@@ -272,6 +272,11 @@ class Assessment(models.Model):
         else:
             raise ValueError(f"Unknown noel_name: {self.noel_name}")
 
+    def hide_rob_scores(self):
+        # TODO - remove 100500031 hack
+        return self.id == 100500031
+
+
 class Attachment(models.Model):
     objects = managers.AttachmentManager()
 

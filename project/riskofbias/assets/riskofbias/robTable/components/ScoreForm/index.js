@@ -5,6 +5,7 @@ import ReactQuill from 'react-quill';
 
 import ScoreIcon from 'riskofbias/robTable/components/ScoreIcon';
 import SelectInput from 'shared/components/SelectInput';
+import h from 'shared/utils/helpers';
 import './ScoreForm.css';
 import { SCORE_SHADES, SCORE_TEXT, SCORE_TEXT_DESCRIPTION } from '../../../constants';
 
@@ -70,19 +71,22 @@ class ScoreForm extends Component {
             { score, notes } = this.state,
             choices = this.props.robResponseValues.map((d) => {
                 return { id: parseInt(d), value: SCORE_TEXT_DESCRIPTION[d] };
-            });
+            }),
+            showScoreInput = !h.hideRobScore(this.props.score.metric.domain.assessment.id);
 
         return (
             <div className="score-form">
-                <div>
-                    <SelectInput
-                        choices={choices}
-                        id={name}
-                        value={score}
-                        handleSelect={this.selectScore}
-                    />
-                    <ScoreIcon score={score} />
-                </div>
+                {showScoreInput ? (
+                    <div>
+                        <SelectInput
+                            choices={choices}
+                            id={name}
+                            value={score}
+                            handleSelect={this.selectScore}
+                        />
+                        <ScoreIcon score={score} />
+                    </div>
+                ) : null}
                 <ReactQuill
                     id={name}
                     value={notes}

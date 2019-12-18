@@ -121,6 +121,10 @@ const helpers = {
                 })
         );
     },
+    hideRobScore(assessment_id) {
+        // TODO - remove 100500031 hack
+        return assessment_id === 100500031;
+    },
 };
 
 export default helpers;

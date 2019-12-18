@@ -72,6 +72,9 @@
           </h3>
           <div class="span12">
             <div id='rob_plot' class="d3_container"></div>
+            {% if assessment.hide_rob_scores %}
+              <div>Click button on right to view study evaluation details</div>
+            {% endif %}
           </div>
       </div>
     {% endif %}
@@ -115,11 +118,13 @@
       thisStudy.add_attachments_row(detail_div, {{study.get_attachments_json|safe}});
     {% endif %}
 
+    {% if not assessment.hide_rob_scores %}
     if (thisStudy.has_riskofbias()){
         window.app.riskofbiasStartup(function(riskofbias){
             new riskofbias.Donut(thisStudy, '#rob_plot', {'build_plot_startup': true});
         })
     }
+    {% endif %}
 });
   </script>
 {% endblock extrajs %}
