@@ -243,6 +243,27 @@ class HAWCUtils {
     static urlify(str) {
         return slugify(str);
     }
+
+    static parseJsonOrNull(el) {
+        // return a JSON version or the object OR null
+        // based on https://stackoverflow.com/a/20392392
+        if (
+            el !== null &&
+            typeof el == 'string' &&
+            el.charAt(0) == '{' &&
+            el.charAt(el.length - 1) == '}'
+        ) {
+            try {
+                let o = JSON.parse(el);
+                if (o && typeof o === 'object') {
+                    return o;
+                }
+            } catch (e) {
+                console.debug('un-parsable JSON-like string', el);
+            }
+        }
+        return null;
+    }
 }
 
 export default HAWCUtils;

@@ -238,10 +238,9 @@ class Study(Reference):
         return reverse('study:update', args=[str(self.pk)])
 
     def get_final_rob_url(self):
-        final = self.get_final_rob()
         try:
-            return final.get_final_url()
-        except AttributeError:
+            return self.get_final_rob().get_final_url()
+        except ObjectDoesNotExist:
             raise Http404('Final RoB does not exist')
 
     def get_assessment(self):
@@ -343,15 +342,22 @@ class Study(Reference):
         else:
             return '<i title="Study is locked" class="fa fa-lock" aria-hidden="true"></i>'
 
-    def get_final_rob(self):
+    def get_final_rob(self) -> models.Model:
+        """
+        Return the active, final risk of bias if one exists.
+
+        Raises:
+            ObjectDoesNotExist: If there is not one active final instance
+
+        Returns:
+            The active, final, RiskOfBias instance
+        """
         try:
             return self.riskofbiases.get(final=True, active=True)
-        except ObjectDoesNotExist:
-            return self.riskofbiases.objects.none()
+        except ObjectDoesNotExist as err:
+            raise err
         except MultipleObjectsReturned:
-            raise ValidationError(
-                'Multiple active final risk of bias/study evaluation reviews for "{}", '
-                'there should only be one per study.'.format(self))
+            raise ObjectDoesNotExist(f'Multiple active final RoB "{self}", expecting one')
 
     def get_active_robs(self, with_final=True):
         if with_final:

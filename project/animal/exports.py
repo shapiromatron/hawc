@@ -5,7 +5,7 @@ from copy import copy
 
 from assessment.models import DoseUnits
 from study.models import Study
-from riskofbias.models import RiskOfBiasScore
+from riskofbias.models import RiskOfBias
 from utils.helper import FlatFileExporter
 
 from . import models
@@ -45,12 +45,6 @@ def get_treatment_period(exp, dr):
         txt = '{0} ({1})'.format(txt, dr['duration_exposure_text'])
 
     return txt
-
-
-def get_final_rob_text(study_id):
-    rob_score = Study.objects.get(pk=study_id).get_overall_confidence()
-    text = RiskOfBiasScore.RISK_OF_BIAS_SCORE_CHOICES_MAP.get(rob_score, "N/A")
-    return text
 
 
 class EndpointGroupFlatComplete(FlatFileExporter):
@@ -163,8 +157,17 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
     def _get_header_row(self):
         # move qs.distinct() call here so we can make qs annotations.
         self.queryset = self.queryset.distinct('pk')
+        if self.queryset.first() is None:
+            self.rob_headers, self.rob_data = {}, {}
+        else:
+            self.rob_headers, self.rob_data = RiskOfBias.get_dp_export(
+                self.queryset.first().assessment_id,
+                list(self.queryset.values_list('animal_group__experiment__study_id', flat=True).distinct()),
+                "animal"
+            )
+
         noel_names = self.kwargs['assessment'].get_noel_names()
-        return [
+        headers = [
             'study id',
             'study name',
             'study identifier',
@@ -232,9 +235,11 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
             'dichotomous summary',
             'percent affected',
             'percent lower ci',
-            'percent upper ci',
-            'Overall study confidence'
+            'percent upper ci'
         ]
+        headers.extend(list(self.rob_headers.values()))
+
+        return headers
 
     def _get_data_rows(self):
 
@@ -244,7 +249,8 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
         for obj in self.queryset:
             ser = obj.get_json(json_encode=False)
             doses = self._get_doses_list(ser, preferred_units)
-            finalROB = get_final_rob_text(ser['animal_group']['experiment']['study']['id'])
+            study_id = ser['animal_group']['experiment']['study']['id']
+            study_robs = [self.rob_data[(study_id, metric_id)] for metric_id in self.rob_headers.keys()]
 
             # build endpoint-group independent data
             row = [
@@ -330,7 +336,7 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
                     eg['percent_lower_ci'],
                     eg['percent_upper_ci'],
                 ])
-                row_copy.append(finalROB)
+                row_copy.extend(study_robs)
                 rows.append(row_copy)
 
         return rows
@@ -339,6 +345,15 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
 class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
 
     def _get_header_row(self):
+        if self.queryset.first() is None:
+            self.rob_headers, self.rob_data = {}, {}
+        else:
+            self.rob_headers, self.rob_data = RiskOfBias.get_dp_export(
+                self.queryset.first().assessment_id,
+                list(self.queryset.values_list('animal_group__experiment__study_id', flat=True).distinct()),
+                "animal"
+            )
+
         noel_names = self.kwargs['assessment'].get_noel_names()
         header = [
             'study id',
@@ -395,7 +410,7 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
         rng = range(1, num_doses + 1)
         header.extend(['Dose {0}'.format(i) for i in rng])
         header.extend(['Significant {0}'.format(i) for i in rng])
-        header.append('Overall study confidence')
+        header.extend(list(self.rob_headers.values()))
 
         # distinct applied last so that queryset can add annotations above
         # in self.queryset.model.max_dose_count
@@ -447,7 +462,6 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
         for obj in self.queryset:
             ser = obj.get_json(json_encode=False)
             doses = self._get_doses_list(ser, preferred_units)
-            finalROB = get_final_rob_text(ser['animal_group']['experiment']['study']['id'])
 
             # build endpoint-group independent data
             row = [
@@ -520,7 +534,9 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
 
             row.extend(dose_list)
             row.extend(sigs)
-            row.append(finalROB)
+
+            study_id = ser['animal_group']['experiment']['study']['id']
+            row.extend([self.rob_data[(study_id, metric_id)] for metric_id in self.rob_headers.keys()])
 
             rows.append(row)
 

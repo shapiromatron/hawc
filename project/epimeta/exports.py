@@ -1,6 +1,5 @@
 from study.models import Study
 from utils.helper import FlatFileExporter
-from animal.exports import get_final_rob_text
 
 from . import models
 
@@ -44,6 +43,8 @@ class MetaResultFlatDataPivot(FlatFileExporter):
     """
     Return a subset of frequently-used data for generation of data-pivot
     visualizations.
+
+    Note: data pivot does not currently include study confidence. Could be added if needed.
     """
 
     def _get_header_row(self):
@@ -71,16 +72,13 @@ class MetaResultFlatDataPivot(FlatFileExporter):
             'lower CI',
             'upper CI',
             'CI units',
-            'heterogeneity',
-            'Overall study confidence'
+            'heterogeneity'
         ]
 
     def _get_data_rows(self):
         rows = []
         for obj in self.queryset:
             ser = obj.get_json(json_encode=False)
-            study_id = ser['protocol']['study']['id']
-            finalROB = get_final_rob_text(study_id)
             row = [
                 ser['protocol']['study']['id'],
                 ser['protocol']['study']['short_citation'],
@@ -107,8 +105,6 @@ class MetaResultFlatDataPivot(FlatFileExporter):
                 ser['ci_units'],
                 ser['heterogeneity'],
             ]
-            row.append(finalROB)
-
             rows.append(row)
 
         return rows

@@ -1,6 +1,6 @@
 from study.models import Study
 from utils.helper import FlatFileExporter
-from animal.exports import get_final_rob_text
+from riskofbias.models import RiskOfBias
 
 from . import models
 
@@ -49,7 +49,16 @@ class OutcomeComplete(FlatFileExporter):
 
 class OutcomeDataPivot(FlatFileExporter):
     def _get_header_row(self):
-        return [
+        if self.queryset.first() is None:
+            self.rob_headers, self.rob_data = {}, {}
+        else:
+            self.rob_headers, self.rob_data = RiskOfBias.get_dp_export(
+                self.queryset.first().assessment_id,
+                list(self.queryset.values_list('study_population__study_id', flat=True).distinct()),
+                "epi"
+            )
+
+        headers = [
             "study id",
             "study name",
             "study identifier",
@@ -67,8 +76,11 @@ class OutcomeDataPivot(FlatFileExporter):
             "diagnostic",
             "age of outcome measurement",
             "tags",
-            "Overall study confidence",
+        ]
 
+        headers.extend(list(self.rob_headers.values()))
+
+        headers.extend([
             "comparison set id",
             "comparison set name",
 
@@ -127,7 +139,9 @@ class OutcomeDataPivot(FlatFileExporter):
             "percent control mean",
             "percent control low",
             "percent control high",
-        ]
+        ])
+
+        return headers
 
     def _get_data_rows(self):
         rows = []
@@ -151,8 +165,11 @@ class OutcomeDataPivot(FlatFileExporter):
                 ser["diagnostic"],
                 ser["age_of_measurement"],
                 self._get_tags(ser),
-                get_final_rob_text(ser["study_population"]["study"]["id"]),
             ]
+            study_id = ser["study_population"]["study"]["id"]
+            study_robs = [self.rob_data[(study_id, metric_id)] for metric_id in self.rob_headers.keys()]
+            row.extend(study_robs)
+
             for res in ser["results"]:
                 row_copy = list(row)
 
@@ -173,31 +190,32 @@ class OutcomeDataPivot(FlatFileExporter):
                             res["comparison_set"]["exposure"]["age_of_exposure"],
                         ]
                     )
-                else:
-                    row_copy.extend(["-"] * 6)
 
-                num_rows_for_ct = len(res["comparison_set"]["exposure"]["central_tendencies"])
-                if num_rows_for_ct == 0:
-                    row_copy.extend(["-"] * 10)
-                    self.addOutcomesAndGroupsToRowAndAppend(rows, res, ser, row_copy)
+                    num_rows_for_ct = len(res["comparison_set"]["exposure"]["central_tendencies"])
+                    if num_rows_for_ct == 0:
+                        row_copy.extend(["-"] * 10)
+                        self.addOutcomesAndGroupsToRowAndAppend(rows, res, ser, row_copy)
+                    else:
+                        for ct in res["comparison_set"]["exposure"]["central_tendencies"]:
+                            row_copy_ct = list(row_copy)
+                            row_copy_ct.extend(
+                                [
+                                    ct["estimate_type"],
+                                    ct["estimate"],
+                                    ct["variance_type"],
+                                    ct["variance"],
+                                    ct["lower_bound_interval"],
+                                    ct["upper_bound_interval"],
+                                    ct["lower_ci"],
+                                    ct["upper_ci"],
+                                    ct["lower_range"],
+                                    ct["upper_range"],
+                                ]
+                            )
+                            self.addOutcomesAndGroupsToRowAndAppend(rows, res, ser, row_copy_ct)
+
                 else:
-                    for ct in res["comparison_set"]["exposure"]["central_tendencies"]:
-                        row_copy_ct = list(row_copy)
-                        row_copy_ct.extend(
-                            [
-                                ct["estimate_type"],
-                                ct["estimate"],
-                                ct["variance_type"],
-                                ct["variance"],
-                                ct["lower_bound_interval"],
-                                ct["upper_bound_interval"],
-                                ct["lower_ci"],
-                                ct["upper_ci"],
-                                ct["lower_range"],
-                                ct["upper_range"],
-                            ]
-                        )
-                        self.addOutcomesAndGroupsToRowAndAppend(rows, res, ser, row_copy_ct)
+                    row_copy.extend(["-"] * (6 + 10))  # exposure + exposure.central_tendencies
 
         return rows
 
