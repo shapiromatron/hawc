@@ -69,10 +69,11 @@ class ScoreForm extends Component {
     render() {
         let { name } = this.props.score.metric,
             { score, notes } = this.state,
+            { assessment_id } = this.props.config,
             choices = this.props.robResponseValues.map((d) => {
                 return { id: parseInt(d), value: SCORE_TEXT_DESCRIPTION[d] };
             }),
-            showScoreInput = !h.hideRobScore(this.props.score.metric.domain.assessment.id);
+            showScoreInput = !h.hideRobScore(parseInt(assessment_id));
 
         return (
             <div className="score-form">
@@ -108,6 +109,9 @@ ScoreForm.propTypes = {
     }).isRequired,
     updateNotesLeft: PropTypes.func.isRequired,
     robResponseValues: PropTypes.array.isRequired,
+    config: PropTypes.shape({
+        assessment_id: PropTypes.string.isRequired,
+    }),
 };
 
 export default ScoreForm;

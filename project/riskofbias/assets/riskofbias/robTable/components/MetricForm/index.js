@@ -55,6 +55,7 @@ class MetricForm extends Component {
                 />
                 {config.display === 'final' ? this.renderScoreRow() : null}
                 <ScoreForm
+                    config={config}
                     ref="form"
                     score={formScore}
                     addText={this.state.addText}
