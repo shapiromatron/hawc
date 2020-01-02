@@ -220,7 +220,7 @@ class RoBReviewersForm(forms.ModelForm):
         try:
             self.fields['final_author'].initial = \
                 self.instance.get_final_rob().author.id
-        except (AttributeError):
+        except (ObjectDoesNotExist, AttributeError):
             pass
 
     def save(self, commit=True):
