@@ -1,5 +1,6 @@
 from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse_lazy
+from django.conf import settings
 from django.db.models import Prefetch
 from django.shortcuts import get_object_or_404
 from django.views.generic.edit import FormView
@@ -319,4 +320,5 @@ class RoBEdit(TimeSpentOnPageMixin, BaseDetail):
         context['back_url'] = self.request.META['HTTP_REFERER'] \
             if 'HTTP_REFERER' in self.request.META \
             else self.object.get_absolute_url()
+        context['hawc_flavor'] = settings.HAWC_FLAVOR
         return context
