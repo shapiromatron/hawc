@@ -47,7 +47,7 @@ def migrate_to_endpoint(apps, schema_editor):
                 endpoint.litter_effect_notes = experiment.litter_effect_notes
                 endpoint.save()
 
-        if not written and endpoint.litter_effect_notes:
+        if not written and experiment.litter_effect_notes:
             print(f"Assessment {experiment.study.assessment_id}, Experiment: [{experiment.id}]/[{experiment.name}] has no endpoints; litter data [{experiment.litter_effects}]/[{experiment.litter_effect_notes}] will be lost...")
 
 
