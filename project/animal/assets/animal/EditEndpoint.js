@@ -32,7 +32,11 @@ class EditEndpoint extends Endpoint {
     }
 
     update_endpoint_from_form() {
-        var vals = { groups: [] };
+        var vals = {
+            groups: [],
+            noel_names: JSON.parse($('#config').html()).noel_names,
+        };
+
         //save form values
         $('#endpoint :input').each(function() {
             vals[this.name] = $(this).val();

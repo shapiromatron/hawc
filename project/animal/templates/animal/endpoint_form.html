@@ -140,6 +140,11 @@
 
 {% block extrajs %}
   {{ form.media }}
+  <script type="text/json" id="config">
+    {
+      "noel_names": {{form.noel_names|safe}}
+    }
+  </script>
   <script type="text/javascript">
     $(document).ready(function () {
 

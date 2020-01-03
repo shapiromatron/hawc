@@ -1,4 +1,5 @@
 from collections import Counter
+import json
 
 from django import forms
 from django.core.urlresolvers import reverse
@@ -418,6 +419,8 @@ class EndpointForm(ModelForm):
         self.fields["name"].help_text = get_flavored_text("ani__endpoint_form__name")
 
         self.helper = self.setHelper()
+
+        self.noel_names = json.dumps(self.instance.get_noel_names()._asdict())
 
     def setHelper(self):
         if self.instance.id:
