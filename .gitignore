@@ -11,12 +11,12 @@
 .pytest_cache
 bin/*local.sh
 package-lock.json
-project/celerybeat*
-project/hawc/settings/local.py
-project/static/css/hawc_d3_aggregated.css
+celerybeat*
+hawc/main/settings/local.py
 webpack-stats.json
 
 # folders
+*.egg-info/
 __pycache__
 .idea/*
 .ipynb_checkpoints
@@ -37,8 +37,8 @@ package-lock.json
 .happypack/
 
 # keep folders; not contents
-project/static/bundles/*
-!project/static/bundles/.gitkeep
+hawc/static/bundles/*
+!hawc/static/bundles/.gitkeep
 
 compose/nginx/ssl/*
 !compose/nginx/ssl/.gitkeep

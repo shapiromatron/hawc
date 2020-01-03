@@ -1,0 +1,14 @@
+[flake8]
+max-line-length = 120
+ignore =
+    E203
+    E266
+exclude =
+    .git,
+    .mypy_cache,
+    .tox,
+    _build,
+    bin,
+    docs,
+    notebooks,
+    venv

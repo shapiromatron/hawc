@@ -1,7 +1,7 @@
 .git
 .cache
-project/assets
-project/node_modules
-project/.happypack
+hawc/assets
+hawc/node_modules
+hawc/.happypack
 **/*.pyc
 **/*.DS_Store

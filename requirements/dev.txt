@@ -1,13 +1,17 @@
 -r base.txt
 
+# lint/format
+black==19.10b0
+flake8==3.7.9
+
 # django development
 django-debug-toolbar==1.8
 django-extensions==1.9.0
 
 # tests
 selenium==3.5.0
-pytest==3.6.1
-pytest-django==3.2.1
+pytest==5.3.2
+pytest-django==3.7.0
 
 # docs
 watchdog==0.8.3
@@ -15,6 +19,3 @@ Sphinx==1.6.3
 
 # django_extensions.graph_models
 pydot==1.2.3
-
-# notebooks
-jupyter==1.0.0
