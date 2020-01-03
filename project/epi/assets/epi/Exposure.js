@@ -69,6 +69,7 @@ class Exposure {
             'Upper CI',
             'Lower Range',
             'Upper Range',
+            'Description',
         ];
 
         var headerRow = $('<tr/>').appendTo(ctTable);

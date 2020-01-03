@@ -379,7 +379,6 @@ class OutcomeForm(forms.ModelForm):
         self.fields['name'].widget = selectable.AutoCompleteWidget(
             lookup_class=BaseEndpointLookup,
             allow_new=True)
-        self.fields['name'].help_text = self.instance.NAME_HELP_TEXT
         self.fields['system'].widget = selectable.AutoCompleteWidget(
             lookup_class=lookups.SystemLookup,
             allow_new=True)
@@ -394,7 +393,6 @@ class OutcomeForm(forms.ModelForm):
             allow_new=True)
         self.fields['effects'].widget = selectable.AutoCompleteSelectMultipleWidget(
             lookup_class=EffectTagLookup)
-        self.fields['effects'].help_text = self.instance.TAGS_HELP_TEXT
         if assessment:
             self.instance.assessment = assessment
         if study_population:
@@ -699,7 +697,7 @@ class GroupForm(forms.ModelForm):
 
 class SingleGroupForm(GroupForm):
 
-    HELP_TEXT_UPDATE = """Update an existing group and group descriptions."""
+    HELP_TEXT_UPDATE = "Update an existing group and numerical group descriptions."
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
