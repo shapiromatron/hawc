@@ -2,7 +2,7 @@ import abc
 import logging
 
 from django.apps import apps
-from django.core.exceptions import PermissionDenied
+from django.core.exceptions import PermissionDenied, EmptyResultSet
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -78,16 +78,12 @@ class AssessmentPermissionsMixin(object):
         # inherit from, and define the get_study method on there. Then we just
         # check an "is-a" instead of looking for the attribute manually.
         study = None
-        study_fetch_method = getattr(obj, 'get_study', None)
-        if callable(study_fetch_method):
-            study = study_fetch_method()
+        if hasattr(obj, 'get_study'):
+            study = obj.get_study()
 
         if assessment.user_can_edit_object(user):
-            if study is not None:
-                if study.user_can_edit_study(assessment, user):
-                    return True
-                else:
-                    return False
+            if study:
+                return study.user_can_edit_study(assessment, user)
             return None
         else:
             return False
@@ -169,6 +165,9 @@ class AssessmentPermissionsMixin(object):
                 if self.model == Assessment:
                     perms = self.assessment.user_can_edit_assessment(self.request.user)
                 else:
+                    obj = queryset.first()
+                    if obj is None:
+                        raise EmptyResultSet("Cannot determine if objects should be locked for editing")
                     self.deny_for_locked_study(self.request.user, self.assessment, obj)
                     perms = self.assessment.user_can_edit_object(self.request.user)
             logging.debug('Permissions checked')

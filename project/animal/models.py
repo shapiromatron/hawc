@@ -456,8 +456,7 @@ class AnimalGroup(models.Model):
         self.save()
 
     def get_study(self):
-        if self.experiment is not None:
-            return self.experiment.get_study()
+        return self.experiment.get_study()
 
 class DosingRegime(models.Model):
 
@@ -650,8 +649,7 @@ class DosingRegime(models.Model):
             child.copy_across_assessments(cw)
 
     def get_study(self):
-        if self.dosed_animals is not None:
-            return self.dosed_animals.get_study()
+        return self.dosed_animals.get_study()
 
 class DoseGroup(models.Model):
     objects = managers.DoseGroupManager()
@@ -1215,8 +1213,7 @@ class Endpoint(BaseEndpoint):
             child.copy_across_assessments(cw)
 
     def get_study(self):
-        if self.animal_group is not None:
-            return self.animal_group.get_study()
+        return self.animal_group.get_study()
 
     def get_noel_names(self):
         return self.assessment.get_noel_names()

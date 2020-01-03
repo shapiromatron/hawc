@@ -537,8 +537,7 @@ class Outcome(BaseEndpoint):
             child.copy_across_assessments(cw)
 
     def get_study(self):
-        if self.study_population is not None:
-            return self.study_population.get_study()
+        return self.study_population.get_study()
 
 
 class ComparisonSet(models.Model):
@@ -643,10 +642,12 @@ class ComparisonSet(models.Model):
             child.copy_across_assessments(cw)
 
     def get_study(self):
-        if self.study_population is not None:
+        if self.study_population:
             return self.study_population.get_study()
-        elif self.outcome is not None:
+        elif self.outcome:
             return self.outcome.get_study()
+        else:
+            raise ValueError('Study cannot be determined')
 
 
 class Group(models.Model):
@@ -987,8 +988,7 @@ class Exposure(models.Model):
         cw[self.COPY_NAME][old_id] = self.id
 
     def get_study(self):
-        if self.study_population is not None:
-            return self.study_population.get_study()
+        return self.study_population.get_study()
 
 
 class CentralTendency(models.Model):
@@ -1480,8 +1480,7 @@ class Result(models.Model):
             child.copy_across_assessments(cw)
 
     def get_study(self):
-        if self.outcome is not None:
-            return self.outcome.get_study()
+        return self.outcome.get_study()
 
 
 class GroupResult(models.Model):
