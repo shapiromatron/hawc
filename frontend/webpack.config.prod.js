@@ -4,7 +4,7 @@ var config = require('./webpack.base.js'),
 
 config.devtool = 'source-map';
 
-config.output.path = path.resolve('./static/bundles');
+config.output.path = path.resolve('../project/static/bundles');
 config.output.publicPath = '/static/bundles/';
 
 config.plugins.unshift.apply(config.plugins, [

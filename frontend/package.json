@@ -4,7 +4,7 @@
     "version": "1.0.0",
     "description": "HAWC frontend code",
     "scripts": {
-        "clean": "rimraf ./static/bundles/* && rimraf ./webpack-stats.json",
+        "clean": "rimraf ../project/static/bundles/* && rimraf ../project/webpack-stats.json",
         "build:webpack": "NODE_ENV=production webpack --config webpack.config.prod.js",
         "build:dev": "webpack --config webpack.config.dev.js",
         "build": "npm run clean && npm run build:webpack",

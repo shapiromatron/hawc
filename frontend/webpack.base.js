@@ -69,7 +69,7 @@ module.exports = {
         }),
         new webpack.NoEmitOnErrorsPlugin(),
         new BundleTracker({
-            filename: './webpack-stats.json',
+            filename: '../project/webpack-stats.json',
         }),
     ],
 };

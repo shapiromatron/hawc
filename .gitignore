@@ -25,13 +25,13 @@ data
 dist
 docs/_build
 env
+node_modules/
 public/static
 public/media
 venv
 .vscode/
 
 # javascript
-node_modules
 webpack-stats.json
 package-lock.json
 .happypack/
