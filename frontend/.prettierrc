@@ -1,5 +1,9 @@
-singleQuote: true
-tabWidth: 4
-trailingComma: es5
-arrowParens: always
+arrowParens: "avoid"
+bracketSpacing: false
+endOfLine: "lf"
+jsxBracketSameLine: true
+parser: "babel"
 printWidth: 100
+semi: true
+tabWidth: 4
+trailingComma: "es5"

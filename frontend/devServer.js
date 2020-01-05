@@ -1,25 +1,13 @@
-var args = process.argv.slice(2),
-    express = require('express'),
+const express = require('express'),
+    middleware = require('webpack-dev-middleware'),
     webpack = require('webpack'),
     config = require('./webpack.config.dev'),
-    port = 3100;
-
-if (args.indexOf('--testProduction') >= 0) {
-    console.log('Using test production;');
-    config.plugins.unshift(
-        new webpack.DefinePlugin({
-            'process.env': {
-                NODE_ENV: JSON.stringify('production'),
-            },
-        })
-    );
-}
-
-var app = express(),
+    port = 3100,
+    app = express(),
     compiler = webpack(config);
 
 app.use(
-    require('webpack-dev-middleware')(compiler, {
+    middleware(compiler, {
         noInfo: true,
         publicPath: config.output.publicPath,
     })

@@ -1,4 +1,3 @@
-import 'babel-polyfill';
 import _ from 'lodash';
 
 import * as types from 'textCleanup/constants/ActionTypes';

@@ -1,9 +1,68 @@
-var path = require('path'),
-    webpack = require('webpack'),
+const path = require('path'),
     BundleTracker = require('webpack-bundle-tracker');
 
 module.exports = {
     context: __dirname,
+
+    entry: {
+        main: [
+            './animal/index',
+            './assessment/index',
+            './assets/index',
+            './bmd/index',
+            './epi/index',
+            './epimeta/index',
+            './invitro/index',
+            './lit/index',
+            './mgmt/index',
+            './riskofbias/index',
+            './study/index',
+            './summary/index',
+            './utils/index',
+        ],
+    },
+
+    externals: {
+        $: '$',
+    },
+
+    mode: 'development',
+
+    module: {
+        noParse: /node_modules\/quill\/dist\/quill\.js/,
+        rules: [
+            {
+                exclude: /node_modules/,
+                test: /\.js$/,
+                use: {
+                    loader: 'babel-loader',
+                    options: {
+                        plugins: [
+                            "@babel/plugin-syntax-dynamic-import",
+                            ["@babel/plugin-proposal-class-properties", { "loose": false }],
+                        ],
+                    },
+                },
+            },
+            {
+                test: /\.css$/,
+                loader: 'style-loader!css-loader',
+            },
+        ],
+    },
+
+    output: {
+        filename: '[name].[hash].js',
+        chunkFilename: '[name].[hash].js',
+        path: path.resolve('../project/static/bundles'),
+        publicPath: '/static/bundles/',
+    },
+
+    plugins: [
+        new BundleTracker({
+            filename: '../project/webpack-stats.json',
+        }),
+    ],
 
     resolve: {
         alias: {
@@ -40,51 +99,4 @@ module.exports = {
         extensions: ['.js', '.css'],
     },
 
-    entry: {
-        main: [
-            './animal/index',
-            './assessment/index',
-            './assets/index',
-            './bmd/index',
-            './epi/index',
-            './epimeta/index',
-            './invitro/index',
-            './lit/index',
-            './mgmt/index',
-            './riskofbias/index',
-            './study/index',
-            './summary/index',
-            './utils/index',
-        ],
-    },
-
-    output: {
-        path: path.join(__dirname, 'dist'),
-        filename: '[name].[hash].js',
-        chunkFilename: '[name].[hash].js',
-    },
-
-    externals: {
-        $: '$',
-    },
-
-    plugins: [
-        new webpack.optimize.CommonsChunkPlugin({
-            name: 'vendor',
-            filename: 'vendor.[hash].js',
-            minChunks: (module, count) => {
-                // puts imported node_modules module code into vendor chunk
-                const userRequest = module.userRequest;
-                return userRequest && userRequest.indexOf('node_modules') >= 0;
-            },
-        }),
-        new webpack.optimize.CommonsChunkPlugin({
-            name: 'manifest',
-            filename: 'manifest.[hash].js',
-        }),
-        new webpack.NoEmitOnErrorsPlugin(),
-        new BundleTracker({
-            filename: '../project/webpack-stats.json',
-        }),
-    ],
 };
