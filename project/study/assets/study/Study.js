@@ -8,7 +8,7 @@ import HAWCUtils from 'utils/HAWCUtils';
 
 import RiskOfBiasScore from 'riskofbias/RiskOfBiasScore';
 import { renderStudyDisplay } from 'riskofbias/robTable/components/StudyDisplay';
-import { SCORE_SHADES, SCORE_TEXT } from 'riskofbias/constants';
+import { SCORE_SHADES, SCORE_TEXT, NA_KEYS } from 'riskofbias/constants';
 
 class Study {
     constructor(data) {
@@ -75,8 +75,8 @@ class Study {
             })
             .entries(riskofbias);
 
-        // now generate a score for each
-        this.riskofbias.forEach(function(v, i) {
+        // now generate a score for each domain (aggregating metrics)
+        this.riskofbias.forEach(function(v) {
             v.domain = v.values[0].data.metric.domain.id;
             v.domain_text = v.values[0].data.metric.domain.name;
             v.domain_is_overall_confidence =
@@ -84,9 +84,6 @@ class Study {
                     ? v.values[0].data.metric.domain.is_overall_confidence
                     : false;
             v.criteria = v.values;
-            v.score_text = v.score > 0 ? v.score : 'N/A';
-            v.score_color = '#E8E8E8';
-            v.score_text_color = String.contrasting_color(v.score_color);
         });
 
         // try to put the 'other' domain at the end

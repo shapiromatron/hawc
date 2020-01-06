@@ -77,8 +77,6 @@ class Donut extends D3Plot {
                 weight: 10, // equally weighted
                 score: v1.score,
                 score_text: v1.score_text,
-                score_color: v1.score_color,
-                score_text_color: String.contrasting_color(v1.score_color),
                 domain: v1.domain_text,
                 idxOrder: idx,
                 self: v1,

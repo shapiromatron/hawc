@@ -3,7 +3,7 @@ import _ from 'lodash';
 import * as types from 'riskofbias/robScoreCleanup/constants';
 import { deepCopy } from 'shared/utils';
 
-import { NR_KEY, SCORE_SHADES, SCORE_TEXT, SCORE_TEXT_DESCRIPTION } from '../../constants';
+import { NR_KEYS, SCORE_SHADES, SCORE_TEXT, SCORE_TEXT_DESCRIPTION } from '../../constants';
 
 const defaultState = {
     isFetching: false,
@@ -17,10 +17,10 @@ const defaultState = {
             {
                 id: 0,
                 riskofbias_id: 0,
-                score: NR_KEY,
-                score_description: SCORE_TEXT_DESCRIPTION[NR_KEY],
-                score_shade: SCORE_SHADES[NR_KEY],
-                score_symbol: SCORE_TEXT[NR_KEY],
+                score: NR_KEYS[1],
+                score_description: SCORE_TEXT_DESCRIPTION[NR_KEYS[1]],
+                score_shade: SCORE_SHADES[NR_KEYS[1]],
+                score_symbol: SCORE_TEXT[NR_KEYS[1]],
                 notes: 'This will change to reflect the first selected metric.',
                 metric: {
                     id: 0,

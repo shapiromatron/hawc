@@ -448,7 +448,7 @@ class RiskOfBias(models.Model):
                     })
 
                     # special case for N/A
-                    if score.score == 1:
+                    if score.score in RiskOfBiasScore.NA_SCORES:
                         content = default_value
 
                     scores_map[key] = content
@@ -459,18 +459,28 @@ class RiskOfBias(models.Model):
         return header_map, scores_map
 
 
+def build_default_rob_score():
+    if settings.HAWC_FLAVOR == "PRIME":
+        return 12
+    elif settings.HAWC_FLAVOR == "EPA":
+        return 22
+    else:
+        raise ValueError("Unknown HAWC flavor")
+
+
 class RiskOfBiasScore(models.Model):
     objects = managers.RiskOfBiasScoreManager()
 
     RISK_OF_BIAS_SCORE_CHOICES = (
-        (1, 'Not applicable'),
-        (2, 'Not reported'),
-
+        (10, 'Not applicable'),
+        (12, 'Not reported'),
         (14, 'Definitely high risk of bias'),
         (15, 'Probably high risk of bias'),
         (16, 'Probably low risk of bias'),
         (17, 'Definitely low risk of bias'),
 
+        (20, 'Not applicable'),
+        (22, 'Not reported'),
         (24, 'Critically deficient'),
         (25, 'Deficient'),
         (26, 'Adequate'),
@@ -479,15 +489,18 @@ class RiskOfBiasScore(models.Model):
 
     RISK_OF_BIAS_SCORE_CHOICES_MAP = {k: v for k, v in RISK_OF_BIAS_SCORE_CHOICES}
 
-    SCORE_SYMBOLS = {
-        1: 'N/A',
-        2: 'NR',
+    NA_SCORES = (10, 20)
 
+    SCORE_SYMBOLS = {
+        10: 'N/A',
+        12: 'NR',
         14: '--',
         15: '-',
         16: '+',
         17: '++',
 
+        20: 'N/A',
+        22: 'NR',
         24: '--',
         25: '-',
         26: '+',
@@ -495,14 +508,15 @@ class RiskOfBiasScore(models.Model):
     }
 
     SCORE_SHADES = {
-        1: '#FFCC00',
-        2: '#FFCC00',
-
+        10: '#FFCC00',
+        12: '#FFCC00',
         14: '#CC3333',
         15: '#FFCC00',
         16: '#6FFF00',
         17: '#00CC00',
 
+        20: '#E8E8E8',
+        22: '#FFCC00',
         24: '#CC3333',
         25: '#FFCC00',
         26: '#6FFF00',
@@ -517,7 +531,7 @@ class RiskOfBiasScore(models.Model):
         related_name='scores')
     score = models.PositiveSmallIntegerField(
         choices=RISK_OF_BIAS_SCORE_CHOICES,
-        default=1)
+        default=build_default_rob_score)
     notes = models.TextField(
         blank=True)
 
@@ -647,9 +661,9 @@ class RiskOfBiasAssessment(models.Model):
     def get_rob_response_values(self):
         # get valid RiskOfBiasScore response options given responses selection
         if self.responses == RESPONSES_OHAT:
-            return [1, 14, 15, 16, 17, 2]
+            return [17, 16, 15, 12, 14, 10]
         elif self.responses == RESPONSES_EPA:
-            return [1, 24, 25, 26, 27, 2]
+            return [27, 26, 25, 22, 24, 20]
         else:
             raise ValueError(f"Unknown responses: {self.responses}")
 

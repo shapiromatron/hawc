@@ -26,15 +26,14 @@ class MetricDisplay extends Component {
 
     render() {
         let { metric } = this.props;
-
         return (
             <div className="metric-display">
                 <h4>{metric.key}</h4>
-                <span
-                    dangerouslySetInnerHTML={{
-                        __html: metric.values[0].metric.description,
-                    }}
-                />
+                {metric.values[0].metric.hide_description ? null : (
+                    <div
+                        dangerouslySetInnerHTML={{ __html: metric.values[0].metric.description }}
+                    />
+                )}
                 {this.renderScoreRow()}
             </div>
         );

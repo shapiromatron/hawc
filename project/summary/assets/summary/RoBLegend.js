@@ -4,11 +4,11 @@ import d3 from 'd3';
 import HAWCUtils from 'utils/HAWCUtils';
 
 import {
-    NA_KEY,
-    NR_KEY,
+    NA_KEYS,
+    NR_KEYS,
     SCORE_SHADES,
     SCORE_TEXT,
-    SCORE_TEXT_DESCRIPTION,
+    SCORE_TEXT_DESCRIPTION_LEGEND,
     COLLAPSED_NR_FIELDS_DESCRIPTION,
 } from 'riskofbias/constants';
 
@@ -28,13 +28,21 @@ class RoBLegend {
 
         // determine which scores to present in legend
         if (!this.settings.show_na_legend) {
-            scores.splice(scores.indexOf(NA_KEY), 1);
+            NA_KEYS.forEach((key) => {
+                if (scores.includes(key)) {
+                    scores.splice(scores.indexOf(key), 1);
+                }
+            });
         }
         if (!this.settings.show_nr_legend || collapseNR) {
-            scores.splice(scores.indexOf(NR_KEY), 1);
+            NR_KEYS.forEach((key) => {
+                if (scores.includes(key)) {
+                    scores.splice(scores.indexOf(key), 1);
+                }
+            });
         }
         fields = _.map(scores, function(v) {
-            let desc = SCORE_TEXT_DESCRIPTION[v];
+            let desc = SCORE_TEXT_DESCRIPTION_LEGEND[v];
             if (collapseNR && COLLAPSED_NR_FIELDS_DESCRIPTION[v]) {
                 desc = COLLAPSED_NR_FIELDS_DESCRIPTION[v];
             }
