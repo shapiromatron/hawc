@@ -200,10 +200,10 @@ class OutcomeDataPivot(FlatFileExporter):
                             row_copy_ct = list(row_copy)
                             row_copy_ct.extend(
                                 [
-                                    ct["estimate_type"],
                                     ct["estimate"],
-                                    ct["variance_type"],
+                                    ct["estimate_type"],
                                     ct["variance"],
+                                    ct["variance_type"],
                                     ct["lower_bound_interval"],
                                     ct["upper_bound_interval"],
                                     ct["lower_ci"],
