@@ -3,7 +3,7 @@ import d3 from 'd3';
 
 import D3Visualization from './D3Visualization';
 import RoBLegend from './RoBLegend';
-import { SCORE_SHADES } from 'riskofbias/constants';
+import { SCORE_SHADES, SCORE_TEXT, NR_KEYS } from 'riskofbias/constants';
 
 class RoBBarchartPlot extends D3Visualization {
     constructor(parent, data, options) {
@@ -54,6 +54,11 @@ class RoBBarchartPlot extends D3Visualization {
     }
 
     setDefaults() {
+        let score_ids = _.chain(this.data.aggregation.studies[0].data.rob_response_values)
+            .filter((d) => !NR_KEYS.includes(d))
+            .reverse()
+            .value();
+
         _.extend(this, {
             firstPass: true,
             included_metrics: [],
@@ -77,46 +82,51 @@ class RoBBarchartPlot extends D3Visualization {
                 axis_labels: true,
                 label_format: undefined,
             },
-            color_scale: d3.scale.ordinal().range(_.values(SCORE_SHADES)),
+            score_ids: score_ids,
+            color_scale: d3.scale.ordinal().range(score_ids.map((d) => SCORE_SHADES[d])),
         });
     }
 
     processData() {
         var included_metrics = this.data.settings.included_metrics,
-            stack_order = ['N/A', '--', '-', '+', '++'],
+            stack_order = this.score_ids,
             metrics,
             stack,
             dataset;
 
         dataset = _.chain(this.data.aggregation.metrics_dataset)
-            .filter(function(d) {
+            .filter((d) => {
                 var metric_id = d.rob_scores[0].data.metric.id;
                 return _.includes(included_metrics, metric_id);
             })
-            .map(function(d) {
+            .map((d) => {
                 var vals = {
                         label: d.rob_scores[0].data.metric.name,
-                        'N/A': 0,
-                        '--': 0,
-                        '-': 0,
-                        '+': 0,
-                        '++': 0,
                     },
                     weight = 1 / d.rob_scores.length;
+
+                this.score_ids.forEach((id) => (vals[id] = 0));
+
                 d.rob_scores.forEach(function(rob) {
-                    vals[rob.data.score_text] += weight;
-                    if (rob.data.score_text === 'NR') {
-                        vals['-'] += weight;
-                    }
+                    vals[rob.data.score] = (vals[rob.data.score] || 0) + weight;
                 });
+
+                if (_.has(vals, 15)) {
+                    vals[15] = (vals[15] || 0) + (vals[12] || 0);
+                    delete vals[12];
+                } else if (_.has(vals, 25)) {
+                    vals[25] = (vals[25] || 0) + (vals[22] || 0);
+                    delete vals[22];
+                } else {
+                    throw 'Unknown `-` value';
+                }
+
                 return vals;
             })
             .value();
 
         metrics = _.chain(dataset)
-            .map(function(d) {
-                return d.label;
-            })
+            .map((d) => d.label)
             .uniq()
             .value();
 
@@ -188,12 +198,8 @@ class RoBBarchartPlot extends D3Visualization {
             .enter()
             .append('svg:g')
             .attr('class', 'score')
-            .style('fill', function(d, i) {
-                return colors(i);
-            })
-            .style('stroke', function(d, i) {
-                return d3.rgb(colors(i)).darker();
-            });
+            .style('fill', (d, i) => colors(i))
+            .style('stroke', (d, i) => d3.rgb(colors(i)).darker());
 
         // Add a rect for each score.
         groups
@@ -201,15 +207,9 @@ class RoBBarchartPlot extends D3Visualization {
             .data(Object)
             .enter()
             .append('svg:rect')
-            .attr('x', function(d) {
-                return x(d.y0);
-            })
-            .attr('y', function(d) {
-                return y(d.x) + 5;
-            })
-            .attr('width', function(d) {
-                return x(d.y);
-            })
+            .attr('x', (d) => x(d.y0))
+            .attr('y', (d) => y(d.x) + 5)
+            .attr('width', (d) => x(d.y))
             .attr('height', 20);
 
         if (this.data.settings.show_values) {
@@ -220,15 +220,9 @@ class RoBBarchartPlot extends D3Visualization {
                 .append('text')
                 .attr('class', 'centeredLabel')
                 .style('fill', '#555')
-                .attr('x', function(d) {
-                    return x(d.y0) + x(d.y) / 2;
-                })
-                .attr('y', function(d) {
-                    return y(d.x) + 20;
-                })
-                .text(function(d) {
-                    return d.y > 0 ? fmt(d.y) : '';
-                });
+                .attr('x', (d) => x(d.y0) + x(d.y) / 2)
+                .attr('y', (d) => y(d.x) + 20)
+                .text((d) => (d.y > 0 ? fmt(d.y) : ''));
         }
     }
 
