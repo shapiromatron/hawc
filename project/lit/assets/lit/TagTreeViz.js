@@ -40,7 +40,7 @@ class TagTreeViz extends D3Plot {
     }
 
     set_defaults() {
-        this.padding = { top: 40, right: 5, bottom: 5, left: 100 };
+        this.padding = { top: 40, right: 5, bottom: 5, left: 115 };
         this.w = 1280 - this.padding.left - this.padding.right;
         this.h = 800 - this.padding.top - this.padding.bottom;
         this.path_length = 180;

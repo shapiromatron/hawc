@@ -57,7 +57,7 @@
     <div class="alert alert-warning">
       <button type="button" class="close" data-dismiss="alert">&times;</button>
       <b>New references marked for inclusion.</b><br>
-      <p>{{ need_import_count }} reference{{ need_import_count|pluralize }} marked for inclusion {{ need_import_count|pluralize:"is,are" }} ready for risk of bias and/or data-extraction. <a href="{% url 'lit:ref_list_extract' assessment.pk %}">Prepare references</a></p>
+      <p>{{ need_import_count }} reference{{ need_import_count|pluralize }} marked for inclusion {{ need_import_count|pluralize:"is,are" }} ready for {{assessment.get_rob_name_display|lower}} and/or data-extraction. <a href="{% url 'lit:ref_list_extract' assessment.pk %}">Prepare references</a></p>
   </div>
   {% endif %}
 

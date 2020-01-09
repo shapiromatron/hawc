@@ -55,8 +55,24 @@ class DataPivotVisualization extends D3Plot {
                     }
                 }
 
-                var aa = chunkify(a[field_name].toString()),
-                    bb = chunkify(b[field_name].toString());
+                var aObj = HAWCUtils.parseJsonOrNull(a[field_name]),
+                    bObj = HAWCUtils.parseJsonOrNull(b[field_name]),
+                    aSort,
+                    bSort,
+                    aa,
+                    bb;
+
+                // if object is JSON and has sortValue, use it, else use string version
+                if (aObj && bObj && aObj.sortValue !== undefined && bObj.sortValue !== undefined) {
+                    aSort = aObj.sortValue;
+                    bSort = bObj.sortValue;
+                } else {
+                    aSort = a[field_name];
+                    bSort = b[field_name];
+                }
+
+                aa = chunkify(aSort.toString());
+                bb = chunkify(bSort.toString());
 
                 for (var x = 0; aa[x] && bb[x]; x++) {
                     if (aa[x] !== bb[x]) {
@@ -1179,7 +1195,9 @@ class DataPivotVisualization extends D3Plot {
             .attr('y', 0)
             .attr('class', 'with_whitespace')
             .text(function(d) {
-                return d.text;
+                // return "display" version of object, or object
+                var dObj = HAWCUtils.parseJsonOrNull(d.text);
+                return dObj !== null && dObj.display !== undefined ? dObj.display : d.text;
             })
             .style('cursor', function(d) {
                 return d.cursor;

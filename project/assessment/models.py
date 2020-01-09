@@ -1,6 +1,7 @@
 from collections import OrderedDict
 import json
 import os
+from typing import NamedTuple
 
 from django.db import models
 from django.core.cache import cache
@@ -31,8 +32,49 @@ def get_cas_url(cas):
         return None
 
 
+NOEL_NAME_CHOICES_NOEL = 0
+NOEL_NAME_CHOICES_NOAEL = 1
+
+ROB_NAME_CHOICES_ROB = 0
+ROB_NAME_CHOICES_SE = 1
+ROB_NAME_CHOICES_ROB_TEXT = "Risk of bias"
+ROB_NAME_CHOICES_SE_TEXT = "Study evaluation"
+
+
+class NoelNames(NamedTuple):
+    noel: str
+    loel: str
+    noel_help_text: str
+    loel_help_text: str
+
 class Assessment(models.Model):
     objects = managers.AssessmentManager()
+
+    NOEL_NAME_CHOICES = (
+        (NOEL_NAME_CHOICES_NOEL, "NOEL/LOEL"),
+        (NOEL_NAME_CHOICES_NOAEL, "NOAEL/LOAEL"),
+    )
+
+    ROB_NAME_CHOICES = (
+        (ROB_NAME_CHOICES_ROB, ROB_NAME_CHOICES_ROB_TEXT),
+        (ROB_NAME_CHOICES_SE, ROB_NAME_CHOICES_SE_TEXT),
+    )
+
+    def get_noel_name_default():
+        if settings.HAWC_FLAVOR == "PRIME":
+            return NOEL_NAME_CHOICES_NOEL
+        elif settings.HAWC_FLAVOR == "EPA":
+            return NOEL_NAME_CHOICES_NOAEL
+        else:
+            raise ValueError("Unknown HAWC flavor")
+
+    def get_rob_name_default():
+        if settings.HAWC_FLAVOR == "PRIME":
+            return ROB_NAME_CHOICES_ROB
+        elif settings.HAWC_FLAVOR == "EPA":
+            return ROB_NAME_CHOICES_SE
+        else:
+            raise ValueError("Unknown HAWC flavor")
 
     name = models.CharField(
         max_length=80,
@@ -119,6 +161,18 @@ class Assessment(models.Model):
     funding_source = models.TextField(
         blank=True,
         help_text="Describe the funding-source(s) for this assessment.")
+    noel_name = models.PositiveSmallIntegerField(
+        default=get_noel_name_default,
+        choices=NOEL_NAME_CHOICES,
+        verbose_name="NOEL/NOAEL name",
+        help_text="What term should be used to refer to NOEL/NOAEL and LOEL/LOAEL?"
+    )
+    rob_name = models.PositiveSmallIntegerField(
+        default=get_rob_name_default,
+        choices=ROB_NAME_CHOICES,
+        verbose_name="Risk of bias/Study evaluation name",
+        help_text="What term should be used to refer to risk of bias/study evaluation questions?"
+    )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
@@ -208,6 +262,19 @@ class Assessment(models.Model):
 
     def get_crumbs(self):
         return get_crumbs(self)
+
+    def get_noel_names(self):
+        if self.noel_name == NOEL_NAME_CHOICES_NOEL:
+            return NoelNames('NOEL', 'LOEL', 'No observed effect level', 'Lowest observed effect level')
+        elif self.noel_name == NOEL_NAME_CHOICES_NOAEL:
+            return NoelNames('NOAEL', 'LOAEL',
+                'No observed adverse effect level', 'Lowest observed adverse effect level')
+        else:
+            raise ValueError(f"Unknown noel_name: {self.noel_name}")
+
+    def hide_rob_scores(self):
+        # TODO - remove 100500031 hack
+        return self.id == 100500031
 
 
 class Attachment(models.Model):
@@ -358,7 +425,7 @@ class BaseEndpoint(models.Model):
     # Some denormalization but required for efficient capture of all endpoints
     # in assessment; major use case in HAWC.
 
-    name = models.CharField(max_length=128, verbose_name="Endpoint name")
+    name = models.CharField(max_length=128, verbose_name="Endpoint/Adverse outcome")
     effects = models.ManyToManyField(EffectTag, blank=True, verbose_name="Tags")
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)

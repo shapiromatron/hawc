@@ -43,6 +43,8 @@ class MetaResultFlatDataPivot(FlatFileExporter):
     """
     Return a subset of frequently-used data for generation of data-pivot
     visualizations.
+
+    Note: data pivot does not currently include study confidence. Could be added if needed.
     """
 
     def _get_header_row(self):

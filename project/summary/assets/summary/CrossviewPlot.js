@@ -759,34 +759,39 @@ class CrossviewPlot extends D3Visualization {
             .append('g')
             .attr('class', 'crossview_path_group');
 
-        paths
-            .each(function (d) {
-                let g = d3.select(this);
-                d.forEach((point) => {
-                    g.append('circle')
-                        .attr('class', 'crossview_points')
-                        .attr('cx', x(point.dose))
-                        .attr('cy', y(point.resp))
-                        .attr('r', '6px')
-                        .attr('opacity', 0)
-                        .attr('fill', self.plot_settings.colorHover);
-                });
-                g.on('mouseover', function () {
+        paths.each(function(d) {
+            let g = d3.select(this);
+            d.forEach((point) => {
+                g
+                    .append('circle')
+                    .attr('class', 'crossview_points')
+                    .attr('cx', x(point.dose))
+                    .attr('cy', y(point.resp))
+                    .attr('r', '6px')
+                    .attr('opacity', 0)
+                    .attr('fill', self.plot_settings.colorHover);
+            });
+            g
+                .on('mouseover', function() {
                     let that = d3.select(this);
                     that.moveToFront();
                     that.selectAll('circle').style('opacity', 1);
-                }).on('mouseout', function(){
-                    d3.select(this).selectAll('circle').style('opacity', 0);
+                })
+                .on('mouseout', function() {
+                    d3
+                        .select(this)
+                        .selectAll('circle')
+                        .style('opacity', 0);
                 });
-            });
+        });
 
-
-        paths.append('path')
+        paths
+            .append('path')
             .attr('class', (d) => `crossview_paths ${d[0].classes.join(' ')}`)
             .attr('d', line)
             .style('stroke', (d) => d[0].currentStroke)
             .on('click', (d) => d[0].endpoint.displayAsModal())
-            .on('mouseover', function (d) {
+            .on('mouseover', function(d) {
                 if (
                     self.active_filters.length === 0 ||
                     d[0].currentStroke === self.plot_settings.colorSelected
@@ -795,7 +800,7 @@ class CrossviewPlot extends D3Visualization {
                 }
                 self.change_show_selected_fields(this, d, true);
             })
-            .on('mouseout', function (d) {
+            .on('mouseout', function(d) {
                 d3.select(this).style('stroke', d[0].currentStroke);
                 self.change_show_selected_fields(this, d, false);
             })
@@ -1126,6 +1131,9 @@ CrossviewPlot._cw_filter_process = {
     },
     chemical(d) {
         return d.data.animal_group.experiment.chemical;
+    },
+    endpoint_name(d) {
+        return d.data.name;
     },
 };
 

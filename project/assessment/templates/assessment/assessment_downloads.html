@@ -27,9 +27,9 @@
     </li>
     {% endif %}
 
-    {% if assessment.enable_risk_of_bias %}
+    {% if assessment.enable_risk_of_bias and not assessment.hide_rob_scores %}
     <li>
-        <b>Risk of bias report</b><br>
+        <b>{{assessment.get_rob_name_display}} report</b><br>
         <a class='btn btn-primary'
            href="{% url 'riskofbias:export' assessment.pk %}">Download</a><br>
 

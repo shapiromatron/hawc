@@ -311,6 +311,9 @@ class Session(models.Model):
         return LogicField.objects\
             .filter(assessment=self.endpoint.assessment_id)
 
+    def get_study(self):
+        if self.endpoint is not None:
+            return self.endpoint.get_study()
 
 class Model(models.Model):
     objects = managers.ModelManager()

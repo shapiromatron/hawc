@@ -37,7 +37,7 @@
           <!-- application settings -->
           <li class="disabled"><a tabindex="-1" href="#">Application settings</a></li>
           {% if assessment.enable_risk_of_bias %}
-          <li><a href="{% url 'riskofbias:arob_detail' pk=object.pk %}">Risk of bias settings</a></li>
+          <li><a href="{% url 'riskofbias:arob_detail' pk=object.pk %}">{{object.get_rob_name_display}} settings</a></li>
           {% endif %}
 
           {% if assessment.enable_bmd %}
@@ -56,7 +56,7 @@
               <li><a href="{% url 'assessment:clean_extracted_data' object.pk %}">Clean extracted data</a></li>
               {% endif%}
               {% if assessment.enable_risk_of_bias and obj_perms.edit_assessment %}
-              <li><a href="{% url 'assessment:clean_study_metrics' pk=object.pk %}">Clean risk of bias responses</a></li>
+              <li><a href="{% url 'assessment:clean_study_metrics' pk=object.pk %}">Clean {{object.get_rob_name_display|lower}} responses</a></li>
               {% endif %}
           {% endif %}
 

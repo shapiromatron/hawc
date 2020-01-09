@@ -78,12 +78,27 @@ class AdjustmentFactorCreate(CloseIfSuccessMixin, BaseCreate):
 
 
 # Exposure
-class ExposureCreate(BaseCreate):
+class ExposureCreate(BaseCreateWithFormset):
     success_message = 'Exposure created.'
     parent_model = models.StudyPopulation
     parent_template_name = 'study_population'
     model = models.Exposure
     form_class = forms.ExposureForm
+    formset_factory = forms.CentralTendencyFormset
+
+    def post_object_save(self, form, formset):
+        # need to get the exposure_id to save the central tendency objects
+        for form in formset.forms:
+            form.instance.exposure = self.object
+            if form.is_valid() and form not in formset.deleted_forms:
+                form.instance.exposure_id = self.object.id
+                if form.has_changed() is False:
+                    # ensure new exposure_id saved to db
+                    form.instance.save()
+
+    def build_initial_formset_factory(self):
+        return forms.BlankCentralTendencyFormset(
+            queryset=models.CentralTendency.objects.none())
 
 
 class ExposureCopyAsNewSelector(CopyAsNewSelectorMixin, StudyPopulationDetail):
@@ -95,10 +110,30 @@ class ExposureDetail(BaseDetail):
     model = models.Exposure
 
 
-class ExposureUpdate(BaseUpdate):
+class ExposureUpdate(BaseUpdateWithFormset):
     success_message = "Study Population updated."
     model = models.Exposure
     form_class = forms.ExposureForm
+    formset_factory = forms.CentralTendencyFormset
+
+    def build_initial_formset_factory(self):
+        # make sure at least one CT exists; we check because it's possible
+        # to delete as well as create objects in this view.
+        qs = self.object.central_tendencies.all().order_by('id')
+        fs = forms.CentralTendencyFormset(queryset=qs)
+        if qs.count() == 0:
+            fs.extra = 1
+        return fs
+
+    def post_object_save(self, form, formset):
+        # need to get the exposure_id to save the central tendency objects
+        for form in formset.forms:
+            form.instance.exposure = self.object
+            if form.is_valid() and form not in formset.deleted_forms:
+                form.instance.exposure_id = self.object.id
+                if form.has_changed() is False:
+                    # ensure new exposure_id saved to db
+                    form.instance.save()
 
 
 class ExposureDelete(BaseDelete):

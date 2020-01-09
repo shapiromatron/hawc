@@ -4,6 +4,8 @@ import d3 from 'd3';
 import slugify from 'slugify';
 
 class HAWCUtils {
+    static HAWC_NEW_WINDOW_POPUP_CLOSING = 'hawcNewWindowPopupClosing';
+
     static booleanCheckbox(value) {
         return value
             ? `<i class="fa fa-check"><span class="invisible">${value}</span></i>`
@@ -15,6 +17,15 @@ class HAWCUtils {
         var href = triggeringLink.href + '?_popup=1';
         var win = window.open(href, '_blank', 'height=500,width=980,resizable=yes,scrollbars=yes');
         win.focus();
+
+        win.onbeforeunload = function(e) {
+            let event = new CustomEvent(window.app.utils.HAWCUtils.HAWC_NEW_WINDOW_POPUP_CLOSING, {
+                detail: {},
+            });
+            triggeringLink.dispatchEvent(event);
+            // interested listeners can access fields in detail e.g. "customField" via e.originalEvent.detail.customField
+        };
+
         return false;
     }
 
@@ -231,6 +242,27 @@ class HAWCUtils {
 
     static urlify(str) {
         return slugify(str);
+    }
+
+    static parseJsonOrNull(el) {
+        // return a JSON version or the object OR null
+        // based on https://stackoverflow.com/a/20392392
+        if (
+            el !== null &&
+            typeof el == 'string' &&
+            el.charAt(0) == '{' &&
+            el.charAt(el.length - 1) == '}'
+        ) {
+            try {
+                let o = JSON.parse(el);
+                if (o && typeof o === 'object') {
+                    return o;
+                }
+            } catch (e) {
+                console.debug('un-parsable JSON-like string', el);
+            }
+        }
+        return null;
     }
 }
 

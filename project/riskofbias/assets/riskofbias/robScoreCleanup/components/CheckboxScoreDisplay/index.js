@@ -6,14 +6,15 @@ import ScoreDisplay from 'riskofbias/robTable/components/ScoreDisplay';
 import Study from 'study/Study';
 import './CheckboxScoreDisplay.css';
 
+import { SCORE_SHADES, SCORE_TEXT_DESCRIPTION } from '../../../constants';
+
 class CheckboxScoreDisplay extends Component {
     render() {
-        let { checked, item, config, handleCheck } = this.props,
-            scoreInfo = h.getScoreInfo(item.score);
+        let { checked, item, config, handleCheck } = this.props;
         item = {
             ...item,
-            score_shade: scoreInfo.shade,
-            score_description: scoreInfo.text,
+            score_shade: SCORE_SHADES[item.score],
+            score_description: SCORE_TEXT_DESCRIPTION[item.score],
         };
         return (
             <div className="flexRow-container">

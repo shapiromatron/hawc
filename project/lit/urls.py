@@ -7,6 +7,7 @@ from . import views, api
 
 router = DefaultRouter()
 router.register(r'tags', api.ReferenceFilterTag, base_name="tags")
+router.register(r'reference-cleanup', api.ReferenceCleanup, base_name="reference-cleanup")
 
 urlpatterns = [
 

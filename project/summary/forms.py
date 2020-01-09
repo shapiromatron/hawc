@@ -3,6 +3,7 @@ import json
 
 from crispy_forms import layout as cfl
 from django import forms
+from django.db.models import QuerySet
 from django.core.urlresolvers import reverse
 import pandas as pd
 from selectable import forms as selectable
@@ -15,7 +16,7 @@ from epi.models import Outcome
 from invitro.models import IVEndpointCategory, IVChemical
 
 from study.lookups import StudyLookup
-from animal.lookups import EndpointByAssessmentLookup
+from animal.lookups import EndpointByAssessmentLookup, EndpointByAssessmentLookupHtml
 from utils.forms import BaseFormHelper
 
 from . import models, lookups
@@ -36,7 +37,7 @@ class PrefilterMixin(object):
 
     PREFILTER_COMBO_FIELDS = [
         'studies',
-        'systems', 'organs', 'effects',
+        'systems', 'organs', 'effects', 'effect_subtypes',
         'episystems', 'epieffects',
         'iv_categories', 'iv_chemicals',
         'effect_tags',
@@ -97,6 +98,16 @@ class PrefilterMixin(object):
                     label="Effects to include",
                     help_text="""Select one or more effects to include in the plot.
                                  If no effect is selected, no endpoints will be available.""")),
+                ("prefilter_effect_subtype", forms.BooleanField(
+                    required=False,
+                    label="Prefilter by effect sub-type",
+                    help_text="Prefilter endpoints on plot to include selected effects.")),
+                ("effect_subtypes", forms.MultipleChoiceField(
+                    required=False,
+                    widget=forms.SelectMultiple,
+                    label="Effect Sub-Types to include",
+                    help_text="""Select one or more effect sub-types to include in the plot.
+                                 If no effect sub-type is selected, no endpoints will be available.""")),
             ])
 
         if "epi" in self.prefilter_include:
@@ -199,6 +210,10 @@ class PrefilterMixin(object):
                     self.fields["prefilter_epieffect"].initial = True
                     self.fields["epieffects"].initial = v
 
+            if k == "effect_subtype__in":
+                self.fields["prefilter_effect_subtype"].initial = True
+                self.fields["effect_subtypes"].initial = v
+
             if k == "effects__in":
                 self.fields["prefilter_effect_tag"].initial = True
                 self.fields["effect_tags"].initial = v
@@ -241,6 +256,8 @@ class PrefilterMixin(object):
             choices = Endpoint.objects.get_organ_choices(assessment_id)
         elif field_name == "effects":
             choices = Endpoint.objects.get_effect_choices(assessment_id)
+        elif field_name == "effect_subtypes":
+            choices = Endpoint.objects.get_effect_subtype_choices(assessment_id)
         elif field_name == "iv_categories":
             choices = IVEndpointCategory.get_choices(assessment_id)
         elif field_name == "iv_chemicals":
@@ -296,6 +313,9 @@ class PrefilterMixin(object):
 
         if data.get('prefilter_effect') is True:
             prefilters["effect__in"] = data.get("effects", [])
+
+        if data.get('prefilter_effect_subtype') is True:
+            prefilters["effect_subtype__in"] = data.get("effect_subtypes", [])
 
         if data.get('prefilter_episystem') is True:
             prefilters["system__in"] = data.get("episystems", [])
@@ -423,6 +443,8 @@ class VisualForm(forms.ModelForm):
             self.instance.assessment = assessment
         if visual_type is not None:  # required if value is 0
             self.instance.visual_type = visual_type
+        if self.instance.visual_type != 2:
+            self.fields['sort_order'].widget = forms.HiddenInput()
 
     def setHelper(self):
 
@@ -459,7 +481,32 @@ class VisualForm(forms.ModelForm):
         return clean_slug(self)
 
 
+class EndpointAggregationSelectMultipleWidget(selectable.AutoCompleteSelectMultipleWidget):
+    """
+    Value in render is a queryset of type assessment.models.BaseEndpoint,
+    where the widget is expecting type animal.models.Endpoint. Therefore, the
+    value is written as a string instead of ID when using the standard widget.
+    We override to return the proper type for the queryset so the widget
+    properly returns IDs instead of strings.
+    """
+
+    def render(self, name, value, attrs=None):
+        if value:
+            value = [value.id for value in value]
+        return super(selectable.AutoCompleteSelectMultipleWidget, self).render(name, value, attrs)
+
 class EndpointAggregationForm(VisualForm):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["endpoints"] = selectable.AutoCompleteSelectMultipleField(
+            lookup_class=EndpointByAssessmentLookupHtml,
+            label='Endpoints',
+            widget=EndpointAggregationSelectMultipleWidget)
+        self.fields["endpoints"].widget.update_query_parameters(
+            {'related': self.instance.assessment_id})
+        self.helper = self.setHelper()
+        self.helper.attrs['novalidate'] = ''
 
     class Meta:
         model = models.Visual

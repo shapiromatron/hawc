@@ -40,7 +40,7 @@ class MetricForm extends Component {
     }
 
     render() {
-        let { metric, config, updateNotesLeft } = this.props,
+        let { metric, config, updateNotesLeft, robResponseValues } = this.props,
             formScore = _.find(metric.values, {
                 riskofbias_id: parseInt(config.riskofbias.id),
             });
@@ -48,17 +48,19 @@ class MetricForm extends Component {
         return (
             <div className="metric-display">
                 <h4>{metric.key}</h4>
-                <span
-                    dangerouslySetInnerHTML={{
-                        __html: metric.values[0].metric.description,
-                    }}
-                />
+                {metric.values[0].metric.hide_description ? null : (
+                    <div
+                        dangerouslySetInnerHTML={{ __html: metric.values[0].metric.description }}
+                    />
+                )}
                 {config.display === 'final' ? this.renderScoreRow() : null}
                 <ScoreForm
+                    config={config}
                     ref="form"
                     score={formScore}
                     addText={this.state.addText}
                     updateNotesLeft={updateNotesLeft}
+                    robResponseValues={robResponseValues}
                 />
             </div>
         );
@@ -75,13 +77,11 @@ MetricForm.propTypes = {
                     name: PropTypes.string.isRequired,
                 }).isRequired,
                 notes: PropTypes.string.isRequired,
-                score_description: PropTypes.string,
-                score_symbol: PropTypes.string.isRequired,
-                score_shade: PropTypes.string.isRequired,
             }).isRequired
         ).isRequired,
     }).isRequired,
     config: PropTypes.object,
+    robResponseValues: PropTypes.array.isRequired,
     updateNotesLeft: PropTypes.func.isRequired,
 };
 

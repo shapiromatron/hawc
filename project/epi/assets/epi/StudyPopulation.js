@@ -45,12 +45,20 @@ class StudyPopulation {
         return HAWCUtils.build_breadcrumbs(urls);
     }
 
+    get_countries_display() {
+        var countries = '';
+        for (var i = 0; i < this.data.countries.length; i++) {
+            countries += (countries == '' ? '' : ', ') + this.data.countries[i].name;
+        }
+        return countries;
+    }
+
     build_details_table() {
         return new DescriptiveTable()
             .add_tbody_tr('Study design', this.data.design)
             .add_tbody_tr('Age profile', this.data.age_profile)
             .add_tbody_tr('Source', this.data.source)
-            .add_tbody_tr('Country', this.data.country)
+            .add_tbody_tr('Countries', this.get_countries_display())
             .add_tbody_tr('State', this.data.state)
             .add_tbody_tr('Region', this.data.region)
             .add_tbody_tr('Eligible N', this.data.eligible_n)

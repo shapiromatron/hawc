@@ -1,6 +1,6 @@
 from copy import copy
 from django.apps import apps
-
+from riskofbias.models import RiskOfBias
 from utils.helper import FlatFileExporter
 
 
@@ -25,12 +25,25 @@ def getDoseRange(ser):
 class DataPivotEndpoint(FlatFileExporter):
 
     def _get_header_row(self):
+        if self.queryset.first() is None:
+            self.rob_headers, self.rob_data = {}, {}
+        else:
+            self.rob_headers, self.rob_data = RiskOfBias.get_dp_export(
+                self.queryset.first().assessment_id,
+                list(self.queryset.values_list('experiment__study_id', flat=True).distinct()),
+                "invitro"
+            )
+
         header = [
             'study id',
             'study name',
             'study identifier',
             'study published',
+        ]
 
+        header.extend(list(self.rob_headers.values()))
+
+        header.extend([
             'chemical id',
             'chemical name',
             'chemical CAS',
@@ -65,7 +78,7 @@ class DataPivotEndpoint(FlatFileExporter):
             'minimum dose',
             'maximum dose',
             'number of doses',
-        ]
+        ])
 
         num_cats = 0
         if self.queryset.count() > 0:
@@ -125,7 +138,13 @@ class DataPivotEndpoint(FlatFileExporter):
                 ser['experiment']['study']['short_citation'],
                 ser['experiment']['study']['study_identifier'],
                 ser['experiment']['study']['published'],
+            ]
 
+            study_id = ser['experiment']['study']['id']
+            study_robs = [self.rob_data[(study_id, metric_id)] for metric_id in self.rob_headers.keys()]
+            row.extend(study_robs)
+
+            row.extend([
                 ser['chemical']['id'],
                 ser['chemical']['name'],
                 ser['chemical']['cas'],
@@ -159,8 +178,8 @@ class DataPivotEndpoint(FlatFileExporter):
                 ser['trend_test'],
                 doseRange[0],
                 doseRange[1],
-                number_doses
-            ]
+                number_doses,
+            ])
 
             # extend rows to include blank placeholders, and apply
             cats.extend([None] * (self.num_cats-len(cats)))
@@ -188,11 +207,27 @@ class DataPivotEndpoint(FlatFileExporter):
 class DataPivotEndpointGroup(FlatFileExporter):
 
     def _get_header_row(self):
+
+        if self.queryset.first() is None:
+            self.rob_headers, self.rob_data = {}, {}
+        else:
+            self.rob_headers, self.rob_data = RiskOfBias.get_dp_export(
+                self.queryset.first().assessment_id,
+                list(self.queryset.values_list('experiment__study_id', flat=True).distinct()),
+                "invitro"
+            )
+
         header = [
             'study id',
             'study name',
             'study identifier',
             'study published',
+
+        ]
+
+        header.extend(list(self.rob_headers.values()))
+
+        header.extend([
 
             'chemical id',
             'chemical name',
@@ -240,7 +275,7 @@ class DataPivotEndpointGroup(FlatFileExporter):
             'significant from control',
             'cytotoxicity observed',
             'precipitation observed',
-        ]
+        ])
         return header
 
     def _get_data_rows(self):
@@ -256,7 +291,13 @@ class DataPivotEndpointGroup(FlatFileExporter):
                 ser['experiment']['study']['short_citation'],
                 ser['experiment']['study']['study_identifier'],
                 ser['experiment']['study']['published'],
+            ]
 
+            study_id = ser['experiment']['study']['id']
+            study_robs = [self.rob_data[(study_id, metric_id)] for metric_id in self.rob_headers.keys()]
+            row.extend(study_robs)
+
+            row.extend([
                 ser['chemical']['id'],
                 ser['chemical']['name'],
                 ser['chemical']['cas'],
@@ -289,7 +330,7 @@ class DataPivotEndpointGroup(FlatFileExporter):
                 ser['monotonicity'],
                 ser['overall_pattern'],
                 ser['trend_test'],
-            ]
+            ])
 
             # endpoint-group information
             for i, eg in enumerate(ser['groups']):

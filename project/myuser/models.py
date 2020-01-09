@@ -2,11 +2,12 @@ from django.apps import apps
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.contrib.sites.models import Site
-from django.core.mail import EmailMultiAlternatives
+from django.core.mail import send_mail, EmailMultiAlternatives
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 from django.template.loader import render_to_string
+from django.template import Context
 
 from utils.helper import SerializerHelper
 from . import managers
@@ -38,10 +39,13 @@ class HAWCUser(AbstractBaseUser, PermissionsMixin):
         return self.get_full_name()
 
     def get_full_name(self):
-        return '{0} {1}'.format(self.first_name, self.last_name).strip()
+        return f'{self.first_name} {self.last_name}'.strip()
 
     def get_short_name(self):
         return self.first_name
+
+    def email_user(self, subject, message, from_email=None):
+        send_mail(subject, message, from_email, [self.email])
 
     def get_assessments(self):
         Assessment = apps.get_model('assessment', 'Assessment')
@@ -52,11 +56,11 @@ class HAWCUser(AbstractBaseUser, PermissionsMixin):
 
     def send_welcome_email(self):
         subject = "Welcome to HAWC!"
-        context = dict(
+        context = Context(dict(
             user=self,
             assessments=self.get_assessments(),
             domain=Site.objects.get_current().domain,
-        )
+        ))
 
         plaintext = render_to_string('myuser/welcome_email.txt', context)
         html = render_to_string('myuser/welcome_email.html', context)
@@ -75,6 +79,9 @@ class UserProfile(models.Model):
         verbose_name='HERO access',
         help_text='All HERO links will redirect to the login-only HERO access '
                   'page, allowing for full article text.')
+
+    def __str__(self):
+        return self.user.get_full_name() + ' Profile'
 
     def get_absolute_url(self):
         return reverse('user:settings')

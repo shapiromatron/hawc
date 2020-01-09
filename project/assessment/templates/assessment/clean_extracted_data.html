@@ -21,6 +21,14 @@
           "url": "{% url 'epi:api:outcome-cleanup-list' %}",
           "title": "Outcome"
         },
+        "study-populations": {
+          "url": "{% url 'epi:api:studypopulation-cleanup-list' %}",
+          "title": "Study Populations"
+        },
+        "exposures": {
+          "url": "{% url 'epi:api:exposure-cleanup-list' %}",
+          "title": "Exposures"
+        },
         "ani": {
           "url": "{% url 'animal:api:endpoint-cleanup-list' %}",
           "title": "Endpoint"
@@ -33,6 +41,10 @@
           "url": "{% url 'animal:api:animal_group-cleanup-list' %}",
           "title": "AnimalGroup"
         },
+        "dosing-regime": {
+          "url": "{% url 'animal:api:dosingregime-cleanup-list' %}",
+          "title": "Dosing Regime"
+        },
         "in-vitro": {
           "url": "{% url 'invitro:api:ivendpoint-cleanup-list' %}",
           "title": "IVEndpoint"
@@ -44,6 +56,10 @@
         "study": {
           "url": "{% url 'study:api:study-cleanup-list' %}",
           "title": "Study"
+        },
+        "reference": {
+          "url": "{% url 'lit:api:reference-cleanup-list' %}",
+          "title": "Reference"
         },
         "csrf": "{{ csrf_token }}",
         "host": "//{{request.get_host}}"

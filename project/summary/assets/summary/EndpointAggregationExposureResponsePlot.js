@@ -390,10 +390,13 @@ class EndpointAggregationExposureResponsePlot extends D3Visualization {
             },
             item_height = 20,
             box_w = 110,
-            items = [addItem('Doses in Study', 'dose_points')];
+            items = [addItem('Doses in Study', 'dose_points')],
+            noel_names = this.data.endpoints[0].data.noel_names;
 
-        if (this.plot_div.find('.LOEL').length > 0) items.push(addItem('LOEL', 'dose_points LOEL'));
-        if (this.plot_div.find('.NOEL').length > 0) items.push(addItem('NOEL', 'dose_points NOEL'));
+        if (this.plot_div.find('.NOEL').length > 0)
+            items.push(addItem(noel_names.noel, 'dose_points NOEL'));
+        if (this.plot_div.find('.LOEL').length > 0)
+            items.push(addItem(noel_names.loel, 'dose_points LOEL'));
         if (this.plot_div.find('.BMDL').length > 0) items.push(addItem('BMDL', 'dose_points BMDL'));
 
         this.build_legend({

@@ -68,6 +68,11 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
     scores = RiskOfBiasScoreSerializer(read_only=False, many=True, partial=True)
     author = HAWCUserSerializer(read_only=True)
 
+    def to_representation(self, instance):
+        ret = super().to_representation(instance)
+        ret['rob_response_values'] = instance.study.assessment.rob_settings.get_rob_response_values()
+        return ret
+
     class Meta:
         model = models.RiskOfBias
         fields = ('id', 'author', 'active',

@@ -40,6 +40,10 @@
                                 <span class='help-inline'>{{field.help_text}}</span>
                             </div>
                             {{field.errors|add_class:"alert alert-error"}}
+
+                            {% if field.name == "order_by" and field.value is not None %}
+                                <input type="hidden" id="initial_order_by" value="{{ field.value }}" />
+                            {% endif %}
                         </div>
 
                         {% if forloop.counter0|add:1|divisibleby:4 %}

@@ -80,6 +80,71 @@ class BaseTable {
         if (txt.length > 0)
             this.tfoot.html('<tr><td colspan="{0}">{1}</td></tr>'.printf(colspan, txt));
     }
+
+    makeHeaderToSortKeyMapFromOrderByDropdown(orderByDropdownSelector, overrides) {
+        // assumes all column headers are unique, ignoring case
+        var headersToSortKeys = {};
+
+        $(orderByDropdownSelector)
+            .find('option')
+            .each(function() {
+                var currOption = $(this);
+
+                var optionText = currOption.text().toLowerCase();
+                if (optionText in overrides) {
+                    optionText = overrides[optionText];
+                }
+                headersToSortKeys[optionText] = currOption.val();
+            });
+
+        return headersToSortKeys;
+    }
+
+    enableSortableHeaderLinks(currentActiveSort, headersToSortKeys, options = {}) {
+        this.thead.find('th').each(function() {
+            var currHeaderCell = $(this);
+            var currHeaderText = currHeaderCell.html();
+            var sortKey = headersToSortKeys[currHeaderText.toLowerCase()];
+
+            if (sortKey !== undefined) {
+                currHeaderCell.addClass('sort-header');
+
+                if (sortKey == currentActiveSort) {
+                    currHeaderCell
+                        .addClass('active-sort')
+                        .addClass('sort-' + (currentActiveSort.startsWith('-') ? 'up' : 'down'));
+                } else {
+                    if (sortKey.startsWith('-')) {
+                        currHeaderCell.addClass('potential-sort-down');
+                    }
+
+                    var clickableLink = $('<a/>')
+                        .attr('href', '?order_by=' + sortKey)
+                        .html(currHeaderText);
+                    $(this)
+                        .empty()
+                        .append(clickableLink);
+                }
+            } else {
+                var warnAboutMissingMapping = true;
+
+                if (
+                    options.unsortableColumns !== undefined &&
+                    options.unsortableColumns.indexOf(currHeaderText.toLowerCase()) != -1
+                ) {
+                    warnAboutMissingMapping = false;
+                }
+
+                if (warnAboutMissingMapping) {
+                    console.log(
+                        "warning - sort key for header '" +
+                            currHeaderText +
+                            "' not found in mapping"
+                    );
+                }
+            }
+        });
+    }
 }
 
 export default BaseTable;

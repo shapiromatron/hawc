@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
+import h from 'shared/utils/helpers';
 import './ScoreCell.css';
 
 class ScoreCell extends Component {
@@ -16,6 +17,9 @@ class ScoreCell extends Component {
 
     render() {
         let { score } = this.props;
+        if (h.hideRobScore(score.metric.domain.assessment.id)) {
+            return <div className="score-cell" />;
+        }
         return (
             <div
                 className="score-cell"

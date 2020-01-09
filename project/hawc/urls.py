@@ -60,7 +60,7 @@ urlpatterns = [
         views.UpdateSession.as_view(), name='update_session'),
 
     # Admin
-    url(r'^admin/',
+    url(rf'^admin/{settings.ADMIN_URL_PREFIX}/',
         include(admin.site.urls), name='master_admin'),
     url(r'^selectable/',
         include('selectable.urls')),

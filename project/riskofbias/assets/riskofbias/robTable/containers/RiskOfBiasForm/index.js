@@ -57,7 +57,7 @@ class RiskOfBiasForm extends Component {
     }
 
     render() {
-        let { itemsLoaded, riskofbiases, error, config } = this.props;
+        let { itemsLoaded, riskofbiases, error, config, robResponseValues } = this.props;
         if (!itemsLoaded) return <Loading />;
         return (
             <div className="riskofbias-display">
@@ -71,12 +71,13 @@ class RiskOfBiasForm extends Component {
                                 domain={domain}
                                 config={config}
                                 updateNotesLeft={this.updateNotesLeft}
+                                robResponseValues={robResponseValues}
                             />
                         );
                     })}
                     <Completeness number={this.state.notesLeft} />
                     <button className="btn btn-primary space" type="submit">
-                        Update risk of bias
+                        Save changes
                     </button>
                     <button className="btn space" onClick={this.handleCancel}>
                         Cancel
@@ -92,6 +93,7 @@ function mapStateToProps(state) {
         config: state.config,
         itemsLoaded: state.study.itemsLoaded,
         riskofbiases: state.study.riskofbiases,
+        robResponseValues: state.study.rob_response_values,
         error: state.study.error,
     };
 }

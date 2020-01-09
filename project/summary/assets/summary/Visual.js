@@ -17,9 +17,11 @@ class Visual {
                     Cls = Crossview;
                     break;
                 case 'risk of bias heatmap':
+                case 'study evaluation heatmap':
                     Cls = RoBHeatmap;
                     break;
                 case 'risk of bias barchart':
+                case 'study evaluation barchart':
                     Cls = RoBBarchart;
                     break;
                 default:

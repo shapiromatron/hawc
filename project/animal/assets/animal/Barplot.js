@@ -451,14 +451,14 @@ class Barplot extends D3Plot {
         ];
         if (this.plot_div.find('.LOEL').length > 0) {
             legend_settings.items.push({
-                text: 'LOEL',
+                text: this.endpoint.data.noel_names.loel,
                 classes: 'dose_points LOEL',
                 color: undefined,
             });
         }
         if (this.plot_div.find('.NOEL').length > 0) {
             legend_settings.items.push({
-                text: 'NOEL',
+                text: this.endpoint.data.noel_names.noel,
                 classes: 'dose_points NOEL',
                 color: undefined,
             });

@@ -4,13 +4,13 @@
 {% load crispy_forms_tags %}
 
 {% block title %}
-  {{assessment}} | Copy risk of bias approach | HAWC
+  {{assessment}} | Copy {{assessment.get_rob_name_display|lower}} approach | HAWC
 {% endblock %}
 
 {% block breadcrumbs %}
   <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{assessment}}</a><span class="divider">/</span></li>
-  <li><a href="{% url 'riskofbias:arob_detail' assessment.pk %}">Risk of bias requirements</a><span class="divider">/</span></li>
-  <li class="active"> Copy risk of bias approach <span class="divider">/</span></li>
+  <li><a href="{% url 'riskofbias:arob_detail' assessment.pk %}">{{assessment.get_rob_name_display}} requirements</a><span class="divider">/</span></li>
+  <li class="active"> Copy {{assessment.get_rob_name_display|lower}} approach <span class="divider">/</span></li>
 {% endblock %}
 
 
@@ -22,9 +22,9 @@
     <div class="alert alert-block">
       <a class="close" href="#" data-dismiss="alert">×</a>
       <h4>Warning!</h4>
-      <p>Copying the approach from another assessment will delete all risk of bias information currently saved for this assessment.</p>
+      <p>Copying the approach from another assessment will delete all {{assessment.get_rob_name_display|lower}} information currently saved for this assessment.</p>
     </div>
-    <b>Risk of Bias approach for selected assessment:</b>
+    <b>{{assessment.get_rob_name_display}} approach for selected assessment:</b>
     <div id="approach"></div>
   </div>
 

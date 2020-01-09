@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
+import h from 'shared/utils/helpers';
 import ScoreBar from 'riskofbias/robTable/components/ScoreBar';
 import './ScoreDisplay.css';
 
@@ -47,6 +48,20 @@ class ScoreDisplay extends Component {
                     Copy Notes
                 </button>
             ) : null;
+        if (h.hideRobScore(score.metric.domain.assessment.id)) {
+            return (
+                <div className={`score-display ${this.state.flex}-container`} ref="display">
+                    <div className="flex-3 score-notes">
+                        <div
+                            dangerouslySetInnerHTML={{
+                                __html: score.notes,
+                            }}
+                        />
+                        {copyTextButton}
+                    </div>
+                </div>
+            );
+        }
         return (
             <div className={`score-display ${this.state.flex}-container`} ref="display">
                 <div className="flex-1">

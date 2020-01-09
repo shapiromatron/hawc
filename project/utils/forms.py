@@ -82,6 +82,20 @@ class BaseFormHelper(cf.FormHelper):
             self.layout.index(firstField),
             cfl.HTML("""<h4>{0}</h4>""".format(text)))
 
+    def find_layout_idx_for_field_name(self, field_name):
+        idx = 0
+        for el in self.layout:
+            if isinstance(el, cfl.LayoutObject):
+                for field_names in el.get_field_names():
+                    if isinstance(field_names, list) and len(field_names) > 1:
+                        if field_names[1] == field_name:
+                            return idx
+            elif isinstance(el, str):
+                if el == field_name:
+                    return idx
+            idx += 1
+        raise ValueError(f"Field not found: {field_name}")
+
 
 class CopyAsNewSelectorForm(forms.Form):
     label = None

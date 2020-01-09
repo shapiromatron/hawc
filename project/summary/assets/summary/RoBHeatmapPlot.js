@@ -13,7 +13,7 @@ import D3Visualization from './D3Visualization';
 
 class RoBHeatmapPlot extends D3Visualization {
     constructor(parent, data, options) {
-        // heatmap of risk of bias information. Criteria are on the y-axis,
+        // heatmap of rob information. Criteria are on the y-axis,
         // and studies are on the x-axis
         super(...arguments);
         this.setDefaults();
@@ -24,8 +24,9 @@ class RoBHeatmapPlot extends D3Visualization {
         this.plot_div = $div.html('');
         this.processData();
         if (this.dataset.length === 0) {
+            let robName = this.data.assessment_rob_name.toLowerCase();
             return this.plot_div.html(
-                '<p>Error: no studies with risk of bias selected. Please select at least one study with risk of bias.</p>'
+                `<p>Error: no studies with ${robName} selected. Please select at least one study with ${robName}.</p>`
             );
         }
         this.get_plot_sizes();
@@ -82,7 +83,7 @@ class RoBHeatmapPlot extends D3Visualization {
             xIsStudy,
             study_label_field = this.data.settings.study_label_field
                 ? this.data.settings.study_label_field
-                : 'short_citation';
+                : 'short_citation'; // use `short_citation` for backwards compatible default
 
         _.each(this.data.aggregation.metrics_dataset, function(metric) {
             _.chain(metric.rob_scores)
@@ -90,13 +91,16 @@ class RoBHeatmapPlot extends D3Visualization {
                     return _.includes(included_metrics, rob.data.metric.id);
                 })
                 .each(function(rob) {
+                    var metric_name =
+                        rob.data.metric.use_short_name === true && rob.data.metric.short_name !== ''
+                            ? rob.data.metric.short_name
+                            : rob.data.metric.name;
                     dataset.push({
                         riskofbias: rob,
                         study: rob.study,
-                        study_id: rob.study.id,
                         study_label: rob.study.data[study_label_field],
                         metric: rob.data.metric,
-                        metric_label: rob.data.metric.name,
+                        metric_label: metric_name,
                         score: rob.data.score,
                         score_text: rob.data.score_text,
                         score_color: rob.data.score_color,
@@ -183,10 +187,11 @@ class RoBHeatmapPlot extends D3Visualization {
             y = this.y_scale,
             width = this.cell_size,
             half_width = width / 2,
+            robName = this.data.assessment_rob_name,
             showSQs = function(v) {
                 self.print_details(self.modal.getBody(), $(this).data('robs'));
                 self.modal
-                    .addHeader('<h4>Risk of bias details: {0}</h4>'.printf(this.textContent))
+                    .addHeader(`<h4>${robName}: ${this.textContent}</h4>`)
                     .addFooter('')
                     .show({ maxWidth: 900 });
             },
@@ -227,7 +232,15 @@ class RoBHeatmapPlot extends D3Visualization {
             })
             .attr('height', width)
             .attr('width', width)
-            .attr('class', 'heatmap_selectable')
+            .attr('class', function(d) {
+                var returnValue = 'heatmap_selectable';
+
+                if (d.metric.domain.is_overall_confidence) {
+                    returnValue = 'heatmap_selectable_bold';
+                }
+
+                return returnValue;
+            })
             .style('fill', function(d) {
                 return d.score_color;
             })
@@ -243,7 +256,7 @@ class RoBHeatmapPlot extends D3Visualization {
                     robs: [v],
                 });
                 self.modal
-                    .addHeader('<h4>Risk of bias details</h4>')
+                    .addHeader(`<h4>${robName}</h4>`)
                     .addFooter('')
                     .show({ maxWidth: 900 });
             });
@@ -261,7 +274,23 @@ class RoBHeatmapPlot extends D3Visualization {
             })
             .attr('text-anchor', 'middle')
             .attr('dy', '3.5px')
-            .attr('class', 'centeredLabel')
+            .attr('class', function(d) {
+                var returnValue = 'centeredLabel';
+
+                if (
+                    typeof self.data != 'undefined' &&
+                    typeof self.data.aggregation != 'undefined' &&
+                    typeof self.data.aggregation.metrics_dataset != 'undefined' &&
+                    d < self.data.aggregation.metrics_dataset.length &&
+                    typeof self.data.aggregation.metrics_dataset[d].domain_is_overall_confidence ==
+                        'boolean' &&
+                    self.data.aggregation.metrics_dataset[d].domain_is_overall_confidence
+                ) {
+                    var returnValue = 'heatmap_selectable_bold';
+                }
+
+                return returnValue;
+            })
             .style('fill', function(d) {
                 return d.score_text_color;
             })
@@ -411,11 +440,12 @@ class RoBHeatmapPlot extends D3Visualization {
 
     build_legend() {
         if (this.legend || !this.data.settings.show_legend) return;
-        let options = {
-            dev: this.options.dev || false,
-            collapseNR: false,
-        };
-        this.legend = new RoBLegend(this.svg, this.data.settings, options);
+        let rob_response_values = this.data.aggregation.studies[0].data.rob_response_values,
+            options = {
+                dev: this.options.dev || false,
+                collapseNR: false,
+            };
+        this.legend = new RoBLegend(this.svg, this.data.settings, rob_response_values, options);
     }
 
     print_details($div, d) {

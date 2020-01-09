@@ -5,36 +5,14 @@ import ReactQuill from 'react-quill';
 
 import ScoreIcon from 'riskofbias/robTable/components/ScoreIcon';
 import SelectInput from 'shared/components/SelectInput';
+import h from 'shared/utils/helpers';
 import './ScoreForm.css';
+import { SCORE_SHADES, SCORE_TEXT, SCORE_TEXT_DESCRIPTION } from '../../../constants';
 
 class ScoreForm extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            scoreSymbols: {
-                0: 'N/A',
-                1: '--',
-                2: '-',
-                3: '+',
-                4: '++',
-                10: 'NR',
-            },
-            scoreShades: {
-                0: '#E8E8E8',
-                1: '#CC3333',
-                2: '#FFCC00',
-                3: '#6FFF00',
-                4: '#00CC00',
-                10: '#FFCC00',
-            },
-            scoreChoices: {
-                0: 'Not applicable',
-                1: 'Definitely high risk of bias',
-                2: 'Probably high risk of bias',
-                3: 'Probably low risk of bias',
-                4: 'Definitely low risk of bias',
-                10: 'Not reported',
-            },
             score: null,
             notes: props.score.notes,
         };
@@ -68,9 +46,9 @@ class ScoreForm extends Component {
 
     selectScore(score) {
         this.setState({
-            score,
-            selectedShade: this.state.scoreShades[score],
-            selectedSymbol: this.state.scoreSymbols[score],
+            score: parseInt(score),
+            selectedShade: SCORE_SHADES[score],
+            selectedSymbol: SCORE_TEXT[score],
         });
         this.validateInput(score, this.state.notes);
     }
@@ -81,7 +59,7 @@ class ScoreForm extends Component {
     }
 
     validateInput(score, notes) {
-        if (this.state.notes.replace(/<\/?[^>]+(>|$)/g, '') == '' && score != 0) {
+        if (this.state.notes.replace(/<\/?[^>]+(>|$)/g, '') == '') {
             this.props.updateNotesLeft(this.props.score.id, 'add');
         } else {
             this.props.updateNotesLeft(this.props.score.id, 'clear');
@@ -90,22 +68,26 @@ class ScoreForm extends Component {
 
     render() {
         let { name } = this.props.score.metric,
-            { scoreChoices, score, notes, selectedSymbol, selectedShade } = this.state,
-            choices = _.map(scoreChoices, (v, k) => {
-                return { id: parseInt(k), value: v };
-            });
+            { score, notes } = this.state,
+            { assessment_id } = this.props.config,
+            choices = this.props.robResponseValues.map((d) => {
+                return { id: parseInt(d), value: SCORE_TEXT_DESCRIPTION[d] };
+            }),
+            showScoreInput = !h.hideRobScore(parseInt(assessment_id));
 
         return (
             <div className="score-form">
-                <div>
-                    <SelectInput
-                        choices={choices}
-                        id={name}
-                        value={score}
-                        handleSelect={this.selectScore}
-                    />
-                    <ScoreIcon shade={selectedShade} symbol={selectedSymbol} />
-                </div>
+                {showScoreInput ? (
+                    <div>
+                        <SelectInput
+                            choices={choices}
+                            id={name}
+                            value={score}
+                            handleSelect={this.selectScore}
+                        />
+                        <ScoreIcon score={score} />
+                    </div>
+                ) : null}
                 <ReactQuill
                     id={name}
                     value={notes}
@@ -126,6 +108,10 @@ ScoreForm.propTypes = {
         }).isRequired,
     }).isRequired,
     updateNotesLeft: PropTypes.func.isRequired,
+    robResponseValues: PropTypes.array.isRequired,
+    config: PropTypes.shape({
+        assessment_id: PropTypes.string.isRequired,
+    }),
 };
 
 export default ScoreForm;

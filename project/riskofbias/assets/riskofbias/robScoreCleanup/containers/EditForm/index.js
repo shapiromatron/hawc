@@ -32,6 +32,7 @@ class EditForm extends Component {
                 riskofbias: {
                     id: 0,
                 },
+                assessment_id: this.props.config.assessment_id,
             },
         };
     }
@@ -97,8 +98,9 @@ class EditForm extends Component {
     }
 }
 function mapStateToProps(state) {
-    const { error } = state;
+    const { config, error } = state;
     return {
+        config,
         error,
     };
 }

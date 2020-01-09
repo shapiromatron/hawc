@@ -5,6 +5,7 @@ from . import models
 
 
 class AssessmentSerializer(serializers.ModelSerializer):
+    rob_name = serializers.CharField(source='get_rob_name_display')
 
     def to_representation(self, instance):
         ret = super().to_representation(instance)

@@ -10,7 +10,7 @@
         <li><a href="{% url 'lit:overview' assessment.pk %}">Literature review</a></li>
     {% endif %}
 
-    {% if assessment.enable_project_management %}
+    {% if assessment.enable_project_management and request.user.is_authenticated %}
         <li><a href="{% url 'mgmt:assessment_dashboard' assessment.pk %}">Management dashboard</a></li>
     {% endif %}
 
@@ -18,7 +18,7 @@
         <li><a href="{% url 'study:list' assessment.pk %}">Study list</a></li>
 
         {% if assessment.enable_risk_of_bias %}
-            <li><a href="{% url 'riskofbias:arob_detail' assessment.pk %}">Risk of bias</a></li>
+            <li><a href="{% url 'riskofbias:arob_detail' assessment.pk %}">{{assessment.get_rob_name_display}}</a></li>
         {% endif %}
 
         <li><a href="{% url 'assessment:endpoint_list' assessment.pk %}">Endpoint list</a></li>

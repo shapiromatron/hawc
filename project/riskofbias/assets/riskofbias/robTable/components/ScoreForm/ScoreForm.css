@@ -16,7 +16,7 @@
     box-shadow: 0 5px 5px -5px black;
 }
 .score-editor .ql-editor {
-    min-height: 80px;
+    min-height: 250px;
 }
 .score-editor .ql-toolbar.ql-snow {
     border: none;

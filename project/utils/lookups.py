@@ -1,4 +1,5 @@
 import operator
+from typing import Any
 
 from django.db.models import Q
 
@@ -49,6 +50,27 @@ class RelatedLookup(ModelLookup):
             Q(**{self.related_filter: id_}) &
             reduce(operator.or_, search_fields)
         )
+
+    def get_underscore_field_val(self, obj: Any, underscore_path: str) -> Any:
+        """
+        Recursively select attributes from objects, given a django queryset underscore path.
+        For example, `related_item__some_field__foo` will return `obj.related_item.some_field.foo`
+
+        Args:
+            obj (Any): An object
+            underscore_path (str): the path to retrieve
+
+        Returns:
+            Any: the desired attribute of the object or child object.
+        """
+        obj_ = obj
+        try:
+            for attr in underscore_path.split("__"):
+                obj_ = getattr(obj_, attr)
+        except AttributeError:
+            raise AttributeError(f"Element {underscore_path} not found in {obj}")
+
+        return obj_
 
 
 class RelatedDistinctStringLookup(DistinctStringLookup):

@@ -50,4 +50,7 @@ urlpatterns = [
     url(r'^attachment/(?P<pk>\d+)/delete/$',
         views.AttachmentDelete.as_view(),
         name='attachment_delete'),
+    url(r'^(?P<pk>\d+)/editability-update/(?P<updated_value>.*)/$',
+        views.EditabilityUpdate.as_view(),
+        name='editability_update'),
 ]

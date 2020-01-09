@@ -10,14 +10,14 @@
 
 {% block content %}
 
-  <h2>{{object}}: Risk of bias review
+  <h2>{{object}}: {{assessment.get_rob_name_display}} review
   {% if obj_perms.edit %}
       <div class="btn-group pull-right">
         <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions
           <span class="caret"></span>
         </a>
         <ul class="dropdown-menu">
-          <li class="disabled"><a tabindex="-1" href="#">Risk of bias</a></li>
+          <li class="disabled"><a tabindex="-1" href="#">{{assessment.get_rob_name_display}}</a></li>
           <li><a href="{% url 'riskofbias:rob_detail_all' object.pk %}">View all reviews</a></li>
       </div>
   {% endif %}

@@ -71,8 +71,8 @@
         <li>Tagged references: {{counts.references_tagged|intcomma}} ({{counts.references_tagged_percent|percentage}})</li>
         <li>Studies with data extracted: {{counts.studies|intcomma}}</li>
         <li>Assessments with studies: {{counts.assessments_with_studies|intcomma}} ({{counts.assessments_with_studies_percent|percentage}})</li>
-        <li>Risk of bias scores: {{counts.rob_scores|intcomma}}</li>
-        <li>Studies with risk of bias: {{counts.studies_with_rob|intcomma}} ({{counts.studies_with_rob_percent|percentage}})</li>
+        <li>{{rob_name}} scores: {{counts.rob_scores|intcomma}}</li>
+        <li>Studies with {{rob_name|lower}}: {{counts.studies_with_rob|intcomma}} ({{counts.studies_with_rob_percent|percentage}})</li>
         <li>Animal bioassay endpoints: {{counts.endpoints|intcomma}}</li>
         <li>Animal bioassay endpoints with data extracted: {{counts.endpoints_with_data|intcomma}} ({{counts.endpoints_with_data_percent|percentage}})</li>
         <li>Epidemiology outcomes: {{counts.outcomes|intcomma}}</li>
@@ -106,7 +106,7 @@
                   <li><a href="#epiMetaExtraction" data-toggle="tab">Epidemiology meta analysis</a></li>
                   <li><a href="#invitroExtraction" data-toggle="tab">In vitro data extraction</a></li>
                   <li><a href="#dataCleanup" data-toggle="tab">Data cleanup</a></li>
-                  <li><a href="#rob" data-toggle="tab">Risk of bias assessment</a></li>
+                  <li><a href="#rob" data-toggle="tab">{{rob_name}} assessment</a></li>
                   <li><a href="#viz" data-toggle="tab">Creating visualizations</a></li>
               </ul>
           </div>
@@ -177,7 +177,7 @@
                   <iframe width="560" height="315" src="https://www.youtube.com/embed/F9T2Nwdq7eU" frameborder="0" allowfullscreen></iframe>
                   <iframe width="560" height="315" src="https://www.youtube.com/embed/HkwRAP4yNBs" frameborder="0" allowfullscreen></iframe>
 
-                  <h4>Risk of bias</h4>
+                  <h4>{{rob_name}}</h4>
                   <iframe width="560" height="315" src="https://www.youtube.com/embed/m_7n8Da3wbo" frameborder="0" allowfullscreen></iframe>
                   <iframe width="560" height="315" src="https://www.youtube.com/embed/_GSO6MMTMC0" frameborder="0" allowfullscreen></iframe>
 

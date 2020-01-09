@@ -11,7 +11,9 @@ const CrossStudyDisplay = (props) => {
         <div className="cross-study-display">
             <h3>{domain}</h3>
             <h4>{metric.name}</h4>
-            <div className="help-block" dangerouslySetInnerHTML={{ __html: metric.description }} />
+            {metric.hide_description ? null : (
+                <div dangerouslySetInnerHTML={{ __html: metric.description }} />
+            )}
             {_.map(scores, (rob, i) => {
                 return (
                     <div key={rob.id}>

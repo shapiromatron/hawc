@@ -1,7 +1,7 @@
 Statistical methods used
 ========================
 
-All statistical methods are documented int eh source code, which is publicly available. `<https://github.com/shapiromatron/hawc>`_.  If you're interested in locating a particular method and have troubles navigating the source code, please contact us and we can help.
+All statistical methods are documented in the source code, which is publicly available. `<https://github.com/shapiromatron/hawc>`_.  If you're interested in locating a particular method and have troubles navigating the source code, please contact us and we can help.
 
 Bioassay:
 ---------

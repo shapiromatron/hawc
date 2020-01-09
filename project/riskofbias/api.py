@@ -96,7 +96,9 @@ class AssessmentScoreViewset(TeamMemberOrHigherMixin, ListUpdateModelMixin, Asse
 
     @list_route()
     def choices(self, request):
-        return Response(models.RiskOfBiasScore.RISK_OF_BIAS_SCORE_CHOICES)
+        assessment_id = self.get_assessment(request)
+        rob_assessment = models.RiskOfBiasAssessment.objects.get(assessment_id=assessment_id)
+        return Response(rob_assessment.get_rob_response_values())
 
     def get_queryset(self):
         return self.model.objects.all()

@@ -57,3 +57,6 @@ class Visual(AssessmentViewset):
         if self.action == "list":
             cls = serializers.CollectionVisualSerializer
         return cls
+
+    def get_queryset(self):
+        return super().get_queryset().select_related('assessment')

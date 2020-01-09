@@ -204,11 +204,6 @@ class VisualizationDelete(BaseDelete):
         return reverse_lazy('summary:visualization_list', kwargs={'pk': self.assessment.pk})
 
 
-class RobFilter(BaseDetail):
-    model = Assessment
-    template_name = 'summary/robFilter.html'
-
-
 # DATA-PIVOT
 class DataPivotNewPrompt(TemplateView):
     """

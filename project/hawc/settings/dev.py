@@ -40,6 +40,7 @@ CACHES = {
 
 
 LOGGING['loggers']['']['handlers'] = ['console']
+LOGGING['loggers']['']['level'] = 'INFO'
 
 
 COMPRESS_ENABLED = False
