@@ -80,7 +80,7 @@
         "react": "^16.1.1",
         "react-autosuggest": "^9.3.2",
         "react-datepicker": "^0.61.0",
-        "react-dom": "^16.1.1",
+        "react-dom": "^16.1.2",
         "react-quill": "^1.2.0",
         "react-redux": "^5.0.6",
         "react-router": "^4.2.0",
