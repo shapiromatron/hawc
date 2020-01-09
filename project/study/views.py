@@ -177,7 +177,10 @@ class AttachmentRead(BaseDetail):
         else:
             raise PermissionDenied
 
-class EditabilityUpdate(BaseDetail):
+
+class EditabilityUpdate(BaseUpdate):
+    # TODO - change to DRF or add new option to standard StudyUpdate view
+
     model = models.Study
 
     def get(self, request, *args, **kwargs):

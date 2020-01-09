@@ -126,7 +126,6 @@ class Study {
     build_details_table(div) {
         var tbl = new DescriptiveTable(),
             links = this._get_identifiers_hyperlinks_ul();
-        tbl.add_tbody_tr('Locked?', this.data.editable ? 'no' : 'yes');
         tbl.add_tbody_tr('Data type(s)', this._get_data_types());
         tbl.add_tbody_tr('Full citation', this.data.full_citation);
         tbl.add_tbody_tr('Abstract', this.data.abstract);
