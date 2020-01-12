@@ -19,9 +19,9 @@ celery==4.1.1
 # utilities
 jsonschema==2.6.0
 lxml==3.8.0
-psycopg2==2.7.3
-redis==2.10.6
-requests==2.18.4
+psycopg2==2.8.4
+redis==3.3.11
+requests==2.22.0
 
 # computational
 numpy==1.13.1
