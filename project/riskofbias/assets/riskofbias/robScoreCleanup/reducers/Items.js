@@ -5,6 +5,7 @@ import { deepCopy } from 'shared/utils';
 
 import { NR_KEYS, SCORE_SHADES, SCORE_TEXT, SCORE_TEXT_DESCRIPTION } from '../../constants';
 
+// TODO make the default score `NR_KEYS[1]` a lookup based on hawc flavor
 const defaultState = {
     isFetching: false,
     isLoaded: false,

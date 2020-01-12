@@ -111,6 +111,7 @@ class RoBBarchartPlot extends D3Visualization {
                     vals[rob.data.score] = (vals[rob.data.score] || 0) + weight;
                 });
 
+                // TODO - remove hard-coding of these values and use lookup
                 if (_.has(vals, 15)) {
                     vals[15] = (vals[15] || 0) + (vals[12] || 0);
                     delete vals[12];
