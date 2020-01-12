@@ -994,6 +994,12 @@ class Endpoint(BaseEndpoint):
     def get_assessment(self):
         return self.assessment
 
+    def litter_effect_required(self):
+        return self.animal_group.experiment.type in ['Rp', '1r', '2r', 'Dv']
+
+    def litter_effect_optional(self):
+        return self.litter_effect_required() or self.animal_group.experiment.type == "Ot"
+
     @property
     def dataset_increasing(self):
         """
