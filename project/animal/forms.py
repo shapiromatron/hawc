@@ -488,12 +488,10 @@ class EndpointForm(ModelForm):
             err = "An observation-time must be reported if time-units are specified"
             self.add_error('observation_time', err)
 
-        experiment_type = self.instance.animal_group.experiment.type
-
-        if experiment_type in ["Rp", "Dv"]:
+        if self.instance.litter_effect_required():
             if litter_effects == "NA":
                 self.add_error('litter_effects', self.LIT_EFF_REQ)
-        elif experiment_type != "Ot" and litter_effects != "NA":
+        elif not self.instance.litter_effect_optional() and litter_effects != "NA":
             self.add_error('litter_effects', self.LIT_EFF_NOT_REQ)
 
         if litter_effects == "O" and litter_effect_notes == "":

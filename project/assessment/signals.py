@@ -5,6 +5,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 from . import models
+from utils.helper import SerializerHelper
 
 
 @receiver(post_save, sender=models.Assessment)
@@ -34,3 +35,11 @@ def default_configuration(sender, instance, created, **kwargs):
         apps.get_model('invitro', 'IVEndpointCategory').create_root(assessment_id=instance.pk)
 
     apps.get_model('mgmt', 'Task').objects.create_assessment_tasks(assessment=instance)
+
+
+@receiver(post_save, sender=models.Assessment)
+def invalidate_endpoint_cache(sender, instance, **kwargs):
+    SerializerHelper.clear_cache(
+        apps.get_model('animal', 'Endpoint'),
+        {'assessment_id': instance.id}
+    )

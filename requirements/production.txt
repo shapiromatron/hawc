@@ -1,7 +1,5 @@
 -r base.txt
 
-# server
-gunicorn==19.7.1
-
-# email
 django-anymail==1.2
+supervisor==4.1.0
+gunicorn==19.7.1

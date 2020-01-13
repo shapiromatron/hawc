@@ -375,6 +375,9 @@ class Endpoint extends Observee {
                     );
                 });
                 return ul;
+            },
+            isMultigenerational = function (experimentType) {
+                return ['Rp', '1r', '2r', 'Dv', 'Ot'].includes(experimentType);
             };
 
         tbl
@@ -424,11 +427,11 @@ class Endpoint extends Observee {
             .add_tbody_tr('Power notes', this.data.power_notes)
             .add_tbody_tr('Results notes', this.data.results_notes);
 
-        if (['Rp', 'Dv', 'Ot'].indexOf(this.data.experiment_type) >= 0) {
+        if (isMultigenerational(this.data.experiment_type)) {
             tbl.add_tbody_tr('Litter Effects', this.data.litter_effects_display, {
                 annotate: this.data.litter_effect_notes,
             });
-        } // else - don't display litter effects at all if not Rp/Dv/Ot in the underlying experiment type
+        }
 
         $(div).html(tbl.get_tbl());
     }

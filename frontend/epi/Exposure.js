@@ -63,8 +63,6 @@ class Exposure {
             'Estimate type',
             'Variance',
             'Variance type',
-            'Lower Bound Interval',
-            'Upper Bound Interval',
             'Lower CI',
             'Upper CI',
             'Lower Range',

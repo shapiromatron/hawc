@@ -2,7 +2,7 @@ const express = require('express'),
     middleware = require('webpack-dev-middleware'),
     webpack = require('webpack'),
     config = require('./webpack.config.dev'),
-    port = 3100,
+    port = 8001,
     app = express(),
     compiler = webpack(config);
 

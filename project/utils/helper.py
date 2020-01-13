@@ -144,6 +144,11 @@ class SerializerHelper(object):
         logging.debug("Removing caches: {}".format(', '.join(names)))
         cache.delete_many(names)
 
+    @classmethod
+    def clear_cache(cls, Model, filters):
+        ids = Model.objects.filter(**filters).values_list('id', flat=True)
+        cls.delete_caches(Model, ids)
+
 
 class FlatFileExporter(object):
     """

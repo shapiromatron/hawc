@@ -39,7 +39,7 @@ class StudyAssessmentSerializer(serializers.ModelSerializer):
 
 
 class VerboseStudySerializer(StudySerializer):
-    assessment = serializers.PrimaryKeyRelatedField(read_only=True)
+    assessment = AssessmentMiniSerializer(read_only=True)
     searches = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     riskofbiases = RiskOfBiasSerializer(many=True, read_only=True)
     identifiers = IdentifiersSerializer(many=True)

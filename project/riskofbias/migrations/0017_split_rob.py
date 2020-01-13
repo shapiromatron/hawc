@@ -10,20 +10,21 @@ import riskofbias.models
 def migrate_scores(apps, schema_editor):
     RiskOfBiasScore = apps.get_model("riskofbias", "RiskOfBiasScore")
     if settings.HAWC_FLAVOR == "PRIME":
+        RiskOfBiasScore.objects.filter(score=0).update(score=10)
+        RiskOfBiasScore.objects.filter(score=10).update(score=12)
         RiskOfBiasScore.objects.filter(score=1).update(score=14)
         RiskOfBiasScore.objects.filter(score=2).update(score=15)
         RiskOfBiasScore.objects.filter(score=3).update(score=16)
         RiskOfBiasScore.objects.filter(score=4).update(score=17)
     elif settings.HAWC_FLAVOR == "EPA":
+        RiskOfBiasScore.objects.filter(score=0).update(score=20)
+        RiskOfBiasScore.objects.filter(score=10).update(score=22)
         RiskOfBiasScore.objects.filter(score=1).update(score=24)
         RiskOfBiasScore.objects.filter(score=2).update(score=25)
         RiskOfBiasScore.objects.filter(score=3).update(score=26)
         RiskOfBiasScore.objects.filter(score=4).update(score=27)
     else:
         raise ValueError("Unknown HAWC flavor")
-
-    RiskOfBiasScore.objects.filter(score=0).update(score=1)
-    RiskOfBiasScore.objects.filter(score=10).update(score=2)
 
 
 class Migration(migrations.Migration):

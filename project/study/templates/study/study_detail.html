@@ -21,40 +21,48 @@
         <ul class="dropdown-menu">
 
             <li class="disabled"><a tabindex="-1" href="#">Study editing</a></li>
-            {% if obj_perms.edit_assessment %}
-            <li><a href="{% url 'study:editability_update' object.pk object.editable|yesno:"False,True"%}">{{ object.editable|yesno:"Lock study,Unlock study" }}</a></li>
-            {% endif %}
+            {% if object.editable %}
             <li><a href="{% url 'study:update' object.pk %}">Update study details</a></li>
             <li><a href="{% url 'lit:ref_edit' object.pk %}">Update reference</a></li>
-            <li><a href="{% url 'study:delete' object.pk %}">Delete study</a></li>
-            <li><a href="{% url 'study:attachment_create' object.pk %}">Add an attachment</a></li>
-
-            {% if object.bioassay %}
-              <li class="divider"></li>
-              <li class="disabled"><a tabindex="-1" href="#">Animal bioassay editing</a></li>
-              <li><a href="{% url 'animal:experiment_new' object.pk %}">Create new experiment</a></li>
-              <li><a href="{% url 'animal:experiment_copy_selector' object.pk %}">Copy from existing</a></li>
             {% endif %}
 
-            {% if object.in_vitro %}
-              <li class="divider"></li>
-              <li class="disabled"><a tabindex="-1" href="#">In-vitro analysis editing</a></li>
-              <li><a href="{% url 'invitro:experiment_create' object.pk %}">Create new experiment</a></li>
-              <li><a href="{% url 'invitro:chemical_create' object.pk %}">Create new chemical</a></li>
-              <li><a href="{% url 'invitro:celltype_create' object.pk %}">Create new cell-type</a></li>
+            {% if obj_perms.edit_assessment %}
+            <li><a
+                href="{% url 'study:editability_update' object.pk object.editable|yesno:"False,True"%}">{{ object.editable|yesno:"Lock study,Unlock study" }}</a>
+            </li>
             {% endif %}
 
-            {% if object.epi %}
-              <li class="divider"></li>
-              <li class="disabled"><a tabindex="-1" href="#">Epidemiology editing</a></li>
-              <li><a href="{% url 'epi:sp_create' object.pk %}">Create new study population</a></li>
-              <li><a href="{% url 'epi:sp_copy_selector' object.pk %}">Copy from existing</a></li>
-            {% endif %}
+            {% if object.editable %}
+              <li><a href="{% url 'study:delete' object.pk %}">Delete study</a></li>
+              <li><a href="{% url 'study:attachment_create' object.pk %}">Add an attachment</a></li>
 
-            {% if object.epi_meta %}
-              <li class="divider"></li>
-              <li class="disabled"><a tabindex="-1" href="#">Epidemiology meta-analysis editing</a></li>
-              <li><a href="{% url 'meta:protocol_create' object.pk %}">Create new protocol</a></li>
+              {% if object.bioassay %}
+                <li class="divider"></li>
+                <li class="disabled"><a tabindex="-1" href="#">Animal bioassay editing</a></li>
+                <li><a href="{% url 'animal:experiment_new' object.pk %}">Create new experiment</a></li>
+                <li><a href="{% url 'animal:experiment_copy_selector' object.pk %}">Copy from existing</a></li>
+              {% endif %}
+
+              {% if object.in_vitro %}
+                <li class="divider"></li>
+                <li class="disabled"><a tabindex="-1" href="#">In-vitro analysis editing</a></li>
+                <li><a href="{% url 'invitro:experiment_create' object.pk %}">Create new experiment</a></li>
+                <li><a href="{% url 'invitro:chemical_create' object.pk %}">Create new chemical</a></li>
+                <li><a href="{% url 'invitro:celltype_create' object.pk %}">Create new cell-type</a></li>
+              {% endif %}
+
+              {% if object.epi %}
+                <li class="divider"></li>
+                <li class="disabled"><a tabindex="-1" href="#">Epidemiology editing</a></li>
+                <li><a href="{% url 'epi:sp_create' object.pk %}">Create new study population</a></li>
+                <li><a href="{% url 'epi:sp_copy_selector' object.pk %}">Copy from existing</a></li>
+              {% endif %}
+
+              {% if object.epi_meta %}
+                <li class="divider"></li>
+                <li class="disabled"><a tabindex="-1" href="#">Epidemiology meta-analysis editing</a></li>
+                <li><a href="{% url 'meta:protocol_create' object.pk %}">Create new protocol</a></li>
+              {% endif %}
             {% endif %}
         </ul>
       </div>

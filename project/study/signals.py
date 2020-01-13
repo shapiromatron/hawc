@@ -7,13 +7,6 @@ from utils.helper import SerializerHelper
 from . import models
 
 
-def clear_cache(Model, filters):
-    ids = Model.objects\
-        .filter(**filters)\
-        .values_list('id', flat=True)
-    SerializerHelper.delete_caches(Model, ids)
-
-
 @receiver(post_save, sender=models.Study)
 def update_study_rob_scores(sender, instance, created, **kwargs):
     # update RiskOfBiasScores when a Study's type is changed.
@@ -30,25 +23,25 @@ def invalidate_caches_study(sender, instance, **kwargs):
     models.Study.delete_caches([instance.id])
 
     if instance.bioassay:
-        clear_cache(
+        SerializerHelper.clear_cache(
             apps.get_model('animal', 'Endpoint'),
             {'animal_group__experiment__study': instance.id}
         )
 
     if instance.epi:
-        clear_cache(
+        SerializerHelper.clear_cache(
             apps.get_model('epi', 'Outcome'),
             {'study_population__study': instance.id}
         )
 
     if instance.in_vitro:
-        clear_cache(
+        SerializerHelper.clear_cache(
             apps.get_model('invitro', 'ivendpoint'),
             {'experiment__study_id': instance.id}
         )
 
     if instance.epi_meta:
-        clear_cache(
+        SerializerHelper.clear_cache(
             apps.get_model('epimeta', 'MetaResult'),
             {'protocol__study': instance.id}
         )
