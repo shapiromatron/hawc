@@ -1,6 +1,6 @@
 name: frontend-ci
 
-on: [push, pull_request]
+on: [pull_request]
 
 jobs:
   build:
@@ -14,8 +14,8 @@ jobs:
     - uses: actions/setup-node@v1
       with:
         node-version: '12.x'
-    - run: npm install -g yarn
     - name: yarn install and lint
       run: |
+        npm install -g yarn
         yarn --cwd ./frontend install
         npm --prefix ./frontend run lint
