@@ -1,15 +1,12 @@
-import _ from 'lodash';
-import React from 'react';
-import { connect } from 'react-redux';
+import _ from "lodash";
+import React from "react";
+import {connect} from "react-redux";
 
-import { resetError } from 'riskofbias/robScoreCleanup/actions/Errors';
-import { selectAll } from 'riskofbias/robScoreCleanup/actions/Items';
-import {
-    updateEditMetricIfNeeded,
-    submitItemEdits,
-} from 'riskofbias/robScoreCleanup/actions/Items';
+import {resetError} from "riskofbias/robScoreCleanup/actions/Errors";
+import {selectAll} from "riskofbias/robScoreCleanup/actions/Items";
+import {updateEditMetricIfNeeded, submitItemEdits} from "riskofbias/robScoreCleanup/actions/Items";
 
-import DisplayComponent from 'riskofbias/robTable/components/MetricForm';
+import DisplayComponent from "riskofbias/robTable/components/MetricForm";
 
 export class MetricForm extends React.Component {
     constructor(props) {
@@ -42,13 +39,13 @@ export class MetricForm extends React.Component {
 
     onSubmit(e) {
         e.preventDefault();
-        let { notes, score } = this.refs.metricForm.refs.form.state,
-            metric = { notes, score: parseInt(score) };
+        let {notes, score} = this.refs.metricForm.refs.form.state,
+            metric = {notes, score: parseInt(score)};
         this.props.dispatch(submitItemEdits(metric));
     }
 
     render() {
-        let { items, config, robResponseValues } = this.props;
+        let {items, config, robResponseValues} = this.props;
         if (!items.isLoaded) return null;
         return (
             <form onSubmit={this.onSubmit}>
@@ -75,10 +72,10 @@ export class MetricForm extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { items } = state;
+    const {items} = state;
     return {
         items,
-        robResponseValues: _.map(state.scores.items, 'id'),
+        robResponseValues: _.map(state.scores.items, "id"),
     };
 }
 

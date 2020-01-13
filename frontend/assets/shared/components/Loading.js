@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 class Loading extends React.Component {
     render() {

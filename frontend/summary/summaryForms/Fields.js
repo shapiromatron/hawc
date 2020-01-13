@@ -1,7 +1,7 @@
-import _ from 'lodash';
-import $ from '$';
+import _ from "lodash";
+import $ from "$";
 
-import HAWCUtils from 'utils/HAWCUtils';
+import HAWCUtils from "utils/HAWCUtils";
 
 class InputField {
     constructor(schema, $parent, parent) {
@@ -90,11 +90,11 @@ class ColorField extends TextField {
 
 class CheckboxField extends TextField {
     toSerialized() {
-        this.parent.settings[this.schema.name] = this.$inp.prop('checked');
+        this.parent.settings[this.schema.name] = this.$inp.prop("checked");
     }
 
     fromSerialized() {
-        this.$inp.prop('checked', this.parent.settings[this.schema.name]);
+        this.$inp.prop("checked", this.parent.settings[this.schema.name]);
     }
 
     _setInput() {
@@ -110,7 +110,7 @@ class RadioField extends TextField {
 
     fromSerialized() {
         var sel = 'input[value="{0}"]'.printf(this.parent.settings[this.schema.name]);
-        this.$inp.find(sel).prop('checked', true);
+        this.$inp.find(sel).prop("checked", true);
     }
 
     _setInput() {
@@ -124,7 +124,7 @@ class RadioField extends TextField {
                 );
             }, this)
         );
-        this.$inp = $('<div>').html(radios.join('\n'));
+        this.$inp = $("<div>").html(radios.join("\n"));
     }
 }
 
@@ -134,7 +134,7 @@ class SelectField extends TextField {
             return '<option value="{0}">{1}</option>'.printf(d[0], d[1]);
         };
         this.$inp = $('<select name="{0}" class="span12">'.printf(this.schema.name)).html(
-            this.schema.opts.map(makeOpt).join('')
+            this.schema.opts.map(makeOpt).join("")
         );
     }
 }
@@ -147,13 +147,13 @@ class NullField extends InputField {
 
 class SpacerNullField extends NullField {
     render() {
-        this.$parent.append('<hr>');
+        this.$parent.append("<hr>");
     }
 }
 
 class HeaderNullField extends NullField {
     render() {
-        this.$parent.append($('<h4>').text(this.schema.label));
+        this.$parent.append($("<h4>").text(this.schema.label));
     }
 }
 
@@ -165,15 +165,15 @@ class HelpTextNullField extends NullField {
     }
 }
 
-export { InputField };
-export { TextField };
-export { IntegerField };
-export { FloatField };
-export { ColorField };
-export { CheckboxField };
-export { RadioField };
-export { SelectField };
-export { NullField };
-export { SpacerNullField };
-export { HeaderNullField };
-export { HelpTextNullField };
+export {InputField};
+export {TextField};
+export {IntegerField};
+export {FloatField};
+export {ColorField};
+export {CheckboxField};
+export {RadioField};
+export {SelectField};
+export {NullField};
+export {SpacerNullField};
+export {HeaderNullField};
+export {HelpTextNullField};

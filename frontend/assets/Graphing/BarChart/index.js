@@ -1,11 +1,11 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React, {Component} from "react";
+import PropTypes from "prop-types";
 
-import './BarChart.css';
+import "./BarChart.css";
 
 class BarChart extends Component {
     render() {
-        const { xScale, yScale, chartData, data } = this.props;
+        const {xScale, yScale, chartData, data} = this.props;
         return (
             <g>
                 {data.map((bar, i) => {
@@ -13,7 +13,7 @@ class BarChart extends Component {
                         x = xScale(bar.values.count),
                         height = yScale.rangeBand(),
                         width = x - chartData.padding.left,
-                        labelText = width > 25 ? 'bar-chart-label-left' : 'bar-chart-label-right',
+                        labelText = width > 25 ? "bar-chart-label-left" : "bar-chart-label-right",
                         labelOffset = width > 25 ? -5 : 2;
 
                     return (
@@ -29,8 +29,7 @@ class BarChart extends Component {
                             <text
                                 className={labelText}
                                 y={y + height / 2}
-                                x={chartData.padding.left + width + labelOffset}
-                            >
+                                x={chartData.padding.left + width + labelOffset}>
                                 {bar.values.count}
                             </text>
                         </g>

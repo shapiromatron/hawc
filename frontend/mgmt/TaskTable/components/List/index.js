@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React, {Component} from "react";
+import PropTypes from "prop-types";
 
 class List extends Component {
     render() {
-        const { component, items, ...rest } = this.props,
+        const {component, items, ...rest} = this.props,
             ComponentToRender = component;
         let content = <div />;
 

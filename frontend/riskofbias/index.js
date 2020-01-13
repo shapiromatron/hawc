@@ -1,5 +1,5 @@
 const riskofbiasStartup = function(cb) {
-    import('./split.js').then((riskofbias) => {
+    import("./split.js").then(riskofbias => {
         cb(riskofbias.default);
     });
 };

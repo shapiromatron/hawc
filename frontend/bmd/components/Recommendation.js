@@ -1,11 +1,11 @@
-import _ from 'lodash';
-import React from 'react';
-import PropTypes from 'prop-types';
+import _ from "lodash";
+import React from "react";
+import PropTypes from "prop-types";
 
-import { asLabel } from 'bmd/models/bmr';
+import {asLabel} from "bmd/models/bmr";
 
-import RecommendationNotes from './RecommendationNotes';
-import RecommendationTable from './RecommendationTable';
+import RecommendationNotes from "./RecommendationNotes";
+import RecommendationTable from "./RecommendationTable";
 
 class Recommendation extends React.Component {
     updateState(props) {
@@ -17,7 +17,7 @@ class Recommendation extends React.Component {
                 notes: props.selectedModelNotes,
             };
         } else {
-            let model = _.find(props.models, { id: props.selectedModelId });
+            let model = _.find(props.models, {id: props.selectedModelId});
             d = {
                 bmr: model.bmr_id,
                 model: model.id,
@@ -40,7 +40,7 @@ class Recommendation extends React.Component {
             name = e.target.name,
             val = e.target.value;
 
-        if (_.includes(['bmr', 'model'], name)) {
+        if (_.includes(["bmr", "model"], name)) {
             val = parseInt(val);
         }
 
@@ -57,12 +57,12 @@ class Recommendation extends React.Component {
     }
 
     renderForm() {
-        let models = _.filter(this.props.models, { bmr_id: this.state.bmr }),
+        let models = _.filter(this.props.models, {bmr_id: this.state.bmr}),
             selectedModel = this.state.model !== null ? this.state.model : -1;
 
         models.unshift({
             id: -1,
-            name: '<no model selected>',
+            name: "<no model selected>",
         });
 
         return (
@@ -78,8 +78,7 @@ class Recommendation extends React.Component {
                                 className="span12"
                                 value={this.state.bmr}
                                 name="bmr"
-                                onChange={this.handleFieldChange.bind(this)}
-                            >
+                                onChange={this.handleFieldChange.bind(this)}>
                                 {this.props.bmrs.map((d, i) => {
                                     return (
                                         <option key={i} value={i}>
@@ -99,9 +98,8 @@ class Recommendation extends React.Component {
                                 className="span12"
                                 value={selectedModel}
                                 name="model"
-                                onChange={this.handleFieldChange.bind(this)}
-                            >
-                                {models.map((d) => {
+                                onChange={this.handleFieldChange.bind(this)}>
+                                {models.map(d => {
                                     return (
                                         <option key={d.id} value={d.id}>
                                             {d.name}
@@ -141,8 +139,7 @@ class Recommendation extends React.Component {
                 <button
                     type="button"
                     className="btn btn-primary"
-                    onClick={this.handleSaveSelected.bind(this)}
-                >
+                    onClick={this.handleSaveSelected.bind(this)}>
                     Save selected model
                 </button>
             </div>

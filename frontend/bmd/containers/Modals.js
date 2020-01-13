@@ -1,11 +1,11 @@
-import React from 'react';
-import { connect } from 'react-redux';
+import React from "react";
+import {connect} from "react-redux";
 
-import ModelOptionModal from 'bmd/components/ModelOptionModal';
-import BMROptionModal from 'bmd/components/BMROptionModal';
-import OutputModal from 'bmd/components/OutputModal';
+import ModelOptionModal from "bmd/components/ModelOptionModal";
+import BMROptionModal from "bmd/components/BMROptionModal";
+import OutputModal from "bmd/components/OutputModal";
 
-import { updateModel, deleteModel, updateBmr, deleteBmr } from 'bmd/actions';
+import {updateModel, deleteModel, updateBmr, deleteBmr} from "bmd/actions";
 
 class Modals extends React.Component {
     handleModelUpdate(values) {
@@ -32,7 +32,7 @@ class Modals extends React.Component {
         if (!this.isReady()) {
             return null;
         }
-        let { editMode } = this.props.config;
+        let {editMode} = this.props.config;
         return (
             <div>
                 <ModelOptionModal

@@ -1,9 +1,9 @@
-import fetch from 'isomorphic-fetch';
+import fetch from "isomorphic-fetch";
 
-import { setError, resetError } from 'riskofbias/robScoreCleanup/actions/Errors';
-import * as types from 'riskofbias/robScoreCleanup/constants';
-import h from 'shared/utils/helpers';
-import { SCORE_TEXT_DESCRIPTION } from '../../constants';
+import {setError, resetError} from "riskofbias/robScoreCleanup/actions/Errors";
+import * as types from "riskofbias/robScoreCleanup/constants";
+import h from "shared/utils/helpers";
+import {SCORE_TEXT_DESCRIPTION} from "../../constants";
 
 function makeScoreOptionRequest() {
     return {
@@ -26,8 +26,8 @@ export function selectScores(scores) {
 }
 
 function formatScoreOptions(choices) {
-    return choices.map((choice) => {
-        return { id: choice, value: SCORE_TEXT_DESCRIPTION[choice] };
+    return choices.map(choice => {
+        return {id: choice, value: SCORE_TEXT_DESCRIPTION[choice]};
     });
 }
 
@@ -37,12 +37,12 @@ export function fetchScoreOptions() {
         if (state.scores.isFetching || state.scores.isLoaded) return;
         dispatch(makeScoreOptionRequest());
         dispatch(resetError());
-        let { host, scores, assessment_id } = state.config;
+        let {host, scores, assessment_id} = state.config;
         const url = h.getUrlWithAssessment(h.getListUrl(host, scores.url), assessment_id);
         return fetch(url, h.fetchGet)
-            .then((response) => response.json())
-            .then((json) => formatScoreOptions(json))
-            .then((json) => dispatch(receiveScoreOptions(json)))
-            .catch((error) => dispatch(setError(error)));
+            .then(response => response.json())
+            .then(json => formatScoreOptions(json))
+            .then(json => dispatch(receiveScoreOptions(json)))
+            .catch(error => dispatch(setError(error)));
     };
 }

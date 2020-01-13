@@ -1,11 +1,11 @@
-import { combineReducers } from 'redux';
+import {combineReducers} from "redux";
 
-import config from 'shared/reducers/Config';
-import items from './Items';
-import metrics from './Metrics';
-import scores from './Scores';
-import studyTypes from './StudyTypes';
-import * as types from 'riskofbias/robScoreCleanup/constants';
+import config from "shared/reducers/Config";
+import items from "./Items";
+import metrics from "./Metrics";
+import scores from "./Scores";
+import studyTypes from "./StudyTypes";
+import * as types from "riskofbias/robScoreCleanup/constants";
 
 const defaultState = {
     message: null,

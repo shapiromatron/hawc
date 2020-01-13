@@ -1,10 +1,10 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React from "react";
+import PropTypes from "prop-types";
 
-import h from 'mgmt/utils/helpers';
-import StatusIcon from 'mgmt/TaskTable/components/StatusIcon';
+import h from "mgmt/utils/helpers";
+import StatusIcon from "mgmt/TaskTable/components/StatusIcon";
 
-const StatusLabel = (props) => {
+const StatusLabel = props => {
     return (
         <div>
             <b>Status: </b>

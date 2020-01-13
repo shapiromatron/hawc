@@ -1,5 +1,5 @@
 const litStartup = function(cb) {
-    import('./split.js').then((lit) => {
+    import("./split.js").then(lit => {
         cb(lit.default);
     });
 };

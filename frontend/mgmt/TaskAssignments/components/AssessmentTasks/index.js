@@ -1,21 +1,24 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React, {Component} from "react";
+import PropTypes from "prop-types";
 
-import Header from 'mgmt/TaskAssignments/components/Header';
-import Task from 'mgmt/TaskAssignments/components/Task';
+import Header from "mgmt/TaskAssignments/components/Header";
+import Task from "mgmt/TaskAssignments/components/Task";
 
 class AssessmentTasks extends Component {
     render() {
-        let headings = [{ name: 'Study', flex: 1 }, { name: 'Task', flex: 2 }];
+        let headings = [
+            {name: "Study", flex: 1},
+            {name: "Task", flex: 2},
+        ];
 
         if (this.props.showAssessment) {
-            headings.unshift({ name: 'Assessment', flex: 1 });
+            headings.unshift({name: "Assessment", flex: 1});
         }
 
         return (
-            <div style={{ padding: '10px' }}>
+            <div style={{padding: "10px"}}>
                 <Header headings={headings} />
-                {this.props.tasks.map((task) => {
+                {this.props.tasks.map(task => {
                     return (
                         <Task
                             key={task.id}

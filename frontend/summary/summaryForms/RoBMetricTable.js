@@ -1,20 +1,20 @@
-import _ from 'lodash';
-import $ from '$';
+import _ from "lodash";
+import $ from "$";
 
-import { TableField } from './TableFields';
+import {TableField} from "./TableFields";
 
 class RoBMetricTable extends TableField {
     renderHeader() {
-        return $('<tr>')
-            .append('<th>Include in visual</th>', '<th>Metric</th>')
+        return $("<tr>")
+            .append("<th>Include in visual</th>", "<th>Metric</th>")
             .appendTo(this.$thead);
     }
 
     addRow() {
-        var includeTd = this.addTdCheckbox('included', true),
-            metricTd = this.addTdP('metric', '');
+        var includeTd = this.addTdCheckbox("included", true),
+            metricTd = this.addTdP("metric", "");
 
-        return $('<tr>')
+        return $("<tr>")
             .append(includeTd, metricTd)
             .appendTo(this.$tbody);
     }
@@ -43,16 +43,15 @@ class RoBMetricTable extends TableField {
 
     fromSerializedRow(d) {
         var row = this.addRow();
-        row.find('.metric').text(d.name);
-        row
-            .find('input[name="included"]')
-            .prop('checked', d.included)
-            .data('id', d.id);
+        row.find(".metric").text(d.name);
+        row.find('input[name="included"]')
+            .prop("checked", d.included)
+            .data("id", d.id);
     }
 
     toSerializedRow(row) {
         var inp = $(row).find('input[name="included"]');
-        return inp.prop('checked') ? inp.data('id') : null;
+        return inp.prop("checked") ? inp.data("id") : null;
     }
 }
 

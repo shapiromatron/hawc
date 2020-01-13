@@ -1,17 +1,17 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import moment from 'moment';
+import React, {Component} from "react";
+import PropTypes from "prop-types";
+import moment from "moment";
 
 class DueDateLabel extends Component {
     render() {
-        const { due_date, status } = this.props,
+        const {due_date, status} = this.props,
             pastDueStyle =
                 status < 30
                     ? moment().isAfter(due_date)
-                      ? { backgroundColor: 'yellow', maxWidth: '175px' }
-                      : null
+                        ? {backgroundColor: "yellow", maxWidth: "175px"}
+                        : null
                     : null,
-            dueDate = due_date ? moment(due_date).format('MM/DD/YYYY') : null;
+            dueDate = due_date ? moment(due_date).format("MM/DD/YYYY") : null;
 
         if (dueDate === null) {
             return null;

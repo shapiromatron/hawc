@@ -1,5 +1,5 @@
 const epiStartup = function(cb) {
-    import('./split.js').then((epi) => {
+    import("./split.js").then(epi => {
         cb(epi.default);
     });
 };

@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React, {Component} from "react";
+import PropTypes from "prop-types";
 
 class FinishedTaskFilter extends Component {
     render() {
@@ -9,7 +9,7 @@ class FinishedTaskFilter extends Component {
                     <input
                         type="checkbox"
                         name="filter"
-                        style={{ margin: '4px' }}
+                        style={{margin: "4px"}}
                         checked={this.props.checked}
                         onChange={this.props.onChange}
                     />

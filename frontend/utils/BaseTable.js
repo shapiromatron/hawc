@@ -1,17 +1,17 @@
-import $ from '$';
-import _ from 'lodash';
-import d3 from 'd3';
+import $ from "$";
+import _ from "lodash";
+import d3 from "d3";
 
-import TableFootnotes from './TableFootnotes';
+import TableFootnotes from "./TableFootnotes";
 
 // General object for creating any table
 class BaseTable {
     constructor() {
         this.tbl = $('<table class="table table-condensed table-striped">');
-        this.thead = $('<thead>');
-        this.colgroup = $('<colgroup>');
-        this.tbody = $('<tbody>');
-        this.tfoot = $('<tfoot>');
+        this.thead = $("<thead>");
+        this.colgroup = $("<colgroup>");
+        this.tbody = $("<tbody>");
+        this.tfoot = $("<tfoot>");
         this.footnotes = new TableFootnotes();
         this.tbl.append(this.colgroup, this.thead, this.tfoot, this.tbody);
     }
@@ -33,7 +33,7 @@ class BaseTable {
                         .first()
                         .children(),
                     function(d) {
-                        return parseInt($(d).attr('colspan')) || 1;
+                        return parseInt($(d).attr("colspan")) || 1;
                     }
                 )
             );
@@ -47,16 +47,16 @@ class BaseTable {
 
     addRow(val, isHeader) {
         var tr,
-            tagName = isHeader ? '<th>' : '<td>';
+            tagName = isHeader ? "<th>" : "<td>";
         if (val instanceof Array) {
-            tr = $('<tr>');
+            tr = $("<tr>");
             val.forEach(function(v) {
                 tr.append($(tagName).html(v));
             });
-        } else if (val instanceof $ && val.first().prop('tagName') === 'TR') {
+        } else if (val instanceof $ && val.first().prop("tagName") === "TR") {
             tr = val;
         } else {
-            console.log('unknown input type');
+            console.log("unknown input type");
         }
         if (isHeader) {
             this.thead.append(tr);
@@ -75,7 +75,7 @@ class BaseTable {
     }
 
     _set_footnotes() {
-        var txt = this.footnotes.html_list().join('<br>'),
+        var txt = this.footnotes.html_list().join("<br>"),
             colspan = this.numCols();
         if (txt.length > 0)
             this.tfoot.html('<tr><td colspan="{0}">{1}</td></tr>'.printf(colspan, txt));
@@ -86,7 +86,7 @@ class BaseTable {
         var headersToSortKeys = {};
 
         $(orderByDropdownSelector)
-            .find('option')
+            .find("option")
             .each(function() {
                 var currOption = $(this);
 
@@ -101,25 +101,25 @@ class BaseTable {
     }
 
     enableSortableHeaderLinks(currentActiveSort, headersToSortKeys, options = {}) {
-        this.thead.find('th').each(function() {
+        this.thead.find("th").each(function() {
             var currHeaderCell = $(this);
             var currHeaderText = currHeaderCell.html();
             var sortKey = headersToSortKeys[currHeaderText.toLowerCase()];
 
             if (sortKey !== undefined) {
-                currHeaderCell.addClass('sort-header');
+                currHeaderCell.addClass("sort-header");
 
                 if (sortKey == currentActiveSort) {
                     currHeaderCell
-                        .addClass('active-sort')
-                        .addClass('sort-' + (currentActiveSort.startsWith('-') ? 'up' : 'down'));
+                        .addClass("active-sort")
+                        .addClass("sort-" + (currentActiveSort.startsWith("-") ? "up" : "down"));
                 } else {
-                    if (sortKey.startsWith('-')) {
-                        currHeaderCell.addClass('potential-sort-down');
+                    if (sortKey.startsWith("-")) {
+                        currHeaderCell.addClass("potential-sort-down");
                     }
 
-                    var clickableLink = $('<a/>')
-                        .attr('href', '?order_by=' + sortKey)
+                    var clickableLink = $("<a/>")
+                        .attr("href", "?order_by=" + sortKey)
                         .html(currHeaderText);
                     $(this)
                         .empty()

@@ -1,7 +1,7 @@
-import $ from '$';
+import $ from "$";
 
-import SmartTagModal from './SmartTagModal';
-import SmartTagInline from './SmartTagInline';
+import SmartTagModal from "./SmartTagModal";
+import SmartTagInline from "./SmartTagInline";
 
 class SmartTagContainer {
     constructor($el, options) {
@@ -14,9 +14,9 @@ class SmartTagContainer {
 
     static toggleAllModals(el) {
         $(el)
-            .find('span.smart-tag')
+            .find("span.smart-tag")
             .each(function() {
-                let st = $(this).data('_smartTag');
+                let st = $(this).data("_smartTag");
                 if (!st) {
                     st = new SmartTagModal(this);
                 }
@@ -39,8 +39,8 @@ class SmartTagContainer {
     }
 
     renderInlines() {
-        this.$el.find('div.smart-tag').each(function() {
-            let st = $(this).data('_smartTag');
+        this.$el.find("div.smart-tag").each(function() {
+            let st = $(this).data("_smartTag");
             if (!st) {
                 st = new SmartTagInline(this);
             }
@@ -49,8 +49,8 @@ class SmartTagContainer {
     }
 
     unrenderInlines($el) {
-        this.$el.find('div.smart-tag').each(function() {
-            let st = $(this).data('_smartTag');
+        this.$el.find("div.smart-tag").each(function() {
+            let st = $(this).data("_smartTag");
             if (!st) {
                 st = new SmartTagInline(this);
             }
@@ -59,8 +59,8 @@ class SmartTagContainer {
     }
 
     enableModals() {
-        this.$el.find('span.smart-tag').each(function() {
-            let st = $(this).data('_smartTag');
+        this.$el.find("span.smart-tag").each(function() {
+            let st = $(this).data("_smartTag");
             if (!st) {
                 st = new SmartTagModal(this);
             }
@@ -69,8 +69,8 @@ class SmartTagContainer {
     }
 
     disableModals() {
-        this.$el.find('span.smart-tag').each(function() {
-            let st = $(this).data('_smartTag');
+        this.$el.find("span.smart-tag").each(function() {
+            let st = $(this).data("_smartTag");
             if (!st) {
                 st = new SmartTagModal(this);
             }

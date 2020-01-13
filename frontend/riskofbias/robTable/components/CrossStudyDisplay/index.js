@@ -1,18 +1,18 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import ReactDOM from 'react-dom';
+import React from "react";
+import PropTypes from "prop-types";
+import ReactDOM from "react-dom";
 
-import ScoreDisplay from 'riskofbias/robTable/components/ScoreDisplay';
+import ScoreDisplay from "riskofbias/robTable/components/ScoreDisplay";
 
-const CrossStudyDisplay = (props) => {
-    let { domain, metric, scores, config } = props;
+const CrossStudyDisplay = props => {
+    let {domain, metric, scores, config} = props;
     scores = scores[0].values[0].values;
     return (
         <div className="cross-study-display">
             <h3>{domain}</h3>
             <h4>{metric.name}</h4>
             {metric.hide_description ? null : (
-                <div dangerouslySetInnerHTML={{ __html: metric.description }} />
+                <div dangerouslySetInnerHTML={{__html: metric.description}} />
             )}
             {_.map(scores, (rob, i) => {
                 return (

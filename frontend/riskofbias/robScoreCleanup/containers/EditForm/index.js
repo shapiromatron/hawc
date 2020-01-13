@@ -1,24 +1,24 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import React, {Component} from "react";
+import {connect} from "react-redux";
 
-import { resetError } from 'riskofbias/robScoreCleanup/actions/Errors';
-import { fetchMetricOptions } from 'riskofbias/robScoreCleanup/actions/Metrics';
-import { fetchScoreOptions } from 'riskofbias/robScoreCleanup/actions/Scores';
-import { fetchStudyTypeOptions } from 'riskofbias/robScoreCleanup/actions/StudyTypes';
+import {resetError} from "riskofbias/robScoreCleanup/actions/Errors";
+import {fetchMetricOptions} from "riskofbias/robScoreCleanup/actions/Metrics";
+import {fetchScoreOptions} from "riskofbias/robScoreCleanup/actions/Scores";
+import {fetchStudyTypeOptions} from "riskofbias/robScoreCleanup/actions/StudyTypes";
 import {
     fetchItemScores,
     clearItemScores,
     updateEditMetricIfNeeded,
-} from 'riskofbias/robScoreCleanup/actions/Items';
+} from "riskofbias/robScoreCleanup/actions/Items";
 
-import ScrollToErrorBox from 'shared/components/ScrollToErrorBox';
-import MetricForm from 'riskofbias/robScoreCleanup/containers/MetricForm';
-import MetricSelect from 'riskofbias/robScoreCleanup/containers/MetricSelect';
-import ScoreList from 'riskofbias/robScoreCleanup/containers/ScoreList';
-import ScoreSelect from 'riskofbias/robScoreCleanup/containers/ScoreSelect';
-import StudyTypeSelect from 'riskofbias/robScoreCleanup/containers/StudyTypeSelect';
+import ScrollToErrorBox from "shared/components/ScrollToErrorBox";
+import MetricForm from "riskofbias/robScoreCleanup/containers/MetricForm";
+import MetricSelect from "riskofbias/robScoreCleanup/containers/MetricSelect";
+import ScoreList from "riskofbias/robScoreCleanup/containers/ScoreList";
+import ScoreSelect from "riskofbias/robScoreCleanup/containers/ScoreSelect";
+import StudyTypeSelect from "riskofbias/robScoreCleanup/containers/StudyTypeSelect";
 
-import './EditForm.css';
+import "./EditForm.css";
 
 class EditForm extends Component {
     constructor(props) {
@@ -27,8 +27,8 @@ class EditForm extends Component {
         this.clearMetrics = this.clearMetrics.bind(this);
         this.state = {
             config: {
-                display: 'all',
-                isForm: 'false',
+                display: "all",
+                isForm: "false",
                 riskofbias: {
                     id: 0,
                 },
@@ -61,8 +61,8 @@ class EditForm extends Component {
     }
 
     render() {
-        let { error } = this.props,
-            { config } = this.state;
+        let {error} = this.props,
+            {config} = this.state;
         return (
             <div>
                 <ScrollToErrorBox error={error} />
@@ -98,7 +98,7 @@ class EditForm extends Component {
     }
 }
 function mapStateToProps(state) {
-    const { config, error } = state;
+    const {config, error} = state;
     return {
         config,
         error,

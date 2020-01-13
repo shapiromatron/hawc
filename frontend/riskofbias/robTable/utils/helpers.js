@@ -1,4 +1,4 @@
-import shared from 'shared/utils/helpers';
+import shared from "shared/utils/helpers";
 
 const helpers = Object.assign({}, shared, {});
 

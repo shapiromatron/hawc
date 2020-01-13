@@ -1,7 +1,7 @@
-import _ from 'lodash';
-import d3 from 'd3';
+import _ from "lodash";
+import d3 from "d3";
 
-import HAWCUtils from 'utils/HAWCUtils';
+import HAWCUtils from "utils/HAWCUtils";
 
 import {
     NA_KEYS,
@@ -10,7 +10,7 @@ import {
     SCORE_TEXT,
     SCORE_TEXT_DESCRIPTION_LEGEND,
     COLLAPSED_NR_FIELDS_DESCRIPTION,
-} from 'riskofbias/constants';
+} from "riskofbias/constants";
 
 class RoBLegend {
     constructor(svg, settings, rob_response_values, options) {
@@ -28,14 +28,14 @@ class RoBLegend {
 
         // determine which scores to present in legend
         if (!this.settings.show_na_legend) {
-            NA_KEYS.forEach((key) => {
+            NA_KEYS.forEach(key => {
                 if (scores.includes(key)) {
                     scores.splice(scores.indexOf(key), 1);
                 }
             });
         }
         if (!this.settings.show_nr_legend || collapseNR) {
-            NR_KEYS.forEach((key) => {
+            NR_KEYS.forEach(key => {
                 if (scores.includes(key)) {
                     scores.splice(scores.indexOf(key), 1);
                 }
@@ -60,8 +60,8 @@ class RoBLegend {
 
     render() {
         let svg = d3.select(this.svg),
-            svgW = parseInt(svg.attr('width'), 10),
-            svgH = parseInt(svg.attr('height'), 10),
+            svgW = parseInt(svg.attr("width"), 10),
+            svgH = parseInt(svg.attr("height"), 10),
             x = this.settings.legend_x,
             y = this.settings.legend_y,
             width = 22,
@@ -69,7 +69,7 @@ class RoBLegend {
             buff = 5,
             title_offset = 8,
             dim = this.svg.getBBox(),
-            cursor = this.options.dev ? 'pointer' : 'auto',
+            cursor = this.options.dev ? "pointer" : "auto",
             drag = this.options.dev
                 ? HAWCUtils.updateDragLocationTransform((x, y) => {
                       this.settings.legend_x = parseInt(x, 10);
@@ -82,58 +82,56 @@ class RoBLegend {
 
         // create a new g.legend_group object on the main svg graphic
         g = svg
-            .append('g')
-            .attr('transform', `translate(${x}, ${y})`)
-            .attr('cursor', cursor)
+            .append("g")
+            .attr("transform", `translate(${x}, ${y})`)
+            .attr("cursor", cursor)
             .call(drag);
 
         // add text 'Legend'; we set the x to a temporarily small value,
         // which we change below after we know the size of the legend
         title = g
-            .append('text')
-            .attr('x', 10)
-            .attr('y', 8)
-            .attr('text-anchor', 'middle')
-            .attr('class', 'dr_title')
+            .append("text")
+            .attr("x", 10)
+            .attr("y", 8)
+            .attr("text-anchor", "middle")
+            .attr("class", "dr_title")
             .text(function(d) {
-                return 'Legend';
+                return "Legend";
             });
 
         // Add color rectangles
-        g
-            .selectAll('svg.rect')
+        g.selectAll("svg.rect")
             .data(fields)
             .enter()
-            .append('rect')
-            .attr('x', function(d, i) {
+            .append("rect")
+            .attr("x", function(d, i) {
                 return 0;
             })
-            .attr('y', function(d, i) {
+            .attr("y", function(d, i) {
                 return i * width + title_offset;
             })
-            .attr('height', width)
-            .attr('width', width)
-            .attr('class', 'heatmap_selectable')
-            .style('fill', function(d) {
+            .attr("height", width)
+            .attr("width", width)
+            .attr("class", "heatmap_selectable")
+            .style("fill", function(d) {
                 return d.color;
             });
 
         // Add text label (++, --, etc.)
-        g
-            .selectAll('svg.text.labels')
+        g.selectAll("svg.text.labels")
             .data(fields)
             .enter()
-            .append('text')
-            .attr('x', function(d, i) {
+            .append("text")
+            .attr("x", function(d, i) {
                 return half_width;
             })
-            .attr('y', function(d, i) {
+            .attr("y", function(d, i) {
                 return i * width + half_width + title_offset;
             })
-            .attr('text-anchor', 'middle')
-            .attr('dy', '3.5px')
-            .attr('class', 'centeredLabel')
-            .style('fill', function(d) {
+            .attr("text-anchor", "middle")
+            .attr("dy", "3.5px")
+            .attr("class", "centeredLabel")
+            .style("fill", function(d) {
                 return d.text_color;
             })
             .text(function(d) {
@@ -141,35 +139,33 @@ class RoBLegend {
             });
 
         // Add text description
-        g
-            .selectAll('svg.text.desc')
+        g.selectAll("svg.text.desc")
             .data(fields)
             .enter()
-            .append('text')
-            .attr('x', function(d, i) {
+            .append("text")
+            .attr("x", function(d, i) {
                 return width + 5;
             })
-            .attr('y', function(d, i) {
+            .attr("y", function(d, i) {
                 return i * width + half_width + title_offset;
             })
-            .attr('dy', '3.5px')
-            .attr('class', 'dr_axis_labels')
+            .attr("dy", "3.5px")
+            .attr("class", "dr_axis_labels")
             .text(function(d) {
                 return d.description;
             });
 
         // add bounding-rectangle around legend
         dim = g.node().getBBox();
-        g
-            .insert('svg:rect', ':first-child')
-            .attr('class', 'legend')
-            .attr('x', -buff)
-            .attr('y', -buff)
-            .attr('height', dim.height + 2 * buff)
-            .attr('width', dim.width);
+        g.insert("svg:rect", ":first-child")
+            .attr("class", "legend")
+            .attr("x", -buff)
+            .attr("y", -buff)
+            .attr("height", dim.height + 2 * buff)
+            .attr("width", dim.width);
 
         // center the legend-text
-        title.attr('x', dim.width / 2);
+        title.attr("x", dim.width / 2);
 
         // set legend in-bounds if out of svg boundaries
         if (x + dim.width > svgW) {
@@ -184,7 +180,7 @@ class RoBLegend {
         if (y < 0) {
             y = 2 * buff;
         }
-        g.attr('transform', `translate(${x},${y})`);
+        g.attr("transform", `translate(${x},${y})`);
 
         this.legend_group = g;
     }

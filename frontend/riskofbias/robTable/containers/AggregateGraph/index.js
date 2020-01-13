@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import React, {Component} from "react";
+import {connect} from "react-redux";
 
-import { fetchFullStudyIfNeeded, selectActive } from 'riskofbias/robTable/actions';
-import DisplayComponent from 'riskofbias/robTable/components/AggregateGraph';
-import Loading from 'shared/components/Loading';
+import {fetchFullStudyIfNeeded, selectActive} from "riskofbias/robTable/actions";
+import DisplayComponent from "riskofbias/robTable/components/AggregateGraph";
+import Loading from "shared/components/Loading";
 
 class AggregateGraph extends Component {
     constructor(props) {
@@ -17,14 +17,14 @@ class AggregateGraph extends Component {
 
     selectActiveWithName(domainName) {
         // domainName is either {domain: xxx} or {domain: xxx, metric: xxx}
-        this.props.dispatch(selectActive({ ...domainName }));
+        this.props.dispatch(selectActive({...domainName}));
     }
 
     formatRiskofbiasForDisplay() {
         let domains = _.flattenDeep(
-            _.map(this.props.riskofbiases, (domain) => {
-                return _.map(domain.values, (metric) => {
-                    return _.filter(metric.values, (score) => {
+            _.map(this.props.riskofbiases, domain => {
+                return _.map(domain.values, metric => {
+                    return _.filter(metric.values, score => {
                         return score.final;
                     });
                 });
@@ -33,17 +33,17 @@ class AggregateGraph extends Component {
 
         return d3
             .nest()
-            .key((d) => {
+            .key(d => {
                 return d.metric.domain.name;
             })
-            .key((d) => {
+            .key(d => {
                 return d.metric.name;
             })
             .entries(domains);
     }
 
     render() {
-        let { itemsLoaded } = this.props;
+        let {itemsLoaded} = this.props;
         if (!itemsLoaded) return <Loading />;
         let domains = this.formatRiskofbiasForDisplay();
         return _.isEmpty(domains) ? (

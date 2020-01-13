@@ -1,13 +1,13 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React from "react";
+import PropTypes from "prop-types";
 
 class ExecuteWell extends React.Component {
     renderValidationWarnings() {
-        let { validationErrors } = this.props;
+        let {validationErrors} = this.props;
         if (validationErrors.length === 0) return null;
 
         return (
-            <div className="alert alert-danger" style={{ marginTop: '1em' }}>
+            <div className="alert alert-danger" style={{marginTop: "1em"}}>
                 <b>The following validation warnings were found:</b>
                 <ul>
                     {validationErrors.map((d, i) => {
@@ -46,7 +46,7 @@ class ExecuteWell extends React.Component {
             return null;
         }
         return (
-            <div className="well" style={{ marginTop: '1em' }}>
+            <div className="well" style={{marginTop: "1em"}}>
                 {this.renderExecuteButton.bind(this)()}
                 {this.renderRunningIndicator.bind(this)()}
                 {this.renderValidationWarnings.bind(this)()}

@@ -1,6 +1,6 @@
-import _ from 'lodash';
+import _ from "lodash";
 
-import * as types from 'textCleanup/constants/ActionTypes';
+import * as types from "textCleanup/constants/ActionTypes";
 
 let defaultState = {
     itemsLoaded: false,
@@ -27,7 +27,7 @@ export default function(state = defaultState, action) {
             });
 
         case types.ITEM_RECEIVE_OBJECT:
-            index = state.list.indexOf(_.find(state.list, { id: action.item.id }));
+            index = state.list.indexOf(_.find(state.list, {id: action.item.id}));
             if (index >= 0) {
                 list = [...state.list.slice(0, index), action.item, ...state.list.slice(index + 1)];
             } else {
@@ -54,7 +54,7 @@ export default function(state = defaultState, action) {
         case types.ITEM_REMOVE_EDIT_OBJECT_IDS:
             patch = state.editObject[action.field];
             ids = patch.ids;
-            action.ids.map((id) => {
+            action.ids.map(id => {
                 index = ids.indexOf(id);
                 if (index >= 0) {
                     ids = [...ids.slice(0, index), ...ids.slice(index + 1)];
@@ -63,7 +63,7 @@ export default function(state = defaultState, action) {
             return Object.assign({}, state, {
                 editObject: {
                     ...state.editObject,
-                    [action.field]: { ...patch, ids },
+                    [action.field]: {...patch, ids},
                 },
             });
 
@@ -77,23 +77,23 @@ export default function(state = defaultState, action) {
                     },
                 };
             } else {
-                patch = { [field]: action.object };
+                patch = {[field]: action.object};
             }
             return Object.assign({}, state, {
-                editObject: { ...state.editObject, ...patch },
+                editObject: {...state.editObject, ...patch},
                 editObjectErrors: {},
             });
 
         case types.ITEM_PATCH_OBJECTS:
             ids = action.patch.ids;
-            patch = _.omit(action.patch, 'ids');
+            patch = _.omit(action.patch, "ids");
             list = state.list;
-            ids.map((id) => {
-                let index = state.list.indexOf(_.find(state.list, { id }));
+            ids.map(id => {
+                let index = state.list.indexOf(_.find(state.list, {id}));
                 if (index >= 0) {
                     list = [
                         ...list.slice(0, index),
-                        Object.assign({}, list[index], { ...patch, id }),
+                        Object.assign({}, list[index], {...patch, id}),
                         ...list.slice(index + 1),
                     ];
                 } else {

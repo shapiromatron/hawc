@@ -6,10 +6,10 @@ class SingleStudyResult {
     build_table_row() {
         return [
             this.study_link(),
-            this.data.weight || '-',
-            this.data.n || '-',
-            this.data.estimateFormatted || '-',
-            this.data.notes || '-',
+            this.data.weight || "-",
+            this.data.n || "-",
+            this.data.estimateFormatted || "-",
+            this.data.notes || "-",
         ];
     }
 

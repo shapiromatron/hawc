@@ -24,19 +24,19 @@ class TableFootnotes {
             });
             if (key === undefined) {
                 key = String.fromCharCode(self.footnote_number);
-                self.footnotes.push({ key, text });
+                self.footnotes.push({key, text});
                 self.footnote_number += 1;
             }
             keys.push(key);
         });
-        return '<sup>{0}</sup>'.printf(keys.join(','));
+        return "<sup>{0}</sup>".printf(keys.join(","));
     }
 
     html_list() {
         // return an html formatted list of footnotes
         var list = [];
         this.footnotes.forEach(function(v, i) {
-            list.push('<sup>{0}</sup> {1}'.printf(v.key, v.text));
+            list.push("<sup>{0}</sup> {1}".printf(v.key, v.text));
         });
         return list;
     }

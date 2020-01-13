@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import _ from 'lodash';
+import React, {Component} from "react";
+import PropTypes from "prop-types";
+import _ from "lodash";
 
-import { STUDY_TYPES } from 'mgmt/TaskTable/constants';
+import {STUDY_TYPES} from "mgmt/TaskTable/constants";
 
 class StudyTypeSelector extends Component {
     constructor(props) {
@@ -13,8 +13,8 @@ class StudyTypeSelector extends Component {
         this.handleChange = this.handleChange.bind(this);
     }
 
-    handleChange({ target: { options } }) {
-        let values = [...options].filter((option) => option.selected).map((option) => option.value);
+    handleChange({target: {options}}) {
+        let values = [...options].filter(option => option.selected).map(option => option.value);
         this.props.handleChange(values);
     }
 
@@ -27,8 +27,7 @@ class StudyTypeSelector extends Component {
                     name="studyType_filter"
                     id="studyType_filter"
                     onChange={this.handleChange}
-                    style={{ height: '80px' }}
-                >
+                    style={{height: "80px"}}>
                     {_.map(STUDY_TYPES, (choice, key) => {
                         return (
                             <option key={key} value={key}>

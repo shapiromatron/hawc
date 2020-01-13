@@ -1,14 +1,14 @@
-import $ from '$';
+import $ from "$";
 
-import StyleViewer from './StyleViewer';
-import { StyleSymbol, StyleLine, StyleText, StyleRectangle } from './Styles';
-import { NULL_CASE } from './shared';
+import StyleViewer from "./StyleViewer";
+import {StyleSymbol, StyleLine, StyleText, StyleRectangle} from "./Styles";
+import {NULL_CASE} from "./shared";
 
 class StyleManager {
     constructor(pivot) {
         this.pivot = pivot;
-        this.styles = { symbols: [], lines: [], texts: [], rectangles: [] };
-        this.selects = { symbols: [], lines: [], texts: [], rectangles: [] };
+        this.styles = {symbols: [], lines: [], texts: [], rectangles: []};
+        this.selects = {symbols: [], lines: [], texts: [], rectangles: []};
         this.se = {};
 
         //unpack styles
@@ -33,7 +33,7 @@ class StyleManager {
             select.prepend(`<option value="${NULL_CASE}">${NULL_CASE}</option>`);
         }
         if (selected_style) {
-            select.find(`option[value="${selected_style}"]`).prop('selected', true);
+            select.find(`option[value="${selected_style}"]`).prop("selected", true);
         }
         this.selects[style_type].push(select);
         return select;
@@ -42,9 +42,9 @@ class StyleManager {
     update_selects(style_type) {
         for (var i = 0; i < this.selects[style_type].length; i++) {
             var select = this.selects[style_type][i],
-                sel = select.find('option:selected').val();
+                sel = select.find("option:selected").val();
             select.html(this._build_options(style_type));
-            select.find('option[value="{0}"]'.printf(sel)).prop('selected', true);
+            select.find('option[value="{0}"]'.printf(sel)).prop("selected", true);
         }
     }
 
@@ -52,7 +52,7 @@ class StyleManager {
         var options = [];
         this.styles[style_type].forEach(function(v) {
             options.push(
-                $('<option value="{0}">{0}</option>'.printf(v.settings.name)).data('d', v)
+                $('<option value="{0}">{0}</option>'.printf(v.settings.name)).data("d", v)
             );
         });
         return options;
@@ -71,26 +71,26 @@ class StyleManager {
             style_div = $('<div class="row-fluid">'),
             form_div = $('<div class="span6">'),
             vis_div = $('<div class="span6">'),
-            d3_div = $('<div>'),
+            d3_div = $("<div>"),
             modal = $(
                 '<div class="modal hide fade">' +
                     '<div class="modal-header">' +
                     '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>' +
-                    '<h3></h3>' +
-                    '</div>' +
+                    "<h3></h3>" +
+                    "</div>" +
                     '<div class="modal-body">' +
                     '<div class="style_fields"></div>' +
-                    '</div>' +
+                    "</div>" +
                     '<div class="modal-footer">' +
                     '<a href="#" class="btn" data-dismiss="modal" aria-hidden="true">Close</a>' +
-                    '</div>' +
-                    '</div>'
+                    "</div>" +
+                    "</div>"
             ),
             button_well = $('<div class="well">');
 
         // functionality
         var get_style = function() {
-                return style_selector.find('option:selected').data('d');
+                return style_selector.find("option:selected").data("d");
             },
             load_style = function() {
                 // load style into details portion of Styles tab
@@ -104,26 +104,26 @@ class StyleManager {
             new_style = function() {
                 var Cls;
                 switch (style_type) {
-                    case 'symbols':
+                    case "symbols":
                         Cls = StyleSymbol;
                         break;
-                    case 'lines':
+                    case "lines":
                         Cls = StyleLine;
                         break;
-                    case 'texts':
+                    case "texts":
                         Cls = StyleText;
                         break;
-                    case 'rectangles':
+                    case "rectangles":
                         Cls = StyleRectangle;
                         break;
                 }
                 var style = new Cls(self, undefined, true);
-                modal.modal('show');
+                modal.modal("show");
                 style.draw_modal(modal);
             },
             edit_style = function() {
                 var style = get_style();
-                modal.modal('show');
+                modal.modal("show");
                 style.draw_modal(modal);
             },
             delete_style = function() {
@@ -151,18 +151,18 @@ class StyleManager {
                 self.update_selects(style_type);
             },
             save_style = function() {
-                var style = modal.data('d');
+                var style = modal.data("d");
                 if (self.save_settings(style, style_type)) {
                     self.update_selects(style_type);
                     style_selector
                         .find('option[value="{0}"]'.printf(style.settings.name))
-                        .prop('selected', true);
-                    modal.modal('hide');
+                        .prop("selected", true);
+                    modal.modal("hide");
                 }
             };
 
         // create buttons and event-bindings
-        var style_selector = this.add_select(style_type).on('change', load_style),
+        var style_selector = this.add_select(style_type).on("change", load_style),
             button_new_style = $(
                 '<button style="margin-right:5px" class="btn btn-primary"><i class="fa fa-plus"></i> New</button>'
             ).click(new_style),
@@ -174,9 +174,9 @@ class StyleManager {
             ).click(delete_style);
 
         modal
-            .find('.modal-footer')
+            .find(".modal-footer")
             .prepend($('<a href="#" class="btn btn-primary">Save and close</a>').click(save_style));
-        modal.on('hidden', load_style);
+        modal.on("hidden", load_style);
 
         // put all the pieces together
         form_div.append(style_selector, button_well);
@@ -203,7 +203,7 @@ class StyleManager {
             };
 
         if (!isNameUnique(style_type, new_styles.name, style_object)) {
-            alert('Error - style name must be unique!');
+            alert("Error - style name must be unique!");
             return false;
         }
 

@@ -1,16 +1,16 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React, {Component} from "react";
+import PropTypes from "prop-types";
 
-import h from 'riskofbias/robScoreCleanup/utils/helpers';
-import ScoreDisplay from 'riskofbias/robTable/components/ScoreDisplay';
-import Study from 'study/Study';
-import './CheckboxScoreDisplay.css';
+import h from "riskofbias/robScoreCleanup/utils/helpers";
+import ScoreDisplay from "riskofbias/robTable/components/ScoreDisplay";
+import Study from "study/Study";
+import "./CheckboxScoreDisplay.css";
 
-import { SCORE_SHADES, SCORE_TEXT_DESCRIPTION } from '../../../constants';
+import {SCORE_SHADES, SCORE_TEXT_DESCRIPTION} from "../../../constants";
 
 class CheckboxScoreDisplay extends Component {
     render() {
-        let { checked, item, config, handleCheck } = this.props;
+        let {checked, item, config, handleCheck} = this.props;
         item = {
             ...item,
             score_shade: SCORE_SHADES[item.score],
@@ -22,8 +22,7 @@ class CheckboxScoreDisplay extends Component {
                     <p
                         onClick={() => {
                             Study.displayAsModal(item.study_id);
-                        }}
-                    >
+                        }}>
                         <b>{item.study_name}</b>
                     </p>
                     <input

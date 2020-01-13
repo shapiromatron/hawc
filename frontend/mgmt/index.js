@@ -1,5 +1,5 @@
 const mgmtStartup = function(cb) {
-    import('./split.js').then((mgmt) => {
+    import("./split.js").then(mgmt => {
         cb(mgmt.default);
     });
 };

@@ -1,37 +1,37 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import _ from 'lodash';
+import React, {Component} from "react";
+import PropTypes from "prop-types";
+import _ from "lodash";
 
-import ScoreDisplay from 'riskofbias/robTable/components/ScoreDisplay';
-import ScoreForm from 'riskofbias/robTable/components/ScoreForm';
-import './MetricForm.css';
+import ScoreDisplay from "riskofbias/robTable/components/ScoreDisplay";
+import ScoreForm from "riskofbias/robTable/components/ScoreForm";
+import "./MetricForm.css";
 
 class MetricForm extends Component {
     constructor(props) {
         super(props);
-        this.state = { addText: '' };
+        this.state = {addText: ""};
         this.copyNotes = this.copyNotes.bind(this);
     }
 
     copyNotes(text) {
-        this.setState({ addText: text });
+        this.setState({addText: text});
     }
 
     renderScoreRow() {
-        let { metric, config } = this.props,
-            displayScores = _.filter(metric.values, (score) => {
+        let {metric, config} = this.props,
+            displayScores = _.filter(metric.values, score => {
                 return !score.final;
             });
 
         return (
             <div className="score-row">
-                {_.map(displayScores, (score) => {
+                {_.map(displayScores, score => {
                     return (
                         <ScoreDisplay
                             key={score.id}
                             score={score}
                             config={config}
-                            copyNotes={config.display === 'final' ? this.copyNotes : undefined}
+                            copyNotes={config.display === "final" ? this.copyNotes : undefined}
                         />
                     );
                 })}
@@ -40,7 +40,7 @@ class MetricForm extends Component {
     }
 
     render() {
-        let { metric, config, updateNotesLeft, robResponseValues } = this.props,
+        let {metric, config, updateNotesLeft, robResponseValues} = this.props,
             formScore = _.find(metric.values, {
                 riskofbias_id: parseInt(config.riskofbias.id),
             });
@@ -49,11 +49,9 @@ class MetricForm extends Component {
             <div className="metric-display">
                 <h4>{metric.key}</h4>
                 {metric.values[0].metric.hide_description ? null : (
-                    <div
-                        dangerouslySetInnerHTML={{ __html: metric.values[0].metric.description }}
-                    />
+                    <div dangerouslySetInnerHTML={{__html: metric.values[0].metric.description}} />
                 )}
-                {config.display === 'final' ? this.renderScoreRow() : null}
+                {config.display === "final" ? this.renderScoreRow() : null}
                 <ScoreForm
                     config={config}
                     ref="form"

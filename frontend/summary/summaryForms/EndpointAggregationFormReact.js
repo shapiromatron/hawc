@@ -1,22 +1,22 @@
-import $ from '$';
-import React from 'react';
-import { Async } from 'react-select';
+import $ from "$";
+import React from "react";
+import {Async} from "react-select";
 
-import 'react-tabs/style/react-tabs.css';
-import 'react-select/dist/react-select.css';
+import "react-tabs/style/react-tabs.css";
+import "react-select/dist/react-select.css";
 
-import BaseVisualForm from './BaseVisualFormReact';
-import EndpointAggregation from 'summary/summary/EndpointAggregation';
+import BaseVisualForm from "./BaseVisualFormReact";
+import EndpointAggregation from "summary/summary/EndpointAggregation";
 
-import { splitStartup } from 'utils/WebpackSplit';
-import QuillTextInput from 'shared/components/QuillTextInput';
-import SelectInput from 'shared/components/SelectInput';
-import TextInput from 'shared/components/TextInput';
-import TextAreaInput from 'shared/components/TextAreaInput';
+import {splitStartup} from "utils/WebpackSplit";
+import QuillTextInput from "shared/components/QuillTextInput";
+import SelectInput from "shared/components/SelectInput";
+import TextInput from "shared/components/TextInput";
+import TextAreaInput from "shared/components/TextAreaInput";
 
 class EndpointAggregationForm extends BaseVisualForm {
-    getEndpointChoices = (endpoints) => {
-        return endpoints.map((e) => {
+    getEndpointChoices = endpoints => {
+        return endpoints.map(e => {
             let s = e.animal_group.experiment.study.short_citation,
                 x = e.animal_group.experiment.name,
                 g = e.animal_group.name;
@@ -27,13 +27,13 @@ class EndpointAggregationForm extends BaseVisualForm {
         });
     };
 
-    updatePreviewGraph = (json) => {
+    updatePreviewGraph = json => {
         new EndpointAggregation(json).displayAsPage($(this.preview).empty());
     };
 
     renderForm = () => {
-        let doseUnitChoices = this.config.dose_units.map((u) => {
-            return { id: u.id, value: u.name };
+        let doseUnitChoices = this.config.dose_units.map(u => {
+            return {id: u.id, value: u.name};
         });
 
         return (
@@ -77,7 +77,7 @@ class EndpointAggregationForm extends BaseVisualForm {
                         backspaceRemoves={false}
                         deleteRemoves={false}
                         clearable={false}
-                        onValueClick={(ep) => window.open(`/ani/endpoint/${ep.value}`, '_blank')}
+                        onValueClick={ep => window.open(`/ani/endpoint/${ep.value}`, "_blank")}
                     />
                 </div>
                 <TextAreaInput
@@ -85,7 +85,7 @@ class EndpointAggregationForm extends BaseVisualForm {
                     label="Settings"
                     value={this.state.settings}
                     onChange={this.handleInputChange}
-                    helpText="Paste from another visualization to copy settings, or set to &quot;undefined&quot;."
+                    helpText='Paste from another visualization to copy settings, or set to "undefined".'
                     required
                 />
                 <QuillTextInput
@@ -130,7 +130,7 @@ EndpointAggregationForm.propTypes = {};
 
 export default EndpointAggregationForm;
 
-const formRender = (element) => {
+const formRender = element => {
     splitStartup(element, EndpointAggregationForm);
 };
 
@@ -141,4 +141,4 @@ class EndpointAggregationShim {
         formRender(element[0]);
     }
 }
-export { formRender, EndpointAggregationShim };
+export {formRender, EndpointAggregationShim};

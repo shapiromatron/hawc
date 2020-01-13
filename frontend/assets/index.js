@@ -1,10 +1,10 @@
 // startup
-import 'utils/startup';
+import "utils/startup";
 
 // custom applications
-import nestedTagEditorStartup from 'nestedTagEditor';
-import smartTagsStartup from 'smartTags/split';
-import textCleanupStartup from 'textCleanup';
+import nestedTagEditorStartup from "nestedTagEditor";
+import smartTagsStartup from "smartTags/split";
+import textCleanupStartup from "textCleanup";
 
 window.app.nestedTagEditorStartup = nestedTagEditorStartup;
 window.app.smartTagsStartup = smartTagsStartup;

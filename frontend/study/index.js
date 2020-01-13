@@ -1,5 +1,5 @@
 const studyStartup = function(cb) {
-    import('./split.js').then((study) => {
+    import("./split.js").then(study => {
         cb(study.default);
     });
 };

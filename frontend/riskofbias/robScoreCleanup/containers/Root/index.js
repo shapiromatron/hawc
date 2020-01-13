@@ -1,10 +1,10 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { Provider } from 'react-redux';
+import React, {Component} from "react";
+import PropTypes from "prop-types";
+import {Provider} from "react-redux";
 
-import { loadConfig } from 'shared/actions/Config';
+import {loadConfig} from "shared/actions/Config";
 
-import EditForm from 'riskofbias/robScoreCleanup/containers/EditForm';
+import EditForm from "riskofbias/robScoreCleanup/containers/EditForm";
 
 class Root extends Component {
     componentWillMount() {

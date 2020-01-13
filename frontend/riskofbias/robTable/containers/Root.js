@@ -1,10 +1,10 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { Provider } from 'react-redux';
+import React, {Component} from "react";
+import PropTypes from "prop-types";
+import {Provider} from "react-redux";
 
-import { loadConfig } from 'shared/actions/Config';
-import Header from './Header';
-import RiskOfBias from './RiskOfBias';
+import {loadConfig} from "shared/actions/Config";
+import Header from "./Header";
+import RiskOfBias from "./RiskOfBias";
 
 class Root extends Component {
     componentWillMount() {

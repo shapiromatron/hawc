@@ -1,19 +1,19 @@
-import Quill from 'quill';
+import Quill from "quill";
 
-let Block = Quill.imports['blots/block'];
+let Block = Quill.imports["blots/block"];
 
 class SmartInline extends Block {
     static create(value) {
-        let el = document.createElement('DIV');
-        el.setAttribute('class', 'smart-tag active');
+        let el = document.createElement("DIV");
+        el.setAttribute("class", "smart-tag active");
         el.dataset.pk = value.pk;
         el.dataset.type = value.type;
         return el;
     }
 
     static formats(domNode) {
-        let cls = domNode.getAttribute('class') || '';
-        if (cls.indexOf('smart-tag') < 0) {
+        let cls = domNode.getAttribute("class") || "";
+        if (cls.indexOf("smart-tag") < 0) {
             return null;
         }
         return {
@@ -22,7 +22,7 @@ class SmartInline extends Block {
         };
     }
 }
-SmartInline.blotName = 'smartInline';
-SmartInline.tagName = 'DIV';
+SmartInline.blotName = "smartInline";
+SmartInline.tagName = "DIV";
 
 export default SmartInline;

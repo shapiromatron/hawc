@@ -1,4 +1,4 @@
-import $ from '$';
+import $ from "$";
 
 class DosingRegimeForm {
     constructor(form, dose_types, initial) {
@@ -43,7 +43,7 @@ class DosingRegimeForm {
         } else {
             rows = this._get_number_dose_groups();
             columns = 1;
-            dose_units.push('');
+            dose_units.push("");
             array = [];
             for (let i = 0; i < rows; i++) {
                 array.push(this._add_blank_row(columns));
@@ -76,9 +76,9 @@ class DosingRegimeForm {
     add_dose_column() {
         this._syncFromForm();
         this.columns += 1;
-        this.dose_units.push('');
+        this.dose_units.push("");
         for (var i = 0; i < this.rows; i++) {
-            this.array[i].doses.push('');
+            this.array[i].doses.push("");
         }
         this.rebuildTable();
     }
@@ -112,8 +112,8 @@ class DosingRegimeForm {
     }
 
     rebuildTable() {
-        $('#dose_table')
-            .html('')
+        $("#dose_table")
+            .html("")
             .append(this._build_colgroup(), this._build_thead(), this._build_tbody());
     }
 
@@ -122,13 +122,13 @@ class DosingRegimeForm {
         var self = this;
 
         this.dose_units = [];
-        $('#dose_table thead th select option:selected').each(function(i, v) {
+        $("#dose_table thead th select option:selected").each(function(i, v) {
             self.dose_units.push(parseFloat(this.value));
         });
 
-        $('#dose_table tbody tr').each(function(i1, v1) {
+        $("#dose_table tbody tr").each(function(i1, v1) {
             $(v1)
-                .find('td input')
+                .find("td input")
                 .each(function(i2, v2) {
                     self.array[i1].doses[i2] = $(v2).val();
                 });
@@ -138,21 +138,21 @@ class DosingRegimeForm {
     _add_blank_row(numCols) {
         var doses = [];
         for (var j = 0; j < numCols; j++) {
-            doses.push('');
+            doses.push("");
         }
-        return { doses };
+        return {doses};
     }
 
     _build_thead() {
-        var tr = $('<tr>').append('<th>Dose Units</th>');
+        var tr = $("<tr>").append("<th>Dose Units</th>");
         for (var j = 0; j < this.columns; j++) {
-            var th = $('<th>');
+            var th = $("<th>");
             var select = $('<select class="input-medium dose_types"></select>');
             this.dose_types.forEach(function(v, i) {
                 select.append('<option value="{0}">{1}</option>'.printf(v.id, v.name));
             });
             if (this.dose_units[j]) {
-                select.find('option[value={0}]'.printf(this.dose_units[j])).prop('selected', true);
+                select.find("option[value={0}]".printf(this.dose_units[j])).prop("selected", true);
             }
             th.append(select);
             if (j > 0) {
@@ -162,7 +162,7 @@ class DosingRegimeForm {
             }
             tr.append(th);
         }
-        return $('<thead>').html(tr);
+        return $("<thead>").html(tr);
     }
 
     _build_colgroup() {
@@ -171,13 +171,13 @@ class DosingRegimeForm {
         for (var j = 0; j < this.columns; j++) {
             cols.push('<col style="width:' + 90 / this.columns + '%"></col>');
         }
-        return $('<colgroup>').html(cols.join(''));
+        return $("<colgroup>").html(cols.join(""));
     }
 
     _build_tbody() {
-        var tbody = $('<tbody>');
+        var tbody = $("<tbody>");
         for (var i = 0; i < this.rows; i++) {
-            var tr = $('<tr></tr>');
+            var tr = $("<tr></tr>");
             tr.append('<td><label class="control-label">Dose Group {0}</label></td>'.printf(i + 1));
             for (var j = 0; j < this.columns; j++) {
                 tr.append(
@@ -194,22 +194,22 @@ class DosingRegimeForm {
     }
 
     _get_number_dose_groups() {
-        return Math.min(parseInt(this.form.find('#id_num_dose_groups').val()), 20);
+        return Math.min(parseInt(this.form.find("#id_num_dose_groups").val()), 20);
     }
 
     _setEventHandlers() {
         var self = this;
 
-        this.form.find('#id_num_dose_groups').on('change', function() {
+        this.form.find("#id_num_dose_groups").on("change", function() {
             self.change_rows();
         });
 
-        this.form.find('#new_dose_column').on('click', function(e) {
+        this.form.find("#new_dose_column").on("click", function(e) {
             e.preventDefault();
             self.add_dose_column();
         });
 
-        $('#dose_table').on('click', '.remove_dose', function(e) {
+        $("#dose_table").on("click", ".remove_dose", function(e) {
             e.preventDefault();
             var td_index =
                 $(this)
@@ -219,7 +219,7 @@ class DosingRegimeForm {
         });
 
         this.form.submit(function() {
-            self.form.find('#dose_groups_json').val(JSON.stringify(self.jsonify()));
+            self.form.find("#dose_groups_json").val(JSON.stringify(self.jsonify()));
             return true;
         });
     }

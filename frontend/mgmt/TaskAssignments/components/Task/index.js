@@ -1,10 +1,10 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React, {Component} from "react";
+import PropTypes from "prop-types";
 
-import AssessmentLabel from 'mgmt/TaskAssignments/components/AssessmentLabel';
-import StudyLabel from 'mgmt/TaskAssignments/components/StudyLabel';
-import TaskLabel from 'mgmt/TaskAssignments/components/TaskLabel';
-import TaskToggle from 'mgmt/TaskTable/containers/TaskToggle';
+import AssessmentLabel from "mgmt/TaskAssignments/components/AssessmentLabel";
+import StudyLabel from "mgmt/TaskAssignments/components/StudyLabel";
+import TaskLabel from "mgmt/TaskAssignments/components/TaskLabel";
+import TaskToggle from "mgmt/TaskTable/containers/TaskToggle";
 
 class Task extends Component {
     render() {

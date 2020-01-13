@@ -1,20 +1,20 @@
-import _ from 'lodash';
-import React from 'react';
-import PropTypes from 'prop-types';
+import _ from "lodash";
+import React from "react";
+import PropTypes from "prop-types";
 
-import * as types from 'bmd/constants';
+import * as types from "bmd/constants";
 
-import BaseModal from './BaseModal';
-import EditableModalFooter from 'bmd/components/EditableModalFooter';
-import ModelOptionField from 'bmd/components/ModelOptionField';
-import ParameterField from 'bmd/components/ParameterField';
+import BaseModal from "./BaseModal";
+import EditableModalFooter from "bmd/components/EditableModalFooter";
+import ModelOptionField from "bmd/components/ModelOptionField";
+import ParameterField from "bmd/components/ParameterField";
 
 class ModelOptionModal extends BaseModal {
     _getDefaults(model) {
         let defaults = {};
         _.each(model.defaults, (v, k) => {
             let val = v.d;
-            if (v.t === 'b') {
+            if (v.t === "b") {
                 val = val === 1;
             }
             defaults[v.key] = val;
@@ -58,15 +58,15 @@ class ModelOptionModal extends BaseModal {
             name = e.target.name;
 
         switch (d.t) {
-            case 'i':
-            case 'dd':
-            case 'rp':
+            case "i":
+            case "dd":
+            case "rp":
                 update[name] = parseInt(e.target.value) || 0;
                 break;
-            case 'd':
+            case "d":
                 update[name] = parseFloat(e.target.value) || 0;
                 break;
-            case 'b':
+            case "b":
                 update[name] = e.target.checked;
                 break;
             default:
@@ -83,16 +83,16 @@ class ModelOptionModal extends BaseModal {
     }
 
     renderEditMode() {
-        let { model } = this.props,
+        let {model} = this.props,
             getOpts = function(type) {
                 return _.chain(model.defaults)
                     .values()
-                    .filter((d) => d.c === type && d.n !== undefined)
+                    .filter(d => d.c === type && d.n !== undefined)
                     .value();
             },
-            models = getOpts('ot'),
-            optimizers = getOpts('op'),
-            params = getOpts('p');
+            models = getOpts("ot"),
+            optimizers = getOpts("op"),
+            params = getOpts("p");
 
         return (
             <div className="modal-body">
@@ -159,7 +159,7 @@ class ModelOptionModal extends BaseModal {
         _.each(this.props.model.defaults, (v, k) => {
             val = state[k];
             if (val !== undefined) {
-                if (v.t === 'b') {
+                if (v.t === "b") {
                     val = val ? 1 : 0;
                 }
                 if (val !== v.d) {
@@ -176,7 +176,7 @@ class ModelOptionModal extends BaseModal {
             return null;
         }
 
-        let { editMode, model } = this.props,
+        let {editMode, model} = this.props,
             title = editMode ? `Edit ${model.name} options` : `${model.name} options`,
             tableFunc = editMode ? this.renderEditMode : this.renderReadOnly;
 

@@ -1,10 +1,10 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import React, {Component} from "react";
+import {connect} from "react-redux";
 
-import { fetchFullStudyIfNeeded, selectActive } from 'riskofbias/robTable/actions';
-import DisplayComponent from 'riskofbias/robTable/components/RiskOfBiasDisplay';
-import ShowAll from 'riskofbias/robTable/components/ShowAll';
-import Loading from 'shared/components/Loading';
+import {fetchFullStudyIfNeeded, selectActive} from "riskofbias/robTable/actions";
+import DisplayComponent from "riskofbias/robTable/components/RiskOfBiasDisplay";
+import ShowAll from "riskofbias/robTable/components/ShowAll";
+import Loading from "shared/components/Loading";
 
 class RiskOfBiasDisplay extends Component {
     constructor(props) {
@@ -21,13 +21,13 @@ class RiskOfBiasDisplay extends Component {
     }
 
     handleShowAllClick() {
-        let { dispatch } = this.props,
-            domains = this.isAllShown() ? 'none' : 'all';
-        dispatch(selectActive({ domain: domains }));
+        let {dispatch} = this.props,
+            domains = this.isAllShown() ? "none" : "all";
+        dispatch(selectActive({domain: domains}));
     }
 
     render() {
-        let { itemsLoaded, active, config } = this.props;
+        let {itemsLoaded, active, config} = this.props;
         if (!itemsLoaded) return <Loading />;
 
         return (

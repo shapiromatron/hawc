@@ -1,6 +1,6 @@
-import EndpointCriticalDose from './EndpointCriticalDose';
-import React from 'react';
-import ReactDOM from 'react-dom';
+import EndpointCriticalDose from "./EndpointCriticalDose";
+import React from "react";
+import ReactDOM from "react-dom";
 
 const WrongUnitsRender = function(props) {
         return (
@@ -42,8 +42,8 @@ const WrongUnitsRender = function(props) {
         return (
             <div>
                 <p>
-                    <i>BMD modeling conducted; no model selected.</i>
-                    (<a href={props.url}>View details</a>)
+                    <i>BMD modeling conducted; no model selected.</i>(
+                    <a href={props.url}>View details</a>)
                 </p>
                 <p>{props.bmd_notes}</p>
             </div>

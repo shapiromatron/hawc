@@ -1,14 +1,14 @@
-import _ from 'lodash';
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
-import d3 from 'd3';
+import _ from "lodash";
+import React, {PureComponent} from "react";
+import PropTypes from "prop-types";
+import d3 from "d3";
 
-import BarChart from 'Graphing/BarChart';
-import XAxis from 'Graphing/Axes/xAxis';
-import YAxis from 'Graphing/Axes/yAxisLabeled';
-import './TaskChart.css';
+import BarChart from "Graphing/BarChart";
+import XAxis from "Graphing/Axes/xAxis";
+import YAxis from "Graphing/Axes/yAxisLabeled";
+import "./TaskChart.css";
 
-import { STATUS } from 'mgmt/TaskTable/constants';
+import {STATUS} from "mgmt/TaskTable/constants";
 
 class TaskChart extends PureComponent {
     componentWillMount() {
@@ -27,29 +27,29 @@ class TaskChart extends PureComponent {
             yScale = this.makeYScale(yData);
         this.setState({
             setData,
-            xData: { ...xData, xScale },
-            yData: { ...yData, yScale },
+            xData: {...xData, xScale},
+            yData: {...yData, yScale},
         });
     }
 
     getYAxisData(setData) {
-        const { chartData } = this.props,
-            values = setData.map((d) => d.key);
+        const {chartData} = this.props,
+            values = setData.map(d => d.key);
         return {
             ...chartData,
             transform: chartData.yTransform,
-            label: '',
+            label: "",
             values,
         };
     }
 
     getXAxisData(setData) {
-        const { chartData } = this.props,
-            values = setData.map((d) => d.values.count);
+        const {chartData} = this.props,
+            values = setData.map(d => d.values.count);
         return {
             ...chartData,
             transform: chartData.xTransform,
-            label: 'Tasks',
+            label: "Tasks",
             min: 0,
             max: d3.max(values),
             values,
@@ -57,7 +57,7 @@ class TaskChart extends PureComponent {
     }
 
     makeYScale(data) {
-        let { height, padding, values } = data;
+        let {height, padding, values} = data;
         return d3.scale
             .ordinal()
             .domain(values)
@@ -65,7 +65,7 @@ class TaskChart extends PureComponent {
     }
 
     makeXScale(data) {
-        let { width, padding, max } = data;
+        let {width, padding, max} = data;
         return d3.scale
             .linear()
             .domain([0, max])
@@ -73,13 +73,13 @@ class TaskChart extends PureComponent {
     }
 
     formatData() {
-        let { tasks } = this.props,
+        let {tasks} = this.props,
             data = _.map(STATUS, function(val, key) {
                 let keyInt = parseInt(key);
                 return {
                     key: key.toString(),
                     values: {
-                        count: tasks.filter((d) => d.status === keyInt).length,
+                        count: tasks.filter(d => d.status === keyInt).length,
                         label: val.type,
                     },
                 };
@@ -102,14 +102,14 @@ class TaskChart extends PureComponent {
     }
 
     render() {
-        const svg = d3.select('svg'),
-            { xData, yData, setData } = this.state,
-            ticks = (d) => {
+        const svg = d3.select("svg"),
+            {xData, yData, setData} = this.state,
+            ticks = d => {
                 let mapper = {
-                    '10': 'not started',
-                    '20': 'started',
-                    '30': 'completed',
-                    '40': 'abandoned',
+                    "10": "not started",
+                    "20": "started",
+                    "30": "completed",
+                    "40": "abandoned",
                 };
                 return mapper[d];
             };

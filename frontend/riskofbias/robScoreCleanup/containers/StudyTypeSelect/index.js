@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import React, {Component} from "react";
+import {connect} from "react-redux";
 
-import { selectStudyType } from 'riskofbias/robScoreCleanup/actions/StudyTypes';
-import h from 'riskofbias/robScoreCleanup/utils/helpers';
+import {selectStudyType} from "riskofbias/robScoreCleanup/actions/StudyTypes";
+import h from "riskofbias/robScoreCleanup/utils/helpers";
 
 class StudyTypeSelect extends Component {
     constructor(props) {
@@ -10,8 +10,8 @@ class StudyTypeSelect extends Component {
         this.handleChange = this.handleChange.bind(this);
     }
 
-    handleChange({ target: { options } }) {
-        let values = [...options].filter((option) => option.selected).map((option) => option.value);
+    handleChange({target: {options}}) {
+        let values = [...options].filter(option => option.selected).map(option => option.value);
         this.props.dispatch(selectStudyType(values));
     }
 
@@ -24,8 +24,7 @@ class StudyTypeSelect extends Component {
                     name="studyType_filter"
                     id="studyType_filter"
                     onChange={this.handleChange}
-                    style={{ height: '120px' }}
-                >
+                    style={{height: "120px"}}>
                     {_.map(this.props.choices, (type, i) => {
                         return (
                             <option key={i} value={type}>

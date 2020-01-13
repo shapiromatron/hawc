@@ -1,14 +1,14 @@
-import $ from '$';
-import _ from 'lodash';
+import $ from "$";
+import _ from "lodash";
 
-import BaseTable from 'utils/BaseTable';
+import BaseTable from "utils/BaseTable";
 
 class AnimalGroupTable {
     constructor(endpoints) {
         this.endpoints = endpoints;
         this.tbl = new BaseTable();
-        (this.endpoints_no_dr = this.endpoints.filter((v) => !v.hasEGdata())),
-            (this.endpoints_dr = this.endpoints.filter((v) => v.hasEGdata()));
+        (this.endpoints_no_dr = this.endpoints.filter(v => !v.hasEGdata())),
+            (this.endpoints_dr = this.endpoints.filter(v => v.hasEGdata()));
     }
 
     static render($div, endpoints) {
@@ -17,16 +17,15 @@ class AnimalGroupTable {
         $div.append(tbl.build_table());
 
         if (tbl.endpoints_no_dr.length > 0) {
-            $div
-                .append('<h3>Additional endpoints</h3>')
-                .append('<p>Endpoints which have no dose-response data extracted.</p>')
+            $div.append("<h3>Additional endpoints</h3>")
+                .append("<p>Endpoints which have no dose-response data extracted.</p>")
                 .append(tbl.build_no_dr_ul());
         }
     }
 
     build_table() {
         if (this.endpoints_dr.length === 0)
-            return '<p>No endpoints with dose-response data extracted are available.</p>';
+            return "<p>No endpoints with dose-response data extracted are available.</p>";
 
         this._build_header();
         this._build_tbody();
@@ -70,7 +69,7 @@ class AnimalGroupTable {
     }
 
     build_no_dr_ul() {
-        var ul = $('<ul>');
+        var ul = $("<ul>");
         this.endpoints_no_dr.forEach(function(v) {
             ul.append(v.build_ag_no_dr_li());
         });

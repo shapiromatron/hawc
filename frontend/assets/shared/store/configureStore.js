@@ -1,17 +1,17 @@
-import { createStore, applyMiddleware, compose } from 'redux';
-import thunk from 'redux-thunk';
-import { createLogger } from 'redux-logger';
+import {createStore, applyMiddleware, compose} from "redux";
+import thunk from "redux-thunk";
+import {createLogger} from "redux-logger";
 
-import addPromiseSupportToDispatch from './promisedDispatch';
+import addPromiseSupportToDispatch from "./promisedDispatch";
 
 let finalCreateStore;
 
-if (process.env.NODE_ENV === 'production') {
+if (process.env.NODE_ENV === "production") {
     finalCreateStore = compose(applyMiddleware(thunk))(createStore);
 } else {
     // development
     const logger = createLogger({
-        level: 'info',
+        level: "info",
         collapsed: false,
         logger: console,
         predicate: (getState, action) => true,
@@ -19,7 +19,7 @@ if (process.env.NODE_ENV === 'production') {
 
     finalCreateStore = compose(
         applyMiddleware(thunk, logger),
-        window.devToolsExtension ? window.devToolsExtension() : (f) => f
+        window.devToolsExtension ? window.devToolsExtension() : f => f
     )(createStore);
 }
 

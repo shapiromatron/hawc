@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import moment from 'moment';
-import DatePicker from 'react-datepicker';
+import React, {Component} from "react";
+import PropTypes from "prop-types";
+import moment from "moment";
+import DatePicker from "react-datepicker";
 
-import '../.../../../../../node_modules/react-datepicker/dist/react-datepicker.css';
+import "../.../../../../../node_modules/react-datepicker/dist/react-datepicker.css";
 
 class ReactDatePicker extends Component {
     constructor(props) {
@@ -39,7 +39,7 @@ class ReactDatePicker extends Component {
         const compProps = this.getDatePickerProps();
         return (
             <div>
-                <label htmlFor={compProps.id} className={this.props.labelClassName || ''}>
+                <label htmlFor={compProps.id} className={this.props.labelClassName || ""}>
                     {this.props.label}
                 </label>
                 <DatePicker {...compProps} />

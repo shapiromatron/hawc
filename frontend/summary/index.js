@@ -1,6 +1,6 @@
-import summaryStartup from './summary';
-import summaryFormsStartup from './summaryForms';
-import dataPivotStartup from './dataPivot';
+import summaryStartup from "./summary";
+import summaryFormsStartup from "./summaryForms";
+import dataPivotStartup from "./dataPivot";
 
 window.app.summaryStartup = summaryStartup;
 window.app.summaryFormsStartup = summaryFormsStartup;

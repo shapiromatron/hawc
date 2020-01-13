@@ -1,9 +1,9 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React from "react";
+import PropTypes from "prop-types";
 
 class DoseResponse extends React.Component {
     componentDidMount() {
-        let { endpoint } = this.props;
+        let {endpoint} = this.props;
         endpoint.build_endpoint_table($(this.refs.epTable));
         endpoint.renderPlot($(this.refs.epFigure), false);
     }
@@ -23,7 +23,7 @@ class DoseResponse extends React.Component {
                     </div>
                     <div
                         className="span4"
-                        style={{ height: '300px', width: '300px' }}
+                        style={{height: "300px", width: "300px"}}
                         ref="epFigure"
                     />
                 </div>

@@ -1,14 +1,14 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import d3 from 'd3';
+import React, {Component} from "react";
+import PropTypes from "prop-types";
+import d3 from "d3";
 
 class xAxis extends Component {
     componentWillMount() {
-        let { xScale, ticks } = this.props;
+        let {xScale, ticks} = this.props;
         this.xAxis = d3.svg
             .axis()
             .scale(xScale)
-            .orient('bottom')
+            .orient("bottom")
             .ticks(ticks);
     }
 
@@ -21,31 +21,29 @@ class xAxis extends Component {
     }
 
     getLabelElement(axisLabel) {
-        let { padding } = this.props;
+        let {padding} = this.props;
         return (
             <text
                 className="xAxis label"
                 textAnchor="beginning"
                 x={padding.left + 10}
-                y={axisLabel.offset}
-            >
+                y={axisLabel.offset}>
                 {axisLabel.label}
             </text>
         );
     }
 
     render() {
-        let { transform, label, padding, renderScale } = this.props,
+        let {transform, label, padding, renderScale} = this.props,
             axisLabel = renderScale
-                ? { offset: padding.bottom - 15, label }
-                : { offset: 20, label: label.substr(0, label.indexOf(' ')) },
+                ? {offset: padding.bottom - 15, label}
+                : {offset: 20, label: label.substr(0, label.indexOf(" "))},
             labelElement = this.getLabelElement(axisLabel);
         return (
             <g
                 ref="xAxis"
                 className="x axis"
-                transform={`translate(${transform[0]}, ${transform[1]})`}
-            >
+                transform={`translate(${transform[0]}, ${transform[1]})`}>
                 {labelElement}
             </g>
         );

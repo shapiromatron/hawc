@@ -1,8 +1,8 @@
-import fetch from 'isomorphic-fetch';
-import h from 'mgmt/utils/helpers';
+import fetch from "isomorphic-fetch";
+import h from "mgmt/utils/helpers";
 
-import { setError, resetError } from 'shared/actions/Errors';
-import * as types from './constants';
+import {setError, resetError} from "shared/actions/Errors";
+import * as types from "./constants";
 
 function makeTaskRequest() {
     return {
@@ -30,29 +30,29 @@ export function fetchTasks() {
         let state = getState();
         if (state.tasks.isFetching) return;
         dispatch(makeTaskRequest());
-        let { host, tasks } = state.config;
+        let {host, tasks} = state.config;
         const url = h.getUrlWithAssessment(
             h.getListUrl(host, tasks.url),
             state.config.assessment_id
         );
         return fetch(url, h.fetchGet)
-            .then((response) => response.json())
-            .then((json) => dispatch(receiveTasks(json)))
-            .catch((error) => dispatch(setError(error)));
+            .then(response => response.json())
+            .then(json => dispatch(receiveTasks(json)))
+            .catch(error => dispatch(setError(error)));
     };
 }
 
 export function submitTaskEdit(task) {
     return (dispatch, getState) => {
         let state = getState();
-        let { host, tasks, csrf } = state.config;
+        let {host, tasks, csrf} = state.config;
         const url = h.getObjectUrl(host, tasks.submit_url || tasks.url, task.id),
-            opts = h.fetchPost(csrf, task, 'PATCH');
-        return fetch(url, opts).then((response) => {
+            opts = h.fetchPost(csrf, task, "PATCH");
+        return fetch(url, opts).then(response => {
             if (response.ok) {
-                response.json().then((json) => dispatch(patchTask(json)));
+                response.json().then(json => dispatch(patchTask(json)));
             } else {
-                response.json().then((json) => dispatch(setError(json)));
+                response.json().then(json => dispatch(setError(json)));
             }
         });
     };
@@ -64,7 +64,7 @@ export function submitTasks(tasks) {
         let state = getState();
         if (state.tasks.isSubmitting) return;
         Promise.all(
-            tasks.map((task) => {
+            tasks.map(task => {
                 return dispatch(submitTaskEdit(task));
             })
         ).then(() => (window.location.href = state.config.cancelUrl));
@@ -110,11 +110,11 @@ export function fetchStudies() {
         let state = getState();
         if (state.studies.isFetching) return;
         dispatch(makeStudyRequest());
-        let { host, studies } = state.config;
+        let {host, studies} = state.config;
         const url = h.getListUrl(host, studies.url);
         return fetch(url, h.fetchGet)
-            .then((response) => response.json())
-            .then((json) => dispatch(receiveStudies(json)))
-            .catch((error) => dispatch(setError(error)));
+            .then(response => response.json())
+            .then(json => dispatch(receiveStudies(json)))
+            .catch(error => dispatch(setError(error)));
     };
 }

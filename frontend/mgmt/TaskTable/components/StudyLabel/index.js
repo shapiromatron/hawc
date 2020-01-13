@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import moment from 'moment';
+import React, {Component} from "react";
+import PropTypes from "prop-types";
+import moment from "moment";
 
 class StudyLabel extends Component {
     render() {
@@ -9,7 +9,7 @@ class StudyLabel extends Component {
                 <a href={this.props.study.url}>{this.props.study.short_citation}</a>
                 <br />
                 <b>Date created: </b>
-                <span>{moment(this.props.study.created).format('L')}</span>
+                <span>{moment(this.props.study.created).format("L")}</span>
             </div>
         );
     }

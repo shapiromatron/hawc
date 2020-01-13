@@ -1,5 +1,5 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React from "react";
+import PropTypes from "prop-types";
 
 class ModelOptionField extends React.Component {
     renderInput() {
@@ -8,7 +8,7 @@ class ModelOptionField extends React.Component {
             handleChange = this.props.handleChange;
 
         switch (d.t) {
-            case 'i':
+            case "i":
                 return (
                     <input
                         className="span12"
@@ -18,7 +18,7 @@ class ModelOptionField extends React.Component {
                         value={v}
                     />
                 );
-            case 'd':
+            case "d":
                 return (
                     <input
                         className="span12"
@@ -29,7 +29,7 @@ class ModelOptionField extends React.Component {
                         step="1e-8"
                     />
                 );
-            case 'b':
+            case "b":
                 return (
                     <input
                         className="span12"
@@ -39,7 +39,7 @@ class ModelOptionField extends React.Component {
                         checked={v}
                     />
                 );
-            case 'dd':
+            case "dd":
                 return (
                     <input
                         className="span12"
@@ -50,7 +50,7 @@ class ModelOptionField extends React.Component {
                         type="text"
                     />
                 );
-            case 'rp':
+            case "rp":
                 return (
                     <input
                         className="span12"
@@ -68,7 +68,7 @@ class ModelOptionField extends React.Component {
     }
 
     render() {
-        let { index, settings } = this.props;
+        let {index, settings} = this.props;
         return (
             <div className="control-group" key={index}>
                 <label className="control-label">{settings.n}</label>

@@ -1,7 +1,7 @@
-import { expect } from 'chai';
+import {expect} from "chai";
 
-describe('truth', () => {
-    it('works!', () => {
+describe("truth", () => {
+    it("works!", () => {
         expect(true).to.be.true;
     });
 });

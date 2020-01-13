@@ -1,13 +1,13 @@
-import _ from 'lodash';
-import React from 'react';
-import PropTypes from 'prop-types';
+import _ from "lodash";
+import React from "react";
+import PropTypes from "prop-types";
 
-import { deepCopy } from 'shared/utils';
+import {deepCopy} from "shared/utils";
 
-import * as types from 'bmd/constants';
+import * as types from "bmd/constants";
 
-import BaseModal from './BaseModal';
-import EditableModalFooter from 'bmd/components/EditableModalFooter';
+import BaseModal from "./BaseModal";
+import EditableModalFooter from "bmd/components/EditableModalFooter";
 
 class BMROptionModal extends BaseModal {
     componentWillReceiveProps(nextProps) {
@@ -35,13 +35,13 @@ class BMROptionModal extends BaseModal {
     }
 
     renderReadOnlyTable() {
-        let { bmr } = this.props;
+        let {bmr} = this.props;
         return (
             <table className="table table-condensed table-striped">
                 <tbody>
                     <tr>
-                        <th style={{ width: '30%' }}>BMR type</th>
-                        <td style={{ width: '70%' }}>{bmr.type}</td>
+                        <th style={{width: "30%"}}>BMR type</th>
+                        <td style={{width: "70%"}}>{bmr.type}</td>
                     </tr>
                     <tr>
                         <th>Value</th>
@@ -57,7 +57,7 @@ class BMROptionModal extends BaseModal {
     }
 
     renderEditingForm() {
-        let { allOptions } = this.props,
+        let {allOptions} = this.props,
             state = this.state,
             opts = _.values(allOptions);
 
@@ -72,8 +72,7 @@ class BMROptionModal extends BaseModal {
                             id="bmr_type"
                             name="type"
                             value={state.type}
-                            onChange={this.handleTypeChange.bind(this)}
-                        >
+                            onChange={this.handleTypeChange.bind(this)}>
                             {opts.map((d, i) => {
                                 return (
                                     <option key={i} value={d.type}>
@@ -125,7 +124,7 @@ class BMROptionModal extends BaseModal {
             return null;
         }
 
-        let { editMode, bmr } = this.props,
+        let {editMode, bmr} = this.props,
             title = this.props.editMode
                 ? `Edit benchmark response: ${bmr.type}`
                 : `Benchmark response: ${bmr.type}`,

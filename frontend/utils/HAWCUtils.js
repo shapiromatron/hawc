@@ -1,10 +1,10 @@
-import $ from '$';
-import _ from 'lodash';
-import d3 from 'd3';
-import slugify from 'slugify';
+import $ from "$";
+import _ from "lodash";
+import d3 from "d3";
+import slugify from "slugify";
 
 class HAWCUtils {
-    static HAWC_NEW_WINDOW_POPUP_CLOSING = 'hawcNewWindowPopupClosing';
+    static HAWC_NEW_WINDOW_POPUP_CLOSING = "hawcNewWindowPopupClosing";
 
     static booleanCheckbox(value) {
         return value
@@ -14,8 +14,8 @@ class HAWCUtils {
 
     static newWindowPopupLink(triggeringLink) {
         // Force new window to be a popup window
-        var href = triggeringLink.href + '?_popup=1';
-        var win = window.open(href, '_blank', 'height=500,width=980,resizable=yes,scrollbars=yes');
+        var href = triggeringLink.href + "?_popup=1";
+        var win = window.open(href, "_blank", "height=500,width=980,resizable=yes,scrollbars=yes");
         win.focus();
 
         win.onbeforeunload = function(e) {
@@ -35,17 +35,17 @@ class HAWCUtils {
         arr.forEach(function(v) {
             links.push('<a target="_blank" href="{0}">{1}</a>'.printf(v.url, v.name));
         });
-        return links.join('<span> / </span>');
+        return links.join("<span> / </span>");
     }
 
     static InitialForm(config) {
-        var selector_val = config.form.find('#id_selector_1'),
-            submitter = config.form.find('#submit_form');
+        var selector_val = config.form.find("#id_selector_1"),
+            submitter = config.form.find("#submit_form");
 
-        submitter.on('click', function() {
+        submitter.on("click", function() {
             var val = parseInt(selector_val.val(), 10);
             if (val) {
-                submitter.attr('href', '{0}?initial={1}'.printf(config.base_url, val));
+                submitter.attr("href", "{0}?initial={1}".printf(config.base_url, val));
                 return true;
             }
             return false;
@@ -53,13 +53,13 @@ class HAWCUtils {
     }
 
     static prettifyVariableName(str) {
-        str = str.replace(/_/g, ' ');
+        str = str.replace(/_/g, " ");
         return str.charAt(0).toUpperCase() + str.substr(1);
     }
 
     static truncateChars(txt, n) {
         n = n || 200;
-        if (txt.length > n) return txt.slice(0, n) + '...';
+        if (txt.length > n) return txt.slice(0, n) + "...";
         return txt;
     }
 
@@ -68,14 +68,14 @@ class HAWCUtils {
         items.forEach(function(d) {
             if (d instanceof Object) {
                 $menu.append(
-                    '<li><a href="{0}" class="{1}">{2}</a></li>'.printf(d.url, d.cls || '', d.text)
+                    '<li><a href="{0}" class="{1}">{2}</a></li>'.printf(d.url, d.cls || "", d.text)
                 );
-            } else if (typeof d === 'string') {
+            } else if (typeof d === "string") {
                 $menu.append(
                     '<li class="disabled"><a tabindex="-1" href="#">{0}</a></li>'.printf(d)
                 );
             } else {
-                console.error('unknown input type');
+                console.error("unknown input type");
             }
         });
         return $('<div class="btn-group pull-right">')
@@ -86,7 +86,7 @@ class HAWCUtils {
     }
 
     static addAlert(content, $div) {
-        $div = $div || $('#content');
+        $div = $div || $("#content");
         $div.prepend(
             $('<div class="alert">')
                 .append('<button type="button" class="close" data-dismiss="alert">&times;</button>')
@@ -95,22 +95,21 @@ class HAWCUtils {
     }
 
     static abstractMethod() {
-        throw 'Abstract method; requires implementation';
+        throw "Abstract method; requires implementation";
     }
 
     static renderChemicalProperties(url, $div, show_header) {
         $.get(url, function(data) {
-            if (data.status === 'success') {
+            if (data.status === "success") {
                 var content = [],
-                    ul = $('<ul>');
+                    ul = $("<ul>");
 
-                ul
-                    .append('<li><b>Common name:</b> {0}</li>'.printf(data.CommonName))
-                    .append('<li><b>SMILES:</b> {0}</li>'.printf(data.SMILES))
-                    .append('<li><b>Molecular Weight:</b> {0}</li>'.printf(data.MW))
+                ul.append("<li><b>Common name:</b> {0}</li>".printf(data.CommonName))
+                    .append("<li><b>SMILES:</b> {0}</li>".printf(data.SMILES))
+                    .append("<li><b>Molecular Weight:</b> {0}</li>".printf(data.MW))
                     .append('<li><img src="data:image/jpeg;base64,{0}"></li>'.printf(data.image));
 
-                if (show_header) content.push('<h3>Chemical Properties Information</h3>');
+                if (show_header) content.push("<h3>Chemical Properties Information</h3>");
 
                 content.push(
                     ul,
@@ -126,24 +125,24 @@ class HAWCUtils {
         // and requires a _.partial injection of th settings module.
         var getXY = function(txt) {
             // expects an attribute like 'translate(277', '1.1920928955078125e-7)'
-            if (_.isNull(txt) || txt.indexOf('translate') !== 0) return;
-            var cmps = txt.split(',');
-            return [parseFloat(cmps[0].split('(')[1], 10), parseFloat(cmps[1].split(')')[0], 10)];
+            if (_.isNull(txt) || txt.indexOf("translate") !== 0) return;
+            var cmps = txt.split(",");
+            return [parseFloat(cmps[0].split("(")[1], 10), parseFloat(cmps[1].split(")")[0], 10)];
         };
 
         return d3.behavior
             .drag()
             .origin(Object)
-            .on('drag', function() {
+            .on("drag", function() {
                 var x,
                     y,
                     p = d3.select(this),
-                    coords = getXY(p.attr('transform'));
+                    coords = getXY(p.attr("transform"));
 
                 if (coords) {
                     x = parseInt(coords[0] + d3.event.dx, 10);
                     y = parseInt(coords[1] + d3.event.dy, 10);
-                    p.attr('transform', `translate(${x},${y})`);
+                    p.attr("transform", `translate(${x},${y})`);
                     if (setDragCB) {
                         setDragCB.bind(this)(x, y);
                     }
@@ -157,13 +156,13 @@ class HAWCUtils {
         return d3.behavior
             .drag()
             .origin(Object)
-            .on('drag', function() {
+            .on("drag", function() {
                 var p = d3.select(this),
-                    x = parseInt(parseInt(p.attr('x'), 10) + d3.event.dx, 10),
-                    y = parseInt(parseInt(p.attr('y'), 10) + d3.event.dy, 10);
+                    x = parseInt(parseInt(p.attr("x"), 10) + d3.event.dx, 10),
+                    y = parseInt(parseInt(p.attr("y"), 10) + d3.event.dy, 10);
 
-                p.attr('x', x);
-                p.attr('y', y);
+                p.attr("x", x);
+                p.attr("y", y);
                 if (setDragCB) {
                     setDragCB.bind(this)(x, y);
                 }
@@ -178,26 +177,26 @@ class HAWCUtils {
             line = [],
             lineNumber = 0,
             lineHeight = text.getBBox().height, // px
-            x = $text.attr('x'),
-            y = $text.attr('y'),
+            x = $text.attr("x"),
+            y = $text.attr("y"),
             tspan = $text
                 .text(null)
-                .append('tspan')
-                .attr('x', x)
-                .attr('y', y);
+                .append("tspan")
+                .attr("x", x)
+                .attr("y", y);
 
         while ((word = words.pop())) {
             line.push(word);
-            tspan.text(line.join(' '));
+            tspan.text(line.join(" "));
             if (tspan.node().getComputedTextLength() > max_width && line.length > 1) {
                 line.pop();
-                tspan.text(line.join(' '));
+                tspan.text(line.join(" "));
                 line = [word];
                 tspan = $text
-                    .append('tspan')
-                    .attr('x', x)
-                    .attr('y', y)
-                    .attr('dy', ++lineNumber * lineHeight + 'px')
+                    .append("tspan")
+                    .attr("x", x)
+                    .attr("y", y)
+                    .attr("dy", ++lineNumber * lineHeight + "px")
                     .text(word);
             }
         }
@@ -207,15 +206,15 @@ class HAWCUtils {
         // not ideal; but <IE12 isn't supported which is primary-goal:
         // http://webaim.org/blog/user-agent-string-history/
         var ua = navigator.userAgent.toLowerCase(),
-            isChrome = ua.indexOf('chrome') > -1,
-            isFirefox = ua.indexOf('firefox') > -1,
-            isSafari = ua.indexOf('safari') > -1;
+            isChrome = ua.indexOf("chrome") > -1,
+            isFirefox = ua.indexOf("firefox") > -1,
+            isSafari = ua.indexOf("safari") > -1;
         return isChrome || isFirefox || isSafari;
     }
 
     static browserCheck() {
         if (!HAWCUtils.isSupportedBrowser()) {
-            $('#content').prepend(
+            $("#content").prepend(
                 $('<div class="alert">')
                     .append(
                         '<button id="hideBrowserWarning" type="button" class="close" data-dismiss="alert">&times;</button>'
@@ -228,11 +227,11 @@ class HAWCUtils {
     }
 
     static buildUL(lst, func) {
-        return '<ul>{0}</ul>'.printf(_.map(lst, func).join(''));
+        return "<ul>{0}</ul>".printf(_.map(lst, func).join(""));
     }
 
     static isHTML(str) {
-        var a = document.createElement('div');
+        var a = document.createElement("div");
         a.innerHTML = str;
         for (var c = a.childNodes, i = c.length; i--; ) {
             if (c[i].nodeType == 1) return true;
@@ -249,17 +248,17 @@ class HAWCUtils {
         // based on https://stackoverflow.com/a/20392392
         if (
             el !== null &&
-            typeof el == 'string' &&
-            el.charAt(0) == '{' &&
-            el.charAt(el.length - 1) == '}'
+            typeof el == "string" &&
+            el.charAt(0) == "{" &&
+            el.charAt(el.length - 1) == "}"
         ) {
             try {
                 let o = JSON.parse(el);
-                if (o && typeof o === 'object') {
+                if (o && typeof o === "object") {
                     return o;
                 }
             } catch (e) {
-                console.debug('un-parsable JSON-like string', el);
+                console.debug("un-parsable JSON-like string", el);
             }
         }
         return null;

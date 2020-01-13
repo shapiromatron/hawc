@@ -1,7 +1,7 @@
-import { EndpointAggregationShim } from './EndpointAggregationFormReact';
-import CrossviewForm from './CrossviewForm';
-import RoBHeatmapForm from './RoBHeatmapForm';
-import RoBBarchartForm from './RoBBarchartForm';
+import {EndpointAggregationShim} from "./EndpointAggregationFormReact";
+import CrossviewForm from "./CrossviewForm";
+import RoBHeatmapForm from "./RoBHeatmapForm";
+import RoBBarchartForm from "./RoBBarchartForm";
 
 class VisualForm {
     static create(visual_type, $el) {
@@ -20,7 +20,7 @@ class VisualForm {
                 Cls = RoBBarchartForm;
                 break;
             default:
-                throw 'Error - unknown visualization-type: {0}'.printf(visual_type);
+                throw "Error - unknown visualization-type: {0}".printf(visual_type);
         }
         return new Cls($el);
     }

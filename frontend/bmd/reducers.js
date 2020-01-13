@@ -1,12 +1,12 @@
-import _ from 'lodash';
-import { deepCopy } from 'shared/utils';
+import _ from "lodash";
+import {deepCopy} from "shared/utils";
 
-import { combineReducers } from 'redux';
+import {combineReducers} from "redux";
 
-import config from 'shared/reducers/Config';
-import * as types from 'bmd/constants';
+import config from "shared/reducers/Config";
+import * as types from "bmd/constants";
 
-import { apply_logic } from 'bmd/models/logic';
+import {apply_logic} from "bmd/models/logic";
 
 /*
     The user-interface is normalized more than the serialized data on the
@@ -34,7 +34,7 @@ const defaultState = {
     selectedOutputs: [],
     hoverModel: null,
     selectedModelId: null,
-    selectedModelNotes: '',
+    selectedModelNotes: "",
     logic: [],
     logicApplied: false,
 };
@@ -53,20 +53,18 @@ function bmd(state = defaultState, action) {
 
         case types.RECEIVE_SESSION:
             // add key-prop to each values dict for parameter
-            _.each(action.settings.allModelOptions, (d) =>
-                _.each(d.defaults, (v, k) => (v.key = k))
-            );
+            _.each(action.settings.allModelOptions, d => _.each(d.defaults, (v, k) => (v.key = k)));
 
             // create model-settings
             // 1) only get the first bmr instance of the model
             // 2) add defaults based on the model name
-            tmp2 = _.keyBy(action.settings.allModelOptions, 'name');
+            tmp2 = _.keyBy(action.settings.allModelOptions, "name");
 
-            action.settings.models.forEach((d) => (d.defaults = tmp2[d.name].defaults));
+            action.settings.models.forEach(d => (d.defaults = tmp2[d.name].defaults));
 
             tmp = _.chain(action.settings.models)
-                .filter((d) => d.bmr_id === 0)
-                .map((d) => deepCopy(d))
+                .filter(d => d.bmr_id === 0)
+                .map(d => deepCopy(d))
                 .value();
 
             tmp3 = action.settings.selected_model || {};
@@ -77,9 +75,9 @@ function bmd(state = defaultState, action) {
                 bmrs: action.settings.bmrs,
                 doseUnits: action.settings.dose_units,
                 allModelOptions: action.settings.allModelOptions,
-                allBmrOptions: _.keyBy(action.settings.allBmrOptions, 'type'),
+                allBmrOptions: _.keyBy(action.settings.allBmrOptions, "type"),
                 selectedModelId: tmp3.model || null,
-                selectedModelNotes: tmp3.notes || '',
+                selectedModelNotes: tmp3.notes || "",
                 logic: action.settings.logic,
                 hasSession: true,
                 hasExecuted: action.settings.is_finished,
@@ -131,7 +129,7 @@ function bmd(state = defaultState, action) {
             });
 
         case types.TOGGLE_VARIANCE:
-            tmp = _.map(state.modelSettings, (d) => {
+            tmp = _.map(state.modelSettings, d => {
                 tmp2 = deepCopy(d);
                 tmp2.overrides.constant_variance = tmp2.overrides.constant_variance === 0 ? 1 : 0;
                 return tmp2;
@@ -141,9 +139,7 @@ function bmd(state = defaultState, action) {
             });
 
         case types.ADD_ALL_MODELS:
-            tmp = _.map(state.allModelOptions, (d) =>
-                Object.assign(deepCopy(d), { overrides: {} })
-            );
+            tmp = _.map(state.allModelOptions, d => Object.assign(deepCopy(d), {overrides: {}}));
             return Object.assign({}, state, {
                 modelSettings: [...state.modelSettings, ...tmp],
             });

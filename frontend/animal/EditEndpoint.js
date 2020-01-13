@@ -1,8 +1,8 @@
-import $ from '$';
-import _ from 'lodash';
+import $ from "$";
+import _ from "lodash";
 
-import DRPlot from './DRPlot';
-import Endpoint from './Endpoint';
+import DRPlot from "./DRPlot";
+import Endpoint from "./Endpoint";
 
 class EditEndpoint extends Endpoint {
     constructor(data, doses, eg_table, plot) {
@@ -19,51 +19,51 @@ class EditEndpoint extends Endpoint {
         // static method used for returning the 'pretty-name' for variance type
         switch (variance_type) {
             case 0:
-                return 'N/A';
+                return "N/A";
             case 1:
-                return 'Standard Deviation';
+                return "Standard Deviation";
             case 2:
-                return 'Standard Error';
+                return "Standard Error";
             case 3:
-                return 'Not Reported';
+                return "Not Reported";
             default:
-                throw 'Unknown variance_type';
+                throw "Unknown variance_type";
         }
     }
 
     update_endpoint_from_form() {
         var vals = {
             groups: [],
-            noel_names: JSON.parse($('#config').html()).noel_names,
+            noel_names: JSON.parse($("#config").html()).noel_names,
         };
 
         //save form values
-        $('#endpoint :input').each(function() {
+        $("#endpoint :input").each(function() {
             vals[this.name] = $(this).val();
         });
-        vals['NOEL'] = $('#id_NOEL option:selected').val();
-        vals['LOEL'] = $('#id_LOEL option:selected').val();
-        vals['FEL'] = $('#id_FEL option:selected').val();
+        vals["NOEL"] = $("#id_NOEL option:selected").val();
+        vals["LOEL"] = $("#id_LOEL option:selected").val();
+        vals["FEL"] = $("#id_FEL option:selected").val();
 
         //now endpoint-group data
-        this.eg_table.find('tbody > tr').each(function(i, tr) {
+        this.eg_table.find("tbody > tr").each(function(i, tr) {
             var row = {};
             $(tr)
-                .find(':input')
+                .find(":input")
                 .each(function(i, d) {
-                    var name = d.name.split('-').pop();
+                    var name = d.name.split("-").pop();
                     row[name] = parseFloat(d.value, 10);
                 });
-            row['isReported'] = $.isNumeric(row['response']) || $.isNumeric(row['incidence']);
-            row['hasVariance'] = $.isNumeric(row['variance']);
+            row["isReported"] = $.isNumeric(row["response"]) || $.isNumeric(row["incidence"]);
+            row["hasVariance"] = $.isNumeric(row["variance"]);
             vals.groups.push(row);
         });
-        delete vals['']; // cleanup
-        vals['doses'] = this.doses;
+        delete vals[""]; // cleanup
+        vals["doses"] = this.doses;
         this.data = vals;
         this.calculate_confidence_intervals();
         this._switch_dose(0);
-        new DRPlot(this, '#endpoint_plot').build_plot();
+        new DRPlot(this, "#endpoint_plot").build_plot();
     }
 
     inject_doses(doses) {
@@ -73,7 +73,7 @@ class EditEndpoint extends Endpoint {
                 key: v.id.toString(),
                 name: v.name,
                 values: v.values.map(function(v2) {
-                    return { dose: v2 };
+                    return {dose: v2};
                 }),
             };
         });
@@ -82,25 +82,25 @@ class EditEndpoint extends Endpoint {
 
     setOELS() {
         // set NOEL, LOEL, FEL
-        var fields = $('#id_NOEL, #id_LOEL, #id_FEL').html(
-            '<option value=-999>&lt;None&gt;</option>'
+        var fields = $("#id_NOEL, #id_LOEL, #id_FEL").html(
+            "<option value=-999>&lt;None&gt;</option>"
         );
 
-        $('.doses').each(function(i, v) {
+        $(".doses").each(function(i, v) {
             fields.append('<option value="{0}">{1}</option>'.printf(i, v.textContent));
         });
 
-        $('#id_NOEL option[value="{0}"]'.printf(this.data.NOEL)).prop('selected', true);
-        $('#id_LOEL option[value="{0}"]'.printf(this.data.LOEL)).prop('selected', true);
-        $('#id_FEL option[value="{0}"]'.printf(this.data.FEL)).prop('selected', true);
+        $('#id_NOEL option[value="{0}"]'.printf(this.data.NOEL)).prop("selected", true);
+        $('#id_LOEL option[value="{0}"]'.printf(this.data.LOEL)).prop("selected", true);
+        $('#id_FEL option[value="{0}"]'.printf(this.data.FEL)).prop("selected", true);
     }
 
     calculate_confidence_intervals() {
         // Calculate 95% confidence intervals
         if (this.data !== undefined && this.data.data_type !== undefined && this.hasEGdata()) {
-            if (this.data.data_type === 'C') {
+            if (this.data.data_type === "C") {
                 this._add_continuous_confidence_intervals();
-            } else if (this.data.data_type === 'P') {
+            } else if (this.data.data_type === "P") {
                 // no change needed
             } else {
                 this._add_dichotomous_confidence_intervals();

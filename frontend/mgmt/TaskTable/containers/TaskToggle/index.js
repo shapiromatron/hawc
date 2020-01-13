@@ -1,10 +1,10 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import React, {Component} from "react";
+import PropTypes from "prop-types";
+import {connect} from "react-redux";
 
-import { submitTaskEdit } from 'mgmt/TaskTable/actions';
-import TaskForm from 'mgmt/TaskTable/components/TaskForm';
-import './TaskToggle.css';
+import {submitTaskEdit} from "mgmt/TaskTable/actions";
+import TaskForm from "mgmt/TaskTable/components/TaskForm";
+import "./TaskToggle.css";
 
 class TaskToggle extends Component {
     constructor(props) {
@@ -41,12 +41,12 @@ class TaskToggle extends Component {
             <div className={`${this.props.className} relative-parent`}>
                 <i
                     onClick={this.handleLabelDisplay}
-                    style={{ cursor: 'pointer' }}
+                    style={{cursor: "pointer"}}
                     title="Cancel edits"
                     className="fa fa-times edit-icon"
                     aria-hidden="true"
                 />
-                <TaskForm ref={(c) => (this.form = c)} {...this.props} />
+                <TaskForm ref={c => (this.form = c)} {...this.props} />
                 <button className="btn btn-primary" onClick={this.handleSubmit}>
                     Submit
                 </button>
@@ -59,7 +59,7 @@ class TaskToggle extends Component {
             <div className={`${this.props.className} relative-parent`}>
                 <i
                     onClick={this.handleFormDisplay}
-                    style={{ cursor: 'pointer' }}
+                    style={{cursor: "pointer"}}
                     title="Edit this task"
                     className="fa fa-pencil-square-o edit-icon"
                     aria-hidden="true"
@@ -81,7 +81,7 @@ TaskToggle.propTypes = {
 };
 
 function mapStateToProps(state) {
-    const { autocomplete } = state.config;
+    const {autocomplete} = state.config;
     return {
         autocompleteUrl: autocomplete.url,
     };

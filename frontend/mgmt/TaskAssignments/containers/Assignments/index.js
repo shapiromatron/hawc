@@ -1,12 +1,12 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import _ from 'lodash';
+import React, {Component} from "react";
+import {connect} from "react-redux";
+import _ from "lodash";
 
-import AssessmentTasks from 'mgmt/TaskAssignments/components/AssessmentTasks';
-import FinishedTaskFilter from 'mgmt/TaskAssignments/components/FinishedTaskFilter';
-import Loading from 'shared/components/Loading';
-import RobTasks from 'mgmt/TaskAssignments/components/RobTasks';
-import { fetchTasks, hydrateTasks } from 'mgmt/TaskAssignments/actions';
+import AssessmentTasks from "mgmt/TaskAssignments/components/AssessmentTasks";
+import FinishedTaskFilter from "mgmt/TaskAssignments/components/FinishedTaskFilter";
+import Loading from "shared/components/Loading";
+import RobTasks from "mgmt/TaskAssignments/components/RobTasks";
+import {fetchTasks, hydrateTasks} from "mgmt/TaskAssignments/actions";
 
 class Assignments extends Component {
     constructor(props) {
@@ -14,7 +14,7 @@ class Assignments extends Component {
         this.toggleFilter = this.toggleFilter.bind(this);
         this.state = {
             filterTasks: true,
-            taskFilter: (task) => {
+            taskFilter: task => {
                 return task.status !== 30 && task.status !== 40;
             },
         };
@@ -28,8 +28,8 @@ class Assignments extends Component {
     formatTasks() {
         return _.chain(this.props.tasks.list)
             .filter(this.state.taskFilter)
-            .filter((task) => task.owner.id == this.props.config.user)
-            .groupBy((task) => {
+            .filter(task => task.owner.id == this.props.config.user)
+            .groupBy(task => {
                 return task.study.assessment.name;
             })
             .value();
@@ -44,7 +44,7 @@ class Assignments extends Component {
         } else {
             this.setState({
                 filterTasks: true,
-                taskFilter: (task) => {
+                taskFilter: task => {
                     return task.status !== 30 && task.status !== 40;
                 },
             });
@@ -82,7 +82,7 @@ class Assignments extends Component {
 }
 
 function mapStateToProps(state) {
-    const { config, tasks } = state;
+    const {config, tasks} = state;
     return {
         config,
         tasks,

@@ -1,8 +1,8 @@
-import fetch from 'isomorphic-fetch';
+import fetch from "isomorphic-fetch";
 
-import { setError, resetError } from 'riskofbias/robScoreCleanup/actions/Errors';
-import * as types from 'riskofbias/robScoreCleanup/constants';
-import h from 'shared/utils/helpers';
+import {setError, resetError} from "riskofbias/robScoreCleanup/actions/Errors";
+import * as types from "riskofbias/robScoreCleanup/constants";
+import h from "shared/utils/helpers";
 
 function makeStudyTypeOptionRequest() {
     return {
@@ -30,11 +30,11 @@ export function fetchStudyTypeOptions() {
         if (state.studyTypes.isFetching || state.studyTypes.isLoaded) return;
         dispatch(makeStudyTypeOptionRequest());
         dispatch(resetError());
-        let { host, studyTypes, assessment_id } = state.config;
+        let {host, studyTypes, assessment_id} = state.config;
         const url = h.getUrlWithAssessment(h.getListUrl(host, studyTypes.url), assessment_id);
         return fetch(url, h.fetchGet)
-            .then((response) => response.json())
-            .then((json) => dispatch(receiveStudyTypeOptions(json)))
-            .catch((error) => dispatch(setError(error)));
+            .then(response => response.json())
+            .then(json => dispatch(receiveStudyTypeOptions(json)))
+            .catch(error => dispatch(setError(error)));
     };
 }

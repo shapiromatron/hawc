@@ -1,13 +1,13 @@
-import $ from '$';
-import _ from 'lodash';
+import $ from "$";
+import _ from "lodash";
 
-import BaseTable from 'utils/BaseTable';
-import DescriptiveTable from 'utils/DescriptiveTable';
-import HAWCModal from 'utils/HAWCModal';
-import HAWCUtils from 'utils/HAWCUtils';
+import BaseTable from "utils/BaseTable";
+import DescriptiveTable from "utils/DescriptiveTable";
+import HAWCModal from "utils/HAWCModal";
+import HAWCUtils from "utils/HAWCUtils";
 
-import IVChemical from './IVChemical';
-import IVEndpointGroup from './IVEndpointGroup';
+import IVChemical from "./IVChemical";
+import IVEndpointGroup from "./IVEndpointGroup";
 
 class IVEndpoint {
     constructor(data) {
@@ -17,7 +17,7 @@ class IVEndpoint {
     }
 
     static get_object(id, cb) {
-        $.get('/in-vitro/api/endpoint/{0}/'.printf(id), function(d) {
+        $.get("/in-vitro/api/endpoint/{0}/".printf(id), function(d) {
             cb(new IVEndpoint(d));
         });
     }
@@ -65,12 +65,12 @@ class IVEndpoint {
     }
 
     build_title() {
-        var el = $('<h1>').text(this._title_text());
+        var el = $("<h1>").text(this._title_text());
         if (window.canEdit) {
             var urls = [
-                'Endpoint editing',
-                { url: this.data.url_update, text: 'Update' },
-                { url: this.data.url_delete, text: 'Delete' },
+                "Endpoint editing",
+                {url: this.data.url_update, text: "Update"},
+                {url: this.data.url_delete, text: "Delete"},
             ];
             el.append(HAWCUtils.pageActionsButton(urls));
         }
@@ -81,11 +81,11 @@ class IVEndpoint {
         var self = this,
             tbl = new DescriptiveTable(),
             getBenchmarkText = function(d) {
-                return '{0}: {1}'.printf(d.benchmark, d.value);
+                return "{0}: {1}".printf(d.benchmark, d.value);
             },
             getCriticalValue = function(idx) {
                 try {
-                    return '{0} {1}'.printf(
+                    return "{0} {1}".printf(
                         self.egs[idx].data.dose,
                         self.data.experiment.dose_units.name
                     );
@@ -95,38 +95,37 @@ class IVEndpoint {
             },
             getObservationTime = function() {
                 if (self.data.observation_time.length > 0)
-                    return '{0} {1}'.printf(
+                    return "{0} {1}".printf(
                         self.data.observation_time,
                         self.data.observation_time_units
                     );
             },
             getCategory = function(cat) {
-                if (cat) return cat.names.join('→');
+                if (cat) return cat.names.join("→");
             };
 
-        tbl
-            .add_tbody_tr('Name', this.data.name)
-            .add_tbody_tr('Assay type', this.data.assay_type)
-            .add_tbody_tr('Short description', this.data.short_description)
-            .add_tbody_tr('Effect category', this.data.effect)
-            .add_tbody_tr('Specific category', getCategory(this.data.category))
-            .add_tbody_tr('Data location', this.data.data_location)
-            .add_tbody_tr('Data type', this.data.data_type)
-            .add_tbody_tr('Variance type', this.data.variance_type)
-            .add_tbody_tr('Response units', this.data.response_units)
-            .add_tbody_tr('Values estimated', HAWCUtils.booleanCheckbox(this.data.values_estimated))
-            .add_tbody_tr('Observation time', getObservationTime())
-            .add_tbody_tr('NOEL', getCriticalValue(this.data.NOEL))
-            .add_tbody_tr('LOEL', getCriticalValue(this.data.LOEL))
-            .add_tbody_tr('Monotonicity', this.data.monotonicity)
-            .add_tbody_tr('Overall pattern', this.data.overall_pattern)
-            .add_tbody_tr('Statistical test notes', this.data.statistical_test_notes)
-            .add_tbody_tr('Trend test', this.data.trend_test)
-            .add_tbody_tr('Trend test notes', this.data.trend_test_notes)
-            .add_tbody_tr('Endpoint notes', this.data.endpoint_notes)
-            .add_tbody_tr('Result notes', this.data.result_notes)
-            .add_tbody_tr_list('Effects', _.map(this.data.effects, 'name'))
-            .add_tbody_tr_list('Benchmarks', this.data.benchmarks.map(getBenchmarkText));
+        tbl.add_tbody_tr("Name", this.data.name)
+            .add_tbody_tr("Assay type", this.data.assay_type)
+            .add_tbody_tr("Short description", this.data.short_description)
+            .add_tbody_tr("Effect category", this.data.effect)
+            .add_tbody_tr("Specific category", getCategory(this.data.category))
+            .add_tbody_tr("Data location", this.data.data_location)
+            .add_tbody_tr("Data type", this.data.data_type)
+            .add_tbody_tr("Variance type", this.data.variance_type)
+            .add_tbody_tr("Response units", this.data.response_units)
+            .add_tbody_tr("Values estimated", HAWCUtils.booleanCheckbox(this.data.values_estimated))
+            .add_tbody_tr("Observation time", getObservationTime())
+            .add_tbody_tr("NOEL", getCriticalValue(this.data.NOEL))
+            .add_tbody_tr("LOEL", getCriticalValue(this.data.LOEL))
+            .add_tbody_tr("Monotonicity", this.data.monotonicity)
+            .add_tbody_tr("Overall pattern", this.data.overall_pattern)
+            .add_tbody_tr("Statistical test notes", this.data.statistical_test_notes)
+            .add_tbody_tr("Trend test", this.data.trend_test)
+            .add_tbody_tr("Trend test notes", this.data.trend_test_notes)
+            .add_tbody_tr("Endpoint notes", this.data.endpoint_notes)
+            .add_tbody_tr("Result notes", this.data.result_notes)
+            .add_tbody_tr_list("Effects", _.map(this.data.effects, "name"))
+            .add_tbody_tr_list("Benchmarks", this.data.benchmarks.map(getBenchmarkText));
 
         // add additional fields
         _.each(this.data.additional_fields, function(val, key) {
@@ -154,23 +153,23 @@ class IVEndpoint {
                     if (v.data.n !== null) opts.hasN = true;
                     if (v.data.response !== null) opts.hasResponse = true;
                     if (v.data.variance !== null) opts.hasVariance = true;
-                    if (v.data.difference_control !== 'not-tested') opts.hasDiffControl = true;
-                    if (v.data.significant_control !== 'not reported') opts.hasSigControl = true;
-                    if (v.data.cytotoxicity_observed !== 'not reported') opts.hasCytotox = true;
-                    if (v.data.precipitation_observed !== 'not reported') opts.hasPrecip = true;
+                    if (v.data.difference_control !== "not-tested") opts.hasDiffControl = true;
+                    if (v.data.significant_control !== "not reported") opts.hasSigControl = true;
+                    if (v.data.cytotoxicity_observed !== "not reported") opts.hasCytotox = true;
+                    if (v.data.precipitation_observed !== "not reported") opts.hasPrecip = true;
                 });
                 return opts;
             },
             opts = getAvailableColumns(),
             headers = function(opts) {
-                var arr = ['Dose ({0})'.printf(units)];
-                if (opts.hasN) arr.push('N');
-                if (opts.hasResponse) arr.push('Response');
-                if (opts.hasVariance) arr.push('Variance');
-                if (opts.hasDiffControl) arr.push('Difference<br>Control');
-                if (opts.hasSigControl) arr.push('Significant<br>Control');
-                if (opts.hasCytotox) arr.push('Cytotoxicity<br>Observed');
-                if (opts.hasPrecip) arr.push('Precipitation<br>Observed');
+                var arr = ["Dose ({0})".printf(units)];
+                if (opts.hasN) arr.push("N");
+                if (opts.hasResponse) arr.push("Response");
+                if (opts.hasVariance) arr.push("Variance");
+                if (opts.hasDiffControl) arr.push("Difference<br>Control");
+                if (opts.hasSigControl) arr.push("Significant<br>Control");
+                if (opts.hasCytotox) arr.push("Cytotoxicity<br>Observed");
+                if (opts.hasPrecip) arr.push("Precipitation<br>Observed");
                 return arr;
             };
 
@@ -188,23 +187,21 @@ class IVEndpoint {
             detail = $(
                 '<i class="fa fa-eye eyeEndpointModal" title="quick view" style="display: none">'
             ).click(() => {
-                this.displayAsModal({ complete: true });
+                this.displayAsModal({complete: true});
             }),
-            endpoint = $('<span>')
+            endpoint = $("<span>")
                 .append(link, detail)
                 .hover(detail.fadeIn.bind(detail), detail.fadeOut.bind(detail));
 
         return [
-            `<a href=${this.data.experiment.study.url} target="_blank">${
-                this.data.experiment.study.short_citation
-            }</a>`,
+            `<a href=${this.data.experiment.study.url} target="_blank">${this.data.experiment.study.short_citation}</a>`,
             `<a href=${this.data.experiment.url} target="_blank">${this.data.experiment.name}</a>`,
             `<a href=${this.chemical.data.url} target="_blank">${this.chemical.data.name}</a>`,
             endpoint,
-            this.data.effect ? this.data.effect : '--',
-            this.data.effects.length > 0 ? _.map(this.data.effects, 'name').join(', ') : '--',
-            this.data.experiment.dose_units.name ? this.data.experiment.dose_units.name : '--',
-            this.data.response_units ? this.data.response_units : '--',
+            this.data.effect ? this.data.effect : "--",
+            this.data.effects.length > 0 ? _.map(this.data.effects, "name").join(", ") : "--",
+            this.data.experiment.dose_units.name ? this.data.experiment.dose_units.name : "--",
+            this.data.response_units ? this.data.response_units : "--",
         ];
     }
 
@@ -225,19 +222,18 @@ class IVEndpoint {
         modal
             .addTitleLinkHeader(this.data.name, this.data.url)
             .addBody($content)
-            .addFooter('')
-            .show({ maxWidth: 900 });
+            .addFooter("")
+            .show({maxWidth: 900});
     }
 
     displayAsPage($div) {
-        $div
-            .append(this.build_title())
+        $div.append(this.build_title())
             .append(this.build_details_table())
-            .append('<h2>Chemical details</h2>')
+            .append("<h2>Chemical details</h2>")
             .append(this.chemical.build_details_table());
 
         if (this.has_egs()) {
-            $div.append('<h2>Endpoint-group</h2>').append(this.build_eg_table());
+            $div.append("<h2>Endpoint-group</h2>").append(this.build_eg_table());
         }
     }
 }

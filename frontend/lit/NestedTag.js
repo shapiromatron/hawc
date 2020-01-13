@@ -1,8 +1,8 @@
-import $ from '$';
+import $ from "$";
 
-import Observee from 'utils/Observee';
+import Observee from "utils/Observee";
 
-import Reference from './Reference';
+import Reference from "./Reference";
 
 class NestedTag extends Observee {
     constructor(item, level, tree, parent) {
@@ -28,34 +28,34 @@ class NestedTag extends Observee {
         var div = $('<div data-id="{0}">'.printf(this.data.pk)),
             collapse = $('<span class="nestedTagCollapser"></span>').appendTo(div),
             txtspan = $('<p class="nestedTag"></p>'),
-            text = '{0}{1}'.printf(padding, this.data.name);
+            text = "{0}{1}".printf(padding, this.data.name);
 
-        if (options && options.show_refs_count) text += ' ({0})'.printf(this.data.reference_count);
+        if (options && options.show_refs_count) text += " ({0})".printf(this.data.reference_count);
         txtspan
             .text(text)
             .appendTo(div)
-            .data('d', this)
-            .on('click', function() {
-                $(this).trigger('hawc-tagClicked');
+            .data("d", this)
+            .on("click", function() {
+                $(this).trigger("hawc-tagClicked");
             });
         parent.append(div);
 
         if (this.children.length > 0) {
-            var toggle = $('<a>')
-                    .attr('title', 'Collapse tags: {0}'.printf(this.data.name))
-                    .attr('data-toggle', 'collapse')
-                    .attr('href', '#collapseTag{0}'.printf(this.data.pk))
-                    .data('expanded', true)
-                    .data('name', this.data.name)
-                    .on('click', function() {
+            var toggle = $("<a>")
+                    .attr("title", "Collapse tags: {0}".printf(this.data.name))
+                    .attr("data-toggle", "collapse")
+                    .attr("href", "#collapseTag{0}".printf(this.data.pk))
+                    .data("expanded", true)
+                    .data("name", this.data.name)
+                    .on("click", function() {
                         var self = toggle;
-                        self.data('expanded', !self.data('expanded'));
-                        if (self.data('expanded')) {
-                            span.attr('class', 'icon-minus');
-                            self.attr('title', 'Collapse tags: {0}'.printf(self.data('name')));
+                        self.data("expanded", !self.data("expanded"));
+                        if (self.data("expanded")) {
+                            span.attr("class", "icon-minus");
+                            self.attr("title", "Collapse tags: {0}".printf(self.data("name")));
                         } else {
-                            span.attr('class', 'icon-plus');
-                            self.attr('title', 'Expand tags: {0}'.printf(self.data('name')));
+                            span.attr("class", "icon-plus");
+                            self.attr("title", "Expand tags: {0}".printf(self.data("name")));
                         }
                     }),
                 span = $('<span class="icon-minus"></span>').appendTo(toggle);
@@ -65,19 +65,19 @@ class NestedTag extends Observee {
                 '<div id="collapseTag{0}" class="in collapse"></div>'.printf(this.data.pk)
             ).appendTo(div);
             this.children.forEach(function(v) {
-                v.get_nested_list_item(nested, padding + '   ', options);
+                v.get_nested_list_item(nested, padding + "   ", options);
             });
             if (options && options.sortable) {
                 nested.sortable({
                     containment: parent,
                     start(event, ui) {
                         var start_pos = ui.item.index();
-                        ui.item.data('start_pos', start_pos);
+                        ui.item.data("start_pos", start_pos);
                     },
                     stop(event, ui) {
-                        var start_pos = ui.item.data('start_pos'),
+                        var start_pos = ui.item.data("start_pos"),
                             offset = ui.item.index() - start_pos;
-                        if (offset !== 0) $(this).trigger('hawc-tagMoved', [ui.item, offset]);
+                        if (offset !== 0) $(this).trigger("hawc-tagMoved", [ui.item, offset]);
                     },
                 });
             }
@@ -87,14 +87,14 @@ class NestedTag extends Observee {
     }
 
     get_reference_objects_by_tag(reference_viewer) {
-        var url = '/lit/assessment/{0}/references/{1}/json/'.printf(
+        var url = "/lit/assessment/{0}/references/{1}/json/".printf(
             window.assessment_pk,
             this.data.pk
         );
-        if (window.search_id) url += '?search_id={0}'.printf(window.search_id);
+        if (window.search_id) url += "?search_id={0}".printf(window.search_id);
 
         $.get(url, function(results) {
-            if (results.status == 'success') {
+            if (results.status == "success") {
                 var refs = [];
                 results.refs.forEach(function(datum) {
                     refs.push(new Reference(datum, window.tagtree));
@@ -111,10 +111,10 @@ class NestedTag extends Observee {
             $(
                 '<option value="{0}">{1}{2}</option>'.printf(
                     this.data.pk,
-                    Array(this.level + 1).join('&nbsp;&nbsp;'),
+                    Array(this.level + 1).join("&nbsp;&nbsp;"),
                     this.data.name
                 )
-            ).data('d', this)
+            ).data("d", this)
         );
         this.children.forEach(function(v) {
             v.get_option_item(lst);
@@ -131,7 +131,7 @@ class NestedTag extends Observee {
 
     get_full_name() {
         if (this.parent && this.parent.get_full_name) {
-            return this.parent.get_full_name() + ' ➤ ' + this.data.name;
+            return this.parent.get_full_name() + " ➤ " + this.data.name;
         } else {
             return this.data.name;
         }
@@ -140,13 +140,13 @@ class NestedTag extends Observee {
     add_child(name) {
         var self = this,
             data = {
-                status: 'add',
+                status: "add",
                 parent_pk: this.data.pk,
                 name,
             };
 
-        $.post('.', data, function(v) {
-            if (v.status === 'success') {
+        $.post(".", data, function(v) {
+            if (v.status === "success") {
                 self.children.push(new NestedTag(v.node[0], self.level + 1, self.tree, self));
                 self.tree.tree_changed();
             }
@@ -159,13 +159,13 @@ class NestedTag extends Observee {
         });
         var self = this,
             data = {
-                status: 'remove',
+                status: "remove",
                 pk: this.data.pk,
             };
 
-        $.post('.', data, function(v) {
-            if (v.status === 'success') {
-                self.notifyObservers({ event: 'tag removed', object: self });
+        $.post(".", data, function(v) {
+            if (v.status === "success") {
+                self.notifyObservers({event: "tag removed", object: self});
                 if (self.parent) {
                     self.parent.remove_child(self);
                 } else {
@@ -181,7 +181,7 @@ class NestedTag extends Observee {
             lst = this.parent.children,
             index = lst.indexOf(this),
             data = {
-                status: 'move',
+                status: "move",
                 pk: this.data.pk,
                 offset,
             };
@@ -189,21 +189,21 @@ class NestedTag extends Observee {
         // update locally
         lst.splice(index + offset, 0, lst.splice(index, 1)[0]);
 
-        $.post('.', data, function(v) {
-            if (v.status === 'success') self.tree.tree_changed();
+        $.post(".", data, function(v) {
+            if (v.status === "success") self.tree.tree_changed();
         });
     }
 
     rename_self(name) {
         var self = this,
             data = {
-                status: 'rename',
+                status: "rename",
                 pk: this.data.pk,
                 name,
             };
 
-        $.post('.', data, function(v) {
-            if (v.status === 'success') {
+        $.post(".", data, function(v) {
+            if (v.status === "success") {
                 self.data.name = name;
                 self.tree.tree_changed();
             }

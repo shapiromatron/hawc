@@ -1,35 +1,35 @@
-import _ from 'lodash';
-import d3 from 'd3';
+import _ from "lodash";
+import d3 from "d3";
 
-import Study from 'study/Study';
+import Study from "study/Study";
 
-import Experiment from 'animal/Experiment';
-import AnimalGroup from 'animal/AnimalGroup';
-import Endpoint from 'animal/Endpoint';
+import Experiment from "animal/Experiment";
+import AnimalGroup from "animal/AnimalGroup";
+import Endpoint from "animal/Endpoint";
 
-import StudyPopulation from 'epi/StudyPopulation';
-import ComparisonSet from 'epi/ComparisonSet';
-import Exposure from 'epi/Exposure';
-import Outcome from 'epi/Outcome';
-import Result from 'epi/Result';
+import StudyPopulation from "epi/StudyPopulation";
+import ComparisonSet from "epi/ComparisonSet";
+import Exposure from "epi/Exposure";
+import Outcome from "epi/Outcome";
+import Result from "epi/Result";
 
-import MetaProtocol from 'epimeta/MetaProtocol';
-import MetaResult from 'epimeta/MetaResult';
+import MetaProtocol from "epimeta/MetaProtocol";
+import MetaResult from "epimeta/MetaResult";
 
-import IVChemical from 'invitro/IVChemical';
-import IVExperiment from 'invitro/IVExperiment';
-import IVCellType from 'invitro/IVCellType';
-import IVEndpoint from 'invitro/IVEndpoint';
+import IVChemical from "invitro/IVChemical";
+import IVExperiment from "invitro/IVExperiment";
+import IVCellType from "invitro/IVCellType";
+import IVEndpoint from "invitro/IVEndpoint";
 
-import { NULL_CASE } from './shared';
+import {NULL_CASE} from "./shared";
 
 class DataPivotExtension {
     static extByName() {
-        return _.keyBy(DataPivotExtension.values, '_dpe_name');
+        return _.keyBy(DataPivotExtension.values, "_dpe_name");
     }
 
     static extByColumnKey() {
-        return _.groupBy(DataPivotExtension.values, '_dpe_key');
+        return _.groupBy(DataPivotExtension.values, "_dpe_key");
     }
 
     static update_extensions(obj, key) {
@@ -38,7 +38,7 @@ class DataPivotExtension {
         if (match) {
             _.extend(obj, match);
         } else {
-            console.log('Unrecognized DPE key: {0}'.printf(key));
+            console.log("Unrecognized DPE key: {0}".printf(key));
         }
     }
 
@@ -74,106 +74,106 @@ class DataPivotExtension {
 _.extend(DataPivotExtension, {
     values: [
         {
-            _dpe_name: 'study',
-            _dpe_key: 'study id',
+            _dpe_name: "study",
+            _dpe_key: "study id",
             _dpe_cls: Study,
-            _dpe_option_txt: 'Show study',
+            _dpe_option_txt: "Show study",
         },
         {
-            _dpe_name: 'experiment',
-            _dpe_key: 'experiment id',
+            _dpe_name: "experiment",
+            _dpe_key: "experiment id",
             _dpe_cls: Experiment,
-            _dpe_option_txt: 'Show experiment',
+            _dpe_option_txt: "Show experiment",
         },
         {
-            _dpe_name: 'animal_group',
-            _dpe_key: 'animal group id',
+            _dpe_name: "animal_group",
+            _dpe_key: "animal group id",
             _dpe_cls: AnimalGroup,
-            _dpe_option_txt: 'Show animal group',
+            _dpe_option_txt: "Show animal group",
         },
         {
-            _dpe_name: 'endpoint',
-            _dpe_key: 'endpoint id',
+            _dpe_name: "endpoint",
+            _dpe_key: "endpoint id",
             _dpe_cls: Endpoint,
-            _dpe_option_txt: 'Show endpoint (basic)',
+            _dpe_option_txt: "Show endpoint (basic)",
             _dpe_options: {
                 complete: false,
             },
         },
         {
-            _dpe_name: 'endpoint_complete',
-            _dpe_key: 'endpoint id',
+            _dpe_name: "endpoint_complete",
+            _dpe_key: "endpoint id",
             _dpe_cls: Endpoint,
-            _dpe_option_txt: 'Show endpoint (complete)',
+            _dpe_option_txt: "Show endpoint (complete)",
             _dpe_options: {
                 complete: true,
             },
         },
         {
-            _dpe_name: 'study_population',
-            _dpe_key: 'study population id',
+            _dpe_name: "study_population",
+            _dpe_key: "study population id",
             _dpe_cls: StudyPopulation,
-            _dpe_option_txt: 'Show study population',
+            _dpe_option_txt: "Show study population",
         },
         {
-            _dpe_name: 'comparison_set',
-            _dpe_key: 'comparison set id',
+            _dpe_name: "comparison_set",
+            _dpe_key: "comparison set id",
             _dpe_cls: ComparisonSet,
-            _dpe_option_txt: 'Show comparison set',
+            _dpe_option_txt: "Show comparison set",
         },
         {
-            _dpe_name: 'exposure',
-            _dpe_key: 'exposure id',
+            _dpe_name: "exposure",
+            _dpe_key: "exposure id",
             _dpe_cls: Exposure,
-            _dpe_option_txt: 'Show exposure',
+            _dpe_option_txt: "Show exposure",
         },
         {
-            _dpe_name: 'outcome',
-            _dpe_key: 'outcome id',
+            _dpe_name: "outcome",
+            _dpe_key: "outcome id",
             _dpe_cls: Outcome,
-            _dpe_option_txt: 'Show outcome',
+            _dpe_option_txt: "Show outcome",
         },
         {
-            _dpe_name: 'result',
-            _dpe_key: 'result id',
+            _dpe_name: "result",
+            _dpe_key: "result id",
             _dpe_cls: Result,
-            _dpe_option_txt: 'Show result',
+            _dpe_option_txt: "Show result",
         },
         {
-            _dpe_name: 'meta_protocol',
-            _dpe_key: 'protocol id',
+            _dpe_name: "meta_protocol",
+            _dpe_key: "protocol id",
             _dpe_cls: MetaProtocol,
-            _dpe_option_txt: 'Show protocol',
+            _dpe_option_txt: "Show protocol",
         },
         {
-            _dpe_name: 'meta_result',
-            _dpe_key: 'meta result id',
+            _dpe_name: "meta_result",
+            _dpe_key: "meta result id",
             _dpe_cls: MetaResult,
-            _dpe_option_txt: 'Show meta result',
+            _dpe_option_txt: "Show meta result",
         },
         {
-            _dpe_name: 'iv_chemical',
-            _dpe_key: 'chemical id',
+            _dpe_name: "iv_chemical",
+            _dpe_key: "chemical id",
             _dpe_cls: IVChemical,
-            _dpe_option_txt: 'Show chemical',
+            _dpe_option_txt: "Show chemical",
         },
         {
-            _dpe_name: 'iv_experiment',
-            _dpe_key: 'IVExperiment id',
+            _dpe_name: "iv_experiment",
+            _dpe_key: "IVExperiment id",
             _dpe_cls: IVExperiment,
-            _dpe_option_txt: 'Show experiment',
+            _dpe_option_txt: "Show experiment",
         },
         {
-            _dpe_name: 'iv_celltype',
-            _dpe_key: 'IVCellType id',
+            _dpe_name: "iv_celltype",
+            _dpe_key: "IVCellType id",
             _dpe_cls: IVCellType,
-            _dpe_option_txt: 'Show cell type',
+            _dpe_option_txt: "Show cell type",
         },
         {
-            _dpe_name: 'iv_endpoint',
-            _dpe_key: 'IVEndpoint id',
+            _dpe_name: "iv_endpoint",
+            _dpe_key: "IVEndpoint id",
             _dpe_cls: IVEndpoint,
-            _dpe_option_txt: 'Show endpoint',
+            _dpe_option_txt: "Show endpoint",
         },
     ],
 });

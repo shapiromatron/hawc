@@ -1,13 +1,13 @@
-import _ from 'lodash';
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import ReactQuill from 'react-quill';
+import _ from "lodash";
+import React, {Component} from "react";
+import PropTypes from "prop-types";
+import ReactQuill from "react-quill";
 
-import ScoreIcon from 'riskofbias/robTable/components/ScoreIcon';
-import SelectInput from 'shared/components/SelectInput';
-import h from 'shared/utils/helpers';
-import './ScoreForm.css';
-import { SCORE_SHADES, SCORE_TEXT, SCORE_TEXT_DESCRIPTION } from '../../../constants';
+import ScoreIcon from "riskofbias/robTable/components/ScoreIcon";
+import SelectInput from "shared/components/SelectInput";
+import h from "shared/utils/helpers";
+import "./ScoreForm.css";
+import {SCORE_SHADES, SCORE_TEXT, SCORE_TEXT_DESCRIPTION} from "../../../constants";
 
 class ScoreForm extends Component {
     constructor(props) {
@@ -54,24 +54,24 @@ class ScoreForm extends Component {
     }
 
     handleEditorInput(event) {
-        this.setState({ notes: event });
+        this.setState({notes: event});
         this.validateInput(this.state.score, event);
     }
 
     validateInput(score, notes) {
-        if (this.state.notes.replace(/<\/?[^>]+(>|$)/g, '') == '') {
-            this.props.updateNotesLeft(this.props.score.id, 'add');
+        if (this.state.notes.replace(/<\/?[^>]+(>|$)/g, "") == "") {
+            this.props.updateNotesLeft(this.props.score.id, "add");
         } else {
-            this.props.updateNotesLeft(this.props.score.id, 'clear');
+            this.props.updateNotesLeft(this.props.score.id, "clear");
         }
     }
 
     render() {
-        let { name } = this.props.score.metric,
-            { score, notes } = this.state,
-            { assessment_id } = this.props.config,
-            choices = this.props.robResponseValues.map((d) => {
-                return { id: parseInt(d), value: SCORE_TEXT_DESCRIPTION[d] };
+        let {name} = this.props.score.metric,
+            {score, notes} = this.state,
+            {assessment_id} = this.props.config,
+            choices = this.props.robResponseValues.map(d => {
+                return {id: parseInt(d), value: SCORE_TEXT_DESCRIPTION[d]};
             }),
             showScoreInput = !h.hideRobScore(parseInt(assessment_id));
 

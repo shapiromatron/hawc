@@ -1,6 +1,6 @@
-import $ from '$';
+import $ from "$";
 
-import SmartTagContainer from './SmartTagContainer';
+import SmartTagContainer from "./SmartTagContainer";
 
 class SmartTagEditor extends SmartTagContainer {
     constructor($el, options) {
@@ -17,7 +17,7 @@ class SmartTagEditor extends SmartTagContainer {
     }
 
     setContent(content) {
-        let q = this.$el.data('_quill');
+        let q = this.$el.data("_quill");
         q.pasteHTML(content);
         this.renderAndEnable();
     }

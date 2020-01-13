@@ -1,6 +1,6 @@
-import Donut from './Donut';
-import ScoreCleanupStartup from './robScoreCleanup';
-import TableStartup from './robTable';
+import Donut from "./Donut";
+import ScoreCleanupStartup from "./robScoreCleanup";
+import TableStartup from "./robTable";
 
 export default {
     Donut,

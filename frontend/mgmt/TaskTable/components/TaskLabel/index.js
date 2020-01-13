@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React, {Component} from "react";
+import PropTypes from "prop-types";
 
-import DueDateLabel from 'mgmt/TaskTable/components/DueDateLabel';
-import StatusLabel from 'mgmt/TaskTable/components/StatusLabel';
-import './TaskLabel.css';
+import DueDateLabel from "mgmt/TaskTable/components/DueDateLabel";
+import StatusLabel from "mgmt/TaskTable/components/StatusLabel";
+import "./TaskLabel.css";
 
 class TaskLabel extends Component {
     renderOwner(task) {
@@ -19,7 +19,7 @@ class TaskLabel extends Component {
     }
 
     render() {
-        const { task } = this.props;
+        const {task} = this.props;
         return (
             <div className="taskLabel">
                 <StatusLabel task={task} />

@@ -1,10 +1,10 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import _ from 'lodash';
+import React, {Component} from "react";
+import {connect} from "react-redux";
+import _ from "lodash";
 
-import { initializeBulkEditForm, patchBulkList, patchDetailList } from 'textCleanup/actions/Items';
-import Loading from 'shared/components/Loading';
-import FormComponent from 'textCleanup/components/Items/BulkForm';
+import {initializeBulkEditForm, patchBulkList, patchDetailList} from "textCleanup/actions/Items";
+import Loading from "shared/components/Loading";
+import FormComponent from "textCleanup/components/Items/BulkForm";
 
 class BulkForm extends Component {
     constructor(props) {
@@ -20,7 +20,7 @@ class BulkForm extends Component {
     }
 
     getIDs(props) {
-        return _.map(props.items, 'id');
+        return _.map(props.items, "id");
     }
 
     handleBulkSubmit(obj) {
@@ -33,7 +33,7 @@ class BulkForm extends Component {
 
     isReadyToRender(thisField) {
         let ids = this.getIDs(this.props),
-            { params, model } = this.props;
+            {params, model} = this.props;
 
         if (
             (ids && model.editObject == null) ||
@@ -46,7 +46,7 @@ class BulkForm extends Component {
     }
 
     render() {
-        let { items, model, params, config } = this.props,
+        let {items, model, params, config} = this.props,
             modalClass = config[params.type].title,
             thisField = items[0][params.field];
         if (!this.isReadyToRender(thisField)) return <Loading />;

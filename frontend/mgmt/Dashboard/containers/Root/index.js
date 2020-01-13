@@ -1,12 +1,12 @@
-import _ from 'lodash';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import _ from "lodash";
+import React, {Component} from "react";
+import {connect} from "react-redux";
 
-import { loadConfig } from 'shared/actions/Config';
-import { fetchTasks } from 'mgmt/Dashboard/actions';
-import Loading from 'shared/components/Loading';
-import TaskChart from 'mgmt/Dashboard/components/TaskChart';
-import { STATUS } from 'mgmt/Dashboard/constants';
+import {loadConfig} from "shared/actions/Config";
+import {fetchTasks} from "mgmt/Dashboard/actions";
+import Loading from "shared/components/Loading";
+import TaskChart from "mgmt/Dashboard/components/TaskChart";
+import {STATUS} from "mgmt/Dashboard/constants";
 
 class Root extends Component {
     constructor(props) {
@@ -21,12 +21,12 @@ class Root extends Component {
     getChartData() {
         const height = 200,
             width = 500,
-            padding = { top: 20, right: 0, bottom: 50, left: 75 },
+            padding = {top: 20, right: 0, bottom: 50, left: 75},
             yTransform = [padding.left, 0],
             xTransform = [0, height - padding.bottom],
             colors = {};
-        Object.keys(STATUS).map((key) => (colors[key] = STATUS[key].color));
-        return { height, width, padding, yTransform, xTransform, colors };
+        Object.keys(STATUS).map(key => (colors[key] = STATUS[key].color));
+        return {height, width, padding, yTransform, xTransform, colors};
     }
 
     renderNoTasks() {
@@ -35,12 +35,12 @@ class Root extends Component {
 
     renderTasksByType(chartData, list) {
         let types = _.chain(list)
-            .map('type')
+            .map("type")
             .uniq()
             .value();
 
         return types.map(function(type) {
-            let subset = list.filter((d) => d.type === type),
+            let subset = list.filter(d => d.type === type),
                 data = _.extend({}, chartData, {
                     label: subset[0].type_display,
                 });
@@ -54,13 +54,13 @@ class Root extends Component {
 
     renderTasksByUser(chartData, list) {
         let users = _.chain(list)
-            .map((d) => (d.owner ? d.owner.full_name : null))
+            .map(d => (d.owner ? d.owner.full_name : null))
             .compact()
             .uniq()
             .value();
 
         return users.map(function(user) {
-            let subset = list.filter((d) => d.owner && d.owner.full_name === user),
+            let subset = list.filter(d => d.owner && d.owner.full_name === user),
                 data = _.extend({}, chartData, {
                     label: subset[0].owner.full_name,
                 });

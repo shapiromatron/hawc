@@ -1,14 +1,14 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { Provider } from 'react-redux';
-import { Switch, Route, BrowserRouter } from 'react-router-dom';
+import React, {Component} from "react";
+import PropTypes from "prop-types";
+import {Provider} from "react-redux";
+import {Switch, Route, BrowserRouter} from "react-router-dom";
 
-import { loadConfig } from 'shared/actions/Config';
+import {loadConfig} from "shared/actions/Config";
 
-import urls from 'textCleanup/constants/urls';
-import AssessmentApp from 'textCleanup/containers/AssessmentApp';
-import FieldSelection from 'textCleanup/containers/FieldSelection';
-import Items from 'textCleanup/containers/Items/App';
+import urls from "textCleanup/constants/urls";
+import AssessmentApp from "textCleanup/containers/AssessmentApp";
+import FieldSelection from "textCleanup/containers/FieldSelection";
+import Items from "textCleanup/containers/Items/App";
 
 class Root extends Component {
     componentWillMount() {
@@ -16,7 +16,7 @@ class Root extends Component {
     }
 
     render() {
-        const { store } = this.props;
+        const {store} = this.props;
         return (
             <Provider store={store}>
                 <BrowserRouter>
@@ -24,16 +24,16 @@ class Root extends Component {
                         <Route
                             exact
                             path={urls.assessment.url}
-                            render={(routerProps) => <AssessmentApp {...routerProps} />}
+                            render={routerProps => <AssessmentApp {...routerProps} />}
                         />
                         <Route
                             exact
                             path={urls.fields.url}
-                            render={(routerProps) => <FieldSelection {...routerProps} />}
+                            render={routerProps => <FieldSelection {...routerProps} />}
                         />
                         <Route
                             path={urls.endpoints.url}
-                            render={(routerProps) => <Items {...routerProps} />}
+                            render={routerProps => <Items {...routerProps} />}
                         />
                     </Switch>
                 </BrowserRouter>

@@ -1,8 +1,8 @@
-import $ from '$';
-import _ from 'lodash';
-import d3 from 'd3';
+import $ from "$";
+import _ from "lodash";
+import d3 from "d3";
 
-import D3Plot from 'utils/D3Plot';
+import D3Plot from "utils/D3Plot";
 
 class DRPlot extends D3Plot {
     constructor(endpoint, div, options, parent) {
@@ -12,7 +12,7 @@ class DRPlot extends D3Plot {
          */
         super(...arguments);
         this.parent = parent;
-        this.options = options || { build_plot_startup: true };
+        this.options = options || {build_plot_startup: true};
         this.endpoint = endpoint;
         this.plot_div = $(div);
         this.bmd = [];
@@ -25,7 +25,7 @@ class DRPlot extends D3Plot {
     }
 
     update(status) {
-        if (status.status === 'dose_changed') this.dose_scale_change();
+        if (status.status === "dose_changed") this.dose_scale_change();
     }
 
     dose_scale_change() {
@@ -35,7 +35,7 @@ class DRPlot extends D3Plot {
 
         //update if plot is live
         if (this.parent && this.parent.plot === this) {
-            if (this.x_axis_settings.scale_type == 'linear') {
+            if (this.x_axis_settings.scale_type == "linear") {
                 this.x_axis_settings.domain = [
                     this.min_x - this.max_x * this.buff,
                     this.max_x * (1 + this.buff),
@@ -58,7 +58,7 @@ class DRPlot extends D3Plot {
             delete this.error_bars_lower;
             delete this.error_bar_group;
         } catch (err) {}
-        this.plot_div.html('');
+        this.plot_div.html("");
         this.get_plot_sizes();
         this.build_plot_skeleton(true);
         this.add_axes();
@@ -73,10 +73,10 @@ class DRPlot extends D3Plot {
         this.customize_menu();
 
         var plot = this;
-        this.y_axis_label.on('click', function(v) {
+        this.y_axis_label.on("click", function(v) {
             plot.toggle_y_axis();
         });
-        this.x_axis_label.on('click', function(v) {
+        this.x_axis_label.on("click", function(v) {
             plot.toggle_x_axis();
         });
         this.trigger_resize();
@@ -93,22 +93,22 @@ class DRPlot extends D3Plot {
         }
         var plot = this;
         var options = {
-            id: 'toggle_y_axis',
-            cls: 'btn btn-mini',
-            title: 'Change y-axis scale (shortcut: click the y-axis label)',
-            text: '',
-            icon: 'icon-resize-vertical',
+            id: "toggle_y_axis",
+            cls: "btn btn-mini",
+            title: "Change y-axis scale (shortcut: click the y-axis label)",
+            text: "",
+            icon: "icon-resize-vertical",
             on_click() {
                 plot.toggle_y_axis();
             },
         };
         this.add_menu_button(options);
         options = {
-            id: 'toggle_x_axis',
-            cls: 'btn btn-mini',
-            title: 'Change x-axis scale (shortcut: click the x-axis label)',
-            text: '',
-            icon: 'icon-resize-horizontal',
+            id: "toggle_x_axis",
+            cls: "btn btn-mini",
+            title: "Change x-axis scale (shortcut: click the x-axis label)",
+            text: "",
+            icon: "icon-resize-horizontal",
             on_click() {
                 plot.toggle_x_axis();
             },
@@ -116,11 +116,11 @@ class DRPlot extends D3Plot {
         this.add_menu_button(options);
         if (this.endpoint.doses.length > 1) {
             options = {
-                id: 'toggle_dose_units',
-                cls: 'btn btn-mini',
-                title: 'Change dose-units representation',
-                text: '',
-                icon: 'icon-certificate',
+                id: "toggle_dose_units",
+                cls: "btn btn-mini",
+                title: "Change dose-units representation",
+                text: "",
+                icon: "icon-certificate",
                 on_click() {
                     plot.endpoint.toggle_dose_units();
                 },
@@ -131,14 +131,14 @@ class DRPlot extends D3Plot {
 
     toggle_y_axis() {
         if (window.event && window.event.stopPropagation) event.stopPropagation();
-        if (this.endpoint.data.data_type == 'C') {
-            if (this.y_axis_settings.scale_type == 'linear') {
-                this.y_axis_settings.scale_type = 'log';
+        if (this.endpoint.data.data_type == "C") {
+            if (this.y_axis_settings.scale_type == "linear") {
+                this.y_axis_settings.scale_type = "log";
                 this.y_axis_settings.number_ticks = 1;
-                var formatNumber = d3.format(',.f');
+                var formatNumber = d3.format(",.f");
                 this.y_axis_settings.label_format = formatNumber;
             } else {
-                this.y_axis_settings.scale_type = 'linear';
+                this.y_axis_settings.scale_type = "linear";
                 this.y_axis_settings.number_ticks = 10;
                 this.y_axis_settings.label_format = undefined;
             }
@@ -158,12 +158,12 @@ class DRPlot extends D3Plot {
         // get minimum non-zero dose and then set all control doses
         // equal to ten-times lower than the lowest dose
         if (window.event && window.event.stopPropagation) event.stopPropagation();
-        if (this.x_axis_settings.scale_type == 'linear') {
-            this.x_axis_settings.scale_type = 'log';
+        if (this.x_axis_settings.scale_type == "linear") {
+            this.x_axis_settings.scale_type = "log";
             this.x_axis_settings.number_ticks = 1;
-            this.x_axis_settings.label_format = d3.format(',.f');
+            this.x_axis_settings.label_format = d3.format(",.f");
         } else {
-            this.x_axis_settings.scale_type = 'linear';
+            this.x_axis_settings.scale_type = "linear";
             this.x_axis_settings.number_ticks = 5;
             this.x_axis_settings.label_format = undefined;
         }
@@ -173,41 +173,41 @@ class DRPlot extends D3Plot {
     }
 
     _setPlottableDoseValues() {
-        if (this.x_axis_settings.scale_type == 'linear') {
-            this.min_x = d3.min(_.map(this.values, 'x'));
+        if (this.x_axis_settings.scale_type == "linear") {
+            this.min_x = d3.min(_.map(this.values, "x"));
             this.x_axis_settings.domain = [
                 this.min_x - this.max_x * this.buff,
                 this.max_x * (1 + this.buff),
             ];
         } else {
-            this.min_x = d3.min(_.map(this.values, 'x_log'));
+            this.min_x = d3.min(_.map(this.values, "x_log"));
             this.x_axis_settings.domain = [this.min_x / 10, this.max_x * (1 + this.buff)];
         }
     }
 
     set_defaults() {
         // Default settings for a DR plot instance
-        this.line_colors = ['#BF3F34', '#545FF2', '#D9B343', '#228C5E', '#B27373']; //bmd lines
-        this.padding = { top: 40, right: 20, bottom: 40, left: 60 };
+        this.line_colors = ["#BF3F34", "#545FF2", "#D9B343", "#228C5E", "#B27373"]; //bmd lines
+        this.padding = {top: 40, right: 20, bottom: 40, left: 60};
         this.buff = 0.05; // addition numerical-spacing around dose/response units
         this.radius = 7;
         this.x_axis_settings = {
             scale_type: this.endpoint.defaultDoseAxis(),
-            text_orient: 'bottom',
-            axis_class: 'axis x_axis',
+            text_orient: "bottom",
+            axis_class: "axis x_axis",
             gridlines: true,
-            gridline_class: 'primary_gridlines x_gridlines',
+            gridline_class: "primary_gridlines x_gridlines",
             number_ticks: 5,
             axis_labels: true,
             label_format: undefined, //default
         };
 
         this.y_axis_settings = {
-            scale_type: 'linear',
-            text_orient: 'left',
-            axis_class: 'axis y_axis',
+            scale_type: "linear",
+            text_orient: "left",
+            axis_class: "axis y_axis",
             gridlines: true,
-            gridline_class: 'primary_gridlines y_gridlines',
+            gridline_class: "primary_gridlines y_gridlines",
             number_ticks: 6,
             axis_labels: true,
             label_format: undefined, //default
@@ -218,7 +218,7 @@ class DRPlot extends D3Plot {
         this.w = this.plot_div.width() - this.padding.left - this.padding.right; // plot width
         this.h = this.w; //plot height
         this.plot_div.css({
-            height: this.h + this.padding.top + this.padding.bottom + 'px',
+            height: this.h + this.padding.top + this.padding.bottom + "px",
         });
     }
 
@@ -233,12 +233,12 @@ class DRPlot extends D3Plot {
             .ticks(this.y_axis_settings.number_ticks, this.y_axis_settings.label_format);
 
         this.vis
-            .selectAll('.y_axis')
+            .selectAll(".y_axis")
             .transition()
             .duration(1000)
             .call(this.yAxis);
 
-        this.rebuild_y_gridlines({ animate: true });
+        this.rebuild_y_gridlines({animate: true});
 
         //rebuild error-bars
         this.add_dr_error_bars(true);
@@ -258,24 +258,24 @@ class DRPlot extends D3Plot {
             .ticks(this.x_axis_settings.number_ticks, this.x_axis_settings.label_format);
 
         this.vis
-            .selectAll('.x_axis')
+            .selectAll(".x_axis")
             .transition()
             .duration(1000)
             .call(this.xAxis)
-            .each('end', function() {
+            .each("end", function() {
                 //force lowest dose on axis to 0
                 var vals = [];
-                d3.selectAll('.x_axis text').each(function() {
+                d3.selectAll(".x_axis text").each(function() {
                     vals.push(parseFloat($(this).text()));
                 });
                 var min = d3.min(vals).toString();
-                var min_label = d3.selectAll('.x_axis text').filter(function() {
+                var min_label = d3.selectAll(".x_axis text").filter(function() {
                     return $(this).text() === min;
                 });
                 min_label.text(0);
             });
 
-        this.rebuild_x_gridlines({ animate: true });
+        this.rebuild_x_gridlines({animate: true});
 
         this.add_dr_error_bars(true);
         this.add_dose_response(true);
@@ -293,25 +293,25 @@ class DRPlot extends D3Plot {
         values = _.chain(ep.groups)
             .map(function(v, i) {
                 var y,
-                    cls = 'dose_points',
-                    txts = ['Dose = {0} {1}'.printf(v.dose, dose_units), 'N = {0}'.printf(v.n)];
+                    cls = "dose_points",
+                    txts = ["Dose = {0} {1}".printf(v.dose, dose_units), "N = {0}".printf(v.n)];
 
-                if (ep.data_type == 'C') {
+                if (ep.data_type == "C") {
                     y = v.response;
                     txts.push(
-                        'Response = {0} {1}'.printf(v.response, ep.response_units),
-                        '{0} = {1}'.printf(ep.variance_name, v.variance)
+                        "Response = {0} {1}".printf(v.response, ep.response_units),
+                        "{0} = {1}".printf(ep.variance_name, v.variance)
                     );
-                } else if (ep.data_type == 'P') {
+                } else if (ep.data_type == "P") {
                     y = v.response;
-                    txts.push('Response = {0}'.printf(self.endpoint.get_pd_string(v)));
+                    txts.push("Response = {0}".printf(self.endpoint.get_pd_string(v)));
                 } else {
                     y = v.incidence / v.n;
-                    txts.push('Incidence = {0} {1}'.printf(v.incidence, ep.response_units));
+                    txts.push("Incidence = {0} {1}".printf(v.incidence, ep.response_units));
                 }
 
-                if (ep.LOEL == i) cls += ' LOEL';
-                if (ep.NOEL == i) cls += ' NOEL';
+                if (ep.LOEL == i) cls += " LOEL";
+                if (ep.NOEL == i) cls += " NOEL";
 
                 return {
                     x: v.dose,
@@ -321,7 +321,7 @@ class DRPlot extends D3Plot {
                     isReported: v.isReported,
                     y_lower: v.lower_ci,
                     y_upper: v.upper_ci,
-                    txt: txts.join('\n'),
+                    txt: txts.join("\n"),
                     significance_level: v.significance_level,
                 };
             })
@@ -347,8 +347,8 @@ class DRPlot extends D3Plot {
 
         _.extend(this, {
             title_str: this.endpoint.data.name,
-            x_label_text: 'Dose ({0})'.printf(this.endpoint.dose_units),
-            y_label_text: 'Response ({0})'.printf(this.endpoint.data.response_units),
+            x_label_text: "Dose ({0})".printf(this.endpoint.dose_units),
+            y_label_text: "Response ({0})".printf(this.endpoint.data.response_units),
             values,
             sigs_data,
             max_x: d3.max(ep.groups, function(datum) {
@@ -406,7 +406,7 @@ class DRPlot extends D3Plot {
                 }
             });
             if (append) {
-                this.add_bmd_line(this.endpoint.data.BMD, 'd3_bmd_selected');
+                this.add_bmd_line(this.endpoint.data.BMD, "d3_bmd_selected");
             }
         }
     }
@@ -427,7 +427,7 @@ class DRPlot extends D3Plot {
         } catch (err) {}
 
         if (!this.error_bar_group) {
-            this.error_bar_group = this.vis.append('g').attr('class', 'error_bars');
+            this.error_bar_group = this.vis.append("g").attr("class", "error_bars");
         }
 
         var bars = this.values.filter(function(v) {
@@ -447,7 +447,7 @@ class DRPlot extends D3Plot {
                 y2(d) {
                     return y(d.y_upper);
                 },
-                classes: 'dr_err_bars',
+                classes: "dr_err_bars",
                 append_to: this.error_bar_group,
             };
 
@@ -502,59 +502,59 @@ class DRPlot extends D3Plot {
                 .data(this.values)
                 .transition()
                 .duration(1000)
-                .attr('transform', (d) => `translate(${x(d.x)},${y(d.y)})`);
+                .attr("transform", d => `translate(${x(d.x)},${y(d.y)})`);
 
             this.sigs
                 .data(this.sigs_data)
                 .transition()
                 .duration(1000)
-                .attr('x', function(d) {
+                .attr("x", function(d) {
                     return x(d.x);
                 })
-                .attr('y', function(d) {
+                .attr("y", function(d) {
                     return y(d.y);
                 });
         } else {
-            var dots_group = this.vis.append('g').attr('class', 'dr_dots');
+            var dots_group = this.vis.append("g").attr("class", "dr_dots");
 
             this.dots = dots_group
-                .selectAll('path.dot')
+                .selectAll("path.dot")
                 .data(this.values)
                 .enter()
-                .append('circle')
-                .attr('r', this.radius)
-                .attr('class', function(d) {
+                .append("circle")
+                .attr("r", this.radius)
+                .attr("class", function(d) {
                     return d.cls;
                 })
-                .attr('transform', (d) => `translate(${x(d.x)},${y(d.y)})`);
+                .attr("transform", d => `translate(${x(d.x)},${y(d.y)})`);
 
-            this.dot_labels = this.dots.append('svg:title').text(function(d) {
+            this.dot_labels = this.dots.append("svg:title").text(function(d) {
                 return d.txt;
             });
 
-            var sigs_group = this.vis.append('g');
+            var sigs_group = this.vis.append("g");
 
             this.sigs = sigs_group
-                .selectAll('text')
+                .selectAll("text")
                 .data(this.sigs_data)
                 .enter()
-                .append('svg:text')
-                .attr('x', function(d) {
+                .append("svg:text")
+                .attr("x", function(d) {
                     return x(d.x);
                 })
-                .attr('y', function(d) {
+                .attr("y", function(d) {
                     return y(d.y);
                 })
-                .attr('text-anchor', 'middle')
+                .attr("text-anchor", "middle")
                 .style({
-                    'font-size': '18px',
-                    'font-weight': 'bold',
-                    cursor: 'pointer',
+                    "font-size": "18px",
+                    "font-weight": "bold",
+                    cursor: "pointer",
                 })
-                .text('*');
+                .text("*");
 
-            this.sigs_labels = this.sigs.append('svg:title').text(function(d) {
-                return 'Statistically significant at {0}'.printf(d.significance_level);
+            this.sigs_labels = this.sigs.append("svg:title").text(function(d) {
+                return "Statistically significant at {0}".printf(d.significance_level);
             });
         }
     }
@@ -562,8 +562,8 @@ class DRPlot extends D3Plot {
     clear_legend() {
         //remove existing legend
         $($(this.legend)[0]).remove();
-        $(this.plot_div.find('.legend_circle')).remove();
-        $(this.plot_div.find('.legend_text')).remove();
+        $(this.plot_div.find(".legend_circle")).remove();
+        $(this.plot_div.find(".legend_text")).remove();
     }
 
     add_legend() {
@@ -573,22 +573,22 @@ class DRPlot extends D3Plot {
         var legend_settings = {};
         legend_settings.items = [
             {
-                text: 'Doses in Study',
-                classes: 'dose_points',
+                text: "Doses in Study",
+                classes: "dose_points",
                 color: undefined,
             },
         ];
-        if (this.plot_div.find('.LOEL').length > 0) {
+        if (this.plot_div.find(".LOEL").length > 0) {
             legend_settings.items.push({
                 text: this.endpoint.data.noel_names.loel,
-                classes: 'dose_points LOEL',
+                classes: "dose_points LOEL",
                 color: undefined,
             });
         }
-        if (this.plot_div.find('.NOEL').length > 0) {
+        if (this.plot_div.find(".NOEL").length > 0) {
             legend_settings.items.push({
                 text: this.endpoint.data.noel_names.noel,
-                classes: 'dose_points NOEL',
+                classes: "dose_points NOEL",
                 color: undefined,
             });
         }
@@ -600,7 +600,7 @@ class DRPlot extends D3Plot {
             .forEach(function(d) {
                 legend_settings.items.push({
                     text: d.name,
-                    classes: '',
+                    classes: "",
                     color: d.stroke,
                 });
             });
@@ -667,7 +667,7 @@ class DRPlot extends D3Plot {
                 .y(function(d) {
                     return y(d.y);
                 })
-                .interpolate('linear');
+                .interpolate("linear");
 
         var bmds = _.chain(lines)
             .filter(function(d) {
@@ -719,65 +719,62 @@ class DRPlot extends D3Plot {
             .flattenDeep()
             .value();
 
-        var g = this.vis.append('g').attr('class', 'bmd');
+        var g = this.vis.append("g").attr("class", "bmd");
 
         // add lines
-        g
-            .selectAll('path')
+        g.selectAll("path")
             .data(lines)
             .enter()
-            .append('path')
-            .attr('class', 'bmd_line')
-            .attr('d', function(d) {
+            .append("path")
+            .attr("class", "bmd_line")
+            .attr("d", function(d) {
                 return liner(d.getData(xs));
             })
-            .attr('stroke', function(d) {
+            .attr("stroke", function(d) {
                 return d.stroke;
             });
 
         // add bmd lines
-        g
-            .selectAll('line.bmd')
+        g.selectAll("line.bmd")
             .data(bmds)
             .enter()
-            .append('line')
-            .attr('class', 'bmd_line')
-            .attr('x1', function(d) {
+            .append("line")
+            .attr("class", "bmd_line")
+            .attr("x1", function(d) {
                 return d.x1;
             })
-            .attr('x2', function(d) {
+            .attr("x2", function(d) {
                 return d.x2;
             })
-            .attr('y1', function(d) {
+            .attr("y1", function(d) {
                 return d.y1;
             })
-            .attr('y2', function(d) {
+            .attr("y2", function(d) {
                 return d.y2;
             })
-            .attr('stroke', function(d) {
+            .attr("stroke", function(d) {
                 return d.stroke;
             });
 
         // add bmdl lines
-        g
-            .selectAll('line.bmd')
+        g.selectAll("line.bmd")
             .data(bmdls)
             .enter()
-            .append('line')
-            .attr('class', 'bmd_line')
-            .attr('x1', function(d) {
+            .append("line")
+            .attr("class", "bmd_line")
+            .attr("x1", function(d) {
                 return d.x1;
             })
-            .attr('x2', function(d) {
+            .attr("x2", function(d) {
                 return d.x2;
             })
-            .attr('y1', function(d) {
+            .attr("y1", function(d) {
                 return d.y1;
             })
-            .attr('y2', function(d) {
+            .attr("y2", function(d) {
                 return d.y2;
             })
-            .attr('stroke', function(d) {
+            .attr("stroke", function(d) {
                 return d.stroke;
             });
 
@@ -785,7 +782,7 @@ class DRPlot extends D3Plot {
     }
 
     remove_bmd_lines() {
-        this.vis.selectAll('g.bmd').remove();
+        this.vis.selectAll("g.bmd").remove();
     }
 }
 

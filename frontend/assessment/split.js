@@ -1,5 +1,5 @@
 const startup = function(cb) {
-    import('./index.js').then((assessment) => {
+    import("./index.js").then(assessment => {
         cb(assessment.default);
     });
 };

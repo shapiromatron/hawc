@@ -1,15 +1,15 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React, {Component} from "react";
+import PropTypes from "prop-types";
 
-import h from 'shared/utils/helpers';
-import ScoreBar from 'riskofbias/robTable/components/ScoreBar';
-import './ScoreDisplay.css';
+import h from "shared/utils/helpers";
+import ScoreBar from "riskofbias/robTable/components/ScoreBar";
+import "./ScoreDisplay.css";
 
 class ScoreDisplay extends Component {
     constructor(props) {
         super(props);
         // values of state.flex correspond to css classes in flex.css
-        this.state = { flex: 'flexRow' };
+        this.state = {flex: "flexRow"};
         this.toggleWidth = 650;
         this.checkFlex = this.checkFlex.bind(this);
         this.copyNotes = this.copyNotes.bind(this);
@@ -17,22 +17,22 @@ class ScoreDisplay extends Component {
 
     componentDidMount() {
         this.checkFlex();
-        window.addEventListener('resize', this.checkFlex);
+        window.addEventListener("resize", this.checkFlex);
     }
 
     componentWillUnmount(nextProps, nextState) {
-        window.removeEventListener('resize', this.checkFlex);
+        window.removeEventListener("resize", this.checkFlex);
     }
 
     // sets state.flex based on the width of the component.
     checkFlex() {
-        if (this.state.flex === 'flexRow' && this.refs.display.offsetWidth <= this.toggleWidth) {
-            this.setState({ flex: 'flexColumn' });
+        if (this.state.flex === "flexRow" && this.refs.display.offsetWidth <= this.toggleWidth) {
+            this.setState({flex: "flexColumn"});
         } else if (
-            this.state.flex === 'flexColumn' &&
+            this.state.flex === "flexColumn" &&
             this.refs.display.offsetWidth > this.toggleWidth
         ) {
-            this.setState({ flex: 'flexRow' });
+            this.setState({flex: "flexRow"});
         }
     }
 
@@ -42,7 +42,7 @@ class ScoreDisplay extends Component {
     }
 
     render() {
-        let { score, config } = this.props,
+        let {score, config} = this.props,
             copyTextButton = this.props.copyNotes ? (
                 <button className="btn btn-secondary copy-notes" onClick={this.copyNotes}>
                     Copy Notes
@@ -65,7 +65,7 @@ class ScoreDisplay extends Component {
         return (
             <div className={`score-display ${this.state.flex}-container`} ref="display">
                 <div className="flex-1">
-                    {config.display === 'final' && !config.isForm ? null : (
+                    {config.display === "final" && !config.isForm ? null : (
                         <p>
                             <b>{score.author.full_name}</b>
                         </p>

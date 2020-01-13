@@ -1,19 +1,19 @@
-import $ from '$';
+import $ from "$";
 
 import {
     _DataPivot_settings_linedata,
     _DataPivot_settings_pointdata,
     _DataPivot_settings_barchart,
     buildHeaderTr,
-} from './DataPivotUtilities';
+} from "./DataPivotUtilities";
 
-const visSelectorId = 'visType',
-    fpDiv = 'fpDiv',
-    bcDiv = 'bcDiv';
+const visSelectorId = "visType",
+    fpDiv = "fpDiv",
+    bcDiv = "bcDiv";
 
 let buildChartSelector = function(tab, dp) {
-        let asBarchart = dp.settings.plot_settings.as_barchart ? 'selected' : '',
-            asForPlot = !dp.settings.plot_settings.as_barchart ? 'selected' : '';
+        let asBarchart = dp.settings.plot_settings.as_barchart ? "selected" : "",
+            asForPlot = !dp.settings.plot_settings.as_barchart ? "selected" : "";
 
         tab.prepend(`
            <h3>Visualization type</h3>
@@ -24,34 +24,34 @@ let buildChartSelector = function(tab, dp) {
                 </select>
            </label>`);
 
-        tab.on('change', '#' + visSelectorId, function() {
-            if (this.value === 'Forest plot') {
+        tab.on("change", "#" + visSelectorId, function() {
+            if (this.value === "Forest plot") {
                 dp.settings.plot_settings.as_barchart = false;
-                $('#' + fpDiv).show();
-                $('#' + bcDiv).hide();
+                $("#" + fpDiv).show();
+                $("#" + bcDiv).hide();
             } else {
                 dp.settings.plot_settings.as_barchart = true;
-                $('#' + fpDiv).hide();
-                $('#' + bcDiv).show();
+                $("#" + fpDiv).hide();
+                $("#" + bcDiv).show();
             }
         });
 
         dp.addOnRenderedCallback(function() {
-            tab.find('#' + visSelectorId).trigger('change');
+            tab.find("#" + visSelectorId).trigger("change");
         });
     },
     buildDataPointTable = function(tab, dp) {
-        let thead = $('<thead>').html(
+        let thead = $("<thead>").html(
                 buildHeaderTr([
-                    'Column header',
-                    'Legend name',
-                    'Marker style',
-                    'Conditional formatting',
-                    'On-click',
-                    'Ordering',
+                    "Column header",
+                    "Legend name",
+                    "Marker style",
+                    "Conditional formatting",
+                    "On-click",
+                    "Ordering",
                 ])
             ),
-            tbody = $('<tbody>'),
+            tbody = $("<tbody>"),
             tbl = $('<table class="table table-condensed table-bordered">').html([thead, tbody]),
             settings = dp.settings.datapoint_settings,
             addDataRow = function(i) {
@@ -67,7 +67,7 @@ let buildChartSelector = function(tab, dp) {
                 addDataRow(num_rows);
             },
             newRowBtn = $('<button class="btn btn-primary pull-right">New row</button>').on(
-                'click',
+                "click",
                 newDataRow
             ),
             numRows = settings.length === 0 ? 3 : settings.length;
@@ -76,7 +76,7 @@ let buildChartSelector = function(tab, dp) {
             addDataRow(i);
         }
 
-        tab.append($('<h3>Data point options</h3>').append(newRowBtn));
+        tab.append($("<h3>Data point options</h3>").append(newRowBtn));
         tab.append(tbl);
     },
     buildLineTable = function(tab, dp) {
@@ -86,8 +86,8 @@ let buildChartSelector = function(tab, dp) {
             obj,
             settings = dp.settings.dataline_settings;
 
-        thead = $('<thead>').html(buildHeaderTr(['Column header', 'Legend name', 'Line style']));
-        tbody = $('<tbody>');
+        thead = $("<thead>").html(buildHeaderTr(["Column header", "Legend name", "Line style"]));
+        tbody = $("<tbody>");
 
         if (settings.length === 0) {
             settings.push(_DataPivot_settings_linedata.defaults());
@@ -97,7 +97,7 @@ let buildChartSelector = function(tab, dp) {
         tbl = $('<table class="table table-condensed table-bordered">').html([thead, tbody]);
         tbody.append(obj.tr);
 
-        tab.append('<h3>Data point error-bar options</h3>', tbl);
+        tab.append("<h3>Data point error-bar options</h3>", tbl);
     },
     buildBarChartDiv = function(tab, dp) {
         let obj = new _DataPivot_settings_barchart(dp);
@@ -112,7 +112,7 @@ let buildChartSelector = function(tab, dp) {
         buildDataPointTable(forestPlotHolder, dp);
         buildLineTable(forestPlotHolder, dp);
         buildBarChartDiv(barchartHolder, dp);
-        tab.find('#' + visSelectorId).trigger('change');
+        tab.find("#" + visSelectorId).trigger("change");
         return tab;
     };
 

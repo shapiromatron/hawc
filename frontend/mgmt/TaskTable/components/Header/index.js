@@ -1,12 +1,12 @@
-import $ from '$';
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import $ from "$";
+import React, {Component} from "react";
+import PropTypes from "prop-types";
 
 class Header extends Component {
     componentDidMount() {
-        $('.popovers').popover({
-            placement: 'top',
-            trigger: 'hover',
+        $(".popovers").popover({
+            placement: "top",
+            trigger: "hover",
         });
     }
 
@@ -21,8 +21,7 @@ class Header extends Component {
                             key={`heading-${i}`}
                             className="popovers flex-1"
                             data-title={heading}
-                            data-content={descriptions[i]}
-                        >
+                            data-content={descriptions[i]}>
                             {heading}
                         </h5>
                     );

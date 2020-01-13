@@ -1,14 +1,14 @@
-import $ from '$';
-import _ from 'lodash';
+import $ from "$";
+import _ from "lodash";
 
-import Tablesort from 'tablesort';
+import Tablesort from "tablesort";
 
-import BaseTable from 'utils/BaseTable';
-import HAWCUtils from 'utils/HAWCUtils';
+import BaseTable from "utils/BaseTable";
+import HAWCUtils from "utils/HAWCUtils";
 
-import BaseVisual from './BaseVisual';
+import BaseVisual from "./BaseVisual";
 
-const NULL_FILTER = '---';
+const NULL_FILTER = "---";
 
 class VisualCollection {
     constructor(data, opts) {
@@ -31,7 +31,7 @@ class VisualCollection {
             })
             .fail(function() {
                 HAWCUtils.addAlert(
-                    'Error- unable to fetch visualizations; please contact a HAWC administrator.'
+                    "Error- unable to fetch visualizations; please contact a HAWC administrator."
                 );
                 visuals = [];
             })
@@ -43,14 +43,14 @@ class VisualCollection {
 
     build_table($el) {
         if (this.visuals.length === 0)
-            return $el.html('<p><i>No custom-visuals are available for this assessment.</i></p>');
+            return $el.html("<p><i>No custom-visuals are available for this assessment.</i></p>");
 
         let tbl = new BaseTable(),
-            headers = ['Title', 'Visual type', 'Description', 'Created', 'Modified'],
+            headers = ["Title", "Visual type", "Description", "Created", "Modified"],
             headerWidths = [20, 20, 36, 12, 12];
 
         if (this.opts.showPublished) {
-            headers.splice(3, 0, 'Published');
+            headers.splice(3, 0, "Published");
             headerWidths = [20, 20, 30, 8, 11, 11];
         }
 
@@ -60,30 +60,30 @@ class VisualCollection {
             tbl.addRow(this.visuals[i].build_row(this.opts));
         }
         $el.append(this.setTableFilter()).append(tbl.getTbl());
-        this.$tbl = $($el.find('table'));
+        this.$tbl = $($el.find("table"));
         this.setTableSorting(this.$tbl);
         return $el;
     }
 
     setTableSorting() {
-        var name = this.$tbl.find('thead tr th')[0];
-        name.setAttribute('class', (name.getAttribute('class') || '') + ' sort-default');
+        var name = this.$tbl.find("thead tr th")[0];
+        name.setAttribute("class", (name.getAttribute("class") || "") + " sort-default");
         new Tablesort(this.$tbl[0]);
     }
 
     setTableFilter() {
         var types = _.chain(this.visuals)
-            .map('data')
-            .map('visual_type')
+            .map("data")
+            .map("visual_type")
             .sort()
             .uniq()
             .unshift(NULL_FILTER)
-            .map((d) => `<option value="${d}">${d}</option>`)
+            .map(d => `<option value="${d}">${d}</option>`)
             .value();
 
-        return $('<div>').append(
+        return $("<div>").append(
             '<label class="control-label">Filter by visualization type:</label>',
-            $('<select>')
+            $("<select>")
                 .append(types)
                 .change(this.filterRows.bind(this))
         );
@@ -93,11 +93,11 @@ class VisualCollection {
         var filter = e ? e.target.value : NULL_FILTER,
             isNullFilter = filter === NULL_FILTER;
 
-        this.$tbl.find('tbody tr').each(function() {
+        this.$tbl.find("tbody tr").each(function() {
             if (isNullFilter || this.innerHTML.indexOf(filter) >= 0) {
                 this.style.display = null;
             } else {
-                this.style.display = 'none';
+                this.style.display = "none";
             }
         });
     }

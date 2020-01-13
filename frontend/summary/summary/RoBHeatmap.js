@@ -1,13 +1,13 @@
-import $ from '$';
-import _ from 'lodash';
+import $ from "$";
+import _ from "lodash";
 
-import HAWCModal from 'utils/HAWCModal';
-import SmartTagContainer from 'assets/smartTags/SmartTagContainer';
-import Study from 'study/Study';
-import Aggregation from 'riskofbias/Aggregation';
+import HAWCModal from "utils/HAWCModal";
+import SmartTagContainer from "assets/smartTags/SmartTagContainer";
+import Study from "study/Study";
+import Aggregation from "riskofbias/Aggregation";
 
-import RoBHeatmapPlot from './RoBHeatmapPlot';
-import BaseVisual from './BaseVisual';
+import RoBHeatmapPlot from "./RoBHeatmapPlot";
+import BaseVisual from "./BaseVisual";
 
 class RoBHeatmap extends BaseVisual {
     constructor(data) {
@@ -20,10 +20,10 @@ class RoBHeatmap extends BaseVisual {
     }
 
     displayAsPage($el, options) {
-        var title = $('<h1>').text(this.data.title),
-            captionDiv = $('<div>').html(this.data.caption),
+        var title = $("<h1>").text(this.data.title),
+            captionDiv = $("<div>").html(this.data.caption),
             caption = new SmartTagContainer(captionDiv),
-            $plotDiv = $('<div>'),
+            $plotDiv = $("<div>"),
             data = this.getPlotData();
 
         options = options || {};
@@ -43,21 +43,21 @@ class RoBHeatmap extends BaseVisual {
 
         var self = this,
             data = this.getPlotData(),
-            captionDiv = $('<div>').html(this.data.caption),
+            captionDiv = $("<div>").html(this.data.caption),
             caption = new SmartTagContainer(captionDiv),
-            $plotDiv = $('<div>'),
+            $plotDiv = $("<div>"),
             modal = new HAWCModal();
 
-        modal.getModal().on('shown', function() {
+        modal.getModal().on("shown", function() {
             new RoBHeatmapPlot(self, data, options).render($plotDiv);
             caption.renderAndEnable();
         });
 
         modal
-            .addHeader($('<h4>').text(this.data.title))
+            .addHeader($("<h4>").text(this.data.title))
             .addBody([$plotDiv, captionDiv])
-            .addFooter('')
-            .show({ maxWidth: 1200 });
+            .addFooter("")
+            .show({maxWidth: 1200});
     }
 
     getPlotData() {

@@ -1,13 +1,13 @@
-import $ from '$';
-import React from 'react';
-import PropTypes from 'prop-types';
+import $ from "$";
+import React from "react";
+import PropTypes from "prop-types";
 
-import * as types from 'bmd/constants';
-import BaseModal from './BaseModal';
+import * as types from "bmd/constants";
+import BaseModal from "./BaseModal";
 
 class OutputModal extends BaseModal {
     componentDidUpdate() {
-        $(this.refs.modalBody).animate({ scrollTop: 0 }, 'fast');
+        $(this.refs.modalBody).animate({scrollTop: 0}, "fast");
     }
 
     renderBody(model, i) {
@@ -26,7 +26,7 @@ class OutputModal extends BaseModal {
     }
 
     render() {
-        let { models } = this.props;
+        let {models} = this.props;
 
         if (models.length === 0) {
             return null;

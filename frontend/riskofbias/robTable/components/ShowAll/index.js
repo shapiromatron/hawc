@@ -1,11 +1,11 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React, {Component} from "react";
+import PropTypes from "prop-types";
 
 class ShowAll extends Component {
     render() {
-        let { handleClick } = this.props,
-            text = this.props.allShown ? 'Hide all details' : 'Show all details',
-            icons = this.props.allShown ? 'fa fa-minus fa-fw' : 'fa fa-plus fa-fw';
+        let {handleClick} = this.props,
+            text = this.props.allShown ? "Hide all details" : "Show all details",
+            icons = this.props.allShown ? "fa fa-minus fa-fw" : "fa fa-plus fa-fw";
 
         return (
             <button className="btn btn-small" onClick={handleClick}>

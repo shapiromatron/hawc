@@ -1,7 +1,7 @@
-import { combineReducers } from 'redux';
+import {combineReducers} from "redux";
 
-import config from 'shared/reducers/Config';
-import * as types from 'mgmt/Dashboard/constants';
+import config from "shared/reducers/Config";
+import * as types from "mgmt/Dashboard/constants";
 
 const defaultState = {
     isFetching: false,

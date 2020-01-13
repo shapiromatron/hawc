@@ -1,8 +1,8 @@
-import * as types from 'textCleanup/constants/ActionTypes';
-import endpointReducer from 'textCleanup/reducers/Endpoint';
+import * as types from "textCleanup/constants/ActionTypes";
+import endpointReducer from "textCleanup/reducers/Endpoint";
 
-describe('textCleanup Endpoint reducer', () => {
-    it('should handle receiving the Endpoint model', () => {
+describe("textCleanup Endpoint reducer", () => {
+    it("should handle receiving the Endpoint model", () => {
         expect(
             endpointReducer(
                 {
@@ -12,26 +12,26 @@ describe('textCleanup Endpoint reducer', () => {
                 {
                     type: types.EP_RECEIVE_MODEL,
                     model: {
-                        text_cleanup_fields: ['system', 'organ', 'effect', 'effect_subtype'],
+                        text_cleanup_fields: ["system", "organ", "effect", "effect_subtype"],
                     },
                 }
             )
         ).to.deep.equal({
             isFetching: false,
-            model: ['system', 'organ', 'effect', 'effect_subtype'],
+            model: ["system", "organ", "effect", "effect_subtype"],
         });
     });
 
-    it('should create an edit object', () => {
+    it("should create an edit object", () => {
         expect(
             endpointReducer(
                 {
-                    model: ['system', 'organ', 'effect', 'effect_subtype'],
+                    model: ["system", "organ", "effect", "effect_subtype"],
                     items: [
                         {
                             id: 10210,
-                            name: 'biliary total bile acid/phospholipid (BA/PL) ratio in liver',
-                            system: 'digestive system',
+                            name: "biliary total bile acid/phospholipid (BA/PL) ratio in liver",
+                            system: "digestive system",
                         },
                     ],
                     editObject: {},
@@ -40,25 +40,25 @@ describe('textCleanup Endpoint reducer', () => {
                 {
                     type: types.EP_CREATE_EDIT_OBJECT,
                     object: {
-                        field: 'system',
-                        system: 'digestive system',
+                        field: "system",
+                        system: "digestive system",
                         ids: [10210, 10212],
                     },
                 }
             )
         ).to.deep.equal({
-            model: ['system', 'organ', 'effect', 'effect_subtype'],
+            model: ["system", "organ", "effect", "effect_subtype"],
             items: [
                 {
                     id: 10210,
-                    name: 'biliary total bile acid/phospholipid (BA/PL) ratio in liver',
-                    system: 'digestive system',
+                    name: "biliary total bile acid/phospholipid (BA/PL) ratio in liver",
+                    system: "digestive system",
                 },
             ],
             editObject: {
-                'digestive system': {
-                    field: 'system',
-                    system: 'digestive system',
+                "digestive system": {
+                    field: "system",
+                    system: "digestive system",
                     ids: [10210, 10212],
                 },
             },
@@ -66,71 +66,71 @@ describe('textCleanup Endpoint reducer', () => {
         });
     });
 
-    it('should be able to patch multiple objects', () => {
+    it("should be able to patch multiple objects", () => {
         expect(
             endpointReducer(
                 {
                     itemsLoaded: true,
                     isFetching: false,
-                    model: ['system', 'organ', 'effect', 'effect_subtype'],
+                    model: ["system", "organ", "effect", "effect_subtype"],
                     items: [
                         {
                             id: 10210,
-                            name: 'biliary total bile acid/phospholipid (BA/PL) ratio in liver',
-                            system: 'digestive system',
+                            name: "biliary total bile acid/phospholipid (BA/PL) ratio in liver",
+                            system: "digestive system",
                         },
                         {
                             id: 10212,
-                            name: 'gross body weight (start of experiment)',
-                            system: 'digestive system',
+                            name: "gross body weight (start of experiment)",
+                            system: "digestive system",
                         },
                     ],
-                    editObject: { system: 'Digestive Systems' },
+                    editObject: {system: "Digestive Systems"},
                     editObjectErrors: {},
                 },
                 {
                     type: types.EP_PATCH_OBJECTS,
-                    patch: { system: 'Digestive Systems', ids: [10210, 10212] },
+                    patch: {system: "Digestive Systems", ids: [10210, 10212]},
                 }
             )
         ).to.deep.equal({
             itemsLoaded: true,
             isFetching: false,
-            model: ['system', 'organ', 'effect', 'effect_subtype'],
+            model: ["system", "organ", "effect", "effect_subtype"],
             items: [
                 {
                     id: 10210,
-                    name: 'biliary total bile acid/phospholipid (BA/PL) ratio in liver',
-                    system: 'Digestive Systems',
+                    name: "biliary total bile acid/phospholipid (BA/PL) ratio in liver",
+                    system: "Digestive Systems",
                 },
                 {
                     id: 10212,
-                    name: 'gross body weight (start of experiment)',
-                    system: 'Digestive Systems',
+                    name: "gross body weight (start of experiment)",
+                    system: "Digestive Systems",
                 },
             ],
-            editObject: { system: 'Digestive Systems' },
+            editObject: {system: "Digestive Systems"},
             editObjectErrors: {},
         });
     });
 
-    it('should handle deleting an object', () => {
+    it("should handle deleting an object", () => {
         expect(
             endpointReducer(
                 {
                     items: [
                         {
                             id: 10210,
-                            name: 'biliary total bile acid/phospholipid (BA/PL) ratio in liver',
-                            system: 'digestive system',
+                            name: "biliary total bile acid/phospholipid (BA/PL) ratio in liver",
+                            system: "digestive system",
                         },
                         {
                             id: 10212,
-                            name: 'gross body weight (start of experiment)',
-                            system: 'systemic',
+                            name: "gross body weight (start of experiment)",
+                            system: "systemic",
                         },
                     ],
-                    editObject: { system: 'Digestive Systems' },
+                    editObject: {system: "Digestive Systems"},
                     editObjectErrors: {},
                 },
                 {
@@ -143,35 +143,35 @@ describe('textCleanup Endpoint reducer', () => {
             items: [
                 {
                     id: 10212,
-                    name: 'gross body weight (start of experiment)',
-                    system: 'systemic',
+                    name: "gross body weight (start of experiment)",
+                    system: "systemic",
                 },
             ],
-            editObject: { system: 'Digestive Systems' },
+            editObject: {system: "Digestive Systems"},
             editObjectErrors: {},
         });
     });
 
-    it('should revert to default state upon release', () => {
+    it("should revert to default state upon release", () => {
         expect(
             endpointReducer(
                 {
                     itemsLoaded: true,
                     isFetching: false,
-                    model: ['system', 'organ', 'effect', 'effect_subtype'],
+                    model: ["system", "organ", "effect", "effect_subtype"],
                     items: [
                         {
                             id: 10210,
-                            name: 'biliary total bile acid/phospholipid (BA/PL) ratio in liver',
-                            system: 'digestive system',
+                            name: "biliary total bile acid/phospholipid (BA/PL) ratio in liver",
+                            system: "digestive system",
                         },
                         {
                             id: 10212,
-                            name: 'gross body weight (start of experiment)',
-                            system: 'systemic',
+                            name: "gross body weight (start of experiment)",
+                            system: "systemic",
                         },
                     ],
-                    editObject: { system: 'Digestive Systems' },
+                    editObject: {system: "Digestive Systems"},
                     editObjectErrors: {},
                 },
                 {

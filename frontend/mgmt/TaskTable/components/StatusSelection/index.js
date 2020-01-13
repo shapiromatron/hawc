@@ -1,25 +1,25 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React, {Component} from "react";
+import PropTypes from "prop-types";
 
-import { STATUS } from 'mgmt/TaskTable/constants';
-import StatusIcon from 'mgmt/TaskTable/components/StatusIcon';
+import {STATUS} from "mgmt/TaskTable/constants";
+import StatusIcon from "mgmt/TaskTable/components/StatusIcon";
 
 class StatusSelection extends Component {
     constructor(props) {
         super(props);
-        this.state = { status: props.task.status };
+        this.state = {status: props.task.status};
         this.getSelection = this.getSelection.bind(this);
     }
 
     getStatusChoices() {
-        return Object.keys(STATUS).map((status) => {
-            return { value: status, display: STATUS[status].type };
+        return Object.keys(STATUS).map(status => {
+            return {value: status, display: STATUS[status].type};
         });
     }
 
-    getSelection({ target }) {
+    getSelection({target}) {
         let value = parseInt(target.value);
-        this.setState({ status: value });
+        this.setState({status: value});
         this.props.onChange(value);
     }
 
@@ -36,9 +36,8 @@ class StatusSelection extends Component {
                     id={idName}
                     onChange={this.getSelection}
                     name="status_selection"
-                    style={{ width: 'auto' }}
-                >
-                    {choices.map(({ value, display }, i) => {
+                    style={{width: "auto"}}>
+                    {choices.map(({value, display}, i) => {
                         return (
                             <option key={i} value={value}>
                                 {display}
@@ -49,9 +48,9 @@ class StatusSelection extends Component {
                 <StatusIcon
                     status={this.state.status}
                     style={{
-                        height: '25px',
-                        verticalAlign: 'middle',
-                        padding: '5px',
+                        height: "25px",
+                        verticalAlign: "middle",
+                        padding: "5px",
                     }}
                 />
             </div>

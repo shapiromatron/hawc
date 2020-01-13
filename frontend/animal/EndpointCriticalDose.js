@@ -1,5 +1,5 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+import React from "react";
+import ReactDOM from "react-dom";
 
 const Renderer = function(props) {
     return (
@@ -23,9 +23,9 @@ class EndpointCriticalDose {
 
     update() {
         let ep = this.endpoint,
-            doses = ep.doses.filter((v) => v.name === ep.dose_units),
+            doses = ep.doses.filter(v => v.name === ep.dose_units),
             dose = doses[0].values[this.critical_effect_idx].dose.toHawcString(),
-            units = this.show_units ? ep.dose_units : '';
+            units = this.show_units ? ep.dose_units : "";
 
         ReactDOM.render(<Renderer dose={dose} units={units} />, this.span[0]);
     }

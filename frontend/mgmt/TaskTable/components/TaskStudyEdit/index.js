@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import _ from 'lodash';
+import React, {Component} from "react";
+import PropTypes from "prop-types";
+import _ from "lodash";
 
-import StudyLabel from 'mgmt/TaskTable/components/StudyLabel';
-import TaskForm from 'mgmt/TaskTable/components/TaskForm';
+import StudyLabel from "mgmt/TaskTable/components/StudyLabel";
+import TaskForm from "mgmt/TaskTable/components/TaskForm";
 
 class TaskStudyEdit extends Component {
     constructor(props) {
@@ -13,17 +13,17 @@ class TaskStudyEdit extends Component {
 
     getChangedData() {
         return _.chain(this.refs)
-            .filter((ref) => {
+            .filter(ref => {
                 return ref.formDidChange();
             })
-            .map((ref) => {
+            .map(ref => {
                 return ref.state;
             })
             .value();
     }
 
     render() {
-        const { tasks, study } = this.props.item;
+        const {tasks, study} = this.props.item;
         return (
             <div>
                 <hr className="hr-tight" />

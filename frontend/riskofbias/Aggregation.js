@@ -1,4 +1,4 @@
-import d3 from 'd3';
+import d3 from "d3";
 
 class Aggregation {
     constructor(studies) {
@@ -25,7 +25,7 @@ class Aggregation {
 
         var score_binning = function(d) {
             let bins = {};
-            d.rob_scores.forEach((rob) => {
+            d.rob_scores.forEach(rob => {
                 if (bins[rob.data.score] === undefined) {
                     bins[rob.data.score] = {
                         rob_scores: [],
@@ -40,11 +40,11 @@ class Aggregation {
         };
 
         ds.forEach(function(v) {
-            v.rename_property('key', 'domain');
-            v.rename_property('values', 'rob_scores');
+            v.rename_property("key", "domain");
+            v.rename_property("values", "rob_scores");
             v.domain_text = v.rob_scores[0].data.metric.domain.name;
             v.domain_is_overall_confidence =
-                typeof v.rob_scores[0].data.metric.domain.is_overall_confidence === 'boolean'
+                typeof v.rob_scores[0].data.metric.domain.is_overall_confidence === "boolean"
                     ? v.rob_scores[0].data.metric.domain.is_overall_confidence
                     : false;
             v.score_bins = score_binning(v);

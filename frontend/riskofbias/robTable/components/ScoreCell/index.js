@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React, {Component} from "react";
+import PropTypes from "prop-types";
 
-import h from 'shared/utils/helpers';
-import './ScoreCell.css';
+import h from "shared/utils/helpers";
+import "./ScoreCell.css";
 
 class ScoreCell extends Component {
     constructor(props) {
@@ -11,12 +11,12 @@ class ScoreCell extends Component {
     }
 
     handleClick() {
-        let { score, handleClick } = this.props;
-        handleClick({ domain: score.domain_name, metric: score.metric.name });
+        let {score, handleClick} = this.props;
+        handleClick({domain: score.domain_name, metric: score.metric.name});
     }
 
     render() {
-        let { score } = this.props;
+        let {score} = this.props;
         if (h.hideRobScore(score.metric.domain.assessment.id)) {
             return <div className="score-cell" />;
         }
@@ -24,9 +24,8 @@ class ScoreCell extends Component {
             <div
                 className="score-cell"
                 name={score.metric.name}
-                style={{ backgroundColor: score.score_shade }}
-                onClick={this.handleClick}
-            >
+                style={{backgroundColor: score.score_shade}}
+                onClick={this.handleClick}>
                 <span className="tooltips" data-toggle="tooltip" title={score.metric.name}>
                     {score.score_symbol}
                 </span>

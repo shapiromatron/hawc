@@ -1,10 +1,10 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import _ from 'lodash';
+import React, {Component} from "react";
+import {connect} from "react-redux";
+import _ from "lodash";
 
-import { fetchAssessment } from 'textCleanup/actions/Assessment';
-import Assessment from 'textCleanup/components/Assessment';
-import Loading from 'shared/components/Loading';
+import {fetchAssessment} from "textCleanup/actions/Assessment";
+import Assessment from "textCleanup/components/Assessment";
+import Loading from "shared/components/Loading";
 
 class App extends Component {
     componentWillMount() {
@@ -12,11 +12,11 @@ class App extends Component {
     }
 
     render() {
-        let { assessment } = this.props,
+        let {assessment} = this.props,
             helpText =
-                'After data has been initially extracted, this module can be\
+                "After data has been initially extracted, this module can be\
                         used to update and standardize text which was used during\
-                        data extraction.';
+                        data extraction.";
         if (_.isEmpty(assessment)) return <Loading />;
         return (
             <div>

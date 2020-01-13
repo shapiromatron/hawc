@@ -1,9 +1,9 @@
-import fetch from 'isomorphic-fetch';
-import _ from 'lodash';
+import fetch from "isomorphic-fetch";
+import _ from "lodash";
 
-import { setError, resetError } from 'riskofbias/robScoreCleanup/actions/Errors';
-import * as types from 'riskofbias/robScoreCleanup/constants';
-import h from 'riskofbias/robScoreCleanup/utils/helpers';
+import {setError, resetError} from "riskofbias/robScoreCleanup/actions/Errors";
+import * as types from "riskofbias/robScoreCleanup/constants";
+import h from "riskofbias/robScoreCleanup/utils/helpers";
 
 function makeScoreRequest() {
     return {
@@ -38,15 +38,15 @@ export function fetchItemScores() {
         dispatch(clearItemScores());
         dispatch(makeScoreRequest());
         dispatch(resetError());
-        let { host, items, assessment_id } = state.config;
+        let {host, items, assessment_id} = state.config;
         const url = h.getUrlWithAssessment(
             h.getObjectUrl(host, items.url, state.metrics.selected.id),
             assessment_id
         );
         return fetch(url, h.fetchGet)
-            .then((response) => response.json())
-            .then((json) => dispatch(receiveScores(json.scores)))
-            .catch((error) => dispatch(setError(error)));
+            .then(response => response.json())
+            .then(json => dispatch(receiveScores(json.scores)))
+            .catch(error => dispatch(setError(error)));
     };
 }
 
@@ -98,7 +98,7 @@ export function selectAll() {
 
 export function updateVisibleItems(selectedScores = null, selectedStudyTypes = null) {
     if (selectedScores !== null) {
-        selectedScores = selectedScores.map((d) => parseInt(d));
+        selectedScores = selectedScores.map(d => parseInt(d));
     }
     return {
         type: types.UPDATE_VISIBLE_ITEMS,
@@ -137,20 +137,20 @@ export function submitItemEdits(metric) {
     return (dispatch, getState) => {
         dispatch(resetError());
         let state = getState(),
-            { updateIds } = state.items,
-            opts = h.fetchBulk(state.config.csrf, { ...metric });
+            {updateIds} = state.items,
+            opts = h.fetchBulk(state.config.csrf, {...metric});
 
         if (updateIds.length === 0) {
-            dispatch(setError('A metric must be selected to update.'));
+            dispatch(setError("A metric must be selected to update."));
             return;
         }
 
-        return fetch(h.buildPatchUrl(state.config, updateIds), opts).then((response) => {
+        return fetch(h.buildPatchUrl(state.config, updateIds), opts).then(response => {
             if (response.ok) {
-                let patch = { ids: updateIds, ...metric };
+                let patch = {ids: updateIds, ...metric};
                 dispatch(patchItems(patch));
             } else {
-                response.json().then((json) => dispatch(setError(json)));
+                response.json().then(json => dispatch(setError(json)));
             }
         });
     };

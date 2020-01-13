@@ -1,6 +1,6 @@
-import $ from '$';
+import $ from "$";
 
-import HAWCUtils from 'utils/HAWCUtils';
+import HAWCUtils from "utils/HAWCUtils";
 
 class BaseVisual {
     constructor(data) {
@@ -24,25 +24,25 @@ class BaseVisual {
     }
 
     displayAsPage($el, options) {
-        throw 'Abstract method; requires implementation';
+        throw "Abstract method; requires implementation";
     }
 
     displayAsModal($el, options) {
-        throw 'Abstract method; requires implementation';
+        throw "Abstract method; requires implementation";
     }
 
     addActionsMenu() {
         return HAWCUtils.pageActionsButton([
-            'Visualization editing',
-            { url: this.data.url_update, text: 'Update' },
-            { url: this.data.url_delete, text: 'Delete' },
+            "Visualization editing",
+            {url: this.data.url_update, text: "Update"},
+            {url: this.data.url_delete, text: "Delete"},
         ]);
     }
 
     object_hyperlink() {
-        return $('<a>')
-            .attr('href', this.data.url)
-            .attr('target', '_blank')
+        return $("<a>")
+            .attr("href", this.data.url)
+            .attr("target", "_blank")
             .text(this.data.title);
     }
 }

@@ -1,23 +1,23 @@
-import $ from '$';
-import d3 from 'd3';
+import $ from "$";
+import d3 from "d3";
 
-import { saveAs } from 'filesaver.js';
+import {saveAs} from "filesaver.js";
 
-import HAWCModal from 'utils/HAWCModal';
+import HAWCModal from "utils/HAWCModal";
 
-import DataPivotDefaultSettings from './DataPivotDefaultSettings';
-import DataPivotExtension from './DataPivotExtension';
-import { NULL_CASE } from './shared';
-import StyleManager from './StyleManager';
+import DataPivotDefaultSettings from "./DataPivotDefaultSettings";
+import DataPivotExtension from "./DataPivotExtension";
+import {NULL_CASE} from "./shared";
+import StyleManager from "./StyleManager";
 
-import build_description_tab from './DPFDescriptionTab';
-import build_settings_general_tab from './DPFGeneralSettingsTab';
-import build_data_tab from './DPFDataTab';
-import build_ordering_tab from './DPFOrderTab';
-import build_reference_tab from './DPFReferenceTab';
-import build_styles_tab from './DPFStyleTab';
+import build_description_tab from "./DPFDescriptionTab";
+import build_settings_general_tab from "./DPFGeneralSettingsTab";
+import build_data_tab from "./DPFDataTab";
+import build_ordering_tab from "./DPFOrderTab";
+import build_reference_tab from "./DPFReferenceTab";
+import build_styles_tab from "./DPFStyleTab";
 
-import DataPivotVisualization from './DataPivotVisualization';
+import DataPivotVisualization from "./DataPivotVisualization";
 
 class DataPivot {
     constructor(data, settings, dom_bindings, title, url) {
@@ -32,9 +32,8 @@ class DataPivot {
     }
 
     static get_object(pk, callback) {
-        $.get('/summary/api/data_pivot/{0}/'.printf(pk), function(d) {
-            d3
-                .tsv(d.data_url)
+        $.get("/summary/api/data_pivot/{0}/".printf(pk), function(d) {
+            d3.tsv(d.data_url)
                 .row(function(d, i) {
                     return DataPivot.massage_row(d, i);
                 })
@@ -56,9 +55,9 @@ class DataPivot {
     }
 
     static displayInline(id, setTitle, setBody) {
-        DataPivot.get_object(id, (obj) => {
-            var title = $('<h4>').html(obj.object_hyperlink()),
-                content = $('<div>');
+        DataPivot.get_object(id, obj => {
+            var title = $("<h4>").html(obj.object_hyperlink()),
+                content = $("<div>");
 
             setTitle(title);
             setBody(content);
@@ -81,7 +80,7 @@ class DataPivot {
 
         // add data-pivot row-level key and index
         row._dp_y = i;
-        row._dp_pk = row['key'] || i;
+        row._dp_pk = row["key"] || i;
 
         return row;
     }
@@ -112,20 +111,20 @@ class DataPivot {
 
     static build_movement_td(arr, self, options) {
         //build a td including buttons for movement
-        var td = $('<td>'),
+        var td = $("<td>"),
             up = $(
                 '<button class="btn btn-mini" title="move up"><i class="icon-arrow-up"></button>'
-            ).on('click', function() {
+            ).on("click", function() {
                 DataPivot.move_row(arr, self, true);
             }),
             down = $(
                 '<button class="btn btn-mini" title="move down"><i class="icon-arrow-down"></button>'
-            ).on('click', function() {
+            ).on("click", function() {
                 DataPivot.move_row(arr, self, false);
             }),
             del = $(
                 '<button class="btn btn-mini" title="remove"><i class="icon-remove"></button>'
-            ).on('click', function() {
+            ).on("click", function() {
                 DataPivot.delete_row(arr, self);
             });
 
@@ -151,21 +150,20 @@ class DataPivot {
     static rangeInputDiv(input) {
         // given an numeric-range input, return a div containing input and text
         // field which updates based on current value.
-        var text = $('<span>').text(input.val());
-        input.on('change', function() {
+        var text = $("<span>").text(input.val());
+        input.on("change", function() {
             text.text(input.val());
         });
-        return $('<div>').append(input, text);
+        return $("<div>").append(input, text);
     }
 
     static displayEditView(data_url, settings, options) {
         var dp;
 
-        d3
-            .tsv(data_url)
+        d3.tsv(data_url)
             .row((d, i) => DataPivot.massage_row(d, i))
             .get((error, data) => {
-                $('#loading_div').fadeOut();
+                $("#loading_div").fadeOut();
                 dp = new DataPivot(data, settings, {
                     update: true,
                     container: options.container,
@@ -191,8 +189,8 @@ class DataPivot {
         this.$display_div = $(dom_bindings.display_div);
 
         // rebuild visualization whenever selected
-        $('a[data-toggle="tab"]').on('shown', function(e) {
-            if (self.$display_div[0] === $($(e.target).attr('href'))[0]) {
+        $('a[data-toggle="tab"]').on("shown", function(e) {
+            if (self.$display_div[0] === $($(e.target).attr("href"))[0]) {
                 self.build_data_pivot_vis(self.$display_div, editable);
             }
         });
@@ -211,8 +209,8 @@ class DataPivot {
 
     build_data_table() {
         var tbl = $('<table class="data_pivot_table">'),
-            thead = $('<thead>'),
-            tbody = $('<tbody>');
+            thead = $("<thead>"),
+            tbody = $("<tbody>");
 
         // get headers
         var data_headers = [];
@@ -223,17 +221,17 @@ class DataPivot {
         }
 
         // print header
-        var tr = $('<tr>');
+        var tr = $("<tr>");
         data_headers.forEach(function(v) {
-            tr.append('<th>{0}</th>'.printf(v));
+            tr.append("<th>{0}</th>".printf(v));
         });
         thead.append(tr);
 
         // print body
         this.data.forEach(function(d) {
-            var tr = $('<tr>');
+            var tr = $("<tr>");
             data_headers.forEach(function(field) {
-                tr.append('<td>{0}</td>'.printf(d[field]));
+                tr.append("<td>{0}</td>".printf(d[field]));
             });
             tbody.append(tr);
         });
@@ -251,7 +249,7 @@ class DataPivot {
     }
 
     triggerOnRenderedCallbacks() {
-        this.onRendered.forEach((cb) => cb());
+        this.onRendered.forEach(cb => cb());
     }
 
     build_settings() {
@@ -276,8 +274,8 @@ class DataPivot {
                 ),
             ];
 
-        this.$settings_div.html(content).on('shown', function(e) {
-            if ($(e.target).attr('href') === '#data_pivot_settings_general') {
+        this.$settings_div.html(content).on("shown", function(e) {
+            if ($(e.target).attr("href") === "#data_pivot_settings_general") {
                 self._dp_settings_general.update_merge_until();
             }
             self.triggerOnRenderedCallbacks();
@@ -303,9 +301,9 @@ class DataPivot {
     download_settings() {
         var settings_json = this.get_settings_json(true),
             blob = new Blob([settings_json], {
-                type: 'text/plain; charset=utf-8',
+                type: "text/plain; charset=utf-8",
             });
-        saveAs(blob, 'data_pivot_settings.json');
+        saveAs(blob, "data_pivot_settings.json");
     }
 
     get_settings_json(pretty) {
@@ -319,27 +317,27 @@ class DataPivot {
     displayAsModal() {
         var self = this,
             modal = new HAWCModal(),
-            title = '<h4>{0}</h4>'.printf(this.title),
+            title = "<h4>{0}</h4>".printf(this.title),
             $plot = $('<div class="span12">'),
             $content = $('<div class="container-fluid">').append(
                 $('<div class="row-fluid">').append($plot)
             );
 
-        modal.getModal().on('shown', function() {
+        modal.getModal().on("shown", function() {
             self.build_data_pivot_vis($plot);
         });
 
         modal
             .addHeader(title)
             .addBody($content)
-            .addFooter('')
+            .addFooter("")
             .show();
     }
 
     object_hyperlink() {
-        return $('<a>')
-            .attr('href', this.url)
-            .attr('target', '_blank')
+        return $("<a>")
+            .attr("href", this.url)
+            .attr("target", "_blank")
             .text(this.title);
     }
 }

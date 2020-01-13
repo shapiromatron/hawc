@@ -1,4 +1,4 @@
-import shared from 'shared/utils/helpers';
+import shared from "shared/utils/helpers";
 
 var helpers = Object.assign({}, shared, {
     getAssessmentApiUrl(config) {
@@ -11,19 +11,17 @@ var helpers = Object.assign({}, shared, {
         ids = null,
         routerParams = {},
     }) {
-        let getFields = fetchModel ? 'fields/' : '',
-            { field, id, type } = routerParams,
-            fields = filterFields && field ? `&fields=${field}` : '',
-            idList = ids ? `&ids=${ids}` : '';
-        return `${state.config.host}${
-            state.config[type].url
-        }${getFields}?assessment_id=${id}${fields}${idList}`;
+        let getFields = fetchModel ? "fields/" : "",
+            {field, id, type} = routerParams,
+            fields = filterFields && field ? `&fields=${field}` : "",
+            idList = ids ? `&ids=${ids}` : "";
+        return `${state.config.host}${state.config[type].url}${getFields}?assessment_id=${id}${fields}${idList}`;
     },
     getObjectUrl(base, id) {
         return `${base}${id}/`;
     },
     extendBreadcrumbs(url) {
-        $('.breadcrumb')
+        $(".breadcrumb")
             .children()
             .last()
             .contents()

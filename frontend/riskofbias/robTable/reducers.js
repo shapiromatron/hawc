@@ -1,13 +1,13 @@
-import { combineReducers } from 'redux';
+import {combineReducers} from "redux";
 
-import config from 'shared/reducers/Config';
-import * as types from 'riskofbias/robTable/constants';
+import config from "shared/reducers/Config";
+import * as types from "riskofbias/robTable/constants";
 
 const defaultState = {
     isFetching: false,
     itemsLoaded: false,
     error: null,
-    name: '',
+    name: "",
     final: [],
     rob_response_values: [],
     riskofbiases: [],
@@ -48,21 +48,21 @@ function study(state = defaultState, action) {
             });
 
         case types.SELECT_ACTIVE:
-            if (_.isEmpty(action.domain) | (action.domain === 'none')) {
+            if (_.isEmpty(action.domain) | (action.domain === "none")) {
                 return Object.assign({}, state, {
                     active: [],
                 });
             }
-            if (action.domain === 'all') {
+            if (action.domain === "all") {
                 return Object.assign({}, state, {
                     active: state.riskofbiases,
                 });
             }
-            let domains = _.find(state.riskofbiases, { key: action.domain });
+            let domains = _.find(state.riskofbiases, {key: action.domain});
             if (action.metric) {
-                let values = _.find(domains.values, { key: action.metric });
+                let values = _.find(domains.values, {key: action.metric});
                 return Object.assign({}, state, {
-                    active: [Object.assign({}, domains, { values: [values] })],
+                    active: [Object.assign({}, domains, {values: [values]})],
                 });
             }
             return Object.assign({}, state, {

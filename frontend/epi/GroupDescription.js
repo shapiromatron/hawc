@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import _ from "lodash";
 
 class GroupDescription {
     constructor(data) {
@@ -7,10 +7,10 @@ class GroupDescription {
 
     build_tr(footnotes) {
         var d = this.data,
-            mean = '-',
-            variance = '-',
-            upper = '-',
-            lower = '-';
+            mean = "-",
+            variance = "-",
+            upper = "-",
+            lower = "-";
 
         if (_.isNumber(d.mean))
             mean = '{0}<br><span class="help-inline">{1}</span>'.printf(d.mean, d.mean_type);

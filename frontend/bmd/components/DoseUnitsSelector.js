@@ -1,5 +1,5 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React from "react";
+import PropTypes from "prop-types";
 
 class DoseUnitsSelector extends React.Component {
     componentWillMount() {
@@ -28,9 +28,8 @@ class DoseUnitsSelector extends React.Component {
                     <select
                         name="dose_units"
                         value={this.props.doseUnits}
-                        onChange={this.handleUnitsChange.bind(this)}
-                    >
-                        {units.map((d) => {
+                        onChange={this.handleUnitsChange.bind(this)}>
+                        {units.map(d => {
                             return (
                                 <option key={d.id} value={d.id}>
                                     {d.name}

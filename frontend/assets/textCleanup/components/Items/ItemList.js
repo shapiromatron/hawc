@@ -1,12 +1,12 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React, {Component} from "react";
+import PropTypes from "prop-types";
 
-import BulkList from './BulkList';
-import Header from './Header';
+import BulkList from "./BulkList";
+import Header from "./Header";
 
 class ItemList extends Component {
     render() {
-        const { params } = this.props;
+        const {params} = this.props;
         return (
             <div className="endpoint_list">
                 <Header params={params} />

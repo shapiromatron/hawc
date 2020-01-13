@@ -1,4 +1,4 @@
-import * as types from 'riskofbias/robScoreCleanup/constants';
+import * as types from "riskofbias/robScoreCleanup/constants";
 
 const defaultState = {
     isFetching: false,

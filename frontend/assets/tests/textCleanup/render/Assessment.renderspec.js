@@ -1,15 +1,15 @@
-import React from 'react';
-import ReactTestUtils from 'react-dom/test-utils';
-import unexpected from 'unexpected';
-import unexpectedReact from 'unexpected-react';
+import React from "react";
+import ReactTestUtils from "react-dom/test-utils";
+import unexpected from "unexpected";
+import unexpectedReact from "unexpected-react";
 
-import Assessment from 'textCleanup/components/Assessment';
+import Assessment from "textCleanup/components/Assessment";
 
-import { HOST } from 'tests/constants';
+import {HOST} from "tests/constants";
 
 const expect = unexpected.clone().use(unexpectedReact);
 
-describe('textCleanup Assessment component', () => {
+describe("textCleanup Assessment component", () => {
     let object, renderer, output;
 
     beforeEach(() => {
@@ -17,18 +17,18 @@ describe('textCleanup Assessment component', () => {
             items: [
                 {
                     count: 334,
-                    type: 'epi',
-                    title: 'epidemiological outcomes assessed',
+                    type: "epi",
+                    title: "epidemiological outcomes assessed",
                     url: `${HOST}/epi/api/cleanup/?assessment_id=57`,
                 },
                 {
                     count: 1,
-                    title: 'in vitro endpoints',
-                    type: 'iv',
+                    title: "in vitro endpoints",
+                    type: "iv",
                     url: `${HOST}/in-vitro/api/cleanup/?assessment_id=57`,
                 },
             ],
-            name: 'test assessment',
+            name: "test assessment",
         };
 
         renderer = ReactTestUtils.createRenderer();
@@ -36,19 +36,19 @@ describe('textCleanup Assessment component', () => {
         output = renderer.getRenderOutput();
     });
 
-    it('should render with a correct class name', () => {
-        expect(output.props.className, 'to equal', 'assessment');
+    it("should render with a correct class name", () => {
+        expect(output.props.className, "to equal", "assessment");
     });
 
-    it('should have a list title', () => {
+    it("should have a list title", () => {
         expect(
-            output.props.children[0].props.children.join(''),
-            'to equal',
-            'Cleanup test assessment'
+            output.props.children[0].props.children.join(""),
+            "to equal",
+            "Cleanup test assessment"
         );
     });
 
-    it('should render two endpoint types', () => {
-        expect(output.props.children[0].props.children.length, 'to equal', 2);
+    it("should render two endpoint types", () => {
+        expect(output.props.children[0].props.children.length, "to equal", 2);
     });
 });

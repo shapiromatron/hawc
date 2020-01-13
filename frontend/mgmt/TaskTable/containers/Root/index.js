@@ -1,10 +1,10 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { Provider } from 'react-redux';
+import React, {Component} from "react";
+import PropTypes from "prop-types";
+import {Provider} from "react-redux";
 
-import { loadConfig } from 'shared/actions/Config';
-import List from 'mgmt/TaskTable/containers/List';
-import Loading from 'shared/components/Loading';
+import {loadConfig} from "shared/actions/Config";
+import List from "mgmt/TaskTable/containers/List";
+import Loading from "shared/components/Loading";
 
 class Root extends Component {
     componentWillMount() {

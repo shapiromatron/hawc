@@ -1,15 +1,15 @@
-import $ from '$';
+import $ from "$";
 
-import BaseTable from 'utils/BaseTable';
-import HAWCModal from 'utils/HAWCModal';
+import BaseTable from "utils/BaseTable";
+import HAWCModal from "utils/HAWCModal";
 
-import Endpoint from 'animal/Endpoint';
-import EndpointDetailRow from 'animal/EndpointDetailRow';
-import SmartTagContainer from 'assets/smartTags/SmartTagContainer';
+import Endpoint from "animal/Endpoint";
+import EndpointDetailRow from "animal/EndpointDetailRow";
+import SmartTagContainer from "assets/smartTags/SmartTagContainer";
 
-import EndpointAggregationExposureResponsePlot from './EndpointAggregationExposureResponsePlot';
-import EndpointAggregationForestPlot from './EndpointAggregationForestPlot';
-import BaseVisual from './BaseVisual';
+import EndpointAggregationExposureResponsePlot from "./EndpointAggregationExposureResponsePlot";
+import EndpointAggregationForestPlot from "./EndpointAggregationForestPlot";
+import BaseVisual from "./BaseVisual";
 
 class EndpointAggregation extends BaseVisual {
     constructor(data) {
@@ -23,8 +23,8 @@ class EndpointAggregation extends BaseVisual {
     }
 
     displayAsPage($el, options) {
-        var title = $('<h1>').text(this.data.title),
-            captionDiv = $('<div>').html(this.data.caption),
+        var title = $("<h1>").text(this.data.title),
+            captionDiv = $("<div>").html(this.data.caption),
             caption = new SmartTagContainer(captionDiv),
             self = this;
 
@@ -32,8 +32,8 @@ class EndpointAggregation extends BaseVisual {
 
         if (window.isEditable) title.append(this.addActionsMenu());
 
-        this.$tblDiv = $('<div>');
-        this.$plotDiv = $('<div>');
+        this.$tblDiv = $("<div>");
+        this.$plotDiv = $("<div>");
 
         $('<button type="button" class="btn btn-mini" title="Toggle table-view representation">')
             .append('<i class="icon-chevron-right"></i>')
@@ -41,15 +41,13 @@ class EndpointAggregation extends BaseVisual {
                 self.buildTbl();
             });
 
-        $el
-            .empty()
+        $el.empty()
             .append(this.$plotDiv)
             .append(this.$tblDiv);
 
         if (!options.visualOnly) {
-            $el
-                .prepend(title)
-                .append('<h2>Caption</h2>')
+            $el.prepend(title)
+                .append("<h2>Caption</h2>")
                 .append(captionDiv);
         }
 
@@ -65,13 +63,13 @@ class EndpointAggregation extends BaseVisual {
 
         var self = this,
             modal = new HAWCModal(),
-            captionDiv = $('<div>').html(this.data.caption),
+            captionDiv = $("<div>").html(this.data.caption),
             caption = new SmartTagContainer(captionDiv);
 
-        this.$tblDiv = $('<div>');
-        this.$plotDiv = $('<div>');
+        this.$tblDiv = $("<div>");
+        this.$plotDiv = $("<div>");
 
-        modal.getModal().on('shown', function() {
+        modal.getModal().on("shown", function() {
             self.buildPlot();
             caption.renderAndEnable();
         });
@@ -79,10 +77,10 @@ class EndpointAggregation extends BaseVisual {
         this.buildTbl();
         this.plotData = this.getPlotData();
         modal
-            .addHeader($('<h4>').text(this.data.title))
-            .addBody($('<div>').append(this.$plotDiv, this.$tblDiv, captionDiv))
-            .addFooter('')
-            .show({ maxWidth: 1200 });
+            .addHeader($("<h4>").text(this.data.title))
+            .addBody($("<div>").append(this.$plotDiv, this.$tblDiv, captionDiv))
+            .addFooter("")
+            .show({maxWidth: 1200});
     }
 
     buildTbl() {
@@ -102,69 +100,62 @@ class EndpointAggregation extends BaseVisual {
                 var tr = $(this)
                     .parent()
                     .parent();
-                if (tr.data('detail_row')) {
-                    tr.data('detail_row').toggle_view(!tr.data('detail_row').object_visible);
+                if (tr.data("detail_row")) {
+                    tr.data("detail_row").toggle_view(!tr.data("detail_row").object_visible);
                 } else {
-                    var ep = tr.data('endpoint'),
+                    var ep = tr.data("endpoint"),
                         div_id = String.random_string(),
                         colspan = tr.children().length;
 
-                    tr
-                        .after(
-                            '<tr><td colspan="{0}"><div id="{1}"></div></td></tr>'.printf(
-                                colspan,
-                                div_id
-                            )
+                    tr.after(
+                        '<tr><td colspan="{0}"><div id="{1}"></div></td></tr>'.printf(
+                            colspan,
+                            div_id
                         )
-                        .data('detail_row', new EndpointDetailRow(ep, '#' + div_id, 1));
+                    ).data("detail_row", new EndpointDetailRow(ep, "#" + div_id, 1));
                 }
             };
 
         tbl.addHeaderRow([
-            'Study',
-            'Experiment',
-            'Animal Group',
-            'Endpoint',
+            "Study",
+            "Experiment",
+            "Animal Group",
+            "Endpoint",
             this.endpoints[0].data.noel_names.noel,
             this.endpoints[0].data.noel_names.loel,
-            'BMD',
-            'BMDL',
+            "BMD",
+            "BMDL",
         ]);
 
         this.endpoints.forEach(function(e) {
-            tbl
-                .addRow([
-                    '<a href="{0}">{1}</a>'.printf(
-                        e.data.animal_group.experiment.study.url,
-                        e.data.animal_group.experiment.study.short_citation
-                    ),
-                    '<a href="{0}">{1}</a>'.printf(
-                        e.data.animal_group.experiment.url,
-                        e.data.animal_group.experiment.name
-                    ),
-                    '<a href="{0}">{1}</a>'.printf(
-                        e.data.animal_group.url,
-                        e.data.animal_group.name
-                    ),
-                    e._endpoint_detail_td(),
-                    e.get_special_dose_text('NOEL'),
-                    e.get_special_dose_text('LOEL'),
-                    e.get_bmd_special_values('BMD'),
-                    e.get_bmd_special_values('BMDL'),
-                ])
-                .data('endpoint', e);
+            tbl.addRow([
+                '<a href="{0}">{1}</a>'.printf(
+                    e.data.animal_group.experiment.study.url,
+                    e.data.animal_group.experiment.study.short_citation
+                ),
+                '<a href="{0}">{1}</a>'.printf(
+                    e.data.animal_group.experiment.url,
+                    e.data.animal_group.experiment.name
+                ),
+                '<a href="{0}">{1}</a>'.printf(e.data.animal_group.url, e.data.animal_group.name),
+                e._endpoint_detail_td(),
+                e.get_special_dose_text("NOEL"),
+                e.get_special_dose_text("LOEL"),
+                e.get_bmd_special_values("BMD"),
+                e.get_bmd_special_values("BMDL"),
+            ]).data("endpoint", e);
         });
 
-        return tbl.getTbl().on('click', '.endpoint-selector', showEndpointDetail);
+        return tbl.getTbl().on("click", ".endpoint-selector", showEndpointDetail);
     }
 
     buildTblEvidence() {
         var tbl = new BaseTable();
 
-        tbl.addHeaderRow(['Study', 'Experiment', 'Animal Group', 'Endpoint']);
+        tbl.addHeaderRow(["Study", "Experiment", "Animal Group", "Endpoint"]);
 
         this.endpoints.forEach(function(e) {
-            var ep_tbl = $('<div>')
+            var ep_tbl = $("<div>")
                 .append('<a href="{0}">{1}</a>'.printf(e.data.url, e.data.name))
                 .append(e.build_endpoint_table($('<table class="table table-condensed">')));
 
@@ -207,11 +198,11 @@ class EndpointAggregation extends BaseVisual {
 
     addPlotToggleButton() {
         return {
-            id: 'plot_toggle',
-            cls: 'btn btn-mini',
-            title: 'View alternate visualizations',
-            text: '',
-            icon: 'icon-circle-arrow-right',
+            id: "plot_toggle",
+            cls: "btn btn-mini",
+            title: "View alternate visualizations",
+            text: "",
+            icon: "icon-circle-arrow-right",
             on_click: this.buildPlot.bind(this),
         };
     }

@@ -1,13 +1,13 @@
-import $ from '$';
+import $ from "$";
 
 // Method for creating a table for descriptive information
 class DescriptiveTable {
     constructor() {
         this._tbl = $('<table class="table table-condensed table-striped">');
-        this._colgroup = $('<colgroup>').append(
+        this._colgroup = $("<colgroup>").append(
             '<col style="width: 30%;"><col style="width: 70%;">'
         );
-        this._tbody = $('<tbody>');
+        this._tbody = $("<tbody>");
         this._tbl.append(this._colgroup, this._tbody);
         return this;
     }
@@ -17,15 +17,15 @@ class DescriptiveTable {
         if (value) {
             if (parseFloat(value, 10) === value) value = value.toHawcString();
             if (opts.calculated) {
-                value = '[{0}]'.printf(value); // [] = estimated
+                value = "[{0}]".printf(value); // [] = estimated
             }
-            var td = $('<td>').html(value);
+            var td = $("<td>").html(value);
             if (opts.annotate) {
-                td.append('<br>', $('<span class="muted">').text(opts.annotate));
+                td.append("<br>", $('<span class="muted">').text(opts.annotate));
             }
             this._tbody.append(
-                $('<tr>')
-                    .append($('<th>').html(description))
+                $("<tr>")
+                    .append($("<th>").html(description))
                     .append(td)
             );
         }
@@ -34,14 +34,14 @@ class DescriptiveTable {
 
     add_tbody_tr_list(description, list_items) {
         if (list_items.length > 0) {
-            var ul = $('<ul>').append(
+            var ul = $("<ul>").append(
                     list_items.map(function(v) {
-                        return $('<li>').html(v);
+                        return $("<li>").html(v);
                     })
                 ),
-                tr = $('<tr>')
-                    .append('<th>{0}</th>'.printf(description))
-                    .append($('<td>').append(ul));
+                tr = $("<tr>")
+                    .append("<th>{0}</th>".printf(description))
+                    .append($("<td>").append(ul));
 
             this._tbody.append(tr);
         }

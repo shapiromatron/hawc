@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import _ from 'lodash';
+import React, {Component} from "react";
+import PropTypes from "prop-types";
+import _ from "lodash";
 
-import './SelectInput.css';
+import "./SelectInput.css";
 
 class SelectInput extends Component {
     /**
@@ -35,8 +35,8 @@ class SelectInput extends Component {
     }
 
     render() {
-        let { id, choices, helpText, name } = this.props,
-            className = this.props.className || 'react-select',
+        let {id, choices, helpText, name} = this.props,
+            className = this.props.className || "react-select",
             value = this.props.value || _.first(choices).id;
         return (
             <div className="control-group">
@@ -47,9 +47,8 @@ class SelectInput extends Component {
                         className={className}
                         value={value}
                         onChange={this.handleSelect}
-                        name={name}
-                    >
-                        {_.map(choices, (choice) => {
+                        name={name}>
+                        {_.map(choices, choice => {
                             return (
                                 <option key={choice.id} value={choice.id}>
                                     {choice.value}

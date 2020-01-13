@@ -1,13 +1,13 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React, {Component} from "react";
+import PropTypes from "prop-types";
 
-import AssessmentLabel from 'mgmt/TaskAssignments/components/AssessmentLabel';
+import AssessmentLabel from "mgmt/TaskAssignments/components/AssessmentLabel";
 
 class RobTask extends Component {
     render() {
-        let { assessment } = this.props.task.scores[0].metric.domain,
-            { study_name, study_id, url_edit } = this.props.task.scores[0],
-            robText = this.props.task.final ? 'Edit final review' : 'Edit review',
+        let {assessment} = this.props.task.scores[0].metric.domain,
+            {study_name, study_id, url_edit} = this.props.task.scores[0],
+            robText = this.props.task.final ? "Edit final review" : "Edit review",
             assessmentLbl = this.props.showAssessment ? (
                 <AssessmentLabel className="flex-1" assessment={assessment} />
             ) : null;

@@ -1,15 +1,15 @@
-import * as types from 'riskofbias/robVisual/constants/ActionTypes';
-import filterReducer from 'riskofbias/robVisual/reducers/Filter';
+import * as types from "riskofbias/robVisual/constants/ActionTypes";
+import filterReducer from "riskofbias/robVisual/reducers/Filter";
 
-describe('robVisual Filter reducer', () => {
-    it('should handle requesting effects', () => {
+describe("robVisual Filter reducer", () => {
+    it("should handle requesting effects", () => {
         expect(
             filterReducer(
                 {
                     effects: [],
                     isFetchingEffects: false,
                 },
-                { type: types.REQUEST_EFFECTS }
+                {type: types.REQUEST_EFFECTS}
             )
         ).to.deep.equal({
             effects: [],
@@ -17,14 +17,14 @@ describe('robVisual Filter reducer', () => {
         });
     });
 
-    it('should handle requesting endpoints', () => {
+    it("should handle requesting endpoints", () => {
         expect(
             filterReducer(
                 {
                     endpoints: [],
                     isFetchingEndpoints: false,
                 },
-                { type: types.REQUEST_ENDPOINTS }
+                {type: types.REQUEST_ENDPOINTS}
             )
         ).to.deep.equal({
             endpoints: [],
@@ -32,14 +32,14 @@ describe('robVisual Filter reducer', () => {
         });
     });
 
-    it('should handle requesting Rob scores', () => {
+    it("should handle requesting Rob scores", () => {
         expect(
             filterReducer(
                 {
                     robScores: [],
                     isFetchingRobScores: false,
                 },
-                { type: types.REQUEST_ROB_SCORES }
+                {type: types.REQUEST_ROB_SCORES}
             )
         ).to.deep.equal({
             robScores: [],
@@ -47,7 +47,7 @@ describe('robVisual Filter reducer', () => {
         });
     });
 
-    it('should handle receiving effects', () => {
+    it("should handle receiving effects", () => {
         expect(
             filterReducer(
                 {
@@ -57,23 +57,23 @@ describe('robVisual Filter reducer', () => {
                 {
                     type: types.RECEIVE_EFFECTS,
                     effects: [
-                        'anxiety/motor activity',
-                        'depression/motor endurance',
-                        'development:ear opening',
+                        "anxiety/motor activity",
+                        "depression/motor endurance",
+                        "development:ear opening",
                     ],
                 }
             )
         ).to.deep.equal({
             effects: [
-                'anxiety/motor activity',
-                'depression/motor endurance',
-                'development:ear opening',
+                "anxiety/motor activity",
+                "depression/motor endurance",
+                "development:ear opening",
             ],
             isFetchingEffects: false,
         });
     });
 
-    it('should handle receiving endpoints', () => {
+    it("should handle receiving endpoints", () => {
         expect(
             filterReducer(
                 {
@@ -83,24 +83,24 @@ describe('robVisual Filter reducer', () => {
                 {
                     type: types.RECEIVE_ENDPOINTS,
                     endpoints: [
-                        'anxiety/motor activity',
-                        'depression/motor endurance',
-                        'development:ear opening',
+                        "anxiety/motor activity",
+                        "depression/motor endurance",
+                        "development:ear opening",
                     ],
                 }
             )
         ).to.deep.equal({
             endpoints: [
-                'anxiety/motor activity',
-                'depression/motor endurance',
-                'development:ear opening',
+                "anxiety/motor activity",
+                "depression/motor endurance",
+                "development:ear opening",
             ],
             isFetchingEndpoints: false,
             endpointsLoaded: true,
         });
     });
 
-    it('should handle receiving robScores', () => {
+    it("should handle receiving robScores", () => {
         expect(
             filterReducer(
                 {
@@ -110,49 +110,49 @@ describe('robVisual Filter reducer', () => {
                 {
                     type: types.RECEIVE_ROB_SCORES,
                     robScores: [
-                        'anxiety/motor activity',
-                        'depression/motor endurance',
-                        'development:ear opening',
+                        "anxiety/motor activity",
+                        "depression/motor endurance",
+                        "development:ear opening",
                     ],
                 }
             )
         ).to.deep.equal({
             robScores: [
-                'anxiety/motor activity',
-                'depression/motor endurance',
-                'development:ear opening',
+                "anxiety/motor activity",
+                "depression/motor endurance",
+                "development:ear opening",
             ],
             isFetchingRobScores: false,
         });
     });
 
-    it('should handle selecting effects', () => {
+    it("should handle selecting effects", () => {
         expect(
             filterReducer(
                 {
                     effects: [
-                        'anxiety/motor activity',
-                        'depression/motor endurance',
-                        'development:ear opening',
+                        "anxiety/motor activity",
+                        "depression/motor endurance",
+                        "development:ear opening",
                     ],
                     selectedEffects: null,
                 },
                 {
                     type: types.SELECT_EFFECTS,
-                    effects: 'anxiety/motor activity',
+                    effects: "anxiety/motor activity",
                 }
             )
         ).to.deep.equal({
             effects: [
-                'anxiety/motor activity',
-                'depression/motor endurance',
-                'development:ear opening',
+                "anxiety/motor activity",
+                "depression/motor endurance",
+                "development:ear opening",
             ],
-            selectedEffects: 'anxiety/motor activity',
+            selectedEffects: "anxiety/motor activity",
         });
     });
 
-    it('should handle setting the RoB score threshold', () => {
+    it("should handle setting the RoB score threshold", () => {
         expect(
             filterReducer(
                 {

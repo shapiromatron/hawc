@@ -1,16 +1,16 @@
-import $ from '$';
+import $ from "$";
 import {
     _DataPivot_settings_refline,
     _DataPivot_settings_refrect,
     _DataPivot_settings_label,
     buildHeaderTr,
-} from './DataPivotUtilities';
+} from "./DataPivotUtilities";
 
 let buildReferenceLines = function(tab, dp) {
-        let thead = $('<thead>').html(
-                buildHeaderTr(['Reference line value', 'Line style', 'Delete'])
+        let thead = $("<thead>").html(
+                buildHeaderTr(["Reference line value", "Line style", "Delete"])
             ),
-            tbody = $('<tbody>'),
+            tbody = $("<tbody>"),
             tbl = $('<table class="table table-condensed table-bordered">').html([thead, tbody]),
             settings = dp.settings.reference_lines,
             addDataRow = function(i) {
@@ -25,7 +25,7 @@ let buildReferenceLines = function(tab, dp) {
                 addDataRow(settings.length);
             },
             newRowBtn = $('<button class="btn btn-primary pull-right">New row</button>').on(
-                'click',
+                "click",
                 newDataRow
             ),
             numRows = settings.length === 0 ? 1 : settings.length;
@@ -33,16 +33,16 @@ let buildReferenceLines = function(tab, dp) {
         for (var i = 0; i < numRows; i++) {
             addDataRow(i);
         }
-        tab.append($('<h3>Reference lines</h3>').append(newRowBtn), tbl);
+        tab.append($("<h3>Reference lines</h3>").append(newRowBtn), tbl);
     },
     buildReferenceRanges = function(tab, dp) {
-        let thead = $('<thead>').html(
-                buildHeaderTr(['Lower value', 'Upper value', 'Range style', 'Delete'])
+        let thead = $("<thead>").html(
+                buildHeaderTr(["Lower value", "Upper value", "Range style", "Delete"])
             ),
             colgroup = $(
                 '<colgroup><col style="width: 25%;"><col style="width: 25%;"><col style="width: 25%;"><col style="width: 25%;"></colgroup>'
             ),
-            tbody = $('<tbody>'),
+            tbody = $("<tbody>"),
             tbl = $('<table class="table table-condensed table-bordered">').html([
                 colgroup,
                 thead,
@@ -61,7 +61,7 @@ let buildReferenceLines = function(tab, dp) {
                 addDataRow(settings.length);
             },
             newRowBtn = $('<button class="btn btn-primary pull-right">New row</button>').on(
-                'click',
+                "click",
                 newDataRow
             ),
             numRows = settings.length === 0 ? 1 : settings.length;
@@ -70,11 +70,11 @@ let buildReferenceLines = function(tab, dp) {
             addDataRow(i);
         }
 
-        tab.append($('<h3>Reference ranges</h3>').append(newRowBtn), tbl);
+        tab.append($("<h3>Reference ranges</h3>").append(newRowBtn), tbl);
     },
     buildReferenceLabels = function(tab, dp) {
-        var thead = $('<thead>').html(buildHeaderTr(['Text', 'Style', 'Delete'])),
-            tbody = $('<tbody>'),
+        var thead = $("<thead>").html(buildHeaderTr(["Text", "Style", "Delete"])),
+            tbody = $("<tbody>"),
             tbl = $('<table class="table table-condensed table-bordered">').html([thead, tbody]),
             settings = dp.settings.labels,
             addDataRow = function(i) {
@@ -89,7 +89,7 @@ let buildReferenceLines = function(tab, dp) {
                 addDataRow(settings.length);
             },
             newRowBtn = $('<button class="btn btn-primary pull-right">New row</button>').on(
-                'click',
+                "click",
                 newDataRow
             ),
             numRows = settings.length === 0 ? 1 : settings.length;
@@ -98,7 +98,7 @@ let buildReferenceLines = function(tab, dp) {
             addDataRow(i);
         }
 
-        tab.append($('<h3>Labels</h3>').append(newRowBtn), tbl);
+        tab.append($("<h3>Labels</h3>").append(newRowBtn), tbl);
     },
     buildReferenceTab = function(dp) {
         let tab = $('<div class="tab-pane" id="data_pivot_settings_ref">');

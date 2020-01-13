@@ -1,18 +1,18 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Provider } from 'react-redux';
+import React from "react";
+import PropTypes from "prop-types";
+import {Provider} from "react-redux";
 
-import './Root.css';
+import "./Root.css";
 
-import { loadConfig } from 'shared/actions/Config';
+import {loadConfig} from "shared/actions/Config";
 
-import { getTags } from 'nestedTagEditor/actions';
+import {getTags} from "nestedTagEditor/actions";
 
-import Tree from 'nestedTagEditor/containers/Tree';
+import Tree from "nestedTagEditor/containers/Tree";
 
 class Root extends React.Component {
     componentWillMount() {
-        let { dispatch } = this.props.store;
+        let {dispatch} = this.props.store;
         Promise.all([dispatch(loadConfig())]).then(() => dispatch(getTags()));
     }
 

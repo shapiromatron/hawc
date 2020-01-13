@@ -1,8 +1,8 @@
-import $ from '$';
-import _ from 'lodash';
-import d3 from 'd3';
+import $ from "$";
+import _ from "lodash";
+import d3 from "d3";
 
-import D3Visualization from './D3Visualization';
+import D3Visualization from "./D3Visualization";
 
 class EndpointAggregationForestPlot extends D3Visualization {
     constructor(parent, data, options) {
@@ -11,7 +11,7 @@ class EndpointAggregationForestPlot extends D3Visualization {
     }
 
     setDefaults() {
-        this.padding = { top: 40, right: 20, bottom: 40, left: 30 };
+        this.padding = {top: 40, right: 20, bottom: 40, left: 30};
         this.padding.left_original = this.padding.left;
         this.buff = 0.05; // addition numerical-spacing around dose/response units
     }
@@ -50,9 +50,9 @@ class EndpointAggregationForestPlot extends D3Visualization {
             upper_ci,
             egs,
             getCoordClass = function(e, i) {
-                if (e.data.LOEL == i) return 'LOEL';
-                if (e.data.NOEL == i) return 'NOEL';
-                return '';
+                if (e.data.LOEL == i) return "LOEL";
+                if (e.data.NOEL == i) return "NOEL";
+                return "";
             },
             dose_units = this.data.endpoints[0].dose_units;
 
@@ -67,7 +67,7 @@ class EndpointAggregationForestPlot extends D3Visualization {
                 endpoint_labels.push({
                     endpoint: e,
                     y: y + egs.length * 0.5,
-                    label: '{0}- {1}- {2}: {3}'.printf(
+                    label: "{0}- {1}- {2}: {3}".printf(
                         e.data.animal_group.experiment.study.short_citation,
                         e.data.animal_group.experiment.name,
                         e.data.animal_group.name,
@@ -79,13 +79,13 @@ class EndpointAggregationForestPlot extends D3Visualization {
                     var txt = [
                         e.data.animal_group.experiment.study.short_citation,
                         e.data.name,
-                        'Dose: ' + eg.dose,
-                        'N: ' + eg.n,
+                        "Dose: " + eg.dose,
+                        "N: " + eg.n,
                     ];
 
                     if (i === 0) {
                         // get control value
-                        if (e.data.data_type == 'C') {
+                        if (e.data.data_type == "C") {
                             control = parseFloat(eg.response, 10);
                         } else {
                             control = parseFloat(eg.incidence / eg.n, 10);
@@ -97,13 +97,13 @@ class EndpointAggregationForestPlot extends D3Visualization {
 
                     // get plot value
                     y += 1;
-                    if (e.data.data_type == 'C') {
-                        txt.push('Mean: ' + eg.response, 'Stdev: ' + eg.stdev);
+                    if (e.data.data_type == "C") {
+                        txt.push("Mean: " + eg.response, "Stdev: " + eg.stdev);
                         val = (eg.response - control) / control;
                         lower_ci = (eg.lower_ci - control) / control;
                         upper_ci = (eg.upper_ci - control) / control;
                     } else {
-                        txt.push('Incidence: ' + eg.incidence);
+                        txt.push("Incidence: " + eg.incidence);
                         val = eg.incidence / eg.n;
                         lower_ci = eg.lower_ci;
                         upper_ci = eg.upper_ci;
@@ -112,7 +112,7 @@ class EndpointAggregationForestPlot extends D3Visualization {
                         x: val,
                         y,
                         class: getCoordClass(e, i),
-                        text: txt.join('\n'),
+                        text: txt.join("\n"),
                         dose: eg.dose,
                         lower_ci,
                         upper_ci,
@@ -120,7 +120,7 @@ class EndpointAggregationForestPlot extends D3Visualization {
                     });
                 });
                 y += 1;
-                lines.push({ y, endpoint: e.data.name });
+                lines.push({y, endpoint: e.data.name});
             })
             .value();
 
@@ -155,39 +155,39 @@ class EndpointAggregationForestPlot extends D3Visualization {
             w: plot_width,
             h: plot_height,
             title_str: this.data.title,
-            x_label_text: '% change from control (continuous), % incidence (dichotomous)',
-            y_label_text: 'Doses ({0})'.printf(dose_units),
+            x_label_text: "% change from control (continuous), % incidence (dichotomous)",
+            y_label_text: "Doses ({0})".printf(dose_units),
         });
-        this.plot_div.css({ height: '{0}px'.printf(container_height) });
+        this.plot_div.css({height: "{0}px".printf(container_height)});
     }
 
     add_axes() {
         // using plot-settings, customize axes
         this.x_axis_settings = {
-            scale_type: 'linear',
+            scale_type: "linear",
             domain: [this.min_x - this.max_x * this.buff, this.max_x * (1 + this.buff)],
             rangeRound: [0, this.w],
-            text_orient: 'bottom',
+            text_orient: "bottom",
             x_translate: 0,
             y_translate: this.h,
-            axis_class: 'axis x_axis',
+            axis_class: "axis x_axis",
             gridlines: true,
-            gridline_class: 'primary_gridlines x_gridlines',
+            gridline_class: "primary_gridlines x_gridlines",
             number_ticks: 10,
             axis_labels: true,
-            label_format: d3.format('.0%'),
+            label_format: d3.format(".0%"),
         };
 
         this.y_axis_settings = {
-            scale_type: 'linear',
+            scale_type: "linear",
             domain: [this.max_y, this.min_y], // invert axis
             rangeRound: [this.h, 0],
-            text_orient: 'left',
+            text_orient: "left",
             x_translate: 0,
             y_translate: 0,
-            axis_class: 'axis y_axis',
+            axis_class: "axis y_axis",
             gridlines: false,
-            gridline_class: 'primary_gridlines y_gridlines',
+            gridline_class: "primary_gridlines y_gridlines",
             number_ticks: 10,
             axis_labels: false,
             label_format: undefined, // default
@@ -200,12 +200,12 @@ class EndpointAggregationForestPlot extends D3Visualization {
         // Resize plot based on the dimensions of the labels.
         var ylabel_width =
             d3.max(
-                this.plot_div.find('.forest_plot_labels').map(function() {
+                this.plot_div.find(".forest_plot_labels").map(function() {
                     return this.getComputedTextLength();
                 })
             ) +
             d3.max(
-                this.plot_div.find('.dr_tick_text').map(function() {
+                this.plot_div.find(".dr_tick_text").map(function() {
                     return this.getComputedTextLength();
                 })
             );
@@ -222,32 +222,32 @@ class EndpointAggregationForestPlot extends D3Visualization {
 
         //horizontal lines
         this.vis
-            .selectAll('svg.endpoint_lines')
+            .selectAll("svg.endpoint_lines")
             .data(this.lines)
             .enter()
-            .append('line')
-            .attr('x1', function(d) {
+            .append("line")
+            .attr("x1", function(d) {
                 return x(x.domain()[0]);
             })
-            .attr('y1', function(d) {
+            .attr("y1", function(d) {
                 return y(d.y);
             })
-            .attr('x2', function(d) {
+            .attr("x2", function(d) {
                 return x(x.domain()[1]);
             })
-            .attr('y2', function(d) {
+            .attr("y2", function(d) {
                 return y(d.y);
             })
-            .attr('class', 'primary_gridlines');
+            .attr("class", "primary_gridlines");
 
         // add vertical line at zero
         this.vis
-            .append('line')
-            .attr('x1', this.x_scale(0))
-            .attr('y1', this.y_scale(this.min_y))
-            .attr('x2', this.x_scale(0))
-            .attr('y2', this.y_scale(this.max_y))
-            .attr('class', 'reference_line');
+            .append("line")
+            .attr("x1", this.x_scale(0))
+            .attr("y1", this.y_scale(this.min_y))
+            .attr("x2", this.x_scale(0))
+            .attr("y2", this.y_scale(this.max_y))
+            .attr("class", "reference_line");
     }
 
     add_dose_points() {
@@ -262,91 +262,91 @@ class EndpointAggregationForestPlot extends D3Visualization {
 
         // horizontal confidence interval line
         this.vis
-            .selectAll('svg.error_bars')
+            .selectAll("svg.error_bars")
             .data(lines)
             .enter()
-            .append('line')
-            .attr('x1', (d) => x(d.lower_ci))
-            .attr('y1', (d) => y(d.y))
-            .attr('x2', (d) => x(d.upper_ci))
-            .attr('y2', (d) => y(d.y))
-            .attr('class', 'dr_err_bars');
+            .append("line")
+            .attr("x1", d => x(d.lower_ci))
+            .attr("y1", d => y(d.y))
+            .attr("x2", d => x(d.upper_ci))
+            .attr("y2", d => y(d.y))
+            .attr("class", "dr_err_bars");
 
         // lower vertical vertical confidence intervals line
         this.vis
-            .selectAll('svg.error_bars')
+            .selectAll("svg.error_bars")
             .data(lines)
             .enter()
-            .append('line')
-            .attr('x1', (d) => x(d.lower_ci))
-            .attr('y1', (d) => y(d.y) - 5)
-            .attr('x2', (d) => x(d.lower_ci))
-            .attr('y2', (d) => y(d.y) + 5)
-            .attr('class', 'dr_err_bars');
+            .append("line")
+            .attr("x1", d => x(d.lower_ci))
+            .attr("y1", d => y(d.y) - 5)
+            .attr("x2", d => x(d.lower_ci))
+            .attr("y2", d => y(d.y) + 5)
+            .attr("class", "dr_err_bars");
 
         // upper vertical confidence intervals line
         this.vis
-            .selectAll('svg.error_bars')
+            .selectAll("svg.error_bars")
             .data(lines)
             .enter()
-            .append('line')
-            .attr('x1', (d) => x(d.upper_ci))
-            .attr('y1', (d) => y(d.y) - 5)
-            .attr('x2', (d) => x(d.upper_ci))
-            .attr('y2', (d) => y(d.y) + 5)
-            .attr('class', 'dr_err_bars');
+            .append("line")
+            .attr("x1", d => x(d.upper_ci))
+            .attr("y1", d => y(d.y) - 5)
+            .attr("x2", d => x(d.upper_ci))
+            .attr("y2", d => y(d.y) + 5)
+            .attr("class", "dr_err_bars");
 
         // central tendency of percent-change
         this.dots = this.vis
-            .selectAll('path.dot')
+            .selectAll("path.dot")
             .data(points)
             .enter()
-            .append('circle')
-            .attr('r', '7')
-            .attr('class', (d) => 'dose_points ' + d.class)
-            .style('cursor', 'pointer')
-            .attr('transform', (d) => `translate(${x(d.x)},${y(d.y)})`)
-            .on('click', (d) => d.endpoint.displayAsModal());
+            .append("circle")
+            .attr("r", "7")
+            .attr("class", d => "dose_points " + d.class)
+            .style("cursor", "pointer")
+            .attr("transform", d => `translate(${x(d.x)},${y(d.y)})`)
+            .on("click", d => d.endpoint.displayAsModal());
 
         // add the outer element last
-        this.dots.append('svg:title').text((d) => d.text);
+        this.dots.append("svg:title").text(d => d.text);
     }
 
     add_axis_text() {
         // Next set labels on axis
         var y_scale = this.y_scale;
         this.y_dose_text = this.vis
-            .selectAll('y_axis.text')
+            .selectAll("y_axis.text")
             .data(this.points)
             .enter()
-            .append('text')
-            .attr('x', -5)
-            .attr('y', function(v, i) {
+            .append("text")
+            .attr("x", -5)
+            .attr("y", function(v, i) {
                 return y_scale(v.y);
             })
-            .attr('dy', '0.5em')
-            .attr('class', 'dr_tick_text')
-            .attr('text-anchor', 'end')
+            .attr("dy", "0.5em")
+            .attr("class", "dr_tick_text")
+            .attr("text-anchor", "end")
             .text(function(d, i) {
                 return d.dose;
             });
 
         this.labels = this.vis
-            .selectAll('y_axis.text')
+            .selectAll("y_axis.text")
             .data(this.endpoint_labels)
             .enter()
-            .append('text')
-            .attr('x', -this.padding.left + 25)
-            .attr('y', function(v, i) {
+            .append("text")
+            .attr("x", -this.padding.left + 25)
+            .attr("y", function(v, i) {
                 return y_scale(v.y);
             })
-            .attr('class', 'dr_title forest_plot_labels')
-            .attr('text-anchor', 'start')
-            .style('cursor', 'pointer')
+            .attr("class", "dr_title forest_plot_labels")
+            .attr("text-anchor", "start")
+            .style("cursor", "pointer")
             .text(function(d, i) {
                 return d.label;
             })
-            .on('click', function(v) {
+            .on("click", function(v) {
                 v.endpoint.displayAsModal();
             });
     }
@@ -361,14 +361,14 @@ class EndpointAggregationForestPlot extends D3Visualization {
             },
             item_height = 20,
             box_w = 110,
-            items = [addItem('Doses in Study', 'dose_points')],
+            items = [addItem("Doses in Study", "dose_points")],
             noel_names = this.data.endpoints[0].data.noel_names;
 
-        if (this.plot_div.find('.NOEL').length > 0)
-            items.push(addItem(noel_names.noel, 'dose_points NOEL'));
-        if (this.plot_div.find('.LOEL').length > 0)
-            items.push(addItem(noel_names.loel, 'dose_points LOEL'));
-        if (this.plot_div.find('.BMDL').length > 0) items.push(addItem('BMDL', 'dose_points BMDL'));
+        if (this.plot_div.find(".NOEL").length > 0)
+            items.push(addItem(noel_names.noel, "dose_points NOEL"));
+        if (this.plot_div.find(".LOEL").length > 0)
+            items.push(addItem(noel_names.loel, "dose_points LOEL"));
+        if (this.plot_div.find(".BMDL").length > 0) items.push(addItem("BMDL", "dose_points BMDL"));
 
         this.build_legend({
             items,

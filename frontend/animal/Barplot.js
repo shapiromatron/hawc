@@ -1,8 +1,8 @@
-import $ from '$';
-import _ from 'lodash';
-import d3 from 'd3';
+import $ from "$";
+import _ from "lodash";
+import d3 from "d3";
 
-import D3Plot from 'utils/D3Plot';
+import D3Plot from "utils/D3Plot";
 
 class Barplot extends D3Plot {
     constructor(endpoint, plot_id, options, parent) {
@@ -10,7 +10,7 @@ class Barplot extends D3Plot {
         this.parent = parent;
         this.endpoint = endpoint;
         this.plot_div = $(plot_id);
-        this.options = options || { build_plot_startup: true };
+        this.options = options || {build_plot_startup: true};
         this.set_defaults();
         this.get_dataset_info();
         this.endpoint.addObserver(this);
@@ -20,7 +20,7 @@ class Barplot extends D3Plot {
     }
 
     build_plot() {
-        this.plot_div.html('');
+        this.plot_div.html("");
         this.get_plot_sizes();
         this.build_plot_skeleton(true);
         this.add_title();
@@ -34,7 +34,7 @@ class Barplot extends D3Plot {
         this.customize_menu();
 
         var plot = this;
-        this.y_axis_label.on('click', function(v) {
+        this.y_axis_label.on("click", function(v) {
             plot.toggle_y_axis();
         });
         this.trigger_resize();
@@ -51,11 +51,11 @@ class Barplot extends D3Plot {
         }
         var plot = this;
         var options = {
-            id: 'toggle_y_axis',
-            cls: 'btn btn-mini',
-            title: 'Change y-axis scale (shortcut: click the y-axis label)',
-            text: '',
-            icon: 'icon-resize-vertical',
+            id: "toggle_y_axis",
+            cls: "btn btn-mini",
+            title: "Change y-axis scale (shortcut: click the y-axis label)",
+            text: "",
+            icon: "icon-resize-vertical",
             on_click() {
                 plot.toggle_y_axis();
             },
@@ -64,11 +64,11 @@ class Barplot extends D3Plot {
 
         if (this.endpoint.doses.length > 1) {
             options = {
-                id: 'toggle_dose_units',
-                cls: 'btn btn-mini',
-                title: 'Change dose-units representation',
-                text: '',
-                icon: 'icon-certificate',
+                id: "toggle_dose_units",
+                cls: "btn btn-mini",
+                title: "Change dose-units representation",
+                text: "",
+                icon: "icon-certificate",
                 on_click() {
                     plot.endpoint.toggle_dose_units();
                 },
@@ -78,14 +78,14 @@ class Barplot extends D3Plot {
     }
 
     toggle_y_axis() {
-        if (this.endpoint.data.data_type == 'C') {
-            if (this.y_axis_settings.scale_type == 'linear') {
-                this.y_axis_settings.scale_type = 'log';
+        if (this.endpoint.data.data_type == "C") {
+            if (this.y_axis_settings.scale_type == "linear") {
+                this.y_axis_settings.scale_type = "log";
                 this.y_axis_settings.number_ticks = 1;
-                var formatNumber = d3.format(',.f');
+                var formatNumber = d3.format(",.f");
                 this.y_axis_settings.label_format = formatNumber;
             } else {
-                this.y_axis_settings.scale_type = 'linear';
+                this.y_axis_settings.scale_type = "linear";
                 this.y_axis_settings.number_ticks = 10;
                 this.y_axis_settings.label_format = undefined;
             }
@@ -102,7 +102,7 @@ class Barplot extends D3Plot {
     }
 
     update(status) {
-        if (status.status === 'dose_changed') {
+        if (status.status === "dose_changed") {
             this.dose_scale_change();
         }
     }
@@ -110,7 +110,7 @@ class Barplot extends D3Plot {
     dose_scale_change() {
         this.get_dataset_info();
         if (this.parent && this.parent.plot === this) {
-            this.x_axis_settings.domain = _.map(this.values, 'dose');
+            this.x_axis_settings.domain = _.map(this.values, "dose");
             this.x_scale = this._build_scale(this.x_axis_settings);
             this.x_axis_change_chart_update();
             this.build_x_label();
@@ -119,25 +119,25 @@ class Barplot extends D3Plot {
 
     set_defaults() {
         // Default settings
-        this.padding = { top: 40, right: 20, bottom: 40, left: 60 };
+        this.padding = {top: 40, right: 20, bottom: 40, left: 60};
         this.buff = 0.05; // addition numerical-spacing around dose/response units
 
         this.x_axis_settings = {
-            scale_type: 'ordinal',
-            text_orient: 'bottom',
-            axis_class: 'axis x_axis',
+            scale_type: "ordinal",
+            text_orient: "bottom",
+            axis_class: "axis x_axis",
             gridlines: true,
-            gridline_class: 'primary_gridlines x_gridlines',
+            gridline_class: "primary_gridlines x_gridlines",
             axis_labels: true,
             label_format: undefined, //default
         };
 
         this.y_axis_settings = {
-            scale_type: this.options.default_y_axis || 'linear',
-            text_orient: 'left',
-            axis_class: 'axis y_axis',
+            scale_type: this.options.default_y_axis || "linear",
+            text_orient: "left",
+            axis_class: "axis y_axis",
             gridlines: true,
-            gridline_class: 'primary_gridlines y_gridlines',
+            gridline_class: "primary_gridlines y_gridlines",
             number_ticks: 10,
             axis_labels: true,
             label_format: undefined, //default
@@ -148,7 +148,7 @@ class Barplot extends D3Plot {
         this.w = this.plot_div.width() - this.padding.left - this.padding.right; // plot width
         this.h = this.w; //plot height
         this.plot_div.css({
-            height: this.h + this.padding.top + this.padding.bottom + 'px',
+            height: this.h + this.padding.top + this.padding.bottom + "px",
         });
     }
 
@@ -167,10 +167,10 @@ class Barplot extends D3Plot {
 
         values = _.chain(this.endpoint.data.groups)
             .map(function(v, i) {
-                if (data_type == 'C') {
+                if (data_type == "C") {
                     val = v.response;
                     txt = v.response;
-                } else if (data_type == 'P') {
+                } else if (data_type == "P") {
                     val = v.response;
                     txt = e.get_pd_string(v);
                 } else {
@@ -178,9 +178,9 @@ class Barplot extends D3Plot {
                     txt = val;
                 }
 
-                cls = 'dose_bars';
-                if (e.data.NOEL == i) cls += ' NOEL';
-                if (e.data.LOEL == i) cls += ' LOEL';
+                cls = "dose_bars";
+                if (e.data.NOEL == i) cls += " NOEL";
+                if (e.data.LOEL == i) cls += " LOEL";
 
                 min = Math.min(min, v.lower_ci || val);
                 max = Math.max(max, v.upper_ci || val);
@@ -214,21 +214,21 @@ class Barplot extends D3Plot {
             })
             .value();
 
-        if (this.endpoint.data.data_type == 'C') {
+        if (this.endpoint.data.data_type == "C") {
             min = min - max * this.buff;
         } else {
             min = 0;
         }
         max = max * (1 + this.buff);
-        if (this.default_y_scale == 'log') {
+        if (this.default_y_scale == "log") {
             min = Math.pow(10, Math.floor(Math.log10(min)));
             max = Math.pow(10, Math.ceil(Math.log10(max)));
         }
 
         _.extend(this, {
             title_str: this.endpoint.data.name,
-            x_label_text: 'Doses ({0})'.printf(this.endpoint.dose_units),
-            y_label_text: 'Response ({0})'.printf(this.endpoint.data.response_units),
+            x_label_text: "Doses ({0})".printf(this.endpoint.dose_units),
+            y_label_text: "Response ({0})".printf(this.endpoint.data.response_units),
             values,
             sigs_data,
             min_y: min,
@@ -238,7 +238,7 @@ class Barplot extends D3Plot {
 
     add_axes() {
         $.extend(this.x_axis_settings, {
-            domain: _.map(this.values, 'dose'),
+            domain: _.map(this.values, "dose"),
             number_ticks: this.values.length,
             rangeRound: [0, this.w],
             x_translate: 0,
@@ -262,59 +262,59 @@ class Barplot extends D3Plot {
             bar_spacing = 0.1,
             min = y(y.domain()[0]);
 
-        this.dose_bar_group = this.vis.append('g');
+        this.dose_bar_group = this.vis.append("g");
         this.bars = this.dose_bar_group
-            .selectAll('svg.bars')
+            .selectAll("svg.bars")
             .data(this.values)
             .enter()
-            .append('rect')
-            .attr('x', function(d, i) {
+            .append("rect")
+            .attr("x", function(d, i) {
                 return x(d.dose) + x.rangeBand() * bar_spacing;
             })
-            .attr('y', function(d, i) {
+            .attr("y", function(d, i) {
                 return y(d.value);
             })
-            .attr('width', x.rangeBand() * (1 - 2 * bar_spacing))
-            .attr('height', function(d) {
+            .attr("width", x.rangeBand() * (1 - 2 * bar_spacing))
+            .attr("height", function(d) {
                 return min - y(d.value);
             })
-            .attr('class', function(d) {
+            .attr("class", function(d) {
                 return d.classes;
             });
 
-        this.bars.append('svg:title').text(function(d) {
+        this.bars.append("svg:title").text(function(d) {
             return d.txt;
         });
 
-        var sigs_group = this.vis.append('g');
+        var sigs_group = this.vis.append("g");
         this.sigs = sigs_group
-            .selectAll('text')
+            .selectAll("text")
             .data(this.sigs_data)
             .enter()
-            .append('svg:text')
-            .attr('x', function(d) {
+            .append("svg:text")
+            .attr("x", function(d) {
                 return x(d.x) + x.rangeBand() / 2;
             })
-            .attr('y', function(d) {
+            .attr("y", function(d) {
                 return y(d.y);
             })
-            .attr('text-anchor', 'middle')
+            .attr("text-anchor", "middle")
             .style({
-                'font-size': '18px',
-                'font-weight': 'bold',
-                cursor: 'pointer',
+                "font-size": "18px",
+                "font-weight": "bold",
+                cursor: "pointer",
             })
-            .text('*');
+            .text("*");
 
-        this.sigs_labels = this.sigs.append('svg:title').text(function(d) {
-            return 'Statistically significant at {0}'.printf(d.significance_level);
+        this.sigs_labels = this.sigs.append("svg:title").text(function(d) {
+            return "Statistically significant at {0}".printf(d.significance_level);
         });
     }
 
     x_axis_change_chart_update() {
         this.xAxis.scale(this.x_scale);
         this.vis
-            .selectAll('.x_axis')
+            .selectAll(".x_axis")
             .transition()
             .call(this.xAxis);
     }
@@ -332,12 +332,12 @@ class Barplot extends D3Plot {
             .ticks(this.y_axis_settings.number_ticks, this.y_axis_settings.label_format);
 
         this.vis
-            .selectAll('.y_axis')
+            .selectAll(".y_axis")
             .transition()
             .duration(1000)
             .call(this.yAxis);
 
-        this.rebuild_y_gridlines({ animate: true });
+        this.rebuild_y_gridlines({animate: true});
 
         //rebuild error-bars
         var opt = {
@@ -369,17 +369,17 @@ class Barplot extends D3Plot {
         this.bars
             .transition()
             .duration(1000)
-            .attr('y', function(d, i) {
+            .attr("y", function(d, i) {
                 return y(d.value);
             })
-            .attr('height', function(d) {
+            .attr("height", function(d) {
                 return min - y(d.value);
             });
 
         this.sigs
             .transition()
             .duration(1000)
-            .attr('y', function(d) {
+            .attr("y", function(d) {
                 return y(d.y);
             });
     }
@@ -392,7 +392,7 @@ class Barplot extends D3Plot {
                 return $.isNumeric(v.low) && $.isNumeric(v.high);
             });
 
-        this.error_bar_group = this.vis.append('g').attr('class', 'error_bars');
+        this.error_bar_group = this.vis.append("g").attr("class", "error_bars");
 
         var bar_options = {
             data: bars,
@@ -408,7 +408,7 @@ class Barplot extends D3Plot {
             y2(d) {
                 return y(d.high);
             },
-            classes: 'dr_err_bars',
+            classes: "dr_err_bars",
             append_to: this.error_bar_group,
         };
         this.error_bars_vertical = this.build_line(bar_options);
@@ -444,29 +444,29 @@ class Barplot extends D3Plot {
         var legend_settings = {};
         legend_settings.items = [
             {
-                text: 'Doses in Study',
-                classes: 'dose_points',
+                text: "Doses in Study",
+                classes: "dose_points",
                 color: undefined,
             },
         ];
-        if (this.plot_div.find('.LOEL').length > 0) {
+        if (this.plot_div.find(".LOEL").length > 0) {
             legend_settings.items.push({
                 text: this.endpoint.data.noel_names.loel,
-                classes: 'dose_points LOEL',
+                classes: "dose_points LOEL",
                 color: undefined,
             });
         }
-        if (this.plot_div.find('.NOEL').length > 0) {
+        if (this.plot_div.find(".NOEL").length > 0) {
             legend_settings.items.push({
                 text: this.endpoint.data.noel_names.noel,
-                classes: 'dose_points NOEL',
+                classes: "dose_points NOEL",
                 color: undefined,
             });
         }
-        if (this.plot_div.find('.BMDL').length > 0) {
+        if (this.plot_div.find(".BMDL").length > 0) {
             legend_settings.items.push({
-                text: 'BMDL',
-                classes: 'dose_points BMDL',
+                text: "BMDL",
+                classes: "dose_points BMDL",
                 color: undefined,
             });
         }

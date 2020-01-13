@@ -1,7 +1,7 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import ReactDOM from 'react-dom';
-import _ from 'lodash';
+import React, {Component} from "react";
+import PropTypes from "prop-types";
+import ReactDOM from "react-dom";
+import _ from "lodash";
 
 class ScrollToErrorBox extends Component {
     componentDidMount() {
@@ -12,13 +12,13 @@ class ScrollToErrorBox extends Component {
     }
 
     render() {
-        let { error } = this.props;
+        let {error} = this.props;
 
         if (_.isNull(error)) {
             error = null;
-        } else if (error.hasOwnProperty('detail')) {
+        } else if (error.hasOwnProperty("detail")) {
             error = error.detail;
-        } else if (error.hasOwnProperty('message')) {
+        } else if (error.hasOwnProperty("message")) {
             error = error.message;
         }
 

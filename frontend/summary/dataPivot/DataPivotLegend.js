@@ -1,10 +1,10 @@
-import $ from '$';
-import d3 from 'd3';
+import $ from "$";
+import d3 from "d3";
 
-import HAWCUtils from 'utils/HAWCUtils';
+import HAWCUtils from "utils/HAWCUtils";
 
-import { StyleSymbol, StyleLine, StyleRectangle } from './Styles';
-import { NULL_CASE } from './shared';
+import {StyleSymbol, StyleLine, StyleRectangle} from "./Styles";
+import {NULL_CASE} from "./shared";
 
 class DataPivotLegend {
     constructor(vis, settings, dp_settings, options) {
@@ -12,7 +12,7 @@ class DataPivotLegend {
         this.settings = settings;
         this.dp_settings = dp_settings;
         this.selects = [];
-        this.options = options || { offset: false };
+        this.options = options || {offset: false};
         if (this.settings.show) this._draw_legend();
     }
 
@@ -22,13 +22,13 @@ class DataPivotLegend {
             left: 5,
             top: 5,
             columns: 1,
-            style: { border_color: '#666666', border_width: '2px' },
+            style: {border_color: "#666666", border_width: "2px"},
             fields: [],
         };
     }
 
     add_select() {
-        var select = $('<select>').html(this._build_options());
+        var select = $("<select>").html(this._build_options());
         this.selects.push(select);
         return select;
     }
@@ -36,15 +36,15 @@ class DataPivotLegend {
     _update_selects() {
         for (var i = 0; i < this.selects.length; i++) {
             var select = this.selects[i],
-                sel = select.find('option:selected').val();
+                sel = select.find("option:selected").val();
             select.html(this._build_options());
-            select.find('option[value="{0}"]'.printf(sel)).prop('selected', true);
+            select.find('option[value="{0}"]'.printf(sel)).prop("selected", true);
         }
     }
 
     _build_options() {
         return this.settings.fields.map(function(v) {
-            return $(`<option value="${v.label}">${v.label}</option>`).data('d', v);
+            return $(`<option value="${v.label}">${v.label}</option>`).data("d", v);
         });
     }
 
@@ -55,7 +55,7 @@ class DataPivotLegend {
         }
 
         var self = this,
-            cursor = this.options.editable ? 'pointer' : 'auto',
+            cursor = this.options.editable ? "pointer" : "auto",
             buffer = 5,
             apply_styles = function(d) {
                 var obj = d3.select(this);
@@ -70,22 +70,22 @@ class DataPivotLegend {
                       self.settings.top = parseInt(y, 10);
                   });
 
-        this.legend = this.vis.append('g');
+        this.legend = this.vis.append("g");
 
         if (this.options.offset) {
             this.legend
-                .attr('cursor', cursor)
-                .attr('transform', `translate(${self.settings.left},${self.settings.top})`)
+                .attr("cursor", cursor)
+                .attr("transform", `translate(${self.settings.left},${self.settings.top})`)
                 .call(drag);
         }
 
         this.legend
-            .append('svg:rect')
-            .attr('stroke-width', this.settings.style.border_width)
-            .attr('stroke', this.settings.style.border_color)
-            .attr('fill', 'white')
-            .attr('height', 10)
-            .attr('width', 10);
+            .append("svg:rect")
+            .attr("stroke-width", this.settings.style.border_width)
+            .attr("stroke", this.settings.style.border_color)
+            .attr("fill", "white")
+            .attr("height", 10)
+            .attr("width", 10);
 
         var vertical_spacing = 22,
             text_x_offset,
@@ -100,7 +100,7 @@ class DataPivotLegend {
         // add bars
         this.settings.fields.forEach(function(datum, i) {
             if (i % rows === 0) {
-                colg = self.legend.append('g');
+                colg = self.legend.append("g");
                 self.legend_columns.push(colg);
                 row_index = 0;
             }
@@ -109,8 +109,7 @@ class DataPivotLegend {
             if (datum.rect_style !== NULL_CASE) {
                 text_x_offset = 15;
                 style = self._get_rect_style(datum);
-                colg
-                    .selectAll()
+                colg.selectAll()
                     .data([
                         {
                             x: buffer * 0.5,
@@ -121,11 +120,11 @@ class DataPivotLegend {
                         },
                     ])
                     .enter()
-                    .append('svg:rect')
-                    .attr('x', (d) => d.x)
-                    .attr('y', (d) => d.y)
-                    .attr('width', (d) => d.width)
-                    .attr('height', (d) => d.height)
+                    .append("svg:rect")
+                    .attr("x", d => d.x)
+                    .attr("y", d => d.y)
+                    .attr("width", d => d.width)
+                    .attr("height", d => d.height)
                     .each(apply_styles);
             }
 
@@ -133,8 +132,7 @@ class DataPivotLegend {
             if (datum.line_style !== NULL_CASE) {
                 text_x_offset = 15;
                 style = self._get_line_style(datum);
-                colg
-                    .selectAll()
+                colg.selectAll()
                     .data([
                         {
                             x1: buffer,
@@ -159,17 +157,17 @@ class DataPivotLegend {
                         },
                     ])
                     .enter()
-                    .append('svg:line')
-                    .attr('x1', function(v) {
+                    .append("svg:line")
+                    .attr("x1", function(v) {
                         return v.x1;
                     })
-                    .attr('x2', function(v) {
+                    .attr("x2", function(v) {
                         return v.x2;
                     })
-                    .attr('y1', function(v) {
+                    .attr("y1", function(v) {
                         return v.y1;
                     })
-                    .attr('y2', function(v) {
+                    .attr("y2", function(v) {
                         return v.y2;
                     })
                     .each(apply_styles);
@@ -179,8 +177,7 @@ class DataPivotLegend {
             if (datum.symbol_style !== NULL_CASE) {
                 text_x_offset = 15;
                 style = self._get_symbol_style(datum);
-                colg
-                    .selectAll()
+                colg.selectAll()
                     .data([
                         {
                             x: buffer + text_x_offset / 2,
@@ -189,29 +186,28 @@ class DataPivotLegend {
                         },
                     ])
                     .enter()
-                    .append('path')
+                    .append("path")
                     .attr(
-                        'd',
+                        "d",
                         d3.svg
                             .symbol()
                             .size(style.size)
                             .type(style.type)
                     )
-                    .attr('transform', (d) => `translate(${d.x},${d.y})`)
+                    .attr("transform", d => `translate(${d.x},${d.y})`)
                     .each(apply_styles);
             }
 
             // add text
             text_x_offset = 15;
-            colg
-                .selectAll()
+            colg.selectAll()
                 .data([self.settings.fields[i]])
                 .enter()
-                .append('svg:text')
-                .attr('x', 2 * buffer + text_x_offset)
-                .attr('class', 'legend_text')
-                .attr('dy', '3.5px')
-                .attr('y', function(d) {
+                .append("svg:text")
+                .attr("x", 2 * buffer + text_x_offset)
+                .attr("class", "legend_text")
+                .attr("dy", "3.5px")
+                .attr("y", function(d) {
                     return (row_index + 0.5) * vertical_spacing;
                 })
                 .text(function(d) {
@@ -224,15 +220,15 @@ class DataPivotLegend {
         var offset = 0;
         for (var i = 1; i < this.legend_columns.length; i++) {
             offset += this.legend_columns[i - 1].node().getBoundingClientRect().width + buffer;
-            this.legend_columns[i].attr('transform', `translate(${offset},0)`);
+            this.legend_columns[i].attr("transform", `translate(${offset},0)`);
         }
 
         var resize_legend = function() {
             var dim = self.legend.node().getBoundingClientRect();
             self.legend
-                .select('rect')
-                .attr('width', dim.width + buffer)
-                .attr('height', dim.height + buffer);
+                .select("rect")
+                .attr("width", dim.width + buffer)
+                .attr("height", dim.height + buffer);
         };
 
         resize_legend();

@@ -1,4 +1,4 @@
-import shared from 'shared/utils/helpers';
+import shared from "shared/utils/helpers";
 
 var helpers = Object.assign({}, shared, {
     sortDates(objects, field, order) {

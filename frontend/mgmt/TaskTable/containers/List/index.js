@@ -1,26 +1,21 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import _ from 'lodash';
+import React, {Component} from "react";
+import {connect} from "react-redux";
+import _ from "lodash";
 
-import {
-    fetchTasks,
-    fetchStudies,
-    filterAndSortStudies,
-    submitTasks,
-} from 'mgmt/TaskTable/actions';
+import {fetchTasks, fetchStudies, filterAndSortStudies, submitTasks} from "mgmt/TaskTable/actions";
 
-import { TASK_TYPES, TASK_TYPE_DESCRIPTIONS } from 'mgmt/TaskTable/constants';
-import CancelButton from 'mgmt/TaskTable/components/CancelButton';
-import EmptyListNotification from 'shared/components/EmptyListNotification';
-import Header from 'mgmt/TaskTable/components/Header';
-import List from 'mgmt/TaskTable/components/List';
-import Loading from 'shared/components/Loading';
-import ScrollToErrorBox from 'shared/components/ScrollToErrorBox';
-import SubmitButton from 'mgmt/TaskTable/components/SubmitButton';
-import StudyFilter from 'mgmt/TaskTable/components/StudyFilter';
-import TaskStudy from 'mgmt/TaskTable/components/TaskStudy';
-import TaskStudyEdit from 'mgmt/TaskTable/components/TaskStudyEdit';
-import './List.css';
+import {TASK_TYPES, TASK_TYPE_DESCRIPTIONS} from "mgmt/TaskTable/constants";
+import CancelButton from "mgmt/TaskTable/components/CancelButton";
+import EmptyListNotification from "shared/components/EmptyListNotification";
+import Header from "mgmt/TaskTable/components/Header";
+import List from "mgmt/TaskTable/components/List";
+import Loading from "shared/components/Loading";
+import ScrollToErrorBox from "shared/components/ScrollToErrorBox";
+import SubmitButton from "mgmt/TaskTable/components/SubmitButton";
+import StudyFilter from "mgmt/TaskTable/components/StudyFilter";
+import TaskStudy from "mgmt/TaskTable/components/TaskStudy";
+import TaskStudyEdit from "mgmt/TaskTable/components/TaskStudyEdit";
+import "./List.css";
 
 class ListApp extends Component {
     constructor(props) {
@@ -40,15 +35,15 @@ class ListApp extends Component {
     }
 
     formatTasks() {
-        const { tasks, studies } = this.props,
-            taskList = studies.visibleList.map((study) => {
+        const {tasks, studies} = this.props,
+            taskList = studies.visibleList.map(study => {
                 let formattedTasks = tasks.list
-                    .filter((task) => {
+                    .filter(task => {
                         return task.study.id === study.id;
                     })
                     .sort((a, b) => a.type - b.type);
 
-                return { tasks: formattedTasks, study };
+                return {tasks: formattedTasks, study};
             });
         return taskList;
     }
@@ -60,10 +55,10 @@ class ListApp extends Component {
     updateForm(e) {
         e.preventDefault();
         const updatedData = _.chain(this.refs.list.refs)
-            .map((ref) => {
+            .map(ref => {
                 return ref.getChangedData();
             })
-            .filter((data) => {
+            .filter(data => {
                 return !_.isEmpty(data);
             })
             .flattenDeep()
@@ -73,12 +68,12 @@ class ListApp extends Component {
 
     render() {
         if (!this.props.tasks.isLoaded) return <Loading />;
-        const { error, config } = this.props,
+        const {error, config} = this.props,
             taskList = this.formatTasks(),
             emptyTaskList = taskList.length === 0,
             headings = _.values(TASK_TYPES),
             descriptions = _.values(TASK_TYPE_DESCRIPTIONS),
-            displayForm = config.type === 'edit';
+            displayForm = config.type === "edit";
 
         return (
             <div>
@@ -86,7 +81,7 @@ class ListApp extends Component {
                 <StudyFilter selectFilter={this.filterStudies} />
                 <Header headings={headings} descriptions={descriptions} />
                 {emptyTaskList ? (
-                    <EmptyListNotification listItem={'studies'} />
+                    <EmptyListNotification listItem={"studies"} />
                 ) : (
                     <List
                         component={displayForm ? TaskStudyEdit : TaskStudy}
@@ -103,7 +98,7 @@ class ListApp extends Component {
 }
 
 function mapStateToProps(state) {
-    const { error, tasks, studies, config } = state;
+    const {error, tasks, studies, config} = state;
     return {
         config,
         error,

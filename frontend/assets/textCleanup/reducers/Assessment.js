@@ -1,4 +1,4 @@
-import * as types from 'textCleanup/constants/ActionTypes';
+import * as types from "textCleanup/constants/ActionTypes";
 
 let defaultState = {
     isFetching: false,

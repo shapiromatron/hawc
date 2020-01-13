@@ -1,8 +1,8 @@
-import _ from 'lodash';
-import React from 'react';
-import PropTypes from 'prop-types';
+import _ from "lodash";
+import React from "react";
+import PropTypes from "prop-types";
 
-import EditNode from './EditNode';
+import EditNode from "./EditNode";
 
 class Node extends React.Component {
     constructor() {
@@ -25,37 +25,37 @@ class Node extends React.Component {
 
     handleEditClick(e) {
         e.stopPropagation();
-        this.setState({ showForm: true });
+        this.setState({showForm: true});
     }
 
     handleCancel(e) {
         e.stopPropagation();
-        this.setState({ showForm: false });
+        this.setState({showForm: false});
     }
 
     handleUpdate(newNodeState) {
         this.props.handleUpdate(this.props.node.id, newNodeState);
-        this.setState({ showForm: false });
+        this.setState({showForm: false});
     }
 
     handleDelete(e) {
         e.stopPropagation();
-        this.setState({ showForm: false });
+        this.setState({showForm: false});
         this.props.handleDelete(this.props.node.id);
     }
 
     toggleChildrenVisibility(e) {
         e.stopPropagation();
-        this.setState({ showChildren: !this.state.showChildren });
+        this.setState({showChildren: !this.state.showChildren});
     }
 
     renderShowHide() {
         let active = this.props.node.children && this.props.node.children.length > 0,
-            classed = 'fa fa-fw',
+            classed = "fa fa-fw",
             action = null;
 
         if (active) {
-            classed += this.state.showChildren ? ' fa-minus' : ' fa-plus';
+            classed += this.state.showChildren ? " fa-minus" : " fa-plus";
             action = this.toggleChildrenVisibility.bind(this);
         }
 
@@ -63,8 +63,7 @@ class Node extends React.Component {
             <button
                 className="btn btn-mini btn-link"
                 title="Show/hide child nodes"
-                onClick={action}
-            >
+                onClick={action}>
                 <i className={classed} />
             </button>
         );
@@ -94,15 +93,15 @@ class Node extends React.Component {
     }
 
     render() {
-        let { node, sortableGroupDecorator } = this.props,
+        let {node, sortableGroupDecorator} = this.props,
             children = node.children || [],
-            displayChildren = this.state.showChildren ? 'inherit' : 'none';
+            displayChildren = this.state.showChildren ? "inherit" : "none";
 
         return (
             <div onClick={this.handleEditClick.bind(this)} className="draggable" data-id={node.id}>
                 {this.state.showForm ? this.renderForm() : this.renderDetail()}
-                <div ref={this.props.sortableGroupDecorator} style={{ display: displayChildren }}>
-                    {children.map((child) => {
+                <div ref={this.props.sortableGroupDecorator} style={{display: displayChildren}}>
+                    {children.map(child => {
                         return (
                             <Node
                                 key={child.id}

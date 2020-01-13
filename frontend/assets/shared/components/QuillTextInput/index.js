@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import ReactQuill from 'react-quill';
+import React, {Component} from "react";
+import PropTypes from "prop-types";
+import ReactQuill from "react-quill";
 
 class QuillTextInput extends Component {
     /**
@@ -8,8 +8,8 @@ class QuillTextInput extends Component {
      *
      */
 
-    onChange = (value) => {
-        this.props.onChange({ target: { name: this.props.name, value: value } });
+    onChange = value => {
+        this.props.onChange({target: {name: this.props.name, value}});
     };
 
     render() {
@@ -31,7 +31,7 @@ class QuillTextInput extends Component {
                     <textarea
                         name={this.props.name}
                         value={this.props.value}
-                        style={{ display: 'none' }}
+                        style={{display: "none"}}
                     />
                     {this.props.helpText ? (
                         <p className="help-block">{this.props.helpText}</p>

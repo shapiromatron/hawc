@@ -1,16 +1,16 @@
-import $ from '$';
+import $ from "$";
 
-import DataPivot from 'summary/dataPivot/DataPivot';
-import Endpoint from 'animal/Endpoint';
-import Study from 'study/Study';
-import Visual from 'summary/summary/Visual';
+import DataPivot from "summary/dataPivot/DataPivot";
+import Endpoint from "animal/Endpoint";
+import Study from "study/Study";
+import Visual from "summary/summary/Visual";
 
 class InlineRendering {
     constructor(div) {
         this.$div = $(div);
-        this.type = this.$div.data('type');
-        this.pk = this.$div.data('pk');
-        this.$div.data('_smartTag', this);
+        this.type = this.$div.data("type");
+        this.pk = this.$div.data("pk");
+        this.$div.data("_smartTag", this);
     }
 
     render() {
@@ -29,7 +29,7 @@ class InlineRendering {
 
         this.renderParent.append($container);
 
-        this.$div.removeClass('active');
+        this.$div.removeClass("active");
         this.display(this.getModelClass());
         this.rendered = true;
     }
@@ -37,39 +37,39 @@ class InlineRendering {
     unrender() {
         this.$div.insertBefore(this.inline);
         this.inline.remove();
-        this.$div.addClass('active');
+        this.$div.addClass("active");
         this.rendered = false;
     }
 
     setTitle($titleContent) {
-        let $title = this.renderParent.find('.inlineSmartTagTitle'),
-            $body = this.renderParent.find('.inlineSmartTagBody'),
+        let $title = this.renderParent.find(".inlineSmartTagTitle"),
+            $body = this.renderParent.find(".inlineSmartTagBody"),
             expandHideTogger = function() {
-                let isMax = $title.find('.icon-minus').length === 1;
+                let isMax = $title.find(".icon-minus").length === 1;
                 if (isMax) {
                     $title
-                        .find('.icon-minus')
-                        .removeClass('icon-minus')
-                        .addClass('icon-plus');
-                    $body.fadeOut('slow');
+                        .find(".icon-minus")
+                        .removeClass("icon-minus")
+                        .addClass("icon-plus");
+                    $body.fadeOut("slow");
                 } else {
                     $title
-                        .find('.icon-plus')
-                        .removeClass('icon-plus')
-                        .addClass('icon-minus');
-                    $body.fadeIn('slow');
+                        .find(".icon-plus")
+                        .removeClass("icon-plus")
+                        .addClass("icon-minus");
+                    $body.fadeIn("slow");
                 }
             },
             toggleBtn = $('<a title="click to toggle visibility" class="btn btn-mini pull-right">')
                 .append('<i class="icon-minus"></i>')
-                .off('click')
+                .off("click")
                 .click(expandHideTogger.bind(this));
 
         $title.append($titleContent.prepend(toggleBtn));
     }
 
     setBody($content) {
-        this.renderParent.find('.inlineSmartTagBody').append($content);
+        this.renderParent.find(".inlineSmartTagBody").append($content);
     }
 
     getModelClass() {

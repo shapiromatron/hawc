@@ -1,7 +1,7 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React, {Component} from "react";
+import PropTypes from "prop-types";
 
-import Autocomplete from 'shared/components/Autocomplete';
+import Autocomplete from "shared/components/Autocomplete";
 
 class UserAutocomplete extends Component {
     constructor(props) {

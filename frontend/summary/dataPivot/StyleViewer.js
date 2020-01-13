@@ -1,7 +1,7 @@
-import $ from '$';
-import d3 from 'd3';
+import $ from "$";
+import d3 from "d3";
 
-import D3Plot from 'utils/D3Plot';
+import D3Plot from "utils/D3Plot";
 
 class StyleViewer extends D3Plot {
     constructor($plot_div, style, settings) {
@@ -33,7 +33,7 @@ class StyleViewer extends D3Plot {
     }
 
     build_plot() {
-        this.plot_div.html('');
+        this.plot_div.html("");
         this.get_plot_sizes();
         this.build_plot_skeleton(false);
         this.draw_visualizations();
@@ -44,7 +44,7 @@ class StyleViewer extends D3Plot {
         this.h = this.settings.plot_settings.height;
         var menu_spacing = this.settings.plot_settings.show_menu_bar ? 40 : 0;
         this.plot_div.css({
-            height: this.h + this.padding.top + this.padding.bottom + menu_spacing + 'px',
+            height: this.h + this.padding.top + this.padding.bottom + menu_spacing + "px",
         });
     }
 
@@ -56,11 +56,11 @@ class StyleViewer extends D3Plot {
             rangeRound: [0, this.settings.plot_settings.width],
             x_translate: 0,
             y_translate: 0,
-            scale_type: 'linear',
-            text_orient: 'bottom',
-            axis_class: 'axis x_axis',
+            scale_type: "linear",
+            text_orient: "bottom",
+            axis_class: "axis x_axis",
             gridlines: false,
-            gridline_class: 'primary_gridlines x_gridlines',
+            gridline_class: "primary_gridlines x_gridlines",
             number_ticks: 10,
             axis_labels: false,
             label_format: undefined,
@@ -72,11 +72,11 @@ class StyleViewer extends D3Plot {
             number_ticks: 10,
             x_translate: 0,
             y_translate: 0,
-            scale_type: 'linear',
-            text_orient: 'left',
-            axis_class: 'axis y_axis',
+            scale_type: "linear",
+            text_orient: "left",
+            axis_class: "axis y_axis",
             gridlines: false,
-            gridline_class: 'primary_gridlines y_gridlines',
+            gridline_class: "primary_gridlines y_gridlines",
             axis_labels: false,
             label_format: undefined,
         };
@@ -90,103 +90,106 @@ class StyleViewer extends D3Plot {
             x = this.x_scale,
             y = this.y_scale;
 
-        if (this.style.type === 'line') {
+        if (this.style.type === "line") {
             this.lines = this.vis
                 .selectAll()
                 .data([
-                    { x1: 0.25, x2: 1.75, y1: 1, y2: 1 },
-                    { x1: 0.25, x2: 0.25, y1: 0.5, y2: 1.5 },
-                    { x1: 1.75, x2: 1.75, y1: 0.5, y2: 1.5 },
+                    {x1: 0.25, x2: 1.75, y1: 1, y2: 1},
+                    {x1: 0.25, x2: 0.25, y1: 0.5, y2: 1.5},
+                    {x1: 1.75, x2: 1.75, y1: 0.5, y2: 1.5},
                 ])
                 .enter()
-                .append('svg:line')
-                .attr('x1', (v) => x(v.x1))
-                .attr('x2', (v) => x(v.x2))
-                .attr('y1', (v) => y(v.y1))
-                .attr('y2', (v) => y(v.y2))
-                .on('click', function() {
+                .append("svg:line")
+                .attr("x1", v => x(v.x1))
+                .attr("x2", v => x(v.x2))
+                .attr("y1", v => y(v.y1))
+                .attr("y2", v => y(v.y2))
+                .on("click", function() {
                     self._update_styles(self.style.settings, true);
                 });
 
             this._update_styles(this.style.settings, false);
         }
 
-        if (this.style.type === 'rectangle') {
+        if (this.style.type === "rectangle") {
             this.rectangles = this.vis
                 .selectAll()
-                .data([{ x: 0.25, y: 0.25, width: 1.5, height: 1.5 }])
+                .data([{x: 0.25, y: 0.25, width: 1.5, height: 1.5}])
                 .enter()
-                .append('svg:rect')
-                .attr('x', function(v) {
+                .append("svg:rect")
+                .attr("x", function(v) {
                     return x(v.x);
                 })
-                .attr('y', function(v) {
+                .attr("y", function(v) {
                     return x(v.y);
                 })
-                .attr('width', function(v) {
+                .attr("width", function(v) {
                     return y(v.width);
                 })
-                .attr('height', function(v) {
+                .attr("height", function(v) {
                     return y(v.height);
                 })
-                .on('click', function() {
+                .on("click", function() {
                     self._update_styles(self.style.settings, true);
                 });
 
             this._update_styles(this.style.settings, false);
         }
 
-        if (this.style.type === 'symbol') {
+        if (this.style.type === "symbol") {
             this.symbol = this.vis
-                .selectAll('path')
+                .selectAll("path")
                 .data([
-                    { x: 0.5, y: 0.5 },
-                    { x: 1.5, y: 0.5 },
-                    { x: 1.5, y: 1.5 },
-                    { x: 0.5, y: 1.5 },
+                    {x: 0.5, y: 0.5},
+                    {x: 1.5, y: 0.5},
+                    {x: 1.5, y: 1.5},
+                    {x: 0.5, y: 1.5},
                 ])
                 .enter()
-                .append('path')
-                .attr('d', d3.svg.symbol())
-                .attr('transform', (d) => `translate(${x(d.x)},${y(d.y)})`)
-                .on('click', function() {
+                .append("path")
+                .attr("d", d3.svg.symbol())
+                .attr("transform", d => `translate(${x(d.x)},${y(d.y)})`)
+                .on("click", function() {
                     self._update_styles(self.style.settings, true);
                 });
 
             this._update_styles(this.style.settings, false);
         }
 
-        if (this.style.type === 'text') {
+        if (this.style.type === "text") {
             this.lines = this.vis
                 .selectAll()
-                .data([{ x1: 1.25, x2: 0.75, y1: 1, y2: 1 }, { x1: 1, x2: 1, y1: 1.25, y2: 0.75 }])
+                .data([
+                    {x1: 1.25, x2: 0.75, y1: 1, y2: 1},
+                    {x1: 1, x2: 1, y1: 1.25, y2: 0.75},
+                ])
                 .enter()
-                .append('svg:line')
-                .attr('x1', function(v) {
+                .append("svg:line")
+                .attr("x1", function(v) {
                     return x(v.x1);
                 })
-                .attr('x2', function(v) {
+                .attr("x2", function(v) {
                     return x(v.x2);
                 })
-                .attr('y1', function(v) {
+                .attr("y1", function(v) {
                     return y(v.y1);
                 })
-                .attr('y2', function(v) {
+                .attr("y2", function(v) {
                     return y(v.y2);
                 })
-                .attr('stroke-width', 2)
-                .attr('stroke', '#ccc');
+                .attr("stroke-width", 2)
+                .attr("stroke", "#ccc");
 
             this.text = this.vis
-                .append('svg:text')
-                .attr('x', x(1))
-                .attr('y', y(1))
-                .text('text');
+                .append("svg:text")
+                .attr("x", x(1))
+                .attr("y", y(1))
+                .text("text");
 
             this._update_styles(this.style.settings, false);
         }
 
-        if (this.style.type == 'legend') {
+        if (this.style.type == "legend") {
             if (this.settings.line_style) this.add_legend_lines();
             if (this.settings.line_style) this.add_legend_symbols();
             this._update_styles(this.style, false);
@@ -200,22 +203,22 @@ class StyleViewer extends D3Plot {
         this.lines = this.vis
             .selectAll()
             .data([
-                { x1: 0.25, x2: 1.75, y1: 1, y2: 1 },
-                { x1: 0.25, x2: 0.25, y1: 0.5, y2: 1.5 },
-                { x1: 1.75, x2: 1.75, y1: 0.5, y2: 1.5 },
+                {x1: 0.25, x2: 1.75, y1: 1, y2: 1},
+                {x1: 0.25, x2: 0.25, y1: 0.5, y2: 1.5},
+                {x1: 1.75, x2: 1.75, y1: 0.5, y2: 1.5},
             ])
             .enter()
-            .append('svg:line')
-            .attr('x1', function(v) {
+            .append("svg:line")
+            .attr("x1", function(v) {
                 return x(v.x1);
             })
-            .attr('x2', function(v) {
+            .attr("x2", function(v) {
                 return x(v.x2);
             })
-            .attr('y1', function(v) {
+            .attr("y1", function(v) {
                 return y(v.y1);
             })
-            .attr('y2', function(v) {
+            .attr("y2", function(v) {
                 return y(v.y2);
             });
     }
@@ -226,13 +229,13 @@ class StyleViewer extends D3Plot {
 
         this.rectangles = this.vis
             .selectAll()
-            .data([{ min: 0.1, max: 1.9 }])
+            .data([{min: 0.1, max: 1.9}])
             .enter()
-            .append('svg:rect')
-            .attr('x', (d) => x(d.min))
-            .attr('y', (d) => y(d.min))
-            .attr('width', (d) => x(d.max) - x(d.min))
-            .attr('height', (d) => y(d.max) - y(d.min));
+            .append("svg:rect")
+            .attr("x", d => x(d.min))
+            .attr("y", d => y(d.min))
+            .attr("width", d => x(d.max) - x(d.min))
+            .attr("height", d => y(d.max) - y(d.min));
     }
 
     add_legend_symbols() {
@@ -240,19 +243,19 @@ class StyleViewer extends D3Plot {
             y = this.y_scale;
 
         this.symbol = this.vis
-            .selectAll('path')
-            .data([{ x: 1, y: 1 }])
+            .selectAll("path")
+            .data([{x: 1, y: 1}])
             .enter()
-            .append('path')
-            .attr('d', d3.svg.symbol())
-            .attr('transform', (d) => `translate(${x(d.x)},${y(d.y)})`);
+            .append("path")
+            .attr("d", d3.svg.symbol())
+            .attr("transform", d => `translate(${x(d.x)},${y(d.y)})`);
     }
 
     _update_styles(style_settings, randomize_position) {
         var x = this.x_scale,
             y = this.y_scale;
 
-        if (this.style.type === 'line') {
+        if (this.style.type === "line") {
             this.lines
                 .transition()
                 .duration(1000)
@@ -261,23 +264,23 @@ class StyleViewer extends D3Plot {
 
         var randomize_data = function() {
             return [
-                { x: Math.random() * 2, y: Math.random() * 2 },
-                { x: Math.random() * 2, y: Math.random() * 2 },
-                { x: Math.random() * 2, y: Math.random() * 2 },
-                { x: Math.random() * 2, y: Math.random() * 2 },
+                {x: Math.random() * 2, y: Math.random() * 2},
+                {x: Math.random() * 2, y: Math.random() * 2},
+                {x: Math.random() * 2, y: Math.random() * 2},
+                {x: Math.random() * 2, y: Math.random() * 2},
             ];
         };
 
-        if (this.style.type === 'symbol') {
+        if (this.style.type === "symbol") {
             var d = randomize_position ? randomize_data() : this.symbol.data();
 
             this.symbol
                 .data(d)
                 .transition()
                 .duration(1000)
-                .attr('transform', (d) => `translate(${x(d.x)},${y(d.y)})`)
+                .attr("transform", d => `translate(${x(d.x)},${y(d.y)})`)
                 .attr(
-                    'd',
+                    "d",
                     d3.svg
                         .symbol()
                         .size(style_settings.size)
@@ -286,27 +289,27 @@ class StyleViewer extends D3Plot {
                 .style(style_settings);
         }
 
-        if (this.style.type === 'text') {
-            this.text.attr('transform', undefined);
+        if (this.style.type === "text") {
+            this.text.attr("transform", undefined);
             this.text
                 .transition()
                 .duration(1000)
-                .attr('font-size', style_settings['font-size'])
-                .attr('font-weight', style_settings['font-weight'])
-                .attr('fill-opacity', style_settings['fill-opacity'])
-                .attr('text-anchor', style_settings['text-anchor'])
-                .attr('fill', style_settings.fill)
-                .attr('transform', 'rotate({0} 25,25)'.printf(style_settings.rotate));
+                .attr("font-size", style_settings["font-size"])
+                .attr("font-weight", style_settings["font-weight"])
+                .attr("fill-opacity", style_settings["fill-opacity"])
+                .attr("text-anchor", style_settings["text-anchor"])
+                .attr("fill", style_settings.fill)
+                .attr("transform", "rotate({0} 25,25)".printf(style_settings.rotate));
         }
 
-        if (this.style.type === 'rectangle') {
+        if (this.style.type === "rectangle") {
             this.rectangles
                 .transition()
                 .duration(1000)
                 .style(style_settings);
         }
 
-        if (this.style.type === 'legend') {
+        if (this.style.type === "legend") {
             if (style_settings.rect_style) {
                 if (!this.rectangles) this.add_legend_rects();
                 this.rectangles
@@ -338,9 +341,9 @@ class StyleViewer extends D3Plot {
                 this.symbol
                     .transition()
                     .duration(1000)
-                    .attr('transform', (d) => `translate(${x(d.x)},${y(d.y)})`)
+                    .attr("transform", d => `translate(${x(d.x)},${y(d.y)})`)
                     .attr(
-                        'd',
+                        "d",
                         d3.svg
                             .symbol()
                             .size(style_settings.symbol_style.settings.size)

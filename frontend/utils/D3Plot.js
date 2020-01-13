@@ -1,5 +1,5 @@
-import $ from '$';
-import d3 from 'd3';
+import $ from "$";
+import d3 from "d3";
 
 // Generic parent for all d3.js visualizations
 class D3Plot {
@@ -11,11 +11,11 @@ class D3Plot {
             this.title.remove();
         }
         this.title = this.vis
-            .append('svg:text')
-            .attr('x', x)
-            .attr('y', y)
-            .attr('text-anchor', 'middle')
-            .attr('class', 'dr_title')
+            .append("svg:text")
+            .attr("x", x)
+            .attr("y", y)
+            .attr("text-anchor", "middle")
+            .attr("class", "dr_title")
             .html(this.title_str);
     }
 
@@ -23,10 +23,10 @@ class D3Plot {
         // Add final rectangle around plot.
         if (this.bounding_rectangle) this.bounding_rectangle.remove();
         this.bounding_rectangle = this.vis
-            .append('rect')
-            .attr('width', this.w)
-            .attr('height', this.h)
-            .attr('class', 'bounding_rectangle');
+            .append("rect")
+            .attr("width", this.w)
+            .attr("height", this.h)
+            .attr("class", "bounding_rectangle");
     }
 
     set_legend_location(top, left) {
@@ -40,60 +40,60 @@ class D3Plot {
             drag = d3.behavior
                 .drag()
                 .origin(Object)
-                .on('drag', function(d, i) {
+                .on("drag", function(d, i) {
                     var regexp = /\((-?[0-9]+)[, ](-?[0-9]+)\)/,
                         p = d3.select(this),
-                        m = regexp.exec(p.attr('transform'));
+                        m = regexp.exec(p.attr("transform"));
 
                     if (m !== null && m.length === 3) {
                         var x = parseFloat(m[1]) + d3.event.dx,
                             y = parseFloat(m[2]) + d3.event.dy;
-                        p.attr('transform', `translate(${x},${y})`);
+                        p.attr("transform", `translate(${x},${y})`);
                         plot.set_legend_location(y, x);
                     }
                 });
 
         this.legend = this.vis
-            .append('g')
-            .attr('class', 'plot_legend')
-            .attr('transform', `translate(${settings.box_l},${settings.box_t})`)
-            .attr('cursor', 'pointer')
-            .attr('data-buffer', buffer)
+            .append("g")
+            .attr("class", "plot_legend")
+            .attr("transform", `translate(${settings.box_l},${settings.box_t})`)
+            .attr("cursor", "pointer")
+            .attr("data-buffer", buffer)
             .call(drag);
 
         this.set_legend_location(settings.box_t, settings.box_l);
 
         this.legend
-            .append('svg:rect')
-            .attr('class', 'legend')
-            .attr('height', 10)
-            .attr('width', 10);
+            .append("svg:rect")
+            .attr("class", "legend")
+            .attr("height", 10)
+            .attr("width", 10);
 
         this.legend
-            .selectAll('legend_circles')
+            .selectAll("legend_circles")
             .data(settings.items)
             .enter()
-            .append('circle')
-            .attr('cx', settings.dot_r + buffer)
-            .attr('cy', function(d, i) {
+            .append("circle")
+            .attr("cx", settings.dot_r + buffer)
+            .attr("cy", function(d, i) {
                 return buffer * 2 + i * settings.item_height;
             })
-            .attr('r', settings.dot_r)
-            .attr('class', function(d, i) {
-                return 'legend_circle ' + d.classes;
+            .attr("r", settings.dot_r)
+            .attr("class", function(d, i) {
+                return "legend_circle " + d.classes;
             })
-            .attr('fill', function(d, i) {
+            .attr("fill", function(d, i) {
                 return d.color;
             });
 
         this.legend
-            .selectAll('legend_text')
+            .selectAll("legend_text")
             .data(settings.items)
             .enter()
-            .append('svg:text')
-            .attr('x', 2 * settings.dot_r + buffer * 2)
-            .attr('class', 'legend_text')
-            .attr('y', function(d, i) {
+            .append("svg:text")
+            .attr("x", 2 * settings.dot_r + buffer * 2)
+            .attr("class", "legend_text")
+            .attr("y", function(d, i) {
                 return buffer * 2 + settings.dot_r + i * settings.item_height;
             })
             .text(function(d, i) {
@@ -107,12 +107,12 @@ class D3Plot {
         // resize legend box that encompasses legend items
         // NOTE that this requires the image to be rendered into DOM
         if (this.legend) {
-            var buffer = parseInt(this.legend.attr('data-buffer')),
+            var buffer = parseInt(this.legend.attr("data-buffer")),
                 dim = this.legend.node().getBoundingClientRect();
             this.legend
-                .select('.legend')
-                .attr('width', dim.width + buffer)
-                .attr('height', dim.height + buffer);
+                .select(".legend")
+                .attr("width", dim.width + buffer)
+                .attr("height", dim.height + buffer);
         }
     }
 
@@ -126,14 +126,14 @@ class D3Plot {
         this.plot_div.empty();
         this.vis = d3
             .select(this.plot_div[0])
-            .append('svg')
-            .attr('width', w)
-            .attr('height', h)
-            .attr('class', 'd3')
-            .attr('viewBox', `0 0 ${w} ${h}`)
-            .attr('preserveAspectRatio', 'xMinYMin')
-            .append('g')
-            .attr('transform', `translate(${this.padding.left},${this.padding.top})`);
+            .append("svg")
+            .attr("width", w)
+            .attr("height", h)
+            .attr("class", "d3")
+            .attr("viewBox", `0 0 ${w} ${h}`)
+            .attr("preserveAspectRatio", "xMinYMin")
+            .append("g")
+            .attr("transform", `translate(${this.padding.left},${this.padding.top})`);
         this.svg = this.vis[0][0].parentNode;
 
         var chart = $(this.svg),
@@ -149,21 +149,21 @@ class D3Plot {
 
             if (targetWidth !== self.full_width) {
                 // use custom smaller size
-                chart.attr('width', targetWidth);
-                chart.attr('height', Math.round(targetWidth / aspect));
+                chart.attr("width", targetWidth);
+                chart.attr("height", Math.round(targetWidth / aspect));
                 self.isFullSize = false;
                 if (self.resize_button) {
-                    self.resize_button.attr('title', 'zoom figure to full-size');
-                    self.resize_button.find('i').attr('class', 'icon-zoom-in');
+                    self.resize_button.attr("title", "zoom figure to full-size");
+                    self.resize_button.find("i").attr("class", "icon-zoom-in");
                 }
             } else {
                 // set back to full-size
-                chart.attr('width', self.full_width);
-                chart.attr('height', self.full_height);
+                chart.attr("width", self.full_width);
+                chart.attr("height", self.full_height);
                 self.isFullSize = true;
                 if (self.resize_button) {
-                    self.resize_button.attr('title', 'zoom figure to fit screen');
-                    self.resize_button.find('i').attr('class', 'icon-zoom-out');
+                    self.resize_button.attr("title", "zoom figure to fit screen");
+                    self.resize_button.find("i").attr("class", "icon-zoom-out");
                 }
             }
         };
@@ -172,12 +172,12 @@ class D3Plot {
         // add gray background to plot.
         if (background) {
             this.vis
-                .append('rect')
-                .attr('x', 0)
-                .attr('y', 0)
-                .attr('height', this.h)
-                .attr('width', this.w)
-                .attr('class', 'dp_bg');
+                .append("rect")
+                .attr("x", 0)
+                .attr("y", 0)
+                .attr("height", this.h)
+                .attr("width", this.w)
+                .attr("class", "dp_bg");
         }
     }
 
@@ -189,11 +189,11 @@ class D3Plot {
             this.x_axis_label.remove();
         }
         this.x_axis_label = this.vis
-            .append('svg:text')
-            .attr('x', x)
-            .attr('y', y)
-            .attr('text-anchor', 'middle')
-            .attr('class', 'dr_axis_labels x_axis_label')
+            .append("svg:text")
+            .attr("x", x)
+            .attr("y", y)
+            .attr("text-anchor", "middle")
+            .attr("class", "dr_axis_labels x_axis_label")
             .text(this.x_label_text);
     }
 
@@ -205,19 +205,19 @@ class D3Plot {
             this.y_axis_label.remove();
         }
         this.y_axis_label = this.vis
-            .append('svg:text')
-            .attr('x', x)
-            .attr('y', y)
-            .attr('transform', 'rotate(270)')
-            .attr('text-anchor', 'middle')
-            .attr('class', 'dr_axis_labels y_axis_label')
+            .append("svg:text")
+            .attr("x", x)
+            .attr("y", y)
+            .attr("transform", "rotate(270)")
+            .attr("text-anchor", "middle")
+            .attr("class", "dr_axis_labels y_axis_label")
             .text(this.y_label_text);
     }
 
     _build_scale(settings) {
         var scale;
         switch (settings.scale_type) {
-            case 'log':
+            case "log":
                 scale = d3.scale
                     .log()
                     .clamp(true)
@@ -225,7 +225,7 @@ class D3Plot {
                     .rangeRound(settings.rangeRound)
                     .nice();
                 break;
-            case 'linear':
+            case "linear":
                 scale = d3.scale
                     .linear()
                     .clamp(true)
@@ -233,14 +233,14 @@ class D3Plot {
                     .rangeRound(settings.rangeRound)
                     .nice();
                 break;
-            case 'ordinal':
+            case "ordinal":
                 scale = d3.scale
                     .ordinal()
                     .domain(settings.domain)
                     .rangeRoundBands(settings.rangeRound);
                 break;
             default:
-                console.log('Error- settings.scale_type is not defined: ' + settings.scale_type);
+                console.log("Error- settings.scale_type is not defined: " + settings.scale_type);
         }
         return scale;
     }
@@ -252,10 +252,10 @@ class D3Plot {
             .orient(settings.text_orient);
 
         switch (settings.scale_type) {
-            case 'log':
+            case "log":
                 axis.ticks(1, settings.label_format);
                 break;
-            case 'linear':
+            case "linear":
                 axis.ticks(settings.number_ticks);
                 if (settings.label_format !== undefined) {
                     axis.tickFormat(settings.label_format);
@@ -265,9 +265,9 @@ class D3Plot {
 
         if (settings.axis_labels) {
             this.vis
-                .append('g')
-                .attr('transform', `translate(${settings.x_translate},${settings.y_translate})`)
-                .attr('class', settings.axis_class)
+                .append("g")
+                .attr("transform", `translate(${settings.x_translate},${settings.y_translate})`)
+                .attr("class", settings.axis_class)
                 .call(axis);
         }
         return axis;
@@ -280,27 +280,27 @@ class D3Plot {
 
         var gridline_data;
         switch (settings.scale_type) {
-            case 'log':
-            case 'linear':
+            case "log":
+            case "linear":
                 gridline_data = scale.ticks(settings.number_ticks);
                 break;
-            case 'ordinal':
+            case "ordinal":
                 gridline_data = scale.domain();
                 break;
         }
 
-        var gridlines = this.vis.append('g').attr('class', settings.gridline_class);
+        var gridlines = this.vis.append("g").attr("class", settings.gridline_class);
 
         gridlines
-            .selectAll('gridlines')
+            .selectAll("gridlines")
             .data(gridline_data)
             .enter()
-            .append('svg:line')
-            .attr('x1', line_settings[0])
-            .attr('x2', line_settings[1])
-            .attr('y1', line_settings[2])
-            .attr('y2', line_settings[3])
-            .attr('class', settings.gridline_class);
+            .append("svg:line")
+            .attr("x1", line_settings[0])
+            .attr("x2", line_settings[1])
+            .attr("y1", line_settings[2])
+            .attr("y2", line_settings[3])
+            .attr("class", settings.gridline_class);
 
         return gridlines;
     }
@@ -312,7 +312,7 @@ class D3Plot {
             .ticks(this.y_axis_settings.number_ticks, this.y_axis_settings.label_format);
 
         this.vis
-            .selectAll('.y_axis')
+            .selectAll(".y_axis")
             .transition()
             .duration(1000)
             .call(this.yAxis);
@@ -324,35 +324,35 @@ class D3Plot {
         var duration = options.animate ? 1000 : 0;
 
         this.y_primary_gridlines = this.vis
-            .select('g.y_gridlines')
-            .selectAll('line')
+            .select("g.y_gridlines")
+            .selectAll("line")
             .data(this.y_scale.ticks(this.y_axis_settings.number_ticks));
 
         this.y_primary_gridlines
             .enter()
-            .append('line')
-            .attr('class', this.y_axis_settings.gridline_class)
-            .attr('y1', function(v) {
+            .append("line")
+            .attr("class", this.y_axis_settings.gridline_class)
+            .attr("y1", function(v) {
                 return v;
             })
-            .attr('y2', function(v) {
+            .attr("y2", function(v) {
                 return v;
             })
-            .attr('x1', 0)
-            .attr('x2', 0);
+            .attr("x1", 0)
+            .attr("x2", 0);
 
         this.y_primary_gridlines
             .transition()
             .duration(duration)
-            .attr('y1', this.y_scale)
-            .attr('y2', this.y_scale)
-            .attr('x2', this.w);
+            .attr("y1", this.y_scale)
+            .attr("y2", this.y_scale)
+            .attr("x2", this.w);
 
         this.y_primary_gridlines
             .exit()
             .transition()
             .duration(duration / 2)
-            .attr('x2', 0)
+            .attr("x2", 0)
             .remove();
     }
 
@@ -363,7 +363,7 @@ class D3Plot {
             .ticks(this.x_axis_settings.number_ticks, this.x_axis_settings.label_format);
 
         this.vis
-            .selectAll('.x_axis')
+            .selectAll(".x_axis")
             .transition()
             .duration(1000)
             .call(this.xAxis);
@@ -375,35 +375,35 @@ class D3Plot {
         var duration = options.animate ? 1000 : 0;
 
         this.x_primary_gridlines = this.vis
-            .select('g.x_gridlines')
-            .selectAll('line')
+            .select("g.x_gridlines")
+            .selectAll("line")
             .data(this.x_scale.ticks(this.x_axis_settings.number_ticks));
 
         this.x_primary_gridlines
             .enter()
-            .append('line')
-            .attr('class', this.x_axis_settings.gridline_class)
-            .attr('x1', function(v) {
+            .append("line")
+            .attr("class", this.x_axis_settings.gridline_class)
+            .attr("x1", function(v) {
                 return v;
             })
-            .attr('x2', function(v) {
+            .attr("x2", function(v) {
                 return v;
             })
-            .attr('y1', 0)
-            .attr('y2', 0);
+            .attr("y1", 0)
+            .attr("y2", 0);
 
         this.x_primary_gridlines
             .transition()
             .duration(duration)
-            .attr('x1', this.x_scale)
-            .attr('x2', this.x_scale)
-            .attr('y2', this.h);
+            .attr("x1", this.x_scale)
+            .attr("x2", this.x_scale)
+            .attr("y2", this.h);
 
         this.x_primary_gridlines
             .exit()
             .transition()
             .duration(duration / 2)
-            .attr('y2', 0)
+            .attr("y2", 0)
             .remove();
     }
 
@@ -441,45 +441,45 @@ class D3Plot {
                 .delay(options.delay || 0)
                 .duration(options.duration || 1000)
                 .attr(
-                    'x1',
+                    "x1",
                     options.x1 ||
                         function(v, i) {
-                            return d3.select(this).attr('x1');
+                            return d3.select(this).attr("x1");
                         }
                 )
                 .attr(
-                    'x2',
+                    "x2",
                     options.x2 ||
                         function(v, i) {
-                            return d3.select(this).attr('x2');
+                            return d3.select(this).attr("x2");
                         }
                 )
                 .attr(
-                    'y1',
+                    "y1",
                     options.y1 ||
                         function(v, i) {
-                            return d3.select(this).attr('y1');
+                            return d3.select(this).attr("y1");
                         }
                 )
                 .attr(
-                    'y2',
+                    "y2",
                     options.y2 ||
                         function(v, i) {
-                            return d3.select(this).attr('y2');
+                            return d3.select(this).attr("y2");
                         }
                 );
         } else {
             var append_to = options.append_to || this.vis;
             l = append_to
-                .selectAll('svg.bars')
+                .selectAll("svg.bars")
                 .data(options.data)
                 .enter()
-                .append('line')
-                .attr('x1', options.x1)
-                .attr('y1', options.y1)
-                .attr('x2', options.x2)
-                .attr('y2', options.y2)
-                .attr('class', options.classes);
+                .append("line")
+                .attr("x1", options.x1)
+                .attr("y1", options.y1)
+                .attr("x2", options.x2)
+                .attr("y2", options.y2)
+                .attr("class", options.classes);
         }
         return l;
     }
@@ -496,20 +496,20 @@ class D3Plot {
 
         // show cog to toggle options menu
         this.cog = this.vis
-            .append('foreignObject')
-            .attr('x', this.w + this.padding.right - 20)
-            .attr('y', -this.padding.top + 5)
-            .attr('width', 30)
-            .attr('height', 30);
+            .append("foreignObject")
+            .attr("x", this.w + this.padding.right - 20)
+            .attr("y", -this.padding.top + 5)
+            .attr("width", 30)
+            .attr("height", 30);
 
         this.cog_button = this.cog
-            .append('xhtml:a')
-            .attr('title', 'Display plot menu')
-            .attr('class', 'hidden')
-            .on('click', function(v, i) {
+            .append("xhtml:a")
+            .attr("title", "Display plot menu")
+            .attr("class", "hidden")
+            .on("click", function(v, i) {
                 plot._toggle_menu_bar();
             });
-        this.cog_button.append('xhtml:i').attr('class', 'icon-cog');
+        this.cog_button.append("xhtml:i").attr("class", "icon-cog");
 
         // add menu below div
         this.menu_div = $('<div class="options_menu"></div>');
@@ -517,10 +517,10 @@ class D3Plot {
 
         // add close button to menu
         var close_button = {
-            id: 'close',
-            cls: 'btn btn-mini pull-right',
-            title: 'Hide menu',
-            text: 'x',
+            id: "close",
+            cls: "btn btn-mini pull-right",
+            title: "Hide menu",
+            text: "x",
             on_click() {
                 plot._toggle_menu_bar();
             },
@@ -531,11 +531,11 @@ class D3Plot {
 
         // add zoom button to menu
         var zoom_button = {
-            id: 'close',
-            cls: 'btn btn-mini pull-right',
-            title: 'Zoom image to full-size',
-            text: '',
-            icon: 'icon-zoom-in',
+            id: "close",
+            cls: "btn btn-mini pull-right",
+            title: "Zoom image to full-size",
+            text: "",
+            icon: "icon-zoom-in",
             on_click() {
                 plot.trigger_resize(true);
             },
@@ -550,29 +550,29 @@ class D3Plot {
                 '<a title="Download figure" class="btn btn-mini dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-download-alt"></i></a>'
             ),
             dropdown_li = $('<ul class="dropdown-menu"></ul>'),
-            svg = $('<li>')
+            svg = $("<li>")
                 .append('<a href="#">Download as a SVG</a>')
-                .on('click', function(e) {
+                .on("click", function(e) {
                     e.preventDefault();
-                    plot._download_image({ format: 'svg' });
+                    plot._download_image({format: "svg"});
                 }),
-            pptx = $('<li>')
+            pptx = $("<li>")
                 .append('<a href="#">Download as a PPTX</a>')
-                .on('click', function(e) {
+                .on("click", function(e) {
                     e.preventDefault();
-                    plot._download_image({ format: 'pptx' });
+                    plot._download_image({format: "pptx"});
                 }),
-            png = $('<li>')
+            png = $("<li>")
                 .append('<a href="#">Download as a PNG</a>')
-                .on('click', function(e) {
+                .on("click", function(e) {
                     e.preventDefault();
-                    plot._download_image({ format: 'png' });
+                    plot._download_image({format: "png"});
                 }),
-            pdf = $('<li>')
+            pdf = $("<li>")
                 .append('<a href="#">Download as a PDF</a>')
-                .on('click', function(e) {
+                .on("click", function(e) {
                     e.preventDefault();
-                    plot._download_image({ format: 'pdf' });
+                    plot._download_image({format: "pdf"});
                 });
         dropdown_li.append(svg, pptx, png, pdf);
         group.append(dropdown, dropdown_li);
@@ -581,14 +581,14 @@ class D3Plot {
 
     add_menu_button(options) {
         // add a button to the options menu
-        var a = $('<a></a>')
-            .attr('id', options.id)
-            .attr('class', options.cls)
-            .attr('title', options.title)
-            .text(options.text || '')
-            .on('click', options.on_click);
+        var a = $("<a></a>")
+            .attr("id", options.id)
+            .attr("class", options.cls)
+            .attr("title", options.title)
+            .text(options.text || "")
+            .on("click", options.on_click);
         if (options.icon) {
-            var icon = $('<i></i>').addClass(options.icon);
+            var icon = $("<i></i>").addClass(options.icon);
             a.append(icon);
         }
         this.menu_div.append(a);
@@ -596,8 +596,8 @@ class D3Plot {
     }
 
     _toggle_menu_bar() {
-        $(this.menu_div).toggleClass('hidden');
-        $(this.cog_button).toggleClass('hidden');
+        $(this.menu_div).toggleClass("hidden");
+        $(this.cog_button).toggleClass("hidden");
     }
 
     _download_image(options) {
@@ -610,7 +610,7 @@ class D3Plot {
                 '<input name="svg" value="{0}">'.printf(btoa(escape(svg_blob.source[0]))),
                 '<input name="output" value="{0}">'.printf(options.format),
             ]);
-        form.appendTo('body').submit();
+        form.appendTo("body").submit();
     }
 
     _save_to_svg() {
@@ -619,9 +619,9 @@ class D3Plot {
         // Removed CSS style-grabbing components as this behavior was unreliable.
 
         function get_selected_svg(svg) {
-            svg.attr('version', '1.1');
-            if (svg.attr('xmlns') === null) {
-                svg.attr('xmlns', d3.ns.prefix.svg);
+            svg.attr("version", "1.1");
+            if (svg.attr("xmlns") === null) {
+                svg.attr("xmlns", d3.ns.prefix.svg);
             }
             var source = new XMLSerializer().serializeToString(svg.node()),
                 rect = svg.node().getBoundingClientRect();
@@ -630,8 +630,8 @@ class D3Plot {
                 left: rect.left,
                 width: rect.width,
                 height: rect.height,
-                classes: svg.attr('class'),
-                id: svg.attr('id'),
+                classes: svg.attr("class"),
+                id: svg.attr("id"),
                 childElementCount: svg.node().childElementCount,
                 source: [doctype + source],
             };
@@ -642,7 +642,7 @@ class D3Plot {
             svg = d3.select(this.svg),
             svg_object = get_selected_svg(svg);
 
-        svg_object.blob = new Blob(svg_object.source, { type: 'text/xml' });
+        svg_object.blob = new Blob(svg_object.source, {type: "text/xml"});
         return svg_object;
     }
 }

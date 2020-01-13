@@ -1,5 +1,5 @@
-import _ from 'lodash';
-import * as types from 'mgmt/TaskTable/constants';
+import _ from "lodash";
+import * as types from "mgmt/TaskTable/constants";
 
 const defaultState = {
     isFetching: false,
@@ -25,18 +25,18 @@ function tasks(state = defaultState, action) {
             });
 
         case types.PATCH_TASK:
-            index = state.list.indexOf(_.find(state.list, { id: action.task.id }));
+            index = state.list.indexOf(_.find(state.list, {id: action.task.id}));
             if (index >= 0) {
                 list = [
                     ...state.list.slice(0, index),
                     {
                         ...state.list[index],
-                        ..._.omit(action.task, 'csrfmiddlewaretoken'),
+                        ..._.omit(action.task, "csrfmiddlewaretoken"),
                     },
                     ...state.list.slice(index + 1),
                 ];
             }
-            return Object.assign({}, state, { list });
+            return Object.assign({}, state, {list});
 
         case types.SUBMIT_TASKS:
             return Object.assign({}, state, {

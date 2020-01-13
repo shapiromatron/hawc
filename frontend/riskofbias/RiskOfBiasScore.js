@@ -1,5 +1,5 @@
-import _ from 'lodash';
-import d3 from 'd3';
+import _ from "lodash";
+import d3 from "d3";
 
 class RiskOfBiasScore {
     constructor(study, data) {
@@ -10,10 +10,10 @@ class RiskOfBiasScore {
     }
 
     static format_for_react(robs, config) {
-        config = config || { display: 'final', isForm: false };
+        config = config || {display: "final", isForm: false};
         var scores = _.map(robs, function(rob) {
             if (!rob.data.author) {
-                _.extend(rob.data, { author: { full_name: '' } });
+                _.extend(rob.data, {author: {full_name: ""}});
             }
             return _.extend(rob.data, {
                 domain: rob.data.metric.domain.id,

@@ -1,4 +1,4 @@
-import * as types from 'riskofbias/robScoreCleanup/constants';
+import * as types from "riskofbias/robScoreCleanup/constants";
 
 export function setError(error) {
     return {

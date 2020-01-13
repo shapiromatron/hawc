@@ -1,7 +1,7 @@
-import _ from 'lodash';
-import $ from '$';
+import _ from "lodash";
+import $ from "$";
 
-import HAWCUtils from 'utils/HAWCUtils';
+import HAWCUtils from "utils/HAWCUtils";
 
 class BaseVisualForm {
     constructor($el) {
@@ -20,52 +20,52 @@ class BaseVisualForm {
             setDataChanged = function() {
                 self.dataSynced = false;
             },
-            $data = this.$el.find('#data'),
-            $settings = this.$el.find('#settings'),
-            $preview = this.$el.find('#preview');
+            $data = this.$el.find("#data"),
+            $settings = this.$el.find("#settings"),
+            $preview = this.$el.find("#preview");
 
         // check if any data have changed
-        $data.find(':input').on('change', setDataChanged);
-        $data.on('djselectableadd djselectableremove', setDataChanged);
+        $data.find(":input").on("change", setDataChanged);
+        $data.on("djselectableadd djselectableremove", setDataChanged);
 
         // TODO - fix!
         $data
-            .find('.wysihtml5-sandbox')
+            .find(".wysihtml5-sandbox")
             .contents()
-            .find('body')
-            .on('keyup', setDataChanged);
+            .find("body")
+            .on("keyup", setDataChanged);
 
         // whenever data is synced, rebuild
-        $settings.on('dataSynched', this.unpackSettings.bind(this));
-        $preview.on('dataSynched', this.buildPreviewDiv.bind(this));
+        $settings.on("dataSynched", this.unpackSettings.bind(this));
+        $preview.on("dataSynched", this.buildPreviewDiv.bind(this));
 
-        $('a[data-toggle="tab"]').on('show', function(e) {
-            var toShow = $(e.target).attr('href'),
-                shown = $(e.relatedTarget).attr('href');
+        $('a[data-toggle="tab"]').on("show", function(e) {
+            var toShow = $(e.target).attr("href"),
+                shown = $(e.relatedTarget).attr("href");
 
             switch (shown) {
-                case '#data':
+                case "#data":
                     self.dataSynced ? self.unpackSettings() : self.getData();
                     break;
-                case '#settings':
+                case "#settings":
                     self.packSettings();
                     break;
-                case '#preview':
+                case "#preview":
                     self.removePreview();
                     break;
             }
 
             switch (toShow) {
-                case '#settings':
+                case "#settings":
                     if (!self.dataSynced) {
                         self.addSettingsLoader();
                         self.getData();
                     }
                     break;
-                case '#preview':
+                case "#preview":
                     self.setPreviewLoading();
                     if (self.dataSynced) {
-                        $('a[data-toggle="tab"]').one('shown', self.buildPreviewDiv.bind(self));
+                        $('a[data-toggle="tab"]').one("shown", self.buildPreviewDiv.bind(self));
                     } else {
                         self.getData();
                     }
@@ -73,12 +73,12 @@ class BaseVisualForm {
             }
         });
 
-        $('#data form').on('submit', this.packSettings.bind(this));
+        $("#data form").on("submit", this.packSettings.bind(this));
     }
 
     getData() {
         var self = this,
-            form = $('form').serialize();
+            form = $("form").serialize();
 
         if (this.isSynching) return;
         this.dataSynced = false;
@@ -89,20 +89,20 @@ class BaseVisualForm {
         })
             .fail(function() {
                 HAWCUtils.addAlert(
-                    '<strong>Data request failed.</strong> Sorry, your query to return results for the visualization failed; please contact the HAWC administrator if you feel this was an error which should be fixed.'
+                    "<strong>Data request failed.</strong> Sorry, your query to return results for the visualization failed; please contact the HAWC administrator if you feel this was an error which should be fixed."
                 );
             })
             .always(function() {
                 self.isSynching = false;
                 self.dataSynced = true;
-                $('#preview, #settings').trigger('dataSynched');
+                $("#preview, #settings").trigger("dataSynched");
             });
     }
 
     initSettings() {
         var settings;
         try {
-            settings = JSON.parse($('#id_settings').val());
+            settings = JSON.parse($("#id_settings").val());
         } catch (err) {
             settings = {};
         }
@@ -112,7 +112,7 @@ class BaseVisualForm {
             if (d.name && settings[d.name] === undefined) settings[d.name] = d.def;
         });
 
-        $('#id_settings').val(JSON.stringify(settings));
+        $("#id_settings").val(JSON.stringify(settings));
         this.settings = settings;
     }
 
@@ -121,7 +121,7 @@ class BaseVisualForm {
         this.fields.map(function(d) {
             d.toSerialized();
         });
-        $('#id_settings').val(JSON.stringify(this.settings));
+        $("#id_settings").val(JSON.stringify(this.settings));
     }
 
     unpackSettings() {
@@ -131,7 +131,7 @@ class BaseVisualForm {
         var self = this,
             settings;
         try {
-            settings = JSON.parse($('#id_settings').val());
+            settings = JSON.parse($("#id_settings").val());
             _.each(settings, function(val, key) {
                 if (self.settings[key] !== undefined) {
                     self.settings[key] = val;
@@ -144,7 +144,7 @@ class BaseVisualForm {
     }
 
     buildSettingsForm() {
-        var $parent = this.$el.find('#settings'),
+        var $parent = this.$el.find("#settings"),
             self = this,
             getParent = function(val) {
                 return self.settingsTabs[val] || $parent;
@@ -165,14 +165,14 @@ class BaseVisualForm {
 
     addPsuedoSubmitDiv($parent, beforeSubmit) {
         var self = this,
-            submitter = this.$el.find('#data .form-actions input'),
-            cancel_url = this.$el.find('#data .form-actions a').attr('href');
+            submitter = this.$el.find("#data .form-actions input"),
+            cancel_url = this.$el.find("#data .form-actions a").attr("href");
 
         $('<div class="form-actions">')
             .append(
-                $('<a class="btn btn-primary">Save</a>').on('click', function() {
+                $('<a class="btn btn-primary">Save</a>').on("click", function() {
                     if (beforeSubmit) beforeSubmit.call(self);
-                    submitter.trigger('click');
+                    submitter.trigger("click");
                 })
             )
             .append('<a class="btn btn-default" href="{0}">Cancel</a>'.printf(cancel_url))
@@ -190,7 +190,7 @@ class BaseVisualForm {
         if (tabs.length === 0) return;
 
         _.each(tabs, function(d, i) {
-            isActive = i === 0 ? 'active' : '';
+            isActive = i === 0 ? "active" : "";
             self.settingsTabs[d.name] = $(
                 '<div id="settings_{0}" class="tab-pane {1}">'.printf(d.name, isActive)
             );
@@ -213,14 +213,14 @@ class BaseVisualForm {
     }
 
     setPreviewLoading() {
-        var $preview = this.$el.find('#preview'),
+        var $preview = this.$el.find("#preview"),
             loading = $('<p class="loader">Loading... <img src="/static/img/loading.gif"></p>');
         $preview.html(loading);
     }
 
     addSettingsLoader() {
-        var div = $('#settings'),
-            loader = div.find('p.loader');
+        var div = $("#settings"),
+            loader = div.find("p.loader");
         if (loader.length === 0)
             loader = $('<p class="loader">Loading... <img src="/static/img/loading.gif"></p>');
         div.children().hide(0, function() {
@@ -229,15 +229,15 @@ class BaseVisualForm {
     }
 
     removeSettingsLoader() {
-        var div = $('#settings');
-        div.find('p.loader').remove();
+        var div = $("#settings");
+        div.find("p.loader").remove();
         div.children().show(800);
     }
 
     initDataForm() {}
 
     buildPreviewDiv() {
-        var $el = $('#preview'),
+        var $el = $("#preview"),
             data = $.extend(true, {}, this.data);
 
         data.settings = $.extend(false, {}, this.settings);
@@ -251,7 +251,7 @@ class BaseVisualForm {
 
     removePreview() {
         this.updateSettingsFromPreview();
-        $('#preview').empty();
+        $("#preview").empty();
         delete this.preview;
     }
 

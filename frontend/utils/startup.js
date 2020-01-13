@@ -1,16 +1,16 @@
-import $ from '$';
-import _ from 'lodash';
+import $ from "$";
+import _ from "lodash";
 
-import Quillify from './Quillify';
+import Quillify from "./Quillify";
 
 // Extend JS built-ins
-Object.defineProperty(Object.prototype, 'rename_property', {
+Object.defineProperty(Object.prototype, "rename_property", {
     value(old_name, new_name) {
         try {
             this[new_name] = this[old_name];
             delete this[old_name];
         } catch (f) {
-            console.log('prop not found');
+            console.log("prop not found");
         }
     },
 });
@@ -18,7 +18,7 @@ Object.defineProperty(Object.prototype, 'rename_property', {
 _.extend(Date.prototype, {
     toString() {
         var pad = function(x) {
-            return (x < 10 ? '0' : '') + x;
+            return (x < 10 ? "0" : "") + x;
         };
         if (this.getTime()) {
             var d = pad(this.getDate());
@@ -26,7 +26,7 @@ _.extend(Date.prototype, {
             var y = this.getFullYear();
             var hr = pad(this.getHours());
             var min = pad(this.getMinutes());
-            return [y, m, d].join('/') + ' ' + hr + ':' + min;
+            return [y, m, d].join("/") + " " + hr + ":" + min;
         }
         return null;
     },
@@ -52,10 +52,10 @@ _.extend(String, {
         // http://stackoverflow.com/questions/1855884/
         var rgb = String.hex_to_rgb(hex),
             a = 1 - (0.299 * rgb.r + 0.587 * rgb.g + 0.114 * rgb.b) / 255;
-        return a < 0.5 ? '#000' : '#fff';
+        return a < 0.5 ? "#000" : "#fff";
     },
     random_string() {
-        return 'xxxxxxxxxxxxxxx'.replace(/x/g, function(c) {
+        return "xxxxxxxxxxxxxxx".replace(/x/g, function(c) {
             return String.fromCharCode(97 + parseInt(26 * Math.random()));
         });
     },
@@ -66,7 +66,7 @@ _.extend(String.prototype, {
         //http://stackoverflow.com/questions/610406/
         var args = arguments;
         return this.replace(/{(\d+)}/g, function(match, number) {
-            return typeof args[number] !== 'undefined' ? args[number] : match;
+            return typeof args[number] !== "undefined" ? args[number] : match;
         });
     },
 });
@@ -114,7 +114,7 @@ _.extend(Math, {
                     G = T9,
                     I = 1;
                 while (T9 > G * 0.00001) {
-                    T9 = T9 * X / (A + I);
+                    T9 = (T9 * X) / (A + I);
                     G = G + T9;
                     I = I + 1;
                 }
@@ -141,11 +141,11 @@ _.extend(Math, {
             var z = (x - a) / Math.sqrt(a);
             var y = Math.normalcdf(z);
             var b1 = 2 / Math.sqrt(a);
-            var phiz = 0.39894228 * Math.exp(-z * z / 2);
-            var w = y - b1 * (z * z - 1) * phiz / 6; //Edgeworth1
+            var phiz = 0.39894228 * Math.exp((-z * z) / 2);
+            var w = y - (b1 * (z * z - 1) * phiz) / 6; //Edgeworth1
             var b2 = 6 / a;
             var u = 3 * b2 * (z * z - 3) + b1 * b1 * (z ^ (4 - 10 * z * z + 15));
-            GI = w - phiz * z * u / 72; //Edgeworth2
+            GI = w - (phiz * z * u) / 72; //Edgeworth2
         } else if (x < a + 1) {
             GI = gser(x, a);
         } else {
@@ -157,7 +157,7 @@ _.extend(Math, {
         // cumulative density function (CDF) for the standard normal distribution
         // HASTINGS.  MAX ERROR = .000001
         var T = 1 / (1 + 0.2316419 * Math.abs(X)),
-            D = 0.3989423 * Math.exp(-X * X / 2),
+            D = 0.3989423 * Math.exp((-X * X) / 2),
             p =
                 D *
                 T *
@@ -208,7 +208,7 @@ _.extend(Math, {
             ];
             if (df > 350) {
                 console.log(
-                    'Warning, extrapolating beyond range for which regression was designed.'
+                    "Warning, extrapolating beyond range for which regression was designed."
                 );
             }
         }
@@ -236,7 +236,7 @@ _.extend(Math, {
                 var sum = 0,
                     err = false;
                 array.forEach(function(v) {
-                    if (typeof v !== 'number') {
+                    if (typeof v !== "number") {
                         err = true;
                     }
                     sum += v;
@@ -261,12 +261,12 @@ $.fn.quillify = Quillify;
 // Django AJAX with CSRF protection.
 var getCookie = function(name) {
         var cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            var cookies = document.cookie.split(';');
+        if (document.cookie && document.cookie !== "") {
+            var cookies = document.cookie.split(";");
             for (var i = 0; i < cookies.length; i++) {
                 var cookie = $.trim(cookies[i]);
                 // Does this cookie string begin with the name we want?
-                if (cookie.substring(0, name.length + 1) == name + '=') {
+                if (cookie.substring(0, name.length + 1) == name + "=") {
                     cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
                     break;
                 }
@@ -274,8 +274,8 @@ var getCookie = function(name) {
         }
         return cookieValue;
     },
-    csrftoken = getCookie('csrftoken'),
-    sessionid = getCookie('sessionid'),
+    csrftoken = getCookie("csrftoken"),
+    sessionid = getCookie("sessionid"),
     csrfSafeMethod = function(method) {
         return /^(GET|HEAD|OPTIONS|TRACE)$/.test(method);
     };
@@ -284,8 +284,8 @@ $.ajaxSetup({
     crossDomain: false,
     beforeSend(xhr, settings) {
         if (!csrfSafeMethod(settings.type)) {
-            xhr.setRequestHeader('X-CSRFToken', csrftoken);
-            xhr.setRequestHeader('sessionid', sessionid);
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            xhr.setRequestHeader("sessionid", sessionid);
         }
     },
 });

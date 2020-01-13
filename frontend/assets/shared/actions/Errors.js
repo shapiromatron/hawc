@@ -1,4 +1,4 @@
-import * as sharedTypes from 'shared/constants/ActionTypes';
+import * as sharedTypes from "shared/constants/ActionTypes";
 
 export function setError(error) {
     return {

@@ -1,8 +1,8 @@
-import _ from 'lodash';
-import d3 from 'd3';
+import _ from "lodash";
+import d3 from "d3";
 
-import BaseTable from 'utils/BaseTable';
-import { docUrlRoot } from 'shared/utils';
+import BaseTable from "utils/BaseTable";
+import {docUrlRoot} from "shared/utils";
 
 class ResultGroupTable {
     constructor(res) {
@@ -12,7 +12,7 @@ class ResultGroupTable {
 
     setVisibleCols() {
         let hasData = function(rgs, fld) {
-            return _.chain(_.map(rgs, 'data'))
+            return _.chain(_.map(rgs, "data"))
                 .map(fld)
                 .map(_.isNumber)
                 .some()
@@ -21,15 +21,15 @@ class ResultGroupTable {
 
         this.visibleCol = {
             name: true,
-            n: hasData(this.res.resultGroups, 'n'),
-            estimate: hasData(this.res.resultGroups, 'estimate'),
-            variance: hasData(this.res.resultGroups, 'variance'),
+            n: hasData(this.res.resultGroups, "n"),
+            estimate: hasData(this.res.resultGroups, "estimate"),
+            variance: hasData(this.res.resultGroups, "variance"),
             ci:
-                hasData(this.res.resultGroups, 'lower_ci') &&
-                hasData(this.res.resultGroups, 'upper_ci'),
+                hasData(this.res.resultGroups, "lower_ci") &&
+                hasData(this.res.resultGroups, "upper_ci"),
             range:
-                hasData(this.res.resultGroups, 'lower_range') &&
-                hasData(this.res.resultGroups, 'upper_range'),
+                hasData(this.res.resultGroups, "lower_range") &&
+                hasData(this.res.resultGroups, "upper_range"),
             pvalue: true,
         };
     }
@@ -63,7 +63,7 @@ class ResultGroupTable {
                 .value(),
             sum = d3.sum(cols);
 
-        return _.map(cols, (d) => Math.round(d / sum * 100));
+        return _.map(cols, d => Math.round((d / sum) * 100));
     }
 
     getTblHeader() {
@@ -73,41 +73,41 @@ class ResultGroupTable {
                 name() {
                     let letter = d.trend_test
                         ? fn.add_footnote(`Trend-test result: ${d.trend_test}.`)
-                        : '';
+                        : "";
                     return `Group${letter}`;
                 },
                 n() {
-                    return 'N';
+                    return "N";
                 },
                 estimate() {
-                    return !_.includes([null, 'other'], d.estimate_type)
+                    return !_.includes([null, "other"], d.estimate_type)
                         ? `Estimate (${d.estimate_type})`
-                        : 'Estimate';
+                        : "Estimate";
                 },
                 variance() {
-                    return !_.includes([null, 'other'], d.variance_type)
+                    return !_.includes([null, "other"], d.variance_type)
                         ? `Variance (${d.variance_type})`
-                        : 'Variance';
+                        : "Variance";
                 },
                 ci() {
                     let letter = _.chain(d.results)
-                        .map('ci_calc')
+                        .map("ci_calc")
                         .some()
                         .value()
                         ? fn.add_footnote(
                               `Confidence intervals calculated in HAWC from distributions provided (<a href="${docUrlRoot}reference.html#statistical-methods-used">source</a>).`
                           )
-                        : '';
+                        : "";
 
                     return _.isNumber(d.ci_units)
                         ? `${d.ci_units * 100}% confidence intervals${letter}`
                         : `Confidence intervals${letter}`;
                 },
                 range() {
-                    return 'Range';
+                    return "Range";
                 },
                 pvalue() {
-                    return '<i>p</i>-value';
+                    return "<i>p</i>-value";
                 },
             };
 

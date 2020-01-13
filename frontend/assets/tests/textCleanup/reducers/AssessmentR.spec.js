@@ -1,8 +1,8 @@
-import * as types from 'textCleanup/constants/ActionTypes';
-import assessmentReducer from 'textCleanup/reducers/Assessment';
+import * as types from "textCleanup/constants/ActionTypes";
+import assessmentReducer from "textCleanup/reducers/Assessment";
 
-describe('textCleanup Assessment reducer', () => {
-    it('should handle receiving an object', () => {
+describe("textCleanup Assessment reducer", () => {
+    it("should handle receiving an object", () => {
         expect(
             assessmentReducer(
                 {
@@ -13,13 +13,13 @@ describe('textCleanup Assessment reducer', () => {
                 {
                     type: types.AS_RECEIVE_OBJECT,
                     item: {
-                        name: 'test assessment',
+                        name: "test assessment",
                         id: 0,
                         items: [
                             {
                                 count: 1,
-                                title: 'in vitro endpoints',
-                                type: 'iv',
+                                title: "in vitro endpoints",
+                                type: "iv",
                             },
                         ],
                     },
@@ -30,13 +30,13 @@ describe('textCleanup Assessment reducer', () => {
             isFetching: false,
             items: [
                 {
-                    name: 'test assessment',
+                    name: "test assessment",
                     id: 0,
                     items: [
                         {
                             count: 1,
-                            title: 'in vitro endpoints',
-                            type: 'iv',
+                            title: "in vitro endpoints",
+                            type: "iv",
                         },
                     ],
                 },
@@ -44,20 +44,20 @@ describe('textCleanup Assessment reducer', () => {
         });
     });
 
-    it('should handle an assessment selection', () => {
+    it("should handle an assessment selection", () => {
         expect(
             assessmentReducer(
                 {
                     active: null,
                     items: [
                         {
-                            name: 'test assessment',
+                            name: "test assessment",
                             id: 0,
                             items: [
                                 {
                                     count: 1,
-                                    title: 'in vitro endpoints',
-                                    type: 'iv',
+                                    title: "in vitro endpoints",
+                                    type: "iv",
                                 },
                             ],
                         },
@@ -66,13 +66,13 @@ describe('textCleanup Assessment reducer', () => {
                 {
                     type: types.AS_SELECT,
                     object: {
-                        name: 'test assessment',
+                        name: "test assessment",
                         id: 0,
                         items: [
                             {
                                 count: 1,
-                                title: 'in vitro endpoints',
-                                type: 'iv',
+                                title: "in vitro endpoints",
+                                type: "iv",
                             },
                         ],
                     },
@@ -80,25 +80,25 @@ describe('textCleanup Assessment reducer', () => {
             )
         ).to.deep.equal({
             active: {
-                name: 'test assessment',
+                name: "test assessment",
                 id: 0,
                 items: [
                     {
                         count: 1,
-                        title: 'in vitro endpoints',
-                        type: 'iv',
+                        title: "in vitro endpoints",
+                        type: "iv",
                     },
                 ],
             },
             items: [
                 {
-                    name: 'test assessment',
+                    name: "test assessment",
                     id: 0,
                     items: [
                         {
                             count: 1,
-                            title: 'in vitro endpoints',
-                            type: 'iv',
+                            title: "in vitro endpoints",
+                            type: "iv",
                         },
                     ],
                 },

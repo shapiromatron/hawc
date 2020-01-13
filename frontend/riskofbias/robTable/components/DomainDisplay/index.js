@@ -1,17 +1,17 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import _ from 'lodash';
+import React, {Component} from "react";
+import PropTypes from "prop-types";
+import _ from "lodash";
 
-import MetricDisplay from 'riskofbias/robTable/components/MetricDisplay';
-import MetricForm from 'riskofbias/robTable/components/MetricForm';
+import MetricDisplay from "riskofbias/robTable/components/MetricDisplay";
+import MetricForm from "riskofbias/robTable/components/MetricForm";
 
 class DomainDisplay extends Component {
     render() {
-        let { domain, config, updateNotesLeft, robResponseValues } = this.props;
+        let {domain, config, updateNotesLeft, robResponseValues} = this.props;
         return (
             <div>
                 <h3>{domain.key}</h3>
-                {_.map(domain.values, (metric) => {
+                {_.map(domain.values, metric => {
                     let props = {
                         key: metric.key,
                         ref: _.last(metric.values).id,

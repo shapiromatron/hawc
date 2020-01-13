@@ -1,5 +1,5 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React from "react";
+import PropTypes from "prop-types";
 
 class BMROptionTable extends React.Component {
     handleRowClick(bmrIndex) {
@@ -15,8 +15,7 @@ class BMROptionTable extends React.Component {
                     <button
                         onClick={this.props.handleCreateBmr}
                         type="button"
-                        className="btn btn-small pull-right"
-                    >
+                        className="btn btn-small pull-right">
                         <i className="icon-plus" /> Create new BMR
                     </button>
                 </div>
@@ -25,7 +24,7 @@ class BMROptionTable extends React.Component {
     }
 
     renderRow(bmr, i) {
-        let header = this.props.editMode ? 'View/edit' : 'View';
+        let header = this.props.editMode ? "View/edit" : "View";
 
         return (
             <tr key={i}>
@@ -36,8 +35,7 @@ class BMROptionTable extends React.Component {
                     <button
                         type="button"
                         className="btn btn-link"
-                        onClick={this.handleRowClick.bind(this, i)}
-                    >
+                        onClick={this.handleRowClick.bind(this, i)}>
                         {header}
                     </button>
                 </td>
@@ -46,17 +44,17 @@ class BMROptionTable extends React.Component {
     }
 
     render() {
-        let header = this.props.editMode ? 'View/edit' : 'View';
+        let header = this.props.editMode ? "View/edit" : "View";
         return (
             <div className="span6">
                 <h4>Benchmark modeling responses</h4>
                 <table className="table table-condensed table-striped">
                     <thead>
                         <tr>
-                            <th style={{ width: '30%' }}>Type</th>
-                            <th style={{ width: '20%' }}>Value</th>
-                            <th style={{ width: '25%' }}>Confidence level</th>
-                            <th style={{ width: '25%' }}>{header}</th>
+                            <th style={{width: "30%"}}>Type</th>
+                            <th style={{width: "20%"}}>Value</th>
+                            <th style={{width: "25%"}}>Confidence level</th>
+                            <th style={{width: "25%"}}>{header}</th>
                         </tr>
                     </thead>
                     <tfoot>

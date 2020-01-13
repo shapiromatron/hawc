@@ -1,5 +1,5 @@
 const invitroStartup = function(cb) {
-    import('./split.js').then((invitro) => {
+    import("./split.js").then(invitro => {
         cb(invitro.default);
     });
 };

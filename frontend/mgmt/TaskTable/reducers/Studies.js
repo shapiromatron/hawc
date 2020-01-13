@@ -1,13 +1,13 @@
-import _ from 'lodash';
-import * as types from 'mgmt/TaskTable/constants';
-import h from 'mgmt/utils/helpers';
+import _ from "lodash";
+import * as types from "mgmt/TaskTable/constants";
+import h from "mgmt/utils/helpers";
 
 const defaultState = {
     isFetching: false,
     isLoaded: false,
     list: [],
     visibleList: [],
-    sortOrder: 'ascending',
+    sortOrder: "ascending",
 };
 
 function studies(state = defaultState, action) {
@@ -34,8 +34,8 @@ function studies(state = defaultState, action) {
                 });
             }
 
-            list = action.types.map((type) => {
-                return state.list.filter((study) => {
+            list = action.types.map(type => {
+                return state.list.filter(study => {
                     return study[type];
                 });
             });
@@ -49,17 +49,17 @@ function studies(state = defaultState, action) {
             /* if sorting field changed, sort */
             if (action.opts.field !== state.sortField) {
                 switch (action.opts.field) {
-                    case 'short_citation':
+                    case "short_citation":
                         list = h.sortStrings(list, action.opts.field);
                         break;
-                    case 'created':
+                    case "created":
                         list = h.sortDates(list, action.opts.field);
                         break;
                     default:
                         list;
                 }
                 /* if sorting field changed and sorting order is descending, reverse list */
-                if (action.opts.order === 'descending') list = list.reverse();
+                if (action.opts.order === "descending") list = list.reverse();
             } else {
                 /* if sorting field didn't change, but sorting order did, reverse list */
                 if (action.opts.order !== state.sortOrder) list = list.reverse();

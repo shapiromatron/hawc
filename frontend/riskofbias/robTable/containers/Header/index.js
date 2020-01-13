@@ -1,11 +1,11 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import React, {Component} from "react";
+import {connect} from "react-redux";
 
 class Header extends Component {
     renderHelpText(hawc_flavor, assessment_id) {
-        if (hawc_flavor !== 'EPA') {
+        if (hawc_flavor !== "EPA") {
             return null;
-        } else if (assessment_id == '100500031') {
+        } else if (assessment_id == "100500031") {
             // TODO - remove 100500031 hack
             return (
                 <p>
@@ -25,11 +25,11 @@ class Header extends Component {
                         sensitivity.&nbsp;For some domains (see below), additional outcome- or
                         chemical-specific refinements to the criteria used to answer the questions
                         should be developed <em>a priori</em> by reviewers.&nbsp;Each domain
-                        receives a judgment of <em>Good</em>, <em>Adequate</em>, <em>Deficient</em>,{' '}
+                        receives a judgment of <em>Good</em>, <em>Adequate</em>, <em>Deficient</em>,{" "}
                         <em>Not Reported</em> or <em>Critically Deficient</em> accompanied by the
                         rationale and primary study-specific information supporting the
-                        judgment.&nbsp;Once all domains are evaluated, a confidence rating of{' '}
-                        <em>High</em>, <em>Medium</em>, or <em>Low</em> confidence or{' '}
+                        judgment.&nbsp;Once all domains are evaluated, a confidence rating of{" "}
+                        <em>High</em>, <em>Medium</em>, or <em>Low</em> confidence or{" "}
                         <em>Uninformative</em> is assigned for each endpoint/outcome from the
                         study.&nbsp;The overall confidence rating should, to the extent possible,
                         reflect interpretations of the potential influence on the results (including
@@ -47,24 +47,26 @@ class Header extends Component {
                         at the level of a specific cohort or individual endpoint within a study must
                         be described within a single free-text box.&nbsp;Within the text boxes,
                         please remember to call out each of the specific judgments and
-                        rationales.&nbsp;A good form to follow for the text boxes is ‘<strong>
+                        rationales.&nbsp;A good form to follow for the text boxes is ‘
+                        <strong>
                             <em>Endpoint/Outcome – Judgment – Rationale</em>
-                        </strong>’.&nbsp;When selecting the representative rating for the domains
-                        and overall rating (i.e., the drop-down selection with the associated color
-                        code), it is typically most appropriate to select the judgment that best
-                        represents an average of the responses for the endpoint/outcome evaluated in
-                        that study, considering the pre-defined importance of individual
-                        outcomes/health effects to the assessment (see Overall Confidence examples).
+                        </strong>
+                        ’.&nbsp;When selecting the representative rating for the domains and overall
+                        rating (i.e., the drop-down selection with the associated color code), it is
+                        typically most appropriate to select the judgment that best represents an
+                        average of the responses for the endpoint/outcome evaluated in that study,
+                        considering the pre-defined importance of individual outcomes/health effects
+                        to the assessment (see Overall Confidence examples).
                     </p>
                     <p>
                         Follow<strong> </strong>
                         <a href="/assessment/100000039/" target="_blank">
                             <strong>link</strong>
-                        </a>{' '}
+                        </a>{" "}
                         to see attachments that contain example answers to the animal study
-                        evaluation domains.{' '}
+                        evaluation domains.{" "}
                         <em>
-                            It is really helpful to have this document open when conducting reviews.{' '}
+                            It is really helpful to have this document open when conducting reviews.{" "}
                         </em>
                     </p>
                     <p>
@@ -82,12 +84,12 @@ class Header extends Component {
 
     render() {
         let headerText,
-            { isForm, display, assessment_id, hawc_flavor } = this.props.config,
+            {isForm, display, assessment_id, hawc_flavor} = this.props.config,
             helpText;
         if (isForm) {
-            headerText = display == 'final' ? 'Final review' : 'Review';
-        } else if (display == 'all') {
-            headerText = 'Show all active reviews';
+            headerText = display == "final" ? "Final review" : "Review";
+        } else if (display == "all") {
+            headerText = "Show all active reviews";
         }
 
         return (

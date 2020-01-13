@@ -1,26 +1,26 @@
-import $ from '$';
-import _ from 'lodash';
+import $ from "$";
+import _ from "lodash";
 
-import DescriptiveTable from 'utils/DescriptiveTable';
-import HAWCModal from 'utils/HAWCModal';
-import HAWCUtils from 'utils/HAWCUtils';
+import DescriptiveTable from "utils/DescriptiveTable";
+import HAWCModal from "utils/HAWCModal";
+import HAWCUtils from "utils/HAWCUtils";
 
 class StudyPopulation {
     constructor(data) {
         this.data = data;
         this.inclusion_criteria = _.filter(this.data.criteria, {
-            criteria_type: 'Inclusion',
+            criteria_type: "Inclusion",
         });
         this.exclusion_criteria = _.filter(this.data.criteria, {
-            criteria_type: 'Exclusion',
+            criteria_type: "Exclusion",
         });
         this.confounding_criteria = _.filter(this.data.criteria, {
-            criteria_type: 'Confounding',
+            criteria_type: "Confounding",
         });
     }
 
     static get_object(id, cb) {
-        $.get('/epi/api/study-population/{0}/'.printf(id), function(d) {
+        $.get("/epi/api/study-population/{0}/".printf(id), function(d) {
             cb(new StudyPopulation(d));
         });
     }
@@ -39,48 +39,48 @@ class StudyPopulation {
 
     build_breadcrumbs() {
         var urls = [
-            { url: this.data.study.url, name: this.data.study.short_citation },
-            { url: this.data.url, name: this.data.name },
+            {url: this.data.study.url, name: this.data.study.short_citation},
+            {url: this.data.url, name: this.data.name},
         ];
         return HAWCUtils.build_breadcrumbs(urls);
     }
 
     get_countries_display() {
-        var countries = '';
+        var countries = "";
         for (var i = 0; i < this.data.countries.length; i++) {
-            countries += (countries == '' ? '' : ', ') + this.data.countries[i].name;
+            countries += (countries == "" ? "" : ", ") + this.data.countries[i].name;
         }
         return countries;
     }
 
     build_details_table() {
         return new DescriptiveTable()
-            .add_tbody_tr('Study design', this.data.design)
-            .add_tbody_tr('Age profile', this.data.age_profile)
-            .add_tbody_tr('Source', this.data.source)
-            .add_tbody_tr('Countries', this.get_countries_display())
-            .add_tbody_tr('State', this.data.state)
-            .add_tbody_tr('Region', this.data.region)
-            .add_tbody_tr('Eligible N', this.data.eligible_n)
-            .add_tbody_tr('Invited N', this.data.invited_n)
-            .add_tbody_tr('Participant N', this.data.participant_n)
-            .add_tbody_tr_list('Inclusion criteria', _.map(this.inclusion_criteria, 'description'))
-            .add_tbody_tr_list('Exclusion criteria', _.map(this.exclusion_criteria, 'description'))
+            .add_tbody_tr("Study design", this.data.design)
+            .add_tbody_tr("Age profile", this.data.age_profile)
+            .add_tbody_tr("Source", this.data.source)
+            .add_tbody_tr("Countries", this.get_countries_display())
+            .add_tbody_tr("State", this.data.state)
+            .add_tbody_tr("Region", this.data.region)
+            .add_tbody_tr("Eligible N", this.data.eligible_n)
+            .add_tbody_tr("Invited N", this.data.invited_n)
+            .add_tbody_tr("Participant N", this.data.participant_n)
+            .add_tbody_tr_list("Inclusion criteria", _.map(this.inclusion_criteria, "description"))
+            .add_tbody_tr_list("Exclusion criteria", _.map(this.exclusion_criteria, "description"))
             .add_tbody_tr_list(
-                'Confounding criteria',
-                _.map(this.confounding_criteria, 'description')
+                "Confounding criteria",
+                _.map(this.confounding_criteria, "description")
             )
-            .add_tbody_tr('Comments', this.data.comments)
+            .add_tbody_tr("Comments", this.data.comments)
             .get_tbl();
     }
 
     build_links_div() {
-        var $el = $('<div>'),
+        var $el = $("<div>"),
             liFunc = function(d) {
                 return '<li><a href="{0}">{1}</a></li>'.printf(d.url, d.name);
             };
 
-        $el.append('<h2>Outcomes</h2>');
+        $el.append("<h2>Outcomes</h2>");
         if (this.data.outcomes.length > 0) {
             $el.append(HAWCUtils.buildUL(this.data.outcomes, liFunc));
         } else {
@@ -88,7 +88,7 @@ class StudyPopulation {
         }
 
         if (this.data.can_create_sets) {
-            $el.append('<h2>Comparison sets</h2>');
+            $el.append("<h2>Comparison sets</h2>");
             if (this.data.comparison_sets.length > 0) {
                 $el.append(HAWCUtils.buildUL(this.data.comparison_sets, liFunc));
             } else {
@@ -96,7 +96,7 @@ class StudyPopulation {
             }
         }
 
-        $el.append('<h2>Exposure measurements</h2>');
+        $el.append("<h2>Exposure measurements</h2>");
         if (this.data.exposures.length > 0) {
             $el.append(HAWCUtils.buildUL(this.data.exposures, liFunc));
         } else {
@@ -106,8 +106,7 @@ class StudyPopulation {
     }
 
     displayFullPager($el) {
-        $el
-            .hide()
+        $el.hide()
             .append(this.build_details_table())
             .append(this.build_links_div())
             .fadeIn();
@@ -115,7 +114,7 @@ class StudyPopulation {
 
     displayAsModal() {
         var modal = new HAWCModal(),
-            title = '<h4>{0}</h4>'.printf(this.build_breadcrumbs()),
+            title = "<h4>{0}</h4>".printf(this.build_breadcrumbs()),
             $content = $('<div class="container-fluid">')
                 .append($('<div class="row-fluid">').append(this.build_details_table()))
                 .append($('<div class="row-fluid">').append(this.build_links_div()));
@@ -123,8 +122,8 @@ class StudyPopulation {
         modal
             .addHeader(title)
             .addBody($content)
-            .addFooter('')
-            .show({ maxWidth: 1000 });
+            .addFooter("")
+            .show({maxWidth: 1000});
     }
 }
 

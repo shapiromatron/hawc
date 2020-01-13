@@ -1,8 +1,8 @@
-import $ from '$';
+import $ from "$";
 
-import DescriptiveTable from 'utils/DescriptiveTable';
-import HAWCModal from 'utils/HAWCModal';
-import HAWCUtils from 'utils/HAWCUtils';
+import DescriptiveTable from "utils/DescriptiveTable";
+import HAWCModal from "utils/HAWCModal";
+import HAWCUtils from "utils/HAWCUtils";
 
 class Experiment {
     constructor(data) {
@@ -10,7 +10,7 @@ class Experiment {
     }
 
     static get_object(id, cb) {
-        $.get('/ani/api/experiment/{0}/'.printf(id), function(d) {
+        $.get("/ani/api/experiment/{0}/".printf(id), function(d) {
             cb(new Experiment(d));
         });
     }
@@ -38,31 +38,31 @@ class Experiment {
     build_details_table() {
         var self = this,
             getGenerations = function() {
-                return self.data.is_generational ? 'Yes' : 'No';
+                return self.data.is_generational ? "Yes" : "No";
             },
             getPurityText = function() {
-                return self.data.purity_available ? 'Chemical purity' : 'Chemical purity available';
+                return self.data.purity_available ? "Chemical purity" : "Chemical purity available";
             },
             getPurity = function() {
                 var qualifier =
-                    self.data.purity_qualifier === '=' ? '' : self.data.purity_qualifier;
-                return self.data.purity ? '{0}{1}%'.printf(qualifier, self.data.purity) : 'No';
+                    self.data.purity_qualifier === "=" ? "" : self.data.purity_qualifier;
+                return self.data.purity ? "{0}{1}%".printf(qualifier, self.data.purity) : "No";
             },
             tbl,
             casTd;
 
         tbl = new DescriptiveTable()
-            .add_tbody_tr('Name', this.data.name)
-            .add_tbody_tr('Type', this.data.type)
-            .add_tbody_tr('Multiple generations', getGenerations())
-            .add_tbody_tr('Chemical', this.data.chemical)
-            .add_tbody_tr('CAS', this.data.cas)
-            .add_tbody_tr('Chemical source', this.data.chemical_source)
+            .add_tbody_tr("Name", this.data.name)
+            .add_tbody_tr("Type", this.data.type)
+            .add_tbody_tr("Multiple generations", getGenerations())
+            .add_tbody_tr("Chemical", this.data.chemical)
+            .add_tbody_tr("CAS", this.data.cas)
+            .add_tbody_tr("Chemical source", this.data.chemical_source)
             .add_tbody_tr(getPurityText(), getPurity())
-            .add_tbody_tr('Vehicle', this.data.vehicle)
-            .add_tbody_tr('Animal diet', this.data.diet)
-            .add_tbody_tr('Guideline compliance', this.data.guideline_compliance)
-            .add_tbody_tr('Description and animal husbandry', this.data.description);
+            .add_tbody_tr("Vehicle", this.data.vehicle)
+            .add_tbody_tr("Animal diet", this.data.diet)
+            .add_tbody_tr("Guideline compliance", this.data.guideline_compliance)
+            .add_tbody_tr("Description and animal husbandry", this.data.description);
 
         if (this.data.cas_url) {
             casTd = tbl
@@ -77,7 +77,7 @@ class Experiment {
 
     displayAsModal() {
         var modal = new HAWCModal(),
-            title = $('<h4>').html(this.build_breadcrumbs()),
+            title = $("<h4>").html(this.build_breadcrumbs()),
             $details = $('<div class="span12">'),
             $content = $('<div class="container-fluid">').append(
                 $('<div class="row-fluid">').append($details)
@@ -88,8 +88,8 @@ class Experiment {
         modal
             .addHeader(title)
             .addBody($content)
-            .addFooter('')
-            .show({ maxWidth: 1000 });
+            .addFooter("")
+            .show({maxWidth: 1000});
     }
 
     render($div) {

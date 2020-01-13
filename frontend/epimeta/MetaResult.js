@@ -1,12 +1,12 @@
-import $ from '$';
-import _ from 'lodash';
+import $ from "$";
+import _ from "lodash";
 
-import BaseTable from 'utils/BaseTable';
-import DescriptiveTable from 'utils/DescriptiveTable';
-import HAWCModal from 'utils/HAWCModal';
-import HAWCUtils from 'utils/HAWCUtils';
+import BaseTable from "utils/BaseTable";
+import DescriptiveTable from "utils/DescriptiveTable";
+import HAWCModal from "utils/HAWCModal";
+import HAWCUtils from "utils/HAWCUtils";
 
-import SingleStudyResult from './SingleStudyResult';
+import SingleStudyResult from "./SingleStudyResult";
 
 class MetaResult {
     constructor(data) {
@@ -16,7 +16,7 @@ class MetaResult {
     }
 
     static get_object(id, cb) {
-        $.get('/epi-meta/api/result/{0}/'.printf(id), function(d) {
+        $.get("/epi-meta/api/result/{0}/".printf(id), function(d) {
             cb(new MetaResult(d));
         });
     }
@@ -43,25 +43,25 @@ class MetaResult {
 
     build_details_table(div) {
         return new DescriptiveTable()
-            .add_tbody_tr('Health outcome', this.data.health_outcome)
-            .add_tbody_tr('Data location', this.data.data_location)
-            .add_tbody_tr('Health outcome notes', this.data.health_outcome_notes)
-            .add_tbody_tr('Exposure name', this.data.exposure_name)
-            .add_tbody_tr('Exposure details', this.data.exposure_details)
-            .add_tbody_tr('Number of studies', this.data.number_studies)
-            .add_tbody_tr_list('Adjustment factors', this.data.adjustment_factors)
-            .add_tbody_tr('N', this.data.n)
+            .add_tbody_tr("Health outcome", this.data.health_outcome)
+            .add_tbody_tr("Data location", this.data.data_location)
+            .add_tbody_tr("Health outcome notes", this.data.health_outcome_notes)
+            .add_tbody_tr("Exposure name", this.data.exposure_name)
+            .add_tbody_tr("Exposure details", this.data.exposure_details)
+            .add_tbody_tr("Number of studies", this.data.number_studies)
+            .add_tbody_tr_list("Adjustment factors", this.data.adjustment_factors)
+            .add_tbody_tr("N", this.data.n)
             .add_tbody_tr(this.get_statistical_metric_header(), this.data.estimateFormatted)
-            .add_tbody_tr('Statistical notes', this.data.statistical_notes)
-            .add_tbody_tr('Hetereogeneity notes', this.data.heterogeneity)
-            .add_tbody_tr('Notes', this.data.notes)
+            .add_tbody_tr("Statistical notes", this.data.statistical_notes)
+            .add_tbody_tr("Hetereogeneity notes", this.data.heterogeneity)
+            .add_tbody_tr("Notes", this.data.notes)
             .get_tbl();
     }
 
     get_statistical_metric_header() {
         var txt = this.data.metric.abbreviation;
         if (this.data.ci_units) {
-            txt += ' ({0}% CI)'.printf(this.data.ci_units * 100);
+            txt += " ({0}% CI)".printf(this.data.ci_units * 100);
         }
         return txt;
     }
@@ -72,7 +72,7 @@ class MetaResult {
 
     build_single_results_table() {
         var tbl = new BaseTable();
-        tbl.addHeaderRow(['Name', 'Weight', 'N', 'Risk estimate', 'Notes']);
+        tbl.addHeaderRow(["Name", "Weight", "N", "Risk estimate", "Notes"]);
         tbl.setColGroup([30, 15, 15, 15, 25]);
         _.each(this.single_results, function(d) {
             tbl.addRow(d.build_table_row(d));
@@ -86,8 +86,8 @@ class MetaResult {
                 url: this.data.protocol.study.url,
                 name: this.data.protocol.study.short_citation,
             },
-            { url: this.data.protocol.url, name: this.data.protocol.name },
-            { url: this.data.url, name: this.data.label },
+            {url: this.data.protocol.url, name: this.data.protocol.name},
+            {url: this.data.url, name: this.data.label},
         ];
         return HAWCUtils.build_breadcrumbs(urls);
     }
@@ -97,34 +97,32 @@ class MetaResult {
             detail = $(
                 '<i class="fa fa-eye eyeEndpointModal" title="quick view" style="display: none">'
             ).click(() => {
-                this.displayAsModal({ complete: true });
+                this.displayAsModal({complete: true});
             }),
-            endpoint = $('<span>')
+            endpoint = $("<span>")
                 .append(link, detail)
                 .hover(detail.fadeIn.bind(detail), detail.fadeOut.bind(detail));
 
         return [
-            `<a href=${this.data.protocol.study.url} target="_blank">${
-                this.data.protocol.study.short_citation
-            }</a>`,
+            `<a href=${this.data.protocol.study.url} target="_blank">${this.data.protocol.study.short_citation}</a>`,
             endpoint,
             `<a href=${this.data.protocol.url} target="_blank">${this.data.protocol.name}</a>`,
-            this.data.health_outcome ? this.data.health_outcome : '--',
-            this.data.exposure_name ? this.data.exposure_name : '--',
-            this.data.ci_units ? `${this.data.ci_units * 100}%` : '--',
-            this.data.estimateFormatted ? this.data.estimateFormatted : '--',
+            this.data.health_outcome ? this.data.health_outcome : "--",
+            this.data.exposure_name ? this.data.exposure_name : "--",
+            this.data.ci_units ? `${this.data.ci_units * 100}%` : "--",
+            this.data.estimateFormatted ? this.data.estimateFormatted : "--",
         ];
     }
 
     displayAsModal() {
         var modal = new HAWCModal(),
-            title = '<h4>{0}</h4>'.printf(this.build_breadcrumbs()),
+            title = "<h4>{0}</h4>".printf(this.build_breadcrumbs()),
             $content = $('<div class="container-fluid">');
 
-        var $singleResultsDiv = $('<div>');
+        var $singleResultsDiv = $("<div>");
         if (this.has_single_results()) {
             $singleResultsDiv
-                .append('<h2>Individual study results</h2>')
+                .append("<h2>Individual study results</h2>")
                 .append(this.build_single_results_table());
         }
         $content.append(this.build_details_table()).append($singleResultsDiv);
@@ -132,19 +130,18 @@ class MetaResult {
         modal
             .addHeader(title)
             .addBody($content)
-            .addFooter('')
-            .show({ maxWidth: 900 });
+            .addFooter("")
+            .show({maxWidth: 900});
     }
 
     displayFullPager($el) {
-        var $singleResultsDiv = $('<div>');
+        var $singleResultsDiv = $("<div>");
         if (this.has_single_results()) {
             $singleResultsDiv
-                .append('<h2>Individual study results</h2>')
+                .append("<h2>Individual study results</h2>")
                 .append(this.build_single_results_table());
         }
-        $el
-            .hide()
+        $el.hide()
             .append(this.build_details_table())
             .append($singleResultsDiv)
             .fadeIn();

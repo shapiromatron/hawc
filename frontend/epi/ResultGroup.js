@@ -1,7 +1,7 @@
-import $ from '$';
-import _ from 'lodash';
+import $ from "$";
+import _ from "lodash";
 
-import Group from './Group';
+import Group from "./Group";
 
 class ResultGroup {
     constructor(data) {
@@ -47,13 +47,13 @@ class ResultGroup {
 
         if (this.data.is_main_finding) {
             txt += fn.add_footnote([
-                'Main finding as selected by HAWC assessment authors ({0}).'.printf(
+                "Main finding as selected by HAWC assessment authors ({0}).".printf(
                     this.data.main_finding_support
                 ),
             ]);
         }
         return $('<a href="#">')
-            .on('click', this.group.show_tooltip.bind(this.group))
+            .on("click", this.group.show_tooltip.bind(this.group))
             .html(txt);
     }
 
@@ -62,27 +62,27 @@ class ResultGroup {
             methods = {
                 name: this._build_group_anchor.bind(this, fn),
                 n() {
-                    return _.isFinite(d.n) ? d.n : '-';
+                    return _.isFinite(d.n) ? d.n : "-";
                 },
                 estimate() {
-                    return _.isFinite(d.estimate) ? d.estimate : '-';
+                    return _.isFinite(d.estimate) ? d.estimate : "-";
                 },
                 variance() {
-                    return _.isFinite(d.variance) ? d.variance : '-';
+                    return _.isFinite(d.variance) ? d.variance : "-";
                 },
                 ci() {
                     return _.isNumber(d.lower_ci) && _.isNumber(d.upper_ci)
-                        ? '{0} - {1}'.printf(d.lower_ci, d.upper_ci)
-                        : '-';
+                        ? "{0} - {1}".printf(d.lower_ci, d.upper_ci)
+                        : "-";
                 },
                 range() {
                     return _.isNumber(d.lower_range) && _.isNumber(d.upper_range)
-                        ? '{0} - {1}'.printf(d.lower_range, d.upper_range)
-                        : '-';
+                        ? "{0} - {1}".printf(d.lower_range, d.upper_range)
+                        : "-";
                 },
                 pvalue() {
                     return _.isNumber(d.p_value)
-                        ? '{0} {1}'.printf(d.p_value_qualifier, d.p_value)
+                        ? "{0} {1}".printf(d.p_value_qualifier, d.p_value)
                         : d.p_value_qualifier;
                 },
             };

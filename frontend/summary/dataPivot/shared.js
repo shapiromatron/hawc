@@ -1,1 +1,1 @@
-export const NULL_CASE = '---';
+export const NULL_CASE = "---";

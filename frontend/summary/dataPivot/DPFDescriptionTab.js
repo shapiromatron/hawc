@@ -1,20 +1,20 @@
-import $ from '$';
+import $ from "$";
 
-import { _DataPivot_settings_description, buildHeaderTr } from './DataPivotUtilities';
+import {_DataPivot_settings_description, buildHeaderTr} from "./DataPivotUtilities";
 
 let buildDescriptionTable = function(tab, dp) {
-        let thead = $('<thead>').html(
+        let thead = $("<thead>").html(
                 buildHeaderTr([
-                    'Column header',
-                    'Display name',
-                    'Header style',
-                    'Text style',
-                    'Maximum width (pixels)',
-                    'On-click',
-                    'Ordering',
+                    "Column header",
+                    "Display name",
+                    "Header style",
+                    "Text style",
+                    "Maximum width (pixels)",
+                    "On-click",
+                    "Ordering",
                 ])
             ),
-            tbody = $('<tbody>'),
+            tbody = $("<tbody>"),
             tbl = $('<table class="table table-condensed table-bordered">').html([thead, tbody]),
             settings = dp.settings.description_settings,
             addDataRow = function(i) {
@@ -29,7 +29,7 @@ let buildDescriptionTable = function(tab, dp) {
                 addDataRow(settings.length);
             },
             newRowBtn = $('<button class="btn btn-primary pull-right">New row</button>').on(
-                'click',
+                "click",
                 newDataRow
             ),
             numRows = settings.length === 0 ? 5 : settings.length;
@@ -38,7 +38,7 @@ let buildDescriptionTable = function(tab, dp) {
             addDataRow(i);
         }
 
-        return tab.append($('<h3>Descriptive text columns</h3>').append(newRowBtn), tbl);
+        return tab.append($("<h3>Descriptive text columns</h3>").append(newRowBtn), tbl);
     },
     buildDescriptionTab = function(dp) {
         let tab = $('<div class="tab-pane active" id="data_pivot_settings_description">');

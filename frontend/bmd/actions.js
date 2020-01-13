@@ -1,14 +1,14 @@
-import $ from '$';
-import fetch from 'isomorphic-fetch';
+import $ from "$";
+import fetch from "isomorphic-fetch";
 
-import h from 'riskofbias/robTable/utils/helpers';
+import h from "riskofbias/robTable/utils/helpers";
 
-import * as types from 'bmd/constants';
+import * as types from "bmd/constants";
 
-import Endpoint from 'animal/Endpoint';
+import Endpoint from "animal/Endpoint";
 
 var showModal = function(name) {
-        return $('#' + name).modal('show');
+        return $("#" + name).modal("show");
     },
     receiveEndpoint = function(endpoint) {
         return {
@@ -26,17 +26,17 @@ var showModal = function(name) {
         return (dispatch, getState) => {
             const url = Endpoint.get_endpoint_url(id);
             return fetch(url, h.fetchGet)
-                .then((response) => response.json())
-                .then((json) => dispatch(receiveEndpoint(new Endpoint(json))))
-                .catch((ex) => console.error('Endpoint parsing failed', ex));
+                .then(response => response.json())
+                .then(json => dispatch(receiveEndpoint(new Endpoint(json))))
+                .catch(ex => console.error("Endpoint parsing failed", ex));
         };
     },
     fetchSessionSettings = function(session_url) {
         return (dispatch, getState) => {
             return fetch(session_url, h.fetchGet)
-                .then((response) => response.json())
-                .then((json) => dispatch(receiveSession(json)))
-                .catch((ex) => console.error('Endpoint parsing failed', ex));
+                .then(response => response.json())
+                .then(json => dispatch(receiveSession(json)))
+                .catch(ex => console.error("Endpoint parsing failed", ex));
         };
     },
     changeUnits = function(doseUnits) {
@@ -130,10 +130,10 @@ var showModal = function(name) {
             })
                 .then(() => dispatch(execute_start()))
                 .then(() => {
-                    fetch(url, h.fetchPost(state.config.csrf, data, 'POST'))
-                        .then((response) => {
+                    fetch(url, h.fetchPost(state.config.csrf, data, "POST"))
+                        .then(response => {
                             if (!response.ok) {
-                                dispatch(setErrors(['An error occurred.']));
+                                dispatch(setErrors(["An error occurred."]));
                             }
                             return response.json();
                         })
@@ -144,10 +144,10 @@ var showModal = function(name) {
     validate = function(state) {
         let errs = [];
         if (state.bmd.bmrs.length === 0) {
-            errs.push('At least one BMR setting is required.');
+            errs.push("At least one BMR setting is required.");
         }
         if (state.bmd.modelSettings.length === 0) {
-            errs.push('At least one model is required.');
+            errs.push("At least one model is required.");
         }
         return errs;
     },
@@ -172,8 +172,8 @@ var showModal = function(name) {
         return (dispatch, getState) => {
             let url = getState().config.execute_status_url;
             fetch(url, h.fetchGet)
-                .then((res) => res.json())
-                .then((res) => {
+                .then(res => res.json())
+                .then(res => {
                     if (res.finished) {
                         dispatch(getExecutionResults());
                     } else {
@@ -190,7 +190,7 @@ var showModal = function(name) {
             })
                 .then(() => dispatch(fetchSessionSettings(url)))
                 .then(() => dispatch(execute_stop()))
-                .then(() => $('#tabs a:eq(1)').tab('show'));
+                .then(() => $("#tabs a:eq(1)").tab("show"));
         };
     },
     toggleVariance = function() {
@@ -260,7 +260,7 @@ var showModal = function(name) {
             return new Promise((res, rej) => {
                 res();
             }).then(() => {
-                fetch(url, h.fetchPost(state.config.csrf, data, 'POST')).then(() =>
+                fetch(url, h.fetchPost(state.config.csrf, data, "POST")).then(() =>
                     dispatch(setSelectedModel(model_id, notes))
                 );
             });
@@ -272,24 +272,24 @@ var showModal = function(name) {
         };
     };
 
-export { fetchEndpoint };
-export { fetchSessionSettings };
-export { changeUnits };
-export { showOptionModal };
-export { showBmrModal };
-export { showOutputModal };
-export { setHoverModel };
-export { tryExecute };
-export { toggleVariance };
-export { addAllModels };
-export { removeAllModels };
-export { createModel };
-export { updateModel };
-export { deleteModel };
-export { createBmr };
-export { updateBmr };
-export { deleteBmr };
-export { selectModel };
-export { applyLogic };
-export { setSelectedModel };
-export { saveSelectedModel };
+export {fetchEndpoint};
+export {fetchSessionSettings};
+export {changeUnits};
+export {showOptionModal};
+export {showBmrModal};
+export {showOutputModal};
+export {setHoverModel};
+export {tryExecute};
+export {toggleVariance};
+export {addAllModels};
+export {removeAllModels};
+export {createModel};
+export {updateModel};
+export {deleteModel};
+export {createBmr};
+export {updateBmr};
+export {deleteBmr};
+export {selectModel};
+export {applyLogic};
+export {setSelectedModel};
+export {saveSelectedModel};

@@ -1,40 +1,40 @@
-import _ from 'lodash';
-import React from 'react';
-import PropTypes from 'prop-types';
+import _ from "lodash";
+import React from "react";
+import PropTypes from "prop-types";
 
-import { asLabel } from 'bmd/models/bmr';
+import {asLabel} from "bmd/models/bmr";
 
 let getColWidths = function(numBmrs) {
         switch (numBmrs) {
             case 1:
                 return {
-                    name: '20%',
-                    nums: '14%',
-                    view: '10%',
+                    name: "20%",
+                    nums: "14%",
+                    view: "10%",
                 };
             case 2:
                 return {
-                    name: '16%',
-                    nums: '11%',
-                    view: '7%',
+                    name: "16%",
+                    nums: "11%",
+                    view: "7%",
                 };
             case 3:
                 return {
-                    name: '12%',
-                    nums: '9%',
-                    view: '7%',
+                    name: "12%",
+                    nums: "9%",
+                    view: "7%",
                 };
             default:
                 return {
-                    name: '1%',
-                    nums: '1%',
-                    view: '1%',
+                    name: "1%",
+                    nums: "1%",
+                    view: "1%",
                 };
         }
     },
     binModels = function(models) {
         return _.chain(models)
-            .groupBy('model_id')
+            .groupBy("model_id")
             .values()
             .value();
     };
@@ -64,34 +64,31 @@ class OutputTable extends React.Component {
                 .map((d, i) => {
                     return [
                         <td
-                            key={i + 'bmd'}
+                            key={i + "bmd"}
                             onMouseOver={this.handleMouseOver.bind(this, d)}
-                            onMouseOut={this.handleMouseOut.bind(this)}
-                        >
+                            onMouseOut={this.handleMouseOut.bind(this)}>
                             {d.output.BMD}
                         </td>,
                         <td
-                            key={i + 'bmdl'}
+                            key={i + "bmdl"}
                             onMouseOver={this.handleMouseOver.bind(this)}
-                            onMouseOut={this.handleMouseOut.bind(this)}
-                        >
+                            onMouseOut={this.handleMouseOut.bind(this)}>
                             {d.output.BMDL}
                         </td>,
                     ];
                 })
                 .flattenDeep()
                 .value(),
-            id = _.includes(_.map(models, 'id'), this.props.selectedModelId)
-                ? 'bmd_selected_model'
-                : '';
+            id = _.includes(_.map(models, "id"), this.props.selectedModelId)
+                ? "bmd_selected_model"
+                : "";
 
         return (
             <tr
                 key={first.id}
                 onMouseOver={this.handleMouseOver.bind(this, first)}
                 onMouseOut={this.handleMouseOut.bind(this)}
-                id={id}
-            >
+                id={id}>
                 <td>{first.name}</td>
                 <td>{first.output.p_value4}</td>
                 <td>{first.output.AIC}</td>
@@ -101,8 +98,7 @@ class OutputTable extends React.Component {
                     <button
                         type="button"
                         className="btn btn-link"
-                        onClick={this.handleRowClick.bind(this, models)}
-                    >
+                        onClick={this.handleRowClick.bind(this, models)}>
                         View
                     </button>
                 </td>
@@ -116,12 +112,14 @@ class OutputTable extends React.Component {
                 .map((d, i) => {
                     let lbl = asLabel(d);
                     return [
-                        <th key={i + 'bmd'} style={{ width: widths.nums }}>
-                            BMD<br />
+                        <th key={i + "bmd"} style={{width: widths.nums}}>
+                            BMD
+                            <br />
                             <span>({lbl})</span>
                         </th>,
-                        <th key={i + 'bmdl'} style={{ width: widths.nums }}>
-                            BMDL<br />
+                        <th key={i + "bmdl"} style={{width: widths.nums}}>
+                            BMDL
+                            <br />
                             <span>({lbl})</span>
                         </th>,
                     ];
@@ -131,15 +129,15 @@ class OutputTable extends React.Component {
 
         return (
             <tr>
-                <th style={{ width: widths.name }}>Model</th>
-                <th style={{ width: widths.nums }}>
+                <th style={{width: widths.name}}>Model</th>
+                <th style={{width: widths.nums}}>
                     Global <br />
                     <i>p</i>-value
                 </th>
-                <th style={{ width: widths.nums }}>AIC</th>
+                <th style={{width: widths.nums}}>AIC</th>
                 {ths}
-                <th style={{ width: widths.nums }}>Residual of interest</th>
-                <th style={{ width: widths.view }}>Output</th>
+                <th style={{width: widths.nums}}>Residual of interest</th>
+                <th style={{width: widths.view}}>Output</th>
             </tr>
         );
     }
@@ -160,7 +158,7 @@ class OutputTable extends React.Component {
                             <td colSpan="100">Selected model (if any) highlighted in yellow</td>
                         </tr>
                     </tfoot>
-                    <tbody style={{ cursor: 'pointer' }}>
+                    <tbody style={{cursor: "pointer"}}>
                         {binnedModels.map(this.renderRow.bind(this))}
                     </tbody>
                 </table>

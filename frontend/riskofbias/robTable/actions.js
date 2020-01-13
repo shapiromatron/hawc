@@ -1,8 +1,8 @@
-import fetch from 'isomorphic-fetch';
-import _ from 'lodash';
+import fetch from "isomorphic-fetch";
+import _ from "lodash";
 
-import * as types from 'riskofbias/robTable/constants';
-import h from 'riskofbias/robTable/utils/helpers';
+import * as types from "riskofbias/robTable/constants";
+import h from "riskofbias/robTable/utils/helpers";
 
 function requestStudy() {
     return {
@@ -42,17 +42,17 @@ function formatOutgoingRiskOfBias(state, riskofbias) {
         author,
         final,
         scores = _.flattenDeep(
-            _.map(state.study.riskofbiases, (domain) => {
-                return _.map(domain.values, (metric) => {
+            _.map(state.study.riskofbiases, domain => {
+                return _.map(domain.values, metric => {
                     return _.omit(
-                        _.find(metric.values, (score) => {
+                        _.find(metric.values, score => {
                             if (score.riskofbias_id == riskofbias_id) {
                                 author = author || score.author;
                                 final = final || score.final;
                             }
                             return score.riskofbias_id == riskofbias_id;
                         }),
-                        ['riskofbias_id', 'author', 'final', 'domain_id', 'domain_name']
+                        ["riskofbias_id", "author", "final", "domain_id", "domain_name"]
                     );
                 });
             })
@@ -72,12 +72,12 @@ function formatOutgoingRiskOfBias(state, riskofbias) {
 }
 
 function formatIncomingStudy(study) {
-    let dirtyRoBs = _.filter(study.riskofbiases, (rob) => {
+    let dirtyRoBs = _.filter(study.riskofbiases, rob => {
             return rob.active === true;
         }),
         domains = _.flattenDeep(
-            _.map(dirtyRoBs, (riskofbias) => {
-                return _.map(riskofbias.scores, (score) => {
+            _.map(dirtyRoBs, riskofbias => {
+                return _.map(riskofbias.scores, score => {
                     return Object.assign({}, score, {
                         riskofbias_id: riskofbias.id,
                         author: riskofbias.author,
@@ -90,18 +90,18 @@ function formatIncomingStudy(study) {
         ),
         riskofbiases = d3
             .nest()
-            .key((d) => {
+            .key(d => {
                 return d.metric.domain.name;
             })
-            .key((d) => {
+            .key(d => {
                 return d.metric.name;
             })
             .entries(domains),
-        finalRoB = _.find(dirtyRoBs, { final: true });
+        finalRoB = _.find(dirtyRoBs, {final: true});
 
     return Object.assign({}, study, {
         riskofbiases,
-        final: _.has(finalRoB, 'scores') ? finalRoB.scores : [],
+        final: _.has(finalRoB, "scores") ? finalRoB.scores : [],
     });
 }
 
@@ -115,10 +115,10 @@ export function fetchFullStudyIfNeeded() {
             h.getObjectUrl(state.config.host, state.config.study.url, state.config.study.id),
             h.fetchGet
         )
-            .then((response) => response.json())
-            .then((json) => formatIncomingStudy(json))
-            .then((json) => dispatch(receiveStudy(json)))
-            .catch((ex) => dispatch(setError(ex)));
+            .then(response => response.json())
+            .then(json => formatIncomingStudy(json))
+            .then(json => dispatch(receiveStudy(json)))
+            .catch(ex => dispatch(setError(ex)));
     };
 }
 
@@ -126,7 +126,7 @@ export function submitRiskOfBiasScores(scores) {
     return (dispatch, getState) => {
         let state = getState(),
             patch = formatOutgoingRiskOfBias(state, scores),
-            opts = h.fetchPost(state.config.csrf, patch, 'PUT');
+            opts = h.fetchPost(state.config.csrf, patch, "PUT");
 
         dispatch(resetError());
         return fetch(
@@ -137,13 +137,13 @@ export function submitRiskOfBiasScores(scores) {
             )}`,
             opts
         )
-            .then((response) => response.json())
-            .then((json) => dispatch(updateFinalScores(json.scores)))
+            .then(response => response.json())
+            .then(json => dispatch(updateFinalScores(json.scores)))
             .then(() => (window.location.href = state.config.cancelUrl))
-            .catch((ex) => dispatch(setError(ex)));
+            .catch(ex => dispatch(setError(ex)));
     };
 }
-export function selectActive({ domain, metric }) {
+export function selectActive({domain, metric}) {
     return {
         type: types.SELECT_ACTIVE,
         domain,

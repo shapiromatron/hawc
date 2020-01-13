@@ -1,12 +1,12 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import _ from 'lodash';
+import React, {Component} from "react";
+import {connect} from "react-redux";
+import _ from "lodash";
 
-import { fetchFullStudyIfNeeded, submitRiskOfBiasScores } from 'riskofbias/robTable/actions';
-import Completeness from 'riskofbias/robTable/components/Completeness';
-import DomainDisplay from 'riskofbias/robTable/components/DomainDisplay';
-import Loading from 'shared/components/Loading';
-import ScrollToErrorBox from 'shared/components/ScrollToErrorBox';
+import {fetchFullStudyIfNeeded, submitRiskOfBiasScores} from "riskofbias/robTable/actions";
+import Completeness from "riskofbias/robTable/components/Completeness";
+import DomainDisplay from "riskofbias/robTable/components/DomainDisplay";
+import Loading from "shared/components/Loading";
+import ScrollToErrorBox from "shared/components/ScrollToErrorBox";
 
 class RiskOfBiasForm extends Component {
     constructor(props) {
@@ -26,9 +26,9 @@ class RiskOfBiasForm extends Component {
     submitForm(e) {
         e.preventDefault();
         let scores = _.flattenDeep(
-            _.map(this.refs, (domain) => {
-                return _.map(domain.refs, (metric) => {
-                    let { form } = metric.refs;
+            _.map(this.refs, domain => {
+                return _.map(domain.refs, metric => {
+                    let {form} = metric.refs;
                     return {
                         id: form.props.score.id,
                         notes: form.state.notes,
@@ -37,7 +37,7 @@ class RiskOfBiasForm extends Component {
                 });
             })
         );
-        this.props.dispatch(submitRiskOfBiasScores({ scores }));
+        this.props.dispatch(submitRiskOfBiasScores({scores}));
     }
 
     handleCancel(e) {
@@ -47,23 +47,23 @@ class RiskOfBiasForm extends Component {
 
     updateNotesLeft(id, action) {
         let notes = this.state.notesLeft;
-        if (action === 'clear') {
+        if (action === "clear") {
             notes.delete(id);
-            this.setState({ notesLeft: notes });
-        } else if (action === 'add') {
+            this.setState({notesLeft: notes});
+        } else if (action === "add") {
             notes.add(id);
-            this.setState({ notesLeft: notes });
+            this.setState({notesLeft: notes});
         }
     }
 
     render() {
-        let { itemsLoaded, riskofbiases, error, config, robResponseValues } = this.props;
+        let {itemsLoaded, riskofbiases, error, config, robResponseValues} = this.props;
         if (!itemsLoaded) return <Loading />;
         return (
             <div className="riskofbias-display">
                 <ScrollToErrorBox error={error} />
                 <form onSubmit={this.submitForm}>
-                    {_.map(riskofbiases, (domain) => {
+                    {_.map(riskofbiases, domain => {
                         return (
                             <DomainDisplay
                                 key={domain.key}

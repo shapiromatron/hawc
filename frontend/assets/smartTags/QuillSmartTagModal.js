@@ -1,5 +1,5 @@
-import $ from '$';
-import _ from 'lodash';
+import $ from "$";
+import _ from "lodash";
 
 class SmartTagModal {
     constructor(quill, modal) {
@@ -11,47 +11,45 @@ class SmartTagModal {
     setupEventListeners() {
         let m = this.modal;
 
-        m
-            .find('#id_resource')
-            .off('change')
+        m.find("#id_resource")
+            .off("change")
             .change(function() {
                 let v = $(this).val(),
                     show,
                     hides = [
-                        '#div_id_study',
-                        '#div_id_endpoint',
-                        '#div_id_data_pivot',
-                        '#div_id_visual',
+                        "#div_id_study",
+                        "#div_id_endpoint",
+                        "#div_id_data_pivot",
+                        "#div_id_visual",
                     ];
-                if (v === 'study') {
-                    show = hides.splice(hides.indexOf('#div_id_study'), 1);
-                } else if (v === 'endpoint') {
-                    show = hides.splice(hides.indexOf('#div_id_endpoint'), 1);
-                } else if (v === 'data_pivot') {
-                    show = hides.splice(hides.indexOf('#div_id_data_pivot'), 1);
-                } else if (v === 'visual') {
-                    show = hides.splice(hides.indexOf('#div_id_visual'), 1);
+                if (v === "study") {
+                    show = hides.splice(hides.indexOf("#div_id_study"), 1);
+                } else if (v === "endpoint") {
+                    show = hides.splice(hides.indexOf("#div_id_endpoint"), 1);
+                } else if (v === "data_pivot") {
+                    show = hides.splice(hides.indexOf("#div_id_data_pivot"), 1);
+                } else if (v === "visual") {
+                    show = hides.splice(hides.indexOf("#div_id_visual"), 1);
                 }
-                m.find(show.join(',')).show();
-                m.find(hides.join(',')).hide();
+                m.find(show.join(",")).show();
+                m.find(hides.join(",")).hide();
             })
-            .trigger('change');
+            .trigger("change");
 
-        m
-            .find('.smartTagSave')
-            .off('click')
+        m.find(".smartTagSave")
+            .off("click")
             .click(this.tryToSave.bind(this));
 
-        m.on('show', () => {
-            m.find('input').val('');
+        m.on("show", () => {
+            m.find("input").val("");
         });
 
-        m.on('shown', () => {
+        m.on("shown", () => {
             this.quill.blur();
-            m.find('input:visible').focus();
+            m.find("input:visible").focus();
         });
 
-        m.on('hidden', () => {
+        m.on("hidden", () => {
             this.quill.stc.enableModals();
         });
     }
@@ -60,7 +58,7 @@ class SmartTagModal {
 
     getDefaultValues() {
         return {
-            type: 'study',
+            type: "study",
             id: null,
         };
     }
@@ -72,26 +70,26 @@ class SmartTagModal {
             values = this.getDefaultValues();
         }
         this.setInitialValues();
-        this.modal.modal('show');
+        this.modal.modal("show");
     }
 
     getFormValues() {
         let m = this.modal,
-            type = m.find('#id_resource').val(),
+            type = m.find("#id_resource").val(),
             pk;
 
         switch (type) {
-            case 'study':
-                pk = m.find('#id_study_1').val();
+            case "study":
+                pk = m.find("#id_study_1").val();
                 break;
-            case 'endpoint':
-                pk = m.find('#id_endpoint_1').val();
+            case "endpoint":
+                pk = m.find("#id_endpoint_1").val();
                 break;
-            case 'data_pivot':
-                pk = m.find('#id_data_pivot_1').val();
+            case "data_pivot":
+                pk = m.find("#id_data_pivot_1").val();
                 break;
-            case 'visual':
-                pk = m.find('#id_visual_1').val();
+            case "visual":
+                pk = m.find("#id_visual_1").val();
                 break;
         }
 
@@ -99,7 +97,7 @@ class SmartTagModal {
         if (_.isNaN(pk)) {
             return null;
         } else {
-            return { type, pk };
+            return {type, pk};
         }
     }
 
@@ -109,7 +107,7 @@ class SmartTagModal {
             this.quill.setSelection(this.selection);
             this.quill.format(this.type, values);
         }
-        this.modal.modal('hide');
+        this.modal.modal("hide");
     }
 }
 

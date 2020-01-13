@@ -1,7 +1,7 @@
-import $ from '$';
+import $ from "$";
 
-import Barplot from './Barplot';
-import DRPlot from './DRPlot';
+import Barplot from "./Barplot";
+import DRPlot from "./DRPlot";
 
 class EndpointPlotContainer {
     constructor(endpoint, plot_id) {
@@ -11,9 +11,9 @@ class EndpointPlotContainer {
         this.plot_id = plot_id;
 
         if (!this.endpoint.hasEGdata()) {
-            this.plot_div.html('<p>Plot unavailable.</p>');
+            this.plot_div.html("<p>Plot unavailable.</p>");
         } else {
-            var options = { build_plot_startup: false };
+            var options = {build_plot_startup: false};
             this.plot_style = [
                 new Barplot(endpoint, this.plot_id, options, this),
                 new DRPlot(endpoint, this.plot_id, options, this),
@@ -42,11 +42,11 @@ class EndpointPlotContainer {
         // add toggle to menu options to view other ways
         var ep = this,
             options = {
-                id: 'plot_toggle',
-                cls: 'btn btn-mini',
-                title: 'View alternate visualizations',
-                text: '',
-                icon: 'icon-circle-arrow-right',
+                id: "plot_toggle",
+                cls: "btn btn-mini",
+                title: "View alternate visualizations",
+                text: "",
+                icon: "icon-circle-arrow-right",
                 on_click() {
                     ep.toggle_views();
                 },

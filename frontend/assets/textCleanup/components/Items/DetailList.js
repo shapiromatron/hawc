@@ -1,26 +1,26 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import _ from 'lodash';
+import React, {Component} from "react";
+import PropTypes from "prop-types";
+import _ from "lodash";
 
-import DetailItem from 'textCleanup/components/Items/DetailItem';
-import h from 'textCleanup/utils/helpers';
+import DetailItem from "textCleanup/components/Items/DetailItem";
+import h from "textCleanup/utils/helpers";
 
 class DetailList extends Component {
     render() {
-        let { items, checkedRows, onDetailChange, showModal } = this.props,
-            fields = _.keys(_.omit(items[0], ['id', 'ids', 'field', 'showDetails'])),
+        let {items, checkedRows, onDetailChange, showModal} = this.props,
+            fields = _.keys(_.omit(items[0], ["id", "ids", "field", "showDetails"])),
             allChecked = checkedRows ? checkedRows.length === items.length : false;
         return (
             <div className="detail-list">
                 <div className="detail-header">
-                    {_.map(fields, (field) => {
+                    {_.map(fields, field => {
                         return (
                             <h5 key={field} className="header-field">
                                 {h.caseToWords(field)}
                             </h5>
                         );
                     })}
-                    <h5 className="header-field" style={{ width: '90px' }}>
+                    <h5 className="header-field" style={{width: "90px"}}>
                         Select all
                         <br />
                         <input
@@ -31,7 +31,7 @@ class DetailList extends Component {
                         />
                     </h5>
                 </div>
-                {_.map(_.sortBy(items, 'name'), (item) => {
+                {_.map(_.sortBy(items, "name"), item => {
                     return (
                         <DetailItem
                             key={item.id}

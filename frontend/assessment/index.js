@@ -1,4 +1,4 @@
-import DoseUnitsWidget from './DoseUnitsWidget';
+import DoseUnitsWidget from "./DoseUnitsWidget";
 
 const assessmentStartup = {
     DoseUnitsWidget,

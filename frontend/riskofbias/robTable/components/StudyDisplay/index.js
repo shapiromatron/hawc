@@ -1,10 +1,10 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import ReactDOM from 'react-dom';
+import React, {Component} from "react";
+import PropTypes from "prop-types";
+import ReactDOM from "react-dom";
 
-import AggregateGraph from 'riskofbias/robTable/components/AggregateGraph';
-import RiskOfBiasDisplay from 'riskofbias/robTable/components/RiskOfBiasDisplay';
-import ShowAll from 'riskofbias/robTable/components/ShowAll';
+import AggregateGraph from "riskofbias/robTable/components/AggregateGraph";
+import RiskOfBiasDisplay from "riskofbias/robTable/components/RiskOfBiasDisplay";
+import ShowAll from "riskofbias/robTable/components/ShowAll";
 
 class StudyDisplay extends Component {
     constructor(props) {
@@ -13,7 +13,7 @@ class StudyDisplay extends Component {
             scores: [],
         };
         this.selectActive = this.selectActive.bind(this);
-        this.selectAllActive = this.selectActive.bind(this, { display: 'all' });
+        this.selectAllActive = this.selectActive.bind(this, {display: "all"});
     }
 
     isAllShown() {
@@ -21,20 +21,20 @@ class StudyDisplay extends Component {
     }
 
     selectActive(selection) {
-        if (selection.domain == 'all') {
+        if (selection.domain == "all") {
             let scores = this.isAllShown() ? [] : this.props.riskofbias.scores;
-            this.setState({ scores });
+            this.setState({scores});
         } else {
             let domain = _.find(this.props.riskofbias.scores, {
                 key: selection.domain,
             });
             if (selection.metric) {
-                let metric = _.find(domain.values, { key: selection.metric });
+                let metric = _.find(domain.values, {key: selection.metric});
                 this.setState({
-                    scores: [Object.assign({}, domain, { values: [metric] })],
+                    scores: [Object.assign({}, domain, {values: [metric]})],
                 });
             } else {
-                this.setState({ scores: [domain] });
+                this.setState({scores: [domain]});
             }
         }
     }

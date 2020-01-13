@@ -1,60 +1,60 @@
-import $ from '$';
-import React from 'react';
-import _ from 'lodash';
-import moment from 'moment';
+import $ from "$";
+import React from "react";
+import _ from "lodash";
+import moment from "moment";
 
 const helpers = {
     noop() {},
     fetchGet: {
-        credentials: 'same-origin',
+        credentials: "same-origin",
     },
-    fetchPost(csrf, obj, verb = 'POST') {
-        obj['csrfmiddlewaretoken'] = csrf;
+    fetchPost(csrf, obj, verb = "POST") {
+        obj["csrfmiddlewaretoken"] = csrf;
         return {
-            credentials: 'same-origin',
+            credentials: "same-origin",
             method: verb,
             headers: new Headers({
-                'X-CSRFToken': csrf,
-                'content-type': 'application/json',
+                "X-CSRFToken": csrf,
+                "content-type": "application/json",
             }),
             body: JSON.stringify(obj),
         };
     },
-    fetchForm(csrf, form, verb = 'POST') {
+    fetchForm(csrf, form, verb = "POST") {
         // form should be a <form> html element
         return {
-            credentials: 'same-origin',
+            credentials: "same-origin",
             method: verb,
             headers: new Headers({
-                'X-CSRFToken': csrf,
-                'content-type': 'application/x-www-form-urlencoded',
+                "X-CSRFToken": csrf,
+                "content-type": "application/x-www-form-urlencoded",
             }),
             body: $(form).serialize(),
         };
     },
 
-    fetchBulk(csrf, obj, verb = 'PATCH') {
-        obj['csrfmiddlewaretoken'] = csrf;
+    fetchBulk(csrf, obj, verb = "PATCH") {
+        obj["csrfmiddlewaretoken"] = csrf;
         return {
-            credentials: 'same-origin',
+            credentials: "same-origin",
             method: verb,
             headers: new Headers({
-                'X-CSRFToken': csrf,
-                'content-type': 'application/json',
-                'X-CUSTOM-BULK-OPERATION': true,
+                "X-CSRFToken": csrf,
+                "content-type": "application/json",
+                "X-CUSTOM-BULK-OPERATION": true,
             }),
             body: JSON.stringify(obj),
         };
     },
     fetchDelete(csrf) {
         return {
-            credentials: 'same-origin',
-            method: 'DELETE',
+            credentials: "same-origin",
+            method: "DELETE",
             headers: new Headers({
-                'X-CSRFToken': csrf,
-                'content-type': 'application/json',
+                "X-CSRFToken": csrf,
+                "content-type": "application/json",
             }),
-            body: JSON.stringify({ csrfmiddlewaretoken: csrf }),
+            body: JSON.stringify({csrfmiddlewaretoken: csrf}),
         };
     },
     goBack(e) {
@@ -63,15 +63,15 @@ const helpers = {
     },
     getValue(target) {
         switch (target.type) {
-            case 'checkbox':
+            case "checkbox":
                 return target.checked;
-            case 'number':
+            case "number":
                 return parseFloat(target.value);
-            case 'select-one': // use isFinite in-case value is 0
+            case "select-one": // use isFinite in-case value is 0
                 let val = parseInt(target.value);
                 return _.isFinite(val) ? val : target.value;
-            case 'text':
-            case 'textarea':
+            case "text":
+            case "textarea":
             default:
                 return target.value;
         }
@@ -89,7 +89,7 @@ const helpers = {
         return `${host}${base}&ids=${ids}`;
     },
     datetimeFormat(dt) {
-        return moment(dt).format('MMMM Do YYYY, h:mm:ss a');
+        return moment(dt).format("MMMM Do YYYY, h:mm:ss a");
     },
     booleanCheckbox(val) {
         if (val) {
@@ -99,9 +99,9 @@ const helpers = {
         }
     },
     getInputDivClass(name, errors, extra = []) {
-        extra.push('form-group');
-        if (errors && errors[name]) extra.push('has-error');
-        return extra.join(' ');
+        extra.push("form-group");
+        if (errors && errors[name]) extra.push("has-error");
+        return extra.join(" ");
     },
     deepCopy(object) {
         return JSON.parse(JSON.stringify(object));
@@ -110,11 +110,11 @@ const helpers = {
         return (
             string
                 // replace underscores and dashes with spaces
-                .replace(/[_-]/g, ' ')
+                .replace(/[_-]/g, " ")
                 // insert a space between lower followed by upper
-                .replace(/([a-z])([A-Z])/g, '$1 $2')
+                .replace(/([a-z])([A-Z])/g, "$1 $2")
                 // insert a space between last upper in sequence followed by lower
-                .replace(/\b([A-Z]+)([A-Z])([a-z])/, '$1 $2$3')
+                .replace(/\b([A-Z]+)([A-Z])([a-z])/, "$1 $2$3")
                 // uppercase the first character of first word
                 .replace(/\w\S*/, function(txt) {
                     return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();

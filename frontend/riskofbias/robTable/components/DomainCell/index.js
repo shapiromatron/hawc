@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React, {Component} from "react";
+import PropTypes from "prop-types";
 
-import ScoreCell from 'riskofbias/robTable/components/ScoreCell';
-import './DomainCell.css';
+import ScoreCell from "riskofbias/robTable/components/ScoreCell";
+import "./DomainCell.css";
 
 class DomainCell extends Component {
     constructor(props) {
@@ -11,23 +11,23 @@ class DomainCell extends Component {
     }
 
     componentDidMount() {
-        $('.tooltips').tooltip();
+        $(".tooltips").tooltip();
     }
 
     handleClick() {
-        let { handleClick, domain } = this.props;
-        handleClick({ domain: domain.key });
+        let {handleClick, domain} = this.props;
+        handleClick({domain: domain.key});
     }
 
     render() {
-        let { domain, handleClick } = this.props;
+        let {domain, handleClick} = this.props;
         return (
-            <div className="domain-cell" style={{ flex: domain.values.length }}>
+            <div className="domain-cell" style={{flex: domain.values.length}}>
                 <div className="header-box" onClick={this.handleClick}>
                     <span className="domain-header">{domain.key}</span>
                 </div>
                 <div className="score-row">
-                    {_.map(domain.values, (score) => {
+                    {_.map(domain.values, score => {
                         return (
                             <ScoreCell
                                 key={score.values[0].id}

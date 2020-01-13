@@ -1,25 +1,25 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import fetch from 'isomorphic-fetch';
-import AutoSuggest from 'react-autosuggest';
+import React, {Component} from "react";
+import PropTypes from "prop-types";
+import fetch from "isomorphic-fetch";
+import AutoSuggest from "react-autosuggest";
 
-import h from 'shared/utils/helpers';
-import './Autocomplete.css';
+import h from "shared/utils/helpers";
+import "./Autocomplete.css";
 
 class Autocomplete extends Component {
     constructor(props) {
         super(props);
-        let { loaded } = props;
+        let {loaded} = props;
         this.defaultTheme = {
-            container: 'autocomplete__container',
-            containerOpen: 'autocomplete__container--open',
-            input: 'autocomplete__input',
-            suggestionsContainer: 'autocomplete__suggestions-container',
-            suggestionsList: 'autocomplete__suggestions-list',
-            suggestion: 'autocomplete__suggestion',
-            suggestionFocused: 'autocomplete__suggestion--focused',
-            sectionContainer: 'autocomplete__section-container',
-            sectionTitle: 'autocomplete__section-title',
+            container: "autocomplete__container",
+            containerOpen: "autocomplete__container--open",
+            input: "autocomplete__input",
+            suggestionsContainer: "autocomplete__suggestions-container",
+            suggestionsList: "autocomplete__suggestions-list",
+            suggestion: "autocomplete__suggestion",
+            suggestionFocused: "autocomplete__suggestion--focused",
+            sectionContainer: "autocomplete__section-container",
+            sectionTitle: "autocomplete__section-title",
         };
         this.getSuggestionValue = this.getSuggestionValue.bind(this);
         this.getTheme = this.getTheme.bind(this);
@@ -31,15 +31,15 @@ class Autocomplete extends Component {
         this.selectionIsInvalid = this.selectionIsInvalid.bind(this);
 
         this.state = {
-            value: loaded.display ? loaded.display : '',
+            value: loaded.display ? loaded.display : "",
             suggestions: [],
             selected: loaded.id ? loaded.id : null,
-            theme: { ...this.defaultTheme },
+            theme: {...this.defaultTheme},
         };
     }
 
     getTheme(event) {
-        const { theme } = this.state;
+        const {theme} = this.state;
         let input = this.defaultTheme.input;
         if (this.selectionIsInvalid(event)) {
             input = `${input} autocomplete-error`;
@@ -51,21 +51,21 @@ class Autocomplete extends Component {
     }
 
     selectionIsInvalid(event) {
-        const { selected } = this.state;
-        return event.type === 'blur' && !selected;
+        const {selected} = this.state;
+        return event.type === "blur" && !selected;
     }
 
     getSuggestionValue(suggestion) {
         return suggestion.value;
     }
 
-    onBlur(event, { focusedSuggestion }) {
+    onBlur(event, {focusedSuggestion}) {
         this.setState({
             theme: this.getTheme(event),
         });
     }
 
-    onChange(event, { newValue }) {
+    onChange(event, {newValue}) {
         this.setState({
             value: newValue,
             theme: this.getTheme(event),
@@ -73,11 +73,11 @@ class Autocomplete extends Component {
         });
     }
 
-    onSuggestionsFetchRequested({ value }) {
+    onSuggestionsFetchRequested({value}) {
         fetch(`${this.props.url}&term=${value}`, h.fetchGet)
-            .then((response) => response.json())
-            .then((json) => {
-                this.setState({ suggestions: json.data });
+            .then(response => response.json())
+            .then(json => {
+                this.setState({suggestions: json.data});
             });
     }
 
@@ -87,7 +87,7 @@ class Autocomplete extends Component {
         });
     }
 
-    onSuggestionSelected(event, { suggestion }) {
+    onSuggestionSelected(event, {suggestion}) {
         this.setState({
             selected: suggestion.id,
         });
@@ -99,8 +99,8 @@ class Autocomplete extends Component {
     }
 
     render() {
-        const { suggestions, theme, value } = this.state,
-            { placeholder, id } = this.props,
+        const {suggestions, theme, value} = this.state,
+            {placeholder, id} = this.props,
             inputProps = {
                 placeholder,
                 value,

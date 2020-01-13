@@ -1,7 +1,7 @@
-import { createStore, applyMiddleware, compose } from 'redux';
-import thunk from 'redux-thunk';
+import {createStore, applyMiddleware, compose} from "redux";
+import thunk from "redux-thunk";
 
-import rootReducer from 'textCleanup/reducers';
+import rootReducer from "textCleanup/reducers";
 
 const finalCreateStore = compose(applyMiddleware(thunk))(createStore);
 

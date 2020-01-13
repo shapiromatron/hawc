@@ -1,11 +1,11 @@
-import $ from '$';
-import _ from 'lodash';
+import $ from "$";
+import _ from "lodash";
 
-import BaseTable from 'utils/BaseTable';
-import DescriptiveTable from 'utils/DescriptiveTable';
-import HawcTooltip from 'utils/HawcTooltip';
+import BaseTable from "utils/BaseTable";
+import DescriptiveTable from "utils/DescriptiveTable";
+import HawcTooltip from "utils/HawcTooltip";
 
-import GroupDescription from './GroupDescription';
+import GroupDescription from "./GroupDescription";
 
 class Group {
     constructor(data) {
@@ -16,7 +16,7 @@ class Group {
     }
 
     static get_object(id, cb) {
-        $.get('/epi/api/group/{0}/'.printf(id), function(d) {
+        $.get("/epi/api/group/{0}/".printf(id), function(d) {
             cb(new Group(d));
         });
     }
@@ -31,9 +31,9 @@ class Group {
         $el.hide().append(this.build_details_table());
 
         if (this.descriptions.length > 0) {
-            $el
-                .append('<h2>Numerical group descriptions</h2>')
-                .append(this.build_group_descriptions_table());
+            $el.append("<h2>Numerical group descriptions</h2>").append(
+                this.build_group_descriptions_table()
+            );
         }
 
         $el.fadeIn();
@@ -46,33 +46,33 @@ class Group {
                 if (val) vals.push([lbl, val]);
             };
 
-        addTuple('Numerical value', d.numeric);
-        addTuple('Comparative name', d.comparative_name);
-        addTuple('Sex', d.sex);
-        addTuple('Ethnicities', _.map(d.ethnicities, 'name'));
-        addTuple('Eligible N', d.eligible_n);
-        addTuple('Invited N', d.invited_n);
-        addTuple('Participant N', d.participant_n);
-        addTuple('Is control?', d.isControl);
-        addTuple('Comments', d.comments);
+        addTuple("Numerical value", d.numeric);
+        addTuple("Comparative name", d.comparative_name);
+        addTuple("Sex", d.sex);
+        addTuple("Ethnicities", _.map(d.ethnicities, "name"));
+        addTuple("Eligible N", d.eligible_n);
+        addTuple("Invited N", d.invited_n);
+        addTuple("Participant N", d.participant_n);
+        addTuple("Is control?", d.isControl);
+        addTuple("Comments", d.comments);
         return vals;
     }
 
     build_tr() {
         var d = this.data,
-            ul = $('<ul>'),
-            url = $('<a>')
-                .attr('href', d.url)
+            ul = $("<ul>"),
+            url = $("<a>")
+                .attr("href", d.url)
                 .text(d.name),
             addLI = function(key, val) {
                 if (val) {
-                    ul.append('<li><strong>{0}:</strong> {1}</li>'.printf(key, val));
+                    ul.append("<li><strong>{0}:</strong> {1}</li>".printf(key, val));
                 }
             },
             content = this.get_content();
 
         _.each(content, function(d) {
-            var val = d[1] instanceof Array ? d[1].join(', ') : d[1];
+            var val = d[1] instanceof Array ? d[1].join(", ") : d[1];
             addLI(d[0], val);
         });
 
@@ -96,7 +96,7 @@ class Group {
 
     build_group_descriptions_table() {
         var tbl = new BaseTable(),
-            headers = ['Variable', 'Mean', 'Variance', 'Lower value', 'Upper value', 'Calculated'],
+            headers = ["Variable", "Mean", "Variance", "Lower value", "Upper value", "Calculated"],
             colgroups = [25, 15, 15, 15, 15, 15]; // todo: number observations? - review data imports
 
         tbl.addHeaderRow(headers);
@@ -111,7 +111,7 @@ class Group {
 
     show_tooltip(e) {
         e.preventDefault();
-        var opts = { width: '700px', height: '380px' },
+        var opts = {width: "700px", height: "380px"},
             title = this.data.name,
             content = this.build_details_table();
         new HawcTooltip(opts).show(e, title, content);

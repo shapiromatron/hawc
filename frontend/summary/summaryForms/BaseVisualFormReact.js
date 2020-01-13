@@ -1,38 +1,38 @@
-import $ from '$';
-import React, { Component } from 'react';
-import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
-import fetch from 'isomorphic-fetch';
+import $ from "$";
+import React, {Component} from "react";
+import {Tab, Tabs, TabList, TabPanel} from "react-tabs";
+import fetch from "isomorphic-fetch";
 
-import 'react-tabs/style/react-tabs.css';
-import 'react-select/dist/react-select.css';
+import "react-tabs/style/react-tabs.css";
+import "react-select/dist/react-select.css";
 
-import h from 'shared/utils/helpers';
-import { splitStartup } from 'utils/WebpackSplit';
-import HAWCUtils from 'utils/HAWCUtils';
+import h from "shared/utils/helpers";
+import {splitStartup} from "utils/WebpackSplit";
+import HAWCUtils from "utils/HAWCUtils";
 
 class BaseVisualForm extends Component {
     constructor(props) {
         super(props);
-        this.config = JSON.parse(document.getElementById('config').textContent);
+        this.config = JSON.parse(document.getElementById("config").textContent);
         this.state = {
-            title: '',
-            slug: '',
+            title: "",
+            slug: "",
             dose_units: null,
-            caption: '',
-            published: '',
+            caption: "",
+            published: "",
             visual_type: this.config.visual_type,
-            settings: 'undefined',
+            settings: "undefined",
             endpoints: [],
             dataRefreshRequired: true,
         };
     }
 
     componentDidMount() {
-        if (this.config.crud == 'Update') {
+        if (this.config.crud == "Update") {
             fetch(`${this.config.data_url}${this.config.instance.id}`, h.fetchGet)
-                .then((response) => response.json())
-                .then((json) => {
-                    let { title, slug, dose_units, endpoints, settings, caption, published } = json;
+                .then(response => response.json())
+                .then(json => {
+                    let {title, slug, dose_units, endpoints, settings, caption, published} = json;
                     this.setState({
                         title,
                         slug,
@@ -47,19 +47,19 @@ class BaseVisualForm extends Component {
         }
     }
 
-    handleInputChange = (e) => {
-        this.setState({ [e.target.name]: e.target.value, dataRefreshRequired: true });
+    handleInputChange = e => {
+        this.setState({[e.target.name]: e.target.value, dataRefreshRequired: true});
     };
 
-    handleCheckboxChange = (e) => {
-        this.setState({ [e.target.name]: e.target.checked, dataRefreshRequired: true });
+    handleCheckboxChange = e => {
+        this.setState({[e.target.name]: e.target.checked, dataRefreshRequired: true});
     };
 
-    handleDoseUnitSelect = (value) => {
-        this.setState({ dose_units: parseInt(value), dataRefreshRequired: true });
+    handleDoseUnitSelect = value => {
+        this.setState({dose_units: parseInt(value), dataRefreshRequired: true});
     };
 
-    handleTitleChange = (e) => {
+    handleTitleChange = e => {
         // When creating a new visual, the slug automatically changes w/ the
         // title. However, if updating, the slug does not change automatically.
         let title = e.target.value,
@@ -68,24 +68,24 @@ class BaseVisualForm extends Component {
                 dataRefreshRequired: true,
             };
 
-        if (this.config.crud === 'Create') {
+        if (this.config.crud === "Create") {
             newState.slug = HAWCUtils.urlify(title);
         }
         this.setState(newState);
     };
 
-    handleEndpointSelect = (value) => {
-        this.setState({ endpoints: value, dataRefreshRequired: true });
+    handleEndpointSelect = value => {
+        this.setState({endpoints: value, dataRefreshRequired: true});
     };
 
-    handleTabSelection = (tabIndex) => {
+    handleTabSelection = tabIndex => {
         // Get new data for chart if a user clicks the preview tab and
         // the data has changed.
         if (tabIndex === 2 && this.state.dataRefreshRequired) {
             fetch(this.config.preview_url, h.fetchForm(this.config.csrf, this.form))
-                .then((response) => response.json())
-                .then((json) => this.updatePreviewGraph(json))
-                .then(() => this.setState({ dataRefreshRequired: false }));
+                .then(response => response.json())
+                .then(json => this.updatePreviewGraph(json))
+                .then(() => this.setState({dataRefreshRequired: false}));
         }
     };
 
@@ -98,9 +98,9 @@ class BaseVisualForm extends Component {
             `${this.config.endpoint_url}?related=${this.config.assessment}&term=${input}`,
             h.fetchGet
         )
-            .then((response) => response.json())
-            .then((json) => {
-                callback(null, { options: json.data });
+            .then(response => response.json())
+            .then(json => {
+                callback(null, {options: json.data});
             });
     };
 
@@ -125,7 +125,7 @@ class BaseVisualForm extends Component {
                     <Tab>Preview</Tab>
                 </TabList>
 
-                <form ref={(form) => (this.form = form)} method="POST" id="visualForm">
+                <form ref={form => (this.form = form)} method="POST" id="visualForm">
                     <TabPanel>
                         <input type="hidden" name="csrfmiddlewaretoken" value={this.config.csrf} />
                         <legend>
@@ -137,7 +137,7 @@ class BaseVisualForm extends Component {
                     </TabPanel>
                     <TabPanel>{this.renderSettingsForm()}</TabPanel>
                     <TabPanel forceRender>
-                        <div ref={(preview) => (this.preview = preview)} />
+                        <div ref={preview => (this.preview = preview)} />
                     </TabPanel>
                     <div className="form-actions">
                         <input
@@ -161,8 +161,8 @@ BaseVisualForm.propTypes = {};
 
 export default BaseVisualForm;
 
-const formRender = (element) => {
+const formRender = element => {
     splitStartup(element, BaseVisualForm);
 };
 
-export { formRender };
+export {formRender};

@@ -1,7 +1,7 @@
-import $ from '$';
-import d3 from 'd3';
+import $ from "$";
+import d3 from "d3";
 
-import D3Plot from 'utils/D3Plot';
+import D3Plot from "utils/D3Plot";
 
 class Donut extends D3Plot {
     constructor(study, plot_id, options) {
@@ -16,7 +16,7 @@ class Donut extends D3Plot {
         if (this.options && this.options.build_plot_startup) {
             this.build_plot();
         }
-        $('body').on('keydown', function() {
+        $("body").on("keydown", function() {
             if (event.ctrlKey || event.metaKey) {
                 self.toggle_lock_view();
             }
@@ -29,16 +29,16 @@ class Donut extends D3Plot {
         this.radius_inner = 30;
         this.radius_middle = 150;
         this.radius_outer = 200;
-        this.padding = { top: 10, right: 10, bottom: 10, left: 10 };
+        this.padding = {top: 10, right: 10, bottom: 10, left: 10};
         this.plot_div.css({
-            height: this.h + this.padding.top + this.padding.bottom + 'px',
+            height: this.h + this.padding.top + this.padding.bottom + "px",
         });
         this.rotated_label_start_padding = 3; // padding from the inner radius where the rotated domain labels should start
         this.rotated_label_end_padding = 2; // padding from the middle radius where the rotated domain labels should end
     }
 
     build_plot() {
-        this.plot_div.html('');
+        this.plot_div.html("");
         this.get_dataset_info();
         this.build_plot_skeleton(false);
         this.draw_visualizations();
@@ -50,11 +50,11 @@ class Donut extends D3Plot {
         this.add_menu();
         var plot = this;
         var options = {
-            id: 'lock_view',
-            cls: 'btn btn-mini',
-            title: 'Lock current view (shortcut: press ctrl to toggle)',
-            text: '',
-            icon: 'icon-lock',
+            id: "lock_view",
+            cls: "btn btn-mini",
+            title: "Lock current view (shortcut: press ctrl to toggle)",
+            text: "",
+            icon: "icon-lock",
             on_click() {
                 plot.toggle_lock_view();
             },
@@ -64,7 +64,7 @@ class Donut extends D3Plot {
     }
 
     toggle_lock_view() {
-        this.plot_div.find('#lock_view').toggleClass('btn-info');
+        this.plot_div.find("#lock_view").toggleClass("btn-info");
         this.viewlock = !this.viewlock;
     }
 
@@ -118,38 +118,38 @@ class Donut extends D3Plot {
 
         if (overall_question_data !== null) {
             this.center_circle = this.vis
-                .append('circle')
-                .attr('cx', 0)
-                .attr('cy', 0)
-                .attr('r', this.radius_inner)
-                .attr('fill', overall_question_data.score_color)
-                .attr('transform', donut_center)
-                .on('mouseover', function() {
+                .append("circle")
+                .attr("cx", 0)
+                .attr("cy", 0)
+                .attr("r", this.radius_inner)
+                .attr("fill", overall_question_data.score_color)
+                .attr("transform", donut_center)
+                .on("mouseover", function() {
                     if (self.viewlock) return;
-                    d3.select(this).classed('hovered', true);
-                    $(':animated')
+                    d3.select(this).classed("hovered", true);
+                    $(":animated")
                         .promise()
                         .done(function() {
                             self.show_subset(overall_question_data);
                         });
                 })
-                .on('mouseout', function(v) {
+                .on("mouseout", function(v) {
                     if (self.viewlock) return;
-                    d3.select(this).classed('hovered', false);
-                    detail_arcs.classed('hovered', false);
-                    domain_arcs.classed('hovered', false);
-                    self.subset_div.fadeOut('500', function() {
+                    d3.select(this).classed("hovered", false);
+                    detail_arcs.classed("hovered", false);
+                    domain_arcs.classed("hovered", false);
+                    self.subset_div.fadeOut("500", function() {
                         self.clear_subset();
                     });
                 });
 
             this.center_text = this.vis
-                .append('svg:text')
-                .attr('x', 0)
-                .attr('y', 0)
-                .attr('text-anchor', 'end')
-                .attr('class', 'centeredLabel')
-                .attr('transform', donut_center)
+                .append("svg:text")
+                .attr("x", 0)
+                .attr("y", 0)
+                .attr("text-anchor", "end")
+                .attr("class", "centeredLabel")
+                .attr("transform", donut_center)
                 .text(this.overall_question_data.score_text);
         }
 
@@ -176,13 +176,13 @@ class Donut extends D3Plot {
         this.domain_arc = domain_arc;
 
         // setup groups
-        this.detail_arc_group = this.vis.append('g').attr('transform', donut_center);
+        this.detail_arc_group = this.vis.append("g").attr("transform", donut_center);
 
-        this.detail_label_group = this.vis.append('g').attr('transform', donut_center);
+        this.detail_label_group = this.vis.append("g").attr("transform", donut_center);
 
-        this.domain_arc_group = this.vis.append('g').attr('transform', donut_center);
+        this.domain_arc_group = this.vis.append("g").attr("transform", donut_center);
 
-        this.domain_label_group = this.vis.append('g').attr('transform', donut_center);
+        this.domain_label_group = this.vis.append("g").attr("transform", donut_center);
 
         // rotate the labels
         var labelArc = d3.svg
@@ -192,31 +192,31 @@ class Donut extends D3Plot {
 
         // add domain labels. Two sets because we want two rows of information
         this.domain_domain_labels = this.domain_label_group
-            .selectAll('text1')
+            .selectAll("text1")
             .data(this.pie_layout(this.domain_donut_data))
             .enter()
-            .append('text')
-            .attr('alignment-baseline', 'middle')
-            .attr('text-anchor', function(d) {
-                return d.endAngle < Math.PI ? 'start' : 'end';
+            .append("text")
+            .attr("alignment-baseline", "middle")
+            .attr("text-anchor", function(d) {
+                return d.endAngle < Math.PI ? "start" : "end";
             })
-            .attr('transform', function(d) {
+            .attr("transform", function(d) {
                 var midAngle =
                     d.endAngle < Math.PI
                         ? d.startAngle / 2 + d.endAngle / 2
                         : d.startAngle / 2 + d.endAngle / 2 + Math.PI;
                 return (
-                    'translate(' +
+                    "translate(" +
                     labelArc.centroid(d)[0] +
-                    ',' +
+                    "," +
                     labelArc.centroid(d)[1] +
-                    ') rotate(-90) rotate(' +
-                    midAngle * 180 / Math.PI +
-                    ')'
+                    ") rotate(-90) rotate(" +
+                    (midAngle * 180) / Math.PI +
+                    ")"
                 );
             })
-            .attr('pointer-events', 'none')
-            .classed('autosized', true)
+            .attr("pointer-events", "none")
+            .classed("autosized", true)
             .text(function(d) {
                 return d.data.domain;
             });
@@ -227,46 +227,46 @@ class Donut extends D3Plot {
 
         // add detail labels
         this.detail_labels = this.detail_label_group
-            .selectAll('text')
+            .selectAll("text")
             .data(this.pie_layout(this.question_donut_data))
             .enter()
-            .append('text')
-            .attr('class', 'centeredLabel')
-            .style('fill', function(d) {
+            .append("text")
+            .attr("class", "centeredLabel")
+            .style("fill", function(d) {
                 return d.data.score_text_color;
             })
-            .attr('transform', (d) => `translate(${details_arc.centroid(d)})`)
-            .attr('text-anchor', 'middle')
+            .attr("transform", d => `translate(${details_arc.centroid(d)})`)
+            .attr("text-anchor", "middle")
             .text(function(d) {
                 return d.data.score_text;
             });
 
         // add detail arcs
         var detail_arcs = this.detail_arc_group
-            .selectAll('path')
+            .selectAll("path")
             .data(this.pie_layout(this.question_donut_data))
             .enter()
-            .append('path')
-            .attr('fill', function(v) {
+            .append("path")
+            .attr("fill", function(v) {
                 return v.data.score_color;
             })
-            .attr('class', 'donuts metric_arc')
-            .attr('d', details_arc)
-            .on('mouseover', function(v1) {
+            .attr("class", "donuts metric_arc")
+            .attr("d", details_arc)
+            .on("mouseover", function(v1) {
                 if (self.viewlock) return;
-                d3.select(this).classed('hovered', true);
-                $(':animated')
+                d3.select(this).classed("hovered", true);
+                $(":animated")
                     .promise()
                     .done(function() {
                         self.show_subset(v1.data);
                     });
             })
-            .on('mouseout', function(v) {
+            .on("mouseout", function(v) {
                 if (self.viewlock) return;
-                d3.select(this).classed('hovered', false);
-                detail_arcs.classed('hovered', false);
-                domain_arcs.classed('hovered', false);
-                self.subset_div.fadeOut('500', function() {
+                d3.select(this).classed("hovered", false);
+                detail_arcs.classed("hovered", false);
+                domain_arcs.classed("hovered", false);
+                self.subset_div.fadeOut("500", function() {
                     self.clear_subset();
                 });
             });
@@ -274,38 +274,38 @@ class Donut extends D3Plot {
 
         // add domain arcs
         var domain_arcs = this.domain_arc_group
-            .selectAll('path')
+            .selectAll("path")
             .data(this.pie_layout(this.domain_donut_data))
             .enter()
-            .append('path')
-            .attr('class', 'donuts domain_arc')
-            .on('mouseover', function(v1) {
+            .append("path")
+            .attr("class", "donuts domain_arc")
+            .on("mouseover", function(v1) {
                 if (self.viewlock) return;
-                d3.select(this).classed('hovered', true);
-                $(':animated')
+                d3.select(this).classed("hovered", true);
+                $(":animated")
                     .promise()
                     .done(function() {
                         self.show_domain_header(v1.data.domain);
                     });
             })
-            .on('mouseout', function(v) {
+            .on("mouseout", function(v) {
                 if (self.viewlock) return;
-                d3.select(this).classed('hovered', false);
-                detail_arcs.classed('hovered', false);
-                domain_arcs.classed('hovered', false);
-                self.subset_div.fadeOut('500', function() {
+                d3.select(this).classed("hovered", false);
+                detail_arcs.classed("hovered", false);
+                domain_arcs.classed("hovered", false);
+                self.subset_div.fadeOut("500", function() {
                     self.clear_subset();
                 });
             })
-            .attr('d', domain_arc);
+            .attr("d", domain_arc);
         this.domain_arcs = domain_arcs;
 
         // build plot div, but make hidden by default
-        this.subset_div = $('<div></div>').css({
-            position: 'relative',
-            display: 'none',
+        this.subset_div = $("<div></div>").css({
+            position: "relative",
+            display: "none",
             height: -this.h - this.padding.top - this.padding.bottom,
-            padding: '5px',
+            padding: "5px",
             width: this.w / 2 - this.padding.left - this.padding.right,
             left: this.w / 2 + this.padding.left + this.padding.right + 10,
             top: -this.h + this.padding.top + 10,
@@ -314,11 +314,11 @@ class Donut extends D3Plot {
 
         // print title
         this.title = this.vis
-            .append('svg:text')
-            .attr('x', this.w)
-            .attr('y', this.h)
-            .attr('text-anchor', 'end')
-            .attr('class', 'dr_title')
+            .append("svg:text")
+            .attr("x", this.w)
+            .attr("y", this.h)
+            .attr("text-anchor", "end")
+            .attr("class", "dr_title")
             .text(this.study.data.short_citation);
 
         setTimeout(function() {
@@ -335,13 +335,13 @@ class Donut extends D3Plot {
             this.rotated_label_start_padding -
             this.rotated_label_end_padding;
 
-        var autosizeFields = $('text.autosized');
+        var autosizeFields = $("text.autosized");
         autosizeFields.each(function() {
             var fld = $(this);
             if (fld[0].getBBox().width > maxLabelWidth) {
                 var choppedText = fld.html().slice(0, -3);
                 while (choppedText.length > 0) {
-                    var abbreviatedText = choppedText + '...';
+                    var abbreviatedText = choppedText + "...";
                     fld.html(abbreviatedText);
 
                     // getBBox needs to be fetched after each content update
@@ -367,8 +367,8 @@ class Donut extends D3Plot {
 
         this.domain_arcs
             .transition()
-            .duration('500')
-            .attr('d', this.domain_arc);
+            .duration("500")
+            .attr("d", this.domain_arc);
     }
 
     clear_subset() {
@@ -377,25 +377,25 @@ class Donut extends D3Plot {
 
     show_subset(metric) {
         this.clear_subset();
-        this.subset_div.append('<h4>{0} domain</h4>'.printf(metric.parent.domain_text));
+        this.subset_div.append("<h4>{0} domain</h4>".printf(metric.parent.domain_text));
         var ol = $('<ol class="score-details"></ol>'),
-            div = $('<div>')
+            div = $("<div>")
                 .text(metric.score_text)
-                .attr('class', 'scorebox')
-                .css('background', metric.score_color),
-            metric_txt = $('<b>').text(metric.criterion),
-            notes_txt = $('<p>')
+                .attr("class", "scorebox")
+                .css("background", metric.score_color),
+            metric_txt = $("<b>").text(metric.criterion),
+            notes_txt = $("<p>")
                 .html(metric.notes)
-                .css({ height: 250, overflow: 'auto' });
-        ol.append($('<li>').html([div, metric_txt, notes_txt]));
+                .css({height: 250, overflow: "auto"});
+        ol.append($("<li>").html([div, metric_txt, notes_txt]));
         this.subset_div.append(ol);
-        this.subset_div.fadeIn('500');
+        this.subset_div.fadeIn("500");
     }
 
     show_domain_header(domain) {
         this.clear_subset();
-        this.subset_div.append('<h4>{0} domain</h4>'.printf(domain));
-        this.subset_div.fadeIn('500');
+        this.subset_div.append("<h4>{0} domain</h4>".printf(domain));
+        this.subset_div.fadeIn("500");
     }
 }
 

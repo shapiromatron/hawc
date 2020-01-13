@@ -1,22 +1,21 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import _ from 'lodash';
+import React, {Component} from "react";
+import PropTypes from "prop-types";
+import _ from "lodash";
 
 class DetailItem extends Component {
     render() {
-        let { fields, item } = this.props,
+        let {fields, item} = this.props,
             checked = _.includes(this.props.checkedRows, item.id);
         return (
             <div className="detail-stripe">
-                {_.map(fields, (field) => {
+                {_.map(fields, field => {
                     return (
                         <span
                             key={field}
                             id={item.id}
                             className="detail-item"
-                            onClick={this.props.showModal}
-                        >
-                            {item[field] || 'N/A'}
+                            onClick={this.props.showModal}>
+                            {item[field] || "N/A"}
                         </span>
                     );
                 })}

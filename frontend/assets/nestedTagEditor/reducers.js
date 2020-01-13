@@ -1,8 +1,8 @@
-import { combineReducers } from 'redux';
+import {combineReducers} from "redux";
 
-import config from 'shared/reducers/Config';
+import config from "shared/reducers/Config";
 
-import * as types from 'nestedTagEditor/constants';
+import * as types from "nestedTagEditor/constants";
 
 const defaultState = {
     tagsLoaded: false,

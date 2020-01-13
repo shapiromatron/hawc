@@ -1,9 +1,9 @@
-import $ from '$';
+import $ from "$";
 
 class HawcTooltip {
     constructor(styles) {
         // singleton instance
-        var tooltip = $('.hawcTooltip'),
+        var tooltip = $(".hawcTooltip"),
             heading,
             close;
 
@@ -19,8 +19,8 @@ class HawcTooltip {
                 .append(heading)
                 .append('<div class="hawcTooltipContent popover-content">')
                 .draggable()
-                .resizable({ handles: 'se', autoHide: true })
-                .appendTo('body');
+                .resizable({handles: "se", autoHide: true})
+                .appendTo("body");
         }
 
         // reapply new styles
@@ -42,7 +42,7 @@ class HawcTooltip {
             x = e.pageX - off_x,
             y = e.pageY - off_y,
             wh = window.innerHeight,
-            ww = $('body').innerWidth(), // includes scrollbar
+            ww = $("body").innerWidth(), // includes scrollbar
             l,
             t;
 
@@ -62,20 +62,20 @@ class HawcTooltip {
             l = ww - width - padding;
         }
 
-        return { top: `${t + off_y}px`, left: `${l + off_x}px` };
+        return {top: `${t + off_y}px`, left: `${l + off_x}px`};
     }
 
     hide() {
-        this.tooltip.fadeOut('slow');
-        $(document).unbind('keyup');
+        this.tooltip.fadeOut("slow");
+        $(document).unbind("keyup");
     }
 
     show(e, title, content) {
-        this.tooltip.find('.hawcTooltipHeading').html(title);
-        this.tooltip.find('.hawcTooltipContent').html(content);
+        this.tooltip.find(".hawcTooltipHeading").html(title);
+        this.tooltip.find(".hawcTooltipContent").html(content);
         this.tooltip
             .css(this._calculate_position(e))
-            .fadeIn('slow')
+            .fadeIn("slow")
             .scrollTop();
 
         var showTooltip = function(e) {
@@ -85,7 +85,7 @@ class HawcTooltip {
             }
         };
 
-        $(document).bind('keyup', showTooltip.bind(this));
+        $(document).bind("keyup", showTooltip.bind(this));
     }
 }
 

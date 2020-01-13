@@ -1,10 +1,10 @@
-import $ from '$';
-import _ from 'lodash';
+import $ from "$";
+import _ from "lodash";
 
-import BaseTable from 'utils/BaseTable';
-import DescriptiveTable from 'utils/DescriptiveTable';
-import HAWCModal from 'utils/HAWCModal';
-import HAWCUtils from 'utils/HAWCUtils';
+import BaseTable from "utils/BaseTable";
+import DescriptiveTable from "utils/DescriptiveTable";
+import HAWCModal from "utils/HAWCModal";
+import HAWCUtils from "utils/HAWCUtils";
 
 class AnimalGroup {
     constructor(data) {
@@ -12,7 +12,7 @@ class AnimalGroup {
     }
 
     static get_object(id, cb) {
-        $.get('/ani/api/animal-group/{0}/'.printf(id), function(d) {
+        $.get("/ani/api/animal-group/{0}/".printf(id), function(d) {
             cb(new AnimalGroup(d));
         });
     }
@@ -52,26 +52,26 @@ class AnimalGroup {
                 return _.chain(lst)
                     .map(self._getAniRelationLink)
                     .map(function(d) {
-                        return $('<li>').append(d);
+                        return $("<li>").append(d);
                     })
                     .value();
             },
             tbl;
 
         tbl = new DescriptiveTable()
-            .add_tbody_tr('Name', this.data.name)
-            .add_tbody_tr('Species', this.data.species)
-            .add_tbody_tr('Strain', this.data.strain)
-            .add_tbody_tr('Sex', this.data.sex)
-            .add_tbody_tr('Source', this.data.animal_source)
-            .add_tbody_tr('Lifestage exposed', this.data.lifestage_exposed)
-            .add_tbody_tr('Lifestage assessed', this.data.lifestage_assessed)
-            .add_tbody_tr('Generation', this.data.generation)
-            .add_tbody_tr_list('Parents', getRelations(this.data.parents))
-            .add_tbody_tr('Siblings', this._getAniRelationLink(this.data.siblings))
-            .add_tbody_tr_list('Children', getRelations(this.data.children))
-            .add_tbody_tr('Animal Husbandry', this.data.comments)
-            .add_tbody_tr('Diet', this.data.diet);
+            .add_tbody_tr("Name", this.data.name)
+            .add_tbody_tr("Species", this.data.species)
+            .add_tbody_tr("Strain", this.data.strain)
+            .add_tbody_tr("Sex", this.data.sex)
+            .add_tbody_tr("Source", this.data.animal_source)
+            .add_tbody_tr("Lifestage exposed", this.data.lifestage_exposed)
+            .add_tbody_tr("Lifestage assessed", this.data.lifestage_assessed)
+            .add_tbody_tr("Generation", this.data.generation)
+            .add_tbody_tr_list("Parents", getRelations(this.data.parents))
+            .add_tbody_tr("Siblings", this._getAniRelationLink(this.data.siblings))
+            .add_tbody_tr_list("Children", getRelations(this.data.children))
+            .add_tbody_tr("Animal Husbandry", this.data.comments)
+            .add_tbody_tr("Diet", this.data.diet);
 
         return tbl.get_tbl();
     }
@@ -87,14 +87,14 @@ class AnimalGroup {
                 if (txt && txt.length > 0) {
                     return txt;
                 } else if (num && num >= 0) {
-                    return '{0} days'.printf(num);
+                    return "{0} days".printf(num);
                 } else {
                     return undefined;
                 }
             },
             getDurationObservation = function(d) {
                 var d = data.duration_observation;
-                return d ? '{0} days'.printf(d) : undefined;
+                return d ? "{0} days".printf(d) : undefined;
             },
             getDoses = function(doses) {
                 if (doses.length === 0) return undefined;
@@ -133,22 +133,22 @@ class AnimalGroup {
             };
 
         tbl = new DescriptiveTable()
-            .add_tbody_tr('Dosed animals', getDosedAnimals(this.data.id, data.dosed_animals))
-            .add_tbody_tr('Route of exposure', data.route_of_exposure)
-            .add_tbody_tr('Exposure duration', getExposureDuration())
-            .add_tbody_tr('Duration observation', getDurationObservation())
-            .add_tbody_tr('Number of dose-groups', data.num_dose_groups)
-            .add_tbody_tr('Positive control', data.positive_control)
-            .add_tbody_tr('Negative control', data.negative_control)
-            .add_tbody_tr('Doses', getDoses(data.doses))
-            .add_tbody_tr('Description', data.description);
+            .add_tbody_tr("Dosed animals", getDosedAnimals(this.data.id, data.dosed_animals))
+            .add_tbody_tr("Route of exposure", data.route_of_exposure)
+            .add_tbody_tr("Exposure duration", getExposureDuration())
+            .add_tbody_tr("Duration observation", getDurationObservation())
+            .add_tbody_tr("Number of dose-groups", data.num_dose_groups)
+            .add_tbody_tr("Positive control", data.positive_control)
+            .add_tbody_tr("Negative control", data.negative_control)
+            .add_tbody_tr("Doses", getDoses(data.doses))
+            .add_tbody_tr("Description", data.description);
 
         return tbl.get_tbl();
     }
 
     displayAsModal() {
         var modal = new HAWCModal(),
-            title = $('<h4>').html(this.build_breadcrumbs()),
+            title = $("<h4>").html(this.build_breadcrumbs()),
             $details = $('<div class="span12">'),
             $content = $('<div class="container-fluid">').append(
                 $('<div class="row-fluid">').append($details)
@@ -159,14 +159,14 @@ class AnimalGroup {
         modal
             .addHeader(title)
             .addBody($content)
-            .addFooter('')
-            .show({ maxWidth: 1000 });
+            .addFooter("")
+            .show({maxWidth: 1000});
     }
 
     render($div) {
         $div.append(
             this.build_details_table(),
-            $('<h2>Dosing regime</h2>'),
+            $("<h2>Dosing regime</h2>"),
             this.build_dr_details_table()
         );
     }

@@ -1,13 +1,13 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React, {Component} from "react";
+import PropTypes from "prop-types";
 
-import StudyLabel from 'mgmt/TaskTable/components/StudyLabel';
-import TaskLabel from 'mgmt/TaskTable/components/TaskLabel';
-import TaskToggle from 'mgmt/TaskTable/containers/TaskToggle';
+import StudyLabel from "mgmt/TaskTable/components/StudyLabel";
+import TaskLabel from "mgmt/TaskTable/components/TaskLabel";
+import TaskToggle from "mgmt/TaskTable/containers/TaskToggle";
 
 class TaskStudy extends Component {
     render() {
-        const { tasks, study } = this.props.item;
+        const {tasks, study} = this.props.item;
         return (
             <div>
                 <hr className="hr-tight" />

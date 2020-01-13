@@ -1,19 +1,19 @@
-import React from 'react';
-import { connect } from 'react-redux';
-import _ from 'lodash';
-import $ from '$';
+import React from "react";
+import {connect} from "react-redux";
+import _ from "lodash";
+import $ from "$";
 
-import Loading from 'shared/components/Loading';
+import Loading from "shared/components/Loading";
 
-import DoseResponse from 'bmd/components/DoseResponse';
-import DoseUnitsSelector from 'bmd/components/DoseUnitsSelector';
-import ModelOptionTable from 'bmd/components/ModelOptionTable';
-import BMROptionTable from 'bmd/components/BMROptionTable';
-import ExecuteWell from 'bmd/components/ExecuteWell';
-import Recommendation from 'bmd/components/Recommendation';
-import RecommendationNotes from 'bmd/components/RecommendationNotes';
-import OutputTable from 'bmd/components/OutputTable';
-import OutputFigure from 'bmd/components/OutputFigure';
+import DoseResponse from "bmd/components/DoseResponse";
+import DoseUnitsSelector from "bmd/components/DoseUnitsSelector";
+import ModelOptionTable from "bmd/components/ModelOptionTable";
+import BMROptionTable from "bmd/components/BMROptionTable";
+import ExecuteWell from "bmd/components/ExecuteWell";
+import Recommendation from "bmd/components/Recommendation";
+import RecommendationNotes from "bmd/components/RecommendationNotes";
+import OutputTable from "bmd/components/OutputTable";
+import OutputFigure from "bmd/components/OutputFigure";
 
 import {
     fetchEndpoint,
@@ -31,7 +31,7 @@ import {
     createBmr,
     saveSelectedModel,
     applyLogic,
-} from 'bmd/actions';
+} from "bmd/actions";
 
 class Tabs extends React.Component {
     componentWillMount() {
@@ -40,8 +40,8 @@ class Tabs extends React.Component {
     }
 
     componentDidUpdate() {
-        if ($('.tab-pane.active').length === 0) {
-            $('#tabs a:first').tab('show');
+        if ($(".tab-pane.active").length === 0) {
+            $("#tabs a:first").tab("show");
         }
     }
 
@@ -52,9 +52,9 @@ class Tabs extends React.Component {
     }
 
     handleTabClick(event) {
-        let tabDisabled = $(event.currentTarget.parentElement).hasClass('disabled');
+        let tabDisabled = $(event.currentTarget.parentElement).hasClass("disabled");
         if (!tabDisabled) {
-            $(event.currentTarget).tab('show');
+            $(event.currentTarget).tab("show");
         }
     }
 
@@ -114,8 +114,8 @@ class Tabs extends React.Component {
     }
 
     renderSetupTab() {
-        let { editMode, bmds_version } = this.props.config,
-            { endpoint, dataType, validationErrors, isExecuting, doseUnits } = this.props;
+        let {editMode, bmds_version} = this.props.config,
+            {endpoint, dataType, validationErrors, isExecuting, doseUnits} = this.props;
 
         return (
             <div>
@@ -158,8 +158,8 @@ class Tabs extends React.Component {
     }
 
     renderResultsTab() {
-        let { bmrs, endpoint, models, selectedModelId, hoverModel, hasExecuted } = this.props,
-            selectedModel = _.find(models, { id: selectedModelId }) || null;
+        let {bmrs, endpoint, models, selectedModelId, hoverModel, hasExecuted} = this.props,
+            selectedModel = _.find(models, {id: selectedModelId}) || null;
 
         if (!hasExecuted) {
             return null;
@@ -187,8 +187,8 @@ class Tabs extends React.Component {
     }
 
     renderRecommendationTab() {
-        let { editMode } = this.props.config,
-            { bmrs, models, selectedModelId, selectedModelNotes, hasExecuted } = this.props;
+        let {editMode} = this.props.config,
+            {bmrs, models, selectedModelId, selectedModelNotes, hasExecuted} = this.props;
 
         if (!hasExecuted) {
             return null;
@@ -207,8 +207,8 @@ class Tabs extends React.Component {
     }
 
     render() {
-        let { hasExecuted } = this.props,
-            showResultsTabs = hasExecuted ? '' : 'disabled';
+        let {hasExecuted} = this.props,
+            showResultsTabs = hasExecuted ? "" : "disabled";
 
         if (this.props.logicApplied === false) {
             return <Loading />;

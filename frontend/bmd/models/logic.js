@@ -1,8 +1,8 @@
-import _ from 'lodash';
-import d3 from 'd3';
-import { deepCopy, toHawcString } from 'shared/utils';
+import _ from "lodash";
+import d3 from "d3";
+import {deepCopy, toHawcString} from "shared/utils";
 
-import * as types from 'bmd/constants';
+import * as types from "bmd/constants";
 
 /*
 Failure bins:
@@ -22,7 +22,7 @@ let SUFFICIENTLY_CLOSE_BMDL = 3,
         return val !== undefined && _.isNumber(val) && val !== -999;
     },
     minNonZeroDose = function(groups) {
-        return d3.min(groups.filter((d) => d.dose > 0).map((d) => d.dose));
+        return d3.min(groups.filter(d => d.dose > 0).map(d => d.dose));
     },
     assertFieldExists = function(value, failure_bin, failure_text) {
         if (!validNumeric(value)) {
@@ -50,38 +50,38 @@ let SUFFICIENTLY_CLOSE_BMDL = 3,
             return assertFieldExists(
                 model.output.BMD,
                 logic.failure_bin,
-                'A BMD value was not calculated.'
+                "A BMD value was not calculated."
             );
         },
         BMDL(logic, model, groups) {
             return assertFieldExists(
                 model.output.BMDL,
                 logic.failure_bin,
-                'A BMDL value was not calculated.'
+                "A BMDL value was not calculated."
             );
         },
         BMDU(logic, model, groups) {
             return assertFieldExists(
                 model.output.BMDU,
                 logic.failure_bin,
-                'A BMDU value was not calculated.'
+                "A BMDU value was not calculated."
             );
         },
         AIC(logic, model, groups) {
             return assertFieldExists(
                 model.output.AIC,
                 logic.failure_bin,
-                'An AIC value was not calculated.'
+                "An AIC value was not calculated."
             );
         },
-        'Variance Type'(logic, model, groups) {
+        "Variance Type"(logic, model, groups) {
             let cv =
                     model.overrides.constant_variance !== undefined
                         ? model.overrides.constant_variance
                         : model.defaults.constant_variance.d,
                 p_value2 = model.output.p_value2;
 
-            if (p_value2 == '<0.0001') {
+            if (p_value2 == "<0.0001") {
                 p_value2 = 0.0001;
             }
 
@@ -102,7 +102,7 @@ let SUFFICIENTLY_CLOSE_BMDL = 3,
                 );
             }
         },
-        'Variance Fit'(logic, model, groups) {
+        "Variance Fit"(logic, model, groups) {
             let val = model.output.p_value3;
 
             if (validNumeric(val)) {
@@ -110,13 +110,13 @@ let SUFFICIENTLY_CLOSE_BMDL = 3,
                     val,
                     logic.threshold,
                     logic.failure_bin,
-                    'Global variance model-fit'
+                    "Global variance model-fit"
                 );
             }
         },
         GGOF(logic, model, groups) {
             let val = model.output.p_value4;
-            if (val === '<0.0001') {
+            if (val === "<0.0001") {
                 val = 0.0001;
             }
             if (validNumeric(val)) {
@@ -124,13 +124,13 @@ let SUFFICIENTLY_CLOSE_BMDL = 3,
                     val,
                     logic.threshold,
                     logic.failure_bin,
-                    'Global goodness-of-fit'
+                    "Global goodness-of-fit"
                 );
             }
         },
-        'GGOF (Cancer)'(logic, model, groups) {
+        "GGOF (Cancer)"(logic, model, groups) {
             let val = model.output.p_value4;
-            if (val === '<0.0001') {
+            if (val === "<0.0001") {
                 val = 0.0001;
             }
             if (validNumeric(val)) {
@@ -138,11 +138,11 @@ let SUFFICIENTLY_CLOSE_BMDL = 3,
                     val,
                     logic.threshold,
                     logic.failure_bin,
-                    'Global goodness-of-fit'
+                    "Global goodness-of-fit"
                 );
             }
         },
-        'BMD/BMDL (serious)'(logic, model, groups) {
+        "BMD/BMDL (serious)"(logic, model, groups) {
             let bmd = model.output.BMD,
                 bmdl = model.output.BMDL;
 
@@ -151,11 +151,11 @@ let SUFFICIENTLY_CLOSE_BMDL = 3,
                     bmd / bmdl,
                     logic.threshold,
                     logic.failure_bin,
-                    'BMD/BMDL ratio'
+                    "BMD/BMDL ratio"
                 );
             }
         },
-        'BMD/BMDL (warning)'(logic, model, groups) {
+        "BMD/BMDL (warning)"(logic, model, groups) {
             let bmd = model.output.bmd,
                 bmdl = model.output.bmdl;
 
@@ -164,54 +164,54 @@ let SUFFICIENTLY_CLOSE_BMDL = 3,
                     bmd / bmdl,
                     logic.threshold,
                     logic.failure_bin,
-                    'BMD/BMDL ratio'
+                    "BMD/BMDL ratio"
                 );
             }
         },
-        'Residual of Interest'(logic, model, groups) {
+        "Residual of Interest"(logic, model, groups) {
             let val = model.output.residual_of_interest;
             if (validNumeric(val)) {
                 return assertLessThan(
                     val,
                     logic.threshold,
                     logic.failure_bin,
-                    'Residual of interest'
+                    "Residual of interest"
                 );
             } else {
-                return assertFieldExists(val, logic.failure_bin, 'Residual of interest not found.');
+                return assertFieldExists(val, logic.failure_bin, "Residual of interest not found.");
             }
         },
         Warnings(logic, model, groups) {
             let vals = model.output.warnings;
             if (vals && vals.length > 0) {
-                return returnFailure(logic.failure_bin, vals.join(' '));
+                return returnFailure(logic.failure_bin, vals.join(" "));
             }
         },
-        'BMD higher'(logic, model, groups) {
-            let high_dose = d3.max(_.map(groups, 'dose')),
+        "BMD higher"(logic, model, groups) {
+            let high_dose = d3.max(_.map(groups, "dose")),
                 bmd = model.output.BMD;
             if (validNumeric(bmd)) {
                 return assertLessThan(
                     bmd / high_dose,
                     logic.threshold,
                     logic.failure_bin,
-                    'BMD/high-dose ratio'
+                    "BMD/high-dose ratio"
                 );
             }
         },
-        'BMDL higher'(logic, model, groups) {
-            let high_dose = d3.max(_.map(groups, 'dose')),
+        "BMDL higher"(logic, model, groups) {
+            let high_dose = d3.max(_.map(groups, "dose")),
                 bmdl = model.output.BMDL;
             if (validNumeric(bmdl)) {
                 return assertLessThan(
                     bmdl / high_dose,
                     logic.threshold,
                     logic.failure_bin,
-                    'BMD/high-dose ratio'
+                    "BMD/high-dose ratio"
                 );
             }
         },
-        'Low BMD (warning)'(logic, model, groups) {
+        "Low BMD (warning)"(logic, model, groups) {
             let minDose = minNonZeroDose(groups),
                 bmd = model.output.BMD;
 
@@ -220,11 +220,11 @@ let SUFFICIENTLY_CLOSE_BMDL = 3,
                     minDose / bmd,
                     logic.threshold,
                     logic.failure_bin,
-                    'BMD/low-dose ratio'
+                    "BMD/low-dose ratio"
                 );
             }
         },
-        'Low BMDL (warning)'(logic, model, groups) {
+        "Low BMDL (warning)"(logic, model, groups) {
             let minDose = minNonZeroDose(groups),
                 bmdl = model.output.BMD;
 
@@ -233,11 +233,11 @@ let SUFFICIENTLY_CLOSE_BMDL = 3,
                     minDose / bmdl,
                     logic.threshold,
                     logic.failure_bin,
-                    'BMDL/low-dose ratio'
+                    "BMDL/low-dose ratio"
                 );
             }
         },
-        'Low BMD (serious)'(logic, model, groups) {
+        "Low BMD (serious)"(logic, model, groups) {
             let minDose = minNonZeroDose(groups),
                 bmd = model.output.BMD;
 
@@ -246,11 +246,11 @@ let SUFFICIENTLY_CLOSE_BMDL = 3,
                     minDose / bmd,
                     logic.threshold,
                     logic.failure_bin,
-                    'BMD/low-dose ratio'
+                    "BMD/low-dose ratio"
                 );
             }
         },
-        'Low BMDL (serious)'(logic, model, groups) {
+        "Low BMDL (serious)"(logic, model, groups) {
             let minDose = minNonZeroDose(groups),
                 bmdl = model.output.BMD;
 
@@ -259,20 +259,20 @@ let SUFFICIENTLY_CLOSE_BMDL = 3,
                     minDose / bmdl,
                     logic.threshold,
                     logic.failure_bin,
-                    'BMDL/low-dose ratio'
+                    "BMDL/low-dose ratio"
                 );
             }
         },
-        'Control residual'(logic, model, groups) {
+        "Control residual"(logic, model, groups) {
             if (model.output.fit_residuals === undefined) {
                 return;
             }
             let val = Math.abs(model.output.fit_residuals[0]);
             if (validNumeric(val)) {
-                return assertLessThan(val, logic.threshold, logic.failure_bin, 'Control residual');
+                return assertLessThan(val, logic.threshold, logic.failure_bin, "Control residual");
             }
         },
-        'Control stdev'(logic, model, groups) {
+        "Control stdev"(logic, model, groups) {
             if (model.output.fit_est_stdev === undefined || model.output.fit_stdev === undefined) {
                 return;
             }
@@ -285,7 +285,7 @@ let SUFFICIENTLY_CLOSE_BMDL = 3,
                     Math.abs(modeled / actual),
                     logic.threshold,
                     logic.failure_bin,
-                    'Control Stdev. Ratio'
+                    "Control Stdev. Ratio"
                 );
             }
         },
@@ -294,13 +294,13 @@ let SUFFICIENTLY_CLOSE_BMDL = 3,
 let apply_logic = function(logics, models, endpoint, doseUnits) {
     let doses = endpoint._get_doses_by_dose_id(doseUnits),
         groups = _.chain(endpoint.data.groups)
-            .map((d) => deepCopy(d))
+            .map(d => deepCopy(d))
             .each((d, i) => (d.dose = doses[i]))
             .value();
 
     // get function associated with each test
     logics = _.chain(logics)
-        .filter((d) => {
+        .filter(d => {
             // filter by data-type
             switch (endpoint.data.data_type) {
                 case types.CONTINUOUS:
@@ -310,19 +310,19 @@ let apply_logic = function(logics, models, endpoint, doseUnits) {
                 case types.DICHOTOMOUS_CANCER:
                     return d.cancer_dichotomous_on;
                 default:
-                    throw 'Unknown data type';
+                    throw "Unknown data type";
             }
         })
-        .each((d) => {
+        .each(d => {
             d.func = testCrosswalk[d.name];
         })
         .value();
 
     // apply unit-tests to each model
-    models.forEach((model) => {
+    models.forEach(model => {
         // set global recommendations
         model.recommended = false;
-        model.recommended_variable = '';
+        model.recommended_variable = "";
 
         // set no warnings by default
         model.logic_bin = 0; // set innocent until proven guilty
@@ -333,7 +333,7 @@ let apply_logic = function(logics, models, endpoint, doseUnits) {
         };
 
         // apply tests for each model
-        logics.forEach((logic) => {
+        logics.forEach(logic => {
             let res = logic.func(logic, model, groups);
             if (res && res.bin) {
                 model.logic_bin = Math.max(res.bin, model.logic_bin);
@@ -346,42 +346,42 @@ let apply_logic = function(logics, models, endpoint, doseUnits) {
 
     // apply model recommendations, with each bmr being independent.
     let bmr_ids = _.chain(models)
-        .map('bmr_id')
+        .map("bmr_id")
         .uniq()
         .value();
 
-    bmr_ids.forEach((bmr_id) => {
-        let subset = _.filter(models, { bmr_id, logic_bin: 0 }),
+    bmr_ids.forEach(bmr_id => {
+        let subset = _.filter(models, {bmr_id, logic_bin: 0}),
             bmdls = _.chain(subset)
-                .map((d) => d.output.BMDL)
-                .filter((d) => _.isNumber(d) && d > 0)
+                .map(d => d.output.BMDL)
+                .filter(d => _.isNumber(d) && d > 0)
                 .value(),
             aics = _.chain(subset)
-                .map((d) => d.output.AIC)
-                .filter((d) => _.isNumber(d) && d > 0)
+                .map(d => d.output.AIC)
+                .filter(d => _.isNumber(d) && d > 0)
                 .value(),
             ratio = d3.max(bmdls) / d3.min(bmdls);
 
         if (ratio <= SUFFICIENTLY_CLOSE_BMDL) {
             let targetValue = d3.min(aics);
             _.chain(subset)
-                .filter((d) => d.output.AIC === targetValue)
-                .each((d) => {
+                .filter(d => d.output.AIC === targetValue)
+                .each(d => {
                     d.recommended = true;
-                    d.recommended_variable = 'AIC';
+                    d.recommended_variable = "AIC";
                 })
                 .value();
         } else {
             let targetValue = d3.min(bmdls);
             _.chain(subset)
-                .filter((d) => d.output.BMDL === targetValue)
-                .each((d) => {
+                .filter(d => d.output.BMDL === targetValue)
+                .each(d => {
                     d.recommended = true;
-                    d.recommended_variable = 'BMDL';
+                    d.recommended_variable = "BMDL";
                 })
                 .value();
         }
     });
 };
 
-export { apply_logic };
+export {apply_logic};

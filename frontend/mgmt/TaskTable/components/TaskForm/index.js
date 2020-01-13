@@ -1,15 +1,15 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import _ from 'lodash';
+import React, {Component} from "react";
+import PropTypes from "prop-types";
+import _ from "lodash";
 
-import UserAutocomplete from 'mgmt/TaskTable/components/UserAutocomplete';
-import StatusSelection from 'mgmt/TaskTable/components/StatusSelection';
-import ReactDatePicker from 'shared/components/ReactDatePicker';
+import UserAutocomplete from "mgmt/TaskTable/components/UserAutocomplete";
+import StatusSelection from "mgmt/TaskTable/components/StatusSelection";
+import ReactDatePicker from "shared/components/ReactDatePicker";
 
 class TaskForm extends Component {
     constructor(props) {
         super(props);
-        const { owner, status, due_date, id } = props.task;
+        const {owner, status, due_date, id} = props.task;
         this.state = {
             id,
             owner,
@@ -24,8 +24,8 @@ class TaskForm extends Component {
     }
 
     formDidChange() {
-        const { owner, status, due_date, id } = this.props.task;
-        return !_.isEqual(this.state, { owner, status, due_date, id });
+        const {owner, status, due_date, id} = this.props.task;
+        return !_.isEqual(this.state, {owner, status, due_date, id});
     }
 
     getOwnerUpdate(owner) {
@@ -50,7 +50,7 @@ class TaskForm extends Component {
     }
 
     render() {
-        const { task, className, autocompleteUrl } = this.props;
+        const {task, className, autocompleteUrl} = this.props;
         return (
             <div className={className}>
                 <UserAutocomplete

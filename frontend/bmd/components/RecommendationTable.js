@@ -1,6 +1,6 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import _ from 'lodash';
+import React from "react";
+import PropTypes from "prop-types";
+import _ from "lodash";
 
 class RecommendationTable extends React.Component {
     renderModelTd(d) {
@@ -26,7 +26,11 @@ class RecommendationTable extends React.Component {
             inner.push(
                 <div key={0}>
                     <b>Warnings</b>
-                    <ul>{d.logic_notes[0].map((d2, i) => <li key={i}>{d2}</li>)}</ul>
+                    <ul>
+                        {d.logic_notes[0].map((d2, i) => (
+                            <li key={i}>{d2}</li>
+                        ))}
+                    </ul>
                 </div>
             );
         }
@@ -34,7 +38,11 @@ class RecommendationTable extends React.Component {
             inner.push(
                 <div key={1}>
                     <b>Questionable warnings</b>
-                    <ul>{d.logic_notes[1].map((d2, i) => <li key={i}>{d2}</li>)}</ul>
+                    <ul>
+                        {d.logic_notes[1].map((d2, i) => (
+                            <li key={i}>{d2}</li>
+                        ))}
+                    </ul>
                 </div>
             );
         }
@@ -42,7 +50,11 @@ class RecommendationTable extends React.Component {
             inner.push(
                 <div key={2}>
                     <b>Serious warnings</b>
-                    <ul>{d.logic_notes[2].map((d2, i) => <li key={i}>{d2}</li>)}</ul>
+                    <ul>
+                        {d.logic_notes[2].map((d2, i) => (
+                            <li key={i}>{d2}</li>
+                        ))}
+                    </ul>
                 </div>
             );
         }
@@ -56,16 +68,16 @@ class RecommendationTable extends React.Component {
         let cls, txt;
         switch (d.logic_bin) {
             case 0:
-                cls = 'badge badge-success bmd_recommendation';
-                txt = 'Valid';
+                cls = "badge badge-success bmd_recommendation";
+                txt = "Valid";
                 break;
             case 1:
-                cls = 'badge badge-warning bmd_recommendation';
-                txt = 'Questionable';
+                cls = "badge badge-warning bmd_recommendation";
+                txt = "Questionable";
                 break;
             case 2:
-                cls = 'badge badge-important bmd_recommendation';
-                txt = 'Failure';
+                cls = "badge badge-important bmd_recommendation";
+                txt = "Failure";
                 break;
         }
         return <p className={cls}>{txt}</p>;
@@ -76,35 +88,33 @@ class RecommendationTable extends React.Component {
 
         if (d.recommended) {
             txts.push(
-                `Recommended best-fitting model, based on the lowest ${
-                    d.recommended_variable
-                } from valid models.`
+                `Recommended best-fitting model, based on the lowest ${d.recommended_variable} from valid models.`
             );
         }
 
         if (this.props.selectedModelId === d.id) {
-            txts.push('Selected as the best-fitting model by the user.');
+            txts.push("Selected as the best-fitting model by the user.");
         }
 
         return (
             <td>
                 {this.renderLogicBatch(d)}
                 <p>
-                    <b>{txts.join(' ')}</b>
+                    <b>{txts.join(" ")}</b>
                 </p>
             </td>
         );
     }
 
     renderRow(d, i) {
-        let tdId = '';
+        let tdId = "";
 
         if (d.recommended) {
-            tdId = 'bmd_recommended_model';
+            tdId = "bmd_recommended_model";
         }
 
         if (this.props.selectedModelId === d.id) {
-            tdId = 'bmd_selected_model';
+            tdId = "bmd_selected_model";
         }
 
         return (
@@ -121,9 +131,9 @@ class RecommendationTable extends React.Component {
             <table className="table table-hover table-condensed">
                 <thead>
                     <tr>
-                        <th style={{ width: '15%' }}>Model</th>
-                        <th style={{ width: '60%' }}>Warnings</th>
-                        <th style={{ width: '25%' }}>Recommendation</th>
+                        <th style={{width: "15%"}}>Model</th>
+                        <th style={{width: "60%"}}>Warnings</th>
+                        <th style={{width: "25%"}}>Recommendation</th>
                     </tr>
                 </thead>
                 <tfoot>
@@ -138,7 +148,7 @@ class RecommendationTable extends React.Component {
                 </tfoot>
                 <tbody>
                     {_.chain(this.props.models)
-                        .sortBy('logic_bin')
+                        .sortBy("logic_bin")
                         .map(this.renderRow.bind(this))
                         .value()}
                 </tbody>

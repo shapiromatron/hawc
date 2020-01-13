@@ -1,33 +1,33 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import d3 from 'd3';
-import _ from 'lodash';
+import React, {Component} from "react";
+import PropTypes from "prop-types";
+import d3 from "d3";
+import _ from "lodash";
 
-import './SplineChart.css';
+import "./SplineChart.css";
 
 class SplineChart extends Component {
     componentWillMount() {
-        let { xScale, yScale, radius } = this.props;
+        let {xScale, yScale, radius} = this.props;
         this.dot = d3.svg
             .symbol()
-            .type('circle')
+            .type("circle")
             .size(radius);
         this.line = d3.svg
             .line()
-            .interpolate('cardinal')
-            .x((d) => {
+            .interpolate("cardinal")
+            .x(d => {
                 return xScale(d.x);
             })
-            .y((d) => {
+            .y(d => {
                 return yScale(d.y);
             });
     }
 
     render() {
-        let { xScale, yScale, data } = this.props,
+        let {xScale, yScale, data} = this.props,
             circles = _.map(data, (d, i) => {
                 let translate = `translate(${xScale(d.x)}, ${yScale(d.y)})`,
-                    className = d.significant ? 'dot significant' : 'dot';
+                    className = d.significant ? "dot significant" : "dot";
                 return (
                     <path
                         key={`circle${i}`}

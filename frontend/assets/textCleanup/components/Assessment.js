@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
+import React, {Component} from "react";
+import PropTypes from "prop-types";
+import {Link} from "react-router-dom";
 
 class Assessment extends Component {
     renderItemType(item) {
@@ -18,7 +18,7 @@ class Assessment extends Component {
     }
 
     render() {
-        const { assessment, helpText } = this.props,
+        const {assessment, helpText} = this.props,
             isEmpty = assessment.items.reduce((prev, curr) => prev + curr.count) === 0;
         if (isEmpty) {
             return (

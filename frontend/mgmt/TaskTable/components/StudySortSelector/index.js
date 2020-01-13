@@ -1,7 +1,7 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React, {Component} from "react";
+import PropTypes from "prop-types";
 
-import h from 'mgmt/utils/helpers';
+import h from "mgmt/utils/helpers";
 
 class StudySortSelector extends Component {
     constructor(props) {
@@ -14,19 +14,19 @@ class StudySortSelector extends Component {
         };
     }
 
-    onChange({ currentTarget }) {
-        const { name, id } = currentTarget,
-            { field, order } = this.state;
+    onChange({currentTarget}) {
+        const {name, id} = currentTarget,
+            {field, order} = this.state;
         this.props.handleChange({
             order: order ? order : this.defaults.order,
             field: field ? field : this.defaults.field,
             [name]: id,
         });
-        this.setState({ [name]: id });
+        this.setState({[name]: id});
     }
 
     render() {
-        const { className, fieldOptions, orderOptions, studySorting } = this.props;
+        const {className, fieldOptions, orderOptions, studySorting} = this.props;
         return (
             <div className={className}>
                 <div className="flexRow-container">
@@ -35,7 +35,7 @@ class StudySortSelector extends Component {
                             Sort studies by:
                         </label>
                         <form id="study_sorting-field">
-                            {fieldOptions.map((field) => {
+                            {fieldOptions.map(field => {
                                 return (
                                     <label key={field} htmlFor={field}>
                                         <input
@@ -44,7 +44,7 @@ class StudySortSelector extends Component {
                                             type="radio"
                                             id={field}
                                             name="field"
-                                            style={{ margin: '0 4px' }}
+                                            style={{margin: "0 4px"}}
                                         />
                                         {h.caseToWords(field)}
                                     </label>
@@ -58,7 +58,7 @@ class StudySortSelector extends Component {
                             Order studies by:
                         </label>
                         <form id="study_sorting-order">
-                            {orderOptions.map((order) => {
+                            {orderOptions.map(order => {
                                 return (
                                     <label key={order} htmlFor={order}>
                                         <input
@@ -67,7 +67,7 @@ class StudySortSelector extends Component {
                                             type="radio"
                                             id={order}
                                             name="order"
-                                            style={{ margin: '0 4px' }}
+                                            style={{margin: "0 4px"}}
                                         />
                                         {h.caseToWords(order)}
                                     </label>

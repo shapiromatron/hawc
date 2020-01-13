@@ -1,13 +1,13 @@
-import React from 'react';
-import { connect } from 'react-redux';
+import React from "react";
+import {connect} from "react-redux";
 
-import Loading from 'shared/components/Loading';
-import Node from 'nestedTagEditor/components/Node';
-import EditNode from 'nestedTagEditor/components/EditNode';
-import Sortable from 'sortablejs';
+import Loading from "shared/components/Loading";
+import Node from "nestedTagEditor/components/Node";
+import EditNode from "nestedTagEditor/components/EditNode";
+import Sortable from "sortablejs";
 
-import { createTag, updateTag, deleteTag, moveTag } from 'nestedTagEditor/actions';
-import { NO_PARENT } from 'nestedTagEditor/constants';
+import {createTag, updateTag, deleteTag, moveTag} from "nestedTagEditor/actions";
+import {NO_PARENT} from "nestedTagEditor/constants";
 
 class Tree extends React.Component {
     constructor() {
@@ -40,11 +40,11 @@ class Tree extends React.Component {
     }
 
     handleCreateClick() {
-        this.setState({ showCreate: true });
+        this.setState({showCreate: true});
     }
 
     handleCreateClickCancel() {
-        this.setState({ showCreate: false });
+        this.setState({showCreate: false});
     }
 
     handleCreate(newNode) {
@@ -55,7 +55,7 @@ class Tree extends React.Component {
     renderCreateNode() {
         let newNode = {
             data: {
-                name: '',
+                name: "",
             },
             id: null,
         };
@@ -86,17 +86,17 @@ class Tree extends React.Component {
         this.props.dispatch(moveTag(nodeId, oldIndex, newIndex));
     }
 
-    sortableGroupDecorator = (componentBackingInstance) => {
+    sortableGroupDecorator = componentBackingInstance => {
         // check if backing instance not null
         if (!componentBackingInstance) {
             return;
         }
         Sortable.create(componentBackingInstance, {
-            draggable: '.draggable',
-            ghostClass: 'draggable-ghost',
-            chosenClass: 'draggable-chosen',
+            draggable: ".draggable",
+            ghostClass: "draggable-ghost",
+            chosenClass: "draggable-chosen",
             animation: 200,
-            onUpdate: (e) => {
+            onUpdate: e => {
                 this.handleMoveNode(parseInt(e.item.dataset.id), e.oldIndex, e.newIndex);
             },
         });
@@ -113,8 +113,7 @@ class Tree extends React.Component {
                     {this.props.title}
                     <button
                         onClick={this.handleCreateClick.bind(this)}
-                        className="pull-right btn btn-primary"
-                    >
+                        className="pull-right btn btn-primary">
                         <i className="fa fa-fw fa-plus" />
                         {this.props.btnLabel}
                     </button>

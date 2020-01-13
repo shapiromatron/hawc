@@ -1,11 +1,11 @@
-import $ from '$';
-import _ from 'lodash';
+import $ from "$";
+import _ from "lodash";
 
-import HAWCUtils from 'utils/HAWCUtils';
+import HAWCUtils from "utils/HAWCUtils";
 
-import SmartTagContainer from 'assets/smartTags/SmartTagContainer';
+import SmartTagContainer from "assets/smartTags/SmartTagContainer";
 
-import SummaryText from './SummaryText';
+import SummaryText from "./SummaryText";
 
 class SummaryTextTree {
     constructor(options) {
@@ -19,9 +19,9 @@ class SummaryTextTree {
             url = SummaryText.assessment_list_url(this.options.assessment_id);
         $.get(url, function(d) {
             self.root = new SummaryText(d[0], 1, self, 0);
-            if (self.options.mode == 'read') {
+            if (self.options.mode == "read") {
                 self._update_read();
-            } else if (self.options.mode === 'modify') {
+            } else if (self.options.mode === "modify") {
                 self._update_modified();
             }
         });
@@ -57,7 +57,7 @@ class SummaryTextTree {
     render_doctext() {
         var contents = [];
         if (this.root.children.length === 0) {
-            contents.push('<p>No summary-text is available.</p>');
+            contents.push("<p>No summary-text is available.</p>");
         } else {
             this.root.children.forEach(function(v) {
                 v.render_body(contents);
@@ -72,17 +72,17 @@ class SummaryTextTree {
             isNew = obj === undefined,
             parent_options = function() {
                 var lst = [],
-                    select = self.options.update_textdiv.find('select#id_parent');
+                    select = self.options.update_textdiv.find("select#id_parent");
                 self.root.get_option_item(lst);
                 select.html(lst);
                 if (!isNew) {
-                    select.find('option[value="{0}"]'.printf(obj.parent.id)).prop('selected', true);
+                    select.find('option[value="{0}"]'.printf(obj.parent.id)).prop("selected", true);
                 }
             },
             sibling_options = function() {
-                var select = self.options.update_textdiv.find('select#id_sibling'),
+                var select = self.options.update_textdiv.find("select#id_sibling"),
                     text_node_id = parseInt(
-                        self.options.update_textdiv.find('select#id_parent option:selected').val(),
+                        self.options.update_textdiv.find("select#id_parent option:selected").val(),
                         10
                     ),
                     lst = ['<option value="">(none)</option>'],
@@ -92,23 +92,23 @@ class SummaryTextTree {
                 if (!isNew) {
                     select
                         .find('option[value="{0}"]'.printf(obj.get_prior_sibling_id()))
-                        .prop('selected', true);
+                        .prop("selected", true);
                 }
             },
             load_contents = function() {
                 if (obj) {
-                    self.options.update_textdiv.find('#id_title').val(obj.data.title);
-                    self.options.update_textdiv.find('#id_slug').val(obj.data.slug);
+                    self.options.update_textdiv.find("#id_title").val(obj.data.title);
+                    self.options.update_textdiv.find("#id_slug").val(obj.data.slug);
                     self.options.text_editor.setContent(obj.data.text);
-                    self.options.update_textdiv.find('#id_text').val(obj.data.text);
+                    self.options.update_textdiv.find("#id_text").val(obj.data.text);
                 } else {
-                    self.options.update_textdiv.find('#id_title').val('');
-                    self.options.update_textdiv.find('#id_slug').val('');
-                    self.options.text_editor.setContent('');
+                    self.options.update_textdiv.find("#id_title").val("");
+                    self.options.update_textdiv.find("#id_slug").val("");
+                    self.options.text_editor.setContent("");
                 }
             },
             toggleEditOptions = function(isNew) {
-                var sel = self.options.update_textdiv.find('#deleteSTBtn');
+                var sel = self.options.update_textdiv.find("#deleteSTBtn");
                 isNew ? sel.hide() : sel.show();
             };
 
@@ -117,7 +117,7 @@ class SummaryTextTree {
         parent_options();
         sibling_options();
         self.options.update_textdiv.fadeIn();
-        self.options.update_textdiv.find('select#id_parent').on('change', function() {
+        self.options.update_textdiv.find("select#id_parent").on("change", function() {
             sibling_options(obj, isNew);
         });
     }
@@ -125,32 +125,32 @@ class SummaryTextTree {
     set_modify_events() {
         var self = this;
 
-        this.options.update_new.unbind().on('click', function() {
+        this.options.update_new.unbind().on("click", function() {
             self.update_textdiv();
         });
 
         this.options.update_textdiv
-            .find('form')
+            .find("form")
             .unbind()
             .submit(function(e) {
                 e.preventDefault();
                 self.submit();
             });
 
-        this.options.update_delete.unbind().on('click', function() {
+        this.options.update_delete.unbind().on("click", function() {
             var url = SummaryText.delete_url(self.selected.id);
             $.post(url, self._redraw.bind(self));
         });
 
-        this.options.update_doctree.unbind().on('click', '.summary_toc', function() {
-            self.update_textdiv($(this).data('d'));
+        this.options.update_doctree.unbind().on("click", ".summary_toc", function() {
+            self.update_textdiv($(this).data("d"));
         });
     }
 
     render_doctree() {
         var contents = [];
         if (this.root.children.length === 0) {
-            contents.push('<p><i>No contents.</i></p>');
+            contents.push("<p><i>No contents.</i></p>");
         } else {
             this.root.children.forEach(function(v) {
                 v.render_tree(contents);
@@ -177,9 +177,9 @@ class SummaryTextTree {
 
     submit() {
         this.options.text_editor.prepareSubmission();
-        var form = this.options.update_textdiv.find('form'),
+        var form = this.options.update_textdiv.find("form"),
             data = form.serialize(),
-            url = '.';
+            url = ".";
         if (this.selected && this.selected.id) {
             url = SummaryText.update_url(this.selected.id);
         }
@@ -188,8 +188,8 @@ class SummaryTextTree {
     }
 
     _redraw(res) {
-        this.options.update_textdiv.find('.alert').remove();
-        if (res.status == 'ok') {
+        this.options.update_textdiv.find(".alert").remove();
+        if (res.status == "ok") {
             this.root = new SummaryText(res.content[0], 1, this);
             this._update_modified();
         } else {
@@ -198,18 +198,18 @@ class SummaryTextTree {
     }
 
     enable_affix() {
-        $('.affix-sidenav a').click(function(e) {
-            var href = $(this).attr('href'),
-                offsetTop = href === '#' ? 0 : $(href).offset().top - 65;
+        $(".affix-sidenav a").click(function(e) {
+            var href = $(this).attr("href"),
+                offsetTop = href === "#" ? 0 : $(href).offset().top - 65;
 
-            $('html, body')
+            $("html, body")
                 .stop()
-                .animate({ scrollTop: offsetTop }, 300);
+                .animate({scrollTop: offsetTop}, 300);
             e.preventDefault();
         });
 
         $('[data-spy="scroll"]').each(function() {
-            $(this).scrollspy('refresh');
+            $(this).scrollspy("refresh");
         });
     }
 

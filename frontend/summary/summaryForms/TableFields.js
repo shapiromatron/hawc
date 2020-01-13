@@ -1,10 +1,10 @@
-import _ from 'lodash';
-import $ from '$';
+import _ from "lodash";
+import $ from "$";
 
-import HAWCUtils from 'utils/HAWCUtils';
-import D3Visualization from 'summary/summary/D3Visualization';
+import HAWCUtils from "utils/HAWCUtils";
+import D3Visualization from "summary/summary/D3Visualization";
 
-import { InputField, SpacerNullField, HeaderNullField, HelpTextNullField } from './Fields';
+import {InputField, SpacerNullField, HeaderNullField, HelpTextNullField} from "./Fields";
 
 class TableField extends InputField {
     renderHeader() {
@@ -45,7 +45,7 @@ class TableField extends InputField {
             setCol = function(d) {
                 return '<col width="{0}%"'.printf(d);
             };
-        $('<colgroup>')
+        $("<colgroup>")
             .append(_.map(cw, setCol))
             .appendTo(this.table);
     }
@@ -59,17 +59,17 @@ class TableField extends InputField {
 
         this.table = $('<table class="table table-condensed table-bordered">').appendTo($div);
         this.setColgroup();
-        this.$thead = $('<thead>').appendTo(this.table);
-        this.$tbody = $('<tbody>').appendTo(this.table);
+        this.$thead = $("<thead>").appendTo(this.table);
+        this.$tbody = $("<tbody>").appendTo(this.table);
         this.renderHeader();
         $div.appendTo(this.$parent);
     }
 
     thOrdering(options) {
-        var th = $('<th>').html('Ordering&nbsp;'),
+        var th = $("<th>").html("Ordering&nbsp;"),
             add = $(
                 '<button class="btn btn-mini btn-primary" title="Add row"><i class="icon-plus icon-white"></button>'
-            ).on('click', this.addRow.bind(this));
+            ).on("click", this.addRow.bind(this));
 
         if (options.showNew) th.append(add);
         return th;
@@ -89,18 +89,18 @@ class TableField extends InputField {
             del = function() {
                 $(this.parentNode.parentNode).remove();
             },
-            td = $('<td>');
+            td = $("<td>");
 
         td.append(
             $('<button class="btn btn-mini" title="Move up"><i class="icon-arrow-up"></button>').on(
-                'click',
+                "click",
                 moveUp
             ),
             $(
                 '<button class="btn btn-mini" title="Move down"><i class="icon-arrow-down"></button>'
-            ).on('click', moveDown),
+            ).on("click", moveDown),
             $('<button class="btn btn-mini" title="Remove"><i class="icon-remove"></button>').on(
-                'click',
+                "click",
                 del
             )
         );
@@ -108,22 +108,22 @@ class TableField extends InputField {
     }
 
     addTdP(cls, txt) {
-        return $('<td>').append(
-            $('<p>')
-                .attr('class', cls)
+        return $("<td>").append(
+            $("<p>")
+                .attr("class", cls)
                 .text(txt)
         );
     }
 
     addTdText(name, val) {
-        val = val || '';
+        val = val || "";
         return $(
             '<td><input name="{0}" value="{1}" class="span12" type="text"></td>'.printf(name, val)
         );
     }
 
     addTdInt(name, val) {
-        val = val || '';
+        val = val || "";
         return '<td><input name="{0}" value="{1}" class="span12" type="number"></td>'.printf(
             name,
             val
@@ -131,7 +131,7 @@ class TableField extends InputField {
     }
 
     addTdFloat(name, val) {
-        val = val || '';
+        val = val || "";
         return '<td><input name="{0}" value="{1}" class="span12" type="number" step="any"></td>'.printf(
             name,
             val
@@ -139,8 +139,8 @@ class TableField extends InputField {
     }
 
     addTdColor(name, val) {
-        val = val || '#000000';
-        return $('<td>').append(
+        val = val || "#000000";
+        return $("<td>").append(
             $(
                 '<input type="color" name="{0}" value="{1}" class="span12" required>'.printf(
                     name,
@@ -151,8 +151,8 @@ class TableField extends InputField {
     }
 
     addTdCheckbox(name, checked) {
-        let checkProp = checked ? 'checked' : '';
-        return $('<td>').append(
+        let checkProp = checked ? "checked" : "";
+        return $("<td>").append(
             $('<input type="checkbox" name="{0}" {1} required>'.printf(name, checkProp))
         );
     }
@@ -163,7 +163,7 @@ class TableField extends InputField {
                 return '<option value="{0}">{0}</option>'.printf(d);
             })
         );
-        return $('<td>').append(sel);
+        return $("<td>").append(sel);
     }
 
     addTdSelectLabels(name, options) {
@@ -172,7 +172,7 @@ class TableField extends InputField {
                 return '<option value="{0}">{1}</option>'.printf(d.value, d.label);
             })
         );
-        return $('<td>').append(sel);
+        return $("<td>").append(sel);
     }
 
     addTdSelectMultiple(name, values) {
@@ -181,28 +181,28 @@ class TableField extends InputField {
                 return '<option value="{0}">{0}</option>'.printf(d);
             })
         );
-        return $('<td>').append(sel);
+        return $("<td>").append(sel);
     }
 }
 
 class ReferenceLineField extends TableField {
     renderHeader() {
-        return $('<tr>')
+        return $("<tr>")
             .append(
-                '<th>Line value</th>',
-                '<th>Caption</th>',
-                '<th>Style</th>',
-                this.thOrdering({ showNew: true })
+                "<th>Line value</th>",
+                "<th>Caption</th>",
+                "<th>Style</th>",
+                this.thOrdering({showNew: true})
             )
             .appendTo(this.$thead);
     }
 
     addRow() {
-        return $('<tr>')
+        return $("<tr>")
             .append(
-                this.addTdFloat('value'),
-                this.addTdText('title'),
-                this.addTdSelect('style', _.map(D3Visualization.styles.lines, 'name')),
+                this.addTdFloat("value"),
+                this.addTdText("title"),
+                this.addTdSelect("style", _.map(D3Visualization.styles.lines, "name")),
                 this.tdOrdering()
             )
             .appendTo(this.$tbody);
@@ -227,24 +227,24 @@ class ReferenceLineField extends TableField {
 
 class ReferenceRangeField extends TableField {
     renderHeader() {
-        return $('<tr>')
+        return $("<tr>")
             .append(
-                '<th>Lower value</th>',
-                '<th>Upper value</th>',
-                '<th>Caption</th>',
-                '<th>Style</th>',
-                this.thOrdering({ showNew: true })
+                "<th>Lower value</th>",
+                "<th>Upper value</th>",
+                "<th>Caption</th>",
+                "<th>Style</th>",
+                this.thOrdering({showNew: true})
             )
             .appendTo(this.$thead);
     }
 
     addRow() {
-        return $('<tr>')
+        return $("<tr>")
             .append(
-                this.addTdFloat('lower'),
-                this.addTdFloat('upper'),
-                this.addTdText('title'),
-                this.addTdSelect('style', _.map(D3Visualization.styles.rectangles, 'name')),
+                this.addTdFloat("lower"),
+                this.addTdFloat("upper"),
+                this.addTdText("title"),
+                this.addTdSelect("style", _.map(D3Visualization.styles.rectangles, "name")),
                 this.tdOrdering()
             )
             .appendTo(this.$tbody);
@@ -271,26 +271,26 @@ class ReferenceRangeField extends TableField {
 
 class ReferenceLabelField extends TableField {
     renderHeader() {
-        return $('<tr>')
+        return $("<tr>")
             .append(
-                '<th>Caption</th>',
-                '<th>Style</th>',
-                '<th>Max width (px)</th>',
-                '<th>X position</th>',
-                '<th>Y position</th>',
-                this.thOrdering({ showNew: true })
+                "<th>Caption</th>",
+                "<th>Style</th>",
+                "<th>Max width (px)</th>",
+                "<th>X position</th>",
+                "<th>Y position</th>",
+                this.thOrdering({showNew: true})
             )
             .appendTo(this.$thead);
     }
 
     addRow() {
-        return $('<tr>')
+        return $("<tr>")
             .append(
-                this.addTdText('caption'),
-                this.addTdSelect('style', _.map(D3Visualization.styles.texts, 'name')),
-                this.addTdInt('max_width', 0),
-                this.addTdInt('x', 0),
-                this.addTdInt('y', 0),
+                this.addTdText("caption"),
+                this.addTdSelect("style", _.map(D3Visualization.styles.texts, "name")),
+                this.addTdInt("max_width", 0),
+                this.addTdInt("x", 0),
+                this.addTdInt("y", 0),
                 this.tdOrdering()
             )
             .appendTo(this.$tbody);
@@ -317,7 +317,7 @@ class ReferenceLabelField extends TableField {
     }
 }
 
-export { TableField };
-export { ReferenceLineField };
-export { ReferenceRangeField };
-export { ReferenceLabelField };
+export {TableField};
+export {ReferenceLineField};
+export {ReferenceRangeField};
+export {ReferenceLabelField};

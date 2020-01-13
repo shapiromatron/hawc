@@ -1,12 +1,12 @@
-import $ from '$';
-import _ from 'lodash';
+import $ from "$";
+import _ from "lodash";
 
-import BaseTable from 'utils/BaseTable';
-import HAWCModal from 'utils/HAWCModal';
-import HAWCUtils from 'utils/HAWCUtils';
+import BaseTable from "utils/BaseTable";
+import HAWCModal from "utils/HAWCModal";
+import HAWCUtils from "utils/HAWCUtils";
 
-import Exposure from './Exposure';
-import Group from './Group';
+import Exposure from "./Exposure";
+import Group from "./Group";
 
 class ComparisonSet {
     constructor(data) {
@@ -18,7 +18,7 @@ class ComparisonSet {
     }
 
     static get_object(id, cb) {
-        $.get('/epi/api/comparison-set/{0}/'.printf(id), function(d) {
+        $.get("/epi/api/comparison-set/{0}/".printf(id), function(d) {
             cb(new ComparisonSet(d));
         });
     }
@@ -36,28 +36,27 @@ class ComparisonSet {
     }
 
     displayFullPager($el) {
-        $el
-            .hide()
+        $el.hide()
             .append(this.build_details_div())
             .append(this.build_exposure_table())
-            .append('<h2>Groups</h2>')
+            .append("<h2>Groups</h2>")
             .append(this.build_groups_table())
             .fadeIn();
     }
 
     displayAsModal() {
         var modal = new HAWCModal(),
-            title = $('<h4>').html(this.build_breadcrumbs()),
+            title = $("<h4>").html(this.build_breadcrumbs()),
             $content = $('<div class="container-fluid">')
                 .append(this.build_details_div())
-                .append('<h2>Groups</h2>')
+                .append("<h2>Groups</h2>")
                 .append(this.build_groups_table());
 
         modal
             .addHeader(title)
             .addBody($content)
-            .addFooter('')
-            .show({ maxWidth: 1000 });
+            .addFooter("")
+            .show({maxWidth: 1000});
     }
 
     build_breadcrumbs() {
@@ -97,13 +96,13 @@ class ComparisonSet {
     }
 
     build_details_div() {
-        return this.data.description ? $('<div>').html(this.data.description) : null;
+        return this.data.description ? $("<div>").html(this.data.description) : null;
     }
 
     build_exposure_table() {
         if (this.exposure === undefined) return;
-        return $('<div>')
-            .append('<h2>Exposure details</h2>')
+        return $("<div>")
+            .append("<h2>Exposure details</h2>")
             .append(this.exposure.build_details_table(true));
     }
 

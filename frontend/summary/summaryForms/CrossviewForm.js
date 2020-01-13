@@ -1,50 +1,50 @@
-import _ from 'lodash';
-import $ from '$';
+import _ from "lodash";
+import $ from "$";
 
-import Endpoint from 'animal/Endpoint';
-import CrossviewPlot from 'summary/summary/CrossviewPlot';
-import Crossview from 'summary/summary/Crossview';
+import Endpoint from "animal/Endpoint";
+import CrossviewPlot from "summary/summary/CrossviewPlot";
+import Crossview from "summary/summary/Crossview";
 
-import BaseVisualForm from './BaseVisualForm';
+import BaseVisualForm from "./BaseVisualForm";
 
-import { TextField, IntegerField, ColorField, CheckboxField, RadioField } from './Fields';
+import {TextField, IntegerField, ColorField, CheckboxField, RadioField} from "./Fields";
 
 import {
     TableField,
     ReferenceLineField,
     ReferenceRangeField,
     ReferenceLabelField,
-} from './TableFields';
+} from "./TableFields";
 
 class CrossviewSelectorField extends TableField {
     renderHeader() {
-        return $('<tr>')
+        return $("<tr>")
             .append(
-                '<th>Field name</th>',
-                '<th>Header name</th>',
-                '<th>Values</th>',
-                '<th>Number of columns</th>',
-                '<th>X position</th>',
-                '<th>Y position</th>',
-                this.thOrdering({ showNew: true })
+                "<th>Field name</th>",
+                "<th>Header name</th>",
+                "<th>Values</th>",
+                "<th>Number of columns</th>",
+                "<th>X position</th>",
+                "<th>Y position</th>",
+                this.thOrdering({showNew: true})
             )
             .appendTo(this.$thead);
     }
 
     addRow() {
         var self = this,
-            nameTd = this.addTdSelect('name', _.keys(CrossviewPlot._filters)).attr(
-                'class',
-                'valuesSome'
+            nameTd = this.addTdSelect("name", _.keys(CrossviewPlot._filters)).attr(
+                "class",
+                "valuesSome"
             ),
-            valuesTd = this.addTdSelectMultiple('values', []),
+            valuesTd = this.addTdSelectMultiple("values", []),
             values = valuesTd
-                .find('select')
-                .attr('size', 8)
-                .css('overflow-y', 'scroll'),
-            name = nameTd.find('select'),
+                .find("select")
+                .attr("size", 8)
+                .css("overflow-y", "scroll"),
+            name = nameTd.find("select"),
             setValues = function(fld) {
-                var isLog = $('input[name="dose_isLog"]').prop('checked'),
+                var isLog = $('input[name="dose_isLog"]').prop("checked"),
                     opts = _.chain(CrossviewPlot.get_options(self.parent.endpoints, fld, isLog))
                         .map(function(d) {
                             return '<option value="{0}" selected>{0}</option>'.printf(d);
@@ -53,43 +53,41 @@ class CrossviewSelectorField extends TableField {
                 values.html(opts);
             },
             allValues,
-            headerNameTd = this.addTdText('headerName', ''),
+            headerNameTd = this.addTdText("headerName", ""),
             setDefaultHeaderName = function(val) {
-                headerNameTd.find('input').val(CrossviewPlot._filters[val]);
+                headerNameTd.find("input").val(CrossviewPlot._filters[val]);
             };
 
         allValues = $('<input name="allValues" type="checkbox" checked>')
-            .on('change', function() {
-                if ($(this).prop('checked')) {
+            .on("change", function() {
+                if ($(this).prop("checked")) {
                     values.hide();
                 } else {
                     values.show();
                     setValues(name.val());
                 }
             })
-            .trigger('change');
+            .trigger("change");
 
         $('<label class="checkbox">')
             .append(allValues)
-            .append('Use all values')
+            .append("Use all values")
             .prependTo(valuesTd);
 
-        name
-            .on('change', function(d) {
-                var val = $(this).val();
-                setValues(val);
-                setDefaultHeaderName(val);
-            })
-            .trigger('change');
+        name.on("change", function(d) {
+            var val = $(this).val();
+            setValues(val);
+            setDefaultHeaderName(val);
+        }).trigger("change");
 
-        return $('<tr>')
+        return $("<tr>")
             .append(
                 nameTd,
                 headerNameTd,
                 valuesTd,
-                this.addTdInt('columns', 1),
-                this.addTdInt('x', 0),
-                this.addTdInt('y', 0),
+                this.addTdInt("columns", 1),
+                this.addTdInt("x", 0),
+                this.addTdInt("y", 0),
                 this.tdOrdering()
             )
             .appendTo(this.$tbody);
@@ -99,10 +97,9 @@ class CrossviewSelectorField extends TableField {
         var row = this.addRow();
         row.find('select[name="name"]').val(d.name);
         row.find('input[name="headerName"]').val(d.headerName);
-        row
-            .find('input[name="allValues"]')
-            .prop('checked', d.allValues)
-            .trigger('change');
+        row.find('input[name="allValues"]')
+            .prop("checked", d.allValues)
+            .trigger("change");
         row.find('select[name="values"]').val(d.values);
         row.find('input[name="columns"]').val(d.columns);
         row.find('input[name="x"]').val(d.x);
@@ -114,7 +111,7 @@ class CrossviewSelectorField extends TableField {
         return {
             name: row.find('select[name="name"]').val(),
             headerName: row.find('input[name="headerName"]').val(),
-            allValues: row.find('input[name="allValues"]').prop('checked'),
+            allValues: row.find('input[name="allValues"]').prop("checked"),
             values: row.find('select[name="values"]').val(),
             columns: parseInt(row.find('input[name="columns"]').val(), 10),
             x: parseInt(row.find('input[name="x"]').val(), 10),
@@ -125,30 +122,30 @@ class CrossviewSelectorField extends TableField {
 
 class CrossviewColorFilterField extends TableField {
     renderHeader() {
-        return $('<tr>')
+        return $("<tr>")
             .append(
-                '<th>Field name</th>',
-                '<th>Field value</th>',
-                '<th>Legend name</th>',
-                '<th>Color</th>',
-                this.thOrdering({ showNew: true })
+                "<th>Field name</th>",
+                "<th>Field value</th>",
+                "<th>Legend name</th>",
+                "<th>Color</th>",
+                this.thOrdering({showNew: true})
             )
             .appendTo(this.$thead);
     }
 
     addRow() {
         var self = this,
-            fieldTd = this.addTdSelect('field', _.keys(CrossviewPlot._filters)).attr(
-                'class',
-                'valuesSome'
+            fieldTd = this.addTdSelect("field", _.keys(CrossviewPlot._filters)).attr(
+                "class",
+                "valuesSome"
             ),
-            valueTd = this.addTdSelect('value', []),
-            headerNameTd = this.addTdText('headerName'),
-            headerName = headerNameTd.find('input'),
-            field = fieldTd.find('select'),
-            value = valueTd.find('select'),
+            valueTd = this.addTdSelect("value", []),
+            headerNameTd = this.addTdText("headerName"),
+            headerName = headerNameTd.find("input"),
+            field = fieldTd.find("select"),
+            value = valueTd.find("select"),
             setValues = function() {
-                var isLog = $('input[name="dose_isLog"]').prop('checked'),
+                var isLog = $('input[name="dose_isLog"]').prop("checked"),
                     opts = _.chain(
                         CrossviewPlot.get_options(self.parent.endpoints, field.val(), isLog)
                     )
@@ -163,19 +160,19 @@ class CrossviewColorFilterField extends TableField {
             };
 
         field
-            .on('change', function(d) {
+            .on("change", function(d) {
                 setValues();
                 setDefaultHeaderName();
             })
-            .trigger('change');
-        value.on('change', setDefaultHeaderName).trigger('change');
+            .trigger("change");
+        value.on("change", setDefaultHeaderName).trigger("change");
 
-        return $('<tr>')
+        return $("<tr>")
             .append(
                 fieldTd,
                 valueTd,
                 headerNameTd,
-                this.addTdColor('color', '#8BA870'),
+                this.addTdColor("color", "#8BA870"),
                 this.tdOrdering()
             )
             .appendTo(this.$tbody);
@@ -183,10 +180,9 @@ class CrossviewColorFilterField extends TableField {
 
     fromSerializedRow(d, i) {
         var row = this.addRow();
-        row
-            .find('select[name="field"]')
+        row.find('select[name="field"]')
             .val(d.field)
-            .trigger('change');
+            .trigger("change");
         row.find('select[name="value"]').val(d.value);
         row.find('input[name="headerName"]').val(d.headerName);
         row.find('input[name="color"]').val(d.color);
@@ -205,12 +201,12 @@ class CrossviewColorFilterField extends TableField {
 
 class CrossviewEndpointFilterField extends TableField {
     renderHeader() {
-        return $('<tr>')
+        return $("<tr>")
             .append(
-                '<th>Field name</th>',
-                '<th>Filter type</th>',
-                '<th>Value</th>',
-                this.thOrdering({ showNew: true })
+                "<th>Field name</th>",
+                "<th>Filter type</th>",
+                "<th>Value</th>",
+                this.thOrdering({showNew: true})
             )
             .appendTo(this.$thead);
     }
@@ -218,30 +214,30 @@ class CrossviewEndpointFilterField extends TableField {
     addRow() {
         var self = this,
             filterOpts = [
-                { label: '>', value: 'gt' },
-                { label: '≥', value: 'gte' },
-                { label: '<', value: 'le' },
-                { label: '≤', value: 'lte' },
-                { label: 'exact', value: 'exact' },
-                { label: 'contains', value: 'contains' },
-                { label: 'does not contain', value: 'not_contains' },
+                {label: ">", value: "gt"},
+                {label: "≥", value: "gte"},
+                {label: "<", value: "le"},
+                {label: "≤", value: "lte"},
+                {label: "exact", value: "exact"},
+                {label: "contains", value: "contains"},
+                {label: "does not contain", value: "not_contains"},
             ],
-            fieldTd = this.addTdSelect('field', _.keys(CrossviewPlot._filters)),
-            field = fieldTd.find('select'),
-            valueTd = this.addTdText('value'),
-            value = valueTd.find('input'),
+            fieldTd = this.addTdSelect("field", _.keys(CrossviewPlot._filters)),
+            field = fieldTd.find("select"),
+            valueTd = this.addTdText("value"),
+            value = valueTd.find("input"),
             setAutocomplete = function() {
-                var isLog = $('input[name="dose_isLog"]').prop('checked'),
+                var isLog = $('input[name="dose_isLog"]').prop("checked"),
                     opts = CrossviewPlot.get_options(self.parent.endpoints, field.val(), isLog);
-                value.autocomplete({ source: opts });
+                value.autocomplete({source: opts});
             };
 
-        field.on('change', setAutocomplete).trigger('change');
+        field.on("change", setAutocomplete).trigger("change");
 
-        return $('<tr>')
+        return $("<tr>")
             .append(
                 fieldTd,
-                this.addTdSelectLabels('filterType', filterOpts),
+                this.addTdSelectLabels("filterType", filterOpts),
                 valueTd,
                 this.tdOrdering()
             )
@@ -250,10 +246,9 @@ class CrossviewEndpointFilterField extends TableField {
 
     fromSerializedRow(d, i) {
         var row = this.addRow();
-        row
-            .find('select[name="field"]')
+        row.find('select[name="field"]')
             .val(d.field)
-            .trigger('change');
+            .trigger("change");
         row.find('select[name="filterType"]').val(d.filterType);
         row.find('input[name="value"]').val(d.value);
     }
@@ -277,7 +272,7 @@ class CrossviewForm extends BaseVisualForm {
 
     updateSettingsFromPreview() {
         var plotSettings = JSON.stringify(this.preview.data.settings);
-        $('#id_settings').val(plotSettings);
+        $("#id_settings").val(plotSettings);
         this.unpackSettings();
     }
 
@@ -291,305 +286,308 @@ class CrossviewForm extends BaseVisualForm {
 
     initDataForm() {
         var fields = [
-            ['system', 'systems'],
-            ['organ', 'organs'],
-            ['effect', 'effects'],
-            ['effect_subtype', 'effect_subtypes'],
-            ['study', 'studies'],
-            ['effect_tag', 'effect_tags'],
+            ["system", "systems"],
+            ["organ", "organs"],
+            ["effect", "effects"],
+            ["effect_subtype", "effect_subtypes"],
+            ["study", "studies"],
+            ["effect_tag", "effect_tags"],
         ];
 
         _.each(fields, function(d) {
-            $('#id_prefilter_{0}'.printf(d[0]))
-                .on('change', function() {
-                    var div = $('#div_id_{0}'.printf(d[1]));
-                    $(this).prop('checked') ? div.show(1000) : div.hide(0);
+            $("#id_prefilter_{0}".printf(d[0]))
+                .on("change", function() {
+                    var div = $("#div_id_{0}".printf(d[1]));
+                    $(this).prop("checked") ? div.show(1000) : div.hide(0);
                 })
-                .trigger('change');
+                .trigger("change");
         });
     }
 }
 
 _.extend(CrossviewForm, {
     tabs: [
-        { name: 'overall', label: 'General settings' },
-        { name: 'filters', label: 'Crossview filters' },
-        { name: 'references', label: 'References' },
-        { name: 'styles', label: 'Styles' },
-        { name: 'endpointFilters', label: 'Endpoint filters' },
+        {name: "overall", label: "General settings"},
+        {name: "filters", label: "Crossview filters"},
+        {name: "references", label: "References"},
+        {name: "styles", label: "Styles"},
+        {name: "endpointFilters", label: "Endpoint filters"},
     ],
     schema: [
         {
             type: TextField,
-            name: 'title',
-            label: 'Title',
-            def: 'Title',
-            tab: 'overall',
+            name: "title",
+            label: "Title",
+            def: "Title",
+            tab: "overall",
         },
         {
             type: TextField,
-            name: 'xAxisLabel',
-            label: 'X-axis label',
-            def: 'Dose (<add units>)',
-            tab: 'overall',
+            name: "xAxisLabel",
+            label: "X-axis label",
+            def: "Dose (<add units>)",
+            tab: "overall",
         },
         {
             type: TextField,
-            name: 'yAxisLabel',
-            label: 'Y-axis label',
-            def: '% change from control (continuous), % incidence (dichotomous)',
-            tab: 'overall',
+            name: "yAxisLabel",
+            label: "Y-axis label",
+            def: "% change from control (continuous), % incidence (dichotomous)",
+            tab: "overall",
         },
         {
             type: IntegerField,
-            name: 'width',
-            label: 'Overall width (px)',
+            name: "width",
+            label: "Overall width (px)",
             def: 1100,
-            helpText: 'Overall width, including plot and tags',
-            tab: 'overall',
+            helpText: "Overall width, including plot and tags",
+            tab: "overall",
         },
         {
             type: IntegerField,
-            name: 'height',
-            label: 'Overall height (px)',
+            name: "height",
+            label: "Overall height (px)",
             def: 600,
-            helpText: 'Overall height, including plot and tags',
-            tab: 'overall',
+            helpText: "Overall height, including plot and tags",
+            tab: "overall",
         },
         {
             type: IntegerField,
-            name: 'inner_width',
-            label: 'Plot width (px)',
+            name: "inner_width",
+            label: "Plot width (px)",
             def: 940,
-            tab: 'overall',
+            tab: "overall",
         },
         {
             type: IntegerField,
-            name: 'inner_height',
-            label: 'Plot height (px)',
+            name: "inner_height",
+            label: "Plot height (px)",
             def: 520,
-            tab: 'overall',
+            tab: "overall",
         },
         {
             type: IntegerField,
-            name: 'padding_left',
-            label: 'Plot padding-left (px)',
+            name: "padding_left",
+            label: "Plot padding-left (px)",
             def: 75,
-            tab: 'overall',
+            tab: "overall",
         },
         {
             type: IntegerField,
-            name: 'padding_top',
-            label: 'Plot padding-top (px)',
+            name: "padding_top",
+            label: "Plot padding-top (px)",
             def: 45,
-            tab: 'overall',
+            tab: "overall",
         },
         {
             type: CheckboxField,
-            name: 'dose_isLog',
-            label: 'Use logscale for dose',
+            name: "dose_isLog",
+            label: "Use logscale for dose",
             def: true,
-            tab: 'overall',
+            tab: "overall",
         },
         {
             type: TextField,
-            name: 'dose_range',
-            label: 'Dose-axis range',
-            tab: 'overall',
+            name: "dose_range",
+            label: "Dose-axis range",
+            tab: "overall",
             helpText: 'If left blank, calculated automatically from data (ex: "1, 100").',
         },
         {
             type: TextField,
-            name: 'response_range',
-            label: 'Response-axis range',
-            tab: 'overall',
+            name: "response_range",
+            label: "Response-axis range",
+            tab: "overall",
             helpText: 'If left blank, calculated automatically from data (ex: "-0.5, 2.5").',
         },
         {
             type: IntegerField,
-            name: 'title_x',
-            label: 'Title x-offset (px)',
+            name: "title_x",
+            label: "Title x-offset (px)",
             def: 0,
-            tab: 'overall',
-            helpText: 'x-offset from default title location (centered at top of plot)',
+            tab: "overall",
+            helpText: "x-offset from default title location (centered at top of plot)",
         },
         {
             type: IntegerField,
-            name: 'title_y',
-            label: 'Title y-offset (px)',
+            name: "title_y",
+            label: "Title y-offset (px)",
             def: 0,
-            tab: 'overall',
-            helpText: 'y-offset from default title location (centered at top of plot)',
+            tab: "overall",
+            helpText: "y-offset from default title location (centered at top of plot)",
         },
         {
             type: IntegerField,
-            name: 'xlabel_x',
-            label: 'X label x-offset (px)',
+            name: "xlabel_x",
+            label: "X label x-offset (px)",
             def: 0,
-            tab: 'overall',
-            helpText: 'x-offset from default location (centered below x-axis)',
+            tab: "overall",
+            helpText: "x-offset from default location (centered below x-axis)",
         },
         {
             type: IntegerField,
-            name: 'xlabel_y',
-            label: 'X label y-offset (px)',
+            name: "xlabel_y",
+            label: "X label y-offset (px)",
             def: 0,
-            tab: 'overall',
-            helpText: 'y-offset from default location (centered below x-axis)',
+            tab: "overall",
+            helpText: "y-offset from default location (centered below x-axis)",
         },
         {
             type: IntegerField,
-            name: 'ylabel_x',
-            label: 'Y label x-offset (px)',
+            name: "ylabel_x",
+            label: "Y label x-offset (px)",
             def: 0,
-            tab: 'overall',
-            helpText: 'x-offset from default location (centered left of y-axis)',
+            tab: "overall",
+            helpText: "x-offset from default location (centered left of y-axis)",
         },
         {
             type: IntegerField,
-            name: 'ylabel_y',
-            label: 'Y label y-offset (px)',
+            name: "ylabel_y",
+            label: "Y label y-offset (px)",
             def: 0,
-            tab: 'overall',
-            helpText: 'y-offset from default location (centered left of y-axis)',
+            tab: "overall",
+            helpText: "y-offset from default location (centered left of y-axis)",
         },
         {
             type: CrossviewSelectorField,
             helpText:
-                'Crossview filters are displayed as text on the chart, which is highlighted when a relevant endpoint is selected.',
+                "Crossview filters are displayed as text on the chart, which is highlighted when a relevant endpoint is selected.",
             prependSpacer: false,
-            name: 'filters',
+            name: "filters",
             colWidths: [15, 20, 20, 10, 10, 10, 15],
             addBlankRowIfNone: true,
-            tab: 'filters',
+            tab: "filters",
         },
         {
             type: ReferenceLineField,
             prependSpacer: false,
-            label: 'Dose reference line',
-            name: 'reflines_dose',
+            label: "Dose reference line",
+            name: "reflines_dose",
             colWidths: [20, 40, 20, 20],
             addBlankRowIfNone: true,
-            tab: 'references',
+            tab: "references",
         },
         {
             type: ReferenceRangeField,
             prependSpacer: true,
-            label: 'Dose reference range',
-            name: 'refranges_dose',
+            label: "Dose reference range",
+            name: "refranges_dose",
             colWidths: [10, 10, 40, 20, 20],
             addBlankRowIfNone: true,
-            tab: 'references',
+            tab: "references",
         },
         {
             type: ReferenceLineField,
             prependSpacer: true,
-            label: 'Response reference line',
-            name: 'reflines_response',
+            label: "Response reference line",
+            name: "reflines_response",
             colWidths: [20, 40, 20, 20],
             addBlankRowIfNone: true,
-            tab: 'references',
+            tab: "references",
         },
         {
             type: ReferenceRangeField,
             prependSpacer: true,
-            label: 'Response reference range',
-            name: 'refranges_response',
+            label: "Response reference range",
+            name: "refranges_response",
             colWidths: [10, 10, 40, 20, 20],
             addBlankRowIfNone: true,
-            tab: 'references',
+            tab: "references",
         },
         {
             type: ReferenceLabelField,
             prependSpacer: true,
-            label: 'Figure captions',
-            name: 'labels',
+            label: "Figure captions",
+            name: "labels",
             colWidths: [45, 15, 10, 10, 10, 10],
             addBlankRowIfNone: true,
-            tab: 'references',
+            tab: "references",
         },
         {
             type: ColorField,
-            name: 'colorBase',
-            label: 'Base path color',
-            tab: 'styles',
-            helpText: 'Must be valid CSS color name',
-            def: '#cccccc',
+            name: "colorBase",
+            label: "Base path color",
+            tab: "styles",
+            helpText: "Must be valid CSS color name",
+            def: "#cccccc",
         },
         {
             type: ColorField,
-            name: 'colorHover',
-            label: 'Hover path color',
-            tab: 'styles',
-            helpText: 'Must be valid CSS color name',
-            def: '#ff4040',
+            name: "colorHover",
+            label: "Hover path color",
+            tab: "styles",
+            helpText: "Must be valid CSS color name",
+            def: "#ff4040",
         },
         {
             type: ColorField,
-            name: 'colorSelected',
-            label: 'Selected path color',
-            tab: 'styles',
-            helpText: 'Must be valid CSS color name',
-            def: '#6495ed',
+            name: "colorSelected",
+            label: "Selected path color",
+            tab: "styles",
+            helpText: "Must be valid CSS color name",
+            def: "#6495ed",
         },
         {
             type: CrossviewColorFilterField,
             prependSpacer: true,
-            label: 'Color filters',
-            name: 'colorFilters',
+            label: "Color filters",
+            name: "colorFilters",
             colWidths: [23, 23, 22, 22, 10],
             addBlankRowIfNone: false,
-            tab: 'styles',
+            tab: "styles",
             helpText:
-                'Custom colors can be applied to paths; these colors are applied based on selectors added below. The first-row is applied last; so if two rules match the same path, the upper-row color will be applied.',
+                "Custom colors can be applied to paths; these colors are applied based on selectors added below. The first-row is applied last; so if two rules match the same path, the upper-row color will be applied.",
         },
         {
             type: CheckboxField,
-            name: 'colorFilterLegend',
-            label: 'Show color filter legend',
+            name: "colorFilterLegend",
+            label: "Show color filter legend",
             def: true,
-            tab: 'styles',
+            tab: "styles",
         },
         {
             type: TextField,
-            name: 'colorFilterLegendLabel',
-            label: 'Color filter legend title',
-            def: 'Color filters',
-            tab: 'styles',
+            name: "colorFilterLegendLabel",
+            label: "Color filter legend title",
+            def: "Color filters",
+            tab: "styles",
         },
         {
             type: IntegerField,
-            name: 'colorFilterLegendX',
-            label: 'Color filter legend X position',
+            name: "colorFilterLegendX",
+            label: "Color filter legend X position",
             def: 0,
-            tab: 'styles',
+            tab: "styles",
         },
         {
             type: IntegerField,
-            name: 'colorFilterLegendY',
-            label: 'Color filter legend Y position',
+            name: "colorFilterLegendY",
+            label: "Color filter legend Y position",
             def: 0,
-            tab: 'styles',
+            tab: "styles",
         },
         {
             type: CrossviewEndpointFilterField,
             helpText:
-                'Filters used to determine which dose-response datasets should be included; by default all plottable datasets are included.',
+                "Filters used to determine which dose-response datasets should be included; by default all plottable datasets are included.",
             prependSpacer: false,
-            name: 'endpointFilters',
+            name: "endpointFilters",
             colWidths: [25, 25, 38, 12],
             addBlankRowIfNone: false,
-            tab: 'endpointFilters',
+            tab: "endpointFilters",
         },
         {
             type: RadioField,
-            label: 'Filter logic',
+            label: "Filter logic",
             helpText:
-                'Should multiple filter criteria be required for ALL rows (AND), or ANY row (OR)?',
-            name: 'endpointFilterLogic',
-            def: 'and',
-            options: [{ label: 'AND', value: 'and' }, { label: 'OR', value: 'or' }],
-            tab: 'endpointFilters',
+                "Should multiple filter criteria be required for ALL rows (AND), or ANY row (OR)?",
+            name: "endpointFilterLogic",
+            def: "and",
+            options: [
+                {label: "AND", value: "and"},
+                {label: "OR", value: "or"},
+            ],
+            tab: "endpointFilters",
         },
     ],
 });

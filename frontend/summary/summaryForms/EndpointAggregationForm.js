@@ -1,8 +1,8 @@
-import _ from 'lodash';
+import _ from "lodash";
 
-import EndpointAggregation from 'summary/summary/EndpointAggregation';
+import EndpointAggregation from "summary/summary/EndpointAggregation";
 
-import BaseVisualForm from './BaseVisualForm';
+import BaseVisualForm from "./BaseVisualForm";
 
 class EndpointAggregationForm extends BaseVisualForm {
     buildPreview($parent, data) {

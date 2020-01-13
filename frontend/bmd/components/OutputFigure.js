@@ -1,11 +1,11 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React from "react";
+import PropTypes from "prop-types";
 
-import { BMDLine } from 'bmd/models/model';
+import {BMDLine} from "bmd/models/model";
 
 class OutputFigure extends React.Component {
     componentDidMount() {
-        let { endpoint } = this.props;
+        let {endpoint} = this.props;
         this.plt = endpoint.renderPlot($(this.refs.epFigure), false).plot;
         this.renderSelectedLine(this.props.selectedModel);
     }
@@ -24,7 +24,7 @@ class OutputFigure extends React.Component {
                 return;
             }
 
-            this.hover_line = new BMDLine(model, this.plt, 'red');
+            this.hover_line = new BMDLine(model, this.plt, "red");
             this.hover_line.render();
         }
     }
@@ -42,7 +42,7 @@ class OutputFigure extends React.Component {
         }
 
         if (model !== null) {
-            this.selected_line = new BMDLine(model, this.plt, 'blue');
+            this.selected_line = new BMDLine(model, this.plt, "blue");
             this.selected_line.render();
         }
     }
@@ -61,7 +61,7 @@ class OutputFigure extends React.Component {
     }
 
     render() {
-        return <div className="span4" style={{ height: '300px', width: '300px' }} ref="epFigure" />;
+        return <div className="span4" style={{height: "300px", width: "300px"}} ref="epFigure" />;
     }
 }
 

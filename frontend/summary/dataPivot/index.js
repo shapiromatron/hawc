@@ -1,5 +1,5 @@
 const dataPivotStartup = function(cb) {
-    import('./split.js').then((dataPivot) => {
+    import("./split.js").then(dataPivot => {
         cb(dataPivot.default);
     });
 };

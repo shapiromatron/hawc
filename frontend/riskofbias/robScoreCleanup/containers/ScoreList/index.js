@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import React, {Component} from "react";
+import {connect} from "react-redux";
 
-import { checkScoreForUpdate, updateVisibleItems } from 'riskofbias/robScoreCleanup/actions/Items';
+import {checkScoreForUpdate, updateVisibleItems} from "riskofbias/robScoreCleanup/actions/Items";
 
-import DisplayComponent from 'riskofbias/robScoreCleanup/components/ScoreList';
+import DisplayComponent from "riskofbias/robScoreCleanup/components/ScoreList";
 
 export class ScoreList extends Component {
     constructor(props) {
@@ -23,7 +23,7 @@ export class ScoreList extends Component {
         }
     }
 
-    handleCheck({ target }) {
+    handleCheck({target}) {
         this.props.dispatch(checkScoreForUpdate(target.id));
     }
 
@@ -33,8 +33,8 @@ export class ScoreList extends Component {
 
     render() {
         if (!this.props.isLoaded) return null;
-        let { items, visibleItemIds, idList, config } = this.props,
-            filteredItems = items.filter((d) => _.includes(visibleItemIds, d.id));
+        let {items, visibleItemIds, idList, config} = this.props,
+            filteredItems = items.filter(d => _.includes(visibleItemIds, d.id));
 
         if (filteredItems.length === 0) {
             return this.renderEmptyScoreList();
@@ -52,7 +52,7 @@ export class ScoreList extends Component {
 }
 
 function mapStateToProps(state) {
-    const { items, visibleItemIds, updateIds, isLoaded } = state.items;
+    const {items, visibleItemIds, updateIds, isLoaded} = state.items;
     return {
         selectedScores: state.scores.selected,
         selectedStudies: state.studyTypes.selected,

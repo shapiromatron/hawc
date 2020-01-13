@@ -1,14 +1,14 @@
-import $ from '$';
-import _ from 'lodash';
+import $ from "$";
+import _ from "lodash";
 
-import DescriptiveTable from 'utils/DescriptiveTable';
-import HAWCModal from 'utils/HAWCModal';
-import HAWCUtils from 'utils/HAWCUtils';
+import DescriptiveTable from "utils/DescriptiveTable";
+import HAWCModal from "utils/HAWCModal";
+import HAWCUtils from "utils/HAWCUtils";
 
-import ComparisonSet from './ComparisonSet';
-import ResultGroup from './ResultGroup';
-import ResultGroupTable from './ResultGroupTable';
-import ResultForestPlot from './ResultForestPlot';
+import ComparisonSet from "./ComparisonSet";
+import ResultGroup from "./ResultGroup";
+import ResultGroupTable from "./ResultGroupTable";
+import ResultForestPlot from "./ResultForestPlot";
 
 class Result {
     constructor(data) {
@@ -26,7 +26,7 @@ class Result {
     }
 
     static get_object(id, cb) {
-        $.get('/epi/api/result/{0}/'.printf(id), function(d) {
+        $.get("/epi/api/result/{0}/".printf(id), function(d) {
             cb(new Result(d));
         });
     }
@@ -44,26 +44,25 @@ class Result {
     }
 
     displayFullPager($el) {
-        $el
-            .hide()
-            .append(this.build_content($el, { tabbed: false }))
+        $el.hide()
+            .append(this.build_content($el, {tabbed: false}))
             .fadeIn()
-            .trigger('plotDivShown');
+            .trigger("plotDivShown");
     }
 
     displayAsModal() {
-        var opts = { maxWidth: 1000 },
+        var opts = {maxWidth: 1000},
             modal = new HAWCModal(),
-            title = $('<h4>').html(this.build_breadcrumbs()),
+            title = $("<h4>").html(this.build_breadcrumbs()),
             $content = $('<div class="container-fluid">');
 
-        $content.append(this.build_content($content, { tabbed: false }));
+        $content.append(this.build_content($content, {tabbed: false}));
         modal
             .addHeader(title)
             .addBody($content)
-            .addFooter('')
+            .addFooter("")
             .show(opts, function() {
-                $content.trigger('plotDivShown');
+                $content.trigger("plotDivShown");
             });
     }
 
@@ -78,7 +77,7 @@ class Result {
     }
 
     get_tab_id() {
-        return 'result' + this.data.id;
+        return "result" + this.data.id;
     }
 
     build_link() {
@@ -86,7 +85,7 @@ class Result {
     }
 
     build_tab(isActive) {
-        var cls = isActive === true ? 'class="active"' : '';
+        var cls = isActive === true ? 'class="active"' : "";
         return '<li {0}><a href="#{1}" data-toggle="tab">{2}</a></li>'.printf(
             cls,
             this.get_tab_id(),
@@ -95,9 +94,9 @@ class Result {
     }
 
     build_content_tab(isActive) {
-        var cls = isActive === true ? 'active' : '',
+        var cls = isActive === true ? "active" : "",
             div = $('<div class="tab-pane {0}" id="{1}">'.printf(cls, this.get_tab_id()));
-        this.build_content(div, { tabbed: true });
+        this.build_content(div, {tabbed: true});
         return div;
     }
 
@@ -111,13 +110,12 @@ class Result {
         $el.append(this.build_details_table(opts.tabbed));
 
         if (this.hasResultGroups()) {
-            $el.append('<h3>Results by group</h3>').append(this.build_result_group_table());
+            $el.append("<h3>Results by group</h3>").append(this.build_result_group_table());
 
             if (this.data.metric.showForestPlot === true) {
-                $el
-                    .append('<h3>Forest plot</h3>')
+                $el.append("<h3>Forest plot</h3>")
                     .append($plotDiv)
-                    .on('plotDivShown', this.build_forest_plot.bind(this, $plotDiv));
+                    .on("plotDivShown", this.build_forest_plot.bind(this, $plotDiv));
             }
         }
 
@@ -127,25 +125,25 @@ class Result {
     build_details_table(withURL) {
         var txt = withURL === true ? this.build_link() : this.data.metric.name;
         return new DescriptiveTable()
-            .add_tbody_tr('Results', txt)
-            .add_tbody_tr('Comparison set', this.comparison_set.build_link())
-            .add_tbody_tr('Data location', this.data.data_location)
-            .add_tbody_tr('Population description', this.data.population_description)
-            .add_tbody_tr('Metric Description', this.data.metric_description)
-            .add_tbody_tr('Metric Units', this.data.metric_units)
-            .add_tbody_tr_list('Result tags', _.map(this.data.resulttags, 'name'))
-            .add_tbody_tr_list('Adjustment factors', _.map(this.factors, 'description'))
+            .add_tbody_tr("Results", txt)
+            .add_tbody_tr("Comparison set", this.comparison_set.build_link())
+            .add_tbody_tr("Data location", this.data.data_location)
+            .add_tbody_tr("Population description", this.data.population_description)
+            .add_tbody_tr("Metric Description", this.data.metric_description)
+            .add_tbody_tr("Metric Units", this.data.metric_units)
+            .add_tbody_tr_list("Result tags", _.map(this.data.resulttags, "name"))
+            .add_tbody_tr_list("Adjustment factors", _.map(this.factors, "description"))
             .add_tbody_tr_list(
-                'Additional factors considered',
-                _.map(this.factors_considered, 'description')
+                "Additional factors considered",
+                _.map(this.factors_considered, "description")
             )
-            .add_tbody_tr('Dose response', this.data.dose_response)
-            .add_tbody_tr('Dose response details', this.data.dose_response_details)
-            .add_tbody_tr('Statistical power', this.data.statistical_power)
-            .add_tbody_tr('Statistical power details', this.data.statistical_power_details)
-            .add_tbody_tr('Statistical test results', this.data.statistical_test_results)
-            .add_tbody_tr('Prevalence incidence', this.data.prevalence_incidence)
-            .add_tbody_tr('Comments', this.data.comments)
+            .add_tbody_tr("Dose response", this.data.dose_response)
+            .add_tbody_tr("Dose response details", this.data.dose_response_details)
+            .add_tbody_tr("Statistical power", this.data.statistical_power)
+            .add_tbody_tr("Statistical power details", this.data.statistical_power_details)
+            .add_tbody_tr("Statistical test results", this.data.statistical_test_results)
+            .add_tbody_tr("Prevalence incidence", this.data.prevalence_incidence)
+            .add_tbody_tr("Comments", this.data.comments)
             .get_tbl();
     }
 

@@ -1,22 +1,22 @@
-import _ from 'lodash';
-import React from 'react';
-import PropTypes from 'prop-types';
-import ReactDOM from 'react-dom';
+import _ from "lodash";
+import React from "react";
+import PropTypes from "prop-types";
+import ReactDOM from "react-dom";
 
-import DomainDisplay from 'riskofbias/robTable/components/DomainDisplay';
+import DomainDisplay from "riskofbias/robTable/components/DomainDisplay";
 
-const RiskOfBiasDisplay = (props) => {
+const RiskOfBiasDisplay = props => {
     return (
         <div className="riskofbias-display">
             {props.config.show_study ? renderStudyHeader(props) : null}
-            {_.map(props.active, (domain) => {
+            {_.map(props.active, domain => {
                 return <DomainDisplay key={domain.key} domain={domain} config={props.config} />;
             })}
         </div>
     );
 };
 
-const renderStudyHeader = (props) => {
+const renderStudyHeader = props => {
     return (
         <h3>
             <a href={props.config.study.url}>{props.config.study.name}</a>

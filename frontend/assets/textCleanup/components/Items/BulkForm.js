@@ -1,13 +1,13 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import _ from 'lodash';
+import React, {Component} from "react";
+import PropTypes from "prop-types";
+import _ from "lodash";
 
-import FormFieldError from 'textCleanup/components/FormFieldError';
-import h from 'textCleanup/utils/helpers';
+import FormFieldError from "textCleanup/components/FormFieldError";
+import h from "textCleanup/utils/helpers";
 
-import GetModalClass from 'shared/utils/GetModalClass';
-import DetailList from './DetailList';
-import './BulkForm.css';
+import GetModalClass from "shared/utils/GetModalClass";
+import DetailList from "./DetailList";
+import "./BulkForm.css";
 
 class BulkForm extends Component {
     constructor(props) {
@@ -25,27 +25,27 @@ class BulkForm extends Component {
     }
 
     _toggleDetails() {
-        this.setState({ showDetails: this.state.showDetails ? false : true });
+        this.setState({showDetails: this.state.showDetails ? false : true});
     }
 
     handleSubmit(e) {
         e.preventDefault();
         let stale = this.props.items[0][this.state.field],
-            { ids, detailIDs, showDetails } = this.state;
+            {ids, detailIDs, showDetails} = this.state;
         // if detail edit and all checkboxes are not checked
         if (showDetails && detailIDs && detailIDs.length !== ids.length) {
             this.props.handleDetailSubmit(
-                Object.assign({}, _.omit(this.state, ['detailIDs', 'showDetails']), {
+                Object.assign({}, _.omit(this.state, ["detailIDs", "showDetails"]), {
                     ids: detailIDs,
                     stale,
                 })
             );
         } else {
             this.props.handleBulkSubmit(
-                Object.assign({}, _.omit(this.state, 'detailIDs'), { stale })
+                Object.assign({}, _.omit(this.state, "detailIDs"), {stale})
             );
         }
-        this.setState({ detailIDs: [] });
+        this.setState({detailIDs: []});
     }
 
     handleChange(e) {
@@ -56,9 +56,9 @@ class BulkForm extends Component {
 
     handleCheckAll(e) {
         if (e.target.checked) {
-            this.setState({ detailIDs: this.props.object.ids });
+            this.setState({detailIDs: this.props.object.ids});
         } else {
-            this.setState({ detailIDs: [] });
+            this.setState({detailIDs: []});
         }
     }
 
@@ -70,12 +70,12 @@ class BulkForm extends Component {
                 detailIDs: detailIDs ? detailIDs.concat(id) : [id],
             });
         } else {
-            this.setState({ detailIDs: _.without(detailIDs, id) });
+            this.setState({detailIDs: _.without(detailIDs, id)});
         }
     }
 
     onDetailChange(e) {
-        e.target.id === 'all' ? this.handleCheckAll(e) : this.handleCheck(e.target);
+        e.target.id === "all" ? this.handleCheckAll(e) : this.handleCheck(e.target);
     }
 
     showModal(e) {
@@ -83,9 +83,9 @@ class BulkForm extends Component {
     }
 
     render() {
-        let { object, errors, field, params, items } = this.props,
-            detailShow = this.state.showDetails ? 'fa-minus-square' : 'fa-plus-square',
-            editButtonText = this.state.showDetails ? 'Submit selected items' : 'Submit bulk edit';
+        let {object, errors, field, params, items} = this.props,
+            detailShow = this.state.showDetails ? "fa-minus-square" : "fa-plus-square",
+            editButtonText = this.state.showDetails ? "Submit selected items" : "Submit bulk edit";
         return (
             <div className="stripe row">
                 <form onSubmit={this.handleSubmit}>
@@ -94,8 +94,7 @@ class BulkForm extends Component {
                             type="button"
                             title="Show/hide all items"
                             className="btn btn-inverse btn-mini"
-                            onClick={this._toggleDetails}
-                        >
+                            onClick={this._toggleDetails}>
                             <i className={`fa ${detailShow}`} />
                         </button>
                         &nbsp;{field || `N/A`} ({items.length})

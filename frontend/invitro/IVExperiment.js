@@ -1,11 +1,11 @@
-import $ from '$';
-import _ from 'lodash';
+import $ from "$";
+import _ from "lodash";
 
-import DescriptiveTable from 'utils/DescriptiveTable';
-import HAWCModal from 'utils/HAWCModal';
-import HAWCUtils from 'utils/HAWCUtils';
+import DescriptiveTable from "utils/DescriptiveTable";
+import HAWCModal from "utils/HAWCModal";
+import HAWCUtils from "utils/HAWCUtils";
 
-import IVEndpoint from './IVEndpoint';
+import IVEndpoint from "./IVEndpoint";
 
 class IVExperiment {
     constructor(data) {
@@ -14,7 +14,7 @@ class IVExperiment {
     }
 
     static get_object(id, cb) {
-        $.get('/in-vitro/api/experiment/{0}/'.printf(id), function(d) {
+        $.get("/in-vitro/api/experiment/{0}/".printf(id), function(d) {
             cb(new IVExperiment(d));
         });
     }
@@ -42,14 +42,14 @@ class IVExperiment {
     }
 
     build_title() {
-        var el = $('<h1>').text(this.data.name);
+        var el = $("<h1>").text(this.data.name);
         if (window.canEdit) {
             var urls = [
-                'Experiment editing',
-                { url: this.data.url_update, text: 'Update' },
-                { url: this.data.url_delete, text: 'Delete' },
-                'Endpoint editing',
-                { url: this.data.url_create_endpoint, text: 'Create endpoint' },
+                "Experiment editing",
+                {url: this.data.url_update, text: "Update"},
+                {url: this.data.url_delete, text: "Delete"},
+                "Endpoint editing",
+                {url: this.data.url_create_endpoint, text: "Create endpoint"},
             ];
             el.append(HAWCUtils.pageActionsButton(urls));
         }
@@ -65,39 +65,39 @@ class IVExperiment {
             pos = getControlText(this.data.has_positive_control, this.data.positive_control),
             neg = getControlText(this.data.has_negative_control, this.data.negative_control),
             veh = getControlText(this.data.has_vehicle_control, this.data.vehicle_control),
-            naive = getControlText(this.data.has_naive_control, '');
+            naive = getControlText(this.data.has_naive_control, "");
 
         return new DescriptiveTable()
-            .add_tbody_tr('Cell type', this.data.cell_type.cell_type)
-            .add_tbody_tr('Tissue', this.data.cell_type.tissue)
-            .add_tbody_tr('Species', this.data.cell_type.species)
-            .add_tbody_tr('Strain', this.data.cell_type.strain)
-            .add_tbody_tr('Sex', this.data.cell_type.sex_symbol)
-            .add_tbody_tr('Cell source', this.data.cell_type.source)
-            .add_tbody_tr('Culture type', this.data.cell_type.culture_type)
-            .add_tbody_tr('Transfection', this.data.transfection)
-            .add_tbody_tr('Cell notes', this.data.cell_notes)
-            .add_tbody_tr('Dosing notes', this.data.dosing_notes)
-            .add_tbody_tr('Metabolic activation', this.data.metabolic_activation)
-            .add_tbody_tr('Serum', this.data.serum)
-            .add_tbody_tr('Naive control', naive)
-            .add_tbody_tr('Positive control', pos)
-            .add_tbody_tr('Negative control', neg)
-            .add_tbody_tr('Vehicle control', veh)
-            .add_tbody_tr('Control notes', this.data.control_notes)
-            .add_tbody_tr('Dose units', this.data.dose_units.name)
+            .add_tbody_tr("Cell type", this.data.cell_type.cell_type)
+            .add_tbody_tr("Tissue", this.data.cell_type.tissue)
+            .add_tbody_tr("Species", this.data.cell_type.species)
+            .add_tbody_tr("Strain", this.data.cell_type.strain)
+            .add_tbody_tr("Sex", this.data.cell_type.sex_symbol)
+            .add_tbody_tr("Cell source", this.data.cell_type.source)
+            .add_tbody_tr("Culture type", this.data.cell_type.culture_type)
+            .add_tbody_tr("Transfection", this.data.transfection)
+            .add_tbody_tr("Cell notes", this.data.cell_notes)
+            .add_tbody_tr("Dosing notes", this.data.dosing_notes)
+            .add_tbody_tr("Metabolic activation", this.data.metabolic_activation)
+            .add_tbody_tr("Serum", this.data.serum)
+            .add_tbody_tr("Naive control", naive)
+            .add_tbody_tr("Positive control", pos)
+            .add_tbody_tr("Negative control", neg)
+            .add_tbody_tr("Vehicle control", veh)
+            .add_tbody_tr("Control notes", this.data.control_notes)
+            .add_tbody_tr("Dose units", this.data.dose_units.name)
             .get_tbl();
     }
 
     build_endpoint_list() {
-        var ul = $('<ul>');
+        var ul = $("<ul>");
 
         if (this.endpoints.length === 0) {
-            ul.append('<li><i>No endpoints available.</i></li>');
+            ul.append("<li><i>No endpoints available.</i></li>");
         }
 
         this.endpoints.forEach(function(d) {
-            ul.append($('<li>').html(d.build_hyperlink()));
+            ul.append($("<li>").html(d.build_hyperlink()));
         });
 
         return ul;
@@ -114,15 +114,14 @@ class IVExperiment {
         modal
             .addTitleLinkHeader(this.data.name, this.data.url)
             .addBody($content)
-            .addFooter('')
-            .show({ maxWidth: 900 });
+            .addFooter("")
+            .show({maxWidth: 900});
     }
 
     displayAsPage($div) {
-        $div
-            .append(this.build_title())
+        $div.append(this.build_title())
             .append(this.build_details_table())
-            .append('<h2>Available endpoints</h2>')
+            .append("<h2>Available endpoints</h2>")
             .append(this.build_endpoint_list());
     }
 }

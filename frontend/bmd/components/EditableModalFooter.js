@@ -1,5 +1,5 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React from "react";
+import PropTypes from "prop-types";
 
 class EditableModalFooter extends React.Component {
     renderEdit() {
@@ -9,16 +9,14 @@ class EditableModalFooter extends React.Component {
                     type="button"
                     onClick={this.props.handleDelete}
                     className="btn btn-danger pull-left"
-                    data-dismiss="modal"
-                >
+                    data-dismiss="modal">
                     Delete
                 </button>
                 <button
                     type="button"
                     onClick={this.props.handleSave}
                     className="btn btn-primary"
-                    data-dismiss="modal"
-                >
+                    data-dismiss="modal">
                     Save and close
                 </button>
                 <button type="button" className="btn" data-dismiss="modal">

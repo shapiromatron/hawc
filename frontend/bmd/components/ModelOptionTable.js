@@ -1,7 +1,7 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React from "react";
+import PropTypes from "prop-types";
 
-import { param_cw } from 'bmd/constants';
+import {param_cw} from "bmd/constants";
 
 class ModelOptionTable extends React.Component {
     handleCreateModel() {
@@ -24,26 +24,26 @@ class ModelOptionTable extends React.Component {
     renderOptionEdits() {
         if (!this.props.editMode) return;
 
-        let { allOptions } = this.props;
+        let {allOptions} = this.props;
 
         return (
             <div className="row-fluid">
                 <label className="control-label">Add new model</label>
                 <div className="controls">
-                    <select style={{ marginBottom: 0, marginRight: '1em' }} ref="modelName">
+                    <select style={{marginBottom: 0, marginRight: "1em"}} ref="modelName">
                         {allOptions.map(this.renderOption)}
                     </select>
                     <button
                         onClick={this.handleCreateModel.bind(this)}
                         type="button"
-                        className="btn btn-small"
-                    >
+                        className="btn btn-small">
                         <i className="icon-plus" />
                     </button>
 
                     <div className="btn-group pull-right">
                         <a className="btn dropdown-toggle" data-toggle="dropdown">
-                            Actions &nbsp;<span className="caret" />
+                            Actions &nbsp;
+                            <span className="caret" />
                         </a>
                         <ul className="dropdown-menu">
                             <li>
@@ -65,7 +65,7 @@ class ModelOptionTable extends React.Component {
     }
 
     renderToggleVarianceBtn() {
-        if (this.props.dataType !== 'C') {
+        if (this.props.dataType !== "C") {
             return null;
         }
 
@@ -74,8 +74,7 @@ class ModelOptionTable extends React.Component {
                 <a
                     href="#"
                     onClick={this.props.handleVarianceToggle}
-                    title="Change the variance model for all continuous models"
-                >
+                    title="Change the variance model for all continuous models">
                     Toggle all variance models
                 </a>
             </li>
@@ -87,24 +86,24 @@ class ModelOptionTable extends React.Component {
             let def = d.defaults[k],
                 tmp;
             switch (def.t) {
-                case 'i':
-                case 'd':
-                case 'dd':
-                case 'rp':
+                case "i":
+                case "d":
+                case "dd":
+                case "rp":
                     return (
                         <span>
                             <b>{def.n}:</b> {v}
                         </span>
                     );
-                case 'b':
-                    tmp = v === 1 ? 'fa fa-check-square-o' : 'fa fa-square-o';
+                case "b":
+                    tmp = v === 1 ? "fa fa-check-square-o" : "fa fa-square-o";
                     return (
                         <span>
                             <b>{def.n}:</b> <i className={tmp} />
                         </span>
                     );
-                case 'p':
-                    v = v.split('|');
+                case "p":
+                    v = v.split("|");
                     return (
                         <span>
                             <b>{def.n}:</b> {param_cw[v[0]]} to {v[1]}
@@ -136,7 +135,7 @@ class ModelOptionTable extends React.Component {
     }
 
     renderRow(d, i) {
-        let header = this.props.editMode ? 'View/edit' : 'View';
+        let header = this.props.editMode ? "View/edit" : "View";
 
         return (
             <tr key={i}>
@@ -146,8 +145,7 @@ class ModelOptionTable extends React.Component {
                     <button
                         type="button"
                         className="btn btn-link"
-                        onClick={this.handleRowClick.bind(this, i)}
-                    >
+                        onClick={this.handleRowClick.bind(this, i)}>
                         {header}
                     </button>
                 </td>
@@ -156,16 +154,16 @@ class ModelOptionTable extends React.Component {
     }
 
     render() {
-        let header = this.props.editMode ? 'View/edit' : 'View';
+        let header = this.props.editMode ? "View/edit" : "View";
         return (
             <div className="span6">
                 <h4>Model options</h4>
                 <table className="table table-condensed table-striped">
                     <thead>
                         <tr>
-                            <th style={{ width: '25%' }}>Model name</th>
-                            <th style={{ width: '60%' }}>Non-default settings</th>
-                            <th style={{ width: '15%' }}>{header}</th>
+                            <th style={{width: "25%"}}>Model name</th>
+                            <th style={{width: "60%"}}>Non-default settings</th>
+                            <th style={{width: "15%"}}>{header}</th>
                         </tr>
                     </thead>
                     <tbody>{this.props.models.map(this.renderRow.bind(this))}</tbody>

@@ -1,4 +1,4 @@
-import VisualForm from './VisualForm';
+import VisualForm from "./VisualForm";
 
 export default {
     VisualForm,

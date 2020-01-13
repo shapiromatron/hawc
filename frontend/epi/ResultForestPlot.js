@@ -1,7 +1,7 @@
-import _ from 'lodash';
-import d3 from 'd3';
+import _ from "lodash";
+import d3 from "d3";
 
-import D3Plot from 'utils/D3Plot';
+import D3Plot from "utils/D3Plot";
 
 class ResultForestPlot extends D3Plot {
     constructor(res, $div, options) {
@@ -16,7 +16,7 @@ class ResultForestPlot extends D3Plot {
     }
 
     default_options() {
-        return { build_plot_startup: true };
+        return {build_plot_startup: true};
     }
 
     build_plot() {
@@ -57,10 +57,10 @@ class ResultForestPlot extends D3Plot {
                     return _.isNumber(d.lower_bound_interval) && _.isNumber(d.upper_bound_interval);
                 })
                 .value(),
-            names = _.map(estimates, 'name'),
+            names = _.map(estimates, "name"),
             vals = _.chain(estimates)
                 .map(function(d) {
-                    let { upper_bound_interval, lower_bound_interval } = d.group.getIntervals();
+                    let {upper_bound_interval, lower_bound_interval} = d.group.getIntervals();
                     return [d.group.data.estimate, lower_bound_interval, upper_bound_interval];
                 })
                 .flattenDeep()
@@ -69,7 +69,7 @@ class ResultForestPlot extends D3Plot {
                 })
                 .value(),
             getXDomain = function(scale_type, vals) {
-                if (scale_type === 'log') {
+                if (scale_type === "log") {
                     vals = _.filter(vals, function(d) {
                         return d > 0;
                     });
@@ -77,7 +77,7 @@ class ResultForestPlot extends D3Plot {
                 var domain = d3.extent(vals);
                 if (domain[0] === domain[1]) {
                     // set reasonable defaults for domain if there is no domain.
-                    if (scale_type === 'log') {
+                    if (scale_type === "log") {
                         domain[0] = domain[0] * 0.1;
                         domain[1] = domain[1] * 10;
                     } else {
@@ -99,7 +99,7 @@ class ResultForestPlot extends D3Plot {
 
         _.extend(this, {
             title_str: data.name,
-            scale_type: data.metric.isLog ? 'log' : 'linear',
+            scale_type: data.metric.isLog ? "log" : "linear",
             estimates,
             lines,
             names,
@@ -123,22 +123,22 @@ class ResultForestPlot extends D3Plot {
             },
             row_height: 30,
             x_axis_settings: {
-                scale_type: 'linear',
-                text_orient: 'bottom',
-                axis_class: 'axis x_axis',
+                scale_type: "linear",
+                text_orient: "bottom",
+                axis_class: "axis x_axis",
                 number_ticks: 6,
                 x_translate: 0,
                 gridlines: true,
-                gridline_class: 'primary_gridlines x_gridlines',
+                gridline_class: "primary_gridlines x_gridlines",
                 axis_labels: true,
                 label_format: undefined,
             },
             y_axis_settings: {
-                scale_type: 'ordinal',
-                text_orient: 'left',
-                axis_class: 'axis y_axis',
+                scale_type: "ordinal",
+                text_orient: "left",
+                axis_class: "axis y_axis",
                 gridlines: true,
-                gridline_class: 'primary_gridlines y_gridlines',
+                gridline_class: "primary_gridlines y_gridlines",
                 axis_labels: true,
                 label_format: undefined,
             },
@@ -150,12 +150,12 @@ class ResultForestPlot extends D3Plot {
         this.w = this.plot_div.width() - this.padding.right - this.padding.left; // extra for margins
         var menu_spacing = this.options.show_menu_bar ? 40 : 0;
         this.plot_div.css({
-            height: this.h + this.padding.top + this.padding.bottom + menu_spacing + 'px',
+            height: this.h + this.padding.top + this.padding.bottom + menu_spacing + "px",
         });
     }
 
     add_axes() {
-        if (this.scale_type === 'log' && this.x_domain[0] >= 1) {
+        if (this.scale_type === "log" && this.x_domain[0] >= 1) {
             this.x_domain[0] = 0.1;
         }
 
@@ -185,100 +185,100 @@ class ResultForestPlot extends D3Plot {
 
         // vertical reference line at 1 relative risk
         this.vis
-            .append('line')
-            .attr('x1', x(1))
-            .attr('y1', 0)
-            .attr('x2', x(1))
-            .attr('y2', this.h)
-            .attr('class', 'reference_line');
+            .append("line")
+            .attr("x1", x(1))
+            .attr("y1", 0)
+            .attr("x2", x(1))
+            .attr("y2", this.h)
+            .attr("class", "reference_line");
 
         // estimate range
-        this.estimate_range = this.vis.append('g').attr('class', 'estimates_range');
+        this.estimate_range = this.vis.append("g").attr("class", "estimates_range");
         this.estimate_range
-            .selectAll('line.temp')
+            .selectAll("line.temp")
             .data(this.lines)
             .enter()
-            .append('line')
-            .attr('x1', function(d) {
+            .append("line")
+            .attr("x1", function(d) {
                 return x(d.lower_bound_interval);
             })
-            .attr('y1', function(d) {
+            .attr("y1", function(d) {
                 return y(d.name) + mid;
             })
-            .attr('x2', function(d) {
+            .attr("x2", function(d) {
                 return x(d.upper_bound_interval);
             })
-            .attr('y2', function(d) {
+            .attr("y2", function(d) {
                 return y(d.name) + mid;
             })
-            .attr('class', 'dr_err_bars');
+            .attr("class", "dr_err_bars");
 
         this.estimate_range
-            .selectAll('line.temp')
+            .selectAll("line.temp")
             .data(this.lines)
             .enter()
-            .append('line')
-            .attr('x1', function(d) {
+            .append("line")
+            .attr("x1", function(d) {
                 return x(d.lower_bound_interval);
             })
-            .attr('y1', function(d) {
+            .attr("y1", function(d) {
                 return y(d.name) + mid * 1.5;
             })
-            .attr('x2', function(d) {
+            .attr("x2", function(d) {
                 return x(d.lower_bound_interval);
             })
-            .attr('y2', function(d) {
+            .attr("y2", function(d) {
                 return y(d.name) + mid * 0.5;
             })
-            .attr('class', 'dr_err_bars');
+            .attr("class", "dr_err_bars");
 
         this.estimate_range
-            .selectAll('line.temp')
+            .selectAll("line.temp")
             .data(this.lines)
             .enter()
-            .append('line')
-            .attr('x1', function(d) {
+            .append("line")
+            .attr("x1", function(d) {
                 return x(d.upper_bound_interval);
             })
-            .attr('y1', function(d) {
+            .attr("y1", function(d) {
                 return y(d.name) + mid * 1.5;
             })
-            .attr('x2', function(d) {
+            .attr("x2", function(d) {
                 return x(d.upper_bound_interval);
             })
-            .attr('y2', function(d) {
+            .attr("y2", function(d) {
                 return y(d.name) + mid * 0.5;
             })
-            .attr('class', 'dr_err_bars');
+            .attr("class", "dr_err_bars");
 
         // central estimate
-        this.estimates_group = this.vis.append('g').attr('class', 'estimates');
+        this.estimates_group = this.vis.append("g").attr("class", "estimates");
         this.estimates = this.estimates_group
-            .selectAll('path.dot')
+            .selectAll("path.dot")
             .data(this.estimates)
             .enter()
-            .append('circle')
-            .attr('class', 'dose_points')
-            .attr('r', 7)
-            .attr('cx', function(d) {
+            .append("circle")
+            .attr("class", "dose_points")
+            .attr("r", 7)
+            .attr("cx", function(d) {
                 return x(d.estimate);
             })
-            .attr('cy', function(d) {
+            .attr("cy", function(d) {
                 return y(d.name) + mid;
             })
-            .style('cursor', 'pointer')
-            .on('click', function(d) {
+            .style("cursor", "pointer")
+            .on("click", function(d) {
                 d.group.show_group_tooltip(d3.event);
             })
-            .append('title')
+            .append("title")
             .text(function(d) {
-                return '{0}: click to view exposure-group details'.printf(d.estimate);
+                return "{0}: click to view exposure-group details".printf(d.estimate);
             });
     }
 
     resize_plot_dimensions() {
         // Resize plot based on the dimensions of the labels.
-        var ylabel_width = this.plot_div.find('.y_axis')[0].getBoundingClientRect().width;
+        var ylabel_width = this.plot_div.find(".y_axis")[0].getBoundingClientRect().width;
         if (this.padding.left < this.padding.left_original + ylabel_width) {
             this.padding.left = this.padding.left_original + ylabel_width;
             this.build_plot();

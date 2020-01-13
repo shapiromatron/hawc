@@ -1,7 +1,7 @@
-import fetch from 'isomorphic-fetch';
-import h from 'mgmt/utils/helpers';
+import fetch from "isomorphic-fetch";
+import h from "mgmt/utils/helpers";
 
-import * as types from './constants';
+import * as types from "./constants";
 
 function makeTaskRequest() {
     return {
@@ -12,7 +12,7 @@ function makeTaskRequest() {
 export function hydrateTasks() {
     return (dispatch, getState) => {
         let state = getState(),
-            { list, rob_tasks } = state.config.tasks;
+            {list, rob_tasks} = state.config.tasks;
         dispatch({
             type: types.HYDRATE_TASKS,
             list,
@@ -33,10 +33,10 @@ export function fetchTasks() {
         let state = getState();
         if (state.tasks.isFetching) return;
         dispatch(makeTaskRequest());
-        let { host, tasks } = state.config;
+        let {host, tasks} = state.config;
         const url = h.getListUrl(host, tasks.url);
         return fetch(url, h.fetchGet)
-            .then((response) => response.json())
-            .then((json) => dispatch(receiveTasks(json)));
+            .then(response => response.json())
+            .then(json => dispatch(receiveTasks(json)));
     };
 }

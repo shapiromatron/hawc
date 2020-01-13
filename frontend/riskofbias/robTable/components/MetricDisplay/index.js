@@ -1,23 +1,23 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React, {Component} from "react";
+import PropTypes from "prop-types";
 
-import ScoreDisplay from 'riskofbias/robTable/components/ScoreDisplay';
-import './MetricDisplay.css';
+import ScoreDisplay from "riskofbias/robTable/components/ScoreDisplay";
+import "./MetricDisplay.css";
 
 class MetricDisplay extends Component {
     renderScoreRow() {
-        let { metric, config } = this.props,
+        let {metric, config} = this.props,
             displayScores = metric.values;
 
-        if (config.display === 'final') {
-            displayScores = _.filter(metric.values, (score) => {
+        if (config.display === "final") {
+            displayScores = _.filter(metric.values, score => {
                 return score.final;
             });
         }
 
         return (
             <div className="score-row">
-                {_.map(displayScores, (score) => {
+                {_.map(displayScores, score => {
                     return <ScoreDisplay key={score.id} score={score} config={config} />;
                 })}
             </div>
@@ -25,14 +25,12 @@ class MetricDisplay extends Component {
     }
 
     render() {
-        let { metric } = this.props;
+        let {metric} = this.props;
         return (
             <div className="metric-display">
                 <h4>{metric.key}</h4>
                 {metric.values[0].metric.hide_description ? null : (
-                    <div
-                        dangerouslySetInnerHTML={{ __html: metric.values[0].metric.description }}
-                    />
+                    <div dangerouslySetInnerHTML={{__html: metric.values[0].metric.description}} />
                 )}
                 {this.renderScoreRow()}
             </div>

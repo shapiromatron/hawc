@@ -1,14 +1,14 @@
-import $ from '$';
-import _ from 'lodash';
-import d3 from 'd3';
+import $ from "$";
+import _ from "lodash";
+import d3 from "d3";
 
-import DescriptiveTable from 'utils/DescriptiveTable';
-import HAWCModal from 'utils/HAWCModal';
-import HAWCUtils from 'utils/HAWCUtils';
+import DescriptiveTable from "utils/DescriptiveTable";
+import HAWCModal from "utils/HAWCModal";
+import HAWCUtils from "utils/HAWCUtils";
 
-import RiskOfBiasScore from 'riskofbias/RiskOfBiasScore';
-import { renderStudyDisplay } from 'riskofbias/robTable/components/StudyDisplay';
-import { SCORE_SHADES, SCORE_TEXT, NA_KEYS } from 'riskofbias/constants';
+import RiskOfBiasScore from "riskofbias/RiskOfBiasScore";
+import {renderStudyDisplay} from "riskofbias/robTable/components/StudyDisplay";
+import {SCORE_SHADES, SCORE_TEXT, NA_KEYS} from "riskofbias/constants";
 
 class Study {
     constructor(data) {
@@ -24,7 +24,7 @@ class Study {
     }
 
     static get_object(id, cb) {
-        $.get('/study/api/study/{0}/'.printf(id), function(d) {
+        $.get("/study/api/study/{0}/".printf(id), function(d) {
             cb(new Study(d));
         });
     }
@@ -42,9 +42,9 @@ class Study {
     }
 
     static displayInline(id, setTitle, setBody) {
-        Study.get_object(id, (obj) => {
-            var title = $('<h4><b>{0}</b></h4>'.printf(obj.build_breadcrumbs())),
-                content = $('<div>');
+        Study.get_object(id, obj => {
+            var title = $("<h4><b>{0}</b></h4>".printf(obj.build_breadcrumbs())),
+                content = $("<div>");
 
             setTitle(title);
             setBody(content);
@@ -82,7 +82,7 @@ class Study {
             v.domain = v.values[0].data.metric.domain.id;
             v.domain_text = v.values[0].data.metric.domain.name;
             v.domain_is_overall_confidence =
-                typeof v.values[0].data.metric.domain.is_overall_confidence === 'boolean'
+                typeof v.values[0].data.metric.domain.is_overall_confidence === "boolean"
                     ? v.values[0].data.metric.domain.is_overall_confidence
                     : false;
             v.criteria = v.values;
@@ -91,7 +91,7 @@ class Study {
         // try to put the 'other' domain at the end
         var l = this.riskofbias.length;
         for (var i = 0; i < l; i++) {
-            if (this.riskofbias[i].domain_text.toLowerCase() === 'other') {
+            if (this.riskofbias[i].domain_text.toLowerCase() === "other") {
                 this.riskofbias.push(this.riskofbias.splice(i, 1)[0]);
                 break;
             }
@@ -99,7 +99,7 @@ class Study {
     }
 
     build_breadcrumbs() {
-        var urls = [{ url: this.data.url, name: this.data.short_citation }];
+        var urls = [{url: this.data.url, name: this.data.short_citation}];
         return HAWCUtils.build_breadcrumbs(urls);
     }
 
@@ -122,47 +122,47 @@ class Study {
                 return Study.typeNames[d];
             })
             .value()
-            .join(', ');
+            .join(", ");
     }
 
     build_details_table(div) {
         var tbl = new DescriptiveTable(),
             links = this._get_identifiers_hyperlinks_ul();
-        tbl.add_tbody_tr('Data type(s)', this._get_data_types());
-        tbl.add_tbody_tr('Full citation', this.data.full_citation);
-        tbl.add_tbody_tr('Abstract', this.data.abstract);
-        if (links.children().length > 0) tbl.add_tbody_tr('Reference hyperlink', links);
+        tbl.add_tbody_tr("Data type(s)", this._get_data_types());
+        tbl.add_tbody_tr("Full citation", this.data.full_citation);
+        tbl.add_tbody_tr("Abstract", this.data.abstract);
+        if (links.children().length > 0) tbl.add_tbody_tr("Reference hyperlink", links);
         tbl.add_tbody_tr_list(
-            'Literature review tags',
+            "Literature review tags",
             this.data.tags.map(function(d) {
                 return d.name;
             })
         );
         if (this.data.full_text_url)
             tbl.add_tbody_tr(
-                'Full-text link',
-                '<a href={0}>{0}</a>'.printf(this.data.full_text_url)
+                "Full-text link",
+                "<a href={0}>{0}</a>".printf(this.data.full_text_url)
             );
-        tbl.add_tbody_tr('COI reported', this.data.coi_reported);
-        tbl.add_tbody_tr('COI details', this.data.coi_details);
-        tbl.add_tbody_tr('Funding source', this.data.funding_source);
-        tbl.add_tbody_tr('Study identifier', this.data.study_identifier);
-        tbl.add_tbody_tr('Author contacted?', HAWCUtils.booleanCheckbox(this.data.contact_author));
-        tbl.add_tbody_tr('Author contact details', this.data.ask_author);
-        tbl.add_tbody_tr('Summary/extraction comments', this.data.summary);
+        tbl.add_tbody_tr("COI reported", this.data.coi_reported);
+        tbl.add_tbody_tr("COI details", this.data.coi_details);
+        tbl.add_tbody_tr("Funding source", this.data.funding_source);
+        tbl.add_tbody_tr("Study identifier", this.data.study_identifier);
+        tbl.add_tbody_tr("Author contacted?", HAWCUtils.booleanCheckbox(this.data.contact_author));
+        tbl.add_tbody_tr("Author contact details", this.data.ask_author);
+        tbl.add_tbody_tr("Summary/extraction comments", this.data.summary);
         $(div).html(tbl.get_tbl());
     }
 
     _get_identifiers_hyperlinks_ul() {
-        var ul = $('<ul>');
+        var ul = $("<ul>");
 
         this.data.identifiers.forEach(function(v) {
             if (v.url) {
                 ul.append(
-                    $('<li>').append(
-                        $('<a>')
-                            .attr('href', v.url)
-                            .attr('target', '_blank')
+                    $("<li>").append(
+                        $("<a>")
+                            .attr("href", v.url)
+                            .attr("target", "_blank")
                             .text(v.database)
                     )
                 );
@@ -175,10 +175,10 @@ class Study {
     add_attachments_row(div, attachments) {
         if (attachments.length === 0) return;
 
-        var tbody = div.find('table tbody'),
-            ul = $('<ul>'),
-            tr = $('<tr>').append('<th>Attachments</th>'),
-            td = $('<td>');
+        var tbody = div.find("table tbody"),
+            ul = $("<ul>"),
+            tr = $("<tr>").append("<th>Attachments</th>"),
+            td = $("<td>");
 
         attachments.forEach(function(v) {
             ul.append(
@@ -194,7 +194,7 @@ class Study {
 
     displayAsModal() {
         var modal = new HAWCModal(),
-            title = '<h4>{0}</h4>'.printf(this.build_breadcrumbs()),
+            title = "<h4>{0}</h4>".printf(this.build_breadcrumbs()),
             $content = $('<div class="container-fluid">');
 
         this.render($content, modal.getModal());
@@ -202,8 +202,8 @@ class Study {
         modal
             .addHeader(title)
             .addBody($content)
-            .addFooter('')
-            .show({ maxWidth: 1000 });
+            .addFooter("")
+            .show({maxWidth: 1000});
     }
 
     render($div, $shower) {
@@ -212,7 +212,7 @@ class Study {
             displayRoB = () => {
                 var render_obj = {
                     riskofbias: self.riskofbias,
-                    display: 'final',
+                    display: "final",
                 };
                 render_obj = self.format_for_react(self.riskofbias);
                 renderStudyDisplay(render_obj, $rob[0]);
@@ -222,7 +222,7 @@ class Study {
             var $rob = $('<div class="span12">');
             $div.prepend($('<div class="row-fluid">').append($rob));
             if ($shower) {
-                $shower.on('shown', function() {
+                $shower.on("shown", function() {
                     displayRoB();
                 });
             } else {
@@ -263,10 +263,10 @@ class Study {
 }
 
 Study.typeNames = {
-    bioassay: 'Animal bioassay',
-    epi: 'Epidemiology',
-    epi_meta: 'Epidemiology meta-analysis/pooled analysis',
-    in_vitro: 'In vitro',
+    bioassay: "Animal bioassay",
+    epi: "Epidemiology",
+    epi_meta: "Epidemiology meta-analysis/pooled analysis",
+    in_vitro: "In vitro",
 };
 
 export default Study;

@@ -1,13 +1,13 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import _ from 'lodash';
+import React, {Component} from "react";
+import {connect} from "react-redux";
+import _ from "lodash";
 
-import { fetchModel } from 'textCleanup/actions/Items';
-import { fetchAssessment } from 'textCleanup/actions/Assessment';
-import FieldList from 'textCleanup/components/FieldList';
-import Loading from 'shared/components/Loading';
-import urls from 'textCleanup/constants/urls';
-import h from 'textCleanup/utils/helpers';
+import {fetchModel} from "textCleanup/actions/Items";
+import {fetchAssessment} from "textCleanup/actions/Assessment";
+import FieldList from "textCleanup/components/FieldList";
+import Loading from "shared/components/Loading";
+import urls from "textCleanup/constants/urls";
+import h from "textCleanup/utils/helpers";
 
 class FieldSelection extends Component {
     componentWillMount() {
@@ -22,8 +22,8 @@ class FieldSelection extends Component {
 
     render() {
         if (this.props.objects == undefined || this.props.types == undefined) return <Loading />;
-        let { objects, location, types, match } = this.props,
-            type = _.find(types, { type: match.params.type }),
+        let {objects, location, types, match} = this.props,
+            type = _.find(types, {type: match.params.type}),
             title = h.caseToWords(type.title),
             url = type.url.substr(0, type.url.lastIndexOf(match.params.type));
         h.extendBreadcrumbs(url);

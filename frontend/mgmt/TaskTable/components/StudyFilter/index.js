@@ -1,14 +1,14 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React, {Component} from "react";
+import PropTypes from "prop-types";
 
-import StudyTypeSelector from 'mgmt/TaskTable/components/StudyTypeSelector';
-import StudySortSelector from 'mgmt/TaskTable/components/StudySortSelector';
+import StudyTypeSelector from "mgmt/TaskTable/components/StudyTypeSelector";
+import StudySortSelector from "mgmt/TaskTable/components/StudySortSelector";
 
 class StudyFilter extends Component {
     constructor(props) {
         super(props);
-        let fieldOptions = ['short_citation', 'created'],
-            orderOptions = ['ascending', 'descending'];
+        let fieldOptions = ["short_citation", "created"],
+            orderOptions = ["ascending", "descending"];
         this.state = {
             studyTypes: [],
             studySorting: {
@@ -32,7 +32,7 @@ class StudyFilter extends Component {
                 order: this.state.orderOptions[0],
             },
         };
-        this.setState({ ...defaults });
+        this.setState({...defaults});
         this.props.selectFilter({
             filterOpts: defaults.studyTypes,
             sortOpts: defaults.studySorting,

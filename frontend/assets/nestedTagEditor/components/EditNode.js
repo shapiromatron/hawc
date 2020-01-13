@@ -1,5 +1,5 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React from "react";
+import PropTypes from "prop-types";
 
 class EditNode extends React.Component {
     componentWillMount() {
@@ -84,9 +84,8 @@ class EditNode extends React.Component {
                                 name="parent"
                                 className="span12"
                                 onChange={this.onChange.bind(this)}
-                                value={this.state.parent}
-                            >
-                                {this.props.parentOptions.map((d) => (
+                                value={this.state.parent}>
+                                {this.props.parentOptions.map(d => (
                                     <option key={d[0]} value={d[0]}>
                                         {d[1]}
                                     </option>

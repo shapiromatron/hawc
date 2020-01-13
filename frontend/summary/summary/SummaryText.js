@@ -1,4 +1,4 @@
-import $ from '$';
+import $ from "$";
 
 class SummaryText {
     constructor(obj, depth, tree, sibling_id, parent) {
@@ -8,8 +8,8 @@ class SummaryText {
         this.id = obj.id;
         this.data = obj.data;
         this.section_label = parent
-            ? this.parent.section_label + (sibling_id + 1).toString() + '.'
-            : '';
+            ? this.parent.section_label + (sibling_id + 1).toString() + "."
+            : "";
 
         var self = this,
             children = [];
@@ -22,26 +22,26 @@ class SummaryText {
     }
 
     static update_url(id) {
-        return '/summary/{0}/update/'.printf(id);
+        return "/summary/{0}/update/".printf(id);
     }
     static delete_url(id) {
-        return '/summary/{0}/delete/'.printf(id);
+        return "/summary/{0}/delete/".printf(id);
     }
 
     static assessment_list_url(assessment_id) {
-        return '/summary/assessment/{0}/summaries/json/'.printf(assessment_id);
+        return "/summary/assessment/{0}/summaries/json/".printf(assessment_id);
     }
 
     get_option_item(lst) {
-        var title = this.depth === 1 ? '(document root)' : this.data.title;
+        var title = this.depth === 1 ? "(document root)" : this.data.title;
         lst.push(
             $(
                 '<option value="{0}">{1}{2}</option>'.printf(
                     this.id,
-                    Array(this.depth).join('&nbsp;&nbsp;'),
+                    Array(this.depth).join("&nbsp;&nbsp;"),
                     title
                 )
-            ).data('d', this)
+            ).data("d", this)
         );
         this.children.forEach(function(v) {
             v.get_option_item(lst);
@@ -58,7 +58,7 @@ class SummaryText {
         lst.push(
             $(
                 '<p class="summary_toc">{0}{1}</p>'.printf(this.get_tab_depth(), this.data.title)
-            ).data('d', this)
+            ).data("d", this)
         );
         this.children.forEach(function(v) {
             v.render_tree(lst);
@@ -66,20 +66,20 @@ class SummaryText {
     }
 
     get_tab_depth() {
-        return Array(this.depth - 1).join('&nbsp;&nbsp;');
+        return Array(this.depth - 1).join("&nbsp;&nbsp;");
     }
 
     print_section() {
         var div = $('<div id="{0}"></div>'.printf(this.data.slug)),
             header = $(
-                '<h{0}>{1} {2}</h{3}>'.printf(
+                "<h{0}>{1} {2}</h{3}>".printf(
                     this.depth,
                     this.section_label,
                     this.data.title,
                     this.depth
                 )
             ),
-            content = $('<div>{0}</div>'.printf(this.data.text));
+            content = $("<div>{0}</div>".printf(this.data.text));
 
         return div.append(header, content);
     }
