@@ -57,7 +57,9 @@ class DRPlot extends D3Plot {
             delete this.error_bars_upper;
             delete this.error_bars_lower;
             delete this.error_bar_group;
-        } catch (err) {}
+        } catch (err) {
+            // continue regardless of error
+        }
         this.plot_div.html("");
         this.get_plot_sizes();
         this.build_plot_skeleton(true);
@@ -424,7 +426,9 @@ class DRPlot extends D3Plot {
                 delete this.error_bars_lower;
                 delete this.error_bar_group;
             }
-        } catch (err) {}
+        } catch (err) {
+            // continue regardless of error
+        }
 
         if (!this.error_bar_group) {
             this.error_bar_group = this.vis.append("g").attr("class", "error_bars");

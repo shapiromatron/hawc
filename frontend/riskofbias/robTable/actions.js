@@ -1,4 +1,5 @@
 import fetch from "isomorphic-fetch";
+import d3 from "d3";
 import _ from "lodash";
 
 import * as types from "riskofbias/robTable/constants";

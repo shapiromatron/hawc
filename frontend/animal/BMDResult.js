@@ -57,6 +57,7 @@ class BMDResult extends EndpointCriticalDose {
             url = this.endpoint.data.bmd_url;
 
         if (bmd === null) {
+            // eslint-disable-next-line react/no-render-return-value
             return ReactDOM.render(<NoneSelected bmd_notes={bmd_notes} url={url} />, this.span[0]);
         }
 

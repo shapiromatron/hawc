@@ -37,7 +37,7 @@ const defaultState = {
 };
 
 function items(state = defaultState, action) {
-    let list, list2, list3, intersection, index;
+    let list, list2, list3, intersection, index, ids, patch, items;
     switch (action.type) {
         case types.REQUEST_STUDY_SCORES:
             return Object.assign({}, state, {
@@ -123,9 +123,9 @@ function items(state = defaultState, action) {
             });
 
         case types.PATCH_ITEMS:
-            let ids = action.patch.ids,
-                patch = _.omit(action.patch, "ids"),
-                items = state.items;
+            ids = action.patch.ids;
+            patch = _.omit(action.patch, "ids");
+            items = state.items;
 
             _.map(ids, id => {
                 let index = state.items.indexOf(_.find(state.items, {id}));

@@ -1,3 +1,4 @@
+import _ from "lodash";
 import React from "react";
 import PropTypes from "prop-types";
 import ReactDOM from "react-dom";
@@ -18,7 +19,7 @@ const CrossStudyDisplay = props => {
                 return (
                     <div key={rob.id}>
                         <h4>
-                            <a target="_blank" href={rob.study.url}>
+                            <a target="_blank" rel="noopener noreferrer" href={rob.study.url}>
                                 {rob.study.name}
                             </a>
                         </h4>
@@ -61,6 +62,7 @@ CrossStudyDisplay.propTypes = {
 };
 
 export function renderCrossStudyDisplay(data, element) {
+    // eslint-disable-next-line react/no-render-return-value
     return ReactDOM.render(<CrossStudyDisplay {...data} />, element);
 }
 

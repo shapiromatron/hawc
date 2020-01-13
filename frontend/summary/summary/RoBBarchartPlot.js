@@ -3,7 +3,7 @@ import d3 from "d3";
 
 import D3Visualization from "./D3Visualization";
 import RoBLegend from "./RoBLegend";
-import {SCORE_SHADES, SCORE_TEXT, NR_KEYS} from "riskofbias/constants";
+import {SCORE_SHADES, NR_KEYS} from "riskofbias/constants";
 
 class RoBBarchartPlot extends D3Visualization {
     constructor(parent, data, options) {

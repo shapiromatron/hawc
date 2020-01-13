@@ -73,6 +73,7 @@ class DataPivot {
         // make numbers in data numeric if possible
         // see https://github.com/mbostock/d3/wiki/CSV
         for (var field in row) {
+            // eslint-disable-next-line no-prototype-builtins
             if (row.hasOwnProperty(field)) {
                 row[field] = +row[field] || row[field];
             }
@@ -215,6 +216,7 @@ class DataPivot {
         // get headers
         var data_headers = [];
         for (var prop in this.data[0]) {
+            // eslint-disable-next-line no-prototype-builtins
             if (this.data[0].hasOwnProperty(prop)) {
                 data_headers.push(prop);
             }

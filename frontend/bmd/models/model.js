@@ -48,7 +48,7 @@ class BMDLine {
         let params = {},
             formula = formulas[this.model.name],
             estimates = this.model.output.fit_estimated,
-            params_in_formula = formula.match(/\{[\w\(\)]+\}/g);
+            params_in_formula = formula.match(/\{[\w()]+\}/g);
 
         // get parameter values for models
         _.each(this.model.output.parameters, (v, k) => {
@@ -73,11 +73,9 @@ class BMDLine {
             bmdl = this.model.output.BMDL,
             bmd_line,
             bmdl_line,
-            bmd_y,
-            x;
+            bmd_y;
 
         if (bmd && bmd > 0) {
-            x = bmd;
             bmd_y = eval(model);
             bmd_line = {
                 x: bmd,
@@ -86,7 +84,6 @@ class BMDLine {
         }
 
         if (bmdl && bmdl > 0) {
-            x = bmdl;
             bmdl_line = {
                 x: bmdl,
                 y: bmd_y,

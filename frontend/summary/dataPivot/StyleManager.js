@@ -208,6 +208,7 @@ class StyleManager {
         }
 
         for (var field in new_styles) {
+            // eslint-disable-next-line no-prototype-builtins
             if (style_object.settings.hasOwnProperty(field)) {
                 style_object.settings[field] = new_styles[field];
             }

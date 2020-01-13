@@ -1,4 +1,3 @@
-import $ from "$";
 import React, {Component} from "react";
 import {Tab, Tabs, TabList, TabPanel} from "react-tabs";
 import fetch from "isomorphic-fetch";

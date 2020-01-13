@@ -5,6 +5,7 @@ import _ from "lodash";
 
 class ScrollToErrorBox extends Component {
     componentDidMount() {
+        // eslint-disable-next-line react/no-find-dom-node
         let node = ReactDOM.findDOMNode(this);
         if (node) {
             node.scrollIntoView(false);
@@ -16,9 +17,9 @@ class ScrollToErrorBox extends Component {
 
         if (_.isNull(error)) {
             error = null;
-        } else if (error.hasOwnProperty("detail")) {
+        } else if (error.detail) {
             error = error.detail;
-        } else if (error.hasOwnProperty("message")) {
+        } else if (error.message) {
             error = error.message;
         }
 

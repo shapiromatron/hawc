@@ -44,7 +44,6 @@ class ModelOptionField extends React.Component {
                     <input
                         className="span12"
                         name={d.key}
-                        type="number"
                         onChange={handleChange}
                         value={v}
                         type="text"
@@ -55,7 +54,6 @@ class ModelOptionField extends React.Component {
                     <input
                         className="span12"
                         name={d.key}
-                        type="number"
                         onChange={handleChange}
                         value={v}
                         type="text"

@@ -62,13 +62,14 @@ const helpers = {
         window.history.back();
     },
     getValue(target) {
+        let val;
         switch (target.type) {
             case "checkbox":
                 return target.checked;
             case "number":
                 return parseFloat(target.value);
             case "select-one": // use isFinite in-case value is 0
-                let val = parseInt(target.value);
+                val = parseInt(target.value);
                 return _.isFinite(val) ? val : target.value;
             case "text":
             case "textarea":

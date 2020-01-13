@@ -1,7 +1,6 @@
 import React, {Component} from "react";
 import PropTypes from "prop-types";
 
-import h from "riskofbias/robScoreCleanup/utils/helpers";
 import ScoreDisplay from "riskofbias/robTable/components/ScoreDisplay";
 import Study from "study/Study";
 import "./CheckboxScoreDisplay.css";

@@ -10,7 +10,7 @@ class Header extends Component {
             return (
                 <p>
                     Please disregard the drop-down selections. They will be assigned as
-                    "Not-applicable" post-review.
+                    &quot;Not-applicable&quot; post-review.
                 </p>
             );
         } else {
@@ -84,8 +84,7 @@ class Header extends Component {
 
     render() {
         let headerText,
-            {isForm, display, assessment_id, hawc_flavor} = this.props.config,
-            helpText;
+            {isForm, display, assessment_id, hawc_flavor} = this.props.config;
         if (isForm) {
             headerText = display == "final" ? "Final review" : "Review";
         } else if (display == "all") {

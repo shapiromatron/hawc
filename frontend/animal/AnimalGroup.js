@@ -93,8 +93,8 @@ class AnimalGroup {
                 }
             },
             getDurationObservation = function(d) {
-                var d = data.duration_observation;
-                return d ? "{0} days".printf(d) : undefined;
+                var duration_observation = data.duration_observation;
+                return duration_observation ? `${duration_observation} days` : undefined;
             },
             getDoses = function(doses) {
                 if (doses.length === 0) return undefined;

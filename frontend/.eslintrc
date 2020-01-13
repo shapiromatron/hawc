@@ -11,8 +11,10 @@
         "react/jsx-uses-react": 2,
         "react/jsx-uses-vars": 2,
         "react/no-deprecated": 1,
+        "react/no-string-refs": 1,
         "react/prop-types": 1,
-        "react/react-in-jsx-scope": 2
+        "react/react-in-jsx-scope": 2,
+        "space-before-function-paren": [2, "never"]
     },
     "parser": "babel-eslint",
     "parserOptions": {
@@ -24,10 +26,10 @@
     },
     "env": {
         "browser": true,
-        "mocha": true,
         "es6": true,
-        "node": true,
-        "jquery": true
+        "jest": true,
+        "jquery": true,
+        "node": true
     },
     "extends": ["eslint:recommended", "plugin:react/recommended", "prettier"],
     "plugins": [

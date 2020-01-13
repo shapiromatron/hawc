@@ -433,33 +433,7 @@ class Endpoint extends Observee {
     }
 
     build_general_notes(div) {
-        var self = this,
-            tbl = new BaseTable(),
-            critical_dose = function(type) {
-                if (self.data[type] < 0) return;
-                var span = $("<span>");
-                new EndpointCriticalDose(self, span, type, true);
-                return span;
-            },
-            bmd_response = function(type, showURL) {
-                if (self.data.bmd === null) return;
-                var span = $("<span>");
-                new BMDResult(self, span, type, true, showURL);
-                return span;
-            },
-            getTaglist = function(tags, assessment_id) {
-                if (tags.length === 0) return false;
-                var ul = $('<ul class="nav nav-pills nav-stacked">');
-                tags.forEach(function(v) {
-                    ul.append(
-                        '<li><a href="{0}">{1}</a></li>'.printf(
-                            Endpoint.getTagURL(assessment_id, v.slug),
-                            v.name
-                        )
-                    );
-                });
-                return ul;
-            };
+        let tbl = new BaseTable();
         tbl.addHeaderRow(["Methodology"]);
         tbl.setColGroup([100]);
         tbl.tbody.append(this.data.endpoint_notes);

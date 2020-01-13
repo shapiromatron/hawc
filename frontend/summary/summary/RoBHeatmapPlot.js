@@ -285,7 +285,7 @@ class RoBHeatmapPlot extends D3Visualization {
                         "boolean" &&
                     self.data.aggregation.metrics_dataset[d].domain_is_overall_confidence
                 ) {
-                    var returnValue = "heatmap_selectable_bold";
+                    returnValue = "heatmap_selectable_bold";
                 }
 
                 return returnValue;

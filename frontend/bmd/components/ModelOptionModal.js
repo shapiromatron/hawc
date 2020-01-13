@@ -104,6 +104,7 @@ class ModelOptionModal extends BaseModal {
                                 {models.map((d, i) => {
                                     return (
                                         <ModelOptionField
+                                            key={i}
                                             index={i}
                                             settings={d}
                                             handleChange={this.handleInputChange.bind(this, d)}
@@ -119,6 +120,7 @@ class ModelOptionModal extends BaseModal {
                                 {optimizers.map((d, i) => {
                                     return (
                                         <ModelOptionField
+                                            key={i}
                                             index={i}
                                             settings={d}
                                             handleChange={this.handleInputChange.bind(this, d)}
@@ -136,6 +138,7 @@ class ModelOptionModal extends BaseModal {
                                 {params.map((d, i) => {
                                     return (
                                         <ParameterField
+                                            key={i}
                                             index={i}
                                             settings={d}
                                             handleChange={this.handleParameterChange.bind(this, d)}

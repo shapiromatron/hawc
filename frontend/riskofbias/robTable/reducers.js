@@ -1,3 +1,5 @@
+import _ from "lodash";
+
 import {combineReducers} from "redux";
 
 import config from "shared/reducers/Config";
@@ -15,6 +17,8 @@ const defaultState = {
 };
 
 function study(state = defaultState, action) {
+    let domains;
+
     switch (action.type) {
         case types.REQUEST:
             return Object.assign({}, state, {
@@ -58,7 +62,7 @@ function study(state = defaultState, action) {
                     active: state.riskofbiases,
                 });
             }
-            let domains = _.find(state.riskofbiases, {key: action.domain});
+            domains = _.find(state.riskofbiases, {key: action.domain});
             if (action.metric) {
                 let values = _.find(domains.values, {key: action.metric});
                 return Object.assign({}, state, {

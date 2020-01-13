@@ -1,5 +1,4 @@
 import $ from "$";
-import _ from "lodash";
 
 import HAWCUtils from "utils/HAWCUtils";
 

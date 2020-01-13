@@ -137,7 +137,9 @@ class BaseVisualForm {
                     self.settings[key] = val;
                 }
             });
-        } catch (err) {}
+        } catch (err) {
+            // run anyways
+        }
         this.fields.forEach(function(d) {
             d.fromSerialized();
         });

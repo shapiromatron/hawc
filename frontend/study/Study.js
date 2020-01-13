@@ -8,7 +8,7 @@ import HAWCUtils from "utils/HAWCUtils";
 
 import RiskOfBiasScore from "riskofbias/RiskOfBiasScore";
 import {renderStudyDisplay} from "riskofbias/robTable/components/StudyDisplay";
-import {SCORE_SHADES, SCORE_TEXT, NA_KEYS} from "riskofbias/constants";
+import {SCORE_SHADES, SCORE_TEXT} from "riskofbias/constants";
 
 class Study {
     constructor(data) {
