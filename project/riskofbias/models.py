@@ -41,6 +41,8 @@ class RiskOfBiasDomain(models.Model):
     last_updated = models.DateTimeField(
         auto_now=True)
 
+    COPY_NAME = 'riskofbiasdomains'
+
     class Meta:
         unique_together = ('assessment', 'name')
         ordering = ('pk', )
@@ -76,73 +78,15 @@ class RiskOfBiasDomain(models.Model):
                 description=domain['description'])
             RiskOfBiasMetric.build_metrics_for_one_domain(d, domain['metrics'])
 
-    @classmethod
-    def copy_across_assessment(cls, cw, studies, assessment):
-        # Copy domain and metrics across studies as well. If a domain and
-        # metric have identical names in the new assessment as the old,
-        # then don't create new metrics and domains. If the names are not
-        # identical, then create a new one. Save metric old:new IDs in a
-        # crosswalk which is returned.
-
-        # assert all studies come from a single assessment
-        source_assessment = Assessment.objects\
-            .filter(references__in=studies)\
-            .distinct()
-        if source_assessment.count() != 1:
-            raise ValueError('Studies must come from the same assessment')
-        source_assessment = source_assessment[0]
-        cw[Assessment.COPY_NAME][source_assessment.id] = assessment.id
-
-        def get_key(metric):
-            return '{}: {}'.format(metric.domain.name, metric.name)
-
-        # create a map of domain + metric for new assessment
-        metrics = RiskOfBiasMetric.objects\
-            .filter(domain__assessment=assessment)
-        metric_mapping = {get_key(metric): metric.id for metric in metrics}
-
-        # if any duplicates exist; create new
-        if len(metric_mapping) != metrics.count():
-            metric_mapping = {}
-
-        # create a map of existing domains for assessment
-        domain_mapping = {
-            domain.name: domain.id for domain in
-            cls.objects.filter(assessment=assessment)
-        }
-
-        # map or create new objects
-        for metric in RiskOfBiasMetric.objects\
-                .filter(domain__assessment=source_assessment):
-
-            source_metric_id = metric.id
-            key = get_key(metric)
-            target_metric_id = metric_mapping.get(key)
-
-            # if existing metric doesn't exist, make one
-            if target_metric_id is None:
-
-                domain = metric.domain
-                # if existing domain doesn't exist, make one
-                if domain_mapping.get(domain.name) is None:
-                    # domain not found; we must create one
-                    domain.id = None
-                    domain.assessment_id = assessment.id
-                    domain.save()
-                    domain_mapping[domain.name] = domain.id
-                    logging.info('Created RoB domain: {} -> {}'.
-                                 format(domain.name, domain.id))
-
-                metric.id = None
-                metric.domain_id = domain_mapping[domain.name]
-                metric.save()
-                target_metric_id = metric.id
-                logging.info('Created RoB metric: {} -> {}'.
-                             format(key, target_metric_id))
-
-            cw[RiskOfBiasMetric.COPY_NAME][source_metric_id] = target_metric_id
-
-        return cw
+    def copy_across_assessments(self, cw):
+        children = list(self.metrics.all())
+        old_id = self.id
+        self.id = None
+        self.assessment_id = cw[Assessment.COPY_NAME][self.assessment_id]
+        self.save()
+        cw[self.COPY_NAME][old_id] = self.id
+        for child in children:
+            child.copy_across_assessments(cw)
 
 
 class RiskOfBiasMetric(models.Model):
@@ -184,7 +128,7 @@ class RiskOfBiasMetric(models.Model):
     last_updated = models.DateTimeField(
         auto_now=True)
 
-    COPY_NAME = 'metrics'
+    COPY_NAME = 'riskofbiasmetrics'
 
     class Meta:
         ordering = ('domain', 'id')
@@ -208,6 +152,13 @@ class RiskOfBiasMetric(models.Model):
             objs.append(obj)
         RiskOfBiasMetric.objects.bulk_create(objs)
 
+    def copy_across_assessments(self, cw):
+        old_id = self.id
+        self.id = None
+        self.domain_id = cw[RiskOfBiasDomain.COPY_NAME][self.domain_id]
+        self.save()
+        cw[self.COPY_NAME][old_id] = self.id
+
 
 class RiskOfBias(models.Model):
     objects = managers.RiskOfBiasManager()
@@ -229,6 +180,8 @@ class RiskOfBias(models.Model):
         auto_now_add=True)
     last_updated = models.DateTimeField(
         auto_now=True)
+
+    COPY_NAME = 'riskofbiases'
 
     class Meta:
         verbose_name_plural = 'Risk of Biases'
@@ -361,32 +314,15 @@ class RiskOfBias(models.Model):
             ser['author']['full_name']
         )
 
-    @classmethod
-    def copy_across_assessment(cls, cw, studies, assessment):
-        # Copy active, final, risk of bias assessments for each study, and
-        # assign to project manager selected at random. Requires that for all
-        # studies, a crosswalk exists which assigns a new RiskOfBiasMetric ID
-        # from the old RiskOfBiasMetric ID.
-
-        author = assessment.project_manager.first()
-        final_robs = cls.objects.filter(study__in=studies, active=True, final=True)
-
-        # copy reviews and scores
-        for rob in final_robs:
-            scores = list(rob.scores.all())
-
-            rob.id = None
-            rob.study_id = cw[Study.COPY_NAME][rob.study_id]
-            rob.author = author
-            rob.save()
-
-            for score in scores:
-                score.id = None
-                score.riskofbias_id = rob.id
-                score.metric_id = cw[RiskOfBiasMetric.COPY_NAME][score.metric_id]
-                score.save()
-
-        return cw
+    def copy_across_assessments(self, cw):
+        children = list(self.scores.all())
+        old_id = self.id
+        self.id = None
+        self.study_id = cw[Study.COPY_NAME][self.study_id]
+        self.save()
+        cw[self.COPY_NAME][old_id] = self.id
+        for child in children:
+            child.copy_across_assessments(cw)
 
     @classmethod
     def get_dp_export(cls, assessment_id: int, study_ids: List[int], data_type: str) -> Tuple[Dict, Dict]:
@@ -535,6 +471,8 @@ class RiskOfBiasScore(models.Model):
     notes = models.TextField(
         blank=True)
 
+    COPY_NAME = 'riskofbiasscores'
+
     class Meta:
         ordering = ('metric', 'id')
 
@@ -588,6 +526,14 @@ class RiskOfBiasScore(models.Model):
         rob_ids, study_ids = list(zip(*id_lists))
         RiskOfBias.delete_caches(rob_ids)
         Study.delete_caches(study_ids)
+
+    def copy_across_assessments(self, cw):
+        old_id = self.id
+        self.id = None
+        self.riskofbias_id = cw[RiskOfBias.COPY_NAME][self.riskofbias_id]
+        self.metric_id = cw[RiskOfBiasMetric.COPY_NAME][self.metric_id]
+        self.save()
+        cw[self.COPY_NAME][old_id] = self.id
 
 
 DEFAULT_QUESTIONS_OHAT = 1
@@ -648,6 +594,8 @@ class RiskOfBiasAssessment(models.Model):
         help_text="Why responses should be used to answering questions:"
     )
 
+    COPY_NAME = 'riskofbiasassessments'
+
     def get_absolute_url(self):
         return reverse('riskofbias:arob_reviewers', args=[self.assessment.pk])
 
@@ -666,6 +614,14 @@ class RiskOfBiasAssessment(models.Model):
             return [27, 26, 25, 22, 24, 20]
         else:
             raise ValueError(f"Unknown responses: {self.responses}")
+
+    def copy_across_assessments(self, cw):
+        old_id = self.id
+        self.id = None
+        new_assessment_id = cw[Assessment.COPY_NAME][self.assessment_id]
+        self.assessment_id = new_assessment_id
+        self.save()
+        cw[self.COPY_NAME][old_id] = self.id
 
 
 reversion.register(RiskOfBiasDomain)

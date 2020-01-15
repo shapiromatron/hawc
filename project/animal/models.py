@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import collections
+from itertools import chain
 import json
 import math
 
@@ -201,7 +202,7 @@ class Experiment(models.Model):
         )
 
     def copy_across_assessments(self, cw):
-        children = list(self.animal_groups.all())
+        children = list(self.animal_groups.all().order_by('id'))
         old_id = self.id
         self.id = None
         self.study_id = cw[Study.COPY_NAME][self.study_id]
@@ -429,13 +430,22 @@ class AnimalGroup(models.Model):
                 .values_list('id', flat=True)
         )
 
-    def copy_across_assessments(self, cw):
-        children = list(self.endpoints.all())
+    def copy_across_assessments(self, cw, skip_siblings: bool = False):
+        children = list(self.endpoints.all().order_by('id'))
         old_id = self.id
         parent_ids = [p.id for p in self.parents.all()]
         self.id = None
         self.experiment_id = cw[Experiment.COPY_NAME][self.experiment_id]
         self.save()
+
+        # set two-way sibling relationship; use skip_siblings to prevent recursion
+        if self.siblings and not skip_siblings:
+            if self.siblings_id not in cw[self.COPY_NAME]:
+                self.siblings.copy_across_assessments(cw, skip_siblings=True)
+            self.siblings_id = cw[self.COPY_NAME][self.siblings_id]
+            self.__class__.objects.filter(id=self.siblings_id).update(siblings_id=self.id)
+            self.save()
+
         cw[self.COPY_NAME][old_id] = self.id
         cw[self.COPY_NAME]['parents'][self.id] = parent_ids
         for child in children:
@@ -639,7 +649,7 @@ class DosingRegime(models.Model):
             return doses
 
     def copy_across_assessments(self, cw):
-        children = list(self.dose_groups)
+        children = list(self.dose_groups.all().order_by('id'))
         old_id = self.id
         self.id = None
         self.dosed_animals_id = cw[AnimalGroup.COPY_NAME].get(self.dosed_animals_id, None)
@@ -1189,7 +1199,11 @@ class Endpoint(BaseEndpoint):
             return None
 
     def copy_across_assessments(self, cw):
-        children = list(self.groups.all())
+        children = chain(
+            list(self.groups.all().order_by('id')),
+            list(self.bmd_sessions.all().order_by('id'))
+        )
+        effects = list(self.effects.all().order_by('id'))
 
         old_id = self.id
         new_assessment_id = cw[Assessment.COPY_NAME][self.assessment_id]
@@ -1208,11 +1222,7 @@ class Endpoint(BaseEndpoint):
         self.save()
         cw[self.COPY_NAME][old_id] = self.id
 
-        # copy tags
-        for tag in self.effects.through.objects.filter(baseendpoint_id=old_id):
-            tag.id = None
-            tag.baseendpoint_id = self.id
-            tag.save()
+        self.effects.set(effects)
 
         # copy other children
         for child in children:

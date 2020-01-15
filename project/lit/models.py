@@ -521,22 +521,6 @@ class ReferenceFilterTag(NonUniqueTagBase, AssessmentRootMixin, MP_Node):
         exc.add_child(name='Tier III')
 
     @classmethod
-    def copy_tags(cls, copy_to_assessment, copy_from_assessment):
-        # delete existing tags for this assessment
-        old_root = cls.get_assessment_root(copy_to_assessment.pk)
-        old_root.delete()
-
-        # copy tags from alternative assessment, renaming root-tag
-        root = cls.get_assessment_root(copy_from_assessment.pk)
-        tags = cls.dump_bulk(root)
-        tags[0]['data']['name'] = cls.get_assessment_root_name(copy_to_assessment.pk)
-        tags[0]['data']['slug'] = cls.get_assessment_root_name(copy_to_assessment.pk)
-
-        # insert as new taglist
-        cls.load_bulk(tags, parent=None, keep_ids=False)
-        cls.clear_cache(copy_to_assessment.pk)
-
-    @classmethod
     def get_flattened_taglist(cls, tagslist, include_parent=True):
         # expects tags dictionary dump_bulk format
         lst = []
