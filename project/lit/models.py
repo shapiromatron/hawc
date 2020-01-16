@@ -114,9 +114,9 @@ class Search(models.Model):
         return self.assessment
 
     def delete(self, **kwargs):
-        assessment_pk = self.assessment.pk
+        ref_ids = list(self.references.all().values_list('id', flat=True))
         super().delete(**kwargs)
-        Reference.objects.delete_orphans(assessment_pk)
+        Reference.objects.delete_orphans(assessment_id=self.assessment_id, ref_ids=ref_ids)
 
     @property
     def search_string_text(self):
