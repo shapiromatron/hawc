@@ -1,0 +1,21 @@
+name: frontend-ci
+
+on: [pull_request]
+
+jobs:
+  build:
+
+    name: frontend-lint
+
+    runs-on: ubuntu-18.04
+
+    steps:
+    - uses: actions/checkout@v1
+    - uses: actions/setup-node@v1
+      with:
+        node-version: '12.x'
+    - name: yarn install and lint
+      run: |
+        npm install -g yarn
+        yarn --cwd ./frontend install
+        npm --prefix ./frontend run lint
