@@ -5,21 +5,31 @@ could potentially be deleted if deemed orphaned. This script forces adoption.
 ```bash
 cd /path/to/hawc/project
 source ../venv/bin/activate
-python manage.py shell < ./scripts/adopt_references.py
+python ../scripts/adopt_references.py
 ```
 """
+import os
+from pathlib import Path
+import sys
+
 import django
 from django.db import models, transaction
 from django.core import management
+
+
+ROOT = str((Path(__file__).parents[1] / 'project').resolve())
+sys.path.append(ROOT)
+os.chdir(ROOT)
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "hawc.settings.local")
 
 django.setup()
 
 from lit.models import Reference, Search  # noqa: E402
 
 
-@transaction.atomic()
+@transaction.atomic
 def adopt_studies(assessment_id: int):
-    print('Fixing {assessment_id}')
+    print(f'Fixing {assessment_id}')
     orphans = (
         Reference.objects
         .filter(assessment_id=assessment_id)

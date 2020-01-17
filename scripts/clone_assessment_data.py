@@ -18,7 +18,7 @@ ROOT = str(Path(__file__).parents[0].resolve())
 sys.path.append(ROOT)
 os.chdir(ROOT)
 
-os.environ["DJANGO_SETTINGS_MODULE"] = "hawc.settings.local"
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "hawc.settings.local")
 django.setup()
 logger = logging.getLogger(__name__)
 

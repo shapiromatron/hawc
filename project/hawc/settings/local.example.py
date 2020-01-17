@@ -8,7 +8,7 @@ DATABASES = {
         'NAME': 'hawc',
         'USER': 'postgres',
         'PASSWORD': 'password',
-        'HOST': '',
+        'HOST': 'localhost',
         'PORT': '',
     }
 }

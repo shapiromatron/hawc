@@ -79,7 +79,7 @@ class RiskOfBiasDomain(models.Model):
             RiskOfBiasMetric.build_metrics_for_one_domain(d, domain['metrics'])
 
     def copy_across_assessments(self, cw):
-        children = list(self.metrics.all())
+        children = list(self.metrics.all().order_by('id'))
         old_id = self.id
         self.id = None
         self.assessment_id = cw[Assessment.COPY_NAME][self.assessment_id]
@@ -315,7 +315,7 @@ class RiskOfBias(models.Model):
         )
 
     def copy_across_assessments(self, cw):
-        children = list(self.scores.all())
+        children = list(self.scores.all().order_by('id'))
         old_id = self.id
         self.id = None
         self.study_id = cw[Study.COPY_NAME][self.study_id]

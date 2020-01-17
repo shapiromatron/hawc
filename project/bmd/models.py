@@ -335,7 +335,7 @@ class Session(models.Model):
 
     def copy_across_assessments(self, cw):
         old_id = self.id
-        children = list(self.models.all())
+        children = list(self.models.all().order_by('id'))
 
         self.id = None
         self.endpoint_id = cw[self.endpoint.COPY_NAME][self.endpoint_id]
