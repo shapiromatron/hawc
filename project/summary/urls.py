@@ -69,6 +69,9 @@ urlpatterns = [
         views.DataPivotCopyAsNewSelector.as_view(),
         name='dp_copy_selector'),
 
+    url(r'^data-pivot/(?P<pk>\d+)/$',
+        views.DataPivotByIdDetail.as_view(),
+        name='dp_detail_id'),
     url(r'^data-pivot/assessment/(?P<pk>\d+)/(?P<slug>[\w-]+)/$',
         views.DataPivotDetail.as_view(),
         name='dp_detail'),

@@ -1,5 +1,6 @@
 import json
 import logging
+from typing import List
 
 from django.apps import apps
 from django.core.exceptions import ValidationError
@@ -208,14 +209,21 @@ class ReferenceManager(BaseManager):
         ]
         m2m.objects.bulk_create(objects)
 
-    def delete_orphans(self, assessment_pk):
-        # Remove orphan references (references with no associated searches)
-        orphans = self.get_qs(assessment_pk)\
-                     .only("id")\
-                     .annotate(searches_count=models.Count('searches'))\
-                     .filter(searches_count=0)
-        logging.info("Removing {} orphan references from assessment {}".format(
-                        orphans.count(), assessment_pk))
+    def delete_orphans(self, assessment_id: int, ref_ids: List[int]):
+        """
+        Remove orphan references (references with no associated searches). Note that this only
+        searches in a given space of reference ids.
+
+        Args:
+            assessment_id (int): the assessment to search
+            ref_ids (List[int]): list of references to check if orphaned
+        """
+        orphans = self.get_qs(assessment_id)\
+            .filter(id__in=ref_ids)\
+            .only("id")\
+            .annotate(searches_count=models.Count('searches'))\
+            .filter(searches_count=0)
+        logging.info(f"Removed {orphans.count()} orphan references from assessment {assessment_id}")
         orphans.delete()
 
     def get_full_assessment_json(self, assessment, json_encode=True):

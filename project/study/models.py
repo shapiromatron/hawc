@@ -15,7 +15,7 @@ from reversion import revisions as reversion
 
 from assessment.models import Assessment
 from assessment.serializers import AssessmentSerializer
-from lit.models import Reference
+from lit.models import Reference, Search
 from utils.helper import HAWCDjangoJSONEncoder, SerializerHelper, cleanHTML
 from utils.models import get_crumbs
 
@@ -140,9 +140,11 @@ class Study(Reference):
 
     @classmethod
     @transaction.atomic
-    def copy_across_assessment(cls, studies, assessment):
+    def copy_across_assessment(cls, studies, assessment, cw=None, copy_rob=False):
+
         # copy selected studies from one assessment to another.
-        cw = collections.defaultdict(dict)
+        if cw is None:
+            cw = collections.defaultdict(dict)
 
         # assert all studies come from a single assessment
         source_assessment = Assessment.objects\
@@ -163,21 +165,24 @@ class Study(Reference):
             # get child-types and copy
             children = []
 
+            if copy_rob:
+                children.extend(list(study.riskofbiases.all().order_by('id')))
+
             if study.bioassay:
-                children.extend(list(study.experiments.all()))
+                children.extend(list(study.experiments.all()).order_by('id'))
 
             if study.epi:
-                children.extend(list(study.study_populations.all()))
+                children.extend(list(study.study_populations.all()).order_by('id'))
 
             if study.in_vitro:
                 children.extend(itertools.chain(
-                    study.ivchemicals.all(),
-                    study.ivcelltypes.all(),
-                    study.ivexperiments.all()))
+                    study.ivchemicals.all().order_by('id'),
+                    study.ivcelltypes.all().order_by('id'),
+                    study.ivexperiments.all().order_by('id')))
 
             if study.epi_meta:
                 any_epi_meta = True
-                children.extend(list(study.meta_protocols.all()))
+                children.extend(list(study.meta_protocols.all().order_by('id')))
 
             # copy study and references
             study._copy_across_assessment(cw)
@@ -191,7 +196,7 @@ class Study(Reference):
             logging.info('Copying epi results')
             SingleResult = apps.get_model('epimeta', 'SingleResult')
             results = SingleResult.objects\
-                .filter(meta_result__protocol__study__in=studies)
+                .filter(meta_result__protocol__study__in=studies).order_by('id')
             for result in results:
                 result.copy_across_assessments(cw)
 
@@ -207,6 +212,11 @@ class Study(Reference):
         ref.assessment_id = cw[Assessment.COPY_NAME][self.assessment_id]
         ref.save()
         ref.identifiers.add(*idents)
+
+        # associate reference w/ manually added search else it'll be designated an
+        # orphan reference which could potentially be deleted by users.
+        manual_search = Search.objects.get_manually_added(ref.assessment_id)
+        manual_search.references.add(ref)
 
         # copy study
         old_id = self.id

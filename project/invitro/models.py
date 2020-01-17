@@ -269,7 +269,7 @@ class IVExperiment(models.Model):
         return get_crumbs(self, self.study)
 
     def copy_across_assessments(self, cw):
-        children = list(self.endpoints.all())
+        children = list(self.endpoints.all().order_by('id'))
         old_id = self.id
         self.id = None
         self.study_id = cw[Study.COPY_NAME][self.study_id]
@@ -515,9 +515,10 @@ class IVEndpoint(BaseEndpoint):
 
     def copy_across_assessments(self, cw):
         children = list(itertools.chain(
-            self.groups.all(),
-            self.benchmarks.all(),
+            self.groups.all().order_by('id'),
+            self.benchmarks.all().order_by('id'),
         ))
+        effects = list(self.effects.all().order_by('id'))
         old_id = self.id
         new_assessment_id = cw[Assessment.COPY_NAME][self.assessment_id]
 
@@ -537,11 +538,7 @@ class IVEndpoint(BaseEndpoint):
         self.save()
         cw[self.COPY_NAME][old_id] = self.id
 
-        # copy tags
-        for tag in self.effects.through.objects.filter(baseendpoint_id=old_id):
-            tag.id = None
-            tag.baseendpoint_id = self.id
-            tag.save()
+        self.effects.set(effects)
 
         if self.category:
             self.category.copy_across_assessments(cw)

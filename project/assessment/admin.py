@@ -4,6 +4,16 @@ from django.contrib import admin
 from . import models
 
 
+def bust_cache(modeladmin, request, queryset):
+    for assessment in queryset:
+        assessment.bust_cache()
+    message = f"Cache for {queryset.count()} assessment(s) busted!"
+    modeladmin.message_user(request, message)
+
+
+bust_cache.short_description = "Clear cache for selected assessments"
+
+
 class AssessmentAdmin(admin.ModelAdmin):
     list_display = (
         '__str__', 'get_managers', 'get_team_members', 'get_reviewers'
@@ -15,6 +25,8 @@ class AssessmentAdmin(admin.ModelAdmin):
         'name', 'project_manager__last_name',
         'team_members__last_name', 'reviewers__last_name'
     )
+
+    actions = (bust_cache, )
 
     def queryset(self, request):
         qs = super().queryset(request)

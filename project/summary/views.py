@@ -4,7 +4,7 @@ import os
 from django.core.urlresolvers import reverse_lazy
 from django.http import HttpResponse, Http404, HttpResponseRedirect, HttpResponseNotAllowed
 from django.shortcuts import get_object_or_404
-from django.views.generic import TemplateView, FormView
+from django.views.generic import TemplateView, FormView, RedirectView
 import pandas as pd
 
 from assessment.models import Assessment
@@ -305,6 +305,14 @@ class GetDataPivotObjectMixin(object):
         else:
             obj = obj.datapivotupload
         return super().get_object(object=obj)
+
+
+class DataPivotByIdDetail(RedirectView):
+    """
+    Redirect to standard data pivot page; useful for developers referencing by database id.
+    """
+    def get_redirect_url(*args, **kwargs):
+        return get_object_or_404(models.DataPivot, id=kwargs.get('pk')).get_absolute_url()
 
 
 class DataPivotDetail(GetDataPivotObjectMixin, BaseDetail):

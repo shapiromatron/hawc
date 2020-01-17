@@ -1,12 +1,19 @@
+from pathlib import Path
 import os
 import sys
 
-sys.path.append(os.path.abspath('..'))
-sys.path.append(os.path.abspath('../../hawc/project'))
+paths = [
+    str(Path('..').resolve()),
+    str(Path('../../hawc/project').resolve()),
+]
+sys.path.extend(paths)
 
-import logging
-import django
 
+import logging  # noqa: E402
+import django  # noqa: E402
+
+
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "hawc.settings.local")
 django.setup()
 logging.disable(logging.WARNING)
 
