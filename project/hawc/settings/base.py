@@ -274,7 +274,7 @@ BMDS_SUBMISSION_URL = os.getenv('BMDS_SUBMISSION_URL', 'http://example.com/api/d
 BMDS_TOKEN = os.getenv('BMDS_TOKEN', 'token')
 
 # increase allowable fields in POST for updating reviewers
-DATA_UPLOAD_MAX_NUMBER_FIELDS = 2000
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000
 
 # Chemspider token details
 CHEMSPIDER_TOKEN = os.getenv('CHEMSPIDER_TOKEN', '')
