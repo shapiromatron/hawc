@@ -366,7 +366,7 @@ class getStrains(TemplateView):
         try:
             sp = models.Species.objects.get(pk=request.GET.get("species"))
             strains = list(models.Strain.objects.filter(species=sp).values("id", "name"))
-        except:
+        except Exception:
             pass
         return HttpResponse(json.dumps(strains), content_type="application/json")
 
@@ -488,12 +488,12 @@ class DownloadPlot(FormView):
         return super().dispatch(*args, **kwargs)
 
     EXPORT_CROSSWALK = {
-        "svg": {"fn": tasks.convert_to_svg, "ct": "image/svg+xml",},
-        "png": {"fn": tasks.convert_to_png, "ct": "application/png",},
-        "pdf": {"fn": tasks.convert_to_pdf, "ct": "application/pdf",},
+        "svg": {"fn": tasks.convert_to_svg, "ct": "image/svg+xml"},
+        "png": {"fn": tasks.convert_to_png, "ct": "application/png"},
+        "pdf": {"fn": tasks.convert_to_pdf, "ct": "application/pdf"},
         "pptx": {
             "fn": tasks.convert_to_pptx,
-            "ct": "application/vnd.openxmlformats-officedocument.presentationml.presentation",  # noqa
+            "ct": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
         },
     }
 

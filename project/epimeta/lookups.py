@@ -1,7 +1,6 @@
 from selectable.registry import registry
 
 from utils.lookups import RelatedDistinctStringLookup, RelatedLookup
-from utils.helper import tryParseInt
 from . import models
 
 

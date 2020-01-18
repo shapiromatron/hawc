@@ -34,10 +34,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         # check inputs are valid
         if len(options) >= 3:
-            app = apps.get_app_config(options["appname"]).models_module
             model = apps.get_model(options["appname"], options["modelname"])
-            field = model._meta.get_field(options["fieldname"])
-            # get all objects
             qs = model.objects.all()
         else:
             raise CommandError("Requires three arguments: {}".format(options))

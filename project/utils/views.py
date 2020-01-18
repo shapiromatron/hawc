@@ -1,7 +1,6 @@
 import abc
 import logging
 
-from django.apps import apps
 from django.core.exceptions import PermissionDenied, EmptyResultSet
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required

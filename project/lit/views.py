@@ -92,7 +92,7 @@ class RefDownloadExcel(BaseList):
         try:
             tag_id = int(request.GET.get("tag_id"))
             self.tag = models.ReferenceFilterTag.get_tag_in_assessment(self.assessment.id, tag_id)
-        except:
+        except Exception:
             self.tag = None
         return super().get(request, *args, **kwargs)
 

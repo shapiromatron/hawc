@@ -14,7 +14,7 @@ from scipy.stats import t
 
 from assessment.models import Assessment, BaseEndpoint, EffectTag
 from study.models import Study
-from utils.models import get_crumbs, get_distinct_charfield_opts
+from utils.models import get_crumbs
 from utils.helper import SerializerHelper, HAWCDjangoJSONEncoder
 
 from . import managers

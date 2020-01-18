@@ -118,7 +118,7 @@ class IdentifiersManager(BaseManager):
             if (
                 db is not None
                 and ref["accession_number"] is not None
-                and ref["accession_number"] is not ""
+                and ref["accession_number"] != ""
             ):
                 db_id = None
                 if db == "wos":
@@ -348,7 +348,7 @@ class ReferenceManager(BaseManager):
             )
             inclusion_tags = list(root_inclusion.get_descendants().values_list("pk", flat=True))
             inclusion_tags.append(root_inclusion.pk)
-        except:
+        except Exception:
             inclusion_tags = []
 
         return (

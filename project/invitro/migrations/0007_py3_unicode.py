@@ -131,7 +131,7 @@ class Migration(migrations.Migration):
             model_name="ivendpoint",
             name="data_type",
             field=models.CharField(
-                choices=[("C", "Continuous"), ("D", "Dichotomous"), ("NR", "Not reported"),],
+                choices=[("C", "Continuous"), ("D", "Dichotomous"), ("NR", "Not reported")],
                 default="C",
                 max_length=2,
                 verbose_name="Dataset type",
@@ -270,7 +270,7 @@ class Migration(migrations.Migration):
             model_name="ivendpointgroup",
             name="cytotoxicity_observed",
             field=models.NullBooleanField(
-                choices=[(None, "not reported"), (False, "not observed"), (True, "observed"),],
+                choices=[(None, "not reported"), (False, "not observed"), (True, "observed")],
                 default=None,
             ),
         ),
@@ -292,7 +292,7 @@ class Migration(migrations.Migration):
             model_name="ivendpointgroup",
             name="precipitation_observed",
             field=models.NullBooleanField(
-                choices=[(None, "not reported"), (False, "not observed"), (True, "observed"),],
+                choices=[(None, "not reported"), (False, "not observed"), (True, "observed")],
                 default=None,
             ),
         ),

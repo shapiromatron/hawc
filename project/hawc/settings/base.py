@@ -1,5 +1,6 @@
 import os
 import sys
+from typing import List, Tuple
 
 from django.core.urlresolvers import reverse_lazy
 
@@ -8,6 +9,7 @@ PROJECT_PATH = os.path.abspath(
     os.path.join(os.path.dirname(__file__), os.path.join(os.pardir, os.pardir))
 )
 PROJECT_ROOT = os.path.abspath(os.path.join(PROJECT_PATH, os.pardir))
+PUBLIC_DATA_ROOT = os.environ.get("PUBLIC_DATA_ROOT", os.path.join(PROJECT_ROOT, "public"))
 
 DEBUG = False
 
@@ -21,7 +23,7 @@ USE_I18N = False
 USE_L10N = True
 USE_TZ = True
 
-ADMINS = []
+ADMINS: List[Tuple[str, str]] = []
 _admin_names = os.getenv("DJANGO_ADMIN_NAMES", "")
 _admin_emails = os.getenv("DJANGO_ADMIN_EMAILS", "")
 if len(_admin_names) > 0 and len(_admin_emails) > 0:
@@ -39,7 +41,7 @@ TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         "APP_DIRS": True,
-        "DIRS": [os.path.join(PROJECT_PATH, "templates"),],
+        "DIRS": [os.path.join(PROJECT_PATH, "templates")],
         "OPTIONS": {
             "context_processors": (
                 "django.contrib.auth.context_processors.auth",
@@ -168,7 +170,7 @@ LOGIN_REDIRECT_URL = reverse_lazy("portal")
 
 # Static files
 STATIC_URL = "/static/"
-STATIC_ROOT = os.path.join(PROJECT_ROOT, "public", "static")
+STATIC_ROOT = os.path.join(PUBLIC_DATA_ROOT, "static")
 STATICFILES_DIRS = (os.path.join(PROJECT_ROOT, "project", "static"),)
 STATICFILES_FINDERS = (
     "django.contrib.staticfiles.finders.FileSystemFinder",
@@ -178,7 +180,7 @@ STATICFILES_FINDERS = (
 
 # Media files
 MEDIA_URL = "/media/"
-MEDIA_ROOT = os.path.join(PROJECT_ROOT, "public", "media")
+MEDIA_ROOT = os.path.join(PUBLIC_DATA_ROOT, "media")
 FILE_UPLOAD_PERMISSIONS = 0o755
 
 
@@ -195,10 +197,10 @@ LOGGING = {
         },
         "simple": {"format": "%(levelname)s %(message)s"},
     },
-    "filters": {"require_debug_false": {"()": "django.utils.log.RequireDebugFalse",}},
+    "filters": {"require_debug_false": {"()": "django.utils.log.RequireDebugFalse"}},
     "handlers": {
-        "null": {"level": "DEBUG", "class": "logging.NullHandler",},
-        "console": {"level": "DEBUG", "class": "logging.StreamHandler", "formatter": "simple",},
+        "null": {"level": "DEBUG", "class": "logging.NullHandler"},
+        "console": {"level": "DEBUG", "class": "logging.StreamHandler", "formatter": "simple"},
         "mail_admins": {
             "level": "ERROR",
             "class": "django.utils.log.AdminEmailHandler",
@@ -215,9 +217,9 @@ LOGGING = {
         },
     },
     "loggers": {
-        "": {"handlers": ["null"], "level": "DEBUG",},
-        "django": {"handlers": ["null"], "propagate": True, "level": "INFO",},
-        "django.request": {"handlers": ["mail_admins"], "level": "ERROR", "propagate": False,},
+        "": {"handlers": ["null"], "level": "DEBUG"},
+        "django": {"handlers": ["null"], "propagate": True, "level": "INFO"},
+        "django.request": {"handlers": ["mail_admins"], "level": "ERROR", "propagate": False},
     },
 }
 

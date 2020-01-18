@@ -352,7 +352,7 @@ class Visual(models.Model):
         dose_units = None
         try:
             dose_units = int(request.POST.get("dose_units"))
-        except (TypeError, ValueError) as e:
+        except (TypeError, ValueError):
             # TypeError if dose_units is None; ValueError if dose_units is ""
             pass
 
@@ -765,7 +765,7 @@ class DataPivotQuery(DataPivot):
                 raise NotImplementedError()
 
             model_cw = cw[get_model_copy_name(Model)]
-            for override in row_overrides:
+            for override in settings["row_overrides"]:
                 override.update(pk=model_cw[override["pk"]])
 
         return json.dumps(settings)

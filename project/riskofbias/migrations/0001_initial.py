@@ -89,7 +89,7 @@ class Migration(migrations.Migration):
                     ),
                 ),
             ],
-            options={"ordering": ("pk",),},
+            options={"ordering": ("pk",)},
         ),
         migrations.CreateModel(
             name="RiskOfBiasMetric",
@@ -134,7 +134,7 @@ class Migration(migrations.Migration):
                     ),
                 ),
             ],
-            options={"ordering": ("domain", "id"),},
+            options={"ordering": ("domain", "id")},
         ),
         migrations.AddField(
             model_name="riskofbias",

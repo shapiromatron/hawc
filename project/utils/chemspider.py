@@ -47,7 +47,7 @@ def fetch_chemspider(cas_number):
             # call it a success if we made it here
             d["status"] = "success"
 
-    except AttributeError as e:
+    except AttributeError:
         logger.error(f"Request failed: {response.text}", exc_info=True)
 
     except Exception as e:

@@ -177,7 +177,7 @@ class Migration(migrations.Migration):
                     ),
                 ),
             ],
-            options={"ordering": ("-created",),},
+            options={"ordering": ("-created",)},
             bases=(models.Model,),
         ),
         migrations.CreateModel(
@@ -247,7 +247,7 @@ class Migration(migrations.Migration):
                     ),
                 ),
             ],
-            options={"ordering": ("-date",),},
+            options={"ordering": ("-date",)},
             bases=(models.Model,),
         ),
         migrations.CreateModel(
@@ -269,7 +269,7 @@ class Migration(migrations.Migration):
                     ),
                 ),
             ],
-            options={"ordering": ("name",),},
+            options={"ordering": ("name",)},
             bases=(models.Model,),
         ),
         migrations.CreateModel(

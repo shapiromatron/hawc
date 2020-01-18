@@ -30,28 +30,27 @@ class SummaryTextTests(TestCase):
     def test_adding_texts(self):
         root = models.SummaryText.get_assessment_root_node(self.assessment_working.id)
         form = forms.SummaryTextForm(
-            {"title": "lvl_1a", "slug": "lvl_1a", "text": "text", "parent": str(root.id),},
+            {"title": "lvl_1a", "slug": "lvl_1a", "text": "text", "parent": str(root.id)},
             parent=self.assessment_working,
         )
         self.assertTrue(form.is_valid())
         lvl_1a = models.SummaryText.create(form)
 
         form = forms.SummaryTextForm(
-            {"title": "lvl_1b", "slug": "lvl_1b", "text": "text", "sibling": str(lvl_1a.id),},
+            {"title": "lvl_1b", "slug": "lvl_1b", "text": "text", "sibling": str(lvl_1a.id)},
             parent=self.assessment_working,
         )
         self.assertTrue(form.is_valid())
-        lvl_1b = models.SummaryText.create(form)
 
         form = forms.SummaryTextForm(
-            {"title": "lvl_2a", "slug": "lvl_2a", "text": "text", "parent": str(lvl_1a.id),},
+            {"title": "lvl_2a", "slug": "lvl_2a", "text": "text", "parent": str(lvl_1a.id)},
             parent=self.assessment_working,
         )
         self.assertTrue(form.is_valid())
         lvl_2a = models.SummaryText.create(form)
 
         form = forms.SummaryTextForm(
-            {"title": "lvl_2b", "slug": "lvl_2b", "text": "text", "sibling": str(lvl_2a.id),},
+            {"title": "lvl_2b", "slug": "lvl_2b", "text": "text", "sibling": str(lvl_2a.id)},
             parent=self.assessment_working,
         )
         self.assertTrue(form.is_valid())

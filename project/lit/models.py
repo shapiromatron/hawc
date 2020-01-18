@@ -133,7 +133,7 @@ class Search(models.Model):
             prior_query = None
             try:
                 prior_query = PubMedQuery.objects.filter(search=self.pk).latest("query_date")
-            except:
+            except Exception:
                 pass
             pubmed = PubMedQuery(search=self)
             results_dictionary = pubmed.run_new_query(prior_query)
@@ -247,7 +247,7 @@ class Search(models.Model):
         if self.source == constants.PUBMED and self.search_type == "s":
             try:
                 return PubMedQuery.objects.filter(search=self).latest().query_date
-            except:
+            except Exception:
                 return "Never (not yet run)"
         else:
             return self.last_updated

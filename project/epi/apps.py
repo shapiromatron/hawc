@@ -9,4 +9,4 @@ class EpiConfig(AppConfig):
         from utils.models import apply_flavored_help_text
 
         apply_flavored_help_text(self.name)
-        from . import signals
+        from . import signals  # noqa: F401

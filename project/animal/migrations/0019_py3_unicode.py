@@ -101,7 +101,7 @@ class Migration(migrations.Migration):
             model_name="animalgroup",
             name="sex",
             field=models.CharField(
-                choices=[("M", "Male"), ("F", "Female"), ("C", "Combined"), ("R", "Not reported"),],
+                choices=[("M", "Male"), ("F", "Female"), ("C", "Combined"), ("R", "Not reported")],
                 max_length=1,
             ),
         ),

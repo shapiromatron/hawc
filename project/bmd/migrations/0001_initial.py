@@ -40,7 +40,7 @@ class Migration(migrations.Migration):
                     models.OneToOneField(related_name="BMD_Settings", to="assessment.Assessment"),
                 ),
             ],
-            options={"verbose_name_plural": "BMD assessment settings",},
+            options={"verbose_name_plural": "BMD assessment settings"},
             bases=(models.Model,),
         ),
         migrations.CreateModel(
@@ -105,7 +105,7 @@ class Migration(migrations.Migration):
                     ),
                 ),
             ],
-            options={"get_latest_by": "last_updated",},
+            options={"get_latest_by": "last_updated"},
             bases=(models.Model,),
         ),
         migrations.CreateModel(
@@ -163,7 +163,7 @@ class Migration(migrations.Migration):
                     ),
                 ),
             ],
-            options={"ordering": ["logic_id"],},
+            options={"ordering": ["logic_id"]},
             bases=(models.Model,),
         ),
         migrations.AddField(

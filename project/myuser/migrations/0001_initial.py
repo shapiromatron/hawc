@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 from django.db import models, migrations
 import django.utils.timezone
 from django.conf import settings
@@ -91,7 +88,7 @@ class Migration(migrations.Migration):
                     ),
                 ),
             ],
-            options={"ordering": ("last_name",),},
+            options={"ordering": ("last_name",)},
             bases=(models.Model,),
         ),
         migrations.CreateModel(

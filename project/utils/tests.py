@@ -1,4 +1,7 @@
 from django.test import TestCase
+from django.core.exceptions import ValidationError
+
+from . import validators
 
 
 class FormTester(TestCase):
@@ -12,12 +15,6 @@ class FormTester(TestCase):
         form = self.createTestForm(inps, *args, **kwargs)
         form.full_clean()
         self.assertTrue(msg in form.errors[field])
-
-
-from django.core.exceptions import ValidationError
-from django.test import TestCase
-
-from . import validators
 
 
 class CustomURLValidtor(TestCase):

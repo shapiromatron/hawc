@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from myuser.models import HAWCUser
 from myuser.serializers import HAWCUserSerializer
-from study.serializers import StudyAssessmentSerializer, SimpleStudySerializer
+from study.serializers import StudyAssessmentSerializer
 from utils.helper import SerializerHelper
 
 from . import models

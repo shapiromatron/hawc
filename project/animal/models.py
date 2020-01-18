@@ -612,7 +612,7 @@ class DosingRegime(models.Model):
         for dg in dgs.distinct("dose_units"):
             dose_values = dgs.filter(dose_units=dg.dose_units).values_list("dose", flat=True)
             doses.append(
-                {"id": dg.dose_units.id, "name": dg.dose_units.name, "values": list(dose_values),}
+                {"id": dg.dose_units.id, "name": dg.dose_units.name, "values": list(dose_values)}
             )
         if json_encode:
             return json.dumps(doses, cls=HAWCDjangoJSONEncoder)

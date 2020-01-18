@@ -22,7 +22,7 @@ def build_assessments_for_permissions_testing(obj):
 
     try:
         call_command("createcachetable", "dev_cache_table", interactive=False)
-    except:
+    except Exception:
         pass
 
     obj.superuser = HAWCUser.objects.create_superuser("sudo@sudo.com", "pw")

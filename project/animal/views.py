@@ -19,7 +19,6 @@ from utils.views import (
     BaseList,
     BaseUpdate,
     BaseUpdateWithFormset,
-    MessageMixin,
     CopyAsNewSelectorMixin,
 )
 

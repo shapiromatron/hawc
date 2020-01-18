@@ -45,7 +45,7 @@ class PermissionTests(TestCase):
         try:  # may be deleted in test
             self.assessment_working.delete()
             self.assessment_final.delete()
-        except:
+        except Exception:
             pass
 
     # new-level permissions

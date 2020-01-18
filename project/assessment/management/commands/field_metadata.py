@@ -27,5 +27,5 @@ class Command(BaseCommand):
                 dicts["field_type"].append(fld.__class__.__name__)
                 dicts["field_help_text"].append(fld.help_text)
         df = pd.DataFrame(dicts)
-        df = df[["app_label", "model_name", "field_name", "field_type", "field_help_text",]]
+        df = df[["app_label", "model_name", "field_name", "field_type", "field_help_text"]]
         df.to_excel(excel_fn, index=False)

@@ -3,7 +3,6 @@ import json
 
 from django import forms
 from django.core.urlresolvers import reverse
-from django.conf import settings
 from django.forms import ModelForm
 from django.forms.models import BaseModelFormSet, modelformset_factory
 from django.db.models import Q
@@ -102,15 +101,14 @@ class ExperimentForm(ModelForm):
         purity_available = cleaned_data.get("purity_available")
         purity_qualifier = cleaned_data.get("purity_qualifier")
         purity = cleaned_data.get("purity")
-        type_ = cleaned_data.get("type")
 
-        if purity_available and purity_qualifier is "":
+        if purity_available and purity_qualifier == "":
             self.add_error("purity_qualifier", self.PURITY_QUALIFIER_REQ)
 
         if purity_available and purity is None:
             self.add_error("purity", self.PURITY_REQ)
 
-        if not purity_available and purity_qualifier is not "":
+        if not purity_available and purity_qualifier != "":
             self.add_error("purity_qualifier", self.PURITY_QUALIFIER_NOT_REQ)
 
         if not purity_available and purity is not None:

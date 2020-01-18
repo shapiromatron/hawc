@@ -3,7 +3,6 @@ import json
 
 from crispy_forms import layout as cfl
 from django import forms
-from django.db.models import QuerySet
 from django.core.urlresolvers import reverse
 import pandas as pd
 from selectable import forms as selectable
@@ -661,7 +660,7 @@ def get_visual_form(visual_type):
             models.Visual.ROB_HEATMAP: RoBForm,
             models.Visual.ROB_BARCHART: RoBForm,
         }[visual_type]
-    except:
+    except Exception:
         raise ValueError()
 
 

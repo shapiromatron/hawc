@@ -314,7 +314,7 @@ class AssessmentRootMixin(object):
             assessment_id = self.get_assessment_id()
             Assessment = apps.get_model("assessment", "Assessment")
             return Assessment.objects.get(id=assessment_id)
-        except:
+        except Exception:
             raise self.__class__.DoesNotExist()
 
     def moveWithinSiblingsToIndex(self, newIndex):

@@ -1,6 +1,4 @@
-from collections import OrderedDict
 import json
-import os
 from typing import NamedTuple
 
 from django.apps import apps
@@ -14,7 +12,6 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.utils import timezone
 from django.utils.http import urlquote
-from django.shortcuts import HttpResponse
 
 from reversion import revisions as reversion
 

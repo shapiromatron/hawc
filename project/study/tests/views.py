@@ -4,8 +4,6 @@ from django.core.urlresolvers import reverse
 from django.test import TestCase
 from django.test.client import Client
 
-from study import models
-
 from .utils import build_studies_for_permission_testing
 
 
@@ -42,18 +40,18 @@ class StudyPermissions(TestCase):
                 "view": reverse("study:list", kwargs={"pk": self.assessment_working.pk}),
                 "status": 403,
             },
-            {"view": reverse("study:detail", kwargs={"pk": self.study_working.pk}), "status": 403,},
+            {"view": reverse("study:detail", kwargs={"pk": self.study_working.pk}), "status": 403},
             {
                 "view": reverse("study:list", kwargs={"pk": self.assessment_final.pk}),
                 "status": 200,
             },
-            {"view": reverse("study:detail", kwargs={"pk": self.study_final.pk}), "status": 200,},
+            {"view": reverse("study:detail", kwargs={"pk": self.study_final.pk}), "status": 200},
         ]
         for view in views:
             response = c.get(view["view"])
             self.assertTrue(response.status_code == view["status"])
 
-    def test_study_crud_sucess(self):
+    def test_study_crud_success(self):
         # Check to ensure that sudo, pm and team have CRUD permissions.
         # Create a new study, edit, view prior versions, and delete. Test both
         # GET and POST when appropriate.

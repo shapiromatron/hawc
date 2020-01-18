@@ -238,7 +238,7 @@ class RoBReviewersForm(forms.ModelForm):
 
         for field in changed_reviewer_fields:
             new_author = self.cleaned_data[field]
-            options = {"study": study, "final": bool(field is "final_author")}
+            options = {"study": study, "final": bool(field == "final_author")}
 
             if self.fields[field].initial:
                 deactivate_rob = models.RiskOfBias.objects.get(

@@ -106,7 +106,7 @@ class Migration(migrations.Migration):
                 ("name", models.CharField(max_length=100, verbose_name="Name")),
                 ("slug", models.SlugField(max_length=100, verbose_name="Slug")),
             ],
-            options={"abstract": False,},
+            options={"abstract": False},
             bases=(models.Model,),
         ),
         migrations.CreateModel(
@@ -126,7 +126,7 @@ class Migration(migrations.Migration):
                     ),
                 ),
             ],
-            options={"abstract": False,},
+            options={"abstract": False},
             bases=(models.Model,),
         ),
         migrations.CreateModel(

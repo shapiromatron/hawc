@@ -72,7 +72,7 @@ class Migration(migrations.Migration):
                     ),
                 ),
             ],
-            options={"ordering": ("study", "type"),},
+            options={"ordering": ("study", "type")},
         ),
         migrations.AlterUniqueTogether(name="task", unique_together=set([("study", "type")]),),
     ]

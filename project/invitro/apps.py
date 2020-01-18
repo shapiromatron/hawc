@@ -6,4 +6,4 @@ class InvitroConfig(AppConfig):
     verbose_name = "Invitro"
 
     def ready(self):
-        from . import signals
+        from . import signals  # noqa: F401

@@ -84,7 +84,7 @@ class Migration(migrations.Migration):
                 ),
                 ("study", models.ForeignKey(related_name="meta_protocols", to="study.Study"),),
             ],
-            options={"ordering": ("name",),},
+            options={"ordering": ("name",)},
         ),
         migrations.CreateModel(
             name="MetaResult",
@@ -155,7 +155,7 @@ class Migration(migrations.Migration):
                 ("metric", models.ForeignKey(to="epi.ResultMetric")),
                 ("protocol", models.ForeignKey(related_name="results", to="epimeta.MetaProtocol"),),
             ],
-            options={"ordering": ("label",),},
+            options={"ordering": ("label",)},
         ),
         migrations.CreateModel(
             name="SingleResult",
