@@ -22,10 +22,11 @@ class MessageMixin(object):
     Make it easy to display notification messages when using Class Based Views.
     Originally from http://stackoverflow.com/questions/5531258/
     """
+
     def send_message(self):
-        logging.debug('MessagingMixin called')
+        logging.debug("MessagingMixin called")
         if self.success_message is not None:
-            messages.success(self.request, self.success_message, extra_tags='alert alert-success')
+            messages.success(self.request, self.success_message, extra_tags="alert alert-success")
 
     def delete(self, request, *args, **kwargs):
         self.send_message()
@@ -40,6 +41,7 @@ class CloseIfSuccessMixin(object):
     """
     Mixin designed to close-window if form executes successfully.
     """
+
     def get_success_url(self):
         return reverse("assessment:close_window")
 
@@ -48,6 +50,7 @@ class LoginRequiredMixin(object):
     """
     A mixin requiring a user to be logged in.
     """
+
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
@@ -61,6 +64,7 @@ class AssessmentPermissionsMixin(object):
     for displaying page. Note that this for all objects which are controlled
     by the assessment object but not including the assessment object.
     """
+
     def deny_for_locked_study(self, user, assessment, obj):
         # determine relevant study for a given object, and then checks its editable status.
         # If not set, raises a PermissionDenied.
@@ -78,7 +82,7 @@ class AssessmentPermissionsMixin(object):
         # inherit from, and define the get_study method on there. Then we just
         # check an "is-a" instead of looking for the attribute manually.
         study = None
-        if hasattr(obj, 'get_study'):
+        if hasattr(obj, "get_study"):
             study = obj.get_study()
 
         if assessment.user_can_edit_object(user):
@@ -100,16 +104,20 @@ class AssessmentPermissionsMixin(object):
             return None
 
     def permission_check_user_can_view(self):
-        logging.debug('Permissions checked')
+        logging.debug("Permissions checked")
         if not self.assessment.user_can_view_object(self.request.user):
             raise PermissionDenied
 
     def permission_check_user_can_edit(self):
-        logging.debug('Permissions checked')
+        logging.debug("Permissions checked")
         if self.model == Assessment:
             canEdit = self.assessment.user_can_edit_assessment(self.request.user)
         else:
-            self.deny_for_locked_study(self.request.user, self.assessment, self.get_contextual_object_for_study_editability_check())
+            self.deny_for_locked_study(
+                self.request.user,
+                self.assessment,
+                self.get_contextual_object_for_study_editability_check(),
+            )
             canEdit = self.assessment.user_can_edit_object(self.request.user)
         if not canEdit:
             raise PermissionDenied
@@ -118,14 +126,14 @@ class AssessmentPermissionsMixin(object):
         """
         Check to make sure user can view object
         """
-        obj = kwargs.get('object')
+        obj = kwargs.get("object")
         if not obj:
             obj = super().get_object(**kwargs)
 
-        if not hasattr(self, 'assessment'):
+        if not hasattr(self, "assessment"):
             self.assessment = obj.get_assessment()
 
-        if self.crud == 'Read':
+        if self.crud == "Read":
             perms = self.assessment.user_can_view_object(self.request.user)
         else:
             if self.model == Assessment:
@@ -134,7 +142,7 @@ class AssessmentPermissionsMixin(object):
                 self.deny_for_locked_study(self.request.user, self.assessment, obj)
                 perms = self.assessment.user_can_edit_object(self.request.user)
 
-        logging.debug('Permissions checked')
+        logging.debug("Permissions checked")
         if perms:
             return obj
         else:
@@ -147,7 +155,7 @@ class AssessmentPermissionsMixin(object):
         permissions for.
         """
         queryset = super().get_queryset()
-        if not hasattr(self, 'assessment'):
+        if not hasattr(self, "assessment"):
             # get_object calls get_queryset; thus we must be careful to check
             # the correct object
             return queryset
@@ -159,7 +167,7 @@ class AssessmentPermissionsMixin(object):
             # a user, and ensure that get_assessment is called for ALL models
             # with assessment permissions mixin
             #
-            if self.crud == 'Read':
+            if self.crud == "Read":
                 perms = self.assessment.user_can_view_object(self.request.user)
             else:
                 if self.model == Assessment:
@@ -167,47 +175,46 @@ class AssessmentPermissionsMixin(object):
                 else:
                     obj = queryset.first()
                     if obj is None:
-                        raise EmptyResultSet("Cannot determine if objects should be locked for editing")
+                        raise EmptyResultSet(
+                            "Cannot determine if objects should be locked for editing"
+                        )
                     self.deny_for_locked_study(self.request.user, self.assessment, obj)
                     perms = self.assessment.user_can_edit_object(self.request.user)
-            logging.debug('Permissions checked')
+            logging.debug("Permissions checked")
             if perms:
                 return queryset
             else:
                 raise PermissionDenied
 
     def get_obj_perms(self):
-        if not hasattr(self, 'assessment'):
-            logging.error('unable to determine object permissions')
-            return {'view': False, 'edit': False, 'edit_assessment': False}
+        if not hasattr(self, "assessment"):
+            logging.error("unable to determine object permissions")
+            return {"view": False, "edit": False, "edit_assessment": False}
 
-        logging.debug('Permissions added')
+        logging.debug("Permissions added")
         user_perms = self.assessment.user_permissions(self.request.user)
 
         contextual_obj = self.get_contextual_object_for_study_editability_check()
-        study_perm_check = self.check_study_editability(self.request.user, self.assessment, contextual_obj)
+        study_perm_check = self.check_study_editability(
+            self.request.user, self.assessment, contextual_obj
+        )
         if study_perm_check is not None:
-            user_perms['edit'] = study_perm_check
+            user_perms["edit"] = study_perm_check
 
         return user_perms
 
 
 class TimeSpentOnPageMixin(object):
-
     def get(self, request, *args, **kwargs):
         TimeSpentEditing.set_start_time(
-            self.request.session.session_key,
-            self.request.path,
+            self.request.session.session_key, self.request.path,
         )
         return super().get(request, *args, **kwargs)
 
     def get_success_url(self):
         response = super().get_success_url()
         TimeSpentEditing.add_time_spent_job(
-            self.request.session.session_key,
-            self.request.path,
-            self.object,
-            self.assessment.id
+            self.request.session.session_key, self.request.path, self.object, self.assessment.id,
         )
         return response
 
@@ -220,20 +227,18 @@ class ProjectManagerOrHigherMixin(object):
 
     @abc.abstractmethod
     def get_assessment(self, request, *args, **kwargs):
-        raise NotImplementedError('get_assessment requires implementation')
+        raise NotImplementedError("get_assessment requires implementation")
 
     def dispatch(self, request, *args, **kwargs):
         self.assessment = self.get_assessment(request, *args, **kwargs)
         logging.debug("Permissions checked")
         if not self.assessment.user_can_edit_assessment(request.user):
             raise PermissionDenied
-        return super()\
-            .dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
-        context = super()\
-            .get_context_data(**kwargs)
-        context['assessment'] = self.assessment
+        context = super().get_context_data(**kwargs)
+        context["assessment"] = self.assessment
         return context
 
 
@@ -245,27 +250,25 @@ class TeamMemberOrHigherMixin(object):
 
     @abc.abstractmethod
     def get_assessment(self, request, *args, **kwargs):
-        raise NotImplementedError('get_assessment requires implementation')
+        raise NotImplementedError("get_assessment requires implementation")
 
     def dispatch(self, request, *args, **kwargs):
         self.assessment = self.get_assessment(request, *args, **kwargs)
         logging.debug("Permissions checked")
         if not self.assessment.user_can_edit_object(request.user):
             raise PermissionDenied
-        return super()\
-            .dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
-        context = super()\
-            .get_context_data(**kwargs)
-        context['assessment'] = self.assessment
+        context = super().get_context_data(**kwargs)
+        context["assessment"] = self.assessment
         return context
 
 
 class IsAuthorMixin(object):
     # Throw error if user is not author
 
-    owner_field = 'author'
+    owner_field = "author"
 
     def get_object(self):
         obj = super().get_object()
@@ -286,15 +289,16 @@ class CanCreateMixin(object):
         If person is superuser or assessment is editable and user is a project
         manager or team member.
         """
-        logging.debug('Permissions checked')
+        logging.debug("Permissions checked")
         if self.request.user.is_superuser:
             return True
         elif self.request.user.is_anonymous():
             return False
         else:
-            return ((assessment.editable is True) and
-                    ((self.request.user in assessment.project_manager.all()) or
-                     (self.request.user in assessment.team_members.all())))
+            return (assessment.editable is True) and (
+                (self.request.user in assessment.project_manager.all())
+                or (self.request.user in assessment.team_members.all())
+            )
 
     def get(self, request, *args, **kwargs):
         if self.user_can_create_object(self.assessment):
@@ -312,7 +316,7 @@ class CanCreateMixin(object):
 class CopyAsNewSelectorMixin(object):
     form_class = None  # required
     copy_model = None  # required
-    template_name_suffix = '_copy_selector'
+    template_name_suffix = "_copy_selector"
 
     def get_related_id(self):
         return self.object.id
@@ -321,39 +325,39 @@ class CopyAsNewSelectorMixin(object):
         context = super().get_context_data(**kwargs)
 
         # prevents copy from locked studies
-        if context['obj_perms']['edit'] is False:
+        if context["obj_perms"]["edit"] is False:
             raise PermissionDenied
 
         related_id = self.get_related_id()
-        context['form'] = self.form_class(parent_id=related_id)
+        context["form"] = self.form_class(parent_id=related_id)
         return context
 
     def get_template_names(self):
         if self.template_name is not None:
             name = self.template_name
         else:
-            name = '%s/%s%s.html' % (
+            name = "%s/%s%s.html" % (
                 self.copy_model._meta.app_label,
                 self.copy_model._meta.object_name.lower(),
-                self.template_name_suffix
+                self.template_name_suffix,
             )
         return [name]
 
 
 # Base HAWC views
 class BaseDetail(AssessmentPermissionsMixin, DetailView):
-    crud = 'Read'
+    crud = "Read"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['assessment'] = self.assessment
-        context['crud'] = self.crud
-        context['obj_perms'] = super().get_obj_perms()
+        context["assessment"] = self.assessment
+        context["crud"] = self.crud
+        context["obj_perms"] = super().get_obj_perms()
         return context
 
 
 class BaseDelete(AssessmentPermissionsMixin, MessageMixin, DeleteView):
-    crud = 'Delete'
+    crud = "Delete"
 
     def delete(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -365,14 +369,14 @@ class BaseDelete(AssessmentPermissionsMixin, MessageMixin, DeleteView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['assessment'] = self.assessment
-        context['crud'] = self.crud
-        context['obj_perms'] = super().get_obj_perms()
+        context["assessment"] = self.assessment
+        context["crud"] = self.crud
+        context["obj_perms"] = super().get_obj_perms()
         return context
 
 
 class BaseUpdate(TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin, UpdateView):
-    crud = 'Update'
+    crud = "Update"
 
     def form_valid(self, form):
         self.object = form.save()
@@ -385,19 +389,19 @@ class BaseUpdate(TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin,
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['assessment'] = self.assessment
-        context['crud'] = self.crud
-        context['obj_perms'] = super().get_obj_perms()
+        context["assessment"] = self.assessment
+        context["crud"] = self.crud
+        context["obj_perms"] = super().get_obj_perms()
         return context
 
 
 class BaseCreate(TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin, CreateView):
     parent_model = None  # required
     parent_template_name = None  # required
-    crud = 'Create'
+    crud = "Create"
 
     def dispatch(self, *args, **kwargs):
-        self.parent = get_object_or_404(self.parent_model, pk=kwargs['pk'])
+        self.parent = get_object_or_404(self.parent_model, pk=kwargs["pk"])
         self.assessment = self.parent.get_assessment()
         self.permission_check_user_can_edit()
         return super().dispatch(*args, **kwargs)
@@ -406,24 +410,25 @@ class BaseCreate(TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin,
         kwargs = super().get_form_kwargs()
 
         # all inputs require a parent field
-        kwargs['parent'] = self.parent
+        kwargs["parent"] = self.parent
 
         # check if we have an object-template to be used
-        pk = tryParseInt(self.request.GET.get('initial'), -1)
+        pk = tryParseInt(self.request.GET.get("initial"), -1)
 
         if pk > 0:
             initial = self.model.objects.filter(pk=pk).first()
-            if initial and initial.get_assessment() in \
-                    Assessment.objects.get_viewable_assessments(self.request.user, public=True):
-                kwargs['initial'] = model_to_dict(initial)
+            if initial and initial.get_assessment() in Assessment.objects.get_viewable_assessments(
+                self.request.user, public=True
+            ):
+                kwargs["initial"] = model_to_dict(initial)
 
         return kwargs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['crud'] = self.crud
-        context['assessment'] = self.assessment
-        context['obj_perms'] = super().get_obj_perms()
+        context["crud"] = self.crud
+        context["assessment"] = self.assessment
+        context["obj_perms"] = super().get_obj_perms()
         context[self.parent_template_name] = self.parent
         return context
 
@@ -441,21 +446,22 @@ class BaseList(AssessmentPermissionsMixin, ListView):
     """
     Basic view that shows a list of objects given
     """
+
     parent_model = None  # required
     parent_template_name = None  # optional
-    crud = 'Read'
+    crud = "Read"
 
     def dispatch(self, *args, **kwargs):
-        self.parent = get_object_or_404(self.parent_model, pk=kwargs['pk'])
+        self.parent = get_object_or_404(self.parent_model, pk=kwargs["pk"])
         self.assessment = self.parent.get_assessment()
         self.permission_check_user_can_view()
         return super().dispatch(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['assessment'] = self.assessment
-        context['obj_perms'] = super().get_obj_perms()
-        context['crud'] = self.crud
+        context["assessment"] = self.assessment
+        context["obj_perms"] = super().get_obj_perms()
+        context["crud"] = self.crud
         if self.parent_template_name:
             context[self.parent_template_name] = self.parent
         return context
@@ -469,7 +475,8 @@ class BaseCreateWithFormset(BaseCreate):
     - post_object_save: method for modifying formset after form is saved but before formset. No return.
     - build_initial_formset_factory: method for returning initial formset factory. Returns formset_factory
     """
-    formset_factory = None   # required
+
+    formset_factory = None  # required
 
     def post(self, request, *args, **kwargs):
         self.object = None
@@ -498,13 +505,13 @@ class BaseCreateWithFormset(BaseCreate):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        if self.request.method == 'GET':
-            context['formset'] = self.build_initial_formset_factory()
+        if self.request.method == "GET":
+            context["formset"] = self.build_initial_formset_factory()
         else:
-            if kwargs.get('form'):
-                context['form'] = kwargs.get('form')
-            if kwargs.get('formset'):
-                context['formset'] = kwargs.get('formset')
+            if kwargs.get("form"):
+                context["form"] = kwargs.get("form")
+            if kwargs.get("formset"):
+                context["formset"] = kwargs.get("formset")
         return context
 
     def pre_validate(self, form, formset):
@@ -529,7 +536,8 @@ class BaseUpdateWithFormset(BaseUpdate):
     - post_objet_save: method for modifying formset after form is saved but before formset. No return.
     - build_initial_formset_factory: method for returning initial formset factory. Returns formset_factory
     """
-    formset_factory = None   # required
+
+    formset_factory = None  # required
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -563,8 +571,7 @@ class BaseUpdateWithFormset(BaseUpdate):
         pass
 
     def form_invalid(self, form, formset):
-        return self.render_to_response(self.get_context_data(
-                                       form=form, formset=formset))
+        return self.render_to_response(self.get_context_data(form=form, formset=formset))
 
     def build_initial_formset_factory(self):
         # Returns initial formset factory
@@ -572,13 +579,13 @@ class BaseUpdateWithFormset(BaseUpdate):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        if self.request.method == 'GET':
-            context['formset'] = self.build_initial_formset_factory()
+        if self.request.method == "GET":
+            context["formset"] = self.build_initial_formset_factory()
         else:
-            if kwargs.get('form'):
-                context['form'] = kwargs.get('form')
-            if kwargs.get('formset'):
-                context['formset'] = kwargs.get('formset')
+            if kwargs.get("form"):
+                context["form"] = kwargs.get("form")
+            if kwargs.get("formset"):
+                context["formset"] = kwargs.get("formset")
         return context
 
 
@@ -589,21 +596,16 @@ class BaseEndpointFilterList(BaseList):
     def get_paginate_by(self, qs):
         val = 25
         try:
-            val = int(self.request.GET.get('paginate_by', val))
+            val = int(self.request.GET.get("paginate_by", val))
         except ValueError:
             pass
         return val
 
     def get(self, request, *args, **kwargs):
         if len(self.request.GET) > 0:
-            self.form = self.form_class(
-                self.request.GET,
-                assessment=self.assessment
-            )
+            self.form = self.form_class(self.request.GET, assessment=self.assessment)
         else:
-            self.form = self.form_class(
-                assessment=self.assessment
-            )
+            self.form = self.form_class(assessment=self.assessment)
         return super().get(request, *args, **kwargs)
 
     def get_query(self, perms):
@@ -625,10 +627,12 @@ class BaseEndpointFilterList(BaseList):
             query &= self.form.get_query()
             order_by = self.form.get_order_by()
 
-        ids = self.model.objects.filter(query)\
-            .order_by('id')\
-            .distinct('id')\
-            .values_list('id', flat=True)
+        ids = (
+            self.model.objects.filter(query)
+            .order_by("id")
+            .distinct("id")
+            .values_list("id", flat=True)
+        )
 
         qs = self.model.objects.filter(id__in=ids)
 
@@ -639,7 +643,6 @@ class BaseEndpointFilterList(BaseList):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['form'] = self.form
-        context['list_json'] = self.model.get_qs_json(
-            context['object_list'], json_encode=True)
+        context["form"] = self.form
+        context["list_json"] = self.model.get_qs_json(context["object_list"], json_encode=True)
         return context

@@ -16,13 +16,11 @@ def show_na_legend(apps, schema_editor):
             settings = False
 
         if settings:
-            settings['show_na_legend'] = True
+            settings["show_na_legend"] = True
             obj.settings = json.dumps(settings)
 
             # don't change last_updated timestamp
-            Visual.objects\
-                .filter(id=obj.id)\
-                .update(settings=obj.settings)
+            Visual.objects.filter(id=obj.id).update(settings=obj.settings)
 
 
 def hide_na_legend(apps, schema_editor):
@@ -35,19 +33,17 @@ def hide_na_legend(apps, schema_editor):
             settings = False
 
             if settings:
-                settings.pop('show_na_legend')
+                settings.pop("show_na_legend")
                 obj.settings = json.dumps(settings)
 
                 # don't change last_updated timestamp
-                Visual.objects\
-                    .filter(id=obj.id)\
-                    .update(settings=obj.settings)
+                Visual.objects.filter(id=obj.id).update(settings=obj.settings)
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('summary', '0010_add_nr_option'),
+        ("summary", "0010_add_nr_option"),
     ]
 
     operations = [

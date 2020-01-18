@@ -6,7 +6,7 @@ from django.db import migrations, models
 
 
 def setName(apps, schema_editor):
-    Result = apps.get_model('epi', 'Result')
+    Result = apps.get_model("epi", "Result")
     for res in Result.objects.all():
         res.name = "{0}: {1}".format(res.comparison_set.name, res.metric.metric)
         res.save()
@@ -15,22 +15,15 @@ def setName(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('epi', '0006_auto_20160614_0952'),
+        ("epi", "0006_auto_20160614_0952"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='result',
-            name='name',
-            field=models.CharField(blank=True, max_length=256),
+            model_name="result", name="name", field=models.CharField(blank=True, max_length=256),
         ),
-        migrations.RunPython(
-            setName,
-            reverse_code=migrations.RunPython.noop
-        ),
+        migrations.RunPython(setName, reverse_code=migrations.RunPython.noop),
         migrations.AlterField(
-            model_name='result',
-            name='name',
-            field=models.CharField(max_length=256),
+            model_name="result", name="name", field=models.CharField(max_length=256),
         ),
     ]

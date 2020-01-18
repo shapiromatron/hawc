@@ -9,17 +9,19 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('assessment', '0007_auto_20160426_1124'),
+        ("assessment", "0007_auto_20160426_1124"),
     ]
 
     operations = [
-        migrations.RemoveField(
-            model_name='assessment',
-            name='enable_comments',
-        ),
+        migrations.RemoveField(model_name="assessment", name="enable_comments",),
         migrations.AlterField(
-            model_name='assessment',
-            name='reviewers',
-            field=models.ManyToManyField(blank=True, help_text=b'Can view the assessment even if the assessment is not public, but cannot add or change content. You can add multiple reviewers.', related_name='assessment_reviewers', to=settings.AUTH_USER_MODEL),
+            model_name="assessment",
+            name="reviewers",
+            field=models.ManyToManyField(
+                blank=True,
+                help_text=b"Can view the assessment even if the assessment is not public, but cannot add or change content. You can add multiple reviewers.",
+                related_name="assessment_reviewers",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
     ]

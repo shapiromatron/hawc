@@ -6,8 +6,8 @@ from django.db import migrations
 
 
 def migrate_to_central_tendency(apps, schema_editor):
-    Exposure = apps.get_model('epi', 'Exposure')
-    CentralTendency = apps.get_model('epi', 'CentralTendency')
+    Exposure = apps.get_model("epi", "Exposure")
+    CentralTendency = apps.get_model("epi", "CentralTendency")
     for exposure in Exposure.objects.all():
         CentralTendency.objects.create(
             exposure_id=exposure.id,
@@ -26,7 +26,7 @@ def migrate_to_central_tendency(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('epi', '0012_create_central_tendency'),
+        ("epi", "0012_create_central_tendency"),
     ]
 
     operations = [

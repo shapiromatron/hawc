@@ -3,10 +3,17 @@ from django.views.generic import DetailView
 
 from assessment.models import Assessment
 from study.models import Study
-from utils.views import (BaseCreate, BaseCreateWithFormset, BaseDelete,
-                         BaseDetail, BaseList, BaseEndpointFilterList,
-                         BaseUpdate, BaseUpdateWithFormset,
-                         ProjectManagerOrHigherMixin)
+from utils.views import (
+    BaseCreate,
+    BaseCreateWithFormset,
+    BaseDelete,
+    BaseDetail,
+    BaseList,
+    BaseEndpointFilterList,
+    BaseUpdate,
+    BaseUpdateWithFormset,
+    ProjectManagerOrHigherMixin,
+)
 from mgmt.views import EnsureExtractionStartedMixin
 
 from . import models, forms, exports
@@ -16,7 +23,7 @@ from . import models, forms, exports
 class ExperimentCreate(EnsureExtractionStartedMixin, BaseCreate):
     success_message = "Experiment created."
     parent_model = Study
-    parent_template_name = 'study'
+    parent_template_name = "study"
     model = models.IVExperiment
     form_class = forms.IVExperimentForm
 
@@ -43,7 +50,7 @@ class ExperimentDelete(BaseDelete):
 class ChemicalCreate(EnsureExtractionStartedMixin, BaseCreate):
     success_message = "Chemical created."
     parent_model = Study
-    parent_template_name = 'study'
+    parent_template_name = "study"
     model = models.IVChemical
     form_class = forms.IVChemicalForm
 
@@ -70,7 +77,7 @@ class ChemicalDelete(BaseDelete):
 class CellTypeCreate(EnsureExtractionStartedMixin, BaseCreate):
     success_message = "Cell-type created."
     parent_model = Study
-    parent_template_name = 'study'
+    parent_template_name = "study"
     model = models.IVCellType
     form_class = forms.IVCellTypeForm
 
@@ -96,7 +103,7 @@ class CellTypeDelete(BaseDelete):
 # Endpoint categories
 class EndpointCategoryUpdate(ProjectManagerOrHigherMixin, DetailView):
     model = Assessment
-    template_name = 'invitro/ivendpointecategory_form.html'
+    template_name = "invitro/ivendpointecategory_form.html"
 
     def get_assessment(self, request, *args, **kwargs):
         return self.get_object()
@@ -104,16 +111,16 @@ class EndpointCategoryUpdate(ProjectManagerOrHigherMixin, DetailView):
 
 # Endpoint
 class EndpointCreate(BaseCreateWithFormset):
-    success_message = 'Endpoint created.'
+    success_message = "Endpoint created."
     parent_model = models.IVExperiment
-    parent_template_name = 'experiment'
+    parent_template_name = "experiment"
     model = models.IVEndpoint
     form_class = forms.IVEndpointForm
     formset_factory = forms.IVEndpointGroupFormset
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs['assessment'] = self.assessment
+        kwargs["assessment"] = self.assessment
         return kwargs
 
     def post_object_save(self, form, formset):
@@ -129,8 +136,7 @@ class EndpointCreate(BaseCreateWithFormset):
                 dose_group_id += 1
 
     def build_initial_formset_factory(self):
-        return forms.BlankIVEndpointGroupFormset(
-            queryset=models.IVEndpointGroup.objects.none())
+        return forms.BlankIVEndpointGroupFormset(queryset=models.IVEndpointGroup.objects.none())
 
 
 class EndpointDetail(BaseDetail):
@@ -144,13 +150,13 @@ class EndpointUpdate(BaseUpdateWithFormset):
     formset_factory = forms.IVEndpointGroupFormset
 
     def build_initial_formset_factory(self):
-            # make sure at least one group exists; we check because it's
-            # possible to delete as well as create objects in this view.
-            qs = self.object.groups.all().order_by('dose_group_id')
-            fs = forms.IVEndpointGroupFormset(queryset=qs)
-            if qs.count() == 0:
-                fs.extra = 1
-            return fs
+        # make sure at least one group exists; we check because it's
+        # possible to delete as well as create objects in this view.
+        qs = self.object.groups.all().order_by("dose_group_id")
+        fs = forms.IVEndpointGroupFormset(queryset=qs)
+        if qs.count() == 0:
+            fs.extra = 1
+        return fs
 
     def post_object_save(self, form, formset):
         dose_group_id = 0
@@ -170,7 +176,7 @@ class EndpointUpdate(BaseUpdateWithFormset):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['benchmark_formset'] = forms.IVBenchmarkFormset(instance=self.object)
+        context["benchmark_formset"] = forms.IVBenchmarkFormset(instance=self.object)
         return context
 
 
@@ -189,13 +195,13 @@ class EndpointList(BaseEndpointFilterList):
 
     def get_query(self, perms):
         query = Q(assessment=self.assessment)
-        if not perms['edit']:
+        if not perms["edit"]:
             query &= Q(experiment__study__published=True)
         return query
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['dose_units'] = self.form.get_dose_units_id()
+        context["dose_units"] = self.form.get_dose_units_id()
         return context
 
 
@@ -205,7 +211,7 @@ class EndpointFullExport(BaseList):
 
     def get_queryset(self):
         perms = self.get_obj_perms()
-        if not perms['edit']:
+        if not perms["edit"]:
             return self.model.objects.published(self.assessment)
         return self.model.objects.get_qs(self.assessment)
 
@@ -215,5 +221,6 @@ class EndpointFullExport(BaseList):
         exporter = exports.DataPivotEndpoint(
             self.object_list,
             export_format=export_format,
-            filename='{}-invitro'.format(self.assessment))
+            filename="{}-invitro".format(self.assessment),
+        )
         return exporter.build_response()

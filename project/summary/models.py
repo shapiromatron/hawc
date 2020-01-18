@@ -27,8 +27,12 @@ import invitro.exports as ivexports
 from reversion import revisions as reversion
 from treebeard.mp_tree import MP_Node
 
-from utils.helper import HAWCtoDateString, HAWCDjangoJSONEncoder, \
-    SerializerHelper, tryParseInt
+from utils.helper import (
+    HAWCtoDateString,
+    HAWCDjangoJSONEncoder,
+    SerializerHelper,
+    tryParseInt,
+)
 
 from . import managers
 
@@ -42,11 +46,12 @@ IN_VITRO = 2
 OTHER = 3
 
 STUDY_TYPE_CHOICES = (
-    (BIOASSAY, 'Animal Bioassay'),
-    (EPI, 'Epidemiology'),
-    (EPI_META, 'Epidemiology meta-analysis/pooled analysis'),
-    (IN_VITRO, 'In vitro'),
-    (OTHER, 'Other'))
+    (BIOASSAY, "Animal Bioassay"),
+    (EPI, "Epidemiology"),
+    (EPI_META, "Epidemiology meta-analysis/pooled analysis"),
+    (IN_VITRO, "In vitro"),
+    (OTHER, "Other"),
+)
 
 
 class SummaryText(MP_Node):
@@ -54,17 +59,21 @@ class SummaryText(MP_Node):
 
     assessment = models.ForeignKey(Assessment)
     title = models.CharField(max_length=128)
-    slug = models.SlugField(verbose_name="URL Name",
-                            help_text="The URL (web address) used on the website to describe this object (no spaces or special-characters).",
-                            unique=True)
+    slug = models.SlugField(
+        verbose_name="URL Name",
+        help_text="The URL (web address) used on the website to describe this object (no spaces or special-characters).",
+        unique=True,
+    )
     text = models.TextField(default="")
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
     class Meta:
         verbose_name_plural = "Summary Text Descriptions"
-        unique_together = (("assessment", "title"),
-                           ("assessment", "slug"),)
+        unique_together = (
+            ("assessment", "title"),
+            ("assessment", "slug"),
+        )
 
     def __str__(self):
         return self.title
@@ -75,7 +84,7 @@ class SummaryText(MP_Node):
 
     @classmethod
     def get_assessment_root_node(cls, assessment_id):
-        return SummaryText.objects.get(title='assessment-{}'.format(assessment_id))
+        return SummaryText.objects.get(title="assessment-{}".format(assessment_id))
 
     @classmethod
     def get_assessment_queryset(cls, assessment_id):
@@ -85,9 +94,10 @@ class SummaryText(MP_Node):
     def build_default(cls, assessment):
         assessment = SummaryText.add_root(
             assessment=assessment,
-            title='assessment-{pk}'.format(pk=assessment.pk),
-            slug='assessment-{pk}-slug'.format(pk=assessment.pk),
-            text="Root-level text")
+            title="assessment-{pk}".format(pk=assessment.pk),
+            slug="assessment-{pk}-slug".format(pk=assessment.pk),
+            text="Root-level text",
+        )
 
     @classmethod
     def get_assessment_descendants(cls, assessment_id, json_encode=True):
@@ -113,13 +123,12 @@ class SummaryText(MP_Node):
     @classmethod
     def create(cls, form):
         instance = form.save(commit=False)
-        sibling = form.cleaned_data.get('sibling')
+        sibling = form.cleaned_data.get("sibling")
         if sibling:
             return sibling.add_sibling(pos="right", instance=instance)
         else:
             parent = form.cleaned_data.get(
-                'parent',
-                SummaryText.get_assessment_root_node(instance.assessment.id)
+                "parent", SummaryText.get_assessment_root_node(instance.assessment.id)
             )
             sibling = parent.get_first_child()
             if sibling:
@@ -129,11 +138,11 @@ class SummaryText(MP_Node):
 
     def update(self, form):
         data = form.cleaned_data
-        self.title = data['title']
-        self.slug = data['slug']
-        self.text = data['text']
+        self.title = data["title"]
+        self.slug = data["slug"]
+        self.text = data["text"]
         self.save()
-        self.move_st(parent=data.get('parent'), sibling=data.get('sibling'))
+        self.move_st(parent=data.get("parent"), sibling=data.get("sibling"))
 
     def move_st(self, parent=None, sibling=None):
         if parent is not None and parent.assessment != self.assessment:
@@ -144,36 +153,37 @@ class SummaryText(MP_Node):
 
         if sibling:
             if self.get_prev_sibling() != sibling:
-                self.move(sibling, pos='right')
+                self.move(sibling, pos="right")
         elif parent:
-            self.move(parent, pos='first-child')
+            self.move(parent, pos="first-child")
 
     def get_absolute_url(self):
-        return '{url}#{id}'.format(url=reverse('summary:list', kwargs={'assessment': self.assessment.pk}),
-                                   id=self.slug)
+        return "{url}#{id}".format(
+            url=reverse("summary:list", kwargs={"assessment": self.assessment.pk}), id=self.slug,
+        )
 
     def get_assessment(self):
         return self.assessment
 
     @classmethod
     def build_report(cls, report, assessment):
-        title = 'Summary Text: ' + HAWCtoDateString(datetime.now())
+        title = "Summary Text: " + HAWCtoDateString(datetime.now())
         report.doc.add_heading(title, level=1)
 
-        preface = 'Preliminary summary-text export in Word (work in progress)'
+        preface = "Preliminary summary-text export in Word (work in progress)"
         p = report.doc.add_paragraph(preface)
         p.italic = True
 
         def print_node(node, depth):
-            report.doc.add_heading(node['data']['title'], level=depth)
-            report.doc.add_paragraph(strip_tags(node['data']['text']))
-            if node.get('children', None):
-                for node in node['children']:
-                    print_node(node, depth+1)
+            report.doc.add_heading(node["data"]["title"], level=depth)
+            report.doc.add_paragraph(strip_tags(node["data"]["text"]))
+            if node.get("children", None):
+                for node in node["children"]:
+                    print_node(node, depth + 1)
 
         nodes = SummaryText.get_assessment_descendants(assessment.id, json_encode=False)
-        if nodes[0].get('children', None):
-            for node in nodes[0]['children']:
+        if nodes[0].get("children", None):
+            for node in nodes[0]["children"]:
                 print_node(node, 2)
 
 
@@ -189,69 +199,67 @@ class Visual(models.Model):
         (BIOASSAY_AGGREGATION, "animal bioassay endpoint aggregation"),
         (BIOASSAY_CROSSVIEW, "animal bioassay endpoint crossview"),
         (ROB_HEATMAP, "risk of bias heatmap"),
-        (ROB_BARCHART, "risk of bias barchart"), )
+        (ROB_BARCHART, "risk of bias barchart"),
+    )
 
-    SORT_ORDER_CHOICES = (("short_citation","Short Citation"),("overall_confidence","Final Study Confidence"),)
+    SORT_ORDER_CHOICES = (
+        ("short_citation", "Short Citation"),
+        ("overall_confidence", "Final Study Confidence"),
+    )
 
-    title = models.CharField(
-        max_length=128)
+    title = models.CharField(max_length=128)
     slug = models.SlugField(
         verbose_name="URL Name",
         help_text="The URL (web address) used to describe this object "
-                  "(no spaces or special-characters).")
-    assessment = models.ForeignKey(
-        Assessment,
-        related_name='visuals')
-    visual_type = models.PositiveSmallIntegerField(
-        choices=VISUAL_CHOICES)
-    dose_units = models.ForeignKey(
-        DoseUnits,
-        blank=True,
-        null=True)
-    prefilters = models.TextField(
-        default="{}")
+        "(no spaces or special-characters).",
+    )
+    assessment = models.ForeignKey(Assessment, related_name="visuals")
+    visual_type = models.PositiveSmallIntegerField(choices=VISUAL_CHOICES)
+    dose_units = models.ForeignKey(DoseUnits, blank=True, null=True)
+    prefilters = models.TextField(default="{}")
     endpoints = models.ManyToManyField(
         BaseEndpoint,
-        related_name='visuals',
+        related_name="visuals",
         help_text="Endpoints to be included in visualization",
-        blank=True)
+        blank=True,
+    )
     studies = models.ManyToManyField(
         Study,
-        related_name='visuals',
+        related_name="visuals",
         help_text="Studies to be included in visualization",
-        blank=True)
-    settings = models.TextField(
-        default="{}")
-    caption = models.TextField(
-        blank=True)
+        blank=True,
+    )
+    settings = models.TextField(default="{}")
+    caption = models.TextField(blank=True)
     published = models.BooleanField(
         default=False,
-        verbose_name='Publish visual for public viewing',
-        help_text='For assessments marked for public viewing, mark visual to be viewable by public')
-    sort_order = models.CharField(max_length=40,choices=SORT_ORDER_CHOICES, default="short_citation",)
-    created = models.DateTimeField(
-        auto_now_add=True)
-    last_updated = models.DateTimeField(
-        auto_now=True)
+        verbose_name="Publish visual for public viewing",
+        help_text="For assessments marked for public viewing, mark visual to be viewable by public",
+    )
+    sort_order = models.CharField(
+        max_length=40, choices=SORT_ORDER_CHOICES, default="short_citation",
+    )
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
 
     class Meta:
-        unique_together = (("assessment", "slug"), )
+        unique_together = (("assessment", "slug"),)
 
     def __str__(self):
         return self.title
 
     @staticmethod
     def get_list_url(assessment_id):
-        return reverse('summary:visualization_list', args=[str(assessment_id)])
+        return reverse("summary:visualization_list", args=[str(assessment_id)])
 
     def get_absolute_url(self):
-        return reverse('summary:visualization_detail', args=[str(self.pk)])
+        return reverse("summary:visualization_detail", args=[str(self.pk)])
 
     def get_update_url(self):
-        return reverse('summary:visualization_update', args=[str(self.pk)])
+        return reverse("summary:visualization_update", args=[str(self.pk)])
 
     def get_delete_url(self):
-        return reverse('summary:visualization_delete', args=[str(self.pk)])
+        return reverse("summary:visualization_delete", args=[str(self.pk)])
 
     def get_assessment(self):
         return self.assessment
@@ -269,9 +277,9 @@ class Visual(models.Model):
 
         if self.visual_type == self.BIOASSAY_AGGREGATION:
             if request:
-                ids = request.POST.getlist('endpoints')
+                ids = request.POST.getlist("endpoints")
             else:
-                ids = self.endpoints.values_list('id', flat=True)
+                ids = self.endpoints.values_list("id", flat=True)
 
             filters["id__in"] = ids
             qs = Endpoint.objects.filter(**filters)
@@ -279,7 +287,7 @@ class Visual(models.Model):
         elif self.visual_type == self.BIOASSAY_CROSSVIEW:
 
             if request:
-                dose_id = tryParseInt(request.POST.get('dose_units'), -1)
+                dose_id = tryParseInt(request.POST.get("dose_units"), -1)
                 Prefilter.setFiltersFromForm(filters, request.POST, self.visual_type)
 
             else:
@@ -287,7 +295,7 @@ class Visual(models.Model):
                 Prefilter.setFiltersFromObj(filters, self.prefilters)
 
             filters["animal_group__dosing_regime__doses__dose_units_id"] = dose_id
-            qs = Endpoint.objects.filter(**filters).distinct('id')
+            qs = Endpoint.objects.filter(**filters).distinct("id")
 
         return qs
 
@@ -306,11 +314,12 @@ class Visual(models.Model):
                 Prefilter.setFiltersFromForm(efilters, request.POST, self.visual_type)
                 if len(efilters) > 1:
                     filters["id__in"] = set(
-                        Endpoint.objects
-                            .filter(**efilters)
-                            .values_list('animal_group__experiment__study_id', flat=True))
+                        Endpoint.objects.filter(**efilters).values_list(
+                            "animal_group__experiment__study_id", flat=True
+                        )
+                    )
                 else:
-                    filters["id__in"] = request.POST.getlist('studies')
+                    filters["id__in"] = request.POST.getlist("studies")
 
                 qs = Study.objects.filter(**filters)
 
@@ -319,16 +328,17 @@ class Visual(models.Model):
                     efilters = {"assessment_id": self.assessment_id}
                     Prefilter.setFiltersFromObj(efilters, self.prefilters)
                     filters["id__in"] = set(
-                        Endpoint.objects
-                            .filter(**efilters)
-                            .values_list('animal_group__experiment__study_id', flat=True))
+                        Endpoint.objects.filter(**efilters).values_list(
+                            "animal_group__experiment__study_id", flat=True
+                        )
+                    )
                     qs = Study.objects.filter(**filters)
                 else:
                     qs = self.studies.all()
 
         if self.sort_order:
             if self.sort_order == "overall_confidence":
-                qs = sorted(qs, key=methodcaller('get_overall_confidence'), reverse=True)
+                qs = sorted(qs, key=methodcaller("get_overall_confidence"), reverse=True)
             else:
                 qs = qs.order_by(self.sort_order)
 
@@ -352,17 +362,15 @@ class Visual(models.Model):
             "caption": request.POST.get("caption"),
             "dose_units": dose_units,
             "created": datetime.now().isoformat(),
-            "last_updated": datetime.now().isoformat()
+            "last_updated": datetime.now().isoformat(),
         }
 
         data["endpoints"] = [
-            SerializerHelper.get_serialized(e, json=False)
-            for e in self.get_endpoints(request)
+            SerializerHelper.get_serialized(e, json=False) for e in self.get_endpoints(request)
         ]
 
         data["studies"] = [
-            SerializerHelper.get_serialized(s, json=False)
-            for s in self.get_studies(request)
+            SerializerHelper.get_serialized(s, json=False) for s in self.get_studies(request)
         ]
 
         return json.dumps(data)
@@ -372,7 +380,7 @@ class Visual(models.Model):
 
         study_cw = cw[get_model_copy_name(Study)]
         new_study_ids = []
-        for study in self.studies.all().order_by('id'):
+        for study in self.studies.all().order_by("id"):
             if study.id in study_cw:
                 new_study_ids.append(study_cw[study.id])
             else:
@@ -397,85 +405,80 @@ class Visual(models.Model):
     def _update_settings_across_assessments(self, cw: Dict) -> str:
         settings = json.loads(self.settings)
 
-        if (self.visual_type == 1) and 'included_metrics' in settings:
+        if (self.visual_type == 1) and "included_metrics" in settings:
             pass
 
-        if (self.visual_type == 2 or self.visual_type == 3) and 'included_metrics' in settings:
+        if (self.visual_type == 2 or self.visual_type == 3) and "included_metrics" in settings:
             ids = []
             model_cw = cw[get_model_copy_name(apps.get_model("riskofbias", "RiskOfBiasMetric"))]
-            for id_ in settings['included_metrics']:
+            for id_ in settings["included_metrics"]:
                 if id_ in model_cw:
                     ids.append(model_cw[id_])
-            settings['included_metrics'] = ids
+            settings["included_metrics"] = ids
 
         return json.dumps(settings)
 
     def get_rob_visual_type_display(self, value):
         rob_name = self.assessment.get_rob_name_display().lower()
-        return value.replace('risk of bias', rob_name)
+        return value.replace("risk of bias", rob_name)
 
 
 class DataPivot(models.Model):
     objects = managers.DataPivotManager()
 
-    assessment = models.ForeignKey(
-        Assessment)
+    assessment = models.ForeignKey(Assessment)
     title = models.CharField(
         max_length=128,
-        help_text="Enter the title of the visualization (spaces and special-characters allowed).")
+        help_text="Enter the title of the visualization (spaces and special-characters allowed).",
+    )
     slug = models.SlugField(
         verbose_name="URL Name",
         help_text="The URL (web address) used to describe this object "
-                  "(no spaces or special-characters).")
+        "(no spaces or special-characters).",
+    )
     settings = models.TextField(
         default="undefined",
         help_text="Paste content from a settings file from a different "
-                  "data-pivot, or keep set to \"undefined\".")
-    caption = models.TextField(
-        blank=True,
-        default="")
+        'data-pivot, or keep set to "undefined".',
+    )
+    caption = models.TextField(blank=True, default="")
     published = models.BooleanField(
         default=False,
-        verbose_name='Publish visual for public viewing',
-        help_text='For assessments marked for public viewing, mark visual to be viewable by public')
-    created = models.DateTimeField(
-        auto_now_add=True)
-    last_updated = models.DateTimeField(
-        auto_now=True)
+        verbose_name="Publish visual for public viewing",
+        help_text="For assessments marked for public viewing, mark visual to be viewable by public",
+    )
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
 
     class Meta:
-        unique_together = (("assessment", "slug"), )
-        ordering = ('title', )
+        unique_together = (("assessment", "slug"),)
+        ordering = ("title",)
 
     def __str__(self):
         return self.title
 
     @staticmethod
     def get_list_url(assessment_id):
-        return reverse('summary:visualization_list', args=[str(assessment_id)])
+        return reverse("summary:visualization_list", args=[str(assessment_id)])
 
     def get_absolute_url(self):
-        return reverse(
-            'summary:dp_detail',
-            kwargs={'pk': self.assessment_id, 'slug': self.slug})
+        return reverse("summary:dp_detail", kwargs={"pk": self.assessment_id, "slug": self.slug})
 
     def get_visualization_update_url(self):
-        return reverse(
-            'summary:dp_update',
-            kwargs={'pk': self.assessment_id, 'slug': self.slug})
+        return reverse("summary:dp_update", kwargs={"pk": self.assessment_id, "slug": self.slug})
 
     def get_assessment(self):
         return self.assessment
 
     def get_download_url(self):
-        return reverse('summary:dp_data', kwargs={'pk': self.assessment_id, 'slug': self.slug})
+        return reverse("summary:dp_data", kwargs={"pk": self.assessment_id, "slug": self.slug})
 
     def get_data_url(self):
         return self.get_download_url() + "?format=tsv"
 
     @property
     def visual_type(self):
-        if hasattr(self, 'datapivotupload'):
+        if hasattr(self, "datapivotupload"):
             return self.datapivotupload.visual_type
         else:
             return self.datapivotquery.visual_type
@@ -489,7 +492,7 @@ class DataPivot(models.Model):
     @staticmethod
     def reset_row_overrides(settings):
         settings_as_json = json.loads(settings)
-        settings_as_json['row_overrides'] = []
+        settings_as_json["row_overrides"] = []
         return json.dumps(settings_as_json)
 
     def copy_across_assessment(cw):
@@ -508,7 +511,7 @@ class DataPivotUpload(DataPivot):
     worksheet_name = models.CharField(
         help_text="Worksheet name to use in Excel file. If blank, the first worksheet is used.",
         max_length=64,
-        blank=True
+        blank=True,
     )
 
     @property
@@ -553,15 +556,14 @@ class DataPivotQuery(DataPivot):
         (EXPORT_ENDPOINT, "One row per Endpoint/Result"),
     )
 
-    evidence_type = models.PositiveSmallIntegerField(
-        choices=STUDY_TYPE_CHOICES,
-        default=BIOASSAY)
+    evidence_type = models.PositiveSmallIntegerField(choices=STUDY_TYPE_CHOICES, default=BIOASSAY)
     export_style = models.PositiveSmallIntegerField(
         choices=EXPORT_STYLE_CHOICES,
         default=EXPORT_GROUP,
         help_text="The export style changes the level at which the "
-                  "data are aggregated, and therefore which columns and types "
-                  "of data are presented in the export, for use in the visual.")
+        "data are aggregated, and therefore which columns and types "
+        "of data are presented in the export, for use in the visual.",
+    )
     # Implementation-note: use ArrayField to save DoseUnits ManyToMany because
     # order is important and it would be a much larger implementation to allow
     # copying and saving dose-units- dose-units are rarely deleted and this
@@ -571,17 +573,18 @@ class DataPivotQuery(DataPivot):
         models.PositiveIntegerField(),
         default=list,
         help_text="List of preferred dose-values, in order of preference. "
-                  "If empty, dose-units will be random for each endpoint "
-                  "presented. This setting may used for comparing "
-                  "percent-response, where dose-units are not needed, or for "
-                  "creating one plot similar, but not identical, dose-units.")
-    prefilters = models.TextField(
-        default="{}")
+        "If empty, dose-units will be random for each endpoint "
+        "presented. This setting may used for comparing "
+        "percent-response, where dose-units are not needed, or for "
+        "creating one plot similar, but not identical, dose-units.",
+    )
+    prefilters = models.TextField(default="{}")
     published_only = models.BooleanField(
         default=True,
         verbose_name="Published studies only",
-        help_text='Only present data from studies which have been marked as '
-                  '"published" in HAWC.')
+        help_text="Only present data from studies which have been marked as "
+        '"published" in HAWC.',
+    )
 
     def clean(self):
         count = self.get_queryset().count()
@@ -599,7 +602,9 @@ class DataPivotQuery(DataPivot):
                 ({0} returned; a maximum of {1} are allowed);
                 make your filtering settings more restrictive
                 (check units and/or prefilters).
-            """.format(count, self.MAXIMUM_QUERYSET_COUNT)
+            """.format(
+                count, self.MAXIMUM_QUERYSET_COUNT
+            )
             raise ValidationError(err)
 
     def _get_dataset_filters(self):
@@ -662,8 +667,8 @@ class DataPivotQuery(DataPivot):
                 qs,
                 assessment=self.assessment,
                 export_format=format_,
-                filename='{}-animal-bioassay'.format(self.assessment),
-                preferred_units=self.preferred_units
+                filename="{}-animal-bioassay".format(self.assessment),
+                preferred_units=self.preferred_units,
             )
 
         elif self.evidence_type == EPI:
@@ -671,7 +676,7 @@ class DataPivotQuery(DataPivot):
                 qs,
                 assessment=self.assessment,
                 export_format=format_,
-                filename='{}-epi'.format(self.assessment)
+                filename="{}-epi".format(self.assessment),
             )
 
         elif self.evidence_type == EPI_META:
@@ -679,7 +684,7 @@ class DataPivotQuery(DataPivot):
                 qs,
                 assessment=self.assessment,
                 export_format=format_,
-                filename='{}-epi-meta-analysis'.format(self.assessment)
+                filename="{}-epi-meta-analysis".format(self.assessment),
             )
 
         elif self.evidence_type == IN_VITRO:
@@ -695,7 +700,7 @@ class DataPivotQuery(DataPivot):
                 qs,
                 assessment=self.assessment,
                 export_format=format_,
-                filename='{}-invitro'.format(self.assessment)
+                filename="{}-invitro".format(self.assessment),
             )
 
         return exporter
@@ -747,7 +752,7 @@ class DataPivotQuery(DataPivot):
         except json.JSONDecodeError:
             return self.settings
 
-        if len(settings['row_overrides']) > 0:
+        if len(settings["row_overrides"]) > 0:
             if self.evidence_type == BIOASSAY and self.export_style == self.EXPORT_GROUP:
                 Model = apps.get_model("animal", "EndpointGroup")
             elif self.evidence_type == BIOASSAY and self.export_style == self.EXPORT_ENDPOINT:
@@ -761,7 +766,7 @@ class DataPivotQuery(DataPivot):
 
             model_cw = cw[get_model_copy_name(Model)]
             for override in row_overrides:
-                override.update(pk=model_cw[override['pk']])
+                override.update(pk=model_cw[override["pk"]])
 
         return json.dumps(settings)
 
@@ -770,35 +775,36 @@ class Prefilter(object):
     """
     Helper-object to deal with DataPivot and Visual prefilters fields.
     """
+
     @staticmethod
     def setFiltersFromForm(filters, d, visual_type):
-        evidence_type = d.get('evidence_type')
+        evidence_type = d.get("evidence_type")
 
         if visual_type == Visual.BIOASSAY_CROSSVIEW:
             evidence_type = BIOASSAY
 
-        if d.get('prefilter_system'):
-            filters["system__in"] = d.getlist('systems')
+        if d.get("prefilter_system"):
+            filters["system__in"] = d.getlist("systems")
 
-        if d.get('prefilter_organ'):
-            filters["organ__in"] = d.getlist('organs')
+        if d.get("prefilter_organ"):
+            filters["organ__in"] = d.getlist("organs")
 
-        if d.get('prefilter_effect'):
-            filters["effect__in"] = d.getlist('effects')
+        if d.get("prefilter_effect"):
+            filters["effect__in"] = d.getlist("effects")
 
-        if d.get('prefilter_effect_subtype'):
-            filters["effect_subtype__in"] = d.getlist('effect_subtypes')
+        if d.get("prefilter_effect_subtype"):
+            filters["effect_subtype__in"] = d.getlist("effect_subtypes")
 
-        if d.get('prefilter_effect_tag'):
-            filters["effects__in"] = d.getlist('effect_tags')
+        if d.get("prefilter_effect_tag"):
+            filters["effects__in"] = d.getlist("effect_tags")
 
-        if d.get('prefilter_episystem'):
-            filters["system__in"] = d.getlist('episystems')
+        if d.get("prefilter_episystem"):
+            filters["system__in"] = d.getlist("episystems")
 
-        if d.get('prefilter_epieffect'):
-            filters["effect__in"] = d.getlist('epieffects')
+        if d.get("prefilter_epieffect"):
+            filters["effect__in"] = d.getlist("epieffects")
 
-        if d.get('prefilter_study'):
+        if d.get("prefilter_study"):
             studies = d.getlist("studies", [])
             if evidence_type == BIOASSAY:
                 filters["animal_group__experiment__study__in"] = studies

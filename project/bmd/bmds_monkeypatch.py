@@ -19,33 +19,35 @@ class JobException(Exception):
 def run_job(url, data, api_token, interval=3, timeout=60):
     # https://gist.github.com/shapiromatron/0f04fa1f2626229cce28b06b02b7af4f
     with requests.Session() as s:
-        s.headers.update({
-            "Authorization": f"Token {api_token}",
-            "Content-Type": "application/json",
-            "Accept": "application/json",
-        })
+        s.headers.update(
+            {
+                "Authorization": f"Token {api_token}",
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+            }
+        )
 
         # initial job request
         response = s.post(url, data=data)
         if response.status_code in [400, 403]:
-            raise JobException(response.json()['detail'])
+            raise JobException(response.json()["detail"])
 
         # poll response until job is complete or client-timeout
         wait_time = 0
-        job_url = response.json()['url']
+        job_url = response.json()["url"]
         while True:
             time.sleep(interval)
             response = s.get(job_url).json()
 
-            if response['is_finished']:
-                if response['has_errors']:
-                    raise JobException(response['errors'])
+            if response["is_finished"]:
+                if response["has_errors"]:
+                    raise JobException(response["errors"])
                 else:
-                    return response['outputs']
+                    return response["outputs"]
 
             wait_time += interval
             if wait_time > timeout:
-                raise JobException('Client timeout')
+                raise JobException("Client timeout")
 
 
 def execute(self):
@@ -65,7 +67,8 @@ def execute(self):
         settings.BMDS_SUBMISSION_URL,
         _get_payload(executable_models),
         settings.BMDS_TOKEN,
-        interval=3, timeout=120
+        interval=3,
+        timeout=120,
     )
 
     # parse results for each model

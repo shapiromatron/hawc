@@ -26,16 +26,15 @@ def HAWCtoDateString(datetime):
 def cleanHTML(txt):
     return strip_entities(
         strip_tags(
-            txt.replace('\n', ' ')
-               .replace('\r', "")
-               .replace('<br>', "\n")
-               .replace("&nbsp;", " ")))
+            txt.replace("\n", " ").replace("\r", "").replace("<br>", "\n").replace("&nbsp;", " ")
+        )
+    )
 
 
 def strip_entities(value):
     """Return the given HTML with all entities (&something;) stripped."""
     # Note: Originally in Django but removed in v1.10
-    return re.sub(r'&(?:\w+|#\d+);', '', html.force_text(value))
+    return re.sub(r"&(?:\w+|#\d+);", "", html.force_text(value))
 
 
 def strip_tags(value):
@@ -43,7 +42,7 @@ def strip_tags(value):
     # Note: in typical case this loop executes _strip_once once. Loop condition
     # is redundant, but helps to reduce number of executions of _strip_once.
     # Note: Originally in Django but removed in v1.10
-    while '<' in value and '>' in value:
+    while "<" in value and ">" in value:
         new_value = html._strip_once(value)
         if new_value == value:
             # _strip_once was not able to detect more tags
@@ -53,8 +52,7 @@ def strip_tags(value):
 
 
 def listToUl(list_):
-    return "<ul>{0}</ul>".format(
-        "".join(["<li>{0}</li>".format(d) for d in list_]))
+    return "<ul>{0}</ul>".format("".join(["<li>{0}</li>".format(d) for d in list_]))
 
 
 def tryParseInt(val, default=None):
@@ -68,6 +66,7 @@ class HAWCDjangoJSONEncoder(DjangoJSONEncoder):
     """
     Modified to return a float instead of a string.
     """
+
     def default(self, o):
         if isinstance(o, decimal.Decimal):
             return float(o)
@@ -97,7 +96,7 @@ class SerializerHelper(object):
             name = cls._get_cache_name(obj.__class__, obj.id, json)
             cached = cache.get(name)
             if cached:
-                logging.debug('using cache: {}'.format(name))
+                logging.debug("using cache: {}".format(name))
             else:
                 cached = cls._serialize_and_cache(obj, json=json)
             return cached
@@ -119,13 +118,13 @@ class SerializerHelper(object):
         json_name = cls._get_cache_name(obj.__class__, obj.id, json=True)
 
         # serialize data and get json-representation
-        if hasattr(obj, 'optimized_for_serialization'):
+        if hasattr(obj, "optimized_for_serialization"):
             obj = obj.optimized_for_serialization()
         serialized = cls._serialize(obj, json=False)
         json_str = JSONRenderer().render(serialized)
         serialized = OrderedDict(serialized)  # for pickling
 
-        logging.debug('setting cache: {}'.format(name))
+        logging.debug("setting cache: {}".format(name))
         cache.set_many({name: serialized, json_name: json_str})
 
         if json:
@@ -141,12 +140,12 @@ class SerializerHelper(object):
     def delete_caches(cls, model, ids):
         names = [cls._get_cache_name(model, id, json=False) for id in ids]
         names.extend([cls._get_cache_name(model, id, json=True) for id in ids])
-        logging.debug("Removing caches: {}".format(', '.join(names)))
+        logging.debug("Removing caches: {}".format(", ".join(names)))
         cache.delete_many(names)
 
     @classmethod
     def clear_cache(cls, Model, filters):
-        ids = Model.objects.filter(**filters).values_list('id', flat=True)
+        ids = Model.objects.filter(**filters).values_list("id", flat=True)
         cls.delete_caches(Model, ids)
 
 
@@ -154,6 +153,7 @@ class FlatFileExporter(object):
     """
     Base class used to generate flat-file exports of serialized data.
     """
+
     def __init__(self, queryset, export_format, **kwargs):
         self.queryset = queryset
         self.export_format = export_format
@@ -176,17 +176,17 @@ class FlatFileExporter(object):
     def _get_tags(cls, e):
         returnValue = ""
 
-        if ("effects" in e):
+        if "effects" in e:
             """ This element is an Outcome element with an "effects" field """
             effects = [tag["name"] for tag in e["effects"]]
 
-            if (len(effects) > 0):
+            if len(effects) > 0:
                 returnValue = "|{0}|".format("|".join(effects))
-        elif ("resulttags" in e):
+        elif "resulttags" in e:
             """ This element is a Result element with a "resulttags" field """
             resulttags = [tag["name"] for tag in e["resulttags"]]
 
-            if (len(resulttags) > 0):
+            if len(resulttags) > 0:
                 returnValue = "|{0}|".format("|".join(resulttags))
 
         return returnValue
@@ -256,12 +256,12 @@ class ExcelFileBuilder(FlatFile):
         - Make sure you did not leave the name blank.
         http://stackoverflow.com/questions/451452/
         """
-        sheet_name = re.sub(r'[\:\\/\?\*\[\]]+', r'-', sheet_name)[:31]
+        sheet_name = re.sub(r"[\:\\/\?\*\[\]]+", r"-", sheet_name)[:31]
         self.ws = self.wb.add_worksheet(sheet_name)
 
     def _write_header_row(self, header_row):
         # set formatting and freeze panes for header-row
-        header_fmt = self.wb.add_format({'bold': True})
+        header_fmt = self.wb.add_format({"bold": True})
         self.ws.freeze_panes(1, 0)
         self.ncols = len(header_row)
 
@@ -270,7 +270,7 @@ class ExcelFileBuilder(FlatFile):
             self.ws.write(0, col, val, header_fmt)
 
     def _write_data_rows(self, data_rows):
-        date_format = self.wb.add_format({'num_format': 'dd/mm/yy'})
+        date_format = self.wb.add_format({"num_format": "dd/mm/yy"})
 
         def write_cell(r, c, val):
             if type(val) is bool:
@@ -294,11 +294,14 @@ class ExcelFileBuilder(FlatFile):
         self.ws.autofilter(0, 0, r, self.ncols - 1)
 
     def _django_response(self):
-        fn = '{}.xlsx'.format(self.filename)
+        fn = "{}.xlsx".format(self.filename)
         self.wb.close()
         self.output.seek(0)
-        response = HttpResponse(self.output.read(), content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-        response['Content-Disposition'] = 'attachment; filename="{}"'.format(fn)
+        response = HttpResponse(
+            self.output.read(),
+            content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        )
+        response["Content-Disposition"] = 'attachment; filename="{}"'.format(fn)
         return response
 
 
@@ -309,7 +312,7 @@ class TSVFileBuilder(FlatFile):
 
     def _setup(self):
         self.output = StringIO()
-        self.tsv = csv.writer(self.output, dialect='excel-tab')
+        self.tsv = csv.writer(self.output, dialect="excel-tab")
 
     def _write_header_row(self, header_row):
         self.tsv.writerow(header_row)
@@ -319,6 +322,6 @@ class TSVFileBuilder(FlatFile):
 
     def _django_response(self):
         self.output.seek(0)
-        response = HttpResponse(self.output, content_type='text/tab-separated-values')
-        response['Content-Disposition'] = 'attachment; filename="{}.tsv"'.format(self.filename)
+        response = HttpResponse(self.output, content_type="text/tab-separated-values")
+        response["Content-Disposition"] = 'attachment; filename="{}.tsv"'.format(self.filename)
         return response

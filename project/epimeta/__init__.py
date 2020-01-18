@@ -1,1 +1,1 @@
-default_app_config = 'epimeta.apps.EpimetaConfig'
+default_app_config = "epimeta.apps.EpimetaConfig"

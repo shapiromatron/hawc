@@ -4,43 +4,54 @@ from assessment.models import Assessment
 from mgmt.views import EnsureExtractionStartedMixin
 from study.models import Study
 from study.views import StudyRead
-from utils.views import (BaseCreate, BaseCreateWithFormset, BaseDetail,
-                         BaseDelete, BaseEndpointFilterList, BaseUpdate,
-                         BaseList, BaseUpdateWithFormset, CloseIfSuccessMixin,
-                         CopyAsNewSelectorMixin)
+from utils.views import (
+    BaseCreate,
+    BaseCreateWithFormset,
+    BaseDetail,
+    BaseDelete,
+    BaseEndpointFilterList,
+    BaseUpdate,
+    BaseList,
+    BaseUpdateWithFormset,
+    CloseIfSuccessMixin,
+    CopyAsNewSelectorMixin,
+)
 
 from . import forms, exports, models
 
 
 # Study criteria
 class StudyCriteriaCreate(CloseIfSuccessMixin, BaseCreate):
-    success_message = 'Criteria created.'
+    success_message = "Criteria created."
     parent_model = Assessment
-    parent_template_name = 'assessment'
+    parent_template_name = "assessment"
     model = models.Criteria
     form_class = forms.CriteriaForm
 
 
 # Study population
 class StudyPopulationCreate(EnsureExtractionStartedMixin, BaseCreate):
-    success_message = 'Study-population created.'
+    success_message = "Study-population created."
     parent_model = Study
-    parent_template_name = 'study'
+    parent_template_name = "study"
     model = models.StudyPopulation
     form_class = forms.StudyPopulationForm
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
 
-        if 'id' in kwargs['initial']:
+        if "id" in kwargs["initial"]:
             # add additional M2M through relationships
-            initial = self.model.objects.get(id=kwargs['initial']['id'])
-            kwargs['initial']['inclusion_criteria'] = \
-                initial.inclusion_criteria.values_list('id', flat=True)
-            kwargs['initial']['exclusion_criteria'] = \
-                initial.exclusion_criteria.values_list('id', flat=True)
-            kwargs['initial']['confounding_criteria'] = \
-                initial.confounding_criteria.values_list('id', flat=True)
+            initial = self.model.objects.get(id=kwargs["initial"]["id"])
+            kwargs["initial"]["inclusion_criteria"] = initial.inclusion_criteria.values_list(
+                "id", flat=True
+            )
+            kwargs["initial"]["exclusion_criteria"] = initial.exclusion_criteria.values_list(
+                "id", flat=True
+            )
+            kwargs["initial"]["confounding_criteria"] = initial.confounding_criteria.values_list(
+                "id", flat=True
+            )
 
         return kwargs
 
@@ -70,18 +81,18 @@ class StudyPopulationDelete(BaseDelete):
 
 # Factors
 class AdjustmentFactorCreate(CloseIfSuccessMixin, BaseCreate):
-    success_message = 'Adjustment factor created.'
+    success_message = "Adjustment factor created."
     parent_model = Assessment
-    parent_template_name = 'assessment'
+    parent_template_name = "assessment"
     model = models.AdjustmentFactor
     form_class = forms.AdjustmentFactorForm
 
 
 # Exposure
 class ExposureCreate(BaseCreateWithFormset):
-    success_message = 'Exposure created.'
+    success_message = "Exposure created."
     parent_model = models.StudyPopulation
-    parent_template_name = 'study_population'
+    parent_template_name = "study_population"
     model = models.Exposure
     form_class = forms.ExposureForm
     formset_factory = forms.CentralTendencyFormset
@@ -97,8 +108,7 @@ class ExposureCreate(BaseCreateWithFormset):
                     form.instance.save()
 
     def build_initial_formset_factory(self):
-        return forms.BlankCentralTendencyFormset(
-            queryset=models.CentralTendency.objects.none())
+        return forms.BlankCentralTendencyFormset(queryset=models.CentralTendency.objects.none())
 
 
 class ExposureCopyAsNewSelector(CopyAsNewSelectorMixin, StudyPopulationDetail):
@@ -119,7 +129,7 @@ class ExposureUpdate(BaseUpdateWithFormset):
     def build_initial_formset_factory(self):
         # make sure at least one CT exists; we check because it's possible
         # to delete as well as create objects in this view.
-        qs = self.object.central_tendencies.all().order_by('id')
+        qs = self.object.central_tendencies.all().order_by("id")
         fs = forms.CentralTendencyFormset(queryset=qs)
         if qs.count() == 0:
             fs.extra = 1
@@ -152,7 +162,7 @@ class OutcomeList(BaseEndpointFilterList):
 
     def get_query(self, perms):
         query = Q(assessment=self.assessment)
-        if not perms['edit']:
+        if not perms["edit"]:
             query &= Q(study_population__study__published=True)
         return query
 
@@ -163,7 +173,7 @@ class OutcomeExport(BaseList):
 
     def get_queryset(self):
         perms = self.get_obj_perms()
-        if not perms['edit']:
+        if not perms["edit"]:
             return self.model.objects.published(self.assessment)
         return self.model.objects.get_qs(self.assessment)
 
@@ -172,21 +182,22 @@ class OutcomeExport(BaseList):
         exporter = exports.OutcomeComplete(
             self.object_list,
             export_format="excel",
-            filename='{}-epi'.format(self.assessment),
-            sheet_name='epi')
+            filename="{}-epi".format(self.assessment),
+            sheet_name="epi",
+        )
         return exporter.build_response()
 
 
 class OutcomeCreate(BaseCreate):
-    success_message = 'Outcome created.'
+    success_message = "Outcome created."
     parent_model = models.StudyPopulation
-    parent_template_name = 'study_population'
+    parent_template_name = "study_population"
     model = models.Outcome
     form_class = forms.OutcomeForm
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs['assessment'] = self.assessment
+        kwargs["assessment"] = self.assessment
         return kwargs
 
 
@@ -215,9 +226,9 @@ class OutcomeDelete(BaseDelete):
 
 # Result
 class ResultCreate(BaseCreateWithFormset):
-    success_message = 'Result created.'
+    success_message = "Result created."
     parent_model = models.Outcome
-    parent_template_name = 'outcome'
+    parent_template_name = "outcome"
     model = models.Result
     form_class = forms.ResultForm
     formset_factory = forms.GroupResultFormset
@@ -225,13 +236,15 @@ class ResultCreate(BaseCreateWithFormset):
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
 
-        if 'id' in kwargs['initial']:
+        if "id" in kwargs["initial"]:
             # add additional M2M through relationships
-            initial = self.model.objects.get(id=kwargs['initial']['id'])
-            kwargs['initial']['factors_applied'] = \
-                initial.factors_applied.values_list('id', flat=True)
-            kwargs['initial']['factors_considered'] = \
-                initial.factors_considered.values_list('id', flat=True)
+            initial = self.model.objects.get(id=kwargs["initial"]["id"])
+            kwargs["initial"]["factors_applied"] = initial.factors_applied.values_list(
+                "id", flat=True
+            )
+            kwargs["initial"]["factors_considered"] = initial.factors_considered.values_list(
+                "id", flat=True
+            )
 
         return kwargs
 
@@ -242,13 +255,13 @@ class ResultCreate(BaseCreateWithFormset):
     def get_formset_kwargs(self):
         return {
             "outcome": self.parent,
-            "study_population": self.parent.study_population
+            "study_population": self.parent.study_population,
         }
 
     def build_initial_formset_factory(self):
         return forms.BlankGroupResultFormset(
-            queryset=models.GroupResult.objects.none(),
-            **self.get_formset_kwargs())
+            queryset=models.GroupResult.objects.none(), **self.get_formset_kwargs()
+        )
 
 
 class ResultCopyAsNewSelector(CopyAsNewSelectorMixin, OutcomeDetail):
@@ -268,22 +281,21 @@ class ResultUpdate(BaseUpdateWithFormset):
 
     def build_initial_formset_factory(self):
         return forms.GroupResultFormset(
-            queryset=self.object.results.all(),
-            **self.get_formset_kwargs())
+            queryset=self.object.results.all(), **self.get_formset_kwargs()
+        )
 
     def get_formset_kwargs(self):
         return {
             "study_population": self.object.outcome.study_population,
             "outcome": self.object.outcome,
-            "result": self.object
+            "result": self.object,
         }
 
     def post_object_save(self, form, formset):
         # delete other results not associated with the selected collection
-        models.GroupResult.objects\
-            .filter(result=self.object)\
-            .exclude(group__comparison_set=self.object.comparison_set)\
-            .delete()
+        models.GroupResult.objects.filter(result=self.object).exclude(
+            group__comparison_set=self.object.comparison_set
+        ).delete()
 
 
 class ResultDelete(BaseDelete):
@@ -296,9 +308,9 @@ class ResultDelete(BaseDelete):
 
 # Comparison set + group
 class ComparisonSetCreate(BaseCreateWithFormset):
-    success_message = 'Groups created.'
+    success_message = "Groups created."
     parent_model = models.StudyPopulation
-    parent_template_name = 'study_population'
+    parent_template_name = "study_population"
     model = models.ComparisonSet
     form_class = forms.ComparisonSet
     formset_factory = forms.GroupFormset
@@ -314,25 +326,24 @@ class ComparisonSetCreate(BaseCreateWithFormset):
                 group_id += 1
 
     def build_initial_formset_factory(self):
-        return forms.BlankGroupFormset(
-            queryset=models.Group.objects.none())
+        return forms.BlankGroupFormset(queryset=models.Group.objects.none())
 
 
 class ComparisonSetOutcomeCreate(ComparisonSetCreate):
     parent_model = models.Outcome
-    parent_template_name = 'outcome'
+    parent_template_name = "outcome"
 
 
 class ComparisonSetStudyPopCopySelector(CopyAsNewSelectorMixin, StudyPopulationDetail):
     copy_model = models.ComparisonSet
     form_class = forms.ComparisonSetByStudyPopulationSelectorForm
-    template_name = 'epi/comparisonset_sp_copy_selector.html'
+    template_name = "epi/comparisonset_sp_copy_selector.html"
 
 
 class ComparisonSetOutcomeCopySelector(CopyAsNewSelectorMixin, OutcomeDetail):
     copy_model = models.ComparisonSet
     form_class = forms.ComparisonSetByOutcomeSelectorForm
-    template_name = 'epi/comparisonset_outcome_copy_selector.html'
+    template_name = "epi/comparisonset_outcome_copy_selector.html"
 
 
 class ComparisonSetDetail(BaseDetail):
@@ -348,7 +359,7 @@ class ComparisonSetUpdate(BaseUpdateWithFormset):
     def build_initial_formset_factory(self):
         # make sure at least one group exists; we check because it's possible
         # to delete as well as create objects in this view.
-        qs = self.object.groups.all().order_by('group_id')
+        qs = self.object.groups.all().order_by("group_id")
         fs = forms.GroupFormset(queryset=qs)
         if qs.count() == 0:
             fs.extra = 1
@@ -387,8 +398,7 @@ class GroupUpdate(BaseUpdateWithFormset):
     formset_factory = forms.GroupNumericalDescriptionsFormset
 
     def build_initial_formset_factory(self):
-        return forms.GroupNumericalDescriptionsFormset(
-            queryset=self.object.descriptions.all())
+        return forms.GroupNumericalDescriptionsFormset(queryset=self.object.descriptions.all())
 
     def post_object_save(self, form, formset):
         for form in formset:

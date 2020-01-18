@@ -61,7 +61,7 @@ class Cloner:
             getattr(obj, name).set(values)
 
     def clone(self, obj: Model, overrides: Dict = None) -> Model:
-        logger.info(f'Cloning: #{obj.id}: {obj}')
+        logger.info(f"Cloning: #{obj.id}: {obj}")
         m2ms = self._get_m2m(obj)
         obj.pk = None
         self._set_overrides(obj, overrides)
@@ -71,48 +71,193 @@ class Cloner:
 
 
 class AssessmentCloner(Cloner):
-    M2M_FIELDS = ['project_manager', 'team_members', 'reviewers']
+    M2M_FIELDS = ["project_manager", "team_members", "reviewers"]
 
 
 def disable_signals():
-    assert post_save.disconnect(receiver=assess_signals.default_configuration, sender=Assessment) is True
-    assert post_save.disconnect(receiver=lit_signals.invalidate_study_cache, sender=lit_models.Reference) is True
-    assert post_save.disconnect(receiver=lit_signals.invalidate_tag_cache, sender=lit_models.ReferenceFilterTag) is True
-    assert post_save.disconnect(receiver=rob_signals.invalidate_caches_rob_metrics, sender=rob_models.RiskOfBiasDomain) is True
-    assert post_save.disconnect(receiver=rob_signals.invalidate_caches_rob_metrics, sender=rob_models.RiskOfBiasMetric) is True
-    assert post_save.disconnect(receiver=rob_signals.create_rob_scores, sender=rob_models.RiskOfBiasMetric) is True
-    assert post_save.disconnect(receiver=rob_signals.update_study_type_metrics, sender=rob_models.RiskOfBiasMetric) is True
-    assert post_save.disconnect(receiver=bmd_signals.invalidate_outcome_cache, sender=bmd_models.SelectedModel) is True
-    assert post_save.disconnect(receiver=study_signals.update_study_rob_scores, sender=study_models.Study) is True
-    assert post_save.disconnect(receiver=study_signals.invalidate_caches_study, sender=study_models.Study) is True
-    assert post_save.disconnect(receiver=study_signals.create_study_tasks, sender=study_models.Study) is True
-    assert post_save.disconnect(receiver=ani_signals.invalidate_endpoint_cache, sender=ani_models.Experiment) is True
-    assert post_save.disconnect(receiver=ani_signals.invalidate_endpoint_cache, sender=ani_models.AnimalGroup) is True
-    assert post_save.disconnect(receiver=ani_signals.invalidate_endpoint_cache, sender=ani_models.DosingRegime) is True
-    assert post_save.disconnect(receiver=ani_signals.invalidate_endpoint_cache, sender=ani_models.Endpoint) is True
-    assert post_save.disconnect(receiver=ani_signals.invalidate_endpoint_cache, sender=ani_models.EndpointGroup) is True
-    assert post_save.disconnect(receiver=rob_signals.invalidate_caches_risk_of_bias, sender=rob_models.RiskOfBias) is True
-    assert post_save.disconnect(receiver=rob_signals.invalidate_caches_risk_of_bias, sender=rob_models.RiskOfBiasScore) is True
-    assert post_save.disconnect(receiver=epi_signals.invalidate_outcome_cache, sender=epi_models.StudyPopulation) is True
-    assert post_save.disconnect(receiver=epi_signals.invalidate_outcome_cache, sender=epi_models.ComparisonSet) is True
-    assert post_save.disconnect(receiver=epi_signals.invalidate_outcome_cache, sender=epi_models.Exposure) is True
-    assert post_save.disconnect(receiver=epi_signals.invalidate_outcome_cache, sender=epi_models.Group) is True
-    assert post_save.disconnect(receiver=epi_signals.invalidate_outcome_cache, sender=epi_models.Outcome) is True
-    assert post_save.disconnect(receiver=epi_signals.invalidate_outcome_cache, sender=epi_models.Result) is True
-    assert post_save.disconnect(receiver=epi_signals.invalidate_outcome_cache, sender=epi_models.GroupResult) is True
-    assert post_save.disconnect(receiver=epi_signals.modify_group_result, sender=epi_models.Group) is True
+    assert (
+        post_save.disconnect(
+            receiver=assess_signals.default_configuration, sender=Assessment
+        )
+        is True
+    )
+    assert (
+        post_save.disconnect(
+            receiver=lit_signals.invalidate_study_cache, sender=lit_models.Reference
+        )
+        is True
+    )
+    assert (
+        post_save.disconnect(
+            receiver=lit_signals.invalidate_tag_cache,
+            sender=lit_models.ReferenceFilterTag,
+        )
+        is True
+    )
+    assert (
+        post_save.disconnect(
+            receiver=rob_signals.invalidate_caches_rob_metrics,
+            sender=rob_models.RiskOfBiasDomain,
+        )
+        is True
+    )
+    assert (
+        post_save.disconnect(
+            receiver=rob_signals.invalidate_caches_rob_metrics,
+            sender=rob_models.RiskOfBiasMetric,
+        )
+        is True
+    )
+    assert (
+        post_save.disconnect(
+            receiver=rob_signals.create_rob_scores, sender=rob_models.RiskOfBiasMetric
+        )
+        is True
+    )
+    assert (
+        post_save.disconnect(
+            receiver=rob_signals.update_study_type_metrics,
+            sender=rob_models.RiskOfBiasMetric,
+        )
+        is True
+    )
+    assert (
+        post_save.disconnect(
+            receiver=bmd_signals.invalidate_outcome_cache,
+            sender=bmd_models.SelectedModel,
+        )
+        is True
+    )
+    assert (
+        post_save.disconnect(
+            receiver=study_signals.update_study_rob_scores, sender=study_models.Study
+        )
+        is True
+    )
+    assert (
+        post_save.disconnect(
+            receiver=study_signals.invalidate_caches_study, sender=study_models.Study
+        )
+        is True
+    )
+    assert (
+        post_save.disconnect(
+            receiver=study_signals.create_study_tasks, sender=study_models.Study
+        )
+        is True
+    )
+    assert (
+        post_save.disconnect(
+            receiver=ani_signals.invalidate_endpoint_cache, sender=ani_models.Experiment
+        )
+        is True
+    )
+    assert (
+        post_save.disconnect(
+            receiver=ani_signals.invalidate_endpoint_cache,
+            sender=ani_models.AnimalGroup,
+        )
+        is True
+    )
+    assert (
+        post_save.disconnect(
+            receiver=ani_signals.invalidate_endpoint_cache,
+            sender=ani_models.DosingRegime,
+        )
+        is True
+    )
+    assert (
+        post_save.disconnect(
+            receiver=ani_signals.invalidate_endpoint_cache, sender=ani_models.Endpoint
+        )
+        is True
+    )
+    assert (
+        post_save.disconnect(
+            receiver=ani_signals.invalidate_endpoint_cache,
+            sender=ani_models.EndpointGroup,
+        )
+        is True
+    )
+    assert (
+        post_save.disconnect(
+            receiver=rob_signals.invalidate_caches_risk_of_bias,
+            sender=rob_models.RiskOfBias,
+        )
+        is True
+    )
+    assert (
+        post_save.disconnect(
+            receiver=rob_signals.invalidate_caches_risk_of_bias,
+            sender=rob_models.RiskOfBiasScore,
+        )
+        is True
+    )
+    assert (
+        post_save.disconnect(
+            receiver=epi_signals.invalidate_outcome_cache,
+            sender=epi_models.StudyPopulation,
+        )
+        is True
+    )
+    assert (
+        post_save.disconnect(
+            receiver=epi_signals.invalidate_outcome_cache,
+            sender=epi_models.ComparisonSet,
+        )
+        is True
+    )
+    assert (
+        post_save.disconnect(
+            receiver=epi_signals.invalidate_outcome_cache, sender=epi_models.Exposure
+        )
+        is True
+    )
+    assert (
+        post_save.disconnect(
+            receiver=epi_signals.invalidate_outcome_cache, sender=epi_models.Group
+        )
+        is True
+    )
+    assert (
+        post_save.disconnect(
+            receiver=epi_signals.invalidate_outcome_cache, sender=epi_models.Outcome
+        )
+        is True
+    )
+    assert (
+        post_save.disconnect(
+            receiver=epi_signals.invalidate_outcome_cache, sender=epi_models.Result
+        )
+        is True
+    )
+    assert (
+        post_save.disconnect(
+            receiver=epi_signals.invalidate_outcome_cache, sender=epi_models.GroupResult
+        )
+        is True
+    )
+    assert (
+        post_save.disconnect(
+            receiver=epi_signals.modify_group_result, sender=epi_models.Group
+        )
+        is True
+    )
 
 
 def apply_lit_tags(study_ids: List[int], cw: Dict):
     # apply the same literature tags previously used in original studies to clones
-    lit_models.ReferenceTags.objects.bulk_create([
-        lit_models.ReferenceTags(
-            tag_id=cw['ref-filter-tags'][tag.tag_id],
-            content_object_id=cw['studies'][tag.content_object_id]
-        )
-        for tag in
-        lit_models.ReferenceTags.objects.filter(content_object_id__in=study_ids)
-    ])
+    lit_models.ReferenceTags.objects.bulk_create(
+        [
+            lit_models.ReferenceTags(
+                tag_id=cw["ref-filter-tags"][tag.tag_id],
+                content_object_id=cw["studies"][tag.content_object_id],
+            )
+            for tag in lit_models.ReferenceTags.objects.filter(
+                content_object_id__in=study_ids
+            )
+        ]
+    )
 
 
 def apply_ivcategory_tags(study_ids: List[int], cw: Dict):
@@ -132,7 +277,9 @@ def clone_assessment(
     # disable post_create signals
     assessment_cloner = AssessmentCloner()
 
-    new_assessment = assessment_cloner.clone(Assessment.objects.get(id=old_assessment_id), {"name": new_assessment_name})
+    new_assessment = assessment_cloner.clone(
+        Assessment.objects.get(id=old_assessment_id), {"name": new_assessment_name}
+    )
     new_assessment_id = new_assessment.id
     old_assessment = Assessment.objects.get(id=old_assessment_id)
 
@@ -142,10 +289,14 @@ def clone_assessment(
     cw = defaultdict(dict)
     cw[Assessment.COPY_NAME][old_assessment_id] = new_assessment_id
 
-    cw["ref-filter-tags"] = lit_models.ReferenceFilterTag.copy_tags(new_assessment, old_assessment)
+    cw["ref-filter-tags"] = lit_models.ReferenceFilterTag.copy_tags(
+        new_assessment, old_assessment
+    )
     lit_models.Search.build_default(new_assessment)
 
-    cw["iv-endpoint-categories"] = iv_models.IVEndpointCategory.copy_tags(new_assessment, old_assessment)
+    cw["iv-endpoint-categories"] = iv_models.IVEndpointCategory.copy_tags(
+        new_assessment, old_assessment
+    )
 
     # copy rob logic
     old_assessment.rob_settings.copy_across_assessments(cw)
@@ -158,31 +309,33 @@ def clone_assessment(
         bmd_logic_field.copy_across_assessments(cw)
 
     # copy study data
-    studies = study_models.Study.objects.filter(id__in=study_ids).order_by('id')
+    studies = study_models.Study.objects.filter(id__in=study_ids).order_by("id")
     assert studies.count() == len(studies)
-    cw = study_models.Study.copy_across_assessment(studies=studies, assessment=new_assessment, cw=cw, copy_rob=True)
+    cw = study_models.Study.copy_across_assessment(
+        studies=studies, assessment=new_assessment, cw=cw, copy_rob=True
+    )
 
     apply_lit_tags(study_ids, cw)
     # apply_ivcategory_tags(study_ids, cw)
 
     # copy viz
-    visuals = summary_models.Visual.objects.filter(id__in=viz_ids).order_by('id')
+    visuals = summary_models.Visual.objects.filter(id__in=viz_ids).order_by("id")
     assert visuals.count() == len(viz_ids)
     for visual in visuals:
         visual.copy_across_assessments(cw)
 
     # copy data-pivots
-    dpus = summary_models.DataPivotUpload.objects.filter(id__in=dp_ids).order_by('id')
-    dpqs = summary_models.DataPivotQuery.objects.filter(id__in=dp_ids).order_by('id')
+    dpus = summary_models.DataPivotUpload.objects.filter(id__in=dp_ids).order_by("id")
+    dpqs = summary_models.DataPivotQuery.objects.filter(id__in=dp_ids).order_by("id")
     assert dpus.count() + dpqs.count() == len(dp_ids)
     for dp in chain(dpus, dpqs):
         dp.copy_across_assessments(cw)
 
-    with open(f'{new_assessment_name}.json', 'w') as f:
+    with open(f"{new_assessment_name}.json", "w") as f:
         json.dump(cw, f, indent=True)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     disable_signals()
     clone_assessment(1, "new-one", [1, 2, 3], [4, 5, 6], [7, 8, 9])
-    management.call_command('clear_cache')
+    management.call_command("clear_cache")

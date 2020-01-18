@@ -13,13 +13,16 @@ class DistinctStringLookup(ModelLookup):
     """
     Return distinct strings for a single CharField in a model
     """
+
     distinct_field = None
 
     def get_query(self, request, term):
-        return self.get_queryset()\
-            .filter(**{self.distinct_field + "__icontains": term})\
-            .order_by(self.distinct_field)\
+        return (
+            self.get_queryset()
+            .filter(**{self.distinct_field + "__icontains": term})
+            .order_by(self.distinct_field)
             .distinct(self.distinct_field)
+        )
 
     def get_item_value(self, item):
         return getattr(item, self.distinct_field)
@@ -36,20 +39,15 @@ class RelatedLookup(ModelLookup):
         WHERE (self.related_filter = related_id) AND
               ( ... OR ... OR ...) for search fields
     """
+
     related_filter = None  # filter-string
 
     def get_query(self, request, term):
-        id_ = tryParseInt(request.GET.get('related'), -1)
+        id_ = tryParseInt(request.GET.get("related"), -1)
 
         qs = self.get_queryset()
-        search_fields = [
-            Q(**{field: term})
-            for field in self.search_fields
-        ]
-        return qs.filter(
-            Q(**{self.related_filter: id_}) &
-            reduce(operator.or_, search_fields)
-        )
+        search_fields = [Q(**{field: term}) for field in self.search_fields]
+        return qs.filter(Q(**{self.related_filter: id_}) & reduce(operator.or_, search_fields))
 
     def get_underscore_field_val(self, obj: Any, underscore_path: str) -> Any:
         """
@@ -78,8 +76,6 @@ class RelatedDistinctStringLookup(DistinctStringLookup):
 
     def get_query(self, request, term):
         qs = super().get_query(request, term)
-        id_ = tryParseInt(request.GET.get('related'), -1)
+        id_ = tryParseInt(request.GET.get("related"), -1)
 
-        return qs.filter(
-            Q(**{self.related_filter: id_})
-        )
+        return qs.filter(Q(**{self.related_filter: id_}))

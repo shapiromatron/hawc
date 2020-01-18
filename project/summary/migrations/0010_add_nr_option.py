@@ -16,13 +16,11 @@ def add_merge_option(apps, schema_editor):
             settings = False
 
         if settings:
-            settings['show_nr_legend'] = False
+            settings["show_nr_legend"] = False
             obj.settings = json.dumps(settings)
 
             # don't change last_updated timestamp
-            Visual.objects\
-                .filter(id=obj.id)\
-                .update(settings=obj.settings)
+            Visual.objects.filter(id=obj.id).update(settings=obj.settings)
 
 
 def remove_merge_option(apps, schema_editor):
@@ -35,19 +33,17 @@ def remove_merge_option(apps, schema_editor):
             settings = False
 
             if settings:
-                settings.pop('show_nr_legend')
+                settings.pop("show_nr_legend")
                 obj.settings = json.dumps(settings)
 
                 # don't change last_updated timestamp
-                Visual.objects\
-                    .filter(id=obj.id)\
-                    .update(settings=obj.settings)
+                Visual.objects.filter(id=obj.id).update(settings=obj.settings)
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('summary', '0009_add_data_pivot_merge_option'),
+        ("summary", "0009_add_data_pivot_merge_option"),
     ]
 
     operations = [

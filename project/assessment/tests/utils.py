@@ -5,17 +5,15 @@ from assessment import models
 
 
 def build_dose_units_for_permission_testing(obj):
-    obj.dose_units = models.DoseUnits.objects.create(name='mg/kg/day')
+    obj.dose_units = models.DoseUnits.objects.create(name="mg/kg/day")
 
 
 def build_species_for_permission_testing(obj):
-    obj.species = models.Species.objects.create(name='orangutan')
+    obj.species = models.Species.objects.create(name="orangutan")
 
 
 def build_strain_for_permission_testing(obj):
-    obj.strain = models.Strain.objects.create(
-        name='sumatran',
-        species=obj.species)
+    obj.strain = models.Strain.objects.create(name="sumatran", species=obj.species)
 
 
 def build_assessments_for_permissions_testing(obj):
@@ -23,22 +21,18 @@ def build_assessments_for_permissions_testing(obj):
     # call this function as well
 
     try:
-        call_command('createcachetable', 'dev_cache_table', interactive=False)
+        call_command("createcachetable", "dev_cache_table", interactive=False)
     except:
         pass
 
-    obj.superuser = HAWCUser.objects.create_superuser('sudo@sudo.com', 'pw')
-    obj.project_manager = HAWCUser.objects.create_user('pm@pm.com', 'pw')
-    obj.team_member = HAWCUser.objects.create_user('team@team.com', 'pw')
-    obj.reviewer = HAWCUser.objects.create_user('rev@rev.com', 'pw')
+    obj.superuser = HAWCUser.objects.create_superuser("sudo@sudo.com", "pw")
+    obj.project_manager = HAWCUser.objects.create_user("pm@pm.com", "pw")
+    obj.team_member = HAWCUser.objects.create_user("team@team.com", "pw")
+    obj.reviewer = HAWCUser.objects.create_user("rev@rev.com", "pw")
 
     # setup working assessment
     obj.assessment_working = models.Assessment.objects.create(
-        name='working',
-        year=1999,
-        version='1.0',
-        editable=True,
-        public=False
+        name="working", year=1999, version="1.0", editable=True, public=False
     )
 
     obj.assessment_working.project_manager.add(obj.project_manager)
@@ -47,11 +41,7 @@ def build_assessments_for_permissions_testing(obj):
 
     # setup final assessment
     obj.assessment_final = models.Assessment.objects.create(
-        name='final',
-        year=2001,
-        version='final',
-        editable=False,
-        public=True
+        name="final", year=2001, version="final", editable=False, public=True
     )
     obj.assessment_final.project_manager.add(obj.project_manager)
     obj.assessment_final.team_members.add(obj.team_member)

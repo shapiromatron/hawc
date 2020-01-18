@@ -19,15 +19,15 @@ def unset_study_types(apps, schema_editor):
     Study.objects.filter(epi=True).update(study_type=1)
     Study.objects.filter(epi_meta=True).update(study_type=4)
     Study.objects.filter(in_vitro=True).update(study_type=2)
-    Study.objects\
-        .filter(bioassay=False, epi=False, epi_meta=False, in_vitro=False)\
-        .update(study_type=3)
+    Study.objects.filter(bioassay=False, epi=False, epi_meta=False, in_vitro=False).update(
+        study_type=3
+    )
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('study', '0006_new_study_type'),
+        ("study", "0006_new_study_type"),
     ]
 
     operations = [

@@ -1,4 +1,3 @@
-
 import json
 import logging
 import os
@@ -24,28 +23,22 @@ from . import managers
 class RiskOfBiasDomain(models.Model):
     objects = managers.RiskOfBiasDomainManager()
 
-    assessment = models.ForeignKey(
-        'assessment.Assessment',
-        related_name='rob_domains')
-    name = models.CharField(
-        max_length=128)
-    description = models.TextField(
-        blank=True)
+    assessment = models.ForeignKey("assessment.Assessment", related_name="rob_domains")
+    name = models.CharField(max_length=128)
+    description = models.TextField(blank=True)
     is_overall_confidence = models.BooleanField(
-        default = False,
-        verbose_name = "Overall confidence?",
-        help_text = "Is this domain for overall confidence?"
+        default=False,
+        verbose_name="Overall confidence?",
+        help_text="Is this domain for overall confidence?",
     )
-    created = models.DateTimeField(
-        auto_now_add=True)
-    last_updated = models.DateTimeField(
-        auto_now=True)
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
 
-    COPY_NAME = 'riskofbiasdomains'
+    COPY_NAME = "riskofbiasdomains"
 
     class Meta:
-        unique_together = ('assessment', 'name')
-        ordering = ('pk', )
+        unique_together = ("assessment", "name")
+        ordering = ("pk",)
 
     def __str__(self):
         return self.name
@@ -67,19 +60,18 @@ class RiskOfBiasDomain(models.Model):
         else:
             raise ValueError("Unknown HAWC flavor")
 
-        fn = os.path.join(settings.PROJECT_PATH, f'riskofbias/fixtures/{fixture}')
-        with open(fn, 'r') as f:
+        fn = os.path.join(settings.PROJECT_PATH, f"riskofbias/fixtures/{fixture}")
+        with open(fn, "r") as f:
             objects = json.loads(f.read(), object_pairs_hook=collections.OrderedDict)
 
-        for domain in objects['domains']:
+        for domain in objects["domains"]:
             d = RiskOfBiasDomain.objects.create(
-                assessment=assessment,
-                name=domain['name'],
-                description=domain['description'])
-            RiskOfBiasMetric.build_metrics_for_one_domain(d, domain['metrics'])
+                assessment=assessment, name=domain["name"], description=domain["description"],
+            )
+            RiskOfBiasMetric.build_metrics_for_one_domain(d, domain["metrics"])
 
     def copy_across_assessments(self, cw):
-        children = list(self.metrics.all().order_by('id'))
+        children = list(self.metrics.all().order_by("id"))
         old_id = self.id
         self.id = None
         self.assessment_id = cw[Assessment.COPY_NAME][self.assessment_id]
@@ -92,46 +84,44 @@ class RiskOfBiasDomain(models.Model):
 class RiskOfBiasMetric(models.Model):
     objects = managers.RiskOfBiasMetricManager()
 
-    domain = models.ForeignKey(
-        RiskOfBiasDomain,
-        related_name='metrics')
-    name = models.CharField(
-        max_length=256)
-    short_name = models.CharField(
-        max_length=50,
-        blank=True)
+    domain = models.ForeignKey(RiskOfBiasDomain, related_name="metrics")
+    name = models.CharField(max_length=256)
+    short_name = models.CharField(max_length=50, blank=True)
     description = models.TextField(
-        blank=True,
-        help_text='HTML text describing scoring of this field.')
+        blank=True, help_text="HTML text describing scoring of this field."
+    )
     required_animal = models.BooleanField(
         default=True,
-        verbose_name='Required for bioassay?',
-        help_text='Is this metric required for animal bioassay studies?<br/><b>CAUTION:</b> Removing requirement will destroy all bioassay responses previously entered for this metric.')
+        verbose_name="Required for bioassay?",
+        help_text="Is this metric required for animal bioassay studies?<br/><b>CAUTION:</b> Removing requirement will destroy all bioassay responses previously entered for this metric.",
+    )
     required_epi = models.BooleanField(
         default=True,
-        verbose_name='Required for epidemiology?',
-        help_text='Is this metric required for human epidemiological studies?<br/><b>CAUTION:</b> Removing requirement will destroy all epi responses previously entered for this metric.')
+        verbose_name="Required for epidemiology?",
+        help_text="Is this metric required for human epidemiological studies?<br/><b>CAUTION:</b> Removing requirement will destroy all epi responses previously entered for this metric.",
+    )
     required_invitro = models.BooleanField(
         default=True,
-        verbose_name='Required for in-vitro?',
-        help_text='Is this metric required for in-vitro studies?<br/><b>CAUTION:</b> Removing requirement will destroy all in-vitro responses previously entered for this metric.')
+        verbose_name="Required for in-vitro?",
+        help_text="Is this metric required for in-vitro studies?<br/><b>CAUTION:</b> Removing requirement will destroy all in-vitro responses previously entered for this metric.",
+    )
     hide_description = models.BooleanField(
         default=False,
-        verbose_name='Hide description?',
-        help_text='Hide the description on reports?')
+        verbose_name="Hide description?",
+        help_text="Hide the description on reports?",
+    )
     use_short_name = models.BooleanField(
         default=False,
-        verbose_name='Use the short name?',
-        help_text='Use the short name in visualizations?')
-    created = models.DateTimeField(
-        auto_now_add=True)
-    last_updated = models.DateTimeField(
-        auto_now=True)
+        verbose_name="Use the short name?",
+        help_text="Use the short name in visualizations?",
+    )
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
 
-    COPY_NAME = 'riskofbiasmetrics'
+    COPY_NAME = "riskofbiasmetrics"
 
     class Meta:
-        ordering = ('domain', 'id')
+        ordering = ("domain", "id")
 
     def __str__(self):
         return self.name
@@ -163,45 +153,33 @@ class RiskOfBiasMetric(models.Model):
 class RiskOfBias(models.Model):
     objects = managers.RiskOfBiasManager()
 
-    study = models.ForeignKey(
-        'study.Study',
-        related_name='riskofbiases',
-        null=True)
-    final = models.BooleanField(
-        default=False,
-        db_index=True)
-    author = models.ForeignKey(
-        HAWCUser,
-        related_name='riskofbiases')
-    active = models.BooleanField(
-        default=False,
-        db_index=True)
-    created = models.DateTimeField(
-        auto_now_add=True)
-    last_updated = models.DateTimeField(
-        auto_now=True)
+    study = models.ForeignKey("study.Study", related_name="riskofbiases", null=True)
+    final = models.BooleanField(default=False, db_index=True)
+    author = models.ForeignKey(HAWCUser, related_name="riskofbiases")
+    active = models.BooleanField(default=False, db_index=True)
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
 
-    COPY_NAME = 'riskofbiases'
+    COPY_NAME = "riskofbiases"
 
     class Meta:
-        verbose_name_plural = 'Risk of Biases'
-        ordering = ('final',)
+        verbose_name_plural = "Risk of Biases"
+        ordering = ("final",)
 
     def __str__(self):
-        return '{} (Risk of bias)'.format(self.study.short_citation)
+        return "{} (Risk of bias)".format(self.study.short_citation)
 
     def get_assessment(self):
         return self.study.get_assessment()
 
     def get_final_url(self):
-        return reverse('riskofbias:rob_detail', args=[self.study_id])
+        return reverse("riskofbias:rob_detail", args=[self.study_id])
 
     def get_absolute_url(self):
-        return reverse('riskofbias:arob_reviewers',
-            args=[self.get_assessment().pk])
+        return reverse("riskofbias:arob_reviewers", args=[self.get_assessment().pk])
 
     def get_edit_url(self):
-        return reverse('riskofbias:rob_update', args=[self.pk])
+        return reverse("riskofbias:rob_update", args=[self.pk])
 
     def get_crumbs(self):
         return get_crumbs(self, self.study)
@@ -225,25 +203,25 @@ class RiskOfBias(models.Model):
         or when a metric is altered.  RiskOfBiasScore are created/deleted as
         needed.
         """
-        metrics = RiskOfBiasMetric.objects.get_required_metrics(assessment, self.study)\
-            .prefetch_related('scores')
+        metrics = RiskOfBiasMetric.objects.get_required_metrics(
+            assessment, self.study
+        ).prefetch_related("scores")
         scores = self.scores.all()
         # add any scores that are required and not currently created
         for metric in metrics:
             if not (metric.scores.all() & scores):
-                logging.info('Creating score: {}->{}'.format(self.study, metric))
+                logging.info("Creating score: {}->{}".format(self.study, metric))
                 RiskOfBiasScore.objects.create(riskofbias=self, metric=metric)
         # delete any scores that are no longer required
         for score in scores:
             if score.metric not in metrics:
-                logging.info('Deleting score: {}->{}'.format(self.study, score.metric))
+                logging.info("Deleting score: {}->{}".format(self.study, score.metric))
                 score.delete()
 
     def build_scores(self, assessment, study):
         scores = [
             RiskOfBiasScore(riskofbias=self, metric=metric)
-            for metric in
-            RiskOfBiasMetric.objects.get_required_metrics(assessment, study)
+            for metric in RiskOfBiasMetric.objects.get_required_metrics(assessment, study)
         ]
         RiskOfBiasScore.objects.bulk_create(scores)
 
@@ -261,23 +239,22 @@ class RiskOfBias(models.Model):
         The rich text editor used for notes input adds HTML tags even if input
         is empty, so HTML needs to be stripped out.
         """
-        return all([
-            len(strip_tags(score.notes)) > 0 for score in self.scores.all() if score.score is not 0
-        ])
+        return all(
+            [
+                len(strip_tags(score.notes)) > 0
+                for score in self.scores.all()
+                if score.score is not 0
+            ]
+        )
 
     @property
     def study_reviews_complete(self):
-        return all([
-            rob.is_complete
-            for rob in self.study.get_active_robs(with_final=False)
-        ])
+        return all([rob.is_complete for rob in self.study.get_active_robs(with_final=False)])
 
     @staticmethod
     def copy_riskofbias(copy_to_assessment, copy_from_assessment):
         # delete existing study quality metrics and domains
-        copy_to_assessment\
-            .rob_domains.all()\
-            .delete()
+        copy_to_assessment.rob_domains.all().delete()
 
         # copy domains and metrics to assessment
         for domain in copy_from_assessment.rob_domains.all():
@@ -296,26 +273,20 @@ class RiskOfBias(models.Model):
 
     @staticmethod
     def flat_complete_header_row():
-        return (
-            'rob-id',
-            'rob-active',
-            'rob-final',
-            'rob-author_id',
-            'rob-author_name'
-        )
+        return ("rob-id", "rob-active", "rob-final", "rob-author_id", "rob-author_name")
 
     @staticmethod
     def flat_complete_data_row(ser):
         return (
-            ser['id'],
-            ser['active'],
-            ser['final'],
-            ser['author']['id'],
-            ser['author']['full_name']
+            ser["id"],
+            ser["active"],
+            ser["final"],
+            ser["author"]["id"],
+            ser["author"]["full_name"],
         )
 
     def copy_across_assessments(self, cw):
-        children = list(self.scores.all().order_by('id'))
+        children = list(self.scores.all().order_by("id"))
         old_id = self.id
         self.id = None
         self.study_id = cw[Study.COPY_NAME][self.study_id]
@@ -325,7 +296,9 @@ class RiskOfBias(models.Model):
             child.copy_across_assessments(cw)
 
     @classmethod
-    def get_dp_export(cls, assessment_id: int, study_ids: List[int], data_type: str) -> Tuple[Dict, Dict]:
+    def get_dp_export(
+        cls, assessment_id: int, study_ids: List[int], data_type: str
+    ) -> Tuple[Dict, Dict]:
         """
         Given an assessment, a list of studies, and a data type, return all the data required to
         build a data pivot risk of bias export for only active, final data.
@@ -352,7 +325,9 @@ class RiskOfBias(models.Model):
             filters["required_invitro"] = True
 
         # return headers
-        metric_qs = list(RiskOfBiasMetric.objects.filter(**filters).select_related('domain').order_by('id'))
+        metric_qs = list(
+            RiskOfBiasMetric.objects.filter(**filters).select_related("domain").order_by("id")
+        )
         header_map = {metric.id: "" for metric in metric_qs}
         for metric in metric_qs:
             if metric.domain.is_overall_confidence:
@@ -369,8 +344,8 @@ class RiskOfBias(models.Model):
             metric__in=metric_ids,
             riskofbias__study__in=study_ids,
             riskofbias__final=True,
-            riskofbias__active=True
-        ).prefetch_related('riskofbias')
+            riskofbias__active=True,
+        ).prefetch_related("riskofbias")
         default_value = '{"sortValue": -1, "display": "N/A"}'
         scores_map = {(score.riskofbias.study_id, score.metric_id): score for score in scores}
         for metric_id in metric_ids:
@@ -378,10 +353,9 @@ class RiskOfBias(models.Model):
                 key = (study_id, metric_id)
                 if key in scores_map:
                     score = scores_map[key]
-                    content = json.dumps({
-                        "sortValue": score.score,
-                        "display": score.get_score_display()
-                    })
+                    content = json.dumps(
+                        {"sortValue": score.score, "display": score.get_score_display()}
+                    )
 
                     # special case for N/A
                     if score.score in RiskOfBiasScore.NA_SCORES:
@@ -408,19 +382,18 @@ class RiskOfBiasScore(models.Model):
     objects = managers.RiskOfBiasScoreManager()
 
     RISK_OF_BIAS_SCORE_CHOICES = (
-        (10, 'Not applicable'),
-        (12, 'Not reported'),
-        (14, 'Definitely high risk of bias'),
-        (15, 'Probably high risk of bias'),
-        (16, 'Probably low risk of bias'),
-        (17, 'Definitely low risk of bias'),
-
-        (20, 'Not applicable'),
-        (22, 'Not reported'),
-        (24, 'Critically deficient'),
-        (25, 'Deficient'),
-        (26, 'Adequate'),
-        (27, 'Good'),
+        (10, "Not applicable"),
+        (12, "Not reported"),
+        (14, "Definitely high risk of bias"),
+        (15, "Probably high risk of bias"),
+        (16, "Probably low risk of bias"),
+        (17, "Definitely low risk of bias"),
+        (20, "Not applicable"),
+        (22, "Not reported"),
+        (24, "Critically deficient"),
+        (25, "Deficient"),
+        (26, "Adequate"),
+        (27, "Good"),
     )
 
     RISK_OF_BIAS_SCORE_CHOICES_MAP = {k: v for k, v in RISK_OF_BIAS_SCORE_CHOICES}
@@ -428,56 +401,49 @@ class RiskOfBiasScore(models.Model):
     NA_SCORES = (10, 20)
 
     SCORE_SYMBOLS = {
-        10: 'N/A',
-        12: 'NR',
-        14: '--',
-        15: '-',
-        16: '+',
-        17: '++',
-
-        20: 'N/A',
-        22: 'NR',
-        24: '--',
-        25: '-',
-        26: '+',
-        27: '++',
+        10: "N/A",
+        12: "NR",
+        14: "--",
+        15: "-",
+        16: "+",
+        17: "++",
+        20: "N/A",
+        22: "NR",
+        24: "--",
+        25: "-",
+        26: "+",
+        27: "++",
     }
 
     SCORE_SHADES = {
-        10: '#FFCC00',
-        12: '#FFCC00',
-        14: '#CC3333',
-        15: '#FFCC00',
-        16: '#6FFF00',
-        17: '#00CC00',
-
-        20: '#E8E8E8',
-        22: '#FFCC00',
-        24: '#CC3333',
-        25: '#FFCC00',
-        26: '#6FFF00',
-        27: '#00CC00',
+        10: "#FFCC00",
+        12: "#FFCC00",
+        14: "#CC3333",
+        15: "#FFCC00",
+        16: "#6FFF00",
+        17: "#00CC00",
+        20: "#E8E8E8",
+        22: "#FFCC00",
+        24: "#CC3333",
+        25: "#FFCC00",
+        26: "#6FFF00",
+        27: "#00CC00",
     }
 
-    riskofbias = models.ForeignKey(
-        RiskOfBias,
-        related_name='scores')
-    metric = models.ForeignKey(
-        RiskOfBiasMetric,
-        related_name='scores')
+    riskofbias = models.ForeignKey(RiskOfBias, related_name="scores")
+    metric = models.ForeignKey(RiskOfBiasMetric, related_name="scores")
     score = models.PositiveSmallIntegerField(
-        choices=RISK_OF_BIAS_SCORE_CHOICES,
-        default=build_default_rob_score)
-    notes = models.TextField(
-        blank=True)
+        choices=RISK_OF_BIAS_SCORE_CHOICES, default=build_default_rob_score
+    )
+    notes = models.TextField(blank=True)
 
-    COPY_NAME = 'riskofbiasscores'
+    COPY_NAME = "riskofbiasscores"
 
     class Meta:
-        ordering = ('metric', 'id')
+        ordering = ("metric", "id")
 
     def __str__(self):
-        return '{} {}'.format(self.riskofbias, self.metric)
+        return "{} {}".format(self.riskofbias, self.metric)
 
     def get_assessment(self):
         return self.metric.get_assessment()
@@ -485,31 +451,31 @@ class RiskOfBiasScore(models.Model):
     @staticmethod
     def flat_complete_header_row():
         return (
-            'rob-domain_id',
-            'rob-domain_name',
-            'rob-domain_description',
-            'rob-metric_id',
-            'rob-metric_name',
-            'rob-metric_description',
-            'rob-score_id',
-            'rob-score_score',
-            'rob-score_description',
-            'rob-score_notes',
+            "rob-domain_id",
+            "rob-domain_name",
+            "rob-domain_description",
+            "rob-metric_id",
+            "rob-metric_name",
+            "rob-metric_description",
+            "rob-score_id",
+            "rob-score_score",
+            "rob-score_description",
+            "rob-score_notes",
         )
 
     @staticmethod
     def flat_complete_data_row(ser):
         return (
-            ser['metric']['domain']['id'],
-            ser['metric']['domain']['name'],
-            ser['metric']['domain']['description'],
-            ser['metric']['id'],
-            ser['metric']['name'],
-            ser['metric']['description'],
-            ser['id'],
-            ser['score'],
-            ser['score_description'],
-            cleanHTML(ser['notes']),
+            ser["metric"]["domain"]["id"],
+            ser["metric"]["domain"]["name"],
+            ser["metric"]["domain"]["description"],
+            ser["metric"]["id"],
+            ser["metric"]["name"],
+            ser["metric"]["description"],
+            ser["id"],
+            ser["score"],
+            ser["score_description"],
+            cleanHTML(ser["notes"]),
         )
 
     @property
@@ -522,7 +488,10 @@ class RiskOfBiasScore(models.Model):
 
     @classmethod
     def delete_caches(cls, ids):
-        id_lists = [(score.riskofbias.id, score.riskofbias.study_id) for score in cls.objects.filter(id__in=ids)]
+        id_lists = [
+            (score.riskofbias.id, score.riskofbias.study_id)
+            for score in cls.objects.filter(id__in=ids)
+        ]
         rob_ids, study_ids = list(zip(*id_lists))
         RiskOfBias.delete_caches(rob_ids)
         Study.delete_caches(study_ids)
@@ -572,38 +541,35 @@ class RiskOfBiasAssessment(models.Model):
         else:
             raise ValueError("Unknown HAWC flavor")
 
-    assessment = models.OneToOneField(
-        Assessment,
-        related_name='rob_settings')
-    number_of_reviewers = models.PositiveSmallIntegerField(
-        default=1)
+    assessment = models.OneToOneField(Assessment, related_name="rob_settings")
+    number_of_reviewers = models.PositiveSmallIntegerField(default=1)
     help_text = models.TextField(
         default="Instructions for reviewers completing assessments",
-        help_text="Detailed instructions for completing risk of bias assessments."
+        help_text="Detailed instructions for completing risk of bias assessments.",
     )
     default_questions = models.PositiveSmallIntegerField(
         choices=DEFAULT_QUESTIONS_CHOICES,
         default=get_default_default_questions,
         verbose_name="Default questions",
-        help_text="If no questions exist, which default questions should be used? If questions already exist, changing this will have no impact."
+        help_text="If no questions exist, which default questions should be used? If questions already exist, changing this will have no impact.",
     )
     responses = models.PositiveSmallIntegerField(
         choices=RESPONSES_CHOICES,
         default=get_default_responses,
         verbose_name="Question responses",
-        help_text="Why responses should be used to answering questions:"
+        help_text="Why responses should be used to answering questions:",
     )
 
-    COPY_NAME = 'riskofbiasassessments'
+    COPY_NAME = "riskofbiasassessments"
 
     def get_absolute_url(self):
-        return reverse('riskofbias:arob_reviewers', args=[self.assessment.pk])
+        return reverse("riskofbias:arob_reviewers", args=[self.assessment.pk])
 
     @classmethod
     def build_default(cls, assessment):
         RiskOfBiasAssessment.objects.create(
             assessment=assessment,
-            help_text=get_flavored_text("riskofbias__riskofbiasassessment_help_text_default")
+            help_text=get_flavored_text("riskofbias__riskofbiasassessment_help_text_default"),
         )
 
     def get_rob_response_values(self):

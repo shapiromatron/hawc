@@ -8,13 +8,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('epi', '0009_groupresult_ranges'),
+        ("epi", "0009_groupresult_ranges"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='result',
-            name='statistical_test_results',
+            model_name="result",
+            name="statistical_test_results",
             field=models.TextField(blank=True),
         ),
     ]

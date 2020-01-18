@@ -30,4 +30,3 @@ class IVExperimentAdmin(admin.ModelAdmin):
 @admin.register(models.IVEndpoint)
 class IVEndpointAdmin(admin.ModelAdmin):
     pass
-

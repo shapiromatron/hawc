@@ -25,10 +25,10 @@ class BaseManager(models.Manager):
     assessment_relation = None
 
     def get_qs(self, assessment_id=None):
-        '''
+        """
         Allows for queryset to be filtered on assessment if assessment_id is passed as argument.
         If assessment_id is not passed, then functions identically to .all()
-        '''
+        """
         if assessment_id:
             return self.assessment_qs(assessment_id)
         return self.get_queryset()
@@ -49,19 +49,19 @@ def get_crumbs(obj, parent=None):
         crumbs = parent.get_crumbs()
     if obj.id is not None:
         icon = None
-        icon_fetch_method = getattr(obj, 'get_crumbs_icon', None)
+        icon_fetch_method = getattr(obj, "get_crumbs_icon", None)
         if callable(icon_fetch_method):
             icon = icon_fetch_method()
 
-        crumbs.append((obj.__str__(),  obj.get_absolute_url(), icon))
+        crumbs.append((obj.__str__(), obj.get_absolute_url(), icon))
     else:
-        crumbs.append((obj._meta.verbose_name.lower(), ))
+        crumbs.append((obj._meta.verbose_name.lower(),))
     return crumbs
 
 
 class NonUniqueTagBase(models.Model):
-    name = models.CharField(verbose_name=_('Name'), max_length=100)
-    slug = models.SlugField(verbose_name=_('Slug'), max_length=100)
+    name = models.CharField(verbose_name=_("Name"), max_length=100)
+    slug = models.SlugField(verbose_name=_("Slug"), max_length=100)
 
     def __str__(self):
         return self.name
@@ -74,8 +74,8 @@ class NonUniqueTagBase(models.Model):
             self.slug = self.slugify(self.name)
             if django.VERSION >= (1, 2):
                 from django.db import router
-                using = kwargs.get("using") or router.db_for_write(
-                    type(self), instance=self)
+
+                using = kwargs.get("using") or router.db_for_write(type(self), instance=self)
                 # Make sure we write to the same db for all attempted writes,
                 # with a multi-master setup, theoretically we could try to
                 # write and rollback on different DBs
@@ -111,7 +111,7 @@ class AssessmentRootMixin(object):
 
     @classmethod
     def get_assessment_root_name(cls, assessment_id):
-        return 'assessment-{pk}'.format(pk=assessment_id)
+        return "assessment-{pk}".format(pk=assessment_id)
 
     @classmethod
     def get_assessment_root(cls, assessment_id):
@@ -132,7 +132,11 @@ class AssessmentRootMixin(object):
         include_root = False
         if issubclass(cls, AssessmentRootMixin):
             include_root = True
-        ids = cls.get_assessment_qs(assessment_id, include_root).order_by('depth').values_list('id', flat=True)
+        ids = (
+            cls.get_assessment_qs(assessment_id, include_root)
+            .order_by("depth")
+            .values_list("id", flat=True)
+        )
         ids = list(ids)  # force evaluation
         return cls.objects.filter(id__in=ids)
 
@@ -144,7 +148,7 @@ class AssessmentRootMixin(object):
         key = cls.cache_template_tagtree.format(assessment_id)
         tags = cache.get(key)
         if tags:
-            logging.info('cache used: {0}'.format(key))
+            logging.info("cache used: {0}".format(key))
         else:
             root = cls.get_assessment_root(assessment_id)
             try:
@@ -155,7 +159,7 @@ class AssessmentRootMixin(object):
                 tags = cls.dump_bulk(root)
                 logging.info("ReferenceFilterTag cleanup successful.")
             cache.set(key, tags)
-            logging.info('cache set: {0}'.format(key))
+            logging.info("cache set: {0}".format(key))
 
         if json_encode:
             return json.dumps(tags, cls=HAWCDjangoJSONEncoder)
@@ -179,9 +183,14 @@ class AssessmentRootMixin(object):
             cursor = connection.cursor()
             for orphan_id in orphan_ids:
                 orphan = cls.objects.get(id=orphan_id)
-                logging.warning('{} "{}" {} is orphaned [path={}]. Deleting.'.format(
-                    name, orphan.name, orphan.id, orphan.path))
-                cursor.execute("DELETE FROM {0} WHERE id = %s".format(cls._meta.db_table), [orphan.id])
+                logging.warning(
+                    '{} "{}" {} is orphaned [path={}]. Deleting.'.format(
+                        name, orphan.name, orphan.id, orphan.path
+                    )
+                )
+                cursor.execute(
+                    "DELETE FROM {0} WHERE id = %s".format(cls._meta.db_table), [orphan.id],
+                )
             cursor.close()
 
     @classmethod
@@ -190,19 +199,21 @@ class AssessmentRootMixin(object):
         key = cls.cache_template_taglist.format(assessment_id)
         descendants = cache.get(key)
         if descendants:
-            logging.info('cache used: {0}'.format(key))
+            logging.info("cache used: {0}".format(key))
         else:
             root = cls.get_assessment_root(assessment_id)
-            descendants = list(root.get_descendants().values_list('pk', flat=True))
+            descendants = list(root.get_descendants().values_list("pk", flat=True))
             cache.set(key, descendants)
-            logging.info('cache set: {0}'.format(key))
+            logging.info("cache set: {0}".format(key))
         return descendants
 
     @classmethod
     def clear_cache(cls, assessment_id):
-        keys = (cls.cache_template_taglist.format(assessment_id),
-                cls.cache_template_tagtree.format(assessment_id))
-        logging.info('removing cache: {0}'.format(', '.join(keys)))
+        keys = (
+            cls.cache_template_taglist.format(assessment_id),
+            cls.cache_template_tagtree.format(assessment_id),
+        )
+        logging.info("removing cache: {0}".format(", ".join(keys)))
         cache.delete_many(keys)
 
     @classmethod
@@ -217,7 +228,7 @@ class AssessmentRootMixin(object):
             parent = cls.get_assessment_root(assessment_id)
 
         # make sure name is valid and not root-like
-        if kwargs.get('name') == cls.get_assessment_root_name(assessment_id):
+        if kwargs.get("name") == cls.get_assessment_root_name(assessment_id):
             raise SuspiciousOperation("attempting to create new root")
 
         # clear cache and create!
@@ -236,10 +247,9 @@ class AssessmentRootMixin(object):
     def get_maximum_depth(cls, assessment_id):
         # get maximum depth; subtracting root-level
         depth = 0
-        descendants = cls\
-            .get_assessment_root(assessment_id)\
-            .get_descendants()\
-            .values_list('depth', flat=True)
+        descendants = (
+            cls.get_assessment_root(assessment_id).get_descendants().values_list("depth", flat=True)
+        )
         if descendants:
             depth = max(descendants) - 1
         return depth
@@ -253,10 +263,10 @@ class AssessmentRootMixin(object):
         # copy tags from alternative assessment, renaming root-tag
         root = cls.get_assessment_root(copy_from_assessment.pk)
         tags = cls.dump_bulk(root)
-        assert 'name' in tags[0]['data']
-        tags[0]['data']['name'] = cls.get_assessment_root_name(copy_to_assessment.pk)
-        if 'slug' in tags[0]['data']:
-            tags[0]['data']['slug'] = cls.get_assessment_root_name(copy_to_assessment.pk)
+        assert "name" in tags[0]["data"]
+        tags[0]["data"]["name"] = cls.get_assessment_root_name(copy_to_assessment.pk)
+        if "slug" in tags[0]["data"]:
+            tags[0]["data"]["slug"] = cls.get_assessment_root_name(copy_to_assessment.pk)
 
         # insert as new taglist
         cls.load_bulk(tags, parent=None, keep_ids=False)
@@ -276,10 +286,10 @@ class AssessmentRootMixin(object):
 
             def append_child(node):
                 # recursively append id and name to lists
-                tag_ids.append(node['id'])
-                tag_names.append(node['data']['name'])
-                if 'children' in node:
-                    for child in node['children']:
+                tag_ids.append(node["id"])
+                tag_names.append(node["data"]["name"])
+                if "children" in node:
+                    for child in node["children"]:
                         append_child(child)
 
             append_child(taglist[0])
@@ -297,12 +307,12 @@ class AssessmentRootMixin(object):
 
     def get_assessment_id(self):
         name = self.get_ancestors()[0].name
-        return int(name[name.find('-') + 1:])
+        return int(name[name.find("-") + 1 :])
 
     def get_assessment(self):
         try:
             assessment_id = self.get_assessment_id()
-            Assessment = apps.get_model('assessment', 'Assessment')
+            Assessment = apps.get_model("assessment", "Assessment")
             return Assessment.objects.get(id=assessment_id)
         except:
             raise self.__class__.DoesNotExist()
@@ -315,10 +325,10 @@ class AssessmentRootMixin(object):
             return
 
         if newIndex == 0:
-            self.move(self.get_parent(), pos='first-child')
+            self.move(self.get_parent(), pos="first-child")
         else:
             anchor = siblings[newIndex]
-            pos = 'left' if (newIndex < currentPosition) else 'right'
+            pos = "left" if (newIndex < currentPosition) else "right"
             self.move(anchor, pos=pos)
 
         self.clear_assessment_cache()
@@ -333,6 +343,7 @@ class AssessmentRootedTagTree(AssessmentRootMixin, MP_Node):
     Implements caching of the tree for quick retrieval. Expects relatively
     small tree for each assessment (<1000 nodes).
     """
+
     name = models.CharField(max_length=128)
 
     class Meta:
@@ -346,17 +357,19 @@ class CustomURLField(URLField):
         # As with CharField, this will cause URL validation to be performed
         # twice.
         defaults = {
-            'form_class': forms.CustomURLField,
+            "form_class": forms.CustomURLField,
         }
         defaults.update(kwargs)
         return super().formfield(**defaults)
 
 
 def get_distinct_charfield(Cls, assessment_id, field):
-    return Cls.filter(assessment_id=assessment_id)\
-              .distinct(field)\
-              .order_by(field)\
-              .values_list(field, flat=True)
+    return (
+        Cls.filter(assessment_id=assessment_id)
+        .distinct(field)
+        .order_by(field)
+        .values_list(field, flat=True)
+    )
 
 
 def get_distinct_charfield_opts(Cls, assessment_id, field):
@@ -397,4 +410,4 @@ def get_flavored_text(key: str) -> str:
 
 
 def get_model_copy_name(instance: models.Model) -> str:
-    return getattr(instance, 'COPY_NAME', instance._meta.db_table)
+    return getattr(instance, "COPY_NAME", instance._meta.db_table)

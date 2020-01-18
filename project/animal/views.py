@@ -10,20 +10,27 @@ from study.models import Study
 from study.views import StudyRead
 from utils.forms import form_error_list_to_lis, form_error_lis_to_ul
 from mgmt.views import EnsureExtractionStartedMixin
-from utils.views import (BaseCreate, BaseCreateWithFormset,
-                         BaseDelete, BaseDetail,
-                         BaseEndpointFilterList, BaseList, BaseUpdate,
-                         BaseUpdateWithFormset, MessageMixin,
-                         CopyAsNewSelectorMixin)
+from utils.views import (
+    BaseCreate,
+    BaseCreateWithFormset,
+    BaseDelete,
+    BaseDetail,
+    BaseEndpointFilterList,
+    BaseList,
+    BaseUpdate,
+    BaseUpdateWithFormset,
+    MessageMixin,
+    CopyAsNewSelectorMixin,
+)
 
 from . import forms, models, exports
 
 
 # Experiment Views
 class ExperimentCreate(EnsureExtractionStartedMixin, BaseCreate):
-    success_message = 'Experiment created.'
+    success_message = "Experiment created."
     parent_model = Study
-    parent_template_name = 'study'
+    parent_template_name = "study"
     model = models.Experiment
     form_class = forms.ExperimentForm
 
@@ -62,8 +69,7 @@ class AnimalGroupCreate(BaseCreate):
 
     def get_form_class(self):
         self.is_generational = self.parent.is_generational()
-        return forms.GenerationalAnimalGroupForm \
-            if self.is_generational else forms.AnimalGroupForm
+        return forms.GenerationalAnimalGroupForm if self.is_generational else forms.AnimalGroupForm
 
     def form_valid(self, form):
         """
@@ -89,8 +95,8 @@ class AnimalGroupCreate(BaseCreate):
             # unpack dose-groups into formset and validate
             # occasionally POST['dose_groups_json'] will be '', which json.loads
             # will raise an error on. Replace with '{}' on those occasions.
-            dose_groups = self.request.POST['dose_groups_json']
-            dose_groups_json = dose_groups if dose_groups != '' else '{}'
+            dose_groups = self.request.POST["dose_groups_json"]
+            dose_groups_json = dose_groups if dose_groups != "" else "{}"
             fs_initial = json.loads(dose_groups_json)
             fs = forms.dosegroup_formset_factory(fs_initial, dosing_regime.num_dose_groups)
 
@@ -128,15 +134,15 @@ class AnimalGroupCreate(BaseCreate):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["dose_types"] = DoseUnits.objects.json_all()
-        if hasattr(self, 'form_dosing_regime'):
-            context['form_dosing_regime'] = self.form_dosing_regime
+        if hasattr(self, "form_dosing_regime"):
+            context["form_dosing_regime"] = self.form_dosing_regime
         else:
             context["form_dosing_regime"] = forms.DosingRegimeForm()
 
-        if self.request.method == 'POST':  # send back dose-group errors
-            context['dose_groups_json'] = self.request.POST['dose_groups_json']
-            if hasattr(self, 'dose_groups_errors'):
-                context['dose_groups_errors'] = self.dose_groups_errors
+        if self.request.method == "POST":  # send back dose-group errors
+            context["dose_groups_json"] = self.request.POST["dose_groups_json"]
+            if hasattr(self, "dose_groups_errors"):
+                context["dose_groups_errors"] = self.dose_groups_errors
 
         return context
 
@@ -154,6 +160,7 @@ class AnimalGroupUpdate(BaseUpdate):
     """
     Update selected animal-group. Dosing regime cannot be edited.
     """
+
     model = models.AnimalGroup
     template_name = "animal/animalgroup_form.html"
     form_class = forms.AnimalGroupForm
@@ -194,6 +201,7 @@ class DosingRegimeUpdate(BaseUpdate):
     Update selected dosing regime. Has custom logic to also add dose-groups with
     each creation of a dose-regime.
     """
+
     model = models.DosingRegime
     form_class = forms.DosingRegimeForm
     success_message = "Dosing regime updated."
@@ -206,7 +214,7 @@ class DosingRegimeUpdate(BaseUpdate):
         self.object = form.save(commit=False)
 
         # unpack dose-groups into formset and validate
-        fs_initial = json.loads(self.request.POST['dose_groups_json'])
+        fs_initial = json.loads(self.request.POST["dose_groups_json"])
         fs = forms.dosegroup_formset_factory(fs_initial, self.object.num_dose_groups)
 
         if fs.is_valid():
@@ -239,13 +247,14 @@ class DosingRegimeUpdate(BaseUpdate):
         context = super().get_context_data(**kwargs)
         context["dose_types"] = DoseUnits.objects.json_all()
 
-        if self.request.method == 'POST':  # send back dose-group errors
-            context['dose_groups_json'] = self.request.POST['dose_groups_json']
-            if hasattr(self, 'dose_groups_errors'):
-                context['dose_groups_errors'] = self.dose_groups_errors
+        if self.request.method == "POST":  # send back dose-group errors
+            context["dose_groups_json"] = self.request.POST["dose_groups_json"]
+            if hasattr(self, "dose_groups_errors"):
+                context["dose_groups_errors"] = self.dose_groups_errors
         else:
             context["dose_groups_json"] = json.dumps(
-                list(self.object.doses.values('dose', 'dose_group_id', 'dose_units')))
+                list(self.object.doses.values("dose", "dose_group_id", "dose_units"))
+            )
 
         return context
 
@@ -256,16 +265,16 @@ class DosingRegimeUpdate(BaseUpdate):
 
 # Endpoint Views
 class EndpointCreate(BaseCreateWithFormset):
-    success_message = 'Assessed-outcome created.'
+    success_message = "Assessed-outcome created."
     parent_model = models.AnimalGroup
-    parent_template_name = 'animal_group'
+    parent_template_name = "animal_group"
     model = models.Endpoint
     form_class = forms.EndpointForm
     formset_factory = forms.EndpointGroupFormSet
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs['assessment'] = self.assessment
+        kwargs["assessment"] = self.assessment
         return kwargs
 
     def build_initial_formset_factory(self):
@@ -273,7 +282,7 @@ class EndpointCreate(BaseCreateWithFormset):
             models.EndpointGroup,
             form=forms.EndpointGroupForm,
             formset=forms.BaseEndpointGroupFormSet,
-            extra=self.parent.dosing_regime.num_dose_groups
+            extra=self.parent.dosing_regime.num_dose_groups,
         )
         return Formset(queryset=models.EndpointGroup.objects.none())
 
@@ -300,7 +309,7 @@ class EndpointCreate(BaseCreateWithFormset):
 
 
 class EndpointUpdate(BaseUpdateWithFormset):
-    success_message = 'Endpoint updated.'
+    success_message = "Endpoint updated."
     model = models.Endpoint
     form_class = forms.EndpointForm
     formset_factory = forms.EndpointGroupFormSet
@@ -324,7 +333,7 @@ class EndpointUpdate(BaseUpdateWithFormset):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['animal_group'] = self.object.animal_group
+        context["animal_group"] = self.object.animal_group
         return context
 
 
@@ -336,7 +345,7 @@ class EndpointList(BaseEndpointFilterList):
 
     def get_query(self, perms):
         query = Q(assessment=self.assessment)
-        if not perms['edit']:
+        if not perms["edit"]:
             query &= Q(animal_group__experiment__study__published=True)
         return query
 
@@ -352,10 +361,12 @@ class EndpointList(BaseEndpointFilterList):
             query &= self.form.get_query()
             order_by = self.form.get_order_by()
 
-        ids = self.model.objects.filter(query)\
-            .order_by('id')\
-            .distinct('id')\
-            .values_list('id', flat=True)
+        ids = (
+            self.model.objects.filter(query)
+            .order_by("id")
+            .distinct("id")
+            .values_list("id", flat=True)
+        )
 
         qs = self.model.objects.filter(id__in=ids)
 
@@ -373,7 +384,7 @@ class EndpointList(BaseEndpointFilterList):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['dose_units'] = self.form.get_dose_units_id()
+        context["dose_units"] = self.form.get_dose_units_id()
         return context
 
 
@@ -381,24 +392,25 @@ class EndpointTags(EndpointList):
     # List of Endpoints associated with an assessment and tag
 
     def get_queryset(self):
-        return self.model.objects.tag_qs(self.assessment.pk, self.kwargs['tag_slug'])
+        return self.model.objects.tag_qs(self.assessment.pk, self.kwargs["tag_slug"])
 
 
 class EndpointRead(BaseDetail):
-    queryset = models.Endpoint.objects\
-        .select_related('animal_group',
-                        'animal_group__dosing_regime',
-                        'animal_group__experiment',
-                        'animal_group__experiment__study')
+    queryset = models.Endpoint.objects.select_related(
+        "animal_group",
+        "animal_group__dosing_regime",
+        "animal_group__experiment",
+        "animal_group__experiment__study",
+    )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['bmd_session'] = self.object.get_latest_bmd_session()
+        context["bmd_session"] = self.object.get_latest_bmd_session()
         return context
 
 
 class EndpointDelete(BaseDelete):
-    success_message = 'Endpoint deleted.'
+    success_message = "Endpoint deleted."
     model = models.Endpoint
 
     def get_success_url(self):
@@ -409,12 +421,13 @@ class FullExport(BaseList):
     """
     Full XLS data export for the animal bioassay data.
     """
+
     parent_model = Assessment
     model = models.Endpoint
 
     def get_queryset(self):
         perms = self.get_obj_perms()
-        if not perms['edit']:
+        if not perms["edit"]:
             return self.model.objects.published(self.assessment)
         return self.model.objects.get_qs(self.assessment)
 
@@ -423,9 +436,10 @@ class FullExport(BaseList):
         exporter = exports.EndpointGroupFlatComplete(
             self.object_list,
             export_format="excel",
-            filename='{}-animal-bioassay'.format(self.assessment),
-            sheet_name='bioassay-analysis',
-            assessment=self.assessment)
+            filename="{}-animal-bioassay".format(self.assessment),
+            sheet_name="bioassay-analysis",
+            assessment=self.assessment,
+        )
         return exporter.build_response()
 
 
@@ -433,12 +447,14 @@ class EndpointExport(FullExport):
     """
     Compressed summary for viewing endpoint-level information.
     """
+
     def get(self, request, *args, **kwargs):
         self.object_list = self.get_queryset()
         exporter = exports.EndpointSummary(
             self.object_list,
             export_format="excel",
-            filename='{}-animal-bioassay'.format(self.assessment),
-            sheet_name='endpoint-summary',
-            assessment=self.assessment)
+            filename="{}-animal-bioassay".format(self.assessment),
+            sheet_name="endpoint-summary",
+            assessment=self.assessment,
+        )
         return exporter.build_response()

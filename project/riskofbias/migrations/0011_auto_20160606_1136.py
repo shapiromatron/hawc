@@ -8,18 +8,14 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('riskofbias', '0010_auto_20160518_1511'),
+        ("riskofbias", "0010_auto_20160518_1511"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='riskofbiasdomain',
-            name='description',
-            field=models.TextField(),
+            model_name="riskofbiasdomain", name="description", field=models.TextField(),
         ),
         migrations.AlterField(
-            model_name='riskofbiasscore',
-            name='notes',
-            field=models.TextField(blank=True),
+            model_name="riskofbiasscore", name="notes", field=models.TextField(blank=True),
         ),
     ]

@@ -8,13 +8,16 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('riskofbias', '0017_split_rob'),
+        ("riskofbias", "0017_split_rob"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='riskofbiasassessment',
-            name='help_text',
-            field=models.TextField(default='Instructions for reviewers completing assessments', help_text='Detailed instructions for completing risk of bias assessments.'),
+            model_name="riskofbiasassessment",
+            name="help_text",
+            field=models.TextField(
+                default="Instructions for reviewers completing assessments",
+                help_text="Detailed instructions for completing risk of bias assessments.",
+            ),
         ),
     ]

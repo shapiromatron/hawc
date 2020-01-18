@@ -8,4 +8,5 @@ from . import models
 class ReferenceFilterTagAdmin(TreeAdmin):
     pass
 
+
 admin.site.register(models.ReferenceFilterTag, ReferenceFilterTagAdmin)

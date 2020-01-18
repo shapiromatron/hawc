@@ -14,21 +14,23 @@ def validateCTCount(model):
         SELECT * FROM riskofbias_riskofbias WHERE content_type_id!=29
         DELETE FROM riskofbias_riskofbias WHERE content_type_id!=29
     """
-    model_ct = model.objects.distinct('content_type_id')
+    model_ct = model.objects.distinct("content_type_id")
     if model_ct.count() > 1:
         model_ct_models = [
-            '_'.join([model.content_type.app_label, model.content_type.model])
-            for model in model_ct]
-        raise ValidationError('{} ContentTypes contain relations to '
-            'more than one model: {}'.format(model._meta.label,', '.join(model_ct_models)))
+            "_".join([model.content_type.app_label, model.content_type.model]) for model in model_ct
+        ]
+        raise ValidationError(
+            "{} ContentTypes contain relations to "
+            "more than one model: {}".format(model._meta.label, ", ".join(model_ct_models))
+        )
 
 
 def setRiskofbiasStudy(apps, schema_editor):
-    RiskOfBias = apps.get_model('riskofbias', 'RiskOfBias')
-    ContentTypes = apps.get_model('contenttypes', 'ContentType')
+    RiskOfBias = apps.get_model("riskofbias", "RiskOfBias")
+    ContentTypes = apps.get_model("contenttypes", "ContentType")
     validateCTCount(RiskOfBias)
     try:
-        study_ct_id = ContentTypes.objects.get(app_label='study', model='study').id
+        study_ct_id = ContentTypes.objects.get(app_label="study", model="study").id
         for rob in RiskOfBias.objects.all():
             if rob.content_type_id is study_ct_id:
                 rob.study_id = rob.object_id
@@ -38,10 +40,10 @@ def setRiskofbiasStudy(apps, schema_editor):
 
 
 def revertToStudyContenttype(apps, schema_editor):
-    RiskOfBias = apps.get_model('riskofbias', 'RiskOfBias')
-    ContentTypes = apps.get_model('contenttypes', 'ContentType')
+    RiskOfBias = apps.get_model("riskofbias", "RiskOfBias")
+    ContentTypes = apps.get_model("contenttypes", "ContentType")
     try:
-        study_ct = ContentTypes.objects.get(app_label='study', model='study')
+        study_ct = ContentTypes.objects.get(app_label="study", model="study")
         for rob in RiskOfBias.objects.all():
             rob.object_id = rob.study.id
             rob.content_type = study_ct
@@ -53,12 +55,7 @@ def revertToStudyContenttype(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('riskofbias', '0002_auto_20160411_0905'),
+        ("riskofbias", "0002_auto_20160411_0905"),
     ]
 
-    operations = [
-        migrations.RunPython(
-            setRiskofbiasStudy,
-            reverse_code=revertToStudyContenttype
-        )
-    ]
+    operations = [migrations.RunPython(setRiskofbiasStudy, reverse_code=revertToStudyContenttype)]

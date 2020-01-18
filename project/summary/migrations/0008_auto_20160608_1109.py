@@ -7,29 +7,25 @@ import json
 
 
 def add_selected_metrics(apps, schema_editor):
-    RiskOfBiasMetric = apps.get_model('riskofbias', 'RiskOfBiasMetric')
-    qs = apps.get_model("summary", "Visual")\
-        .objects\
-        .filter(visual_type__in=[2, 3])
+    RiskOfBiasMetric = apps.get_model("riskofbias", "RiskOfBiasMetric")
+    qs = apps.get_model("summary", "Visual").objects.filter(visual_type__in=[2, 3])
 
     for obj in qs:
-        ids = RiskOfBiasMetric.objects\
-            .filter(domain__assessment_id=obj.assessment_id)\
-            .values_list('id', flat=True)
+        ids = RiskOfBiasMetric.objects.filter(domain__assessment_id=obj.assessment_id).values_list(
+            "id", flat=True
+        )
 
         settings = json.loads(obj.settings)
-        settings['included_metrics'] = list(ids)
+        settings["included_metrics"] = list(ids)
         obj.settings = json.dumps(settings)
         obj.save()
 
 
 def remove_selected_metrics(apps, schema_editor):
-    qs = apps.get_model("summary", "Visual")\
-            .objects\
-            .filter(visual_type__in=[2, 3])
+    qs = apps.get_model("summary", "Visual").objects.filter(visual_type__in=[2, 3])
     for obj in qs:
         settings = json.loads(obj.settings)
-        settings.pop('included_metrics')
+        settings.pop("included_metrics")
         obj.settings = json.dumps(settings)
         obj.save()
 
@@ -37,7 +33,7 @@ def remove_selected_metrics(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('summary', '0007_auto_20160121_1507'),
+        ("summary", "0007_auto_20160121_1507"),
     ]
 
     operations = [

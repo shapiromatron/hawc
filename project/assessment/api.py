@@ -16,7 +16,7 @@ from utils.helper import tryParseInt
 
 class RequiresAssessmentID(APIException):
     status_code = status.HTTP_400_BAD_REQUEST
-    default_detail = 'Please provide an `assessment_id` argument to your GET request.'
+    default_detail = "Please provide an `assessment_id` argument to your GET request."
 
 
 class DisabledPagination(PageNumberPagination):
@@ -25,21 +25,21 @@ class DisabledPagination(PageNumberPagination):
 
 def get_assessment_from_query(request):
     """Returns assessment or None."""
-    assessment_id = tryParseInt(request.GET.get('assessment_id'))
+    assessment_id = tryParseInt(request.GET.get("assessment_id"))
     if assessment_id is None:
         raise RequiresAssessmentID
 
-    return models.Assessment.objects\
-        .get_qs(assessment_id)\
-        .first()
+    return models.Assessment.objects.get_qs(assessment_id).first()
 
 
 class AssessmentLevelPermissions(permissions.BasePermission):
 
-    list_actions = ['list', ]
+    list_actions = [
+        "list",
+    ]
 
     def has_object_permission(self, request, view, obj):
-        if not hasattr(view, 'assessment'):
+        if not hasattr(view, "assessment"):
             view.assessment = obj.get_assessment()
         if request.method in permissions.SAFE_METHODS:
             return view.assessment.user_can_view_object(request.user)
@@ -50,9 +50,9 @@ class AssessmentLevelPermissions(permissions.BasePermission):
 
     def has_permission(self, request, view):
         if view.action in self.list_actions:
-            logging.info('Permission checked')
+            logging.info("Permission checked")
 
-            if not hasattr(view, 'assessment'):
+            if not hasattr(view, "assessment"):
                 view.assessment = get_assessment_from_query(request)
 
             if view.assessment is None:
@@ -67,12 +67,13 @@ class InAssessmentFilter(filters.BaseFilterBackend):
     """
     Filter objects which are in a particular assessment.
     """
+
     def filter_queryset(self, request, queryset, view):
-        list_actions = getattr(view, 'list_actions', ['list'])
+        list_actions = getattr(view, "list_actions", ["list"])
         if view.action not in list_actions:
             return queryset
 
-        if not hasattr(view, 'assessment'):
+        if not hasattr(view, "assessment"):
             view.assessment = get_assessment_from_query(request)
 
         filters = {view.assessment_filter_args: view.assessment.id}
@@ -81,8 +82,8 @@ class InAssessmentFilter(filters.BaseFilterBackend):
 
 class AssessmentViewset(viewsets.ReadOnlyModelViewSet):
     assessment_filter_args = ""
-    permission_classes = (AssessmentLevelPermissions, )
-    filter_backends = (InAssessmentFilter, )
+    permission_classes = (AssessmentLevelPermissions,)
+    filter_backends = (InAssessmentFilter,)
 
     def get_queryset(self):
         return self.model.objects.all()
@@ -90,9 +91,9 @@ class AssessmentViewset(viewsets.ReadOnlyModelViewSet):
 
 class AssessmentEditViewset(viewsets.ModelViewSet):
     assessment_filter_args = ""
-    permission_classes = (AssessmentLevelPermissions, )
+    permission_classes = (AssessmentLevelPermissions,)
     parent_model = models.Assessment
-    filter_backends = (InAssessmentFilter, )
+    filter_backends = (InAssessmentFilter,)
 
     def get_queryset(self):
         return self.model.objects.all()
@@ -102,10 +103,11 @@ class AssessmentRootedTagTreeViewset(viewsets.ModelViewSet):
     """
     Base viewset used with utils/models/AssessmentRootedTagTree subclasses
     """
-    permission_classes = (AssessmentLevelPermissions, )
 
-    PROJECT_MANAGER = 'PROJECT_MANAGER'
-    TEAM_MEMBER = 'TEAM_MEMBER'
+    permission_classes = (AssessmentLevelPermissions,)
+
+    PROJECT_MANAGER = "PROJECT_MANAGER"
+    TEAM_MEMBER = "TEAM_MEMBER"
     create_requires = TEAM_MEMBER
 
     def get_queryset(self):
@@ -118,10 +120,8 @@ class AssessmentRootedTagTreeViewset(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         # get an assessment
-        assessment_id = tryParseInt(request.data.get('assessment_id'), -1)
-        self.assessment = models.Assessment.objects\
-                .get_qs(assessment_id)\
-                .first()
+        assessment_id = tryParseInt(request.data.get("assessment_id"), -1)
+        self.assessment = models.Assessment.objects.get_qs(assessment_id).first()
         if self.assessment is None:
             raise RequiresAssessmentID
 
@@ -129,13 +129,13 @@ class AssessmentRootedTagTreeViewset(viewsets.ModelViewSet):
 
         return super().create(request, *args, **kwargs)
 
-    @decorators.detail_route(methods=('patch',))
+    @decorators.detail_route(methods=("patch",))
     def move(self, request, *args, **kwargs):
         instance = self.get_object()
         self.assessment = instance.get_assessment()
         self.check_editing_permission(request)
-        instance.moveWithinSiblingsToIndex(request.data['newIndex'])
-        return Response({'status': True})
+        instance.moveWithinSiblingsToIndex(request.data["newIndex"])
+        return Response({"status": True})
 
     def check_editing_permission(self, request):
         if self.create_requires == self.PROJECT_MANAGER:
@@ -143,7 +143,7 @@ class AssessmentRootedTagTreeViewset(viewsets.ModelViewSet):
         elif self.create_requires == self.TEAM_MEMBER:
             permissions_check = self.assessment.user_can_edit_object
         else:
-            raise ValueError('invalid configuration of `create_requires`')
+            raise ValueError("invalid configuration of `create_requires`")
 
         if not permissions_check(request.user):
             raise exceptions.PermissionDenied()
@@ -160,7 +160,7 @@ class DoseUnitsViewset(viewsets.ReadOnlyModelViewSet):
 
 class Assessment(AssessmentViewset):
     model = models.Assessment
-    permission_classes = (AssessmentLevelPermissions, )
+    permission_classes = (AssessmentLevelPermissions,)
     serializer_class = serializers.AssessmentSerializer
 
 
@@ -178,131 +178,130 @@ class AssessmentEndpointList(AssessmentViewset):
         """
 
         instance = self.filter_queryset(self.get_queryset())[0]
-        app_url = reverse('assessment:clean_extracted_data', kwargs={'pk': instance.id})
+        app_url = reverse("assessment:clean_extracted_data", kwargs={"pk": instance.id})
         instance.items = []
 
         # animal
-        instance.items.append({
-            'count': instance.endpoint_count,
-            'title': "animal bioassay endpoints",
-            'type': 'ani',
-            'url': "{}{}".format(app_url, 'ani/'),
-        })
+        instance.items.append(
+            {
+                "count": instance.endpoint_count,
+                "title": "animal bioassay endpoints",
+                "type": "ani",
+                "url": "{}{}".format(app_url, "ani/"),
+            }
+        )
 
-        count = apps.get_model('animal', 'Experiment')\
-            .objects\
-            .get_qs(instance.id)\
-            .count()
-        instance.items.append({
-            "count": count,
-            "title": "animal bioassay experiments",
-            'type': 'experiment',
-            'url': "{}{}".format(app_url, 'experiment/'),
-        })
+        count = apps.get_model("animal", "Experiment").objects.get_qs(instance.id).count()
+        instance.items.append(
+            {
+                "count": count,
+                "title": "animal bioassay experiments",
+                "type": "experiment",
+                "url": "{}{}".format(app_url, "experiment/"),
+            }
+        )
 
-        count = apps.get_model('animal', 'AnimalGroup')\
-            .objects\
-            .get_qs(instance.id)\
-            .count()
-        instance.items.append({
-            "count": count,
-            "title": "animal bioassay animal groups",
-            'type': 'animal-groups',
-            'url': "{}{}".format(app_url, 'animal-groups/'),
-        })
+        count = apps.get_model("animal", "AnimalGroup").objects.get_qs(instance.id).count()
+        instance.items.append(
+            {
+                "count": count,
+                "title": "animal bioassay animal groups",
+                "type": "animal-groups",
+                "url": "{}{}".format(app_url, "animal-groups/"),
+            }
+        )
 
-        count = apps.get_model('animal', 'DosingRegime')\
-            .objects\
-            .get_qs(instance.id)\
-            .count()
-        instance.items.append({
-            "count": count,
-            "title": "animal bioassay dosing regimes",
-            'type': 'dosing-regime',
-            'url': "{}{}".format(app_url, 'dosing-regime/'),
-        })
+        count = apps.get_model("animal", "DosingRegime").objects.get_qs(instance.id).count()
+        instance.items.append(
+            {
+                "count": count,
+                "title": "animal bioassay dosing regimes",
+                "type": "dosing-regime",
+                "url": "{}{}".format(app_url, "dosing-regime/"),
+            }
+        )
 
         # epi
-        instance.items.append({
-            "count": instance.outcome_count,
-            "title": "epidemiological outcomes assessed",
-            'type': 'epi',
-            'url': "{}{}".format(app_url, 'epi/')
-        })
+        instance.items.append(
+            {
+                "count": instance.outcome_count,
+                "title": "epidemiological outcomes assessed",
+                "type": "epi",
+                "url": "{}{}".format(app_url, "epi/"),
+            }
+        )
 
-        count = apps.get_model('epi', 'StudyPopulation')\
-            .objects\
-            .get_qs(instance.id)\
-            .count()
-        instance.items.append({
-            "count": count,
-            "title": "epi study populations",
-            'type': 'study-populations',
-            'url': "{}{}".format(app_url, 'study-populations/'),
-        })
+        count = apps.get_model("epi", "StudyPopulation").objects.get_qs(instance.id).count()
+        instance.items.append(
+            {
+                "count": count,
+                "title": "epi study populations",
+                "type": "study-populations",
+                "url": "{}{}".format(app_url, "study-populations/"),
+            }
+        )
 
-        count = apps.get_model('epi', 'Exposure')\
-            .objects\
-            .get_qs(instance.id)\
-            .count()
-        instance.items.append({
-            "count": count,
-            "title": "epi exposures",
-            'type': 'exposures',
-            'url': "{}{}".format(app_url, 'exposures/'),
-        })
+        count = apps.get_model("epi", "Exposure").objects.get_qs(instance.id).count()
+        instance.items.append(
+            {
+                "count": count,
+                "title": "epi exposures",
+                "type": "exposures",
+                "url": "{}{}".format(app_url, "exposures/"),
+            }
+        )
 
         # in vitro
-        instance.items.append({
-            "count": instance.ivendpoint_count,
-            "title": "in vitro endpoints",
-            'type': 'in-vitro',
-            'url': "{}{}".format(app_url, 'in-vitro/'),
-        })
+        instance.items.append(
+            {
+                "count": instance.ivendpoint_count,
+                "title": "in vitro endpoints",
+                "type": "in-vitro",
+                "url": "{}{}".format(app_url, "in-vitro/"),
+            }
+        )
 
-        count = apps.get_model('invitro', 'ivchemical')\
-            .objects\
-            .get_qs(instance.id)\
-            .count()
-        instance.items.append({
-            "count": count,
-            "title": "in vitro chemicals",
-            'type': 'in-vitro-chemical',
-            'url': "{}{}".format(app_url, 'in-vitro-chemical/'),
-        })
+        count = apps.get_model("invitro", "ivchemical").objects.get_qs(instance.id).count()
+        instance.items.append(
+            {
+                "count": count,
+                "title": "in vitro chemicals",
+                "type": "in-vitro-chemical",
+                "url": "{}{}".format(app_url, "in-vitro-chemical/"),
+            }
+        )
 
         # study
-        count = apps.get_model('study', 'Study')\
-            .objects\
-            .get_qs(instance.id)\
-            .count()
-        instance.items.append({
-            "count": count,
-            "title": "studies",
-            "type": "study",
-            "url": "{}{}".format(app_url, 'study/'),
-        })
+        count = apps.get_model("study", "Study").objects.get_qs(instance.id).count()
+        instance.items.append(
+            {
+                "count": count,
+                "title": "studies",
+                "type": "study",
+                "url": "{}{}".format(app_url, "study/"),
+            }
+        )
 
         # lit
-        count = apps.get_model('lit', 'Reference')\
-            .objects\
-            .get_qs(instance.id)\
-            .count()
-        instance.items.append({
-            "count": count,
-            "title": "references",
-            "type": "reference",
-            "url": "{}{}".format(app_url, 'reference/'),
-        })
+        count = apps.get_model("lit", "Reference").objects.get_qs(instance.id).count()
+        instance.items.append(
+            {
+                "count": count,
+                "title": "references",
+                "type": "reference",
+                "url": "{}{}".format(app_url, "reference/"),
+            }
+        )
 
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
 
     def get_queryset(self):
-        id_ = tryParseInt(self.request.GET.get('assessment_id'))
-        queryset = self.model.objects\
-            .get_qs(id_)\
-            .annotate(endpoint_count=Count('baseendpoint__endpoint'))\
-            .annotate(outcome_count=Count('baseendpoint__outcome'))\
-            .annotate(ivendpoint_count=Count('baseendpoint__ivendpoint'))
+        id_ = tryParseInt(self.request.GET.get("assessment_id"))
+        queryset = (
+            self.model.objects.get_qs(id_)
+            .annotate(endpoint_count=Count("baseendpoint__endpoint"))
+            .annotate(outcome_count=Count("baseendpoint__outcome"))
+            .annotate(ivendpoint_count=Count("baseendpoint__ivendpoint"))
+        )
         return queryset

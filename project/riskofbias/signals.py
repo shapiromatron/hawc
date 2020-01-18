@@ -12,15 +12,13 @@ from . import models
 @receiver(post_save, sender=models.RiskOfBiasMetric)
 @receiver(pre_delete, sender=models.RiskOfBiasMetric)
 def invalidate_caches_rob_metrics(sender, instance, **kwargs):
-    Study = apps.get_model('study', 'Study')
+    Study = apps.get_model("study", "Study")
     if sender is models.RiskOfBiasDomain:
         assessment_id = instance.assessment_id
     elif sender is models.RiskOfBiasMetric:
         assessment_id = instance.domain.assessment_id
 
-    ids = Study.objects\
-        .filter(assessment_id=assessment_id)\
-        .values_list('id', flat=True)
+    ids = Study.objects.filter(assessment_id=assessment_id).values_list("id", flat=True)
 
     Study.delete_caches(ids)
 
@@ -34,28 +32,26 @@ def create_rob_scores(sender, instance, created, **kwargs):
 
     assessment_id = instance.get_assessment().id
 
-    all_robs = models.RiskOfBias.objects\
-        .filter(study__assessment_id=assessment_id)\
-        .values_list('id', flat=True)
+    all_robs = models.RiskOfBias.objects.filter(study__assessment_id=assessment_id).values_list(
+        "id", flat=True
+    )
 
-    robs_with_met = models.RiskOfBias.objects\
-        .filter(study__assessment_id=assessment_id,
-                scores__metric=instance)\
-        .values_list('id', flat=True)
+    robs_with_met = models.RiskOfBias.objects.filter(
+        study__assessment_id=assessment_id, scores__metric=instance
+    ).values_list("id", flat=True)
 
     robs_without_met = set(all_robs) - set(robs_with_met)
 
     objs = [
-        models.RiskOfBiasScore(
-            riskofbias_id=rob_id,
-            metric_id=instance.id,
-        ) for rob_id in robs_without_met
+        models.RiskOfBiasScore(riskofbias_id=rob_id, metric_id=instance.id,)
+        for rob_id in robs_without_met
     ]
 
     if len(objs) > 0:
-        logging.info('Assessment %s -> RiskOfBiasMetric %s (post_save creation signal) '
-                     '-> %s RiskOfBiasScore(s) created.' %
-                     (assessment_id, instance.id, len(objs)))
+        logging.info(
+            "Assessment %s -> RiskOfBiasMetric %s (post_save creation signal) "
+            "-> %s RiskOfBiasScore(s) created." % (assessment_id, instance.id, len(objs))
+        )
         models.RiskOfBiasScore.objects.bulk_create(objs)
 
 
@@ -63,12 +59,13 @@ def create_rob_scores(sender, instance, created, **kwargs):
 def update_study_type_metrics(sender, instance, created, **kwargs):
     # update RiskOfBiasScores with RiskOfBiasMetric requirements are updated (required study
     # type changes)
-    Study = apps.get_model('study', 'Study')
+    Study = apps.get_model("study", "Study")
     assessment = instance.get_assessment()
-    for rob in models.RiskOfBias.objects\
-            .filter(study__in=Study.objects.get_qs(assessment))\
-            .select_related('study', 'study__assessment')\
-            .prefetch_related('scores'):
+    for rob in (
+        models.RiskOfBias.objects.filter(study__in=Study.objects.get_qs(assessment))
+        .select_related("study", "study__assessment")
+        .prefetch_related("scores")
+    ):
         rob.update_scores(assessment)
 
 
@@ -77,7 +74,7 @@ def update_study_type_metrics(sender, instance, created, **kwargs):
 @receiver(post_save, sender=models.RiskOfBiasScore)
 @receiver(pre_delete, sender=models.RiskOfBiasScore)
 def invalidate_caches_risk_of_bias(sender, instance, **kwargs):
-    Study = apps.get_model('study', 'Study')
+    Study = apps.get_model("study", "Study")
     if sender is models.RiskOfBias:
         rob_ids = [instance.id]
         study_ids = [instance.study_id]

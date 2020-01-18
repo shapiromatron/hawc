@@ -21,8 +21,6 @@ def invalidate_meta_result_cache(sender, instance, **kwargs):
         ids = [instance.meta_result_id]
 
     if len(filters) > 0:
-        ids = models.MetaResult.objects\
-            .filter(**filters)\
-            .values_list('id', flat=True)
+        ids = models.MetaResult.objects.filter(**filters).values_list("id", flat=True)
 
     models.MetaResult.delete_caches(ids)

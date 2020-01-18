@@ -58,6 +58,6 @@ def deactivate_user(new_id: int, old_ids: List[int]):
         old_user.save()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     deactivate_user(new_id=123, old_ids=[456, 789])
-    management.call_command('clear_cache')
+    management.call_command("clear_cache")

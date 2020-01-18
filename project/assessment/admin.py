@@ -15,22 +15,25 @@ bust_cache.short_description = "Clear cache for selected assessments"
 
 
 class AssessmentAdmin(admin.ModelAdmin):
-    list_display = (
-        '__str__', 'get_managers', 'get_team_members', 'get_reviewers'
-    )
+    list_display = ("__str__", "get_managers", "get_team_members", "get_reviewers")
     list_per_page = 10
-    list_filter = ('editable', 'public', )
+    list_filter = (
+        "editable",
+        "public",
+    )
 
     search_fields = (
-        'name', 'project_manager__last_name',
-        'team_members__last_name', 'reviewers__last_name'
+        "name",
+        "project_manager__last_name",
+        "team_members__last_name",
+        "reviewers__last_name",
     )
 
-    actions = (bust_cache, )
+    actions = (bust_cache,)
 
     def queryset(self, request):
         qs = super().queryset(request)
-        return qs.prefetch_related('project_manager', 'team_members', 'reviewers')
+        return qs.prefetch_related("project_manager", "team_members", "reviewers")
 
     def get_staff_ul(self, mgr):
         ul = ["<ul>"]
@@ -49,51 +52,59 @@ class AssessmentAdmin(admin.ModelAdmin):
     def get_reviewers(self, obj):
         return self.get_staff_ul(obj.reviewers)
 
-    get_managers.short_description = 'Managers'
+    get_managers.short_description = "Managers"
     get_managers.allow_tags = True
 
-    get_team_members.short_description = 'Team'
+    get_team_members.short_description = "Team"
     get_team_members.allow_tags = True
 
-    get_reviewers.short_description = 'Reviewers'
+    get_reviewers.short_description = "Reviewers"
     get_reviewers.allow_tags = True
 
 
 class DoseUnitsAdmin(admin.ModelAdmin):
-    list_display = ('name',
-                    'animal_dose_group_count',
-                    'epi_exposure_count',
-                    'invitro_experiment_count')
+    list_display = (
+        "name",
+        "animal_dose_group_count",
+        "epi_exposure_count",
+        "invitro_experiment_count",
+    )
 
 
 class SpeciesAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', )
-    list_display_links = ('name', )
+    list_display = (
+        "id",
+        "name",
+    )
+    list_display_links = ("name",)
 
 
 class StrainAdmin(admin.ModelAdmin):
-    list_select_related = ('species', )
-    list_display = ('id', 'name', 'species')
-    list_display_links = ('name', )
-    list_filter = ('species', )
+    list_select_related = ("species",)
+    list_display = ("id", "name", "species")
+    list_display_links = ("name",)
+    list_filter = ("species",)
 
 
 class EffectTagAdmin(admin.ModelAdmin):
-    list_display = ('name', 'slug', 'id')
-    search_fields = ('name', )
+    list_display = ("name", "slug", "id")
+    search_fields = ("name",)
 
 
 class TimeSpentEditingAdmin(admin.ModelAdmin):
     list_display = (
-        'id',
-        'seconds',
-        'assessment',
-        'content_type',
-        'object_id',
-        'content_object',
-        'created',
+        "id",
+        "seconds",
+        "assessment",
+        "content_type",
+        "object_id",
+        "content_object",
+        "created",
     )
-    search_fields = ('assessment', 'content_type',)
+    search_fields = (
+        "assessment",
+        "content_type",
+    )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

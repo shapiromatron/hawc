@@ -8,43 +8,61 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('bmd', '0004_add_bmds270'),
+        ("bmd", "0004_add_bmds270"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='logicfield',
-            name='cancer_dichotomous_on',
-            field=models.BooleanField(default=True, verbose_name='Cancer Dichotomous Datasets'),
+            model_name="logicfield",
+            name="cancer_dichotomous_on",
+            field=models.BooleanField(default=True, verbose_name="Cancer Dichotomous Datasets"),
         ),
         migrations.AlterField(
-            model_name='logicfield',
-            name='continuous_on',
-            field=models.BooleanField(default=True, verbose_name='Continuous Datasets'),
+            model_name="logicfield",
+            name="continuous_on",
+            field=models.BooleanField(default=True, verbose_name="Continuous Datasets"),
         ),
         migrations.AlterField(
-            model_name='logicfield',
-            name='dichotomous_on',
-            field=models.BooleanField(default=True, verbose_name='Dichotomous Datasets'),
+            model_name="logicfield",
+            name="dichotomous_on",
+            field=models.BooleanField(default=True, verbose_name="Dichotomous Datasets"),
         ),
         migrations.AlterField(
-            model_name='logicfield',
-            name='failure_bin',
-            field=models.PositiveSmallIntegerField(choices=[(0, 'Warning (no change)'), (1, 'Questionable'), (2, 'Not Viable')], help_text='If the test fails, select the model-bin should the model be placed into.'),
+            model_name="logicfield",
+            name="failure_bin",
+            field=models.PositiveSmallIntegerField(
+                choices=[(0, "Warning (no change)"), (1, "Questionable"), (2, "Not Viable"),],
+                help_text="If the test fails, select the model-bin should the model be placed into.",
+            ),
         ),
         migrations.AlterField(
-            model_name='logicfield',
-            name='threshold',
-            field=models.DecimalField(blank=True, decimal_places=2, help_text='If a threshold is required for the test, threshold can be specified to non-default.', max_digits=5, null=True),
+            model_name="logicfield",
+            name="threshold",
+            field=models.DecimalField(
+                blank=True,
+                decimal_places=2,
+                help_text="If a threshold is required for the test, threshold can be specified to non-default.",
+                max_digits=5,
+                null=True,
+            ),
         ),
         migrations.AlterField(
-            model_name='model',
-            name='plot',
-            field=models.ImageField(blank=True, upload_to='bmds_plot'),
+            model_name="model",
+            name="plot",
+            field=models.ImageField(blank=True, upload_to="bmds_plot"),
         ),
         migrations.AlterField(
-            model_name='session',
-            name='version',
-            field=models.CharField(choices=[('BMDS231', 'BMDS v2.3.1'), ('BMDS240', 'BMDS v2.4.0'), ('BMDS260', 'BMDS v2.6.0'), ('BMDS2601', 'BMDS v2.6.0.1'), ('BMDS270', 'BMDS v2.7.0')], max_length=10),
+            model_name="session",
+            name="version",
+            field=models.CharField(
+                choices=[
+                    ("BMDS231", "BMDS v2.3.1"),
+                    ("BMDS240", "BMDS v2.4.0"),
+                    ("BMDS260", "BMDS v2.6.0"),
+                    ("BMDS2601", "BMDS v2.6.0.1"),
+                    ("BMDS270", "BMDS v2.7.0"),
+                ],
+                max_length=10,
+            ),
         ),
     ]

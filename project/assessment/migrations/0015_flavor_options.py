@@ -9,18 +9,28 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('assessment', '0014_auto_20190401_1852'),
+        ("assessment", "0014_auto_20190401_1852"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='assessment',
-            name='noel_name',
-            field=models.PositiveSmallIntegerField(choices=[(0, 'NOEL/LOEL'), (1, 'NOAEL/LOAEL')], default=assessment.models.Assessment.get_noel_name_default, help_text='What term should be used to refer to NOEL/NOAEL and LOEL/LOAEL?', verbose_name='NOEL/NOAEL name'),
+            model_name="assessment",
+            name="noel_name",
+            field=models.PositiveSmallIntegerField(
+                choices=[(0, "NOEL/LOEL"), (1, "NOAEL/LOAEL")],
+                default=assessment.models.Assessment.get_noel_name_default,
+                help_text="What term should be used to refer to NOEL/NOAEL and LOEL/LOAEL?",
+                verbose_name="NOEL/NOAEL name",
+            ),
         ),
         migrations.AddField(
-            model_name='assessment',
-            name='rob_name',
-            field=models.PositiveSmallIntegerField(choices=[(0, 'Risk of bias'), (1, 'Study evaluation')], default=assessment.models.Assessment.get_rob_name_default, help_text='What term should be used to refer to risk of bias/study evaluation questions?', verbose_name='Risk of bias/Study evaluation name'),
+            model_name="assessment",
+            name="rob_name",
+            field=models.PositiveSmallIntegerField(
+                choices=[(0, "Risk of bias"), (1, "Study evaluation")],
+                default=assessment.models.Assessment.get_rob_name_default,
+                help_text="What term should be used to refer to risk of bias/study evaluation questions?",
+                verbose_name="Risk of bias/Study evaluation name",
+            ),
         ),
     ]

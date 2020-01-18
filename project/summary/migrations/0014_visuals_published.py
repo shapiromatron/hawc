@@ -6,8 +6,8 @@ from django.db import migrations, models
 
 def make_public(apps, schema_editor):
     Models = [
-        apps.get_model('summary', 'Visual'),
-        apps.get_model('summary', 'DataPivot'),
+        apps.get_model("summary", "Visual"),
+        apps.get_model("summary", "DataPivot"),
     ]
     for Model in Models:
         Model.objects.all().update(published=True)
@@ -16,19 +16,27 @@ def make_public(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('summary', '0013_optional_captions'),
+        ("summary", "0013_optional_captions"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='datapivot',
-            name='published',
-            field=models.BooleanField(default=False, help_text='For assessments marked for public viewing, mark visual to be viewable by public', verbose_name='Publish visual for public viewing'),
+            model_name="datapivot",
+            name="published",
+            field=models.BooleanField(
+                default=False,
+                help_text="For assessments marked for public viewing, mark visual to be viewable by public",
+                verbose_name="Publish visual for public viewing",
+            ),
         ),
         migrations.AddField(
-            model_name='visual',
-            name='published',
-            field=models.BooleanField(default=False, help_text='For assessments marked for public viewing, mark visual to be viewable by public', verbose_name='Publish visual for public viewing'),
+            model_name="visual",
+            name="published",
+            field=models.BooleanField(
+                default=False,
+                help_text="For assessments marked for public viewing, mark visual to be viewable by public",
+                verbose_name="Publish visual for public viewing",
+            ),
         ),
         migrations.RunPython(make_public, reverse_code=migrations.RunPython.noop),
     ]

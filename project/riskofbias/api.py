@@ -1,5 +1,3 @@
-
-
 from django.shortcuts import get_object_or_404
 
 from rest_framework import filters
@@ -8,8 +6,14 @@ from rest_framework.decorators import list_route
 from rest_framework import viewsets
 from rest_framework_extensions.mixins import ListUpdateModelMixin
 
-from assessment.api import AssessmentLevelPermissions, AssessmentEditViewset,\
-    AssessmentViewset, DisabledPagination, InAssessmentFilter, RequiresAssessmentID
+from assessment.api import (
+    AssessmentLevelPermissions,
+    AssessmentEditViewset,
+    AssessmentViewset,
+    DisabledPagination,
+    InAssessmentFilter,
+    RequiresAssessmentID,
+)
 from utils.api import BulkIdFilter
 from utils.views import TeamMemberOrHigherMixin
 
@@ -19,7 +23,7 @@ from . import models, serializers
 
 
 class RiskOfBiasDomain(viewsets.ReadOnlyModelViewSet):
-    assessment_filter_args = 'assessment'
+    assessment_filter_args = "assessment"
     model = models.RiskOfBiasDomain
     pagination_class = DisabledPagination
     permission_classes = (AssessmentLevelPermissions,)
@@ -27,11 +31,11 @@ class RiskOfBiasDomain(viewsets.ReadOnlyModelViewSet):
     serializer_class = serializers.AssessmentDomainSerializer
 
     def get_queryset(self):
-        return self.model.objects.all().prefetch_related('metrics')
+        return self.model.objects.all().prefetch_related("metrics")
 
 
 class RiskOfBias(viewsets.ModelViewSet):
-    assessment_filter_args = 'study__assessment'
+    assessment_filter_args = "study__assessment"
     model = models.RiskOfBias
     pagination_class = DisabledPagination
     permission_classes = (AssessmentLevelPermissions,)
@@ -39,8 +43,9 @@ class RiskOfBias(viewsets.ModelViewSet):
     serializer_class = serializers.RiskOfBiasSerializer
 
     def get_queryset(self):
-        return self.model.objects.all()\
-            .prefetch_related('study', 'author', 'scores__metric__domain')
+        return self.model.objects.all().prefetch_related(
+            "study", "author", "scores__metric__domain"
+        )
 
     def perform_update(self, serializer):
         super().perform_update(serializer)
@@ -56,7 +61,7 @@ class RiskOfBias(viewsets.ModelViewSet):
                 self.request.session.session_key,
                 serializer.instance.get_edit_url(),
                 serializer.instance,
-                serializer.instance.get_assessment().id
+                serializer.instance.get_assessment().id,
             )
 
 
@@ -84,11 +89,11 @@ class AssessmentScoreViewset(TeamMemberOrHigherMixin, ListUpdateModelMixin, Asse
     model = models.RiskOfBiasScore
     serializer_class = serializers.AssessmentRiskOfBiasScoreSerializer
     pagination_class = DisabledPagination
-    assessment_filter_args = 'metric__domain_assessment'
-    filter_backends = (BulkIdFilter, )
+    assessment_filter_args = "metric__domain_assessment"
+    filter_backends = (BulkIdFilter,)
 
     def get_assessment(self, request, *args, **kwargs):
-        assessment_id = request.GET.get('assessment_id', None)
+        assessment_id = request.GET.get("assessment_id", None)
         if assessment_id is None:
             raise RequiresAssessmentID
 
@@ -104,5 +109,5 @@ class AssessmentScoreViewset(TeamMemberOrHigherMixin, ListUpdateModelMixin, Asse
         return self.model.objects.all()
 
     def post_save_bulk(self, queryset, update_bulk_dict):
-        ids = list(queryset.values_list('id', flat=True))
+        ids = list(queryset.values_list("id", flat=True))
         queryset.model.delete_caches(ids)

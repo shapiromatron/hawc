@@ -6,7 +6,6 @@ from . import utils
 
 
 class AssessmentTests(TestCase):
-
     def setUp(self):
         utils.build_assessments_for_permissions_testing(self)
 
@@ -24,17 +23,20 @@ class AssessmentTests(TestCase):
     def test_two_assessment_name(self):
         # test two assessments with duplicate information can be created.
         c = Client()
-        self.assertTrue(c.login(email='sudo@sudo.com', password='pw'))
+        self.assertTrue(c.login(email="sudo@sudo.com", password="pw"))
         for i in range(2):
-            response = c.post(reverse('assessment:new'), {
-                'name': 'testing',
-                'year': '2013',
-                'version': '1',
-                'public': 'off',
-                'editable': 'on',
-                'project_manager': ('1'),
-                'team_members': ('1', '2'),
-                'reviewers': ('1')
-            })
-            self.assertTemplateUsed('assessment/assessment_detail.html')
+            response = c.post(
+                reverse("assessment:new"),
+                {
+                    "name": "testing",
+                    "year": "2013",
+                    "version": "1",
+                    "public": "off",
+                    "editable": "on",
+                    "project_manager": ("1"),
+                    "team_members": ("1", "2"),
+                    "reviewers": ("1"),
+                },
+            )
+            self.assertTemplateUsed("assessment/assessment_detail.html")
             self.assertTrue(response.status_code in [200, 302])

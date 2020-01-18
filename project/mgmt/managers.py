@@ -6,7 +6,7 @@ from study.models import Study
 
 
 class TaskManager(BaseManager):
-    assessment_relation = 'study__assessment'
+    assessment_relation = "study__assessment"
 
     def owned_by(self, user):
         return self.filter(owner=user)
@@ -20,13 +20,11 @@ class TaskManager(BaseManager):
         """
         if not assessment.enable_project_management:
             return
-        studies = Study.objects\
-            .assessment_qs(assessment.id)\
-            .prefetch_related('tasks')
+        studies = Study.objects.assessment_qs(assessment.id).prefetch_related("tasks")
         tasks = []
         for study in studies:
             tasks.extend(self._get_missing_tasks(study, assessment))
-        logging.info('Creating {} tasks for assessment {}.'.format(len(tasks), assessment.id))
+        logging.info("Creating {} tasks for assessment {}.".format(len(tasks), assessment.id))
         self.bulk_create(tasks)
 
     def create_study_tasks(self, study):
@@ -39,7 +37,7 @@ class TaskManager(BaseManager):
         if not assessment.enable_project_management:
             return
         tasks = self._get_missing_tasks(study, assessment)
-        logging.info('Creating {} tasks for study {}.'.format(len(tasks), study.id))
+        logging.info("Creating {} tasks for study {}.".format(len(tasks), study.id))
         self.bulk_create(tasks)
 
     def _get_missing_tasks(self, study, assessment):
@@ -57,36 +55,24 @@ class TaskManager(BaseManager):
         # create prep task
         task = task_by_type(existing_tasks, self.model.TYPE_PREPARATION)
         if task is None:
-            new_tasks.append(self.model(
-                study=study,
-                type=self.model.TYPE_PREPARATION
-            ))
+            new_tasks.append(self.model(study=study, type=self.model.TYPE_PREPARATION))
 
         # create extraction tasks
         if assessment.enable_data_extraction:
 
             task = task_by_type(existing_tasks, self.model.TYPE_EXTRACTION)
             if task is None:
-                new_tasks.append(self.model(
-                    study=study,
-                    type=self.model.TYPE_EXTRACTION
-                ))
+                new_tasks.append(self.model(study=study, type=self.model.TYPE_EXTRACTION))
 
             task = task_by_type(existing_tasks, self.model.TYPE_QA)
             if task is None:
-                new_tasks.append(self.model(
-                    study=study,
-                    type=self.model.TYPE_QA
-                ))
+                new_tasks.append(self.model(study=study, type=self.model.TYPE_QA))
 
         # create rob tasks
         if assessment.enable_risk_of_bias:
             task = task_by_type(existing_tasks, self.model.TYPE_ROB)
             if task is None:
-                new_tasks.append(self.model(
-                    study=study,
-                    type=self.model.TYPE_ROB
-                ))
+                new_tasks.append(self.model(study=study, type=self.model.TYPE_ROB))
 
         return new_tasks
 

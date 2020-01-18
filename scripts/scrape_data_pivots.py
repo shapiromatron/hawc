@@ -23,8 +23,8 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.chrome.options import Options
 
 
-FN = 'data-pivots.pkl'
-ROOT = str(Path(Path(__file__).parents[0] / '../project').resolve())
+FN = "data-pivots.pkl"
+ROOT = str(Path(Path(__file__).parents[0] / "../project").resolve())
 os.chdir(ROOT)
 sys.path.append(ROOT)
 
@@ -43,18 +43,15 @@ def get_pivot_objects():
     from summary.models import DataPivot
 
     data = []
-    for d in DataPivot.objects.all().order_by('assessment_id'):
+    for d in DataPivot.objects.all().order_by("assessment_id"):
         data.append((d.id, d.get_absolute_url(), False, False, False, False))
 
-    df = pd.DataFrame(
-        data=data,
-        columns=('id', 'url', 'loaded', 'error', 'png', 'svg')
-    )
+    df = pd.DataFrame(data=data, columns=("id", "url", "loaded", "error", "png", "svg"))
     df.to_pickle(FN)
 
 
 @cli.command()
-@click.argument('base_url')
+@click.argument("base_url")
 def webscrape(base_url: str):
     df = pd.read_pickle(FN)
 
@@ -66,25 +63,25 @@ def webscrape(base_url: str):
     driver.set_window_size(2000, 1500)
     driver.implicitly_wait(max_sleep)
 
-    url = f'{base_url}/user/login/'
+    url = f"{base_url}/user/login/"
     driver.get(url)
 
-    driver.find_element_by_id('id_username').clear()
-    driver.find_element_by_id('id_username').send_keys(os.environ["HAWC_USERNAME"])
-    driver.find_element_by_id('id_password').clear()
-    driver.find_element_by_id('id_password').send_keys(os.environ["HAWC_PW"])
-    driver.find_element_by_id('submit-id-login').submit()
+    driver.find_element_by_id("id_username").clear()
+    driver.find_element_by_id("id_username").send_keys(os.environ["HAWC_USERNAME"])
+    driver.find_element_by_id("id_password").clear()
+    driver.find_element_by_id("id_password").send_keys(os.environ["HAWC_PW"])
+    driver.find_element_by_id("submit-id-login").submit()
 
     for key, data in df.iterrows():
         if data.loaded is True:
             continue
 
         driver.implicitly_wait(max_sleep)
-        url = f'{base_url}{data.url}'
-        print(f'Trying {key+1} of {df.shape[0]}: {url}')
+        url = f"{base_url}{data.url}"
+        print(f"Trying {key+1} of {df.shape[0]}: {url}")
         driver.get(url)
-        el = driver.find_element_by_id('dp_display')
-        loading_div = driver.find_element_by_id('loading_div')
+        el = driver.find_element_by_id("dp_display")
+        loading_div = driver.find_element_by_id("loading_div")
         while True:
             if not loading_div.is_displayed():
                 driver.implicitly_wait(10)
@@ -107,5 +104,5 @@ def webscrape(base_url: str):
             time.sleep(0.1)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     cli()

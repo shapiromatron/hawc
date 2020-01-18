@@ -1,1 +1,1 @@
-default_app_config = 'invitro.apps.InvitroConfig'
+default_app_config = "invitro.apps.InvitroConfig"

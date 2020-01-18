@@ -11,5 +11,5 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         base = settings.PROJECT_PATH
-        cmd = 'npm run build'.split(' ')
+        cmd = "npm run build".split(" ")
         subprocess.call(cmd, cwd=base)

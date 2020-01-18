@@ -2,61 +2,65 @@ from django.utils.safestring import mark_safe
 from selectable.registry import registry
 
 from . import models
-from utils.lookups import DistinctStringLookup, RelatedLookup, RelatedDistinctStringLookup
+from utils.lookups import (
+    DistinctStringLookup,
+    RelatedLookup,
+    RelatedDistinctStringLookup,
+)
 
 
 class RelatedExperimentCASLookup(RelatedDistinctStringLookup):
     model = models.Experiment
     distinct_field = "cas"
-    related_filter = 'study__assessment_id'
+    related_filter = "study__assessment_id"
 
 
 class ExperimentByStudyLookup(RelatedLookup):
     model = models.Experiment
-    search_fields = ('name__icontains', )
-    related_filter = 'study_id'
+    search_fields = ("name__icontains",)
+    related_filter = "study_id"
 
 
 class AnimalGroupByExperimentLookup(RelatedLookup):
     model = models.AnimalGroup
-    search_fields = ('name__icontains', )
-    related_filter = 'experiment_id'
+    search_fields = ("name__icontains",)
+    related_filter = "experiment_id"
 
 
 class RelatedAnimalGroupLifestageExposedLookup(RelatedDistinctStringLookup):
     model = models.AnimalGroup
     distinct_field = "lifestage_exposed"
-    related_filter = 'experiment__study__assessment_id'
+    related_filter = "experiment__study__assessment_id"
 
 
 class RelatedAnimalGroupLifestageAssessedLookup(RelatedDistinctStringLookup):
     model = models.AnimalGroup
     distinct_field = "lifestage_assessed"
-    related_filter = 'experiment__study__assessment_id'
+    related_filter = "experiment__study__assessment_id"
 
 
 class RelatedEndpointSystemLookup(RelatedDistinctStringLookup):
     model = models.Endpoint
     distinct_field = "system"
-    related_filter = 'assessment_id'
+    related_filter = "assessment_id"
 
 
 class RelatedEndpointOrganLookup(RelatedDistinctStringLookup):
     model = models.Endpoint
     distinct_field = "organ"
-    related_filter = 'assessment_id'
+    related_filter = "assessment_id"
 
 
 class RelatedEndpointEffectLookup(RelatedDistinctStringLookup):
     model = models.Endpoint
     distinct_field = "effect"
-    related_filter = 'assessment_id'
+    related_filter = "assessment_id"
 
 
 class RelatedEndpointEffectSubtypeLookup(RelatedDistinctStringLookup):
     model = models.Endpoint
     distinct_field = "effect_subtype"
-    related_filter = 'assessment_id'
+    related_filter = "assessment_id"
 
 
 class ExpChemicalLookup(DistinctStringLookup):
@@ -110,27 +114,26 @@ class EndpointByStudyLookup(RelatedLookup):
     user_specified_search_fields = [
         "animal_group__experiment__name",
         "animal_group__name",
-        "name"
+        "name",
     ]
     search_fields = (
-        'name__icontains',
-        'animal_group__name__icontains',
-        'animal_group__experiment__name__icontains',
+        "name__icontains",
+        "animal_group__name__icontains",
+        "animal_group__experiment__name__icontains",
     )
-    related_filter = 'animal_group__experiment__study'
+    related_filter = "animal_group__experiment__study"
 
     def get_item_label(self, obj):
-        return " | ".join([
-            str(self.get_underscore_field_val(obj, f))
-            for f in self.user_specified_search_fields
-        ])
+        return " | ".join(
+            [str(self.get_underscore_field_val(obj, f)) for f in self.user_specified_search_fields]
+        )
 
     def get_item_value(self, obj):
         return self.get_item_label(obj)
 
     def get_query(self, request, term):
-        order_by = request.GET['order_by']
-        search_fields = request.GET.get('search_fields')
+        order_by = request.GET["order_by"]
+        search_fields = request.GET.get("search_fields")
 
         # TODO - investigate if this alters class-state; may have side effects across requests
         # preserve this so we can return a dynamic representation of the Endpoint...
@@ -150,20 +153,22 @@ class EndpointByAssessmentLookup(RelatedLookup):
     # Return names of endpoints available for a assessment study
     model = models.Endpoint
     search_fields = (
-        'name__icontains',
-        'animal_group__name__icontains',
-        'animal_group__experiment__name__icontains',
-        'animal_group__experiment__study__short_citation__icontains'
+        "name__icontains",
+        "animal_group__name__icontains",
+        "animal_group__experiment__name__icontains",
+        "animal_group__experiment__study__short_citation__icontains",
     )
-    related_filter = 'assessment_id'
+    related_filter = "assessment_id"
 
     def get_item_label(self, obj):
-        return mark_safe("{} | {} | {} | {}".format(
-            obj.animal_group.experiment.study,
-            obj.animal_group.experiment,
-            obj.animal_group,
-            obj
-        ))
+        return mark_safe(
+            "{} | {} | {} | {}".format(
+                obj.animal_group.experiment.study,
+                obj.animal_group.experiment,
+                obj.animal_group,
+                obj,
+            )
+        )
 
     def get_item_value(self, obj):
         return self.get_item_label(obj)
@@ -171,26 +176,22 @@ class EndpointByAssessmentLookup(RelatedLookup):
 
 class EndpointByAssessmentTextLookup(RelatedLookup):
     model = models.Endpoint
-    search_fields = ('name__icontains', )
-    related_filter = 'assessment_id'
+    search_fields = ("name__icontains",)
+    related_filter = "assessment_id"
 
     def get_query(self, request, term):
-        return super().get_query(request, term)\
-            .distinct('name')
+        return super().get_query(request, term).distinct("name")
 
 
 class EndpointIdByAssessmentLookup(EndpointByAssessmentLookup):
-
     def get_item_value(self, obj):
         return obj.id
 
 
 class EndpointByAssessmentLookupHtml(EndpointByAssessmentLookup):
-
     def get_item_value(self, obj):
-        return u'<a href="{}" target="_blank">{}</a>'.format(
-            obj.get_absolute_url(),
-            self.get_item_label(obj)
+        return '<a href="{}" target="_blank">{}</a>'.format(
+            obj.get_absolute_url(), self.get_item_label(obj)
         )
 
 

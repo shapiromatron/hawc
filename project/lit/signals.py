@@ -8,7 +8,7 @@ from . import models
 @receiver(post_save, sender=models.Reference)
 @receiver(pre_delete, sender=models.Reference)
 def invalidate_study_cache(sender, instance, **kwargs):
-    Study = apps.get_model('study', 'Study')
+    Study = apps.get_model("study", "Study")
     Study.delete_caches([instance.id])
 
 

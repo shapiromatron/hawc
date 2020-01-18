@@ -8,22 +8,20 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('riskofbias', '0008_auto_20160428_1208'),
+        ("riskofbias", "0008_auto_20160428_1208"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='riskofbias',
-            options={'ordering': ('final',), 'verbose_name_plural': 'Risk of Biases'},
+            name="riskofbias",
+            options={"ordering": ("final",), "verbose_name_plural": "Risk of Biases"},
         ),
         migrations.RenameField(
-            model_name='riskofbias',
-            old_name='conflict_resolution',
-            new_name='final',
+            model_name="riskofbias", old_name="conflict_resolution", new_name="final",
         ),
         migrations.AlterField(
-            model_name='riskofbias',
-            name='active',
+            model_name="riskofbias",
+            name="active",
             field=models.BooleanField(db_index=True, default=False),
         ),
     ]

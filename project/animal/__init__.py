@@ -1,1 +1,1 @@
-default_app_config = 'animal.apps.AnimalConfig'
+default_app_config = "animal.apps.AnimalConfig"

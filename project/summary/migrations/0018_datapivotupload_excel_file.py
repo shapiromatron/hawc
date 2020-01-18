@@ -8,17 +8,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('summary', '0017_datapivotupload_excel_file'),
+        ("summary", "0017_datapivotupload_excel_file"),
     ]
 
     operations = [
-        migrations.RemoveField(
-            model_name='datapivotupload',
-            name='file',
-        ),
+        migrations.RemoveField(model_name="datapivotupload", name="file",),
         migrations.AlterField(
-            model_name='datapivotupload',
-            name='excel_file',
-            field=models.FileField(help_text='Upload an Excel file (XLSX). If the file contains multiple worksheets (tabs), the data from the first worksheet will be used.', upload_to='data_pivot_excel', verbose_name='Excel file'),
+            model_name="datapivotupload",
+            name="excel_file",
+            field=models.FileField(
+                help_text="Upload an Excel file (XLSX). If the file contains multiple worksheets (tabs), the data from the first worksheet will be used.",
+                upload_to="data_pivot_excel",
+                verbose_name="Excel file",
+            ),
         ),
     ]

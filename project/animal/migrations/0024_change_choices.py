@@ -6,32 +6,67 @@ from django.db import migrations, models
 
 
 def update_choices(apps, schema_editor):
-    apps.get_model('animal', 'DosingRegime').objects.filter(negative_control="Y").update(negative_control="B")
-    apps.get_model('animal', 'Endpoint').objects.filter(monotonicity=5).update(monotonicity=4)
-    apps.get_model('animal', 'Endpoint').objects.filter(monotonicity=7).update(monotonicity=6)
+    apps.get_model("animal", "DosingRegime").objects.filter(negative_control="Y").update(
+        negative_control="B"
+    )
+    apps.get_model("animal", "Endpoint").objects.filter(monotonicity=5).update(monotonicity=4)
+    apps.get_model("animal", "Endpoint").objects.filter(monotonicity=7).update(monotonicity=6)
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('animal', '0023_update_help_text'),
+        ("animal", "0023_update_help_text"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='dosingregime',
-            name='negative_control',
-            field=models.CharField(choices=[('NR', 'Not-reported'), ('UN', 'Untreated'), ('VT', 'Vehicle-treated'), ('B', 'Untreated + Vehicle-treated'), ('N', 'No')], default='VT', help_text='Description of negative-controls used', max_length=2),
+            model_name="dosingregime",
+            name="negative_control",
+            field=models.CharField(
+                choices=[
+                    ("NR", "Not-reported"),
+                    ("UN", "Untreated"),
+                    ("VT", "Vehicle-treated"),
+                    ("B", "Untreated + Vehicle-treated"),
+                    ("N", "No"),
+                ],
+                default="VT",
+                help_text="Description of negative-controls used",
+                max_length=2,
+            ),
         ),
         migrations.AlterField(
-            model_name='endpoint',
-            name='expected_adversity_direction',
-            field=models.PositiveSmallIntegerField(choices=[(3, 'increase from reference/control group'), (2, 'decrease from reference/control group'), (1, 'any change from reference/control group'), (0, 'unclear'), (4, '---')], default=4, help_text='Response direction which would be considered adverse', verbose_name='Expected response adversity direction'),
+            model_name="endpoint",
+            name="expected_adversity_direction",
+            field=models.PositiveSmallIntegerField(
+                choices=[
+                    (3, "increase from reference/control group"),
+                    (2, "decrease from reference/control group"),
+                    (1, "any change from reference/control group"),
+                    (0, "unclear"),
+                    (4, "---"),
+                ],
+                default=4,
+                help_text="Response direction which would be considered adverse",
+                verbose_name="Expected response adversity direction",
+            ),
         ),
         migrations.AlterField(
-            model_name='endpoint',
-            name='monotonicity',
-            field=models.PositiveSmallIntegerField(choices=[(8, '--'), (0, 'N/A, single dose level study'), (1, 'N/A, no effects detected'), (2, 'visual appearance of monotonicity'), (3, 'monotonic and significant trend'), (4, 'visual appearance of non-monotonicity'), (6, 'no pattern/unclear')], default=8),
+            model_name="endpoint",
+            name="monotonicity",
+            field=models.PositiveSmallIntegerField(
+                choices=[
+                    (8, "--"),
+                    (0, "N/A, single dose level study"),
+                    (1, "N/A, no effects detected"),
+                    (2, "visual appearance of monotonicity"),
+                    (3, "monotonic and significant trend"),
+                    (4, "visual appearance of non-monotonicity"),
+                    (6, "no pattern/unclear"),
+                ],
+                default=8,
+            ),
         ),
-        migrations.RunPython(update_choices)
+        migrations.RunPython(update_choices),
     ]

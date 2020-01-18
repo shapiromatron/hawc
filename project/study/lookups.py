@@ -6,24 +6,32 @@ from . import models
 
 class StudyLookup(RelatedLookup):
     model = models.Study
-    search_fields = ('short_citation__icontains', )
+    search_fields = ("short_citation__icontains",)
     related_filter = "assessment_id"
 
 
 class AnimalStudyLookup(StudyLookup):
-    filters = {'bioassay': True, }
+    filters = {
+        "bioassay": True,
+    }
 
 
 class EpiStudyLookup(StudyLookup):
-    filters = {'epi': True, }
+    filters = {
+        "epi": True,
+    }
 
 
 class EpimetaStudyLookup(StudyLookup):
-    filters = {'epi_meta': True, }
+    filters = {
+        "epi_meta": True,
+    }
 
 
 class InvitroStudyLookup(StudyLookup):
-    filters = {'in_vitro': True, }
+    filters = {
+        "in_vitro": True,
+    }
 
 
 registry.register(StudyLookup)

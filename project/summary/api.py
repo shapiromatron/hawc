@@ -12,7 +12,7 @@ class UnpublishedFilter(BaseFilterBackend):
 
     def filter_queryset(self, request, queryset, view):
 
-        if not hasattr(view, 'assessment'):
+        if not hasattr(view, "assessment"):
             self.instance = get_object_or_404(queryset.model, **view.kwargs)
             view.assessment = self.instance.get_assessment()
 
@@ -27,6 +27,7 @@ class DataPivot(AssessmentViewset):
 
     For all other views, use the detailed visual view.
     """
+
     assessment_filter_args = "assessment"
     model = models.DataPivot
     pagination_class = DisabledPagination
@@ -59,4 +60,4 @@ class Visual(AssessmentViewset):
         return cls
 
     def get_queryset(self):
-        return super().get_queryset().select_related('assessment')
+        return super().get_queryset().select_related("assessment")

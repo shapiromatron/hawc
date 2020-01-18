@@ -6,29 +6,20 @@ from . import api, views
 
 
 router = DefaultRouter()
-router.register(r'task', api.Task, base_name="task")
+router.register(r"task", api.Task, base_name="task")
 
 
 urlpatterns = [
-
-    url(r'^api/', include(router.urls, namespace='api')),
-
+    url(r"^api/", include(router.urls, namespace="api")),
     # user task-list
-    url(r'^my-assignments/$',
-        views.UserAssignments.as_view(),
-        name='user_assignments'),
-    url(r'^my-assignments/(?P<pk>\d+)/$',
+    url(r"^my-assignments/$", views.UserAssignments.as_view(), name="user_assignments"),
+    url(
+        r"^my-assignments/(?P<pk>\d+)/$",
         views.UserAssessmentAssignments.as_view(),
-        name='user_assessment_assignments'),
-
+        name="user_assessment_assignments",
+    ),
     # assessment-level views
-    url(r'^assessment/(?P<pk>\d+)/$',
-        views.TaskDashboard.as_view(),
-        name='assessment_dashboard'),
-    url(r'^assessment/(?P<pk>\d+)/details/$',
-        views.TaskDetail.as_view(),
-        name='assessment_tasks'),
-    url(r'^assessment/(?P<pk>\d+)/edit/$',
-        views.TaskModify.as_view(),
-        name='assessment_modify'),
+    url(r"^assessment/(?P<pk>\d+)/$", views.TaskDashboard.as_view(), name="assessment_dashboard",),
+    url(r"^assessment/(?P<pk>\d+)/details/$", views.TaskDetail.as_view(), name="assessment_tasks",),
+    url(r"^assessment/(?P<pk>\d+)/edit/$", views.TaskModify.as_view(), name="assessment_modify",),
 ]

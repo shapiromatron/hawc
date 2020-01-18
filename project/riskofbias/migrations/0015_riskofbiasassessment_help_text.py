@@ -8,13 +8,16 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('riskofbias', '0014_revise_rob_help_text'),
+        ("riskofbias", "0014_revise_rob_help_text"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='riskofbiasassessment',
-            name='help_text',
-            field=models.TextField(default='<p>When a study is entered into the HAWC database for use in an assessment, risk of bias metrics can be entered for a metric of bias for each study. Risk of Bias metrics are organized by domain. The following questions are required for evaluation for this assessment.</p>', help_text='Detailed instructions for completing risk of bias assessments.'),
+            model_name="riskofbiasassessment",
+            name="help_text",
+            field=models.TextField(
+                default="<p>When a study is entered into the HAWC database for use in an assessment, risk of bias metrics can be entered for a metric of bias for each study. Risk of Bias metrics are organized by domain. The following questions are required for evaluation for this assessment.</p>",
+                help_text="Detailed instructions for completing risk of bias assessments.",
+            ),
         ),
     ]

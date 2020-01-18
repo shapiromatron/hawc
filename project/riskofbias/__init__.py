@@ -1,1 +1,1 @@
-default_app_config = 'riskofbias.apps.RiskOfBiasConfig'
+default_app_config = "riskofbias.apps.RiskOfBiasConfig"

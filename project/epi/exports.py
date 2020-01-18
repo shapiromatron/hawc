@@ -24,20 +24,14 @@ class OutcomeComplete(FlatFileExporter):
             ser = obj.get_json(json_encode=False)
             row = []
             row.extend(Study.flat_complete_data_row(ser["study_population"]["study"]))
-            row.extend(
-                models.StudyPopulation.flat_complete_data_row(ser["study_population"])
-            )
+            row.extend(models.StudyPopulation.flat_complete_data_row(ser["study_population"]))
             row.extend(models.Outcome.flat_complete_data_row(ser))
             for res in ser["results"]:
                 row_copy = list(row)
                 row_copy.extend(
-                    models.Exposure.flat_complete_data_row(
-                        res["comparison_set"]["exposure"]
-                    )
+                    models.Exposure.flat_complete_data_row(res["comparison_set"]["exposure"])
                 )
-                row_copy.extend(
-                    models.ComparisonSet.flat_complete_data_row(res["comparison_set"])
-                )
+                row_copy.extend(models.ComparisonSet.flat_complete_data_row(res["comparison_set"]))
                 row_copy.extend(models.Result.flat_complete_data_row(res))
                 for rg in res["results"]:
                     row_copy2 = list(row_copy)
@@ -54,8 +48,8 @@ class OutcomeDataPivot(FlatFileExporter):
         else:
             self.rob_headers, self.rob_data = RiskOfBias.get_dp_export(
                 self.queryset.first().assessment_id,
-                list(self.queryset.values_list('study_population__study_id', flat=True).distinct()),
-                "epi"
+                list(self.queryset.values_list("study_population__study_id", flat=True).distinct()),
+                "epi",
             )
 
         headers = [
@@ -80,66 +74,64 @@ class OutcomeDataPivot(FlatFileExporter):
 
         headers.extend(list(self.rob_headers.values()))
 
-        headers.extend([
-            "comparison set id",
-            "comparison set name",
-
-            "exposure id",
-            "exposure name",
-            "exposure metric",
-            "exposure measured",
-            "dose units",
-            "age of exposure",
-
-            "exposure estimate",
-            "exposure estimate type",
-            "exposure variance",
-            "exposure variance type",
-            "exposure lower bound interval",
-            "exposure upper bound interval",
-            "exposure lower ci",
-            "exposure upper ci",
-            "exposure lower range",
-            "exposure upper range",
-
-            "result id",
-            "result name",
-            "result population description",
-            "result tags",
-            "statistical metric",
-            "statistical metric abbreviation",
-            "statistical metric description",
-            "result summary",
-            "dose response",
-            "statistical power",
-            "statistical test results",
-            "CI units",
-
-            "exposure group order",
-            "exposure group name",
-            "exposure group comparison name",
-            "exposure group numeric",
-            "Reference/Exposure group",
-            "Result, summary numerical",
-            "key",
-            "result group id",
-            "N",
-            "estimate",
-            "lower CI",
-            "upper CI",
-            "lower range",
-            "upper range",
-            "lower bound interval",
-            "upper bound interval",
-            "variance",
-            "statistical significance",
-            "statistical significance (numeric)",
-            "main finding",
-            "main finding support",
-            "percent control mean",
-            "percent control low",
-            "percent control high",
-        ])
+        headers.extend(
+            [
+                "comparison set id",
+                "comparison set name",
+                "exposure id",
+                "exposure name",
+                "exposure metric",
+                "exposure measured",
+                "dose units",
+                "age of exposure",
+                "exposure estimate",
+                "exposure estimate type",
+                "exposure variance",
+                "exposure variance type",
+                "exposure lower bound interval",
+                "exposure upper bound interval",
+                "exposure lower ci",
+                "exposure upper ci",
+                "exposure lower range",
+                "exposure upper range",
+                "result id",
+                "result name",
+                "result population description",
+                "result tags",
+                "statistical metric",
+                "statistical metric abbreviation",
+                "statistical metric description",
+                "result summary",
+                "dose response",
+                "statistical power",
+                "statistical test results",
+                "CI units",
+                "exposure group order",
+                "exposure group name",
+                "exposure group comparison name",
+                "exposure group numeric",
+                "Reference/Exposure group",
+                "Result, summary numerical",
+                "key",
+                "result group id",
+                "N",
+                "estimate",
+                "lower CI",
+                "upper CI",
+                "lower range",
+                "upper range",
+                "lower bound interval",
+                "upper bound interval",
+                "variance",
+                "statistical significance",
+                "statistical significance (numeric)",
+                "main finding",
+                "main finding support",
+                "percent control mean",
+                "percent control low",
+                "percent control high",
+            ]
+        )
 
         return headers
 
@@ -167,16 +159,16 @@ class OutcomeDataPivot(FlatFileExporter):
                 self._get_tags(ser),
             ]
             study_id = ser["study_population"]["study"]["id"]
-            study_robs = [self.rob_data[(study_id, metric_id)] for metric_id in self.rob_headers.keys()]
+            study_robs = [
+                self.rob_data[(study_id, metric_id)] for metric_id in self.rob_headers.keys()
+            ]
             row.extend(study_robs)
 
             for res in ser["results"]:
                 row_copy = list(row)
 
                 # comparison set
-                row_copy.extend(
-                    [res["comparison_set"]["id"], res["comparison_set"]["name"]]
-                )
+                row_copy.extend([res["comparison_set"]["id"], res["comparison_set"]["name"]])
 
                 # exposure (may be missing)
                 if res["comparison_set"]["exposure"]:

@@ -9,7 +9,7 @@ class FlavoredText(NamedTuple):
 text_mapping = dict(
     ani__endpoint_form__effects=FlavoredText(
         prime="Any additional descriptive-tags used to categorize the outcome",
-        epa="For now, use the endpoint specific overall study evaluation rating of \"high\", \"medium\", \"low\", or \"uninformative\""
+        epa='For now, use the endpoint specific overall study evaluation rating of "high", "medium", "low", or "uninformative"',
     ),
     ani__endpoint_form__name=FlavoredText(
         prime="""
@@ -32,7 +32,7 @@ text_mapping = dict(
             (6 wk), using the abbreviated format: seconds = sec,
             minutes = min, hours = h, days = d, weeks = wk,
             months = mon, years = y.
-            """
+            """,
     ),
     ani__endpoint_form__create=FlavoredText(
         prime="""
@@ -95,5 +95,5 @@ text_mapping = dict(
                 <p>Follow <a href='https://hawcprd.epa.gov/assessment/100000039/' target='_blank'><strong>link</strong></a>
                 to see attachments that contain example prompting and follow-up questions for epidemiological studies.</p>
             """,
-    )
+    ),
 )

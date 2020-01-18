@@ -8,13 +8,37 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('animal', '0017_endpoint_expected_adversity_direction'),
+        ("animal", "0017_endpoint_expected_adversity_direction"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='dosingregime',
-            name='route_of_exposure',
-            field=models.CharField(choices=[(b'OR', 'Oral'), (b'OC', 'Oral capsule'), (b'OD', 'Oral diet'), (b'OG', 'Oral gavage'), (b'OW', 'Oral drinking water'), (b'I', 'Inhalation'), (b'IG', 'Inhalation - gas'), (b'IR', 'Inhalation - particle'), (b'IA', 'Inhalation - vapor'), (b'D', 'Dermal'), (b'SI', 'Subcutaneous injection'), (b'IP', 'Intraperitoneal injection'), (b'IV', 'Intravenous injection'), (b'IO', 'in ovo'), (b'P', 'Parental'), (b'W', 'Whole body'), (b'M', 'Multiple'), (b'U', 'Unknown'), (b'O', 'Other')], help_text=b'Primary route of exposure. If multiple primary-exposures, describe in notes-field below', max_length=2),
+            model_name="dosingregime",
+            name="route_of_exposure",
+            field=models.CharField(
+                choices=[
+                    (b"OR", "Oral"),
+                    (b"OC", "Oral capsule"),
+                    (b"OD", "Oral diet"),
+                    (b"OG", "Oral gavage"),
+                    (b"OW", "Oral drinking water"),
+                    (b"I", "Inhalation"),
+                    (b"IG", "Inhalation - gas"),
+                    (b"IR", "Inhalation - particle"),
+                    (b"IA", "Inhalation - vapor"),
+                    (b"D", "Dermal"),
+                    (b"SI", "Subcutaneous injection"),
+                    (b"IP", "Intraperitoneal injection"),
+                    (b"IV", "Intravenous injection"),
+                    (b"IO", "in ovo"),
+                    (b"P", "Parental"),
+                    (b"W", "Whole body"),
+                    (b"M", "Multiple"),
+                    (b"U", "Unknown"),
+                    (b"O", "Other"),
+                ],
+                help_text=b"Primary route of exposure. If multiple primary-exposures, describe in notes-field below",
+                max_length=2,
+            ),
         ),
     ]

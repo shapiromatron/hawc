@@ -5,15 +5,14 @@ from . import utils
 
 
 class ExperimentFormTester(FormTester):
-
     def setUp(self):
         self.Form = ExperimentForm
         self.baseInps = {
-            'name': 'Example',
-            'type': 'Ac',
-            'purity_available': False,
-            'purity_qualifier': "",
-            'purity': None
+            "name": "Example",
+            "type": "Ac",
+            "purity_available": False,
+            "purity_qualifier": "",
+            "purity": None,
         }
         utils.build_studies_for_permission_testing(self)
 

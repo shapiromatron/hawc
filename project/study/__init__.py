@@ -1,1 +1,1 @@
-default_app_config = 'study.apps.StudyConfig'
+default_app_config = "study.apps.StudyConfig"

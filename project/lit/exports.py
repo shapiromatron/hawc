@@ -12,14 +12,27 @@ class ReferenceFlatComplete(FlatFileExporter):
     """
 
     def _get_header_row(self):
-        tags = self.kwargs.get('tags', None)
-        include_parent_tag = self.kwargs.get('include_parent_tag', False)
+        tags = self.kwargs.get("tags", None)
+        include_parent_tag = self.kwargs.get("include_parent_tag", False)
 
-        headers = ['HAWC ID', 'PubMed ID', 'Citation', 'Full Citation',
-                   'Title', 'Authors', 'Year', 'Journal',  'Abstract',
-                   'Full text URL', 'Created', 'Last updated']
+        headers = [
+            "HAWC ID",
+            "PubMed ID",
+            "Citation",
+            "Full Citation",
+            "Title",
+            "Authors",
+            "Year",
+            "Journal",
+            "Abstract",
+            "Full text URL",
+            "Created",
+            "Last updated",
+        ]
         if tags:
-            headers.extend(models.ReferenceFilterTag.get_flattened_taglist(tags, include_parent_tag))
+            headers.extend(
+                models.ReferenceFilterTag.get_flattened_taglist(tags, include_parent_tag)
+            )
         return headers
 
     def _get_data_rows(self):
@@ -27,51 +40,49 @@ class ReferenceFlatComplete(FlatFileExporter):
 
         def resetTags(tags):
             def setFalse(obj):
-                obj['isTagged'] = False
-                for child in obj.get('children', []):
+                obj["isTagged"] = False
+                for child in obj.get("children", []):
                     setFalse(child)
 
             tagsCopy = deepcopy(tags)
             setFalse(tagsCopy)
             return tagsCopy
 
-        tags_base = resetTags(self.kwargs.get('tags')[0])
-        include_parent_tag = self.kwargs.get('include_parent_tag', False)
+        tags_base = resetTags(self.kwargs.get("tags")[0])
+        include_parent_tag = self.kwargs.get("include_parent_tag", False)
 
         def getTagRow(tags):
             row = []
 
             def printStatus(obj):
-                row.append(obj['isTagged'])
-                for child in obj.get('children', []):
+                row.append(obj["isTagged"])
+                for child in obj.get("children", []):
                     printStatus(child)
 
             if include_parent_tag:
                 printStatus(tags)
             else:
-                for child in tags['children']:
+                for child in tags["children"]:
                     printStatus(child)
             return row
 
         def applyTags(tagslist, ref):
-
             def applyTag(tagged, tagslist):
-
                 def checkMatch(tagged, tag, parents):
                     parents = copy(parents)
-                    if tagged.id == tag['id']:
-                        tag['isTagged'] = True
+                    if tagged.id == tag["id"]:
+                        tag["isTagged"] = True
                         for parent in parents:
-                            parent['isTagged'] = True
+                            parent["isTagged"] = True
 
                     parents.append(tag)
-                    for child in tag.get('children', []):
+                    for child in tag.get("children", []):
                         checkMatch(tagged, child, parents)
 
                 if include_parent_tag:
                     checkMatch(tagged, tagslist, [])
                 else:
-                    for child in tagslist['children']:
+                    for child in tagslist["children"]:
                         checkMatch(tagged, child, [])
 
             for tag in ref.tags.all():
@@ -91,7 +102,7 @@ class ReferenceFlatComplete(FlatFileExporter):
                 strip_tags(ref.abstract),
                 ref.full_text_url,
                 ref.created,
-                ref.last_updated
+                ref.last_updated,
             ]
 
             tagsCopy = deepcopy(tags_base)
@@ -108,8 +119,11 @@ class TableBuilderFormat(FlatFileExporter):
 
     def _get_header_row(self):
         return [
-            'PubMed ID', 'Name', 'Full Citation',
-            'Other URL', 'PDF URL',
+            "PubMed ID",
+            "Name",
+            "Full Citation",
+            "Other URL",
+            "PDF URL",
         ]
 
     def _get_data_rows(self):
@@ -120,5 +134,6 @@ class TableBuilderFormat(FlatFileExporter):
                 ref.reference_citation,
                 None,
                 ref.full_text_url,
-            ] for ref in self.queryset
+            ]
+            for ref in self.queryset
         ]
