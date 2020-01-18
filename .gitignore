@@ -13,11 +13,12 @@
 bin/*local.sh
 package-lock.json
 project/celerybeat*
-project/hawc/settings/local.py
+project/main/settings/local.py
 project/static/css/hawc_d3_aggregated.css
 webpack-stats.json
 
 # folders
+*.egg-info/
 __pycache__
 .idea/*
 .ipynb_checkpoints

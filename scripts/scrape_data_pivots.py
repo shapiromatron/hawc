@@ -36,7 +36,7 @@ def cli():
 @cli.command()
 def get_pivot_objects():
 
-    os.environ["DJANGO_SETTINGS_MODULE"] = "hawc.settings.local"
+    os.environ["DJANGO_SETTINGS_MODULE"] = "main.settings.local"
     django.setup()
 
     from summary.models import DataPivot

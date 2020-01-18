@@ -3,7 +3,7 @@
 """
 Update settings for rapid-unit-testing:
 
-python manage.py test --settings=hawc.settings.unittest
+python manage.py test --settings=main.settings.unittest
 
 """
 import logging

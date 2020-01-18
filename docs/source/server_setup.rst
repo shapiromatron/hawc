@@ -42,7 +42,7 @@ please specify in the docker-compose `.env` file (example secrets below):
 
     # django
     LOGS_PATH=/app/logs
-    DJANGO_SETTINGS_MODULE=hawc.settings.production
+    DJANGO_SETTINGS_MODULE=main.settings.production
     DJANGO_ALLOWED_HOSTS=hawcproject.org
     DJANGO_SECRET_KEY=myBigSecretKey
     DJANGO_ADMIN_EMAILS=johnny@appleseed.com|tommy@appleseed.com

@@ -13,7 +13,7 @@ PUBLIC_DATA_ROOT = os.environ.get("PUBLIC_DATA_ROOT", os.path.join(PROJECT_ROOT,
 DEBUG = False
 
 # Basic setup
-WSGI_APPLICATION = "hawc.wsgi.application"
+WSGI_APPLICATION = "main.wsgi.application"
 SECRET_KEY = "io^^q^q1))7*r0u@6i+6kx&ek!yxyf6^5vix_6io6k4kdn@@5t"
 LANGUAGE_CODE = "en-us"
 SITE_ID = 1
@@ -51,7 +51,7 @@ TEMPLATES = [
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
                 "django.template.context_processors.request",
-                "hawc.context_processors.from_settings",
+                "main.context_processors.from_settings",
             ),
         },
     },
@@ -130,10 +130,7 @@ CELERY_RESULT_BACKEND = os.getenv("DJANGO_CELERY_RESULT_BACKEND")
 CELERY_BROKER_URL = os.getenv("DJANGO_BROKER_URL")
 CELERY_RESULT_EXPIRES = 60 * 60 * 5  # 5 hours
 CELERY_RESULT_SERIALIZER = "pickle"
-CELERY_ACCEPT_CONTENT = (
-    "json",
-    "pickle",
-)
+CELERY_ACCEPT_CONTENT = ("json", "pickle")
 
 
 # Cache settings
@@ -161,7 +158,7 @@ SESSION_CACHE_ALIAS = "default"
 
 
 # Server URL settings
-ROOT_URLCONF = "hawc.urls"
+ROOT_URLCONF = "main.urls"
 LOGIN_URL = reverse_lazy("user:login")
 LOGOUT_URL = reverse_lazy("user:logout")
 LOGIN_REDIRECT_URL = reverse_lazy("portal")

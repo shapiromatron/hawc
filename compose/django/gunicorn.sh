@@ -7,7 +7,7 @@ python manage.py collectstatic --noinput
 LOGFILE="$LOGS_PATH/gunicorn.log"
 
 # serve w/ gunicorn
-/usr/local/bin/gunicorn hawc.wsgi \
+/usr/local/bin/gunicorn main.wsgi \
     --bind 0.0.0.0:5000 \
     --chdir=/app/project \
     --timeout 300 \
