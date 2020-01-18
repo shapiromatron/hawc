@@ -9,13 +9,14 @@ python ../scripts/adopt_references.py
 ```
 """
 import os
-from pathlib import Path
 import sys
+from pathlib import Path
 
 import django
-from django.db import models, transaction
 from django.core import management
+from django.db import models, transaction
 
+from lit.models import Reference, Search  # noqa: E402
 
 ROOT = str((Path(__file__).parents[1] / "project").resolve())
 sys.path.append(ROOT)
@@ -23,8 +24,6 @@ os.chdir(ROOT)
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "hawc.settings.local")
 
 django.setup()
-
-from lit.models import Reference, Search  # noqa: E402
 
 
 @transaction.atomic

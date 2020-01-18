@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 
-from django.db import models, migrations
 import django.core.validators
+from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
@@ -298,7 +298,7 @@ class Migration(migrations.Migration):
                 ("numchild", models.PositiveIntegerField(default=0)),
                 ("name", models.CharField(max_length=128)),
             ],
-            options={"abstract": False,},
+            options={"abstract": False},
             bases=(models.Model,),
         ),
         migrations.CreateModel(
@@ -382,7 +382,7 @@ class Migration(migrations.Migration):
                 ),
                 ("endpoint", models.ForeignKey(related_name="groups", to="invitro.IVEndpoint"),),
             ],
-            options={"ordering": ("endpoint", "dose_group_id"),},
+            options={"ordering": ("endpoint", "dose_group_id")},
             bases=(models.Model,),
         ),
         migrations.CreateModel(

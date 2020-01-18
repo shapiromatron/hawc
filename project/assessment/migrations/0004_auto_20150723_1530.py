@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 
-from django.db import models, migrations
+from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
@@ -28,7 +28,7 @@ class Migration(migrations.Migration):
                 ("created", models.DateTimeField(auto_now_add=True)),
                 ("last_updated", models.DateTimeField(auto_now=True)),
             ],
-            options={"verbose_name_plural": "dose units",},
+            options={"verbose_name_plural": "dose units"},
         ),
         migrations.CreateModel(
             name="Species",
@@ -50,7 +50,7 @@ class Migration(migrations.Migration):
                 ("created", models.DateTimeField(auto_now_add=True)),
                 ("last_updated", models.DateTimeField(auto_now=True)),
             ],
-            options={"ordering": ("name",), "verbose_name_plural": "species",},
+            options={"ordering": ("name",), "verbose_name_plural": "species"},
         ),
         migrations.CreateModel(
             name="Strain",
@@ -66,7 +66,7 @@ class Migration(migrations.Migration):
                 ("last_updated", models.DateTimeField(auto_now=True)),
                 ("species", models.ForeignKey(to="assessment.Species")),
             ],
-            options={"ordering": ("species", "name"),},
+            options={"ordering": ("species", "name")},
         ),
     ]
 

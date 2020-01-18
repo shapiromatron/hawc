@@ -1,25 +1,23 @@
-from collections import OrderedDict
 import json
+from collections import OrderedDict
 
+import pandas as pd
 from crispy_forms import layout as cfl
 from django import forms
-from django.db.models import QuerySet
 from django.core.urlresolvers import reverse
-import pandas as pd
 from selectable import forms as selectable
 from xlrd import XLRDError, open_workbook
 
-from assessment.models import EffectTag
-from study.models import Study
-from animal.models import Endpoint
-from epi.models import Outcome
-from invitro.models import IVEndpointCategory, IVChemical
-
-from study.lookups import StudyLookup
 from animal.lookups import EndpointByAssessmentLookup, EndpointByAssessmentLookupHtml
+from animal.models import Endpoint
+from assessment.models import EffectTag
+from epi.models import Outcome
+from invitro.models import IVChemical, IVEndpointCategory
+from study.lookups import StudyLookup
+from study.models import Study
 from utils.forms import BaseFormHelper
 
-from . import models, lookups
+from . import lookups, models
 
 
 def clean_slug(form):
@@ -661,7 +659,7 @@ def get_visual_form(visual_type):
             models.Visual.ROB_HEATMAP: RoBForm,
             models.Visual.ROB_BARCHART: RoBForm,
         }[visual_type]
-    except:
+    except Exception:
         raise ValueError()
 
 

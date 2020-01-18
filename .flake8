@@ -1,0 +1,17 @@
+[flake8]
+max-line-length = 100
+ignore =
+    E203
+    E266
+    E501
+    W503
+exclude =
+    .git,
+    .mypy_cache,
+    bin,
+    compose,
+    docs,
+    frontend,
+    public,
+    requirements,
+    venv

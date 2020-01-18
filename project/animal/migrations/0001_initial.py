@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
 
-from django.db import models, migrations
-import django.db.models.deletion
 import django.core.validators
+import django.db.models.deletion
+from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
@@ -157,7 +157,7 @@ class Migration(migrations.Migration):
                 ("created", models.DateTimeField(auto_now_add=True)),
                 ("last_updated", models.DateTimeField(auto_now=True)),
             ],
-            options={"ordering": ("dose_units", "dose_group_id"),},
+            options={"ordering": ("dose_units", "dose_group_id")},
             bases=(models.Model,),
         ),
         migrations.CreateModel(
@@ -176,7 +176,7 @@ class Migration(migrations.Migration):
                 ("created", models.DateTimeField(auto_now_add=True)),
                 ("last_updated", models.DateTimeField(auto_now=True)),
             ],
-            options={"verbose_name_plural": "dose units",},
+            options={"verbose_name_plural": "dose units"},
             bases=(models.Model,),
         ),
         migrations.CreateModel(
@@ -596,7 +596,7 @@ class Migration(migrations.Migration):
                     models.ForeignKey(related_name="endpoint_group", to="animal.Endpoint"),
                 ),
             ],
-            options={"ordering": ("endpoint", "dose_group_id"),},
+            options={"ordering": ("endpoint", "dose_group_id")},
             bases=(models.Model,),
         ),
         migrations.CreateModel(
@@ -816,7 +816,7 @@ class Migration(migrations.Migration):
                 ("created", models.DateTimeField(auto_now_add=True)),
                 ("last_updated", models.DateTimeField(auto_now=True)),
             ],
-            options={"ordering": ("name",), "verbose_name_plural": "species",},
+            options={"ordering": ("name",), "verbose_name_plural": "species"},
             bases=(models.Model,),
         ),
         migrations.CreateModel(
@@ -833,7 +833,7 @@ class Migration(migrations.Migration):
                 ("last_updated", models.DateTimeField(auto_now=True)),
                 ("species", models.ForeignKey(to="animal.Species")),
             ],
-            options={"ordering": ("species", "name"),},
+            options={"ordering": ("species", "name")},
             bases=(models.Model,),
         ),
         migrations.CreateModel(
@@ -873,7 +873,7 @@ class Migration(migrations.Migration):
                 ("last_updated", models.DateTimeField(auto_now=True)),
                 ("endpoint", models.ForeignKey(related_name="ufs", to="animal.Endpoint"),),
             ],
-            options={"abstract": False,},
+            options={"abstract": False},
             bases=(models.Model,),
         ),
         migrations.CreateModel(
@@ -916,7 +916,7 @@ class Migration(migrations.Migration):
                     models.ForeignKey(related_name="ufs", to="animal.ReferenceValue"),
                 ),
             ],
-            options={"abstract": False,},
+            options={"abstract": False},
             bases=(models.Model,),
         ),
         migrations.AlterUniqueTogether(

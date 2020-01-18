@@ -44,8 +44,8 @@ servedocs: docs ## compile the docs watching for changes
 notebook:  ## start jupyter notebook
 	cd project; jupyter notebook --no-browser --notebook-dir=../notebooks
 
-lint:  ## detect black formatting issues
-	@black . --check
+lint:  ## check for formatting issues via black & flake8
+	@black . --check && flake8 .
 
-format:  ## run black
-	@black .
+format:  ## modify code using black & show flake8 issues
+	@black . && isort -rc -y --atomic && flake8 .

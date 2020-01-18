@@ -1,28 +1,21 @@
-from datetime import datetime
 import html.parser
-from math import ceil
 import json
 import logging
 import re
+from datetime import datetime
+from math import ceil
 from urllib import parse
 
-from django.db import models, transaction
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
+from django.db import models, transaction
 from django.utils.html import strip_tags
-
+from litter_getter import pubmed, ris
 from taggit.models import ItemBase
 from treebeard.mp_tree import MP_Node
 
-from utils.helper import SerializerHelper, HAWCDjangoJSONEncoder
-from utils.models import (
-    NonUniqueTagBase,
-    get_crumbs,
-    CustomURLField,
-    AssessmentRootMixin,
-)
-
-from litter_getter import ris, pubmed
+from utils.helper import HAWCDjangoJSONEncoder, SerializerHelper
+from utils.models import AssessmentRootMixin, CustomURLField, NonUniqueTagBase, get_crumbs
 
 from . import constants, managers, tasks
 
@@ -133,7 +126,7 @@ class Search(models.Model):
             prior_query = None
             try:
                 prior_query = PubMedQuery.objects.filter(search=self.pk).latest("query_date")
-            except:
+            except Exception:
                 pass
             pubmed = PubMedQuery(search=self)
             results_dictionary = pubmed.run_new_query(prior_query)
@@ -247,7 +240,7 @@ class Search(models.Model):
         if self.source == constants.PUBMED and self.search_type == "s":
             try:
                 return PubMedQuery.objects.filter(search=self).latest().query_date
-            except:
+            except Exception:
                 return "Never (not yet run)"
         else:
             return self.last_updated

@@ -1,11 +1,8 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
 from copy import copy
 
 from assessment.models import DoseUnits
-from study.models import Study
 from riskofbias.models import RiskOfBias
+from study.models import Study
 from utils.helper import FlatFileExporter
 
 from . import models
@@ -301,9 +298,7 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
             else:
                 row.extend([None] * 5)
 
-            row.extend(
-                [ser["trend_value"], ser["trend_result"],]
-            )
+            row.extend([ser["trend_value"], ser["trend_result"]])
 
             # endpoint-group information
             for i, eg in enumerate(ser["groups"]):
@@ -511,9 +506,7 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
             # bmd/bmdl information
             row.extend(self._get_bmd_values(ser["bmd"], preferred_units))
 
-            row.extend(
-                [ser["trend_value"], ser["trend_result"],]
-            )
+            row.extend([ser["trend_value"], ser["trend_result"]])
 
             dose_list = [self._get_dose(doses, i) for i in range(len(doses))]
             sigs = self._get_significance_and_direction(ser["groups"])

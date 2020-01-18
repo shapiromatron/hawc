@@ -1,15 +1,16 @@
 from django.apps import apps
-from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.contrib.sites.models import Site
-from django.core.mail import send_mail, EmailMultiAlternatives
+from django.core.mail import EmailMultiAlternatives, send_mail
 from django.core.urlresolvers import reverse
-from django.utils.translation import ugettext_lazy as _
-from django.utils import timezone
-from django.template.loader import render_to_string
+from django.db import models
 from django.template import Context
+from django.template.loader import render_to_string
+from django.utils import timezone
+from django.utils.translation import ugettext_lazy as _
 
 from utils.helper import SerializerHelper
+
 from . import managers
 
 

@@ -6,4 +6,4 @@ class EpimetaConfig(AppConfig):
     verbose_name = "EpiMeta"
 
     def ready(self):
-        from . import signals
+        from . import signals  # noqa: F401

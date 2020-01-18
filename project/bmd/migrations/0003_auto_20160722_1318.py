@@ -3,8 +3,8 @@
 
 
 import django.contrib.postgres.fields.jsonb
-from django.db import migrations, models
 import django.db.models.deletion
+from django.db import migrations, models
 
 
 def updateAssessmentVersion(apps, schema_editor):
@@ -112,7 +112,7 @@ class Migration(migrations.Migration):
                     ),
                 ),
             ],
-            options={"ordering": ("-last_updated",), "get_latest_by": "last_updated",},
+            options={"ordering": ("-last_updated",), "get_latest_by": "last_updated"},
         ),
         migrations.RemoveField(model_name="bmd_session", name="dose_units",),
         migrations.RemoveField(model_name="bmd_session", name="endpoint",),
@@ -150,7 +150,7 @@ class Migration(migrations.Migration):
                     ),
                 ),
             ],
-            options={"ordering": ("model_id", "bmr_id"), "get_latest_by": "created",},
+            options={"ordering": ("model_id", "bmr_id"), "get_latest_by": "created"},
         ),
         migrations.DeleteModel(name="BMD_model_run",),
         # selected model
@@ -181,6 +181,6 @@ class Migration(migrations.Migration):
                     ),
                 ),
             ],
-            options={"get_latest_by": "created",},
+            options={"get_latest_by": "created"},
         ),
     ]

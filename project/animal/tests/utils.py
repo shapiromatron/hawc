@@ -1,7 +1,7 @@
 import json
 
-from study.tests.utils import build_studies_for_permission_testing
 from animal import models
+from study.tests.utils import build_studies_for_permission_testing
 
 
 def build_experiments_for_permission_testing(obj):

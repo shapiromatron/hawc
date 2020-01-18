@@ -1,18 +1,17 @@
-from django import forms
-from django.db.models import Q
-from django.core.urlresolvers import reverse
-from django.forms.models import modelformset_factory
-from django.utils.functional import curry
-
 from crispy_forms import bootstrap as cfb
 from crispy_forms import layout as cfl
+from django import forms
+from django.core.urlresolvers import reverse
+from django.db.models import Q
+from django.forms.models import modelformset_factory
+from django.utils.functional import curry
 from selectable import forms as selectable
 
-from utils.forms import BaseFormHelper
 from epi.lookups import AdjustmentFactorLookup, CriteriaLookup
 from study.lookups import EpimetaStudyLookup
+from utils.forms import BaseFormHelper
 
-from . import models, lookups
+from . import lookups, models
 
 
 class MetaProtocolForm(forms.ModelForm):

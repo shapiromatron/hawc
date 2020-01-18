@@ -1,19 +1,17 @@
-from datetime import datetime
+import csv
 import decimal
 import logging
-from collections import OrderedDict
-from io import BytesIO, StringIO
 import re
+from collections import OrderedDict
+from datetime import datetime
+from io import BytesIO, StringIO
 
+import xlsxwriter
 from django.core.cache import cache
 from django.core.serializers.json import DjangoJSONEncoder
 from django.shortcuts import HttpResponse
 from django.utils import html
-
 from rest_framework.renderers import JSONRenderer
-
-import csv
-import xlsxwriter
 
 
 def HAWCtoDateString(datetime):
@@ -252,7 +250,7 @@ class ExcelFileBuilder(FlatFile):
         """
         Create a new blank worksheet, and make sure the worksheet name is valid:
         - Make sure the name you entered does not exceed 31 characters.
-        - Make sure the name does not contain any of the following characters: : \ / ? * [ or ]
+        - Make sure the name does not contain any of the following characters: : \\ / ? * [ or ]
         - Make sure you did not leave the name blank.
         http://stackoverflow.com/questions/451452/
         """
@@ -280,7 +278,7 @@ class ExcelFileBuilder(FlatFile):
 
             try:
                 val = float(val)
-            except:
+            except Exception:
                 pass
 
             return self.ws.write(r, c, val)

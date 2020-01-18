@@ -17,7 +17,7 @@ class AssessmentTests(TestCase):
         try:  # may be deleted in test
             self.assessment_working.delete()
             self.assessment_final.delete()
-        except:
+        except Exception:
             pass
 
     def test_two_assessment_name(self):

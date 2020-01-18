@@ -1,41 +1,32 @@
-from operator import methodcaller
-from datetime import datetime
 import json
 import logging
+from datetime import datetime
+from operator import methodcaller
 from typing import Dict
 
 from django.apps import apps
-from django.db import models
 from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
+from django.db import models
 from django.utils.html import strip_tags
-
-from assessment.models import Assessment, BaseEndpoint, DoseUnits
-from study.models import Study
-from animal.models import Endpoint
-from epi.models import Outcome
-from epimeta.models import MetaResult
-from invitro.models import IVEndpoint
-from utils.models import get_model_copy_name
-
-from animal.exports import EndpointGroupFlatDataPivot, EndpointFlatDataPivot
-from epi.exports import OutcomeDataPivot
-from epimeta.exports import MetaResultFlatDataPivot
-import invitro.exports as ivexports
-
 from reversion import revisions as reversion
 from treebeard.mp_tree import MP_Node
 
-from utils.helper import (
-    HAWCtoDateString,
-    HAWCDjangoJSONEncoder,
-    SerializerHelper,
-    tryParseInt,
-)
+import invitro.exports as ivexports
+from animal.exports import EndpointFlatDataPivot, EndpointGroupFlatDataPivot
+from animal.models import Endpoint
+from assessment.models import Assessment, BaseEndpoint, DoseUnits
+from epi.exports import OutcomeDataPivot
+from epi.models import Outcome
+from epimeta.exports import MetaResultFlatDataPivot
+from epimeta.models import MetaResult
+from invitro.models import IVEndpoint
+from study.models import Study
+from utils.helper import HAWCDjangoJSONEncoder, HAWCtoDateString, SerializerHelper, tryParseInt
+from utils.models import get_model_copy_name
 
 from . import managers
-
 
 logger = logging.getLogger(__name__)
 
@@ -352,7 +343,7 @@ class Visual(models.Model):
         dose_units = None
         try:
             dose_units = int(request.POST.get("dose_units"))
-        except (TypeError, ValueError) as e:
+        except (TypeError, ValueError):
             # TypeError if dose_units is None; ValueError if dose_units is ""
             pass
 
@@ -765,7 +756,7 @@ class DataPivotQuery(DataPivot):
                 raise NotImplementedError()
 
             model_cw = cw[get_model_copy_name(Model)]
-            for override in row_overrides:
+            for override in settings["row_overrides"]:
                 override.update(pk=model_cw[override["pk"]])
 
         return json.dumps(settings)

@@ -72,7 +72,7 @@ class Task(models.Model):
         if json_encode:
             return json.dumps(tasks, cls=HAWCDjangoJSONEncoder)
         else:
-            return outcomes
+            return tasks
 
     def save(self, *args, **kwargs):
         """Alter model business logic for timestamps and open/closed."""

@@ -3,8 +3,8 @@
 from __future__ import unicode_literals
 
 import django.core.validators
-from django.db import migrations, models
 import django.db.models.deletion
+from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
@@ -167,7 +167,7 @@ class Migration(migrations.Migration):
             model_name="exposure",
             name="variance_type",
             field=models.PositiveSmallIntegerField(
-                choices=[(0, None), (1, "SD"), (2, "SE"), (3, "SEM"), (4, "GSD"), (5, "other"),],
+                choices=[(0, None), (1, "SD"), (2, "SE"), (3, "SEM"), (4, "GSD"), (5, "other")],
                 default=0,
             ),
         ),
@@ -582,7 +582,7 @@ class Migration(migrations.Migration):
             model_name="result",
             name="variance_type",
             field=models.PositiveSmallIntegerField(
-                choices=[(0, None), (1, "SD"), (2, "SE"), (3, "SEM"), (4, "GSD"), (5, "other"),],
+                choices=[(0, None), (1, "SD"), (2, "SE"), (3, "SEM"), (4, "GSD"), (5, "other")],
                 default=0,
             ),
         ),

@@ -1,26 +1,22 @@
-from collections import OrderedDict
 import json
-import os
 from typing import NamedTuple
 
 from django.apps import apps
-from django.db import models
-from django.core.cache import cache
-from django.core.urlresolvers import reverse
-from django.core.validators import MinValueValidator
 from django.conf import settings
 from django.contrib.contenttypes import fields
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
+from django.core.cache import cache
+from django.core.urlresolvers import reverse
+from django.core.validators import MinValueValidator
+from django.db import models
 from django.utils import timezone
 from django.utils.http import urlquote
-from django.shortcuts import HttpResponse
-
 from reversion import revisions as reversion
 
-from utils.models import get_crumbs
-from utils.helper import HAWCDjangoJSONEncoder, SerializerHelper
 from myuser.models import HAWCUser
+from utils.helper import HAWCDjangoJSONEncoder, SerializerHelper
+from utils.models import get_crumbs
 
 from . import managers
 from .tasks import add_time_spent

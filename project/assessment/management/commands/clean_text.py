@@ -2,14 +2,12 @@
 
 import os
 import re
-
-import xlsxwriter
 import unicodedata
 
-from django.core.management.base import BaseCommand, CommandError
+import xlsxwriter
 from django.apps import apps
 from django.conf import settings
-
+from django.core.management.base import BaseCommand, CommandError
 
 HELP_TEXT = """Remove control characters from a text field"""
 
@@ -34,10 +32,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         # check inputs are valid
         if len(options) >= 3:
-            app = apps.get_app_config(options["appname"]).models_module
             model = apps.get_model(options["appname"], options["modelname"])
-            field = model._meta.get_field(options["fieldname"])
-            # get all objects
             qs = model.objects.all()
         else:
             raise CommandError("Requires three arguments: {}".format(options))

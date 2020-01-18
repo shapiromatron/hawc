@@ -1,6 +1,7 @@
 from assessment.api import AssessmentViewset
-from . import models, serializers
 from utils.api import CleanupFieldsBaseViewSet
+
+from . import models, serializers
 
 
 class StudyPopulation(AssessmentViewset):

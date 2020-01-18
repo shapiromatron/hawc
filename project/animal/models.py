@@ -1,15 +1,12 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
 import collections
-from itertools import chain
 import json
 import math
+from itertools import chain
 
-from django.db import models
-from django.core.urlresolvers import reverse
-from django.core.validators import MinValueValidator, MaxValueValidator
 from django.core.exceptions import ObjectDoesNotExist
-
+from django.core.urlresolvers import reverse
+from django.core.validators import MaxValueValidator, MinValueValidator
+from django.db import models
 from reversion import revisions as reversion
 from scipy import stats
 
@@ -612,7 +609,7 @@ class DosingRegime(models.Model):
         for dg in dgs.distinct("dose_units"):
             dose_values = dgs.filter(dose_units=dg.dose_units).values_list("dose", flat=True)
             doses.append(
-                {"id": dg.dose_units.id, "name": dg.dose_units.name, "values": list(dose_values),}
+                {"id": dg.dose_units.id, "name": dg.dose_units.name, "values": list(dose_values)}
             )
         if json_encode:
             return json.dumps(doses, cls=HAWCDjangoJSONEncoder)

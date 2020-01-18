@@ -1,24 +1,22 @@
 from django.shortcuts import get_object_or_404
-
-from rest_framework import filters
-from rest_framework.response import Response
+from rest_framework import filters, viewsets
 from rest_framework.decorators import list_route
-from rest_framework import viewsets
+from rest_framework.response import Response
 from rest_framework_extensions.mixins import ListUpdateModelMixin
 
 from assessment.api import (
-    AssessmentLevelPermissions,
     AssessmentEditViewset,
+    AssessmentLevelPermissions,
     AssessmentViewset,
     DisabledPagination,
     InAssessmentFilter,
     RequiresAssessmentID,
 )
+from assessment.models import TimeSpentEditing
+from mgmt.models import Task
 from utils.api import BulkIdFilter
 from utils.views import TeamMemberOrHigherMixin
 
-from assessment.models import TimeSpentEditing
-from mgmt.models import Task
 from . import models, serializers
 
 

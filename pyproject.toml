@@ -10,10 +10,8 @@ exclude = '''
   | compose
   | docs
   | frontend
-  | notebooks
   | public
   | requirements
-  | scripts
   | venv
 )/
 '''

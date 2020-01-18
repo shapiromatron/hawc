@@ -1,16 +1,14 @@
-from datetime import datetime
 import subprocess
 import textwrap
+from datetime import datetime
 
-from django.db import connection
 from django.apps import apps
-from django.core.management.base import BaseCommand, CommandError, OutputWrapper
 from django.conf import settings
-
-from assessment.models import Assessment
-
+from django.core.management.base import BaseCommand, CommandError, OutputWrapper
+from django.db import connection
 from django.utils.encoding import force_str
 
+from assessment.models import Assessment
 
 HELP_TEXT = """Dump database for selected assessment."""
 

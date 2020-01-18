@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 
-from django.db import models, migrations
 import django.core.validators
+from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
@@ -27,7 +27,7 @@ class Migration(migrations.Migration):
                 ("last_updated", models.DateTimeField(auto_now=True)),
                 ("assessment", models.ForeignKey(to="assessment.Assessment")),
             ],
-            options={"ordering": ("description",),},
+            options={"ordering": ("description",)},
         ),
         migrations.CreateModel(
             name="ComparisonSet",
@@ -43,7 +43,7 @@ class Migration(migrations.Migration):
                 ("created", models.DateTimeField(auto_now_add=True)),
                 ("last_updated", models.DateTimeField(auto_now=True)),
             ],
-            options={"ordering": ("name",),},
+            options={"ordering": ("name",)},
         ),
         migrations.CreateModel(
             name="Country",
@@ -57,7 +57,7 @@ class Migration(migrations.Migration):
                 ("code", models.CharField(max_length=2, blank=True)),
                 ("name", models.CharField(unique=True, max_length=64)),
             ],
-            options={"ordering": ("name",), "verbose_name_plural": "Countries",},
+            options={"ordering": ("name",), "verbose_name_plural": "Countries"},
         ),
         migrations.CreateModel(
             name="Criteria",
@@ -73,7 +73,7 @@ class Migration(migrations.Migration):
                 ("last_updated", models.DateTimeField(auto_now=True)),
                 ("assessment", models.ForeignKey(to="assessment.Assessment")),
             ],
-            options={"ordering": ("description",), "verbose_name_plural": "Criteria",},
+            options={"ordering": ("description",), "verbose_name_plural": "Criteria"},
         ),
         migrations.CreateModel(
             name="Ethnicity",
@@ -88,7 +88,7 @@ class Migration(migrations.Migration):
                 ("created", models.DateTimeField(auto_now_add=True)),
                 ("last_updated", models.DateTimeField(auto_now=True)),
             ],
-            options={"verbose_name_plural": "Ethnicities",},
+            options={"verbose_name_plural": "Ethnicities"},
         ),
         migrations.CreateModel(
             name="Exposure",
@@ -231,7 +231,7 @@ class Migration(migrations.Migration):
                 ),
                 ("ethnicities", models.ManyToManyField(to="epi.Ethnicity", blank=True)),
             ],
-            options={"ordering": ("comparison_set", "group_id"),},
+            options={"ordering": ("comparison_set", "group_id")},
         ),
         migrations.CreateModel(
             name="GroupNumericalDescriptions",
@@ -278,7 +278,7 @@ class Migration(migrations.Migration):
                     "variance_type",
                     models.PositiveSmallIntegerField(
                         default=0,
-                        choices=[(0, None), (1, b"SD"), (2, b"SEM"), (3, b"GSD"), (4, b"other"),],
+                        choices=[(0, None), (1, b"SD"), (2, b"SEM"), (3, b"GSD"), (4, b"other")],
                     ),
                 ),
                 ("lower", models.FloatField(null=True, blank=True)),
@@ -286,7 +286,7 @@ class Migration(migrations.Migration):
                     "lower_type",
                     models.PositiveSmallIntegerField(
                         default=0,
-                        choices=[(0, None), (1, b"lower limit"), (2, b"5% CI"), (3, b"other"),],
+                        choices=[(0, None), (1, b"lower limit"), (2, b"5% CI"), (3, b"other")],
                     ),
                 ),
                 ("upper", models.FloatField(null=True, blank=True)),
@@ -294,7 +294,7 @@ class Migration(migrations.Migration):
                     "upper_type",
                     models.PositiveSmallIntegerField(
                         default=0,
-                        choices=[(0, None), (1, b"upper limit"), (2, b"95% CI"), (3, b"other"),],
+                        choices=[(0, None), (1, b"upper limit"), (2, b"95% CI"), (3, b"other")],
                     ),
                 ),
                 ("group", models.ForeignKey(related_name="descriptions", to="epi.Group"),),
@@ -401,7 +401,7 @@ class Migration(migrations.Migration):
                 ("last_updated", models.DateTimeField(auto_now=True)),
                 ("group", models.ForeignKey(related_name="results", to="epi.Group")),
             ],
-            options={"ordering": ("result", "group__comparison_set_id"),},
+            options={"ordering": ("result", "group__comparison_set_id")},
         ),
         migrations.CreateModel(
             name="Outcome",
@@ -557,7 +557,7 @@ class Migration(migrations.Migration):
                     "variance_type",
                     models.PositiveSmallIntegerField(
                         default=0,
-                        choices=[(0, None), (1, b"SD"), (2, b"SEM"), (3, b"GSD"), (4, b"other"),],
+                        choices=[(0, None), (1, b"SD"), (2, b"SEM"), (3, b"GSD"), (4, b"other")],
                     ),
                 ),
                 (
@@ -641,7 +641,7 @@ class Migration(migrations.Migration):
                     ),
                 ),
             ],
-            options={"ordering": ("order",),},
+            options={"ordering": ("order",)},
         ),
         migrations.CreateModel(
             name="StudyPopulation",
@@ -710,7 +710,7 @@ class Migration(migrations.Migration):
                 ("last_updated", models.DateTimeField(auto_now=True)),
                 ("country", models.ForeignKey(to="epi.Country")),
             ],
-            options={"ordering": ("name",),},
+            options={"ordering": ("name",)},
         ),
         migrations.CreateModel(
             name="StudyPopulationCriteria",

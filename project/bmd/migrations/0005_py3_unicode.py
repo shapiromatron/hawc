@@ -31,7 +31,7 @@ class Migration(migrations.Migration):
             model_name="logicfield",
             name="failure_bin",
             field=models.PositiveSmallIntegerField(
-                choices=[(0, "Warning (no change)"), (1, "Questionable"), (2, "Not Viable"),],
+                choices=[(0, "Warning (no change)"), (1, "Questionable"), (2, "Not Viable")],
                 help_text="If the test fails, select the model-bin should the model be placed into.",
             ),
         ),

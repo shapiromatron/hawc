@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
 
-from django.db import models, migrations
+from django.db import migrations, models
+
 import lit.managers
 
 
@@ -106,7 +107,7 @@ class Migration(migrations.Migration):
                 ("name", models.CharField(max_length=100, verbose_name="Name")),
                 ("slug", models.SlugField(max_length=100, verbose_name="Slug")),
             ],
-            options={"abstract": False,},
+            options={"abstract": False},
             bases=(models.Model,),
         ),
         migrations.CreateModel(
@@ -126,7 +127,7 @@ class Migration(migrations.Migration):
                     ),
                 ),
             ],
-            options={"abstract": False,},
+            options={"abstract": False},
             bases=(models.Model,),
         ),
         migrations.CreateModel(

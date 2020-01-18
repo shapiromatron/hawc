@@ -3,6 +3,7 @@ from copy import copy, deepcopy
 from django.utils.html import strip_tags
 
 from utils.helper import FlatFileExporter
+
 from . import models
 
 

@@ -5,10 +5,11 @@ from rest_framework_extensions.mixins import ListUpdateModelMixin
 
 from assessment.api import (
     AssessmentEditViewset,
+    DisabledPagination,
     InAssessmentFilter,
     RequiresAssessmentID,
-    DisabledPagination,
 )
+
 from . import views
 
 
@@ -25,9 +26,7 @@ class BulkIdFilter(InAssessmentFilter):
 
     def filter_queryset(self, request, queryset, view):
         queryset = super().filter_queryset(request, queryset, view)
-        ids = (
-            request.query_params.get("ids") if (request.query_params.get("ids") is not "") else None
-        )
+        ids = request.query_params.get("ids") if (request.query_params.get("ids") != "") else None
         try:
             ids = ids.split(",")
             filters = {"id__in": ids}

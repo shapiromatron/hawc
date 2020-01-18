@@ -1,12 +1,9 @@
 from django.utils.safestring import mark_safe
 from selectable.registry import registry
 
+from utils.lookups import DistinctStringLookup, RelatedDistinctStringLookup, RelatedLookup
+
 from . import models
-from utils.lookups import (
-    DistinctStringLookup,
-    RelatedLookup,
-    RelatedDistinctStringLookup,
-)
 
 
 class RelatedExperimentCASLookup(RelatedDistinctStringLookup):

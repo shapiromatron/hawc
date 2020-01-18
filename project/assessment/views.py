@@ -1,32 +1,32 @@
 import json
 import logging
 
-from django.core.exceptions import PermissionDenied
-from django.db.models import Count
 from django.apps import apps
+from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
 from django.core.cache import cache
+from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse, reverse_lazy
-from django.conf import settings
-from django.http import HttpResponseRedirect, HttpResponseNotAllowed
-from django.utils.decorators import method_decorator
-from django.utils import timezone
-from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import View, ListView, TemplateView, FormView
-from django.views.generic.edit import CreateView
+from django.db.models import Count
+from django.http import HttpResponseNotAllowed, HttpResponseRedirect
 from django.shortcuts import HttpResponse, get_object_or_404
+from django.utils import timezone
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
+from django.views.generic import FormView, ListView, TemplateView, View
+from django.views.generic.edit import CreateView
 
 from utils.views import (
-    MessageMixin,
-    LoginRequiredMixin,
     BaseCreate,
-    CloseIfSuccessMixin,
-    BaseDetail,
-    BaseUpdate,
     BaseDelete,
+    BaseDetail,
     BaseList,
-    TeamMemberOrHigherMixin,
+    BaseUpdate,
+    CloseIfSuccessMixin,
+    LoginRequiredMixin,
+    MessageMixin,
     ProjectManagerOrHigherMixin,
+    TeamMemberOrHigherMixin,
     TimeSpentOnPageMixin,
 )
 
@@ -366,7 +366,7 @@ class getStrains(TemplateView):
         try:
             sp = models.Species.objects.get(pk=request.GET.get("species"))
             strains = list(models.Strain.objects.filter(species=sp).values("id", "name"))
-        except:
+        except Exception:
             pass
         return HttpResponse(json.dumps(strains), content_type="application/json")
 
@@ -488,12 +488,12 @@ class DownloadPlot(FormView):
         return super().dispatch(*args, **kwargs)
 
     EXPORT_CROSSWALK = {
-        "svg": {"fn": tasks.convert_to_svg, "ct": "image/svg+xml",},
-        "png": {"fn": tasks.convert_to_png, "ct": "application/png",},
-        "pdf": {"fn": tasks.convert_to_pdf, "ct": "application/pdf",},
+        "svg": {"fn": tasks.convert_to_svg, "ct": "image/svg+xml"},
+        "png": {"fn": tasks.convert_to_png, "ct": "application/png"},
+        "pdf": {"fn": tasks.convert_to_pdf, "ct": "application/pdf"},
         "pptx": {
             "fn": tasks.convert_to_pptx,
-            "ct": "application/vnd.openxmlformats-officedocument.presentationml.presentation",  # noqa
+            "ct": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
         },
     }
 

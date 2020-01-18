@@ -3,8 +3,8 @@
 from __future__ import unicode_literals
 
 import django.core.validators
-from django.db import migrations, models
 import django.db.models.deletion
+from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
@@ -101,7 +101,7 @@ class Migration(migrations.Migration):
             model_name="animalgroup",
             name="sex",
             field=models.CharField(
-                choices=[("M", "Male"), ("F", "Female"), ("C", "Combined"), ("R", "Not reported"),],
+                choices=[("M", "Male"), ("F", "Female"), ("C", "Combined"), ("R", "Not reported")],
                 max_length=1,
             ),
         ),

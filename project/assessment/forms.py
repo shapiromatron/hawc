@@ -1,19 +1,18 @@
 from textwrap import dedent
 
-from django.core.mail import send_mail, mail_admins
 from django import forms
 from django.conf import settings
-from django.core.urlresolvers import reverse_lazy
 from django.contrib.contenttypes.models import ContentType
-
-from selectable.forms import AutoCompleteWidget, AutoCompleteSelectMultipleWidget
-from pagedown.widgets import PagedownWidget
+from django.core.mail import mail_admins, send_mail
+from django.core.urlresolvers import reverse_lazy
 from markdown_deux import markdown
-from utils.forms import BaseFormHelper
+from pagedown.widgets import PagedownWidget
+from selectable.forms import AutoCompleteSelectMultipleWidget, AutoCompleteWidget
 
 from myuser.lookups import HAWCUserLookup
+from utils.forms import BaseFormHelper
 
-from . import models, lookups
+from . import lookups, models
 
 
 class AssessmentForm(forms.ModelForm):

@@ -1,7 +1,7 @@
 from copy import deepcopy
-from jsonschema import validate, ValidationError
-from rest_framework import serializers
 
+from jsonschema import ValidationError, validate
+from rest_framework import serializers
 
 from . import models
 

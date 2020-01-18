@@ -1,6 +1,6 @@
+from django.apps import apps
 from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse_lazy
-from django.apps import apps
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
 from django.views.generic import FormView
@@ -9,16 +9,16 @@ from assessment.models import Assessment
 from lit.models import Reference
 from mgmt.views import EnsurePreparationStartedMixin
 from utils.views import (
-    MessageMixin,
-    BaseDetail,
-    BaseDelete,
-    BaseUpdate,
     BaseCreate,
+    BaseDelete,
+    BaseDetail,
     BaseList,
+    BaseUpdate,
+    MessageMixin,
     TeamMemberOrHigherMixin,
 )
 
-from . import models, forms
+from . import forms, models
 
 
 class StudyList(BaseList):

@@ -1,8 +1,7 @@
 from datetime import datetime
 
 from django.apps import apps
-from django.core.management.base import BaseCommand, CommandError
-
+from django.core.management.base import BaseCommand
 
 HELP_TEXT = """Recursively iterate through all custom HAWC modules,
 and print the number of items found in the database by object type."""

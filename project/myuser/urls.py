@@ -3,14 +3,12 @@ from django.contrib.auth.views import (
     login,
     logout,
     password_reset,
-    password_reset_done,
     password_reset_confirm,
+    password_reset_done,
 )
 from django.core.urlresolvers import reverse_lazy
 
-from . import forms
-from . import views
-
+from . import forms, views
 
 urlpatterns = [
     url(r"^login/$", login, {"authentication_form": forms.HAWCAuthenticationForm}, "login",),

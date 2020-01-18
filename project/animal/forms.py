@@ -1,24 +1,22 @@
-from collections import Counter
 import json
+from collections import Counter
 
+from crispy_forms import bootstrap as cfb
+from crispy_forms import layout as cfl
 from django import forms
 from django.core.urlresolvers import reverse
-from django.conf import settings
+from django.db.models import Q
 from django.forms import ModelForm
 from django.forms.models import BaseModelFormSet, modelformset_factory
-from django.db.models import Q
-
-from crispy_forms import layout as cfl
-from crispy_forms import bootstrap as cfb
 from selectable import forms as selectable
 
-from assessment.models import DoseUnits
 from assessment.lookups import EffectTagLookup, SpeciesLookup, StrainLookup
+from assessment.models import DoseUnits
 from study.lookups import AnimalStudyLookup
 from utils.forms import BaseFormHelper, CopyAsNewSelectorForm
 from utils.models import get_flavored_text
 
-from . import models, lookups
+from . import lookups, models
 
 
 class ExperimentForm(ModelForm):
@@ -102,15 +100,14 @@ class ExperimentForm(ModelForm):
         purity_available = cleaned_data.get("purity_available")
         purity_qualifier = cleaned_data.get("purity_qualifier")
         purity = cleaned_data.get("purity")
-        type_ = cleaned_data.get("type")
 
-        if purity_available and purity_qualifier is "":
+        if purity_available and purity_qualifier == "":
             self.add_error("purity_qualifier", self.PURITY_QUALIFIER_REQ)
 
         if purity_available and purity is None:
             self.add_error("purity", self.PURITY_REQ)
 
-        if not purity_available and purity_qualifier is not "":
+        if not purity_available and purity_qualifier != "":
             self.add_error("purity_qualifier", self.PURITY_QUALIFIER_NOT_REQ)
 
         if not purity_available and purity is not None:

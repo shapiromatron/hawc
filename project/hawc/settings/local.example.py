@@ -1,5 +1,6 @@
-from .dev import *  # noqa
+# flake8: noqa
 
+from .dev import *  # noqa
 
 # DATABASE SETTINGS
 DATABASES = {

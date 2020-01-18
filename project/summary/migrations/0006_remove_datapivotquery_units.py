@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 
-from django.db import migrations, models
+from django.db import migrations
 
 
 def units_to_list(apps, schema_editor):

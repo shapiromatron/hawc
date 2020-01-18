@@ -1,7 +1,7 @@
 from django.core.management import call_command
 
-from myuser.models import HAWCUser
 from assessment import models
+from myuser.models import HAWCUser
 
 
 def build_dose_units_for_permission_testing(obj):
@@ -22,7 +22,7 @@ def build_assessments_for_permissions_testing(obj):
 
     try:
         call_command("createcachetable", "dev_cache_table", interactive=False)
-    except:
+    except Exception:
         pass
 
     obj.superuser = HAWCUser.objects.create_superuser("sudo@sudo.com", "pw")

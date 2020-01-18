@@ -1,9 +1,9 @@
 from rest_framework import serializers
 
 from assessment.serializers import AssessmentMiniSerializer
+from myuser.serializers import HAWCUserSerializer
 from utils.helper import SerializerHelper
 
-from myuser.serializers import HAWCUserSerializer
 from . import models
 
 

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 
-from django.db import models, migrations
+from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
@@ -127,7 +127,7 @@ class Migration(migrations.Migration):
                     ),
                 ),
             ],
-            options={"ordering": ("short_citation",), "verbose_name_plural": "Studies",},
+            options={"ordering": ("short_citation",), "verbose_name_plural": "Studies"},
             bases=("lit.reference",),
         ),
         migrations.CreateModel(
@@ -182,7 +182,7 @@ class Migration(migrations.Migration):
                     models.ForeignKey(related_name="sq_domains", to="assessment.Assessment"),
                 ),
             ],
-            options={"ordering": ("pk",),},
+            options={"ordering": ("pk",)},
             bases=(models.Model,),
         ),
         migrations.CreateModel(
@@ -224,7 +224,7 @@ class Migration(migrations.Migration):
                     models.ForeignKey(related_name="metrics", to="study.StudyQualityDomain"),
                 ),
             ],
-            options={"ordering": ("domain", "id"),},
+            options={"ordering": ("domain", "id")},
             bases=(models.Model,),
         ),
         migrations.AlterUniqueTogether(

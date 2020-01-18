@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 
-from django.db import models, migrations
+from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
@@ -47,7 +47,7 @@ class Migration(migrations.Migration):
                 ("created", models.DateTimeField(auto_now_add=True)),
                 ("last_updated", models.DateTimeField(auto_now=True)),
             ],
-            options={"ordering": ("title",),},
+            options={"ordering": ("title",)},
             bases=(models.Model,),
         ),
         migrations.CreateModel(
@@ -148,7 +148,7 @@ class Migration(migrations.Migration):
                 ("last_updated", models.DateTimeField(auto_now=True)),
                 ("assessment", models.ForeignKey(to="assessment.Assessment")),
             ],
-            options={"verbose_name_plural": "Summary Text Descriptions",},
+            options={"verbose_name_plural": "Summary Text Descriptions"},
             bases=(models.Model,),
         ),
         migrations.CreateModel(

@@ -1,9 +1,8 @@
 from importlib import import_module
 
 from django.conf import settings
-from django.core.management.base import BaseCommand
 from django.contrib.auth import get_user_model
-
+from django.core.management.base import BaseCommand
 
 HELP_TEXT = """Given a session ID, attempt to get user name and email."""
 

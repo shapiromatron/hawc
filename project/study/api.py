@@ -1,17 +1,12 @@
-from rest_framework import filters
-from rest_framework import viewsets
+from rest_framework import filters, viewsets
 from rest_framework.decorators import list_route
 from rest_framework.response import Response
 
-from assessment.api import (
-    AssessmentLevelPermissions,
-    InAssessmentFilter,
-    DisabledPagination,
-)
-
-from . import models, serializers
+from assessment.api import AssessmentLevelPermissions, DisabledPagination, InAssessmentFilter
 from utils.api import CleanupFieldsBaseViewSet
 from utils.helper import tryParseInt
+
+from . import models, serializers
 
 
 class Study(viewsets.ReadOnlyModelViewSet):

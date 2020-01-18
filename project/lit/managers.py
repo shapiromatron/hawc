@@ -6,11 +6,9 @@ from django.apps import apps
 from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
 from django.db import models
-
-from taggit.utils import require_instance_manager
-from taggit.managers import TaggableManager, _TaggableManager
-
 from litter_getter import hero, pubmed
+from taggit.managers import TaggableManager, _TaggableManager
+from taggit.utils import require_instance_manager
 
 from utils.helper import HAWCDjangoJSONEncoder
 from utils.models import BaseManager
@@ -118,7 +116,7 @@ class IdentifiersManager(BaseManager):
             if (
                 db is not None
                 and ref["accession_number"] is not None
-                and ref["accession_number"] is not ""
+                and ref["accession_number"] != ""
             ):
                 db_id = None
                 if db == "wos":
@@ -348,7 +346,7 @@ class ReferenceManager(BaseManager):
             )
             inclusion_tags = list(root_inclusion.get_descendants().values_list("pk", flat=True))
             inclusion_tags.append(root_inclusion.pk)
-        except:
+        except Exception:
             inclusion_tags = []
 
         return (

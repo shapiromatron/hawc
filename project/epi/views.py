@@ -7,17 +7,17 @@ from study.views import StudyRead
 from utils.views import (
     BaseCreate,
     BaseCreateWithFormset,
-    BaseDetail,
     BaseDelete,
+    BaseDetail,
     BaseEndpointFilterList,
-    BaseUpdate,
     BaseList,
+    BaseUpdate,
     BaseUpdateWithFormset,
     CloseIfSuccessMixin,
     CopyAsNewSelectorMixin,
 )
 
-from . import forms, exports, models
+from . import exports, forms, models
 
 
 # Study criteria

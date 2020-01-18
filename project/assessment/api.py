@@ -4,14 +4,14 @@ from django.apps import apps
 from django.core import exceptions
 from django.core.urlresolvers import reverse
 from django.db.models import Count
-
-from rest_framework import permissions, status, viewsets, decorators, filters
-from rest_framework.response import Response
+from rest_framework import decorators, filters, permissions, status, viewsets
 from rest_framework.exceptions import APIException
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.response import Response
+
+from utils.helper import tryParseInt
 
 from . import models, serializers
-from utils.helper import tryParseInt
 
 
 class RequiresAssessmentID(APIException):

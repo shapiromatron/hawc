@@ -3,6 +3,7 @@
 
 from django.db import migrations, models
 
+
 """
 Original:
     (0, None),

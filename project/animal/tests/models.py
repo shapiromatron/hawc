@@ -3,8 +3,8 @@ from unittest import skip
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 
-from assessment.models import Species, DoseUnits
 from animal import models
+from assessment.models import DoseUnits, Species
 
 from . import utils
 

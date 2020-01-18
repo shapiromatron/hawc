@@ -1,11 +1,8 @@
 from selectable.registry import registry
 
+from utils.lookups import DistinctStringLookup, RelatedDistinctStringLookup, RelatedLookup
+
 from . import models
-from utils.lookups import (
-    DistinctStringLookup,
-    RelatedDistinctStringLookup,
-    RelatedLookup,
-)
 
 
 # Chemical

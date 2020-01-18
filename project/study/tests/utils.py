@@ -1,5 +1,5 @@
-from study.models import Study
 from assessment.tests.utils import build_assessments_for_permissions_testing
+from study.models import Study
 
 
 def build_studies_for_permission_testing(obj):

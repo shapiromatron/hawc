@@ -1,8 +1,7 @@
+from celery.task.control import inspect
 from django.core.urlresolvers import reverse
 from django.test import TestCase
 from django.test.client import Client
-
-from celery.task.control import inspect
 from selenium import webdriver
 
 from . import utils
@@ -45,7 +44,7 @@ class PermissionTests(TestCase):
         try:  # may be deleted in test
             self.assessment_working.delete()
             self.assessment_final.delete()
-        except:
+        except Exception:
             pass
 
     # new-level permissions

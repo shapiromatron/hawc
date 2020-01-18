@@ -1,24 +1,20 @@
 import json
-from django import forms
-from django.db.models import Q
-from django.core.urlresolvers import reverse
-from django.forms.models import (
-    BaseModelFormSet,
-    modelformset_factory,
-    inlineformset_factory,
-)
-from django.forms.widgets import Select
 
-from crispy_forms import layout as cfl
 from crispy_forms import bootstrap as cfb
+from crispy_forms import layout as cfl
+from django import forms
+from django.core.urlresolvers import reverse
+from django.db.models import Q
+from django.forms.models import BaseModelFormSet, inlineformset_factory, modelformset_factory
+from django.forms.widgets import Select
 from selectable import forms as selectable
 
-from assessment.models import DoseUnits
 from assessment.lookups import EffectTagLookup
+from assessment.models import DoseUnits
 from study.lookups import InvitroStudyLookup
 from utils.forms import BaseFormHelper
 
-from . import models, lookups
+from . import lookups, models
 
 
 class IVChemicalForm(forms.ModelForm):

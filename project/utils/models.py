@@ -5,13 +5,12 @@ from typing import Dict, List, Tuple
 import django
 from django.apps import apps
 from django.conf import settings
-from django.db import models, IntegrityError, transaction, connection
-from django.db.models import URLField, Q
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist, SuspiciousOperation
+from django.db import IntegrityError, connection, models, transaction
+from django.db.models import Q, URLField
 from django.template.defaultfilters import slugify as default_slugify
 from django.utils.translation import ugettext_lazy as _
-
 from treebeard.mp_tree import MP_Node
 
 from utils.helper import HAWCDjangoJSONEncoder
@@ -314,7 +313,7 @@ class AssessmentRootMixin(object):
             assessment_id = self.get_assessment_id()
             Assessment = apps.get_model("assessment", "Assessment")
             return Assessment.objects.get(id=assessment_id)
-        except:
+        except Exception:
             raise self.__class__.DoesNotExist()
 
     def moveWithinSiblingsToIndex(self, newIndex):
