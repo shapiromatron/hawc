@@ -5,7 +5,7 @@ For all data pivots in HAWC, get an SVG and PNG for each data pivot:
 export "HAWC_USERNAME=foo@bar.com"
 export "HAWC_PW=foobar"
 
-cd ~/dev/hawc/project
+cd ~/dev/hawc/hawc
 python ../scripts/scrape_data_pivots.py get-pivot-objects
 python ../scripts/scrape_data_pivots.py webscrape http://127.0.0.1:8400
 ```
@@ -23,7 +23,7 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.chrome.options import Options
 
 FN = "data-pivots.pkl"
-ROOT = str(Path(Path(__file__).parents[0] / "../project").resolve())
+ROOT = str(Path(Path(__file__).parents[0] / "../hawc").resolve())
 os.chdir(ROOT)
 sys.path.append(ROOT)
 

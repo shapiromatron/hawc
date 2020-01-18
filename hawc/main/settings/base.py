@@ -167,7 +167,7 @@ LOGIN_REDIRECT_URL = reverse_lazy("portal")
 # Static files
 STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(PUBLIC_DATA_ROOT, "static")
-STATICFILES_DIRS = (os.path.join(PROJECT_ROOT, "project", "static"),)
+STATICFILES_DIRS = (os.path.join(PROJECT_ROOT, "hawc", "static"),)
 STATICFILES_FINDERS = (
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",

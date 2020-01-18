@@ -1,7 +1,6 @@
 .git
 .cache
-project/assets
-project/node_modules
-project/.happypack
+frontend/
 **/*.pyc
 **/*.DS_Store
+venv/

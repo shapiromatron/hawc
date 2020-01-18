@@ -3,7 +3,7 @@ Previously migrated references didn't have a Search associated with them and
 could potentially be deleted if deemed orphaned. This script forces adoption.
 
 ```bash
-cd /path/to/hawc/project
+cd /path/to/hawc/hawc
 source ../venv/bin/activate
 python ../scripts/adopt_references.py
 ```
@@ -18,7 +18,7 @@ from django.db import models, transaction
 
 from lit.models import Reference, Search  # noqa: E402
 
-ROOT = str((Path(__file__).parents[1] / "project").resolve())
+ROOT = str((Path(__file__).parents[1] / "hawc").resolve())
 sys.path.append(ROOT)
 os.chdir(ROOT)
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "main.settings.local")
