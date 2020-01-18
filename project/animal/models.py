@@ -1,15 +1,12 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
 import collections
-from itertools import chain
 import json
 import math
+from itertools import chain
 
-from django.db import models
-from django.core.urlresolvers import reverse
-from django.core.validators import MinValueValidator, MaxValueValidator
 from django.core.exceptions import ObjectDoesNotExist
-
+from django.core.urlresolvers import reverse
+from django.core.validators import MaxValueValidator, MinValueValidator
+from django.db import models
 from reversion import revisions as reversion
 from scipy import stats
 

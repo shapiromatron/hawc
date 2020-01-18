@@ -2,7 +2,6 @@
 
 from .dev import *  # noqa
 
-
 # DATABASE SETTINGS
 DATABASES = {
     "default": {

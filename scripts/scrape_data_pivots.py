@@ -11,9 +11,9 @@ python ../scripts/scrape_data_pivots.py webscrape http://127.0.0.1:8400
 ```
 """
 import os
-from pathlib import Path
 import sys
 import time
+from pathlib import Path
 
 import click
 import django
@@ -21,7 +21,6 @@ import pandas as pd
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.chrome.options import Options
-
 
 FN = "data-pivots.pkl"
 ROOT = str(Path(Path(__file__).parents[0] / "../project").resolve())

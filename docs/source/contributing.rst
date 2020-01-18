@@ -21,7 +21,7 @@ Here is an example folder-level configuration setting for vscode:
     {
         "restructuredtext.linter.disabled": true,
         "[html]": {
-            "editor.formatOnSave": true
+            "editor.formatOnSave": false
         },
         "[python]": {
             "editor.formatOnSave": true

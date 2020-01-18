@@ -1,9 +1,7 @@
-from django.conf.urls import url, include
-
+from django.conf.urls import include, url
 from rest_framework.routers import DefaultRouter
 
 from . import api, views
-
 
 router = DefaultRouter()
 router.register(r"study-population", api.StudyPopulation, base_name="study-population")

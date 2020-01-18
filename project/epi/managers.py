@@ -1,4 +1,5 @@
 from django.db.models import Q
+
 from utils.models import BaseManager, get_distinct_charfield_opts
 
 

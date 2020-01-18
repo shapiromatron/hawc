@@ -48,4 +48,4 @@ lint:  ## check for formatting issues via black & flake8
 	@black . --check && flake8 .
 
 format:  ## modify code using black & show flake8 issues
-	@black . && flake8 .
+	@black . && isort -rc -y --atomic && flake8 .

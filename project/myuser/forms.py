@@ -1,24 +1,21 @@
+from crispy_forms import bootstrap as cfb
+from crispy_forms import layout as cfl
 from django import forms
-from django.forms import ModelForm
 from django.contrib.auth import get_backends
 from django.contrib.auth.forms import (
     AuthenticationForm,
+    PasswordChangeForm,
     PasswordResetForm,
     SetPasswordForm,
-    PasswordChangeForm,
 )
 from django.core.urlresolvers import reverse
-
-from crispy_forms import layout as cfl
-from crispy_forms import bootstrap as cfb
-
+from django.forms import ModelForm
 from selectable.forms import AutoCompleteSelectMultipleField
 
 from assessment import lookups
 from utils.forms import BaseFormHelper
 
 from . import models
-
 
 _PASSWORD_HELP = (
     "Password must be at least eight characters in length, "

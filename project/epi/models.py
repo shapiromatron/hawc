@@ -1,24 +1,20 @@
-#!/usr/bin/env python
-# -*- coding: utf8 -*-
 import itertools
 import json
 import math
 from operator import xor
 
-from django.db import models
 from django.core.urlresolvers import reverse
-from django.core.validators import MinValueValidator, MaxValueValidator
-
+from django.core.validators import MaxValueValidator, MinValueValidator
+from django.db import models
 from reversion import revisions as reversion
 from scipy.stats import t
 
 from assessment.models import Assessment, BaseEndpoint, EffectTag
 from study.models import Study
+from utils.helper import HAWCDjangoJSONEncoder, SerializerHelper
 from utils.models import get_crumbs
-from utils.helper import SerializerHelper, HAWCDjangoJSONEncoder
 
 from . import managers
-
 
 # version with no special formatting exists as sometimes it is used in a tag title attribute, e.g. for tooltips
 HAWC_VIS_NOTE_UNSTYLED = "This field is commonly used in HAWC visualizations"

@@ -1,9 +1,9 @@
+import os
 from collections import defaultdict
+
+import pandas as pd
 from django.apps import apps
 from django.core.management.base import BaseCommand
-import os
-import pandas as pd
-
 
 HELP_TEXT = """Print HAWC field-level metadata"""
 

@@ -3,8 +3,8 @@
 
 
 import django.contrib.postgres.fields.jsonb
-from django.db import migrations, models
 import django.db.models.deletion
+from django.db import migrations, models
 
 
 def updateAssessmentVersion(apps, schema_editor):

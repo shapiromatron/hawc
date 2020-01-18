@@ -1,5 +1,7 @@
 from copy import copy
+
 from django.apps import apps
+
 from riskofbias.models import RiskOfBias
 from utils.helper import FlatFileExporter
 

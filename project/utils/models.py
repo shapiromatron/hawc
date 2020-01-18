@@ -5,13 +5,12 @@ from typing import Dict, List, Tuple
 import django
 from django.apps import apps
 from django.conf import settings
-from django.db import models, IntegrityError, transaction, connection
-from django.db.models import URLField, Q
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist, SuspiciousOperation
+from django.db import IntegrityError, connection, models, transaction
+from django.db.models import Q, URLField
 from django.template.defaultfilters import slugify as default_slugify
 from django.utils.translation import ugettext_lazy as _
-
 from treebeard.mp_tree import MP_Node
 
 from utils.helper import HAWCDjangoJSONEncoder

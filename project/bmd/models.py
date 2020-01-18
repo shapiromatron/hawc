@@ -3,17 +3,16 @@ import collections
 import json
 import os
 
-from django.db import models
+import bmds
 from django.conf import settings
 from django.contrib.postgres.fields import JSONField
 from django.core.urlresolvers import reverse_lazy
+from django.db import models
 from django.utils.timezone import now
 
 from utils.models import get_crumbs, get_model_copy_name
+
 from . import managers
-
-import bmds
-
 
 BMDS_CHOICES = (
     ("BMDS231", "BMDS v2.3.1"),

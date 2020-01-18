@@ -1,28 +1,21 @@
-from datetime import datetime
 import html.parser
-from math import ceil
 import json
 import logging
 import re
+from datetime import datetime
+from math import ceil
 from urllib import parse
 
-from django.db import models, transaction
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
+from django.db import models, transaction
 from django.utils.html import strip_tags
-
+from litter_getter import pubmed, ris
 from taggit.models import ItemBase
 from treebeard.mp_tree import MP_Node
 
-from utils.helper import SerializerHelper, HAWCDjangoJSONEncoder
-from utils.models import (
-    NonUniqueTagBase,
-    get_crumbs,
-    CustomURLField,
-    AssessmentRootMixin,
-)
-
-from litter_getter import ris, pubmed
+from utils.helper import HAWCDjangoJSONEncoder, SerializerHelper
+from utils.models import AssessmentRootMixin, CustomURLField, NonUniqueTagBase, get_crumbs
 
 from . import constants, managers, tasks
 

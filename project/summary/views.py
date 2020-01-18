@@ -1,26 +1,21 @@
 import json
 import os
 
-from django.core.urlresolvers import reverse_lazy
-from django.http import (
-    HttpResponse,
-    Http404,
-    HttpResponseRedirect,
-    HttpResponseNotAllowed,
-)
-from django.shortcuts import get_object_or_404
-from django.views.generic import TemplateView, FormView, RedirectView
 import pandas as pd
+from django.core.urlresolvers import reverse_lazy
+from django.http import Http404, HttpResponse, HttpResponseNotAllowed, HttpResponseRedirect
+from django.shortcuts import get_object_or_404
+from django.views.generic import FormView, RedirectView, TemplateView
 
 from assessment.models import Assessment
 from riskofbias.models import RiskOfBiasMetric
 from utils.helper import HAWCDjangoJSONEncoder
 from utils.views import (
-    BaseList,
     BaseCreate,
-    BaseDetail,
-    BaseUpdate,
     BaseDelete,
+    BaseDetail,
+    BaseList,
+    BaseUpdate,
     TeamMemberOrHigherMixin,
 )
 

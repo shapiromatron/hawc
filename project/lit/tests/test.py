@@ -5,7 +5,6 @@ from django.test import TestCase
 from django.test.client import Client
 
 from assessment.tests.utils import build_assessments_for_permissions_testing
-
 from lit import constants, models
 
 

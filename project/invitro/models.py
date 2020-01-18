@@ -1,19 +1,16 @@
-#!/usr/bin/env python
-# -*- coding: utf8 -*-
 import itertools
 import json
 
+from django.core.urlresolvers import reverse
 from django.core.validators import MinValueValidator
 from django.db import models
-from django.core.urlresolvers import reverse
-
 from reversion import revisions as reversion
 
-from assessment.models import BaseEndpoint, Assessment
 from animal.models import ConfidenceIntervalsMixin
+from assessment.models import Assessment, BaseEndpoint
 from study.models import Study
-from utils.helper import SerializerHelper, HAWCDjangoJSONEncoder
-from utils.models import get_crumbs, AssessmentRootedTagTree
+from utils.helper import HAWCDjangoJSONEncoder, SerializerHelper
+from utils.models import AssessmentRootedTagTree, get_crumbs
 
 from . import managers
 

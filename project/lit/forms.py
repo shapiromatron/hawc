@@ -1,18 +1,16 @@
-from io import StringIO
 import logging
+from io import StringIO
+
 import numpy as np
 import pandas as pd
-
 from crispy_forms import layout as cfl
-from django.core.urlresolvers import reverse_lazy
-
-from django.db.models import Q
 from django import forms
+from django.core.urlresolvers import reverse_lazy
+from django.db.models import Q
+from litter_getter import ris
 
 from assessment.models import Assessment
 from utils.forms import BaseFormHelper, addPopupLink
-
-from litter_getter import ris
 
 from . import models
 

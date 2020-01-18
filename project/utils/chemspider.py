@@ -1,8 +1,8 @@
 import json
 import logging
-from django.conf import settings
-import requests
 
+import requests
+from django.conf import settings
 
 logger = logging.getLogger(__name__)
 

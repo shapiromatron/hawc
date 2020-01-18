@@ -1,17 +1,14 @@
-#!/usr/bin/env python
-# -*- coding: utf8 -*-
 import json
 
-from django.db import models
 from django.core.urlresolvers import reverse
-from django.core.validators import MinValueValidator, MaxValueValidator
-
+from django.core.validators import MaxValueValidator, MinValueValidator
+from django.db import models
 from reversion import revisions as reversion
 
 from assessment.serializers import AssessmentSerializer
-from epi.models import Criteria, ResultMetric, AdjustmentFactor
+from epi.models import AdjustmentFactor, Criteria, ResultMetric
 from study.models import Study
-from utils.helper import SerializerHelper, HAWCDjangoJSONEncoder
+from utils.helper import HAWCDjangoJSONEncoder, SerializerHelper
 from utils.models import get_crumbs
 
 from . import managers

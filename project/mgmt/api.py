@@ -1,15 +1,11 @@
 from django.shortcuts import get_object_or_404
+from rest_framework import permissions
 from rest_framework.decorators import detail_route, list_route
 from rest_framework.response import Response
-from rest_framework import permissions
 
-from assessment.api import (
-    AssessmentEditViewset,
-    AssessmentLevelPermissions,
-    DisabledPagination,
-)
-
+from assessment.api import AssessmentEditViewset, AssessmentLevelPermissions, DisabledPagination
 from assessment.models import Assessment
+
 from . import models, serializers
 
 

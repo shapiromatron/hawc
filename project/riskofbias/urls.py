@@ -1,8 +1,7 @@
-from django.conf.urls import url, include
-
+from django.conf.urls import include, url
 from rest_framework.routers import DefaultRouter
 
-from . import views, api
+from . import api, views
 
 router = DefaultRouter()
 router.register(r"domain", api.RiskOfBiasDomain, base_name="domain")

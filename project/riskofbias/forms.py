@@ -1,15 +1,15 @@
+from crispy_forms import layout as cfl
 from django import forms
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse
 from django.forms.models import BaseModelFormSet, modelformset_factory
-
-from crispy_forms import layout as cfl
 from selectable import forms as selectable
 
 from assessment.models import Assessment
 from myuser.lookups import AssessmentTeamMemberOrHigherLookup
 from study.models import Study
 from utils.forms import BaseFormHelper
+
 from . import models
 
 

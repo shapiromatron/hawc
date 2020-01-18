@@ -2,7 +2,6 @@ from django.core.management.base import BaseCommand, CommandError
 
 from myuser.models import HAWCUser
 
-
 HELP_TEXT = """Interactive prompt to create users/send welcome emails. Can either use
 interactive prompts, or non-interactive prompts via command line. If using the
 command-line, specify lists of assessments based on primary keys, comma-separated.

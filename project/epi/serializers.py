@@ -1,8 +1,7 @@
 from rest_framework import serializers
 
-from assessment.serializers import EffectTagsSerializer, DoseUnitsSerializer
+from assessment.serializers import DoseUnitsSerializer, EffectTagsSerializer
 from study.serializers import StudySerializer
-
 from utils.api import DynamicFieldsMixin
 from utils.helper import SerializerHelper
 

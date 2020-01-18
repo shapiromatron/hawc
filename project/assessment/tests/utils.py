@@ -1,7 +1,7 @@
 from django.core.management import call_command
 
-from myuser.models import HAWCUser
 from assessment import models
+from myuser.models import HAWCUser
 
 
 def build_dose_units_for_permission_testing(obj):

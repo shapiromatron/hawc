@@ -1,11 +1,10 @@
-from django import forms
-from django.db.models import Q
-from django.core.urlresolvers import reverse
-from django.forms.models import BaseModelFormSet, modelformset_factory
-from django.utils.functional import curry
-
 from crispy_forms import bootstrap as cfb
 from crispy_forms import layout as cfl
+from django import forms
+from django.core.urlresolvers import reverse
+from django.db.models import Q
+from django.forms.models import BaseModelFormSet, modelformset_factory
+from django.utils.functional import curry
 from selectable import forms as selectable
 
 from assessment.lookups import BaseEndpointLookup, EffectTagLookup
@@ -13,7 +12,7 @@ from study.lookups import EpiStudyLookup
 from utils.forms import BaseFormHelper, CopyAsNewSelectorForm
 from utils.helper import tryParseInt
 
-from . import models, lookups
+from . import lookups, models
 
 
 class CriteriaForm(forms.ModelForm):

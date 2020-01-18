@@ -1,9 +1,8 @@
-from django.conf.urls import url, include
+from django.conf.urls import include, url
 from django.contrib import admin
-
 from rest_framework.routers import DefaultRouter
 
-from . import views, api
+from . import api, views
 
 router = DefaultRouter()
 router.register(r"assessment", api.Assessment, base_name="assessment")

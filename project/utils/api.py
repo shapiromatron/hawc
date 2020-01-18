@@ -5,10 +5,11 @@ from rest_framework_extensions.mixins import ListUpdateModelMixin
 
 from assessment.api import (
     AssessmentEditViewset,
+    DisabledPagination,
     InAssessmentFilter,
     RequiresAssessmentID,
-    DisabledPagination,
 )
+
 from . import views
 
 

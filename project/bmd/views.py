@@ -1,15 +1,13 @@
 from django.shortcuts import get_object_or_404
-
-from assessment.models import Assessment
-from animal.models import Endpoint
-
 from django.views.generic import RedirectView
 
+from animal.models import Endpoint
+from assessment.models import Assessment
 from utils.views import (
-    BaseUpdate,
-    BaseDetail,
     BaseDelete,
+    BaseDetail,
     BaseList,
+    BaseUpdate,
     ProjectManagerOrHigherMixin,
     TeamMemberOrHigherMixin,
 )

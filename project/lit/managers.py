@@ -6,11 +6,9 @@ from django.apps import apps
 from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
 from django.db import models
-
-from taggit.utils import require_instance_manager
-from taggit.managers import TaggableManager, _TaggableManager
-
 from litter_getter import hero, pubmed
+from taggit.managers import TaggableManager, _TaggableManager
+from taggit.utils import require_instance_manager
 
 from utils.helper import HAWCDjangoJSONEncoder
 from utils.models import BaseManager

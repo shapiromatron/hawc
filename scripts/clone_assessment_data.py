@@ -1,18 +1,34 @@
-from collections import defaultdict
 import json
-from itertools import chain
-import os
 import logging
+import os
 import sys
+from collections import defaultdict
+from itertools import chain
 from pathlib import Path
 from typing import Dict, List
 
 import django
+from django.core import management
+from django.db import transaction
 from django.db.models import Model
 from django.db.models.signals import post_save
-from django.db import transaction
-from django.core import management
 
+from animal import models as ani_models
+from animal import signals as ani_signals
+from assessment import signals as assess_signals
+from assessment.models import Assessment
+from bmd import models as bmd_models
+from bmd import signals as bmd_signals
+from epi import models as epi_models
+from epi import signals as epi_signals
+from invitro import models as iv_models
+from lit import models as lit_models
+from lit import signals as lit_signals
+from riskofbias import models as rob_models
+from riskofbias import signals as rob_signals
+from study import models as study_models
+from study import signals as study_signals
+from summary import models as summary_models
 
 ROOT = str(Path(__file__).parents[0].resolve())
 sys.path.append(ROOT)
@@ -21,24 +37,6 @@ os.chdir(ROOT)
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "hawc.settings.local")
 django.setup()
 logger = logging.getLogger(__name__)
-
-from assessment.models import Assessment
-from study import models as study_models
-from lit import models as lit_models
-from riskofbias import models as rob_models
-from bmd import models as bmd_models
-from animal import models as ani_models
-from epi import models as epi_models
-from invitro import models as iv_models
-from summary import models as summary_models
-
-from study import signals as study_signals
-from lit import signals as lit_signals
-from assessment import signals as assess_signals
-from riskofbias import signals as rob_signals
-from animal import signals as ani_signals
-from epi import signals as epi_signals
-from bmd import signals as bmd_signals
 
 
 class Cloner:
@@ -76,9 +74,7 @@ class AssessmentCloner(Cloner):
 
 def disable_signals():
     assert (
-        post_save.disconnect(
-            receiver=assess_signals.default_configuration, sender=Assessment
-        )
+        post_save.disconnect(receiver=assess_signals.default_configuration, sender=Assessment)
         is True
     )
     assert (
@@ -89,22 +85,19 @@ def disable_signals():
     )
     assert (
         post_save.disconnect(
-            receiver=lit_signals.invalidate_tag_cache,
-            sender=lit_models.ReferenceFilterTag,
+            receiver=lit_signals.invalidate_tag_cache, sender=lit_models.ReferenceFilterTag,
         )
         is True
     )
     assert (
         post_save.disconnect(
-            receiver=rob_signals.invalidate_caches_rob_metrics,
-            sender=rob_models.RiskOfBiasDomain,
+            receiver=rob_signals.invalidate_caches_rob_metrics, sender=rob_models.RiskOfBiasDomain,
         )
         is True
     )
     assert (
         post_save.disconnect(
-            receiver=rob_signals.invalidate_caches_rob_metrics,
-            sender=rob_models.RiskOfBiasMetric,
+            receiver=rob_signals.invalidate_caches_rob_metrics, sender=rob_models.RiskOfBiasMetric,
         )
         is True
     )
@@ -116,15 +109,13 @@ def disable_signals():
     )
     assert (
         post_save.disconnect(
-            receiver=rob_signals.update_study_type_metrics,
-            sender=rob_models.RiskOfBiasMetric,
+            receiver=rob_signals.update_study_type_metrics, sender=rob_models.RiskOfBiasMetric,
         )
         is True
     )
     assert (
         post_save.disconnect(
-            receiver=bmd_signals.invalidate_outcome_cache,
-            sender=bmd_models.SelectedModel,
+            receiver=bmd_signals.invalidate_outcome_cache, sender=bmd_models.SelectedModel,
         )
         is True
     )
@@ -141,9 +132,7 @@ def disable_signals():
         is True
     )
     assert (
-        post_save.disconnect(
-            receiver=study_signals.create_study_tasks, sender=study_models.Study
-        )
+        post_save.disconnect(receiver=study_signals.create_study_tasks, sender=study_models.Study)
         is True
     )
     assert (
@@ -154,15 +143,13 @@ def disable_signals():
     )
     assert (
         post_save.disconnect(
-            receiver=ani_signals.invalidate_endpoint_cache,
-            sender=ani_models.AnimalGroup,
+            receiver=ani_signals.invalidate_endpoint_cache, sender=ani_models.AnimalGroup,
         )
         is True
     )
     assert (
         post_save.disconnect(
-            receiver=ani_signals.invalidate_endpoint_cache,
-            sender=ani_models.DosingRegime,
+            receiver=ani_signals.invalidate_endpoint_cache, sender=ani_models.DosingRegime,
         )
         is True
     )
@@ -174,36 +161,31 @@ def disable_signals():
     )
     assert (
         post_save.disconnect(
-            receiver=ani_signals.invalidate_endpoint_cache,
-            sender=ani_models.EndpointGroup,
+            receiver=ani_signals.invalidate_endpoint_cache, sender=ani_models.EndpointGroup,
         )
         is True
     )
     assert (
         post_save.disconnect(
-            receiver=rob_signals.invalidate_caches_risk_of_bias,
-            sender=rob_models.RiskOfBias,
+            receiver=rob_signals.invalidate_caches_risk_of_bias, sender=rob_models.RiskOfBias,
         )
         is True
     )
     assert (
         post_save.disconnect(
-            receiver=rob_signals.invalidate_caches_risk_of_bias,
-            sender=rob_models.RiskOfBiasScore,
+            receiver=rob_signals.invalidate_caches_risk_of_bias, sender=rob_models.RiskOfBiasScore,
         )
         is True
     )
     assert (
         post_save.disconnect(
-            receiver=epi_signals.invalidate_outcome_cache,
-            sender=epi_models.StudyPopulation,
+            receiver=epi_signals.invalidate_outcome_cache, sender=epi_models.StudyPopulation,
         )
         is True
     )
     assert (
         post_save.disconnect(
-            receiver=epi_signals.invalidate_outcome_cache,
-            sender=epi_models.ComparisonSet,
+            receiver=epi_signals.invalidate_outcome_cache, sender=epi_models.ComparisonSet,
         )
         is True
     )
@@ -214,9 +196,7 @@ def disable_signals():
         is True
     )
     assert (
-        post_save.disconnect(
-            receiver=epi_signals.invalidate_outcome_cache, sender=epi_models.Group
-        )
+        post_save.disconnect(receiver=epi_signals.invalidate_outcome_cache, sender=epi_models.Group)
         is True
     )
     assert (
@@ -238,9 +218,7 @@ def disable_signals():
         is True
     )
     assert (
-        post_save.disconnect(
-            receiver=epi_signals.modify_group_result, sender=epi_models.Group
-        )
+        post_save.disconnect(receiver=epi_signals.modify_group_result, sender=epi_models.Group)
         is True
     )
 
@@ -253,9 +231,7 @@ def apply_lit_tags(study_ids: List[int], cw: Dict):
                 tag_id=cw["ref-filter-tags"][tag.tag_id],
                 content_object_id=cw["studies"][tag.content_object_id],
             )
-            for tag in lit_models.ReferenceTags.objects.filter(
-                content_object_id__in=study_ids
-            )
+            for tag in lit_models.ReferenceTags.objects.filter(content_object_id__in=study_ids)
         ]
     )
 
@@ -289,9 +265,7 @@ def clone_assessment(
     cw = defaultdict(dict)
     cw[Assessment.COPY_NAME][old_assessment_id] = new_assessment_id
 
-    cw["ref-filter-tags"] = lit_models.ReferenceFilterTag.copy_tags(
-        new_assessment, old_assessment
-    )
+    cw["ref-filter-tags"] = lit_models.ReferenceFilterTag.copy_tags(new_assessment, old_assessment)
     lit_models.Search.build_default(new_assessment)
 
     cw["iv-endpoint-categories"] = iv_models.IVEndpointCategory.copy_tags(

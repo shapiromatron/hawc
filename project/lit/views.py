@@ -1,29 +1,28 @@
 import json
-
 from datetime import datetime
 
 from django.core.urlresolvers import reverse_lazy
 from django.forms.models import model_to_dict
-from django.http import HttpResponseRedirect, Http404, HttpResponse
+from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
-from django.views.generic import TemplateView, DetailView
+from django.views.generic import DetailView, TemplateView
 from django.views.generic.edit import FormView
 
+from assessment.models import Assessment
+from utils.helper import listToUl, tryParseInt
 from utils.views import (
     AssessmentPermissionsMixin,
-    MessageMixin,
-    BaseList,
     BaseCreate,
-    BaseDetail,
-    BaseUpdate,
     BaseDelete,
+    BaseDetail,
+    BaseList,
+    BaseUpdate,
+    MessageMixin,
     ProjectManagerOrHigherMixin,
     TeamMemberOrHigherMixin,
 )
-from utils.helper import listToUl, tryParseInt
-from assessment.models import Assessment
 
-from . import constants, forms, exports, models
+from . import constants, exports, forms, models
 
 
 class LitOverview(BaseList):

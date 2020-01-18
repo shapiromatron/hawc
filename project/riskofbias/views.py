@@ -1,6 +1,6 @@
+from django.conf import settings
 from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse_lazy
-from django.conf import settings
 from django.db.models import Prefetch
 from django.shortcuts import get_object_or_404
 from django.views.generic.edit import FormView
@@ -11,18 +11,18 @@ from study.models import Study
 from study.views import StudyList
 from utils.views import (
     BaseCreate,
-    BaseDetail,
     BaseDelete,
+    BaseDetail,
     BaseList,
     BaseUpdate,
     BaseUpdateWithFormset,
     MessageMixin,
+    ProjectManagerOrHigherMixin,
     TeamMemberOrHigherMixin,
     TimeSpentOnPageMixin,
-    ProjectManagerOrHigherMixin,
 )
 
-from . import models, forms
+from . import forms, models
 
 
 # Assessment risk of bias requirements

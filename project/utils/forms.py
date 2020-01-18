@@ -1,12 +1,9 @@
-from django import forms
-
+from crispy_forms import bootstrap as cfb
 from crispy_forms import helper as cf
 from crispy_forms import layout as cfl
-from crispy_forms import bootstrap as cfb
-from crispy_forms.utils import flatatt, TEMPLATE_PACK
-
+from crispy_forms.utils import TEMPLATE_PACK, flatatt
+from django import forms
 from django.template.loader import render_to_string
-
 from selectable import forms as selectable
 
 from . import validators

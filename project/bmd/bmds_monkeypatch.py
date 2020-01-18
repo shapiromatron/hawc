@@ -4,12 +4,13 @@ workaround is to submit data to bmds-server instance. However, HAWC proxies to
 an intermediary server with a asynchronous response; therefore we need to
 have a different workaround for execution.
 """
-from bmds.monkeypatch import _get_payload, _set_results
-from bmds import BMDS
-from datetime import datetime
-from django.conf import settings
 import time
+from datetime import datetime
+
 import requests
+from bmds import BMDS
+from bmds.monkeypatch import _get_payload, _set_results
+from django.conf import settings
 
 
 class JobException(Exception):

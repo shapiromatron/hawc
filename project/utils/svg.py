@@ -1,19 +1,17 @@
-from datetime import datetime
 import base64
 import logging
 import os
 import re
 import subprocess
-from io import BytesIO
 import tempfile
+from datetime import datetime
+from io import BytesIO
 from urllib import parse
 
 from django.conf import settings
 from django.template.loader import render_to_string
-
 from pptx import Presentation
 from pptx.util import Inches, Pt
-
 
 logger = logging.getLogger(__name__)
 

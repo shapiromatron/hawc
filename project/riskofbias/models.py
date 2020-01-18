@@ -1,20 +1,19 @@
+import collections
 import json
 import logging
 import os
-import collections
-from typing import Tuple, List, Dict
+from typing import Dict, List, Tuple
 
-from django.db import models
 from django.conf import settings
 from django.core.urlresolvers import reverse
+from django.db import models
 from django.utils.html import strip_tags
-
 from reversion import revisions as reversion
 
 from assessment.models import Assessment
 from myuser.models import HAWCUser
 from study.models import Study
-from utils.helper import cleanHTML, HAWCDjangoJSONEncoder, SerializerHelper
+from utils.helper import HAWCDjangoJSONEncoder, SerializerHelper, cleanHTML
 from utils.models import get_crumbs, get_flavored_text
 
 from . import managers

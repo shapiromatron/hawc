@@ -1,12 +1,11 @@
 import operator
+from functools import reduce
 from typing import Any
 
 from django.db.models import Q
-
 from selectable.base import ModelLookup
 
 from .helper import tryParseInt
-from functools import reduce
 
 
 class DistinctStringLookup(ModelLookup):

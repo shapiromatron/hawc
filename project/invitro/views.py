@@ -2,21 +2,21 @@ from django.db.models import Q
 from django.views.generic import DetailView
 
 from assessment.models import Assessment
+from mgmt.views import EnsureExtractionStartedMixin
 from study.models import Study
 from utils.views import (
     BaseCreate,
     BaseCreateWithFormset,
     BaseDelete,
     BaseDetail,
-    BaseList,
     BaseEndpointFilterList,
+    BaseList,
     BaseUpdate,
     BaseUpdateWithFormset,
     ProjectManagerOrHigherMixin,
 )
-from mgmt.views import EnsureExtractionStartedMixin
 
-from . import models, forms, exports
+from . import exports, forms, models
 
 
 # Experiment

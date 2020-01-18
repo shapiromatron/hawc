@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 
-from django.db import models, migrations
+from django.db import migrations, models
 
 
 def setObservationTimeText(apps, schema_editor):

@@ -3,11 +3,11 @@ from django.contrib.auth import authenticate, login
 from django.core.urlresolvers import reverse_lazy
 from django.shortcuts import redirect, render
 from django.utils.decorators import method_decorator
-from django.views.generic import DetailView, TemplateView
-from django.views.generic.edit import FormView, UpdateView
 from django.views.decorators.debug import sensitive_post_parameters
-
+from django.views.generic import DetailView, TemplateView
 from django.views.generic.base import RedirectView
+from django.views.generic.edit import FormView, UpdateView
+
 from utils.views import LoginRequiredMixin, MessageMixin
 
 from . import forms, models

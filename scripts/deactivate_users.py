@@ -9,9 +9,10 @@ from pathlib import Path
 from typing import List
 
 import django
-from django.db import transaction
 from django.core import management
+from django.db import transaction
 
+from myuser.models import HAWCUser  # noqa: E402
 
 ROOT = str(Path(__file__).parents[0].resolve())
 sys.path.append(ROOT)
@@ -20,8 +21,6 @@ os.chdir(ROOT)
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "hawc.settings.local")
 django.setup()
 logger = logging.getLogger(__name__)
-
-from myuser.models import HAWCUser  # noqa: E402
 
 
 @transaction.atomic

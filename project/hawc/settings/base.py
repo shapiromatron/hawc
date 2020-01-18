@@ -4,7 +4,6 @@ from typing import List, Tuple
 
 from django.core.urlresolvers import reverse_lazy
 
-
 PROJECT_PATH = os.path.abspath(
     os.path.join(os.path.dirname(__file__), os.path.join(os.pardir, os.pardir))
 )

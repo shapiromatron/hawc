@@ -1,6 +1,7 @@
-from . import models, serializers
-from assessment.api import AssessmentViewset, AssessmentRootedTagTreeViewset
+from assessment.api import AssessmentRootedTagTreeViewset, AssessmentViewset
 from utils.api import CleanupFieldsBaseViewSet
+
+from . import models, serializers
 
 
 class IVChemical(AssessmentViewset):

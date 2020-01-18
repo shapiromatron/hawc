@@ -3,14 +3,12 @@ import json
 from rest_framework import serializers
 
 from assessment.serializers import EffectTagsSerializer
-
+from bmd.serializers import ModelSerializer
 from study.serializers import StudySerializer
 from utils.api import DynamicFieldsMixin
 from utils.helper import SerializerHelper
 
 from . import models
-
-from bmd.serializers import ModelSerializer
 
 
 class ExperimentSerializer(serializers.ModelSerializer):

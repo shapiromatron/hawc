@@ -1,15 +1,13 @@
-from datetime import timedelta
 import json
+from datetime import timedelta
 
 from celery import shared_task
 from celery.decorators import periodic_task
 from celery.utils.log import get_task_logger
 from django.apps import apps
-
 from litter_getter import pubmed
 
 from . import constants
-
 
 logger = get_task_logger(__name__)
 

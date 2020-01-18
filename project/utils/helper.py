@@ -1,19 +1,17 @@
-from datetime import datetime
+import csv
 import decimal
 import logging
-from collections import OrderedDict
-from io import BytesIO, StringIO
 import re
+from collections import OrderedDict
+from datetime import datetime
+from io import BytesIO, StringIO
 
+import xlsxwriter
 from django.core.cache import cache
 from django.core.serializers.json import DjangoJSONEncoder
 from django.shortcuts import HttpResponse
 from django.utils import html
-
 from rest_framework.renderers import JSONRenderer
-
-import csv
-import xlsxwriter
 
 
 def HAWCtoDateString(datetime):

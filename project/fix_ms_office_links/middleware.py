@@ -1,5 +1,6 @@
-from django.http import HttpResponse
 import re
+
+from django.http import HttpResponse
 
 
 class MicrosoftOfficeLinkMiddleware(object):

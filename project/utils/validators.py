@@ -1,7 +1,7 @@
-from django.utils.encoding import force_text
-from django.utils import http
 from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
+from django.utils import http
+from django.utils.encoding import force_text
 
 
 class CustomURLValidator(URLValidator):

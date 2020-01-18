@@ -1,11 +1,8 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
 from copy import copy
 
 from assessment.models import DoseUnits
-from study.models import Study
 from riskofbias.models import RiskOfBias
+from study.models import Study
 from utils.helper import FlatFileExporter
 
 from . import models

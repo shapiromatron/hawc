@@ -1,5 +1,4 @@
 from assessment.api import AssessmentRootedTagTreeViewset
-
 from utils.api import CleanupFieldsBaseViewSet
 
 from . import models, serializers

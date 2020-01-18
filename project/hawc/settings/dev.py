@@ -2,7 +2,6 @@
 
 from .base import *
 
-
 DEBUG = True
 
 SERVER_ROLE = "dev"
