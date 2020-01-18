@@ -9,13 +9,16 @@ import utils.models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('lit', '0010_py3_unicode'),
+        ("lit", "0010_py3_unicode"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='reference',
-            name='full_text_url',
-            field=utils.models.CustomURLField(blank=True, help_text='Link to full-text URL from journal site (may require increased access privileges to view)'),
+            model_name="reference",
+            name="full_text_url",
+            field=utils.models.CustomURLField(
+                blank=True,
+                help_text="Link to full-text URL from journal site (may require increased access privileges to view)",
+            ),
         ),
     ]

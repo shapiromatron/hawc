@@ -3,8 +3,12 @@ from rest_framework.decorators import list_route
 from rest_framework.response import Response
 from rest_framework_extensions.mixins import ListUpdateModelMixin
 
-from assessment.api import AssessmentEditViewset, InAssessmentFilter, \
-    RequiresAssessmentID, DisabledPagination
+from assessment.api import (
+    AssessmentEditViewset,
+    InAssessmentFilter,
+    RequiresAssessmentID,
+    DisabledPagination,
+)
 from . import views
 
 
@@ -18,25 +22,28 @@ class BulkIdFilter(InAssessmentFilter):
 
     Catches AttributeError when `ids` is not supplied.
     """
+
     def filter_queryset(self, request, queryset, view):
         queryset = super().filter_queryset(request, queryset, view)
-        ids = request.query_params.get('ids')\
-            if (request.query_params.get('ids') is not '')\
-            else None
+        ids = (
+            request.query_params.get("ids") if (request.query_params.get("ids") is not "") else None
+        )
         try:
-            ids = ids.split(',')
-            filters = {'id__in': ids}
+            ids = ids.split(",")
+            filters = {"id__in": ids}
         except AttributeError:
             ids = []
             filters = {}
 
-        if view.action not in ('list', 'retrieve'):
-            filters = {'id__in': ids}
+        if view.action not in ("list", "retrieve"):
+            filters = {"id__in": ids}
 
         return queryset.filter(**filters)
 
 
-class CleanupFieldsBaseViewSet(AssessmentEditViewset, views.TeamMemberOrHigherMixin, ListUpdateModelMixin):
+class CleanupFieldsBaseViewSet(
+    AssessmentEditViewset, views.TeamMemberOrHigherMixin, ListUpdateModelMixin
+):
     """
     Base Viewset for bulk updating text fields. Model should have a
     TEXT_CLEANUP_FIELDS class attribute which is list of fields.
@@ -45,26 +52,27 @@ class CleanupFieldsBaseViewSet(AssessmentEditViewset, views.TeamMemberOrHigherMi
 
     Serializer should implement DynamicFieldsMixin.
     """
+
     assessment_filter_args = "assessment"
-    template_name = 'assessment/endpointcleanup_list.html'
+    template_name = "assessment/endpointcleanup_list.html"
     pagination_class = DisabledPagination
-    filter_backends = (BulkIdFilter, )
+    filter_backends = (BulkIdFilter,)
 
     def get_assessment(self, request, *args, **kwargs):
-        assessment_id = request.GET.get('assessment_id', None)
+        assessment_id = request.GET.get("assessment_id", None)
         if assessment_id is None:
             raise RequiresAssessmentID
 
         return get_object_or_404(self.parent_model, pk=assessment_id)
 
-    @list_route(methods=['get'])
+    @list_route(methods=["get"])
     def fields(self, request, format=None):
         """ /$model/api/cleanup/fields/?assessment_id=$id """
         cleanup_fields = self.model.TEXT_CLEANUP_FIELDS
-        return Response({'text_cleanup_fields': cleanup_fields})
+        return Response({"text_cleanup_fields": cleanup_fields})
 
     def post_save_bulk(self, queryset, update_bulk_dict):
-        ids = list(queryset.values_list('id', flat=True))
+        ids = list(queryset.values_list("id", flat=True))
         queryset.model.delete_caches(ids)
 
 
@@ -77,14 +85,15 @@ class DynamicFieldsMixin(object):
             class Meta:
                 model = MyModel
     """
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if self.context.get('request'):
-            fields = self.context.get('request').query_params.get('fields')
+        if self.context.get("request"):
+            fields = self.context.get("request").query_params.get("fields")
             if fields:
-                fields = fields.split(',')
+                fields = fields.split(",")
                 # Drop fields that are not specified in the `fields` argument.
-                fields.extend(['id', 'name'])
+                fields.extend(["id", "name"])
                 allowed = set(fields)
                 existing = set(self.fields.keys())
                 for field_name in existing - allowed:

@@ -1,1 +1,1 @@
-default_app_config = 'bmd.apps.BMDConfig'
+default_app_config = "bmd.apps.BMDConfig"

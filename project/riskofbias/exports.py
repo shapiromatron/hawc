@@ -24,8 +24,9 @@ class RiskOfBiasFlat(FlatFileExporter):
 
             try:
                 scores = [
-                    rob['scores'] for rob in ser.get('riskofbiases', [])
-                    if rob['final'] and rob['active']
+                    rob["scores"]
+                    for rob in ser.get("riskofbiases", [])
+                    if rob["final"] and rob["active"]
                 ][0]
             except IndexError:
                 scores = []
@@ -54,9 +55,9 @@ class RiskOfBiasCompleteFlat(RiskOfBiasFlat):
             ser = obj.get_json(json_encode=False)
             row = []
             row.extend(Study.flat_complete_data_row(ser))
-            for rob in ser.get('riskofbiases', []):
+            for rob in ser.get("riskofbiases", []):
                 rob_data = models.RiskOfBias.flat_complete_data_row(rob)
-                for score in rob['scores']:
+                for score in rob["scores"]:
                     row_copy = list(row)
                     row_copy.extend(models.RiskOfBiasScore.flat_complete_data_row(score))
                     row_copy.extend(rob_data)

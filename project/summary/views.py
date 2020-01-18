@@ -2,7 +2,12 @@ import json
 import os
 
 from django.core.urlresolvers import reverse_lazy
-from django.http import HttpResponse, Http404, HttpResponseRedirect, HttpResponseNotAllowed
+from django.http import (
+    HttpResponse,
+    Http404,
+    HttpResponseRedirect,
+    HttpResponseNotAllowed,
+)
 from django.shortcuts import get_object_or_404
 from django.views.generic import TemplateView, FormView, RedirectView
 import pandas as pd
@@ -10,7 +15,14 @@ import pandas as pd
 from assessment.models import Assessment
 from riskofbias.models import RiskOfBiasMetric
 from utils.helper import HAWCDjangoJSONEncoder
-from utils.views import (BaseList, BaseCreate, BaseDetail, BaseUpdate, BaseDelete, TeamMemberOrHigherMixin)
+from utils.views import (
+    BaseList,
+    BaseCreate,
+    BaseDetail,
+    BaseUpdate,
+    BaseDelete,
+    TeamMemberOrHigherMixin,
+)
 
 from . import forms, models
 
@@ -20,7 +32,7 @@ class SummaryTextJSON(BaseDetail):
     model = models.SummaryText
 
     def dispatch(self, *args, **kwargs):
-        self.assessment = get_object_or_404(Assessment, pk=kwargs.get('pk'))
+        self.assessment = get_object_or_404(Assessment, pk=kwargs.get("pk"))
         self.permission_check_user_can_view()
         return super().dispatch(*args, **kwargs)
 
@@ -41,18 +53,17 @@ class SummaryTextList(BaseList):
 def validSummaryTextChange(assessment_id):
     response = {
         "status": "ok",
-        "content": models.SummaryText.get_assessment_descendants(assessment_id, json_encode=False)
+        "content": models.SummaryText.get_assessment_descendants(assessment_id, json_encode=False),
     }
     return HttpResponse(
-        json.dumps(response, cls=HAWCDjangoJSONEncoder),
-        content_type="application/json"
+        json.dumps(response, cls=HAWCDjangoJSONEncoder), content_type="application/json"
     )
 
 
 class SummaryTextCreate(BaseCreate):
     # Base view for all Create, Update, Delete GET operations
     parent_model = Assessment
-    parent_template_name = 'assessment'
+    parent_template_name = "assessment"
     model = models.SummaryText
     form_class = forms.SummaryTextForm
 
@@ -70,7 +81,7 @@ class SummaryTextCreate(BaseCreate):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['smart_tag_form'] = forms.SmartTagForm(assessment_id=self.assessment.id)
+        context["smart_tag_form"] = forms.SmartTagForm(assessment_id=self.assessment.id)
         return context
 
 
@@ -79,7 +90,9 @@ class SummaryTextUpdate(BaseUpdate):
     model = models.SummaryText
     form_class = forms.SummaryTextForm
     success_message = None
-    http_method_names = ['post', ]
+    http_method_names = [
+        "post",
+    ]
 
     def post(self, request, *args, **kwargs):
         if not request.is_ajax():
@@ -98,7 +111,9 @@ class SummaryTextDelete(BaseDelete):
     # AJAX POST-only
     model = models.SummaryText
     success_message = None
-    http_method_names = ['post', ]
+    http_method_names = [
+        "post",
+    ]
 
     def post(self, request, *args, **kwargs):
         if not request.is_ajax():
@@ -121,7 +136,7 @@ class VisualizationList(BaseList):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['show_published'] = self.assessment.user_is_part_of_team(self.request.user)
+        context["show_published"] = self.assessment.user_is_part_of_team(self.request.user)
         return context
 
 
@@ -137,11 +152,11 @@ class VisualizationCreateSelector(BaseDetail):
 class VisualizationCreate(BaseCreate):
     success_message = "Visualization created."
     parent_model = Assessment
-    parent_template_name = 'assessment'
+    parent_template_name = "assessment"
     model = models.Visual
 
     def get_form_class(self):
-        visual_type = int(self.kwargs.get('visual_type'))
+        visual_type = int(self.kwargs.get("visual_type"))
         try:
             return forms.get_visual_form(visual_type)
         except ValueError:
@@ -149,23 +164,24 @@ class VisualizationCreate(BaseCreate):
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs['visual_type'] = int(self.kwargs.get('visual_type'))
+        kwargs["visual_type"] = int(self.kwargs.get("visual_type"))
         return kwargs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['dose_units'] = models.Visual.get_dose_units()
-        context['instance'] = {}
-        context['visual_type'] = int(self.kwargs.get('visual_type'))
-        context['smart_tag_form'] = forms.SmartTagForm(assessment_id=self.assessment.id)
-        context['rob_metrics'] = json.dumps(list(
-            RiskOfBiasMetric.objects.get_metrics_for_visuals(self.assessment.id)))
+        context["dose_units"] = models.Visual.get_dose_units()
+        context["instance"] = {}
+        context["visual_type"] = int(self.kwargs.get("visual_type"))
+        context["smart_tag_form"] = forms.SmartTagForm(assessment_id=self.assessment.id)
+        context["rob_metrics"] = json.dumps(
+            list(RiskOfBiasMetric.objects.get_metrics_for_visuals(self.assessment.id))
+        )
         return context
 
 
 class VisualizationCreateTester(VisualizationCreate):
     parent_model = Assessment
-    http_method_names = ('post', )
+    http_method_names = ("post",)
 
     def post(self, request, *args, **kwargs):
         self.object = None
@@ -176,7 +192,7 @@ class VisualizationCreateTester(VisualizationCreate):
 
 
 class VisualizationUpdate(BaseUpdate):
-    success_message = 'Visualization updated.'
+    success_message = "Visualization updated."
     model = models.Visual
 
     def get_form_class(self):
@@ -187,21 +203,22 @@ class VisualizationUpdate(BaseUpdate):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['dose_units'] = models.Visual.get_dose_units()
-        context['instance'] = self.object.get_json()
-        context['visual_type'] = self.object.visual_type
-        context['smart_tag_form'] = forms.SmartTagForm(assessment_id=self.assessment.id)
-        context['rob_metrics'] = json.dumps(list(
-            RiskOfBiasMetric.objects.get_metrics_for_visuals(self.assessment.id)))
+        context["dose_units"] = models.Visual.get_dose_units()
+        context["instance"] = self.object.get_json()
+        context["visual_type"] = self.object.visual_type
+        context["smart_tag_form"] = forms.SmartTagForm(assessment_id=self.assessment.id)
+        context["rob_metrics"] = json.dumps(
+            list(RiskOfBiasMetric.objects.get_metrics_for_visuals(self.assessment.id))
+        )
         return context
 
 
 class VisualizationDelete(BaseDelete):
-    success_message = 'Visualization deleted.'
+    success_message = "Visualization deleted."
     model = models.Visual
 
     def get_success_url(self):
-        return reverse_lazy('summary:visualization_list', kwargs={'pk': self.assessment.pk})
+        return reverse_lazy("summary:visualization_list", kwargs={"pk": self.assessment.pk})
 
 
 # DATA-PIVOT
@@ -209,26 +226,27 @@ class DataPivotNewPrompt(TemplateView):
     """
     Select if you wish to upload a file or use a query.
     """
+
     model = models.DataPivot
-    crud = 'Read'
-    template_name = 'summary/datapivot_type_selector.html'
+    crud = "Read"
+    template_name = "summary/datapivot_type_selector.html"
 
     def dispatch(self, *args, **kwargs):
-        self.assessment = get_object_or_404(Assessment, pk=kwargs['pk'])
+        self.assessment = get_object_or_404(Assessment, pk=kwargs["pk"])
         return super().dispatch(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['assessment'] = self.assessment
+        context["assessment"] = self.assessment
         return context
 
 
 class DataPivotNew(BaseCreate):
     # abstract view; extended below for actual use
     parent_model = Assessment
-    parent_template_name = 'assessment'
-    success_message = 'Data Pivot created.'
-    template_name = 'summary/datapivot_form.html'
+    parent_template_name = "assessment"
+    success_message = "Data Pivot created."
+    template_name = "summary/datapivot_form.html"
 
     def get_success_url(self):
         super().get_success_url()
@@ -236,9 +254,10 @@ class DataPivotNew(BaseCreate):
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        if self.request.GET.get('reset_row_overrides'):
-            kwargs['initial']['settings'] = \
-                models.DataPivot.reset_row_overrides(kwargs['initial']['settings'])
+        if self.request.GET.get("reset_row_overrides"):
+            kwargs["initial"]["settings"] = models.DataPivot.reset_row_overrides(
+                kwargs["initial"]["settings"]
+            )
         return kwargs
 
 
@@ -248,8 +267,8 @@ class DataPivotQueryNew(DataPivotNew):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['file_loader'] = False
-        context['smart_tag_form'] = forms.SmartTagForm(assessment_id=self.assessment.id)
+        context["file_loader"] = False
+        context["smart_tag_form"] = forms.SmartTagForm(assessment_id=self.assessment.id)
         return context
 
 
@@ -259,46 +278,45 @@ class DataPivotFileNew(DataPivotNew):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['file_loader'] = True
-        context['smart_tag_form'] = forms.SmartTagForm(assessment_id=self.assessment.id)
+        context["file_loader"] = True
+        context["smart_tag_form"] = forms.SmartTagForm(assessment_id=self.assessment.id)
         return context
 
 
 class DataPivotCopyAsNewSelector(TeamMemberOrHigherMixin, FormView):
     # Select an existing assessed outcome as a template for a new one
     model = Assessment
-    template_name = 'summary/datapivot_copy_selector.html'
+    template_name = "summary/datapivot_copy_selector.html"
     form_class = forms.DataPivotSelectorForm
 
     def get_assessment(self, request, *args, **kwargs):
-        return get_object_or_404(Assessment, pk=self.kwargs.get('pk'))
+        return get_object_or_404(Assessment, pk=self.kwargs.get("pk"))
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs['user'] = self.request.user
+        kwargs["user"] = self.request.user
         return kwargs
 
     def form_valid(self, form):
-        dp = form.cleaned_data['dp']
+        dp = form.cleaned_data["dp"]
 
-        if hasattr(dp, 'datapivotupload'):
-            url = reverse_lazy('summary:dp_new-file', kwargs={"pk": self.assessment.id})
+        if hasattr(dp, "datapivotupload"):
+            url = reverse_lazy("summary:dp_new-file", kwargs={"pk": self.assessment.id})
         else:
-            url = reverse_lazy('summary:dp_new-query', kwargs={"pk": self.assessment.id})
+            url = reverse_lazy("summary:dp_new-query", kwargs={"pk": self.assessment.id})
 
         url += "?initial={0}".format(dp.pk)
 
-        if form.cleaned_data['reset_row_overrides']:
-            url += '&reset_row_overrides=1'
+        if form.cleaned_data["reset_row_overrides"]:
+            url += "&reset_row_overrides=1"
 
         return HttpResponseRedirect(url)
 
 
 class GetDataPivotObjectMixin(object):
-
     def get_object(self):
-        slug = self.kwargs.get('slug')
-        assessment = self.kwargs.get('pk')
+        slug = self.kwargs.get("slug")
+        assessment = self.kwargs.get("pk")
         obj = get_object_or_404(models.DataPivot, assessment=assessment, slug=slug)
         if hasattr(obj, "datapivotquery"):
             obj = obj.datapivotquery
@@ -311,8 +329,9 @@ class DataPivotByIdDetail(RedirectView):
     """
     Redirect to standard data pivot page; useful for developers referencing by database id.
     """
+
     def get_redirect_url(*args, **kwargs):
-        return get_object_or_404(models.DataPivot, id=kwargs.get('pk')).get_absolute_url()
+        return get_object_or_404(models.DataPivot, id=kwargs.get("pk")).get_absolute_url()
 
 
 class DataPivotDetail(GetDataPivotObjectMixin, BaseDetail):
@@ -332,67 +351,69 @@ class DataPivotData(GetDataPivotObjectMixin, BaseDetail):
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
         format_ = self.get_export_format()
-        if hasattr(self.object, 'datapivotupload'):
-            if format_ == 'excel':
+        if hasattr(self.object, "datapivotupload"):
+            if format_ == "excel":
                 response = HttpResponse(
                     self.object.excel_file.file.read(),
-                    content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                    content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                 )
                 fn = os.path.basename(self.object.excel_file.name)
             else:
                 worksheet_name = self.object.worksheet_name
-                if worksheet_name == '':
+                if worksheet_name == "":
                     worksheet_name = 0
                 response = HttpResponse(
-                    pd.read_excel(self.object.excel_file.file, sheet_name=worksheet_name).to_csv(index=False, sep='\t'),
-                    content_type='text/tab-separated-values'
+                    pd.read_excel(self.object.excel_file.file, sheet_name=worksheet_name).to_csv(
+                        index=False, sep="\t"
+                    ),
+                    content_type="text/tab-separated-values",
                 )
-                fn = os.path.basename(os.path.basename(self.object.excel_file.name)) + '.tsv'
-            response['Content-Disposition'] = f'attachment; filename="{fn}"'
+                fn = os.path.basename(os.path.basename(self.object.excel_file.name)) + ".tsv"
+            response["Content-Disposition"] = f'attachment; filename="{fn}"'
             return response
-        elif hasattr(self.object, 'datapivotquery'):
+        elif hasattr(self.object, "datapivotquery"):
             return self.object.get_dataset(format_)
         else:
             raise Http404()
 
 
 class DataPivotUpdateSettings(GetDataPivotObjectMixin, BaseUpdate):
-    success_message = 'Data Pivot updated.'
+    success_message = "Data Pivot updated."
     model = models.DataPivot
     form_class = forms.DataPivotSettingsForm
-    template_name = 'summary/datapivot_update_settings.html'
+    template_name = "summary/datapivot_update_settings.html"
 
 
 class DataPivotUpdateQuery(GetDataPivotObjectMixin, BaseUpdate):
-    success_message = 'Data Pivot updated.'
+    success_message = "Data Pivot updated."
     model = models.DataPivotQuery
     form_class = forms.DataPivotQueryForm
-    template_name = 'summary/datapivot_form.html'
+    template_name = "summary/datapivot_form.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['file_loader'] = False
-        context['smart_tag_form'] = forms.SmartTagForm(assessment_id=self.assessment.id)
+        context["file_loader"] = False
+        context["smart_tag_form"] = forms.SmartTagForm(assessment_id=self.assessment.id)
         return context
 
 
 class DataPivotUpdateFile(GetDataPivotObjectMixin, BaseUpdate):
-    success_message = 'Data Pivot updated.'
+    success_message = "Data Pivot updated."
     model = models.DataPivotUpload
     form_class = forms.DataPivotUploadForm
-    template_name = 'summary/datapivot_form.html'
+    template_name = "summary/datapivot_form.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['file_loader'] = True
-        context['smart_tag_form'] = forms.SmartTagForm(assessment_id=self.assessment.id)
+        context["file_loader"] = True
+        context["smart_tag_form"] = forms.SmartTagForm(assessment_id=self.assessment.id)
         return context
 
 
 class DataPivotDelete(GetDataPivotObjectMixin, BaseDelete):
-    success_message = 'Data Pivot deleted.'
+    success_message = "Data Pivot deleted."
     model = models.DataPivot
     template_name = "summary/datapivot_confirm_delete.html"
 
     def get_success_url(self):
-        return reverse_lazy('summary:visualization_list', kwargs={'pk': self.assessment.pk})
+        return reverse_lazy("summary:visualization_list", kwargs={"pk": self.assessment.pk})

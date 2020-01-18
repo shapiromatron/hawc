@@ -8,28 +8,52 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('animal', '0019_py3_unicode'),
+        ("animal", "0019_py3_unicode"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='animalgroup',
-            name='diet',
-            field=models.TextField(blank=True, help_text='Describe diet as presented in the paper (e.g., "soy-protein free 2020X Teklad," "Atromin 1310", "standard rodent chow").'),
+            model_name="animalgroup",
+            name="diet",
+            field=models.TextField(
+                blank=True,
+                help_text='Describe diet as presented in the paper (e.g., "soy-protein free 2020X Teklad," "Atromin 1310", "standard rodent chow").',
+            ),
         ),
         migrations.AddField(
-            model_name='dosingregime',
-            name='duration_observation',
-            field=models.FloatField(blank=True, help_text='Optional: Numeric length of time between start of exposure and outcome assessment in days. This field may be used to sort studies which is why days are used as a common metric.', null=True, verbose_name='Exposure-outcome duration'),
+            model_name="dosingregime",
+            name="duration_observation",
+            field=models.FloatField(
+                blank=True,
+                help_text="Optional: Numeric length of time between start of exposure and outcome assessment in days. This field may be used to sort studies which is why days are used as a common metric.",
+                null=True,
+                verbose_name="Exposure-outcome duration",
+            ),
         ),
         migrations.AddField(
-            model_name='endpoint',
-            name='litter_effect_notes',
-            field=models.CharField(blank=True, help_text='Any additional notes describing how litter effects were controlled', max_length=128),
+            model_name="endpoint",
+            name="litter_effect_notes",
+            field=models.CharField(
+                blank=True,
+                help_text="Any additional notes describing how litter effects were controlled",
+                max_length=128,
+            ),
         ),
         migrations.AddField(
-            model_name='endpoint',
-            name='litter_effects',
-            field=models.CharField(choices=[('NA', 'Not applicable'), ('NR', 'Not reported'), ('YS', 'Yes, statistical control'), ('YD', 'Yes, study-design'), ('N', 'No'), ('O', 'Other')], default='NA', help_text='Type of controls used for litter-effects. The "No" response will be infrequently used. More typically the information will be "Not reported" and assumed not considered. Only use "No" if it is explicitly mentioned in the study that litter was not controlled for.', max_length=2),
+            model_name="endpoint",
+            name="litter_effects",
+            field=models.CharField(
+                choices=[
+                    ("NA", "Not applicable"),
+                    ("NR", "Not reported"),
+                    ("YS", "Yes, statistical control"),
+                    ("YD", "Yes, study-design"),
+                    ("N", "No"),
+                    ("O", "Other"),
+                ],
+                default="NA",
+                help_text='Type of controls used for litter-effects. The "No" response will be infrequently used. More typically the information will be "Not reported" and assumed not considered. Only use "No" if it is explicitly mentioned in the study that litter was not controlled for.',
+                max_length=2,
+            ),
         ),
     ]

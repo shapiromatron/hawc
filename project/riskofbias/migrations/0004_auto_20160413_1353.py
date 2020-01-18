@@ -6,50 +6,75 @@ from django.conf import settings
 from django.db import migrations, models
 import django.db.models.deletion
 
+
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('riskofbias', '0003_auto_20160413_1057'),
+        ("riskofbias", "0003_auto_20160413_1057"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='RiskOfBiasScore',
+            name="RiskOfBiasScore",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('score', models.PositiveSmallIntegerField(choices=[(1, 'Definitely high risk of bias'), (2, 'Probably high risk of bias'), (3, 'Probably low risk of bias'), (4, 'Definitely low risk of bias'), (0, 'Not applicable')], default=4)),
-                ('notes', models.TextField(blank=True, default='')),
-                ('metric', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='scores', to='riskofbias.RiskOfBiasMetric')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID",
+                    ),
+                ),
+                (
+                    "score",
+                    models.PositiveSmallIntegerField(
+                        choices=[
+                            (1, "Definitely high risk of bias"),
+                            (2, "Probably high risk of bias"),
+                            (3, "Probably low risk of bias"),
+                            (4, "Definitely low risk of bias"),
+                            (0, "Not applicable"),
+                        ],
+                        default=4,
+                    ),
+                ),
+                ("notes", models.TextField(blank=True, default="")),
+                (
+                    "metric",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="scores",
+                        to="riskofbias.RiskOfBiasMetric",
+                    ),
+                ),
             ],
         ),
         migrations.AlterModelOptions(
-            name='riskofbias',
-            options={'ordering': ('metric',), 'verbose_name_plural': 'Risk of Biases'},
+            name="riskofbias",
+            options={"ordering": ("metric",), "verbose_name_plural": "Risk of Biases"},
         ),
-        migrations.AlterUniqueTogether(
-            name='riskofbias',
-            unique_together=set([]),
-        ),
-        migrations.RemoveField(
-            model_name='riskofbias',
-            name='content_type',
-        ),
-        migrations.RemoveField(
-            model_name='riskofbias',
-            name='object_id',
-        ),
+        migrations.AlterUniqueTogether(name="riskofbias", unique_together=set([]),),
+        migrations.RemoveField(model_name="riskofbias", name="content_type",),
+        migrations.RemoveField(model_name="riskofbias", name="object_id",),
         migrations.AlterModelOptions(
-            name='riskofbias',
-            options={'verbose_name_plural': 'Risk of Biases'},
+            name="riskofbias", options={"verbose_name_plural": "Risk of Biases"},
         ),
         migrations.AlterField(
-            model_name='riskofbias',
-            name='metric',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='qualities', to='riskofbias.RiskOfBiasMetric'),
+            model_name="riskofbias",
+            name="metric",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="qualities",
+                to="riskofbias.RiskOfBiasMetric",
+            ),
         ),
         migrations.AddField(
-            model_name='riskofbiasscore',
-            name='riskofbias',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='scores', to='riskofbias.RiskOfBias'),
+            model_name="riskofbiasscore",
+            name="riskofbias",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="scores",
+                to="riskofbias.RiskOfBias",
+            ),
         ),
     ]

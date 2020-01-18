@@ -3,18 +3,25 @@ from django.db.models import Q
 from assessment.models import Assessment
 from mgmt.views import EnsureExtractionStartedMixin
 from study.models import Study
-from utils.views import (BaseCreate, BaseCreateWithFormset, BaseList,
-                         BaseDelete, BaseDetail, BaseEndpointFilterList,
-                         BaseUpdate, BaseUpdateWithFormset)
+from utils.views import (
+    BaseCreate,
+    BaseCreateWithFormset,
+    BaseList,
+    BaseDelete,
+    BaseDetail,
+    BaseEndpointFilterList,
+    BaseUpdate,
+    BaseUpdateWithFormset,
+)
 
 from . import forms, models, exports
 
 
 # MetaProtocol
 class MetaProtocolCreate(EnsureExtractionStartedMixin, BaseCreate):
-    success_message = 'Meta-protocol created.'
+    success_message = "Meta-protocol created."
     parent_model = Study
-    parent_template_name = 'study'
+    parent_template_name = "study"
     model = models.MetaProtocol
     form_class = forms.MetaProtocolForm
 
@@ -39,9 +46,9 @@ class MetaProtocolDelete(BaseDelete):
 
 # MetaResult
 class MetaResultCreate(BaseCreateWithFormset):
-    success_message = 'Meta-Result created.'
+    success_message = "Meta-Result created."
     parent_model = models.MetaProtocol
-    parent_template_name = 'protocol'
+    parent_template_name = "protocol"
     model = models.MetaResult
     form_class = forms.MetaResultForm
     formset_factory = forms.SingleResultFormset
@@ -56,21 +63,21 @@ class MetaResultCreate(BaseCreateWithFormset):
 
     def build_initial_formset_factory(self):
         return forms.SingleResultFormset(
-            queryset=models.SingleResult.objects.none(),
-            **self.get_formset_kwargs())
+            queryset=models.SingleResult.objects.none(), **self.get_formset_kwargs()
+        )
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs['assessment'] = self.assessment
+        kwargs["assessment"] = self.assessment
         return kwargs
 
 
 class MetaResultCopyAsNew(MetaProtocolDetail):
-    template_name = 'epimeta/metaresult_copy_selector.html'
+    template_name = "epimeta/metaresult_copy_selector.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['form'] = forms.MetaResultSelectorForm(study_id=self.object.study_id)
+        context["form"] = forms.MetaResultSelectorForm(study_id=self.object.study_id)
         return context
 
 
@@ -89,12 +96,12 @@ class MetaResultUpdate(BaseUpdateWithFormset):
 
     def build_initial_formset_factory(self):
         return forms.SingleResultFormset(
-            queryset=self.object.single_results.all().order_by('pk'),
-            **self.get_formset_kwargs())
+            queryset=self.object.single_results.all().order_by("pk"), **self.get_formset_kwargs()
+        )
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs['assessment'] = self.assessment
+        kwargs["assessment"] = self.assessment
         return kwargs
 
     def post_object_save(self, form, formset):
@@ -118,7 +125,7 @@ class MetaResultList(BaseEndpointFilterList):
     def get_query(self, perms):
         query = Q(protocol__study__assessment=self.assessment)
 
-        if not perms['edit']:
+        if not perms["edit"]:
             query &= Q(protocol__study__published=True)
         return query
 
@@ -129,15 +136,16 @@ class MetaResultFullExport(BaseList):
 
     def get_queryset(self):
         perms = self.get_obj_perms()
-        if not perms['edit']:
+        if not perms["edit"]:
             return self.model.objects.published(self.assessment)
         return self.model.objects.get_qs(self.assessment)
 
     def get(self, request, *args, **kwargs):
         self.object_list = self.get_queryset()
         exporter = exports.MetaResultFlatComplete(
-                self.object_list,
-                export_format="excel",
-                filename='{}-epi-meta-analysis'.format(self.assessment),
-                sheet_name='epi-meta-analysis')
+            self.object_list,
+            export_format="excel",
+            filename="{}-epi-meta-analysis".format(self.assessment),
+            sheet_name="epi-meta-analysis",
+        )
         return exporter.build_response()

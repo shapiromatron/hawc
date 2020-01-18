@@ -8,18 +8,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('myuser', '0003_py3_unicode'),
+        ("myuser", "0003_py3_unicode"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='hawcuser',
-            name='license_v1_accepted',
+            model_name="hawcuser",
+            name="license_v1_accepted",
             field=models.BooleanField(default=False),
         ),
         migrations.AddField(
-            model_name='hawcuser',
-            name='license_v2_accepted',
+            model_name="hawcuser",
+            name="license_v2_accepted",
             field=models.BooleanField(default=False),
         ),
     ]

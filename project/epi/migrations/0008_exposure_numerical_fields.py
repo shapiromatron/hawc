@@ -8,53 +8,98 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('epi', '0007_result_name'),
+        ("epi", "0007_result_name"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='exposure',
-            name='estimate',
-            field=models.FloatField(blank=True, help_text=b'Central tendency estimate', null=True),
+            model_name="exposure",
+            name="estimate",
+            field=models.FloatField(blank=True, help_text=b"Central tendency estimate", null=True),
         ),
         migrations.AddField(
-            model_name='exposure',
-            name='estimate_type',
-            field=models.PositiveSmallIntegerField(choices=[(0, None), (1, b'mean'), (2, b'geometric mean'), (3, b'median'), (5, b'point'), (4, b'other')], default=0, verbose_name=b'Central estimate type'),
+            model_name="exposure",
+            name="estimate_type",
+            field=models.PositiveSmallIntegerField(
+                choices=[
+                    (0, None),
+                    (1, b"mean"),
+                    (2, b"geometric mean"),
+                    (3, b"median"),
+                    (5, b"point"),
+                    (4, b"other"),
+                ],
+                default=0,
+                verbose_name=b"Central estimate type",
+            ),
         ),
         migrations.AddField(
-            model_name='exposure',
-            name='lower_ci',
-            field=models.FloatField(blank=True, help_text=b'Numerical value for lower-confidence interval', null=True, verbose_name=b'Lower CI'),
+            model_name="exposure",
+            name="lower_ci",
+            field=models.FloatField(
+                blank=True,
+                help_text=b"Numerical value for lower-confidence interval",
+                null=True,
+                verbose_name=b"Lower CI",
+            ),
         ),
         migrations.AddField(
-            model_name='exposure',
-            name='lower_range',
-            field=models.FloatField(blank=True, null=True, verbose_name='Lower range', help_text=b'Numerical value for lower range'),
+            model_name="exposure",
+            name="lower_range",
+            field=models.FloatField(
+                blank=True,
+                null=True,
+                verbose_name="Lower range",
+                help_text=b"Numerical value for lower range",
+            ),
         ),
         migrations.AddField(
-            model_name='exposure',
-            name='n',
-            field=models.PositiveIntegerField(blank=True, help_text=b'Individuals where outcome was measured', null=True),
+            model_name="exposure",
+            name="n",
+            field=models.PositiveIntegerField(
+                blank=True, help_text=b"Individuals where outcome was measured", null=True,
+            ),
         ),
         migrations.AddField(
-            model_name='exposure',
-            name='upper_ci',
-            field=models.FloatField(blank=True, help_text=b'Numerical value for upper-confidence interval', null=True, verbose_name=b'Upper CI'),
+            model_name="exposure",
+            name="upper_ci",
+            field=models.FloatField(
+                blank=True,
+                help_text=b"Numerical value for upper-confidence interval",
+                null=True,
+                verbose_name=b"Upper CI",
+            ),
         ),
         migrations.AddField(
-            model_name='exposure',
-            name='upper_range',
-            field=models.FloatField(blank=True, null=True, verbose_name='Upper range', help_text=b'Numerical value for upper range'),
+            model_name="exposure",
+            name="upper_range",
+            field=models.FloatField(
+                blank=True,
+                null=True,
+                verbose_name="Upper range",
+                help_text=b"Numerical value for upper range",
+            ),
         ),
         migrations.AddField(
-            model_name='exposure',
-            name='variance',
-            field=models.FloatField(blank=True, help_text=b'Variance estimate', null=True, verbose_name=b'Variance'),
+            model_name="exposure",
+            name="variance",
+            field=models.FloatField(
+                blank=True, help_text=b"Variance estimate", null=True, verbose_name=b"Variance",
+            ),
         ),
         migrations.AddField(
-            model_name='exposure',
-            name='variance_type',
-            field=models.PositiveSmallIntegerField(choices=[(0, None), (1, b'SD'), (2, b'SE'), (3, b'SEM'), (4, b'GSD'), (5, b'other')], default=0),
+            model_name="exposure",
+            name="variance_type",
+            field=models.PositiveSmallIntegerField(
+                choices=[
+                    (0, None),
+                    (1, b"SD"),
+                    (2, b"SE"),
+                    (3, b"SEM"),
+                    (4, b"GSD"),
+                    (5, b"other"),
+                ],
+                default=0,
+            ),
         ),
     ]

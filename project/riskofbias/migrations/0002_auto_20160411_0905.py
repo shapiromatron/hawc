@@ -9,22 +9,30 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('riskofbias', '0001_initial'),
+        ("riskofbias", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='riskofbias',
-            options={'ordering': ('content_type', 'object_id', 'metric'), 'verbose_name_plural': 'Risk of Biases'},
+            name="riskofbias",
+            options={
+                "ordering": ("content_type", "object_id", "metric"),
+                "verbose_name_plural": "Risk of Biases",
+            },
         ),
         migrations.AddField(
-            model_name='riskofbias',
-            name='conflict_resolution',
+            model_name="riskofbias",
+            name="conflict_resolution",
             field=models.BooleanField(default=False),
         ),
         migrations.AddField(
-            model_name='riskofbias',
-            name='study',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='qualities', to='study.Study'),
+            model_name="riskofbias",
+            name="study",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="qualities",
+                to="study.Study",
+            ),
         ),
     ]

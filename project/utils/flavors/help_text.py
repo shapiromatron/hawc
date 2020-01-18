@@ -4,17 +4,17 @@ EPA = dict(
             effect=(
                 "Please reference terminology reference"
                 "file and use Title Style. Commonly used "
-                "effects include \"Histopathology\", \"Malformation,\" "
-                "\"Growth\", \"Clinical Chemistry\", \"Mortality,\" "
-                "\"Organ Weight.\""
+                'effects include "Histopathology", "Malformation," '
+                '"Growth", "Clinical Chemistry", "Mortality," '
+                '"Organ Weight."'
             ),
             effect_subtype=(
                 "Please reference terminology reference file and use Title "
-                "Style. Commonly used effects include \"Neoplastic\", \"Non-Neoplastic,\" "
-                "\"Feed Consumption\", \"Fetal Survival\", \"Body Weight,\" \"Body Weight "
-                "Gain,\" \"Body Length\". For Malformation effects, effect subtypes can "
-                "be \"Skeletal Malformation\", \"External Malformation\" \"Soft Tissue.\" "
-                "For organ weight effects, subtypes can be \"Absolute,\" \"Relative\" "
+                'Style. Commonly used effects include "Neoplastic", "Non-Neoplastic," '
+                '"Feed Consumption", "Fetal Survival", "Body Weight," "Body Weight '
+                'Gain," "Body Length". For Malformation effects, effect subtypes can '
+                'be "Skeletal Malformation", "External Malformation" "Soft Tissue." '
+                'For organ weight effects, subtypes can be "Absolute," "Relative" '
                 "(absolute can be inferred when it's not explicitly stated)."
             ),
         ),
@@ -42,7 +42,7 @@ EPA = dict(
                 "Use title style (capitalize all words). Ex. Hyperthyroidism <span class='important-note'>This field is commonly used in HAWC visualizations</span>"
             ),
             effects=(
-                'For now, tag overall study confidence from the Risk of Bias review in this field. Ex. high '
+                "For now, tag overall study confidence from the Risk of Bias review in this field. Ex. high "
                 '<span class="help-text-notes"> To add a new tag, click the "+" button to the right. '
                 '</span><span class="help-text-notes">Only create new tags when necessary</span>'
             ),
@@ -61,13 +61,13 @@ EPA = dict(
                 "<a target='_new' href='https://hawcprd.epa.gov/assessment/100000039/'>https://hawcprd.epa.gov/assessment/100000039/</a>."
                 "Use title style (capitalize all words). Ex. Absolute "
                 "<i>This field is not mandatory; often no effect subtype is necessary</i>"
-            )
+            ),
         ),
         Group=dict(
             comparative_name=(
-                "For categorical, note if there is a comparison group. Ex. referent; Q2 vs. Q1 " +
-                "The referent group against which exposure or \"index\" groups are compared is " +
-                "typically the group with the lowest or no exposure"
+                "For categorical, note if there is a comparison group. Ex. referent; Q2 vs. Q1 "
+                + 'The referent group against which exposure or "index" groups are compared is '
+                + "typically the group with the lowest or no exposure"
             ),
         ),
     ),
@@ -103,7 +103,7 @@ EPA = dict(
                 "the correspondence can also be added to HAWC as attachments and HERO as a "
                 "new record, but first it is important to redact confidential or personal "
                 "information (e.g., email address)."
-            )
+            ),
         )
-    )
+    ),
 )

@@ -27,42 +27,52 @@ class Command(BaseCommand):
     help = HELP_TEXT
 
     def add_arguments(self, parser):
-        parser.add_argument('email', nargs='?', default=None)
-        parser.add_argument('first_name', nargs='?', default=None)
-        parser.add_argument('last_name', nargs='?', default=None)
-        parser.add_argument('pms', nargs='?', default=None)
-        parser.add_argument('tms', nargs='?', default=None)
-        parser.add_argument('rvs', nargs='?', default=None)
-        parser.add_argument('send_welcome', nargs='?', default=None)
+        parser.add_argument("email", nargs="?", default=None)
+        parser.add_argument("first_name", nargs="?", default=None)
+        parser.add_argument("last_name", nargs="?", default=None)
+        parser.add_argument("pms", nargs="?", default=None)
+        parser.add_argument("tms", nargs="?", default=None)
+        parser.add_argument("rvs", nargs="?", default=None)
+        parser.add_argument("send_welcome", nargs="?", default=None)
         parser.add_argument(
-            '--noinput',
-            action='store_false',
-            dest='interactive', default=True,
-            help=('Tells Django to NOT prompt the user for input of any kind. '
-                  'You must provide all 7 input fields to create without input'))
+            "--noinput",
+            action="store_false",
+            dest="interactive",
+            default=True,
+            help=(
+                "Tells Django to NOT prompt the user for input of any kind. "
+                "You must provide all 7 input fields to create without input"
+            ),
+        )
 
     def handle(self, *args, **options):
-        interactive = options.get('interactive')
+        interactive = options.get("interactive")
         if interactive:
             try:
                 email = input("Enter user email: ")
                 first_name = input("Enter first name: ")
                 last_name = input("Enter last name: ")
-                pms = input("Enter assessment ids to assign as project manager (comma delimited, N if none): ")
-                tms = input("Enter assessment ids to assign as team-member (comma delimited, N if none): ")
-                rvs = input("Enter assessment ids to assign as reviewer (comma delimited, N if none): ")
+                pms = input(
+                    "Enter assessment ids to assign as project manager (comma delimited, N if none): "
+                )
+                tms = input(
+                    "Enter assessment ids to assign as team-member (comma delimited, N if none): "
+                )
+                rvs = input(
+                    "Enter assessment ids to assign as reviewer (comma delimited, N if none): "
+                )
                 send_welcome = input("Send welcome email [Y or N] ? ")
             except KeyboardInterrupt:
                 self.stdout.write("\nUser creation aborted.\n")
                 return
         else:
-            email = options.get('email')
-            first_name = options.get('first_name')
-            last_name = options.get('last_name')
-            pms = options.get('pms')
-            tms = options.get('tms')
-            rvs = options.get('rvs')
-            send_welcome = options.get('send_welcome')
+            email = options.get("email")
+            first_name = options.get("first_name")
+            last_name = options.get("last_name")
+            pms = options.get("pms")
+            tms = options.get("tms")
+            rvs = options.get("rvs")
+            send_welcome = options.get("send_welcome")
             print(email, first_name, last_name, pms, tms, rvs, send_welcome)
             if not all((email, first_name, last_name, pms, tms, rvs, send_welcome)):
                 raise CommandError("Invalid number of input arguments")
@@ -74,5 +84,5 @@ class Command(BaseCommand):
             pms=get_assessment_ids(pms),
             tms=get_assessment_ids(tms),
             rvs=get_assessment_ids(rvs),
-            welcome_email=(send_welcome.lower() == "y")
+            welcome_email=(send_welcome.lower() == "y"),
         )

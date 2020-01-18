@@ -1,128 +1,130 @@
 from selectable.registry import registry
 
 from . import models
-from utils.lookups import DistinctStringLookup, RelatedDistinctStringLookup, RelatedLookup
+from utils.lookups import (
+    DistinctStringLookup,
+    RelatedDistinctStringLookup,
+    RelatedLookup,
+)
 
 
 # Chemical
 class RelatedIVChemicalNameLookup(RelatedDistinctStringLookup):
     model = models.IVChemical
-    distinct_field = 'name'
-    related_filter = 'study__assessment_id'
+    distinct_field = "name"
+    related_filter = "study__assessment_id"
 
 
 class RelatedIVChemicalCASLookup(RelatedDistinctStringLookup):
     model = models.IVChemical
-    distinct_field = 'cas'
-    related_filter = 'study__assessment_id'
+    distinct_field = "cas"
+    related_filter = "study__assessment_id"
 
 
 class IVChemicalSourceLookup(DistinctStringLookup):
     model = models.IVChemical
-    distinct_field = 'source'
+    distinct_field = "source"
 
 
 class IVChemicalPurityLookup(DistinctStringLookup):
     model = models.IVChemical
-    distinct_field = 'purity'
+    distinct_field = "purity"
 
 
 # CellType
 class RelatedIVCellTypeNameLookup(RelatedDistinctStringLookup):
     model = models.IVCellType
-    distinct_field = 'cell_type'
-    related_filter = 'study__assessment_id'
+    distinct_field = "cell_type"
+    related_filter = "study__assessment_id"
 
 
 class IVCellTypeSpeciesLookup(DistinctStringLookup):
     model = models.IVCellType
-    distinct_field = 'species'
+    distinct_field = "species"
 
 
 class IVCellTypeStrainLookup(DistinctStringLookup):
     model = models.IVCellType
-    distinct_field = 'strain'
+    distinct_field = "strain"
 
 
 class IVCellTypeCellTypeLookup(DistinctStringLookup):
     model = models.IVCellType
-    distinct_field = 'cell_type'
+    distinct_field = "cell_type"
 
 
 class RelatedIVCellTypeTissueLookup(RelatedDistinctStringLookup):
     model = models.IVCellType
-    distinct_field = 'tissue'
-    related_filter = 'study__assessment_id'
+    distinct_field = "tissue"
+    related_filter = "study__assessment_id"
 
 
 class IVCellTypeTissueLookup(DistinctStringLookup):
     model = models.IVCellType
-    distinct_field = 'tissue'
+    distinct_field = "tissue"
 
 
 class IVCellTypeSourceLookup(DistinctStringLookup):
     model = models.IVCellType
-    distinct_field = 'source'
+    distinct_field = "source"
 
 
 # Experiment
 class IVExperimentTransfectionLookup(DistinctStringLookup):
     model = models.IVExperiment
-    distinct_field = 'transfection'
+    distinct_field = "transfection"
 
 
 class IVExperimentPositiveControlLookup(DistinctStringLookup):
     model = models.IVExperiment
-    distinct_field = 'positive_control'
+    distinct_field = "positive_control"
 
 
 class IVExperimentNegativeControlLookup(DistinctStringLookup):
     model = models.IVExperiment
-    distinct_field = 'negative_control'
+    distinct_field = "negative_control"
 
 
 class IVExperimentVehicleControlLookup(DistinctStringLookup):
     model = models.IVExperiment
-    distinct_field = 'vehicle_control'
+    distinct_field = "vehicle_control"
 
 
 # Endpoint
 class RelatedIVEndpointEffectLookup(RelatedDistinctStringLookup):
     model = models.IVEndpoint
-    distinct_field = 'effect'
-    related_filter = 'assessment_id'
+    distinct_field = "effect"
+    related_filter = "assessment_id"
 
 
 class IVEndpointEffectLookup(DistinctStringLookup):
     model = models.IVEndpoint
-    distinct_field = 'effect'
+    distinct_field = "effect"
 
 
 class IVEndpointAssayTypeLookup(DistinctStringLookup):
     model = models.IVEndpoint
-    distinct_field = 'assay_type'
+    distinct_field = "assay_type"
 
 
 class IVEndpointResponseUnitsLookup(DistinctStringLookup):
     model = models.IVEndpoint
-    distinct_field = 'response_units'
+    distinct_field = "response_units"
 
 
 class RelatedIVEndpointResponseUnitsLookup(RelatedDistinctStringLookup):
     model = models.IVEndpoint
-    distinct_field = 'response_units'
-    related_filter = 'assessment_id'
+    distinct_field = "response_units"
+    related_filter = "assessment_id"
 
 
 class IVEndpointByAssessmentTextLookup(RelatedLookup):
     model = models.IVEndpoint
-    search_fields = ('name__icontains', )
-    related_filter = 'assessment_id'
+    search_fields = ("name__icontains",)
+    related_filter = "assessment_id"
 
     def get_query(self, request, term):
-        return super()\
-            .get_query(request, term)\
-            .distinct('name')
+        return super().get_query(request, term).distinct("name")
 
 
 # Chemical

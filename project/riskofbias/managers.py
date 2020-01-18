@@ -4,11 +4,11 @@ from utils.models import BaseManager
 
 
 class RiskOfBiasDomainManager(BaseManager):
-    assessment_relation = 'assessment'
+    assessment_relation = "assessment"
 
 
 class RiskOfBiasMetricManager(BaseManager):
-    assessment_relation = 'domain__assessment'
+    assessment_relation = "domain__assessment"
 
     def get_required_metrics(self, assessment, study):
         requireds = models.Q()
@@ -21,11 +21,11 @@ class RiskOfBiasMetricManager(BaseManager):
         return self.get_qs(assessment).filter(requireds)
 
     def get_metrics_for_visuals(self, assessment_id):
-        return self.get_qs(assessment_id).values('id', 'name')
+        return self.get_qs(assessment_id).values("id", "name")
 
 
 class RiskOfBiasManager(BaseManager):
-    assessment_relation = 'study__assessment'
+    assessment_relation = "study__assessment"
 
     def all_active(self, assessment=None):
         return self.get_qs(assessment).filter(active=True)
@@ -38,8 +38,8 @@ class RiskOfBiasManager(BaseManager):
 
 
 class RiskOfBiasScoreManager(BaseManager):
-    assessment_relation = 'riskofbias__study__assessment'
+    assessment_relation = "riskofbias__study__assessment"
 
 
 class RiskOfBiasAssessmentManager(BaseManager):
-    assessment_relation = 'assessment'
+    assessment_relation = "assessment"

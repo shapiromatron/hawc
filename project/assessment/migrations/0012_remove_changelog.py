@@ -9,11 +9,9 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('assessment', '0011_create_time_spent_editing'),
+        ("assessment", "0011_create_time_spent_editing"),
     ]
 
     operations = [
-        migrations.DeleteModel(
-            name='ChangeLog',
-        ),
+        migrations.DeleteModel(name="ChangeLog",),
     ]

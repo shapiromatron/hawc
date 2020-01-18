@@ -1,4 +1,4 @@
-.PHONY: clean docs help
+.PHONY: clean docs help lint format
 .DEFAULT_GOAL := help
 define BROWSER_PYSCRIPT
 import os, webbrowser, sys
@@ -43,3 +43,9 @@ servedocs: docs ## compile the docs watching for changes
 
 notebook:  ## start jupyter notebook
 	cd project; jupyter notebook --no-browser --notebook-dir=../notebooks
+
+lint:  ## detect black formatting issues
+	@black . --check
+
+format:  ## run black
+	@black .

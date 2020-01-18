@@ -9,15 +9,18 @@ class IntentionalException(Exception):
     """
     An intentionally thrown exception, used for testing in various deployment environments.
     """
+
     pass
 
 
 class HAWCUserAdmin(admin.ModelAdmin):
-    list_display = ('__str__', 'email', 'is_active',
-                    'is_staff', 'date_joined')
-    list_filter = ('date_joined', 'is_staff', )
-    search_fields = ('last_name', 'first_name', 'email')
-    ordering = ('-date_joined', )
+    list_display = ("__str__", "email", "is_active", "is_staff", "date_joined")
+    list_filter = (
+        "date_joined",
+        "is_staff",
+    )
+    search_fields = ("last_name", "first_name", "email")
+    ordering = ("-date_joined",)
     form = forms.AdminUserForm
 
     def send_welcome_emails(modeladmin, request, queryset):
@@ -29,15 +32,15 @@ class HAWCUserAdmin(admin.ModelAdmin):
     def set_password(modeladmin, request, queryset):
         if queryset.count() != 1:
             return modeladmin.message_user(
-                request,
-                "Please select only-one user",
-                level=messages.ERROR)
+                request, "Please select only-one user", level=messages.ERROR
+            )
 
         return HttpResponseRedirect(
-            reverse('user:set_password', kwargs={'pk': queryset.first().id}))
+            reverse("user:set_password", kwargs={"pk": queryset.first().id})
+        )
 
     def throw_500(modeladmin, request, queryset):
-        message = f'User {request.user} intentionally threw a server error from the admin site.'
+        message = f"User {request.user} intentionally threw a server error from the admin site."
         raise IntentionalException(message)
 
     def save_model(self, request, obj, form, change):

@@ -4,7 +4,10 @@ from rest_framework.decorators import list_route
 from rest_framework.response import Response
 
 from assessment.api import (
-    AssessmentLevelPermissions, InAssessmentFilter, DisabledPagination)
+    AssessmentLevelPermissions,
+    InAssessmentFilter,
+    DisabledPagination,
+)
 
 from . import models, serializers
 from utils.api import CleanupFieldsBaseViewSet
@@ -15,9 +18,12 @@ class Study(viewsets.ReadOnlyModelViewSet):
     assessment_filter_args = "assessment"
     model = models.Study
     pagination_class = DisabledPagination
-    permission_classes = (AssessmentLevelPermissions, )
+    permission_classes = (AssessmentLevelPermissions,)
     filter_backends = (InAssessmentFilter, filters.DjangoFilterBackend)
-    list_actions = ['list', 'rob_scores', ]
+    list_actions = [
+        "list",
+        "rob_scores",
+    ]
 
     def get_serializer_class(self):
         cls = serializers.VerboseStudySerializer
@@ -32,13 +38,12 @@ class Study(viewsets.ReadOnlyModelViewSet):
             return self.model.objects.get_qs(self.assessment)
         else:
             return self.model.objects.prefetch_related(
-                'identifiers',
-                'riskofbiases__scores__metric__domain',
-            ).select_related('assessment__rob_settings', 'assessment')
+                "identifiers", "riskofbiases__scores__metric__domain",
+            ).select_related("assessment__rob_settings", "assessment")
 
     @list_route()
     def rob_scores(self, request):
-        assessment_id = tryParseInt(self.request.query_params.get('assessment_id'), -1)
+        assessment_id = tryParseInt(self.request.query_params.get("assessment_id"), -1)
         scores = self.model.objects.rob_scores(assessment_id)
         return Response(scores)
 
@@ -49,7 +54,7 @@ class Study(viewsets.ReadOnlyModelViewSet):
 
 
 class FinalRobStudy(Study):
-    list_actions = ['list']
+    list_actions = ["list"]
 
     def get_serializer_class(self):
         return serializers.FinalRobStudySerializer

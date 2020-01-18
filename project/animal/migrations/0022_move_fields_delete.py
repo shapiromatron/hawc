@@ -8,24 +8,12 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('animal', '0021_move_fields_data'),
+        ("animal", "0021_move_fields_data"),
     ]
 
     operations = [
-        migrations.RemoveField(
-            model_name='animalgroup',
-            name='duration_observation',
-        ),
-        migrations.RemoveField(
-            model_name='experiment',
-            name='diet',
-        ),
-        migrations.RemoveField(
-            model_name='experiment',
-            name='litter_effect_notes',
-        ),
-        migrations.RemoveField(
-            model_name='experiment',
-            name='litter_effects',
-        ),
+        migrations.RemoveField(model_name="animalgroup", name="duration_observation",),
+        migrations.RemoveField(model_name="experiment", name="diet",),
+        migrations.RemoveField(model_name="experiment", name="litter_effect_notes",),
+        migrations.RemoveField(model_name="experiment", name="litter_effects",),
     ]

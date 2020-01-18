@@ -21,11 +21,11 @@ def invalidate_endpoint_cache(sender, instance, **kwargs):
     filters = {}
 
     if instance_type is models.IVChemical:
-        filters['chemical_id'] = instance.id
+        filters["chemical_id"] = instance.id
     elif instance_type is models.IVCellType:
-        filters['experiment__cell_type_id'] = instance.id
+        filters["experiment__cell_type_id"] = instance.id
     elif instance_type is models.IVExperiment:
-        filters['experiment_id'] = instance.id
+        filters["experiment_id"] = instance.id
     elif instance_type is models.IVEndpoint:
         ids = [instance.id]
     elif instance_type is models.IVEndpointGroup:
@@ -34,9 +34,7 @@ def invalidate_endpoint_cache(sender, instance, **kwargs):
         ids = [instance.endpoint_id]
 
     if len(filters) > 0:
-        ids = models.IVEndpoint.objects\
-            .filter(**filters)\
-            .values_list('id', flat=True)
+        ids = models.IVEndpoint.objects.filter(**filters).values_list("id", flat=True)
 
     models.IVEndpoint.delete_caches(ids)
 

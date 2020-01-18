@@ -29,9 +29,7 @@ def invalidate_endpoint_cache(sender, instance, **kwargs):
         ids = [instance.endpoint_id]
 
     if len(filters) > 0:
-        ids = models.Endpoint.objects\
-            .filter(**filters)\
-            .values_list('id', flat=True)
+        ids = models.Endpoint.objects.filter(**filters).values_list("id", flat=True)
 
     models.Endpoint.delete_caches(ids)
 
@@ -42,25 +40,27 @@ def change_num_dg(sender, instance, **kwargs):
 
     # get endpoints associated with this dosing-regime
     eps = models.Endpoint.objects.filter(
-        animal_group_id__in=models.AnimalGroup.objects.filter(
-            dosing_regime=instance))
+        animal_group_id__in=models.AnimalGroup.objects.filter(dosing_regime=instance)
+    )
 
     if eps.count() == 0:
         return
 
     # get dose-ids
-    dose_ids = instance.doses.all().values_list('dose_group_id', flat=True)
+    dose_ids = instance.doses.all().values_list("dose_group_id", flat=True)
 
     # create endpoint-groups, as needed
     egs = []
     for dose_id in dose_ids:
-        egs.extend([
-            models.EndpointGroup(endpoint_id=ep.id, dose_group_id=dose_id) for
-            ep in eps.exclude(groups__dose_group_id=dose_id)
-        ])
+        egs.extend(
+            [
+                models.EndpointGroup(endpoint_id=ep.id, dose_group_id=dose_id)
+                for ep in eps.exclude(groups__dose_group_id=dose_id)
+            ]
+        )
     models.EndpointGroup.objects.bulk_create(egs)
 
     # delete endpoint-groups without a dose-group, as needed
-    models.EndpointGroup.objects.filter(endpoint__in=eps)\
-        .exclude(dose_group_id__in=dose_ids)\
-        .delete()
+    models.EndpointGroup.objects.filter(endpoint__in=eps).exclude(
+        dose_group_id__in=dose_ids
+    ).delete()

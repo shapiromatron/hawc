@@ -8,20 +8,39 @@ from django.conf import settings
 
 def update_choices(apps, schema_editor):
     if settings.HAWC_FLAVOR == "EPA":
-        apps.get_model('study', 'Study').objects.filter(coi_reported=2).update(coi_reported=6)
+        apps.get_model("study", "Study").objects.filter(coi_reported=2).update(coi_reported=6)
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('study', '0010_auto_20190403_1934'),
+        ("study", "0010_auto_20190403_1934"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='study',
-            name='coi_reported',
-            field=models.PositiveSmallIntegerField(choices=[(4, '---'), (0, 'Authors report they have no COI'), (1, 'Authors disclosed COI'), (5, 'Not reported; no COI is inferred based on author affiliation and/or funding source'), (6, 'Not reported; a COI is inferred based on author affiliation and/or funding source'), (3, 'Not reported'), (2, 'Unknown')], default=4, help_text='Was a conflict of interest reported by the study authors?', verbose_name='COI reported'),
+            model_name="study",
+            name="coi_reported",
+            field=models.PositiveSmallIntegerField(
+                choices=[
+                    (4, "---"),
+                    (0, "Authors report they have no COI"),
+                    (1, "Authors disclosed COI"),
+                    (
+                        5,
+                        "Not reported; no COI is inferred based on author affiliation and/or funding source",
+                    ),
+                    (
+                        6,
+                        "Not reported; a COI is inferred based on author affiliation and/or funding source",
+                    ),
+                    (3, "Not reported"),
+                    (2, "Unknown"),
+                ],
+                default=4,
+                help_text="Was a conflict of interest reported by the study authors?",
+                verbose_name="COI reported",
+            ),
         ),
         migrations.RunPython(update_choices),
     ]

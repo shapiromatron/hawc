@@ -6,12 +6,14 @@ from django.db import migrations
 
 
 def migrate_to_animal_group(apps, schema_editor):
-    Experiment = apps.get_model('animal', 'Experiment')
-    for experiment in Experiment.objects.all().order_by('study__assessment_id'):
+    Experiment = apps.get_model("animal", "Experiment")
+    for experiment in Experiment.objects.all().order_by("study__assessment_id"):
         animal_groups = list(experiment.animal_groups.all())
 
         if len(animal_groups) == 0 and experiment.diet:
-            print(f"Assessment {experiment.study.assessment_id}, Experiment: [{experiment.id}]/[{ experiment.name}] has no animal groups; diet [{experiment.diet}] will be lost.")
+            print(
+                f"Assessment {experiment.study.assessment_id}, Experiment: [{experiment.id}]/[{ experiment.name}] has no animal groups; diet [{experiment.diet}] will be lost."
+            )
 
         for animal_group in animal_groups:
             animal_group.diet = experiment.diet
@@ -19,26 +21,30 @@ def migrate_to_animal_group(apps, schema_editor):
 
 
 def migrate_to_dosing_regime(apps, schema_editor):
-    AnimalGroup = apps.get_model('animal', 'AnimalGroup')
-    DosingRegime = apps.get_model('animal', 'DosingRegime')
-    for dosing_regime in DosingRegime.objects.all().order_by('dosed_animals__experiment__study__assessment_id'):
+    AnimalGroup = apps.get_model("animal", "AnimalGroup")
+    DosingRegime = apps.get_model("animal", "DosingRegime")
+    for dosing_regime in DosingRegime.objects.all().order_by(
+        "dosed_animals__experiment__study__assessment_id"
+    ):
         animal_group = dosing_regime.dosed_animals
         if animal_group is None:
             continue
         dosing_regime.duration_observation = animal_group.duration_observation
         dosing_regime.save()
 
-    drs = set(DosingRegime.objects.values_list('dosed_animals_id', flat=True))
-    ags = set(AnimalGroup.objects.values_list('id', flat=True))
+    drs = set(DosingRegime.objects.values_list("dosed_animals_id", flat=True))
+    ags = set(AnimalGroup.objects.values_list("id", flat=True))
     for id in ags - drs:
         ag = AnimalGroup.objects.get(id=id)
         if ag.duration_observation:
-            print(f"Assessment {ag.experiment.study.assessment_id}, Animal Group {ag.id}/{ag.name} has no animal groups; duration_observation {ag.duration_observation} will be lost")
+            print(
+                f"Assessment {ag.experiment.study.assessment_id}, Animal Group {ag.id}/{ag.name} has no animal groups; duration_observation {ag.duration_observation} will be lost"
+            )
 
 
 def migrate_to_endpoint(apps, schema_editor):
-    Experiment = apps.get_model('animal', 'Experiment')
-    for experiment in Experiment.objects.all().order_by('study__assessment_id'):
+    Experiment = apps.get_model("animal", "Experiment")
+    for experiment in Experiment.objects.all().order_by("study__assessment_id"):
         written = False
         for animal_group in experiment.animal_groups.all():
             for endpoint in animal_group.endpoints.all():
@@ -48,13 +54,15 @@ def migrate_to_endpoint(apps, schema_editor):
                 endpoint.save()
 
         if not written and experiment.litter_effect_notes:
-            print(f"Assessment {experiment.study.assessment_id}, Experiment: [{experiment.id}]/[{experiment.name}] has no endpoints; litter data [{experiment.litter_effects}]/[{experiment.litter_effect_notes}] will be lost...")
+            print(
+                f"Assessment {experiment.study.assessment_id}, Experiment: [{experiment.id}]/[{experiment.name}] has no endpoints; litter data [{experiment.litter_effects}]/[{experiment.litter_effect_notes}] will be lost..."
+            )
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('animal', '0020_move_fields_create'),
+        ("animal", "0020_move_fields_create"),
     ]
 
     operations = [

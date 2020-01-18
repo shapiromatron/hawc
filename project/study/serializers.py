@@ -10,32 +10,33 @@ from . import models
 
 
 class StudySerializer(serializers.ModelSerializer):
-
     def to_representation(self, instance):
         ret = super().to_representation(instance)
-        ret['coi_reported'] = instance.get_coi_reported_display()
-        ret['url'] = instance.get_absolute_url()
+        ret["coi_reported"] = instance.get_coi_reported_display()
+        ret["url"] = instance.get_absolute_url()
         return ret
 
     class Meta:
         model = models.Study
-        fields = '__all__'
+        fields = "__all__"
 
 
 class SimpleStudySerializer(StudySerializer):
-
     class Meta:
         model = models.Study
-        exclude = ('searches', 'identifiers', )
+        exclude = (
+            "searches",
+            "identifiers",
+        )
 
 
 class StudyAssessmentSerializer(serializers.ModelSerializer):
     assessment = AssessmentMiniSerializer(read_only=True)
-    url = serializers.CharField(source='get_absolute_url')
+    url = serializers.CharField(source="get_absolute_url")
 
     class Meta:
         model = models.Study
-        fields = ('id', 'url', 'assessment', 'short_citation')
+        fields = ("id", "url", "assessment", "short_citation")
 
 
 class VerboseStudySerializer(StudySerializer):
@@ -47,12 +48,12 @@ class VerboseStudySerializer(StudySerializer):
 
     def to_representation(self, instance):
         ret = super().to_representation(instance)
-        ret['rob_response_values'] = instance.assessment.rob_settings.get_rob_response_values()
+        ret["rob_response_values"] = instance.assessment.rob_settings.get_rob_response_values()
         return ret
 
     class Meta:
         model = models.Study
-        fields = '__all__'
+        fields = "__all__"
 
 
 class FinalRobStudySerializer(StudySerializer):
@@ -61,7 +62,10 @@ class FinalRobStudySerializer(StudySerializer):
 
     class Meta:
         model = models.Study
-        exclude = ('searches', 'identifiers', )
+        exclude = (
+            "searches",
+            "identifiers",
+        )
 
     def to_representation(self, instance):
         instance.riskofbiases = instance.riskofbiases.filter(final=True)
@@ -70,11 +74,10 @@ class FinalRobStudySerializer(StudySerializer):
 
 
 class StudyCleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
-
     class Meta:
         model = models.Study
         cleanup_fields = model.TEXT_CLEANUP_FIELDS
-        fields = ('id', 'short_citation', ) + cleanup_fields
+        fields = ("id", "short_citation",) + cleanup_fields
 
 
 SerializerHelper.add_serializer(models.Study, VerboseStudySerializer)

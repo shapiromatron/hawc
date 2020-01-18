@@ -30,24 +30,48 @@ def migrate_scores(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('riskofbias', '0016_auto_20190407_2152'),
+        ("riskofbias", "0016_auto_20190407_2152"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='riskofbiasassessment',
-            name='default_questions',
-            field=models.PositiveSmallIntegerField(choices=[(1, 'OHAT'), (2, 'EPA')], default=riskofbias.models.RiskOfBiasAssessment.get_default_default_questions, help_text='If no questions exist, which default questions should be used? If questions already exist, changing this will have no impact.', verbose_name='Default questions'),
+            model_name="riskofbiasassessment",
+            name="default_questions",
+            field=models.PositiveSmallIntegerField(
+                choices=[(1, "OHAT"), (2, "EPA")],
+                default=riskofbias.models.RiskOfBiasAssessment.get_default_default_questions,
+                help_text="If no questions exist, which default questions should be used? If questions already exist, changing this will have no impact.",
+                verbose_name="Default questions",
+            ),
         ),
         migrations.AddField(
-            model_name='riskofbiasassessment',
-            name='responses',
-            field=models.PositiveSmallIntegerField(choices=[(0, 'OHAT'), (1, 'EPA')], default=riskofbias.models.RiskOfBiasAssessment.get_default_responses, help_text='Why responses should be used to answering questions:', verbose_name='Question responses'),
+            model_name="riskofbiasassessment",
+            name="responses",
+            field=models.PositiveSmallIntegerField(
+                choices=[(0, "OHAT"), (1, "EPA")],
+                default=riskofbias.models.RiskOfBiasAssessment.get_default_responses,
+                help_text="Why responses should be used to answering questions:",
+                verbose_name="Question responses",
+            ),
         ),
         migrations.AlterField(
-            model_name='riskofbiasscore',
-            name='score',
-            field=models.PositiveSmallIntegerField(choices=[(1, 'Not applicable'), (2, 'Not reported'), (14, 'Definitely high risk of bias'), (15, 'Probably high risk of bias'), (16, 'Probably low risk of bias'), (17, 'Definitely low risk of bias'), (24, 'Critically deficient'), (25, 'Deficient'), (26, 'Adequate'), (27, 'Good')], default=10),
+            model_name="riskofbiasscore",
+            name="score",
+            field=models.PositiveSmallIntegerField(
+                choices=[
+                    (1, "Not applicable"),
+                    (2, "Not reported"),
+                    (14, "Definitely high risk of bias"),
+                    (15, "Probably high risk of bias"),
+                    (16, "Probably low risk of bias"),
+                    (17, "Definitely low risk of bias"),
+                    (24, "Critically deficient"),
+                    (25, "Deficient"),
+                    (26, "Adequate"),
+                    (27, "Good"),
+                ],
+                default=10,
+            ),
         ),
-        migrations.RunPython(migrate_scores)
+        migrations.RunPython(migrate_scores),
     ]

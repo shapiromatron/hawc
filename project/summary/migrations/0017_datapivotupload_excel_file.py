@@ -13,7 +13,7 @@ import pandas as pd
 
 def _read_tsv(fn: str, encoding: str) -> Optional[pd.DataFrame]:
     try:
-        return pd.read_csv(fn, sep='\t', encoding=encoding)
+        return pd.read_csv(fn, sep="\t", encoding=encoding)
     except Exception:
         return None
 
@@ -35,12 +35,12 @@ def rewrite_static_files(apps, schema_editor):
     os.makedirs(os.path.join(settings.MEDIA_ROOT, excel_root), exist_ok=True)
     for dp in DataPivotUpload.objects.all():
         from_fn = dp.file.path
-        to_fn = os.path.join(excel_root, os.path.basename(dp.file.name) + '.xlsx')
+        to_fn = os.path.join(excel_root, os.path.basename(dp.file.name) + ".xlsx")
         dfs = [
-            _read_tsv(from_fn, 'utf-8'),
-            _read_tsv(from_fn, 'utf-16'),
-            _read_tsv(from_fn, 'latin1'),
-            _read_excel(from_fn)
+            _read_tsv(from_fn, "utf-8"),
+            _read_tsv(from_fn, "utf-16"),
+            _read_tsv(from_fn, "latin1"),
+            _read_excel(from_fn),
         ]
         dfs = [el for el in dfs if el is not None]
         if len(dfs) > 0:
@@ -60,7 +60,7 @@ def rewrite_static_files(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('summary', '0016_datapivotupload_excel_file'),
+        ("summary", "0016_datapivotupload_excel_file"),
     ]
 
     operations = [

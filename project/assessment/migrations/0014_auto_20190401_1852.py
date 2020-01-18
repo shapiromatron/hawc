@@ -8,13 +8,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('assessment', '0013_py3_unicode'),
+        ("assessment", "0013_py3_unicode"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='baseendpoint',
-            name='name',
-            field=models.CharField(max_length=128, verbose_name='Endpoint/Adverse outcome'),
+            model_name="baseendpoint",
+            name="name",
+            field=models.CharField(max_length=128, verbose_name="Endpoint/Adverse outcome"),
         ),
     ]

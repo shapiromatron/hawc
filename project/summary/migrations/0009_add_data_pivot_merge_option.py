@@ -15,13 +15,11 @@ def add_merge_option(apps, schema_editor):
             settings = False
 
         if settings:
-            settings['plot_settings']['merge_aggressive'] = False
+            settings["plot_settings"]["merge_aggressive"] = False
             obj.settings = json.dumps(settings)
 
             # don't change last_updated timestamp
-            DataPivot.objects\
-                .filter(id=obj.id)\
-                .update(settings=obj.settings)
+            DataPivot.objects.filter(id=obj.id).update(settings=obj.settings)
 
 
 def remove_merge_option(apps, schema_editor):
@@ -33,19 +31,17 @@ def remove_merge_option(apps, schema_editor):
             settings = False
 
             if settings:
-                settings['plot_settings'].pop('merge_aggressive')
+                settings["plot_settings"].pop("merge_aggressive")
                 obj.settings = json.dumps(settings)
 
             # don't change last_updated timestamp
-            DataPivot.objects\
-                .filter(id=obj.id)\
-                .update(settings=obj.settings)
+            DataPivot.objects.filter(id=obj.id).update(settings=obj.settings)
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('summary', '0008_auto_20160608_1109'),
+        ("summary", "0008_auto_20160608_1109"),
     ]
 
     operations = [

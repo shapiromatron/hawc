@@ -11,20 +11,10 @@ def load_fixture(apps, schema_editor):
     # Fixtures adapted from:
     # https://www.fsd1.org/powerschool/Documents/PDFs/Federal_Race_Ethnicity_Guidelines.pdf
     # https://www.iso.org/obp/ui/
-    fixture_dir = os.path.abspath(
-        os.path.join(os.path.dirname(__file__), '../fixtures'))
-    call_command(
-        'loaddata',
-        os.path.join(fixture_dir, 'ethnicity.json'),
-        app_label='epi')
-    call_command(
-        'loaddata',
-        os.path.join(fixture_dir, 'countries.json'),
-        app_label='epi')
-    call_command(
-        'loaddata',
-        os.path.join(fixture_dir, 'resultmetric.json'),
-        app_label='epi')
+    fixture_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../fixtures"))
+    call_command("loaddata", os.path.join(fixture_dir, "ethnicity.json"), app_label="epi")
+    call_command("loaddata", os.path.join(fixture_dir, "countries.json"), app_label="epi")
+    call_command("loaddata", os.path.join(fixture_dir, "resultmetric.json"), app_label="epi")
 
 
 def unload_fixture(apps, schema_editor):
@@ -36,7 +26,7 @@ def unload_fixture(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('epi', '0001_initial'),
+        ("epi", "0001_initial"),
     ]
 
     operations = [

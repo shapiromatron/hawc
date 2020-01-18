@@ -5,7 +5,6 @@ from .middleware import MicrosoftOfficeLinkMiddleware
 
 
 class MicrosoftOfficeLinkMiddlewareTests(TestCase):
-
     def setUp(self):
         self.middleware = MicrosoftOfficeLinkMiddleware()
         self.request = HttpRequest()
@@ -13,18 +12,16 @@ class MicrosoftOfficeLinkMiddlewareTests(TestCase):
     def test_office(self):
         """Ensure these strings do return custom middleware response"""
         agents = [
-
             # Office 2011 on Mac
             "Mozilla/5.0 (Macintosh; Intel Mac OS X) Word/14.20.0",
             "Mozilla/5.0 (Macintosh; Intel Mac OS X) Excel/14.20.0",
             "Mozilla/5.0 (Macintosh; Intel Mac OS X) PowerPoint/14.20.0",
-
             # Office on Windows 7
             "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.1; WOW64; Trident/4.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .NET CLR 3.0.30729; Media Center PC 6.0; .NET4.0C; .NET4.0E; ms-office)",
         ]
 
         for agent in agents:
-            self.request.META['HTTP_USER_AGENT'] = agent
+            self.request.META["HTTP_USER_AGENT"] = agent
             resp = self.middleware.process_request(self.request)
             self.assertIs(type(resp), HttpResponse)
 
@@ -34,7 +31,6 @@ class MicrosoftOfficeLinkMiddlewareTests(TestCase):
             # Microsoft Outlook
             "Microsoft Office/14.0 (Windows NT 6.0; Microsoft Outlook 14.0.4760; Pro)",
             "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.1; Trident/4.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .NET CLR 3.0.30729; .NET4.0C; InfoPath.3; Microsoft Outlook 14.0.6131; ms-office; MSOffice 14)",
-
             # other common user-agents
             # https://techblog.willshouse.com/2012/01/03/most-common-user-agents/
             "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.101 Safari/537.36",
@@ -64,6 +60,6 @@ class MicrosoftOfficeLinkMiddlewareTests(TestCase):
         ]
 
         for agent in agents:
-            self.request.META['HTTP_USER_AGENT'] = agent
+            self.request.META["HTTP_USER_AGENT"] = agent
             resp = self.middleware.process_request(self.request)
             self.assertIs(resp, None)

@@ -38,14 +38,24 @@ def revert_variances(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('epi', '0004_auto_20151105_1056'),
+        ("epi", "0004_auto_20151105_1056"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='result',
-            name='variance_type',
-            field=models.PositiveSmallIntegerField(default=0, choices=[(0, None), (1, b'SD'), (2, b'SE'), (3, b'SEM'), (4, b'GSD'), (5, b'other')]),
+            model_name="result",
+            name="variance_type",
+            field=models.PositiveSmallIntegerField(
+                default=0,
+                choices=[
+                    (0, None),
+                    (1, b"SD"),
+                    (2, b"SE"),
+                    (3, b"SEM"),
+                    (4, b"GSD"),
+                    (5, b"other"),
+                ],
+            ),
         ),
         migrations.RunPython(update_variances, reverse_code=revert_variances),
     ]

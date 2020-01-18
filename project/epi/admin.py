@@ -9,9 +9,7 @@ class CriteriaAdmin(admin.ModelAdmin):
 
 class CountryAdmin(admin.ModelAdmin):
 
-    search_fields = (
-        'name',
-    )
+    search_fields = ("name",)
 
 
 class AdjustmentFactorAdmin(admin.ModelAdmin):
@@ -24,8 +22,12 @@ class EthnicityAdmin(admin.ModelAdmin):
 
 class ResultMetricAdmin(admin.ModelAdmin):
     list_display = (
-        "metric", "abbreviation", "showForestPlot",
-        "isLog", "reference_value", "order",
+        "metric",
+        "abbreviation",
+        "showForestPlot",
+        "isLog",
+        "reference_value",
+        "order",
     )
 
 

@@ -13,20 +13,20 @@ class SingleResultSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         ret = super().to_representation(instance)
-        ret['estimateFormatted'] = instance.estimate_formatted
+        ret["estimateFormatted"] = instance.estimate_formatted
         return ret
 
     class Meta:
         model = models.SingleResult
-        fields = '__all__'
+        fields = "__all__"
 
 
 class MetaResultLinkSerializer(serializers.ModelSerializer):
-    url = serializers.CharField(source='get_absolute_url', read_only=True)
+    url = serializers.CharField(source="get_absolute_url", read_only=True)
 
     class Meta:
         model = models.MetaResult
-        fields = ('id', 'label', 'url')
+        fields = ("id", "label", "url")
 
 
 class MetaProtocolSerializer(serializers.ModelSerializer):
@@ -40,7 +40,7 @@ class MetaProtocolSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.MetaProtocol
-        fields = '__all__'
+        fields = "__all__"
 
 
 class MetaResultSerializer(serializers.ModelSerializer):
@@ -52,12 +52,12 @@ class MetaResultSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         ret = super().to_representation(instance)
-        ret['estimateFormatted'] = instance.estimate_formatted
+        ret["estimateFormatted"] = instance.estimate_formatted
         return ret
 
     class Meta:
         model = models.MetaResult
-        fields = '__all__'
+        fields = "__all__"
 
 
 SerializerHelper.add_serializer(models.MetaProtocol, MetaProtocolSerializer)

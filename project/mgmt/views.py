@@ -13,10 +13,7 @@ class EnsurePreparationStartedMixin(object):
     """Ensure the preparation task has been started if form is valid."""
 
     def get_success_url(self):
-        models.Task.objects.ensure_preparation_started(
-            self.object,
-            self.request.user
-        )
+        models.Task.objects.ensure_preparation_started(self.object, self.request.user)
         return super().get_success_url()
 
 
@@ -39,64 +36,65 @@ class RobTaskMixin:
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['list_json'] = self.model.get_qs_json(context['object_list'], json_encode=True)
-        context['review_tasks'] = self.get_review_tasks()
+        context["list_json"] = self.model.get_qs_json(context["object_list"], json_encode=True)
+        context["review_tasks"] = self.get_review_tasks()
         return context
 
     def get_review_tasks(self):
-        RiskOfBias = apps.get_model('riskofbias', 'RiskOfBias')
+        RiskOfBias = apps.get_model("riskofbias", "RiskOfBias")
         rob_tasks = self.get_rob_queryset(RiskOfBias)
         filtered_tasks = [rob for rob in rob_tasks if rob.is_complete is False]
         return RiskOfBias.get_qs_json(filtered_tasks, json_encode=True)
 
     def get_rob_queryset(self, RiskOfBias):
-        raise NotImplementedError('Abstract method; requires implementation')
+        raise NotImplementedError("Abstract method; requires implementation")
 
 
 class UserAssignments(RobTaskMixin, LoginRequiredMixin, ListView):
     model = models.Task
-    template_name = 'mgmt/user_assignments.html'
+    template_name = "mgmt/user_assignments.html"
 
     def get_queryset(self):
         return self.model.objects.owned_by(self.request.user)
 
     def get_rob_queryset(self, RiskOfBias):
-        return RiskOfBias.objects\
-            .filter(author=self.request.user, active=True)
+        return RiskOfBias.objects.filter(author=self.request.user, active=True)
 
 
 class UserAssessmentAssignments(RobTaskMixin, LoginRequiredMixin, BaseList):
     parent_model = Assessment
     model = models.Task
-    template_name = 'mgmt/user_assessment_assignments.html'
+    template_name = "mgmt/user_assessment_assignments.html"
 
     def get_queryset(self):
-        return self.model.objects.owned_by(self.request.user)\
-            .filter(study__assessment=self.assessment)\
-            .select_related('owner', 'study', 'study__reference_ptr', 'study__assessment')
+        return (
+            self.model.objects.owned_by(self.request.user)
+            .filter(study__assessment=self.assessment)
+            .select_related("owner", "study", "study__reference_ptr", "study__assessment")
+        )
 
     def get_rob_queryset(self, RiskOfBias):
-        return RiskOfBias.objects\
-            .filter(author=self.request.user, active=True,
-                    study__assessment=self.assessment)
+        return RiskOfBias.objects.filter(
+            author=self.request.user, active=True, study__assessment=self.assessment
+        )
 
 
 # Assessment-level task views
 class TaskDashboard(TeamMemberOrHigherMixin, BaseList):
     parent_model = Assessment
     model = models.Task
-    template_name = 'mgmt/assessment_dashboard.html'
+    template_name = "mgmt/assessment_dashboard.html"
 
     def get_assessment(self, *args, **kwargs):
-        return get_object_or_404(Assessment, pk=kwargs['pk'])
+        return get_object_or_404(Assessment, pk=kwargs["pk"])
 
     def get_queryset(self):
         return self.model.objects.assessment_qs(self.assessment.id)
 
 
 class TaskDetail(TaskDashboard):
-    template_name = 'mgmt/assessment_details.html'
+    template_name = "mgmt/assessment_details.html"
 
 
 class TaskModify(TaskDashboard):
-    template_name = 'mgmt/assessment_modify.html'
+    template_name = "mgmt/assessment_modify.html"

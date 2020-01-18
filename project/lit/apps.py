@@ -3,10 +3,11 @@ from django.conf import settings
 
 
 class LitConfig(AppConfig):
-    name = 'lit'
-    verbose_name = 'Literature'
+    name = "lit"
+    verbose_name = "Literature"
 
     def ready(self):
         from . import signals  # noqa
         from litter_getter import pubmed
+
         pubmed.connect(settings.PUBMED_TOOL, settings.PUBMED_EMAIL)

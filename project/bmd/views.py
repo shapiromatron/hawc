@@ -5,8 +5,14 @@ from animal.models import Endpoint
 
 from django.views.generic import RedirectView
 
-from utils.views import BaseUpdate, BaseDetail, BaseDelete, \
-    BaseList, ProjectManagerOrHigherMixin, TeamMemberOrHigherMixin
+from utils.views import (
+    BaseUpdate,
+    BaseDetail,
+    BaseDelete,
+    BaseList,
+    ProjectManagerOrHigherMixin,
+    TeamMemberOrHigherMixin,
+)
 
 from . import forms, models
 
@@ -17,21 +23,21 @@ class AssessSettingsRead(BaseDetail):
 
     def get_object(self, **kwargs):
         # get the bmd settings of the specified assessment
-        obj = get_object_or_404(self.model, assessment_id=self.kwargs['pk'])
+        obj = get_object_or_404(self.model, assessment_id=self.kwargs["pk"])
         return super(AssessSettingsRead, self).get_object(object=obj, **kwargs)
 
 
 class AssessSettingsUpdate(ProjectManagerOrHigherMixin, BaseUpdate):
-    success_message = 'BMD Settings updated.'
+    success_message = "BMD Settings updated."
     model = models.AssessmentSettings
     form_class = forms.AssessmentSettingsForm
 
     def get_assessment(self, request, *args, **kwargs):
-        return get_object_or_404(Assessment, pk=kwargs['pk'])
+        return get_object_or_404(Assessment, pk=kwargs["pk"])
 
 
 class AssessLogicUpdate(ProjectManagerOrHigherMixin, BaseUpdate):
-    success_message = 'BMD logic settings updated.'
+    success_message = "BMD logic settings updated."
     model = models.LogicField
     form_class = forms.LogicFieldForm
 
@@ -41,9 +47,8 @@ class AssessLogicUpdate(ProjectManagerOrHigherMixin, BaseUpdate):
 
 # BMD sessions
 class SessionCreate(TeamMemberOrHigherMixin, RedirectView):
-
     def get_assessment(self, request, *args, **kwargs):
-        self.object = get_object_or_404(Endpoint, pk=kwargs['pk'])
+        self.object = get_object_or_404(Endpoint, pk=kwargs["pk"])
         return self.object.assessment
 
     def get_redirect_url(self, *args, **kwargs):
@@ -54,7 +59,7 @@ class SessionCreate(TeamMemberOrHigherMixin, RedirectView):
 class SessionList(BaseList):
     parent_model = Endpoint
     model = models.Session
-    parent_template_name = 'object'
+    parent_template_name = "object"
 
     def get_queryset(self):
         return self.model.objects.filter(endpoint=self.parent)
@@ -66,7 +71,7 @@ class SessionDetail(BaseDetail):
 
 class SessionUpdate(BaseUpdate):
 
-    success_message = 'BMD session updated.'
+    success_message = "BMD session updated."
     model = models.Session
     form_class = forms.SessionForm
 

@@ -10,20 +10,38 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('contenttypes', '0002_remove_content_type_name'),
-        ('assessment', '0010_auto_20170511_1057'),
+        ("contenttypes", "0002_remove_content_type_name"),
+        ("assessment", "0010_auto_20170511_1057"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='TimeSpentEditing',
+            name="TimeSpentEditing",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('seconds', models.FloatField(validators=(django.core.validators.MinValueValidator,))),
-                ('assessment', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='assessment.Assessment')),
-                ('object_id', models.PositiveIntegerField()),
-                ('content_type', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='contenttypes.ContentType')),
-                ('created', models.DateTimeField(auto_now_add=True)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID",
+                    ),
+                ),
+                (
+                    "seconds",
+                    models.FloatField(validators=(django.core.validators.MinValueValidator,)),
+                ),
+                (
+                    "assessment",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="assessment.Assessment",
+                    ),
+                ),
+                ("object_id", models.PositiveIntegerField()),
+                (
+                    "content_type",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="contenttypes.ContentType",
+                    ),
+                ),
+                ("created", models.DateTimeField(auto_now_add=True)),
             ],
         ),
     ]

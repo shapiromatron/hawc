@@ -8,17 +8,16 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('riskofbias', '0009_auto_20160509_1618'),
+        ("riskofbias", "0009_auto_20160509_1618"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='riskofbiasscore',
-            options={'ordering': ('metric', 'id')},
+            name="riskofbiasscore", options={"ordering": ("metric", "id")},
         ),
         migrations.AlterField(
-            model_name='riskofbias',
-            name='final',
+            model_name="riskofbias",
+            name="final",
             field=models.BooleanField(db_index=True, default=False),
         ),
     ]

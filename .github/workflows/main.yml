@@ -1,14 +1,25 @@
-name: frontend-ci
+name: ci-checks
 
 on: [pull_request]
 
 jobs:
-  build:
-
-    name: frontend-lint
-
+  backend:
+    name: backend
     runs-on: ubuntu-18.04
+    steps:
+    - uses: actions/checkout@v1
+    - uses: actions/setup-python@v1
+      with:
+        python-version: '3.6'
+        architecture: 'x64'
+    - name: install + lint
+      run: |
+        pip install -r requirements/dev.txt
+        make lint
 
+  frontend:
+    name: frontend
+    runs-on: ubuntu-18.04
     steps:
     - uses: actions/checkout@v1
     - uses: actions/setup-node@v1
