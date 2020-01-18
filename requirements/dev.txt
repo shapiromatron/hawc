@@ -3,8 +3,8 @@
 # lint and formatting tools
 black==19.10b0
 flake8==3.7.9
-flake8-isort-2.8.0
-isort-4.3.21
+isort==4.3.21
+flake8-isort==2.8.0
 
 # django development
 django-debug-toolbar==1.8
