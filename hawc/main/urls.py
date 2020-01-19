@@ -4,7 +4,7 @@ from django.conf.urls import include, url
 from django.contrib import admin
 from django.views.generic import TemplateView
 
-from assessment import views
+from hawc.apps.assessment import views
 
 urlpatterns = [
     # Portal
@@ -17,18 +17,18 @@ urlpatterns = [
     url(r"^about/$", views.About.as_view(), name="about"),
     url(r"^contact/$", views.Contact.as_view(), name="contact"),
     # Apps
-    url(r"^user/", include("myuser.urls", namespace="user")),
-    url(r"^assessment/", include("assessment.urls", namespace="assessment")),
-    url(r"^study/", include("study.urls", namespace="study")),
-    url(r"^ani/", include("animal.urls", namespace="animal")),
-    url(r"^epi/", include("epi.urls", namespace="epi")),
-    url(r"^epi-meta/", include("epimeta.urls", namespace="meta")),
-    url(r"^in-vitro/", include("invitro.urls", namespace="invitro")),
-    url(r"^bmd/", include("bmd.urls", namespace="bmd")),
-    url(r"^lit/", include("lit.urls", namespace="lit")),
-    url(r"^summary/", include("summary.urls", namespace="summary")),
-    url(r"^rob/", include("riskofbias.urls", namespace="riskofbias")),
-    url(r"^mgmt/", include("mgmt.urls", namespace="mgmt")),
+    url(r"^user/", include("hawc.apps.myuser.urls", namespace="user")),
+    url(r"^assessment/", include("hawc.apps.assessment.urls", namespace="assessment")),
+    url(r"^study/", include("hawc.apps.study.urls", namespace="study")),
+    url(r"^ani/", include("hawc.apps.animal.urls", namespace="animal")),
+    url(r"^epi/", include("hawc.apps.epi.urls", namespace="epi")),
+    url(r"^epi-meta/", include("hawc.apps.epimeta.urls", namespace="meta")),
+    url(r"^in-vitro/", include("hawc.apps.invitro.urls", namespace="invitro")),
+    url(r"^bmd/", include("hawc.apps.bmd.urls", namespace="bmd")),
+    url(r"^lit/", include("hawc.apps.lit.urls", namespace="lit")),
+    url(r"^summary/", include("hawc.apps.summary.urls", namespace="summary")),
+    url(r"^rob/", include("hawc.apps.riskofbias.urls", namespace="riskofbias")),
+    url(r"^mgmt/", include("hawc.apps.mgmt.urls", namespace="mgmt")),
     # Error-pages
     url(r"^403/$", views.Error403.as_view(), name="403"),
     url(r"^404/$", views.Error404.as_view(), name="404"),

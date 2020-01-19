@@ -1,19 +1,18 @@
 import os
+from pathlib import Path
 import sys
 from typing import List, Tuple
 
 from django.core.urlresolvers import reverse_lazy
 
-PROJECT_PATH = os.path.abspath(
-    os.path.join(os.path.dirname(__file__), os.path.join(os.pardir, os.pardir))
-)
-PROJECT_ROOT = os.path.abspath(os.path.join(PROJECT_PATH, os.pardir))
-PUBLIC_DATA_ROOT = os.environ.get("PUBLIC_DATA_ROOT", os.path.join(PROJECT_ROOT, "public"))
+PROJECT_PATH = Path(__file__).parents[2].absolute()
+PROJECT_ROOT = PROJECT_PATH.parent
+PUBLIC_DATA_ROOT = Path(os.environ.get("PUBLIC_DATA_ROOT", PROJECT_ROOT / "public"))
 
 DEBUG = False
 
 # Basic setup
-WSGI_APPLICATION = "main.wsgi.application"
+WSGI_APPLICATION = "hawc.main.wsgi.application"
 SECRET_KEY = "io^^q^q1))7*r0u@6i+6kx&ek!yxyf6^5vix_6io6k4kdn@@5t"
 LANGUAGE_CODE = "en-us"
 SITE_ID = 1
@@ -40,7 +39,7 @@ TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         "APP_DIRS": True,
-        "DIRS": [os.path.join(PROJECT_PATH, "templates")],
+        "DIRS": [str(PROJECT_PATH / "templates")],
         "OPTIONS": {
             "context_processors": (
                 "django.contrib.auth.context_processors.auth",
@@ -51,7 +50,7 @@ TEMPLATES = [
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
                 "django.template.context_processors.request",
-                "main.context_processors.from_settings",
+                "hawc.apps.utils.context_processors.from_settings",
             ),
         },
     },
@@ -69,7 +68,7 @@ MIDDLEWARE_CLASSES = (
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django.middleware.security.SecurityMiddleware",
-    "fix_ms_office_links.middleware.MicrosoftOfficeLinkMiddleware",
+    "hawc.apps.utils.middleware.MicrosoftOfficeLinkMiddleware",
 )
 
 
@@ -96,19 +95,19 @@ INSTALLED_APPS = (
     "rest_framework_extensions",
     "webpack_loader",
     # Custom apps
-    "utils",
-    "myuser",
-    "assessment",
-    "lit",
-    "riskofbias",
-    "study",
-    "animal",
-    "epi",
-    "epimeta",
-    "invitro",
-    "bmd",
-    "summary",
-    "mgmt",
+    "hawc.apps.utils",
+    "hawc.apps.myuser",
+    "hawc.apps.assessment",
+    "hawc.apps.lit",
+    "hawc.apps.riskofbias",
+    "hawc.apps.study",
+    "hawc.apps.animal",
+    "hawc.apps.epi",
+    "hawc.apps.epimeta",
+    "hawc.apps.invitro",
+    "hawc.apps.bmd",
+    "hawc.apps.summary",
+    "hawc.apps.mgmt",
 )
 
 
@@ -158,7 +157,7 @@ SESSION_CACHE_ALIAS = "default"
 
 
 # Server URL settings
-ROOT_URLCONF = "main.urls"
+ROOT_URLCONF = "hawc.main.urls"
 LOGIN_URL = reverse_lazy("user:login")
 LOGOUT_URL = reverse_lazy("user:logout")
 LOGIN_REDIRECT_URL = reverse_lazy("portal")
@@ -166,8 +165,8 @@ LOGIN_REDIRECT_URL = reverse_lazy("portal")
 
 # Static files
 STATIC_URL = "/static/"
-STATIC_ROOT = os.path.join(PUBLIC_DATA_ROOT, "static")
-STATICFILES_DIRS = (os.path.join(PROJECT_ROOT, "hawc", "static"),)
+STATIC_ROOT = str(PUBLIC_DATA_ROOT / "static")
+STATICFILES_DIRS = (str(PROJECT_PATH / "static"),)
 STATICFILES_FINDERS = (
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
@@ -176,7 +175,7 @@ STATICFILES_FINDERS = (
 
 # Media files
 MEDIA_URL = "/media/"
-MEDIA_ROOT = os.path.join(PUBLIC_DATA_ROOT, "media")
+MEDIA_ROOT = str(PUBLIC_DATA_ROOT / "media")
 FILE_UPLOAD_PERMISSIONS = 0o755
 
 
@@ -207,7 +206,7 @@ LOGGING = {
             "level": "INFO",
             "class": "logging.handlers.RotatingFileHandler",
             "formatter": "simple",
-            "filename": os.path.join(PROJECT_ROOT, "hawc.log"),
+            "filename": str(PROJECT_ROOT / "hawc.log"),
             "maxBytes": 10 * 1024 * 1024,  # 10 MB
             "backupCount": 10,
         },
@@ -221,10 +220,12 @@ LOGGING = {
 
 
 # commit information
+GIT_COMMIT_FILE = str(PROJECT_ROOT / ".gitcommit")
+
+
 def get_git_commit():
-    fn = os.path.join(PROJECT_PATH, ".gitcommit")
-    if os.path.exists(fn):
-        with open(fn, "r") as f:
+    if os.path.exists(GIT_COMMIT_FILE):
+        with open(GIT_COMMIT_FILE, "r") as f:
             return f.read()
     return None
 
@@ -274,7 +275,7 @@ REST_FRAMEWORK_EXTENSIONS = {"DEFAULT_BULK_OPERATION_HEADER_NAME": "X-CUSTOM-BUL
 WEBPACK_LOADER = {
     "DEFAULT": {
         "BUNDLE_DIR_NAME": "bundles/",
-        "STATS_FILE": os.path.join(PROJECT_PATH, "webpack-stats.json"),
+        "STATS_FILE": str(PROJECT_ROOT / "webpack-stats.json"),
         "POLL_INTERVAL": 0.1,
         "IGNORE": [".+/.map"],
     }

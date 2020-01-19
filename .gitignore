@@ -18,26 +18,24 @@ webpack-stats.json
 
 # folders
 *.egg-info/
-__pycache__
-.idea/*
-.ipynb_checkpoints
+__pycache__/
+.idea/
+.ipynb_checkpoints/
 .mypy_cache/
-dist
-docs/_build
-env
-node_modules/
-public/static
-public/media
-venv
 .vscode/
+_build/
+build/
+dist/
+node_modules/
+public/
+venv/
 
 # javascript
 webpack-stats.json
 package-lock.json
-.happypack/
 
 # keep folders; not contents
-hawc/static/bundles/*
+hawc/static/bundles/
 !hawc/static/bundles/.gitkeep
 
 compose/nginx/ssl/*
