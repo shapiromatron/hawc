@@ -20,6 +20,7 @@ router.register(
 router.register(r"dose-units", api.DoseUnits, base_name="dose_units")
 
 
+app_name = "animal"
 urlpatterns = [
     url(r"^api/", include(router.urls, namespace="api")),
     # Overall views

@@ -8,6 +8,7 @@ router.register(r"study", api.Study, base_name="study")
 router.register(r"final", api.FinalRobStudy, base_name="final")
 router.register(r"study-cleanup", api.StudyCleanupFieldsView, base_name="study-cleanup")
 
+app_name = "study"
 urlpatterns = [
     url(r"^api/", include(router.urls, namespace="api")),
     # study

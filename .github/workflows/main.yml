@@ -37,6 +37,7 @@ jobs:
         DJANGO_SETTINGS_MODULE: "hawc.main.settings.dev"
         CHEMSPIDER_TOKEN: ${{ secrets.CHEMSPIDER_TOKEN }}
       run: |
+        mv ci-webpack-stats.json webpack-stats.json
         pip install -r requirements/dev.txt
         make lint
         make test

@@ -10,6 +10,7 @@ from django.core.urlresolvers import reverse_lazy
 
 from . import forms, views
 
+app_name = "user"
 urlpatterns = [
     url(r"^login/$", login, {"authentication_form": forms.HAWCAuthenticationForm}, "login",),
     url(r"^logout/$", logout, {"next_page": "/"}, name="logout"),

@@ -7,6 +7,7 @@ router = DefaultRouter()
 router.register(r"tags", api.ReferenceFilterTag, base_name="tags")
 router.register(r"reference-cleanup", api.ReferenceCleanup, base_name="reference-cleanup")
 
+app_name = "lit"
 urlpatterns = [
     # overview
     url(r"^assessment/(?P<pk>\d+)/$", views.LitOverview.as_view(), name="overview"),

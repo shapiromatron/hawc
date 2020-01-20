@@ -6,7 +6,7 @@ from . import api, views
 router = DefaultRouter()
 router.register(r"task", api.Task, base_name="task")
 
-
+app_name = "mgmt"
 urlpatterns = [
     url(r"^api/", include(router.urls, namespace="api")),
     # user task-list

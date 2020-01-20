@@ -8,6 +8,7 @@ router = DefaultRouter()
 router.register(r"assessment", api.Assessment, base_name="assessment")
 router.register(r"endpoints", api.AssessmentEndpointList, base_name="endpoint_type")
 
+app_name = "assessment"
 urlpatterns = [
     # assessment objects
     url(r"^all/$", views.AssessmentFullList.as_view(), name="full_list"),

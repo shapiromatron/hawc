@@ -17,6 +17,7 @@ router.register(
 router.register(r"exposure-cleanup", api.ExposureCleanup, base_name="exposure-cleanup")
 
 
+app_name = "epi"
 urlpatterns = [
     url(r"^api/", include(router.urls, namespace="api")),
     # Criteria

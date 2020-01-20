@@ -8,6 +8,7 @@ router.register(r"protocol", api.MetaProtocol, base_name="protocol")
 router.register(r"result", api.MetaResult, base_name="result")
 
 
+app_name = "meta"
 urlpatterns = [
     # API
     url(r"^api/", include(router.urls, namespace="api")),

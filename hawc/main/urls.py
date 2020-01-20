@@ -17,26 +17,26 @@ urlpatterns = [
     url(r"^about/$", views.About.as_view(), name="about"),
     url(r"^contact/$", views.Contact.as_view(), name="contact"),
     # Apps
-    url(r"^user/", include("hawc.apps.myuser.urls", namespace="user")),
-    url(r"^assessment/", include("hawc.apps.assessment.urls", namespace="assessment")),
-    url(r"^study/", include("hawc.apps.study.urls", namespace="study")),
-    url(r"^ani/", include("hawc.apps.animal.urls", namespace="animal")),
-    url(r"^epi/", include("hawc.apps.epi.urls", namespace="epi")),
-    url(r"^epi-meta/", include("hawc.apps.epimeta.urls", namespace="meta")),
-    url(r"^in-vitro/", include("hawc.apps.invitro.urls", namespace="invitro")),
-    url(r"^bmd/", include("hawc.apps.bmd.urls", namespace="bmd")),
-    url(r"^lit/", include("hawc.apps.lit.urls", namespace="lit")),
-    url(r"^summary/", include("hawc.apps.summary.urls", namespace="summary")),
-    url(r"^rob/", include("hawc.apps.riskofbias.urls", namespace="riskofbias")),
-    url(r"^mgmt/", include("hawc.apps.mgmt.urls", namespace="mgmt")),
+    url(r"^user/", include("hawc.apps.myuser.urls")),
+    url(r"^assessment/", include("hawc.apps.assessment.urls")),
+    url(r"^study/", include("hawc.apps.study.urls")),
+    url(r"^ani/", include("hawc.apps.animal.urls")),
+    url(r"^epi/", include("hawc.apps.epi.urls")),
+    url(r"^epi-meta/", include("hawc.apps.epimeta.urls")),
+    url(r"^in-vitro/", include("hawc.apps.invitro.urls")),
+    url(r"^bmd/", include("hawc.apps.bmd.urls")),
+    url(r"^lit/", include("hawc.apps.lit.urls")),
+    url(r"^summary/", include("hawc.apps.summary.urls")),
+    url(r"^rob/", include("hawc.apps.riskofbias.urls")),
+    url(r"^mgmt/", include("hawc.apps.mgmt.urls")),
     # Error-pages
     url(r"^403/$", views.Error403.as_view(), name="403"),
     url(r"^404/$", views.Error404.as_view(), name="404"),
     url(r"^500/$", views.Error500.as_view(), name="500"),
-    # Change-log
+    # Changelog
     url(r"^update-session/", views.UpdateSession.as_view(), name="update_session"),
     # Admin
-    url(rf"^admin/{settings.ADMIN_URL_PREFIX}/", include(admin.site.urls), name="master_admin",),
+    url(rf"^admin/{settings.ADMIN_URL_PREFIX}/", include(admin.site.urls)),
     url(r"^selectable/", include("selectable.urls")),
 ]
 

@@ -283,7 +283,7 @@ def test_existing_pubmed_hero_add(assessment_data):
     assert ref.identifiers.count() == 2
 
 
-class TestFile:
+class RisFile:
     def __init__(self, fn):
         self.path = fn
 
@@ -300,7 +300,7 @@ def test_ris_import(assessment_data):
         slug="ris",
         description="-",
     )
-    search.import_file = TestFile(os.path.join(os.path.dirname(__file__), "data/single_ris.txt"))
+    search.import_file = RisFile(os.path.join(os.path.dirname(__file__), "data/single_ris.txt"))
 
     # check initially blank
     assert models.Reference.objects.count() == 0
@@ -335,7 +335,7 @@ def test_ris_import_with_existing(assessment_data):
         slug="ris",
         description="-",
     )
-    search.import_file = TestFile(os.path.join(os.path.dirname(__file__), "data/single_ris.txt"))
+    search.import_file = RisFile(os.path.join(os.path.dirname(__file__), "data/single_ris.txt"))
 
     # check initially blank
     assert models.Reference.objects.count() == 0

@@ -6,7 +6,7 @@ from . import api, views
 router = DefaultRouter()
 router.register(r"session", api.Session, base_name="session")
 
-
+app_name = "bmd"
 urlpatterns = [
     url(r"^api/", include(router.urls, namespace="api")),
     # BMD assessment-level settings

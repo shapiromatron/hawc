@@ -10,6 +10,7 @@ router.register(r"metrics", api.AssessmentMetricViewset, base_name="metrics")
 router.register(r"metrics/scores", api.AssessmentMetricScoreViewset, base_name="metric_scores")
 router.register(r"scores", api.AssessmentScoreViewset, base_name="scores")
 
+app_name = "riskofbias"
 urlpatterns = [
     url(r"^api/", include(router.urls, namespace="api")),
     # modify assessment rob settings

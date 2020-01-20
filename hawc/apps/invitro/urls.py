@@ -12,6 +12,7 @@ router.register(r"category", api.IVEndpointCategory, base_name="category")
 router.register(r"ivendpoint-cleanup", api.IVEndpointCleanup, base_name="ivendpoint-cleanup")
 router.register(r"ivchemical-cleanup", api.IVChemicalCleanup, base_name="ivchemical-cleanup")
 
+app_name = "invitro"
 urlpatterns = [
     # experiment
     url(
