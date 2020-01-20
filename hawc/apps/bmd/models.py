@@ -107,7 +107,7 @@ class LogicField(models.Model):
         """
         Build default BMD decision logic.
         """
-        fn = str(settings.PROJECT_PATH, "bmd/fixtures/logic.json")
+        fn = str(settings.PROJECT_PATH / "apps/bmd/fixtures/logic.json")
         with open(fn, "r") as f:
             text = json.loads(f.read(), object_pairs_hook=collections.OrderedDict)
 

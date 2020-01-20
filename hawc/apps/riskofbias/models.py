@@ -1,7 +1,6 @@
 import collections
 import json
 import logging
-import os
 from typing import Dict, List, Tuple
 
 from django.conf import settings
@@ -58,7 +57,7 @@ class RiskOfBiasDomain(models.Model):
         else:
             raise ValueError("Unknown HAWC flavor")
 
-        fn = str(settings.PROJECT_PATH / f"riskofbias/fixtures/{fixture}")
+        fn = str(settings.PROJECT_PATH / f"apps/riskofbias/fixtures/{fixture}")
         with open(fn, "r") as f:
             objects = json.loads(f.read(), object_pairs_hook=collections.OrderedDict)
 

@@ -1,6 +1,6 @@
 import os
-from pathlib import Path
 import sys
+from pathlib import Path
 from typing import List, Tuple
 
 from django.core.urlresolvers import reverse_lazy
@@ -115,10 +115,11 @@ INSTALLED_APPS = (
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": os.getenv("DJANGO_DB_NAME"),
-        "USER": os.getenv("DJANGO_DB_USER"),
-        "PASSWORD": os.getenv("DJANGO_DB_PW"),
-        "HOST": os.getenv("DJANGO_DB_HOST", ""),
+        "NAME": os.getenv("DJANGO_DB_NAME", "hawc"),
+        "USER": os.getenv("DJANGO_DB_USER", ""),
+        "PASSWORD": os.getenv("DJANGO_DB_PW", ""),
+        "HOST": os.getenv("DJANGO_DB_HOST", "localhost"),
+        "PORT": os.getenv("DJANGO_DB_PORT", ""),
         "CONN_MAX_AGE": 300,
     }
 }

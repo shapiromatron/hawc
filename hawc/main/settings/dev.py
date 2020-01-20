@@ -29,12 +29,10 @@ DEBUG_TOOLBAR_CONFIG = dict(JQUERY_URL="/static/debug/jquery/1.9.1/jquery.js",)
 
 CACHES = {
     "default": {
-        "BACKEND": "django.core.cache.backends.db.DatabaseCache",
-        "LOCATION": "hawc_cache_table",
-        "TIMEOUT": 60 * 60 * 24,  # seconds
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "TIMEOUT": 60 * 10,  # 10 minutes (in seconds)
     }
 }
-
 
 LOGGING["loggers"][""]["handlers"] = ["console"]
 LOGGING["loggers"][""]["level"] = "INFO"

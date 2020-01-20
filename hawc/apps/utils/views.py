@@ -291,7 +291,7 @@ class CanCreateMixin(object):
         logging.debug("Permissions checked")
         if self.request.user.is_superuser:
             return True
-        elif self.request.user.is_anonymous():
+        elif self.request.user.is_anonymous:
             return False
         else:
             return (assessment.editable is True) and (

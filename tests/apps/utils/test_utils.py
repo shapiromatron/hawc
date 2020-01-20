@@ -2,21 +2,8 @@ from django.core.exceptions import ValidationError
 from django.http import HttpRequest, HttpResponse
 from django.test import TestCase
 
-from .middleware import MicrosoftOfficeLinkMiddleware
-from . import validators
-
-
-class FormTester(TestCase):
-    def createTestForm(self, inps, *args, **kwargs):
-        """
-        Should return an form instance for testing
-        """
-        raise NotImplementedError("Requries override.")
-
-    def fieldHasError(self, inps, field, msg, *args, **kwargs):
-        form = self.createTestForm(inps, *args, **kwargs)
-        form.full_clean()
-        self.assertTrue(msg in form.errors[field])
+from hawc.apps.utils import validators
+from hawc.apps.utils.middleware import MicrosoftOfficeLinkMiddleware
 
 
 class CustomURLValidtor(TestCase):

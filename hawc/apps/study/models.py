@@ -422,7 +422,7 @@ class Study(Reference):
         # TODO - remove, or user super()? this is almost already implemented with standard methods?
         if user.is_superuser:
             return True
-        elif user.is_anonymous():
+        elif user.is_anonymous:
             return False
         else:
             return self.editable and (

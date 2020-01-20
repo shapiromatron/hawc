@@ -18,14 +18,14 @@ class UserCreationTests(TestCase):
                 "last_name": "Malcovich",
                 "password1": "simple",
                 "password2": "simple",
-                "accept_license": "",
+                "license_v2_accepted": "",
             },
         )
         self.assertFormError(response, "form", "email", "Enter a valid email address.")
         self.assertFormError(
             response,
             "form",
-            "accept_license",
+            "license_v2_accepted",
             "License must be accepted in order to create an account.",
         )
         self.assertFormError(
@@ -47,7 +47,7 @@ class UserCreationTests(TestCase):
                 "last_name": "Malcovich",
                 "password1": "abcEasy@s123",
                 "password2": "abcEasy@s1234",
-                "accept_license": "t",
+                "license_v2_accepted": "t",
             },
         )
         self.assertFormError(response, "form", "password2", "Passwords don't match")
@@ -62,7 +62,7 @@ class UserCreationTests(TestCase):
             "last_name": "Malcovich",
             "password1": "abcEasy@s123",
             "password2": "abcEasy@s123",
-            "accept_license": "t",
+            "license_v2_accepted": "t",
         }
 
         c = Client()
@@ -86,7 +86,7 @@ class UserCreationTests(TestCase):
                 "last_name": "Malcovich",
                 "password1": "asdf@asdf1",
                 "password2": "asdf@asdf1",
-                "accept_license": "true",
+                "license_v2_accepted": "true",
             },
         )
         self.assertTrue(models.HAWCUser.objects.filter(email=email).exists())

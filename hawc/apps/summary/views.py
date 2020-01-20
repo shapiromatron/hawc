@@ -62,7 +62,7 @@ class SummaryTextCreate(BaseCreate):
     form_class = forms.SummaryTextForm
 
     def post(self, request, *args, **kwargs):
-        if not request.is_ajax() or not request.user.is_authenticated():
+        if not request.is_ajax() or not request.user.is_authenticated:
             raise HttpResponseNotAllowed()
         return super().post(request, *args, **kwargs)
 

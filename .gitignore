@@ -10,7 +10,7 @@
 .eslintcache
 .gitcommit
 .pytest_cache
-bin/*local.sh
+bin/dev.local.sh
 package-lock.json
 celerybeat*
 hawc/main/settings/local.py
