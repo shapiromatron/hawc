@@ -82,19 +82,19 @@ class DataPivotEndpoint(FlatFileExporter):
         if self.queryset.count() > 0:
             IVEndpointCategory = apps.get_model("invitro", "IVEndpointCategory")
             num_cats = IVEndpointCategory.get_maximum_depth(self.queryset[0].assessment_id)
-        header.extend(["Category {0}".format(i) for i in range(1, num_cats + 1)])
+        header.extend([f"Category {i}" for i in range(1, num_cats + 1)])
 
         num_doses = self.queryset.model.max_dose_count(self.queryset)
         rng = range(1, num_doses + 1)
-        header.extend(["Dose {0}".format(i) for i in rng])
-        header.extend(["Change Control {0}".format(i) for i in rng])
-        header.extend(["Significant {0}".format(i) for i in rng])
-        header.extend(["Cytotoxicity {0}".format(i) for i in rng])
+        header.extend([f"Dose {i}" for i in rng])
+        header.extend([f"Change Control {i}" for i in rng])
+        header.extend([f"Significant {i}" for i in rng])
+        header.extend([f"Cytotoxicity {i}" for i in rng])
 
         num_bms = self.queryset.model.max_benchmark_count(self.queryset)
         rng = range(1, num_bms + 1)
-        header.extend(["Benchmark Type {0}".format(i) for i in rng])
-        header.extend(["Benchmark Value {0}".format(i) for i in rng])
+        header.extend([f"Benchmark Type {i}" for i in rng])
+        header.extend([f"Benchmark Value {i}" for i in rng])
 
         self.num_cats = num_cats
         self.num_doses = num_doses

@@ -434,7 +434,7 @@ class FullExport(BaseList):
         exporter = exports.EndpointGroupFlatComplete(
             self.object_list,
             export_format="excel",
-            filename="{}-animal-bioassay".format(self.assessment),
+            filename=f"{self.assessment}-animal-bioassay",
             sheet_name="bioassay-analysis",
             assessment=self.assessment,
         )
@@ -451,7 +451,7 @@ class EndpointExport(FullExport):
         exporter = exports.EndpointSummary(
             self.object_list,
             export_format="excel",
-            filename="{}-animal-bioassay".format(self.assessment),
+            filename=f"{self.assessment}-animal-bioassay",
             sheet_name="endpoint-summary",
             assessment=self.assessment,
         )

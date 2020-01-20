@@ -234,7 +234,7 @@ def get_git_commit():
 GIT_COMMIT = get_git_commit()
 COMMIT_URL = "https://github.com/shapiromatron/hawc/"
 if GIT_COMMIT:
-    COMMIT_URL = COMMIT_URL + "commit/{0}/".format(GIT_COMMIT)
+    COMMIT_URL = COMMIT_URL + f"commit/{GIT_COMMIT}/"
 
 
 # PubMed settings

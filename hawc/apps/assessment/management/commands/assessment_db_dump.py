@@ -159,7 +159,7 @@ class Command(UnicodeCommand):
         fields = self.get_select_fields(qs.model)
         select_include = self.generate_select(fields, db_table)
         qry_start = "SELECT DISTINCT" if "DISTINCT" in qry else "SELECT"
-        qry = "{} {} {}".format(qry_start, select_include, qry[qry.find(" FROM") :])
+        qry = f"{qry_start} {select_include} {qry[qry.find(' FROM'):]}"
         self.convert_copy(db_table, fields, qry)
 
         for m2m in model._meta.many_to_many:
@@ -181,7 +181,7 @@ class Command(UnicodeCommand):
 
             if base_exports.lookup(db_table):
                 self.base_tables_handled.append(db_table)
-                self.stdout.write("\n--- TABLE {}\n".format(db_table))
+                self.stdout.write(f"\n--- TABLE {db_table}\n")
                 qs = None
 
                 qs = base_exports.lookup(db_table)(model, self.id_list)
@@ -202,7 +202,7 @@ class Command(UnicodeCommand):
                 continue
             self.table_handled.append(db_table)
 
-            self.stdout.write("\n--- TABLE {}\n".format(db_table))
+            self.stdout.write(f"\n--- TABLE {db_table}\n")
             qs = None
             if hasattr(model.objects, "assessment_qs"):
                 qs = model.objects.assessment_qs(assessment_id)
@@ -232,20 +232,18 @@ class Command(UnicodeCommand):
             ids = "-1"
 
         matchfield = field.m2m_column_name()
-        self.stdout.write("\n--- TABLE {}\n".format(db_table))
+        self.stdout.write(f"\n--- TABLE {db_table}\n")
         model = getattr(field.model, field.name).through
         fields = self.get_select_fields(model)
         select_include = self.generate_select(fields, db_table)
-        qry = 'SELECT {} FROM "{}" WHERE "{}"."{}" IN ({})'.format(
-            select_include, db_table, db_table, matchfield, ids,
-        )
+        qry = f'SELECT {select_include} FROM "{db_table}" WHERE "{db_table}"."{matchfield}" IN ({ids})'
         self.convert_copy(db_table, fields, qry)
 
     def convert_copy(self, db_table, fields, qry):
-        fields = ['"{}"'.format(fld) for fld in fields]
+        fields = [f'"{fld}"' for fld in fields]
         selects = ", ".join(fields)
-        header = "COPY {} ({}) FROM stdin;\n".format(db_table, selects)
-        copy = "COPY ({}) TO STDOUT;".format(qry)
+        header = f"COPY {db_table} ({selects}) FROM stdin;\n"
+        copy = f"COPY ({qry}) TO STDOUT;"
         self.stdout.write(header)
         self.cursor.copy_expert(copy, self.stdout)
         self.stdout.write("\\.\n")
@@ -260,7 +258,7 @@ class Command(UnicodeCommand):
         return db_cols
 
     def generate_select(self, cols, db_table):
-        select = ['"{}"."{}"'.format(db_table, col) for col in cols]
+        select = [f'"{db_table}"."{col}"' for col in cols]
         return ", ".join(select)
 
     def handle(self, *args, **options):
@@ -272,7 +270,7 @@ class Command(UnicodeCommand):
         for assessment_id in self.id_list:
             assessment = Assessment.objects.filter(id=assessment_id).first()
             if not assessment:
-                raise CommandError("Assessment {} not found.".format(assessment_id))
+                raise CommandError(f"Assessment {assessment_id} not found.")
 
             self.write_header(assessment)
             self.write_data(assessment.id)

@@ -52,3 +52,6 @@ format:  ## Modify code using black & show flake8 issues
 
 test:  ## Run python tests
 	@py.test
+
+flynt:  ## Run flynt (optional) using preferred config
+	@flynt --verbose --line_length=120 hawc/

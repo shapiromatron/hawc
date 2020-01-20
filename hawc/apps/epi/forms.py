@@ -177,7 +177,7 @@ class StudyPopulationForm(forms.ModelForm):
 
         if self.instance.id:
             inputs = {
-                "legend_text": "Update {}".format(self.instance),
+                "legend_text": f"Update {self.instance}",
                 "help_text": self.UPDATE_HELP_TEXT,
                 "cancel_url": self.instance.get_absolute_url(),
             }
@@ -320,7 +320,7 @@ class ExposureForm(forms.ModelForm):
 
         if self.instance.id:
             inputs = {
-                "legend_text": "Update {}".format(self.instance),
+                "legend_text": f"Update {self.instance}",
                 "help_text": self.HELP_TEXT_UPDATE,
                 "cancel_url": self.instance.get_absolute_url(),
             }
@@ -414,7 +414,7 @@ class OutcomeForm(forms.ModelForm):
 
         if self.instance.id:
             inputs = {
-                "legend_text": "Update {}".format(self.instance),
+                "legend_text": f"Update {self.instance}",
                 "help_text": self.HELP_TEXT_UPDATE,
                 "cancel_url": self.instance.get_absolute_url(),
             }
@@ -662,7 +662,7 @@ class ComparisonSet(forms.ModelForm):
             else:
                 url = self.instance.study_population.get_absolute_url()
             inputs = {
-                "legend_text": "Update {}".format(self.instance),
+                "legend_text": f"Update {self.instance}",
                 "help_text": self.HELP_TEXT_UPDATE,
                 "cancel_url": url,
             }
@@ -711,7 +711,7 @@ class SingleGroupForm(GroupForm):
                 widget.attrs["rows"] = 3
 
         inputs = {
-            "legend_text": "Update {}".format(self.instance),
+            "legend_text": f"Update {self.instance}",
             "help_text": self.HELP_TEXT_UPDATE,
             "cancel_url": self.instance.get_absolute_url(),
         }
@@ -898,7 +898,7 @@ class ResultForm(forms.ModelForm):
 
         if self.instance.id:
             inputs = {
-                "legend_text": "Update {}".format(self.instance),
+                "legend_text": f"Update {self.instance}",
                 "help_text": self.HELP_TEXT_UPDATE,
                 "cancel_url": self.instance.get_absolute_url(),
             }

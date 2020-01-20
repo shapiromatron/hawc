@@ -158,12 +158,7 @@ class EndpointByAssessmentLookup(RelatedLookup):
 
     def get_item_label(self, obj):
         return mark_safe(
-            "{} | {} | {} | {}".format(
-                obj.animal_group.experiment.study,
-                obj.animal_group.experiment,
-                obj.animal_group,
-                obj,
-            )
+            f"{obj.animal_group.experiment.study} | {obj.animal_group.experiment} | {obj.animal_group} | {obj}"
         )
 
     def get_item_value(self, obj):
@@ -186,9 +181,7 @@ class EndpointIdByAssessmentLookup(EndpointByAssessmentLookup):
 
 class EndpointByAssessmentLookupHtml(EndpointByAssessmentLookup):
     def get_item_value(self, obj):
-        return '<a href="{}" target="_blank">{}</a>'.format(
-            obj.get_absolute_url(), self.get_item_label(obj)
-        )
+        return f'<a href="{obj.get_absolute_url()}" target="_blank">{self.get_item_label(obj)}</a>'
 
 
 registry.register(ExperimentByStudyLookup)

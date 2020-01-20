@@ -117,7 +117,7 @@ class IVCellType(models.Model):
     COPY_NAME = "ivcelltypes"
 
     def __str__(self):
-        return "{} {} {}".format(self.cell_type, self.species, self.tissue)
+        return f"{self.cell_type} {self.species} {self.tissue}"
 
     def get_crumbs(self):
         return get_crumbs(self, self.study)

@@ -32,7 +32,7 @@ class Command(BaseCommand):
             model = apps.get_model(options["appname"], options["modelname"])
             qs = model.objects.all()
         else:
-            raise CommandError("Requires three arguments: {}".format(options))
+            raise CommandError(f"Requires three arguments: {options}")
 
         if options.get("test_only"):
             self.test_clean_field(qs, options["fieldname"])
@@ -50,13 +50,12 @@ class Command(BaseCommand):
                     obj.save()
                     mods += 1
                     self.stdout.write(
-                        "Updated {} {}".format(qs.model.__name__, obj.pk),
-                        self.style.HTTP_NOT_MODIFIED,
+                        f"Updated {qs.model.__name__} {obj.pk}", self.style.HTTP_NOT_MODIFIED,
                     )
                 except Exception as e:
                     print(e, obj.id)
 
-        self.stdout.write("{} objects were modified".format(mods), self.style.SQL_FIELD)
+        self.stdout.write(f"{mods} objects were modified", self.style.SQL_FIELD)
 
     def test_clean_field(self, qs, field):
         """
@@ -72,7 +71,7 @@ class Command(BaseCommand):
 
         if len(rows) > 0:
             # get filename
-            fn = str(settings.PROJECT_PATH / "{}-{}.xlsx".format(qs.model.__name__, field))
+            fn = str(settings.PROJECT_PATH / f"{qs.model.__name__}-{field}.xlsx")
 
             # create WB and WS
             wb = xlsxwriter.Workbook(fn)
@@ -92,9 +91,9 @@ class Command(BaseCommand):
                 ws.write(i + 1, 2, row[2])
 
             wb.close()
-            self.stdout.write("Output XLSX: {}".format(fn), self.style.SQL_FIELD)
+            self.stdout.write(f"Output XLSX: {fn}", self.style.SQL_FIELD)
 
-        self.stdout.write("{} objects would be modified".format(len(rows)), self.style.SQL_FIELD)
+        self.stdout.write(f"{len(rows)} objects would be modified", self.style.SQL_FIELD)
 
     def _cleanup_text(self, s):
         """

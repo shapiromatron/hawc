@@ -368,7 +368,7 @@ class PrefilterMixin(object):
         elif field_name == "epieffects":
             choices = Outcome.objects.get_effect_choices(assessment_id)
         else:
-            raise ValueError("Unknown field name: {}".format(field_name))
+            raise ValueError(f"Unknown field name: {field_name}")
 
         return choices
 
@@ -518,17 +518,14 @@ class SummaryTextForm(forms.ModelForm):
             if type(widget) != forms.CheckboxInput:
                 widget.attrs["class"] = "span12"
 
+        cancel_url = reverse("summary:list", kwargs={"pk": self.instance.assessment.id})
         inputs = {
             "form_actions": [
                 cfl.Submit("save", "Save"),
                 cfl.HTML(
                     '<a class="btn btn-danger" id="deleteSTBtn" href="#deleteST" data-toggle="modal">Delete</a>'
                 ),
-                cfl.HTML(
-                    '<a class="btn" href="{0}" >Cancel</a>'.format(
-                        reverse("summary:list", kwargs={"pk": self.instance.assessment.id})
-                    )
-                ),
+                cfl.HTML(f'<a class="btn" href="{cancel_url}" >Cancel</a>'),
             ]
         }
         helper = BaseFormHelper(self, **inputs)
@@ -562,7 +559,7 @@ class VisualForm(forms.ModelForm):
 
         if self.instance.id:
             inputs = {
-                "legend_text": "Update {}".format(self.instance),
+                "legend_text": f"Update {self.instance}",
                 "help_text": "Update an existing visualization.",
                 "cancel_url": self.instance.get_absolute_url(),
             }
@@ -680,7 +677,7 @@ class DataPivotForm(forms.ModelForm):
 
         if self.instance.id:
             inputs = {
-                "legend_text": "Update {}".format(self.instance),
+                "legend_text": f"Update {self.instance}",
                 "help_text": "Update an existing data-pivot.",
                 "cancel_url": self.instance.get_absolute_url(),
             }
@@ -798,7 +795,7 @@ class DataPivotSettingsForm(forms.ModelForm):
 
 class DataPivotModelChoiceField(forms.ModelChoiceField):
     def label_from_instance(self, obj):
-        return "{}: {}".format(obj.assessment, obj)
+        return f"{obj.assessment}: {obj}"
 
 
 class DataPivotSelectorForm(forms.Form):

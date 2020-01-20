@@ -51,7 +51,7 @@ class SearchForm(forms.ModelForm):
     def setHelper(self):
         if self.instance.id:
             inputs = {
-                "legend_text": "Update {}".format(self.instance),
+                "legend_text": f"Update {self.instance}",
                 "help_text": "Update an existing literature search",
                 "cancel_url": self.instance.get_absolute_url(),
             }
@@ -90,7 +90,7 @@ class ImportForm(SearchForm):
     def setHelper(self):
         if self.instance.id:
             inputs = {
-                "legend_text": "Update {}".format(self.instance),
+                "legend_text": f"Update {self.instance}",
                 "help_text": "Update an existing literature search",
                 "cancel_url": self.instance.get_absolute_url(),
             }
@@ -156,7 +156,7 @@ class RISForm(SearchForm):
     def setHelper(self):
         if self.instance.id:
             inputs = {
-                "legend_text": "Update {}".format(self.instance),
+                "legend_text": f"Update {self.instance}",
                 "help_text": "Update an existing literature search",
                 "cancel_url": self.instance.get_absolute_url(),
             }
@@ -237,7 +237,7 @@ class RISForm(SearchForm):
 
 class SearchModelChoiceField(forms.ModelChoiceField):
     def label_from_instance(self, obj):
-        return "{} | {{{}}} | {}".format(obj.assessment, obj.get_search_type_display(), obj)
+        return f"{obj.assessment} | {{{obj.get_search_type_display()}}} | {obj}"
 
 
 class SearchSelectorForm(forms.Form):

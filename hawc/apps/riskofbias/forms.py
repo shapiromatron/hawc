@@ -195,7 +195,7 @@ class RoBReviewersForm(forms.ModelForm):
 
         if reviewers > 1:
             for i in range(reviewers):
-                author_field = "author-{}".format(i)
+                author_field = f"author-{i}"
                 self.fields[author_field] = selectable.AutoCompleteSelectField(
                     lookup_class=AssessmentTeamMemberOrHigherLookup,
                     label="Reviewer",

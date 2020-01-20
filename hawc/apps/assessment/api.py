@@ -186,7 +186,7 @@ class AssessmentEndpointList(AssessmentViewset):
                 "count": instance.endpoint_count,
                 "title": "animal bioassay endpoints",
                 "type": "ani",
-                "url": "{}{}".format(app_url, "ani/"),
+                "url": f"{app_url}ani/",
             }
         )
 
@@ -196,7 +196,7 @@ class AssessmentEndpointList(AssessmentViewset):
                 "count": count,
                 "title": "animal bioassay experiments",
                 "type": "experiment",
-                "url": "{}{}".format(app_url, "experiment/"),
+                "url": f"{app_url}experiment/",
             }
         )
 
@@ -206,7 +206,7 @@ class AssessmentEndpointList(AssessmentViewset):
                 "count": count,
                 "title": "animal bioassay animal groups",
                 "type": "animal-groups",
-                "url": "{}{}".format(app_url, "animal-groups/"),
+                "url": f"{app_url}animal-groups/",
             }
         )
 
@@ -216,7 +216,7 @@ class AssessmentEndpointList(AssessmentViewset):
                 "count": count,
                 "title": "animal bioassay dosing regimes",
                 "type": "dosing-regime",
-                "url": "{}{}".format(app_url, "dosing-regime/"),
+                "url": f"{app_url}dosing-regime/",
             }
         )
 
@@ -226,7 +226,7 @@ class AssessmentEndpointList(AssessmentViewset):
                 "count": instance.outcome_count,
                 "title": "epidemiological outcomes assessed",
                 "type": "epi",
-                "url": "{}{}".format(app_url, "epi/"),
+                "url": f"{app_url}epi/",
             }
         )
 
@@ -236,7 +236,7 @@ class AssessmentEndpointList(AssessmentViewset):
                 "count": count,
                 "title": "epi study populations",
                 "type": "study-populations",
-                "url": "{}{}".format(app_url, "study-populations/"),
+                "url": f"{app_url}study-populations/",
             }
         )
 
@@ -246,7 +246,7 @@ class AssessmentEndpointList(AssessmentViewset):
                 "count": count,
                 "title": "epi exposures",
                 "type": "exposures",
-                "url": "{}{}".format(app_url, "exposures/"),
+                "url": f"{app_url}exposures/",
             }
         )
 
@@ -256,7 +256,7 @@ class AssessmentEndpointList(AssessmentViewset):
                 "count": instance.ivendpoint_count,
                 "title": "in vitro endpoints",
                 "type": "in-vitro",
-                "url": "{}{}".format(app_url, "in-vitro/"),
+                "url": f"{app_url}in-vitro/",
             }
         )
 
@@ -266,19 +266,14 @@ class AssessmentEndpointList(AssessmentViewset):
                 "count": count,
                 "title": "in vitro chemicals",
                 "type": "in-vitro-chemical",
-                "url": "{}{}".format(app_url, "in-vitro-chemical/"),
+                "url": f"{app_url}in-vitro-chemical/",
             }
         )
 
         # study
         count = apps.get_model("study", "Study").objects.get_qs(instance.id).count()
         instance.items.append(
-            {
-                "count": count,
-                "title": "studies",
-                "type": "study",
-                "url": "{}{}".format(app_url, "study/"),
-            }
+            {"count": count, "title": "studies", "type": "study", "url": f"{app_url}study/"}
         )
 
         # lit
@@ -288,7 +283,7 @@ class AssessmentEndpointList(AssessmentViewset):
                 "count": count,
                 "title": "references",
                 "type": "reference",
-                "url": "{}{}".format(app_url, "reference/"),
+                "url": f"{app_url}reference/",
             }
         )
 

@@ -23,8 +23,8 @@ def get_gen_species_strain_sex(e, withN=False):
     if sex_symbol == "NR":
         sex_symbol = "sex=NR"
 
-    return "{}{}, {} ({}{})".format(
-        gen, e["animal_group"]["species"], e["animal_group"]["strain"], sex_symbol, ns_txt,
+    return (
+        f"{gen}{e['animal_group']['species']}, {e['animal_group']['strain']} ({sex_symbol}{ns_txt})"
     )
 
 
@@ -34,7 +34,7 @@ def get_treatment_period(exp, dr):
         txt = txt[: txt.find("(")]
 
     if dr["duration_exposure_text"]:
-        txt = "{0} ({1})".format(txt, dr["duration_exposure_text"])
+        txt = f"{txt} ({dr['duration_exposure_text']})"
 
     return txt
 
@@ -54,7 +54,7 @@ class EndpointGroupFlatComplete(FlatFileExporter):
         header.extend(models.AnimalGroup.flat_complete_header_row())
         header.extend(models.DosingRegime.flat_complete_header_row())
         header.extend(models.Endpoint.flat_complete_header_row())
-        header.extend(["doses-{}".format(d) for d in self.doses])
+        header.extend([f"doses-{d}" for d in self.doses])
         header.extend(models.EndpointGroup.flat_complete_header_row())
         return header
 
@@ -120,7 +120,7 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
     @classmethod
     def _get_doses_str(cls, doses):
         values = ", ".join([str(float(d["dose"])) for d in doses])
-        return "{0} {1}".format(values, cls._get_dose_units(doses))
+        return f"{values} {cls._get_dose_units(doses)}"
 
     @classmethod
     def _get_dose(cls, doses, idx):
@@ -131,18 +131,18 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
 
     @classmethod
     def _get_species_strain(cls, e):
-        return "{} {}".format(e["animal_group"]["species"], e["animal_group"]["strain"])
+        return f"{e['animal_group']['species']} {e['animal_group']['strain']}"
 
     @classmethod
     def _get_tags(cls, e):
         effs = [tag["name"] for tag in e["effects"]]
         if len(effs) > 0:
-            return "|{0}|".format("|".join(effs))
+            return f"|{'|'.join(effs)}|"
         return ""
 
     @classmethod
     def _get_observation_time_and_time_units(cls, e):
-        return "{} {}".format(e["observation_time"], e["observation_time_units"])
+        return f"{e['observation_time']} {e['observation_time_units']}"
 
     def _get_header_row(self):
         # move qs.distinct() call here so we can make qs annotations.
@@ -395,8 +395,8 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
 
         num_doses = self.queryset.model.max_dose_count(self.queryset)
         rng = range(1, num_doses + 1)
-        header.extend(["Dose {0}".format(i) for i in rng])
-        header.extend(["Significant {0}".format(i) for i in rng])
+        header.extend([f"Dose {i}" for i in rng])
+        header.extend([f"Significant {i}" for i in rng])
         header.extend(list(self.rob_headers.values()))
 
         # distinct applied last so that queryset can add annotations above
@@ -561,7 +561,7 @@ class EndpointSummary(FlatFileExporter):
         def getDoses(doses, unit):
 
             doses = [d["dose"] for d in doses if d["dose_units"]["name"] == unit]
-            return ["{0:g}".format(d) for d in doses]
+            return [f"{d:g}" for d in doses]
 
         def getResponses(groups):
             resps = []
@@ -569,11 +569,11 @@ class EndpointSummary(FlatFileExporter):
                 txt = ""
                 if grp["isReported"]:
                     if grp["response"] is not None:
-                        txt = "{0:g}".format(grp["response"])
+                        txt = f"{grp['response']:g}"
                     else:
-                        txt = "{0:g}".format(grp["incidence"])
+                        txt = f"{grp['incidence']:g}"
                     if grp["variance"] is not None:
-                        txt = "{0} ± {1:g}".format(txt, grp["variance"])
+                        txt = f"{txt} ± {grp['variance']:g}"
                 resps.append(txt)
             return resps
 
@@ -581,7 +581,7 @@ class EndpointSummary(FlatFileExporter):
             txts = []
             for i in range(len(doses)):
                 if len(responses) > i and len(responses[i]) > 0:
-                    txt = "{} {}: {}".format(doses[i], units, responses[i])
+                    txt = f"{doses[i]} {units}: {responses[i]}"
                     txts.append(txt)
             return ", ".join(txts)
 

@@ -64,7 +64,7 @@ class ExperimentForm(ModelForm):
 
         if self.instance.id:
             inputs = {
-                "legend_text": "Update {}".format(self.instance),
+                "legend_text": f"Update {self.instance}",
                 "help_text": "Update an existing experiment.",
                 "cancel_url": self.instance.get_absolute_url(),
             }
@@ -174,7 +174,7 @@ class AnimalGroupForm(ModelForm):
 
         if self.instance.id:
             inputs = {
-                "legend_text": "Update {}".format(self.instance),
+                "legend_text": f"Update {self.instance}",
                 "help_text": "Update an existing animal-group.",
                 "cancel_url": self.instance.get_absolute_url(),
             }
@@ -323,9 +323,7 @@ class BaseDoseGroupFormSet(BaseModelFormSet):
         for dose_unit in dose_units.values():
             if dose_unit != num_dose_groups:
                 raise forms.ValidationError(
-                    "<ul><li>Each dose-type must have {} dose groups</li></ul>".format(
-                        num_dose_groups
-                    )
+                    f"<ul><li>Each dose-type must have {num_dose_groups} dose groups</li></ul>"
                 )
 
         if not all(list(dose_group.values())[0] == group for group in list(dose_group.values())):
@@ -343,9 +341,9 @@ def dosegroup_formset_factory(groups, num_dose_groups):
     }
 
     for i, v in enumerate(groups):
-        data["form-{}-dose_group_id".format(i)] = str(v.get("dose_group_id", ""))
-        data["form-{}-dose_units".format(i)] = str(v.get("dose_units", ""))
-        data["form-{}-dose".format(i)] = str(v.get("dose", ""))
+        data[f"form-{i}-dose_group_id"] = str(v.get("dose_group_id", ""))
+        data[f"form-{i}-dose_units"] = str(v.get("dose_units", ""))
+        data[f"form-{i}-dose"] = str(v.get("dose", ""))
 
     FS = modelformset_factory(
         models.DoseGroup, form=DoseGroupForm, formset=BaseDoseGroupFormSet, extra=len(groups),
@@ -447,7 +445,7 @@ class EndpointForm(ModelForm):
     def setHelper(self):
         if self.instance.id:
             inputs = {
-                "legend_text": "Update {}".format(self.instance),
+                "legend_text": f"Update {self.instance}",
                 "help_text": "Update an existing endpoint.",
                 "cancel_url": self.instance.get_absolute_url(),
             }

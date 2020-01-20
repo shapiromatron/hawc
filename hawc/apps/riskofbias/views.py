@@ -150,7 +150,7 @@ class ARoBReviewersUpdate(ProjectManagerOrHigherMixin, BaseUpdateWithFormset):
             required_fields = ["reference_ptr", "final_author"]
             if n == 1:
                 n = 0
-            [required_fields.append("author-{}".format(i)) for i in range(n)]
+            [required_fields.append(f"author-{i}") for i in range(n)]
             for rob_form in formset.forms:
                 for field in rob_form.fields:
                     if field not in required_fields:

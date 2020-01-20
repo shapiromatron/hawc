@@ -546,7 +546,7 @@ class DosingRegime(models.Model):
     COPY_NAME = "dose_regime"
 
     def __str__(self):
-        return "{0} {1}".format(self.dosed_animals, self.get_route_of_exposure_display())
+        return f"{self.dosed_animals} {self.get_route_of_exposure_display()}"
 
     def get_absolute_url(self):
         return self.dosed_animals.get_absolute_url()
@@ -645,7 +645,7 @@ class DoseGroup(models.Model):
         ordering = ("dose_units", "dose_group_id")
 
     def __str__(self):
-        return "{0} {1}".format(self.dose, self.dose_units)
+        return f"{self.dose} {self.dose_units}"
 
     @staticmethod
     def flat_complete_data_row(ser_full, units, idx):
@@ -1420,7 +1420,7 @@ class EndpointGroup(ConfidenceIntervalsMixin, models.Model):
             else:
                 return str(nmin)
         else:
-            return "{}-{}".format(nmin, nmax)
+            return f"{nmin}-{nmax}"
 
     @staticmethod
     def flat_complete_header_row():

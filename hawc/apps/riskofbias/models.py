@@ -164,7 +164,7 @@ class RiskOfBias(models.Model):
         ordering = ("final",)
 
     def __str__(self):
-        return "{} (Risk of bias)".format(self.study.short_citation)
+        return f"{self.study.short_citation} (Risk of bias)"
 
     def get_assessment(self):
         return self.study.get_assessment()
@@ -207,12 +207,12 @@ class RiskOfBias(models.Model):
         # add any scores that are required and not currently created
         for metric in metrics:
             if not (metric.scores.all() & scores):
-                logging.info("Creating score: {}->{}".format(self.study, metric))
+                logging.info(f"Creating score: {self.study}->{metric}")
                 RiskOfBiasScore.objects.create(riskofbias=self, metric=metric)
         # delete any scores that are no longer required
         for score in scores:
             if score.metric not in metrics:
-                logging.info("Deleting score: {}->{}".format(self.study, score.metric))
+                logging.info(f"Deleting score: {self.study}->{score.metric}")
                 score.delete()
 
     def build_scores(self, assessment, study):
@@ -436,7 +436,7 @@ class RiskOfBiasScore(models.Model):
         ordering = ("metric", "id")
 
     def __str__(self):
-        return "{} {}".format(self.riskofbias, self.metric)
+        return f"{self.riskofbias} {self.metric}"
 
     def get_assessment(self):
         return self.metric.get_assessment()

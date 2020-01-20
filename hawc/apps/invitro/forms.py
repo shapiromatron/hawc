@@ -51,7 +51,7 @@ class IVChemicalForm(forms.ModelForm):
 
         if self.instance.id:
             inputs = {
-                "legend_text": "Update {}".format(self.instance),
+                "legend_text": f"Update {self.instance}",
                 "help_text": self.HELP_TEXT_UPDATE,
                 "cancel_url": self.instance.get_absolute_url(),
             }
@@ -123,7 +123,7 @@ class IVCellTypeForm(forms.ModelForm):
 
         if self.instance.id:
             inputs = {
-                "legend_text": "Update {}".format(self.instance),
+                "legend_text": f"Update {self.instance}",
                 "help_text": self.HELP_TEXT_UPDATE,
                 "cancel_url": self.instance.get_absolute_url(),
             }
@@ -202,7 +202,7 @@ class IVExperimentForm(forms.ModelForm):
 
         if self.instance.id:
             inputs = {
-                "legend_text": "Update {}".format(self.instance),
+                "legend_text": f"Update {self.instance}",
                 "help_text": self.HELP_TEXT_UPDATE,
                 "cancel_url": self.instance.get_absolute_url(),
             }
@@ -330,7 +330,7 @@ class IVEndpointForm(forms.ModelForm):
 
         if self.instance.id:
             inputs = {
-                "legend_text": "Update {}".format(self.instance),
+                "legend_text": f"Update {self.instance}",
                 "help_text": self.HELP_TEXT_UPDATE,
                 "cancel_url": self.instance.get_absolute_url(),
             }

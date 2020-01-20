@@ -19,8 +19,7 @@ class ReferenceFilterTagManager(TaggableManager):
     def __get__(self, instance, model):
         if instance is not None and instance.pk is None:
             raise ValueError(
-                "%s objects need to have a primary key value "
-                "before you can access their tags." % model.__name__
+                f"{model.__name__} objects need to have a primary key value before you can access their tags."
             )
         manager = _ReferenceFilterTagManager(
             through=self.through, model=model, instance=instance, prefetch_cache_name=self.name,
@@ -82,7 +81,7 @@ class IdentifiersManager(BaseManager):
 
             # Create Endnote identifier
             # create id based on search_id and id from RIS file.
-            id_ = "s{}-id{}".format(search_id, ref["id"])
+            id_ = f"s{search_id}-id{ref['id']}"
             content = json.dumps(ref)
             ident = self.filter(database=constants.RIS, unique_id=id_).first()
             if ident:
@@ -339,7 +338,7 @@ class ReferenceManager(BaseManager):
         Study = apps.get_model("study", "Study")
         try:
             root_inclusion = (
-                ReferenceFilterTag.objects.get(name="assessment-{a}".format(a=assessment.pk))
+                ReferenceFilterTag.objects.get(name=f"assessment-{assessment.pk}")
                 .get_descendants()
                 .get(name="Inclusion")
             )
@@ -376,9 +375,7 @@ class ReferenceManager(BaseManager):
                     validator(d["Full text URL"])
                     self.filter(id=d["HAWC ID"]).update(full_text_url=d["Full text URL"])
                 except ValidationError:
-                    errors.append(
-                        "HAWC ID {0}, invalid URL: {1}".format(d["HAWC ID"], d["Full text URL"])
-                    )
+                    errors.append(f"HAWC ID {d['HAWC ID']}, invalid URL: {d['Full text URL']}")
 
         cw = {}
         validator = URLValidator()

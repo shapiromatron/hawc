@@ -1522,9 +1522,9 @@ class GroupResult(models.Model):
         txt = self.get_p_value_qualifier_display()
         if self.p_value is not None:
             if txt in ["=", "-", "n.s."]:
-                txt = "{0:g}".format(self.p_value)
+                txt = f"{self.p_value:g}"
             else:
-                txt = "{0}{1:g}".format(txt, self.p_value)
+                txt = f"{txt}{self.p_value:g}"
 
         return txt
 

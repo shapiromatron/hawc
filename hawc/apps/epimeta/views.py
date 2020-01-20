@@ -144,7 +144,7 @@ class MetaResultFullExport(BaseList):
         exporter = exports.MetaResultFlatComplete(
             self.object_list,
             export_format="excel",
-            filename="{}-epi-meta-analysis".format(self.assessment),
+            filename=f"{self.assessment}-epi-meta-analysis",
             sheet_name="epi-meta-analysis",
         )
         return exporter.build_response()

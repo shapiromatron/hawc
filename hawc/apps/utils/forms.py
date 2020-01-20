@@ -28,26 +28,21 @@ class BaseFormHelper(cf.FormHelper):
 
         if self.kwargs.get("legend_text"):
             layout.insert(
-                0, cfl.HTML("<legend>{}</legend>".format(self.kwargs.get("legend_text"))),
+                0, cfl.HTML(f"<legend>{self.kwargs.get('legend_text')}</legend>"),
             )
 
-        if self.kwargs.get("help_text"):
+        if "help_text" in self.kwargs:
             layout.insert(
-                1,
-                cfl.HTML(
-                    """<p class="help-block">{}</p><br>""".format(self.kwargs.get("help_text"))
-                ),
+                1, cfl.HTML(f'<p class="help-block">{self.kwargs["help_text"]}</p><br>'),
             )
 
-        if self.kwargs.get("cancel_url"):
+        if "cancel_url" in self.kwargs:
             self.addCustomFormActions(
                 layout,
                 [
                     cfl.Submit("save", "Save"),
                     cfl.HTML(
-                        """<a role="button" class="btn btn-default" href="{}">Cancel</a>""".format(
-                            self.kwargs.get("cancel_url")
-                        )
+                        f'<a role="button" class="btn btn-default" href="{self.kwargs["cancel_url"]}">Cancel</a>'
                     ),
                 ],
             )
@@ -84,7 +79,7 @@ class BaseFormHelper(cf.FormHelper):
         self[first : first + numFields].wrap_together(TdLayout)
 
     def add_header(self, firstField, text):
-        self.layout.insert(self.layout.index(firstField), cfl.HTML("""<h4>{0}</h4>""".format(text)))
+        self.layout.insert(self.layout.index(firstField), cfl.HTML(f"<h4>{text}</h4>"))
 
     def find_layout_idx_for_field_name(self, field_name):
         idx = 0
@@ -136,14 +131,11 @@ def form_error_list_to_lis(form):
 
 
 def form_error_lis_to_ul(lis):
-    return "<ul>{0}</ul>".format("".join(lis))
+    return f"<ul>{''.join(lis)}</ul>"
 
 
 def addPopupLink(href, text):
-    return """<a href="{0}"
-                 onclick="return HAWCUtils.newWindowPopupLink(this);")>{1}</a>""".format(
-        href, text
-    )
+    return f'<a href="{href}" onclick="return HAWCUtils.newWindowPopupLink(this);")>{text}</a>'
 
 
 class TdLayout(cfl.LayoutObject):

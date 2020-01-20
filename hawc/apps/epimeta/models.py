@@ -188,7 +188,7 @@ class MetaResult(models.Model):
         if self.estimate:
             txt = str(self.estimate)
         if self.lower_ci and self.upper_ci:
-            txt += " ({}, {})".format(self.lower_ci, self.upper_ci)
+            txt += f" ({self.lower_ci}, {self.upper_ci})"
         return txt
 
     @classmethod
@@ -264,7 +264,7 @@ class MetaResult(models.Model):
         """
 
         def getStatMethods(mr):
-            key = "{}|{}".format(mr["adjustments_list"], mr["statistical_notes"])
+            key = f"{mr['adjustments_list']}|{mr['statistical_notes']}"
             return key, mr
 
         results = [SerializerHelper.get_serialized(obj, json=False) for obj in queryset]
@@ -396,7 +396,7 @@ class SingleResult(models.Model):
         if self.estimate:
             txt = str(self.estimate)
         if self.lower_ci and self.upper_ci:
-            txt += " ({}, {})".format(self.lower_ci, self.upper_ci)
+            txt += f" ({self.lower_ci}, {self.upper_ci})"
         return txt
 
     @staticmethod

@@ -10,5 +10,5 @@ from . import models
 @receiver(post_save, sender=models.SelectedModel)
 @receiver(pre_delete, sender=models.SelectedModel)
 def invalidate_outcome_cache(sender, instance, **kwargs):
-    logging.info("Clearing endpoint cache: {}".format(instance.endpoint_id))
+    logging.info(f"Clearing endpoint cache: {instance.endpoint_id}")
     apps.get_model("animal", "Endpoint").delete_caches([instance.endpoint_id])

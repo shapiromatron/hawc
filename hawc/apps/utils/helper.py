@@ -50,7 +50,7 @@ def strip_tags(value):
 
 
 def listToUl(list_):
-    return "<ul>{0}</ul>".format("".join(["<li>{0}</li>".format(d) for d in list_]))
+    return f"<ul>{''.join(['<li>{0}</li>'.format(d) for d in list_])}</ul>"
 
 
 def tryParseInt(val, default=None):
@@ -83,7 +83,7 @@ class SerializerHelper(object):
 
     @classmethod
     def _get_cache_name(cls, model, id, json=True):
-        name = "{}.{}.{}".format(model.__module__, model.__name__, id)
+        name = f"{model.__module__}.{model.__name__}.{id}"
         if json:
             name += ".json"
         return name
@@ -94,7 +94,7 @@ class SerializerHelper(object):
             name = cls._get_cache_name(obj.__class__, obj.id, json)
             cached = cache.get(name)
             if cached:
-                logging.debug("using cache: {}".format(name))
+                logging.debug(f"using cache: {name}")
             else:
                 cached = cls._serialize_and_cache(obj, json=json)
             return cached
@@ -122,7 +122,7 @@ class SerializerHelper(object):
         json_str = JSONRenderer().render(serialized)
         serialized = OrderedDict(serialized)  # for pickling
 
-        logging.debug("setting cache: {}".format(name))
+        logging.debug(f"setting cache: {name}")
         cache.set_many({name: serialized, json_name: json_str})
 
         if json:
@@ -138,7 +138,7 @@ class SerializerHelper(object):
     def delete_caches(cls, model, ids):
         names = [cls._get_cache_name(model, id, json=False) for id in ids]
         names.extend([cls._get_cache_name(model, id, json=True) for id in ids])
-        logging.debug("Removing caches: {}".format(", ".join(names)))
+        logging.debug(f"Removing caches: {', '.join(names)}")
         cache.delete_many(names)
 
     @classmethod
@@ -162,7 +162,7 @@ class FlatFileExporter(object):
         elif self.export_format == "excel":
             self.exporter = ExcelFileBuilder(**kwargs)
         else:
-            raise ValueError("export_format not found: {}".format(self.export_format))
+            raise ValueError(f"export_format not found: {self.export_format}")
 
     def _get_header_row(self):
         raise NotImplementedError()
@@ -179,13 +179,13 @@ class FlatFileExporter(object):
             effects = [tag["name"] for tag in e["effects"]]
 
             if len(effects) > 0:
-                returnValue = "|{0}|".format("|".join(effects))
+                returnValue = f"|{'|'.join(effects)}|"
         elif "resulttags" in e:
             """ This element is a Result element with a "resulttags" field """
             resulttags = [tag["name"] for tag in e["resulttags"]]
 
             if len(resulttags) > 0:
-                returnValue = "|{0}|".format("|".join(resulttags))
+                returnValue = f"|{'|'.join(resulttags)}|"
 
         return returnValue
 
@@ -292,14 +292,14 @@ class ExcelFileBuilder(FlatFile):
         self.ws.autofilter(0, 0, r, self.ncols - 1)
 
     def _django_response(self):
-        fn = "{}.xlsx".format(self.filename)
+        fn = f"{self.filename}.xlsx"
         self.wb.close()
         self.output.seek(0)
         response = HttpResponse(
             self.output.read(),
             content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         )
-        response["Content-Disposition"] = 'attachment; filename="{}"'.format(fn)
+        response["Content-Disposition"] = f'attachment; filename="{fn}"'
         return response
 
 
@@ -321,5 +321,5 @@ class TSVFileBuilder(FlatFile):
     def _django_response(self):
         self.output.seek(0)
         response = HttpResponse(self.output, content_type="text/tab-separated-values")
-        response["Content-Disposition"] = 'attachment; filename="{}.tsv"'.format(self.filename)
+        response["Content-Disposition"] = f'attachment; filename="{self.filename}.tsv"'
         return response

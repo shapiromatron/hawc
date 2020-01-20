@@ -70,7 +70,7 @@ class MetaProtocolForm(forms.ModelForm):
 
         if self.instance.id:
             inputs = {
-                "legend_text": "Update {}".format(self.instance),
+                "legend_text": f"Update {self.instance}",
                 "help_text": self.UPDATE_HELP_TEXT,
                 "cancel_url": self.instance.get_absolute_url(),
             }
@@ -151,7 +151,7 @@ class MetaResultForm(forms.ModelForm):
 
         if self.instance.id:
             inputs = {
-                "legend_text": "Update {}".format(self.instance),
+                "legend_text": f"Update {self.instance}",
                 "help_text": self.UPDATE_HELP_TEXT,
                 "cancel_url": self.instance.get_absolute_url(),
             }

@@ -23,7 +23,7 @@ class Command(BaseCommand):
         if user_id:
             user = User.objects.get(pk=session.get("_auth_user_id"))
             print("Session found!")
-            print("Full name: {}".format(user.get_full_name()))
-            print("Email: {}".format(user.email))
+            print(f"Full name: {user.get_full_name()}")
+            print(f"Email: {user.email}")
         else:
-            print('Session not found; used session-id "{}"'.format(session_id))
+            print(f'Session not found; used session-id "{session_id}"')

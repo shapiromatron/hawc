@@ -74,7 +74,7 @@ class SummaryText(MP_Node):
 
     @classmethod
     def get_assessment_root_node(cls, assessment_id):
-        return SummaryText.objects.get(title="assessment-{}".format(assessment_id))
+        return SummaryText.objects.get(title=f"assessment-{assessment_id}")
 
     @classmethod
     def get_assessment_queryset(cls, assessment_id):
@@ -84,8 +84,8 @@ class SummaryText(MP_Node):
     def build_default(cls, assessment):
         assessment = SummaryText.add_root(
             assessment=assessment,
-            title="assessment-{pk}".format(pk=assessment.pk),
-            slug="assessment-{pk}-slug".format(pk=assessment.pk),
+            title=f"assessment-{assessment.pk}",
+            slug=f"assessment-{assessment.pk}-slug",
             text="Root-level text",
         )
 
@@ -148,9 +148,7 @@ class SummaryText(MP_Node):
             self.move(parent, pos="first-child")
 
     def get_absolute_url(self):
-        return "{url}#{id}".format(
-            url=reverse("summary:list", kwargs={"assessment": self.assessment.pk}), id=self.slug,
-        )
+        return f"{reverse('summary:list', kwargs={'assessment': self.assessment.pk})}#{self.slug}"
 
     def get_assessment(self):
         return self.assessment
@@ -657,7 +655,7 @@ class DataPivotQuery(DataPivot):
                 qs,
                 assessment=self.assessment,
                 export_format=format_,
-                filename="{}-animal-bioassay".format(self.assessment),
+                filename=f"{self.assessment}-animal-bioassay",
                 preferred_units=self.preferred_units,
             )
 
@@ -666,7 +664,7 @@ class DataPivotQuery(DataPivot):
                 qs,
                 assessment=self.assessment,
                 export_format=format_,
-                filename="{}-epi".format(self.assessment),
+                filename=f"{self.assessment}-epi",
             )
 
         elif self.evidence_type == EPI_META:
@@ -674,7 +672,7 @@ class DataPivotQuery(DataPivot):
                 qs,
                 assessment=self.assessment,
                 export_format=format_,
-                filename="{}-epi-meta-analysis".format(self.assessment),
+                filename=f"{self.assessment}-epi-meta-analysis",
             )
 
         elif self.evidence_type == IN_VITRO:
@@ -690,7 +688,7 @@ class DataPivotQuery(DataPivot):
                 qs,
                 assessment=self.assessment,
                 export_format=format_,
-                filename="{}-invitro".format(self.assessment),
+                filename=f"{self.assessment}-invitro",
             )
 
         return exporter

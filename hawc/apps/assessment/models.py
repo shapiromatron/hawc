@@ -23,7 +23,7 @@ from .tasks import add_time_spent
 
 def get_cas_url(cas):
     if cas:
-        return "{}?cas={}".format(reverse("assessment:cas_details"), urlquote(cas))
+        return f"{reverse('assessment:cas_details')}?cas={urlquote(cas)}"
     else:
         return None
 
@@ -208,7 +208,7 @@ class Assessment(models.Model):
         ordering = ("-created",)
 
     def __str__(self):
-        return "%s (%s)" % (self.name, self.year)
+        return f"{self.name} ({self.year})"
 
     def user_permissions(self, user):
         return {

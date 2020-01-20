@@ -98,7 +98,7 @@ class NonUniqueTagBase(models.Model):
     def slugify(self, tag, i=None):
         slug = default_slugify(tag)
         if i is not None:
-            slug += "_%d" % i
+            slug += f"_{i:d}"
         return slug
 
 
@@ -109,7 +109,7 @@ class AssessmentRootMixin(object):
 
     @classmethod
     def get_assessment_root_name(cls, assessment_id):
-        return "assessment-{pk}".format(pk=assessment_id)
+        return f"assessment-{assessment_id}"
 
     @classmethod
     def get_assessment_root(cls, assessment_id):
@@ -146,7 +146,7 @@ class AssessmentRootMixin(object):
         key = cls.cache_template_tagtree.format(assessment_id)
         tags = cache.get(key)
         if tags:
-            logging.info("cache used: {0}".format(key))
+            logging.info(f"cache used: {key}")
         else:
             root = cls.get_assessment_root(assessment_id)
             try:
@@ -157,7 +157,7 @@ class AssessmentRootMixin(object):
                 tags = cls.dump_bulk(root)
                 logging.info("ReferenceFilterTag cleanup successful.")
             cache.set(key, tags)
-            logging.info("cache set: {0}".format(key))
+            logging.info(f"cache set: {key}")
 
         if json_encode:
             return json.dumps(tags, cls=HAWCDjangoJSONEncoder)
@@ -171,23 +171,21 @@ class AssessmentRootMixin(object):
         remove all orphans from the tree.
         """
         name = cls.__name__
-        logging.warning("{}: attempting to recover...".format(name))
+        logging.warning(f"{name}: attempting to recover...")
         problems = cls.find_problems()
         cls.fix_tree()
         problems = cls.find_problems()
-        logging.warning("{}: problems identified: {}".format(name, problems))
+        logging.warning(f"{name}: problems identified: {problems}")
         orphan_ids = problems[2]
         if len(orphan_ids) > 0:
             cursor = connection.cursor()
             for orphan_id in orphan_ids:
                 orphan = cls.objects.get(id=orphan_id)
                 logging.warning(
-                    '{} "{}" {} is orphaned [path={}]. Deleting.'.format(
-                        name, orphan.name, orphan.id, orphan.path
-                    )
+                    f'{name} "{orphan.name}" {orphan.id} is orphaned [path={orphan.path}]. Deleting.'
                 )
                 cursor.execute(
-                    "DELETE FROM {0} WHERE id = %s".format(cls._meta.db_table), [orphan.id],
+                    f"DELETE FROM {cls._meta.db_table} WHERE id = %s", [orphan.id],
                 )
             cursor.close()
 
@@ -197,12 +195,12 @@ class AssessmentRootMixin(object):
         key = cls.cache_template_taglist.format(assessment_id)
         descendants = cache.get(key)
         if descendants:
-            logging.info("cache used: {0}".format(key))
+            logging.info(f"cache used: {key}")
         else:
             root = cls.get_assessment_root(assessment_id)
             descendants = list(root.get_descendants().values_list("pk", flat=True))
             cache.set(key, descendants)
-            logging.info("cache set: {0}".format(key))
+            logging.info(f"cache set: {key}")
         return descendants
 
     @classmethod
@@ -211,7 +209,7 @@ class AssessmentRootMixin(object):
             cls.cache_template_taglist.format(assessment_id),
             cls.cache_template_tagtree.format(assessment_id),
         )
-        logging.info("removing cache: {0}".format(", ".join(keys)))
+        logging.info(f"removing cache: {', '.join(keys)}")
         cache.delete_many(keys)
 
     @classmethod

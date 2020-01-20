@@ -8,7 +8,7 @@ from django.db import migrations, models
 def setName(apps, schema_editor):
     Result = apps.get_model("epi", "Result")
     for res in Result.objects.all():
-        res.name = "{0}: {1}".format(res.comparison_set.name, res.metric.metric)
+        res.name = f"{res.comparison_set.name}: {res.metric.metric}"
         res.save()
 
 

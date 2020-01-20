@@ -39,14 +39,14 @@ def convert_to_pptx(svg, url, width, height):
 
 @shared_task
 def get_chemspider_details(cas_number):
-    cache_name = "chemspider-{}".format(cas_number.replace(" ", "_"))
+    cache_name = f"chemspider-{cas_number.replace(' ', '_')}"
     d = cache.get(cache_name)
     if d is None:
         d = {"status": "failure"}
         if cas_number:
             d = fetch_chemspider(cas_number)
             if d.get("status") == "success":
-                logger.info("setting cache: {}".format(cache_name))
+                logger.info(f"setting cache: {cache_name}")
                 cache.set(cache_name, d)
     return d
 

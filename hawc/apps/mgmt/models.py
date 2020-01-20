@@ -53,7 +53,7 @@ class Task(models.Model):
         )
 
     def __str__(self):
-        return "{}: {}".format(self.study, self.get_type_display())
+        return f"{self.study}: {self.get_type_display()}"
 
     @classmethod
     def dashboard_metrics(cls, qs):
@@ -92,7 +92,7 @@ class Task(models.Model):
     def start_if_unstarted(self, user):
         """Save task as started by user if currently not started."""
         if self.status == self.STATUS_NOT_STARTED:
-            logging.info('Starting "{}" task {}'.format(self.get_type_display(), self.id))
+            logging.info(f'Starting "{self.get_type_display()}" task {self.id}')
             self.owner = user
             self.status = self.STATUS_STARTED
             self.save()
@@ -100,6 +100,6 @@ class Task(models.Model):
     def stop_if_started(self):
         """Stop task if currently started."""
         if self.status == self.STATUS_STARTED:
-            logging.info('Stopping "{}" task {}'.format(self.get_type_display(), self.id))
+            logging.info(f'Stopping "{self.get_type_display()}" task {self.id}')
             self.status = self.STATUS_COMPLETED
             self.save()

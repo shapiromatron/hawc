@@ -218,8 +218,6 @@ class EndpointFullExport(BaseList):
         self.object_list = self.get_queryset()
         export_format = request.GET.get("output", "excel")
         exporter = exports.DataPivotEndpoint(
-            self.object_list,
-            export_format=export_format,
-            filename="{}-invitro".format(self.assessment),
+            self.object_list, export_format=export_format, filename=f"{self.assessment}-invitro",
         )
         return exporter.build_response()

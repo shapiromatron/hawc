@@ -14,12 +14,10 @@ def setObservationTimeText(apps, schema_editor):
             txt = ep.get_observation_time_units_display()
 
         elif int(ep.observation_time) == float(ep.observation_time):
-            txt = "{0} {1}".format(
-                int(ep.observation_time), ep.get_observation_time_units_display()
-            )
+            txt = f"{int(ep.observation_time)} {ep.get_observation_time_units_display()}"
 
         else:
-            txt = "{0} {1}".format(ep.observation_time, ep.get_observation_time_units_display())
+            txt = f"{ep.observation_time} {ep.get_observation_time_units_display()}"
 
         ep.observation_time_text = txt
         ep.save()

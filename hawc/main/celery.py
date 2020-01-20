@@ -16,4 +16,4 @@ app.autodiscover_tasks()
 @app.task(bind=True)
 def debug_task(self):
     logger.info("Running the debug_task task.")
-    print("Request: {0!r}".format(self.request))
+    print(f"Request: {self.request!r}")

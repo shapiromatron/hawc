@@ -97,12 +97,12 @@ class RefDownloadExcel(BaseList):
     def get_context_data(self, **kwargs):
         if self.tag:
             self.include_parent_tag = True
-            self.fn = "{}-{}-refs".format(self.tag.name, self.assessment)
+            self.fn = f"{self.tag.name}-{self.assessment}-refs"
             self.sheet_name = self.tag.name
             self.tags = models.ReferenceFilterTag.dump_bulk(self.tag)
         else:
             self.include_parent_tag = False
-            self.fn = "{}-refs".format(self.assessment)
+            self.fn = f"{self.assessment}-refs"
             self.sheet_name = str(self.assessment)
             self.tags = models.ReferenceFilterTag.get_all_tags(
                 self.assessment.id, json_encode=False

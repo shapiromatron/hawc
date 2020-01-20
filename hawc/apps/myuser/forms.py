@@ -92,13 +92,12 @@ class HAWCSetPasswordForm(SetPasswordForm):
         helper = BaseFormHelper(self, **inputs)
         helper.form_class = "loginForm"
 
+        cancel_url = reverse("user:login")
         helper.layout.append(
             cfb.FormActions(
                 cfl.Submit("submit", "Change password"),
                 cfl.HTML(
-                    """<a role="button" class="btn btn-default" href="{}">Cancel</a>""".format(
-                        reverse("user:login")
-                    )
+                    f'<a role="button" class="btn btn-default" href="{cancel_url}">Cancel</a>'
                 ),
             )
         )
@@ -173,17 +172,16 @@ class RegisterForm(PasswordForm):
         helper = BaseFormHelper(self, **inputs)
         helper.form_class = "loginForm"
 
+        login_url = reverse("user:login")
         helper.layout.extend(
             [
                 cfl.HTML(
-                    """<a class="btn btn-small" href="#license_modal" data-toggle="modal">View License</a>"""
+                    '<a class="btn btn-small" href="#license_modal" data-toggle="modal">View License</a>'
                 ),
                 cfb.FormActions(
                     cfl.Submit("login", "Create account"),
                     cfl.HTML(
-                        """<a role="button" class="btn btn-default" href="{}">Cancel</a>""".format(
-                            reverse("user:login")
-                        )
+                        f'<a role="button" class="btn btn-default" href="{login_url}">Cancel</a>'
                     ),
                 ),
             ]
@@ -262,7 +260,7 @@ def hawc_authenticate(email=None, password=None):
         user = models.HAWCUser.objects.get(email__iexact=email)
         if user.check_password(password):
             # Annotate the user object with the path of the backend.
-            user.backend = "%s.%s" % (backend.__module__, backend.__class__.__name__)
+            user.backend = f"{backend.__module__}.{backend.__class__.__name__}"
             return user
         else:
             return None
@@ -296,17 +294,16 @@ class HAWCAuthenticationForm(AuthenticationForm):
             cfb.FormActions(
                 cfl.Submit("login", "Login"),
                 cfl.HTML(
-                    """<a role="button" class="btn btn-default" href="{}">Cancel</a>""".format(
-                        reverse("home")
-                    )
+                    f"""
+                <a role="button" class="btn btn-default" href="{reverse("home")}">Cancel</a>
+                <br>
+                <br>
+                <a href="{reverse("user:reset_password")}">Forgot your password?</a>
+                <br>
+                <a href="{reverse("user:new")}">Create an account</a>
+                <br>
+                """
                 ),
-                cfl.HTML("""<br><br>"""),
-                cfl.HTML(
-                    """<a href="{0}">Forgot your password?</a><br>""".format(
-                        reverse("user:reset_password")
-                    )
-                ),
-                cfl.HTML("""<a href="{0}">Create an account</a><br>""".format(reverse("user:new"))),
             )
         )
 
@@ -357,9 +354,7 @@ class HAWCPasswordResetForm(PasswordResetForm):
             cfb.FormActions(
                 cfl.Submit("submit", "Send email confirmation"),
                 cfl.HTML(
-                    """<a role="button" class="btn btn-default" href="{}">Cancel</a>""".format(
-                        reverse("user:login")
-                    )
+                    f'<a role="button" class="btn btn-default" href="{reverse("user:login")}">Cancel</a>'
                 ),
             )
         )

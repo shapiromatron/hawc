@@ -53,7 +53,7 @@ class AssessmentForm(forms.ModelForm):
 
         if self.instance.id:
             inputs = {
-                "legend_text": "Update {}".format(self.instance),
+                "legend_text": f"Update {self.instance}",
                 "help_text": "Update an existing HAWC assessment.<br><br>* required fields",
                 "cancel_url": self.instance.get_absolute_url(),
             }
@@ -140,7 +140,7 @@ class AttachmentForm(forms.ModelForm):
                 widget.attrs["class"] += " html5text"
 
         if self.instance.id:
-            inputs = {"legend_text": "Update {}".format(self.instance)}
+            inputs = {"legend_text": f"Update {self.instance}"}
         else:
             inputs = {"legend_text": "Create new attachment"}
         inputs["cancel_url"] = self.instance.get_absolute_url()
@@ -212,7 +212,7 @@ class AssessmentEmailManagersForm(forms.Form):
 
     def send_email(self):
         from_email = settings.DEFAULT_FROM_EMAIL
-        subject = "[HAWC] {0}".format(self.cleaned_data["subject"])
+        subject = f"[HAWC] {self.cleaned_data['subject']}"
         message = ""
         recipient_list = self.assessment.get_project_manager_emails()
         html_message = markdown(self.cleaned_data["message"])

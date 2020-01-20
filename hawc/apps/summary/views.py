@@ -299,7 +299,7 @@ class DataPivotCopyAsNewSelector(TeamMemberOrHigherMixin, FormView):
         else:
             url = reverse_lazy("summary:dp_new-query", kwargs={"pk": self.assessment.id})
 
-        url += "?initial={0}".format(dp.pk)
+        url += f"?initial={dp.pk}"
 
         if form.cleaned_data["reset_row_overrides"]:
             url += "&reset_row_overrides=1"

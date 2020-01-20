@@ -164,7 +164,7 @@ class Study(Reference):
         # copy studies; flag if any epi-meta studies exist
         any_epi_meta = False
         for study in studies:
-            logging.info("Copying study {} to assessment {}".format(study.id, assessment.id))
+            logging.info(f"Copying study {study.id} to assessment {assessment.id}")
 
             # get child-types and copy
             children = []

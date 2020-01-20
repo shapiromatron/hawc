@@ -185,9 +185,7 @@ class Search(models.Model):
             for ref in ref_ids:
                 ref_searches.append(RefSearchM2M(reference_id=ref, search_id=self.pk))
             RefSearchM2M.objects.bulk_create(ref_searches)
-            logging.debug(
-                "Completed bulk creation of {c} search-thorough values".format(c=len(ref_searches))
-            )
+            logging.debug(f"Completed bulk creation of {len(ref_searches)} search-thorough values")
 
         # For the cases where the search resulted in new ids which may or may
         # not already be imported as a reference for this assessment, find the
@@ -206,9 +204,9 @@ class Search(models.Model):
             refs = [i.create_reference(self.assessment, block_id) for i in ids]
             id_pks = [i.pk for i in ids]
 
-            logging.debug("Starting  bulk creation of {c} references".format(c=len(refs)))
+            logging.debug(f"Starting  bulk creation of {len(refs)} references")
             Reference.objects.bulk_create(refs)
-            logging.debug("Completed bulk creation of {c} references".format(c=len(refs)))
+            logging.debug(f"Completed bulk creation of {len(refs)} references")
 
             # re-query to get the objects back with PKs
             refs = Reference.objects.filter(assessment=self.assessment, block_id=block_id).order_by(
@@ -218,17 +216,13 @@ class Search(models.Model):
             # associate identifiers with each
             ref_searches = []
             ref_ids = []
-            logging.debug(
-                "Starting  bulk creation of {c} reference-thorough values".format(c=refs.count())
-            )
+            logging.debug(f"Starting  bulk creation of {refs.count()} reference-thorough values")
             for i, ref in enumerate(refs):
                 ref_searches.append(RefSearchM2M(reference_id=ref.pk, search_id=self.pk))
                 ref_ids.append(RefIdM2M(reference_id=ref.pk, identifiers_id=id_pks[i]))
             RefSearchM2M.objects.bulk_create(ref_searches)
             RefIdM2M.objects.bulk_create(ref_ids)
-            logging.debug(
-                "Completed bulk creation of {c} reference-thorough values".format(c=refs.count())
-            )
+            logging.debug(f"Completed bulk creation of {refs.count()} reference-thorough values")
 
             # finally, remove temporary identifier used for re-query after bulk_create
             logging.debug("Removing block-id from created references")
@@ -375,11 +369,11 @@ class PubMedQuery(models.Model):
         ids_to_add_len = len(ids_to_add)
 
         block_size = 1000.0
-        logging.debug("{0} IDs to be added".format(ids_to_add_len))
+        logging.debug(f"{ids_to_add_len} IDs to be added")
         for i in range(int(ceil(ids_to_add_len / block_size))):
             start_index = int(i * block_size)
             end_index = min(int(i * block_size + block_size), ids_to_add_len)
-            logging.debug("Building from {0} to {1}".format(start_index, end_index))
+            logging.debug(f"Building from {start_index} to {end_index}")
             fetch = pubmed.PubMedFetch(
                 id_list=ids_to_add[start_index:end_index], retmax=int(block_size)
             )
@@ -427,7 +421,7 @@ class Identifiers(models.Model):
         index_together = (("database", "unique_id"),)
 
     def __str__(self):
-        return "{db}: {id}".format(db=self.database, id=self.unique_id)
+        return f"{self.database}: {self.unique_id}"
 
     URL_TEMPLATES = {
         constants.PUBMED: r"https://www.ncbi.nlm.nih.gov/pubmed/{0}",
@@ -451,7 +445,7 @@ class Identifiers(models.Model):
         except ValueError:
             if self.database == constants.PUBMED:
                 self.update_pubmed_content([self])
-            raise AttributeError("Content invalid JSON: {}".format(self.unique_id))
+            raise AttributeError(f"Content invalid JSON: {self.unique_id}")
 
         if self.database == constants.PUBMED:
             ref = Reference(

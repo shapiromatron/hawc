@@ -181,7 +181,7 @@ class OutcomeExport(BaseList):
         exporter = exports.OutcomeComplete(
             self.object_list,
             export_format="excel",
-            filename="{}-epi".format(self.assessment),
+            filename=f"{self.assessment}-epi",
             sheet_name="epi",
         )
         return exporter.build_response()

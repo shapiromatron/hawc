@@ -12,14 +12,14 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         outputs = []
-        outputs.append("HAWC object outputs\t{0}".format(datetime.now()))
+        outputs.append(f"HAWC object outputs\t{datetime.now()}")
 
         models = apps.get_models()
         for model in models:
             module = model.__module__
             name = model.__name__
             count = model.objects.count()
-            outputs.append("{0}\t{1}\t{2}".format(module, name, count))
+            outputs.append(f"{module}\t{name}\t{count}")
 
         for output in outputs:
             self.stdout.write(output)

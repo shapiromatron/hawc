@@ -514,9 +514,7 @@ class DownloadPlot(FormView):
             output = task.get(timeout=90)
             if output:
                 response = HttpResponse(output, content_type=handler["ct"])
-                response["Content-Disposition"] = 'attachment; filename="download.{}"'.format(
-                    extension
-                )
+                response["Content-Disposition"] = f'attachment; filename="download.{extension}"'
 
         return response
 

@@ -20,8 +20,7 @@ def validateCTCount(model):
             "_".join([model.content_type.app_label, model.content_type.model]) for model in model_ct
         ]
         raise ValidationError(
-            "{} ContentTypes contain relations to "
-            "more than one model: {}".format(model._meta.label, ", ".join(model_ct_models))
+            f"{model._meta.label} ContentTypes contain relations to more than one model: {', '.join(model_ct_models)}"
         )
 
 

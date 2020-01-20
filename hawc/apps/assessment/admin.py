@@ -37,7 +37,7 @@ class AssessmentAdmin(admin.ModelAdmin):
     def get_staff_ul(self, mgr):
         ul = ["<ul>"]
         for user in mgr.all():
-            ul.append("<li>{} {}</li>".format(user.first_name, user.last_name))
+            ul.append(f"<li>{user.first_name} {user.last_name}</li>")
 
         ul.append("</ul>")
         return " ".join(ul)

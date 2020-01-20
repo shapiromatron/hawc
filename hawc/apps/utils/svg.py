@@ -22,9 +22,7 @@ class HawcStyles:
         # lazy evaluation
         style = getattr(self, "_for_svg", None)
         if style is None:
-            style = '<defs><style type="text/css"><![CDATA[{0}]]></style></defs>'.format(
-                self._get_styles()
-            )  # noqa
+            style = f'<defs><style type="text/css"><![CDATA[{self._get_styles()}]]></style></defs>'
             setattr(self, "_for_svg", style)
         return style
 
@@ -33,7 +31,7 @@ class HawcStyles:
         # lazy evaluation
         style = getattr(self, "_for_html", None)
         if style is None:
-            style = '<style type="text/css">{0}</style>'.format(self._get_styles())  # noqa
+            style = f'<style type="text/css">{self._get_styles()}</style>'
             setattr(self, "_for_html", style)
         return style
 
@@ -132,7 +130,7 @@ class SVGConverter(object):
         txBox = slide.shapes.add_textbox(Inches(0.5), Inches(0.25), Inches(9), Inches(0.5))
         tf = txBox.text_frame
         now = datetime.now().strftime("%B %d %Y, %I:%M %p")
-        tf.text = "HAWC visualization generated on {}".format(now)
+        tf.text = f"HAWC visualization generated on {now}"
         tf.paragraphs[0].alignment = 2
 
     def _pptx_add_url(self, slide):
