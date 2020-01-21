@@ -6,6 +6,11 @@ from hawc.apps.study.models import Study
 
 
 @pytest.fixture
+def authenticated_user():
+    return HAWCUser.objects.create_superuser("me@me.com", "pw")
+
+
+@pytest.fixture
 def assessment_data():
     # builds assessments to be used for tests; note that other test-suites may
     # call this function as well

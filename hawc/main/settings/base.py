@@ -85,6 +85,7 @@ INSTALLED_APPS = (
     "django.contrib.humanize",
     # External apps
     "rest_framework",
+    "rest_framework.authtoken",
     "reversion",
     "taggit",
     "treebeard",
@@ -253,10 +254,16 @@ CHEMSPIDER_TOKEN = os.getenv("CHEMSPIDER_TOKEN", "")
 
 # Django rest framework settings
 REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.SessionAuthentication",
+        "rest_framework.authentication.TokenAuthentication",
+    ],
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.AllowAny",),
     "PAGE_SIZE": 10,
     "COERCE_DECIMAL_TO_STRING": False,
 }
+REST_FRAMEWORK_EXTENSIONS = {"DEFAULT_BULK_OPERATION_HEADER_NAME": "X-CUSTOM-BULK-OPERATION"}
+
 
 # Django pagedown settings
 PAGEDOWN_WIDGET_CSS = (
@@ -269,9 +276,6 @@ SELECTABLE_MAX_LIMIT = 10
 
 # Django crispy-forms settings
 CRISPY_TEMPLATE_PACK = "bootstrap"
-
-# DRF-Extensions header requirement
-REST_FRAMEWORK_EXTENSIONS = {"DEFAULT_BULK_OPERATION_HEADER_NAME": "X-CUSTOM-BULK-OPERATION"}
 
 WEBPACK_LOADER = {
     "DEFAULT": {
