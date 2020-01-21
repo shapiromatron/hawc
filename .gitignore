@@ -46,6 +46,3 @@ compose/nginx/conf/*
 
 compose/django/fonts/*
 !compose/django/fonts/.gitkeep
-
-notebooks/*
-!notebooks/example.ipynb
