@@ -14,8 +14,8 @@ from litter_getter import pubmed, ris
 from taggit.models import ItemBase
 from treebeard.mp_tree import MP_Node
 
-from ..utils.helper import HAWCDjangoJSONEncoder, SerializerHelper
-from ..utils.models import AssessmentRootMixin, CustomURLField, NonUniqueTagBase, get_crumbs
+from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper
+from ..common.models import AssessmentRootMixin, CustomURLField, NonUniqueTagBase, get_crumbs
 from . import constants, managers, tasks
 
 

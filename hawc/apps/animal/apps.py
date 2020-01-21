@@ -6,7 +6,7 @@ class AnimalConfig(AppConfig):
     verbose_name = "Animal"
 
     def ready(self):
-        from ..utils.models import apply_flavored_help_text
+        from ..common.models import apply_flavored_help_text
 
         apply_flavored_help_text(self.name)
         from . import signals  # noqa: F401

@@ -2,8 +2,8 @@ from copy import copy
 
 from django.apps import apps
 
+from ..common.helper import FlatFileExporter
 from ..riskofbias.models import RiskOfBias
-from ..utils.helper import FlatFileExporter
 
 
 def getDose(ser, tag):

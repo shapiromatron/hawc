@@ -4,9 +4,9 @@ from collections import OrderedDict
 from rest_framework import serializers
 
 from ..assessment.serializers import AssessmentRootedSerializer, EffectTagsSerializer
+from ..common.api import DynamicFieldsMixin
+from ..common.helper import SerializerHelper
 from ..study.serializers import StudySerializer
-from ..utils.api import DynamicFieldsMixin
-from ..utils.helper import SerializerHelper
 from . import models
 
 

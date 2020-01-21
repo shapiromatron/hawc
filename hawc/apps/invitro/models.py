@@ -8,9 +8,9 @@ from reversion import revisions as reversion
 
 from ..animal.models import ConfidenceIntervalsMixin
 from ..assessment.models import Assessment, BaseEndpoint
+from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper
+from ..common.models import AssessmentRootedTagTree, get_crumbs
 from ..study.models import Study
-from ..utils.helper import HAWCDjangoJSONEncoder, SerializerHelper
-from ..utils.models import AssessmentRootedTagTree, get_crumbs
 from . import managers
 
 

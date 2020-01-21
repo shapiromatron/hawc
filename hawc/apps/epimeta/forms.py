@@ -7,9 +7,9 @@ from django.forms.models import modelformset_factory
 from django.utils.functional import curry
 from selectable import forms as selectable
 
+from ..common.forms import BaseFormHelper
 from ..epi.lookups import AdjustmentFactorLookup, CriteriaLookup
 from ..study.lookups import EpimetaStudyLookup
-from ..utils.forms import BaseFormHelper
 from . import lookups, models
 
 

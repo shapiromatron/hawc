@@ -14,9 +14,9 @@ from django.utils import timezone
 from django.utils.http import urlquote
 from reversion import revisions as reversion
 
+from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper
+from ..common.models import get_crumbs
 from ..myuser.models import HAWCUser
-from ..utils.helper import HAWCDjangoJSONEncoder, SerializerHelper
-from ..utils.models import get_crumbs
 from . import managers
 from .tasks import add_time_spent
 

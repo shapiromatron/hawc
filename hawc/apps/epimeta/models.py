@@ -6,10 +6,10 @@ from django.db import models
 from reversion import revisions as reversion
 
 from ..assessment.serializers import AssessmentSerializer
+from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper
+from ..common.models import get_crumbs
 from ..epi.models import AdjustmentFactor, Criteria, ResultMetric
 from ..study.models import Study
-from ..utils.helper import HAWCDjangoJSONEncoder, SerializerHelper
-from ..utils.models import get_crumbs
 from . import managers
 
 

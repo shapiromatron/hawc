@@ -1,6 +1,6 @@
 from django.apps import apps
 
-from ..utils.models import BaseManager, get_distinct_charfield, get_distinct_charfield_opts
+from ..common.models import BaseManager, get_distinct_charfield, get_distinct_charfield_opts
 
 
 class ExperimentManager(BaseManager):

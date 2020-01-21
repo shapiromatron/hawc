@@ -2,7 +2,7 @@ from rest_framework import serializers
 from rest_framework.exceptions import ParseError
 
 from ..assessment.serializers import AssessmentRootedSerializer
-from ..utils.api import DynamicFieldsMixin
+from ..common.api import DynamicFieldsMixin
 from . import models
 
 

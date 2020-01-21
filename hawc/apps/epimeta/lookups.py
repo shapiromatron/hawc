@@ -1,6 +1,6 @@
 from selectable.registry import registry
 
-from ..utils.lookups import RelatedDistinctStringLookup, RelatedLookup
+from ..common.lookups import RelatedDistinctStringLookup, RelatedLookup
 from . import models
 
 

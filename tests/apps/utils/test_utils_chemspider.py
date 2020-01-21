@@ -1,4 +1,4 @@
-from hawc.apps.utils.chemspider import fetch_chemspider
+from hawc.apps.common.chemspider import fetch_chemspider
 
 
 def test_chemspider():

@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404
 from django.views.generic import ListView
 
 from ..assessment.models import Assessment
-from ..utils.views import BaseList, LoginRequiredMixin, TeamMemberOrHigherMixin
+from ..common.views import BaseList, LoginRequiredMixin, TeamMemberOrHigherMixin
 from . import models
 
 

@@ -13,9 +13,9 @@ from reversion import revisions as reversion
 
 from ..assessment.models import Assessment
 from ..assessment.serializers import AssessmentSerializer
+from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper, cleanHTML
+from ..common.models import get_crumbs
 from ..lit.models import Reference, Search
-from ..utils.helper import HAWCDjangoJSONEncoder, SerializerHelper, cleanHTML
-from ..utils.models import get_crumbs
 from . import managers
 
 

@@ -16,7 +16,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import FormView, ListView, TemplateView, View
 from django.views.generic.edit import CreateView
 
-from ..utils.views import (
+from ..common.views import (
     BaseCreate,
     BaseDelete,
     BaseDetail,

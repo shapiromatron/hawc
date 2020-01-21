@@ -6,9 +6,7 @@ from django.shortcuts import get_object_or_404, redirect
 from django.views.generic import FormView
 
 from ..assessment.models import Assessment
-from ..lit.models import Reference
-from ..mgmt.views import EnsurePreparationStartedMixin
-from ..utils.views import (
+from ..common.views import (
     BaseCreate,
     BaseDelete,
     BaseDetail,
@@ -17,6 +15,8 @@ from ..utils.views import (
     MessageMixin,
     TeamMemberOrHigherMixin,
 )
+from ..lit.models import Reference
+from ..mgmt.views import EnsurePreparationStartedMixin
 from . import forms, models
 
 

@@ -13,9 +13,9 @@ from ..assessment.api import (
     RequiresAssessmentID,
 )
 from ..assessment.models import TimeSpentEditing
+from ..common.api import BulkIdFilter
+from ..common.views import TeamMemberOrHigherMixin
 from ..mgmt.models import Task
-from ..utils.api import BulkIdFilter
-from ..utils.views import TeamMemberOrHigherMixin
 from . import models, serializers
 
 

@@ -6,9 +6,9 @@ from django.forms.models import BaseModelFormSet, modelformset_factory
 from selectable import forms as selectable
 
 from ..assessment.models import Assessment
+from ..common.forms import BaseFormHelper
 from ..myuser.lookups import AssessmentTeamMemberOrHigherLookup
 from ..study.models import Study
-from ..utils.forms import BaseFormHelper
 from . import models
 
 

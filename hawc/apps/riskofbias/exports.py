@@ -1,5 +1,5 @@
+from ..common.helper import FlatFileExporter
 from ..study.models import Study
-from ..utils.helper import FlatFileExporter
 from . import models
 
 

@@ -3,8 +3,8 @@ from rest_framework.decorators import list_route
 from rest_framework.response import Response
 
 from ..assessment.api import AssessmentLevelPermissions, DisabledPagination, InAssessmentFilter
-from ..utils.api import CleanupFieldsBaseViewSet
-from ..utils.helper import tryParseInt
+from ..common.api import CleanupFieldsBaseViewSet
+from ..common.helper import tryParseInt
 from . import models, serializers
 
 

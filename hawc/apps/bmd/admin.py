@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from ..utils.admin import AllListFieldAdmin
+from ..common.admin import AllListFieldAdmin
 from . import models
 
 

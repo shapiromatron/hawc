@@ -10,7 +10,7 @@ from django.core.urlresolvers import reverse_lazy
 from django.db import models
 from django.utils.timezone import now
 
-from ..utils.models import get_crumbs, get_model_copy_name
+from ..common.models import get_crumbs, get_model_copy_name
 from . import managers
 
 BMDS_CHOICES = (

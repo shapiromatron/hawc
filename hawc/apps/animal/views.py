@@ -6,11 +6,8 @@ from django.forms.models import modelformset_factory
 from django.http import HttpResponseRedirect
 
 from ..assessment.models import Assessment, DoseUnits
-from ..mgmt.views import EnsureExtractionStartedMixin
-from ..study.models import Study
-from ..study.views import StudyRead
-from ..utils.forms import form_error_lis_to_ul, form_error_list_to_lis
-from ..utils.views import (
+from ..common.forms import form_error_lis_to_ul, form_error_list_to_lis
+from ..common.views import (
     BaseCreate,
     BaseCreateWithFormset,
     BaseDelete,
@@ -21,6 +18,9 @@ from ..utils.views import (
     BaseUpdateWithFormset,
     CopyAsNewSelectorMixin,
 )
+from ..mgmt.views import EnsureExtractionStartedMixin
+from ..study.models import Study
+from ..study.views import StudyRead
 from . import exports, forms, models
 
 

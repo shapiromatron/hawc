@@ -1,6 +1,6 @@
+from ..common.helper import FlatFileExporter
 from ..riskofbias.models import RiskOfBias
 from ..study.models import Study
-from ..utils.helper import FlatFileExporter
 from . import models
 
 

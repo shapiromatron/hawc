@@ -3,8 +3,8 @@ from django.core.urlresolvers import reverse
 from django.forms.fields import TextInput
 
 from ..assessment.models import Assessment
+from ..common.forms import BaseFormHelper
 from ..lit.models import Reference
-from ..utils.forms import BaseFormHelper
 from . import models
 
 

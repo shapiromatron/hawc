@@ -6,10 +6,7 @@ from django.shortcuts import get_object_or_404
 from django.views.generic.edit import FormView
 
 from ..assessment.models import Assessment
-from ..riskofbias import exports
-from ..study.models import Study
-from ..study.views import StudyList
-from ..utils.views import (
+from ..common.views import (
     BaseCreate,
     BaseDelete,
     BaseDetail,
@@ -21,6 +18,9 @@ from ..utils.views import (
     TeamMemberOrHigherMixin,
     TimeSpentOnPageMixin,
 )
+from ..riskofbias import exports
+from ..study.models import Study
+from ..study.views import StudyList
 from . import forms, models
 
 

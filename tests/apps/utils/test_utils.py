@@ -2,8 +2,8 @@ from django.core.exceptions import ValidationError
 from django.http import HttpRequest, HttpResponse
 from django.test import TestCase
 
-from hawc.apps.utils import validators
-from hawc.apps.utils.middleware import MicrosoftOfficeLinkMiddleware
+from hawc.apps.common import validators
+from hawc.apps.common.middleware import MicrosoftOfficeLinkMiddleware
 
 
 class CustomURLValidtor(TestCase):

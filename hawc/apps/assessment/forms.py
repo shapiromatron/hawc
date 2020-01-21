@@ -9,8 +9,8 @@ from markdown_deux import markdown
 from pagedown.widgets import PagedownWidget
 from selectable.forms import AutoCompleteSelectMultipleWidget, AutoCompleteWidget
 
+from ..common.forms import BaseFormHelper
 from ..myuser.lookups import HAWCUserLookup
-from ..utils.forms import BaseFormHelper
 from . import lookups, models
 
 

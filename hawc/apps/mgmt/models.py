@@ -5,8 +5,8 @@ from django.conf import settings
 from django.db import models
 from django.utils import timezone
 
+from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper
 from ..study.models import Study
-from ..utils.helper import HAWCDjangoJSONEncoder, SerializerHelper
 from . import managers
 
 

@@ -13,7 +13,7 @@ from django.forms import ModelForm
 from selectable.forms import AutoCompleteSelectMultipleField
 
 from ..assessment import lookups
-from ..utils.forms import BaseFormHelper
+from ..common.forms import BaseFormHelper
 from . import models
 
 _PASSWORD_HELP = (

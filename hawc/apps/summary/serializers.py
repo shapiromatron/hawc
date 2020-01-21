@@ -2,7 +2,7 @@ import json
 
 from rest_framework import serializers
 
-from ..utils.helper import SerializerHelper
+from ..common.helper import SerializerHelper
 from . import models
 
 

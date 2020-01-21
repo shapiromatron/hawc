@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 
 from django.db import migrations, models
 
-from ...utils.models import CustomURLField
+from ...common.models import CustomURLField
 
 
 class Migration(migrations.Migration):

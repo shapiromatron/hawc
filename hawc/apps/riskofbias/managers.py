@@ -1,6 +1,6 @@
 from django.db import models
 
-from ..utils.models import BaseManager
+from ..common.models import BaseManager
 
 
 class RiskOfBiasDomainManager(BaseManager):

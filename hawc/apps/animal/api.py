@@ -4,8 +4,8 @@ from rest_framework.exceptions import NotAcceptable
 from rest_framework.response import Response
 
 from ..assessment.api import AssessmentViewset, DoseUnitsViewset
-from ..utils.api import CleanupFieldsBaseViewSet
-from ..utils.helper import tryParseInt
+from ..common.api import CleanupFieldsBaseViewSet
+from ..common.helper import tryParseInt
 from . import models, serializers
 
 

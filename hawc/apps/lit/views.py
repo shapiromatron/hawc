@@ -9,8 +9,8 @@ from django.views.generic import DetailView, TemplateView
 from django.views.generic.edit import FormView
 
 from ..assessment.models import Assessment
-from ..utils.helper import listToUl, tryParseInt
-from ..utils.views import (
+from ..common.helper import listToUl, tryParseInt
+from ..common.views import (
     AssessmentPermissionsMixin,
     BaseCreate,
     BaseDelete,

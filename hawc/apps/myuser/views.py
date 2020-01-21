@@ -8,7 +8,7 @@ from django.views.generic import DetailView, TemplateView
 from django.views.generic.base import RedirectView
 from django.views.generic.edit import FormView, UpdateView
 
-from ..utils.views import LoginRequiredMixin, MessageMixin
+from ..common.views import LoginRequiredMixin, MessageMixin
 from . import forms, models
 
 

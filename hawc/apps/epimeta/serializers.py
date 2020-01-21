@@ -1,8 +1,8 @@
 from rest_framework import serializers
 
+from ..common.helper import SerializerHelper
 from ..epi.serializers import ResultMetricSerializer
 from ..study.serializers import StudySerializer
-from ..utils.helper import SerializerHelper
 from . import models
 
 

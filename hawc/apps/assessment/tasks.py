@@ -3,8 +3,8 @@ from celery.utils.log import get_task_logger
 from django.apps import apps
 from django.core.cache import cache
 
-from ..utils.chemspider import fetch_chemspider
-from ..utils.svg import SVGConverter
+from ..common.chemspider import fetch_chemspider
+from ..common.svg import SVGConverter
 
 logger = get_task_logger(__name__)
 

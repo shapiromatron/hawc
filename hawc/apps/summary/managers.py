@@ -1,7 +1,7 @@
 from django.apps import apps
 from treebeard.mp_tree import MP_NodeQuerySet
 
-from ..utils.models import BaseManager
+from ..common.models import BaseManager
 
 
 class SummaryTextManager(BaseManager):

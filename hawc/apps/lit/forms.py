@@ -10,7 +10,7 @@ from django.db.models import Q
 from litter_getter import ris
 
 from ..assessment.models import Assessment
-from ..utils.forms import BaseFormHelper, addPopupLink
+from ..common.forms import BaseFormHelper, addPopupLink
 from . import models
 
 

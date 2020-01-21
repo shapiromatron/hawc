@@ -4,8 +4,8 @@ from django.apps import apps
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Q
 
-from ..utils.helper import HAWCDjangoJSONEncoder
-from ..utils.models import BaseManager
+from ..common.helper import HAWCDjangoJSONEncoder
+from ..common.models import BaseManager
 
 
 class AssessmentManager(BaseManager):

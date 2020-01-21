@@ -10,9 +10,9 @@ from reversion import revisions as reversion
 from scipy.stats import t
 
 from ..assessment.models import Assessment, BaseEndpoint, EffectTag
+from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper
+from ..common.models import get_crumbs
 from ..study.models import Study
-from ..utils.helper import HAWCDjangoJSONEncoder, SerializerHelper
-from ..utils.models import get_crumbs
 from . import managers
 
 # version with no special formatting exists as sometimes it is used in a tag title attribute, e.g. for tooltips

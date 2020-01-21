@@ -10,10 +10,10 @@ from django.utils.html import strip_tags
 from reversion import revisions as reversion
 
 from ..assessment.models import Assessment
+from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper, cleanHTML
+from ..common.models import get_crumbs, get_flavored_text
 from ..myuser.models import HAWCUser
 from ..study.models import Study
-from ..utils.helper import HAWCDjangoJSONEncoder, SerializerHelper, cleanHTML
-from ..utils.models import get_crumbs, get_flavored_text
 from . import managers
 
 

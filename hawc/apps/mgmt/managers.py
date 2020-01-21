@@ -1,7 +1,7 @@
 import logging
 
+from ..common.models import BaseManager
 from ..study.models import Study
-from ..utils.models import BaseManager
 
 
 class TaskManager(BaseManager):

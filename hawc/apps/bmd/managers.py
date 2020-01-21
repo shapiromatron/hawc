@@ -1,4 +1,4 @@
-from ..utils.models import BaseManager
+from ..common.models import BaseManager
 
 
 class AssessmentSettingsManager(BaseManager):

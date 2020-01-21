@@ -1,6 +1,6 @@
 from django.db.models import Q
 
-from ..utils.models import BaseManager, get_distinct_charfield_opts
+from ..common.models import BaseManager, get_distinct_charfield_opts
 
 
 class CriteriaManager(BaseManager):

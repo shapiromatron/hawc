@@ -1,10 +1,10 @@
 from rest_framework import serializers
 
 from ..assessment.serializers import AssessmentMiniSerializer
+from ..common.api import DynamicFieldsMixin
+from ..common.helper import SerializerHelper
 from ..lit.serializers import IdentifiersSerializer, ReferenceTagsSerializer
 from ..riskofbias.serializers import RiskOfBiasSerializer
-from ..utils.api import DynamicFieldsMixin
-from ..utils.helper import SerializerHelper
 from . import models
 
 

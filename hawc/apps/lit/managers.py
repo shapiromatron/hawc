@@ -10,8 +10,8 @@ from litter_getter import hero, pubmed
 from taggit.managers import TaggableManager, _TaggableManager
 from taggit.utils import require_instance_manager
 
-from ..utils.helper import HAWCDjangoJSONEncoder
-from ..utils.models import BaseManager
+from ..common.helper import HAWCDjangoJSONEncoder
+from ..common.models import BaseManager
 from . import constants
 
 

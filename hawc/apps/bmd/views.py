@@ -3,7 +3,7 @@ from django.views.generic import RedirectView
 
 from ..animal.models import Endpoint
 from ..assessment.models import Assessment
-from ..utils.views import (
+from ..common.views import (
     BaseDelete,
     BaseDetail,
     BaseList,

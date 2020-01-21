@@ -8,9 +8,9 @@ from django.utils.functional import curry
 from selectable import forms as selectable
 
 from ..assessment.lookups import BaseEndpointLookup, EffectTagLookup
+from ..common.forms import BaseFormHelper, CopyAsNewSelectorForm
+from ..common.helper import tryParseInt
 from ..study.lookups import EpiStudyLookup
-from ..utils.forms import BaseFormHelper, CopyAsNewSelectorForm
-from ..utils.helper import tryParseInt
 from . import lookups, models
 
 

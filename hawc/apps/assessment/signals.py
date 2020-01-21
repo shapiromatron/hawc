@@ -4,7 +4,7 @@ from django.apps import apps
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-from ..utils.helper import SerializerHelper
+from ..common.helper import SerializerHelper
 from . import models
 
 

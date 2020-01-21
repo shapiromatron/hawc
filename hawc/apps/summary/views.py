@@ -8,9 +8,8 @@ from django.shortcuts import get_object_or_404
 from django.views.generic import FormView, RedirectView, TemplateView
 
 from ..assessment.models import Assessment
-from ..riskofbias.models import RiskOfBiasMetric
-from ..utils.helper import HAWCDjangoJSONEncoder
-from ..utils.views import (
+from ..common.helper import HAWCDjangoJSONEncoder
+from ..common.views import (
     BaseCreate,
     BaseDelete,
     BaseDetail,
@@ -18,6 +17,7 @@ from ..utils.views import (
     BaseUpdate,
     TeamMemberOrHigherMixin,
 )
+from ..riskofbias.models import RiskOfBiasMetric
 from . import forms, models
 
 

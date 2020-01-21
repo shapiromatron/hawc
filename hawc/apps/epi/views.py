@@ -1,10 +1,7 @@
 from django.db.models import Q
 
 from ..assessment.models import Assessment
-from ..mgmt.views import EnsureExtractionStartedMixin
-from ..study.models import Study
-from ..study.views import StudyRead
-from ..utils.views import (
+from ..common.views import (
     BaseCreate,
     BaseCreateWithFormset,
     BaseDelete,
@@ -16,6 +13,9 @@ from ..utils.views import (
     CloseIfSuccessMixin,
     CopyAsNewSelectorMixin,
 )
+from ..mgmt.views import EnsureExtractionStartedMixin
+from ..study.models import Study
+from ..study.views import StudyRead
 from . import exports, forms, models
 
 

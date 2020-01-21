@@ -50,7 +50,7 @@ TEMPLATES = [
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
                 "django.template.context_processors.request",
-                "hawc.apps.utils.context_processors.from_settings",
+                "hawc.apps.common.context_processors.from_settings",
             ),
         },
     },
@@ -68,7 +68,7 @@ MIDDLEWARE_CLASSES = (
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django.middleware.security.SecurityMiddleware",
-    "hawc.apps.utils.middleware.MicrosoftOfficeLinkMiddleware",
+    "hawc.apps.common.middleware.MicrosoftOfficeLinkMiddleware",
 )
 
 
@@ -95,7 +95,7 @@ INSTALLED_APPS = (
     "rest_framework_extensions",
     "webpack_loader",
     # Custom apps
-    "hawc.apps.utils",
+    "hawc.apps.common",
     "hawc.apps.myuser",
     "hawc.apps.assessment",
     "hawc.apps.lit",

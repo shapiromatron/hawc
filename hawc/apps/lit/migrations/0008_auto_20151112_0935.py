@@ -3,7 +3,7 @@
 
 from django.db import migrations
 
-from ...utils.models import CustomURLField
+from ...common.models import CustomURLField
 
 
 class Migration(migrations.Migration):

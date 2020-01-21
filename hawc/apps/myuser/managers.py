@@ -2,7 +2,7 @@ from django.contrib.auth.models import BaseUserManager
 from django.db import models
 from django.utils import timezone
 
-from ..utils.models import BaseManager
+from ..common.models import BaseManager
 
 
 class UserProfileManager(BaseManager):
