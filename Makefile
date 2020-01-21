@@ -1,4 +1,4 @@
-.PHONY: clean docs help lint format
+.PHONY: dev docs sevedocs notebook lint format test
 .DEFAULT_GOAL := help
 define BROWSER_PYSCRIPT
 import os, webbrowser, sys
@@ -33,19 +33,25 @@ dev: ## Start development environment
 help:
 	@python -c "$$PRINT_HELP_PYSCRIPT" < $(MAKEFILE_LIST)
 
-docs: ## generate Sphinx HTML documentation, including API docs
+docs: ## Generate Sphinx HTML documentation, including API docs
 	$(MAKE) -C docs clean
 	$(MAKE) -C docs html
 	$(BROWSER) docs/_build/html/index.html
 
-servedocs: docs ## compile the docs watching for changes
+servedocs: docs ## Compile the docs watching for changes
 	watchmedo shell-command -p '*.rst' -c '$(MAKE) -C docs html' -R -D .
 
-notebook:  ## start jupyter notebook
+notebook:  ## Start jupyter notebook
 	cd project; jupyter notebook --no-browser --notebook-dir=../notebooks
 
-lint:  ## check for formatting issues via black & flake8
+lint:  ## Check for formatting issues via black & flake8
 	@black . --check && flake8 .
 
-format:  ## modify code using black & show flake8 issues
+format:  ## Modify code using black & show flake8 issues
 	@black . && isort -rc -y --atomic && flake8 .
+
+test:  ## Run python tests
+	@py.test
+
+flynt:  ## Run flynt (optional) using preferred config
+	@flynt --verbose --line_length=120 hawc/

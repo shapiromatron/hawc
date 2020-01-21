@@ -54,13 +54,13 @@ module.exports = {
     output: {
         filename: "[name].[hash].js",
         chunkFilename: "[name].[hash].js",
-        path: path.resolve("../project/static/bundles"),
+        path: path.resolve("../hawc/static/bundles"),
         publicPath: "/static/bundles/",
     },
 
     plugins: [
         new BundleTracker({
-            filename: "../project/webpack-stats.json",
+            filename: "../webpack-stats.json",
         }),
     ],
 

@@ -42,7 +42,7 @@ please specify in the docker-compose `.env` file (example secrets below):
 
     # django
     LOGS_PATH=/app/logs
-    DJANGO_SETTINGS_MODULE=hawc.settings.production
+    DJANGO_SETTINGS_MODULE=main.settings.production
     DJANGO_ALLOWED_HOSTS=hawcproject.org
     DJANGO_SECRET_KEY=myBigSecretKey
     DJANGO_ADMIN_EMAILS=johnny@appleseed.com|tommy@appleseed.com
@@ -99,20 +99,20 @@ Here is an example `fabric`_ script for doing so:
     @task
     def update():
 
-        with lcd('/local/hawc/project'):
+        with lcd('/local/hawc/hawc'):
             local('npm run build')
             put(
-                os.path.join('/local/hawc/project/webpack-stats.json'),
-                '/apps/hawc/project',
+                os.path.join('/local/hawc/hawc/webpack-stats.json'),
+                '/apps/hawc/hawc',
                 mode=0o644
             )
             put(
-                os.path.join(/local/hawc/project/static/bundles/*'),
-                '/remote/hawc/project/static/bundles/',
+                os.path.join(/local/hawc/hawc/static/bundles/*'),
+                '/remote/hawc/hawc/static/bundles/',
                 mode=0o644
             )
 
         with cd('/remote/hawc'):
-            run('git log -1 --format=%H > /remote/hawc/project/.gitcommit')
+            run('git log -1 --format=%H > /remote/hawc/hawc/.gitcommit')
             run('docker-compose build django')
             run('docker-compose up --no-deps -d django')

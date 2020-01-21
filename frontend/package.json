@@ -4,7 +4,7 @@
     "version": "1.0.0",
     "description": "HAWC frontend code",
     "scripts": {
-        "clean": "rimraf ../project/static/bundles/* && rimraf ../project/webpack-stats.json",
+        "clean": "rimraf ../hawc/static/bundles/* && rimraf ../webpack-stats.json",
         "build": "npm run clean && webpack --config webpack.config.prod.js",
         "start": "node devServer.js",
         "test": "env NODE_PATH=$NODE_PATH:$PWD/assets mocha ./assets/tests/ --compilers js:babel-core/register --require ./assets/tests/test_helper.js --recursive",
