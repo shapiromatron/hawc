@@ -1,6 +1,6 @@
 import os
 
-from django.core.wsgi import get_wsgi_application  # noqa
+from django.core.wsgi import get_wsgi_application
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "hawc.main.settings.local")
 os.environ["LC_ALL"] = "en_US.UTF-8"
