@@ -1,3 +1,8 @@
+import logging
+from io import StringIO
+
+import pandas as pd
+from django.db import transaction
 from rest_framework import serializers
 from rest_framework.exceptions import ParseError
 
@@ -40,3 +45,84 @@ class ReferenceCleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSeri
         model = models.Reference
         cleanup_fields = model.TEXT_CLEANUP_FIELDS
         fields = cleanup_fields + ("id",)
+
+
+class BulkReferenceTagSerializer(serializers.Serializer):
+    operation = serializers.ChoiceField(choices=["append", "replace"], required=True)
+    csv = serializers.CharField(required=True)
+
+    def validate_csv(self, value):
+        try:
+            df = pd.read_csv(StringIO(value))
+        except pd.errors.ParserError:
+            raise serializers.ValidationError("CSV could not be parsed")
+        except pd.errors.EmptyDataError:
+            raise serializers.ValidationError("CSV must not be empty")
+
+        # ensure columns are expected
+        expected_columns = ["reference_id", "tag_id"]
+        if df.columns.tolist() != expected_columns:
+            raise serializers.ValidationError(
+                f"Invalid column headers; expecting \"{','.join(expected_columns)}\""
+            )
+
+        # ensure we have some data
+        if df.shape[0] == 0:
+            raise serializers.ValidationError("CSV has no data")
+
+        expected_assessment_id = self.context["assessment"].id
+
+        # ensure that all references are from this assessment
+        assessments = (
+            models.Reference.objects.filter(id__in=df.reference_id.unique())
+            .values_list("assessment_id", flat=True)
+            .distinct()
+        )
+        if len(assessments) > 1 or assessments[0] != expected_assessment_id:
+            raise serializers.ValidationError(
+                f"All reference ids are not from assessment {expected_assessment_id}"
+            )
+
+        # ensure that all tags are from this assessment
+        expected_tag_ids = models.ReferenceFilterTag.get_descendants_pks(expected_assessment_id)
+        additional_tags = set(df.tag_id.unique()) - set(expected_tag_ids)
+        if len(additional_tags) > 0:
+            raise serializers.ValidationError(
+                f"All tags are not from assessment {expected_assessment_id}"
+            )
+
+        # success! save dataframe
+        self.assessment = self.context["assessment"]
+        self.df = df
+
+        return value
+
+    @transaction.atomic
+    def bulk_create_tags(self):
+        assessment_id = self.assessment.id
+        operation = self.validated_data["operation"]
+
+        existing = set()
+        if operation == "append":
+            existing = set(
+                models.ReferenceTags.objects.filter(
+                    content_object__assessment_id=assessment_id
+                ).values_list("tag_id", "content_object_id")
+            )
+
+        if operation == "replace":
+            tags_to_delete = models.ReferenceTags.objects.assessment_qs(assessment_id)
+            logging.info(f"Deleting {tags_to_delete.count()} reference tags for {assessment_id}")
+            tags_to_delete.delete()
+
+        new_tags = [
+            models.ReferenceTags(tag_id=row.tag_id, content_object_id=row.reference_id)
+            for row in self.df.itertuples(index=False)
+            if (row.tag_id, row.reference_id) not in existing
+        ]
+
+        if new_tags:
+            logging.info(f"Creating {len(new_tags)} reference tags for {assessment_id}")
+            models.ReferenceTags.objects.bulk_create(new_tags)
+
+            models.Reference.delete_cache(assessment_id)

@@ -24,6 +24,25 @@ class LiteratureAssessmentViewset(viewsets.GenericViewSet):
         df = models.ReferenceFilterTag.as_dataframe(instance.id)
         return Response(df)
 
+    @decorators.detail_route(
+        methods=("get", "post"), url_path="reference-tags", renderer_classes=PandasRenderers
+    )
+    def reference_tags(self, request, pk):
+        """
+        Apply reference tags for all references in an assessment.
+        """
+        instance = self.get_object()
+
+        if self.request.method == "POST":
+            serializer = serializers.BulkReferenceTagSerializer(
+                data=request.data, context={"assessment": instance}
+            )
+            serializer.is_valid(raise_exception=True)
+            serializer.bulk_create_tags()
+
+        df = models.ReferenceTags.objects.as_dataframe(instance.id)
+        return Response(df)
+
 
 class ReferenceFilterTag(AssessmentRootedTagTreeViewset):
     model = models.ReferenceFilterTag

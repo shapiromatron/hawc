@@ -2,6 +2,7 @@ import json
 import logging
 from typing import List
 
+import pandas as pd
 from django.apps import apps
 from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
@@ -430,3 +431,19 @@ class ReferenceManager(BaseManager):
 
 class ReferenceTagsManager(BaseManager):
     assessment_relation = "content_object__assessment"
+
+    def as_dataframe(self, assessment_id: int) -> pd.DataFrame:
+        """
+        Returns all reference tag relations for an assessment.
+
+        Args:
+            assessment_id (int): Assessment id
+
+        Returns:
+            pd.DataFrame: A pandas dataframe
+        """
+        df = pd.DataFrame(
+            data=list(self.assessment_qs(assessment_id).values("tag_id", "content_object_id"))
+        )
+        df = df.rename(columns=dict(content_object_id="reference_id"))
+        return df
