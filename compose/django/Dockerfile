@@ -48,10 +48,11 @@ RUN pip install -U pip && \
     pip install -r /requirements/production.txt --no-cache-dir && \
     rm -rf /requirements
 
-COPY ./project /app/project
-
-RUN chown -R django /app
-
-WORKDIR /app/project
+WORKDIR /app
+COPY ./dist/hawc.tar.gz /app/hawc.tar.gz
+RUN tar -xf /app/hawc.tar.gz -C /app && \
+    rm /app/hawc.tar.gz && \
+    pip install -e . && \
+    chown -R django /app
 
 ENTRYPOINT ["/entrypoint.sh"]

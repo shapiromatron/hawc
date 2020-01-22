@@ -24,3 +24,7 @@ pydot==1.2.3
 
 # notebooks
 jupyter==1.0.0
+
+# hawc; save in editable mode so it doesn't copy to venv
+# but instead stays in place
+-e .
