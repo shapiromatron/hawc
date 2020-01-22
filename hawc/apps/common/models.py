@@ -1,14 +1,16 @@
 import json
 import logging
+import math
 from typing import Dict, List, Tuple
 
 import django
+import pandas as pd
 from django.apps import apps
 from django.conf import settings
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist, SuspiciousOperation
 from django.db import IntegrityError, connection, models, transaction
-from django.db.models import Q, URLField
+from django.db.models import Q, QuerySet, URLField
 from django.template.defaultfilters import slugify as default_slugify
 from django.utils.translation import ugettext_lazy as _
 from treebeard.mp_tree import MP_Node
@@ -124,6 +126,47 @@ class AssessmentRootMixin(object):
         if include_root:
             return cls.get_tree(root)
         return root.get_descendants()
+
+    @classmethod
+    def annotated_nested_names(cls, qs: QuerySet):
+        """
+        Include the nested name for each item in the queryset. Assumes the queryset is correctly
+        ordered; uses the `name` field and saves to `nested_name` field.
+
+        Args:
+            qs (QuerySet): An ordered queryset, like from `get_assessment_qs`
+        """
+        # preconditions; check that we have a name attribute and we don't have a nested_name attribute
+        el = qs.first()
+        assert hasattr(el, "name")
+        assert not hasattr(el, "nested_name")
+
+        last_depth = -math.inf
+        names: List[str] = []
+        for node in qs:
+
+            if node.depth == 1:
+                node.nested_name = node.name
+            else:
+                if node.depth > last_depth:
+                    pass
+                else:
+                    for i in range(last_depth - node.depth + 1):
+                        names.pop()
+
+                names.append(node.name)
+                node.nested_name = "|".join(names)
+
+            last_depth = node.depth
+
+    @classmethod
+    def as_dataframe(cls, assessment_id: int, include_root=False) -> pd.DataFrame:
+        qs = cls.get_assessment_qs(assessment_id, include_root)
+        cls.annotated_nested_names(qs)
+        return pd.DataFrame(
+            data=[(el.id, el.depth, el.name, el.nested_name) for el in qs],
+            columns=["id", "depth", "name", "nested_name"],
+        )
 
     @classmethod
     def assessment_qs(cls, assessment_id):

@@ -1,7 +1,7 @@
 import pytest
-from rest_framework.test import APIClient
-from django.core.urlresolvers import reverse
 from django.core.exceptions import ImproperlyConfigured
+from django.core.urlresolvers import reverse
+from rest_framework.test import APIClient
 
 
 @pytest.mark.django_db
