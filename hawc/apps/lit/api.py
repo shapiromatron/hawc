@@ -25,6 +25,18 @@ class LiteratureAssessmentViewset(viewsets.GenericViewSet):
         return Response(df)
 
     @decorators.detail_route(
+        methods=("get",), renderer_classes=PandasRenderers, url_path="reference-ids"
+    )
+    def reference_ids(self, request, pk):
+        """
+        Get literature reference ids for all assessment references
+        """
+        instance = self.get_object()
+        qs = models.Reference.objects.assessment_qs(instance.id)
+        df = models.Reference.objects.identifiers_dataframe(qs)
+        return Response(df)
+
+    @decorators.detail_route(
         methods=("get", "post"), url_path="reference-tags", renderer_classes=PandasRenderers
     )
     def reference_tags(self, request, pk):

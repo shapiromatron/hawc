@@ -1,8 +1,10 @@
 import json
 import logging
+from collections import defaultdict
 from typing import List
 
 import pandas as pd
+from django.db.models import QuerySet
 from django.apps import apps
 from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
@@ -427,6 +429,53 @@ class ReferenceManager(BaseManager):
             # add all identifiers and searches
             ref.identifiers.add(*idents)
             ref.searches.add(search)
+
+    def identifiers_dataframe(self, qs: QuerySet) -> pd.DataFrame:
+        """
+        Returns identifiers references for an assessment from external databases or tools.
+
+        Args:
+            qs (QuerySet): A queryset
+
+        Returns:
+            pd.DataFrame: A pandas dataframe
+        """
+        qs = qs.prefetch_related("identifiers")
+
+        captured = {None, constants.HERO, constants.PUBMED}
+        diff = set(qs.values_list("identifiers__database", flat=True).distinct()) - captured
+        if diff:
+            logging.warning(f"Missing some identifier IDs from id export: {diff}")
+
+        data = defaultdict(dict)
+
+        # capture HERO ids
+        heros = qs.filter(identifiers__database=constants.HERO).values_list(
+            "id", "identifiers__unique_id"
+        )
+        for hawc_id, hero_id in heros:
+            data[hawc_id]["hero_id"] = int(hero_id)
+
+        # capture PUBMED ids
+        pubmeds = qs.filter(identifiers__database=constants.PUBMED).values_list(
+            "id", "identifiers__unique_id"
+        )
+        for hawc_id, pubmed_id in pubmeds:
+            data[hawc_id]["pubmed_id"] = int(pubmed_id)
+
+        # create a dataframe
+        df = (
+            pd.DataFrame.from_dict(data, orient="index")
+            .reset_index()
+            .rename(columns={"index": "reference_id"})
+        )
+
+        # set missing columns
+        for col in ["hero_id", "pubmed_id"]:
+            if col not in df.columns:
+                df.loc[:, col] = None
+
+        return df
 
 
 class ReferenceTagsManager(BaseManager):

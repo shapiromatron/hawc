@@ -36,7 +36,7 @@ class PandasHtmlRenderer(PandasBaseRenderer):
 
     def render_dataframe(self, df: pd.DataFrame) -> str:
         with pd.option_context("display.max_colwidth", -1):
-            return df.to_html(index=False)
+            return df.fillna("-").to_html(index=False)
 
 
 class PandasCsvRenderer(PandasBaseRenderer):
