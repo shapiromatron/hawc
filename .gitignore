@@ -25,6 +25,7 @@ __pycache__/
 .vscode/
 _build/
 build/
+data/
 dist/
 node_modules/
 public/
@@ -37,12 +38,6 @@ package-lock.json
 # keep folders; not contents
 hawc/static/bundles/
 !hawc/static/bundles/.gitkeep
-
-compose/nginx/ssl/*
-!compose/nginx/ssl/.gitkeep
-
-compose/nginx/conf/*
-!compose/nginx/conf/.gitkeep
 
 compose/django/fonts/*
 !compose/django/fonts/.gitkeep

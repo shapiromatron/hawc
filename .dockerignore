@@ -1,5 +1,6 @@
 .git/
 .mypy_cache/
+data/
 docs/
 hawc/
 frontend/
