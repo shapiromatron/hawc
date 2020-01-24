@@ -1,6 +1,6 @@
 #!/bin/sh
 
-manage.py migrate --noinput &> migrations.txt
+manage.py migrate --noinput
 manage.py clear_cache
 manage.py collectstatic --noinput
 

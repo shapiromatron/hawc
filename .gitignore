@@ -13,6 +13,7 @@
 bin/dev.local.sh
 package-lock.json
 celerybeat*
+compose/nginx/conf/nginx.conf
 hawc/main/settings/local.py
 webpack-stats.json
 

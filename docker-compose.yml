@@ -26,3 +26,12 @@ services:
     volumes:
       - ./data/public:/app/public
 
+  nginx:
+    build: ./compose/nginx
+    depends_on:
+      - django
+    ports:
+      - "0.0.0.0:8000:8000"
+    volumes:
+      - ./data/public:/app/public
+      - ./data/nginx/ssl:/etc/nginx/ssl
