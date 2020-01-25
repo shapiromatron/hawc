@@ -5,7 +5,7 @@ from pytest_django.asserts import assertTemplateUsed
 
 
 @pytest.mark.django_db
-def test_new_success(assessment_data):
+def test_new_success():
     users = ("sudo@sudo.com", "pm@pm.com", "team@team.com", "rev@rev.com")
     views = ("assessment:new",)
     for user in users:
@@ -32,7 +32,7 @@ def test_new_success(assessment_data):
 
 
 @pytest.mark.django_db
-def test_new_forbidden(assessment_data):
+def test_new_forbidden():
     clients = (None,)
     views = ("assessment:new",)
     for client in clients:
@@ -58,13 +58,10 @@ def test_new_forbidden(assessment_data):
 
 
 @pytest.mark.django_db
-def test_detail_success(assessment_data):
+def test_detail_success():
     users = ("sudo@sudo.com", "pm@pm.com", "team@team.com", "rev@rev.com")
     views = ("assessment:detail",)
-    pks = (
-        assessment_data["assessment"]["assessment_working"].pk,
-        assessment_data["assessment"]["assessment_final"].pk,
-    )
+    pks = (1, 2)
     for user in users:
         c = Client()
         assert c.login(email=user, password="pw") is True
@@ -75,32 +72,20 @@ def test_detail_success(assessment_data):
 
 
 @pytest.mark.django_db
-def test_detail_view_public(assessment_data):
+def test_detail_view_public():
     c = Client()
-    response = c.get(
-        reverse(
-            "assessment:detail",
-            kwargs={"pk": assessment_data["assessment"]["assessment_working"].pk},
-        )
-    )
+    response = c.get(reverse("assessment:detail", kwargs={"pk": 1},))
     assert response.status_code == 403
 
-    response = c.get(
-        reverse(
-            "assessment:detail", kwargs={"pk": assessment_data["assessment"]["assessment_final"].pk}
-        )
-    )
+    response = c.get(reverse("assessment:detail", kwargs={"pk": 2}))
     assert response.status_code == 200
 
 
 @pytest.mark.django_db
-def test_edit_view_success(assessment_data):
+def test_edit_view_success():
     clients = ("sudo@sudo.com", "pm@pm.com")
     views = ("assessment:update", "assessment:delete")
-    pks = (
-        assessment_data["assessment"]["assessment_working"].pk,
-        assessment_data["assessment"]["assessment_final"].pk,
-    )
+    pks = (1, 2)
     for client in clients:
         c = Client()
         assert c.login(email=client, password="pw") is True
@@ -111,35 +96,20 @@ def test_edit_view_success(assessment_data):
                 assert response.status_code == 200
 
         # check post updates
-        response = c.post(
-            reverse(
-                "assessment:update",
-                kwargs={"pk": assessment_data["assessment"]["assessment_working"].pk},
-            ),
-            {"name": "foo manchu"},
-        )
+        response = c.post(reverse("assessment:update", kwargs={"pk": 1},), {"name": "foo manchu"},)
         assertTemplateUsed("assessment/assessment_detail.html")
         assert response.status_code == 200
 
-        response = c.post(
-            reverse(
-                "assessment:update",
-                kwargs={"pk": assessment_data["assessment"]["assessment_final"].pk},
-            ),
-            {"name": "foo manchu"},
-        )
+        response = c.post(reverse("assessment:update", kwargs={"pk": 2},), {"name": "foo manchu"},)
         assertTemplateUsed("assessment/assessment_detail.html")
         assert response.status_code == 200
 
 
 @pytest.mark.django_db
-def test_edit_view_forbidden(assessment_data):
+def test_edit_view_forbidden():
     clients = (None, "team@team.com", "rev@rev.com")
     views = ("assessment:update", "assessment:delete")
-    pks = [
-        assessment_data["assessment"]["assessment_working"].pk,
-        assessment_data["assessment"]["assessment_final"].pk,
-    ]
+    pks = (1, 2)
     for client in clients:
         c = Client()
         if client:
@@ -157,58 +127,37 @@ def test_edit_view_forbidden(assessment_data):
 
 
 @pytest.mark.django_db
-def test_delete_superuser(assessment_data):
+def test_delete_superuser():
     c = Client()
     assert c.login(email="sudo@sudo.com", password="pw") is True
 
-    response = c.post(
-        reverse(
-            "assessment:delete",
-            kwargs={"pk": assessment_data["assessment"]["assessment_working"].pk},
-        )
-    )
+    response = c.post(reverse("assessment:delete", kwargs={"pk": 1},))
     assert response.status_code == 302
     assertTemplateUsed("assessment/assessment_list.html")
 
-    response = c.post(
-        reverse(
-            "assessment:delete", kwargs={"pk": assessment_data["assessment"]["assessment_final"].pk}
-        )
-    )
+    response = c.post(reverse("assessment:delete", kwargs={"pk": 2}))
     assert response.status_code == 302
     assertTemplateUsed("assessment/assessment_list.html")
 
 
 @pytest.mark.django_db
-def test_delete_project_manager(assessment_data):
+def test_delete_project_manager(test_db):
     c = Client()
     assert c.login(email="pm@pm.com", password="pw") is True
 
-    response = c.post(
-        reverse(
-            "assessment:delete",
-            kwargs={"pk": assessment_data["assessment"]["assessment_working"].pk},
-        )
-    )
+    response = c.post(reverse("assessment:delete", kwargs={"pk": 1},))
     assert response.status_code == 302
     assertTemplateUsed("assessment/assessment_list.html")
 
-    response = c.post(
-        reverse(
-            "assessment:delete", kwargs={"pk": assessment_data["assessment"]["assessment_final"].pk}
-        )
-    )
+    response = c.post(reverse("assessment:delete", kwargs={"pk": 2}))
     assert response.status_code == 302
     assertTemplateUsed("assessment/assessment_list.html")
 
 
 @pytest.mark.django_db
-def test_delete_forbidden(assessment_data):
+def test_delete_forbidden():
     clients = (None, "team@team.com", "rev@rev.com")
-    pks = (
-        assessment_data["assessment"]["assessment_working"].pk,
-        assessment_data["assessment"]["assessment_final"].pk,
-    )
+    pks = (1, 2)
     for client in clients:
         c = Client()
         if client:

@@ -5,7 +5,7 @@ from pytest_django.asserts import assertTemplateUsed
 
 
 @pytest.mark.django_db
-def test_assessment_creation(assessment_data):
+def test_assessment_creation():
     c = Client()
     assert c.login(email="sudo@sudo.com", password="pw") is True
     for i in range(2):
