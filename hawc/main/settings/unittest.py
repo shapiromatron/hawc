@@ -2,7 +2,7 @@
 
 import logging
 
-from .local import *  # noqa
+from .dev import *  # noqa
 
 DEBUG = False
 

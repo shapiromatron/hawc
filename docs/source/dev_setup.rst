@@ -46,7 +46,7 @@ Clone the repository and install all requirements into a virtual environment:
     source ./venv/bin/activate
     $VIRTUAL_ENV/bin/pip install -r ./requirements/dev.txt
 
-    # create a local settings file
+    # create a local settings file (optional; in case you want to change local settings)
     cp ./hawc/main/settings/local.example.py ./hawc/main/settings/local.py
 
 Update the settings file with any changes you'd like to make for your local
