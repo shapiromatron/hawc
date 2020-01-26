@@ -3,7 +3,7 @@ import os
 from celery import Celery
 from celery.utils.log import get_task_logger
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "hawc.main.settings.local")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "hawc.main.settings.dev")
 logger = get_task_logger(__name__)
 app = Celery("hawc")
 

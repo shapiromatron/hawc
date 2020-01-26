@@ -12,7 +12,7 @@ paths = [
 sys.path.extend(paths)
 
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "hawc.settings.local")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "hawc.settings.dev")
 django.setup()
 logging.disable(logging.WARNING)
 

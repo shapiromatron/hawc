@@ -46,7 +46,7 @@ Clone the repository and install all requirements into a virtual environment:
     source ./venv/bin/activate
     $VIRTUAL_ENV/bin/pip install -r ./requirements/dev.txt
 
-    # create a local settings file
+    # create a local settings file (optional; in case you want to change local settings)
     cp ./hawc/main/settings/local.example.py ./hawc/main/settings/local.py
 
 Update the settings file with any changes you'd like to make for your local
@@ -126,3 +126,21 @@ If Postgres tools are not available from the command-line, from a pqsl session::
     CREATE DATABASE hawc;   --- create new database
     \c hawc                 --- open database
     \i /path/to/export.sql  --- load data into database
+
+Building the test database:
+---------------------------
+
+A test database is loaded to run unit tests. The database may need to be periodically updated as new feature are added. To load, make edits, and export the test database:
+
+.. code-block:: bash
+
+    export "DJANGO_SETTINGS_MODULE=hawc.main.settings.unittest"
+
+    # load existing test
+    createdb hawc-test
+    manage.py load_test_db
+
+    # now make edits to the database using the GUI or via command line
+
+    # export database
+    manage.py dump_test_db

@@ -7,13 +7,13 @@ from pytest_django.asserts import assertTemplateUsed
 
 
 @pytest.mark.django_db
-def test_study_read_success(study_data):
+def test_study_read_success(db_keys):
     clients = ["sudo@sudo.com", "pm@pm.com", "team@team.com", "rev@rev.com"]
     views = [
-        reverse("study:list", kwargs={"pk": study_data["assessment"]["assessment_working"].id}),
-        reverse("study:detail", kwargs={"pk": study_data["study"]["study_working"].id}),
-        reverse("study:list", kwargs={"pk": study_data["assessment"]["assessment_final"].id}),
-        reverse("study:detail", kwargs={"pk": study_data["study"]["study_final"].id}),
+        reverse("study:list", kwargs={"pk": db_keys.assessment_working}),
+        reverse("study:detail", kwargs={"pk": db_keys.study_working}),
+        reverse("study:list", kwargs={"pk": db_keys.assessment_final}),
+        reverse("study:detail", kwargs={"pk": db_keys.study_final}),
     ]
 
     for client in clients:
@@ -25,30 +25,14 @@ def test_study_read_success(study_data):
 
 
 @pytest.mark.django_db
-def test_study_read_failure(study_data):
+def test_study_read_failure(db_keys):
     # anonymous user
     c = Client()
     views = [
-        {
-            "view": reverse(
-                "study:list", kwargs={"pk": study_data["assessment"]["assessment_working"].id}
-            ),
-            "status": 403,
-        },
-        {
-            "view": reverse("study:detail", kwargs={"pk": study_data["study"]["study_working"].id}),
-            "status": 403,
-        },
-        {
-            "view": reverse(
-                "study:list", kwargs={"pk": study_data["assessment"]["assessment_final"].id}
-            ),
-            "status": 200,
-        },
-        {
-            "view": reverse("study:detail", kwargs={"pk": study_data["study"]["study_final"].id}),
-            "status": 200,
-        },
+        {"view": reverse("study:list", kwargs={"pk": db_keys.assessment_working}), "status": 403},
+        {"view": reverse("study:detail", kwargs={"pk": db_keys.study_working}), "status": 403},
+        {"view": reverse("study:list", kwargs={"pk": db_keys.assessment_final}), "status": 200},
+        {"view": reverse("study:detail", kwargs={"pk": db_keys.study_final}), "status": 200},
     ]
     for view in views:
         response = c.get(view["view"])
@@ -56,7 +40,7 @@ def test_study_read_failure(study_data):
 
 
 @pytest.mark.django_db
-def test_study_crud_success(study_data):
+def test_study_crud_success(db_keys):
     # Check to ensure that sudo, pm and team have CRUD permissions.
     # Create a new study, edit, view prior versions, and delete. Test both
     # GET and POST when appropriate.
@@ -66,18 +50,12 @@ def test_study_crud_success(study_data):
         assert c.login(username=client, password="pw") is True
 
         # create new
-        response = c.get(
-            reverse(
-                "study:new_ref", kwargs={"pk": study_data["assessment"]["assessment_working"].id}
-            )
-        )
+        response = c.get(reverse("study:new_ref", kwargs={"pk": db_keys.assessment_working}))
         assert response.status_code == 200
         response = c.post(
-            reverse(
-                "study:new_ref", kwargs={"pk": study_data["assessment"]["assessment_working"].id}
-            ),
+            reverse("study:new_ref", kwargs={"pk": db_keys.assessment_working}),
             {
-                "assessment": study_data["assessment"]["assessment_working"].id,
+                "assessment": db_keys.assessment_working,
                 "short_citation": "foo et al.",
                 "full_citation": "cite",
                 "bioassay": True,
@@ -94,7 +72,7 @@ def test_study_crud_success(study_data):
         response = c.post(
             reverse("study:update", kwargs={"pk": pk}),
             {
-                "assessment": study_data["assessment"]["assessment_working"].id,
+                "assessment": db_keys.assessment_working,
                 "citation": "foo et al.",
                 "full_citation": "cite",
             },
@@ -114,7 +92,7 @@ def test_study_crud_success(study_data):
 
 
 @pytest.mark.django_db
-def test_uf_crud_failure(study_data):
+def test_uf_crud_failure(db_keys):
     # Check to ensure that rev and None don't have CRUD permissions.
     # Attempt to create a new study, edit, view prior versions, and delete.
     # Test both GET and POST when appropriate.
@@ -122,9 +100,9 @@ def test_uf_crud_failure(study_data):
     # first test working scenario
     users = ["rev@rev.com", None]
     views = [
-        reverse("study:new_ref", kwargs={"pk": study_data["assessment"]["assessment_working"].id}),
-        reverse("study:update", kwargs={"pk": study_data["study"]["study_working"].id}),
-        reverse("study:delete", kwargs={"pk": study_data["study"]["study_working"].id}),
+        reverse("study:new_ref", kwargs={"pk": db_keys.assessment_working}),
+        reverse("study:update", kwargs={"pk": db_keys.study_working}),
+        reverse("study:delete", kwargs={"pk": db_keys.study_working}),
     ]
 
     for user in users:
@@ -141,9 +119,9 @@ def test_uf_crud_failure(study_data):
     # next check that all people (except sudo) cannot edit a final study
     users = ["pm@pm.com", "team@team.com", "rev@rev.com", None]
     views = [
-        reverse("study:new_ref", kwargs={"pk": study_data["assessment"]["assessment_final"].id}),
-        reverse("study:update", kwargs={"pk": study_data["study"]["study_final"].id}),
-        reverse("study:delete", kwargs={"pk": study_data["study"]["study_final"].id}),
+        reverse("study:new_ref", kwargs={"pk": db_keys.assessment_final}),
+        reverse("study:update", kwargs={"pk": db_keys.study_final}),
+        reverse("study:delete", kwargs={"pk": db_keys.study_final}),
     ]
 
     for user in users:

@@ -21,7 +21,7 @@ from lit.models import Reference, Search  # noqa: E402
 ROOT = str((Path(__file__).parents[1] / "hawc").resolve())
 sys.path.append(ROOT)
 os.chdir(ROOT)
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "main.settings.local")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "main.settings.dev")
 
 django.setup()
 
