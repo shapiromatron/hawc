@@ -11,8 +11,8 @@ jobs:
       postgres:
         image: postgres:9.6
         env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: ""
+          POSTGRES_USER: hawc
+          POSTGRES_PASSWORD: password
           POSTGRES_DB: hawc-test
         ports:
         # will assign a random free host port
@@ -29,9 +29,9 @@ jobs:
       env:
         # use localhost for the host here because we are running the job on the VM.
         # If we were running the job on in a container this would be postgres
-        DJANGO_DB_NAME: hawc
+        DJANGO_DB_NAME: hawc-test
         DJANGO_DB_USER: hawc
-        DJANGO_DB_PW: hawc
+        DJANGO_DB_PW: password
         DJANGO_DB_HOST: localhost
         DJANGO_DB_PORT: ${{ job.services.postgres.ports[5432] }} # get randomly assigned published port
         DJANGO_SETTINGS_MODULE: "hawc.main.settings.dev"
