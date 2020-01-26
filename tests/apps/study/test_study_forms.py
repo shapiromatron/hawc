@@ -7,13 +7,11 @@ from pytest_django.asserts import assertFormError, assertRedirects, assertTempla
 
 
 @pytest.mark.django_db
-def test_study_forms(study_data):
+def test_study_forms(db_keys):
     c = Client()
     assert c.login(username="team@team.com", password="pw") is True
 
-    new_study_url = reverse(
-        "study:new_ref", kwargs={"pk": study_data["assessment"]["assessment_working"].id}
-    )
+    new_study_url = reverse("study:new_ref", kwargs={"pk": db_keys.assessment_working})
     study_dict = {
         "short_citation": "foo et al.",
         "full_citation": "cite",
@@ -43,8 +41,7 @@ def test_study_forms(study_data):
     assert c.login(username="sudo@sudo.com", password="pw") is True
 
     response = c.post(
-        reverse("study:new_ref", kwargs={"pk": study_data["assessment"]["assessment_final"].id}),
-        study_dict,
+        reverse("study:new_ref", kwargs={"pk": db_keys.assessment_final}), study_dict,
     )
     pk = re.findall(r"/study/(\d+)/$", response["location"])
     pk = int(pk[0])

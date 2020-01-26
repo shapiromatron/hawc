@@ -1,0 +1,760 @@
+- model: contenttypes.contenttype
+  pk: 1
+  fields:
+    app_label: auth
+    model: permission
+- model: contenttypes.contenttype
+  pk: 2
+  fields:
+    app_label: auth
+    model: group
+- model: contenttypes.contenttype
+  pk: 3
+  fields:
+    app_label: contenttypes
+    model: contenttype
+- model: contenttypes.contenttype
+  pk: 4
+  fields:
+    app_label: sessions
+    model: session
+- model: contenttypes.contenttype
+  pk: 5
+  fields:
+    app_label: sites
+    model: site
+- model: contenttypes.contenttype
+  pk: 6
+  fields:
+    app_label: admin
+    model: logentry
+- model: contenttypes.contenttype
+  pk: 7
+  fields:
+    app_label: reversion
+    model: revision
+- model: contenttypes.contenttype
+  pk: 8
+  fields:
+    app_label: reversion
+    model: version
+- model: contenttypes.contenttype
+  pk: 9
+  fields:
+    app_label: taggit
+    model: tag
+- model: contenttypes.contenttype
+  pk: 10
+  fields:
+    app_label: taggit
+    model: taggeditem
+- model: contenttypes.contenttype
+  pk: 11
+  fields:
+    app_label: myuser
+    model: hawcuser
+- model: contenttypes.contenttype
+  pk: 12
+  fields:
+    app_label: myuser
+    model: userprofile
+- model: contenttypes.contenttype
+  pk: 13
+  fields:
+    app_label: assessment
+    model: assessment
+- model: contenttypes.contenttype
+  pk: 14
+  fields:
+    app_label: assessment
+    model: attachment
+- model: contenttypes.contenttype
+  pk: 15
+  fields:
+    app_label: assessment
+    model: doseunits
+- model: contenttypes.contenttype
+  pk: 16
+  fields:
+    app_label: assessment
+    model: species
+- model: contenttypes.contenttype
+  pk: 17
+  fields:
+    app_label: assessment
+    model: strain
+- model: contenttypes.contenttype
+  pk: 18
+  fields:
+    app_label: assessment
+    model: effecttag
+- model: contenttypes.contenttype
+  pk: 19
+  fields:
+    app_label: assessment
+    model: baseendpoint
+- model: contenttypes.contenttype
+  pk: 20
+  fields:
+    app_label: assessment
+    model: timespentediting
+- model: contenttypes.contenttype
+  pk: 21
+  fields:
+    app_label: lit
+    model: search
+- model: contenttypes.contenttype
+  pk: 22
+  fields:
+    app_label: lit
+    model: pubmedquery
+- model: contenttypes.contenttype
+  pk: 23
+  fields:
+    app_label: lit
+    model: identifiers
+- model: contenttypes.contenttype
+  pk: 24
+  fields:
+    app_label: lit
+    model: referencefiltertag
+- model: contenttypes.contenttype
+  pk: 25
+  fields:
+    app_label: lit
+    model: referencetags
+- model: contenttypes.contenttype
+  pk: 26
+  fields:
+    app_label: lit
+    model: reference
+- model: contenttypes.contenttype
+  pk: 27
+  fields:
+    app_label: riskofbias
+    model: riskofbiasdomain
+- model: contenttypes.contenttype
+  pk: 28
+  fields:
+    app_label: riskofbias
+    model: riskofbiasmetric
+- model: contenttypes.contenttype
+  pk: 29
+  fields:
+    app_label: riskofbias
+    model: riskofbias
+- model: contenttypes.contenttype
+  pk: 30
+  fields:
+    app_label: riskofbias
+    model: riskofbiasscore
+- model: contenttypes.contenttype
+  pk: 31
+  fields:
+    app_label: riskofbias
+    model: riskofbiasassessment
+- model: contenttypes.contenttype
+  pk: 32
+  fields:
+    app_label: study
+    model: study
+- model: contenttypes.contenttype
+  pk: 33
+  fields:
+    app_label: study
+    model: attachment
+- model: contenttypes.contenttype
+  pk: 34
+  fields:
+    app_label: animal
+    model: experiment
+- model: contenttypes.contenttype
+  pk: 35
+  fields:
+    app_label: animal
+    model: animalgroup
+- model: contenttypes.contenttype
+  pk: 36
+  fields:
+    app_label: animal
+    model: dosingregime
+- model: contenttypes.contenttype
+  pk: 37
+  fields:
+    app_label: animal
+    model: dosegroup
+- model: contenttypes.contenttype
+  pk: 38
+  fields:
+    app_label: animal
+    model: endpoint
+- model: contenttypes.contenttype
+  pk: 39
+  fields:
+    app_label: animal
+    model: endpointgroup
+- model: contenttypes.contenttype
+  pk: 40
+  fields:
+    app_label: epi
+    model: criteria
+- model: contenttypes.contenttype
+  pk: 41
+  fields:
+    app_label: epi
+    model: country
+- model: contenttypes.contenttype
+  pk: 42
+  fields:
+    app_label: epi
+    model: adjustmentfactor
+- model: contenttypes.contenttype
+  pk: 43
+  fields:
+    app_label: epi
+    model: ethnicity
+- model: contenttypes.contenttype
+  pk: 44
+  fields:
+    app_label: epi
+    model: studypopulationcriteria
+- model: contenttypes.contenttype
+  pk: 45
+  fields:
+    app_label: epi
+    model: studypopulation
+- model: contenttypes.contenttype
+  pk: 46
+  fields:
+    app_label: epi
+    model: outcome
+- model: contenttypes.contenttype
+  pk: 47
+  fields:
+    app_label: epi
+    model: comparisonset
+- model: contenttypes.contenttype
+  pk: 48
+  fields:
+    app_label: epi
+    model: group
+- model: contenttypes.contenttype
+  pk: 49
+  fields:
+    app_label: epi
+    model: exposure
+- model: contenttypes.contenttype
+  pk: 50
+  fields:
+    app_label: epi
+    model: centraltendency
+- model: contenttypes.contenttype
+  pk: 51
+  fields:
+    app_label: epi
+    model: groupnumericaldescriptions
+- model: contenttypes.contenttype
+  pk: 52
+  fields:
+    app_label: epi
+    model: resultmetric
+- model: contenttypes.contenttype
+  pk: 53
+  fields:
+    app_label: epi
+    model: resultadjustmentfactor
+- model: contenttypes.contenttype
+  pk: 54
+  fields:
+    app_label: epi
+    model: result
+- model: contenttypes.contenttype
+  pk: 55
+  fields:
+    app_label: epi
+    model: groupresult
+- model: contenttypes.contenttype
+  pk: 56
+  fields:
+    app_label: epimeta
+    model: metaprotocol
+- model: contenttypes.contenttype
+  pk: 57
+  fields:
+    app_label: epimeta
+    model: metaresult
+- model: contenttypes.contenttype
+  pk: 58
+  fields:
+    app_label: epimeta
+    model: singleresult
+- model: contenttypes.contenttype
+  pk: 59
+  fields:
+    app_label: invitro
+    model: ivchemical
+- model: contenttypes.contenttype
+  pk: 60
+  fields:
+    app_label: invitro
+    model: ivcelltype
+- model: contenttypes.contenttype
+  pk: 61
+  fields:
+    app_label: invitro
+    model: ivexperiment
+- model: contenttypes.contenttype
+  pk: 62
+  fields:
+    app_label: invitro
+    model: ivendpointcategory
+- model: contenttypes.contenttype
+  pk: 63
+  fields:
+    app_label: invitro
+    model: ivendpoint
+- model: contenttypes.contenttype
+  pk: 64
+  fields:
+    app_label: invitro
+    model: ivendpointgroup
+- model: contenttypes.contenttype
+  pk: 65
+  fields:
+    app_label: invitro
+    model: ivbenchmark
+- model: contenttypes.contenttype
+  pk: 66
+  fields:
+    app_label: bmd
+    model: assessmentsettings
+- model: contenttypes.contenttype
+  pk: 67
+  fields:
+    app_label: bmd
+    model: logicfield
+- model: contenttypes.contenttype
+  pk: 68
+  fields:
+    app_label: bmd
+    model: session
+- model: contenttypes.contenttype
+  pk: 69
+  fields:
+    app_label: bmd
+    model: model
+- model: contenttypes.contenttype
+  pk: 70
+  fields:
+    app_label: bmd
+    model: selectedmodel
+- model: contenttypes.contenttype
+  pk: 71
+  fields:
+    app_label: summary
+    model: summarytext
+- model: contenttypes.contenttype
+  pk: 72
+  fields:
+    app_label: summary
+    model: visual
+- model: contenttypes.contenttype
+  pk: 73
+  fields:
+    app_label: summary
+    model: datapivot
+- model: contenttypes.contenttype
+  pk: 74
+  fields:
+    app_label: summary
+    model: datapivotupload
+- model: contenttypes.contenttype
+  pk: 75
+  fields:
+    app_label: summary
+    model: datapivotquery
+- model: contenttypes.contenttype
+  pk: 76
+  fields:
+    app_label: mgmt
+    model: task
+- model: myuser.hawcuser
+  pk: 1
+  fields:
+    password: md5$OtMBo5HXuH5d$79fbf1f0ae6d765b17b29256920cc8ef
+    last_login: 2020-01-25 14:23:16.156609+00:00
+    is_superuser: true
+    email: sudo@sudo.com
+    first_name: ''
+    last_name: ''
+    is_staff: true
+    is_active: true
+    license_v1_accepted: false
+    license_v2_accepted: false
+    date_joined: 2020-01-25 14:23:16.156609+00:00
+    groups: []
+    user_permissions: []
+- model: myuser.hawcuser
+  pk: 2
+  fields:
+    password: md5$fFanL0QpS7Sg$cf3808b6102279eb6982d78edfdc6111
+    last_login: 2020-01-25 14:23:16.170965+00:00
+    is_superuser: false
+    email: pm@pm.com
+    first_name: ''
+    last_name: ''
+    is_staff: false
+    is_active: true
+    license_v1_accepted: false
+    license_v2_accepted: false
+    date_joined: 2020-01-25 14:23:16.170965+00:00
+    groups: []
+    user_permissions: []
+- model: myuser.hawcuser
+  pk: 3
+  fields:
+    password: md5$oqL3kGUEvBCo$540b7af58759b8faeef79275b327a4e8
+    last_login: 2020-01-25 14:23:16.172427+00:00
+    is_superuser: false
+    email: team@team.com
+    first_name: ''
+    last_name: ''
+    is_staff: false
+    is_active: true
+    license_v1_accepted: false
+    license_v2_accepted: false
+    date_joined: 2020-01-25 14:23:16.172427+00:00
+    groups: []
+    user_permissions: []
+- model: myuser.hawcuser
+  pk: 4
+  fields:
+    password: md5$xp4A7HztQgax$744b942a9c35520e8a1a8c0b92a6ee27
+    last_login: 2020-01-25 14:23:16.173584+00:00
+    is_superuser: false
+    email: rev@rev.com
+    first_name: ''
+    last_name: ''
+    is_staff: false
+    is_active: true
+    license_v1_accepted: false
+    license_v2_accepted: false
+    date_joined: 2020-01-25 14:23:16.173584+00:00
+    groups: []
+    user_permissions: []
+- model: myuser.hawcuser
+  pk: 5
+  fields:
+    password: md5$jzGYN20VEexO$c1d4bd0bf1280917505a6989338fb37d
+    last_login: 2020-01-25 14:23:16.175169+00:00
+    is_superuser: false
+    email: public@rev.com
+    first_name: ''
+    last_name: ''
+    is_staff: false
+    is_active: true
+    license_v1_accepted: false
+    license_v2_accepted: false
+    date_joined: 2020-01-25 14:23:16.175169+00:00
+    groups: []
+    user_permissions: []
+- model: assessment.assessment
+  pk: 1
+  fields:
+    name: working
+    year: 1999
+    version: '1.0'
+    cas: ''
+    assessment_objective: ''
+    editable: true
+    public: false
+    hide_from_public_page: false
+    enable_literature_review: true
+    enable_project_management: true
+    enable_data_extraction: true
+    enable_risk_of_bias: true
+    enable_bmd: true
+    enable_summary_text: true
+    conflicts_of_interest: ''
+    funding_source: ''
+    noel_name: 0
+    rob_name: 0
+    created: 2020-01-25 14:23:16.176620+00:00
+    last_updated: 2020-01-25 14:23:16.176637+00:00
+    project_manager:
+    - 2
+    team_members:
+    - 3
+    reviewers:
+    - 4
+- model: assessment.assessment
+  pk: 2
+  fields:
+    name: final
+    year: 2001
+    version: final
+    cas: ''
+    assessment_objective: ''
+    editable: false
+    public: true
+    hide_from_public_page: false
+    enable_literature_review: true
+    enable_project_management: true
+    enable_data_extraction: true
+    enable_risk_of_bias: true
+    enable_bmd: true
+    enable_summary_text: true
+    conflicts_of_interest: ''
+    funding_source: ''
+    noel_name: 0
+    rob_name: 0
+    created: 2020-01-25 14:23:16.288774+00:00
+    last_updated: 2020-01-25 14:23:16.288806+00:00
+    project_manager:
+    - 2
+    team_members:
+    - 3
+    reviewers:
+    - 4
+- model: lit.search
+  pk: 1
+  fields:
+    assessment: 1
+    search_type: i
+    source: 0
+    title: Manual import
+    slug: manual-import
+    description: Default search instance used for manually importing literature into
+      HAWC instead of using a search.
+    search_string: None. This is used to manually enter literature.
+    import_file: ''
+    created: 2020-01-25 14:23:16.222728+00:00
+    last_updated: 2020-01-25 14:23:16.222754+00:00
+- model: lit.search
+  pk: 2
+  fields:
+    assessment: 2
+    search_type: i
+    source: 0
+    title: Manual import
+    slug: manual-import
+    description: Default search instance used for manually importing literature into
+      HAWC instead of using a search.
+    search_string: None. This is used to manually enter literature.
+    import_file: ''
+    created: 2020-01-25 14:23:16.325978+00:00
+    last_updated: 2020-01-25 14:23:16.326001+00:00
+- model: lit.referencefiltertag
+  pk: 1
+  fields:
+    path: '0001'
+    depth: 1
+    numchild: 2
+    name: assessment-1
+    slug: assessment-1
+- model: lit.referencefiltertag
+  pk: 2
+  fields:
+    path: '00010001'
+    depth: 2
+    numchild: 3
+    name: Inclusion
+    slug: inclusion
+- model: lit.referencefiltertag
+  pk: 3
+  fields:
+    path: '000100010001'
+    depth: 3
+    numchild: 0
+    name: Human Study
+    slug: human-study
+- model: lit.referencefiltertag
+  pk: 4
+  fields:
+    path: '000100010002'
+    depth: 3
+    numchild: 0
+    name: Animal Study
+    slug: animal-study
+- model: lit.referencefiltertag
+  pk: 5
+  fields:
+    path: '000100010003'
+    depth: 3
+    numchild: 0
+    name: Mechanistic Study
+    slug: mechanistic-study
+- model: lit.referencefiltertag
+  pk: 6
+  fields:
+    path: '00010002'
+    depth: 2
+    numchild: 3
+    name: Exclusion
+    slug: exclusion
+- model: lit.referencefiltertag
+  pk: 7
+  fields:
+    path: '000100020001'
+    depth: 3
+    numchild: 0
+    name: Tier I
+    slug: tier-i
+- model: lit.referencefiltertag
+  pk: 8
+  fields:
+    path: '000100020002'
+    depth: 3
+    numchild: 0
+    name: Tier II
+    slug: tier-ii
+- model: lit.referencefiltertag
+  pk: 9
+  fields:
+    path: '000100020003'
+    depth: 3
+    numchild: 0
+    name: Tier III
+    slug: tier-iii
+- model: lit.referencefiltertag
+  pk: 10
+  fields:
+    path: '0002'
+    depth: 1
+    numchild: 2
+    name: assessment-2
+    slug: assessment-2
+- model: lit.referencefiltertag
+  pk: 11
+  fields:
+    path: '00020001'
+    depth: 2
+    numchild: 3
+    name: Inclusion
+    slug: inclusion
+- model: lit.referencefiltertag
+  pk: 12
+  fields:
+    path: '000200010001'
+    depth: 3
+    numchild: 0
+    name: Human Study
+    slug: human-study
+- model: lit.referencefiltertag
+  pk: 13
+  fields:
+    path: '000200010002'
+    depth: 3
+    numchild: 0
+    name: Animal Study
+    slug: animal-study
+- model: lit.referencefiltertag
+  pk: 14
+  fields:
+    path: '000200010003'
+    depth: 3
+    numchild: 0
+    name: Mechanistic Study
+    slug: mechanistic-study
+- model: lit.referencefiltertag
+  pk: 15
+  fields:
+    path: '00020002'
+    depth: 2
+    numchild: 3
+    name: Exclusion
+    slug: exclusion
+- model: lit.referencefiltertag
+  pk: 16
+  fields:
+    path: '000200020001'
+    depth: 3
+    numchild: 0
+    name: Tier I
+    slug: tier-i
+- model: lit.referencefiltertag
+  pk: 17
+  fields:
+    path: '000200020002'
+    depth: 3
+    numchild: 0
+    name: Tier II
+    slug: tier-ii
+- model: lit.referencefiltertag
+  pk: 18
+  fields:
+    path: '000200020003'
+    depth: 3
+    numchild: 0
+    name: Tier III
+    slug: tier-iii
+- model: lit.reference
+  pk: 1
+  fields:
+    assessment: 1
+    title: ''
+    authors: ''
+    year: null
+    journal: ''
+    abstract: ''
+    full_text_url: ''
+    created: 2020-01-25 14:23:16.370427+00:00
+    last_updated: 2020-01-25 14:23:16.370456+00:00
+    block_id: null
+    searches: []
+    identifiers: []
+- model: lit.reference
+  pk: 2
+  fields:
+    assessment: 2
+    title: ''
+    authors: ''
+    year: null
+    journal: ''
+    abstract: ''
+    full_text_url: ''
+    created: 2020-01-25 14:23:16.385003+00:00
+    last_updated: 2020-01-25 14:23:16.385023+00:00
+    block_id: null
+    searches: []
+    identifiers: []
+- model: study.study
+  pk: 1
+  fields:
+    bioassay: true
+    epi: false
+    epi_meta: false
+    in_vitro: false
+    short_citation: Foo et al.
+    full_citation: Foo et al.
+    coi_reported: 4
+    coi_details: ''
+    funding_source: ''
+    study_identifier: ''
+    contact_author: false
+    ask_author: ''
+    published: false
+    summary: ''
+    editable: true
+    searches: []
+    identifiers: []
+- model: study.study
+  pk: 2
+  fields:
+    bioassay: true
+    epi: false
+    epi_meta: false
+    in_vitro: false
+    short_citation: Foo et al.
+    full_citation: Foo et al.
+    coi_reported: 4
+    coi_details: ''
+    funding_source: ''
+    study_identifier: ''
+    contact_author: false
+    ask_author: ''
+    published: false
+    summary: ''
+    editable: true
+    searches: []
+    identifiers: []

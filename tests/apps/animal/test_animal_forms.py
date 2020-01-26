@@ -1,5 +1,6 @@
 import pytest
 
+from hawc.apps.study.models import Study
 from hawc.apps.animal.forms import ExperimentForm
 
 
@@ -9,8 +10,8 @@ def assert_field_has_error(form, field, msg):
 
 
 @pytest.mark.django_db
-def test_experiment_form(study_data):
-    study_working = study_data["study"]["study_working"]
+def test_experiment_form(db_keys):
+    study = Study.objects.get(id=db_keys.study_working)
     inputs = {
         "name": "Example",
         "type": "Ac",
@@ -18,12 +19,12 @@ def test_experiment_form(study_data):
         "purity_qualifier": "",
         "purity": None,
     }
-    form = ExperimentForm(inputs, parent=study_working)
+    form = ExperimentForm(inputs, parent=study)
     assert form.is_valid()
 
     inputs2 = inputs.copy()
     inputs2.update(purity_available=True, purity=None, purity_qualifier="")
-    form = ExperimentForm(inputs2, parent=study_working)
+    form = ExperimentForm(inputs2, parent=study)
     assert form.is_valid() is False
     assert_field_has_error(form, "purity", ExperimentForm.PURITY_REQ)
     assert_field_has_error(form, "purity_qualifier", ExperimentForm.PURITY_QUALIFIER_REQ)
@@ -31,7 +32,7 @@ def test_experiment_form(study_data):
     inputs3 = inputs.copy()
     inputs3.update(purity_available=True, purity=None, purity_qualifier="")
     inputs3.update(purity_available=False, purity=95, purity_qualifier=">")
-    form = ExperimentForm(inputs3, parent=study_working)
+    form = ExperimentForm(inputs3, parent=study)
     assert form.is_valid() is False
     assert_field_has_error(form, "purity", ExperimentForm.PURITY_NOT_REQ)
     assert_field_has_error(form, "purity_qualifier", ExperimentForm.PURITY_QUALIFIER_NOT_REQ)

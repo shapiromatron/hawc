@@ -42,6 +42,6 @@ COMPRESS_ENABLED = False
 
 try:
     # load local settings from `local.py` if they exist
-    from . import local
+    from .local import *
 except ModuleNotFoundError:
     pass

@@ -11,9 +11,9 @@ jobs:
       postgres:
         image: postgres:9.6
         env:
-          POSTGRES_USER: hawc
-          POSTGRES_PASSWORD: hawc
-          POSTGRES_DB: hawc
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: ""
+          POSTGRES_DB: hawc-test
         ports:
         # will assign a random free host port
         - 5432/tcp

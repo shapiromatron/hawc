@@ -9,8 +9,8 @@ from hawc.apps.lit import constants, models
 
 
 @pytest.mark.django_db
-def test_clean_import_string(assessment_data):
-    assessment_pk = assessment_data["assessment"]["assessment_working"].id
+def test_clean_import_string(db_keys):
+    assessment_pk = db_keys.assessment_working
     client = Client()
     assert client.login(username="pm@pm.com", password="pw") is True
     data = {
@@ -46,12 +46,12 @@ def test_clean_import_string(assessment_data):
 
 
 @pytest.mark.django_db
-def test_pubmed_search(assessment_data):
+def test_pubmed_search(db_keys):
     # Check when searching, the same number of identifiers and refs are
     # created, with refs fully-qualified with identifiers and searches
 
     # setup
-    assessment_pk = assessment_data["assessment"]["assessment_working"].id
+    assessment_pk = db_keys.assessment_working
     client = Client()
     assert client.login(username="pm@pm.com", password="pw") is True
     data = {
@@ -62,10 +62,10 @@ def test_pubmed_search(assessment_data):
         "search_string": "1998 Longstreth health risks ozone depletion",
     }
 
-    # check initially blank
-    assert models.Reference.objects.count() == 0
-    assert models.Search.objects.count() == 2
-    assert models.Identifiers.objects.count() == 0
+    # get initial counts
+    initial_searches = models.Search.objects.count()
+    initial_identifiers = models.Identifiers.objects.count()
+    initial_refs = models.Reference.objects.count()
 
     # term returns 200+ literature
     data[
@@ -83,10 +83,11 @@ def test_pubmed_search(assessment_data):
     response = client.get(url, data)
     assert response.status_code in [200, 302]
 
-    assert models.Search.objects.count() == 3
+    assert models.Search.objects.count() == initial_searches + 1
     i_count = models.Identifiers.objects.count()
-    assert i_count > 200
-    assert models.Reference.objects.count() == i_count
+    added_ids = i_count - initial_identifiers
+    assert added_ids > 200
+    assert models.Reference.objects.count() == added_ids + initial_refs
 
     # make sure all each reference has an identifier
     i_pks = models.Identifiers.objects.values_list("pk", flat=True)
@@ -97,10 +98,10 @@ def test_pubmed_search(assessment_data):
 
 
 @pytest.mark.django_db
-def test_pubmed_import(assessment_data):
+def test_pubmed_import(db_keys):
     # ensure successful PubMed import
     # setup
-    assessment_pk = assessment_data["assessment"]["assessment_working"].id
+    assessment_pk = db_keys.assessment_working
     client = Client()
     assert client.login(username="pm@pm.com", password="pw") is True
     data = {
@@ -111,10 +112,10 @@ def test_pubmed_import(assessment_data):
         "search_string": "1998 Longstreth health risks ozone depletion",
     }
 
-    # check initially blank
-    assert models.Reference.objects.count() == 0
-    assert models.Search.objects.count() == 2
-    assert models.Identifiers.objects.count() == 0
+    # get initial counts
+    initial_searches = models.Search.objects.count()
+    initial_identifiers = models.Identifiers.objects.count()
+    initial_refs = models.Reference.objects.count()
 
     data[
         "search_string"
@@ -126,23 +127,25 @@ def test_pubmed_import(assessment_data):
     assert response.status_code in [200, 302]
 
     # check new counts
-    assert models.Reference.objects.count() == 20
-    assert models.Search.objects.count() == 3
-    assert models.Identifiers.objects.count() == 20
+    assert models.Search.objects.count() == initial_searches + 1
+    assert models.Identifiers.objects.count() == initial_identifiers + 20
+    assert models.Reference.objects.count() == initial_refs + 20
 
     # make sure all each reference has an identifier
     i_pks = models.Identifiers.objects.values_list("pk", flat=True)
     search = models.Search.objects.latest()
-    assert i_pks.count() == 20
-    assert models.Reference.objects.filter(identifiers__in=i_pks).count() == 20
+    assert i_pks.count() == initial_identifiers + 20
+    assert (
+        models.Reference.objects.filter(identifiers__in=i_pks).count() == initial_identifiers + 20
+    )
 
     # make sure all references associated with search
-    assert models.Reference.objects.filter(searches=search).count() == 20
+    assert models.Reference.objects.filter(searches=search).count() == initial_identifiers + 20
 
 
 @pytest.mark.skip(reason="TODO: fix")
 @pytest.mark.django_db
-def test_successful_single_hero_id(assessment_data):
+def test_successful_single_hero_id(db_keys):
     """
     Test that a single hero ID can be added. Confirm:
     1) Reference created
@@ -150,7 +153,7 @@ def test_successful_single_hero_id(assessment_data):
     3) Reference associated with literature
     """
     # setup
-    assessment_pk = assessment_data["assessment"]["assessment_working"].id
+    assessment_pk = db_keys.assessment_working
     client = Client()
     assert client.login(username="pm@pm.com", password="pw") is True
     data = {
@@ -184,14 +187,14 @@ def test_successful_single_hero_id(assessment_data):
 
 
 @pytest.mark.django_db
-def test_failed_hero_id(assessment_data):
+def test_failed_hero_id(db_keys):
     """
     Test that a hero ID that doesn't exist fails gracefully. Confirm:
     1) Search created
     2) No reference created, no literature
     """
     # setup
-    assessment_pk = assessment_data["assessment"]["assessment_working"].id
+    assessment_pk = db_keys.assessment_working
     client = Client()
     assert client.login(username="pm@pm.com", password="pw") is True
     data = {
@@ -202,10 +205,10 @@ def test_failed_hero_id(assessment_data):
         "search_string": "1200",
     }
 
-    # check initially blank
-    assert models.Reference.objects.count() == 0
-    assert models.Search.objects.count() == 2  # manual imports
-    assert models.Identifiers.objects.count() == 0
+    # get initial counts
+    initial_searches = models.Search.objects.count()
+    initial_identifiers = models.Identifiers.objects.count()
+    initial_refs = models.Reference.objects.count()
 
     # known hero ID that doesn't exist
     data["search_string"] = "9999999"
@@ -214,20 +217,20 @@ def test_failed_hero_id(assessment_data):
 
     # check completion as as expected
     assert response.status_code in [200, 302]
-    assert models.Search.objects.count() == 3
-    assert models.Reference.objects.count() == 0
-    assert models.Identifiers.objects.count() == 0
+    assert models.Search.objects.count() == initial_searches + 1
+    assert models.Reference.objects.count() == initial_refs
+    assert models.Identifiers.objects.count() == initial_identifiers
 
 
 @pytest.mark.skip(reason="TODO: fix")
 @pytest.mark.django_db
-def test_existing_pubmed_hero_add(assessment_data):
+def test_existing_pubmed_hero_add(db_keys):
     """
     Check that search is complete, new identifier is created, but is
     associated with existing PubMed Reference
     """
     # setup
-    assessment_pk = assessment_data["assessment"]["assessment_working"].id
+    assessment_pk = db_keys.assessment_working
     client = Client()
     assert client.login(username="pm@pm.com", password="pw") is True
     data = {
@@ -289,11 +292,11 @@ class RisFile:
 
 
 @pytest.mark.django_db
-def test_ris_import(assessment_data):
+def test_ris_import(db_keys):
     # setup
-    assessment = assessment_data["assessment"]["assessment_working"]
+    assessment_id = db_keys.assessment_working
     search = models.Search.objects.create(
-        assessment_id=assessment.id,
+        assessment_id=assessment_id,
         search_type="i",
         source=constants.RIS,
         title="ris",
@@ -302,33 +305,42 @@ def test_ris_import(assessment_data):
     )
     search.import_file = RisFile(os.path.join(os.path.dirname(__file__), "data/single_ris.txt"))
 
-    # check initially blank
-    assert models.Reference.objects.count() == 0
-    assert models.Search.objects.count() == 3
-    assert models.Identifiers.objects.count() == 0
+    # get initial counts
+    initial_searches = models.Search.objects.count()
+    initial_identifiers = models.Identifiers.objects.count()
+    initial_refs = models.Reference.objects.count()
 
     search.run_new_import()
-    assert models.Reference.objects.count() == 1
-    assert models.Identifiers.objects.count() == 3
-    assert models.Reference.objects.first().identifiers.count() == 3
+    ris_ref = models.Reference.objects.filter(
+        title="Early alterations in protein and gene expression in rat kidney following bromate exposure"
+    ).first()
+    assert models.Reference.objects.count() == initial_refs + 1
+    assert models.Identifiers.objects.count() == initial_identifiers + 3
+    assert ris_ref.identifiers.count() == 3
 
-    assert models.Identifiers.objects.filter(database=constants.PUBMED).count() == 1
-    assert models.Identifiers.objects.filter(database=constants.RIS).count() == 1
-    assert models.Identifiers.objects.filter(database=constants.DOI).count() == 1
+    assert ris_ref.identifiers.filter(database=constants.PUBMED).count() == 1
+    assert ris_ref.identifiers.filter(database=constants.RIS).count() == 1
+    assert ris_ref.identifiers.filter(database=constants.DOI).count() == 1
 
     # assert Pubmed XML content is loaded
     assert (
-        "<PubmedArticle>"
-        in models.Identifiers.objects.filter(database=constants.PUBMED).first().content
+        "<PubmedArticle>" in ris_ref.identifiers.filter(database=constants.PUBMED).first().content
     )
 
 
 @pytest.mark.django_db
-def test_ris_import_with_existing(assessment_data):
+def test_ris_import_with_existing(db_keys):
     # setup
-    assessment = assessment_data["assessment"]["assessment_working"]
+    assessment_id = db_keys.assessment_working
+
+    # get initial counts
+    initial_searches = models.Search.objects.count()
+    initial_identifiers = models.Identifiers.objects.count()
+    initial_refs = models.Reference.objects.count()
+
+    # ris file should contain the two identifiers above
     search = models.Search.objects.create(
-        assessment_id=assessment.id,
+        assessment_id=assessment_id,
         search_type="i",
         source=constants.RIS,
         title="ris",
@@ -336,11 +348,6 @@ def test_ris_import_with_existing(assessment_data):
         description="-",
     )
     search.import_file = RisFile(os.path.join(os.path.dirname(__file__), "data/single_ris.txt"))
-
-    # check initially blank
-    assert models.Reference.objects.count() == 0
-    assert models.Search.objects.count() == 3
-    assert models.Identifiers.objects.count() == 0
 
     # create existing identifiers
     models.Identifiers.objects.create(
@@ -349,13 +356,20 @@ def test_ris_import_with_existing(assessment_data):
     models.Identifiers.objects.create(
         database=constants.DOI, unique_id="10.1016/j.fct.2009.02.003", content="None",
     )
-
     search.run_new_import()
-    assert models.Reference.objects.count() == 1
-    assert models.Identifiers.objects.count() == 3
-    assert models.Reference.objects.first().identifiers.count() == 3
+
+    ris_ref = models.Reference.objects.filter(
+        title="Early alterations in protein and gene expression in rat kidney following bromate exposure"
+    ).first()
+    assert (
+        models.Reference.objects.count() == initial_refs + 1
+    )  # only one copy of ref should be made
+    assert (
+        models.Identifiers.objects.count() == initial_identifiers + 3
+    )  # should be 3 different identifiers
+    assert ris_ref.identifiers.count() == 3
 
     # ensure new ones aren't created
-    assert models.Identifiers.objects.filter(database=constants.PUBMED).count() == 1
-    assert models.Identifiers.objects.filter(database=constants.RIS).count() == 1
-    assert models.Identifiers.objects.filter(database=constants.DOI).count() == 1
+    assert ris_ref.identifiers.filter(database=constants.PUBMED).count() == 1
+    assert ris_ref.identifiers.filter(database=constants.RIS).count() == 1
+    assert ris_ref.identifiers.filter(database=constants.DOI).count() == 1
