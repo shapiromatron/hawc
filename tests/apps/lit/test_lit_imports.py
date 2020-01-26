@@ -306,7 +306,6 @@ def test_ris_import(db_keys):
     search.import_file = RisFile(os.path.join(os.path.dirname(__file__), "data/single_ris.txt"))
 
     # get initial counts
-    initial_searches = models.Search.objects.count()
     initial_identifiers = models.Identifiers.objects.count()
     initial_refs = models.Reference.objects.count()
 
@@ -334,7 +333,6 @@ def test_ris_import_with_existing(db_keys):
     assessment_id = db_keys.assessment_working
 
     # get initial counts
-    initial_searches = models.Search.objects.count()
     initial_identifiers = models.Identifiers.objects.count()
     initial_refs = models.Reference.objects.count()
 

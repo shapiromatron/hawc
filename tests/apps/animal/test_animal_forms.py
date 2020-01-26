@@ -1,7 +1,7 @@
 import pytest
 
-from hawc.apps.study.models import Study
 from hawc.apps.animal.forms import ExperimentForm
+from hawc.apps.study.models import Study
 
 
 def assert_field_has_error(form, field, msg):
