@@ -17,11 +17,21 @@ class Command(BaseCommand):
             raise CommandError("Must be using a test database to execute.")
 
         f = StringIO()
-        call_command("dumpdata", "contenttypes", format="yaml", indent=2, stdout=f)
-        call_command("dumpdata", "myuser", format="yaml", indent=2, stdout=f)
-        call_command("dumpdata", "assessment", format="yaml", indent=2, stdout=f)
-        call_command("dumpdata", "lit", format="yaml", indent=2, stdout=f)
-        call_command("dumpdata", "study", format="yaml", indent=2, stdout=f)
+        shared_kwargs = dict(
+            format="yaml",
+            indent=2,
+            stdout=f,
+            use_natural_foreign_keys=True,
+            use_natural_primary_keys=True,
+        )
+
+        call_command("dumpdata", "contenttypes", **shared_kwargs)
+        call_command("dumpdata", "myuser", **shared_kwargs)
+        call_command(
+            "dumpdata", "assessment", exclude=["assessment.timespentediting"], **shared_kwargs
+        )
+        call_command("dumpdata", "lit", **shared_kwargs)
+        call_command("dumpdata", "study", **shared_kwargs)
 
         Path(settings.TEST_DB_FIXTURE).parent.mkdir(exist_ok=True, parents=True)
         Path(settings.TEST_DB_FIXTURE).write_text(f.getvalue())

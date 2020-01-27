@@ -1,11 +1,14 @@
 import json
 import logging
+from collections import defaultdict
 from typing import List
 
+import pandas as pd
 from django.apps import apps
 from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
 from django.db import models
+from django.db.models import QuerySet
 from litter_getter import hero, pubmed
 from taggit.managers import TaggableManager, _TaggableManager
 from taggit.utils import require_instance_manager
@@ -427,6 +430,69 @@ class ReferenceManager(BaseManager):
             ref.identifiers.add(*idents)
             ref.searches.add(search)
 
+    def identifiers_dataframe(self, qs: QuerySet) -> pd.DataFrame:
+        """
+        Returns identifiers references for an assessment from external databases or tools.
+
+        Args:
+            qs (QuerySet): A queryset
+
+        Returns:
+            pd.DataFrame: A pandas dataframe
+        """
+        qs = qs.prefetch_related("identifiers")
+
+        captured = {None, constants.HERO, constants.PUBMED}
+        diff = set(qs.values_list("identifiers__database", flat=True).distinct()) - captured
+        if diff:
+            logging.warning(f"Missing some identifier IDs from id export: {diff}")
+
+        data = defaultdict(dict)
+
+        # capture HERO ids
+        heros = qs.filter(identifiers__database=constants.HERO).values_list(
+            "id", "identifiers__unique_id"
+        )
+        for hawc_id, hero_id in heros:
+            data[hawc_id]["hero_id"] = int(hero_id)
+
+        # capture PUBMED ids
+        pubmeds = qs.filter(identifiers__database=constants.PUBMED).values_list(
+            "id", "identifiers__unique_id"
+        )
+        for hawc_id, pubmed_id in pubmeds:
+            data[hawc_id]["pubmed_id"] = int(pubmed_id)
+
+        # create a dataframe
+        df = (
+            pd.DataFrame.from_dict(data, orient="index")
+            .reset_index()
+            .rename(columns={"index": "reference_id"})
+        )
+
+        # set missing columns
+        for col in ["hero_id", "pubmed_id"]:
+            if col not in df.columns:
+                df.loc[:, col] = None
+
+        return df
+
 
 class ReferenceTagsManager(BaseManager):
     assessment_relation = "content_object__assessment"
+
+    def as_dataframe(self, assessment_id: int) -> pd.DataFrame:
+        """
+        Returns all reference tag relations for an assessment.
+
+        Args:
+            assessment_id (int): Assessment id
+
+        Returns:
+            pd.DataFrame: A pandas dataframe
+        """
+        df = pd.DataFrame(
+            data=list(self.assessment_qs(assessment_id).values("tag_id", "content_object_id"))
+        )
+        df = df.rename(columns=dict(content_object_id="reference_id"))
+        return df

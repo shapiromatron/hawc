@@ -4,7 +4,6 @@ from django.contrib.sites.models import Site
 from django.core.mail import EmailMultiAlternatives, send_mail
 from django.core.urlresolvers import reverse
 from django.db import models
-from django.template import Context
 from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
@@ -61,12 +60,8 @@ class HAWCUser(AbstractBaseUser, PermissionsMixin):
 
     def send_welcome_email(self):
         subject = "Welcome to HAWC!"
-        context = Context(
-            dict(
-                user=self,
-                assessments=self.get_assessments(),
-                domain=Site.objects.get_current().domain,
-            )
+        context = dict(
+            user=self, assessments=self.get_assessments(), domain=Site.objects.get_current().domain
         )
 
         plaintext = render_to_string("myuser/welcome_email.txt", context)

@@ -4,7 +4,7 @@ import logging
 
 from .dev import *  # noqa
 
-DEBUG = False
+DEBUG = True
 
 DATABASES["default"]["NAME"] = f"{DATABASES['default']['NAME']}-test"
 

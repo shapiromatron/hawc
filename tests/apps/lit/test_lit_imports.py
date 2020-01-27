@@ -93,9 +93,6 @@ def test_pubmed_search(db_keys):
     i_pks = models.Identifiers.objects.values_list("pk", flat=True)
     assert models.Reference.objects.filter(identifiers__in=i_pks).count() == i_count
 
-    # make sure all references associated with search
-    assert models.Reference.objects.filter(searches=search).count() == i_count
-
 
 @pytest.mark.django_db
 def test_pubmed_import(db_keys):
@@ -133,14 +130,10 @@ def test_pubmed_import(db_keys):
 
     # make sure all each reference has an identifier
     i_pks = models.Identifiers.objects.values_list("pk", flat=True)
-    search = models.Search.objects.latest()
     assert i_pks.count() == initial_identifiers + 20
     assert (
         models.Reference.objects.filter(identifiers__in=i_pks).count() == initial_identifiers + 20
     )
-
-    # make sure all references associated with search
-    assert models.Reference.objects.filter(searches=search).count() == initial_identifiers + 20
 
 
 @pytest.mark.skip(reason="TODO: fix")
@@ -164,10 +157,10 @@ def test_successful_single_hero_id(db_keys):
         "search_string": "1200",
     }
 
-    # check initially blank
-    assert models.Reference.objects.count() == 0
-    assert models.Search.objects.count() == 2
-    assert models.Identifiers.objects.count() == 0
+    # get initial counts
+    initial_searches = models.Search.objects.count()
+    initial_identifiers = models.Identifiers.objects.count()
+    initial_refs = models.Reference.objects.count()
 
     # check successful post
     url = reverse("lit:import_new", kwargs={"pk": assessment_pk})
@@ -175,9 +168,9 @@ def test_successful_single_hero_id(db_keys):
     assert response.status_code in [200, 302]
 
     # check expected results
-    assert models.Search.objects.count() == 3
-    assert models.Identifiers.objects.count() == 1
-    assert models.Reference.objects.count() == 1
+    assert models.Search.objects.count() == initial_searches + 1
+    assert models.Identifiers.objects.count() == initial_identifiers + 1
+    assert models.Reference.objects.count() == initial_refs + 1
     ref = models.Reference.objects.all()[0]
 
     search = models.Search.objects.get(assessment=assessment_pk, title="example search")

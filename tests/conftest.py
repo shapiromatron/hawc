@@ -1,7 +1,13 @@
 import logging
+from typing import NamedTuple
 
 import pytest
 from django.core.management import call_command
+
+
+class UserCredential(NamedTuple):
+    email: str
+    password: str
 
 
 class Keys:
@@ -16,6 +22,8 @@ class Keys:
 
         self.study_working = 1
         self.study_final = 2
+
+        self.pm_user = UserCredential("pm@pm.com", "pw")
 
 
 _keys = Keys()

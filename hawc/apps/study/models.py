@@ -429,6 +429,13 @@ class Study(Reference):
                 user in assessment.project_manager.all() or user in assessment.team_members.all()
             )
 
+    @classmethod
+    def delete_cache(cls, assessment_id: int, delete_reference_cache: bool = True):
+        ids = list(cls.objects.filter(assessment_id=assessment_id).values_list("id", flat=True))
+        SerializerHelper.delete_caches(cls, ids)
+        if delete_reference_cache:
+            apps.get_model("lit", "Reference").delete_cache(assessment_id, delete_study_cache=False)
+
 
 class Attachment(models.Model):
     objects = managers.AttachmentManager()
