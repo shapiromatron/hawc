@@ -27,7 +27,9 @@ class Command(BaseCommand):
 
         call_command("dumpdata", "contenttypes", **shared_kwargs)
         call_command("dumpdata", "myuser", **shared_kwargs)
-        call_command("dumpdata", "assessment", **shared_kwargs)
+        call_command(
+            "dumpdata", "assessment", exclude=["assessment.timespentediting"], **shared_kwargs
+        )
         call_command("dumpdata", "lit", **shared_kwargs)
         call_command("dumpdata", "study", **shared_kwargs)
 

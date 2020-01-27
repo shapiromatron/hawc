@@ -324,15 +324,15 @@
 - model: myuser.hawcuser
   fields:
     password: md5$fFanL0QpS7Sg$cf3808b6102279eb6982d78edfdc6111
-    last_login: 2020-01-25 14:23:16.170965+00:00
+    last_login: 2020-01-27 19:11:48.469783+00:00
     is_superuser: false
     email: pm@pm.com
-    first_name: ''
-    last_name: ''
+    first_name: Project
+    last_name: Manager
     is_staff: false
     is_active: true
     license_v1_accepted: false
-    license_v2_accepted: false
+    license_v2_accepted: true
     date_joined: 2020-01-25 14:23:16.170965+00:00
     groups: []
     user_permissions: []
@@ -381,6 +381,12 @@
     date_joined: 2020-01-25 14:23:16.175169+00:00
     groups: []
     user_permissions: []
+- model: myuser.userprofile
+  pk: 1
+  fields:
+    user:
+    - pm@pm.com
+    HERO_access: false
 - model: assessment.assessment
   pk: 1
   fields:
@@ -413,7 +419,7 @@
 - model: assessment.assessment
   pk: 2
   fields:
-    name: final
+    name: public final
     year: 2001
     version: final
     cas: ''
@@ -432,7 +438,7 @@
     noel_name: 0
     rob_name: 0
     created: 2020-01-25 14:23:16.288774+00:00
-    last_updated: 2020-01-25 14:23:16.288806+00:00
+    last_updated: 2020-01-27 19:13:57.976928+00:00
     project_manager:
     - - pm@pm.com
     team_members:
@@ -478,7 +484,7 @@
 - model: lit.referencefiltertag
   pk: 2
   fields:
-    path: '00010001'
+    path: '00010002'
     depth: 2
     numchild: 3
     name: Inclusion
@@ -486,7 +492,7 @@
 - model: lit.referencefiltertag
   pk: 3
   fields:
-    path: '000100010001'
+    path: '000100020001'
     depth: 3
     numchild: 0
     name: Human Study
@@ -494,7 +500,7 @@
 - model: lit.referencefiltertag
   pk: 4
   fields:
-    path: '000100010002'
+    path: '000100020002'
     depth: 3
     numchild: 0
     name: Animal Study
@@ -502,7 +508,7 @@
 - model: lit.referencefiltertag
   pk: 5
   fields:
-    path: '000100010003'
+    path: '000100020003'
     depth: 3
     numchild: 0
     name: Mechanistic Study
@@ -510,7 +516,7 @@
 - model: lit.referencefiltertag
   pk: 6
   fields:
-    path: '00010002'
+    path: '00010003'
     depth: 2
     numchild: 3
     name: Exclusion
@@ -518,7 +524,7 @@
 - model: lit.referencefiltertag
   pk: 7
   fields:
-    path: '000100020001'
+    path: '000100030002'
     depth: 3
     numchild: 0
     name: Tier I
@@ -526,7 +532,7 @@
 - model: lit.referencefiltertag
   pk: 8
   fields:
-    path: '000100020002'
+    path: '000100030004'
     depth: 3
     numchild: 0
     name: Tier II
@@ -534,9 +540,9 @@
 - model: lit.referencefiltertag
   pk: 9
   fields:
-    path: '000100020003'
+    path: '000100030005'
     depth: 3
-    numchild: 0
+    numchild: 3
     name: Tier III
     slug: tier-iii
 - model: lit.referencefiltertag
@@ -611,6 +617,30 @@
     numchild: 0
     name: Tier III
     slug: tier-iii
+- model: lit.referencefiltertag
+  pk: 19
+  fields:
+    path: '0001000300050001'
+    depth: 4
+    numchild: 0
+    name: a
+    slug: a
+- model: lit.referencefiltertag
+  pk: 20
+  fields:
+    path: '0001000300050002'
+    depth: 4
+    numchild: 0
+    name: b
+    slug: b
+- model: lit.referencefiltertag
+  pk: 21
+  fields:
+    path: '0001000300050003'
+    depth: 4
+    numchild: 0
+    name: c
+    slug: c
 - model: lit.reference
   pk: 1
   fields:

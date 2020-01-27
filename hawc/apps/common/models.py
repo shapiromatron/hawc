@@ -128,7 +128,7 @@ class AssessmentRootMixin(object):
         return root.get_descendants()
 
     @classmethod
-    def annotated_nested_names(cls, qs: QuerySet):
+    def annotate_nested_names(cls, qs: QuerySet):
         """
         Include the nested name for each item in the queryset. Assumes the queryset is correctly
         ordered; uses the `name` field and saves to `nested_name` field.
@@ -162,7 +162,7 @@ class AssessmentRootMixin(object):
     @classmethod
     def as_dataframe(cls, assessment_id: int, include_root=False) -> pd.DataFrame:
         qs = cls.get_assessment_qs(assessment_id, include_root)
-        cls.annotated_nested_names(qs)
+        cls.annotate_nested_names(qs)
         return pd.DataFrame(
             data=[(el.id, el.depth, el.name, el.nested_name) for el in qs],
             columns=["id", "depth", "name", "nested_name"],

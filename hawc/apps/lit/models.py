@@ -1,4 +1,4 @@
-import html.parser
+import html
 import json
 import logging
 import re
@@ -116,9 +116,7 @@ class Search(models.Model):
 
     @property
     def search_string_text(self):
-        # strip all HTML tags from search-string text
-        html_parser = html.parser.HTMLParser()
-        return html_parser.unescape(strip_tags(self.search_string))
+        return html.unescape(strip_tags(self.search_string))
 
     @transaction.atomic
     def run_new_query(self):

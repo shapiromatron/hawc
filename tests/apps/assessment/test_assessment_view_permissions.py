@@ -60,7 +60,7 @@ def test_create_assessment():
 def test_detail(db_keys):
     # these users should have permission
     users = ("sudo@sudo.com", "pm@pm.com", "team@team.com", "rev@rev.com")
-    views = ("assessment:detail",)
+    views = ("assessment:detail", "assessment:api:assessment-detail")
     for user in users:
         c = Client()
         assert c.login(email=user, password="pw") is True
@@ -71,23 +71,27 @@ def test_detail(db_keys):
 
     # anon user should not view
     c = Client()
-    response = c.get(reverse("assessment:detail", kwargs={"pk": db_keys.assessment_working},))
-    assert response.status_code == 403
+    for view in views:
+        url = reverse(view, kwargs={"pk": db_keys.assessment_working})
+        response = c.get(url)
+        assert response.status_code == 403
 
     # this is public
-    response = c.get(reverse("assessment:detail", kwargs={"pk": db_keys.assessment_final}))
-    assert response.status_code == 200
+    for view in views:
+        url = reverse(view, kwargs={"pk": db_keys.assessment_final})
+        response = c.get(url)
+        assert response.status_code == 200
 
 
 @pytest.mark.django_db
-def test_edit_view_success(db_keys):
+def test_edit_view_success_template(db_keys):
     clients = ("sudo@sudo.com", "pm@pm.com")
-    views = ("assessment:update", "assessment:delete")
     for client in clients:
         c = Client()
         assert c.login(email=client, password="pw") is True
 
-        for view in views:
+        # django template views
+        for view in ("assessment:update", "assessment:delete"):
             for pk in db_keys.assessment_keys:
                 response = c.get(reverse(view, kwargs={"pk": pk}))
                 assert response.status_code == 200
@@ -111,13 +115,12 @@ def test_edit_view_success(db_keys):
 @pytest.mark.django_db
 def test_edit_view_forbidden(db_keys):
     clients = (None, "team@team.com", "rev@rev.com")
-    views = ("assessment:update", "assessment:delete")
     for client in clients:
         c = Client()
         if client:
             assert c.login(email=client, password="pw") is True
         for pk in db_keys.assessment_keys:
-            for view in views:
+            for view in ("assessment:update", "assessment:delete"):
                 response = c.get(reverse(view, kwargs={"pk": pk}))
                 assert response.status_code == 403
 
