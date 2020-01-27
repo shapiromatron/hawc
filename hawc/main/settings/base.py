@@ -117,7 +117,7 @@ DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
         "NAME": os.getenv("DJANGO_DB_NAME", "hawc"),
-        "USER": os.getenv("DJANGO_DB_USER", ""),
+        "USER": os.getenv("DJANGO_DB_USER", "postgres"),
         "PASSWORD": os.getenv("DJANGO_DB_PW", ""),
         "HOST": os.getenv("DJANGO_DB_HOST", "localhost"),
         "PORT": os.getenv("DJANGO_DB_PORT", ""),

@@ -25,6 +25,7 @@ __pycache__/
 .vscode/
 _build/
 build/
+/data/
 dist/
 node_modules/
 public/
