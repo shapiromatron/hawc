@@ -130,7 +130,6 @@ def test_pubmed_import(db_keys):
 
     # make sure all each reference has an identifier
     i_pks = models.Identifiers.objects.values_list("pk", flat=True)
-    search = models.Search.objects.latest()
     assert i_pks.count() == initial_identifiers + 20
     assert (
         models.Reference.objects.filter(identifiers__in=i_pks).count() == initial_identifiers + 20
