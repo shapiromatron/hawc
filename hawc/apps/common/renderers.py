@@ -1,8 +1,10 @@
 import json
+from io import BytesIO
 
 import pandas as pd
 from rest_framework import status
 from rest_framework.renderers import BaseRenderer
+from rest_framework.response import Response
 
 
 class PandasBaseRenderer(BaseRenderer):
@@ -23,7 +25,7 @@ class PandasBaseRenderer(BaseRenderer):
         if not isinstance(data, pd.DataFrame):
             raise ValueError(f"Expecting data frame; got {type(data)}")
 
-        return self.render_dataframe(data)
+        return self.render_dataframe(data, renderer_context["response"])
 
 
 class PandasHtmlRenderer(PandasBaseRenderer):
@@ -34,7 +36,7 @@ class PandasHtmlRenderer(PandasBaseRenderer):
     media_type = "text/html"
     format = "html"
 
-    def render_dataframe(self, df: pd.DataFrame) -> str:
+    def render_dataframe(self, df: pd.DataFrame, response: Response) -> str:
         with pd.option_context("display.max_colwidth", -1):
             return df.fillna("-").to_html(index=False)
 
@@ -47,7 +49,7 @@ class PandasCsvRenderer(PandasBaseRenderer):
     media_type = "text/csv"
     format = "csv"
 
-    def render_dataframe(self, df: pd.DataFrame) -> str:
+    def render_dataframe(self, df: pd.DataFrame, response: Response) -> str:
         return df.to_csv(index=False)
 
 
@@ -59,8 +61,25 @@ class PandasJsonRenderer(PandasBaseRenderer):
     media_type = "application/json"
     format = "json"
 
-    def render_dataframe(self, df: pd.DataFrame) -> str:
+    def render_dataframe(self, df: pd.DataFrame, response: Response) -> str:
         return df.to_json(orient="records")
 
 
-PandasRenderers = (PandasJsonRenderer, PandasHtmlRenderer, PandasCsvRenderer)
+class PandasXlsxRenderer(PandasBaseRenderer):
+    """
+    Renders dataframe as xlsx
+    """
+
+    media_type = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    format = "xlsx"
+    charset = None
+    render_style = "binary"
+
+    def render_dataframe(self, df: pd.DataFrame, response: Response) -> bytes:
+        response["Content-Disposition"] = "attachment; filename=hawc-export.xlsx"
+        f = BytesIO()
+        df.to_excel(f, index=False)
+        return f.getvalue()
+
+
+PandasRenderers = (PandasJsonRenderer, PandasHtmlRenderer, PandasCsvRenderer, PandasXlsxRenderer)

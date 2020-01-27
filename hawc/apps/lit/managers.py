@@ -4,11 +4,11 @@ from collections import defaultdict
 from typing import List
 
 import pandas as pd
-from django.db.models import QuerySet
 from django.apps import apps
 from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
 from django.db import models
+from django.db.models import QuerySet
 from litter_getter import hero, pubmed
 from taggit.managers import TaggableManager, _TaggableManager
 from taggit.utils import require_instance_manager
