@@ -324,7 +324,7 @@
 - model: myuser.hawcuser
   fields:
     password: md5$fFanL0QpS7Sg$cf3808b6102279eb6982d78edfdc6111
-    last_login: 2020-01-27 19:11:48.469783+00:00
+    last_login: 2020-01-27 20:53:17.106063+00:00
     is_superuser: false
     email: pm@pm.com
     first_name: Project
@@ -473,6 +473,32 @@
     import_file: ''
     created: 2020-01-25 14:23:16.325978+00:00
     last_updated: 2020-01-25 14:23:16.326001+00:00
+- model: lit.search
+  pk: 3
+  fields:
+    assessment: 2
+    search_type: i
+    source: 1
+    title: pmid
+    slug: pmid
+    description: ''
+    search_string: '29641658'
+    import_file: ''
+    created: 2020-01-27 22:44:26.097357+00:00
+    last_updated: 2020-01-27 22:44:26.097399+00:00
+- model: lit.pubmedquery
+  pk: 1
+  fields:
+    search: 3
+    results: ''
+    query_date: 2020-01-27 22:45:49.365291+00:00
+- model: lit.identifiers
+  pk: 1
+  fields:
+    unique_id: '29641658'
+    database: 1
+    content: demo-content
+    url: https://www.ncbi.nlm.nih.gov/pubmed/29641658
 - model: lit.referencefiltertag
   pk: 1
   fields:
@@ -641,6 +667,11 @@
     numchild: 0
     name: c
     slug: c
+- model: lit.referencetags
+  pk: 1
+  fields:
+    tag: 13
+    content_object: 2
 - model: lit.reference
   pk: 1
   fields:
@@ -669,8 +700,10 @@
     created: 2020-01-25 14:23:16.385003+00:00
     last_updated: 2020-01-25 14:23:16.385023+00:00
     block_id: null
-    searches: []
-    identifiers: []
+    searches:
+    - 3
+    identifiers:
+    - 1
 - model: study.study
   pk: 1
   fields:
@@ -709,5 +742,7 @@
     published: false
     summary: ''
     editable: true
-    searches: []
-    identifiers: []
+    searches:
+    - 3
+    identifiers:
+    - 1

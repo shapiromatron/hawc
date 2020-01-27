@@ -88,7 +88,7 @@ class BulkReferenceTagSerializer(serializers.Serializer):
         additional_tags = set(df.tag_id.unique()) - set(expected_tag_ids)
         if len(additional_tags) > 0:
             raise serializers.ValidationError(
-                f"All tags are not from assessment {expected_assessment_id}"
+                f"All tag ids are not from assessment {expected_assessment_id}"
             )
 
         # success! save dataframe
