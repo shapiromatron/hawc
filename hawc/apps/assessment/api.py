@@ -4,10 +4,12 @@ from django.apps import apps
 from django.core import exceptions
 from django.core.urlresolvers import reverse
 from django.db.models import Count
+import plotly.express as px
 from rest_framework import decorators, filters, permissions, status, viewsets
 from rest_framework.exceptions import APIException
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
+from rest_framework.renderers import JSONRenderer
 
 from ..common.helper import tryParseInt
 from . import models, serializers
@@ -299,3 +301,15 @@ class AssessmentEndpointList(AssessmentViewset):
             .annotate(ivendpoint_count=Count("baseendpoint__ivendpoint"))
         )
         return queryset
+
+
+class AdminDashboardViewset(viewsets.ViewSet):
+
+    permission_classes = (permissions.IsAdminUser,)
+    renderer_classes = (JSONRenderer,)
+
+    @decorators.list_route()
+    def test(self, request):
+        df = px.data.iris()
+        fig = px.scatter(df, x="sepal_width", y="sepal_length")
+        return Response(fig.to_dict())

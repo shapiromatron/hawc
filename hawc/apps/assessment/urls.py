@@ -6,6 +6,7 @@ from . import api, views
 
 router = DefaultRouter()
 router.register(r"assessment", api.Assessment, base_name="assessment")
+router.register(r"dashboard", api.AdminDashboardViewset, base_name="admin_dashboard")
 router.register(r"endpoints", api.AssessmentEndpointList, base_name="endpoint_type")
 
 app_name = "assessment"
@@ -88,6 +89,8 @@ urlpatterns = [
     ),
     # api views
     url(r"^api/", include(router.urls, namespace="api")),
+    # admin views
+    url(r"^admin-dashboard/$", views.AdminDashboard.as_view(), name="admin_dashboard"),
 ]
 
 admin.autodiscover()

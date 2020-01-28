@@ -1,0 +1,30 @@
+{% extends "admin/base_site.html" %}
+
+{% block extrahead %}
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+{% endblock extrahead %}
+
+{% block content %}
+<div class="container-fluid">
+    <h1>Hello admin</h1>
+    <div id="test"></div>
+</div>
+
+<script>
+    const opts = { headers: { 'Content-Type': 'application/json' } },
+        embedPlotly = function (url, id) {
+            fetch(url, opts)
+                .then(
+                    function (response) {
+                        response.json().then(function (resp) {
+                            Plotly.newPlot(document.getElementById(id), resp.data, resp.layout);
+                        });
+                    }
+                );
+        };
+
+    document.addEventListener("DOMContentLoaded", function () {
+        embedPlotly("/assessment/api/dashboard/test/", "test")
+    });
+</script>
+{% endblock content %}
