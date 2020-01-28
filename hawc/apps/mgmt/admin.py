@@ -3,6 +3,7 @@ from django.contrib import admin
 from . import models
 
 
+@admin.register(models.Task)
 class TaskAdmin(admin.ModelAdmin):
     search_fields = (
         "owner__email",
@@ -18,6 +19,3 @@ class TaskAdmin(admin.ModelAdmin):
         "started",
         "completed",
     )
-
-
-admin.site.register(models.Task, TaskAdmin)

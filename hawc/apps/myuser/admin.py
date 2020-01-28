@@ -13,6 +13,7 @@ class IntentionalException(Exception):
     pass
 
 
+@admin.register(models.HAWCUser)
 class HAWCUserAdmin(admin.ModelAdmin):
     list_display = ("__str__", "email", "is_active", "is_staff", "date_joined")
     list_filter = (
@@ -51,6 +52,3 @@ class HAWCUserAdmin(admin.ModelAdmin):
     throw_500.short_description = "Intentionally throw a server error (500)"
 
     actions = (send_welcome_emails, set_password, throw_500)
-
-
-admin.site.register(models.HAWCUser, HAWCUserAdmin)
