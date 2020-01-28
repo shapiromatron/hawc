@@ -8,7 +8,7 @@ from django.contrib.auth.views import (
 )
 from django.core.urlresolvers import reverse_lazy
 
-from . import forms, views
+from . import api, forms, views
 
 app_name = "user"
 urlpatterns = [
@@ -46,4 +46,5 @@ urlpatterns = [
     ),
     url(r"^password/changed/$", views.PasswordChanged.as_view(), name="password_reset_complete",),
     url(r"^(?P<pk>\d+)/set-password/$", views.SetUserPassword.as_view(), name="set_password",),
+    url(r"^api/token-auth/$", api.hawc_obtain_auth_token, name="api_token_auth"),
 ]

@@ -110,9 +110,11 @@ class RefDownloadExcel(BaseList):
 
     def get_queryset(self):
         if self.tag:
-            return self.model.objects.get_references_with_tag(self.tag, descendants=True)
+            return self.model.objects.get_references_with_tag(
+                self.tag, descendants=True
+            ).prefetch_related("identifiers")
         else:
-            return self.model.objects.get_qs(self.assessment)
+            return self.model.objects.get_qs(self.assessment).prefetch_related("identifiers")
 
     def get_exporter(self):
         fmt = self.request.GET.get("fmt", "complete")

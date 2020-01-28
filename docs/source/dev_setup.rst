@@ -6,30 +6,43 @@ Assessment Workspace Collaborative project.  To begin you should have the
 following applications installed on your local development system:
 
 - `Git`_
+- `Python`_ ≥ 3.6
 - `Node.js`_
 - `Yarn`_
-- `PostgreSQL`_ ≥ 9.4 (uses `JSONB`_)
-- `Python`_ 3.6+
+- `PostgreSQL`_ ≥ 9.4
 
 .. _`Git`: https://git-scm.com/
 .. _`Python`: https://www.python.org/
 .. _`Node.js`: https://nodejs.org
 .. _`Yarn`: https://yarnpkg.com/
 .. _`PostgreSQL`: https://www.postgresql.org/
-.. _`JSONB`: https://www.postgresql.org/docs/current/static/datatype-json.html
 
 
-.. warning::
-    HAWC can be developed in Windows, however, in versions older than Windows 10,
-    it may not be possible due to file-system restrictions. The maximum
-    path length in some Windows environments is 260; the Node.js packaging
-    system may often exceed this length, and does in the current HAWC environment.
+HAWC API
+--------
 
-    There's nothing we can do to fix this that we're aware of.
+Authenticated users can access HAWC REST APIs; below is an example script for use:
+
+.. code-block:: python
+
+    import requests
+
+    session = requests.Session()
+    login = requests.post(
+        "https://hawcproject.org/user/api/token-auth/",
+        json={"username": "me@me.com", "password": "keep-it-hidden"}
+    )
+
+    if login.status_code == 200:
+        session.headers.update(Authorization=f"Token {login.json()['token']}")
+    else:
+        raise EnvironmentError("Authentication failed")
+
+    session.get('https://hawcproject.org/ani/api/endpoint/?assessment_id=123').json()
 
 
-HAWC setup
-----------
+HAWC developer environment setup
+--------------------------------
 
 Clone the repository and install all requirements into a virtual environment:
 
@@ -46,7 +59,7 @@ Clone the repository and install all requirements into a virtual environment:
     source ./venv/bin/activate
     $VIRTUAL_ENV/bin/pip install -r ./requirements/dev.txt
 
-    # create a local settings file
+    # create a local settings file (optional; in case you want to change local settings)
     cp ./hawc/main/settings/local.example.py ./hawc/main/settings/local.py
 
 Update the settings file with any changes you'd like to make for your local
@@ -126,3 +139,21 @@ If Postgres tools are not available from the command-line, from a pqsl session::
     CREATE DATABASE hawc;   --- create new database
     \c hawc                 --- open database
     \i /path/to/export.sql  --- load data into database
+
+Building the test database:
+---------------------------
+
+A test database is loaded to run unit tests. The database may need to be periodically updated as new feature are added. To load, make edits, and export the test database:
+
+.. code-block:: bash
+
+    export "DJANGO_SETTINGS_MODULE=hawc.main.settings.unittest"
+
+    # load existing test
+    createdb hawc-test
+    manage.py load_test_db
+
+    # now make edits to the database using the GUI or via command line
+
+    # export database
+    manage.py dump_test_db

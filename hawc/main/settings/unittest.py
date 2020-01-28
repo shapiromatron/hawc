@@ -2,12 +2,14 @@
 
 import logging
 
-from .local import *  # noqa
+from .dev import *  # noqa
 
-DEBUG = False
+DEBUG = True
 
-DATABASES = {"default": {"ENGINE": "django.db.backends.sqlite3", "NAME": "hawc_test",}}
+DATABASES["default"]["NAME"] = f"{DATABASES['default']['NAME']}-test"
 
 PASSWORD_HASHERS = ("django.contrib.auth.hashers.MD5PasswordHasher",)
+
+TEST_DB_FIXTURE = PROJECT_ROOT / "tests/data/fixtures/db.yaml"
 
 logging.disable(logging.CRITICAL)

@@ -1,4 +1,4 @@
-.PHONY: dev docs sevedocs notebook lint format test
+.PHONY: dev docs servedocs lint format test
 .DEFAULT_GOAL := help
 define BROWSER_PYSCRIPT
 import os, webbrowser, sys
@@ -46,9 +46,6 @@ docs: ## Generate Sphinx HTML documentation, including API docs
 
 servedocs: docs ## Compile the docs watching for changes
 	watchmedo shell-command -p '*.rst' -c '$(MAKE) -C docs html' -R -D .
-
-notebook:  ## Start jupyter notebook
-	cd project; jupyter notebook --no-browser --notebook-dir=../notebooks
 
 lint:  ## Check for formatting issues via black & flake8
 	@black . --check && flake8 .

@@ -39,3 +39,9 @@ LOGGING["loggers"][""]["level"] = "INFO"
 
 
 COMPRESS_ENABLED = False
+
+try:
+    # load local settings from `local.py` if they exist
+    from .local import *
+except ModuleNotFoundError:
+    pass

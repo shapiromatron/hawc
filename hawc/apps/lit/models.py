@@ -1,4 +1,4 @@
-import html.parser
+import html
 import json
 import logging
 import re
@@ -6,6 +6,7 @@ from datetime import datetime
 from math import ceil
 from urllib import parse
 
+from django.apps import apps
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.db import models, transaction
@@ -115,9 +116,7 @@ class Search(models.Model):
 
     @property
     def search_string_text(self):
-        # strip all HTML tags from search-string text
-        html_parser = html.parser.HTMLParser()
-        return html_parser.unescape(strip_tags(self.search_string))
+        return html.unescape(strip_tags(self.search_string))
 
     @transaction.atomic
     def run_new_query(self):
@@ -622,6 +621,15 @@ class Reference(models.Model):
     def delete_caches(cls, ids):
         SerializerHelper.delete_caches(cls, ids)
 
+    @classmethod
+    def delete_cache(cls, assessment_id: int, delete_study_cache: bool = True):
+        ids = list(cls.objects.filter(assessment_id=assessment_id).values_list("id", flat=True))
+        SerializerHelper.delete_caches(cls, ids)
+        if delete_study_cache:
+            apps.get_model("study", "Study").delete_cache(
+                assessment_id, delete_reference_cache=False
+            )
+
     @property
     def reference_citation(self):
         txt = ""
@@ -660,10 +668,16 @@ class Reference(models.Model):
 
         return citation
 
-    def getPubMedID(ref):
+    def get_pubmed_id(ref):
         for ident in ref.identifiers.all():
-            if ident.database == 1:
-                return ident.unique_id
+            if ident.database == constants.PUBMED:
+                return int(ident.unique_id)
+        return None
+
+    def get_hero_id(ref):
+        for ident in ref.identifiers.all():
+            if ident.database == constants.HERO:
+                return int(ident.unique_id)
         return None
 
     def set_custom_url(self, url):

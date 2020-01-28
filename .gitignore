@@ -26,7 +26,7 @@ __pycache__/
 .vscode/
 _build/
 build/
-data/
+/data/
 dist/
 node_modules/
 public/
@@ -42,6 +42,3 @@ hawc/static/bundles/
 
 compose/django/fonts/*
 !compose/django/fonts/.gitkeep
-
-notebooks/*
-!notebooks/example.ipynb

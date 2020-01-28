@@ -318,11 +318,12 @@ class Assessment(models.Model):
             (apps.get_model("invitro", "IVEndpoint"), dict(assessment_id=self.id)),
             (apps.get_model("mgmt", "Task"), dict(study__assessment_id=self.id)),
             (apps.get_model("riskofbias", "RiskOfBias"), dict(study__assessment_id=self.id),),
-            (apps.get_model("study", "Study"), dict(assessment_id=self.id)),
             (apps.get_model("summary", "Visual"), dict(assessment_id=self.id)),
         ]:
             ids = list(Model.objects.filter(**filters).values_list("id", flat=True))
             SerializerHelper.delete_caches(Model, ids)
+
+        apps.get_model("study", "Study").delete_cache(self.id)
 
 
 class Attachment(models.Model):

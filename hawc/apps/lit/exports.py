@@ -17,6 +17,7 @@ class ReferenceFlatComplete(FlatFileExporter):
 
         headers = [
             "HAWC ID",
+            "HERO ID",
             "PubMed ID",
             "Citation",
             "Full Citation",
@@ -92,7 +93,8 @@ class ReferenceFlatComplete(FlatFileExporter):
         for ref in self.queryset:
             row = [
                 ref.pk,
-                ref.getPubMedID(),
+                ref.get_hero_id(),
+                ref.get_pubmed_id(),
                 ref.get_short_citation_estimate(),
                 ref.reference_citation,
                 ref.title,
@@ -129,7 +131,7 @@ class TableBuilderFormat(FlatFileExporter):
     def _get_data_rows(self):
         return [
             [
-                ref.getPubMedID(),
+                ref.get_pubmed_id(),
                 ref.get_short_citation_estimate(),
                 ref.reference_citation,
                 None,

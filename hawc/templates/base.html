@@ -29,7 +29,7 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/d3.css' %}" />
     <link rel="stylesheet" type="text/css" href="{% static 'css/flex.css' %}" />
     {% block extrastyle %}{% endblock %}
-    {% if SERVER_ROLE != 'production' %}
+    {% if user.is_superuser or SERVER_ROLE != 'production' %}
         {% include 'includes/environment_banner.html' %}
     {% endif %}
   </head>
