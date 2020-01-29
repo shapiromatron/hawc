@@ -4,6 +4,7 @@ import Crossview from "./Crossview";
 import EndpointAggregation from "./EndpointAggregation";
 import RoBBarchart from "./RoBBarchart";
 import RoBHeatmap from "./RoBHeatmap";
+import LiteratureTagtree from "./LiteratureTagtree";
 
 class Visual {
     static get_object(id, cb) {
@@ -24,8 +25,11 @@ class Visual {
                 case "study evaluation barchart":
                     Cls = RoBBarchart;
                     break;
+                case "literature tagtree":
+                    Cls = LiteratureTagtree;
+                    break;
                 default:
-                    throw "Error - unknown visualization-type: {0}".printf(d.visual_type);
+                    throw `Error - unknown visualization-type: ${d.visual_type}`;
             }
             cb(new Cls(d));
         });

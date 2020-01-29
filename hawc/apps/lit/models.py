@@ -491,6 +491,12 @@ class ReferenceFilterTag(NonUniqueTagBase, AssessmentRootMixin, MP_Node):
     cache_template_taglist = "reference-taglist-assessment-{0}"
     cache_template_tagtree = "reference-tagtree-assessment-{0}"
 
+    def get_nested_name(self) -> str:
+        if self.name.startswith("assessment-"):
+            return "<ROOT>"
+        else:
+            return f"{'━' * (self.depth - 1)} {self.name}"
+
     @classmethod
     def get_tag_in_assessment(cls, assessment_pk, tag_id):
         tag = cls.objects.get(id=tag_id)

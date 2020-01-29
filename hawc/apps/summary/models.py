@@ -182,12 +182,14 @@ class Visual(models.Model):
     BIOASSAY_CROSSVIEW = 1
     ROB_HEATMAP = 2
     ROB_BARCHART = 3
+    LITERATURE_TAGTREE = 4
 
     VISUAL_CHOICES = (
         (BIOASSAY_AGGREGATION, "animal bioassay endpoint aggregation"),
         (BIOASSAY_CROSSVIEW, "animal bioassay endpoint crossview"),
         (ROB_HEATMAP, "risk of bias heatmap"),
         (ROB_BARCHART, "risk of bias barchart"),
+        (LITERATURE_TAGTREE, "literature tagtree"),
     )
 
     SORT_ORDER_CHOICES = (

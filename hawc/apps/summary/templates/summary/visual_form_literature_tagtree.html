@@ -1,0 +1,29 @@
+{% extends './visual_form.html' %}
+
+{% load crispy_forms_tags %}
+{% load selectable_tags %}
+
+
+{% block content %}
+{% crispy form %}
+{% include "summary/_smartTagEditModal.html" with form=smart_tag_form only %}
+{% endblock %}
+
+
+{% block extrajs %}
+{{ smart_tag_form.media }}
+<script type="text/javascript">
+    window.app.summaryFormsStartup(function (summaryForms) {
+
+        {% if crud == "Create" %}
+        $('#id_title').on('keyup', function () {
+            $('#id_slug').val(URLify($(this).val(), 50));
+        });
+        {% endif %}
+
+        window.app.smartTagsStartup(function (smartTags) {
+            new smartTags.SmartTagEditor($('#id_caption'), { submitEl: '#visualForm' });
+        })
+    });
+</script>
+{% endblock %}
