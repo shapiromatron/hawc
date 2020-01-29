@@ -427,6 +427,9 @@ def apply_flavored_help_text(app_name: str):
     if not settings.MODIFY_HELP_TEXT:
         return
 
+    # instead of `hawc.apps.animal` use `animal`
+    app_name = app_name.split(".")[-1]
+
     texts = getattr(help_text_flavors, settings.HAWC_FLAVOR, None)
     if texts is None:
         return
