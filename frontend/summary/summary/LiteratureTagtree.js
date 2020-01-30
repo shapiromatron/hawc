@@ -19,7 +19,7 @@ class LiteratureTagtree extends BaseVisual {
             let tagtree = new TagTree(data[0]),
                 title = "hi",
                 url = "/url";
-
+            tagtree.build_top_level_node("");
             tagtree.add_references(data[1]);
             new TagTreeViz(tagtree, this.$plotDiv, title, url);
         });

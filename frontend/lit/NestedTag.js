@@ -5,19 +5,21 @@ import Observee from "utils/Observee";
 import Reference from "./Reference";
 
 class NestedTag extends Observee {
-    constructor(item, level, tree, parent) {
+    constructor(item, level, tree, parent, assessment_id, search_id) {
         super();
-        var self = this,
-            children = [];
+        var children = [];
         this.observers = [];
         this.parent = parent;
         this.data = item.data;
         this.data.pk = item.id;
         this.level = level;
         this.tree = tree;
+        this.assessment_id = assessment_id;
+        this.search_id = search_id;
+
         if (item.children) {
-            item.children.forEach(function(v) {
-                children.push(new NestedTag(v, level + 1, tree, self));
+            children = item.children.map(v => {
+                return new NestedTag(v, level + 1, tree, this, this.assessment_id, this.search_id);
             });
         }
         this.children = children;
@@ -87,17 +89,16 @@ class NestedTag extends Observee {
     }
 
     get_reference_objects_by_tag(reference_viewer) {
-        var url = "/lit/assessment/{0}/references/{1}/json/".printf(
-            window.assessment_pk,
-            this.data.pk
-        );
-        if (window.search_id) url += "?search_id={0}".printf(window.search_id);
+        var url = `/lit/assessment/${this.assessment_id}/references/${this.data.pk}/json/`;
+        if (this.search_id) {
+            url += `?search_id=${this.search_id}`.printf();
+        }
 
         $.get(url, function(results) {
             if (results.status == "success") {
                 var refs = [];
-                results.refs.forEach(function(datum) {
-                    refs.push(new Reference(datum, window.tagtree));
+                results.refs.map(d(datum) {
+                    refs.push(new Reference(datum, this.tree));
                 });
                 reference_viewer.set_references(refs);
             } else {
@@ -138,17 +139,26 @@ class NestedTag extends Observee {
     }
 
     add_child(name) {
-        var self = this,
-            data = {
-                status: "add",
-                parent_pk: this.data.pk,
-                name,
-            };
+        var data = {
+            status: "add",
+            parent_pk: this.data.pk,
+            name,
+        };
 
-        $.post(".", data, function(v) {
+        $.post(".", data, v => {
             if (v.status === "success") {
-                self.children.push(new NestedTag(v.node[0], self.level + 1, self.tree, self));
-                self.tree.tree_changed();
+                this.children.push(
+                    new NestedTag(
+                        v.node[0],
+                        this.level + 1,
+                        this.tree,
+                        this,
+                        this.tagtree,
+                        this.assessment_id,
+                        this.search_id
+                    )
+                );
+                this.tree.tree_changed();
             }
         });
     }

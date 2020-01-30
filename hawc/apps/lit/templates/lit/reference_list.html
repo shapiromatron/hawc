@@ -70,7 +70,7 @@
                 download_url: "{% url 'lit:ref_download_excel' assessment.pk %}"
               },
               refviewer = new lit.ReferencesViewer($('#references_detail_div'), options);
-          tagtree.view_untagged_references(refviewer);
+          refviewer.view_untagged_references(tagtree, window.assessment_pk, window.search_id);
         });
     });
   </script>
