@@ -38,7 +38,7 @@ python-pptx==0.6.6
 bmds==0.10.0
 
 # literature
-litter-getter==0.2.4
+litter-getter==0.2.6
 
 # hawc; save in editable mode so it doesn't copy to venv
 # but instead stays in place

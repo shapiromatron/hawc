@@ -10,4 +10,5 @@ class LitConfig(AppConfig):
         from . import signals  # noqa
         from litter_getter import pubmed
 
-        pubmed.connect(settings.PUBMED_TOOL, settings.PUBMED_EMAIL)
+        if settings.PUBMED_API_KEY:
+            pubmed.connect(settings.PUBMED_API_KEY)
