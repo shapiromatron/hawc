@@ -83,7 +83,7 @@ class TagTree extends Observee {
     add_references(references) {
         var nodeDict = this.dict,
             addRef = function(ref) {
-                nodeDict[ref.tag_id].references.push(ref.content_object_id);
+                nodeDict[ref.tag_id].references.push(ref.reference_id);
             };
 
         _.map(nodeDict, d => (d.references = []));
@@ -105,6 +105,7 @@ class TagTree extends Observee {
         if (this.data) {
             this.data.reference_count = d3.sum(_.map(this.tags, d => d.data.reference_count));
         }
+        console.log(this.tags);
     }
 
     build_top_level_node(name) {

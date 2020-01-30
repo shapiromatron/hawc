@@ -1,20 +1,27 @@
 import SmartTagContainer from "assets/smartTags/SmartTagContainer";
 import BaseVisual from "./BaseVisual";
+import TagTree from "lit/TagTree";
+import TagTreeViz from "lit/TagTreeViz";
 
 class LiteratureTagtree extends BaseVisual {
     constructor(data) {
         super(data);
     }
 
-    getPlotData() {
+    getPlotData($plotDiv) {
         const urls = [
-                `/lit/api/assessment/${this.data.assessment}/tags/`,
+                `/lit/api/tags/?assessment_id=${this.data.assessment}`,
                 `/lit/api/assessment/${this.data.assessment}/reference-tags/`,
             ],
             allRequests = urls.map(url => fetch(url).then(resp => resp.json()));
-
+        this.$plotDiv = $plotDiv;
         Promise.all(allRequests).then(data => {
-            console.log(data);
+            let tagtree = new TagTree(data[0]),
+                title = "hi",
+                url = "/url";
+
+            tagtree.add_references(data[1]);
+            new TagTreeViz(tagtree, this.$plotDiv, title, url);
         });
     }
 
@@ -22,8 +29,7 @@ class LiteratureTagtree extends BaseVisual {
         var title = $("<h1>").text(this.data.title),
             captionDiv = $("<div>").html(this.data.caption),
             caption = new SmartTagContainer(captionDiv),
-            $plotDiv = $("<div>"),
-            data = this.getPlotData();
+            $plotDiv = $("<div>");
 
         options = options || {};
 
@@ -32,7 +38,8 @@ class LiteratureTagtree extends BaseVisual {
         $el.empty().append($plotDiv);
         if (!options.visualOnly) $el.prepend(title).append(captionDiv);
 
-        // new RoBHeatmapPlot(this, data, options).render($plotDiv);
+        this.getPlotData($plotDiv);
+
         caption.renderAndEnable();
         return this;
     }
