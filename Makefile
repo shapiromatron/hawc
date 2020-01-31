@@ -54,7 +54,7 @@ format:  ## Modify code using black & show flake8 issues
 	@black . && isort -rc -y --atomic && flake8 .
 
 test:  ## Run python tests
-	@py.test
+	@DJANGO_SETTINGS_MODULE=hawc.main.settings.unittest py.test
 
 flynt:  ## Run flynt (optional) using preferred config
 	@flynt --verbose --line_length=120 hawc/
