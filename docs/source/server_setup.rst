@@ -42,7 +42,7 @@ please specify in the docker-compose `.env` file (example secrets below):
 
     # django
     LOGS_PATH=/app/logs
-    DJANGO_SETTINGS_MODULE=main.settings.production
+    DJANGO_SETTINGS_MODULE=hawc.main.settings.production
     DJANGO_ALLOWED_HOSTS=hawcproject.org
     DJANGO_SECRET_KEY=myBigSecretKey
     DJANGO_ADMIN_EMAILS=johnny@appleseed.com|tommy@appleseed.com
@@ -52,7 +52,7 @@ please specify in the docker-compose `.env` file (example secrets below):
     DJANGO_CELERY_RESULT_BACKEND=redis://redis:6379/2
     CHEMSPIDER_TOKEN=myChemspiderToken
     PHANTOMJS_PATH=/usr/local/bin/phantomjs
-    PUBMED_EMAIL=myEmail@email.com
+    PUBMED_API_KEY=my-secret-key
 
     # Enum; one of {"PRIME", "EPA"}
     HAWC_FLAVOR=PRIME
