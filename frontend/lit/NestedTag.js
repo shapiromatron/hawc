@@ -96,10 +96,7 @@ class NestedTag extends Observee {
 
         $.get(url, function(results) {
             if (results.status == "success") {
-                var refs = [];
-                results.refs.map(d(datum) {
-                    refs.push(new Reference(datum, this.tree));
-                });
+                var refs = results.refs.map(datum => new Reference(datum, this.tree));
                 reference_viewer.set_references(refs);
             } else {
                 reference_viewer.set_error();
