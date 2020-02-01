@@ -39,7 +39,3 @@ bmds==0.10.0
 
 # literature
 litter-getter==0.2.6
-
-# hawc; save in editable mode so it doesn't copy to venv
-# but instead stays in place
--e .
