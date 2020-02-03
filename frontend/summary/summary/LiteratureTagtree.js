@@ -19,12 +19,43 @@ class LiteratureTagtree extends BaseVisual {
         Promise.all(allRequests).then(data => {
             let tagtree = new TagTree(data[0][0], this.data.assessment, null),
                 title = this.data.title,
-                url = null;
+                url = `/lit/assessment/${this.data.assessment}/references/download/`;
+
             if (tagtree.rootNode.data.name.startsWith("assessment-")) {
                 // if this is an assessment-root node; hide the name
                 tagtree.rename_top_level_node("");
             }
-            tagtree.add_references(data[1]);
+
+            /*
+            Filter references displayed based on the presence of a reference containing a
+            specific tag; for example, filter to only show references which have had tags
+            123 and 456 applied.
+            */
+            let reference_tag_mapping = data[1];
+            if (this.data.settings.required_tags.length > 0) {
+                let required_tags = new Set(this.data.settings.required_tags),
+                    included_references = new Set();
+
+                // find references which should be included
+                reference_tag_mapping.forEach(row => {
+                    if (required_tags.has(row.tag_id)) {
+                        included_references.add(row.reference_id);
+                    }
+                });
+
+                // filter mapping to only include these references
+                reference_tag_mapping = reference_tag_mapping.filter(row =>
+                    included_references.has(row.reference_id)
+                );
+            }
+            tagtree.add_references(reference_tag_mapping);
+
+            // remove nodes from tagtree
+            this.data.settings.pruned_tags.forEach(tagId => tagtree.prune_tree(tagId));
+
+            // change root node
+            tagtree.reset_root_node(this.data.settings.root_node);
+
             new TagTreeViz(tagtree, this.$plotDiv, title, url);
         });
     }

@@ -50,6 +50,22 @@ class TagTree extends Observee {
     get_tag(pk) {
         return this.dict[pk] || null;
     }
+
+    prune_tree(pk) {
+        // Remove a NestedTag from a parent tree. The dictionary still contains this
+        // node, but it will not be accessed by crawling the tree.
+        let tag = this.dict[pk],
+            index = tag.parent.children.findIndex(el => el === tag);
+        tag.parent.children.splice(index, 1);
+    }
+
+    reset_root_node(pk) {
+        // Change the root node for this tagtree; useful for displaying a subset of the tree
+        let tag = this.dict[pk];
+        if (tag.data.pk !== this.rootNode.data.pk) {
+            this.rootNode = tag;
+        }
+    }
 }
 
 export default TagTree;

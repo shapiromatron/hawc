@@ -99,7 +99,7 @@ class TagTreeViz extends D3Plot {
                 toggle(d);
             },
             fetch_references = function(tag) {
-                var title = "<h4>{0}</h4>".printf(tag.data.name),
+                var title = `<h4>${tag.data.name}</h4>`,
                     div = $('<div id="references_div"></div'),
                     options = {tag, download_url: self.downloadURL},
                     refviewer = new ReferencesViewer(div, options);
@@ -108,8 +108,8 @@ class TagTreeViz extends D3Plot {
                     .addHeader(title)
                     .addBody(div)
                     .addFooter("")
-                    .show({maxWidth: 800});
-                tag.get_reference_objects_by_tag(refviewer);
+                    .show({maxWidth: 1200});
+                tag.get_reference_objects_by_tag(refviewer, {filteredSubset: true});
             },
             update = function(source) {
                 var duration = d3.event && d3.event.altKey ? 5000 : 500;

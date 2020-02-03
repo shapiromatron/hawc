@@ -91,15 +91,20 @@ class NestedTag extends Observee {
         return parent;
     }
 
-    get_reference_objects_by_tag(reference_viewer) {
-        var url = `/lit/assessment/${this.assessment_id}/references/${this.data.pk}/json/`;
+    get_reference_objects_by_tag(reference_viewer, options) {
+        options = options || {filteredSubset: false};
+        let url = `/lit/assessment/${this.assessment_id}/references/${this.data.pk}/json/`;
         if (this.search_id) {
-            url += `?search_id=${this.search_id}`.printf();
+            url += `?search_id=${this.search_id}`;
         }
 
         $.get(url, results => {
             if (results.status == "success") {
-                var refs = results.refs.map(datum => new Reference(datum, this.tree));
+                let refs = results.refs.map(datum => new Reference(datum, this.tree));
+                if (options.filteredSubset) {
+                    let expected_references = new Set(this.get_references_deep());
+                    refs = refs.filter(ref => expected_references.has(ref.data.pk));
+                }
                 reference_viewer.set_references(refs);
             } else {
                 reference_viewer.set_error();
