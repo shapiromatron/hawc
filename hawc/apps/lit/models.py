@@ -11,9 +11,10 @@ from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.db import models, transaction
 from django.utils.html import strip_tags
-from litter_getter import pubmed, ris
 from taggit.models import ItemBase
 from treebeard.mp_tree import MP_Node
+
+from litter_getter import pubmed, ris
 
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper
 from ..common.models import AssessmentRootMixin, CustomURLField, NonUniqueTagBase, get_crumbs
@@ -266,8 +267,11 @@ class Search(models.Model):
         return dicts
 
     def get_all_reference_tags(self, json_encode=True):
-        refs = self.references.all().values_list("pk", flat=True)
-        ref_objs = list(ReferenceTags.objects.filter(content_object__in=refs).values())
+        ref_objs = list(
+            ReferenceTags.objects.filter(content_object__in=self.references.all())
+            .annotate(reference_id=models.F("content_object_id"))
+            .values("reference_id", "tag_id")
+        )
         if json_encode:
             return json.dumps(ref_objs, cls=HAWCDjangoJSONEncoder)
         else:
