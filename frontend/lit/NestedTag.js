@@ -7,8 +7,8 @@ import Reference from "./Reference";
 class NestedTag extends Observee {
     constructor(item, level, tree, parent, assessment_id, search_id) {
         super();
-        var children = [];
         this.observers = [];
+        this.references = new Set();
         this.parent = parent;
         this.data = item.data;
         this.data.pk = item.id;
@@ -17,10 +17,13 @@ class NestedTag extends Observee {
         this.assessment_id = assessment_id;
         this.search_id = search_id;
 
+        let children;
         if (item.children) {
-            children = item.children.map(v => {
-                return new NestedTag(v, level + 1, tree, this, this.assessment_id, this.search_id);
-            });
+            children = item.children.map(
+                v => new NestedTag(v, level + 1, tree, this, this.assessment_id, this.search_id)
+            );
+        } else {
+            children = [];
         }
         this.children = children;
         return this;
@@ -32,7 +35,7 @@ class NestedTag extends Observee {
             txtspan = $('<p class="nestedTag"></p>'),
             text = "{0}{1}".printf(padding, this.data.name);
 
-        if (options && options.show_refs_count) text += " ({0})".printf(this.data.reference_count);
+        if (options && options.show_refs_count) text += " ({0})".printf(this.data.references.size);
         txtspan
             .text(text)
             .appendTo(div)
@@ -104,6 +107,14 @@ class NestedTag extends Observee {
         });
     }
 
+    get_references_deep() {
+        let set = new Set([...this.references.values()]);
+        this.children.forEach(child => {
+            [...child.get_references_deep()].forEach(set.add, set);
+        });
+        return [...set.values()];
+    }
+
     get_option_item(lst) {
         lst.push(
             $(
@@ -122,9 +133,7 @@ class NestedTag extends Observee {
 
     _append_to_dict(dict) {
         dict[this.data.pk] = this;
-        this.children.forEach(function(v) {
-            v._append_to_dict(dict);
-        });
+        this.children.forEach(child => child._append_to_dict(dict));
     }
 
     get_full_name() {
@@ -150,7 +159,6 @@ class NestedTag extends Observee {
                         this.level + 1,
                         this.tree,
                         this,
-                        this.tagtree,
                         this.assessment_id,
                         this.search_id
                     )
