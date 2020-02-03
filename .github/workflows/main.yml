@@ -39,7 +39,7 @@ jobs:
       run: |
         mv ci-webpack-stats.json webpack-stats.json
         pip install -r requirements/dev.txt
-        make lint
+        make lint-py
         make test
 
   frontend:
@@ -54,4 +54,4 @@ jobs:
       run: |
         npm install -g yarn
         yarn --cwd ./frontend install
-        npm --prefix ./frontend run lint
+        make lint-js
