@@ -16,10 +16,10 @@ class LiteratureTagtree extends BaseVisual {
             allRequests = urls.map(url => fetch(url).then(resp => resp.json()));
         this.$plotDiv = $plotDiv;
         Promise.all(allRequests).then(data => {
-            let tagtree = new TagTree(data[0]),
+            let tagtree = new TagTree(data[0][0], this.data.assessment, null),
                 title = "hi",
                 url = "/url";
-            tagtree.build_top_level_node("");
+            tagtree.rename_top_level_node("TEST");
             tagtree.add_references(data[1]);
             new TagTreeViz(tagtree, this.$plotDiv, title, url);
         });

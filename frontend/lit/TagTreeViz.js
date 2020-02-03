@@ -66,44 +66,37 @@ class TagTreeViz extends D3Plot {
 
     draw_visualization() {
         var i = 0,
-            root = this.tagtree,
+            rootNode = this.tagtree.rootNode,
             vis = this.vis,
             tree = d3.layout.tree().size([this.h, this.w]),
-            diagonal = d3.svg.diagonal().projection(function(d) {
-                return [d.y, d.x];
-            }),
+            diagonal = d3.svg.diagonal().projection(d => [d.y, d.x]),
             self = this;
 
-        root.x0 = this.h / 2;
-        root.y0 = 0;
+        rootNode.x0 = this.h / 2;
+        rootNode.y0 = 0;
 
         this.add_title();
 
         var radius_scale = d3.scale
             .pow()
             .exponent(0.5)
-            .domain([0, root.data.reference_count])
+            .domain([0, rootNode.get_references_deep().length])
             .range([this.minimum_radius, this.maximum_radius]);
 
-        function toggleAll(d) {
-            if (d.children) {
-                d.children.forEach(toggleAll);
-                toggle(d);
+        function hideAll(node) {
+            node._children = node.children;
+            node.vizHidden = true;
+            if (node.children.length > 0) {
+                node.children.forEach(hideAll);
             }
         }
+        rootNode.children.forEach(hideAll);
 
-        function toggle(d) {
-            if (d.children && d.children.length > 0) {
-                d._children = d.children;
-                d.children = null;
-            } else {
-                d.children = d._children;
-                d._children = null;
-            }
+        function toggle(node) {
+            node.vizHidden = !node.vizHidden;
         }
 
-        root.children.forEach(toggleAll);
-        update(root);
+        update(rootNode);
 
         function fetch_references(nested_tag) {
             var title = "<h4>{0}</h4>".printf(nested_tag.data.name),
@@ -123,17 +116,15 @@ class TagTreeViz extends D3Plot {
             var duration = d3.event && d3.event.altKey ? 5000 : 500;
 
             // Compute the new tree layout.
-            var nodes = tree.nodes(root).reverse();
+            var nodes = tree.nodes(rootNode).reverse();
+            // TODO - figure out what's going on here; this removes the `children` attribute?
+            // https://d3-wiki.readthedocs.io/zh_CN/master/Tree-Layout/
 
             // Normalize for fixed-depth.
-            nodes.forEach(function(d) {
-                d.y = d.depth * self.path_length;
-            });
+            nodes.forEach(d => (d.y = d.depth * self.path_length));
 
-            // Update the nodes…
-            var node = vis.selectAll("g.tagnode").data(nodes, function(d) {
-                return d.id || (d.id = ++i);
-            });
+            // Update nodes
+            var node = vis.selectAll("g.tagnode").data(nodes, d => d.id || (d.id = ++i));
 
             // Enter any new nodes at the parent's previous position.
             var nodeEnter = node
@@ -157,21 +148,15 @@ class TagTreeViz extends D3Plot {
             nodeEnter
                 .append("svg:circle")
                 .attr("r", 1e-6)
-                .style("fill", function(d) {
-                    return d._children ? "lightsteelblue" : "#fff";
-                });
+                .style("fill", d => (d.children.length > 0 ? "lightsteelblue" : "#fff"));
 
             nodeEnter
                 .append("svg:text")
                 .attr("x", 0)
-                .attr("dy", function(d) {
-                    return radius_scale(d.data.reference_count) + 15;
-                })
+                .attr("dy", d => radius_scale(d.get_references_deep().length) + 15)
                 .attr("class", "node_name")
                 .attr("text-anchor", "middle")
-                .text(function(d) {
-                    return d.data.name;
-                })
+                .text(d => d.data.name)
                 .style("fill-opacity", 1e-6);
 
             nodeEnter
@@ -180,9 +165,7 @@ class TagTreeViz extends D3Plot {
                 .attr("dy", "3.5px")
                 .attr("class", "node_value")
                 .attr("text-anchor", "middle")
-                .text(function(d) {
-                    return d.data.reference_count;
-                })
+                .text(d => d.get_references_deep().length)
                 .style("fill-opacity", 1e-6);
 
             // Transition nodes to their new position.
@@ -193,12 +176,8 @@ class TagTreeViz extends D3Plot {
 
             nodeUpdate
                 .select("circle")
-                .attr("r", function(d) {
-                    return radius_scale(d.data.reference_count);
-                })
-                .style("fill", function(d) {
-                    return d._children ? "lightsteelblue" : "#fff";
-                });
+                .attr("r", d => radius_scale(d.get_references_deep().length))
+                .style("fill", d => (d.children.length > 0 ? "lightsteelblue" : "#fff"));
 
             nodeUpdate.selectAll("text").style("fill-opacity", 1);
 
@@ -214,10 +193,8 @@ class TagTreeViz extends D3Plot {
 
             nodeExit.select("text").style("fill-opacity", 1e-6);
 
-            // Update the links…
-            var link = vis.selectAll("path.tagslink").data(tree.links(nodes), function(d) {
-                return d.target.id;
-            });
+            // Update links
+            var link = vis.selectAll("path.tagslink").data(tree.links(nodes), d => d.target.id);
 
             // Enter any new links at the parent's previous position.
             link.enter()
@@ -249,7 +226,7 @@ class TagTreeViz extends D3Plot {
                 .remove();
 
             // Stash the old positions for transition.
-            nodes.forEach(function(d) {
+            nodes.forEach(d => {
                 d.x0 = d.x;
                 d.y0 = d.y;
             });
