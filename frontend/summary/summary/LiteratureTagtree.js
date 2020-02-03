@@ -2,6 +2,7 @@ import SmartTagContainer from "assets/smartTags/SmartTagContainer";
 import BaseVisual from "./BaseVisual";
 import TagTree from "lit/TagTree";
 import TagTreeViz from "lit/TagTreeViz";
+import HAWCModal from "utils/HAWCModal";
 
 class LiteratureTagtree extends BaseVisual {
     constructor(data) {
@@ -17,9 +18,12 @@ class LiteratureTagtree extends BaseVisual {
         this.$plotDiv = $plotDiv;
         Promise.all(allRequests).then(data => {
             let tagtree = new TagTree(data[0][0], this.data.assessment, null),
-                title = "hi",
-                url = "/url";
-            tagtree.rename_top_level_node("TEST");
+                title = this.data.title,
+                url = null;
+            if (tagtree.rootNode.data.name.startsWith("assessment-")) {
+                // if this is an assessment-root node; hide the name
+                tagtree.rename_top_level_node("");
+            }
             tagtree.add_references(data[1]);
             new TagTreeViz(tagtree, this.$plotDiv, title, url);
         });
@@ -47,21 +51,21 @@ class LiteratureTagtree extends BaseVisual {
     displayAsModal(options) {
         options = options || {};
 
-        var data = this.getPlotData(),
-            captionDiv = $("<div>").html(this.data.caption),
+        var captionDiv = $("<div>").html(this.data.caption),
             caption = new SmartTagContainer(captionDiv),
             $plotDiv = $("<div>"),
             modal = new HAWCModal();
 
         modal.getModal().on("shown", () => {
-            // new RoBHeatmapPlot(self, data, options).render($plotDiv);
+            this.getPlotData($plotDiv);
             caption.renderAndEnable();
         });
 
         modal
             .addHeader($("<h4>").text(this.data.title))
             .addBody([$plotDiv, captionDiv])
-            .addFooter("");
+            .addFooter("")
+            .show({maxWidth: 1200});
     }
 }
 
