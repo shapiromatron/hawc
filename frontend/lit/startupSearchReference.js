@@ -5,7 +5,7 @@ import ReferencesViewer from "./ReferencesViewer";
 import TagTree from "./TagTree";
 
 let startupSearchReference = function(tags) {
-    let tagtree = new TagTree(tags),
+    let tagtree = new TagTree(tags[0]),
         refviewer = new ReferencesViewer($("#references_detail_div"), {
             fixed_title: "Search Results",
         }),
