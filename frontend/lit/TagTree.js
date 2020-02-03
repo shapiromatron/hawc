@@ -8,7 +8,7 @@ class TagTree extends Observee {
         super();
         this.assessment_id = assessment_id;
         this.search_id = search_id;
-        this.rootNode = new NestedTag(rootNode, 0, self, null, assessment_id, search_id);
+        this.rootNode = new NestedTag(rootNode, 0, this, null, assessment_id, search_id);
         this.dict = this._build_dictionary();
         this.observers = [];
     }
@@ -16,7 +16,7 @@ class TagTree extends Observee {
     get_nested_list(options) {
         // builds a nested list
         let div = $("<div>");
-        this.rootNode.get_nested_list_item(div, "", options);
+        this.rootNode.children.forEach(child => child.get_nested_list_item(div, "", options));
         return div;
     }
 

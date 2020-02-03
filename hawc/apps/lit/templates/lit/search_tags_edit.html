@@ -26,18 +26,25 @@
 
 {% block extrajs %}
   <script type="text/javascript">
+    let data = {
+          tags: {{ tags | safe }},
+          refs: [],
+          tag_edit_url: {% if obj_perms.edit_assessment %}"{% url 'lit: tags_update' assessment.pk %}"{% else %}null{% endif %},
+        };
+
+    {% for ref in references %}
+      data.refs.push({{ ref.get_json | safe }})
+    {% endfor %}
+
+    window.isEdit = true;
+
     window.app.litStartup(function(lit){
-      window.isEdit = true;
-      {% if obj_perms.edit_assessment %}
-          window.tag_edit_url = '{% url 'lit:tags_update' assessment.pk %}'
-      {% endif %}
-      window.tagtree = new lit.TagTree({{tags|safe}});
-      window.refs = [];
-      {% for ref in references %}
-          refs.push(new lit.Reference({{ref.get_json|safe}}, window.tagtree));
-      {% endfor %}
-      window.ref_container = new lit.EditReferenceContainer(window.refs, window.tagtree,
-                                    {"content_div": "#reference_details"});
+      let tagtree = new lit.TagTree(data.tags[0]),
+          references = data.refs.map(function(data) {
+            return new lit.Reference(data, tagtree);
+          });
+
+      new lit.EditReferenceContainer(references, tagtree, {content_div: "#reference_details"});
     });
   </script>
 {% endblock extrajs %}

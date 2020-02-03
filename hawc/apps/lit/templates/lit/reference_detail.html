@@ -29,9 +29,13 @@
 
 {% block extrajs %}
   <script type="text/javascript">
+    let data = {
+      tags: {{ tags| safe}},
+      reference: {{ object_json | safe }}
+    };
     window.app.litStartup(function(lit){
-      window.tagtree = new lit.TagTree({{tags|safe}});
-      window.ref = new lit.Reference({{object_json|safe}}, window.tagtree);
+      let tagtree = new lit.TagTree(data.tags[0]),
+          ref = new lit.Reference(data.reference, tagtree);
       $('#reference_detail_div').html(ref.print_self(true)); });
   </script>
 {% endblock extrajs %}

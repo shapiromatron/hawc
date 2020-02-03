@@ -63,18 +63,16 @@
 
 {% block extrajs %}
   <script type="text/javascript">
+    let data = {
+      rootUrl: "{% url 'lit:tags_list' %}",
+    };
     window.app.litStartup(function(lit){
-
-        var loadTaglist = function(){
-            $.get("{% url 'lit:tags_list' %}", {'pk': $('#id_assessment').val()}, function(d){
-                window.tagtree = new lit.TagTree(JSON.parse(d));
-                $('#tags').html(window.tagtree.get_nested_list({"show_refs_count": false}))
-            });
-        };
-
-        $('#id_assessment').on('change', loadTaglist);
-        loadTaglist();
-
+      $('#id_assessment').on('change', function () {
+        $.get(data.rootUrl, { 'pk': $('#id_assessment').val() }, function (d) {
+          tagtree = new lit.TagTree(JSON.parse(d)[0]);
+          $('#tags').html(tagtree.get_nested_list({ "show_refs_count": false }))
+        });
+      }).trigger('change');
     });
   </script>
 {% endblock extrajs %}

@@ -5,14 +5,14 @@ import Observee from "utils/Observee";
 import Reference from "./Reference";
 
 class NestedTag extends Observee {
-    constructor(item, level, tree, parent, assessment_id, search_id) {
+    constructor(item, depth, tree, parent, assessment_id, search_id) {
         super();
         this.observers = [];
         this.references = new Set();
         this.parent = parent;
         this.data = item.data;
         this.data.pk = item.id;
-        this.level = level;
+        this.depth = depth;
         this.tree = tree;
         this.assessment_id = assessment_id;
         this.search_id = search_id;
@@ -20,7 +20,7 @@ class NestedTag extends Observee {
         let children;
         if (item.children) {
             children = item.children.map(
-                v => new NestedTag(v, level + 1, tree, this, this.assessment_id, this.search_id)
+                v => new NestedTag(v, depth + 1, tree, this, this.assessment_id, this.search_id)
             );
         } else {
             children = [];
@@ -30,12 +30,12 @@ class NestedTag extends Observee {
     }
 
     get_nested_list_item(parent, padding, options) {
-        var div = $('<div data-id="{0}">'.printf(this.data.pk)),
+        var div = $(`<div data-id="${this.data.pk}">`),
             collapse = $('<span class="nestedTagCollapser"></span>').appendTo(div),
             txtspan = $('<p class="nestedTag"></p>'),
-            text = "{0}{1}".printf(padding, this.data.name);
+            text = `${padding}${this.data.name}`;
 
-        if (options && options.show_refs_count) text += " ({0})".printf(this.data.references.size);
+        if (options && options.show_refs_count) text += ` (${this.get_references_deep().length})`;
         txtspan
             .text(text)
             .appendTo(div)
@@ -97,7 +97,7 @@ class NestedTag extends Observee {
             url += `?search_id=${this.search_id}`.printf();
         }
 
-        $.get(url, function(results) {
+        $.get(url, results => {
             if (results.status == "success") {
                 var refs = results.refs.map(datum => new Reference(datum, this.tree));
                 reference_viewer.set_references(refs);
@@ -120,7 +120,7 @@ class NestedTag extends Observee {
             $(
                 '<option value="{0}">{1}{2}</option>'.printf(
                     this.data.pk,
-                    Array(this.level + 1).join("&nbsp;&nbsp;"),
+                    Array(this.depth + 1).join("&nbsp;&nbsp;"),
                     this.data.name
                 )
             ).data("d", this)
@@ -137,8 +137,10 @@ class NestedTag extends Observee {
     }
 
     get_full_name() {
-        if (this.parent && this.parent.get_full_name) {
-            return this.parent.get_full_name() + " ➤ " + this.data.name;
+        // omit root-tag name
+        let parentName = this.parent.depth > 0 ? this.parent.get_full_name() : null;
+        if (parentName) {
+            return `${parentName} ➤ ${this.data.name}`;
         } else {
             return this.data.name;
         }
@@ -156,7 +158,7 @@ class NestedTag extends Observee {
                 this.children.push(
                     new NestedTag(
                         v.node[0],
-                        this.level + 1,
+                        this.depth + 1,
                         this.tree,
                         this,
                         this.assessment_id,
