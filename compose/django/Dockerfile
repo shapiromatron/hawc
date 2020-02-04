@@ -10,6 +10,7 @@ COPY ./compose/django/gunicorn.sh /app/bin/gunicorn.sh
 COPY ./compose/django/celery.sh /app/bin/celery.sh
 COPY ./compose/django/celerybeat.sh /app/bin/celerybeat.sh
 COPY ./compose/django/supervisord.conf /app/bin/supervisord.conf
+COPY ./compose/django/phantomjs_openssh.conf /app/phantomjs_openssh.conf
 COPY ./compose/django/fonts /usr/share/fonts/truetype/django
 
 # 1) install start-scripts

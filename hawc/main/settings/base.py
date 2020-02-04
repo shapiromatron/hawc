@@ -181,7 +181,8 @@ MEDIA_ROOT = str(PUBLIC_DATA_ROOT / "media")
 FILE_UPLOAD_PERMISSIONS = 0o755
 
 
-# Filesystem settings
+# Phantom JS settings
+PHANTOMJS_PREFIX = os.getenv("PHANTOMJS_PREFIX", "")
 PHANTOMJS_PATH = os.getenv("PHANTOMJS_PATH")
 
 # Logging configuration

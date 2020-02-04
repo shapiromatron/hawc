@@ -2,6 +2,7 @@ import base64
 import logging
 import os
 import re
+import shlex
 import subprocess
 import tempfile
 from datetime import datetime
@@ -217,11 +218,12 @@ class SVGConverter(object):
         return fn
 
     def _rasterize(self, out_fn):
+        phantom_prefix = settings.PHANTOMJS_PREFIX
         phantom = settings.PHANTOMJS_PATH
         rasterize = str(settings.PROJECT_PATH / "static/js/rasterize.js")
         html_fn = self._to_html()
         try:
-            commands = [phantom, rasterize, html_fn, out_fn]
+            commands = shlex.split(" ".join([phantom_prefix, phantom, rasterize, html_fn, out_fn]))
             subprocess.call(commands)
             logger.info("Conversion successful")
         except Exception as e:
