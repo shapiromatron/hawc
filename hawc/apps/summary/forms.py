@@ -658,21 +658,21 @@ class TagtreeForm(VisualForm):
         coerce=int,
         choices=[],
         label="Root node",
-        help_text="Select the root node for the tag tree being visualized",
+        help_text="Select the root node for the tag tree (the left-most node to be displayed)",
         required=True,
     )
     required_tags = forms.TypedMultipleChoiceField(
         coerce=int,
         choices=[],
-        label="Required tags",
-        help_text="Select any tags which can be used as filters, which are required to be true when displayed on visual. If a parent tag is selected, child tags will be included. This field is optional; if no tags are required then all references will be displayed.",
+        label="Filter references by tags",
+        help_text="Filter which references are displayed by selecting required tags. If a tag is selected, only references which have this tag will be displayed.<br><br><i>This field is optional; if no tags are selected, all references will be displayed.</i>",
         required=False,
     )
     pruned_tags = forms.TypedMultipleChoiceField(
         coerce=int,
         choices=[],
-        label="Tags to be removed",
-        help_text="Any tags which should be removed from the tagtree and not be displayed. If a parent-tag is pruned, child-tags will also not be displayed. This field is optional.",
+        label="Hidden tags",
+        help_text="Select tags which should be hidden from the tagtree. If a parent-tag is selected, all child-tags will also be hidden.<br><br><i>This field is optional; if no tags are selected, then all tags will be displayed.</i>",
         required=False,
     )
 
@@ -680,13 +680,17 @@ class TagtreeForm(VisualForm):
         super().__init__(*args, **kwargs)
         self.helper = self.setHelper()
         self.helper.add_fluid_row("root_node", 3, "span4")
+
         choices = [
             (tag.id, tag.get_nested_name())
-            for tag in ReferenceFilterTag.get_assessment_qs(self.instance.assessment_id)
+            for tag in ReferenceFilterTag.get_assessment_qs(
+                self.instance.assessment_id, include_root=True
+            )
         ]
+        choices[0] = (choices[0][0], "<root-node>")  # rename root tag in select-box
         self.fields["root_node"].choices = choices
-        self.fields["required_tags"].choices = choices
-        self.fields["pruned_tags"].choices = choices
+        self.fields["required_tags"].choices = choices[1:]
+        self.fields["pruned_tags"].choices = choices[1:]
 
         self.fields["required_tags"].widget.attrs.update(size=10)
         self.fields["pruned_tags"].widget.attrs.update(size=10)

@@ -498,7 +498,7 @@ class ReferenceFilterTag(NonUniqueTagBase, AssessmentRootMixin, MP_Node):
         if self.name.startswith("assessment-"):
             return "<ROOT>"
         else:
-            return f"{'━' * (self.depth - 1)} {self.name}"
+            return f"{'━ ' * (self.depth - 1)}{self.name}"
 
     @classmethod
     def get_tag_in_assessment(cls, assessment_pk, tag_id):
