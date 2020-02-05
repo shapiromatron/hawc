@@ -36,6 +36,8 @@
         tags: {{ tags | safe }}
     };
     window.canEdit = data.canEdit;
-    window.app.litStartup(lit => lit.startupSearchReference(data.tags));
+    window.app.litStartup(function(lit){
+        lit.startupSearchReference(data.tags)
+    });
 </script>
 {% endblock extrajs %}
