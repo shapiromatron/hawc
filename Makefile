@@ -23,6 +23,12 @@ endef
 export PRINT_HELP_PYSCRIPT
 BROWSER := python -c "$$BROWSER_PYSCRIPT"
 
+build:  ## build python application
+	rm -rf build/ dist/
+	npm --prefix ./frontend run build
+	manage.py set_git_commit
+	manage.py build_hawc_bundle
+
 dev: ## Start development environment
 	@if [ -a ./bin/dev.local.sh ]; then \
 		./bin/dev.local.sh; \

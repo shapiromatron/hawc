@@ -1,45 +1,37 @@
-version: '2'
-
-volumes:
-  postgres_data: {}
-  postgres_backup: {}
-  public_data: {}
+version: '3'
 
 services:
 
   postgres:
-    restart: always
     build: ./compose/postgres
     volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - postgres_backup:/app/data
+      - ./data/postgres/data:/var/lib/postgresql/data
+      - ./data/postgres/backups:/app/data
     env_file: .env
 
   redis:
-    restart: always
     build: ./compose/redis
 
   django:
-    restart: always
     build:
       context: .
       dockerfile: ./compose/django/Dockerfile
-    command: /usr/local/bin/supervisord -c /supervisord.conf --nodaemon
+    command: /usr/local/bin/supervisord -c /app/bin/supervisord.conf --nodaemon
     depends_on:
       - postgres
       - redis
     env_file: .env
+    ports:
+      - "0.0.0.0:5000:5000"
     volumes:
-      - public_data:/app/public
-      - postgres_backup:/data
+      - ./data/public:/app/public
 
   nginx:
-    restart: always
     build: ./compose/nginx
     depends_on:
       - django
     ports:
-      - "0.0.0.0:80:80"
-      - "0.0.0.0:443:443"
+      - "0.0.0.0:8000:8000"
     volumes:
-      - public_data:/app/public
+      - ./data/public:/app/public
+      - ./data/nginx/ssl:/etc/nginx/ssl
