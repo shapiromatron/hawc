@@ -9,6 +9,7 @@ flake8-isort==2.8.0
 # django development
 django-debug-toolbar==1.8
 django-extensions==1.9.0
+faker==4.0.0
 
 # tests
 selenium==3.5.0
