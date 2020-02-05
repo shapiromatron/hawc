@@ -9,10 +9,9 @@ from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
 from django.db import models
 from django.db.models import QuerySet
+from litter_getter import hero, pubmed
 from taggit.managers import TaggableManager, _TaggableManager
 from taggit.utils import require_instance_manager
-
-from litter_getter import hero, pubmed
 
 from ..common.helper import HAWCDjangoJSONEncoder
 from ..common.models import BaseManager

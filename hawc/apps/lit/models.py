@@ -11,10 +11,9 @@ from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.db import models, transaction
 from django.utils.html import strip_tags
+from litter_getter import pubmed, ris
 from taggit.models import ItemBase
 from treebeard.mp_tree import MP_Node
-
-from litter_getter import pubmed, ris
 
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper
 from ..common.models import AssessmentRootMixin, CustomURLField, NonUniqueTagBase, get_crumbs
