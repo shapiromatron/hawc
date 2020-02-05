@@ -687,7 +687,6 @@ class TagtreeForm(VisualForm):
                 self.instance.assessment_id, include_root=True
             )
         ]
-        choices[0] = (choices[0][0], "<root-node>")  # rename root tag in select-box
         self.fields["root_node"].choices = choices
         self.fields["required_tags"].choices = choices[1:]
         self.fields["pruned_tags"].choices = choices[1:]
