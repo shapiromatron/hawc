@@ -108,7 +108,7 @@ class SVGConverter(object):
             with open(png, "rb") as f:
                 content = f.read()
         except Exception as e:
-            logger.error(e.message, exc_info=True)
+            logger.error(e, exc_info=True)
         finally:
             self.cleanup()
         return content
@@ -122,7 +122,7 @@ class SVGConverter(object):
             with open(pdf, "rb") as f:
                 content = f.read()
         except Exception as e:
-            logger.error(e.message, exc_info=True)
+            logger.error(e, exc_info=True)
         finally:
             self.cleanup()
         return content
@@ -167,7 +167,7 @@ class SVGConverter(object):
         top = Inches(6.65)
         width = Inches(1.4)
         height = Inches(0.8)
-        logo_location = os.path.join(settings.STATIC_ROOT, "img/HAWC-120.png")
+        logo_location = os.path.join(settings.STATICFILES_DIRS[0], "img/HAWC-120.png")
         slide.shapes.add_picture(logo_location, left, top, width, height)
 
     def to_pptx(self):

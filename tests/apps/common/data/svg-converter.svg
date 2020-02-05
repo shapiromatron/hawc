@@ -1,0 +1,61 @@
+<svg width="100" height="100" version="1.1" xmlns="http://www.w3.org/2000/svg"><defs><style type="text/css"><![CDATA[/* We use one-set of styles for all D3 objects so that when generating PNG images using other software (i.e. Inkscape), the software doesn't choke on unrecognized HTML expressions. */ .d3{background-color:white;border:thin solid black;font-family:'Liberation Sans', Arial, Helvetica, sans-serif;font-size:14px;line-height:20px;}
+.options_menu{background-color:#eee;border:thin solid black;height:23px;padding:5px;}
+.dr_title{font-size:12px;font-weight:bold;white-space:pre;}
+.with_whitespace{white-space:pre;}
+.dr_axis_labels{font-size:12px;}
+.legend_text{fill:black;font-size:12px;stroke-width:0;white-space:pre;}
+.dr_tick_text{font-size:12px;}
+.reference_text{font-size:11px;text-anchor:middle;}
+.dr_err_bars{stroke:#2f516e;stroke-width:1.5px;}
+.reference_line{stroke:black;stroke-width:2px;}
+.dose_points{fill:#a8b2d3;r:8px;stroke:black;stroke-width:1.5px;}
+.dose_points:hover{fill:yellow;}
+.dose_bars{fill:#a8b2d3;stroke:#666666;stroke-width:2px;}
+.NOEL{fill:red;}
+.LOEL{fill:green;}
+.BMDL{fill:blue;}
+rect.bounding_rectangle{fill:none;stroke:#666666;stroke-width:2px;}
+rect.bounding_rectangle_cover{fill:Gold;fill-opacity:0.1;stroke-width:4px;}
+rect.selected_overlay{fill:yellow;fill-opacity:0.5;}
+.centeredLabel{font-size:12px;font-weight:bold;pointer-events:none;stroke-width:0;text-anchor:middle;}
+.centeredLabel_bold{font-size:18px;font-weight:bold;pointer-events:none;stroke-width:0;text-anchor:middle;}
+rect.legend{fill:white;stroke:#666666;stroke-width:2px;}
+line.primary_gridlines{stroke:white;stroke-width:2px;}
+.axis path, .axis line{fill:none;stroke:black;}
+.axis text{font-size:12px;}
+path.dr_line{fill:none;stroke-width:3;}
+path.bmd_line{fill:none;stroke-width:3px;}
+.d3modal{background-color:white;border:2px solid gray;padding:10px;}
+.scorebox{border:1px solid gray;border-radius:5px;color:white;display:inline-block;font-weight:bold;margin-bottom:3px;margin-right:5px;text-align:center;width:30px;}
+td.scorecell{background-color:#ddd;border:2px solid white;border-radius:10px;color:white;cursor:pointer;font-weight:bold;text-align:center;vertical-align:middle;width:50px;}
+td.domain_cell{color:#757575;}
+ol.score-details{list-style-type:none;}
+path.donuts{stroke:white;stroke-width:2;}
+path.domain_arc{fill:#ddd;}
+path.metric_arc{cursor:pointer;}
+text.domain_arc{fill:#757575;}
+path.donuts.hovered{fill:#87ceff;}
+text.arc_label{fill:white;font-size:12px;font-weight:bold;pointer-events:none;}
+.heatmap_selectable{cursor:pointer;}
+rect.heatmap_selectable{stroke:gray;stroke-width:2px;}
+text.heatmap_selectable:hover{font-weight:bold;}
+rect.heatmap_hovered{stroke:yellow;stroke-width:6;fill:white;fill-opacity:0.5;pointer-events:none;}
+.heatmap_selectable_bold{cursor:pointer;}
+rect.heatmap_selectable_bold{stroke:black;stroke-width:4px;}
+text.heatmap_selectable_bold{font-weight:bold;}
+text.heatmap_selectable_bold:hover{font-weight:bold;}
+/* * Crossview Plot */ .crossview_title{font-weight:bold;}
+.crossview_paths{cursor:pointer;fill:none;stroke-width:3px;}
+.crossview_fields{cursor:pointer;}
+.crossview_fields:hover{text-decoration:underline;}
+.crossview_colorFilter{cursor:pointer;}
+.crossview_colorFilter:hover{text-decoration:underline;}
+/* * Tag Tree layout */ .tagnode circle{cursor:pointer;fill:#fff;stroke:steelblue;stroke-width:2.5px;}
+.tagnode text{font-size:11px;font-weight:bold;pointer-events:none;}
+path.tagslink{fill:none;stroke:#ccc;stroke-width:3.5px;}
+/* * Data Pivot */ .dp_bg{fill:#eee;}
+.dp_header{stroke:#666666;stroke-width:2px;}
+/* * Duplicate of hawc.css but required for image building */ .hidden{display:none;}
+]]></style></defs>
+            <rect x="10" y="10" width="80" height="80" style="fill:red;stroke-width:3;stroke:blue" />
+        </svg>
