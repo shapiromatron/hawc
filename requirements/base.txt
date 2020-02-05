@@ -1,5 +1,5 @@
 # web application
-Django==1.11.27
+Django==1.11.28
 django-crispy-forms==1.6.1
 django-filter==1.0.4
 django-redis==4.8.0
@@ -39,7 +39,3 @@ bmds==0.10.0
 
 # literature
 litter-getter==0.2.6
-
-# hawc; save in editable mode so it doesn't copy to venv
-# but instead stays in place
--e .

@@ -21,3 +21,7 @@ Sphinx==1.6.3
 
 # django_extensions.graph_models
 pydot==1.2.3
+
+# hawc; save in editable mode so it doesn't copy to venv
+# but instead stays in place
+-e .
