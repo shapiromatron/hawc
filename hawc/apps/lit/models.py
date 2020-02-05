@@ -266,8 +266,11 @@ class Search(models.Model):
         return dicts
 
     def get_all_reference_tags(self, json_encode=True):
-        refs = self.references.all().values_list("pk", flat=True)
-        ref_objs = list(ReferenceTags.objects.filter(content_object__in=refs).values())
+        ref_objs = list(
+            ReferenceTags.objects.filter(content_object__in=self.references.all())
+            .annotate(reference_id=models.F("content_object_id"))
+            .values("reference_id", "tag_id")
+        )
         if json_encode:
             return json.dumps(ref_objs, cls=HAWCDjangoJSONEncoder)
         else:
@@ -490,6 +493,12 @@ class Identifiers(models.Model):
 class ReferenceFilterTag(NonUniqueTagBase, AssessmentRootMixin, MP_Node):
     cache_template_taglist = "reference-taglist-assessment-{0}"
     cache_template_tagtree = "reference-tagtree-assessment-{0}"
+
+    def get_nested_name(self) -> str:
+        if self.is_root():
+            return "<root-node>"
+        else:
+            return f"{'━ ' * (self.depth - 1)}{self.name}"
 
     @classmethod
     def get_tag_in_assessment(cls, assessment_pk, tag_id):

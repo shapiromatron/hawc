@@ -4,22 +4,11 @@ import Reference from "./Reference";
 import ReferencesViewer from "./ReferencesViewer";
 import TagTree from "./TagTree";
 
-let startupSearchReference = function(assessment_id, tags, canEdit) {
-    window.assessment_pk = assessment_id;
-    window.tagtree = new TagTree(tags);
-    window.canEdit = canEdit;
-
-    let refviewer = new ReferencesViewer($("#references_detail_div"), {
+let startupSearchReference = function(tags) {
+    let tagtree = new TagTree(tags[0]),
+        refviewer = new ReferencesViewer($("#references_detail_div"), {
             fixed_title: "Search Results",
         }),
-        handleResults = function(results) {
-            if (results.status === "success") {
-                let refs = results.refs.map(d => new Reference(d, window.tagtree));
-                refviewer.set_references(refs);
-            } else {
-                refviewer.set_error();
-            }
-        },
         renderSearchRow = function(txt, label) {
             return txt ? `<p><b>${label}:</b>&nbsp;${txt}</p>` : "";
         },
@@ -38,7 +27,14 @@ let startupSearchReference = function(assessment_id, tags, canEdit) {
         event.preventDefault();
         print_search_fields();
         let data = $(this).serialize();
-        $.post(".", data).done(handleResults);
+        $.post(".", data).done(results => {
+            if (results.status === "success") {
+                let refs = results.refs.map(d => new Reference(d, tagtree));
+                refviewer.set_references(refs);
+            } else {
+                refviewer.set_error();
+            }
+        });
         $("#resultsHolder").fadeIn();
         $("#searchFormHolder").fadeOut();
     });

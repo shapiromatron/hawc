@@ -232,8 +232,11 @@ class ReferenceManager(BaseManager):
 
     def get_full_assessment_json(self, assessment, json_encode=True):
         ReferenceTags = apps.get_model("lit", "ReferenceTags")
-        refs = self.get_qs(assessment).values_list("pk", flat=True)
-        ref_objs = list(ReferenceTags.objects.filter(content_object__in=refs).values())
+        ref_objs = list(
+            ReferenceTags.objects.filter(content_object__in=self.get_qs(assessment))
+            .annotate(reference_id=models.F("content_object_id"))
+            .values("reference_id", "tag_id")
+        )
         if json_encode:
             return json.dumps(ref_objs, cls=HAWCDjangoJSONEncoder)
         else:

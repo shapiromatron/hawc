@@ -34,13 +34,17 @@
 
 {% block extrajs %}
   <script type="text/javascript">
+    let data = {
+      assessment_id: {{assessment.id}},
+      search_id: parseInt("{{ object.id }}") || null,
+      tags: {{ tags | safe }},
+      references: {{ ref_objs | safe }}
+    };
+    window.canEdit = {{ obj_perms.edit | lower }};
     window.app.litStartup(function(lit){
-      window.assessment_pk = {{assessment.pk}};
-      window.tagtree = new lit.TagTree({{tags|safe}});
-      window.canEdit = {{obj_perms.edit|lower}};
-      window.search_id = parseInt("{{object.id}}", 10) || null;
 
-      tagtree.add_references({{ref_objs|safe}});
+      let tagtree = new lit.TagTree(data.tags[0], data.assessment_id, data.search_id);
+      tagtree.add_references(data.references);
 
       $('#taglist')
         .html(tagtree.get_nested_list({"show_refs_count": true}))
@@ -70,7 +74,7 @@
                 download_url: "{% url 'lit:ref_download_excel' assessment.pk %}"
               },
               refviewer = new lit.ReferencesViewer($('#references_detail_div'), options);
-          tagtree.view_untagged_references(refviewer);
+          refviewer.view_untagged_references(tagtree, data.assessment_id, window.search_id);
         });
     });
   </script>

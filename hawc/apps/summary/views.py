@@ -161,6 +161,13 @@ class VisualizationCreate(BaseCreate):
         kwargs["visual_type"] = int(self.kwargs.get("visual_type"))
         return kwargs
 
+    def get_template_names(self):
+        visual_type = int(self.kwargs.get("visual_type"))
+        if visual_type == models.Visual.LITERATURE_TAGTREE:
+            return "summary/visual_form_literature_tagtree.html"
+        else:
+            return super().get_template_names()
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["dose_units"] = models.Visual.get_dose_units()
@@ -194,6 +201,12 @@ class VisualizationUpdate(BaseUpdate):
             return forms.get_visual_form(self.object.visual_type)
         except ValueError:
             raise Http404
+
+    def get_template_names(self):
+        if self.object.visual_type == models.Visual.LITERATURE_TAGTREE:
+            return "summary/visual_form_literature_tagtree.html"
+        else:
+            return super().get_template_names()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

@@ -26,16 +26,14 @@ class Reference extends Observee {
         var taglist = show_taglist || false,
             content = [
                 "<h4>Reference details:</h4>",
-                '<p class="ref_small">{0}</p>'.printf(this.data.journal),
-                '<p class="ref_title">{0}</p>'.printf(this.data.title),
-                '<p class="ref_small">{0}</p>'.printf(
-                    this.data.authors || Reference.no_authors_text
-                ),
+                `<p class="ref_small">${this.data.journal}</p>`,
+                `<p class="ref_title">${this.data.title}</p>`,
+                `<p class="ref_small">${this.data.authors || Reference.no_authors_text}</p>`,
             ];
         if (taglist) {
             content = content.concat(this.print_taglist());
         }
-        content.push("<p>{0}</p>".printf(this.data.abstract));
+        content.push(`<p>${this.data.abstract}</p>`);
         content.push(this.getLinks());
         return content;
     }
@@ -43,11 +41,9 @@ class Reference extends Observee {
     print_taglist() {
         var title = window.isEdit ? "click to remove" : "",
             cls = window.isEdit ? "refTag refTagEditing" : "refTag";
-        return _.map(this.data.tags, function(d) {
-            return $(
-                '<span title="{0}" class="{1}">{2}</span>'.printf(title, cls, d.get_full_name())
-            ).data("d", d);
-        });
+        return this.data.tags.map(d =>
+            $(`<span title="${title}" class="${cls}">${d.get_full_name()}</span>`).data("d", d)
+        );
     }
 
     print_name() {

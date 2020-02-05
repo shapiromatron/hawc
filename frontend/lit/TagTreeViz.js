@@ -66,194 +66,181 @@ class TagTreeViz extends D3Plot {
 
     draw_visualization() {
         var i = 0,
-            root = this.tagtree,
             vis = this.vis,
             tree = d3.layout.tree().size([this.h, this.w]),
-            diagonal = d3.svg.diagonal().projection(function(d) {
-                return [d.y, d.x];
-            }),
-            self = this;
+            diagonal = d3.svg.diagonal().projection(d => [d.y, d.x]),
+            self = this,
+            buildVizDatasetNode = function(nestedTag) {
+                return {
+                    id: nestedTag.data.pk,
+                    name: nestedTag.data.name,
+                    depth: nestedTag.depth,
+                    nestedTag,
+                    numReferences: nestedTag.references.size,
+                    numReferencesDeep: nestedTag.get_references_deep().length,
+                    hasChildren: nestedTag.children.length > 0,
+                    children: nestedTag.children.map(buildVizDatasetNode),
+                };
+            },
+            rootNode = buildVizDatasetNode(this.tagtree.rootNode),
+            toggle = function toggle(d) {
+                if (d.children && d.children.length > 0) {
+                    d._children = d.children;
+                    d.children = null;
+                } else {
+                    d.children = d._children;
+                    d._children = null;
+                }
+            },
+            toggleAll = function(d) {
+                if (d.children) {
+                    d.children.forEach(toggleAll);
+                }
+                toggle(d);
+            },
+            fetch_references = function(tag) {
+                var title = `<h4>${tag.data.name}</h4>`,
+                    div = $('<div id="references_div"></div'),
+                    options = {tag, download_url: self.downloadURL},
+                    refviewer = new ReferencesViewer(div, options);
 
-        root.x0 = this.h / 2;
-        root.y0 = 0;
+                self.modal
+                    .addHeader(title)
+                    .addBody(div)
+                    .addFooter("")
+                    .show({maxWidth: 1200});
+                tag.get_reference_objects_by_tag(refviewer, {filteredSubset: true});
+            },
+            update = function(source) {
+                var duration = d3.event && d3.event.altKey ? 5000 : 500;
+
+                // Compute the new tree layout.
+                var nodes = tree.nodes(rootNode).reverse();
+
+                // Normalize for fixed-depth.
+                nodes.forEach(d => (d.y = d.depth * self.path_length));
+
+                // Update nodes
+                var node = vis.selectAll("g.tagnode").data(nodes, d => d.id || (d.id = ++i));
+
+                // Enter any new nodes at the parent's previous position.
+                var nodeEnter = node
+                    .enter()
+                    .append("svg:g")
+                    .attr("class", "tagnode")
+                    .attr("transform", () => `translate(${source.y0},${source.x0})`)
+                    .on("click", function(d) {
+                        if (d3.event.ctrlKey || d3.event.metaKey) {
+                            if (d.depth == 0) {
+                                alert("Cannot view details on root-node.");
+                            } else {
+                                fetch_references(d.nestedTag);
+                            }
+                        } else {
+                            toggle(d);
+                            update(d);
+                        }
+                    });
+
+                nodeEnter
+                    .append("svg:circle")
+                    .attr("r", 1e-6)
+                    .style("fill", d => (d.hasChildren ? "lightsteelblue" : "white"));
+
+                nodeEnter
+                    .append("svg:text")
+                    .attr("x", 0)
+                    .attr("dy", d => radius_scale(d.numReferencesDeep) + 15)
+                    .attr("class", "node_name")
+                    .attr("text-anchor", "middle")
+                    .text(d => d.name)
+                    .style("fill-opacity", 1e-6);
+
+                nodeEnter
+                    .append("svg:text")
+                    .attr("x", 0)
+                    .attr("dy", "3.5px")
+                    .attr("class", "node_value")
+                    .attr("text-anchor", "middle")
+                    .text(d => d.numReferencesDeep)
+                    .style("fill-opacity", 1e-6);
+
+                // Transition nodes to their new position.
+                var nodeUpdate = node
+                    .transition()
+                    .duration(duration)
+                    .attr("transform", d => `translate(${d.y},${d.x})`);
+
+                nodeUpdate
+                    .select("circle")
+                    .attr("r", d => radius_scale(d.numReferencesDeep))
+                    .style("fill", d => (d.hasChildren ? "lightsteelblue" : "white"));
+
+                nodeUpdate.selectAll("text").style("fill-opacity", 1);
+
+                // Transition exiting nodes to the parent's new position.
+                var nodeExit = node
+                    .exit()
+                    .transition()
+                    .duration(duration)
+                    .attr("transform", d => `translate(${source.y},${source.x})`)
+                    .remove();
+
+                nodeExit.select("circle").attr("r", 1e-6);
+
+                nodeExit.select("text").style("fill-opacity", 1e-6);
+
+                // Update links
+                var link = vis.selectAll("path.tagslink").data(tree.links(nodes), d => d.target.id);
+
+                // Enter any new links at the parent's previous position.
+                link.enter()
+                    .insert("svg:path", "g")
+                    .attr("class", "tagslink")
+                    .attr("d", function(d) {
+                        self.check_svg_fit(source.y0);
+                        var o = {x: source.x0, y: source.y0};
+                        return diagonal({source: o, target: o});
+                    })
+                    .transition()
+                    .duration(duration)
+                    .attr("d", diagonal);
+
+                // Transition links to their new position.
+                link.transition()
+                    .duration(duration)
+                    .attr("d", diagonal);
+
+                // Transition exiting nodes to the parent's new position.
+                link.exit()
+                    .transition()
+                    .duration(duration)
+                    .attr("d", function(d) {
+                        self.check_svg_fit(source.y);
+                        var o = {x: source.x, y: source.y};
+                        return diagonal({source: o, target: o});
+                    })
+                    .remove();
+
+                // Stash the old positions for transition.
+                nodes.forEach(d => {
+                    d.x0 = d.x;
+                    d.y0 = d.y;
+                });
+            };
 
         this.add_title();
+        rootNode.x0 = this.h / 2;
+        rootNode.y0 = 0;
 
         var radius_scale = d3.scale
             .pow()
             .exponent(0.5)
-            .domain([0, root.data.reference_count])
+            .domain([0, rootNode.numReferencesDeep])
             .range([this.minimum_radius, this.maximum_radius]);
 
-        function toggleAll(d) {
-            if (d.children) {
-                d.children.forEach(toggleAll);
-                toggle(d);
-            }
-        }
-
-        function toggle(d) {
-            if (d.children && d.children.length > 0) {
-                d._children = d.children;
-                d.children = null;
-            } else {
-                d.children = d._children;
-                d._children = null;
-            }
-        }
-
-        root.children.forEach(toggleAll);
-        update(root);
-
-        function fetch_references(nested_tag) {
-            var title = "<h4>{0}</h4>".printf(nested_tag.data.name),
-                div = $('<div id="references_div"></div'),
-                options = {tag: nested_tag, download_url: self.downloadURL},
-                refviewer = new ReferencesViewer(div, options);
-
-            self.modal
-                .addHeader(title)
-                .addBody(div)
-                .addFooter("")
-                .show({maxWidth: 800});
-            nested_tag.get_reference_objects_by_tag(refviewer);
-        }
-
-        function update(source) {
-            var duration = d3.event && d3.event.altKey ? 5000 : 500;
-
-            // Compute the new tree layout.
-            var nodes = tree.nodes(root).reverse();
-
-            // Normalize for fixed-depth.
-            nodes.forEach(function(d) {
-                d.y = d.depth * self.path_length;
-            });
-
-            // Update the nodes…
-            var node = vis.selectAll("g.tagnode").data(nodes, function(d) {
-                return d.id || (d.id = ++i);
-            });
-
-            // Enter any new nodes at the parent's previous position.
-            var nodeEnter = node
-                .enter()
-                .append("svg:g")
-                .attr("class", "tagnode")
-                .attr("transform", d => `translate(${source.y0},${source.x0})`)
-                .on("click", function(d) {
-                    if (d3.event.ctrlKey || d3.event.metaKey) {
-                        if (d.depth == 0) {
-                            alert("Cannot view details on root-node.");
-                        } else {
-                            fetch_references(d);
-                        }
-                    } else {
-                        toggle(d);
-                        update(d);
-                    }
-                });
-
-            nodeEnter
-                .append("svg:circle")
-                .attr("r", 1e-6)
-                .style("fill", function(d) {
-                    return d._children ? "lightsteelblue" : "#fff";
-                });
-
-            nodeEnter
-                .append("svg:text")
-                .attr("x", 0)
-                .attr("dy", function(d) {
-                    return radius_scale(d.data.reference_count) + 15;
-                })
-                .attr("class", "node_name")
-                .attr("text-anchor", "middle")
-                .text(function(d) {
-                    return d.data.name;
-                })
-                .style("fill-opacity", 1e-6);
-
-            nodeEnter
-                .append("svg:text")
-                .attr("x", 0)
-                .attr("dy", "3.5px")
-                .attr("class", "node_value")
-                .attr("text-anchor", "middle")
-                .text(function(d) {
-                    return d.data.reference_count;
-                })
-                .style("fill-opacity", 1e-6);
-
-            // Transition nodes to their new position.
-            var nodeUpdate = node
-                .transition()
-                .duration(duration)
-                .attr("transform", d => `translate(${d.y},${d.x})`);
-
-            nodeUpdate
-                .select("circle")
-                .attr("r", function(d) {
-                    return radius_scale(d.data.reference_count);
-                })
-                .style("fill", function(d) {
-                    return d._children ? "lightsteelblue" : "#fff";
-                });
-
-            nodeUpdate.selectAll("text").style("fill-opacity", 1);
-
-            // Transition exiting nodes to the parent's new position.
-            var nodeExit = node
-                .exit()
-                .transition()
-                .duration(duration)
-                .attr("transform", d => `translate(${source.y},${source.x})`)
-                .remove();
-
-            nodeExit.select("circle").attr("r", 1e-6);
-
-            nodeExit.select("text").style("fill-opacity", 1e-6);
-
-            // Update the links…
-            var link = vis.selectAll("path.tagslink").data(tree.links(nodes), function(d) {
-                return d.target.id;
-            });
-
-            // Enter any new links at the parent's previous position.
-            link.enter()
-                .insert("svg:path", "g")
-                .attr("class", "tagslink")
-                .attr("d", function(d) {
-                    self.check_svg_fit(source.y0);
-                    var o = {x: source.x0, y: source.y0};
-                    return diagonal({source: o, target: o});
-                })
-                .transition()
-                .duration(duration)
-                .attr("d", diagonal);
-
-            // Transition links to their new position.
-            link.transition()
-                .duration(duration)
-                .attr("d", diagonal);
-
-            // Transition exiting nodes to the parent's new position.
-            link.exit()
-                .transition()
-                .duration(duration)
-                .attr("d", function(d) {
-                    self.check_svg_fit(source.y);
-                    var o = {x: source.x, y: source.y};
-                    return diagonal({source: o, target: o});
-                })
-                .remove();
-
-            // Stash the old positions for transition.
-            nodes.forEach(function(d) {
-                d.x0 = d.x;
-                d.y0 = d.y;
-            });
-        }
+        rootNode.children.forEach(toggleAll);
+        update(rootNode);
     }
 }
 

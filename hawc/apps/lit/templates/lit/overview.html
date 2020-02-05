@@ -71,9 +71,14 @@
 
 {% block extrajs %}
   <script type="text/javascript">
+    let data = {
+      tags: {{ tags| safe}},
+      assessment_id: {{ assessment.id }}
+    };
+
     window.app.litStartup(function(lit){
-      window.tagtree = new lit.TagTree({{tags|safe}});
-      $('#tags').html(window.tagtree.get_nested_list({"show_refs_count": false}))
+      let tagtree = new lit.TagTree(data.tags[0], data.assessment_id, null);
+      $('#tags').html(tagtree.get_nested_list({ show_refs_count: false }))
     });
   </script>
 {% endblock extrajs %}
