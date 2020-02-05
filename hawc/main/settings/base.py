@@ -1,3 +1,4 @@
+import json
 import os
 import sys
 from pathlib import Path
@@ -182,7 +183,7 @@ FILE_UPLOAD_PERMISSIONS = 0o755
 
 
 # Phantom JS settings
-PHANTOMJS_PREFIX = os.getenv("PHANTOMJS_PREFIX", "")
+PHANTOMJS_ENV = json.loads(os.getenv("PHANTOMJS_ENV", "{}"))
 PHANTOMJS_PATH = os.getenv("PHANTOMJS_PATH")
 
 # Logging configuration

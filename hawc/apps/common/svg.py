@@ -218,13 +218,13 @@ class SVGConverter(object):
         return fn
 
     def _rasterize(self, out_fn):
-        phantom_prefix = settings.PHANTOMJS_PREFIX
-        phantom = settings.PHANTOMJS_PATH
+        phantomjs_env = os.environ.copy()
+        phantomjs_env.update(settings.PHANTOMJS_ENV)
         rasterize = str(settings.PROJECT_PATH / "static/js/rasterize.js")
         html_fn = self._to_html()
         try:
-            commands = shlex.split(" ".join([phantom_prefix, phantom, rasterize, html_fn, out_fn]))
-            subprocess.call(commands)
+            commands = shlex.split(" ".join([settings.PHANTOMJS_PATH, rasterize, html_fn, out_fn]))
+            subprocess.run(commands, env=phantomjs_env, check=True)
             logger.info("Conversion successful")
-        except Exception as e:
-            logger.error(e.message, exc_info=True)
+        except subprocess.CalledProcessError as err:
+            logger.error(err, exc_info=True)
