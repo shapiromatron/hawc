@@ -25,7 +25,14 @@ jobs:
       with:
         python-version: '3.6'
         architecture: 'x64'
-    - name: install + lint + test
+    - name: install
+      run: |
+        mv ci-webpack-stats.json webpack-stats.json
+        pip install -r requirements/dev.txt
+    - name: lint
+      run: |
+        make lint-py
+    - name: test
       env:
         # use localhost for the host here because we are running the job on the VM.
         # If we were running the job on in a container this would be postgres
@@ -37,9 +44,6 @@ jobs:
         CHEMSPIDER_TOKEN: ${{ secrets.CHEMSPIDER_TOKEN }}
         PUBMED_API_KEY: ${{ secrets.PUBMED_API_KEY }}
       run: |
-        mv ci-webpack-stats.json webpack-stats.json
-        pip install -r requirements/dev.txt
-        make lint
         make test
 
   frontend:
@@ -50,8 +54,10 @@ jobs:
     - uses: actions/setup-node@v1
       with:
         node-version: '12.x'
-    - name: yarn install and lint
+    - name: install
       run: |
         npm install -g yarn
         yarn --cwd ./frontend install
-        npm --prefix ./frontend run lint
+    - name: lint
+      run: |
+        make lint-js

@@ -31,12 +31,13 @@
 
 {% block extrajs %}
 <script type="text/javascript">
-window.app.litStartup(function(lit){
-    lit.startupSearchReference(
-        {{ assessment.pk }},
-        {{ tags|safe }},
-        {{ obj_perms.edit|lower }}
-    );
-});
-  </script>
+    let data = {
+        canEdit: {{ obj_perms.edit | lower }},
+        tags: {{ tags | safe }}
+    };
+    window.canEdit = data.canEdit;
+    window.app.litStartup(function(lit){
+        lit.startupSearchReference(data.tags)
+    });
+</script>
 {% endblock extrajs %}

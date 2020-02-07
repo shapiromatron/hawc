@@ -14,28 +14,27 @@
 {% endblock %}
 
 {% block content %}
-
   <div id="tagtree"></div><br><br>
   <p class='help-block'>Click a node to expand to view child-nodes. Ctrl-click or ⌘-click to view references associated with an node (except root-node).</p>
 {% endblock %}
 
 {% block extrajs %}
   <script type="text/javascript">
+    let data = {
+      assessment_id: {{ assessment.pk }},
+      search_id: {% if objectType == "Search" %} {{object.id}} {% else %} null {% endif %},
+      tags: {{ tags | safe }},
+      assessment_name: "{{assessment}}",
+      references: {{ ref_objs | safe }},
+      title: {% if object_type == 'reference' %}"{{assessment}}: Literature Tagtree"{% else %}'"{{object}}" Literature Tagtree'{% endif %},
+      url: "{% url 'lit:ref_download_excel' assessment.pk %}"
+    };
+    window.canEdit = {{ obj_perms.edit | lower }};
     window.app.litStartup(function(lit){
-      window.assessment_pk = {{assessment.pk}};
-      window.tagtree = new lit.TagTree({{tags|safe}});
-      window.tagtree.build_top_level_node("{{assessment}}");
-      window.tagtree.add_references({{ref_objs|safe}});
-      window.canEdit = {{obj_perms.edit|lower}};
-      window.search_id = {% if objectType == "Search" %} parseInt("{{object.id}}", 10) {% else %} null {% endif %};
-
-      var title = {% if object_type == 'reference' %}
-          "{{assessment}}: Literature Tagtree"; {% else %}
-          '"{{object}}" Literature Tagtree'; {% endif %}
-      window.treeviz = new lit.TagTreeViz(window.tagtree,
-                                      $('#tagtree'),
-                                      title,
-                                      "{% url 'lit:ref_download_excel' assessment.pk %}");
+      let tagtree = new lit.TagTree(data.tags[0], data.assessment_id, data.search_id)
+      tagtree.rename_top_level_node(data.assessment_name);
+      tagtree.add_references(data.references);
+      treeviz = new lit.TagTreeViz(tagtree, $('#tagtree'), data.title, data.url);
     });
   </script>
 {% endblock extrajs %}
