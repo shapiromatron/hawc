@@ -157,3 +157,9 @@ A test database is loaded to run unit tests. The database may need to be periodi
 
     # export database
     manage.py dump_test_db
+
+
+FAQ
+---
+
+- If your tests aren't working after the database has changed; try deleting and rebuilding the test database.
