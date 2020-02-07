@@ -184,7 +184,7 @@ FILE_UPLOAD_PERMISSIONS = 0o755
 
 # Phantom JS settings
 PHANTOMJS_ENV = json.loads(os.getenv("PHANTOMJS_ENV", "{}"))
-PHANTOMJS_PATH = os.getenv("PHANTOMJS_PATH")
+PHANTOMJS_PATH = os.getenv("PHANTOMJS_PATH", "phantomjs")
 
 # Logging configuration
 LOGGING = {
