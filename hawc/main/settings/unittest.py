@@ -6,7 +6,7 @@ from .dev import *  # noqa
 
 DEBUG = True
 
-DATABASES["default"]["NAME"] = f"{DATABASES['default']['NAME']}-test"
+DATABASES["default"]["NAME"] = f"hawc-fixture-test"
 
 PASSWORD_HASHERS = ("django.contrib.auth.hashers.MD5PasswordHasher",)
 
