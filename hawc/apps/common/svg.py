@@ -2,6 +2,7 @@ import base64
 import logging
 import os
 import re
+import shlex
 import subprocess
 import tempfile
 from datetime import datetime
@@ -107,7 +108,7 @@ class SVGConverter(object):
             with open(png, "rb") as f:
                 content = f.read()
         except Exception as e:
-            logger.error(e.message, exc_info=True)
+            logger.error(e, exc_info=True)
         finally:
             self.cleanup()
         return content
@@ -121,7 +122,7 @@ class SVGConverter(object):
             with open(pdf, "rb") as f:
                 content = f.read()
         except Exception as e:
-            logger.error(e.message, exc_info=True)
+            logger.error(e, exc_info=True)
         finally:
             self.cleanup()
         return content
@@ -166,7 +167,7 @@ class SVGConverter(object):
         top = Inches(6.65)
         width = Inches(1.4)
         height = Inches(0.8)
-        logo_location = os.path.join(settings.STATIC_ROOT, "img/HAWC-120.png")
+        logo_location = os.path.join(settings.STATICFILES_DIRS[0], "img/HAWC-120.png")
         slide.shapes.add_picture(logo_location, left, top, width, height)
 
     def to_pptx(self):
@@ -217,12 +218,13 @@ class SVGConverter(object):
         return fn
 
     def _rasterize(self, out_fn):
-        phantom = settings.PHANTOMJS_PATH
+        phantomjs_env = os.environ.copy()
+        phantomjs_env.update(settings.PHANTOMJS_ENV)
         rasterize = str(settings.PROJECT_PATH / "static/js/rasterize.js")
         html_fn = self._to_html()
         try:
-            commands = [phantom, rasterize, html_fn, out_fn]
-            subprocess.call(commands)
+            commands = shlex.split(" ".join([settings.PHANTOMJS_PATH, rasterize, html_fn, out_fn]))
+            subprocess.run(commands, env=phantomjs_env, check=True)
             logger.info("Conversion successful")
-        except Exception as e:
-            logger.error(e.message, exc_info=True)
+        except subprocess.CalledProcessError as err:
+            logger.error(err, exc_info=True)
