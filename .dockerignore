@@ -1,6 +1,9 @@
-.git
-.cache
+.git/
+.mypy_cache/
+data/
+docs/
+hawc/
 frontend/
-**/*.pyc
-**/*.DS_Store
+public/
+scripts/
 venv/

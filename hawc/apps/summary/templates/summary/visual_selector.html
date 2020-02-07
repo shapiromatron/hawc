@@ -41,6 +41,8 @@
             data-showcase="#visual3"
             value="{% url 'summary:visualization_create' assessment.id 3 %}">
             {{assessment.get_rob_name_display}} barchart</option>
+          <option data-showcase="#visual4" value="{% url 'summary:visualization_create' assessment.id 4 %}">
+              Literature tagtree</option>
         </select>
         <a id="create_btn" class="pull-right btn btn-primary span2" href="#">Select</a>
       </div>
@@ -127,6 +129,16 @@
       <p class="help-block">
         A {{assessment.get_rob_name_display|lower}} stacked barchart, showing the percent of studies with
         each score, for each metric, in a selectable subset of studies.
+      </p>
+    </div>
+
+    <div id="visual4">
+      <h2>Literature tagtree</h2>
+      <div class="row">
+        <img class="span10 offset1" src="{% static '/img/summary/ehp.1509912.g001.jpg' %}">
+      </div>
+      <p class="help-block">
+        A customizable dendrogram aka "tagtree" to display literature tags applied to references in a HAWC assessment.
       </p>
     </div>
 

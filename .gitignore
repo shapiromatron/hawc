@@ -13,6 +13,7 @@
 bin/dev.local.sh
 package-lock.json
 celerybeat*
+compose/nginx/conf/nginx.conf
 hawc/main/settings/local.py
 webpack-stats.json
 
@@ -38,12 +39,6 @@ package-lock.json
 # keep folders; not contents
 hawc/static/bundles/
 !hawc/static/bundles/.gitkeep
-
-compose/nginx/ssl/*
-!compose/nginx/ssl/.gitkeep
-
-compose/nginx/conf/*
-!compose/nginx/conf/.gitkeep
 
 compose/django/fonts/*
 !compose/django/fonts/.gitkeep

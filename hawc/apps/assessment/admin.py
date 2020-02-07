@@ -13,6 +13,7 @@ def bust_cache(modeladmin, request, queryset):
 bust_cache.short_description = "Clear cache for selected assessments"
 
 
+@admin.register(models.Assessment)
 class AssessmentAdmin(admin.ModelAdmin):
     list_display = ("__str__", "get_managers", "get_team_members", "get_reviewers")
     list_per_page = 10
@@ -61,6 +62,7 @@ class AssessmentAdmin(admin.ModelAdmin):
     get_reviewers.allow_tags = True
 
 
+@admin.register(models.DoseUnits)
 class DoseUnitsAdmin(admin.ModelAdmin):
     list_display = (
         "name",
@@ -70,6 +72,7 @@ class DoseUnitsAdmin(admin.ModelAdmin):
     )
 
 
+@admin.register(models.Species)
 class SpeciesAdmin(admin.ModelAdmin):
     list_display = (
         "id",
@@ -78,6 +81,7 @@ class SpeciesAdmin(admin.ModelAdmin):
     list_display_links = ("name",)
 
 
+@admin.register(models.Strain)
 class StrainAdmin(admin.ModelAdmin):
     list_select_related = ("species",)
     list_display = ("id", "name", "species")
@@ -85,11 +89,13 @@ class StrainAdmin(admin.ModelAdmin):
     list_filter = ("species",)
 
 
+@admin.register(models.EffectTag)
 class EffectTagAdmin(admin.ModelAdmin):
     list_display = ("name", "slug", "id")
     search_fields = ("name",)
 
 
+@admin.register(models.TimeSpentEditing)
 class TimeSpentEditingAdmin(admin.ModelAdmin):
     list_display = (
         "id",
@@ -108,11 +114,3 @@ class TimeSpentEditingAdmin(admin.ModelAdmin):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.list_display_links = []
-
-
-admin.site.register(models.Assessment, AssessmentAdmin)
-admin.site.register(models.DoseUnits, DoseUnitsAdmin)
-admin.site.register(models.Species, SpeciesAdmin)
-admin.site.register(models.Strain, StrainAdmin)
-admin.site.register(models.EffectTag, EffectTagAdmin)
-admin.site.register(models.TimeSpentEditing, TimeSpentEditingAdmin)

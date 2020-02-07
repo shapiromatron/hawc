@@ -136,7 +136,6 @@ def test_pubmed_import(db_keys):
     )
 
 
-@pytest.mark.skip(reason="TODO: fix")
 @pytest.mark.django_db
 def test_successful_single_hero_id(db_keys):
     """
@@ -154,7 +153,7 @@ def test_successful_single_hero_id(db_keys):
         "title": "example search",
         "slug": "example-search",
         "description": "search description",
-        "search_string": "1200",
+        "search_string": "51001",
     }
 
     # get initial counts
@@ -171,10 +170,11 @@ def test_successful_single_hero_id(db_keys):
     assert models.Search.objects.count() == initial_searches + 1
     assert models.Identifiers.objects.count() == initial_identifiers + 1
     assert models.Reference.objects.count() == initial_refs + 1
-    ref = models.Reference.objects.all()[0]
 
     search = models.Search.objects.get(assessment=assessment_pk, title="example search")
-    ident = models.Identifiers.objects.all()[0]
+    ref = models.Reference.objects.get(title="Effect of thyroid hormone on growth and development")
+    ident = models.Identifiers.objects.get(unique_id="51001", database=constants.HERO)
+
     assert ref.searches.all()[0] == search
     assert ref.identifiers.all()[0] == ident
 
@@ -215,7 +215,6 @@ def test_failed_hero_id(db_keys):
     assert models.Identifiers.objects.count() == initial_identifiers
 
 
-@pytest.mark.skip(reason="TODO: fix")
 @pytest.mark.django_db
 def test_existing_pubmed_hero_add(db_keys):
     """
@@ -241,10 +240,10 @@ def test_existing_pubmed_hero_add(db_keys):
         "search_string": "1998 Longstreth health risks ozone depletion",
     }
 
-    # check initially blank
-    assert models.Reference.objects.count() == 0
-    assert models.Search.objects.count() == 2  # manual imports
-    assert models.Identifiers.objects.count() == 0
+    # get initial counts
+    initial_searches = models.Search.objects.count()
+    initial_identifiers = models.Identifiers.objects.count()
+    initial_refs = models.Reference.objects.count()
 
     # build PubMed
     url = reverse("lit:search_new", kwargs={"pk": assessment_pk})
@@ -259,9 +258,9 @@ def test_existing_pubmed_hero_add(db_keys):
     assert response.status_code in [200, 302]
 
     # assert that one object was created
-    assert models.Reference.objects.count() == 1
-    assert models.Search.objects.count() == 3
-    assert models.Identifiers.objects.count() == 1
+    assert models.Search.objects.count() == initial_searches + 1
+    assert models.Identifiers.objects.count() == initial_identifiers + 1
+    assert models.Reference.objects.count() == initial_refs + 1
 
     # build HERO
     data["search_string"] = "1200"
@@ -270,11 +269,11 @@ def test_existing_pubmed_hero_add(db_keys):
     assert response.status_code in [200, 302]
 
     # assert that search & identifier created but not new reference
-    assert models.Search.objects.count() == 4
-    assert models.Identifiers.objects.count() == 2
-    assert models.Reference.objects.count() == 1
+    assert models.Search.objects.count() == initial_searches + 2
+    assert models.Identifiers.objects.count() == initial_identifiers + 2
+    assert models.Reference.objects.count() == initial_refs + 1
 
-    ref = models.Reference.objects.all()[0]
+    ref = models.Reference.objects.get(authors="Longstreth J et al.")
     assert ref.searches.count() == 2
     assert ref.identifiers.count() == 2
 

@@ -7,6 +7,7 @@ class EditReferenceContainer {
         this.refs = refs.sort(Reference.sortCompare);
         this.tagtree = tagtree;
         this.tagtree.addObserver(this);
+        this.settings = settings;
         this.$div_content = $(settings.content_div);
         // build containers and load first reference
         this._build_containers();
@@ -40,7 +41,8 @@ class EditReferenceContainer {
                 button_reset_tags,
                 this.saved_icon,
                 this.$editRef,
-            ]);
+            ]),
+            header = $("<h4>Available Tags</h4>");
 
         this.$div_reflist = $('<div class="span3"></div>');
         this._populate_reflist();
@@ -55,15 +57,6 @@ class EditReferenceContainer {
             var tag = $(e.target).data("d");
             self.loaded_ref.add_tag(tag);
         });
-
-        var header = $("<h4>Available Tags</h4>");
-        if (window.tag_edit_url) {
-            header.append(
-                '<a href="{0}" class="btn btn-primary pull-right">Edit Tags</a>'.printf(
-                    window.tag_edit_url
-                )
-            );
-        }
 
         this.$div_tags = $('<div class="span3"></div>').html([header, this.$tags_content]);
         this.$div_content.html([this.$div_reflist, this.$div_ref, this.$div_tags]);

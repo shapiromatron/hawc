@@ -22,6 +22,21 @@ class ReferencesViewer {
         this.$table_div.html("<p>An error has occurred</p>");
     }
 
+    view_untagged_references(tagtree, assessment_id, search_id) {
+        let url = `/lit/assessment/${assessment_id}/references/untagged/json/`;
+        if (search_id) {
+            url += `?search_id=${search_id}`;
+        }
+
+        $.get(url, results => {
+            if (results.status == "success") {
+                this.set_references(results.refs.map(datum => new Reference(datum, tagtree)));
+            } else {
+                this.set_error();
+            }
+        });
+    }
+
     _print_header() {
         var h3 = $("<h3>"),
             $div = this.$div,
@@ -34,21 +49,18 @@ class ReferencesViewer {
             );
 
             actionLinks.push({
-                url: "{0}?tag_id={1}".printf(this.options.download_url, this.options.tag.data.pk),
+                url: `${this.options.download_url}?tag_id=${this.options.tag.data.pk}`,
                 text: "Download references",
             });
 
             actionLinks.push({
-                url: "{0}?tag_id={1}&fmt=tb".printf(
-                    this.options.download_url,
-                    this.options.tag.data.pk
-                ),
+                url: `${this.options.download_url}?tag_id=${this.options.tag.data.pk}&fmt=tb`,
                 text: "Download references (table-builder format)",
             });
 
             if (window.canEdit) {
                 actionLinks.push({
-                    url: "/lit/tag/{0}/tag/".printf(this.options.tag.data.pk),
+                    url: `/lit/tag/${this.options.tag.data.pk}/tag/`,
                     text: "Edit references with this tag (but not descendants)",
                 });
             }

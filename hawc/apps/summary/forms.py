@@ -14,6 +14,7 @@ from ..assessment.models import EffectTag
 from ..common.forms import BaseFormHelper
 from ..epi.models import Outcome
 from ..invitro.models import IVChemical, IVEndpointCategory
+from ..lit.models import ReferenceFilterTag
 from ..study.lookups import StudyLookup
 from ..study.models import Study
 from . import lookups, models
@@ -542,12 +543,16 @@ class VisualForm(forms.ModelForm):
         assessment = kwargs.pop("parent", None)
         visual_type = kwargs.pop("visual_type", None)
         super().__init__(*args, **kwargs)
-        self.fields["settings"].widget.attrs["rows"] = 2
+        if "settings" in self.fields:
+            self.fields["settings"].widget.attrs["rows"] = 2
         if assessment:
             self.instance.assessment = assessment
         if visual_type is not None:  # required if value is 0
             self.instance.visual_type = visual_type
-        if self.instance.visual_type != 2:
+        if self.instance.visual_type not in [
+            models.Visual.ROB_HEATMAP,
+            models.Visual.LITERATURE_TAGTREE,
+        ]:
             self.fields["sort_order"].widget = forms.HiddenInput()
 
     def setHelper(self):
@@ -647,6 +652,79 @@ class RoBForm(PrefilterMixin, VisualForm):
         exclude = ("assessment", "visual_type", "dose_units", "endpoints")
 
 
+class TagtreeForm(VisualForm):
+
+    root_node = forms.TypedChoiceField(
+        coerce=int,
+        choices=[],
+        label="Root node",
+        help_text="Select the root node for the tag tree (the left-most node to be displayed)",
+        required=True,
+    )
+    required_tags = forms.TypedMultipleChoiceField(
+        coerce=int,
+        choices=[],
+        label="Filter references by tags",
+        help_text="Filter which references are displayed by selecting required tags. If a tag is selected, only references which have this tag will be displayed.<br><br><i>This field is optional; if no tags are selected, all references will be displayed.</i>",
+        required=False,
+    )
+    pruned_tags = forms.TypedMultipleChoiceField(
+        coerce=int,
+        choices=[],
+        label="Hidden tags",
+        help_text="Select tags which should be hidden from the tagtree. If a parent-tag is selected, all child-tags will also be hidden.<br><br><i>This field is optional; if no tags are selected, then all tags will be displayed.</i>",
+        required=False,
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = self.setHelper()
+        self.helper.add_fluid_row("root_node", 3, "span4")
+
+        choices = [
+            (tag.id, tag.get_nested_name())
+            for tag in ReferenceFilterTag.get_assessment_qs(
+                self.instance.assessment_id, include_root=True
+            )
+        ]
+        self.fields["root_node"].choices = choices
+        self.fields["required_tags"].choices = choices[1:]
+        self.fields["pruned_tags"].choices = choices[1:]
+
+        self.fields["required_tags"].widget.attrs.update(size=10)
+        self.fields["pruned_tags"].widget.attrs.update(size=10)
+
+        data = json.loads(self.instance.settings)
+        if "root_node" in data:
+            self.fields["root_node"].initial = data["root_node"]
+        if "required_tags" in data:
+            self.fields["required_tags"].initial = data["required_tags"]
+        if "pruned_tags" in data:
+            self.fields["pruned_tags"].initial = data["pruned_tags"]
+
+    def save(self, commit=True):
+        self.instance.settings = json.dumps(
+            dict(
+                root_node=self.cleaned_data["root_node"],
+                required_tags=self.cleaned_data["required_tags"],
+                pruned_tags=self.cleaned_data["pruned_tags"],
+            )
+        )
+        return super().save(commit)
+
+    class Meta:
+        model = models.Visual
+        fields = (
+            "title",
+            "slug",
+            "caption",
+            "published",
+            "root_node",
+            "required_tags",
+            "pruned_tags",
+        )
+
+
 def get_visual_form(visual_type):
     try:
         return {
@@ -654,6 +732,7 @@ def get_visual_form(visual_type):
             models.Visual.BIOASSAY_CROSSVIEW: CrossviewForm,
             models.Visual.ROB_HEATMAP: RoBForm,
             models.Visual.ROB_BARCHART: RoBForm,
+            models.Visual.LITERATURE_TAGTREE: TagtreeForm,
         }[visual_type]
     except Exception:
         raise ValueError()

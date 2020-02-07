@@ -342,9 +342,10 @@ class TagBySearch(TagReferences):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["references"] = models.Reference.objects.filter(
-            searches=self.object
-        ).prefetch_related("identifiers")
+        qs = models.Reference.objects.filter(searches=self.object).prefetch_related(
+            "searches", "identifiers"
+        )
+        context["references"] = qs
         context["tags"] = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
         return context
 
@@ -362,9 +363,10 @@ class TagByReference(TagReferences):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["references"] = self.model.objects.filter(pk=self.object.pk).prefetch_related(
-            "identifiers"
+        qs = self.model.objects.filter(pk=self.object.pk).prefetch_related(
+            "searches", "identifiers"
         )
+        context["references"] = qs
         context["tags"] = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
         return context
 
@@ -382,11 +384,12 @@ class TagByTag(TagReferences):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["references"] = (
+        qs = (
             models.Reference.objects.filter(tags=self.object.pk)
             .distinct()
-            .prefetch_related("identifiers")
+            .prefetch_related("searches", "identifiers")
         )
+        context["references"] = qs
         context["tags"] = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
         return context
 
@@ -404,7 +407,10 @@ class TagByUntagged(TagReferences):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["references"] = models.Reference.objects.get_untagged_references(self.assessment)
+        qs = models.Reference.objects.get_untagged_references(self.assessment).prefetch_related(
+            "searches", "identifiers"
+        )
+        context["references"] = qs
         context["tags"] = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
         return context
 

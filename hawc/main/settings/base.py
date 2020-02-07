@@ -1,3 +1,4 @@
+import json
 import os
 import sys
 from pathlib import Path
@@ -181,8 +182,9 @@ MEDIA_ROOT = str(PUBLIC_DATA_ROOT / "media")
 FILE_UPLOAD_PERMISSIONS = 0o755
 
 
-# Filesystem settings
-PHANTOMJS_PATH = os.getenv("PHANTOMJS_PATH")
+# Phantom JS settings
+PHANTOMJS_ENV = json.loads(os.getenv("PHANTOMJS_ENV", "{}"))
+PHANTOMJS_PATH = os.getenv("PHANTOMJS_PATH", "phantomjs")
 
 # Logging configuration
 LOGGING = {
@@ -239,8 +241,7 @@ if GIT_COMMIT:
 
 
 # PubMed settings
-PUBMED_TOOL = os.getenv("PUBMED_TOOL", "hawc")
-PUBMED_EMAIL = os.getenv("PUBMED_EMAIL", DEFAULT_FROM_EMAIL)
+PUBMED_API_KEY = os.getenv("PUBMED_API_KEY")
 
 # BMD modeling settings
 BMDS_SUBMISSION_URL = os.getenv("BMDS_SUBMISSION_URL", "http://example.com/api/dfile/")

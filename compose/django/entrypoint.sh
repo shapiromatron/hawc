@@ -39,13 +39,13 @@ END
 }
 
 until postgres_ready; do
-  >&2 echo "Postgres is unavailable - sleeping"
-  sleep 1
+    >&2 echo "Postgres is unavailable - sleeping"
+    sleep 1
 done
 
 until redis_ready; do
-  >&2 echo "Redis is unavailable - sleeping"
-  sleep 1
+    >&2 echo "Redis is unavailable - sleeping"
+    sleep 1
 done
 
 >&2 echo "Postgres and Redis are up - continuing..."
