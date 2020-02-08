@@ -7,6 +7,7 @@ from math import ceil
 from urllib import parse
 
 from django.apps import apps
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.db import models, transaction
@@ -322,8 +323,6 @@ class Search(models.Model):
 class PubMedQuery(models.Model):
     objects = managers.PubMedQueryManager()
 
-    MAX_QUERY_SIZE = 5000
-
     search = models.ForeignKey(Search)
     results = models.TextField(blank=True)
     query_date = models.DateTimeField(auto_now_add=True)
@@ -338,10 +337,10 @@ class PubMedQuery(models.Model):
         search = pubmed.PubMedSearch(term=self.search.search_string_text)
         search.get_ids_count()
 
-        if search.id_count > self.MAX_QUERY_SIZE:
+        if search.id_count > settings.PUBMED_MAX_QUERY_SIZE:
             raise TooManyPubMedResults(
                 "Too many PubMed references found: {0}; reduce query scope to "
-                "fewer than {1}".format(search.id_count, self.MAX_QUERY_SIZE)
+                "fewer than {1}".format(search.id_count, settings.PUBMED_MAX_QUERY_SIZE)
             )
 
         search.get_ids()
