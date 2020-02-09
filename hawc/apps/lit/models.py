@@ -583,7 +583,7 @@ class Reference(models.Model):
     def __str__(self):
         return self.get_short_citation_estimate()
 
-    def get_json(self, json_encode=True, searches=False):
+    def get_json(self, json_encode=True):
         d = {}
         fields = (
             "pk",
@@ -597,9 +597,12 @@ class Reference(models.Model):
         for field in fields:
             d[field] = getattr(self, field)
 
+        d["url"] = self.get_absolute_url()
+        d["editTagUrl"] = reverse("lit:reference_tags_edit", kwargs={"pk": self.pk})
+        d["editReferenceUrl"] = reverse("lit:ref_edit", kwargs={"pk": self.pk})
+
         d["identifiers"] = [ident.get_json(json_encode=False) for ident in self.identifiers.all()]
-        if searches:
-            d["searches"] = [ref.get_json() for ref in self.searches.all()]
+        d["searches"] = [ref.get_json() for ref in self.searches.all()]
 
         d["tags"] = list(self.tags.all().values_list("pk", flat=True))
         d["tags_text"] = list(self.tags.all().values_list("name", flat=True))
