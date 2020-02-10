@@ -560,6 +560,7 @@ class Reference(models.Model):
     identifiers = models.ManyToManyField(Identifiers, blank=True, related_name="references")
     title = models.TextField(blank=True)
     authors = models.TextField(blank=True)
+    authors_list = models.TextField(blank=True, help_text="Comma separated authors list")
     year = models.PositiveSmallIntegerField(blank=True, null=True)
     journal = models.TextField(blank=True)
     abstract = models.TextField(blank=True)

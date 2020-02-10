@@ -96,7 +96,7 @@ class IdentifiersManager(BaseManager):
             # create DOI identifier
             if ref["doi"] is not None:
                 ident, _ = self.get_or_create(
-                    database=constants.DOI, unique_id=ref["doi"], content="None"
+                    database=constants.DOI, unique_id=ref["doi"], content=""
                 )
                 ids.append(ident)
 
@@ -107,9 +107,7 @@ class IdentifiersManager(BaseManager):
                 if id_ is not None:
                     ident = self.filter(database=constants.PUBMED, unique_id=id_).first()
                     if not ident:
-                        ident = self.create(
-                            database=constants.PUBMED, unique_id=id_, content="None"
-                        )
+                        ident = self.create(database=constants.PUBMED, unique_id=id_, content="")
                         pimdsFetch.append(ident)
                     ids.append(ident)
 
@@ -129,7 +127,7 @@ class IdentifiersManager(BaseManager):
 
                 if db_id:
                     id_ = ref["accession_number"]
-                    ident, _ = self.get_or_create(database=db_id, unique_id=id_, content="None")
+                    ident, _ = self.get_or_create(database=db_id, unique_id=id_, content="")
                     ids.append(ident)
 
             refs.append(ids)

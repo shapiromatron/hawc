@@ -23,11 +23,14 @@ def update_pubmed_content(ids):
         Identifiers.objects.filter(unique_id=d["PMID"], database=constants.PUBMED).update(
             content=content
         )
+    Identifiers.objects.filter(unique_id__in=ids, database=constants.PUBMED, content="").update(
+        content='{"status": "failed"}'
+    )
 
 
 @periodic_task(run_every=timedelta(hours=1))
 def fix_pubmed_without_content():
     # Try getting pubmed data without content
     Identifiers = apps.get_model("lit", "identifiers")
-    ids = Identifiers.objects.filter(content="None", database=constants.PUBMED)
+    ids = Identifiers.objects.filter(content="", database=constants.PUBMED)
     Identifiers.update_pubmed_content(ids)
