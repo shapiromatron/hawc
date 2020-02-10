@@ -269,9 +269,10 @@ class ReferenceForm(forms.ModelForm):
     class Meta:
         model = models.Reference
         fields = (
-            "title",
             "authors",
+            "title",
             "year",
+            "authors_list",
             "journal",
             "abstract",
             "full_text_url",
@@ -284,7 +285,7 @@ class ReferenceForm(forms.ModelForm):
     def setHelper(self):
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
-            if fld in ["title", "authors", "journal"]:
+            if fld in ["title", "authors", "authors_list", "journal"]:
                 widget.attrs["rows"] = 3
 
             if type(widget) != forms.CheckboxInput:
@@ -297,8 +298,8 @@ class ReferenceForm(forms.ModelForm):
         }
 
         helper = BaseFormHelper(self, **inputs)
-        helper.add_fluid_row("title", 2, "span6")
-        helper.add_fluid_row("year", 2, "span6")
+        helper.add_fluid_row("authors", 3, "span4")
+        helper.add_fluid_row("authors_list", 2, "span6")
         helper.form_class = None
         return helper
 
@@ -343,7 +344,9 @@ class ReferenceSearchForm(forms.Form):
         if self.cleaned_data["title"]:
             query &= Q(title__icontains=self.cleaned_data["title"])
         if self.cleaned_data["authors"]:
-            query &= Q(authors__icontains=self.cleaned_data["authors"])
+            query &= Q(authors__icontains=self.cleaned_data["authors"]) | Q(
+                authors_list__icontains=self.cleaned_data["authors"]
+            )
         if self.cleaned_data["journal"]:
             query &= Q(journal__icontains=self.cleaned_data["journal"])
         if self.cleaned_data["db_id"]:

@@ -143,8 +143,8 @@ class EditReferenceContainer {
             tagged = this.refs.filter(v => v.data.tags.length > 0),
             untagged = this.refs.filter(v => v.data.tags.length === 0);
 
-        tagged.forEach(v => $refs_tagged.append(v.print_name()));
-        untagged.forEach(v => $refs_untagged.append(v.print_name()));
+        tagged.forEach(v => $refs_tagged.append(v.print_short_name()));
+        untagged.forEach(v => $refs_untagged.append(v.print_short_name()));
 
         var taggedbody = $(
                 '<div id="references_tagged" class="accordion-body collapse in">'

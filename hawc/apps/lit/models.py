@@ -5,6 +5,7 @@ import re
 from datetime import datetime
 from math import ceil
 from urllib import parse
+from typing import Dict, Optional
 
 from django.apps import apps
 from django.conf import settings
@@ -453,6 +454,7 @@ class Identifiers(models.Model):
                 assessment=assessment,
                 title=content.get("title", ""),
                 authors=content.get("authors_short", ""),
+                authors_list=", ".join(content.get("authors_list", [""])),
                 journal=content.get("citation", ""),
                 abstract=content.get("abstract", ""),
                 year=content.get("year", None),
@@ -467,6 +469,7 @@ class Identifiers(models.Model):
                 assessment=assessment,
                 title=title or "",
                 authors=content.get("authors_short", ""),
+                authors_list=", ".join(content.get("authors_list", [""])),
                 year=content.get("year", None),
                 journal=journal or "",
                 abstract=abstract or "",
@@ -483,6 +486,9 @@ class Identifiers(models.Model):
             "database_id": self.database,
             "url": self.get_url(),
         }
+
+    def get_content_json(self) -> Optional[Dict]:
+        return json.loads(self.content) if self.content else None
 
     @staticmethod
     def update_pubmed_content(idents):
@@ -559,8 +565,13 @@ class Reference(models.Model):
     searches = models.ManyToManyField(Search, blank=False, related_name="references")
     identifiers = models.ManyToManyField(Identifiers, blank=True, related_name="references")
     title = models.TextField(blank=True)
-    authors = models.TextField(blank=True)
-    authors_list = models.TextField(blank=True, help_text="Comma separated authors list")
+    authors = models.TextField(
+        blank=True, help_text="Short-text for to display (eg., `Smith et al.`)"
+    )
+    authors_list = models.TextField(
+        blank=True,
+        help_text="The complete, comma separated authors list, (eg., `Smith JD, Tom JF, McFarlen PD`)",
+    )
     year = models.PositiveSmallIntegerField(blank=True, null=True)
     journal = models.TextField(blank=True)
     abstract = models.TextField(blank=True)
@@ -590,6 +601,7 @@ class Reference(models.Model):
             "pk",
             "title",
             "authors",
+            "authors_list",
             "year",
             "journal",
             "abstract",
@@ -641,7 +653,6 @@ class Reference(models.Model):
 
     def get_short_citation_estimate(self):
         citation = ""
-
         # get authors guess
         if (self.authors.find("and") > -1) or (self.authors.find("et al.") > -1):
             citation = re.sub(r" ([A-Z]{2})", "", self.authors)  # remove initials
