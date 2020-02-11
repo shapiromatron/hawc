@@ -1,8 +1,9 @@
+from textwrap import dedent
+
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 from faker import Faker
-
 
 HELP_TEXT = """Anonymize user information."""
 
@@ -50,3 +51,17 @@ class Command(BaseCommand):
         superuser.email = "webmaster@hawcproject.org"
         superuser.set_password("password")
         superuser.save()
+
+        num_users = get_user_model().objects.count()
+        message = dedent(
+            f"""\
+        Rewrite complete!
+
+        - All {num_users} users have randomly generated names and email-addresses.
+        - All {num_users} users have passwords set to `password`
+        - A superuser has the username `webmaster@hawcproject.org`
+        - A superuser has the password `password`
+        """
+        )
+
+        self.stdout.write(self.style.SUCCESS(message))
