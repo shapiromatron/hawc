@@ -620,9 +620,7 @@ class D3Plot {
 
         function get_selected_svg(svg) {
             svg.attr("version", "1.1");
-            if (svg.attr("xmlns") === null) {
-                svg.attr("xmlns", d3.ns.prefix.svg);
-            }
+            svg.attr("xmlns", d3.ns.prefix.svg);
             var source = new XMLSerializer().serializeToString(svg.node()),
                 rect = svg.node().getBoundingClientRect();
             return {
@@ -633,13 +631,11 @@ class D3Plot {
                 classes: svg.attr("class"),
                 id: svg.attr("id"),
                 childElementCount: svg.node().childElementCount,
-                source: [doctype + source],
+                source: [source],
             };
         }
 
-        var doctype =
-                '<?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">',
-            svg = d3.select(this.svg),
+        var svg = d3.select(this.svg),
             svg_object = get_selected_svg(svg);
 
         svg_object.blob = new Blob(svg_object.source, {type: "text/xml"});

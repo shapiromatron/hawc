@@ -1,3 +1,4 @@
+import json
 import os
 import sys
 from pathlib import Path
@@ -181,8 +182,9 @@ MEDIA_ROOT = str(PUBLIC_DATA_ROOT / "media")
 FILE_UPLOAD_PERMISSIONS = 0o755
 
 
-# Filesystem settings
-PHANTOMJS_PATH = os.getenv("PHANTOMJS_PATH")
+# Phantom JS settings
+PHANTOMJS_ENV = json.loads(os.getenv("PHANTOMJS_ENV", "{}"))
+PHANTOMJS_PATH = os.getenv("PHANTOMJS_PATH", "phantomjs")
 
 # Logging configuration
 LOGGING = {

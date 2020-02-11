@@ -51,7 +51,6 @@ please specify in the docker-compose `.env` file (example secrets below):
     DJANGO_BROKER_URL=redis://redis:6379/1
     DJANGO_CELERY_RESULT_BACKEND=redis://redis:6379/2
     CHEMSPIDER_TOKEN=myChemspiderToken
-    PHANTOMJS_PATH=/usr/local/bin/phantomjs
     PUBMED_API_KEY=my-secret-key
 
     # Enum; one of {"PRIME", "EPA"}

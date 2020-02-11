@@ -546,23 +546,9 @@ class ReferenceFilterTag(NonUniqueTagBase, AssessmentRootMixin, MP_Node):
 
 class ReferenceTags(ItemBase):
     objects = managers.ReferenceTagsManager()
-    # required to be copied when overridden tag object. See GitHub bug report:
-    # https://github.com/alex/django-taggit/issues/101
-    # copied directly and unchanged from "TaggedItemBase"
+
     tag = models.ForeignKey(ReferenceFilterTag, related_name="%(app_label)s_%(class)s_items")
     content_object = models.ForeignKey("Reference")
-
-    @classmethod
-    def tags_for(cls, model, instance=None):
-        if instance is not None:
-            return cls.tag_model().objects.filter(
-                **{"%s__content_object" % cls.tag_relname(): instance}
-            )
-        return (
-            cls.tag_model()
-            .objects.filter(**{"%s__content_object__isnull" % cls.tag_relname(): False})
-            .distinct()
-        )
 
 
 class Reference(models.Model):

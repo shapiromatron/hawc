@@ -72,6 +72,9 @@ For reference, here's how to create a database dump:
     # dump in gzipped format
     pg_dump -U hawc hawc | gzip > db_dump.sql.gz
 
+Running the application
+~~~~~~~~~~~~~~~~~~~~~~~
+
 You'll need to run both the python webserver and the node webserver to develop
 HAWC; here are instructions how how to do both.
 
@@ -109,7 +112,11 @@ If you navigate to `localhost`_ and see a website, you're ready to begin coding!
 
 .. _`localhost`: http://127.0.0.1:8000/
 
-In addition, there are a number of helpful utility commands in the ``Makefile``. View the makefile to
+
+Useful utilities
+~~~~~~~~~~~~~~~~
+
+There are a number of helpful utility commands in the ``Makefile``. View the makefile to
 see how to run manually.  Note that code-formatting and linting is now required; there are checks
 set-up in continuous integration that enforce these rules:
 
@@ -129,9 +136,11 @@ set-up in continuous integration that enforce these rules:
 
 If you don't have ``Make`` in your developer environment, you can just call the commands as they're written in the Makefile.
 
+FAQ
+~~~
 
-Building the test database
---------------------------
+- If tests aren't working after the database has changed; try dropping the test-database
+
 
 A test database is loaded to run unit tests. The database may need to be periodically updated as new feature are added. To load, make edits, and export the test database:
 
@@ -148,6 +157,40 @@ A test database is loaded to run unit tests. The database may need to be periodi
 
     # export database
     manage.py dump_test_db
+
+Visual Studio Code settings
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+An example folder-level configuration setting for `Visual Studio Code`_ (recommended HAWC editor):
+
+.. _`Visual Studio Code`: https://code.visualstudio.com/
+
+.. code-block:: json
+
+    {
+        "restructuredtext.linter.disabled": true,
+        "[html]": {
+            "editor.formatOnSave": false
+        },
+        "[python]": {
+            "editor.formatOnSave": true
+        },
+        "[javascript]": {
+            "editor.formatOnSave": false,
+            "editor.codeActionsOnSave": {
+                "source.fixAll.eslint": true
+            }
+        },
+        "editor.formatOnSave": true,
+        "python.pythonPath": "./venv/bin/python",
+        "python.linting.flake8Args": [
+            "--config=.flake8"
+        ],
+        "eslint.workingDirectories": [
+            "./frontend"
+        ]
+    }
+
 
 HAWC API
 --------
