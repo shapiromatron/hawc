@@ -691,12 +691,18 @@ class Endpoint(BaseEndpoint):
         "litter_effect_notes",
     )
 
+    DATA_TYPE_CONTINUOUS = "C"
+    DATA_TYPE_DICHOTOMOUS = "D"
+    DATA_TYPE_PERCENT_DIFFERENCE = "P"
+    DATA_TYPE_DICHOTOMOUS_CANCER = "DC"
+    DATA_TYPE_NOT_REPORTED = "NR"
+
     DATA_TYPE_CHOICES = (
-        ("C", "Continuous"),
-        ("D", "Dichotomous"),
-        ("P", "Percent Difference"),
-        ("DC", "Dichotomous Cancer"),
-        ("NR", "Not reported"),
+        (DATA_TYPE_CONTINUOUS, "Continuous"),
+        (DATA_TYPE_DICHOTOMOUS, "Dichotomous"),
+        (DATA_TYPE_PERCENT_DIFFERENCE, "Percent Difference"),
+        (DATA_TYPE_DICHOTOMOUS_CANCER, "Dichotomous Cancer"),
+        (DATA_TYPE_NOT_REPORTED, "Not reported"),
     )
 
     MONOTONICITY_CHOICES = (
