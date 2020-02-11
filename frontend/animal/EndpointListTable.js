@@ -4,10 +4,9 @@ import BaseTable from "utils/BaseTable";
 
 class EndpointListTable {
     constructor(endpoints, dose_id) {
-        if (dose_id)
-            _.each(endpoints, function(e) {
-                e.switch_dose_units(dose_id);
-            });
+        if (dose_id) {
+            endpoints.forEach(e => e.switch_dose_units(dose_id));
+        }
         this.endpoints = endpoints;
         this.tbl = new BaseTable();
     }
@@ -37,10 +36,12 @@ class EndpointListTable {
                 "dose units": "units",
             }
         );
-        headersToSortKeys.noael = "NOEL";
-        headersToSortKeys.noel = "NOEL";
-        headersToSortKeys.loael = "LOEL";
-        headersToSortKeys.loel = "LOEL";
+        headersToSortKeys.noael = "-NOEL";
+        headersToSortKeys.noel = "-NOEL";
+        headersToSortKeys.nel = "-NOEL";
+        headersToSortKeys.loael = "-LOEL";
+        headersToSortKeys.loel = "-LOEL";
+        headersToSortKeys.lel = "-LOEL";
 
         tbl.enableSortableHeaderLinks($("#initial_order_by").val(), headersToSortKeys);
 

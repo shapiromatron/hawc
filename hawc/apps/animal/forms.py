@@ -759,12 +759,13 @@ class EndpointFilterForm(forms.Form):
             if field not in ("sex", "data_extracted", "dose_units", "order_by", "paginate_by",):
                 self.fields[field].widget.update_query_parameters({"related": assessment.id})
 
-            if field == "order_by":
-                for i, (k, v) in enumerate(self.fields[field].choices):
-                    if v == "<NOEL-NAME>":
-                        self.fields[field].choices[i][1] = noel_names.noel
-                    if v == "<LOEL-NAME>":
-                        self.fields[field].choices[i][1] = noel_names.loel
+        for i, (k, v) in enumerate(self.fields["order_by"].choices):
+            if v == "<NOEL-NAME>":
+                self.fields["order_by"].choices[i][1] = noel_names.noel
+                self.fields["order_by"].widget.choices[i][1] = noel_names.noel
+            elif v == "<LOEL-NAME>":
+                self.fields["order_by"].choices[i][1] = noel_names.loel
+                self.fields["order_by"].widget.choices[i][1] = noel_names.loel
 
         self.helper = self.setHelper()
 

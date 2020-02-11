@@ -30,6 +30,7 @@ def get_cas_url(cas):
 
 NOEL_NAME_CHOICES_NOEL = 0
 NOEL_NAME_CHOICES_NOAEL = 1
+NOEL_NAME_CHOICES_NEL = 2
 
 ROB_NAME_CHOICES_ROB = 0
 ROB_NAME_CHOICES_SE = 1
@@ -48,6 +49,7 @@ class Assessment(models.Model):
     objects = managers.AssessmentManager()
 
     NOEL_NAME_CHOICES = (
+        (NOEL_NAME_CHOICES_NEL, "NEL/LEL"),
         (NOEL_NAME_CHOICES_NOEL, "NOEL/LOEL"),
         (NOEL_NAME_CHOICES_NOAEL, "NOAEL/LOAEL"),
     )
@@ -180,8 +182,8 @@ class Assessment(models.Model):
     noel_name = models.PositiveSmallIntegerField(
         default=get_noel_name_default,
         choices=NOEL_NAME_CHOICES,
-        verbose_name="NOEL/NOAEL name",
-        help_text="What term should be used to refer to NOEL/NOAEL and LOEL/LOAEL?",
+        verbose_name="NEL/NOEL/NOAEL name",
+        help_text="What term should be used to refer to NEL/NOEL/NOAEL and LEL/LOEL/LOAEL?",
     )
     rob_name = models.PositiveSmallIntegerField(
         default=get_rob_name_default,
@@ -284,7 +286,9 @@ class Assessment(models.Model):
         return get_crumbs(self)
 
     def get_noel_names(self):
-        if self.noel_name == NOEL_NAME_CHOICES_NOEL:
+        if self.noel_name == NOEL_NAME_CHOICES_NEL:
+            return NoelNames("NEL", "LEL", "No effect level", "Lowest effect level",)
+        elif self.noel_name == NOEL_NAME_CHOICES_NOEL:
             return NoelNames(
                 "NOEL", "LOEL", "No observed effect level", "Lowest observed effect level",
             )
