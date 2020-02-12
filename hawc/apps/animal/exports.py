@@ -532,7 +532,7 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
             row.extend([ser["trend_value"], ser["trend_result"]])
 
             dose_list = [self._get_dose(doses, i) for i in range(len(doses))]
-            sigs = get_significance_and_direction(ser['data_type'], ser['groups'])
+            sigs = get_significance_and_direction(ser["data_type"], ser["groups"])
 
             dose_list.extend([None] * (self.num_doses - len(dose_list)))
             sigs.extend([None] * (self.num_doses - len(sigs)))

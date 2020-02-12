@@ -9,7 +9,7 @@ from pathlib import Path
 from django.conf import settings
 from django.db import migrations
 
-from hawc.apps.assessment.models import NOEL_NAME_CHOICES_NOEL, NOEL_NAME_CHOICES_NEL
+from hawc.apps.assessment.models import NOEL_NAME_CHOICES_NEL, NOEL_NAME_CHOICES_NOEL
 from hawc.apps.summary import models
 
 
