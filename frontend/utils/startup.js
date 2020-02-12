@@ -252,7 +252,7 @@ _.extend(Math, {
 
 _.extend(Number.prototype, {
     toHawcString() {
-        return this > 0.001 ? this.toLocaleString() : this.toString();
+        return this > 0.001 ? this.toLocaleString() : this.toExponential(2);
     },
 });
 
