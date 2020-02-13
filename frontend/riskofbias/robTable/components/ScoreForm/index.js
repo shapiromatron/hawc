@@ -102,6 +102,8 @@ ScoreForm.propTypes = {
     score: PropTypes.shape({
         score: PropTypes.number.isRequired,
         notes: PropTypes.string.isRequired,
+        is_default: PropTypes.bool.isRequired,
+        label: PropTypes.string.isRequired,
         metric: PropTypes.shape({
             name: PropTypes.string.isRequired,
         }).isRequired,
@@ -109,7 +111,7 @@ ScoreForm.propTypes = {
     updateNotesLeft: PropTypes.func.isRequired,
     robResponseValues: PropTypes.array.isRequired,
     config: PropTypes.shape({
-        assessment_id: PropTypes.string.isRequired,
+        assessment_id: PropTypes.number.isRequired,
     }),
 };
 

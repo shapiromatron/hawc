@@ -84,10 +84,15 @@ class AssessmentMetricScoreViewset(AssessmentViewset):
 
 class AssessmentScoreViewset(TeamMemberOrHigherMixin, ListUpdateModelMixin, AssessmentEditViewset):
     model = models.RiskOfBiasScore
-    serializer_class = serializers.AssessmentRiskOfBiasScoreSerializer
     pagination_class = DisabledPagination
     assessment_filter_args = "metric__domain_assessment"
     filter_backends = (BulkIdFilter,)
+
+    def get_serializer_class(self):
+        cls = serializers.RiskOfBiasScoreSerializer
+        if self.action == "create":
+            cls = serializers.RiskOfBiasScoreOverrideCreateSerializer
+        return cls
 
     def get_assessment(self, request, *args, **kwargs):
         assessment_id = request.GET.get("assessment_id", None)

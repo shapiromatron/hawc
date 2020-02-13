@@ -4,6 +4,8 @@ import logging
 from typing import Dict, List, Tuple
 
 from django.conf import settings
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.utils.html import strip_tags
@@ -237,7 +239,11 @@ class RiskOfBias(models.Model):
         is empty, so HTML needs to be stripped out.
         """
         return all(
-            [len(strip_tags(score.notes)) > 0 for score in self.scores.all() if score.score != 0]
+            [
+                len(strip_tags(score.notes)) > 0
+                for score in self.scores.all()
+                if score.score not in RiskOfBiasScore.NA_SCORES
+            ]
         )
 
     @property
@@ -425,6 +431,8 @@ class RiskOfBiasScore(models.Model):
 
     riskofbias = models.ForeignKey(RiskOfBias, related_name="scores")
     metric = models.ForeignKey(RiskOfBiasMetric, related_name="scores")
+    is_default = models.BooleanField(default=True)
+    label = models.CharField(max_length=128, blank=True)
     score = models.PositiveSmallIntegerField(
         choices=RISK_OF_BIAS_SCORE_CHOICES, default=build_default_rob_score
     )
@@ -451,6 +459,8 @@ class RiskOfBiasScore(models.Model):
             "rob-metric_name",
             "rob-metric_description",
             "rob-score_id",
+            "rob-score_is_default",
+            "rob-score_label",
             "rob-score_score",
             "rob-score_description",
             "rob-score_notes",
@@ -466,6 +476,8 @@ class RiskOfBiasScore(models.Model):
             ser["metric"]["name"],
             ser["metric"]["description"],
             ser["id"],
+            ser["is_default"],
+            ser["label"],
             ser["score"],
             ser["score_description"],
             cleanHTML(ser["notes"]),
@@ -490,12 +502,22 @@ class RiskOfBiasScore(models.Model):
         Study.delete_caches(study_ids)
 
     def copy_across_assessments(self, cw):
+        # TODO - add overrides
         old_id = self.id
         self.id = None
         self.riskofbias_id = cw[RiskOfBias.COPY_NAME][self.riskofbias_id]
         self.metric_id = cw[RiskOfBiasMetric.COPY_NAME][self.metric_id]
         self.save()
         cw[self.COPY_NAME][old_id] = self.id
+
+
+class RiskOfBiasScoreOverrideObject(models.Model):
+    score = models.ForeignKey(
+        RiskOfBiasScore, on_delete=models.CASCADE, related_name="overriden_objects"
+    )
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey("content_type", "object_id")
 
 
 DEFAULT_QUESTIONS_OHAT = 1
@@ -587,3 +609,4 @@ reversion.register(RiskOfBiasDomain)
 reversion.register(RiskOfBiasMetric)
 reversion.register(RiskOfBias)
 reversion.register(RiskOfBiasScore)
+reversion.register(RiskOfBiasScoreOverrideObject)

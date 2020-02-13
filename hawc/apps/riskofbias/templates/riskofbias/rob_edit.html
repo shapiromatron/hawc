@@ -24,25 +24,7 @@
 {% endblock %}
 
 {% block extrajs %}
-  <script id="config" type="text/json" charset="utf-8">
-      {
-          "assessment_id": "{{ assessment.id }}",
-          "study": {
-              "id": "{{ object.study.pk }}",
-              "url": "{% url 'study:api:study-list' %}"
-          },
-          "riskofbias": {
-              "id": "{{ object.pk }}"  ,
-              "url": "{% url 'riskofbias:api:review-list' %}"
-          },
-          "cancelUrl": "{{back_url}}",
-          "csrf": "{{ csrf_token }}",
-          "host": "//{{request.get_host}}",
-          "isForm": true,
-          "display": {% if object.final %} "final" {% else %} "all" {% endif %},
-          "hawc_flavor": "{{hawc_flavor}}"
-      }
-  </script>
+  <script id="config" type="text/json" charset="utf-8">{{config|safe}}</script>
   <script type="text/javascript">
   $(document).ready(function(){
       window.app.riskofbiasStartup(function(riskofbias){

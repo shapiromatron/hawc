@@ -36,3 +36,16 @@ class RiskOfBiasAssessmentAdmin(admin.ModelAdmin):
         "responses",
     )
     list_filter = ("number_of_reviewers", "default_questions", "responses")
+
+
+@admin.register(models.RiskOfBiasScore)
+class RiskOfBiasScoreAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "riskofbias_id",
+        "metric_id",
+        "is_default",
+        "label",
+        "score",
+    )
+    list_filter = ("is_default", "score")

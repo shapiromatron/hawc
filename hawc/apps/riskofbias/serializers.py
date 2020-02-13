@@ -58,7 +58,22 @@ class RiskOfBiasScoreSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.RiskOfBiasScore
-        fields = ("id", "score", "notes", "metric")
+        fields = ("id", "score", "is_default", "label", "notes", "metric")
+
+
+class RiskOfBiasScoreOverrideCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.RiskOfBiasScore
+        fields = ("id", "riskofbias", "metric")
+
+    def create(self, validated_data):
+        override = models.RiskOfBiasScore.create(
+            riskofbias=validated_data["riskofbias"],
+            metric=validated_data["metric"],
+            is_default=False,
+            label="<add>",
+        )
+        return override
 
 
 class RiskOfBiasSerializer(serializers.ModelSerializer):
@@ -109,12 +124,6 @@ class AssessmentMetricScoreSerializer(serializers.ModelSerializer):
         scores = instance.scores.filter(riskofbias__final=True, riskofbias__active=True)
         serializer = RiskOfBiasScoreSerializer(scores, many=True)
         return serializer.data
-
-
-class AssessmentRiskOfBiasScoreSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.RiskOfBiasScore
-        fields = ("id", "notes", "score")
 
 
 SerializerHelper.add_serializer(models.RiskOfBias, RiskOfBiasSerializer)

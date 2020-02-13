@@ -1,7 +1,10 @@
+import json
+
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
-from django.core.urlresolvers import reverse_lazy
+from django.core.urlresolvers import reverse, reverse_lazy
 from django.db.models import Prefetch
+from django.middleware.csrf import get_token
 from django.shortcuts import get_object_or_404
 from django.views.generic.edit import FormView
 
@@ -321,10 +324,21 @@ class RoBEdit(TimeSpentOnPageMixin, BaseDetail):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["back_url"] = (
-            self.request.META["HTTP_REFERER"]
-            if "HTTP_REFERER" in self.request.META
-            else self.object.get_absolute_url()
+        context["config"] = json.dumps(
+            {
+                "assessment_id": self.assessment.id,
+                "cancelUrl": (
+                    self.request.META["HTTP_REFERER"]
+                    if "HTTP_REFERER" in self.request.META
+                    else self.object.get_absolute_url()
+                ),
+                "csrf": get_token(self.request),
+                "host": f"//{self.request.get_host()}",
+                "isForm": True,
+                "display": "final" if self.object.final else "all",
+                "hawc_flavor": settings.HAWC_FLAVOR,
+                "study": {"id": self.object.study_id, "url": reverse("study:api:study-list")},
+                "riskofbias": {"id": self.object.id, "url": reverse("riskofbias:api:review-list")},
+            }
         )
-        context["hawc_flavor"] = settings.HAWC_FLAVOR
         return context
