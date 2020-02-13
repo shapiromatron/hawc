@@ -42,9 +42,15 @@ class RiskOfBiasMetricSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class RiskOfBiasScoreSerializer(serializers.ModelSerializer):
+class RiskOfBiasScoreSerializerSlim(serializers.ModelSerializer):
     metric = RiskOfBiasMetricSerializer(read_only=True)
 
+    class Meta:
+        model = models.RiskOfBiasScore
+        fields = ("id", "score", "is_default", "label", "notes", "metric")
+
+
+class RiskOfBiasScoreSerializer(RiskOfBiasScoreSerializerSlim):
     def to_representation(self, instance):
         ret = super().to_representation(instance)
         ret["score_description"] = instance.get_score_display()
@@ -56,10 +62,6 @@ class RiskOfBiasScoreSerializer(serializers.ModelSerializer):
         ret["study_types"] = instance.riskofbias.study.get_study_type()
         return ret
 
-    class Meta:
-        model = models.RiskOfBiasScore
-        fields = ("id", "score", "is_default", "label", "notes", "metric")
-
 
 class RiskOfBiasScoreOverrideCreateSerializer(serializers.ModelSerializer):
     class Meta:
@@ -67,7 +69,7 @@ class RiskOfBiasScoreOverrideCreateSerializer(serializers.ModelSerializer):
         fields = ("id", "riskofbias", "metric")
 
     def create(self, validated_data):
-        override = models.RiskOfBiasScore.create(
+        override = models.RiskOfBiasScore.objects.create(
             riskofbias=validated_data["riskofbias"],
             metric=validated_data["metric"],
             is_default=False,

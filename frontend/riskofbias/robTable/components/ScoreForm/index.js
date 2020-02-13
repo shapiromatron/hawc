@@ -69,13 +69,23 @@ class ScoreForm extends Component {
         let {name} = this.props.score.metric,
             {score, notes} = this.state,
             {assessment_id} = this.props.config,
+            {is_default, label} = this.props.score,
             choices = this.props.robResponseValues.map(d => {
                 return {id: parseInt(d), value: SCORE_TEXT_DESCRIPTION[d]};
             }),
-            showScoreInput = !h.hideRobScore(parseInt(assessment_id));
+            showScoreInput = !h.hideRobScore(parseInt(assessment_id)),
+            showOverrideCreate = is_default === true;
 
         return (
             <div className="score-form">
+                {showOverrideCreate ? (
+                    <button
+                        className="btn btn-primary pull-right"
+                        type="button"
+                        onClick={this.props.createScoreOverride}>
+                        <i className="fa fa-plus"></i>&nbsp;Create new override
+                    </button>
+                ) : null}
                 {showScoreInput ? (
                     <div>
                         <SelectInput
@@ -87,6 +97,17 @@ class ScoreForm extends Component {
                         <ScoreIcon score={score} />
                     </div>
                 ) : null}
+
+                {this.props.metricHasOverrides ? (
+                    <div>
+                        <label className="checkbox">
+                            <input type="checkbox" checked={is_default}></input> Default Score?
+                        </label>
+                        <label>Label</label>
+                        <input value={label}></input>
+                    </div>
+                ) : null}
+
                 <ReactQuill
                     id={name}
                     value={notes}
@@ -108,7 +129,9 @@ ScoreForm.propTypes = {
             name: PropTypes.string.isRequired,
         }).isRequired,
     }).isRequired,
+    metricHasOverrides: PropTypes.bool.isRequired,
     updateNotesLeft: PropTypes.func.isRequired,
+    createScoreOverride: PropTypes.func.isRequired,
     robResponseValues: PropTypes.array.isRequired,
     config: PropTypes.shape({
         assessment_id: PropTypes.number.isRequired,

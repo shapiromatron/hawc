@@ -2,7 +2,11 @@ import React, {Component} from "react";
 import {connect} from "react-redux";
 import _ from "lodash";
 
-import {fetchFullStudyIfNeeded, submitRiskOfBiasScores} from "riskofbias/robTable/actions";
+import {
+    fetchFullStudyIfNeeded,
+    submitRiskOfBiasScores,
+    createScoreOverride,
+} from "riskofbias/robTable/actions";
 import Completeness from "riskofbias/robTable/components/Completeness";
 import DomainDisplay from "riskofbias/robTable/components/DomainDisplay";
 import Loading from "shared/components/Loading";
@@ -13,7 +17,8 @@ class RiskOfBiasForm extends Component {
         super(props);
         this.handleCancel = this.handleCancel.bind(this);
         this.submitForm = this.submitForm.bind(this);
-        this.updateNotesLeft = this.updateNotesLeft.bind(this);
+        this.handleUpdateNotes = this.handleUpdateNotes.bind(this);
+        this.handleCreateScoreOverride = this.handleCreateScoreOverride.bind(this);
         this.state = {
             notesLeft: new Set(),
         };
@@ -45,7 +50,7 @@ class RiskOfBiasForm extends Component {
         window.location.href = this.props.config.cancelUrl;
     }
 
-    updateNotesLeft(id, action) {
+    handleUpdateNotes(id, action) {
         let notes = this.state.notesLeft;
         if (action === "clear") {
             notes.delete(id);
@@ -54,6 +59,10 @@ class RiskOfBiasForm extends Component {
             notes.add(id);
             this.setState({notesLeft: notes});
         }
+    }
+
+    handleCreateScoreOverride(payload) {
+        this.props.dispatch(createScoreOverride(payload));
     }
 
     render() {
@@ -70,7 +79,8 @@ class RiskOfBiasForm extends Component {
                                 ref={domain.key}
                                 domain={domain}
                                 config={config}
-                                updateNotesLeft={this.updateNotesLeft}
+                                updateNotesLeft={this.handleUpdateNotes}
+                                createScoreOverride={this.handleCreateScoreOverride}
                                 robResponseValues={robResponseValues}
                             />
                         );

@@ -19,9 +19,7 @@ class MetricForm extends Component {
 
     renderScoreRow() {
         let {metric, config} = this.props,
-            displayScores = _.filter(metric.values, score => {
-                return !score.final;
-            });
+            displayScores = metric.values.filter(score => score.final === false);
 
         return (
             <div className="score-row">
@@ -40,10 +38,21 @@ class MetricForm extends Component {
     }
 
     render() {
-        let {metric, config, updateNotesLeft, robResponseValues} = this.props,
+        // AJS resume here?
+        // we need to revise this now. We'll need to build slots for each reviewer
+        // and then always put default first
+        // and then show the other forms after
+        let {metric, config, updateNotesLeft, createScoreOverride, robResponseValues} = this.props,
             formScore = _.find(metric.values, {
                 riskofbias_id: parseInt(config.riskofbias.id),
-            });
+            }),
+            metricHasOverrides = _.some(metric.values, el => el.is_default === false),
+            createScoreOverrideFunc = () => {
+                createScoreOverride({
+                    metric: formScore.metric.id,
+                    riskofbias: config.riskofbias.id,
+                });
+            };
 
         return (
             <div className="metric-display">
@@ -59,6 +68,8 @@ class MetricForm extends Component {
                     addText={this.state.addText}
                     updateNotesLeft={updateNotesLeft}
                     robResponseValues={robResponseValues}
+                    createScoreOverride={createScoreOverrideFunc}
+                    metricHasOverrides={metricHasOverrides}
                 />
             </div>
         );

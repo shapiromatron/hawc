@@ -73,6 +73,10 @@ function study(state = defaultState, action) {
                 active: [domains],
             });
 
+        case types.CREATE_SCORE_OVERRIDE:
+            console.log("here!");
+            return Object.assign({}, state, {});
+
         default:
             return state;
     }

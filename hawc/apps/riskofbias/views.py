@@ -338,7 +338,11 @@ class RoBEdit(TimeSpentOnPageMixin, BaseDetail):
                 "display": "final" if self.object.final else "all",
                 "hawc_flavor": settings.HAWC_FLAVOR,
                 "study": {"id": self.object.study_id, "url": reverse("study:api:study-list")},
-                "riskofbias": {"id": self.object.id, "url": reverse("riskofbias:api:review-list")},
+                "riskofbias": {
+                    "id": self.object.id,
+                    "url": reverse("riskofbias:api:review-list"),
+                    "scores_url": reverse("riskofbias:api:scores-list"),
+                },
             }
         )
         return context

@@ -38,6 +38,25 @@ function updateFinalScores(scores) {
     };
 }
 
+export function createScoreOverride(data) {
+    return (dispatch, getState) => {
+        let state = getState(),
+            url = `${state.config.riskofbias.scores_url}?assessment_id=${state.config.assessment_id}`,
+            csrf = state.config.csrf;
+
+        return (
+            fetch(url, h.fetchPost(csrf, data, "POST"))
+                .then(response => response.json())
+                .then(json => {
+                    console.log(json);
+                })
+                // .then(json => formatIncomingStudy(json))
+                // .then(json => dispatch(receiveStudy(json)))
+                .catch(ex => dispatch(setError(ex)))
+        );
+    };
+}
+
 function formatOutgoingRiskOfBias(state, riskofbias) {
     let riskofbias_id = state.config.riskofbias.id,
         author,
@@ -144,6 +163,7 @@ export function submitRiskOfBiasScores(scores) {
             .catch(ex => dispatch(setError(ex)));
     };
 }
+
 export function selectActive({domain, metric}) {
     return {
         type: types.SELECT_ACTIVE,
