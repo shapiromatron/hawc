@@ -1,3 +1,4 @@
+from django.core.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404
 from rest_framework import filters, viewsets
 from rest_framework.decorators import list_route
@@ -113,3 +114,8 @@ class AssessmentScoreViewset(TeamMemberOrHigherMixin, ListUpdateModelMixin, Asse
     def post_save_bulk(self, queryset, update_bulk_dict):
         ids = list(queryset.values_list("id", flat=True))
         queryset.model.delete_caches(ids)
+
+    def perform_destroy(self, instance):
+        if instance.is_default:
+            raise PermissionDenied("Cannot delete a default risk of bias score")
+        instance.delete()

@@ -4,6 +4,7 @@ import ReactQuill from "react-quill";
 
 import ScoreIcon from "riskofbias/robTable/components/ScoreIcon";
 import SelectInput from "shared/components/SelectInput";
+import TextInput from "shared/components/TextInput";
 import h from "shared/utils/helpers";
 import "./ScoreForm.css";
 import {SCORE_SHADES, SCORE_TEXT, SCORE_TEXT_DESCRIPTION} from "../../../constants";
@@ -12,12 +13,19 @@ class ScoreForm extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            id: props.score.id,
             score: props.score.score,
             notes: props.score.notes,
             label: props.score.label,
         };
         this.handleEditorInput = this.handleEditorInput.bind(this);
+        this.handleLabelInput = this.handleLabelInput.bind(this);
         this.updateSelectedScore = this.updateSelectedScore.bind(this);
+        this.notifyStateChange = this.notifyStateChange.bind(this);
+    }
+
+    notifyStateChange() {
+        this.props.notifyStateChange(this.state);
     }
 
     componentWillMount() {
@@ -45,32 +53,39 @@ class ScoreForm extends Component {
     }
 
     updateSelectedScore(score) {
-        this.setState({
-            score: parseInt(score),
-            selectedShade: SCORE_SHADES[score],
-            selectedSymbol: SCORE_TEXT[score],
-        });
+        this.setState(
+            {
+                score: parseInt(score),
+                selectedShade: SCORE_SHADES[score],
+                selectedSymbol: SCORE_TEXT[score],
+            },
+            this.notifyStateChange
+        );
         this.validateInput(score, this.state.notes);
     }
 
     handleEditorInput(event) {
-        this.setState({notes: event});
+        this.setState({notes: event}, this.notifyStateChange);
         this.validateInput(this.state.score, event);
+    }
+
+    handleLabelInput(event) {
+        this.setState({label: event.target.value}, this.notifyStateChange);
     }
 
     validateInput(score, notes) {
         if (this.state.notes.replace(/<\/?[^>]+(>|$)/g, "") == "") {
-            this.props.updateNotesLeft(this.props.score.id, "add");
+            this.props.updateNotesRemaining(this.props.score.id, "add");
         } else {
-            this.props.updateNotesLeft(this.props.score.id, "clear");
+            this.props.updateNotesRemaining(this.props.score.id, "clear");
         }
     }
 
     render() {
         let {name} = this.props.score.metric,
-            {score, notes} = this.state,
+            {score, notes, label} = this.state,
             {assessment_id} = this.props.config,
-            {is_default, label} = this.props.score,
+            {is_default} = this.props.score,
             choices = this.props.robResponseValues.map(d => {
                 return {id: parseInt(d), value: SCORE_TEXT_DESCRIPTION[d]};
             }),
@@ -91,6 +106,7 @@ class ScoreForm extends Component {
                         <i className="fa fa-plus"></i>&nbsp;Create new override
                     </button>
                 ) : null}
+
                 {showDelete ? (
                     <button
                         className="btn btn-danger pull-right"
@@ -99,9 +115,11 @@ class ScoreForm extends Component {
                         <i className="fa fa-trash"></i>&nbsp;Delete override
                     </button>
                 ) : null}
+
                 {showScoreInput ? (
                     <div>
                         <SelectInput
+                            label="Score"
                             choices={choices}
                             id={name}
                             value={score}
@@ -114,10 +132,15 @@ class ScoreForm extends Component {
                 {this.props.metricHasOverrides ? (
                     <div>
                         <label className="checkbox">
-                            <input type="checkbox" checked={is_default}></input> Default Score?
+                            <input type="checkbox" checked={is_default} readOnly={true}></input>
+                            Default score
                         </label>
-                        <label>Label</label>
-                        <input value={label}></input>
+                        <TextInput
+                            label="Label"
+                            name="label"
+                            onChange={this.handleLabelInput}
+                            value={label}
+                        />
                     </div>
                 ) : null}
 
@@ -144,7 +167,8 @@ ScoreForm.propTypes = {
         }).isRequired,
     }).isRequired,
     metricHasOverrides: PropTypes.bool.isRequired,
-    updateNotesLeft: PropTypes.func.isRequired,
+    updateNotesRemaining: PropTypes.func.isRequired,
+    notifyStateChange: PropTypes.func.isRequired,
     createScoreOverride: PropTypes.func.isRequired,
     deleteScoreOverride: PropTypes.func.isRequired,
     robResponseValues: PropTypes.array.isRequired,

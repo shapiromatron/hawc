@@ -10,7 +10,8 @@ class DomainDisplay extends Component {
         let {
             domain,
             config,
-            updateNotesLeft,
+            updateNotesRemaining,
+            notifyStateChange,
             createScoreOverride,
             deleteScoreOverride,
             robResponseValues,
@@ -29,7 +30,8 @@ class DomainDisplay extends Component {
                     return config.isForm ? (
                         <MetricForm
                             {...props}
-                            updateNotesLeft={updateNotesLeft}
+                            updateNotesRemaining={updateNotesRemaining}
+                            notifyStateChange={notifyStateChange}
                             createScoreOverride={createScoreOverride}
                             deleteScoreOverride={deleteScoreOverride}
                         />
@@ -50,7 +52,8 @@ DomainDisplay.propTypes = {
     }).isRequired,
     config: PropTypes.object,
     robResponseValues: PropTypes.array.isRequired,
-    updateNotesLeft: PropTypes.func,
+    updateNotesRemaining: PropTypes.func,
+    notifyStateChange: PropTypes.func,
     createScoreOverride: PropTypes.func,
     deleteScoreOverride: PropTypes.func,
 };

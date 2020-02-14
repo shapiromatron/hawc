@@ -14,10 +14,11 @@ const defaultState = {
     rob_response_values: [],
     riskofbiases: [],
     active: [],
+    current_score_state: {},
 };
 
 function study(state = defaultState, action) {
-    let domains;
+    let domains, scores;
 
     switch (action.type) {
         case types.REQUEST:
@@ -73,9 +74,10 @@ function study(state = defaultState, action) {
                 active: [domains],
             });
 
-        case types.CREATE_SCORE_OVERRIDE:
-            console.log("here!");
-            return Object.assign({}, state, {});
+        case types.UPDATE_SCORE_STATE:
+            scores = Object.assign({}, state.current_score_state);
+            scores[action.score.id] = action.score;
+            return Object.assign({}, state, {current_score_state: scores});
 
         default:
             return state;

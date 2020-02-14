@@ -53,7 +53,7 @@ export class MetricForm extends React.Component {
                     ref="metricForm"
                     metric={items.editMetric}
                     config={config}
-                    updateNotesLeft={_.noop}
+                    updateNotesRemaining={_.noop}
                     robResponseValues={robResponseValues}
                 />
                 <button type="submit" className="btn btn-primary space">

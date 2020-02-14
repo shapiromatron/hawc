@@ -5,6 +5,7 @@ import _ from "lodash";
 import {
     fetchFullStudyIfNeeded,
     submitRiskOfBiasScores,
+    scoreStateChange,
     createScoreOverride,
     deleteScoreOverride,
 } from "riskofbias/robTable/actions";
@@ -19,6 +20,7 @@ class RiskOfBiasForm extends Component {
         this.handleCancel = this.handleCancel.bind(this);
         this.submitForm = this.submitForm.bind(this);
         this.handleUpdateNotes = this.handleUpdateNotes.bind(this);
+        this.handleNotifyStateChange = this.handleNotifyStateChange.bind(this);
         this.handleCreateScoreOverride = this.handleCreateScoreOverride.bind(this);
         this.handleDeleteScoreOverride = this.handleDeleteScoreOverride.bind(this);
         this.state = {
@@ -32,19 +34,7 @@ class RiskOfBiasForm extends Component {
 
     submitForm(e) {
         e.preventDefault();
-        let scores = _.flattenDeep(
-            _.map(this.refs, domain => {
-                return _.map(domain.refs, metric => {
-                    let {form} = metric.refs;
-                    return {
-                        id: form.props.score.id,
-                        notes: form.state.notes,
-                        score: form.state.score,
-                    };
-                });
-            })
-        );
-        this.props.dispatch(submitRiskOfBiasScores({scores}));
+        this.props.dispatch(submitRiskOfBiasScores());
     }
 
     handleCancel(e) {
@@ -61,6 +51,10 @@ class RiskOfBiasForm extends Component {
             notes.add(id);
             this.setState({notesLeft: notes});
         }
+    }
+
+    handleNotifyStateChange(payload) {
+        this.props.dispatch(scoreStateChange(payload));
     }
 
     handleCreateScoreOverride(payload) {
@@ -85,7 +79,8 @@ class RiskOfBiasForm extends Component {
                                 ref={domain.key}
                                 domain={domain}
                                 config={config}
-                                updateNotesLeft={this.handleUpdateNotes}
+                                updateNotesRemaining={this.handleUpdateNotes}
+                                notifyStateChange={this.handleNotifyStateChange}
                                 createScoreOverride={this.handleCreateScoreOverride}
                                 deleteScoreOverride={this.handleDeleteScoreOverride}
                                 robResponseValues={robResponseValues}

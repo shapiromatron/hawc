@@ -38,6 +38,13 @@ function updateFinalScores(scores) {
     };
 }
 
+export function scoreStateChange(score) {
+    return {
+        type: types.UPDATE_SCORE_STATE,
+        score,
+    };
+}
+
 export function createScoreOverride(data) {
     // todo update state on create
     return (dispatch, getState) => {
@@ -65,40 +72,6 @@ export function deleteScoreOverride(data) {
             .then(json => console.log(json))
             .catch(ex => dispatch(setError(ex)));
     };
-}
-
-function formatOutgoingRiskOfBias(state, riskofbias) {
-    let riskofbias_id = state.config.riskofbias.id,
-        author,
-        final,
-        scores = _.flattenDeep(
-            _.map(state.study.riskofbiases, domain => {
-                return _.map(domain.values, metric => {
-                    return _.omit(
-                        _.find(metric.values, score => {
-                            if (score.riskofbias_id == riskofbias_id) {
-                                author = author || score.author;
-                                final = final || score.final;
-                            }
-                            return score.riskofbias_id == riskofbias_id;
-                        }),
-                        ["riskofbias_id", "author", "final", "domain_id", "domain_name"]
-                    );
-                });
-            })
-        );
-    return Object.assign(
-        {},
-        {
-            author,
-            final,
-            scores,
-            active: true,
-            pk: parseInt(riskofbias_id),
-            study: parseInt(state.config.study.id),
-        },
-        riskofbias
-    );
 }
 
 function formatIncomingStudy(study) {
@@ -152,21 +125,23 @@ export function fetchFullStudyIfNeeded() {
     };
 }
 
-export function submitRiskOfBiasScores(scores) {
+export function submitRiskOfBiasScores() {
     return (dispatch, getState) => {
         let state = getState(),
-            patch = formatOutgoingRiskOfBias(state, scores),
-            opts = h.fetchPost(state.config.csrf, patch, "PUT");
-
-        dispatch(resetError());
-        return fetch(
-            `${h.getObjectUrl(
+            scores = _.values(state.study.current_score_state),
+            payload = {
+                id: state.config.riskofbias.id,
+                scores,
+            },
+            opts = h.fetchPost(state.config.csrf, payload, "PATCH"),
+            url = `${h.getObjectUrl(
                 state.config.host,
                 state.config.riskofbias.url,
                 state.config.riskofbias.id
-            )}`,
-            opts
-        )
+            )}`;
+
+        dispatch(resetError());
+        return fetch(url, opts)
             .then(response => response.json())
             .then(json => dispatch(updateFinalScores(json.scores)))
             .then(() => (window.location.href = state.config.cancelUrl))
