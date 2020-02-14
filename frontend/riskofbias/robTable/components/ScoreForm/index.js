@@ -12,15 +12,16 @@ class ScoreForm extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            score: null,
+            score: props.score.score,
             notes: props.score.notes,
+            label: props.score.label,
         };
         this.handleEditorInput = this.handleEditorInput.bind(this);
-        this.selectScore = this.selectScore.bind(this);
+        this.updateSelectedScore = this.updateSelectedScore.bind(this);
     }
 
     componentWillMount() {
-        this.selectScore(this.props.score.score);
+        this.updateSelectedScore(this.props.score.score);
     }
 
     componentWillUpdate(nextProps, nextState) {
@@ -39,11 +40,11 @@ class ScoreForm extends Component {
         }
         // if score is changed, change to new score
         if (nextProps.score.score !== this.props.score.score) {
-            this.selectScore(nextProps.score.score);
+            this.updateSelectedScore(nextProps.score.score);
         }
     }
 
-    selectScore(score) {
+    updateSelectedScore(score) {
         this.setState({
             score: parseInt(score),
             selectedShade: SCORE_SHADES[score],
@@ -74,7 +75,11 @@ class ScoreForm extends Component {
                 return {id: parseInt(d), value: SCORE_TEXT_DESCRIPTION[d]};
             }),
             showScoreInput = !h.hideRobScore(parseInt(assessment_id)),
-            showOverrideCreate = is_default === true;
+            showOverrideCreate = is_default === true,
+            showDelete = is_default === false,
+            deleteScoreOverride = () => {
+                this.props.deleteScoreOverride({score_id: this.props.score.id});
+            };
 
         return (
             <div className="score-form">
@@ -86,13 +91,21 @@ class ScoreForm extends Component {
                         <i className="fa fa-plus"></i>&nbsp;Create new override
                     </button>
                 ) : null}
+                {showDelete ? (
+                    <button
+                        className="btn btn-danger pull-right"
+                        type="button"
+                        onClick={deleteScoreOverride}>
+                        <i className="fa fa-trash"></i>&nbsp;Delete override
+                    </button>
+                ) : null}
                 {showScoreInput ? (
                     <div>
                         <SelectInput
                             choices={choices}
                             id={name}
                             value={score}
-                            handleSelect={this.selectScore}
+                            handleSelect={this.updateSelectedScore}
                         />
                         <ScoreIcon score={score} />
                     </div>
@@ -121,6 +134,7 @@ class ScoreForm extends Component {
 
 ScoreForm.propTypes = {
     score: PropTypes.shape({
+        id: PropTypes.number.isRequired,
         score: PropTypes.number.isRequired,
         notes: PropTypes.string.isRequired,
         is_default: PropTypes.bool.isRequired,
@@ -132,6 +146,7 @@ ScoreForm.propTypes = {
     metricHasOverrides: PropTypes.bool.isRequired,
     updateNotesLeft: PropTypes.func.isRequired,
     createScoreOverride: PropTypes.func.isRequired,
+    deleteScoreOverride: PropTypes.func.isRequired,
     robResponseValues: PropTypes.array.isRequired,
     config: PropTypes.shape({
         assessment_id: PropTypes.number.isRequired,

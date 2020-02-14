@@ -6,6 +6,7 @@ import {
     fetchFullStudyIfNeeded,
     submitRiskOfBiasScores,
     createScoreOverride,
+    deleteScoreOverride,
 } from "riskofbias/robTable/actions";
 import Completeness from "riskofbias/robTable/components/Completeness";
 import DomainDisplay from "riskofbias/robTable/components/DomainDisplay";
@@ -19,6 +20,7 @@ class RiskOfBiasForm extends Component {
         this.submitForm = this.submitForm.bind(this);
         this.handleUpdateNotes = this.handleUpdateNotes.bind(this);
         this.handleCreateScoreOverride = this.handleCreateScoreOverride.bind(this);
+        this.handleDeleteScoreOverride = this.handleDeleteScoreOverride.bind(this);
         this.state = {
             notesLeft: new Set(),
         };
@@ -65,6 +67,10 @@ class RiskOfBiasForm extends Component {
         this.props.dispatch(createScoreOverride(payload));
     }
 
+    handleDeleteScoreOverride(payload) {
+        this.props.dispatch(deleteScoreOverride(payload));
+    }
+
     render() {
         let {itemsLoaded, riskofbiases, error, config, robResponseValues} = this.props;
         if (!itemsLoaded) return <Loading />;
@@ -81,6 +87,7 @@ class RiskOfBiasForm extends Component {
                                 config={config}
                                 updateNotesLeft={this.handleUpdateNotes}
                                 createScoreOverride={this.handleCreateScoreOverride}
+                                deleteScoreOverride={this.handleDeleteScoreOverride}
                                 robResponseValues={robResponseValues}
                             />
                         );

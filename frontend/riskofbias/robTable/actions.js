@@ -39,21 +39,31 @@ function updateFinalScores(scores) {
 }
 
 export function createScoreOverride(data) {
+    // todo update state on create
     return (dispatch, getState) => {
         let state = getState(),
             url = `${state.config.riskofbias.scores_url}?assessment_id=${state.config.assessment_id}`,
             csrf = state.config.csrf;
 
-        return (
-            fetch(url, h.fetchPost(csrf, data, "POST"))
-                .then(response => response.json())
-                .then(json => {
-                    console.log(json);
-                })
-                // .then(json => formatIncomingStudy(json))
-                // .then(json => dispatch(receiveStudy(json)))
-                .catch(ex => dispatch(setError(ex)))
-        );
+        return fetch(url, h.fetchPost(csrf, data, "POST"))
+            .then(response => response.json())
+            .then(json => console.log(json))
+            .catch(ex => dispatch(setError(ex)));
+    };
+}
+
+export function deleteScoreOverride(data) {
+    return (dispatch, getState) => {
+        // todo update state on delete
+        // the ids are required because of the BulkIdFilter
+        let state = getState(),
+            url = `${state.config.riskofbias.scores_url}${data.score_id}/?assessment_id=${state.config.assessment_id}&ids=${data.score_id}`,
+            csrf = state.config.csrf;
+
+        return fetch(url, h.fetchDelete(csrf))
+            .then(response => response.json())
+            .then(json => console.log(json))
+            .catch(ex => dispatch(setError(ex)));
     };
 }
 
