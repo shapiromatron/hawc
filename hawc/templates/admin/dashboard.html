@@ -1,22 +1,38 @@
 {% extends "admin/base_site.html" %}
+{% load i18n static %}
 
 {% block extrahead %}
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 {% endblock extrahead %}
 
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+    &rsaquo;
+    Insights
+</div>
+{% endblock %}
+
 {% block content %}
 <div class="container-fluid">
-    <h1>Hello admin</h1>
-    <div id="test"></div>
+    <h1>User growth</h1>
+    <div id="user_growth"></div>
+    <h1>Assessment growth</h1>
+    <div id="assessment_growth"></div>
+    <h1>Study growth</h1>
+    <div id="study_growth"></div>
 </div>
 
 <script>
     const opts = { headers: { 'Content-Type': 'application/json' } },
         embedPlotly = function (url, id) {
+            document.getElementById(id).textContent = "Loading..."
             fetch(url, opts)
                 .then(
                     function (response) {
                         response.json().then(function (resp) {
+                            document.getElementById(id).textContent = "";
                             Plotly.newPlot(document.getElementById(id), resp.data, resp.layout);
                         });
                     }
@@ -24,7 +40,9 @@
         };
 
     document.addEventListener("DOMContentLoaded", function () {
-        embedPlotly("/assessment/api/dashboard/test/", "test")
+        embedPlotly("/assessment/api/dashboard/user_growth/", "user_growth")
+        embedPlotly("/assessment/api/dashboard/assessment_growth/", "assessment_growth")
+        embedPlotly("/assessment/api/dashboard/study_growth/", "study_growth")
     });
 </script>
 {% endblock content %}

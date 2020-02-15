@@ -1,15 +1,18 @@
 import logging
 
+import pandas as pd
+import plotly.express as px
+import plotly.graph_objects as go
 from django.apps import apps
 from django.core import exceptions
 from django.core.urlresolvers import reverse
 from django.db.models import Count
-import plotly.express as px
+from plotly.subplots import make_subplots
 from rest_framework import decorators, filters, permissions, status, viewsets
 from rest_framework.exceptions import APIException
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
+from rest_framework.response import Response
 
 from ..common.helper import tryParseInt
 from . import models, serializers
@@ -308,8 +311,62 @@ class AdminDashboardViewset(viewsets.ViewSet):
     permission_classes = (permissions.IsAdminUser,)
     renderer_classes = (JSONRenderer,)
 
+    def _quarterly_change_plots(self, df: pd.DataFrame, y_axis: str) -> go.Figure:
+
+        df1 = df.set_index("date").groupby(pd.Grouper(freq="Q")).count().cumsum().reset_index()
+        df2 = (
+            df.set_index("date")
+            .groupby(pd.Grouper(freq="Q"))
+            .count()
+            .cumsum()
+            .diff(periods=1)
+            .dropna()
+            .reset_index()
+        )
+
+        fig = make_subplots(
+            rows=2,
+            cols=1,
+            shared_xaxes=True,
+            subplot_titles=(
+                f"Cumulative growth of {y_axis.lower()}",
+                f"Quarterly growth of {y_axis.lower()}",
+            ),
+        )
+        fig.update_layout(height=600)
+
+        ax1 = px.bar(df1, x="date", y="id")
+        for trace in ax1.data:
+            fig.add_trace(trace, row=1, col=1)
+        fig.update_yaxes(title_text=y_axis, row=1, col=1)
+
+        ax2 = px.bar(df2, x="date", y="id")
+        for trace in ax2.data:
+            fig.add_trace(trace, row=2, col=1)
+        fig.update_yaxes(title_text=y_axis, row=2, col=1)
+
+        return fig
+
     @decorators.list_route()
-    def test(self, request):
-        df = px.data.iris()
-        fig = px.scatter(df, x="sepal_width", y="sepal_length")
+    def user_growth(self, request):
+        fields = ("id", "date_joined")
+        data = list(apps.get_model("myuser", "HAWCUser").objects.values_list(*fields))
+        df = pd.DataFrame(data, columns=fields).rename(columns=dict(date_joined="date"))
+        fig = self._quarterly_change_plots(df, "New users")
+        return Response(fig.to_dict())
+
+    @decorators.list_route()
+    def assessment_growth(self, request):
+        fields = ("id", "created")
+        data = list(apps.get_model("assessment", "Assessment").objects.values_list(*fields))
+        df = pd.DataFrame(data, columns=fields).rename(columns=dict(created="date"))
+        fig = self._quarterly_change_plots(df, "Assessments")
+        return Response(fig.to_dict())
+
+    @decorators.list_route()
+    def study_growth(self, request):
+        fields = ("id", "created")
+        data = list(apps.get_model("study", "Study").objects.values_list(*fields))
+        df = pd.DataFrame(data, columns=fields).rename(columns=dict(created="date"))
+        fig = self._quarterly_change_plots(df, "Studies")
         return Response(fig.to_dict())

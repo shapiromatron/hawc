@@ -89,8 +89,6 @@ urlpatterns = [
     ),
     # api views
     url(r"^api/", include(router.urls, namespace="api")),
-    # admin views
-    url(r"^admin-dashboard/$", views.AdminDashboard.as_view(), name="admin_dashboard"),
 ]
 
 admin.autodiscover()
