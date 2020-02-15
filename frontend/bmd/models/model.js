@@ -67,7 +67,6 @@ class BMDLine {
     }
 
     _getPlotData() {
-        // x must be defined since we're calling "eval" in the javascript models
         let model = this._getModel(),
             bmd = this.model.output.BMD,
             bmdl = this.model.output.BMDL,
@@ -75,7 +74,12 @@ class BMDLine {
             bmdl_line,
             bmd_y;
 
+        // x must be defined since we're calling "eval" in the javascript models
+        // eslint-disable-next-line no-unused-vars
+        var x;
+
         if (bmd && bmd > 0) {
+            x = bmd;
             bmd_y = eval(model);
             bmd_line = {
                 x: bmd,

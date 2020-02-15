@@ -246,6 +246,10 @@ div.smart-tag.active {
 .refTagEditing {
     cursor: pointer;
 }
+.ref-container {
+    max-height: 40vh;
+    overflow-y: auto;
+}
 .abstract_label {
     font-weight: bold;
 }

@@ -65,7 +65,7 @@ format-js:  ## Modify javascript code if possible using linters/formatters
 	@npm --prefix ./frontend run format
 
 test:  ## Run python tests
-	@DJANGO_SETTINGS_MODULE=hawc.main.settings.unittest py.test
+	@py.test
 
 flynt:  ## Run flynt (optional) using preferred config
 	@flynt --verbose --line_length=120 hawc/

@@ -71,7 +71,7 @@ class ReferencesViewer {
         if (actionLinks.length > 0) {
             actionLinks.push({
                 url: "#",
-                text: "Show all abstracts",
+                text: "Hide all abstracts",
                 cls: "show_abstracts",
             });
             h3.append(HAWCUtils.pageActionsButton(actionLinks)).on(
@@ -103,7 +103,7 @@ class ReferencesViewer {
         let content =
             this.refs.length === 0
                 ? "<p>No references found.</p>"
-                : this.refs.map(d => d.print_div_row());
+                : this.refs.map(d => d.print_self({showActions: true, showHr: true}));
 
         this.$table_div.html(content);
     }

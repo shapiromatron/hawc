@@ -242,6 +242,7 @@ if GIT_COMMIT:
 
 # PubMed settings
 PUBMED_API_KEY = os.getenv("PUBMED_API_KEY")
+PUBMED_MAX_QUERY_SIZE = 10000
 
 # BMD modeling settings
 BMDS_SUBMISSION_URL = os.getenv("BMDS_SUBMISSION_URL", "http://example.com/api/dfile/")

@@ -7,6 +7,7 @@ from math import ceil
 from urllib import parse
 
 from django.apps import apps
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.db import models, transaction
@@ -322,8 +323,6 @@ class Search(models.Model):
 class PubMedQuery(models.Model):
     objects = managers.PubMedQueryManager()
 
-    MAX_QUERY_SIZE = 5000
-
     search = models.ForeignKey(Search)
     results = models.TextField(blank=True)
     query_date = models.DateTimeField(auto_now_add=True)
@@ -338,10 +337,10 @@ class PubMedQuery(models.Model):
         search = pubmed.PubMedSearch(term=self.search.search_string_text)
         search.get_ids_count()
 
-        if search.id_count > self.MAX_QUERY_SIZE:
+        if search.id_count > settings.PUBMED_MAX_QUERY_SIZE:
             raise TooManyPubMedResults(
                 "Too many PubMed references found: {0}; reduce query scope to "
-                "fewer than {1}".format(search.id_count, self.MAX_QUERY_SIZE)
+                "fewer than {1}".format(search.id_count, settings.PUBMED_MAX_QUERY_SIZE)
             )
 
         search.get_ids()
@@ -546,23 +545,9 @@ class ReferenceFilterTag(NonUniqueTagBase, AssessmentRootMixin, MP_Node):
 
 class ReferenceTags(ItemBase):
     objects = managers.ReferenceTagsManager()
-    # required to be copied when overridden tag object. See GitHub bug report:
-    # https://github.com/alex/django-taggit/issues/101
-    # copied directly and unchanged from "TaggedItemBase"
+
     tag = models.ForeignKey(ReferenceFilterTag, related_name="%(app_label)s_%(class)s_items")
     content_object = models.ForeignKey("Reference")
-
-    @classmethod
-    def tags_for(cls, model, instance=None):
-        if instance is not None:
-            return cls.tag_model().objects.filter(
-                **{"%s__content_object" % cls.tag_relname(): instance}
-            )
-        return (
-            cls.tag_model()
-            .objects.filter(**{"%s__content_object__isnull" % cls.tag_relname(): False})
-            .distinct()
-        )
 
 
 class Reference(models.Model):
@@ -598,7 +583,7 @@ class Reference(models.Model):
     def __str__(self):
         return self.get_short_citation_estimate()
 
-    def get_json(self, json_encode=True, searches=False):
+    def get_json(self, json_encode=True):
         d = {}
         fields = (
             "pk",
@@ -612,9 +597,12 @@ class Reference(models.Model):
         for field in fields:
             d[field] = getattr(self, field)
 
+        d["url"] = self.get_absolute_url()
+        d["editTagUrl"] = reverse("lit:reference_tags_edit", kwargs={"pk": self.pk})
+        d["editReferenceUrl"] = reverse("lit:ref_edit", kwargs={"pk": self.pk})
+
         d["identifiers"] = [ident.get_json(json_encode=False) for ident in self.identifiers.all()]
-        if searches:
-            d["searches"] = [ref.get_json() for ref in self.searches.all()]
+        d["searches"] = [ref.get_json() for ref in self.searches.all()]
 
         d["tags"] = list(self.tags.all().values_list("pk", flat=True))
         d["tags_text"] = list(self.tags.all().values_list("name", flat=True))
