@@ -7,13 +7,8 @@ var deepCopy = function(d) {
             "X-CSRFToken": csrf,
             "content-type": "application/json",
         });
-    },
-    toHawcString = function(v) {
-        // synced with method in hawc.js
-        return v > 0.001 ? v.toLocaleString() : v.toString();
     };
 
 export {deepCopy};
 export {docUrlRoot};
 export {getAjaxHeaders};
-export {toHawcString};

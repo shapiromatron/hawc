@@ -39,6 +39,55 @@ def get_treatment_period(exp, dr):
     return txt
 
 
+def get_significance_and_direction(data_type, groups):
+    """
+    Get significance and direction; return all possible values as strings.
+    """
+    significance_list = []
+
+    if len(groups) == 0:
+        return significance_list
+
+    if data_type == models.Endpoint.DATA_TYPE_CONTINUOUS:
+        control_resp = groups[0]["response"]
+        for group in groups:
+            if group["significant"]:
+                resp = group["response"]
+                if control_resp is None or resp is None or resp == control_resp:
+                    significance_list.append("Yes - ?")
+                elif resp > control_resp:
+                    significance_list.append("Yes - ↑")
+                else:
+                    significance_list.append("Yes - ↓")
+            else:
+                significance_list.append("No")
+    elif data_type in [
+        models.Endpoint.DATA_TYPE_DICHOTOMOUS,
+        models.Endpoint.DATA_TYPE_DICHOTOMOUS_CANCER,
+    ]:
+        for group in groups:
+            if group["significant"]:
+                significance_list.append("Yes - ↑")
+            else:
+                significance_list.append("No")
+    elif data_type == models.Endpoint.DATA_TYPE_PERCENT_DIFFERENCE:
+        for group in groups:
+            if group["significant"]:
+                resp = group["response"]
+                if resp is None or resp == 0:
+                    significance_list.append("Yes - ?")
+                elif resp > 0:
+                    significance_list.append("Yes - ↑")
+                else:
+                    significance_list.append("Yes - ↓")
+            else:
+                significance_list.append("No")
+    else:
+        raise ValueError("Unknown state to determine significance/direction")
+
+    return significance_list
+
+
 class EndpointGroupFlatComplete(FlatFileExporter):
     """
     Returns a complete export of all data required to rebuild the the
@@ -407,31 +456,6 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
         return header
 
     @staticmethod
-    def _get_significance_and_direction(groups):
-        """
-        Get significance and direction; return all possible values as strings.
-        """
-        significance_list = []
-
-        if len(groups) == 0:
-            return significance_list
-
-        control_resp = groups[0]["response"]
-        for group in groups:
-            if group["significant"]:
-                resp = group["response"]
-                if control_resp is None or resp is None:
-                    significance_list.append("Yes - ?")
-                elif resp > control_resp:
-                    significance_list.append("Yes - ↑")
-                else:
-                    significance_list.append("Yes - ↓")
-            else:
-                significance_list.append("No")
-
-        return significance_list
-
-    @staticmethod
     def _get_bmd_values(bmd, preferred_units):
         # only return BMD values if they're in the preferred units
         if bmd and bmd["dose_units"] in preferred_units:
@@ -508,7 +532,7 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
             row.extend([ser["trend_value"], ser["trend_result"]])
 
             dose_list = [self._get_dose(doses, i) for i in range(len(doses))]
-            sigs = self._get_significance_and_direction(ser["groups"])
+            sigs = get_significance_and_direction(ser["data_type"], ser["groups"])
 
             dose_list.extend([None] * (self.num_doses - len(dose_list)))
             sigs.extend([None] * (self.num_doses - len(sigs)))

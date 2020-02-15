@@ -71,26 +71,32 @@ class ResultGroup {
                     return _.isFinite(d.variance) ? d.variance : "-";
                 },
                 ci() {
-                    return _.isNumber(d.lower_ci) && _.isNumber(d.upper_ci)
-                        ? "{0} - {1}".printf(d.lower_ci, d.upper_ci)
-                        : "-";
+                    if (_.isNumber(d.lower_ci) && _.isNumber(d.upper_ci)) {
+                        return d.lower_ci < 0
+                            ? `[${d.lower_ci}, ${d.upper_ci}]`
+                            : `${d.lower_ci} – ${d.upper_ci}`;
+                    } else {
+                        return "-";
+                    }
                 },
                 range() {
-                    return _.isNumber(d.lower_range) && _.isNumber(d.upper_range)
-                        ? "{0} - {1}".printf(d.lower_range, d.upper_range)
-                        : "-";
+                    if (_.isNumber(d.lower_range) && _.isNumber(d.upper_range)) {
+                        return d.lower_range < 0
+                            ? `[${d.lower_range}, ${d.upper_range}]`
+                            : `${d.lower_range} – ${d.upper_range}`;
+                    } else {
+                        return "-";
+                    }
                 },
                 pvalue() {
                     return _.isNumber(d.p_value)
-                        ? "{0} {1}".printf(d.p_value_qualifier, d.p_value)
+                        ? `${d.p_value_qualifier} ${d.p_value}`
                         : d.p_value_qualifier;
                 },
             };
 
         return _.chain(cols)
-            .map(function(v, k) {
-                return v ? methods[k]() : null;
-            })
+            .map((v, k) => (v ? methods[k]() : null))
             .without(null)
             .value();
     }

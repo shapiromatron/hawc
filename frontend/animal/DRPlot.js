@@ -439,18 +439,10 @@ class DRPlot extends D3Plot {
             }),
             bar_options = {
                 data: bars,
-                x1(d) {
-                    return x(d.x);
-                },
-                y1(d) {
-                    return y(d.y_lower);
-                },
-                x2(d) {
-                    return x(d.x);
-                },
-                y2(d) {
-                    return y(d.y_upper);
-                },
+                x1: d => x(d.x),
+                y1: d => y(d.y_lower),
+                x2: d => x(d.x),
+                y2: d => y(d.y_upper),
                 classes: "dr_err_bars",
                 append_to: this.error_bar_group,
             };
@@ -462,19 +454,12 @@ class DRPlot extends D3Plot {
         }
 
         $.extend(bar_options, {
-            x1(d, i) {
-                return x(d.x) + hline_width;
-            },
-            y1(d) {
-                return y(d.y_lower);
-            },
-            x2(d, i) {
-                return x(d.x) - hline_width;
-            },
-            y2(d) {
-                return y(d.y_lower);
-            },
+            x1: d => x(d.x) + hline_width,
+            y1: d => y(d.y_lower),
+            x2: d => x(d.x) - hline_width,
+            y2: d => y(d.y_lower),
         });
+
         if (this.error_bars_lower && update) {
             this.error_bars_lower = this.build_line(bar_options, this.error_bars_lower);
         } else {
@@ -482,13 +467,10 @@ class DRPlot extends D3Plot {
         }
 
         $.extend(bar_options, {
-            y1(d) {
-                return y(d.y_upper);
-            },
-            y2(d) {
-                return y(d.y_upper);
-            },
+            y1: d => y(d.y_upper),
+            y2: d => y(d.y_upper),
         });
+
         if (this.error_bars_upper && update) {
             this.error_bars_upper = this.build_line(bar_options, this.error_bars_upper);
         } else {

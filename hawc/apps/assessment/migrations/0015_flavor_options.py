@@ -18,10 +18,10 @@ class Migration(migrations.Migration):
             model_name="assessment",
             name="noel_name",
             field=models.PositiveSmallIntegerField(
-                choices=[(0, "NOEL/LOEL"), (1, "NOAEL/LOAEL")],
+                choices=[(2, "NEL/LEL"), (0, "NOEL/LOEL"), (1, "NOAEL/LOAEL")],
                 default=Assessment.get_noel_name_default,
-                help_text="What term should be used to refer to NOEL/NOAEL and LOEL/LOAEL?",
-                verbose_name="NOEL/NOAEL name",
+                help_text="What term should be used to refer to NEL/NOEL/NOAEL and LEL/LOEL/LOAEL?",
+                verbose_name="NEL/NOEL/NOAEL name",
             ),
         ),
         migrations.AddField(
