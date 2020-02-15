@@ -28,6 +28,7 @@ def set_authors_list(apps, schema_editor):
                 identifier.authors_list = ", ".join(content["authors_list"])
                 identifier.save()
 
+    # TODO - move this code somewhere else
     # 2 or 3 sequential single capital-letters with single spaces between
     pattern = re.compile(r"([A-Z])\s([A-Z])\s?([A-Z])?")
     qs = Identifiers.objects.filter(database=RIS)

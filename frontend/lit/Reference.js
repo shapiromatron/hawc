@@ -38,6 +38,7 @@ class Reference extends Observee {
                 if (this.data.abstract) return `<p class="abstracts">${this.data.abstract}</p>`;
             },
             getAuthors = () => {
+                // TODO - use new names
                 let authors =
                         this.data.authors_list || this.data.authors || Reference.no_authors_text,
                     year = this.data.year || "",
@@ -169,6 +170,7 @@ class Reference extends Observee {
     }
 
     print_short_name() {
+        // TODO - use new names
         let authors = this.data.authors || this.data.authors_list || Reference.no_authors_text,
             year = this.data.year || "";
         this.$list = $(`<p class="reference">${authors} ${year}</p>`).data("d", this);

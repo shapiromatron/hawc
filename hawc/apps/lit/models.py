@@ -565,6 +565,7 @@ class Reference(models.Model):
     searches = models.ManyToManyField(Search, blank=False, related_name="references")
     identifiers = models.ManyToManyField(Identifiers, blank=True, related_name="references")
     title = models.TextField(blank=True)
+    # TODO rename authors to authors_short and authors_list to authors
     authors = models.TextField(
         blank=True, help_text="Short-text for to display (eg., `Smith et al.`)"
     )
@@ -600,6 +601,7 @@ class Reference(models.Model):
         fields = (
             "pk",
             "title",
+            # TODO: use new names
             "authors",
             "authors_list",
             "year",
@@ -643,6 +645,7 @@ class Reference(models.Model):
     @property
     def reference_citation(self):
         txt = ""
+        # TODO: use new names
         for itm in [self.authors, self.title, self.journal]:
             txt += itm
             if (len(itm) > 0) and (itm[-1] != "."):
@@ -653,6 +656,7 @@ class Reference(models.Model):
 
     def get_short_citation_estimate(self):
         citation = ""
+        # TODO: use new names
         # get authors guess
         if (self.authors.find("and") > -1) or (self.authors.find("et al.") > -1):
             citation = re.sub(r" ([A-Z]{2})", "", self.authors)  # remove initials

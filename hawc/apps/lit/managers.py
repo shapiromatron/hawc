@@ -411,7 +411,8 @@ class ReferenceManager(BaseManager):
             if ref:
                 ref.__dict__.update(
                     title=content["title"],
-                    authors=content["authors_short"],
+                    authors=content["authors_short"],  # TODO FIX THIS
+                    authors_list=content["authors"],
                     year=content["year"],
                     journal=content["citation"],
                     abstract=content["abstract"],
@@ -422,6 +423,7 @@ class ReferenceManager(BaseManager):
                     assessment_id=assessment_id,
                     title=content["title"],
                     authors=content["authors_short"],
+                    authors_list=content["authors"],  # TODO FIX THIS
                     year=content["year"],
                     journal=content["citation"],
                     abstract=content["abstract"],

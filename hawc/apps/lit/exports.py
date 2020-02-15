@@ -22,6 +22,7 @@ class ReferenceFlatComplete(FlatFileExporter):
             "Citation",
             "Full Citation",
             "Title",
+            # TODO: use new names
             "Short Authors",
             "Full Authors",
             "Year",
@@ -99,6 +100,7 @@ class ReferenceFlatComplete(FlatFileExporter):
                 ref.get_short_citation_estimate(),
                 ref.reference_citation,
                 ref.title,
+                # TODO: use new names
                 ref.authors,
                 ref.authors_list,
                 ref.year,
