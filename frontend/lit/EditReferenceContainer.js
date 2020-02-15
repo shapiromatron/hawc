@@ -17,8 +17,8 @@ class EditReferenceContainer {
 
     _build_containers() {
         this.$div_selected_tags = $('<div class="well well-small"></div>');
-        this.$div_details = $("<div></div>");
-        this.$div_error = $("<div></div>");
+        this.$div_details = $("<div>");
+        this.$div_error = $("<div>");
         this.saved_icon = $('<span class="btn litSavedIcon" style="display: none;">Saved!</span>');
         this.$editRef = $(
             '<a class="btn pull-right" target="_blank" href="#" title="Cleanup imported reference details">Edit</a>'
@@ -85,8 +85,8 @@ class EditReferenceContainer {
         if (this.loaded_ref) {
             this.loaded_ref.addObserver(this);
             this.loaded_ref.select_name();
-            this.$div_details.html(this.loaded_ref.print_self());
-            this.$editRef.attr("href", this.loaded_ref.edit_reference_url());
+            this.$div_details.html(["<br/>", this.loaded_ref.print_self({showActions: false})]);
+            this.$editRef.attr("href", this.loaded_ref.data.editReferenceUrl);
             this.clear_errors();
             this._build_tagslist();
         }
@@ -138,35 +138,27 @@ class EditReferenceContainer {
     }
 
     _populate_reflist() {
-        var $refs_tagged = $('<div class="accordion-inner"></div>'),
-            $refs_untagged = $('<div class="accordion-inner"></div>'),
-            tagged = this.refs.filter(function(v) {
-                return v.data.tags.length > 0;
-            }),
-            untagged = this.refs.filter(function(v) {
-                return v.data.tags.length === 0;
-            });
+        var $refs_tagged = $('<div class="accordion-inner ref-container">'),
+            $refs_untagged = $('<div class="accordion-inner ref-container">'),
+            tagged = this.refs.filter(v => v.data.tags.length > 0),
+            untagged = this.refs.filter(v => v.data.tags.length === 0);
 
-        tagged.forEach(function(v) {
-            $refs_tagged.append(v.print_name());
-        });
-        untagged.forEach(function(v) {
-            $refs_untagged.append(v.print_name());
-        });
+        tagged.forEach(v => $refs_tagged.append(v.print_name()));
+        untagged.forEach(v => $refs_untagged.append(v.print_name()));
 
         var taggedbody = $(
-                '<div id="references_tagged" class="accordion-body collapse in"></div>'
+                '<div id="references_tagged" class="accordion-body collapse in">'
             ).append($refs_tagged),
-            taggedgroup = $('<div class="accordion-group"></div>')
+            taggedgroup = $('<div class="accordion-group">')
                 .append(
                     '<div class="accordion-heading"><a class="accordion-toggle" data-toggle="collapse" data-parent="#references_lists" href="#references_tagged">Tagged</a></div>'
                 )
                 .append(taggedbody);
 
         var untaggedbody = $(
-                '<div id="references_untagged" class="accordion-body collapse in"></div>'
+                '<div id="references_untagged" class="accordion-body collapse in">'
             ).append($refs_untagged),
-            untaggedgroup = $('<div class="accordion-group"></div>')
+            untaggedgroup = $('<div class="accordion-group">')
                 .append(
                     '<div class="accordion-heading"><a class="accordion-toggle" data-toggle="collapse" data-parent="#references_lists" href="#references_untagged">Untagged</a></div>'
                 )

@@ -351,10 +351,7 @@ class ReferenceSearchForm(forms.Form):
         if self.cleaned_data["abstract"]:
             query &= Q(abstract__icontains=self.cleaned_data["abstract"])
 
-        refs = [
-            r.get_json(json_encode=False, searches=True)
-            for r in models.Reference.objects.filter(query)
-        ]
+        refs = [r.get_json(json_encode=False) for r in models.Reference.objects.filter(query)]
 
         return refs
 

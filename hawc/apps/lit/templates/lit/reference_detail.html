@@ -36,6 +36,6 @@
     window.app.litStartup(function(lit){
       let tagtree = new lit.TagTree(data.tags[0]),
           ref = new lit.Reference(data.reference, tagtree);
-      $('#reference_detail_div').html(ref.print_self(true)); });
+      $('#reference_detail_div').html(ref.print_self({showActions: true, showDetailsHeader: true, showTaglist: true})); });
   </script>
 {% endblock extrajs %}

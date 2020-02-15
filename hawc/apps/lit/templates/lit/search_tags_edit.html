@@ -36,7 +36,7 @@
       data.refs.push({{ ref.get_json | safe }})
     {% endfor %}
 
-    window.isEdit = true;
+    window.canEdit = true;
 
     window.app.litStartup(function(lit){
       let tagtree = new lit.TagTree(data.tags[0]),
