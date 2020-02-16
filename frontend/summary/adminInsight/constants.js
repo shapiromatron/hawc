@@ -1,9 +1,11 @@
-import _ from "lodash";
-
-export const selectedModelChoices = [
-    {id: 1, value: "User growth", model: "user"},
-    {id: 2, value: "Assessment growth", model: "assessment"},
-    {id: 3, value: "Study growth", model: "study"},
+export const modelChoices = [
+    {id: "user", value: "User growth"},
+    {id: "assessment", value: "Assessment growth"},
+    {id: "study", value: "Study growth"},
 ];
 
-export const selectedModelChoiceMap = _.keyBy(selectedModelChoices, "id");
+export const grouperChoices = [
+    {id: "A", value: "Annually"},
+    {id: "Q", value: "Quarterly"},
+    {id: "M", value: "Monthly"},
+];

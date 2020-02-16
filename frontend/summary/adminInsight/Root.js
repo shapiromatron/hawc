@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 
 import Loading from "shared/components/Loading";
 import SelectInput from "shared/components/SelectInput";
-import {selectedModelChoices} from "./constants";
+import {modelChoices, grouperChoices} from "./constants";
 import Plot from "react-plotly.js";
 
 @observer
@@ -13,20 +13,29 @@ class Root extends React.Component {
         this.props.store.growthStore.fetchNewChart();
     }
 
-    renderSelectInput(store) {
+    renderInputs(store) {
         return (
-            <SelectInput
-                id="selectedModel"
-                choices={selectedModelChoices}
-                handleSelect={() => store.changeSelectedModel(parseInt(event.target.value))}
-                value={store.selectedModel}
-                label="Select model to view results"
-            />
+            <div>
+                <SelectInput
+                    id="model"
+                    choices={modelChoices}
+                    handleSelect={() => store.changeQueryValue("model", event.target.value)}
+                    value={store.query.model}
+                    label="Select model to view results"
+                />
+                <SelectInput
+                    id="selectedModel"
+                    choices={grouperChoices}
+                    handleSelect={() => store.changeQueryValue("grouper", event.target.value)}
+                    value={store.query.grouper}
+                    label="Select grouping frequency"
+                />
+            </div>
         );
     }
 
     renderVisualization(store) {
-        if (store.isFetchingData || store.plotData === null) {
+        if (store.isFetchingPlot || store.plotData === null) {
             return <Loading />;
         }
         return <Plot data={store.plotData.data} layout={store.plotData.layout} />;
@@ -36,7 +45,7 @@ class Root extends React.Component {
         let store = this.props.store.growthStore;
         return (
             <div>
-                {this.renderSelectInput(store)}
+                {this.renderInputs(store)}
                 {this.renderVisualization(store)}
             </div>
         );
@@ -46,8 +55,11 @@ class Root extends React.Component {
 Root.propTypes = {
     store: PropTypes.shape({
         growthStore: PropTypes.shape({
-            selectedModel: PropTypes.number.isRequired,
-            changeSelectedModel: PropTypes.func.isRequired,
+            query: PropTypes.shape({
+                model: PropTypes.number.isRequired,
+                grouper: PropTypes.number.isRequired,
+            }),
+            changeQueryValue: PropTypes.func.isRequired,
             fetchNewChart: PropTypes.func.isRequired,
             plotData: PropTypes.object,
         }).isRequired,

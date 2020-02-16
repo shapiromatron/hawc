@@ -1,7 +1,7 @@
 import $ from "$";
 import {observable, action} from "mobx";
 
-import {selectedModelChoices, selectedModelChoiceMap} from "./constants";
+import {modelChoices, grouperChoices} from "./constants";
 
 class RootStore {
     constructor() {
@@ -13,23 +13,29 @@ class GrowthStore {
     constructor(rootStore) {
         this.rootStore = rootStore;
     }
-    @observable selectedModel = selectedModelChoices[0].id;
-    @observable isFetchingData = false;
+
+    @observable query = {
+        model: modelChoices[0].id,
+        grouper: grouperChoices[0].id,
+    };
+
+    @observable isFetchingPlot = false;
     @observable plotData = null;
-    @action.bound changeSelectedModel(newModel) {
-        this.selectedModel = newModel;
+
+    @action.bound changeQueryValue(field, value) {
+        this.query[field] = value;
         this.fetchNewChart();
     }
     @action.bound fetchNewChart() {
-        this.isFetchingData = true;
+        this.isFetchingPlot = true;
         this.plotData = null;
         let url = "/assessment/api/dashboard/growth/",
-            params = {model: selectedModelChoiceMap[this.selectedModel].model};
+            params = $.param(this.query);
 
-        fetch(`${url}?${$.param(params)}`)
+        fetch(`${url}?${params}`)
             .then(resp => resp.json())
             .then(json => {
-                this.isFetchingData = false;
+                this.isFetchingPlot = false;
                 this.plotData = json;
             });
     }
