@@ -1,0 +1,29 @@
+{% extends "admin/base_site.html" %}
+
+{% load i18n static %}
+{% load render_bundle from webpack_loader %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+    &rsaquo;
+    Insights
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid" id="main"></div>
+
+{% if debug %}
+<script type="text/javascript" src="{% static 'debug/jquery/1.9.1/jquery.js' %}"></script>
+{% else %}
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+{% endif %}
+
+{% render_bundle "main" %}
+<script type="text/javascript">
+window.app.adminInsightStartup(function (app) {
+    app.func(document.getElementById("main"));
+});
+</script>
+{% endblock content %}

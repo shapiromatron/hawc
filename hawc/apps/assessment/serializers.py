@@ -1,3 +1,8 @@
+import pandas as pd
+import plotly.express as px
+import plotly.graph_objects as go
+from django.apps import apps
+from plotly.subplots import make_subplots
 from rest_framework import serializers
 from rest_framework.exceptions import ParseError
 
@@ -102,3 +107,67 @@ class AssessmentRootedSerializer(serializers.ModelSerializer):
             instance.move(parent, pos="last-child")
 
         return instance
+
+
+class GrowthPlotSerializer(serializers.Serializer):
+    model = serializers.ChoiceField(choices=["user", "assessment", "study"])
+    grouper = serializers.ChoiceField(choices=["A", "Q", "M"])
+
+    group_mapping = dict(A="Annual", Q="Quarterly", M="Monthly")
+
+    def _build_change_plots(self, df: pd.DataFrame, grouper: str, y_axis: str) -> go.Figure:
+        df1 = df.set_index("date").groupby(pd.Grouper(freq=grouper)).count().cumsum().reset_index()
+        df2 = (
+            df.set_index("date")
+            .groupby(pd.Grouper(freq=grouper))
+            .count()
+            .cumsum()
+            .diff(periods=1)
+            .dropna()
+            .reset_index()
+        )
+
+        fig = make_subplots(
+            rows=2,
+            cols=1,
+            shared_xaxes=True,
+            subplot_titles=(
+                f"Cumulative growth of {y_axis.lower()}",
+                f"{self.group_mapping[grouper]} growth of {y_axis.lower()}",
+            ),
+        )
+        fig.update_layout(height=600)
+
+        ax1 = px.bar(df1, x="date", y="id")
+        for trace in ax1.data:
+            fig.add_trace(trace, row=1, col=1)
+        fig.update_yaxes(title_text=y_axis, row=1, col=1)
+
+        ax2 = px.bar(df2, x="date", y="id")
+        for trace in ax2.data:
+            fig.add_trace(trace, row=2, col=1)
+        fig.update_yaxes(title_text=y_axis, row=2, col=1)
+
+        return fig
+
+    def create_figure(self) -> go.Figure:
+        model = self.validated_data["model"]
+        if model == "user":
+            fields = ("id", "date_joined")
+            data = list(apps.get_model("myuser", "HAWCUser").objects.values_list(*fields))
+            df = pd.DataFrame(data, columns=fields).rename(columns=dict(date_joined="date"))
+            fig = self._build_change_plots(df, self.validated_data["grouper"], "New users")
+        elif model == "assessment":
+            fields = ("id", "created")
+            data = list(apps.get_model("assessment", "Assessment").objects.values_list(*fields))
+            df = pd.DataFrame(data, columns=fields).rename(columns=dict(created="date"))
+            fig = self._build_change_plots(df, self.validated_data["grouper"], "Assessments")
+        elif model == "study":
+            fields = ("id", "created")
+            data = list(apps.get_model("study", "Study").objects.values_list(*fields))
+            df = pd.DataFrame(data, columns=fields).rename(columns=dict(created="date"))
+            fig = self._build_change_plots(df, self.validated_data["grouper"], "Studies")
+        else:
+            raise Exception("Unreachable code.")
+
+        return fig
