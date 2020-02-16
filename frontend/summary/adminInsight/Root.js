@@ -10,7 +10,7 @@ import Plot from "react-plotly.js";
 @observer
 class Root extends React.Component {
     componentDidMount() {
-        this.props.store.fetchNewChart();
+        this.props.store.growthStore.fetchNewChart();
     }
 
     renderSelectInput(store) {
@@ -26,17 +26,14 @@ class Root extends React.Component {
     }
 
     renderVisualization(store) {
-        if (store.isFetchingData) {
+        if (store.isFetchingData || store.plotData === null) {
             return <Loading />;
-        }
-        if (store.plotData === null) {
-            return <p>-</p>;
         }
         return <Plot data={store.plotData.data} layout={store.plotData.layout} />;
     }
 
     render() {
-        let {store} = this.props;
+        let store = this.props.store.growthStore;
         return (
             <div>
                 {this.renderSelectInput(store)}
@@ -48,9 +45,12 @@ class Root extends React.Component {
 
 Root.propTypes = {
     store: PropTypes.shape({
-        selectedModel: PropTypes.number.isRequired,
-        changeSelectedModel: PropTypes.func.isRequired,
-        plotData: PropTypes.object,
+        growthStore: PropTypes.shape({
+            selectedModel: PropTypes.number.isRequired,
+            changeSelectedModel: PropTypes.func.isRequired,
+            fetchNewChart: PropTypes.func.isRequired,
+            plotData: PropTypes.object,
+        }).isRequired,
     }).isRequired,
 };
 

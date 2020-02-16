@@ -3,7 +3,16 @@ import {observable, action} from "mobx";
 
 import {selectedModelChoices, selectedModelChoiceMap} from "./constants";
 
-class AdminInsightStore {
+class RootStore {
+    constructor() {
+        this.growthStore = new GrowthStore(this);
+    }
+}
+
+class GrowthStore {
+    constructor(rootStore) {
+        this.rootStore = rootStore;
+    }
     @observable selectedModel = selectedModelChoices[0].id;
     @observable isFetchingData = false;
     @observable plotData = null;
@@ -26,7 +35,7 @@ class AdminInsightStore {
     }
 }
 
-const store = new AdminInsightStore();
+const store = new RootStore();
 
 // singleton pattern
 export default store;
