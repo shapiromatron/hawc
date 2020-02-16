@@ -1,10 +1,7 @@
 {% extends "admin/base_site.html" %}
+
 {% load i18n static %}
-
-{% block extrahead %}
-<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-{% endblock extrahead %}
-
+{% load render_bundle from webpack_loader %}
 
 {% block breadcrumbs %}
 <div class="breadcrumbs">
@@ -15,34 +12,19 @@
 {% endblock %}
 
 {% block content %}
-<div class="container-fluid">
-    <h1>User growth</h1>
-    <div id="user_growth"></div>
-    <h1>Assessment growth</h1>
-    <div id="assessment_growth"></div>
-    <h1>Study growth</h1>
-    <div id="study_growth"></div>
-</div>
+<div class="container-fluid" id="main"></div>
 
-<script>
-    const opts = { headers: { 'Content-Type': 'application/json' } },
-        embedPlotly = function (url, id) {
-            document.getElementById(id).textContent = "Loading..."
-            fetch(url, opts)
-                .then(
-                    function (response) {
-                        response.json().then(function (resp) {
-                            document.getElementById(id).textContent = "";
-                            Plotly.newPlot(document.getElementById(id), resp.data, resp.layout);
-                        });
-                    }
-                );
-        };
+{% if debug %}
+<script type="text/javascript" src="{% static 'debug/jquery/1.9.1/jquery.js' %}"></script>
+{% else %}
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+{% endif %}
 
-    document.addEventListener("DOMContentLoaded", function () {
-        embedPlotly("/assessment/api/dashboard/user_growth/", "user_growth")
-        embedPlotly("/assessment/api/dashboard/assessment_growth/", "assessment_growth")
-        embedPlotly("/assessment/api/dashboard/study_growth/", "study_growth")
+{% render_bundle "main" %}
+
+<script type="text/javascript">
+    window.app.adminInsightStartup(function (app) {
+        app.func(document.getElementById("main"));
     });
 </script>
 {% endblock content %}
