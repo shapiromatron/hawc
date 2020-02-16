@@ -9,7 +9,7 @@ from django.core.urlresolvers import reverse
 from django.db.models import Count
 from plotly.subplots import make_subplots
 from rest_framework import decorators, filters, permissions, status, viewsets
-from rest_framework.exceptions import APIException
+from rest_framework.exceptions import APIException, ValidationError
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
@@ -348,25 +348,28 @@ class AdminDashboardViewset(viewsets.ViewSet):
         return fig
 
     @decorators.list_route()
-    def user_growth(self, request):
-        fields = ("id", "date_joined")
-        data = list(apps.get_model("myuser", "HAWCUser").objects.values_list(*fields))
-        df = pd.DataFrame(data, columns=fields).rename(columns=dict(date_joined="date"))
-        fig = self._quarterly_change_plots(df, "New users")
-        return Response(fig.to_dict())
+    def growth(self, request):
+        model = request.GET.get("model")
+        models = {"user", "assessment", "study"}
+        if model not in models:
+            raise ValidationError(f"Bad `model` parameter: expected one of {models}")
 
-    @decorators.list_route()
-    def assessment_growth(self, request):
-        fields = ("id", "created")
-        data = list(apps.get_model("assessment", "Assessment").objects.values_list(*fields))
-        df = pd.DataFrame(data, columns=fields).rename(columns=dict(created="date"))
-        fig = self._quarterly_change_plots(df, "Assessments")
-        return Response(fig.to_dict())
+        if model == "user":
+            fields = ("id", "date_joined")
+            data = list(apps.get_model("myuser", "HAWCUser").objects.values_list(*fields))
+            df = pd.DataFrame(data, columns=fields).rename(columns=dict(date_joined="date"))
+            fig = self._quarterly_change_plots(df, "New users")
+        elif model == "assessment":
+            fields = ("id", "created")
+            data = list(apps.get_model("assessment", "Assessment").objects.values_list(*fields))
+            df = pd.DataFrame(data, columns=fields).rename(columns=dict(created="date"))
+            fig = self._quarterly_change_plots(df, "Assessments")
+        elif model == "study":
+            fields = ("id", "created")
+            data = list(apps.get_model("study", "Study").objects.values_list(*fields))
+            df = pd.DataFrame(data, columns=fields).rename(columns=dict(created="date"))
+            fig = self._quarterly_change_plots(df, "Studies")
+        else:
+            raise Exception("Unreachable code.")
 
-    @decorators.list_route()
-    def study_growth(self, request):
-        fields = ("id", "created")
-        data = list(apps.get_model("study", "Study").objects.values_list(*fields))
-        df = pd.DataFrame(data, columns=fields).rename(columns=dict(created="date"))
-        fig = self._quarterly_change_plots(df, "Studies")
         return Response(fig.to_dict())

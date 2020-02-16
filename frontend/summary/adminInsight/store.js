@@ -1,5 +1,7 @@
+import $ from "$";
 import {observable, action} from "mobx";
 
+import h from "shared/utils/helpers";
 import {selectedModelChoices, selectedModelChoiceMap} from "./constants";
 
 class AdminInsightStore {
@@ -13,8 +15,10 @@ class AdminInsightStore {
     @action.bound fetchNewChart() {
         this.isFetchingData = true;
         this.plotData = null;
-        let url = selectedModelChoiceMap[this.selectedModel].url;
-        fetch(url)
+        let url = "/assessment/api/dashboard/growth/",
+            params = {model: selectedModelChoiceMap[this.selectedModel].model};
+
+        fetch(`${url}?${$.param(params)}`)
             .then(resp => resp.json())
             .then(json => {
                 this.isFetchingData = false;
