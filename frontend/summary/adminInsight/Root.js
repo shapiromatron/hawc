@@ -56,8 +56,8 @@ Root.propTypes = {
     store: PropTypes.shape({
         growthStore: PropTypes.shape({
             query: PropTypes.shape({
-                model: PropTypes.number.isRequired,
-                grouper: PropTypes.number.isRequired,
+                model: PropTypes.string.isRequired,
+                grouper: PropTypes.string.isRequired,
             }),
             changeQueryValue: PropTypes.func.isRequired,
             fetchNewChart: PropTypes.func.isRequired,
