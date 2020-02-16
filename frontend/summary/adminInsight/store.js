@@ -1,7 +1,6 @@
 import $ from "$";
 import {observable, action} from "mobx";
 
-import h from "shared/utils/helpers";
 import {selectedModelChoices, selectedModelChoiceMap} from "./constants";
 
 class AdminInsightStore {
