@@ -36,6 +36,11 @@ urlpatterns = [
     # Changelog
     url(r"^update-session/", views.UpdateSession.as_view(), name="update_session"),
     # Admin
+    url(
+        rf"^admin/{settings.ADMIN_URL_PREFIX}/dashboard/$",
+        views.AdminDashboard.as_view(),
+        name="admin_dashboard",
+    ),
     url(rf"^admin/{settings.ADMIN_URL_PREFIX}/", include(admin.site.urls)),
     url(r"^selectable/", include("selectable.urls")),
 ]

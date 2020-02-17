@@ -22,25 +22,146 @@ class Reference extends Observee {
         return 0;
     }
 
-    print_self(show_taglist) {
-        var taglist = show_taglist || false,
-            content = [
-                "<h4>Reference details:</h4>",
-                `<p class="ref_small">${this.data.journal}</p>`,
-                `<p class="ref_title">${this.data.title}</p>`,
-                `<p class="ref_small">${this.data.authors || Reference.no_authors_text}</p>`,
-            ];
-        if (taglist) {
+    print_self(options) {
+        options = options || {};
+        let content = [],
+            getTitle = () => {
+                if (this.data.title) {
+                    return `<p class="ref_title">${this.data.title}</p>`;
+                }
+            },
+            getJournal = () => {
+                let journal = this.data.journal ? `${this.data.journal}<br/>` : "";
+                return `<p class="ref_small">${journal}</p>`;
+            },
+            getAbstract = () => {
+                if (this.data.abstract) return `<p class="abstracts">${this.data.abstract}</p>`;
+            },
+            getAuthors = () => {
+                let authors = this.data.authors || Reference.no_authors_text,
+                    year = this.data.year || "",
+                    p = $(`<p class="ref_small">${authors} ${year}</p>`);
+
+                // return content or undefined
+                if (options.showActions && window.canEdit) {
+                    var ul = $('<ul class="dropdown-menu">')
+                        .append(
+                            `<li><a href="${this.data.editTagUrl}" target="_blank">Edit tags</a></li>`
+                        )
+                        .append(
+                            `<li><a href="${this.data.editReferenceUrl}" target="_blank">Edit reference</a></li>`
+                        );
+
+                    $('<div class="btn-group pull-right">')
+                        .append(
+                            '<a class="btn btn-small dropdown-toggle" data-toggle="dropdown">Actions <span class="caret"></span></a>'
+                        )
+                        .append(ul)
+                        .appendTo(p);
+                }
+
+                return p;
+            },
+            getSearches = () => {
+                if (this.data.searches) {
+                    let links = this.data.searches
+                            .map(d => `<a href="${d.url}">${d.title}</a>`)
+                            .join("<span>,&nbsp;</span>"),
+                        text = `<p><strong>HAWC searches/imports:</strong> ${links}</p>`;
+
+                    return $("<div>").append(text);
+                }
+            },
+            getIdentifiers = () => {
+                var links = $("<div>"),
+                    addHawcId = () => {
+                        let grp = $('<div class="btn-group">'),
+                            link = `<a class="btn btn-mini btn-warning" target="_blank" href="${this.data.url}">HAWC</a>`,
+                            copyID = $(
+                                `<button type="button" class="btn btn-mini btn-warning" title="Copy to clipboard"><i class="fa fa-clipboard"></i></button>`
+                            );
+
+                        // copy ID to clipboard
+                        new Clipboard(copyID.get(0), {text: () => this.data.pk});
+
+                        links.append(grp.append(link, copyID), "<span>&nbsp;</span>");
+                    };
+
+                if (this.data.full_text_url) {
+                    let grp = $('<div class="btn-group">'),
+                        link = `<a class="btn btn-mini btn-primary" target="_blank" href="${this.data.full_text_url}">Full text link</a>`,
+                        copyID = $(
+                            `<button type="button" class="btn btn-mini btn-primary" title="Copy to clipboard"><i class="fa fa-clipboard"></i></button>`
+                        );
+
+                    // copy ID to clipboard
+                    new Clipboard(copyID.get(0), {text: () => this.data.full_text_url});
+
+                    links.append(grp.append(link, copyID), "<span>&nbsp;</span>");
+                }
+
+                _.chain(this.data.identifiers)
+                    .filter(v => v.url.length > 0)
+                    .sortBy(v => v.database_id)
+                    .each(function(v) {
+                        let grp = $('<div class="btn-group">'),
+                            link = `<a class="btn btn-mini btn-success" target="_blank" href="${v.url}" title="View ${v.id}">${v.database}</a>`,
+                            copyID = $(
+                                `<button type="button" class="btn btn-mini btn-success" title="Copy to clipboard"><i class="fa fa-clipboard"></i></button>`
+                            );
+
+                        // copy ID to clipboard
+                        new Clipboard(copyID.get(0), {text: () => v.id});
+
+                        links.append(grp.append(link, copyID), "<span>&nbsp;</span>");
+                    })
+                    .value();
+
+                links.append(addHawcId());
+
+                _.chain(this.data.identifiers)
+                    .reject(v => v.url.length > 0 || v.database === "External link")
+                    .sortBy(v => v.database_id)
+                    .each(function(v) {
+                        let grp = $('<div class="btn-group">'),
+                            link = `<button type="button" class="btn btn-mini">${v.database}</a>`,
+                            copyID = $(
+                                `<button type="button" class="btn btn-mini" title="Copy to clipboard"><i class="fa fa-clipboard"></i></button>`
+                            );
+
+                        // copy ID to clipboard
+                        new Clipboard(copyID.get(0), {text: () => v.id});
+
+                        links.append(grp.append(link, copyID), "<span>&nbsp;</span>");
+                    })
+                    .value();
+
+                return links;
+            };
+
+        if (options.showDetailsHeader) {
+            content.push("<h4>Reference details:</h4>");
+        }
+        content.push(getAuthors());
+        content.push(getTitle());
+        content.push(getJournal());
+        if (options.showTaglist) {
             content = content.concat(this.print_taglist());
         }
-        content.push(`<p>${this.data.abstract}</p>`);
-        content.push(this.getLinks());
-        return content;
+        content.push(getAbstract());
+        content.push(getSearches());
+        content.push(getIdentifiers());
+
+        if (options.showHr) {
+            content.push("<hr/>");
+        }
+
+        return $("<div>").html(content);
     }
 
     print_taglist() {
-        var title = window.isEdit ? "click to remove" : "",
-            cls = window.isEdit ? "refTag refTagEditing" : "refTag";
+        var title = window.canEdit ? "click to remove" : "",
+            cls = window.canEdit ? "refTag refTagEditing" : "refTag";
         return this.data.tags.map(d =>
             $(`<span title="${title}" class="${cls}">${d.get_full_name()}</span>`).data("d", d)
         );
@@ -64,169 +185,6 @@ class Reference extends Observee {
         this.$list.removeClass("selected");
     }
 
-    getLinks() {
-        var links = $("<p>");
-
-        if (this.data.full_text_url) {
-            links.append(
-                $("<a>")
-                    .attr("class", "btn btn-mini btn-primary")
-                    .attr("target", "_blank")
-                    .attr("href", this.data.full_text_url)
-                    .text("Full text link ")
-                    .append('<i class="fa fa-fw fa-file-pdf-o"></i>')
-            );
-            links.append("<span>&nbsp;</span>");
-        }
-
-        _.chain(this.data.identifiers)
-            .filter(function(v) {
-                return v.url.length > 0;
-            })
-            .sortBy(function(v) {
-                return v.database_id;
-            })
-            .each(function(v) {
-                let grp = $('<div class="btn-group">'),
-                    link = `<a class="btn btn-mini btn-success" target="_blank" href="${v.url}" title="View ${v.id}">${v.database}</a>`,
-                    copyID = $(
-                        `<button type="button" class="btn btn-mini btn-success" title="Copy ID ${v.id} to clipboard"><i class="fa fa-clipboard"></i></button>`
-                    );
-
-                // copy ID to clipboard
-                new Clipboard(copyID.get(0), {text: () => v.id});
-
-                links.append(grp.append(link, copyID));
-                links.append("<span>&nbsp;</span>");
-            })
-            .value();
-
-        _.chain(this.data.identifiers)
-            .reject(function(v) {
-                return v.url.length > 0 || v.database === "External link";
-            })
-            .sortBy(function(v) {
-                return v.database_id;
-            })
-            .each(function(v) {
-                let copyID = $(
-                    `<button class="btn btn-mini" title="Copy ID ${v.id} to clipboard">${v.database} <i class="fa fa-clipboard"></i></button>`
-                );
-
-                // copy ID to clipboard
-                new Clipboard(copyID.get(0), {text: () => v.id});
-
-                links.append(copyID);
-                links.append("<span>&nbsp;</span>");
-            })
-            .value();
-
-        return links.children().length > 0 ? links : null;
-    }
-
-    print_div_row() {
-        var self = this,
-            data = this.data,
-            div = $("<div>"),
-            abs_btn = this.get_abstract_button(div),
-            edit_btn = this.get_edit_button(),
-            get_title = function() {
-                if (data.title) return '<p class="ref_title">{0}</p>'.printf(data.title);
-            },
-            get_journal = function() {
-                let journal = data.journal ? `${data.journal}<br/>` : "";
-                return `<p class="ref_small">${journal}HAWC ID: ${data.pk}</p>`;
-            },
-            get_abstract = function() {
-                if (data.abstract)
-                    return '<p class="abstracts" style="display: none">{0}</p>'.printf(
-                        data.abstract
-                    );
-            },
-            get_authors_row = function() {
-                var p = $(
-                    '<p class="ref_small">{0} {1}</p>'.printf(
-                        data.authors || Reference.no_authors_text,
-                        data.year || ""
-                    )
-                );
-
-                if (abs_btn || edit_btn) {
-                    var ul = $('<ul class="dropdown-menu">');
-
-                    if (abs_btn) ul.append($("<li>").append(abs_btn));
-                    if (edit_btn) ul.append($("<li>").append(edit_btn));
-
-                    $('<div class="btn-group pull-right">')
-                        .append(
-                            '<a class="btn btn-small dropdown-toggle" data-toggle="dropdown">Actions <span class="caret"></span></a>'
-                        )
-                        .append(ul)
-                        .appendTo(p);
-                }
-
-                return p;
-            },
-            get_searches = function() {
-                if (data.searches) {
-                    let links = data.searches
-                            .map(d => `<a href="${d.url}">${d.title}</a>`)
-                            .join("<span>,&nbsp;</span>"),
-                        text = `<p><strong>HAWC searches/imports:</strong> ${links}</p>`;
-
-                    return $("<div>").append(text);
-                }
-            },
-            populate_div = function() {
-                return [
-                    "<hr>",
-                    get_authors_row(),
-                    get_title(),
-                    get_journal(),
-                    get_abstract(),
-                    self.getLinks(),
-                ];
-            };
-
-        return div.html(populate_div().concat(this.print_taglist())).append(get_searches());
-    }
-
-    get_abstract_button(div) {
-        // get abstract button if abstract available, or return undefined
-        if (this.data.abstract) {
-            return $("<a>")
-                .text("Show abstract")
-                .attr("class", "abstractToggle")
-                .on("click", function() {
-                    var sel = $(this);
-                    if (sel.text() === "Show abstract") {
-                        div.find(".abstracts").show();
-                        sel.text("Hide abstract");
-                    } else {
-                        div.find(".abstracts").hide();
-                        sel.text("Show abstract");
-                    }
-                });
-        }
-    }
-
-    get_edit_button() {
-        // return content or undefined
-        if (window.canEdit) {
-            return $("<div>")
-                .append(
-                    '<li><a href="{0}" target="_blank">Edit tags</a></li>'.printf(
-                        this.edit_tags_url()
-                    )
-                )
-                .append(
-                    '<li><a href="{0}" target="_blank">Edit reference</a></li>'.printf(
-                        this.edit_reference_url()
-                    )
-                );
-        }
-    }
-
     add_tag(tag) {
         var tag_already_exists = false;
         this.data.tags.forEach(function(v) {
@@ -238,14 +196,6 @@ class Reference extends Observee {
         this.data.tags.push(tag);
         tag.addObserver(this);
         this.notifyObservers();
-    }
-
-    edit_tags_url() {
-        return "/lit/reference/{0}/tag/".printf(this.data.pk);
-    }
-
-    edit_reference_url() {
-        return "/lit/reference/{0}/edit/".printf(this.data.pk);
     }
 
     remove_tag(tag) {

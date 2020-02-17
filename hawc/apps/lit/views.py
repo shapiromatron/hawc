@@ -585,7 +585,7 @@ class RefsByTagJSON(BaseDetail):
                 self.assessment
             ).prefetch_related("searches", "identifiers")
 
-        response["refs"] = [ref.get_json(json_encode=False, searches=True) for ref in refs]
+        response["refs"] = [ref.get_json(json_encode=False) for ref in refs]
         self.response = response
 
     def render_to_response(self, context, **response_kwargs):
