@@ -4,65 +4,88 @@ import _ from "lodash";
 
 import ScoreDisplay from "riskofbias/robTable/components/ScoreDisplay";
 import ScoreForm from "riskofbias/robTable/components/ScoreForm";
-import "./MetricForm.css";
 
 class MetricForm extends Component {
     renderReadOnlyReviewerScoreRow(data) {
-        console.log(data);
-        let {metric, config} = this.props,
-            displayScores = metric.values.filter(score => score.final === false);
+        let {config} = this.props,
+            numReviews = data.nonEditable.length,
+            getSpanClass = function(numReviews) {
+                if (numReviews <= 1) {
+                    return "span12";
+                } else if (numReviews === 2) {
+                    return "span6";
+                } else if (numReviews === 3) {
+                    return "span4";
+                } else if (numReviews >= 4) {
+                    return "span3";
+                }
+            },
+            spanClass = getSpanClass(numReviews);
+
+        if (numReviews === 0) {
+            return null;
+        }
 
         return (
-            <div className="score-row">
-                {_.map(displayScores, score => {
+            <div className="row-fluid">
+                {data.nonEditable.map((scores, idx) => {
                     return (
-                        <ScoreDisplay
-                            key={score.id}
-                            score={score}
-                            config={config}
-                            copyNotes={config.display === "final" ? this.copyNotes : undefined}
-                        />
+                        <div key={idx} className={spanClass}>
+                            {scores.map(score => {
+                                return (
+                                    <ScoreDisplay
+                                        key={score.id}
+                                        score={score}
+                                        config={config}
+                                        hasOverrides={data.metricHasOverrides}
+                                    />
+                                );
+                            })}
+                        </div>
                     );
                 })}
             </div>
         );
     }
 
-    render() {
-        let {
-                metric,
-                config,
-                updateNotesRemaining,
-                notifyStateChange,
-                createScoreOverride,
-                deleteScoreOverride,
-                robResponseValues,
-            } = this.props,
-            createScoreOverrideFunc = () => {
+    formatData() {
+        let {metric, config, createScoreOverride} = this.props,
+            editableRiskOfBiasId = config.riskofbias.id,
+            scores = metric.values;
+
+        return {
+            editable: _.chain(scores)
+                .filter(score => score.riskofbias_id === editableRiskOfBiasId)
+                .sortBy("id")
+                .value(),
+            nonEditable: _.chain(scores)
+                .filter(score => score.riskofbias_id !== editableRiskOfBiasId)
+                .sortBy("id")
+                .groupBy(score => score.author.id)
+                .values()
+                .value(),
+            hideDescription: metric.values[0].metric.hide_description,
+            metricName: metric.key,
+            metricDescription: metric.values[0].metric.description,
+            metricHasOverrides: _.some(metric.values, el => el.is_default === false),
+            createScoreOverrideFunc: () => {
                 createScoreOverride({
                     metric: metric.values[0].metric.id,
                     riskofbias: config.riskofbias.id,
                 });
             },
-            formatData = function(editableRiskOfBiasId, metric, scores) {
-                return {
-                    editable: _.chain(scores)
-                        .filter(score => score.riskofbias_id === editableRiskOfBiasId)
-                        .sortBy("id")
-                        .value(),
-                    nonEditable: _.chain(scores)
-                        .filter(score => score.riskofbias_id !== editableRiskOfBiasId)
-                        .sortBy("id")
-                        .groupBy(score => score.author.id)
-                        .values()
-                        .value(),
-                    hideDescription: metric.values[0].metric.hide_description,
-                    metricName: metric.key,
-                    metricDescription: metric.values[0].metric.description,
-                    metricHasOverrides: _.some(metric.values, el => el.is_default === false),
-                };
-            },
-            data = formatData(config.riskofbias.id, metric, metric.values);
+        };
+    }
+
+    render() {
+        let {
+                config,
+                updateNotesRemaining,
+                notifyStateChange,
+                deleteScoreOverride,
+                robResponseValues,
+            } = this.props,
+            data = this.formatData();
 
         return (
             <div className="metric-display">
@@ -80,7 +103,7 @@ class MetricForm extends Component {
                             updateNotesRemaining={updateNotesRemaining}
                             robResponseValues={robResponseValues}
                             notifyStateChange={notifyStateChange}
-                            createScoreOverride={createScoreOverrideFunc}
+                            createScoreOverride={data.createScoreOverrideFunc}
                             deleteScoreOverride={deleteScoreOverride}
                             metricHasOverrides={data.metricHasOverrides}
                         />

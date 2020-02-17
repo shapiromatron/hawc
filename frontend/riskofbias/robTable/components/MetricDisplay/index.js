@@ -11,15 +11,15 @@ class MetricDisplay extends Component {
             displayScores = metric.values;
 
         if (config.display === "final") {
-            displayScores = _.filter(metric.values, score => {
-                return score.final;
-            });
+            displayScores = _.filter(metric.values, score => score.final);
         }
 
         return (
             <div className="score-row">
                 {_.map(displayScores, score => {
-                    return <ScoreDisplay key={score.id} score={score} config={config} />;
+                    return (
+                        <ScoreDisplay key={score.id} score={score} config={config} isForm={false} />
+                    );
                 })}
             </div>
         );
