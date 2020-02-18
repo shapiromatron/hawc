@@ -1,93 +1,64 @@
 import React, {Component} from "react";
 import PropTypes from "prop-types";
+import {observer} from "mobx-react";
 
-// import {connect} from "react-redux";
-// import _ from "lodash";
+import Domain from "./Domain";
+import Loading from "shared/components/Loading";
+import ScrollToErrorBox from "shared/components/ScrollToErrorBox";
 
-// import {
-//     fetchFullStudyIfNeeded,
-//     submitRiskOfBiasScores,
-//     scoreStateChange,
-//     createScoreOverride,
-//     deleteScoreOverride,
-// } from "riskofbias/robTable/actions";
-// import Completeness from "riskofbias/robTable/components/Completeness";
-// import DomainDisplay from "riskofbias/robTable/components/DomainDisplay";
-// import Loading from "shared/components/Loading";
-// import ScrollToErrorBox from "shared/components/ScrollToErrorBox";
-
+@observer
 class Root extends Component {
     constructor(props) {
         super(props);
+        /* TODO - remove state and move to store */
         this.state = {
             notesLeft: new Set(),
         };
     }
 
     componentWillMount() {
-        this.props.store.fetchFullStudyIfNeeded();
+        this.props.store.setConfig("config");
+        this.props.store.fetchFullStudy();
     }
 
-    submitForm(e) {
-        e.preventDefault();
-        this.props.store.submitRiskOfBiasScores();
-    }
-
-    handleNotifyStateChange(payload) {
-        this.props.store.scoreStateChange(payload);
-    }
-
-    handleCreateScoreOverride(payload) {
-        this.props.store.createScoreOverride(payload);
-    }
-
-    handleDeleteScoreOverride(payload) {
-        this.props.store.deleteScoreOverride(payload);
-    }
-
-    handleCancel(e) {
-        e.preventDefault();
-        window.location.href = this.props.config.cancelUrl;
-    }
-
-    handleUpdateNotes(id, action) {
-        let notes = this.state.notesLeft;
-        if (action === "clear") {
-            notes.delete(id);
-            this.setState({notesLeft: notes});
-        } else if (action === "add") {
-            notes.add(id);
-            this.setState({notesLeft: notes});
-        }
-    }
+    // handleUpdateNotes(id, action) {
+    //     let notes = this.state.notesLeft;
+    //     if (action === "clear") {
+    //         notes.delete(id);
+    //         this.setState({notesLeft: notes});
+    //     } else if (action === "add") {
+    //         notes.add(id);
+    //         this.setState({notesLeft: notes});
+    //     }
+    // }
 
     render() {
-        let {itemsLoaded, riskofbiases, error, config, robResponseValues} = this.props;
-        if (!itemsLoaded) return <Loading />;
+        let store = this.props.store;
+        if (store.dataLoaded === false) {
+            return <Loading />;
+        }
+
         return (
             <div className="riskofbias-display">
-                <ScrollToErrorBox error={error} />
-                <form onSubmit={this.submitForm}>
-                    {_.map(riskofbiases, domain => {
+                <ScrollToErrorBox error={store.error} />
+                <form>
+                    {store.domainIds.map(domainId => {
                         return (
-                            <DomainDisplay
-                                key={domain.key}
-                                ref={domain.key}
-                                domain={domain}
-                                config={config}
-                                updateNotesRemaining={this.handleUpdateNotes}
-                                notifyStateChange={this.handleNotifyStateChange}
-                                createScoreOverride={this.handleCreateScoreOverride}
-                                deleteScoreOverride={this.handleDeleteScoreOverride}
-                                robResponseValues={robResponseValues}
+                            <Domain
+                                key={domainId}
+                                domainId={domainId}
+                                scores={store.getScoresForDomain(domainId)}
                             />
                         );
                     })}
-                    <Completeness number={this.state.notesLeft} />
-                    <button className="btn btn-primary space" type="submit">
+                    {/* <Completeness number={this.state.notesLeft} /> */}
+                    <button
+                        className="btn btn-primary space"
+                        type="button"
+                        onClick={store.submitScores}>
                         Save changes
                     </button>
-                    <button className="btn space" onClick={this.handleCancel}>
+                    <button className="btn space" onClick={store.cancelSubmitScores}>
                         Cancel
                     </button>
                 </form>
@@ -98,11 +69,16 @@ class Root extends Component {
 
 Root.propTypes = {
     store: PropTypes.shape({
+        error: PropTypes.string,
+        domainIds: PropTypes.array.isRequired,
+        dataLoaded: PropTypes.bool.isRequired,
+        setConfig: PropTypes.func.isRequired,
+        fetchFullStudy: PropTypes.func.isRequired,
+        submitScores: PropTypes.func.isRequired,
+        cancelSubmitScores: PropTypes.func.isRequired,
         createScoreOverride: PropTypes.func.isRequired,
         deleteScoreOverride: PropTypes.func.isRequired,
-        fetchFullStudyIfNeeded: PropTypes.func.isRequired,
         scoreStateChange: PropTypes.func.isRequired,
-        submitRiskOfBiasScores: PropTypes.func.isRequired,
     }).isRequired,
 };
 
