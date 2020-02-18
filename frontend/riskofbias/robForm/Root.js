@@ -16,7 +16,7 @@ class Root extends Component {
         };
     }
 
-    componentWillMount() {
+    componentDidMount() {
         this.props.store.setConfig("config");
         this.props.store.fetchFullStudy();
     }
@@ -75,6 +75,7 @@ Root.propTypes = {
         setConfig: PropTypes.func.isRequired,
         fetchFullStudy: PropTypes.func.isRequired,
         submitScores: PropTypes.func.isRequired,
+        getScoresForDomain: PropTypes.func.isRequired,
         cancelSubmitScores: PropTypes.func.isRequired,
         createScoreOverride: PropTypes.func.isRequired,
         deleteScoreOverride: PropTypes.func.isRequired,

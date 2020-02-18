@@ -7,10 +7,15 @@ import Score from "./Score";
 @observer
 class Metric extends Component {
     render() {
-        let metricName = this.props.scores[0].metric.name;
+        const anyScore = this.props.scores[0],
+            name = anyScore.metric.name,
+            hideDescription = anyScore.metric.hide_description,
+            description = anyScore.metric.description;
+
         return (
             <div>
-                <h4>{metricName}</h4>
+                <h4>{name}</h4>
+                {hideDescription ? null : <div dangerouslySetInnerHTML={{__html: description}} />}
                 {this.props.scores.map(score => {
                     return <Score key={score.id} score={score} />;
                 })}
