@@ -82,8 +82,7 @@ class ScoreForm extends Component {
     }
 
     render() {
-        let {name} = this.props.score.metric,
-            {score, notes, label} = this.state,
+        let {id, score, notes, label} = this.state,
             {assessment_id} = this.props.config,
             {is_default} = this.props.score,
             choices = this.props.robResponseValues.map(d => {
@@ -95,7 +94,6 @@ class ScoreForm extends Component {
             deleteScoreOverride = () => {
                 this.props.deleteScoreOverride({score_id: this.props.score.id});
             };
-
         return (
             <div className="score-form">
                 {showOverrideCreate ? (
@@ -121,7 +119,7 @@ class ScoreForm extends Component {
                         <SelectInput
                             label="Score"
                             choices={choices}
-                            id={name}
+                            id={`${id}-score`}
                             value={score}
                             handleSelect={this.updateSelectedScore}
                         />
@@ -136,8 +134,9 @@ class ScoreForm extends Component {
                             Default score
                         </label>
                         <TextInput
+                            id={`${id}-label`}
                             label="Label"
-                            name="label"
+                            name={`label-id-${id}`}
                             onChange={this.handleLabelInput}
                             value={label}
                         />
@@ -145,7 +144,7 @@ class ScoreForm extends Component {
                 ) : null}
 
                 <ReactQuill
-                    id={name}
+                    id={`${id}-notes`}
                     value={notes}
                     onChange={this.handleEditorInput}
                     className="score-editor"

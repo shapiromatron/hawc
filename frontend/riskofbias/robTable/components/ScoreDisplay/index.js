@@ -13,7 +13,7 @@ class ScoreDisplay extends Component {
             labelText = score.label ? score.label : "<default>";
 
         return (
-            <div className="score-display" ref="display">
+            <div className="score-display">
                 <div className="flex-1">
                     {showAuthorDisplay ? (
                         <p>

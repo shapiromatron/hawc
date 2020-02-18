@@ -5,27 +5,22 @@ import h from "shared/utils/helpers";
 import "./ScoreCell.css";
 
 class ScoreCell extends Component {
-    constructor(props) {
-        super(props);
-        this.handleClick = this.handleClick.bind(this);
-    }
-
-    handleClick() {
-        let {score, handleClick} = this.props;
-        handleClick({domain: score.domain_name, metric: score.metric.name});
-    }
-
     render() {
-        let {score} = this.props;
+        let {score, handleClick} = this.props,
+            handleClickFn = () => {
+                handleClick({domain: score.domain_name, metric: score.metric.name});
+            };
+
         if (h.hideRobScore(score.metric.domain.assessment.id)) {
             return <div className="score-cell" />;
         }
+
         return (
             <div
                 className="score-cell"
                 name={score.metric.name}
                 style={{backgroundColor: score.score_shade}}
-                onClick={this.handleClick}>
+                onClick={handleClickFn}>
                 <span className="tooltips" data-toggle="tooltip" title={score.metric.name}>
                     {score.score_symbol}
                 </span>
@@ -41,6 +36,11 @@ ScoreCell.propTypes = {
         domain_name: PropTypes.string.isRequired,
         metric: PropTypes.shape({
             name: PropTypes.string.isRequired,
+            domain: PropTypes.shape({
+                assessment: PropTypes.shape({
+                    id: PropTypes.number.isRequired,
+                }),
+            }),
         }).isRequired,
     }).isRequired,
     handleClick: PropTypes.func.isRequired,

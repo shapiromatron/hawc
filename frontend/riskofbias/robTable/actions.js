@@ -25,6 +25,14 @@ function setError(error) {
     };
 }
 
+function addOverride(object) {
+    return {type: types.ADD_NEW_OVERRIDE, object};
+}
+
+function removeOverride(score_id) {
+    return {type: types.REMOVE_DELETED_OVERRIDE, score_id};
+}
+
 function resetError() {
     return {
         type: types.RESET_ERROR,
@@ -54,7 +62,7 @@ export function createScoreOverride(data) {
 
         return fetch(url, h.fetchPost(csrf, data, "POST"))
             .then(response => response.json())
-            .then(json => console.log(json))
+            .then(json => dispatch(addOverride(json)))
             .catch(ex => dispatch(setError(ex)));
     };
 }
@@ -68,8 +76,11 @@ export function deleteScoreOverride(data) {
             csrf = state.config.csrf;
 
         return fetch(url, h.fetchDelete(csrf))
-            .then(response => response.json())
-            .then(json => console.log(json))
+            .then(response => {
+                if (response.status === 204) {
+                    dispatch(removeOverride(data.score_id));
+                }
+            })
             .catch(ex => dispatch(setError(ex)));
     };
 }
