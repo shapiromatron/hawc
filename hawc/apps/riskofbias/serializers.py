@@ -47,7 +47,7 @@ class RiskOfBiasScoreSerializerSlim(serializers.ModelSerializer):
 
     class Meta:
         model = models.RiskOfBiasScore
-        fields = ("id", "score", "is_default", "label", "notes", "metric")
+        fields = ("id", "score", "is_default", "label", "notes", "metric", "riskofbias_id")
 
 
 class RiskOfBiasScoreSerializer(RiskOfBiasScoreSerializerSlim):

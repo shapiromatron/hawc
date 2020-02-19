@@ -1,6 +1,6 @@
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404
-from rest_framework import filters, viewsets
+from rest_framework import status, filters, viewsets
 from rest_framework.decorators import list_route
 from rest_framework.response import Response
 from rest_framework_extensions.mixins import ListUpdateModelMixin
@@ -88,12 +88,7 @@ class AssessmentScoreViewset(TeamMemberOrHigherMixin, ListUpdateModelMixin, Asse
     pagination_class = DisabledPagination
     assessment_filter_args = "metric__domain_assessment"
     filter_backends = (BulkIdFilter,)
-
-    def get_serializer_class(self):
-        cls = serializers.RiskOfBiasScoreSerializer
-        if self.action == "create":
-            cls = serializers.RiskOfBiasScoreOverrideCreateSerializer
-        return cls
+    serializer_class = serializers.RiskOfBiasScoreSerializer
 
     def get_assessment(self, request, *args, **kwargs):
         assessment_id = request.GET.get("assessment_id", None)
@@ -114,6 +109,15 @@ class AssessmentScoreViewset(TeamMemberOrHigherMixin, ListUpdateModelMixin, Asse
     def post_save_bulk(self, queryset, update_bulk_dict):
         ids = list(queryset.values_list("id", flat=True))
         queryset.model.delete_caches(ids)
+
+    def create(self, request, *args, **kwargs):
+        # create using one serializer; return using a different one
+        serializer = serializers.RiskOfBiasScoreOverrideCreateSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        new_serializer = serializers.RiskOfBiasScoreSerializer(serializer.instance)
+        headers = self.get_success_headers(new_serializer.data)
+        return Response(new_serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def perform_destroy(self, instance):
         if instance.is_default:

@@ -44,13 +44,7 @@ class Root extends Component {
                 <ScrollToErrorBox error={store.error} />
                 <form>
                     {store.domainIds.map(domainId => {
-                        return (
-                            <Domain
-                                key={domainId}
-                                domainId={domainId}
-                                scores={store.getScoresForDomain(domainId)}
-                            />
-                        );
+                        return <Domain key={domainId} domainId={domainId} />;
                     })}
                     {/* <Completeness number={this.state.notesLeft} /> */}
                     <button
@@ -68,6 +62,8 @@ class Root extends Component {
     }
 }
 
-Root.propTypes = {};
+Root.propTypes = {
+    store: PropTypes.object,
+};
 
 export default Root;

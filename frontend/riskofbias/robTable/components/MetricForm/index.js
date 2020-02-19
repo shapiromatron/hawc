@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import _ from "lodash";
 
 import ScoreDisplay from "riskofbias/robTable/components/ScoreDisplay";
-import ScoreForm from "riskofbias/robTable/components/ScoreForm";
+import ScoreForm from "riskofbias/robForm/ScoreForm";
 
 class MetricForm extends Component {
     renderReadOnlyReviewerScoreRow(data) {

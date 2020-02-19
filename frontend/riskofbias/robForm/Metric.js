@@ -3,14 +3,17 @@ import React, {Component} from "react";
 import PropTypes from "prop-types";
 import {observer, inject} from "mobx-react";
 
-import ScoreForm from "riskofbias/robTable/components/ScoreForm";
+import ScoreForm from "./ScoreForm";
 import ScoreDisplay from "riskofbias/robTable/components/ScoreDisplay";
 
 @inject("store")
 @observer
 class Metric extends Component {
-    renderReadOnlyReviewerScoreRow(data) {
-        let numReviews = data.nonEditable.length,
+    renderReadOnlyReviewerScoreRow(nonEditableScores, metricHasOverrides) {
+        let scoresByUser = _.chain(nonEditableScores)
+                .groupBy(score => score.author.id)
+                .values(),
+            numReviews = scoresByUser.length,
             getSpanClass = function(numReviews) {
                 if (numReviews <= 1) {
                     return "span12";
@@ -30,7 +33,7 @@ class Metric extends Component {
 
         return (
             <div className="row-fluid">
-                {data.nonEditable.map((scores, idx) => {
+                {scoresByUser.map((scores, idx) => {
                     return (
                         <div key={idx} className={spanClass}>
                             {scores.map(score => {
@@ -42,7 +45,7 @@ class Metric extends Component {
                                             display: "final",
                                             isForm: true,
                                         }}
-                                        hasOverrides={data.metricHasOverrides}
+                                        hasOverrides={metricHasOverrides}
                                     />
                                 );
                             })}
@@ -54,56 +57,37 @@ class Metric extends Component {
     }
 
     render() {
-        const {scores, store} = this.props,
+        const {store, metricId} = this.props,
             editableRiskOfBiasId = store.config.riskofbias.id,
             assessmentId = store.config.assessment_id,
-            updateNotesRemaining = () => console.log("updateNotesRemaining"),
-            robResponseValues = store.study.rob_response_values,
-            notifyStateChange = store.notifyStateChange,
-            createScoreOverride = store.createScoreOverride,
-            deleteScoreOverride = store.deleteScoreOverride,
-            anyScore = this.props.scores[0],
+            anyScore = store.editableScores.filter(score => score.metric.id == metricId)[0],
             name = anyScore.metric.name,
             hideDescription = anyScore.metric.hide_description,
             description = anyScore.metric.description,
-            data = {
-                metricHasOverrides: _.some(scores, el => el.is_default === false),
-                editable: _.chain(scores)
-                    .filter(score => score.riskofbias_id === editableRiskOfBiasId)
-                    .sortBy("id")
-                    .value(),
-                nonEditable: _.chain(scores)
-                    .filter(score => score.riskofbias_id !== editableRiskOfBiasId)
-                    .sortBy("id")
-                    .groupBy(score => score.author.id)
-                    .values()
-                    .value(),
-            },
-            createScoreOverrideFunc = () => {
-                createScoreOverride({
-                    metric: anyScore.metric.id,
-                    riskofbias: editableRiskOfBiasId,
-                });
-            },
-            editingFinal = data.editable[0].final;
+            metricHasOverrides = _.chain(store.scores)
+                .filter(score => score.metric.id == metricId)
+                .map(score => score.is_default === false)
+                .some()
+                .value(),
+            editableScores = store.editableScores.filter(score => score.metric.id == metricId),
+            nonEditableScores = store.nonEditableScores.filter(
+                score => score.metric.id == metricId
+            ),
+            editingFinal = editableScores[0].final;
 
         return (
             <div>
                 <h4>{name}</h4>
                 {hideDescription ? null : <div dangerouslySetInnerHTML={{__html: description}} />}
-                {editingFinal ? this.renderReadOnlyReviewerScoreRow(data) : null}
-                {data.editable.map(score => {
+                {editingFinal
+                    ? this.renderReadOnlyReviewerScoreRow(nonEditableScores, metricHasOverrides)
+                    : null}
+                {editableScores.map(score => {
                     return (
                         <ScoreForm
                             key={score.id}
-                            score={score}
-                            assessmentId={assessmentId}
-                            updateNotesRemaining={updateNotesRemaining}
-                            robResponseValues={robResponseValues}
-                            notifyStateChange={notifyStateChange}
-                            createScoreOverride={createScoreOverrideFunc}
-                            deleteScoreOverride={deleteScoreOverride}
-                            metricHasOverrides={data.metricHasOverrides}
+                            scoreId={score.id}
+                            metricHasOverrides={metricHasOverrides}
                         />
                     );
                 })}
@@ -113,8 +97,8 @@ class Metric extends Component {
 }
 
 Metric.propTypes = {
+    store: PropTypes.object,
     metricId: PropTypes.number.isRequired,
-    scores: PropTypes.array.isRequired,
 };
 
 export default Metric;
