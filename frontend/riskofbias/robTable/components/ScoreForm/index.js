@@ -83,12 +83,12 @@ class ScoreForm extends Component {
 
     render() {
         let {id, score, notes, label} = this.state,
-            {assessment_id} = this.props.config,
+            {assessmentId} = this.props,
             {is_default} = this.props.score,
             choices = this.props.robResponseValues.map(d => {
                 return {id: parseInt(d), value: SCORE_TEXT_DESCRIPTION[d]};
             }),
-            showScoreInput = !h.hideRobScore(parseInt(assessment_id)),
+            showScoreInput = !h.hideRobScore(parseInt(assessmentId)),
             showOverrideCreate = is_default === true,
             showDelete = is_default === false,
             deleteScoreOverride = () => {
@@ -171,9 +171,7 @@ ScoreForm.propTypes = {
     createScoreOverride: PropTypes.func.isRequired,
     deleteScoreOverride: PropTypes.func.isRequired,
     robResponseValues: PropTypes.array.isRequired,
-    config: PropTypes.shape({
-        assessment_id: PropTypes.number.isRequired,
-    }),
+    assessmentId: PropTypes.number.isRequired,
 };
 
 export default ScoreForm;

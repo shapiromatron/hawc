@@ -1,11 +1,12 @@
 import React, {Component} from "react";
 import PropTypes from "prop-types";
-import {observer} from "mobx-react";
+import {inject, observer} from "mobx-react";
 
 import Domain from "./Domain";
 import Loading from "shared/components/Loading";
 import ScrollToErrorBox from "shared/components/ScrollToErrorBox";
 
+@inject("store")
 @observer
 class Root extends Component {
     constructor(props) {
@@ -67,20 +68,6 @@ class Root extends Component {
     }
 }
 
-Root.propTypes = {
-    store: PropTypes.shape({
-        error: PropTypes.string,
-        domainIds: PropTypes.array.isRequired,
-        dataLoaded: PropTypes.bool.isRequired,
-        setConfig: PropTypes.func.isRequired,
-        fetchFullStudy: PropTypes.func.isRequired,
-        submitScores: PropTypes.func.isRequired,
-        getScoresForDomain: PropTypes.func.isRequired,
-        cancelSubmitScores: PropTypes.func.isRequired,
-        createScoreOverride: PropTypes.func.isRequired,
-        deleteScoreOverride: PropTypes.func.isRequired,
-        scoreStateChange: PropTypes.func.isRequired,
-    }).isRequired,
-};
+Root.propTypes = {};
 
 export default Root;

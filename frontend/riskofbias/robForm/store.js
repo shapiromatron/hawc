@@ -1,5 +1,5 @@
 import _ from "lodash";
-import {observable, computed, action, createTransformer} from "mobx";
+import {observable, computed, action} from "mobx";
 
 import h from "riskofbias/robTable/utils/helpers";
 
@@ -35,6 +35,19 @@ class RobFormStore {
         fetch(url, h.fetchGet)
             .then(response => response.json())
             .then(json => {
+                // move some parent information to each individual score
+                json.riskofbiases.forEach(riskofbias => {
+                    riskofbias.scores = riskofbias.scores.map(score => {
+                        return Object.assign({}, score, {
+                            riskofbias_id: riskofbias.id,
+                            author: riskofbias.author,
+                            final: riskofbias.final,
+                            domain_name: score.metric.domain.name,
+                            domain_id: score.metric.domain.id,
+                        });
+                    });
+                });
+
                 this.study = json;
                 this.scores.replace(_.flatMapDeep(json.riskofbiases, "scores"));
                 this.domainIds.replace(
@@ -50,6 +63,9 @@ class RobFormStore {
     }
 
     // CRUD actions
+    @action.bound notifyStateChange() {
+        console.log("notifyStateChange here");
+    }
     @action.bound cancelSubmitScores() {
         console.log("cancelSubmitScores here");
         window.location.href = this.config.cancelUrl;
