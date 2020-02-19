@@ -101,7 +101,31 @@ class RobFormStore {
         window.location.href = this.config.cancelUrl;
     }
     @action.bound submitScores() {
-        console.log("submitScores here");
+        const payload = {
+                id: this.config.riskofbias.id,
+                scores: this.editableScores.map(score => {
+                    return {
+                        id: score.id,
+                        score: score.score,
+                        label: score.label,
+                        notes: score.notes,
+                    };
+                }),
+            },
+            opts = h.fetchPost(this.config.csrf, payload, "PATCH"),
+            url = `${h.getObjectUrl(
+                this.config.host,
+                this.config.riskofbias.url,
+                this.config.riskofbias.id
+            )}`;
+
+        this.error = null;
+        return fetch(url, opts)
+            .then(response => response.json())
+            .then(() => (window.location.href = this.config.cancelUrl))
+            .catch(error => {
+                this.error = error;
+            });
     }
     @action.bound createScoreOverride(payload) {
         let url = `${this.config.riskofbias.scores_url}?assessment_id=${this.config.assessment_id}`,
