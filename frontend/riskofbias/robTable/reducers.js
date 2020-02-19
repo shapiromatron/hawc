@@ -18,7 +18,7 @@ const defaultState = {
 };
 
 function study(state = defaultState, action) {
-    let domains, scores;
+    let domains;
 
     switch (action.type) {
         case types.REQUEST:
@@ -47,11 +47,6 @@ function study(state = defaultState, action) {
                 error: null,
             });
 
-        case types.UPDATE_FINAL_SCORES:
-            return Object.assign({}, state, {
-                final: action.score,
-            });
-
         case types.SELECT_ACTIVE:
             if (_.isEmpty(action.domain) | (action.domain === "none")) {
                 return Object.assign({}, state, {
@@ -73,26 +68,6 @@ function study(state = defaultState, action) {
             return Object.assign({}, state, {
                 active: [domains],
             });
-
-        case types.UPDATE_SCORE_STATE:
-            scores = Object.assign({}, state.current_score_state);
-            scores[action.score.id] = action.score;
-            return Object.assign({}, state, {current_score_state: scores});
-
-        case types.ADD_NEW_OVERRIDE:
-            console.log(action, state);
-            return state;
-
-        case types.REMOVE_DELETED_OVERRIDE:
-            // TODO deep clone?
-            domains = state.riskofbiases.forEach(domain => {
-                domain.values.forEach(metrics => {
-                    metrics.values.filter(score => {
-                        return score.id !== action.score_id;
-                    });
-                });
-            });
-            return state;
 
         default:
             return state;

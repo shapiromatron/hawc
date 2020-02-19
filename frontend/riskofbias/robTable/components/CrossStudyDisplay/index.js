@@ -36,6 +36,7 @@ CrossStudyDisplay.propTypes = {
     metric: PropTypes.shape({
         name: PropTypes.string.isRequired,
         description: PropTypes.string.isRequired,
+        hide_description: PropTypes.bool.isRequired,
     }).isRequired,
     scores: PropTypes.arrayOf(
         PropTypes.shape({

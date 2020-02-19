@@ -47,6 +47,7 @@ MetricDisplay.propTypes = {
                 metric: PropTypes.shape({
                     description: PropTypes.string.isRequired,
                     name: PropTypes.string.isRequired,
+                    hide_description: PropTypes.bool.isRequired,
                 }).isRequired,
                 notes: PropTypes.string.isRequired,
                 score_description: PropTypes.string.isRequired,
