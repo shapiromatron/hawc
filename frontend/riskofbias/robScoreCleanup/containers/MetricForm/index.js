@@ -43,13 +43,14 @@ export class MetricForm extends React.Component {
     }
 
     render() {
-        let {items, config, robResponseValues} = this.props;
+        let {items} = this.props;
         if (!items.isLoaded) return null;
         return (
             <form onSubmit={this.onSubmit}>
                 {/* TODO: fix robScoreCleanup */}
                 <p>
-                    Feature disabled; need it? Contact the developers and we'll get it working soon.
+                    Feature disabled; need it? Contact the developers and we will get it working
+                    soon.
                 </p>
             </form>
         );
