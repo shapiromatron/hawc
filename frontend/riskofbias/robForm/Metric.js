@@ -12,7 +12,8 @@ class Metric extends Component {
     renderReadOnlyReviewerScoreRow(nonEditableScores, metricHasOverrides) {
         let scoresByUser = _.chain(nonEditableScores)
                 .groupBy(score => score.author.id)
-                .values(),
+                .values()
+                .value(),
             numReviews = scoresByUser.length,
             getSpanClass = function(numReviews) {
                 if (numReviews <= 1) {
@@ -58,8 +59,6 @@ class Metric extends Component {
 
     render() {
         const {store, metricId} = this.props,
-            editableRiskOfBiasId = store.config.riskofbias.id,
-            assessmentId = store.config.assessment_id,
             anyScore = store.editableScores.filter(score => score.metric.id == metricId)[0],
             name = anyScore.metric.name,
             hideDescription = anyScore.metric.hide_description,

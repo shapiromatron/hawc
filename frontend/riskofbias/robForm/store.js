@@ -1,6 +1,7 @@
 import _ from "lodash";
 import {observable, computed, action} from "mobx";
 
+import {NR_KEYS} from "riskofbias/constants";
 import h from "riskofbias/robTable/utils/helpers";
 
 const updateRobScore = function(score, riskofbias) {
@@ -26,6 +27,16 @@ class RobFormStore {
     // computed props
     @computed get dataLoaded() {
         return this.study !== null && this.study.id !== undefined;
+    }
+    @computed get activeRiskOfBias() {
+        return _.find(this.study.riskofbiases, {id: this.config.riskofbias.id});
+    }
+    @computed get numIncompleteScores() {
+        return this.editableScores.filter(score => {
+            return (
+                _.includes(NR_KEYS, score.score) && score.notes.replace(/<\/?[^>]+(>|$)/g, "") == ""
+            );
+        }).length;
     }
     getScoresForDomain(domainId) {
         return this.scores.filter(score => score.metric.domain.id == domainId);
@@ -86,26 +97,21 @@ class RobFormStore {
     }
 
     // CRUD actions
-    @action.bound modifyScore() {
-        console.log("notifyStateChange here");
-    }
     @action.bound cancelSubmitScores() {
         window.location.href = this.config.cancelUrl;
     }
     @action.bound submitScores() {
         console.log("submitScores here");
     }
-    @action.bound scoreStateChange() {
-        console.log("scoreStateChange here");
-    }
     @action.bound createScoreOverride(payload) {
         let url = `${this.config.riskofbias.scores_url}?assessment_id=${this.config.assessment_id}`,
-            csrf = this.config.csrf;
+            csrf = this.config.csrf,
+            activeRiskOfBias = this.activeRiskOfBias;
 
         return fetch(url, h.fetchPost(csrf, payload, "POST"))
             .then(response => response.json())
             .then(json => {
-                console.log("added!");
+                this.editableScores.push(updateRobScore(json, activeRiskOfBias));
             })
             .catch(error => {
                 this.error = error;
@@ -118,7 +124,9 @@ class RobFormStore {
         return fetch(url, h.fetchDelete(csrf))
             .then(response => {
                 if (response.status === 204) {
-                    console.log("deleted");
+                    this.editableScores.replace(
+                        this.editableScores.filter(score => score.id !== scoreId)
+                    );
                 }
             })
             .catch(error => {

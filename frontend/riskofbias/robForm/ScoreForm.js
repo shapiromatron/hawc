@@ -8,7 +8,7 @@ import SelectInput from "shared/components/SelectInput";
 import TextInput from "shared/components/TextInput";
 import h from "shared/utils/helpers";
 import "./ScoreForm.css";
-import {SCORE_SHADES, SCORE_TEXT, SCORE_TEXT_DESCRIPTION} from "riskofbias/constants";
+import {SCORE_TEXT_DESCRIPTION} from "riskofbias/constants";
 
 @inject("store")
 @observer

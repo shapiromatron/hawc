@@ -9,7 +9,7 @@ import {
     createScoreOverride,
     deleteScoreOverride,
 } from "riskofbias/robTable/actions";
-import Completeness from "riskofbias/robTable/components/Completeness";
+import Completeness from "riskofbias/robForm/Completeness";
 import DomainDisplay from "riskofbias/robTable/components/DomainDisplay";
 import Loading from "shared/components/Loading";
 import ScrollToErrorBox from "shared/components/ScrollToErrorBox";
