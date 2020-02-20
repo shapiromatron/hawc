@@ -82,8 +82,11 @@ def get_significance_and_direction(data_type, groups):
                     significance_list.append("Yes - ↓")
             else:
                 significance_list.append("No")
+    elif data_type == models.Endpoint.DATA_TYPE_NOT_REPORTED:
+        for group in groups:
+            significance_list.append("?")
     else:
-        raise ValueError("Unknown state to determine significance/direction")
+        raise ValueError("Unreachable code - unable to determine significance/direction")
 
     return significance_list
 
