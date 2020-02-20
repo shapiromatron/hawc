@@ -1,3 +1,4 @@
+import _ from "lodash";
 import $ from "$";
 import d3 from "d3";
 
@@ -71,42 +72,57 @@ class Donut extends D3Plot {
     get_dataset_info() {
         var domain_donut_data = [],
             question_donut_data = [],
-            overall_question_data = null;
-
-        this.study.riskofbias.forEach(function(v1, idx) {
-            let data = {
-                weight: 10, // equally weighted
-                score: v1.score,
-                score_text: v1.score_text,
-                domain: v1.domain_text,
-                idxOrder: idx,
-                self: v1,
+            overall_question_data = null,
+            scores = this.study.final.filter(
+                score => score.data.metric.domain.is_overall_confidence === false
+            ),
+            overallScores = this.study.final.filter(
+                score => score.data.metric.domain.is_overall_confidence
+            ),
+            scoresByDomain = _.chain(scores)
+                .groupBy(el => el.data.metric.domain.id)
+                .values()
+                .value(),
+            getDataForMetric = function(numMetrics, domain, scores) {
+                return {
+                    weight: 1 / numMetrics,
+                    score: scores[0].data.score,
+                    score_text: scores[0].data.score_text,
+                    score_color: scores[0].data.score_color,
+                    score_text_color: scores[0].data.score_text_color,
+                    criterion: scores[0].data.metric.name,
+                    notes: scores[0].data.notes,
+                    parent: domain,
+                };
             };
 
-            if (v1.domain_is_overall_confidence === false) {
-                domain_donut_data.push(data);
-            }
+        scoresByDomain.forEach(function(domainScores, domainIndex) {
+            let firstScore = scores[0],
+                scoresByMetric = _.chain(domainScores)
+                    .groupBy(el => el.data.metric.id)
+                    .values()
+                    .value();
 
-            v1.criteria.forEach(function(v2) {
-                data = {
-                    weight: 10 / v1.criteria.length,
-                    score: v2.data.score,
-                    score_text: v2.data.score_text,
-                    score_color: v2.data.score_color,
-                    score_text_color: v2.data.score_text_color,
-                    criterion: v2.data.metric.name,
-                    notes: v2.data.notes,
-                    parent: v1,
-                };
-                if (v1.domain_is_overall_confidence) {
-                    overall_question_data = data;
-                } else {
-                    question_donut_data.push(data);
-                }
+            domain_donut_data.push({
+                weight: 1, // equally weighted
+                domain: firstScore.metric.domain.name,
+                idxOrder: domainIndex,
+                self: firstScore,
+            });
+
+            scoresByMetric.forEach(function(metricScores) {
+                question_donut_data.push(
+                    getDataForMetric(scoresByMetric.length, domainScores[0], metricScores)
+                );
             });
         });
 
-        this.overall_question_data = overall_question_data;
+        if (overallScores.length > 0) {
+            this.overall_question_data = getDataForMetric(1, overallScores[0], overallScores);
+        }
+
+        // TO RESUME HERE!
+
         this.domain_donut_data = domain_donut_data;
         this.question_donut_data = question_donut_data;
     }
