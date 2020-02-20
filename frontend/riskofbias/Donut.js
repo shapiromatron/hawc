@@ -5,26 +5,23 @@ import d3 from "d3";
 import D3Plot from "utils/D3Plot";
 
 class Donut extends D3Plot {
-    constructor(study, plot_id, options) {
+    constructor(study, el) {
         super();
-        var self = this;
         this.study = study;
-        this.plot_div = $(plot_id);
-        this.options = options;
-        this.viewlock = false;
-        if (!this.study.riskofbias || this.study.riskofbias.length === 0) return;
-        this.set_defaults(options);
-        if (this.options && this.options.build_plot_startup) {
-            this.build_plot();
+        this.plot_div = $(el);
+        if (this.study.final === undefined || this.study.final.length === 0) {
+            return;
         }
-        $("body").on("keydown", function() {
+        this.set_defaults();
+        this.build_plot();
+        $("body").on("keydown", () => {
             if (event.ctrlKey || event.metaKey) {
-                self.toggle_lock_view();
+                this.toggle_lock_view();
             }
         });
     }
 
-    set_defaults(options) {
+    set_defaults() {
         this.w = 800;
         this.h = 400;
         this.radius_inner = 30;
@@ -36,6 +33,7 @@ class Donut extends D3Plot {
         });
         this.rotated_label_start_padding = 3; // padding from the inner radius where the rotated domain labels should start
         this.rotated_label_end_padding = 2; // padding from the middle radius where the rotated domain labels should end
+        this.viewlock = false;
     }
 
     build_plot() {
@@ -49,19 +47,14 @@ class Donut extends D3Plot {
 
     customize_menu() {
         this.add_menu();
-        var plot = this;
-        var options = {
+        this.add_menu_button({
             id: "lock_view",
             cls: "btn btn-mini",
             title: "Lock current view (shortcut: press ctrl to toggle)",
             text: "",
             icon: "icon-lock",
-            on_click() {
-                plot.toggle_lock_view();
-            },
-        };
-
-        this.add_menu_button(options);
+            on_click: () => this.toggle_lock_view(),
+        });
     }
 
     toggle_lock_view() {
@@ -72,34 +65,33 @@ class Donut extends D3Plot {
     get_dataset_info() {
         var domain_donut_data = [],
             question_donut_data = [],
-            overall_question_data = null,
-            scores = this.study.final.filter(
-                score => score.data.metric.domain.is_overall_confidence === false
+            scores = this.study.final.scores.filter(
+                score => score.metric.domain.is_overall_confidence === false
             ),
-            overallScores = this.study.final.filter(
-                score => score.data.metric.domain.is_overall_confidence
+            overallScores = this.study.final.scores.filter(
+                score => score.metric.domain.is_overall_confidence
             ),
             scoresByDomain = _.chain(scores)
-                .groupBy(el => el.data.metric.domain.id)
+                .groupBy("metric.domain.id")
                 .values()
                 .value(),
             getDataForMetric = function(numMetrics, domain, scores) {
                 return {
                     weight: 1 / numMetrics,
-                    score: scores[0].data.score,
-                    score_text: scores[0].data.score_text,
-                    score_color: scores[0].data.score_color,
-                    score_text_color: scores[0].data.score_text_color,
-                    criterion: scores[0].data.metric.name,
-                    notes: scores[0].data.notes,
-                    parent: domain,
+                    score: scores[0].score,
+                    score_text: scores[0].score_text,
+                    score_color: scores[0].score_color,
+                    score_text_color: scores[0].score_text_color,
+                    criterion: scores[0].metric.name,
+                    notes: scores[0].notes,
+                    parent_name: scores[0].metric.domain.name,
                 };
             };
 
         scoresByDomain.forEach(function(domainScores, domainIndex) {
-            let firstScore = scores[0],
+            let firstScore = domainScores[0],
                 scoresByMetric = _.chain(domainScores)
-                    .groupBy(el => el.data.metric.id)
+                    .groupBy("metric.id")
                     .values()
                     .value();
 
@@ -117,14 +109,10 @@ class Donut extends D3Plot {
             });
         });
 
-        if (overallScores.length > 0) {
-            this.overall_question_data = getDataForMetric(1, overallScores[0], overallScores);
-        }
-
-        // TO RESUME HERE!
-
         this.domain_donut_data = domain_donut_data;
         this.question_donut_data = question_donut_data;
+        this.overall_question_data =
+            overallScores.length > 0 ? getDataForMetric(1, overallScores[0], overallScores) : null;
     }
 
     draw_visualizations() {
@@ -393,7 +381,7 @@ class Donut extends D3Plot {
 
     show_subset(metric) {
         this.clear_subset();
-        this.subset_div.append("<h4>{0} domain</h4>".printf(metric.parent.domain_text));
+        this.subset_div.append(`<h4>${metric.parent_name}</h4>`);
         var ol = $('<ol class="score-details"></ol>'),
             div = $("<div>")
                 .text(metric.score_text)

@@ -79,9 +79,10 @@
             <a class="btn btn-primary pull-right" href="{% url 'riskofbias:rob_detail' object.pk %}">View details</a>
           </h3>
           <div class="span12">
-            <div id='rob_plot' class="d3_container"></div>
             {% if assessment.hide_rob_scores %}
               <div>Click button on right to view study evaluation details</div>
+            {% else %}
+              <div id='rob_plot' class="d3_container"></div>
             {% endif %}
           </div>
       </div>
@@ -129,8 +130,8 @@
     {% if not assessment.hide_rob_scores %}
     if (thisStudy.has_riskofbias()){
         window.app.riskofbiasStartup(function(riskofbias){
-            new riskofbias.Donut(thisStudy, '#rob_plot', {'build_plot_startup': true});
-        })
+            new riskofbias.Donut(thisStudy, document.getElementById('rob_plot'));
+        });
     }
     {% endif %}
 });
