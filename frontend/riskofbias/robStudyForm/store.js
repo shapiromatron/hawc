@@ -6,7 +6,6 @@ import h from "riskofbias/robTable/utils/helpers";
 
 const updateRobScore = function(score, riskofbias) {
     return Object.assign({}, score, {
-        riskofbias_id: riskofbias.id,
         author: riskofbias.author,
         final: riskofbias.final,
         domain_name: score.metric.domain.name,

@@ -7,17 +7,33 @@ import "./ScoreDisplay.css";
 
 class ScoreDisplay extends Component {
     render() {
-        let {score, config, hasOverrides} = this.props,
+        let {score, showAuthors, hasOverrides} = this.props,
             showRobScore = !h.hideRobScore(score.metric.domain.assessment.id),
-            showAuthorDisplay = config.display === "final" && config.isForm,
-            labelText = score.label ? score.label : "<default>";
+            showAuthorDisplay = showAuthors && score.is_default,
+            labelText = score.label,
+            displayClass =
+                score.is_default && hasOverrides
+                    ? "score-display default-score-display"
+                    : "score-display",
+            finalStar = score.final ? <i className="fa fa-star" title="Final review" /> : null;
+
+        if (score.is_default) {
+            labelText = labelText.length > 0 ? `${labelText} (default)` : "Default";
+        }
 
         return (
-            <div className="score-display">
+            <div className={displayClass}>
                 <div className="flex-1">
-                    {showAuthorDisplay ? (
+                    {showAuthorDisplay || hasOverrides ? (
                         <p>
-                            <b>{score.author.full_name}</b>
+                            {showAuthorDisplay ? (
+                                <b className="pull-right">
+                                    {score.author.full_name}
+                                    &nbsp;
+                                    {finalStar}
+                                </b>
+                            ) : null}
+                            {hasOverrides ? <b>{labelText}</b> : <b>&nbsp;</b>}
                         </p>
                     ) : null}
                     {showRobScore ? (
@@ -30,20 +46,6 @@ class ScoreDisplay extends Component {
                     ) : null}
                 </div>
                 <div className="flex-3 score-notes">
-                    {hasOverrides ? (
-                        <p>
-                            <b>{labelText}</b>
-                            {score.is_default ? (
-                                <span
-                                    className="pull-right fa fa-check-square-o"
-                                    title="Default score"></span>
-                            ) : (
-                                <span
-                                    className="pull-right fa fa-square-o"
-                                    title="Override score"></span>
-                            )}
-                        </p>
-                    ) : null}
                     <p dangerouslySetInnerHTML={{__html: score.notes}} />
                 </div>
             </div>
@@ -69,10 +71,7 @@ ScoreDisplay.propTypes = {
         score_shade: PropTypes.string.isRequired,
         score: PropTypes.number.isRequired,
     }).isRequired,
-    config: PropTypes.shape({
-        display: PropTypes.string.isRequired,
-        isForm: PropTypes.bool.isRequired,
-    }),
+    showAuthors: PropTypes.bool.isRequired,
     hasOverrides: PropTypes.bool.isRequired,
 };
 
