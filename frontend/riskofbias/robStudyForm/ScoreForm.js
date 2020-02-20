@@ -4,8 +4,10 @@ import ReactQuill from "react-quill";
 import {observer, inject} from "mobx-react";
 
 import ScoreIcon from "riskofbias/robTable/components/ScoreIcon";
+import CheckboxInput from "shared/components/CheckboxInput";
 import SelectInput from "shared/components/SelectInput";
 import TextInput from "shared/components/TextInput";
+
 import h from "shared/utils/helpers";
 import "./ScoreForm.css";
 import {SCORE_TEXT_DESCRIPTION} from "riskofbias/constants";
@@ -24,74 +26,83 @@ class ScoreForm extends Component {
             showDelete = score.is_default === false;
 
         return (
-            <div className="score-form">
-                {showOverrideCreate ? (
-                    <button
-                        className="btn btn-primary pull-right"
-                        type="button"
-                        onClick={() => {
-                            store.createScoreOverride({
-                                metric: score.metric.id,
-                                riskofbias: score.riskofbias_id,
-                            });
-                        }}>
-                        <i className="fa fa-plus"></i>&nbsp;Create new override
-                    </button>
-                ) : null}
-
-                {showDelete ? (
-                    <button
-                        className="btn btn-danger pull-right"
-                        type="button"
-                        onClick={() => store.deleteScoreOverride(scoreId)}>
-                        <i className="fa fa-trash"></i>&nbsp;Delete override
-                    </button>
-                ) : null}
-
-                {showScoreInput ? (
-                    <div>
-                        <SelectInput
-                            label="Score"
-                            choices={choices}
-                            id={`${score.id}-score`}
-                            value={score.score}
-                            handleSelect={value => {
-                                score.score = parseInt(value);
-                            }}
-                        />
-                        <ScoreIcon score={score.score} />
+            <div className="score-form container-fluid ">
+                <div className="row-fluid form-inline">
+                    <div className="span3">
+                        {metricHasOverrides ? (
+                            <TextInput
+                                id={`${score.id}-label`}
+                                label="Label"
+                                name={`label-id-${score.id}`}
+                                onChange={e => {
+                                    score.label = e.target.value;
+                                }}
+                                value={score.label}
+                            />
+                        ) : null}
                     </div>
-                ) : null}
+                    <div className="span9">
+                        {showOverrideCreate ? (
+                            <button
+                                className="btn btn-primary pull-right"
+                                type="button"
+                                onClick={() => {
+                                    store.createScoreOverride({
+                                        metric: score.metric.id,
+                                        riskofbias: score.riskofbias_id,
+                                    });
+                                }}>
+                                <i className="fa fa-plus"></i>&nbsp;Create new override
+                            </button>
+                        ) : null}
 
-                {metricHasOverrides ? (
-                    <div>
-                        <label className="checkbox">
-                            <input
-                                type="checkbox"
+                        {showDelete ? (
+                            <button
+                                className="btn btn-danger pull-right"
+                                type="button"
+                                onClick={() => store.deleteScoreOverride(scoreId)}>
+                                <i className="fa fa-trash"></i>&nbsp;Delete override
+                            </button>
+                        ) : null}
+
+                        {metricHasOverrides ? (
+                            <CheckboxInput
+                                label={score.is_default ? "Default score" : "Override score"}
+                                readOnly={true}
                                 checked={score.is_default}
-                                readOnly={true}></input>
-                            Default score
-                        </label>
-                        <TextInput
-                            id={`${score.id}-label`}
-                            label="Label"
-                            name={`label-id-${score.id}`}
-                            onChange={e => {
-                                score.label = e.target.value;
+                            />
+                        ) : null}
+                    </div>
+                </div>
+                <div className="row-fluid">
+                    <div className="span3">
+                        {showScoreInput ? (
+                            <div>
+                                <SelectInput
+                                    className="span12"
+                                    label="Score"
+                                    choices={choices}
+                                    value={score.score}
+                                    handleSelect={value => {
+                                        score.score = parseInt(value);
+                                    }}
+                                />
+                                <ScoreIcon score={score.score} />
+                            </div>
+                        ) : null}
+                    </div>
+                    <div className="span9">
+                        <ReactQuill
+                            id={`${score.id}-notes`}
+                            value={score.notes}
+                            onChange={htmlContent => {
+                                score.notes = htmlContent;
                             }}
-                            value={score.label}
+                            className="score-editor"
                         />
                     </div>
-                ) : null}
-
-                <ReactQuill
-                    id={`${score.id}-notes`}
-                    value={score.notes}
-                    onChange={htmlContent => {
-                        score.notes = htmlContent;
-                    }}
-                    className="score-editor"
-                />
+                </div>
+                <hr />
             </div>
         );
     }
