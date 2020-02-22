@@ -453,8 +453,8 @@ class Identifiers(models.Model):
             ref = Reference(
                 assessment=assessment,
                 title=content.get("title", ""),
-                authors=content.get("authors_short", ""),
-                authors_list=", ".join(content.get("authors_list", [""])),
+                authors_short=content.get("authors_short", ""),
+                authors=", ".join(content.get("authors", [""])),
                 journal=content.get("citation", ""),
                 abstract=content.get("abstract", ""),
                 year=content.get("year", None),
@@ -468,8 +468,8 @@ class Identifiers(models.Model):
             ref = Reference(
                 assessment=assessment,
                 title=title or "",
-                authors=content.get("authors_short", ""),
-                authors_list=", ".join(content.get("authors_list", [""])),
+                authors_short=content.get("authors_short", ""),
+                authors=", ".join(content.get("authors", [""])),
                 year=content.get("year", None),
                 journal=journal or "",
                 abstract=abstract or "",
@@ -565,13 +565,12 @@ class Reference(models.Model):
     searches = models.ManyToManyField(Search, blank=False, related_name="references")
     identifiers = models.ManyToManyField(Identifiers, blank=True, related_name="references")
     title = models.TextField(blank=True)
-    # TODO rename authors to authors_short and authors_list to authors
-    authors = models.TextField(
-        blank=True, help_text="Short-text for to display (eg., `Smith et al.`)"
+    authors_short = models.TextField(
+        blank=True, help_text='Short-text for to display (eg., "Smith et al.")'
     )
-    authors_list = models.TextField(
+    authors = models.TextField(
         blank=True,
-        help_text="The complete, comma separated authors list, (eg., `Smith JD, Tom JF, McFarlen PD`)",
+        help_text='The complete, comma separated authors list, (eg., "Smith JD, Tom JF, McFarlen PD")',
     )
     year = models.PositiveSmallIntegerField(blank=True, null=True)
     journal = models.TextField(blank=True)
@@ -601,9 +600,8 @@ class Reference(models.Model):
         fields = (
             "pk",
             "title",
-            # TODO: use new names
+            "authors_short",
             "authors",
-            "authors_list",
             "year",
             "journal",
             "abstract",

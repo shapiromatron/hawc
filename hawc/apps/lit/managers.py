@@ -411,8 +411,8 @@ class ReferenceManager(BaseManager):
             if ref:
                 ref.__dict__.update(
                     title=content["title"],
-                    authors=content["authors_short"],  # TODO FIX THIS
-                    authors_list=content["authors"],
+                    authors_short=content["authors_short"],
+                    authors=content["authors"],
                     year=content["year"],
                     journal=content["citation"],
                     abstract=content["abstract"],
@@ -422,8 +422,8 @@ class ReferenceManager(BaseManager):
                 ref = self.create(
                     assessment_id=assessment_id,
                     title=content["title"],
-                    authors=content["authors_short"],
-                    authors_list=content["authors"],  # TODO FIX THIS
+                    authors_short=content["authors_short"],
+                    authors=content["authors"],
                     year=content["year"],
                     journal=content["citation"],
                     abstract=content["abstract"],

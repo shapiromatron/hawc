@@ -16,7 +16,7 @@ def set_null_content(apps, schema_editor):
     print(f"Updated {num_updated} items renaming content from 'None' to ''")
 
 
-def set_authors_list(apps, schema_editor):
+def set_authors(apps, schema_editor):
     Identifiers = apps.get_model("lit", "Identifiers")
     qs = Identifiers.objects.filter(database__in=[PUBMED, HERO])
     for idx, identifier in enumerate(qs.iterator()):
@@ -25,7 +25,7 @@ def set_authors_list(apps, schema_editor):
         if len(identifier.content):
             content = json.loads(identifier.content)
             if "authors_list" in content:
-                identifier.authors_list = ", ".join(content["authors_list"])
+                identifier.authors = ", ".join(content["authors"])
                 identifier.save()
 
     # TODO - move this code somewhere else
@@ -46,7 +46,7 @@ def set_authors_list(apps, schema_editor):
                     r"\1\2\3",
                     ", ".join(author.replace(",", "").replace(".", "") for author in authors_list),
                 )
-            identifier.authors_list = authors
+            identifier.authors = authors
             identifier.save()
 
 
@@ -57,11 +57,24 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.RenameField(
+            model_name="reference", old_name="authors", new_name="authors_short",
+        ),
+        migrations.AlterField(
+            model_name="reference",
+            name="authors_short",
+            field=models.TextField(
+                blank=True, help_text='Short-text for to display (eg., "Smith et al.")'
+            ),
+        ),
         migrations.AddField(
             model_name="reference",
-            name="authors_list",
-            field=models.TextField(blank=True, help_text="Comma separated authors list"),
+            name="authors",
+            field=models.TextField(
+                blank=True,
+                help_text='The complete, comma separated authors list, (eg., "Smith JD, Tom JF, McFarlen PD")',
+            ),
         ),
         migrations.RunPython(set_null_content, reverse_code=migrations.RunPython.noop),
-        migrations.RunPython(set_authors_list, reverse_code=migrations.RunPython.noop),
+        migrations.RunPython(set_authors, reverse_code=migrations.RunPython.noop),
     ]

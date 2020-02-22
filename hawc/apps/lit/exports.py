@@ -100,9 +100,8 @@ class ReferenceFlatComplete(FlatFileExporter):
                 ref.get_short_citation_estimate(),
                 ref.reference_citation,
                 ref.title,
-                # TODO: use new names
+                ref.authors_short,
                 ref.authors,
-                ref.authors_list,
                 ref.year,
                 ref.journal,
                 strip_tags(ref.abstract),
