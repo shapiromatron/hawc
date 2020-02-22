@@ -4,8 +4,8 @@ import logging
 import re
 from datetime import datetime
 from math import ceil
-from urllib import parse
 from typing import Dict, Optional
+from urllib import parse
 
 from django.apps import apps
 from django.conf import settings
