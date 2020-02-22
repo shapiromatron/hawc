@@ -525,3 +525,11 @@ class CleanStudyRoB(ProjectManagerOrHigherMixin, BaseDetail):
 
     def get_assessment(self, request, *args, **kwargs):
         return get_object_or_404(self.model, pk=kwargs["pk"])
+
+
+class AdminDashboard(TemplateView):
+    template_name = "admin/dashboard.html"
+
+    @method_decorator(staff_member_required)
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)

@@ -169,8 +169,7 @@ class Reference extends Observee {
         );
     }
 
-    print_short_name() {
-        // TODO - use new names
+    print_name() {
         let authors = this.data.authors || this.data.authors_list || Reference.no_authors_text,
             year = this.data.year || "";
         this.$list = $(`<p class="reference">${authors} ${year}</p>`).data("d", this);

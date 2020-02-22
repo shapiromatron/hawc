@@ -691,12 +691,18 @@ class Endpoint(BaseEndpoint):
         "litter_effect_notes",
     )
 
+    DATA_TYPE_CONTINUOUS = "C"
+    DATA_TYPE_DICHOTOMOUS = "D"
+    DATA_TYPE_PERCENT_DIFFERENCE = "P"
+    DATA_TYPE_DICHOTOMOUS_CANCER = "DC"
+    DATA_TYPE_NOT_REPORTED = "NR"
+
     DATA_TYPE_CHOICES = (
-        ("C", "Continuous"),
-        ("D", "Dichotomous"),
-        ("P", "Percent Difference"),
-        ("DC", "Dichotomous Cancer"),
-        ("NR", "Not reported"),
+        (DATA_TYPE_CONTINUOUS, "Continuous"),
+        (DATA_TYPE_DICHOTOMOUS, "Dichotomous"),
+        (DATA_TYPE_PERCENT_DIFFERENCE, "Percent Difference"),
+        (DATA_TYPE_DICHOTOMOUS_CANCER, "Dichotomous Cancer"),
+        (DATA_TYPE_NOT_REPORTED, "Not reported"),
     )
 
     MONOTONICITY_CHOICES = (
@@ -1244,7 +1250,7 @@ class ConfidenceIntervalsMixin(object):
                 mu_2 = eg["response"]
                 sd_2 = eg.get("stdev")
 
-                if mu_1 and mu_2 and mu_1 != 0:
+                if mu_1 is not None and mu_2 is not None and mu_1 > 0 and mu_2 > 0:
                     mean = (mu_2 - mu_1) / mu_1 * 100.0
                     if sd_1 and sd_2 and n_1 and n_2:
                         sd = math.sqrt(
@@ -1287,8 +1293,8 @@ class ConfidenceIntervalsMixin(object):
                 """
                 se = eg["stdev"] / math.sqrt(n)
                 change = stats.t.ppf(0.975, max(n - 1, 1)) * se
-                lower_ci = round(eg["response"] - change, 2)
-                upper_ci = round(eg["response"] + change, 2)
+                lower_ci = eg["response"] - change
+                upper_ci = eg["response"] + change
                 update = True
             elif data_type in ["D", "DC"] and eg["incidence"] is not None:
                 """

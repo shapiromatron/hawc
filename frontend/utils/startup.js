@@ -252,7 +252,15 @@ _.extend(Math, {
 
 _.extend(Number.prototype, {
     toHawcString() {
-        return this > 0.001 ? this.toLocaleString() : this.toString();
+        if (this === 0) {
+            return this.toString();
+        } else if (Math.abs(this) > 0.001 && Math.abs(this) < 1e9) {
+            // local print "0" for anything smaller than this
+            return this.toLocaleString();
+        } else {
+            // too many 0; use exponential notation
+            return this.toExponential(2);
+        }
     },
 });
 

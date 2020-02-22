@@ -26,7 +26,7 @@
 {% block extrajs %}
   {{ smart_tag_form.media }}
   <script type="text/javascript">
-    window.app.assessmentStartup(function(assessment){
+    $(document).ready(function () {
 
       {% if crud == "Create" %}
         $('#id_title').on('keyup', function(){
@@ -34,10 +34,11 @@
         });
       {% endif %}
 
-      var doseWidget = new assessment.DoseUnitsWidget($('form'), {
+      var doseWidget = new window.app.assessmentStartup.DoseUnitsWidget($('form'), {
         api: "{% url 'animal:api:dose_units-list' %}",
         el: '#id_preferred_units',
       });
+
       window.app.smartTagsStartup(function(smartTags){
           new smartTags.SmartTagEditor($('#id_caption'), {submitEl: '#dataPivotForm'});
       })

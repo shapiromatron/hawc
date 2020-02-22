@@ -476,7 +476,7 @@ class ReferenceManager(BaseManager):
         # set missing columns
         for col in ["hero_id", "pubmed_id"]:
             if col not in df.columns:
-                df.loc[:, col] = None
+                df[col] = None
 
         return df
 

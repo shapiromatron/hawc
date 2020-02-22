@@ -5,8 +5,9 @@ import DRPlot from "./DRPlot";
 import Endpoint from "./Endpoint";
 
 class EditEndpoint extends Endpoint {
-    constructor(data, doses, eg_table, plot) {
+    constructor(settings, data, doses, eg_table, plot) {
         super(data);
+        this.settings = settings;
         this.doses = data.doses;
         this.eg_table = eg_table;
         this.plot_div = plot;
@@ -34,7 +35,7 @@ class EditEndpoint extends Endpoint {
     update_endpoint_from_form() {
         var vals = {
             groups: [],
-            noel_names: JSON.parse($("#config").html()).noel_names,
+            noel_names: this.settings.noel_names,
         };
 
         //save form values
