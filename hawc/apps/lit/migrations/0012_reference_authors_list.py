@@ -3,7 +3,6 @@
 from __future__ import unicode_literals
 
 import json
-import re
 
 from django.db import migrations, models
 
@@ -17,7 +16,22 @@ def set_null_content(apps, schema_editor):
     print(f"Updated {num_updated} items renaming content from 'None' to ''")
 
 
+def update_identifier_content(apps, schema_editor):
+    # TODO - do the parse import from litter-getter and resave.
+    Identifiers = apps.get_model("lit", "Identifiers")
+    qs = Identifiers.objects.filter(database__in=[HERO, RIS])
+    for idx, identifier in enumerate(qs.iterator()):
+        if idx % 1000 == 0:
+            print(f"Updating identifier content {idx:,} ...")
+        if len(identifier.content):
+            content = json.loads(identifier.content)
+            if "authors_list" in content:
+                identifier.authors = ", ".join(content["authors"])
+                identifier.save()
+
+
 def set_authors(apps, schema_editor):
+    # TODO - then, set Reference authors from the new content
     Identifiers = apps.get_model("lit", "Identifiers")
     qs = Identifiers.objects.filter(database__in=[PUBMED, HERO])
     for idx, identifier in enumerate(qs.iterator()):
@@ -29,24 +43,11 @@ def set_authors(apps, schema_editor):
                 identifier.authors = ", ".join(content["authors"])
                 identifier.save()
 
-    # TODO - move this code somewhere else
-    # 2 or 3 sequential single capital-letters with single spaces between
-    pattern = re.compile(r"([A-Z])\s([A-Z])\s?([A-Z])?")
     qs = Identifiers.objects.filter(database=RIS)
     for idx, identifier in enumerate(qs.iterator()):
         if idx % 1000 == 0:
-            print(f"Processing Pubmed/HERO {idx:,} ...")
+            print(f"Processing RIS {idx:,} ...")
         if len(identifier.content):
-            authors_list = json.loads(json.loads(identifier.content)["json"])["authors"]
-            if len(authors_list) == 0:
-                raise ValueError(f'No authors in authors list: "{authors_list}"')
-            elif len(authors_list) == 1:
-                authors = authors_list
-            elif len(authors_list) > 1:
-                authors = pattern.sub(
-                    r"\1\2\3",
-                    ", ".join(author.replace(",", "").replace(".", "") for author in authors_list),
-                )
             identifier.authors = authors
             identifier.save()
 
@@ -77,5 +78,6 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.RunPython(set_null_content, reverse_code=migrations.RunPython.noop),
+        migrations.RunPython(update_identifier_content, reverse_code=migrations.RunPython.noop),
         migrations.RunPython(set_authors, reverse_code=migrations.RunPython.noop),
     ]

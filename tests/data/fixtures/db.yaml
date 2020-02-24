@@ -677,6 +677,7 @@
   fields:
     assessment: 1
     title: ''
+    authors_short: ''
     authors: ''
     year: null
     journal: ''
@@ -692,6 +693,7 @@
   fields:
     assessment: 2
     title: ''
+    authors_short: ''
     authors: ''
     year: null
     journal: ''
