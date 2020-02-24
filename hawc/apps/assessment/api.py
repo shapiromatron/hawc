@@ -7,6 +7,7 @@ from django.db.models import Count
 from rest_framework import decorators, filters, permissions, status, viewsets
 from rest_framework.exceptions import APIException
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 
 from ..common.helper import tryParseInt
@@ -299,3 +300,16 @@ class AssessmentEndpointList(AssessmentViewset):
             .annotate(ivendpoint_count=Count("baseendpoint__ivendpoint"))
         )
         return queryset
+
+
+class AdminDashboardViewset(viewsets.ViewSet):
+
+    permission_classes = (permissions.IsAdminUser,)
+    renderer_classes = (JSONRenderer,)
+
+    @decorators.list_route()
+    def growth(self, request):
+        serializer = serializers.GrowthPlotSerializer(data=request.GET)
+        serializer.is_valid(raise_exception=True)
+        fig = serializer.create_figure()
+        return Response(fig.to_dict())

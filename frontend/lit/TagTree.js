@@ -39,7 +39,12 @@ class TagTree extends Observee {
 
     add_references(references) {
         references.forEach(el => {
-            this.dict[el.tag_id].references.add(el.reference_id);
+            let node = this.dict[el.tag_id];
+            if (node) {
+                node.references.add(el.reference_id);
+            } else {
+                console.error(`Tag not found ${el.tag_id}; reference id: ${el.reference_id}`);
+            }
         });
     }
 

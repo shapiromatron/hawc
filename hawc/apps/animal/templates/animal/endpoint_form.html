@@ -140,13 +140,19 @@
 
 {% block extrajs %}
   {{ form.media }}
-  <script type="text/json" id="config">
+  <script type="text/json" id="settings">
     {
-      "noel_names": {{form.noel_names|safe}}
+      "noel_names": {{form.noel_names|safe}},
+      "litterEffectRequired": {{form.instance.litter_effect_required|lower}},
+      "NOEL": {{form.NOEL.value|default_if_none:"-999"}},
+      "LOEL": {{form.LOEL.value|default_if_none:"-999"}},
+      "FEL": {{form.FEL.value|default_if_none:"-999"}},
+      "doses": {{animal_group.get_doses_json|safe}}
     }
   </script>
   <script type="text/javascript">
     $(document).ready(function () {
+      let settings = JSON.parse(document.getElementById('settings').text);
 
       // reorganize forms
       $('#endpointGroups').insertBefore($('div.form-actions'));
@@ -155,21 +161,20 @@
       $('#id_results_notes').quillify();
       $('#id_endpoint_notes').quillify();
 
-      // get doses for use in doses-data table
-      var doses = {{animal_group.get_doses_json|safe}};
-
       //update values in doses table
-      $('#doses_title').html('Dose<br>(' + doses[0].name + ')');
+      $('#doses_title').html('Dose<br>(' + settings.doses[0].name + ')');
       $('.doses').each(function(i, v){
-        $(v).html(doses[0].values[i]);
+        $(v).html(settings.doses[0].values[i]);
       });
 
       window.app.animalStartup(function(animal){
-          var endpoint = new animal.EditEndpoint({
-              "NOEL": {{form.NOEL.value|default_if_none:"-999"}},
-              "LOEL": {{form.LOEL.value|default_if_none:"-999"}},
-              "FEL": {{form.FEL.value|default_if_none:"-999"}}
-          }, doses, $('#eg'), $('#endpoint_plot'));
+          var endpoint = new animal.EditEndpoint(
+            settings,
+            {"NOEL": settings.NOEL, "LOEL": settings.LOEL, "FEL": settings.FEL},
+            settings.doses,
+            $('#eg'),
+            $('#endpoint_plot')
+          );
 
           // whenever input changes, update data form
           $('body')
@@ -240,22 +245,20 @@
 
           // initialize sample-size power widget
           new animal.SampleSizeWidget();
-
-      })
+      });
 
       // show/hide the litter_effects fields depending on the underlying experiment type
       var litEff = $('#id_litter_effects'),
         litEffNotes = $('#id_litter_effect_notes'),
         litterDiv = litEff.parent().parent().parent();
-      if (["Rp", "Dv", "Ot"].indexOf("{{animal_group.experiment.type}}")>=0){
+
+      if (settings.litterEffectRequired){
         litterDiv.show();
       } else {
         litterDiv.hide();
         litEff.val("NA");
         litEffNotes.val("");
       }
-
-
     });
   </script>
 

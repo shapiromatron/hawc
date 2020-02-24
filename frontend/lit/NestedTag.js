@@ -35,40 +35,45 @@ class NestedTag extends Observee {
             txtspan = $('<p class="nestedTag"></p>'),
             text = `${padding}${this.data.name}`;
 
-        if (options && options.show_refs_count) text += ` (${this.get_references_deep().length})`;
+        if (options && options.show_refs_count) {
+            text += ` (${this.get_references_deep().length})`;
+        }
+
         txtspan
             .text(text)
             .appendTo(div)
             .data("d", this)
-            .on("click", function() {
-                $(this).trigger("hawc-tagClicked");
-            });
+            .on("click", () => txtspan.trigger("hawc-tagClicked"));
+
         parent.append(div);
 
         if (this.children.length > 0) {
-            var toggle = $("<a>")
-                    .attr("title", "Collapse tags: {0}".printf(this.data.name))
+            let key = `lit-referencetag-${this.data.pk}-expanded`,
+                currentValue = window.localStorage.getItem(key) === "false" ? false : true,
+                getToggleClass = value => (value === true ? "icon-minus" : "icon-plus"),
+                getExpansionClass = value => (value === true ? "in" : "out"),
+                getToggleTitle = value => (value === true ? "Collapse tags" : "Expand tags"),
+                span = $(`<span class="${getToggleClass(currentValue)}"></span>`),
+                nested = $(`<div class="${getExpansionClass(currentValue)} collapse">`),
+                toggle = $("<a href='#'>")
+                    .append(span)
+                    .attr("title", getToggleTitle(true))
                     .attr("data-toggle", "collapse")
-                    .attr("href", "#collapseTag{0}".printf(this.data.pk))
-                    .data("expanded", true)
-                    .data("name", this.data.name)
-                    .on("click", function() {
-                        var self = toggle;
-                        self.data("expanded", !self.data("expanded"));
-                        if (self.data("expanded")) {
-                            span.attr("class", "icon-minus");
-                            self.attr("title", "Collapse tags: {0}".printf(self.data("name")));
-                        } else {
-                            span.attr("class", "icon-plus");
-                            self.attr("title", "Expand tags: {0}".printf(self.data("name")));
-                        }
+                    .on("click", e => {
+                        e.preventDefault();
+                        currentValue = !currentValue;
+                        toggleCurrentValue(currentValue);
                     }),
-                span = $('<span class="icon-minus"></span>').appendTo(toggle);
-            toggle.appendTo(collapse);
+                toggleCurrentValue = value => {
+                    window.localStorage.setItem(key, value.toString());
+                    span.attr("class", getToggleClass(value));
+                    toggle.attr("title", getToggleTitle(value));
+                    nested.collapse("toggle");
+                };
 
-            var nested = $(
-                '<div id="collapseTag{0}" class="in collapse"></div>'.printf(this.data.pk)
-            ).appendTo(div);
+            toggle.appendTo(collapse);
+            nested.appendTo(div);
+
             this.children.forEach(function(v) {
                 v.get_nested_list_item(nested, padding + "   ", options);
             });
@@ -121,18 +126,11 @@ class NestedTag extends Observee {
     }
 
     get_option_item(lst) {
+        let depth = Array(this.depth + 1).join("&nbsp;&nbsp;");
         lst.push(
-            $(
-                '<option value="{0}">{1}{2}</option>'.printf(
-                    this.data.pk,
-                    Array(this.depth + 1).join("&nbsp;&nbsp;"),
-                    this.data.name
-                )
-            ).data("d", this)
+            $(`<option value="${this.data.pk}">${depth}${this.data.name}</option>`).data("d", this)
         );
-        this.children.forEach(function(v) {
-            v.get_option_item(lst);
-        });
+        this.children.forEach(v => v.get_option_item(lst));
         return lst;
     }
 
