@@ -4,9 +4,9 @@ Server setup
 Minimum hardware requirements:
 
 - Linux OS (ex: Ubuntu 16.04, CentOS, or RHEL)
-- 2 GB RAM (4 GB recommended)
+- 4 GB RAM (8 GB recommended)
 - 2 processors (4-8 recommended)
-- 40 GB HD space (120 GB recommended)
+- 100 GB HD space
 
 Software requirements:
 

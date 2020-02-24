@@ -32,12 +32,14 @@ class DataPivot {
     }
 
     static get_object(pk, callback) {
-        $.get("/summary/api/data_pivot/{0}/".printf(pk), function(d) {
+        $.get(`/summary/api/data_pivot/${pk}/`, function(d) {
             d3.tsv(d.data_url)
-                .row(function(d, i) {
-                    return DataPivot.massage_row(d, i);
-                })
+                .row((row, idx) => DataPivot.massage_row(row, idx))
                 .get(function(error, data) {
+                    if (error && error.status === 500) {
+                        alert("An error occurred; if the error continues please contact us.");
+                        throw "Server error";
+                    }
                     var dp = new DataPivot(data, d.settings, {}, d.title, d.url);
                     if (callback) {
                         callback(dp);
