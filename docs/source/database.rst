@@ -58,26 +58,26 @@ To generate these database schema diagrams:
 
 .. code-block:: bash
 
-    python manage.py graph_models \
+    manage.py graph_models \
         -a -g --pydot \
-        -o ../docs/source/_static/hawc-schema.png
+        -o ./docs/source/_static/hawc-schema.png
 
-    python manage.py graph_models \
+    manage.py graph_models \
         lit study riskofbias \
         -g --pydot \
-        -o ../docs/source/_static/hawc-study-schema.png
+        -o ./docs/source/_static/hawc-study-schema.png
 
-    python manage.py graph_models \
+    manage.py graph_models \
         animal bmd \
         -g --pydot \
-        -o ../docs/source/_static/hawc-animal-schema.png
+        -o ./docs/source/_static/hawc-animal-schema.png
 
-    python manage.py graph_models \
+    manage.py graph_models \
         epi epimeta \
         -g --pydot \
-        -o ../docs/source/_static/hawc-epi-schema.png
+        -o ./docs/source/_static/hawc-epi-schema.png
 
-    python manage.py graph_models \
+    manage.py graph_models \
         invitro \
         -g --pydot \
-        -o ../docs/source/_static/hawc-invitro-schema.png
+        -o ./docs/source/_static/hawc-invitro-schema.png

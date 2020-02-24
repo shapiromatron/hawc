@@ -19,7 +19,6 @@ Contents:
    reference
    ci_description
    management_commands
-   contributing
 
 Indices and tables
 ==================

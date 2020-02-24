@@ -15,10 +15,12 @@ class IntentionalException(Exception):
 
 @admin.register(models.HAWCUser)
 class HAWCUserAdmin(admin.ModelAdmin):
-    list_display = ("__str__", "email", "is_active", "is_staff", "date_joined")
+    list_display = ("email", "is_active", "is_staff", "date_joined")
     list_filter = (
-        "date_joined",
+        "is_superuser",
         "is_staff",
+        "date_joined",
+        "groups",
     )
     search_fields = ("last_name", "first_name", "email")
     ordering = ("-date_joined",)
