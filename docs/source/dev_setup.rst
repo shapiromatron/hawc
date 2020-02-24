@@ -86,8 +86,8 @@ In one terminal, start the the python webserver:
     createdb -E UTF-8 hawc
 
     # active python virtual environment
-    cd ./project
-    source ../venv/bin/activate
+    cd ~/dev/hawc
+    source ./venv/bin/activate
 
     # sync db state with application state
     manage.py migrate
@@ -99,8 +99,8 @@ In a new terminal, run the node development webserver for javascript:
 
 .. code-block:: bash
 
-    # navigate to project folder
-    cd ./project
+    # navigate to frontend folder
+    cd ~/dev/hawc/frontend
 
     # install javascript dependencies
     yarn install
@@ -139,8 +139,10 @@ If you don't have ``Make`` in your developer environment, you can just call the 
 FAQ
 ~~~
 
-- If tests aren't working after the database has changed; try dropping the test-database
+- If tests aren't working after the database has changed (ie., migrated); try dropping the test-database. You can use the command `dropdb test_hawc-fixture-test`, assuming your user has admin rights to delete databases.
 
+Building a test database
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 A test database is loaded to run unit tests. The database may need to be periodically updated as new feature are added. To load, make edits, and export the test database:
 
