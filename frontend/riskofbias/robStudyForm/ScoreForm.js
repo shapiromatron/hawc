@@ -67,6 +67,7 @@ class ScoreForm extends Component {
 
                         {metricHasOverrides ? (
                             <CheckboxInput
+                                id={`${score.id}-override`}
                                 label={score.is_default ? "Default score" : "Override score"}
                                 readOnly={true}
                                 checked={score.is_default}
@@ -80,6 +81,7 @@ class ScoreForm extends Component {
                             <div>
                                 <SelectInput
                                     className="span12"
+                                    id={`${score.id}-score`}
                                     label="Score"
                                     choices={choices}
                                     value={score.score}

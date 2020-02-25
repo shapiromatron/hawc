@@ -13,6 +13,7 @@ class Root extends Component {
     componentDidMount() {
         this.props.store.setConfig("config");
         this.props.store.fetchFullStudy();
+        this.props.store.fetchOverrideOptions();
     }
 
     render() {

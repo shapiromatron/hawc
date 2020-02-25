@@ -339,6 +339,9 @@ class RoBEdit(TimeSpentOnPageMixin, BaseDetail):
                 "riskofbias": {
                     "id": self.object.id,
                     "url": reverse("riskofbias:api:review-list"),
+                    "override_options_url": reverse(
+                        "riskofbias:api:review-override-options", args=(self.object.id,)
+                    ),
                     "scores_url": reverse("riskofbias:api:scores-list"),
                 },
             }

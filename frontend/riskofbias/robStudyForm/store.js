@@ -18,6 +18,7 @@ class RobFormStore {
     @observable error = null;
     @observable config = null;
     @observable study = null;
+    @observable overrideOptions = null;
     scores = observable.array();
     editableScores = observable.array();
     nonEditableScores = observable.array();
@@ -25,7 +26,7 @@ class RobFormStore {
 
     // computed props
     @computed get dataLoaded() {
-        return this.study !== null && this.study.id !== undefined;
+        return this.study !== null && this.overrideOptions !== null;
     }
     @computed get activeRiskOfBias() {
         return _.find(this.study.riskofbiases, {id: this.config.riskofbias.id});
@@ -47,6 +48,18 @@ class RobFormStore {
     // actions
     @action.bound setConfig(elementId) {
         this.config = JSON.parse(document.getElementById(elementId).textContent);
+    }
+
+    @action.bound fetchOverrideOptions() {
+        let url = this.config.riskofbias.override_options_url;
+        fetch(url, h.fetchGet)
+            .then(response => response.json())
+            .then(json => {
+                this.overrideOptions = json;
+            })
+            .catch(exception => {
+                this.error = exception;
+            });
     }
 
     @action.bound fetchFullStudy() {
