@@ -1,7 +1,7 @@
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404
 from rest_framework import filters, status, viewsets
-from rest_framework.decorators import list_route
+from rest_framework.decorators import list_route, detail_route
 from rest_framework.response import Response
 from rest_framework_extensions.mixins import ListUpdateModelMixin
 
@@ -61,6 +61,11 @@ class RiskOfBias(viewsets.ModelViewSet):
                 serializer.instance,
                 serializer.instance.get_assessment().id,
             )
+
+    @detail_route(methods=["get"])
+    def override_options(self, request, pk=None):
+        object_ = self.get_object()
+        return Response(object_.get_override_options())
 
 
 class AssessmentMetricViewset(AssessmentViewset):

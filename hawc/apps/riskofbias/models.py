@@ -3,6 +3,7 @@ import json
 import logging
 from typing import Dict, List, Tuple
 
+from django.apps import apps
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
@@ -366,6 +367,67 @@ class RiskOfBias(models.Model):
                     scores_map[key] = default_value
 
         return header_map, scores_map
+
+    def get_override_options(self) -> Dict:
+        """Get risk of bias override options and overrides
+
+        Returns:
+            Dict: A dictionary of metadata and choices
+        """
+        options = {
+            "metadata": [
+                {"key": "animal.Endpoint", "label": "Animal bioassay endpoints"},
+                {"key": "animal.AnimalGroup", "label": "Animal bioassay groups"},
+                {"key": "epi.Outcome", "label": "Epidemiological outcomes"},
+                {"key": "epi.Exposure", "label": "Epidemiological exposures"},
+                {"key": "epi.Result", "label": "Epidemiological results"},
+            ],
+            "choices": {},
+        }
+
+        qs = (
+            apps.get_model("animal.Endpoint")
+            .objects.filter(animal_group__experiment__study=self.study_id)
+            .select_related("animal_group", "animal_group__experiment")
+            .order_by("animal_group__experiment_id", "animal_group_id", "id")
+        )
+        options["choices"]["animal.Endpoint"] = [
+            (el.id, f"{el.animal_group.experiment} → {el.animal_group} → {el}") for el in qs
+        ]
+
+        qs = (
+            apps.get_model("animal.AnimalGroup")
+            .objects.filter(experiment__study=self.study_id)
+            .select_related("experiment")
+            .order_by("experiment_id", "id")
+        )
+        options["choices"]["animal.AnimalGroup"] = [(el.id, f"{el.experiment} → {el}") for el in qs]
+
+        qs = (
+            apps.get_model("epi.Outcome")
+            .objects.filter(study_population__study=self.study_id)
+            .select_related("study_population")
+            .order_by("study_population_id", "id")
+        )
+        options["choices"]["epi.Outcome"] = [(el.id, str(el)) for el in qs]
+
+        qs = (
+            apps.get_model("epi.Exposure")
+            .objects.filter(study_population__study=self.study_id)
+            .select_related("study_population")
+            .order_by("study_population_id", "id")
+        )
+        options["choices"]["epi.Exposure"] = [(el.id, str(el)) for el in qs]
+
+        qs = (
+            apps.get_model("epi.Result")
+            .objects.filter(outcome__study_population__study=self.study_id)
+            .select_related("outcome", "outcome__study_population")
+            .order_by("outcome__study_population_id", "outcome_id", "id")
+        )
+        options["choices"]["epi.Result"] = [(el.id, f"{el.outcome} → {el}") for el in qs]
+
+        return options
 
 
 def build_default_rob_score():
