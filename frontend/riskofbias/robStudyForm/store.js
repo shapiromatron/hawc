@@ -1,5 +1,5 @@
 import _ from "lodash";
-import {observable, computed, action} from "mobx";
+import {observable, computed, action, toJS} from "mobx";
 
 import {NR_KEYS} from "riskofbias/constants";
 import h from "riskofbias/robTable/utils/helpers";
@@ -20,7 +20,7 @@ class RobFormStore {
     @observable study = null;
     @observable overrideOptions = null;
     scores = observable.array();
-    editableScores = observable.array();
+    editableScores = observable.map();
     nonEditableScores = observable.array();
     domainIds = observable.array();
 
@@ -32,17 +32,34 @@ class RobFormStore {
         return _.find(this.study.riskofbiases, {id: this.config.riskofbias.id});
     }
     @computed get numIncompleteScores() {
-        return this.editableScores.filter(score => {
+        return [...this.editableScores.values()].filter(score => {
             return (
                 _.includes(NR_KEYS, score.score) && score.notes.replace(/<\/?[^>]+(>|$)/g, "") == ""
             );
         }).length;
     }
+
     getScoresForDomain(domainId) {
         return this.scores.filter(score => score.metric.domain.id == domainId);
     }
+    getEditableScoresForMetric(metricId) {
+        return [...this.editableScores.values()].filter(score => score.metric.id == metricId);
+    }
+    getNonEditableScoresForMetric(metricId) {
+        return this.nonEditableScores.filter(score => score.metric.id == metricId);
+    }
+    metricHasOverrides(metricId) {
+        return _.chain(this.scores)
+            .filter(score => score.metric.id == metricId)
+            .map(score => score.is_default === false)
+            .some()
+            .value();
+    }
     getEditableScore(scoreId) {
-        return this.editableScores.filter(score => score.id === scoreId)[0];
+        if (!this.editableScores.has(scoreId)) {
+            throw `Score ${scoreId} does not exist.`;
+        }
+        return this.editableScores.get(scoreId);
     }
 
     // actions
@@ -70,34 +87,32 @@ class RobFormStore {
         fetch(url, h.fetchGet)
             .then(response => response.json())
             .then(json => {
-                const editableRiskOfBiasId = this.config.riskofbias.id;
-
-                this.study = json;
-
-                this.scores.replace(
-                    _.flatten(
+                const editableRiskOfBiasId = this.config.riskofbias.id,
+                    scores = _.flatten(
                         json.riskofbiases.map(riskofbias =>
                             riskofbias.scores.map(score => updateRobScore(score, riskofbias))
                         )
-                    )
-                );
+                    );
 
-                this.editableScores.replace(
-                    _.chain(this.scores)
-                        .filter(score => score.riskofbias_id === editableRiskOfBiasId)
-                        .sortBy("id")
-                        .value()
-                );
+                this.study = json;
+
+                this.scores.replace(scores);
+
+                scores
+                    .filter(score => score.riskofbias_id === editableRiskOfBiasId)
+                    .forEach(score => {
+                        this.editableScores.set(score.id, score);
+                    });
 
                 this.nonEditableScores.replace(
-                    _.chain(this.scores)
+                    _.chain(scores)
                         .filter(score => score.riskofbias_id !== editableRiskOfBiasId)
                         .sortBy("id")
                         .value()
                 );
 
                 this.domainIds.replace(
-                    _.chain(this.scores)
+                    _.chain(scores)
                         .flatMapDeep("metric.domain.id")
                         .uniq()
                         .value()
@@ -115,7 +130,7 @@ class RobFormStore {
     @action.bound submitScores() {
         const payload = {
                 id: this.config.riskofbias.id,
-                scores: this.editableScores.map(score => {
+                scores: [...this.editableScores.values()].map(score => {
                     return {
                         id: score.id,
                         score: score.score,
@@ -147,7 +162,7 @@ class RobFormStore {
         return fetch(url, h.fetchPost(csrf, payload, "POST"))
             .then(response => response.json())
             .then(json => {
-                this.editableScores.push(updateRobScore(json, activeRiskOfBias));
+                this.editableScores.set(json.id, updateRobScore(json, activeRiskOfBias));
             })
             .catch(error => {
                 this.error = error;
@@ -160,9 +175,7 @@ class RobFormStore {
         return fetch(url, h.fetchDelete(csrf))
             .then(response => {
                 if (response.status === 204) {
-                    this.editableScores.replace(
-                        this.editableScores.filter(score => score.id !== scoreId)
-                    );
+                    this.editableScores.delete(scoreId);
                 }
             })
             .catch(error => {

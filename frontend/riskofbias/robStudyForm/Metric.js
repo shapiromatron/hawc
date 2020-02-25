@@ -11,20 +11,14 @@ import MetricScores from "riskofbias/robTable/components/MetricScores";
 class Metric extends Component {
     render() {
         const {store, metricId} = this.props,
-            anyScore = store.editableScores.filter(score => score.metric.id == metricId)[0],
-            name = anyScore.metric.name,
-            hideDescription = anyScore.metric.hide_description,
-            description = anyScore.metric.description,
-            metricHasOverrides = _.chain(store.scores)
-                .filter(score => score.metric.id == metricId)
-                .map(score => score.is_default === false)
-                .some()
-                .value(),
-            editableScores = store.editableScores.filter(score => score.metric.id == metricId),
-            nonEditableScores = store.nonEditableScores.filter(
-                score => score.metric.id == metricId
-            ),
-            editingFinal = editableScores[0].final;
+            editableScores = store.getEditableScoresForMetric(metricId),
+            nonEditableScores = store.getNonEditableScoresForMetric(metricId),
+            metricHasOverrides = store.metricHasOverrides(metricId),
+            anyEditableScore = editableScores[0],
+            name = anyEditableScore.metric.name,
+            hideDescription = anyEditableScore.metric.hide_description,
+            description = anyEditableScore.metric.description,
+            editingFinal = anyEditableScore.final;
 
         return (
             <div>
