@@ -42,12 +42,32 @@ class RiskOfBiasMetricSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class RiskOfBiasScoreOverrideObjectSerializer(serializers.ModelSerializer):
+    object_url = serializers.URLField(source="get_object_url")
+    object_name = serializers.CharField(source="get_object_name")
+    content_type_name = serializers.CharField(source="get_content_type_name")
+
+    class Meta:
+        model = models.RiskOfBiasScoreOverrideObject
+        fields = ("id", "score_id", "content_type_name", "object_id", "object_name", "object_url")
+
+
 class RiskOfBiasScoreSerializerSlim(serializers.ModelSerializer):
     metric = RiskOfBiasMetricSerializer(read_only=True)
+    overriden_objects = RiskOfBiasScoreOverrideObjectSerializer(many=True)
 
     class Meta:
         model = models.RiskOfBiasScore
-        fields = ("id", "score", "is_default", "label", "notes", "metric", "riskofbias_id")
+        fields = (
+            "id",
+            "score",
+            "is_default",
+            "label",
+            "notes",
+            "metric",
+            "overriden_objects",
+            "riskofbias_id",
+        )
 
 
 class RiskOfBiasScoreSerializer(RiskOfBiasScoreSerializerSlim):
