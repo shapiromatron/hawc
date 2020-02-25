@@ -1,10 +1,6 @@
 import React, {Component} from "react";
 import PropTypes from "prop-types";
 
-const noop = e => {
-    console.log("None");
-};
-
 class CheckboxInput extends Component {
     render() {
         return (
@@ -15,7 +11,7 @@ class CheckboxInput extends Component {
                 </label>
                 <div className="controls">
                     <input
-                        id={`id_${this.props.name}`}
+                        id={this.props.id}
                         name={this.props.name}
                         type="checkbox"
                         checked={this.props.checked}
@@ -33,12 +29,13 @@ class CheckboxInput extends Component {
 
 CheckboxInput.propTypes = {
     helpText: PropTypes.string,
+    id: PropTypes.string.isRequired,
     label: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
     onChange: PropTypes.func.isRequired,
     required: PropTypes.bool,
     checked: PropTypes.bool.isRequired,
-    readOnly: PropTypes.readOnly,
+    readOnly: PropTypes.bool,
 };
 
 export default CheckboxInput;

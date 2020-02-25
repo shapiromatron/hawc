@@ -35,7 +35,7 @@ class SelectInput extends Component {
     }
 
     render() {
-        let {id, choices, helpText, name} = this.props,
+        let {id, choices, helpText, name, multiple} = this.props,
             className = this.props.className || "react-select",
             value = this.props.value || _.first(choices).id;
         return (
@@ -47,6 +47,7 @@ class SelectInput extends Component {
                         className={className}
                         value={value}
                         onChange={this.handleSelect}
+                        multiple={multiple}
                         name={name}>
                         {_.map(choices, choice => {
                             return (
@@ -75,6 +76,7 @@ SelectInput.propTypes = {
     id: PropTypes.string.isRequired,
     value: PropTypes.number,
     name: PropTypes.string,
+    multiple: PropTypes.bool.isRequired,
     helpText: PropTypes.string,
     label: PropTypes.string,
     required: PropTypes.bool,

@@ -58,6 +58,7 @@ class EndpointAggregationForm extends BaseVisualForm {
                     label="Dose Units"
                     className="span12 select"
                     choices={doseUnitChoices}
+                    multiple={false}
                     id="id_dose_units"
                     value={this.state.dose_units}
                     handleSelect={this.handleDoseUnitSelect}

@@ -33,6 +33,7 @@ export class MetricSelect extends Component {
                     name="metric-select"
                     className="span12"
                     choices={choices}
+                    multiple={false}
                     handleSelect={this.handleSelect}
                     value={this.props.selected.id}
                     label="Select the metric to edit"

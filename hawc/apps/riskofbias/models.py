@@ -392,7 +392,12 @@ class RiskOfBias(models.Model):
             .order_by("animal_group__experiment_id", "animal_group_id", "id")
         )
         options["choices"]["animal.Endpoint"] = [
-            (el.id, f"{el.animal_group.experiment} → {el.animal_group} → {el}") for el in qs
+            (
+                el.id,
+                f"{el.animal_group.experiment} → {el.animal_group} → {el}",
+                el.get_absolute_url(),
+            )
+            for el in qs
         ]
 
         qs = (
@@ -401,7 +406,9 @@ class RiskOfBias(models.Model):
             .select_related("experiment")
             .order_by("experiment_id", "id")
         )
-        options["choices"]["animal.AnimalGroup"] = [(el.id, f"{el.experiment} → {el}") for el in qs]
+        options["choices"]["animal.AnimalGroup"] = [
+            (el.id, f"{el.experiment} → {el}", el.get_absolute_url()) for el in qs
+        ]
 
         qs = (
             apps.get_model("epi.Outcome")
@@ -409,7 +416,7 @@ class RiskOfBias(models.Model):
             .select_related("study_population")
             .order_by("study_population_id", "id")
         )
-        options["choices"]["epi.Outcome"] = [(el.id, str(el)) for el in qs]
+        options["choices"]["epi.Outcome"] = [(el.id, str(el), el.get_absolute_url()) for el in qs]
 
         qs = (
             apps.get_model("epi.Exposure")
@@ -417,7 +424,7 @@ class RiskOfBias(models.Model):
             .select_related("study_population")
             .order_by("study_population_id", "id")
         )
-        options["choices"]["epi.Exposure"] = [(el.id, str(el)) for el in qs]
+        options["choices"]["epi.Exposure"] = [(el.id, str(el), el.get_absolute_url()) for el in qs]
 
         qs = (
             apps.get_model("epi.Result")
@@ -425,7 +432,9 @@ class RiskOfBias(models.Model):
             .select_related("outcome", "outcome__study_population")
             .order_by("outcome__study_population_id", "outcome_id", "id")
         )
-        options["choices"]["epi.Result"] = [(el.id, f"{el.outcome} → {el}") for el in qs]
+        options["choices"]["epi.Result"] = [
+            (el.id, f"{el.outcome} → {el}", el.get_absolute_url()) for el in qs
+        ]
 
         return options
 

@@ -10,6 +10,7 @@ import TextInput from "shared/components/TextInput";
 
 import h from "shared/utils/helpers";
 import "./ScoreForm.css";
+import ScoreOverrideForm from "./ScoreOverrideForm";
 import {SCORE_TEXT_DESCRIPTION} from "riskofbias/constants";
 
 @inject("store")
@@ -68,9 +69,11 @@ class ScoreForm extends Component {
                         {metricHasOverrides ? (
                             <CheckboxInput
                                 id={`${score.id}-override`}
+                                name={"override"}
                                 label={score.is_default ? "Default score" : "Override score"}
                                 readOnly={true}
                                 checked={score.is_default}
+                                onChange={() => {}}
                             />
                         ) : null}
                     </div>
@@ -84,6 +87,7 @@ class ScoreForm extends Component {
                                     id={`${score.id}-score`}
                                     label="Score"
                                     choices={choices}
+                                    multiple={false}
                                     value={score.score}
                                     handleSelect={value => {
                                         score.score = parseInt(value);
@@ -103,6 +107,7 @@ class ScoreForm extends Component {
                             className="score-editor"
                         />
                     </div>
+                    <ScoreOverrideForm score={score} />
                 </div>
                 <hr />
             </div>
