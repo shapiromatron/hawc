@@ -64,6 +64,12 @@ class RobFormStore {
             .some()
             .value();
     }
+    editableMetricHasOverride(metricId) {
+        return _.chain(this.getEditableScoresForMetric(metricId))
+            .map(score => score.is_default === false)
+            .some()
+            .value();
+    }
     getEditableScore(scoreId) {
         if (!this.editableScores.has(scoreId)) {
             throw `Score ${scoreId} does not exist.`;
@@ -149,6 +155,12 @@ class RobFormStore {
                         score: score.score,
                         label: score.label,
                         notes: score.notes,
+                        overridden_objects: score.overridden_objects.map(obj => {
+                            return {
+                                object_id: obj.object_id,
+                                content_type_name: obj.content_type_name,
+                            };
+                        }),
                     };
                 }),
             },

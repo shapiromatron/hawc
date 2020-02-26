@@ -17,8 +17,9 @@ import {SCORE_TEXT_DESCRIPTION} from "riskofbias/constants";
 @observer
 class ScoreForm extends Component {
     render() {
-        let {scoreId, metricHasOverrides, store} = this.props,
+        let {scoreId, store} = this.props,
             score = store.getEditableScore(scoreId),
+            editableMetricHasOverride = store.editableMetricHasOverride(score.metric.id),
             choices = store.study.rob_response_values.map(d => {
                 return {id: parseInt(d), label: SCORE_TEXT_DESCRIPTION[d]};
             }),
@@ -30,7 +31,7 @@ class ScoreForm extends Component {
             <div className="score-form container-fluid ">
                 <div className="row-fluid form-inline">
                     <div className="span3">
-                        {metricHasOverrides ? (
+                        {editableMetricHasOverride ? (
                             <TextInput
                                 id={`${score.id}-label`}
                                 label="Label"
@@ -66,7 +67,7 @@ class ScoreForm extends Component {
                             </button>
                         ) : null}
 
-                        {metricHasOverrides ? (
+                        {editableMetricHasOverride ? (
                             <CheckboxInput
                                 id={`${score.id}-override`}
                                 name={"override"}
@@ -117,7 +118,6 @@ class ScoreForm extends Component {
 
 ScoreForm.propTypes = {
     scoreId: PropTypes.number.isRequired,
-    metricHasOverrides: PropTypes.bool.isRequired,
     store: PropTypes.object,
 };
 

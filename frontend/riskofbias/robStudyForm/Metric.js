@@ -1,4 +1,3 @@
-import _ from "lodash";
 import React, {Component} from "react";
 import PropTypes from "prop-types";
 import {observer, inject} from "mobx-react";
@@ -32,13 +31,7 @@ class Metric extends Component {
                     />
                 ) : null}
                 {editableScores.map(score => {
-                    return (
-                        <ScoreForm
-                            key={score.id}
-                            scoreId={score.id}
-                            metricHasOverrides={metricHasOverrides}
-                        />
-                    );
+                    return <ScoreForm key={score.id} scoreId={score.id} />;
                 })}
             </div>
         );
