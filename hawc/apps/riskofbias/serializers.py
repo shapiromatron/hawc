@@ -1,5 +1,5 @@
-from rest_framework import serializers
 from django.contrib.contenttypes.models import ContentType
+from rest_framework import serializers
 
 from ..assessment.serializers import AssessmentMiniSerializer
 from ..common.helper import SerializerHelper
