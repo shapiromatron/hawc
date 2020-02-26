@@ -33,7 +33,7 @@ class EndpointAggregationForm extends BaseVisualForm {
 
     renderForm = () => {
         let doseUnitChoices = this.config.dose_units.map(u => {
-            return {id: u.id, value: u.name};
+            return {id: u.id, label: u.name};
         });
 
         return (

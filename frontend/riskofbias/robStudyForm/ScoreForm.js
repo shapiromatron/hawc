@@ -20,7 +20,7 @@ class ScoreForm extends Component {
         let {scoreId, metricHasOverrides, store} = this.props,
             score = store.getEditableScore(scoreId),
             choices = store.study.rob_response_values.map(d => {
-                return {id: parseInt(d), value: SCORE_TEXT_DESCRIPTION[d]};
+                return {id: parseInt(d), label: SCORE_TEXT_DESCRIPTION[d]};
             }),
             showScoreInput = !h.hideRobScore(parseInt(store.config.assessment_id)),
             showOverrideCreate = score.is_default === true,

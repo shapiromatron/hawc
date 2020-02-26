@@ -52,7 +52,7 @@ class SelectInput extends Component {
                         {_.map(choices, choice => {
                             return (
                                 <option key={choice.id} value={choice.id}>
-                                    {choice.value}
+                                    {choice.label}
                                 </option>
                             );
                         })}
@@ -69,12 +69,12 @@ SelectInput.propTypes = {
     className: PropTypes.string,
     choices: PropTypes.arrayOf(
         PropTypes.shape({
-            id: PropTypes.number.isRequired,
-            value: PropTypes.string.isRequired,
+            key: PropTypes.any.isRequired,
+            label: PropTypes.string.isRequired,
         })
     ).isRequired,
     id: PropTypes.string.isRequired,
-    value: PropTypes.number,
+    value: PropTypes.any.isRequired,
     name: PropTypes.string,
     multiple: PropTypes.bool.isRequired,
     helpText: PropTypes.string,

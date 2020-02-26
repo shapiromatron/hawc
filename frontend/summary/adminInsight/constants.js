@@ -1,11 +1,11 @@
 export const modelChoices = [
-    {id: "user", value: "User growth"},
-    {id: "assessment", value: "Assessment growth"},
-    {id: "study", value: "Study growth"},
+    {id: "user", label: "User growth"},
+    {id: "assessment", label: "Assessment growth"},
+    {id: "study", label: "Study growth"},
 ];
 
 export const grouperChoices = [
-    {id: "A", value: "Annually"},
-    {id: "Q", value: "Quarterly"},
-    {id: "M", value: "Monthly"},
+    {id: "A", label: "Annually"},
+    {id: "Q", label: "Quarterly"},
+    {id: "M", label: "Monthly"},
 ];

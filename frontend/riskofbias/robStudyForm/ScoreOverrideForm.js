@@ -9,7 +9,8 @@ import {OVERRIDE_SCORE_LABEL_MAPPING} from "riskofbias/constants";
 @observer
 class ScoreOverrideForm extends Component {
     render() {
-        const {store, score} = this.props;
+        const {store, score} = this.props,
+            hasOverrideObjects = score.overridden_objects.length > 0;
 
         if (score.is_default) {
             return null;
@@ -19,7 +20,7 @@ class ScoreOverrideForm extends Component {
             .keys()
             .filter(key => store.overrideOptions[key].length > 0)
             .map(key => {
-                return {id: key, value: OVERRIDE_SCORE_LABEL_MAPPING[key]};
+                return {id: key, label: OVERRIDE_SCORE_LABEL_MAPPING[key]};
             })
             .value();
 
@@ -27,12 +28,15 @@ class ScoreOverrideForm extends Component {
             return <p>No extracted data is available for this study for overrides.</p>;
         }
 
-        const overrideTypeValue = dataTypeOptions[0].id,
+        const overrideTypeValue = hasOverrideObjects
+                ? score.overridden_objects[0].content_type_name
+                : dataTypeOptions[0].id,
             overrideOptions = _.chain(store.overrideOptions[overrideTypeValue])
                 .map(option => {
-                    return {id: option[0], value: option[1]};
+                    return {id: option[0], label: option[1]};
                 })
-                .value();
+                .value(),
+            overrideOptionValues = score.overridden_objects.map(object => object.object_id);
 
         return (
             <div className="row-fluid form-inline">
@@ -42,7 +46,7 @@ class ScoreOverrideForm extends Component {
                     label="Override type"
                     choices={dataTypeOptions}
                     multiple={false}
-                    value={dataTypeOptions[0].id}
+                    value={overrideTypeValue}
                     handleSelect={value => {
                         // score.score = parseInt(value);
                     }}
@@ -53,7 +57,7 @@ class ScoreOverrideForm extends Component {
                     label="Overrides"
                     choices={overrideOptions}
                     multiple={true}
-                    value={[]}
+                    value={overrideOptionValues}
                     handleSelect={value => {
                         // score.score = parseInt(value);
                     }}
