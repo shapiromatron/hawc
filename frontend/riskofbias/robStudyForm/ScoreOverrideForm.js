@@ -3,6 +3,7 @@ import React, {Component} from "react";
 import PropTypes from "prop-types";
 import {observer, inject} from "mobx-react";
 import SelectInput from "shared/components/SelectInput";
+import {OVERRIDE_SCORE_LABEL_MAPPING} from "riskofbias/constants";
 
 @inject("store")
 @observer
@@ -14,10 +15,11 @@ class ScoreOverrideForm extends Component {
             return null;
         }
 
-        const dataTypeOptions = _.chain(store.overrideOptions.metadata)
-            .filter(option => store.overrideOptions.choices[option.key].length > 0)
-            .map(option => {
-                return {id: option.key, value: option.label};
+        const dataTypeOptions = _.chain(store.overrideOptions)
+            .keys()
+            .filter(key => store.overrideOptions[key].length > 0)
+            .map(key => {
+                return {id: key, value: OVERRIDE_SCORE_LABEL_MAPPING[key]};
             })
             .value();
 
@@ -26,7 +28,7 @@ class ScoreOverrideForm extends Component {
         }
 
         const overrideTypeValue = dataTypeOptions[0].id,
-            overrideOptions = _.chain(store.overrideOptions.choices[overrideTypeValue])
+            overrideOptions = _.chain(store.overrideOptions[overrideTypeValue])
                 .map(option => {
                     return {id: option[0], value: option[1]};
                 })

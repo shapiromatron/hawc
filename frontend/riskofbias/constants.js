@@ -132,6 +132,13 @@ const NA_KEYS = [10, 20],
             symbolText,
             svgStyle,
         };
+    },
+    OVERRIDE_SCORE_LABEL_MAPPING = {
+        "animal.endpoint": "Animal bioassay endpoints",
+        "animal.animalgroup": "Animal bioassay groups",
+        "epi.outcome": "Epidemiological outcomes",
+        "epi.exposure": "Epidemiological exposures",
+        "epi.result": "Epidemiological results",
     };
 
 export {
@@ -144,4 +151,5 @@ export {
     SCORE_BAR_WIDTH_PERCENTAGE,
     COLLAPSED_NR_FIELDS_DESCRIPTION,
     getMultiScoreDisplaySettings,
+    OVERRIDE_SCORE_LABEL_MAPPING,
 };

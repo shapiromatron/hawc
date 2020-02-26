@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 
 import h from "shared/utils/helpers";
 import ScoreBar from "riskofbias/robTable/components/ScoreBar";
+import {OVERRIDE_SCORE_LABEL_MAPPING} from "riskofbias/constants";
 import "./ScoreDisplay.css";
 
 class ScoreDisplay extends Component {
@@ -15,7 +16,8 @@ class ScoreDisplay extends Component {
                 score.is_default && hasOverrides
                     ? "score-display default-score-display"
                     : "score-display",
-            finalStar = score.final ? <i className="fa fa-star" title="Final review" /> : null;
+            finalStar = score.final ? <i className="fa fa-star" title="Final review" /> : null,
+            hasOverride = score.overridden_objects.length > 0;
 
         if (score.is_default) {
             labelText = labelText.length > 0 ? `${labelText} (default)` : "Default";
@@ -23,7 +25,7 @@ class ScoreDisplay extends Component {
 
         return (
             <div className={displayClass}>
-                <div className="flex-1">
+                <div>
                     {showAuthorDisplay || hasOverrides ? (
                         <p>
                             {showAuthorDisplay ? (
@@ -45,9 +47,31 @@ class ScoreDisplay extends Component {
                         />
                     ) : null}
                 </div>
-                <div className="flex-3 score-notes">
+                <div>
                     <p dangerouslySetInnerHTML={{__html: score.notes}} />
                 </div>
+                {hasOverride ? (
+                    <div>
+                        <p>
+                            <b>
+                                {
+                                    OVERRIDE_SCORE_LABEL_MAPPING[
+                                        score.overridden_objects[0].content_type_name
+                                    ]
+                                }
+                            </b>
+                        </p>
+                        <ul>
+                            {score.overridden_objects.map(object => {
+                                return (
+                                    <li key={object.id}>
+                                        <a href={object.object_url}>{object.object_name}</a>
+                                    </li>
+                                );
+                            })}
+                        </ul>
+                    </div>
+                ) : null}
             </div>
         );
     }
@@ -65,6 +89,16 @@ ScoreDisplay.propTypes = {
         }),
         is_default: PropTypes.bool.isRequired,
         label: PropTypes.string.isRequired,
+        overridden_objects: PropTypes.arrayOf(
+            PropTypes.shape({
+                id: PropTypes.number.isRequired,
+                object_id: PropTypes.number.isRequired,
+                score_id: PropTypes.number.isRequired,
+                content_type_name: PropTypes.string.isRequired,
+                object_name: PropTypes.string.isRequired,
+                object_url: PropTypes.string.isRequired,
+            })
+        ),
         notes: PropTypes.string.isRequired,
         score_description: PropTypes.string.isRequired,
         score_symbol: PropTypes.string.isRequired,

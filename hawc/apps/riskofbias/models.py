@@ -374,16 +374,7 @@ class RiskOfBias(models.Model):
         Returns:
             Dict: A dictionary of metadata and choices
         """
-        options = {
-            "metadata": [
-                {"key": "animal.endpoint", "label": "Animal bioassay endpoints"},
-                {"key": "animal.animalgroup", "label": "Animal bioassay groups"},
-                {"key": "epi.outcome", "label": "Epidemiological outcomes"},
-                {"key": "epi.exposure", "label": "Epidemiological exposures"},
-                {"key": "epi.result", "label": "Epidemiological results"},
-            ],
-            "choices": {},
-        }
+        options = {}
 
         qs = (
             apps.get_model("animal.Endpoint")
@@ -391,7 +382,7 @@ class RiskOfBias(models.Model):
             .select_related("animal_group", "animal_group__experiment")
             .order_by("animal_group__experiment_id", "animal_group_id", "id")
         )
-        options["choices"]["animal.endpoint"] = [
+        options["animal.endpoint"] = [
             (
                 el.id,
                 f"{el.animal_group.experiment} → {el.animal_group} → {el}",
@@ -406,7 +397,7 @@ class RiskOfBias(models.Model):
             .select_related("experiment")
             .order_by("experiment_id", "id")
         )
-        options["choices"]["animal.animalgroup"] = [
+        options["animal.animalgroup"] = [
             (el.id, f"{el.experiment} → {el}", el.get_absolute_url()) for el in qs
         ]
 
@@ -416,7 +407,7 @@ class RiskOfBias(models.Model):
             .select_related("study_population")
             .order_by("study_population_id", "id")
         )
-        options["choices"]["epi.outcome"] = [(el.id, str(el), el.get_absolute_url()) for el in qs]
+        options["epi.outcome"] = [(el.id, str(el), el.get_absolute_url()) for el in qs]
 
         qs = (
             apps.get_model("epi.Exposure")
@@ -424,7 +415,7 @@ class RiskOfBias(models.Model):
             .select_related("study_population")
             .order_by("study_population_id", "id")
         )
-        options["choices"]["epi.exposure"] = [(el.id, str(el), el.get_absolute_url()) for el in qs]
+        options["epi.exposure"] = [(el.id, str(el), el.get_absolute_url()) for el in qs]
 
         qs = (
             apps.get_model("epi.Result")
@@ -432,7 +423,7 @@ class RiskOfBias(models.Model):
             .select_related("outcome", "outcome__study_population")
             .order_by("outcome__study_population_id", "outcome_id", "id")
         )
-        options["choices"]["epi.result"] = [
+        options["epi.result"] = [
             (el.id, f"{el.outcome} → {el}", el.get_absolute_url()) for el in qs
         ]
 
@@ -584,7 +575,7 @@ class RiskOfBiasScore(models.Model):
 
 class RiskOfBiasScoreOverrideObject(models.Model):
     score = models.ForeignKey(
-        RiskOfBiasScore, on_delete=models.CASCADE, related_name="overriden_objects"
+        RiskOfBiasScore, on_delete=models.CASCADE, related_name="overridden_objects"
     )
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()

@@ -54,7 +54,7 @@ class RiskOfBiasScoreOverrideObjectSerializer(serializers.ModelSerializer):
 
 class RiskOfBiasScoreSerializerSlim(serializers.ModelSerializer):
     metric = RiskOfBiasMetricSerializer(read_only=True)
-    overriden_objects = RiskOfBiasScoreOverrideObjectSerializer(many=True)
+    overridden_objects = RiskOfBiasScoreOverrideObjectSerializer(many=True)
 
     class Meta:
         model = models.RiskOfBiasScore
@@ -65,7 +65,7 @@ class RiskOfBiasScoreSerializerSlim(serializers.ModelSerializer):
             "label",
             "notes",
             "metric",
-            "overriden_objects",
+            "overridden_objects",
             "riskofbias_id",
         )
 
