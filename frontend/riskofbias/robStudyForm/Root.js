@@ -12,8 +12,7 @@ import ScrollToErrorBox from "shared/components/ScrollToErrorBox";
 class Root extends Component {
     componentDidMount() {
         this.props.store.setConfig("config");
-        this.props.store.fetchFullStudy();
-        this.props.store.fetchOverrideOptions();
+        this.props.store.fetchFormData();
     }
 
     render() {

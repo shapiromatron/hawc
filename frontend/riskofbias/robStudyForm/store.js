@@ -1,11 +1,20 @@
 import _ from "lodash";
-import {observable, computed, action, toJS} from "mobx";
+import {observable, computed, action} from "mobx";
 
 import {NR_KEYS} from "riskofbias/constants";
 import h from "riskofbias/robTable/utils/helpers";
 
-const updateRobScore = function(score, riskofbias) {
+const updateRobScore = function(score, riskofbias, overrideOptions) {
+    let overrideDataTypeValue;
+    if (score.is_default) {
+        overrideDataTypeValue = null;
+    } else if (score.overridden_objects.length > 0) {
+        overrideDataTypeValue = score.overridden_objects[0].content_type_name;
+    } else {
+        overrideDataTypeValue = _.keys(overrideOptions)[0] || null;
+    }
     return Object.assign({}, score, {
+        overrideDataTypeValue,
         author: riskofbias.author,
         final: riskofbias.final,
         domain_name: score.metric.domain.name,
@@ -67,34 +76,34 @@ class RobFormStore {
         this.config = JSON.parse(document.getElementById(elementId).textContent);
     }
 
-    @action.bound fetchOverrideOptions() {
-        let url = this.config.riskofbias.override_options_url;
-        fetch(url, h.fetchGet)
-            .then(response => response.json())
-            .then(json => {
-                this.overrideOptions = json;
-            })
-            .catch(exception => {
-                this.error = exception;
-            });
-    }
+    @action.bound fetchFormData() {
+        let override_options_url = this.config.riskofbias.override_options_url,
+            study_url = this.config.study.api_url;
 
-    @action.bound fetchFullStudy() {
-        this.error = null;
+        Promise.all([
+            fetch(override_options_url, h.fetchGet).then(response => response.json()),
+            fetch(study_url, h.fetchGet).then(response => response.json()),
+        ])
+            .then(data => {
+                // only set options which have data
+                let overrideOptions = {};
+                _.each(data[0], (value, key) => {
+                    if (value.length > 0) {
+                        overrideOptions[key] = value;
+                    }
+                });
+                this.overrideOptions = overrideOptions;
 
-        let url = h.getObjectUrl(this.config.host, this.config.study.url, this.config.study.id);
+                this.study = data[1];
 
-        fetch(url, h.fetchGet)
-            .then(response => response.json())
-            .then(json => {
                 const editableRiskOfBiasId = this.config.riskofbias.id,
                     scores = _.flatten(
-                        json.riskofbiases.map(riskofbias =>
-                            riskofbias.scores.map(score => updateRobScore(score, riskofbias))
+                        data[1].riskofbiases.map(riskofbias =>
+                            riskofbias.scores.map(score =>
+                                updateRobScore(score, riskofbias, overrideOptions)
+                            )
                         )
                     );
-
-                this.study = json;
 
                 this.scores.replace(scores);
 
@@ -121,6 +130,10 @@ class RobFormStore {
             .catch(exception => {
                 this.error = exception;
             });
+    }
+
+    @action.bound updateFormState(scoreId, key, value) {
+        this.getEditableScore(scoreId)[key] = value;
     }
 
     // CRUD actions
@@ -162,7 +175,10 @@ class RobFormStore {
         return fetch(url, h.fetchPost(csrf, payload, "POST"))
             .then(response => response.json())
             .then(json => {
-                this.editableScores.set(json.id, updateRobScore(json, activeRiskOfBias));
+                this.editableScores.set(
+                    json.id,
+                    updateRobScore(json, activeRiskOfBias, this.overrideOptions)
+                );
             })
             .catch(error => {
                 this.error = error;

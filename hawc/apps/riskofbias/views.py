@@ -335,7 +335,11 @@ class RoBEdit(TimeSpentOnPageMixin, BaseDetail):
                 "csrf": get_token(self.request),
                 "host": f"//{self.request.get_host()}",
                 "hawc_flavor": settings.HAWC_FLAVOR,
-                "study": {"id": self.object.study_id, "url": reverse("study:api:study-list")},
+                "study": {
+                    "id": self.object.study_id,
+                    "api_url": reverse("study:api:study-detail", args=(self.object.study_id,)),
+                    "url": reverse("study:api:study-list"),
+                },
                 "riskofbias": {
                     "id": self.object.id,
                     "url": reverse("riskofbias:api:review-list"),

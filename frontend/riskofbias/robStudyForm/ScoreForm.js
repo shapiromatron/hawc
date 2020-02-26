@@ -36,7 +36,7 @@ class ScoreForm extends Component {
                                 label="Label"
                                 name={`label-id-${score.id}`}
                                 onChange={e => {
-                                    score.label = e.target.value;
+                                    store.updateFormState(scoreId, "label", e.target.value);
                                 }}
                                 value={score.label}
                             />
@@ -90,7 +90,7 @@ class ScoreForm extends Component {
                                     multiple={false}
                                     value={score.score}
                                     handleSelect={value => {
-                                        score.score = parseInt(value);
+                                        store.updateFormState(scoreId, "score", parseInt(value));
                                     }}
                                 />
                                 <ScoreIcon score={score.score} />
@@ -102,12 +102,12 @@ class ScoreForm extends Component {
                             id={`${score.id}-notes`}
                             value={score.notes}
                             onChange={htmlContent => {
-                                score.notes = htmlContent;
+                                store.updateFormState(scoreId, "notes", htmlContent);
                             }}
                             className="score-editor"
                         />
                     </div>
-                    <ScoreOverrideForm score={score} />
+                    {score.is_default ? null : <ScoreOverrideForm score={score} />}
                 </div>
                 <hr />
             </div>

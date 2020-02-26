@@ -43,7 +43,7 @@ class SelectInput extends Component {
                 {this.renderLabel()}
                 <div className="controls">
                     <select
-                        id={id}
+                        id={id || null}
                         className={className}
                         value={value}
                         onChange={this.handleSelect}
@@ -69,11 +69,11 @@ SelectInput.propTypes = {
     className: PropTypes.string,
     choices: PropTypes.arrayOf(
         PropTypes.shape({
-            key: PropTypes.any.isRequired,
+            id: PropTypes.any.isRequired,
             label: PropTypes.string.isRequired,
         })
     ).isRequired,
-    id: PropTypes.string.isRequired,
+    id: PropTypes.string,
     value: PropTypes.any.isRequired,
     name: PropTypes.string,
     multiple: PropTypes.bool.isRequired,

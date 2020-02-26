@@ -5,61 +5,100 @@ import {observer, inject} from "mobx-react";
 import SelectInput from "shared/components/SelectInput";
 import {OVERRIDE_SCORE_LABEL_MAPPING} from "riskofbias/constants";
 
+class OverrideObjectTypeSelector extends Component {
+    render() {
+        let {choices, value, onChange} = this.props;
+        return (
+            <SelectInput
+                className="span6"
+                label="Override type"
+                choices={choices}
+                multiple={false}
+                value={value}
+                handleSelect={onChange}
+            />
+        );
+    }
+}
+
+OverrideObjectTypeSelector.propTypes = {
+    choices: PropTypes.arrayOf(PropTypes.object).isRequired,
+    value: PropTypes.string.isRequired,
+    onChange: PropTypes.func.isRequired,
+};
+
+class OverrideObjectsSelector extends Component {
+    render() {
+        let {choices, value, onChange} = this.props;
+        return (
+            <SelectInput
+                className="span6"
+                label="Override type"
+                choices={choices}
+                multiple={true}
+                value={value}
+                handleSelect={onChange}
+            />
+        );
+    }
+}
+
+OverrideObjectsSelector.propTypes = {
+    choices: PropTypes.arrayOf(PropTypes.object).isRequired,
+    value: PropTypes.array.isRequired,
+    onChange: PropTypes.func.isRequired,
+};
+
 @inject("store")
 @observer
 class ScoreOverrideForm extends Component {
     render() {
         const {store, score} = this.props,
-            hasOverrideObjects = score.overridden_objects.length > 0;
-
-        if (score.is_default) {
-            return null;
-        }
-
-        const dataTypeOptions = _.chain(store.overrideOptions)
-            .keys()
-            .filter(key => store.overrideOptions[key].length > 0)
-            .map(key => {
-                return {id: key, label: OVERRIDE_SCORE_LABEL_MAPPING[key]};
-            })
-            .value();
-
-        if (dataTypeOptions.length == 0) {
-            return <p>No extracted data is available for this study for overrides.</p>;
-        }
-
-        const overrideTypeValue = hasOverrideObjects
-                ? score.overridden_objects[0].content_type_name
-                : dataTypeOptions[0].id,
-            overrideOptions = _.chain(store.overrideOptions[overrideTypeValue])
-                .map(option => {
-                    return {id: option[0], label: option[1]};
+            {id, overrideDataTypeValue} = score,
+            overrideDataTypeChoices = _.chain(store.overrideOptions)
+                .keys()
+                .map(key => {
+                    return {id: key, label: OVERRIDE_SCORE_LABEL_MAPPING[key]};
                 })
                 .value(),
+            overrideObjectChoices =
+                overrideDataTypeValue !== null
+                    ? _.chain(store.overrideOptions[overrideDataTypeValue])
+                          .map(option => {
+                              return {id: option[0], label: option[1]};
+                          })
+                          .value()
+                    : null,
             overrideOptionValues = score.overridden_objects.map(object => object.object_id);
+
+        if (overrideDataTypeValue === null) {
+            return <p>No extracted data is available for this study to use for overrides.</p>;
+        }
 
         return (
             <div className="row-fluid form-inline">
-                <SelectInput
-                    className="span6"
-                    id={`${score.id}-overrideType`}
-                    label="Override type"
-                    choices={dataTypeOptions}
-                    multiple={false}
-                    value={overrideTypeValue}
-                    handleSelect={value => {
-                        // score.score = parseInt(value);
+                <OverrideObjectTypeSelector
+                    choices={overrideDataTypeChoices}
+                    value={overrideDataTypeValue}
+                    onChange={value => {
+                        store.updateFormState(id, "overridden_objects", []);
+                        store.updateFormState(id, "overrideDataTypeValue", value);
                     }}
                 />
-                <SelectInput
-                    className="span6"
-                    id={`${score.id}-overrides`}
-                    label="Overrides"
-                    choices={overrideOptions}
-                    multiple={true}
+                <OverrideObjectsSelector
+                    choices={overrideObjectChoices}
                     value={overrideOptionValues}
-                    handleSelect={value => {
-                        // score.score = parseInt(value);
+                    onChange={() => {
+                        let selected = _.chain(event.target.options)
+                            .filter(opt => opt.selected)
+                            .map(opt => {
+                                return {
+                                    content_type_name: overrideDataTypeValue,
+                                    object_id: parseInt(opt.value),
+                                };
+                            })
+                            .value();
+                        store.updateFormState(id, "overridden_objects", selected);
                     }}
                 />
             </div>
