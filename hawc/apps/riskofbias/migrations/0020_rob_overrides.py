@@ -50,4 +50,9 @@ class Migration(migrations.Migration):
             name="label",
             field=models.CharField(blank=True, max_length=128),
         ),
+        migrations.AlterField(
+            model_name="riskofbiasassessment",
+            name="number_of_reviewers",
+            field=models.PositiveSmallIntegerField(default=2),
+        ),
     ]

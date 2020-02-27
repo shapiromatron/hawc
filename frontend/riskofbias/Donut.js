@@ -135,11 +135,12 @@ class Donut extends D3Plot {
 
     draw_visualizations() {
         var self = this,
-            donut_center = `translate(200,${this.h / 2})`,
-            overall_question_data = this.data.overall_question_data;
+            donut_center = `translate(200,${this.h / 2})`;
 
         // setup gradients
-        let gradientData = _.chain(this.data.question_donut_data)
+        let gradientData = _.chain([this.data.question_donut_data, this.data.overall_question_data])
+            .flatten()
+            .compact()
             .filter(d => d.score_svg_style.gradient !== undefined)
             .map(d => d.score_svg_style.gradient)
             .value()
@@ -147,20 +148,22 @@ class Donut extends D3Plot {
 
         this.vis.html(`<defs>${gradientData}<defs>`);
 
-        if (overall_question_data !== null) {
+        if (this.data.overall_question_data !== null) {
             this.center_circle = this.vis
                 .append("circle")
                 .attr("cx", 0)
                 .attr("cy", 0)
                 .attr("r", this.radius_inner)
-                .attr("fill", overall_question_data.score_color)
+                .style({
+                    fill: this.data.overall_question_data.score_svg_style.fill,
+                })
                 .attr("transform", donut_center)
                 .on("mouseover", function() {
                     if (self.viewlock) return;
                     d3.select(this).classed("hovered", true);
                     $(":animated")
                         .promise()
-                        .done(() => self.show_subset(overall_question_data));
+                        .done(() => self.show_subset(this.data.overall_question_data));
                 })
                 .on("mouseout", function(v) {
                     if (self.viewlock) return;
@@ -177,7 +180,7 @@ class Donut extends D3Plot {
                 .attr("text-anchor", "end")
                 .attr("class", "centeredLabel")
                 .attr("transform", donut_center)
-                .text(this.overall_question_data.score_text);
+                .text(this.data.overall_question_data.score_text);
         }
 
         // setup pie layout generator

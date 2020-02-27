@@ -13,8 +13,6 @@
 }
 
 .score-cell-scores-span{
-    /* background: rgba(0,0,0,0.3); */
-    width: max-content !important;
     padding: 5px 10px;
     border-radius: 5px;
 }
