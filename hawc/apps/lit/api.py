@@ -1,4 +1,4 @@
-from rest_framework import decorators, viewsets
+from rest_framework import decorators, mixins, viewsets
 from rest_framework.response import Response
 
 from ..assessment.api import AssessmentLevelPermissions, AssessmentRootedTagTreeViewset
@@ -54,6 +54,15 @@ class LiteratureAssessmentViewset(viewsets.GenericViewSet):
 
         df = models.ReferenceTags.objects.as_dataframe(instance.id)
         return Response(df)
+
+
+class SearchViewset(viewsets.GenericViewSet, mixins.CreateModelMixin):
+    model = models.Search
+    serializer_class = serializers.SearchSerializer
+    permission_classes = (AssessmentLevelPermissions,)
+
+    def get_queryset(self):
+        return self.model.objects.all()
 
 
 class ReferenceFilterTag(AssessmentRootedTagTreeViewset):

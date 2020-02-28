@@ -1,6 +1,7 @@
 import logging
 from io import StringIO
 
+from django.db import transaction
 import numpy as np
 import pandas as pd
 from crispy_forms import layout as cfl
@@ -11,7 +12,7 @@ from litter_getter import ris
 
 from ..assessment.models import Assessment
 from ..common.forms import BaseFormHelper, addPopupLink
-from . import models
+from . import constants, models
 
 
 class SearchForm(forms.ModelForm):
@@ -111,28 +112,36 @@ class ImportForm(SearchForm):
         return helper
 
     def clean_search_string(self):
-        # make sure that it returns a list of positive unique integers
-        valid_id = True
-        ids = self.cleaned_data["search_string"]
-        vals = []
-        for id in ids.split(","):
-            try:
-                val = int(id)
-                if val < 0:
-                    valid_id = False
-                    break
-                vals.append(val)
-            except ValueError:
-                valid_id = False
-                break
 
-        if len(vals) != len(set(vals)):
-            raise forms.ValidationError("IDs must be unique.")
+        search_string = self.cleaned_data["search_string"]
 
-        if not valid_id:
-            raise forms.ValidationError("Please enter a comma-separated list of numeric IDs.")
+        try:
+            ids = [int(el) for el in search_string.split(",") if el]
+        except ValueError:
+            raise forms.ValidationError("Must be a comma-separated list of numeric IDs")
 
-        return ids
+        if len(ids) == 0 or len(ids) != len(set(ids)):
+            raise forms.ValidationError("IDs must exist and must be unique")
+
+        if self.cleaned_data["source"] == constants.HERO:
+            _, _, content = models.Identifiers.objects.validate_valid_hero_ids(ids)
+            self._import_data = dict(ids=ids, content=content)
+
+        return search_string
+
+    @transaction.atomic
+    def save(self, commit=True):
+        search = super().save(commit=commit)
+        if search.source == constants.HERO:
+            # create missing identifiers from import
+            models.Identifiers.objects.bulk_create_hero_ids(self._import_data["content"])
+            # get hero identifiers
+            identifiers = models.Identifiers.objects.hero(self._import_data["ids"])
+            # get or create  reference objects from identifiers
+            models.Reference.objects.get_hero_references(search, identifiers)
+        else:
+            search.run_new_import()
+        return search
 
 
 class RISForm(SearchForm):

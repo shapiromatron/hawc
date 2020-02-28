@@ -5,6 +5,7 @@ from . import api, views
 
 router = DefaultRouter()
 router.register(r"assessment", api.LiteratureAssessmentViewset, base_name="assessment")
+router.register(r"search", api.SearchViewset, base_name="search")
 router.register(r"tags", api.ReferenceFilterTag, base_name="tags")
 router.register(r"reference-cleanup", api.ReferenceCleanup, base_name="reference-cleanup")
 
