@@ -23,6 +23,9 @@ class Keys:
         self.study_working = 1
         self.study_final = 2
 
+        self.visual_heatmap = 1
+        self.visual_barchart = 2
+
         self.pm_user = UserCredential("pm@pm.com", "pw")
 
 

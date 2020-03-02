@@ -122,6 +122,7 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
             "last_updated",
             "scores",
         )
+        read_only_fields = ("id", "study")
 
     def validate(self, data):
 
