@@ -10,7 +10,7 @@ from rest_framework.exceptions import ParseError
 
 from ..assessment.serializers import AssessmentRootedSerializer
 from ..common.api import DynamicFieldsMixin
-from . import constants, models
+from . import constants, forms, models
 
 
 class SearchSerializer(serializers.ModelSerializer):
@@ -43,16 +43,7 @@ class SearchSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("API currently only supports HERO imports")
 
         if data["search_type"] == "i":
-            try:
-                ids = [int(el) for el in data["search_string"].split(",") if el]
-            except ValueError:
-                raise serializers.ValidationError(
-                    "Must be a comma-separated list of integer identifiers"
-                )
-
-            if len(ids) == 0 or len(ids) != len(set(ids)):
-                raise serializers.ValidationError("Identifiers must exist and must be unique")
-
+            ids = forms.ImportForm.validate_import_search_string(data["search_string"])
             self.validate_import_ids_exist(data, ids)
 
         return data

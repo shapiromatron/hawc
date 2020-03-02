@@ -1,5 +1,6 @@
 import logging
 from io import StringIO
+from typing import List
 
 from django.db import transaction
 import numpy as np
@@ -111,17 +112,26 @@ class ImportForm(SearchForm):
         helper = BaseFormHelper(self, **inputs)
         return helper
 
-    def clean_search_string(self):
+    @classmethod
+    def validate_import_search_string(cls, search_string) -> List[int]:
+        try:
+            ids = [int(el) for el in search_string.split(",")]
+        except ValueError:
+            raise forms.ValidationError(
+                "Must be a comma-separated list of positive integer identifiers"
+            )
 
+        if len(ids) == 0 or len(ids) != len(set(ids)) or any([el < 0 for el in ids]):
+            raise forms.ValidationError(
+                "At least one positive identifer must exist and must be unique"
+            )
+
+        return ids
+
+    def clean_search_string(self):
         search_string = self.cleaned_data["search_string"]
 
-        try:
-            ids = [int(el) for el in search_string.split(",") if el]
-        except ValueError:
-            raise forms.ValidationError("Must be a comma-separated list of numeric IDs")
-
-        if len(ids) == 0 or len(ids) != len(set(ids)):
-            raise forms.ValidationError("IDs must exist and must be unique")
+        ids = self.validate_import_search_string(search_string)
 
         if self.cleaned_data["source"] == constants.HERO:
             _, _, content = models.Identifiers.objects.validate_valid_hero_ids(ids)
