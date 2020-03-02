@@ -85,15 +85,17 @@ const NA_KEYS = [10, 20],
         // Return visualization/color settings for situations where multiple scores may exist for
         // a given metric (eg, study-level override settings)
         let sortedScores = _.orderBy(scores, "score", "desc"),
+            defaultScore = _.find(scores, {is_default: true}),
             shades = _.chain(sortedScores)
                 .map(score => score.score_shade)
                 .uniq()
                 .value(),
-            symbolText = _.chain(sortedScores)
+            symbols = _.chain(sortedScores)
                 .map(score => score.score_symbol)
                 .uniq()
-                .value()
-                .join(" / "),
+                .value(),
+            symbolText = symbols.join(" / "),
+            symbolShortText = symbols.length === 1 ? symbols[0] : `${defaultScore.score_symbol}*`,
             reactStyle,
             svgStyle,
             cssStyle;
@@ -130,6 +132,7 @@ const NA_KEYS = [10, 20],
             reactStyle,
             cssStyle,
             symbolText,
+            symbolShortText,
             svgStyle,
         };
     },

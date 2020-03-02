@@ -146,7 +146,9 @@ class Donut extends D3Plot {
             .value()
             .join();
 
-        this.vis.html(`<defs>${gradientData}<defs>`);
+        if (gradientData) {
+            this.vis.append("defs").html(gradientData);
+        }
 
         if (this.data.overall_question_data !== null) {
             this.center_circle = this.vis
@@ -163,7 +165,7 @@ class Donut extends D3Plot {
                     d3.select(this).classed("hovered", true);
                     $(":animated")
                         .promise()
-                        .done(() => self.show_subset(this.data.overall_question_data));
+                        .done(() => self.show_subset(self.data.overall_question_data));
                 })
                 .on("mouseout", function(v) {
                     if (self.viewlock) return;

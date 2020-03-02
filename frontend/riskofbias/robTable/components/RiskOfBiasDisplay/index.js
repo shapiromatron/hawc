@@ -8,7 +8,11 @@ import DomainDisplay from "riskofbias/robTable/components/DomainDisplay";
 const RiskOfBiasDisplay = props => {
     return (
         <div className="riskofbias-display">
-            {props.config.show_study ? renderStudyHeader(props) : null}
+            {props.config.showStudyHeader ? (
+                <h3>
+                    <a href={props.config.studyUrl}>{props.config.studyName}</a>
+                </h3>
+            ) : null}
             {_.map(props.active, domain => {
                 return <DomainDisplay key={domain.key} domain={domain} config={props.config} />;
             })}
@@ -16,17 +20,13 @@ const RiskOfBiasDisplay = props => {
     );
 };
 
-const renderStudyHeader = props => {
-    return (
-        <h3>
-            <a href={props.config.study.url}>{props.config.study.name}</a>
-        </h3>
-    );
-};
-
 RiskOfBiasDisplay.propTypes = {
     active: PropTypes.arrayOf(PropTypes.object).isRequired,
-    config: PropTypes.object,
+    config: PropTypes.shape({
+        showStudyHeader: PropTypes.bool,
+        studyUrl: PropTypes.string,
+        studyName: PropTypes.string,
+    }),
 };
 
 export function renderRiskOfBiasDisplay(data, element) {
