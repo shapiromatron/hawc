@@ -95,34 +95,32 @@ class RoBBarchartPlot extends D3Visualization {
             dataset;
 
         dataset = _.chain(this.data.aggregation.metrics_dataset)
-            .filter(d => {
-                var metric_id = d.rob_scores[0].data.metric.id;
-                return _.includes(included_metrics, metric_id);
-            })
+            .filter(d => _.includes(included_metrics, d.rob_scores[0].data.metric.id))
             .map(d => {
-                var vals = {
-                        label: d.rob_scores[0].data.metric.name,
-                    },
-                    weight = 1 / d.rob_scores.length;
+                // Filter to ONLY show default scores, not overrides:
+                //   this may need to be a user-configurable option at some point
+                let scores = d.rob_scores.filter(score => score.data.is_default === true),
+                    weights = {},
+                    total_weight = 1 / scores.length;
 
-                this.score_ids.forEach(id => (vals[id] = 0));
+                this.score_ids.forEach(id => (weights[id] = 0));
 
-                d.rob_scores.forEach(function(rob) {
-                    vals[rob.data.score] = (vals[rob.data.score] || 0) + weight;
+                scores.forEach(function(rob) {
+                    weights[rob.data.score] = (weights[rob.data.score] || 0) + total_weight;
                 });
 
                 // TODO - remove hard-coding of these values and use lookup
-                if (_.has(vals, 15)) {
-                    vals[15] = (vals[15] || 0) + (vals[12] || 0);
-                    delete vals[12];
-                } else if (_.has(vals, 25)) {
-                    vals[25] = (vals[25] || 0) + (vals[22] || 0);
-                    delete vals[22];
+                if (_.has(weights, 15)) {
+                    weights[15] = (weights[15] || 0) + (weights[12] || 0);
+                    delete weights[12];
+                } else if (_.has(weights, 25)) {
+                    weights[25] = (weights[25] || 0) + (weights[22] || 0);
+                    delete weights[22];
                 } else {
                     throw "Unknown `-` value";
                 }
 
-                return vals;
+                return _.extend(weights, {label: scores[0].data.metric.name});
             })
             .value();
 
