@@ -1,7 +1,7 @@
 import json
 import logging
 from collections import defaultdict
-from typing import List, Tuple, Dict
+from typing import Dict, List, Tuple
 
 import pandas as pd
 from django.apps import apps
@@ -9,7 +9,6 @@ from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
 from django.db import models
 from django.db.models import QuerySet
-from django.forms import ValidationError
 from litter_getter import hero, pubmed
 from taggit.managers import TaggableManager, _TaggableManager
 from taggit.utils import require_instance_manager
