@@ -1,11 +1,11 @@
-A method for estimating the variance of a ratio of means
---------------------------------------------------------
+Appendix A: Estimating the variance of a ratio of means
+=======================================================
 
 Or, a Normal-Theory Derivation of an Estimator of the Sampling Variance for a Ratio of Means.
 
 
 Introduction
-============
+------------
 
 A maximum likelihood method is used to find a formula for the variance of the ratio of the means from two independent samples of normally distributed data. The method defines the ratio as a transformation of the means then finds the variance matrix of the transformed parameters. Note that this method transforms parameters of distributions, not random variables. The method uses the inverse of the variance matrix of parameters, known as Fisher’s information matrix.
 
@@ -14,7 +14,7 @@ The method is not used very much, because in general the algebra is prohibitive.
 One may note that the 2nd formula above is not the usual textbook estimator of variance.  The latter is usually denoted :math:`s^2` and has an :math:`n – 1` in the denominator where the formula above has :math:`n`, i.e., uses the "degrees of freedom." The two estimators will converge with a modest amount of data. We will revisit this distinction below. Maximum likelihood estimators have nice asymptotic properties. For example, the asymptotic distribution is normal around the true value of the parameter (here the ratio) with confidence intervals constructed using the variance estimate with Gaussian critical values. For example, the 95% confidence interval can be computed by subtracting from the observed ratio of means (for lower bound) and adding (for upper bound), the quantity :math:`Z_{0.975} * SE`, where :math:`SE` is the standard error (as derived here) and :math:`Z_{0.975}` is the 97.5th percentile of the standard normal distribution, around 1.96.
 
 Method
-======
+------
 
 The normal distribution, denoted by :math:`N(x|\mu,\sigma^2)`, has 2 parameters. To find the information matrix of a normal sample of :math:`n` observations, start with the log of the likelihood function and calculate the partial derivative with respect to each of the parameters. If the sample :math:`x` has :math:`n` observations, the log-likelihood function can be calculated from the likelihood function to look like
 
@@ -73,7 +73,7 @@ This describes a standard error for a ratio of normal means (e.g., the treated g
 The formula is generally used with positive measurements. For example, inspection of the formula shows that the mean of the first sample cannot be "close" to zero. But "close" would be defined in terms of the corresponding standard deviation :math:`\sigma_1`. If the standard deviation was large enough that the chance of negative values was appreciable given a normal distribution, probably the assumption of normality would be suspect, and a different approach should be used.
 
 References
-==========
+----------
 
 1. Cox DR and Hinkley DV. (1974) Theoretical Statistics, Halsted Press, NY.
 2. Lehmann EL. (1983) Theory of Point Estimation, Wiley Press, NY

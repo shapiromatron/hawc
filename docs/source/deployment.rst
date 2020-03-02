@@ -1,5 +1,5 @@
-Server setup
-============
+Deployment
+==========
 
 Minimum hardware requirements:
 
@@ -83,7 +83,7 @@ Other required files are:
 - nginx configuration (place in ``compose/nginx/conf/nginx.conf``)
 - nginx ssl certificates (place in ``compose/nginx/ssl``)
 
-Deploying:
+Automation
 ----------
 
 To deploy, build and run all docker containers. Currently a javascript
