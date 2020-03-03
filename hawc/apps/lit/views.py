@@ -174,9 +174,6 @@ class ImportNew(SearchNew):
     form_class = forms.ImportForm
     search_type = "Import"
 
-    def post_object_save(self, form):
-        self.object.run_new_import()
-
 
 class ImportRISNew(ImportNew):
     form_class = forms.RISForm

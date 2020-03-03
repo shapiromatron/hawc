@@ -1,14 +1,72 @@
 import logging
 from io import StringIO
+from typing import List
 
 import pandas as pd
 from django.db import transaction
-from rest_framework import serializers
+from django.template.defaultfilters import slugify
+from rest_framework import exceptions, serializers
 from rest_framework.exceptions import ParseError
 
 from ..assessment.serializers import AssessmentRootedSerializer
 from ..common.api import DynamicFieldsMixin
-from . import models
+from . import constants, forms, models
+
+
+class SearchSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Search
+        fields = (
+            "assessment",
+            "search_type",
+            "source",
+            "title",
+            "slug",
+            "description",
+            "search_string",
+            "created",
+            "last_updated",
+        )
+        read_only_fields = ["slug", "created", "last_updated"]
+
+    def validate(self, data):
+
+        user = self.context["request"].user
+        if not data["assessment"].user_can_edit_object(user):
+            # TODO - move authentication check outside validation?
+            raise exceptions.PermissionDenied("Invalid permissions to edit assessment")
+
+        if data["search_type"] != "i":
+            raise serializers.ValidationError("API currently only supports imports")
+
+        if data["source"] != constants.HERO:
+            raise serializers.ValidationError("API currently only supports HERO imports")
+
+        if data["search_type"] == "i":
+            ids = forms.ImportForm.validate_import_search_string(data["search_string"])
+            self.validate_import_ids_exist(data, ids)
+
+        return data
+
+    def validate_import_ids_exist(self, data, ids: List[int]):
+        if data["source"] == constants.HERO:
+            _, _, content = models.Identifiers.objects.validate_valid_hero_ids(ids)
+            self._import_data = dict(ids=ids, content=content)
+        else:
+            raise NotImplementedError()
+
+    @transaction.atomic
+    def create(self, validated_data):
+        validated_data["slug"] = slugify(validated_data["title"])
+        # create search object
+        search = models.Search.objects.create(**validated_data)
+        # create missing identifiers from import
+        models.Identifiers.objects.bulk_create_hero_ids(self._import_data["content"])
+        # get hero identifiers
+        identifiers = models.Identifiers.objects.hero(self._import_data["ids"])
+        # get or create  reference objects from identifiers
+        models.Reference.objects.get_hero_references(search, identifiers)
+        return search
 
 
 class IdentifiersSerializer(serializers.ModelSerializer):

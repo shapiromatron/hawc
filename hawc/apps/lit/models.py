@@ -145,8 +145,7 @@ class Search(models.Model):
             identifiers = Identifiers.objects.get_pubmed_identifiers(self.import_ids)
             Reference.objects.get_pubmed_references(self, identifiers)
         elif self.source == constants.HERO:
-            identifiers = Identifiers.objects.get_hero_identifiers(self.import_ids)
-            Reference.objects.get_hero_references(self, identifiers)
+            raise NotImplementedError()
         elif self.source == constants.RIS:
             # check if importer references are cached on object
             refs = getattr(self, "_references", None)
