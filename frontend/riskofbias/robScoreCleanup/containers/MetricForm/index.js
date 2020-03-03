@@ -46,13 +46,7 @@ export class MetricForm extends React.Component {
         let {items} = this.props;
         if (!items.isLoaded) return null;
         return (
-            <form onSubmit={this.onSubmit}>
-                {/* TODO: fix robScoreCleanup */}
-                <p>
-                    Feature disabled; need it? Contact the developers and we will get it working
-                    soon.
-                </p>
-            </form>
+            <form onSubmit={this.onSubmit}>{/* TODO resume with re-enabling this module */}</form>
         );
     }
 }

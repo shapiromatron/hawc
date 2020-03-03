@@ -6,7 +6,7 @@ Assessment Workspace Collaborative project.  To begin you should have the
 following applications installed on your local development system:
 
 - `Git`_
-- `Python`_ ≥ 3.6
+- `Python`_ == 3.6 (recommended to stay on Python 3.6 for some packages)
 - `Node.js`_
 - `Yarn`_
 - `PostgreSQL`_ ≥ 9.6
