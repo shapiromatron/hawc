@@ -17,8 +17,8 @@ pytest==5.3.3
 pytest-django==3.8.0
 
 # docs
-watchdog==0.8.3
-Sphinx==1.6.3
+watchdog==0.10.2
+Sphinx==2.4.3
 
 # django_extensions.graph_models
 pydot==1.2.3
