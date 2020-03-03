@@ -61,6 +61,17 @@ class EditForm extends Component {
     }
 
     render() {
+        return (
+            <div className="alert alert-danger">
+                <p>
+                    Currently disabled with the added complexity of the risk of bias overrides. Need
+                    it? Please contact the HAWC developers so we know there is an immediate need.
+                </p>
+            </div>
+        );
+    }
+
+    render_rename() {
         let {error} = this.props,
             {config} = this.state;
         return (
@@ -91,7 +102,6 @@ class EditForm extends Component {
                         </p>
                     </div>
                 </div>
-                {/* TODO FIX THIS HERE */}
                 <MetricForm config={config} />
                 <ScoreList config={config} />
             </div>
