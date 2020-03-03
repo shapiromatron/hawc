@@ -286,34 +286,6 @@ class AssessmentDownloads(BaseDetail):
     template_name = "assessment/assessment_downloads.html"
 
 
-class AssessmentEmailManagers(MessageMixin, FormView):
-    template_name = "assessment/assessment_email_managers.html"
-    form_class = forms.AssessmentEmailManagersForm
-    success_message = "Your message has been sent!"
-
-    @method_decorator(staff_member_required)
-    def dispatch(self, request, *args, **kwargs):
-        self.assessment = get_object_or_404(models.Assessment, pk=kwargs.get("pk"))
-        return super().dispatch(request, *args, **kwargs)
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs["assessment"] = self.assessment
-        return kwargs
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["object"] = self.assessment
-        return context
-
-    def get_success_url(self):
-        return self.assessment.get_absolute_url()
-
-    def form_valid(self, form):
-        form.send_email()
-        return super().form_valid(form)
-
-
 # Attachment views
 class AttachmentCreate(BaseCreate):
     success_message = "Attachment added."

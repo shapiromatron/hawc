@@ -7,13 +7,13 @@ isort==4.3.21
 flake8-isort==2.8.0
 
 # django development
-django-debug-toolbar==1.8
+django-debug-toolbar==1.11
 django-extensions==1.9.0
-faker==4.0.0
+faker==4.0.1
 
 # tests
-selenium==3.5.0
-pytest==5.3.3
+selenium==3.141.0
+pytest==5.3.5
 pytest-django==3.8.0
 
 # docs
@@ -21,7 +21,7 @@ watchdog==0.10.2
 Sphinx==2.4.3
 
 # django_extensions.graph_models
-pydot==1.2.3
+pydot==1.4.1
 
 # hawc; save in editable mode so it doesn't copy to venv
 # but instead stays in place

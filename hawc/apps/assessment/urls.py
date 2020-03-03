@@ -24,11 +24,6 @@ urlpatterns = [
     ),
     url(r"^(?P<pk>\d+)/delete/$", views.AssessmentDelete.as_view(), name="delete"),
     url(r"^(?P<pk>\d+)/downloads/$", views.AssessmentDownloads.as_view(), name="downloads",),
-    url(
-        r"^(?P<pk>\d+)/email-project-managers/$",
-        views.AssessmentEmailManagers.as_view(),
-        name="email_managers",
-    ),
     # attachment objects
     url(
         r"^(?P<pk>\d+)/attachment/create/$",
