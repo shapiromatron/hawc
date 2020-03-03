@@ -102,7 +102,6 @@ class EditForm extends Component {
                         </p>
                     </div>
                 </div>
-                {/* TODO FIX THIS HERE */}
                 <MetricForm config={config} />
                 <ScoreList config={config} />
             </div>

@@ -628,7 +628,7 @@ class RiskOfBiasAssessment(models.Model):
             raise ValueError("Unknown HAWC flavor")
 
     assessment = models.OneToOneField(Assessment, related_name="rob_settings")
-    number_of_reviewers = models.PositiveSmallIntegerField(default=2)
+    number_of_reviewers = models.PositiveSmallIntegerField(default=1)
     help_text = models.TextField(
         default="Instructions for reviewers completing assessments",
         help_text="Detailed instructions for completing risk of bias assessments.",
