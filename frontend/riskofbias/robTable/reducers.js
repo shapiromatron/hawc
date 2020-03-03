@@ -14,6 +14,7 @@ const defaultState = {
     rob_response_values: [],
     riskofbiases: [],
     active: [],
+    current_score_state: {},
 };
 
 function study(state = defaultState, action) {
@@ -44,11 +45,6 @@ function study(state = defaultState, action) {
         case types.RESET_ERROR:
             return Object.assign({}, state, {
                 error: null,
-            });
-
-        case types.UPDATE_FINAL_SCORES:
-            return Object.assign({}, state, {
-                final: action.score,
             });
 
         case types.SELECT_ACTIVE:

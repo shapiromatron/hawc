@@ -61,6 +61,7 @@ class AnimalGroupCreate(BaseCreate):
     # Create view of AnimalGroup, and sometimes DosingRegime if generational.
     model = models.AnimalGroup
     parent_model = models.Experiment
+    parent_template_name = "experiment"
     template_name = "animal/animalgroup_form.html"
     success_message = "Animal Group created."
     crud = "Create"

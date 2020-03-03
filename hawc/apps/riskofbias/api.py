@@ -1,6 +1,7 @@
+from django.core.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404
-from rest_framework import filters, viewsets
-from rest_framework.decorators import list_route
+from rest_framework import filters, status, viewsets
+from rest_framework.decorators import detail_route, list_route
 from rest_framework.response import Response
 from rest_framework_extensions.mixins import ListUpdateModelMixin
 
@@ -61,6 +62,11 @@ class RiskOfBias(viewsets.ModelViewSet):
                 serializer.instance.get_assessment().id,
             )
 
+    @detail_route(methods=["get"])
+    def override_options(self, request, pk=None):
+        object_ = self.get_object()
+        return Response(object_.get_override_options())
+
 
 class AssessmentMetricViewset(AssessmentViewset):
     model = models.RiskOfBiasMetric
@@ -84,10 +90,10 @@ class AssessmentMetricScoreViewset(AssessmentViewset):
 
 class AssessmentScoreViewset(TeamMemberOrHigherMixin, ListUpdateModelMixin, AssessmentEditViewset):
     model = models.RiskOfBiasScore
-    serializer_class = serializers.AssessmentRiskOfBiasScoreSerializer
     pagination_class = DisabledPagination
     assessment_filter_args = "metric__domain_assessment"
     filter_backends = (BulkIdFilter,)
+    serializer_class = serializers.RiskOfBiasScoreSerializer
 
     def get_assessment(self, request, *args, **kwargs):
         assessment_id = request.GET.get("assessment_id", None)
@@ -108,3 +114,17 @@ class AssessmentScoreViewset(TeamMemberOrHigherMixin, ListUpdateModelMixin, Asse
     def post_save_bulk(self, queryset, update_bulk_dict):
         ids = list(queryset.values_list("id", flat=True))
         queryset.model.delete_caches(ids)
+
+    def create(self, request, *args, **kwargs):
+        # create using one serializer; return using a different one
+        serializer = serializers.RiskOfBiasScoreOverrideCreateSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        new_serializer = serializers.RiskOfBiasScoreSerializer(serializer.instance)
+        headers = self.get_success_headers(new_serializer.data)
+        return Response(new_serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    def perform_destroy(self, instance):
+        if instance.is_default:
+            raise PermissionDenied("Cannot delete a default risk of bias score")
+        instance.delete()

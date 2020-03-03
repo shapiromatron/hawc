@@ -3,88 +3,75 @@ import PropTypes from "prop-types";
 
 import h from "shared/utils/helpers";
 import ScoreBar from "riskofbias/robTable/components/ScoreBar";
+import {OVERRIDE_SCORE_LABEL_MAPPING} from "riskofbias/constants";
 import "./ScoreDisplay.css";
 
 class ScoreDisplay extends Component {
-    constructor(props) {
-        super(props);
-        // values of state.flex correspond to css classes in flex.css
-        this.state = {flex: "flexRow"};
-        this.toggleWidth = 650;
-        this.checkFlex = this.checkFlex.bind(this);
-        this.copyNotes = this.copyNotes.bind(this);
-    }
-
-    componentDidMount() {
-        this.checkFlex();
-        window.addEventListener("resize", this.checkFlex);
-    }
-
-    componentWillUnmount(nextProps, nextState) {
-        window.removeEventListener("resize", this.checkFlex);
-    }
-
-    // sets state.flex based on the width of the component.
-    checkFlex() {
-        if (this.state.flex === "flexRow" && this.refs.display.offsetWidth <= this.toggleWidth) {
-            this.setState({flex: "flexColumn"});
-        } else if (
-            this.state.flex === "flexColumn" &&
-            this.refs.display.offsetWidth > this.toggleWidth
-        ) {
-            this.setState({flex: "flexRow"});
-        }
-    }
-
-    copyNotes(e) {
-        e.preventDefault();
-        this.props.copyNotes(this.props.score.notes);
-    }
-
     render() {
-        let {score, config} = this.props,
-            copyTextButton = this.props.copyNotes ? (
-                <button className="btn btn-secondary copy-notes" onClick={this.copyNotes}>
-                    Copy Notes
-                </button>
-            ) : null;
-        if (h.hideRobScore(score.metric.domain.assessment.id)) {
-            return (
-                <div className={`score-display ${this.state.flex}-container`} ref="display">
-                    <div className="flex-3 score-notes">
-                        <div
-                            dangerouslySetInnerHTML={{
-                                __html: score.notes,
-                            }}
-                        />
-                        {copyTextButton}
-                    </div>
-                </div>
-            );
+        let {score, showAuthors, hasOverrides} = this.props,
+            showRobScore = !h.hideRobScore(score.metric.domain.assessment.id),
+            showAuthorDisplay = showAuthors && score.is_default,
+            labelText = score.label,
+            displayClass =
+                score.is_default && hasOverrides
+                    ? "score-display default-score-display"
+                    : "score-display",
+            finalStar = score.final ? <i className="fa fa-star" title="Final review" /> : null,
+            hasOverride = score.overridden_objects.length > 0;
+
+        if (score.is_default) {
+            labelText = labelText.length > 0 ? `${labelText} (default)` : "Default";
         }
+
         return (
-            <div className={`score-display ${this.state.flex}-container`} ref="display">
-                <div className="flex-1">
-                    {config.display === "final" && !config.isForm ? null : (
+            <div className={displayClass}>
+                <div>
+                    {showAuthorDisplay || hasOverrides ? (
                         <p>
-                            <b>{score.author.full_name}</b>
+                            {showAuthorDisplay ? (
+                                <b className="pull-right">
+                                    {score.author.full_name}
+                                    &nbsp;
+                                    {finalStar}
+                                </b>
+                            ) : null}
+                            {hasOverrides ? <b>{labelText}</b> : <b>&nbsp;</b>}
                         </p>
-                    )}
-                    <ScoreBar
-                        score={score.score}
-                        shade={score.score_shade}
-                        symbol={score.score_symbol}
-                        description={score.score_description}
-                    />
+                    ) : null}
+                    {showRobScore ? (
+                        <ScoreBar
+                            score={score.score}
+                            shade={score.score_shade}
+                            symbol={score.score_symbol}
+                            description={score.score_description}
+                        />
+                    ) : null}
                 </div>
-                <div className="flex-3 score-notes">
-                    <div
-                        dangerouslySetInnerHTML={{
-                            __html: score.notes,
-                        }}
-                    />
-                    {copyTextButton}
+                <div>
+                    <p dangerouslySetInnerHTML={{__html: score.notes}} />
                 </div>
+                {hasOverride ? (
+                    <div>
+                        <p>
+                            <b>
+                                {
+                                    OVERRIDE_SCORE_LABEL_MAPPING[
+                                        score.overridden_objects[0].content_type_name
+                                    ]
+                                }
+                            </b>
+                        </p>
+                        <ul>
+                            {score.overridden_objects.map(object => {
+                                return (
+                                    <li key={object.id}>
+                                        <a href={object.object_url}>{object.object_name}</a>
+                                    </li>
+                                );
+                            })}
+                        </ul>
+                    </div>
+                ) : null}
             </div>
         );
     }
@@ -93,14 +80,33 @@ class ScoreDisplay extends Component {
 ScoreDisplay.propTypes = {
     score: PropTypes.shape({
         author: PropTypes.object.isRequired,
-        notes: PropTypes.string,
+        metric: PropTypes.shape({
+            domain: PropTypes.shape({
+                assessment: PropTypes.shape({
+                    id: PropTypes.number.isRequired,
+                }),
+            }),
+        }),
+        is_default: PropTypes.bool.isRequired,
+        label: PropTypes.string.isRequired,
+        overridden_objects: PropTypes.arrayOf(
+            PropTypes.shape({
+                id: PropTypes.number.isRequired,
+                object_id: PropTypes.number.isRequired,
+                score_id: PropTypes.number.isRequired,
+                content_type_name: PropTypes.string.isRequired,
+                object_name: PropTypes.string.isRequired,
+                object_url: PropTypes.string.isRequired,
+            })
+        ),
+        notes: PropTypes.string.isRequired,
         score_description: PropTypes.string.isRequired,
         score_symbol: PropTypes.string.isRequired,
         score_shade: PropTypes.string.isRequired,
         score: PropTypes.number.isRequired,
     }).isRequired,
-    config: PropTypes.object.isRequired,
-    copyNotes: PropTypes.func,
+    showAuthors: PropTypes.bool.isRequired,
+    hasOverrides: PropTypes.bool.isRequired,
 };
 
 export default ScoreDisplay;

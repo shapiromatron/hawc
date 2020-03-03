@@ -6,7 +6,7 @@ Assessment Workspace Collaborative project.  To begin you should have the
 following applications installed on your local development system:
 
 - `Git`_
-- `Python`_ ≥ 3.6
+- `Python`_ == 3.6 (recommended to stay on Python 3.6 for some packages)
 - `Node.js`_
 - `Yarn`_
 - `PostgreSQL`_ ≥ 9.6
@@ -152,7 +152,7 @@ A test database is loaded to run unit tests. The database may need to be periodi
     export "DJANGO_SETTINGS_MODULE=hawc.main.settings.unittest"
 
     # load existing test
-    createdb hawc-test
+    createdb hawc-fixture-test
     manage.py load_test_db
 
     # now make edits to the database using the GUI or via command line

@@ -14,7 +14,7 @@ export class MetricSelect extends Component {
 
     formatMetricChoices() {
         return _.map(this.props.choices, choice => {
-            return {id: choice.id, value: choice.name};
+            return {id: choice.id, label: choice.name};
         });
     }
 
@@ -33,6 +33,7 @@ export class MetricSelect extends Component {
                     name="metric-select"
                     className="span12"
                     choices={choices}
+                    multiple={false}
                     handleSelect={this.handleSelect}
                     value={this.props.selected.id}
                     label="Select the metric to edit"

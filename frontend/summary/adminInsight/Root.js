@@ -19,6 +19,7 @@ class Root extends React.Component {
                 <SelectInput
                     id="model"
                     choices={modelChoices}
+                    multiple={false}
                     handleSelect={() => store.changeQueryValue("model", event.target.value)}
                     value={store.query.model}
                     label="Select model to view results"
@@ -26,6 +27,7 @@ class Root extends React.Component {
                 <SelectInput
                     id="selectedModel"
                     choices={grouperChoices}
+                    multiple={false}
                     handleSelect={() => store.changeQueryValue("grouper", event.target.value)}
                     value={store.query.grouper}
                     label="Select grouping frequency"

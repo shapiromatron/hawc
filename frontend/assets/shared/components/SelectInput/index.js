@@ -35,7 +35,7 @@ class SelectInput extends Component {
     }
 
     render() {
-        let {id, choices, helpText, name} = this.props,
+        let {id, choices, helpText, name, multiple} = this.props,
             className = this.props.className || "react-select",
             value = this.props.value || _.first(choices).id;
         return (
@@ -43,15 +43,16 @@ class SelectInput extends Component {
                 {this.renderLabel()}
                 <div className="controls">
                     <select
-                        id={id}
+                        id={id || null}
                         className={className}
                         value={value}
                         onChange={this.handleSelect}
+                        multiple={multiple}
                         name={name}>
                         {_.map(choices, choice => {
                             return (
                                 <option key={choice.id} value={choice.id}>
-                                    {choice.value}
+                                    {choice.label}
                                 </option>
                             );
                         })}
@@ -68,13 +69,14 @@ SelectInput.propTypes = {
     className: PropTypes.string,
     choices: PropTypes.arrayOf(
         PropTypes.shape({
-            id: PropTypes.number.isRequired,
-            value: PropTypes.string.isRequired,
+            id: PropTypes.any.isRequired,
+            label: PropTypes.string.isRequired,
         })
     ).isRequired,
-    id: PropTypes.string.isRequired,
-    value: PropTypes.number,
+    id: PropTypes.string,
+    value: PropTypes.any.isRequired,
     name: PropTypes.string,
+    multiple: PropTypes.bool.isRequired,
     helpText: PropTypes.string,
     label: PropTypes.string,
     required: PropTypes.bool,
