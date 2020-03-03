@@ -1,11 +1,9 @@
 from textwrap import dedent
 
 from django import forms
-from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
-from django.core.mail import mail_admins, send_mail
+from django.core.mail import mail_admins
 from django.core.urlresolvers import reverse_lazy
-from markdown_deux import markdown
 from selectable.forms import AutoCompleteSelectMultipleWidget, AutoCompleteWidget
 
 from ..common.forms import BaseFormHelper

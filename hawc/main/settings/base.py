@@ -91,7 +91,6 @@ INSTALLED_APPS = (
     "taggit",
     "treebeard",
     "selectable",
-    "markdown_deux",
     "crispy_forms",
     "rest_framework_extensions",
     "webpack_loader",
