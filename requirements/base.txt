@@ -13,7 +13,9 @@ djangorestframework==3.11.0
 drf-extensions==0.6.0
 
 # tasks
-celery==4.1.1
+celery==4.4.0
+  billiard==3.6.3.0
+  kombu==4.6.8
 
 # utilities
 jsonschema==3.2.0
