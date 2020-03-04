@@ -3,7 +3,7 @@ from textwrap import dedent
 from django import forms
 from django.contrib.contenttypes.models import ContentType
 from django.core.mail import mail_admins
-from django.core.urlresolvers import reverse_lazy
+from django.urls import reverse_lazy
 from selectable.forms import AutoCompleteSelectMultipleWidget, AutoCompleteWidget
 
 from ..common.forms import BaseFormHelper

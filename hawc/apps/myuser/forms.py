@@ -8,8 +8,8 @@ from django.contrib.auth.forms import (
     PasswordResetForm,
     SetPasswordForm,
 )
-from django.core.urlresolvers import reverse
 from django.forms import ModelForm
+from django.urls import reverse
 from selectable.forms import AutoCompleteSelectMultipleField
 
 from ..assessment import lookups

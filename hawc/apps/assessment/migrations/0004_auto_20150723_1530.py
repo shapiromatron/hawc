@@ -64,7 +64,7 @@ class Migration(migrations.Migration):
                 ("name", models.CharField(max_length=30)),
                 ("created", models.DateTimeField(auto_now_add=True)),
                 ("last_updated", models.DateTimeField(auto_now=True)),
-                ("species", models.ForeignKey(to="assessment.Species")),
+                ("species", models.ForeignKey(to="assessment.Species", on_delete=models.CASCADE)),
             ],
             options={"ordering": ("species", "name")},
         ),

@@ -1,7 +1,14 @@
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import authenticate, login
-from django.core.urlresolvers import reverse_lazy
+from django.contrib.auth.views import (
+    LoginView,
+    LogoutView,
+    PasswordResetConfirmView,
+    PasswordResetDoneView,
+    PasswordResetView,
+)
 from django.shortcuts import redirect, render
+from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.decorators.debug import sensitive_post_parameters
 from django.views.generic import DetailView, TemplateView
@@ -46,6 +53,28 @@ def create_account(request):
         form = forms.RegisterForm()
 
     return render(request, "registration/create_account.html", {"form": form})
+
+
+class HawcLoginView(LoginView):
+    form_class = forms.HAWCAuthenticationForm
+
+
+class HawcLogoutView(LogoutView):
+    next_page = reverse_lazy("home")
+
+
+class HawcPasswordResetView(PasswordResetView):
+    form_class = forms.HAWCPasswordResetForm
+    success_url = reverse_lazy("user:reset_password_sent")
+
+
+class HawcPasswordResetConfirmView(PasswordResetConfirmView):
+    form_class = forms.HAWCSetPasswordForm
+    success_url = reverse_lazy("user:password_reset_complete")
+
+
+class HawcPasswordResetDoneView(PasswordResetDoneView):
+    pass
 
 
 class ProfileDetail(LoginRequiredMixin, DetailView):

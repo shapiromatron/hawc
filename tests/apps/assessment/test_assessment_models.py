@@ -1,6 +1,6 @@
 import pytest
-from django.core.urlresolvers import reverse
 from django.test.client import Client
+from django.urls import reverse
 from pytest_django.asserts import assertTemplateUsed
 
 

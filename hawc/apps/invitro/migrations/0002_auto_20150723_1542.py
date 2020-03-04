@@ -15,7 +15,9 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="ivexperiment",
             name="dose_units",
-            field=models.ForeignKey(related_name="ivexperiments", to="assessment.DoseUnits"),
+            field=models.ForeignKey(
+                related_name="ivexperiments", to="assessment.DoseUnits", on_delete=models.CASCADE
+            ),
         ),
     ]
 

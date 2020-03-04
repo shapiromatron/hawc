@@ -6,10 +6,10 @@ from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
 from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
-from django.core.urlresolvers import reverse, reverse_lazy
 from django.db.models import Count
 from django.http import HttpResponseNotAllowed, HttpResponseRedirect
 from django.shortcuts import HttpResponse, get_object_or_404
+from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt

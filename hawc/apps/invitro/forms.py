@@ -3,10 +3,10 @@ import json
 from crispy_forms import bootstrap as cfb
 from crispy_forms import layout as cfl
 from django import forms
-from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.forms.models import BaseModelFormSet, inlineformset_factory, modelformset_factory
 from django.forms.widgets import Select
+from django.urls import reverse
 from selectable import forms as selectable
 
 from ..assessment.lookups import EffectTagLookup

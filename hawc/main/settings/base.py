@@ -4,7 +4,7 @@ import sys
 from pathlib import Path
 from typing import List, Tuple
 
-from django.core.urlresolvers import reverse_lazy
+from django.urls import reverse_lazy
 
 PROJECT_PATH = Path(__file__).parents[2].absolute()
 PROJECT_ROOT = PROJECT_PATH.parent
@@ -64,7 +64,6 @@ MIDDLEWARE = (
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "django.contrib.auth.middleware.SessionAuthenticationMiddleware",
     "reversion.middleware.RevisionMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
@@ -114,7 +113,7 @@ INSTALLED_APPS = (
 # DB settings
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "ENGINE": "django.db.backends.postgresql",
         "NAME": os.getenv("DJANGO_DB_NAME", "hawc"),
         "USER": os.getenv("DJANGO_DB_USER", "postgres"),
         "PASSWORD": os.getenv("DJANGO_DB_PW", ""),

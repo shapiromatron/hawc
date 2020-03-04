@@ -2,10 +2,10 @@ import json
 
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
-from django.core.urlresolvers import reverse, reverse_lazy
 from django.db.models import Prefetch
 from django.middleware.csrf import get_token
 from django.shortcuts import get_object_or_404
+from django.urls import reverse, reverse_lazy
 from django.views.generic.edit import FormView
 
 from ..assessment.models import Assessment

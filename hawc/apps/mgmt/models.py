@@ -36,8 +36,14 @@ class Task(models.Model):
 
     objects = managers.TaskManager()
 
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True, related_name="tasks")
-    study = models.ForeignKey(Study, related_name="tasks")
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        related_name="tasks",
+    )
+    study = models.ForeignKey(Study, on_delete=models.CASCADE, related_name="tasks")
     type = models.PositiveSmallIntegerField(choices=TYPE_CHOICES)
     status = models.PositiveSmallIntegerField(default=STATUS_CHOICES[0][0], choices=STATUS_CHOICES)
     open = models.BooleanField(default=False)
