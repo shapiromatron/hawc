@@ -4,7 +4,7 @@ from rest_framework.routers import DefaultRouter
 from . import api, views
 
 router = DefaultRouter()
-router.register(r"task", api.Task, base_name="task")
+router.register(r"task", api.Task, basename="task")
 
 app_name = "mgmt"
 urlpatterns = [

@@ -4,7 +4,7 @@ from rest_framework.routers import DefaultRouter
 from . import api, views
 
 router = DefaultRouter()
-router.register(r"session", api.Session, base_name="session")
+router.register(r"session", api.Session, basename="session")
 
 app_name = "bmd"
 urlpatterns = [

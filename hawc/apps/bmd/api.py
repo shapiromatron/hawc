@@ -1,4 +1,4 @@
-from rest_framework.decorators import detail_route
+from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from ..assessment.api import AssessmentViewset
@@ -17,7 +17,7 @@ class Session(AssessmentViewset):
         else:
             return serializers.SessionSerializer
 
-    @detail_route(methods=["post"])
+    @action(detail=True, methods=["post"])
     def execute(self, request, pk=None):
         instance = self.get_object()
         serializer = self.get_serializer(instance, data=request.data)
@@ -26,13 +26,13 @@ class Session(AssessmentViewset):
         tasks.execute.delay(instance.id)
         return Response({"started": True})
 
-    @detail_route(methods=["get"])
+    @action(detail=True, methods=["get"])
     def execute_status(self, request, pk=None):
         # ping until execution is complete
         session = self.get_object()
         return Response({"finished": session.is_finished})
 
-    @detail_route(methods=["post"])
+    @action(detail=True, methods=["post"])
     def selected_model(self, request, pk=None):
         session = self.get_object()
         serializer = self.get_serializer(session, data=request.data)

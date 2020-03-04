@@ -1,5 +1,5 @@
 from django.db.models import Q
-from rest_framework.decorators import list_route
+from rest_framework.decorators import action
 from rest_framework.exceptions import NotAcceptable
 from rest_framework.response import Response
 
@@ -34,13 +34,13 @@ class Endpoint(AssessmentViewset):
     def get_queryset(self):
         return self.model.objects.optimized_qs()
 
-    @list_route()
+    @action(detail=False)
     def effects(self, request):
         assessment_id = tryParseInt(self.request.query_params.get("assessment_id"), -1)
         effects = models.Endpoint.objects.get_effects(assessment_id)
         return Response(effects)
 
-    @list_route()
+    @action(detail=False)
     def rob_filter(self, request):
         params = self.request.query_params
 

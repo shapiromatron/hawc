@@ -4,8 +4,8 @@ from rest_framework.routers import DefaultRouter
 from . import api, views
 
 router = DefaultRouter()
-router.register(r"visual", api.Visual, base_name="visual")
-router.register(r"data_pivot", api.DataPivot, base_name="data_pivot")
+router.register(r"visual", api.Visual, basename="visual")
+router.register(r"data_pivot", api.DataPivot, basename="data_pivot")
 
 app_name = "summary"
 urlpatterns = [

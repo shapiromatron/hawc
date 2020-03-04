@@ -4,11 +4,11 @@ from rest_framework.routers import DefaultRouter
 from . import api, views
 
 router = DefaultRouter()
-router.register(r"domain", api.RiskOfBiasDomain, base_name="domain")
-router.register(r"review", api.RiskOfBias, base_name="review")
-router.register(r"metrics", api.AssessmentMetricViewset, base_name="metrics")
-router.register(r"metrics/scores", api.AssessmentMetricScoreViewset, base_name="metric_scores")
-router.register(r"scores", api.AssessmentScoreViewset, base_name="scores")
+router.register(r"domain", api.RiskOfBiasDomain, basename="domain")
+router.register(r"review", api.RiskOfBias, basename="review")
+router.register(r"metrics", api.AssessmentMetricViewset, basename="metrics")
+router.register(r"metrics/scores", api.AssessmentMetricScoreViewset, basename="metric_scores")
+router.register(r"scores", api.AssessmentScoreViewset, basename="scores")
 
 app_name = "riskofbias"
 urlpatterns = [

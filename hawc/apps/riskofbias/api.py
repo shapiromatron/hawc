@@ -1,7 +1,8 @@
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404
-from rest_framework import filters, status, viewsets
-from rest_framework.decorators import detail_route, list_route
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import status, viewsets
+from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework_extensions.mixins import ListUpdateModelMixin
 
@@ -25,7 +26,7 @@ class RiskOfBiasDomain(viewsets.ReadOnlyModelViewSet):
     model = models.RiskOfBiasDomain
     pagination_class = DisabledPagination
     permission_classes = (AssessmentLevelPermissions,)
-    filter_backends = (InAssessmentFilter, filters.DjangoFilterBackend)
+    filter_backends = (InAssessmentFilter, DjangoFilterBackend)
     serializer_class = serializers.AssessmentDomainSerializer
 
     def get_queryset(self):
@@ -37,7 +38,7 @@ class RiskOfBias(viewsets.ModelViewSet):
     model = models.RiskOfBias
     pagination_class = DisabledPagination
     permission_classes = (AssessmentLevelPermissions,)
-    filter_backends = (InAssessmentFilter, filters.DjangoFilterBackend)
+    filter_backends = (InAssessmentFilter, DjangoFilterBackend)
     serializer_class = serializers.RiskOfBiasSerializer
 
     def get_queryset(self):
@@ -62,7 +63,7 @@ class RiskOfBias(viewsets.ModelViewSet):
                 serializer.instance.get_assessment().id,
             )
 
-    @detail_route(methods=["get"])
+    @action(detail=True, methods=["get"])
     def override_options(self, request, pk=None):
         object_ = self.get_object()
         return Response(object_.get_override_options())
@@ -102,7 +103,7 @@ class AssessmentScoreViewset(TeamMemberOrHigherMixin, ListUpdateModelMixin, Asse
 
         return get_object_or_404(self.parent_model, pk=assessment_id)
 
-    @list_route()
+    @action(detail=False)
     def choices(self, request):
         assessment_id = self.get_assessment(request)
         rob_assessment = models.RiskOfBiasAssessment.objects.get(assessment_id=assessment_id)

@@ -12,6 +12,7 @@ django-extensions==1.9.0
 faker==4.0.1
 
 # tests
+PyYAML==5.3
 selenium==3.141.0
 pytest==5.3.5
 pytest-django==3.8.0
