@@ -94,6 +94,8 @@ class SerializerHelper(object):
             name = cls._get_cache_name(obj.__class__, obj.id, json)
             cached = cache.get(name)
             if cached:
+                if hasattr(cached, "decode"):
+                    cached = cached.decode("utf8")
                 logging.debug(f"using cache: {name}")
             else:
                 cached = cls._serialize_and_cache(obj, json=json)

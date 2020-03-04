@@ -420,11 +420,12 @@ class CleanExtractedData(TeamMemberOrHigherMixin, BaseEndpointList):
 class CASDetails(TemplateView):
     def get(self, request, *args, **kwargs):
         cas = self.request.GET.get("cas")
-        task = tasks.get_chemspider_details.delay(cas)
-        v = task.get(timeout=60)
-        if v is None:
-            v = {}
-        return HttpResponse(json.dumps(v), content_type="application/json")
+        payload = tasks.get_chemspider_details.delay(cas).get(
+            timeout=60, disable_sync_subtasks=False
+        )
+        if payload is None:
+            payload = {}
+        return HttpResponse(json.dumps(payload), content_type="application/json")
 
 
 class CloseWindow(TemplateView):

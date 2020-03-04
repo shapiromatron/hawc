@@ -219,9 +219,6 @@ class Assessment(models.Model):
             "edit_assessment": self.user_can_edit_assessment(user),
         }
 
-    def get_project_manager_emails(self):
-        return self.project_manager.all().values_list("email", flat=True)
-
     def user_can_view_object(self, user):
         """
         Superusers can view all, noneditible reviews can be viewed, team
