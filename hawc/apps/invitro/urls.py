@@ -76,5 +76,5 @@ urlpatterns = [
         views.EndpointFullExport.as_view(),
         name="endpoints_export",
     ),
-    url(r"^api/", include(router.urls, namespace="api")),
+    url(r"^api/", include((router.urls, "api"))),
 ]

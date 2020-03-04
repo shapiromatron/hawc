@@ -10,7 +10,7 @@ router.register(r"study-cleanup", api.StudyCleanupFieldsView, basename="study-cl
 
 app_name = "study"
 urlpatterns = [
-    url(r"^api/", include(router.urls, namespace="api")),
+    url(r"^api/", include((router.urls, "api"))),
     # study
     url(r"^assessment/(?P<pk>\d+)/$", views.StudyList.as_view(), name="list"),
     url(r"^(?P<pk>\d+)/add-details/$", views.StudyCreateFromReference.as_view(), name="new_study",),

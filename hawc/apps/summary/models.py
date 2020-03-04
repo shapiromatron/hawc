@@ -1,6 +1,5 @@
 import json
 import logging
-from datetime import datetime
 from operator import methodcaller
 from typing import Dict
 
@@ -9,6 +8,7 @@ from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.db import models
+from django.utils import timezone
 from django.utils.html import strip_tags
 from reversion import revisions as reversion
 from treebeard.mp_tree import MP_Node
@@ -155,7 +155,7 @@ class SummaryText(MP_Node):
 
     @classmethod
     def build_report(cls, report, assessment):
-        title = "Summary Text: " + HAWCtoDateString(datetime.now())
+        title = "Summary Text: " + HAWCtoDateString(timezone.now())
         report.doc.add_heading(title, level=1)
 
         preface = "Preliminary summary-text export in Word (work in progress)"
@@ -351,8 +351,8 @@ class Visual(models.Model):
             "slug": request.POST.get("slug"),
             "caption": request.POST.get("caption"),
             "dose_units": dose_units,
-            "created": datetime.now().isoformat(),
-            "last_updated": datetime.now().isoformat(),
+            "created": timezone.now().isoformat(),
+            "last_updated": timezone.now().isoformat(),
         }
 
         data["endpoints"] = [

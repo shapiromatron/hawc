@@ -1,10 +1,10 @@
 import json
-from datetime import datetime
 
 from django.core.urlresolvers import reverse_lazy
 from django.forms.models import model_to_dict
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 from django.views.generic import DetailView, TemplateView
 from django.views.generic.edit import FormView
 
@@ -312,7 +312,7 @@ class TagReferences(TeamMemberOrHigherMixin, FormView):
         if ref:
             tag_pks = self.request.POST.getlist("tags[]", [])
             ref.tags.set(tag_pks)
-            ref.last_updated = datetime.now()
+            ref.last_updated = timezone.now()
             ref.save()
             response["status"] = "success"
         return response

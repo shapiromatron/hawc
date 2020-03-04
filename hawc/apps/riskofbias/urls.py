@@ -12,7 +12,7 @@ router.register(r"scores", api.AssessmentScoreViewset, basename="scores")
 
 app_name = "riskofbias"
 urlpatterns = [
-    url(r"^api/", include(router.urls, namespace="api")),
+    url(r"^api/", include((router.urls, "api"))),
     # modify assessment rob settings
     url(r"^assessment/(?P<pk>\d+)/$", views.ARoBDetail.as_view(), name="arob_detail"),
     url(r"^assessment/(?P<pk>\d+)/copy/$", views.ARoBCopy.as_view(), name="arob_copy"),

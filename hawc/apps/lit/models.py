@@ -2,7 +2,6 @@ import html
 import json
 import logging
 import re
-from datetime import datetime
 from math import ceil
 from urllib import parse
 
@@ -11,6 +10,7 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.db import models, transaction
+from django.utils import timezone
 from django.utils.html import strip_tags
 from litter_getter import pubmed, ris
 from taggit.models import ItemBase
@@ -197,7 +197,7 @@ class Search(models.Model):
         ids_count = ids.count()
 
         if ids_count > 0:
-            block_id = datetime.now()
+            block_id = timezone.now()
 
             # create list of references for each identifier
             refs = [i.create_reference(self.assessment, block_id) for i in ids]

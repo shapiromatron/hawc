@@ -22,7 +22,7 @@ router.register(r"dose-units", api.DoseUnits, basename="dose_units")
 
 app_name = "animal"
 urlpatterns = [
-    url(r"^api/", include(router.urls, namespace="api")),
+    url(r"^api/", include((router.urls, "api"))),
     # Overall views
     url(r"^assessment/(?P<pk>\d+)/full-export/$", views.FullExport.as_view(), name="export",),
     url(

@@ -11,7 +11,7 @@ router.register(r"result", api.MetaResult, basename="result")
 app_name = "meta"
 urlpatterns = [
     # API
-    url(r"^api/", include(router.urls, namespace="api")),
+    url(r"^api/", include((router.urls, "api"))),
     # protocol views
     url(
         r"^study/(?P<pk>\d+)/protocol/create/$",

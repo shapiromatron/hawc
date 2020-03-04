@@ -121,5 +121,5 @@ urlpatterns = [
         views.RISExportInstructions.as_view(),
         name="ris_export_instructions",
     ),
-    url(r"^api/", include(router.urls, namespace="api")),
+    url(r"^api/", include((router.urls, "api"))),
 ]

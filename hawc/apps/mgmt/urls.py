@@ -8,7 +8,7 @@ router.register(r"task", api.Task, basename="task")
 
 app_name = "mgmt"
 urlpatterns = [
-    url(r"^api/", include(router.urls, namespace="api")),
+    url(r"^api/", include((router.urls, "api"))),
     # user task-list
     url(r"^my-assignments/$", views.UserAssignments.as_view(), name="user_assignments"),
     url(

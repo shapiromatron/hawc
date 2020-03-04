@@ -10,7 +10,7 @@ router.register(r"data_pivot", api.DataPivot, basename="data_pivot")
 app_name = "summary"
 urlpatterns = [
     # API
-    url(r"^api/", include(router.urls, namespace="api")),
+    url(r"^api/", include((router.urls, "api"))),
     # SUMMARY-TEXT
     url(r"^assessment/(?P<pk>\d+)/summaries/$", views.SummaryTextList.as_view(), name="list",),
     url(
