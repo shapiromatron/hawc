@@ -4,7 +4,6 @@ import ReactQuill from "react-quill";
 import {observer, inject} from "mobx-react";
 
 import ScoreIcon from "riskofbias/robTable/components/ScoreIcon";
-import CheckboxInput from "shared/components/CheckboxInput";
 import SelectInput from "shared/components/SelectInput";
 import TextInput from "shared/components/TextInput";
 
@@ -68,14 +67,17 @@ class ScoreForm extends Component {
                         ) : null}
 
                         {editableMetricHasOverride ? (
-                            <CheckboxInput
-                                id={`${score.id}-override`}
-                                name={"override"}
-                                label={score.is_default ? "Default score" : "Override score"}
-                                readOnly={true}
-                                checked={score.is_default}
-                                onChange={() => {}}
-                            />
+                            score.is_default ? (
+                                <b title="Unless otherwise specified, all content will use this value">
+                                    <i className="fa fa-check-square-o" />
+                                    &nbsp;Default score
+                                </b>
+                            ) : (
+                                <b title="Only selected override content will use this value">
+                                    <i className="fa fa-square-o" />
+                                    &nbsp;Override score
+                                </b>
+                            )
                         ) : null}
                     </div>
                 </div>
