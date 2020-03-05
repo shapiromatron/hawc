@@ -173,8 +173,15 @@ class RobFormStore {
 
         this.error = null;
         return fetch(url, opts)
-            .then(response => response.json())
-            .then(() => (window.location.href = this.config.cancelUrl))
+            .then(response => {
+                if (response.ok) {
+                    window.location.href = this.config.cancelUrl;
+                } else {
+                    response.text().then(text => {
+                        this.error = text;
+                    });
+                }
+            })
             .catch(error => {
                 this.error = error;
             });
