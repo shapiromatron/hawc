@@ -119,6 +119,7 @@ class RoBHeatmapPlot extends D3Visualization {
         studies = _.chain(cells_data)
             .map(d => d.study_label)
             .uniq()
+            .sort()
             .value();
 
         metrics = _.chain(cells_data)
