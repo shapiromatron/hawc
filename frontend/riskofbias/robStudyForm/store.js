@@ -104,11 +104,13 @@ class RobFormStore {
 
                 const editableRiskOfBiasId = this.config.riskofbias.id,
                     scores = _.flatten(
-                        data[1].riskofbiases.map(riskofbias =>
-                            riskofbias.scores.map(score =>
-                                updateRobScore(score, riskofbias, overrideOptions)
+                        data[1].riskofbiases
+                            .filter(riskofbias => riskofbias.active === true)
+                            .map(riskofbias =>
+                                riskofbias.scores.map(score =>
+                                    updateRobScore(score, riskofbias, overrideOptions)
+                                )
                             )
-                        )
                     );
 
                 this.scores.replace(scores);
