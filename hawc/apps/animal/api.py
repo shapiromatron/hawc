@@ -1,12 +1,41 @@
 from django.db.models import Q
-from rest_framework.decorators import list_route
+from rest_framework import viewsets
+from rest_framework.decorators import list_route, detail_route
 from rest_framework.exceptions import NotAcceptable
 from rest_framework.response import Response
 
-from ..assessment.api import AssessmentViewset, DoseUnitsViewset
+from ..assessment.api import AssessmentViewset, DoseUnitsViewset, AssessmentLevelPermissions
+from ..assessment.models import Assessment
 from ..common.api import CleanupFieldsBaseViewSet
 from ..common.helper import tryParseInt
+from ..common.renderers import PandasRenderers
 from . import models, serializers
+
+import pandas as pd
+
+
+class AnimalAssessmentViewset(viewsets.GenericViewSet):
+    model = Assessment
+    permission_classes = (AssessmentLevelPermissions,)
+
+    def get_queryset(self):
+        return self.model.objects.all()
+
+    @detail_route(methods=("get",), url_path="full-export", renderer_classes=PandasRenderers)
+    def full_export(self, request, pk):
+        """
+        Retrieve complete animal data
+        """
+        # TODO
+        return Response(pd.DataFrame([1, 2, 3]))
+
+    @detail_route(methods=("get",), url_path="endpoint-export", renderer_classes=PandasRenderers)
+    def endpoint_export(self, request, pk):
+        """
+        Retrieve endpoint animal data
+        """
+        # TODO
+        return Response(pd.DataFrame([1, 2, 3]))
 
 
 class Experiment(AssessmentViewset):

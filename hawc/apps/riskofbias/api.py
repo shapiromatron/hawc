@@ -13,11 +13,30 @@ from ..assessment.api import (
     InAssessmentFilter,
     RequiresAssessmentID,
 )
-from ..assessment.models import TimeSpentEditing
+from ..assessment.models import TimeSpentEditing, Assessment
 from ..common.api import BulkIdFilter
 from ..common.views import TeamMemberOrHigherMixin
+from ..common.renderers import PandasRenderers
 from ..mgmt.models import Task
 from . import models, serializers
+
+import pandas as pd
+
+
+class RiskOfBiasAssessmentViewset(viewsets.GenericViewSet):
+    model = Assessment
+    permission_classes = (AssessmentLevelPermissions,)
+
+    def get_queryset(self):
+        return self.model.objects.all()
+
+    @detail_route(methods=("get",), renderer_classes=PandasRenderers)
+    def export(self, request, pk):
+        """
+        Show risk of bias for assessment.
+        """
+        # TODO
+        return Response(pd.DataFrame([1, 2, 3]))
 
 
 class RiskOfBiasDomain(viewsets.ReadOnlyModelViewSet):
@@ -41,9 +60,7 @@ class RiskOfBias(viewsets.ModelViewSet):
     serializer_class = serializers.RiskOfBiasSerializer
 
     def get_queryset(self):
-        return self.model.objects.all().prefetch_related(
-            "study", "author", "scores__metric__domain"
-        )
+        return self.model.objects.all().prefetch_related("study", "author", "scores__metric__domain")
 
     def perform_update(self, serializer):
         super().perform_update(serializer)

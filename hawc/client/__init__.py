@@ -2,6 +2,8 @@ from typing import Dict, Optional, List
 
 from requests import Session, Response
 
+import pandas as pd
+
 
 class HawcClientException(Exception):
     """An exception occurred in the HAWC client module."""
@@ -58,12 +60,19 @@ class Client:
         data = {"username": email, "password": password}
         response = session.post(url, json=data)
         token = self._handle_hawc_response(response)["token"]
+        print(response)
         session.headers.update(Authorization=f"Token {token}")
         return session
 
-    def lit_import_hero(
-        self, assessment_id: int, title: str, description: str, ids: List[int]
-    ) -> Dict:
+    def get(self, url: str) -> Optional[Dict]:
+        response = self.session.get(url)
+        return self._handle_hawc_response(response)
+
+    def post(self, url: str, payload: Dict) -> Optional[Dict]:
+        response = self.session.post(url, payload)
+        return self._handle_hawc_response(response)
+
+    def lit_import_hero(self, assessment_id: int, title: str, description: str, ids: List[int]) -> Dict:
         payload = {
             "assessment": assessment_id,
             "search_type": "i",
@@ -73,5 +82,44 @@ class Client:
             "search_string": ",".join(str(id_) for id_ in ids),
         }
         url = f"{self.root_url}/lit/api/search/"
-        response = self.session.post(url, payload)
-        return self._handle_hawc_response(response)
+        return self.post(url, payload)
+
+    def lit_tags(self, assessment_id: int) -> pd.DataFrame:
+        url = f"{self.root_url}/lit/api/assessment/{assessment_id}/tags/"
+        return self.get(url)
+
+    def lit_reference_tags(self, assessment_id: int) -> pd.DataFrame:
+        url = f"{self.root_url}/lit/api/assessment/{assessment_id}/reference-tags/"
+        return self.get(url)
+
+    def lit_reference_ids(self, assessment_id: int) -> pd.DataFrame:
+        url = f"{self.root_url}/lit/api/assessment/{assessment_id}/reference-ids/"
+        return self.get(url)
+
+    def lit_references(self, assessment_id: int) -> pd.DataFrame:
+        url = f"{self.root_url}/lit/api/assessment/{assessment_id}/references-download/"
+        return self.get(url)
+
+    def rob_data(self, assessment_id: int) -> pd.DataFrame:
+        url = f"{self.root_url}/rob/api/assessment/{assessment_id}/export/"
+        return self.get(url)
+
+    def ani_data(self, assessment_id: int) -> pd.DataFrame:
+        url = f"{self.root_url}/ani/api/assessment/{assessment_id}/full-export/"
+        return self.get(url)
+
+    def ani_data_summary(self, assessment_id: int) -> pd.DataFrame:
+        url = f"{self.root_url}/ani/api/assessment/{assessment_id}/endpoint-export/"
+        return self.get(url)
+
+    def epi_data(self, assessment_id: int) -> pd.DataFrame:
+        url = f"{self.root_url}/epi/api/assessment/{assessment_id}/export/"
+        return self.get(url)
+
+    def invitro_data(self, assessment_id: int) -> pd.DataFrame:
+        url = f"{self.root_url}/in-vitro/api/assessment/{assessment_id}/full-export/"
+        return self.get(url)
+
+    def visual_list(self, assessment_id: int) -> pd.DataFrame:
+        url = f"{self.root_url}/summary/api/visual/?assessment_id={assessment_id}"
+        return self.get(url)

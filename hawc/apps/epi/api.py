@@ -1,6 +1,29 @@
-from ..assessment.api import AssessmentViewset
+from rest_framework import viewsets, decorators
+from rest_framework.response import Response
+
+from ..assessment.api import AssessmentViewset, AssessmentLevelPermissions
+from ..assessment.models import Assessment
 from ..common.api import CleanupFieldsBaseViewSet
+from ..common.renderers import PandasRenderers
 from . import models, serializers
+
+import pandas as pd
+
+
+class EpiAssessmentViewset(viewsets.GenericViewSet):
+    model = Assessment
+    permission_classes = (AssessmentLevelPermissions,)
+
+    def get_queryset(self):
+        return self.model.objects.all()
+
+    @decorators.detail_route(methods=("get",), url_path="export", renderer_classes=PandasRenderers)
+    def export(self, request, pk):
+        """
+        Retrieve epidemiology data for assessment.
+        """
+        # TODO
+        return Response(pd.DataFrame([1, 2, 3]))
 
 
 class StudyPopulation(AssessmentViewset):
