@@ -1,3 +1,4 @@
+import plotly.express as px
 from rest_framework import decorators, mixins, viewsets
 from rest_framework.response import Response
 
@@ -54,6 +55,19 @@ class LiteratureAssessmentViewset(viewsets.GenericViewSet):
 
         df = models.ReferenceTags.objects.as_dataframe(instance.id)
         return Response(df)
+
+    @decorators.detail_route(methods=("get",))
+    def reference_year_histogram(self, request, pk):
+        instance = self.get_object()
+        # get all the years for a given assessment
+        years = list(
+            models.Reference.objects.filter(assessment_id=instance.id, year__gt=0).values_list(
+                "year", flat=True
+            )
+        )
+        fig = px.bar(x=[0, 1, 2, 3], y=range(4))
+        fig.update_layout(autosize=True, margin=dict(l=20, r=20, t=50, b=20))  # noqa: E741
+        return Response(fig.to_dict())
 
 
 class SearchViewset(viewsets.GenericViewSet, mixins.CreateModelMixin):
