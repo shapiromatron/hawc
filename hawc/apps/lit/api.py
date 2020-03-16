@@ -3,13 +3,13 @@ from rest_framework.response import Response
 
 from ..assessment.api import AssessmentLevelPermissions, AssessmentRootedTagTreeViewset
 from ..assessment.models import Assessment
-from ..common.api import CleanupFieldsBaseViewSet
+from ..common.api import CleanupFieldsBaseViewSet, APIAdapterMixin
 from ..common.renderers import PandasRenderers
-from . import models, serializers
-import pandas as pd
+from . import models, serializers, exports
 
 
-class LiteratureAssessmentViewset(viewsets.GenericViewSet):
+class LiteratureAssessmentViewset(APIAdapterMixin, viewsets.GenericViewSet):
+    parent_model = Assessment
     model = Assessment
     permission_classes = (AssessmentLevelPermissions,)
 
@@ -55,8 +55,21 @@ class LiteratureAssessmentViewset(viewsets.GenericViewSet):
         """
         Get all references in an assessment.
         """
-        # TODO
-        return Response(pd.DataFrame([1, 2, 3]))
+
+        self.create_legacy_attr(pk)
+
+        self.tags = models.ReferenceFilterTag.get_all_tags(self.assessment.id, json_encode=False)
+
+        exporter = exports.ReferenceFlatComplete(
+            models.Reference.objects.get_qs(self.assessment).prefetch_related("identifiers"),
+            export_format="excel",
+            assessment=self.assessment,
+            tags=self.tags,
+        )
+
+        excel_response = exporter.build_response()
+
+        return Response(self.excel_to_df(excel_response.content))
 
 
 class SearchViewset(viewsets.GenericViewSet, mixins.CreateModelMixin):

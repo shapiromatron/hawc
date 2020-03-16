@@ -2,27 +2,33 @@ from rest_framework import decorators, viewsets
 from rest_framework.response import Response
 from ..assessment.api import AssessmentRootedTagTreeViewset, AssessmentViewset, AssessmentLevelPermissions
 from ..assessment.models import Assessment
-from ..common.api import CleanupFieldsBaseViewSet
+from ..common.api import CleanupFieldsBaseViewSet, APIAdapterMixin
 from ..common.renderers import PandasRenderers
-from . import models, serializers
+from ..common.views import AssessmentPermissionsMixin
+from . import exports, models, serializers
 
-import pandas as pd
 
-
-class IVAssessmentViewset(viewsets.GenericViewSet):
-    model = Assessment
+class IVAssessmentViewset(AssessmentPermissionsMixin, APIAdapterMixin, viewsets.GenericViewSet):
+    parent_model = Assessment
+    model = models.IVEndpoint
     permission_classes = (AssessmentLevelPermissions,)
 
     def get_queryset(self):
-        return self.model.objects.all()
+        perms = self.get_obj_perms()
+        if not perms["edit"]:
+            return self.model.objects.published(self.assessment)
+        return self.model.objects.get_qs(self.assessment)
 
     @decorators.detail_route(methods=("get",), url_path="full-export", renderer_classes=PandasRenderers)
     def full_export(self, request, pk):
-        """
-        Retrieve IV data for assessment.
-        """
-        # TODO
-        return Response(pd.DataFrame([1, 2, 3]))
+        self.create_legacy_attr(pk)
+        self.object_list = self.get_queryset()
+        export_format = request.GET.get("output", "excel")
+        exporter = exports.DataPivotEndpoint(
+            self.object_list, export_format=export_format, filename=f"{self.assessment}-invitro",
+        )
+        excel_response = exporter.build_response()
+        return Response(self.excel_to_df(excel_response.content))
 
 
 class IVChemical(AssessmentViewset):

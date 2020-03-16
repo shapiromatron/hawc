@@ -11,6 +11,10 @@ from ..assessment.api import (
 )
 from . import views
 
+import pandas as pd
+
+import io
+
 
 class BulkIdFilter(InAssessmentFilter):
     """
@@ -39,9 +43,7 @@ class BulkIdFilter(InAssessmentFilter):
         return queryset.filter(**filters)
 
 
-class CleanupFieldsBaseViewSet(
-    AssessmentEditViewset, views.TeamMemberOrHigherMixin, ListUpdateModelMixin
-):
+class CleanupFieldsBaseViewSet(AssessmentEditViewset, views.TeamMemberOrHigherMixin, ListUpdateModelMixin):
     """
     Base Viewset for bulk updating text fields. Model should have a
     TEXT_CLEANUP_FIELDS class attribute which is list of fields.
@@ -96,3 +98,17 @@ class DynamicFieldsMixin(object):
                 existing = set(self.fields.keys())
                 for field_name in existing - allowed:
                     self.fields.pop(field_name)
+
+
+class APIAdapterMixin(object):
+    """
+    A mixin that allows API viewsets to interact with legacy methods.
+    """
+
+    def excel_to_df(self, excel_bytes):
+        return pd.read_excel(io.BytesIO(excel_bytes))
+
+    def create_legacy_attr(self, pk):
+        self.parent = get_object_or_404(self.parent_model, pk=pk)
+        self.assessment = self.parent.get_assessment()
+

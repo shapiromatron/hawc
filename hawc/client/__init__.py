@@ -104,6 +104,10 @@ class Client:
         url = f"{self.root_url}/rob/api/assessment/{assessment_id}/export/"
         return self.get(url)
 
+    def rob_full_data(self, assessment_id: int) -> pd.DataFrame:
+        url = f"{self.root_url}/rob/api/assessment/{assessment_id}/full-export/"
+        return self.get(url)
+
     def ani_data(self, assessment_id: int) -> pd.DataFrame:
         url = f"{self.root_url}/ani/api/assessment/{assessment_id}/full-export/"
         return self.get(url)
