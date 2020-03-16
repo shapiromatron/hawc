@@ -22,7 +22,7 @@
     {% if assessment.enable_literature_review %}
     <li>
         <b>Literature-review</b><br>
-        <a class='btn btn-primary' href="{% url 'lit:ref_download_excel' assessment.pk %}">Download</a><br>
+        <a class='btn btn-primary' href="/lit/api/assessment/{{assessment.pk}}/references-download/?format=xlsx">Download</a><br>
         <p class='help-block'>Microsoft Excel spreadsheet</p>
     </li>
     {% endif %}
@@ -31,12 +31,12 @@
     <li>
         <b>{{assessment.get_rob_name_display}} report</b><br>
         <a class='btn btn-primary'
-           href="{% url 'riskofbias:export' assessment.pk %}">Download</a><br>
+           href="/rob/api/assessment/{{assessment.pk}}/export/?format=xlsx">Download</a><br>
 
         {% if obj_perms.edit %}
         <p class='help-block'>(no individual reviews)</p>
         <a class='btn btn-primary'
-           href="{% url 'riskofbias:complete_export' assessment.pk %}">Download complete</a>
+           href="/rob/api/assessment/{{assessment.pk}}/full-export/?format=xlsx">Download complete</a>
            <p class='help-block'>(includes individual reviews - team-members and higher only)</p>
         {% endif %}
         <p class='help-block'>Microsoft Excel spreadsheet</p>
@@ -46,26 +46,26 @@
     {% if assessment.enable_data_extraction %}
     <li>
         <b>Animal bioassay data</b><br>
-        <a class='btn btn-primary' href="{% url 'animal:export' assessment.pk %}">Complete export</a> &nbsp;
-        <a class='btn btn-primary' href="{% url 'animal:endpoint_export' assessment.pk %}">Endpoint summary</a><br>
+        <a class='btn btn-primary' href="/ani/api/assessment/{{assessment.pk}}/full-export/?format=xlsx">Complete export</a> &nbsp;
+        <a class='btn btn-primary' href="/ani/api/assessment/{{assessment.pk}}/endpoint-export/?format=xlsx">Endpoint summary</a><br>
         <p class='help-block'>Microsoft Excel spreadsheet</p>
     </li>
 
     <li>
         <b>Epidemiology data</b><br>
-        <a class='btn btn-primary' href="{% url 'epi:outcome_export' assessment.pk %}">Download</a><br>
+        <a class='btn btn-primary' href="/epi/api/assessment/{{assessment.pk}}/export/?format=xlsx">Download</a><br>
         <p class='help-block'>Microsoft Excel spreadsheet</p>
     </li>
 
     <li>
         <b>Epidemiology meta-analysis data</b><br>
-        <a class='btn btn-primary' href="{% url 'meta:result_export' assessment.pk %}">Download</a><br>
+        <a class='btn btn-primary' href="/epi-meta/api/assessment/{{assessment.pk}}/export/?format=xlsx">Download</a><br>
         <p class='help-block'>Microsoft Excel spreadsheet</p>
     </li>
 
     <li>
         <b>In-vitro data</b><br>
-        <a class='btn btn-primary' href="{% url 'invitro:endpoints_export' assessment.pk %}">Download</a><br>
+        <a class='btn btn-primary' href="/in-vitro/api/assessment/{{assessment.pk}}/full-export/?format=xlsx">Download</a><br>
         <p class='help-block'>Microsoft Excel spreadsheet</p>
     </li>
 
