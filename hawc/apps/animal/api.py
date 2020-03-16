@@ -12,8 +12,6 @@ from ..common.renderers import PandasRenderers
 from ..common.views import AssessmentPermissionsMixin
 from . import models, serializers, exports
 
-import pandas as pd
-
 
 class AnimalAssessmentViewset(AssessmentPermissionsMixin, APIAdapterMixin, viewsets.GenericViewSet):
     parent_model = Assessment

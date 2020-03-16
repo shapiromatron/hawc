@@ -120,6 +120,10 @@ class Client:
         url = f"{self.root_url}/epi/api/assessment/{assessment_id}/export/"
         return self.get(url)
 
+    def epimeta_data(self, assessment_id: int) -> pd.DataFrame:
+        url = f"{self.root_url}/epi-meta/api/assessment/{assessment_id}/export/"
+        return self.get(url)
+
     def invitro_data(self, assessment_id: int) -> pd.DataFrame:
         url = f"{self.root_url}/in-vitro/api/assessment/{assessment_id}/full-export/"
         return self.get(url)
