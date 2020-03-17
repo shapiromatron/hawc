@@ -13,17 +13,17 @@ from ..assessment.api import (
     InAssessmentFilter,
     RequiresAssessmentID,
 )
-from ..assessment.models import TimeSpentEditing, Assessment
-from ..study.models import Study
-from ..common.api import BulkIdFilter, APIAdapterMixin
-from ..common.views import TeamMemberOrHigherMixin, AssessmentPermissionsMixin
+from ..assessment.models import Assessment, TimeSpentEditing
+from ..common.api import BulkIdFilter, LegacyAssessmentAdapterMixin
 from ..common.renderers import PandasRenderers
+from ..common.views import AssessmentPermissionsMixin, TeamMemberOrHigherMixin
 from ..mgmt.models import Task
 from ..riskofbias import exports
+from ..study.models import Study
 from . import models, serializers
 
 
-class RiskOfBiasAssessmentViewset(AssessmentPermissionsMixin, APIAdapterMixin, viewsets.GenericViewSet):
+class RiskOfBiasAssessmentViewset(AssessmentPermissionsMixin, LegacyAssessmentAdapterMixin, viewsets.GenericViewSet):
     parent_model = Assessment
     model = Study
     permission_classes = (AssessmentLevelPermissions,)
@@ -37,7 +37,7 @@ class RiskOfBiasAssessmentViewset(AssessmentPermissionsMixin, APIAdapterMixin, v
 
     @detail_route(methods=("get",), url_path="export", renderer_classes=PandasRenderers)
     def export(self, request, pk):
-        self.create_legacy_attr(pk)
+        self.set_legacy_attr(pk)
         rob_name = self.assessment.get_rob_name_display().lower()
         exporter = exports.RiskOfBiasFlat(
             self.get_queryset(),
@@ -45,13 +45,12 @@ class RiskOfBiasAssessmentViewset(AssessmentPermissionsMixin, APIAdapterMixin, v
             filename=f'{self.assessment}-{rob_name.replace(" ", "-")}',
             sheet_name=rob_name,
         )
-        excel_response = exporter.build_response()
 
-        return Response(self.excel_to_df(excel_response.content))
+        return Response(exporter.build_dataframe())
 
     @detail_route(methods=("get",), url_path="full-export", renderer_classes=PandasRenderers)
     def full_export(self, request, pk):
-        self.create_legacy_attr(pk)
+        self.cset_legacy_attrreate_legacy_attr(pk)
         rob_name = self.assessment.get_rob_name_display().lower()
         exporter = exports.RiskOfBiasCompleteFlat(
             self.get_queryset(),
@@ -59,9 +58,8 @@ class RiskOfBiasAssessmentViewset(AssessmentPermissionsMixin, APIAdapterMixin, v
             filename=f'{self.assessment}-{rob_name.replace(" ", "-")}-complete',
             sheet_name=rob_name,
         )
-        excel_response = exporter.build_response()
 
-        return Response(self.excel_to_df(excel_response.content))
+        return Response(exporter.build_dataframe())
 
 
 class RiskOfBiasDomain(viewsets.ReadOnlyModelViewSet):

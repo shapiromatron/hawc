@@ -1,14 +1,19 @@
 from rest_framework import decorators, viewsets
 from rest_framework.response import Response
-from ..assessment.api import AssessmentRootedTagTreeViewset, AssessmentViewset, AssessmentLevelPermissions
+
+from ..assessment.api import (
+    AssessmentLevelPermissions,
+    AssessmentRootedTagTreeViewset,
+    AssessmentViewset,
+)
 from ..assessment.models import Assessment
-from ..common.api import CleanupFieldsBaseViewSet, APIAdapterMixin
+from ..common.api import CleanupFieldsBaseViewSet, LegacyAssessmentAdapterMixin
 from ..common.renderers import PandasRenderers
 from ..common.views import AssessmentPermissionsMixin
 from . import exports, models, serializers
 
 
-class IVAssessmentViewset(AssessmentPermissionsMixin, APIAdapterMixin, viewsets.GenericViewSet):
+class IVAssessmentViewset(AssessmentPermissionsMixin, LegacyAssessmentAdapterMixin, viewsets.GenericViewSet):
     parent_model = Assessment
     model = models.IVEndpoint
     permission_classes = (AssessmentLevelPermissions,)
@@ -21,14 +26,13 @@ class IVAssessmentViewset(AssessmentPermissionsMixin, APIAdapterMixin, viewsets.
 
     @decorators.detail_route(methods=("get",), url_path="full-export", renderer_classes=PandasRenderers)
     def full_export(self, request, pk):
-        self.create_legacy_attr(pk)
+        self.set_legacy_attr(pk)
         self.object_list = self.get_queryset()
         export_format = request.GET.get("output", "excel")
         exporter = exports.DataPivotEndpoint(
             self.object_list, export_format=export_format, filename=f"{self.assessment}-invitro",
         )
-        excel_response = exporter.build_response()
-        return Response(self.excel_to_df(excel_response.content))
+        return Response(exporter.build_dataframe())
 
 
 class IVChemical(AssessmentViewset):

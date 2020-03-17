@@ -1,8 +1,7 @@
-from typing import Dict, Optional, List
-
-from requests import Session, Response
+from typing import Dict, List, Optional
 
 import pandas as pd
+from requests import Response, Session
 
 
 class HawcClientException(Exception):
@@ -72,7 +71,9 @@ class Client:
         response = self.session.post(url, payload)
         return self._handle_hawc_response(response)
 
-    def lit_import_hero(self, assessment_id: int, title: str, description: str, ids: List[int]) -> Dict:
+    def lit_import_hero(
+        self, assessment_id: int, title: str, description: str, ids: List[int]
+    ) -> Dict:
         payload = {
             "assessment": assessment_id,
             "search_type": "i",

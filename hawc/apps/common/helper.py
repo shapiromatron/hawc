@@ -6,6 +6,7 @@ from collections import OrderedDict
 from datetime import datetime
 from io import BytesIO, StringIO
 
+import pandas as pd
 import xlsxwriter
 from django.core.cache import cache
 from django.core.serializers.json import DjangoJSONEncoder
@@ -23,9 +24,7 @@ def HAWCtoDateString(datetime):
 
 def cleanHTML(txt):
     return strip_entities(
-        strip_tags(
-            txt.replace("\n", " ").replace("\r", "").replace("<br>", "\n").replace("&nbsp;", " ")
-        )
+        strip_tags(txt.replace("\n", " ").replace("\r", "").replace("<br>", "\n").replace("&nbsp;", " "))
     )
 
 
@@ -194,6 +193,11 @@ class FlatFileExporter(object):
         data_rows = self._get_data_rows()
         return self.exporter.generate_response(header_row, data_rows)
 
+    def build_dataframe(self):
+        header_row = self._get_header_row()
+        data_rows = self._get_data_rows()
+        return self.exporter.generate_dataframe(header_row, data_rows)
+
 
 class FlatFile(object):
     """
@@ -214,6 +218,9 @@ class FlatFile(object):
         self._write_header_row(header_row)
         self._write_data_rows(data_rows)
         return self._django_response()
+
+    def generate_dataframe(self, header_row, data_rows):
+        raise NotImplementedError()
 
     def _setup(self):
         raise NotImplementedError()
@@ -296,11 +303,18 @@ class ExcelFileBuilder(FlatFile):
         self.wb.close()
         self.output.seek(0)
         response = HttpResponse(
-            self.output.read(),
-            content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            self.output.read(), content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         )
         response["Content-Disposition"] = f'attachment; filename="{fn}"'
         return response
+
+    def generate_dataframe(self, header_row, data_rows):
+        self._setup()
+        self._write_header_row(header_row)
+        self._write_data_rows(data_rows)
+        self.wb.close()
+        self.output.seek(0)
+        return pd.read_excel(self.output)
 
 
 class TSVFileBuilder(FlatFile):

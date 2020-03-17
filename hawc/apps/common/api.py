@@ -11,10 +11,6 @@ from ..assessment.api import (
 )
 from . import views
 
-import pandas as pd
-
-import io
-
 
 class BulkIdFilter(InAssessmentFilter):
     """
@@ -100,15 +96,11 @@ class DynamicFieldsMixin(object):
                     self.fields.pop(field_name)
 
 
-class APIAdapterMixin(object):
+class LegacyAssessmentAdapterMixin(object):
     """
     A mixin that allows API viewsets to interact with legacy methods.
     """
 
-    def excel_to_df(self, excel_bytes):
-        return pd.read_excel(io.BytesIO(excel_bytes))
-
-    def create_legacy_attr(self, pk):
+    def set_legacy_attr(self, pk):
         self.parent = get_object_or_404(self.parent_model, pk=pk)
         self.assessment = self.parent.get_assessment()
-

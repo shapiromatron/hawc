@@ -1,19 +1,19 @@
 from django.db.models import Q
 from rest_framework import viewsets
-from rest_framework.decorators import list_route, detail_route
+from rest_framework.decorators import detail_route, list_route
 from rest_framework.exceptions import NotAcceptable
 from rest_framework.response import Response
 
-from ..assessment.api import AssessmentViewset, DoseUnitsViewset, AssessmentLevelPermissions
+from ..assessment.api import AssessmentLevelPermissions, AssessmentViewset, DoseUnitsViewset
 from ..assessment.models import Assessment
-from ..common.api import CleanupFieldsBaseViewSet, APIAdapterMixin
+from ..common.api import CleanupFieldsBaseViewSet, LegacyAssessmentAdapterMixin
 from ..common.helper import tryParseInt
 from ..common.renderers import PandasRenderers
 from ..common.views import AssessmentPermissionsMixin
-from . import models, serializers, exports
+from . import exports, models, serializers
 
 
-class AnimalAssessmentViewset(AssessmentPermissionsMixin, APIAdapterMixin, viewsets.GenericViewSet):
+class AnimalAssessmentViewset(AssessmentPermissionsMixin, LegacyAssessmentAdapterMixin, viewsets.GenericViewSet):
     parent_model = Assessment
     model = models.Endpoint
     permission_classes = (AssessmentLevelPermissions,)
@@ -29,22 +29,20 @@ class AnimalAssessmentViewset(AssessmentPermissionsMixin, APIAdapterMixin, views
         """
         Retrieve complete animal data
         """
-        self.create_legacy_attr(pk)
+        self.set_legacy_attr(pk)
         exporter = exports.EndpointGroupFlatComplete(
             self.get_queryset(), export_format="excel", assessment=self.assessment,
         )
-        excel_response = exporter.build_response()
-        return Response(self.excel_to_df(excel_response.content))
+        return Response(exporter.build_dataframe())
 
     @detail_route(methods=("get",), url_path="endpoint-export", renderer_classes=PandasRenderers)
     def endpoint_export(self, request, pk):
         """
         Retrieve endpoint animal data
         """
-        self.create_legacy_attr(pk)
+        self.set_legacy_attr(pk)
         exporter = exports.EndpointSummary(self.get_queryset(), export_format="excel", assessment=self.assessment,)
-        excel_response = exporter.build_response()
-        return Response(self.excel_to_df(excel_response.content))
+        return Response(exporter.build_dataframe())
 
 
 class Experiment(AssessmentViewset):
