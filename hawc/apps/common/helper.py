@@ -24,7 +24,9 @@ def HAWCtoDateString(datetime):
 
 def cleanHTML(txt):
     return strip_entities(
-        strip_tags(txt.replace("\n", " ").replace("\r", "").replace("<br>", "\n").replace("&nbsp;", " "))
+        strip_tags(
+            txt.replace("\n", " ").replace("\r", "").replace("<br>", "\n").replace("&nbsp;", " ")
+        )
     )
 
 
@@ -303,7 +305,8 @@ class ExcelFileBuilder(FlatFile):
         self.wb.close()
         self.output.seek(0)
         response = HttpResponse(
-            self.output.read(), content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            self.output.read(),
+            content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         )
         response["Content-Disposition"] = f'attachment; filename="{fn}"'
         return response

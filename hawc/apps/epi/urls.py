@@ -70,7 +70,6 @@ urlpatterns = [
     url(r"^exposure/(?P<pk>\d+)/update/$", views.ExposureUpdate.as_view(), name="exp_update",),
     url(r"^exposure/(?P<pk>\d+)/delete/$", views.ExposureDelete.as_view(), name="exp_delete",),
     # Outcome
-    url(r"^assessment/(?P<pk>\d+)/export/$", views.OutcomeExport.as_view(), name="outcome_export",),
     url(r"^assessment/(?P<pk>\d+)/outcomes/$", views.OutcomeList.as_view(), name="outcome_list",),
     url(
         r"^study-population/(?P<pk>\d+)/outcome/create/$",

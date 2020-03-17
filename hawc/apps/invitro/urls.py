@@ -72,10 +72,5 @@ urlpatterns = [
     url(r"^endpoint/(?P<pk>\d+)/$", views.EndpointDetail.as_view(), name="endpoint_detail",),
     url(r"^endpoint/(?P<pk>\d+)/update/$", views.EndpointUpdate.as_view(), name="endpoint_update",),
     url(r"^endpoint/(?P<pk>\d+)/delete/$", views.EndpointDelete.as_view(), name="endpoint_delete",),
-    url(
-        r"^assessment/(?P<pk>\d+)/full-export/$",
-        views.EndpointFullExport.as_view(),
-        name="endpoints_export",
-    ),
     url(r"^api/", include(router.urls, namespace="api")),
 ]

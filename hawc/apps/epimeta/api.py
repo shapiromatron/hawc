@@ -9,7 +9,9 @@ from ..common.views import AssessmentPermissionsMixin
 from . import exports, models, serializers
 
 
-class EpiMetaAssessmentViewset(AssessmentPermissionsMixin, LegacyAssessmentAdapterMixin, viewsets.GenericViewSet):
+class EpiMetaAssessmentViewset(
+    AssessmentPermissionsMixin, LegacyAssessmentAdapterMixin, viewsets.GenericViewSet
+):
     parent_model = Assessment
     model = models.MetaResult
     permission_classes = (AssessmentLevelPermissions,)

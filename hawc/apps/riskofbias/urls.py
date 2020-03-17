@@ -23,13 +23,6 @@ urlpatterns = [
         views.ARoBTextEdit.as_view(),
         name="arob_text_update",
     ),
-    # reporting
-    url(r"^assessment/(?P<pk>\d+)/export/$", views.StudyRoBExport.as_view(), name="export",),
-    url(
-        r"^assessment/(?P<pk>\d+)/complete-export/$",
-        views.StudyRoBCompleteExport.as_view(),
-        name="complete_export",
-    ),
     # modify domains
     url(
         r"^assessment/(?P<pk>\d+)/domain/create/$",

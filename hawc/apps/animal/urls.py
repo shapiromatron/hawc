@@ -24,13 +24,6 @@ router.register(r"dose-units", api.DoseUnits, base_name="dose_units")
 app_name = "animal"
 urlpatterns = [
     url(r"^api/", include(router.urls, namespace="api")),
-    # Overall views
-    url(r"^assessment/(?P<pk>\d+)/full-export/$", views.FullExport.as_view(), name="export",),
-    url(
-        r"^assessment/(?P<pk>\d+)/endpoint-export/$",
-        views.EndpointExport.as_view(),
-        name="endpoint_export",
-    ),
     # Experiment
     url(
         r"^study/(?P<pk>\d+)/experiment/new/$",

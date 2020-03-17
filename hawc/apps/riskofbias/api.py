@@ -23,7 +23,9 @@ from ..study.models import Study
 from . import models, serializers
 
 
-class RiskOfBiasAssessmentViewset(AssessmentPermissionsMixin, LegacyAssessmentAdapterMixin, viewsets.GenericViewSet):
+class RiskOfBiasAssessmentViewset(
+    AssessmentPermissionsMixin, LegacyAssessmentAdapterMixin, viewsets.GenericViewSet
+):
     parent_model = Assessment
     model = Study
     permission_classes = (AssessmentLevelPermissions,)
@@ -50,7 +52,7 @@ class RiskOfBiasAssessmentViewset(AssessmentPermissionsMixin, LegacyAssessmentAd
 
     @detail_route(methods=("get",), url_path="full-export", renderer_classes=PandasRenderers)
     def full_export(self, request, pk):
-        self.cset_legacy_attrreate_legacy_attr(pk)
+        self.set_legacy_attr(pk)
         rob_name = self.assessment.get_rob_name_display().lower()
         exporter = exports.RiskOfBiasCompleteFlat(
             self.get_queryset(),
@@ -83,7 +85,9 @@ class RiskOfBias(viewsets.ModelViewSet):
     serializer_class = serializers.RiskOfBiasSerializer
 
     def get_queryset(self):
-        return self.model.objects.all().prefetch_related("study", "author", "scores__metric__domain")
+        return self.model.objects.all().prefetch_related(
+            "study", "author", "scores__metric__domain"
+        )
 
     def perform_update(self, serializer):
         super().perform_update(serializer)

@@ -13,7 +13,9 @@ from ..common.views import AssessmentPermissionsMixin
 from . import exports, models, serializers
 
 
-class AnimalAssessmentViewset(AssessmentPermissionsMixin, LegacyAssessmentAdapterMixin, viewsets.GenericViewSet):
+class AnimalAssessmentViewset(
+    AssessmentPermissionsMixin, LegacyAssessmentAdapterMixin, viewsets.GenericViewSet
+):
     parent_model = Assessment
     model = models.Endpoint
     permission_classes = (AssessmentLevelPermissions,)
@@ -41,7 +43,9 @@ class AnimalAssessmentViewset(AssessmentPermissionsMixin, LegacyAssessmentAdapte
         Retrieve endpoint animal data
         """
         self.set_legacy_attr(pk)
-        exporter = exports.EndpointSummary(self.get_queryset(), export_format="excel", assessment=self.assessment,)
+        exporter = exports.EndpointSummary(
+            self.get_queryset(), export_format="excel", assessment=self.assessment,
+        )
         return Response(exporter.build_dataframe())
 
 
