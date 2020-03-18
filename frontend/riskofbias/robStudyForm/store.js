@@ -104,11 +104,13 @@ class RobFormStore {
 
                 const editableRiskOfBiasId = this.config.riskofbias.id,
                     scores = _.flatten(
-                        data[1].riskofbiases.map(riskofbias =>
-                            riskofbias.scores.map(score =>
-                                updateRobScore(score, riskofbias, overrideOptions)
+                        data[1].riskofbiases
+                            .filter(riskofbias => riskofbias.active === true)
+                            .map(riskofbias =>
+                                riskofbias.scores.map(score =>
+                                    updateRobScore(score, riskofbias, overrideOptions)
+                                )
                             )
-                        )
                     );
 
                 this.scores.replace(scores);
@@ -173,8 +175,15 @@ class RobFormStore {
 
         this.error = null;
         return fetch(url, opts)
-            .then(response => response.json())
-            .then(() => (window.location.href = this.config.cancelUrl))
+            .then(response => {
+                if (response.ok) {
+                    window.location.href = this.config.cancelUrl;
+                } else {
+                    response.text().then(text => {
+                        this.error = text;
+                    });
+                }
+            })
             .catch(error => {
                 this.error = error;
             });

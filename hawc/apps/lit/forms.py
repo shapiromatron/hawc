@@ -141,16 +141,18 @@ class ImportForm(SearchForm):
 
     @transaction.atomic
     def save(self, commit=True):
+        is_create = self.instance.id is None
         search = super().save(commit=commit)
-        if search.source == constants.HERO:
-            # create missing identifiers from import
-            models.Identifiers.objects.bulk_create_hero_ids(self._import_data["content"])
-            # get hero identifiers
-            identifiers = models.Identifiers.objects.hero(self._import_data["ids"])
-            # get or create  reference objects from identifiers
-            models.Reference.objects.get_hero_references(search, identifiers)
-        else:
-            search.run_new_import()
+        if is_create:
+            if search.source == constants.HERO:
+                # create missing identifiers from import
+                models.Identifiers.objects.bulk_create_hero_ids(self._import_data["content"])
+                # get hero identifiers
+                identifiers = models.Identifiers.objects.hero(self._import_data["ids"])
+                # get or create  reference objects from identifiers
+                models.Reference.objects.get_hero_references(search, identifiers)
+            else:
+                search.run_new_import()
         return search
 
 
