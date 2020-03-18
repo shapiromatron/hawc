@@ -13,9 +13,7 @@ from ..common.views import AssessmentPermissionsMixin
 from . import exports, models, serializers
 
 
-class IVAssessmentViewset(
-    AssessmentPermissionsMixin, LegacyAssessmentAdapterMixin, viewsets.GenericViewSet
-):
+class IVAssessmentViewset(AssessmentPermissionsMixin, LegacyAssessmentAdapterMixin, viewsets.GenericViewSet):
     parent_model = Assessment
     model = models.IVEndpoint
     permission_classes = (AssessmentLevelPermissions,)
@@ -26,15 +24,12 @@ class IVAssessmentViewset(
             return self.model.objects.published(self.assessment)
         return self.model.objects.get_qs(self.assessment)
 
-    @decorators.detail_route(
-        methods=("get",), url_path="full-export", renderer_classes=PandasRenderers
-    )
+    @decorators.detail_route(methods=("get",), url_path="full-export", renderer_classes=PandasRenderers)
     def full_export(self, request, pk):
         self.set_legacy_attr(pk)
         self.object_list = self.get_queryset()
-        export_format = request.GET.get("output", "excel")
         exporter = exports.DataPivotEndpoint(
-            self.object_list, export_format=export_format, filename=f"{self.assessment}-invitro",
+            self.object_list, export_format="excel", filename=f"{self.assessment}-invitro",
         )
         return Response(exporter.build_dataframe())
 
