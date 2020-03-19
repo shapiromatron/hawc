@@ -160,12 +160,23 @@ A test database is loaded to run unit tests. The database may need to be periodi
     # export database
     manage.py dump_test_db
 
+
 Visual Studio Code settings
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-An example folder-level configuration setting for `Visual Studio Code`_ (recommended HAWC editor):
+`Visual Studio Code`_ is the recommended editor for this project.
 
 .. _`Visual Studio Code`: https://code.visualstudio.com/
+
+Recommended extensions:
+
+- `Python for vscode`_
+- `Eslint for vscode`_
+
+.. _`Python for vscode`: https://marketplace.visualstudio.com/items?itemName=ms-python.python
+.. _`Eslint for vscode`: https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint
+
+Recommended workspace settings:
 
 .. code-block:: json
 
