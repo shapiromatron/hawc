@@ -20,3 +20,24 @@ Authenticated users can access HAWC REST APIs; below is an example script for us
 
     session.get('https://hawcproject.org/ani/api/endpoint/?assessment_id=123').json()
 
+
+There's also a HAWC client available:
+
+.. code-block:: python
+
+    from hawc.client import Client
+
+    client = Client(
+        email="me@me.com",
+        password="keep-it-hidden",
+        root_url="https://hawcproject.org"
+    )
+
+    hero_ids = list(range(5000, 5020))
+    client.lit_import_hero(
+        assessment_id=123,
+        title="example title",
+        description="example description",
+        ids=hero_ids
+    )
+

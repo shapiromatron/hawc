@@ -4,6 +4,7 @@ from rest_framework.routers import DefaultRouter
 from . import api, views
 
 router = DefaultRouter()
+router.register(r"assessment", api.AnimalAssessmentViewset, basename="assessment")
 router.register(r"endpoint", api.Endpoint, basename="endpoint")
 router.register(r"experiment", api.Experiment, basename="experiment")
 router.register(r"animal-group", api.AnimalGroup, basename="animal_group")
@@ -23,13 +24,6 @@ router.register(r"dose-units", api.DoseUnits, basename="dose_units")
 app_name = "animal"
 urlpatterns = [
     url(r"^api/", include((router.urls, "api"))),
-    # Overall views
-    url(r"^assessment/(?P<pk>\d+)/full-export/$", views.FullExport.as_view(), name="export",),
-    url(
-        r"^assessment/(?P<pk>\d+)/endpoint-export/$",
-        views.EndpointExport.as_view(),
-        name="endpoint_export",
-    ),
     # Experiment
     url(
         r"^study/(?P<pk>\d+)/experiment/new/$",

@@ -21,9 +21,7 @@ from ..common.views import (
     TeamMemberOrHigherMixin,
     TimeSpentOnPageMixin,
 )
-from ..riskofbias import exports
 from ..study.models import Study
-from ..study.views import StudyList
 from . import forms, models
 
 
@@ -241,45 +239,6 @@ class RoBMetricDelete(BaseDelete):
 
     def get_success_url(self):
         return reverse_lazy("riskofbias:arob_update", kwargs={"pk": self.assessment.pk})
-
-
-# Risk of bias views for study
-class StudyRoBExport(StudyList):
-    """
-    Full XLS data export for the risk of bias.
-    """
-
-    def get(self, request, *args, **kwargs):
-        self.object_list = super().get_queryset()
-        rob_name = self.assessment.get_rob_name_display().lower()
-        exporter = exports.RiskOfBiasFlat(
-            self.object_list,
-            export_format="excel",
-            filename=f'{self.assessment}-{rob_name.replace(" ", "-")}',
-            sheet_name=rob_name,
-        )
-        return exporter.build_response()
-
-
-class StudyRoBCompleteExport(TeamMemberOrHigherMixin, StudyList):
-    """
-    Full XLS data export for the risk-of-bias.
-    """
-
-    def get_assessment(self, request, *args, **kwargs):
-        self.parent = get_object_or_404(self.parent_model, pk=kwargs["pk"])
-        return self.parent
-
-    def get(self, request, *args, **kwargs):
-        self.object_list = super().get_queryset()
-        rob_name = self.assessment.get_rob_name_display().lower()
-        exporter = exports.RiskOfBiasCompleteFlat(
-            self.object_list,
-            export_format="excel",
-            filename=f'{self.assessment}-{rob_name.replace(" ", "-")}-complete',
-            sheet_name=rob_name,
-        )
-        return exporter.build_response()
 
 
 # RoB views

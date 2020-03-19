@@ -4,6 +4,7 @@ from rest_framework.routers import DefaultRouter
 from . import api, views
 
 router = DefaultRouter()
+router.register(r"assessment", api.RiskOfBiasAssessmentViewset, basename="assessment")
 router.register(r"domain", api.RiskOfBiasDomain, basename="domain")
 router.register(r"review", api.RiskOfBias, basename="review")
 router.register(r"metrics", api.AssessmentMetricViewset, basename="metrics")
@@ -21,13 +22,6 @@ urlpatterns = [
         r"^assessment/(?P<pk>\d+)/text-edit/$",
         views.ARoBTextEdit.as_view(),
         name="arob_text_update",
-    ),
-    # reporting
-    url(r"^assessment/(?P<pk>\d+)/export/$", views.StudyRoBExport.as_view(), name="export",),
-    url(
-        r"^assessment/(?P<pk>\d+)/complete-export/$",
-        views.StudyRoBCompleteExport.as_view(),
-        name="complete_export",
     ),
     # modify domains
     url(

@@ -96,3 +96,13 @@ class DynamicFieldsMixin(object):
                 existing = set(self.fields.keys())
                 for field_name in existing - allowed:
                     self.fields.pop(field_name)
+
+
+class LegacyAssessmentAdapterMixin(object):
+    """
+    A mixin that allows API viewsets to interact with legacy methods.
+    """
+
+    def set_legacy_attr(self, pk):
+        self.parent = get_object_or_404(self.parent_model, pk=pk)
+        self.assessment = self.parent.get_assessment()

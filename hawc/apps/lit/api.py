@@ -4,12 +4,13 @@ from rest_framework.response import Response
 
 from ..assessment.api import AssessmentLevelPermissions, AssessmentRootedTagTreeViewset
 from ..assessment.models import Assessment
-from ..common.api import CleanupFieldsBaseViewSet
+from ..common.api import CleanupFieldsBaseViewSet, LegacyAssessmentAdapterMixin
 from ..common.renderers import PandasRenderers
-from . import models, serializers
+from . import exports, models, serializers
 
 
-class LiteratureAssessmentViewset(viewsets.GenericViewSet):
+class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.GenericViewSet):
+    parent_model = Assessment
     model = Assessment
     permission_classes = (AssessmentLevelPermissions,)
 
@@ -58,6 +59,30 @@ class LiteratureAssessmentViewset(viewsets.GenericViewSet):
 
         df = models.ReferenceTags.objects.as_dataframe(instance.id)
         return Response(df)
+
+    @action(
+        detail=True,
+        methods=("get",),
+        url_path="references-download",
+        renderer_classes=PandasRenderers,
+    )
+    def references_download(self, request, pk):
+        """
+        Get all references in an assessment.
+        """
+
+        self.set_legacy_attr(pk)
+
+        tags = models.ReferenceFilterTag.get_all_tags(self.assessment.id, json_encode=False)
+
+        exporter = exports.ReferenceFlatComplete(
+            models.Reference.objects.get_qs(self.assessment).prefetch_related("identifiers"),
+            export_format="excel",
+            assessment=self.assessment,
+            tags=tags,
+        )
+
+        return Response(exporter.build_dataframe())
 
 
 class SearchViewset(viewsets.GenericViewSet, mixins.CreateModelMixin):
