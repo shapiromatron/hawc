@@ -4,6 +4,7 @@ from rest_framework.routers import DefaultRouter
 from . import api, views
 
 router = DefaultRouter()
+router.register(r"assessment", api.EpiMetaAssessmentViewset, base_name="assessment")
 router.register(r"protocol", api.MetaProtocol, base_name="protocol")
 router.register(r"result", api.MetaResult, base_name="result")
 
@@ -30,11 +31,6 @@ urlpatterns = [
         name="protocol_delete",
     ),
     # result views
-    url(
-        r"^assessment/(?P<pk>\d+)/export/$",
-        views.MetaResultFullExport.as_view(),
-        name="result_export",
-    ),
     url(r"^assessment/(?P<pk>\d+)/results/$", views.MetaResultList.as_view(), name="result_list",),
     url(
         r"^protocol/(?P<pk>\d+)/result/create/$",
