@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.utils.html import format_html
 
 from . import models
 
@@ -41,7 +42,7 @@ class AssessmentAdmin(admin.ModelAdmin):
             ul.append(f"<li>{user.first_name} {user.last_name}</li>")
 
         ul.append("</ul>")
-        return " ".join(ul)
+        return format_html(" ".join(ul))
 
     def get_managers(self, obj):
         return self.get_staff_ul(obj.project_manager)

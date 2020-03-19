@@ -4,22 +4,22 @@
 black==19.10b0
 flake8==3.7.9
 isort==4.3.21
-flake8-isort==2.8.0
+flake8-isort==2.9.0
 
 # django development
 django-debug-toolbar==2.2
 django-extensions==2.2.8
-faker==4.0.1
+faker==4.0.2
 
 # tests
-PyYAML==5.3
+PyYAML==5.3.1
 selenium==3.141.0
-pytest==5.3.5
+pytest==5.4.1
 pytest-django==3.8.0
 
 # docs
 watchdog==0.10.2
-Sphinx==2.4.3
+Sphinx==2.4.4
 
 # django_extensions.graph_models
 pydot==1.4.1

@@ -12,7 +12,7 @@ djangorestframework==3.11.0
 drf-extensions==0.6.0
 
 # tasks
-celery==4.4.0
+celery==4.4.2
   billiard==3.6.3.0
   kombu==4.6.8
 
@@ -24,10 +24,10 @@ redis==3.4.1
 requests==2.23.0
 
 # computational
-numpy==1.18.1
-pandas==1.0.1
+numpy==1.18.2
+pandas==1.0.3
   xlrd==1.2.0  # for pd.read_excel()
-plotly==4.5.2
+plotly==4.5.4
 scipy==1.4.1
 
 # exports
