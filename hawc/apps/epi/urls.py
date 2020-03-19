@@ -4,6 +4,7 @@ from rest_framework.routers import DefaultRouter
 from . import api, views
 
 router = DefaultRouter()
+router.register(r"assessment", api.EpiAssessmentViewset, base_name="assessment")
 router.register(r"study-population", api.StudyPopulation, base_name="study-population")
 router.register(r"exposure", api.Exposure, base_name="exposure")
 router.register(r"outcome", api.Outcome, base_name="outcome")
@@ -69,7 +70,6 @@ urlpatterns = [
     url(r"^exposure/(?P<pk>\d+)/update/$", views.ExposureUpdate.as_view(), name="exp_update",),
     url(r"^exposure/(?P<pk>\d+)/delete/$", views.ExposureDelete.as_view(), name="exp_delete",),
     # Outcome
-    url(r"^assessment/(?P<pk>\d+)/export/$", views.OutcomeExport.as_view(), name="outcome_export",),
     url(r"^assessment/(?P<pk>\d+)/outcomes/$", views.OutcomeList.as_view(), name="outcome_list",),
     url(
         r"^study-population/(?P<pk>\d+)/outcome/create/$",
