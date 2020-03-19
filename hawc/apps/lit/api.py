@@ -57,7 +57,7 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         return Response(df)
 
     @decorators.detail_route(
-        methods=("get", "post"), url_path="references-download", renderer_classes=PandasRenderers
+        methods=("get",), url_path="references-download", renderer_classes=PandasRenderers
     )
     def references_download(self, request, pk):
         """
