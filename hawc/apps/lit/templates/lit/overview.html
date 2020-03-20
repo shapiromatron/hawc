@@ -59,7 +59,7 @@
             <th>Untagged</th>
             <td>{{overview.total_untagged}}</td>
           </tr>
-          {% if overview.total_references > 50 %}
+          {% if overview.total_references >= 10 %}
           <tr>
             <th colspan="2">
               References by year<br/>

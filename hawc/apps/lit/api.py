@@ -72,7 +72,14 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
 
             df = pd.DataFrame(years, columns=["Year"])
             nbins = min(max(df.Year.max() - df.Year.min() + 1, 4), 30)
-            fig = px.histogram(df, x="Year", nbins=nbins)
+
+            try:
+                fig = px.histogram(df, x="Year", nbins=nbins)
+            except ValueError:
+                # in some cases a bad nbins can be provided; just use default bins instead
+                # Invalid value of type 'numpy.int64' received for the 'nbinsx' property of histogram
+                # [2005, 2013, 1995, 2001, 2017, 1991, 1991, 2009, 2006, 2005]; nbins=27
+                fig = px.histogram(df, x="Year")
 
             fig.update_yaxes(title_text="# References")
             fig.update_xaxes(title_text="Year")
