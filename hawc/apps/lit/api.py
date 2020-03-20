@@ -1,3 +1,4 @@
+import pandas as pd
 import plotly.express as px
 from rest_framework import decorators, mixins, viewsets
 from rest_framework.response import Response
@@ -66,8 +67,21 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
                 "year", flat=True
             )
         )
-        fig = px.bar(x=[0, 1, 2, 3], y=range(4))
-        fig.update_layout(autosize=True, margin=dict(l=20, r=20, t=50, b=20))  # noqa: E741
+
+        df = pd.DataFrame(years, columns=["Year"])
+        fig = px.histogram(df, x="Year")
+
+        fig.update_yaxes(title_text="Count")
+        fig.update_xaxes(title_text="Year")
+        fig.update_traces(marker=dict(color="#003d7b"))
+
+        fig.update_layout(
+            bargap=0.1,  # gap between bars
+            plot_bgcolor="rgba(0,0,0,0)",
+            autosize=True,
+            margin=dict(l=20, r=20, t=50, b=20),  # noqa: E741
+        )
+
         return Response(fig.to_dict())
 
     @decorators.detail_route(
