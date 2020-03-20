@@ -67,22 +67,26 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
                 "year", flat=True
             )
         )
+        payload = {}
+        if len(years) > 0:
 
-        df = pd.DataFrame(years, columns=["Year"])
-        fig = px.histogram(df, x="Year")
+            df = pd.DataFrame(years, columns=["Year"])
+            nbins = min(max(df.Year.max() - df.Year.min() + 1, 4), 30)
+            fig = px.histogram(df, x="Year", nbins=nbins)
 
-        fig.update_yaxes(title_text="Count")
-        fig.update_xaxes(title_text="Year")
-        fig.update_traces(marker=dict(color="#003d7b"))
+            fig.update_yaxes(title_text="# References")
+            fig.update_xaxes(title_text="Year")
+            fig.update_traces(marker=dict(color="#003d7b"))
 
-        fig.update_layout(
-            bargap=0.1,  # gap between bars
-            plot_bgcolor="rgba(0,0,0,0)",
-            autosize=True,
-            margin=dict(l=20, r=20, t=50, b=20),  # noqa: E741
-        )
+            fig.update_layout(
+                bargap=0.1,
+                plot_bgcolor="white",
+                autosize=True,
+                margin=dict(l=0, r=0, t=30, b=0),  # noqa: E741
+            )
+            payload = fig.to_dict()
 
-        return Response(fig.to_dict())
+        return Response(payload)
 
     @decorators.detail_route(
         methods=("get",), url_path="references-download", renderer_classes=PandasRenderers
