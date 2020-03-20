@@ -7,7 +7,6 @@ from ..common.views import (
     BaseDelete,
     BaseDetail,
     BaseEndpointFilterList,
-    BaseList,
     BaseUpdate,
     BaseUpdateWithFormset,
     CloseIfSuccessMixin,
@@ -16,7 +15,7 @@ from ..common.views import (
 from ..mgmt.views import EnsureExtractionStartedMixin
 from ..study.models import Study
 from ..study.views import StudyRead
-from . import exports, forms, models
+from . import forms, models
 
 
 # Study criteria
@@ -164,27 +163,6 @@ class OutcomeList(BaseEndpointFilterList):
         if not perms["edit"]:
             query &= Q(study_population__study__published=True)
         return query
-
-
-class OutcomeExport(BaseList):
-    parent_model = Assessment
-    model = models.Outcome
-
-    def get_queryset(self):
-        perms = self.get_obj_perms()
-        if not perms["edit"]:
-            return self.model.objects.published(self.assessment)
-        return self.model.objects.get_qs(self.assessment)
-
-    def get(self, request, *args, **kwargs):
-        self.object_list = self.get_queryset()
-        exporter = exports.OutcomeComplete(
-            self.object_list,
-            export_format="excel",
-            filename=f"{self.assessment}-epi",
-            sheet_name="epi",
-        )
-        return exporter.build_response()
 
 
 class OutcomeCreate(BaseCreate):
