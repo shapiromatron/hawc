@@ -30,7 +30,7 @@ def test_study_detail_api(db_keys):
         "tags": [],
         "title": "",
         "authors": "",
-        "year": None,
+        "year": 2010,
         "journal": "",
         "abstract": "",
         "full_text_url": "",
