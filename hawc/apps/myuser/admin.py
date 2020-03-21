@@ -1,6 +1,6 @@
 from django.contrib import admin, messages
-from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
+from django.urls import reverse
 
 from . import forms, models, tasks
 

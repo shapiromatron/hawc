@@ -15,7 +15,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="bmd_session",
             name="dose_units",
-            field=models.ForeignKey(to="assessment.DoseUnits"),
+            field=models.ForeignKey(to="assessment.DoseUnits", on_delete=models.CASCADE),
         ),
     ]
 

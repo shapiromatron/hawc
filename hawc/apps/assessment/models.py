@@ -7,9 +7,9 @@ from django.contrib.contenttypes import fields
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
-from django.core.urlresolvers import reverse
 from django.core.validators import MinValueValidator
 from django.db import models
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.http import urlquote
 from reversion import revisions as reversion
@@ -219,9 +219,6 @@ class Assessment(models.Model):
             "edit_assessment": self.user_can_edit_assessment(user),
         }
 
-    def get_project_manager_emails(self):
-        return self.project_manager.all().values_list("email", flat=True)
-
     def user_can_view_object(self, user):
         """
         Superusers can view all, noneditible reviews can be viewed, team
@@ -333,7 +330,7 @@ class Assessment(models.Model):
 class Attachment(models.Model):
     objects = managers.AttachmentManager()
 
-    content_type = models.ForeignKey(ContentType)
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
     content_object = fields.GenericForeignKey("content_type", "object_id")
     title = models.CharField(max_length=128)
@@ -413,7 +410,7 @@ class Species(models.Model):
 class Strain(models.Model):
     objects = managers.StrainManager()
 
-    species = models.ForeignKey(Species)
+    species = models.ForeignKey(Species, on_delete=models.CASCADE)
     name = models.CharField(max_length=30)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
@@ -467,7 +464,7 @@ class BaseEndpoint(models.Model):
 
     objects = managers.BaseEndpointManager()
 
-    assessment = models.ForeignKey(Assessment, db_index=True)
+    assessment = models.ForeignKey(Assessment, on_delete=models.CASCADE, db_index=True)
     # Some denormalization but required for efficient capture of all endpoints
     # in assessment; major use case in HAWC.
 

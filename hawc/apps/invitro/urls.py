@@ -4,14 +4,14 @@ from rest_framework.routers import DefaultRouter
 from . import api, views
 
 router = DefaultRouter()
-router.register(r"assessment", api.IVAssessmentViewset, base_name="assessment")
-router.register(r"chemical", api.IVChemical, base_name="chemical")
-router.register(r"celltype", api.IVCellType, base_name="celltype")
-router.register(r"experiment", api.IVExperiment, base_name="experiment")
-router.register(r"endpoint", api.IVEndpoint, base_name="endpoint")
-router.register(r"category", api.IVEndpointCategory, base_name="category")
-router.register(r"ivendpoint-cleanup", api.IVEndpointCleanup, base_name="ivendpoint-cleanup")
-router.register(r"ivchemical-cleanup", api.IVChemicalCleanup, base_name="ivchemical-cleanup")
+router.register(r"assessment", api.IVAssessmentViewset, basename="assessment")
+router.register(r"chemical", api.IVChemical, basename="chemical")
+router.register(r"celltype", api.IVCellType, basename="celltype")
+router.register(r"experiment", api.IVExperiment, basename="experiment")
+router.register(r"endpoint", api.IVEndpoint, basename="endpoint")
+router.register(r"category", api.IVEndpointCategory, basename="category")
+router.register(r"ivendpoint-cleanup", api.IVEndpointCleanup, basename="ivendpoint-cleanup")
+router.register(r"ivchemical-cleanup", api.IVChemicalCleanup, basename="ivchemical-cleanup")
 
 app_name = "invitro"
 urlpatterns = [
@@ -72,5 +72,5 @@ urlpatterns = [
     url(r"^endpoint/(?P<pk>\d+)/$", views.EndpointDetail.as_view(), name="endpoint_detail",),
     url(r"^endpoint/(?P<pk>\d+)/update/$", views.EndpointUpdate.as_view(), name="endpoint_update",),
     url(r"^endpoint/(?P<pk>\d+)/delete/$", views.EndpointDelete.as_view(), name="endpoint_delete",),
-    url(r"^api/", include(router.urls, namespace="api")),
+    url(r"^api/", include((router.urls, "api"))),
 ]

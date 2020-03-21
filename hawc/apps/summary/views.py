@@ -2,9 +2,9 @@ import json
 import os
 
 import pandas as pd
-from django.core.urlresolvers import reverse_lazy
 from django.http import Http404, HttpResponse, HttpResponseNotAllowed, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
+from django.urls import reverse_lazy
 from django.views.generic import FormView, RedirectView, TemplateView
 
 from ..assessment.models import Assessment

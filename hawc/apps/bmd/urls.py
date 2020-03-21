@@ -4,11 +4,11 @@ from rest_framework.routers import DefaultRouter
 from . import api, views
 
 router = DefaultRouter()
-router.register(r"session", api.Session, base_name="session")
+router.register(r"session", api.Session, basename="session")
 
 app_name = "bmd"
 urlpatterns = [
-    url(r"^api/", include(router.urls, namespace="api")),
+    url(r"^api/", include((router.urls, "api"))),
     # BMD assessment-level settings
     url(
         r"^assessment/(?P<pk>\d+)/settings/$",

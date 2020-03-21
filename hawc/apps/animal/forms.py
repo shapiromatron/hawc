@@ -4,10 +4,10 @@ from collections import Counter
 from crispy_forms import bootstrap as cfb
 from crispy_forms import layout as cfl
 from django import forms
-from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.forms import ModelForm
 from django.forms.models import BaseModelFormSet, modelformset_factory
+from django.urls import reverse
 from selectable import forms as selectable
 
 from ..assessment.lookups import EffectTagLookup, SpeciesLookup, StrainLookup

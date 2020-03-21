@@ -15,17 +15,17 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="animalgroup",
             name="species",
-            field=models.ForeignKey(to="assessment.Species"),
+            field=models.ForeignKey(to="assessment.Species", on_delete=models.CASCADE),
         ),
         migrations.AlterField(
             model_name="animalgroup",
             name="strain",
-            field=models.ForeignKey(to="assessment.Strain"),
+            field=models.ForeignKey(to="assessment.Strain", on_delete=models.CASCADE),
         ),
         migrations.AlterField(
             model_name="dosegroup",
             name="dose_units",
-            field=models.ForeignKey(to="assessment.DoseUnits"),
+            field=models.ForeignKey(to="assessment.DoseUnits", on_delete=models.CASCADE),
         ),
     ]
 

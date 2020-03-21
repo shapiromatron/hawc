@@ -1,8 +1,8 @@
 import os
 
 import pytest
-from django.core.urlresolvers import reverse
 from django.test.client import Client
+from django.urls import reverse
 from pytest_django.asserts import assertFormError
 
 from hawc.apps.lit import constants, models

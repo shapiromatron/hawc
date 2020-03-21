@@ -4,13 +4,13 @@ from rest_framework.routers import DefaultRouter
 from . import api, views
 
 router = DefaultRouter()
-router.register(r"study", api.Study, base_name="study")
-router.register(r"final", api.FinalRobStudy, base_name="final")
-router.register(r"study-cleanup", api.StudyCleanupFieldsView, base_name="study-cleanup")
+router.register(r"study", api.Study, basename="study")
+router.register(r"final", api.FinalRobStudy, basename="final")
+router.register(r"study-cleanup", api.StudyCleanupFieldsView, basename="study-cleanup")
 
 app_name = "study"
 urlpatterns = [
-    url(r"^api/", include(router.urls, namespace="api")),
+    url(r"^api/", include((router.urls, "api"))),
     # study
     url(r"^assessment/(?P<pk>\d+)/$", views.StudyList.as_view(), name="list"),
     url(r"^(?P<pk>\d+)/add-details/$", views.StudyCreateFromReference.as_view(), name="new_study",),

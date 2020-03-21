@@ -1,6 +1,7 @@
 import pandas as pd
 import plotly.express as px
-from rest_framework import decorators, mixins, viewsets
+from rest_framework import mixins, viewsets
+from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from ..assessment.api import AssessmentLevelPermissions, AssessmentRootedTagTreeViewset
@@ -18,7 +19,7 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
     def get_queryset(self):
         return self.model.objects.all()
 
-    @decorators.detail_route(methods=("get",), renderer_classes=PandasRenderers)
+    @action(detail=True, methods=("get",), renderer_classes=PandasRenderers)
     def tags(self, request, pk):
         """
         Show literature tags for entire assessment.
@@ -27,8 +28,8 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         df = models.ReferenceFilterTag.as_dataframe(instance.id)
         return Response(df)
 
-    @decorators.detail_route(
-        methods=("get",), renderer_classes=PandasRenderers, url_path="reference-ids"
+    @action(
+        detail=True, methods=("get",), renderer_classes=PandasRenderers, url_path="reference-ids"
     )
     def reference_ids(self, request, pk):
         """
@@ -39,8 +40,11 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         df = models.Reference.objects.identifiers_dataframe(qs)
         return Response(df)
 
-    @decorators.detail_route(
-        methods=("get", "post"), url_path="reference-tags", renderer_classes=PandasRenderers
+    @action(
+        detail=True,
+        methods=("get", "post"),
+        url_path="reference-tags",
+        renderer_classes=PandasRenderers,
     )
     def reference_tags(self, request, pk):
         """
@@ -58,7 +62,9 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         df = models.ReferenceTags.objects.as_dataframe(instance.id)
         return Response(df)
 
-    @decorators.detail_route(methods=("get",))
+    @action(
+        detail=True, methods=("get",), url_path="reference-year-histogram",
+    )
     def reference_year_histogram(self, request, pk):
         instance = self.get_object()
         # get all the years for a given assessment
@@ -95,8 +101,11 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
 
         return Response(payload)
 
-    @decorators.detail_route(
-        methods=("get",), url_path="references-download", renderer_classes=PandasRenderers
+    @action(
+        detail=True,
+        methods=("get",),
+        url_path="references-download",
+        renderer_classes=PandasRenderers,
     )
     def references_download(self, request, pk):
         """

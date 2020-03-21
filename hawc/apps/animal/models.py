@@ -4,9 +4,9 @@ import math
 from itertools import chain
 
 from django.core.exceptions import ObjectDoesNotExist
-from django.core.urlresolvers import reverse
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from django.urls import reverse
 from reversion import revisions as reversion
 from scipy import stats
 
@@ -48,7 +48,7 @@ class Experiment(models.Model):
         "guideline_compliance",
     )
 
-    study = models.ForeignKey("study.Study", related_name="experiments")
+    study = models.ForeignKey("study.Study", on_delete=models.CASCADE, related_name="experiments")
     name = models.CharField(
         max_length=80,
         help_text="Short-text used to describe the experiment "
@@ -249,7 +249,9 @@ class AnimalGroup(models.Model):
         "diet",
     )
 
-    experiment = models.ForeignKey(Experiment, related_name="animal_groups")
+    experiment = models.ForeignKey(
+        Experiment, on_delete=models.CASCADE, related_name="animal_groups"
+    )
     name = models.CharField(
         max_length=80,
         help_text="""
@@ -259,9 +261,10 @@ class AnimalGroup(models.Model):
             sex in title (e.g., F1 Male Sprague Dawley Rat or P0 Female C57 Mice)
             """,
     )
-    species = models.ForeignKey("assessment.Species")
+    species = models.ForeignKey("assessment.Species", on_delete=models.CASCADE)
     strain = models.ForeignKey(
         "assessment.Strain",
+        on_delete=models.CASCADE,
         help_text="When adding a new strain, put the stock in parenthesis, e.g., "
         + '"Sprague-Dawley (Harlan)."',
     )
@@ -298,6 +301,7 @@ class AnimalGroup(models.Model):
     parents = models.ManyToManyField("self", related_name="children", symmetrical=False, blank=True)
     dosing_regime = models.ForeignKey(
         "DosingRegime",
+        on_delete=models.SET_NULL,
         help_text="Specify an existing dosing regime or create a new dosing regime below",
         blank=True,
         null=True,
@@ -479,7 +483,7 @@ class DosingRegime(models.Model):
     )
 
     dosed_animals = models.OneToOneField(
-        AnimalGroup, related_name="dosed_animals", blank=True, null=True
+        AnimalGroup, related_name="dosed_animals", on_delete=models.SET_NULL, blank=True, null=True
     )
     route_of_exposure = models.CharField(
         max_length=2,
@@ -632,8 +636,8 @@ class DosingRegime(models.Model):
 class DoseGroup(models.Model):
     objects = managers.DoseGroupManager()
 
-    dose_regime = models.ForeignKey(DosingRegime, related_name="doses")
-    dose_units = models.ForeignKey("assessment.DoseUnits")
+    dose_regime = models.ForeignKey(DosingRegime, on_delete=models.CASCADE, related_name="doses")
+    dose_units = models.ForeignKey("assessment.DoseUnits", on_delete=models.CASCADE)
     dose_group_id = models.PositiveSmallIntegerField()
     dose = models.FloatField(validators=[MinValueValidator(0)])
     created = models.DateTimeField(auto_now_add=True)
@@ -761,7 +765,9 @@ class Endpoint(BaseEndpoint):
         ("O", "Other"),
     )
 
-    animal_group = models.ForeignKey(AnimalGroup, related_name="endpoints")
+    animal_group = models.ForeignKey(
+        AnimalGroup, on_delete=models.CASCADE, related_name="endpoints"
+    )
     system = models.CharField(max_length=128, blank=True, help_text="Relevant biological system")
     organ = models.CharField(
         max_length=128,
@@ -1367,7 +1373,7 @@ class ConfidenceIntervalsMixin(object):
 class EndpointGroup(ConfidenceIntervalsMixin, models.Model):
     objects = managers.EndpointGroupManager()
 
-    endpoint = models.ForeignKey(Endpoint, related_name="groups")
+    endpoint = models.ForeignKey(Endpoint, on_delete=models.CASCADE, related_name="groups")
     dose_group_id = models.IntegerField()
     n = models.PositiveSmallIntegerField(blank=True, null=True, validators=[MinValueValidator(0)])
     incidence = models.PositiveSmallIntegerField(

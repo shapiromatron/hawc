@@ -82,7 +82,12 @@ class Migration(migrations.Migration):
                         related_name="meta_inclusion_criteria", to="epi.Criteria", blank=True,
                     ),
                 ),
-                ("study", models.ForeignKey(related_name="meta_protocols", to="study.Study"),),
+                (
+                    "study",
+                    models.ForeignKey(
+                        related_name="meta_protocols", to="study.Study", on_delete=models.CASCADE
+                    ),
+                ),
             ],
             options={"ordering": ("name",)},
         ),
@@ -152,8 +157,13 @@ class Migration(migrations.Migration):
                         blank=True,
                     ),
                 ),
-                ("metric", models.ForeignKey(to="epi.ResultMetric")),
-                ("protocol", models.ForeignKey(related_name="results", to="epimeta.MetaProtocol"),),
+                ("metric", models.ForeignKey(to="epi.ResultMetric", on_delete=models.CASCADE)),
+                (
+                    "protocol",
+                    models.ForeignKey(
+                        related_name="results", to="epimeta.MetaProtocol", on_delete=models.CASCADE
+                    ),
+                ),
             ],
             options={"ordering": ("label",)},
         ),
@@ -232,12 +242,20 @@ class Migration(migrations.Migration):
                 ("notes", models.TextField(blank=True)),
                 (
                     "meta_result",
-                    models.ForeignKey(related_name="single_results", to="epimeta.MetaResult"),
+                    models.ForeignKey(
+                        related_name="single_results",
+                        to="epimeta.MetaResult",
+                        on_delete=models.CASCADE,
+                    ),
                 ),
                 (
                     "study",
                     models.ForeignKey(
-                        related_name="single_results", blank=True, to="study.Study", null=True,
+                        related_name="single_results",
+                        blank=True,
+                        to="study.Study",
+                        on_delete=models.SET_NULL,
+                        null=True,
                     ),
                 ),
             ],

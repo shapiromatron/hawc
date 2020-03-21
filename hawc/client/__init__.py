@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional
+from typing import Dict, List
 
 import pandas as pd
 from requests import Response, Session
@@ -21,7 +21,7 @@ class Client:
         self.root_url = root_url
         self.session = self.authenticate(email, password)
 
-    def _handle_hawc_response(self, response: Response) -> Optional[Dict]:
+    def _handle_hawc_response(self, response: Response) -> Dict:
         """
         Handle standard hawc API response
 
@@ -62,17 +62,17 @@ class Client:
         session.headers.update(Authorization=f"Token {token}")
         return session
 
-    def _get(self, url: str) -> Optional[Dict]:
+    def _get(self, url: str) -> Dict:
         response = self.session.get(url)
         return self._handle_hawc_response(response)
 
-    def _post(self, url: str, payload: Dict) -> Optional[Dict]:
+    def _post(self, url: str, payload: Dict) -> Dict:
         response = self.session.post(url, payload)
         return self._handle_hawc_response(response)
 
     def lit_import_hero(
         self, assessment_id: int, title: str, description: str, ids: List[int]
-    ) -> pd.DataFrame:
+    ) -> Dict:
         payload = {
             "assessment": assessment_id,
             "search_type": "i",
@@ -82,8 +82,7 @@ class Client:
             "search_string": ",".join(str(id_) for id_ in ids),
         }
         url = f"{self.root_url}/lit/api/search/"
-        response_json = self._post(url, payload)
-        return pd.DataFrame(response_json, index=[0])
+        return self._post(url, payload)
 
     def lit_tags(self, assessment_id: int) -> pd.DataFrame:
         url = f"{self.root_url}/lit/api/assessment/{assessment_id}/tags/"

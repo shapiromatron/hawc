@@ -1,6 +1,6 @@
 import pytest
-from django.core.urlresolvers import reverse
 from django.test.client import Client
+from django.urls import reverse
 
 
 @pytest.mark.django_db
@@ -34,8 +34,8 @@ def test_study_detail_api(db_keys):
         "journal": "",
         "abstract": "",
         "full_text_url": "",
-        "created": "2020-01-25T14:23:16.370427Z",
-        "last_updated": "2020-02-27T20:14:41.479008Z",
+        "created": "2020-01-25T08:23:16.370427-06:00",
+        "last_updated": "2020-02-27T14:14:41.479008-06:00",
         "block_id": None,
         "bioassay": True,
         "epi": False,

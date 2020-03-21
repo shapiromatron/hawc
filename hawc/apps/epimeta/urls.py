@@ -4,15 +4,15 @@ from rest_framework.routers import DefaultRouter
 from . import api, views
 
 router = DefaultRouter()
-router.register(r"assessment", api.EpiMetaAssessmentViewset, base_name="assessment")
-router.register(r"protocol", api.MetaProtocol, base_name="protocol")
-router.register(r"result", api.MetaResult, base_name="result")
+router.register(r"assessment", api.EpiMetaAssessmentViewset, basename="assessment")
+router.register(r"protocol", api.MetaProtocol, basename="protocol")
+router.register(r"result", api.MetaResult, basename="result")
 
 
 app_name = "meta"
 urlpatterns = [
     # API
-    url(r"^api/", include(router.urls, namespace="api")),
+    url(r"^api/", include((router.urls, "api"))),
     # protocol views
     url(
         r"^study/(?P<pk>\d+)/protocol/create/$",
