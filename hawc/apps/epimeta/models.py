@@ -1,8 +1,8 @@
 import json
 
-from django.core.urlresolvers import reverse
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from django.urls import reverse
 from reversion import revisions as reversion
 
 from ..assessment.serializers import AssessmentSerializer
@@ -20,7 +20,9 @@ class MetaProtocol(models.Model):
 
     META_LIT_SEARCH_CHOICES = ((0, "Systematic"), (1, "Other"))
 
-    study = models.ForeignKey("study.Study", related_name="meta_protocols")
+    study = models.ForeignKey(
+        "study.Study", on_delete=models.CASCADE, related_name="meta_protocols"
+    )
     name = models.CharField(verbose_name="Protocol name", max_length=128)
     protocol_type = models.PositiveSmallIntegerField(choices=META_PROTOCOL_CHOICES, default=0)
     lit_search_strategy = models.PositiveSmallIntegerField(
@@ -126,7 +128,7 @@ class MetaProtocol(models.Model):
 class MetaResult(models.Model):
     objects = managers.MetaResultManager()
 
-    protocol = models.ForeignKey(MetaProtocol, related_name="results")
+    protocol = models.ForeignKey(MetaProtocol, on_delete=models.CASCADE, related_name="results")
     label = models.CharField(max_length=128)
     data_location = models.CharField(
         max_length=128,
@@ -139,7 +141,7 @@ class MetaResult(models.Model):
     exposure_name = models.CharField(max_length=128)
     exposure_details = models.TextField(blank=True)
     number_studies = models.PositiveSmallIntegerField()
-    metric = models.ForeignKey(ResultMetric)
+    metric = models.ForeignKey(ResultMetric, on_delete=models.CASCADE)
     statistical_notes = models.TextField(blank=True)
     n = models.PositiveIntegerField(help_text="Number of individuals included from all analyses")
     estimate = models.FloatField()
@@ -339,8 +341,16 @@ class MetaResult(models.Model):
 class SingleResult(models.Model):
     objects = managers.SingleResultManager()
 
-    meta_result = models.ForeignKey(MetaResult, related_name="single_results")
-    study = models.ForeignKey("study.Study", related_name="single_results", blank=True, null=True)
+    meta_result = models.ForeignKey(
+        MetaResult, on_delete=models.CASCADE, related_name="single_results"
+    )
+    study = models.ForeignKey(
+        "study.Study",
+        on_delete=models.SET_NULL,
+        related_name="single_results",
+        blank=True,
+        null=True,
+    )
     exposure_name = models.CharField(
         max_length=128,
         help_text="Enter a descriptive-name for the single study result "

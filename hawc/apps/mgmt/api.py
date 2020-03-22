@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import permissions
-from rest_framework.decorators import detail_route, list_route
+from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from ..assessment.api import AssessmentEditViewset, AssessmentLevelPermissions, DisabledPagination
@@ -22,7 +22,7 @@ class Task(AssessmentEditViewset):
     def filter_queryset(self, queryset):
         return super().filter_queryset(queryset).select_related("owner", "study")
 
-    @list_route()
+    @action(detail=False)
     def assignments(self, request):
         # Tasks assigned to user.
         qs = self.model.objects.owned_by(request.user).select_related(
@@ -31,7 +31,7 @@ class Task(AssessmentEditViewset):
         serializer = serializers.TaskByAssessmentSerializer(qs, many=True)
         return Response(serializer.data)
 
-    @detail_route(methods=["get"])
+    @action(detail=True, methods=["get"])
     def assessment_assignments(self, request, pk=None):
         # Tasks assigned to user for a specific assessment
         assessment = get_object_or_404(Assessment, pk=pk)
@@ -43,7 +43,7 @@ class Task(AssessmentEditViewset):
         serializer = serializers.TaskByAssessmentSerializer(qs, many=True)
         return Response(serializer.data)
 
-    @list_route()
+    @action(detail=False)
     def dashboard(self, request):
         qs = self.filter_queryset(self.get_queryset())
         metrics = self.model.dashboard_metrics(qs)

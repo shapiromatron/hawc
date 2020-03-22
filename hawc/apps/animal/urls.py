@@ -4,26 +4,26 @@ from rest_framework.routers import DefaultRouter
 from . import api, views
 
 router = DefaultRouter()
-router.register(r"assessment", api.AnimalAssessmentViewset, base_name="assessment")
-router.register(r"endpoint", api.Endpoint, base_name="endpoint")
-router.register(r"experiment", api.Experiment, base_name="experiment")
-router.register(r"animal-group", api.AnimalGroup, base_name="animal_group")
+router.register(r"assessment", api.AnimalAssessmentViewset, basename="assessment")
+router.register(r"endpoint", api.Endpoint, basename="endpoint")
+router.register(r"experiment", api.Experiment, basename="experiment")
+router.register(r"animal-group", api.AnimalGroup, basename="animal_group")
 router.register(
-    r"experiment-cleanup", api.ExperimentCleanupFieldsView, base_name="experiment-cleanup",
+    r"experiment-cleanup", api.ExperimentCleanupFieldsView, basename="experiment-cleanup",
 )
 router.register(
-    r"animal_group-cleanup", api.AnimalGroupCleanupFieldsView, base_name="animal_group-cleanup",
+    r"animal_group-cleanup", api.AnimalGroupCleanupFieldsView, basename="animal_group-cleanup",
 )
-router.register(r"endpoint-cleanup", api.EndpointCleanupFieldsView, base_name="endpoint-cleanup")
+router.register(r"endpoint-cleanup", api.EndpointCleanupFieldsView, basename="endpoint-cleanup")
 router.register(
-    r"dosingregime-cleanup", api.DosingRegimeCleanupFieldsView, base_name="dosingregime-cleanup",
+    r"dosingregime-cleanup", api.DosingRegimeCleanupFieldsView, basename="dosingregime-cleanup",
 )
-router.register(r"dose-units", api.DoseUnits, base_name="dose_units")
+router.register(r"dose-units", api.DoseUnits, basename="dose_units")
 
 
 app_name = "animal"
 urlpatterns = [
-    url(r"^api/", include(router.urls, namespace="api")),
+    url(r"^api/", include((router.urls, "api"))),
     # Experiment
     url(
         r"^study/(?P<pk>\d+)/experiment/new/$",

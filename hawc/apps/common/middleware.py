@@ -1,9 +1,10 @@
 import re
 
 from django.http import HttpResponse
+from django.utils.deprecation import MiddlewareMixin
 
 
-class MicrosoftOfficeLinkMiddleware(object):
+class MicrosoftOfficeLinkMiddleware(MiddlewareMixin):
     # https://support.microsoft.com/en-us/kb/899927
     # https://github.com/spilliton/fix_microsoft_links
 

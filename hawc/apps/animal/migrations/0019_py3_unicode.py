@@ -39,7 +39,7 @@ class Migration(migrations.Migration):
                 blank=True,
                 help_text="Specify an existing dosing regime or create a new dosing regime below",
                 null=True,
-                on_delete=django.db.models.deletion.CASCADE,
+                on_delete=django.db.models.deletion.SET_NULL,
                 to="animal.DosingRegime",
             ),
         ),

@@ -4,23 +4,23 @@ from rest_framework.routers import DefaultRouter
 from . import api, views
 
 router = DefaultRouter()
-router.register(r"assessment", api.EpiAssessmentViewset, base_name="assessment")
-router.register(r"study-population", api.StudyPopulation, base_name="study-population")
-router.register(r"exposure", api.Exposure, base_name="exposure")
-router.register(r"outcome", api.Outcome, base_name="outcome")
-router.register(r"result", api.Result, base_name="result")
-router.register(r"comparison-set", api.ComparisonSet, base_name="set")
-router.register(r"group", api.Group, base_name="group")
-router.register(r"outcome-cleanup", api.OutcomeCleanup, base_name="outcome-cleanup")
+router.register(r"assessment", api.EpiAssessmentViewset, basename="assessment")
+router.register(r"study-population", api.StudyPopulation, basename="study-population")
+router.register(r"exposure", api.Exposure, basename="exposure")
+router.register(r"outcome", api.Outcome, basename="outcome")
+router.register(r"result", api.Result, basename="result")
+router.register(r"comparison-set", api.ComparisonSet, basename="set")
+router.register(r"group", api.Group, basename="group")
+router.register(r"outcome-cleanup", api.OutcomeCleanup, basename="outcome-cleanup")
 router.register(
-    r"studypopulation-cleanup", api.StudyPopulationCleanup, base_name="studypopulation-cleanup",
+    r"studypopulation-cleanup", api.StudyPopulationCleanup, basename="studypopulation-cleanup",
 )
-router.register(r"exposure-cleanup", api.ExposureCleanup, base_name="exposure-cleanup")
+router.register(r"exposure-cleanup", api.ExposureCleanup, basename="exposure-cleanup")
 
 
 app_name = "epi"
 urlpatterns = [
-    url(r"^api/", include(router.urls, namespace="api")),
+    url(r"^api/", include((router.urls, "api"))),
     # Criteria
     url(
         r"^assessment/(?P<pk>\d+)/study-criteria/create/$",

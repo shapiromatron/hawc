@@ -1,7 +1,7 @@
 from copy import deepcopy
 
 import pytest
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from rest_framework.test import APIClient
 
 from hawc.apps.riskofbias.models import RiskOfBias, RiskOfBiasScore

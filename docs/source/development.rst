@@ -160,6 +160,27 @@ A test database is loaded to run unit tests. The database may need to be periodi
     # export database
     manage.py dump_test_db
 
+Testing celery application
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+To test asynchronous functionality in development, modify your ``hawc/main/settings/local.py``:
+
+.. code-block:: python
+
+    CELERY_BROKER_URL = "redis://localhost:6379/1"
+    CELERY_RESULT_BACKEND = "redis://localhost:6379/2"
+    CELERY_TASK_ALWAYS_EAGER = False
+    CELERY_TASK_EAGER_PROPAGATES = False
+
+Then, create the example docker container and start a celery worker instance:
+
+.. code-block:: bash
+
+    docker-compose build redis
+    docker up -d redis
+    celery worker --app=hawc.main.celery --loglevel=INFO --soft-time-limit=90 --time-limit=120
+
+Asynchronous tasks will no be executed by celery workers instead of the main thread.
 
 Visual Studio Code settings
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~

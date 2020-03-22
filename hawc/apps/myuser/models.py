@@ -2,9 +2,9 @@ from django.apps import apps
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.contrib.sites.models import Site
 from django.core.mail import EmailMultiAlternatives, send_mail
-from django.core.urlresolvers import reverse
 from django.db import models
 from django.template.loader import render_to_string
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
@@ -75,7 +75,7 @@ class HAWCUser(AbstractBaseUser, PermissionsMixin):
 class UserProfile(models.Model):
     objects = managers.UserProfileManager()
 
-    user = models.OneToOneField(HAWCUser, related_name="profile")
+    user = models.OneToOneField(HAWCUser, on_delete=models.CASCADE, related_name="profile")
     HERO_access = models.BooleanField(
         default=False,
         verbose_name="HERO access",

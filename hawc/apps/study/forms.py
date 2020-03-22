@@ -1,6 +1,6 @@
 from django import forms
-from django.core.urlresolvers import reverse
 from django.forms.fields import TextInput
+from django.urls import reverse
 
 from ..assessment.models import Assessment
 from ..common.forms import BaseFormHelper

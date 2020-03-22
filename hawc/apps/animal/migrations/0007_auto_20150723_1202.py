@@ -14,6 +14,8 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="endpointgroup",
             name="endpoint",
-            field=models.ForeignKey(related_name="groups", to="animal.Endpoint"),
+            field=models.ForeignKey(
+                related_name="groups", to="animal.Endpoint", on_delete=models.CASCADE
+            ),
         ),
     ]

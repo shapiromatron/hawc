@@ -80,7 +80,11 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "assessment",
-                    models.ForeignKey(related_name="references", to="assessment.Assessment"),
+                    models.ForeignKey(
+                        related_name="references",
+                        to="assessment.Assessment",
+                        on_delete=models.CASCADE,
+                    ),
                 ),
                 (
                     "identifiers",
@@ -119,11 +123,13 @@ class Migration(migrations.Migration):
                         verbose_name="ID", serialize=False, auto_created=True, primary_key=True,
                     ),
                 ),
-                ("content_object", models.ForeignKey(to="lit.Reference")),
+                ("content_object", models.ForeignKey(to="lit.Reference", on_delete=models.CASCADE)),
                 (
                     "tag",
                     models.ForeignKey(
-                        related_name="lit_referencetags_items", to="lit.ReferenceFilterTag",
+                        related_name="lit_referencetags_items",
+                        to="lit.ReferenceFilterTag",
+                        on_delete=models.CASCADE,
                     ),
                 ),
             ],
@@ -182,7 +188,9 @@ class Migration(migrations.Migration):
                 (
                     "assessment",
                     models.ForeignKey(
-                        related_name="literature_searches", to="assessment.Assessment"
+                        related_name="literature_searches",
+                        to="assessment.Assessment",
+                        on_delete=models.CASCADE,
                     ),
                 ),
             ],
@@ -217,7 +225,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="pubmedquery",
             name="search",
-            field=models.ForeignKey(to="lit.Search"),
+            field=models.ForeignKey(to="lit.Search", on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AlterUniqueTogether(
