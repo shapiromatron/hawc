@@ -6,7 +6,7 @@ import requests
 logger = logging.getLogger(__name__)
 
 
-def fetch_chemspider(cas_number):
+def fetch_dsstox(cas_number):
     d = {}
     try:
         # get details
@@ -33,4 +33,4 @@ def fetch_chemspider(cas_number):
     except Exception as e:
         logger.error(str(e), exc_info=True)
 
-    return d
+    return {} if d["DTXSID"] is None else d

@@ -17,8 +17,5 @@ DATABASES = {
 # BMD MODELING SETTINGS
 BMD_HOST = "http://example.com"  # optional; used for BMD module
 
-# API keys
-CHEMSPIDER_TOKEN = r"get-chemspider-token-online"
-
 # SET HAWC FLAVOR (see docs)
 HAWC_FLAVOR = "PRIME"

@@ -107,13 +107,16 @@ class HAWCUtils {
                 ul.append("<li><b>Common name:</b> {0}</li>".printf(data.CommonName))
                     .append("<li><b>SMILES:</b> {0}</li>".printf(data.SMILES))
                     .append("<li><b>Molecular Weight:</b> {0}</li>".printf(data.MW))
-                    .append('<li><img src="data:image/jpeg;base64,{0}"></li>'.printf(data.image));
+                    .append('<img src="data:image/jpeg;base64,{0}"></li>'.printf(data.image))
+                    .append("<li><b>DTXSID:</b> {0}".printf(data.DTXSID));
 
                 if (show_header) content.push("<h3>Chemical Properties Information</h3>");
 
                 content.push(
                     ul,
-                    '<p class="help-block">Chemical information provided by <a target="_blank" href="http://www.chemspider.com/">http://www.chemspider.com/</a></p>'
+                    '<p class="help-block">Chemical information provided by <a target="_blank" href="https://comptox.epa.gov/dashboard/dsstoxdb/results?search={0}">CompTox Chemicals Dashboard</a></p>'.printf(
+                        data.DTXSID
+                    )
                 );
                 $div.html(content);
             }

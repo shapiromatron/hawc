@@ -3,7 +3,7 @@ from celery.utils.log import get_task_logger
 from django.apps import apps
 from django.core.cache import cache
 
-from ..common.chemspider import fetch_chemspider
+from ..common.dsstox import fetch_dsstox
 from ..common.svg import SVGConverter
 
 logger = get_task_logger(__name__)
@@ -38,13 +38,13 @@ def convert_to_pptx(svg, url, width, height):
 
 
 @shared_task
-def get_chemspider_details(cas_number):
-    cache_name = f"chemspider-{cas_number.replace(' ', '_')}"
+def get_dsstox_details(cas_number):
+    cache_name = f"dsstox-{cas_number.replace(' ', '_')}"
     d = cache.get(cache_name)
     if d is None:
         d = {"status": "failure"}
         if cas_number:
-            d = fetch_chemspider(cas_number)
+            d = fetch_dsstox(cas_number)
             if d.get("status") == "success":
                 logger.info(f"setting cache: {cache_name}")
                 cache.set(cache_name, d)
