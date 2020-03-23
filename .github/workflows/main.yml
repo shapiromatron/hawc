@@ -15,48 +15,48 @@ jobs:
           POSTGRES_PASSWORD: password
           POSTGRES_DB: hawc-test
         ports:
-          # will assign a random free host port
-          - 5432/tcp
+        # will assign a random free host port
+        - 5432/tcp
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
     steps:
-      - uses: actions/checkout@v1
-      - uses: actions/setup-python@v1
-        with:
-          python-version: "3.6"
-          architecture: "x64"
-      - name: install
-        run: |
-          mv ci-webpack-stats.json webpack-stats.json
-          pip install -r requirements/dev.txt
-      - name: lint
-        run: |
-          make lint-py
-      - name: test
-        env:
-          # use localhost for the host here because we are running the job on the VM.
-          # If we were running the job on in a container this would be postgres
-          DJANGO_DB_NAME: hawc-test
-          DJANGO_DB_USER: hawc
-          DJANGO_DB_PW: password
-          DJANGO_DB_HOST: localhost
-          DJANGO_DB_PORT: ${{ job.services.postgres.ports[5432] }} # get randomly assigned published port
-          PUBMED_API_KEY: ${{ secrets.PUBMED_API_KEY }}
-        run: |
-          make test
+    - uses: actions/checkout@v1
+    - uses: actions/setup-python@v1
+      with:
+        python-version: '3.6'
+        architecture: 'x64'
+    - name: install
+      run: |
+        mv ci-webpack-stats.json webpack-stats.json
+        pip install -r requirements/dev.txt
+    - name: lint
+      run: |
+        make lint-py
+    - name: test
+      env:
+        # use localhost for the host here because we are running the job on the VM.
+        # If we were running the job on in a container this would be postgres
+        DJANGO_DB_NAME: hawc-test
+        DJANGO_DB_USER: hawc
+        DJANGO_DB_PW: password
+        DJANGO_DB_HOST: localhost
+        DJANGO_DB_PORT: ${{ job.services.postgres.ports[5432] }} # get randomly assigned published port
+        PUBMED_API_KEY: ${{ secrets.PUBMED_API_KEY }}
+      run: |
+        make test
 
   frontend:
     name: frontend
     runs-on: ubuntu-18.04
     steps:
-      - uses: actions/checkout@v1
-      - uses: actions/setup-node@v1
-        with:
-          node-version: "12.x"
-      - name: install
-        run: |
-          npm install -g yarn
-          yarn --cwd ./frontend install
-      - name: lint
-        run: |
-          make lint-js
+    - uses: actions/checkout@v1
+    - uses: actions/setup-node@v1
+      with:
+        node-version: '12.x'
+    - name: install
+      run: |
+        npm install -g yarn
+        yarn --cwd ./frontend install
+    - name: lint
+      run: |
+        make lint-js
