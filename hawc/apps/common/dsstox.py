@@ -13,6 +13,7 @@ def fetch_dsstox(cas_number):
         url = r"https://actorws.epa.gov/actorws/chemIdentifier/v01/resolve.json"
         params = {"identifier": cas_number}
         response_dict = requests.get(url, params).json()["DataRow"]
+        d["CASRN"] = cas_number
         d["CommonName"] = response_dict["preferredName"]
         d["SMILES"] = response_dict["smiles"]
         d["MW"] = response_dict["molWeight"]

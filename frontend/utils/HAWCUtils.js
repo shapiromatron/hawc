@@ -104,19 +104,20 @@ class HAWCUtils {
                 var content = [],
                     ul = $("<ul>");
 
-                ul.append("<li><b>Common name:</b> {0}</li>".printf(data.CommonName))
-                    .append("<li><b>SMILES:</b> {0}</li>".printf(data.SMILES))
-                    .append("<li><b>Molecular Weight:</b> {0}</li>".printf(data.MW))
-                    .append('<img src="data:image/jpeg;base64,{0}"></li>'.printf(data.image))
-                    .append("<li><b>DTXSID:</b> {0}".printf(data.DTXSID));
+                ul.append(`<li><b>Common name:</b> ${data.CommonName}</li>`)
+                    .append(`<li><b>CASRN:</b> ${data.CASRN}</li>`)
+                    .append(
+                        `<li><b>DTXSID:</b> <a target="_blank" href="https://comptox.epa.gov/dashboard/dsstoxdb/results?search=${data.DTXSID}">${data.DTXSID}</a></li>`
+                    )
+                    .append(`<li><b>SMILES:</b> ${data.SMILES}</li>`)
+                    .append(`<li><b>Molecular Weight:</b> ${data.MW}</li>`)
+                    .append(`<li><img src="data:image/jpeg;base64,${data.image}"></li>`);
 
                 if (show_header) content.push("<h3>Chemical Properties Information</h3>");
 
                 content.push(
                     ul,
-                    '<p class="help-block">Chemical information provided by <a target="_blank" href="https://comptox.epa.gov/dashboard/dsstoxdb/results?search={0}">CompTox Chemicals Dashboard</a></p>'.printf(
-                        data.DTXSID
-                    )
+                    `<p class="help-block">Chemical information provided by <a target="_blank" href="https://comptox.epa.gov/dashboard/">USEPA Chemistry Dashboard</a></p>`
                 );
                 $div.html(content);
             }
