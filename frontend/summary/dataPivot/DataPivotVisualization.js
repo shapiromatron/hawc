@@ -265,7 +265,7 @@ class DataPivotVisualization extends D3Plot {
             default:
                 font = "Arial;";
         }
-        d3.select(this.svg).attr("style", "font-family: {0}".printf(font));
+        d3.select(this.svg).attr("style", `font-family: ${font}`);
     }
 
     get_dataset() {
@@ -343,9 +343,7 @@ class DataPivotVisualization extends D3Plot {
             }
         });
 
-        var get_selected_fields = function(v) {
-            return v.field_name !== NULL_CASE;
-        };
+        var get_selected_fields = v => v.field_name !== NULL_CASE;
         settings.sorts = this.dp_settings.sorts.filter(get_selected_fields);
         settings.filters = this.dp_settings.filters.filter(get_selected_fields);
 
@@ -378,6 +376,7 @@ class DataPivotVisualization extends D3Plot {
         });
 
         //build data-objects for visualization
+        const defaultLineSetting = get_associated_style("lines", settings.bars.marker_style);
         rows = _.chain(self.dp_data)
             .filter(
                 _.partial(
@@ -391,7 +390,7 @@ class DataPivotVisualization extends D3Plot {
             .map(function(d) {
                 // unpack any column-level styles
                 let styles = {
-                    bars: get_associated_style("lines", settings.bars.marker_style),
+                    bars: defaultLineSetting,
                     barchartBar: get_associated_style("rectangles", settings.barchart.bar_style),
                     barchartErrorBar: get_associated_style(
                         "lines",
@@ -400,18 +399,21 @@ class DataPivotVisualization extends D3Plot {
                 };
 
                 _.chain(self.dp_settings.datapoint_settings)
-                    .filter(function(d) {
-                        return d.field_name !== NULL_CASE;
-                    })
-                    .each(function(d, i) {
-                        styles["points_" + i] = get_associated_style("symbols", d.marker_style);
-                    })
+                    .filter(d => d.field_name !== NULL_CASE)
+                    .each(
+                        (d, i) =>
+                            (styles[`points_${i}`] = get_associated_style(
+                                "symbols",
+                                d.marker_style
+                            ))
+                    )
                     .value();
 
                 _.chain(self.dp_settings.description_settings)
-                    .each(function(d, i) {
-                        styles["text_" + i] = get_associated_style("texts", d.text_style);
-                    })
+                    .each(
+                        (d, i) =>
+                            (styles[`text_${i}`] = get_associated_style("texts", d.text_style))
+                    )
                     .value();
 
                 return _.extend(d, {_styles: styles});
@@ -467,11 +469,29 @@ class DataPivotVisualization extends D3Plot {
                 }
             });
         } else {
+            this.dp_settings.dataline_settings[0].conditional_formatting.forEach(function(cf) {
+                const styles = "bars",
+                    hash = d3.map();
+                switch (cf.condition_type) {
+                    case "discrete-style":
+                        cf.discrete_styles.forEach(d => hash.set(d.key, d.style));
+                        rows.forEach(function(d) {
+                            if (hash.get(d[cf.field_name]) !== NULL_CASE) {
+                                d._styles[styles] = get_associated_style(
+                                    "lines",
+                                    hash.get(d[cf.field_name])
+                                );
+                            }
+                        });
+
+                        break;
+                    default:
+                        console.log(`Unrecognized condition_type: ${cf.condition_type}`);
+                }
+            });
             this.dp_settings.datapoint_settings.forEach(function(datapoint, i) {
                 datapoint.conditional_formatting.forEach(function(cf) {
-                    var arr = rows.map(function(d) {
-                            return d[cf.field_name];
-                        }),
+                    var arr = rows.map(d => d[cf.field_name]),
                         vals = DataPivot.getRowDetails(arr),
                         styles = "points_" + i;
 
@@ -512,9 +532,7 @@ class DataPivotVisualization extends D3Plot {
 
                         case "discrete-style":
                             var hash = d3.map();
-                            cf.discrete_styles.forEach(function(d) {
-                                hash.set(d.key, d.style);
-                            });
+                            cf.discrete_styles.forEach(d => hash.set(d.key, d.style));
                             rows.forEach(function(d) {
                                 if (hash.get(d[cf.field_name]) !== NULL_CASE) {
                                     d._styles[styles] = get_associated_style(
@@ -526,9 +544,7 @@ class DataPivotVisualization extends D3Plot {
 
                             break;
                         default:
-                            console.log(
-                                "Unrecognized condition_type: {0}".printf(cf.condition_type)
-                            );
+                            console.log(`Unrecognized condition_type: ${cf.condition_type}`);
                     }
                 });
             });
@@ -562,9 +578,7 @@ class DataPivotVisualization extends D3Plot {
         });
 
         // with final datarows subset, add index for rendered order
-        rows.forEach(function(v, i) {
-            v._dp_index = i;
-        });
+        rows.forEach((v, i) => (v._dp_index = i));
 
         // unpack extra spacers
         this.dp_settings.spacers.forEach(function(v) {
@@ -964,18 +978,10 @@ class DataPivotVisualization extends D3Plot {
             .data(bar_rows)
             .enter()
             .append("svg:line")
-            .attr("x1", function(d) {
-                return x(d[bars.low_field_name]);
-            })
-            .attr("x2", function(d) {
-                return x(d[bars.high_field_name]);
-            })
-            .attr("y1", function(d) {
-                return row_heights[d._dp_index].mid;
-            })
-            .attr("y2", function(d) {
-                return row_heights[d._dp_index].mid;
-            })
+            .attr("x1", d => x(d[bars.low_field_name]))
+            .attr("x2", d => x(d[bars.high_field_name]))
+            .attr("y1", d => row_heights[d._dp_index].mid)
+            .attr("y2", d => row_heights[d._dp_index].mid)
             .each(this.apply_line_styles);
 
         g_bars
@@ -983,18 +989,10 @@ class DataPivotVisualization extends D3Plot {
             .data(bar_rows)
             .enter()
             .append("svg:line")
-            .attr("x1", function(d) {
-                return x(d[bars.low_field_name]);
-            })
-            .attr("x2", function(d) {
-                return x(d[bars.low_field_name]);
-            })
-            .attr("y1", function(d) {
-                return row_heights[d._dp_index].mid + bar_half_height;
-            })
-            .attr("y2", function(d) {
-                return row_heights[d._dp_index].mid - bar_half_height;
-            })
+            .attr("x1", d => x(d[bars.low_field_name]))
+            .attr("x2", d => x(d[bars.low_field_name]))
+            .attr("y1", d => row_heights[d._dp_index].mid + bar_half_height)
+            .attr("y2", d => row_heights[d._dp_index].mid - bar_half_height)
             .each(this.apply_line_styles);
 
         g_bars
@@ -1002,18 +1000,10 @@ class DataPivotVisualization extends D3Plot {
             .data(bar_rows)
             .enter()
             .append("svg:line")
-            .attr("x1", function(d) {
-                return x(d[bars.high_field_name]);
-            })
-            .attr("x2", function(d) {
-                return x(d[bars.high_field_name]);
-            })
-            .attr("y1", function(d) {
-                return row_heights[d._dp_index].mid + bar_half_height;
-            })
-            .attr("y2", function(d) {
-                return row_heights[d._dp_index].mid - bar_half_height;
-            })
+            .attr("x1", d => x(d[bars.high_field_name]))
+            .attr("x2", d => x(d[bars.high_field_name]))
+            .attr("y1", d => row_heights[d._dp_index].mid + bar_half_height)
+            .attr("y2", d => row_heights[d._dp_index].mid - bar_half_height)
             .each(this.apply_line_styles);
 
         // add points
@@ -1030,12 +1020,8 @@ class DataPivotVisualization extends D3Plot {
                     "d",
                     d3.svg
                         .symbol()
-                        .size(function(d) {
-                            return d._styles["points_" + i].size;
-                        })
-                        .type(function(d) {
-                            return d._styles["points_" + i].type;
-                        })
+                        .size(d => d._styles["points_" + i].size)
+                        .type(d => d._styles["points_" + i].type)
                 )
                 .attr(
                     "transform",
