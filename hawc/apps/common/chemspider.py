@@ -1,8 +1,7 @@
-import json
+import base64
 import logging
 
 import requests
-from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
@@ -10,42 +9,23 @@ logger = logging.getLogger(__name__)
 def fetch_chemspider(cas_number):
     d = {}
     try:
-        with requests.Session() as session:
-            session.headers.update(
-                {
-                    "apikey": settings.CHEMSPIDER_TOKEN,
-                    "Content-type": "application/json",
-                    "Accept": "application/json",
-                }
-            )
+        # get details
+        url = r"https://actorws.epa.gov/actorws/chemIdentifier/v01/resolve.json"
+        params = {"identifier": cas_number}
+        response_dict = requests.get(url, params).json()["DataRow"]
+        d["CommonName"] = response_dict["preferredName"]
+        d["SMILES"] = response_dict["smiles"]
+        d["MW"] = response_dict["molWeight"]
+        d["DTXSID"] = response_dict["dtxsid"]
 
-            # submit query
-            url = "https://api.rsc.org/compounds/v1/filter/name"
-            payload = {"name": cas_number}
-            response = session.post(url, data=json.dumps(payload))
-            query_id = response.json()["queryId"]
+        # get image
+        url = r"https://actorws.epa.gov/actorws/chemical/image"
+        params = {"casrn": cas_number, "fmt": "jpeg"}
+        response = requests.get(url, params)
+        d["image"] = base64.b64encode(response.content).decode("utf-8")
 
-            # get chemspider id
-            url = f"https://api.rsc.org/compounds/v1/filter/{query_id}/results"
-            params = {"start": 0, "count": 1}
-            response = session.get(url, params=params)
-            chemspider_id = response.json()["results"][0]
-
-            # get details
-            url = f"https://api.rsc.org/compounds/v1/records/{chemspider_id}/details"
-            params = {"fields": "SMILES,MolecularWeight,CommonName"}
-            response = session.get(url, params=params).json()
-            d["CommonName"] = response["commonName"]
-            d["SMILES"] = response["smiles"]
-            d["MW"] = response["molecularWeight"]
-
-            # get image
-            url = f"https://api.rsc.org/compounds/v1/records/{chemspider_id}/image"
-            response = session.get(url)
-            d["image"] = response.json()["image"]
-
-            # call it a success if we made it here
-            d["status"] = "success"
+        # call it a success if we made it here
+        d["status"] = "success"
 
     except AttributeError:
         logger.error(f"Request failed: {response.text}", exc_info=True)
