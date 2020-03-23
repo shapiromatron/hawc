@@ -48,35 +48,31 @@ def get_significance_and_direction(data_type, groups):
     if len(groups) == 0:
         return significance_list
 
-    if data_type == models.Endpoint.DATA_TYPE_CONTINUOUS:
-        control_resp = groups[0]["response"]
+    if data_type in {
+        models.Endpoint.DATA_TYPE_CONTINUOUS,
+        models.Endpoint.DATA_TYPE_PERCENT_DIFFERENCE,
+        models.Endpoint.DATA_TYPE_DICHOTOMOUS,
+        models.Endpoint.DATA_TYPE_DICHOTOMOUS_CANCER,
+    }:
+        if data_type in {
+            models.Endpoint.DATA_TYPE_CONTINUOUS,
+            models.Endpoint.DATA_TYPE_PERCENT_DIFFERENCE,
+        }:
+            field = "response"
+        elif data_type in {
+            models.Endpoint.DATA_TYPE_DICHOTOMOUS,
+            models.Endpoint.DATA_TYPE_DICHOTOMOUS_CANCER,
+        }:
+            field = "percent_affected"
+        else:
+            raise ValueError(f"Unreachable code? data_type={data_type}")
+        control_resp = groups[0][field]
         for group in groups:
             if group["significant"]:
-                resp = group["response"]
+                resp = group[field]
                 if control_resp is None or resp is None or resp == control_resp:
                     significance_list.append("Yes - ?")
                 elif resp > control_resp:
-                    significance_list.append("Yes - ↑")
-                else:
-                    significance_list.append("Yes - ↓")
-            else:
-                significance_list.append("No")
-    elif data_type in [
-        models.Endpoint.DATA_TYPE_DICHOTOMOUS,
-        models.Endpoint.DATA_TYPE_DICHOTOMOUS_CANCER,
-    ]:
-        for group in groups:
-            if group["significant"]:
-                significance_list.append("Yes - ↑")
-            else:
-                significance_list.append("No")
-    elif data_type == models.Endpoint.DATA_TYPE_PERCENT_DIFFERENCE:
-        for group in groups:
-            if group["significant"]:
-                resp = group["response"]
-                if resp is None or resp == 0:
-                    significance_list.append("Yes - ?")
-                elif resp > 0:
                     significance_list.append("Yes - ↑")
                 else:
                     significance_list.append("Yes - ↓")
