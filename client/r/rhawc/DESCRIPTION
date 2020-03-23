@@ -1,0 +1,18 @@
+Package: rhawc
+Type: Package
+Title: A Tale of Translation, A HAWC Client 
+Version: 0.1.0
+Author: c(person("Mckayla", "Lein", email="mckayla.lein@gmail.com", role=c("cre", "cst", "dnc","spy")),
+    person("Daniel", "Rabstejnek", email="rabstejnek.daniel@epa.gov", role=c("aqt")))
+Maintainer: Mckayla Lein <mckayla.lein@gmail.com>
+Description: Doing cool things in the name of HAWC. This package is a knock off version of the Python client. 
+License: What license is it under?
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.1.0
+Imports:
+    httr
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
