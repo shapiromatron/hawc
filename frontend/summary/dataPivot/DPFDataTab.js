@@ -86,7 +86,9 @@ let buildChartSelector = function(tab, dp) {
             obj,
             settings = dp.settings.dataline_settings;
 
-        thead = $("<thead>").html(buildHeaderTr(["Column header", "Legend name", "Line style"]));
+        thead = $("<thead>").html(
+            buildHeaderTr(["Column header", "Legend name", "Line style", "Conditional formatting"])
+        );
         tbody = $("<tbody>");
 
         if (settings.length === 0) {
