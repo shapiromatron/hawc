@@ -469,25 +469,27 @@ class DataPivotVisualization extends D3Plot {
                 }
             });
         } else {
-            this.dp_settings.dataline_settings[0].conditional_formatting.forEach(function(cf) {
-                const styles = "bars",
-                    hash = d3.map();
-                switch (cf.condition_type) {
-                    case "discrete-style":
-                        cf.discrete_styles.forEach(d => hash.set(d.key, d.style));
-                        rows.forEach(function(d) {
-                            if (hash.get(d[cf.field_name]) !== NULL_CASE) {
-                                d._styles[styles] = get_associated_style(
-                                    "lines",
-                                    hash.get(d[cf.field_name])
-                                );
-                            }
-                        });
+            this.dp_settings.dataline_settings.forEach(dl => {
+                dl.conditional_formatting.forEach(cf => {
+                    const styles = "bars",
+                        hash = d3.map();
+                    switch (cf.condition_type) {
+                        case "discrete-style":
+                            cf.discrete_styles.forEach(d => hash.set(d.key, d.style));
+                            rows.forEach(function(d) {
+                                if (hash.get(d[cf.field_name]) !== NULL_CASE) {
+                                    d._styles[styles] = get_associated_style(
+                                        "lines",
+                                        hash.get(d[cf.field_name])
+                                    );
+                                }
+                            });
 
-                        break;
-                    default:
-                        console.log(`Unrecognized condition_type: ${cf.condition_type}`);
-                }
+                            break;
+                        default:
+                            console.log(`Unrecognized condition_type: ${cf.condition_type}`);
+                    }
+                });
             });
             this.dp_settings.datapoint_settings.forEach(function(datapoint, i) {
                 datapoint.conditional_formatting.forEach(function(cf) {
