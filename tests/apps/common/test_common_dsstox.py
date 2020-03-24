@@ -9,6 +9,7 @@ def test_dsstox():
     # test success
     response = fetch_dsstox("1836-75-5")
     assert response == {
+        "CASRN": "1836-75-5",
         "CommonName": "Nitrofen",
         "SMILES": "[O-][N+](=O)C1=CC=C(OC2=C(Cl)C=C(Cl)C=C2)C=C1",
         "MW": 284.09,
