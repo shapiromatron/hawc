@@ -248,8 +248,6 @@ BMDS_TOKEN = os.getenv("BMDS_TOKEN", "token")
 # increase allowable fields in POST for updating reviewers
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000
 
-# Chemspider token details
-CHEMSPIDER_TOKEN = os.getenv("CHEMSPIDER_TOKEN", "")
 
 # Django rest framework settings
 REST_FRAMEWORK = {
