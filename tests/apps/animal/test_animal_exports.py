@@ -23,9 +23,23 @@ def test_get_significance_and_direction():
     # dichotomous
     resp = get_significance_and_direction(
         Endpoint.DATA_TYPE_DICHOTOMOUS,
-        [dict(significant=False), dict(significant=False), dict(significant=True)],
+        [
+            dict(percent_affected=0, significant=False),
+            dict(percent_affected=10, significant=False),
+            dict(percent_affected=20, significant=True),
+        ],
     )
     assert resp == ["No", "No", "Yes - ↑"]
+
+    resp = get_significance_and_direction(
+        Endpoint.DATA_TYPE_DICHOTOMOUS_CANCER,
+        [
+            dict(percent_affected=50, significant=False),
+            dict(percent_affected=40, significant=False),
+            dict(percent_affected=30, significant=True),
+        ],
+    )
+    assert resp == ["No", "No", "Yes - ↓"]
 
     # percent diff
     resp = get_significance_and_direction(
