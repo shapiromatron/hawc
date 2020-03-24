@@ -41,7 +41,6 @@ jobs:
         DJANGO_DB_PW: password
         DJANGO_DB_HOST: localhost
         DJANGO_DB_PORT: ${{ job.services.postgres.ports[5432] }} # get randomly assigned published port
-        CHEMSPIDER_TOKEN: ${{ secrets.CHEMSPIDER_TOKEN }}
         PUBMED_API_KEY: ${{ secrets.PUBMED_API_KEY }}
       run: |
         make test
