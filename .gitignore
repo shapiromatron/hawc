@@ -42,3 +42,4 @@ hawc/static/bundles/
 
 compose/django/fonts/*
 !compose/django/fonts/.gitkeep
+.Rproj.user
