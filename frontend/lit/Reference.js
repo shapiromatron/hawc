@@ -17,8 +17,8 @@ class Reference extends Observee {
     }
 
     static sortCompare(a, b) {
-        if (a.data.year > b.data.year) return 1;
-        if (a.data.year < b.data.year) return -1;
+        if (a.data.authors > b.data.authors) return 1;
+        if (a.data.authors < b.data.authors) return -1;
         return 0;
     }
 

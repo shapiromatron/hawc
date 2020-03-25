@@ -142,9 +142,7 @@ class Search(models.Model):
 
     @transaction.atomic
     def run_new_import(self):
-        if self.source == constants.EXTERNAL_LINK:
-            raise Exception("Import functionality disabled for manual import")
-        elif self.source == constants.PUBMED:
+        if self.source == constants.PUBMED:
             identifiers = Identifiers.objects.get_pubmed_identifiers(self.import_ids)
             Reference.objects.get_pubmed_references(self, identifiers)
         elif self.source == constants.HERO:
@@ -158,7 +156,7 @@ class Search(models.Model):
             identifiers = Identifiers.objects.get_from_ris(self.id, refs)
             Reference.objects.update_from_ris_identifiers(self, identifiers)
         else:
-            raise ValueError("Unknown import type")
+            raise ValueError(f"Source type cannot be imported: {self.source}")
 
     def create_new_references(self, results):
         # Create assessment-specific references for each value which return
@@ -695,23 +693,6 @@ class Reference(models.Model):
             if ident.database == constants.HERO:
                 return int(ident.unique_id)
         return None
-
-    def set_custom_url(self, url):
-        """
-        Special-case. Add an Identifier with the selected URL for this reference.
-        Only-one custom URL is allowed for each reference; overwrites existing.
-        """
-        i = self.identifiers.filter(database=constants.EXTERNAL_LINK).first()
-        if i:
-            i.url = url
-            i.save()
-        else:
-            unique_id = Identifiers.objects.get_max_external_id() + 1
-            self.identifiers.add(
-                Identifiers.objects.create(
-                    database=constants.EXTERNAL_LINK, unique_id=unique_id, url=url
-                )
-            )
 
     def get_assessment(self):
         return self.assessment

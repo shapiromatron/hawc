@@ -173,11 +173,6 @@ class IdentifiersManager(BaseManager):
 
         return qs
 
-    def get_max_external_id(self):
-        return self.filter(database=constants.EXTERNAL_LINK).aggregate(models.Max("unique_id"))[
-            "unique_id__max"
-        ]
-
     def get_pubmed_identifiers(self, ids):
         # Return a queryset of identifiers, one for each PubMed ID. Either get
         # or create an identifier, whatever is required
