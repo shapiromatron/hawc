@@ -1,8 +1,11 @@
+import json
+
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
-from django.core.urlresolvers import reverse_lazy
 from django.db.models import Prefetch
+from django.middleware.csrf import get_token
 from django.shortcuts import get_object_or_404
+from django.urls import reverse, reverse_lazy
 from django.views.generic.edit import FormView
 
 from ..assessment.models import Assessment
@@ -18,9 +21,7 @@ from ..common.views import (
     TeamMemberOrHigherMixin,
     TimeSpentOnPageMixin,
 )
-from ..riskofbias import exports
 from ..study.models import Study
-from ..study.views import StudyList
 from . import forms, models
 
 
@@ -240,45 +241,6 @@ class RoBMetricDelete(BaseDelete):
         return reverse_lazy("riskofbias:arob_update", kwargs={"pk": self.assessment.pk})
 
 
-# Risk of bias views for study
-class StudyRoBExport(StudyList):
-    """
-    Full XLS data export for the risk of bias.
-    """
-
-    def get(self, request, *args, **kwargs):
-        self.object_list = super().get_queryset()
-        rob_name = self.assessment.get_rob_name_display().lower()
-        exporter = exports.RiskOfBiasFlat(
-            self.object_list,
-            export_format="excel",
-            filename=f'{self.assessment}-{rob_name.replace(" ", "-")}',
-            sheet_name=rob_name,
-        )
-        return exporter.build_response()
-
-
-class StudyRoBCompleteExport(TeamMemberOrHigherMixin, StudyList):
-    """
-    Full XLS data export for the risk-of-bias.
-    """
-
-    def get_assessment(self, request, *args, **kwargs):
-        self.parent = get_object_or_404(self.parent_model, pk=kwargs["pk"])
-        return self.parent
-
-    def get(self, request, *args, **kwargs):
-        self.object_list = super().get_queryset()
-        rob_name = self.assessment.get_rob_name_display().lower()
-        exporter = exports.RiskOfBiasCompleteFlat(
-            self.object_list,
-            export_format="excel",
-            filename=f'{self.assessment}-{rob_name.replace(" ", "-")}-complete',
-            sheet_name=rob_name,
-        )
-        return exporter.build_response()
-
-
 # RoB views
 class RoBDetail(BaseDetail):
     """
@@ -321,10 +283,30 @@ class RoBEdit(TimeSpentOnPageMixin, BaseDetail):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["back_url"] = (
-            self.request.META["HTTP_REFERER"]
-            if "HTTP_REFERER" in self.request.META
-            else self.object.get_absolute_url()
+        context["config"] = json.dumps(
+            {
+                "assessment_id": self.assessment.id,
+                "cancelUrl": (
+                    self.request.META["HTTP_REFERER"]
+                    if "HTTP_REFERER" in self.request.META
+                    else self.object.get_absolute_url()
+                ),
+                "csrf": get_token(self.request),
+                "host": f"//{self.request.get_host()}",
+                "hawc_flavor": settings.HAWC_FLAVOR,
+                "study": {
+                    "id": self.object.study_id,
+                    "api_url": reverse("study:api:study-detail", args=(self.object.study_id,)),
+                    "url": reverse("study:api:study-list"),
+                },
+                "riskofbias": {
+                    "id": self.object.id,
+                    "url": reverse("riskofbias:api:review-list"),
+                    "override_options_url": reverse(
+                        "riskofbias:api:review-override-options", args=(self.object.id,)
+                    ),
+                    "scores_url": reverse("riskofbias:api:scores-list"),
+                },
+            }
         )
-        context["hawc_flavor"] = settings.HAWC_FLAVOR
         return context

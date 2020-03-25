@@ -34,8 +34,7 @@ class _DataPivot_settings_conditionalFormat {
     }
 
     _show_modal() {
-        var fieldName = this.parent.content.field_name.val(),
-            header = $("<h4>").html(`Conditional formatting: <i>${fieldName}<i>`),
+        var header = $("<h4>").html(`Conditional formatting: <i>${this.parent.getName()}<i>`),
             footer = this._getFooter();
 
         this.setModalContent();
@@ -111,6 +110,9 @@ class _DataPivot_settings_conditionalFormat {
         switch (this.settings.type) {
             case "symbols":
                 return ["point-size", "point-color", "discrete-style"];
+
+            case "lines":
+                return ["discrete-style"];
 
             case "rectangles":
                 return ["discrete-style"];

@@ -25,8 +25,8 @@ elif os.environ.get("DJANGO_EMAIL_BACKEND") == "MAILGUN":
     INSTALLED_APPS += ("anymail",)
     EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
     ANYMAIL = dict(
-        MAILGUN_API_KEY=os.environ.get("MAILGUN_ACCESS_KEY"),
-        MAILGUN_SENDER_DOMAIN=os.environ.get("MAILGUN_SERVER_NAME"),
+        MAILGUN_API_KEY=os.environ["MAILGUN_ACCESS_KEY"],
+        MAILGUN_SENDER_DOMAIN=os.environ["MAILGUN_SERVER_NAME"],
     )
 else:
     raise ValueError("Unknown email backend")

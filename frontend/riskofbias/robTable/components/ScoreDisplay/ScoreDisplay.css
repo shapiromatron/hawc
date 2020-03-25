@@ -1,15 +1,8 @@
 .score-display {
-    flex: 1;
-    padding: 0.8rem 0;
+    padding: 0.5rem;
 }
 
-.score-notes {
-    display: flex;
-    flex-flow: column;
-}
-
-.copy-notes {
-    align-items: flex-end;
-    justify-content: flex-end;
-    max-width: 250px;
+.default-score-display{
+    background-color: #efefef;
+    border-radius: 0.5rem;
 }

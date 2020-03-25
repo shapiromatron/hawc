@@ -125,6 +125,10 @@
 - model: contenttypes.contenttype
   fields:
     app_label: riskofbias
+    model: riskofbiasscoreoverrideobject
+- model: contenttypes.contenttype
+  fields:
+    app_label: riskofbias
     model: riskofbiasassessment
 - model: contenttypes.contenttype
   fields:
@@ -309,22 +313,22 @@
 - model: myuser.hawcuser
   fields:
     password: md5$OtMBo5HXuH5d$79fbf1f0ae6d765b17b29256920cc8ef
-    last_login: 2020-01-25 14:23:16.156609+00:00
+    last_login: 2020-02-27 22:01:13.627540+00:00
     is_superuser: true
     email: sudo@sudo.com
-    first_name: ''
-    last_name: ''
+    first_name: a
+    last_name: superuser
     is_staff: true
     is_active: true
     license_v1_accepted: false
-    license_v2_accepted: false
+    license_v2_accepted: true
     date_joined: 2020-01-25 14:23:16.156609+00:00
     groups: []
     user_permissions: []
 - model: myuser.hawcuser
   fields:
     password: md5$fFanL0QpS7Sg$cf3808b6102279eb6982d78edfdc6111
-    last_login: 2020-01-27 20:53:17.106063+00:00
+    last_login: 2020-02-27 19:30:09.088507+00:00
     is_superuser: false
     email: pm@pm.com
     first_name: Project
@@ -342,8 +346,8 @@
     last_login: 2020-01-25 14:23:16.172427+00:00
     is_superuser: false
     email: team@team.com
-    first_name: ''
-    last_name: ''
+    first_name: Team
+    last_name: Member
     is_staff: false
     is_active: true
     license_v1_accepted: false
@@ -357,8 +361,8 @@
     last_login: 2020-01-25 14:23:16.173584+00:00
     is_superuser: false
     email: rev@rev.com
-    first_name: ''
-    last_name: ''
+    first_name: a
+    last_name: reviewer
     is_staff: false
     is_active: true
     license_v1_accepted: false
@@ -409,7 +413,7 @@
     noel_name: 0
     rob_name: 0
     created: 2020-01-25 14:23:16.176620+00:00
-    last_updated: 2020-01-25 14:23:16.176637+00:00
+    last_updated: 2020-02-27 20:12:29.233982+00:00
     project_manager:
     - - pm@pm.com
     team_members:
@@ -445,6 +449,33 @@
     - - team@team.com
     reviewers:
     - - rev@rev.com
+- model: assessment.doseunits
+  pk: 1
+  fields:
+    name: mg/kg/d
+    created: 2020-02-27 20:37:27.650973+00:00
+    last_updated: 2020-02-27 20:37:27.651000+00:00
+- model: assessment.species
+  pk: 1
+  fields:
+    name: rat
+    created: 2020-02-27 20:37:36.002070+00:00
+    last_updated: 2020-02-27 20:38:09.171871+00:00
+- model: assessment.strain
+  pk: 1
+  fields:
+    species: 1
+    name: sprague dawley
+    created: 2020-02-27 20:39:18.920826+00:00
+    last_updated: 2020-02-27 20:39:25.049259+00:00
+- model: assessment.baseendpoint
+  pk: 1
+  fields:
+    assessment: 1
+    name: my outcome
+    created: 2020-02-27 20:53:19.390879+00:00
+    last_updated: 2020-02-27 20:53:19.390902+00:00
+    effects: []
 - model: lit.search
   pk: 1
   fields:
@@ -679,12 +710,12 @@
     title: ''
     authors_short: ''
     authors: ''
-    year: null
+    year: 2010
     journal: ''
     abstract: ''
     full_text_url: ''
     created: 2020-01-25 14:23:16.370427+00:00
-    last_updated: 2020-01-25 14:23:16.370456+00:00
+    last_updated: 2020-02-27 20:14:41.479008+00:00
     block_id: null
     searches: []
     identifiers: []
@@ -695,7 +726,7 @@
     title: ''
     authors_short: ''
     authors: ''
-    year: null
+    year: 2020
     journal: ''
     abstract: ''
     full_text_url: ''
@@ -714,7 +745,7 @@
     epi_meta: false
     in_vitro: false
     short_citation: Foo et al.
-    full_citation: Foo et al.
+    full_citation: Foo et al. 2010
     coi_reported: 4
     coi_details: ''
     funding_source: ''
@@ -747,4 +778,388 @@
     searches:
     - 3
     identifiers:
+    - 1
+- model: animal.experiment
+  pk: 1
+  fields:
+    study: 1
+    name: 2 year bioassay
+    type: Ch
+    has_multiple_generations: false
+    chemical: flubber
+    cas: ''
+    chemical_source: ''
+    purity_available: false
+    purity_qualifier: ''
+    purity: null
+    vehicle: ''
+    guideline_compliance: ''
+    description: ''
+    created: 2020-02-27 20:36:41.236477+00:00
+    last_updated: 2020-02-27 20:36:41.236499+00:00
+- model: animal.animalgroup
+  pk: 1
+  fields:
+    experiment: 1
+    name: tester
+    species: 1
+    strain: 1
+    sex: F
+    animal_source: ''
+    lifestage_exposed: ''
+    lifestage_assessed: ''
+    siblings: null
+    generation: ''
+    dosing_regime: 1
+    comments: ''
+    diet: ''
+    created: 2020-02-27 20:52:18.377123+00:00
+    last_updated: 2020-02-27 20:52:18.446571+00:00
+    parents: []
+- model: animal.dosingregime
+  pk: 1
+  fields:
+    dosed_animals: 1
+    route_of_exposure: OD
+    duration_exposure: null
+    duration_exposure_text: ''
+    duration_observation: null
+    num_dose_groups: 3
+    positive_control: false
+    negative_control: VT
+    description: ''
+    created: 2020-02-27 20:52:18.340922+00:00
+    last_updated: 2020-02-27 20:52:18.403090+00:00
+- model: animal.dosegroup
+  pk: 1
+  fields:
+    dose_regime: 1
+    dose_units: 1
+    dose_group_id: 0
+    dose: 0.0
+    created: 2020-02-27 20:52:18.428972+00:00
+    last_updated: 2020-02-27 20:52:18.428992+00:00
+- model: animal.dosegroup
+  pk: 2
+  fields:
+    dose_regime: 1
+    dose_units: 1
+    dose_group_id: 1
+    dose: 10.0
+    created: 2020-02-27 20:52:18.438557+00:00
+    last_updated: 2020-02-27 20:52:18.438575+00:00
+- model: animal.dosegroup
+  pk: 3
+  fields:
+    dose_regime: 1
+    dose_units: 1
+    dose_group_id: 2
+    dose: 100.0
+    created: 2020-02-27 20:52:18.442491+00:00
+    last_updated: 2020-02-27 20:52:18.442505+00:00
+- model: animal.endpoint
+  pk: 1
+  fields:
+    animal_group: 1
+    system: ''
+    organ: ''
+    effect: ''
+    effect_subtype: ''
+    litter_effects: NA
+    litter_effect_notes: ''
+    observation_time: null
+    observation_time_units: 0
+    observation_time_text: ''
+    data_location: ''
+    expected_adversity_direction: 4
+    response_units: "\u03BCg/dL"
+    data_type: C
+    variance_type: 1
+    confidence_interval: null
+    NOEL: -999
+    LOEL: 2
+    FEL: -999
+    data_reported: true
+    data_extracted: true
+    values_estimated: false
+    monotonicity: 8
+    statistical_test: ''
+    trend_value: null
+    trend_result: 3
+    diagnostic: ''
+    power_notes: ''
+    results_notes: ''
+    endpoint_notes: ''
+    additional_fields: '{}'
+    effects: []
+- model: animal.endpointgroup
+  pk: 1
+  fields:
+    endpoint: 1
+    dose_group_id: 0
+    n: 10
+    incidence: null
+    response: 3.0
+    variance: 1.0
+    lower_ci: null
+    upper_ci: null
+    significant: false
+    significance_level: null
+- model: animal.endpointgroup
+  pk: 2
+  fields:
+    endpoint: 1
+    dose_group_id: 1
+    n: 11
+    incidence: null
+    response: 4.0
+    variance: 1.0
+    lower_ci: null
+    upper_ci: null
+    significant: false
+    significance_level: null
+- model: animal.endpointgroup
+  pk: 3
+  fields:
+    endpoint: 1
+    dose_group_id: 2
+    n: 12
+    incidence: null
+    response: 5.0
+    variance: 1.0
+    lower_ci: null
+    upper_ci: null
+    significant: true
+    significance_level: 0.05
+- model: riskofbias.riskofbiasdomain
+  pk: 1
+  fields:
+    assessment: 1
+    name: example domain
+    description: <p>This is an <strong>example</strong> domain description.</p>
+    is_overall_confidence: false
+    created: 2020-02-27 19:30:52.454609+00:00
+    last_updated: 2020-02-27 19:30:52.454638+00:00
+- model: riskofbias.riskofbiasdomain
+  pk: 2
+  fields:
+    assessment: 1
+    name: final domain
+    description: <p>it's the final one.</p>
+    is_overall_confidence: true
+    created: 2020-02-27 20:04:23.718503+00:00
+    last_updated: 2020-02-27 20:04:23.718531+00:00
+- model: riskofbias.riskofbiasmetric
+  pk: 1
+  fields:
+    domain: 1
+    name: example metric
+    short_name: metric
+    description: <p>Is this a good study?</p>
+    required_animal: true
+    required_epi: true
+    required_invitro: true
+    hide_description: false
+    use_short_name: true
+    created: 2020-02-27 19:31:21.953998+00:00
+    last_updated: 2020-02-27 19:31:21.954027+00:00
+- model: riskofbias.riskofbiasmetric
+  pk: 2
+  fields:
+    domain: 2
+    name: final domain
+    short_name: final
+    description: ''
+    required_animal: true
+    required_epi: true
+    required_invitro: true
+    hide_description: false
+    use_short_name: false
+    created: 2020-02-27 20:04:35.816069+00:00
+    last_updated: 2020-02-27 20:04:35.816096+00:00
+- model: riskofbias.riskofbias
+  pk: 1
+  fields:
+    study: 1
+    final: false
+    author:
+    - team@team.com
+    active: true
+    created: 2020-02-27 20:12:29.325028+00:00
+    last_updated: 2020-02-27 20:13:06.061991+00:00
+- model: riskofbias.riskofbias
+  pk: 2
+  fields:
+    study: 1
+    final: false
+    author:
+    - pm@pm.com
+    active: true
+    created: 2020-02-27 20:12:29.376104+00:00
+    last_updated: 2020-02-27 20:13:30.095126+00:00
+- model: riskofbias.riskofbias
+  pk: 3
+  fields:
+    study: 1
+    final: true
+    author:
+    - pm@pm.com
+    active: true
+    created: 2020-02-27 20:12:29.417932+00:00
+    last_updated: 2020-02-27 20:53:42.455277+00:00
+- model: riskofbias.riskofbiasscore
+  pk: 1
+  fields:
+    riskofbias: 1
+    metric: 1
+    is_default: true
+    label: ''
+    score: 27
+    notes: <p>Content here.</p>
+- model: riskofbias.riskofbiasscore
+  pk: 2
+  fields:
+    riskofbias: 1
+    metric: 2
+    is_default: true
+    label: Default label
+    score: 26
+    notes: <p>Content here.</p>
+- model: riskofbias.riskofbiasscore
+  pk: 3
+  fields:
+    riskofbias: 2
+    metric: 1
+    is_default: true
+    label: ''
+    score: 27
+    notes: <p>good!</p>
+- model: riskofbias.riskofbiasscore
+  pk: 4
+  fields:
+    riskofbias: 2
+    metric: 2
+    is_default: true
+    label: ''
+    score: 26
+    notes: <p>ok!</p>
+- model: riskofbias.riskofbiasscore
+  pk: 5
+  fields:
+    riskofbias: 3
+    metric: 1
+    is_default: true
+    label: ''
+    score: 26
+    notes: <p>Adequate.</p>
+- model: riskofbias.riskofbiasscore
+  pk: 6
+  fields:
+    riskofbias: 3
+    metric: 2
+    is_default: true
+    label: base
+    score: 26
+    notes: <p>Fine, but subsets are imprortant</p>
+- model: riskofbias.riskofbiasscore
+  pk: 7
+  fields:
+    riskofbias: 1
+    metric: 2
+    is_default: false
+    label: Custom label
+    score: 25
+    notes: <p>With override.</p>
+- model: riskofbias.riskofbiasscore
+  pk: 9
+  fields:
+    riskofbias: 3
+    metric: 2
+    is_default: false
+    label: other stuff
+    score: 22
+    notes: <p>This wasn't reported in this case.</p>
+- model: riskofbias.riskofbiasscoreoverrideobject
+  pk: 1
+  fields:
+    score: 9
+    content_type:
+    - animal
+    - endpoint
+    object_id: 1
+- model: riskofbias.riskofbiasassessment
+  pk: 1
+  fields:
+    assessment: 1
+    number_of_reviewers: 2
+    help_text: <p>These are instructions for how to do risk of bias for an assessment.</p>
+    default_questions: 2
+    responses: 1
+- model: riskofbias.riskofbiasassessment
+  pk: 3
+  fields:
+    assessment: 2
+    number_of_reviewers: 1
+    help_text: <p>These are instructions for how to do risk of bias for an assessment.</p>
+    default_questions: 2
+    responses: 1
+- model: summary.summarytext
+  pk: 1
+  fields:
+    path: '0001'
+    depth: 1
+    numchild: 0
+    assessment: 2
+    title: assessment-2
+    slug: assessment-2-slug
+    text: Root-level text
+    created: 2020-02-27 20:35:25.660031+00:00
+    last_updated: 2020-02-27 20:35:25.660075+00:00
+- model: summary.summarytext
+  pk: 2
+  fields:
+    path: '0002'
+    depth: 1
+    numchild: 0
+    assessment: 1
+    title: assessment-1
+    slug: assessment-1-slug
+    text: Root-level text
+    created: 2020-02-27 20:35:25.667126+00:00
+    last_updated: 2020-02-27 20:35:25.667163+00:00
+- model: summary.visual
+  pk: 1
+  fields:
+    title: example heatmap
+    slug: example-heatmap
+    assessment: 1
+    visual_type: 2
+    dose_units: null
+    prefilters: '{}'
+    settings: '{"title":"","xAxisLabel":"","yAxisLabel":"","padding_top":20,"cell_size":40,"padding_right":400,"padding_bottom":35,"padding_left":20,"x_field":"study","study_label_field":"short_citation","included_metrics":[1,2],"show_legend":true,"show_na_legend":true,"show_nr_legend":true,"legend_x":239,"legend_y":17}'
+    caption: ''
+    published: false
+    sort_order: short_citation
+    created: 2020-02-27 20:32:30.901597+00:00
+    last_updated: 2020-02-27 20:33:06.585979+00:00
+    endpoints: []
+    studies:
+    - 1
+- model: summary.visual
+  pk: 2
+  fields:
+    title: example barchart
+    slug: example-barchart
+    assessment: 1
+    visual_type: 3
+    dose_units: null
+    prefilters: '{}'
+    settings: '{"title":"Title","xAxisLabel":"Percent of studies","yAxisLabel":"","plot_width":400,"row_height":30,"padding_top":40,"padding_right":400,"padding_bottom":40,"padding_left":70,"show_values":true,"included_metrics":[1,2],"show_legend":true,"show_na_legend":true,"legend_x":640,"legend_y":10}'
+    caption: ''
+    published: false
+    sort_order: short_citation
+    created: 2020-02-27 20:34:17.606164+00:00
+    last_updated: 2020-02-27 20:34:17.606186+00:00
+    endpoints: []
+    studies:
     - 1

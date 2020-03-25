@@ -27,13 +27,6 @@
             <li class="divider"></li>
           {% endif %}
 
-          <!-- staff -->
-          {% if user.is_staff %}
-            <li class="disabled"><a tabindex="-1" href="#">Staff settings</a></li>
-            <li><a href="{% url 'assessment:email_managers' object.pk %}">Email managers</a></li>
-            <li class="divider"></li>
-          {% endif %}
-
           <!-- application settings -->
           <li class="disabled"><a tabindex="-1" href="#">Application settings</a></li>
           {% if assessment.enable_risk_of_bias %}

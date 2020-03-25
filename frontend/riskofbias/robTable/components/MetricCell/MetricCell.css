@@ -8,4 +8,11 @@
     border-radius: 10px;
     cursor: pointer;
     color: white;
+    display: flex;
+    justify-content: center;
+}
+
+.score-cell-scores-span{
+    padding: 5px 10px;
+    border-radius: 5px;
 }

@@ -1,9 +1,9 @@
 import itertools
 import json
 
-from django.core.urlresolvers import reverse
 from django.core.validators import MinValueValidator
 from django.db import models
+from django.urls import reverse
 from reversion import revisions as reversion
 
 from ..animal.models import ConfidenceIntervalsMixin
@@ -17,7 +17,7 @@ from . import managers
 class IVChemical(models.Model):
     objects = managers.IVChemicalManager()
 
-    study = models.ForeignKey("study.Study", related_name="ivchemicals")
+    study = models.ForeignKey("study.Study", on_delete=models.CASCADE, related_name="ivchemicals")
     name = models.CharField(max_length=128)
     cas = models.CharField(max_length=40, blank=True, verbose_name="Chemical identifier (CAS)")
     cas_inferred = models.BooleanField(
@@ -105,7 +105,7 @@ class IVCellType(models.Model):
         ("na", "not applicable"),
     )
 
-    study = models.ForeignKey("study.Study", related_name="ivcelltypes")
+    study = models.ForeignKey("study.Study", on_delete=models.CASCADE, related_name="ivcelltypes")
     species = models.CharField(max_length=64)
     strain = models.CharField(max_length=64, default="not applicable")
     sex = models.CharField(max_length=2, choices=SEX_CHOICES)
@@ -158,9 +158,11 @@ class IVExperiment(models.Model):
         ("nr", "not reported"),
     )
 
-    study = models.ForeignKey("study.Study", related_name="ivexperiments")
+    study = models.ForeignKey("study.Study", on_delete=models.CASCADE, related_name="ivexperiments")
     name = models.CharField(max_length=128)
-    cell_type = models.ForeignKey(IVCellType, related_name="ivexperiments")
+    cell_type = models.ForeignKey(
+        IVCellType, on_delete=models.CASCADE, related_name="ivexperiments"
+    )
     transfection = models.CharField(
         max_length=256,
         help_text="Details on transfection methodology and details on genes or "
@@ -200,7 +202,9 @@ class IVExperiment(models.Model):
     control_notes = models.CharField(
         max_length=256, blank=True, help_text="Additional details related to controls"
     )
-    dose_units = models.ForeignKey("assessment.DoseUnits", related_name="ivexperiments")
+    dose_units = models.ForeignKey(
+        "assessment.DoseUnits", on_delete=models.CASCADE, related_name="ivexperiments"
+    )
 
     COPY_NAME = "ivexperiments"
 
@@ -333,10 +337,14 @@ class IVEndpoint(BaseEndpoint):
         "observation_time",
     )
 
-    experiment = models.ForeignKey(IVExperiment, related_name="endpoints")
-    chemical = models.ForeignKey(IVChemical, related_name="endpoints")
+    experiment = models.ForeignKey(IVExperiment, on_delete=models.CASCADE, related_name="endpoints")
+    chemical = models.ForeignKey(IVChemical, on_delete=models.CASCADE, related_name="endpoints")
     category = models.ForeignKey(
-        IVEndpointCategory, blank=True, null=True, related_name="endpoints"
+        IVEndpointCategory,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name="endpoints",
     )
     assay_type = models.CharField(max_length=128)
     short_description = models.CharField(
@@ -504,7 +512,7 @@ class IVEndpointGroup(ConfidenceIntervalsMixin, models.Model):
         (True, "observed"),
     )
 
-    endpoint = models.ForeignKey(IVEndpoint, related_name="groups")
+    endpoint = models.ForeignKey(IVEndpoint, on_delete=models.CASCADE, related_name="groups")
     dose_group_id = models.PositiveSmallIntegerField()
     dose = models.FloatField(validators=[MinValueValidator(0)])
     n = models.PositiveSmallIntegerField(blank=True, null=True, validators=[MinValueValidator(1)])
@@ -537,7 +545,7 @@ class IVEndpointGroup(ConfidenceIntervalsMixin, models.Model):
 class IVBenchmark(models.Model):
     objects = managers.IVBenchmarkManager()
 
-    endpoint = models.ForeignKey(IVEndpoint, related_name="benchmarks")
+    endpoint = models.ForeignKey(IVEndpoint, on_delete=models.CASCADE, related_name="benchmarks")
     benchmark = models.CharField(max_length=32)
     value = models.FloatField()
 

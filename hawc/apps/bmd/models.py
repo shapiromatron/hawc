@@ -6,8 +6,8 @@ import os
 import bmds
 from django.conf import settings
 from django.contrib.postgres.fields import JSONField
-from django.core.urlresolvers import reverse_lazy
 from django.db import models
+from django.urls import reverse_lazy
 from django.utils.timezone import now
 
 from ..common.models import get_crumbs, get_model_copy_name
@@ -25,7 +25,9 @@ BMDS_CHOICES = (
 class AssessmentSettings(models.Model):
     objects = managers.AssessmentSettingsManager()
 
-    assessment = models.OneToOneField("assessment.Assessment", related_name="bmd_settings")
+    assessment = models.OneToOneField(
+        "assessment.Assessment", on_delete=models.CASCADE, related_name="bmd_settings"
+    )
     version = models.CharField(max_length=10, choices=BMDS_CHOICES, default=BMDS_CHOICES[-1][0])
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
@@ -66,7 +68,10 @@ class LogicField(models.Model):
     )
 
     assessment = models.ForeignKey(
-        "assessment.Assessment", related_name="bmd_logic_fields", editable=False
+        "assessment.Assessment",
+        on_delete=models.CASCADE,
+        related_name="bmd_logic_fields",
+        editable=False,
     )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
@@ -127,8 +132,12 @@ class LogicField(models.Model):
 class Session(models.Model):
     objects = managers.SessionManager()
 
-    endpoint = models.ForeignKey("animal.Endpoint", related_name="bmd_sessions")
-    dose_units = models.ForeignKey("assessment.DoseUnits", related_name="bmd_sessions")
+    endpoint = models.ForeignKey(
+        "animal.Endpoint", on_delete=models.CASCADE, related_name="bmd_sessions"
+    )
+    dose_units = models.ForeignKey(
+        "assessment.DoseUnits", on_delete=models.CASCADE, related_name="bmd_sessions"
+    )
     version = models.CharField(max_length=10, choices=BMDS_CHOICES)
     bmrs = JSONField(default=list)
     date_executed = models.DateTimeField(null=True)
@@ -299,7 +308,7 @@ class Model(models.Model):
 
     IMAGE_UPLOAD_TO = "bmds_plot"
 
-    session = models.ForeignKey(Session, related_name="models")
+    session = models.ForeignKey(Session, on_delete=models.CASCADE, related_name="models")
     model_id = models.PositiveSmallIntegerField()
     bmr_id = models.PositiveSmallIntegerField()
     name = models.CharField(max_length=25)
@@ -357,8 +366,10 @@ class Model(models.Model):
 class SelectedModel(models.Model):
     objects = managers.SelectedModelManager()
 
-    endpoint = models.OneToOneField("animal.Endpoint", related_name="bmd_model")
-    model = models.ForeignKey(Model, null=True)
+    endpoint = models.OneToOneField(
+        "animal.Endpoint", on_delete=models.CASCADE, related_name="bmd_model"
+    )
+    model = models.ForeignKey(Model, on_delete=models.CASCADE, null=True)
     notes = models.TextField(blank=True)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)

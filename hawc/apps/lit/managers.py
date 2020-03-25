@@ -1,7 +1,7 @@
 import json
 import logging
 from collections import defaultdict
-from typing import List
+from typing import Dict, List, Tuple
 
 import pandas as pd
 from django.apps import apps
@@ -135,31 +135,43 @@ class IdentifiersManager(BaseManager):
         Identifiers.update_pubmed_content(pimdsFetch)
         return refs
 
-    def get_hero_identifiers(self, hero_ids):
-        # Return a queryset of identifiers, one for each hero ID. Either get or
-        # create an identifier, whatever is required
-        Identifiers = apps.get_model("lit", "Identifiers")
-        # Filter HERO IDs to those which need to be imported
-        idents = list(
-            self.filter(database=constants.HERO, unique_id__in=hero_ids).values_list(
-                "unique_id", flat=True
+    def validate_valid_hero_ids(self, ids: List[int]) -> Tuple[List[int], List[int], Dict]:
+        qs = self.hero(ids, allow_missing=True).values_list("unique_id", flat=True)
+        existing_ids = [int(id_) for id_ in qs]
+        remaining_ids = list(set(ids) - set(existing_ids))
+        remaining_ids_str = [str(el) for el in remaining_ids]
+        fetcher = hero.HEROFetch(remaining_ids_str)
+        fetched_content = fetcher.get_content()
+        if len(fetched_content["failure"]) > 0:
+            failed_ids = ",".join(str(el) for el in fetched_content["failure"])
+            raise ValidationError(
+                f"Import failed; the following HERO IDs could not be imported: {failed_ids}"
             )
+        return existing_ids, remaining_ids, fetched_content
+
+    def bulk_create_hero_ids(self, content):
+        # sometimes HERO can import two records from a single ID
+        deduplicated_content = {item["HEROID"]: item for item in content["success"]}.values()
+        self.bulk_create(
+            [
+                apps.get_model("lit", "Identifiers")(
+                    database=constants.HERO,
+                    unique_id=content["HEROID"],
+                    content=json.dumps(content),
+                )
+                for content in deduplicated_content
+            ]
         )
-        need_import = tuple(set(hero_ids) - set(idents))
 
-        # Grab HERO objects
-        fetcher = hero.HEROFetch(need_import)
-        fetcher.get_content()
+    def hero(self, hero_ids: List[int], allow_missing=False):
+        qs = self.filter(database=constants.HERO, unique_id__in=hero_ids)
 
-        # Save new Identifier objects
-        for content in fetcher.content:
-            ident = Identifiers(
-                database=constants.HERO, unique_id=content["HEROID"], content=json.dumps(content),
+        if allow_missing is False and qs.count() != len(hero_ids):
+            raise ValueError(
+                f"Identifier count ({qs.count()}) does not match ID count ({len(hero_ids)})"
             )
-            ident.save()
-            idents.append(ident.unique_id)
 
-        return self.filter(database=constants.HERO, unique_id__in=idents)
+        return qs
 
     def get_max_external_id(self):
         return self.filter(database=constants.EXTERNAL_LINK).aggregate(models.Max("unique_id"))[

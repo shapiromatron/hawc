@@ -4,9 +4,10 @@ from rest_framework.routers import DefaultRouter
 from . import api, views
 
 router = DefaultRouter()
-router.register(r"assessment", api.LiteratureAssessmentViewset, base_name="assessment")
-router.register(r"tags", api.ReferenceFilterTag, base_name="tags")
-router.register(r"reference-cleanup", api.ReferenceCleanup, base_name="reference-cleanup")
+router.register(r"assessment", api.LiteratureAssessmentViewset, basename="assessment")
+router.register(r"search", api.SearchViewset, basename="search")
+router.register(r"tags", api.ReferenceFilterTag, basename="tags")
+router.register(r"reference-cleanup", api.ReferenceCleanup, basename="reference-cleanup")
 
 app_name = "lit"
 urlpatterns = [
@@ -48,11 +49,6 @@ urlpatterns = [
         r"^assessment/(?P<pk>\d+)/references/(?P<tag_id>(\d+|untagged))/json/$",
         views.RefsByTagJSON.as_view(),
         name="refs_json",
-    ),
-    url(
-        r"^assessment/(?P<pk>\d+)/references/download/$",
-        views.RefDownloadExcel.as_view(),
-        name="ref_download_excel",
     ),
     url(
         r"^assessment/(?P<pk>\d+)/references/upload/$",
@@ -120,5 +116,5 @@ urlpatterns = [
         views.RISExportInstructions.as_view(),
         name="ris_export_instructions",
     ),
-    url(r"^api/", include(router.urls, namespace="api")),
+    url(r"^api/", include((router.urls, "api"))),
 ]

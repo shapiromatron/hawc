@@ -8,14 +8,13 @@ from ..common.views import (
     BaseDelete,
     BaseDetail,
     BaseEndpointFilterList,
-    BaseList,
     BaseUpdate,
     BaseUpdateWithFormset,
     ProjectManagerOrHigherMixin,
 )
 from ..mgmt.views import EnsureExtractionStartedMixin
 from ..study.models import Study
-from . import exports, forms, models
+from . import forms, models
 
 
 # Experiment
@@ -202,22 +201,3 @@ class EndpointList(BaseEndpointFilterList):
         context = super().get_context_data(**kwargs)
         context["dose_units"] = self.form.get_dose_units_id()
         return context
-
-
-class EndpointFullExport(BaseList):
-    parent_model = Assessment
-    model = models.IVEndpoint
-
-    def get_queryset(self):
-        perms = self.get_obj_perms()
-        if not perms["edit"]:
-            return self.model.objects.published(self.assessment)
-        return self.model.objects.get_qs(self.assessment)
-
-    def get(self, request, *args, **kwargs):
-        self.object_list = self.get_queryset()
-        export_format = request.GET.get("output", "excel")
-        exporter = exports.DataPivotEndpoint(
-            self.object_list, export_format=export_format, filename=f"{self.assessment}-invitro",
-        )
-        return exporter.build_response()

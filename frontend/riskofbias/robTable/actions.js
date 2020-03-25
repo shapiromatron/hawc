@@ -31,47 +31,6 @@ function resetError() {
     };
 }
 
-function updateFinalScores(scores) {
-    return {
-        type: types.UPDATE_FINAL_SCORES,
-        scores,
-    };
-}
-
-function formatOutgoingRiskOfBias(state, riskofbias) {
-    let riskofbias_id = state.config.riskofbias.id,
-        author,
-        final,
-        scores = _.flattenDeep(
-            _.map(state.study.riskofbiases, domain => {
-                return _.map(domain.values, metric => {
-                    return _.omit(
-                        _.find(metric.values, score => {
-                            if (score.riskofbias_id == riskofbias_id) {
-                                author = author || score.author;
-                                final = final || score.final;
-                            }
-                            return score.riskofbias_id == riskofbias_id;
-                        }),
-                        ["riskofbias_id", "author", "final", "domain_id", "domain_name"]
-                    );
-                });
-            })
-        );
-    return Object.assign(
-        {},
-        {
-            author,
-            final,
-            scores,
-            active: true,
-            pk: parseInt(riskofbias_id),
-            study: parseInt(state.config.study.id),
-        },
-        riskofbias
-    );
-}
-
 function formatIncomingStudy(study) {
     let dirtyRoBs = _.filter(study.riskofbiases, rob => {
             return rob.active === true;
@@ -123,27 +82,6 @@ export function fetchFullStudyIfNeeded() {
     };
 }
 
-export function submitRiskOfBiasScores(scores) {
-    return (dispatch, getState) => {
-        let state = getState(),
-            patch = formatOutgoingRiskOfBias(state, scores),
-            opts = h.fetchPost(state.config.csrf, patch, "PUT");
-
-        dispatch(resetError());
-        return fetch(
-            `${h.getObjectUrl(
-                state.config.host,
-                state.config.riskofbias.url,
-                state.config.riskofbias.id
-            )}`,
-            opts
-        )
-            .then(response => response.json())
-            .then(json => dispatch(updateFinalScores(json.scores)))
-            .then(() => (window.location.href = state.config.cancelUrl))
-            .catch(ex => dispatch(setError(ex)));
-    };
-}
 export function selectActive({domain, metric}) {
     return {
         type: types.SELECT_ACTIVE,

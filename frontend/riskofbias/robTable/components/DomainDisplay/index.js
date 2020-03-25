@@ -3,11 +3,10 @@ import PropTypes from "prop-types";
 import _ from "lodash";
 
 import MetricDisplay from "riskofbias/robTable/components/MetricDisplay";
-import MetricForm from "riskofbias/robTable/components/MetricForm";
 
 class DomainDisplay extends Component {
     render() {
-        let {domain, config, updateNotesLeft, robResponseValues} = this.props;
+        let {domain, config} = this.props;
         return (
             <div>
                 <h3>{domain.key}</h3>
@@ -17,13 +16,8 @@ class DomainDisplay extends Component {
                         ref: _.last(metric.values).id,
                         metric,
                         config,
-                        robResponseValues,
                     };
-                    return config.isForm ? (
-                        <MetricForm {...props} updateNotesLeft={updateNotesLeft} />
-                    ) : (
-                        <MetricDisplay {...props} />
-                    );
+                    return <MetricDisplay {...props} />;
                 })}
                 <hr />
             </div>
@@ -37,8 +31,6 @@ DomainDisplay.propTypes = {
         values: PropTypes.array.isRequired,
     }).isRequired,
     config: PropTypes.object,
-    robResponseValues: PropTypes.array.isRequired,
-    updateNotesLeft: PropTypes.func,
 };
 
 export default DomainDisplay;

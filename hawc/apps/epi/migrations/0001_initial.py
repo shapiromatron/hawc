@@ -25,7 +25,10 @@ class Migration(migrations.Migration):
                 ("description", models.TextField()),
                 ("created", models.DateTimeField(auto_now_add=True)),
                 ("last_updated", models.DateTimeField(auto_now=True)),
-                ("assessment", models.ForeignKey(to="assessment.Assessment")),
+                (
+                    "assessment",
+                    models.ForeignKey(to="assessment.Assessment", on_delete=models.CASCADE),
+                ),
             ],
             options={"ordering": ("description",)},
         ),
@@ -71,7 +74,10 @@ class Migration(migrations.Migration):
                 ("description", models.TextField()),
                 ("created", models.DateTimeField(auto_now_add=True)),
                 ("last_updated", models.DateTimeField(auto_now=True)),
-                ("assessment", models.ForeignKey(to="assessment.Assessment")),
+                (
+                    "assessment",
+                    models.ForeignKey(to="assessment.Assessment", on_delete=models.CASCADE),
+                ),
             ],
             options={"ordering": ("description",), "verbose_name_plural": "Criteria"},
         ),
@@ -144,7 +150,10 @@ class Migration(migrations.Migration):
                 ("description", models.TextField(blank=True)),
                 ("created", models.DateTimeField(auto_now_add=True)),
                 ("last_updated", models.DateTimeField(auto_now=True)),
-                ("metric_units", models.ForeignKey(to="assessment.DoseUnits")),
+                (
+                    "metric_units",
+                    models.ForeignKey(to="assessment.DoseUnits", on_delete=models.CASCADE),
+                ),
             ],
             options={
                 "ordering": ("name",),
@@ -227,7 +236,9 @@ class Migration(migrations.Migration):
                 ("last_updated", models.DateTimeField(auto_now=True)),
                 (
                     "comparison_set",
-                    models.ForeignKey(related_name="groups", to="epi.ComparisonSet"),
+                    models.ForeignKey(
+                        related_name="groups", to="epi.ComparisonSet", on_delete=models.CASCADE
+                    ),
                 ),
                 ("ethnicities", models.ManyToManyField(to="epi.Ethnicity", blank=True)),
             ],
@@ -297,7 +308,12 @@ class Migration(migrations.Migration):
                         choices=[(0, None), (1, b"upper limit"), (2, b"95% CI"), (3, b"other")],
                     ),
                 ),
-                ("group", models.ForeignKey(related_name="descriptions", to="epi.Group"),),
+                (
+                    "group",
+                    models.ForeignKey(
+                        related_name="descriptions", to="epi.Group", on_delete=models.CASCADE
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
@@ -399,7 +415,12 @@ class Migration(migrations.Migration):
                 ),
                 ("created", models.DateTimeField(auto_now_add=True)),
                 ("last_updated", models.DateTimeField(auto_now=True)),
-                ("group", models.ForeignKey(related_name="results", to="epi.Group")),
+                (
+                    "group",
+                    models.ForeignKey(
+                        related_name="results", to="epi.Group", on_delete=models.CASCADE
+                    ),
+                ),
             ],
             options={"ordering": ("result", "group__comparison_set_id")},
         ),
@@ -414,6 +435,7 @@ class Migration(migrations.Migration):
                         primary_key=True,
                         serialize=False,
                         to="assessment.BaseEndpoint",
+                        on_delete=models.CASCADE,
                     ),
                 ),
                 (
@@ -593,9 +615,18 @@ class Migration(migrations.Migration):
                 ("included_in_final_model", models.BooleanField(default=True)),
                 (
                     "adjustment_factor",
-                    models.ForeignKey(related_name="resfactors", to="epi.AdjustmentFactor"),
+                    models.ForeignKey(
+                        related_name="resfactors",
+                        to="epi.AdjustmentFactor",
+                        on_delete=models.CASCADE,
+                    ),
                 ),
-                ("result", models.ForeignKey(related_name="resfactors", to="epi.Result"),),
+                (
+                    "result",
+                    models.ForeignKey(
+                        related_name="resfactors", to="epi.Result", on_delete=models.CASCADE
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
@@ -708,7 +739,7 @@ class Migration(migrations.Migration):
                 ),
                 ("created", models.DateTimeField(auto_now_add=True)),
                 ("last_updated", models.DateTimeField(auto_now=True)),
-                ("country", models.ForeignKey(to="epi.Country")),
+                ("country", models.ForeignKey(to="epi.Country", on_delete=models.CASCADE)),
             ],
             options={"ordering": ("name",)},
         ),
@@ -732,10 +763,19 @@ class Migration(migrations.Migration):
                         ],
                     ),
                 ),
-                ("criteria", models.ForeignKey(related_name="spcriteria", to="epi.Criteria"),),
+                (
+                    "criteria",
+                    models.ForeignKey(
+                        related_name="spcriteria", to="epi.Criteria", on_delete=models.CASCADE
+                    ),
+                ),
                 (
                     "study_population",
-                    models.ForeignKey(related_name="spcriteria", to="epi.StudyPopulation"),
+                    models.ForeignKey(
+                        related_name="spcriteria",
+                        to="epi.StudyPopulation",
+                        on_delete=models.CASCADE,
+                    ),
                 ),
             ],
         ),
@@ -751,7 +791,9 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="studypopulation",
             name="study",
-            field=models.ForeignKey(related_name="study_populations", to="study.Study"),
+            field=models.ForeignKey(
+                related_name="study_populations", to="study.Study", on_delete=models.CASCADE
+            ),
         ),
         migrations.AddField(
             model_name="result",
@@ -766,40 +808,54 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="result",
             name="comparison_set",
-            field=models.ForeignKey(related_name="results", to="epi.ComparisonSet"),
+            field=models.ForeignKey(
+                related_name="results", to="epi.ComparisonSet", on_delete=models.CASCADE
+            ),
         ),
         migrations.AddField(
             model_name="result",
             name="metric",
             field=models.ForeignKey(
-                related_name="results", to="epi.ResultMetric", help_text=b"&nbsp;"
+                related_name="results",
+                to="epi.ResultMetric",
+                on_delete=models.CASCADE,
+                help_text=b"&nbsp;",
             ),
         ),
         migrations.AddField(
             model_name="result",
             name="outcome",
-            field=models.ForeignKey(related_name="results", to="epi.Outcome"),
+            field=models.ForeignKey(
+                related_name="results", to="epi.Outcome", on_delete=models.CASCADE
+            ),
         ),
         migrations.AddField(
             model_name="outcome",
             name="study_population",
-            field=models.ForeignKey(related_name="outcomes", to="epi.StudyPopulation"),
+            field=models.ForeignKey(
+                related_name="outcomes", to="epi.StudyPopulation", on_delete=models.CASCADE
+            ),
         ),
         migrations.AddField(
             model_name="groupresult",
             name="result",
-            field=models.ForeignKey(related_name="results", to="epi.Result"),
+            field=models.ForeignKey(
+                related_name="results", to="epi.Result", on_delete=models.CASCADE
+            ),
         ),
         migrations.AddField(
             model_name="Exposure",
             name="study_population",
-            field=models.ForeignKey(related_name="exposures", to="epi.StudyPopulation"),
+            field=models.ForeignKey(
+                related_name="exposures", to="epi.StudyPopulation", on_delete=models.CASCADE
+            ),
         ),
         migrations.AddField(
             model_name="comparisonset",
             name="exposure",
             field=models.ForeignKey(
                 related_name="comparison_sets",
+                on_delete=models.CASCADE,
                 blank=True,
                 to="epi.Exposure",
                 help_text=b"Exposure-group associated with this group",
@@ -809,13 +865,21 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="comparisonset",
             name="outcome",
-            field=models.ForeignKey(related_name="comparison_sets", to="epi.Outcome", null=True),
+            field=models.ForeignKey(
+                related_name="comparison_sets",
+                to="epi.Outcome",
+                on_delete=models.SET_NULL,
+                null=True,
+            ),
         ),
         migrations.AddField(
             model_name="comparisonset",
             name="study_population",
             field=models.ForeignKey(
-                related_name="comparison_sets", to="epi.StudyPopulation", null=True
+                related_name="comparison_sets",
+                to="epi.StudyPopulation",
+                on_delete=models.SET_NULL,
+                null=True,
             ),
         ),
         migrations.AlterUniqueTogether(

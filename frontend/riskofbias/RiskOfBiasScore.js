@@ -11,7 +11,7 @@ class RiskOfBiasScore {
 
     static format_for_react(robs, config) {
         config = config || {display: "final", isForm: false};
-        var scores = _.map(robs, function(rob) {
+        var scores = robs.map(rob => {
             if (!rob.data.author) {
                 _.extend(rob.data, {author: {full_name: ""}});
             }
@@ -31,12 +31,8 @@ class RiskOfBiasScore {
             metric: robs[0].data.metric,
             scores: d3
                 .nest()
-                .key(function(d) {
-                    return d.metric.domain.name;
-                })
-                .key(function(d) {
-                    return d.metric.name;
-                })
+                .key(d => d.metric.domain.name)
+                .key(d => d.metric.name)
                 .entries(scores),
             config,
         };

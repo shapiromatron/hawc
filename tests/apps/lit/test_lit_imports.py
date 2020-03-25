@@ -1,48 +1,11 @@
 import os
 
 import pytest
-from django.core.urlresolvers import reverse
 from django.test.client import Client
+from django.urls import reverse
 from pytest_django.asserts import assertFormError
 
 from hawc.apps.lit import constants, models
-
-
-@pytest.mark.django_db
-def test_clean_import_string(db_keys):
-    assessment_pk = db_keys.assessment_working
-    client = Client()
-    assert client.login(username="pm@pm.com", password="pw") is True
-    data = {
-        "source": 2,
-        "title": "example search",
-        "slug": "example-search",
-        "description": "search description",
-        "search_string": "1234, 1235, 12345",
-    }
-
-    # comma-separating checks
-    failed_strings = [
-        "string",
-        "123, number, 1234",
-        "-123",
-        "123,,1234",
-        "123, , 1234",
-    ]
-    for search_string in failed_strings:
-        data["search_string"] = search_string
-        response = client.post(reverse("lit:import_new", kwargs={"pk": assessment_pk}), data)
-        assertFormError(
-            response,
-            "form",
-            "search_string",
-            "Please enter a comma-separated list of numeric IDs.",
-        )
-
-    # ID uniqueness-check
-    data["search_string"] = "123, 123"
-    response = client.post(reverse("lit:import_new", kwargs={"pk": assessment_pk}), data)
-    assertFormError(response, "form", "search_string", "IDs must be unique.")
 
 
 @pytest.mark.django_db
@@ -200,19 +163,19 @@ def test_failed_hero_id(db_keys):
 
     # get initial counts
     initial_searches = models.Search.objects.count()
-    initial_identifiers = models.Identifiers.objects.count()
-    initial_refs = models.Reference.objects.count()
 
     # known hero ID that doesn't exist
     data["search_string"] = "9999999"
     url = reverse("lit:import_new", kwargs={"pk": assessment_pk})
     response = client.post(url, data)
 
-    # check completion as as expected
-    assert response.status_code in [200, 302]
-    assert models.Search.objects.count() == initial_searches + 1
-    assert models.Reference.objects.count() == initial_refs
-    assert models.Identifiers.objects.count() == initial_identifiers
+    assertFormError(
+        response,
+        "form",
+        "search_string",
+        "Import failed; the following HERO IDs could not be imported: 9999999",
+    )
+    assert models.Search.objects.count() == initial_searches
 
 
 @pytest.mark.django_db

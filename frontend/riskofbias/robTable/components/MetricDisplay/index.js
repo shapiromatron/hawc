@@ -2,38 +2,32 @@ import _ from "lodash";
 import React, {Component} from "react";
 import PropTypes from "prop-types";
 
-import ScoreDisplay from "riskofbias/robTable/components/ScoreDisplay";
+import MetricScores from "../MetricScores";
 import "./MetricDisplay.css";
 
 class MetricDisplay extends Component {
-    renderScoreRow() {
-        let {metric, config} = this.props,
-            displayScores = metric.values;
-
-        if (config.display === "final") {
-            displayScores = _.filter(metric.values, score => {
-                return score.final;
-            });
-        }
-
-        return (
-            <div className="score-row">
-                {_.map(displayScores, score => {
-                    return <ScoreDisplay key={score.id} score={score} config={config} />;
-                })}
-            </div>
-        );
-    }
-
     render() {
-        let {metric} = this.props;
+        const {metric, config} = this.props,
+            scores = metric.values.filter(score => {
+                return config.display === "all" ? true : score.final;
+            }),
+            metricHasOverrides = _.chain(scores)
+                .map(score => score.is_default === false)
+                .some()
+                .value(),
+            showAuthors = config.display === "all";
+
         return (
             <div className="metric-display">
-                <h4>{metric.key}</h4>
-                {metric.values[0].metric.hide_description ? null : (
-                    <div dangerouslySetInnerHTML={{__html: metric.values[0].metric.description}} />
+                <h4>{scores[0].metric.name}</h4>
+                {scores[0].metric.hide_description ? null : (
+                    <div dangerouslySetInnerHTML={{__html: scores[0].metric.description}} />
                 )}
-                {this.renderScoreRow()}
+                <MetricScores
+                    scores={scores}
+                    showAuthors={showAuthors}
+                    metricHasOverrides={metricHasOverrides}
+                />
             </div>
         );
     }
@@ -47,6 +41,7 @@ MetricDisplay.propTypes = {
                 metric: PropTypes.shape({
                     description: PropTypes.string.isRequired,
                     name: PropTypes.string.isRequired,
+                    hide_description: PropTypes.bool.isRequired,
                 }).isRequired,
                 notes: PropTypes.string.isRequired,
                 score_description: PropTypes.string.isRequired,
@@ -55,7 +50,10 @@ MetricDisplay.propTypes = {
             }).isRequired
         ).isRequired,
     }).isRequired,
-    config: PropTypes.object,
+    config: PropTypes.shape({
+        display: PropTypes.string.isRequired,
+        isForm: PropTypes.bool.isRequired,
+    }),
 };
 
 export default MetricDisplay;

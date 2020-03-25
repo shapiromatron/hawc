@@ -2,37 +2,35 @@ import _ from "lodash";
 import React, {Component} from "react";
 import PropTypes from "prop-types";
 
-import ScoreCell from "riskofbias/robTable/components/ScoreCell";
+import MetricCell from "riskofbias/robTable/components/MetricCell";
 import "./DomainCell.css";
 
 class DomainCell extends Component {
-    constructor(props) {
-        super(props);
-        this.handleClick = this.handleClick.bind(this);
-    }
-
     componentDidMount() {
         $(".tooltips").tooltip();
     }
 
-    handleClick() {
-        let {handleClick, domain} = this.props;
-        handleClick({domain: domain.key});
-    }
-
     render() {
-        let {domain, handleClick} = this.props;
+        // scoresByMetric is an array of score arrays, grouped by metric
+        let {domain, handleClick} = this.props,
+            scoresByMetric = _.map(this.props.domain.values, "values"),
+            domainName = scoresByMetric[0][0].metric.domain.name;
+
         return (
-            <div className="domain-cell" style={{flex: domain.values.length}}>
-                <div className="header-box" onClick={this.handleClick}>
-                    <span className="domain-header">{domain.key}</span>
+            <div className="domain-cell" style={{flex: scoresByMetric.length}}>
+                <div
+                    className="header-box"
+                    onClick={() => {
+                        handleClick({domain: domain.key});
+                    }}>
+                    <span className="domain-header">{domainName}</span>
                 </div>
                 <div className="score-row">
-                    {_.map(domain.values, score => {
+                    {scoresByMetric.map(scores => {
                         return (
-                            <ScoreCell
-                                key={score.values[0].id}
-                                score={score.values[0]}
+                            <MetricCell
+                                key={scores[0].metric.id}
+                                scores={scores}
                                 handleClick={handleClick}
                             />
                         );

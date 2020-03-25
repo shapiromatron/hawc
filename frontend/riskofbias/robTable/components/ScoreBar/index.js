@@ -30,7 +30,7 @@ class ScoreBar extends Component {
                     duration={1000}>
                     {this.render_score_bar()}
                 </VelocityComponent>
-                {description}
+                <i>{description}</i>
             </div>
         );
     }

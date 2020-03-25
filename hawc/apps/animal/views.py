@@ -13,7 +13,6 @@ from ..common.views import (
     BaseDelete,
     BaseDetail,
     BaseEndpointFilterList,
-    BaseList,
     BaseUpdate,
     BaseUpdateWithFormset,
     CopyAsNewSelectorMixin,
@@ -21,7 +20,7 @@ from ..common.views import (
 from ..mgmt.views import EnsureExtractionStartedMixin
 from ..study.models import Study
 from ..study.views import StudyRead
-from . import exports, forms, models
+from . import forms, models
 
 
 # Experiment Views
@@ -61,6 +60,7 @@ class AnimalGroupCreate(BaseCreate):
     # Create view of AnimalGroup, and sometimes DosingRegime if generational.
     model = models.AnimalGroup
     parent_model = models.Experiment
+    parent_template_name = "experiment"
     template_name = "animal/animalgroup_form.html"
     success_message = "Animal Group created."
     crud = "Create"
@@ -413,46 +413,3 @@ class EndpointDelete(BaseDelete):
 
     def get_success_url(self):
         return self.object.animal_group.get_absolute_url()
-
-
-class FullExport(BaseList):
-    """
-    Full XLS data export for the animal bioassay data.
-    """
-
-    parent_model = Assessment
-    model = models.Endpoint
-
-    def get_queryset(self):
-        perms = self.get_obj_perms()
-        if not perms["edit"]:
-            return self.model.objects.published(self.assessment)
-        return self.model.objects.get_qs(self.assessment)
-
-    def get(self, request, *args, **kwargs):
-        self.object_list = self.get_queryset()
-        exporter = exports.EndpointGroupFlatComplete(
-            self.object_list,
-            export_format="excel",
-            filename=f"{self.assessment}-animal-bioassay",
-            sheet_name="bioassay-analysis",
-            assessment=self.assessment,
-        )
-        return exporter.build_response()
-
-
-class EndpointExport(FullExport):
-    """
-    Compressed summary for viewing endpoint-level information.
-    """
-
-    def get(self, request, *args, **kwargs):
-        self.object_list = self.get_queryset()
-        exporter = exports.EndpointSummary(
-            self.object_list,
-            export_format="excel",
-            filename=f"{self.assessment}-animal-bioassay",
-            sheet_name="endpoint-summary",
-            assessment=self.assessment,
-        )
-        return exporter.build_response()

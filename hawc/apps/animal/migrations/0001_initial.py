@@ -42,7 +42,11 @@ class Migration(migrations.Migration):
                 ("last_updated", models.DateTimeField(auto_now=True)),
                 (
                     "assessment",
-                    models.ForeignKey(related_name="aggregation", to="assessment.Assessment"),
+                    models.ForeignKey(
+                        related_name="aggregation",
+                        to="assessment.Assessment",
+                        on_delete=models.CASCADE,
+                    ),
                 ),
             ],
             options={},
@@ -279,6 +283,7 @@ class Migration(migrations.Migration):
                         null=True,
                         blank=True,
                         to="animal.AnimalGroup",
+                        on_delete=models.SET_NULL,
                     ),
                 ),
             ],
@@ -296,6 +301,7 @@ class Migration(migrations.Migration):
                         primary_key=True,
                         serialize=False,
                         to="assessment.BaseEndpoint",
+                        on_delete=models.CASCADE,
                     ),
                 ),
                 (
@@ -514,7 +520,9 @@ class Migration(migrations.Migration):
                 ("additional_fields", models.TextField(default=b"{}")),
                 (
                     "animal_group",
-                    models.ForeignKey(related_name="endpoints", to="animal.AnimalGroup"),
+                    models.ForeignKey(
+                        related_name="endpoints", to="animal.AnimalGroup", on_delete=models.CASCADE
+                    ),
                 ),
             ],
             options={},
@@ -593,7 +601,11 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "endpoint",
-                    models.ForeignKey(related_name="endpoint_group", to="animal.Endpoint"),
+                    models.ForeignKey(
+                        related_name="endpoint_group",
+                        to="animal.Endpoint",
+                        on_delete=models.CASCADE,
+                    ),
                 ),
             ],
             options={"ordering": ("endpoint", "dose_group_id")},
@@ -727,7 +739,12 @@ class Migration(migrations.Migration):
                 ),
                 ("created", models.DateTimeField(auto_now_add=True)),
                 ("last_updated", models.DateTimeField(auto_now=True)),
-                ("study", models.ForeignKey(related_name="experiments", to="study.Study"),),
+                (
+                    "study",
+                    models.ForeignKey(
+                        related_name="experiments", to="study.Study", on_delete=models.CASCADE
+                    ),
+                ),
             ],
             options={},
             bases=(models.Model,),
@@ -744,7 +761,11 @@ class Migration(migrations.Migration):
                 ("response", models.FloatField()),
                 (
                     "endpoint_group",
-                    models.ForeignKey(related_name="individual_data", to="animal.EndpointGroup"),
+                    models.ForeignKey(
+                        related_name="individual_data",
+                        to="animal.EndpointGroup",
+                        on_delete=models.CASCADE,
+                    ),
                 ),
             ],
             options={},
@@ -785,13 +806,23 @@ class Migration(migrations.Migration):
                     models.ForeignKey(
                         help_text=b"Specify a collection of endpoints which justify this reference-value",
                         to="animal.Aggregation",
+                        on_delete=models.CASCADE,
                     ),
                 ),
                 (
                     "assessment",
-                    models.ForeignKey(related_name="reference_values", to="assessment.Assessment"),
+                    models.ForeignKey(
+                        related_name="reference_values",
+                        to="assessment.Assessment",
+                        on_delete=models.CASCADE,
+                    ),
                 ),
-                ("units", models.ForeignKey(related_name="units+", to="animal.DoseUnits"),),
+                (
+                    "units",
+                    models.ForeignKey(
+                        related_name="units+", to="animal.DoseUnits", on_delete=models.CASCADE
+                    ),
+                ),
             ],
             options={},
             bases=(models.Model,),
@@ -831,7 +862,7 @@ class Migration(migrations.Migration):
                 ("name", models.CharField(max_length=30)),
                 ("created", models.DateTimeField(auto_now_add=True)),
                 ("last_updated", models.DateTimeField(auto_now=True)),
-                ("species", models.ForeignKey(to="animal.Species")),
+                ("species", models.ForeignKey(to="animal.Species", on_delete=models.CASCADE)),
             ],
             options={"ordering": ("species", "name")},
             bases=(models.Model,),
@@ -871,7 +902,12 @@ class Migration(migrations.Migration):
                 ("description", models.TextField(verbose_name=b"Justification", blank=True),),
                 ("created", models.DateTimeField(auto_now_add=True)),
                 ("last_updated", models.DateTimeField(auto_now=True)),
-                ("endpoint", models.ForeignKey(related_name="ufs", to="animal.Endpoint"),),
+                (
+                    "endpoint",
+                    models.ForeignKey(
+                        related_name="ufs", to="animal.Endpoint", on_delete=models.CASCADE
+                    ),
+                ),
             ],
             options={"abstract": False},
             bases=(models.Model,),
@@ -913,7 +949,9 @@ class Migration(migrations.Migration):
                 ("last_updated", models.DateTimeField(auto_now=True)),
                 (
                     "reference_value",
-                    models.ForeignKey(related_name="ufs", to="animal.ReferenceValue"),
+                    models.ForeignKey(
+                        related_name="ufs", to="animal.ReferenceValue", on_delete=models.CASCADE
+                    ),
                 ),
             ],
             options={"abstract": False},
@@ -932,13 +970,15 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="dosegroup",
             name="dose_regime",
-            field=models.ForeignKey(related_name="doses", to="animal.DosingRegime"),
+            field=models.ForeignKey(
+                related_name="doses", to="animal.DosingRegime", on_delete=models.CASCADE
+            ),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name="dosegroup",
             name="dose_units",
-            field=models.ForeignKey(to="animal.DoseUnits"),
+            field=models.ForeignKey(to="animal.DoseUnits", on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -947,6 +987,7 @@ class Migration(migrations.Migration):
             field=models.ForeignKey(
                 blank=True,
                 to="animal.DosingRegime",
+                on_delete=models.SET_NULL,
                 help_text=b"Specify an existing dosing regime or create a new dosing regime below",
                 null=True,
             ),
@@ -955,7 +996,9 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="animalgroup",
             name="experiment",
-            field=models.ForeignKey(related_name="animal_groups", to="animal.Experiment"),
+            field=models.ForeignKey(
+                related_name="animal_groups", on_delete=models.CASCADE, to="animal.Experiment"
+            ),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -980,19 +1023,19 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="animalgroup",
             name="species",
-            field=models.ForeignKey(to="animal.Species"),
+            field=models.ForeignKey(to="animal.Species", on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name="animalgroup",
             name="strain",
-            field=models.ForeignKey(to="animal.Strain"),
+            field=models.ForeignKey(to="animal.Strain", on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name="aggregation",
             name="dose_units",
-            field=models.ForeignKey(to="animal.DoseUnits"),
+            field=models.ForeignKey(to="animal.DoseUnits", on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(

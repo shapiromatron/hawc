@@ -9,6 +9,7 @@ import HAWCUtils from "utils/HAWCUtils";
 import RiskOfBiasScore from "riskofbias/RiskOfBiasScore";
 import {renderStudyDisplay} from "riskofbias/robTable/components/StudyDisplay";
 import {SCORE_SHADES, SCORE_TEXT} from "riskofbias/constants";
+import Donut from "riskofbias/Donut";
 
 class Study {
     constructor(data) {
@@ -24,9 +25,7 @@ class Study {
     }
 
     static get_object(id, cb) {
-        $.get("/study/api/study/{0}/".printf(id), function(d) {
-            cb(new Study(d));
-        });
+        $.get(`/study/api/study/${id}/`, d => cb(new Study(d)));
     }
 
     static displayAsModal(id) {
@@ -43,7 +42,7 @@ class Study {
 
     static displayInline(id, setTitle, setBody) {
         Study.get_object(id, obj => {
-            var title = $("<h4><b>{0}</b></h4>".printf(obj.build_breadcrumbs())),
+            var title = $(`<h4><b>${obj.build_breadcrumbs()}</b></h4>`),
                 content = $("<div>");
 
             setTitle(title);
@@ -108,7 +107,7 @@ class Study {
     }
 
     get_url() {
-        return '<a href="{0}">{1}</a>'.printf(this.data.url, this.data.short_citation);
+        return `<a href="${this.data.url}">${this.data.short_citation}</a>`;
     }
 
     _get_data_types() {
@@ -141,7 +140,7 @@ class Study {
         if (this.data.full_text_url)
             tbl.add_tbody_tr(
                 "Full-text link",
-                "<a href={0}>{0}</a>".printf(this.data.full_text_url)
+                `<a href=${this.data.full_text_url}>${this.data.full_text_url}</a>`
             );
         tbl.add_tbody_tr("COI reported", this.data.coi_reported);
         tbl.add_tbody_tr("COI details", this.data.coi_details);
@@ -182,11 +181,7 @@ class Study {
 
         attachments.forEach(function(v) {
             ul.append(
-                '<li><a target="_blank" href="{0}">{1}</a> <a class="pull-right" title="Delete {1}" href="{2}"><i class="icon-trash"></i></a></li>'.printf(
-                    v.url,
-                    v.filename,
-                    v.url_delete
-                )
+                `<li><a target="_blank" href="${v.url}">${v.filename}</a> <a class="pull-right" title="Delete" href="${v.url_delete}"><i class="icon-trash"></i></a></li>`
             );
         });
         tbody.append(tr.append(td.append(ul)));
@@ -194,7 +189,7 @@ class Study {
 
     displayAsModal() {
         var modal = new HAWCModal(),
-            title = "<h4>{0}</h4>".printf(this.build_breadcrumbs()),
+            title = `<h4>${this.build_breadcrumbs()}</h4>`,
             $content = $('<div class="container-fluid">');
 
         this.render($content, modal.getModal());
@@ -259,6 +254,10 @@ class Study {
             })
         );
         return RiskOfBiasScore.format_for_react(scores);
+    }
+
+    createDonutVisualization(element) {
+        new Donut(this, element);
     }
 }
 

@@ -4,6 +4,7 @@ import d3 from "d3";
 
 import HAWCModal from "utils/HAWCModal";
 
+import {getMultiScoreDisplaySettings} from "riskofbias/constants";
 import RiskOfBiasScore from "riskofbias/RiskOfBiasScore";
 import {renderCrossStudyDisplay} from "riskofbias/robTable/components/CrossStudyDisplay";
 import {renderRiskOfBiasDisplay} from "riskofbias/robTable/components/RiskOfBiasDisplay";
@@ -23,7 +24,7 @@ class RoBHeatmapPlot extends D3Visualization {
     render($div) {
         this.plot_div = $div.html("");
         this.processData();
-        if (this.dataset.length === 0) {
+        if (this.cells_data.length === 0) {
             let robName = this.data.assessment_rob_name.toLowerCase();
             return this.plot_div.html(
                 `<p>Error: no studies with ${robName} selected. Please select at least one study with ${robName}.</p>`
@@ -76,7 +77,8 @@ class RoBHeatmapPlot extends D3Visualization {
     }
 
     processData() {
-        var dataset = [],
+        var cells_data = [],
+            gradients_data = [],
             included_metrics = this.data.settings.included_metrics,
             studies,
             metrics,
@@ -87,38 +89,41 @@ class RoBHeatmapPlot extends D3Visualization {
 
         _.each(this.data.aggregation.metrics_dataset, function(metric) {
             _.chain(metric.rob_scores)
-                .filter(function(rob) {
-                    return _.includes(included_metrics, rob.data.metric.id);
-                })
-                .each(function(rob) {
-                    var metric_name =
-                        rob.data.metric.use_short_name === true && rob.data.metric.short_name !== ""
-                            ? rob.data.metric.short_name
-                            : rob.data.metric.name;
-                    dataset.push({
-                        riskofbias: rob,
-                        study: rob.study,
-                        study_label: rob.study.data[study_label_field],
-                        metric: rob.data.metric,
+                .filter(rob => _.includes(included_metrics, rob.data.metric.id))
+                .groupBy(rob => rob.data.study_id)
+                .values()
+                .each(function(robArray) {
+                    const displayData = getMultiScoreDisplaySettings(robArray.map(rob => rob.data)),
+                        metric_name =
+                            robArray[0].data.metric.use_short_name === true &&
+                            robArray[0].data.metric.short_name !== ""
+                                ? robArray[0].data.metric.short_name
+                                : robArray[0].data.metric.name;
+                    if (displayData.svgStyle.gradient) {
+                        gradients_data.push(displayData.svgStyle.gradient);
+                    }
+                    cells_data.push({
+                        robArray,
+                        study: robArray[0].study,
+                        study_label: robArray[0].study.data[study_label_field],
+                        metric: robArray[0].data.metric,
                         metric_label: metric_name,
-                        score: rob.data.score,
-                        score_text: rob.data.score_text,
-                        score_color: rob.data.score_color,
-                        score_text_color: rob.data.score_text_color,
+                        score_text: displayData.symbolShortText,
+                        score_color: displayData.svgStyle.fill,
+                        score_text_color: robArray[0].data.score_text_color,
                     });
                 })
                 .value();
         });
 
-        studies = _.chain(dataset)
+        studies = _.chain(cells_data)
             .map(d => d.study_label)
             .uniq()
+            .sort()
             .value();
 
-        metrics = _.chain(dataset)
-            .map(function(d) {
-                return d.metric_label;
-            })
+        metrics = _.chain(cells_data)
+            .map(d => d.metric_label)
             .uniq()
             .value();
 
@@ -138,7 +143,8 @@ class RoBHeatmapPlot extends D3Visualization {
         xIsStudy = this.data.settings.x_field !== "metric";
         _.extend(this, {
             cell_size: this.data.settings.cell_size,
-            dataset,
+            cells_data,
+            gradients_data,
             studies,
             metrics,
             title_str: this.data.settings.title,
@@ -195,66 +201,54 @@ class RoBHeatmapPlot extends D3Visualization {
                     .show({maxWidth: 900});
             },
             getMetricSQs = function(i, v) {
-                var vals = self.dataset.filter(function(e, i, a) {
-                    return e.metric_label === v.textContent;
+                $(this).data("robs", {
+                    type: "metric",
+                    robs: self.cells_data
+                        .filter(cell => cell.metric_label === v.textContent)
+                        .map(cell => cell.robArray),
                 });
-                vals = vals.map(function(v) {
-                    return v.riskofbias;
-                });
-                $(this).data("robs", {type: "metric", robs: vals});
             },
             getStudySQs = function(i, v) {
-                var vals = self.dataset.filter(function(e, i, a) {
-                    return e.study_label === v.textContent;
+                $(this).data("robs", {
+                    type: "study",
+                    robs: self.cells_data
+                        .filter(cell => cell.study_label === v.textContent)
+                        .map(cell => cell.robArray),
                 });
-                vals = vals.map(function(v) {
-                    return v.riskofbias;
-                });
-                $(this).data("robs", {type: "study", robs: vals});
             },
-            hideHovers = function(v) {
+            hideHovers = function() {
                 self.draw_hovers(this, {draw: false});
             };
+
+        if (this.gradients_data.length > 0) {
+            this.vis.append("defs").html(this.gradients_data.join());
+        }
 
         this.cells_group = this.vis.append("g");
 
         this.cells = this.cells_group
             .selectAll("svg.rect")
-            .data(this.dataset)
+            .data(this.cells_data)
             .enter()
             .append("rect")
-            .attr("x", function(d) {
-                return x(d[self.xField]);
-            })
-            .attr("y", function(d) {
-                return y(d[self.yField]);
-            })
+            .attr("x", d => x(d[self.xField]))
+            .attr("y", d => y(d[self.yField]))
             .attr("height", width)
             .attr("width", width)
-            .attr("class", function(d) {
-                var returnValue = "heatmap_selectable";
-
-                if (d.metric.domain.is_overall_confidence) {
-                    returnValue = "heatmap_selectable_bold";
-                }
-
-                return returnValue;
-            })
-            .style("fill", function(d) {
-                return d.score_color;
-            })
-            .on("mouseover", function(v, i) {
-                self.draw_hovers(v, {draw: true, type: "cell"});
-            })
-            .on("mouseout", function(v, i) {
-                self.draw_hovers(v, {draw: false});
-            })
-            .on("click", function(v) {
-                self.print_details(self.modal.getBody(), {
+            .attr("class", d =>
+                d.metric.domain.is_overall_confidence
+                    ? "heatmap_selectable_bold"
+                    : "heatmap_selectable"
+            )
+            .style("fill", d => d.score_color)
+            .on("mouseover", v => this.draw_hovers(v, {draw: true, type: "cell"}))
+            .on("mouseout", v => this.draw_hovers(v, {draw: false}))
+            .on("click", v => {
+                this.print_details(this.modal.getBody(), {
                     type: "cell",
-                    robs: [v],
+                    robs: v.robArray,
                 });
-                self.modal
+                this.modal
                     .addHeader(`<h4>${robName}</h4>`)
                     .addFooter("")
                     .show({maxWidth: 900});
@@ -262,15 +256,11 @@ class RoBHeatmapPlot extends D3Visualization {
 
         this.score = this.cells_group
             .selectAll("svg.text")
-            .data(this.dataset)
+            .data(this.cells_data)
             .enter()
             .append("text")
-            .attr("x", function(d) {
-                return x(d[self.xField]) + half_width;
-            })
-            .attr("y", function(d) {
-                return y(d[self.yField]) + half_width;
-            })
+            .attr("x", d => x(d[self.xField]) + half_width)
+            .attr("y", d => y(d[self.yField]) + half_width)
             .attr("text-anchor", "middle")
             .attr("dy", "3.5px")
             .attr("class", function(d) {
@@ -290,12 +280,8 @@ class RoBHeatmapPlot extends D3Visualization {
 
                 return returnValue;
             })
-            .style("fill", function(d) {
-                return d.score_text_color;
-            })
-            .text(function(d) {
-                return d.score_text;
-            });
+            .style("fill", d => d.score_text_color)
+            .text(d => d.score_text);
 
         $(".x_axis text")
             .each(this.xIsStudy ? getStudySQs : getMetricSQs)
@@ -382,18 +368,10 @@ class RoBHeatmapPlot extends D3Visualization {
             .data([draw_type])
             .enter()
             .append("rect")
-            .attr("x", function(d) {
-                return d.x;
-            })
-            .attr("y", function(d) {
-                return d.y;
-            })
-            .attr("height", function(d) {
-                return d.height;
-            })
-            .attr("width", function(d) {
-                return d.width;
-            })
+            .attr("x", d => d.x)
+            .attr("y", d => d.y)
+            .attr("height", d => d.height)
+            .attr("width", d => d.width)
             .attr("class", "heatmap_hovered");
     }
 
@@ -445,35 +423,42 @@ class RoBHeatmapPlot extends D3Visualization {
     }
 
     print_details($div, d) {
-        var config = {
-            display: "all",
-            isForm: false,
-        };
         // delay rendering until modal is displayed, as component depends on accurate width.
         window.setTimeout(function() {
             switch (d.type) {
                 case "cell":
-                    _.extend(config, {
-                        show_study: true,
-                        study: {
-                            name: d.robs[0].study_label,
-                            url: d.robs[0].study.data.url,
-                        },
-                    });
                     renderRiskOfBiasDisplay(
-                        RiskOfBiasScore.format_for_react([d.robs[0].riskofbias], config),
+                        RiskOfBiasScore.format_for_react(d.robs, {
+                            display: "all",
+                            isForm: false,
+                            showStudyHeader: true,
+                            studyUrl: d.robs[0].study.data.url,
+                            studyName: d.robs[0].study.data.short_citation,
+                        }),
                         $div[0]
                     );
                     break;
                 case "study":
                     renderRiskOfBiasDisplay(
-                        RiskOfBiasScore.format_for_react(d.robs, config),
+                        RiskOfBiasScore.format_for_react(_.flatten(d.robs), {
+                            display: "all",
+                            isForm: false,
+                            showStudyHeader: true,
+                            studyUrl: d.robs[0][0].study.data.url,
+                            studyName: d.robs[0][0].study.data.short_citation,
+                        }),
                         $div[0]
                     );
                     break;
                 case "metric":
                     renderCrossStudyDisplay(
-                        RiskOfBiasScore.format_for_react(d.robs, config),
+                        _.chain(d.robs)
+                            .flatten()
+                            .map(rob => {
+                                rob.data.study = rob.study.data;
+                                return rob.data;
+                            })
+                            .value(),
                         $div[0]
                     );
                     break;

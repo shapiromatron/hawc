@@ -1,10 +1,10 @@
 import json
-from datetime import datetime
 
-from django.core.urlresolvers import reverse_lazy
 from django.forms.models import model_to_dict
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
+from django.urls import reverse_lazy
+from django.utils import timezone
 from django.views.generic import DetailView, TemplateView
 from django.views.generic.edit import FormView
 
@@ -76,69 +76,6 @@ class SearchCopyAsNewSelector(AssessmentPermissionsMixin, FormView):
         return kwargs
 
 
-class RefDownloadExcel(BaseList):
-    """
-    If a tag primary-key is specified, download all references associated
-    with that tag or any child tags for the selected assessment. Otherwise,
-    download a full export of data.
-    """
-
-    parent_model = Assessment
-    model = models.Reference
-
-    def get(self, request, *args, **kwargs):
-        try:
-            tag_id = int(request.GET.get("tag_id"))
-            self.tag = models.ReferenceFilterTag.get_tag_in_assessment(self.assessment.id, tag_id)
-        except Exception:
-            self.tag = None
-        return super().get(request, *args, **kwargs)
-
-    def get_context_data(self, **kwargs):
-        if self.tag:
-            self.include_parent_tag = True
-            self.fn = f"{self.tag.name}-{self.assessment}-refs"
-            self.sheet_name = self.tag.name
-            self.tags = models.ReferenceFilterTag.dump_bulk(self.tag)
-        else:
-            self.include_parent_tag = False
-            self.fn = f"{self.assessment}-refs"
-            self.sheet_name = str(self.assessment)
-            self.tags = models.ReferenceFilterTag.get_all_tags(
-                self.assessment.id, json_encode=False
-            )
-
-    def get_queryset(self):
-        if self.tag:
-            return self.model.objects.get_references_with_tag(
-                self.tag, descendants=True
-            ).prefetch_related("identifiers")
-        else:
-            return self.model.objects.get_qs(self.assessment).prefetch_related("identifiers")
-
-    def get_exporter(self):
-        fmt = self.request.GET.get("fmt", "complete")
-        if fmt == "complete":
-            return exports.ReferenceFlatComplete
-        elif fmt == "tb":
-            return exports.TableBuilderFormat
-        else:
-            raise ValueError("Unknown export format.")
-
-    def render_to_response(self, context, **response_kwargs):
-        exporter_cls = self.get_exporter()
-        exporter = exporter_cls(
-            self.object_list,
-            export_format="excel",
-            filename=self.fn,
-            sheet_name=self.sheet_name,
-            assessment=self.assessment,
-            tags=self.tags,
-            include_parent_tag=self.include_parent_tag,
-        )
-        return exporter.build_response()
-
-
 class SearchNew(BaseCreate):
     success_message = "Search created."
     parent_model = Assessment
@@ -173,9 +110,6 @@ class ImportNew(SearchNew):
     success_message = "Import created."
     form_class = forms.ImportForm
     search_type = "Import"
-
-    def post_object_save(self, form):
-        self.object.run_new_import()
 
 
 class ImportRISNew(ImportNew):
@@ -315,7 +249,7 @@ class TagReferences(TeamMemberOrHigherMixin, FormView):
         if ref:
             tag_pks = self.request.POST.getlist("tags[]", [])
             ref.tags.set(tag_pks)
-            ref.last_updated = datetime.now()
+            ref.last_updated = timezone.now()
             ref.save()
             response["status"] = "success"
         return response

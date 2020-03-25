@@ -3,9 +3,12 @@ import json
 import logging
 from typing import Dict, List, Tuple
 
+from django.apps import apps
 from django.conf import settings
-from django.core.urlresolvers import reverse
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 from django.db import models
+from django.urls import reverse
 from django.utils.html import strip_tags
 from reversion import revisions as reversion
 
@@ -20,7 +23,9 @@ from . import managers
 class RiskOfBiasDomain(models.Model):
     objects = managers.RiskOfBiasDomainManager()
 
-    assessment = models.ForeignKey("assessment.Assessment", related_name="rob_domains")
+    assessment = models.ForeignKey(
+        "assessment.Assessment", on_delete=models.CASCADE, related_name="rob_domains"
+    )
     name = models.CharField(max_length=128)
     description = models.TextField(blank=True)
     is_overall_confidence = models.BooleanField(
@@ -81,7 +86,7 @@ class RiskOfBiasDomain(models.Model):
 class RiskOfBiasMetric(models.Model):
     objects = managers.RiskOfBiasMetricManager()
 
-    domain = models.ForeignKey(RiskOfBiasDomain, related_name="metrics")
+    domain = models.ForeignKey(RiskOfBiasDomain, on_delete=models.CASCADE, related_name="metrics")
     name = models.CharField(max_length=256)
     short_name = models.CharField(max_length=50, blank=True)
     description = models.TextField(
@@ -150,9 +155,11 @@ class RiskOfBiasMetric(models.Model):
 class RiskOfBias(models.Model):
     objects = managers.RiskOfBiasManager()
 
-    study = models.ForeignKey("study.Study", related_name="riskofbiases", null=True)
+    study = models.ForeignKey(
+        "study.Study", on_delete=models.CASCADE, related_name="riskofbiases", null=True
+    )
     final = models.BooleanField(default=False, db_index=True)
-    author = models.ForeignKey(HAWCUser, related_name="riskofbiases")
+    author = models.ForeignKey(HAWCUser, on_delete=models.CASCADE, related_name="riskofbiases")
     active = models.BooleanField(default=False, db_index=True)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
@@ -237,7 +244,11 @@ class RiskOfBias(models.Model):
         is empty, so HTML needs to be stripped out.
         """
         return all(
-            [len(strip_tags(score.notes)) > 0 for score in self.scores.all() if score.score != 0]
+            [
+                len(strip_tags(score.notes)) > 0
+                for score in self.scores.all()
+                if score.score not in RiskOfBiasScore.NA_SCORES
+            ]
         )
 
     @property
@@ -361,6 +372,67 @@ class RiskOfBias(models.Model):
 
         return header_map, scores_map
 
+    def get_override_options(self) -> Dict:
+        """Get risk of bias override options and overrides
+
+        Returns:
+            Dict: A dictionary of metadata and choices
+        """
+        options = {}
+
+        qs = (
+            apps.get_model("animal.Endpoint")
+            .objects.filter(animal_group__experiment__study=self.study_id)
+            .select_related("animal_group", "animal_group__experiment")
+            .order_by("animal_group__experiment_id", "animal_group_id", "id")
+        )
+        options["animal.endpoint"] = [
+            (
+                el.id,
+                f"{el.animal_group.experiment} → {el.animal_group} → {el}",
+                el.get_absolute_url(),
+            )
+            for el in qs
+        ]
+
+        qs = (
+            apps.get_model("animal.AnimalGroup")
+            .objects.filter(experiment__study=self.study_id)
+            .select_related("experiment")
+            .order_by("experiment_id", "id")
+        )
+        options["animal.animalgroup"] = [
+            (el.id, f"{el.experiment} → {el}", el.get_absolute_url()) for el in qs
+        ]
+
+        qs = (
+            apps.get_model("epi.Outcome")
+            .objects.filter(study_population__study=self.study_id)
+            .select_related("study_population")
+            .order_by("study_population_id", "id")
+        )
+        options["epi.outcome"] = [(el.id, str(el), el.get_absolute_url()) for el in qs]
+
+        qs = (
+            apps.get_model("epi.Exposure")
+            .objects.filter(study_population__study=self.study_id)
+            .select_related("study_population")
+            .order_by("study_population_id", "id")
+        )
+        options["epi.exposure"] = [(el.id, str(el), el.get_absolute_url()) for el in qs]
+
+        qs = (
+            apps.get_model("epi.Result")
+            .objects.filter(outcome__study_population__study=self.study_id)
+            .select_related("outcome", "outcome__study_population")
+            .order_by("outcome__study_population_id", "outcome_id", "id")
+        )
+        options["epi.result"] = [
+            (el.id, f"{el.outcome} → {el}", el.get_absolute_url()) for el in qs
+        ]
+
+        return options
+
 
 def build_default_rob_score():
     if settings.HAWC_FLAVOR == "PRIME":
@@ -423,8 +495,10 @@ class RiskOfBiasScore(models.Model):
         27: "#00CC00",
     }
 
-    riskofbias = models.ForeignKey(RiskOfBias, related_name="scores")
-    metric = models.ForeignKey(RiskOfBiasMetric, related_name="scores")
+    riskofbias = models.ForeignKey(RiskOfBias, on_delete=models.CASCADE, related_name="scores")
+    metric = models.ForeignKey(RiskOfBiasMetric, on_delete=models.CASCADE, related_name="scores")
+    is_default = models.BooleanField(default=True)
+    label = models.CharField(max_length=128, blank=True)
     score = models.PositiveSmallIntegerField(
         choices=RISK_OF_BIAS_SCORE_CHOICES, default=build_default_rob_score
     )
@@ -451,6 +525,8 @@ class RiskOfBiasScore(models.Model):
             "rob-metric_name",
             "rob-metric_description",
             "rob-score_id",
+            "rob-score_is_default",
+            "rob-score_label",
             "rob-score_score",
             "rob-score_description",
             "rob-score_notes",
@@ -466,6 +542,8 @@ class RiskOfBiasScore(models.Model):
             ser["metric"]["name"],
             ser["metric"]["description"],
             ser["id"],
+            ser["is_default"],
+            ser["label"],
             ser["score"],
             ser["score_description"],
             cleanHTML(ser["notes"]),
@@ -490,12 +568,31 @@ class RiskOfBiasScore(models.Model):
         Study.delete_caches(study_ids)
 
     def copy_across_assessments(self, cw):
+        # TODO - add overrides
         old_id = self.id
         self.id = None
         self.riskofbias_id = cw[RiskOfBias.COPY_NAME][self.riskofbias_id]
         self.metric_id = cw[RiskOfBiasMetric.COPY_NAME][self.metric_id]
         self.save()
         cw[self.COPY_NAME][old_id] = self.id
+
+
+class RiskOfBiasScoreOverrideObject(models.Model):
+    score = models.ForeignKey(
+        RiskOfBiasScore, on_delete=models.CASCADE, related_name="overridden_objects"
+    )
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey("content_type", "object_id")
+
+    def get_content_type_name(self) -> str:
+        return f"{self.content_type.app_label}.{self.content_type.model}"
+
+    def get_object_url(self) -> str:
+        return self.content_object.get_absolute_url()
+
+    def get_object_name(self) -> str:
+        return str(self.content_object)
 
 
 DEFAULT_QUESTIONS_OHAT = 1
@@ -534,7 +631,9 @@ class RiskOfBiasAssessment(models.Model):
         else:
             raise ValueError("Unknown HAWC flavor")
 
-    assessment = models.OneToOneField(Assessment, related_name="rob_settings")
+    assessment = models.OneToOneField(
+        Assessment, on_delete=models.CASCADE, related_name="rob_settings"
+    )
     number_of_reviewers = models.PositiveSmallIntegerField(default=1)
     help_text = models.TextField(
         default="Instructions for reviewers completing assessments",
@@ -587,3 +686,4 @@ reversion.register(RiskOfBiasDomain)
 reversion.register(RiskOfBiasMetric)
 reversion.register(RiskOfBias)
 reversion.register(RiskOfBiasScore)
+reversion.register(RiskOfBiasScoreOverrideObject)

@@ -1,12 +1,12 @@
-Server setup
-============
+Deployment
+==========
 
 Minimum hardware requirements:
 
 - Linux OS (ex: Ubuntu 16.04, CentOS, or RHEL)
-- 2 GB RAM (4 GB recommended)
+- 4 GB RAM (8 GB recommended)
 - 2 processors (4-8 recommended)
-- 40 GB HD space (120 GB recommended)
+- 100 GB HD space
 
 Software requirements:
 
@@ -50,7 +50,6 @@ please specify in the docker-compose `.env` file (example secrets below):
     DJANGO_CACHE_LOCATION=redis://redis:6379/0
     DJANGO_BROKER_URL=redis://redis:6379/1
     DJANGO_CELERY_RESULT_BACKEND=redis://redis:6379/2
-    CHEMSPIDER_TOKEN=myChemspiderToken
     PUBMED_API_KEY=my-secret-key
 
     # Enum; one of {"PRIME", "EPA"}
@@ -83,7 +82,7 @@ Other required files are:
 - nginx configuration (place in ``compose/nginx/conf/nginx.conf``)
 - nginx ssl certificates (place in ``compose/nginx/ssl``)
 
-Deploying:
+Automation
 ----------
 
 To deploy, build and run all docker containers. Currently a javascript

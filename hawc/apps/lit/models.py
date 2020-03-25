@@ -2,7 +2,6 @@ import html
 import json
 import logging
 import re
-from datetime import datetime
 from math import ceil
 from typing import Dict, Optional
 from urllib import parse
@@ -10,8 +9,9 @@ from urllib import parse
 from django.apps import apps
 from django.conf import settings
 from django.core.exceptions import ValidationError
-from django.core.urlresolvers import reverse
 from django.db import models, transaction
+from django.urls import reverse
+from django.utils import timezone
 from django.utils.html import strip_tags
 from litter_getter import pubmed, ris
 from taggit.models import ItemBase
@@ -44,7 +44,9 @@ class Search(models.Model):
         ("i", "Import"),
     )
 
-    assessment = models.ForeignKey("assessment.Assessment", related_name="literature_searches")
+    assessment = models.ForeignKey(
+        "assessment.Assessment", on_delete=models.CASCADE, related_name="literature_searches"
+    )
     search_type = models.CharField(max_length=1, choices=SEARCH_TYPES)
     source = models.PositiveSmallIntegerField(
         choices=constants.REFERENCE_DATABASES, help_text="Database used to identify literature.",
@@ -146,8 +148,7 @@ class Search(models.Model):
             identifiers = Identifiers.objects.get_pubmed_identifiers(self.import_ids)
             Reference.objects.get_pubmed_references(self, identifiers)
         elif self.source == constants.HERO:
-            identifiers = Identifiers.objects.get_hero_identifiers(self.import_ids)
-            Reference.objects.get_hero_references(self, identifiers)
+            raise NotImplementedError()
         elif self.source == constants.RIS:
             # check if importer references are cached on object
             refs = getattr(self, "_references", None)
@@ -199,7 +200,7 @@ class Search(models.Model):
         ids_count = ids.count()
 
         if ids_count > 0:
-            block_id = datetime.now()
+            block_id = timezone.now()
 
             # create list of references for each identifier
             refs = [i.create_reference(self.assessment, block_id) for i in ids]
@@ -324,7 +325,7 @@ class Search(models.Model):
 class PubMedQuery(models.Model):
     objects = managers.PubMedQueryManager()
 
-    search = models.ForeignKey(Search)
+    search = models.ForeignKey(Search, on_delete=models.CASCADE)
     results = models.TextField(blank=True)
     query_date = models.DateTimeField(auto_now_add=True)
 
@@ -552,8 +553,10 @@ class ReferenceFilterTag(NonUniqueTagBase, AssessmentRootMixin, MP_Node):
 class ReferenceTags(ItemBase):
     objects = managers.ReferenceTagsManager()
 
-    tag = models.ForeignKey(ReferenceFilterTag, related_name="%(app_label)s_%(class)s_items")
-    content_object = models.ForeignKey("Reference")
+    tag = models.ForeignKey(
+        ReferenceFilterTag, on_delete=models.CASCADE, related_name="%(app_label)s_%(class)s_items"
+    )
+    content_object = models.ForeignKey("Reference", on_delete=models.CASCADE)
 
 
 class Reference(models.Model):
@@ -561,7 +564,9 @@ class Reference(models.Model):
 
     objects = managers.ReferenceManager()
 
-    assessment = models.ForeignKey("assessment.Assessment", related_name="references")
+    assessment = models.ForeignKey(
+        "assessment.Assessment", on_delete=models.CASCADE, related_name="references"
+    )
     searches = models.ManyToManyField(Search, blank=False, related_name="references")
     identifiers = models.ManyToManyField(Identifiers, blank=True, related_name="references")
     title = models.TextField(blank=True)

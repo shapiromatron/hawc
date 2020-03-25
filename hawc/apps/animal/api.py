@@ -1,12 +1,54 @@
 from django.db.models import Q
-from rest_framework.decorators import list_route
+from rest_framework import viewsets
+from rest_framework.decorators import action
 from rest_framework.exceptions import NotAcceptable
 from rest_framework.response import Response
 
-from ..assessment.api import AssessmentViewset, DoseUnitsViewset
-from ..common.api import CleanupFieldsBaseViewSet
+from ..assessment.api import AssessmentLevelPermissions, AssessmentViewset, DoseUnitsViewset
+from ..assessment.models import Assessment
+from ..common.api import CleanupFieldsBaseViewSet, LegacyAssessmentAdapterMixin
 from ..common.helper import tryParseInt
-from . import models, serializers
+from ..common.renderers import PandasRenderers
+from ..common.views import AssessmentPermissionsMixin
+from . import exports, models, serializers
+
+
+class AnimalAssessmentViewset(
+    AssessmentPermissionsMixin, LegacyAssessmentAdapterMixin, viewsets.GenericViewSet
+):
+    parent_model = Assessment
+    model = models.Endpoint
+    permission_classes = (AssessmentLevelPermissions,)
+
+    def get_queryset(self):
+        perms = self.get_obj_perms()
+        if not perms["edit"]:
+            return self.model.objects.published(self.assessment)
+        return self.model.objects.get_qs(self.assessment)
+
+    @action(detail=True, methods=("get",), url_path="full-export", renderer_classes=PandasRenderers)
+    def full_export(self, request, pk):
+        """
+        Retrieve complete animal data
+        """
+        self.set_legacy_attr(pk)
+        exporter = exports.EndpointGroupFlatComplete(
+            self.get_queryset(), export_format="excel", assessment=self.assessment,
+        )
+        return Response(exporter.build_dataframe())
+
+    @action(
+        detail=True, methods=("get",), url_path="endpoint-export", renderer_classes=PandasRenderers
+    )
+    def endpoint_export(self, request, pk):
+        """
+        Retrieve endpoint animal data
+        """
+        self.set_legacy_attr(pk)
+        exporter = exports.EndpointSummary(
+            self.get_queryset(), export_format="excel", assessment=self.assessment,
+        )
+        return Response(exporter.build_dataframe())
 
 
 class Experiment(AssessmentViewset):
@@ -34,13 +76,13 @@ class Endpoint(AssessmentViewset):
     def get_queryset(self):
         return self.model.objects.optimized_qs()
 
-    @list_route()
+    @action(detail=False)
     def effects(self, request):
         assessment_id = tryParseInt(self.request.query_params.get("assessment_id"), -1)
         effects = models.Endpoint.objects.get_effects(assessment_id)
         return Response(effects)
 
-    @list_route()
+    @action(detail=False)
     def rob_filter(self, request):
         params = self.request.query_params
 

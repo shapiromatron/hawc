@@ -1,4 +1,6 @@
-let NA_KEYS = [10, 20],
+import _ from "lodash";
+
+const NA_KEYS = [10, 20],
     NR_KEYS = [12, 22],
     SCORE_TEXT = {
         10: "N/A",
@@ -78,6 +80,68 @@ let NA_KEYS = [10, 20],
     COLLAPSED_NR_FIELDS_DESCRIPTION = {
         15: "Probably high risk of bias/not reported",
         25: "Deficient/not reported",
+    },
+    getMultiScoreDisplaySettings = function(scores) {
+        // Return visualization/color settings for situations where multiple scores may exist for
+        // a given metric (eg, study-level override settings)
+        let sortedScores = _.orderBy(scores, "score", "desc"),
+            defaultScore = _.find(scores, {is_default: true}),
+            shades = _.chain(sortedScores)
+                .map(score => score.score_shade)
+                .uniq()
+                .value(),
+            symbols = _.chain(sortedScores)
+                .map(score => score.score_symbol)
+                .uniq()
+                .value(),
+            symbolText = symbols.join(" / "),
+            symbolShortText = symbols.length === 1 ? symbols[0] : `${defaultScore.score_symbol}*`,
+            reactStyle,
+            svgStyle,
+            cssStyle;
+
+        if (shades.length == 1) {
+            reactStyle = {backgroundColor: shades[0]};
+            cssStyle = {"background-color": shades[0]};
+            svgStyle = {fill: shades[0]};
+        } else if (shades.length >= 2) {
+            let dim = Math.ceil(50 / shades.length),
+                reactGradients = shades
+                    .map((shade, idx) => `${shade} ${idx * dim}px, ${shade} ${(idx + 1) * dim}px`)
+                    .join(", "),
+                svgShades = shades
+                    .map((shade, idx) => {
+                        const offset1 = Math.ceil((idx / shades.length) * 100),
+                            offset2 = Math.ceil(((idx + 1) / shades.length) * 100);
+                        return `<stop offset="${offset1}%" stop-color="${shade}" stop-opacity="1" />
+                                <stop offset="${offset2}%" stop-color="${shade}" stop-opacity="1" />`;
+                    })
+                    .join(""),
+                gradientId = `gradient${scores[0].id}`,
+                gradient = `<linearGradient id="${gradientId}" x1="0" y1="0" x2="5%" y2="5%" spreadMethod="repeat">${svgShades}</linearGradient>`;
+
+            reactStyle = {background: `repeating-linear-gradient(-45deg, ${reactGradients})`};
+            cssStyle = reactStyle;
+            svgStyle = {
+                gradient,
+                fill: `url(#${gradientId})`,
+            };
+        }
+
+        return {
+            reactStyle,
+            cssStyle,
+            symbolText,
+            symbolShortText,
+            svgStyle,
+        };
+    },
+    OVERRIDE_SCORE_LABEL_MAPPING = {
+        "animal.endpoint": "Animal bioassay endpoints",
+        "animal.animalgroup": "Animal bioassay groups",
+        "epi.outcome": "Epidemiological outcomes",
+        "epi.exposure": "Epidemiological exposures",
+        "epi.result": "Epidemiological results",
     };
 
 export {
@@ -89,4 +153,6 @@ export {
     SCORE_TEXT_DESCRIPTION_LEGEND,
     SCORE_BAR_WIDTH_PERCENTAGE,
     COLLAPSED_NR_FIELDS_DESCRIPTION,
+    getMultiScoreDisplaySettings,
+    OVERRIDE_SCORE_LABEL_MAPPING,
 };
