@@ -36,11 +36,10 @@ get_ <- function(url, header = auth_header) {
     stop("An exception occured on the HAWC server") }
 
   else {
-    #response.list = content(response)
-    #response.list = lapply(response.list, lapply, function(x)ifelse(is.null(x), NA, x))
-    #response.df = rbind.fill(lapply(response.list, as.data.frame))
-    #return(response.df)
-    print("worked")
+    response.list = content(response)
+    response.list = lapply(response.list, lapply, function(x)ifelse(is.null(x), NA, x))
+    response.df = rbind.fill(lapply(response.list, as.data.frame))
+    return(response.df)
   }
 }
 
@@ -68,7 +67,7 @@ lit_import_hero <- function(assessment_id, title, description, ids) {
                   description = description,
                   search_string = paste(unlist(ids), collapse=','))
 
-  response = POST(url, auth_header, body = pc_json, encode = "json", verbose())
+  response = POST(url, auth_header, body = pc_json, encode = "json")
   response.list = content(response)
   response.df = as.data.frame(response.list)
   return(response.df)
@@ -97,8 +96,7 @@ lit_import_reference_tags <- function(assessment_id, csv, operation = "append") 
                    auth_header,
                    body = list(csv = csv.string,
                                operation = operation),
-                   encode = "json",
-                   verbose())
+                   encode = "json")
   return(response)
 }
 
@@ -112,18 +110,8 @@ lit_reference_ids <- function(assessment_id) {
 #' @export
 lit_references <- function(assessment_id) {
   url = paste0(root_url, "/lit/api/assessment/", assessment_id, "/references-download/")
-  response = GET(url)
-  # if (response$status_code >= 400 & response$status_code < 500) {
-  #    stop("An exception occured in the HAWC client module") }
-
-  # else if (response$status_code == 500) {
-  #  stop("An exception occured on the HAWC server") }
-
-  #else {
-  #  response.list = content(response)
-  #  response.list = lapply(response.list, lapply, function(x)ifelse(is.null(x), NA, x))
-  #  response.df = rbind.fill(lapply(response.list, as.data.frame))
-  return(content(response))
+  response = get_(url)
+  return(response)
 }
 
 #' @export
