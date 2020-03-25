@@ -4,15 +4,16 @@ from rest_framework.routers import DefaultRouter
 from . import api, views
 
 router = DefaultRouter()
-router.register(r"domain", api.RiskOfBiasDomain, base_name="domain")
-router.register(r"review", api.RiskOfBias, base_name="review")
-router.register(r"metrics", api.AssessmentMetricViewset, base_name="metrics")
-router.register(r"metrics/scores", api.AssessmentMetricScoreViewset, base_name="metric_scores")
-router.register(r"scores", api.AssessmentScoreViewset, base_name="scores")
+router.register(r"assessment", api.RiskOfBiasAssessmentViewset, basename="assessment")
+router.register(r"domain", api.RiskOfBiasDomain, basename="domain")
+router.register(r"review", api.RiskOfBias, basename="review")
+router.register(r"metrics", api.AssessmentMetricViewset, basename="metrics")
+router.register(r"metrics/scores", api.AssessmentMetricScoreViewset, basename="metric_scores")
+router.register(r"scores", api.AssessmentScoreViewset, basename="scores")
 
 app_name = "riskofbias"
 urlpatterns = [
-    url(r"^api/", include(router.urls, namespace="api")),
+    url(r"^api/", include((router.urls, "api"))),
     # modify assessment rob settings
     url(r"^assessment/(?P<pk>\d+)/$", views.ARoBDetail.as_view(), name="arob_detail"),
     url(r"^assessment/(?P<pk>\d+)/copy/$", views.ARoBCopy.as_view(), name="arob_copy"),
@@ -21,13 +22,6 @@ urlpatterns = [
         r"^assessment/(?P<pk>\d+)/text-edit/$",
         views.ARoBTextEdit.as_view(),
         name="arob_text_update",
-    ),
-    # reporting
-    url(r"^assessment/(?P<pk>\d+)/export/$", views.StudyRoBExport.as_view(), name="export",),
-    url(
-        r"^assessment/(?P<pk>\d+)/complete-export/$",
-        views.StudyRoBCompleteExport.as_view(),
-        name="complete_export",
     ),
     # modify domains
     url(

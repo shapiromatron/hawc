@@ -3,9 +3,9 @@ import json
 import math
 from operator import xor
 
-from django.core.urlresolvers import reverse
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from django.urls import reverse
 from reversion import revisions as reversion
 from scipy.stats import t
 
@@ -28,7 +28,7 @@ def formatHelpTextNotes(s):
 class Criteria(models.Model):
     objects = managers.CriteriaManager()
 
-    assessment = models.ForeignKey("assessment.Assessment")
+    assessment = models.ForeignKey("assessment.Assessment", on_delete=models.CASCADE)
     description = models.TextField()
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
@@ -68,7 +68,7 @@ class Country(models.Model):
 class AdjustmentFactor(models.Model):
     objects = managers.AdjustmentFactorManager()
 
-    assessment = models.ForeignKey("assessment.Assessment")
+    assessment = models.ForeignKey("assessment.Assessment", on_delete=models.CASCADE)
     description = models.TextField()
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
@@ -108,8 +108,10 @@ class StudyPopulationCriteria(models.Model):
     objects = managers.StudyPopulationCriteriaManager()
 
     CRITERIA_TYPE = (("I", "Inclusion"), ("E", "Exclusion"), ("C", "Confounding"))
-    criteria = models.ForeignKey("Criteria", related_name="spcriteria")
-    study_population = models.ForeignKey("StudyPopulation", related_name="spcriteria")
+    criteria = models.ForeignKey("Criteria", on_delete=models.CASCADE, related_name="spcriteria")
+    study_population = models.ForeignKey(
+        "StudyPopulation", on_delete=models.CASCADE, related_name="spcriteria"
+    )
     criteria_type = models.CharField(max_length=1, choices=CRITERIA_TYPE)
 
     COPY_NAME = "spcriterias"
@@ -155,7 +157,9 @@ class StudyPopulation(models.Model):
 
     OUTCOME_GROUP_DESIGNS = ("CC", "NC")
 
-    study = models.ForeignKey("study.Study", related_name="study_populations")
+    study = models.ForeignKey(
+        "study.Study", on_delete=models.CASCADE, related_name="study_populations"
+    )
     name = models.CharField(
         max_length=256,
         help_text="Name the population associated with the study, following the format <b>Study name (years study conducted), Country, number participants "
@@ -369,7 +373,9 @@ class Outcome(BaseEndpoint):
         (6, "other"),
     )
 
-    study_population = models.ForeignKey(StudyPopulation, related_name="outcomes")
+    study_population = models.ForeignKey(
+        StudyPopulation, on_delete=models.CASCADE, related_name="outcomes"
+    )
     system = models.CharField(
         max_length=128, blank=True, help_text="Primary biological system affected"
     )
@@ -520,8 +526,12 @@ class Outcome(BaseEndpoint):
 class ComparisonSet(models.Model):
     objects = managers.ComparisonSetManager()
 
-    study_population = models.ForeignKey(StudyPopulation, related_name="comparison_sets", null=True)
-    outcome = models.ForeignKey(Outcome, related_name="comparison_sets", null=True)
+    study_population = models.ForeignKey(
+        StudyPopulation, on_delete=models.SET_NULL, related_name="comparison_sets", null=True
+    )
+    outcome = models.ForeignKey(
+        Outcome, on_delete=models.SET_NULL, related_name="comparison_sets", null=True
+    )
     name = models.CharField(
         max_length=256,
         help_text="Name the comparison set, following the format <b>Exposure (If log transformed indicate Ln or Logbase) "
@@ -536,8 +546,9 @@ class ComparisonSet(models.Model):
     )
     exposure = models.ForeignKey(
         "Exposure",
+        on_delete=models.SET_NULL,
         related_name="comparison_sets",
-        help_text="Which chemical exposure group is associated with this comparison set?",
+        help_text="Which exposure group is associated with this comparison set?",
         blank=True,
         null=True,
     )
@@ -638,7 +649,9 @@ class Group(models.Model):
         (None, "N/A"),
     )
 
-    comparison_set = models.ForeignKey(ComparisonSet, related_name="groups")
+    comparison_set = models.ForeignKey(
+        ComparisonSet, on_delete=models.CASCADE, related_name="groups"
+    )
     group_id = models.PositiveSmallIntegerField()
     name = models.CharField(
         max_length=256,
@@ -768,7 +781,9 @@ class Exposure(models.Model):
         "analytical_method",
     )
 
-    study_population = models.ForeignKey(StudyPopulation, related_name="exposures")
+    study_population = models.ForeignKey(
+        StudyPopulation, on_delete=models.CASCADE, related_name="exposures"
+    )
     name = models.CharField(
         max_length=128, help_text="Name of chemical exposure; use abbreviation. Ex. PFNA; DEHP",
     )
@@ -801,6 +816,7 @@ class Exposure(models.Model):
     )
     metric_units = models.ForeignKey(
         "assessment.DoseUnits",
+        on_delete=models.CASCADE,
         help_text="Note chemical measurement units (metric system); if no units given, that is, chemical exposure assumed "
         + "from occupation or survey data, note appropriate exposure categories. Ex. ng/mL; Y/N; electroplating/welding/other"
         + HAWC_VIS_NOTE,
@@ -985,7 +1001,9 @@ class CentralTendency(models.Model):
         (5, "other"),
     )
 
-    exposure = models.ForeignKey(Exposure, related_name="central_tendencies")
+    exposure = models.ForeignKey(
+        Exposure, on_delete=models.CASCADE, related_name="central_tendencies"
+    )
 
     estimate = models.FloatField(
         blank=True,
@@ -1096,7 +1114,7 @@ class GroupNumericalDescriptions(models.Model):
 
     UPPER_LIMIT_CHOICES = ((0, None), (1, "upper limit"), (2, "95% CI"), (3, "other"))
 
-    group = models.ForeignKey(Group, related_name="descriptions")
+    group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name="descriptions")
     description = models.CharField(
         max_length=128,
         help_text="Description if numeric ages do not make sense for this "
@@ -1162,8 +1180,10 @@ class ResultMetric(models.Model):
 class ResultAdjustmentFactor(models.Model):
     objects = managers.ResultAdjustmentFactorManager()
 
-    adjustment_factor = models.ForeignKey("AdjustmentFactor", related_name="resfactors")
-    result = models.ForeignKey("Result", related_name="resfactors")
+    adjustment_factor = models.ForeignKey(
+        "AdjustmentFactor", on_delete=models.CASCADE, related_name="resfactors"
+    )
+    result = models.ForeignKey("Result", on_delete=models.CASCADE, related_name="resfactors")
     included_in_final_model = models.BooleanField(default=True)
 
     COPY_NAME = "rfactors"
@@ -1220,10 +1240,13 @@ class Result(models.Model):
         + "– subgroup</b>. Ex. Hyperthyroidism PFHxS (ln) (continuous) – women"
         + HAWC_VIS_NOTE,
     )
-    outcome = models.ForeignKey(Outcome, related_name="results")
-    comparison_set = models.ForeignKey(ComparisonSet, related_name="results")
+    outcome = models.ForeignKey(Outcome, on_delete=models.CASCADE, related_name="results")
+    comparison_set = models.ForeignKey(
+        ComparisonSet, on_delete=models.CASCADE, related_name="results"
+    )
     metric = models.ForeignKey(
         ResultMetric,
+        on_delete=models.CASCADE,
         related_name="results",
         help_text="Select the most specific term for the result metric",
     )
@@ -1429,8 +1452,8 @@ class GroupResult(models.Model):
         (0, "not-supportive"),
     )
 
-    result = models.ForeignKey(Result, related_name="results")
-    group = models.ForeignKey(Group, related_name="results")
+    result = models.ForeignKey(Result, on_delete=models.CASCADE, related_name="results")
+    group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name="results")
     n = models.PositiveIntegerField(
         blank=True,
         null=True,
@@ -1489,7 +1512,7 @@ class GroupResult(models.Model):
         help_text="Note p-value when available. " + HAWC_VIS_NOTE_UNSTYLED,
     )
     is_main_finding = models.BooleanField(
-        blank=True,
+        default=False,
         verbose_name="Main finding",
         help_text="If study does not report a statistically significant association (p<0.05) between exposure "
         + 'and health outcome at any exposure level, check "Main finding" for highest exposure group '

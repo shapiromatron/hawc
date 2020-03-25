@@ -6,10 +6,10 @@ from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
 from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
-from django.core.urlresolvers import reverse, reverse_lazy
 from django.db.models import Count
 from django.http import HttpResponseNotAllowed, HttpResponseRedirect
 from django.shortcuts import HttpResponse, get_object_or_404
+from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
@@ -286,34 +286,6 @@ class AssessmentDownloads(BaseDetail):
     template_name = "assessment/assessment_downloads.html"
 
 
-class AssessmentEmailManagers(MessageMixin, FormView):
-    template_name = "assessment/assessment_email_managers.html"
-    form_class = forms.AssessmentEmailManagersForm
-    success_message = "Your message has been sent!"
-
-    @method_decorator(staff_member_required)
-    def dispatch(self, request, *args, **kwargs):
-        self.assessment = get_object_or_404(models.Assessment, pk=kwargs.get("pk"))
-        return super().dispatch(request, *args, **kwargs)
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs["assessment"] = self.assessment
-        return kwargs
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["object"] = self.assessment
-        return context
-
-    def get_success_url(self):
-        return self.assessment.get_absolute_url()
-
-    def form_valid(self, form):
-        form.send_email()
-        return super().form_valid(form)
-
-
 # Attachment views
 class AttachmentCreate(BaseCreate):
     success_message = "Attachment added."
@@ -448,11 +420,10 @@ class CleanExtractedData(TeamMemberOrHigherMixin, BaseEndpointList):
 class CASDetails(TemplateView):
     def get(self, request, *args, **kwargs):
         cas = self.request.GET.get("cas")
-        task = tasks.get_chemspider_details.delay(cas)
-        v = task.get(timeout=60)
-        if v is None:
-            v = {}
-        return HttpResponse(json.dumps(v), content_type="application/json")
+        payload = tasks.get_dsstox_details.delay(cas).get(timeout=60, disable_sync_subtasks=False)
+        if payload is None:
+            payload = {}
+        return HttpResponse(json.dumps(payload), content_type="application/json")
 
 
 class CloseWindow(TemplateView):

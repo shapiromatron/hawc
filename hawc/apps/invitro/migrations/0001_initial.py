@@ -59,7 +59,12 @@ class Migration(migrations.Migration):
                     "source",
                     models.CharField(max_length=128, verbose_name=b"Source of cell cultures"),
                 ),
-                ("study", models.ForeignKey(related_name="ivcelltypes", to="study.Study"),),
+                (
+                    "study",
+                    models.ForeignKey(
+                        related_name="ivcelltypes", to="study.Study", on_delete=models.CASCADE
+                    ),
+                ),
             ],
             options={},
             bases=(models.Model,),
@@ -114,7 +119,12 @@ class Migration(migrations.Migration):
                         help_text=b"Dilution, storage, and observations such as precipitation should be noted here."
                     ),
                 ),
-                ("study", models.ForeignKey(related_name="ivchemicals", to="study.Study"),),
+                (
+                    "study",
+                    models.ForeignKey(
+                        related_name="ivchemicals", to="study.Study", on_delete=models.CASCADE
+                    ),
+                ),
             ],
             options={},
             bases=(models.Model,),
@@ -130,6 +140,7 @@ class Migration(migrations.Migration):
                         primary_key=True,
                         serialize=False,
                         to="assessment.BaseEndpoint",
+                        on_delete=models.CASCADE,
                     ),
                 ),
                 ("assay_type", models.CharField(max_length=128)),
@@ -380,7 +391,12 @@ class Migration(migrations.Migration):
                         ],
                     ),
                 ),
-                ("endpoint", models.ForeignKey(related_name="groups", to="invitro.IVEndpoint"),),
+                (
+                    "endpoint",
+                    models.ForeignKey(
+                        related_name="groups", to="invitro.IVEndpoint", on_delete=models.CASCADE
+                    ),
+                ),
             ],
             options={"ordering": ("endpoint", "dose_group_id")},
             bases=(models.Model,),
@@ -473,13 +489,26 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "cell_type",
-                    models.ForeignKey(related_name="ivexperiments", to="invitro.IVCellType"),
+                    models.ForeignKey(
+                        related_name="ivexperiments",
+                        to="invitro.IVCellType",
+                        on_delete=models.CASCADE,
+                    ),
                 ),
                 (
                     "dose_units",
-                    models.ForeignKey(related_name="ivexperiments", to="assessment.DoseUnits"),
+                    models.ForeignKey(
+                        related_name="ivexperiments",
+                        to="assessment.DoseUnits",
+                        on_delete=models.CASCADE,
+                    ),
                 ),
-                ("study", models.ForeignKey(related_name="ivexperiments", to="study.Study"),),
+                (
+                    "study",
+                    models.ForeignKey(
+                        related_name="ivexperiments", to="study.Study", on_delete=models.CASCADE
+                    ),
+                ),
             ],
             options={},
             bases=(models.Model,),
@@ -488,26 +517,36 @@ class Migration(migrations.Migration):
             model_name="ivendpoint",
             name="category",
             field=models.ForeignKey(
-                related_name="endpoints", blank=True, to="invitro.IVEndpointCategory", null=True,
+                related_name="endpoints",
+                blank=True,
+                to="invitro.IVEndpointCategory",
+                null=True,
+                on_delete=models.SET_NULL,
             ),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name="ivendpoint",
             name="chemical",
-            field=models.ForeignKey(related_name="endpoints", to="invitro.IVChemical"),
+            field=models.ForeignKey(
+                related_name="endpoints", to="invitro.IVChemical", on_delete=models.CASCADE
+            ),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name="ivendpoint",
             name="experiment",
-            field=models.ForeignKey(related_name="endpoints", to="invitro.IVExperiment"),
+            field=models.ForeignKey(
+                related_name="endpoints", to="invitro.IVExperiment", on_delete=models.CASCADE
+            ),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name="ivbenchmark",
             name="endpoint",
-            field=models.ForeignKey(related_name="benchmarks", to="invitro.IVEndpoint"),
+            field=models.ForeignKey(
+                related_name="benchmarks", to="invitro.IVEndpoint", on_delete=models.CASCADE
+            ),
             preserve_default=True,
         ),
     ]

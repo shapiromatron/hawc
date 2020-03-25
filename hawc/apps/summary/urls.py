@@ -4,13 +4,13 @@ from rest_framework.routers import DefaultRouter
 from . import api, views
 
 router = DefaultRouter()
-router.register(r"visual", api.Visual, base_name="visual")
-router.register(r"data_pivot", api.DataPivot, base_name="data_pivot")
+router.register(r"visual", api.Visual, basename="visual")
+router.register(r"data_pivot", api.DataPivot, basename="data_pivot")
 
 app_name = "summary"
 urlpatterns = [
     # API
-    url(r"^api/", include(router.urls, namespace="api")),
+    url(r"^api/", include((router.urls, "api"))),
     # SUMMARY-TEXT
     url(r"^assessment/(?P<pk>\d+)/summaries/$", views.SummaryTextList.as_view(), name="list",),
     url(

@@ -7,8 +7,8 @@ from django.apps import apps
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
-from django.core.urlresolvers import reverse
 from django.db import models
+from django.urls import reverse
 from django.utils.html import strip_tags
 from reversion import revisions as reversion
 
@@ -23,7 +23,9 @@ from . import managers
 class RiskOfBiasDomain(models.Model):
     objects = managers.RiskOfBiasDomainManager()
 
-    assessment = models.ForeignKey("assessment.Assessment", related_name="rob_domains")
+    assessment = models.ForeignKey(
+        "assessment.Assessment", on_delete=models.CASCADE, related_name="rob_domains"
+    )
     name = models.CharField(max_length=128)
     description = models.TextField(blank=True)
     is_overall_confidence = models.BooleanField(
@@ -84,7 +86,7 @@ class RiskOfBiasDomain(models.Model):
 class RiskOfBiasMetric(models.Model):
     objects = managers.RiskOfBiasMetricManager()
 
-    domain = models.ForeignKey(RiskOfBiasDomain, related_name="metrics")
+    domain = models.ForeignKey(RiskOfBiasDomain, on_delete=models.CASCADE, related_name="metrics")
     name = models.CharField(max_length=256)
     short_name = models.CharField(max_length=50, blank=True)
     description = models.TextField(
@@ -153,9 +155,11 @@ class RiskOfBiasMetric(models.Model):
 class RiskOfBias(models.Model):
     objects = managers.RiskOfBiasManager()
 
-    study = models.ForeignKey("study.Study", related_name="riskofbiases", null=True)
+    study = models.ForeignKey(
+        "study.Study", on_delete=models.CASCADE, related_name="riskofbiases", null=True
+    )
     final = models.BooleanField(default=False, db_index=True)
-    author = models.ForeignKey(HAWCUser, related_name="riskofbiases")
+    author = models.ForeignKey(HAWCUser, on_delete=models.CASCADE, related_name="riskofbiases")
     active = models.BooleanField(default=False, db_index=True)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
@@ -491,8 +495,8 @@ class RiskOfBiasScore(models.Model):
         27: "#00CC00",
     }
 
-    riskofbias = models.ForeignKey(RiskOfBias, related_name="scores")
-    metric = models.ForeignKey(RiskOfBiasMetric, related_name="scores")
+    riskofbias = models.ForeignKey(RiskOfBias, on_delete=models.CASCADE, related_name="scores")
+    metric = models.ForeignKey(RiskOfBiasMetric, on_delete=models.CASCADE, related_name="scores")
     is_default = models.BooleanField(default=True)
     label = models.CharField(max_length=128, blank=True)
     score = models.PositiveSmallIntegerField(
@@ -627,7 +631,9 @@ class RiskOfBiasAssessment(models.Model):
         else:
             raise ValueError("Unknown HAWC flavor")
 
-    assessment = models.OneToOneField(Assessment, related_name="rob_settings")
+    assessment = models.OneToOneField(
+        Assessment, on_delete=models.CASCADE, related_name="rob_settings"
+    )
     number_of_reviewers = models.PositiveSmallIntegerField(default=1)
     help_text = models.TextField(
         default="Instructions for reviewers completing assessments",

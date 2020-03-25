@@ -20,12 +20,15 @@ class Migration(migrations.Migration):
                 to="assessment.DoseUnits",
                 help_text=b"If kept-blank, dose-units will be random for each endpoint presented. This setting may used for comparing percent-response, where dose-units are not needed.",
                 null=True,
+                on_delete=models.CASCADE,
             ),
         ),
         migrations.AlterField(
             model_name="visual",
             name="dose_units",
-            field=models.ForeignKey(blank=True, to="assessment.DoseUnits", null=True),
+            field=models.ForeignKey(
+                blank=True, to="assessment.DoseUnits", on_delete=models.SET_NULL, null=True
+            ),
         ),
     ]
 

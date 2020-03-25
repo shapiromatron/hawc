@@ -61,6 +61,7 @@ class Migration(migrations.Migration):
                         primary_key=True,
                         serialize=False,
                         to="summary.DataPivot",
+                        on_delete=models.CASCADE,
                     ),
                 ),
                 (
@@ -92,6 +93,7 @@ class Migration(migrations.Migration):
                         to="animal.DoseUnits",
                         help_text=b"If kept-blank, dose-units will be random for each endpoint presented. This setting may used for comparing percent-response, where dose-units are not needed.",
                         null=True,
+                        on_delete=models.CASCADE,
                     ),
                 ),
             ],
@@ -109,6 +111,7 @@ class Migration(migrations.Migration):
                         primary_key=True,
                         serialize=False,
                         to="summary.DataPivot",
+                        on_delete=models.CASCADE,
                     ),
                 ),
                 (
@@ -146,7 +149,10 @@ class Migration(migrations.Migration):
                 ("text", models.TextField(default=b"")),
                 ("created", models.DateTimeField(auto_now_add=True)),
                 ("last_updated", models.DateTimeField(auto_now=True)),
-                ("assessment", models.ForeignKey(to="assessment.Assessment")),
+                (
+                    "assessment",
+                    models.ForeignKey(to="assessment.Assessment", on_delete=models.CASCADE),
+                ),
             ],
             options={"verbose_name_plural": "Summary Text Descriptions"},
             bases=(models.Model,),
@@ -186,9 +192,16 @@ class Migration(migrations.Migration):
                 ("last_updated", models.DateTimeField(auto_now=True)),
                 (
                     "assessment",
-                    models.ForeignKey(related_name="visuals", to="assessment.Assessment"),
+                    models.ForeignKey(
+                        related_name="visuals", to="assessment.Assessment", on_delete=models.CASCADE
+                    ),
                 ),
-                ("dose_units", models.ForeignKey(blank=True, to="animal.DoseUnits", null=True),),
+                (
+                    "dose_units",
+                    models.ForeignKey(
+                        blank=True, to="animal.DoseUnits", null=True, on_delete=models.CASCADE
+                    ),
+                ),
                 (
                     "endpoints",
                     models.ManyToManyField(
@@ -223,7 +236,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="datapivot",
             name="assessment",
-            field=models.ForeignKey(to="assessment.Assessment"),
+            field=models.ForeignKey(to="assessment.Assessment", on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AlterUniqueTogether(

@@ -1,19 +1,17 @@
 from django.db.models import Q
 
-from ..assessment.models import Assessment
 from ..common.views import (
     BaseCreate,
     BaseCreateWithFormset,
     BaseDelete,
     BaseDetail,
     BaseEndpointFilterList,
-    BaseList,
     BaseUpdate,
     BaseUpdateWithFormset,
 )
 from ..mgmt.views import EnsureExtractionStartedMixin
 from ..study.models import Study
-from . import exports, forms, models
+from . import forms, models
 
 
 # MetaProtocol
@@ -127,24 +125,3 @@ class MetaResultList(BaseEndpointFilterList):
         if not perms["edit"]:
             query &= Q(protocol__study__published=True)
         return query
-
-
-class MetaResultFullExport(BaseList):
-    parent_model = Assessment
-    model = models.MetaResult
-
-    def get_queryset(self):
-        perms = self.get_obj_perms()
-        if not perms["edit"]:
-            return self.model.objects.published(self.assessment)
-        return self.model.objects.get_qs(self.assessment)
-
-    def get(self, request, *args, **kwargs):
-        self.object_list = self.get_queryset()
-        exporter = exports.MetaResultFlatComplete(
-            self.object_list,
-            export_format="excel",
-            filename=f"{self.assessment}-epi-meta-analysis",
-            sheet_name="epi-meta-analysis",
-        )
-        return exporter.build_response()

@@ -2,9 +2,10 @@ import logging
 
 from django.apps import apps
 from django.core import exceptions
-from django.core.urlresolvers import reverse
 from django.db.models import Count
-from rest_framework import decorators, filters, permissions, status, viewsets
+from django.urls import reverse
+from rest_framework import filters, permissions, status, viewsets
+from rest_framework.decorators import action
 from rest_framework.exceptions import APIException
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.renderers import JSONRenderer
@@ -129,7 +130,7 @@ class AssessmentRootedTagTreeViewset(viewsets.ModelViewSet):
 
         return super().create(request, *args, **kwargs)
 
-    @decorators.detail_route(methods=("patch",))
+    @action(detail=True, methods=("patch",))
     def move(self, request, *args, **kwargs):
         instance = self.get_object()
         self.assessment = instance.get_assessment()
@@ -307,7 +308,7 @@ class AdminDashboardViewset(viewsets.ViewSet):
     permission_classes = (permissions.IsAdminUser,)
     renderer_classes = (JSONRenderer,)
 
-    @decorators.list_route()
+    @action(detail=False)
     def growth(self, request):
         serializer = serializers.GrowthPlotSerializer(data=request.GET)
         serializer.is_valid(raise_exception=True)

@@ -6,9 +6,9 @@ import os
 
 from django.apps import apps
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist, ValidationError
-from django.core.urlresolvers import reverse
 from django.db import models, transaction
 from django.http import Http404
+from django.urls import reverse
 from reversion import revisions as reversion
 
 from ..assessment.models import Assessment
@@ -440,7 +440,7 @@ class Study(Reference):
 class Attachment(models.Model):
     objects = managers.AttachmentManager()
 
-    study = models.ForeignKey(Study, related_name="attachments")
+    study = models.ForeignKey(Study, related_name="attachments", on_delete=models.CASCADE)
     attachment = models.FileField(upload_to="study-attachment")
 
     def __str__(self):
