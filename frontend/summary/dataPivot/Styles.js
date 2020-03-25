@@ -340,7 +340,7 @@ class StyleLine {
             stroke: "#000000",
             "stroke-dasharray": "none",
             "stroke-opacity": 0.8,
-            "stroke-width": 2,
+            "stroke-width": 3,
         };
     }
 
