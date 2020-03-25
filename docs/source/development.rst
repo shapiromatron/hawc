@@ -224,3 +224,94 @@ Recommended workspace settings:
             "./frontend"
         ]
     }
+
+Windows development instructions
+--------------------------------
+
+The following steps are necessary to setup a developer environment in Windows.
+
+.. code-block:: bat
+
+    :: create a conda environment with our hard to get dependencies
+    conda create --name hawc
+    conda activate hawc
+    conda install python=3.6 postgresql=9.6
+    conda install -c conda-forge nodejs
+    conda install -c conda-forge yarn
+
+    :: now create a virtual python environment for our project
+    mkdir %HOMEPATH%\dev
+    cd %HOMEPATH%\dev
+    git clone https://github.com/shapiromatron/hawc.git
+    cd hawc
+
+    :: install the python requirements
+    conda activate hawc
+    python -m venv venv
+    venv\Scripts\activate.bat
+    pip install -r requirements\dev.txt
+
+    :: install the javascript requirements
+    cd frontend
+    yarn
+
+    :: setup our postgres database
+    mkdir %HOMEPATH%\dev\pgdata\
+    pg_ctl -D %HOMEPATH%\dev\pgdata initdb
+    mkdir %HOMEPATH%\dev\pgdata\logs
+    pg_ctl -D %HOMEPATH%\dev\pgdata -l %HOMEPATH%\dev\pgdata\logs\logfile start
+    createuser --superuser --no-password hawc
+    createdb -T template0 -E UTF8 hawc
+    manage.py migrate
+
+To run the application, you must run the python webserver in one terminal:
+
+.. code-block:: bat
+
+    :: start the postgres service
+    pg_ctl -D %HOMEPATH%\dev\pgdata -l %HOMEPATH%\dev\pgdata\logs\logfile start
+    :: run the postgres database
+    manage.py runserver
+
+and the node webserver in another terminal:
+
+.. code-block:: bat
+
+    :: run the web server
+    cd %HOMEPATH%\dev\hawc\frontend
+    npm start
+
+You can check `localhost`_ to see if everything is hosted correctly.
+
+.. _`localhost`: http://127.0.0.1:8000/
+
+Useful utilities
+~~~~~~~~~~~~~~~~
+
+There are two batch scripts named ``make`` available which provide most of the utilities found in the ``Makefile``.
+
+One of these is accessible from the project's top directory:
+
+.. code-block:: bat
+
+    :: run python test suite
+    make test
+
+    :: format python code
+    make format-py
+
+    :: for more commands...
+    make help
+
+And another within the project's ``doc`` folder:
+
+.. code-block:: bat
+
+    :: clean all the built documents
+    make clean
+
+    :: build documents as html
+    make html
+
+    :: for more commands...
+    make help
