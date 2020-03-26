@@ -451,9 +451,7 @@ class _DataPivot_settings_pointdata {
         };
 
         // set default values
-        this.content.field_name
-            .find('option[value="{0}"]'.printf(values.field_name))
-            .prop("selected", true);
+        this.content.field_name.find(`option[value="${values.field_name}"]`).prop("selected", true);
         this.content.header_name.val(values.header_name);
         this.content.dpe.find('option[value="{0}"]'.printf(values.dpe)).prop("selected", true);
 
@@ -504,6 +502,10 @@ class _DataPivot_settings_pointdata {
         };
     }
 
+    getName() {
+        return this.content.field_name.val();
+    }
+
     data_push() {
         this.values.field_name = this.content.field_name.find("option:selected").val();
         this.values.header_name = this.content.header_name.val();
@@ -527,6 +529,11 @@ class _DataPivot_settings_linedata {
 
         this.data_pivot = data_pivot;
         this.index = index;
+        this.conditional_formatter = new _DataPivot_settings_conditionalFormat(
+            this,
+            values.conditional_formatting || [],
+            {type: "lines"}
+        );
 
         // create fields
         this.content = {
@@ -538,6 +545,7 @@ class _DataPivot_settings_linedata {
             ),
             header_name: $('<input  class="span12" type="text">'),
             marker_style: this.data_pivot.style_manager.add_select(style_type, values.marker_style),
+            conditional_formatting: this.conditional_formatter.data,
         };
 
         // set default values
@@ -571,6 +579,7 @@ class _DataPivot_settings_linedata {
             )
             .append($("<td>").append(this.content.header_name))
             .append($("<td>").append(this.content.marker_style))
+            .append($("<td>").append(this.conditional_formatter.status))
             .on("change", "input,select", function(v) {
                 self.data_push();
 
@@ -593,7 +602,12 @@ class _DataPivot_settings_linedata {
             high_field_name: NULL_CASE,
             header_name: "",
             marker_style: "base",
+            conditional_formatting: [],
         };
+    }
+
+    getName() {
+        return "Line data";
     }
 
     data_push() {
@@ -602,6 +616,7 @@ class _DataPivot_settings_linedata {
             high_field_name: this.content.high_field_name.find("option:selected").val(),
             header_name: this.content.header_name.val(),
             marker_style: this.content.marker_style.find("option:selected").text(),
+            conditional_formatting: this.conditional_formatter.data,
         };
 
         if (v.header_name === "") {
@@ -907,6 +922,10 @@ class _DataPivot_settings_barchart {
             conditional_formatting: [],
             error_show_tails: true,
         };
+    }
+
+    getName() {
+        return this.content.field_name.val();
     }
 
     data_push() {
