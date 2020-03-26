@@ -3,6 +3,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework import filters, status, viewsets
 from rest_framework.decorators import detail_route, list_route
 from rest_framework.response import Response
+from rest_framework.serializers import ValidationError
 from rest_framework_extensions.mixins import ListUpdateModelMixin
 
 from ..assessment.api import (
@@ -15,8 +16,10 @@ from ..assessment.api import (
 )
 from ..assessment.models import TimeSpentEditing
 from ..common.api import BulkIdFilter
+from ..common.helper import tryParseInt
 from ..common.views import TeamMemberOrHigherMixin
 from ..mgmt.models import Task
+from ..study.models import Study
 from . import models, serializers
 
 
@@ -61,6 +64,26 @@ class RiskOfBias(viewsets.ModelViewSet):
                 serializer.instance,
                 serializer.instance.get_assessment().id,
             )
+
+    def create(self, request, *args, **kwargs):
+        requester_has_appropriate_permissions = False
+        study_id = tryParseInt(request.data.get("study_id"), -1)
+        study = Study.objects.get(id=study_id)
+        if study.user_can_edit_study(study.assessment, request.user):
+            # request.user is the user represented by the "Authorization: Token xxxx" header.
+            requester_has_appropriate_permissions = True
+
+        if not requester_has_appropriate_permissions:
+            raise ValidationError("Submitter '%s' has invalid permissions to edit Risk of Bias for this study" % request.user)
+
+        # overridden_objects is not marked as optional in RiskOfBiasScoreSerializerSlim; if it's not present
+        # in the payload, let's just add an empty array.
+        scores = request.data.get("scores")
+        for score in scores:
+            if "overridden_objects" not in score:
+                score["overridden_objects"] = []
+
+        return super().create(request, args, kwargs)
 
     @detail_route(methods=["get"])
     def override_options(self, request, pk=None):
