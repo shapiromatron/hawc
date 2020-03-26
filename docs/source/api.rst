@@ -41,3 +41,21 @@ There's also a HAWC client available:
         ids=hero_ids
     )
 
+There's also a HAWC client available in R:
+
+.. code-block:: R
+
+    install.packages("rhawc")
+    library(rhawc)
+
+    client = HawcClient("https://hawcproject.org")
+    client$authenticate("me@me.com", "keep-it-hidden")
+    
+    hero_ids = list(500:520)
+    client$lit_import_hero(
+        assessment_id=123,
+        title="example title",
+        description="example description",
+        ids=hero_ids
+    )
+
