@@ -272,7 +272,6 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
                 score = score_to_create["score"],
                 notes = score_to_create["notes"]
             )
-            # should we somehow add this score to the rob when returning it?
 
         return rob
 
