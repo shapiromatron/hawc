@@ -50,7 +50,8 @@ class PandasCsvRenderer(PandasBaseRenderer):
     format = "csv"
 
     def render_dataframe(self, df: pd.DataFrame, response: Response) -> str:
-        return df.to_csv(index=False)
+        # set line terminator to keep consistent on windows too
+        return df.to_csv(index=False, line_terminator="\n")
 
 
 class PandasJsonRenderer(PandasBaseRenderer):

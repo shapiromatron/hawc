@@ -85,6 +85,9 @@ In one terminal, start the the python webserver:
     # create a PostgreSQL database
     createdb -E UTF-8 hawc
 
+    # create a new PostgreSQL superuser
+    createuser --superuser --no-password hawc
+
     # active python virtual environment
     cd ~/dev/hawc
     source ./venv/bin/activate
@@ -249,6 +252,7 @@ The following steps are necessary to setup a developer environment in Windows.
     conda activate hawc
     python -m venv venv
     venv\Scripts\activate.bat
+    python -m pip install --upgrade pip
     pip install -r requirements\dev.txt
 
     :: install the javascript requirements
@@ -261,23 +265,39 @@ The following steps are necessary to setup a developer environment in Windows.
     mkdir %HOMEPATH%\dev\pgdata\logs
     pg_ctl -D %HOMEPATH%\dev\pgdata -l %HOMEPATH%\dev\pgdata\logs\logfile start
     createuser --superuser --no-password hawc
+
+    :: create our main and test databases
     createdb -T template0 -E UTF8 hawc
+    createdb -T template0 -E UTF8 test_hawc-fixture-test
+
+    :: sync the hawc code with the database
     manage.py migrate
 
 To run the application, you must run the python webserver in one terminal:
 
 .. code-block:: bat
 
-    :: start the postgres service
+    :: activate our environment
+    cd %HOMEPATH%\dev\hawc
+    conda activate hawc
+    venv\Scripts\activate
+
+    :: start the postgres database
     pg_ctl -D %HOMEPATH%\dev\pgdata -l %HOMEPATH%\dev\pgdata\logs\logfile start
-    :: run the postgres database
+
+    :: run the python webserver
     manage.py runserver
 
 and the node webserver in another terminal:
 
 .. code-block:: bat
 
-    :: run the web server
+    :: activate our environment
+    cd %HOMEPATH%\dev\hawc
+    conda activate hawc
+    venv\Scripts\activate
+
+    :: run the frontend build server
     cd %HOMEPATH%\dev\hawc\frontend
     npm start
 
