@@ -25,6 +25,12 @@ jobs:
       with:
         python-version: '3.6'
         architecture: 'x64'
+    - uses: actions/cache@v1
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('requirements/*.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
     - name: install
       run: |
         mv ci-webpack-stats.json webpack-stats.json
