@@ -143,7 +143,8 @@ class Search(models.Model):
     @transaction.atomic
     def run_new_import(self):
         if self.source == constants.PUBMED:
-            identifiers = Identifiers.objects.get_pubmed_identifiers(self.import_ids)
+            pmids = [int(id) for id in self.import_ids]
+            identifiers = Identifiers.objects.get_pubmed_identifiers(pmids)
             Reference.objects.get_pubmed_references(self, identifiers)
         elif self.source == constants.HERO:
             raise NotImplementedError()
@@ -170,9 +171,10 @@ class Search(models.Model):
         # For the cases where the current search found a new identifier which
         # already has an assessment-specific Reference object associated with
         # it, just associate the current reference with this search.
+        added_str = [str(id) for id in results["added"]]
         ref_ids = (
             Reference.objects.filter(
-                assessment=self.assessment, identifiers__unique_id__in=results["added"]
+                assessment=self.assessment, identifiers__unique_id__in=added_str
             )
             .exclude(searches=self)
             .values_list("pk", flat=True)
@@ -180,18 +182,16 @@ class Search(models.Model):
         ids_count = ref_ids.count()
 
         if ids_count > 0:
-            logging.debug("Starting bulk creation of existing search-thorough values")
-            ref_searches = []
-            for ref in ref_ids:
-                ref_searches.append(RefSearchM2M(reference_id=ref, search_id=self.pk))
+            logging.debug("Starting bulk creation of existing search-through values")
+            ref_searches = [RefSearchM2M(reference_id=ref, search_id=self.pk) for ref in ref_ids]
             RefSearchM2M.objects.bulk_create(ref_searches)
-            logging.debug(f"Completed bulk creation of {len(ref_searches)} search-thorough values")
+            logging.debug(f"Completed bulk creation of {len(ref_searches)} search-through values")
 
         # For the cases where the search resulted in new ids which may or may
         # not already be imported as a reference for this assessment, find the
         # proper subset.
         ids = (
-            Identifiers.objects.filter(database=self.source, unique_id__in=results["added"])
+            Identifiers.objects.filter(database=self.source, unique_id__in=added_str)
             .exclude(references__in=Reference.objects.get_qs(self.assessment))
             .order_by("pk")
         )
@@ -216,13 +216,13 @@ class Search(models.Model):
             # associate identifiers with each
             ref_searches = []
             ref_ids = []
-            logging.debug(f"Starting  bulk creation of {refs.count()} reference-thorough values")
+            logging.debug(f"Starting  bulk creation of {refs.count()} reference-through values")
             for i, ref in enumerate(refs):
                 ref_searches.append(RefSearchM2M(reference_id=ref.pk, search_id=self.pk))
                 ref_ids.append(RefIdM2M(reference_id=ref.pk, identifiers_id=id_pks[i]))
             RefSearchM2M.objects.bulk_create(ref_searches)
             RefIdM2M.objects.bulk_create(ref_ids)
-            logging.debug(f"Completed bulk creation of {refs.count()} reference-thorough values")
+            logging.debug(f"Completed bulk creation of {refs.count()} reference-through values")
 
             # finally, remove temporary identifier used for re-query after bulk_create
             logging.debug("Removing block-id from created references")
@@ -366,7 +366,7 @@ class PubMedQuery(models.Model):
                 database=constants.PUBMED, unique_id__in=new_ids
             ).values_list("unique_id", flat=True)
         )
-        ids_to_add = list(set(new_ids) - set(existing_pmids))
+        ids_to_add = [int(id) for id in set(new_ids) - set(existing_pmids)]
         ids_to_add_len = len(ids_to_add)
 
         block_size = 1000.0
@@ -453,7 +453,7 @@ class Identifiers(models.Model):
                 assessment=assessment,
                 title=content.get("title", ""),
                 authors_short=content.get("authors_short", ""),
-                authors=", ".join(content.get("authors", [""])),
+                authors=", ".join(content.get("authors", [])),
                 journal=content.get("citation", ""),
                 abstract=content.get("abstract", ""),
                 year=content.get("year", None),
@@ -468,7 +468,7 @@ class Identifiers(models.Model):
                 assessment=assessment,
                 title=title or "",
                 authors_short=content.get("authors_short", ""),
-                authors=", ".join(content.get("authors", [""])),
+                authors=", ".join(content.get("authors", [])),
                 year=content.get("year", None),
                 journal=journal or "",
                 abstract=abstract or "",

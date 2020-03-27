@@ -1,5 +1,6 @@
 import json
 from datetime import timedelta
+from typing import List
 
 from celery import shared_task
 from celery.decorators import periodic_task
@@ -13,17 +14,18 @@ logger = get_task_logger(__name__)
 
 
 @shared_task
-def update_pubmed_content(ids):
+def update_pubmed_content(ids: List[int]):
     """Fetch the latest data from Pubmed and update identifier object."""
     Identifiers = apps.get_model("lit", "identifiers")
     fetcher = pubmed.PubMedFetch(ids)
     contents = fetcher.get_content()
     for d in contents:
         content = json.dumps(d)
-        Identifiers.objects.filter(unique_id=d["PMID"], database=constants.PUBMED).update(
+        Identifiers.objects.filter(unique_id=str(d["PMID"]), database=constants.PUBMED).update(
             content=content
         )
-    Identifiers.objects.filter(unique_id__in=ids, database=constants.PUBMED, content="").update(
+    ids_str = [str(id) for id in ids]
+    Identifiers.objects.filter(unique_id__in=ids_str, database=constants.PUBMED, content="").update(
         content='{"status": "failed"}'
     )
 

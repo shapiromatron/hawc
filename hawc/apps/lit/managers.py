@@ -105,9 +105,11 @@ class IdentifiersManager(BaseManager):
             if ref["PMID"] is not None or db == "nlm":
                 id_ = ref["PMID"] or ref["accession_number"]
                 if id_ is not None:
-                    ident = self.filter(database=constants.PUBMED, unique_id=id_).first()
+                    ident = self.filter(database=constants.PUBMED, unique_id=str(id_)).first()
                     if not ident:
-                        ident = self.create(database=constants.PUBMED, unique_id=id_, content="")
+                        ident = self.create(
+                            database=constants.PUBMED, unique_id=str(id_), content=""
+                        )
                         pimdsFetch.append(ident)
                     ids.append(ident)
 
@@ -139,8 +141,7 @@ class IdentifiersManager(BaseManager):
         qs = self.hero(ids, allow_missing=True).values_list("unique_id", flat=True)
         existing_ids = [int(id_) for id_ in qs]
         remaining_ids = list(set(ids) - set(existing_ids))
-        remaining_ids_str = [str(el) for el in remaining_ids]
-        fetcher = hero.HEROFetch(remaining_ids_str)
+        fetcher = hero.HEROFetch(remaining_ids)
         fetched_content = fetcher.get_content()
         if len(fetched_content["failure"]) > 0:
             failed_ids = ",".join(str(el) for el in fetched_content["failure"])
@@ -156,7 +157,7 @@ class IdentifiersManager(BaseManager):
             [
                 apps.get_model("lit", "Identifiers")(
                     database=constants.HERO,
-                    unique_id=content["HEROID"],
+                    unique_id=str(content["HEROID"]),
                     content=json.dumps(content),
                 )
                 for content in deduplicated_content
@@ -173,30 +174,41 @@ class IdentifiersManager(BaseManager):
 
         return qs
 
-    def get_pubmed_identifiers(self, ids):
-        # Return a queryset of identifiers, one for each PubMed ID. Either get
-        # or create an identifier, whatever is required
+    def get_pubmed_identifiers(self, pmids: List[int]):
+        """Return a queryset of identifiers, one for each PubMed ID. Either get
+        or create an identifier, whatever is required
+
+        Args:
+            pmids (List[int]): A list of pubmed identifiers
+        """
+        #
         Identifiers = apps.get_model("lit", "Identifiers")
-        # Filter IDs which need to be imported
-        idents = list(
-            self.filter(database=constants.PUBMED, unique_id__in=ids).values_list(
+
+        # Filter IDs which need to be imported; we cast to str and back to mirror db fields
+        pmids_str = [str(id) for id in pmids]
+        existing = list(
+            self.filter(database=constants.PUBMED, unique_id__in=pmids_str).values_list(
                 "unique_id", flat=True
             )
         )
-        need_import = tuple(set(ids) - set(idents))
+        need_import = [int(id) for id in set(pmids_str) - set(existing)]
 
         # Grab Pubmed objects
         fetch = pubmed.PubMedFetch(need_import)
 
         # Save new Identifier objects
-        for item in fetch.get_content():
-            ident = Identifiers(
-                unique_id=item["PMID"], database=constants.PUBMED, content=json.dumps(item),
-            )
-            ident.save()
-            idents.append(ident.unique_id)
+        Identifiers.objects.bulk_create(
+            [
+                Identifiers(
+                    unique_id=str(item["PMID"]),
+                    database=constants.PUBMED,
+                    content=json.dumps(item),
+                )
+                for item in fetch.get_content()
+            ]
+        )
 
-        return self.filter(database=constants.PUBMED, unique_id__in=idents)
+        return self.filter(database=constants.PUBMED, unique_id__in=pmids_str)
 
 
 class ReferenceManager(BaseManager):
@@ -276,7 +288,7 @@ class ReferenceManager(BaseManager):
 
             if pmid:
                 ref = self.get_qs(search.assessment).filter(
-                    identifiers__unique_id=pmid, identifiers__database=constants.PUBMED
+                    identifiers__unique_id=str(pmid), identifiers__database=constants.PUBMED
                 )
             else:
                 ref = self.none()

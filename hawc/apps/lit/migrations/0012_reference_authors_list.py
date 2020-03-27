@@ -3,67 +3,134 @@
 from __future__ import unicode_literals
 
 import json
+import xml.etree.ElementTree as ET
 
 from django.db import migrations, models
-from litter_getter import hero, ris
+from litter_getter import hero, pubmed, ris
 
 from hawc.apps.lit.constants import HERO, PUBMED, RIS
 
 
 def delete_external(apps, schema_editor):
+    """
+    Delete all external identifiers (no longer used)
+    """
     apps.get_model("lit", "Identifiers").objects.filter(database=0).delete()
 
 
 def set_null_content(apps, schema_editor):
+    """
+    Update identifiers to either return a valid JSON string or an empty string
+    """
     num_updated = (
         apps.get_model("lit", "Identifiers").objects.filter(content="None").update(content="")
     )
     print(f"Updated {num_updated} items renaming content from 'None' to ''")
 
 
-def update_identifier_content(apps, schema_editor):
+def reparse_identifiers(apps, schema_editor):
+    """
+    Re-parse identifiers from HERO/RIS using new parsing engine.
+    """
     Identifiers = apps.get_model("lit", "Identifiers")
 
-    qs = Identifiers.objects.filter(database=HERO)
-    ntotal = qs.count()
+    qs = Identifiers.objects.filter(database=PUBMED)
+    n_total = qs.count()
+    updates = []
     for idx, identifier in enumerate(qs.iterator()):
-        if idx % 1000 == 0:
-            print(f"Updating HERO identifier content {idx:,} of {ntotal:,}")
+        if idx % 5000 == 0:
+            print(f"Updating PubMed identifier content {idx:,} of {n_total:,}")
+        if len(identifier.content) > 0:
+            tree = ET.fromstring(json.loads(identifier.content)["xml"])
+            content = pubmed.PubMedParser.parse(tree)
+            try:
+                identifier.content = json.dumps(content)
+            except Exception:
+                import pdb
+
+                pdb.set_trace()
+            updates.append(identifier)
+
+    print(f"Updating {len(updates):,} PubMed identifiers of {n_total:,}")
+    Identifiers.objects.bulk_update(updates, ["content"], batch_size=5000)
+
+    qs = Identifiers.objects.filter(database=HERO)
+    n_total = qs.count()
+    updates = []
+    for idx, identifier in enumerate(qs.iterator()):
+        if idx % 5000 == 0:
+            print(f"Updating HERO identifier content {idx:,} of {n_total:,}")
         if len(identifier.content) > 0:
             content = hero.parse_article(json.loads(json.loads(identifier.content)["json"]))
             identifier.content = json.dumps(content)
-            identifier.save()
+            updates.append(identifier)
+
+    print(f"Updating {len(updates):,} HERO identifiers of {n_total:,}")
+    Identifiers.objects.bulk_update(updates, ["content"], batch_size=5000)
 
     qs = Identifiers.objects.filter(database=RIS)
-    ntotal = qs.count()
+    n_total = qs.count()
+    updates = []
     for idx, identifier in enumerate(qs.iterator()):
-        if idx % 1000 == 0:
-            print(f"Updating identifier content {idx:,} of {ntotal:,}")
+        if idx % 5000 == 0:
+            print(f"Updating identifier content {idx:,} of {n_total:,}")
         if len(identifier.content) > 0:
             parser = ris.ReferenceParser(json.loads(json.loads(identifier.content)["json"]))
             identifier.content = json.dumps(parser.format())
-            identifier.save()
+            updates.append(identifier)
+
+    print(f"Updating {len(updates):,} references of {n_total:,}")
+    Identifiers.objects.bulk_update(updates, ["content"], batch_size=5000)
 
 
-def set_authors(apps, schema_editor):
-    Identifiers = apps.get_model("lit", "Identifiers")
-    qs = Identifiers.objects.filter(database=[PUBMED, HERO])
-    for idx, identifier in enumerate(qs.iterator()):
-        if idx % 1000 == 0:
-            print(f"Processing Pubmed/HERO {idx:,} ...")
-        if len(identifier.content):
+def update_reference_authors(apps, schema_editor):
+    """
+    Set `authors` and `authors_short` for all references.
+    """
+    Reference = apps.get_model("lit", "Reference")
+    qs = Reference.objects.all().prefetch_related("identifiers")
+    n_total = Reference.objects.all().count()
+    updates = []
+    for idx, reference in enumerate(qs.iterator()):
+        if idx % 5000 == 0:
+            print(f"Updating reference authors {idx:,} of {n_total:,}")
+
+        # get pubmed, or hero, or ris, if they exist, in that order
+        identifier = (
+            reference.identifiers.filter(database=PUBMED).first()
+            or reference.identifiers.filter(database=HERO).first()
+            or reference.identifiers.filter(database=RIS).first()
+        )
+        if identifier and identifier.content:
             content = json.loads(identifier.content)
-            if "authors_list" in content:
-                identifier.authors = ", ".join(content["authors"])
-                identifier.save()
+            if "authors" in content:
+                reference.authors = ", ".join(content["authors"])
+                updates.append(reference)
 
-    qs = Identifiers.objects.filter(database=RIS)
-    for idx, identifier in enumerate(qs.iterator()):
-        if idx % 1000 == 0:
-            print(f"Processing RIS {idx:,} ...")
-        if len(identifier.content) > 0:
-            identifier.authors = authors
-            identifier.save()
+    print(f"Updating {len(updates):,} RIS identifiers of {n_total:,}")
+    Reference.objects.bulk_update(updates, ["authors"], batch_size=5000)
+
+
+def update_pubmed_queries(apps, schema_editor):
+    # convert ids from str to int
+    PubMedQuery = apps.get_model("lit", "PubMedQuery")
+    qs = PubMedQuery.objects.all()
+    n_total = qs.count()
+    updates = []
+    for idx, query in enumerate(qs):
+        if query.results:
+            results = json.loads(query.results)
+            results = dict(
+                ids=[int(id) for id in results["ids"]],
+                added=[int(id) for id in results["added"]],
+                removed=[int(id) for id in results["removed"]],
+            )
+            query.results = json.dumps(results)
+            updates.append(query)
+            n_total += 1
+
+    print(f"Updating {len(updates):,} PubMedQuery of {n_total:,}")
+    PubMedQuery.objects.bulk_update(updates, ["results"], batch_size=5000)
 
 
 class Migration(migrations.Migration):
@@ -124,6 +191,7 @@ class Migration(migrations.Migration):
         ),
         migrations.RunPython(delete_external, reverse_code=migrations.RunPython.noop),
         migrations.RunPython(set_null_content, reverse_code=migrations.RunPython.noop),
-        migrations.RunPython(update_identifier_content, reverse_code=migrations.RunPython.noop),
-        migrations.RunPython(set_authors, reverse_code=migrations.RunPython.noop),
+        migrations.RunPython(reparse_identifiers, reverse_code=migrations.RunPython.noop),
+        migrations.RunPython(update_reference_authors, reverse_code=migrations.RunPython.noop),
+        migrations.RunPython(update_pubmed_queries, reverse_code=migrations.RunPython.noop),
     ]

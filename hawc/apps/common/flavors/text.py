@@ -75,20 +75,14 @@ text_mapping = dict(
                 confidence rating should be documented clearly and consistently, including
                 a brief description of any important strengths and/or limitations that were
                 identified and their potential impact on the overall confidence.</p>
-                <p>Note that due to current limitations in HAWC, domain judgments and overall
-                ratings for all individual endpoints/outcomes assessed in a study will need
-                to be entered using a single drop-down selection and free-text box for each
-                study. Thus, all the reviewer decisions (and the supporting rationale) drawn
-                at the level of a specific cohort or individual endpoint within a study must
-                be described within a single free-text box.&nbsp;Within the text boxes, please
-                remember to call out each of the specific judgments and rationales. A good
-                form to follow for the text boxes is '<strong><em>Endpoint/Outcome – Judgment
-                – Rationale</em></strong>'. When selecting the representative rating for the
-                domains and overall rating (i.e., the drop-down selection with the associated
-                color code), it is typically most appropriate to select the judgment that
-                best represents an average of the responses for the endpoint/outcome evaluated
-                in that study, considering the pre-defined importance of individual
-                outcomes/health effects to the assessment (see Overall Confidence examples).</p>
+                <p>Domain judgments and overall ratings for all individual endpoints/outcomes
+                can be captured by a single (default) response, or you can create override
+                responses assigned to individual endpoints, outcomes, or results; provide a
+                descriptive label to describe which components the score refers to. Each response
+                must have a single default score; when selecting the default representative rating
+                for the domains and overall rating (i.e., the drop-down selection with the
+                associated color code), it is typically most appropriate to select the judgment
+                that best represents the study overall.</p>
                 <p>Follow <a href='https://hawcprd.epa.gov/assessment/100000039/' target='_blank'><strong>link</strong></a>
                 to see attachments that contain example answers to the animal study evaluation domains.
                 <em>It is really helpful to have this document open when conducting reviews.</em></p>
