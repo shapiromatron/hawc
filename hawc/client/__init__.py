@@ -57,12 +57,12 @@ class Client:
         token = self._handle_hawc_response(response)["token"]
         self.session.headers.update(Authorization=f"Token {token}")
 
-    def _get(self, url: str) -> Dict:
-        response = self.session.get(url)
+    def _get(self, url: str, params: Dict = None) -> Dict:
+        response = self.session.get(url=url, params=params)
         return self._handle_hawc_response(response)
 
-    def _post(self, url: str, payload: Dict) -> Dict:
-        response = self.session.post(url, payload)
+    def _post(self, url: str, data: Dict) -> Dict:
+        response = self.session.post(url=url, data=data)
         return self._handle_hawc_response(response)
 
     def lit_import_hero(self, assessment_id: int, title: str, description: str, ids: List[int]) -> Dict:
@@ -146,3 +146,22 @@ class Client:
     def public_assessments(self) -> Dict:
         url = f"{self.root_url}/assessment/api/public/"
         return self._get(url)
+
+    def _page_gen(self, url, params=None):
+        response_json = self._get(url, params)
+        yield response_json["results"]
+        while response_json["next"] is not None:
+            response_json = self._get(response_json["next"])
+            yield response_json["results"]
+
+    def ani_endpoints(self, assessment_id: int) -> Dict:
+        payload = {"assessment_id": assessment_id}
+        url = f"{self.root_url}/ani/api/endpoint/"
+        generator = self._page_gen(url, payload)
+        return [res for results in generator for res in results]
+
+    def epi_endpoints(self, assessment_id: int) -> Dict:
+        payload = {"assessment_id": assessment_id}
+        url = f"{self.root_url}/epi/api/outcome/"
+        generator = self._page_gen(url, payload)
+        return [res for results in generator for res in results]
