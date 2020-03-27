@@ -1,7 +1,7 @@
 #' HawcClient
 #'
-#' This function sets up a HawcClient class, which contains functions
-#' for specific get and post requests from HAWC APIs
+#' This function serves as an R-client to send and receive
+#' data from HAWC (Health assessment workspace collaborative)
 #'
 #' @import httr
 #' @import plyr
