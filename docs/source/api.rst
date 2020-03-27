@@ -45,7 +45,7 @@ There's also a HAWC client available in R:
 
 .. code-block:: R
 
-    install.packages("rhawc")
+    devtools::install_github('shapiromatron/hawc', subdir='client/r/rhawc')
     library(rhawc)
 
     client = HawcClient("https://hawcproject.org")
