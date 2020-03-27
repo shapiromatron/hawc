@@ -210,8 +210,6 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
                 explanation = "; ".join(problematic_scores)
                 raise serializers.ValidationError("create failed; study %s had problematic scores (%s)" % (study_id, explanation))
 
-            # TODO - check to make sure submitted score values are real? Like within acceptable ranges
-
             # store the actual metric object we want to create
             score_idx = 0
             for score in data["scores"]:
@@ -221,6 +219,17 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
                 score_idx += 1
 
             override_options = models.RiskOfBias().get_override_options()
+
+        # check to make sure submitted score values are valid
+        rob_assessment = models.RiskOfBiasAssessment()
+        valid_score_values = rob_assessment.get_rob_response_values()
+
+        scores = self.initial_data["scores"]
+        for score in scores:
+            score_value = score["score"]
+            if score_value not in valid_score_values:
+                raise serializers.ValidationError("score %s is not valid" % (score_value,))
+
 
         # check overrides
         for key, values in override_options.items():
@@ -297,31 +306,6 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
                 overridden_object.save()
 
         return rob
-
-        # TODO - do we need to handle overrides?
-        """
-        Creates the nested RiskOfBiasScores with submitted data before creating
-        the RiskOfBias instance.
-        """
-
-        """
-        for update_score in update_scores:
-            score = scores[update_score["id"]]
-            for key in ["score", "label", "notes"]:
-                setattr(score, key, update_score[key])
-            score.save()
-
-        # update overrides
-        new_overrides = []
-        for update_score in update_scores:
-            new_overrides.extend(update_score["overridden_objects"])
-        models.RiskOfBiasScoreOverrideObject.objects.filter(
-            score__riskofbias_id=instance.id
-        ).delete()
-        models.RiskOfBiasScoreOverrideObject.objects.bulk_create(new_overrides)
-
-        return super().update(instance, validated_data)
-        """
 
     def update(self, instance, validated_data):
         """
