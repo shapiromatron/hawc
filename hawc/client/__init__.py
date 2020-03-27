@@ -17,9 +17,9 @@ class HawcServerException(Exception):
 
 
 class Client:
-    def __init__(self, email: str, password: str, root_url: str = "https://hawcproject.org"):
+    def __init__(self, root_url: str = "https://hawcproject.org"):
         self.root_url = root_url
-        self.session = self.authenticate(email, password)
+        self.session = Session()
 
     def _handle_hawc_response(self, response: Response) -> Dict:
         """
@@ -49,18 +49,13 @@ class Client:
         Args:
             email (str): email to authenticate
             password (str): password to authenticate
-
-        Returns:
-            Session: a requests.Session object
         """
-        session = Session()
 
         url = f"{self.root_url}/user/api/token-auth/"
         data = {"username": email, "password": password}
-        response = session.post(url, json=data)
+        response = self.session.post(url, json=data)
         token = self._handle_hawc_response(response)["token"]
-        session.headers.update(Authorization=f"Token {token}")
-        return session
+        self.session.headers.update(Authorization=f"Token {token}")
 
     def _get(self, url: str) -> Dict:
         response = self.session.get(url)
@@ -70,9 +65,7 @@ class Client:
         response = self.session.post(url, payload)
         return self._handle_hawc_response(response)
 
-    def lit_import_hero(
-        self, assessment_id: int, title: str, description: str, ids: List[int]
-    ) -> Dict:
+    def lit_import_hero(self, assessment_id: int, title: str, description: str, ids: List[int]) -> Dict:
         payload = {
             "assessment": assessment_id,
             "search_type": "i",
@@ -94,9 +87,7 @@ class Client:
         response_json = self._get(url)
         return pd.DataFrame(response_json)
 
-    def lit_import_reference_tags(
-        self, assessment_id: int, csv: str, operation: str = "append"
-    ) -> pd.DataFrame:
+    def lit_import_reference_tags(self, assessment_id: int, csv: str, operation: str = "append") -> pd.DataFrame:
         payload = {"csv": csv, "operation": operation}
         url = f"{self.root_url}/lit/api/assessment/{assessment_id}/reference-tags/"
         response_json = self._post(url, payload)
@@ -151,3 +142,7 @@ class Client:
         url = f"{self.root_url}/summary/api/visual/?assessment_id={assessment_id}"
         response_json = self._get(url)
         return pd.DataFrame(response_json)
+
+    def public_assessments(self) -> Dict:
+        url = f"{self.root_url}/assessment/api/public/"
+        return self._get(url)
