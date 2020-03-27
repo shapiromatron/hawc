@@ -12,7 +12,7 @@ LazyData: true
 RoxygenNote: 7.1.0
 Imports:
     httr,
-    getPass,
+    glue,
     plyr
 Suggests: 
     knitr,
