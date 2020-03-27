@@ -252,7 +252,12 @@ class AssessmentEndpointList(AssessmentViewset):
 
         count = apps.get_model("epi", "Exposure").objects.get_qs(instance.id).count()
         instance.items.append(
-            {"count": count, "title": "epi exposures", "type": "exposures", "url": f"{app_url}exposures/",}
+            {
+                "count": count,
+                "title": "epi exposures",
+                "type": "exposures",
+                "url": f"{app_url}exposures/",
+            }
         )
 
         # in vitro
@@ -277,12 +282,19 @@ class AssessmentEndpointList(AssessmentViewset):
 
         # study
         count = apps.get_model("study", "Study").objects.get_qs(instance.id).count()
-        instance.items.append({"count": count, "title": "studies", "type": "study", "url": f"{app_url}study/"})
+        instance.items.append(
+            {"count": count, "title": "studies", "type": "study", "url": f"{app_url}study/"}
+        )
 
         # lit
         count = apps.get_model("lit", "Reference").objects.get_qs(instance.id).count()
         instance.items.append(
-            {"count": count, "title": "references", "type": "reference", "url": f"{app_url}reference/",}
+            {
+                "count": count,
+                "title": "references",
+                "type": "reference",
+                "url": f"{app_url}reference/",
+            }
         )
 
         serializer = self.get_serializer(instance)

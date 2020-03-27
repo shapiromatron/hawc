@@ -65,7 +65,9 @@ class Client:
         response = self.session.post(url=url, data=data)
         return self._handle_hawc_response(response)
 
-    def lit_import_hero(self, assessment_id: int, title: str, description: str, ids: List[int]) -> Dict:
+    def lit_import_hero(
+        self, assessment_id: int, title: str, description: str, ids: List[int]
+    ) -> Dict:
         payload = {
             "assessment": assessment_id,
             "search_type": "i",
@@ -87,7 +89,9 @@ class Client:
         response_json = self._get(url)
         return pd.DataFrame(response_json)
 
-    def lit_import_reference_tags(self, assessment_id: int, csv: str, operation: str = "append") -> pd.DataFrame:
+    def lit_import_reference_tags(
+        self, assessment_id: int, csv: str, operation: str = "append"
+    ) -> pd.DataFrame:
         payload = {"csv": csv, "operation": operation}
         url = f"{self.root_url}/lit/api/assessment/{assessment_id}/reference-tags/"
         response_json = self._post(url, payload)
