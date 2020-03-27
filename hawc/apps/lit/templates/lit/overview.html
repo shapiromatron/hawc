@@ -59,7 +59,6 @@
             <th>Untagged</th>
             <td>{{overview.total_untagged}}</td>
           </tr>
-
           {% if overview.total_references >= 10 %}
           <tr>
             <th colspan="2">
@@ -113,7 +112,6 @@
       let tagtree = new lit.TagTree(data.tags[0], data.assessment_id, null);
       $('#tags').html(tagtree.get_nested_list({ show_refs_count: false }))
     });
-
 
     const histo = document.getElementById("referenceYearHistogram");
     if (histo){

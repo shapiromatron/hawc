@@ -16,6 +16,8 @@ celerybeat*
 compose/nginx/conf/nginx.conf
 hawc/main/settings/local.py
 webpack-stats.json
+.Rhistory
+.Rproj.user
 
 # folders
 *.egg-info/
@@ -42,4 +44,3 @@ hawc/static/bundles/
 
 compose/django/fonts/*
 !compose/django/fonts/.gitkeep
-.Rproj.user

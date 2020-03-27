@@ -62,11 +62,9 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         df = models.ReferenceTags.objects.as_dataframe(instance.id)
         return Response(df)
 
-
     @action(
         detail=True, methods=("get",), url_path="reference-year-histogram",
     )
-
     def reference_year_histogram(self, request, pk):
         instance = self.get_object()
         # get all the years for a given assessment
@@ -75,7 +73,6 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
                 "year", flat=True
             )
         )
-
         payload = {}
         if len(years) > 0:
 
