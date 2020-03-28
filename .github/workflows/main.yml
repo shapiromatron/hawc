@@ -60,6 +60,10 @@ jobs:
     - uses: actions/setup-node@v1
       with:
         node-version: '12.x'
+    - name: set yarn cache directory
+      id: yarn-cache-dir-path
+      run: |
+        echo "::set-output name=dir::$(yarn cache dir)"
     - name: try to restore yarn cache
       uses: actions/cache@v1
       id: yarn-cache
