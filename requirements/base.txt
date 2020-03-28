@@ -36,7 +36,7 @@ python-docx==0.8.10
 python-pptx==0.6.18
 
 # bmds
-bmds==0.10.0
+git+https://github.com/shapiromatron/bmds.git@36c102cfc0340ad98efcb57686dfcd72a8a02895#egg=bmds
 
 # literature
 litter-getter==0.2.6

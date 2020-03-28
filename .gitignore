@@ -16,6 +16,8 @@ celerybeat*
 compose/nginx/conf/nginx.conf
 hawc/main/settings/local.py
 webpack-stats.json
+.Rhistory
+.Rproj.user
 
 # folders
 *.egg-info/
