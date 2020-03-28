@@ -96,8 +96,8 @@ class ReferenceFlatComplete(FlatFileExporter):
                 ref.pk,
                 ref.get_hero_id(),
                 ref.get_pubmed_id(),
-                ref.short_citation,
-                ref.full_citation,
+                ref.ref_short_citation,
+                ref.ref_full_citation,
                 ref.title,
                 ref.authors,
                 ref.authors_short,
@@ -132,6 +132,12 @@ class TableBuilderFormat(FlatFileExporter):
 
     def _get_data_rows(self):
         return [
-            [ref.get_pubmed_id(), ref.short_citation, ref.full_citation, None, ref.full_text_url]
+            [
+                ref.get_pubmed_id(),
+                ref.ref_short_citation,
+                ref.ref_full_citation,
+                None,
+                ref.full_text_url,
+            ]
             for ref in self.queryset
         ]

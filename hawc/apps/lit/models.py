@@ -596,7 +596,7 @@ class Reference(models.Model):
         return reverse("lit:ref_detail", kwargs={"pk": self.pk})
 
     def __str__(self):
-        return self.short_citation
+        return self.ref_short_citation
 
     def get_json(self, json_encode=True):
         d = {}
@@ -644,9 +644,10 @@ class Reference(models.Model):
             )
 
     @property
-    def full_citation(self):
+    def ref_full_citation(self):
+        # must be prefixed w/ ref b/c study.Study has the same property
         txt = ""
-        for itm in [self.authors_short, self.title, self.journal]:
+        for itm in [self.authors, self.title, self.journal]:
             txt += itm
             if (len(itm) > 0) and (itm[-1] != "."):
                 txt += ". "
@@ -655,7 +656,8 @@ class Reference(models.Model):
         return txt
 
     @property
-    def short_citation(self):
+    def ref_short_citation(self):
+        # must be prefixed w/ ref b/c study.Study has the same property
         # get short citation
         citation = self.authors_short if self.authors_short else "[No authors listed]"
 

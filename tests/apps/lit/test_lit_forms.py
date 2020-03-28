@@ -120,13 +120,38 @@ class TestRisImportForm:
         )
         assert form.is_valid()
 
-        assert Reference.objects.filter(
-            title="Early alterations in protein and gene expression in rat kidney following bromate exposure"
-        ).first() is None
-
+        # confirm that after save a reference is
+        qs = Reference.objects.filter(authors_short="Ahlborn GJ et al.")
+        assert qs.count() == 0
         form.save()
+        assert qs.count() == 1
 
-        assert Reference.objects.filter(
-            title="Early alterations in protein and gene expression in rat kidney following bromate exposure"
-        ).first() is not None
+    def test_not_ris_file(self, db_keys):
+        form = RisImportForm(
+            {
+                "search_type": "i",
+                "source": constants.RIS,
+                "title": "demo title",
+                "slug": "demo-title",
+                "description": "",
+            },
+            {"import_file": SimpleUploadedFile("test.pdf", b"Nope")},
+            parent=Assessment.objects.get(id=db_keys.assessment_working),
+        )
+        assert form.is_valid() is False
+        assert form.errors == {"import_file": ['File must have an ".ris" or ".txt" file-extension']}
 
+    def test_unparsable_ris(self, db_keys):
+        form = RisImportForm(
+            {
+                "search_type": "i",
+                "source": constants.RIS,
+                "title": "demo title",
+                "slug": "demo-title",
+                "description": "",
+            },
+            {"import_file": SimpleUploadedFile("test.ris", b"Not valid ris")},
+            parent=Assessment.objects.get(id=db_keys.assessment_working),
+        )
+        assert form.is_valid() is False
+        assert form.errors == {"import_file": [RisImportForm.UNPARSABLE_RIS]}

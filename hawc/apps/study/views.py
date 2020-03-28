@@ -52,7 +52,7 @@ class StudyCreateFromReference(EnsurePreparationStartedMixin, BaseCreate):
             assessment=self.assessment,
             reference=self.parent,
             short_citation=self.parent.short_citation,
-            full_citation=self.parent.full_citation,
+            full_citation=self.parent.ref_full_citation,
         )
         return self.initial
 

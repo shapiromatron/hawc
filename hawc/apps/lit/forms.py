@@ -157,6 +157,9 @@ class ImportForm(SearchForm):
 
 
 class RisImportForm(SearchForm):
+
+    UNPARSABLE_RIS = "File cannot be successfully loaded. Are you sure this is a valid RIS file?  If you are, please contact us and we'll try to fix the issue."
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["source"].choices = [(3, "RIS (EndNote/Reference Manager)")]
@@ -228,12 +231,7 @@ class RisImportForm(SearchForm):
             )
 
         if not readable:
-            raise forms.ValidationError(
-                """
-                File cannot be successfully loaded. Are you sure this is a
-                valid RIS file?  If you are, please contact us and we'll try to
-                fix the issue."""
-            )
+            raise forms.ValidationError(self.UNPARSABLE_RIS)
 
         return fileObj
 
