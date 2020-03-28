@@ -69,7 +69,7 @@ jobs:
       id: node_modules-cache
       with:
         path: ./frontend/node_modules
-        key: ${{ runner.os }}-yarn-${{ hashFiles('frontend/package.json') }}
+        key: ${{ runner.os }}-node_modules-${{ hashFiles('frontend/package.json') }}
         restore-keys: |
           ${{ runner.os }}-node_modules-
     - name: install
