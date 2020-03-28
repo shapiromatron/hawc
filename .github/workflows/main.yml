@@ -25,22 +25,19 @@ jobs:
       with:
         python-version: '3.6'
         architecture: 'x64'
-    - name: try to restore venv
+    - name: try to restore pip cache
       uses: actions/cache@v1
       with:
-        path: ./venv
-        key: ${{ runner.os }}-venv-${{ hashFiles('requirements/*.txt') }}
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('requirements/*.txt') }}
         restore-keys: |
-          ${{ runner.os }}-venv-
+          ${{ runner.os }}-pip-
     - name: install
       run: |
-        python -m venv venv
-        ./venv/bin/activate
         mv ci-webpack-stats.json webpack-stats.json
         pip install -r requirements/dev.txt
     - name: lint
       run: |
-        ./venv/bin/activate
         make lint-py
     - name: test
       env:
@@ -53,7 +50,6 @@ jobs:
         DJANGO_DB_PORT: ${{ job.services.postgres.ports[5432] }} # get randomly assigned published port
         PUBMED_API_KEY: ${{ secrets.PUBMED_API_KEY }}
       run: |
-        ./venv/bin/activate
         make test
 
   frontend:
@@ -64,14 +60,14 @@ jobs:
     - uses: actions/setup-node@v1
       with:
         node-version: '12.x'
-    - name: try to restore node_modules cache
+    - name: try to restore yarn cache
       uses: actions/cache@v1
-      id: node_modules-cache
+      id: yarn-cache
       with:
-        path: ./frontend/node_modules
-        key: ${{ runner.os }}-node_modules-${{ hashFiles('frontend/package.json') }}
+        path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+        key: ${{ runner.os }}-yarn-${{ hashFiles('frontend/package.json') }}
         restore-keys: |
-          ${{ runner.os }}-node_modules-
+          ${{ runner.os }}-yarn-
     - name: install
       run: |
         yarn --cwd ./frontend install
