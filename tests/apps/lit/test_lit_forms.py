@@ -1,7 +1,12 @@
+import os
+
 import pytest
+from django.core.files.uploadedfile import SimpleUploadedFile
 
 from hawc.apps.assessment.models import Assessment
-from hawc.apps.lit.forms import ImportForm
+from hawc.apps.lit import constants
+from hawc.apps.lit.forms import ImportForm, RisImportForm
+from hawc.apps.lit.models import Reference
 
 
 @pytest.mark.django_db
@@ -14,7 +19,7 @@ class TestImportForm:
         form = ImportForm(
             {
                 "search_type": "i",
-                "source": 2,
+                "source": constants.HERO,
                 "title": "demo title",
                 "slug": "demo-title",
                 "description": "",
@@ -29,7 +34,7 @@ class TestImportForm:
 
         payload = {
             "search_type": "i",
-            "source": 2,
+            "source": constants.HERO,
             "title": "demo title",
             "slug": "demo-title",
             "description": "",
@@ -84,7 +89,7 @@ class TestImportForm:
         form = ImportForm(
             {
                 "search_type": "i",
-                "source": 2,
+                "source": constants.HERO,
                 "title": "demo title",
                 "slug": "demo-title",
                 "description": "",
@@ -96,3 +101,32 @@ class TestImportForm:
         assert form.errors == {
             "search_string": ["Import failed; the following HERO IDs could not be imported: 41589"]
         }
+
+
+@pytest.mark.django_db
+class TestRisImportForm:
+    def test_success(self, db_keys):
+        upload_file = open(os.path.join(os.path.dirname(__file__), "data/single_ris.txt"), "rb")
+        form = RisImportForm(
+            {
+                "search_type": "i",
+                "source": constants.RIS,
+                "title": "demo title",
+                "slug": "demo-title",
+                "description": "",
+            },
+            {"import_file": SimpleUploadedFile(upload_file.name, upload_file.read())},
+            parent=Assessment.objects.get(id=db_keys.assessment_working),
+        )
+        assert form.is_valid()
+
+        assert Reference.objects.filter(
+            title="Early alterations in protein and gene expression in rat kidney following bromate exposure"
+        ).first() is None
+
+        form.save()
+
+        assert Reference.objects.filter(
+            title="Early alterations in protein and gene expression in rat kidney following bromate exposure"
+        ).first() is not None
+

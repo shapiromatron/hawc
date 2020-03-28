@@ -596,7 +596,7 @@ class Reference(models.Model):
         return reverse("lit:ref_detail", kwargs={"pk": self.pk})
 
     def __str__(self):
-        return self.get_short_citation_estimate()
+        return self.short_citation
 
     def get_json(self, json_encode=True):
         d = {}
@@ -644,10 +644,9 @@ class Reference(models.Model):
             )
 
     @property
-    def reference_citation(self):
+    def full_citation(self):
         txt = ""
-        # TODO: use new names
-        for itm in [self.authors, self.title, self.journal]:
+        for itm in [self.authors_short, self.title, self.journal]:
             txt += itm
             if (len(itm) > 0) and (itm[-1] != "."):
                 txt += ". "
@@ -655,18 +654,10 @@ class Reference(models.Model):
                 txt += " "
         return txt
 
-    def get_short_citation_estimate(self):
-        citation = ""
-        # TODO: use new names
-        # get authors guess
-        if (self.authors.find("and") > -1) or (self.authors.find("et al.") > -1):
-            citation = re.sub(r" ([A-Z]{2})", "", self.authors)  # remove initials
-        else:
-            authors = re.findall(r"[\w']+", self.authors)
-            if len(authors) > 0:
-                citation = authors[0]
-            else:
-                citation = "[No authors listed]"
+    @property
+    def short_citation(self):
+        # get short citation
+        citation = self.authors_short if self.authors_short else "[No authors listed]"
 
         # get year guess
         year = ""
@@ -677,7 +668,7 @@ class Reference(models.Model):
             if len(m) > 0:
                 year = m[0]
 
-        if len(year) > 0:
+        if year:
             citation += " " + year
 
         return citation

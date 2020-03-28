@@ -39,7 +39,7 @@ class Reference extends Observee {
             },
             getAuthors = () => {
                 let authors =
-                        this.data.authors_short || this.data.authors || Reference.no_authors_text,
+                        this.data.authors || this.data.authors_short || Reference.no_authors_text,
                     year = this.data.year || "",
                     p = $(`<p class="ref_small">${authors} ${year}</p>`);
 

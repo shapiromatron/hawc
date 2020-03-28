@@ -427,26 +427,21 @@ class ReferenceManager(BaseManager):
             # find ref if exists and update content
             # first identifier is from RIS file; use this content
             content = json.loads(idents[0].content)
+            data = dict(
+                title=content["title"],
+                authors_short=content["authors_short"],
+                authors=", ".join(content["authors"]),
+                year=content["year"],
+                journal=content["citation"],
+                abstract=content["abstract"],
+            )
             if ref:
-                ref.__dict__.update(
-                    title=content["title"],
-                    authors_short=content["authors_short"],
-                    authors=content["authors"],
-                    year=content["year"],
-                    journal=content["citation"],
-                    abstract=content["abstract"],
-                )
+                for key, value in data.items():
+                    setattr(ref, key, value)
                 ref.save()
             else:
-                ref = self.create(
-                    assessment_id=assessment_id,
-                    title=content["title"],
-                    authors_short=content["authors_short"],
-                    authors=content["authors"],
-                    year=content["year"],
-                    journal=content["citation"],
-                    abstract=content["abstract"],
-                )
+                data["assessment_id"] = assessment_id
+                ref = self.create(**data)
 
             # add all identifiers and searches
             ref.identifiers.add(*idents)

@@ -156,7 +156,7 @@ class ImportForm(SearchForm):
         return search
 
 
-class RISForm(SearchForm):
+class RisImportForm(SearchForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["source"].choices = [(3, "RIS (EndNote/Reference Manager)")]
@@ -254,6 +254,14 @@ class RISForm(SearchForm):
                 importer = ris.RisImporter(f)
 
             self.instance._references = importer.references
+
+    @transaction.atomic
+    def save(self, commit=True):
+        is_create = self.instance.id is None
+        search = super().save(commit=commit)
+        if is_create:
+            search.run_new_import()
+        return search
 
 
 class SearchModelChoiceField(forms.ModelChoiceField):
