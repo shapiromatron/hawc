@@ -29,6 +29,7 @@ def test_study_detail_api(db_keys):
         "identifiers": [],
         "tags": [],
         "title": "",
+        "authors_short": "",
         "authors": "",
         "year": 2010,
         "journal": "",

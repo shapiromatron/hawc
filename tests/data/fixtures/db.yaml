@@ -708,6 +708,7 @@
   fields:
     assessment: 1
     title: ''
+    authors_short: ''
     authors: ''
     year: 2010
     journal: ''
@@ -723,6 +724,7 @@
   fields:
     assessment: 2
     title: ''
+    authors_short: ''
     authors: ''
     year: 2020
     journal: ''
