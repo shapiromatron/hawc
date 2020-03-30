@@ -96,7 +96,7 @@ class IdentifiersManager(BaseManager):
             # create DOI identifier
             if ref["doi"] is not None:
                 ident, _ = self.get_or_create(
-                    database=constants.DOI, unique_id=ref["doi"], content="None"
+                    database=constants.DOI, unique_id=ref["doi"], content=""
                 )
                 ids.append(ident)
 
@@ -105,10 +105,10 @@ class IdentifiersManager(BaseManager):
             if ref["PMID"] is not None or db == "nlm":
                 id_ = ref["PMID"] or ref["accession_number"]
                 if id_ is not None:
-                    ident = self.filter(database=constants.PUBMED, unique_id=id_).first()
+                    ident = self.filter(database=constants.PUBMED, unique_id=str(id_)).first()
                     if not ident:
                         ident = self.create(
-                            database=constants.PUBMED, unique_id=id_, content="None"
+                            database=constants.PUBMED, unique_id=str(id_), content=""
                         )
                         pimdsFetch.append(ident)
                     ids.append(ident)
@@ -129,7 +129,7 @@ class IdentifiersManager(BaseManager):
 
                 if db_id:
                     id_ = ref["accession_number"]
-                    ident, _ = self.get_or_create(database=db_id, unique_id=id_, content="None")
+                    ident, _ = self.get_or_create(database=db_id, unique_id=id_, content="")
                     ids.append(ident)
 
             refs.append(ids)
@@ -141,8 +141,7 @@ class IdentifiersManager(BaseManager):
         qs = self.hero(ids, allow_missing=True).values_list("unique_id", flat=True)
         existing_ids = [int(id_) for id_ in qs]
         remaining_ids = list(set(ids) - set(existing_ids))
-        remaining_ids_str = [str(el) for el in remaining_ids]
-        fetcher = hero.HEROFetch(remaining_ids_str)
+        fetcher = hero.HEROFetch(remaining_ids)
         fetched_content = fetcher.get_content()
         if len(fetched_content["failure"]) > 0:
             failed_ids = ",".join(str(el) for el in fetched_content["failure"])
@@ -158,7 +157,7 @@ class IdentifiersManager(BaseManager):
             [
                 apps.get_model("lit", "Identifiers")(
                     database=constants.HERO,
-                    unique_id=content["HEROID"],
+                    unique_id=str(content["HEROID"]),
                     content=json.dumps(content),
                 )
                 for content in deduplicated_content
@@ -175,35 +174,41 @@ class IdentifiersManager(BaseManager):
 
         return qs
 
-    def get_max_external_id(self):
-        return self.filter(database=constants.EXTERNAL_LINK).aggregate(models.Max("unique_id"))[
-            "unique_id__max"
-        ]
+    def get_pubmed_identifiers(self, pmids: List[int]):
+        """Return a queryset of identifiers, one for each PubMed ID. Either get
+        or create an identifier, whatever is required
 
-    def get_pubmed_identifiers(self, ids):
-        # Return a queryset of identifiers, one for each PubMed ID. Either get
-        # or create an identifier, whatever is required
+        Args:
+            pmids (List[int]): A list of pubmed identifiers
+        """
+        #
         Identifiers = apps.get_model("lit", "Identifiers")
-        # Filter IDs which need to be imported
-        idents = list(
-            self.filter(database=constants.PUBMED, unique_id__in=ids).values_list(
+
+        # Filter IDs which need to be imported; we cast to str and back to mirror db fields
+        pmids_str = [str(id) for id in pmids]
+        existing = list(
+            self.filter(database=constants.PUBMED, unique_id__in=pmids_str).values_list(
                 "unique_id", flat=True
             )
         )
-        need_import = tuple(set(ids) - set(idents))
+        need_import = [int(id) for id in set(pmids_str) - set(existing)]
 
         # Grab Pubmed objects
         fetch = pubmed.PubMedFetch(need_import)
 
         # Save new Identifier objects
-        for item in fetch.get_content():
-            ident = Identifiers(
-                unique_id=item["PMID"], database=constants.PUBMED, content=json.dumps(item),
-            )
-            ident.save()
-            idents.append(ident.unique_id)
+        Identifiers.objects.bulk_create(
+            [
+                Identifiers(
+                    unique_id=str(item["PMID"]),
+                    database=constants.PUBMED,
+                    content=json.dumps(item),
+                )
+                for item in fetch.get_content()
+            ]
+        )
 
-        return self.filter(database=constants.PUBMED, unique_id__in=idents)
+        return self.filter(database=constants.PUBMED, unique_id__in=pmids_str)
 
 
 class ReferenceManager(BaseManager):
@@ -283,7 +288,7 @@ class ReferenceManager(BaseManager):
 
             if pmid:
                 ref = self.get_qs(search.assessment).filter(
-                    identifiers__unique_id=pmid, identifiers__database=constants.PUBMED
+                    identifiers__unique_id=str(pmid), identifiers__database=constants.PUBMED
                 )
             else:
                 ref = self.none()
@@ -422,24 +427,21 @@ class ReferenceManager(BaseManager):
             # find ref if exists and update content
             # first identifier is from RIS file; use this content
             content = json.loads(idents[0].content)
+            data = dict(
+                title=content["title"],
+                authors_short=content["authors_short"],
+                authors=", ".join(content["authors"]),
+                year=content["year"],
+                journal=content["citation"],
+                abstract=content["abstract"],
+            )
             if ref:
-                ref.__dict__.update(
-                    title=content["title"],
-                    authors=content["authors_short"],
-                    year=content["year"],
-                    journal=content["citation"],
-                    abstract=content["abstract"],
-                )
+                for key, value in data.items():
+                    setattr(ref, key, value)
                 ref.save()
             else:
-                ref = self.create(
-                    assessment_id=assessment_id,
-                    title=content["title"],
-                    authors=content["authors_short"],
-                    year=content["year"],
-                    journal=content["citation"],
-                    abstract=content["abstract"],
-                )
+                data["assessment_id"] = assessment_id
+                ref = self.create(**data)
 
             # add all identifiers and searches
             ref.identifiers.add(*idents)

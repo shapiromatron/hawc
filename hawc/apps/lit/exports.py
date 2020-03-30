@@ -23,6 +23,7 @@ class ReferenceFlatComplete(FlatFileExporter):
             "Full Citation",
             "Title",
             "Authors",
+            "Authors short",
             "Year",
             "Journal",
             "Abstract",
@@ -95,10 +96,11 @@ class ReferenceFlatComplete(FlatFileExporter):
                 ref.pk,
                 ref.get_hero_id(),
                 ref.get_pubmed_id(),
-                ref.get_short_citation_estimate(),
-                ref.reference_citation,
+                ref.ref_short_citation,
+                ref.ref_full_citation,
                 ref.title,
                 ref.authors,
+                ref.authors_short,
                 ref.year,
                 ref.journal,
                 strip_tags(ref.abstract),
@@ -132,8 +134,8 @@ class TableBuilderFormat(FlatFileExporter):
         return [
             [
                 ref.get_pubmed_id(),
-                ref.get_short_citation_estimate(),
-                ref.reference_citation,
+                ref.ref_short_citation,
+                ref.ref_full_citation,
                 None,
                 ref.full_text_url,
             ]
