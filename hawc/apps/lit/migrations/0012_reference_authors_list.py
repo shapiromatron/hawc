@@ -43,12 +43,7 @@ def reparse_identifiers(apps, schema_editor):
         if len(identifier.content) > 0:
             tree = ET.fromstring(json.loads(identifier.content)["xml"])
             content = pubmed.PubMedParser.parse(tree)
-            try:
-                identifier.content = json.dumps(content)
-            except Exception:
-                import pdb
-
-                pdb.set_trace()
+            identifier.content = json.dumps(content)
             updates.append(identifier)
 
     print(f"Updating {len(updates):,} PubMed identifiers of {n_total:,}")

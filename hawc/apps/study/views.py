@@ -51,7 +51,7 @@ class StudyCreateFromReference(EnsurePreparationStartedMixin, BaseCreate):
         self.initial = dict(
             assessment=self.assessment,
             reference=self.parent,
-            short_citation=self.parent.short_citation,
+            short_citation=self.parent.ref_short_citation,
             full_citation=self.parent.ref_full_citation,
         )
         return self.initial
