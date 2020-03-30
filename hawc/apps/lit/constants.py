@@ -7,7 +7,6 @@ WOS = 5
 SCOPUS = 6
 EMBASE = 7
 REFERENCE_DATABASES = (
-    (EXTERNAL_LINK, "External link"),
     (PUBMED, "PubMed"),
     (HERO, "HERO"),
     (RIS, "RIS (EndNote/Reference Manager)"),

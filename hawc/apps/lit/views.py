@@ -113,7 +113,7 @@ class ImportNew(SearchNew):
 
 
 class ImportRISNew(ImportNew):
-    form_class = forms.RISForm
+    form_class = forms.RisImportForm
 
 
 class RISExportInstructions(TemplateView):
@@ -141,7 +141,7 @@ class SearchUpdate(BaseUpdate):
             return forms.SearchForm
         elif self.object.search_type == "i":
             if self.object.source == constants.RIS:
-                return forms.RISForm
+                return forms.RisImportForm
             else:
                 return forms.ImportForm
         else:
