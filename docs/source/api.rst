@@ -25,21 +25,12 @@ There's also a HAWC client available:
 
 .. code-block:: python
 
-    from hawc.client import Client
+    from hawc_client import HawcClient
 
-    client = Client(
-        email="me@me.com",
-        password="keep-it-hidden",
-        root_url="https://hawcproject.org"
-    )
+    client = HawcClient(root_url="https://hawcproject.org")
+    client.authenticate(username="username",password="password")
 
-    hero_ids = list(range(5000, 5020))
-    client.lit_import_hero(
-        assessment_id=123,
-        title="example title",
-        description="example description",
-        ids=hero_ids
-    )
+    client.animal.endpoints(assessment_id=123)
 
 There's also a HAWC client available in R:
 
@@ -50,7 +41,7 @@ There's also a HAWC client available in R:
 
     client = HawcClient("https://hawcproject.org")
     client$authenticate("me@me.com", "keep-it-hidden")
-    
+
     hero_ids = list(500:520)
     client$lit_import_hero(
         assessment_id=123,
