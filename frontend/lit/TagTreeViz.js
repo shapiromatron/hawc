@@ -3,6 +3,7 @@ import d3 from "d3";
 
 import D3Plot from "utils/D3Plot";
 import HAWCModal from "utils/HAWCModal";
+import HAWCUtils from "utils/HAWCUtils";
 
 import ReferencesViewer from "./ReferencesViewer";
 
@@ -150,11 +151,14 @@ class TagTreeViz extends D3Plot {
                 nodeEnter
                     .append("svg:text")
                     .attr("x", 0)
-                    .attr("dy", d => radius_scale(d.numReferencesDeep) + 15)
+                    .attr("y", d => radius_scale(d.numReferencesDeep) + 12)
                     .attr("class", "node_name")
                     .attr("text-anchor", "middle")
                     .text(d => d.name)
-                    .style("fill-opacity", 1e-6);
+                    .style("fill-opacity", 1e-6)
+                    .each(function() {
+                        HAWCUtils.wrapText(this, 150);
+                    });
 
                 nodeEnter
                     .append("svg:text")
