@@ -38,6 +38,7 @@ class Migration(migrations.Migration):
                         primary_key=True,
                         serialize=False,
                         to="lit.Reference",
+                        on_delete=models.CASCADE,
                     ),
                 ),
                 (
@@ -156,7 +157,10 @@ class Migration(migrations.Migration):
                 ("notes", models.TextField(default=b"", blank=True)),
                 ("created", models.DateTimeField(auto_now_add=True)),
                 ("last_updated", models.DateTimeField(auto_now=True)),
-                ("content_type", models.ForeignKey(to="contenttypes.ContentType")),
+                (
+                    "content_type",
+                    models.ForeignKey(to="contenttypes.ContentType", on_delete=models.CASCADE),
+                ),
             ],
             options={
                 "ordering": ("content_type", "object_id", "metric"),
@@ -179,7 +183,11 @@ class Migration(migrations.Migration):
                 ("last_updated", models.DateTimeField(auto_now=True)),
                 (
                     "assessment",
-                    models.ForeignKey(related_name="sq_domains", to="assessment.Assessment"),
+                    models.ForeignKey(
+                        related_name="sq_domains",
+                        to="assessment.Assessment",
+                        on_delete=models.CASCADE,
+                    ),
                 ),
             ],
             options={"ordering": ("pk",)},
@@ -221,7 +229,11 @@ class Migration(migrations.Migration):
                 ("last_updated", models.DateTimeField(auto_now=True)),
                 (
                     "domain",
-                    models.ForeignKey(related_name="metrics", to="study.StudyQualityDomain"),
+                    models.ForeignKey(
+                        related_name="metrics",
+                        to="study.StudyQualityDomain",
+                        on_delete=models.CASCADE,
+                    ),
                 ),
             ],
             options={"ordering": ("domain", "id")},
@@ -233,7 +245,9 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="studyquality",
             name="metric",
-            field=models.ForeignKey(related_name="qualities", to="study.StudyQualityMetric"),
+            field=models.ForeignKey(
+                related_name="qualities", to="study.StudyQualityMetric", on_delete=models.CASCADE
+            ),
             preserve_default=True,
         ),
         migrations.AlterUniqueTogether(
@@ -242,7 +256,9 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="attachment",
             name="study",
-            field=models.ForeignKey(related_name="attachments", to="study.Study"),
+            field=models.ForeignKey(
+                related_name="attachments", to="study.Study", on_delete=models.CASCADE
+            ),
             preserve_default=True,
         ),
     ]

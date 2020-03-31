@@ -37,7 +37,11 @@ class Migration(migrations.Migration):
                 ("last_updated", models.DateTimeField(auto_now=True)),
                 (
                     "assessment",
-                    models.OneToOneField(related_name="BMD_Settings", to="assessment.Assessment"),
+                    models.OneToOneField(
+                        related_name="BMD_Settings",
+                        to="assessment.Assessment",
+                        on_delete=models.CASCADE,
+                    ),
                 ),
             ],
             options={"verbose_name_plural": "BMD assessment settings"},
@@ -93,15 +97,27 @@ class Migration(migrations.Migration):
                 ("last_updated", models.DateTimeField(auto_now=True)),
                 ("bmrs", models.TextField(blank=True)),
                 ("notes", models.TextField()),
-                ("dose_units", models.ForeignKey(to="assessment.DoseUnits")),
+                (
+                    "dose_units",
+                    models.ForeignKey(to="assessment.DoseUnits", on_delete=models.CASCADE),
+                ),
                 (
                     "endpoint",
-                    models.ForeignKey(related_name="BMD_session", to="animal.Endpoint", null=True),
+                    models.ForeignKey(
+                        related_name="BMD_session",
+                        to="animal.Endpoint",
+                        on_delete=models.CASCADE,
+                        null=True,
+                    ),
                 ),
                 (
                     "selected_model",
                     models.OneToOneField(
-                        related_name="selected", null=True, blank=True, to="bmd.BMD_model_run",
+                        related_name="selected",
+                        on_delete=models.CASCADE,
+                        null=True,
+                        blank=True,
+                        to="bmd.BMD_model_run",
                     ),
                 ),
             ],
@@ -159,7 +175,10 @@ class Migration(migrations.Migration):
                 (
                     "assessment",
                     models.ForeignKey(
-                        related_name="BMD_Logic_Fields", editable=False, to="assessment.Assessment",
+                        related_name="BMD_Logic_Fields",
+                        editable=False,
+                        to="assessment.Assessment",
+                        on_delete=models.CASCADE,
                     ),
                 ),
             ],
@@ -169,7 +188,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="bmd_model_run",
             name="BMD_session",
-            field=models.ForeignKey(to="bmd.BMD_session"),
+            field=models.ForeignKey(to="bmd.BMD_session", on_delete=models.CASCADE),
             preserve_default=True,
         ),
     ]

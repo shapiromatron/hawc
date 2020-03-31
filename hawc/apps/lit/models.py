@@ -2,15 +2,16 @@ import html
 import json
 import logging
 import re
-from datetime import datetime
 from math import ceil
+from typing import Dict, Optional
 from urllib import parse
 
 from django.apps import apps
 from django.conf import settings
 from django.core.exceptions import ValidationError
-from django.core.urlresolvers import reverse
 from django.db import models, transaction
+from django.urls import reverse
+from django.utils import timezone
 from django.utils.html import strip_tags
 from litter_getter import pubmed, ris
 from taggit.models import ItemBase
@@ -43,7 +44,9 @@ class Search(models.Model):
         ("i", "Import"),
     )
 
-    assessment = models.ForeignKey("assessment.Assessment", related_name="literature_searches")
+    assessment = models.ForeignKey(
+        "assessment.Assessment", on_delete=models.CASCADE, related_name="literature_searches"
+    )
     search_type = models.CharField(max_length=1, choices=SEARCH_TYPES)
     source = models.PositiveSmallIntegerField(
         choices=constants.REFERENCE_DATABASES, help_text="Database used to identify literature.",
@@ -139,10 +142,9 @@ class Search(models.Model):
 
     @transaction.atomic
     def run_new_import(self):
-        if self.source == constants.EXTERNAL_LINK:
-            raise Exception("Import functionality disabled for manual import")
-        elif self.source == constants.PUBMED:
-            identifiers = Identifiers.objects.get_pubmed_identifiers(self.import_ids)
+        if self.source == constants.PUBMED:
+            pmids = [int(id) for id in self.import_ids]
+            identifiers = Identifiers.objects.get_pubmed_identifiers(pmids)
             Reference.objects.get_pubmed_references(self, identifiers)
         elif self.source == constants.HERO:
             raise NotImplementedError()
@@ -155,7 +157,7 @@ class Search(models.Model):
             identifiers = Identifiers.objects.get_from_ris(self.id, refs)
             Reference.objects.update_from_ris_identifiers(self, identifiers)
         else:
-            raise ValueError("Unknown import type")
+            raise ValueError(f"Source type cannot be imported: {self.source}")
 
     def create_new_references(self, results):
         # Create assessment-specific references for each value which return
@@ -169,9 +171,10 @@ class Search(models.Model):
         # For the cases where the current search found a new identifier which
         # already has an assessment-specific Reference object associated with
         # it, just associate the current reference with this search.
+        added_str = [str(id) for id in results["added"]]
         ref_ids = (
             Reference.objects.filter(
-                assessment=self.assessment, identifiers__unique_id__in=results["added"]
+                assessment=self.assessment, identifiers__unique_id__in=added_str
             )
             .exclude(searches=self)
             .values_list("pk", flat=True)
@@ -179,25 +182,23 @@ class Search(models.Model):
         ids_count = ref_ids.count()
 
         if ids_count > 0:
-            logging.debug("Starting bulk creation of existing search-thorough values")
-            ref_searches = []
-            for ref in ref_ids:
-                ref_searches.append(RefSearchM2M(reference_id=ref, search_id=self.pk))
+            logging.debug("Starting bulk creation of existing search-through values")
+            ref_searches = [RefSearchM2M(reference_id=ref, search_id=self.pk) for ref in ref_ids]
             RefSearchM2M.objects.bulk_create(ref_searches)
-            logging.debug(f"Completed bulk creation of {len(ref_searches)} search-thorough values")
+            logging.debug(f"Completed bulk creation of {len(ref_searches)} search-through values")
 
         # For the cases where the search resulted in new ids which may or may
         # not already be imported as a reference for this assessment, find the
         # proper subset.
         ids = (
-            Identifiers.objects.filter(database=self.source, unique_id__in=results["added"])
+            Identifiers.objects.filter(database=self.source, unique_id__in=added_str)
             .exclude(references__in=Reference.objects.get_qs(self.assessment))
             .order_by("pk")
         )
         ids_count = ids.count()
 
         if ids_count > 0:
-            block_id = datetime.now()
+            block_id = timezone.now()
 
             # create list of references for each identifier
             refs = [i.create_reference(self.assessment, block_id) for i in ids]
@@ -215,13 +216,13 @@ class Search(models.Model):
             # associate identifiers with each
             ref_searches = []
             ref_ids = []
-            logging.debug(f"Starting  bulk creation of {refs.count()} reference-thorough values")
+            logging.debug(f"Starting  bulk creation of {refs.count()} reference-through values")
             for i, ref in enumerate(refs):
                 ref_searches.append(RefSearchM2M(reference_id=ref.pk, search_id=self.pk))
                 ref_ids.append(RefIdM2M(reference_id=ref.pk, identifiers_id=id_pks[i]))
             RefSearchM2M.objects.bulk_create(ref_searches)
             RefIdM2M.objects.bulk_create(ref_ids)
-            logging.debug(f"Completed bulk creation of {refs.count()} reference-thorough values")
+            logging.debug(f"Completed bulk creation of {refs.count()} reference-through values")
 
             # finally, remove temporary identifier used for re-query after bulk_create
             logging.debug("Removing block-id from created references")
@@ -322,7 +323,7 @@ class Search(models.Model):
 class PubMedQuery(models.Model):
     objects = managers.PubMedQueryManager()
 
-    search = models.ForeignKey(Search)
+    search = models.ForeignKey(Search, on_delete=models.CASCADE)
     results = models.TextField(blank=True)
     query_date = models.DateTimeField(auto_now_add=True)
 
@@ -365,7 +366,7 @@ class PubMedQuery(models.Model):
                 database=constants.PUBMED, unique_id__in=new_ids
             ).values_list("unique_id", flat=True)
         )
-        ids_to_add = list(set(new_ids) - set(existing_pmids))
+        ids_to_add = [int(id) for id in set(new_ids) - set(existing_pmids)]
         ids_to_add_len = len(ids_to_add)
 
         block_size = 1000.0
@@ -451,7 +452,8 @@ class Identifiers(models.Model):
             ref = Reference(
                 assessment=assessment,
                 title=content.get("title", ""),
-                authors=content.get("authors_short", ""),
+                authors_short=content.get("authors_short", ""),
+                authors=", ".join(content.get("authors", [])),
                 journal=content.get("citation", ""),
                 abstract=content.get("abstract", ""),
                 year=content.get("year", None),
@@ -465,7 +467,8 @@ class Identifiers(models.Model):
             ref = Reference(
                 assessment=assessment,
                 title=title or "",
-                authors=content.get("authors_short", ""),
+                authors_short=content.get("authors_short", ""),
+                authors=", ".join(content.get("authors", [])),
                 year=content.get("year", None),
                 journal=journal or "",
                 abstract=abstract or "",
@@ -482,6 +485,9 @@ class Identifiers(models.Model):
             "database_id": self.database,
             "url": self.get_url(),
         }
+
+    def get_content_json(self) -> Optional[Dict]:
+        return json.loads(self.content) if self.content else None
 
     @staticmethod
     def update_pubmed_content(idents):
@@ -545,8 +551,10 @@ class ReferenceFilterTag(NonUniqueTagBase, AssessmentRootMixin, MP_Node):
 class ReferenceTags(ItemBase):
     objects = managers.ReferenceTagsManager()
 
-    tag = models.ForeignKey(ReferenceFilterTag, related_name="%(app_label)s_%(class)s_items")
-    content_object = models.ForeignKey("Reference")
+    tag = models.ForeignKey(
+        ReferenceFilterTag, on_delete=models.CASCADE, related_name="%(app_label)s_%(class)s_items"
+    )
+    content_object = models.ForeignKey("Reference", on_delete=models.CASCADE)
 
 
 class Reference(models.Model):
@@ -554,11 +562,19 @@ class Reference(models.Model):
 
     objects = managers.ReferenceManager()
 
-    assessment = models.ForeignKey("assessment.Assessment", related_name="references")
+    assessment = models.ForeignKey(
+        "assessment.Assessment", on_delete=models.CASCADE, related_name="references"
+    )
     searches = models.ManyToManyField(Search, blank=False, related_name="references")
     identifiers = models.ManyToManyField(Identifiers, blank=True, related_name="references")
     title = models.TextField(blank=True)
-    authors = models.TextField(blank=True)
+    authors_short = models.TextField(
+        blank=True, help_text='Short-text for to display (eg., "Smith et al.")'
+    )
+    authors = models.TextField(
+        blank=True,
+        help_text='The complete, comma separated authors list, (eg., "Smith JD, Tom JF, McFarlen PD")',
+    )
     year = models.PositiveSmallIntegerField(blank=True, null=True)
     journal = models.TextField(blank=True)
     abstract = models.TextField(blank=True)
@@ -580,13 +596,14 @@ class Reference(models.Model):
         return reverse("lit:ref_detail", kwargs={"pk": self.pk})
 
     def __str__(self):
-        return self.get_short_citation_estimate()
+        return self.ref_short_citation
 
     def get_json(self, json_encode=True):
         d = {}
         fields = (
             "pk",
             "title",
+            "authors_short",
             "authors",
             "year",
             "journal",
@@ -627,7 +644,8 @@ class Reference(models.Model):
             )
 
     @property
-    def reference_citation(self):
+    def ref_full_citation(self):
+        # must be prefixed w/ ref b/c study.Study has the same property
         txt = ""
         for itm in [self.authors, self.title, self.journal]:
             txt += itm
@@ -637,18 +655,11 @@ class Reference(models.Model):
                 txt += " "
         return txt
 
-    def get_short_citation_estimate(self):
-        citation = ""
-
-        # get authors guess
-        if (self.authors.find("and") > -1) or (self.authors.find("et al.") > -1):
-            citation = re.sub(r" ([A-Z]{2})", "", self.authors)  # remove initials
-        else:
-            authors = re.findall(r"[\w']+", self.authors)
-            if len(authors) > 0:
-                citation = authors[0]
-            else:
-                citation = "[No authors listed]"
+    @property
+    def ref_short_citation(self):
+        # must be prefixed w/ ref b/c study.Study has the same property
+        # get short citation
+        citation = self.authors_short if self.authors_short else "[No authors listed]"
 
         # get year guess
         year = ""
@@ -659,7 +670,7 @@ class Reference(models.Model):
             if len(m) > 0:
                 year = m[0]
 
-        if len(year) > 0:
+        if year:
             citation += " " + year
 
         return citation
@@ -675,23 +686,6 @@ class Reference(models.Model):
             if ident.database == constants.HERO:
                 return int(ident.unique_id)
         return None
-
-    def set_custom_url(self, url):
-        """
-        Special-case. Add an Identifier with the selected URL for this reference.
-        Only-one custom URL is allowed for each reference; overwrites existing.
-        """
-        i = self.identifiers.filter(database=constants.EXTERNAL_LINK).first()
-        if i:
-            i.url = url
-            i.save()
-        else:
-            unique_id = Identifiers.objects.get_max_external_id() + 1
-            self.identifiers.add(
-                Identifiers.objects.create(
-                    database=constants.EXTERNAL_LINK, unique_id=unique_id, url=url
-                )
-            )
 
     def get_assessment(self):
         return self.assessment

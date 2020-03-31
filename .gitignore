@@ -6,35 +6,33 @@
 *~
 
 # files
+.Rhistory
+.Rproj.user
 .env
 .eslintcache
 .gitcommit
 .pytest_cache
 bin/dev.local.sh
-package-lock.json
 celerybeat*
 compose/nginx/conf/nginx.conf
 hawc/main/settings/local.py
+package-lock.json
 webpack-stats.json
 
 # folders
 *.egg-info/
-__pycache__/
 .idea/
 .ipynb_checkpoints/
 .mypy_cache/
 .vscode/
+/data/
+__pycache__/
 _build/
 build/
-/data/
 dist/
 node_modules/
 public/
 venv/
-
-# javascript
-webpack-stats.json
-package-lock.json
 
 # keep folders; not contents
 hawc/static/bundles/

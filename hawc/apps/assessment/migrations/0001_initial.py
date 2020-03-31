@@ -194,7 +194,10 @@ class Migration(migrations.Migration):
                 ("attachment", models.FileField(upload_to=b"attachment")),
                 ("publicly_available", models.BooleanField(default=True)),
                 ("description", models.TextField(blank=True)),
-                ("content_type", models.ForeignKey(to="contenttypes.ContentType")),
+                (
+                    "content_type",
+                    models.ForeignKey(to="contenttypes.ContentType", on_delete=models.CASCADE),
+                ),
             ],
             options={},
             bases=(models.Model,),
@@ -211,7 +214,10 @@ class Migration(migrations.Migration):
                 ("name", models.CharField(max_length=128, verbose_name=b"Endpoint name"),),
                 ("created", models.DateTimeField(auto_now_add=True)),
                 ("last_updated", models.DateTimeField(auto_now=True)),
-                ("assessment", models.ForeignKey(to="assessment.Assessment")),
+                (
+                    "assessment",
+                    models.ForeignKey(to="assessment.Assessment", on_delete=models.CASCADE),
+                ),
             ],
             options={},
             bases=(models.Model,),
@@ -301,7 +307,11 @@ class Migration(migrations.Migration):
                 (
                     "assessment",
                     models.ForeignKey(
-                        related_name="templates", blank=True, to="assessment.Assessment", null=True,
+                        related_name="templates",
+                        blank=True,
+                        to="assessment.Assessment",
+                        on_delete=models.CASCADE,
+                        null=True,
                     ),
                 ),
             ],

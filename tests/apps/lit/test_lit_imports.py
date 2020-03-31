@@ -1,8 +1,8 @@
 import os
 
 import pytest
-from django.core.urlresolvers import reverse
 from django.test.client import Client
+from django.urls import reverse
 from pytest_django.asserts import assertFormError
 
 from hawc.apps.lit import constants, models
@@ -236,7 +236,7 @@ def test_existing_pubmed_hero_add(db_keys):
     assert models.Identifiers.objects.count() == initial_identifiers + 2
     assert models.Reference.objects.count() == initial_refs + 1
 
-    ref = models.Reference.objects.get(authors="Longstreth J et al.")
+    ref = models.Reference.objects.get(authors_short="Longstreth J et al.")
     assert ref.searches.count() == 2
     assert ref.identifiers.count() == 2
 
@@ -303,11 +303,9 @@ def test_ris_import_with_existing(db_keys):
     search.import_file = RisFile(os.path.join(os.path.dirname(__file__), "data/single_ris.txt"))
 
     # create existing identifiers
+    models.Identifiers.objects.create(database=constants.PUBMED, unique_id="19425233", content="")
     models.Identifiers.objects.create(
-        database=constants.PUBMED, unique_id="19425233", content="None"
-    )
-    models.Identifiers.objects.create(
-        database=constants.DOI, unique_id="10.1016/j.fct.2009.02.003", content="None",
+        database=constants.DOI, unique_id="10.1016/j.fct.2009.02.003", content="",
     )
     search.run_new_import()
 

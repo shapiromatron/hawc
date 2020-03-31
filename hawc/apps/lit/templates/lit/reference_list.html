@@ -54,7 +54,7 @@
           var tag = $(e.target).data('d'),
               options = {
                 tag: tag,
-                download_url: "{% url 'lit:ref_download_excel' assessment.pk %}"
+                download_url: "{% url 'lit:api:assessment-references-download' assessment.pk %}"
               },
               refviewer = new lit.ReferencesViewer($('#references_detail_div'), options);
           tag.get_reference_objects_by_tag(refviewer);
@@ -71,7 +71,7 @@
                     text: "Tag untagged references"
                   }
                 ],
-                download_url: "{% url 'lit:ref_download_excel' assessment.pk %}"
+                download_url: "{% url 'lit:api:assessment-references-download' assessment.pk %}"
               },
               refviewer = new lit.ReferencesViewer($('#references_detail_div'), options);
           refviewer.view_untagged_references(tagtree, data.assessment_id, window.search_id);

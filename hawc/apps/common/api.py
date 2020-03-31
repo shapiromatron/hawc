@@ -1,5 +1,5 @@
 from django.shortcuts import get_object_or_404
-from rest_framework.decorators import list_route
+from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework_extensions.mixins import ListUpdateModelMixin
 
@@ -63,7 +63,7 @@ class CleanupFieldsBaseViewSet(
 
         return get_object_or_404(self.parent_model, pk=assessment_id)
 
-    @list_route(methods=["get"])
+    @action(detail=False, methods=["get"])
     def fields(self, request, format=None):
         """ /$model/api/cleanup/fields/?assessment_id=$id """
         cleanup_fields = self.model.TEXT_CLEANUP_FIELDS
@@ -96,3 +96,13 @@ class DynamicFieldsMixin(object):
                 existing = set(self.fields.keys())
                 for field_name in existing - allowed:
                     self.fields.pop(field_name)
+
+
+class LegacyAssessmentAdapterMixin(object):
+    """
+    A mixin that allows API viewsets to interact with legacy methods.
+    """
+
+    def set_legacy_attr(self, pk):
+        self.parent = get_object_or_404(self.parent_model, pk=pk)
+        self.assessment = self.parent.get_assessment()

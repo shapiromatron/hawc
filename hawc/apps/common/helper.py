@@ -6,11 +6,13 @@ from collections import OrderedDict
 from datetime import datetime
 from io import BytesIO, StringIO
 
+import pandas as pd
 import xlsxwriter
 from django.core.cache import cache
 from django.core.serializers.json import DjangoJSONEncoder
 from django.shortcuts import HttpResponse
 from django.utils import html
+from django.utils.encoding import force_text
 from rest_framework.renderers import JSONRenderer
 
 
@@ -32,7 +34,7 @@ def cleanHTML(txt):
 def strip_entities(value):
     """Return the given HTML with all entities (&something;) stripped."""
     # Note: Originally in Django but removed in v1.10
-    return re.sub(r"&(?:\w+|#\d+);", "", html.force_text(value))
+    return re.sub(r"&(?:\w+|#\d+);", "", force_text(value))
 
 
 def strip_tags(value):
@@ -94,6 +96,8 @@ class SerializerHelper(object):
             name = cls._get_cache_name(obj.__class__, obj.id, json)
             cached = cache.get(name)
             if cached:
+                if hasattr(cached, "decode"):
+                    cached = cached.decode("utf8")
                 logging.debug(f"using cache: {name}")
             else:
                 cached = cls._serialize_and_cache(obj, json=json)
@@ -194,6 +198,11 @@ class FlatFileExporter(object):
         data_rows = self._get_data_rows()
         return self.exporter.generate_response(header_row, data_rows)
 
+    def build_dataframe(self):
+        header_row = self._get_header_row()
+        data_rows = self._get_data_rows()
+        return self.exporter.generate_dataframe(header_row, data_rows)
+
 
 class FlatFile(object):
     """
@@ -214,6 +223,9 @@ class FlatFile(object):
         self._write_header_row(header_row)
         self._write_data_rows(data_rows)
         return self._django_response()
+
+    def generate_dataframe(self, header_row, data_rows):
+        raise NotImplementedError()
 
     def _setup(self):
         raise NotImplementedError()
@@ -301,6 +313,14 @@ class ExcelFileBuilder(FlatFile):
         )
         response["Content-Disposition"] = f'attachment; filename="{fn}"'
         return response
+
+    def generate_dataframe(self, header_row, data_rows):
+        self._setup()
+        self._write_header_row(header_row)
+        self._write_data_rows(data_rows)
+        self.wb.close()
+        self.output.seek(0)
+        return pd.read_excel(self.output)
 
 
 class TSVFileBuilder(FlatFile):

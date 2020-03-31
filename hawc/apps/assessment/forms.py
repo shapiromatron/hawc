@@ -1,12 +1,9 @@
 from textwrap import dedent
 
 from django import forms
-from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
-from django.core.mail import mail_admins, send_mail
-from django.core.urlresolvers import reverse_lazy
-from markdown_deux import markdown
-from pagedown.widgets import PagedownWidget
+from django.core.mail import mail_admins
+from django.urls import reverse_lazy
 from selectable.forms import AutoCompleteSelectMultipleWidget, AutoCompleteWidget
 
 from ..common.forms import BaseFormHelper
@@ -204,32 +201,6 @@ class EffectTagForm(forms.ModelForm):
         )
         for fld in list(self.fields.keys()):
             self.fields[fld].widget.attrs["class"] = "span12"
-
-
-class AssessmentEmailManagersForm(forms.Form):
-    subject = forms.CharField(max_length=100)
-    message = forms.CharField(widget=PagedownWidget())
-
-    def send_email(self):
-        from_email = settings.DEFAULT_FROM_EMAIL
-        subject = f"[HAWC] {self.cleaned_data['subject']}"
-        message = ""
-        recipient_list = self.assessment.get_project_manager_emails()
-        html_message = markdown(self.cleaned_data["message"])
-        send_mail(
-            subject,
-            message,
-            from_email,
-            recipient_list,
-            html_message=html_message,
-            fail_silently=False,
-        )
-
-    def __init__(self, *args, **kwargs):
-        self.assessment = kwargs.pop("assessment", None)
-        super().__init__(*args, **kwargs)
-        for key in list(self.fields.keys()):
-            self.fields[key].widget.attrs["class"] = "span12"
 
 
 class ContactForm(forms.Form):

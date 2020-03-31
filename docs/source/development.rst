@@ -17,10 +17,23 @@ following applications installed on your local development system:
 .. _`Yarn`: https://yarnpkg.com/
 .. _`PostgreSQL`: https://www.postgresql.org/
 
-HAWC developer environment setup
---------------------------------
+When writing code for HAWC, there are a few requirements for code acceptance. We have built-in CI using github actions for enforcement:
 
-Instructions below have been written for bash, so should work out of the box for linux/mac. They may need to be adapted slightly for Windows due to the differences in python apps on different operating systems. Clone the repository and install all requirements into a virtual environment:
+- Python code must comply with code formatters and linters: black, flake8, and isort
+- Javascript code must comply with eslint formatters
+- All unit-test (currently in python-only) must pass; please write test when contributing new code
+
+See the `Useful utilities`_ below for more details on how to automatically lint/format your code.
+
+Environment setup
+-----------------
+
+HAWC can be developed both on Windows and and Linux/Mac. Development on Mac/Linux is preferred as it is more similar to the deployment environments, and things are a little more out of the box. However, instructions are provided below for both environments.
+
+Linux/Mac
+~~~~~~~~~
+
+Instructions below have been written for bash, so should work out of the box for Linux/Mac. Clone the repository and install all requirements into a virtual environment:
 
 .. code-block:: bash
 
@@ -39,51 +52,68 @@ Instructions below have been written for bash, so should work out of the box for
     # install requirements
     ./venv/bin/pip install -r ./requirements/dev.txt
 
-    # create local settings and modify default settings in this file
-    cp ./hawc/main/settings/local.example.py ./hawc/main/settings/local.py
+    # create a PostgreSQL database and superuser
+    createuser --superuser --no-password hawc
+    createdb -E UTF-8 -U hawc hawc
 
-Currently HAWC has two possible application "flavors", where the application is slightly
-different depending on which flavor is selected. To change, modify the ``HAWC_FLAVOR``
-variable ``hawc/main/settings/local.py``. Possible values include:
 
-- PRIME (default application; as hosted at https://hawcproject.org)
-- EPA (EPA application; as hosted at EPA)
 
-Loading a database dump:
+Windows
+~~~~~~~
 
-.. code-block:: bash
+Windows requires using anaconda, or miniconda to get requirements.
 
-    # add hawc superuser
-    createuser hawc --superuser --no-password
+.. code-block:: bat
 
-    # create new database owned by a hawc user
-    createdb -O hawc hawc
+    :: create a conda environment with our hard to get dependencies
+    conda create --name hawc
+    conda activate hawc
+    conda install python=3.6 postgresql=9.6
+    conda install -c conda-forge nodejs
+    conda install -c conda-forge yarn
 
-    # load gzipped database
-    gunzip -c "db_dump.sql.gz" | psql -U hawc -d hawc
+    :: now create a virtual python environment for our project
+    mkdir %HOMEPATH%\dev
+    cd %HOMEPATH%\dev
+    git clone https://github.com/shapiromatron/hawc.git
+    cd hawc
 
-For reference, here's how to create a database dump:
+    :: install the python requirements
+    conda activate hawc
+    python -m venv venv
+    venv\Scripts\activate.bat
+    python -m pip install --upgrade pip
+    pip install -r requirements\dev.txt
 
-.. code-block:: bash
+    :: install the javascript requirements
+    cd frontend
+    yarn
 
-    # anonymize data
-    manage.py scrub_db
+    :: setup our postgres database
+    mkdir %HOMEPATH%\dev\pgdata\
+    pg_ctl -D %HOMEPATH%\dev\pgdata initdb
+    mkdir %HOMEPATH%\dev\pgdata\logs
+    pg_ctl -D %HOMEPATH%\dev\pgdata -l %HOMEPATH%\dev\pgdata\logs\logfile start
+    createuser --superuser --no-password hawc
 
-    # dump in gzipped format
-    pg_dump -U hawc hawc | gzip > db_dump.sql.gz
+    :: create our main and test databases
+    createdb -T template0 -E UTF8 hawc
+    createdb -T template0 -E UTF8 test_hawc-fixture-test
+
+    :: sync the hawc code with the database
+    manage.py migrate
 
 Running the application
-~~~~~~~~~~~~~~~~~~~~~~~
+-----------------------
 
-You'll need to run both the python webserver and the node webserver to develop
-HAWC; here are instructions how how to do both.
+After initial setup, here are the steps needed to run the application in development.
 
-In one terminal, start the the python webserver:
+Linux/Mac
+~~~~~~~~~
+
+In the first terminal, let's create our database and then run the python webserver:
 
 .. code-block:: bash
-
-    # create a PostgreSQL database
-    createdb -E UTF-8 hawc
 
     # active python virtual environment
     cd ~/dev/hawc
@@ -95,7 +125,7 @@ In one terminal, start the the python webserver:
     # run development webserver
     manage.py runserver
 
-In a new terminal, run the node development webserver for javascript:
+In a second terminal, run the node development webserver for javascript:
 
 .. code-block:: bash
 
@@ -112,34 +142,179 @@ If you navigate to `localhost`_ and see a website, you're ready to begin coding!
 
 .. _`localhost`: http://127.0.0.1:8000/
 
+Windows
+~~~~~~~
+
+In the first terminal, let's create our database and then run the python webserver:
+
+.. code-block:: bat
+
+    :: activate our environment
+    cd %HOMEPATH%\dev\hawc
+    conda activate hawc
+    venv\Scripts\activate
+
+    :: start the postgres database (if not already started)
+    pg_ctl -D %HOMEPATH%\dev\pgdata -l %HOMEPATH%\dev\pgdata\logs\logfile start
+
+    :: run the python webserver
+    manage.py runserver
+
+In a second terminal, run the node development webserver for javascript:
+
+.. code-block:: bat
+
+    :: activate our environment
+    cd %HOMEPATH%\dev\hawc
+    conda activate hawc
+    venv\Scripts\activate
+
+    :: run the frontend build server
+    cd %HOMEPATH%\dev\hawc\frontend
+    npm start
+
+You can check `localhost`_ to see if everything is hosted correctly.
+
+.. _`localhost`: http://127.0.0.1:8000/
 
 Useful utilities
 ~~~~~~~~~~~~~~~~
 
-There are a number of helpful utility commands in the ``Makefile``. View the makefile to
-see how to run manually.  Note that code-formatting and linting is now required; there are checks
-set-up in continuous integration that enforce these rules:
+There are a number of helpful utility commands available from the command line. Depending on the
+OS, they're either available in the ``Makefile`` or ``make.bat``, but they can be called using
+the same commands.
 
 .. code-block:: bash
 
     # run unit tests
     make test
 
-    # format and lint python code
+    # lint code (show changes required) - all, javascript-only, or python-only
+    make lint
+    make lint-js
+    make lint-py
+
+    # format code (try to make changes) - all,  javascript-only, or python-only
+    make format
+    make format-js
     make format-py
 
-    # format and lint javascript code
-    make format-js
+On Mac/Linux; if you have tmux installed, there's a one-line command to start the environment
+
+.. code-block:: bash
 
     # use the bundled dev `tmux` dev environment
     make dev
 
-If you don't have ``Make`` in your developer environment, you can just call the commands as they're written in the Makefile.
+Visual Studio Code
+------------------
 
-FAQ
-~~~
+`Visual Studio Code`_ is the recommended editor for this project.
 
-- If tests aren't working after the database has changed (ie., migrated); try dropping the test-database. You can use the command `dropdb test_hawc-fixture-test`, assuming your user has admin rights to delete databases.
+.. _`Visual Studio Code`: https://code.visualstudio.com/
+
+Recommended extensions:
+
+- `Python for vscode`_
+- `Eslint for vscode`_
+- `Code Spell Checker`_
+
+.. _`Python for vscode`: https://marketplace.visualstudio.com/items?itemName=ms-python.python
+.. _`Eslint for vscode`: https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint
+.. _`Code Spell Checker`: https://marketplace.visualstudio.com/items?itemName=streetsidesoftware.code-spell-checker
+
+When using the recommended settings below, your python and javascript code should automatically format whenever you save to fix most, but not all requirements. In addition, you should have pretty good autocompletion. Python type annotations are enabled with warnings, but not enforced; this may change as we continue to annotate the existing codebase.
+
+.. code-block:: json
+
+    {
+        "restructuredtext.linter.disabled": true,
+        "[html]": {
+            "editor.formatOnSave": false
+        },
+        "[python]": {
+            "editor.formatOnPaste": false,
+            "editor.formatOnSave": true
+        },
+        "[javascript]": {
+            "editor.formatOnSave": false,
+            "editor.codeActionsOnSave": {
+                "source.fixAll.eslint": true
+            }
+        },
+        "editor.formatOnSave": true,
+        "eslint.workingDirectories": [
+            "./frontend"
+        ],
+        "python.formatting.provider": "black",
+        "python.jediEnabled": false,
+        "python.languageServer": "Microsoft",
+        "python.linting.flake8Args": [
+            "--config=.flake8"
+        ],
+        "python.linting.flake8Enabled": true,
+        "python.linting.mypyCategorySeverity.error": "Warning",
+        "python.linting.mypyEnabled": true,
+        "python.pythonPath": "./venv/bin/python",
+        "cSpell.words": [
+            "chemspider",
+            "epimeta",
+            "invitro",
+            "lel",
+            "loael",
+            "loel",
+            "mgmt",
+            "nel",
+            "noael",
+            "noel",
+            "noel",
+            "pmid",
+            "pmids",
+            "transfection",
+        ]
+    }
+
+More settings
+-------------
+
+HAWC flavors
+~~~~~~~~~~~~
+
+Currently HAWC has two possible application "flavors", where the application is slightly
+different depending on which flavor is selected. To change, modify the ``HAWC_FLAVOR``
+variable ``hawc/main/settings/local.py``. Possible values include:
+
+- PRIME (default application; as hosted at https://hawcproject.org)
+- EPA (EPA application; as hosted at EPA)
+
+Loading a database dump
+~~~~~~~~~~~~~~~~~~~~~~~
+
+Loading a database dump:
+
+.. code-block:: bash
+
+    # add hawc superuser
+    createuser hawc --superuser --no-password
+
+    # create new database owned by a hawc user
+    createdb -O hawc hawc
+
+    # load gzipped database
+    gunzip -c "db_dump.sql.gz" | psql -U hawc -d hawc
+
+Creating a database dump
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+Here's how to create a database dump:
+
+.. code-block:: bash
+
+    # anonymize data
+    manage.py scrub_db
+
+    # dump in gzipped format
+    pg_dump -U hawc hawc | gzip > db_dump.sql.gz
 
 Building a test database
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -160,35 +335,30 @@ A test database is loaded to run unit tests. The database may need to be periodi
     # export database
     manage.py dump_test_db
 
-Visual Studio Code settings
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Problems running tests
+~~~~~~~~~~~~~~~~~~~~~~
 
-An example folder-level configuration setting for `Visual Studio Code`_ (recommended HAWC editor):
+If tests aren't working after the database has changed (ie., migrated); try dropping the test-database. Try the command ``dropdb test_hawc-fixture-test``.
 
-.. _`Visual Studio Code`: https://code.visualstudio.com/
+Testing celery application
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. code-block:: json
+To test asynchronous functionality in development, modify your ``hawc/main/settings/local.py``:
 
-    {
-        "restructuredtext.linter.disabled": true,
-        "[html]": {
-            "editor.formatOnSave": false
-        },
-        "[python]": {
-            "editor.formatOnSave": true
-        },
-        "[javascript]": {
-            "editor.formatOnSave": false,
-            "editor.codeActionsOnSave": {
-                "source.fixAll.eslint": true
-            }
-        },
-        "editor.formatOnSave": true,
-        "python.pythonPath": "./venv/bin/python",
-        "python.linting.flake8Args": [
-            "--config=.flake8"
-        ],
-        "eslint.workingDirectories": [
-            "./frontend"
-        ]
-    }
+.. code-block:: python
+
+    CELERY_BROKER_URL = "redis://localhost:6379/1"
+    CELERY_RESULT_BACKEND = "redis://localhost:6379/2"
+    CELERY_TASK_ALWAYS_EAGER = False
+    CELERY_TASK_EAGER_PROPAGATES = False
+
+Then, create the example docker container and start a celery worker instance:
+
+.. code-block:: bash
+
+    docker-compose build redis
+    docker up -d redis
+    celery worker --app=hawc.main.celery --loglevel=INFO --soft-time-limit=90 --time-limit=120
+
+Asynchronous tasks will no be executed by celery workers instead of the main thread.
+

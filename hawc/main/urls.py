@@ -41,7 +41,7 @@ urlpatterns = [
         views.AdminDashboard.as_view(),
         name="admin_dashboard",
     ),
-    url(rf"^admin/{settings.ADMIN_URL_PREFIX}/", include(admin.site.urls)),
+    url(rf"^admin/{settings.ADMIN_URL_PREFIX}/", admin.site.urls),
     url(r"^selectable/", include("selectable.urls")),
 ]
 

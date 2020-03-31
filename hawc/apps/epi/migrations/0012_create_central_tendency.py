@@ -134,9 +134,9 @@ class Migration(migrations.Migration):
             name="exposure",
             field=models.ForeignKey(
                 blank=True,
-                help_text="Which chemical exposure group is associated with this comparison set?",
+                help_text="Which exposure group is associated with this comparison set?",
                 null=True,
-                on_delete=django.db.models.deletion.CASCADE,
+                on_delete=django.db.models.deletion.SET_NULL,
                 related_name="comparison_sets",
                 to="epi.Exposure",
             ),
@@ -329,6 +329,7 @@ class Migration(migrations.Migration):
             model_name="groupresult",
             name="is_main_finding",
             field=models.BooleanField(
+                default=False,
                 help_text='If study does not report a statistically significant association (p<0.05) between exposure and health outcome at any exposure level, check "Main finding" for highest exposure group compared with referent group (e.g.Q4 vs. Q1). If study reports a statistically significant association and monotonic dose response, check "Main finding" for lowest exposure group with a statistically significant association. If nonmonotonic dose response, case-by-case considering statistical trend analyses, consistency of pattern across exposure groups, and/or biological significance.  See "Results" section of https://ehp.niehs.nih.gov/1205502/ for examples and further details. This field is commonly used in HAWC visualizations',
                 verbose_name="Main finding",
             ),

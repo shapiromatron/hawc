@@ -1,5 +1,5 @@
 import pytest
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from rest_framework.test import APIClient
 
 
@@ -32,6 +32,16 @@ class TestLiteratureAssessmentViewset:
         assert c.login(email="pm@pm.com", password="pw") is True
         resp = c.get(url).json()
         assert resp == [{"reference_id": 2, "tag_id": 13}]
+
+    def test_reference_year_histogram(self, db_keys):
+        url = reverse(
+            "lit:api:assessment-reference-year-histogram",
+            kwargs=dict(pk=db_keys.assessment_working),
+        )
+        c = APIClient()
+        assert c.login(email="pm@pm.com", password="pw") is True
+        resp = c.get(url).json()
+        assert resp["data"][0]["type"] == "histogram"
 
 
 @pytest.mark.django_db

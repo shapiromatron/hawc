@@ -110,7 +110,11 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "user",
-                    models.OneToOneField(related_name="profile", to=settings.AUTH_USER_MODEL),
+                    models.OneToOneField(
+                        related_name="profile",
+                        on_delete=models.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
                 ),
             ],
             options={},

@@ -6,9 +6,9 @@ import numpy as np
 import pandas as pd
 from crispy_forms import layout as cfl
 from django import forms
-from django.core.urlresolvers import reverse_lazy
 from django.db import transaction
 from django.db.models import Q
+from django.urls import reverse_lazy
 from litter_getter import ris
 
 from ..assessment.models import Assessment
@@ -156,7 +156,10 @@ class ImportForm(SearchForm):
         return search
 
 
-class RISForm(SearchForm):
+class RisImportForm(SearchForm):
+
+    UNPARSABLE_RIS = "File cannot be successfully loaded. Are you sure this is a valid RIS file?  If you are, please contact us and we'll try to fix the issue."
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["source"].choices = [(3, "RIS (EndNote/Reference Manager)")]
@@ -228,12 +231,7 @@ class RISForm(SearchForm):
             )
 
         if not readable:
-            raise forms.ValidationError(
-                """
-                File cannot be successfully loaded. Are you sure this is a
-                valid RIS file?  If you are, please contact us and we'll try to
-                fix the issue."""
-            )
+            raise forms.ValidationError(self.UNPARSABLE_RIS)
 
         return fileObj
 
@@ -254,6 +252,14 @@ class RISForm(SearchForm):
                 importer = ris.RisImporter(f)
 
             self.instance._references = importer.references
+
+    @transaction.atomic
+    def save(self, commit=True):
+        is_create = self.instance.id is None
+        search = super().save(commit=commit)
+        if is_create:
+            search.run_new_import()
+        return search
 
 
 class SearchModelChoiceField(forms.ModelChoiceField):
@@ -290,9 +296,10 @@ class ReferenceForm(forms.ModelForm):
     class Meta:
         model = models.Reference
         fields = (
+            "authors_short",
             "title",
-            "authors",
             "year",
+            "authors",
             "journal",
             "abstract",
             "full_text_url",
@@ -305,7 +312,7 @@ class ReferenceForm(forms.ModelForm):
     def setHelper(self):
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
-            if fld in ["title", "authors", "journal"]:
+            if fld in ["title", "authors_short", "authors", "journal"]:
                 widget.attrs["rows"] = 3
 
             if type(widget) != forms.CheckboxInput:
@@ -318,8 +325,9 @@ class ReferenceForm(forms.ModelForm):
         }
 
         helper = BaseFormHelper(self, **inputs)
-        helper.add_fluid_row("title", 2, "span6")
-        helper.add_fluid_row("year", 2, "span6")
+        # TODO: use new names
+        helper.add_fluid_row("authors_short", 3, "span4")
+        helper.add_fluid_row("authors", 2, "span6")
         helper.form_class = None
         return helper
 
@@ -364,7 +372,9 @@ class ReferenceSearchForm(forms.Form):
         if self.cleaned_data["title"]:
             query &= Q(title__icontains=self.cleaned_data["title"])
         if self.cleaned_data["authors"]:
-            query &= Q(authors__icontains=self.cleaned_data["authors"])
+            query &= Q(authors_short__icontains=self.cleaned_data["authors"]) | Q(
+                authors__icontains=self.cleaned_data["authors"]
+            )
         if self.cleaned_data["journal"]:
             query &= Q(journal__icontains=self.cleaned_data["journal"])
         if self.cleaned_data["db_id"]:

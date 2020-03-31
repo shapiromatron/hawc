@@ -1,8 +1,8 @@
 from django.apps import apps
 from django.core.exceptions import PermissionDenied
-from django.core.urlresolvers import reverse_lazy
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
+from django.urls import reverse_lazy
 from django.views.generic import FormView
 
 from ..assessment.models import Assessment
@@ -51,8 +51,8 @@ class StudyCreateFromReference(EnsurePreparationStartedMixin, BaseCreate):
         self.initial = dict(
             assessment=self.assessment,
             reference=self.parent,
-            short_citation=self.parent.get_short_citation_estimate(),
-            full_citation=self.parent.reference_citation,
+            short_citation=self.parent.ref_short_citation,
+            full_citation=self.parent.ref_full_citation,
         )
         return self.initial
 

@@ -4,7 +4,7 @@ import sys
 from pathlib import Path
 from typing import List, Tuple
 
-from django.core.urlresolvers import reverse_lazy
+from django.urls import reverse_lazy
 
 PROJECT_PATH = Path(__file__).parents[2].absolute()
 PROJECT_ROOT = PROJECT_PATH.parent
@@ -59,12 +59,11 @@ TEMPLATES = [
 
 
 # Middleware
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE = (
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "django.contrib.auth.middleware.SessionAuthenticationMiddleware",
     "reversion.middleware.RevisionMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
@@ -91,8 +90,6 @@ INSTALLED_APPS = (
     "taggit",
     "treebeard",
     "selectable",
-    "pagedown",
-    "markdown_deux",
     "crispy_forms",
     "rest_framework_extensions",
     "webpack_loader",
@@ -116,9 +113,9 @@ INSTALLED_APPS = (
 # DB settings
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "ENGINE": "django.db.backends.postgresql",
         "NAME": os.getenv("DJANGO_DB_NAME", "hawc"),
-        "USER": os.getenv("DJANGO_DB_USER", "postgres"),
+        "USER": os.getenv("DJANGO_DB_USER", "hawc"),
         "PASSWORD": os.getenv("DJANGO_DB_PW", ""),
         "HOST": os.getenv("DJANGO_DB_HOST", "localhost"),
         "PORT": os.getenv("DJANGO_DB_PORT", ""),
@@ -251,8 +248,6 @@ BMDS_TOKEN = os.getenv("BMDS_TOKEN", "token")
 # increase allowable fields in POST for updating reviewers
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000
 
-# Chemspider token details
-CHEMSPIDER_TOKEN = os.getenv("CHEMSPIDER_TOKEN", "")
 
 # Django rest framework settings
 REST_FRAMEWORK = {
@@ -260,18 +255,12 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.SessionAuthentication",
         "rest_framework.authentication.TokenAuthentication",
     ],
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.AllowAny",),
-    "PAGE_SIZE": 10,
+    "PAGE_SIZE": 50,
     "COERCE_DECIMAL_TO_STRING": False,
 }
 REST_FRAMEWORK_EXTENSIONS = {"DEFAULT_BULK_OPERATION_HEADER_NAME": "X-CUSTOM-BULK-OPERATION"}
-
-
-# Django pagedown settings
-PAGEDOWN_WIDGET_CSS = (
-    "pagedown/demo/browser/demo.css",
-    "css/pagedown.css",
-)
 
 # Django selectable settings
 SELECTABLE_MAX_LIMIT = 10
