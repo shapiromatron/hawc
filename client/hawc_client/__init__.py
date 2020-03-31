@@ -3,6 +3,8 @@ from typing import Dict, Generator, List
 import pandas as pd
 from requests import Response, Session
 
+__all__ = ["HawcClient"]
+
 
 class HawcClientException(Exception):
     """An exception occurred in the HAWC client module."""
@@ -16,7 +18,7 @@ class HawcServerException(Exception):
     pass
 
 
-class _Session:
+class HawcSession:
     """
     A session that handles HAWC requests and responses.
 
@@ -112,18 +114,18 @@ class _Session:
             yield response_json["results"]
 
 
-class _BaseClient:
+class BaseClient:
     """
     Base client class.
 
-    Initiates with a given _Session object.
+    Initiates with a given HawcSession object.
     """
 
-    def __init__(self, session: _Session):
+    def __init__(self, session: HawcSession):
         self.session = session
 
 
-class _LiteratureClient(_BaseClient):
+class LiteratureClient(BaseClient):
     """
     Client class for literature requests.
     """
@@ -150,9 +152,7 @@ class _LiteratureClient(_BaseClient):
         response_json = self.session._get(url)
         return pd.DataFrame(response_json)
 
-    def import_reference_tags(
-        self, assessment_id: int, csv: str, operation: str = "append"
-    ) -> pd.DataFrame:
+    def import_reference_tags(self, assessment_id: int, csv: str, operation: str = "append") -> pd.DataFrame:
         payload = {"csv": csv, "operation": operation}
         url = f"{self.session.root_url}/lit/api/assessment/{assessment_id}/reference-tags/"
         response_json = self.session._post(url, payload)
@@ -169,7 +169,7 @@ class _LiteratureClient(_BaseClient):
         return pd.DataFrame(response_json)
 
 
-class _RiskOfBiasClient(_BaseClient):
+class RiskOfBiasClient(BaseClient):
     """
     Client class for risk of bias requests.
     """
@@ -185,7 +185,7 @@ class _RiskOfBiasClient(_BaseClient):
         return pd.DataFrame(response_json)
 
 
-class _EpiClient(_BaseClient):
+class EpiClient(BaseClient):
     """
     Client class for epidemiology requests.
     """
@@ -202,7 +202,7 @@ class _EpiClient(_BaseClient):
         return [res for results in generator for res in results]
 
 
-class _AnimalClient(_BaseClient):
+class AnimalClient(BaseClient):
     """
     Client class for animal experiment requests.
     """
@@ -224,7 +224,7 @@ class _AnimalClient(_BaseClient):
         return [res for results in generator for res in results]
 
 
-class _EpiMetaClient(_BaseClient):
+class EpiMetaClient(BaseClient):
     """
     Client class for epidemiology metadata requests.
     """
@@ -235,7 +235,7 @@ class _EpiMetaClient(_BaseClient):
         return pd.DataFrame(response_json)
 
 
-class _InvitroClient(_BaseClient):
+class InvitroClient(BaseClient):
     """
     Client class for in-vitro requests.
     """
@@ -246,7 +246,7 @@ class _InvitroClient(_BaseClient):
         return pd.DataFrame(response_json)
 
 
-class _SummaryClient(_BaseClient):
+class SummaryClient(BaseClient):
     """
     Client class for summary requests.
     """
@@ -257,7 +257,7 @@ class _SummaryClient(_BaseClient):
         return pd.DataFrame(response_json)
 
 
-class _AssessmentClient(_BaseClient):
+class AssessmentClient(BaseClient):
     """
     Client class for assessment requests.
     """
@@ -267,7 +267,7 @@ class _AssessmentClient(_BaseClient):
         return self.session._get(url)
 
 
-class HawcClient(_BaseClient):
+class HawcClient(BaseClient):
     """
     HAWC Client.
 
@@ -283,16 +283,16 @@ class HawcClient(_BaseClient):
     """
 
     def __init__(self, root_url: str = "https://hawcproject.org"):
-        super().__init__(_Session(root_url))
+        super().__init__(HawcSession(root_url))
 
-        self.animal = _AnimalClient(self.session)
-        self.assessment = _AssessmentClient(self.session)
-        self.epi = _EpiClient(self.session)
-        self.epimeta = _EpiMetaClient(self.session)
-        self.invitro = _InvitroClient(self.session)
-        self.lit = _LiteratureClient(self.session)
-        self.riskofbias = _RiskOfBiasClient(self.session)
-        self.summary = _SummaryClient(self.session)
+        self.animal = AnimalClient(self.session)
+        self.assessment = AssessmentClient(self.session)
+        self.epi = EpiClient(self.session)
+        self.epimeta = EpiMetaClient(self.session)
+        self.invitro = InvitroClient(self.session)
+        self.lit = LiteratureClient(self.session)
+        self.riskofbias = RiskOfBiasClient(self.session)
+        self.summary = SummaryClient(self.session)
 
     def authenticate(self, email: str, password: str):
         """
