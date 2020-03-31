@@ -68,7 +68,12 @@ class RiskOfBias(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         requester_has_appropriate_permissions = False
         study_id = tryParseInt(request.data.get("study_id"), -1)
-        study = Study.objects.get(id=study_id)
+        study = None
+        try:
+            study = Study.objects.get(id=study_id)
+        except:
+            raise ValidationError("Invalid study_id")
+
         if study.user_can_edit_study(study.assessment, request.user):
             # request.user is the user represented by the "Authorization: Token xxxx" header.
             requester_has_appropriate_permissions = True

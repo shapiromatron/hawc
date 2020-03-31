@@ -146,16 +146,28 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
             # creating a new RoB object
             # convert the supplied study_id to an actual Study object...
             study_id = tryParseInt(self.initial_data["study_id"], -1)
-            study = Study.objects.get(id=study_id)
+            study = None
+            try:
+                study = Study.objects.get(id=study_id)
+            except:
+                pass
+
             if study is None:
-                raise serializers.ValidationError("Invalid study_id")
+                pass
+                # raise serializers.ValidationError("Invalid study_id")
+                # we actually raise this exception in api.py
             else:
                 data["study"] = study
 
 
             # ...and same for author_id
             author_id = tryParseInt(self.initial_data["author_id"], -1)
-            author = HAWCUser.objects.get(id=author_id)
+            author = None
+            try:
+                author = HAWCUser.objects.get(id=author_id)
+            except:
+                pass
+
             if author is None:
                 raise serializers.ValidationError("Invalid author_id")
             else:
