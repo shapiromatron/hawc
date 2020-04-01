@@ -45,13 +45,14 @@ def db_keys():
     return _keys
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="session")
 def vcr_config():
     return {
+        "filter_headers": [("authorization", "<omitted>")],
         "ignore_localhost": True,
     }
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="session")
 def vcr_cassette_dir(request):
     return os.path.join("tests", "data", "cassettes", request.module.__name__)
