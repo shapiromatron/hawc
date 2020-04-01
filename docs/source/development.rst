@@ -362,3 +362,17 @@ Then, create the example docker container and start a celery worker instance:
 
 Asynchronous tasks will no be executed by celery workers instead of the main thread.
 
+Distributing HAWC clients
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The Python HAWC client can be packaged for easy distribution.
+
+.. code-block:: bash
+
+    # change to your client directory within the hawc project
+    cd client
+
+    # make a sdist and wheel for your hawc-client
+    python setup.py sdist bdist_wheel
+
+These distributions will be located in the ``dist`` folder within the aforementioned ``client`` directory.
