@@ -1,4 +1,5 @@
 import logging
+import os
 from typing import NamedTuple
 
 import pytest
@@ -42,3 +43,15 @@ def test_db(django_db_setup, django_db_blocker):
 @pytest.fixture
 def db_keys():
     return _keys
+
+
+@pytest.fixture(scope="module")
+def vcr_config():
+    return {
+        "ignore_localhost": True,
+    }
+
+
+@pytest.fixture(scope="module")
+def vcr_cassette_dir(request):
+    return os.path.join("tests", "data", "cassettes", request.module.__name__)

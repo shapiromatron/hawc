@@ -1,6 +1,9 @@
+import pytest
+
 from hawc.apps.common.dsstox import fetch_dsstox
 
 
+@pytest.mark.vcr
 def test_dsstox():
     # bad casrn failure
     response = fetch_dsstox("abc-123")

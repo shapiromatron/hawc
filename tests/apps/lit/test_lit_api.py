@@ -44,6 +44,7 @@ class TestLiteratureAssessmentViewset:
         assert resp["data"][0]["type"] == "histogram"
 
 
+@pytest.mark.vcr
 @pytest.mark.django_db
 class TestSearchViewset:
     def test_success(self, db_keys):

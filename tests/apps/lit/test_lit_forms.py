@@ -9,6 +9,7 @@ from hawc.apps.lit.forms import ImportForm, RisImportForm
 from hawc.apps.lit.models import Reference
 
 
+@pytest.mark.vcr
 @pytest.mark.django_db
 class TestImportForm:
     """
@@ -103,6 +104,7 @@ class TestImportForm:
         }
 
 
+@pytest.mark.vcr
 @pytest.mark.django_db
 class TestRisImportForm:
     def test_success(self, db_keys):
