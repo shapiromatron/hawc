@@ -30,7 +30,16 @@ There's also a HAWC client available:
     client = HawcClient(root_url="https://hawcproject.org")
     client.authenticate(username="username",password="password")
 
-    client.animal.endpoints(assessment_id=123)
+    # as an example, get all references for an assessment
+    client.lit.references(assessment_id=123)
+
+    # as an example, import new references to an assessment
+    client.lit.import_hero(
+        assessment_id=123,
+        title="example title",
+        description="example description",
+        ids=[5000,5010]
+    )
 
 There's also a HAWC client available in R:
 
