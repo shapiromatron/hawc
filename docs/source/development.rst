@@ -340,12 +340,12 @@ Problems running tests
 
 If tests aren't working after the database has changed (ie., migrated); try dropping the test-database. Try the command ``dropdb test_hawc-fixture-test``.
 
-Request mocking
-~~~~~~~~~~~~~~~
+Mocking external resources in tests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Some of the unit tests rely on requests made to external sites. For these tests, there are "cassettes" in ``tests\data\cassettes`` that provide a static response for these external requests, allowing us to pass tests regardless of the status of these external sites.
+When writing tests that require accessing external resources, the ``vcr`` python package is used to save "cassettes" of expected responses to allow faster tests and stability in case external resources are intermittently offline. These cassettes can be rebuilt by running ``make test-refresh``, which will delete the ``cassettes`` directory and run the python test suite, which in turn recreates the cassettes based on actual responses.
 
-To rebuild these cassettes simply run ``make test-clean``. This will delete the cassettes folder and then run our python tests, which will regenerate the necessary cassettes based on responses from those external sites.
+If a test uses an external resource, ensure that it is decorated with ``@pytest.mark.vcr`` to generate a cassette; see our current tests suite for examples.
 
 Testing celery application
 ~~~~~~~~~~~~~~~~~~~~~~~~~~

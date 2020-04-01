@@ -66,7 +66,7 @@ format-js:  ## Modify javascript code if possible using linters/formatters
 test:  ## Run python tests
 	@py.test
 
-test-clean: ## Removes mock requests and runs python tests
+test-refresh: ## Removes mock requests and runs python tests
 	rm -rf tests/data/cassettes
 	@py.test
 
