@@ -1,5 +1,5 @@
 import logging
-import os
+from pathlib import Path
 from typing import NamedTuple
 
 import pytest
@@ -53,6 +53,7 @@ def vcr_config():
     }
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="module")
 def vcr_cassette_dir(request):
-    return os.path.join("tests", "data", "cassettes", request.module.__name__)
+    cassette_dir = Path(__file__).parent.absolute() / "data/cassettes" / request.module.__name__
+    return str(cassette_dir)
