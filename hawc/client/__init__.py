@@ -70,6 +70,10 @@ class Client:
         response = self.session.post(url, payload)
         return self._handle_hawc_response(response)
 
+    def _post_as_json(self, url: str, payload: Dict) -> Dict:
+        response = self.session.post(url, json=payload)
+        return self._handle_hawc_response(response)
+
     def lit_import_hero(
         self, assessment_id: int, title: str, description: str, ids: List[int]
     ) -> Dict:
@@ -151,3 +155,16 @@ class Client:
         url = f"{self.root_url}/summary/api/visual/?assessment_id={assessment_id}"
         response_json = self._get(url)
         return pd.DataFrame(response_json)
+
+    def rob_create(self, study_id: int, author_id: int, active: bool, final: bool, scores: list) -> pd.DataFrame:
+        payload = {
+            "study_id": study_id,
+            "author_id": author_id,
+            "active": active,
+            "final": final,
+            "scores": scores,
+        }
+        url = f"{self.root_url}/rob/api/review/"
+        response_json = self._post_as_json(url, payload)
+
+        return response_json

@@ -176,13 +176,14 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
             # (2) for scores, a default=True exists for each required metric (by study type) for a study.
 
             # (1) does the study already have an active=True/final=True rob?
-            robs = study.riskofbiases.all()
-            for rob in robs:
-                if rob.active and rob.final:
-                    raise serializers.ValidationError(
-                        "create failed; study %s already has an active & final risk of bias"
-                        % study_id
-                    )
+            if self.initial_data["active"] is True and self.initial_data["final"] is True:
+                robs = study.riskofbiases.all()
+                for rob in robs:
+                    if rob.active and rob.final:
+                        raise serializers.ValidationError(
+                            "create failed; study %s already has an active & final risk of bias"
+                            % study_id
+                        )
 
             # (2) subject to the settings of the metrics defined for this assessment,
             # and the study_type of the study, we need to make sure all necessary scores
