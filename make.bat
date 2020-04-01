@@ -10,6 +10,7 @@ if /I %1 == format-py goto :format-py
 if /I %1 == lint-js goto :lint-js
 if /I %1 == format-js goto :format-js
 if /I %1 == test goto :test
+if /I %1 == test-clean goto :test-clean
 goto :help
 
 :build
@@ -23,6 +24,7 @@ goto :eof
 echo.Please use `make ^<target^>` where ^<target^> is one of
 echo.  build      build python application
 echo.  test       run python tests
+echo.  test-clean removes mock requests and runs python tests
 echo.  lint       perform both lint-py and lint-js
 echo.  format     perform both format-py and lint-js
 echo.  lint-py    check for pytho formatting issues via black and flake8
@@ -58,5 +60,10 @@ npm --prefix .\frontend run format
 goto :eof
 
 :test
+py.test
+goto :eof
+
+:test-clean
+rmdir /s /q .\tests\data\cassettes
 py.test
 goto :eof
