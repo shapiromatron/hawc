@@ -22,12 +22,6 @@ class AssessmentSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class PublicAssessmentSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.Assessment
-        fields = "__all__"
-
-
 class AssessmentMiniSerializer(serializers.ModelSerializer):
     url = serializers.CharField(source="get_absolute_url")
 

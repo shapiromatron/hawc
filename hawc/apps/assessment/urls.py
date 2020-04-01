@@ -6,7 +6,6 @@ from . import api, views
 
 router = DefaultRouter()
 router.register(r"assessment", api.Assessment, basename="assessment")
-router.register(r"public", api.PublicAssessment, basename="public")
 router.register(r"dashboard", api.AdminDashboardViewset, basename="admin_dashboard")
 router.register(r"endpoints", api.AssessmentEndpointList, basename="endpoint_type")
 

@@ -50,7 +50,7 @@ class HawcSession:
         else:
             return response.json()
 
-    def _get(self, url: str, params: Dict = None) -> Dict:
+    def get(self, url: str, params: Dict = None) -> Dict:
         """
         Sends a GET request using the session instance
 
@@ -64,7 +64,7 @@ class HawcSession:
         response = self._session.get(url=url, params=params)
         return self._handle_hawc_response(response)
 
-    def _post(self, url: str, data: Dict) -> Dict:
+    def post(self, url: str, data: Dict) -> Dict:
         """
         Sends a POST request using the session instance
 
@@ -93,7 +93,7 @@ class HawcSession:
         token = self._handle_hawc_response(response)["token"]
         self._session.headers.update(Authorization=f"Token {token}")
 
-    def _page_gen(self, url: str, params: Dict = None) -> Generator:
+    def iter_pages(self, url: str, params: Dict = None) -> Generator:
         """
         Generator that crawls paginated HAWC responses.
 
@@ -107,10 +107,10 @@ class HawcSession:
         Yields:
             Generator: Results for a page of response
         """
-        response_json = self._get(url, params)
+        response_json = self.get(url, params)
         yield response_json["results"]
         while response_json["next"] is not None:
-            response_json = self._get(response_json["next"])
+            response_json = self.get(response_json["next"])
             yield response_json["results"]
 
 
@@ -140,32 +140,34 @@ class LiteratureClient(BaseClient):
             "search_string": ",".join(str(id_) for id_ in ids),
         }
         url = f"{self.session.root_url}/lit/api/search/"
-        return self.session._post(url, payload)
+        return self.session.post(url, payload)
 
     def tags(self, assessment_id: int) -> pd.DataFrame:
         url = f"{self.session.root_url}/lit/api/assessment/{assessment_id}/tags/"
-        response_json = self.session._get(url)
+        response_json = self.session.get(url)
         return pd.DataFrame(response_json)
 
     def reference_tags(self, assessment_id: int) -> pd.DataFrame:
         url = f"{self.session.root_url}/lit/api/assessment/{assessment_id}/reference-tags/"
-        response_json = self.session._get(url)
+        response_json = self.session.get(url)
         return pd.DataFrame(response_json)
 
-    def import_reference_tags(self, assessment_id: int, csv: str, operation: str = "append") -> pd.DataFrame:
+    def import_reference_tags(
+        self, assessment_id: int, csv: str, operation: str = "append"
+    ) -> pd.DataFrame:
         payload = {"csv": csv, "operation": operation}
         url = f"{self.session.root_url}/lit/api/assessment/{assessment_id}/reference-tags/"
-        response_json = self.session._post(url, payload)
+        response_json = self.session.post(url, payload)
         return pd.DataFrame(response_json)
 
     def reference_ids(self, assessment_id: int) -> pd.DataFrame:
         url = f"{self.session.root_url}/lit/api/assessment/{assessment_id}/reference-ids/"
-        response_json = self.session._get(url)
+        response_json = self.session.get(url)
         return pd.DataFrame(response_json)
 
     def references(self, assessment_id: int) -> pd.DataFrame:
         url = f"{self.session.root_url}/lit/api/assessment/{assessment_id}/references-download/"
-        response_json = self.session._get(url)
+        response_json = self.session.get(url)
         return pd.DataFrame(response_json)
 
 
@@ -176,12 +178,12 @@ class RiskOfBiasClient(BaseClient):
 
     def data(self, assessment_id: int) -> pd.DataFrame:
         url = f"{self.session.root_url}/rob/api/assessment/{assessment_id}/export/"
-        response_json = self.session._get(url)
+        response_json = self.session.get(url)
         return pd.DataFrame(response_json)
 
     def full_data(self, assessment_id: int) -> pd.DataFrame:
         url = f"{self.session.root_url}/rob/api/assessment/{assessment_id}/full-export/"
-        response_json = self.session._get(url)
+        response_json = self.session.get(url)
         return pd.DataFrame(response_json)
 
 
@@ -192,13 +194,13 @@ class EpiClient(BaseClient):
 
     def data(self, assessment_id: int) -> pd.DataFrame:
         url = f"{self.session.root_url}/epi/api/assessment/{assessment_id}/export/"
-        response_json = self.session._get(url)
+        response_json = self.session.get(url)
         return pd.DataFrame(response_json)
 
     def endpoints(self, assessment_id: int) -> List[Dict]:
         payload = {"assessment_id": assessment_id}
         url = f"{self.session.root_url}/epi/api/outcome/"
-        generator = self.session._page_gen(url, payload)
+        generator = self.session.iter_pages(url, payload)
         return [res for results in generator for res in results]
 
 
@@ -209,18 +211,18 @@ class AnimalClient(BaseClient):
 
     def data(self, assessment_id: int) -> pd.DataFrame:
         url = f"{self.session.root_url}/ani/api/assessment/{assessment_id}/full-export/"
-        response_json = self.session._get(url)
+        response_json = self.session.get(url)
         return pd.DataFrame(response_json)
 
     def data_summary(self, assessment_id: int) -> pd.DataFrame:
         url = f"{self.session.root_url}/ani/api/assessment/{assessment_id}/endpoint-export/"
-        response_json = self.session._get(url)
+        response_json = self.session.get(url)
         return pd.DataFrame(response_json)
 
     def endpoints(self, assessment_id: int) -> List[Dict]:
         payload = {"assessment_id": assessment_id}
         url = f"{self.session.root_url}/ani/api/endpoint/"
-        generator = self.session._page_gen(url, payload)
+        generator = self.session.iter_pages(url, payload)
         return [res for results in generator for res in results]
 
 
@@ -231,7 +233,7 @@ class EpiMetaClient(BaseClient):
 
     def data(self, assessment_id: int) -> pd.DataFrame:
         url = f"{self.session.root_url}/epi-meta/api/assessment/{assessment_id}/export/"
-        response_json = self.session._get(url)
+        response_json = self.session.get(url)
         return pd.DataFrame(response_json)
 
 
@@ -242,7 +244,7 @@ class InvitroClient(BaseClient):
 
     def data(self, assessment_id: int) -> pd.DataFrame:
         url = f"{self.session.root_url}/in-vitro/api/assessment/{assessment_id}/full-export/"
-        response_json = self.session._get(url)
+        response_json = self.session.get(url)
         return pd.DataFrame(response_json)
 
 
@@ -253,7 +255,7 @@ class SummaryClient(BaseClient):
 
     def visual_list(self, assessment_id: int) -> pd.DataFrame:
         url = f"{self.session.root_url}/summary/api/visual/?assessment_id={assessment_id}"
-        response_json = self.session._get(url)
+        response_json = self.session.get(url)
         return pd.DataFrame(response_json)
 
 
@@ -263,8 +265,8 @@ class AssessmentClient(BaseClient):
     """
 
     def public(self) -> Dict:
-        url = f"{self.session.root_url}/assessment/api/public/"
-        return self.session._get(url)
+        url = f"{self.session.root_url}/assessment/api/assessment/public/"
+        return self.session.get(url)
 
 
 class HawcClient(BaseClient):
