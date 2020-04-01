@@ -164,6 +164,12 @@ class Assessment(AssessmentViewset):
     permission_classes = (AssessmentLevelPermissions,)
     serializer_class = serializers.AssessmentSerializer
 
+    @action(detail=False, methods=("get",), permission_classes=(permissions.AllowAny,))
+    def public(self, request):
+        queryset = self.model.objects.get_public_assessments()
+        serializer = serializers.AssessmentSerializer(queryset, many=True)
+        return Response(serializer.data)
+
 
 class AssessmentEndpointList(AssessmentViewset):
     serializer_class = serializers.AssessmentEndpointSerializer
