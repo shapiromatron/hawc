@@ -5,7 +5,12 @@ from django.urls import reverse
 from rest_framework.test import APIClient
 
 from hawc.apps.myuser.models import HAWCUser
-from hawc.apps.riskofbias.models import RiskOfBias, RiskOfBiasAssessment, RiskOfBiasMetric, RiskOfBiasScore
+from hawc.apps.riskofbias.models import (
+    RiskOfBias,
+    RiskOfBiasAssessment,
+    RiskOfBiasMetric,
+    RiskOfBiasScore,
+)
 from hawc.apps.study.models import Study
 
 
@@ -151,6 +156,7 @@ def test_riskofbias_post_overrides():
     # ensure we can delete
     assert c.delete(url).status_code == 204
 
+
 def build_upload_payload(study, author, metrics, dummy_score):
     payload = {
         "study_id": study.id if study is not None else -1,
@@ -163,12 +169,13 @@ def build_upload_payload(study, author, metrics, dummy_score):
                 is_default=True,
                 label="",
                 score=dummy_score,
-                notes="sample note"
+                notes="sample note",
             )
             for metric in metrics
-        ]
+        ],
     }
     return payload
+
 
 @pytest.mark.django_db
 def test_riskofbias_create():
@@ -184,7 +191,7 @@ def test_riskofbias_create():
 
     required_metrics = RiskOfBiasMetric.objects.get_required_metrics(study.assessment, study)
     first_valid_score = RiskOfBiasAssessment().get_rob_response_values()[0]
-    
+
     # failed uploading for a study that already has an active & final RoB
     payload = build_upload_payload(study, pm_author, required_metrics, first_valid_score)
     resp = client.post(url, payload, format="json")

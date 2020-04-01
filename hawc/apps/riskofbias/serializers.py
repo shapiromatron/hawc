@@ -1,6 +1,7 @@
 import datetime
 
 from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import serializers
 
 from ..assessment.serializers import AssessmentMiniSerializer
@@ -138,7 +139,9 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
                 id__in=score_ids, riskofbias=self.instance
             ).count() != len(score_ids):
                 raise serializers.ValidationError("Cannot update; scores to not match instances")
-            for initial_score_data, update_score in zip(self.initial_data["scores"], data["scores"]):
+            for initial_score_data, update_score in zip(
+                self.initial_data["scores"], data["scores"]
+            ):
                 update_score["id"] = initial_score_data["id"]
 
             override_options = self.instance.get_override_options()
@@ -146,39 +149,27 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
             # creating a new RoB object
             # convert the supplied study_id to an actual Study object...
             study_id = tryParseInt(self.initial_data["study_id"], -1)
-            study = None
-            try:
-                study = Study.objects.get(id=study_id)
-            except:
-                pass
-
-            if study is None:
-                pass
-                # raise serializers.ValidationError("Invalid study_id")
-                # we actually raise this exception in api.py
-            else:
-                data["study"] = study
-
+            study = Study.objects.get(id=study_id)
+            data["study"] = study
 
             # ...and same for author_id
             author_id = tryParseInt(self.initial_data["author_id"], -1)
             author = None
             try:
                 author = HAWCUser.objects.get(id=author_id)
-            except:
-                pass
-
-            if author is None:
+            except ObjectDoesNotExist:
                 raise serializers.ValidationError("Invalid author_id")
-            else:
-                data["author"] = author
+
+            data["author"] = author
 
             assessment = study.assessment
             # we also checked permissions for the caller, not just the supplied author, in api.py
             if not study.user_can_edit_study(assessment, author):
                 # author is the user specified by the "author_id" value in the payload
-                raise serializers.ValidationError("Author '%s' has invalid permissions to edit Risk of Bias for this study" % author)
-
+                raise serializers.ValidationError(
+                    "Author '%s' has invalid permissions to edit Risk of Bias for this study"
+                    % author
+                )
 
             # Validation should check that:
             # (1) no other active=True, final=True exists for this study_id, and
@@ -188,39 +179,55 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
             robs = study.riskofbiases.all()
             for rob in robs:
                 if rob.active and rob.final:
-                    raise serializers.ValidationError("create failed; study %s already has an active & final risk of bias" % study_id)
-
-            # study_type is an array like ['bioassay','epi']
-            study_type = study.get_study_type()
+                    raise serializers.ValidationError(
+                        "create failed; study %s already has an active & final risk of bias"
+                        % study_id
+                    )
 
             # (2) subject to the settings of the metrics defined for this assessment,
             # and the study_type of the study, we need to make sure all necessary scores
             # have been submitted with a default=True
             scores = self.initial_data["scores"]
-            required_metrics = models.RiskOfBiasMetric.objects.get_required_metrics(assessment, study)
+            required_metrics = models.RiskOfBiasMetric.objects.get_required_metrics(
+                assessment, study
+            )
             problematic_scores = []
             for metric in required_metrics:
                 domain = metric.domain
                 # there could be multiple scores for a given metric if there are overrides, so we need to fetch them all
-                scores_for_metric = [ score for score in scores if "metric_id" in score and score["metric_id"] == metric.id ]
+                scores_for_metric = [
+                    score
+                    for score in scores
+                    if "metric_id" in score and score["metric_id"] == metric.id
+                ]
 
                 metric_descriptor = "'%s:%s'" % (domain.name, metric.name)
 
                 if 0 == len(scores_for_metric):
-                    problematic_scores.append("No score for metric %s/%s was submitted" % (metric.id, metric_descriptor))
+                    problematic_scores.append(
+                        "No score for metric %s/%s was submitted" % (metric.id, metric_descriptor)
+                    )
                 else:
                     default_score_for_this_metric_included = False
                     for submitted_score in scores_for_metric:
-                        if "is_default" in submitted_score and submitted_score["is_default"] == True:
+                        if (
+                            "is_default" in submitted_score
+                            and submitted_score["is_default"] is True
+                        ):
                             default_score_for_this_metric_included = True
                             break
 
                     if not default_score_for_this_metric_included:
-                        problematic_scores.append("The score for metric %s/%s was submitted but not marked as default" % (metric.id, metric_descriptor))
+                        problematic_scores.append(
+                            "The score for metric %s/%s was submitted but not marked as default"
+                            % (metric.id, metric_descriptor)
+                        )
 
             if len(problematic_scores) > 0:
                 explanation = "; ".join(problematic_scores)
-                raise serializers.ValidationError("create failed; study %s had problematic scores (%s)" % (study_id, explanation))
+                raise serializers.ValidationError(
+                    "create failed; study %s had problematic scores (%s)" % (study_id, explanation)
+                )
 
             # store the actual metric object we want to create
             score_idx = 0
@@ -241,7 +248,6 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
             score_value = score["score"]
             if score_value not in valid_score_values:
                 raise serializers.ValidationError("score %s is not valid" % (score_value,))
-
 
         # check overrides
         for key, values in override_options.items():
@@ -293,23 +299,23 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
         # print(validated_data)
 
         rob = models.RiskOfBias.objects.create(
-            study = validated_data["study"],
-            final = validated_data["final"],
-            author = validated_data["author"],
-            active = validated_data["active"],
-            created = validated_data["created"],
-            last_updated = validated_data["last_updated"]
+            study=validated_data["study"],
+            final=validated_data["final"],
+            author=validated_data["author"],
+            active=validated_data["active"],
+            created=validated_data["created"],
+            last_updated=validated_data["last_updated"],
         )
 
         scores_to_create = validated_data["scores"]
         for score_to_create in scores_to_create:
             score = models.RiskOfBiasScore.objects.create(
-                riskofbias = rob,
-                metric = score_to_create["metric"],
-                is_default = score_to_create["is_default"],
-                label = score_to_create["label"],
-                score = score_to_create["score"],
-                notes = score_to_create["notes"]
+                riskofbias=rob,
+                metric=score_to_create["metric"],
+                is_default=score_to_create["is_default"],
+                label=score_to_create["label"],
+                score=score_to_create["score"],
+                notes=score_to_create["notes"],
             )
 
             overridden_objects = score_to_create["overridden_objects"]

@@ -1,4 +1,4 @@
-from django.core.exceptions import PermissionDenied
+from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status, viewsets
@@ -15,7 +15,6 @@ from ..assessment.api import (
     InAssessmentFilter,
     RequiresAssessmentID,
 )
-
 from ..assessment.models import Assessment, TimeSpentEditing
 from ..common.api import BulkIdFilter, LegacyAssessmentAdapterMixin
 from ..common.helper import tryParseInt
@@ -116,7 +115,7 @@ class RiskOfBias(viewsets.ModelViewSet):
         study = None
         try:
             study = Study.objects.get(id=study_id)
-        except:
+        except ObjectDoesNotExist:
             raise ValidationError("Invalid study_id")
 
         if study.user_can_edit_study(study.assessment, request.user):
@@ -124,7 +123,10 @@ class RiskOfBias(viewsets.ModelViewSet):
             requester_has_appropriate_permissions = True
 
         if not requester_has_appropriate_permissions:
-            raise ValidationError("Submitter '%s' has invalid permissions to edit Risk of Bias for this study" % request.user)
+            raise ValidationError(
+                "Submitter '%s' has invalid permissions to edit Risk of Bias for this study"
+                % request.user
+            )
 
         # overridden_objects is not marked as optional in RiskOfBiasScoreSerializerSlim; if it's not present
         # in the payload, let's just add an empty array.
