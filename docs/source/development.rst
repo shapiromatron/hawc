@@ -340,6 +340,13 @@ Problems running tests
 
 If tests aren't working after the database has changed (ie., migrated); try dropping the test-database. Try the command ``dropdb test_hawc-fixture-test``.
 
+Request mocking
+~~~~~~~~~~~~~~~
+
+Some of the unit tests rely on requests made to external sites. For these tests, there are "cassettes" in ``tests\data\cassettes`` that provide a static response for these external requests, allowing us to pass tests regardless of the status of these external sites.
+
+To rebuild these cassettes simply run ``make test-clean``. This will delete the cassettes folder and then run our python tests, which will regenerate the necessary cassettes based on responses from those external sites.
+
 Testing celery application
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
