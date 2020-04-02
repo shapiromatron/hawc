@@ -297,8 +297,6 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
         validated_data["created"] = right_now
         validated_data["last_updated"] = right_now
 
-        # print(validated_data)
-
         rob = models.RiskOfBias.objects.create(
             study=validated_data["study"],
             final=validated_data["final"],
