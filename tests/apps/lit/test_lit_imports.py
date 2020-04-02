@@ -8,6 +8,7 @@ from pytest_django.asserts import assertFormError
 from hawc.apps.lit import constants, models
 
 
+@pytest.mark.vcr
 @pytest.mark.django_db
 def test_pubmed_search(db_keys):
     # Check when searching, the same number of identifiers and refs are
@@ -57,6 +58,7 @@ def test_pubmed_search(db_keys):
     assert models.Reference.objects.filter(identifiers__in=i_pks).count() == i_count
 
 
+@pytest.mark.vcr
 @pytest.mark.django_db
 def test_pubmed_import(db_keys):
     # ensure successful PubMed import
@@ -99,6 +101,7 @@ def test_pubmed_import(db_keys):
     )
 
 
+@pytest.mark.vcr
 @pytest.mark.django_db
 def test_successful_single_hero_id(db_keys):
     """
@@ -142,6 +145,7 @@ def test_successful_single_hero_id(db_keys):
     assert ref.identifiers.all()[0] == ident
 
 
+@pytest.mark.vcr
 @pytest.mark.django_db
 def test_failed_hero_id(db_keys):
     """
@@ -178,6 +182,7 @@ def test_failed_hero_id(db_keys):
     assert models.Search.objects.count() == initial_searches
 
 
+@pytest.mark.vcr
 @pytest.mark.django_db
 def test_existing_pubmed_hero_add(db_keys):
     """
@@ -246,6 +251,7 @@ class RisFile:
         self.path = fn
 
 
+@pytest.mark.vcr
 @pytest.mark.django_db
 def test_ris_import(db_keys):
     # setup

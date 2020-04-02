@@ -66,5 +66,9 @@ format-js:  ## Modify javascript code if possible using linters/formatters
 test:  ## Run python tests
 	@py.test
 
+test-refresh: ## Removes mock requests and runs python tests
+	rm -rf tests/data/cassettes
+	@py.test
+
 flynt:  ## Run flynt (optional) using preferred config
 	@flynt --verbose --line_length=120 hawc/

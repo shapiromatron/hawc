@@ -340,6 +340,13 @@ Problems running tests
 
 If tests aren't working after the database has changed (ie., migrated); try dropping the test-database. Try the command ``dropdb test_hawc-fixture-test``.
 
+Mocking external resources in tests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+When writing tests that require accessing external resources, the ``vcr`` python package is used to save "cassettes" of expected responses to allow faster tests and stability in case external resources are intermittently offline. These cassettes can be rebuilt by running ``make test-refresh``, which will delete the ``cassettes`` directory and run the python test suite, which in turn recreates the cassettes based on actual responses.
+
+If a test uses an external resource, ensure that it is decorated with ``@pytest.mark.vcr`` to generate a cassette; see our current tests suite for examples.
+
 Testing celery application
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -362,3 +369,17 @@ Then, create the example docker container and start a celery worker instance:
 
 Asynchronous tasks will no be executed by celery workers instead of the main thread.
 
+Distributing HAWC clients
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The Python HAWC client can be packaged for easy distribution.
+
+.. code-block:: bash
+
+    # change to your client directory within the hawc project
+    cd client
+
+    # make a sdist and wheel for your hawc-client
+    python setup.py sdist bdist_wheel
+
+These distributions will be located in the ``dist`` folder within the aforementioned ``client`` directory.

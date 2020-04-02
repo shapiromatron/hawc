@@ -1,0 +1,298 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://actorws.epa.gov/actorws/chemIdentifier/v01/resolve.json?identifier=abc-123
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAAJVSXWvCMBT9L3nwyVl17KUgIo6J6FRkIuwtS27TbPnocqO1iP99aV27MoSxl5J7
+        Ts+5J4ecySP1dGtzEp+JdVLMORgvEwmOxIS+sbvB8J50CaPoDInNQakuyRwk4BzwFdVQg1iYGUpO
+        4n51fimyNtW2vYLcn6rfm4n9TO/TFPTcTNP5AooalIZLYX+jqKUCrCdt1ZN1+qBoC9mDFKkPwXoh
+        GrNKSS6NmLW2N+C0fc0G3dy6r3dSa+D7VHrAjLJAJFQhNMwSaCl+BWex4YJTyEe9B96u5JtlKbAP
+        POhQ/WpCyqItA0Tgk+BAluv1YrchZROJfUZRJ8mpM2FRC9G4DcuLsopSmHqfxVFEmbcuxx5ktCfs
+        sZ4jjujtKTr2h5FGVwrHssk2Kh3Dzk+k7v9+peqGmdRUwG67/NsrNKIloyqqJOPrM6lsOvlo8NDv
+        pNU30X6ER0Euly/TKfxY0QIAAA==
+    headers:
+      Access-Control-Allow-Headers:
+      - x-requested-with
+      Access-Control-Allow-Methods:
+      - POST, GET, OPTIONS, DELETE
+      Access-Control-Allow-Origin:
+      - '*'
+      Allow:
+      - GET, HEAD, POST, PUT, DELETE, TRACE, OPTIONS
+      Cache-Control:
+      - no-cache, no-store, max-age=0
+      Connection:
+      - Keep-Alive
+      Content-Encoding:
+      - gzip
+      Content-Language:
+      - en-US
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Wed, 01 Apr 2020 15:21:15 GMT
+      Expires:
+      - Thu, 01 Jan 1970 00:00:00 GMT
+      Keep-Alive:
+      - timeout=5, max=100
+      Pragma:
+      - no-cache
+      Server:
+      - Apache-Coyote/1.1
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      Transfer-Encoding:
+      - chunked
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://actorws.epa.gov/actorws/chemical/image?casrn=abc-123&fmt=jpeg
+  response:
+    body:
+      string: '<!DOCTYPE html><html><head><title>Apache Tomcat/8.0.30 - Error report</title><style
+        type="text/css">H1 {font-family:Tahoma,Arial,sans-serif;color:white;background-color:#525D76;font-size:22px;}
+        H2 {font-family:Tahoma,Arial,sans-serif;color:white;background-color:#525D76;font-size:16px;}
+        H3 {font-family:Tahoma,Arial,sans-serif;color:white;background-color:#525D76;font-size:14px;}
+        BODY {font-family:Tahoma,Arial,sans-serif;color:black;background-color:white;}
+        B {font-family:Tahoma,Arial,sans-serif;color:white;background-color:#525D76;}
+        P {font-family:Tahoma,Arial,sans-serif;background:white;color:black;font-size:12px;}A
+        {color : black;}A.name {color : black;}.line {height: 1px; background-color:
+        #525D76; border: none;}</style> </head><body><h1>HTTP Status 404 - /actorws/invalidRequest.html</h1><div
+        class="line"></div><p><b>type</b> Status report</p><p><b>message</b> <u>/actorws/invalidRequest.html</u></p><p><b>description</b>
+        <u>The requested resource is not available.</u></p><hr class="line"><h3>Apache
+        Tomcat/8.0.30</h3></body></html>'
+    headers:
+      Access-Control-Allow-Headers:
+      - x-requested-with
+      Access-Control-Allow-Methods:
+      - POST, GET, OPTIONS, DELETE
+      Access-Control-Allow-Origin:
+      - '*'
+      Allow:
+      - GET, HEAD, POST, PUT, DELETE, TRACE, OPTIONS
+      Connection:
+      - Keep-Alive
+      Content-Encoding:
+      - gzip
+      Content-Language:
+      - en
+      Content-Length:
+      - '1048'
+      Content-Type:
+      - text/html;charset=utf-8
+      Date:
+      - Wed, 01 Apr 2020 15:21:15 GMT
+      Keep-Alive:
+      - timeout=5, max=100
+      Server:
+      - Apache-Coyote/1.1
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+    status:
+      code: 404
+      message: Not Found
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://actorws.epa.gov/actorws/chemIdentifier/v01/resolve.json?identifier=1836-75-5
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAAJVS72+bMBD9X/hQtdoIP7IsbSRUMTNW1BQ2IGu3qposOMCbjTPbSRpV/d9noInS
+        StW2L2f53r1353d+MAKscMo3xuzB4ILUUQmtIhUBYcwM53T83pxOzInx1iiwFO2L3FJABUJAGWMG
+        GouJEryCVkNy236SpDRmrn02tft7vl12RcjPzDQeSl7tVqr7nm0E+U0WBVO7lxmAYgegKBg/pX+i
+        BljUoia6hK1Gb6L8yyKbz5PsMsg/mIuLMAz95Fvmm11n0pak5v9cLhmhIHXZbWLe3cZv7o695AQ5
+        HkIeOk6QqyOiJ2h/uF1wNJFxGnLBVhR373bciymibpyMB+gaSN0o7dDpu5F9ph3mlJKStPVgXLui
+        9CCJBv9fZD8/38CAKkEYg/K6IQrkEhcaqDCVsEfmgDvydxBc7jGtpGfFSkF5uJYntGig+CVXTD/k
+        qz+Pgn77vAApofQ7b8IkvfLz/GPwQy84HVyu+JWsd1NtsGh104MMk6keZNtZ1Ck0Si1nloULxcVG
+        jmCJRzVf7+5WKaXi99badi0mRUc8J/s5veff4bfE4v9lO9brmoThGhbp/O+S2itGCkytnnI+fNlD
+        taON50zso6aPFVOeXNfG4+MfL/IJtI0DAAA=
+    headers:
+      Access-Control-Allow-Headers:
+      - x-requested-with
+      Access-Control-Allow-Methods:
+      - POST, GET, OPTIONS, DELETE
+      Access-Control-Allow-Origin:
+      - '*'
+      Allow:
+      - GET, HEAD, POST, PUT, DELETE, TRACE, OPTIONS
+      Cache-Control:
+      - no-cache, no-store, max-age=0
+      Connection:
+      - Keep-Alive
+      Content-Encoding:
+      - gzip
+      Content-Language:
+      - en-US
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Wed, 01 Apr 2020 15:21:15 GMT
+      Expires:
+      - Thu, 01 Jan 1970 00:00:00 GMT
+      Keep-Alive:
+      - timeout=5, max=100
+      Pragma:
+      - no-cache
+      Server:
+      - Apache-Coyote/1.1
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      Transfer-Encoding:
+      - chunked
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://actorws.epa.gov/actorws/chemical/image?casrn=1836-75-5&fmt=jpeg
+  response:
+    body:
+      string: !!binary |
+        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
+        DvneOEeM+1/6VMc/AY7Iu/YMGwAA
+    headers:
+      Access-Control-Allow-Headers:
+      - x-requested-with
+      Access-Control-Allow-Methods:
+      - POST, GET, OPTIONS, DELETE
+      Access-Control-Allow-Origin:
+      - '*'
+      Allow:
+      - GET, HEAD, POST, PUT, DELETE, TRACE, OPTIONS
+      Connection:
+      - Keep-Alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - image/jpeg
+      Date:
+      - Wed, 01 Apr 2020 15:21:16 GMT
+      Keep-Alive:
+      - timeout=5, max=100
+      Server:
+      - Apache-Coyote/1.1
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      Transfer-Encoding:
+      - chunked
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+    status:
+      code: 200
+      message: OK
+version: 1

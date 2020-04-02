@@ -96,8 +96,6 @@ class SerializerHelper(object):
             name = cls._get_cache_name(obj.__class__, obj.id, json)
             cached = cache.get(name)
             if cached:
-                if hasattr(cached, "decode"):
-                    cached = cached.decode("utf8")
                 logging.debug(f"using cache: {name}")
             else:
                 cached = cls._serialize_and_cache(obj, json=json)
@@ -110,7 +108,7 @@ class SerializerHelper(object):
         serializer = cls.serializers.get(obj.__class__)
         serialized = serializer(obj).data
         if json:
-            serialized = JSONRenderer().render(serialized)
+            serialized = JSONRenderer().render(serialized).decode("utf8")
         return serialized
 
     @classmethod
@@ -123,7 +121,7 @@ class SerializerHelper(object):
         if hasattr(obj, "optimized_for_serialization"):
             obj = obj.optimized_for_serialization()
         serialized = cls._serialize(obj, json=False)
-        json_str = JSONRenderer().render(serialized)
+        json_str = JSONRenderer().render(serialized).decode("utf8")
         serialized = OrderedDict(serialized)  # for pickling
 
         logging.debug(f"setting cache: {name}")
