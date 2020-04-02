@@ -1,7 +1,9 @@
+import math
 from typing import Dict, Generator, List
 
 import pandas as pd
 from requests import Response, Session
+from tqdm import tqdm
 
 __all__ = ["HawcClient"]
 
@@ -109,9 +111,12 @@ class HawcSession:
         """
         response_json = self.get(url, params)
         yield response_json["results"]
-        while response_json["next"] is not None:
-            response_json = self.get(response_json["next"])
-            yield response_json["results"]
+        num_pages = math.ceil(response_json["count"] / len(response_json["results"]))
+        with tqdm(desc="Iterating pages", initial=1, total=num_pages) as progress_bar:
+            while response_json["next"] is not None:
+                response_json = self.get(response_json["next"])
+                progress_bar.update(1)
+                yield response_json["results"]
 
 
 class BaseClient:
