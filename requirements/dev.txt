@@ -18,6 +18,9 @@ selenium==3.141.0
 pytest==5.4.1
 pytest-django==3.8.0
 
+# build tools
+wheel==0.34.2
+
 # docs
 watchdog==0.10.2
 Sphinx==2.4.4
@@ -28,3 +31,4 @@ pydot==1.4.1
 # hawc; save in editable mode so it doesn't copy to venv
 # but instead stays in place
 -e .
+-e client/
