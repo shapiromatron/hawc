@@ -26,6 +26,7 @@ class HawcSession:
 
     Allows user authentication and keeps track of root url.
     """
+    ENCODING_OPTION_JSON = "json"
 
     def __init__(self, root_url: str = "https://hawcproject.org"):
         self.root_url = root_url
@@ -66,7 +67,7 @@ class HawcSession:
         response = self._session.get(url=url, params=params)
         return self._handle_hawc_response(response)
 
-    def post(self, url: str, data: Dict) -> Dict:
+    def post(self, url: str, data: Dict, encoding_option: str = None) -> Dict:
         """
         Sends a POST request using the session instance
 
@@ -77,7 +78,16 @@ class HawcSession:
         Returns:
             Dict: The JSON response as a dictionary.
         """
-        response = self._session.post(url=url, data=data)
+        post_params = {
+            "url": url,
+            "data": data
+        }
+
+        if encoding_option == HawcSession.ENCODING_OPTION_JSON:
+            del post_params["data"]
+            post_params["json"] = data
+
+        response = self._session.post(**post_params)
         return self._handle_hawc_response(response)
 
     def authenticate(self, email: str, password: str):
@@ -190,6 +200,19 @@ class RiskOfBiasClient(BaseClient):
         url = f"{self.session.root_url}/rob/api/assessment/{assessment_id}/full-export/"
         response_json = self.session.get(url)
         return pd.DataFrame(response_json)
+
+    def create(self, study_id: int, author_id: int, active: bool, final: bool, scores: List[Dict]) -> dict:
+        payload = {
+            "study_id": study_id,
+            "author_id": author_id,
+            "active": active,
+            "final": final,
+            "scores": scores,
+        }
+        url = f"{self.session.root_url}/rob/api/review/"
+        response_json = self.session.post(url, payload, HawcSession.ENCODING_OPTION_JSON)
+
+        return response_json
 
 
 class EpiClient(BaseClient):
