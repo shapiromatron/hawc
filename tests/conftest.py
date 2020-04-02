@@ -1,4 +1,5 @@
 import logging
+from pathlib import Path
 from typing import NamedTuple
 
 import pytest
@@ -42,3 +43,17 @@ def test_db(django_db_setup, django_db_blocker):
 @pytest.fixture
 def db_keys():
     return _keys
+
+
+@pytest.fixture(scope="session")
+def vcr_config():
+    return {
+        "filter_headers": [("authorization", "<omitted>")],
+        "ignore_localhost": True,
+    }
+
+
+@pytest.fixture(scope="module")
+def vcr_cassette_dir(request):
+    cassette_dir = Path(__file__).parent.absolute() / "data/cassettes" / request.module.__name__
+    return str(cassette_dir)
