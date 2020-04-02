@@ -135,6 +135,10 @@ class Assessment(models.Model):
         help_text="If public, anyone with a link can view, "
         "but do not show a link on the public-assessment page.",
     )
+    is_public_training_data = models.BooleanField(
+        default=False,
+        help_text="Allows data to be anonymized by assessment id and user id for machine learning projects.",
+    )
     enable_literature_review = models.BooleanField(
         default=True,
         help_text="Search or import references from PubMed and other literature "

@@ -170,6 +170,12 @@ class Assessment(AssessmentViewset):
         serializer = serializers.AssessmentSerializer(queryset, many=True)
         return Response(serializer.data)
 
+    @action(detail=False, methods=("get",))
+    def training_data(self, request):
+        queryset = self.model.objects.filter(is_public_training_data=True)
+        serializer = serializers.AssessmentSerializer(queryset, many=True)
+        return Response(serializer.data)
+
 
 class AssessmentEndpointList(AssessmentViewset):
     serializer_class = serializers.AssessmentEndpointSerializer
