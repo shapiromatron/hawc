@@ -26,6 +26,7 @@ class HawcSession:
 
     Allows user authentication and keeps track of root url.
     """
+
     ENCODING_OPTION_JSON = "json"
 
     def __init__(self, root_url: str = "https://hawcproject.org"):
@@ -78,10 +79,7 @@ class HawcSession:
         Returns:
             Dict: The JSON response as a dictionary.
         """
-        post_params = {
-            "url": url,
-            "data": data
-        }
+        post_params = {"url": url, "data": data}
 
         if encoding_option == HawcSession.ENCODING_OPTION_JSON:
             del post_params["data"]
@@ -201,7 +199,9 @@ class RiskOfBiasClient(BaseClient):
         response_json = self.session.get(url)
         return pd.DataFrame(response_json)
 
-    def create(self, study_id: int, author_id: int, active: bool, final: bool, scores: List[Dict]) -> dict:
+    def create(
+        self, study_id: int, author_id: int, active: bool, final: bool, scores: List[Dict]
+    ) -> dict:
         payload = {
             "study_id": study_id,
             "author_id": author_id,
