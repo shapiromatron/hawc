@@ -2,8 +2,9 @@ import html
 import json
 import logging
 import re
+from datetime import datetime
 from math import ceil
-from typing import Dict, Optional
+from typing import Dict, List, Optional
 from urllib import parse
 
 from django.apps import apps
@@ -592,6 +593,10 @@ class Reference(models.Model):
         help_text="Used internally for determining when reference was " "originally added",
     )
 
+    @property
+    def has_tags(self):
+        return self.tags.count() > 0
+
     def get_absolute_url(self):
         return reverse("lit:ref_detail", kwargs={"pk": self.pk})
 
@@ -689,3 +694,23 @@ class Reference(models.Model):
 
     def get_assessment(self):
         return self.assessment
+
+    @staticmethod
+    @transaction.atomic
+    def apply_bulk_tags(reference_ids: List[int], tag_ids: List[int]) -> None:
+        existing = ReferenceTags.objects.filter(tag__in=tag_ids, content_object__in=reference_ids)
+        existing_set = {f"{tag.tag_id}-{tag.content_object_id}" for tag in existing}
+
+        creates = []
+        reference_ids_to_update = set()
+        for tag in tag_ids:
+            for ref in reference_ids:
+                if f"{tag}-{ref}" not in existing_set:
+                    creates.append(ReferenceTags(tag_id=tag, content_object_id=ref))
+                    reference_ids_to_update.add(ref)
+
+        ReferenceTags.objects.bulk_create(creates)
+
+        Reference.objects.filter(pk__in=reference_ids_to_update).update(last_updated=datetime.now())
+
+        # note from Andy - necessary to somehow clear lit cache after bulk create?

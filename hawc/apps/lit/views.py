@@ -43,6 +43,32 @@ class LitOverview(BaseList):
         return context
 
 
+class BulkTagging(TeamMemberOrHigherMixin, TemplateView):
+    template_name = "lit/bulk_tagging.html"
+
+    def get_assessment(self, request, *args, **kwargs):
+        return get_object_or_404(Assessment, pk=kwargs["pk"])
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        self.assessment = get_object_or_404(Assessment, pk=kwargs["pk"])
+        context["assessment"] = self.assessment
+        context["tags"] = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
+        context["method"] = "GET"
+        return context
+
+    def post(self, request, *args, **kwargs):
+        context = self.get_context_data(**kwargs)
+        context["method"] = "POST"
+
+        ref_ids = [tryParseInt(x, -1) for x in (self.request.POST["referenceIds"]).split(",")]
+        tag_ids = [tryParseInt(x, -1) for x in (self.request.POST["tagIds"]).split(",")]
+
+        models.Reference.apply_bulk_tags(ref_ids, tag_ids)
+
+        return super(TemplateView, self).render_to_response(context)
+
+
 class SearchList(BaseList):
     parent_model = Assessment
     model = models.Search

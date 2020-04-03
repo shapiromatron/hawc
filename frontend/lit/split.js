@@ -4,6 +4,7 @@ import ReferencesViewer from "./ReferencesViewer";
 import TagTree from "./TagTree";
 import TagTreeViz from "./TagTreeViz";
 import startupSearchReference from "./startupSearchReference";
+import BulkTagInterface from "./BulkTagInterface";
 
 export default {
     EditReferenceContainer,
@@ -12,4 +13,5 @@ export default {
     TagTree,
     TagTreeViz,
     startupSearchReference,
+    BulkTagInterface,
 };

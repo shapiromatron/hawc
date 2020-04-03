@@ -5,6 +5,7 @@ from . import api, views
 
 router = DefaultRouter()
 router.register(r"assessment", api.LiteratureAssessmentViewset, basename="assessment")
+router.register(r"reference", api.Reference, basename="reference")
 router.register(r"search", api.SearchViewset, basename="search")
 router.register(r"tags", api.ReferenceFilterTag, basename="tags")
 router.register(r"reference-cleanup", api.ReferenceCleanup, basename="reference-cleanup")
@@ -115,6 +116,9 @@ urlpatterns = [
         r"^ris-export-instructions/$",
         views.RISExportInstructions.as_view(),
         name="ris_export_instructions",
+    ),
+    url(
+        r"^assessment/(?P<pk>\d+)/bulk-tagging/$", views.BulkTagging.as_view(), name="bulk_tagging"
     ),
     url(r"^api/", include((router.urls, "api"))),
 ]

@@ -542,3 +542,18 @@ table.bordered th,
 table.bordered td {
     border: 1px solid #dddddd;
 }
+
+/* bulk tagging - start */
+form#bulkTaggingForm table {
+    border: 1px solid #eeeeee;
+    margin: 10px;
+}
+
+form#bulkTaggingForm td {
+    border: 1px solid #eeeeee;
+}
+
+form#bulkTaggingForm a {
+    cursor: pointer;
+}
+/* bulk tagging - end */

@@ -184,3 +184,18 @@ class BulkReferenceTagSerializer(serializers.Serializer):
             models.ReferenceTags.objects.bulk_create(new_tags)
 
             models.Reference.delete_cache(assessment_id)
+
+
+class ReferenceBasicFieldsSerializer(serializers.ModelSerializer):
+    tags = serializers.SerializerMethodField()
+    has_tags = serializers.SerializerMethodField()
+
+    class Meta:
+        model = models.Reference
+        fields = ["id", "title", "authors", "year", "tags", "has_tags"]
+
+    def get_tags(self, obj):
+        return list(obj.tags.all().values("id", "name"))
+
+    def get_has_tags(self, obj):
+        return obj.has_tags

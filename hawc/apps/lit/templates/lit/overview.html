@@ -27,6 +27,7 @@
           <li><a href="{% url 'study:new_ref' assessment.pk %}">Add new reference (manually)</a></li>
           <li><a href="{% url 'lit:search_tags_edit' assessment.pk manual_import.slug %}">Tag manually-added references</a></li>
           <li><a href="{% url 'lit:tag_untagged' assessment.pk %}">Tag untagged references</a></li>
+          <li><a href="{% url 'lit:bulk_tagging' assessment.pk %}">Bulk reference tagging</a></li>
           {% if obj_perms.edit_assessment %}
             <li class="disabled"><a tabindex="-1" href="#">Assessment-level editing</a></li>
             <li><a href="{% url 'lit:tags_update' assessment.pk %}">Update literature tags</a></li>

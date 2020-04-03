@@ -1,0 +1,61 @@
+{% extends 'portal.html' %}
+
+{% block title %}
+  {{assessment}} | Literature Review | HAWC
+{% endblock %}
+
+{% block breadcrumbs %}
+  <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{ assessment }}</a><span class="divider">/</span></li>
+  <li><a href="{% url 'lit:overview' assessment.pk %}">Literature Review</a><span class="divider">/</span></li>
+  <li class="active">Bulk Reference Tagging<span class="divider">/</span></li>
+{% endblock %}
+
+{% block content %}
+
+<h2>Bulk Reference Tagging for {{assessment}}</h2>
+
+{% if method == "GET" %}
+
+  <form method="POST" id="bulkTaggingForm">
+    {% csrf_token %}
+    References to fetch:  <select id="listing_variety">
+                            <option value="untagged_only">Untagged Only</option>
+                            <option value="tagged_only">Tagged Only</option>
+                            <option value="all">All</option>
+                          </select>
+    <input type="hidden" id="referenceIds" name="referenceIds"/>
+    <input type="hidden" id="tagIds" name="tagIds"/>
+    <p>
+    <div id="status_msg"></div>
+    <table id="reference_list">
+    </table>
+    <div id="shortcut_links"></div>
+    <div id="pagination_links"></div>
+
+    <hr>
+
+    <div class="span3">
+      <div id="taglist"></div><br>
+      <a class="btn btn-primary" id="submitBtn"></a>
+    </div>
+
+  </form>
+
+{% else %}
+
+  Your bulk tag operation has been completed. <a href="{% url 'lit:bulk_tagging' assessment.pk %}">Make another</a>?
+
+{% endif %}
+
+
+{% endblock %}
+
+{% block extrajs %}
+  <script type="text/javascript">
+    window.app.litStartup(function(lit){
+      let bti = new lit.BulkTagInterface(lit, {{ assessment.pk }}, {{ tags|safe }});
+      bti.loadReferences();
+    });
+  </script>
+{% endblock extrajs %}
+
