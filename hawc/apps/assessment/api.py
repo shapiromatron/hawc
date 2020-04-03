@@ -1,6 +1,10 @@
+import hashlib
 import logging
+import uuid
 
+import pandas as pd
 from django.apps import apps
+from django.conf import settings
 from django.core import exceptions
 from django.db.models import Count
 from django.urls import reverse
@@ -12,6 +16,8 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 
 from ..common.helper import tryParseInt
+from ..common.renderers import PandasRenderers
+from ..lit import constants
 from . import models, serializers
 
 
@@ -170,11 +176,48 @@ class Assessment(AssessmentViewset):
         serializer = serializers.AssessmentSerializer(queryset, many=True)
         return Response(serializer.data)
 
-    @action(detail=False, methods=("get",))
+    """
+    [animal.Endpoint.system, animal.AnimalGroup.species, animal.AnimalGroup.strain, study.title, study.abstract, study.hero_id, study.pubmed_id, and assessment.uuid_id]
+    """
+
+    @action(detail=False, methods=("get",), renderer_classes=PandasRenderers)
     def training_data(self, request):
-        queryset = self.model.objects.filter(is_public_training_data=True)
-        serializer = serializers.AssessmentSerializer(queryset, many=True)
-        return Response(serializer.data)
+        Endpoint = apps.get_model("animal", "Endpoint")
+        # map of django field names to friendlier column names
+        column_map = {
+            "assessment_id": "assessment_uuid",
+            "system": None,
+            "animal_group__species__name": "species_name",
+            "animal_group__strain__name": "strain_name",
+            "animal_group__experiment__study__title": "study_title",
+            "animal_group__experiment__study__abstract": "study_abstract",
+            "animal_group__experiment__study__identifiers__database": "db",
+            "animal_group__experiment__study__identifiers__unique_id": "db_id",
+        }
+        queryset = Endpoint.objects.filter(assessment__is_public_training_data=True).values(*column_map.keys())
+
+        df = pd.DataFrame.from_records(queryset).rename(columns={k: v for k, v in column_map.items() if v is not None})
+
+        def create_uuid(id):
+            """
+            Creates a UUID from a given ID
+            """
+            hashed_id = hashlib.md5(str(id).encode())
+            hashed_id.update(settings.SECRET_KEY.encode())
+            return uuid.UUID(bytes=hashed_id.digest())
+
+        # Creates a UUID for each assessment_id, providing anonymity
+        df["assessment_uuid"] = df["assessment_uuid"].apply(create_uuid)
+
+        # Assigns db_id to hero_id in all instances where db == HERO
+        df["hero_id"] = None
+        df["hero_id"].loc[df["db"] == constants.HERO] = df["db_id"][df["db"] == constants.HERO]
+
+        # Assigns db_id to pubmed_id in all instances where db == PUBMED
+        df["pubmed_id"] = None
+        df["pubmed_id"].loc[df["db"] == constants.PUBMED] = df["db_id"][df["db"] == constants.PUBMED]
+
+        return Response(df.drop(columns=["db", "db_id"]).drop_duplicates())
 
 
 class AssessmentEndpointList(AssessmentViewset):
@@ -256,12 +299,7 @@ class AssessmentEndpointList(AssessmentViewset):
 
         count = apps.get_model("epi", "Exposure").objects.get_qs(instance.id).count()
         instance.items.append(
-            {
-                "count": count,
-                "title": "epi exposures",
-                "type": "exposures",
-                "url": f"{app_url}exposures/",
-            }
+            {"count": count, "title": "epi exposures", "type": "exposures", "url": f"{app_url}exposures/",}
         )
 
         # in vitro
@@ -286,19 +324,12 @@ class AssessmentEndpointList(AssessmentViewset):
 
         # study
         count = apps.get_model("study", "Study").objects.get_qs(instance.id).count()
-        instance.items.append(
-            {"count": count, "title": "studies", "type": "study", "url": f"{app_url}study/"}
-        )
+        instance.items.append({"count": count, "title": "studies", "type": "study", "url": f"{app_url}study/"})
 
         # lit
         count = apps.get_model("lit", "Reference").objects.get_qs(instance.id).count()
         instance.items.append(
-            {
-                "count": count,
-                "title": "references",
-                "type": "reference",
-                "url": f"{app_url}reference/",
-            }
+            {"count": count, "title": "references", "type": "reference", "url": f"{app_url}reference/",}
         )
 
         serializer = self.get_serializer(instance)
