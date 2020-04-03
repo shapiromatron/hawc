@@ -2,7 +2,6 @@ import html
 import json
 import logging
 import re
-from datetime import datetime
 from math import ceil
 from typing import Dict, List, Optional
 from urllib import parse
@@ -711,6 +710,6 @@ class Reference(models.Model):
 
         ReferenceTags.objects.bulk_create(creates)
 
-        Reference.objects.filter(pk__in=reference_ids_to_update).update(last_updated=datetime.now())
+        Reference.objects.filter(pk__in=reference_ids_to_update).update(last_updated=timezone.now())
 
         # note from Andy - necessary to somehow clear lit cache after bulk create?
