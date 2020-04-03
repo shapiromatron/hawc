@@ -8,6 +8,8 @@ from django.conf import settings
 from django.core import exceptions
 from django.db.models import Count
 from django.urls import reverse
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 from rest_framework import filters, permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import APIException
@@ -176,6 +178,7 @@ class Assessment(AssessmentViewset):
         serializer = serializers.AssessmentSerializer(queryset, many=True)
         return Response(serializer.data)
 
+    @method_decorator(cache_page(60 * 60 * 24))
     @action(detail=False, methods=("get",), renderer_classes=PandasRenderers)
     def training_data(self, request):
         Endpoint = apps.get_model("animal", "Endpoint")
@@ -190,9 +193,13 @@ class Assessment(AssessmentViewset):
             "animal_group__experiment__study__identifiers__database": "db",
             "animal_group__experiment__study__identifiers__unique_id": "db_id",
         }
-        queryset = Endpoint.objects.filter(assessment__is_public_training_data=True).values(*column_map.keys())
+        queryset = Endpoint.objects.filter(assessment__is_public_training_data=True).values(
+            *column_map.keys()
+        )
 
-        df = pd.DataFrame.from_records(queryset).rename(columns={k: v for k, v in column_map.items() if v is not None})
+        df = pd.DataFrame.from_records(queryset).rename(
+            columns={k: v for k, v in column_map.items() if v is not None}
+        )
 
         def create_uuid(id):
             """
@@ -211,7 +218,9 @@ class Assessment(AssessmentViewset):
 
         # Assigns db_id to pubmed_id in all instances where db == PUBMED
         df["pubmed_id"] = None
-        df["pubmed_id"].loc[df["db"] == constants.PUBMED] = df["db_id"][df["db"] == constants.PUBMED]
+        df["pubmed_id"].loc[df["db"] == constants.PUBMED] = df["db_id"][
+            df["db"] == constants.PUBMED
+        ]
 
         return Response(df.drop(columns=["db", "db_id"]).drop_duplicates())
 
@@ -295,7 +304,12 @@ class AssessmentEndpointList(AssessmentViewset):
 
         count = apps.get_model("epi", "Exposure").objects.get_qs(instance.id).count()
         instance.items.append(
-            {"count": count, "title": "epi exposures", "type": "exposures", "url": f"{app_url}exposures/",}
+            {
+                "count": count,
+                "title": "epi exposures",
+                "type": "exposures",
+                "url": f"{app_url}exposures/",
+            }
         )
 
         # in vitro
@@ -320,12 +334,19 @@ class AssessmentEndpointList(AssessmentViewset):
 
         # study
         count = apps.get_model("study", "Study").objects.get_qs(instance.id).count()
-        instance.items.append({"count": count, "title": "studies", "type": "study", "url": f"{app_url}study/"})
+        instance.items.append(
+            {"count": count, "title": "studies", "type": "study", "url": f"{app_url}study/"}
+        )
 
         # lit
         count = apps.get_model("lit", "Reference").objects.get_qs(instance.id).count()
         instance.items.append(
-            {"count": count, "title": "references", "type": "reference", "url": f"{app_url}reference/",}
+            {
+                "count": count,
+                "title": "references",
+                "type": "reference",
+                "url": f"{app_url}reference/",
+            }
         )
 
         serializer = self.get_serializer(instance)
