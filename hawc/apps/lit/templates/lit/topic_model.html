@@ -1,0 +1,20 @@
+{% extends 'portal.html' %}
+
+{% block title %}
+  {{assessment}} | Literature Review | Topic Model | HAWC
+{% endblock %}
+
+{% block breadcrumbs %}
+  <li><a href="{{assessment.get_absolute_url}}">{{ assessment }}</a><span class="divider">/</span></li>
+  <li><a href="{% url 'lit:overview' assessment.pk %}">Literature Review</a><span class="divider">/</span></li>
+  <li class="active">Topic Model<span class="divider">/</span></li>
+{% endblock %}
+
+{% block content %}
+<h1>Topic model.</h1>
+{% endblock %}
+
+{% block extrajs %}
+  <script type="text/javascript">
+  </script>
+{% endblock extrajs %}

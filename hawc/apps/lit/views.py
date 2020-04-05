@@ -540,6 +540,11 @@ class RefVisualization(BaseDetail):
         return context
 
 
+class RefTopicModel(BaseDetail):
+    model = Assessment
+    template_name = "lit/topic_model.html"
+
+
 class TagsJSON(BaseDetail):
     model = Assessment
 
