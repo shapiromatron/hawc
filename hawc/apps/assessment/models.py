@@ -11,9 +11,7 @@ from django.core.validators import MinValueValidator
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
-from django.utils.decorators import method_decorator
 from django.utils.http import urlquote
-from django.views.decorators.cache import cache_page
 from reversion import revisions as reversion
 
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper

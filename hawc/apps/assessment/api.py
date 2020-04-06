@@ -182,17 +182,24 @@ class Assessment(AssessmentViewset):
         # map of django field names to friendlier column names
         column_map = {
             "assessment_id": "assessment_uuid",
-            "animal_group__species__name": "species_name",
-            "animal_group__strain__name": "strain_name",
+            "name": None,
+            "animal_group__experiment__chemical": "chemical",
+            "animal_group__species__name": "species",
+            "animal_group__strain__name": "strain",
+            "animal_group__sex": "sex",
             "system": None,
+            "organ": None,
+            "effect": None,
+            "effect_subtype": None,
             "animal_group__experiment__study__title": "study_title",
             "animal_group__experiment__study__abstract": "study_abstract",
+            "data_location": None,
             "animal_group__experiment__study__identifiers__database": "db",
             "animal_group__experiment__study__identifiers__unique_id": "db_id",
         }
         queryset = (
             Endpoint.objects.filter(assessment__is_public_training_data=True)
-            .prefetch_related(
+            .select_related(
                 "animal_group",
                 "animal_group__species",
                 "animal_group__strain",
