@@ -28,9 +28,7 @@ def HAWCtoDateString(datetime):
 
 def cleanHTML(txt):
     return strip_entities(
-        strip_tags(
-            txt.replace("\n", " ").replace("\r", "").replace("<br>", "\n").replace("&nbsp;", " ")
-        )
+        strip_tags(txt.replace("\n", " ").replace("\r", "").replace("<br>", "\n").replace("&nbsp;", " "))
     )
 
 
@@ -71,7 +69,7 @@ def create_uuid(id: int) -> str:
     """
     hashed_id = hashlib.md5(str(id).encode())
     hashed_id.update(settings.SECRET_KEY.encode())
-    return uuid.UUID(bytes=hashed_id.digest())
+    return str(uuid.UUID(bytes=hashed_id.digest()))
 
 
 class HAWCDjangoJSONEncoder(DjangoJSONEncoder):
@@ -318,8 +316,7 @@ class ExcelFileBuilder(FlatFile):
         self.wb.close()
         self.output.seek(0)
         response = HttpResponse(
-            self.output.read(),
-            content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            self.output.read(), content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         )
         response["Content-Disposition"] = f'attachment; filename="{fn}"'
         return response
