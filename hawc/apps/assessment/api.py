@@ -1,10 +1,7 @@
-import hashlib
 import logging
-import uuid
 
 import pandas as pd
 from django.apps import apps
-from django.conf import settings
 from django.core import exceptions
 from django.db.models import Count
 from django.urls import reverse
@@ -17,7 +14,7 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 
-from ..common.helper import tryParseInt
+from ..common.helper import create_uuid, tryParseInt
 from ..common.renderers import PandasRenderers
 from ..lit import constants
 from . import models, serializers
@@ -209,14 +206,6 @@ class Assessment(AssessmentViewset):
         df = pd.DataFrame.from_records(queryset).rename(
             columns={k: v for k, v in column_map.items() if v is not None}
         )
-
-        def create_uuid(id):
-            """
-            Creates a UUID from a given ID
-            """
-            hashed_id = hashlib.md5(str(id).encode())
-            hashed_id.update(settings.SECRET_KEY.encode())
-            return uuid.UUID(bytes=hashed_id.digest())
 
         # Creates a UUID for each assessment_id, providing anonymity
         df["assessment_uuid"] = df["assessment_uuid"].apply(create_uuid)
