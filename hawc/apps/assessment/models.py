@@ -11,7 +11,9 @@ from django.core.validators import MinValueValidator
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.decorators import method_decorator
 from django.utils.http import urlquote
+from django.views.decorators.cache import cache_page
 from reversion import revisions as reversion
 
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper
@@ -137,7 +139,8 @@ class Assessment(models.Model):
     )
     is_public_training_data = models.BooleanField(
         default=False,
-        help_text="Allows data to be anonymized by assessment id and user id for machine learning projects.",
+        verbose_name="Public training data",
+        help_text="Allows data to be anonymized and made available for machine learning projects. Both assessment ID and user ID will be made anonymous for these purposes.",
     )
     enable_literature_review = models.BooleanField(
         default=True,
