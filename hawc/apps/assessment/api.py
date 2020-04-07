@@ -177,23 +177,24 @@ class Assessment(AssessmentViewset):
 
     @method_decorator(cache_page(60 * 60 * 24))
     @action(detail=False, methods=("get",), renderer_classes=PandasRenderers)
-    def training_data(self, request):
+    def bioassay_ml_dataset(self, request):
         Endpoint = apps.get_model("animal", "Endpoint")
         # map of django field names to friendlier column names
         column_map = {
             "assessment_id": "assessment_uuid",
-            "name": None,
+            "name": "endpoint_name",
             "animal_group__experiment__chemical": "chemical",
             "animal_group__species__name": "species",
             "animal_group__strain__name": "strain",
             "animal_group__sex": "sex",
-            "system": None,
-            "organ": None,
-            "effect": None,
-            "effect_subtype": None,
+            "system": "endpoint_system",
+            "organ": "endpoint_organ",
+            "effect": "endpoint_effect",
+            "effect_subtype": "endpoint_effect_subtype",
+            "data_location": "endpoint_data_location",
             "animal_group__experiment__study__title": "study_title",
             "animal_group__experiment__study__abstract": "study_abstract",
-            "data_location": None,
+            "animal_group__experiment__study__full_citation": "study_full_citation",
             "animal_group__experiment__study__identifiers__database": "db",
             "animal_group__experiment__study__identifiers__unique_id": "db_id",
         }
