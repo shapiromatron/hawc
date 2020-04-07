@@ -1,13 +1,16 @@
 import csv
 import decimal
+import hashlib
 import logging
 import re
+import uuid
 from collections import OrderedDict
 from datetime import datetime
 from io import BytesIO, StringIO
 
 import pandas as pd
 import xlsxwriter
+from django.conf import settings
 from django.core.cache import cache
 from django.core.serializers.json import DjangoJSONEncoder
 from django.shortcuts import HttpResponse
@@ -60,6 +63,15 @@ def tryParseInt(val, default=None):
         return int(val)
     except (ValueError, TypeError):
         return default
+
+
+def create_uuid(id: int) -> str:
+    """
+    Creates a UUID from a given ID
+    """
+    hashed_id = hashlib.md5(str(id).encode())
+    hashed_id.update(settings.SECRET_KEY.encode())
+    return str(uuid.UUID(bytes=hashed_id.digest()))
 
 
 class HAWCDjangoJSONEncoder(DjangoJSONEncoder):
