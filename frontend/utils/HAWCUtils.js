@@ -117,7 +117,7 @@ class HAWCUtils {
 
                 content.push(
                     ul,
-                    `<p class="help-block">Chemical information provided by <a target="_blank" href="https://comptox.epa.gov/dashboard/">USEPA Chemistry Dashboard</a></p>`
+                    `<p class="help-block">Chemical information provided by <a target="_blank" href="https://comptox.epa.gov/dashboard/">USEPA Chemicals Dashboard</a></p>`
                 );
                 $div.html(content);
             }
