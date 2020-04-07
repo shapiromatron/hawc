@@ -295,8 +295,14 @@ class _DataPivot_settings_conditional {
                         .add_select(parent.settings.type, hash.get(v), true)
                         .data("key", v);
                     self.discrete_styles.push(style);
-                    add_input_row(discrete, `Style for <i>${v}</i>:`, style);
+                    add_input_row(discrete, `Style for <code>${v}</code>:`, style);
                 });
+
+                if (vals.unique.length === 0) {
+                    discrete.append(
+                        "<p><i>The selected condition field contains no non-null values. Please select another field.</i></p>"
+                    );
+                }
             } else {
                 var txt = `Selected items in <i>${fieldName.val()}</i> `;
                 if (vals.range) {

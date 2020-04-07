@@ -22,7 +22,8 @@ class Migration(migrations.Migration):
             name="is_public_training_data",
             field=models.BooleanField(
                 default=False,
-                help_text="Allows data to be anonymized by assessment id and user id for machine learning projects.",
+                verbose_name="Public training data",
+                help_text="Allows data to be anonymized and made available for machine learning projects. Both assessment ID and user ID will be made anonymous for these purposes.",
             ),
         ),
         migrations.RunPython(set_public_training_data),
