@@ -8,7 +8,7 @@ from urllib import parse
 
 from django.apps import apps
 from django.conf import settings
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import models, transaction
 from django.urls import reverse
 from django.utils import timezone
@@ -128,7 +128,7 @@ class Search(models.Model):
             prior_query = None
             try:
                 prior_query = PubMedQuery.objects.filter(search=self.pk).latest("query_date")
-            except Exception:
+            except ObjectDoesNotExist:
                 pass
             pubmed = PubMedQuery(search=self)
             results_dictionary = pubmed.run_new_query(prior_query)
@@ -361,12 +361,13 @@ class PubMedQuery(models.Model):
         # Create new PubMed identifiers for any PMIDs which are not already in
         # our database.
         new_ids = json.loads(self.results)["added"]
-        existing_pmids = list(
-            Identifiers.objects.filter(
+        existing_pmids = [
+            int(id_)
+            for id_ in Identifiers.objects.filter(
                 database=constants.PUBMED, unique_id__in=new_ids
             ).values_list("unique_id", flat=True)
-        )
-        ids_to_add = [int(id) for id in set(new_ids) - set(existing_pmids)]
+        ]
+        ids_to_add = set(new_ids) - set(existing_pmids)
         ids_to_add_len = len(ids_to_add)
 
         block_size = 1000.0
