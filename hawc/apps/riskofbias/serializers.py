@@ -78,6 +78,7 @@ class RiskOfBiasScoreSerializer(RiskOfBiasScoreSerializerSlim):
         ret["score_description"] = instance.get_score_display()
         ret["score_symbol"] = instance.score_symbol
         ret["score_shade"] = instance.score_shade
+        ret["bias_direction_description"] = instance.get_bias_direction_display()
         ret["url_edit"] = instance.riskofbias.get_edit_url()
         ret["study_name"] = instance.riskofbias.study.short_citation
         ret["study_id"] = instance.riskofbias.study.id
