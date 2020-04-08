@@ -402,6 +402,7 @@
     editable: true
     public: false
     hide_from_public_page: false
+    is_public_training_data: false
     enable_literature_review: true
     enable_project_management: true
     enable_data_extraction: true
@@ -431,6 +432,7 @@
     editable: false
     public: true
     hide_from_public_page: false
+    is_public_training_data: true
     enable_literature_review: true
     enable_project_management: true
     enable_data_extraction: true
@@ -705,6 +707,22 @@
     content_object: 2
 - model: lit.reference
   pk: 1
+  fields:
+    assessment: 1
+    title: ''
+    authors_short: ''
+    authors: ''
+    year: 2010
+    journal: ''
+    abstract: ''
+    full_text_url: ''
+    created: 2020-01-25 14:23:16.370427+00:00
+    last_updated: 2020-02-27 20:14:41.479008+00:00
+    block_id: null
+    searches: []
+    identifiers: []
+- model: lit.reference
+  pk: 3
   fields:
     assessment: 1
     title: ''

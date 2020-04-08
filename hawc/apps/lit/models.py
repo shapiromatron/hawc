@@ -367,7 +367,7 @@ class PubMedQuery(models.Model):
                 database=constants.PUBMED, unique_id__in=new_ids
             ).values_list("unique_id", flat=True)
         ]
-        ids_to_add = set(new_ids) - set(existing_pmids)
+        ids_to_add = list(set(new_ids) - set(existing_pmids))
         ids_to_add_len = len(ids_to_add)
 
         block_size = 1000.0

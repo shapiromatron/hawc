@@ -149,6 +149,14 @@ class BulkReferenceTagSerializer(serializers.Serializer):
                 f"All tag ids are not from assessment {expected_assessment_id}"
             )
 
+        # check to make sure we have no duplicates
+        df_nrows = df.shape[0]
+        df = df.drop_duplicates()
+        if df.shape[0] != df_nrows:
+            raise serializers.ValidationError(
+                "CSV contained duplicates; please remove before importing"
+            )
+
         # success! save dataframe
         self.assessment = self.context["assessment"]
         self.df = df
