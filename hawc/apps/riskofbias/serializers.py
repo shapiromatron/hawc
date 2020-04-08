@@ -93,7 +93,10 @@ class RiskOfBiasScoreOverrideCreateSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         override = models.RiskOfBiasScore.objects.create(
-            riskofbias=validated_data["riskofbias"], metric=validated_data["metric"], is_default=False, label="",
+            riskofbias=validated_data["riskofbias"],
+            metric=validated_data["metric"],
+            is_default=False,
+            label="",
         )
         return override
 
@@ -104,7 +107,9 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         ret = super().to_representation(instance)
-        ret["rob_response_values"] = instance.study.assessment.rob_settings.get_rob_response_values()
+        ret[
+            "rob_response_values"
+        ] = instance.study.assessment.rob_settings.get_rob_response_values()
         return ret
 
     class Meta:
@@ -125,7 +130,9 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
 
         # make sure that all scores match those in score; add `id` field to validated data
         score_ids = [score["id"] for score in self.initial_data["scores"]]
-        if models.RiskOfBiasScore.objects.filter(id__in=score_ids, riskofbias=self.instance).count() != len(score_ids):
+        if models.RiskOfBiasScore.objects.filter(
+            id__in=score_ids, riskofbias=self.instance
+        ).count() != len(score_ids):
             raise serializers.ValidationError("Cannot update; scores to not match instances")
         for initial_score_data, update_score in zip(self.initial_data["scores"], data["scores"]):
             update_score["id"] = initial_score_data["id"]
@@ -148,15 +155,21 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
                     raise serializers.ValidationError(f"Invalid content type name: {ct_name}")
 
                 if object_id not in override_options[ct_name]:
-                    raise serializers.ValidationError(f"Invalid content object: {ct_name}: {object_id}")
+                    raise serializers.ValidationError(
+                        f"Invalid content object: {ct_name}: {object_id}"
+                    )
 
                 if ct_name not in content_types:
                     app_label, model = ct_name.split(".")
-                    content_types[ct_name] = ContentType.objects.get(app_label=app_label, model=model).id
+                    content_types[ct_name] = ContentType.objects.get(
+                        app_label=app_label, model=model
+                    ).id
 
                 overridden_objects.append(
                     models.RiskOfBiasScoreOverrideObject(
-                        score_id=update_score["id"], content_type_id=content_types[ct_name], object_id=object_id,
+                        score_id=update_score["id"],
+                        content_type_id=content_types[ct_name],
+                        object_id=object_id,
                     )
                 )
 
@@ -175,11 +188,13 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
         ids = [score["id"] for score in update_scores]
         scores = {
             score.id: score
-            for score in models.RiskOfBiasScore.objects.filter(id__in=ids).prefetch_related("overridden_objects")
+            for score in models.RiskOfBiasScore.objects.filter(id__in=ids).prefetch_related(
+                "overridden_objects"
+            )
         }
         for update_score in update_scores:
             score = scores[update_score["id"]]
-            for key in ["score", "label", "notes"]:
+            for key in ["score", "label", "bias_direction", "notes"]:
                 setattr(score, key, update_score[key])
             score.save()
 
@@ -187,7 +202,9 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
         new_overrides = []
         for update_score in update_scores:
             new_overrides.extend(update_score["overridden_objects"])
-        models.RiskOfBiasScoreOverrideObject.objects.filter(score__riskofbias_id=instance.id).delete()
+        models.RiskOfBiasScoreOverrideObject.objects.filter(
+            score__riskofbias_id=instance.id
+        ).delete()
         models.RiskOfBiasScoreOverrideObject.objects.bulk_create(new_overrides)
 
         return super().update(instance, validated_data)

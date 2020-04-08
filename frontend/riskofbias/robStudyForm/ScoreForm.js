@@ -10,7 +10,8 @@ import TextInput from "shared/components/TextInput";
 import h from "shared/utils/helpers";
 import "./ScoreForm.css";
 import ScoreOverrideForm from "./ScoreOverrideForm";
-import {SCORE_TEXT_DESCRIPTION} from "riskofbias/constants";
+import {SCORE_TEXT_DESCRIPTION, BIAS_DIRECTION_VERBOSE} from "riskofbias/constants";
+import {keys} from "mobx";
 
 @inject("store")
 @observer
@@ -21,6 +22,9 @@ class ScoreForm extends Component {
             editableMetricHasOverride = store.editableMetricHasOverride(score.metric.id),
             choices = store.study.rob_response_values.map(d => {
                 return {id: parseInt(d), label: SCORE_TEXT_DESCRIPTION[d]};
+            }),
+            direction_choices = Object.entries(BIAS_DIRECTION_VERBOSE).map(kv => {
+                return {id: kv[0], label: kv[1]};
             }),
             showScoreInput = !h.hideRobScore(parseInt(store.config.assessment_id)),
             showOverrideCreate = score.is_default === true,
@@ -97,6 +101,21 @@ class ScoreForm extends Component {
                                     }}
                                 />
                                 <ScoreIcon score={score.score} />
+                                <SelectInput
+                                    className="span12"
+                                    id={`${score.id}-direction`}
+                                    label="Bias direction"
+                                    choices={direction_choices}
+                                    multiple={false}
+                                    value={score.bias_direction}
+                                    handleSelect={value => {
+                                        store.updateFormState(
+                                            scoreId,
+                                            "bias_direction",
+                                            parseInt(value)
+                                        );
+                                    }}
+                                />
                             </div>
                         ) : null}
                     </div>

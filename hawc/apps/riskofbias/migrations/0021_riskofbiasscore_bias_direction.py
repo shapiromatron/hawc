@@ -15,7 +15,11 @@ class Migration(migrations.Migration):
             model_name="riskofbiasscore",
             name="bias_direction",
             field=models.PositiveSmallIntegerField(
-                choices=[(0, "not entered/unknown"), (1, "⬆ (away from null)"), (2, "⬇ (towards null)")],
+                choices=[
+                    (0, "not entered/unknown"),
+                    (1, "⬆ (away from null)"),
+                    (2, "⬇ (towards null)"),
+                ],
                 default=0,
                 help_text="Judgment of direction of bias (⬆ = away from null, ⬇ = towards null); only add entry if important to show in visuals",
             ),
