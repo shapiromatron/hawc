@@ -1,5 +1,6 @@
 import pandas as pd
 import plotly.express as px
+import plotly.graph_objects as go
 from rest_framework import mixins, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -98,6 +99,19 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
                 margin=dict(l=0, r=0, t=30, b=0),  # noqa: E741
             )
             payload = fig.to_dict()
+
+        return Response(payload)
+
+    @action(
+        detail=True, methods=("get",), url_path="topic-model",
+    )
+    def topic_model(self, request, pk):
+        instance = self.get_object()
+        df = instance.literature_settings.get_topic_tsne_data()  # noqa: F841
+
+        fig = go.Figure()
+        fig.add_trace(go.Scatter(x=[1, 2, 3, 4, 5], y=[1, 3, 2, 3, 1]))
+        payload = fig.to_dict()
 
         return Response(payload)
 

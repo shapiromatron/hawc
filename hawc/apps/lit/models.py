@@ -2,18 +2,21 @@ import html
 import json
 import logging
 import re
+from io import BytesIO
 from math import ceil
 from typing import Dict, Optional
 from urllib import parse
 
 from django.apps import apps
 from django.conf import settings
+from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.db import models, transaction
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.html import strip_tags
 from litter_getter import pubmed, ris
+import pandas as pd
 from taggit.models import ItemBase
 from treebeard.mp_tree import MP_Node
 
@@ -37,6 +40,7 @@ class TooManyPubMedResults(Exception):
 class LiteratureAssessment(models.Model):
 
     DEFAULT_EXTRACTION_TAG = "Inclusion"
+    TOPIC_MODEL_MIN_REFERENCES = 50
 
     assessment = models.OneToOneField(
         "assessment.Assessment",
@@ -70,8 +74,41 @@ class LiteratureAssessment(models.Model):
     def get_assessment(self):
         return self.assessment
 
-    def get_update_url(self):
+    def get_update_url(self) -> str:
         return reverse("lit:literature_assessment_update", args=(self.id,))
+
+    @property
+    def topic_tsne_data_cache_key(self) -> str:
+        return f"{self.assessment_id}_topic_tsne_data"
+
+    def create_topic_tsne_data(self) -> None:
+        # do the real thing here
+        df = pd.DataFrame(data=[[1, 2, 3], [4, 5, 6]], columns="a b c".split())
+        f = BytesIO()
+        df.to_parquet(f, engine="pyarrow", index=False)
+        self.topic_tsne_data = f.getvalue()
+        self.topic_tsne_refresh_requested = None
+        self.topic_tsne_last_refresh = timezone.now()
+        cache.delete(self.topic_tsne_data_cache_key)
+        self.save()
+
+    def get_topic_tsne_data(self) -> pd.DataFrame:
+        df = cache.get(self.topic_tsne_data_cache_key)
+        if df is None:
+            if self.topic_tsne_data is None:
+                raise ValueError("No data available.")
+            df = pd.read_parquet(self.topic_tsne_data.getvalue(), engine="pyarrow")
+            cache.set(self.topic_tsne_data_cache_key, df, 60 * 60)  # cache for 1 hour
+        return df
+
+    def has_topic_model(self) -> bool:
+        return self.topic_tsne_data is not None
+
+    def can_topic_model(self) -> bool:
+        return self.assessment.references.count() > self.TOPIC_MODEL_MIN_REFERENCES
+
+    def can_request_refresh(self) -> bool:
+        return self.can_topic_model and self.topic_tsne_refresh_requested is None
 
 
 class Search(models.Model):

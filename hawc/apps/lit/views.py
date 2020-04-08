@@ -3,7 +3,7 @@ import json
 from django.forms.models import model_to_dict
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from django.views.generic import DetailView, TemplateView
 from django.views.generic.edit import FormView
@@ -541,8 +541,20 @@ class RefVisualization(BaseDetail):
 
 
 class RefTopicModel(BaseDetail):
-    model = Assessment
+    model = models.LiteratureAssessment
     template_name = "lit/topic_model.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["num_references"] = self.object.assessment.references.count()
+        context["data"] = json.dumps(
+            dict(
+                topicModelUrl=reverse(
+                    "lit:api:assessment-topic-model", args=(self.object.assessment_id,)
+                ),
+            )
+        )
+        return context
 
 
 class TagsJSON(BaseDetail):
