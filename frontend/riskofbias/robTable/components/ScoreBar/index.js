@@ -20,6 +20,7 @@ class ScoreBar extends Component {
 
     render() {
         let {description, direction, direction_description, score} = this.props,
+            direction_tooltip = "Bias direction " + direction_description,
             barWidth = SCORE_BAR_WIDTH_PERCENTAGE[score],
             direction_simple = BIAS_DIRECTION_SIMPLE[direction];
 
@@ -33,7 +34,7 @@ class ScoreBar extends Component {
                 </VelocityComponent>
                 <i>{description}</i>{" "}
                 {direction == 0 ? null : (
-                    <span className="js-tooltip" title={direction_description}>
+                    <span className="js-tooltip" title={direction_tooltip}>
                         ({direction_simple})
                     </span>
                 )}

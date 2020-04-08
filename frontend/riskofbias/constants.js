@@ -83,9 +83,9 @@ const NA_KEYS = [10, 20],
         2: "⬇",
     },
     BIAS_DIRECTION_VERBOSE = {
-        0: "? dunno",
-        1: "⬆ goes up",
-        2: "⬇ goes down",
+        0: "Not specified",
+        1: "Away from null",
+        2: "Towards null",
     },
     COLLAPSED_NR_FIELDS_DESCRIPTION = {
         15: "Probably high risk of bias/not reported",
