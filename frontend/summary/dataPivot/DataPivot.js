@@ -137,14 +137,15 @@ class DataPivot {
     }
 
     static getRowDetails(values) {
-        var unique = d3.set(values).values(),
-            numeric = values.filter(function(v) {
-                return $.isNumeric(v);
-            }),
+        var unique = d3.set(values),
+            numeric = values.filter(v => $.isNumeric(v)),
             range = numeric.length > 0 ? d3.extent(numeric) : undefined;
 
+        unique.remove("");
+        unique.remove("undefined");
+
         return {
-            unique,
+            unique: unique.values(),
             numeric,
             range,
         };
