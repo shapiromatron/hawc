@@ -11,7 +11,6 @@ import h from "shared/utils/helpers";
 import "./ScoreForm.css";
 import ScoreOverrideForm from "./ScoreOverrideForm";
 import {SCORE_TEXT_DESCRIPTION, BIAS_DIRECTION_VERBOSE} from "riskofbias/constants";
-import {keys} from "mobx";
 
 @inject("store")
 @observer
