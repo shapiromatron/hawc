@@ -511,5 +511,7 @@ class ReferenceTagsManager(BaseManager):
         df = pd.DataFrame(
             data=list(self.assessment_qs(assessment_id).values("content_object_id", "tag_id",))
         )
-        df = df.rename(columns=dict(content_object_id="reference_id")).sort_values(by=["reference_id", "tag_id"])
+        df = df.rename(columns=dict(content_object_id="reference_id")).sort_values(
+            by=["reference_id", "tag_id"]
+        )
         return df
