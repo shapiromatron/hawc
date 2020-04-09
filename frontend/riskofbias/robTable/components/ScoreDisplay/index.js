@@ -45,7 +45,6 @@ class ScoreDisplay extends Component {
                             symbol={score.score_symbol}
                             description={score.score_description}
                             direction={score.bias_direction}
-                            direction_description={score.bias_direction_description}
                         />
                     ) : null}
                 </div>
@@ -107,7 +106,6 @@ ScoreDisplay.propTypes = {
         score_shade: PropTypes.string.isRequired,
         score: PropTypes.number.isRequired,
         bias_direction: PropTypes.number.isRequired,
-        bias_direction_description: PropTypes.string.isRequired,
     }).isRequired,
     showAuthors: PropTypes.bool.isRequired,
     hasOverrides: PropTypes.bool.isRequired,
