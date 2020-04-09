@@ -364,8 +364,9 @@ Then, create the example docker container and start a celery worker instance:
 .. code-block:: bash
 
     docker-compose build redis
-    docker up -d redis
-    celery worker --app=hawc.main.celery --loglevel=INFO --soft-time-limit=90 --time-limit=120
+    docker-compose up -d redis
+    celery worker --app=hawc.main.celery --loglevel=INFO --logfile=celery-worker.log --soft-time-limit=90 --time-limit=120
+    celery beat --app=hawc.main.celery --loglevel=INFO --logfile=celery-beat.log
 
 Asynchronous tasks will no be executed by celery workers instead of the main thread.
 

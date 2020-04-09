@@ -12,20 +12,20 @@
 
 {% block content %}
 <h1>Topic model.
-{% if obj_perms.edit_assessment and object.can_request_refresh %}
-<a class="pull-right btn btn-primary" href="/">
-  {% if has_topic_model %}Request model refresh{% else %}Build model{% endif %}
+{% if obj_perms.edit and object.can_request_refresh %}
+<a id="refresh-topic-model" class="pull-right btn btn-primary" href=".">
+  {% if object.has_topic_model %}Request model refresh{% else %}Build model{% endif %}
 </a>
 {% endif %}
 </h1>
 
-{% if obj_perms.edit_assessment %}
+{% if obj_perms.edit %}
   {% if object.topic_tsne_refresh_requested %}
-  Model (re)build requested at {{object.topic_tsne_refresh_requested}}.
+  <p>Model (re)build requested at <i>{{object.topic_tsne_refresh_requested}}</i>. When resources are available, a new topic model will be generated.</p>
   {% endif %}
 {% endif %}
 
-{% if has_topic_model %}
+{% if object.has_topic_model %}
 <div id="viz"></div>
 {% else %}
 <p>No topic model available.
@@ -42,10 +42,36 @@
 </script>
 <script type="text/javascript">
   const data = JSON.parse(document.getElementById("data").textContent),
+    refreshBtn = document.getElementById("refresh-topic-model"),
     viz = document.getElementById("viz");
 
+  // request a model refresh
+  if (refreshBtn){
+    refreshBtn.onclick = function (event) {
+      event.preventDefault()
+      fetch(
+        data.topicModelRefreshUrl,
+        {
+          credentials: "same-origin",
+          method: "POST",
+          body: "",
+          headers: new Headers({
+            "X-CSRFToken": "{{ csrf_token }}",
+            "content-type": "application/json",
+          })
+        }).then((resp) => {
+          if (resp.ok) {
+            location.reload();
+          }
+          return false;
+        });
+    };
+  }
+
+  // load visual
   if (viz) {
     window.app.renderPlotlyFromApi(viz, data.topicModelUrl);
   }
+
 </script>
 {% endblock extrajs %}

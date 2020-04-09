@@ -1,7 +1,7 @@
+from django.utils import timezone
 import pandas as pd
 import plotly.express as px
-import plotly.graph_objects as go
-from rest_framework import mixins, viewsets
+from rest_framework import exceptions, mixins, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
@@ -106,14 +106,20 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         detail=True, methods=("get",), url_path="topic-model",
     )
     def topic_model(self, request, pk):
-        instance = self.get_object()
-        df = instance.literature_settings.get_topic_tsne_data()  # noqa: F841
+        assessment = self.get_object()
+        fig_dict = assessment.literature_settings.get_topic_tsne_fig_dict()
+        return Response(fig_dict)
 
-        fig = go.Figure()
-        fig.add_trace(go.Scatter(x=[1, 2, 3, 4, 5], y=[1, 3, 2, 3, 1]))
-        payload = fig.to_dict()
-
-        return Response(payload)
+    @action(
+        detail=True, methods=("post",), url_path="topic-model-request-refresh",
+    )
+    def topic_model_request_refresh(self, request, pk):
+        assessment = self.get_object()
+        if not assessment.user_can_edit_object(request.user):
+            raise exceptions.PermissionDenied()
+        assessment.literature_settings.topic_tsne_refresh_requested = timezone.now()
+        assessment.literature_settings.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(
         detail=True,

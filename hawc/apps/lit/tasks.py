@@ -1,9 +1,7 @@
 import json
-from datetime import timedelta
 from typing import List
 
 from celery import shared_task
-from celery.decorators import periodic_task
 from celery.utils.log import get_task_logger
 from django.apps import apps
 from django.db.models import F
@@ -34,25 +32,31 @@ def update_pubmed_content(ids: List[int]):
     )
 
 
-@periodic_task(run_every=timedelta(hours=1))
+@shared_task
 def fix_pubmed_without_content():
     # Try getting pubmed data without content
     Identifiers = apps.get_model("lit", "identifiers")
     ids = Identifiers.objects.filter(content="", database=constants.PUBMED)
-    Identifiers.update_pubmed_content(ids)
+    num_ids = ids.count()
+    logger.info(f"Attempting to update pubmed content for {num_ids} identifiers")
+    if num_ids > 0:
+        Identifiers.update_pubmed_content(ids)
 
 
-@periodic_task(run_every=timedelta(hours=1))
+@shared_task
 def schedule_topic_model_reruns():
     # schedule which topic models which require a refresh
     LiteratureAssessment = apps.get_model("lit", "LiteratureAssessment")
 
     # if topic model doesn't exist have a model with minimum references
     qs1 = (
-        LiteratureAssessment.objects.filter(topic_tsne_last_refresh__isnull=True)
+        LiteratureAssessment.objects.filter(
+            topic_tsne_refresh_requested__isnull=True, topic_tsne_last_refresh__isnull=True
+        )
         .annotate(num_refs=Count("assessment__references"))
         .filter(num_refs__gte=LiteratureAssessment.TOPIC_MODEL_MIN_REFERENCES)
     )
+    logger.info(f"Scheduling {qs1.count()} new assessments for topic modeling")
 
     # if model execution datetime < max(reference.last_updated)
     qs2 = (
@@ -60,36 +64,45 @@ def schedule_topic_model_reruns():
         .annotate(ref_last_updated=Max("assessment__references__last_updated"))
         .filter(topic_tsne_last_refresh__lte=F("ref_last_updated"))
     )
+    logger.info(f"Scheduling {qs2.count()} assessments for topic modeling refresh")
 
     # schedule refreshes
-    qs1.union(qs2).update(topic_tsne_refresh_requested=timezone.now())
+    qs1.update(topic_tsne_refresh_requested=timezone.now())
+    qs2.update(topic_tsne_refresh_requested=timezone.now())
 
-    # schedule rerun
-    for settings in LiteratureAssessment.objects.filter(
-        topic_tsne_refresh_requested__not_null=True
-    ):
+    qs = LiteratureAssessment.objects.filter(topic_tsne_refresh_requested__isnull=False)
+    logger.info(f"Scheduling {qs.count()} assessments for topic model rerun")
+    for settings in qs:
         rerun_topic_model.apply_async((settings.assessment_id,), ignore_result=True)
+
+    logger.info("Task complete.")
 
 
 @shared_task
 def rerun_topic_model(assessment_id):
+    logger.info(f"Topic model rerun reqest scheduled for assessment {assessment_id}")
+
     # rerun a topic model
     LiteratureAssessment = apps.get_model("lit", "LiteratureAssessment")
     settings = LiteratureAssessment.objects.get(assessment_id=assessment_id)
 
-    # exit early conditions w/o re-running model:
-    # 1) if the model has been updated after the refresh request (duplicate tasks on queue?)
-    # 2) if there aren't enough references
-    if settings.topic_tsne_last_refresh > settings.topic_tsne_refresh_requested:
+    if (
+        settings.topic_tsne_last_refresh is not None
+        and settings.topic_tsne_last_refresh > settings.topic_tsne_refresh_requested
+    ):
+        logger.info(f"Refresh for {settings.assessment_id} cancelled; data is up to date.")
         settings.topic_tsne_refresh_requested = None
         settings.save()
         return
 
     if settings.assessment.references.count() < LiteratureAssessment.TOPIC_MODEL_MIN_REFERENCES:
+        logger.info(f"Refresh for {settings.assessment_id} cancelled; not enough references")
         settings.topic_tsne_data = None
         settings.topic_tsne_refresh_requested = None
         settings.save()
         return
 
     # otherwise re-run model
+    logger.info(f"Updating {settings.assessment_id} topic model")
     settings.create_topic_tsne_data()
+    logger.info("Task complete.")

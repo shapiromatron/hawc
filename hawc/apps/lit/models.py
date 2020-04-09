@@ -7,7 +7,9 @@ from math import ceil
 from typing import Dict, Optional
 from urllib import parse
 
+import numpy as np
 import pandas as pd
+import plotly.graph_objects as go
 from django.apps import apps
 from django.conf import settings
 from django.core.cache import cache
@@ -78,28 +80,33 @@ class LiteratureAssessment(models.Model):
         return reverse("lit:literature_assessment_update", args=(self.id,))
 
     @property
-    def topic_tsne_data_cache_key(self) -> str:
+    def topic_tsne_fig_dict_cache_key(self) -> str:
         return f"{self.assessment_id}_topic_tsne_data"
 
     def create_topic_tsne_data(self) -> None:
-        # do the real thing here
-        df = pd.DataFrame(data=[[1, 2, 3], [4, 5, 6]], columns="a b c".split())
+        df = pd.DataFrame(dict(x=np.random.normal(size=100), y=np.random.beta(2, 8, size=100)))
         f = BytesIO()
         df.to_parquet(f, engine="pyarrow", index=False)
         self.topic_tsne_data = f.getvalue()
         self.topic_tsne_refresh_requested = None
         self.topic_tsne_last_refresh = timezone.now()
-        cache.delete(self.topic_tsne_data_cache_key)
+        cache.delete(self.topic_tsne_fig_dict_cache_key)
         self.save()
 
     def get_topic_tsne_data(self) -> pd.DataFrame:
-        df = cache.get(self.topic_tsne_data_cache_key)
-        if df is None:
-            if self.topic_tsne_data is None:
-                raise ValueError("No data available.")
-            df = pd.read_parquet(self.topic_tsne_data.getvalue(), engine="pyarrow")
-            cache.set(self.topic_tsne_data_cache_key, df, 60 * 60)  # cache for 1 hour
-        return df
+        if self.topic_tsne_data is None:
+            raise ValueError("No data available.")
+        return pd.read_parquet(BytesIO(self.topic_tsne_data), engine="pyarrow")
+
+    def get_topic_tsne_fig_dict(self) -> Dict:
+        fig_dict = cache.get(self.topic_tsne_fig_dict_cache_key)
+        if fig_dict is None:
+            df = self.get_topic_tsne_data()
+            fig = go.Figure()
+            fig.add_trace(go.Scatter(x=df.x, y=df.y, mode="markers"))
+            fig_dict = fig.to_dict()
+            cache.set(self.topic_tsne_fig_dict_cache_key, fig_dict, 60 * 60)  # cache for 1 hour
+        return fig_dict
 
     def has_topic_model(self) -> bool:
         return self.topic_tsne_data is not None

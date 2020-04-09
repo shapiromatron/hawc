@@ -553,6 +553,10 @@ class RefTopicModel(BaseDetail):
                 topicModelUrl=reverse(
                     "lit:api:assessment-topic-model", args=(self.object.assessment_id,)
                 ),
+                topicModelRefreshUrl=reverse(
+                    "lit:api:assessment-topic-model-request-refresh",
+                    args=(self.object.assessment_id,),
+                ),
             )
         )
         return context
