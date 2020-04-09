@@ -7,6 +7,7 @@ from math import ceil
 from typing import Dict, Optional
 from urllib import parse
 
+import pandas as pd
 from django.apps import apps
 from django.conf import settings
 from django.core.cache import cache
@@ -16,7 +17,6 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.html import strip_tags
 from litter_getter import pubmed, ris
-import pandas as pd
 from taggit.models import ItemBase
 from treebeard.mp_tree import MP_Node
 
@@ -105,7 +105,7 @@ class LiteratureAssessment(models.Model):
         return self.topic_tsne_data is not None
 
     def can_topic_model(self) -> bool:
-        return self.assessment.references.count() > self.TOPIC_MODEL_MIN_REFERENCES
+        return self.assessment.references.count() >= self.TOPIC_MODEL_MIN_REFERENCES
 
     def can_request_refresh(self) -> bool:
         return self.can_topic_model and self.topic_tsne_refresh_requested is None

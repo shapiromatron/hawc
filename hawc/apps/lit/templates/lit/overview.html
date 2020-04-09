@@ -72,7 +72,9 @@
       <div class="well well-small">
         <a class="btn btn-primary" href="{% url 'lit:ref_list' assessment.pk %}">View by tag</a>
         <a class="btn btn-primary" href="{% url 'lit:ref_visual' assessment.pk %}">Visualization</a>
+        {% if user.is_staff and can_topic_model %}
         <a class="btn btn-primary" href="{% url 'lit:topic_model' assessment.literature_settings.pk %}">Topic model</a>
+        {% endif %}
         <a class="btn btn-primary" href="{% url 'lit:ref_search' assessment.pk %}">Find a reference</a>
       </div>
     </div>

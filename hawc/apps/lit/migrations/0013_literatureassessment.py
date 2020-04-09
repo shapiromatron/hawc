@@ -1,5 +1,6 @@
 import django
 from django.db import migrations, models
+from django.utils import timezone
 
 from hawc.apps.lit.models import ReferenceFilterTag
 
@@ -7,6 +8,7 @@ from hawc.apps.lit.models import ReferenceFilterTag
 def build_lit_assessments(apps, schema_editor):
     Assessment = apps.get_model("assessment", "Assessment")
     LiteratureAssessment = apps.get_model("lit", "LiteratureAssessment")
+    Reference = apps.get_model("lit", "Reference")
     for assessment in Assessment.objects.all():
         # adapted  from `LiteratureAssessment.build_default`
         extraction_tag = (
@@ -16,8 +18,16 @@ def build_lit_assessments(apps, schema_editor):
             .first()
         )
 
+        topic_tsne_refresh_requested = (
+            timezone.now()
+            if Reference.objects.filter(assessment_id=assessment.id).count() >= 50
+            else None
+        )
+
         LiteratureAssessment.objects.create(
-            assessment=assessment, extraction_tag_id=extraction_tag.id if extraction_tag else None,
+            assessment=assessment,
+            topic_tsne_refresh_requested=topic_tsne_refresh_requested,
+            extraction_tag_id=extraction_tag.id if extraction_tag else None,
         )
 
 
