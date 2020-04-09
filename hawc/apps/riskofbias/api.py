@@ -124,8 +124,7 @@ class RiskOfBias(viewsets.ModelViewSet):
 
         if not requester_has_appropriate_permissions:
             raise ValidationError(
-                "Submitter '%s' has invalid permissions to edit Risk of Bias for this study"
-                % request.user
+                f"Submitter '{request.user}' has invalid permissions to edit Risk of Bias for this study"
             )
 
         # overridden_objects is not marked as optional in RiskOfBiasScoreSerializerSlim; if it's not present

@@ -167,8 +167,7 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
             if not study.user_can_edit_study(assessment, author):
                 # author is the user specified by the "author_id" value in the payload
                 raise serializers.ValidationError(
-                    "Author '%s' has invalid permissions to edit Risk of Bias for this study"
-                    % author
+                    f"Author '{author}' has invalid permissions to edit Risk of Bias for this study"
                 )
 
             # Validation should check that:
@@ -181,8 +180,7 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
                 for rob in robs:
                     if rob.active and rob.final:
                         raise serializers.ValidationError(
-                            "create failed; study %s already has an active & final risk of bias"
-                            % study_id
+                            f"create failed; study {study_id} already has an active & final risk of bias"
                         )
 
             # (2) subject to the settings of the metrics defined for this assessment,
@@ -202,11 +200,11 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
                     if "metric_id" in score and score["metric_id"] == metric.id
                 ]
 
-                metric_descriptor = "'%s:%s'" % (domain.name, metric.name)
+                metric_descriptor = f"'{domain.name}:{metric.name}'"
 
                 if 0 == len(scores_for_metric):
                     problematic_scores.append(
-                        "No score for metric %s/%s was submitted" % (metric.id, metric_descriptor)
+                        f"No score for metric {metric.id}/{metric_descriptor} was submitted"
                     )
                 else:
                     default_score_for_this_metric_included = False
@@ -220,14 +218,13 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
 
                     if not default_score_for_this_metric_included:
                         problematic_scores.append(
-                            "The score for metric %s/%s was submitted but not marked as default"
-                            % (metric.id, metric_descriptor)
+                            f"The score for metric {metric.id}/{metric_descriptor} was submitted but not marked as default"
                         )
 
             if len(problematic_scores) > 0:
                 explanation = "; ".join(problematic_scores)
                 raise serializers.ValidationError(
-                    "create failed; study %s had problematic scores (%s)" % (study_id, explanation)
+                    f"create failed; study {study_id} had problematic scores ({explanation})"
                 )
 
             # store the actual metric object we want to create
@@ -248,7 +245,7 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
         for score in scores:
             score_value = score["score"]
             if score_value not in valid_score_values:
-                raise serializers.ValidationError("score %s is not valid" % (score_value,))
+                raise serializers.ValidationError(f"score {score_value} is not valid")
 
         # check overrides
         for key, values in override_options.items():
