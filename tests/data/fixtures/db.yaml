@@ -376,8 +376,8 @@
     last_login: 2020-01-25 14:23:16.175169+00:00
     is_superuser: false
     email: public@rev.com
-    first_name: ""
-    last_name: ""
+    first_name: ''
+    last_name: ''
     is_staff: false
     is_active: true
     license_v1_accepted: false
@@ -389,16 +389,16 @@
   pk: 1
   fields:
     user:
-      - pm@pm.com
+    - pm@pm.com
     HERO_access: false
 - model: assessment.assessment
   pk: 1
   fields:
     name: working
     year: 1999
-    version: "1.0"
-    cas: ""
-    assessment_objective: ""
+    version: '1.0'
+    cas: ''
+    assessment_objective: ''
     editable: true
     public: false
     hide_from_public_page: false
@@ -408,26 +408,26 @@
     enable_risk_of_bias: true
     enable_bmd: true
     enable_summary_text: true
-    conflicts_of_interest: ""
-    funding_source: ""
+    conflicts_of_interest: ''
+    funding_source: ''
     noel_name: 0
     rob_name: 0
     created: 2020-01-25 14:23:16.176620+00:00
     last_updated: 2020-02-27 20:12:29.233982+00:00
     project_manager:
-      - - pm@pm.com
+    - - pm@pm.com
     team_members:
-      - - team@team.com
+    - - team@team.com
     reviewers:
-      - - rev@rev.com
+    - - rev@rev.com
 - model: assessment.assessment
   pk: 2
   fields:
     name: public final
     year: 2001
     version: final
-    cas: ""
-    assessment_objective: ""
+    cas: ''
+    assessment_objective: ''
     editable: false
     public: true
     hide_from_public_page: false
@@ -437,18 +437,18 @@
     enable_risk_of_bias: true
     enable_bmd: true
     enable_summary_text: true
-    conflicts_of_interest: ""
-    funding_source: ""
+    conflicts_of_interest: ''
+    funding_source: ''
     noel_name: 0
     rob_name: 0
     created: 2020-01-25 14:23:16.288774+00:00
     last_updated: 2020-01-27 19:13:57.976928+00:00
     project_manager:
-      - - pm@pm.com
+    - - pm@pm.com
     team_members:
-      - - team@team.com
+    - - team@team.com
     reviewers:
-      - - rev@rev.com
+    - - rev@rev.com
 - model: assessment.doseunits
   pk: 1
   fields:
@@ -484,11 +484,10 @@
     source: 0
     title: Manual import
     slug: manual-import
-    description:
-      Default search instance used for manually importing literature into
+    description: Default search instance used for manually importing literature into
       HAWC instead of using a search.
     search_string: None. This is used to manually enter literature.
-    import_file: ""
+    import_file: ''
     created: 2020-01-25 14:23:16.222728+00:00
     last_updated: 2020-01-25 14:23:16.222754+00:00
 - model: lit.search
@@ -499,11 +498,10 @@
     source: 0
     title: Manual import
     slug: manual-import
-    description:
-      Default search instance used for manually importing literature into
+    description: Default search instance used for manually importing literature into
       HAWC instead of using a search.
     search_string: None. This is used to manually enter literature.
-    import_file: ""
+    import_file: ''
     created: 2020-01-25 14:23:16.325978+00:00
     last_updated: 2020-01-25 14:23:16.326001+00:00
 - model: lit.search
@@ -514,28 +512,28 @@
     source: 1
     title: pmid
     slug: pmid
-    description: ""
-    search_string: "29641658"
-    import_file: ""
+    description: ''
+    search_string: '29641658'
+    import_file: ''
     created: 2020-01-27 22:44:26.097357+00:00
     last_updated: 2020-01-27 22:44:26.097399+00:00
 - model: lit.pubmedquery
   pk: 1
   fields:
     search: 3
-    results: ""
+    results: ''
     query_date: 2020-01-27 22:45:49.365291+00:00
 - model: lit.identifiers
   pk: 1
   fields:
-    unique_id: "29641658"
+    unique_id: '29641658'
     database: 1
     content: demo-content
     url: https://www.ncbi.nlm.nih.gov/pubmed/29641658
 - model: lit.referencefiltertag
   pk: 1
   fields:
-    path: "0001"
+    path: '0001'
     depth: 1
     numchild: 2
     name: assessment-1
@@ -543,7 +541,7 @@
 - model: lit.referencefiltertag
   pk: 2
   fields:
-    path: "00010002"
+    path: '00010002'
     depth: 2
     numchild: 3
     name: Inclusion
@@ -551,7 +549,7 @@
 - model: lit.referencefiltertag
   pk: 3
   fields:
-    path: "000100020001"
+    path: '000100020001'
     depth: 3
     numchild: 0
     name: Human Study
@@ -559,7 +557,7 @@
 - model: lit.referencefiltertag
   pk: 4
   fields:
-    path: "000100020002"
+    path: '000100020002'
     depth: 3
     numchild: 0
     name: Animal Study
@@ -567,7 +565,7 @@
 - model: lit.referencefiltertag
   pk: 5
   fields:
-    path: "000100020003"
+    path: '000100020003'
     depth: 3
     numchild: 0
     name: Mechanistic Study
@@ -575,7 +573,7 @@
 - model: lit.referencefiltertag
   pk: 6
   fields:
-    path: "00010003"
+    path: '00010003'
     depth: 2
     numchild: 3
     name: Exclusion
@@ -583,7 +581,7 @@
 - model: lit.referencefiltertag
   pk: 7
   fields:
-    path: "000100030002"
+    path: '000100030002'
     depth: 3
     numchild: 0
     name: Tier I
@@ -591,7 +589,7 @@
 - model: lit.referencefiltertag
   pk: 8
   fields:
-    path: "000100030004"
+    path: '000100030004'
     depth: 3
     numchild: 0
     name: Tier II
@@ -599,7 +597,7 @@
 - model: lit.referencefiltertag
   pk: 9
   fields:
-    path: "000100030005"
+    path: '000100030005'
     depth: 3
     numchild: 3
     name: Tier III
@@ -607,7 +605,7 @@
 - model: lit.referencefiltertag
   pk: 10
   fields:
-    path: "0002"
+    path: '0002'
     depth: 1
     numchild: 2
     name: assessment-2
@@ -615,7 +613,7 @@
 - model: lit.referencefiltertag
   pk: 11
   fields:
-    path: "00020001"
+    path: '00020001'
     depth: 2
     numchild: 3
     name: Inclusion
@@ -623,7 +621,7 @@
 - model: lit.referencefiltertag
   pk: 12
   fields:
-    path: "000200010001"
+    path: '000200010001'
     depth: 3
     numchild: 0
     name: Human Study
@@ -631,7 +629,7 @@
 - model: lit.referencefiltertag
   pk: 13
   fields:
-    path: "000200010002"
+    path: '000200010002'
     depth: 3
     numchild: 0
     name: Animal Study
@@ -639,7 +637,7 @@
 - model: lit.referencefiltertag
   pk: 14
   fields:
-    path: "000200010003"
+    path: '000200010003'
     depth: 3
     numchild: 0
     name: Mechanistic Study
@@ -647,7 +645,7 @@
 - model: lit.referencefiltertag
   pk: 15
   fields:
-    path: "00020002"
+    path: '00020002'
     depth: 2
     numchild: 3
     name: Exclusion
@@ -655,7 +653,7 @@
 - model: lit.referencefiltertag
   pk: 16
   fields:
-    path: "000200020001"
+    path: '000200020001'
     depth: 3
     numchild: 0
     name: Tier I
@@ -663,7 +661,7 @@
 - model: lit.referencefiltertag
   pk: 17
   fields:
-    path: "000200020002"
+    path: '000200020002'
     depth: 3
     numchild: 0
     name: Tier II
@@ -671,7 +669,7 @@
 - model: lit.referencefiltertag
   pk: 18
   fields:
-    path: "000200020003"
+    path: '000200020003'
     depth: 3
     numchild: 0
     name: Tier III
@@ -679,7 +677,7 @@
 - model: lit.referencefiltertag
   pk: 19
   fields:
-    path: "0001000300050001"
+    path: '0001000300050001'
     depth: 4
     numchild: 0
     name: a
@@ -687,7 +685,7 @@
 - model: lit.referencefiltertag
   pk: 20
   fields:
-    path: "0001000300050002"
+    path: '0001000300050002'
     depth: 4
     numchild: 0
     name: b
@@ -695,7 +693,7 @@
 - model: lit.referencefiltertag
   pk: 21
   fields:
-    path: "0001000300050003"
+    path: '0001000300050003'
     depth: 4
     numchild: 0
     name: c
@@ -709,13 +707,13 @@
   pk: 1
   fields:
     assessment: 1
-    title: ""
-    authors_short: ""
-    authors: ""
+    title: ''
+    authors_short: ''
+    authors: ''
     year: 2010
-    journal: ""
-    abstract: ""
-    full_text_url: ""
+    journal: ''
+    abstract: ''
+    full_text_url: ''
     created: 2020-01-25 14:23:16.370427+00:00
     last_updated: 2020-02-27 20:14:41.479008+00:00
     block_id: null
@@ -725,20 +723,20 @@
   pk: 2
   fields:
     assessment: 2
-    title: ""
-    authors_short: ""
-    authors: ""
+    title: ''
+    authors_short: ''
+    authors: ''
     year: 2020
-    journal: ""
-    abstract: ""
-    full_text_url: ""
+    journal: ''
+    abstract: ''
+    full_text_url: ''
     created: 2020-01-25 14:23:16.385003+00:00
     last_updated: 2020-01-25 14:23:16.385023+00:00
     block_id: null
     searches:
-      - 3
+    - 3
     identifiers:
-      - 1
+    - 1
 - model: study.study
   pk: 1
   fields:
@@ -749,13 +747,13 @@
     short_citation: Foo et al.
     full_citation: Foo et al. 2010
     coi_reported: 4
-    coi_details: ""
-    funding_source: ""
-    study_identifier: ""
+    coi_details: ''
+    funding_source: ''
+    study_identifier: ''
     contact_author: false
-    ask_author: ""
+    ask_author: ''
     published: false
-    summary: ""
+    summary: ''
     editable: true
     searches: []
     identifiers: []
@@ -769,18 +767,18 @@
     short_citation: Foo et al.
     full_citation: Foo et al.
     coi_reported: 4
-    coi_details: ""
-    funding_source: ""
-    study_identifier: ""
+    coi_details: ''
+    funding_source: ''
+    study_identifier: ''
     contact_author: false
-    ask_author: ""
+    ask_author: ''
     published: false
-    summary: ""
+    summary: ''
     editable: true
     searches:
-      - 3
+    - 3
     identifiers:
-      - 1
+    - 1
 - model: animal.experiment
   pk: 1
   fields:
@@ -789,14 +787,14 @@
     type: Ch
     has_multiple_generations: false
     chemical: flubber
-    cas: ""
-    chemical_source: ""
+    cas: ''
+    chemical_source: ''
     purity_available: false
-    purity_qualifier: ""
+    purity_qualifier: ''
     purity: null
-    vehicle: ""
-    guideline_compliance: ""
-    description: ""
+    vehicle: ''
+    guideline_compliance: ''
+    description: ''
     created: 2020-02-27 20:36:41.236477+00:00
     last_updated: 2020-02-27 20:36:41.236499+00:00
 - model: animal.animalgroup
@@ -807,14 +805,14 @@
     species: 1
     strain: 1
     sex: F
-    animal_source: ""
-    lifestage_exposed: ""
-    lifestage_assessed: ""
+    animal_source: ''
+    lifestage_exposed: ''
+    lifestage_assessed: ''
     siblings: null
-    generation: ""
+    generation: ''
     dosing_regime: 1
-    comments: ""
-    diet: ""
+    comments: ''
+    diet: ''
     created: 2020-02-27 20:52:18.377123+00:00
     last_updated: 2020-02-27 20:52:18.446571+00:00
     parents: []
@@ -824,12 +822,12 @@
     dosed_animals: 1
     route_of_exposure: OD
     duration_exposure: null
-    duration_exposure_text: ""
+    duration_exposure_text: ''
     duration_observation: null
     num_dose_groups: 3
     positive_control: false
     negative_control: VT
-    description: ""
+    description: ''
     created: 2020-02-27 20:52:18.340922+00:00
     last_updated: 2020-02-27 20:52:18.403090+00:00
 - model: animal.dosegroup
@@ -863,16 +861,16 @@
   pk: 1
   fields:
     animal_group: 1
-    system: ""
-    organ: ""
-    effect: ""
-    effect_subtype: ""
+    system: ''
+    organ: ''
+    effect: ''
+    effect_subtype: ''
     litter_effects: NA
-    litter_effect_notes: ""
+    litter_effect_notes: ''
     observation_time: null
     observation_time_units: 0
-    observation_time_text: ""
-    data_location: ""
+    observation_time_text: ''
+    data_location: ''
     expected_adversity_direction: 4
     response_units: "\u03BCg/dL"
     data_type: C
@@ -885,14 +883,14 @@
     data_extracted: true
     values_estimated: false
     monotonicity: 8
-    statistical_test: ""
+    statistical_test: ''
     trend_value: null
     trend_result: 3
-    diagnostic: ""
-    power_notes: ""
-    results_notes: ""
-    endpoint_notes: ""
-    additional_fields: "{}"
+    diagnostic: ''
+    power_notes: ''
+    results_notes: ''
+    endpoint_notes: ''
+    additional_fields: '{}'
     effects: []
 - model: animal.endpointgroup
   pk: 1
@@ -971,7 +969,7 @@
     domain: 2
     name: final domain
     short_name: final
-    description: ""
+    description: ''
     required_animal: true
     required_epi: true
     required_invitro: true
@@ -985,7 +983,7 @@
     study: 1
     final: false
     author:
-      - team@team.com
+    - team@team.com
     active: true
     created: 2020-02-27 20:12:29.325028+00:00
     last_updated: 2020-02-27 20:13:06.061991+00:00
@@ -995,7 +993,7 @@
     study: 1
     final: false
     author:
-      - pm@pm.com
+    - pm@pm.com
     active: true
     created: 2020-02-27 20:12:29.376104+00:00
     last_updated: 2020-02-27 20:13:30.095126+00:00
@@ -1005,7 +1003,7 @@
     study: 1
     final: true
     author:
-      - pm@pm.com
+    - pm@pm.com
     active: true
     created: 2020-02-27 20:12:29.417932+00:00
     last_updated: 2020-02-27 20:53:42.455277+00:00
@@ -1015,7 +1013,7 @@
     riskofbias: 1
     metric: 1
     is_default: true
-    label: ""
+    label: ''
     score: 27
     bias_direction: 0
     notes: <p>Content here.</p>
@@ -1035,7 +1033,7 @@
     riskofbias: 2
     metric: 1
     is_default: true
-    label: ""
+    label: ''
     score: 27
     bias_direction: 2
     notes: <p>good!</p>
@@ -1045,7 +1043,7 @@
     riskofbias: 2
     metric: 2
     is_default: true
-    label: ""
+    label: ''
     score: 26
     bias_direction: 0
     notes: <p>ok!</p>
@@ -1055,7 +1053,7 @@
     riskofbias: 3
     metric: 1
     is_default: true
-    label: ""
+    label: ''
     score: 26
     bias_direction: 1
     notes: <p>Adequate.</p>
@@ -1094,8 +1092,8 @@
   fields:
     score: 9
     content_type:
-      - animal
-      - endpoint
+    - animal
+    - endpoint
     object_id: 1
 - model: riskofbias.riskofbiasassessment
   pk: 1
@@ -1116,7 +1114,7 @@
 - model: summary.summarytext
   pk: 1
   fields:
-    path: "0001"
+    path: '0001'
     depth: 1
     numchild: 0
     assessment: 2
@@ -1128,7 +1126,7 @@
 - model: summary.summarytext
   pk: 2
   fields:
-    path: "0002"
+    path: '0002'
     depth: 1
     numchild: 0
     assessment: 1
@@ -1145,16 +1143,16 @@
     assessment: 1
     visual_type: 2
     dose_units: null
-    prefilters: "{}"
+    prefilters: '{}'
     settings: '{"title":"","xAxisLabel":"","yAxisLabel":"","padding_top":20,"cell_size":40,"padding_right":400,"padding_bottom":35,"padding_left":20,"x_field":"study","study_label_field":"short_citation","included_metrics":[1,2],"show_legend":true,"show_na_legend":true,"show_nr_legend":true,"legend_x":239,"legend_y":17}'
-    caption: ""
+    caption: ''
     published: false
     sort_order: short_citation
     created: 2020-02-27 20:32:30.901597+00:00
     last_updated: 2020-02-27 20:33:06.585979+00:00
     endpoints: []
     studies:
-      - 1
+    - 1
 - model: summary.visual
   pk: 2
   fields:
@@ -1163,13 +1161,13 @@
     assessment: 1
     visual_type: 3
     dose_units: null
-    prefilters: "{}"
+    prefilters: '{}'
     settings: '{"title":"Title","xAxisLabel":"Percent of studies","yAxisLabel":"","plot_width":400,"row_height":30,"padding_top":40,"padding_right":400,"padding_bottom":40,"padding_left":70,"show_values":true,"included_metrics":[1,2],"show_legend":true,"show_na_legend":true,"legend_x":640,"legend_y":10}'
-    caption: ""
+    caption: ''
     published: false
     sort_order: short_citation
     created: 2020-02-27 20:34:17.606164+00:00
     last_updated: 2020-02-27 20:34:17.606186+00:00
     endpoints: []
     studies:
-      - 1
+    - 1
