@@ -130,22 +130,10 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
         read_only_fields = ("id", "study")
 
     def validate(self, data):
-        performing_update_operation = self.instance is not None
+        is_create = self.instance is None
 
         # make sure that all scores match those in score; add `id` field to validated data
-        if performing_update_operation:
-            score_ids = [score["id"] for score in self.initial_data["scores"]]
-            if models.RiskOfBiasScore.objects.filter(
-                id__in=score_ids, riskofbias=self.instance
-            ).count() != len(score_ids):
-                raise serializers.ValidationError("Cannot update; scores to not match instances")
-            for initial_score_data, update_score in zip(
-                self.initial_data["scores"], data["scores"]
-            ):
-                update_score["id"] = initial_score_data["id"]
-
-            override_options = self.instance.get_override_options()
-        else:
+        if is_create:
             # creating a new RoB object
             # convert the supplied study_id to an actual Study object...
             study_id = tryParseInt(self.initial_data["study_id"], -1)
@@ -176,12 +164,10 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
 
             # (1) does the study already have an active=True/final=True rob?
             if self.initial_data["active"] is True and self.initial_data["final"] is True:
-                robs = study.riskofbiases.all()
-                for rob in robs:
-                    if rob.active and rob.final:
-                        raise serializers.ValidationError(
-                            f"create failed; study {study_id} already has an active & final risk of bias"
-                        )
+                if study.riskofbiases.filter(active=True, final=True).exists():
+                    raise serializers.ValidationError(
+                        f"create failed; study {study_id} already has an active & final risk of bias"
+                    )
 
             # (2) subject to the settings of the metrics defined for this assessment,
             # and the study_type of the study, we need to make sure all necessary scores
@@ -236,6 +222,18 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
                 score_idx += 1
 
             override_options = models.RiskOfBias().get_override_options()
+        else:
+            score_ids = [score["id"] for score in self.initial_data["scores"]]
+            if models.RiskOfBiasScore.objects.filter(
+                id__in=score_ids, riskofbias=self.instance
+            ).count() != len(score_ids):
+                raise serializers.ValidationError("Cannot update; scores to not match instances")
+            for initial_score_data, update_score in zip(
+                self.initial_data["scores"], data["scores"]
+            ):
+                update_score["id"] = initial_score_data["id"]
+
+            override_options = self.instance.get_override_options()
 
         # check to make sure submitted score values are valid
         rob_assessment = models.RiskOfBiasAssessment()
@@ -264,7 +262,7 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
                     if ct_name not in override_options:
                         raise serializers.ValidationError(f"Invalid content type name: {ct_name}")
 
-                    if performing_update_operation:
+                    if not is_create:
                         if object_id not in override_options[ct_name]:
                             raise serializers.ValidationError(
                                 f"Invalid content object: {ct_name}: {object_id}"
