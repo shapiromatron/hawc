@@ -49,8 +49,8 @@ class RiskOfBiasMetricSerializer(serializers.ModelSerializer):
 
 
 class RiskOfBiasScoreOverrideObjectSerializer(serializers.ModelSerializer):
-    object_url = serializers.URLField(source="get_object_url")
-    object_name = serializers.CharField(source="get_object_name")
+    object_url = serializers.URLField(source="get_object_url", read_only=True)
+    object_name = serializers.CharField(source="get_object_name", read_only=True)
     content_type_name = serializers.CharField(source="get_content_type_name")
 
     class Meta:
