@@ -160,9 +160,7 @@ class LiteratureClient(BaseClient):
         response_json = self.session.get(url).json()
         return pd.DataFrame(response_json)
 
-    def import_reference_tags(
-        self, assessment_id: int, csv: str, operation: str = "append"
-    ) -> pd.DataFrame:
+    def import_reference_tags(self, assessment_id: int, csv: str, operation: str = "append") -> pd.DataFrame:
         payload = {"csv": csv, "operation": operation}
         url = f"{self.session.root_url}/lit/api/assessment/{assessment_id}/reference-tags/"
         response_json = self.session.post(url, payload).json()
@@ -218,16 +216,43 @@ class AnimalClient(BaseClient):
     """
 
     def data(self, assessment_id: int) -> pd.DataFrame:
+        """
+        Retrieves a complete export of animal bioassay data for a given assessment.
+
+        Args:
+            assessment_id (int): Assessment ID
+
+        Returns:
+            pd.DataFrame: Complete bioassay export
+        """
         url = f"{self.session.root_url}/ani/api/assessment/{assessment_id}/full-export/"
         response_json = self.session.get(url).json()
         return pd.DataFrame(response_json)
 
     def data_summary(self, assessment_id: int) -> pd.DataFrame:
+        """
+        Retrieves an endpoint summary of animal bioassay data for a given assessment.
+
+        Args:
+            assessment_id (int): Assessment ID
+
+        Returns:
+            pd.DataFrame: Endpoint bioassay summary
+        """
         url = f"{self.session.root_url}/ani/api/assessment/{assessment_id}/endpoint-export/"
         response_json = self.session.get(url).json()
         return pd.DataFrame(response_json)
 
     def endpoints(self, assessment_id: int) -> List[Dict]:
+        """
+        Retrieves all bioassay endpoints for a given assessment.
+
+        Args:
+            assessment_id (int): Assessment ID
+
+        Returns:
+            List[Dict]: Endpoints
+        """
         payload = {"assessment_id": assessment_id}
         url = f"{self.session.root_url}/ani/api/endpoint/"
         generator = self.session.iter_pages(url, payload)
@@ -273,10 +298,22 @@ class AssessmentClient(BaseClient):
     """
 
     def public(self) -> Dict:
+        """
+        Retrieves data pertaining to all public assessments
+
+        Returns:
+            Dict: Public assessment data
+        """
         url = f"{self.session.root_url}/assessment/api/assessment/public/"
         return self.session.get(url).json()
 
     def bioassay_ml_dataset(self) -> pd.DataFrame:
+        """
+        Retrieves anonymized bioassay data for all eligible assessments.
+
+        Returns:
+            pd.DataFrame: Anonymized bioassay data
+        """
         url = f"{self.session.root_url}/assessment/api/assessment/bioassay_ml_dataset/?format=csv"
         response = self.session.get(url)
         return self._csv_to_df(response.text)
