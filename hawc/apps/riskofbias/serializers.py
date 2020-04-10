@@ -195,18 +195,17 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
                         f"No score for metric {metric.id}/{metric_descriptor} was submitted"
                     )
                 else:
-                    default_score_for_this_metric_included = False
-                    for submitted_score in scores_for_metric:
-                        if (
-                            "is_default" in submitted_score
-                            and submitted_score["is_default"] is True
-                        ):
-                            default_score_for_this_metric_included = True
-                            break
+                    default_scores_for_metric = sum(
+                        ("is_default" in s and s["is_default"] is True) for s in scores_for_metric
+                    )
 
-                    if not default_score_for_this_metric_included:
+                    if default_scores_for_metric == 0:
                         problematic_scores.append(
-                            f"The score for metric {metric.id}/{metric_descriptor} was submitted but not marked as default"
+                            f"No default score for metric {metric.id}/{metric_descriptor} was submitted."
+                        )
+                    elif default_scores_for_metric > 1:
+                        problematic_scores.append(
+                            f"Multiple default scores for metric {metric.id}/{metric_descriptor} were submitted."
                         )
 
             if len(problematic_scores) > 0:

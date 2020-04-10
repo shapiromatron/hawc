@@ -231,3 +231,26 @@ def test_riskofbias_create():
     assert resp.status_code == 201
     assert "created" in resp.data
     assert "scores" in resp.data and len(resp.data["scores"]) == 2
+
+    # no scores submitted for a metric
+    RiskOfBias.objects.all().delete()
+    payload = build_upload_payload(study, pm_author, required_metrics, first_valid_score)
+    payload["scores"].pop()
+    resp = client.post(url, payload, format="json")
+    assert resp.status_code == 400
+    assert b"No score for metric" in resp.content
+
+    # no default score submitted for a metric
+    RiskOfBias.objects.all().delete()
+    payload = build_upload_payload(study, pm_author, required_metrics, first_valid_score)
+    payload["scores"][0]["is_default"] = False
+    resp = client.post(url, payload, format="json")
+    assert resp.status_code == 400
+    assert b"No default score for metric" in resp.content
+
+    # multiple default scores submitted for a metric
+    payload = build_upload_payload(study, pm_author, required_metrics, first_valid_score)
+    payload["scores"].append(payload["scores"][0])
+    resp = client.post(url, payload, format="json")
+    assert resp.status_code == 400
+    assert b"Multiple default scores for metric" in resp.content
