@@ -215,12 +215,9 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
                 )
 
             # store the actual metric object we want to create
-            score_idx = 0
-            for score in data["scores"]:
-                metric = models.RiskOfBiasMetric.objects.get(id=scores[score_idx]["metric_id"])
-                # score["metric_id"] = scores[score_idx]["metric_id"]
-                score["metric"] = metric
-                score_idx += 1
+            metrics_dict = {obj.id: obj for obj in required_metrics}
+            for score, initial_score in zip(data["scores"], scores):
+                score["metric"] = metrics_dict[initial_score["metric_id"]]
 
             override_options = models.RiskOfBias().get_override_options()
         else:
