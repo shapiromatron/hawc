@@ -1,5 +1,5 @@
 from django.contrib.admin.views.decorators import staff_member_required
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import login
 from django.contrib.auth.views import (
     LoginView,
     LogoutView,
@@ -7,11 +7,12 @@ from django.contrib.auth.views import (
     PasswordResetDoneView,
     PasswordResetView,
 )
-from django.shortcuts import redirect, render
+from django.http import HttpResponseRedirect
+from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.decorators.debug import sensitive_post_parameters
-from django.views.generic import DetailView, TemplateView
+from django.views.generic import CreateView, DetailView, TemplateView
 from django.views.generic.base import RedirectView
 from django.views.generic.edit import FormView, UpdateView
 
@@ -19,40 +20,19 @@ from ..common.views import LoginRequiredMixin, MessageMixin
 from . import forms, models
 
 
-@sensitive_post_parameters("password1", "password2")
-def create_account(request):
-    """
-    Create a new user request. Modified from default such that the username is
-    equal to the email address.
-    """
-    if request.method == "POST":
+class HawcUserCreate(CreateView):
+    model = models.HAWCUser
+    form_class = forms.RegisterForm
+    success_url = reverse_lazy("portal")
 
-        post = request.POST
-        form = forms.RegisterForm(post)
+    @method_decorator(sensitive_post_parameters("password1", "password2"))
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
 
-        if form.is_valid():
-            # use case normalized email
-            email = models.HAWCUser.objects.normalize_email(form.cleaned_data["email"])
-            pw = form.cleaned_data["password1"]
-
-            # create a new user
-            user = models.HAWCUser.objects.create_user(email, pw)
-            user.first_name = form.cleaned_data["first_name"]
-            user.last_name = form.cleaned_data["last_name"]
-            user.license_v2_accepted = form.cleaned_data["license_v2_accepted"]
-            user.save()
-
-            # create a new user profile
-            models.UserProfile.objects.create(user=user)
-
-            # after save, log user in
-            user = authenticate(request, email=form.cleaned_data["email"], password=pw)
-            login(request, user)
-            return redirect("portal")
-    else:
-        form = forms.RegisterForm()
-
-    return render(request, "registration/create_account.html", {"form": form})
+    def form_valid(self, form):
+        self.object = form.save()
+        login(self.request, self.object)
+        return HttpResponseRedirect(self.get_success_url())
 
 
 class HawcLoginView(LoginView):

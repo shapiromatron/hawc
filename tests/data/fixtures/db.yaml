@@ -1033,6 +1033,7 @@
     is_default: true
     label: ''
     score: 27
+    bias_direction: 0
     notes: <p>Content here.</p>
 - model: riskofbias.riskofbiasscore
   pk: 2
@@ -1042,6 +1043,7 @@
     is_default: true
     label: Default label
     score: 26
+    bias_direction: 1
     notes: <p>Content here.</p>
 - model: riskofbias.riskofbiasscore
   pk: 3
@@ -1051,6 +1053,7 @@
     is_default: true
     label: ''
     score: 27
+    bias_direction: 2
     notes: <p>good!</p>
 - model: riskofbias.riskofbiasscore
   pk: 4
@@ -1060,6 +1063,7 @@
     is_default: true
     label: ''
     score: 26
+    bias_direction: 0
     notes: <p>ok!</p>
 - model: riskofbias.riskofbiasscore
   pk: 5
@@ -1069,6 +1073,7 @@
     is_default: true
     label: ''
     score: 26
+    bias_direction: 1
     notes: <p>Adequate.</p>
 - model: riskofbias.riskofbiasscore
   pk: 6
@@ -1078,6 +1083,7 @@
     is_default: true
     label: base
     score: 26
+    bias_direction: 2
     notes: <p>Fine, but subsets are imprortant</p>
 - model: riskofbias.riskofbiasscore
   pk: 7
@@ -1087,6 +1093,7 @@
     is_default: false
     label: Custom label
     score: 25
+    bias_direction: 0
     notes: <p>With override.</p>
 - model: riskofbias.riskofbiasscore
   pk: 9
@@ -1096,6 +1103,7 @@
     is_default: false
     label: other stuff
     score: 22
+    bias_direction: 1
     notes: <p>This wasn't reported in this case.</p>
 - model: riskofbias.riskofbiasscoreoverrideobject
   pk: 1

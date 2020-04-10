@@ -2,7 +2,12 @@ import React, {Component} from "react";
 import PropTypes from "prop-types";
 import {VelocityComponent} from "velocity-react";
 
-import {SCORE_BAR_WIDTH_PERCENTAGE} from "riskofbias/constants";
+import {
+    SCORE_BAR_WIDTH_PERCENTAGE,
+    BIAS_DIRECTION_SIMPLE,
+    BIAS_DIRECTION_VERBOSE,
+    BIAS_DIRECTION_UNKNOWN,
+} from "riskofbias/constants";
 
 import "./ScoreBar.css";
 
@@ -19,8 +24,10 @@ class ScoreBar extends Component {
     }
 
     render() {
-        let {description, score} = this.props,
-            barWidth = SCORE_BAR_WIDTH_PERCENTAGE[score];
+        let {description, direction, score} = this.props,
+            direction_tooltip = "Bias direction " + BIAS_DIRECTION_VERBOSE[direction],
+            barWidth = SCORE_BAR_WIDTH_PERCENTAGE[score],
+            direction_simple = BIAS_DIRECTION_SIMPLE[direction];
 
         return (
             <div className="score-bar">
@@ -30,7 +37,10 @@ class ScoreBar extends Component {
                     duration={1000}>
                     {this.render_score_bar()}
                 </VelocityComponent>
-                <i>{description}</i>
+                <i>{description}</i>{" "}
+                {direction == BIAS_DIRECTION_UNKNOWN ? null : (
+                    <span title={direction_tooltip}>({direction_simple})</span>
+                )}
             </div>
         );
     }
@@ -41,6 +51,7 @@ ScoreBar.propTypes = {
     shade: PropTypes.string.isRequired,
     symbol: PropTypes.string.isRequired,
     description: PropTypes.string.isRequired,
+    direction: PropTypes.number.isRequired,
 };
 
 export default ScoreBar;
