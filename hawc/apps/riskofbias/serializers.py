@@ -69,6 +69,7 @@ class RiskOfBiasScoreSerializerSlim(serializers.ModelSerializer):
             "score",
             "is_default",
             "label",
+            "bias_direction",
             "notes",
             "metric",
             "overridden_objects",
@@ -82,6 +83,7 @@ class RiskOfBiasScoreSerializer(RiskOfBiasScoreSerializerSlim):
         ret["score_description"] = instance.get_score_display()
         ret["score_symbol"] = instance.score_symbol
         ret["score_shade"] = instance.score_shade
+        ret["bias_direction_description"] = instance.get_bias_direction_display()
         ret["url_edit"] = instance.riskofbias.get_edit_url()
         ret["study_name"] = instance.riskofbias.study.short_citation
         ret["study_id"] = instance.riskofbias.study.id
@@ -336,7 +338,7 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
         }
         for update_score in update_scores:
             score = scores[update_score["id"]]
-            for key in ["score", "label", "notes"]:
+            for key in ["score", "label", "bias_direction", "notes"]:
                 setattr(score, key, update_score[key])
             score.save()
 
