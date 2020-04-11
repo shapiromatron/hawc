@@ -22,6 +22,7 @@ class LiteratureAssessmentForm(forms.ModelForm):
         qs = models.ReferenceFilterTag.get_assessment_qs(self.instance.assessment_id)
         self.fields["extraction_tag"].queryset = qs
         self.fields["extraction_tag"].choices = [(el.id, el.get_nested_name()) for el in qs]
+        self.fields["extraction_tag"].choices.insert(0, (None, "<none>"))
         self.helper = self.setHelper()
 
     class Meta:

@@ -7,14 +7,11 @@ from . import forms, models
 @admin.register(models.LiteratureAssessment)
 class LiteratureAssessmentAdmin(admin.ModelAdmin):
     form = forms.LiteratureAssessmentForm
-    readonly_fields = ("assessment", "topic_tsne_refresh_requested", "topic_tsne_last_refresh")
+    readonly_fields = ("assessment",)
 
     list_display = (
         "assessment",
         "extraction_tag",
-        "topic_tsne_data",
-        "topic_tsne_refresh_requested",
-        "topic_tsne_last_refresh",
     )
 
 

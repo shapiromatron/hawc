@@ -20,10 +20,6 @@ def debug_task(self):
 
 
 app.conf.beat_schedule = {
-    "lit-schedule_topic_model_reruns-10-min": {
-        "task": "hawc.apps.lit.tasks.schedule_topic_model_reruns",
-        "schedule": 60 * 10,
-    },
     "lit-update_pubmed_content-1-hour": {
         "task": "hawc.apps.lit.tasks.update_pubmed_content",
         "schedule": 3600,

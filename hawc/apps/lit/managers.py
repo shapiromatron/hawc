@@ -368,6 +368,8 @@ class ReferenceManager(BaseManager):
                 self.get_qs(assessment)
                 .filter(referencetags__tag_id__in=inclusion_tags)
                 .exclude(pk__in=Study.objects.get_qs(assessment).values_list("pk", flat=True))
+                .order_by("authors")
+                .distinct()
             )
         else:
             return self.none()

@@ -2,17 +2,12 @@ import html
 import json
 import logging
 import re
-from io import BytesIO
 from math import ceil
 from typing import Dict, Optional
 from urllib import parse
 
-import numpy as np
-import pandas as pd
-import plotly.graph_objects as go
 from django.apps import apps
 from django.conf import settings
-from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import models, transaction
 from django.urls import reverse
@@ -57,20 +52,20 @@ class LiteratureAssessment(models.Model):
         on_delete=models.SET_NULL,
         help_text="All references or child references of this tag will be marked as ready for extraction.",
     )
-    topic_tsne_data = models.BinaryField(null=True, editable=False)
-    topic_tsne_refresh_requested = models.DateTimeField(null=True)
-    topic_tsne_last_refresh = models.DateTimeField(null=True)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
     @classmethod
     def build_default(cls, assessment: "assessment.Assessment") -> "LiteratureAssessment":
-        return cls.objects.create(
-            assessment=assessment,
-            extraction_tag=ReferenceFilterTag.get_assessment_root(assessment.id)
+        extraction_tag = (
+            ReferenceFilterTag.get_assessment_root(assessment.id)
             .get_children()
             .filter(name=cls.DEFAULT_EXTRACTION_TAG)
-            .first(),
+            .first()
+        )
+
+        return cls.objects.create(
+            assessment=assessment, extraction_tag_id=extraction_tag.id if extraction_tag else None,
         )
 
     def get_assessment(self):
@@ -78,44 +73,6 @@ class LiteratureAssessment(models.Model):
 
     def get_update_url(self) -> str:
         return reverse("lit:literature_assessment_update", args=(self.id,))
-
-    @property
-    def topic_tsne_fig_dict_cache_key(self) -> str:
-        return f"{self.assessment_id}_topic_tsne_data"
-
-    def create_topic_tsne_data(self) -> None:
-        df = pd.DataFrame(dict(x=np.random.normal(size=100), y=np.random.beta(2, 8, size=100)))
-        f = BytesIO()
-        df.to_parquet(f, engine="pyarrow", index=False)
-        self.topic_tsne_data = f.getvalue()
-        self.topic_tsne_refresh_requested = None
-        self.topic_tsne_last_refresh = timezone.now()
-        cache.delete(self.topic_tsne_fig_dict_cache_key)
-        self.save()
-
-    def get_topic_tsne_data(self) -> pd.DataFrame:
-        if self.topic_tsne_data is None:
-            raise ValueError("No data available.")
-        return pd.read_parquet(BytesIO(self.topic_tsne_data), engine="pyarrow")
-
-    def get_topic_tsne_fig_dict(self) -> Dict:
-        fig_dict = cache.get(self.topic_tsne_fig_dict_cache_key)
-        if fig_dict is None:
-            df = self.get_topic_tsne_data()
-            fig = go.Figure()
-            fig.add_trace(go.Scatter(x=df.x, y=df.y, mode="markers"))
-            fig_dict = fig.to_dict()
-            cache.set(self.topic_tsne_fig_dict_cache_key, fig_dict, 60 * 60)  # cache for 1 hour
-        return fig_dict
-
-    def has_topic_model(self) -> bool:
-        return self.topic_tsne_data is not None
-
-    def can_topic_model(self) -> bool:
-        return self.assessment.references.count() >= self.TOPIC_MODEL_MIN_REFERENCES
-
-    def can_request_refresh(self) -> bool:
-        return self.can_topic_model and self.topic_tsne_refresh_requested is None
 
 
 class Search(models.Model):

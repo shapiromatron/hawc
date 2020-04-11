@@ -46,11 +46,6 @@ urlpatterns = [
         name="ref_visual",
     ),
     url(
-        r"^assessment/(?P<pk>\d+)/references/topic-model/$",
-        views.RefTopicModel.as_view(),
-        name="topic_model",
-    ),
-    url(
         r"^assessment/(?P<pk>\d+)/references/search/$",
         views.RefSearch.as_view(),
         name="ref_search",
