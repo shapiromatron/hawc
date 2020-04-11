@@ -36,9 +36,10 @@ class LitOverview(BaseList):
         context = super().get_context_data(**kwargs)
         context["overview"] = models.Reference.objects.get_overview_details(self.assessment)
         context["manual_import"] = models.Search.objects.get_manually_added(self.assessment)
-        if context["obj_perms"]["edit"]:  # expensive, only calculate if needed
-            qryset = models.Reference.objects.get_references_ready_for_import(self.assessment)
-            context["need_import_count"] = qryset.count()
+        if context["obj_perms"]["edit"]:
+            context["need_import_count"] = models.Reference.objects.get_references_ready_for_import(
+                self.assessment
+            ).count()
         context["tags"] = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
         return context
 
@@ -565,6 +566,23 @@ class TagsUpdate(ProjectManagerOrHigherMixin, DetailView):
 
     def get_assessment(self, request, *args, **kwargs):
         return self.get_object()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["lit_assesment_update_url"] = self.assessment.literature_settings.get_update_url()
+        return context
+
+
+class LiteratureAssessmentUpdate(ProjectManagerOrHigherMixin, BaseUpdate):
+    success_message = "Literature assessment settings updated."
+    model = models.LiteratureAssessment
+    form_class = forms.LiteratureAssessmentForm
+
+    def get_assessment(self, request, *args, **kwargs):
+        return self.get_object().assessment
+
+    def get_success_url(self):
+        return reverse_lazy("lit:tags_update", args=(self.assessment.id,))
 
 
 class TagsCopy(AssessmentPermissionsMixin, MessageMixin, FormView):

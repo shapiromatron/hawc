@@ -478,6 +478,20 @@
     created: 2020-02-27 20:53:19.390879+00:00
     last_updated: 2020-02-27 20:53:19.390902+00:00
     effects: []
+- model: lit.literatureassessment
+  pk: 1
+  fields:
+    assessment: 1
+    extraction_tag: 2
+    created: 2020-04-11 20:53:19.390879+00:00
+    last_updated: 2020-04-11 20:53:19.390902+00:00
+- model: lit.literatureassessment
+  pk: 2
+  fields:
+    assessment: 2
+    extraction_tag: 11
+    created: 2020-04-11 20:53:19.390979+00:00
+    last_updated: 2020-04-11 20:53:19.390979+00:00
 - model: lit.search
   pk: 1
   fields:

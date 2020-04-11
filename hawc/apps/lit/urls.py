@@ -17,6 +17,11 @@ urlpatterns = [
     url(r"^assessment/tags/json/$", views.TagsJSON.as_view(), name="tags_list"),
     url(r"^assessment/(?P<pk>\d+)/tags/update/$", views.TagsUpdate.as_view(), name="tags_update",),
     url(r"^assessment/(?P<pk>\d+)/tags/update/copy/$", views.TagsCopy.as_view(), name="tags_copy",),
+    url(
+        r"^assessment/(?P<pk>\d+)/update/$",
+        views.LiteratureAssessmentUpdate.as_view(),
+        name="literature_assessment_update",
+    ),
     # Reference-level details
     url(r"^reference/(?P<pk>\d+)/$", views.RefDetail.as_view(), name="ref_detail"),
     url(r"^reference/(?P<pk>\d+)/edit/$", views.RefEdit.as_view(), name="ref_edit"),

@@ -34,6 +34,47 @@ class TooManyPubMedResults(Exception):
         return repr(self.value)
 
 
+class LiteratureAssessment(models.Model):
+
+    DEFAULT_EXTRACTION_TAG = "Inclusion"
+    TOPIC_MODEL_MIN_REFERENCES = 50
+
+    assessment = models.OneToOneField(
+        "assessment.Assessment",
+        editable=False,
+        on_delete=models.CASCADE,
+        related_name="literature_settings",
+    )
+    extraction_tag = models.ForeignKey(
+        "lit.ReferenceFilterTag",
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+        help_text="All references or child references of this tag will be marked as ready for extraction.",
+    )
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    @classmethod
+    def build_default(cls, assessment: "assessment.Assessment") -> "LiteratureAssessment":
+        extraction_tag = (
+            ReferenceFilterTag.get_assessment_root(assessment.id)
+            .get_children()
+            .filter(name=cls.DEFAULT_EXTRACTION_TAG)
+            .first()
+        )
+
+        return cls.objects.create(
+            assessment=assessment, extraction_tag_id=extraction_tag.id if extraction_tag else None,
+        )
+
+    def get_assessment(self):
+        return self.assessment
+
+    def get_update_url(self) -> str:
+        return reverse("lit:literature_assessment_update", args=(self.id,))
+
+
 class Search(models.Model):
     objects = managers.SearchManager()
 
@@ -518,7 +559,7 @@ class ReferenceFilterTag(NonUniqueTagBase, AssessmentRootMixin, MP_Node):
         """
         root = cls.add_root(name=cls.get_assessment_root_name(assessment.pk))
 
-        inc = root.add_child(name="Inclusion")
+        inc = root.add_child(name=LiteratureAssessment.DEFAULT_EXTRACTION_TAG)
         inc.add_child(name="Human Study")
         inc.add_child(name="Animal Study")
         inc.add_child(name="Mechanistic Study")
