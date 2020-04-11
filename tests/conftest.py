@@ -22,6 +22,7 @@ class Keys:
         self.assessment_keys = [1, 2]
 
         self.study_working = 1
+        self.study_working_2 = 3
         self.study_final = 2
 
         self.visual_heatmap = 1
