@@ -65,12 +65,15 @@ class LiteratureAssessment(models.Model):
 
     @classmethod
     def build_default(cls, assessment: "assessment.Assessment") -> "LiteratureAssessment":
-        return cls.objects.create(
-            assessment=assessment,
-            extraction_tag=ReferenceFilterTag.get_assessment_root(assessment.id)
+        extraction_tag = (
+            ReferenceFilterTag.get_assessment_root(assessment.id)
             .get_children()
             .filter(name=cls.DEFAULT_EXTRACTION_TAG)
-            .first(),
+            .first()
+        )
+
+        return cls.objects.create(
+            assessment=assessment, extraction_tag_id=extraction_tag.id if extraction_tag else None,
         )
 
     def get_assessment(self):
