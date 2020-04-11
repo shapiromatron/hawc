@@ -155,6 +155,7 @@ class RobFormStore {
                     return {
                         id: score.id,
                         score: score.score,
+                        bias_direction: score.bias_direction,
                         label: score.label,
                         notes: score.notes,
                         overridden_objects: score.overridden_objects.map(obj => {

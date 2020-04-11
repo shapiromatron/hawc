@@ -495,12 +495,26 @@ class RiskOfBiasScore(models.Model):
         27: "#00CC00",
     }
 
+    BIAS_DIRECTION_UNKNOWN = 0
+    BIAS_DIRECTION_UP = 1
+    BIAS_DIRECTION_DOWN = 2
+    BIAS_DIRECTION_CHOICES = (
+        (BIAS_DIRECTION_UNKNOWN, "not entered/unknown"),
+        (BIAS_DIRECTION_UP, "⬆ (away from null)"),
+        (BIAS_DIRECTION_DOWN, "⬇ (towards null)"),
+    )
+
     riskofbias = models.ForeignKey(RiskOfBias, on_delete=models.CASCADE, related_name="scores")
     metric = models.ForeignKey(RiskOfBiasMetric, on_delete=models.CASCADE, related_name="scores")
     is_default = models.BooleanField(default=True)
     label = models.CharField(max_length=128, blank=True)
     score = models.PositiveSmallIntegerField(
         choices=RISK_OF_BIAS_SCORE_CHOICES, default=build_default_rob_score
+    )
+    bias_direction = models.PositiveSmallIntegerField(
+        choices=BIAS_DIRECTION_CHOICES,
+        default=BIAS_DIRECTION_UNKNOWN,
+        help_text="Judgment of direction of bias (⬆ = away from null, ⬇ = towards null); only add entry if important to show in visuals",
     )
     notes = models.TextField(blank=True)
 
@@ -529,6 +543,7 @@ class RiskOfBiasScore(models.Model):
             "rob-score_label",
             "rob-score_score",
             "rob-score_description",
+            "rob-score_bias_direction",
             "rob-score_notes",
         )
 
@@ -546,6 +561,7 @@ class RiskOfBiasScore(models.Model):
             ser["label"],
             ser["score"],
             ser["score_description"],
+            ser["bias_direction"],
             cleanHTML(ser["notes"]),
         )
 

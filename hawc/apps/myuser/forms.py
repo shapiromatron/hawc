@@ -196,10 +196,18 @@ class RegisterForm(PasswordForm):
         return license
 
     def clean_email(self):
-        email = self.cleaned_data.get("email")
+        email = self.cleaned_data.get("email").strip().lower()
         if models.HAWCUser.objects.filter(email__iexact=email).count() > 0:
             raise forms.ValidationError("HAWC user with this email already exists.")
         return email
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.set_password(self.cleaned_data["password1"])
+        if commit:
+            user.save()
+            user.create_profile()
+        return user
 
 
 class UserProfileForm(ModelForm):
@@ -300,7 +308,7 @@ class HAWCAuthenticationForm(AuthenticationForm):
                 <br>
                 <a href="{reverse("user:reset_password")}">Forgot your password?</a>
                 <br>
-                <a href="{reverse("user:new")}">Create an account</a>
+                <a href="{reverse("user:register")}">Create an account</a>
                 <br>
                 """
                 ),

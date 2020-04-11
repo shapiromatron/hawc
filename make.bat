@@ -11,6 +11,7 @@ if /I %1 == lint-js goto :lint-js
 if /I %1 == format-js goto :format-js
 if /I %1 == test goto :test
 if /I %1 == test-refresh goto :test-refresh
+if /I %1 == coverage goto :coverage
 goto :help
 
 :build
@@ -25,6 +26,7 @@ echo.Please use `make ^<target^>` where ^<target^> is one of
 echo.  build        build python application
 echo.  test         run python tests
 echo.  test-refresh removes mock requests and runs python tests
+echo.  coverage     run coverage and create html report
 echo.  lint         perform both lint-py and lint-js
 echo.  format       perform both format-py and lint-js
 echo.  lint-py      check for pytho formatting issues via black and flake8
@@ -66,4 +68,10 @@ goto :eof
 :test-refresh
 rmdir /s /q .\tests\data\cassettes
 py.test
+goto :eof
+
+:coverage
+coverage run -m pytest
+coverage html -d coverage_html
+echo "Report ready; open ./coverage_html/index.html to view"
 goto :eof

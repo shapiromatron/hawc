@@ -93,6 +93,7 @@ def test_riskofbias_post_overrides():
                 label=score.label,
                 notes="<p>my new notes!</p>",
                 score=score.score,
+                bias_direction=score.bias_direction,
                 overridden_objects=[],
             )
             for score in rob.scores.all()
