@@ -2,6 +2,7 @@ import logging
 from pathlib import Path
 from typing import NamedTuple
 
+
 import pytest
 from django.core.management import call_command
 
@@ -19,6 +20,7 @@ class Keys:
     def __init__(self):
         self.assessment_working = 1
         self.assessment_final = 2
+        self.assessment_client = 3
         self.assessment_keys = [1, 2]
 
         self.study_working = 1
@@ -36,6 +38,12 @@ _keys = Keys()
 @pytest.fixture(scope="session", autouse=True)
 def test_db(django_db_setup, django_db_blocker):
     logging.info("Loading db fixture...")
+    with django_db_blocker.unblock():
+        call_command("load_test_db")
+
+
+@pytest.fixture(scope="function")
+def load_test_db(django_db_blocker):
     with django_db_blocker.unblock():
         call_command("load_test_db")
 

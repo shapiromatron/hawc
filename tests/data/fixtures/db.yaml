@@ -328,7 +328,7 @@
 - model: myuser.hawcuser
   fields:
     password: md5$fFanL0QpS7Sg$cf3808b6102279eb6982d78edfdc6111
-    last_login: 2020-02-27 19:30:09.088507+00:00
+    last_login: 2020-04-10 17:42:36.252383+00:00
     is_superuser: false
     email: pm@pm.com
     first_name: Project
@@ -402,6 +402,7 @@
     editable: true
     public: false
     hide_from_public_page: false
+    is_public_training_data: false
     enable_literature_review: true
     enable_project_management: true
     enable_data_extraction: true
@@ -431,6 +432,7 @@
     editable: false
     public: true
     hide_from_public_page: false
+    is_public_training_data: false
     enable_literature_review: true
     enable_project_management: true
     enable_data_extraction: true
@@ -449,6 +451,34 @@
     - - team@team.com
     reviewers:
     - - rev@rev.com
+- model: assessment.assessment
+  pk: 3
+  fields:
+    name: public client
+    year: 2020
+    version: draft
+    cas: ''
+    assessment_objective: ''
+    editable: true
+    public: true
+    hide_from_public_page: false
+    is_public_training_data: true
+    enable_literature_review: true
+    enable_project_management: true
+    enable_data_extraction: true
+    enable_risk_of_bias: true
+    enable_bmd: true
+    enable_summary_text: true
+    conflicts_of_interest: ''
+    funding_source: ''
+    noel_name: 0
+    rob_name: 0
+    created: 2020-04-10 17:45:39.555285+00:00
+    last_updated: 2020-04-10 17:45:39.555285+00:00
+    project_manager:
+    - - pm@pm.com
+    team_members: []
+    reviewers: []
 - model: assessment.doseunits
   pk: 1
   fields:
@@ -475,6 +505,14 @@
     name: my outcome
     created: 2020-02-27 20:53:19.390879+00:00
     last_updated: 2020-02-27 20:53:19.390902+00:00
+    effects: []
+- model: assessment.baseendpoint
+  pk: 2
+  fields:
+    assessment: 3
+    name: Test Endpoint
+    created: 2020-04-10 19:37:19.983403+00:00
+    last_updated: 2020-04-10 19:37:19.983403+00:00
     effects: []
 - model: lit.search
   pk: 1
@@ -517,6 +555,20 @@
     import_file: ''
     created: 2020-01-27 22:44:26.097357+00:00
     last_updated: 2020-01-27 22:44:26.097399+00:00
+- model: lit.search
+  pk: 4
+  fields:
+    assessment: 3
+    search_type: i
+    source: 0
+    title: Manual import
+    slug: manual-import
+    description: Default search instance used for manually importing literature into
+      HAWC instead of using a search.
+    search_string: None. This is used to manually enter literature.
+    import_file: ''
+    created: 2020-04-10 17:45:42.766856+00:00
+    last_updated: 2020-04-10 17:45:42.766856+00:00
 - model: lit.pubmedquery
   pk: 1
   fields:
@@ -698,6 +750,78 @@
     numchild: 0
     name: c
     slug: c
+- model: lit.referencefiltertag
+  pk: 22
+  fields:
+    path: '0003'
+    depth: 1
+    numchild: 2
+    name: assessment-3
+    slug: assessment-3
+- model: lit.referencefiltertag
+  pk: 23
+  fields:
+    path: '00030001'
+    depth: 2
+    numchild: 3
+    name: Inclusion
+    slug: inclusion
+- model: lit.referencefiltertag
+  pk: 24
+  fields:
+    path: '000300010001'
+    depth: 3
+    numchild: 0
+    name: Human Study
+    slug: human-study
+- model: lit.referencefiltertag
+  pk: 25
+  fields:
+    path: '000300010002'
+    depth: 3
+    numchild: 0
+    name: Animal Study
+    slug: animal-study
+- model: lit.referencefiltertag
+  pk: 26
+  fields:
+    path: '000300010003'
+    depth: 3
+    numchild: 0
+    name: Mechanistic Study
+    slug: mechanistic-study
+- model: lit.referencefiltertag
+  pk: 27
+  fields:
+    path: '00030002'
+    depth: 2
+    numchild: 3
+    name: Exclusion
+    slug: exclusion
+- model: lit.referencefiltertag
+  pk: 28
+  fields:
+    path: '000300020001'
+    depth: 3
+    numchild: 0
+    name: Tier I
+    slug: tier-i
+- model: lit.referencefiltertag
+  pk: 29
+  fields:
+    path: '000300020002'
+    depth: 3
+    numchild: 0
+    name: Tier II
+    slug: tier-ii
+- model: lit.referencefiltertag
+  pk: 30
+  fields:
+    path: '000300020003'
+    depth: 3
+    numchild: 0
+    name: Tier III
+    slug: tier-iii
 - model: lit.referencetags
   pk: 1
   fields:
@@ -737,9 +861,27 @@
     - 3
     identifiers:
     - 1
+- model: lit.reference
+  pk: 3
+  fields:
+    assessment: 3
+    title: ''
+    authors_short: ''
+    authors: ''
+    year: null
+    journal: ''
+    abstract: ''
+    full_text_url: ''
+    created: 2020-04-10 19:18:09.163184+00:00
+    last_updated: 2020-04-10 19:18:10.164173+00:00
+    block_id: null
+    searches:
+    - 4
+    identifiers: []
 - model: study.study
   pk: 1
   fields:
+    reference_ptr: 1
     bioassay: true
     epi: false
     epi_meta: false
@@ -760,6 +902,7 @@
 - model: study.study
   pk: 2
   fields:
+    reference_ptr: 2
     bioassay: true
     epi: false
     epi_meta: false
@@ -779,6 +922,28 @@
     - 3
     identifiers:
     - 1
+- model: study.study
+  pk: 3
+  fields:
+    reference_ptr: 3
+    bioassay: true
+    epi: true
+    epi_meta: true
+    in_vitro: true
+    short_citation: Smith
+    full_citation: John Smith
+    coi_reported: 2
+    coi_details: ''
+    funding_source: ''
+    study_identifier: ''
+    contact_author: false
+    ask_author: ''
+    published: true
+    summary: ''
+    editable: true
+    searches:
+    - 4
+    identifiers: []
 - model: animal.experiment
   pk: 1
   fields:
@@ -797,6 +962,24 @@
     description: ''
     created: 2020-02-27 20:36:41.236477+00:00
     last_updated: 2020-02-27 20:36:41.236499+00:00
+- model: animal.experiment
+  pk: 2
+  fields:
+    study: 3
+    name: Test Experiment
+    type: Ac
+    has_multiple_generations: false
+    chemical: ''
+    cas: ''
+    chemical_source: ''
+    purity_available: true
+    purity_qualifier: '>'
+    purity: 10.0
+    vehicle: ''
+    guideline_compliance: ''
+    description: ''
+    created: 2020-04-10 19:21:14.709371+00:00
+    last_updated: 2020-04-10 19:21:14.710369+00:00
 - model: animal.animalgroup
   pk: 1
   fields:
@@ -816,6 +999,25 @@
     created: 2020-02-27 20:52:18.377123+00:00
     last_updated: 2020-02-27 20:52:18.446571+00:00
     parents: []
+- model: animal.animalgroup
+  pk: 2
+  fields:
+    experiment: 2
+    name: Test Animal Group
+    species: 1
+    strain: 1
+    sex: M
+    animal_source: ''
+    lifestage_exposed: ''
+    lifestage_assessed: ''
+    siblings: null
+    generation: ''
+    dosing_regime: 2
+    comments: ''
+    diet: ''
+    created: 2020-04-10 19:35:26.254532+00:00
+    last_updated: 2020-04-10 19:35:26.881519+00:00
+    parents: []
 - model: animal.dosingregime
   pk: 1
   fields:
@@ -830,6 +1032,20 @@
     description: ''
     created: 2020-02-27 20:52:18.340922+00:00
     last_updated: 2020-02-27 20:52:18.403090+00:00
+- model: animal.dosingregime
+  pk: 2
+  fields:
+    dosed_animals: 2
+    route_of_exposure: U
+    duration_exposure: null
+    duration_exposure_text: ''
+    duration_observation: null
+    num_dose_groups: 4
+    positive_control: false
+    negative_control: VT
+    description: ''
+    created: 2020-04-10 19:35:25.948536+00:00
+    last_updated: 2020-04-10 19:35:26.532528+00:00
 - model: animal.dosegroup
   pk: 1
   fields:
@@ -857,9 +1073,46 @@
     dose: 100.0
     created: 2020-02-27 20:52:18.442491+00:00
     last_updated: 2020-02-27 20:52:18.442505+00:00
+- model: animal.dosegroup
+  pk: 4
+  fields:
+    dose_regime: 2
+    dose_units: 1
+    dose_group_id: 0
+    dose: 1.0
+    created: 2020-04-10 19:35:26.748525+00:00
+    last_updated: 2020-04-10 19:35:26.748525+00:00
+- model: animal.dosegroup
+  pk: 5
+  fields:
+    dose_regime: 2
+    dose_units: 1
+    dose_group_id: 1
+    dose: 2.0
+    created: 2020-04-10 19:35:26.812520+00:00
+    last_updated: 2020-04-10 19:35:26.812520+00:00
+- model: animal.dosegroup
+  pk: 6
+  fields:
+    dose_regime: 2
+    dose_units: 1
+    dose_group_id: 2
+    dose: 3.0
+    created: 2020-04-10 19:35:26.833524+00:00
+    last_updated: 2020-04-10 19:35:26.833524+00:00
+- model: animal.dosegroup
+  pk: 7
+  fields:
+    dose_regime: 2
+    dose_units: 1
+    dose_group_id: 3
+    dose: 4.0
+    created: 2020-04-10 19:35:26.856523+00:00
+    last_updated: 2020-04-10 19:35:26.856523+00:00
 - model: animal.endpoint
   pk: 1
   fields:
+    baseendpoint_ptr: 1
     animal_group: 1
     system: ''
     organ: ''
@@ -881,6 +1134,42 @@
     FEL: -999
     data_reported: true
     data_extracted: true
+    values_estimated: false
+    monotonicity: 8
+    statistical_test: ''
+    trend_value: null
+    trend_result: 3
+    diagnostic: ''
+    power_notes: ''
+    results_notes: ''
+    endpoint_notes: ''
+    additional_fields: '{}'
+    effects: []
+- model: animal.endpoint
+  pk: 2
+  fields:
+    baseendpoint_ptr: 2
+    animal_group: 2
+    system: ''
+    organ: ''
+    effect: ''
+    effect_subtype: ''
+    litter_effects: NA
+    litter_effect_notes: ''
+    observation_time: null
+    observation_time_units: 0
+    observation_time_text: ''
+    data_location: ''
+    expected_adversity_direction: 4
+    response_units: ''
+    data_type: C
+    variance_type: 1
+    confidence_interval: null
+    NOEL: -999
+    LOEL: -999
+    FEL: -999
+    data_reported: true
+    data_extracted: false
     values_estimated: false
     monotonicity: 8
     statistical_test: ''
@@ -949,6 +1238,69 @@
     is_overall_confidence: true
     created: 2020-02-27 20:04:23.718503+00:00
     last_updated: 2020-02-27 20:04:23.718531+00:00
+- model: riskofbias.riskofbiasdomain
+  pk: 3
+  fields:
+    assessment: 3
+    name: Selection
+    description: ''
+    is_overall_confidence: false
+    created: 2020-04-10 17:45:42.806867+00:00
+    last_updated: 2020-04-10 17:45:42.806867+00:00
+- model: riskofbias.riskofbiasdomain
+  pk: 4
+  fields:
+    assessment: 3
+    name: Confounding
+    description: ''
+    is_overall_confidence: false
+    created: 2020-04-10 17:45:43.247952+00:00
+    last_updated: 2020-04-10 17:45:43.247952+00:00
+- model: riskofbias.riskofbiasdomain
+  pk: 5
+  fields:
+    assessment: 3
+    name: Performance
+    description: ''
+    is_overall_confidence: false
+    created: 2020-04-10 17:45:43.580016+00:00
+    last_updated: 2020-04-10 17:45:43.580016+00:00
+- model: riskofbias.riskofbiasdomain
+  pk: 6
+  fields:
+    assessment: 3
+    name: Attrition
+    description: ''
+    is_overall_confidence: false
+    created: 2020-04-10 17:45:43.875578+00:00
+    last_updated: 2020-04-10 17:45:43.875578+00:00
+- model: riskofbias.riskofbiasdomain
+  pk: 7
+  fields:
+    assessment: 3
+    name: Detection
+    description: ''
+    is_overall_confidence: false
+    created: 2020-04-10 17:45:44.153727+00:00
+    last_updated: 2020-04-10 17:45:44.153727+00:00
+- model: riskofbias.riskofbiasdomain
+  pk: 8
+  fields:
+    assessment: 3
+    name: Selective Reporting
+    description: ''
+    is_overall_confidence: false
+    created: 2020-04-10 17:45:44.482110+00:00
+    last_updated: 2020-04-10 17:45:44.482110+00:00
+- model: riskofbias.riskofbiasdomain
+  pk: 9
+  fields:
+    assessment: 3
+    name: Other
+    description: ''
+    is_overall_confidence: false
+    created: 2020-04-10 17:45:44.768158+00:00
+    last_updated: 2020-04-10 17:45:44.768158+00:00
 - model: riskofbias.riskofbiasmetric
   pk: 1
   fields:
@@ -977,6 +1329,180 @@
     use_short_name: false
     created: 2020-02-27 20:04:35.816069+00:00
     last_updated: 2020-02-27 20:04:35.816096+00:00
+- model: riskofbias.riskofbiasmetric
+  pk: 3
+  fields:
+    domain: 3
+    name: Was administered dose or exposure level adequately randomized?
+    short_name: ''
+    description: Randomization requires that each human subject or animal had an equal
+      chance of being assigned to any study group including controls (e.g., use of
+      random number table or computer generated randomization).
+    required_animal: true
+    required_epi: true
+    required_invitro: true
+    hide_description: false
+    use_short_name: false
+    created: 2020-04-10 17:45:43.195936+00:00
+    last_updated: 2020-04-10 17:45:43.195936+00:00
+- model: riskofbias.riskofbiasmetric
+  pk: 4
+  fields:
+    domain: 3
+    name: Was allocation to study groups adequately concealed?
+    short_name: ''
+    description: 'Allocation concealment requires that research personnel do not know
+      which administered dose or exposure level is assigned at the start of a study.
+      Human studies also require that allocation be concealed from human subjects
+      prior to entering the study. <br><br>Note: <br><ol><li>a question under performance
+      bias addresses blinding of personnel and human subjects to treatment during
+      the study;</li><li>a question under detection bias addresses blinding of outcome
+      assessors.</li></ol>'
+    required_animal: true
+    required_epi: true
+    required_invitro: true
+    hide_description: false
+    use_short_name: false
+    created: 2020-04-10 17:45:43.195936+00:00
+    last_updated: 2020-04-10 17:45:43.195936+00:00
+- model: riskofbias.riskofbiasmetric
+  pk: 5
+  fields:
+    domain: 3
+    name: Did selection of study participants result in appropriate comparison groups?
+    short_name: ''
+    description: Comparison group appropriateness refers to having similar baseline
+      characteristics between the groups aside from the exposures and outcomes under
+      study.
+    required_animal: false
+    required_epi: true
+    required_invitro: true
+    hide_description: false
+    use_short_name: false
+    created: 2020-04-10 17:45:43.195936+00:00
+    last_updated: 2020-04-10 17:45:43.195936+00:00
+- model: riskofbias.riskofbiasmetric
+  pk: 6
+  fields:
+    domain: 4
+    name: Did the study design or analysis account for important confounding and modifying
+      variables?
+    short_name: ''
+    description: ''
+    required_animal: false
+    required_epi: true
+    required_invitro: true
+    hide_description: false
+    use_short_name: false
+    created: 2020-04-10 17:45:43.537996+00:00
+    last_updated: 2020-04-10 17:45:43.537996+00:00
+- model: riskofbias.riskofbiasmetric
+  pk: 7
+  fields:
+    domain: 5
+    name: Were experimental conditions identical across study groups?
+    short_name: ''
+    description: ''
+    required_animal: true
+    required_epi: false
+    required_invitro: true
+    hide_description: false
+    use_short_name: false
+    created: 2020-04-10 17:45:43.834572+00:00
+    last_updated: 2020-04-10 17:45:43.834572+00:00
+- model: riskofbias.riskofbiasmetric
+  pk: 8
+  fields:
+    domain: 5
+    name: Were the research personnel and human subjects blinded to the study group
+      during the study?
+    short_name: ''
+    description: Blinding requires that study scientists do not know which administered
+      dose or exposure level the human subject or animal is being given (i.e., study
+      group). Human studies also require blinding of the human subjects when possible.
+    required_animal: true
+    required_epi: true
+    required_invitro: true
+    hide_description: false
+    use_short_name: false
+    created: 2020-04-10 17:45:43.834572+00:00
+    last_updated: 2020-04-10 17:45:43.834572+00:00
+- model: riskofbias.riskofbiasmetric
+  pk: 9
+  fields:
+    domain: 6
+    name: Were outcome data incomplete due to attrition or exclusion from analysis?
+    short_name: ''
+    description: Attrition rates are required to be similar and uniformly low across
+      groups with respect to withdrawal or exclusion from analysis
+    required_animal: true
+    required_epi: true
+    required_invitro: true
+    hide_description: false
+    use_short_name: false
+    created: 2020-04-10 17:45:44.116719+00:00
+    last_updated: 2020-04-10 17:45:44.116719+00:00
+- model: riskofbias.riskofbiasmetric
+  pk: 10
+  fields:
+    domain: 7
+    name: Can we be confident in the exposure characterization?
+    short_name: ''
+    description: Confidence requires valid, reliable, and sensitive methods to measure
+      exposure applied consistently across groups.
+    required_animal: true
+    required_epi: true
+    required_invitro: true
+    hide_description: false
+    use_short_name: false
+    created: 2020-04-10 17:45:44.445107+00:00
+    last_updated: 2020-04-10 17:45:44.445107+00:00
+- model: riskofbias.riskofbiasmetric
+  pk: 11
+  fields:
+    domain: 7
+    name: Can we be confident in the outcome assessment?
+    short_name: ''
+    description: Confidence requires valid, reliable, and sensitive methods to assess
+      the outcome and the methods should be applied consistently across groups.
+    required_animal: true
+    required_epi: true
+    required_invitro: true
+    hide_description: false
+    use_short_name: false
+    created: 2020-04-10 17:45:44.445107+00:00
+    last_updated: 2020-04-10 17:45:44.445107+00:00
+- model: riskofbias.riskofbiasmetric
+  pk: 12
+  fields:
+    domain: 8
+    name: Were all measured outcomes reported?
+    short_name: ''
+    description: ''
+    required_animal: true
+    required_epi: true
+    required_invitro: true
+    hide_description: false
+    use_short_name: false
+    created: 2020-04-10 17:45:44.732154+00:00
+    last_updated: 2020-04-10 17:45:44.732154+00:00
+- model: riskofbias.riskofbiasmetric
+  pk: 13
+  fields:
+    domain: 9
+    name: Were there any other potential threats to internal validity?
+    short_name: ''
+    description: <p>On a project specific basis, additional questions for other potential
+      threats to internal validity can be added and applied to study designs as appropriate.</p><br><p>Examples
+      may include appropriateness of statistical methods, adherence to the study-protocol,
+      etc.</p>
+    required_animal: true
+    required_epi: true
+    required_invitro: true
+    hide_description: false
+    use_short_name: false
+    created: 2020-04-10 17:45:44.981198+00:00
+    last_updated: 2020-04-10 17:45:44.981198+00:00
 - model: riskofbias.riskofbias
   pk: 1
   fields:
@@ -1103,6 +1629,17 @@
     help_text: <p>These are instructions for how to do risk of bias for an assessment.</p>
     default_questions: 2
     responses: 1
+- model: riskofbias.riskofbiasassessment
+  pk: 4
+  fields:
+    assessment: 3
+    number_of_reviewers: 1
+    help_text: <p>When a study is entered into the HAWC database for use in an assessment,
+      risk of bias metrics can be entered for a metric of bias for each study. Risk
+      of Bias metrics are organized by domain. The following questions are required
+      for evaluation for this assessment.</p>
+    default_questions: 1
+    responses: 0
 - model: summary.summarytext
   pk: 1
   fields:
@@ -1127,6 +1664,18 @@
     text: Root-level text
     created: 2020-02-27 20:35:25.667126+00:00
     last_updated: 2020-02-27 20:35:25.667163+00:00
+- model: summary.summarytext
+  pk: 3
+  fields:
+    path: '0003'
+    depth: 1
+    numchild: 0
+    assessment: 3
+    title: assessment-3
+    slug: assessment-3-slug
+    text: Root-level text
+    created: 2020-04-10 17:45:45.143229+00:00
+    last_updated: 2020-04-10 17:45:45.143229+00:00
 - model: summary.visual
   pk: 1
   fields:

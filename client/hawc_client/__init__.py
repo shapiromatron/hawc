@@ -110,6 +110,9 @@ class HawcSession:
         """
         response_json = self.get(url, params).json()
         yield response_json["results"]
+        # Prevents divide by zero if there are no results
+        if len(response_json["results"]) == 0:
+            raise StopIteration
         num_pages = math.ceil(response_json["count"] / len(response_json["results"]))
         with tqdm(desc="Iterating pages", initial=1, total=num_pages) as progress_bar:
             while response_json["next"] is not None:
@@ -129,6 +132,15 @@ class BaseClient:
         self.session = session
 
     def _csv_to_df(self, csv: str) -> pd.DataFrame:
+        """
+        Takes a CSV string and returns the pandas DataFrame representation of it.
+
+        Args:
+            csv (str): CSV string
+
+        Returns:
+            pd.DataFrame: DataFrame from CSV
+        """
         csv_io = StringIO(csv)
         return pd.read_csv(csv_io)
 
@@ -199,11 +211,29 @@ class EpiClient(BaseClient):
     """
 
     def data(self, assessment_id: int) -> pd.DataFrame:
+        """
+        Retrieves epidemiology data for the given assessment.
+
+        Args:
+            assessment_id (int): Assessment ID
+
+        Returns:
+            pd.DataFrame: Epidemiology data
+        """
         url = f"{self.session.root_url}/epi/api/assessment/{assessment_id}/export/"
         response_json = self.session.get(url).json()
         return pd.DataFrame(response_json)
 
     def endpoints(self, assessment_id: int) -> List[Dict]:
+        """
+        Retrieves all of the epidemiology endpoints for the given assessment.
+
+        Args:
+            assessment_id (int): Assessment ID
+
+        Returns:
+            List[Dict]: Epidemiology endpoints
+        """
         payload = {"assessment_id": assessment_id}
         url = f"{self.session.root_url}/epi/api/outcome/"
         generator = self.session.iter_pages(url, payload)
@@ -265,6 +295,15 @@ class EpiMetaClient(BaseClient):
     """
 
     def data(self, assessment_id: int) -> pd.DataFrame:
+        """
+        Retrieves epidemiology metadata for the given assessment.
+
+        Args:
+            assessment_id (int): Assessment ID
+
+        Returns:
+            pd.DataFrame: Epidemiology metadata
+        """
         url = f"{self.session.root_url}/epi-meta/api/assessment/{assessment_id}/export/"
         response_json = self.session.get(url).json()
         return pd.DataFrame(response_json)
@@ -297,12 +336,12 @@ class AssessmentClient(BaseClient):
     Client class for assessment requests.
     """
 
-    def public(self) -> Dict:
+    def public(self) -> List[Dict]:
         """
         Retrieves data pertaining to all public assessments
 
         Returns:
-            Dict: Public assessment data
+            List[Dict]: Public assessment data
         """
         url = f"{self.session.root_url}/assessment/api/assessment/public/"
         return self.session.get(url).json()
