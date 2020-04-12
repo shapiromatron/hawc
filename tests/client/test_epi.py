@@ -14,8 +14,5 @@ def test_data(live_server, db_keys):
 @pytest.mark.usefixtures("load_test_db")
 def test_endpoints(live_server, db_keys):
     client = HawcClient(live_server.url)
-    import pdb
-
-    pdb.set_trace()
     response = client.epi.endpoints(db_keys.assessment_client)
     assert type(response) is list
