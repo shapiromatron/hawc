@@ -8,7 +8,7 @@ from hawc.apps.myuser import models
 class UserCreationTests(TestCase):
     def test_validation_errors(self):
         # assert various errors are present
-        view = "user:new"
+        view = "user:register"
         c = Client()
         response = c.post(
             reverse(view),
@@ -37,7 +37,7 @@ class UserCreationTests(TestCase):
 
     def test_password_match(self):
         # password-match check
-        view = "user:new"
+        view = "user:register"
         c = Client()
         response = c.post(
             reverse(view),
@@ -54,7 +54,7 @@ class UserCreationTests(TestCase):
 
     def test_duplicate_email(self):
         # confirm that you can't create two accounts with the same email
-        view = "user:new"
+        view = "user:register"
         email = "duplicate_email@gmail.com"
         form_dict = {
             "email": email,
@@ -75,7 +75,7 @@ class UserCreationTests(TestCase):
 
     def test_long_email_success(self):
         # confirm you can use a long email address, 200+characters
-        view = "user:new"
+        view = "user:register"
         c = Client()
         email = "a" * 200 + "@gmail.com"
         c.post(

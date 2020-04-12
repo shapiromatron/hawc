@@ -432,7 +432,7 @@
     editable: false
     public: true
     hide_from_public_page: false
-    is_public_training_data: false
+    is_public_training_data: true
     enable_literature_review: true
     enable_project_management: true
     enable_data_extraction: true
@@ -514,6 +514,20 @@
     created: 2020-04-10 19:37:19.983403+00:00
     last_updated: 2020-04-10 19:37:19.983403+00:00
     effects: []
+- model: lit.literatureassessment
+  pk: 1
+  fields:
+    assessment: 1
+    extraction_tag: 2
+    created: 2020-04-11 20:53:19.390879+00:00
+    last_updated: 2020-04-11 20:53:19.390902+00:00
+- model: lit.literatureassessment
+  pk: 2
+  fields:
+    assessment: 2
+    extraction_tag: 11
+    created: 2020-04-11 20:53:19.390979+00:00
+    last_updated: 2020-04-11 20:53:19.390979+00:00
 - model: lit.search
   pk: 1
   fields:
@@ -829,6 +843,22 @@
     content_object: 2
 - model: lit.reference
   pk: 1
+  fields:
+    assessment: 1
+    title: ''
+    authors_short: ''
+    authors: ''
+    year: 2010
+    journal: ''
+    abstract: ''
+    full_text_url: ''
+    created: 2020-01-25 14:23:16.370427+00:00
+    last_updated: 2020-02-27 20:14:41.479008+00:00
+    block_id: null
+    searches: []
+    identifiers: []
+- model: lit.reference
+  pk: 3
   fields:
     assessment: 1
     title: ''
@@ -1541,6 +1571,7 @@
     is_default: true
     label: ''
     score: 27
+    bias_direction: 0
     notes: <p>Content here.</p>
 - model: riskofbias.riskofbiasscore
   pk: 2
@@ -1550,6 +1581,7 @@
     is_default: true
     label: Default label
     score: 26
+    bias_direction: 1
     notes: <p>Content here.</p>
 - model: riskofbias.riskofbiasscore
   pk: 3
@@ -1559,6 +1591,7 @@
     is_default: true
     label: ''
     score: 27
+    bias_direction: 2
     notes: <p>good!</p>
 - model: riskofbias.riskofbiasscore
   pk: 4
@@ -1568,6 +1601,7 @@
     is_default: true
     label: ''
     score: 26
+    bias_direction: 0
     notes: <p>ok!</p>
 - model: riskofbias.riskofbiasscore
   pk: 5
@@ -1577,6 +1611,7 @@
     is_default: true
     label: ''
     score: 26
+    bias_direction: 1
     notes: <p>Adequate.</p>
 - model: riskofbias.riskofbiasscore
   pk: 6
@@ -1586,6 +1621,7 @@
     is_default: true
     label: base
     score: 26
+    bias_direction: 2
     notes: <p>Fine, but subsets are imprortant</p>
 - model: riskofbias.riskofbiasscore
   pk: 7
@@ -1595,6 +1631,7 @@
     is_default: false
     label: Custom label
     score: 25
+    bias_direction: 0
     notes: <p>With override.</p>
 - model: riskofbias.riskofbiasscore
   pk: 9
@@ -1604,6 +1641,7 @@
     is_default: false
     label: other stuff
     score: 22
+    bias_direction: 1
     notes: <p>This wasn't reported in this case.</p>
 - model: riskofbias.riskofbiasscoreoverrideobject
   pk: 1

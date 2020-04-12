@@ -5,8 +5,45 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 
 from hawc.apps.assessment.models import Assessment
 from hawc.apps.lit import constants
-from hawc.apps.lit.forms import ImportForm, RisImportForm
+from hawc.apps.lit.forms import ImportForm, LiteratureAssessmentForm, RisImportForm
 from hawc.apps.lit.models import Reference
+
+
+@pytest.mark.django_db
+class TestLiteratureAssessmentForm:
+    def test_extraction_tag_queryset(self, db_keys):
+        instance1 = Assessment.objects.get(id=db_keys.assessment_working).literature_settings
+        form1 = LiteratureAssessmentForm(instance=instance1)
+
+        instance2 = Assessment.objects.get(id=db_keys.assessment_final).literature_settings
+        form2 = LiteratureAssessmentForm(instance=instance2)
+
+        # ensure that queryset is filtered by assessment and None choice exists
+        assert form1.fields["extraction_tag"].choices != form2.fields["extraction_tag"].choices
+        assert form1.fields["extraction_tag"].choices[0][0] is None
+        assert len(form2.fields["extraction_tag"].choices) == 9
+
+        # ensure we can save `extraction_tag == None`
+        form = LiteratureAssessmentForm(data={"extraction_tag": None}, instance=instance1)
+        assert form.is_valid()
+
+        # ensure that a choice from our assessment is valid
+        form = LiteratureAssessmentForm(
+            data={"extraction_tag": form1.fields["extraction_tag"].choices[-1][0]},
+            instance=instance1,
+        )
+        assert form.is_valid()
+
+        # ensure that a choice from another assessment is invalid
+        form = LiteratureAssessmentForm(
+            data={"extraction_tag": form2.fields["extraction_tag"].choices[-1][0]},
+            instance=instance1,
+        )
+        assert form.is_valid() is False
+        assert (
+            form.errors["extraction_tag"][0]
+            == "Select a valid choice. That choice is not one of the available choices."
+        )
 
 
 @pytest.mark.vcr

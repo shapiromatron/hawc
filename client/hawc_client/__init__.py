@@ -116,7 +116,7 @@ class HawcSession:
         num_pages = math.ceil(response_json["count"] / len(response_json["results"]))
         with tqdm(desc="Iterating pages", initial=1, total=num_pages) as progress_bar:
             while response_json["next"] is not None:
-                response_json = self.get(response_json["next"])
+                response_json = self.get(response_json["next"]).json()
                 progress_bar.update(1)
                 yield response_json["results"]
 

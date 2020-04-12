@@ -8,7 +8,7 @@ from urllib import parse
 
 from django.apps import apps
 from django.conf import settings
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import models, transaction
 from django.urls import reverse
 from django.utils import timezone
@@ -32,6 +32,47 @@ class TooManyPubMedResults(Exception):
 
     def __str__(self):
         return repr(self.value)
+
+
+class LiteratureAssessment(models.Model):
+
+    DEFAULT_EXTRACTION_TAG = "Inclusion"
+    TOPIC_MODEL_MIN_REFERENCES = 50
+
+    assessment = models.OneToOneField(
+        "assessment.Assessment",
+        editable=False,
+        on_delete=models.CASCADE,
+        related_name="literature_settings",
+    )
+    extraction_tag = models.ForeignKey(
+        "lit.ReferenceFilterTag",
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+        help_text="All references or child references of this tag will be marked as ready for extraction.",
+    )
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    @classmethod
+    def build_default(cls, assessment: "assessment.Assessment") -> "LiteratureAssessment":
+        extraction_tag = (
+            ReferenceFilterTag.get_assessment_root(assessment.id)
+            .get_children()
+            .filter(name=cls.DEFAULT_EXTRACTION_TAG)
+            .first()
+        )
+
+        return cls.objects.create(
+            assessment=assessment, extraction_tag_id=extraction_tag.id if extraction_tag else None,
+        )
+
+    def get_assessment(self):
+        return self.assessment
+
+    def get_update_url(self) -> str:
+        return reverse("lit:literature_assessment_update", args=(self.id,))
 
 
 class Search(models.Model):
@@ -128,7 +169,7 @@ class Search(models.Model):
             prior_query = None
             try:
                 prior_query = PubMedQuery.objects.filter(search=self.pk).latest("query_date")
-            except Exception:
+            except ObjectDoesNotExist:
                 pass
             pubmed = PubMedQuery(search=self)
             results_dictionary = pubmed.run_new_query(prior_query)
@@ -361,12 +402,13 @@ class PubMedQuery(models.Model):
         # Create new PubMed identifiers for any PMIDs which are not already in
         # our database.
         new_ids = json.loads(self.results)["added"]
-        existing_pmids = list(
-            Identifiers.objects.filter(
+        existing_pmids = [
+            int(id_)
+            for id_ in Identifiers.objects.filter(
                 database=constants.PUBMED, unique_id__in=new_ids
             ).values_list("unique_id", flat=True)
-        )
-        ids_to_add = [int(id) for id in set(new_ids) - set(existing_pmids)]
+        ]
+        ids_to_add = list(set(new_ids) - set(existing_pmids))
         ids_to_add_len = len(ids_to_add)
 
         block_size = 1000.0
@@ -517,7 +559,7 @@ class ReferenceFilterTag(NonUniqueTagBase, AssessmentRootMixin, MP_Node):
         """
         root = cls.add_root(name=cls.get_assessment_root_name(assessment.pk))
 
-        inc = root.add_child(name="Inclusion")
+        inc = root.add_child(name=LiteratureAssessment.DEFAULT_EXTRACTION_TAG)
         inc.add_child(name="Human Study")
         inc.add_child(name="Animal Study")
         inc.add_child(name="Mechanistic Study")

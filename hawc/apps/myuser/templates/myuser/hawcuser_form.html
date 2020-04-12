@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block title %}
+Create account | HAWC
+{% endblock %}
+
+
+{% block main_content %}
+<div class='row-fluid'>
+    <div class="span8 offset2">
+        {% crispy form %}
+    </div>
+</div>
+{% include "hawc_license.html" %}
+{% endblock main_content %}

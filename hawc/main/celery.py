@@ -17,3 +17,11 @@ app.autodiscover_tasks()
 def debug_task(self):
     logger.info("Running the debug_task task.")
     print(f"Request: {self.request!r}")
+
+
+app.conf.beat_schedule = {
+    "lit-update_pubmed_content-1-hour": {
+        "task": "hawc.apps.lit.tasks.update_pubmed_content",
+        "schedule": 3600,
+    },
+}
