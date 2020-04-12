@@ -5,12 +5,11 @@ from celery import shared_task
 from celery.utils.log import get_task_logger
 from django.apps import apps
 from django.db.models import F
-from django.db.models.aggregates import Max, Count
+from django.db.models.aggregates import Count, Max
 from django.utils import timezone
 from litter_getter import pubmed
 
 from . import constants
-
 
 logger = get_task_logger(__name__)
 

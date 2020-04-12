@@ -14,6 +14,7 @@ from django.apps import apps
 from django.conf import settings
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
+from django.core.files.base import ContentFile
 from django.db import models, transaction
 from django.urls import reverse
 from django.utils import timezone
@@ -23,7 +24,13 @@ from taggit.models import ItemBase
 from treebeard.mp_tree import MP_Node
 
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper
-from ..common.models import AssessmentRootMixin, CustomURLField, NonUniqueTagBase, get_crumbs
+from ..common.models import (
+    AssessmentRootMixin,
+    CustomURLField,
+    NonUniqueTagBase,
+    get_crumbs,
+    get_private_data_storage,
+)
 from . import constants, managers, tasks
 
 
@@ -57,7 +64,13 @@ class LiteratureAssessment(models.Model):
         on_delete=models.SET_NULL,
         help_text="All references or child references of this tag will be marked as ready for extraction.",
     )
-    topic_tsne_data = models.BinaryField(null=True, editable=False)
+    topic_tsne_data = models.FileField(
+        blank=True,
+        null=True,
+        editable=False,
+        upload_to="lit/topic_model",
+        storage=get_private_data_storage(),
+    )
     topic_tsne_refresh_requested = models.DateTimeField(null=True)
     topic_tsne_last_refresh = models.DateTimeField(null=True)
     created = models.DateTimeField(auto_now_add=True)
@@ -73,7 +86,7 @@ class LiteratureAssessment(models.Model):
         )
 
         return cls.objects.create(
-            assessment=assessment, extraction_tag_id=extraction_tag.id if extraction_tag else None,
+            assessment=assessment, extraction_tag_id=extraction_tag.id if extraction_tag else None
         )
 
     def get_assessment(self):
@@ -86,20 +99,25 @@ class LiteratureAssessment(models.Model):
     def topic_tsne_fig_dict_cache_key(self) -> str:
         return f"{self.assessment_id}_topic_tsne_data"
 
+    @property
+    def topic_tsne_data_filename(self) -> str:
+        return f"assessment-{self.assessment_id}.parquet"
+
     def create_topic_tsne_data(self) -> None:
         df = pd.DataFrame(dict(x=np.random.normal(size=100), y=np.random.beta(2, 8, size=100)))
         f = BytesIO()
         df.to_parquet(f, engine="pyarrow", index=False)
-        self.topic_tsne_data = f.getvalue()
+        if self.topic_tsne_data.name is not None:
+            self.topic_tsne_data.delete(save=False)
         self.topic_tsne_refresh_requested = None
         self.topic_tsne_last_refresh = timezone.now()
+        self.topic_tsne_data.save(self.topic_tsne_data_filename, ContentFile(f.getvalue()))
         cache.delete(self.topic_tsne_fig_dict_cache_key)
-        self.save()
 
     def get_topic_tsne_data(self) -> pd.DataFrame:
-        if self.topic_tsne_data is None:
+        if self.topic_tsne_data.name is None:
             raise ValueError("No data available.")
-        return pd.read_parquet(BytesIO(self.topic_tsne_data), engine="pyarrow")
+        return pd.read_parquet(self.topic_tsne_data.file, engine="pyarrow")
 
     def get_topic_tsne_fig_dict(self) -> Dict:
         fig_dict = cache.get(self.topic_tsne_fig_dict_cache_key)
