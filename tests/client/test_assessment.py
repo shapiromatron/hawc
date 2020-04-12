@@ -1,6 +1,7 @@
-import pytest
-from hawc_client import HawcClient
 import pandas as pd
+import pytest
+
+from hawc_client import HawcClient
 
 
 @pytest.mark.usefixtures("load_test_db")

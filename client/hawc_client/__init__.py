@@ -172,7 +172,9 @@ class LiteratureClient(BaseClient):
         response_json = self.session.get(url).json()
         return pd.DataFrame(response_json)
 
-    def import_reference_tags(self, assessment_id: int, csv: str, operation: str = "append") -> pd.DataFrame:
+    def import_reference_tags(
+        self, assessment_id: int, csv: str, operation: str = "append"
+    ) -> pd.DataFrame:
         payload = {"csv": csv, "operation": operation}
         url = f"{self.session.root_url}/lit/api/assessment/{assessment_id}/reference-tags/"
         response_json = self.session.post(url, payload).json()

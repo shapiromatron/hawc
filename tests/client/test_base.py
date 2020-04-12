@@ -1,5 +1,6 @@
-from hawc_client import BaseClient
 import pandas as pd
+
+from hawc_client import BaseClient
 
 
 def test_csv_to_df():
