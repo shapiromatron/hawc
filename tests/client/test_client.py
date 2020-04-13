@@ -1,11 +1,18 @@
 import pandas as pd
 import pytest
+from django.core.cache import cache
 from django.test import LiveServerTestCase, TestCase
-from hawc_client import HawcClient, BaseClient
+
+from hawc_client import BaseClient, HawcClient
 
 
 @pytest.mark.usefixtures("set_db_keys")
 class TestClient(LiveServerTestCase, TestCase):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        # Reset user authentication throttling
+        cache.clear()
 
     #####################
     # HawcSession tests #
@@ -18,7 +25,9 @@ class TestClient(LiveServerTestCase, TestCase):
     def test_csv_to_df(self):
         client = BaseClient(None)
         csv = "column1,column2,column3\na,b,c\n1,2,3"
-        df = pd.DataFrame(data={"column1": ["a", "1"], "column2": ["b", "2"], "column3": ["c", "3"]})
+        df = pd.DataFrame(
+            data={"column1": ["a", "1"], "column2": ["b", "2"], "column3": ["c", "3"]}
+        )
         assert client._csv_to_df(csv).equals(df)
 
     ######################
@@ -27,17 +36,17 @@ class TestClient(LiveServerTestCase, TestCase):
 
     def test_animal_data(self):
         client = HawcClient(self.live_server_url)
-        response = client.animal.data(self.db_keys.assessment_final)
+        response = client.animal.data(self.db_keys.assessment_client)
         assert isinstance(response, pd.DataFrame)
 
     def test_animal_data_summary(self):
         client = HawcClient(self.live_server_url)
-        response = client.animal.data_summary(self.db_keys.assessment_final)
+        response = client.animal.data_summary(self.db_keys.assessment_client)
         assert isinstance(response, pd.DataFrame)
 
     def test_animal_endpoints(self):
         client = HawcClient(self.live_server_url)
-        response = client.animal.endpoints(self.db_keys.assessment_final)
+        response = client.animal.endpoints(self.db_keys.assessment_client)
         assert isinstance(response, list)
 
     ##########################
@@ -60,12 +69,12 @@ class TestClient(LiveServerTestCase, TestCase):
 
     def test_epi_data(self):
         client = HawcClient(self.live_server_url)
-        response = client.epi.data(self.db_keys.assessment_final)
+        response = client.epi.data(self.db_keys.assessment_client)
         assert isinstance(response, pd.DataFrame)
 
     def test_epi_endpoints(self):
         client = HawcClient(self.live_server_url)
-        response = client.epi.endpoints(self.db_keys.assessment_final)
+        response = client.epi.endpoints(self.db_keys.assessment_client)
         assert isinstance(response, list)
 
     #######################
@@ -74,7 +83,7 @@ class TestClient(LiveServerTestCase, TestCase):
 
     def test_epimeta_data(self):
         client = HawcClient(self.live_server_url)
-        response = client.epimeta.data(self.db_keys.assessment_final)
+        response = client.epimeta.data(self.db_keys.assessment_client)
         assert isinstance(response, pd.DataFrame)
 
     #######################
@@ -83,7 +92,7 @@ class TestClient(LiveServerTestCase, TestCase):
 
     def test_invitro_data(self):
         client = HawcClient(self.live_server_url)
-        response = client.invitro.data(self.db_keys.assessment_final)
+        response = client.invitro.data(self.db_keys.assessment_client)
         assert isinstance(response, pd.DataFrame)
 
     ##########################
@@ -117,13 +126,16 @@ class TestClient(LiveServerTestCase, TestCase):
             8761421,
         ]
         response = client.lit.import_hero(
-            assessment_id=self.db_keys.assessment_final, title="Title", description="Description", ids=hero_ids
+            assessment_id=self.db_keys.assessment_client,
+            title="Title",
+            description="Description",
+            ids=hero_ids,
         )
         assert isinstance(response, dict)
 
     def test_lit_tags(self):
         client = HawcClient(self.live_server_url)
-        response = client.lit.tags(self.db_keys.assessment_final)
+        response = client.lit.tags(self.db_keys.assessment_client)
         assert isinstance(response, pd.DataFrame)
 
     def test_lit_reference_tags(self):
@@ -135,17 +147,19 @@ class TestClient(LiveServerTestCase, TestCase):
         csv = "reference_id,tag_id\n2,14"
         client = HawcClient(self.live_server_url)
         client.authenticate("pm@pm.com", "pw")
-        response = client.lit.import_reference_tags(assessment_id=self.db_keys.assessment_final, csv=csv)
+        response = client.lit.import_reference_tags(
+            assessment_id=self.db_keys.assessment_final, csv=csv
+        )
         assert isinstance(response, pd.DataFrame)
 
     def test_lit_reference_ids(self):
         client = HawcClient(self.live_server_url)
-        response = client.lit.reference_ids(self.db_keys.assessment_final)
+        response = client.lit.reference_ids(self.db_keys.assessment_client)
         assert isinstance(response, pd.DataFrame)
 
     def test_lit_references(self):
         client = HawcClient(self.live_server_url)
-        response = client.lit.references(self.db_keys.assessment_final)
+        response = client.lit.references(self.db_keys.assessment_client)
         assert isinstance(response, pd.DataFrame)
 
     ##########################
@@ -154,12 +168,12 @@ class TestClient(LiveServerTestCase, TestCase):
 
     def test_riskofbias_data(self):
         client = HawcClient(self.live_server_url)
-        response = client.riskofbias.data(self.db_keys.assessment_final)
+        response = client.riskofbias.data(self.db_keys.assessment_client)
         assert isinstance(response, pd.DataFrame)
 
     def test_riskofbias_full_data(self):
         client = HawcClient(self.live_server_url)
-        response = client.riskofbias.full_data(self.db_keys.assessment_final)
+        response = client.riskofbias.full_data(self.db_keys.assessment_client)
         assert isinstance(response, pd.DataFrame)
 
     #######################
@@ -168,5 +182,5 @@ class TestClient(LiveServerTestCase, TestCase):
 
     def test_summary_visual_list(self):
         client = HawcClient(self.live_server_url)
-        response = client.summary.visual_list(self.db_keys.assessment_final)
+        response = client.summary.visual_list(self.db_keys.assessment_client)
         assert isinstance(response, pd.DataFrame)

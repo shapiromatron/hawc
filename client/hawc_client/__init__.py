@@ -202,7 +202,9 @@ class LiteratureClient(BaseClient):
         response_json = self.session.get(url).json()
         return pd.DataFrame(response_json)
 
-    def import_reference_tags(self, assessment_id: int, csv: str, operation: str = "append") -> pd.DataFrame:
+    def import_reference_tags(
+        self, assessment_id: int, csv: str, operation: str = "append"
+    ) -> pd.DataFrame:
         """
         Imports a CSV of reference IDs with corresponding tag IDs to the given assessment.
         The header of the CSV string should be "reference_id,tag_id"
