@@ -892,7 +892,7 @@
     identifiers:
     - 1
 - model: lit.reference
-  pk: 3
+  pk: 4
   fields:
     assessment: 3
     title: ''
@@ -955,7 +955,7 @@
 - model: study.study
   pk: 3
   fields:
-    reference_ptr: 3
+    reference_ptr: 4
     bioassay: true
     epi: true
     epi_meta: true
@@ -995,7 +995,7 @@
 - model: animal.experiment
   pk: 2
   fields:
-    study: 3
+    study: 4
     name: Test Experiment
     type: Ac
     has_multiple_generations: false
@@ -1142,7 +1142,6 @@
 - model: animal.endpoint
   pk: 1
   fields:
-    baseendpoint_ptr: 1
     animal_group: 1
     system: ''
     organ: ''
@@ -1178,7 +1177,6 @@
 - model: animal.endpoint
   pk: 2
   fields:
-    baseendpoint_ptr: 2
     animal_group: 2
     system: ''
     organ: ''
