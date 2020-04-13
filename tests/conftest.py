@@ -42,15 +42,14 @@ def test_db(django_db_setup, django_db_blocker):
         call_command("load_test_db")
 
 
-@pytest.fixture(scope="function")
-def load_test_db(django_db_blocker):
-    with django_db_blocker.unblock():
-        call_command("load_test_db")
-
-
 @pytest.fixture
 def db_keys():
     return _keys
+
+
+@pytest.fixture
+def set_db_keys(request):
+    request.cls.db_keys = _keys
 
 
 @pytest.fixture(scope="session")

@@ -151,6 +151,18 @@ class LiteratureClient(BaseClient):
     """
 
     def import_hero(self, assessment_id: int, title: str, description: str, ids: List[int]) -> Dict:
+        """
+        Imports a list of HERO IDs as literature references for the given assessment.
+
+        Args:
+            assessment_id (int): Assessment ID
+            title (str): Title of import
+            description (str): Description of import
+            ids (List[int]): HERO IDs
+
+        Returns:
+            Dict: JSON response
+        """
         payload = {
             "assessment": assessment_id,
             "search_type": "i",
@@ -163,29 +175,75 @@ class LiteratureClient(BaseClient):
         return self.session.post(url, payload).json()
 
     def tags(self, assessment_id: int) -> pd.DataFrame:
+        """
+        Retrieves all of the tags for the given assessment.
+
+        Args:
+            assessment_id (int): Assessment ID
+
+        Returns:
+            pd.DataFrame: Assessment tags
+        """
         url = f"{self.session.root_url}/lit/api/assessment/{assessment_id}/tags/"
         response_json = self.session.get(url).json()
         return pd.DataFrame(response_json)
 
     def reference_tags(self, assessment_id: int) -> pd.DataFrame:
+        """
+        Retrieves the literature references and their corresponding tags for a given assessment.
+
+        Args:
+            assessment_id (int): Assessment ID
+
+        Returns:
+            pd.DataFrame: References with corresponding tags
+        """
         url = f"{self.session.root_url}/lit/api/assessment/{assessment_id}/reference-tags/"
         response_json = self.session.get(url).json()
         return pd.DataFrame(response_json)
 
-    def import_reference_tags(
-        self, assessment_id: int, csv: str, operation: str = "append"
-    ) -> pd.DataFrame:
+    def import_reference_tags(self, assessment_id: int, csv: str, operation: str = "append") -> pd.DataFrame:
+        """
+        Imports a CSV of reference IDs with corresponding tag IDs to the given assessment.
+        The header of the CSV string should be "reference_id,tag_id"
+
+        Args:
+            assessment_id (int): Assessment ID
+            csv (str): Reference IDs to tag ID mapping
+            operation (str, optional): Whether you want to append or replace the reference ID to tag ID mapping. Defaults to "append".
+
+        Returns:
+            pd.DataFrame: New mapping
+        """
         payload = {"csv": csv, "operation": operation}
         url = f"{self.session.root_url}/lit/api/assessment/{assessment_id}/reference-tags/"
         response_json = self.session.post(url, payload).json()
         return pd.DataFrame(response_json)
 
     def reference_ids(self, assessment_id: int) -> pd.DataFrame:
+        """
+        Retrieves the reference IDs and corresponding HERO/PubMed/etc IDs for the given assessment.
+
+        Args:
+            assessment_id (int): Assessment ID
+
+        Returns:
+            pd.DataFrame: Reference IDs and HERO/PubMed/etc IDs
+        """
         url = f"{self.session.root_url}/lit/api/assessment/{assessment_id}/reference-ids/"
         response_json = self.session.get(url).json()
         return pd.DataFrame(response_json)
 
     def references(self, assessment_id: int) -> pd.DataFrame:
+        """
+        Retrieves data on all references for a given assessment.
+
+        Args:
+            assessment_id (int): Assessment ID
+
+        Returns:
+            pd.DataFrame: References data
+        """
         url = f"{self.session.root_url}/lit/api/assessment/{assessment_id}/references-download/"
         response_json = self.session.get(url).json()
         return pd.DataFrame(response_json)
@@ -197,11 +255,29 @@ class RiskOfBiasClient(BaseClient):
     """
 
     def data(self, assessment_id: int) -> pd.DataFrame:
+        """
+        Retrieves risk of bias data for the given assessment.
+
+        Args:
+            assessment_id (int): Assessment ID
+
+        Returns:
+            pd.DataFrame: Risk of bias data
+        """
         url = f"{self.session.root_url}/rob/api/assessment/{assessment_id}/export/"
         response_json = self.session.get(url).json()
         return pd.DataFrame(response_json)
 
     def full_data(self, assessment_id: int) -> pd.DataFrame:
+        """
+        Retrieves full risk of bias data for the given assessment.
+
+        Args:
+            assessment_id (int): Assessment ID
+
+        Returns:
+            pd.DataFrame: Full risk of bias data
+        """
         url = f"{self.session.root_url}/rob/api/assessment/{assessment_id}/full-export/"
         response_json = self.session.get(url).json()
         return pd.DataFrame(response_json)
@@ -317,6 +393,15 @@ class InvitroClient(BaseClient):
     """
 
     def data(self, assessment_id: int) -> pd.DataFrame:
+        """
+        Retrieves in-vitro data for the given assessment.
+
+        Args:
+            assessment_id (int): Assessment ID
+
+        Returns:
+            pd.DataFrame: In-vitro data
+        """
         url = f"{self.session.root_url}/in-vitro/api/assessment/{assessment_id}/full-export/"
         response_json = self.session.get(url).json()
         return pd.DataFrame(response_json)
@@ -328,6 +413,15 @@ class SummaryClient(BaseClient):
     """
 
     def visual_list(self, assessment_id: int) -> pd.DataFrame:
+        """
+        Retrieves a visual list for the given assessment.
+
+        Args:
+            assessment_id (int): Assessment ID
+
+        Returns:
+            pd.DataFrame: Visual list
+        """
         url = f"{self.session.root_url}/summary/api/visual/?assessment_id={assessment_id}"
         response_json = self.session.get(url).json()
         return pd.DataFrame(response_json)
