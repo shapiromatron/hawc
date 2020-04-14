@@ -2,9 +2,11 @@ from copy import copy
 
 from ..assessment.models import DoseUnits
 from ..common.helper import FlatFileExporter
+from ..common.exports import FlatExporter
 from ..riskofbias.models import RiskOfBias
 from ..study.models import Study
 from . import models
+import pandas as pd
 
 
 def get_gen_species_strain_sex(e, withN=False):
@@ -23,9 +25,7 @@ def get_gen_species_strain_sex(e, withN=False):
     if sex_symbol == "NR":
         sex_symbol = "sex=NR"
 
-    return (
-        f"{gen}{e['animal_group']['species']}, {e['animal_group']['strain']} ({sex_symbol}{ns_txt})"
-    )
+    return f"{gen}{e['animal_group']['species']}, {e['animal_group']['strain']} ({sex_symbol}{ns_txt})"
 
 
 def get_treatment_period(exp, dr):
@@ -114,9 +114,7 @@ class EndpointGroupFlatComplete(FlatFileExporter):
             row.extend(Study.flat_complete_data_row(ser["animal_group"]["experiment"]["study"]))
             row.extend(models.Experiment.flat_complete_data_row(ser["animal_group"]["experiment"]))
             row.extend(models.AnimalGroup.flat_complete_data_row(ser["animal_group"]))
-            row.extend(
-                models.DosingRegime.flat_complete_data_row(ser["animal_group"]["dosing_regime"])
-            )
+            row.extend(models.DosingRegime.flat_complete_data_row(ser["animal_group"]["dosing_regime"]))
             row.extend(models.Endpoint.flat_complete_data_row(ser))
             for i, eg in enumerate(ser["groups"]):
                 row_copy = copy(row)
@@ -144,9 +142,7 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
         units_id = None
 
         if preferred_units:
-            available_units = set(
-                [d["dose_units"]["id"] for d in ser["animal_group"]["dosing_regime"]["doses"]]
-            )
+            available_units = set([d["dose_units"]["id"] for d in ser["animal_group"]["dosing_regime"]["doses"]])
             for units in preferred_units:
                 if units in available_units:
                     units_id = units
@@ -155,11 +151,7 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
         if units_id is None:
             units_id = ser["animal_group"]["dosing_regime"]["doses"][0]["dose_units"]["id"]
 
-        return [
-            d
-            for d in ser["animal_group"]["dosing_regime"]["doses"]
-            if units_id == d["dose_units"]["id"]
-        ]
+        return [d for d in ser["animal_group"]["dosing_regime"]["doses"] if units_id == d["dose_units"]["id"]]
 
     @classmethod
     def _get_dose_units(cls, doses):
@@ -200,11 +192,7 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
         else:
             self.rob_headers, self.rob_data = RiskOfBias.get_dp_export(
                 self.queryset.first().assessment_id,
-                list(
-                    self.queryset.values_list(
-                        "animal_group__experiment__study_id", flat=True
-                    ).distinct()
-                ),
+                list(self.queryset.values_list("animal_group__experiment__study_id", flat=True).distinct()),
                 "animal",
             )
 
@@ -285,9 +273,7 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
             ser = obj.get_json(json_encode=False)
             doses = self._get_doses_list(ser, preferred_units)
             study_id = ser["animal_group"]["experiment"]["study"]["id"]
-            study_robs = [
-                self.rob_data[(study_id, metric_id)] for metric_id in self.rob_headers.keys()
-            ]
+            study_robs = [self.rob_data[(study_id, metric_id)] for metric_id in self.rob_headers.keys()]
 
             # build endpoint-group independent data
             row = [
@@ -309,9 +295,7 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
                 get_gen_species_strain_sex(ser, withN=True),
                 ser["animal_group"]["sex"],
                 ser["animal_group"]["dosing_regime"]["route_of_exposure"].lower(),
-                get_treatment_period(
-                    ser["animal_group"]["experiment"], ser["animal_group"]["dosing_regime"],
-                ),
+                get_treatment_period(ser["animal_group"]["experiment"], ser["animal_group"]["dosing_regime"],),
                 ser["animal_group"]["dosing_regime"]["duration_exposure_text"],
                 ser["id"],
                 ser["name"],
@@ -385,17 +369,13 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
         else:
             self.rob_headers, self.rob_data = RiskOfBias.get_dp_export(
                 self.queryset.first().assessment_id,
-                list(
-                    self.queryset.values_list(
-                        "animal_group__experiment__study_id", flat=True
-                    ).distinct()
-                ),
+                list(self.queryset.values_list("animal_group__experiment__study_id", flat=True).distinct()),
                 "animal",
             )
 
         noel_names = self.kwargs["assessment"].get_noel_names()
         header = [
-            "study id",
+            "study i",
             "study name",
             "study identifier",
             "study published",
@@ -490,9 +470,7 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
                 get_gen_species_strain_sex(ser, withN=True),
                 ser["animal_group"]["sex"],
                 ser["animal_group"]["dosing_regime"]["route_of_exposure"].lower(),
-                get_treatment_period(
-                    ser["animal_group"]["experiment"], ser["animal_group"]["dosing_regime"],
-                ),
+                get_treatment_period(ser["animal_group"]["experiment"], ser["animal_group"]["dosing_regime"],),
                 ser["animal_group"]["dosing_regime"]["duration_exposure_text"],
                 ser["id"],
                 ser["name"],
@@ -540,9 +518,7 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
             row.extend(sigs)
 
             study_id = ser["animal_group"]["experiment"]["study"]["id"]
-            row.extend(
-                [self.rob_data[(study_id, metric_id)] for metric_id in self.rob_headers.keys()]
-            )
+            row.extend([self.rob_data[(study_id, metric_id)] for metric_id in self.rob_headers.keys()])
 
             rows.append(row)
 
@@ -642,9 +618,7 @@ class EndpointSummary(FlatFileExporter):
                 ser["animal_group"]["sex"],
                 get_gen_species_strain_sex(ser, withN=True),
                 ser["animal_group"]["dosing_regime"]["route_of_exposure"],
-                get_treatment_period(
-                    ser["animal_group"]["experiment"], ser["animal_group"]["dosing_regime"],
-                ),
+                get_treatment_period(ser["animal_group"]["experiment"], ser["animal_group"]["dosing_regime"],),
                 ser["animal_group"]["species"],
                 ser["animal_group"]["strain"],
                 ser["id"],
@@ -674,3 +648,97 @@ class EndpointSummary(FlatFileExporter):
                 rows.append(row_copy)
 
         return rows
+
+
+class EndpointSummaryWIP(FlatExporter):
+    def build_dataframe(self):
+        def getDoseUnits(doses):
+            return set(sorted([d["dose_units"]["name"] for d in doses]))
+
+        def getDoses(doses, unit):
+
+            doses = [d["dose"] for d in doses if d["dose_units"]["name"] == unit]
+            return [f"{d:g}" for d in doses]
+
+        def getResponses(groups):
+            resps = []
+            for grp in groups:
+                txt = ""
+                if grp["isReported"]:
+                    if grp["response"] is not None:
+                        txt = f"{grp['response']:g}"
+                    else:
+                        txt = f"{grp['incidence']:g}"
+                    if grp["variance"] is not None:
+                        txt = f"{txt} ± {grp['variance']:g}"
+                resps.append(txt)
+            return resps
+
+        def getDR(doses, responses, units):
+            txts = []
+            for i in range(len(doses)):
+                if len(responses) > i and len(responses[i]) > 0:
+                    txt = f"{doses[i]} {units}: {responses[i]}"
+                    txts.append(txt)
+            return ", ".join(txts)
+
+        def getResponseDirection(responses, data_type):
+            # return unknown if control response is null
+            if responses and responses[0]["response"] is None:
+                return "?"
+
+            txt = "↔"
+            for resp in responses:
+                if resp["significant"]:
+                    if data_type in ["C", "P"]:
+                        if resp["response"] > responses[0]["response"]:
+                            txt = "↑"
+                        else:
+                            txt = "↓"
+                    else:
+                        txt = "↑"
+                    break
+            return txt
+
+        pref_col_names = [
+            "study-short_citation",
+            "study-study_identifier",
+            "experiment-chemical",
+            "animal_group-name",
+            "animal_group-sex",
+            "dosing_regime-route_of_exposure",
+            "species-name",
+            "strain-name",
+            "endpoint-id",
+            "endpoint-url",
+            "endpoint-system",
+            "endpoint-organ",
+            "endpoint-effect",
+            "endpoint-name",
+            "endpoint-observation_time",
+            "endpoint-response_units",
+        ]
+        col_names = [
+            "animal_group__experiment__study__short_citation",
+            "animal_group__experiment__study__study_identifier",
+            "animal_group__experiment__chemical",
+            "animal_group__name",
+            "animal_group__sex",
+            "animal_group__dosing_regime__route_of_exposure",
+            "animal_group__species",
+            "animal_group__strain",
+            "id",
+            "url",
+            "system",
+            "organ",
+            "effect",
+            "name",
+            "observation_time_text",
+            "response_units",
+        ]
+
+        col_map = dict(zip(col_names, pref_col_names))
+        df = pd.DataFrame.from_records(self.queryset.values(*col_map.keys())).rename(
+            columns={k: v for k, v in col_map.items()}
+        )
+        return df
