@@ -1,6 +1,5 @@
 from rest_framework import viewsets
 from rest_framework.decorators import action
-from rest_framework.response import Response
 
 from ..assessment.api import AssessmentLevelPermissions, AssessmentViewset
 from ..assessment.models import Assessment
@@ -30,7 +29,7 @@ class EpiMetaAssessmentViewset(
         """
         self.set_legacy_attr(pk)
         exporter = exports.MetaResultFlatComplete(self.get_queryset(), export_format="excel",)
-        return Response(exporter.build_dataframe())
+        return exporter.build_response()
 
 
 class MetaProtocol(AssessmentViewset):

@@ -49,7 +49,7 @@ class RiskOfBiasAssessmentViewset(
             sheet_name=rob_name,
         )
 
-        return Response(exporter.build_dataframe())
+        return exporter.build_response()
 
     @action(detail=True, methods=("get",), url_path="full-export", renderer_classes=PandasRenderers)
     def full_export(self, request, pk):
@@ -62,7 +62,7 @@ class RiskOfBiasAssessmentViewset(
             sheet_name=rob_name,
         )
 
-        return Response(exporter.build_dataframe())
+        return exporter.build_response()
 
 
 class RiskOfBiasDomain(viewsets.ReadOnlyModelViewSet):
