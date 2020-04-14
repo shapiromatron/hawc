@@ -162,10 +162,9 @@ class FlatFileExporter(object):
     Base class used to generate flat-file exports of serialized data.
     """
 
-    def __init__(self, queryset, export_format=None, filename="download"):
+    def __init__(self, queryset, **kwargs):
         self.queryset = queryset
-        self.export_format = export_format
-        self.filename = filename
+        self.kwargs = kwargs
 
     def _get_header_row(self):
         raise NotImplementedError()
@@ -194,20 +193,4 @@ class FlatFileExporter(object):
 
     def build_response(self):
         dataframe = pd.DataFrame(data=self._get_data_rows(), columns=self._get_header_row())
-        if self.export_format is None:
-            return Response(dataframe)
-        elif self.export_format == "tsv":
-            tsv = dataframe.to_csv(sep="\t")
-            response = Response(tsv, content_type="text/tab-separated-values")
-            response["Content-Disposition"] = f'attachment; filename="{self.filename}.tsv"'
-            return response
-        elif self.export_format == "excel":
-            excel = dataframe.to_excel()
-            response = Response(
-                excel,
-                content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-            )
-            response["Content-Disposition"] = f'attachment; filename="{self.filename}.xlsx"'
-            return response
-        else:
-            raise ValueError(f"export_format not found: {self.export_format}")
+        return Response(dataframe)
