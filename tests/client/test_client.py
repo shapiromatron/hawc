@@ -6,6 +6,15 @@ from django.test import LiveServerTestCase, TestCase
 from hawc_client import BaseClient, HawcClient
 
 
+"""
+We must structure this suite as a class that inherits from both LiveServerTestCase and TestCase in order to supersede properties of LiveServerTestCase that cause the database to be flushed after every test, while still being able to utilize a live server for HTTP requests.
+
+Further reading:
+https://code.djangoproject.com/ticket/23640#comment:3
+
+"""
+
+
 @pytest.mark.usefixtures("set_db_keys")
 class TestClient(LiveServerTestCase, TestCase):
     @classmethod

@@ -207,15 +207,14 @@ class LiteratureClient(BaseClient):
     ) -> pd.DataFrame:
         """
         Imports a CSV of reference IDs with corresponding tag IDs to the given assessment.
-        The header of the CSV string should be "reference_id,tag_id"
 
         Args:
             assessment_id (int): Assessment ID
-            csv (str): Reference IDs to tag ID mapping
-            operation (str, optional): Whether you want to append or replace the reference ID to tag ID mapping. Defaults to "append".
+            csv (str): Reference IDs to tag ID mapping. The header of this CSV string should be "reference_id,tag_id".
+            operation (str, optional): Either add new references tags to existing (`append`), or replace current tag mappings (`replace`). Defaults to "append".
 
         Returns:
-            pd.DataFrame: New mapping
+            pd.DataFrame: All tag mappings for the selected `assessment_id`, after the requested changes
         """
         payload = {"csv": csv, "operation": operation}
         url = f"{self.session.root_url}/lit/api/assessment/{assessment_id}/reference-tags/"
@@ -238,7 +237,7 @@ class LiteratureClient(BaseClient):
 
     def references(self, assessment_id: int) -> pd.DataFrame:
         """
-        Retrieves data on all references for a given assessment.
+        Retrieves all references for the given assessment.
 
         Args:
             assessment_id (int): Assessment ID
@@ -259,6 +258,7 @@ class RiskOfBiasClient(BaseClient):
     def data(self, assessment_id: int) -> pd.DataFrame:
         """
         Retrieves risk of bias data for the given assessment.
+        This includes only final reviews.
 
         Args:
             assessment_id (int): Assessment ID
@@ -273,6 +273,7 @@ class RiskOfBiasClient(BaseClient):
     def full_data(self, assessment_id: int) -> pd.DataFrame:
         """
         Retrieves full risk of bias data for the given assessment.
+        This includes user-level reviews.
 
         Args:
             assessment_id (int): Assessment ID
@@ -446,7 +447,7 @@ class AssessmentClient(BaseClient):
 
     def bioassay_ml_dataset(self) -> pd.DataFrame:
         """
-        Retrieves anonymized bioassay data for all eligible assessments.
+        Retrieves anonymized bioassay data and their related study identification for all eligible assessments, designed for training of machine learning algorithms.
 
         Returns:
             pd.DataFrame: Anonymized bioassay data
