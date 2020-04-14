@@ -104,26 +104,11 @@ class TestClient(LiveServerTestCase, TestCase):
         client = HawcClient(self.live_server_url)
         client.authenticate("pm@pm.com", "pw")
         hero_ids = [
-            10357793,
-            20358181,
-            6355494,
-            8998951,
-            3383337,
-            12209194,
-            6677511,
-            11995694,
-            1632818,
-            12215663,
-            3180084,
-            14727734,
-            23625783,
-            11246142,
-            10485824,
-            3709451,
-            2877511,
-            6143560,
-            3934796,
-            8761421,
+            2199697,
+            5353200,
+            595055,
+            5176411,
+            5920377,
         ]
         response = client.lit.import_hero(
             assessment_id=self.db_keys.assessment_client,
