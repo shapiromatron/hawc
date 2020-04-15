@@ -35,7 +35,7 @@ class AnimalAssessmentViewset(
         exporter = exports.EndpointGroupFlatComplete(
             self.get_queryset(), export_format="excel", assessment=self.assessment,
         )
-        return Response(exporter.build_dataframe())
+        return exporter.build_response()
 
     @action(
         detail=True, methods=("get",), url_path="endpoint-export", renderer_classes=PandasRenderers
@@ -48,7 +48,7 @@ class AnimalAssessmentViewset(
         exporter = exports.EndpointSummary(
             self.get_queryset(), export_format="excel", assessment=self.assessment,
         )
-        return Response(exporter.build_dataframe())
+        return exporter.build_response()
 
 
 class Experiment(AssessmentViewset):

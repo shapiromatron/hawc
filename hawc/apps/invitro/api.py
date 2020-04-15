@@ -1,6 +1,5 @@
 from rest_framework import viewsets
 from rest_framework.decorators import action
-from rest_framework.response import Response
 
 from ..assessment.api import (
     AssessmentLevelPermissions,
@@ -34,7 +33,7 @@ class IVAssessmentViewset(
         exporter = exports.DataPivotEndpoint(
             self.object_list, export_format="excel", filename=f"{self.assessment}-invitro",
         )
-        return Response(exporter.build_dataframe())
+        return exporter.build_response()
 
 
 class IVChemical(AssessmentViewset):

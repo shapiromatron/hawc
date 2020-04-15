@@ -123,7 +123,7 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
             tags=tags,
         )
 
-        return Response(exporter.build_dataframe())
+        return exporter.build_response()
 
 
 class SearchViewset(viewsets.GenericViewSet, mixins.CreateModelMixin):
