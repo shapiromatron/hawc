@@ -1,4 +1,4 @@
-.PHONY: dev docs servedocs lint format lint-py format-py lint-js format-js test
+.PHONY: build dev docs servedocs lint format lint-py format-py lint-js format-js test test-refresh coverage flynt
 .DEFAULT_GOAL := help
 define BROWSER_PYSCRIPT
 import os, webbrowser, sys
