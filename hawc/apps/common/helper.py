@@ -24,9 +24,7 @@ def HAWCtoDateString(datetime):
 
 def cleanHTML(txt):
     return strip_entities(
-        strip_tags(
-            txt.replace("\n", " ").replace("\r", "").replace("<br>", "\n").replace("&nbsp;", " ")
-        )
+        strip_tags(txt.replace("\n", " ").replace("\r", "").replace("<br>", "\n").replace("&nbsp;", " "))
     )
 
 
@@ -192,5 +190,7 @@ class FlatFileExporter(object):
         return returnValue
 
     def build_response(self):
-        dataframe = pd.DataFrame(data=self._get_data_rows(), columns=self._get_header_row())
+        header_row = self._get_header_row()
+        data_rows = self._get_data_rows()
+        dataframe = pd.DataFrame(data=data_rows, columns=header_row)
         return Response(dataframe)
