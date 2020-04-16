@@ -110,6 +110,12 @@ const NA_KEYS = [10, 20],
             symbolText = symbols.join(" / "),
             symbolShortText = symbols.length === 1 ? symbols[0] : `${defaultScore.score_symbol}*`,
             biasDirection = scores[0].bias_direction,
+            biasDirectionSimple =
+                biasDirection == BIAS_DIRECTION_UNKNOWN ? "" : BIAS_DIRECTION_SIMPLE[biasDirection],
+            biasDirectionVerbose =
+                biasDirection == BIAS_DIRECTION_UNKNOWN
+                    ? ""
+                    : BIAS_DIRECTION_VERBOSE[biasDirection],
             reactStyle,
             svgStyle,
             cssStyle;
@@ -147,7 +153,8 @@ const NA_KEYS = [10, 20],
             cssStyle,
             symbolText,
             symbolShortText,
-            biasDirection,
+            biasDirectionSimple,
+            biasDirectionVerbose,
             svgStyle,
         };
     },
