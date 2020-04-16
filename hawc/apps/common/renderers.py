@@ -78,8 +78,16 @@ class PandasXlsxRenderer(PandasBaseRenderer):
 
     def render_dataframe(self, df: pd.DataFrame, response: Response) -> bytes:
         response["Content-Disposition"] = "attachment; filename=hawc-export.xlsx"
+
+        # We have to remove the timezone from datetime objects to make it Excel compatible
+        ## Note: DataFrame update doesn't preserve dtype, so we must iterate through the columns instead
+        df_datetime = df.select_dtypes(include="datetimetz").apply(lambda x: x.dt.tz_localize(None))
+        for col in df_datetime.columns:
+            df[col] = df_datetime[col]
+
         f = BytesIO()
-        df.to_excel(f, index=False)
+        with pd.ExcelWriter(f, date_format="YYYY-MM-DD", datetime_format="YYYY-MM-DD HH:MM:SS") as writer:
+            df.to_excel(writer, index=False)
         return f.getvalue()
 
 
