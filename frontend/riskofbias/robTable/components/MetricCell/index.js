@@ -31,6 +31,7 @@ class MetricCell extends Component {
                     data-toggle="tooltip"
                     title={firstScore.metric.name}>
                     {displaySettings.symbolText}
+                    {displaySettings.biasDirection}
                 </span>
             </div>
         );
@@ -42,6 +43,7 @@ MetricCell.propTypes = {
         PropTypes.shape({
             score_symbol: PropTypes.string.isRequired,
             score_shade: PropTypes.string.isRequired,
+            bias_direction: PropTypes.number.isRequired,
             domain_name: PropTypes.string.isRequired,
             metric: PropTypes.shape({
                 name: PropTypes.string.isRequired,
