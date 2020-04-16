@@ -31,7 +31,7 @@ class IVAssessmentViewset(
         self.set_legacy_attr(pk)
         self.object_list = self.get_queryset()
         exporter = exports.DataPivotEndpoint(
-            self.object_list, export_format="excel", filename=f"{self.assessment}-invitro",
+            self.object_list, export_format="api", filename=f"{self.assessment}-invitro",
         )
         return exporter.build_response()
 

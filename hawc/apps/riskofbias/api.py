@@ -44,7 +44,7 @@ class RiskOfBiasAssessmentViewset(
         rob_name = self.assessment.get_rob_name_display().lower()
         exporter = exports.RiskOfBiasFlat(
             self.get_queryset(),
-            export_format="excel",
+            export_format="api",
             filename=f'{self.assessment}-{rob_name.replace(" ", "-")}',
             sheet_name=rob_name,
         )
@@ -57,7 +57,7 @@ class RiskOfBiasAssessmentViewset(
         rob_name = self.assessment.get_rob_name_display().lower()
         exporter = exports.RiskOfBiasCompleteFlat(
             self.get_queryset(),
-            export_format="excel",
+            export_format="api",
             filename=f'{self.assessment}-{rob_name.replace(" ", "-")}-complete',
             sheet_name=rob_name,
         )

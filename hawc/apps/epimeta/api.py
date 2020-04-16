@@ -28,7 +28,7 @@ class EpiMetaAssessmentViewset(
         Retrieve epidemiology metadata for assessment.
         """
         self.set_legacy_attr(pk)
-        exporter = exports.MetaResultFlatComplete(self.get_queryset(), export_format="excel",)
+        exporter = exports.MetaResultFlatComplete(self.get_queryset(), export_format="api",)
         return exporter.build_response()
 
 

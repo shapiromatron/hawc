@@ -28,7 +28,7 @@ class EpiAssessmentViewset(
         Retrieve epidemiology data for assessment.
         """
         self.set_legacy_attr(pk)
-        exporter = exports.OutcomeComplete(self.get_queryset(), export_format="excel",)
+        exporter = exports.OutcomeComplete(self.get_queryset(), export_format="api",)
         return exporter.build_response()
 
 

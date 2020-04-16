@@ -33,7 +33,7 @@ class AnimalAssessmentViewset(
         """
         self.set_legacy_attr(pk)
         exporter = exports.EndpointGroupFlatComplete(
-            self.get_queryset(), export_format="excel", assessment=self.assessment,
+            self.get_queryset(), export_format="api", assessment=self.assessment
         )
         return exporter.build_response()
 
@@ -46,7 +46,7 @@ class AnimalAssessmentViewset(
         """
         self.set_legacy_attr(pk)
         exporter = exports.EndpointSummary(
-            self.get_queryset(), export_format="excel", assessment=self.assessment,
+            self.get_queryset(), export_format="api", assessment=self.assessment
         )
         return exporter.build_response()
 

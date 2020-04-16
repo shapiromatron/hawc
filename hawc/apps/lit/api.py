@@ -118,7 +118,7 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
 
         exporter = exports.ReferenceFlatComplete(
             models.Reference.objects.get_qs(self.assessment).prefetch_related("identifiers"),
-            export_format="excel",
+            export_format="api",
             assessment=self.assessment,
             tags=tags,
         )
