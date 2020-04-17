@@ -1,12 +1,18 @@
 import json
 from io import BytesIO
 
-import numpy as np
 import pandas as pd
 import pytest
 from rest_framework.response import Response
 
 from hawc.apps.common import renderers
+from hawc.apps.common.helper import FlatExport
+
+
+@pytest.fixture
+def basic_export():
+    df = pd.DataFrame(data=[[1, 2], [3, 4]], columns=["a", "b"])
+    return FlatExport(df=df, filename="fn")
 
 
 def test_base_renderer():
@@ -17,18 +23,23 @@ def test_base_renderer():
         )
 
 
-def test_csv_renderer():
-    df = pd.DataFrame(data=[[1, 2], [3, 4]], columns=["a", "b"])
+def test_csv_renderer(basic_export):
     response = renderers.PandasCsvRenderer().render(
-        data=df, renderer_context={"response": Response()}
+        data=basic_export, renderer_context={"response": Response()}
     )
     assert response == "a,b\n1,2\n3,4\n"
 
 
-def test_html_renderer():
-    df = pd.DataFrame(data=[[1, 2], [3, 4]], columns=["a", "b"])
+def test_tsv_renderer(basic_export):
+    response = renderers.PandasTsvRenderer().render(
+        data=basic_export, renderer_context={"response": Response()}
+    )
+    assert response == "a\tb\n1\t2\n3\t4\n"
+
+
+def test_html_renderer(basic_export):
     response = renderers.PandasHtmlRenderer().render(
-        data=df, renderer_context={"response": Response()}
+        data=basic_export, renderer_context={"response": Response()}
     )
     assert (
         response
@@ -36,44 +47,50 @@ def test_html_renderer():
     )
 
 
-def test_json_renderer():
-    df = pd.DataFrame(data=[[1, 2], [3, 4]], columns=["a", "b"])
+def test_json_renderer(basic_export):
     response = renderers.PandasJsonRenderer().render(
-        data=df, renderer_context={"response": Response()}
+        data=basic_export, renderer_context={"response": Response()}
     )
     assert json.loads(response) == [{"a": 1, "b": 2}, {"a": 3, "b": 4}]
 
 
-def test_xlsx_renderer():
-    df = pd.DataFrame(data=[[1, 2], [3, 4]], columns=["a", "b"])
+def test_xlsx_renderer(basic_export):
     resp_obj = Response()
     assert "Content-Disposition" not in resp_obj
 
     response = renderers.PandasXlsxRenderer().render(
-        data=df, renderer_context={"response": resp_obj}
+        data=basic_export, renderer_context={"response": resp_obj}
     )
     df2 = pd.read_excel(BytesIO(response))
     assert df2.to_dict(orient="records") == [{"a": 1, "b": 2}, {"a": 3, "b": 4}]
-    assert (
-        "Content-Disposition" in "Content-Disposition"
-        and "attachment; filename=" in resp_obj["Content-Disposition"]
-    )
+    assert resp_obj["Content-Disposition"] == "attachment; filename=fn.xlsx"
 
     # Datetimes with timezones are incompatible with Excel. Make sure that the renderer can handle DataFrames with timezoned datetimes.
-
-    datetimes = np.array(
-        ["2000-01-01 01:00:00", "2005-12-31 02:10:00", "2010-06-01 03:20:10"], dtype="datetime64"
+    df = pd.DataFrame(
+        data=[[1, "2000-01-01 01:00:00"], [2, "2005-12-31 02:10:00"]], columns=["count", "when"],
     )
-    datetimes_series = pd.Series(datetimes).dt.tz_localize(tz="US/Eastern")
+    df.loc[:, "when"] = df.when.astype("datetime64")
+    basic_export
 
-    df = pd.DataFrame(data=[1, 2, 3], columns=["count"])
-    df["when"] = datetimes_series
-
-    resp_obj = Response()
+    # naive datetime
     response = renderers.PandasXlsxRenderer().render(
-        data=df, renderer_context={"response": resp_obj}
+        data=FlatExport(df=df, filename="fn"), renderer_context={"response": Response()}
     )
+    df2 = pd.read_excel(BytesIO(response))
+    assert df2.equals(df)
 
+    # with timezone
+    df.loc[:, "when"] = df.when.dt.tz_localize(tz="US/Eastern")
+    response = renderers.PandasXlsxRenderer().render(
+        data=FlatExport(df=df, filename="fn"), renderer_context={"response": Response()}
+    )
     df2 = pd.read_excel(BytesIO(response))
 
-    assert df2.equals(df)
+    # expected; we lost the timezone
+    with pytest.raises(TypeError) as err:
+        assert df2.equals(df) is False
+    assert "data type not understood" in str(err)
+
+    # with appropriate cast, success!
+    df2.loc[:, "when"] = df2.when.astype("datetime64").dt.tz_localize(tz="US/Eastern")
+    assert df2.equals(df) is True

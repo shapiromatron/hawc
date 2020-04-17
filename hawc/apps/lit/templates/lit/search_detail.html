@@ -27,7 +27,7 @@
             {% endif %}
           {% endif %}
 
-          <li><a href="{% url 'lit:search_download_excel' object.assessment.pk object.slug %}">Download to Excel</a></li>
+          <li><a href="{% url 'lit:api:search-references' object.id %}?format=xlsx">Download to Excel</a></li>
         </ul>
       </div>
     {% endif %}

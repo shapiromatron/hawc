@@ -1,7 +1,10 @@
 from django.shortcuts import get_object_or_404
+from rest_framework.decorators import action
 from rest_framework.filters import BaseFilterBackend
+from rest_framework.response import Response
 
 from ..assessment.api import AssessmentViewset, DisabledPagination, InAssessmentFilter
+from ..common.renderers import PandasRenderers
 from . import models, serializers
 
 
@@ -38,6 +41,12 @@ class DataPivot(AssessmentViewset):
         if self.action == "list":
             cls = serializers.CollectionDataPivotSerializer
         return cls
+
+    @action(detail=True, methods=("get",), renderer_classes=PandasRenderers)
+    def data(self, request, pk):
+        obj = self.get_object()
+        export = obj.get_dataset()
+        return Response(export)
 
 
 class Visual(AssessmentViewset):

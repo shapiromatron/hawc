@@ -1,5 +1,6 @@
 from rest_framework import viewsets
 from rest_framework.decorators import action
+from rest_framework.response import Response
 
 from ..assessment.api import AssessmentLevelPermissions, AssessmentViewset
 from ..assessment.models import Assessment
@@ -28,8 +29,8 @@ class EpiAssessmentViewset(
         Retrieve epidemiology data for assessment.
         """
         self.set_legacy_attr(pk)
-        exporter = exports.OutcomeComplete(self.get_queryset(), export_format="api",)
-        return exporter.build_response()
+        exporter = exports.OutcomeComplete(self.get_queryset(), filename=f"{self.assessment}-epi")
+        return Response(exporter.build_export())
 
 
 class StudyPopulation(AssessmentViewset):

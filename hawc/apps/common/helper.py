@@ -4,17 +4,17 @@ import logging
 import re
 import uuid
 from collections import OrderedDict
-from io import BytesIO
+from dataclasses import dataclass
+from typing import Dict
 
 import pandas as pd
 from django.conf import settings
 from django.core.cache import cache
 from django.core.serializers.json import DjangoJSONEncoder
-from django.http import HttpResponse
+from django.db.models import QuerySet
 from django.utils import html
 from django.utils.encoding import force_text
 from rest_framework.renderers import JSONRenderer
-from rest_framework.response import Response
 
 
 def HAWCtoDateString(datetime):
@@ -159,14 +159,23 @@ class SerializerHelper(object):
         cls.delete_caches(Model, ids)
 
 
-class FlatFileExporter(object):
+@dataclass(frozen=True)
+class FlatExport:
     """
-    Base class used to generate flat-file exports of serialized data.
+    Response class of an exporter method.
     """
 
-    def __init__(self, queryset, export_format, filename="download", **kwargs):
+    df: pd.DataFrame
+    filename: str
+
+
+class FlatFileExporter:
+    """
+    Base class used to generate tabular dataset exports.
+    """
+
+    def __init__(self, queryset: QuerySet, filename: str = "hawc-export", **kwargs):
         self.queryset = queryset
-        self.export_format = export_format
         self.filename = filename
         self.kwargs = kwargs
 
@@ -176,61 +185,16 @@ class FlatFileExporter(object):
     def _get_data_rows(self):
         raise NotImplementedError()
 
-    @classmethod
-    def _get_tags(cls, e):
-        returnValue = ""
+    @staticmethod
+    def get_flattened_tags(dict: Dict, key: str) -> str:
+        values = [tag.get("name", "") for tag in dict.get(key, [])]
+        return f"|{'|'.join(values)}|"
 
-        if "effects" in e:
-            """ This element is an Outcome element with an "effects" field """
-            effects = [tag["name"] for tag in e["effects"]]
-
-            if len(effects) > 0:
-                returnValue = f"|{'|'.join(effects)}|"
-        elif "resulttags" in e:
-            """ This element is a Result element with a "resulttags" field """
-            resulttags = [tag["name"] for tag in e["resulttags"]]
-
-            if len(resulttags) > 0:
-                returnValue = f"|{'|'.join(resulttags)}|"
-
-        return returnValue
-
-    def build_response(self):
+    def build_df(self) -> pd.DataFrame:
         header_row = self._get_header_row()
         data_rows = self._get_data_rows()
-        df = pd.DataFrame(data=data_rows, columns=header_row)
+        return pd.DataFrame(data=data_rows, columns=header_row)
 
-        if self.export_format == "api":
-            return Response(df)
-
-        elif self.export_format == "tsv":
-            response = HttpResponse(
-                df.to_csv(sep="\t", index=False), content_type="text/tab-separated-values"
-            )
-            response["Content-Disposition"] = f'attachment; filename="{self.filename}.tsv"'
-            return response
-
-        elif self.export_format == "excel":
-            # We have to remove the timezone from datetime objects to make it Excel compatible
-            ## Note: DataFrame update doesn't preserve dtype, so we must iterate through the columns instead
-            df_datetime = df.select_dtypes(include="datetimetz").apply(
-                lambda x: x.dt.tz_localize(None)
-            )
-            for col in df_datetime.columns:
-                df[col] = df_datetime[col]
-
-            f = BytesIO()
-            with pd.ExcelWriter(
-                f, date_format="YYYY-MM-DD", datetime_format="YYYY-MM-DD HH:MM:SS"
-            ) as writer:
-                df.to_excel(writer, index=False)
-
-            response = HttpResponse(
-                f.getvalue(),
-                content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-            )
-            response["Content-Disposition"] = f'attachment; filename="{self.filename}.xlsx"'
-            return response
-
-        else:
-            raise ValueError(f"export_format not found: {self.export_format}")
+    def build_export(self) -> FlatExport:
+        df = self.build_df()
+        return FlatExport(df, self.filename)

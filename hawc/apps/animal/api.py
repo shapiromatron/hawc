@@ -33,9 +33,11 @@ class AnimalAssessmentViewset(
         """
         self.set_legacy_attr(pk)
         exporter = exports.EndpointGroupFlatComplete(
-            self.get_queryset(), export_format="api", assessment=self.assessment
+            self.get_queryset(),
+            filename=f"{self.assessment}-bioassay-complete",
+            assessment=self.assessment,
         )
-        return exporter.build_response()
+        return Response(exporter.build_export())
 
     @action(
         detail=True, methods=("get",), url_path="endpoint-export", renderer_classes=PandasRenderers
@@ -46,9 +48,11 @@ class AnimalAssessmentViewset(
         """
         self.set_legacy_attr(pk)
         exporter = exports.EndpointSummary(
-            self.get_queryset(), export_format="api", assessment=self.assessment
+            self.get_queryset(),
+            filename=f"{self.assessment}-bioassay-summary",
+            assessment=self.assessment,
         )
-        return exporter.build_response()
+        return Response(exporter.build_export())
 
 
 class Experiment(AssessmentViewset):
