@@ -5,6 +5,7 @@ from django.apps import apps
 from django.core import exceptions
 from django.db.models import Count
 from django.urls import reverse
+from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from rest_framework import filters, permissions, status, viewsets
@@ -14,7 +15,7 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 
-from ..common.helper import create_uuid, tryParseInt
+from ..common.helper import FlatExport, create_uuid, tryParseInt
 from ..common.renderers import PandasRenderers
 from ..lit import constants
 from . import models, serializers
@@ -227,8 +228,10 @@ class Assessment(AssessmentViewset):
         df["pubmed_id"].loc[df["db"] == constants.PUBMED] = df["db_id"][
             df["db"] == constants.PUBMED
         ]
-
-        return Response(df.drop(columns=["db", "db_id"]).drop_duplicates())
+        df = df.drop(columns=["db", "db_id"]).drop_duplicates()
+        today = timezone.now().strftime("%Y-%m-%d")
+        export = FlatExport(df=df, filename=f"hawc-bioassay-dataset-{today}")
+        return Response(export)
 
 
 class AssessmentEndpointList(AssessmentViewset):

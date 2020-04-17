@@ -43,26 +43,19 @@ class RiskOfBiasAssessmentViewset(
         self.set_legacy_attr(pk)
         rob_name = self.assessment.get_rob_name_display().lower()
         exporter = exports.RiskOfBiasFlat(
-            self.get_queryset(),
-            export_format="excel",
-            filename=f'{self.assessment}-{rob_name.replace(" ", "-")}',
-            sheet_name=rob_name,
+            self.get_queryset(), filename=f"{self.assessment}-{rob_name}"
         )
 
-        return exporter.build_response()
+        return Response(exporter.build_export())
 
     @action(detail=True, methods=("get",), url_path="full-export", renderer_classes=PandasRenderers)
     def full_export(self, request, pk):
         self.set_legacy_attr(pk)
         rob_name = self.assessment.get_rob_name_display().lower()
         exporter = exports.RiskOfBiasCompleteFlat(
-            self.get_queryset(),
-            export_format="excel",
-            filename=f'{self.assessment}-{rob_name.replace(" ", "-")}-complete',
-            sheet_name=rob_name,
+            self.get_queryset(), filename=f"{self.assessment}-{rob_name}-complete"
         )
-
-        return exporter.build_response()
+        return Response(exporter.build_export())
 
 
 class RiskOfBiasDomain(viewsets.ReadOnlyModelViewSet):

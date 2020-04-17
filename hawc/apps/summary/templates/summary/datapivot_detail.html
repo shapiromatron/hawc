@@ -26,7 +26,7 @@
         <span class="caret"></span>
       </a>
       <ul class="dropdown-menu">
-          <li><a href="{{object.get_download_url|safe}}">Download data file</a></li>
+          <li><a href="{{object.get_download_url|safe}}?format=xlsx">Download data file</a></li>
         {% if obj_perms.edit %}
           <li class="divider"></li>
           <li><a href="{% url 'summary:dp_update' assessment.pk object.slug %}">Edit display settings</a></li>
