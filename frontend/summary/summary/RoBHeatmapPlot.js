@@ -109,6 +109,7 @@ class RoBHeatmapPlot extends D3Visualization {
                         metric: robArray[0].data.metric,
                         metric_label: metric_name,
                         score_text: displayData.symbolShortText,
+                        direction: displayData.biasDirection,
                         direction_compact: displayData.biasDirectionCompact,
                         score_color: displayData.svgStyle.fill,
                         score_text_color: robArray[0].data.score_text_color,
@@ -194,6 +195,7 @@ class RoBHeatmapPlot extends D3Visualization {
             width = this.cell_size,
             half_width = width / 2,
             quarter_width = width * 0.25,
+            three_quarter_width = width * 0.75,
             robName = this.data.assessment_rob_name,
             showSQs = function(v) {
                 self.print_details(self.modal.getBody(), $(this).data("robs"));
@@ -291,7 +293,12 @@ class RoBHeatmapPlot extends D3Visualization {
             .enter()
             .append("text")
             .attr("x", d => x(d[self.xField]) + half_width)
-            .attr("y", d => y(d[self.yField]) + quarter_width)
+            .attr(
+                "y",
+                d =>
+                    y(d[self.yField]) +
+                    (d.direction == BIAS_DIRECTION_UP ? quarter_width : three_quarter_width)
+            )
             .attr("text-anchor", "middle")
             .attr("dy", "3.5px")
             .attr("class", function(d) {
