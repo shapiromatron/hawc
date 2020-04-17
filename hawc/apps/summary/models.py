@@ -1,8 +1,10 @@
 import json
 import logging
+import os
 from operator import methodcaller
 from typing import Dict
 
+import pandas as pd
 from django.apps import apps
 from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
@@ -16,7 +18,13 @@ from treebeard.mp_tree import MP_Node
 from ..animal.exports import EndpointFlatDataPivot, EndpointGroupFlatDataPivot
 from ..animal.models import Endpoint
 from ..assessment.models import Assessment, BaseEndpoint, DoseUnits
-from ..common.helper import HAWCDjangoJSONEncoder, HAWCtoDateString, SerializerHelper, tryParseInt
+from ..common.helper import (
+    FlatExport,
+    HAWCDjangoJSONEncoder,
+    HAWCtoDateString,
+    SerializerHelper,
+    tryParseInt,
+)
 from ..common.models import get_model_copy_name
 from ..epi.exports import OutcomeDataPivot
 from ..epi.models import Outcome
@@ -461,10 +469,16 @@ class DataPivot(models.Model):
         return self.assessment
 
     def get_download_url(self):
-        return reverse("summary:dp_data", kwargs={"pk": self.assessment_id, "slug": self.slug})
+        return reverse("summary:api:data_pivot-data", args=(self.id,))
 
     def get_data_url(self):
         return self.get_download_url() + "?format=tsv"
+
+    def get_dataset(self) -> FlatExport:
+        if hasattr(self, "datapivotupload"):
+            return self.datapivotupload.get_dataset()
+        else:
+            return self.datapivotquery.get_dataset()
 
     @property
     def visual_type(self):
@@ -532,6 +546,12 @@ class DataPivotUpload(DataPivot):
     def _update_settings_across_assessments(self, cw: Dict) -> str:
         # no changes required
         return self.settings
+
+    def get_dataset(self) -> FlatExport:
+        worksheet_name = self.worksheet_name if len(self.worksheet_name) > 0 else 0
+        df = pd.read_excel(self.excel_file.file, sheet_name=worksheet_name)
+        filename = os.path.splitext(os.path.basename(self.excel_file.file.name))[0]
+        return FlatExport(df=df, filename=filename)
 
 
 class DataPivotQuery(DataPivot):
@@ -644,37 +664,30 @@ class DataPivotQuery(DataPivot):
 
         return qs
 
-    def _get_dataset_exporter(self, qs, format_):
+    def _get_dataset_exporter(self, qs):
         if self.evidence_type == BIOASSAY:
 
             # select export class
             if self.export_style == self.EXPORT_GROUP:
-                Exporter = EndpointGroupFlatDataPivot
+                ExportClass = EndpointGroupFlatDataPivot
             elif self.export_style == self.EXPORT_ENDPOINT:
-                Exporter = EndpointFlatDataPivot
+                ExportClass = EndpointFlatDataPivot
 
-            exporter = Exporter(
+            exporter = ExportClass(
                 qs,
                 assessment=self.assessment,
-                export_format=format_,
                 filename=f"{self.assessment}-animal-bioassay",
                 preferred_units=self.preferred_units,
             )
 
         elif self.evidence_type == EPI:
             exporter = OutcomeDataPivot(
-                qs,
-                assessment=self.assessment,
-                export_format=format_,
-                filename=f"{self.assessment}-epi",
+                qs, assessment=self.assessment, filename=f"{self.assessment}-epi",
             )
 
         elif self.evidence_type == EPI_META:
             exporter = MetaResultFlatDataPivot(
-                qs,
-                assessment=self.assessment,
-                export_format=format_,
-                filename=f"{self.assessment}-epi-meta-analysis",
+                qs, assessment=self.assessment, filename=f"{self.assessment}-epi",
             )
 
         elif self.evidence_type == IN_VITRO:
@@ -687,10 +700,7 @@ class DataPivotQuery(DataPivot):
 
             # generate export
             exporter = Exporter(
-                qs,
-                assessment=self.assessment,
-                export_format=format_,
-                filename=f"{self.assessment}-invitro",
+                qs, assessment=self.assessment, filename=f"{self.assessment}-invitro",
             )
 
         return exporter
@@ -699,10 +709,10 @@ class DataPivotQuery(DataPivot):
         filters = self._get_dataset_filters()
         return self._get_dataset_queryset(filters)
 
-    def get_dataset(self, format_):
+    def get_dataset(self) -> FlatExport:
         qs = self.get_queryset()
-        exporter = self._get_dataset_exporter(qs, format_)
-        return exporter.build_response()
+        exporter = self._get_dataset_exporter(qs)
+        return exporter.build_export()
 
     @property
     def visual_type(self):

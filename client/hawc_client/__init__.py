@@ -112,7 +112,7 @@ class HawcSession:
         yield response_json["results"]
         # Prevents divide by zero if there are no results
         if len(response_json["results"]) == 0:
-            raise StopIteration
+            return
         num_pages = math.ceil(response_json["count"] / len(response_json["results"]))
         with tqdm(desc="Iterating pages", initial=1, total=num_pages) as progress_bar:
             while response_json["next"] is not None:

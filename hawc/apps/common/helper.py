@@ -4,15 +4,17 @@ import logging
 import re
 import uuid
 from collections import OrderedDict
+from dataclasses import dataclass
+from typing import Dict
 
 import pandas as pd
 from django.conf import settings
 from django.core.cache import cache
 from django.core.serializers.json import DjangoJSONEncoder
+from django.db.models import QuerySet
 from django.utils import html
 from django.utils.encoding import force_text
 from rest_framework.renderers import JSONRenderer
-from rest_framework.response import Response
 
 
 def HAWCtoDateString(datetime):
@@ -157,13 +159,24 @@ class SerializerHelper(object):
         cls.delete_caches(Model, ids)
 
 
-class FlatFileExporter(object):
+@dataclass(frozen=True)
+class FlatExport:
     """
-    Base class used to generate flat-file exports of serialized data.
+    Response class of an exporter method.
     """
 
-    def __init__(self, queryset, **kwargs):
+    df: pd.DataFrame
+    filename: str
+
+
+class FlatFileExporter:
+    """
+    Base class used to generate tabular dataset exports.
+    """
+
+    def __init__(self, queryset: QuerySet, filename: str = "hawc-export", **kwargs):
         self.queryset = queryset
+        self.filename = filename
         self.kwargs = kwargs
 
     def _get_header_row(self):
@@ -172,25 +185,16 @@ class FlatFileExporter(object):
     def _get_data_rows(self):
         raise NotImplementedError()
 
-    @classmethod
-    def _get_tags(cls, e):
-        returnValue = ""
+    @staticmethod
+    def get_flattened_tags(dict: Dict, key: str) -> str:
+        values = [tag.get("name", "") for tag in dict.get(key, [])]
+        return f"|{'|'.join(values)}|"
 
-        if "effects" in e:
-            """ This element is an Outcome element with an "effects" field """
-            effects = [tag["name"] for tag in e["effects"]]
+    def build_df(self) -> pd.DataFrame:
+        header_row = self._get_header_row()
+        data_rows = self._get_data_rows()
+        return pd.DataFrame(data=data_rows, columns=header_row)
 
-            if len(effects) > 0:
-                returnValue = f"|{'|'.join(effects)}|"
-        elif "resulttags" in e:
-            """ This element is a Result element with a "resulttags" field """
-            resulttags = [tag["name"] for tag in e["resulttags"]]
-
-            if len(resulttags) > 0:
-                returnValue = f"|{'|'.join(resulttags)}|"
-
-        return returnValue
-
-    def build_response(self):
-        dataframe = pd.DataFrame(data=self._get_data_rows(), columns=self._get_header_row())
-        return Response(dataframe)
+    def build_export(self) -> FlatExport:
+        df = self.build_df()
+        return FlatExport(df, self.filename)
