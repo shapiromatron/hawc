@@ -19,11 +19,11 @@ from ..animal.exports import EndpointFlatDataPivot, EndpointGroupFlatDataPivot
 from ..animal.models import Endpoint
 from ..assessment.models import Assessment, BaseEndpoint, DoseUnits
 from ..common.helper import (
+    FlatExport,
     HAWCDjangoJSONEncoder,
     HAWCtoDateString,
     SerializerHelper,
     tryParseInt,
-    FlatExport,
 )
 from ..common.models import get_model_copy_name
 from ..epi.exports import OutcomeDataPivot
