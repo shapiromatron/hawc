@@ -2,13 +2,14 @@ import $ from "$";
 
 import Crossview from "./Crossview";
 import EndpointAggregation from "./EndpointAggregation";
+import ExternalSiteVisual from "./ExternalSiteVisual";
 import RoBBarchart from "./RoBBarchart";
 import RoBHeatmap from "./RoBHeatmap";
 import LiteratureTagtree from "./LiteratureTagtree";
 
 class Visual {
     static get_object(id, cb) {
-        $.get("/summary/api/visual/{0}/".printf(id), function(d) {
+        $.get(`/summary/api/visual/${id}/`, function(d) {
             var Cls;
             switch (d.visual_type) {
                 case "animal bioassay endpoint aggregation":
@@ -27,6 +28,9 @@ class Visual {
                     break;
                 case "literature tagtree":
                     Cls = LiteratureTagtree;
+                    break;
+                case "embedded external website":
+                    Cls = ExternalSiteVisual;
                     break;
                 default:
                     throw `Error - unknown visualization-type: ${d.visual_type}`;
