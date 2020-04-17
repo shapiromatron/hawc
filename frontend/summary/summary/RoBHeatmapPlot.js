@@ -4,7 +4,7 @@ import d3 from "d3";
 
 import HAWCModal from "utils/HAWCModal";
 
-import {getMultiScoreDisplaySettings} from "riskofbias/constants";
+import {getMultiScoreDisplaySettings, BIAS_DIRECTION_UP} from "riskofbias/constants";
 import RiskOfBiasScore from "riskofbias/RiskOfBiasScore";
 import {renderCrossStudyDisplay} from "riskofbias/robTable/components/CrossStudyDisplay";
 import {renderRiskOfBiasDisplay} from "riskofbias/robTable/components/RiskOfBiasDisplay";
@@ -109,6 +109,7 @@ class RoBHeatmapPlot extends D3Visualization {
                         metric: robArray[0].data.metric,
                         metric_label: metric_name,
                         score_text: displayData.symbolShortText,
+                        direction_compact: displayData.biasDirectionCompact,
                         score_color: displayData.svgStyle.fill,
                         score_text_color: robArray[0].data.score_text_color,
                     });
@@ -192,6 +193,7 @@ class RoBHeatmapPlot extends D3Visualization {
             y = this.y_scale,
             width = this.cell_size,
             half_width = width / 2,
+            quarter_width = width * 0.25,
             robName = this.data.assessment_rob_name,
             showSQs = function(v) {
                 self.print_details(self.modal.getBody(), $(this).data("robs"));
@@ -282,6 +284,35 @@ class RoBHeatmapPlot extends D3Visualization {
             })
             .style("fill", d => d.score_text_color)
             .text(d => d.score_text);
+
+        this.direction = this.cells_group
+            .selectAll("svg.text")
+            .data(this.cells_data)
+            .enter()
+            .append("text")
+            .attr("x", d => x(d[self.xField]) + half_width)
+            .attr("y", d => y(d[self.yField]) + quarter_width)
+            .attr("text-anchor", "middle")
+            .attr("dy", "3.5px")
+            .attr("class", function(d) {
+                var returnValue = "centeredLabel";
+
+                if (
+                    typeof self.data != "undefined" &&
+                    typeof self.data.aggregation != "undefined" &&
+                    typeof self.data.aggregation.metrics_dataset != "undefined" &&
+                    d < self.data.aggregation.metrics_dataset.length &&
+                    typeof self.data.aggregation.metrics_dataset[d].domain_is_overall_confidence ==
+                        "boolean" &&
+                    self.data.aggregation.metrics_dataset[d].domain_is_overall_confidence
+                ) {
+                    returnValue = "heatmap_selectable_bold";
+                }
+
+                return returnValue;
+            })
+            .style("fill", d => d.score_text_color)
+            .text(d => d.direction_compact);
 
         $(".x_axis text")
             .each(this.xIsStudy ? getStudySQs : getMetricSQs)

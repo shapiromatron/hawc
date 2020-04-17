@@ -80,6 +80,11 @@ const NA_KEYS = [10, 20],
     BIAS_DIRECTION_UNKNOWN = 0,
     BIAS_DIRECTION_UP = 1,
     BIAS_DIRECTION_DOWN = 2,
+    BIAS_DIRECTION_COMPACT = {
+        [BIAS_DIRECTION_UNKNOWN]: "-",
+        [BIAS_DIRECTION_UP]: "🠹",
+        [BIAS_DIRECTION_DOWN]: "🠻",
+    },
     BIAS_DIRECTION_SIMPLE = {
         [BIAS_DIRECTION_UNKNOWN]: "?",
         [BIAS_DIRECTION_UP]: "⬆",
@@ -116,6 +121,10 @@ const NA_KEYS = [10, 20],
                 biasDirection == BIAS_DIRECTION_UNKNOWN
                     ? ""
                     : BIAS_DIRECTION_VERBOSE[biasDirection],
+            biasDirectionCompact =
+                biasDirection == BIAS_DIRECTION_UNKNOWN
+                    ? ""
+                    : BIAS_DIRECTION_COMPACT[biasDirection],
             reactStyle,
             svgStyle,
             cssStyle;
@@ -153,8 +162,10 @@ const NA_KEYS = [10, 20],
             cssStyle,
             symbolText,
             symbolShortText,
+            biasDirection,
             biasDirectionSimple,
             biasDirectionVerbose,
+            biasDirectionCompact,
             svgStyle,
         };
     },
@@ -178,6 +189,7 @@ export {
     BIAS_DIRECTION_DOWN,
     BIAS_DIRECTION_SIMPLE,
     BIAS_DIRECTION_VERBOSE,
+    BIAS_DIRECTION_COMPACT,
     SCORE_BAR_WIDTH_PERCENTAGE,
     COLLAPSED_NR_FIELDS_DESCRIPTION,
     getMultiScoreDisplaySettings,
