@@ -4,7 +4,6 @@ import {VelocityComponent} from "velocity-react";
 
 import {
     SCORE_BAR_WIDTH_PERCENTAGE,
-    BIAS_DIRECTION_SIMPLE,
     BIAS_DIRECTION_VERBOSE,
     BIAS_DIRECTION_UNKNOWN,
 } from "riskofbias/constants";
