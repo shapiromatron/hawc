@@ -73,4 +73,9 @@ def test_BulkReferenceTagSerializer(db_keys):
     serializer = BulkReferenceTagSerializer(data=data, context=context)
     assert serializer.is_valid() is True
     serializer.bulk_create_tags()
-    assert ReferenceTags.objects.as_dataframe(db_keys.assessment_working).to_csv(index=False) == csv
+    assert (
+        ReferenceTags.objects.as_dataframe(db_keys.assessment_working).to_csv(
+            index=False, line_terminator="\n"
+        )
+        == csv
+    )

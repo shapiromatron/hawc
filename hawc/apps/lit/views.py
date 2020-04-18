@@ -21,7 +21,7 @@ from ..common.views import (
     ProjectManagerOrHigherMixin,
     TeamMemberOrHigherMixin,
 )
-from . import constants, exports, forms, models
+from . import constants, forms, models
 
 
 class LitOverview(BaseList):
@@ -173,31 +173,6 @@ class SearchDelete(BaseDelete):
 
     def get_success_url(self):
         return reverse_lazy("lit:search_list", kwargs={"pk": self.assessment.pk})
-
-
-class SearchDownloadExcel(BaseDetail):
-    model = models.Search
-
-    def get_object(self, **kwargs):
-        obj = get_object_or_404(
-            models.Search,
-            slug=self.kwargs.get(self.slug_url_kwarg),
-            assessment=self.kwargs.get("pk"),
-        )
-        return super().get_object(object=obj)
-
-    def get(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        exporter = exports.ReferenceFlatComplete(
-            self.object.references.all(),
-            export_format="excel",
-            filename=self.object.slug,
-            sheet_name=self.object.slug,
-            assessment=self.assessment,
-            tags=models.ReferenceFilterTag.get_all_tags(self.assessment.id, json_encode=False),
-            include_parent_tag=False,
-        )
-        return exporter.build_response()
 
 
 class SearchQuery(BaseUpdate):

@@ -93,11 +93,6 @@ urlpatterns = [
         views.SearchQuery.as_view(),
         name="search_query",
     ),
-    url(
-        r"^assessment/(?P<pk>\d+)/search/(?P<slug>[\w-]+)/download/$",
-        views.SearchDownloadExcel.as_view(),
-        name="search_download_excel",
-    ),
     # CRUD import
     url(r"^assessment/(?P<pk>\d+)/import/new/$", views.ImportNew.as_view(), name="import_new",),
     url(

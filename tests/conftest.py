@@ -19,6 +19,7 @@ class Keys:
     def __init__(self):
         self.assessment_working = 1
         self.assessment_final = 2
+        self.assessment_client = 3
         self.assessment_keys = [1, 2]
 
         self.study_working = 1
@@ -44,6 +45,11 @@ def test_db(django_db_setup, django_db_blocker):
 @pytest.fixture
 def db_keys():
     return _keys
+
+
+@pytest.fixture
+def set_db_keys(request):
+    request.cls.db_keys = _keys
 
 
 @pytest.fixture(scope="session")
