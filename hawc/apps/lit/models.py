@@ -107,7 +107,7 @@ class LiteratureAssessment(models.Model):
 
     @property
     def topic_tsne_data_filename(self) -> str:
-        return f"assessment-{self.assessment_id}.parquet"
+        return f"assessment-{self.assessment_id}.pkl"
 
     def create_topic_tsne_data(self) -> None:
         refs = Reference.objects.filter(assessment=1).values_list("id", "title", "abstract")
@@ -121,9 +121,7 @@ class LiteratureAssessment(models.Model):
         tfidf_transformer = TfidfTransformer()
         X_train_tfidf = tfidf_transformer.fit_transform(x_counts)
         n_topics = int(max(min(30, np.sqrt(df.shape[0])), 10))
-        model = NMF(
-            n_components=n_topics, random_state=1, alpha=0.1, l1_ratio=0.5, init="nndsvd"
-        ).fit(X_train_tfidf.T)
+        model = NMF(n_components=n_topics, random_state=1, alpha=0.1, l1_ratio=0.5, init="nndsvd")
         term_maps = model.fit_transform(X_train_tfidf.T)
         nmf_embedded = TSNE(n_components=2, perplexity=20).fit_transform(model.components_.T)
         df.drop(columns=["text"], inplace=True)
