@@ -389,7 +389,7 @@ class Donut extends D3Plot {
         this.subset_div.append(`<h4>${metric.parent_name}</h4>`);
         var ol = $('<ol class="score-details"></ol>'),
             div = $("<div>")
-                .text(metric.score_text)
+                .text(metric.score_text + metric.direction_simple)
                 .attr("class", "scorebox")
                 .css(metric.score_css_style),
             metric_txt = $("<b>").text(metric.criterion),
