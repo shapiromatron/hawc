@@ -790,6 +790,9 @@ class ExternalSiteForm(VisualForm):
         external_url = urlunparse(("https", url.netloc, url.path, "", "", ""))
         external_url_hostname = urlunparse(("https", url.netloc, "", "", "", ""))
 
+        if url.path == "" or url.path == "/":
+            raise forms.ValidationError("A URL path must be specified.")
+
         external_url_query_args = []
         if url.netloc == self.DOMAIN_TABLEAU:
             external_url_query_args = [":showVizHome=no", ":embed=y"]
