@@ -20,15 +20,21 @@ class TableauDashboard extends Component {
 
     render() {
         const {hostUrl, path, queryArgs} = this.props,
-            contentSize = h.getHawcContentSize();
+            contentSize = h.getHawcContentSize(),
+            MIN_HEIGHT = 600,
+            MIN_WIDTH = 700,
+            height = Math.max(contentSize.height, MIN_HEIGHT),
+            width = Math.max(contentSize.width, MIN_WIDTH);
+
+        console.log(height, width);
 
         let fullPath = queryArgs && queryArgs.length > 0 ? `${path}?${queryArgs.join("&")}` : path;
 
         return (
             <object
                 className="tableauViz"
-                height={`${contentSize.height}px`}
-                width={`${contentSize.width}px`}
+                height={`${height}px`}
+                width={`${width}px`}
                 style={{display: "none"}}>
                 <param name="host_url" value={hostUrl} />
                 <param name="path" value={fullPath} />

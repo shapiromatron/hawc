@@ -735,8 +735,8 @@ class ExternalSiteForm(VisualForm):
         <p class="help-block">
             Embed an external website. The following websites can be linked to:
         </p>
-        <ul>
-            <li><a href="https://public.tableau.com/">Tableau (public)</a></li>
+        <ul class="help-block">
+            <li><a href="https://public.tableau.com/">Tableau (public)</a> - press the "share" icon and then select the URL in the "link" text box</li>
         </ul>
         <p class="help-block">
             If you'd like to link to another website, please contact us.
