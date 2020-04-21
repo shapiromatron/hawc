@@ -394,9 +394,7 @@ class Donut extends D3Plot {
                 .css(metric.score_css_style),
             metric_txt = $("<b>").text(metric.criterion),
             direction_txt =
-                metric.direction_verbose == ""
-                    ? null
-                    : $("<p>").html("Bias direction " + metric.direction_verbose),
+                metric.direction_verbose == "" ? null : $("<p>").html(metric.direction_verbose),
             notes_txt = $("<p>")
                 .html(metric.notes)
                 .css({height: 250, overflow: "auto"});
