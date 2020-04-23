@@ -1,0 +1,19 @@
+{% extends 'portal.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block title %}
+{{assessment}} | Literature Review | {{crud}} {{type|lower}} | HAWC
+{% endblock %}
+
+{% block breadcrumbs %}
+<li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{ assessment }}</a><span class="divider">/</span></li>
+<li><a href="{% url 'lit:overview' assessment.pk %}">Literature Review</a><span class="divider">/</span></li>
+<li class="active">{{crud}} literature assessment settings<span class="divider">/</span></li>
+{% endblock %}
+
+{% block content %}
+
+{% crispy form %}
+
+{% endblock %}

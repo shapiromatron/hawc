@@ -1,19 +1,17 @@
-import csv
 import decimal
 import hashlib
 import logging
 import re
 import uuid
 from collections import OrderedDict
-from datetime import datetime
-from io import BytesIO, StringIO
+from dataclasses import dataclass
+from typing import Dict
 
 import pandas as pd
-import xlsxwriter
 from django.conf import settings
 from django.core.cache import cache
 from django.core.serializers.json import DjangoJSONEncoder
-from django.shortcuts import HttpResponse
+from django.db.models import QuerySet
 from django.utils import html
 from django.utils.encoding import force_text
 from rest_framework.renderers import JSONRenderer
@@ -161,22 +159,25 @@ class SerializerHelper(object):
         cls.delete_caches(Model, ids)
 
 
-class FlatFileExporter(object):
+@dataclass(frozen=True)
+class FlatExport:
     """
-    Base class used to generate flat-file exports of serialized data.
+    Response class of an exporter method.
     """
 
-    def __init__(self, queryset, export_format, **kwargs):
+    df: pd.DataFrame
+    filename: str
+
+
+class FlatFileExporter:
+    """
+    Base class used to generate tabular dataset exports.
+    """
+
+    def __init__(self, queryset: QuerySet, filename: str = "hawc-export", **kwargs):
         self.queryset = queryset
-        self.export_format = export_format
+        self.filename = filename
         self.kwargs = kwargs
-
-        if self.export_format == "tsv":
-            self.exporter = TSVFileBuilder(**kwargs)
-        elif self.export_format == "excel":
-            self.exporter = ExcelFileBuilder(**kwargs)
-        else:
-            raise ValueError(f"export_format not found: {self.export_format}")
 
     def _get_header_row(self):
         raise NotImplementedError()
@@ -184,172 +185,16 @@ class FlatFileExporter(object):
     def _get_data_rows(self):
         raise NotImplementedError()
 
-    @classmethod
-    def _get_tags(cls, e):
-        returnValue = ""
+    @staticmethod
+    def get_flattened_tags(dict: Dict, key: str) -> str:
+        values = [tag.get("name", "") for tag in dict.get(key, [])]
+        return f"|{'|'.join(values)}|"
 
-        if "effects" in e:
-            """ This element is an Outcome element with an "effects" field """
-            effects = [tag["name"] for tag in e["effects"]]
-
-            if len(effects) > 0:
-                returnValue = f"|{'|'.join(effects)}|"
-        elif "resulttags" in e:
-            """ This element is a Result element with a "resulttags" field """
-            resulttags = [tag["name"] for tag in e["resulttags"]]
-
-            if len(resulttags) > 0:
-                returnValue = f"|{'|'.join(resulttags)}|"
-
-        return returnValue
-
-    def build_response(self):
+    def build_df(self) -> pd.DataFrame:
         header_row = self._get_header_row()
         data_rows = self._get_data_rows()
-        return self.exporter.generate_response(header_row, data_rows)
+        return pd.DataFrame(data=data_rows, columns=header_row)
 
-    def build_dataframe(self):
-        header_row = self._get_header_row()
-        data_rows = self._get_data_rows()
-        return self.exporter.generate_dataframe(header_row, data_rows)
-
-
-class FlatFile(object):
-    """
-    Generic file-builder object, providing an interface for generation of
-    some-type of flat-file-export.
-
-    Optional initialization argument:
-
-        - `filename`: String filename, without extension (default: "download")
-    """
-
-    def __init__(self, filename="download", **kwargs):
-        self.filename = filename
-        self.kwargs = kwargs
-
-    def generate_response(self, header_row, data_rows):
-        self._setup()
-        self._write_header_row(header_row)
-        self._write_data_rows(data_rows)
-        return self._django_response()
-
-    def generate_dataframe(self, header_row, data_rows):
-        raise NotImplementedError()
-
-    def _setup(self):
-        raise NotImplementedError()
-
-    def _write_header_row(self, header_row):
-        # `header_row` is a list of strings
-        raise NotImplementedError()
-
-    def _write_data_rows(self, data_rows):
-        # `data_rows` is a list of lists
-        raise NotImplementedError()
-
-    def _django_response(self):
-        raise NotImplementedError()
-
-
-class ExcelFileBuilder(FlatFile):
-    """
-    Implementation of FlatFile to generate an Excel workbook with a single
-    Excel worksheet. Has one header row with minor styles applied.
-
-    Optional initialization argument:
-
-    - `sheet_name`: String name of worksheet (default: "Sheet1")
-
-    """
-
-    def _setup(self):
-        self.output = BytesIO()
-        self.wb = xlsxwriter.Workbook(self.output)
-        self._add_worksheet(sheet_name=self.kwargs.get("sheet_name", "Sheet1"))
-
-    def _add_worksheet(self, sheet_name="Sheet1"):
-        """
-        Create a new blank worksheet, and make sure the worksheet name is valid:
-        - Make sure the name you entered does not exceed 31 characters.
-        - Make sure the name does not contain any of the following characters: : \\ / ? * [ or ]
-        - Make sure you did not leave the name blank.
-        http://stackoverflow.com/questions/451452/
-        """
-        sheet_name = re.sub(r"[\:\\/\?\*\[\]]+", r"-", sheet_name)[:31]
-        self.ws = self.wb.add_worksheet(sheet_name)
-
-    def _write_header_row(self, header_row):
-        # set formatting and freeze panes for header-row
-        header_fmt = self.wb.add_format({"bold": True})
-        self.ws.freeze_panes(1, 0)
-        self.ncols = len(header_row)
-
-        # write header-rows
-        for col, val in enumerate(header_row):
-            self.ws.write(0, col, val, header_fmt)
-
-    def _write_data_rows(self, data_rows):
-        date_format = self.wb.add_format({"num_format": "dd/mm/yy"})
-
-        def write_cell(r, c, val):
-            if type(val) is bool:
-                return self.ws.write_boolean(r, c, val)
-            elif type(val) is datetime:
-                return self.ws.write_datetime(r, c, val.replace(tzinfo=None), date_format)
-
-            try:
-                val = float(val)
-            except Exception:
-                pass
-
-            return self.ws.write(r, c, val)
-
-        r = 0
-        for row in data_rows:
-            r += 1
-            for c, val in enumerate(row):
-                write_cell(r, c, val)
-
-        self.ws.autofilter(0, 0, r, self.ncols - 1)
-
-    def _django_response(self):
-        fn = f"{self.filename}.xlsx"
-        self.wb.close()
-        self.output.seek(0)
-        response = HttpResponse(
-            self.output.read(),
-            content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        )
-        response["Content-Disposition"] = f'attachment; filename="{fn}"'
-        return response
-
-    def generate_dataframe(self, header_row, data_rows):
-        self._setup()
-        self._write_header_row(header_row)
-        self._write_data_rows(data_rows)
-        self.wb.close()
-        self.output.seek(0)
-        return pd.read_excel(self.output)
-
-
-class TSVFileBuilder(FlatFile):
-    """
-    Implementation of FlatFile to generate an tab-separated value file.
-    """
-
-    def _setup(self):
-        self.output = StringIO()
-        self.tsv = csv.writer(self.output, dialect="excel-tab")
-
-    def _write_header_row(self, header_row):
-        self.tsv.writerow(header_row)
-
-    def _write_data_rows(self, data_rows):
-        self.tsv.writerows(data_rows)
-
-    def _django_response(self):
-        self.output.seek(0)
-        response = HttpResponse(self.output, content_type="text/tab-separated-values")
-        response["Content-Disposition"] = f'attachment; filename="{self.filename}.tsv"'
-        return response
+    def build_export(self) -> FlatExport:
+        df = self.build_df()
+        return FlatExport(df, self.filename)

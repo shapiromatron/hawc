@@ -16,6 +16,31 @@ from ..common.forms import BaseFormHelper, addPopupLink
 from . import constants, models
 
 
+class LiteratureAssessmentForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        qs = models.ReferenceFilterTag.get_assessment_qs(self.instance.assessment_id)
+        self.fields["extraction_tag"].queryset = qs
+        self.fields["extraction_tag"].choices = [(el.id, el.get_nested_name()) for el in qs]
+        self.fields["extraction_tag"].choices.insert(0, (None, "<none>"))
+        self.helper = self.setHelper()
+
+    class Meta:
+        model = models.LiteratureAssessment
+        fields = ("extraction_tag",)
+
+    def setHelper(self):
+        if self.instance.id:
+            inputs = {
+                "legend_text": "Update literature assessment settings",
+                "help_text": "Update literature settings for this assessment",
+                "cancel_url": reverse_lazy("lit:tags_update", args=(self.instance.assessment_id,)),
+            }
+
+        helper = BaseFormHelper(self, **inputs)
+        return helper
+
+
 class SearchForm(forms.ModelForm):
 
     title_str = "Literature Search"

@@ -83,11 +83,6 @@ urlpatterns = [
         name="dp_detail",
     ),
     url(
-        r"^data-pivot/assessment/(?P<pk>\d+)/(?P<slug>[\w-]+)/data/$",
-        views.DataPivotData.as_view(),
-        name="dp_data",
-    ),
-    url(
         r"^data-pivot/assessment/(?P<pk>\d+)/(?P<slug>[\w-]+)/update/$",
         views.DataPivotUpdateSettings.as_view(),
         name="dp_update",

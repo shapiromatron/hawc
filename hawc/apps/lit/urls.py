@@ -17,6 +17,11 @@ urlpatterns = [
     url(r"^assessment/tags/json/$", views.TagsJSON.as_view(), name="tags_list"),
     url(r"^assessment/(?P<pk>\d+)/tags/update/$", views.TagsUpdate.as_view(), name="tags_update",),
     url(r"^assessment/(?P<pk>\d+)/tags/update/copy/$", views.TagsCopy.as_view(), name="tags_copy",),
+    url(
+        r"^assessment/(?P<pk>\d+)/update/$",
+        views.LiteratureAssessmentUpdate.as_view(),
+        name="literature_assessment_update",
+    ),
     # Reference-level details
     url(r"^reference/(?P<pk>\d+)/$", views.RefDetail.as_view(), name="ref_detail"),
     url(r"^reference/(?P<pk>\d+)/edit/$", views.RefEdit.as_view(), name="ref_edit"),
@@ -82,11 +87,6 @@ urlpatterns = [
         r"^assessment/(?P<pk>\d+)/search/(?P<slug>[\w-]+)/query/$",
         views.SearchQuery.as_view(),
         name="search_query",
-    ),
-    url(
-        r"^assessment/(?P<pk>\d+)/search/(?P<slug>[\w-]+)/download/$",
-        views.SearchDownloadExcel.as_view(),
-        name="search_download_excel",
     ),
     # CRUD import
     url(r"^assessment/(?P<pk>\d+)/import/new/$", views.ImportNew.as_view(), name="import_new",),

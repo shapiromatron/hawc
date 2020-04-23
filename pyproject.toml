@@ -16,3 +16,15 @@ exclude = '''
   | venv
 )/
 '''
+
+[tool.coverage.run]
+omit = [
+  "*migrations*",
+  "*urls.py",
+  "./build/",
+  "./hawc/main/*",
+  "./tests/*",
+  "./venv/*",
+  "*/bmds/*",
+  "*/litter_getter/*",
+]

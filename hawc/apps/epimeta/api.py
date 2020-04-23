@@ -29,8 +29,10 @@ class EpiMetaAssessmentViewset(
         Retrieve epidemiology metadata for assessment.
         """
         self.set_legacy_attr(pk)
-        exporter = exports.MetaResultFlatComplete(self.get_queryset(), export_format="excel",)
-        return Response(exporter.build_dataframe())
+        exporter = exports.MetaResultFlatComplete(
+            self.get_queryset(), filename=f"{self.assessment}-epi-meta"
+        )
+        return Response(exporter.build_export())
 
 
 class MetaProtocol(AssessmentViewset):

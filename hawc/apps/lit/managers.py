@@ -357,25 +357,22 @@ class ReferenceManager(BaseManager):
         return refs
 
     def get_references_ready_for_import(self, assessment):
-        ReferenceFilterTag = apps.get_model("lit", "ReferenceFilterTag")
         Study = apps.get_model("study", "Study")
-        try:
-            root_inclusion = (
-                ReferenceFilterTag.objects.get(name=f"assessment-{assessment.pk}")
-                .get_descendants()
-                .get(name="Inclusion")
-            )
+
+        root_inclusion = assessment.literature_settings.extraction_tag
+        inclusion_tags = []
+        if root_inclusion:
             inclusion_tags = list(root_inclusion.get_descendants().values_list("pk", flat=True))
             inclusion_tags.append(root_inclusion.pk)
-        except Exception:
-            inclusion_tags = []
-
-        return (
-            self.get_qs(assessment)
-            .filter(referencetags__tag_id__in=inclusion_tags)
-            .exclude(pk__in=Study.objects.get_qs(assessment).values_list("pk", flat=True))
-            .distinct()
-        )
+            return (
+                self.get_qs(assessment)
+                .filter(referencetags__tag_id__in=inclusion_tags)
+                .exclude(pk__in=Study.objects.get_qs(assessment).values_list("pk", flat=True))
+                .order_by("authors")
+                .distinct()
+            )
+        else:
+            return self.none()
 
     def get_references_with_tag(self, tag, descendants=False):
         tag_ids = [tag.id]
@@ -509,7 +506,9 @@ class ReferenceTagsManager(BaseManager):
             pd.DataFrame: A pandas dataframe
         """
         df = pd.DataFrame(
-            data=list(self.assessment_qs(assessment_id).values("tag_id", "content_object_id"))
+            data=list(self.assessment_qs(assessment_id).values("content_object_id", "tag_id",))
         )
-        df = df.rename(columns=dict(content_object_id="reference_id"))
+        df = df.rename(columns=dict(content_object_id="reference_id")).sort_values(
+            by=["reference_id", "tag_id"]
+        )
         return df

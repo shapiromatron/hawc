@@ -1,7 +1,5 @@
 import json
-import os
 
-import pandas as pd
 from django.http import Http404, HttpResponse, HttpResponseNotAllowed, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
@@ -163,8 +161,8 @@ class VisualizationCreate(BaseCreate):
 
     def get_template_names(self):
         visual_type = int(self.kwargs.get("visual_type"))
-        if visual_type == models.Visual.LITERATURE_TAGTREE:
-            return "summary/visual_form_literature_tagtree.html"
+        if visual_type in {models.Visual.LITERATURE_TAGTREE, models.Visual.EXTERNAL_SITE}:
+            return "summary/visual_form_django.html"
         else:
             return super().get_template_names()
 
@@ -203,8 +201,9 @@ class VisualizationUpdate(BaseUpdate):
             raise Http404
 
     def get_template_names(self):
-        if self.object.visual_type == models.Visual.LITERATURE_TAGTREE:
-            return "summary/visual_form_literature_tagtree.html"
+        visual_type = self.object.visual_type
+        if visual_type in {models.Visual.LITERATURE_TAGTREE, models.Visual.EXTERNAL_SITE}:
+            return "summary/visual_form_django.html"
         else:
             return super().get_template_names()
 
@@ -344,44 +343,6 @@ class DataPivotByIdDetail(RedirectView):
 class DataPivotDetail(GetDataPivotObjectMixin, BaseDetail):
     model = models.DataPivot
     template_name = "summary/datapivot_detail.html"
-
-
-class DataPivotData(GetDataPivotObjectMixin, BaseDetail):
-    model = models.DataPivot
-
-    def get_export_format(self):
-        format_ = self.request.GET.get("format", "excel")
-        if format_ not in ["tsv", "excel"]:
-            raise Http404()
-        return format_
-
-    def get(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        format_ = self.get_export_format()
-        if hasattr(self.object, "datapivotupload"):
-            if format_ == "excel":
-                response = HttpResponse(
-                    self.object.excel_file.file.read(),
-                    content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                )
-                fn = os.path.basename(self.object.excel_file.name)
-            else:
-                worksheet_name = self.object.worksheet_name
-                if worksheet_name == "":
-                    worksheet_name = 0
-                response = HttpResponse(
-                    pd.read_excel(self.object.excel_file.file, sheet_name=worksheet_name).to_csv(
-                        index=False, sep="\t"
-                    ),
-                    content_type="text/tab-separated-values",
-                )
-                fn = os.path.basename(os.path.basename(self.object.excel_file.name)) + ".tsv"
-            response["Content-Disposition"] = f'attachment; filename="{fn}"'
-            return response
-        elif hasattr(self.object, "datapivotquery"):
-            return self.object.get_dataset(format_)
-        else:
-            raise Http404()
 
 
 class DataPivotUpdateSettings(GetDataPivotObjectMixin, BaseUpdate):
