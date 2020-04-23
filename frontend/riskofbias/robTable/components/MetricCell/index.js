@@ -30,7 +30,7 @@ class MetricCell extends Component {
                     className="score-cell-scores-span tooltips text-center"
                     data-toggle="tooltip"
                     title={firstScore.metric.name}>
-                    {displaySettings.symbolText} {displaySettings.biasDirectionSimple}
+                    {displaySettings.symbolText} {displaySettings.directionText}
                 </span>
             </div>
         );

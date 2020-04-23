@@ -4,7 +4,12 @@ import d3 from "d3";
 
 import HAWCModal from "utils/HAWCModal";
 
-import {getMultiScoreDisplaySettings, BIAS_DIRECTION_UP} from "riskofbias/constants";
+import {
+    getMultiScoreDisplaySettings,
+    BIAS_DIRECTION_UP,
+    BIAS_DIRECTION_DOWN,
+    BIAS_DIRECTION_COMPACT,
+} from "riskofbias/constants";
 import RiskOfBiasScore from "riskofbias/RiskOfBiasScore";
 import {renderCrossStudyDisplay} from "riskofbias/robTable/components/CrossStudyDisplay";
 import {renderRiskOfBiasDisplay} from "riskofbias/robTable/components/RiskOfBiasDisplay";
@@ -109,8 +114,7 @@ class RoBHeatmapPlot extends D3Visualization {
                         metric: robArray[0].data.metric,
                         metric_label: metric_name,
                         score_text: displayData.symbolShortText,
-                        direction: displayData.biasDirection,
-                        direction_compact: displayData.biasDirectionCompact,
+                        directions: displayData.directions,
                         score_color: displayData.svgStyle.fill,
                         score_text_color: robArray[0].data.score_text_color,
                     });
@@ -287,39 +291,43 @@ class RoBHeatmapPlot extends D3Visualization {
             .style("fill", d => d.score_text_color)
             .text(d => d.score_text);
 
-        this.direction = this.cells_group
+        this.direction_up = this.cells_group
             .selectAll("svg.text")
             .data(this.cells_data)
             .enter()
             .append("text")
             .attr("x", d => x(d[self.xField]) + half_width)
-            .attr(
-                "y",
-                d =>
-                    y(d[self.yField]) +
-                    (d.direction == BIAS_DIRECTION_UP ? quarter_width : three_quarter_width)
-            )
+            .attr("y", d => y(d[self.yField]) + quarter_width)
             .attr("text-anchor", "middle")
             .attr("dy", "3.5px")
-            .attr("class", function(d) {
-                var returnValue = "centeredLabel";
-
-                if (
-                    typeof self.data != "undefined" &&
-                    typeof self.data.aggregation != "undefined" &&
-                    typeof self.data.aggregation.metrics_dataset != "undefined" &&
-                    d < self.data.aggregation.metrics_dataset.length &&
-                    typeof self.data.aggregation.metrics_dataset[d].domain_is_overall_confidence ==
-                        "boolean" &&
-                    self.data.aggregation.metrics_dataset[d].domain_is_overall_confidence
-                ) {
-                    returnValue = "heatmap_selectable_bold";
-                }
-
-                return returnValue;
-            })
+            .attr("class", d =>
+                d.metric.domain.is_overall_confidence ? "heatmap_selectable_bold" : "centeredLabel"
+            )
             .style("fill", d => d.score_text_color)
-            .text(d => d.direction_compact);
+            .text(d =>
+                _.includes(d.directions, BIAS_DIRECTION_UP)
+                    ? BIAS_DIRECTION_COMPACT[BIAS_DIRECTION_UP]
+                    : null
+            );
+
+        this.direction_down = this.cells_group
+            .selectAll("svg.text")
+            .data(this.cells_data)
+            .enter()
+            .append("text")
+            .attr("x", d => x(d[self.xField]) + half_width)
+            .attr("y", d => y(d[self.yField]) + three_quarter_width)
+            .attr("text-anchor", "middle")
+            .attr("dy", "3.5px")
+            .attr("class", d =>
+                d.metric.domain.is_overall_confidence ? "heatmap_selectable_bold" : "centeredLabel"
+            )
+            .style("fill", d => d.score_text_color)
+            .text(d =>
+                _.includes(d.directions, BIAS_DIRECTION_DOWN)
+                    ? BIAS_DIRECTION_COMPACT[BIAS_DIRECTION_DOWN]
+                    : null
+            );
 
         $(".x_axis text")
             .each(this.xIsStudy ? getStudySQs : getMetricSQs)

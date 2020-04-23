@@ -4,7 +4,7 @@ import d3 from "d3";
 
 import D3Plot from "utils/D3Plot";
 
-import {getMultiScoreDisplaySettings} from "riskofbias/constants";
+import {getMultiScoreDisplaySettings, BIAS_DIRECTION_SIMPLE} from "riskofbias/constants";
 
 class Donut extends D3Plot {
     constructor(study, el) {
@@ -96,7 +96,7 @@ class Donut extends D3Plot {
                     weight: 1 / numMetrics,
                     score: defaultScore.score,
                     score_text: defaultScore.score_text,
-                    direction_simple: data.biasDirectionSimple,
+                    direction_simple: BIAS_DIRECTION_SIMPLE[defaultScore.bias_direction],
                     direction_verbose: data.biasDirectionVerbose,
                     score_svg_style: data.svgStyle,
                     score_css_style: data.cssStyle,
@@ -389,7 +389,7 @@ class Donut extends D3Plot {
         this.subset_div.append(`<h4>${metric.parent_name}</h4>`);
         var ol = $('<ol class="score-details"></ol>'),
             div = $("<div>")
-                .text(metric.score_text + metric.direction_simple)
+                .text(metric.score_text + " " + metric.direction_simple)
                 .attr("class", "scorebox")
                 .css(metric.score_css_style),
             metric_txt = $("<b>").text(metric.criterion),
