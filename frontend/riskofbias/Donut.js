@@ -4,7 +4,11 @@ import d3 from "d3";
 
 import D3Plot from "utils/D3Plot";
 
-import {getMultiScoreDisplaySettings, BIAS_DIRECTION_SIMPLE} from "riskofbias/constants";
+import {
+    getMultiScoreDisplaySettings,
+    BIAS_DIRECTION_SIMPLE,
+    BIAS_DIRECTION_VERBOSE,
+} from "riskofbias/constants";
 
 class Donut extends D3Plot {
     constructor(study, el) {
@@ -97,7 +101,7 @@ class Donut extends D3Plot {
                     score: defaultScore.score,
                     score_text: defaultScore.score_text,
                     direction_simple: BIAS_DIRECTION_SIMPLE[defaultScore.bias_direction],
-                    direction_verbose: data.biasDirectionVerbose,
+                    direction_verbose: BIAS_DIRECTION_VERBOSE[defaultScore.bias_direction],
                     score_svg_style: data.svgStyle,
                     score_css_style: data.cssStyle,
                     score_text_color: defaultScore.score_text_color,
