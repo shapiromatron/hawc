@@ -161,8 +161,8 @@ class VisualizationCreate(BaseCreate):
 
     def get_template_names(self):
         visual_type = int(self.kwargs.get("visual_type"))
-        if visual_type == models.Visual.LITERATURE_TAGTREE:
-            return "summary/visual_form_literature_tagtree.html"
+        if visual_type in {models.Visual.LITERATURE_TAGTREE, models.Visual.EXTERNAL_SITE}:
+            return "summary/visual_form_django.html"
         else:
             return super().get_template_names()
 
@@ -201,8 +201,9 @@ class VisualizationUpdate(BaseUpdate):
             raise Http404
 
     def get_template_names(self):
-        if self.object.visual_type == models.Visual.LITERATURE_TAGTREE:
-            return "summary/visual_form_literature_tagtree.html"
+        visual_type = self.object.visual_type
+        if visual_type in {models.Visual.LITERATURE_TAGTREE, models.Visual.EXTERNAL_SITE}:
+            return "summary/visual_form_django.html"
         else:
             return super().get_template_names()
 
