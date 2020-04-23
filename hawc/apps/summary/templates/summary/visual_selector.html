@@ -43,6 +43,8 @@
             {{assessment.get_rob_name_display}} barchart</option>
           <option data-showcase="#visual4" value="{% url 'summary:visualization_create' assessment.id 4 %}">
               Literature tagtree</option>
+          <option data-showcase="#visual5" value="{% url 'summary:visualization_create' assessment.id 5 %}">
+              Embedded external website</option>
         </select>
         <a id="create_btn" class="pull-right btn btn-primary span2" href="#">Select</a>
       </div>
@@ -142,6 +144,21 @@
       </p>
     </div>
 
+    <div id="visual5">
+      <h2>Embedded external website</h2>
+      <div class="row">
+        <img class="span10 offset1" src="{% static '/img/summary/external-tableau.png' %}">
+      </div>
+      <p class="help-block">
+        Embed an external website. The following websites can be linked to:
+      </p>
+      <ul>
+        <li><a href="https://public.tableau.com/">Tableau (public)</a></li>
+      </ul>
+      <p class="help-block">
+        If you'd like to link to another website, please <a href="{% url 'contact' %}">contact us</a>.
+      </p>
+    </div>
   </div>
 
 {% endblock %}
