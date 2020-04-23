@@ -293,7 +293,7 @@ class RoBHeatmapPlot extends D3Visualization {
 
         this.direction_up = this.cells_group
             .selectAll("svg.text")
-            .data(this.cells_data)
+            .data(_.filter(this.cells_data, d => _.includes(d.directions, BIAS_DIRECTION_UP)))
             .enter()
             .append("text")
             .attr("x", d => x(d[self.xField]) + half_width)
@@ -304,15 +304,11 @@ class RoBHeatmapPlot extends D3Visualization {
             )
             .style("font-size", "6px")
             .style("fill", d => d.score_text_color)
-            .text(d =>
-                _.includes(d.directions, BIAS_DIRECTION_UP)
-                    ? BIAS_DIRECTION_COMPACT[BIAS_DIRECTION_UP]
-                    : null
-            );
+            .text(BIAS_DIRECTION_COMPACT[BIAS_DIRECTION_UP]);
 
         this.direction_down = this.cells_group
             .selectAll("svg.text")
-            .data(this.cells_data)
+            .data(_.filter(this.cells_data, d => _.includes(d.directions, BIAS_DIRECTION_DOWN)))
             .enter()
             .append("text")
             .attr("x", d => x(d[self.xField]) + half_width)
@@ -324,11 +320,7 @@ class RoBHeatmapPlot extends D3Visualization {
             )
             .style("font-size", "6px")
             .style("fill", d => d.score_text_color)
-            .text(d =>
-                _.includes(d.directions, BIAS_DIRECTION_DOWN)
-                    ? BIAS_DIRECTION_COMPACT[BIAS_DIRECTION_DOWN]
-                    : null
-            );
+            .text(BIAS_DIRECTION_COMPACT[BIAS_DIRECTION_DOWN]);
 
         $(".x_axis text")
             .each(this.xIsStudy ? getStudySQs : getMetricSQs)
