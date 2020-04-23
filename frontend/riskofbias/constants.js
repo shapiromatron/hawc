@@ -87,8 +87,8 @@ const NA_KEYS = [10, 20],
     },
     BIAS_DIRECTION_COMPACT = {
         [BIAS_DIRECTION_UNKNOWN]: "",
-        [BIAS_DIRECTION_UP]: "⯅",
-        [BIAS_DIRECTION_DOWN]: "⯆",
+        [BIAS_DIRECTION_UP]: "▲",
+        [BIAS_DIRECTION_DOWN]: "▼",
     },
     BIAS_DIRECTION_SIMPLE = {
         [BIAS_DIRECTION_UNKNOWN]: "",

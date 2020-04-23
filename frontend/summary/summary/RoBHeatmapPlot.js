@@ -299,10 +299,10 @@ class RoBHeatmapPlot extends D3Visualization {
             .attr("x", d => x(d[self.xField]) + half_width)
             .attr("y", d => y(d[self.yField]) + quarter_width)
             .attr("text-anchor", "middle")
-            .attr("dy", "3.5px")
             .attr("class", d =>
                 d.metric.domain.is_overall_confidence ? "heatmap_selectable_bold" : "centeredLabel"
             )
+            .style("font-size", "6px")
             .style("fill", d => d.score_text_color)
             .text(d =>
                 _.includes(d.directions, BIAS_DIRECTION_UP)
@@ -317,11 +317,12 @@ class RoBHeatmapPlot extends D3Visualization {
             .append("text")
             .attr("x", d => x(d[self.xField]) + half_width)
             .attr("y", d => y(d[self.yField]) + three_quarter_width)
-            .attr("text-anchor", "middle")
             .attr("dy", "3.5px")
+            .attr("text-anchor", "middle")
             .attr("class", d =>
                 d.metric.domain.is_overall_confidence ? "heatmap_selectable_bold" : "centeredLabel"
             )
+            .style("font-size", "6px")
             .style("fill", d => d.score_text_color)
             .text(d =>
                 _.includes(d.directions, BIAS_DIRECTION_DOWN)
