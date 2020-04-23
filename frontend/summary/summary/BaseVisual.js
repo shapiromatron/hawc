@@ -11,7 +11,7 @@ class BaseVisual {
 
     build_row(opts) {
         let arr = [
-            '<a href="{0}">{1}</a>'.printf(this.data.url, this.data.title),
+            `<a href="${this.data.url}">${this.data.title}</a>`,
             this.data.visual_type,
             HAWCUtils.truncateChars(this.data.caption),
             this.data.created.toString(),
