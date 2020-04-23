@@ -219,7 +219,7 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
             for score, initial_score in zip(data["scores"], scores):
                 score["metric"] = metrics_dict[initial_score["metric_id"]]
 
-            override_options = models.RiskOfBias().get_override_options()
+            override_options = models.RiskOfBias(study=study).get_override_options()
         else:
             score_ids = [score["id"] for score in self.initial_data["scores"]]
             if models.RiskOfBiasScore.objects.filter(
@@ -260,11 +260,10 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
                     if ct_name not in override_options:
                         raise serializers.ValidationError(f"Invalid content type name: {ct_name}")
 
-                    if not is_create:
-                        if object_id not in override_options[ct_name]:
-                            raise serializers.ValidationError(
-                                f"Invalid content object: {ct_name}: {object_id}"
-                            )
+                    if object_id not in override_options[ct_name]:
+                        raise serializers.ValidationError(
+                            f"Invalid content object: {ct_name}: {object_id}"
+                        )
 
                     if ct_name not in content_types:
                         app_label, model = ct_name.split(".")

@@ -254,3 +254,34 @@ def test_riskofbias_create():
     resp = client.post(url, payload, format="json")
     assert resp.status_code == 400
     assert b"Multiple default scores for metric" in resp.content
+
+    # demonstrate overridden objects with a unsupported content type
+    RiskOfBias.objects.all().delete()
+    payload = build_upload_payload(study, pm_author, required_metrics, first_valid_score)
+    payload["scores"][0]["overridden_objects"] = [
+        {"content_type_name": "animal.dosingregime", "object_id": 999}
+    ]
+    resp = client.post(url, payload, format="json")
+    assert resp.status_code == 400
+    assert b"Invalid content type name" in resp.content
+
+    # demonstrate overridden objects with a valid content type but a bad object_id
+    RiskOfBias.objects.all().delete()
+    payload = build_upload_payload(study, pm_author, required_metrics, first_valid_score)
+    payload["scores"][0]["overridden_objects"] = [
+        {"content_type_name": "animal.animalgroup", "object_id": 999}
+    ]
+    resp = client.post(url, payload, format="json")
+    assert resp.status_code == 400
+    assert b"Invalid content object" in resp.content
+
+    # demonstrate valid overridden objects
+    RiskOfBias.objects.all().delete()
+    payload = build_upload_payload(study, pm_author, required_metrics, first_valid_score)
+    payload["scores"][0]["overridden_objects"] = [
+        {"content_type_name": "animal.animalgroup", "object_id": 1}
+    ]
+    resp = client.post(url, payload, format="json")
+    assert resp.status_code == 201
+    assert "created" in resp.data
+    assert "scores" in resp.data and len(resp.data["scores"]) == 2
