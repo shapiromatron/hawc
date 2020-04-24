@@ -47,9 +47,7 @@ def validSummaryTextChange(assessment_id):
         "status": "ok",
         "content": models.SummaryText.get_assessment_descendants(assessment_id, json_encode=False),
     }
-    return HttpResponse(
-        json.dumps(response, cls=HAWCDjangoJSONEncoder), content_type="application/json"
-    )
+    return HttpResponse(json.dumps(response, cls=HAWCDjangoJSONEncoder), content_type="application/json")
 
 
 class SummaryTextCreate(BaseCreate):
@@ -161,7 +159,11 @@ class VisualizationCreate(BaseCreate):
 
     def get_template_names(self):
         visual_type = int(self.kwargs.get("visual_type"))
-        if visual_type in {models.Visual.LITERATURE_TAGTREE, models.Visual.EXTERNAL_SITE}:
+        if visual_type in {
+            models.Visual.LITERATURE_TAGTREE,
+            models.Visual.EXTERNAL_SITE,
+            models.Visual.EXPLORE_HEATMAP,
+        }:
             return "summary/visual_form_django.html"
         else:
             return super().get_template_names()
@@ -172,9 +174,7 @@ class VisualizationCreate(BaseCreate):
         context["instance"] = {}
         context["visual_type"] = int(self.kwargs.get("visual_type"))
         context["smart_tag_form"] = forms.SmartTagForm(assessment_id=self.assessment.id)
-        context["rob_metrics"] = json.dumps(
-            list(RiskOfBiasMetric.objects.get_metrics_for_visuals(self.assessment.id))
-        )
+        context["rob_metrics"] = json.dumps(list(RiskOfBiasMetric.objects.get_metrics_for_visuals(self.assessment.id)))
         return context
 
 
@@ -202,7 +202,11 @@ class VisualizationUpdate(BaseUpdate):
 
     def get_template_names(self):
         visual_type = self.object.visual_type
-        if visual_type in {models.Visual.LITERATURE_TAGTREE, models.Visual.EXTERNAL_SITE}:
+        if visual_type in {
+            models.Visual.LITERATURE_TAGTREE,
+            models.Visual.EXTERNAL_SITE,
+            models.Visual.EXPLORE_HEATMAP,
+        }:
             return "summary/visual_form_django.html"
         else:
             return super().get_template_names()
@@ -213,9 +217,7 @@ class VisualizationUpdate(BaseUpdate):
         context["instance"] = self.object.get_json()
         context["visual_type"] = self.object.visual_type
         context["smart_tag_form"] = forms.SmartTagForm(assessment_id=self.assessment.id)
-        context["rob_metrics"] = json.dumps(
-            list(RiskOfBiasMetric.objects.get_metrics_for_visuals(self.assessment.id))
-        )
+        context["rob_metrics"] = json.dumps(list(RiskOfBiasMetric.objects.get_metrics_for_visuals(self.assessment.id)))
         return context
 
 
@@ -261,9 +263,7 @@ class DataPivotNew(BaseCreate):
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         if self.request.GET.get("reset_row_overrides"):
-            kwargs["initial"]["settings"] = models.DataPivot.reset_row_overrides(
-                kwargs["initial"]["settings"]
-            )
+            kwargs["initial"]["settings"] = models.DataPivot.reset_row_overrides(kwargs["initial"]["settings"])
         return kwargs
 
 

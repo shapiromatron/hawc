@@ -451,9 +451,7 @@ class PrefilterMixin(object):
 class SummaryTextForm(forms.ModelForm):
 
     parent = forms.ModelChoiceField(queryset=models.SummaryText.objects.all(), required=False)
-    sibling = forms.ModelChoiceField(
-        label="Insert After", queryset=models.SummaryText.objects.all(), required=False
-    )
+    sibling = forms.ModelChoiceField(label="Insert After", queryset=models.SummaryText.objects.all(), required=False)
 
     class Meta:
         model = models.SummaryText
@@ -524,9 +522,7 @@ class SummaryTextForm(forms.ModelForm):
         inputs = {
             "form_actions": [
                 cfl.Submit("save", "Save"),
-                cfl.HTML(
-                    '<a class="btn btn-danger" id="deleteSTBtn" href="#deleteST" data-toggle="modal">Delete</a>'
-                ),
+                cfl.HTML('<a class="btn btn-danger" id="deleteSTBtn" href="#deleteST" data-toggle="modal">Delete</a>'),
                 cfl.HTML(f'<a class="btn" href="{cancel_url}" >Cancel</a>'),
             ]
         }
@@ -554,6 +550,7 @@ class VisualForm(forms.ModelForm):
             models.Visual.ROB_HEATMAP,
             models.Visual.LITERATURE_TAGTREE,
             models.Visual.EXTERNAL_SITE,
+            models.Visual.EXPLORE_HEATMAP,
         ]:
             self.fields["sort_order"].widget = forms.HiddenInput()
 
@@ -615,9 +612,7 @@ class EndpointAggregationForm(VisualForm):
             label="Endpoints",
             widget=EndpointAggregationSelectMultipleWidget,
         )
-        self.fields["endpoints"].widget.update_query_parameters(
-            {"related": self.instance.assessment_id}
-        )
+        self.fields["endpoints"].widget.update_query_parameters({"related": self.instance.assessment_id})
         self.helper = self.setHelper()
         self.helper.attrs["novalidate"] = ""
 
@@ -644,9 +639,7 @@ class RoBForm(PrefilterMixin, VisualForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields["studies"].queryset = self.fields["studies"].queryset.filter(
-            assessment=self.instance.assessment
-        )
+        self.fields["studies"].queryset = self.fields["studies"].queryset.filter(assessment=self.instance.assessment)
         self.helper = self.setHelper()
 
     class Meta:
@@ -685,9 +678,7 @@ class TagtreeForm(VisualForm):
 
         choices = [
             (tag.id, tag.get_nested_name())
-            for tag in ReferenceFilterTag.get_assessment_qs(
-                self.instance.assessment_id, include_root=True
-            )
+            for tag in ReferenceFilterTag.get_assessment_qs(self.instance.assessment_id, include_root=True)
         ]
         self.fields["root_node"].choices = choices
         self.fields["required_tags"].choices = choices[1:]
@@ -807,6 +798,86 @@ class ExternalSiteForm(VisualForm):
         return external_url
 
 
+class ExploreHeatmapForm(VisualForm):
+
+    external_url = forms.URLField(
+        label="External URL",
+        help_text=f"""
+        <p class="help-block">
+            Embed an external website. The following websites can be linked to:
+        </p>
+        <ul class="help-block">
+            <li><a href="https://public.tableau.com/">Tableau (public)</a> - press the "share" icon and then select the URL in the "link" text box</li>
+        </ul>
+        <p class="help-block">
+            If you'd like to link to another website, please contact us.
+        </p>
+        """,
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        data = json.loads(self.instance.settings)
+        if "external_url" in data:
+            self.fields["external_url"].initial = data["external_url"]
+
+        self.helper = self.setHelper()
+
+    def save(self, commit=True):
+        self.instance.settings = json.dumps(
+            dict(
+                external_url=self.cleaned_data["external_url"],
+                external_url_hostname=self.cleaned_data["external_url_hostname"],
+                external_url_path=self.cleaned_data["external_url_path"],
+                external_url_query_args=self.cleaned_data["external_url_query_args"],
+            )
+        )
+        return super().save(commit)
+
+    class Meta:
+        model = models.Visual
+        fields = (
+            "title",
+            "slug",
+            "caption",
+            "published",
+        )
+
+    DOMAIN_TABLEAU = "public.tableau.com"
+    VALID_DOMAINS = {
+        DOMAIN_TABLEAU,
+    }
+
+    def clean_external_url(self):
+        external_url = self.cleaned_data.get("external_url")
+        url = urlparse(external_url)
+
+        # check whitelist
+        if url.netloc not in self.VALID_DOMAINS:
+            msg = f"{url.netloc} not on the list of accepted domains, please contact webmasters to request additions"
+            raise forms.ValidationError(msg)
+
+        external_url = urlunparse(("https", url.netloc, url.path, "", "", ""))
+        external_url_hostname = urlunparse(("https", url.netloc, "", "", "", ""))
+
+        if url.path == "" or url.path == "/":
+            raise forms.ValidationError("A URL path must be specified.")
+
+        external_url_query_args = []
+        if url.netloc == self.DOMAIN_TABLEAU:
+            external_url_query_args = [":showVizHome=no", ":embed=y"]
+
+        self.cleaned_data.update(
+            external_url=external_url,
+            external_url_hostname=external_url_hostname,
+            external_url_path=url.path,
+            external_url_query_args=external_url_query_args,
+        )
+
+        return external_url
+
+
 def get_visual_form(visual_type):
     try:
         return {
@@ -816,6 +887,7 @@ def get_visual_form(visual_type):
             models.Visual.ROB_BARCHART: RoBForm,
             models.Visual.LITERATURE_TAGTREE: TagtreeForm,
             models.Visual.EXTERNAL_SITE: ExternalSiteForm,
+            models.Visual.EXPLORE_HEATMAP: ExploreHeatmapForm,
         }[visual_type]
     except Exception:
         raise ValueError()
@@ -881,8 +953,7 @@ class DataPivotUploadForm(DataPivotForm):
                 worksheet_names = open_workbook(file_contents=excel_file.read()).sheet_names()
             except XLRDError:
                 self.add_error(
-                    "excel_file",
-                    "Unable to read Excel file. Please upload an Excel file in XLSX format.",
+                    "excel_file", "Unable to read Excel file. Please upload an Excel file in XLSX format.",
                 )
                 return
 
@@ -939,13 +1010,8 @@ class DataPivotQueryForm(PrefilterMixin, DataPivotForm):
     def clean_export_style(self):
         evidence_type = self.cleaned_data["evidence_type"]
         export_style = self.cleaned_data["export_style"]
-        if (
-            evidence_type not in (models.IN_VITRO, models.BIOASSAY)
-            and export_style != self.instance.EXPORT_GROUP
-        ):
-            raise forms.ValidationError(
-                "Outcome/Result level export not implemented for this data-type."
-            )
+        if evidence_type not in (models.IN_VITRO, models.BIOASSAY) and export_style != self.instance.EXPORT_GROUP:
+            raise forms.ValidationError("Outcome/Result level export not implemented for this data-type.")
         return export_style
 
 
@@ -962,14 +1028,10 @@ class DataPivotModelChoiceField(forms.ModelChoiceField):
 
 class DataPivotSelectorForm(forms.Form):
 
-    dp = DataPivotModelChoiceField(
-        label="Data Pivot", queryset=models.DataPivot.objects.all(), empty_label=None
-    )
+    dp = DataPivotModelChoiceField(label="Data Pivot", queryset=models.DataPivot.objects.all(), empty_label=None)
 
     reset_row_overrides = forms.BooleanField(
-        help_text="Reset all row-level customization in the data-pivot copy",
-        required=False,
-        initial=True,
+        help_text="Reset all row-level customization in the data-pivot copy", required=False, initial=True,
     )
 
     def __init__(self, *args, **kwargs):
@@ -991,16 +1053,14 @@ class SmartTagForm(forms.Form):
     )
     resource = forms.ChoiceField(choices=RESOURCE_CHOICES)
     study = selectable.AutoCompleteSelectField(
-        lookup_class=StudyLookup,
-        help_text="Type a few characters of the study name, then click to select.",
+        lookup_class=StudyLookup, help_text="Type a few characters of the study name, then click to select.",
     )
     endpoint = selectable.AutoCompleteSelectField(
         lookup_class=EndpointByAssessmentLookup,
         help_text="Type a few characters of the endpoint name, then click to select.",
     )
     visual = selectable.AutoCompleteSelectField(
-        lookup_class=lookups.VisualLookup,
-        help_text="Type a few characters of the visual name, then click to select.",
+        lookup_class=lookups.VisualLookup, help_text="Type a few characters of the visual name, then click to select.",
     )
     data_pivot = selectable.AutoCompleteSelectField(
         lookup_class=lookups.DataPivotLookup,
