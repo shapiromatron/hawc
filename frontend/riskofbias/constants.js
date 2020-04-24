@@ -80,15 +80,25 @@ const NA_KEYS = [10, 20],
     BIAS_DIRECTION_UNKNOWN = 0,
     BIAS_DIRECTION_UP = 1,
     BIAS_DIRECTION_DOWN = 2,
+    BIAS_DIRECTION_CHOICES = {
+        [BIAS_DIRECTION_UNKNOWN]: "? (Unknown/not specified)",
+        [BIAS_DIRECTION_UP]: "⬆ (Away from null)",
+        [BIAS_DIRECTION_DOWN]: "⬇ (Towards null)",
+    },
+    BIAS_DIRECTION_COMPACT = {
+        [BIAS_DIRECTION_UNKNOWN]: "",
+        [BIAS_DIRECTION_UP]: "▲",
+        [BIAS_DIRECTION_DOWN]: "▼",
+    },
     BIAS_DIRECTION_SIMPLE = {
-        [BIAS_DIRECTION_UNKNOWN]: "?",
+        [BIAS_DIRECTION_UNKNOWN]: "",
         [BIAS_DIRECTION_UP]: "⬆",
         [BIAS_DIRECTION_DOWN]: "⬇",
     },
     BIAS_DIRECTION_VERBOSE = {
-        [BIAS_DIRECTION_UNKNOWN]: "? (Unknown/not specified)",
-        [BIAS_DIRECTION_UP]: "⬆ (Away from null)",
-        [BIAS_DIRECTION_DOWN]: "⬇ (Towards null)",
+        [BIAS_DIRECTION_UNKNOWN]: "",
+        [BIAS_DIRECTION_UP]: "Bias direction up (Away from null)",
+        [BIAS_DIRECTION_DOWN]: "Bias direction down (Towards null)",
     },
     COLLAPSED_NR_FIELDS_DESCRIPTION = {
         15: "Probably high risk of bias/not reported",
@@ -109,6 +119,14 @@ const NA_KEYS = [10, 20],
                 .value(),
             symbolText = symbols.join(" / "),
             symbolShortText = symbols.length === 1 ? symbols[0] : `${defaultScore.score_symbol}*`,
+            directions = _.chain(sortedScores)
+                .map(score => score.bias_direction)
+                .uniq()
+                .value(),
+            directionText = _.chain(directions)
+                .map(d => BIAS_DIRECTION_SIMPLE[d])
+                .value()
+                .join(""),
             reactStyle,
             svgStyle,
             cssStyle;
@@ -146,6 +164,8 @@ const NA_KEYS = [10, 20],
             cssStyle,
             symbolText,
             symbolShortText,
+            directions,
+            directionText,
             svgStyle,
         };
     },
@@ -167,8 +187,10 @@ export {
     BIAS_DIRECTION_UNKNOWN,
     BIAS_DIRECTION_UP,
     BIAS_DIRECTION_DOWN,
+    BIAS_DIRECTION_CHOICES,
     BIAS_DIRECTION_SIMPLE,
     BIAS_DIRECTION_VERBOSE,
+    BIAS_DIRECTION_COMPACT,
     SCORE_BAR_WIDTH_PERCENTAGE,
     COLLAPSED_NR_FIELDS_DESCRIPTION,
     getMultiScoreDisplaySettings,

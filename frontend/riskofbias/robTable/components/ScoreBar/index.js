@@ -13,11 +13,11 @@ import "./ScoreBar.css";
 
 class ScoreBar extends Component {
     render_score_bar() {
-        let {shade, symbol} = this.props;
+        let {shade, symbol, direction} = this.props;
         return (
             <div className="rob_score_bar" style={{backgroundColor: shade, opacity: 0, width: 0}}>
                 <span style={{color: String.contrasting_color(shade)}} className="score-symbol">
-                    {symbol}
+                    {symbol} {BIAS_DIRECTION_SIMPLE[direction]}
                 </span>
             </div>
         );
@@ -25,9 +25,8 @@ class ScoreBar extends Component {
 
     render() {
         let {description, direction, score} = this.props,
-            direction_tooltip = "Bias direction " + BIAS_DIRECTION_VERBOSE[direction],
-            barWidth = SCORE_BAR_WIDTH_PERCENTAGE[score],
-            direction_simple = BIAS_DIRECTION_SIMPLE[direction];
+            direction_postfix = " | " + BIAS_DIRECTION_VERBOSE[direction],
+            barWidth = SCORE_BAR_WIDTH_PERCENTAGE[score];
 
         return (
             <div className="score-bar">
@@ -37,10 +36,8 @@ class ScoreBar extends Component {
                     duration={1000}>
                     {this.render_score_bar()}
                 </VelocityComponent>
-                <i>{description}</i>{" "}
-                {direction == BIAS_DIRECTION_UNKNOWN ? null : (
-                    <span title={direction_tooltip}>({direction_simple})</span>
-                )}
+                <i>{description}</i>
+                {direction == BIAS_DIRECTION_UNKNOWN ? null : direction_postfix}
             </div>
         );
     }
