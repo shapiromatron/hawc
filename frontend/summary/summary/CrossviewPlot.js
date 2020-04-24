@@ -1066,6 +1066,7 @@ CrossviewPlot._filters = {
     organ: "Organ",
     effect: "Effect",
     effect_subtype: "Effect subtype",
+    endpoint_name: "Endpoint name",
     monotonicity: "Monotonicity",
     chemical: "Chemical",
 };
