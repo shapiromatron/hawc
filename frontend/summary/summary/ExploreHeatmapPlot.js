@@ -48,10 +48,16 @@ class ExploreHeatmapPlot extends D3Visualization {
         );
         this.x_steps = this.x_domain.reduce((total, element) => total * element.length, 1);
         this.y_steps = this.y_domain.reduce((total, element) => total * element.length, 1);
-        this.xy_map = this.create_map(this.x_field, this.y_field, this.x_domain, this.y_domain);
+        this.xy_map = this.create_map(
+            this.data.dataset,
+            this.x_field,
+            this.y_field,
+            this.x_domain,
+            this.y_domain
+        );
     }
 
-    create_map(x_field, y_field, x_domain, y_domain) {
+    create_map(dataset, x_field, y_field, x_domain, y_domain) {
         function _step_domain(domain, field, depth) {
             if (depth >= domain.length - 1) {
                 return domain[depth].map(function(element, index) {
@@ -75,15 +81,23 @@ class ExploreHeatmapPlot extends D3Visualization {
             xy_map = x_map
                 .map(function(x_element) {
                     return y_map.map(function(y_element) {
-                        return {
+                        let new_element = {
                             x_filter: x_element.filter,
                             y_filter: y_element.filter,
                             x_step: x_element.step,
                             y_step: y_element.step,
                         };
+                        new_element["dataset"] = _.filter(
+                            dataset,
+                            _.matches(
+                                _.assign({}, new_element["x_filter"], new_element["y_filter"])
+                            )
+                        );
+                        return new_element;
                     });
                 })
                 .flat();
+        console.log(xy_map);
 
         return xy_map;
     }
