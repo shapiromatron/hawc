@@ -50,7 +50,7 @@ class HawcSession:
             content = response.text
         if response.status_code >= 400 and response.status_code < 500:
             raise HawcClientException(response.status_code, content)
-        elif response.status_code == 500:
+        elif response.status_code >= 500 and response.status_code < 600:
             raise HawcServerException(response.status_code, content)
 
     def get(self, url: str, params: Dict = None) -> Response:

@@ -3,15 +3,12 @@ import json
 import logging
 import pickle
 import re
-import textwrap
 from io import BytesIO
 from math import ceil
 from typing import Dict, Optional
 from urllib import parse
 
-import numpy as np
 import pandas as pd
-import plotly.graph_objects as go
 from django.apps import apps
 from django.conf import settings
 from django.core.cache import cache
@@ -22,13 +19,10 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.html import strip_tags
 from litter_getter import pubmed, ris
-from refml.topic_modeling.preprocess import stem_and_tokenize
-from sklearn.decomposition import NMF
-from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
-from sklearn.manifold import TSNE
 from taggit.models import ItemBase
 from treebeard.mp_tree import MP_Node
 
+from ...refml import topics
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper
 from ..common.models import (
     AssessmentRootMixin,
@@ -101,6 +95,12 @@ class LiteratureAssessment(models.Model):
     def get_update_url(self) -> str:
         return reverse("lit:literature_assessment_update", args=(self.id,))
 
+    def get_topic_model_url(self) -> str:
+        return reverse("lit:api:assessment-topic-model", args=(self.assessment_id,))
+
+    def get_topic_model_refresh_url(self) -> str:
+        return reverse("lit:api:assessment-topic-model-request-refresh", args=(self.assessment_id,))
+
     @property
     def topic_tsne_fig_dict_cache_key(self) -> str:
         return f"{self.assessment_id}_topic_tsne_data"
@@ -110,39 +110,10 @@ class LiteratureAssessment(models.Model):
         return f"assessment-{self.assessment_id}.pkl"
 
     def create_topic_tsne_data(self) -> None:
-        refs = Reference.objects.filter(assessment=1).values_list("id", "title", "abstract")
-        df = pd.DataFrame(data=refs, columns="id title abstract".split())
-        df.loc[:, "text"] = (df.title + " " + df.abstract).apply(stem_and_tokenize)
-        df.drop(columns=["abstract"], inplace=True)
-
-        tfidf_transformer = TfidfTransformer()
-        vectorizer = CountVectorizer(analyzer="word", max_features=10000)
-        x_counts = vectorizer.fit_transform(df.text)
-        tfidf_transformer = TfidfTransformer()
-        X_train_tfidf = tfidf_transformer.fit_transform(x_counts)
-        n_topics = int(max(min(30, np.sqrt(df.shape[0])), 10))
-        model = NMF(n_components=n_topics, random_state=1, alpha=0.1, l1_ratio=0.5, init="nndsvd")
-        term_maps = model.fit_transform(X_train_tfidf.T)
-        nmf_embedded = TSNE(n_components=2, perplexity=20).fit_transform(model.components_.T)
-        df.drop(columns=["text"], inplace=True)
-
-        def textwrapper(text):
-            return "<br>".join(textwrap.wrap(text))
-
-        df.loc[:, "title"] = df.title.apply(textwrapper)
-        df.loc[:, "max_topic"] = model.components_.argmax(axis=0)
-        df.loc[:, "tsne_x"] = nmf_embedded[:, 0]
-        df.loc[:, "tsne_y"] = nmf_embedded[:, 1]
-
-        def get_nmf_topics(term_map, vectorizer, n_top_words=3):
-            feat_names = vectorizer.get_feature_names()
-            words = []
-            for i in range(term_map.shape[1]):
-                words_ids = term_map[:, i].argsort()[-n_top_words:][::-1]
-                words.append(" ".join([feat_names[key] for key in words_ids]))
-            return pd.DataFrame(data=dict(topic=list(range(term_map.shape[1])), top_words=words))
-
-        topics_df = get_nmf_topics(term_maps, vectorizer, 10)
+        refs = Reference.objects.filter(assessment=self.assessment_id).values_list(
+            "id", "title", "abstract"
+        )
+        df, topics_df = topics.topic_model_tsne(refs)
 
         f1 = BytesIO()
         df.to_parquet(f1, engine="pyarrow", index=False)
@@ -171,31 +142,7 @@ class LiteratureAssessment(models.Model):
         fig_dict = cache.get(self.topic_tsne_fig_dict_cache_key)
         if fig_dict is None:
             data = self.get_topic_tsne_data()
-            fig = go.Figure()
-            fig.add_trace(
-                go.Scatter(
-                    name="",
-                    x=data["df"].tsne_x,
-                    y=data["df"].tsne_y,
-                    text=data["df"].title,
-                    marker=dict(
-                        size=9,
-                        color=data["df"].max_topic,
-                        colorscale="rainbow",
-                        line_width=1,
-                        line_color="grey",
-                    ),
-                    mode="markers",
-                    hovertemplate="%{text}",
-                )
-            )
-            fig.update_layout(
-                autosize=True,
-                plot_bgcolor="white",
-                margin=dict(l=20, r=20, t=20, b=20),  # noqa: E741
-            )
-            fig.update_xaxes(showticklabels=False)
-            fig.update_yaxes(showticklabels=False)
+            fig = topics.tsne_to_scatterplot(data)
             fig_dict = fig.to_dict()
             cache.set(self.topic_tsne_fig_dict_cache_key, fig_dict, 60 * 60)  # cache for 1 hour
         return fig_dict

@@ -3,7 +3,7 @@ import json
 from django.forms.models import model_to_dict
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse_lazy
 from django.utils import timezone
 from django.views.generic import DetailView, TemplateView
 from django.views.generic.edit import FormView
@@ -525,13 +525,8 @@ class RefTopicModel(BaseDetail):
         context["num_references"] = self.object.assessment.references.count()
         context["data"] = json.dumps(
             dict(
-                topicModelUrl=reverse(
-                    "lit:api:assessment-topic-model", args=(self.object.assessment_id,)
-                ),
-                topicModelRefreshUrl=reverse(
-                    "lit:api:assessment-topic-model-request-refresh",
-                    args=(self.object.assessment_id,),
-                ),
+                topicModelUrl=self.object.get_topic_model_url(),
+                topicModelRefreshUrl=self.object.get_topic_model_refresh_url(),
             )
         )
         return context
