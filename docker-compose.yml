@@ -26,6 +26,7 @@ services:
     ports:
       - "0.0.0.0:5000:5000"
     volumes:
+      - ./data/private:/app/private
       - ./data/public:/app/public
 
   nginx:

@@ -9,6 +9,7 @@ from django.apps import apps
 from django.conf import settings
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist, SuspiciousOperation
+from django.core.files.storage import FileSystemStorage
 from django.db import IntegrityError, connection, models, transaction
 from django.db.models import Q, QuerySet, URLField
 from django.template.defaultfilters import slugify as default_slugify
@@ -19,6 +20,12 @@ from . import forms, validators
 from .flavors import help_text as help_text_flavors
 from .flavors.text import text_mapping
 from .helper import HAWCDjangoJSONEncoder
+
+_private_storage = FileSystemStorage(location=str(settings.PRIVATE_DATA_ROOT))
+
+
+def get_private_data_storage() -> FileSystemStorage:
+    return _private_storage
 
 
 class BaseManager(models.Manager):

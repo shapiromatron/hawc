@@ -519,6 +519,9 @@
   fields:
     assessment: 1
     extraction_tag: 2
+    topic_tsne_data: ""
+    topic_tsne_refresh_requested: null
+    topic_tsne_last_refresh: null
     created: 2020-04-11 20:53:19.390879+00:00
     last_updated: 2020-04-11 20:53:19.390902+00:00
 - model: lit.literatureassessment
@@ -526,6 +529,19 @@
   fields:
     assessment: 2
     extraction_tag: 11
+    topic_tsne_data: ""
+    topic_tsne_refresh_requested: null
+    topic_tsne_last_refresh: null
+    created: 2020-04-11 20:53:19.390979+00:00
+    last_updated: 2020-04-11 20:53:19.390979+00:00
+- model: lit.literatureassessment
+  pk: 3
+  fields:
+    assessment: 3
+    extraction_tag: 23
+    topic_tsne_data: ""
+    topic_tsne_refresh_requested: null
+    topic_tsne_last_refresh: null
     created: 2020-04-11 20:53:19.390979+00:00
     last_updated: 2020-04-11 20:53:19.390979+00:00
 - model: lit.search
