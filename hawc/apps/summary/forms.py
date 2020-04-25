@@ -451,7 +451,9 @@ class PrefilterMixin(object):
 class SummaryTextForm(forms.ModelForm):
 
     parent = forms.ModelChoiceField(queryset=models.SummaryText.objects.all(), required=False)
-    sibling = forms.ModelChoiceField(label="Insert After", queryset=models.SummaryText.objects.all(), required=False)
+    sibling = forms.ModelChoiceField(
+        label="Insert After", queryset=models.SummaryText.objects.all(), required=False
+    )
 
     class Meta:
         model = models.SummaryText
@@ -522,7 +524,9 @@ class SummaryTextForm(forms.ModelForm):
         inputs = {
             "form_actions": [
                 cfl.Submit("save", "Save"),
-                cfl.HTML('<a class="btn btn-danger" id="deleteSTBtn" href="#deleteST" data-toggle="modal">Delete</a>'),
+                cfl.HTML(
+                    '<a class="btn btn-danger" id="deleteSTBtn" href="#deleteST" data-toggle="modal">Delete</a>'
+                ),
                 cfl.HTML(f'<a class="btn" href="{cancel_url}" >Cancel</a>'),
             ]
         }
@@ -612,7 +616,9 @@ class EndpointAggregationForm(VisualForm):
             label="Endpoints",
             widget=EndpointAggregationSelectMultipleWidget,
         )
-        self.fields["endpoints"].widget.update_query_parameters({"related": self.instance.assessment_id})
+        self.fields["endpoints"].widget.update_query_parameters(
+            {"related": self.instance.assessment_id}
+        )
         self.helper = self.setHelper()
         self.helper.attrs["novalidate"] = ""
 
@@ -639,7 +645,9 @@ class RoBForm(PrefilterMixin, VisualForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields["studies"].queryset = self.fields["studies"].queryset.filter(assessment=self.instance.assessment)
+        self.fields["studies"].queryset = self.fields["studies"].queryset.filter(
+            assessment=self.instance.assessment
+        )
         self.helper = self.setHelper()
 
     class Meta:
@@ -678,7 +686,9 @@ class TagtreeForm(VisualForm):
 
         choices = [
             (tag.id, tag.get_nested_name())
-            for tag in ReferenceFilterTag.get_assessment_qs(self.instance.assessment_id, include_root=True)
+            for tag in ReferenceFilterTag.get_assessment_qs(
+                self.instance.assessment_id, include_root=True
+            )
         ]
         self.fields["root_node"].choices = choices
         self.fields["required_tags"].choices = choices[1:]
@@ -953,7 +963,8 @@ class DataPivotUploadForm(DataPivotForm):
                 worksheet_names = open_workbook(file_contents=excel_file.read()).sheet_names()
             except XLRDError:
                 self.add_error(
-                    "excel_file", "Unable to read Excel file. Please upload an Excel file in XLSX format.",
+                    "excel_file",
+                    "Unable to read Excel file. Please upload an Excel file in XLSX format.",
                 )
                 return
 
@@ -1010,8 +1021,13 @@ class DataPivotQueryForm(PrefilterMixin, DataPivotForm):
     def clean_export_style(self):
         evidence_type = self.cleaned_data["evidence_type"]
         export_style = self.cleaned_data["export_style"]
-        if evidence_type not in (models.IN_VITRO, models.BIOASSAY) and export_style != self.instance.EXPORT_GROUP:
-            raise forms.ValidationError("Outcome/Result level export not implemented for this data-type.")
+        if (
+            evidence_type not in (models.IN_VITRO, models.BIOASSAY)
+            and export_style != self.instance.EXPORT_GROUP
+        ):
+            raise forms.ValidationError(
+                "Outcome/Result level export not implemented for this data-type."
+            )
         return export_style
 
 
@@ -1028,10 +1044,14 @@ class DataPivotModelChoiceField(forms.ModelChoiceField):
 
 class DataPivotSelectorForm(forms.Form):
 
-    dp = DataPivotModelChoiceField(label="Data Pivot", queryset=models.DataPivot.objects.all(), empty_label=None)
+    dp = DataPivotModelChoiceField(
+        label="Data Pivot", queryset=models.DataPivot.objects.all(), empty_label=None
+    )
 
     reset_row_overrides = forms.BooleanField(
-        help_text="Reset all row-level customization in the data-pivot copy", required=False, initial=True,
+        help_text="Reset all row-level customization in the data-pivot copy",
+        required=False,
+        initial=True,
     )
 
     def __init__(self, *args, **kwargs):
@@ -1053,14 +1073,16 @@ class SmartTagForm(forms.Form):
     )
     resource = forms.ChoiceField(choices=RESOURCE_CHOICES)
     study = selectable.AutoCompleteSelectField(
-        lookup_class=StudyLookup, help_text="Type a few characters of the study name, then click to select.",
+        lookup_class=StudyLookup,
+        help_text="Type a few characters of the study name, then click to select.",
     )
     endpoint = selectable.AutoCompleteSelectField(
         lookup_class=EndpointByAssessmentLookup,
         help_text="Type a few characters of the endpoint name, then click to select.",
     )
     visual = selectable.AutoCompleteSelectField(
-        lookup_class=lookups.VisualLookup, help_text="Type a few characters of the visual name, then click to select.",
+        lookup_class=lookups.VisualLookup,
+        help_text="Type a few characters of the visual name, then click to select.",
     )
     data_pivot = selectable.AutoCompleteSelectField(
         lookup_class=lookups.DataPivotLookup,

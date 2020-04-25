@@ -125,7 +125,9 @@ class SummaryText(MP_Node):
         if sibling:
             return sibling.add_sibling(pos="right", instance=instance)
         else:
-            parent = form.cleaned_data.get("parent", SummaryText.get_assessment_root_node(instance.assessment.id))
+            parent = form.cleaned_data.get(
+                "parent", SummaryText.get_assessment_root_node(instance.assessment.id)
+            )
             sibling = parent.get_first_child()
             if sibling:
                 return sibling.add_sibling(pos="first-sibling", instance=instance)
@@ -210,17 +212,24 @@ class Visual(models.Model):
     title = models.CharField(max_length=128)
     slug = models.SlugField(
         verbose_name="URL Name",
-        help_text="The URL (web address) used to describe this object " "(no spaces or special-characters).",
+        help_text="The URL (web address) used to describe this object "
+        "(no spaces or special-characters).",
     )
     assessment = models.ForeignKey(Assessment, on_delete=models.CASCADE, related_name="visuals")
     visual_type = models.PositiveSmallIntegerField(choices=VISUAL_CHOICES)
     dose_units = models.ForeignKey(DoseUnits, on_delete=models.SET_NULL, blank=True, null=True)
     prefilters = models.TextField(default="{}")
     endpoints = models.ManyToManyField(
-        BaseEndpoint, related_name="visuals", help_text="Endpoints to be included in visualization", blank=True,
+        BaseEndpoint,
+        related_name="visuals",
+        help_text="Endpoints to be included in visualization",
+        blank=True,
     )
     studies = models.ManyToManyField(
-        Study, related_name="visuals", help_text="Studies to be included in visualization", blank=True,
+        Study,
+        related_name="visuals",
+        help_text="Studies to be included in visualization",
+        blank=True,
     )
     settings = models.TextField(default="{}")
     caption = models.TextField(blank=True)
@@ -229,7 +238,9 @@ class Visual(models.Model):
         verbose_name="Publish visual for public viewing",
         help_text="For assessments marked for public viewing, mark visual to be viewable by public",
     )
-    sort_order = models.CharField(max_length=40, choices=SORT_ORDER_CHOICES, default="short_citation",)
+    sort_order = models.CharField(
+        max_length=40, choices=SORT_ORDER_CHOICES, default="short_citation",
+    )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
@@ -305,7 +316,9 @@ class Visual(models.Model):
                 Prefilter.setFiltersFromForm(efilters, request.POST, self.visual_type)
                 if len(efilters) > 1:
                     filters["id__in"] = set(
-                        Endpoint.objects.filter(**efilters).values_list("animal_group__experiment__study_id", flat=True)
+                        Endpoint.objects.filter(**efilters).values_list(
+                            "animal_group__experiment__study_id", flat=True
+                        )
                     )
                 else:
                     filters["id__in"] = request.POST.getlist("studies")
@@ -317,7 +330,9 @@ class Visual(models.Model):
                     efilters = {"assessment_id": self.assessment_id}
                     Prefilter.setFiltersFromObj(efilters, self.prefilters)
                     filters["id__in"] = set(
-                        Endpoint.objects.filter(**efilters).values_list("animal_group__experiment__study_id", flat=True)
+                        Endpoint.objects.filter(**efilters).values_list(
+                            "animal_group__experiment__study_id", flat=True
+                        )
                     )
                     qs = Study.objects.filter(**filters)
                 else:
@@ -352,9 +367,13 @@ class Visual(models.Model):
             "last_updated": timezone.now().isoformat(),
         }
 
-        data["endpoints"] = [SerializerHelper.get_serialized(e, json=False) for e in self.get_endpoints(request)]
+        data["endpoints"] = [
+            SerializerHelper.get_serialized(e, json=False) for e in self.get_endpoints(request)
+        ]
 
-        data["studies"] = [SerializerHelper.get_serialized(s, json=False) for s in self.get_studies(request)]
+        data["studies"] = [
+            SerializerHelper.get_serialized(s, json=False) for s in self.get_studies(request)
+        ]
 
         return json.dumps(data)
 
@@ -411,15 +430,18 @@ class DataPivot(models.Model):
 
     assessment = models.ForeignKey(Assessment, on_delete=models.CASCADE)
     title = models.CharField(
-        max_length=128, help_text="Enter the title of the visualization (spaces and special-characters allowed).",
+        max_length=128,
+        help_text="Enter the title of the visualization (spaces and special-characters allowed).",
     )
     slug = models.SlugField(
         verbose_name="URL Name",
-        help_text="The URL (web address) used to describe this object " "(no spaces or special-characters).",
+        help_text="The URL (web address) used to describe this object "
+        "(no spaces or special-characters).",
     )
     settings = models.TextField(
         default="undefined",
-        help_text="Paste content from a settings file from a different " 'data-pivot, or keep set to "undefined".',
+        help_text="Paste content from a settings file from a different "
+        'data-pivot, or keep set to "undefined".',
     )
     caption = models.TextField(blank=True, default="")
     published = models.BooleanField(
@@ -574,7 +596,8 @@ class DataPivotQuery(DataPivot):
     published_only = models.BooleanField(
         default=True,
         verbose_name="Published studies only",
-        help_text="Only present data from studies which have been marked as " '"published" in HAWC.',
+        help_text="Only present data from studies which have been marked as "
+        '"published" in HAWC.',
     )
 
     def clean(self):
@@ -662,10 +685,14 @@ class DataPivotQuery(DataPivot):
             )
 
         elif self.evidence_type == EPI:
-            exporter = OutcomeDataPivot(qs, assessment=self.assessment, filename=f"{self.assessment}-epi",)
+            exporter = OutcomeDataPivot(
+                qs, assessment=self.assessment, filename=f"{self.assessment}-epi",
+            )
 
         elif self.evidence_type == EPI_META:
-            exporter = MetaResultFlatDataPivot(qs, assessment=self.assessment, filename=f"{self.assessment}-epi",)
+            exporter = MetaResultFlatDataPivot(
+                qs, assessment=self.assessment, filename=f"{self.assessment}-epi",
+            )
 
         elif self.evidence_type == IN_VITRO:
 
@@ -676,7 +703,9 @@ class DataPivotQuery(DataPivot):
                 Exporter = ivexports.DataPivotEndpoint
 
             # generate export
-            exporter = Exporter(qs, assessment=self.assessment, filename=f"{self.assessment}-invitro",)
+            exporter = Exporter(
+                qs, assessment=self.assessment, filename=f"{self.assessment}-invitro",
+            )
 
         return exporter
 
