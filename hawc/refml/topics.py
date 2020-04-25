@@ -11,7 +11,6 @@ from sklearn.decomposition import NMF
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from sklearn.manifold import TSNE
 
-
 logger = logging.getLogger(__name__)
 
 stopwords_ = None
