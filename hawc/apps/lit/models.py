@@ -110,10 +110,14 @@ class LiteratureAssessment(models.Model):
         return f"assessment-{self.assessment_id}.pkl"
 
     def create_topic_tsne_data(self) -> None:
-        refs = Reference.objects.filter(assessment=self.assessment_id).values_list(
-            "id", "title", "abstract"
-        )
-        df, topics_df = topics.topic_model_tsne(refs)
+        columns = ("id", "title", "abstract")
+        refs = Reference.objects.filter(assessment=self.assessment_id).values_list(*columns)
+        df = pd.DataFrame(data=refs, columns=columns)
+        df.loc[:, "text"] = df.title + " " + df.abstract
+        df.loc[:, "title"] = df.title.apply(topics.textwrapper)
+        df.drop(columns=["abstract"], inplace=True)
+
+        df, topics_df = topics.topic_model_tsne(df)
 
         f1 = BytesIO()
         df.to_parquet(f1, engine="pyarrow", index=False)
@@ -123,7 +127,7 @@ class LiteratureAssessment(models.Model):
 
         data = dict(df=f1.getvalue(), topics=f2.getvalue())
 
-        if self.topic_tsne_data.name is not None:
+        if self.has_topic_model():
             self.topic_tsne_data.delete(save=False)
         self.topic_tsne_refresh_requested = None
         self.topic_tsne_last_refresh = timezone.now()
@@ -148,7 +152,7 @@ class LiteratureAssessment(models.Model):
         return fig_dict
 
     def has_topic_model(self) -> bool:
-        return self.topic_tsne_data is not None
+        return self.topic_tsne_data.name is not None and self.topic_tsne_data.name != ""
 
     def can_topic_model(self) -> bool:
         return self.assessment.references.count() >= self.TOPIC_MODEL_MIN_REFERENCES
