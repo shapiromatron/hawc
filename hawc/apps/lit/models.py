@@ -135,7 +135,7 @@ class LiteratureAssessment(models.Model):
         cache.delete(self.topic_tsne_fig_dict_cache_key)
 
     def get_topic_tsne_data(self) -> Dict:
-        if self.has_topic_model():
+        if not self.has_topic_model():
             raise ValueError("No data available.")
         data = pickle.load(self.topic_tsne_data.file.file)
         data["df"] = pd.read_parquet(BytesIO(data["df"]), engine="pyarrow")
