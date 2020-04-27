@@ -1,44 +1,42 @@
 import _ from "lodash";
 import d3 from "d3";
-
-import HAWCModal from "utils/HAWCModal";
-
+import h from "shared/utils/helpers";
 import D3Visualization from "./D3Visualization";
 
 class ExploreHeatmapPlot extends D3Visualization {
     constructor(parent, data, options) {
-        // heatmap of rob information. Criteria are on the y-axis,
-        // and studies are on the x-axis
         super(...arguments);
-        this.data.settings.type = "heatmap";
-        this.data.dataset = [
-            {foo: "b", bar: "b", foobar: "b"},
-            {foo: "c", bar: "a", foobar: "c"},
-        ];
-        this.modal = new HAWCModal();
+        this.data.settings = {
+            type: "heatmap",
+            title: "Exploratory heatmap of experiments by species, sex, and health system",
+            x_axis_label: "Species & Sex",
+            y_axis_label: "Health System",
+        };
+        this.data.options = {
+            x_fields: ["species-name", "animal_group-sex"], //nested fields on x axis
+            y_fields: ["endpoint-system"], //nested fields on y axis
+            //all_fields: ["foo", "bar"], //all fields we are interested in, ignore excluded fields on detail page
+            filter: "study-short_citation", //additional filter(s?) / main identifier
+        };
+        this.data.dataset = require("./test-json.json");
     }
 
     render($div) {
-        this.plot_div = $div.html("");
-        this.assignProperties();
-
+        this.generateProperties($div);
         this.draw_visualization();
     }
 
-    assignProperties() {
-        this.plot_width = 600;
-        this.plot_height = 600;
-        this.options = _.keys(this.data.dataset[0]);
-        this.x_field = [this.options[0], this.options[1], this.options[2]];
-        this.y_field = [this.options[0]];
-        this.x_domain = this.x_field.map(e =>
+    generateProperties($div) {
+        this.plot = _.assign({}, h.getHawcContentSize());
+        this.plot.div = $div.html("")[0];
+        this.x_domain = this.data.options.x_fields.map(e =>
             _.chain(this.data.dataset)
                 .map(d => d[e])
                 .uniq()
                 .sort()
                 .value()
         );
-        this.y_domain = this.y_field.map(e =>
+        this.y_domain = this.data.options.y_fields.map(e =>
             _.chain(this.data.dataset)
                 .map(d => d[e])
                 .uniq()
@@ -49,8 +47,8 @@ class ExploreHeatmapPlot extends D3Visualization {
         this.y_steps = this.y_domain.reduce((total, element) => total * element.length, 1);
         this.xy_map = this.create_map(
             this.data.dataset,
-            this.x_field,
-            this.y_field,
+            this.data.options.x_fields,
+            this.data.options.y_fields,
             this.x_domain,
             this.y_domain
         );
@@ -102,41 +100,39 @@ class ExploreHeatmapPlot extends D3Visualization {
     }
 
     draw_visualization() {
-        var w = 600,
-            h = 600;
         this.vis = d3
-            .select(this.plot_div[0])
+            .select(this.plot.div)
             .append("svg")
-            .attr("width", w)
-            .attr("height", h)
+            .attr("width", this.plot.width)
+            .attr("height", this.plot.height)
             .attr("class", "d3")
-            .attr("viewBox", `0 0 ${w} ${h}`)
+            .attr("viewBox", `0 0 ${this.plot.width} ${this.plot.height}`)
             .attr("preserveAspectRatio", "xMinYMin");
 
         var axis_b = d3.scale
             .ordinal()
             .domain(_.range(1, this.x_steps + 2))
-            .rangeBands([0, this.plot_width]);
+            .rangeBands([0, this.plot.width]);
 
         this.vis
             .append("text")
-            .attr("x", this.plot_width / 2)
-            .attr("y", this.plot_height)
+            .attr("x", this.plot.width / 2)
+            .attr("y", this.plot.height)
             .style("text-anchor", "middle")
-            .text(this.x_field);
+            .text(this.data.options.x_fields);
 
         var axis_l = d3.scale
             .ordinal()
             .domain(_.range(1, this.y_steps + 2))
-            .rangeBands([this.plot_height, 0]);
+            .rangeBands([this.plot.height, 0]);
 
         this.vis
             .append("text")
             .attr("x", 0)
             .attr("y", 0)
-            .attr("transform", `translate(0,${this.plot_height / 2}) rotate(-90)`)
+            .attr("transform", `translate(0,${this.plot.height / 2}) rotate(-90)`)
             .style("text-anchor", "middle")
-            .text(this.y_field);
+            .text(this.data.options.y_fields);
 
         this.vis
             .append("g")
@@ -152,8 +148,17 @@ class ExploreHeatmapPlot extends D3Visualization {
             })
             .attr("width", axis_b.rangeBand())
             .attr("height", axis_l.rangeBand())
-            .style("stroke", "white")
-            .style("stroke-width", "5");
+            .style("fill", "white")
+            .style("stroke", "black")
+            .style("stroke-width", "1")
+            .append("text")
+            .attr("x", function(d) {
+                return axis_b(d.x_step);
+            })
+            .attr("y", function(d) {
+                return axis_l(d.y_step);
+            })
+            .text("test");
     }
 }
 
