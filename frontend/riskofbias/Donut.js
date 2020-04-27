@@ -4,7 +4,11 @@ import d3 from "d3";
 
 import D3Plot from "utils/D3Plot";
 
-import {getMultiScoreDisplaySettings} from "riskofbias/constants";
+import {
+    getMultiScoreDisplaySettings,
+    BIAS_DIRECTION_SIMPLE,
+    BIAS_DIRECTION_VERBOSE,
+} from "riskofbias/constants";
 
 class Donut extends D3Plot {
     constructor(study, el) {
@@ -96,6 +100,8 @@ class Donut extends D3Plot {
                     weight: 1 / numMetrics,
                     score: defaultScore.score,
                     score_text: defaultScore.score_text,
+                    direction_simple: BIAS_DIRECTION_SIMPLE[defaultScore.bias_direction],
+                    direction_verbose: BIAS_DIRECTION_VERBOSE[defaultScore.bias_direction],
                     score_svg_style: data.svgStyle,
                     score_css_style: data.cssStyle,
                     score_text_color: defaultScore.score_text_color,
@@ -182,7 +188,11 @@ class Donut extends D3Plot {
                 .attr("text-anchor", "end")
                 .attr("class", "centeredLabel")
                 .attr("transform", donut_center)
-                .text(this.data.overall_question_data.score_text);
+                .text(
+                    this.data.overall_question_data.score_text +
+                        " " +
+                        this.data.overall_question_data.direction_simple
+                );
         }
 
         // setup pie layout generator
@@ -253,7 +263,7 @@ class Donut extends D3Plot {
             .style("fill", d => d.data.score_text_color)
             .attr("transform", d => `translate(${details_arc.centroid(d)})`)
             .attr("text-anchor", "middle")
-            .text(d => d.data.score_text);
+            .text(d => d.data.score_text + " " + d.data.direction_simple);
 
         // add detail arcs
         let metric_arcs = this.detail_arc_group
@@ -383,14 +393,16 @@ class Donut extends D3Plot {
         this.subset_div.append(`<h4>${metric.parent_name}</h4>`);
         var ol = $('<ol class="score-details"></ol>'),
             div = $("<div>")
-                .text(metric.score_text)
+                .text(metric.score_text + " " + metric.direction_simple)
                 .attr("class", "scorebox")
                 .css(metric.score_css_style),
             metric_txt = $("<b>").text(metric.criterion),
+            direction_txt =
+                metric.direction_verbose == "" ? null : $("<p>").html(metric.direction_verbose),
             notes_txt = $("<p>")
                 .html(metric.notes)
                 .css({height: 250, overflow: "auto"});
-        ol.append($("<li>").html([div, metric_txt, notes_txt]));
+        ol.append($("<li>").html([div, metric_txt, direction_txt, notes_txt]));
         this.subset_div.append(ol);
         this.subset_div.fadeIn("500");
     }

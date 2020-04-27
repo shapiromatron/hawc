@@ -10,7 +10,7 @@ import TextInput from "shared/components/TextInput";
 import h from "shared/utils/helpers";
 import "./ScoreForm.css";
 import ScoreOverrideForm from "./ScoreOverrideForm";
-import {SCORE_TEXT_DESCRIPTION, BIAS_DIRECTION_VERBOSE} from "riskofbias/constants";
+import {SCORE_TEXT_DESCRIPTION, BIAS_DIRECTION_CHOICES} from "riskofbias/constants";
 
 @inject("store")
 @observer
@@ -22,7 +22,7 @@ class ScoreForm extends Component {
             choices = store.study.rob_response_values.map(d => {
                 return {id: parseInt(d), label: SCORE_TEXT_DESCRIPTION[d]};
             }),
-            direction_choices = Object.entries(BIAS_DIRECTION_VERBOSE).map(kv => {
+            direction_choices = Object.entries(BIAS_DIRECTION_CHOICES).map(kv => {
                 return {id: kv[0], label: kv[1]};
             }),
             showScoreInput = !h.hideRobScore(parseInt(store.config.assessment_id)),
