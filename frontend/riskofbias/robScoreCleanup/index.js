@@ -1,11 +1,15 @@
-import {splitStartupRedux} from "utils/WebpackSplit";
+import React from "react";
+import ReactDOM from "react-dom";
+import {Provider} from "mobx-react";
 
-const startup = function(element) {
-    import("riskofbias/robScoreCleanup/containers/Root").then(Component => {
-        import("riskofbias/robScoreCleanup/store/configureStore").then(store => {
-            splitStartupRedux(element, Component.default, store.default);
-        });
-    });
-};
+import store from "./store";
+import Root from "./containers/Root";
 
-export default startup;
+export default function(el) {
+    ReactDOM.render(
+        <Provider store={store}>
+            <Root />
+        </Provider>,
+        el
+    );
+}

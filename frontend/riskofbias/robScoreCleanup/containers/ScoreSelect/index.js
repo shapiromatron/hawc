@@ -1,32 +1,33 @@
 import _ from "lodash";
 import React, {Component} from "react";
-import {connect} from "react-redux";
+import PropTypes from "prop-types";
+import {inject, observer} from "mobx-react";
 
-import {selectScores} from "riskofbias/robScoreCleanup/actions/Scores";
-
-export class ScoreSelect extends Component {
-    constructor(props) {
-        super(props);
-        this.handleChange = this.handleChange.bind(this);
-    }
-
-    handleChange({target: {options}}) {
-        let values = [...options].filter(o => o.selected).map(o => o.value);
-        this.props.dispatch(selectScores(values));
-    }
-
+@inject("store")
+@observer
+class ScoreSelect extends Component {
     render() {
-        if (!this.props.isLoaded) return null;
+        const choices = this.props.store.scoreOptions,
+            selected = this.props.store.selectedScores.map(e => e.toString()),
+            handleChange = e => {
+                const values = _.chain(e.target.options)
+                    .filter(o => o.selected)
+                    .map(o => parseInt(o.value))
+                    .value();
+                this.props.store.changeSelectedScores(values);
+            };
+
         return (
             <div>
                 <label className="control-label">Rating filter (optional):</label>
                 <select
-                    multiple
+                    multiple={true}
                     name="score_filter"
                     id="score_filter"
-                    onChange={this.handleChange}
+                    onChange={handleChange}
                     style={{height: "120px"}}>
-                    {_.map(this.props.choices, score => {
+                    value={selected}
+                    {_.map(choices, score => {
                         return (
                             <option key={score.id} value={score.id}>
                                 {score.value}
@@ -38,12 +39,8 @@ export class ScoreSelect extends Component {
         );
     }
 }
+ScoreSelect.propTypes = {
+    store: PropTypes.object,
+};
 
-function mapStateToProps(state) {
-    return {
-        isLoaded: state.scores.isLoaded,
-        choices: state.scores.items,
-    };
-}
-
-export default connect(mapStateToProps)(ScoreSelect);
+export default ScoreSelect;

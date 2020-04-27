@@ -1,31 +1,19 @@
-import React, {Component} from "react";
-import {connect} from "react-redux";
 import _ from "lodash";
-
-import {selectMetric} from "riskofbias/robScoreCleanup/actions/Metrics";
+import React, {Component} from "react";
+import PropTypes from "prop-types";
+import {inject, observer} from "mobx-react";
 
 import SelectInput from "shared/components/SelectInput";
 
-export class MetricSelect extends Component {
-    constructor(props) {
-        super(props);
-        this.handleSelect = this.handleSelect.bind(this);
-    }
-
-    formatMetricChoices() {
-        return _.map(this.props.choices, choice => {
-            return {id: choice.id, label: choice.name};
-        });
-    }
-
-    handleSelect(option = null) {
-        let choice = _.find(this.props.choices, {id: parseInt(option)});
-        this.props.dispatch(selectMetric(choice));
-    }
-
+@inject("store")
+@observer
+class MetricSelect extends Component {
     render() {
-        if (!this.props.isLoaded) return null;
-        let choices = this.formatMetricChoices();
+        const choices = _.map(this.props.store.metricOptions, choice => {
+                return {id: choice.id, label: choice.name};
+            }),
+            selected = this.props.store.selectedMetric;
+
         return (
             <div>
                 <SelectInput
@@ -34,21 +22,18 @@ export class MetricSelect extends Component {
                     className="span12"
                     choices={choices}
                     multiple={false}
-                    handleSelect={this.handleSelect}
-                    value={this.props.selected.id}
+                    handleSelect={e => {
+                        this.props.store.changeSelectedMetric(parseInt(e));
+                    }}
+                    value={selected}
                     label="Select the metric to edit"
                 />
             </div>
         );
     }
 }
+MetricSelect.propTypes = {
+    store: PropTypes.object,
+};
 
-function mapStateToProps(state) {
-    return {
-        selected: state.metrics.selected,
-        isLoaded: state.metrics.isLoaded,
-        choices: state.metrics.items,
-    };
-}
-
-export default connect(mapStateToProps)(MetricSelect);
+export default MetricSelect;

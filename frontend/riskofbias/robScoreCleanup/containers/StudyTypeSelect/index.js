@@ -1,22 +1,24 @@
 import _ from "lodash";
 import React, {Component} from "react";
-import {connect} from "react-redux";
+import PropTypes from "prop-types";
+import {inject, observer} from "mobx-react";
 
-import {selectStudyType} from "riskofbias/robScoreCleanup/actions/StudyTypes";
-import h from "riskofbias/robScoreCleanup/utils/helpers";
+import h from "../../utils/helpers";
 
+@inject("store")
+@observer
 class StudyTypeSelect extends Component {
-    constructor(props) {
-        super(props);
-        this.handleChange = this.handleChange.bind(this);
-    }
-
-    handleChange({target: {options}}) {
-        let values = [...options].filter(option => option.selected).map(option => option.value);
-        this.props.dispatch(selectStudyType(values));
-    }
-
     render() {
+        const choices = this.props.store.studyTypeOptions,
+            selected = this.props.store.selectedStudyTypes,
+            handleChange = e => {
+                const values = _.chain(e.target.options)
+                    .filter(o => o.selected)
+                    .map(o => o.value)
+                    .value();
+                this.props.store.changeSelectedStudyType(values);
+            };
+
         return (
             <div>
                 <label className="control-label">Study Type filter (optional):</label>
@@ -24,9 +26,10 @@ class StudyTypeSelect extends Component {
                     multiple
                     name="studyType_filter"
                     id="studyType_filter"
-                    onChange={this.handleChange}
+                    onChange={handleChange}
                     style={{height: "120px"}}>
-                    {_.map(this.props.choices, (type, i) => {
+                    value={selected}
+                    {_.map(choices, (type, i) => {
                         return (
                             <option key={i} value={type}>
                                 {h.caseToWords(type)}
@@ -38,12 +41,8 @@ class StudyTypeSelect extends Component {
         );
     }
 }
+StudyTypeSelect.propTypes = {
+    store: PropTypes.object,
+};
 
-function mapStateToProps(state) {
-    return {
-        isLoaded: state.studyTypes.isLoaded,
-        choices: state.studyTypes.items,
-    };
-}
-
-export default connect(mapStateToProps)(StudyTypeSelect);
+export default StudyTypeSelect;
