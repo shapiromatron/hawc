@@ -9,8 +9,8 @@ class ExploreHeatmapPlot extends D3Visualization {
         this.data.settings = {
             type: "heatmap",
             title: "Exploratory heatmap of experiments by species, sex, and health system",
-            x_axis_label: "Species & Sex",
-            y_axis_label: "Health System",
+            x_y_scaleabel: "Species & Sex",
+            y_y_scaleabel: "Health System",
         };
         this.data.options = {
             x_fields: ["species-name", "animal_group-sex"], //nested fields on x axis
@@ -24,10 +24,12 @@ class ExploreHeatmapPlot extends D3Visualization {
     render($div) {
         this.generateProperties($div);
         this.draw_visualization();
+        this.build_axes();
     }
 
     generateProperties($div) {
         this.plot = _.assign({}, h.getHawcContentSize());
+        _.assign(this.plot, {top: 100, left: 100, bottom: 100, right: 100});
         this.plot.div = $div.html("")[0];
         this.x_domain = this.data.options.x_fields.map(e =>
             _.chain(this.data.dataset)
@@ -99,20 +101,103 @@ class ExploreHeatmapPlot extends D3Visualization {
         return xy_map;
     }
 
+    build_axes() {
+        let x_domains = this.x_domain.map((e, i) => {
+                let length = i == 0 ? 1 : this.x_domain[i - 1].length;
+                for (let j = 1; j < length; j++) {
+                    e = e.concat(e);
+                }
+                return e;
+            }),
+            y_domains = this.y_domain.map((e, i) => {
+                let length = i == 0 ? 1 : this.y_domain[i - 1].length;
+                for (let j = 1; j < length; j++) {
+                    e = e.concat(e);
+                }
+                return e;
+            });
+
+        let x_axes = x_domains.map((element, index) => {
+                return d3.svg
+                    .axis()
+                    .scale(
+                        d3.scale
+                            .ordinal()
+                            .domain(_.range(0, element.length))
+                            .rangeBands([0, this.plot.width])
+                    )
+                    .tickFormat(d => x_domains[index][d])
+                    .orient("bottom");
+            }),
+            y_axes = y_domains.map((element, index) => {
+                return d3.svg
+                    .axis()
+                    .scale(
+                        d3.scale
+                            .ordinal()
+                            .domain(_.range(0, element.length))
+                            .rangeBands([this.plot.height, 0])
+                    )
+                    .tickFormat(d => y_domains[index][d])
+                    .orient("left");
+            });
+
+        this.vis
+            .append("g")
+            .attr("id", "x-axes")
+            .attr("transform", `translate(0,${this.plot.height})`);
+
+        for (let i = 0; i < x_axes.length; i++) {
+            this.vis
+                .select("g#x-axes")
+                .append("g")
+                .attr("transform", `translate(0,${25 * (x_axes.length - i - 1)})`)
+                .call(x_axes[i]);
+        }
+
+        this.vis.append("g").attr("id", "y-axes");
+
+        for (let i = 0; i < y_axes.length; i++) {
+            this.vis
+                .select("g#y-axes")
+                .append("g")
+                .attr("transform", `translate(${25 * i},0)`)
+                .call(y_axes[i]);
+        }
+    }
+
     draw_visualization() {
+        let w = this.plot.width + this.plot.left + this.plot.right,
+            h = this.plot.height + this.plot.top + this.plot.bottom;
         this.vis = d3
             .select(this.plot.div)
             .append("svg")
-            .attr("width", this.plot.width)
-            .attr("height", this.plot.height)
+            .attr("width", w)
+            .attr("height", h)
             .attr("class", "d3")
-            .attr("viewBox", `0 0 ${this.plot.width} ${this.plot.height}`)
-            .attr("preserveAspectRatio", "xMinYMin");
+            .attr("viewBox", `0 0 ${w} ${h}`)
+            .attr("preserveAspectRatio", "xMinYMin")
+            .append("g")
+            .attr("transform", `translate(${this.plot.left},${this.plot.top})`);
 
-        var axis_b = d3.scale
-            .ordinal()
-            .domain(_.range(1, this.x_steps + 2))
-            .rangeBands([0, this.plot.width]);
+        let x_scale = d3.scale
+                .ordinal()
+                .domain(_.range(1, this.x_steps + 1))
+                .rangeBands([0, this.plot.width]),
+            y_scale = d3.scale
+                .ordinal()
+                .domain(_.range(1, this.y_steps + 1))
+                .rangeBands([this.plot.height, 0]),
+            color_scale = d3.scale
+                .linear()
+                .domain([
+                    0,
+                    this.xy_map.reduce(
+                        (current_max, element) => Math.max(current_max, element.dataset.length),
+                        0
+                    ),
+                ])
+                .range(["white", "black"]);
 
         this.vis
             .append("text")
@@ -120,11 +205,6 @@ class ExploreHeatmapPlot extends D3Visualization {
             .attr("y", this.plot.height)
             .style("text-anchor", "middle")
             .text(this.data.options.x_fields);
-
-        var axis_l = d3.scale
-            .ordinal()
-            .domain(_.range(1, this.y_steps + 2))
-            .rangeBands([this.plot.height, 0]);
 
         this.vis
             .append("text")
@@ -136,27 +216,30 @@ class ExploreHeatmapPlot extends D3Visualization {
 
         this.vis
             .append("g")
-            .selectAll("dot")
+            .attr("id", "cells")
+            .selectAll("g#cells")
             .data(this.xy_map)
             .enter()
             .append("rect")
             .attr("x", function(d) {
-                return axis_b(d.x_step);
+                return x_scale(d.x_step);
             })
             .attr("y", function(d) {
-                return axis_l(d.y_step);
+                return y_scale(d.y_step);
             })
-            .attr("width", axis_b.rangeBand())
-            .attr("height", axis_l.rangeBand())
-            .style("fill", "white")
+            .attr("width", x_scale.rangeBand())
+            .attr("height", y_scale.rangeBand())
+            .style("fill", function(d) {
+                return color_scale(d.dataset.length);
+            })
             .style("stroke", "black")
             .style("stroke-width", "1")
             .append("text")
             .attr("x", function(d) {
-                return axis_b(d.x_step);
+                return x_scale(d.x_step);
             })
             .attr("y", function(d) {
-                return axis_l(d.y_step);
+                return y_scale(d.y_step);
             })
             .text("test");
     }
