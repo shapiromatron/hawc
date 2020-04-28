@@ -6,7 +6,7 @@ import Loading from "shared/components/Loading";
 import ScrollToErrorBox from "shared/components/ScrollToErrorBox";
 // import MetricForm from "riskofbias/robScoreCleanup/containers/MetricForm";
 import MetricSelect from "../MetricSelect";
-// import ScoreList from "riskofbias/robScoreCleanup/containers/ScoreList";
+import ScoreList from "../ScoreList";
 import ScoreSelect from "../ScoreSelect";
 import StudyTypeSelect from "../StudyTypeSelect";
 
@@ -22,23 +22,34 @@ class Root extends Component {
         this.props.store.fetchStudyTypeOptions();
     }
     render() {
-        const error = this.props.store.error,
-            isLoading = this.props.store.isLoading;
+        const {error, isLoading} = this.props.store;
+
+        if (error) {
+            return <ScrollToErrorBox error={error} />;
+        }
 
         if (isLoading) {
             return <Loading />;
         }
+
         return (
             <div>
-                <ScrollToErrorBox error={error} />
                 <div className="container-fluid cleanStudyMetricForm">
                     <div className="span6">
                         <MetricSelect />
                         <div>
-                            <button className="btn btn-primary space" onClick={this.loadMetrics}>
+                            <button
+                                className="btn btn-primary space"
+                                onClick={() => {
+                                    this.props.store.fetchScores();
+                                }}>
                                 Load responses
                             </button>
-                            <button className="btn space" onClick={this.clearMetrics}>
+                            <button
+                                className="btn space"
+                                onClick={() => {
+                                    this.props.store.clearFetchedScores();
+                                }}>
                                 Hide currently shown responses
                             </button>
                         </div>
@@ -51,13 +62,13 @@ class Root extends Component {
                             <StudyTypeSelect />
                         </div>
                         <p className="help-block">
-                            0 To de-select a filter, click on the filter while holding ⌘ on Mac or
+                            To de-select a filter, click on the filter while holding ⌘ on Mac or
                             Control on Windows
                         </p>
                     </div>
                 </div>
-                {/* <MetricForm config={config} /> */}
-                {/* <ScoreList config={config} /> */}
+                {/* <MetricForm /> */}
+                <ScoreList />
             </div>
         );
     }

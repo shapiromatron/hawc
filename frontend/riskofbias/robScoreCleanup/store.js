@@ -1,5 +1,5 @@
 import _ from "lodash";
-import {observable, computed, action} from "mobx";
+import {observable, computed, action, toJS} from "mobx";
 
 import h from "shared/utils/helpers";
 import {SCORE_TEXT_DESCRIPTION} from "../constants";
@@ -14,6 +14,10 @@ class RobCleanupStore {
     @observable selectedMetric = null;
     @observable selectedScores = observable.array();
     @observable selectedStudyTypes = observable.array();
+    @observable studyScores = observable.array();
+    @observable selectedStudyScores = observable.set();
+    @observable studyScoresFetchTime = null;
+    @observable isFetchingStudyScores = false;
 
     // computed
     @computed get isLoading() {
@@ -82,6 +86,42 @@ class RobCleanupStore {
         this.selectedScores = values;
     }
 
+    @action.bound fetchScores() {
+        this.isFetchingStudyScores = true;
+        this.clearFetchedScores();
+        const {host, items, assessment_id} = this.config,
+            url = h.getUrlWithAssessment(
+                h.getObjectUrl(host, items.url, this.selectedMetric),
+                assessment_id
+            );
+
+        fetch(url, h.fetchGet)
+            .then(response => response.json())
+            .then(json => {
+                this.studyScores = _.sortBy(json.scores, "study_name");
+                this.studyScoresFetchTime = new Date().toISOString();
+            })
+            .catch(error => {
+                this.error = error;
+            })
+            .finally(() => {
+                this.isFetchingStudyScores = false;
+            });
+    }
+    @action.bound clearFetchedScores() {
+        this.studyScores = [];
+        this.studyScoresFetchTime = null;
+        this.selectedStudyScores = new Set();
+    }
+
+    @action.bound changeSelectedStudyScores(id, selected) {
+        if (selected) {
+            this.selectedStudyScores.add(id);
+        } else {
+            this.selectedStudyScores.delete(id);
+        }
+    }
+
     // actions: studies
     @action.bound fetchStudyTypeOptions() {
         const {host, studyTypes, assessment_id} = this.config,
@@ -99,6 +139,24 @@ class RobCleanupStore {
     }
     @action.bound changeSelectedStudyType(studyTypes) {
         this.selectedStudyTypes = studyTypes;
+    }
+
+    @computed get visibleStudyScores() {
+        let scores = this.studyScores;
+
+        if (this.selectedScores.length > 0) {
+            const selectedScores = new Set(toJS(this.selectedScores));
+            scores = _.filter(scores, score => selectedScores.has(score.score));
+        }
+
+        if (this.selectedStudyTypes.length > 0) {
+            const selectedStudyTypes = new Set(toJS(this.selectedStudyTypes));
+            scores = _.filter(scores, score =>
+                _.some(score.study_types, studyType => selectedStudyTypes.has(studyType))
+            );
+        }
+
+        return scores;
     }
 }
 

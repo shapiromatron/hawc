@@ -31,25 +31,6 @@ export function checkScoreForUpdate(id) {
     };
 }
 
-export function fetchItemScores() {
-    return (dispatch, getState) => {
-        let state = getState();
-        if (state.items.isFetching) return;
-        dispatch(clearItemScores());
-        dispatch(makeScoreRequest());
-        dispatch(resetError());
-        let {host, items, assessment_id} = state.config;
-        const url = h.getUrlWithAssessment(
-            h.getObjectUrl(host, items.url, state.metrics.selected.id),
-            assessment_id
-        );
-        return fetch(url, h.fetchGet)
-            .then(response => response.json())
-            .then(json => dispatch(receiveScores(json.scores)))
-            .catch(error => dispatch(setError(error)));
-    };
-}
-
 function updateEditMetric(editMetric) {
     return {
         type: types.UPDATE_EDIT_METRIC,

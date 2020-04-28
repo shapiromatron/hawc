@@ -1,67 +1,58 @@
 import _ from "lodash";
+import PropTypes from "prop-types";
 import React, {Component} from "react";
-import {connect} from "react-redux";
+import {inject, observer} from "mobx-react";
 
-import {checkScoreForUpdate, updateVisibleItems} from "riskofbias/robScoreCleanup/actions/Items";
+import Loading from "shared/components/Loading";
+import CheckboxScoreDisplay from "../../components/CheckboxScoreDisplay";
 
-import DisplayComponent from "riskofbias/robScoreCleanup/components/ScoreList";
-
-export class ScoreList extends Component {
-    constructor(props) {
-        super(props);
-        this.handleCheck = this.handleCheck.bind(this);
-    }
-
-    componentWillReceiveProps(nextProps) {
-        if (
-            nextProps.selectedScores != this.props.selectedScores ||
-            nextProps.items != this.props.items ||
-            nextProps.selectedStudies != this.props.selectedStudies
-        ) {
-            this.props.dispatch(
-                updateVisibleItems(nextProps.selectedScores, nextProps.selectedStudies)
-            );
-        }
-    }
-
-    handleCheck({target}) {
-        this.props.dispatch(checkScoreForUpdate(target.id));
-    }
-
-    renderEmptyScoreList() {
-        return <p className="lead">No items meet your criteria.</p>;
-    }
-
+@inject("store")
+@observer
+class ScoreList extends Component {
     render() {
-        if (!this.props.isLoaded) return null;
-        let {items, visibleItemIds, idList, config} = this.props,
-            filteredItems = items.filter(d => _.includes(visibleItemIds, d.id));
+        const {
+                isFetchingStudyScores,
+                studyScoresFetchTime,
+                visibleStudyScores,
+                selectedStudyScores,
+            } = this.props.store,
+            handleCheck = e => {
+                this.props.store.changeSelectedStudyScores(parseInt(e.target.id), e.target.checked);
+            };
 
-        if (filteredItems.length === 0) {
-            return this.renderEmptyScoreList();
+        if (isFetchingStudyScores) {
+            return <Loading />;
+        }
+
+        if (studyScoresFetchTime === null) {
+            return null;
+        }
+
+        if (visibleStudyScores.length === 0) {
+            return <p className="lead">No items meet your criteria.</p>;
         }
 
         return (
-            <DisplayComponent
-                idList={idList}
-                items={filteredItems}
-                config={config}
-                handleCheck={this.handleCheck}
-            />
+            <div>
+                <h4>RoB responses which meet criteria specified above:</h4>
+                {_.map(visibleStudyScores, studyScore => {
+                    return (
+                        <div key={studyScore.id}>
+                            <CheckboxScoreDisplay
+                                score={studyScore}
+                                handleCheck={handleCheck}
+                                checked={selectedStudyScores.has(studyScore.id)}
+                            />
+                            <hr />
+                        </div>
+                    );
+                })}
+            </div>
         );
     }
 }
+ScoreList.propTypes = {
+    store: PropTypes.object,
+};
 
-function mapStateToProps(state) {
-    const {items, visibleItemIds, updateIds, isLoaded} = state.items;
-    return {
-        selectedScores: state.scores.selected,
-        selectedStudies: state.studyTypes.selected,
-        items,
-        visibleItemIds,
-        idList: updateIds,
-        isLoaded,
-    };
-}
-
-export default connect(mapStateToProps)(ScoreList);
+export default ScoreList;
