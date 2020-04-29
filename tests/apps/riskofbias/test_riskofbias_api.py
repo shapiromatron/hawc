@@ -4,7 +4,14 @@ import pytest
 from django.urls import reverse
 from rest_framework.test import APIClient
 
-from hawc.apps.riskofbias.models import RiskOfBias, RiskOfBiasScore
+from hawc.apps.myuser.models import HAWCUser
+from hawc.apps.riskofbias.models import (
+    RiskOfBias,
+    RiskOfBiasAssessment,
+    RiskOfBiasMetric,
+    RiskOfBiasScore,
+)
+from hawc.apps.study.models import Study
 
 
 @pytest.mark.django_db
@@ -149,3 +156,133 @@ def test_riskofbias_post_overrides():
 
     # ensure we can delete
     assert c.delete(url).status_code == 204
+
+
+def build_upload_payload(study, author, metrics, dummy_score):
+    payload = {
+        "study_id": study.id if study is not None else -1,
+        "author_id": author.id if author is not None else -1,
+        "active": True,
+        "final": True,
+        "scores": [
+            dict(
+                metric_id=metric.id,
+                is_default=True,
+                label="",
+                bias_direction=0,
+                score=dummy_score,
+                notes="sample note",
+            )
+            for metric in metrics
+        ],
+    }
+    return payload
+
+
+@pytest.mark.django_db
+def test_riskofbias_create():
+    # check upload version of RoB api
+    client = APIClient()
+    assert client.login(username="team@team.com", password="pw") is True
+
+    url = reverse("riskofbias:api:review-list")
+
+    rev_author = HAWCUser.objects.get(email="rev@rev.com")
+    pm_author = HAWCUser.objects.get(email="pm@pm.com")
+    study = Study.objects.get(id=1)
+
+    required_metrics = RiskOfBiasMetric.objects.get_required_metrics(study.assessment, study)
+    first_valid_score = RiskOfBiasAssessment().get_rob_response_values()[0]
+
+    # failed uploading for a study that already has an active & final RoB
+    payload = build_upload_payload(study, pm_author, required_metrics, first_valid_score)
+    resp = client.post(url, payload, format="json")
+    assert resp.status_code == 400
+    assert b"already has an active" in resp.content
+
+    # bad score value
+    payload = build_upload_payload(study, pm_author, required_metrics, -999)
+    payload["scores"][0]["score"] *= -1
+    resp = client.post(url, payload, format="json")
+    assert resp.status_code == 400
+    assert b"is not a valid choice" in resp.content
+
+    # author without permissions for the study/assessment
+    payload = build_upload_payload(study, rev_author, required_metrics, first_valid_score)
+    resp = client.post(url, payload, format="json")
+    assert resp.status_code == 400
+    assert b"has invalid permissions" in resp.content
+
+    # invalid study_id
+    payload = build_upload_payload(None, pm_author, required_metrics, first_valid_score)
+    resp = client.post(url, payload, format="json")
+    assert resp.status_code == 400
+    assert b"Invalid study_id" in resp.content
+
+    # invalid author_id
+    payload = build_upload_payload(study, None, required_metrics, first_valid_score)
+    resp = client.post(url, payload, format="json")
+    assert resp.status_code == 400
+    assert b"Invalid author_id" in resp.content
+
+    # delete existing RoBs so we can insert (study already has active/final)
+    RiskOfBias.objects.all().delete()
+    payload = build_upload_payload(study, pm_author, required_metrics, first_valid_score)
+    resp = client.post(url, payload, format="json")
+    assert resp.status_code == 201
+    assert "created" in resp.data
+    assert "scores" in resp.data and len(resp.data["scores"]) == 2
+
+    # no scores submitted for a metric
+    RiskOfBias.objects.all().delete()
+    payload = build_upload_payload(study, pm_author, required_metrics, first_valid_score)
+    payload["scores"].pop()
+    resp = client.post(url, payload, format="json")
+    assert resp.status_code == 400
+    assert b"No score for metric" in resp.content
+
+    # no default score submitted for a metric
+    RiskOfBias.objects.all().delete()
+    payload = build_upload_payload(study, pm_author, required_metrics, first_valid_score)
+    payload["scores"][0]["is_default"] = False
+    resp = client.post(url, payload, format="json")
+    assert resp.status_code == 400
+    assert b"No default score for metric" in resp.content
+
+    # multiple default scores submitted for a metric
+    payload = build_upload_payload(study, pm_author, required_metrics, first_valid_score)
+    payload["scores"].append(payload["scores"][0])
+    resp = client.post(url, payload, format="json")
+    assert resp.status_code == 400
+    assert b"Multiple default scores for metric" in resp.content
+
+    # demonstrate overridden objects with a unsupported content type
+    RiskOfBias.objects.all().delete()
+    payload = build_upload_payload(study, pm_author, required_metrics, first_valid_score)
+    payload["scores"][0]["overridden_objects"] = [
+        {"content_type_name": "animal.dosingregime", "object_id": 999}
+    ]
+    resp = client.post(url, payload, format="json")
+    assert resp.status_code == 400
+    assert b"Invalid content type name" in resp.content
+
+    # demonstrate overridden objects with a valid content type but a bad object_id
+    RiskOfBias.objects.all().delete()
+    payload = build_upload_payload(study, pm_author, required_metrics, first_valid_score)
+    payload["scores"][0]["overridden_objects"] = [
+        {"content_type_name": "animal.animalgroup", "object_id": 999}
+    ]
+    resp = client.post(url, payload, format="json")
+    assert resp.status_code == 400
+    assert b"Invalid content object" in resp.content
+
+    # demonstrate valid overridden objects
+    RiskOfBias.objects.all().delete()
+    payload = build_upload_payload(study, pm_author, required_metrics, first_valid_score)
+    payload["scores"][0]["overridden_objects"] = [
+        {"content_type_name": "animal.animalgroup", "object_id": 1}
+    ]
+    resp = client.post(url, payload, format="json")
+    assert resp.status_code == 201
+    assert "created" in resp.data
+    assert "scores" in resp.data and len(resp.data["scores"]) == 2

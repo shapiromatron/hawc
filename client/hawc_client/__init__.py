@@ -79,7 +79,7 @@ class HawcSession:
         Returns:
             Response: The response.
         """
-        response = self._session.post(url=url, data=data)
+        response = self._session.post(url=url, json=data)
         self._handle_hawc_response(response)
         return response
 
@@ -289,6 +289,82 @@ class RiskOfBiasClient(BaseClient):
         url = f"{self.session.root_url}/rob/api/assessment/{assessment_id}/full-export/"
         response_json = self.session.get(url).json()
         return pd.DataFrame(response_json)
+
+    def create(
+        self, study_id: int, author_id: int, active: bool, final: bool, scores: List[Dict]
+    ) -> Dict:
+        """
+        Create a Risk of Bias review for a study. The review must be complete and contain answers for
+        all required metrics.
+
+        Args:
+            study_id (int): id of study.
+            author_id (int): id of author of the Risk of Bias data.
+            active (bool): create the new Risk of Bias data as active or not
+            final (bool): create the new Risk of Bias data as final or not
+            scores (List[Dict]): List of scores. Each element of the List is a Dict containing the following
+                                 string keys / expected values:
+                * "metric_id" (int): the id of the metric for this score
+                * "is_default" (bool): create this score as default or not
+                * "label" (str, optional): label for this score
+                * "notes" (str): notes for this core
+                * "score" (int): numeric score value. Actual legal values for this are dependent on the value
+                                 of the HAWC_FLAVOR setting for this instance of HAWC and correspond to readable
+                                 values like "Critically deficient" or "++". See also:
+                                    + hawc.apps.riskofbias.models.RiskOfBiasAssessment.get_rob_response_values
+                                    + hawc.apps.riskofbias.models.RiskOfBiasScore.RISK_OF_BIAS_SCORE_CHOICES
+                                    + hawc.apps.riskofbias.models.RiskOfBiasScore.SCORE_SYMBOLS
+                * bias_direction (int, optional): bias direction
+                * "overridden_objects" (List[Dict], optional): a list of overrides for this particular score. Optional.
+                                                     Each element of this List is a Dict containing the
+                                                     following string keys / expected values:
+                    * "content_type_name" (str): the name of the data type relevant to this override.
+                    * "object_id" (int): the id of the particular instance of that data type relevant to this override.
+
+
+        Example Usage:
+            try:
+                rob = client.riskofbias.create(
+                    study_id=123,
+                    author_id=123,
+                    active=True,
+                    final=True,
+                    scores=[
+                        {
+                            "metric_id": 123,
+                            "is_default": True,
+                            "score": 26,
+                            "bias_direction": 1,
+                            "notes": "<p>more custom notes</p>"
+                        },
+                        {
+                            "metric_id": 123,
+                            "is_default": False,
+                            "label": "override-example",
+                            "score": 25,
+                            "bias_direction": 0,
+                            "notes": "<p>custom notes</p>",
+                            "overridden_objects": [
+                                {
+                                    "content_type_name": "animal.animalgroup",
+                                    "object_id": 123
+                                }
+                            ]
+                        }
+                    ]
+                )
+            except HawcClientException as hce:
+                pass
+        """
+        payload = {
+            "study_id": study_id,
+            "author_id": author_id,
+            "active": active,
+            "final": final,
+            "scores": scores,
+        }
+        url = f"{self.session.root_url}/rob/api/review/"
+        return self.session.post(url, payload)
 
 
 class EpiClient(BaseClient):
