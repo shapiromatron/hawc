@@ -12,6 +12,8 @@ class ExploreHeatmapPlot extends D3Visualization {
         this.build_elements($div);
         this.build_plot();
         this.build_axes();
+        this.build_labels();
+        this.position_plot();
         this.build_blacklist_sidebar();
         this.build_detail_box();
     }
@@ -22,8 +24,11 @@ class ExploreHeatmapPlot extends D3Visualization {
         _.assign(this, data.settings);
         this.blacklist = [];
 
-        this.plot = _.assign({}, {width: 1200, height: 700});
-        _.assign(this.plot, {top: 100, left: 100, bottom: 100, right: 100});
+        this.plot = _.assign({}, {width: 700, height: 400});
+        _.assign(this.plot, {top: 0, left: 0, bottom: 0, right: 0});
+
+        this.horizontal_margin = 200;
+        this.vertical_margin = 50;
 
         this.blacklist_map = _.chain(this.dataset)
             .map(d => d[this.blacklist_field])
@@ -237,8 +242,9 @@ class ExploreHeatmapPlot extends D3Visualization {
             this.plot_svg
                 .select("g#x-axes")
                 .append("g")
-                .attr("transform", `translate(0,${25 * (x_axes.length - i - 1)})`)
+                .attr("transform", `translate(0,${this.vertical_margin * (x_axes.length - i - 1)})`)
                 .call(x_axes[i]);
+            this.plot.bottom += this.vertical_margin;
         }
 
         this.plot_svg.append("g").attr("id", "y-axes");
@@ -247,8 +253,49 @@ class ExploreHeatmapPlot extends D3Visualization {
             this.plot_svg
                 .select("g#y-axes")
                 .append("g")
-                .attr("transform", `translate(${25 * i},0)`)
+                .attr("transform", `translate(${this.horizontal_margin * i},0)`)
                 .call(y_axes[i]);
+            this.plot.left += this.horizontal_margin;
+        }
+    }
+
+    build_labels() {
+        let label_margin = 50;
+
+        // Plot title
+        if (this.title.length > 0) {
+            this.plot_svg
+                .append("text")
+                .attr("x", this.plot.width / 2)
+                .attr("y", -label_margin / 2)
+                .style("text-anchor", "middle")
+                .text(this.title);
+            this.plot.top += label_margin;
+        }
+        // X axis
+        if (this.x_label.length > 0) {
+            this.plot_svg
+                .append("text")
+                .attr("x", this.plot.width / 2)
+                .attr("y", this.plot.height + this.plot.bottom + label_margin / 2)
+                .style("text-anchor", "middle")
+                .text(this.x_label);
+            this.plot.bottom += label_margin;
+        }
+        // Y axis
+        if (this.y_label.length > 0) {
+            this.plot_svg
+                .append("text")
+                .attr("x", 0)
+                .attr("y", 0)
+                .attr(
+                    "transform",
+                    `translate(${-(this.plot.left + label_margin / 2)},${this.plot.height /
+                        2}) rotate(-90)`
+                )
+                .style("text-anchor", "middle")
+                .text(this.y_label);
+            this.plot.left += label_margin;
         }
     }
 
@@ -302,17 +349,21 @@ class ExploreHeatmapPlot extends D3Visualization {
         cells_text_data.text(d => d.dataset.length);
     };
 
-    build_plot() {
+    position_plot() {
         let w = this.plot.width + this.plot.left + this.plot.right,
-            h = this.plot.height + this.plot.top + this.plot.bottom;
-        this.plot_svg = this.plot_container
+            h = this.plot.height + this.plot.bottom + this.plot.top;
+
+        this.svg.attr("viewBox", `0 0 ${w} ${h}`);
+        this.plot_svg.attr("transform", `translate(${this.plot.left},${this.plot.top})`);
+    }
+
+    build_plot() {
+        this.svg = this.plot_container
             .append("svg")
             .attr("class", "d3")
             .attr("width", "100%")
-            .attr("height", "100%")
-            .attr("viewBox", `0 0 ${w} ${h}`)
-            .append("g")
-            .attr("transform", `translate(${this.plot.left},${this.plot.top})`);
+            .attr("height", "100%");
+        this.plot_svg = this.svg.append("g");
 
         // Scales for x axis, y axis, and cell color
         this.x_scale = d3.scale
@@ -343,29 +394,6 @@ class ExploreHeatmapPlot extends D3Visualization {
 
         // Draw cells
         this.update_plot();
-
-        // Axis labels
-        this.plot_svg
-            .append("text")
-            .attr("x", this.plot.width / 2)
-            .attr("y", this.plot.height + 0.75 * this.plot.bottom)
-            .style("text-anchor", "middle")
-            .text(this.x_label);
-        this.plot_svg
-            .append("text")
-            .attr("x", 0)
-            .attr("y", 0)
-            .attr("transform", `translate(${-this.plot.left},${this.plot.height / 2}) rotate(-90)`)
-            .style("text-anchor", "middle")
-            .text(this.y_label);
-
-        // Plot title
-        this.plot_svg
-            .append("text")
-            .attr("x", this.plot.width / 2)
-            .attr("y", -0.75 * this.plot.top)
-            .style("text-anchor", "middle")
-            .text(this.title);
     }
 }
 
