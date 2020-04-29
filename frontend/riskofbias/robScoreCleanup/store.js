@@ -86,6 +86,26 @@ class RobCleanupStore {
         this.selectedScores = values;
     }
 
+    // actions: study types
+    @action.bound fetchStudyTypeOptions() {
+        const {host, studyTypes, assessment_id} = this.config,
+            url = h.getUrlWithAssessment(h.getListUrl(host, studyTypes.url), assessment_id);
+
+        this.resetError();
+        fetch(url, h.fetchGet)
+            .then(response => response.json())
+            .then(json => {
+                this.studyTypeOptions = json;
+            })
+            .catch(error => {
+                this.setError(error);
+            });
+    }
+    @action.bound changeSelectedStudyType(studyTypes) {
+        this.selectedStudyTypes = studyTypes;
+    }
+
+    // actions: study score responses
     @action.bound fetchScores() {
         this.isFetchingStudyScores = true;
         this.clearFetchedScores();
@@ -113,7 +133,6 @@ class RobCleanupStore {
         this.studyScoresFetchTime = null;
         this.selectedStudyScores = new Set();
     }
-
     @action.bound changeSelectedStudyScores(id, selected, score, notes) {
         if (selected) {
             this.selectedStudyScores.add(id);
@@ -122,25 +141,6 @@ class RobCleanupStore {
         } else {
             this.selectedStudyScores.delete(id);
         }
-    }
-
-    // actions: studies
-    @action.bound fetchStudyTypeOptions() {
-        const {host, studyTypes, assessment_id} = this.config,
-            url = h.getUrlWithAssessment(h.getListUrl(host, studyTypes.url), assessment_id);
-
-        this.resetError();
-        fetch(url, h.fetchGet)
-            .then(response => response.json())
-            .then(json => {
-                this.studyTypeOptions = json;
-            })
-            .catch(error => {
-                this.setError(error);
-            });
-    }
-    @action.bound changeSelectedStudyType(studyTypes) {
-        this.selectedStudyTypes = studyTypes;
     }
     @action.bound clearSelectedStudyScores() {
         this.selectedStudyScores = new Set();
@@ -178,6 +178,7 @@ class RobCleanupStore {
     // form store
     @observable formScore = null;
     @observable formNotes = "";
+
     @action.bound setFormScore(value) {
         this.formScore = value;
     }
@@ -210,16 +211,20 @@ class RobCleanupStore {
     }
 }
 
-const store = new RobCleanupStore();
+const createStore = function() {
+    const store = new RobCleanupStore();
 
-autorun(() => {
-    // whenever visible scores change, reset selected items
-    const newScoreHash = store.visibleStudyScores.map(score => score.id.toString()).join("-");
-    if (store.visibleScoreHash !== newScoreHash) {
-        store.clearSelectedStudyScores();
-        store.setVisibleScoreHash(newScoreHash);
-    }
-});
+    autorun(() => {
+        // whenever visible scores change, reset selected items
+        const newScoreHash = store.visibleStudyScores.map(score => score.id.toString()).join("-");
+        if (store.visibleScoreHash !== newScoreHash) {
+            store.clearSelectedStudyScores();
+            store.setVisibleScoreHash(newScoreHash);
+        }
+    });
 
-// singleton pattern
-export default store;
+    // singleton pattern
+    return store;
+};
+
+export default createStore;
