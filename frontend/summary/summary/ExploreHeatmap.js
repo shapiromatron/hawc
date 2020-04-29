@@ -9,11 +9,24 @@ class ExploreHeatmap extends BaseVisual {
     }
 
     displayAsPage($el, options) {
-        var title = $("<h1>").text("this.data.title"),
-            captionDiv = $("<div>").html("this.data.caption"),
+        var title = $("<h1>").text(this.data.title),
+            captionDiv = $("<div>").html(this.data.caption),
             caption = new SmartTagContainer(captionDiv),
-            $plotDiv = $("<div>"),
-            data = this.getPlotData();
+            $plotDiv = $("<div>");
+        //data = this.getPlotData();
+
+        var data = {};
+        data.settings = {
+            type: "heatmap",
+            title: "Exploratory heatmap of experiments by species, sex, and health system",
+            x_label: "Species & Sex",
+            y_label: "Health System",
+            x_fields: ["species-name", "animal_group-sex"], //nested fields on x axis
+            y_fields: ["endpoint-system"], //nested fields on y axis
+            //all_fields: ["foo", "bar"], //all fields we are interested in, ignore excluded fields on detail page
+            blacklist_field: "study-short_citation", //additional filter(s?) / main identifier
+        };
+        data.dataset = require("./test-json.json");
 
         options = options || {};
 
@@ -31,11 +44,24 @@ class ExploreHeatmap extends BaseVisual {
         options = options || {};
 
         var self = this,
-            data = this.getPlotData(),
-            captionDiv = $("<div>").html("this.data.caption"),
+            //data = this.getPlotData(),
+            captionDiv = $("<div>").html(this.data.caption),
             caption = new SmartTagContainer(captionDiv),
             $plotDiv = $("<div>"),
             modal = new HAWCModal();
+
+        var data = {};
+        data.settings = {
+            type: "heatmap",
+            title: "Exploratory heatmap of experiments by species, sex, and health system",
+            x_label: "Species & Sex",
+            y_label: "Health System",
+            x_fields: ["species-name", "animal_group-sex"], //nested fields on x axis
+            y_fields: ["endpoint-system"], //nested fields on y axis
+            //all_fields: ["foo", "bar"], //all fields we are interested in, ignore excluded fields on detail page
+            blacklist_field: "study-short_citation", //additional filter(s?) / main identifier
+        };
+        data.dataset = require("./test-json.json");
 
         modal.getModal().on("shown", function() {
             new ExploreHeatmapPlot(self, data, options).render($plotDiv);
@@ -43,7 +69,7 @@ class ExploreHeatmap extends BaseVisual {
         });
 
         modal
-            .addHeader($("<h4>").text("this.data.title"))
+            .addHeader($("<h4>").text(this.data.title))
             .addBody([$plotDiv, captionDiv])
             .addFooter("")
             .show({maxWidth: 1200});
