@@ -1584,7 +1584,7 @@
     metric: 1
     is_default: true
     label: ''
-    score: 27
+    score: 17
     bias_direction: 0
     notes: <p>Content here.</p>
 - model: riskofbias.riskofbiasscore
@@ -1594,7 +1594,7 @@
     metric: 2
     is_default: true
     label: Default label
-    score: 26
+    score: 16
     bias_direction: 1
     notes: <p>Content here.</p>
 - model: riskofbias.riskofbiasscore
@@ -1604,7 +1604,7 @@
     metric: 1
     is_default: true
     label: ''
-    score: 27
+    score: 17
     bias_direction: 2
     notes: <p>good!</p>
 - model: riskofbias.riskofbiasscore
@@ -1614,7 +1614,7 @@
     metric: 2
     is_default: true
     label: ''
-    score: 26
+    score: 16
     bias_direction: 0
     notes: <p>ok!</p>
 - model: riskofbias.riskofbiasscore
@@ -1624,7 +1624,7 @@
     metric: 1
     is_default: true
     label: ''
-    score: 26
+    score: 16
     bias_direction: 1
     notes: <p>Adequate.</p>
 - model: riskofbias.riskofbiasscore
@@ -1634,7 +1634,7 @@
     metric: 2
     is_default: true
     label: base
-    score: 26
+    score: 16
     bias_direction: 2
     notes: <p>Fine, but subsets are imprortant</p>
 - model: riskofbias.riskofbiasscore
@@ -1644,7 +1644,7 @@
     metric: 2
     is_default: false
     label: Custom label
-    score: 25
+    score: 15
     bias_direction: 0
     notes: <p>With override.</p>
 - model: riskofbias.riskofbiasscore
@@ -1654,7 +1654,7 @@
     metric: 2
     is_default: false
     label: other stuff
-    score: 22
+    score: 14
     bias_direction: 1
     notes: <p>This wasn't reported in this case.</p>
 - model: riskofbias.riskofbiasscoreoverrideobject

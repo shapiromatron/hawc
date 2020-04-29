@@ -1,9 +1,10 @@
-from django.core.exceptions import PermissionDenied
+from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.serializers import ValidationError
 from rest_framework_extensions.mixins import ListUpdateModelMixin
 
 from ..assessment.api import (
@@ -16,6 +17,7 @@ from ..assessment.api import (
 )
 from ..assessment.models import Assessment, TimeSpentEditing
 from ..common.api import BulkIdFilter, LegacyAssessmentAdapterMixin
+from ..common.helper import tryParseInt
 from ..common.renderers import PandasRenderers
 from ..common.views import AssessmentPermissionsMixin, TeamMemberOrHigherMixin
 from ..mgmt.models import Task
@@ -99,6 +101,29 @@ class RiskOfBias(viewsets.ModelViewSet):
                 serializer.instance,
                 serializer.instance.get_assessment().id,
             )
+
+    def create(self, request, *args, **kwargs):
+        study_id = tryParseInt(request.data.get("study_id"), -1)
+
+        try:
+            study = Study.objects.get(id=study_id)
+        except ObjectDoesNotExist:
+            raise ValidationError("Invalid study_id")
+
+        # permission check using the user submitting the request
+        if not study.user_can_edit_study(study.assessment, request.user):
+            raise PermissionDenied(
+                f"Submitter '{request.user}' has invalid permissions to edit Risk of Bias for this study"
+            )
+
+        # overridden_objects is not marked as optional in RiskOfBiasScoreSerializerSlim; if it's not present
+        # in the payload, let's just add an empty array.
+        scores = request.data.get("scores")
+        for score in scores:
+            if "overridden_objects" not in score:
+                score["overridden_objects"] = []
+
+        return super().create(request, args, kwargs)
 
     @action(detail=True, methods=["get"])
     def override_options(self, request, pk=None):
