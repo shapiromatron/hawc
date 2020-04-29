@@ -1,5 +1,5 @@
 import _ from "lodash";
-import {observable, computed, action, toJS} from "mobx";
+import {autorun, observable, computed, action, toJS} from "mobx";
 
 import h from "shared/utils/helpers";
 import {SCORE_TEXT_DESCRIPTION} from "../constants";
@@ -18,8 +18,8 @@ class RobCleanupStore {
     @observable selectedStudyScores = observable.set();
     @observable studyScoresFetchTime = null;
     @observable isFetchingStudyScores = false;
+    @observable visibleScoreHash = "";
 
-    // computed
     @computed get isLoading() {
         return (
             this.metricOptions === null ||
@@ -114,9 +114,11 @@ class RobCleanupStore {
         this.selectedStudyScores = new Set();
     }
 
-    @action.bound changeSelectedStudyScores(id, selected) {
+    @action.bound changeSelectedStudyScores(id, selected, score, notes) {
         if (selected) {
             this.selectedStudyScores.add(id);
+            this.setFormScore(score);
+            this.setFormNotes(notes);
         } else {
             this.selectedStudyScores.delete(id);
         }
@@ -140,6 +142,20 @@ class RobCleanupStore {
     @action.bound changeSelectedStudyType(studyTypes) {
         this.selectedStudyTypes = studyTypes;
     }
+    @action.bound clearSelectedStudyScores() {
+        this.selectedStudyScores = new Set();
+    }
+    @action.bound selectAllStudyScores() {
+        const studyScores = this.visibleStudyScores;
+        this.selectedStudyScores = new Set(studyScores.map(score => score.id));
+        if (studyScores.length > 0) {
+            this.setFormScore(studyScores[0].score);
+            this.setFormNotes(studyScores[0].notes);
+        }
+    }
+    @action.bound setVisibleScoreHash(newScoreHash) {
+        this.visibleScoreHash = newScoreHash;
+    }
 
     @computed get visibleStudyScores() {
         let scores = this.studyScores;
@@ -158,9 +174,52 @@ class RobCleanupStore {
 
         return scores;
     }
+
+    // form store
+    @observable formScore = null;
+    @observable formNotes = "";
+    @action.bound setFormScore(value) {
+        this.formScore = value;
+    }
+    @action.bound setFormNotes(value) {
+        this.formNotes = value;
+    }
+    @action.bound bulkUpdateSelectedStudies() {
+        const ids = Array.from(this.selectedStudyScores),
+            payload = {
+                score: this.formScore,
+                notes: this.formNotes,
+            },
+            opts = h.fetchBulk(this.config.csrf, payload),
+            url = h.getBulkUrl(
+                this.config.host,
+                h.getUrlWithAssessment(this.config.items.patchUrl, this.config.assessment_id),
+                ids
+            );
+
+        this.resetError();
+        fetch(url, opts).then(response => {
+            if (response.ok) {
+                this.fetchScores();
+            } else {
+                response.json().then(json => {
+                    this.setError(json);
+                });
+            }
+        });
+    }
 }
 
 const store = new RobCleanupStore();
+
+autorun(() => {
+    // whenever visible scores change, reset selected items
+    const newScoreHash = store.visibleStudyScores.map(score => score.id.toString()).join("-");
+    if (store.visibleScoreHash !== newScoreHash) {
+        store.clearSelectedStudyScores();
+        store.setVisibleScoreHash(newScoreHash);
+    }
+});
 
 // singleton pattern
 export default store;

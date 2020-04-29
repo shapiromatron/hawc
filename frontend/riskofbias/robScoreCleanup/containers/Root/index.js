@@ -4,7 +4,7 @@ import {inject, observer} from "mobx-react";
 
 import Loading from "shared/components/Loading";
 import ScrollToErrorBox from "shared/components/ScrollToErrorBox";
-// import MetricForm from "riskofbias/robScoreCleanup/containers/MetricForm";
+import MetricForm from "../MetricForm";
 import MetricSelect from "../MetricSelect";
 import ScoreList from "../ScoreList";
 import ScoreSelect from "../ScoreSelect";
@@ -24,16 +24,13 @@ class Root extends Component {
     render() {
         const {error, isLoading} = this.props.store;
 
-        if (error) {
-            return <ScrollToErrorBox error={error} />;
-        }
-
         if (isLoading) {
             return <Loading />;
         }
 
         return (
             <div>
+                <ScrollToErrorBox error={error} />
                 <div className="container-fluid cleanStudyMetricForm">
                     <div className="span6">
                         <MetricSelect />
@@ -62,12 +59,12 @@ class Root extends Component {
                             <StudyTypeSelect />
                         </div>
                         <p className="help-block">
-                            To de-select a filter, click on the filter while holding ⌘ on Mac or
-                            Control on Windows
+                            To de-select a filter, click on the filter while holding Control on
+                            Windows or ⌘ on Mac
                         </p>
                     </div>
                 </div>
-                {/* <MetricForm /> */}
+                <MetricForm />
                 <ScoreList />
             </div>
         );

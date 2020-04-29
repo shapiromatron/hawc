@@ -1,62 +1,60 @@
-import _ from "lodash";
 import React from "react";
-import {connect} from "react-redux";
+import PropTypes from "prop-types";
+import {inject, observer} from "mobx-react";
 
-import {resetError} from "riskofbias/robScoreCleanup/actions/Errors";
-import {selectAll} from "riskofbias/robScoreCleanup/actions/Items";
-import {updateEditMetricIfNeeded, submitItemEdits} from "riskofbias/robScoreCleanup/actions/Items";
+import {ScoreInput, ScoreNotesInput} from "../../../robStudyForm/ScoreForm";
 
-export class MetricForm extends React.Component {
-    constructor(props) {
-        super(props);
-        this.handleCancel = this.handleCancel.bind(this);
-        this.handleSelectAll = this.handleSelectAll.bind(this);
-        this.onSubmit = this.onSubmit.bind(this);
-    }
-
-    shouldComponentUpdate(nextProps, nextState) {
-        if (!_.isEqual(nextProps, this.props) || !_.isEqual(nextState, this.state)) {
-            return true;
-        }
-        return false;
-    }
-
-    componentWillUpdate(prevProps, prevState) {
-        this.props.dispatch(updateEditMetricIfNeeded());
-    }
-
-    handleCancel(e) {
-        e.preventDefault();
-        this.props.dispatch(resetError());
-    }
-
-    handleSelectAll(e) {
-        e.preventDefault();
-        this.props.dispatch(selectAll());
-    }
-
-    onSubmit(e) {
-        e.preventDefault();
-        let {notes, score} = this.refs.metricForm.refs.form.state,
-            metric = {notes, score: parseInt(score)};
-        this.props.dispatch(submitItemEdits(metric));
-    }
-
+@inject("store")
+@observer
+class MetricForm extends React.Component {
     render() {
-        let {items} = this.props;
-        if (!items.isLoaded) return null;
+        const {store} = this.props,
+            numItems = this.props.store.selectedStudyScores.size,
+            itemString = numItems === 1 ? "item" : "items";
+
+        if (store.selectedStudyScores.size === 0) {
+            return null;
+        }
         return (
-            <form onSubmit={this.onSubmit}>{/* TODO resume with re-enabling this module */}</form>
+            <form
+                className="row-fluid"
+                style={{margin: "1em 0", padding: "1em"}}
+                onSubmit={e => {
+                    e.preventDefault();
+                    store.bulkUpdateSelectedStudies();
+                }}>
+                <div className="span5">
+                    <ScoreInput
+                        scoreId={-1}
+                        choices={store.scoreOptions.map(d => d.id)}
+                        value={store.formScore}
+                        handleChange={value => {
+                            store.setFormScore(parseInt(value));
+                        }}
+                    />
+                    <button className="btn btn-primary" type="submit">
+                        Bulk modify {numItems} {itemString}.
+                    </button>
+                    <p className="help-block">
+                        Submitting this request will change the selected score and notes for the
+                        selected items.
+                    </p>
+                </div>
+                <div className="span7">
+                    <ScoreNotesInput
+                        scoreId={-1}
+                        value={store.formNotes}
+                        handleChange={value => {
+                            store.setFormNotes(value);
+                        }}
+                    />
+                </div>
+            </form>
         );
     }
 }
+MetricForm.propTypes = {
+    store: PropTypes.object,
+};
 
-function mapStateToProps(state) {
-    const {items} = state;
-    return {
-        items,
-        robResponseValues: _.map(state.scores.items, "id"),
-    };
-}
-
-export default connect(mapStateToProps)(MetricForm);
+export default MetricForm;

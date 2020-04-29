@@ -11,14 +11,11 @@ import CheckboxScoreDisplay from "../../components/CheckboxScoreDisplay";
 class ScoreList extends Component {
     render() {
         const {
-                isFetchingStudyScores,
-                studyScoresFetchTime,
-                visibleStudyScores,
-                selectedStudyScores,
-            } = this.props.store,
-            handleCheck = e => {
-                this.props.store.changeSelectedStudyScores(parseInt(e.target.id), e.target.checked);
-            };
+            isFetchingStudyScores,
+            studyScoresFetchTime,
+            visibleStudyScores,
+            selectedStudyScores,
+        } = this.props.store;
 
         if (isFetchingStudyScores) {
             return <Loading />;
@@ -34,13 +31,41 @@ class ScoreList extends Component {
 
         return (
             <div>
-                <h4>RoB responses which meet criteria specified above:</h4>
+                <h4>
+                    Responses which meet your filtered criteria above:
+                    <div className="pull-right">
+                        <button
+                            className="btn btn-default"
+                            onClick={() => {
+                                this.props.store.clearSelectedStudyScores();
+                            }}>
+                            Clear selected
+                        </button>
+                        <span>&nbsp;</span>
+                        <button
+                            className="btn btn-primary"
+                            onClick={() => {
+                                this.props.store.selectAllStudyScores();
+                            }}>
+                            Select all responses
+                        </button>
+                    </div>
+                </h4>
+                <br />
+
                 {_.map(visibleStudyScores, studyScore => {
                     return (
                         <div key={studyScore.id}>
                             <CheckboxScoreDisplay
                                 score={studyScore}
-                                handleCheck={handleCheck}
+                                handleCheck={e => {
+                                    this.props.store.changeSelectedStudyScores(
+                                        studyScore.id,
+                                        e.target.checked,
+                                        studyScore.score,
+                                        studyScore.notes
+                                    );
+                                }}
                                 checked={selectedStudyScores.has(studyScore.id)}
                             />
                             <hr />

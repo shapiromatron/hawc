@@ -2,7 +2,7 @@ import React, {Component} from "react";
 import PropTypes from "prop-types";
 import {observer, inject} from "mobx-react";
 
-import ScoreForm from "./ScoreForm";
+import {ScoreForm} from "./ScoreForm";
 import MetricScores from "riskofbias/robTable/components/MetricScores";
 
 @inject("store")
