@@ -3,7 +3,7 @@ import React, {Component} from "react";
 import PropTypes from "prop-types";
 import {inject, observer} from "mobx-react";
 
-import h from "../../utils/helpers";
+import h from "shared/utils/helpers";
 
 @inject("store")
 @observer

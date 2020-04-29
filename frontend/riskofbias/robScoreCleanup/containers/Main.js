@@ -4,13 +4,13 @@ import {inject, observer} from "mobx-react";
 
 import Loading from "shared/components/Loading";
 import ScrollToErrorBox from "shared/components/ScrollToErrorBox";
-import MetricForm from "../MetricForm";
-import MetricSelect from "../MetricSelect";
-import ScoreList from "../ScoreList";
-import ScoreSelect from "../ScoreSelect";
-import StudyTypeSelect from "../StudyTypeSelect";
+import MetricForm from "./MetricForm";
+import MetricSelect from "./MetricSelect";
+import ScoreList from "./ScoreList";
+import ScoreSelect from "./ScoreSelect";
+import StudyTypeSelect from "./StudyTypeSelect";
 
-import "./Root.css";
+import "./Main.css";
 
 @inject("store")
 @observer

@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import {inject, observer} from "mobx-react";
 
-import {ScoreInput, ScoreNotesInput} from "../../../robStudyForm/ScoreForm";
+import {ScoreInput, ScoreNotesInput} from "../../robStudyForm/ScoreForm";
 
 @inject("store")
 @observer
@@ -17,8 +17,7 @@ class MetricForm extends React.Component {
         }
         return (
             <form
-                className="row-fluid"
-                style={{margin: "1em 0", padding: "1em"}}
+                className="container-fluid bulkEditForm"
                 onSubmit={e => {
                     e.preventDefault();
                     store.bulkUpdateSelectedStudies();
