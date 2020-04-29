@@ -809,83 +809,19 @@ class ExternalSiteForm(VisualForm):
 
 
 class ExploreHeatmapForm(VisualForm):
-
-    external_url = forms.URLField(
-        label="External URL",
-        help_text=f"""
-        <p class="help-block">
-            Embed an external website. The following websites can be linked to:
-        </p>
-        <ul class="help-block">
-            <li><a href="https://public.tableau.com/">Tableau (public)</a> - press the "share" icon and then select the URL in the "link" text box</li>
-        </ul>
-        <p class="help-block">
-            If you'd like to link to another website, please contact us.
-        </p>
-        """,
-    )
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
-        data = json.loads(self.instance.settings)
-        if "external_url" in data:
-            self.fields["external_url"].initial = data["external_url"]
-
         self.helper = self.setHelper()
-
-    def save(self, commit=True):
-        self.instance.settings = json.dumps(
-            dict(
-                external_url=self.cleaned_data["external_url"],
-                external_url_hostname=self.cleaned_data["external_url_hostname"],
-                external_url_path=self.cleaned_data["external_url_path"],
-                external_url_query_args=self.cleaned_data["external_url_query_args"],
-            )
-        )
-        return super().save(commit)
 
     class Meta:
         model = models.Visual
         fields = (
             "title",
             "slug",
+            "settings",
             "caption",
             "published",
         )
-
-    DOMAIN_TABLEAU = "public.tableau.com"
-    VALID_DOMAINS = {
-        DOMAIN_TABLEAU,
-    }
-
-    def clean_external_url(self):
-        external_url = self.cleaned_data.get("external_url")
-        url = urlparse(external_url)
-
-        # check whitelist
-        if url.netloc not in self.VALID_DOMAINS:
-            msg = f"{url.netloc} not on the list of accepted domains, please contact webmasters to request additions"
-            raise forms.ValidationError(msg)
-
-        external_url = urlunparse(("https", url.netloc, url.path, "", "", ""))
-        external_url_hostname = urlunparse(("https", url.netloc, "", "", "", ""))
-
-        if url.path == "" or url.path == "/":
-            raise forms.ValidationError("A URL path must be specified.")
-
-        external_url_query_args = []
-        if url.netloc == self.DOMAIN_TABLEAU:
-            external_url_query_args = [":showVizHome=no", ":embed=y"]
-
-        self.cleaned_data.update(
-            external_url=external_url,
-            external_url_hostname=external_url_hostname,
-            external_url_path=url.path,
-            external_url_query_args=external_url_query_args,
-        )
-
-        return external_url
 
 
 def get_visual_form(visual_type):
