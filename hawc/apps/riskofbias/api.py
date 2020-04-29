@@ -104,13 +104,13 @@ class RiskOfBias(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         study_id = tryParseInt(request.data.get("study_id"), -1)
-        study = None
+
         try:
             study = Study.objects.get(id=study_id)
         except ObjectDoesNotExist:
             raise ValidationError("Invalid study_id")
 
-        # request.user is the user represented by the "Authorization: Token xxxx" header.
+        # permission check using the user submitting the request
         if not study.user_can_edit_study(study.assessment, request.user):
             raise PermissionDenied(
                 f"Submitter '{request.user}' has invalid permissions to edit Risk of Bias for this study"

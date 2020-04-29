@@ -169,6 +169,7 @@ def build_upload_payload(study, author, metrics, dummy_score):
                 metric_id=metric.id,
                 is_default=True,
                 label="",
+                bias_direction=0,
                 score=dummy_score,
                 notes="sample note",
             )

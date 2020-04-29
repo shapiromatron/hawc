@@ -1,7 +1,6 @@
-import datetime
-
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ObjectDoesNotExist
+from django.db import transaction
 from rest_framework import serializers
 
 from ..assessment.serializers import AssessmentMiniSerializer
@@ -134,15 +133,13 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
     def validate(self, data):
         is_create = self.instance is None
 
-        # make sure that all scores match those in score; add `id` field to validated data
         if is_create:
-            # creating a new RoB object
-            # convert the supplied study_id to an actual Study object...
+            # convert study_id to Study object
             study_id = tryParseInt(self.initial_data["study_id"], -1)
             study = Study.objects.get(id=study_id)
             data["study"] = study
 
-            # ...and same for author_id
+            # convert author_id to user
             author_id = tryParseInt(self.initial_data["author_id"], -1)
             author = None
             try:
@@ -190,20 +187,19 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
 
                 metric_descriptor = f"'{domain.name}:{metric.name}'"
 
-                if 0 == len(scores_for_metric):
+                if len(scores_for_metric) == 0:
                     problematic_scores.append(
                         f"No score for metric {metric.id}/{metric_descriptor} was submitted"
                     )
                 else:
-                    default_scores_for_metric = sum(
-                        ("is_default" in s and s["is_default"] is True) for s in scores_for_metric
+                    num_defaults = len(
+                        [score for score in scores_for_metric if score["is_default"] is True]
                     )
-
-                    if default_scores_for_metric == 0:
+                    if num_defaults == 0:
                         problematic_scores.append(
                             f"No default score for metric {metric.id}/{metric_descriptor} was submitted."
                         )
-                    elif default_scores_for_metric > 1:
+                    elif num_defaults > 1:
                         problematic_scores.append(
                             f"Multiple default scores for metric {metric.id}/{metric_descriptor} were submitted."
                         )
@@ -222,10 +218,12 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
             override_options = models.RiskOfBias(study=study).get_override_options()
         else:
             score_ids = [score["id"] for score in self.initial_data["scores"]]
+
             if models.RiskOfBiasScore.objects.filter(
                 id__in=score_ids, riskofbias=self.instance
             ).count() != len(score_ids):
                 raise serializers.ValidationError("Cannot update; scores to not match instances")
+
             for initial_score_data, update_score in zip(
                 self.initial_data["scores"], data["scores"]
             ):
@@ -284,18 +282,14 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
 
         return data
 
+    @transaction.atomic
     def create(self, validated_data):
-        right_now = datetime.datetime.now()
-        validated_data["created"] = right_now
-        validated_data["last_updated"] = right_now
 
         rob = models.RiskOfBias.objects.create(
             study=validated_data["study"],
             final=validated_data["final"],
             author=validated_data["author"],
             active=validated_data["active"],
-            created=validated_data["created"],
-            last_updated=validated_data["last_updated"],
         )
 
         scores_to_create = validated_data["scores"]
@@ -316,6 +310,7 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
 
         return rob
 
+    @transaction.atomic
     def update(self, instance, validated_data):
         """
         Updates the nested RiskOfBiasScores with submitted data before updating
