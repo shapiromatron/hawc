@@ -1,3 +1,4 @@
+import json
 import math
 from io import StringIO
 from typing import Dict, Generator, List
@@ -43,10 +44,14 @@ class HawcSession:
             HawcClientException: If error occurs in data submission
             HawcServerException: If error orccurs on server
         """
+        try:
+            content = response.json()
+        except json.JSONDecodeError:
+            content = response.text
         if response.status_code >= 400 and response.status_code < 500:
-            raise HawcClientException(response.status_code, response.json())
-        elif response.status_code == 500:
-            raise HawcServerException(response)
+            raise HawcClientException(response.status_code, content)
+        elif response.status_code >= 500 and response.status_code < 600:
+            raise HawcServerException(response.status_code, content)
 
     def get(self, url: str, params: Dict = None) -> Response:
         """

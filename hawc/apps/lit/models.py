@@ -1,14 +1,19 @@
 import html
 import json
 import logging
+import pickle
 import re
+from io import BytesIO
 from math import ceil
 from typing import Dict, Optional
 from urllib import parse
 
+import pandas as pd
 from django.apps import apps
 from django.conf import settings
+from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
+from django.core.files.base import ContentFile
 from django.db import models, transaction
 from django.urls import reverse
 from django.utils import timezone
@@ -17,8 +22,15 @@ from litter_getter import pubmed, ris
 from taggit.models import ItemBase
 from treebeard.mp_tree import MP_Node
 
+from ...refml import topics
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper
-from ..common.models import AssessmentRootMixin, CustomURLField, NonUniqueTagBase, get_crumbs
+from ..common.models import (
+    AssessmentRootMixin,
+    CustomURLField,
+    NonUniqueTagBase,
+    get_crumbs,
+    get_private_data_storage,
+)
 from . import constants, managers, tasks
 
 
@@ -52,6 +64,15 @@ class LiteratureAssessment(models.Model):
         on_delete=models.SET_NULL,
         help_text="All references or child references of this tag will be marked as ready for extraction.",
     )
+    topic_tsne_data = models.FileField(
+        blank=True,
+        null=True,
+        editable=False,
+        upload_to="lit/topic_model",
+        storage=get_private_data_storage(),
+    )
+    topic_tsne_refresh_requested = models.DateTimeField(null=True)
+    topic_tsne_last_refresh = models.DateTimeField(null=True)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
@@ -65,7 +86,7 @@ class LiteratureAssessment(models.Model):
         )
 
         return cls.objects.create(
-            assessment=assessment, extraction_tag_id=extraction_tag.id if extraction_tag else None,
+            assessment=assessment, extraction_tag_id=extraction_tag.id if extraction_tag else None
         )
 
     def get_assessment(self):
@@ -73,6 +94,71 @@ class LiteratureAssessment(models.Model):
 
     def get_update_url(self) -> str:
         return reverse("lit:literature_assessment_update", args=(self.id,))
+
+    def get_topic_model_url(self) -> str:
+        return reverse("lit:api:assessment-topic-model", args=(self.assessment_id,))
+
+    def get_topic_model_refresh_url(self) -> str:
+        return reverse("lit:api:assessment-topic-model-request-refresh", args=(self.assessment_id,))
+
+    @property
+    def topic_tsne_fig_dict_cache_key(self) -> str:
+        return f"{self.assessment_id}_topic_tsne_data"
+
+    @property
+    def topic_tsne_data_filename(self) -> str:
+        return f"assessment-{self.assessment_id}.pkl"
+
+    def create_topic_tsne_data(self) -> None:
+        columns = ("id", "title", "abstract")
+        refs = Reference.objects.filter(assessment=self.assessment_id).values_list(*columns)
+        df = pd.DataFrame(data=refs, columns=columns)
+        df.loc[:, "text"] = df.title + " " + df.abstract
+        df.loc[:, "title"] = df.title.apply(topics.textwrapper)
+        df.drop(columns=["abstract"], inplace=True)
+
+        df, topics_df = topics.topic_model_tsne(df)
+
+        f1 = BytesIO()
+        df.to_parquet(f1, engine="pyarrow", index=False)
+
+        f2 = BytesIO()
+        topics_df.to_parquet(f2, engine="pyarrow", index=False)
+
+        data = dict(df=f1.getvalue(), topics=f2.getvalue())
+
+        if self.has_topic_model():
+            self.topic_tsne_data.delete(save=False)
+        self.topic_tsne_refresh_requested = None
+        self.topic_tsne_last_refresh = timezone.now()
+        self.topic_tsne_data.save(self.topic_tsne_data_filename, ContentFile(pickle.dumps(data)))
+        cache.delete(self.topic_tsne_fig_dict_cache_key)
+
+    def get_topic_tsne_data(self) -> Dict:
+        if not self.has_topic_model():
+            raise ValueError("No data available.")
+        data = pickle.load(self.topic_tsne_data.file.file)
+        data["df"] = pd.read_parquet(BytesIO(data["df"]), engine="pyarrow")
+        data["topics"] = pd.read_parquet(BytesIO(data["topics"]), engine="pyarrow")
+        return data
+
+    def get_topic_tsne_fig_dict(self) -> Dict:
+        fig_dict = cache.get(self.topic_tsne_fig_dict_cache_key)
+        if fig_dict is None:
+            data = self.get_topic_tsne_data()
+            fig = topics.tsne_to_scatterplot(data)
+            fig_dict = fig.to_dict()
+            cache.set(self.topic_tsne_fig_dict_cache_key, fig_dict, 60 * 60)  # cache for 1 hour
+        return fig_dict
+
+    def has_topic_model(self) -> bool:
+        return self.topic_tsne_data.name is not None and self.topic_tsne_data.name != ""
+
+    def can_topic_model(self) -> bool:
+        return self.assessment.references.count() >= self.TOPIC_MODEL_MIN_REFERENCES
+
+    def can_request_refresh(self) -> bool:
+        return self.can_topic_model and self.topic_tsne_refresh_requested is None
 
 
 class Search(models.Model):
