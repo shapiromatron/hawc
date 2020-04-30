@@ -1,0 +1,31 @@
+.cleanStudyMetricForm {
+    background-color: #efefef;
+    border-radius: 5px;
+    border: 2px solid grey;
+    margin: 1em 0;
+    padding: 10px;
+}
+
+.bulkEditForm {
+    border-radius: 5px;
+    border: 2px solid grey;
+    margin: 1em 0;
+    padding: 1em;
+}
+
+.robScoreList {
+    border: 2px solid grey;
+    border-radius: 5px;
+    padding: 10px;
+    background-color: #efefef;
+}
+
+.score-display-checkbox {
+    margin-top: 15px !important;
+}
+.score-display-checkbox p {
+    cursor: pointer;
+}
+.score-display-checkbox input {
+    margin: 0 5px 0 0;
+}

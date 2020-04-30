@@ -286,3 +286,101 @@ def test_riskofbias_create():
     assert resp.status_code == 201
     assert "created" in resp.data
     assert "scores" in resp.data and len(resp.data["scores"]) == 2
+
+
+@pytest.mark.django_db
+class TestBulkRobCleanupApis:
+    """
+    Make sure all the APIs we're using for the risk of bias score cleanup are working and return
+    data as expected.
+    """
+
+    def test_study_types(self, db_keys):
+        c = APIClient()
+        assert c.login(username="team@team.com", password="pw") is True
+        assessment_query = f"?assessment_id={db_keys.assessment_working}"
+        url = reverse("study:api:study-types") + assessment_query
+
+        resp = c.get(url, format="json")
+        assert resp.status_code == 200
+        assert set(resp.json()) == {"in_vitro", "bioassay", "epi_meta", "epi"}
+
+    def test_score_choices(self, db_keys):
+        c = APIClient()
+        assert c.login(username="team@team.com", password="pw") is True
+        assessment_query = f"?assessment_id={db_keys.assessment_working}"
+
+        url = reverse("riskofbias:api:scores-choices") + assessment_query
+        resp = c.get(url, format="json")
+        assert resp.status_code == 200
+        assert resp.json() == [27, 26, 25, 22, 24, 20]
+
+    def test_metrics_list(self, db_keys):
+        c = APIClient()
+        assert c.login(username="team@team.com", password="pw") is True
+        assessment_query = f"?assessment_id={db_keys.assessment_working}"
+
+        url = reverse("riskofbias:api:metrics-list") + assessment_query
+        resp = c.get(url, format="json")
+        assert resp.status_code == 200
+        assert resp.json() == [
+            {"id": 1, "name": "example metric", "description": "<p>Is this a good study?</p>"},
+            {"id": 2, "name": "final domain", "description": ""},
+        ]
+
+    def test_rob_scores(self, db_keys):
+        c = APIClient()
+        assert c.login(username="team@team.com", password="pw") is True
+        assessment_query = f"?assessment_id={db_keys.assessment_working}"
+
+        # get metrics for score
+        url = reverse("riskofbias:api:metrics-list") + assessment_query
+        metrics = c.get(url, format="json").json()
+
+        # get available rob scores for a metric
+        detail_url = (
+            reverse("riskofbias:api:scores-detail", args=(metrics[0]["id"],)) + assessment_query
+        )
+        resp = c.get(detail_url, format="json")
+        assert resp.status_code == 200
+
+        data = resp.json()
+        data.pop("metric")
+        assert data == {
+            "id": 1,
+            "score": 17,
+            "is_default": True,
+            "label": "",
+            "bias_direction": 0,
+            "notes": "<p>Content here.</p>",
+            "overridden_objects": [],
+            "riskofbias_id": 1,
+            "score_description": "Definitely low risk of bias",
+            "score_symbol": "++",
+            "score_shade": "#00CC00",
+            "bias_direction_description": "not entered/unknown",
+            "url_edit": "/rob/1/edit/",
+            "study_name": "Foo et al.",
+            "study_id": 1,
+            "study_types": ["bioassay"],
+        }
+
+        # TODO: evaluate how to correctly add header
+
+        # # patch
+        # url = reverse("riskofbias:api:scores-list") + assessment_query + f"&ids={data['id']}"
+        # resp = c.patch(
+        #     url,
+        #     {"score": 16, "notes": "<p>More content here.</p>"},
+        #     headers={"X-CUSTOM-BULK-OPERATION": "true"},
+        #     format="json",
+        # )
+        # assert resp.status_code == 201
+
+        # # ensure patch went through
+        # resp = c.get(detail_url, format="json")
+        # data = resp.json()
+        # assert resp.status_code == 200
+        # assert data["id"] == 1
+        # assert data["score"] == 16
+        # assert data["notes"] == "<p>More content here.</p>"
