@@ -67,7 +67,12 @@ class ExploreHeatmap extends BaseVisual {
             //all_fields: ["foo", "bar"], //all fields we are interested in, ignore excluded fields on detail page
             blacklist_field: "study-short_citation", //additional filter(s?) / main identifier
         };
-        data.dataset = require("./test-json.json");
+        data.dataset = JSON.parse(
+            $.ajax(`/ani/api/assessment/${this.data.assessment}/endpoint-export/?format=json`, {
+                async: false,
+                dataType: "json",
+            }).responseText
+        );
 
         modal.getModal().on("shown", function() {
             new ExploreHeatmapPlot(self, data, options).render($plotDiv);
