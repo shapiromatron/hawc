@@ -45,6 +45,10 @@
               Literature tagtree</option>
           <option data-showcase="#visual5" value="{% url 'summary:visualization_create' assessment.id 5 %}">
               Embedded external website</option>
+          {% if user.is_staff or request.user|has_user_group:"beta tester" %}
+          <option data-showcase="#visual6" value="{% url 'summary:visualization_create' assessment.id 6 %}">
+              Exploratory heatmap</option>
+          {% endif %}
         </select>
         <a id="create_btn" class="pull-right btn btn-primary span2" href="#">Select</a>
       </div>
@@ -159,6 +163,16 @@
         If you'd like to link to another website, please <a href="{% url 'contact' %}">contact us</a>.
       </p>
     </div>
+
+    <div id="visual6">
+      <h2>Exploratory heatmap</h2>
+      <div class="row">
+      </div>
+      <p class="help-block">
+        A heatmap with customizable axes, filters, and interactivity to explore a dataset visually.
+      </p>
+    </div>
+
   </div>
 
 {% endblock %}

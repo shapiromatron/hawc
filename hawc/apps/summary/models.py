@@ -192,6 +192,7 @@ class Visual(models.Model):
     ROB_BARCHART = 3
     LITERATURE_TAGTREE = 4
     EXTERNAL_SITE = 5
+    EXPLORE_HEATMAP = 6
 
     VISUAL_CHOICES = (
         (BIOASSAY_AGGREGATION, "animal bioassay endpoint aggregation"),
@@ -200,6 +201,7 @@ class Visual(models.Model):
         (ROB_BARCHART, "risk of bias barchart"),
         (LITERATURE_TAGTREE, "literature tagtree"),
         (EXTERNAL_SITE, "embedded external website"),
+        (EXPLORE_HEATMAP, "exploratory heatmap"),
     )
 
     SORT_ORDER_CHOICES = (

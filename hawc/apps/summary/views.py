@@ -161,7 +161,11 @@ class VisualizationCreate(BaseCreate):
 
     def get_template_names(self):
         visual_type = int(self.kwargs.get("visual_type"))
-        if visual_type in {models.Visual.LITERATURE_TAGTREE, models.Visual.EXTERNAL_SITE}:
+        if visual_type in {
+            models.Visual.LITERATURE_TAGTREE,
+            models.Visual.EXTERNAL_SITE,
+            models.Visual.EXPLORE_HEATMAP,
+        }:
             return "summary/visual_form_django.html"
         else:
             return super().get_template_names()
@@ -202,7 +206,11 @@ class VisualizationUpdate(BaseUpdate):
 
     def get_template_names(self):
         visual_type = self.object.visual_type
-        if visual_type in {models.Visual.LITERATURE_TAGTREE, models.Visual.EXTERNAL_SITE}:
+        if visual_type in {
+            models.Visual.LITERATURE_TAGTREE,
+            models.Visual.EXTERNAL_SITE,
+            models.Visual.EXPLORE_HEATMAP,
+        }:
             return "summary/visual_form_django.html"
         else:
             return super().get_template_names()

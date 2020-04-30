@@ -554,6 +554,7 @@ class VisualForm(forms.ModelForm):
             models.Visual.ROB_HEATMAP,
             models.Visual.LITERATURE_TAGTREE,
             models.Visual.EXTERNAL_SITE,
+            models.Visual.EXPLORE_HEATMAP,
         ]:
             self.fields["sort_order"].widget = forms.HiddenInput()
 
@@ -807,6 +808,22 @@ class ExternalSiteForm(VisualForm):
         return external_url
 
 
+class ExploreHeatmapForm(VisualForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = self.setHelper()
+
+    class Meta:
+        model = models.Visual
+        fields = (
+            "title",
+            "slug",
+            "settings",
+            "caption",
+            "published",
+        )
+
+
 def get_visual_form(visual_type):
     try:
         return {
@@ -816,6 +833,7 @@ def get_visual_form(visual_type):
             models.Visual.ROB_BARCHART: RoBForm,
             models.Visual.LITERATURE_TAGTREE: TagtreeForm,
             models.Visual.EXTERNAL_SITE: ExternalSiteForm,
+            models.Visual.EXPLORE_HEATMAP: ExploreHeatmapForm,
         }[visual_type]
     except Exception:
         raise ValueError()
