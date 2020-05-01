@@ -1,6 +1,7 @@
 import _ from "lodash";
 import d3 from "d3";
 import D3Visualization from "./D3Visualization";
+import h from "shared/utils/helpers";
 
 class ExploreHeatmapPlot extends D3Visualization {
     constructor(parent, data, options) {
@@ -24,7 +25,7 @@ class ExploreHeatmapPlot extends D3Visualization {
         _.assign(this, data.settings);
         this.blacklist = [];
 
-        this.plot = _.assign({}, {width: 700, height: 400});
+        this.plot = _.assign({}, {width: undefined, height: undefined});
         _.assign(this.plot, {top: 0, left: 0, bottom: 0, right: 0});
 
         this.horizontal_margin = 200;
@@ -59,36 +60,54 @@ class ExploreHeatmapPlot extends D3Visualization {
     }
 
     build_elements($div) {
-        this.sidebar = {width: 200, height: this.plot.height};
-        this.box = {width: this.plot.width + this.sidebar.width, height: 400};
+        const PLOT_WIDTH_MIN = 600,
+            PLOT_HEIGHT_MIN = 400;
+
+        this.show_blacklist = true;
+        this.show_detail = true;
+        this.sidebar_width = this.show_blacklist ? 200 : 0;
+        this.box_height = this.show_detail ? 400 : 0;
+
+        let content_size = h.getHawcContentSize();
+
+        if (typeof this.plot.width == "undefined")
+            this.plot.width = Math.max(content_size.width - this.sidebar_width, PLOT_WIDTH_MIN);
+        if (typeof this.plot.height == "undefined")
+            this.plot.height = Math.max(content_size.height - this.box_height, PLOT_HEIGHT_MIN);
+
+        this.sidebar = {width: this.sidebar_width, height: this.plot.height};
+        this.box = {width: this.plot.width + this.sidebar.width, height: this.box_height};
         this.container = {width: this.box.width, height: this.plot.height + this.box.height};
         this.viz_container = $div.html("")[0];
         d3.select(this.viz_container)
             .style("width", `${this.container.width}px`)
-            .style("height", `${this.container.height}px`)
-            .style("outline-style", "solid");
+            .style("height", `${this.container.height}px`);
         this.plot_container = d3
             .select(this.viz_container)
             .append("div")
-            .style("float", "left")
+            .attr("class", "exp_heatmap_container")
+            .style("float", "right")
             .style("width", `${this.plot.width}px`)
             .style("height", `${this.plot.height}px`)
-            .style("outline-style", "solid");
+            .style("overflow", "hidden");
         this.blacklist_container = d3
             .select(this.viz_container)
             .append("div")
-            .style("float", "right")
+            .attr("class", "hm_container")
+            .style("float", "left")
             .style("width", `${this.sidebar.width}px`)
             .style("height", `${this.sidebar.height}px`)
-            .style("outline-style", "solid");
+            .style("display", this.show_blacklist ? null : "none")
+            .style("overflow", "scroll");
         this.detail_container = d3
             .select(this.viz_container)
             .append("div")
-            .attr("id", "viz-details")
+            .attr("class", "exp_heatmap_container")
+            .attr("id", "exp_heatmap_details")
             .style("clear", "both")
             .style("width", `${this.box.width}px`)
             .style("height", `${this.box.height}px`)
-            .style("outline-style", "solid")
+            .style("display", this.show_detail ? null : "none")
             .style("overflow", "scroll");
     }
 
@@ -149,6 +168,7 @@ class ExploreHeatmapPlot extends D3Visualization {
                 in_list ? _.pull(this.blacklist, d) : this.blacklist.push(d);
                 in_list = !in_list;
                 this.xy_map = this.create_map();
+                //this.xy_map = [];
                 this.update_plot();
                 return in_list;
             };
@@ -217,7 +237,10 @@ class ExploreHeatmapPlot extends D3Visualization {
                             .domain(_.range(0, element.length))
                             .rangeBands([0, this.plot.width])
                     )
+
                     .tickFormat(d => x_domains[index][d])
+                    .outerTickSize(2)
+                    .innerTickSize(10)
                     .orient("bottom");
             }),
             y_axes = y_domains.map((element, index) => {
@@ -230,29 +253,29 @@ class ExploreHeatmapPlot extends D3Visualization {
                             .rangeBands([this.plot.height, 0])
                     )
                     .tickFormat(d => y_domains[index][d])
+                    .outerTickSize(2)
+                    .innerTickSize(10)
                     .orient("left");
             });
 
-        this.plot_svg
-            .append("g")
-            .attr("id", "x-axes")
-            .attr("transform", `translate(0,${this.plot.height})`);
+        let x_axes_group = this.plot_svg
+                .append("g")
+                .attr("transform", `translate(0,${this.plot.height})`),
+            y_axes_group = this.plot_svg.append("g");
 
         for (let i = 0; i < x_axes.length; i++) {
-            this.plot_svg
-                .select("g#x-axes")
+            x_axes_group
                 .append("g")
-                .attr("transform", `translate(0,${this.vertical_margin * (x_axes.length - i - 1)})`)
+                .attr("class", "exp_heatmap_axis")
+                .attr("transform", `translate(0,${this.vertical_margin * (x_axes.length - 1 - i)})`)
                 .call(x_axes[i]);
             this.plot.bottom += this.vertical_margin;
         }
 
-        this.plot_svg.append("g").attr("id", "y-axes");
-
         for (let i = 0; i < y_axes.length; i++) {
-            this.plot_svg
-                .select("g#y-axes")
+            y_axes_group
                 .append("g")
+                .attr("class", "exp_heatmap_axis")
                 .attr("transform", `translate(${this.horizontal_margin * i},0)`)
                 .call(y_axes[i]);
             this.plot.left += this.horizontal_margin;
@@ -266,9 +289,10 @@ class ExploreHeatmapPlot extends D3Visualization {
         if (this.title.length > 0) {
             this.plot_svg
                 .append("text")
+                .attr("id", "exp_heatmap_title")
+                .attr("class", "exp_heatmap_label")
                 .attr("x", this.plot.width / 2)
                 .attr("y", -label_margin / 2)
-                .style("text-anchor", "middle")
                 .text(this.title);
             this.plot.top += label_margin;
         }
@@ -276,9 +300,9 @@ class ExploreHeatmapPlot extends D3Visualization {
         if (this.x_label.length > 0) {
             this.plot_svg
                 .append("text")
+                .attr("class", "exp_heatmap_label")
                 .attr("x", this.plot.width / 2)
                 .attr("y", this.plot.height + this.plot.bottom + label_margin / 2)
-                .style("text-anchor", "middle")
                 .text(this.x_label);
             this.plot.bottom += label_margin;
         }
@@ -286,6 +310,7 @@ class ExploreHeatmapPlot extends D3Visualization {
         if (this.y_label.length > 0) {
             this.plot_svg
                 .append("text")
+                .attr("class", "exp_heatmap_label")
                 .attr("x", 0)
                 .attr("y", 0)
                 .attr(
@@ -293,22 +318,25 @@ class ExploreHeatmapPlot extends D3Visualization {
                     `translate(${-(this.plot.left + label_margin / 2)},${this.plot.height /
                         2}) rotate(-90)`
                 )
-                .style("text-anchor", "middle")
                 .text(this.y_label);
             this.plot.left += label_margin;
         }
     }
 
     update_plot = () => {
-        let cells_data = this.cells.data(this.xy_map),
-            cells_text_data = this.cells_text.data(
-                _.filter(this.xy_map, e => e.dataset.length > 0)
-            );
-        // Update cells
-        cells_data
-            .enter()
+        let cells_data = this.cells.selectAll("g").data(this.xy_map),
+            cells_enter = cells_data
+                .enter()
+                .append("g")
+                .attr("class", "exp_heatmap_cell")
+                .on("click", d =>
+                    this.fill_table(d3.select("div#exp_heatmap_details>table"), d.dataset)
+                );
+
+        // Update cell blocks
+        cells_enter
             .append("rect")
-            .attr("class", "cell")
+            .attr("class", "exp_heatmap_cell_block")
             .attr("x", d => {
                 return this.x_scale(d.x_step);
             })
@@ -316,37 +344,26 @@ class ExploreHeatmapPlot extends D3Visualization {
                 return this.y_scale(d.y_step);
             })
             .attr("width", this.x_scale.rangeBand())
-            .attr("height", this.y_scale.rangeBand())
-            .style("stroke", "black")
-            .style("stroke-width", "1")
+            .attr("height", this.y_scale.rangeBand());
+        cells_data.select("rect").style("fill", d => {
+            return this.color_scale(d.dataset.length);
+        });
+        // Update cell text
+        cells_enter
             .append("text")
-            .attr("x", d => {
-                return this.x_scale(d.x_step);
-            })
-            .attr("y", d => {
-                return this.y_scale(d.y_step);
-            });
-        cells_data.exit().remove();
-        cells_data
-            .style("fill", d => {
-                return this.color_scale(d.dataset.length);
-            })
-            .on("click", d => this.fill_table(d3.select("div#viz-details>table"), d.dataset));
-
-        // Update cells text
-        cells_text_data
-            .enter()
-            .append("text")
-            .attr("class", "cell")
+            .attr("class", "exp_heatmap_cell_text")
             .attr("x", d => {
                 return this.x_scale(d.x_step) + this.x_scale.rangeBand() / 2;
             })
             .attr("y", d => {
                 return this.y_scale(d.y_step) + this.y_scale.rangeBand() / 2;
-            })
-            .style("text-anchor", "middle");
-        cells_text_data.exit().remove();
-        cells_text_data.text(d => d.dataset.length);
+            });
+        cells_data
+            .select("text")
+            .style("display", d => (d.dataset.length == 0 ? "none" : null))
+            .text(d => d.dataset.length);
+
+        cells_data.exit().remove();
     };
 
     position_plot() {
@@ -385,12 +402,7 @@ class ExploreHeatmapPlot extends D3Visualization {
             ])
             .range(["white", "red"]);
 
-        // D3 selection of cells & text
-        this.cells = this.plot_svg
-            .append("g")
-            .attr("id", "cells")
-            .selectAll("rect.cell");
-        this.cells_text = this.plot_svg.select("g#cells").selectAll("text.cell");
+        this.cells = this.plot_svg.append("g").attr("id", "exp_heatmap_cells");
 
         // Draw cells
         this.update_plot();
