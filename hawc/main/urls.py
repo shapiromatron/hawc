@@ -4,7 +4,7 @@ from django.conf.urls import include, url
 from django.contrib import admin
 from django.views.generic import TemplateView
 from rest_framework.schemas import get_schema_view
-
+from rest_framework import permissions
 from hawc.apps.animal.urls import router as animal_api
 from hawc.apps.assessment import views
 from hawc.apps.assessment.urls import router as assessment_api
@@ -36,10 +36,7 @@ urlpatterns = [
     # Portal
     url(r"^$", views.Home.as_view(), name="home"),
     url(r"^portal/$", views.AssessmentList.as_view(), name="portal"),
-    url(
-        r"^robots\.txt$",
-        TemplateView.as_view(template_name="robots.txt", content_type="text/plain"),
-    ),
+    url(r"^robots\.txt$", TemplateView.as_view(template_name="robots.txt", content_type="text/plain"),),
     url(r"^about/$", views.About.as_view(), name="about"),
     url(r"^contact/$", views.Contact.as_view(), name="contact"),
     # Apps
@@ -62,20 +59,16 @@ urlpatterns = [
     # Changelog
     url(r"^update-session/", views.UpdateSession.as_view(), name="update_session"),
     # Admin
-    url(
-        rf"^admin/{settings.ADMIN_URL_PREFIX}/dashboard/$",
-        views.AdminDashboard.as_view(),
-        name="admin_dashboard",
-    ),
+    url(rf"^admin/{settings.ADMIN_URL_PREFIX}/dashboard/$", views.AdminDashboard.as_view(), name="admin_dashboard",),
     url(rf"^admin/{settings.ADMIN_URL_PREFIX}/", admin.site.urls),
     url(r"^selectable/", include("selectable.urls")),
     url(
         r"^openapi/$",
         get_schema_view(
-            title="Your Project",
-            description="API for all things …",
-            version="1.0.0",
+            title="HAWC OpenAPI",
+            version="0.0.1",
             patterns=open_api_patterns,
+            permission_classes=(permissions.IsAdminUser,),
         ),
         name="openapi-schema",
     ),
@@ -87,11 +80,7 @@ if settings.DEBUG:
 
     urlpatterns += [
         url(r"^__debug__/", include(debug_toolbar.urls)),
-        url(
-            r"^media/(?P<path>.*)$",
-            django.views.static.serve,
-            {"document_root": settings.MEDIA_ROOT},
-        ),
+        url(r"^media/(?P<path>.*)$", django.views.static.serve, {"document_root": settings.MEDIA_ROOT},),
     ]
 
 admin.autodiscover()
