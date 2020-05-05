@@ -135,6 +135,22 @@ const helpers = {
             height: windowHeight - contentSize.top,
         };
     },
+    getTextContrastColor(r, g, b) {
+        /* Returns white or black based on best contrast for given background color
+           Based on W3C guidelines: https://www.w3.org/TR/UNDERSTANDING-WCAG20/visual-audio-contrast-contrast.html
+         */
+        if (r > 255 || r < 0) throw `RGB values must be between 0 and 255. R value was ${r}.`;
+        if (g > 255 || g < 0) throw `RGB values must be between 0 and 255. G value was ${g}.`;
+        if (b > 255 || b < 0) throw `RGB values must be between 0 and 255. B value was ${b}.`;
+        (r /= 255), (g /= 255), (b /= 255);
+        let r_component = r <= 0.03928 ? r / 12.92 : ((r + 0.055) / 1.055) ** 2.4,
+            g_component = g <= 0.03928 ? g / 12.92 : ((g + 0.055) / 1.055) ** 2.4,
+            b_component = b <= 0.03928 ? b / 12.92 : ((b + 0.055) / 1.055) ** 2.4,
+            luminance = 0.2126 * r_component + 0.7152 * g_component + 0.0722 * b_component;
+        return luminance > Math.sqrt(1.05 * 0.05) - 0.05
+            ? {r: 0, g: 0, b: 0}
+            : {r: 255, g: 255, b: 255};
+    },
 };
 
 export default helpers;

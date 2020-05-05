@@ -2,7 +2,6 @@ import _ from "lodash";
 import d3 from "d3";
 import D3Visualization from "./D3Visualization";
 import h from "shared/utils/helpers";
-import HAWCModal from "utils/HAWCModal";
 
 class ExploreHeatmapPlot extends D3Visualization {
     constructor(parent, data, options) {
@@ -65,23 +64,56 @@ class ExploreHeatmapPlot extends D3Visualization {
 
     build_elements($div) {
         const PLOT_WIDTH_MIN = 600,
-            PLOT_HEIGHT_MIN = 400;
+            PLOT_HEIGHT_MIN = 400,
+            BLACKLIST_WIDTH_DEFAULT = 200,
+            DETAILS_HEIGHT_DEFAULT = 400;
+
+        this.blacklist_width = this.show_blacklist
+            ? typeof this.blacklist_width == "undefined"
+                ? BLACKLIST_WIDTH_DEFAULT
+                : this.blacklist_width
+            : 0;
+        this.details_height =
+            typeof this.details_height == "undefined"
+                ? DETAILS_HEIGHT_DEFAULT
+                : this.details_height;
 
         let content_size = h.getHawcContentSize();
 
         if (typeof this.plot.width == "undefined")
-            this.plot.width = Math.max(content_size.width, PLOT_WIDTH_MIN);
+            this.plot.width = Math.max(content_size.width - this.blacklist_width, PLOT_WIDTH_MIN);
         if (typeof this.plot.height == "undefined")
-            this.plot.height = Math.max(content_size.height, PLOT_HEIGHT_MIN);
+            this.plot.height = Math.max(content_size.height - this.details_height, PLOT_HEIGHT_MIN);
 
-        this.viz_container = d3.select($div.html("")[0]);
+        this.sidebar = {width: this.blacklist_width, height: this.plot.height};
+        this.box = {width: this.plot.width + this.sidebar.width, height: this.details_height};
+        this.container = {width: this.box.width, height: this.plot.height + this.box.height};
+
+        this.viz_container = d3
+            .select($div.html("")[0])
+            .style("width", `${this.container.width}px`)
+            .style("height", `${this.container.height}px`);
         this.svg = this.viz_container
             .append("svg")
-            .attr("class", "d3")
+            .attr("id", "exp_heatmap_svg")
             .attr("width", this.plot.width)
-            .attr("height", this.plot.height);
-
-        this.modal = new HAWCModal();
+            .attr("height", this.plot.height)
+            .style("float", "right");
+        this.blacklist_container = this.viz_container
+            .append("div")
+            .attr("class", "exp_heatmap_container")
+            .style("width", `${this.sidebar.width}px`)
+            .style("height", `${this.sidebar.height}px`)
+            .style("display", this.show_blacklist ? null : "none")
+            .style("overflow", "scroll")
+            .style("float", "left");
+        this.details_container = this.viz_container
+            .append("div")
+            .attr("class", "exp_heatmap_container")
+            .style("clear", "both")
+            .style("width", `${this.box.width}px`)
+            .style("height", `${this.box.height}px`)
+            .style("overflow", "scroll");
     }
 
     create_map = () => {
@@ -135,59 +167,56 @@ class ExploreHeatmapPlot extends D3Visualization {
     };
 
     build_blacklist() {
-        if (!this.show_blacklist) return;
-        this.plot.right += 100;
-        let cell_width = this.horizontal_margin,
+        let table = this.blacklist_container
+                .append("table")
+                .attr("class", "table table-striped table-bordered table-hover"),
             func = d => {
                 let in_list = _.includes(this.blacklist, d);
                 in_list ? _.pull(this.blacklist, d) : this.blacklist.push(d);
                 in_list = !in_list;
                 this.xy_map = this.create_map();
-                //this.xy_map = [];
                 this.update_plot();
                 return in_list;
             };
-        this.blacklist_width = Math.ceil(this.blacklist_domain.length / this.y_steps) * cell_width;
-        this.blacklist_group = this.plot_svg
-            .append("g")
-            .attr("id", "exp_heatmap_blacklist_cells")
-            .attr("transform", `translate(${this.plot.width + this.plot.right},0)`);
-        let blacklist_data = this.blacklist_group.selectAll("g").data(this.blacklist_domain),
-            blacklist_enter = blacklist_data
-                .enter()
-                .append("g")
-                .attr("class", "exp_heatmap_blacklist_cell")
-                .on("click", function(d) {
-                    d3.select(this).style("text-decoration", func(d) ? "line-through" : null);
-                });
-        blacklist_enter
-            .append("rect")
-            .attr("class", "exp_heatmap_blacklist_cell_block")
-            .attr("x", (d, i) => cell_width * Math.floor(i / this.y_steps))
-            .attr("y", (d, i) => {
-                return this.y_scale(i % this.y_steps);
-            })
-            .attr("width", cell_width)
-            .attr("height", this.y_scale.rangeBand())
-            .style("fill", "white");
-        blacklist_enter
-            .append("text")
-            .attr("class", "exp_heatmap_blacklist_cell_text")
-            .attr("x", (d, i) => cell_width * Math.floor(i / this.y_steps))
-            .attr("y", (d, i) => {
-                return this.y_scale(i % this.y_steps);
-            })
-            .text(d => d);
-        this.plot.right += this.blacklist_width;
+
+        this.build_table(table, [this.blacklist_field], this.blacklist_map, function(d) {
+            d3.select(this).style("text-decoration", func(d) ? "line-through" : null);
+        });
+
+        table.selectAll("th").attr("colspan", 2);
+        table.selectAll("td").attr("colspan", 2);
+
+        let mass_select = table.select("tbody").insert("tr", ":first-child"),
+            select_all = mass_select
+                .append("td")
+                .style("width", "50%")
+                .on("click", d => {
+                    table.selectAll("tbody>tr+tr>td").style("text-decoration", null);
+                    this.blacklist = [];
+                    this.xy_map = this.create_map();
+                    this.update_plot();
+                })
+                .text("All"),
+            select_none = mass_select
+                .append("td")
+                .style("width", "50%")
+                .on("click", d => {
+                    table.selectAll("tbody>tr+tr>td").style("text-decoration", "line-through");
+                    this.blacklist = this.blacklist_domain;
+                    this.xy_map = this.create_map();
+                    this.update_plot();
+                })
+                .text("None");
     }
 
     build_detail_box() {
-        let table = d3.select(this.modal.getBody()[0]).append("table");
-        this.build_table(table, this.dataset);
+        let table = this.details_container
+            .append("table")
+            .attr("class", "table table-striped table-bordered");
+        this.build_table(table, this.all_fields, this.dataset);
     }
 
-    build_table = (table, data, func) => {
-        let header = this.all_fields;
+    build_table = (table, header, data, func) => {
         // Create table header
         table
             .append("thead")
@@ -286,8 +315,7 @@ class ExploreHeatmapPlot extends D3Visualization {
     }
 
     build_labels() {
-        let label_margin = 50,
-            title_exists = false;
+        let label_margin = 50;
 
         // Plot title
         if (this.plot_title.length > 0) {
@@ -299,7 +327,6 @@ class ExploreHeatmapPlot extends D3Visualization {
                 .attr("y", -label_margin / 2)
                 .text(this.plot_title);
             this.plot.top += label_margin;
-            title_exists = true;
         }
 
         // X axis
@@ -327,17 +354,6 @@ class ExploreHeatmapPlot extends D3Visualization {
                 .text(this.y_label);
             this.plot.left += label_margin;
         }
-
-        // Blacklist title
-        if (this.show_blacklist && this.blacklist_label.length > 0) {
-            this.blacklist_group
-                .append("text")
-                .attr("class", "exp_heatmap_label")
-                .attr("x", this.blacklist_width / 2)
-                .attr("y", -label_margin / 2)
-                .text(this.blacklist_label);
-            this.plot.top += title_exists ? 0 : label_margin;
-        }
     }
 
     update_plot = () => {
@@ -346,20 +362,9 @@ class ExploreHeatmapPlot extends D3Visualization {
                 .enter()
                 .append("g")
                 .attr("class", "exp_heatmap_cell")
-                .on("click", d => {
-                    this.fill_table(d3.select(this.modal.getBody()[0]).select("table"), d.dataset);
-                    this.modal
-                        .addHeader(
-                            `<h4>Records where ${_.keys(d.x_filter)
-                                .map(k => `${k} = ${d.x_filter[k]}`)
-                                .join(", ")} and ${_.keys(d.y_filter)
-                                .map(k => `${k} = ${d.y_filter[k]}`)
-                                .join(", ")}</h4>`
-                        )
-                        .addFooter("")
-                        .show();
-                    console.log(d);
-                });
+                .on("click", d =>
+                    this.fill_table(this.details_container.select("table"), d.dataset)
+                );
 
         // Update cell blocks
         cells_enter
@@ -390,6 +395,11 @@ class ExploreHeatmapPlot extends D3Visualization {
         cells_data
             .select("text")
             .style("display", d => (d.dataset.length == 0 ? "none" : null))
+            .style("fill", d => {
+                let {r, g, b} = d3.rgb(this.color_scale(d.dataset.length));
+                ({r, g, b} = h.getTextContrastColor(r, g, b));
+                return d3.rgb(r, g, b);
+            })
             .text(d => d.dataset.length);
 
         cells_data.exit().remove();
@@ -400,6 +410,9 @@ class ExploreHeatmapPlot extends D3Visualization {
     }
 
     set_viewbox() {
+        //Center the plot
+        this.plot.right = this.plot.left;
+
         let w = this.plot.left + this.plot.right + this.plot.width,
             h = this.plot.top + this.plot.bottom + this.plot.height;
         this.svg.attr("viewBox", `0 0 ${w} ${h}`);
@@ -426,7 +439,7 @@ class ExploreHeatmapPlot extends D3Visualization {
                     0
                 ),
             ])
-            .range(["white", "red"]);
+            .range(this.color_range);
 
         this.cells = this.plot_svg.append("g").attr("id", "exp_heatmap_cells");
 

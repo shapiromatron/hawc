@@ -34,8 +34,11 @@ class ExploreHeatmap extends BaseVisual {
                 "species-name",
             ], //all fields we are interested in, ignore excluded fields on detail page
             blacklist_field: "study-short_citation", //additional filter / main identifier
-            blacklist_label: "Studies",
+
             show_blacklist: true,
+            blacklist_width: undefined,
+            details_height: undefined,
+            color_range: ["white", "green"],
         };
         data.dataset = JSON.parse(
             $.ajax(`/ani/api/assessment/${this.data.assessment}/endpoint-export/?format=json`, {
@@ -84,8 +87,11 @@ class ExploreHeatmap extends BaseVisual {
                 "species-name",
             ], //all fields we are interested in, ignore excluded fields on detail page
             blacklist_field: "study-short_citation", //additional filter / main identifier
-            blacklist_label: "Studies",
+
             show_blacklist: true,
+            blacklist_width: undefined,
+            details_height: undefined,
+            color_range: ["white", "green"],
         };
         data.dataset = JSON.parse(
             $.ajax(`/ani/api/assessment/${this.data.assessment}/endpoint-export/?format=json`, {
