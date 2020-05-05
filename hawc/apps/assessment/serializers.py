@@ -38,6 +38,10 @@ class EffectTagsSerializer(serializers.ModelSerializer):
         # obj is a model-manager in this case; convert to list to serialize
         return list(obj.values("slug", "name"))
 
+    class Meta:
+        model = models.EffectTag
+        fields = "__all__"
+
 
 class DoseUnitsSerializer(serializers.ModelSerializer):
     class Meta:

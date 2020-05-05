@@ -1,7 +1,9 @@
 import pandas as pd
 import plotly.express as px
 from django.utils import timezone
-from rest_framework import exceptions, mixins, status, viewsets
+from rest_framework import exceptions, mixins
+from rest_framework import serializers as ser
+from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
@@ -17,6 +19,7 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
     parent_model = Assessment
     model = Assessment
     permission_classes = (AssessmentLevelPermissions,)
+    serializer_class = ser.Serializer
 
     def get_queryset(self):
         return self.model.objects.all()

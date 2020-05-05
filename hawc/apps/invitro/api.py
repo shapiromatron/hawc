@@ -1,3 +1,4 @@
+from rest_framework import serializers as ser
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -20,6 +21,7 @@ class IVAssessmentViewset(
     parent_model = Assessment
     model = models.IVEndpoint
     permission_classes = (AssessmentLevelPermissions,)
+    serializer_class = ser.Serializer
 
     def get_queryset(self):
         perms = self.get_obj_perms()

@@ -3,8 +3,34 @@ from django.conf import settings
 from django.conf.urls import include, url
 from django.contrib import admin
 from django.views.generic import TemplateView
+from rest_framework.schemas import get_schema_view
 
+from hawc.apps.animal.urls import router as animal_api
 from hawc.apps.assessment import views
+from hawc.apps.assessment.urls import router as assessment_api
+from hawc.apps.bmd.urls import router as bmd_api
+from hawc.apps.epi.urls import router as epi_api
+from hawc.apps.epimeta.urls import router as epimeta_api
+from hawc.apps.invitro.urls import router as invitro_api
+from hawc.apps.lit.urls import router as lit_api
+from hawc.apps.mgmt.urls import router as mgmt_api
+from hawc.apps.riskofbias.urls import router as riskofbias_api
+from hawc.apps.study.urls import router as study_api
+from hawc.apps.summary.urls import router as summary_api
+
+open_api_patterns = [
+    url(r"^ani/api/", include(animal_api.urls)),
+    url(r"^assessment/api/", include(assessment_api.urls)),
+    url(r"^bmd/api/", include(bmd_api.urls)),
+    url(r"^epi/api/", include(epi_api.urls)),
+    url(r"^epi-meta/api/", include(epimeta_api.urls)),
+    url(r"^in-vitro/api/", include(invitro_api.urls)),
+    url(r"^lit/api/", include(lit_api.urls)),
+    url(r"^mgmt/api/", include(mgmt_api.urls)),
+    url(r"^rob/api/", include(riskofbias_api.urls)),
+    url(r"^study/api/", include(study_api.urls)),
+    url(r"^summary/api/", include(summary_api.urls)),
+]
 
 urlpatterns = [
     # Portal
@@ -43,6 +69,16 @@ urlpatterns = [
     ),
     url(rf"^admin/{settings.ADMIN_URL_PREFIX}/", admin.site.urls),
     url(r"^selectable/", include("selectable.urls")),
+    url(
+        r"^openapi/$",
+        get_schema_view(
+            title="Your Project",
+            description="API for all things …",
+            version="1.0.0",
+            patterns=open_api_patterns,
+        ),
+        name="openapi-schema",
+    ),
 ]
 
 # only for DEBUG, want to use static server otherwise
