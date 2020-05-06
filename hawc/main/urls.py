@@ -6,31 +6,31 @@ from django.views.generic import TemplateView
 from rest_framework import permissions
 from rest_framework.schemas import get_schema_view
 
-from hawc.apps.animal.urls import router as animal_api
+import hawc.apps.animal.urls
+import hawc.apps.assessment.urls
+import hawc.apps.bmd.urls
+import hawc.apps.epi.urls
+import hawc.apps.epimeta.urls
+import hawc.apps.invitro.urls
+import hawc.apps.lit.urls
+import hawc.apps.mgmt.urls
+import hawc.apps.riskofbias.urls
+import hawc.apps.study.urls
+import hawc.apps.summary.urls
 from hawc.apps.assessment import views
-from hawc.apps.assessment.urls import router as assessment_api
-from hawc.apps.bmd.urls import router as bmd_api
-from hawc.apps.epi.urls import router as epi_api
-from hawc.apps.epimeta.urls import router as epimeta_api
-from hawc.apps.invitro.urls import router as invitro_api
-from hawc.apps.lit.urls import router as lit_api
-from hawc.apps.mgmt.urls import router as mgmt_api
-from hawc.apps.riskofbias.urls import router as riskofbias_api
-from hawc.apps.study.urls import router as study_api
-from hawc.apps.summary.urls import router as summary_api
 
 open_api_patterns = [
-    url(r"^ani/api/", include(animal_api.urls)),
-    url(r"^assessment/api/", include(assessment_api.urls)),
-    url(r"^bmd/api/", include(bmd_api.urls)),
-    url(r"^epi/api/", include(epi_api.urls)),
-    url(r"^epi-meta/api/", include(epimeta_api.urls)),
-    url(r"^in-vitro/api/", include(invitro_api.urls)),
-    url(r"^lit/api/", include(lit_api.urls)),
-    url(r"^mgmt/api/", include(mgmt_api.urls)),
-    url(r"^rob/api/", include(riskofbias_api.urls)),
-    url(r"^study/api/", include(study_api.urls)),
-    url(r"^summary/api/", include(summary_api.urls)),
+    url(r"^ani/api/", include(hawc.apps.animal.urls.router.urls)),
+    url(r"^assessment/api/", include(hawc.apps.assessment.urls.router.urls)),
+    url(r"^bmd/api/", include(hawc.apps.bmd.urls.router.urls)),
+    url(r"^epi/api/", include(hawc.apps.epi.urls.router.urls)),
+    url(r"^epi-meta/api/", include(hawc.apps.epimeta.urls.router.urls)),
+    url(r"^in-vitro/api/", include(hawc.apps.invitro.urls.router.urls)),
+    url(r"^lit/api/", include(hawc.apps.lit.urls.router.urls)),
+    url(r"^mgmt/api/", include(hawc.apps.mgmt.urls.router.urls)),
+    url(r"^rob/api/", include(hawc.apps.riskofbias.urls.router.urls)),
+    url(r"^study/api/", include(hawc.apps.study.urls.router.urls)),
+    url(r"^summary/api/", include(hawc.apps.summary.urls.router.urls)),
 ]
 
 urlpatterns = [

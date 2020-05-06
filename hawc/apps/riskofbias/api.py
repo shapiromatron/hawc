@@ -1,7 +1,6 @@
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import serializers as ser
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -20,6 +19,7 @@ from ..assessment.models import Assessment, TimeSpentEditing
 from ..common.api import BulkIdFilter, LegacyAssessmentAdapterMixin
 from ..common.helper import tryParseInt
 from ..common.renderers import PandasRenderers
+from ..common.serializers import UnusedSerializer
 from ..common.views import AssessmentPermissionsMixin, TeamMemberOrHigherMixin
 from ..mgmt.models import Task
 from ..riskofbias import exports
@@ -33,7 +33,7 @@ class RiskOfBiasAssessmentViewset(
     parent_model = Assessment
     model = Study
     permission_classes = (AssessmentLevelPermissions,)
-    serializer_class = ser.Serializer
+    serializer_class = UnusedSerializer
 
     def get_queryset(self):
 
