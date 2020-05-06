@@ -17,6 +17,7 @@ import hawc.apps.mgmt.urls
 import hawc.apps.riskofbias.urls
 import hawc.apps.study.urls
 import hawc.apps.summary.urls
+from hawc import __version__
 from hawc.apps.assessment import views
 
 open_api_patterns = [
@@ -73,8 +74,8 @@ urlpatterns = [
     url(
         r"^openapi/$",
         get_schema_view(
-            title="HAWC OpenAPI",
-            version="0.0.1",
+            title="HAWC",
+            version=__version__,
             patterns=open_api_patterns,
             permission_classes=(permissions.IsAdminUser,),
         ),
