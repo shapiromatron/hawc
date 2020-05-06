@@ -78,7 +78,7 @@ urlpatterns = [
             patterns=open_api_patterns,
             permission_classes=(permissions.IsAdminUser,),
         ),
-        name="openapi-schema",
+        name="openapi",
     ),
 ]
 
