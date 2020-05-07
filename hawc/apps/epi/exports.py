@@ -217,7 +217,7 @@ class OutcomeDataPivot(FlatFileExporter):
                 res["id"],
                 res["name"],
                 res["population_description"],
-                self.get_flattened_tags(ser, "resulttags"),
+                self.get_flattened_tags(res, "resulttags"),
                 res["metric"]["metric"],
                 res["metric"]["abbreviation"],
                 res["metric_description"],
