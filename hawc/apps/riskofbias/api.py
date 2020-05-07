@@ -19,6 +19,7 @@ from ..assessment.models import Assessment, TimeSpentEditing
 from ..common.api import BulkIdFilter, LegacyAssessmentAdapterMixin
 from ..common.helper import tryParseInt
 from ..common.renderers import PandasRenderers
+from ..common.serializers import UnusedSerializer
 from ..common.views import AssessmentPermissionsMixin, TeamMemberOrHigherMixin
 from ..mgmt.models import Task
 from ..riskofbias import exports
@@ -32,6 +33,7 @@ class RiskOfBiasAssessmentViewset(
     parent_model = Assessment
     model = Study
     permission_classes = (AssessmentLevelPermissions,)
+    serializer_class = UnusedSerializer
 
     def get_queryset(self):
 
