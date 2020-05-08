@@ -1,15 +1,19 @@
+from django.http import QueryDict
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import viewsets
+from rest_framework import mixins, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from ..assessment.api import AssessmentLevelPermissions, DisabledPagination, InAssessmentFilter
 from ..common.api import CleanupFieldsBaseViewSet
 from ..common.helper import tryParseInt
+from ..lit.models import Reference
 from . import models, serializers
 
 
-class Study(viewsets.ReadOnlyModelViewSet):
+class Study(
+    viewsets.ReadOnlyModelViewSet, mixins.CreateModelMixin,
+):
     assessment_filter_args = "assessment"
     model = models.Study
     pagination_class = DisabledPagination
@@ -46,6 +50,20 @@ class Study(viewsets.ReadOnlyModelViewSet):
     def types(self, request):
         study_types = self.model.STUDY_TYPE_FIELDS
         return Response(study_types)
+
+    def create(self, request):
+        reference_id = tryParseInt(self.request.query_params.get("reference_id"), -1)
+        reference = Reference.objects.get(id=reference_id)
+        self.check_object_permissions(request, reference)
+        data = request.data.dict() if isinstance(request.data, QueryDict) else request.data
+
+        data["assessment"] = reference.assessment.id
+        serializer = serializers.SimpleStudySerializer(data=data)
+        serializer.is_valid(raise_exception=True)
+
+        created_study = models.Study.save_new_from_reference(reference, data)
+
+        return Response(serializers.SimpleStudySerializer(created_study).data)
 
 
 class FinalRobStudy(Study):

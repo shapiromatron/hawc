@@ -511,6 +511,50 @@ class SummaryClient(BaseClient):
         return pd.DataFrame(response_json)
 
 
+class StudyClient(BaseClient):
+    """
+    Client class for study requests.
+    """
+
+    def create(
+        self, reference_id: int, short_citation: str, full_citation: str, data: Dict = {}
+    ) -> Dict:
+        """
+        Creates a study using a given reference ID.
+
+        Args:
+            reference_id (int): Reference ID to create study from.
+            short_citation (str): Short study citation, can be used as identifier.
+            full_citation (str): Complete study citation.
+            data (Dict, optional): Dict containing any additional field/value pairings for the study.
+                Possible pairings are:
+                    bioassay: bool (study contains animal bioassay data)
+                    epi: bool (study contains epidemiology data)
+                    epi_meta: bool (study contains epidemiology meta-analysis data)
+                    in_vitro: bool (study contains in-vitro data)
+                    coi_reported: int (COI reported, see
+                        hawc.apps.study.models.Study.COI_REPORTED_CHOICES for choices )
+                    coi_details: str (COI details; use the COI declaration when available)
+                    funding_source: str (any funding source information)
+                    study_identifier: str (reference descriptor for assessment-tracking,
+                        for example, "{Author, year, #EndNoteNumber}")
+                    contact_author: bool (was the author contacted for clarification/additional data)
+                    ask_author: str (correspondence details)
+                    published: bool (study, evaluation, and extraction details may be visible to permitted users)
+                    summary: str (often left blank, used to add comments on data extration)
+                    editable: bool (project-managers/team-members allowed to edit this study)
+                Defaults to {empty}.
+
+        Returns:
+            Dict: JSON of the created study
+        """
+        data["short_citation"] = short_citation
+        data["full_citation"] = full_citation
+
+        url = f"{self.session.root_url}/study/api/study/?reference_id={reference_id}"
+        return self.session.post(url, data)
+
+
 class AssessmentClient(BaseClient):
     """
     Client class for assessment requests.
@@ -564,6 +608,7 @@ class HawcClient(BaseClient):
         self.lit = LiteratureClient(self.session)
         self.riskofbias = RiskOfBiasClient(self.session)
         self.summary = SummaryClient(self.session)
+        self.study = StudyClient(self.session)
 
     def authenticate(self, email: str, password: str):
         """
