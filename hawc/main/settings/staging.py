@@ -31,6 +31,4 @@ elif os.environ.get("DJANGO_EMAIL_BACKEND") == "MAILGUN":
 else:
     raise ValueError("Unknown email backend")
 
-LOGGING["handlers"]["file"]["filename"] = os.path.join(os.getenv("LOGS_PATH"), "hawc.log")
-
 LOGGING["loggers"]["django"]["handlers"] = ["file"]
