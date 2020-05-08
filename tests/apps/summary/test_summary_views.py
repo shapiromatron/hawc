@@ -73,3 +73,7 @@ def test_summary_text_adding_texts(assessment_data):
         comparableTree(root)
         == """[{"data": {"title": "assessment-1"}, "children": [{"data": {"title": "lvl_1a"}, "children": [{"data": {"title": "lvl_2a"}}, {"data": {"title": "lvl_2b"}}]}, {"data": {"title": "lvl_1b"}}]}]"""
     )
+
+
+class TestVisualViews:
+    pass

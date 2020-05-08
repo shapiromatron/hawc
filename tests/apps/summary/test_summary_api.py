@@ -1,6 +1,33 @@
+import os
+import json
+from pathlib import Path
+
 import pytest
 from django.test.client import Client
 from django.urls import reverse
+
+from hawc.apps.summary import models
+
+DATA_ROOT = Path(__file__).parent / "data"
+
+
+# rebuild data in this fixture - should ALWAYS be False unless changing
+# review diffs after writing
+REWRITE_DATA = False
+
+
+in_ci = os.environ.get("GITHUB_RUN_ID") is not None
+
+
+@pytest.mark.skipif(not in_ci, reason="only run in CI")
+def test_no_data_rewrite():
+    # safety check - make sure tests aren't passing b/c we're rewriting expected results...
+    if REWRITE_DATA is True:
+        raise ValueError("Rewrite data must be set to `False` with commits")
+
+
+def _rewrite(fn: Path, content):
+    fn.write_text(json.dumps(content, indent=2))
 
 
 @pytest.mark.django_db
@@ -63,3 +90,82 @@ def test_api_visual_barchart(db_keys):
         "legend_x": 640,
         "legend_y": 10,
     }
+
+
+@pytest.mark.django_db
+class TestVisual:
+    """
+    Make sure our API gives expected results for all visual types
+    """
+
+    def _test_visual_detail_api(self, slug: str):
+        client = Client()
+
+        fn = Path(DATA_ROOT / f"api-visual-{slug}.json")
+        url = models.Visual.objects.get(slug=slug).get_api_detail()
+        response = client.get(url)
+
+        assert response.status_code == 200
+        data = response.json()
+
+        if REWRITE_DATA:
+            _rewrite(fn, response.json())
+        assert data == json.loads(fn.read_text())
+
+    def test_heatmap(self):
+        self._test_visual_detail_api("heatmap")
+
+    def test_crossview(self):
+        self._test_visual_detail_api("crossview")
+
+    def test_barchart(self):
+        self._test_visual_detail_api("barchart")
+
+    def test_tagtree(self):
+        self._test_visual_detail_api("tagtree")
+
+    def test_embedded_tableau(self):
+        self._test_visual_detail_api("embedded-tableau")
+
+
+@pytest.mark.django_db
+class TestDataPivot:
+    def _get_key_context(self, slug: str):
+        return slug, Path(DATA_ROOT / f"api-dp-data-{slug}.json")
+
+    def test_bioassay_endpoint(self):
+        # make sure that our data export is working and giving what's expected
+        client = Client()
+
+        slug, fn = self._get_key_context("animal-bioassay-data-pivot-endpoint")
+
+        dp = models.DataPivot.objects.get(slug=slug)
+        url = dp.get_data_url().replace("tsv", "json")
+        response = client.get(url)
+        assert response.status_code == 200
+
+        resp = response.json()
+        assert len(resp) == 1
+
+        if REWRITE_DATA:
+            _rewrite(fn, response.json())
+        assert json.loads(fn.read_text()) == resp
+
+    def test_bioassay_endpoint_group(self):
+        # make sure that our data export is working and giving what's expected
+        client = Client()
+
+        slug, fn = self._get_key_context("animal-bioassay-data-pivot-endpoint-group")
+
+        dp = models.DataPivot.objects.get(slug=slug)
+        url = dp.get_data_url().replace("tsv", "json")
+        response = client.get(url)
+
+        assert response.status_code == 200
+
+        resp = response.json()
+        assert len(resp) == 5
+
+        if REWRITE_DATA:
+            _rewrite(fn, response.json())
+        assert json.loads(fn.read_text()) == resp
