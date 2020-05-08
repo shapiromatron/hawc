@@ -24,14 +24,24 @@ class TestLiteratureAssessmentViewset:
         c = APIClient()
         assert c.login(email="pm@pm.com", password="pw") is True
         resp = c.get(url).json()
-        assert resp == [{"reference_id": 2, "pubmed_id": 29641658, "hero_id": None}]
+        assert resp == [
+            {"reference_id": 5, "pubmed_id": 11778423, "hero_id": None},
+            {"reference_id": 6, "pubmed_id": 15907334, "hero_id": None},
+            {"reference_id": 7, "pubmed_id": 21284075, "hero_id": None},
+            {"reference_id": 8, "pubmed_id": 24004895, "hero_id": None},
+        ]
 
     def test_reference_tags(self, db_keys):
         url = reverse("lit:api:assessment-reference-tags", kwargs=dict(pk=db_keys.assessment_final))
         c = APIClient()
         assert c.login(email="pm@pm.com", password="pw") is True
         resp = c.get(url).json()
-        assert resp == [{"reference_id": 2, "tag_id": 13}]
+        assert resp == [
+            {"reference_id": 5, "tag_id": 12},
+            {"reference_id": 6, "tag_id": 13},
+            {"reference_id": 7, "tag_id": 13},
+            {"reference_id": 8, "tag_id": 12},
+        ]
 
     def test_reference_year_histogram(self, db_keys):
         url = reverse(

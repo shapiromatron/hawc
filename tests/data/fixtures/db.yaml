@@ -85,6 +85,10 @@
 - model: contenttypes.contenttype
   fields:
     app_label: lit
+    model: literatureassessment
+- model: contenttypes.contenttype
+  fields:
+    app_label: lit
     model: search
 - model: contenttypes.contenttype
   fields:
@@ -313,7 +317,7 @@
 - model: myuser.hawcuser
   fields:
     password: md5$OtMBo5HXuH5d$79fbf1f0ae6d765b17b29256920cc8ef
-    last_login: 2020-02-27 22:01:13.627540+00:00
+    last_login: 2020-05-08 19:29:36.731679+00:00
     is_superuser: true
     email: sudo@sudo.com
     first_name: a
@@ -328,7 +332,7 @@
 - model: myuser.hawcuser
   fields:
     password: md5$fFanL0QpS7Sg$cf3808b6102279eb6982d78edfdc6111
-    last_login: 2020-04-10 17:42:36.252383+00:00
+    last_login: 2020-05-08 19:33:02.435858+00:00
     is_superuser: false
     email: pm@pm.com
     first_name: Project
@@ -427,8 +431,11 @@
     name: public final
     year: 2001
     version: final
-    cas: ''
-    assessment_objective: ''
+    cas: 7732-18-5
+    assessment_objective: <p>This is an example public final assessment, with lots
+      of content saved in the assessment. This assessment should have example data
+      for all data types, and you should be able to create example visualizations
+      for all visuals.</p>
     editable: false
     public: true
     hide_from_public_page: false
@@ -439,12 +446,12 @@
     enable_risk_of_bias: true
     enable_bmd: true
     enable_summary_text: true
-    conflicts_of_interest: ''
-    funding_source: ''
+    conflicts_of_interest: <p>The authors report COI</p>
+    funding_source: <p>This was funded by coffee</p>
     noel_name: 0
     rob_name: 0
     created: 2020-01-25 14:23:16.288774+00:00
-    last_updated: 2020-01-27 19:13:57.976928+00:00
+    last_updated: 2020-05-08 17:56:45.167410+00:00
     project_manager:
     - - pm@pm.com
     team_members:
@@ -498,6 +505,11 @@
     name: sprague dawley
     created: 2020-02-27 20:39:18.920826+00:00
     last_updated: 2020-02-27 20:39:25.049259+00:00
+- model: assessment.effecttag
+  pk: 1
+  fields:
+    name: tag1
+    slug: tag1
 - model: assessment.baseendpoint
   pk: 1
   fields:
@@ -514,12 +526,21 @@
     created: 2020-04-10 19:37:19.983403+00:00
     last_updated: 2020-04-10 19:37:19.983403+00:00
     effects: []
+- model: assessment.baseendpoint
+  pk: 3
+  fields:
+    assessment: 2
+    name: Water T maze (learning error)
+    created: 2020-05-08 17:47:49.464004+00:00
+    last_updated: 2020-05-08 17:47:49.464028+00:00
+    effects:
+    - 1
 - model: lit.literatureassessment
   pk: 1
   fields:
     assessment: 1
     extraction_tag: 2
-    topic_tsne_data: ""
+    topic_tsne_data: ''
     topic_tsne_refresh_requested: null
     topic_tsne_last_refresh: null
     created: 2020-04-11 20:53:19.390879+00:00
@@ -529,7 +550,7 @@
   fields:
     assessment: 2
     extraction_tag: 11
-    topic_tsne_data: ""
+    topic_tsne_data: ''
     topic_tsne_refresh_requested: null
     topic_tsne_last_refresh: null
     created: 2020-04-11 20:53:19.390979+00:00
@@ -539,7 +560,7 @@
   fields:
     assessment: 3
     extraction_tag: 23
-    topic_tsne_data: ""
+    topic_tsne_data: ''
     topic_tsne_refresh_requested: null
     topic_tsne_last_refresh: null
     created: 2020-04-11 20:53:19.390979+00:00
@@ -573,19 +594,6 @@
     created: 2020-01-25 14:23:16.325978+00:00
     last_updated: 2020-01-25 14:23:16.326001+00:00
 - model: lit.search
-  pk: 3
-  fields:
-    assessment: 2
-    search_type: i
-    source: 1
-    title: pmid
-    slug: pmid
-    description: ''
-    search_string: '29641658'
-    import_file: ''
-    created: 2020-01-27 22:44:26.097357+00:00
-    last_updated: 2020-01-27 22:44:26.097399+00:00
-- model: lit.search
   pk: 4
   fields:
     assessment: 3
@@ -599,12 +607,19 @@
     import_file: ''
     created: 2020-04-10 17:45:42.766856+00:00
     last_updated: 2020-04-10 17:45:42.766856+00:00
-- model: lit.pubmedquery
-  pk: 1
+- model: lit.search
+  pk: 5
   fields:
-    search: 3
-    results: ''
-    query_date: 2020-01-27 22:45:49.365291+00:00
+    assessment: 2
+    search_type: i
+    source: 1
+    title: pmid import
+    slug: pmid-import
+    description: Description
+    search_string: 24004895,21284075,15907334,11778423
+    import_file: ''
+    created: 2020-05-08 17:03:51.608549+00:00
+    last_updated: 2020-05-08 17:03:51.608572+00:00
 - model: lit.identifiers
   pk: 1
   fields:
@@ -612,6 +627,555 @@
     database: 1
     content: demo-content
     url: https://www.ncbi.nlm.nih.gov/pubmed/29641658
+- model: lit.identifiers
+  pk: 2
+  fields:
+    unique_id: '15907334'
+    database: 1
+    content: '{"xml": "<PubmedArticle>\n    <MedlineCitation Owner=\"NLM\" Status=\"MEDLINE\">\n        <PMID
+      Version=\"1\">15907334</PMID>\n        <DateCompleted>\n            <Year>2006</Year>\n            <Month>01</Month>\n            <Day>03</Day>\n        </DateCompleted>\n        <DateRevised>\n            <Year>2013</Year>\n            <Month>11</Month>\n            <Day>21</Day>\n        </DateRevised>\n        <Article
+      PubModel=\"Print\">\n            <Journal>\n                <ISSN IssnType=\"Print\">0041-008X</ISSN>\n                <JournalIssue
+      CitedMedium=\"Print\">\n                    <Volume>209</Volume>\n                    <Issue>2</Issue>\n                    <PubDate>\n                        <Year>2005</Year>\n                        <Month>Dec</Month>\n                        <Day>01</Day>\n                    </PubDate>\n                </JournalIssue>\n                <Title>Toxicology
+      and applied pharmacology</Title>\n                <ISOAbbreviation>Toxicol.
+      Appl. Pharmacol.</ISOAbbreviation>\n            </Journal>\n            <ArticleTitle>Effects
+      of bisphenol A-related diphenylalkanes on vitellogenin production in male carp
+      (Cyprinus carpio) hepatocytes and aromatase (CYP19) activity in human H295R
+      adrenocortical carcinoma cells.</ArticleTitle>\n            <Pagination>\n                <MedlinePgn>95-104</MedlinePgn>\n            </Pagination>\n            <Abstract>\n                <AbstractText>The
+      present study investigated the effects of the known xenoestrogen bisphenol A
+      (BPA) relative to eight BPA-related diphenylalkanes on estrogen receptor (ER)-mediated
+      vitellogenin (vtg) production in hepatocytes from male carp (Cyprinus carpio),
+      and on aromatase (CYP19) activity in the human adrenocortical H295R carcinoma
+      cell line. Of the eight diphenylalkanes, only 4,4''-(hexafluoropropylidene)diphenol
+      (BHF) and 2,2''-bis(4-hydroxy-3-methylphenyl)propane (BPRO) induced vtg, i.e.,
+      to a maximum of 3% to 4% (at 100 microM) compared with 8% for BPA relative to
+      the maximum induction by 17beta-estradiol (E2, 1 microM). Bisphenol A diglycidyl
+      ether (BADGE) was a potent antagonist of vtg production with an IC50 of 5.5
+      microM, virtually 100% inhibition of vtg at 20 microM, and an inhibitive (IC50)
+      potency about one-tenth that of the known ER antagonist tamoxifen (IC50, 0.6
+      microM). 2,2''-Diallyl bisphenol A, 4,4''-(1,4-phenylene-diisopropylidene)bisphenol,
+      BPRO, and BHF were much less inhibitory with IC50 concentrations of 20-70 microM,
+      and relative potencies of 0.03 and 0.009 with tamoxifen. Bisphenol ethoxylate
+      showed no anti-estrogenicity (up to 100 microM), and 4,4''-isopropylidene-diphenol
+      diacetate was only antagonistic at 100 microM. When comparing the (anti)estrogenic
+      potencies of these bisphenol A analogues/diphenylalkanes, anti-estrogenicity
+      occurred at lower concentrations than estrogenicity. 4,4''-Isopropylidenebis(2,6-dimethylphenol)
+      (IC50, 2.0 microM) reduced E2-induced (EC50, 100 nM) vtg production due to concentration-dependent
+      cytotoxicity as indicated by a parallel decrease in MTT activity and vtg, whereas
+      the remaining diphenylalkanes did not cause any cytotoxicity relative to controls.
+      None of the diphenylalkanes (up to 100 microM) induced EROD activity indicating
+      that concentration-dependent, CYP1A enzyme-mediated metabolism of E2, or any
+      Ah-receptor-mediated interaction with the ER, was not a likely explanation for
+      the observed anti-estrogenic effects. At concentrations as great as 100 microM,
+      none of the diphenylalkanes directly inhibited aromatase (CYP19) activity in
+      H295R cells. Environmental exposure of fish to BPA and related diphenylalkanes,
+      depending on the structure, may pose anti-estrogenic, and to a lesser extent
+      estrogenic, risks to development and reproduction.</AbstractText>\n            </Abstract>\n            <AuthorList
+      CompleteYN=\"Y\">\n                <Author ValidYN=\"Y\">\n                    <LastName>Letcher</LastName>\n                    <ForeName>Robert
+      J</ForeName>\n                    <Initials>RJ</Initials>\n                    <AffiliationInfo>\n                        <Affiliation>National
+      Wildlife Research Centre, Canadian Wildlife Service, Environment Canada, Ottawa,
+      Ontario, Canada K1A 0H3. robert.letcher@ec.gc.ca</Affiliation>\n                    </AffiliationInfo>\n                </Author>\n                <Author
+      ValidYN=\"Y\">\n                    <LastName>Sanderson</LastName>\n                    <ForeName>J
+      Thomas</ForeName>\n                    <Initials>JT</Initials>\n                </Author>\n                <Author
+      ValidYN=\"Y\">\n                    <LastName>Bokkers</LastName>\n                    <ForeName>Abraham</ForeName>\n                    <Initials>A</Initials>\n                </Author>\n                <Author
+      ValidYN=\"Y\">\n                    <LastName>Giesy</LastName>\n                    <ForeName>John
+      P</ForeName>\n                    <Initials>JP</Initials>\n                </Author>\n                <Author
+      ValidYN=\"Y\">\n                    <LastName>van den Berg</LastName>\n                    <ForeName>Martin</ForeName>\n                    <Initials>M</Initials>\n                </Author>\n            </AuthorList>\n            <Language>eng</Language>\n            <PublicationTypeList>\n                <PublicationType
+      UI=\"D016428\">Journal Article</PublicationType>\n                <PublicationType
+      UI=\"D013485\">Research Support, Non-U.S. Gov''t</PublicationType>\n            </PublicationTypeList>\n        </Article>\n        <MedlineJournalInfo>\n            <Country>United
+      States</Country>\n            <MedlineTA>Toxicol Appl Pharmacol</MedlineTA>\n            <NlmUniqueID>0416575</NlmUniqueID>\n            <ISSNLinking>0041-008X</ISSNLinking>\n        </MedlineJournalInfo>\n        <ChemicalList>\n            <Chemical>\n                <RegistryNumber>0</RegistryNumber>\n                <NameOfSubstance
+      UI=\"D000473\">Alkanes</NameOfSubstance>\n            </Chemical>\n            <Chemical>\n                <RegistryNumber>0</RegistryNumber>\n                <NameOfSubstance
+      UI=\"D047072\">Aromatase Inhibitors</NameOfSubstance>\n            </Chemical>\n            <Chemical>\n                <RegistryNumber>0</RegistryNumber>\n                <NameOfSubstance
+      UI=\"D001559\">Benzhydryl Compounds</NameOfSubstance>\n            </Chemical>\n            <Chemical>\n                <RegistryNumber>0</RegistryNumber>\n                <NameOfSubstance
+      UI=\"D001713\">Biphenyl Compounds</NameOfSubstance>\n            </Chemical>\n            <Chemical>\n                <RegistryNumber>0</RegistryNumber>\n                <NameOfSubstance
+      UI=\"D020847\">Estrogen Receptor Modulators</NameOfSubstance>\n            </Chemical>\n            <Chemical>\n                <RegistryNumber>0</RegistryNumber>\n                <NameOfSubstance
+      UI=\"D004968\">Estrogens, Non-Steroidal</NameOfSubstance>\n            </Chemical>\n            <Chemical>\n                <RegistryNumber>0</RegistryNumber>\n                <NameOfSubstance
+      UI=\"D010636\">Phenols</NameOfSubstance>\n            </Chemical>\n            <Chemical>\n                <RegistryNumber>0</RegistryNumber>\n                <NameOfSubstance
+      UI=\"D018336\">Receptors, Aryl Hydrocarbon</NameOfSubstance>\n            </Chemical>\n            <Chemical>\n                <RegistryNumber>0</RegistryNumber>\n                <NameOfSubstance
+      UI=\"D011960\">Receptors, Estrogen</NameOfSubstance>\n            </Chemical>\n            <Chemical>\n                <RegistryNumber>0</RegistryNumber>\n                <NameOfSubstance
+      UI=\"D014819\">Vitellogenins</NameOfSubstance>\n            </Chemical>\n            <Chemical>\n                <RegistryNumber>094ZI81Y45</RegistryNumber>\n                <NameOfSubstance
+      UI=\"D013629\">Tamoxifen</NameOfSubstance>\n            </Chemical>\n            <Chemical>\n                <RegistryNumber>4TI98Z838E</RegistryNumber>\n                <NameOfSubstance
+      UI=\"D004958\">Estradiol</NameOfSubstance>\n            </Chemical>\n            <Chemical>\n                <RegistryNumber>EC
+      1.14.14.1</RegistryNumber>\n                <NameOfSubstance UI=\"D001141\">Aromatase</NameOfSubstance>\n            </Chemical>\n            <Chemical>\n                <RegistryNumber>EC
+      1.14.14.1</RegistryNumber>\n                <NameOfSubstance UI=\"D019363\">Cytochrome
+      P-450 CYP1A1</NameOfSubstance>\n            </Chemical>\n            <Chemical>\n                <RegistryNumber>MLT3645I99</RegistryNumber>\n                <NameOfSubstance
+      UI=\"C006780\">bisphenol A</NameOfSubstance>\n            </Chemical>\n        </ChemicalList>\n        <CitationSubset>IM</CitationSubset>\n        <MeshHeadingList>\n            <MeshHeading>\n                <DescriptorName
+      MajorTopicYN=\"N\" UI=\"D018268\">Adrenocortical Carcinoma</DescriptorName>\n                <QualifierName
+      MajorTopicYN=\"N\" UI=\"Q000201\">enzymology</QualifierName>\n            </MeshHeading>\n            <MeshHeading>\n                <DescriptorName
+      MajorTopicYN=\"N\" UI=\"D000473\">Alkanes</DescriptorName>\n                <QualifierName
+      MajorTopicYN=\"Y\" UI=\"Q000494\">pharmacology</QualifierName>\n                <QualifierName
+      MajorTopicYN=\"N\" UI=\"Q000633\">toxicity</QualifierName>\n            </MeshHeading>\n            <MeshHeading>\n                <DescriptorName
+      MajorTopicYN=\"N\" UI=\"D000818\">Animals</DescriptorName>\n            </MeshHeading>\n            <MeshHeading>\n                <DescriptorName
+      MajorTopicYN=\"N\" UI=\"D001141\">Aromatase</DescriptorName>\n                <QualifierName
+      MajorTopicYN=\"N\" UI=\"Q000378\">metabolism</QualifierName>\n            </MeshHeading>\n            <MeshHeading>\n                <DescriptorName
+      MajorTopicYN=\"N\" UI=\"D047072\">Aromatase Inhibitors</DescriptorName>\n                <QualifierName
+      MajorTopicYN=\"Y\" UI=\"Q000494\">pharmacology</QualifierName>\n            </MeshHeading>\n            <MeshHeading>\n                <DescriptorName
+      MajorTopicYN=\"N\" UI=\"D001559\">Benzhydryl Compounds</DescriptorName>\n            </MeshHeading>\n            <MeshHeading>\n                <DescriptorName
+      MajorTopicYN=\"N\" UI=\"D001713\">Biphenyl Compounds</DescriptorName>\n                <QualifierName
+      MajorTopicYN=\"N\" UI=\"Q000494\">pharmacology</QualifierName>\n                <QualifierName
+      MajorTopicYN=\"N\" UI=\"Q000633\">toxicity</QualifierName>\n            </MeshHeading>\n            <MeshHeading>\n                <DescriptorName
+      MajorTopicYN=\"N\" UI=\"D002347\">Carps</DescriptorName>\n                <QualifierName
+      MajorTopicYN=\"Y\" UI=\"Q000378\">metabolism</QualifierName>\n            </MeshHeading>\n            <MeshHeading>\n                <DescriptorName
+      MajorTopicYN=\"N\" UI=\"D045744\">Cell Line, Tumor</DescriptorName>\n            </MeshHeading>\n            <MeshHeading>\n                <DescriptorName
+      MajorTopicYN=\"N\" UI=\"D019363\">Cytochrome P-450 CYP1A1</DescriptorName>\n                <QualifierName
+      MajorTopicYN=\"N\" UI=\"Q000037\">antagonists &amp; inhibitors</QualifierName>\n                <QualifierName
+      MajorTopicYN=\"N\" UI=\"Q000378\">metabolism</QualifierName>\n            </MeshHeading>\n            <MeshHeading>\n                <DescriptorName
+      MajorTopicYN=\"N\" UI=\"D004958\">Estradiol</DescriptorName>\n                <QualifierName
+      MajorTopicYN=\"N\" UI=\"Q000378\">metabolism</QualifierName>\n            </MeshHeading>\n            <MeshHeading>\n                <DescriptorName
+      MajorTopicYN=\"N\" UI=\"D020847\">Estrogen Receptor Modulators</DescriptorName>\n                <QualifierName
+      MajorTopicYN=\"N\" UI=\"Q000494\">pharmacology</QualifierName>\n                <QualifierName
+      MajorTopicYN=\"N\" UI=\"Q000633\">toxicity</QualifierName>\n            </MeshHeading>\n            <MeshHeading>\n                <DescriptorName
+      MajorTopicYN=\"N\" UI=\"D004968\">Estrogens, Non-Steroidal</DescriptorName>\n                <QualifierName
+      MajorTopicYN=\"Y\" UI=\"Q000494\">pharmacology</QualifierName>\n                <QualifierName
+      MajorTopicYN=\"N\" UI=\"Q000633\">toxicity</QualifierName>\n            </MeshHeading>\n            <MeshHeading>\n                <DescriptorName
+      MajorTopicYN=\"N\" UI=\"D022781\">Hepatocytes</DescriptorName>\n                <QualifierName
+      MajorTopicYN=\"Y\" UI=\"Q000187\">drug effects</QualifierName>\n                <QualifierName
+      MajorTopicYN=\"N\" UI=\"Q000201\">enzymology</QualifierName>\n                <QualifierName
+      MajorTopicYN=\"N\" UI=\"Q000378\">metabolism</QualifierName>\n            </MeshHeading>\n            <MeshHeading>\n                <DescriptorName
+      MajorTopicYN=\"N\" UI=\"D006801\">Humans</DescriptorName>\n            </MeshHeading>\n            <MeshHeading>\n                <DescriptorName
+      MajorTopicYN=\"N\" UI=\"D020128\">Inhibitory Concentration 50</DescriptorName>\n            </MeshHeading>\n            <MeshHeading>\n                <DescriptorName
+      MajorTopicYN=\"N\" UI=\"D008297\">Male</DescriptorName>\n            </MeshHeading>\n            <MeshHeading>\n                <DescriptorName
+      MajorTopicYN=\"N\" UI=\"D010636\">Phenols</DescriptorName>\n                <QualifierName
+      MajorTopicYN=\"Y\" UI=\"Q000494\">pharmacology</QualifierName>\n                <QualifierName
+      MajorTopicYN=\"N\" UI=\"Q000633\">toxicity</QualifierName>\n            </MeshHeading>\n            <MeshHeading>\n                <DescriptorName
+      MajorTopicYN=\"N\" UI=\"D018336\">Receptors, Aryl Hydrocarbon</DescriptorName>\n                <QualifierName
+      MajorTopicYN=\"N\" UI=\"Q000378\">metabolism</QualifierName>\n            </MeshHeading>\n            <MeshHeading>\n                <DescriptorName
+      MajorTopicYN=\"N\" UI=\"D011960\">Receptors, Estrogen</DescriptorName>\n                <QualifierName
+      MajorTopicYN=\"N\" UI=\"Q000037\">antagonists &amp; inhibitors</QualifierName>\n                <QualifierName
+      MajorTopicYN=\"N\" UI=\"Q000378\">metabolism</QualifierName>\n            </MeshHeading>\n            <MeshHeading>\n                <DescriptorName
+      MajorTopicYN=\"N\" UI=\"D013629\">Tamoxifen</DescriptorName>\n                <QualifierName
+      MajorTopicYN=\"N\" UI=\"Q000494\">pharmacology</QualifierName>\n            </MeshHeading>\n            <MeshHeading>\n                <DescriptorName
+      MajorTopicYN=\"N\" UI=\"D014819\">Vitellogenins</DescriptorName>\n                <QualifierName
+      MajorTopicYN=\"Y\" UI=\"Q000096\">biosynthesis</QualifierName>\n                <QualifierName
+      MajorTopicYN=\"N\" UI=\"Q000378\">metabolism</QualifierName>\n            </MeshHeading>\n        </MeshHeadingList>\n    </MedlineCitation>\n    <PubmedData>\n        <History>\n            <PubMedPubDate
+      PubStatus=\"received\">\n                <Year>2005</Year>\n                <Month>01</Month>\n                <Day>24</Day>\n            </PubMedPubDate>\n            <PubMedPubDate
+      PubStatus=\"revised\">\n                <Year>2005</Year>\n                <Month>03</Month>\n                <Day>23</Day>\n            </PubMedPubDate>\n            <PubMedPubDate
+      PubStatus=\"accepted\">\n                <Year>2005</Year>\n                <Month>03</Month>\n                <Day>25</Day>\n            </PubMedPubDate>\n            <PubMedPubDate
+      PubStatus=\"pubmed\">\n                <Year>2005</Year>\n                <Month>5</Month>\n                <Day>24</Day>\n                <Hour>9</Hour>\n                <Minute>0</Minute>\n            </PubMedPubDate>\n            <PubMedPubDate
+      PubStatus=\"medline\">\n                <Year>2006</Year>\n                <Month>1</Month>\n                <Day>4</Day>\n                <Hour>9</Hour>\n                <Minute>0</Minute>\n            </PubMedPubDate>\n            <PubMedPubDate
+      PubStatus=\"entrez\">\n                <Year>2005</Year>\n                <Month>5</Month>\n                <Day>24</Day>\n                <Hour>9</Hour>\n                <Minute>0</Minute>\n            </PubMedPubDate>\n        </History>\n        <PublicationStatus>ppublish</PublicationStatus>\n        <ArticleIdList>\n            <ArticleId
+      IdType=\"pubmed\">15907334</ArticleId>\n            <ArticleId IdType=\"pii\">S0041-008X(05)00154-7</ArticleId>\n            <ArticleId
+      IdType=\"doi\">10.1016/j.taap.2005.03.013</ArticleId>\n        </ArticleIdList>\n    </PubmedData>\n</PubmedArticle>\n\n\n",
+      "PMID": 15907334, "title": "Effects of bisphenol A-related diphenylalkanes on
+      vitellogenin production in male carp (Cyprinus carpio) hepatocytes and aromatase
+      (CYP19) activity in human H295R adrenocortical carcinoma cells.", "abstract":
+      "The present study investigated the effects of the known xenoestrogen bisphenol
+      A (BPA) relative to eight BPA-related diphenylalkanes on estrogen receptor (ER)-mediated
+      vitellogenin (vtg) production in hepatocytes from male carp (Cyprinus carpio),
+      and on aromatase (CYP19) activity in the human adrenocortical H295R carcinoma
+      cell line. Of the eight diphenylalkanes, only 4,4''-(hexafluoropropylidene)diphenol
+      (BHF) and 2,2''-bis(4-hydroxy-3-methylphenyl)propane (BPRO) induced vtg, i.e.,
+      to a maximum of 3% to 4% (at 100 microM) compared with 8% for BPA relative to
+      the maximum induction by 17beta-estradiol (E2, 1 microM). Bisphenol A diglycidyl
+      ether (BADGE) was a potent antagonist of vtg production with an IC50 of 5.5
+      microM, virtually 100% inhibition of vtg at 20 microM, and an inhibitive (IC50)
+      potency about one-tenth that of the known ER antagonist tamoxifen (IC50, 0.6
+      microM). 2,2''-Diallyl bisphenol A, 4,4''-(1,4-phenylene-diisopropylidene)bisphenol,
+      BPRO, and BHF were much less inhibitory with IC50 concentrations of 20-70 microM,
+      and relative potencies of 0.03 and 0.009 with tamoxifen. Bisphenol ethoxylate
+      showed no anti-estrogenicity (up to 100 microM), and 4,4''-isopropylidene-diphenol
+      diacetate was only antagonistic at 100 microM. When comparing the (anti)estrogenic
+      potencies of these bisphenol A analogues/diphenylalkanes, anti-estrogenicity
+      occurred at lower concentrations than estrogenicity. 4,4''-Isopropylidenebis(2,6-dimethylphenol)
+      (IC50, 2.0 microM) reduced E2-induced (EC50, 100 nM) vtg production due to concentration-dependent
+      cytotoxicity as indicated by a parallel decrease in MTT activity and vtg, whereas
+      the remaining diphenylalkanes did not cause any cytotoxicity relative to controls.
+      None of the diphenylalkanes (up to 100 microM) induced EROD activity indicating
+      that concentration-dependent, CYP1A enzyme-mediated metabolism of E2, or any
+      Ah-receptor-mediated interaction with the ER, was not a likely explanation for
+      the observed anti-estrogenic effects. At concentrations as great as 100 microM,
+      none of the diphenylalkanes directly inhibited aromatase (CYP19) activity in
+      H295R cells. Environmental exposure of fish to BPA and related diphenylalkanes,
+      depending on the structure, may pose anti-estrogenic, and to a lesser extent
+      estrogenic, risks to development and reproduction.", "citation": "Toxicol. Appl.
+      Pharmacol. 2005; 209 (2):95-104", "year": 2005, "doi": null, "authors": ["Letcher
+      RJ", "Sanderson JT", "Bokkers A", "Giesy JP", "van den Berg M"], "authors_short":
+      "Letcher RJ et al."}'
+    url: ''
+- model: lit.identifiers
+  pk: 3
+  fields:
+    unique_id: '24004895'
+    database: 1
+    content: '{"xml": "<PubmedArticle>\n    <MedlineCitation Owner=\"NLM\" Status=\"MEDLINE\">\n        <PMID
+      Version=\"1\">24004895</PMID>\n        <DateCompleted>\n            <Year>2013</Year>\n            <Month>12</Month>\n            <Day>12</Day>\n        </DateCompleted>\n        <DateRevised>\n            <Year>2018</Year>\n            <Month>12</Month>\n            <Day>02</Day>\n        </DateRevised>\n        <Article
+      PubModel=\"Print-Electronic\">\n            <Journal>\n                <ISSN
+      IssnType=\"Electronic\">1938-3207</ISSN>\n                <JournalIssue CitedMedium=\"Internet\">\n                    <Volume>98</Volume>\n                    <Issue>5</Issue>\n                    <PubDate>\n                        <Year>2013</Year>\n                        <Month>Nov</Month>\n                    </PubDate>\n                </JournalIssue>\n                <Title>The
+      American journal of clinical nutrition</Title>\n                <ISOAbbreviation>Am.
+      J. Clin. Nutr.</ISOAbbreviation>\n            </Journal>\n            <ArticleTitle>Prenatal
+      folic acid and risk of asthma in children: a systematic review and meta-analysis.</ArticleTitle>\n            <Pagination>\n                <MedlinePgn>1272-81</MedlinePgn>\n            </Pagination>\n            <ELocationID
+      EIdType=\"doi\" ValidYN=\"Y\">10.3945/ajcn.113.065623</ELocationID>\n            <Abstract>\n                <AbstractText
+      Label=\"BACKGROUND\" NlmCategory=\"BACKGROUND\">Childhood asthma has become
+      a critical public health problem because of its high morbidity and increasing
+      prevalence. The impact of nutrition and other exposures during pregnancy on
+      long-term health and development of children has been of increasing interest.</AbstractText>\n                <AbstractText
+      Label=\"OBJECTIVE\" NlmCategory=\"OBJECTIVE\">We performed a systematic review
+      and meta-analysis of the association of folate and folic acid intake during
+      pregnancy and risk of asthma and other allergic outcomes in children.</AbstractText>\n                <AbstractText
+      Label=\"DESIGN\" NlmCategory=\"METHODS\">We performed a systematic search of
+      8 electronic databases for articles that examined the association between prenatal
+      folate or folic acid exposure and risk of asthma and other allergic outcomes
+      (eg, allergy, eczema, and atopic dermatitis) in childhood. We performed a meta-analysis
+      by using a random-effects model to derive a summary risk estimate of studies
+      with similar exposure timing, exposure assessment, and outcomes.</AbstractText>\n                <AbstractText
+      Label=\"RESULTS\" NlmCategory=\"RESULTS\">Our meta-analysis provided no evidence
+      of an association between maternal folic acid supplement use (compared with
+      no use) in the prepregnancy period through the first trimester and asthma in
+      childhood (summary risk estimate: 1.01; 95% CI: 0.78, 1.30). Because of substantial
+      heterogeneity in exposures and outcomes, it was not possible to generate summary
+      measures for other folate indicators (eg, blood folate concentrations) and asthma
+      or allergy-related outcomes; however, the preponderance of primary risk estimates
+      was not elevated.</AbstractText>\n                <AbstractText Label=\"CONCLUSIONS\"
+      NlmCategory=\"CONCLUSIONS\">Our findings do not support an association between
+      periconceptional folic acid supplementation and increased risk of asthma in
+      children. However, because of the limited number and types of studies in the
+      literature, additional research is needed.</AbstractText>\n            </Abstract>\n            <AuthorList
+      CompleteYN=\"Y\">\n                <Author ValidYN=\"Y\">\n                    <LastName>Crider</LastName>\n                    <ForeName>Krista
+      S</ForeName>\n                    <Initials>KS</Initials>\n                    <AffiliationInfo>\n                        <Affiliation>National
+      Center on Birth Defects and Developmental Disabilities, CDC, Atlanta, GA (KSC,
+      AMC, YPQ, NFD, and RJB), and Carter Consulting Inc, Atlanta, GA (JM).</Affiliation>\n                    </AffiliationInfo>\n                </Author>\n                <Author
+      ValidYN=\"Y\">\n                    <LastName>Cordero</LastName>\n                    <ForeName>Amy
+      M</ForeName>\n                    <Initials>AM</Initials>\n                </Author>\n                <Author
+      ValidYN=\"Y\">\n                    <LastName>Qi</LastName>\n                    <ForeName>Yan
+      Ping</ForeName>\n                    <Initials>YP</Initials>\n                </Author>\n                <Author
+      ValidYN=\"Y\">\n                    <LastName>Mulinare</LastName>\n                    <ForeName>Joseph</ForeName>\n                    <Initials>J</Initials>\n                </Author>\n                <Author
+      ValidYN=\"Y\">\n                    <LastName>Dowling</LastName>\n                    <ForeName>Nicole
+      F</ForeName>\n                    <Initials>NF</Initials>\n                </Author>\n                <Author
+      ValidYN=\"Y\">\n                    <LastName>Berry</LastName>\n                    <ForeName>Robert
+      J</ForeName>\n                    <Initials>RJ</Initials>\n                </Author>\n            </AuthorList>\n            <Language>eng</Language>\n            <GrantList
+      CompleteYN=\"Y\">\n                <Grant>\n                    <GrantID>CC999999</GrantID>\n                    <Agency>Intramural
+      CDC HHS</Agency>\n                    <Country>United States</Country>\n                </Grant>\n            </GrantList>\n            <PublicationTypeList>\n                <PublicationType
+      UI=\"D016428\">Journal Article</PublicationType>\n                <PublicationType
+      UI=\"D017418\">Meta-Analysis</PublicationType>\n                <PublicationType
+      UI=\"D013487\">Research Support, U.S. Gov''t, P.H.S.</PublicationType>\n                <PublicationType
+      UI=\"D016454\">Review</PublicationType>\n                <PublicationType UI=\"D000078182\">Systematic
+      Review</PublicationType>\n            </PublicationTypeList>\n            <ArticleDate
+      DateType=\"Electronic\">\n                <Year>2013</Year>\n                <Month>09</Month>\n                <Day>04</Day>\n            </ArticleDate>\n        </Article>\n        <MedlineJournalInfo>\n            <Country>United
+      States</Country>\n            <MedlineTA>Am J Clin Nutr</MedlineTA>\n            <NlmUniqueID>0376027</NlmUniqueID>\n            <ISSNLinking>0002-9165</ISSNLinking>\n        </MedlineJournalInfo>\n        <ChemicalList>\n            <Chemical>\n                <RegistryNumber>935E97BOY8</RegistryNumber>\n                <NameOfSubstance
+      UI=\"D005492\">Folic Acid</NameOfSubstance>\n            </Chemical>\n        </ChemicalList>\n        <CitationSubset>AIM</CitationSubset>\n        <CitationSubset>IM</CitationSubset>\n        <MeshHeadingList>\n            <MeshHeading>\n                <DescriptorName
+      MajorTopicYN=\"N\" UI=\"D001249\">Asthma</DescriptorName>\n                <QualifierName
+      MajorTopicYN=\"Y\" UI=\"Q000453\">epidemiology</QualifierName>\n            </MeshHeading>\n            <MeshHeading>\n                <DescriptorName
+      MajorTopicYN=\"N\" UI=\"D002648\">Child</DescriptorName>\n            </MeshHeading>\n            <MeshHeading>\n                <DescriptorName
+      MajorTopicYN=\"N\" UI=\"D016208\">Databases, Factual</DescriptorName>\n            </MeshHeading>\n            <MeshHeading>\n                <DescriptorName
+      MajorTopicYN=\"N\" UI=\"D003876\">Dermatitis, Atopic</DescriptorName>\n                <QualifierName
+      MajorTopicYN=\"N\" UI=\"Q000453\">epidemiology</QualifierName>\n            </MeshHeading>\n            <MeshHeading>\n                <DescriptorName
+      MajorTopicYN=\"N\" UI=\"D019587\">Dietary Supplements</DescriptorName>\n                <QualifierName
+      MajorTopicYN=\"Y\" UI=\"Q000009\">adverse effects</QualifierName>\n            </MeshHeading>\n            <MeshHeading>\n                <DescriptorName
+      MajorTopicYN=\"N\" UI=\"D004485\">Eczema</DescriptorName>\n                <QualifierName
+      MajorTopicYN=\"N\" UI=\"Q000453\">epidemiology</QualifierName>\n            </MeshHeading>\n            <MeshHeading>\n                <DescriptorName
+      MajorTopicYN=\"N\" UI=\"D005260\">Female</DescriptorName>\n            </MeshHeading>\n            <MeshHeading>\n                <DescriptorName
+      MajorTopicYN=\"N\" UI=\"D005492\">Folic Acid</DescriptorName>\n                <QualifierName
+      MajorTopicYN=\"Y\" UI=\"Q000008\">administration &amp; dosage</QualifierName>\n                <QualifierName
+      MajorTopicYN=\"Y\" UI=\"Q000009\">adverse effects</QualifierName>\n                <QualifierName
+      MajorTopicYN=\"N\" UI=\"Q000097\">blood</QualifierName>\n            </MeshHeading>\n            <MeshHeading>\n                <DescriptorName
+      MajorTopicYN=\"N\" UI=\"D006801\">Humans</DescriptorName>\n            </MeshHeading>\n            <MeshHeading>\n                <DescriptorName
+      MajorTopicYN=\"N\" UI=\"D006967\">Hypersensitivity</DescriptorName>\n                <QualifierName
+      MajorTopicYN=\"N\" UI=\"Q000453\">epidemiology</QualifierName>\n            </MeshHeading>\n            <MeshHeading>\n                <DescriptorName
+      MajorTopicYN=\"N\" UI=\"D011247\">Pregnancy</DescriptorName>\n            </MeshHeading>\n            <MeshHeading>\n                <DescriptorName
+      MajorTopicYN=\"N\" UI=\"D011264\">Pregnancy Trimesters</DescriptorName>\n            </MeshHeading>\n            <MeshHeading>\n                <DescriptorName
+      MajorTopicYN=\"Y\" UI=\"D011297\">Prenatal Exposure Delayed Effects</DescriptorName>\n            </MeshHeading>\n            <MeshHeading>\n                <DescriptorName
+      MajorTopicYN=\"N\" UI=\"D016032\">Randomized Controlled Trials as Topic</DescriptorName>\n            </MeshHeading>\n            <MeshHeading>\n                <DescriptorName
+      MajorTopicYN=\"N\" UI=\"D012307\">Risk Factors</DescriptorName>\n            </MeshHeading>\n        </MeshHeadingList>\n    </MedlineCitation>\n    <PubmedData>\n        <History>\n            <PubMedPubDate
+      PubStatus=\"entrez\">\n                <Year>2013</Year>\n                <Month>9</Month>\n                <Day>6</Day>\n                <Hour>6</Hour>\n                <Minute>0</Minute>\n            </PubMedPubDate>\n            <PubMedPubDate
+      PubStatus=\"pubmed\">\n                <Year>2013</Year>\n                <Month>9</Month>\n                <Day>6</Day>\n                <Hour>6</Hour>\n                <Minute>0</Minute>\n            </PubMedPubDate>\n            <PubMedPubDate
+      PubStatus=\"medline\">\n                <Year>2013</Year>\n                <Month>12</Month>\n                <Day>18</Day>\n                <Hour>6</Hour>\n                <Minute>0</Minute>\n            </PubMedPubDate>\n        </History>\n        <PublicationStatus>ppublish</PublicationStatus>\n        <ArticleIdList>\n            <ArticleId
+      IdType=\"pubmed\">24004895</ArticleId>\n            <ArticleId IdType=\"pii\">ajcn.113.065623</ArticleId>\n            <ArticleId
+      IdType=\"doi\">10.3945/ajcn.113.065623</ArticleId>\n            <ArticleId IdType=\"pmc\">PMC5369603</ArticleId>\n            <ArticleId
+      IdType=\"mid\">NIHMS710111</ArticleId>\n        </ArticleIdList>\n        <ReferenceList>\n            <Reference>\n                <Citation>JAMA.
+      1995 Dec 6;274(21):1698-702</Citation>\n                <ArticleIdList>\n                    <ArticleId
+      IdType=\"pubmed\">7474275</ArticleId>\n                </ArticleIdList>\n            </Reference>\n            <Reference>\n                <Citation>Allergy
+      Asthma Proc. 2012 May-Jun;33 Suppl 1:S28-31</Citation>\n                <ArticleIdList>\n                    <ArticleId
+      IdType=\"pubmed\">22794682</ArticleId>\n                </ArticleIdList>\n            </Reference>\n            <Reference>\n                <Citation>Allergy.
+      2010 Nov;65(11):1446-54</Citation>\n                <ArticleIdList>\n                    <ArticleId
+      IdType=\"pubmed\">20456312</ArticleId>\n                </ArticleIdList>\n            </Reference>\n            <Reference>\n                <Citation>Stat
+      Med. 2002 Jun 15;21(11):1539-58</Citation>\n                <ArticleIdList>\n                    <ArticleId
+      IdType=\"pubmed\">12111919</ArticleId>\n                </ArticleIdList>\n            </Reference>\n            <Reference>\n                <Citation>J
+      Nutr. 2012 Apr;142(4):731-8</Citation>\n                <ArticleIdList>\n                    <ArticleId
+      IdType=\"pubmed\">22399526</ArticleId>\n                </ArticleIdList>\n            </Reference>\n            <Reference>\n                <Citation>Am
+      J Respir Crit Care Med. 2011 Aug 15;184(4):407-13</Citation>\n                <ArticleIdList>\n                    <ArticleId
+      IdType=\"pubmed\">21642247</ArticleId>\n                </ArticleIdList>\n            </Reference>\n            <Reference>\n                <Citation>Am
+      J Respir Crit Care Med. 2012 May 1;185(9):937-43</Citation>\n                <ArticleIdList>\n                    <ArticleId
+      IdType=\"pubmed\">22323304</ArticleId>\n                </ArticleIdList>\n            </Reference>\n            <Reference>\n                <Citation>Proc
+      Natl Acad Sci U S A. 2013 Feb 26;110(9):3507-12</Citation>\n                <ArticleIdList>\n                    <ArticleId
+      IdType=\"pubmed\">23401516</ArticleId>\n                </ArticleIdList>\n            </Reference>\n            <Reference>\n                <Citation>J
+      Clin Epidemiol. 2009 Oct;62(10):1006-12</Citation>\n                <ArticleIdList>\n                    <ArticleId
+      IdType=\"pubmed\">19631508</ArticleId>\n                </ArticleIdList>\n            </Reference>\n            <Reference>\n                <Citation>N
+      Engl J Med. 1995 Jan 19;332(3):133-8</Citation>\n                <ArticleIdList>\n                    <ArticleId
+      IdType=\"pubmed\">7800004</ArticleId>\n                </ArticleIdList>\n            </Reference>\n            <Reference>\n                <Citation>Allergy.
+      2012 Jan;67(1):50-7</Citation>\n                <ArticleIdList>\n                    <ArticleId
+      IdType=\"pubmed\">21923665</ArticleId>\n                </ArticleIdList>\n            </Reference>\n            <Reference>\n                <Citation>N
+      Engl J Med. 1999 Nov 11;341(20):1485-90</Citation>\n                <ArticleIdList>\n                    <ArticleId
+      IdType=\"pubmed\">10559448</ArticleId>\n                </ArticleIdList>\n            </Reference>\n            <Reference>\n                <Citation>Eur
+      Respir Rev. 2012 Sep 1;21(125):175-85</Citation>\n                <ArticleIdList>\n                    <ArticleId
+      IdType=\"pubmed\">22941882</ArticleId>\n                </ArticleIdList>\n            </Reference>\n            <Reference>\n                <Citation>Biometrics.
+      2000 Jun;56(2):455-63</Citation>\n                <ArticleIdList>\n                    <ArticleId
+      IdType=\"pubmed\">10877304</ArticleId>\n                </ArticleIdList>\n            </Reference>\n            <Reference>\n                <Citation>Semin
+      Fetal Neonatal Med. 2012 Apr;17(2):82-91</Citation>\n                <ArticleIdList>\n                    <ArticleId
+      IdType=\"pubmed\">22265927</ArticleId>\n                </ArticleIdList>\n            </Reference>\n            <Reference>\n                <Citation>Am
+      J Clin Nutr. 2011 Jun;93(6):1365-72</Citation>\n                <ArticleIdList>\n                    <ArticleId
+      IdType=\"pubmed\">21508090</ArticleId>\n                </ArticleIdList>\n            </Reference>\n            <Reference>\n                <Citation>J
+      Clin Invest. 2008 Oct;118(10):3462-9</Citation>\n                <ArticleIdList>\n                    <ArticleId
+      IdType=\"pubmed\">18802477</ArticleId>\n                </ArticleIdList>\n            </Reference>\n            <Reference>\n                <Citation>Allergy
+      Asthma Clin Immunol. 2011 Oct 04;7:17</Citation>\n                <ArticleIdList>\n                    <ArticleId
+      IdType=\"pubmed\">21970733</ArticleId>\n                </ArticleIdList>\n            </Reference>\n            <Reference>\n                <Citation>Adv
+      Nutr. 2012 Jan;3(1):21-38</Citation>\n                <ArticleIdList>\n                    <ArticleId
+      IdType=\"pubmed\">22332098</ArticleId>\n                </ArticleIdList>\n            </Reference>\n            <Reference>\n                <Citation>Clin
+      Exp Allergy. 2008 Feb;38(2):320-8</Citation>\n                <ArticleIdList>\n                    <ArticleId
+      IdType=\"pubmed\">18070159</ArticleId>\n                </ArticleIdList>\n            </Reference>\n            <Reference>\n                <Citation>Eur
+      Respir J. 2012 Jun;39(6):1468-74</Citation>\n                <ArticleIdList>\n                    <ArticleId
+      IdType=\"pubmed\">22034647</ArticleId>\n                </ArticleIdList>\n            </Reference>\n            <Reference>\n                <Citation>J
+      Allergy Clin Immunol. 2011 Jan;127(1):262-4, 264.e1</Citation>\n                <ArticleIdList>\n                    <ArticleId
+      IdType=\"pubmed\">21094522</ArticleId>\n                </ArticleIdList>\n            </Reference>\n            <Reference>\n                <Citation>Pediatrics.
+      2011 Jul;128(1):e135-44</Citation>\n                <ArticleIdList>\n                    <ArticleId
+      IdType=\"pubmed\">21690114</ArticleId>\n                </ArticleIdList>\n            </Reference>\n            <Reference>\n                <Citation>Am
+      J Clin Nutr. 2006 Oct;84(4):903-11</Citation>\n                <ArticleIdList>\n                    <ArticleId
+      IdType=\"pubmed\">17023719</ArticleId>\n                </ArticleIdList>\n            </Reference>\n            <Reference>\n                <Citation>Am
+      J Epidemiol. 2009 Dec 15;170(12):1486-93</Citation>\n                <ArticleIdList>\n                    <ArticleId
+      IdType=\"pubmed\">19880541</ArticleId>\n                </ArticleIdList>\n            </Reference>\n            <Reference>\n                <Citation>JAMA.
+      2008 Dec 3;300(21):2486-7</Citation>\n                <ArticleIdList>\n                    <ArticleId
+      IdType=\"pubmed\">19050191</ArticleId>\n                </ArticleIdList>\n            </Reference>\n            <Reference>\n                <Citation>Pediatr
+      Allergy Immunol. 2011 Feb;22(1 Pt 1):69-74</Citation>\n                <ArticleIdList>\n                    <ArticleId
+      IdType=\"pubmed\">20561231</ArticleId>\n                </ArticleIdList>\n            </Reference>\n            <Reference>\n                <Citation>J
+      Allergy Clin Immunol. 2004 Dec;114(6):1282-7</Citation>\n                <ArticleIdList>\n                    <ArticleId
+      IdType=\"pubmed\">15577824</ArticleId>\n                </ArticleIdList>\n            </Reference>\n            <Reference>\n                <Citation>Arch
+      Dis Child. 2009 Mar;94(3):180-4</Citation>\n                <ArticleIdList>\n                    <ArticleId
+      IdType=\"pubmed\">19052032</ArticleId>\n                </ArticleIdList>\n            </Reference>\n            <Reference>\n                <Citation>Allergy
+      Asthma Proc. 2012 May-Jun;33 Suppl 1:S36-8</Citation>\n                <ArticleIdList>\n                    <ArticleId
+      IdType=\"pubmed\">22794684</ArticleId>\n                </ArticleIdList>\n            </Reference>\n            <Reference>\n                <Citation>Ann
+      Allergy Asthma Immunol. 2011 Feb;106(2):131-139.e1</Citation>\n                <ArticleIdList>\n                    <ArticleId
+      IdType=\"pubmed\">21277514</ArticleId>\n                </ArticleIdList>\n            </Reference>\n            <Reference>\n                <Citation>Am
+      J Obstet Gynecol. 2012 Jan;206(1):72.e1-7</Citation>\n                <ArticleIdList>\n                    <ArticleId
+      IdType=\"pubmed\">21982024</ArticleId>\n                </ArticleIdList>\n            </Reference>\n            <Reference>\n                <Citation>Eur
+      J Clin Nutr. 2011 Aug;65(8):937-43</Citation>\n                <ArticleIdList>\n                    <ArticleId
+      IdType=\"pubmed\">21559033</ArticleId>\n                </ArticleIdList>\n            </Reference>\n        </ReferenceList>\n    </PubmedData>\n</PubmedArticle>\n\n\n",
+      "PMID": 24004895, "title": "Prenatal folic acid and risk of asthma in children:
+      a systematic review and meta-analysis.", "abstract": "<span class=\"abstract_label\">BACKGROUND:
+      </span>Childhood asthma has become a critical public health problem because
+      of its high morbidity and increasing prevalence. The impact of nutrition and
+      other exposures during pregnancy on long-term health and development of children
+      has been of increasing interest.<br><span class=\"abstract_label\">OBJECTIVE:
+      </span>We performed a systematic review and meta-analysis of the association
+      of folate and folic acid intake during pregnancy and risk of asthma and other
+      allergic outcomes in children.<br><span class=\"abstract_label\">DESIGN: </span>We
+      performed a systematic search of 8 electronic databases for articles that examined
+      the association between prenatal folate or folic acid exposure and risk of asthma
+      and other allergic outcomes (eg, allergy, eczema, and atopic dermatitis) in
+      childhood. We performed a meta-analysis by using a random-effects model to derive
+      a summary risk estimate of studies with similar exposure timing, exposure assessment,
+      and outcomes.<br><span class=\"abstract_label\">RESULTS: </span>Our meta-analysis
+      provided no evidence of an association between maternal folic acid supplement
+      use (compared with no use) in the prepregnancy period through the first trimester
+      and asthma in childhood (summary risk estimate: 1.01; 95% CI: 0.78, 1.30). Because
+      of substantial heterogeneity in exposures and outcomes, it was not possible
+      to generate summary measures for other folate indicators (eg, blood folate concentrations)
+      and asthma or allergy-related outcomes; however, the preponderance of primary
+      risk estimates was not elevated.<br><span class=\"abstract_label\">CONCLUSIONS:
+      </span>Our findings do not support an association between periconceptional folic
+      acid supplementation and increased risk of asthma in children. However, because
+      of the limited number and types of studies in the literature, additional research
+      is needed.", "citation": "Am. J. Clin. Nutr. 2013; 98 (5):1272-81", "year":
+      2013, "doi": "10.3945/ajcn.113.065623", "authors": ["Crider KS", "Cordero AM",
+      "Qi YP", "Mulinare J", "Dowling NF", "Berry RJ"], "authors_short": "Crider KS
+      et al."}'
+    url: ''
+- model: lit.identifiers
+  pk: 4
+  fields:
+    unique_id: '11778423'
+    database: 1
+    content: '{"xml": "<PubmedArticle>\n    <MedlineCitation Owner=\"NLM\" Status=\"MEDLINE\">\n        <PMID
+      Version=\"1\">11778423</PMID>\n        <DateCompleted>\n            <Year>2002</Year>\n            <Month>02</Month>\n            <Day>19</Day>\n        </DateCompleted>\n        <DateRevised>\n            <Year>2017</Year>\n            <Month>12</Month>\n            <Day>06</Day>\n        </DateRevised>\n        <Article
+      PubModel=\"Print\">\n            <Journal>\n                <ISSN IssnType=\"Print\">0026-4075</ISSN>\n                <JournalIssue
+      CitedMedium=\"Print\">\n                    <Volume>166</Volume>\n                    <Issue>12
+      Suppl</Issue>\n                    <PubDate>\n                        <Year>2001</Year>\n                        <Month>Dec</Month>\n                    </PubDate>\n                </JournalIssue>\n                <Title>Military
+      medicine</Title>\n                <ISOAbbreviation>Mil Med</ISOAbbreviation>\n            </Journal>\n            <ArticleTitle>Psycho-physiological
+      effects of the terrorist sarin attack on the Tokyo subway system.</ArticleTitle>\n            <Pagination>\n                <MedlinePgn>23-6</MedlinePgn>\n            </Pagination>\n            <Abstract>\n                <AbstractText>The
+      investigation describes the follow-up of the victims of the 1995 Tokyo sarin
+      attack who were followed by a team at the St. Luke''s International Hospital.
+      A symptom questionnaire (\"St. Luke''s Questionnaire\") was developed and given
+      2, 3, and 5 years following the sarin attack. Somatic and psychological symptoms
+      have continued for 5 years after the incident. New post-traumatic stress disorder
+      diagnostic criteria, which include physical symptoms, were developed and applied
+      for assessment of the outcomes. The St. Luke''s cohort was also compared with
+      other Japanese sarin attack cohorts. Interventions, including counseling, medical
+      treatments, and support group activities, were associated with fewer symptoms
+      among the victims.</AbstractText>\n            </Abstract>\n            <AuthorList
+      CompleteYN=\"Y\">\n                <Author ValidYN=\"Y\">\n                    <LastName>Kawana</LastName>\n                    <ForeName>N</ForeName>\n                    <Initials>N</Initials>\n                    <AffiliationInfo>\n                        <Affiliation>St.
+      Luke''s International Hospital, Tokyo, Japan. kwnori@luke.or.jp</Affiliation>\n                    </AffiliationInfo>\n                </Author>\n                <Author
+      ValidYN=\"Y\">\n                    <LastName>Ishimatsu</LastName>\n                    <ForeName>S</ForeName>\n                    <Initials>S</Initials>\n                </Author>\n                <Author
+      ValidYN=\"Y\">\n                    <LastName>Kanda</LastName>\n                    <ForeName>K</ForeName>\n                    <Initials>K</Initials>\n                </Author>\n            </AuthorList>\n            <Language>eng</Language>\n            <PublicationTypeList>\n                <PublicationType
+      UI=\"D016428\">Journal Article</PublicationType>\n            </PublicationTypeList>\n        </Article>\n        <MedlineJournalInfo>\n            <Country>England</Country>\n            <MedlineTA>Mil
+      Med</MedlineTA>\n            <NlmUniqueID>2984771R</NlmUniqueID>\n            <ISSNLinking>0026-4075</ISSNLinking>\n        </MedlineJournalInfo>\n        <ChemicalList>\n            <Chemical>\n                <RegistryNumber>0</RegistryNumber>\n                <NameOfSubstance
+      UI=\"D002619\">Chemical Warfare Agents</NameOfSubstance>\n            </Chemical>\n            <Chemical>\n                <RegistryNumber>B4XG72QGFM</RegistryNumber>\n                <NameOfSubstance
+      UI=\"D012524\">Sarin</NameOfSubstance>\n            </Chemical>\n        </ChemicalList>\n        <CitationSubset>IM</CitationSubset>\n        <MeshHeadingList>\n            <MeshHeading>\n                <DescriptorName
+      MajorTopicYN=\"N\" UI=\"D000328\">Adult</DescriptorName>\n            </MeshHeading>\n            <MeshHeading>\n                <DescriptorName
+      MajorTopicYN=\"N\" UI=\"D002619\">Chemical Warfare Agents</DescriptorName>\n                <QualifierName
+      MajorTopicYN=\"Y\" UI=\"Q000009\">adverse effects</QualifierName>\n            </MeshHeading>\n            <MeshHeading>\n                <DescriptorName
+      MajorTopicYN=\"N\" UI=\"D005260\">Female</DescriptorName>\n            </MeshHeading>\n            <MeshHeading>\n                <DescriptorName
+      MajorTopicYN=\"N\" UI=\"D006801\">Humans</DescriptorName>\n            </MeshHeading>\n            <MeshHeading>\n                <DescriptorName
+      MajorTopicYN=\"N\" UI=\"D008297\">Male</DescriptorName>\n            </MeshHeading>\n            <MeshHeading>\n                <DescriptorName
+      MajorTopicYN=\"N\" UI=\"D012524\">Sarin</DescriptorName>\n                <QualifierName
+      MajorTopicYN=\"Y\" UI=\"Q000009\">adverse effects</QualifierName>\n            </MeshHeading>\n            <MeshHeading>\n                <DescriptorName
+      MajorTopicYN=\"N\" UI=\"D013313\">Stress Disorders, Post-Traumatic</DescriptorName>\n                <QualifierName
+      MajorTopicYN=\"Y\" UI=\"Q000175\">diagnosis</QualifierName>\n                <QualifierName
+      MajorTopicYN=\"N\" UI=\"Q000523\">psychology</QualifierName>\n            </MeshHeading>\n            <MeshHeading>\n                <DescriptorName
+      MajorTopicYN=\"N\" UI=\"D011795\">Surveys and Questionnaires</DescriptorName>\n            </MeshHeading>\n            <MeshHeading>\n                <DescriptorName
+      MajorTopicYN=\"N\" UI=\"D023481\">Terrorism</DescriptorName>\n                <QualifierName
+      MajorTopicYN=\"Y\" UI=\"Q000523\">psychology</QualifierName>\n            </MeshHeading>\n            <MeshHeading>\n                <DescriptorName
+      MajorTopicYN=\"N\" UI=\"D013997\">Time Factors</DescriptorName>\n            </MeshHeading>\n            <MeshHeading>\n                <DescriptorName
+      MajorTopicYN=\"N\" Type=\"Geographic\" UI=\"D014041\">Tokyo</DescriptorName>\n            </MeshHeading>\n        </MeshHeadingList>\n    </MedlineCitation>\n    <PubmedData>\n        <History>\n            <PubMedPubDate
+      PubStatus=\"pubmed\">\n                <Year>2002</Year>\n                <Month>1</Month>\n                <Day>10</Day>\n                <Hour>10</Hour>\n                <Minute>0</Minute>\n            </PubMedPubDate>\n            <PubMedPubDate
+      PubStatus=\"medline\">\n                <Year>2002</Year>\n                <Month>2</Month>\n                <Day>20</Day>\n                <Hour>10</Hour>\n                <Minute>1</Minute>\n            </PubMedPubDate>\n            <PubMedPubDate
+      PubStatus=\"entrez\">\n                <Year>2002</Year>\n                <Month>1</Month>\n                <Day>10</Day>\n                <Hour>10</Hour>\n                <Minute>0</Minute>\n            </PubMedPubDate>\n        </History>\n        <PublicationStatus>ppublish</PublicationStatus>\n        <ArticleIdList>\n            <ArticleId
+      IdType=\"pubmed\">11778423</ArticleId>\n        </ArticleIdList>\n    </PubmedData>\n</PubmedArticle>\n\n\n",
+      "PMID": 11778423, "title": "Psycho-physiological effects of the terrorist sarin
+      attack on the Tokyo subway system.", "abstract": "The investigation describes
+      the follow-up of the victims of the 1995 Tokyo sarin attack who were followed
+      by a team at the St. Luke''s International Hospital. A symptom questionnaire
+      (\"St. Luke''s Questionnaire\") was developed and given 2, 3, and 5 years following
+      the sarin attack. Somatic and psychological symptoms have continued for 5 years
+      after the incident. New post-traumatic stress disorder diagnostic criteria,
+      which include physical symptoms, were developed and applied for assessment of
+      the outcomes. The St. Luke''s cohort was also compared with other Japanese sarin
+      attack cohorts. Interventions, including counseling, medical treatments, and
+      support group activities, were associated with fewer symptoms among the victims.",
+      "citation": "Mil Med 2001; 166 (12 Suppl):23-6", "year": 2001, "doi": null,
+      "authors": ["Kawana N", "Ishimatsu S", "Kanda K"], "authors_short": "Kawana
+      N, Ishimatsu S, and Kanda K"}'
+    url: ''
+- model: lit.identifiers
+  pk: 5
+  fields:
+    unique_id: '21284075'
+    database: 1
+    content: '{"xml": "<PubmedArticle>\n    <MedlineCitation Owner=\"NLM\" Status=\"MEDLINE\">\n        <PMID
+      Version=\"1\">21284075</PMID>\n        <DateCompleted>\n            <Year>2011</Year>\n            <Month>07</Month>\n            <Day>27</Day>\n        </DateCompleted>\n        <DateRevised>\n            <Year>2015</Year>\n            <Month>11</Month>\n            <Day>19</Day>\n        </DateRevised>\n        <Article
+      PubModel=\"Print-Electronic\">\n            <Journal>\n                <ISSN
+      IssnType=\"Electronic\">1542-9741</ISSN>\n                <JournalIssue CitedMedium=\"Internet\">\n                    <Volume>92</Volume>\n                    <Issue>1</Issue>\n                    <PubDate>\n                        <Year>2011</Year>\n                        <Month>Feb</Month>\n                    </PubDate>\n                </JournalIssue>\n                <Title>Birth
+      defects research. Part B, Developmental and reproductive toxicology</Title>\n                <ISOAbbreviation>Birth
+      Defects Res. B Dev. Reprod. Toxicol.</ISOAbbreviation>\n            </Journal>\n            <ArticleTitle>An
+      oral developmental neurotoxicity study of decabromodiphenyl ether (DecaBDE)
+      in rats.</ArticleTitle>\n            <Pagination>\n                <MedlinePgn>17-35</MedlinePgn>\n            </Pagination>\n            <ELocationID
+      EIdType=\"doi\" ValidYN=\"Y\">10.1002/bdrb.20280</ELocationID>\n            <Abstract>\n                <AbstractText
+      Label=\"BACKGROUND\" NlmCategory=\"BACKGROUND\">Decabromodiphenyl ether (DecaBDE;
+      CASRN 1163-19-5) is a flame retardant used in a variety of manufactured products.
+      A single oral dose of 20.1 mg/kg administered to mice on postnatal day 3 has
+      been reported to alter motor activity at 2, 4, and 6 months of age.</AbstractText>\n                <AbstractText
+      Label=\"METHODS\" NlmCategory=\"METHODS\">To further evaluate these results,
+      a developmental neurotoxicity study was conducted in the most commonly used
+      species for studies of this type, the rat, according to international validated
+      testing guidelines and Good Laboratory Practice Standards. DecaBDE was administered
+      orally via gavage in corn oil to dams from gestation day 6 to weaning at doses
+      of 0, 1, 10, 100, or 1,000 mg/kg/day. Standard measures of growth, development,
+      and neurological endpoints were evaluated in the offspring. Motor activity was
+      assessed at 2 months of age. Additional motor activity assessments were conducted
+      at 4 and 6 months of age. Neuropathology and morphometry evaluations of the
+      offspring were performed at weaning and adulthood.</AbstractText>\n                <AbstractText
+      Label=\"RESULTS\" NlmCategory=\"RESULTS\">No treatment-related neurobehavioral
+      changes were observed in detailed clinical observations, startle response, or
+      learning and memory tests. No test substance-related changes were noted in motor
+      activity assessments performed at 2, 4, or 6 months of age. Finally, no treatment-related
+      neuropathological or morphometric alterations were found.</AbstractText>\n                <AbstractText
+      Label=\"CONCLUSIONS\" NlmCategory=\"CONCLUSIONS\">Under the conditions of this
+      study, the no-observed-adverse-effect level for developmental neurotoxicity
+      of DecaBDE was 1,000 mg/kg/day, the highest dose tested.</AbstractText>\n                <CopyrightInformation>\u00a9
+      2011 Wiley-Liss, Inc.</CopyrightInformation>\n            </Abstract>\n            <AuthorList
+      CompleteYN=\"Y\">\n                <Author ValidYN=\"Y\">\n                    <LastName>Biesemeier</LastName>\n                    <ForeName>John
+      A</ForeName>\n                    <Initials>JA</Initials>\n                    <AffiliationInfo>\n                        <Affiliation>Chemtura
+      Corporation, West Lafayette, Indiana 47906, USA. john.biesemeier@chemtura.com</Affiliation>\n                    </AffiliationInfo>\n                </Author>\n                <Author
+      ValidYN=\"Y\">\n                    <LastName>Beck</LastName>\n                    <ForeName>Melissa
+      J</ForeName>\n                    <Initials>MJ</Initials>\n                </Author>\n                <Author
+      ValidYN=\"Y\">\n                    <LastName>Silberberg</LastName>\n                    <ForeName>Hanna</ForeName>\n                    <Initials>H</Initials>\n                </Author>\n                <Author
+      ValidYN=\"Y\">\n                    <LastName>Myers</LastName>\n                    <ForeName>Nicole
+      R</ForeName>\n                    <Initials>NR</Initials>\n                </Author>\n                <Author
+      ValidYN=\"Y\">\n                    <LastName>Ariano</LastName>\n                    <ForeName>John
+      M</ForeName>\n                    <Initials>JM</Initials>\n                </Author>\n                <Author
+      ValidYN=\"Y\">\n                    <LastName>Radovsky</LastName>\n                    <ForeName>Ann</ForeName>\n                    <Initials>A</Initials>\n                </Author>\n                <Author
+      ValidYN=\"Y\">\n                    <LastName>Freshwater</LastName>\n                    <ForeName>Les</ForeName>\n                    <Initials>L</Initials>\n                </Author>\n                <Author
+      ValidYN=\"Y\">\n                    <LastName>Sved</LastName>\n                    <ForeName>Daniel
+      W</ForeName>\n                    <Initials>DW</Initials>\n                </Author>\n                <Author
+      ValidYN=\"Y\">\n                    <LastName>Jacobi</LastName>\n                    <ForeName>Sylvia</ForeName>\n                    <Initials>S</Initials>\n                </Author>\n                <Author
+      ValidYN=\"Y\">\n                    <LastName>Stump</LastName>\n                    <ForeName>Donald
+      G</ForeName>\n                    <Initials>DG</Initials>\n                </Author>\n                <Author
+      ValidYN=\"Y\">\n                    <LastName>Hardy</LastName>\n                    <ForeName>Marcia
+      L</ForeName>\n                    <Initials>ML</Initials>\n                </Author>\n                <Author
+      ValidYN=\"Y\">\n                    <LastName>Stedeford</LastName>\n                    <ForeName>Todd</ForeName>\n                    <Initials>T</Initials>\n                </Author>\n            </AuthorList>\n            <Language>eng</Language>\n            <PublicationTypeList>\n                <PublicationType
+      UI=\"D016428\">Journal Article</PublicationType>\n            </PublicationTypeList>\n            <ArticleDate
+      DateType=\"Electronic\">\n                <Year>2011</Year>\n                <Month>01</Month>\n                <Day>31</Day>\n            </ArticleDate>\n        </Article>\n        <MedlineJournalInfo>\n            <Country>United
+      States</Country>\n            <MedlineTA>Birth Defects Res B Dev Reprod Toxicol</MedlineTA>\n            <NlmUniqueID>101155115</NlmUniqueID>\n            <ISSNLinking>1542-9733</ISSNLinking>\n        </MedlineJournalInfo>\n        <ChemicalList>\n            <Chemical>\n                <RegistryNumber>0</RegistryNumber>\n                <NameOfSubstance
+      UI=\"D055768\">Halogenated Diphenyl Ethers</NameOfSubstance>\n            </Chemical>\n            <Chemical>\n                <RegistryNumber>0</RegistryNumber>\n                <NameOfSubstance
+      UI=\"D009498\">Neurotoxins</NameOfSubstance>\n            </Chemical>\n            <Chemical>\n                <RegistryNumber>N80BQ29A0H</RegistryNumber>\n                <NameOfSubstance
+      UI=\"C010902\">decabromobiphenyl ether</NameOfSubstance>\n            </Chemical>\n        </ChemicalList>\n        <CitationSubset>IM</CitationSubset>\n        <MeshHeadingList>\n            <MeshHeading>\n                <DescriptorName
+      MajorTopicYN=\"N\" UI=\"D000284\">Administration, Oral</DescriptorName>\n            </MeshHeading>\n            <MeshHeading>\n                <DescriptorName
+      MajorTopicYN=\"N\" UI=\"D000818\">Animals</DescriptorName>\n            </MeshHeading>\n            <MeshHeading>\n                <DescriptorName
+      MajorTopicYN=\"N\" UI=\"D001835\">Body Weight</DescriptorName>\n                <QualifierName
+      MajorTopicYN=\"N\" UI=\"Q000187\">drug effects</QualifierName>\n            </MeshHeading>\n            <MeshHeading>\n                <DescriptorName
+      MajorTopicYN=\"N\" UI=\"D001921\">Brain</DescriptorName>\n                <QualifierName
+      MajorTopicYN=\"N\" UI=\"Q000187\">drug effects</QualifierName>\n                <QualifierName
+      MajorTopicYN=\"N\" UI=\"Q000473\">pathology</QualifierName>\n            </MeshHeading>\n            <MeshHeading>\n                <DescriptorName
+      MajorTopicYN=\"N\" UI=\"D003433\">Crosses, Genetic</DescriptorName>\n            </MeshHeading>\n            <MeshHeading>\n                <DescriptorName
+      MajorTopicYN=\"N\" UI=\"D047108\">Embryonic Development</DescriptorName>\n                <QualifierName
+      MajorTopicYN=\"Y\" UI=\"Q000187\">drug effects</QualifierName>\n            </MeshHeading>\n            <MeshHeading>\n                <DescriptorName
+      MajorTopicYN=\"N\" UI=\"D005247\">Feeding Behavior</DescriptorName>\n                <QualifierName
+      MajorTopicYN=\"N\" UI=\"Q000187\">drug effects</QualifierName>\n            </MeshHeading>\n            <MeshHeading>\n                <DescriptorName
+      MajorTopicYN=\"N\" UI=\"D005260\">Female</DescriptorName>\n            </MeshHeading>\n            <MeshHeading>\n                <DescriptorName
+      MajorTopicYN=\"N\" UI=\"D055768\">Halogenated Diphenyl Ethers</DescriptorName>\n                <QualifierName
+      MajorTopicYN=\"Y\" UI=\"Q000008\">administration &amp; dosage</QualifierName>\n                <QualifierName
+      MajorTopicYN=\"Y\" UI=\"Q000633\">toxicity</QualifierName>\n            </MeshHeading>\n            <MeshHeading>\n                <DescriptorName
+      MajorTopicYN=\"N\" UI=\"D008297\">Male</DescriptorName>\n            </MeshHeading>\n            <MeshHeading>\n                <DescriptorName
+      MajorTopicYN=\"N\" UI=\"D008568\">Memory</DescriptorName>\n                <QualifierName
+      MajorTopicYN=\"N\" UI=\"Q000187\">drug effects</QualifierName>\n            </MeshHeading>\n            <MeshHeading>\n                <DescriptorName
+      MajorTopicYN=\"N\" UI=\"D009043\">Motor Activity</DescriptorName>\n                <QualifierName
+      MajorTopicYN=\"N\" UI=\"Q000187\">drug effects</QualifierName>\n            </MeshHeading>\n            <MeshHeading>\n                <DescriptorName
+      MajorTopicYN=\"N\" UI=\"D009498\">Neurotoxins</DescriptorName>\n                <QualifierName
+      MajorTopicYN=\"N\" UI=\"Q000008\">administration &amp; dosage</QualifierName>\n                <QualifierName
+      MajorTopicYN=\"Y\" UI=\"Q000633\">toxicity</QualifierName>\n            </MeshHeading>\n            <MeshHeading>\n                <DescriptorName
+      MajorTopicYN=\"N\" UI=\"D009929\">Organ Size</DescriptorName>\n                <QualifierName
+      MajorTopicYN=\"N\" UI=\"Q000187\">drug effects</QualifierName>\n            </MeshHeading>\n            <MeshHeading>\n                <DescriptorName
+      MajorTopicYN=\"N\" UI=\"D011247\">Pregnancy</DescriptorName>\n            </MeshHeading>\n            <MeshHeading>\n                <DescriptorName
+      MajorTopicYN=\"N\" UI=\"D011297\">Prenatal Exposure Delayed Effects</DescriptorName>\n                <QualifierName
+      MajorTopicYN=\"Y\" UI=\"Q000473\">pathology</QualifierName>\n            </MeshHeading>\n            <MeshHeading>\n                <DescriptorName
+      MajorTopicYN=\"N\" UI=\"D051381\">Rats</DescriptorName>\n            </MeshHeading>\n            <MeshHeading>\n                <DescriptorName
+      MajorTopicYN=\"N\" UI=\"D017207\">Rats, Sprague-Dawley</DescriptorName>\n            </MeshHeading>\n            <MeshHeading>\n                <DescriptorName
+      MajorTopicYN=\"N\" UI=\"D013216\">Reflex, Startle</DescriptorName>\n                <QualifierName
+      MajorTopicYN=\"N\" UI=\"Q000187\">drug effects</QualifierName>\n            </MeshHeading>\n            <MeshHeading>\n                <DescriptorName
+      MajorTopicYN=\"N\" UI=\"D016019\">Survival Analysis</DescriptorName>\n            </MeshHeading>\n            <MeshHeading>\n                <DescriptorName
+      MajorTopicYN=\"N\" UI=\"D013550\">Swimming</DescriptorName>\n            </MeshHeading>\n            <MeshHeading>\n                <DescriptorName
+      MajorTopicYN=\"Y\" UI=\"D018675\">Toxicity Tests</DescriptorName>\n            </MeshHeading>\n        </MeshHeadingList>\n    </MedlineCitation>\n    <PubmedData>\n        <History>\n            <PubMedPubDate
+      PubStatus=\"received\">\n                <Year>2010</Year>\n                <Month>08</Month>\n                <Day>10</Day>\n            </PubMedPubDate>\n            <PubMedPubDate
+      PubStatus=\"revised\">\n                <Year>2010</Year>\n                <Month>10</Month>\n                <Day>08</Day>\n            </PubMedPubDate>\n            <PubMedPubDate
+      PubStatus=\"accepted\">\n                <Year>2010</Year>\n                <Month>10</Month>\n                <Day>08</Day>\n            </PubMedPubDate>\n            <PubMedPubDate
+      PubStatus=\"entrez\">\n                <Year>2011</Year>\n                <Month>2</Month>\n                <Day>2</Day>\n                <Hour>6</Hour>\n                <Minute>0</Minute>\n            </PubMedPubDate>\n            <PubMedPubDate
+      PubStatus=\"pubmed\">\n                <Year>2011</Year>\n                <Month>2</Month>\n                <Day>2</Day>\n                <Hour>6</Hour>\n                <Minute>0</Minute>\n            </PubMedPubDate>\n            <PubMedPubDate
+      PubStatus=\"medline\">\n                <Year>2011</Year>\n                <Month>7</Month>\n                <Day>28</Day>\n                <Hour>6</Hour>\n                <Minute>0</Minute>\n            </PubMedPubDate>\n        </History>\n        <PublicationStatus>ppublish</PublicationStatus>\n        <ArticleIdList>\n            <ArticleId
+      IdType=\"pubmed\">21284075</ArticleId>\n            <ArticleId IdType=\"doi\">10.1002/bdrb.20280</ArticleId>\n        </ArticleIdList>\n    </PubmedData>\n</PubmedArticle>\n\n",
+      "PMID": 21284075, "title": "An oral developmental neurotoxicity study of decabromodiphenyl
+      ether (DecaBDE) in rats.", "abstract": "<span class=\"abstract_label\">BACKGROUND:
+      </span>Decabromodiphenyl ether (DecaBDE; CASRN 1163-19-5) is a flame retardant
+      used in a variety of manufactured products. A single oral dose of 20.1 mg/kg
+      administered to mice on postnatal day 3 has been reported to alter motor activity
+      at 2, 4, and 6 months of age.<br><span class=\"abstract_label\">METHODS: </span>To
+      further evaluate these results, a developmental neurotoxicity study was conducted
+      in the most commonly used species for studies of this type, the rat, according
+      to international validated testing guidelines and Good Laboratory Practice Standards.
+      DecaBDE was administered orally via gavage in corn oil to dams from gestation
+      day 6 to weaning at doses of 0, 1, 10, 100, or 1,000 mg/kg/day. Standard measures
+      of growth, development, and neurological endpoints were evaluated in the offspring.
+      Motor activity was assessed at 2 months of age. Additional motor activity assessments
+      were conducted at 4 and 6 months of age. Neuropathology and morphometry evaluations
+      of the offspring were performed at weaning and adulthood.<br><span class=\"abstract_label\">RESULTS:
+      </span>No treatment-related neurobehavioral changes were observed in detailed
+      clinical observations, startle response, or learning and memory tests. No test
+      substance-related changes were noted in motor activity assessments performed
+      at 2, 4, or 6 months of age. Finally, no treatment-related neuropathological
+      or morphometric alterations were found.<br><span class=\"abstract_label\">CONCLUSIONS:
+      </span>Under the conditions of this study, the no-observed-adverse-effect level
+      for developmental neurotoxicity of DecaBDE was 1,000 mg/kg/day, the highest
+      dose tested.", "citation": "Birth Defects Res. B Dev. Reprod. Toxicol. 2011;
+      92 (1):17-35", "year": 2011, "doi": "10.1002/bdrb.20280", "authors": ["Biesemeier
+      JA", "Beck MJ", "Silberberg H", "Myers NR", "Ariano JM", "Radovsky A", "Freshwater
+      L", "Sved DW", "Jacobi S", "Stump DG", "Hardy ML", "Stedeford T"], "authors_short":
+      "Biesemeier JA et al."}'
+    url: ''
 - model: lit.referencefiltertag
   pk: 1
   fields:
@@ -853,10 +1417,25 @@
     name: Tier III
     slug: tier-iii
 - model: lit.referencetags
-  pk: 1
+  pk: 2
   fields:
     tag: 13
-    content_object: 2
+    content_object: 7
+- model: lit.referencetags
+  pk: 3
+  fields:
+    tag: 12
+    content_object: 8
+- model: lit.referencetags
+  pk: 4
+  fields:
+    tag: 12
+    content_object: 5
+- model: lit.referencetags
+  pk: 5
+  fields:
+    tag: 13
+    content_object: 6
 - model: lit.reference
   pk: 1
   fields:
@@ -890,24 +1469,6 @@
     searches: []
     identifiers: []
 - model: lit.reference
-  pk: 2
-  fields:
-    assessment: 2
-    title: ''
-    authors_short: ''
-    authors: ''
-    year: 2020
-    journal: ''
-    abstract: ''
-    full_text_url: ''
-    created: 2020-01-25 14:23:16.385003+00:00
-    last_updated: 2020-01-25 14:23:16.385023+00:00
-    block_id: null
-    searches:
-    - 3
-    identifiers:
-    - 1
-- model: lit.reference
   pk: 4
   fields:
     assessment: 3
@@ -924,6 +1485,165 @@
     searches:
     - 4
     identifiers: []
+- model: lit.reference
+  pk: 5
+  fields:
+    assessment: 2
+    title: Psycho-physiological effects of the terrorist sarin attack on the Tokyo
+      subway system.
+    authors_short: Kawana N, Ishimatsu S, and Kanda K
+    authors: Kawana N, Ishimatsu S, Kanda K
+    year: 2001
+    journal: Mil Med 2001; 166 (12 Suppl):23-6
+    abstract: The investigation describes the follow-up of the victims of the 1995
+      Tokyo sarin attack who were followed by a team at the St. Luke's International
+      Hospital. A symptom questionnaire ("St. Luke's Questionnaire") was developed
+      and given 2, 3, and 5 years following the sarin attack. Somatic and psychological
+      symptoms have continued for 5 years after the incident. New post-traumatic stress
+      disorder diagnostic criteria, which include physical symptoms, were developed
+      and applied for assessment of the outcomes. The St. Luke's cohort was also compared
+      with other Japanese sarin attack cohorts. Interventions, including counseling,
+      medical treatments, and support group activities, were associated with fewer
+      symptoms among the victims.
+    full_text_url: ''
+    created: 2020-05-08 17:03:52.095604+00:00
+    last_updated: 2020-05-08 17:04:14.726133+00:00
+    block_id: null
+    searches:
+    - 5
+    identifiers:
+    - 4
+- model: lit.reference
+  pk: 6
+  fields:
+    assessment: 2
+    title: Effects of bisphenol A-related diphenylalkanes on vitellogenin production
+      in male carp (Cyprinus carpio) hepatocytes and aromatase (CYP19) activity in
+      human H295R adrenocortical carcinoma cells.
+    authors_short: Letcher RJ et al.
+    authors: Letcher RJ, Sanderson JT, Bokkers A, Giesy JP, van den Berg M
+    year: 2005
+    journal: Toxicol. Appl. Pharmacol. 2005; 209 (2):95-104
+    abstract: The present study investigated the effects of the known xenoestrogen
+      bisphenol A (BPA) relative to eight BPA-related diphenylalkanes on estrogen
+      receptor (ER)-mediated vitellogenin (vtg) production in hepatocytes from male
+      carp (Cyprinus carpio), and on aromatase (CYP19) activity in the human adrenocortical
+      H295R carcinoma cell line. Of the eight diphenylalkanes, only 4,4'-(hexafluoropropylidene)diphenol
+      (BHF) and 2,2'-bis(4-hydroxy-3-methylphenyl)propane (BPRO) induced vtg, i.e.,
+      to a maximum of 3% to 4% (at 100 microM) compared with 8% for BPA relative to
+      the maximum induction by 17beta-estradiol (E2, 1 microM). Bisphenol A diglycidyl
+      ether (BADGE) was a potent antagonist of vtg production with an IC50 of 5.5
+      microM, virtually 100% inhibition of vtg at 20 microM, and an inhibitive (IC50)
+      potency about one-tenth that of the known ER antagonist tamoxifen (IC50, 0.6
+      microM). 2,2'-Diallyl bisphenol A, 4,4'-(1,4-phenylene-diisopropylidene)bisphenol,
+      BPRO, and BHF were much less inhibitory with IC50 concentrations of 20-70 microM,
+      and relative potencies of 0.03 and 0.009 with tamoxifen. Bisphenol ethoxylate
+      showed no anti-estrogenicity (up to 100 microM), and 4,4'-isopropylidene-diphenol
+      diacetate was only antagonistic at 100 microM. When comparing the (anti)estrogenic
+      potencies of these bisphenol A analogues/diphenylalkanes, anti-estrogenicity
+      occurred at lower concentrations than estrogenicity. 4,4'-Isopropylidenebis(2,6-dimethylphenol)
+      (IC50, 2.0 microM) reduced E2-induced (EC50, 100 nM) vtg production due to concentration-dependent
+      cytotoxicity as indicated by a parallel decrease in MTT activity and vtg, whereas
+      the remaining diphenylalkanes did not cause any cytotoxicity relative to controls.
+      None of the diphenylalkanes (up to 100 microM) induced EROD activity indicating
+      that concentration-dependent, CYP1A enzyme-mediated metabolism of E2, or any
+      Ah-receptor-mediated interaction with the ER, was not a likely explanation for
+      the observed anti-estrogenic effects. At concentrations as great as 100 microM,
+      none of the diphenylalkanes directly inhibited aromatase (CYP19) activity in
+      H295R cells. Environmental exposure of fish to BPA and related diphenylalkanes,
+      depending on the structure, may pose anti-estrogenic, and to a lesser extent
+      estrogenic, risks to development and reproduction.
+    full_text_url: ''
+    created: 2020-05-08 17:03:52.203728+00:00
+    last_updated: 2020-05-08 17:04:17.766639+00:00
+    block_id: null
+    searches:
+    - 5
+    identifiers:
+    - 2
+- model: lit.reference
+  pk: 7
+  fields:
+    assessment: 2
+    title: An oral developmental neurotoxicity study of decabromodiphenyl ether (DecaBDE)
+      in rats.
+    authors_short: Biesemeier JA et al.
+    authors: Biesemeier JA, Beck MJ, Silberberg H, Myers NR, Ariano JM, Radovsky A,
+      Freshwater L, Sved DW, Jacobi S, Stump DG, Hardy ML, Stedeford T
+    year: 2011
+    journal: Birth Defects Res. B Dev. Reprod. Toxicol. 2011; 92 (1):17-35
+    abstract: '<span class="abstract_label">BACKGROUND: </span>Decabromodiphenyl ether
+      (DecaBDE; CASRN 1163-19-5) is a flame retardant used in a variety of manufactured
+      products. A single oral dose of 20.1 mg/kg administered to mice on postnatal
+      day 3 has been reported to alter motor activity at 2, 4, and 6 months of age.<br><span
+      class="abstract_label">METHODS: </span>To further evaluate these results, a
+      developmental neurotoxicity study was conducted in the most commonly used species
+      for studies of this type, the rat, according to international validated testing
+      guidelines and Good Laboratory Practice Standards. DecaBDE was administered
+      orally via gavage in corn oil to dams from gestation day 6 to weaning at doses
+      of 0, 1, 10, 100, or 1,000 mg/kg/day. Standard measures of growth, development,
+      and neurological endpoints were evaluated in the offspring. Motor activity was
+      assessed at 2 months of age. Additional motor activity assessments were conducted
+      at 4 and 6 months of age. Neuropathology and morphometry evaluations of the
+      offspring were performed at weaning and adulthood.<br><span class="abstract_label">RESULTS:
+      </span>No treatment-related neurobehavioral changes were observed in detailed
+      clinical observations, startle response, or learning and memory tests. No test
+      substance-related changes were noted in motor activity assessments performed
+      at 2, 4, or 6 months of age. Finally, no treatment-related neuropathological
+      or morphometric alterations were found.<br><span class="abstract_label">CONCLUSIONS:
+      </span>Under the conditions of this study, the no-observed-adverse-effect level
+      for developmental neurotoxicity of DecaBDE was 1,000 mg/kg/day, the highest
+      dose tested.'
+    full_text_url: ''
+    created: 2020-05-08 17:03:52.391195+00:00
+    last_updated: 2020-05-08 17:56:45.324222+00:00
+    block_id: null
+    searches:
+    - 5
+    identifiers:
+    - 5
+- model: lit.reference
+  pk: 8
+  fields:
+    assessment: 2
+    title: 'Prenatal folic acid and risk of asthma in children: a systematic review
+      and meta-analysis.'
+    authors_short: Crider KS et al.
+    authors: Crider KS, Cordero AM, Qi YP, Mulinare J, Dowling NF, Berry RJ
+    year: 2013
+    journal: Am. J. Clin. Nutr. 2013; 98 (5):1272-81
+    abstract: '<span class="abstract_label">BACKGROUND: </span>Childhood asthma has
+      become a critical public health problem because of its high morbidity and increasing
+      prevalence. The impact of nutrition and other exposures during pregnancy on
+      long-term health and development of children has been of increasing interest.<br><span
+      class="abstract_label">OBJECTIVE: </span>We performed a systematic review and
+      meta-analysis of the association of folate and folic acid intake during pregnancy
+      and risk of asthma and other allergic outcomes in children.<br><span class="abstract_label">DESIGN:
+      </span>We performed a systematic search of 8 electronic databases for articles
+      that examined the association between prenatal folate or folic acid exposure
+      and risk of asthma and other allergic outcomes (eg, allergy, eczema, and atopic
+      dermatitis) in childhood. We performed a meta-analysis by using a random-effects
+      model to derive a summary risk estimate of studies with similar exposure timing,
+      exposure assessment, and outcomes.<br><span class="abstract_label">RESULTS:
+      </span>Our meta-analysis provided no evidence of an association between maternal
+      folic acid supplement use (compared with no use) in the prepregnancy period
+      through the first trimester and asthma in childhood (summary risk estimate:
+      1.01; 95% CI: 0.78, 1.30). Because of substantial heterogeneity in exposures
+      and outcomes, it was not possible to generate summary measures for other folate
+      indicators (eg, blood folate concentrations) and asthma or allergy-related outcomes;
+      however, the preponderance of primary risk estimates was not elevated.<br><span
+      class="abstract_label">CONCLUSIONS: </span>Our findings do not support an association
+      between periconceptional folic acid supplementation and increased risk of asthma
+      in children. However, because of the limited number and types of studies in
+      the literature, additional research is needed.'
+    full_text_url: ''
+    created: 2020-05-08 17:03:52.500862+00:00
+    last_updated: 2020-05-08 17:04:11.036574+00:00
+    block_id: null
+    searches:
+    - 5
+    identifiers:
+    - 3
 - model: study.study
   pk: 1
   fields:
@@ -946,30 +1666,7 @@
     searches: []
     identifiers: []
 - model: study.study
-  pk: 2
-  fields:
-    reference_ptr: 2
-    bioassay: true
-    epi: false
-    epi_meta: false
-    in_vitro: false
-    short_citation: Foo et al.
-    full_citation: Foo et al.
-    coi_reported: 4
-    coi_details: ''
-    funding_source: ''
-    study_identifier: ''
-    contact_author: false
-    ask_author: ''
-    published: false
-    summary: ''
-    editable: true
-    searches:
-    - 3
-    identifiers:
-    - 1
-- model: study.study
-  pk: 3
+  pk: 4
   fields:
     reference_ptr: 4
     bioassay: true
@@ -990,6 +1687,40 @@
     searches:
     - 4
     identifiers: []
+- model: study.study
+  pk: 7
+  fields:
+    reference_ptr: 7
+    bioassay: true
+    epi: false
+    epi_meta: false
+    in_vitro: false
+    short_citation: Biesemeier JA et al. 2011
+    full_citation: Biesemeier JA, Beck MJ, Silberberg H, Myers NR, Ariano JM, Radovsky
+      A, Freshwater L, Sved DW, Jacobi S, Stump DG, Hardy ML, Stedeford T. An oral
+      developmental neurotoxicity study of decabromodiphenyl ether (DecaBDE) in rats.
+      Birth Defects Res. B Dev. Reprod. Toxicol. 2011; 92 (1):17-35.
+    coi_reported: 1
+    coi_details: J.B., H.S., J.A., S.J., M.H. and T.S. are employed by specialty chemical
+      manufacturers whose product lines include brominated flame retardants. M.B.,
+      N.M., A.R., D.W.S. and D.G.S. are employed by WIL Research Laboratories, a contract
+      research organization commissioned to conduct the guideline DNT study presented
+      herein. L.F. is employed with BioSTAT Consultants and was commissioned to design
+      and evaluate the statistical aspects of the DNT study. The views and opinions
+      expressed in this article are those of the authors and not necessarily those
+      of their respective employers.
+    funding_source: Bromine Science and Environmental Forum for funding this study
+    study_identifier: ''
+    contact_author: true
+    ask_author: not really (example)
+    published: true
+    summary: <p>Adapted from <a href="https://hawcproject.org/study/173483/" rel="noopener
+      noreferrer" target="_blank">https://hawcproject.org/study/173483/</a></p>
+    editable: true
+    searches:
+    - 5
+    identifiers:
+    - 5
 - model: animal.experiment
   pk: 1
   fields:
@@ -1026,6 +1757,25 @@
     description: ''
     created: 2020-04-10 19:21:14.709371+00:00
     last_updated: 2020-04-10 19:21:14.710369+00:00
+- model: animal.experiment
+  pk: 3
+  fields:
+    study: 7
+    name: developmental
+    type: Dv
+    has_multiple_generations: true
+    chemical: PBDE 209
+    cas: 1163-19-5
+    chemical_source: Albemarle Corporation (Baton Rouge, LA), Chemtura Corporation,
+      and ICL-IP America
+    purity_available: true
+    purity_qualifier: '>'
+    purity: 97.51
+    vehicle: Corn oil
+    guideline_compliance: guideline
+    description: <p>comments</p>
+    created: 2020-05-08 17:38:22.190951+00:00
+    last_updated: 2020-05-08 17:38:22.190975+00:00
 - model: animal.animalgroup
   pk: 1
   fields:
@@ -1064,6 +1814,25 @@
     created: 2020-04-10 19:35:26.254532+00:00
     last_updated: 2020-04-10 19:35:26.881519+00:00
     parents: []
+- model: animal.animalgroup
+  pk: 3
+  fields:
+    experiment: 3
+    name: sd rats
+    species: 1
+    strain: 1
+    sex: C
+    animal_source: Charles River
+    lifestage_exposed: Adult
+    lifestage_assessed: Adult
+    siblings: null
+    generation: P0
+    dosing_regime: 3
+    comments: <p>source</p>
+    diet: diet
+    created: 2020-05-08 17:40:30.086088+00:00
+    last_updated: 2020-05-08 17:40:30.333334+00:00
+    parents: []
 - model: animal.dosingregime
   pk: 1
   fields:
@@ -1092,6 +1861,20 @@
     description: ''
     created: 2020-04-10 19:35:25.948536+00:00
     last_updated: 2020-04-10 19:35:26.532528+00:00
+- model: animal.dosingregime
+  pk: 3
+  fields:
+    dosed_animals: 3
+    route_of_exposure: OG
+    duration_exposure: 3.0
+    duration_exposure_text: 3 days
+    duration_observation: null
+    num_dose_groups: 5
+    positive_control: false
+    negative_control: VT
+    description: <p>description</p>
+    created: 2020-05-08 17:40:29.993336+00:00
+    last_updated: 2020-05-08 17:40:30.178820+00:00
 - model: animal.dosegroup
   pk: 1
   fields:
@@ -1155,9 +1938,55 @@
     dose: 4.0
     created: 2020-04-10 19:35:26.856523+00:00
     last_updated: 2020-04-10 19:35:26.856523+00:00
+- model: animal.dosegroup
+  pk: 8
+  fields:
+    dose_regime: 3
+    dose_units: 1
+    dose_group_id: 0
+    dose: 0.0
+    created: 2020-05-08 17:40:30.255630+00:00
+    last_updated: 2020-05-08 17:40:30.255654+00:00
+- model: animal.dosegroup
+  pk: 9
+  fields:
+    dose_regime: 3
+    dose_units: 1
+    dose_group_id: 1
+    dose: 1.0
+    created: 2020-05-08 17:40:30.283493+00:00
+    last_updated: 2020-05-08 17:40:30.283514+00:00
+- model: animal.dosegroup
+  pk: 10
+  fields:
+    dose_regime: 3
+    dose_units: 1
+    dose_group_id: 2
+    dose: 10.0
+    created: 2020-05-08 17:40:30.296393+00:00
+    last_updated: 2020-05-08 17:40:30.296412+00:00
+- model: animal.dosegroup
+  pk: 11
+  fields:
+    dose_regime: 3
+    dose_units: 1
+    dose_group_id: 3
+    dose: 100.0
+    created: 2020-05-08 17:40:30.309262+00:00
+    last_updated: 2020-05-08 17:40:30.309281+00:00
+- model: animal.dosegroup
+  pk: 12
+  fields:
+    dose_regime: 3
+    dose_units: 1
+    dose_group_id: 4
+    dose: 1000.0
+    created: 2020-05-08 17:40:30.321662+00:00
+    last_updated: 2020-05-08 17:40:30.321682+00:00
 - model: animal.endpoint
   pk: 1
   fields:
+    baseendpoint_ptr: 1
     animal_group: 1
     system: ''
     organ: ''
@@ -1193,6 +2022,7 @@
 - model: animal.endpoint
   pk: 2
   fields:
+    baseendpoint_ptr: 2
     animal_group: 2
     system: ''
     organ: ''
@@ -1225,6 +2055,43 @@
     endpoint_notes: ''
     additional_fields: '{}'
     effects: []
+- model: animal.endpoint
+  pk: 3
+  fields:
+    baseendpoint_ptr: 3
+    animal_group: 3
+    system: developmental
+    organ: brain
+    effect: learning and memory
+    effect_subtype: errors (forward)
+    litter_effects: YS
+    litter_effect_notes: notes
+    observation_time: null
+    observation_time_units: 0
+    observation_time_text: ''
+    data_location: Figure 5; Table S 41
+    expected_adversity_direction: 2
+    response_units: '# errors'
+    data_type: C
+    variance_type: 1
+    confidence_interval: null
+    NOEL: -999
+    LOEL: 4
+    FEL: -999
+    data_reported: true
+    data_extracted: true
+    values_estimated: false
+    monotonicity: 8
+    statistical_test: t-test
+    trend_value: 0.04
+    trend_result: 2
+    diagnostic: name as reported
+    power_notes: N/A
+    results_notes: <p>results notes</p>
+    endpoint_notes: <p>methods</p>
+    additional_fields: '{}'
+    effects:
+    - 1
 - model: animal.endpointgroup
   pk: 1
   fields:
@@ -1260,6 +2127,71 @@
     incidence: null
     response: 5.0
     variance: 1.0
+    lower_ci: null
+    upper_ci: null
+    significant: true
+    significance_level: 0.05
+- model: animal.endpointgroup
+  pk: 4
+  fields:
+    endpoint: 3
+    dose_group_id: 0
+    n: 20
+    incidence: null
+    response: 15.0
+    variance: 1.7
+    lower_ci: null
+    upper_ci: null
+    significant: false
+    significance_level: null
+- model: animal.endpointgroup
+  pk: 5
+  fields:
+    endpoint: 3
+    dose_group_id: 1
+    n: 20
+    incidence: null
+    response: 11.0
+    variance: 1.9
+    lower_ci: null
+    upper_ci: null
+    significant: false
+    significance_level: null
+- model: animal.endpointgroup
+  pk: 6
+  fields:
+    endpoint: 3
+    dose_group_id: 2
+    n: 20
+    incidence: null
+    response: 15.0
+    variance: 2.3
+    lower_ci: null
+    upper_ci: null
+    significant: false
+    significance_level: null
+- model: animal.endpointgroup
+  pk: 7
+  fields:
+    endpoint: 3
+    dose_group_id: 3
+    n: 20
+    incidence: null
+    response: 12.0
+    variance: 2.2
+    lower_ci: null
+    upper_ci: null
+    significant: false
+    significance_level: null
+- model: animal.endpointgroup
+  pk: 8
+  fields:
+    endpoint: 3
+    dose_group_id: 4
+    n: 20
+    incidence: null
+    response: 9.0
+    variance: 1.2
     lower_ci: null
     upper_ci: null
     significant: true
@@ -1345,6 +2277,24 @@
     is_overall_confidence: false
     created: 2020-04-10 17:45:44.768158+00:00
     last_updated: 2020-04-10 17:45:44.768158+00:00
+- model: riskofbias.riskofbiasdomain
+  pk: 10
+  fields:
+    assessment: 2
+    name: domain 1
+    description: <p>description</p>
+    is_overall_confidence: false
+    created: 2020-05-08 17:05:55.142679+00:00
+    last_updated: 2020-05-08 17:05:55.142703+00:00
+- model: riskofbias.riskofbiasdomain
+  pk: 11
+  fields:
+    assessment: 2
+    name: overall
+    description: <p>description</p>
+    is_overall_confidence: true
+    created: 2020-05-08 17:06:37.006374+00:00
+    last_updated: 2020-05-08 17:06:37.006406+00:00
 - model: riskofbias.riskofbiasmetric
   pk: 1
   fields:
@@ -1547,6 +2497,34 @@
     use_short_name: false
     created: 2020-04-10 17:45:44.981198+00:00
     last_updated: 2020-04-10 17:45:44.981198+00:00
+- model: riskofbias.riskofbiasmetric
+  pk: 14
+  fields:
+    domain: 10
+    name: metric 1
+    short_name: metric 1 short
+    description: <p>description</p>
+    required_animal: true
+    required_epi: true
+    required_invitro: true
+    hide_description: false
+    use_short_name: false
+    created: 2020-05-08 17:06:18.057471+00:00
+    last_updated: 2020-05-08 17:06:18.057493+00:00
+- model: riskofbias.riskofbiasmetric
+  pk: 15
+  fields:
+    domain: 11
+    name: overall
+    short_name: overall short
+    description: <p>overall description</p>
+    required_animal: true
+    required_epi: true
+    required_invitro: true
+    hide_description: false
+    use_short_name: false
+    created: 2020-05-08 17:06:55.509303+00:00
+    last_updated: 2020-05-08 17:06:55.509353+00:00
 - model: riskofbias.riskofbias
   pk: 1
   fields:
@@ -1577,6 +2555,36 @@
     active: true
     created: 2020-02-27 20:12:29.417932+00:00
     last_updated: 2020-02-27 20:53:42.455277+00:00
+- model: riskofbias.riskofbias
+  pk: 4
+  fields:
+    study: 7
+    final: false
+    author:
+    - team@team.com
+    active: true
+    created: 2020-05-08 17:56:45.599914+00:00
+    last_updated: 2020-05-08 19:33:23.187120+00:00
+- model: riskofbias.riskofbias
+  pk: 5
+  fields:
+    study: 7
+    final: false
+    author:
+    - pm@pm.com
+    active: true
+    created: 2020-05-08 17:56:45.903109+00:00
+    last_updated: 2020-05-08 19:33:43.045401+00:00
+- model: riskofbias.riskofbias
+  pk: 6
+  fields:
+    study: 7
+    final: true
+    author:
+    - team@team.com
+    active: true
+    created: 2020-05-08 17:56:46.183552+00:00
+    last_updated: 2020-05-08 19:34:31.468702+00:00
 - model: riskofbias.riskofbiasscore
   pk: 1
   fields:
@@ -1657,6 +2665,76 @@
     score: 14
     bias_direction: 1
     notes: <p>This wasn't reported in this case.</p>
+- model: riskofbias.riskofbiasscore
+  pk: 10
+  fields:
+    riskofbias: 4
+    metric: 14
+    is_default: true
+    label: ''
+    score: 17
+    bias_direction: 0
+    notes: <p>test</p>
+- model: riskofbias.riskofbiasscore
+  pk: 11
+  fields:
+    riskofbias: 4
+    metric: 15
+    is_default: true
+    label: ''
+    score: 14
+    bias_direction: 1
+    notes: <p>test2</p>
+- model: riskofbias.riskofbiasscore
+  pk: 12
+  fields:
+    riskofbias: 5
+    metric: 14
+    is_default: true
+    label: ''
+    score: 16
+    bias_direction: 0
+    notes: <p>test</p>
+- model: riskofbias.riskofbiasscore
+  pk: 13
+  fields:
+    riskofbias: 5
+    metric: 15
+    is_default: true
+    label: ''
+    score: 17
+    bias_direction: 0
+    notes: <p>test</p>
+- model: riskofbias.riskofbiasscore
+  pk: 14
+  fields:
+    riskofbias: 6
+    metric: 14
+    is_default: true
+    label: test1
+    score: 16
+    bias_direction: 1
+    notes: <p>test</p>
+- model: riskofbias.riskofbiasscore
+  pk: 15
+  fields:
+    riskofbias: 6
+    metric: 15
+    is_default: true
+    label: ''
+    score: 16
+    bias_direction: 1
+    notes: <p>test</p>
+- model: riskofbias.riskofbiasscore
+  pk: 16
+  fields:
+    riskofbias: 6
+    metric: 14
+    is_default: false
+    label: test2
+    score: 14
+    bias_direction: 1
+    notes: <p>beep</p>
 - model: riskofbias.riskofbiasscoreoverrideobject
   pk: 1
   fields:
@@ -1665,22 +2743,30 @@
     - animal
     - endpoint
     object_id: 1
+- model: riskofbias.riskofbiasscoreoverrideobject
+  pk: 2
+  fields:
+    score: 16
+    content_type:
+    - animal
+    - animalgroup
+    object_id: 3
 - model: riskofbias.riskofbiasassessment
   pk: 1
   fields:
     assessment: 1
     number_of_reviewers: 2
     help_text: <p>These are instructions for how to do risk of bias for an assessment.</p>
-    default_questions: 2
-    responses: 1
+    default_questions: 1
+    responses: 0
 - model: riskofbias.riskofbiasassessment
   pk: 3
   fields:
     assessment: 2
-    number_of_reviewers: 1
+    number_of_reviewers: 2
     help_text: <p>These are instructions for how to do risk of bias for an assessment.</p>
-    default_questions: 2
-    responses: 1
+    default_questions: 1
+    responses: 0
 - model: riskofbias.riskofbiasassessment
   pk: 4
   fields:
@@ -1764,3 +2850,322 @@
     endpoints: []
     studies:
     - 1
+- model: summary.visual
+  pk: 3
+  fields:
+    title: heatmap
+    slug: heatmap
+    assessment: 2
+    visual_type: 2
+    dose_units: null
+    prefilters: '{}'
+    settings: '{"title":"","xAxisLabel":"","yAxisLabel":"","padding_top":20,"cell_size":40,"padding_right":300,"padding_bottom":35,"padding_left":20,"x_field":"study","study_label_field":"short_citation","included_metrics":[14,15],"show_legend":true,"show_na_legend":true,"show_nr_legend":true,"legend_x":231,"legend_y":30}'
+    caption: <p>caption</p>
+    published: true
+    sort_order: short_citation
+    created: 2020-05-08 19:35:41.634588+00:00
+    last_updated: 2020-05-08 19:36:41.324440+00:00
+    endpoints: []
+    studies:
+    - 7
+- model: summary.visual
+  pk: 4
+  fields:
+    title: crossview
+    slug: crossview
+    assessment: 2
+    visual_type: 1
+    dose_units: 1
+    prefilters: '{"animal_group__experiment__study__published": true}'
+    settings: '{"title":"Title","xAxisLabel":"Dose (<add units>)","yAxisLabel":"%
+      change from control (continuous), % incidence (dichotomous)","width":1100,"height":600,"inner_width":940,"inner_height":520,"padding_left":75,"padding_top":45,"dose_isLog":true,"dose_range":"","response_range":"","title_x":0,"title_y":0,"xlabel_x":0,"xlabel_y":0,"ylabel_x":0,"ylabel_y":0,"filters":[{"name":"study","headerName":"Study","allValues":true,"values":null,"columns":1,"x":null,"y":null}],"reflines_dose":[{"value":null,"title":"","style":"base"}],"refranges_dose":[{"lower":null,"upper":null,"title":"","style":"base"}],"reflines_response":[{"value":null,"title":"","style":"base"}],"refranges_response":[{"lower":null,"upper":null,"title":"","style":"base"}],"labels":[{"caption":"","style":"base","max_width":null,"x":null,"y":null}],"colorBase":"#cccccc","colorHover":"#ff4040","colorSelected":"#6495ed","colorFilters":[],"colorFilterLegend":true,"colorFilterLegendLabel":"Color
+      filters","colorFilterLegendX":0,"colorFilterLegendY":0,"endpointFilters":[],"endpointFilterLogic":"and"}'
+    caption: <p>example</p>
+    published: true
+    sort_order: short_citation
+    created: 2020-05-08 19:37:19.255703+00:00
+    last_updated: 2020-05-08 19:37:19.255730+00:00
+    endpoints: []
+    studies: []
+- model: summary.visual
+  pk: 5
+  fields:
+    title: barchart
+    slug: barchart
+    assessment: 2
+    visual_type: 3
+    dose_units: null
+    prefilters: '{}'
+    settings: '{"title":"Title","xAxisLabel":"Percent of studies","yAxisLabel":"","plot_width":400,"row_height":30,"padding_top":40,"padding_right":300,"padding_bottom":40,"padding_left":70,"show_values":true,"included_metrics":[14,15],"show_legend":true,"show_na_legend":true,"legend_x":574,"legend_y":10}'
+    caption: <p>caption</p>
+    published: true
+    sort_order: short_citation
+    created: 2020-05-08 19:37:44.283008+00:00
+    last_updated: 2020-05-08 19:38:48.445082+00:00
+    endpoints: []
+    studies:
+    - 7
+- model: summary.visual
+  pk: 6
+  fields:
+    title: tagtree
+    slug: tagtree
+    assessment: 2
+    visual_type: 4
+    dose_units: null
+    prefilters: '{}'
+    settings: '{"root_node": 11, "required_tags": [], "pruned_tags": []}'
+    caption: <p>caption</p>
+    published: false
+    sort_order: short_citation
+    created: 2020-05-08 19:43:09.448597+00:00
+    last_updated: 2020-05-08 19:43:09.448621+00:00
+    endpoints: []
+    studies: []
+- model: summary.visual
+  pk: 7
+  fields:
+    title: embedded-tableau
+    slug: embedded-tableau
+    assessment: 2
+    visual_type: 5
+    dose_units: null
+    prefilters: '{}'
+    settings: '{"external_url": "https://public.tableau.com/views/Iris_15675445278420/Iris-Actual",
+      "external_url_hostname": "https://public.tableau.com", "external_url_path":
+      "/views/Iris_15675445278420/Iris-Actual", "external_url_query_args": [":showVizHome=no",
+      ":embed=y"]}'
+    caption: <p>iris (flowers)</p>
+    published: true
+    sort_order: short_citation
+    created: 2020-05-08 19:45:29.985823+00:00
+    last_updated: 2020-05-08 19:45:29.985848+00:00
+    endpoints: []
+    studies: []
+- model: summary.datapivot
+  pk: 1
+  fields:
+    assessment: 2
+    title: data pivot - animal bioassay - endpoint
+    slug: animal-bioassay-data-pviot
+    settings: '{"plot_settings":{"plot_width":400,"minimum_row_height":12,"padding":{"top":45,"right":25,"bottom":40,"left":20},"title":"Title","axis_label":"Axis
+      label","logscale":false,"show_xticks":true,"show_yticks":true,"domain":"","filter_logic":"and","font_style":"Arial","merge_descriptions":false,"merge_aggressive":true,"text_background":true,"text_background_color":"#eeeeee","as_barchart":false,"merge_until":0},"legend":{"show":true,"left":257,"top":-51,"columns":1,"style":{"border_color":"#666666","border_width":"2px"},"fields":[{"symbol_index":0,"label":"percent
+      control mean","symbol_style":"base","line_style":"---","rect_style":"---"},{"line_index":0,"label":"percent
+      control low","line_style":"base","symbol_style":"---","rect_style":"---"}]},"dataline_settings":[{"low_field_name":"percent
+      control low","high_field_name":"percent control high","header_name":"percent
+      control low","marker_style":"base","conditional_formatting":[]}],"datapoint_settings":[{"field_name":"percent
+      control mean","header_name":"percent control mean","marker_style":"base","dpe":"---","conditional_formatting":[]}],"description_settings":[{"field_name":"study
+      name","header_name":"study name","header_style":"header","text_style":"base","dpe":"study","field_index":"study
+      name"},{"field_name":"experiment name","header_name":"experiment name","header_style":"header","text_style":"base","dpe":"experiment","field_index":"experiment
+      name"},{"field_name":"animal group name","header_name":"animal group name","header_style":"header","text_style":"base","dpe":"animal_group","field_index":"animal
+      group name"},{"field_name":"endpoint name","header_name":"endpoint name","header_style":"header","text_style":"base","dpe":"endpoint_complete","field_index":"endpoint
+      name"},{"field_name":"dose","header_name":"dose (mg/kg/d)","header_style":"header","text_style":"base","dpe":"---","field_index":"dose"}],"barchart":{"dpe":"---","field_name":"---","error_low_field_name":"---","error_high_field_name":"---","header_name":"","error_header_name":"","bar_style":"base","error_marker_style":"base","conditional_formatting":[],"error_show_tails":true},"spacers":[{"index":-1,"show_line":true,"line_style":"reference
+      line","extra_space":false}],"sorts":[{"field_name":"---","ascending":true},{"field_name":"---","ascending":true}],"filters":[{"field_name":"---","quantifier":"contains","value":""},{"field_name":"---","quantifier":"contains","value":""}],"reference_lines":[{"value":null,"line_style":"reference
+      line"}],"reference_rectangles":[{"x1":null,"x2":null,"rectangle_style":"base"}],"labels":[{"text":"","style":"title","x":10,"y":10,"_style":{"name":"title","fill":"#000","rotate":"0","font-size":"12px","font-weight":"bold","text-anchor":"middle","fill-opacity":1}}],"row_overrides":[],"styles":{"symbols":[{"name":"base","type":"circle","size":130,"fill":"#000","fill-opacity":1,"stroke":"#fff","stroke-width":1},{"name":"transparent","type":"circle","size":90,"stroke":"#000000","fill-opacity":0,"stroke-width":0,"fill":"#000000"},{"name":"circle
+      | black","type":"circle","size":90,"stroke":"#000000","fill-opacity":0.8,"stroke-width":2,"fill":"#000000"},{"name":"circle
+      | red","type":"circle","size":90,"stroke":"#6f0000","fill-opacity":0.8,"stroke-width":2,"fill":"#e32727"},{"name":"circle
+      | green","type":"circle","size":90,"stroke":"#006a1e","fill-opacity":0.8,"stroke-width":2,"fill":"#22ba53"},{"name":"circle
+      | blue","type":"circle","size":90,"stroke":"#006dbe","fill-opacity":0.8,"stroke-width":2,"fill":"#3aa4e5"},{"name":"circle
+      | orange","type":"circle","size":90,"stroke":"#dc8f00","fill-opacity":0.8,"stroke-width":2,"fill":"#ffb100"},{"name":"circle
+      | purple","type":"circle","size":90,"stroke":"#5e5e5e","fill-opacity":0.8,"stroke-width":2,"fill":"#b82cff"},{"name":"circle
+      | fuschia","type":"circle","size":90,"stroke":"#ab006c","fill-opacity":0.8,"stroke-width":2,"fill":"#d4266e"},{"name":"triangle
+      up | black","type":"triangle-up","size":90,"stroke":"#000000","fill-opacity":0.8,"stroke-width":2,"fill":"#000000"},{"name":"triangle
+      up | red","type":"triangle-up","size":90,"stroke":"#6f0000","fill-opacity":0.8,"stroke-width":2,"fill":"#e32727"},{"name":"triangle
+      up | green","type":"triangle-up","size":90,"stroke":"#006a1e","fill-opacity":0.8,"stroke-width":2,"fill":"#22ba53"},{"name":"triangle
+      up | blue","type":"triangle-up","size":90,"stroke":"#006dbe","fill-opacity":0.8,"stroke-width":2,"fill":"#3aa4e5"},{"name":"triangle
+      up | orange","type":"triangle-up","size":90,"stroke":"#dc8f00","fill-opacity":0.8,"stroke-width":2,"fill":"#ffb100"},{"name":"triangle
+      up | purple","type":"triangle-up","size":90,"stroke":"#5e5e5e","fill-opacity":0.8,"stroke-width":2,"fill":"#b82cff"},{"name":"triangle
+      up | fuschia","type":"triangle-up","size":90,"stroke":"#ab006c","fill-opacity":0.8,"stroke-width":2,"fill":"#d4266e"},{"name":"triangle
+      down | black","type":"triangle-down","size":90,"stroke":"#000000","fill-opacity":0.8,"stroke-width":2,"fill":"#000000"},{"name":"triangle
+      down | red","type":"triangle-down","size":90,"stroke":"#6f0000","fill-opacity":0.8,"stroke-width":2,"fill":"#e32727"},{"name":"triangle
+      down | green","type":"triangle-down","size":90,"stroke":"#006a1e","fill-opacity":0.8,"stroke-width":2,"fill":"#22ba53"},{"name":"triangle
+      down | blue","type":"triangle-down","size":90,"stroke":"#006dbe","fill-opacity":0.8,"stroke-width":2,"fill":"#3aa4e5"},{"name":"triangle
+      down | orange","type":"triangle-down","size":90,"stroke":"#dc8f00","fill-opacity":0.8,"stroke-width":2,"fill":"#ffb100"},{"name":"triangle
+      down | purple","type":"triangle-down","size":90,"stroke":"#5e5e5e","fill-opacity":0.8,"stroke-width":2,"fill":"#b82cff"},{"name":"triangle
+      down | fuschia","type":"triangle-down","size":90,"stroke":"#ab006c","fill-opacity":0.8,"stroke-width":2,"fill":"#d4266e"},{"name":"diamond
+      | black","type":"diamond","size":90,"stroke":"#000000","fill-opacity":0.8,"stroke-width":2,"fill":"#000000"},{"name":"diamond
+      | red","type":"diamond","size":90,"stroke":"#6f0000","fill-opacity":0.8,"stroke-width":2,"fill":"#e32727"},{"name":"diamond
+      | green","type":"diamond","size":90,"stroke":"#006a1e","fill-opacity":0.8,"stroke-width":2,"fill":"#22ba53"},{"name":"diamond
+      | blue","type":"diamond","size":90,"stroke":"#006dbe","fill-opacity":0.8,"stroke-width":2,"fill":"#3aa4e5"},{"name":"diamond
+      | orange","type":"diamond","size":90,"stroke":"#dc8f00","fill-opacity":0.8,"stroke-width":2,"fill":"#ffb100"},{"name":"diamond
+      | purple","type":"diamond","size":90,"stroke":"#5e5e5e","fill-opacity":0.8,"stroke-width":2,"fill":"#b82cff"},{"name":"diamond
+      | fuschia","type":"diamond","size":90,"stroke":"#ab006c","fill-opacity":0.8,"stroke-width":2,"fill":"#d4266e"},{"name":"square
+      | black","type":"square","size":90,"stroke":"#000000","fill-opacity":0.8,"stroke-width":2,"fill":"#000000"},{"name":"square
+      | red","type":"square","size":90,"stroke":"#6f0000","fill-opacity":0.8,"stroke-width":2,"fill":"#e32727"},{"name":"square
+      | green","type":"square","size":90,"stroke":"#006a1e","fill-opacity":0.8,"stroke-width":2,"fill":"#22ba53"},{"name":"square
+      | blue","type":"square","size":90,"stroke":"#006dbe","fill-opacity":0.8,"stroke-width":2,"fill":"#3aa4e5"},{"name":"square
+      | orange","type":"square","size":90,"stroke":"#dc8f00","fill-opacity":0.8,"stroke-width":2,"fill":"#ffb100"},{"name":"square
+      | purple","type":"square","size":90,"stroke":"#5e5e5e","fill-opacity":0.8,"stroke-width":2,"fill":"#b82cff"},{"name":"square
+      | fuschia","type":"square","size":90,"stroke":"#ab006c","fill-opacity":0.8,"stroke-width":2,"fill":"#d4266e"},{"name":"cross
+      | black","type":"cross","size":90,"stroke":"#000000","fill-opacity":0.8,"stroke-width":2,"fill":"#000000"},{"name":"cross
+      | red","type":"cross","size":90,"stroke":"#6f0000","fill-opacity":0.8,"stroke-width":2,"fill":"#e32727"},{"name":"cross
+      | green","type":"cross","size":90,"stroke":"#006a1e","fill-opacity":0.8,"stroke-width":2,"fill":"#22ba53"},{"name":"cross
+      | blue","type":"cross","size":90,"stroke":"#006dbe","fill-opacity":0.8,"stroke-width":2,"fill":"#3aa4e5"},{"name":"cross
+      | orange","type":"cross","size":90,"stroke":"#dc8f00","fill-opacity":0.8,"stroke-width":2,"fill":"#ffb100"},{"name":"cross
+      | purple","type":"cross","size":90,"stroke":"#5e5e5e","fill-opacity":0.8,"stroke-width":2,"fill":"#b82cff"},{"name":"cross
+      | fuschia","type":"cross","size":90,"stroke":"#ab006c","fill-opacity":0.8,"stroke-width":2,"fill":"#d4266e"}],"lines":[{"name":"base","stroke":"#708090","stroke-dasharray":"none","stroke-opacity":0.9,"stroke-width":3},{"name":"reference
+      line","stroke":"#000000","stroke-dasharray":"none","stroke-opacity":0.8,"stroke-width":3},{"name":"transparent","stroke":"#000000","stroke-dasharray":"none","stroke-opacity":0,"stroke-width":0},{"name":"solid
+      | black","stroke":"#000000","stroke-dasharray":"none","stroke-opacity":0.9,"stroke-width":3},{"name":"solid
+      | red","stroke":"#e32727","stroke-dasharray":"none","stroke-opacity":0.9,"stroke-width":3},{"name":"solid
+      | green","stroke":"#006a1e","stroke-dasharray":"none","stroke-opacity":0.9,"stroke-width":3},{"name":"solid
+      | blue","stroke":"#006dbe","stroke-dasharray":"none","stroke-opacity":0.9,"stroke-width":3},{"name":"solid
+      | orange","stroke":"#dc8f00","stroke-dasharray":"none","stroke-opacity":0.9,"stroke-width":3},{"name":"solid
+      | purple","stroke":"#b82cff","stroke-dasharray":"none","stroke-opacity":0.9,"stroke-width":3},{"name":"solid
+      | fuschia","stroke":"#ab006c","stroke-dasharray":"none","stroke-opacity":0.9,"stroke-width":3},{"name":"dashed
+      | black","stroke":"#000000","stroke-dasharray":"10, 10","stroke-opacity":0.9,"stroke-width":3},{"name":"dashed
+      | red","stroke":"#e32727","stroke-dasharray":"10, 10","stroke-opacity":0.9,"stroke-width":3},{"name":"dashed
+      | green","stroke":"#006a1e","stroke-dasharray":"10, 10","stroke-opacity":0.9,"stroke-width":3},{"name":"dashed
+      | blue","stroke":"#006dbe","stroke-dasharray":"10, 10","stroke-opacity":0.9,"stroke-width":3},{"name":"dashed
+      | orange","stroke":"#dc8f00","stroke-dasharray":"10, 10","stroke-opacity":0.9,"stroke-width":3},{"name":"dashed
+      | purple","stroke":"#b82cff","stroke-dasharray":"10, 10","stroke-opacity":0.9,"stroke-width":3},{"name":"dashed
+      | fuschia","stroke":"#ab006c","stroke-dasharray":"10, 10","stroke-opacity":0.9,"stroke-width":3},{"name":"dotted
+      | black","stroke":"#000000","stroke-dasharray":"4, 3","stroke-opacity":0.9,"stroke-width":3},{"name":"dotted
+      | red","stroke":"#e32727","stroke-dasharray":"4, 3","stroke-opacity":0.9,"stroke-width":3},{"name":"dotted
+      | green","stroke":"#006a1e","stroke-dasharray":"4, 3","stroke-opacity":0.9,"stroke-width":3},{"name":"dotted
+      | blue","stroke":"#006dbe","stroke-dasharray":"4, 3","stroke-opacity":0.9,"stroke-width":3},{"name":"dotted
+      | orange","stroke":"#dc8f00","stroke-dasharray":"4, 3","stroke-opacity":0.9,"stroke-width":3},{"name":"dotted
+      | purple","stroke":"#b82cff","stroke-dasharray":"4, 3","stroke-opacity":0.9,"stroke-width":3},{"name":"dotted
+      | fuschia","stroke":"#ab006c","stroke-dasharray":"4, 3","stroke-opacity":0.9,"stroke-width":3},{"name":"dash-dotted
+      | black","stroke":"#000000","stroke-dasharray":"15, 10, 5, 10","stroke-opacity":0.9,"stroke-width":3},{"name":"dash-dotted
+      | red","stroke":"#e32727","stroke-dasharray":"15, 10, 5, 10","stroke-opacity":0.9,"stroke-width":3},{"name":"dash-dotted
+      | green","stroke":"#006a1e","stroke-dasharray":"15, 10, 5, 10","stroke-opacity":0.9,"stroke-width":3},{"name":"dash-dotted
+      | blue","stroke":"#006dbe","stroke-dasharray":"15, 10, 5, 10","stroke-opacity":0.9,"stroke-width":3},{"name":"dash-dotted
+      | orange","stroke":"#dc8f00","stroke-dasharray":"15, 10, 5, 10","stroke-opacity":0.9,"stroke-width":3},{"name":"dash-dotted
+      | purple","stroke":"#b82cff","stroke-dasharray":"15, 10, 5, 10","stroke-opacity":0.9,"stroke-width":3},{"name":"dash-dotted
+      | fuschia","stroke":"#ab006c","stroke-dasharray":"15, 10, 5, 10","stroke-opacity":0.9,"stroke-width":3}],"texts":[{"name":"base","fill":"#000","rotate":"0","font-size":"12px","font-weight":"normal","text-anchor":"start","fill-opacity":1},{"name":"header","fill":"#000","rotate":"0","font-size":"12px","font-weight":"bold","text-anchor":"middle","fill-opacity":1},{"name":"title","fill":"#000","rotate":"0","font-size":"12px","font-weight":"bold","text-anchor":"middle","fill-opacity":1},{"name":"transparent","font-size":"12px","rotate":"0","font-weight":"normal","text-anchor":"start","fill":"#000000","fill-opacity":0},{"name":"normal
+      | black","font-size":"12px","rotate":"0","font-weight":"normal","text-anchor":"start","fill":"#000000","fill-opacity":1},{"name":"normal
+      | red","font-size":"12px","rotate":"0","font-weight":"normal","text-anchor":"start","fill":"#6f0000","fill-opacity":1},{"name":"normal
+      | green","font-size":"12px","rotate":"0","font-weight":"normal","text-anchor":"start","fill":"#006a1e","fill-opacity":1},{"name":"normal
+      | blue","font-size":"12px","rotate":"0","font-weight":"normal","text-anchor":"start","fill":"#006dbe","fill-opacity":1},{"name":"normal
+      | orange","font-size":"12px","rotate":"0","font-weight":"normal","text-anchor":"start","fill":"#dc8f00","fill-opacity":1},{"name":"normal
+      | purple","font-size":"12px","rotate":"0","font-weight":"normal","text-anchor":"start","fill":"#b82cff","fill-opacity":1},{"name":"normal
+      | fuschia","font-size":"12px","rotate":"0","font-weight":"normal","text-anchor":"start","fill":"#ab006c","fill-opacity":1}],"rectangles":[{"name":"base","fill":"#999999","stroke":"#000000","fill-opacity":0.8,"stroke-width":1},{"name":"black","fill":"#000000","fill-opacity":0.8,"stroke":"#FFFFFF","stroke-width":1},{"name":"red","fill":"#e32727","fill-opacity":0.8,"stroke":"#6f0000","stroke-width":1},{"name":"green","fill":"#22ba53","fill-opacity":0.8,"stroke":"#006a1e","stroke-width":1},{"name":"blue","fill":"#3aa4e5","fill-opacity":0.8,"stroke":"#006dbe","stroke-width":1},{"name":"orange","fill":"#ffb100","fill-opacity":0.8,"stroke":"#dc8f00","stroke-width":1},{"name":"purple","fill":"#b82cff","fill-opacity":0.8,"stroke":"#5e5e5e","stroke-width":1},{"name":"fuschia","fill":"#d4266e","fill-opacity":0.8,"stroke":"#ab006c","stroke-width":1}]}}'
+    caption: <p>caption</p>
+    published: true
+    created: 2020-05-08 17:48:36.143248+00:00
+    last_updated: 2020-05-08 19:46:14.546712+00:00
+- model: summary.datapivot
+  pk: 2
+  fields:
+    assessment: 2
+    title: data pivot - animal bioassay - endpoint
+    slug: animal-bioassay-endpoint
+    settings: '{"plot_settings":{"plot_width":400,"minimum_row_height":12,"padding":{"top":50,"right":100,"bottom":50,"left":20},"title":"Title","axis_label":"Axis
+      label","logscale":true,"show_xticks":true,"show_yticks":true,"domain":"0.1,10000","filter_logic":"and","font_style":"Arial","merge_descriptions":false,"merge_aggressive":true,"text_background":true,"text_background_color":"#eeeeee","as_barchart":false,"merge_until":0},"legend":{"show":true,"left":419,"top":-60,"columns":1,"style":{"border_color":"#666666","border_width":"2px"},"fields":[{"symbol_index":0,"label":"Dose
+      1","symbol_style":"base","line_style":"---","rect_style":"---"},{"symbol_index":1,"label":"Dose
+      2","symbol_style":"base","line_style":"---","rect_style":"---"},{"symbol_index":2,"label":"Dose
+      3","symbol_style":"base","line_style":"---","rect_style":"---"},{"symbol_index":3,"label":"Dose
+      4","symbol_style":"base","line_style":"---","rect_style":"---"},{"symbol_index":4,"label":"Dose
+      5","symbol_style":"base","line_style":"---","rect_style":"---"},{"line_index":0,"label":"low_dose","line_style":"base","symbol_style":"---","rect_style":"---"}]},"dataline_settings":[{"low_field_name":"low_dose","high_field_name":"high_dose","header_name":"low_dose","marker_style":"base","conditional_formatting":[]}],"datapoint_settings":[{"field_name":"Dose
+      1","header_name":"Dose 1","marker_style":"base","dpe":"endpoint_complete","conditional_formatting":[]},{"field_name":"Dose
+      2","header_name":"Dose 2","marker_style":"base","dpe":"endpoint_complete","conditional_formatting":[]},{"field_name":"Dose
+      3","header_name":"Dose 3","marker_style":"base","dpe":"endpoint_complete","conditional_formatting":[]},{"field_name":"Dose
+      4","header_name":"Dose 4","marker_style":"base","dpe":"endpoint_complete","conditional_formatting":[]},{"field_name":"Dose
+      5","header_name":"Dose 5","marker_style":"base","dpe":"endpoint_complete","conditional_formatting":[]}],"description_settings":[{"field_name":"study
+      name","header_name":"study name","header_style":"header","text_style":"base","dpe":"study","field_index":"study
+      name"},{"field_name":"experiment name","header_name":"experiment name","header_style":"header","text_style":"base","dpe":"experiment","field_index":"experiment
+      name"},{"field_name":"animal group name","header_name":"animal group name","header_style":"header","text_style":"base","dpe":"animal_group","field_index":"animal
+      group name"},{"field_name":"endpoint name","header_name":"endpoint name","header_style":"header","text_style":"base","dpe":"endpoint_complete","field_index":"endpoint
+      name"}],"barchart":{"dpe":"---","field_name":"---","error_low_field_name":"---","error_high_field_name":"---","header_name":"","error_header_name":"","bar_style":"base","error_marker_style":"base","conditional_formatting":[],"error_show_tails":true},"spacers":[{"index":-1,"show_line":true,"line_style":"reference
+      line","extra_space":false}],"sorts":[{"field_name":"---","ascending":true},{"field_name":"---","ascending":true}],"filters":[{"field_name":"---","quantifier":"contains","value":""},{"field_name":"---","quantifier":"contains","value":""}],"reference_lines":[{"value":null,"line_style":"reference
+      line"}],"reference_rectangles":[{"x1":null,"x2":null,"rectangle_style":"base"}],"labels":[{"text":"","style":"title","x":10,"y":10,"_style":{"name":"title","fill":"#000","rotate":"0","font-size":"12px","font-weight":"bold","text-anchor":"middle","fill-opacity":1}}],"row_overrides":[],"styles":{"symbols":[{"name":"base","type":"circle","size":130,"fill":"#000","fill-opacity":1,"stroke":"#fff","stroke-width":1},{"name":"transparent","type":"circle","size":90,"stroke":"#000000","fill-opacity":0,"stroke-width":0,"fill":"#000000"},{"name":"circle
+      | black","type":"circle","size":90,"stroke":"#000000","fill-opacity":0.8,"stroke-width":2,"fill":"#000000"},{"name":"circle
+      | red","type":"circle","size":90,"stroke":"#6f0000","fill-opacity":0.8,"stroke-width":2,"fill":"#e32727"},{"name":"circle
+      | green","type":"circle","size":90,"stroke":"#006a1e","fill-opacity":0.8,"stroke-width":2,"fill":"#22ba53"},{"name":"circle
+      | blue","type":"circle","size":90,"stroke":"#006dbe","fill-opacity":0.8,"stroke-width":2,"fill":"#3aa4e5"},{"name":"circle
+      | orange","type":"circle","size":90,"stroke":"#dc8f00","fill-opacity":0.8,"stroke-width":2,"fill":"#ffb100"},{"name":"circle
+      | purple","type":"circle","size":90,"stroke":"#5e5e5e","fill-opacity":0.8,"stroke-width":2,"fill":"#b82cff"},{"name":"circle
+      | fuschia","type":"circle","size":90,"stroke":"#ab006c","fill-opacity":0.8,"stroke-width":2,"fill":"#d4266e"},{"name":"triangle
+      up | black","type":"triangle-up","size":90,"stroke":"#000000","fill-opacity":0.8,"stroke-width":2,"fill":"#000000"},{"name":"triangle
+      up | red","type":"triangle-up","size":90,"stroke":"#6f0000","fill-opacity":0.8,"stroke-width":2,"fill":"#e32727"},{"name":"triangle
+      up | green","type":"triangle-up","size":90,"stroke":"#006a1e","fill-opacity":0.8,"stroke-width":2,"fill":"#22ba53"},{"name":"triangle
+      up | blue","type":"triangle-up","size":90,"stroke":"#006dbe","fill-opacity":0.8,"stroke-width":2,"fill":"#3aa4e5"},{"name":"triangle
+      up | orange","type":"triangle-up","size":90,"stroke":"#dc8f00","fill-opacity":0.8,"stroke-width":2,"fill":"#ffb100"},{"name":"triangle
+      up | purple","type":"triangle-up","size":90,"stroke":"#5e5e5e","fill-opacity":0.8,"stroke-width":2,"fill":"#b82cff"},{"name":"triangle
+      up | fuschia","type":"triangle-up","size":90,"stroke":"#ab006c","fill-opacity":0.8,"stroke-width":2,"fill":"#d4266e"},{"name":"triangle
+      down | black","type":"triangle-down","size":90,"stroke":"#000000","fill-opacity":0.8,"stroke-width":2,"fill":"#000000"},{"name":"triangle
+      down | red","type":"triangle-down","size":90,"stroke":"#6f0000","fill-opacity":0.8,"stroke-width":2,"fill":"#e32727"},{"name":"triangle
+      down | green","type":"triangle-down","size":90,"stroke":"#006a1e","fill-opacity":0.8,"stroke-width":2,"fill":"#22ba53"},{"name":"triangle
+      down | blue","type":"triangle-down","size":90,"stroke":"#006dbe","fill-opacity":0.8,"stroke-width":2,"fill":"#3aa4e5"},{"name":"triangle
+      down | orange","type":"triangle-down","size":90,"stroke":"#dc8f00","fill-opacity":0.8,"stroke-width":2,"fill":"#ffb100"},{"name":"triangle
+      down | purple","type":"triangle-down","size":90,"stroke":"#5e5e5e","fill-opacity":0.8,"stroke-width":2,"fill":"#b82cff"},{"name":"triangle
+      down | fuschia","type":"triangle-down","size":90,"stroke":"#ab006c","fill-opacity":0.8,"stroke-width":2,"fill":"#d4266e"},{"name":"diamond
+      | black","type":"diamond","size":90,"stroke":"#000000","fill-opacity":0.8,"stroke-width":2,"fill":"#000000"},{"name":"diamond
+      | red","type":"diamond","size":90,"stroke":"#6f0000","fill-opacity":0.8,"stroke-width":2,"fill":"#e32727"},{"name":"diamond
+      | green","type":"diamond","size":90,"stroke":"#006a1e","fill-opacity":0.8,"stroke-width":2,"fill":"#22ba53"},{"name":"diamond
+      | blue","type":"diamond","size":90,"stroke":"#006dbe","fill-opacity":0.8,"stroke-width":2,"fill":"#3aa4e5"},{"name":"diamond
+      | orange","type":"diamond","size":90,"stroke":"#dc8f00","fill-opacity":0.8,"stroke-width":2,"fill":"#ffb100"},{"name":"diamond
+      | purple","type":"diamond","size":90,"stroke":"#5e5e5e","fill-opacity":0.8,"stroke-width":2,"fill":"#b82cff"},{"name":"diamond
+      | fuschia","type":"diamond","size":90,"stroke":"#ab006c","fill-opacity":0.8,"stroke-width":2,"fill":"#d4266e"},{"name":"square
+      | black","type":"square","size":90,"stroke":"#000000","fill-opacity":0.8,"stroke-width":2,"fill":"#000000"},{"name":"square
+      | red","type":"square","size":90,"stroke":"#6f0000","fill-opacity":0.8,"stroke-width":2,"fill":"#e32727"},{"name":"square
+      | green","type":"square","size":90,"stroke":"#006a1e","fill-opacity":0.8,"stroke-width":2,"fill":"#22ba53"},{"name":"square
+      | blue","type":"square","size":90,"stroke":"#006dbe","fill-opacity":0.8,"stroke-width":2,"fill":"#3aa4e5"},{"name":"square
+      | orange","type":"square","size":90,"stroke":"#dc8f00","fill-opacity":0.8,"stroke-width":2,"fill":"#ffb100"},{"name":"square
+      | purple","type":"square","size":90,"stroke":"#5e5e5e","fill-opacity":0.8,"stroke-width":2,"fill":"#b82cff"},{"name":"square
+      | fuschia","type":"square","size":90,"stroke":"#ab006c","fill-opacity":0.8,"stroke-width":2,"fill":"#d4266e"},{"name":"cross
+      | black","type":"cross","size":90,"stroke":"#000000","fill-opacity":0.8,"stroke-width":2,"fill":"#000000"},{"name":"cross
+      | red","type":"cross","size":90,"stroke":"#6f0000","fill-opacity":0.8,"stroke-width":2,"fill":"#e32727"},{"name":"cross
+      | green","type":"cross","size":90,"stroke":"#006a1e","fill-opacity":0.8,"stroke-width":2,"fill":"#22ba53"},{"name":"cross
+      | blue","type":"cross","size":90,"stroke":"#006dbe","fill-opacity":0.8,"stroke-width":2,"fill":"#3aa4e5"},{"name":"cross
+      | orange","type":"cross","size":90,"stroke":"#dc8f00","fill-opacity":0.8,"stroke-width":2,"fill":"#ffb100"},{"name":"cross
+      | purple","type":"cross","size":90,"stroke":"#5e5e5e","fill-opacity":0.8,"stroke-width":2,"fill":"#b82cff"},{"name":"cross
+      | fuschia","type":"cross","size":90,"stroke":"#ab006c","fill-opacity":0.8,"stroke-width":2,"fill":"#d4266e"}],"lines":[{"name":"base","stroke":"#708090","stroke-dasharray":"none","stroke-opacity":0.9,"stroke-width":3},{"name":"reference
+      line","stroke":"#000000","stroke-dasharray":"none","stroke-opacity":0.8,"stroke-width":3},{"name":"transparent","stroke":"#000000","stroke-dasharray":"none","stroke-opacity":0,"stroke-width":0},{"name":"solid
+      | black","stroke":"#000000","stroke-dasharray":"none","stroke-opacity":0.9,"stroke-width":3},{"name":"solid
+      | red","stroke":"#e32727","stroke-dasharray":"none","stroke-opacity":0.9,"stroke-width":3},{"name":"solid
+      | green","stroke":"#006a1e","stroke-dasharray":"none","stroke-opacity":0.9,"stroke-width":3},{"name":"solid
+      | blue","stroke":"#006dbe","stroke-dasharray":"none","stroke-opacity":0.9,"stroke-width":3},{"name":"solid
+      | orange","stroke":"#dc8f00","stroke-dasharray":"none","stroke-opacity":0.9,"stroke-width":3},{"name":"solid
+      | purple","stroke":"#b82cff","stroke-dasharray":"none","stroke-opacity":0.9,"stroke-width":3},{"name":"solid
+      | fuschia","stroke":"#ab006c","stroke-dasharray":"none","stroke-opacity":0.9,"stroke-width":3},{"name":"dashed
+      | black","stroke":"#000000","stroke-dasharray":"10, 10","stroke-opacity":0.9,"stroke-width":3},{"name":"dashed
+      | red","stroke":"#e32727","stroke-dasharray":"10, 10","stroke-opacity":0.9,"stroke-width":3},{"name":"dashed
+      | green","stroke":"#006a1e","stroke-dasharray":"10, 10","stroke-opacity":0.9,"stroke-width":3},{"name":"dashed
+      | blue","stroke":"#006dbe","stroke-dasharray":"10, 10","stroke-opacity":0.9,"stroke-width":3},{"name":"dashed
+      | orange","stroke":"#dc8f00","stroke-dasharray":"10, 10","stroke-opacity":0.9,"stroke-width":3},{"name":"dashed
+      | purple","stroke":"#b82cff","stroke-dasharray":"10, 10","stroke-opacity":0.9,"stroke-width":3},{"name":"dashed
+      | fuschia","stroke":"#ab006c","stroke-dasharray":"10, 10","stroke-opacity":0.9,"stroke-width":3},{"name":"dotted
+      | black","stroke":"#000000","stroke-dasharray":"4, 3","stroke-opacity":0.9,"stroke-width":3},{"name":"dotted
+      | red","stroke":"#e32727","stroke-dasharray":"4, 3","stroke-opacity":0.9,"stroke-width":3},{"name":"dotted
+      | green","stroke":"#006a1e","stroke-dasharray":"4, 3","stroke-opacity":0.9,"stroke-width":3},{"name":"dotted
+      | blue","stroke":"#006dbe","stroke-dasharray":"4, 3","stroke-opacity":0.9,"stroke-width":3},{"name":"dotted
+      | orange","stroke":"#dc8f00","stroke-dasharray":"4, 3","stroke-opacity":0.9,"stroke-width":3},{"name":"dotted
+      | purple","stroke":"#b82cff","stroke-dasharray":"4, 3","stroke-opacity":0.9,"stroke-width":3},{"name":"dotted
+      | fuschia","stroke":"#ab006c","stroke-dasharray":"4, 3","stroke-opacity":0.9,"stroke-width":3},{"name":"dash-dotted
+      | black","stroke":"#000000","stroke-dasharray":"15, 10, 5, 10","stroke-opacity":0.9,"stroke-width":3},{"name":"dash-dotted
+      | red","stroke":"#e32727","stroke-dasharray":"15, 10, 5, 10","stroke-opacity":0.9,"stroke-width":3},{"name":"dash-dotted
+      | green","stroke":"#006a1e","stroke-dasharray":"15, 10, 5, 10","stroke-opacity":0.9,"stroke-width":3},{"name":"dash-dotted
+      | blue","stroke":"#006dbe","stroke-dasharray":"15, 10, 5, 10","stroke-opacity":0.9,"stroke-width":3},{"name":"dash-dotted
+      | orange","stroke":"#dc8f00","stroke-dasharray":"15, 10, 5, 10","stroke-opacity":0.9,"stroke-width":3},{"name":"dash-dotted
+      | purple","stroke":"#b82cff","stroke-dasharray":"15, 10, 5, 10","stroke-opacity":0.9,"stroke-width":3},{"name":"dash-dotted
+      | fuschia","stroke":"#ab006c","stroke-dasharray":"15, 10, 5, 10","stroke-opacity":0.9,"stroke-width":3}],"texts":[{"name":"base","fill":"#000","rotate":"0","font-size":"12px","font-weight":"normal","text-anchor":"start","fill-opacity":1},{"name":"header","fill":"#000","rotate":"0","font-size":"12px","font-weight":"bold","text-anchor":"middle","fill-opacity":1},{"name":"title","fill":"#000","rotate":"0","font-size":"12px","font-weight":"bold","text-anchor":"middle","fill-opacity":1},{"name":"transparent","font-size":"12px","rotate":"0","font-weight":"normal","text-anchor":"start","fill":"#000000","fill-opacity":0},{"name":"normal
+      | black","font-size":"12px","rotate":"0","font-weight":"normal","text-anchor":"start","fill":"#000000","fill-opacity":1},{"name":"normal
+      | red","font-size":"12px","rotate":"0","font-weight":"normal","text-anchor":"start","fill":"#6f0000","fill-opacity":1},{"name":"normal
+      | green","font-size":"12px","rotate":"0","font-weight":"normal","text-anchor":"start","fill":"#006a1e","fill-opacity":1},{"name":"normal
+      | blue","font-size":"12px","rotate":"0","font-weight":"normal","text-anchor":"start","fill":"#006dbe","fill-opacity":1},{"name":"normal
+      | orange","font-size":"12px","rotate":"0","font-weight":"normal","text-anchor":"start","fill":"#dc8f00","fill-opacity":1},{"name":"normal
+      | purple","font-size":"12px","rotate":"0","font-weight":"normal","text-anchor":"start","fill":"#b82cff","fill-opacity":1},{"name":"normal
+      | fuschia","font-size":"12px","rotate":"0","font-weight":"normal","text-anchor":"start","fill":"#ab006c","fill-opacity":1}],"rectangles":[{"name":"base","fill":"#999999","stroke":"#000000","fill-opacity":0.8,"stroke-width":1},{"name":"black","fill":"#000000","fill-opacity":0.8,"stroke":"#FFFFFF","stroke-width":1},{"name":"red","fill":"#e32727","fill-opacity":0.8,"stroke":"#6f0000","stroke-width":1},{"name":"green","fill":"#22ba53","fill-opacity":0.8,"stroke":"#006a1e","stroke-width":1},{"name":"blue","fill":"#3aa4e5","fill-opacity":0.8,"stroke":"#006dbe","stroke-width":1},{"name":"orange","fill":"#ffb100","fill-opacity":0.8,"stroke":"#dc8f00","stroke-width":1},{"name":"purple","fill":"#b82cff","fill-opacity":0.8,"stroke":"#5e5e5e","stroke-width":1},{"name":"fuschia","fill":"#d4266e","fill-opacity":0.8,"stroke":"#ab006c","stroke-width":1}]}}'
+    caption: ''
+    published: true
+    created: 2020-05-08 17:52:21.928839+00:00
+    last_updated: 2020-05-08 19:46:02.216322+00:00
+- model: summary.datapivotquery
+  pk: 2
+  fields:
+    datapivot_ptr: 2
+    evidence_type: 0
+    export_style: 1
+    preferred_units: '["1"]'
+    prefilters: '{}'
+    published_only: true
+- model: summary.datapivotquery
+  pk: 1
+  fields:
+    datapivot_ptr: 1
+    evidence_type: 0
+    export_style: 0
+    preferred_units: '["1"]'
+    prefilters: '{}'
+    published_only: true

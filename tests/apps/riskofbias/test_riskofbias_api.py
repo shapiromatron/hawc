@@ -313,7 +313,7 @@ class TestBulkRobCleanupApis:
         url = reverse("riskofbias:api:scores-choices") + assessment_query
         resp = c.get(url, format="json")
         assert resp.status_code == 200
-        assert resp.json() == [27, 26, 25, 22, 24, 20]
+        assert resp.json() == [17, 16, 15, 12, 14, 10]
 
     def test_metrics_list(self, db_keys):
         c = APIClient()
