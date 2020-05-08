@@ -10,6 +10,7 @@ from ..assessment.api import (
 from ..assessment.models import Assessment
 from ..common.api import CleanupFieldsBaseViewSet, LegacyAssessmentAdapterMixin
 from ..common.renderers import PandasRenderers
+from ..common.serializers import UnusedSerializer
 from ..common.views import AssessmentPermissionsMixin
 from . import exports, models, serializers
 
@@ -20,6 +21,7 @@ class IVAssessmentViewset(
     parent_model = Assessment
     model = models.IVEndpoint
     permission_classes = (AssessmentLevelPermissions,)
+    serializer_class = UnusedSerializer
 
     def get_queryset(self):
         perms = self.get_obj_perms()

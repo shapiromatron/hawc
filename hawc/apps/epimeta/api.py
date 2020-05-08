@@ -6,6 +6,7 @@ from ..assessment.api import AssessmentLevelPermissions, AssessmentViewset
 from ..assessment.models import Assessment
 from ..common.api import LegacyAssessmentAdapterMixin
 from ..common.renderers import PandasRenderers
+from ..common.serializers import UnusedSerializer
 from ..common.views import AssessmentPermissionsMixin
 from . import exports, models, serializers
 
@@ -16,6 +17,7 @@ class EpiMetaAssessmentViewset(
     parent_model = Assessment
     model = models.MetaResult
     permission_classes = (AssessmentLevelPermissions,)
+    serializer_class = UnusedSerializer
 
     def get_queryset(self):
         perms = self.get_obj_perms()

@@ -89,6 +89,10 @@ class ReferenceTagsSerializer(serializers.ModelSerializer):
         # obj is a model-manager in this case; convert to list to serialize
         return list(obj.values("id", "name"))
 
+    class Meta:
+        model = models.ReferenceTags
+        fields = "__all__"
+
 
 class ReferenceFilterTagSerializer(AssessmentRootedSerializer):
     parent = serializers.IntegerField(write_only=True, required=False)

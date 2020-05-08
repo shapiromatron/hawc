@@ -2,6 +2,8 @@ import os
 import platform
 import sys
 
+__version__ = "0.1"
+
 
 def manage():
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "hawc.main.settings.dev")

@@ -10,6 +10,7 @@ from ..assessment.models import Assessment
 from ..common.api import CleanupFieldsBaseViewSet, LegacyAssessmentAdapterMixin
 from ..common.helper import FlatExport
 from ..common.renderers import PandasRenderers
+from ..common.serializers import UnusedSerializer
 from . import exports, models, serializers
 
 
@@ -17,6 +18,7 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
     parent_model = Assessment
     model = Assessment
     permission_classes = (AssessmentLevelPermissions,)
+    serializer_class = UnusedSerializer
 
     def get_queryset(self):
         return self.model.objects.all()
