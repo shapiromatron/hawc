@@ -109,7 +109,7 @@ class TestVisual:
         data = response.json()
 
         if REWRITE_DATA:
-            _rewrite(fn, response.json())
+            _rewrite(fn, data)
         assert data == json.loads(fn.read_text())
 
     def test_heatmap(self):
@@ -130,42 +130,44 @@ class TestVisual:
 
 @pytest.mark.django_db
 class TestDataPivot:
-    def _get_key_context(self, slug: str):
-        return slug, Path(DATA_ROOT / f"api-dp-data-{slug}.json")
+    def _test_dp(self, slug: str, fn_key: str):
+        client = Client()
+
+        fn = Path(DATA_ROOT / f"api-dp-{fn_key}.json")
+
+        dp = models.DataPivot.objects.get(slug=slug)
+        url = dp.get_api_detail()
+        response = client.get(url)
+        assert response.status_code == 200
+
+        data = response.json()
+        if REWRITE_DATA:
+            _rewrite(fn, data)
+        assert json.loads(fn.read_text()) == data
+
+    def _test_dp_data(self, slug: str, fn_key: str):
+        client = Client()
+
+        fn = Path(DATA_ROOT / f"api-dp-data-{fn_key}.json")
+
+        dp = models.DataPivot.objects.get(slug=slug)
+        url = dp.get_data_url().replace("tsv", "json")
+        response = client.get(url)
+        assert response.status_code == 200
+
+        data = response.json()
+        if REWRITE_DATA:
+            _rewrite(fn, data)
+        assert json.loads(fn.read_text()) == data
 
     def test_bioassay_endpoint(self):
-        # make sure that our data export is working and giving what's expected
-        client = Client()
-
-        slug, fn = self._get_key_context("animal-bioassay-data-pivot-endpoint")
-
-        dp = models.DataPivot.objects.get(slug=slug)
-        url = dp.get_data_url().replace("tsv", "json")
-        response = client.get(url)
-        assert response.status_code == 200
-
-        resp = response.json()
-        assert len(resp) == 1
-
-        if REWRITE_DATA:
-            _rewrite(fn, response.json())
-        assert json.loads(fn.read_text()) == resp
+        self._test_dp("animal-bioassay-data-pivot-endpoint", "animal-bioassay-endpoint")
+        self._test_dp_data("animal-bioassay-data-pivot-endpoint", "animal-bioassay-endpoint")
 
     def test_bioassay_endpoint_group(self):
-        # make sure that our data export is working and giving what's expected
-        client = Client()
+        self._test_dp("animal-bioassay-data-pivot-endpoint", "animal-bioassay-endpoint")
+        self._test_dp_data(
+            "animal-bioassay-data-pivot-endpoint-group", "animal-bioassay-endpoint-group"
+        )
 
-        slug, fn = self._get_key_context("animal-bioassay-data-pivot-endpoint-group")
 
-        dp = models.DataPivot.objects.get(slug=slug)
-        url = dp.get_data_url().replace("tsv", "json")
-        response = client.get(url)
-
-        assert response.status_code == 200
-
-        resp = response.json()
-        assert len(resp) == 5
-
-        if REWRITE_DATA:
-            _rewrite(fn, response.json())
-        assert json.loads(fn.read_text()) == resp

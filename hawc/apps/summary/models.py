@@ -475,6 +475,9 @@ class DataPivot(models.Model):
     def get_assessment(self):
         return self.assessment
 
+    def get_api_detail(self):
+        return reverse("summary:api:data_pivot-detail", args=(self.id,))
+
     def get_download_url(self):
         return reverse("summary:api:data_pivot-data", args=(self.id,))
 
