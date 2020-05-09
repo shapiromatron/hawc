@@ -170,4 +170,6 @@ class TestDataPivot:
             "animal-bioassay-data-pivot-endpoint-group", "animal-bioassay-endpoint-group"
         )
 
-
+    def test_epimeta(self):
+        self._test_dp("data-pivot-epimeta", "epimeta")
+        self._test_dp_data("data-pivot-epimeta", "epimeta")

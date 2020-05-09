@@ -1193,6 +1193,35 @@
     - 5
     identifiers:
     - 5
+- model: study.study
+  pk: 8
+  fields:
+    reference_ptr: 8
+    bioassay: false
+    epi: false
+    epi_meta: true
+    in_vitro: false
+    short_citation: Crider KS et al. 2013
+    full_citation: 'Crider KS, Cordero AM, Qi YP, Mulinare J, Dowling NF, Berry RJ.
+      Prenatal folic acid and risk of asthma in children: a systematic review and
+      meta-analysis. Am. J. Clin. Nutr. 2013; 98 (5):1272-81.'
+    coi_reported: 0
+    coi_details: No COI
+    funding_source: Supported by the CDC and in part by an appointment to the Research
+      Participation Program at the CDC administered by the Oak Ridge Institute for
+      Science and Education through an interagency agreement between the US Department
+      of Energy and the CDC.
+    study_identifier: ''
+    contact_author: false
+    ask_author: ''
+    published: true
+    summary: <p>Adapted from <a href="https://hawcproject.org/study/41226/" rel="noopener
+      noreferrer" target="_blank">https://hawcproject.org/study/41226/</a>.</p>
+    editable: true
+    searches:
+    - 5
+    identifiers:
+    - 3
 - model: animal.experiment
   pk: 1
   fields:
@@ -2250,6 +2279,100 @@
       for evaluation for this assessment.</p>
     default_questions: 1
     responses: 0
+- model: epi.criteria
+  pk: 1
+  fields:
+    assessment: 2
+    description: have an exposure timing during the periconceptional period or during
+      pregnancy
+    created: 2020-05-09 02:54:37.318282+00:00
+    last_updated: 2020-05-09 02:54:37.318306+00:00
+- model: epi.criteria
+  pk: 2
+  fields:
+    assessment: 2
+    description: include an evaluation of the direct association between folic acid
+      exposure and one of the outcomes of interest
+    created: 2020-05-09 02:54:54.953311+00:00
+    last_updated: 2020-05-09 02:54:54.953335+00:00
+- model: epi.criteria
+  pk: 3
+  fields:
+    assessment: 2
+    description: provide results on at least one allergic or respiratory outcome
+    created: 2020-05-09 02:55:07.387702+00:00
+    last_updated: 2020-05-09 02:55:07.387726+00:00
+- model: epi.criteria
+  pk: 4
+  fields:
+    assessment: 2
+    description: '"heterogeneity of exposure and outcome" excluded 9 of the 14 studies
+      that met the inclusion criteria'
+    created: 2020-05-09 02:55:36.846577+00:00
+    last_updated: 2020-05-09 02:55:36.846601+00:00
+- model: epi.adjustmentfactor
+  pk: 1
+  fields:
+    assessment: 2
+    description: have an exposure timing during the periconceptional period or during
+      pregnancy
+    created: 2020-05-09 03:09:27.407889+00:00
+    last_updated: 2020-05-09 03:09:27.407910+00:00
+- model: epi.resultmetric
+  pk: 1
+  fields:
+    metric: adjusted odds ratio
+    abbreviation: adjOR
+    isLog: true
+    showForestPlot: true
+    reference_value: 1.0
+    order: 10
+- model: epimeta.metaprotocol
+  pk: 1
+  fields:
+    study: 8
+    name: Prenatal folic acid and risk of asthma in children
+    protocol_type: 0
+    lit_search_strategy: 0
+    lit_search_notes: ''
+    lit_search_start_date: null
+    lit_search_end_date: 2013-02-01
+    total_references: 1154
+    total_studies_identified: 14
+    notes: ''
+    inclusion_criteria:
+    - 1
+    - 2
+    - 3
+    exclusion_criteria:
+    - 4
+- model: epimeta.metaresult
+  pk: 1
+  fields:
+    protocol: 1
+    label: Periconceptional and first trimester folic acid supplement use and asthma
+      in childhood
+    data_location: Figure 2
+    health_outcome: asthma
+    health_outcome_notes: All studies included in the review that assessed asthma
+      or wheezing did so on the basis of parental response to a questionnaire or a
+      structured interview, with the outcome definition varying slightly in studies.
+    exposure_name: Periconceptional and first trimester folic acid supplement use
+    exposure_details: In all studies, dietary folate intake was self-reported via
+      food-frequency questionnaires and supplement use was assessed via questionnaires.
+    number_studies: 3
+    metric: 1
+    statistical_notes: We performed meta-analyses on articles with similar exposures
+      and outcomes with Comprehensive Meta-Analysis Software (version 2; Biostat).
+    n: 4823
+    estimate: 1.01
+    heterogeneity: I2=0.00%, p=0.74
+    lower_ci: 0.73
+    upper_ci: 1.3
+    ci_units: 0.95
+    notes: ''
+    adjustment_factors:
+    - 1
 - model: summary.summarytext
   pk: 1
   fields:
@@ -2623,6 +2746,105 @@
     published: true
     created: 2020-05-08 17:52:21.928839+00:00
     last_updated: 2020-05-08 19:46:02.216322+00:00
+- model: summary.datapivot
+  pk: 3
+  fields:
+    assessment: 2
+    title: data pivot - epimeta
+    slug: data-pivot-epimeta
+    settings: '{"plot_settings":{"plot_width":400,"minimum_row_height":12,"padding":{"top":55,"right":25,"bottom":40,"left":20},"title":"Title","axis_label":"Axis
+      label","logscale":false,"show_xticks":true,"show_yticks":true,"domain":"","filter_logic":"and","font_style":"Arial","merge_descriptions":false,"merge_aggressive":true,"text_background":true,"text_background_color":"#eeeeee","as_barchart":false,"merge_until":0},"legend":{"show":true,"left":324,"top":-57,"columns":1,"style":{"border_color":"#666666","border_width":"2px"},"fields":[{"symbol_index":0,"label":"estimate","symbol_style":"base","line_style":"---","rect_style":"---"},{"line_index":0,"label":"lower
+      CI","line_style":"base","symbol_style":"---","rect_style":"---"}]},"dataline_settings":[{"low_field_name":"lower
+      CI","high_field_name":"upper CI","header_name":"lower CI","marker_style":"base","conditional_formatting":[]}],"datapoint_settings":[{"field_name":"estimate","header_name":"estimate","marker_style":"base","dpe":"---","conditional_formatting":[]},{"field_name":"---","header_name":"---","marker_style":"base","dpe":"---","conditional_formatting":[]},{"field_name":"---","header_name":"---","marker_style":"base","dpe":"---","conditional_formatting":[]}],"description_settings":[{"field_name":"study
+      name","header_name":"study name","header_style":"header","text_style":"base","dpe":"study","field_index":"study
+      name"},{"field_name":"protocol name","header_name":"protocol name","header_style":"header","text_style":"base","dpe":"meta_protocol","field_index":"protocol
+      name"},{"field_name":"health outcome","header_name":"health outcome","header_style":"header","text_style":"base","dpe":"meta_result","field_index":"health
+      outcome"},{"field_name":"total references","header_name":"total references","header_style":"header","text_style":"base","dpe":"meta_result","field_index":"total
+      references"},{"field_name":"N","header_name":"N","header_style":"header","text_style":"base","dpe":"meta_result","field_index":"N"}],"barchart":{"dpe":"---","field_name":"---","error_low_field_name":"---","error_high_field_name":"---","header_name":"","error_header_name":"","bar_style":"base","error_marker_style":"base","conditional_formatting":[],"error_show_tails":true},"spacers":[{"index":-1,"show_line":true,"line_style":"reference
+      line","extra_space":false}],"sorts":[{"field_name":"---","ascending":true},{"field_name":"---","ascending":true}],"filters":[{"field_name":"---","quantifier":"contains","value":""},{"field_name":"---","quantifier":"contains","value":""}],"reference_lines":[{"value":null,"line_style":"reference
+      line"}],"reference_rectangles":[{"x1":null,"x2":null,"rectangle_style":"base"}],"labels":[{"text":"","style":"title","x":10,"y":10,"_style":{"name":"title","fill":"#000","rotate":"0","font-size":"12px","font-weight":"bold","text-anchor":"middle","fill-opacity":1}}],"row_overrides":[],"styles":{"symbols":[{"name":"base","type":"circle","size":130,"fill":"#000","fill-opacity":1,"stroke":"#fff","stroke-width":1},{"name":"transparent","type":"circle","size":90,"stroke":"#000000","fill-opacity":0,"stroke-width":0,"fill":"#000000"},{"name":"circle
+      | black","type":"circle","size":90,"stroke":"#000000","fill-opacity":0.8,"stroke-width":2,"fill":"#000000"},{"name":"circle
+      | red","type":"circle","size":90,"stroke":"#6f0000","fill-opacity":0.8,"stroke-width":2,"fill":"#e32727"},{"name":"circle
+      | green","type":"circle","size":90,"stroke":"#006a1e","fill-opacity":0.8,"stroke-width":2,"fill":"#22ba53"},{"name":"circle
+      | blue","type":"circle","size":90,"stroke":"#006dbe","fill-opacity":0.8,"stroke-width":2,"fill":"#3aa4e5"},{"name":"circle
+      | orange","type":"circle","size":90,"stroke":"#dc8f00","fill-opacity":0.8,"stroke-width":2,"fill":"#ffb100"},{"name":"circle
+      | purple","type":"circle","size":90,"stroke":"#5e5e5e","fill-opacity":0.8,"stroke-width":2,"fill":"#b82cff"},{"name":"circle
+      | fuschia","type":"circle","size":90,"stroke":"#ab006c","fill-opacity":0.8,"stroke-width":2,"fill":"#d4266e"},{"name":"triangle
+      up | black","type":"triangle-up","size":90,"stroke":"#000000","fill-opacity":0.8,"stroke-width":2,"fill":"#000000"},{"name":"triangle
+      up | red","type":"triangle-up","size":90,"stroke":"#6f0000","fill-opacity":0.8,"stroke-width":2,"fill":"#e32727"},{"name":"triangle
+      up | green","type":"triangle-up","size":90,"stroke":"#006a1e","fill-opacity":0.8,"stroke-width":2,"fill":"#22ba53"},{"name":"triangle
+      up | blue","type":"triangle-up","size":90,"stroke":"#006dbe","fill-opacity":0.8,"stroke-width":2,"fill":"#3aa4e5"},{"name":"triangle
+      up | orange","type":"triangle-up","size":90,"stroke":"#dc8f00","fill-opacity":0.8,"stroke-width":2,"fill":"#ffb100"},{"name":"triangle
+      up | purple","type":"triangle-up","size":90,"stroke":"#5e5e5e","fill-opacity":0.8,"stroke-width":2,"fill":"#b82cff"},{"name":"triangle
+      up | fuschia","type":"triangle-up","size":90,"stroke":"#ab006c","fill-opacity":0.8,"stroke-width":2,"fill":"#d4266e"},{"name":"triangle
+      down | black","type":"triangle-down","size":90,"stroke":"#000000","fill-opacity":0.8,"stroke-width":2,"fill":"#000000"},{"name":"triangle
+      down | red","type":"triangle-down","size":90,"stroke":"#6f0000","fill-opacity":0.8,"stroke-width":2,"fill":"#e32727"},{"name":"triangle
+      down | green","type":"triangle-down","size":90,"stroke":"#006a1e","fill-opacity":0.8,"stroke-width":2,"fill":"#22ba53"},{"name":"triangle
+      down | blue","type":"triangle-down","size":90,"stroke":"#006dbe","fill-opacity":0.8,"stroke-width":2,"fill":"#3aa4e5"},{"name":"triangle
+      down | orange","type":"triangle-down","size":90,"stroke":"#dc8f00","fill-opacity":0.8,"stroke-width":2,"fill":"#ffb100"},{"name":"triangle
+      down | purple","type":"triangle-down","size":90,"stroke":"#5e5e5e","fill-opacity":0.8,"stroke-width":2,"fill":"#b82cff"},{"name":"triangle
+      down | fuschia","type":"triangle-down","size":90,"stroke":"#ab006c","fill-opacity":0.8,"stroke-width":2,"fill":"#d4266e"},{"name":"diamond
+      | black","type":"diamond","size":90,"stroke":"#000000","fill-opacity":0.8,"stroke-width":2,"fill":"#000000"},{"name":"diamond
+      | red","type":"diamond","size":90,"stroke":"#6f0000","fill-opacity":0.8,"stroke-width":2,"fill":"#e32727"},{"name":"diamond
+      | green","type":"diamond","size":90,"stroke":"#006a1e","fill-opacity":0.8,"stroke-width":2,"fill":"#22ba53"},{"name":"diamond
+      | blue","type":"diamond","size":90,"stroke":"#006dbe","fill-opacity":0.8,"stroke-width":2,"fill":"#3aa4e5"},{"name":"diamond
+      | orange","type":"diamond","size":90,"stroke":"#dc8f00","fill-opacity":0.8,"stroke-width":2,"fill":"#ffb100"},{"name":"diamond
+      | purple","type":"diamond","size":90,"stroke":"#5e5e5e","fill-opacity":0.8,"stroke-width":2,"fill":"#b82cff"},{"name":"diamond
+      | fuschia","type":"diamond","size":90,"stroke":"#ab006c","fill-opacity":0.8,"stroke-width":2,"fill":"#d4266e"},{"name":"square
+      | black","type":"square","size":90,"stroke":"#000000","fill-opacity":0.8,"stroke-width":2,"fill":"#000000"},{"name":"square
+      | red","type":"square","size":90,"stroke":"#6f0000","fill-opacity":0.8,"stroke-width":2,"fill":"#e32727"},{"name":"square
+      | green","type":"square","size":90,"stroke":"#006a1e","fill-opacity":0.8,"stroke-width":2,"fill":"#22ba53"},{"name":"square
+      | blue","type":"square","size":90,"stroke":"#006dbe","fill-opacity":0.8,"stroke-width":2,"fill":"#3aa4e5"},{"name":"square
+      | orange","type":"square","size":90,"stroke":"#dc8f00","fill-opacity":0.8,"stroke-width":2,"fill":"#ffb100"},{"name":"square
+      | purple","type":"square","size":90,"stroke":"#5e5e5e","fill-opacity":0.8,"stroke-width":2,"fill":"#b82cff"},{"name":"square
+      | fuschia","type":"square","size":90,"stroke":"#ab006c","fill-opacity":0.8,"stroke-width":2,"fill":"#d4266e"},{"name":"cross
+      | black","type":"cross","size":90,"stroke":"#000000","fill-opacity":0.8,"stroke-width":2,"fill":"#000000"},{"name":"cross
+      | red","type":"cross","size":90,"stroke":"#6f0000","fill-opacity":0.8,"stroke-width":2,"fill":"#e32727"},{"name":"cross
+      | green","type":"cross","size":90,"stroke":"#006a1e","fill-opacity":0.8,"stroke-width":2,"fill":"#22ba53"},{"name":"cross
+      | blue","type":"cross","size":90,"stroke":"#006dbe","fill-opacity":0.8,"stroke-width":2,"fill":"#3aa4e5"},{"name":"cross
+      | orange","type":"cross","size":90,"stroke":"#dc8f00","fill-opacity":0.8,"stroke-width":2,"fill":"#ffb100"},{"name":"cross
+      | purple","type":"cross","size":90,"stroke":"#5e5e5e","fill-opacity":0.8,"stroke-width":2,"fill":"#b82cff"},{"name":"cross
+      | fuschia","type":"cross","size":90,"stroke":"#ab006c","fill-opacity":0.8,"stroke-width":2,"fill":"#d4266e"}],"lines":[{"name":"base","stroke":"#708090","stroke-dasharray":"none","stroke-opacity":0.9,"stroke-width":3},{"name":"reference
+      line","stroke":"#000000","stroke-dasharray":"none","stroke-opacity":0.8,"stroke-width":3},{"name":"transparent","stroke":"#000000","stroke-dasharray":"none","stroke-opacity":0,"stroke-width":0},{"name":"solid
+      | black","stroke":"#000000","stroke-dasharray":"none","stroke-opacity":0.9,"stroke-width":3},{"name":"solid
+      | red","stroke":"#e32727","stroke-dasharray":"none","stroke-opacity":0.9,"stroke-width":3},{"name":"solid
+      | green","stroke":"#006a1e","stroke-dasharray":"none","stroke-opacity":0.9,"stroke-width":3},{"name":"solid
+      | blue","stroke":"#006dbe","stroke-dasharray":"none","stroke-opacity":0.9,"stroke-width":3},{"name":"solid
+      | orange","stroke":"#dc8f00","stroke-dasharray":"none","stroke-opacity":0.9,"stroke-width":3},{"name":"solid
+      | purple","stroke":"#b82cff","stroke-dasharray":"none","stroke-opacity":0.9,"stroke-width":3},{"name":"solid
+      | fuschia","stroke":"#ab006c","stroke-dasharray":"none","stroke-opacity":0.9,"stroke-width":3},{"name":"dashed
+      | black","stroke":"#000000","stroke-dasharray":"10, 10","stroke-opacity":0.9,"stroke-width":3},{"name":"dashed
+      | red","stroke":"#e32727","stroke-dasharray":"10, 10","stroke-opacity":0.9,"stroke-width":3},{"name":"dashed
+      | green","stroke":"#006a1e","stroke-dasharray":"10, 10","stroke-opacity":0.9,"stroke-width":3},{"name":"dashed
+      | blue","stroke":"#006dbe","stroke-dasharray":"10, 10","stroke-opacity":0.9,"stroke-width":3},{"name":"dashed
+      | orange","stroke":"#dc8f00","stroke-dasharray":"10, 10","stroke-opacity":0.9,"stroke-width":3},{"name":"dashed
+      | purple","stroke":"#b82cff","stroke-dasharray":"10, 10","stroke-opacity":0.9,"stroke-width":3},{"name":"dashed
+      | fuschia","stroke":"#ab006c","stroke-dasharray":"10, 10","stroke-opacity":0.9,"stroke-width":3},{"name":"dotted
+      | black","stroke":"#000000","stroke-dasharray":"4, 3","stroke-opacity":0.9,"stroke-width":3},{"name":"dotted
+      | red","stroke":"#e32727","stroke-dasharray":"4, 3","stroke-opacity":0.9,"stroke-width":3},{"name":"dotted
+      | green","stroke":"#006a1e","stroke-dasharray":"4, 3","stroke-opacity":0.9,"stroke-width":3},{"name":"dotted
+      | blue","stroke":"#006dbe","stroke-dasharray":"4, 3","stroke-opacity":0.9,"stroke-width":3},{"name":"dotted
+      | orange","stroke":"#dc8f00","stroke-dasharray":"4, 3","stroke-opacity":0.9,"stroke-width":3},{"name":"dotted
+      | purple","stroke":"#b82cff","stroke-dasharray":"4, 3","stroke-opacity":0.9,"stroke-width":3},{"name":"dotted
+      | fuschia","stroke":"#ab006c","stroke-dasharray":"4, 3","stroke-opacity":0.9,"stroke-width":3},{"name":"dash-dotted
+      | black","stroke":"#000000","stroke-dasharray":"15, 10, 5, 10","stroke-opacity":0.9,"stroke-width":3},{"name":"dash-dotted
+      | red","stroke":"#e32727","stroke-dasharray":"15, 10, 5, 10","stroke-opacity":0.9,"stroke-width":3},{"name":"dash-dotted
+      | green","stroke":"#006a1e","stroke-dasharray":"15, 10, 5, 10","stroke-opacity":0.9,"stroke-width":3},{"name":"dash-dotted
+      | blue","stroke":"#006dbe","stroke-dasharray":"15, 10, 5, 10","stroke-opacity":0.9,"stroke-width":3},{"name":"dash-dotted
+      | orange","stroke":"#dc8f00","stroke-dasharray":"15, 10, 5, 10","stroke-opacity":0.9,"stroke-width":3},{"name":"dash-dotted
+      | purple","stroke":"#b82cff","stroke-dasharray":"15, 10, 5, 10","stroke-opacity":0.9,"stroke-width":3},{"name":"dash-dotted
+      | fuschia","stroke":"#ab006c","stroke-dasharray":"15, 10, 5, 10","stroke-opacity":0.9,"stroke-width":3}],"texts":[{"name":"base","fill":"#000","rotate":"0","font-size":"12px","font-weight":"normal","text-anchor":"start","fill-opacity":1},{"name":"header","fill":"#000","rotate":"0","font-size":"12px","font-weight":"bold","text-anchor":"middle","fill-opacity":1},{"name":"title","fill":"#000","rotate":"0","font-size":"12px","font-weight":"bold","text-anchor":"middle","fill-opacity":1},{"name":"transparent","font-size":"12px","rotate":"0","font-weight":"normal","text-anchor":"start","fill":"#000000","fill-opacity":0},{"name":"normal
+      | black","font-size":"12px","rotate":"0","font-weight":"normal","text-anchor":"start","fill":"#000000","fill-opacity":1},{"name":"normal
+      | red","font-size":"12px","rotate":"0","font-weight":"normal","text-anchor":"start","fill":"#6f0000","fill-opacity":1},{"name":"normal
+      | green","font-size":"12px","rotate":"0","font-weight":"normal","text-anchor":"start","fill":"#006a1e","fill-opacity":1},{"name":"normal
+      | blue","font-size":"12px","rotate":"0","font-weight":"normal","text-anchor":"start","fill":"#006dbe","fill-opacity":1},{"name":"normal
+      | orange","font-size":"12px","rotate":"0","font-weight":"normal","text-anchor":"start","fill":"#dc8f00","fill-opacity":1},{"name":"normal
+      | purple","font-size":"12px","rotate":"0","font-weight":"normal","text-anchor":"start","fill":"#b82cff","fill-opacity":1},{"name":"normal
+      | fuschia","font-size":"12px","rotate":"0","font-weight":"normal","text-anchor":"start","fill":"#ab006c","fill-opacity":1}],"rectangles":[{"name":"base","fill":"#999999","stroke":"#000000","fill-opacity":0.8,"stroke-width":1},{"name":"black","fill":"#000000","fill-opacity":0.8,"stroke":"#FFFFFF","stroke-width":1},{"name":"red","fill":"#e32727","fill-opacity":0.8,"stroke":"#6f0000","stroke-width":1},{"name":"green","fill":"#22ba53","fill-opacity":0.8,"stroke":"#006a1e","stroke-width":1},{"name":"blue","fill":"#3aa4e5","fill-opacity":0.8,"stroke":"#006dbe","stroke-width":1},{"name":"orange","fill":"#ffb100","fill-opacity":0.8,"stroke":"#dc8f00","stroke-width":1},{"name":"purple","fill":"#b82cff","fill-opacity":0.8,"stroke":"#5e5e5e","stroke-width":1},{"name":"fuschia","fill":"#d4266e","fill-opacity":0.8,"stroke":"#ab006c","stroke-width":1}]}}'
+    caption: ''
+    published: true
+    created: 2020-05-09 03:22:01.190725+00:00
+    last_updated: 2020-05-09 03:23:45.812012+00:00
 - model: summary.datapivotquery
   pk: 2
   fields:
@@ -2639,5 +2861,14 @@
     evidence_type: 0
     export_style: 0
     preferred_units: '["1"]'
+    prefilters: '{}'
+    published_only: true
+- model: summary.datapivotquery
+  pk: 3
+  fields:
+    datapivot_ptr: 3
+    evidence_type: 4
+    export_style: 0
+    preferred_units: '[]'
     prefilters: '{}'
     published_only: true

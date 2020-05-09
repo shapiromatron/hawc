@@ -34,6 +34,8 @@ class Command(BaseCommand):
         call_command("dumpdata", "study", **shared_kwargs)
         call_command("dumpdata", "animal", **shared_kwargs)
         call_command("dumpdata", "riskofbias", **shared_kwargs)
+        call_command("dumpdata", "epi", **shared_kwargs)
+        call_command("dumpdata", "epimeta", **shared_kwargs)
         call_command("dumpdata", "summary", **shared_kwargs)
 
         Path(settings.TEST_DB_FIXTURE).parent.mkdir(exist_ok=True, parents=True)
