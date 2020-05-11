@@ -510,6 +510,11 @@
   fields:
     name: tag1
     slug: tag1
+- model: assessment.effecttag
+  pk: 2
+  fields:
+    name: tag2
+    slug: tag2
 - model: assessment.baseendpoint
   pk: 1
   fields:
@@ -535,6 +540,15 @@
     last_updated: 2020-05-08 17:47:49.464028+00:00
     effects:
     - 1
+- model: assessment.baseendpoint
+  pk: 4
+  fields:
+    assessment: 2
+    name: partial PTSD
+    created: 2020-05-11 02:21:56.870317+00:00
+    last_updated: 2020-05-11 02:21:56.870345+00:00
+    effects:
+    - 2
 - model: lit.literatureassessment
   pk: 1
   fields:
@@ -1159,6 +1173,34 @@
     searches:
     - 4
     identifiers: []
+- model: study.study
+  pk: 5
+  fields:
+    reference_ptr: 5
+    bioassay: false
+    epi: true
+    epi_meta: false
+    in_vitro: false
+    short_citation: Kawana N, Ishimatsu S, and Kanda K 2001
+    full_citation: Kawana N, Ishimatsu S, Kanda K. Psycho-physiological effects of
+      the terrorist sarin attack on the Tokyo subway system. Mil Med 2001; 166 (12
+      Suppl):23-6.
+    coi_reported: 3
+    coi_details: ''
+    funding_source: NR
+    study_identifier: ''
+    contact_author: false
+    ask_author: ''
+    published: true
+    summary: '<p><span style="background-color: rgb(249, 249, 249);">Only extract
+      data for neurological symptoms (e.g., do&nbsp;</span><strong style="background-color:
+      rgb(249, 249, 249);">not</strong><span style="background-color: rgb(249, 249,
+      249);">&nbsp;extract diarrhea, vulnerability to catch colds)</span></p>'
+    editable: true
+    searches:
+    - 5
+    identifiers:
+    - 4
 - model: study.study
   pk: 7
   fields:
@@ -2310,6 +2352,11 @@
       that met the inclusion criteria'
     created: 2020-05-09 02:55:36.846577+00:00
     last_updated: 2020-05-09 02:55:36.846601+00:00
+- model: epi.country
+  pk: 1
+  fields:
+    code: JP
+    name: Japan
 - model: epi.adjustmentfactor
   pk: 1
   fields:
@@ -2318,6 +2365,164 @@
       pregnancy
     created: 2020-05-09 03:09:27.407889+00:00
     last_updated: 2020-05-09 03:09:27.407910+00:00
+- model: epi.ethnicity
+  pk: 1
+  fields:
+    name: Asian
+    created: 2020-05-11 02:13:24.743082+00:00
+    last_updated: 2020-05-11 02:13:24.743106+00:00
+- model: epi.studypopulationcriteria
+  pk: 1
+  fields:
+    criteria: 4
+    study_population: 1
+    criteria_type: I
+- model: epi.studypopulationcriteria
+  pk: 2
+  fields:
+    criteria: 2
+    study_population: 1
+    criteria_type: E
+- model: epi.studypopulationcriteria
+  pk: 3
+  fields:
+    criteria: 1
+    study_population: 1
+    criteria_type: C
+- model: epi.studypopulation
+  pk: 1
+  fields:
+    study: 5
+    name: Tokyo subway victims
+    design: SE
+    age_profile: ''
+    source: ''
+    region: Tokyo
+    state: ''
+    eligible_n: null
+    invited_n: null
+    participant_n: 582
+    comments: Descriptions.
+    created: 2020-05-11 02:09:54.288594+00:00
+    last_updated: 2020-05-11 02:09:54.288617+00:00
+    countries:
+    - 1
+- model: epi.outcome
+  pk: 4
+  fields:
+    baseendpoint_ptr: 4
+    study_population: 1
+    system: nervous system and special sense organs
+    effect: 'neurological: behavior'
+    effect_subtype: ''
+    diagnostic: 6
+    diagnostic_description: NR
+    outcome_n: null
+    age_of_measurement: ''
+    summary: ''
+    effects:
+    - 2
+- model: epi.comparisonset
+  pk: 1
+  fields:
+    study_population: 1
+    outcome: null
+    name: Tokyo subway victims (different groups)
+    exposure: 1
+    description: sarin released at five points in the Tokyo subway systems
+    created: 2020-05-11 02:14:03.887387+00:00
+    last_updated: 2020-05-11 02:14:17.353405+00:00
+- model: epi.group
+  pk: 1
+  fields:
+    comparison_set: 1
+    group_id: 0
+    name: Tokyo (St. Luke) respondents 1997
+    numeric: null
+    comparative_name: ''
+    sex: B
+    eligible_n: 582
+    invited_n: null
+    participant_n: 283
+    isControl: null
+    comments: ''
+    created: 2020-05-11 02:14:04.009669+00:00
+    last_updated: 2020-05-11 02:14:17.432631+00:00
+    ethnicities:
+    - 1
+- model: epi.group
+  pk: 2
+  fields:
+    comparison_set: 1
+    group_id: 1
+    name: Tokyo (St. Luke) respondents 1998
+    numeric: null
+    comparative_name: ''
+    sex: B
+    eligible_n: 582
+    invited_n: null
+    participant_n: 206
+    isControl: null
+    comments: ''
+    created: 2020-05-11 02:14:04.247759+00:00
+    last_updated: 2020-05-11 02:14:17.591544+00:00
+    ethnicities:
+    - 1
+- model: epi.group
+  pk: 3
+  fields:
+    comparison_set: 1
+    group_id: 2
+    name: Tokyo (St. Luke) respondents 2000
+    numeric: null
+    comparative_name: ''
+    sex: B
+    eligible_n: 582
+    invited_n: null
+    participant_n: 191
+    isControl: null
+    comments: ''
+    created: 2020-05-11 02:14:04.403130+00:00
+    last_updated: 2020-05-11 02:14:17.746856+00:00
+    ethnicities:
+    - 1
+- model: epi.exposure
+  pk: 1
+  fields:
+    study_population: 1
+    name: sarin poisoning
+    inhalation: true
+    dermal: false
+    oral: false
+    in_utero: false
+    iv: false
+    unknown_route: false
+    measured: Sarin
+    metric: air
+    metric_units: 1
+    metric_description: sarin released at five points in the Tokyo subway systems
+    analytical_method: NA
+    sampling_period: single exposure
+    age_of_exposure: ''
+    duration: ''
+    exposure_distribution: ''
+    n: null
+    description: ''
+    created: 2020-05-11 02:11:48.360112+00:00
+    last_updated: 2020-05-11 02:11:48.360136+00:00
+- model: epi.centraltendency
+  pk: 1
+  fields:
+    exposure: 1
+    estimate: 123.0
+    estimate_type: 1
+    variance: 10.0
+    variance_type: 1
+    lower_ci: null
+    upper_ci: null
+    lower_range: null
+    upper_range: null
+    description: (made-up)
 - model: epi.resultmetric
   pk: 1
   fields:
@@ -2327,6 +2532,95 @@
     showForestPlot: true
     reference_value: 1.0
     order: 10
+- model: epi.resultmetric
+  pk: 2
+  fields:
+    metric: other
+    abbreviation: oth
+    isLog: false
+    showForestPlot: false
+    reference_value: 1.0
+    order: 99
+- model: epi.result
+  pk: 1
+  fields:
+    name: partial PTSD
+    outcome: 4
+    comparison_set: 1
+    metric: 2
+    metric_description: count
+    metric_units: '#'
+    data_location: Table 2
+    population_description: ''
+    dose_response: 0
+    dose_response_details: ''
+    prevalence_incidence: ''
+    statistical_power: 0
+    statistical_power_details: ''
+    statistical_test_results: ''
+    trend_test: ''
+    estimate_type: 0
+    variance_type: 0
+    ci_units: 0.95
+    comments: ''
+    created: 2020-05-11 02:23:49.490734+00:00
+    last_updated: 2020-05-11 02:25:38.225671+00:00
+    resulttags:
+    - 2
+- model: epi.groupresult
+  pk: 1
+  fields:
+    result: 1
+    group: 1
+    n: 283
+    estimate: 20.0
+    variance: null
+    lower_ci: null
+    upper_ci: null
+    lower_range: null
+    upper_range: null
+    p_value_qualifier: ' '
+    p_value: null
+    is_main_finding: false
+    main_finding_support: 3
+    created: 2020-05-11 02:23:49.737387+00:00
+    last_updated: 2020-05-11 02:23:49.737414+00:00
+- model: epi.groupresult
+  pk: 2
+  fields:
+    result: 1
+    group: 2
+    n: 206
+    estimate: 15.0
+    variance: null
+    lower_ci: null
+    upper_ci: null
+    lower_range: null
+    upper_range: null
+    p_value_qualifier: ' '
+    p_value: null
+    is_main_finding: false
+    main_finding_support: 3
+    created: 2020-05-11 02:23:49.806018+00:00
+    last_updated: 2020-05-11 02:23:49.806044+00:00
+- model: epi.groupresult
+  pk: 3
+  fields:
+    result: 1
+    group: 3
+    n: 191
+    estimate: 16.0
+    variance: null
+    lower_ci: null
+    upper_ci: null
+    lower_range: null
+    upper_range: null
+    p_value_qualifier: ' '
+    p_value: null
+    is_main_finding: false
+    main_finding_support: 3
+    created: 2020-05-11 02:23:49.859670+00:00
+    last_updated: 2020-05-11 02:23:49.859696+00:00
 - model: epimeta.metaprotocol
   pk: 1
   fields:
@@ -2845,6 +3139,105 @@
     published: true
     created: 2020-05-09 03:22:01.190725+00:00
     last_updated: 2020-05-09 03:23:45.812012+00:00
+- model: summary.datapivot
+  pk: 4
+  fields:
+    assessment: 2
+    title: data pivot - epi
+    slug: data-pivot-epi
+    settings: '{"plot_settings":{"plot_width":400,"minimum_row_height":12,"padding":{"top":25,"right":25,"bottom":40,"left":20},"title":"Title","axis_label":"#","logscale":false,"show_xticks":true,"show_yticks":true,"domain":"1,30","filter_logic":"and","font_style":"Arial","merge_descriptions":true,"merge_aggressive":true,"text_background":true,"text_background_color":"#eeeeee","as_barchart":false,"merge_until":3},"legend":{"show":true,"left":322,"top":-32,"columns":1,"style":{"border_color":"#666666","border_width":"2px"},"fields":[{"symbol_index":0,"label":"estimate","symbol_style":"base","line_style":"---","rect_style":"---"}]},"dataline_settings":[{"low_field_name":"---","high_field_name":"---","header_name":"---","marker_style":"base","conditional_formatting":[]}],"datapoint_settings":[{"field_name":"estimate","header_name":"estimate","marker_style":"base","dpe":"---","conditional_formatting":[]}],"description_settings":[{"field_name":"study
+      name","header_name":"study name","header_style":"header","text_style":"base","dpe":"---","max_width":150,"field_index":"study
+      name"},{"field_name":"study population name","header_name":"study population
+      name","header_style":"header","text_style":"base","dpe":"---","max_width":100,"field_index":"study
+      population name"},{"field_name":"outcome name","header_name":"outcome name","header_style":"header","text_style":"base","dpe":"---","field_index":"outcome
+      name"},{"field_name":"comparison set name","header_name":"comparison set name","header_style":"header","text_style":"base","dpe":"---","max_width":100,"field_index":"comparison
+      set name"},{"field_name":"exposure group name","header_name":"exposure group
+      name","header_style":"header","text_style":"base","dpe":"---","max_width":100,"field_index":"exposure
+      group name"},{"field_name":"N","header_name":"N","header_style":"header","text_style":"base","dpe":"---","field_index":"N"}],"barchart":{"dpe":"---","field_name":"---","error_low_field_name":"---","error_high_field_name":"---","header_name":"","error_header_name":"","bar_style":"base","error_marker_style":"base","conditional_formatting":[],"error_show_tails":true},"spacers":[{"index":-1,"show_line":true,"line_style":"reference
+      line","extra_space":false}],"sorts":[{"field_name":"---","ascending":true},{"field_name":"---","ascending":true}],"filters":[{"field_name":"---","quantifier":"contains","value":""},{"field_name":"---","quantifier":"contains","value":""}],"reference_lines":[{"value":null,"line_style":"reference
+      line"}],"reference_rectangles":[{"x1":null,"x2":null,"rectangle_style":"base"}],"labels":[{"text":"","style":"title","x":10,"y":10,"_style":{"name":"title","fill":"#000","rotate":"0","font-size":"12px","font-weight":"bold","text-anchor":"middle","fill-opacity":1}}],"row_overrides":[],"styles":{"symbols":[{"name":"base","type":"circle","size":130,"fill":"#000","fill-opacity":1,"stroke":"#fff","stroke-width":1},{"name":"transparent","type":"circle","size":90,"stroke":"#000000","fill-opacity":0,"stroke-width":0,"fill":"#000000"},{"name":"circle
+      | black","type":"circle","size":90,"stroke":"#000000","fill-opacity":0.8,"stroke-width":2,"fill":"#000000"},{"name":"circle
+      | red","type":"circle","size":90,"stroke":"#6f0000","fill-opacity":0.8,"stroke-width":2,"fill":"#e32727"},{"name":"circle
+      | green","type":"circle","size":90,"stroke":"#006a1e","fill-opacity":0.8,"stroke-width":2,"fill":"#22ba53"},{"name":"circle
+      | blue","type":"circle","size":90,"stroke":"#006dbe","fill-opacity":0.8,"stroke-width":2,"fill":"#3aa4e5"},{"name":"circle
+      | orange","type":"circle","size":90,"stroke":"#dc8f00","fill-opacity":0.8,"stroke-width":2,"fill":"#ffb100"},{"name":"circle
+      | purple","type":"circle","size":90,"stroke":"#5e5e5e","fill-opacity":0.8,"stroke-width":2,"fill":"#b82cff"},{"name":"circle
+      | fuschia","type":"circle","size":90,"stroke":"#ab006c","fill-opacity":0.8,"stroke-width":2,"fill":"#d4266e"},{"name":"triangle
+      up | black","type":"triangle-up","size":90,"stroke":"#000000","fill-opacity":0.8,"stroke-width":2,"fill":"#000000"},{"name":"triangle
+      up | red","type":"triangle-up","size":90,"stroke":"#6f0000","fill-opacity":0.8,"stroke-width":2,"fill":"#e32727"},{"name":"triangle
+      up | green","type":"triangle-up","size":90,"stroke":"#006a1e","fill-opacity":0.8,"stroke-width":2,"fill":"#22ba53"},{"name":"triangle
+      up | blue","type":"triangle-up","size":90,"stroke":"#006dbe","fill-opacity":0.8,"stroke-width":2,"fill":"#3aa4e5"},{"name":"triangle
+      up | orange","type":"triangle-up","size":90,"stroke":"#dc8f00","fill-opacity":0.8,"stroke-width":2,"fill":"#ffb100"},{"name":"triangle
+      up | purple","type":"triangle-up","size":90,"stroke":"#5e5e5e","fill-opacity":0.8,"stroke-width":2,"fill":"#b82cff"},{"name":"triangle
+      up | fuschia","type":"triangle-up","size":90,"stroke":"#ab006c","fill-opacity":0.8,"stroke-width":2,"fill":"#d4266e"},{"name":"triangle
+      down | black","type":"triangle-down","size":90,"stroke":"#000000","fill-opacity":0.8,"stroke-width":2,"fill":"#000000"},{"name":"triangle
+      down | red","type":"triangle-down","size":90,"stroke":"#6f0000","fill-opacity":0.8,"stroke-width":2,"fill":"#e32727"},{"name":"triangle
+      down | green","type":"triangle-down","size":90,"stroke":"#006a1e","fill-opacity":0.8,"stroke-width":2,"fill":"#22ba53"},{"name":"triangle
+      down | blue","type":"triangle-down","size":90,"stroke":"#006dbe","fill-opacity":0.8,"stroke-width":2,"fill":"#3aa4e5"},{"name":"triangle
+      down | orange","type":"triangle-down","size":90,"stroke":"#dc8f00","fill-opacity":0.8,"stroke-width":2,"fill":"#ffb100"},{"name":"triangle
+      down | purple","type":"triangle-down","size":90,"stroke":"#5e5e5e","fill-opacity":0.8,"stroke-width":2,"fill":"#b82cff"},{"name":"triangle
+      down | fuschia","type":"triangle-down","size":90,"stroke":"#ab006c","fill-opacity":0.8,"stroke-width":2,"fill":"#d4266e"},{"name":"diamond
+      | black","type":"diamond","size":90,"stroke":"#000000","fill-opacity":0.8,"stroke-width":2,"fill":"#000000"},{"name":"diamond
+      | red","type":"diamond","size":90,"stroke":"#6f0000","fill-opacity":0.8,"stroke-width":2,"fill":"#e32727"},{"name":"diamond
+      | green","type":"diamond","size":90,"stroke":"#006a1e","fill-opacity":0.8,"stroke-width":2,"fill":"#22ba53"},{"name":"diamond
+      | blue","type":"diamond","size":90,"stroke":"#006dbe","fill-opacity":0.8,"stroke-width":2,"fill":"#3aa4e5"},{"name":"diamond
+      | orange","type":"diamond","size":90,"stroke":"#dc8f00","fill-opacity":0.8,"stroke-width":2,"fill":"#ffb100"},{"name":"diamond
+      | purple","type":"diamond","size":90,"stroke":"#5e5e5e","fill-opacity":0.8,"stroke-width":2,"fill":"#b82cff"},{"name":"diamond
+      | fuschia","type":"diamond","size":90,"stroke":"#ab006c","fill-opacity":0.8,"stroke-width":2,"fill":"#d4266e"},{"name":"square
+      | black","type":"square","size":90,"stroke":"#000000","fill-opacity":0.8,"stroke-width":2,"fill":"#000000"},{"name":"square
+      | red","type":"square","size":90,"stroke":"#6f0000","fill-opacity":0.8,"stroke-width":2,"fill":"#e32727"},{"name":"square
+      | green","type":"square","size":90,"stroke":"#006a1e","fill-opacity":0.8,"stroke-width":2,"fill":"#22ba53"},{"name":"square
+      | blue","type":"square","size":90,"stroke":"#006dbe","fill-opacity":0.8,"stroke-width":2,"fill":"#3aa4e5"},{"name":"square
+      | orange","type":"square","size":90,"stroke":"#dc8f00","fill-opacity":0.8,"stroke-width":2,"fill":"#ffb100"},{"name":"square
+      | purple","type":"square","size":90,"stroke":"#5e5e5e","fill-opacity":0.8,"stroke-width":2,"fill":"#b82cff"},{"name":"square
+      | fuschia","type":"square","size":90,"stroke":"#ab006c","fill-opacity":0.8,"stroke-width":2,"fill":"#d4266e"},{"name":"cross
+      | black","type":"cross","size":90,"stroke":"#000000","fill-opacity":0.8,"stroke-width":2,"fill":"#000000"},{"name":"cross
+      | red","type":"cross","size":90,"stroke":"#6f0000","fill-opacity":0.8,"stroke-width":2,"fill":"#e32727"},{"name":"cross
+      | green","type":"cross","size":90,"stroke":"#006a1e","fill-opacity":0.8,"stroke-width":2,"fill":"#22ba53"},{"name":"cross
+      | blue","type":"cross","size":90,"stroke":"#006dbe","fill-opacity":0.8,"stroke-width":2,"fill":"#3aa4e5"},{"name":"cross
+      | orange","type":"cross","size":90,"stroke":"#dc8f00","fill-opacity":0.8,"stroke-width":2,"fill":"#ffb100"},{"name":"cross
+      | purple","type":"cross","size":90,"stroke":"#5e5e5e","fill-opacity":0.8,"stroke-width":2,"fill":"#b82cff"},{"name":"cross
+      | fuschia","type":"cross","size":90,"stroke":"#ab006c","fill-opacity":0.8,"stroke-width":2,"fill":"#d4266e"}],"lines":[{"name":"base","stroke":"#708090","stroke-dasharray":"none","stroke-opacity":0.9,"stroke-width":3},{"name":"reference
+      line","stroke":"#000000","stroke-dasharray":"none","stroke-opacity":0.8,"stroke-width":3},{"name":"transparent","stroke":"#000000","stroke-dasharray":"none","stroke-opacity":0,"stroke-width":0},{"name":"solid
+      | black","stroke":"#000000","stroke-dasharray":"none","stroke-opacity":0.9,"stroke-width":3},{"name":"solid
+      | red","stroke":"#e32727","stroke-dasharray":"none","stroke-opacity":0.9,"stroke-width":3},{"name":"solid
+      | green","stroke":"#006a1e","stroke-dasharray":"none","stroke-opacity":0.9,"stroke-width":3},{"name":"solid
+      | blue","stroke":"#006dbe","stroke-dasharray":"none","stroke-opacity":0.9,"stroke-width":3},{"name":"solid
+      | orange","stroke":"#dc8f00","stroke-dasharray":"none","stroke-opacity":0.9,"stroke-width":3},{"name":"solid
+      | purple","stroke":"#b82cff","stroke-dasharray":"none","stroke-opacity":0.9,"stroke-width":3},{"name":"solid
+      | fuschia","stroke":"#ab006c","stroke-dasharray":"none","stroke-opacity":0.9,"stroke-width":3},{"name":"dashed
+      | black","stroke":"#000000","stroke-dasharray":"10, 10","stroke-opacity":0.9,"stroke-width":3},{"name":"dashed
+      | red","stroke":"#e32727","stroke-dasharray":"10, 10","stroke-opacity":0.9,"stroke-width":3},{"name":"dashed
+      | green","stroke":"#006a1e","stroke-dasharray":"10, 10","stroke-opacity":0.9,"stroke-width":3},{"name":"dashed
+      | blue","stroke":"#006dbe","stroke-dasharray":"10, 10","stroke-opacity":0.9,"stroke-width":3},{"name":"dashed
+      | orange","stroke":"#dc8f00","stroke-dasharray":"10, 10","stroke-opacity":0.9,"stroke-width":3},{"name":"dashed
+      | purple","stroke":"#b82cff","stroke-dasharray":"10, 10","stroke-opacity":0.9,"stroke-width":3},{"name":"dashed
+      | fuschia","stroke":"#ab006c","stroke-dasharray":"10, 10","stroke-opacity":0.9,"stroke-width":3},{"name":"dotted
+      | black","stroke":"#000000","stroke-dasharray":"4, 3","stroke-opacity":0.9,"stroke-width":3},{"name":"dotted
+      | red","stroke":"#e32727","stroke-dasharray":"4, 3","stroke-opacity":0.9,"stroke-width":3},{"name":"dotted
+      | green","stroke":"#006a1e","stroke-dasharray":"4, 3","stroke-opacity":0.9,"stroke-width":3},{"name":"dotted
+      | blue","stroke":"#006dbe","stroke-dasharray":"4, 3","stroke-opacity":0.9,"stroke-width":3},{"name":"dotted
+      | orange","stroke":"#dc8f00","stroke-dasharray":"4, 3","stroke-opacity":0.9,"stroke-width":3},{"name":"dotted
+      | purple","stroke":"#b82cff","stroke-dasharray":"4, 3","stroke-opacity":0.9,"stroke-width":3},{"name":"dotted
+      | fuschia","stroke":"#ab006c","stroke-dasharray":"4, 3","stroke-opacity":0.9,"stroke-width":3},{"name":"dash-dotted
+      | black","stroke":"#000000","stroke-dasharray":"15, 10, 5, 10","stroke-opacity":0.9,"stroke-width":3},{"name":"dash-dotted
+      | red","stroke":"#e32727","stroke-dasharray":"15, 10, 5, 10","stroke-opacity":0.9,"stroke-width":3},{"name":"dash-dotted
+      | green","stroke":"#006a1e","stroke-dasharray":"15, 10, 5, 10","stroke-opacity":0.9,"stroke-width":3},{"name":"dash-dotted
+      | blue","stroke":"#006dbe","stroke-dasharray":"15, 10, 5, 10","stroke-opacity":0.9,"stroke-width":3},{"name":"dash-dotted
+      | orange","stroke":"#dc8f00","stroke-dasharray":"15, 10, 5, 10","stroke-opacity":0.9,"stroke-width":3},{"name":"dash-dotted
+      | purple","stroke":"#b82cff","stroke-dasharray":"15, 10, 5, 10","stroke-opacity":0.9,"stroke-width":3},{"name":"dash-dotted
+      | fuschia","stroke":"#ab006c","stroke-dasharray":"15, 10, 5, 10","stroke-opacity":0.9,"stroke-width":3}],"texts":[{"name":"base","fill":"#000","rotate":"0","font-size":"12px","font-weight":"normal","text-anchor":"start","fill-opacity":1},{"name":"header","fill":"#000","rotate":"0","font-size":"12px","font-weight":"bold","text-anchor":"middle","fill-opacity":1},{"name":"title","fill":"#000","rotate":"0","font-size":"12px","font-weight":"bold","text-anchor":"middle","fill-opacity":1},{"name":"transparent","font-size":"12px","rotate":"0","font-weight":"normal","text-anchor":"start","fill":"#000000","fill-opacity":0},{"name":"normal
+      | black","font-size":"12px","rotate":"0","font-weight":"normal","text-anchor":"start","fill":"#000000","fill-opacity":1},{"name":"normal
+      | red","font-size":"12px","rotate":"0","font-weight":"normal","text-anchor":"start","fill":"#6f0000","fill-opacity":1},{"name":"normal
+      | green","font-size":"12px","rotate":"0","font-weight":"normal","text-anchor":"start","fill":"#006a1e","fill-opacity":1},{"name":"normal
+      | blue","font-size":"12px","rotate":"0","font-weight":"normal","text-anchor":"start","fill":"#006dbe","fill-opacity":1},{"name":"normal
+      | orange","font-size":"12px","rotate":"0","font-weight":"normal","text-anchor":"start","fill":"#dc8f00","fill-opacity":1},{"name":"normal
+      | purple","font-size":"12px","rotate":"0","font-weight":"normal","text-anchor":"start","fill":"#b82cff","fill-opacity":1},{"name":"normal
+      | fuschia","font-size":"12px","rotate":"0","font-weight":"normal","text-anchor":"start","fill":"#ab006c","fill-opacity":1}],"rectangles":[{"name":"base","fill":"#999999","stroke":"#000000","fill-opacity":0.8,"stroke-width":1},{"name":"black","fill":"#000000","fill-opacity":0.8,"stroke":"#FFFFFF","stroke-width":1},{"name":"red","fill":"#e32727","fill-opacity":0.8,"stroke":"#6f0000","stroke-width":1},{"name":"green","fill":"#22ba53","fill-opacity":0.8,"stroke":"#006a1e","stroke-width":1},{"name":"blue","fill":"#3aa4e5","fill-opacity":0.8,"stroke":"#006dbe","stroke-width":1},{"name":"orange","fill":"#ffb100","fill-opacity":0.8,"stroke":"#dc8f00","stroke-width":1},{"name":"purple","fill":"#b82cff","fill-opacity":0.8,"stroke":"#5e5e5e","stroke-width":1},{"name":"fuschia","fill":"#d4266e","fill-opacity":0.8,"stroke":"#ab006c","stroke-width":1}]}}'
+    caption: <p>Example.</p>
+    published: true
+    created: 2020-05-11 02:26:51.725098+00:00
+    last_updated: 2020-05-11 02:30:13.609245+00:00
 - model: summary.datapivotquery
   pk: 2
   fields:
@@ -2861,6 +3254,15 @@
     evidence_type: 0
     export_style: 0
     preferred_units: '["1"]'
+    prefilters: '{}'
+    published_only: true
+- model: summary.datapivotquery
+  pk: 4
+  fields:
+    datapivot_ptr: 4
+    evidence_type: 1
+    export_style: 0
+    preferred_units: '[]'
     prefilters: '{}'
     published_only: true
 - model: summary.datapivotquery
