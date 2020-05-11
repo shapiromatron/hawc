@@ -492,6 +492,12 @@
     name: mg/kg/d
     created: 2020-02-27 20:37:27.650973+00:00
     last_updated: 2020-02-27 20:37:27.651000+00:00
+- model: assessment.doseunits
+  pk: 2
+  fields:
+    name: "\xB5M"
+    created: 2020-05-11 04:00:03.013851+00:00
+    last_updated: 2020-05-11 04:00:03.013881+00:00
 - model: assessment.species
   pk: 1
   fields:
@@ -549,6 +555,15 @@
     last_updated: 2020-05-11 02:21:56.870345+00:00
     effects:
     - 2
+- model: assessment.baseendpoint
+  pk: 5
+  fields:
+    assessment: 2
+    name: anti-estrogenic activity
+    created: 2020-05-11 04:03:15.481081+00:00
+    last_updated: 2020-05-11 04:03:34.408793+00:00
+    effects:
+    - 1
 - model: lit.literatureassessment
   pk: 1
   fields:
@@ -1201,6 +1216,34 @@
     - 5
     identifiers:
     - 4
+- model: study.study
+  pk: 6
+  fields:
+    reference_ptr: 6
+    bioassay: false
+    epi: false
+    epi_meta: false
+    in_vitro: true
+    short_citation: Letcher RJ et al. 2005
+    full_citation: Letcher RJ, Sanderson JT, Bokkers A, Giesy JP, van den Berg M.
+      Effects of bisphenol A-related diphenylalkanes on vitellogenin production in
+      male carp (Cyprinus carpio) hepatocytes and aromatase (CYP19) activity in human
+      H295R adrenocortical carcinoma cells. Toxicol. Appl. Pharmacol. 2005; 209 (2):95-104.
+    coi_reported: 3
+    coi_details: ''
+    funding_source: Internal research grant from Utrecht University
+    study_identifier: ''
+    contact_author: false
+    ask_author: ''
+    published: true
+    summary: <p><strong>Data extracted:</strong></p><ul><li>Table 1, Figure 2, 3,
+      5,</li><li>TMBPA (called BTM), BPC (called BPRO), BPAF (called BHF), BPAP (called
+      BDP)</li></ul><p><br></p>
+    editable: true
+    searches:
+    - 5
+    identifiers:
+    - 2
 - model: study.study
   pk: 7
   fields:
@@ -2621,6 +2664,136 @@
     main_finding_support: 3
     created: 2020-05-11 02:23:49.859670+00:00
     last_updated: 2020-05-11 02:23:49.859696+00:00
+- model: invitro.ivchemical
+  pk: 1
+  fields:
+    study: 6
+    name: Bisphenol AF
+    cas: 1478-61-1
+    cas_inferred: true
+    cas_notes: CASRN inferred based on name (4,4'-hexafluoropropylidene diphenol or
+      BHF) and structure
+    source: Fluka (Switzerland)
+    purity: '>98%'
+    purity_confirmed: false
+    purity_confirmed_notes: NR
+    dilution_storage_notes: prepared as 1000-fold concentration DMSO stock solution
+- model: invitro.ivcelltype
+  pk: 1
+  fields:
+    study: 6
+    species: carp
+    strain: C. carpio
+    sex: m
+    cell_type: hepatocytes
+    culture_type: pc
+    tissue: liver
+    source: authors isolated
+- model: invitro.ivexperiment
+  pk: 1
+  fields:
+    study: 6
+    name: HEP inhibition
+    cell_type: 1
+    transfection: '-'
+    cell_notes: ''
+    dosing_notes: doses converted to uM by extractor, reported in Figure 3 as M and
+      in Table 1 as uM; hepatocytes co-administered with 100 nM (EC50) of E2 and test
+      compounds
+    metabolic_activation: nr
+    serum: 2% Ultroser steroid-free serum
+    has_naive_control: false
+    has_positive_control: true
+    positive_control: E2, tamoxifen
+    has_negative_control: false
+    negative_control: '-'
+    has_vehicle_control: true
+    vehicle_control: DMSO
+    control_notes: 0.2% DMSO
+    dose_units: 2
+- model: invitro.ivendpointcategory
+  pk: 1
+  fields:
+    path: '0001'
+    depth: 1
+    numchild: 0
+    name: assessment-2
+- model: invitro.ivendpoint
+  pk: 5
+  fields:
+    baseendpoint_ptr: 5
+    experiment: 1
+    chemical: 1
+    category: null
+    assay_type: protein production assay
+    short_description: VTG
+    effect: anti-estrogenic activity
+    data_location: Table 1, Figure 3
+    data_type: C
+    variance_type: 0
+    response_units: '% induction by E2'
+    values_estimated: false
+    observation_time: ''
+    observation_time_units: 0
+    NOEL: -999
+    LOEL: -999
+    monotonicity: 4
+    overall_pattern: 0
+    statistical_test_notes: ''
+    trend_test: 4
+    trend_test_notes: two-way ANOVA
+    endpoint_notes: ''
+    result_notes: Relative inhibition potency of BPAF compared to tamoxifen was 0.009,
+      while the maximum vitellogenin inhibition (at 100 uM) was 99% of E2-mediated
+      induction;* Tamoxifen>BPAF
+    additional_fields: '{}'
+    effects:
+    - 1
+- model: invitro.ivendpointgroup
+  pk: 1
+  fields:
+    endpoint: 5
+    dose_group_id: 0
+    dose: 1.0
+    n: 6
+    response: null
+    variance: null
+    difference_control: nc
+    significant_control: nr
+    cytotoxicity_observed: null
+    precipitation_observed: null
+- model: invitro.ivendpointgroup
+  pk: 2
+  fields:
+    endpoint: 5
+    dose_group_id: 1
+    dose: 10.0
+    n: 6
+    response: null
+    variance: null
+    difference_control: '-'
+    significant_control: nr
+    cytotoxicity_observed: null
+    precipitation_observed: null
+- model: invitro.ivendpointgroup
+  pk: 3
+  fields:
+    endpoint: 5
+    dose_group_id: 2
+    dose: 100.0
+    n: 6
+    response: null
+    variance: null
+    difference_control: '-'
+    significant_control: si
+    cytotoxicity_observed: null
+    precipitation_observed: null
+- model: invitro.ivbenchmark
+  pk: 1
+  fields:
+    endpoint: 5
+    benchmark: IC50
+    value: 68.4
 - model: epimeta.metaprotocol
   pk: 1
   fields:
@@ -3237,7 +3410,311 @@
     caption: <p>Example.</p>
     published: true
     created: 2020-05-11 02:26:51.725098+00:00
-    last_updated: 2020-05-11 02:30:13.609245+00:00
+    last_updated: 2020-05-11 02:46:43.863863+00:00
+- model: summary.datapivot
+  pk: 5
+  fields:
+    assessment: 2
+    title: data pivot - invitro - endpoint
+    slug: data-pivot-invitro-endpoint
+    settings: '{"plot_settings":{"plot_width":400,"minimum_row_height":12,"padding":{"top":25,"right":25,"bottom":40,"left":20},"title":"Title","axis_label":"Axis
+      label","logscale":true,"show_xticks":true,"show_yticks":true,"domain":".1,1000","filter_logic":"and","font_style":"Arial","merge_descriptions":true,"merge_aggressive":true,"text_background":true,"text_background_color":"#eeeeee","as_barchart":false,"merge_until":3},"legend":{"show":true,"left":310,"top":-33,"columns":1,"style":{"border_color":"#666666","border_width":"2px"},"fields":[{"line_index":0,"label":"dose
+      range","line_style":"base","symbol_style":"base","rect_style":"---"}]},"dataline_settings":[{"low_field_name":"minimum
+      dose","high_field_name":"maximum dose","header_name":"minimum dose","marker_style":"base","conditional_formatting":[]}],"datapoint_settings":[{"field_name":"Dose
+      1","header_name":"Dose 1","marker_style":"base","dpe":"---","conditional_formatting":[]},{"field_name":"Dose
+      2","header_name":"Dose 2","marker_style":"base","dpe":"---","conditional_formatting":[]},{"field_name":"Dose
+      3","header_name":"Dose 3","marker_style":"base","dpe":"---","conditional_formatting":[]}],"description_settings":[{"field_name":"study
+      name","header_name":"study name","header_style":"header","text_style":"base","dpe":"---","field_index":"study
+      name"},{"field_name":"chemical name","header_name":"chemical name","header_style":"header","text_style":"base","dpe":"---","field_index":"chemical
+      name"},{"field_name":"cell species","header_name":"cell species","header_style":"header","text_style":"base","dpe":"---","field_index":"cell
+      species"},{"field_name":"IVEndpoint name","header_name":"IVEndpoint name","header_style":"header","text_style":"base","dpe":"---","field_index":"IVEndpoint
+      name"},{"field_name":"---","header_name":"---","header_style":"header","text_style":"base","dpe":"---","field_index":"---"}],"barchart":{"dpe":"---","field_name":"---","error_low_field_name":"---","error_high_field_name":"---","header_name":"","error_header_name":"","bar_style":"base","error_marker_style":"base","conditional_formatting":[],"error_show_tails":true},"spacers":[{"index":-1,"show_line":true,"line_style":"reference
+      line","extra_space":false}],"sorts":[{"field_name":"---","ascending":true},{"field_name":"---","ascending":true}],"filters":[{"field_name":"---","quantifier":"contains","value":""},{"field_name":"---","quantifier":"contains","value":""}],"reference_lines":[{"value":null,"line_style":"reference
+      line"}],"reference_rectangles":[{"x1":null,"x2":null,"rectangle_style":"base"}],"labels":[{"text":"","style":"title","x":10,"y":10,"_style":{"name":"title","fill":"#000","rotate":"0","font-size":"12px","font-weight":"bold","text-anchor":"middle","fill-opacity":1}}],"row_overrides":[],"styles":{"symbols":[{"name":"base","type":"circle","size":130,"fill":"#000","fill-opacity":1,"stroke":"#fff","stroke-width":1},{"name":"transparent","type":"circle","size":90,"stroke":"#000000","fill-opacity":0,"stroke-width":0,"fill":"#000000"},{"name":"circle
+      | black","type":"circle","size":90,"stroke":"#000000","fill-opacity":0.8,"stroke-width":2,"fill":"#000000"},{"name":"circle
+      | red","type":"circle","size":90,"stroke":"#6f0000","fill-opacity":0.8,"stroke-width":2,"fill":"#e32727"},{"name":"circle
+      | green","type":"circle","size":90,"stroke":"#006a1e","fill-opacity":0.8,"stroke-width":2,"fill":"#22ba53"},{"name":"circle
+      | blue","type":"circle","size":90,"stroke":"#006dbe","fill-opacity":0.8,"stroke-width":2,"fill":"#3aa4e5"},{"name":"circle
+      | orange","type":"circle","size":90,"stroke":"#dc8f00","fill-opacity":0.8,"stroke-width":2,"fill":"#ffb100"},{"name":"circle
+      | purple","type":"circle","size":90,"stroke":"#5e5e5e","fill-opacity":0.8,"stroke-width":2,"fill":"#b82cff"},{"name":"circle
+      | fuschia","type":"circle","size":90,"stroke":"#ab006c","fill-opacity":0.8,"stroke-width":2,"fill":"#d4266e"},{"name":"triangle
+      up | black","type":"triangle-up","size":90,"stroke":"#000000","fill-opacity":0.8,"stroke-width":2,"fill":"#000000"},{"name":"triangle
+      up | red","type":"triangle-up","size":90,"stroke":"#6f0000","fill-opacity":0.8,"stroke-width":2,"fill":"#e32727"},{"name":"triangle
+      up | green","type":"triangle-up","size":90,"stroke":"#006a1e","fill-opacity":0.8,"stroke-width":2,"fill":"#22ba53"},{"name":"triangle
+      up | blue","type":"triangle-up","size":90,"stroke":"#006dbe","fill-opacity":0.8,"stroke-width":2,"fill":"#3aa4e5"},{"name":"triangle
+      up | orange","type":"triangle-up","size":90,"stroke":"#dc8f00","fill-opacity":0.8,"stroke-width":2,"fill":"#ffb100"},{"name":"triangle
+      up | purple","type":"triangle-up","size":90,"stroke":"#5e5e5e","fill-opacity":0.8,"stroke-width":2,"fill":"#b82cff"},{"name":"triangle
+      up | fuschia","type":"triangle-up","size":90,"stroke":"#ab006c","fill-opacity":0.8,"stroke-width":2,"fill":"#d4266e"},{"name":"triangle
+      down | black","type":"triangle-down","size":90,"stroke":"#000000","fill-opacity":0.8,"stroke-width":2,"fill":"#000000"},{"name":"triangle
+      down | red","type":"triangle-down","size":90,"stroke":"#6f0000","fill-opacity":0.8,"stroke-width":2,"fill":"#e32727"},{"name":"triangle
+      down | green","type":"triangle-down","size":90,"stroke":"#006a1e","fill-opacity":0.8,"stroke-width":2,"fill":"#22ba53"},{"name":"triangle
+      down | blue","type":"triangle-down","size":90,"stroke":"#006dbe","fill-opacity":0.8,"stroke-width":2,"fill":"#3aa4e5"},{"name":"triangle
+      down | orange","type":"triangle-down","size":90,"stroke":"#dc8f00","fill-opacity":0.8,"stroke-width":2,"fill":"#ffb100"},{"name":"triangle
+      down | purple","type":"triangle-down","size":90,"stroke":"#5e5e5e","fill-opacity":0.8,"stroke-width":2,"fill":"#b82cff"},{"name":"triangle
+      down | fuschia","type":"triangle-down","size":90,"stroke":"#ab006c","fill-opacity":0.8,"stroke-width":2,"fill":"#d4266e"},{"name":"diamond
+      | black","type":"diamond","size":90,"stroke":"#000000","fill-opacity":0.8,"stroke-width":2,"fill":"#000000"},{"name":"diamond
+      | red","type":"diamond","size":90,"stroke":"#6f0000","fill-opacity":0.8,"stroke-width":2,"fill":"#e32727"},{"name":"diamond
+      | green","type":"diamond","size":90,"stroke":"#006a1e","fill-opacity":0.8,"stroke-width":2,"fill":"#22ba53"},{"name":"diamond
+      | blue","type":"diamond","size":90,"stroke":"#006dbe","fill-opacity":0.8,"stroke-width":2,"fill":"#3aa4e5"},{"name":"diamond
+      | orange","type":"diamond","size":90,"stroke":"#dc8f00","fill-opacity":0.8,"stroke-width":2,"fill":"#ffb100"},{"name":"diamond
+      | purple","type":"diamond","size":90,"stroke":"#5e5e5e","fill-opacity":0.8,"stroke-width":2,"fill":"#b82cff"},{"name":"diamond
+      | fuschia","type":"diamond","size":90,"stroke":"#ab006c","fill-opacity":0.8,"stroke-width":2,"fill":"#d4266e"},{"name":"square
+      | black","type":"square","size":90,"stroke":"#000000","fill-opacity":0.8,"stroke-width":2,"fill":"#000000"},{"name":"square
+      | red","type":"square","size":90,"stroke":"#6f0000","fill-opacity":0.8,"stroke-width":2,"fill":"#e32727"},{"name":"square
+      | green","type":"square","size":90,"stroke":"#006a1e","fill-opacity":0.8,"stroke-width":2,"fill":"#22ba53"},{"name":"square
+      | blue","type":"square","size":90,"stroke":"#006dbe","fill-opacity":0.8,"stroke-width":2,"fill":"#3aa4e5"},{"name":"square
+      | orange","type":"square","size":90,"stroke":"#dc8f00","fill-opacity":0.8,"stroke-width":2,"fill":"#ffb100"},{"name":"square
+      | purple","type":"square","size":90,"stroke":"#5e5e5e","fill-opacity":0.8,"stroke-width":2,"fill":"#b82cff"},{"name":"square
+      | fuschia","type":"square","size":90,"stroke":"#ab006c","fill-opacity":0.8,"stroke-width":2,"fill":"#d4266e"},{"name":"cross
+      | black","type":"cross","size":90,"stroke":"#000000","fill-opacity":0.8,"stroke-width":2,"fill":"#000000"},{"name":"cross
+      | red","type":"cross","size":90,"stroke":"#6f0000","fill-opacity":0.8,"stroke-width":2,"fill":"#e32727"},{"name":"cross
+      | green","type":"cross","size":90,"stroke":"#006a1e","fill-opacity":0.8,"stroke-width":2,"fill":"#22ba53"},{"name":"cross
+      | blue","type":"cross","size":90,"stroke":"#006dbe","fill-opacity":0.8,"stroke-width":2,"fill":"#3aa4e5"},{"name":"cross
+      | orange","type":"cross","size":90,"stroke":"#dc8f00","fill-opacity":0.8,"stroke-width":2,"fill":"#ffb100"},{"name":"cross
+      | purple","type":"cross","size":90,"stroke":"#5e5e5e","fill-opacity":0.8,"stroke-width":2,"fill":"#b82cff"},{"name":"cross
+      | fuschia","type":"cross","size":90,"stroke":"#ab006c","fill-opacity":0.8,"stroke-width":2,"fill":"#d4266e"}],"lines":[{"name":"base","stroke":"#708090","stroke-dasharray":"none","stroke-opacity":0.9,"stroke-width":3},{"name":"reference
+      line","stroke":"#000000","stroke-dasharray":"none","stroke-opacity":0.8,"stroke-width":3},{"name":"transparent","stroke":"#000000","stroke-dasharray":"none","stroke-opacity":0,"stroke-width":0},{"name":"solid
+      | black","stroke":"#000000","stroke-dasharray":"none","stroke-opacity":0.9,"stroke-width":3},{"name":"solid
+      | red","stroke":"#e32727","stroke-dasharray":"none","stroke-opacity":0.9,"stroke-width":3},{"name":"solid
+      | green","stroke":"#006a1e","stroke-dasharray":"none","stroke-opacity":0.9,"stroke-width":3},{"name":"solid
+      | blue","stroke":"#006dbe","stroke-dasharray":"none","stroke-opacity":0.9,"stroke-width":3},{"name":"solid
+      | orange","stroke":"#dc8f00","stroke-dasharray":"none","stroke-opacity":0.9,"stroke-width":3},{"name":"solid
+      | purple","stroke":"#b82cff","stroke-dasharray":"none","stroke-opacity":0.9,"stroke-width":3},{"name":"solid
+      | fuschia","stroke":"#ab006c","stroke-dasharray":"none","stroke-opacity":0.9,"stroke-width":3},{"name":"dashed
+      | black","stroke":"#000000","stroke-dasharray":"10, 10","stroke-opacity":0.9,"stroke-width":3},{"name":"dashed
+      | red","stroke":"#e32727","stroke-dasharray":"10, 10","stroke-opacity":0.9,"stroke-width":3},{"name":"dashed
+      | green","stroke":"#006a1e","stroke-dasharray":"10, 10","stroke-opacity":0.9,"stroke-width":3},{"name":"dashed
+      | blue","stroke":"#006dbe","stroke-dasharray":"10, 10","stroke-opacity":0.9,"stroke-width":3},{"name":"dashed
+      | orange","stroke":"#dc8f00","stroke-dasharray":"10, 10","stroke-opacity":0.9,"stroke-width":3},{"name":"dashed
+      | purple","stroke":"#b82cff","stroke-dasharray":"10, 10","stroke-opacity":0.9,"stroke-width":3},{"name":"dashed
+      | fuschia","stroke":"#ab006c","stroke-dasharray":"10, 10","stroke-opacity":0.9,"stroke-width":3},{"name":"dotted
+      | black","stroke":"#000000","stroke-dasharray":"4, 3","stroke-opacity":0.9,"stroke-width":3},{"name":"dotted
+      | red","stroke":"#e32727","stroke-dasharray":"4, 3","stroke-opacity":0.9,"stroke-width":3},{"name":"dotted
+      | green","stroke":"#006a1e","stroke-dasharray":"4, 3","stroke-opacity":0.9,"stroke-width":3},{"name":"dotted
+      | blue","stroke":"#006dbe","stroke-dasharray":"4, 3","stroke-opacity":0.9,"stroke-width":3},{"name":"dotted
+      | orange","stroke":"#dc8f00","stroke-dasharray":"4, 3","stroke-opacity":0.9,"stroke-width":3},{"name":"dotted
+      | purple","stroke":"#b82cff","stroke-dasharray":"4, 3","stroke-opacity":0.9,"stroke-width":3},{"name":"dotted
+      | fuschia","stroke":"#ab006c","stroke-dasharray":"4, 3","stroke-opacity":0.9,"stroke-width":3},{"name":"dash-dotted
+      | black","stroke":"#000000","stroke-dasharray":"15, 10, 5, 10","stroke-opacity":0.9,"stroke-width":3},{"name":"dash-dotted
+      | red","stroke":"#e32727","stroke-dasharray":"15, 10, 5, 10","stroke-opacity":0.9,"stroke-width":3},{"name":"dash-dotted
+      | green","stroke":"#006a1e","stroke-dasharray":"15, 10, 5, 10","stroke-opacity":0.9,"stroke-width":3},{"name":"dash-dotted
+      | blue","stroke":"#006dbe","stroke-dasharray":"15, 10, 5, 10","stroke-opacity":0.9,"stroke-width":3},{"name":"dash-dotted
+      | orange","stroke":"#dc8f00","stroke-dasharray":"15, 10, 5, 10","stroke-opacity":0.9,"stroke-width":3},{"name":"dash-dotted
+      | purple","stroke":"#b82cff","stroke-dasharray":"15, 10, 5, 10","stroke-opacity":0.9,"stroke-width":3},{"name":"dash-dotted
+      | fuschia","stroke":"#ab006c","stroke-dasharray":"15, 10, 5, 10","stroke-opacity":0.9,"stroke-width":3}],"texts":[{"name":"base","fill":"#000","rotate":"0","font-size":"12px","font-weight":"normal","text-anchor":"start","fill-opacity":1},{"name":"header","fill":"#000","rotate":"0","font-size":"12px","font-weight":"bold","text-anchor":"middle","fill-opacity":1},{"name":"title","fill":"#000","rotate":"0","font-size":"12px","font-weight":"bold","text-anchor":"middle","fill-opacity":1},{"name":"transparent","font-size":"12px","rotate":"0","font-weight":"normal","text-anchor":"start","fill":"#000000","fill-opacity":0},{"name":"normal
+      | black","font-size":"12px","rotate":"0","font-weight":"normal","text-anchor":"start","fill":"#000000","fill-opacity":1},{"name":"normal
+      | red","font-size":"12px","rotate":"0","font-weight":"normal","text-anchor":"start","fill":"#6f0000","fill-opacity":1},{"name":"normal
+      | green","font-size":"12px","rotate":"0","font-weight":"normal","text-anchor":"start","fill":"#006a1e","fill-opacity":1},{"name":"normal
+      | blue","font-size":"12px","rotate":"0","font-weight":"normal","text-anchor":"start","fill":"#006dbe","fill-opacity":1},{"name":"normal
+      | orange","font-size":"12px","rotate":"0","font-weight":"normal","text-anchor":"start","fill":"#dc8f00","fill-opacity":1},{"name":"normal
+      | purple","font-size":"12px","rotate":"0","font-weight":"normal","text-anchor":"start","fill":"#b82cff","fill-opacity":1},{"name":"normal
+      | fuschia","font-size":"12px","rotate":"0","font-weight":"normal","text-anchor":"start","fill":"#ab006c","fill-opacity":1}],"rectangles":[{"name":"base","fill":"#999999","stroke":"#000000","fill-opacity":0.8,"stroke-width":1},{"name":"black","fill":"#000000","fill-opacity":0.8,"stroke":"#FFFFFF","stroke-width":1},{"name":"red","fill":"#e32727","fill-opacity":0.8,"stroke":"#6f0000","stroke-width":1},{"name":"green","fill":"#22ba53","fill-opacity":0.8,"stroke":"#006a1e","stroke-width":1},{"name":"blue","fill":"#3aa4e5","fill-opacity":0.8,"stroke":"#006dbe","stroke-width":1},{"name":"orange","fill":"#ffb100","fill-opacity":0.8,"stroke":"#dc8f00","stroke-width":1},{"name":"purple","fill":"#b82cff","fill-opacity":0.8,"stroke":"#5e5e5e","stroke-width":1},{"name":"fuschia","fill":"#d4266e","fill-opacity":0.8,"stroke":"#ab006c","stroke-width":1}]}}'
+    caption: <p>demo.</p>
+    published: true
+    created: 2020-05-11 04:10:29.880052+00:00
+    last_updated: 2020-05-11 04:15:33.309627+00:00
+- model: summary.datapivot
+  pk: 6
+  fields:
+    assessment: 2
+    title: data pivot - invitro - endpoint group
+    slug: data-pivot-invitro-endpoint-group
+    settings: '{"plot_settings": {"plot_width": 400, "minimum_row_height": 12, "padding":
+      {"top": 25, "right": 25, "bottom": 40, "left": 20}, "title": "Title", "axis_label":
+      "Axis label", "logscale": false, "show_xticks": true, "show_yticks": true, "domain":
+      "-1,120", "filter_logic": "and", "font_style": "Arial", "merge_descriptions":
+      true, "merge_aggressive": true, "text_background": true, "text_background_color":
+      "#eeeeee", "as_barchart": false, "merge_until": 3}, "legend": {"show": true,
+      "left": 344, "top": -29, "columns": 1, "style": {"border_color": "#666666",
+      "border_width": "2px"}, "fields": [{"symbol_index": 0, "label": "dose", "symbol_style":
+      "base", "line_style": "---", "rect_style": "---"}]}, "dataline_settings": [{"low_field_name":
+      "---", "high_field_name": "---", "header_name": "---", "marker_style": "base",
+      "conditional_formatting": []}], "datapoint_settings": [{"field_name": "dose",
+      "header_name": "dose", "marker_style": "base", "dpe": "---", "conditional_formatting":
+      []}, {"field_name": "---", "header_name": "---", "marker_style": "base", "dpe":
+      "---", "conditional_formatting": []}, {"field_name": "---", "header_name": "---",
+      "marker_style": "base", "dpe": "---", "conditional_formatting": []}], "description_settings":
+      [{"field_name": "study name", "header_name": "study name", "header_style": "header",
+      "text_style": "base", "dpe": "---", "field_index": "study name"}, {"field_name":
+      "chemical name", "header_name": "chemical name", "header_style": "header", "text_style":
+      "base", "dpe": "---", "field_index": "chemical name"}, {"field_name": "cell
+      species", "header_name": "cell species", "header_style": "header", "text_style":
+      "base", "dpe": "---", "field_index": "cell species"}, {"field_name": "IVEndpoint
+      name", "header_name": "IVEndpoint name", "header_style": "header", "text_style":
+      "base", "dpe": "---", "field_index": "IVEndpoint name"}, {"field_name": "---",
+      "header_name": "---", "header_style": "header", "text_style": "base", "dpe":
+      "---", "field_index": "---"}], "barchart": {"dpe": "---", "field_name": "---",
+      "error_low_field_name": "---", "error_high_field_name": "---", "header_name":
+      "", "error_header_name": "", "bar_style": "base", "error_marker_style": "base",
+      "conditional_formatting": [], "error_show_tails": true}, "spacers": [{"index":
+      -1, "show_line": true, "line_style": "reference line", "extra_space": false}],
+      "sorts": [{"field_name": "---", "ascending": true}, {"field_name": "---", "ascending":
+      true}], "filters": [{"field_name": "---", "quantifier": "contains", "value":
+      ""}, {"field_name": "---", "quantifier": "contains", "value": ""}], "reference_lines":
+      [{"value": null, "line_style": "reference line"}], "reference_rectangles": [{"x1":
+      null, "x2": null, "rectangle_style": "base"}], "labels": [{"text": "", "style":
+      "title", "x": 10, "y": 10, "_style": {"name": "title", "fill": "#000", "rotate":
+      "0", "font-size": "12px", "font-weight": "bold", "text-anchor": "middle", "fill-opacity":
+      1}}], "row_overrides": [], "styles": {"symbols": [{"name": "base", "type": "circle",
+      "size": 130, "fill": "#000", "fill-opacity": 1, "stroke": "#fff", "stroke-width":
+      1}, {"name": "transparent", "type": "circle", "size": 90, "stroke": "#000000",
+      "fill-opacity": 0, "stroke-width": 0, "fill": "#000000"}, {"name": "circle |
+      black", "type": "circle", "size": 90, "stroke": "#000000", "fill-opacity": 0.8,
+      "stroke-width": 2, "fill": "#000000"}, {"name": "circle | red", "type": "circle",
+      "size": 90, "stroke": "#6f0000", "fill-opacity": 0.8, "stroke-width": 2, "fill":
+      "#e32727"}, {"name": "circle | green", "type": "circle", "size": 90, "stroke":
+      "#006a1e", "fill-opacity": 0.8, "stroke-width": 2, "fill": "#22ba53"}, {"name":
+      "circle | blue", "type": "circle", "size": 90, "stroke": "#006dbe", "fill-opacity":
+      0.8, "stroke-width": 2, "fill": "#3aa4e5"}, {"name": "circle | orange", "type":
+      "circle", "size": 90, "stroke": "#dc8f00", "fill-opacity": 0.8, "stroke-width":
+      2, "fill": "#ffb100"}, {"name": "circle | purple", "type": "circle", "size":
+      90, "stroke": "#5e5e5e", "fill-opacity": 0.8, "stroke-width": 2, "fill": "#b82cff"},
+      {"name": "circle | fuschia", "type": "circle", "size": 90, "stroke": "#ab006c",
+      "fill-opacity": 0.8, "stroke-width": 2, "fill": "#d4266e"}, {"name": "triangle
+      up | black", "type": "triangle-up", "size": 90, "stroke": "#000000", "fill-opacity":
+      0.8, "stroke-width": 2, "fill": "#000000"}, {"name": "triangle up | red", "type":
+      "triangle-up", "size": 90, "stroke": "#6f0000", "fill-opacity": 0.8, "stroke-width":
+      2, "fill": "#e32727"}, {"name": "triangle up | green", "type": "triangle-up",
+      "size": 90, "stroke": "#006a1e", "fill-opacity": 0.8, "stroke-width": 2, "fill":
+      "#22ba53"}, {"name": "triangle up | blue", "type": "triangle-up", "size": 90,
+      "stroke": "#006dbe", "fill-opacity": 0.8, "stroke-width": 2, "fill": "#3aa4e5"},
+      {"name": "triangle up | orange", "type": "triangle-up", "size": 90, "stroke":
+      "#dc8f00", "fill-opacity": 0.8, "stroke-width": 2, "fill": "#ffb100"}, {"name":
+      "triangle up | purple", "type": "triangle-up", "size": 90, "stroke": "#5e5e5e",
+      "fill-opacity": 0.8, "stroke-width": 2, "fill": "#b82cff"}, {"name": "triangle
+      up | fuschia", "type": "triangle-up", "size": 90, "stroke": "#ab006c", "fill-opacity":
+      0.8, "stroke-width": 2, "fill": "#d4266e"}, {"name": "triangle down | black",
+      "type": "triangle-down", "size": 90, "stroke": "#000000", "fill-opacity": 0.8,
+      "stroke-width": 2, "fill": "#000000"}, {"name": "triangle down | red", "type":
+      "triangle-down", "size": 90, "stroke": "#6f0000", "fill-opacity": 0.8, "stroke-width":
+      2, "fill": "#e32727"}, {"name": "triangle down | green", "type": "triangle-down",
+      "size": 90, "stroke": "#006a1e", "fill-opacity": 0.8, "stroke-width": 2, "fill":
+      "#22ba53"}, {"name": "triangle down | blue", "type": "triangle-down", "size":
+      90, "stroke": "#006dbe", "fill-opacity": 0.8, "stroke-width": 2, "fill": "#3aa4e5"},
+      {"name": "triangle down | orange", "type": "triangle-down", "size": 90, "stroke":
+      "#dc8f00", "fill-opacity": 0.8, "stroke-width": 2, "fill": "#ffb100"}, {"name":
+      "triangle down | purple", "type": "triangle-down", "size": 90, "stroke": "#5e5e5e",
+      "fill-opacity": 0.8, "stroke-width": 2, "fill": "#b82cff"}, {"name": "triangle
+      down | fuschia", "type": "triangle-down", "size": 90, "stroke": "#ab006c", "fill-opacity":
+      0.8, "stroke-width": 2, "fill": "#d4266e"}, {"name": "diamond | black", "type":
+      "diamond", "size": 90, "stroke": "#000000", "fill-opacity": 0.8, "stroke-width":
+      2, "fill": "#000000"}, {"name": "diamond | red", "type": "diamond", "size":
+      90, "stroke": "#6f0000", "fill-opacity": 0.8, "stroke-width": 2, "fill": "#e32727"},
+      {"name": "diamond | green", "type": "diamond", "size": 90, "stroke": "#006a1e",
+      "fill-opacity": 0.8, "stroke-width": 2, "fill": "#22ba53"}, {"name": "diamond
+      | blue", "type": "diamond", "size": 90, "stroke": "#006dbe", "fill-opacity":
+      0.8, "stroke-width": 2, "fill": "#3aa4e5"}, {"name": "diamond | orange", "type":
+      "diamond", "size": 90, "stroke": "#dc8f00", "fill-opacity": 0.8, "stroke-width":
+      2, "fill": "#ffb100"}, {"name": "diamond | purple", "type": "diamond", "size":
+      90, "stroke": "#5e5e5e", "fill-opacity": 0.8, "stroke-width": 2, "fill": "#b82cff"},
+      {"name": "diamond | fuschia", "type": "diamond", "size": 90, "stroke": "#ab006c",
+      "fill-opacity": 0.8, "stroke-width": 2, "fill": "#d4266e"}, {"name": "square
+      | black", "type": "square", "size": 90, "stroke": "#000000", "fill-opacity":
+      0.8, "stroke-width": 2, "fill": "#000000"}, {"name": "square | red", "type":
+      "square", "size": 90, "stroke": "#6f0000", "fill-opacity": 0.8, "stroke-width":
+      2, "fill": "#e32727"}, {"name": "square | green", "type": "square", "size":
+      90, "stroke": "#006a1e", "fill-opacity": 0.8, "stroke-width": 2, "fill": "#22ba53"},
+      {"name": "square | blue", "type": "square", "size": 90, "stroke": "#006dbe",
+      "fill-opacity": 0.8, "stroke-width": 2, "fill": "#3aa4e5"}, {"name": "square
+      | orange", "type": "square", "size": 90, "stroke": "#dc8f00", "fill-opacity":
+      0.8, "stroke-width": 2, "fill": "#ffb100"}, {"name": "square | purple", "type":
+      "square", "size": 90, "stroke": "#5e5e5e", "fill-opacity": 0.8, "stroke-width":
+      2, "fill": "#b82cff"}, {"name": "square | fuschia", "type": "square", "size":
+      90, "stroke": "#ab006c", "fill-opacity": 0.8, "stroke-width": 2, "fill": "#d4266e"},
+      {"name": "cross | black", "type": "cross", "size": 90, "stroke": "#000000",
+      "fill-opacity": 0.8, "stroke-width": 2, "fill": "#000000"}, {"name": "cross
+      | red", "type": "cross", "size": 90, "stroke": "#6f0000", "fill-opacity": 0.8,
+      "stroke-width": 2, "fill": "#e32727"}, {"name": "cross | green", "type": "cross",
+      "size": 90, "stroke": "#006a1e", "fill-opacity": 0.8, "stroke-width": 2, "fill":
+      "#22ba53"}, {"name": "cross | blue", "type": "cross", "size": 90, "stroke":
+      "#006dbe", "fill-opacity": 0.8, "stroke-width": 2, "fill": "#3aa4e5"}, {"name":
+      "cross | orange", "type": "cross", "size": 90, "stroke": "#dc8f00", "fill-opacity":
+      0.8, "stroke-width": 2, "fill": "#ffb100"}, {"name": "cross | purple", "type":
+      "cross", "size": 90, "stroke": "#5e5e5e", "fill-opacity": 0.8, "stroke-width":
+      2, "fill": "#b82cff"}, {"name": "cross | fuschia", "type": "cross", "size":
+      90, "stroke": "#ab006c", "fill-opacity": 0.8, "stroke-width": 2, "fill": "#d4266e"}],
+      "lines": [{"name": "base", "stroke": "#708090", "stroke-dasharray": "none",
+      "stroke-opacity": 0.9, "stroke-width": 3}, {"name": "reference line", "stroke":
+      "#000000", "stroke-dasharray": "none", "stroke-opacity": 0.8, "stroke-width":
+      3}, {"name": "transparent", "stroke": "#000000", "stroke-dasharray": "none",
+      "stroke-opacity": 0, "stroke-width": 0}, {"name": "solid | black", "stroke":
+      "#000000", "stroke-dasharray": "none", "stroke-opacity": 0.9, "stroke-width":
+      3}, {"name": "solid | red", "stroke": "#e32727", "stroke-dasharray": "none",
+      "stroke-opacity": 0.9, "stroke-width": 3}, {"name": "solid | green", "stroke":
+      "#006a1e", "stroke-dasharray": "none", "stroke-opacity": 0.9, "stroke-width":
+      3}, {"name": "solid | blue", "stroke": "#006dbe", "stroke-dasharray": "none",
+      "stroke-opacity": 0.9, "stroke-width": 3}, {"name": "solid | orange", "stroke":
+      "#dc8f00", "stroke-dasharray": "none", "stroke-opacity": 0.9, "stroke-width":
+      3}, {"name": "solid | purple", "stroke": "#b82cff", "stroke-dasharray": "none",
+      "stroke-opacity": 0.9, "stroke-width": 3}, {"name": "solid | fuschia", "stroke":
+      "#ab006c", "stroke-dasharray": "none", "stroke-opacity": 0.9, "stroke-width":
+      3}, {"name": "dashed | black", "stroke": "#000000", "stroke-dasharray": "10,
+      10", "stroke-opacity": 0.9, "stroke-width": 3}, {"name": "dashed | red", "stroke":
+      "#e32727", "stroke-dasharray": "10, 10", "stroke-opacity": 0.9, "stroke-width":
+      3}, {"name": "dashed | green", "stroke": "#006a1e", "stroke-dasharray": "10,
+      10", "stroke-opacity": 0.9, "stroke-width": 3}, {"name": "dashed | blue", "stroke":
+      "#006dbe", "stroke-dasharray": "10, 10", "stroke-opacity": 0.9, "stroke-width":
+      3}, {"name": "dashed | orange", "stroke": "#dc8f00", "stroke-dasharray": "10,
+      10", "stroke-opacity": 0.9, "stroke-width": 3}, {"name": "dashed | purple",
+      "stroke": "#b82cff", "stroke-dasharray": "10, 10", "stroke-opacity": 0.9, "stroke-width":
+      3}, {"name": "dashed | fuschia", "stroke": "#ab006c", "stroke-dasharray": "10,
+      10", "stroke-opacity": 0.9, "stroke-width": 3}, {"name": "dotted | black", "stroke":
+      "#000000", "stroke-dasharray": "4, 3", "stroke-opacity": 0.9, "stroke-width":
+      3}, {"name": "dotted | red", "stroke": "#e32727", "stroke-dasharray": "4, 3",
+      "stroke-opacity": 0.9, "stroke-width": 3}, {"name": "dotted | green", "stroke":
+      "#006a1e", "stroke-dasharray": "4, 3", "stroke-opacity": 0.9, "stroke-width":
+      3}, {"name": "dotted | blue", "stroke": "#006dbe", "stroke-dasharray": "4, 3",
+      "stroke-opacity": 0.9, "stroke-width": 3}, {"name": "dotted | orange", "stroke":
+      "#dc8f00", "stroke-dasharray": "4, 3", "stroke-opacity": 0.9, "stroke-width":
+      3}, {"name": "dotted | purple", "stroke": "#b82cff", "stroke-dasharray": "4,
+      3", "stroke-opacity": 0.9, "stroke-width": 3}, {"name": "dotted | fuschia",
+      "stroke": "#ab006c", "stroke-dasharray": "4, 3", "stroke-opacity": 0.9, "stroke-width":
+      3}, {"name": "dash-dotted | black", "stroke": "#000000", "stroke-dasharray":
+      "15, 10, 5, 10", "stroke-opacity": 0.9, "stroke-width": 3}, {"name": "dash-dotted
+      | red", "stroke": "#e32727", "stroke-dasharray": "15, 10, 5, 10", "stroke-opacity":
+      0.9, "stroke-width": 3}, {"name": "dash-dotted | green", "stroke": "#006a1e",
+      "stroke-dasharray": "15, 10, 5, 10", "stroke-opacity": 0.9, "stroke-width":
+      3}, {"name": "dash-dotted | blue", "stroke": "#006dbe", "stroke-dasharray":
+      "15, 10, 5, 10", "stroke-opacity": 0.9, "stroke-width": 3}, {"name": "dash-dotted
+      | orange", "stroke": "#dc8f00", "stroke-dasharray": "15, 10, 5, 10", "stroke-opacity":
+      0.9, "stroke-width": 3}, {"name": "dash-dotted | purple", "stroke": "#b82cff",
+      "stroke-dasharray": "15, 10, 5, 10", "stroke-opacity": 0.9, "stroke-width":
+      3}, {"name": "dash-dotted | fuschia", "stroke": "#ab006c", "stroke-dasharray":
+      "15, 10, 5, 10", "stroke-opacity": 0.9, "stroke-width": 3}], "texts": [{"name":
+      "base", "fill": "#000", "rotate": "0", "font-size": "12px", "font-weight": "normal",
+      "text-anchor": "start", "fill-opacity": 1}, {"name": "header", "fill": "#000",
+      "rotate": "0", "font-size": "12px", "font-weight": "bold", "text-anchor": "middle",
+      "fill-opacity": 1}, {"name": "title", "fill": "#000", "rotate": "0", "font-size":
+      "12px", "font-weight": "bold", "text-anchor": "middle", "fill-opacity": 1},
+      {"name": "transparent", "font-size": "12px", "rotate": "0", "font-weight": "normal",
+      "text-anchor": "start", "fill": "#000000", "fill-opacity": 0}, {"name": "normal
+      | black", "font-size": "12px", "rotate": "0", "font-weight": "normal", "text-anchor":
+      "start", "fill": "#000000", "fill-opacity": 1}, {"name": "normal | red", "font-size":
+      "12px", "rotate": "0", "font-weight": "normal", "text-anchor": "start", "fill":
+      "#6f0000", "fill-opacity": 1}, {"name": "normal | green", "font-size": "12px",
+      "rotate": "0", "font-weight": "normal", "text-anchor": "start", "fill": "#006a1e",
+      "fill-opacity": 1}, {"name": "normal | blue", "font-size": "12px", "rotate":
+      "0", "font-weight": "normal", "text-anchor": "start", "fill": "#006dbe", "fill-opacity":
+      1}, {"name": "normal | orange", "font-size": "12px", "rotate": "0", "font-weight":
+      "normal", "text-anchor": "start", "fill": "#dc8f00", "fill-opacity": 1}, {"name":
+      "normal | purple", "font-size": "12px", "rotate": "0", "font-weight": "normal",
+      "text-anchor": "start", "fill": "#b82cff", "fill-opacity": 1}, {"name": "normal
+      | fuschia", "font-size": "12px", "rotate": "0", "font-weight": "normal", "text-anchor":
+      "start", "fill": "#ab006c", "fill-opacity": 1}], "rectangles": [{"name": "base",
+      "fill": "#999999", "stroke": "#000000", "fill-opacity": 0.8, "stroke-width":
+      1}, {"name": "black", "fill": "#000000", "fill-opacity": 0.8, "stroke": "#FFFFFF",
+      "stroke-width": 1}, {"name": "red", "fill": "#e32727", "fill-opacity": 0.8,
+      "stroke": "#6f0000", "stroke-width": 1}, {"name": "green", "fill": "#22ba53",
+      "fill-opacity": 0.8, "stroke": "#006a1e", "stroke-width": 1}, {"name": "blue",
+      "fill": "#3aa4e5", "fill-opacity": 0.8, "stroke": "#006dbe", "stroke-width":
+      1}, {"name": "orange", "fill": "#ffb100", "fill-opacity": 0.8, "stroke": "#dc8f00",
+      "stroke-width": 1}, {"name": "purple", "fill": "#b82cff", "fill-opacity": 0.8,
+      "stroke": "#5e5e5e", "stroke-width": 1}, {"name": "fuschia", "fill": "#d4266e",
+      "fill-opacity": 0.8, "stroke": "#ab006c", "stroke-width": 1}]}}'
+    caption: <p>demo.</p>
+    published: true
+    created: 2020-05-11 04:12:54.866928+00:00
+    last_updated: 2020-05-11 04:12:54.866957+00:00
 - model: summary.datapivotquery
   pk: 2
   fields:
@@ -3270,6 +3747,24 @@
   fields:
     datapivot_ptr: 3
     evidence_type: 4
+    export_style: 0
+    preferred_units: '[]'
+    prefilters: '{}'
+    published_only: true
+- model: summary.datapivotquery
+  pk: 5
+  fields:
+    datapivot_ptr: 5
+    evidence_type: 2
+    export_style: 1
+    preferred_units: '[]'
+    prefilters: '{}'
+    published_only: true
+- model: summary.datapivotquery
+  pk: 6
+  fields:
+    datapivot_ptr: 6
+    evidence_type: 2
     export_style: 0
     preferred_units: '[]'
     prefilters: '{}'

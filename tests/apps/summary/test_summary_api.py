@@ -177,3 +177,11 @@ class TestDataPivot:
     def test_epimeta(self):
         self._test_dp("data-pivot-epimeta", "epimeta")
         self._test_dp_data("data-pivot-epimeta", "epimeta")
+
+    def test_invitro_endpoint(self):
+        self._test_dp("data-pivot-invitro-endpoint", "invitro-endpoint")
+        self._test_dp_data("data-pivot-invitro-endpoint", "invitro-endpoint")
+
+    def test_invitro_endpoint_group(self):
+        self._test_dp("data-pivot-invitro-endpoint-group", "invitro-endpoint-group")
+        self._test_dp_data("data-pivot-invitro-endpoint-group", "invitro-endpoint-group")
