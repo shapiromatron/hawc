@@ -26,6 +26,9 @@ class Keys:
         self.study_working_2 = 3
         self.study_final = 2
 
+        self.reference_linked = 1
+        self.reference_unlinked = 3
+
         self.visual_heatmap = 1
         self.visual_barchart = 2
 
