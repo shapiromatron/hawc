@@ -11,7 +11,7 @@ DATA_ROOT = Path(__file__).parent / "data"
 @pytest.mark.django_db
 class TestEpiAssessmentViewset:
     def test_full_export(self, db_keys):
-        fn = Path(DATA_ROOT / f"api-assessment-epimeta-export.json")
+        fn = Path(DATA_ROOT / f"api-assessment-epi-export.json")
         url = (
             reverse("epi:api:assessment-export", args=(db_keys.assessment_final,)) + "?format=json"
         )
