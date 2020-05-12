@@ -1,8 +1,10 @@
+from django.core.exceptions import ObjectDoesNotExist
 from django.http import QueryDict
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.serializers import ValidationError
 
 from ..assessment.api import AssessmentLevelPermissions, DisabledPagination, InAssessmentFilter
 from ..common.api import CleanupFieldsBaseViewSet
@@ -28,6 +30,8 @@ class Study(
         cls = serializers.VerboseStudySerializer
         if self.action == "list":
             cls = serializers.SimpleStudySerializer
+        elif self.action == "create":
+            cls = serializers.SimpleStudySerializer
         return cls
 
     def get_queryset(self):
@@ -52,13 +56,26 @@ class Study(
         return Response(study_types)
 
     def create(self, request):
-        reference_id = tryParseInt(self.request.query_params.get("reference_id"), -1)
-        reference = Reference.objects.get(id=reference_id)
-        self.check_object_permissions(request, reference)
+
         data = request.data.dict() if isinstance(request.data, QueryDict) else request.data
+        try:
+            reference_ptr = tryParseInt(data.pop("reference_ptr"), -1)
+        except KeyError as e:
+            raise ValidationError(f"Key '{e.args[0]}' not found in payload.")
+
+        try:
+            reference = Reference.objects.get(id=reference_ptr)
+        except ObjectDoesNotExist:
+            raise ValidationError(f"Reference ID does not exist.")
+
+        self.check_object_permissions(request, reference)
+
+        if models.Study.objects.filter(reference_ptr=reference_ptr).exists():
+            raise ValidationError(f"Reference ID {reference_ptr} already linked with a study.")
 
         data["assessment"] = reference.assessment.id
-        serializer = serializers.SimpleStudySerializer(data=data)
+        serializer_class = self.get_serializer_class()
+        serializer = serializer_class(data=data)
         serializer.is_valid(raise_exception=True)
 
         created_study = models.Study.save_new_from_reference(reference, data)

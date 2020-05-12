@@ -59,42 +59,55 @@ def test_study_detail_api(db_keys):
     }
 
 
-@pytest.mark.django_db()
+@pytest.mark.django_db
 def test_study_create_api(db_keys):
-    url = lambda reference: f"/study/api/study/?reference_id={reference}"
-    unlinked_reference_url = url(db_keys.reference_unlinked)
-    linked_reference_url = url(db_keys.reference_linked)
-    invalid_reference_url = url("abc")
+    url = "/study/api/study/"
+    data = {"reference_ptr": db_keys.reference_unlinked}
 
     # reviewers shouldn't be able to edit (create)
     client = APIClient()
     assert client.login(username="rev@rev.com", password="pw") is True
-    response = client.post(unlinked_reference_url)
+    response = client.post(url, data)
     assert response.status_code == 403
 
     # public shouldn't be able to edit
     client = APIClient()
-    response = client.post(unlinked_reference_url)
+    response = client.post(url, data)
     assert response.status_code == 403
 
     # payload needs to include the required short_citation and full_citation
     client = APIClient()
     assert client.login(username="team@team.com", password="pw") is True
-    response = client.post(unlinked_reference_url)
+    response = client.post(url, data)
     assert response.status_code == 400
+    assert {"short_citation", "full_citation"}.issubset((response.data.keys()))
 
     # this is a correct request
-    data = {"short_citation": "Short citation.", "full_citation": "Full citation."}
-    response = client.post(unlinked_reference_url, data)
+    data = {
+        "reference_ptr": db_keys.reference_unlinked,
+        "short_citation": "Short citation.",
+        "full_citation": "Full citation.",
+    }
+    response = client.post(url, data)
     assert response.status_code == 200
-    # assert set(data).issubset(set(response.data))
+    assert data["short_citation"] == response.data["short_citation"]
+    assert data["full_citation"] == response.data["full_citation"]
 
     # references can only be linked to one study
-    response = client.post(unlinked_reference_url, data)
-    assert response.status_code == 200
-    response = client.post(linked_reference_url, data)
-    assert response.status_code == 200
+    response = client.post(url, data)
+    assert response.status_code == 400
+    assert f"Reference ID {db_keys.reference_unlinked} already linked with a study." == str(
+        response.data[0]
+    )
+    data["reference_ptr"] = db_keys.reference_linked
+    response = client.post(url, data)
+    assert response.status_code == 400
+    assert f"Reference ID {db_keys.reference_linked} already linked with a study." == str(
+        response.data[0]
+    )
 
     # invalid references will not be successful
-    response = client.post(invalid_reference_url, data)
-    assert response.status_code == 408
+    data["reference_ptr"] = "asdf"
+    response = client.post(url, data)
+    assert response.status_code == 400
+    assert "Reference ID does not exist." == str(response.data[0])

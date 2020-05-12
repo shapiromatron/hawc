@@ -517,13 +517,13 @@ class StudyClient(BaseClient):
     """
 
     def create(
-        self, reference_id: int, short_citation: str, full_citation: str, data: Dict = {}
+        self, reference_ptr: int, short_citation: str, full_citation: str, data: Dict = {}
     ) -> Dict:
         """
         Creates a study using a given reference ID.
 
         Args:
-            reference_id (int): Reference ID to create study from.
+            reference_ptr (int): Reference ID to create study from.
             short_citation (str): Short study citation, can be used as identifier.
             full_citation (str): Complete study citation.
             data (Dict, optional): Dict containing any additional field/value pairings for the study.
@@ -548,11 +548,12 @@ class StudyClient(BaseClient):
         Returns:
             Dict: JSON of the created study
         """
+        data["reference_ptr"] = reference_ptr
         data["short_citation"] = short_citation
         data["full_citation"] = full_citation
 
-        url = f"{self.session.root_url}/study/api/study/?reference_id={reference_id}"
-        return self.session.post(url, data)
+        url = f"{self.session.root_url}/study/api/study/"
+        return self.session.post(url, data).json()
 
 
 class AssessmentClient(BaseClient):
