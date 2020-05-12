@@ -31,7 +31,7 @@ class Study(
         if self.action == "list":
             cls = serializers.SimpleStudySerializer
         elif self.action == "create":
-            cls = serializers.SimpleStudySerializer
+            cls = serializers.CreateStudySerializer
         return cls
 
     def get_queryset(self):
@@ -58,27 +58,21 @@ class Study(
     def create(self, request):
 
         data = request.data.dict() if isinstance(request.data, QueryDict) else request.data
-        try:
-            reference_ptr = tryParseInt(data.pop("reference_ptr"), -1)
-        except KeyError as e:
-            raise ValidationError(f"Key '{e.args[0]}' not found in payload.")
+        reference_id = tryParseInt(data.pop("reference_id", -1), -1)
 
         try:
-            reference = Reference.objects.get(id=reference_ptr)
+            reference = Reference.objects.get(id=reference_id)
         except ObjectDoesNotExist:
             raise ValidationError(f"Reference ID does not exist.")
+        data["assessment"] = reference.assessment.id
 
         self.check_object_permissions(request, reference)
 
-        if models.Study.objects.filter(reference_ptr=reference_ptr).exists():
-            raise ValidationError(f"Reference ID {reference_ptr} already linked with a study.")
-
-        data["assessment"] = reference.assessment.id
         serializer_class = self.get_serializer_class()
-        serializer = serializer_class(data=data)
+        serializer = serializer_class(data=data, context={"reference_id": reference_id})
         serializer.is_valid(raise_exception=True)
 
-        created_study = models.Study.save_new_from_reference(reference, data)
+        created_study = models.Study.save_new_from_reference(reference, serializer.validated_data)
 
         return Response(serializers.SimpleStudySerializer(created_study).data)
 

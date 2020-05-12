@@ -62,7 +62,7 @@ def test_study_detail_api(db_keys):
 @pytest.mark.django_db
 def test_study_create_api(db_keys):
     url = "/study/api/study/"
-    data = {"reference_ptr": db_keys.reference_unlinked}
+    data = {"reference_id": db_keys.reference_unlinked}
 
     # reviewers shouldn't be able to edit (create)
     client = APIClient()
@@ -84,7 +84,7 @@ def test_study_create_api(db_keys):
 
     # this is a correct request
     data = {
-        "reference_ptr": db_keys.reference_unlinked,
+        "reference_id": db_keys.reference_unlinked,
         "short_citation": "Short citation.",
         "full_citation": "Full citation.",
     }
@@ -97,17 +97,17 @@ def test_study_create_api(db_keys):
     response = client.post(url, data)
     assert response.status_code == 400
     assert f"Reference ID {db_keys.reference_unlinked} already linked with a study." == str(
-        response.data[0]
+        response.data["non_field_errors"][0]
     )
-    data["reference_ptr"] = db_keys.reference_linked
+    data["reference_id"] = db_keys.reference_linked
     response = client.post(url, data)
     assert response.status_code == 400
     assert f"Reference ID {db_keys.reference_linked} already linked with a study." == str(
-        response.data[0]
+        response.data["non_field_errors"][0]
     )
 
     # invalid references will not be successful
-    data["reference_ptr"] = "asdf"
+    data["reference_id"] = "asdf"
     response = client.post(url, data)
     assert response.status_code == 400
     assert "Reference ID does not exist." == str(response.data[0])
