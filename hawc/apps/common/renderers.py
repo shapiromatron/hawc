@@ -100,7 +100,9 @@ class PandasXlsxRenderer(PandasBaseRenderer):
             df[col] = df_datetime[col]
 
         f = BytesIO()
-        with pd.ExcelWriter(f, date_format="YYYY-MM-DD", datetime_format="YYYY-MM-DD HH:MM:SS") as writer:
+        with pd.ExcelWriter(
+            f, date_format="YYYY-MM-DD", datetime_format="YYYY-MM-DD HH:MM:SS"
+        ) as writer:
             df.to_excel(writer, index=False)
         return f.getvalue()
 
