@@ -5,13 +5,13 @@ import pytest
 from django.urls import reverse
 from rest_framework.test import APIClient
 
-DATA_ROOT = Path(__file__).parent / "data"
+DATA_ROOT = Path(__file__).parents[2] / "data/api"
 
 
 @pytest.mark.django_db
 class TestAssessmentViewset:
-    def test_full_export(self, db_keys):
-        fn = Path(DATA_ROOT / f"api-assessment-epimeta-export.json")
+    def test_full_export(self, rewrite_data_files: bool, db_keys):
+        fn = Path(DATA_ROOT / f"api-epimeta-assessment-export.json")
         url = (
             reverse("meta:api:assessment-export", args=(db_keys.assessment_final,)) + "?format=json"
         )
@@ -22,5 +22,7 @@ class TestAssessmentViewset:
 
         data = resp.json()
 
-        # Path(fn).write_text(json.dumps(data, indent=2))
+        if rewrite_data_files:
+            Path(fn).write_text(json.dumps(data, indent=2))
+
         assert data == json.loads(fn.read_text())

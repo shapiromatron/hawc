@@ -15,13 +15,13 @@ from hawc.apps.riskofbias.models import (
 )
 from hawc.apps.study.models import Study
 
-DATA_ROOT = Path(__file__).parent / "data"
+DATA_ROOT = Path(__file__).parents[2] / "data/api"
 
 
 @pytest.mark.django_db
 class TestRiskOfBiasAssessmentViewsetViewset:
-    def test_full_export(self, db_keys):
-        fn = Path(DATA_ROOT / f"api-assessment-rob-full-export.json")
+    def test_full_export(self, rewrite_data_files: bool, db_keys):
+        fn = Path(DATA_ROOT / f"api-rob-assessment-full-export.json")
         url = (
             reverse("riskofbias:api:assessment-full-export", args=(db_keys.assessment_final,))
             + "?format=json"
@@ -33,11 +33,12 @@ class TestRiskOfBiasAssessmentViewsetViewset:
 
         data = resp.json()
 
-        # Path(fn).write_text(json.dumps(data, indent=2))
+        if rewrite_data_files:
+            Path(fn).write_text(json.dumps(data, indent=2))
         assert data == json.loads(fn.read_text())
 
-    def test_export(self, db_keys):
-        fn = Path(DATA_ROOT / f"api-assessment-rob-export.json")
+    def test_export(self, rewrite_data_files: bool, db_keys):
+        fn = Path(DATA_ROOT / f"api-rob-assessment-export.json")
         url = (
             reverse("riskofbias:api:assessment-export", args=(db_keys.assessment_final,))
             + "?format=json"
@@ -49,7 +50,9 @@ class TestRiskOfBiasAssessmentViewsetViewset:
 
         data = resp.json()
 
-        # Path(fn).write_text(json.dumps(data, indent=2))
+        if rewrite_data_files:
+            Path(fn).write_text(json.dumps(data, indent=2))
+
         assert data == json.loads(fn.read_text())
 
 
