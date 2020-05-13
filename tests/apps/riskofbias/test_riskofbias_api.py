@@ -41,6 +41,21 @@ def test_riskofbias_detail(db_keys):
 
 
 @pytest.mark.django_db
+def test_riskofbias_export(db_keys):
+
+    client = APIClient()
+    assert client.login(username="team@team.com", password="pw") is True
+
+    url = f"/rob/api/assessment/{db_keys.study_working}/export/?format=xlsx"
+
+    response = client.get(url)
+    assert response.status_code == 200
+
+    response = client.post(url)
+    assert response.status_code == 405
+
+
+@pytest.mark.django_db
 def test_riskofbias_override_options(db_keys):
     # check read-version of study api; including deeply nested scores and overridden objects
     c = APIClient()
@@ -121,9 +136,7 @@ def test_riskofbias_post_overrides():
 
     # demonstrate successful path with override
     new_payload = deepcopy(payload)
-    new_payload["scores"][0]["overridden_objects"] = [
-        {"content_type_name": "animal.animalgroup", "object_id": 1}
-    ]
+    new_payload["scores"][0]["overridden_objects"] = [{"content_type_name": "animal.animalgroup", "object_id": 1}]
     resp = c.patch(url, new_payload, format="json")
     assert resp.status_code == 200
     assert len(resp.data["scores"][0]["overridden_objects"]) == 1
@@ -138,18 +151,14 @@ def test_riskofbias_post_overrides():
 
     # demonstrate invalid override #1
     new_payload = deepcopy(payload)
-    new_payload["scores"][0]["overridden_objects"] = [
-        {"content_type_name": "animal.animalgroup", "object_id": 2}
-    ]
+    new_payload["scores"][0]["overridden_objects"] = [{"content_type_name": "animal.animalgroup", "object_id": 2}]
     resp = c.patch(url, new_payload, format="json")
     assert resp.status_code == 400
     assert resp.data == {"non_field_errors": ["Invalid content object: animal.animalgroup: 2"]}
 
     # demonstrate invalid override #2
     new_payload = deepcopy(payload)
-    new_payload["scores"][0]["overridden_objects"] = [
-        {"content_type_name": "invalid.contenttype", "object_id": 1}
-    ]
+    new_payload["scores"][0]["overridden_objects"] = [{"content_type_name": "invalid.contenttype", "object_id": 1}]
     resp = c.patch(url, new_payload, format="json")
     assert resp.status_code == 400
     assert resp.data == {"non_field_errors": ["Invalid content type name: invalid.contenttype"]}
@@ -259,9 +268,7 @@ def test_riskofbias_create():
     # demonstrate overridden objects with a unsupported content type
     RiskOfBias.objects.all().delete()
     payload = build_upload_payload(study, pm_author, required_metrics, first_valid_score)
-    payload["scores"][0]["overridden_objects"] = [
-        {"content_type_name": "animal.dosingregime", "object_id": 999}
-    ]
+    payload["scores"][0]["overridden_objects"] = [{"content_type_name": "animal.dosingregime", "object_id": 999}]
     resp = client.post(url, payload, format="json")
     assert resp.status_code == 400
     assert b"Invalid content type name" in resp.content
@@ -269,9 +276,7 @@ def test_riskofbias_create():
     # demonstrate overridden objects with a valid content type but a bad object_id
     RiskOfBias.objects.all().delete()
     payload = build_upload_payload(study, pm_author, required_metrics, first_valid_score)
-    payload["scores"][0]["overridden_objects"] = [
-        {"content_type_name": "animal.animalgroup", "object_id": 999}
-    ]
+    payload["scores"][0]["overridden_objects"] = [{"content_type_name": "animal.animalgroup", "object_id": 999}]
     resp = client.post(url, payload, format="json")
     assert resp.status_code == 400
     assert b"Invalid content object" in resp.content
@@ -279,9 +284,7 @@ def test_riskofbias_create():
     # demonstrate valid overridden objects
     RiskOfBias.objects.all().delete()
     payload = build_upload_payload(study, pm_author, required_metrics, first_valid_score)
-    payload["scores"][0]["overridden_objects"] = [
-        {"content_type_name": "animal.animalgroup", "object_id": 1}
-    ]
+    payload["scores"][0]["overridden_objects"] = [{"content_type_name": "animal.animalgroup", "object_id": 1}]
     resp = client.post(url, payload, format="json")
     assert resp.status_code == 201
     assert "created" in resp.data
@@ -338,9 +341,7 @@ class TestBulkRobCleanupApis:
         metrics = c.get(url, format="json").json()
 
         # get available rob scores for a metric
-        detail_url = (
-            reverse("riskofbias:api:scores-detail", args=(metrics[0]["id"],)) + assessment_query
-        )
+        detail_url = reverse("riskofbias:api:scores-detail", args=(metrics[0]["id"],)) + assessment_query
         resp = c.get(detail_url, format="json")
         assert resp.status_code == 200
 

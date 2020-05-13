@@ -89,8 +89,6 @@ class PandasXlsxRenderer(PandasBaseRenderer):
 
     media_type = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     format = "xlsx"
-    charset = None
-    render_style = "binary"
 
     def render_dataframe(self, export: FlatExport, response: Response) -> bytes:
         response["Content-Disposition"] = f"attachment; filename={slugify(export.filename)}.xlsx"
@@ -102,9 +100,7 @@ class PandasXlsxRenderer(PandasBaseRenderer):
             df[col] = df_datetime[col]
 
         f = BytesIO()
-        with pd.ExcelWriter(
-            f, date_format="YYYY-MM-DD", datetime_format="YYYY-MM-DD HH:MM:SS"
-        ) as writer:
+        with pd.ExcelWriter(f, date_format="YYYY-MM-DD", datetime_format="YYYY-MM-DD HH:MM:SS") as writer:
             df.to_excel(writer, index=False)
         return f.getvalue()
 
