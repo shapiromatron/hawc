@@ -23,6 +23,8 @@ class PandasBaseRenderer(BaseRenderer):
         if not status.is_success(status_code):
             if isinstance(data, dict):
                 return json.dumps(data)
+            else:
+                raise ValueError(f"Expecting error data as `dict`; got {type(data)}")
 
         # throw error if we don't have a data frame
         if not isinstance(data, FlatExport):
