@@ -178,10 +178,13 @@
 {% if crud == "Read" and object.cas %}
 <script type="text/javascript">
     $(document).on('ready', function(){
-        var url = '{{object.cas_url}}',
+      {% with url=object.get_casrn_url %}
+        {% if url %}
+          var url = "{{url}}",
             div = $('<div>').insertAfter($('#assessment_table'));
-
-        window.app.utils.HAWCUtils.renderChemicalProperties(url, div, true);
+          window.app.utils.HAWCUtils.renderChemicalProperties(url, div, true);
+        {% endif %}
+      {% endwith %}
     });
 </script>
 {% endif %}

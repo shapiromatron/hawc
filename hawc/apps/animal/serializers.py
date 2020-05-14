@@ -18,7 +18,7 @@ class ExperimentSerializer(serializers.ModelSerializer):
         ret["url"] = instance.get_absolute_url()
         ret["type"] = instance.get_type_display()
         ret["is_generational"] = instance.is_generational()
-        ret["cas_url"] = instance.cas_url
+        ret["cas_url"] = instance.get_casrn_url()
         return ret
 
     class Meta:

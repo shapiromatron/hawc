@@ -3,6 +3,7 @@ import logging
 import pandas as pd
 from django.apps import apps
 from django.core import exceptions
+from django.core.cache import cache
 from django.db.models import Count
 from django.urls import reverse
 from django.utils import timezone
@@ -14,11 +15,13 @@ from rest_framework.exceptions import APIException
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
+from ..common import dsstox
 from ..common.helper import FlatExport, create_uuid, tryParseInt
 from ..common.renderers import PandasRenderers
 from ..lit import constants
-from . import models, serializers
+from . import models, serializers, tasks
 
 
 class RequiresAssessmentID(APIException):
@@ -383,3 +386,21 @@ class AdminDashboardViewset(viewsets.ViewSet):
         serializer.is_valid(raise_exception=True)
         fig = serializer.create_figure()
         return Response(fig.to_dict())
+
+
+class CasrnView(APIView):
+    permission_classes = (permissions.AllowAny,)
+
+    def get(self, request, casrn: str, format=None):
+        """
+        Given a CAS number, get results.
+        """
+        cache_name = dsstox.get_cache_name(casrn)
+
+        data = cache.get(cache_name)
+        if data is None:
+            data = {"status": "requesting"}
+            cache.set(cache_name, data, 60)  # add task; don't resubmit for 60 seconds
+            tasks.get_dsstox_details.delay(casrn)
+
+        return Response(data)

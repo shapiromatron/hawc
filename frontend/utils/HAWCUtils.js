@@ -3,6 +3,8 @@ import _ from "lodash";
 import d3 from "d3";
 import slugify from "slugify";
 
+import renderChemicalDetails from "./components/ChemicalDetails";
+
 class HAWCUtils {
     static HAWC_NEW_WINDOW_POPUP_CLOSING = "hawcNewWindowPopupClosing";
 
@@ -99,29 +101,21 @@ class HAWCUtils {
     }
 
     static renderChemicalProperties(url, $div, show_header) {
-        $.get(url, function(data) {
-            if (data.status === "success") {
-                var content = [],
-                    ul = $("<ul>");
+        const handleResponse = function(data) {
+                if (data.status === "requesting") {
+                    setTimeout(tryToFetch, 1000);
+                }
+                if (data.status === "success") {
+                    renderChemicalDetails($div.get(0), data.content, show_header);
+                }
+            },
+            tryToFetch = () => {
+                fetch(url)
+                    .then(resp => resp.json())
+                    .then(handleResponse);
+            };
 
-                ul.append(`<li><b>Common name:</b> ${data.CommonName}</li>`)
-                    .append(`<li><b>CASRN:</b> ${data.CASRN}</li>`)
-                    .append(
-                        `<li><b>DTXSID:</b> <a target="_blank" href="https://comptox.epa.gov/dashboard/dsstoxdb/results?search=${data.DTXSID}">${data.DTXSID}</a></li>`
-                    )
-                    .append(`<li><b>SMILES:</b> ${data.SMILES}</li>`)
-                    .append(`<li><b>Molecular Weight:</b> ${data.MW}</li>`)
-                    .append(`<li><img src="data:image/jpeg;base64,${data.image}"></li>`);
-
-                if (show_header) content.push("<h3>Chemical Properties Information</h3>");
-
-                content.push(
-                    ul,
-                    `<p class="help-block">Chemical information provided by <a target="_blank" href="https://comptox.epa.gov/dashboard/">USEPA Chemicals Dashboard</a></p>`
-                );
-                $div.html(content);
-            }
-        });
+        tryToFetch();
     }
 
     static updateDragLocationTransform(setDragCB) {
