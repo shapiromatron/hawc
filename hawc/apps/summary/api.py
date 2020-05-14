@@ -1,10 +1,12 @@
 from django.shortcuts import get_object_or_404
+from django.http import Http404
 from rest_framework.decorators import action
 from rest_framework.filters import BaseFilterBackend
 from rest_framework.response import Response
 
 from ..assessment.api import AssessmentViewset, DisabledPagination, InAssessmentFilter
 from ..common.renderers import PandasRenderers
+from ..common.helper import valid_values_or_404
 from . import models, serializers
 
 
@@ -16,6 +18,10 @@ class UnpublishedFilter(BaseFilterBackend):
     def filter_queryset(self, request, queryset, view):
 
         if not hasattr(view, "assessment"):
+            try:
+                int(view.kwargs["pk"])
+            except ValueError:
+                raise Http404(f"No 'pk' matches {view.kwargs['pk']}.")
             self.instance = get_object_or_404(queryset.model, **view.kwargs)
             view.assessment = self.instance.get_assessment()
 

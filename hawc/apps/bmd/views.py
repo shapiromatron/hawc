@@ -1,3 +1,4 @@
+from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.views.generic import RedirectView
 
@@ -20,6 +21,10 @@ class AssessSettingsRead(BaseDetail):
 
     def get_object(self, **kwargs):
         # get the bmd settings of the specified assessment
+        try:
+            int(self.kwargs["pk"])
+        except ValueError:
+            raise Http404(f"No 'assessment_id' matches {self.kwargs['pk']}.")
         obj = get_object_or_404(self.model, assessment_id=self.kwargs["pk"])
         return super(AssessSettingsRead, self).get_object(object=obj, **kwargs)
 
@@ -30,6 +35,10 @@ class AssessSettingsUpdate(ProjectManagerOrHigherMixin, BaseUpdate):
     form_class = forms.AssessmentSettingsForm
 
     def get_assessment(self, request, *args, **kwargs):
+        try:
+            int(kwargs["pk"])
+        except ValueError:
+            raise Http404(f"No 'pk' matches {kwargs['pk']}.")
         return get_object_or_404(Assessment, pk=kwargs["pk"])
 
 
@@ -45,6 +54,10 @@ class AssessLogicUpdate(ProjectManagerOrHigherMixin, BaseUpdate):
 # BMD sessions
 class SessionCreate(TeamMemberOrHigherMixin, RedirectView):
     def get_assessment(self, request, *args, **kwargs):
+        try:
+            int(kwargs["pk"])
+        except ValueError:
+            raise Http404(f"No 'pk' matches {kwargs['pk']}.")
         self.object = get_object_or_404(Endpoint, pk=kwargs["pk"])
         return self.object.assessment
 

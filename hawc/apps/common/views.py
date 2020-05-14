@@ -5,7 +5,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import EmptyResultSet, PermissionDenied
 from django.forms.models import model_to_dict
-from django.http import HttpResponseRedirect
+from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.utils.decorators import method_decorator
@@ -400,6 +400,10 @@ class BaseCreate(TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin,
     crud = "Create"
 
     def dispatch(self, *args, **kwargs):
+        try:
+            int(kwargs["pk"])
+        except ValueError:
+            raise Http404(f"No 'pk' matches {kwargs['pk']}.")
         self.parent = get_object_or_404(self.parent_model, pk=kwargs["pk"])
         self.assessment = self.parent.get_assessment()
         self.permission_check_user_can_edit()
@@ -451,6 +455,10 @@ class BaseList(AssessmentPermissionsMixin, ListView):
     crud = "Read"
 
     def dispatch(self, *args, **kwargs):
+        try:
+            int(kwargs["pk"])
+        except ValueError:
+            raise Http404(f"No 'pk' matches {kwargs['pk']}.")
         self.parent = get_object_or_404(self.parent_model, pk=kwargs["pk"])
         self.assessment = self.parent.get_assessment()
         self.permission_check_user_can_view()

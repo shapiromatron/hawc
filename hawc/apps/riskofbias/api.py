@@ -1,4 +1,5 @@
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
+from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status, viewsets
@@ -164,6 +165,10 @@ class AssessmentScoreViewset(TeamMemberOrHigherMixin, ListUpdateModelMixin, Asse
         assessment_id = request.GET.get("assessment_id", None)
         if assessment_id is None:
             raise RequiresAssessmentID
+        try:
+            int(assessment_id)
+        except ValueError:
+            raise Http404(f"No 'pk' matches {assessment_id}.")
 
         return get_object_or_404(self.parent_model, pk=assessment_id)
 

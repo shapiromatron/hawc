@@ -1,3 +1,4 @@
+from django.http import Http404
 from django.shortcuts import get_object_or_404
 from rest_framework import permissions
 from rest_framework.decorators import action
@@ -34,6 +35,10 @@ class Task(AssessmentEditViewset):
     @action(detail=True, methods=["get"])
     def assessment_assignments(self, request, pk=None):
         # Tasks assigned to user for a specific assessment
+        try:
+            int(pk)
+        except ValueError:
+            raise Http404(f"No 'pk' matches {pk}.")
         assessment = get_object_or_404(Assessment, pk=pk)
         qs = (
             self.model.objects.owned_by(request.user)

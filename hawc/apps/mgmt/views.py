@@ -1,4 +1,5 @@
 from django.apps import apps
+from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.views.generic import ListView
 
@@ -85,6 +86,10 @@ class TaskDashboard(TeamMemberOrHigherMixin, BaseList):
     template_name = "mgmt/assessment_dashboard.html"
 
     def get_assessment(self, *args, **kwargs):
+        try:
+            int(kwargs["pk"])
+        except ValueError:
+            raise Http404(f"No 'pk' matches {kwargs['pk']}.")
         return get_object_or_404(Assessment, pk=kwargs["pk"])
 
     def get_queryset(self):

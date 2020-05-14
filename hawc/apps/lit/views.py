@@ -62,6 +62,10 @@ class SearchCopyAsNewSelector(AssessmentPermissionsMixin, FormView):
     form_class = forms.SearchSelectorForm
 
     def dispatch(self, *args, **kwargs):
+        try:
+            int(kwargs["pk"])
+        except ValueError:
+            raise Http404(f"No 'pk' matches {kwargs['pk']}.")
         self.assessment = get_object_or_404(Assessment, pk=kwargs["pk"])
         self.permission_check_user_can_view()
         return super().dispatch(*args, **kwargs)
@@ -126,6 +130,10 @@ class SearchDetail(BaseDetail):
     model = models.Search
 
     def get_object(self, **kwargs):
+        try:
+            int(self.kwargs.get("pk"))
+        except ValueError:
+            raise Http404(f"No 'assessment' matches {self.kwargs.get('pk')}.")
         obj = get_object_or_404(
             models.Search,
             slug=self.kwargs.get(self.slug_url_kwarg),
@@ -152,6 +160,10 @@ class SearchUpdate(BaseUpdate):
     def get_object(self):
         slug = self.kwargs.get(self.slug_url_kwarg, None)
         assessment = self.kwargs.get("pk", None)
+        try:
+            int(assessment)
+        except ValueError:
+            raise Http404(f"No 'assessment' matches {assessment}.")
         obj = get_object_or_404(models.Search, assessment=assessment, slug=slug)
         return super().get_object(object=obj)
 
@@ -167,6 +179,10 @@ class SearchDelete(BaseDelete):
 
     def get_object(self):
         slug = self.kwargs.get(self.slug_url_kwarg, None)
+        try:
+            int(self.kwargs.get("pk"))
+        except ValueError:
+            raise Http404(f"No 'pk' matches {self.kwargs.get('pk')}.")
         self.assessment = get_object_or_404(Assessment, pk=self.kwargs.get("pk"))
         obj = get_object_or_404(models.Search, assessment=self.assessment, slug=slug)
         return super().get_object(object=obj)
@@ -181,6 +197,10 @@ class SearchQuery(BaseUpdate):
     http_method_names = ("get",)  # don't allow POST
 
     def get_object(self, **kwargs):
+        try:
+            int(self.kwargs.get("pk"))
+        except ValueError:
+            raise Http404(f"No 'assessment' matches {self.kwargs.get('pk')}.")
         obj = get_object_or_404(
             self.model, slug=self.kwargs.get(self.slug_url_kwarg), assessment=self.kwargs.get("pk"),
         )
@@ -246,6 +266,10 @@ class TagBySearch(TagReferences):
     model = models.Search
 
     def get_assessment(self, request, *args, **kwargs):
+        try:
+            int(self.kwargs.get("pk"))
+        except ValueError:
+            raise Http404(f"No 'assessment' matches {self.kwargs.get('pk')}.")
         self.object = get_object_or_404(
             self.model, slug=self.kwargs.get("slug"), assessment=self.kwargs.get("pk")
         )
@@ -269,6 +293,10 @@ class TagByReference(TagReferences):
     model = models.Reference
 
     def get_assessment(self, request, *args, **kwargs):
+        try:
+            int(self.kwargs.get("pk"))
+        except ValueError:
+            raise Http404(f"No 'pk' matches {self.kwargs.get('pk')}.")
         self.object = get_object_or_404(self.model, pk=self.kwargs.get("pk"))
         return self.object.get_assessment()
 
@@ -290,6 +318,10 @@ class TagByTag(TagReferences):
     model = models.ReferenceFilterTag
 
     def get_assessment(self, request, *args, **kwargs):
+        try:
+            int(self.kwargs.get("pk"))
+        except ValueError:
+            raise Http404(f"No 'pk' matches {self.kwargs.get('pk')}.")
         self.object = get_object_or_404(self.model, pk=self.kwargs.get("pk"))
         return self.object.get_assessment()
 
@@ -313,6 +345,10 @@ class TagByUntagged(TagReferences):
     model = Assessment
 
     def get_assessment(self, request, *args, **kwargs):
+        try:
+            int(self.kwargs.get("pk"))
+        except ValueError:
+            raise Http404(f"No 'id' matches {self.kwargs.get('pk')}.")
         self.object = get_object_or_404(Assessment, id=self.kwargs.get("pk"))
         return self.object
 
@@ -331,6 +367,10 @@ class SearchRefList(BaseDetail):
     template_name = "lit/reference_list.html"
 
     def get_object(self, **kwargs):
+        try:
+            int(self.kwargs.get("pk"))
+        except ValueError:
+            raise Http404(f"No 'assessment' matches {self.kwargs.get('pk')}.")
         obj = get_object_or_404(
             models.Search,
             slug=self.kwargs.get(self.slug_url_kwarg),
@@ -352,6 +392,10 @@ class SearchTagsVisualization(BaseDetail):
     template_name = "lit/reference_visual.html"
 
     def get_object(self, **kwargs):
+        try:
+            int(self.kwargs.get("pk"))
+        except ValueError:
+            raise Http404(f"No 'assessment' matches {self.kwargs.get('pk')}.")
         obj = get_object_or_404(
             models.Search,
             slug=self.kwargs.get(self.slug_url_kwarg),
@@ -391,6 +435,10 @@ class RefUploadExcel(ProjectManagerOrHigherMixin, MessageMixin, FormView):
     form_class = forms.ReferenceExcelUploadForm
 
     def get_assessment(self, request, *args, **kwargs):
+        try:
+            int(kwargs["pk"])
+        except ValueError:
+            raise Http404(f"No 'pk' matches {kwargs['pk']}.")
         return get_object_or_404(self.model, pk=kwargs["pk"])
 
     def get_form_kwargs(self):
@@ -445,6 +493,10 @@ class RefSearch(AssessmentPermissionsMixin, FormView):
     form_class = forms.ReferenceSearchForm
 
     def dispatch(self, *args, **kwargs):
+        try:
+            int(kwargs["pk"])
+        except ValueError:
+            raise Http404(f"No 'pk' matches {kwargs['pk']}.")
         self.assessment = get_object_or_404(Assessment, pk=kwargs["pk"])
         self.permission_check_user_can_view()
         return super().dispatch(*args, **kwargs)
@@ -588,6 +640,10 @@ class TagsCopy(AssessmentPermissionsMixin, MessageMixin, FormView):
     success_message = "Literature tags for this assessment have been updated"
 
     def dispatch(self, *args, **kwargs):
+        try:
+            int(kwargs["pk"])
+        except ValueError:
+            raise Http404(f"No 'pk' matches {kwargs['pk']}.")
         self.assessment = get_object_or_404(Assessment, pk=kwargs["pk"])
         self.permission_check_user_can_edit()
         return super().dispatch(*args, **kwargs)

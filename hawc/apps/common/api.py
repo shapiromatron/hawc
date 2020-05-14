@@ -1,3 +1,4 @@
+from django.http import Http404
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -60,7 +61,10 @@ class CleanupFieldsBaseViewSet(
         assessment_id = request.GET.get("assessment_id", None)
         if assessment_id is None:
             raise RequiresAssessmentID
-
+        try:
+            int(assessment_id)
+        except ValueError:
+            raise Http404(f"No 'pk' matches {assessment_id}.")
         return get_object_or_404(self.parent_model, pk=assessment_id)
 
     @action(detail=False, methods=["get"])
@@ -104,5 +108,9 @@ class LegacyAssessmentAdapterMixin(object):
     """
 
     def set_legacy_attr(self, pk):
+        try:
+            int(pk)
+        except ValueError:
+            raise Http404(f"No 'pk' matches {pk}.")
         self.parent = get_object_or_404(self.parent_model, pk=pk)
         self.assessment = self.parent.get_assessment()

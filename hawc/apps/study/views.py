@@ -1,6 +1,6 @@
 from django.apps import apps
 from django.core.exceptions import PermissionDenied
-from django.http import HttpResponseRedirect
+from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views.generic import FormView
@@ -120,6 +120,10 @@ class StudiesCopy(TeamMemberOrHigherMixin, MessageMixin, FormView):
     form_class = forms.StudiesCopy
 
     def get_assessment(self, request, *args, **kwargs):
+        try:
+            int(self.kwargs.get("pk"))
+        except ValueError:
+            raise Http404(f"No 'pk' matches {self.kwargs.get('pk')}.")
         return get_object_or_404(Assessment, pk=self.kwargs.get("pk"))
 
     def get_context_data(self, **kwargs):

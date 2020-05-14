@@ -3,6 +3,7 @@ import json
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
 from django.db.models import Prefetch
+from django.http import Http404
 from django.middleware.csrf import get_token
 from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
@@ -39,6 +40,10 @@ class ARoBEdit(ProjectManagerOrHigherMixin, ARoBDetail):
     crud = "Update"
 
     def get_assessment(self, request, *args, **kwargs):
+        try:
+            int(kwargs["pk"])
+        except ValueError:
+            raise Http404(f"No 'pk' matches {kwargs['pk']}.")
         return get_object_or_404(self.parent_model, pk=kwargs["pk"])
 
 
@@ -50,9 +55,17 @@ class ARoBTextEdit(ProjectManagerOrHigherMixin, BaseUpdate):
     success_message = "Help text has been updated."
 
     def get_object(self, queryset=None):
+        try:
+            int(self.assessment.pk)
+        except ValueError:
+            raise Http404(f"No 'assessment_id' matches {self.assessment.pk}.")
         return get_object_or_404(self.model, assessment_id=self.assessment.pk)
 
     def get_assessment(self, request, *args, **kwargs):
+        try:
+            int(kwargs["pk"])
+        except ValueError:
+            raise Http404(f"No 'pk' matches {kwargs['pk']}.")
         return get_object_or_404(self.parent_model, pk=kwargs["pk"])
 
     def get_success_url(self):
@@ -67,6 +80,10 @@ class ARoBCopy(ProjectManagerOrHigherMixin, MessageMixin, FormView):
     success_message = "Settings have been updated."
 
     def get_assessment(self, request, *args, **kwargs):
+        try:
+            int(kwargs["pk"])
+        except ValueError:
+            raise Http404(f"No 'pk' matches {kwargs['pk']}.")
         return get_object_or_404(self.parent_model, pk=kwargs["pk"])
 
     def get_form_kwargs(self):
@@ -93,6 +110,10 @@ class ARoBReviewersList(TeamMemberOrHigherMixin, BaseList):
     template_name = "riskofbias/reviewers_list.html"
 
     def get_assessment(self, request, *args, **kwargs):
+        try:
+            int(kwargs["pk"])
+        except ValueError:
+            raise Http404(f"No 'pk' matches {kwargs['pk']}.")
         return get_object_or_404(self.parent_model, pk=kwargs["pk"])
 
     def get_queryset(self):
@@ -125,6 +146,10 @@ class ARoBReviewersUpdate(ProjectManagerOrHigherMixin, BaseUpdateWithFormset):
     template_name = "riskofbias/reviewers_form.html"
 
     def get_assessment(self, request, *args, **kwargs):
+        try:
+            int(kwargs["pk"])
+        except ValueError:
+            raise Http404(f"No 'pk' matches {kwargs['pk']}.")
         return get_object_or_404(self.model, pk=kwargs["pk"])
 
     def build_initial_formset_factory(self):
@@ -259,6 +284,10 @@ class RoBsDetailAll(TeamMemberOrHigherMixin, RoBDetail):
     template_name = "riskofbias/rob_detail_all.html"
 
     def get_assessment(self, request, *args, **kwargs):
+        try:
+            int(kwargs["pk"])
+        except ValueError:
+            raise Http404(f"No 'pk' matches {kwargs['pk']}.")
         self.object = get_object_or_404(Study, pk=kwargs["pk"])
         return self.object.get_assessment()
 

@@ -12,9 +12,27 @@ from django.conf import settings
 from django.core.cache import cache
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import QuerySet
+from django.http import Http404
 from django.utils import html
 from django.utils.encoding import force_text
 from rest_framework.renderers import JSONRenderer
+
+
+def valid_values_or_404(klass, **kwargs):
+    """
+    Checks whether field values are valid for given model.
+
+    Args:
+        klass (Model): Model on which to validate field values
+
+    Raises:
+        Http404: Value is invalid for given field
+    """
+    for field, value in kwargs.items():
+        try:
+            klass._meta.get_field(field).get_prep_value(value)
+        except ValueError:
+            raise Http404(f"Value '{value}' not valid for field '{field}'")
 
 
 def HAWCtoDateString(datetime):
@@ -26,9 +44,7 @@ def HAWCtoDateString(datetime):
 
 def cleanHTML(txt):
     return strip_entities(
-        strip_tags(
-            txt.replace("\n", " ").replace("\r", "").replace("<br>", "\n").replace("&nbsp;", " ")
-        )
+        strip_tags(txt.replace("\n", " ").replace("\r", "").replace("<br>", "\n").replace("&nbsp;", " "))
     )
 
 

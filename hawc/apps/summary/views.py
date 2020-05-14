@@ -24,6 +24,10 @@ class SummaryTextJSON(BaseDetail):
     model = models.SummaryText
 
     def dispatch(self, *args, **kwargs):
+        try:
+            int(kwargs.get("pk"))
+        except ValueError:
+            raise Http404(f"No 'pk' matches {kwargs.get('pk')}.")
         self.assessment = get_object_or_404(Assessment, pk=kwargs.get("pk"))
         self.permission_check_user_can_view()
         return super().dispatch(*args, **kwargs)
@@ -246,6 +250,10 @@ class DataPivotNewPrompt(TemplateView):
     template_name = "summary/datapivot_type_selector.html"
 
     def dispatch(self, *args, **kwargs):
+        try:
+            int(kwargs["pk"])
+        except ValueError:
+            raise Http404(f"No 'pk' matches {kwargs['pk']}.")
         self.assessment = get_object_or_404(Assessment, pk=kwargs["pk"])
         return super().dispatch(*args, **kwargs)
 
@@ -304,6 +312,10 @@ class DataPivotCopyAsNewSelector(TeamMemberOrHigherMixin, FormView):
     form_class = forms.DataPivotSelectorForm
 
     def get_assessment(self, request, *args, **kwargs):
+        try:
+            int(self.kwargs.get("pk"))
+        except ValueError:
+            raise Http404(f"No 'pk' matches {self.kwargs.get('pk')}.")
         return get_object_or_404(Assessment, pk=self.kwargs.get("pk"))
 
     def get_form_kwargs(self):
@@ -331,6 +343,10 @@ class GetDataPivotObjectMixin(object):
     def get_object(self):
         slug = self.kwargs.get("slug")
         assessment = self.kwargs.get("pk")
+        try:
+            int(assessment)
+        except ValueError:
+            raise Http404(f"No 'assessment' matches {assessment}.")
         obj = get_object_or_404(models.DataPivot, assessment=assessment, slug=slug)
         if hasattr(obj, "datapivotquery"):
             obj = obj.datapivotquery
@@ -345,6 +361,10 @@ class DataPivotByIdDetail(RedirectView):
     """
 
     def get_redirect_url(*args, **kwargs):
+        try:
+            int(kwargs.get("pk"))
+        except ValueError:
+            raise Http404(f"No 'id' matches {kwargs.get('pk')}.")
         return get_object_or_404(models.DataPivot, id=kwargs.get("pk")).get_absolute_url()
 
 

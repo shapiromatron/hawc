@@ -7,7 +7,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
 from django.db.models import Count
-from django.http import HttpResponseNotAllowed, HttpResponseRedirect
+from django.http import Http404, HttpResponseNotAllowed, HttpResponseRedirect
 from django.shortcuts import HttpResponse, get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
@@ -413,6 +413,10 @@ class CleanExtractedData(TeamMemberOrHigherMixin, BaseEndpointList):
     template_name = "assessment/clean_extracted_data.html"
 
     def get_assessment(self, request, *args, **kwargs):
+        try:
+            int(kwargs["pk"])
+        except ValueError:
+            raise Http404(f"No 'pk' matches {kwargs['pk']}.")
         return get_object_or_404(self.parent_model, pk=kwargs["pk"])
 
 
@@ -495,6 +499,10 @@ class CleanStudyRoB(ProjectManagerOrHigherMixin, BaseDetail):
     model = models.Assessment
 
     def get_assessment(self, request, *args, **kwargs):
+        try:
+            int(kwargs["pk"])
+        except ValueError:
+            raise Http404(f"No 'pk' matches {kwargs['pk']}.")
         return get_object_or_404(self.model, pk=kwargs["pk"])
 
 
