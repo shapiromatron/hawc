@@ -44,7 +44,9 @@ def HAWCtoDateString(datetime):
 
 def cleanHTML(txt):
     return strip_entities(
-        strip_tags(txt.replace("\n", " ").replace("\r", "").replace("<br>", "\n").replace("&nbsp;", " "))
+        strip_tags(
+            txt.replace("\n", " ").replace("\r", "").replace("<br>", "\n").replace("&nbsp;", " ")
+        )
     )
 
 
