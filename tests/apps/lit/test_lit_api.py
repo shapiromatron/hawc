@@ -1,10 +1,31 @@
+import json
+from pathlib import Path
+
 import pytest
 from django.urls import reverse
 from rest_framework.test import APIClient
 
+DATA_ROOT = Path(__file__).parents[2] / "data/api"
+
 
 @pytest.mark.django_db
 class TestLiteratureAssessmentViewset:
+    def test_references_download(self, rewrite_data_files: str, db_keys):
+        # make sure this export is the format we expect it to be in
+        fn = Path(DATA_ROOT / f"api-lit-assessment-references-export.json")
+        url = reverse("lit:api:assessment-references-download", args=(db_keys.assessment_final,))
+        client = APIClient()
+        resp = client.get(url)
+        assert resp.status_code == 200
+
+        data = resp.json()
+
+        if rewrite_data_files:
+            Path(fn).write_text(json.dumps(data, indent=2))
+
+        assert len(data) == 4
+        assert data == json.loads(fn.read_text())
+
     def test_tags(self, db_keys):
         url = reverse("lit:api:assessment-tags", kwargs=dict(pk=db_keys.assessment_working))
         c = APIClient()
