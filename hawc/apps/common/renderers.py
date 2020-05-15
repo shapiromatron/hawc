@@ -18,13 +18,14 @@ class PandasBaseRenderer(BaseRenderer):
 
     def render(self, data, accepted_media_type=None, renderer_context=None):
 
-        # return error in JSON
+        # return error or OPTIONS as JSON
         status_code = renderer_context["response"].status_code
-        if not status.is_success(status_code):
+        method = renderer_context["request"].method
+        if not status.is_success(status_code) or method == "OPTIONS":
             if isinstance(data, dict):
                 return json.dumps(data)
             else:
-                raise ValueError(f"Expecting error data as `dict`; got {type(data)}")
+                raise ValueError(f"Expecting data as `dict`; got {type(data)}")
 
         # throw error if we don't have a data frame
         if not isinstance(data, FlatExport):
