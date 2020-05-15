@@ -55,7 +55,7 @@ def test_study_detail_api(db_keys):
         "summary": "",
         "editable": True,
         "url": "/study/1/",
-        "rob_response_values": [27, 26, 25, 22, 24, 20],
+        "rob_response_values": [17, 16, 15, 12, 14, 10],
     }
 
 

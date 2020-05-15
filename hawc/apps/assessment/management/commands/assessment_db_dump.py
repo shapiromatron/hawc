@@ -29,7 +29,7 @@ class UnicodeCommand(BaseCommand):
         self.stderr = NaiveWrapper(self.stderr._out)
 
 
-class ExternalLibraryExports(object):
+class ExternalLibraryExports:
     def empty_qs(self, cls):
         # return no rows in table
         return cls.objects.filter(id=-1)

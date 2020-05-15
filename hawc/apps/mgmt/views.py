@@ -8,7 +8,7 @@ from . import models
 
 
 # View mixins for ensuring tasks are started
-class EnsurePreparationStartedMixin(object):
+class EnsurePreparationStartedMixin:
     """Ensure the preparation task has been started if form is valid."""
 
     def get_success_url(self):
@@ -16,7 +16,7 @@ class EnsurePreparationStartedMixin(object):
         return super().get_success_url()
 
 
-class EnsureExtractionStartedMixin(object):
+class EnsureExtractionStartedMixin:
     """Ensure the extraction task has been started if form is valid."""
 
     def get_success_url(self):

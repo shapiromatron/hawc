@@ -50,10 +50,15 @@
     {% if object.cas %}
       <script type="text/javascript">
         $(document).on('ready', function(){
-          var url = "{{object.cas_url}}",
-              div = $('<div>').appendTo($('#chem_details'));
 
-          window.app.utils.HAWCUtils.renderChemicalProperties(url, div, false);
+          {% with url=object.get_casrn_url %}
+            {% if url %}
+              var url = "{{url}}",
+                div = $('<div>').appendTo($('#chem_details'));
+              window.app.utils.HAWCUtils.renderChemicalProperties(url, div, false);
+            {% endif %}
+          {% endwith %}
+
         });
       </script>
     {% endif %}

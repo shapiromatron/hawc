@@ -10,6 +10,7 @@ PROJECT_PATH = Path(__file__).parents[2].absolute()
 PROJECT_ROOT = PROJECT_PATH.parent
 PUBLIC_DATA_ROOT = Path(os.environ.get("PUBLIC_DATA_ROOT", PROJECT_ROOT / "public"))
 PRIVATE_DATA_ROOT = Path(os.environ.get("PRIVATE_DATA_ROOT", PROJECT_ROOT / "private"))
+LOGS_ROOT = Path(os.environ.get("LOGS_PATH", PROJECT_ROOT))
 
 DEBUG = False
 
@@ -209,11 +210,19 @@ LOGGING = {
             "filters": ["require_debug_false"],
             "include_html": True,
         },
+        "file_500s": {
+            "level": "ERROR",
+            "class": "logging.handlers.RotatingFileHandler",
+            "formatter": "simple",
+            "filename": str(LOGS_ROOT / "hawc_500s.log"),
+            "maxBytes": 10 * 1024 * 1024,  # 10 MB
+            "backupCount": 10,
+        },
         "file": {
             "level": "INFO",
             "class": "logging.handlers.RotatingFileHandler",
             "formatter": "simple",
-            "filename": str(PROJECT_ROOT / "hawc.log"),
+            "filename": str(LOGS_ROOT / "hawc.log"),
             "maxBytes": 10 * 1024 * 1024,  # 10 MB
             "backupCount": 10,
         },
@@ -221,7 +230,11 @@ LOGGING = {
     "loggers": {
         "": {"handlers": ["null"], "level": "DEBUG"},
         "django": {"handlers": ["null"], "propagate": True, "level": "INFO"},
-        "django.request": {"handlers": ["mail_admins"], "level": "ERROR", "propagate": False},
+        "django.request": {
+            "handlers": ["file_500s", "mail_admins"],
+            "level": "ERROR",
+            "propagate": False,
+        },
     },
 }
 
