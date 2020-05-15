@@ -5,6 +5,7 @@ import pandas as pd
 import pytest
 from rest_framework.exceptions import MethodNotAllowed
 from rest_framework.response import Response
+from rest_framework.test import APIRequestFactory
 
 from hawc.apps.common import renderers
 from hawc.apps.common.helper import FlatExport
@@ -110,3 +111,21 @@ def test_xlsx_response_error(basic_export):
     response.render()
     # the rendered content should be a binary JSON with the exception details
     assert response.rendered_content == b'{"detail": "Method \\"POST\\" not allowed."}'
+
+
+def test_xlsx_options_request():
+    """
+    Make sure that sending an OPTIONS to an xlsx-style export doesn't result in server error.
+
+    This test was added based on security scan; please don't remove.
+    """
+    # We will pass in an OPTIONS request to the renderer context
+    factory = APIRequestFactory()
+    request = factory.options(r"\path")
+    # The response data from an OPTIONS request is type dict
+    data = {"dummy": "data"}
+    response = renderers.PandasXlsxRenderer().render(
+        data=data, renderer_context={"response": Response(), "request": request}
+    )
+    # The renderered response should be a JSON string of the passed in data
+    assert response == '{"dummy": "data"}'
