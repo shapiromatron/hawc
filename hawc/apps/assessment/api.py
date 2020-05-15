@@ -15,7 +15,7 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 
-from ..common.helper import FlatExport, create_uuid, tryParseInt
+from ..common.helper import FlatExport, create_uuid, re_digits, tryParseInt
 from ..common.renderers import PandasRenderers
 from ..lit import constants
 from . import models, serializers
@@ -34,7 +34,7 @@ def get_assessment_from_query(request):
     """Returns assessment or None."""
     assessment_id = tryParseInt(request.GET.get("assessment_id"))
     if assessment_id is None:
-        raise RequiresAssessmentID
+        raise RequiresAssessmentID()
 
     return models.Assessment.objects.get_qs(assessment_id).first()
 
@@ -91,6 +91,7 @@ class AssessmentViewset(viewsets.ReadOnlyModelViewSet):
     assessment_filter_args = ""
     permission_classes = (AssessmentLevelPermissions,)
     filter_backends = (InAssessmentFilter,)
+    lookup_value_regex = re_digits
 
     def get_queryset(self):
         return self.model.objects.all()
@@ -101,6 +102,7 @@ class AssessmentEditViewset(viewsets.ModelViewSet):
     permission_classes = (AssessmentLevelPermissions,)
     parent_model = models.Assessment
     filter_backends = (InAssessmentFilter,)
+    lookup_value_regex = re_digits
 
     def get_queryset(self):
         return self.model.objects.all()
@@ -111,6 +113,7 @@ class AssessmentRootedTagTreeViewset(viewsets.ModelViewSet):
     Base viewset used with utils/models/AssessmentRootedTagTree subclasses
     """
 
+    lookup_value_regex = re_digits
     permission_classes = (AssessmentLevelPermissions,)
 
     PROJECT_MANAGER = "PROJECT_MANAGER"
@@ -127,11 +130,11 @@ class AssessmentRootedTagTreeViewset(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         # get an assessment
-        assessment_id = tryParseInt(request.data.get("assessment_id"), -1)
-        self.assessment = models.Assessment.objects.get_qs(assessment_id).first()
+        assessment_id = tryParseInt(request.data.get("assessment_id"))
         if self.assessment is None:
-            raise RequiresAssessmentID
+            raise RequiresAssessmentID()
 
+        self.assessment = models.Assessment.objects.get_qs(assessment_id).first()
         self.check_editing_permission(request)
 
         return super().create(request, *args, **kwargs)
@@ -160,6 +163,7 @@ class DoseUnitsViewset(viewsets.ReadOnlyModelViewSet):
     model = models.DoseUnits
     serializer_class = serializers.DoseUnitsSerializer
     pagination_class = DisabledPagination
+    lookup_value_regex = re_digits
 
     def get_queryset(self):
         return self.model.objects.all()
@@ -362,9 +366,12 @@ class AssessmentEndpointList(AssessmentViewset):
         return Response(serializer.data)
 
     def get_queryset(self):
-        id_ = tryParseInt(self.request.GET.get("assessment_id"))
+        assessment_id = tryParseInt(self.request.data.get("assessment_id"))
+        if self.assessment is None:
+            raise RequiresAssessmentID()
+
         queryset = (
-            self.model.objects.get_qs(id_)
+            self.model.objects.get_qs(assessment_id)
             .annotate(endpoint_count=Count("baseendpoint__endpoint"))
             .annotate(outcome_count=Count("baseendpoint__outcome"))
             .annotate(ivendpoint_count=Count("baseendpoint__ivendpoint"))

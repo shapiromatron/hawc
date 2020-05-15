@@ -9,6 +9,7 @@ from ..assessment.api import (
 )
 from ..assessment.models import Assessment
 from ..common.api import CleanupFieldsBaseViewSet, LegacyAssessmentAdapterMixin
+from ..common.helper import re_digits
 from ..common.renderers import PandasRenderers
 from ..common.serializers import UnusedSerializer
 from ..common.views import AssessmentPermissionsMixin
@@ -22,7 +23,7 @@ class IVAssessmentViewset(
     model = models.IVEndpoint
     permission_classes = (AssessmentLevelPermissions,)
     serializer_class = UnusedSerializer
-    lookup_value_regex = r"\d+"
+    lookup_value_regex = re_digits
 
     def get_queryset(self):
         perms = self.get_obj_perms()

@@ -35,7 +35,6 @@ class DataPivot(AssessmentViewset):
     model = models.DataPivot
     pagination_class = DisabledPagination
     filter_backends = (InAssessmentFilter, UnpublishedFilter)
-    lookup_value_regex = r"\d+"
 
     def get_serializer_class(self):
         cls = serializers.DataPivotSerializer

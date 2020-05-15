@@ -34,7 +34,7 @@ def clean_slug(form):
     return slug
 
 
-class PrefilterMixin(object):
+class PrefilterMixin:
 
     PREFILTER_COMBO_FIELDS = [
         "studies",

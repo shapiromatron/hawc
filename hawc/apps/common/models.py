@@ -111,7 +111,7 @@ class NonUniqueTagBase(models.Model):
         return slug
 
 
-class AssessmentRootMixin(object):
+class AssessmentRootMixin:
 
     cache_template_taglist = NotImplementedAttribute
     cache_template_tagtree = NotImplementedAttribute

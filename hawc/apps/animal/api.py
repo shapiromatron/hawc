@@ -4,10 +4,15 @@ from rest_framework.decorators import action
 from rest_framework.exceptions import NotAcceptable
 from rest_framework.response import Response
 
-from ..assessment.api import AssessmentLevelPermissions, AssessmentViewset, DoseUnitsViewset
+from ..assessment.api import (
+    AssessmentLevelPermissions,
+    AssessmentViewset,
+    DoseUnitsViewset,
+    RequiresAssessmentID,
+)
 from ..assessment.models import Assessment
 from ..common.api import CleanupFieldsBaseViewSet, LegacyAssessmentAdapterMixin
-from ..common.helper import tryParseInt
+from ..common.helper import re_digits, tryParseInt
 from ..common.renderers import PandasRenderers
 from ..common.serializers import UnusedSerializer
 from ..common.views import AssessmentPermissionsMixin
@@ -21,7 +26,7 @@ class AnimalAssessmentViewset(
     model = models.Endpoint
     permission_classes = (AssessmentLevelPermissions,)
     serializer_class = UnusedSerializer
-    lookup_value_regex = r"\d+"
+    lookup_value_regex = re_digits
 
     def get_queryset(self):
         perms = self.get_obj_perms()
@@ -85,7 +90,9 @@ class Endpoint(AssessmentViewset):
 
     @action(detail=False)
     def effects(self, request):
-        assessment_id = tryParseInt(self.request.query_params.get("assessment_id"), -1)
+        assessment_id = tryParseInt(self.request.query_params.get("assessment_id"))
+        if assessment_id is None:
+            raise RequiresAssessmentID()
         effects = models.Endpoint.objects.get_effects(assessment_id)
         return Response(effects)
 
@@ -93,7 +100,10 @@ class Endpoint(AssessmentViewset):
     def rob_filter(self, request):
         params = self.request.query_params
 
-        assessment_id = tryParseInt(params.get("assessment_id"), -1)
+        assessment_id = tryParseInt(params.get("assessment_id"))
+        if assessment_id is None:
+            raise RequiresAssessmentID()
+
         query = Q(assessment_id=assessment_id)
 
         effects = params.get("effect[]")

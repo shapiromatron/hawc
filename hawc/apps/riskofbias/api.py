@@ -17,7 +17,7 @@ from ..assessment.api import (
 )
 from ..assessment.models import Assessment, TimeSpentEditing
 from ..common.api import BulkIdFilter, LegacyAssessmentAdapterMixin
-from ..common.helper import tryParseInt
+from ..common.helper import re_digits, tryParseInt
 from ..common.renderers import PandasRenderers
 from ..common.serializers import UnusedSerializer
 from ..common.views import AssessmentPermissionsMixin, TeamMemberOrHigherMixin
@@ -34,7 +34,7 @@ class RiskOfBiasAssessmentViewset(
     model = Study
     permission_classes = (AssessmentLevelPermissions,)
     serializer_class = UnusedSerializer
-    lookup_value_regex = r"\d+"
+    lookup_value_regex = re_digits
 
     def get_queryset(self):
 
@@ -70,6 +70,7 @@ class RiskOfBiasDomain(viewsets.ReadOnlyModelViewSet):
     permission_classes = (AssessmentLevelPermissions,)
     filter_backends = (InAssessmentFilter, DjangoFilterBackend)
     serializer_class = serializers.AssessmentDomainSerializer
+    lookup_value_regex = re_digits
 
     def get_queryset(self):
         return self.model.objects.all().prefetch_related("metrics")
@@ -82,7 +83,7 @@ class RiskOfBias(viewsets.ModelViewSet):
     permission_classes = (AssessmentLevelPermissions,)
     filter_backends = (InAssessmentFilter, DjangoFilterBackend)
     serializer_class = serializers.RiskOfBiasSerializer
-    lookup_value_regex = r"\d+"
+    lookup_value_regex = re_digits
 
     def get_queryset(self):
         return self.model.objects.all().prefetch_related(
@@ -163,9 +164,9 @@ class AssessmentScoreViewset(TeamMemberOrHigherMixin, ListUpdateModelMixin, Asse
     serializer_class = serializers.RiskOfBiasScoreSerializer
 
     def get_assessment(self, request, *args, **kwargs):
-        assessment_id = request.GET.get("assessment_id", None)
+        assessment_id = tryParseInt(request.GET.get("assessment_id"))
         if assessment_id is None:
-            raise RequiresAssessmentID
+            raise RequiresAssessmentID()
 
         return get_object_or_404(self.parent_model, pk=assessment_id)
 

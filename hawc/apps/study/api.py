@@ -3,9 +3,14 @@ from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from ..assessment.api import AssessmentLevelPermissions, DisabledPagination, InAssessmentFilter
+from ..assessment.api import (
+    AssessmentLevelPermissions,
+    DisabledPagination,
+    InAssessmentFilter,
+    RequiresAssessmentID,
+)
 from ..common.api import CleanupFieldsBaseViewSet
-from ..common.helper import tryParseInt
+from ..common.helper import re_digits, tryParseInt
 from . import models, serializers
 
 
@@ -19,6 +24,7 @@ class Study(viewsets.ReadOnlyModelViewSet):
         "list",
         "rob_scores",
     ]
+    lookup_value_regex = re_digits
 
     def get_serializer_class(self):
         cls = serializers.VerboseStudySerializer
@@ -38,7 +44,9 @@ class Study(viewsets.ReadOnlyModelViewSet):
 
     @action(detail=False)
     def rob_scores(self, request):
-        assessment_id = tryParseInt(self.request.query_params.get("assessment_id"), -1)
+        assessment_id = tryParseInt(self.request.query_params.get("assessment_id"))
+        if assessment_id is None:
+            raise RequiresAssessmentID()
         scores = self.model.objects.rob_scores(assessment_id)
         return Response(scores)
 
