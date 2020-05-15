@@ -266,6 +266,9 @@ class Visual(models.Model):
     def get_assessment(self):
         return self.assessment
 
+    def get_api_detail(self):
+        return reverse("summary:api:visual-detail", args=(self.id,))
+
     @staticmethod
     def get_dose_units():
         return DoseUnits.objects.json_all()
@@ -471,6 +474,9 @@ class DataPivot(models.Model):
 
     def get_assessment(self):
         return self.assessment
+
+    def get_api_detail(self):
+        return reverse("summary:api:data_pivot-detail", args=(self.id,))
 
     def get_download_url(self):
         return reverse("summary:api:data_pivot-data", args=(self.id,))

@@ -13,7 +13,7 @@ def test_study_read_success(db_keys):
         reverse("study:list", kwargs={"pk": db_keys.assessment_working}),
         reverse("study:detail", kwargs={"pk": db_keys.study_working}),
         reverse("study:list", kwargs={"pk": db_keys.assessment_final}),
-        reverse("study:detail", kwargs={"pk": db_keys.study_final}),
+        reverse("study:detail", kwargs={"pk": db_keys.study_final_bioassay}),
     ]
 
     for client in clients:
@@ -32,7 +32,10 @@ def test_study_read_failure(db_keys):
         {"view": reverse("study:list", kwargs={"pk": db_keys.assessment_working}), "status": 403},
         {"view": reverse("study:detail", kwargs={"pk": db_keys.study_working}), "status": 403},
         {"view": reverse("study:list", kwargs={"pk": db_keys.assessment_final}), "status": 200},
-        {"view": reverse("study:detail", kwargs={"pk": db_keys.study_final}), "status": 200},
+        {
+            "view": reverse("study:detail", kwargs={"pk": db_keys.study_final_bioassay}),
+            "status": 200,
+        },
     ]
     for view in views:
         response = c.get(view["view"])
@@ -120,8 +123,8 @@ def test_uf_crud_failure(db_keys):
     users = ["pm@pm.com", "team@team.com", "rev@rev.com", None]
     views = [
         reverse("study:new_ref", kwargs={"pk": db_keys.assessment_final}),
-        reverse("study:update", kwargs={"pk": db_keys.study_final}),
-        reverse("study:delete", kwargs={"pk": db_keys.study_final}),
+        reverse("study:update", kwargs={"pk": db_keys.study_final_bioassay}),
+        reverse("study:delete", kwargs={"pk": db_keys.study_final_bioassay}),
     ]
 
     for user in users:
