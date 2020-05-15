@@ -1,4 +1,6 @@
+import json
 from copy import deepcopy
+from pathlib import Path
 
 import pytest
 from django.urls import reverse
@@ -12,6 +14,46 @@ from hawc.apps.riskofbias.models import (
     RiskOfBiasScore,
 )
 from hawc.apps.study.models import Study
+
+DATA_ROOT = Path(__file__).parents[2] / "data/api"
+
+
+@pytest.mark.django_db
+class TestRiskOfBiasAssessmentViewsetViewset:
+    def test_full_export(self, rewrite_data_files: bool, db_keys):
+        fn = Path(DATA_ROOT / f"api-rob-assessment-full-export.json")
+        url = (
+            reverse("riskofbias:api:assessment-full-export", args=(db_keys.assessment_final,))
+            + "?format=json"
+        )
+
+        client = APIClient()
+        resp = client.get(url)
+        assert resp.status_code == 200
+
+        data = resp.json()
+
+        if rewrite_data_files:
+            Path(fn).write_text(json.dumps(data, indent=2))
+        assert data == json.loads(fn.read_text())
+
+    def test_export(self, rewrite_data_files: bool, db_keys):
+        fn = Path(DATA_ROOT / f"api-rob-assessment-export.json")
+        url = (
+            reverse("riskofbias:api:assessment-export", args=(db_keys.assessment_final,))
+            + "?format=json"
+        )
+
+        client = APIClient()
+        resp = client.get(url)
+        assert resp.status_code == 200
+
+        data = resp.json()
+
+        if rewrite_data_files:
+            Path(fn).write_text(json.dumps(data, indent=2))
+
+        assert data == json.loads(fn.read_text())
 
 
 @pytest.mark.django_db
@@ -313,7 +355,7 @@ class TestBulkRobCleanupApis:
         url = reverse("riskofbias:api:scores-choices") + assessment_query
         resp = c.get(url, format="json")
         assert resp.status_code == 200
-        assert resp.json() == [27, 26, 25, 22, 24, 20]
+        assert resp.json() == [17, 16, 15, 12, 14, 10]
 
     def test_metrics_list(self, db_keys):
         c = APIClient()

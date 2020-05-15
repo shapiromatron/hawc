@@ -32,6 +32,12 @@ def test_BulkReferenceTagSerializer(db_keys):
     assert serializer.is_valid() is False
     assert serializer.errors["csv"][0] == "All tag ids are not from assessment 1"
 
+    # invalid ids
+    data = {"operation": "append", "csv": "reference_id,tag_id\n-1,-1"}
+    serializer = BulkReferenceTagSerializer(data=data, context=context)
+    assert serializer.is_valid() is False
+    assert serializer.errors["csv"][0] == "All reference ids are not from assessment 1"
+
     # check success
     reference = Reference.objects.get(id=db_keys.study_working)
     assert reference.tags.count() == 0
