@@ -140,7 +140,7 @@ class BulkReferenceTagSerializer(serializers.Serializer):
             .values_list("assessment_id", flat=True)
             .distinct()
         )
-        if len(assessments) > 1 or assessments[0] != expected_assessment_id:
+        if len(assessments) != 1 or assessments[0] != expected_assessment_id:
             raise serializers.ValidationError(
                 f"All reference ids are not from assessment {expected_assessment_id}"
             )
