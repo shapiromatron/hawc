@@ -18,6 +18,7 @@ class EpiMetaAssessmentViewset(
     model = models.MetaResult
     permission_classes = (AssessmentLevelPermissions,)
     serializer_class = UnusedSerializer
+    lookup_value_regex = r"\d+"
 
     def get_queryset(self):
         perms = self.get_obj_perms()

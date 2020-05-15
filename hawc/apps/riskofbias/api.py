@@ -34,6 +34,7 @@ class RiskOfBiasAssessmentViewset(
     model = Study
     permission_classes = (AssessmentLevelPermissions,)
     serializer_class = UnusedSerializer
+    lookup_value_regex = r"\d+"
 
     def get_queryset(self):
 
@@ -81,6 +82,7 @@ class RiskOfBias(viewsets.ModelViewSet):
     permission_classes = (AssessmentLevelPermissions,)
     filter_backends = (InAssessmentFilter, DjangoFilterBackend)
     serializer_class = serializers.RiskOfBiasSerializer
+    lookup_value_regex = r"\d+"
 
     def get_queryset(self):
         return self.model.objects.all().prefetch_related(

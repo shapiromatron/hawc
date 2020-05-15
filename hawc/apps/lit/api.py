@@ -19,6 +19,7 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
     model = Assessment
     permission_classes = (AssessmentLevelPermissions,)
     serializer_class = UnusedSerializer
+    lookup_value_regex = r"\d+"
 
     def get_queryset(self):
         return self.model.objects.all()
@@ -155,6 +156,7 @@ class SearchViewset(viewsets.GenericViewSet, mixins.CreateModelMixin, mixins.Ret
     model = models.Search
     serializer_class = serializers.SearchSerializer
     permission_classes = (AssessmentLevelPermissions,)
+    lookup_value_regex = r"\d+"
 
     def get_queryset(self):
         return self.model.objects.all()

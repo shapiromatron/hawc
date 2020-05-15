@@ -18,6 +18,7 @@ class Task(AssessmentEditViewset):
     )
     pagination_class = DisabledPagination
     list_actions = ["list", "dashboard"]
+    lookup_value_regex = r"\d+"
 
     def filter_queryset(self, queryset):
         return super().filter_queryset(queryset).select_related("owner", "study")
