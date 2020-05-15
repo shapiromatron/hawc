@@ -1,7 +1,7 @@
 import json
 import math
 from io import StringIO
-from typing import Dict, Generator, List
+from typing import Dict, Generator, List, Optional
 
 import pandas as pd
 from requests import Response, Session
@@ -517,7 +517,11 @@ class StudyClient(BaseClient):
     """
 
     def create(
-        self, reference_id: int, short_citation: str, full_citation: str, data: Dict = {}
+        self,
+        reference_id: int,
+        short_citation: str,
+        full_citation: str,
+        data: Optional[Dict] = None,
     ) -> Dict:
         """
         Creates a study using a given reference ID.
@@ -548,6 +552,8 @@ class StudyClient(BaseClient):
         Returns:
             Dict: JSON of the created study
         """
+        if data is None:
+            data = {}
         data["reference_id"] = reference_id
         data["short_citation"] = short_citation
         data["full_citation"] = full_citation
