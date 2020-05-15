@@ -1,4 +1,5 @@
 import logging
+from typing import Optional
 
 import pandas as pd
 from django.apps import apps
@@ -30,13 +31,20 @@ class DisabledPagination(PageNumberPagination):
     page_size = None
 
 
-def get_assessment_from_query(request):
-    """Returns assessment or None."""
+def get_assessment_id_param(request) -> int:
+    """
+    If request doesn't contain an integer-based `assessment_id`, an exception is raised.
+    """
     assessment_id = tryParseInt(request.GET.get("assessment_id"))
     if assessment_id is None:
         raise RequiresAssessmentID()
+    return assessment_id
 
-    return models.Assessment.objects.get_qs(assessment_id).first()
+
+def get_assessment_from_query(request) -> Optional[models.Assessment]:
+    """Returns assessment or None."""
+    assessment_id = get_assessment_id_param(request)
+    return models.Assessment.objects.filter(pk=assessment_id).first()
 
 
 class AssessmentLevelPermissions(permissions.BasePermission):
@@ -82,6 +90,9 @@ class InAssessmentFilter(filters.BaseFilterBackend):
 
         if not hasattr(view, "assessment"):
             view.assessment = get_assessment_from_query(request)
+
+        if view.assessment is None:
+            return queryset.none()
 
         filters = {view.assessment_filter_args: view.assessment.id}
         return queryset.filter(**filters)
@@ -130,13 +141,9 @@ class AssessmentRootedTagTreeViewset(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         # get an assessment
-        assessment_id = tryParseInt(request.data.get("assessment_id"))
-        if self.assessment is None:
-            raise RequiresAssessmentID()
-
-        self.assessment = models.Assessment.objects.get_qs(assessment_id).first()
+        assessment_id = get_assessment_id_param(self.request)
+        self.assessment = models.Assessment.objects.filter(id=assessment_id).first()
         self.check_editing_permission(request)
-
         return super().create(request, *args, **kwargs)
 
     @action(detail=True, methods=("patch",))
@@ -366,10 +373,7 @@ class AssessmentEndpointList(AssessmentViewset):
         return Response(serializer.data)
 
     def get_queryset(self):
-        assessment_id = tryParseInt(self.request.data.get("assessment_id"))
-        if self.assessment is None:
-            raise RequiresAssessmentID()
-
+        assessment_id = get_assessment_id_param(self.request)
         queryset = (
             self.model.objects.get_qs(assessment_id)
             .annotate(endpoint_count=Count("baseendpoint__endpoint"))

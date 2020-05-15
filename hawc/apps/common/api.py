@@ -7,9 +7,9 @@ from ..assessment.api import (
     AssessmentEditViewset,
     DisabledPagination,
     InAssessmentFilter,
-    RequiresAssessmentID,
+    get_assessment_id_param,
 )
-from . import helper, views
+from . import views
 
 
 class BulkIdFilter(InAssessmentFilter):
@@ -57,10 +57,7 @@ class CleanupFieldsBaseViewSet(
     filter_backends = (BulkIdFilter,)
 
     def get_assessment(self, request, *args, **kwargs):
-        assessment_id = helper.tryParseInt(request.GET.get("assessment_id"))
-        if assessment_id is None:
-            raise RequiresAssessmentID()
-
+        assessment_id = get_assessment_id_param(request)
         return get_object_or_404(self.parent_model, pk=assessment_id)
 
     @action(detail=False, methods=["get"])

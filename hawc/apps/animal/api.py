@@ -8,11 +8,11 @@ from ..assessment.api import (
     AssessmentLevelPermissions,
     AssessmentViewset,
     DoseUnitsViewset,
-    RequiresAssessmentID,
+    get_assessment_id_param,
 )
 from ..assessment.models import Assessment
 from ..common.api import CleanupFieldsBaseViewSet, LegacyAssessmentAdapterMixin
-from ..common.helper import re_digits, tryParseInt
+from ..common.helper import re_digits
 from ..common.renderers import PandasRenderers
 from ..common.serializers import UnusedSerializer
 from ..common.views import AssessmentPermissionsMixin
@@ -90,19 +90,15 @@ class Endpoint(AssessmentViewset):
 
     @action(detail=False)
     def effects(self, request):
-        assessment_id = tryParseInt(self.request.query_params.get("assessment_id"))
-        if assessment_id is None:
-            raise RequiresAssessmentID()
+        assessment_id = get_assessment_id_param(self.request)
         effects = models.Endpoint.objects.get_effects(assessment_id)
         return Response(effects)
 
     @action(detail=False)
     def rob_filter(self, request):
-        params = self.request.query_params
 
-        assessment_id = tryParseInt(params.get("assessment_id"))
-        if assessment_id is None:
-            raise RequiresAssessmentID()
+        params = request.query_params
+        assessment_id = get_assessment_id_param(request)
 
         query = Q(assessment_id=assessment_id)
 

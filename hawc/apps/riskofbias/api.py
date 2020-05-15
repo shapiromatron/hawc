@@ -13,7 +13,7 @@ from ..assessment.api import (
     AssessmentViewset,
     DisabledPagination,
     InAssessmentFilter,
-    RequiresAssessmentID,
+    get_assessment_id_param,
 )
 from ..assessment.models import Assessment, TimeSpentEditing
 from ..common.api import BulkIdFilter, LegacyAssessmentAdapterMixin
@@ -164,10 +164,7 @@ class AssessmentScoreViewset(TeamMemberOrHigherMixin, ListUpdateModelMixin, Asse
     serializer_class = serializers.RiskOfBiasScoreSerializer
 
     def get_assessment(self, request, *args, **kwargs):
-        assessment_id = tryParseInt(request.GET.get("assessment_id"))
-        if assessment_id is None:
-            raise RequiresAssessmentID()
-
+        assessment_id = get_assessment_id_param(request)
         return get_object_or_404(self.parent_model, pk=assessment_id)
 
     @action(detail=False)

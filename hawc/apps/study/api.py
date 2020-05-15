@@ -7,10 +7,10 @@ from ..assessment.api import (
     AssessmentLevelPermissions,
     DisabledPagination,
     InAssessmentFilter,
-    RequiresAssessmentID,
+    get_assessment_id_param,
 )
 from ..common.api import CleanupFieldsBaseViewSet
-from ..common.helper import re_digits, tryParseInt
+from ..common.helper import re_digits
 from . import models, serializers
 
 
@@ -44,9 +44,7 @@ class Study(viewsets.ReadOnlyModelViewSet):
 
     @action(detail=False)
     def rob_scores(self, request):
-        assessment_id = tryParseInt(self.request.query_params.get("assessment_id"))
-        if assessment_id is None:
-            raise RequiresAssessmentID()
+        assessment_id = get_assessment_id_param(request)
         scores = self.model.objects.rob_scores(assessment_id)
         return Response(scores)
 
