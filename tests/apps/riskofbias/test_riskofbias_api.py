@@ -55,6 +55,36 @@ class TestRiskOfBiasAssessmentViewsetViewset:
 
         assert data == json.loads(fn.read_text())
 
+    def test_PandasXlsxRenderer(self, db_keys):
+        """
+        Make sure that our pandas xlsx serializer effectively returns JSON when needed.
+
+        We add this test to this viewset because it's related to a full Viewset lifecycle and
+        not just the logic in a Renderer; thus it's essentially an integration test for this
+        renderer type; test was added based on security scan.
+        """
+        client = APIClient()
+
+        url = (
+            reverse("riskofbias:api:assessment-export", args=(db_keys.assessment_final,))
+            + "?format=xlsx"
+        )
+
+        # the normal path worth via GET
+        response = client.get(url)
+        assert response.status_code == 200
+
+        # an OPTIONS returns JSON
+        response = client.options(url)
+        assert response.status_code == 200
+        expected_keys = {"name", "description", "renders", "parses"}
+        assert set(json.loads(response.content).keys()) == expected_keys
+
+        # a POST returns JSON and status_code
+        response = client.post(url)
+        assert response.status_code == 405
+        assert json.loads(response.content) == {"detail": 'Method "POST" not allowed.'}
+
 
 @pytest.mark.django_db
 def test_riskofbias_detail(db_keys):
