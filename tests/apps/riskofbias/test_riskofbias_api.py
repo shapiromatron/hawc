@@ -84,7 +84,11 @@ def test_riskofbias_detail(db_keys):
 
 @pytest.mark.django_db
 def test_riskofbias_export(db_keys):
+    """
+    Make sure that sending a POST to an xlsx-style export doesn't result in server error.
 
+    This test was added based on security scan; please don't remove.
+    """
     client = APIClient()
     assert client.login(username="team@team.com", password="pw") is True
 
