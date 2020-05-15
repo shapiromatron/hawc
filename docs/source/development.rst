@@ -346,6 +346,13 @@ When writing tests that require accessing external resources, the ``vcr`` python
 
 If a test uses an external resource, ensure that it is decorated with ``@pytest.mark.vcr`` to generate a cassette; see our current tests suite for examples.
 
+To run tests without using the cassettes and making the network requests, use:
+
+.. code-block:: bash
+
+    py.test --disable-vcr
+
+
 Testing celery application
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
