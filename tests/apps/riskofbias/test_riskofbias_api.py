@@ -55,6 +55,36 @@ class TestRiskOfBiasAssessmentViewsetViewset:
 
         assert data == json.loads(fn.read_text())
 
+    def test_PandasXlsxRenderer(self, db_keys):
+        """
+        Make sure that our pandas xlsx serializer effectively returns JSON when needed.
+
+        We add this test to this viewset because it's related to a full Viewset lifecycle and
+        not just the logic in a Renderer; thus it's essentially an integration test for this
+        renderer type; test was added based on security scan.
+        """
+        client = APIClient()
+
+        url = (
+            reverse("riskofbias:api:assessment-export", args=(db_keys.assessment_final,))
+            + "?format=xlsx"
+        )
+
+        # the normal path worth via GET
+        response = client.get(url)
+        assert response.status_code == 200
+
+        # an OPTIONS returns JSON
+        response = client.options(url)
+        assert response.status_code == 200
+        expected_keys = {"name", "description", "renders", "parses"}
+        assert set(json.loads(response.content).keys()) == expected_keys
+
+        # a POST returns JSON and status_code
+        response = client.post(url)
+        assert response.status_code == 405
+        assert json.loads(response.content) == {"detail": 'Method "POST" not allowed.'}
+
 
 @pytest.mark.django_db
 def test_riskofbias_detail(db_keys):
@@ -80,25 +110,6 @@ def test_riskofbias_detail(db_keys):
             "object_url": "/ani/endpoint/1/",
         }
     ]
-
-
-@pytest.mark.django_db
-def test_riskofbias_export(db_keys):
-    """
-    Make sure that sending a POST to an xlsx-style export doesn't result in server error.
-
-    This test was added based on security scan; please don't remove.
-    """
-    client = APIClient()
-    assert client.login(username="team@team.com", password="pw") is True
-
-    url = f"/rob/api/assessment/{db_keys.study_working}/export/?format=xlsx"
-
-    response = client.get(url)
-    assert response.status_code == 200
-
-    response = client.post(url)
-    assert response.status_code == 405
 
 
 @pytest.mark.django_db
