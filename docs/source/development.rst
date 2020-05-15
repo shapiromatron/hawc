@@ -377,10 +377,15 @@ The Python HAWC client can be packaged for easy distribution.
 
 .. code-block:: bash
 
-    # change to your client directory within the hawc project
+    # install dependencies
+    pip install twine wheel
+
+    # change to client path
     cd client
 
-    # make a sdist and wheel for your hawc-client
-    python setup.py sdist bdist_wheel
+    # build packages; these can be distributed directly
+    make build
 
-These distributions will be located in the ``dist`` folder within the aforementioned ``client`` directory.
+    # or can be uploaded to pypi
+    make upload-testpypi
+    make upload-pypi
