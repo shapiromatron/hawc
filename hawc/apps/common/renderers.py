@@ -20,7 +20,7 @@ class PandasBaseRenderer(BaseRenderer):
 
         # return error or OPTIONS as JSON
         status_code = renderer_context["response"].status_code
-        method = renderer_context["request"].method
+        method = renderer_context["request"].method if "request" in renderer_context else None
         if not status.is_success(status_code) or method == "OPTIONS":
             if isinstance(data, dict):
                 return json.dumps(data)
