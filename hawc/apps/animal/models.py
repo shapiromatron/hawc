@@ -1196,7 +1196,7 @@ class Endpoint(BaseEndpoint):
         return self.assessment.get_noel_names()
 
 
-class ConfidenceIntervalsMixin(object):
+class ConfidenceIntervalsMixin:
     """
     Mixin class which calculates standard deviation and confidence intervals
     for django models.

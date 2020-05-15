@@ -84,7 +84,7 @@ class HAWCDjangoJSONEncoder(DjangoJSONEncoder):
             return super().default(o)
 
 
-class SerializerHelper(object):
+class SerializerHelper:
     """
     HAWC helper-object for getting serialized objects and setting cache.
     Sets cache names based on django models and primary keys automatically.
@@ -198,3 +198,6 @@ class FlatFileExporter:
     def build_export(self) -> FlatExport:
         df = self.build_df()
         return FlatExport(df, self.filename)
+
+
+re_digits = r"\d+"

@@ -335,10 +335,9 @@ A test database is loaded to run unit tests. The database may need to be periodi
     # export database
     manage.py dump_test_db
 
-Problems running tests
-~~~~~~~~~~~~~~~~~~~~~~
-
 If tests aren't working after the database has changed (ie., migrated); try dropping the test-database. Try the command ``dropdb test_hawc-fixture-test``.
+
+Some tests compare large exports on disk to ensure the generated output is the same as expected. In some cases, these export files should changes. Therefore, you can set a flag in the `tests/conftest.py` to set `rewrite_data_files` to True. This will rewrite all saved files, so please review the changes to ensure they're expected. A test is in CI to ensure that `rewrite_data_files` is False.
 
 Mocking external resources in tests
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -384,10 +383,15 @@ The Python HAWC client can be packaged for easy distribution.
 
 .. code-block:: bash
 
-    # change to your client directory within the hawc project
+    # install dependencies
+    pip install twine wheel
+
+    # change to client path
     cd client
 
-    # make a sdist and wheel for your hawc-client
-    python setup.py sdist bdist_wheel
+    # build packages; these can be distributed directly
+    make build
 
-These distributions will be located in the ``dist`` folder within the aforementioned ``client`` directory.
+    # or can be uploaded to pypi
+    make upload-testpypi
+    make upload-pypi

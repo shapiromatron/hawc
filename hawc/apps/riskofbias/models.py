@@ -168,7 +168,7 @@ class RiskOfBias(models.Model):
 
     class Meta:
         verbose_name_plural = "Risk of Biases"
-        ordering = ("final",)
+        ordering = ("final", "id")
 
     def __str__(self):
         return f"{self.study.short_citation} (Risk of bias)"
