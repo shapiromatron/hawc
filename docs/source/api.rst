@@ -40,7 +40,7 @@ There are many more commands available in the HAWC client that aren't documented
 R HAWC client
 -------------
 
-An R client is also available, though it is updated less frequently. To install and use:
+An R client is also available. To install and use:
 
 .. code-block:: R
 
@@ -58,7 +58,7 @@ An R client is also available, though it is updated less frequently. To install 
         ids=hero_ids
     )
 
-The API for the R-client is roughly a mirror of the Python client, but may be lagging in features.
+Please note that the Python client is considered the reference implementation for a HAWC client and will include the latest features; the R client may be a little behind.
 
 API access
 ----------
