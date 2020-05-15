@@ -327,7 +327,7 @@ class DataPivotCopyAsNewSelector(TeamMemberOrHigherMixin, FormView):
         return HttpResponseRedirect(url)
 
 
-class GetDataPivotObjectMixin(object):
+class GetDataPivotObjectMixin:
     def get_object(self):
         slug = self.kwargs.get("slug")
         assessment = self.kwargs.get("pk")

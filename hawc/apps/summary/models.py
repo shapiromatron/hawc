@@ -781,7 +781,7 @@ class DataPivotQuery(DataPivot):
         return json.dumps(settings)
 
 
-class Prefilter(object):
+class Prefilter:
     """
     Helper-object to deal with DataPivot and Visual prefilters fields.
     """
