@@ -1,8 +1,10 @@
 import logging
+from typing import Optional
 
 import pandas as pd
 from django.apps import apps
 from django.core import exceptions
+from django.core.cache import cache
 from django.db.models import Count
 from django.urls import reverse
 from django.utils import timezone
@@ -14,11 +16,13 @@ from rest_framework.exceptions import APIException
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
-from ..common.helper import FlatExport, create_uuid, tryParseInt
+from ..common import dsstox
+from ..common.helper import FlatExport, create_uuid, re_digits, tryParseInt
 from ..common.renderers import PandasRenderers
 from ..lit import constants
-from . import models, serializers
+from . import models, serializers, tasks
 
 
 class RequiresAssessmentID(APIException):
@@ -30,13 +34,20 @@ class DisabledPagination(PageNumberPagination):
     page_size = None
 
 
-def get_assessment_from_query(request):
-    """Returns assessment or None."""
+def get_assessment_id_param(request) -> int:
+    """
+    If request doesn't contain an integer-based `assessment_id`, an exception is raised.
+    """
     assessment_id = tryParseInt(request.GET.get("assessment_id"))
     if assessment_id is None:
-        raise RequiresAssessmentID
+        raise RequiresAssessmentID()
+    return assessment_id
 
-    return models.Assessment.objects.get_qs(assessment_id).first()
+
+def get_assessment_from_query(request) -> Optional[models.Assessment]:
+    """Returns assessment or None."""
+    assessment_id = get_assessment_id_param(request)
+    return models.Assessment.objects.filter(pk=assessment_id).first()
 
 
 class AssessmentLevelPermissions(permissions.BasePermission):
@@ -83,6 +94,9 @@ class InAssessmentFilter(filters.BaseFilterBackend):
         if not hasattr(view, "assessment"):
             view.assessment = get_assessment_from_query(request)
 
+        if view.assessment is None:
+            return queryset.none()
+
         filters = {view.assessment_filter_args: view.assessment.id}
         return queryset.filter(**filters)
 
@@ -91,6 +105,7 @@ class AssessmentViewset(viewsets.ReadOnlyModelViewSet):
     assessment_filter_args = ""
     permission_classes = (AssessmentLevelPermissions,)
     filter_backends = (InAssessmentFilter,)
+    lookup_value_regex = re_digits
 
     def get_queryset(self):
         return self.model.objects.all()
@@ -101,6 +116,7 @@ class AssessmentEditViewset(viewsets.ModelViewSet):
     permission_classes = (AssessmentLevelPermissions,)
     parent_model = models.Assessment
     filter_backends = (InAssessmentFilter,)
+    lookup_value_regex = re_digits
 
     def get_queryset(self):
         return self.model.objects.all()
@@ -111,6 +127,7 @@ class AssessmentRootedTagTreeViewset(viewsets.ModelViewSet):
     Base viewset used with utils/models/AssessmentRootedTagTree subclasses
     """
 
+    lookup_value_regex = re_digits
     permission_classes = (AssessmentLevelPermissions,)
 
     PROJECT_MANAGER = "PROJECT_MANAGER"
@@ -127,13 +144,9 @@ class AssessmentRootedTagTreeViewset(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         # get an assessment
-        assessment_id = tryParseInt(request.data.get("assessment_id"), -1)
-        self.assessment = models.Assessment.objects.get_qs(assessment_id).first()
-        if self.assessment is None:
-            raise RequiresAssessmentID
-
+        assessment_id = get_assessment_id_param(self.request)
+        self.assessment = models.Assessment.objects.filter(id=assessment_id).first()
         self.check_editing_permission(request)
-
         return super().create(request, *args, **kwargs)
 
     @action(detail=True, methods=("patch",))
@@ -160,6 +173,7 @@ class DoseUnitsViewset(viewsets.ReadOnlyModelViewSet):
     model = models.DoseUnits
     serializer_class = serializers.DoseUnitsSerializer
     pagination_class = DisabledPagination
+    lookup_value_regex = re_digits
 
     def get_queryset(self):
         return self.model.objects.all()
@@ -362,9 +376,9 @@ class AssessmentEndpointList(AssessmentViewset):
         return Response(serializer.data)
 
     def get_queryset(self):
-        id_ = tryParseInt(self.request.GET.get("assessment_id"))
+        assessment_id = get_assessment_id_param(self.request)
         queryset = (
-            self.model.objects.get_qs(id_)
+            self.model.objects.get_qs(assessment_id)
             .annotate(endpoint_count=Count("baseendpoint__endpoint"))
             .annotate(outcome_count=Count("baseendpoint__outcome"))
             .annotate(ivendpoint_count=Count("baseendpoint__ivendpoint"))
@@ -383,3 +397,21 @@ class AdminDashboardViewset(viewsets.ViewSet):
         serializer.is_valid(raise_exception=True)
         fig = serializer.create_figure()
         return Response(fig.to_dict())
+
+
+class CasrnView(APIView):
+    permission_classes = (permissions.AllowAny,)
+
+    def get(self, request, casrn: str, format=None):
+        """
+        Given a CAS number, get results.
+        """
+        cache_name = dsstox.get_cache_name(casrn)
+
+        data = cache.get(cache_name)
+        if data is None:
+            data = {"status": "requesting"}
+            cache.set(cache_name, data, 60)  # add task; don't resubmit for 60 seconds
+            tasks.get_dsstox_details.delay(casrn)
+
+        return Response(data)

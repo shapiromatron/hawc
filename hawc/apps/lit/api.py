@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from ..assessment.api import AssessmentLevelPermissions, AssessmentRootedTagTreeViewset
 from ..assessment.models import Assessment
 from ..common.api import CleanupFieldsBaseViewSet, LegacyAssessmentAdapterMixin
-from ..common.helper import FlatExport
+from ..common.helper import FlatExport, re_digits
 from ..common.renderers import PandasRenderers
 from ..common.serializers import UnusedSerializer
 from . import exports, models, serializers
@@ -19,6 +19,7 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
     model = Assessment
     permission_classes = (AssessmentLevelPermissions,)
     serializer_class = UnusedSerializer
+    lookup_value_regex = re_digits
 
     def get_queryset(self):
         return self.model.objects.all()
@@ -151,10 +152,11 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         return Response(exporter.build_export())
 
 
-class SearchViewset(viewsets.GenericViewSet, mixins.CreateModelMixin, mixins.RetrieveModelMixin):
+class SearchViewset(mixins.CreateModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     model = models.Search
     serializer_class = serializers.SearchSerializer
     permission_classes = (AssessmentLevelPermissions,)
+    lookup_value_regex = re_digits
 
     def get_queryset(self):
         return self.model.objects.all()

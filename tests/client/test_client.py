@@ -138,7 +138,7 @@ class TestClient(LiveServerTestCase, TestCase):
         assert isinstance(response, pd.DataFrame)
 
     def test_lit_import_reference_tags(self):
-        csv = "reference_id,tag_id\n2,14"
+        csv = "reference_id,tag_id\n5,14"
         client = HawcClient(self.live_server_url)
         client.authenticate("pm@pm.com", "pw")
         response = client.lit.import_reference_tags(

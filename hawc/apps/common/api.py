@@ -7,7 +7,7 @@ from ..assessment.api import (
     AssessmentEditViewset,
     DisabledPagination,
     InAssessmentFilter,
-    RequiresAssessmentID,
+    get_assessment_id_param,
 )
 from . import views
 
@@ -57,10 +57,7 @@ class CleanupFieldsBaseViewSet(
     filter_backends = (BulkIdFilter,)
 
     def get_assessment(self, request, *args, **kwargs):
-        assessment_id = request.GET.get("assessment_id", None)
-        if assessment_id is None:
-            raise RequiresAssessmentID
-
+        assessment_id = get_assessment_id_param(request)
         return get_object_or_404(self.parent_model, pk=assessment_id)
 
     @action(detail=False, methods=["get"])
@@ -74,7 +71,7 @@ class CleanupFieldsBaseViewSet(
         queryset.model.delete_caches(ids)
 
 
-class DynamicFieldsMixin(object):
+class DynamicFieldsMixin:
     """
     A serializer mixin that takes an additional `fields` argument that controls
     which fields should be displayed.
@@ -98,7 +95,7 @@ class DynamicFieldsMixin(object):
                     self.fields.pop(field_name)
 
 
-class LegacyAssessmentAdapterMixin(object):
+class LegacyAssessmentAdapterMixin:
     """
     A mixin that allows API viewsets to interact with legacy methods.
     """
