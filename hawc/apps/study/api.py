@@ -10,7 +10,7 @@ from . import models, serializers
 
 
 class Study(
-    viewsets.ReadOnlyModelViewSet, mixins.CreateModelMixin,
+    mixins.CreateModelMixin, viewsets.ReadOnlyModelViewSet,
 ):
     assessment_filter_args = "assessment"
     model = models.Study

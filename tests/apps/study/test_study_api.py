@@ -62,7 +62,7 @@ def test_study_detail_api(db_keys):
 @pytest.mark.django_db
 class TestStudyCreateApi:
     def test_permissions(self, db_keys):
-        url = "/study/api/study/"
+        url = reverse("study:api:study-list")
         data = {
             "reference_id": db_keys.reference_unlinked,
             "short_citation": "Short citation.",
@@ -82,7 +82,7 @@ class TestStudyCreateApi:
 
     def test_bad_requests(self, db_keys):
         # payload needs to include the required short_citation and full_citation
-        url = "/study/api/study/"
+        url = reverse("study:api:study-list")
         data = {"reference_id": db_keys.reference_unlinked}
         client = APIClient()
         assert client.login(username="team@team.com", password="pw") is True
@@ -99,19 +99,20 @@ class TestStudyCreateApi:
 
         response = client.post(url, data)
         assert response.status_code == 400
-        assert "Reference ID must be a number." == str(response.data["non_field_errors"][0])
+        assert str(response.data["non_field_errors"][0]) == "Reference ID must be a number."
 
         # references can only be linked to one study
         data["reference_id"] = db_keys.reference_linked
         response = client.post(url, data)
         assert response.status_code == 400
-        assert f"Reference ID {db_keys.reference_linked} already linked with a study." == str(
-            response.data["non_field_errors"][0]
+        assert (
+            str(response.data["non_field_errors"][0])
+            == f"Reference ID {db_keys.reference_linked} already linked with a study."
         )
 
     def test_valid_requests(self, db_keys):
         # this is a correct request
-        url = "/study/api/study/"
+        url = reverse("study:api:study-list")
         data = {
             "reference_id": db_keys.reference_unlinked,
             "short_citation": "Short citation.",
@@ -122,12 +123,13 @@ class TestStudyCreateApi:
         response = client.post(url, data)
         assert response.status_code == 201
 
-        assert data["short_citation"] == response.data["short_citation"]
-        assert data["full_citation"] == response.data["full_citation"]
+        assert response.data["short_citation"] == data["short_citation"]
+        assert response.data["full_citation"] == data["full_citation"]
 
         # now that it has been create, we should not be able to create it again
         response = client.post(url, data)
         assert response.status_code == 400
-        assert f"Reference ID {db_keys.reference_unlinked} already linked with a study." == str(
-            response.data["non_field_errors"][0]
+        assert (
+            str(response.data["non_field_errors"][0])
+            == f"Reference ID {db_keys.reference_unlinked} already linked with a study."
         )
