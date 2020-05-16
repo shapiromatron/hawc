@@ -33,7 +33,7 @@ class Study(
         if self.action == "list":
             cls = serializers.SimpleStudySerializer
         elif self.action == "create":
-            cls = serializers.CreateStudySerializer
+            cls = serializers.SimpleStudySerializer
         return cls
 
     def get_queryset(self):

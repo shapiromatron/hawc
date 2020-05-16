@@ -106,7 +106,7 @@ class TestStudyCreateApi:
         response = client.post(url, data)
         assert response.status_code == 400
         assert (
-            str(response.data["non_field_errors"][0])
+            str(response.data[0])
             == f"Reference ID {db_keys.reference_linked} already linked with a study."
         )
 
@@ -130,6 +130,6 @@ class TestStudyCreateApi:
         response = client.post(url, data)
         assert response.status_code == 400
         assert (
-            str(response.data["non_field_errors"][0])
+            str(response.data[0])
             == f"Reference ID {db_keys.reference_unlinked} already linked with a study."
         )

@@ -23,33 +23,27 @@ class StudySerializer(serializers.ModelSerializer):
 
 
 class SimpleStudySerializer(StudySerializer):
-    class Meta:
-        model = models.Study
-        exclude = (
-            "searches",
-            "identifiers",
-        )
-
-
-class CreateStudySerializer(SimpleStudySerializer):
     def validate(self, data):
+        if "reference_id" in self.initial_data:
 
-        ref_id = self.initial_data.get("reference_id", -1)
+            ref_id = self.initial_data.get("reference_id")
 
-        try:
-            reference = Reference.objects.get(id=ref_id)
-        except ValueError:
-            raise serializers.ValidationError("Reference ID must be a number.")
-        except ObjectDoesNotExist:
-            raise serializers.ValidationError(f"Reference ID does not exist.")
+            try:
+                Reference.objects.get(id=ref_id)
+            except ValueError:
+                raise serializers.ValidationError("Reference ID must be a number.")
+            except ObjectDoesNotExist:
+                raise serializers.ValidationError(f"Reference ID does not exist.")
+
+        return super().validate(data)
+
+    def create(self, validated_data):
+        ref_id = self.initial_data.get("reference_id")
+        reference = Reference.objects.get(id=ref_id)
         if models.Study.objects.filter(reference_ptr=ref_id).exists():
             raise serializers.ValidationError(f"Reference ID {ref_id} already linked with a study.")
         if not reference.assessment.user_can_edit_object(self.context["request"].user):
             raise exceptions.PermissionDenied("Invalid permission to edit assessment.")
-        return super().validate(data)
-
-    def create(self, validated_data):
-        reference = Reference.objects.get(id=self.initial_data.get("reference_id"))
         validated_data["assessment"] = reference.assessment.id
 
         return models.Study.save_new_from_reference(reference, validated_data)
@@ -57,10 +51,10 @@ class CreateStudySerializer(SimpleStudySerializer):
     class Meta:
         model = models.Study
         exclude = (
-            "assessment",
             "searches",
             "identifiers",
         )
+        extra_kwargs = {"assessment": {"required": False}}
 
 
 class StudyAssessmentSerializer(serializers.ModelSerializer):
