@@ -1,5 +1,5 @@
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import viewsets
+from rest_framework import mixins, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
@@ -14,7 +14,9 @@ from ..common.helper import re_digits
 from . import models, serializers
 
 
-class Study(viewsets.ReadOnlyModelViewSet):
+class Study(
+    mixins.CreateModelMixin, viewsets.ReadOnlyModelViewSet,
+):
     assessment_filter_args = "assessment"
     model = models.Study
     pagination_class = DisabledPagination
@@ -29,6 +31,8 @@ class Study(viewsets.ReadOnlyModelViewSet):
     def get_serializer_class(self):
         cls = serializers.VerboseStudySerializer
         if self.action == "list":
+            cls = serializers.SimpleStudySerializer
+        elif self.action == "create":
             cls = serializers.SimpleStudySerializer
         return cls
 
@@ -52,6 +56,10 @@ class Study(viewsets.ReadOnlyModelViewSet):
     def types(self, request):
         study_types = self.model.STUDY_TYPE_FIELDS
         return Response(study_types)
+
+    def create(self, request):
+        # permissions check not here; see serializer validation
+        return super().create(request)
 
 
 class FinalRobStudy(Study):

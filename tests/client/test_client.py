@@ -178,3 +178,15 @@ class TestClient(LiveServerTestCase, TestCase):
         client = HawcClient(self.live_server_url)
         response = client.summary.visual_list(self.db_keys.assessment_client)
         assert isinstance(response, pd.DataFrame)
+
+    #####################
+    # StudyClient tests #
+    #####################
+
+    def test_study_create(self):
+        client = HawcClient(self.live_server_url)
+        client.authenticate("pm@pm.com", "pw")
+        response = client.study.create(
+            self.db_keys.reference_unlinked, "short citation", "full citation"
+        )
+        assert isinstance(response, dict)
