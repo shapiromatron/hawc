@@ -1,5 +1,5 @@
 from django.db.models import Q
-from rest_framework import viewsets
+from rest_framework import mixins, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import NotAcceptable
 from rest_framework.response import Response
@@ -63,7 +63,7 @@ class AnimalAssessmentViewset(
         return Response(exporter.build_export())
 
 
-class Experiment(AssessmentViewset):
+class Experiment(mixins.CreateModelMixin, AssessmentViewset):
     assessment_filter_args = "study__assessment"
     model = models.Experiment
     serializer_class = serializers.ExperimentSerializer

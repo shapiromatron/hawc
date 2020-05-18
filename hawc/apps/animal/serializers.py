@@ -1,17 +1,19 @@
 import json
 
-from rest_framework import serializers
+from django.core.exceptions import ObjectDoesNotExist
+from rest_framework import exceptions, serializers
 
 from ..assessment.serializers import EffectTagsSerializer
 from ..bmd.serializers import ModelSerializer
 from ..common.api import DynamicFieldsMixin
 from ..common.helper import SerializerHelper
+from ..study.models import Study
 from ..study.serializers import StudySerializer
 from . import models
 
 
 class ExperimentSerializer(serializers.ModelSerializer):
-    study = StudySerializer()
+    study = StudySerializer(required=False, read_only=True)
 
     def to_representation(self, instance):
         ret = super().to_representation(instance)
@@ -20,6 +22,34 @@ class ExperimentSerializer(serializers.ModelSerializer):
         ret["is_generational"] = instance.is_generational()
         ret["cas_url"] = instance.get_casrn_url()
         return ret
+
+    def validate(self, data):
+        if "study_id" in self.initial_data:
+            # Get study instance
+            study_id = self.initial_data.get("study_id")
+            try:
+                study = Study.objects.get(id=study_id)
+                data["study"] = StudySerializer(study).data
+            except ValueError:
+                raise serializers.ValidationError("Study ID must be a number.")
+            except ObjectDoesNotExist:
+                raise serializers.ValidationError(f"Study ID does not exist.")
+        elif "study" in self.initial_data:
+            study_serializer = StudySerializer(data=self.initial_data.get("study"))
+            study_serializer.is_valid(raise_exception=True)
+            data["study"] = study_serializer.validated_data
+        else:
+            # Serializer needs one form of study identifier
+            raise serializers.ValidationError("Expected 'study' or 'study_id'.")
+        return super().validate(data)
+
+    def create(self, validated_data):
+        study_id = self.initial_data.get("study_id")
+        study = Study.objects.get(id=study_id)
+        if not study.assessment.user_can_edit_object(self.context["request"].user):
+            raise exceptions.PermissionDenied("Invalid permission to edit assessment.")
+        validated_data["study"] = study
+        return models.Experiment.objects.create(**validated_data)
 
     class Meta:
         model = models.Experiment
