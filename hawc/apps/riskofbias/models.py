@@ -481,7 +481,7 @@ class RiskOfBiasScore(models.Model):
     }
 
     SCORE_SHADES = {
-        10: "#FFCC00",
+        10: "#E8E8E8",
         12: "#FFCC00",
         14: "#CC3333",
         15: "#FFCC00",
