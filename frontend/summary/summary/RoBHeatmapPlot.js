@@ -110,14 +110,15 @@ class RoBHeatmapPlot extends D3Visualization {
                     }
                     cells_data.push({
                         robArray,
-                        study: robArray[0].study,
-                        study_label: robArray[0].study.data[study_label_field],
+                        directions: displayData.directions,
                         metric: robArray[0].data.metric,
                         metric_label: metric_name,
-                        score_text: displayData.symbolShortText,
-                        directions: displayData.directions,
                         score_color: displayData.svgStyle.fill,
+                        score_text: displayData.symbolShortText,
                         score_text_color: robArray[0].data.score_text_color,
+                        study: robArray[0].study,
+                        study_label: robArray[0].study.data[study_label_field],
+                        symbols: displayData.symbols,
                     });
                 })
                 .value();
@@ -461,7 +462,7 @@ class RoBHeatmapPlot extends D3Visualization {
             },
             getFootnoteOptions = () => {
                 let footnotes = [];
-                if (this.cells_data.filter(d => d.robArray.length > 1).length > 0) {
+                if (this.cells_data.filter(d => d.symbols.length > 1).length > 0) {
                     footnotes.push(FOOTNOTES.MULTIPLE_SCORES);
                 }
                 if (this.cells_data_up.length > 0) {

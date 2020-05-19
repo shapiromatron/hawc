@@ -167,6 +167,7 @@ const NA_KEYS = [10, 20],
         return {
             reactStyle,
             cssStyle,
+            symbols,
             symbolText,
             symbolShortText,
             directions,
