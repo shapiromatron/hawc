@@ -118,7 +118,7 @@ const NA_KEYS = [10, 20],
                 .uniq()
                 .value(),
             symbolText = symbols.join(" / "),
-            symbolShortText = symbols.length === 1 ? symbols[0] : `${defaultScore.score_symbol}*`,
+            symbolShortText = symbols.length === 1 ? symbols[0] : `${defaultScore.score_symbol}✱`,
             directions = _.chain(sortedScores)
                 .map(score => score.bias_direction)
                 .uniq()
