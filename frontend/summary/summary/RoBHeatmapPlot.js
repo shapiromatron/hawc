@@ -302,7 +302,7 @@ class RoBHeatmapPlot extends D3Visualization {
             .attr("class", d =>
                 d.metric.domain.is_overall_confidence ? "heatmap_selectable_bold" : "centeredLabel"
             )
-            .style("font-size", "6px")
+            .style("font-size", "10px")
             .style("fill", d => d.score_text_color)
             .text(BIAS_DIRECTION_COMPACT[BIAS_DIRECTION_UP]);
 
@@ -318,7 +318,7 @@ class RoBHeatmapPlot extends D3Visualization {
             .attr("class", d =>
                 d.metric.domain.is_overall_confidence ? "heatmap_selectable_bold" : "centeredLabel"
             )
-            .style("font-size", "6px")
+            .style("font-size", "10px")
             .style("fill", d => d.score_text_color)
             .text(BIAS_DIRECTION_COMPACT[BIAS_DIRECTION_DOWN]);
 
