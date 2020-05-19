@@ -149,7 +149,7 @@ const NA_KEYS = [10, 20],
                     })
                     .join(""),
                 gradientId = `gradient${scores[0].id}`,
-                gradient = `<linearGradient id="${gradientId}" x1="0" y1="0" x2="5%" y2="5%" spreadMethod="repeat">${svgShades}</linearGradient>`;
+                gradient = `<linearGradient id="${gradientId}" x1="0" y1="0" x2="25%" y2="25%" spreadMethod="repeat">${svgShades}</linearGradient>`;
 
             reactStyle = {background: `repeating-linear-gradient(-45deg, ${reactGradients})`};
             cssStyle = reactStyle;
