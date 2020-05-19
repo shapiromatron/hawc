@@ -268,7 +268,7 @@ class RoBBarchartPlot extends D3Visualization {
                 dev: this.options.dev || false,
                 collapseNR: true,
             };
-        this.legend = new RoBLegend(this.svg, this.data.settings, rob_response_values, options);
+        this.legend = new RoBLegend(this.svg, this.data.settings, rob_response_values, [], options);
     }
 }
 
