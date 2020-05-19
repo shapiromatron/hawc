@@ -69,7 +69,7 @@ class Experiment(mixins.CreateModelMixin, AssessmentViewset):
     serializer_class = serializers.ExperimentSerializer
 
 
-class AnimalGroup(AssessmentViewset):
+class AnimalGroup(mixins.CreateModelMixin, AssessmentViewset):
     assessment_filter_args = "experiment__study__assessment"
     model = models.AnimalGroup
     serializer_class = serializers.AnimalGroupSerializer

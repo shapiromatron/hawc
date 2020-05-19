@@ -96,25 +96,60 @@ class DosingRegimeSerializer(serializers.ModelSerializer):
 
 
 class AnimalGroupSerializer(serializers.ModelSerializer):
-    experiment = ExperimentSerializer()
-    dosing_regime = DosingRegimeSerializer(allow_null=True)
-    species = serializers.StringRelatedField()
-    strain = serializers.StringRelatedField()
-    parents = AnimalGroupRelationSerializer(many=True)
-    siblings = AnimalGroupRelationSerializer()
-    children = AnimalGroupRelationSerializer(many=True)
+    experiment = ExperimentSerializer(required=False)
+    dosing_regime = DosingRegimeSerializer(allow_null=True, default=None)
+    parents = AnimalGroupRelationSerializer(many=True, required=False)
+    siblings = AnimalGroupRelationSerializer(required=False)
+    children = AnimalGroupRelationSerializer(many=True, required=False)
 
     def to_representation(self, instance):
         ret = super().to_representation(instance)
+        ret["species"] = instance.species.name
+        ret["strain"] = instance.strain.name
         ret["url"] = instance.get_absolute_url()
         ret["sex"] = instance.get_sex_display()
         ret["generation"] = instance.generation_short
         ret["sex_symbol"] = instance.sex_symbol
         return ret
 
+    def validate(self, data):
+        # Validate experiment
+        if "experiment_id" in self.initial_data:
+            # Get experiment instance
+            experiment_id = self.initial_data.get("experiment_id")
+            try:
+                experiment = models.Experiment.objects.get(id=experiment_id)
+                data["experiment"] = ExperimentSerializer(experiment).data
+            except ValueError:
+                raise serializers.ValidationError("Experiment ID must be a number.")
+            except ObjectDoesNotExist:
+                raise serializers.ValidationError(f"Experiment ID does not exist.")
+        elif "experiment" in self.initial_data:
+            experiment_serializer = ExperimentSerializer(data=self.initial_data.get("experiment"))
+            experiment_serializer.is_valid(raise_exception=True)
+            data["experiment"] = experiment_serializer.validated_data
+        else:
+            # Serializer needs one form of experiment identifier
+            raise serializers.ValidationError("Expected 'experiment' or 'experiment_id'.")
+
+        return super().validate(data)
+
+    def create(self, validated_data):
+        experiment_id = self.initial_data.get("experiment_id")
+        experiment = models.Experiment.objects.get(id=experiment_id)
+        if not experiment.study.assessment.user_can_edit_object(self.context["request"].user):
+            raise exceptions.PermissionDenied("Invalid permission to edit assessment.")
+        validated_data["experiment"] = experiment
+        return models.AnimalGroup.objects.create(**validated_data)
+
     class Meta:
         model = models.AnimalGroup
         fields = "__all__"
+        extra_kwargs = {
+            "name": {"required": True},
+            "species": {"required": True},
+            "strain": {"required": True},
+        }
 
 
 class EndpointGroupSerializer(serializers.ModelSerializer):

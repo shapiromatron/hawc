@@ -86,3 +86,68 @@ class TestExperimentCreateApi:
         response = client.post(url, data)
         assert response.status_code == 201
         assert len(models.Experiment.objects.filter(name="Experiment name")) == 2
+
+
+@pytest.mark.django_db
+class TestAnimalGroupCreateApi:
+    def test_permissions(self, db_keys):
+        url = reverse("animal:api:animal_group-list")
+        data = {
+            "name": "Animal group name",
+            "species": 1,
+            "strain": 1,
+            "sex": "M",
+            "experiment_id": 1,
+        }
+
+        # reviewers shouldn't be able to create
+        client = APIClient()
+        assert client.login(username="rev@rev.com", password="pw") is True
+        response = client.post(url, data)
+        assert response.status_code == 403
+
+        # public shouldn't be able to create
+        client = APIClient()
+        response = client.post(url, data)
+        assert response.status_code == 403
+
+    def test_bad_requests(self, db_keys):
+        url = reverse("animal:api:animal_group-list")
+        client = APIClient()
+        assert client.login(username="team@team.com", password="pw") is True
+
+        # payload needs to include name, species, strain, and sex
+        data = {"experiment_id": 1}
+        response = client.post(url, data)
+        assert response.status_code == 400
+        assert {"name", "species", "strain", "sex"}.issubset((response.data.keys()))
+
+        # payload needs experiment id
+        data = {"name": "Animal group name", "species": 1, "strain": 1, "sex": "M"}
+        response = client.post(url, data)
+        assert response.status_code == 400
+        assert (
+            str(response.data["non_field_errors"][0]) == "Expected 'experiment' or 'experiment_id'."
+        )
+
+    def test_valid_requests(self, db_keys):
+        url = reverse("animal:api:animal_group-list")
+        data = {
+            "name": "Animal group name",
+            "species": 1,
+            "strain": 1,
+            "sex": "M",
+            "experiment_id": 1,
+        }
+
+        # valid request
+        client = APIClient()
+        assert client.login(username="team@team.com", password="pw") is True
+        response = client.post(url, data)
+        assert response.status_code == 201
+
+        assert len(models.AnimalGroup.objects.filter(name="Animal group name")) == 1
+
+        response = client.post(url, data)
+        assert response.status_code == 201
+        assert len(models.AnimalGroup.objects.filter(name="Animal group name")) == 2
