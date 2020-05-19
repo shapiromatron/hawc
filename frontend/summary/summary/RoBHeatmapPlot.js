@@ -325,18 +325,14 @@ class RoBHeatmapPlot extends D3Visualization {
         $(".x_axis text")
             .each(this.xIsStudy ? getStudySQs : getMetricSQs)
             .attr("class", "heatmap_selectable")
-            .on("mouseover", function(v) {
-                self.draw_hovers(this, {draw: true, type: "column"});
-            })
+            .on("mouseover", v => self.draw_hovers(this, {draw: true, type: "column"}))
             .on("mouseout", hideHovers)
             .on("click", showSQs);
 
         $(".y_axis text")
             .each(!this.xIsStudy ? getStudySQs : getMetricSQs)
             .attr("class", "heatmap_selectable")
-            .on("mouseover", function(v) {
-                self.draw_hovers(this, {draw: true, type: "row"});
-            })
+            .on("mouseover", v => self.draw_hovers(this, {draw: true, type: "row"}))
             .on("mouseout", hideHovers)
             .on("click", showSQs);
 
