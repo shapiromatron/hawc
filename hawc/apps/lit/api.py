@@ -183,6 +183,38 @@ class ReferenceFilterTag(AssessmentRootedTagTreeViewset):
     model = models.ReferenceFilterTag
     serializer_class = serializers.ReferenceFilterTagSerializer
 
+    @action(detail=True, renderer_classes=PandasRenderers)
+    def export(self, request, pk):
+        """
+        Return all references for a given Search
+        """
+        # TODO RESUME HERE - make sure permissions are checked
+        instance = self.get_object()
+        exporter = exports.ReferenceFlatComplete(
+            instance.references.all(),
+            filename=f"{instance.assessment}-search-{instance.slug}",
+            assessment=self.assessment,
+            tags=models.ReferenceFilterTag.get_all_tags(self.assessment.id, json_encode=False),
+            include_parent_tag=False,
+        )
+        return Response(exporter.build_export())
+
+    @action(detail=True, url_path="table-builder-export", renderer_classes=PandasRenderers)
+    def table_builder_export(self, request, pk):
+        """
+        Return all references for a given Search
+        """
+        # TODO RESUME HERE - make sure permissions are checked
+        instance = self.get_object()
+        exporter = exports.ReferenceFlatComplete(
+            instance.references.all(),
+            filename=f"{instance.assessment}-search-{instance.slug}",
+            assessment=self.assessment,
+            tags=models.ReferenceFilterTag.get_all_tags(self.assessment.id, json_encode=False),
+            include_parent_tag=False,
+        )
+        return Response(exporter.build_export())
+
 
 class ReferenceCleanup(CleanupFieldsBaseViewSet):
     serializer_class = serializers.ReferenceCleanupFieldsSerializer
