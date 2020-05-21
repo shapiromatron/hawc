@@ -179,44 +179,41 @@ class SearchViewset(mixins.CreateModelMixin, mixins.RetrieveModelMixin, viewsets
         return Response(exporter.build_export())
 
 
-class ReferenceFilterTag(AssessmentRootedTagTreeViewset):
+class ReferenceFilterTagViewset(AssessmentRootedTagTreeViewset):
     model = models.ReferenceFilterTag
     serializer_class = serializers.ReferenceFilterTagSerializer
 
     @action(detail=True, renderer_classes=PandasRenderers)
-    def export(self, request, pk):
+    def references(self, request, pk):
         """
-        Return all references for a given Search
+        Return all references for a selected tag; does not include tag-descendants.
         """
-        # TODO RESUME HERE - make sure permissions are checked
-        instance = self.get_object()
+        tag = self.get_object()
         exporter = exports.ReferenceFlatComplete(
-            instance.references.all(),
-            filename=f"{instance.assessment}-search-{instance.slug}",
+            queryset=models.Reference.objects.filter(tags=tag),
+            filename=f"{self.assessment}-{tag.slug}",
             assessment=self.assessment,
-            tags=models.ReferenceFilterTag.get_all_tags(self.assessment.id, json_encode=False),
+            tags=self.model.get_all_tags(self.assessment.id, json_encode=False),
             include_parent_tag=False,
         )
         return Response(exporter.build_export())
 
-    @action(detail=True, url_path="table-builder-export", renderer_classes=PandasRenderers)
-    def table_builder_export(self, request, pk):
+    @action(detail=True, url_path="references-table-builder", renderer_classes=PandasRenderers)
+    def references_table_builder(self, request, pk):
         """
-        Return all references for a given Search
+        Return all references for a selected tag in table-builder import format; does not include
+        tag-descendants.
         """
-        # TODO RESUME HERE - make sure permissions are checked
-        instance = self.get_object()
-        exporter = exports.ReferenceFlatComplete(
-            instance.references.all(),
-            filename=f"{instance.assessment}-search-{instance.slug}",
+        tag = self.get_object()
+        exporter = exports.TableBuilderFormat(
+            queryset=models.Reference.objects.filter(tags=tag),
+            filename=f"{self.assessment}-{tag.slug}",
             assessment=self.assessment,
-            tags=models.ReferenceFilterTag.get_all_tags(self.assessment.id, json_encode=False),
-            include_parent_tag=False,
         )
         return Response(exporter.build_export())
 
 
-class ReferenceCleanup(CleanupFieldsBaseViewSet):
+class ReferenceCleanupViewset(CleanupFieldsBaseViewSet):
     serializer_class = serializers.ReferenceCleanupFieldsSerializer
     model = models.Reference
     assessment_filter_args = "assessment"

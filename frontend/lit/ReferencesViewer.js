@@ -49,12 +49,12 @@ class ReferencesViewer {
             );
 
             actionLinks.push({
-                url: `/lit/api/tags/${this.options.tag.data.pk}/export/?format=xlsx`,
+                url: `/lit/api/tags/${this.options.tag.data.pk}/references/?format=xlsx`,
                 text: "Download references",
             });
 
             actionLinks.push({
-                url: `/lit/api/tags/${this.options.tag.data.pk}/table-builder-export/?format=xlsx`,
+                url: `/lit/api/tags/${this.options.tag.data.pk}/references-table-builder/?format=xlsx`,
                 text: "Download references (table-builder format)",
             });
 
