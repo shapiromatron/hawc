@@ -151,3 +151,24 @@ class TestAnimalGroupCreateApi:
         response = client.post(url, data)
         assert response.status_code == 201
         assert len(models.AnimalGroup.objects.filter(name="Animal group name")) == 2
+
+    def test_create_dosing_regime(self, db_keys):
+        url = reverse("animal:api:animal_group-list")
+        data = {
+            "name": "Animal group name",
+            "species": 1,
+            "strain": 1,
+            "sex": "M",
+            "experiment_id": 1,
+            "dosing_regime": {
+                "doses": [{"dose_group_id": 0, "dose": 1.0, "dose_units_id": 1}],
+                "route_of_exposure": "OR",
+            },
+        }
+
+        # valid request
+        client = APIClient()
+        assert client.login(username="team@team.com", password="pw") is True
+        response = client.post(url, data, format="json")
+
+        assert response.status_code == 201

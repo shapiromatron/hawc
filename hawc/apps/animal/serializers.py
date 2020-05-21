@@ -3,6 +3,7 @@ import json
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import exceptions, serializers
 
+from ..assessment.models import DoseUnits
 from ..assessment.serializers import EffectTagsSerializer
 from ..bmd.serializers import ModelSerializer
 from ..common.api import DynamicFieldsMixin
@@ -64,6 +65,31 @@ class DosesSerializer(serializers.ModelSerializer):
         fields = "__all__"
         depth = 1
 
+    def validate(self, data):
+        if hasattr(self, "initial_data"):
+            try:
+                dose_regime_id = self.initial_data.get("dose_regime_id", -1)
+                models.DosingRegime.objects.get(id=dose_regime_id)
+                data["dose_regime_id"] = dose_regime_id
+            except ValueError:
+                raise serializers.ValidationError("Dosing regime ID must be a number.")
+            except ObjectDoesNotExist:
+                raise serializers.ValidationError(f"Dosing regime ID does not exist.")
+
+            try:
+                dose_units_id = self.initial_data.get("dose_units_id", -1)
+                DoseUnits.objects.get(id=dose_units_id)
+                data["dose_units_id"] = dose_units_id
+            except ValueError:
+                raise serializers.ValidationError("Dose units ID must be a number.")
+            except ObjectDoesNotExist:
+                raise serializers.ValidationError(f"Dose units ID does not exist.")
+
+        return super().validate(data)
+
+    def create(self, validated_data):
+        return models.DoseGroup.objects.create(**validated_data)
+
 
 class AnimalGroupRelationSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
@@ -81,7 +107,7 @@ class AnimalGroupRelationSerializer(serializers.ModelSerializer):
 
 class DosingRegimeSerializer(serializers.ModelSerializer):
     doses = DosesSerializer(many=True)
-    dosed_animals = AnimalGroupRelationSerializer()
+    dosed_animals = AnimalGroupRelationSerializer(required=False)
 
     def to_representation(self, instance):
         ret = super().to_representation(instance)
@@ -89,6 +115,22 @@ class DosingRegimeSerializer(serializers.ModelSerializer):
         ret["positive_control"] = instance.get_positive_control_display()
         ret["negative_control"] = instance.get_negative_control_display()
         return ret
+
+    def create(self, validated_data):
+
+        doses = list()
+        validated_data.pop("doses")
+        dosing_regime = models.DosingRegime.objects.create(**validated_data)
+        doses_data = self.initial_data.get("doses")
+        for dose in doses_data:
+            dose["dose_regime_id"] = dosing_regime.id
+            dose_serializer = DosesSerializer(data=dose)
+            dose_serializer.is_valid(raise_exception=True)
+            doses.append(dose_serializer)
+        # All doses are valid
+        for dose in doses:
+            dose.save()
+        return dosing_regime
 
     class Meta:
         model = models.DosingRegime
@@ -140,6 +182,16 @@ class AnimalGroupSerializer(serializers.ModelSerializer):
         if not experiment.study.assessment.user_can_edit_object(self.context["request"].user):
             raise exceptions.PermissionDenied("Invalid permission to edit assessment.")
         validated_data["experiment"] = experiment
+        if validated_data["dosing_regime"] is not None:
+            dosing_regime_serializer = DosingRegimeSerializer(
+                data=self.initial_data.get("dosing_regime")
+            )
+            dosing_regime_serializer.is_valid(raise_exception=True)
+            validated_data["dosing_regime"] = dosing_regime_serializer.save()
+            animal_group = models.AnimalGroup.objects.create(**validated_data)
+            animal_group.dosing_regime.dosed_animals = animal_group
+            animal_group.dosing_regime.save()
+            return animal_group
         return models.AnimalGroup.objects.create(**validated_data)
 
     class Meta:
