@@ -177,7 +177,7 @@ class BaseVisualForm {
                     submitter.trigger("click");
                 })
             )
-            .append('<a class="btn btn-default" href="{0}">Cancel</a>'.printf(cancel_url))
+            .append(`<a class="btn btn-default" href="${cancel_url}">Cancel</a>`)
             .appendTo($parent);
     }
 
@@ -194,14 +194,12 @@ class BaseVisualForm {
         _.each(tabs, function(d, i) {
             isActive = i === 0 ? "active" : "";
             self.settingsTabs[d.name] = $(
-                '<div id="settings_{0}" class="tab-pane {1}">'.printf(d.name, isActive)
+                `<div id="settings_${d.name}" class="tab-pane ${isActive}">`
             );
             tablinks.push(
-                '<li class="{0}"><a href="#settings_{1}" data-toggle="tab">{2}</a></li>'.printf(
-                    isActive,
-                    d.name,
-                    d.label
-                )
+                `<li class="${isActive}">
+                    <a href="#settings_${d.name}" data-toggle="tab">${d.label}</a>
+                </li>`
             );
         });
 

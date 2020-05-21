@@ -11,30 +11,20 @@ import Result from "./Result";
 class Outcome {
     constructor(data) {
         this.data = data;
-        this.results = _.map(data.results, function(d) {
-            return new Result(d);
-        });
-        this.comparison_sets = _.map(data.comparison_sets, function(d) {
-            return new ComparisonSet(d);
-        });
+        this.results = _.map(data.results, d => new Result(d));
+        this.comparison_sets = _.map(data.comparison_sets, d => new ComparisonSet(d));
     }
 
     static get_object(id, cb) {
-        $.get("/epi/api/outcome/{0}/".printf(id), function(d) {
-            cb(new Outcome(d));
-        });
+        $.get(`/epi/api/outcome/${id}/`, d => cb(new Outcome(d)));
     }
 
     static displayAsModal(id) {
-        Outcome.get_object(id, function(d) {
-            d.displayAsModal();
-        });
+        Outcome.get_object(id, d => d.displayAsModal());
     }
 
     static displayFullPager($el, id) {
-        Outcome.get_object(id, function(d) {
-            d.displayFullPager($el);
-        });
+        Outcome.get_object(id, d => d.displayFullPager($el));
     }
 
     build_details_table() {
@@ -90,14 +80,10 @@ class Outcome {
     build_comparison_set_bullets() {
         if (this.data.can_create_sets) {
             var $el = $("<div>"),
-                grps = this.get_unused_comparison_sets();
+                groups = this.get_unused_comparison_sets();
             $el.append("<h2>Unused comparison sets</h2>");
-            if (grps.length > 0) {
-                $el.append(
-                    HAWCUtils.buildUL(grps, function(d) {
-                        return "<li>{0}</li>".printf(d.build_link());
-                    })
-                );
+            if (groups.length > 0) {
+                $el.append(HAWCUtils.buildUL(groups, d => `<li>${d.build_link()}</li>`));
             } else {
                 $el.append('<p class="help-block">No comparison sets are available.</p>');
             }

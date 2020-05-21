@@ -76,7 +76,7 @@ class SummaryTextTree {
                 self.root.get_option_item(lst);
                 select.html(lst);
                 if (!isNew) {
-                    select.find('option[value="{0}"]'.printf(obj.parent.id)).prop("selected", true);
+                    select.find(`option[value="${obj.parent.id}"]`).prop("selected", true);
                 }
             },
             sibling_options = function() {
@@ -91,7 +91,7 @@ class SummaryTextTree {
                 select.html(lst);
                 if (!isNew) {
                     select
-                        .find('option[value="{0}"]'.printf(obj.get_prior_sibling_id()))
+                        .find(`option[value="${obj.get_prior_sibling_id()}"]`)
                         .prop("selected", true);
                 }
             },

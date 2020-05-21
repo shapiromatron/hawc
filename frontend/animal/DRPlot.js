@@ -296,20 +296,20 @@ class DRPlot extends D3Plot {
             .map(function(v, i) {
                 var y,
                     cls = "dose_points",
-                    txts = ["Dose = {0} {1}".printf(v.dose, dose_units), "N = {0}".printf(v.n)];
+                    txts = [`Dose = ${v.dose} ${dose_units}`, `N = ${v.n}`];
 
                 if (ep.data_type == "C") {
                     y = v.response;
                     txts.push(
-                        "Response = {0} {1}".printf(v.response, ep.response_units),
-                        "{0} = {1}".printf(ep.variance_name, v.variance)
+                        `Response = ${v.response} ${ep.response_units}`,
+                        `${ep.variance_name} = ${v.variance}`
                     );
                 } else if (ep.data_type == "P") {
                     y = v.response;
-                    txts.push("Response = {0}".printf(self.endpoint.get_pd_string(v)));
+                    txts.push(`Response = ${self.endpoint.get_pd_string(v)}`);
                 } else {
                     y = v.incidence / v.n;
-                    txts.push("Incidence = {0} {1}".printf(v.incidence, ep.response_units));
+                    txts.push(`Incidence = ${v.incidence} ${ep.response_units}`);
                 }
 
                 if (ep.LOEL == i) cls += " LOEL";
@@ -349,8 +349,8 @@ class DRPlot extends D3Plot {
 
         _.extend(this, {
             title_str: this.endpoint.data.name,
-            x_label_text: "Dose ({0})".printf(this.endpoint.dose_units),
-            y_label_text: "Response ({0})".printf(this.endpoint.data.response_units),
+            x_label_text: `Dose (${this.endpoint.dose_units})`,
+            y_label_text: `Response (${this.endpoint.data.response_units})`,
             values,
             sigs_data,
             max_x: d3.max(ep.groups, function(datum) {
@@ -539,9 +539,9 @@ class DRPlot extends D3Plot {
                 })
                 .text("*");
 
-            this.sigs_labels = this.sigs.append("svg:title").text(function(d) {
-                return "Statistically significant at {0}".printf(d.significance_level);
-            });
+            this.sigs_labels = this.sigs
+                .append("svg:title")
+                .text(d => `Statistically significant at ${d.significance_level}`);
         }
     }
 

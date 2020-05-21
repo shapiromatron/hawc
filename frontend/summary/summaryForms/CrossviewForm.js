@@ -46,9 +46,7 @@ class CrossviewSelectorField extends TableField {
             setValues = function(fld) {
                 var isLog = $('input[name="dose_isLog"]').prop("checked"),
                     opts = _.chain(CrossviewPlot.get_options(self.parent.endpoints, fld, isLog))
-                        .map(function(d) {
-                            return '<option value="{0}" selected>{0}</option>'.printf(d);
-                        })
+                        .map(d => `<option value="${d}" selected>${d}</option>`)
                         .value();
                 values.html(opts);
             },
@@ -149,9 +147,7 @@ class CrossviewColorFilterField extends TableField {
                     opts = _.chain(
                         CrossviewPlot.get_options(self.parent.endpoints, field.val(), isLog)
                     )
-                        .map(function(d) {
-                            return '<option value="{0}" selected>{0}</option>'.printf(d);
-                        })
+                        .map(d => `<option value="${d}" selected>${d}</option>`)
                         .value();
                 value.html(opts);
             },
@@ -295,9 +291,9 @@ class CrossviewForm extends BaseVisualForm {
         ];
 
         _.each(fields, function(d) {
-            $("#id_prefilter_{0}".printf(d[0]))
+            $(`#id_prefilter_${d[0]}`)
                 .on("change", function() {
-                    var div = $("#div_id_{0}".printf(d[1]));
+                    var div = $(`#div_id_${d[1]}`);
                     $(this).prop("checked") ? div.show(1000) : div.hide(0);
                 })
                 .trigger("change");

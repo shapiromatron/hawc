@@ -16,21 +16,15 @@ class MetaResult {
     }
 
     static get_object(id, cb) {
-        $.get("/epi-meta/api/result/{0}/".printf(id), function(d) {
-            cb(new MetaResult(d));
-        });
+        $.get(`/epi-meta/api/result/${id}/`, d => cb(new MetaResult(d)));
     }
 
     static displayAsModal(id) {
-        MetaResult.get_object(id, function(d) {
-            d.displayAsModal();
-        });
+        MetaResult.get_object(id, d => d.displayAsModal());
     }
 
     static displayFullPager($el, id) {
-        MetaResult.get_object(id, function(d) {
-            d.displayFullPager($el);
-        });
+        MetaResult.get_object(id, d => d.displayFullPager($el));
     }
 
     _unpack_single_results() {
@@ -61,7 +55,7 @@ class MetaResult {
     get_statistical_metric_header() {
         var txt = this.data.metric.abbreviation;
         if (this.data.ci_units) {
-            txt += " ({0}% CI)".printf(this.data.ci_units * 100);
+            txt += ` (${this.data.ci_units * 100}% CI)`;
         }
         return txt;
     }
@@ -116,7 +110,7 @@ class MetaResult {
 
     displayAsModal() {
         var modal = new HAWCModal(),
-            title = "<h4>{0}</h4>".printf(this.build_breadcrumbs()),
+            title = `<h4>${this.build_breadcrumbs()}</h4>`,
             $content = $('<div class="container-fluid">');
 
         var $singleResultsDiv = $("<div>");

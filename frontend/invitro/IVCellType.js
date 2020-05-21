@@ -10,21 +10,15 @@ class IVCellType {
     }
 
     static get_object(id, cb) {
-        $.get("/in-vitro/api/celltype/{0}/".printf(id), function(d) {
-            cb(new IVCellType(d));
-        });
+        $.get(`/in-vitro/api/celltype/${id}/`, d => cb(new IVCellType(d)));
     }
 
     static displayAsModal(id) {
-        IVCellType.get_object(id, function(d) {
-            d.displayAsModal();
-        });
+        IVCellType.get_object(id, d => d.displayAsModal());
     }
 
     static displayAsPage(id, div) {
-        IVCellType.get_object(id, function(d) {
-            d.displayAsPage(div);
-        });
+        IVCellType.get_object(id, d => d.displayAsPage(div));
     }
 
     build_title() {

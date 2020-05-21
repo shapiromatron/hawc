@@ -12,15 +12,11 @@ class AnimalGroup {
     }
 
     static get_object(id, cb) {
-        $.get("/ani/api/animal-group/{0}/".printf(id), function(d) {
-            cb(new AnimalGroup(d));
-        });
+        $.get(`/ani/api/animal-group/${id}/`, d => cb(new AnimalGroup(d)));
     }
 
     static displayAsModal(id) {
-        AnimalGroup.get_object(id, function(d) {
-            d.displayAsModal();
-        });
+        AnimalGroup.get_object(id, d => d.displayAsModal());
     }
 
     build_breadcrumbs() {
@@ -43,7 +39,7 @@ class AnimalGroup {
 
     _getAniRelationLink(obj) {
         if (!obj) return undefined;
-        return $('<a href="{0}">{1}</a>'.printf(obj.url, obj.name));
+        return $(`<a href="${obj.url}">${obj.name}</a>`);
     }
 
     build_details_table() {
@@ -87,7 +83,7 @@ class AnimalGroup {
                 if (txt && txt.length > 0) {
                     return txt;
                 } else if (num && num >= 0) {
-                    return "{0} days".printf(num);
+                    return `${num} days`;
                 } else {
                     return undefined;
                 }

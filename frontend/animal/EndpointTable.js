@@ -42,7 +42,7 @@ class EndpointTable {
     build_header() {
         var self = this,
             d = this.endpoint.data,
-            dose = $("<th>Dose ({0})</th>".printf(this.endpoint.dose_units)),
+            dose = $(`<th>Dose (${this.endpoint.dose_units})</th>`),
             tr = $("<tr>"),
             txt;
 
@@ -66,16 +66,16 @@ class EndpointTable {
                 tr.append("<th>Incidence</th>").append("<th>Percent Incidence</th>");
                 break;
             case "P":
-                tr.append("<th>Response ({0}% CI)</th>".printf(d.confidence_interval * 100));
+                tr.append(`<th>Response (${d.confidence_interval * 100}% CI)</th>`);
                 break;
             case "C":
                 txt = "Response";
                 if (this.endpoint.data.response_units) {
-                    txt += " ({0})".printf(this.endpoint.data.response_units);
+                    txt += ` (${this.endpoint.data.response_units})`;
                 }
                 tr.append($("<th>").text(txt));
                 this.hasVariance = this.hasValues("variance");
-                if (this.hasVariance) tr.append("<th>{0}</th>".printf(d.variance_name));
+                if (this.hasVariance) tr.append(`<th>${d.variance_name}</th>`);
                 break;
             default:
                 throw "Unknown data type.";
@@ -96,18 +96,18 @@ class EndpointTable {
 
             dose = dose + self.endpoint.add_endpoint_group_footnotes(self.footnotes, i);
 
-            tr.append("<td>{0}</td>".printf(dose));
+            tr.append(`<td>${dose}</td>`);
 
-            if (self.hasN) tr.append("<td>{0}</td>".printf(v.n || "NR"));
+            if (self.hasN) tr.append(`<td>${v.n || "NR"}</td>`);
 
             if (self.endpoint.data.data_type == "C") {
-                tr.append("<td>{0}</td>".printf(v.response));
-                if (self.hasVariance) tr.append("<td>{0}</td>".printf(v.variance || "NR"));
+                tr.append(`<td>${v.response}</td>`);
+                if (self.hasVariance) tr.append(`<td>${v.variance || "NR"}</td>`);
             } else if (self.endpoint.data.data_type == "P") {
-                tr.append("<td>{0}</td>".printf(self.endpoint.get_pd_string(v)));
+                tr.append(`<td>${self.endpoint.get_pd_string(v)}</td>`);
             } else {
-                tr.append("<td>{0}</td>".printf(v.incidence)).append(
-                    "<td>{0}%</td>".printf(self.endpoint._dichotomous_percent_change_incidence(v))
+                tr.append(`<td>${v.incidence}</td>`).append(
+                    `<td>${self.endpoint._dichotomous_percent_change_incidence(v)}%</td>`
                 );
             }
             self.tbody.append(tr);
@@ -116,16 +116,14 @@ class EndpointTable {
 
     build_footer() {
         var txt = this.footnotes.html_list().join("<br>");
-        this.tfoot = $(
-            '<tfoot><tr><td colspan="{0}">{1}</td></tr></tfoot>'.printf(this.number_columns, txt)
-        );
+        this.tfoot = $(`<tfoot><tr><td colspan="${this.number_columns}">${txt}</td></tr></tfoot>`);
     }
 
     build_colgroup() {
         this.colgroup = $("<colgroup></colgroup>");
         var self = this;
         for (var i = 0; i < this.number_columns; i++) {
-            self.colgroup.append('<col style="width:{0}%;">'.printf(100 / self.number_columns));
+            self.colgroup.append(`<col style="width:${100 / self.number_columns}%;">`);
         }
     }
 }

@@ -61,16 +61,6 @@ _.extend(String, {
     },
 });
 
-_.extend(String.prototype, {
-    printf() {
-        //http://stackoverflow.com/questions/610406/
-        var args = arguments;
-        return this.replace(/{(\d+)}/g, function(match, number) {
-            return typeof args[number] !== "undefined" ? args[number] : match;
-        });
-    },
-});
-
 _.extend(Array.prototype, {
     splice_object(obj) {
         if (this.length === 0) return this;

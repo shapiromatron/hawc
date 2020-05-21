@@ -149,10 +149,10 @@ class DosingRegimeForm {
             var th = $("<th>");
             var select = $('<select class="input-medium dose_types"></select>');
             this.dose_types.forEach(function(v, i) {
-                select.append('<option value="{0}">{1}</option>'.printf(v.id, v.name));
+                select.append(`<option value="${v.id}">${v.name}</option>`);
             });
             if (this.dose_units[j]) {
-                select.find("option[value={0}]".printf(this.dose_units[j])).prop("selected", true);
+                select.find(`option[value=${this.dose_units[j]}]`).prop("selected", true);
             }
             th.append(select);
             if (j > 0) {
@@ -178,14 +178,18 @@ class DosingRegimeForm {
         var tbody = $("<tbody>");
         for (var i = 0; i < this.rows; i++) {
             var tr = $("<tr></tr>");
-            tr.append('<td><label class="control-label">Dose Group {0}</label></td>'.printf(i + 1));
+            tr.append(`<td><label class="control-label">Dose Group ${i + 1}</label></td>`);
             for (var j = 0; j < this.columns; j++) {
                 tr.append(
-                    '<td><input type="number" step="any" tabindex="{0}" class="input-medium" id="dose_{1}" value="{2}"></td>'.printf(
-                        j + 1,
-                        i,
-                        this.array[i].doses[j]
-                    )
+                    `<td>
+                        <input
+                            type="number"
+                            step="any"
+                            tabindex="${j + 1}"
+                            class="input-medium"
+                            id="dose_${i}"
+                            value="${this.array[i].doses[j]}" />
+                    </td>`
                 );
             }
             tbody.append(tr);
