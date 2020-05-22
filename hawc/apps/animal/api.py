@@ -75,7 +75,7 @@ class AnimalGroup(mixins.CreateModelMixin, AssessmentViewset):
     serializer_class = serializers.AnimalGroupSerializer
 
 
-class Endpoint(AssessmentViewset):
+class Endpoint(mixins.CreateModelMixin, AssessmentViewset):
     assessment_filter_args = "assessment"
     model = models.Endpoint
     serializer_class = serializers.EndpointSerializer

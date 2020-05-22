@@ -87,9 +87,6 @@ class DosesSerializer(serializers.ModelSerializer):
 
         return super().validate(data)
 
-    def create(self, validated_data):
-        return models.DoseGroup.objects.create(**validated_data)
-
 
 class AnimalGroupRelationSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
@@ -174,6 +171,17 @@ class AnimalGroupSerializer(serializers.ModelSerializer):
             # Serializer needs one form of experiment identifier
             raise serializers.ValidationError("Expected 'experiment' or 'experiment_id'.")
 
+        if "dosing_regime_id" in self.initial_data:
+            # Get dosing regime instance
+            dosing_regime_id = self.initial_data.get("dosing_regime_id")
+            try:
+                dosing_regime = models.DosingRegime.objects.get(id=dosing_regime_id)
+                data["dosing_regime"] = DosingRegimeSerializer(dosing_regime).data
+            except ValueError:
+                raise serializers.ValidationError("Dosing regime ID must be a number.")
+            except ObjectDoesNotExist:
+                raise serializers.ValidationError(f"Dosing regime ID does not exist.")
+
         return super().validate(data)
 
     def create(self, validated_data):
@@ -182,16 +190,15 @@ class AnimalGroupSerializer(serializers.ModelSerializer):
         if not experiment.study.assessment.user_can_edit_object(self.context["request"].user):
             raise exceptions.PermissionDenied("Invalid permission to edit assessment.")
         validated_data["experiment"] = experiment
-        if validated_data["dosing_regime"] is not None:
+        if "dosing_regime_id" in self.initial_data:
+            dosing_regime_id = self.initial_data.get("dosing_regime_id")
+            validated_data["dosing_regime"] = models.DosingRegime.objects.get(id=dosing_regime_id)
+        elif validated_data["dosing_regime"] is not None:
             dosing_regime_serializer = DosingRegimeSerializer(
                 data=self.initial_data.get("dosing_regime")
             )
             dosing_regime_serializer.is_valid(raise_exception=True)
             validated_data["dosing_regime"] = dosing_regime_serializer.save()
-            animal_group = models.AnimalGroup.objects.create(**validated_data)
-            animal_group.dosing_regime.dosed_animals = animal_group
-            animal_group.dosing_regime.save()
-            return animal_group
         return models.AnimalGroup.objects.create(**validated_data)
 
     class Meta:
@@ -213,6 +220,19 @@ class EndpointGroupSerializer(serializers.ModelSerializer):
         ret["isReported"] = instance.isReported
         return ret
 
+    def validate(self, data):
+        if hasattr(self, "initial_data"):
+            try:
+                endpoint_id = self.initial_data.get("endpoint_id", -1)
+                models.Endpoint.objects.get(id=endpoint_id)
+                data["endpoint_id"] = endpoint_id
+            except ValueError:
+                raise serializers.ValidationError("Endpoint ID must be a number.")
+            except ObjectDoesNotExist:
+                raise serializers.ValidationError(f"Endpoint ID does not exist.")
+
+        return super().validate(data)
+
     class Meta:
         model = models.EndpointGroup
         fields = "__all__"
@@ -220,9 +240,9 @@ class EndpointGroupSerializer(serializers.ModelSerializer):
 
 class EndpointSerializer(serializers.ModelSerializer):
     assessment = serializers.PrimaryKeyRelatedField(read_only=True)
-    effects = EffectTagsSerializer()
-    animal_group = AnimalGroupSerializer()
-    groups = EndpointGroupSerializer(many=True)
+    effects = EffectTagsSerializer(read_only=True)
+    animal_group = AnimalGroupSerializer(read_only=True, required=False)
+    groups = EndpointGroupSerializer(many=True, required=False)
 
     def to_representation(self, instance):
         ret = super().to_representation(instance)
@@ -259,6 +279,56 @@ class EndpointSerializer(serializers.ModelSerializer):
                 ret["bmd_url"] = instance.bmd_sessions.latest().get_absolute_url()
 
         return ret
+
+    def validate(self, data):
+        # Validate animal group
+        if "animal_group_id" in self.initial_data:
+            # Get animal group instance
+            animal_group_id = self.initial_data.get("animal_group_id")
+            try:
+                animal_group = models.AnimalGroup.objects.get(id=animal_group_id)
+                data["animal_group"] = AnimalGroupSerializer(animal_group).data
+            except ValueError:
+                raise serializers.ValidationError("Animal group ID must be a number.")
+            except ObjectDoesNotExist:
+                raise serializers.ValidationError(f"Animal group ID does not exist.")
+        elif "animal_group" in self.initial_data:
+            animal_group_serializer = AnimalGroupSerializer(
+                data=self.initial_data.get("animal_group")
+            )
+            animal_group_serializer.is_valid(raise_exception=True)
+            data["animal_group"] = animal_group_serializer.validated_data
+        else:
+            # Serializer needs one form of animal group identifier
+            raise serializers.ValidationError("Expected 'animal_group' or 'animal_group_id'.")
+
+        data["assessment_id"] = data["animal_group"]["experiment"]["study"]["assessment"]
+
+        return super().validate(data)
+
+    def create(self, validated_data):
+        animal_group_id = self.initial_data.get("animal_group_id")
+        animal_group = models.AnimalGroup.objects.get(id=animal_group_id)
+        if not animal_group.experiment.study.assessment.user_can_edit_object(
+            self.context["request"].user
+        ):
+            raise exceptions.PermissionDenied("Invalid permission to edit assessment.")
+        validated_data["animal_group"] = animal_group
+
+        groups = list()
+        if "groups" in validated_data:
+            validated_data.pop("groups")
+        endpoint = models.Endpoint.objects.create(**validated_data)
+        groups_data = self.initial_data.get("groups", list())
+        for group in groups_data:
+            group["endpoint_id"] = endpoint.id
+            group_serializer = EndpointGroupSerializer(data=group)
+            group_serializer.is_valid(raise_exception=True)
+            groups.append(group_serializer)
+        # All groups are valid
+        for group in groups:
+            group.save()
+        return endpoint
 
     class Meta:
         model = models.Endpoint
