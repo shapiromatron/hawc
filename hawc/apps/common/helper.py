@@ -5,7 +5,7 @@ import re
 import uuid
 from collections import OrderedDict
 from dataclasses import dataclass
-from typing import Dict
+from typing import Dict, List
 
 import pandas as pd
 from django.conf import settings
@@ -61,6 +61,19 @@ def tryParseInt(val, default=None):
         return int(val)
     except (ValueError, TypeError):
         return default
+
+
+def try_parse_list_ints(val: str = None) -> List[int]:
+    """
+    Try to parse a list of integers and return a list of integers, eg., `1,2,3` -> [1,2,3].
+    If this fails for any reason, an empty list is returned
+    """
+    if val is None:
+        return []
+    try:
+        return [int(item) for item in val.split(",")]
+    except ValueError:
+        return []
 
 
 def create_uuid(id: int) -> str:

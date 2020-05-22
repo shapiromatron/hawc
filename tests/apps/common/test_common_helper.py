@@ -29,3 +29,18 @@ class TestFlatFileExporter:
             helper.FlatFileExporter.get_flattened_tags({"hi": [{"name": "a"}, {"name": "b"}]}, "hi")
             == "|a|b|"
         )
+
+
+class test_try_parse_list_ints:
+    # expected None case
+    assert helper.try_parse_list_ints(None) == []
+
+    # expected str cases
+    assert helper.try_parse_list_ints("") == []
+    assert helper.try_parse_list_ints("1,2,3") == [1, 2, 3]
+    assert helper.try_parse_list_ints("123") == [123]
+    assert helper.try_parse_list_ints("1, 2 , 3 ") == [1, 2, 3]
+
+    # edge cases
+    assert helper.try_parse_list_ints("a") == []
+    assert helper.try_parse_list_ints("1,a") == []
