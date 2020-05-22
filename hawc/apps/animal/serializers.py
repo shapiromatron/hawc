@@ -94,12 +94,19 @@ class AnimalGroupRelationSerializer(serializers.ModelSerializer):
         ret["url"] = instance.get_absolute_url()
         return ret
 
+    def validate(self, data):
+        if hasattr(self, "initial_data"):
+            if "id" not in self.initial_data:
+                raise serializers.ValidationError("ID required.")
+        return super().validate(data)
+
     class Meta:
         model = models.AnimalGroup
         fields = (
             "id",
             "name",
         )
+        extra_kwargs = {"id": {"required": True}}
 
 
 class DosingRegimeSerializer(serializers.ModelSerializer):
@@ -182,6 +189,23 @@ class AnimalGroupSerializer(serializers.ModelSerializer):
             except ObjectDoesNotExist:
                 raise serializers.ValidationError(f"Dosing regime ID does not exist.")
 
+        if "sibling_id" in self.initial_data:
+            # Get animal group instance
+            sibling_id = self.initial_data.get("sibling_id")
+            try:
+                sibling = models.AnimalGroup.objects.get(id=sibling_id)
+                data["siblings"] = AnimalGroupRelationSerializer(sibling).data
+            except ValueError:
+                raise serializers.ValidationError("Sibling ID must be a number.")
+            except ObjectDoesNotExist:
+                raise serializers.ValidationError(f"Sibling ID does not exist.")
+        elif "siblings" in self.initial_data:
+            sibling_serializer = AnimalGroupRelationSerializer(
+                data=self.initial_data.get("siblings")
+            )
+            sibling_serializer.is_valid(raise_exception=True)
+            data["siblings"] = sibling_serializer.validated_data
+
         return super().validate(data)
 
     def create(self, validated_data):
@@ -190,6 +214,11 @@ class AnimalGroupSerializer(serializers.ModelSerializer):
         if not experiment.study.assessment.user_can_edit_object(self.context["request"].user):
             raise exceptions.PermissionDenied("Invalid permission to edit assessment.")
         validated_data["experiment"] = experiment
+        validated_data["siblings"] = (
+            models.AnimalGroup.objects.get(id=validated_data["siblings"]["id"])
+            if "siblings" in validated_data
+            else None
+        )
         if "dosing_regime_id" in self.initial_data:
             dosing_regime_id = self.initial_data.get("dosing_regime_id")
             validated_data["dosing_regime"] = models.DosingRegime.objects.get(id=dosing_regime_id)

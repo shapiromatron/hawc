@@ -145,12 +145,18 @@ class TestAnimalGroupCreateApi:
         assert client.login(username="team@team.com", password="pw") is True
         response = client.post(url, data)
         assert response.status_code == 201
-
         assert len(models.AnimalGroup.objects.filter(name="Animal group name")) == 1
 
-        response = client.post(url, data)
+        first_animal_group = models.AnimalGroup.objects.filter(name="Animal group name")[0]
+        data["sibling_id"] = first_animal_group.id
+
+        response = client.post(url, data, format="json")
         assert response.status_code == 201
         assert len(models.AnimalGroup.objects.filter(name="Animal group name")) == 2
+
+        assert models.AnimalGroup.objects.filter(
+            name="Animal group name", siblings_id=first_animal_group.id
+        ).exists()
 
     def test_create_dosing_regime(self, db_keys):
         url = reverse("animal:api:animal_group-list")
@@ -178,9 +184,41 @@ class TestAnimalGroupCreateApi:
 
         animal_groups = models.AnimalGroup.objects.filter(name="Animal group name")
         assert len(animal_groups) == 1
-        animal_group = animal_groups[0]
 
-        assert len(animal_group.dosing_regime.doses.all()) == 2
+        animal_group = animal_groups[0]
+        expected_data = {
+            "name": "Animal group name",
+            "species_id": 1,
+            "strain_id": 1,
+            "sex": "M",
+            "experiment_id": 1,
+        }
+        assert set(expected_data.items()).issubset(set(animal_group.__dict__.items()))
+
+        dosing_regime = animal_group.dosing_regime
+        expected_data = {"route_of_exposure": "OR"}
+        assert set(expected_data.items()).issubset(set(dosing_regime.__dict__.items()))
+
+        doses = dosing_regime.doses.all()
+        assert len(doses) == 2
+
+        dose_1 = doses[0]
+        expected_data = {
+            "dose_regime_id": dosing_regime.id,
+            "dose_units_id": 1,
+            "dose_group_id": 0,
+            "dose": 1.0,
+        }
+        assert set(expected_data.items()).issubset(set(dose_1.__dict__.items()))
+
+        dose_2 = doses[1]
+        expected_data = {
+            "dose_regime_id": dosing_regime.id,
+            "dose_units_id": 1,
+            "dose_group_id": 1,
+            "dose": 2.0,
+        }
+        assert set(expected_data.items()).issubset(set(dose_2.__dict__.items()))
 
     def test_reference_dosing_regime(self, db_keys):
         url = reverse("animal:api:animal_group-list")
@@ -270,6 +308,21 @@ class TestEndpointCreateApi:
 
         endpoints = models.Endpoint.objects.filter(name="Endpoint name")
         assert len(endpoints) == 1
-        endpoint = endpoints[0]
 
-        assert len(endpoint.groups.all()) == 2
+        endpoint = endpoints[0]
+        expected_data = {
+            "name": "Endpoint name",
+            "animal_group_id": 1,
+        }
+        assert set(expected_data.items()).issubset(set(endpoint.__dict__.items()))
+
+        groups = endpoint.groups.all()
+        assert len(groups) == 2
+
+        group_1 = groups[0]
+        expected_data = {"endpoint_id": endpoint.id, "dose_group_id": 0, "n": 1}
+        assert set(expected_data.items()).issubset(set(group_1.__dict__.items()))
+
+        group_2 = groups[1]
+        expected_data = {"endpoint_id": endpoint.id, "dose_group_id": 1, "n": 2}
+        assert set(expected_data.items()).issubset(set(group_2.__dict__.items()))
