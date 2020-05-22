@@ -1,15 +1,15 @@
 from django.db import models
 from django.shortcuts import get_object_or_404
-from rest_framework import mixins, permissions, viewsets
+from rest_framework import exceptions, filters, mixins, permissions, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework_extensions.mixins import ListUpdateModelMixin
 
-from ..assessment.api import DisabledPagination, InAssessmentFilter, get_assessment_from_query
+from ..assessment.api import DisabledPagination, get_assessment_from_query
 from .helper import try_parse_list_ints
 
 
-class CleanupBulkIdFilter(InAssessmentFilter):
+class CleanupBulkIdFilter(filters.BaseFilterBackend):
     """
     Filters objects in Assessment on GET using InAssessmentFilter.
     Filters objects on ID on PATCH. If ID is not supplied in query_params,
@@ -20,13 +20,19 @@ class CleanupBulkIdFilter(InAssessmentFilter):
     """
 
     def filter_queryset(self, request, queryset, view):
-        qs = super().filter_queryset(request, queryset, view)
+        # always filter queryset by `assessment_id`
+        queryset = queryset.filter(**{view.assessment_filter_args: view.assessment.id})
 
-        if view.action not in ("list", "retrieve"):
-            ids = try_parse_list_ints(request.query_params.get("ids"))
-            qs = qs.filter(id__in=ids)
+        # required header for bulk-update
+        if request._request.method.lower() == "patch":
+            ids = list(set(try_parse_list_ints(request.query_params.get("ids"))))
+            queryset = queryset.filter(id__in=ids)
 
-        return qs
+            # invalid IDs
+            if queryset.count() != len(ids):
+                raise exceptions.PermissionDenied()
+
+        return queryset
 
 
 class CleanupFieldsPermissions(permissions.BasePermission):
