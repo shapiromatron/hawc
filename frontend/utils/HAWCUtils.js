@@ -35,7 +35,7 @@ class HAWCUtils {
         // builds a string of breadcrumb hyperlinks for navigation
         var links = [];
         arr.forEach(function(v) {
-            links.push('<a target="_blank" href="{0}">{1}</a>'.printf(v.url, v.name));
+            links.push(`<a target="_blank" href="${v.url}">${v.name}</a>`);
         });
         return links.join("<span> / </span>");
     }
@@ -47,7 +47,7 @@ class HAWCUtils {
         submitter.on("click", function() {
             var val = parseInt(selector_val.val(), 10);
             if (val) {
-                submitter.attr("href", "{0}?initial={1}".printf(config.base_url, val));
+                submitter.attr("href", `${config.base_url}?initial=${val}`);
                 return true;
             }
             return false;
@@ -69,13 +69,9 @@ class HAWCUtils {
         var $menu = $('<ul class="dropdown-menu">');
         items.forEach(function(d) {
             if (d instanceof Object) {
-                $menu.append(
-                    '<li><a href="{0}" class="{1}">{2}</a></li>'.printf(d.url, d.cls || "", d.text)
-                );
+                $menu.append(`<li><a href="${d.url}" class="${d.cls || ""}">${d.text}</a></li>`);
             } else if (typeof d === "string") {
-                $menu.append(
-                    '<li class="disabled"><a tabindex="-1" href="#">{0}</a></li>'.printf(d)
-                );
+                $menu.append(`<li class="disabled"><a tabindex="-1" href="#">${d}</a></li>`);
             } else {
                 console.error("unknown input type");
             }
@@ -225,7 +221,8 @@ class HAWCUtils {
     }
 
     static buildUL(lst, func) {
-        return "<ul>{0}</ul>".printf(_.map(lst, func).join(""));
+        const items = _.map(lst, func).join("");
+        return `<ul>${items}</ul>`;
     }
 
     static isHTML(str) {

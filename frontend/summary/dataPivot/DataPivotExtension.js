@@ -38,14 +38,14 @@ class DataPivotExtension {
         if (match) {
             _.extend(obj, match);
         } else {
-            console.log("Unrecognized DPE key: {0}".printf(key));
+            console.log(`Unrecognized DPE key: ${key}`);
         }
     }
 
     static get_options(dp) {
         // extension options dependent on available data-columns
         var build_opt = function(val, txt) {
-                return '<option value="{0}">{1}</option>'.printf(val, txt);
+                return `<option value="${val}">${txt}</option>`;
             },
             opts = [build_opt(NULL_CASE, NULL_CASE)],
             headers;

@@ -22,43 +22,35 @@ class SummaryText {
     }
 
     static update_url(id) {
-        return "/summary/{0}/update/".printf(id);
+        return `/summary/${id}/update/`;
     }
     static delete_url(id) {
-        return "/summary/{0}/delete/".printf(id);
+        return `/summary/${id}/delete/`;
     }
 
     static assessment_list_url(assessment_id) {
-        return "/summary/assessment/{0}/summaries/json/".printf(assessment_id);
+        return `/summary/assessment/${assessment_id}/summaries/json/`;
     }
 
     get_option_item(lst) {
-        var title = this.depth === 1 ? "(document root)" : this.data.title;
-        lst.push(
-            $(
-                '<option value="{0}">{1}{2}</option>'.printf(
-                    this.id,
-                    Array(this.depth).join("&nbsp;&nbsp;"),
-                    title
-                )
-            ).data("d", this)
-        );
+        const indents = Array(this.depth).join("&nbsp;&nbsp;"),
+            title = this.depth === 1 ? "(document root)" : this.data.title;
+        lst.push($(`<option value="${this.id}">${indents}${title}</option>`).data("d", this));
         this.children.forEach(function(v) {
             v.get_option_item(lst);
         });
     }
 
     get_children_option_items(lst) {
-        this.children.forEach(function(v) {
-            lst.push('<option value="{0}">{1}</option>'.printf(v.id, v.data.title));
-        });
+        this.children.forEach(v => lst.push(`<option value="${v.id}">${v.data.title}</option>`));
     }
 
     render_tree(lst) {
         lst.push(
-            $(
-                '<p class="summary_toc">{0}{1}</p>'.printf(this.get_tab_depth(), this.data.title)
-            ).data("d", this)
+            $(`<p class="summary_toc">${this.get_tab_depth()}${this.data.title}</p>`).data(
+                "d",
+                this
+            )
         );
         this.children.forEach(function(v) {
             v.render_tree(lst);
@@ -70,28 +62,22 @@ class SummaryText {
     }
 
     print_section() {
-        var div = $('<div id="{0}"></div>'.printf(this.data.slug)),
-            header = $(
-                "<h{0}>{1} {2}</h{3}>".printf(
-                    this.depth,
-                    this.section_label,
-                    this.data.title,
-                    this.depth
-                )
-            ),
-            content = $("<div>{0}</div>".printf(this.data.text));
+        var div = $(`<div id="${this.data.slug}"></div>`),
+            header = $(`<h${this.depth}>${this.section_label} ${this.data.title}</h${this.depth}>`),
+            content = $(`<div>${this.data.text}</div>`);
 
         return div.append(header, content);
     }
 
     render_header(lst) {
         lst.push(
-            '<li><a href="#{0}">{1}{2} {3}<i class="icon-chevron-right"></i></a></li>'.printf(
-                this.data.slug,
-                this.get_tab_depth(),
-                this.section_label,
+            `<li>
+                <a href="#${this.data.slug}">${this.get_tab_depth()}${this.section_label} ${
                 this.data.title
-            )
+            }
+                    <i class="icon-chevron-right"></i>
+                </a>
+            </li>`
         );
         this.children.forEach(function(v) {
             v.render_header(lst);

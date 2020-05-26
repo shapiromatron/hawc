@@ -63,10 +63,7 @@ class SampleSizeWidget {
             } else {
                 txt = "Effect ";
             }
-            txt += "requires approximately {0} animals to detect a {1}% change from control at 80% power".printf(
-                power,
-                fields.percentToDetect
-            );
+            txt += `requires approximately ${power} animals to detect a ${fields.percentToDetect}% change from control at 80% power`;
         }
         return this.result.html(txt);
     }

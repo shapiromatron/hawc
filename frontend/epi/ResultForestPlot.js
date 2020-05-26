@@ -271,9 +271,7 @@ class ResultForestPlot extends D3Plot {
                 d.group.show_group_tooltip(d3.event);
             })
             .append("title")
-            .text(function(d) {
-                return "{0}: click to view exposure-group details".printf(d.estimate);
-            });
+            .text(d => `${d.estimate}: click to view exposure-group details`);
     }
 
     resize_plot_dimensions() {

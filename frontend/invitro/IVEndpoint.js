@@ -17,21 +17,15 @@ class IVEndpoint {
     }
 
     static get_object(id, cb) {
-        $.get("/in-vitro/api/endpoint/{0}/".printf(id), function(d) {
-            cb(new IVEndpoint(d));
-        });
+        $.get(`/in-vitro/api/endpoint/${id}/`, d => cb(new IVEndpoint(d)));
     }
 
     static displayAsModal(id) {
-        IVEndpoint.get_object(id, function(d) {
-            d.displayAsModal();
-        });
+        IVEndpoint.get_object(id, d => d.displayAsModal());
     }
 
     static displayAsPage(id, div) {
-        IVEndpoint.get_object(id, function(d) {
-            d.displayAsPage(div);
-        });
+        IVEndpoint.get_object(id, d => d.displayAsPage(div));
     }
 
     _build_ivegs() {
@@ -39,9 +33,7 @@ class IVEndpoint {
         groups.sort(function(a, b) {
             return a.id - b.id;
         });
-        this.egs = groups.map(function(v) {
-            return new IVEndpointGroup(v);
-        });
+        this.egs = groups.map(v => new IVEndpointGroup(v));
         delete this.data.groups;
     }
 
@@ -53,7 +45,7 @@ class IVEndpoint {
     }
 
     build_hyperlink() {
-        return '<a href="{0}">{1}</a>'.printf(this.data.url, this._title_text());
+        return `<a href="${this.data.url}">${this._title_text()}</a>`;
     }
 
     _title_text() {
@@ -81,24 +73,18 @@ class IVEndpoint {
         var self = this,
             tbl = new DescriptiveTable(),
             getBenchmarkText = function(d) {
-                return "{0}: {1}".printf(d.benchmark, d.value);
+                return `${d.benchmark}: ${d.value}`;
             },
             getCriticalValue = function(idx) {
                 try {
-                    return "{0} {1}".printf(
-                        self.egs[idx].data.dose,
-                        self.data.experiment.dose_units.name
-                    );
+                    return `${self.egs[idx].data.dose} ${self.data.experiment.dose_units.name}`;
                 } catch (err) {
                     return undefined;
                 }
             },
             getObservationTime = function() {
                 if (self.data.observation_time.length > 0)
-                    return "{0} {1}".printf(
-                        self.data.observation_time,
-                        self.data.observation_time_units
-                    );
+                    return `${self.data.observation_time} ${self.data.observation_time_units}`;
             },
             getCategory = function(cat) {
                 if (cat) return cat.names.join("→");
@@ -162,7 +148,7 @@ class IVEndpoint {
             },
             opts = getAvailableColumns(),
             headers = function(opts) {
-                var arr = ["Dose ({0})".printf(units)];
+                var arr = [`Dose (${units})`];
                 if (opts.hasN) arr.push("N");
                 if (opts.hasResponse) arr.push("Response");
                 if (opts.hasVariance) arr.push("Variance");

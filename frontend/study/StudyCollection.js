@@ -11,18 +11,14 @@ class StudyCollection {
     }
 
     static get_list(id, cb) {
-        $.get("/study/api/study/?assessment_id={0}".printf(id), function(ds) {
-            var objs = _.map(ds, function(d) {
-                return new Study(d);
-            });
+        $.get(`/study/api/study/?assessment_id=${id}`, function(ds) {
+            var objs = _.map(ds, d => new Study(d));
             cb(new StudyCollection(objs));
         });
     }
 
     static render(id, $div) {
-        StudyCollection.get_list(id, function(d) {
-            d.render($div);
-        });
+        StudyCollection.get_list(id, d => d.render($div));
     }
 
     render($el) {
@@ -38,42 +34,22 @@ class StudyCollection {
         var $el = $('<div class="row-fluid">'),
             flds = [];
 
-        if (
-            this.object_list.filter(function(d) {
-                return d.data.bioassay;
-            }).length > 0
-        ) {
+        if (this.object_list.filter(d => d.data.bioassay).length > 0) {
             flds.push("bioassay");
         }
-        if (
-            this.object_list.filter(function(d) {
-                return d.data.epi;
-            }).length > 0
-        ) {
+        if (this.object_list.filter(d => d.data.epi).length > 0) {
             flds.push("epi");
         }
-        if (
-            this.object_list.filter(function(d) {
-                return d.data.epi_meta;
-            }).length > 0
-        ) {
+        if (this.object_list.filter(d => d.data.epi_meta).length > 0) {
             flds.push("epi_meta");
         }
-        if (
-            this.object_list.filter(function(d) {
-                return d.data.in_vitro;
-            }).length > 0
-        ) {
+        if (this.object_list.filter(d => d.data.in_vitro).length > 0) {
             flds.push("in_vitro");
         }
 
         if (flds.length > 1) {
             $('<select class="span12" size="6" multiple>')
-                .append(
-                    _.map(flds, function(d) {
-                        return '<option value="{0}">{1}</option>'.printf(d, Study.typeNames[d]);
-                    })
-                )
+                .append(_.map(flds, d => `<option value="${d}">${Study.typeNames[d]}</option>`))
                 .appendTo($el);
         }
         return $el;
