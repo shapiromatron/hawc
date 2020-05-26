@@ -76,6 +76,7 @@ class Group(AssessmentViewset):
 class OutcomeCleanup(CleanupFieldsBaseViewSet):
     serializer_class = serializers.OutcomeCleanupFieldsSerializer
     model = models.Outcome
+    assessment_filter_args = "assessment"
 
 
 class StudyPopulationCleanup(CleanupFieldsBaseViewSet):

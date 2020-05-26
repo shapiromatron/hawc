@@ -72,3 +72,4 @@ class FinalRobStudy(Study):
 class StudyCleanupFieldsView(CleanupFieldsBaseViewSet):
     model = models.Study
     serializer_class = serializers.StudyCleanupFieldsSerializer
+    assessment_filter_args = "assessment"

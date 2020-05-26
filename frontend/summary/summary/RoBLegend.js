@@ -13,10 +13,11 @@ import {
 } from "riskofbias/constants";
 
 class RoBLegend {
-    constructor(svg, settings, rob_response_values, options) {
+    constructor(svg, settings, rob_response_values, footnotes, options) {
         this.svg = svg;
         this.settings = settings;
         this.rob_response_values = rob_response_values;
+        this.footnotes = footnotes;
         this.options = options;
         this.render();
     }
@@ -95,65 +96,65 @@ class RoBLegend {
             .attr("y", 8)
             .attr("text-anchor", "middle")
             .attr("class", "dr_title")
-            .text(function(d) {
-                return "Legend";
-            });
+            .text("Legend");
 
         // Add color rectangles
         g.selectAll("svg.rect")
             .data(fields)
             .enter()
             .append("rect")
-            .attr("x", function(d, i) {
-                return 0;
-            })
-            .attr("y", function(d, i) {
-                return i * width + title_offset;
-            })
+            .attr("x", 0)
+            .attr("y", (d, i) => i * width + title_offset)
             .attr("height", width)
             .attr("width", width)
             .attr("class", "heatmap_selectable")
-            .style("fill", function(d) {
-                return d.color;
-            });
+            .style("fill", d => d.color);
 
         // Add text label (++, --, etc.)
         g.selectAll("svg.text.labels")
             .data(fields)
             .enter()
             .append("text")
-            .attr("x", function(d, i) {
-                return half_width;
-            })
-            .attr("y", function(d, i) {
-                return i * width + half_width + title_offset;
-            })
+            .attr("x", half_width)
+            .attr("y", (d, i) => i * width + half_width + title_offset)
             .attr("text-anchor", "middle")
             .attr("dy", "3.5px")
             .attr("class", "centeredLabel")
-            .style("fill", function(d) {
-                return d.text_color;
-            })
-            .text(function(d) {
-                return d.text;
-            });
+            .style("fill", d => d.text_color)
+            .text(d => d.text);
 
         // Add text description
         g.selectAll("svg.text.desc")
             .data(fields)
             .enter()
             .append("text")
-            .attr("x", function(d, i) {
-                return width + 5;
-            })
-            .attr("y", function(d, i) {
-                return i * width + half_width + title_offset;
-            })
+            .attr("x", width + 5)
+            .attr("y", (d, i) => i * width + half_width + title_offset)
             .attr("dy", "3.5px")
             .attr("class", "dr_axis_labels")
-            .text(function(d) {
-                return d.description;
-            });
+            .text(d => d.description);
+
+        // add footnotes
+        if (this.footnotes.length > 0) {
+            dim = g.node().getBBox();
+            g.selectAll("svg.text.footnote_icon")
+                .data(this.footnotes)
+                .enter()
+                .append("text")
+                .attr("x", half_width)
+                .attr("y", (d, i) => dim.height + (i + 1) * 15)
+                .attr("class", "centeredLabel footnote_icon")
+                .text(d => d[0]);
+
+            g.selectAll("svg.text.footnote_text")
+                .data(this.footnotes)
+                .enter()
+                .append("text")
+                .attr("x", width + 5)
+                .attr("y", (d, i) => dim.height + (i + 1) * 15)
+                .attr("class", "dr_axis_labels footnote_text")
+                .text(d => d[1]);
+        }
 
         // add bounding-rectangle around legend
         dim = g.node().getBBox();
@@ -181,8 +182,6 @@ class RoBLegend {
             y = 2 * buff;
         }
         g.attr("transform", `translate(${x},${y})`);
-
-        this.legend_group = g;
     }
 }
 
