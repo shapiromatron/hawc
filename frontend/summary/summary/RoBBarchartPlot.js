@@ -256,7 +256,7 @@ class RoBBarchartPlot extends D3Visualization {
             .attr("x", x)
             .attr("y", y)
             .attr("text-anchor", "middle")
-            .attr("transform", "rotate(270, {0}, {1})".printf(x, y))
+            .attr("transform", `rotate(270, ${x}, ${y})`)
             .attr("class", "dr_axis_labels x_axis_label")
             .text(this.y_label_text);
     }

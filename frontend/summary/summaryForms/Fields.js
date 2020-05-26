@@ -34,9 +34,7 @@ class TextField extends InputField {
     }
 
     _setInput() {
-        this.$inp = $(
-            '<input type="text" name="{0}" class="span12" required>'.printf(this.schema.name)
-        );
+        this.$inp = $(`<input type="text" name="${this.schema.name}" class="span12" required>`);
     }
 
     render() {
@@ -44,10 +42,10 @@ class TextField extends InputField {
         var $ctrl = $('<div class="controls">').append(this.$inp);
 
         if (this.schema.helpText)
-            $ctrl.append('<span class="help-inline">{0}</span>'.printf(this.schema.helpText));
+            $ctrl.append(`<span class="help-inline">${this.schema.helpText}</span>`);
 
         var $div = $('<div class="control-group form-row">')
-            .append('<label class="control-label">{0}:</label>'.printf(this.schema.label))
+            .append(`<label class="control-label">${this.schema.label}:</label>`)
             .append($ctrl);
 
         this.$parent.append($div);
@@ -60,9 +58,7 @@ class IntegerField extends TextField {
     }
 
     _setInput() {
-        this.$inp = $(
-            '<input type="number" name="{0}" class="span12" required>'.printf(this.schema.name)
-        );
+        this.$inp = $(`<input type="number" name="${this.schema.name}" class="span12" required>`);
     }
 }
 
@@ -73,18 +69,14 @@ class FloatField extends TextField {
 
     _setInput() {
         this.$inp = $(
-            '<input type="number" step="any" name="{0}" class="span12" required>'.printf(
-                this.schema.name
-            )
+            `<input type="number" step="any" name="${this.schema.name}" class="span12" required>`
         );
     }
 }
 
 class ColorField extends TextField {
     _setInput() {
-        this.$inp = $(
-            '<input type="color" name="{0}" class="span12" required>'.printf(this.schema.name)
-        );
+        this.$inp = $(`<input type="color" name="${this.schema.name}" class="span12" required>`);
     }
 }
 
@@ -98,18 +90,18 @@ class CheckboxField extends TextField {
     }
 
     _setInput() {
-        this.$inp = $('<input type="checkbox" name="{0}">'.printf(this.schema.name));
+        this.$inp = $(`<input type="checkbox" name="${this.schema.name}">`);
     }
 }
 
 class RadioField extends TextField {
     toSerialized() {
-        var sel = 'input[name="{0}"]:checked'.printf(this.schema.name);
+        var sel = `input[name="${this.schema.name}"]:checked`;
         this.parent.settings[this.schema.name] = this.$inp.find(sel).val();
     }
 
     fromSerialized() {
-        var sel = 'input[value="{0}"]'.printf(this.parent.settings[this.schema.name]);
+        var sel = `input[value="${this.parent.settings[this.schema.name]}"]`;
         this.$inp.find(sel).prop("checked", true);
     }
 
@@ -117,11 +109,10 @@ class RadioField extends TextField {
         var radios = _.map(
             this.schema.options,
             _.bind(function(d) {
-                return '<label class="radio inline">{0}<input name="{1}" type="radio" value="{2}"></label>'.printf(
-                    d.label,
-                    this.schema.name,
-                    d.value
-                );
+                return `<label class="radio inline">
+                    ${d.label}
+                    <input name="${this.schema.name}" type="radio" value="${d.value}">
+                </label>`;
             }, this)
         );
         this.$inp = $("<div>").html(radios.join("\n"));
@@ -131,9 +122,9 @@ class RadioField extends TextField {
 class SelectField extends TextField {
     _setInput() {
         var makeOpt = function(d) {
-            return '<option value="{0}">{1}</option>'.printf(d[0], d[1]);
+            return `<option value="${d[0]}">${d[1]}</option>`;
         };
-        this.$inp = $('<select name="{0}" class="span12">'.printf(this.schema.name)).html(
+        this.$inp = $(`<select name="${this.schema.name}" class="span12">`).html(
             this.schema.opts.map(makeOpt).join("")
         );
     }
@@ -159,9 +150,7 @@ class HeaderNullField extends NullField {
 
 class HelpTextNullField extends NullField {
     render() {
-        this.$parent.append(
-            '<p class="helpTextForTable help-inline">{0}</p>'.printf(this.schema.helpText)
-        );
+        this.$parent.append(`<p class="helpTextForTable help-inline">${this.schema.helpText}</p>`);
     }
 }
 

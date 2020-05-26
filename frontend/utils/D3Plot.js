@@ -605,10 +605,10 @@ class D3Plot {
             form = $(
                 '<form style="display: none;" action="/assessment/download-plot/" method="post"></form>'
             ).html([
-                '<input name="height" value="{0}">'.printf(svg_blob.height),
-                '<input name="width" value="{0}">'.printf(svg_blob.width),
-                '<input name="svg" value="{0}">'.printf(btoa(escape(svg_blob.source[0]))),
-                '<input name="output" value="{0}">'.printf(options.format),
+                `<input name="height" value="${svg_blob.height}">`,
+                `<input name="width" value="${svg_blob.width}">`,
+                `<input name="svg" value="${btoa(escape(svg_blob.source[0]))}">`,
+                `<input name="output" value="${options.format}">`,
             ]);
         form.appendTo("body").submit();
     }

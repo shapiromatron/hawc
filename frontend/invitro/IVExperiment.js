@@ -14,29 +14,21 @@ class IVExperiment {
     }
 
     static get_object(id, cb) {
-        $.get("/in-vitro/api/experiment/{0}/".printf(id), function(d) {
-            cb(new IVExperiment(d));
-        });
+        $.get(`/in-vitro/api/experiment/${id}/`, d => cb(new IVExperiment(d)));
     }
 
     static displayAsModal(id) {
-        IVExperiment.get_object(id, function(d) {
-            d.displayAsModal();
-        });
+        IVExperiment.get_object(id, d => d.displayAsModal());
     }
 
     static displayAsPage(id, div) {
-        IVExperiment.get_object(id, function(d) {
-            d.displayAsPage(div);
-        });
+        IVExperiment.get_object(id, d => d.displayAsPage(div));
     }
 
     initEndpoints() {
         this.endpoints = [];
         if (this.data.endpoints) {
-            this.endpoints = _.map(this.data.endpoints, function(d) {
-                return new IVEndpoint(d);
-            });
+            this.endpoints = _.map(this.data.endpoints, d => new IVEndpoint(d));
             delete this.data.endpoints;
         }
     }

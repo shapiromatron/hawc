@@ -445,7 +445,7 @@ class RoBHeatmapPlot extends D3Visualization {
         svg.append("svg:text")
             .attr("x", 15)
             .attr("y", yLoc)
-            .attr("transform", "rotate(270, {0}, {1})".printf(15, yLoc))
+            .attr("transform", `rotate(270, 15, ${yLoc})`)
             .text(this.y_label_text)
             .attr("text-anchor", "middle")
             .attr("class", "dr_axis_labels y_axis_label");

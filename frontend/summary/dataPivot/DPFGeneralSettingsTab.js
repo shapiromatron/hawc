@@ -50,12 +50,12 @@ let build_settings_general_tab = function(self) {
                 colgroup = $('<colgroup><col style="width: 30%;"><col style="width: 70%;">'),
                 build_tr = function(label, input) {
                     return $("<tr>")
-                        .append("<th>{0}</th>".printf(label))
+                        .append(`<th>${label}</th>`)
                         .append($("<td>").append(input));
                 },
                 add_horizontal_field = function(label_text, html_obj) {
                     return $('<div class="control-group">')
-                        .append('<label class="control-label">{0}</label>'.printf(label_text))
+                        .append(`<label class="control-label">${label_text}</label>`)
                         .append($('<div class="controls">').append(html_obj));
                 },
                 show_legend = $('<input type="checkbox">')
@@ -82,17 +82,13 @@ let build_settings_general_tab = function(self) {
                         self.legend._draw_legend();
                     }),
                 border_width = $(
-                    '<input type="range" min="0" max="10" value="{0}">'.printf(
-                        self.settings.legend.style.border_width
-                    )
+                    `<input type="range" min="0" max="10" value="${self.settings.legend.style.border_width}">`
                 ).on("change", function() {
                     self.settings.legend.style.border_width = parseFloat($(this).val(), 10) || 0;
                     self.legend._draw_legend();
                 }),
                 border_color = $(
-                    '<input name="fill" type="color" value="{0}">'.printf(
-                        self.settings.legend.style.border_color
-                    )
+                    `<input name="fill" type="color" value="${self.settings.legend.style.border_color}">`
                 ).on("change", function() {
                     self.settings.legend.style.border_color = $(this).val();
                     self.legend._draw_legend();
@@ -123,7 +119,7 @@ let build_settings_general_tab = function(self) {
                         tmp_line = d ? d.line_style : NULL_CASE,
                         tmp_symbol = d ? d.symbol_style : NULL_CASE,
                         tmp_rect = d ? d.rect_style : NULL_CASE,
-                        name = $('<input name="legend_name" value="{0}">'.printf(tmp_label)),
+                        name = $(`<input name="legend_name" value="${tmp_label}">`),
                         line = self.style_manager
                             .add_select("lines", tmp_line, true)
                             .removeClass("span12")
