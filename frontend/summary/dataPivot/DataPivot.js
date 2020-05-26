@@ -228,7 +228,7 @@ class DataPivot {
         // print header
         var tr = $("<tr>");
         data_headers.forEach(function(v) {
-            tr.append("<th>{0}</th>".printf(v));
+            tr.append(`<th>${v}</th>`);
         });
         thead.append(tr);
 
@@ -236,7 +236,7 @@ class DataPivot {
         this.data.forEach(function(d) {
             var tr = $("<tr>");
             data_headers.forEach(function(field) {
-                tr.append("<td>{0}</td>".printf(d[field]));
+                tr.append(`<td>${d[field]}</td>`);
             });
             tbody.append(tr);
         });
@@ -289,18 +289,14 @@ class DataPivot {
 
     _get_header_options(show_blank) {
         var opts = [];
-        if (show_blank) opts.push('<option value="{0}">{0}</option>'.printf(NULL_CASE));
-        return opts.concat(
-            this.data_headers.map(function(v) {
-                return '<option value="{0}">{0}</option>'.printf(v);
-            })
-        );
+        if (show_blank) opts.push(`<option value="${NULL_CASE}">${NULL_CASE}</option>`);
+        return opts.concat(this.data_headers.map(v => `<option value="${v}">${v}</option>`));
     }
 
     _get_description_options() {
-        return this.settings.description_settings.map(function(d, i) {
-            return '<option value="{0}">{1}</option>'.printf(i, d.header_name);
-        });
+        return this.settings.description_settings.map(
+            (d, i) => `<option value="${i}">${d.header_name}</option>`
+        );
     }
 
     download_settings() {
@@ -322,7 +318,7 @@ class DataPivot {
     displayAsModal() {
         var self = this,
             modal = new HAWCModal(),
-            title = "<h4>{0}</h4>".printf(this.title),
+            title = `<h4>${this.title}</h4>`,
             $plot = $('<div class="span12">'),
             $content = $('<div class="container-fluid">').append(
                 $('<div class="row-fluid">').append($plot)

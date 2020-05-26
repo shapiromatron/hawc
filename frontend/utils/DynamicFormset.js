@@ -52,7 +52,7 @@ class DynamicFormset {
     }
 
     _updateTotalFormsField() {
-        $("#id_{0}-TOTAL_FORMS".printf(this.prefix)).val(this._formsInFormset().length);
+        $(`#id_${this.prefix}-TOTAL_FORMS`).val(this._formsInFormset().length);
     }
 
     deleteForm(e) {

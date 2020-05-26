@@ -168,7 +168,7 @@ class DataPivotVisualization extends D3Plot {
                     });
                 }
             } else {
-                console.log("Unrecognized filter: {0}".printf(filters[i].quantifier));
+                console.log(`Unrecognized filter: ${filters[i].quantifier}`);
             }
         }
 
@@ -465,7 +465,7 @@ class DataPivotVisualization extends D3Plot {
                         break;
 
                     default:
-                        console.log("Unrecognized condition_type: {0}".printf(cf.condition_type));
+                        console.log(`Unrecognized condition_type: ${cf.condition_type}`);
                 }
             });
         } else {
@@ -1117,7 +1117,7 @@ class DataPivotVisualization extends D3Plot {
                 if (styles.rotate > 0) {
                     obj.attr(
                         "transform",
-                        "rotate({0} {1},{2})".printf(styles.rotate, obj.attr("x"), obj.attr("y"))
+                        `rotate(${styles.rotate} ${obj.attr("x")},${obj.attr("y")})`
                     );
                 }
             },
@@ -1338,7 +1338,7 @@ class DataPivotVisualization extends D3Plot {
         d3.select(this.svg)
             .attr("width", w)
             .attr("height", h)
-            .attr("viewBox", "0 0 {0} {1}".printf(w, h));
+            .attr("viewBox", `0 0 ${w} ${h}`);
 
         this.full_width = w;
         this.full_height = h;

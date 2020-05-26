@@ -17,7 +17,7 @@ class DescriptiveTable {
         if (value) {
             if (parseFloat(value, 10) === value) value = value.toHawcString();
             if (opts.calculated) {
-                value = "[{0}]".printf(value); // [] = estimated
+                value = `[${value}]`; // [] = estimated
             }
             var td = $("<td>").html(value);
             if (opts.annotate) {
@@ -40,7 +40,7 @@ class DescriptiveTable {
                     })
                 ),
                 tr = $("<tr>")
-                    .append("<th>{0}</th>".printf(description))
+                    .append(`<th>${description}</th>`)
                     .append($("<td>").append(ul));
 
             this._tbody.append(tr);

@@ -44,7 +44,7 @@ class StyleManager {
             var select = this.selects[style_type][i],
                 sel = select.find("option:selected").val();
             select.html(this._build_options(style_type));
-            select.find('option[value="{0}"]'.printf(sel)).prop("selected", true);
+            select.find(`option[value="${sel}"]`).prop("selected", true);
         }
     }
 
@@ -52,7 +52,7 @@ class StyleManager {
         var options = [];
         this.styles[style_type].forEach(function(v) {
             options.push(
-                $('<option value="{0}">{0}</option>'.printf(v.settings.name)).data("d", v)
+                $(`<option value="${v.settings.name}">${v.settings.name}</option>`).data("d", v)
             );
         });
         return options;
@@ -155,7 +155,7 @@ class StyleManager {
                 if (self.save_settings(style, style_type)) {
                     self.update_selects(style_type);
                     style_selector
-                        .find('option[value="{0}"]'.printf(style.settings.name))
+                        .find(`option[value="${style.settings.name}"]`)
                         .prop("selected", true);
                     modal.modal("hide");
                 }

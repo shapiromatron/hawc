@@ -134,6 +134,7 @@ class AnimalGroupCleanupFieldsView(CleanupFieldsBaseViewSet):
 class EndpointCleanupFieldsView(CleanupFieldsBaseViewSet):
     serializer_class = serializers.EndpointCleanupFieldsSerializer
     model = models.Endpoint
+    assessment_filter_args = "assessment"
 
 
 class DosingRegimeCleanupFieldsView(CleanupFieldsBaseViewSet):

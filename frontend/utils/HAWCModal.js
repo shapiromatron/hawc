@@ -46,8 +46,7 @@ class HAWCModal {
     }
 
     addTitleLinkHeader(name, url, options) {
-        var txt = '<h4><a href="{0}" target="_blank">{1}</a></h4>'.printf(url, name);
-        return this.addHeader(txt, options);
+        return this.addHeader(`<h4><a href="${url}" target="_blank">${name}</a></h4>`, options);
     }
 
     addFooter(html, options) {
@@ -89,14 +88,14 @@ class HAWCModal {
                 mWidthPadding = parseInt((w - mWidth) * 0.5, 10),
                 mHeight = Math.min(h - 50, this.maxHeight);
             _.extend(modalCSS, {
-                width: "{0}px".printf(mWidth),
+                width: `${mWidth}px`,
                 top: "25px",
-                left: "{0}px".printf(mWidthPadding),
+                left: `${mWidthPadding}px`,
                 margin: "0px",
-                "max-height": "{0}px".printf(mHeight),
+                "max-height": `${mHeight}px`,
             });
             _.extend(modalBodyCSS, {
-                "max-height": "{0}px".printf(mHeight - 150),
+                "max-height": `${mHeight - 150}px`,
             });
         }
         this.$modalDiv.css(modalCSS);

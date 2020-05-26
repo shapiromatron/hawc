@@ -28,12 +28,12 @@ path.bmd_line{fill:none;stroke-width:3px;}
 .d3modal{background-color:white;border:2px solid gray;padding:10px;}
 .scorebox{border:1px solid gray;border-radius:5px;color:white;display:inline-block;font-weight:bold;margin-bottom:3px;margin-right:5px;text-align:center;width:30px;}
 td.scorecell{background-color:#ddd;border:2px solid white;border-radius:10px;color:white;cursor:pointer;font-weight:bold;text-align:center;vertical-align:middle;width:50px;}
-td.domain_cell{color:#757575;}
+td.domain_cell{color:#404040;}
 ol.score-details{list-style-type:none;}
 path.donuts{stroke:white;stroke-width:2;}
 path.domain_arc{fill:#ddd;}
 path.metric_arc{cursor:pointer;}
-text.domain_arc{fill:#757575;}
+text.domain_arc{fill:#404040;}
 path.donuts.hovered{fill:#87ceff;}
 text.arc_label{fill:white;font-size:12px;font-weight:bold;pointer-events:none;}
 .heatmap_selectable{cursor:pointer;}

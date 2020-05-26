@@ -31,10 +31,7 @@ class D3Visualization extends D3Plot {
             obj.style(k, v);
         });
         if (styles.rotate > 0) {
-            obj.attr(
-                "transform",
-                "rotate({0} {1},{2})".printf(styles.rotate, obj.attr("x"), obj.attr("y"))
-            );
+            obj.attr("transform", `rotate(${styles.rotate} ${obj.attr("x")},${obj.attr("y")})`);
         }
     }
 }

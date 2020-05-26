@@ -6,8 +6,8 @@ from . import api, views
 router = DefaultRouter()
 router.register(r"assessment", api.LiteratureAssessmentViewset, basename="assessment")
 router.register(r"search", api.SearchViewset, basename="search")
-router.register(r"tags", api.ReferenceFilterTag, basename="tags")
-router.register(r"reference-cleanup", api.ReferenceCleanup, basename="reference-cleanup")
+router.register(r"tags", api.ReferenceFilterTagViewset, basename="tags")
+router.register(r"reference-cleanup", api.ReferenceCleanupViewset, basename="reference-cleanup")
 
 app_name = "lit"
 urlpatterns = [

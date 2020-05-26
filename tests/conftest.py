@@ -23,7 +23,6 @@ class Keys:
         self.assessment_keys = [1, 2]
 
         self.study_working = 1
-        self.study_working_2 = 3
         self.study_final_bioassay = 7
 
         self.reference_linked = 1
