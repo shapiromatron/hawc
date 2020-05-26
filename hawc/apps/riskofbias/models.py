@@ -504,6 +504,11 @@ class RiskOfBiasScore(models.Model):
         (BIAS_DIRECTION_DOWN, "⬇ (towards null)"),
     )
 
+    TEXT_CLEANUP_FIELDS = (
+        "score",
+        "notes",
+    )
+
     riskofbias = models.ForeignKey(RiskOfBias, on_delete=models.CASCADE, related_name="scores")
     metric = models.ForeignKey(RiskOfBiasMetric, on_delete=models.CASCADE, related_name="scores")
     is_default = models.BooleanField(default=True)

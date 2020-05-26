@@ -1,18 +1,15 @@
+from django.db import models
 from django.shortcuts import get_object_or_404
+from rest_framework import exceptions, filters, mixins, permissions, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework_extensions.mixins import ListUpdateModelMixin
 
-from ..assessment.api import (
-    AssessmentEditViewset,
-    DisabledPagination,
-    InAssessmentFilter,
-    get_assessment_id_param,
-)
-from . import views
+from ..assessment.api import DisabledPagination, get_assessment_from_query
+from .helper import try_parse_list_ints
 
 
-class BulkIdFilter(InAssessmentFilter):
+class CleanupBulkIdFilter(filters.BaseFilterBackend):
     """
     Filters objects in Assessment on GET using InAssessmentFilter.
     Filters objects on ID on PATCH. If ID is not supplied in query_params,
@@ -20,49 +17,73 @@ class BulkIdFilter(InAssessmentFilter):
 
     IDs must be supplied in the form ?ids=10209,10210.
 
-    Catches AttributeError when `ids` is not supplied.
     """
 
     def filter_queryset(self, request, queryset, view):
-        queryset = super().filter_queryset(request, queryset, view)
-        ids = request.query_params.get("ids") if (request.query_params.get("ids") != "") else None
-        try:
-            ids = ids.split(",")
-            filters = {"id__in": ids}
-        except AttributeError:
-            ids = []
-            filters = {}
+        # always filter queryset by `assessment_id`
+        queryset = queryset.filter(**{view.assessment_filter_args: view.assessment.id})
 
-        if view.action not in ("list", "retrieve"):
-            filters = {"id__in": ids}
+        # required header for bulk-update
+        if request._request.method.lower() == "patch":
+            ids = list(set(try_parse_list_ints(request.query_params.get("ids"))))
+            queryset = queryset.filter(id__in=ids)
 
-        return queryset.filter(**filters)
+            # invalid IDs
+            if queryset.count() != len(ids):
+                raise exceptions.PermissionDenied()
+
+        return queryset
+
+
+class CleanupFieldsPermissions(permissions.BasePermission):
+    """
+    Custom permissions for bulk-cleanup view. No object-level permissions. Here we check that
+    the user has permission to edit content for this assessment, but not necessarily that they
+    can edit the specific ids selected.
+    """
+
+    def has_object_permission(self, request, view, obj):
+        # no object-specific permissions
+        return False
+
+    def has_permission(self, request, view):
+        # must be team-member or higher to bulk-edit
+        view.assessment = get_assessment_from_query(request)
+        return view.assessment.user_can_edit_object(request.user)
 
 
 class CleanupFieldsBaseViewSet(
-    AssessmentEditViewset, views.TeamMemberOrHigherMixin, ListUpdateModelMixin
+    ListUpdateModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet,
 ):
     """
-    Base Viewset for bulk updating text fields. Model should have a
-    TEXT_CLEANUP_FIELDS class attribute which is list of fields.
+    Base Viewset for bulk updating text fields.
 
+    Implements three routes:
+
+    - GET /?assessment_id=1: list data available for cleanup
+    - PATCH /?assessment_id=1&ids=1,2,3: modify selected data
+    - GET /fields/: list fields available for cleanup
+
+    Model should have a TEXT_CLEANUP_FIELDS class attribute which is list of fields.
     For bulk update, 'X-CUSTOM-BULK-OPERATION' header must be provided.
-
     Serializer should implement DynamicFieldsMixin.
     """
 
-    assessment_filter_args = "assessment"
-    template_name = "assessment/endpointcleanup_list.html"
+    model: models.Model = None  # must be added
+    assessment_filter_args: str = ""  # must be added
+    filter_backends = (CleanupBulkIdFilter,)
     pagination_class = DisabledPagination
-    filter_backends = (BulkIdFilter,)
+    permission_classes = (CleanupFieldsPermissions,)
+    template_name = "assessment/endpointcleanup_list.html"
 
-    def get_assessment(self, request, *args, **kwargs):
-        assessment_id = get_assessment_id_param(request)
-        return get_object_or_404(self.parent_model, pk=assessment_id)
+    def get_queryset(self):
+        return self.model.objects.all()
 
     @action(detail=False, methods=["get"])
     def fields(self, request, format=None):
-        """ /$model/api/cleanup/fields/?assessment_id=$id """
+        """
+        Return field names available for cleanup.
+        """
         cleanup_fields = self.model.TEXT_CLEANUP_FIELDS
         return Response({"text_cleanup_fields": cleanup_fields})
 

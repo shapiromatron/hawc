@@ -75,6 +75,27 @@ class TestLiteratureAssessmentViewset:
         assert resp["data"][0]["type"] == "histogram"
 
 
+@pytest.mark.django_db
+class TestReferenceFilterTagViewset:
+    def test_references(self):
+        # ensure we get a valid json return
+        url = reverse("lit:api:tags-references", args=(12,))
+        c = APIClient()
+        assert c.login(email="pm@pm.com", password="pw") is True
+        resp = c.get(url).json()
+        assert len(resp) == 2
+        assert resp[0]["Inclusion"] is True
+
+    def test_references_table_builder(self):
+        # ensure we get the expected return
+        url = reverse("lit:api:tags-references-table-builder", args=(12,))
+        c = APIClient()
+        assert c.login(email="pm@pm.com", password="pw") is True
+        resp = c.get(url).json()
+        assert len(resp) == 2
+        assert resp[0]["Name"] == "Kawana N, Ishimatsu S, and Kanda K 2001"
+
+
 @pytest.mark.vcr
 @pytest.mark.django_db
 class TestSearchViewset:
