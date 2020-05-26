@@ -9,7 +9,8 @@ class MetricCell extends Component {
     render() {
         let {scores, handleClick} = this.props,
             firstScore = scores[0],
-            displaySettings = getMultiScoreDisplaySettings(scores);
+            displaySettings = getMultiScoreDisplaySettings(scores),
+            textColor = String.contrasting_color(firstScore.score_shade);
 
         if (h.hideRobScore(scores[0].metric.domain.assessment.id)) {
             return <div className="score-cell" />;
@@ -29,6 +30,9 @@ class MetricCell extends Component {
                 <span
                     className="score-cell-scores-span tooltips text-center"
                     data-toggle="tooltip"
+                    style={{
+                        color: textColor,
+                    }}
                     title={firstScore.metric.name}>
                     {displaySettings.symbolText} {displaySettings.directionText}
                 </span>

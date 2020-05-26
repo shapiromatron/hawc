@@ -52,7 +52,7 @@ _.extend(String, {
         // http://stackoverflow.com/questions/1855884/
         var rgb = String.hex_to_rgb(hex),
             a = 1 - (0.299 * rgb.r + 0.587 * rgb.g + 0.114 * rgb.b) / 255;
-        return a < 0.5 ? "#000" : "#fff";
+        return a < 0.5 ? "#404040" : "#ffffff";
     },
     random_string() {
         return "xxxxxxxxxxxxxxx".replace(/x/g, function(c) {
