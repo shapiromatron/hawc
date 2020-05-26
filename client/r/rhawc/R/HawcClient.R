@@ -137,7 +137,7 @@ HawcClient = function(baseUrl){
       return(as_data_frame(response))
     },
 
-    # TODO - needs to be tested w/ real data
+    ## TODO - needs to be tested w/ real data
     rob_create = function(study_id, author_id, active, final, scores) {
       # Parameters:
       #           study_id: id of study.
