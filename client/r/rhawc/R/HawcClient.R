@@ -51,6 +51,28 @@ HawcClient = function(baseUrl){
     response.df = rbind.fill(lapply(response.list, as.data.frame))
     return(response.df)
   }
+  iter_pages = function(url) {
+    response_json = get_(url)
+    results_list = response_json$results
+    # Prevents divide by zero if there are no results
+    if (length(response_json$results) == 0) {
+      return()
+    }
+    # Set up progress bar
+    num_pages = ceiling(response_json$count / length(response_json$results))
+    pb <- txtProgressBar(min = 0, max = num_pages, style = 3)
+    Sys.sleep(0.1)
+    i = 2
+    while (!(is.null(response_json$`next`))) {
+      response_json = get_(response_json$`next`)
+      results_list = append(results_list, response_json$results)
+      setTxtProgressBar(pb, i)
+      i = i+1
+    }
+    close(pb)
+    return (results_list)
+  }
+
   # the methods which will be exposed by the client
   me = list(
     authenticate = function(username, password){
@@ -59,6 +81,8 @@ HawcClient = function(baseUrl){
       token = (content(response))[[1]]
       assign("token", token, thisEnv)
     },
+
+    #literature functions
     lit_import_hero = function(assessment_id, title, description, ids) {
       url = glue("{root_url}/lit/api/search/")
       pc_json = list(assessment = assessment_id,
@@ -100,6 +124,8 @@ HawcClient = function(baseUrl){
       response = get_(url)
       return(as_data_frame(response))
     },
+
+    #risk of bias data functions
     rob_data = function(assessment_id) {
       url = glue("{root_url}/rob/api/assessment/{assessment_id}/export/")
       response = get_(url)
@@ -110,6 +136,33 @@ HawcClient = function(baseUrl){
       response = get_(url)
       return(as_data_frame(response))
     },
+
+    # TODO - needs to be tested w/ real data
+    rob_create = function(study_id, author_id, active, final, scores) {
+      # Parameters:
+      #           study_id: id of study.
+      #           author_id: id of author of the Risk of Bias data.
+      #           active: create the new Risk of Bias as active or not.
+      #           final: create the new Risk of Bias data as final or not.
+      #           scores: List of scores. Each element of the List is a Dict containing the following string keys / expected values:
+      #                 * "metric_id" (int): the id of the metric for this score
+      #                 * "is_default" (bool): create this score as default or not
+      #                 * "label" (str, optional): label for this score
+      #                 * "notes" (str): notes for this core
+      #                 * "score" (int): numeric score value.
+
+      pc_json = list(
+        study_id = study_id,
+        author_id = author_id,
+        active =  active,
+        final = final,
+        scores = scores)
+      url = glue("{root_url}/rob/api/review/")
+      response = post_(url, auth_header, body = pc_json, encode = "json",  verbose())
+      content(response)
+    },
+
+    #animal data functions
     ani_data = function(assessment_id) {
       url = glue("{root_url}/ani/api/assessment/{assessment_id}/full-export/")
       response = get_(url)
@@ -120,16 +173,32 @@ HawcClient = function(baseUrl){
       response = get_(url)
       return(as_data_frame(response))
     },
+    ani_endpoints = function(assessment_id) {
+      assessment_id = assessment_id
+      url = glue("{root_url}/ani/api/endpoint/?assessment_id={assessment_id}")
+      generator = iter_pages(url)
+      return(generator) #** doesnt match python version yet
+     },
+
+    #epidemiology data functions
     epi_data = function(assessment_id) {
       url = glue("{root_url}/epi/api/assessment/{assessment_id}/export/")
       response = get_(url)
       return(as_data_frame(response))
+    },
+    epi_endpoints = function(assessment_id) {
+      assessment_id = assessment_id
+      url = glue("{root_url}/epi/api/outcome/?assessment_id={assessment_id}")
+      generator = iter_pages(url)
+      return(generator) #** doesnt match python version yet
     },
     epimeta_data = function(assessment_id) {
       url = glue("{root_url}/epi-meta/api/assessment/{assessment_id}/export/")
       response = get_(url)
       return(as_data_frame(response))
     },
+
+    #other functions
     invitro_data = function(assessment_id) {
       url = glue("{root_url}/in-vitro/api/assessment/{assessment_id}/full-export/")
       response = get_(url)
