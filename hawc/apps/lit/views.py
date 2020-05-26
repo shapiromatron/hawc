@@ -520,6 +520,12 @@ class RefTopicModel(BaseDetail):
     model = models.LiteratureAssessment
     template_name = "lit/topic_model.html"
 
+    def get_object(self, queryset=None):
+        # use the assessment_id as the primary key instead of the models.LiteratureAssessment
+        assessment_id = self.kwargs.get(self.pk_url_kwarg)
+        object_ = get_object_or_404(self.model, assessment_id=assessment_id)
+        return super().get_object(object=object_)
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["num_references"] = self.object.assessment.references.count()

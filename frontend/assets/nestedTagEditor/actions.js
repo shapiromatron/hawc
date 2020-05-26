@@ -50,7 +50,7 @@ var addDepth = function(node, depth) {
     createTag = function(newNode) {
         return (dispatch, getState) => {
             let state = getState(),
-                url = `${state.config.base_url}`,
+                url = `${state.config.list_url}`,
                 csrf = state.config.csrf,
                 obj = {
                     assessment_id: state.config.assessment_id,
