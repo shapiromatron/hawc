@@ -1,9 +1,9 @@
 from django.conf.urls import include, url
-from rest_framework.routers import DefaultRouter
 
+from ..common.api import OptionalTrailingSlashRouter
 from . import api, views
 
-router = DefaultRouter()
+router = OptionalTrailingSlashRouter()
 router.register(r"visual", api.Visual, basename="visual")
 router.register(r"data_pivot", api.DataPivot, basename="data_pivot")
 

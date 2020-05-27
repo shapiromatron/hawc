@@ -1,3 +1,4 @@
+
 import json
 
 import pytest
@@ -5,6 +6,35 @@ from django.urls import reverse
 from rest_framework.test import APIClient
 
 from hawc.apps.study.models import Study
+
+
+@pytest.mark.django_db
+class TestOptionalTrailingSlashRouter:
+    """
+    Test the OptionalTrailingSlashRouter.
+
+    We'll test the `StudyCleanupFieldsView` since it's a fully parameterized implementation of
+    this base class.
+    """
+
+    def test_same_result(self, db_keys):
+        # check that we get the same result with or without a trailing slash
+
+        url1 = reverse("study:api:study-detail", args=(db_keys.study_final_bioassay,))
+        url2 = url1 + "/"
+
+        client = APIClient()
+
+        resp1 = client.get(url1)
+        resp2 = client.get(url2)
+
+        assert url1 == '/study/api/study/7'
+        assert url2 == '/study/api/study/7/'
+
+        assert resp1.status_code == 200
+        assert resp2.status_code == 200
+
+        assert resp1.json() == resp2.json()
 
 
 @pytest.mark.django_db

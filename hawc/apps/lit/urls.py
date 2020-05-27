@@ -1,9 +1,9 @@
 from django.conf.urls import include, url
-from rest_framework.routers import DefaultRouter
 
+from ..common.api import OptionalTrailingSlashRouter
 from . import api, views
 
-router = DefaultRouter()
+router = OptionalTrailingSlashRouter()
 router.register(r"assessment", api.LiteratureAssessmentViewset, basename="assessment")
 router.register(r"search", api.SearchViewset, basename="search")
 router.register(r"tags", api.ReferenceFilterTagViewset, basename="tags")
