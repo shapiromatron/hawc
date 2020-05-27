@@ -1,0 +1,25 @@
+{% extends 'portal.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block title %}
+{% include "hawc/siteTitle.html" with crumbs=form.instance.get_crumbs crud=crud %}
+{% endblock title %}
+
+{% block breadcrumbs %}
+{% include "hawc/breadcrumbs.html" with crumbs=form.instance.get_crumbs crud=crud %}
+{% endblock %}
+
+{% block content %}
+{% crispy form %}
+{% endblock content %}
+
+
+{% block extrajs %}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('.html5text').quillify();
+        $('#id_name').focus();
+    });
+</script>
+{% endblock extrajs %}

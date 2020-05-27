@@ -6,16 +6,19 @@ from django.conf import settings
 from django.contrib.contenttypes import fields
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.postgres.fields import JSONField
 from django.core.cache import cache
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
 from reversion import revisions as reversion
+import pandas as pd
 
 from ..common.dsstox import get_casrn_url
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper
-from ..common.models import get_crumbs
+from ..common.models import get_crumbs, get_private_data_storage
+
 from ..myuser.models import HAWCUser
 from . import managers
 from .tasks import add_time_spent
@@ -542,8 +545,79 @@ class TimeSpentEditing(models.Model):
             cache.delete(cache_name)
 
 
+class Dataset(models.Model):
+    """
+    An external Dataset
+    """
+
+    valid_extensions = {"xlsx", "csv", "tsv", "json"}
+    assessment = models.ForeignKey(Assessment, editable=False, on_delete=models.CASCADE)
+    name = models.CharField(max_length=256)
+    is_tabular = models.BooleanField(default=True)
+    description = models.TextField(blank=True)
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ("created",)
+        unique_together = (("assessment", "name"),)
+
+    def __str__(self) -> str:
+        return self.name
+
+    def get_absolute_url(self) -> str:
+        return self.assessment.get_absolute_url()
+
+    def get_crumbs(self):
+        return get_crumbs(self, parent=self.assessment)
+
+    def get_latest_revision(self) -> "DatasetRevision":
+        return self.revisions.latest()
+
+    def get_latest_df(self) -> pd.DataFrame:
+        if not self.is_tabular:
+            raise ValueError("Only tabular datsets can be returned as a data frame")
+        return self.get_latest_revision().get_df()
+
+
+class DatasetRevision(models.Model):
+    """
+    A specific external dataset revision
+    """
+
+    dataset = models.ForeignKey(Dataset, on_delete=models.CASCADE, related_name="revisions")
+    version = models.PositiveSmallIntegerField()
+    data = models.FileField(
+        upload_to="assessment/dataset-revision", storage=get_private_data_storage(),
+    )
+    metadata = JSONField(editable=False)
+    excel_worksheet_name = models.CharField(
+        help_text="Worksheet name to use in Excel file. If blank, the first worksheet is used.",
+        max_length=64,
+        blank=True,
+    )
+    notes = models.TextField(
+        blank=True,
+        help_text="Notes on specific revision. For example, describe what's different from a previous version.",
+    )
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ("created",)
+        unique_together = (("dataset", "version"),)
+
+    def __str__(self) -> str:
+        return f"{self.dataset}: v{self.version}"
+
+    def get_df(self) -> pd.DataFrame:
+        pass
+
+
 reversion.register(Assessment)
 reversion.register(EffectTag)
 reversion.register(Species)
 reversion.register(Strain)
 reversion.register(BaseEndpoint)
+reversion.register(Dataset)
+reversion.register(DatasetRevision)

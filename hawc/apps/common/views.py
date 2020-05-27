@@ -396,7 +396,7 @@ class BaseUpdate(TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin,
 
 class BaseCreate(TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin, CreateView):
     parent_model = None  # required
-    parent_template_name = None  # required
+    parent_template_name: str = None  # required
     crud = "Create"
 
     def dispatch(self, *args, **kwargs):

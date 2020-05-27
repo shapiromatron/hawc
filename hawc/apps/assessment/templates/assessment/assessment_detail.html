@@ -24,6 +24,7 @@
             <li><a href="{% url 'assessment:modules_update' object.pk %}">Update enabled modules</a></li>
             <li><a href="{% url 'assessment:delete' object.pk %}">Delete assessment</a></li>
             <li><a href="{% url 'assessment:attachment_create' object.pk %}">Add an attachment</a></li>
+            <li><a href="{% url 'assessment:dataset_create' object.pk %}">Add a dataset</a></li>
             <li class="divider"></li>
           {% endif %}
 
@@ -170,6 +171,7 @@
 
   {% if crud == "Read" %}
     {% include "assessment/_attachment_list.html" with object_list=attachments canEdit=obj_perms.edit_assessment %}
+    {% include "assessment/_dataset_list.html" with object_list=attachments canEdit=obj_perms.edit_assessment %}
   {% endif %}
 
 {% endblock content %}

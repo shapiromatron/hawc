@@ -320,6 +320,33 @@ class AttachmentDelete(BaseDelete):
         return self.object.get_absolute_url()
 
 
+# Dataset views
+class DatasetCreate(BaseCreate):
+    success_message = "Dataset created."
+    parent_model = models.Assessment
+    parent_template_name = "parent"
+    model = models.Dataset
+    form_class = forms.DatasetForm
+
+
+class DatasetRead(BaseDetail):
+    model = models.Dataset
+
+
+class DatasetUpdate(BaseUpdate):
+    success_message = "Dataset updated."
+    model = models.Dataset
+    form_class = forms.DatasetForm
+
+
+class DatasetDelete(BaseDelete):
+    success_message = "Dataset deleted."
+    model = models.Dataset
+
+    def get_success_url(self):
+        return self.object.assessment.get_absolute_url()
+
+
 # Endpoint objects
 class EffectTagCreate(CloseIfSuccessMixin, BaseCreate):
     success_message = "Effect tag created."

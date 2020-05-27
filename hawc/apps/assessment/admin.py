@@ -63,6 +63,37 @@ class AssessmentAdmin(admin.ModelAdmin):
     get_reviewers.allow_tags = True
 
 
+@admin.register(models.Attachment)
+class AttachmentAdmin(admin.ModelAdmin):
+    list_select_related = ("content_type",)
+    list_display = ("id", "title", "attachment", "content_object", "publicly_available")
+    list_display_links = ("id",)
+    list_filter = ("publicly_available",)
+
+
+class DatasetRevisionInline(admin.StackedInline):
+    model = models.DatasetRevision
+
+
+@admin.register(models.Dataset)
+class DatasetAdmin(admin.ModelAdmin):
+    list_select_related = ("assessment",)
+    list_display = (
+        "id",
+        "assessment",
+        "name",
+        "is_tabular",
+        "description",
+        "created",
+        "last_updated",
+    )
+    list_display_links = ("id",)
+    list_filter = ("is_tabular", "assessment")
+    inlines = [
+        DatasetRevisionInline,
+    ]
+
+
 @admin.register(models.DoseUnits)
 class DoseUnitsAdmin(admin.ModelAdmin):
     list_display = (
