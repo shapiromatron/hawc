@@ -2,8 +2,8 @@
 
 import django.contrib.postgres.fields.jsonb
 import django.core.files.storage
-from django.db import migrations, models
 import django.db.models.deletion
+from django.db import migrations, models
 
 
 class Migration(migrations.Migration):

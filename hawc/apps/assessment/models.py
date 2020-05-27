@@ -1,6 +1,7 @@
 import json
 from typing import NamedTuple
 
+import pandas as pd
 from django.apps import apps
 from django.conf import settings
 from django.contrib.contenttypes import fields
@@ -13,12 +14,10 @@ from django.db import models
 from django.urls import reverse
 from django.utils import timezone
 from reversion import revisions as reversion
-import pandas as pd
 
 from ..common.dsstox import get_casrn_url
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper
 from ..common.models import get_crumbs, get_private_data_storage
-
 from ..myuser.models import HAWCUser
 from . import managers
 from .tasks import add_time_spent
