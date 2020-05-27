@@ -602,10 +602,12 @@ class EndpointAggregationSelectMultipleWidget(selectable.AutoCompleteSelectMulti
     properly returns IDs instead of strings.
     """
 
-    def render(self, name, value, attrs=None):
+    def render(self, name, value, attrs=None, renderer=None):
         if value:
             value = [value.id for value in value]
-        return super(selectable.AutoCompleteSelectMultipleWidget, self).render(name, value, attrs)
+        return super(selectable.AutoCompleteSelectMultipleWidget, self).render(
+            name, value, attrs, renderer
+        )
 
 
 class EndpointAggregationForm(VisualForm):
