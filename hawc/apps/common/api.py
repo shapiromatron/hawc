@@ -3,23 +3,10 @@ from django.shortcuts import get_object_or_404
 from rest_framework import exceptions, filters, mixins, permissions, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.routers import DefaultRouter
 from rest_framework_extensions.mixins import ListUpdateModelMixin
 
 from ..assessment.api import DisabledPagination, get_assessment_from_query
 from .helper import try_parse_list_ints
-
-
-class OptionalTrailingSlashRouter(DefaultRouter):
-    """
-    DefautRouter with optional final slash.
-
-    Required for some tools to navigate open-api routes.
-    """
-
-    def __init__(self):
-        super().__init__()
-        self.trailing_slash = "/?"
 
 
 class CleanupBulkIdFilter(filters.BaseFilterBackend):

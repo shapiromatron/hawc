@@ -1,9 +1,9 @@
 from django.conf.urls import include, url
+from rest_framework.routers import DefaultRouter
 
-from ..common.api import OptionalTrailingSlashRouter
 from . import api, views
 
-router = OptionalTrailingSlashRouter()
+router = DefaultRouter()
 router.register(r"assessment", api.AnimalAssessmentViewset, basename="assessment")
 router.register(r"endpoint", api.Endpoint, basename="endpoint")
 router.register(r"experiment", api.Experiment, basename="experiment")

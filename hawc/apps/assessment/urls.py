@@ -1,10 +1,10 @@
 from django.conf.urls import include, url
 from django.contrib import admin
+from rest_framework.routers import DefaultRouter
 
-from ..common.api import OptionalTrailingSlashRouter
 from . import api, views
 
-router = OptionalTrailingSlashRouter()
+router = DefaultRouter()
 router.register(r"assessment", api.Assessment, basename="assessment")
 router.register(r"dashboard", api.AdminDashboardViewset, basename="admin_dashboard")
 
