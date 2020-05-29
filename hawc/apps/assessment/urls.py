@@ -7,7 +7,6 @@ from . import api, views
 router = OptionalTrailingSlashRouter()
 router.register(r"assessment", api.Assessment, basename="assessment")
 router.register(r"dashboard", api.AdminDashboardViewset, basename="admin_dashboard")
-router.register(r"endpoints", api.AssessmentEndpointList, basename="endpoint_type")
 
 app_name = "assessment"
 urlpatterns = [

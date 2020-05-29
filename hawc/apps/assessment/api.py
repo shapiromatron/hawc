@@ -247,14 +247,8 @@ class Assessment(AssessmentViewset):
         export = FlatExport(df=df, filename=f"hawc-bioassay-dataset-{today}")
         return Response(export)
 
-
-class AssessmentEndpointList(AssessmentViewset):
-    serializer_class = serializers.AssessmentEndpointSerializer
-    assessment_filter_args = "id"
-    model = models.Assessment
-    pagination_class = DisabledPagination
-
-    def list(self, request, *args, **kwargs):
+    @action(detail=True)
+    def endpoints(self, request, pk: int = None):
         """
         List has been optimized for queryset speed; some counts in get_queryset
         and others in the list here; depends on if a "select distinct" is
@@ -372,7 +366,7 @@ class AssessmentEndpointList(AssessmentViewset):
             }
         )
 
-        serializer = self.get_serializer(instance)
+        serializer = serializers.AssessmentEndpointSerializer(instance)
         return Response(serializer.data)
 
     def get_queryset(self):
