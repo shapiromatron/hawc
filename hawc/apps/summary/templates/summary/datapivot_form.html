@@ -37,7 +37,7 @@
       var doseWidget = new window.app.assessmentStartup.DoseUnitsWidget($('form'), {
         api: "{% url 'animal:api:dose_units-list' %}",
         el: '#id_preferred_units',
-      });
+      }), printf = window.app.utils.HAWCUtils.printf;
 
       window.app.smartTagsStartup(function(smartTags){
           new smartTags.SmartTagEditor($('#id_caption'), {submitEl: '#dataPivotForm'});
@@ -57,8 +57,8 @@
             ["effect_tag", "effect_tags"],
         ];
         _.each(fields, function(d){
-            $('#id_prefilter_{0}'.printf(d[0])).on('change', function(){
-                var div = $('#div_id_{0}'.printf(d[1]));
+            $(printf('#id_prefilter_{0}', d[0])).on('change', function(){
+                var div = $(printf('#div_id_{0}', d[1]));
                 ($(this).prop('checked')) ? div.show(1000) : div.hide(0);
             }).trigger('change');
         });
