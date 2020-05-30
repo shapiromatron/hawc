@@ -60,7 +60,8 @@
   {{ form.media }}
   <script type="text/javascript">
     $(document).ready(function(){
-        var isSearch = function(txt){
+        var printf = window.app.utils.HAWCUtils.printf,
+            isSearch = function(txt){
             return (txt.search('{Search}')>=0);
         };
 
@@ -72,7 +73,7 @@
 
             if (val){
                 var url = (isSearch(txt)) ? search_url : import_url;
-                $(this).attr('href', "{0}?initial={1}".printf(url, val));
+                $(this).attr('href', printf("{0}?initial={1}", url, val));
                 return true;
             }
             return false;

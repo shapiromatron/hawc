@@ -181,7 +181,6 @@ class DoseUnitsViewset(viewsets.ReadOnlyModelViewSet):
 
 class Assessment(AssessmentViewset):
     model = models.Assessment
-    permission_classes = (AssessmentLevelPermissions,)
     serializer_class = serializers.AssessmentSerializer
 
     @action(detail=False, methods=("get",), permission_classes=(permissions.AllowAny,))
@@ -247,21 +246,25 @@ class Assessment(AssessmentViewset):
         export = FlatExport(df=df, filename=f"hawc-bioassay-dataset-{today}")
         return Response(export)
 
-
-class AssessmentEndpointList(AssessmentViewset):
-    serializer_class = serializers.AssessmentEndpointSerializer
-    assessment_filter_args = "id"
-    model = models.Assessment
-    pagination_class = DisabledPagination
-
-    def list(self, request, *args, **kwargs):
+    @action(detail=True)
+    def endpoints(self, request, pk: int = None):
         """
-        List has been optimized for queryset speed; some counts in get_queryset
+        Optimized for queryset speed; some counts in get_queryset
         and others in the list here; depends on if a "select distinct" is
         required which significantly decreases query speed.
         """
 
-        instance = self.filter_queryset(self.get_queryset())[0]
+        # check permissions
+        instance = self.get_object()
+
+        # re-query w/ annotations
+        instance = (
+            self.model.objects.get_qs(instance.id)
+            .annotate(endpoint_count=Count("baseendpoint__endpoint"))
+            .annotate(outcome_count=Count("baseendpoint__outcome"))
+            .annotate(ivendpoint_count=Count("baseendpoint__ivendpoint"))
+        ).first()
+
         app_url = reverse("assessment:clean_extracted_data", kwargs={"pk": instance.id})
         instance.items = []
 
@@ -372,18 +375,8 @@ class AssessmentEndpointList(AssessmentViewset):
             }
         )
 
-        serializer = self.get_serializer(instance)
+        serializer = serializers.AssessmentEndpointSerializer(instance)
         return Response(serializer.data)
-
-    def get_queryset(self):
-        assessment_id = get_assessment_id_param(self.request)
-        queryset = (
-            self.model.objects.get_qs(assessment_id)
-            .annotate(endpoint_count=Count("baseendpoint__endpoint"))
-            .annotate(outcome_count=Count("baseendpoint__outcome"))
-            .annotate(ivendpoint_count=Count("baseendpoint__ivendpoint"))
-        )
-        return queryset
 
 
 class AdminDashboardViewset(viewsets.ViewSet):

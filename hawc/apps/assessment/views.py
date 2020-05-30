@@ -429,7 +429,7 @@ class CleanExtractedData(TeamMemberOrHigherMixin, BaseEndpointList):
     """
     To add a model to clean,
      - add TEXT_CLEANUP_FIELDS = {...fields} to the model
-     - add model count dict to assessment.views.AssessmentEndpointList
+     - add model count dict to assessment.views.Assessment.endpoints
      - add model serializer that uses utils.api.DynamicFieldsMixin
      - add api view that inherits from assessment.api.CleanupFieldsBaseViewSet
         with model={model} & serializer_class={new serializer}
