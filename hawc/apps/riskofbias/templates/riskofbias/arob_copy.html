@@ -78,11 +78,12 @@
             };
 
             var displayApproach = function(domains){
-                var displayDiv = document.getElementById('approach');
+                var printf = window.app.utils.HAWCUtils.printf,
+                    displayDiv = document.getElementById('approach');
                 displayDiv.innerHTML = '';
                 if (domains.length === 0){
                     var assessment = $('#id_assessment option:selected').text(),
-                        warn = '<div class="alert alert-danger">{0} does not have a default approach.</div>'.printf(assessment);
+                        warn = printf('<div class="alert alert-danger">{0} does not have a default approach.</div>', assessment);
                     displayDiv.innerHTML = warn;
                 }
                 domains.forEach(function(domain){
