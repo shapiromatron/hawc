@@ -20,6 +20,25 @@
     $(document).ready(function () {
         $('.html5text').quillify();
         $('#id_name').focus();
+
+        // show/hide excel worksheet name depending on what was file was selected
+        const reExcelFile = RegExp("\.xlsx$"),
+            excelNameDiv = $("#div_id_revision_excel_worksheet_name"),
+            excelNameInput = $("#id_revision_excel_worksheet_name"),
+            versionNotes = $("#div_id_revision_notes"),
+            handleExcelNameChange = function () {
+                if(reExcelFile.test(this.value)){
+                    excelNameDiv.show();
+                } else {
+                    excelNameDiv.hide();
+                    excelNameInput.val("");
+                }
+                versionNotes.show();
+            };
+
+        $('#id_revision_data').change(handleExcelNameChange);
+        excelNameDiv.hide();
+        versionNotes.hide();
     });
 </script>
 {% endblock extrajs %}

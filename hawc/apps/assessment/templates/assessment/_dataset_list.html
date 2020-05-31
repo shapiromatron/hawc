@@ -1,0 +1,23 @@
+{% if object_list.count > 0 %}
+<h2>Attachments</h2>
+<table class="table table-condensed table-striped">
+    <colgroup>
+        <col style="width: 30%;">
+        <col style="width: 60%;">
+    </colgroup>
+    <thead>
+        <tr>
+            <th>Dataset</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for object in object_list %}
+        <tr>
+            <td><a href="{{object.get_absolute_url}}">{{object.name}}</a></td>
+            <td>{{object.description|safe}}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}

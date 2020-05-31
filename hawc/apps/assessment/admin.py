@@ -82,13 +82,12 @@ class DatasetAdmin(admin.ModelAdmin):
         "id",
         "assessment",
         "name",
-        "is_tabular",
         "description",
         "created",
         "last_updated",
     )
     list_display_links = ("id",)
-    list_filter = ("is_tabular", "assessment")
+    list_filter = ("assessment",)
     inlines = [
         DatasetRevisionInline,
     ]

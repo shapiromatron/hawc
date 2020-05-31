@@ -1,5 +1,5 @@
 import json
-from typing import NamedTuple
+from typing import List, NamedTuple
 
 import pandas as pd
 from django.apps import apps
@@ -13,6 +13,7 @@ from django.core.validators import MinValueValidator
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
+from pydantic import BaseModel as PydanticModel
 from reversion import revisions as reversion
 
 from ..common.dsstox import get_casrn_url
@@ -549,10 +550,10 @@ class Dataset(models.Model):
     An external Dataset
     """
 
-    valid_extensions = {"xlsx", "csv", "tsv", "json"}
-    assessment = models.ForeignKey(Assessment, editable=False, on_delete=models.CASCADE)
+    assessment = models.ForeignKey(
+        Assessment, editable=False, related_name="datasets", on_delete=models.CASCADE
+    )
     name = models.CharField(max_length=256)
-    is_tabular = models.BooleanField(default=True)
     description = models.TextField(blank=True)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
@@ -565,7 +566,16 @@ class Dataset(models.Model):
         return self.name
 
     def get_absolute_url(self) -> str:
-        return self.assessment.get_absolute_url()
+        return reverse("assessment:dataset_detail", args=(self.id,))
+
+    def get_edit_url(self) -> str:
+        return reverse("assessment:dataset_update", args=(self.id,))
+
+    def get_delete_url(self) -> str:
+        return reverse("assessment:dataset_delete", args=(self.id,))
+
+    def get_assessment(self) -> Assessment:
+        return self.assessment
 
     def get_crumbs(self):
         return get_crumbs(self, parent=self.assessment)
@@ -573,9 +583,13 @@ class Dataset(models.Model):
     def get_latest_revision(self) -> "DatasetRevision":
         return self.revisions.latest()
 
+    def get_new_version_value(self) -> int:
+        try:
+            return self.get_latest_revision().version + 1
+        except models.ObjectDoesNotExist:
+            return 1
+
     def get_latest_df(self) -> pd.DataFrame:
-        if not self.is_tabular:
-            raise ValueError("Only tabular datsets can be returned as a data frame")
         return self.get_latest_revision().get_df()
 
 
@@ -585,11 +599,18 @@ class DatasetRevision(models.Model):
     """
 
     dataset = models.ForeignKey(Dataset, on_delete=models.CASCADE, related_name="revisions")
-    version = models.PositiveSmallIntegerField()
-    data = models.FileField(
-        upload_to="assessment/dataset-revision", storage=get_private_data_storage(),
+    version = models.PositiveSmallIntegerField(
+        help_text="""The uploaded file is versioned; this is the version of the dataset currently
+            being edited.""",
     )
-    metadata = JSONField(editable=False)
+    data = models.FileField(
+        upload_to="assessment/dataset-revision",
+        storage=get_private_data_storage(),
+        help_text="""Upload a version of this dataset. Dataset versions cannot be deleted, but if
+            users are not team members, only the most recent dataset version will be visible.
+            Visualizations using a dataset will use the latest version available.""",
+    )
+    metadata = JSONField(default=dict, editable=False)
     excel_worksheet_name = models.CharField(
         help_text="Worksheet name to use in Excel file. If blank, the first worksheet is used.",
         max_length=64,
@@ -597,20 +618,67 @@ class DatasetRevision(models.Model):
     )
     notes = models.TextField(
         blank=True,
-        help_text="Notes on specific revision. For example, describe what's different from a previous version.",
+        help_text="""Notes on specific revision. For example, describe what's different from a
+            previous version. After save, cannot be edited.""",
     )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
     class Meta:
         ordering = ("created",)
+        get_latest_by = "created"
         unique_together = (("dataset", "version"),)
+
+    class Metadata(PydanticModel):
+        filename: str
+        extension: str
+        num_rows: int
+        num_columns: int
+        column_names: List[str]
 
     def __str__(self) -> str:
         return f"{self.dataset}: v{self.version}"
 
     def get_df(self) -> pd.DataFrame:
-        pass
+        return self.try_read_df(self.data, self.metadata.extension, self.excel_worksheet_name)
+
+    @classmethod
+    def try_read_df(cls, data, suffix: str, worksheet_name: str = None) -> pd.DataFrame:
+        """
+        Try to load and return a pandas dataframe.
+
+        Args:
+            data: File-like object
+            suffix: str = File suffix
+            worksheet_name: Optional[str] = Excel worksheet name, or empty string
+
+        Returns:
+            pd.DataFrame or throws a ValueError exception
+        """
+        kwargs = {}
+        if suffix == ".xlsx":
+            func = pd.read_excel
+            if worksheet_name:
+                kwargs["sheet_name"] = worksheet_name
+        elif suffix in [".csv", ".tsv"]:
+            func = pd.read_csv
+            if suffix == ".tsv":
+                kwargs["sep"] = "\t"
+        else:
+            raise ValueError(f"Unknown suffix: {suffix}")
+
+        try:
+            df = func(data.file, **kwargs)
+        except Exception:
+            raise ValueError("Unable load dataframe")
+
+        if df.shape[0] == 0:
+            raise ValueError("Dataframe contains no rows")
+
+        if df.shape[1] == 0:
+            raise ValueError("Dataframe contains no columns")
+
+        return df
 
 
 reversion.register(Assessment)
