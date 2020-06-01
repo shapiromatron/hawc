@@ -1,4 +1,5 @@
 import logging
+from pathlib import Path
 from typing import Optional
 
 import pandas as pd
@@ -182,6 +183,7 @@ class DoseUnitsViewset(viewsets.ReadOnlyModelViewSet):
 class Assessment(AssessmentViewset):
     model = models.Assessment
     serializer_class = serializers.AssessmentSerializer
+    assessment_filter_args = "id"
 
     @action(detail=False, methods=("get",), permission_classes=(permissions.AllowAny,))
     def public(self, request):
@@ -377,6 +379,21 @@ class Assessment(AssessmentViewset):
 
         serializer = serializers.AssessmentEndpointSerializer(instance)
         return Response(serializer.data)
+
+
+class DatasetViewset(AssessmentViewset):
+    model = models.Dataset
+    serializer_class = serializers.DatasetSerializer
+    assessment_filter_args = "assessment_id"
+
+    @action(detail=True, renderer_classes=PandasRenderers)
+    def data(self, request, pk: int = None):
+        instance = self.get_object()
+        revision = instance.get_latest_revision()
+        export = FlatExport(
+            df=revision.get_df(), filename=Path(revision.metadata["filename"]).stem
+        )
+        return Response(export)
 
 
 class AdminDashboardViewset(viewsets.ViewSet):

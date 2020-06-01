@@ -7,6 +7,7 @@ from . import api, views
 router = DefaultRouter()
 router.register(r"assessment", api.Assessment, basename="assessment")
 router.register(r"dashboard", api.AdminDashboardViewset, basename="admin_dashboard")
+router.register(r"dataset", api.DatasetViewset, basename="dataset")
 
 app_name = "assessment"
 urlpatterns = [

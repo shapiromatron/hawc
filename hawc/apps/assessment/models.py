@@ -577,6 +577,12 @@ class Dataset(models.Model):
     def get_assessment(self) -> Assessment:
         return self.assessment
 
+    def get_api_detail_url(self) -> str:
+        return reverse("assessment:api:dataset-detail", args=(self.id,))
+
+    def get_api_data_url(self) -> str:
+        return reverse("assessment:api:dataset-data", args=(self.id,))
+
     def get_crumbs(self):
         return get_crumbs(self, parent=self.assessment)
 
@@ -640,7 +646,7 @@ class DatasetRevision(models.Model):
         return f"{self.dataset}: v{self.version}"
 
     def get_df(self) -> pd.DataFrame:
-        return self.try_read_df(self.data, self.metadata.extension, self.excel_worksheet_name)
+        return self.try_read_df(self.data, self.metadata["extension"], self.excel_worksheet_name)
 
     @classmethod
     def try_read_df(cls, data, suffix: str, worksheet_name: str = None) -> pd.DataFrame:
