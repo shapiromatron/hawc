@@ -326,8 +326,10 @@ class DatasetForm(forms.ModelForm):
 
             if suffix not in valid_extensions:
                 self.add_error(
-                    "revision_data", f"Invalid file extension: must be one of: {valid_extensions}"
+                    "revision_data",
+                    f"Invalid file extension: must be one of: {', '.join(sorted(valid_extensions))}",
                 )
+                return cleaned_data
 
             df = None
             try:
