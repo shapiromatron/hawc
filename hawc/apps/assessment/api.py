@@ -14,7 +14,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from rest_framework import filters, permissions, status, viewsets
 from rest_framework.decorators import action
-from rest_framework.exceptions import APIException
+from rest_framework.exceptions import APIException, PermissionDenied
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
@@ -397,8 +397,10 @@ class DatasetViewset(AssessmentViewset):
     @action(detail=True, renderer_classes=PandasRenderers, url_path=r"version/(?P<version>\d+)")
     def version(self, request, pk: int, version: int):
         instance = self.get_object()
+        if not self.assessment.user_is_team_member_or_higher(request.user):
+            raise PermissionDenied()
         revision = instance.revisions.filter(version=version).first()
-        if revision is None or not self.assessment.user_is_part_of_team(request.user):
+        if revision is None:
             raise Http404()
         export = FlatExport(df=revision.get_df(), filename=Path(revision.metadata["filename"]).stem)
         return Response(export)

@@ -278,6 +278,17 @@ class Assessment(models.Model):
                 or (user in self.reviewers.all())
             )
 
+    def user_is_team_member_or_higher(self, user) -> bool:
+        """
+        Check if user is superuser, project-manager, or team-member, otherwise False.
+        """
+        if user.is_superuser:
+            return True
+        elif user.is_anonymous:
+            return False
+        else:
+            return user in self.project_manager.all() or user in self.team_members.all()
+
     def get_crumbs(self):
         return get_crumbs(self)
 

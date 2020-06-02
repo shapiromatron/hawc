@@ -22,6 +22,9 @@ class Keys:
         self.assessment_client = 3
         self.assessment_keys = [1, 2]
 
+        self.dataset_final = 2
+        self.dataset_working = 1
+
         self.study_working = 1
         self.study_final_bioassay = 7
 
