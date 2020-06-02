@@ -645,6 +645,9 @@ class DatasetRevision(models.Model):
     def __str__(self) -> str:
         return f"{self.dataset}: v{self.version}"
 
+    def get_api_data_url(self) -> str:
+        return reverse("assessment:api:dataset-version", args=(self.dataset_id, self.version))
+
     def get_df(self) -> pd.DataFrame:
         return self.try_read_df(self.data, self.metadata["extension"], self.excel_worksheet_name)
 

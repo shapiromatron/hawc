@@ -7,6 +7,7 @@ from django.apps import apps
 from django.core import exceptions
 from django.core.cache import cache
 from django.db.models import Count
+from django.http import Http404
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.decorators import method_decorator
@@ -390,9 +391,16 @@ class DatasetViewset(AssessmentViewset):
     def data(self, request, pk: int = None):
         instance = self.get_object()
         revision = instance.get_latest_revision()
-        export = FlatExport(
-            df=revision.get_df(), filename=Path(revision.metadata["filename"]).stem
-        )
+        export = FlatExport(df=revision.get_df(), filename=Path(revision.metadata["filename"]).stem)
+        return Response(export)
+
+    @action(detail=True, renderer_classes=PandasRenderers, url_path=r"version/(?P<version>\d+)")
+    def version(self, request, pk: int, version: int):
+        instance = self.get_object()
+        revision = instance.revisions.filter(version=version).first()
+        if revision is None or not self.assessment.user_is_part_of_team(request.user):
+            raise Http404()
+        export = FlatExport(df=revision.get_df(), filename=Path(revision.metadata["filename"]).stem)
         return Response(export)
 
 

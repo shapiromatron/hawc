@@ -27,17 +27,26 @@
 
 <table class="table table-condensed table-striped">
     <colgroup>
-        <col style="width: 30%;">
-        <col style="width: 70%;">
+        <col style="width: 20%;">
+        <col style="width: 80%;">
     </colgroup>
     <tbody>
-        <tr>
         <tr>
             <th>Description</th>
             <td>{{object.description|safe}}</td>
         </tr>
         {% if object.revisions.count > 0 %}
         {% with revision=object.get_latest_revision %}
+        <tr>
+            <th>Download</th>
+            <td>
+                <i class="fas fa-file-csv"></i>
+                <a class="btn btn-primary" href="{{revision.get_api_data_url}}?format=csv">
+                    <i class="fa fa-file-text-o"></i>&nbsp;CSV</a>
+                <a class="btn btn-primary" href="{{revision.get_api_data_url}}?format=xlsx">
+                    <i class="fa fa-file-excel-o"></i>&nbsp;Excel</a>
+            </td>
+        </tr>
         <tr>
             <th>Metadata</th>
             <td>
@@ -77,8 +86,8 @@
         <tr>
             <th>Version</th>
             <th>Metadata</th>
-            <th>Created</th>
-            <th>Last updated</th>
+            <th>Download</th>
+            <th>Created/Last updated</th>
         </tr>
     </thead>
     <tbody>
@@ -93,8 +102,17 @@
                     <li><b>Revision notes:</b> {{revision.notes|safe}}</li>
                 </ul>
             </td>
-            <td>{{revision.created}}</td>
-            <td>{{revision.last_updated}}</td>
+            <td>
+                <i class="fas fa-file-csv"></i>
+                <a class="btn btn-primary" href="{{revision.get_api_data_url}}?format=csv" title="Download CSV">
+                    <i class="fa fa-file-text-o"></i></a>
+                <a class="btn btn-primary" href="{{revision.get_api_data_url}}?format=xlsx" title="Download Excel">
+                    <i class="fa fa-file-excel-o"></i></a>
+            </td>
+            <td>
+                <b>Created:</b>&nbsp;{{revision.created}}<br/>
+                <b>Last updated:</b>&nbsp;{{revision.last_updated}}
+            </td>
         </tr>
 {% endfor %}
     </tbody>
