@@ -191,6 +191,14 @@ class ExploreHeatmapPlot extends D3Visualization {
         // Fill in table body
         this.blacklist_table.append("tbody");
 
+        let button_func = () => {
+            d3.event.stopPropagation();
+            this.modal
+                .addHeader(`<h4>Test</h4>`)
+                .addFooter("")
+                .show();
+        };
+
         let rows = this.blacklist_table
             .select("tbody")
             .selectAll("tr")
@@ -204,10 +212,7 @@ class ExploreHeatmapPlot extends D3Visualization {
             })
             .append("button")
             .attr("class", "btn pull-right")
-            .on("click", function() {
-                d3.event.stopPropagation();
-                alert("test");
-            })
+            .on("click", button_func)
             .text("test");
 
         this.blacklist_table.selectAll("th").attr("colspan", 2);
