@@ -69,12 +69,6 @@ class ExploreHeatmapPlot extends D3Visualization {
             .sort()
             .value();
 
-        this.blacklist_map = _.chain(this.blacklist_domain)
-            .map(d => ({
-                [this.blacklist_field]: d,
-            }))
-            .value();
-
         this.x_domain = this.x_fields.map(e =>
             _.chain(this.dataset)
                 .map(d => d[e])
@@ -237,7 +231,7 @@ class ExploreHeatmapPlot extends D3Visualization {
                     this.blacklist_table
                         .selectAll("tbody>tr+tr>td")
                         .style("text-decoration", "line-through");
-                    this.blacklist = this.blacklist_domain;
+                    this.blacklist = this.blacklist_domain.slice();
                     this.xy_map = this.create_map();
                     this.update_plot();
                 })
