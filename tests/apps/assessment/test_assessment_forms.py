@@ -1,3 +1,4 @@
+import tempfile
 from pathlib import Path
 
 import pandas as pd
@@ -5,7 +6,7 @@ import pytest
 from django.core.files.uploadedfile import SimpleUploadedFile
 
 from hawc.apps.assessment.forms import DatasetForm
-from hawc.apps.assessment.models import Assessment, Dataset
+from hawc.apps.assessment.models import Assessment, Dataset, DatasetRevision
 
 IRIS_DATA_CSV = (
     Path(__file__).parents[2] / "data/private-data/assessment/dataset-revision/iris.csv"
@@ -18,6 +19,19 @@ IRIS_DATA_XLSX = (
 
 @pytest.mark.django_db
 class TestDatasetForm:
+    @classmethod
+    def setup_class(cls):
+        # set temporary location for data storage
+        cls.storage_location = DatasetRevision.data.field.storage.location
+        DatasetRevision.data.field.storage.location = tempfile.TemporaryDirectory(
+            prefix="hawc-tests"
+        ).name
+
+    @classmethod
+    def teardown_class(cls):
+        # restore location for other tests
+        DatasetRevision.data.field.storage.location = cls.storage_location
+
     def test_initial_versions(self, db_keys):
         form = DatasetForm(parent=Assessment.objects.get(id=db_keys.assessment_working))
         assert form.fields["revision_version"].initial == 1
@@ -35,13 +49,13 @@ class TestDatasetForm:
         }
         form = DatasetForm(
             settings,
-            {"revision_data": SimpleUploadedFile("data.csv", IRIS_DATA_CSV)},
+            {"revision_data": SimpleUploadedFile("test-data.csv", IRIS_DATA_CSV)},
             parent=Assessment.objects.get(id=db_keys.assessment_working),
         )
         assert form.is_valid()
         assert isinstance(form.revision_df, pd.DataFrame)
         assert form.revision_metadata.dict() == {
-            "filename": "data.csv",
+            "filename": "test-data.csv",
             "extension": ".csv",
             "num_rows": 150,
             "num_columns": 5,
