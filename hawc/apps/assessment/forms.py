@@ -308,6 +308,14 @@ class DatasetForm(forms.ModelForm):
                 "cancel_url": self.instance.assessment.get_absolute_url(),
             }
 
+        inputs[
+            "help_text"
+        ] = """Datasets are tabular data files that may contain information
+        which was captured in external data systems.  A dataset can be used for generating a
+        custom visualization. All datasets are public and can be downloaded if an assessment
+        is made public. Only team-members or higher can view or download older versions of a
+        dataset; the public can only download and see the latest version."""
+
         helper = BaseFormHelper(self, **inputs)
         helper.add_fluid_row("revision_version", 3, ("span2", "span5", "span5"))
         helper.form_class = None
@@ -320,7 +328,7 @@ class DatasetForm(forms.ModelForm):
 
         if revision_data is not None:
 
-            valid_extensions = {".xlsx", ".csv", ".tsv"}
+            valid_extensions = self.instance.VALID_EXTENSIONS
 
             suffix = Path(revision_data.name).suffix
 

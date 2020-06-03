@@ -569,6 +569,8 @@ class Dataset(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
+    VALID_EXTENSIONS = {".xlsx", ".csv", ".tsv"}
+
     class Meta:
         ordering = ("created",)
         unique_together = (("assessment", "name"),)
@@ -623,9 +625,10 @@ class DatasetRevision(models.Model):
     data = models.FileField(
         upload_to="assessment/dataset-revision",
         storage=get_private_data_storage(),
-        help_text="""Upload a version of this dataset. Dataset versions cannot be deleted, but if
-            users are not team members, only the most recent dataset version will be visible.
-            Visualizations using a dataset will use the latest version available.""",
+        help_text=f"""Upload a dataset ({", ".join(sorted(Dataset.VALID_EXTENSIONS))}).
+            Dataset versions cannot be deleted, but if users are not team members, only the most
+            recent dataset version will be visible. Visualizations using a dataset will use the
+            latest version available.""",
     )
     metadata = JSONField(default=dict, editable=False)
     excel_worksheet_name = models.CharField(
