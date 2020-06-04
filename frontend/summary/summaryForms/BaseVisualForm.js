@@ -29,8 +29,8 @@ class BaseVisualForm {
         $data.on("djselectableadd djselectableremove", setDataChanged);
 
         // whenever data is synced, rebuild
-        $settings.on("dataSynched", this.unpackSettings.bind(this));
-        $preview.on("dataSynched", this.buildPreviewDiv.bind(this));
+        $settings.on("dataSynced", this.unpackSettings.bind(this));
+        $preview.on("dataSynced", this.buildPreviewDiv.bind(this));
 
         $('a[data-toggle="tab"]').on("show", function(e) {
             var toShow = $(e.target).attr("href"),
@@ -88,7 +88,7 @@ class BaseVisualForm {
             .always(function() {
                 self.isSynching = false;
                 self.dataSynced = true;
-                $("#preview, #settings").trigger("dataSynched");
+                $("#preview, #settings").trigger("dataSynced");
             });
     }
 
