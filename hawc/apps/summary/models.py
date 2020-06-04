@@ -362,6 +362,7 @@ class Visual(models.Model):
             pass
 
         data = {
+            "assessment": self.assessment_id,
             "title": request.POST.get("title"),
             "slug": request.POST.get("slug"),
             "caption": request.POST.get("caption"),
