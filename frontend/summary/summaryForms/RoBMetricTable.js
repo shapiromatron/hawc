@@ -22,7 +22,7 @@ class RoBMetricTable extends TableField {
     fromSerialized() {
         // override this method to include all metrics,
         // even those not included in serialization.
-        var metrics = window.rob_metrics,
+        var metrics = this.parent.config.rob_metrics,
             selected = this.parent.settings[this.schema.name] || [],
             func;
 

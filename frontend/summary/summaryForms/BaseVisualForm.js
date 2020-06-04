@@ -4,8 +4,9 @@ import $ from "$";
 import HAWCUtils from "utils/HAWCUtils";
 
 class BaseVisualForm {
-    constructor($el) {
+    constructor($el, config) {
         this.$el = $el;
+        this.config = config;
         this.fields = [];
         this.settings = {};
         this.initDataForm();
@@ -76,7 +77,7 @@ class BaseVisualForm {
         if (this.isSynching) return;
         this.dataSynced = false;
         this.isSynching = true;
-        $.post(window.test_url, form, function(d) {
+        $.post(this.config.preview_url, form, function(d) {
             self.data = d;
             if (self.afterGetDataHook) self.afterGetDataHook(d);
         })

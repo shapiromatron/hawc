@@ -164,7 +164,6 @@ class VisualizationCreate(BaseCreate):
         if visual_type in {
             models.Visual.LITERATURE_TAGTREE,
             models.Visual.EXTERNAL_SITE,
-            models.Visual.EXPLORE_HEATMAP,
         }:
             return "summary/visual_form_django.html"
         else:
@@ -209,7 +208,6 @@ class VisualizationUpdate(BaseUpdate):
         if visual_type in {
             models.Visual.LITERATURE_TAGTREE,
             models.Visual.EXTERNAL_SITE,
-            models.Visual.EXPLORE_HEATMAP,
         }:
             return "summary/visual_form_django.html"
         else:
