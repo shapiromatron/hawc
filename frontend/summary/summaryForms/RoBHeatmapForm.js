@@ -16,9 +16,9 @@ class RoBHeatmapForm extends BaseVisualForm {
 
     initDataForm() {
         _.each(["system", "organ", "effect", "effect_subtype"], function(d) {
-            $("#id_prefilter_{0}".printf(d))
+            $(`#id_prefilter_${d}`)
                 .on("change", function() {
-                    var div = $("#div_id_{0}s".printf(d));
+                    var div = $(`#div_id_${d}s`);
                     $(this).prop("checked") ? div.show(1000) : div.hide(0);
                 })
                 .trigger("change");

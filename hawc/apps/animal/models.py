@@ -10,8 +10,9 @@ from django.urls import reverse
 from reversion import revisions as reversion
 from scipy import stats
 
-from ..assessment.models import Assessment, BaseEndpoint, get_cas_url
+from ..assessment.models import Assessment, BaseEndpoint
 from ..assessment.serializers import AssessmentSerializer
+from ..common.dsstox import get_casrn_url
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper, cleanHTML, tryParseInt
 from ..common.models import get_crumbs
 from ..study.models import Study
@@ -141,9 +142,8 @@ class Experiment(models.Model):
     def get_crumbs(self):
         return get_crumbs(self, self.study)
 
-    @property
-    def cas_url(self):
-        return get_cas_url(self.cas)
+    def get_casrn_url(self):
+        return get_casrn_url(self.cas)
 
     @staticmethod
     def flat_complete_header_row():
@@ -1196,7 +1196,7 @@ class Endpoint(BaseEndpoint):
         return self.assessment.get_noel_names()
 
 
-class ConfidenceIntervalsMixin(object):
+class ConfidenceIntervalsMixin:
     """
     Mixin class which calculates standard deviation and confidence intervals
     for django models.

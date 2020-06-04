@@ -88,12 +88,12 @@ class EditEndpoint extends Endpoint {
         );
 
         $(".doses").each(function(i, v) {
-            fields.append('<option value="{0}">{1}</option>'.printf(i, v.textContent));
+            fields.append(`<option value="${i}">${v.textContent}</option>`);
         });
 
-        $('#id_NOEL option[value="{0}"]'.printf(this.data.NOEL)).prop("selected", true);
-        $('#id_LOEL option[value="{0}"]'.printf(this.data.LOEL)).prop("selected", true);
-        $('#id_FEL option[value="{0}"]'.printf(this.data.FEL)).prop("selected", true);
+        $(`#id_NOEL option[value="${this.data.NOEL}"]`).prop("selected", true);
+        $(`#id_LOEL option[value="${this.data.LOEL}"]`).prop("selected", true);
+        $(`#id_FEL option[value="${this.data.FEL}"]`).prop("selected", true);
     }
 
     calculate_confidence_intervals() {

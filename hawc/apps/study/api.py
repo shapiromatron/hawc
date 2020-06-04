@@ -1,15 +1,22 @@
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import viewsets
+from rest_framework import mixins, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from ..assessment.api import AssessmentLevelPermissions, DisabledPagination, InAssessmentFilter
+from ..assessment.api import (
+    AssessmentLevelPermissions,
+    DisabledPagination,
+    InAssessmentFilter,
+    get_assessment_id_param,
+)
 from ..common.api import CleanupFieldsBaseViewSet
-from ..common.helper import tryParseInt
+from ..common.helper import re_digits
 from . import models, serializers
 
 
-class Study(viewsets.ReadOnlyModelViewSet):
+class Study(
+    mixins.CreateModelMixin, viewsets.ReadOnlyModelViewSet,
+):
     assessment_filter_args = "assessment"
     model = models.Study
     pagination_class = DisabledPagination
@@ -19,10 +26,13 @@ class Study(viewsets.ReadOnlyModelViewSet):
         "list",
         "rob_scores",
     ]
+    lookup_value_regex = re_digits
 
     def get_serializer_class(self):
         cls = serializers.VerboseStudySerializer
         if self.action == "list":
+            cls = serializers.SimpleStudySerializer
+        elif self.action == "create":
             cls = serializers.SimpleStudySerializer
         return cls
 
@@ -38,7 +48,7 @@ class Study(viewsets.ReadOnlyModelViewSet):
 
     @action(detail=False)
     def rob_scores(self, request):
-        assessment_id = tryParseInt(self.request.query_params.get("assessment_id"), -1)
+        assessment_id = get_assessment_id_param(request)
         scores = self.model.objects.rob_scores(assessment_id)
         return Response(scores)
 
@@ -46,6 +56,10 @@ class Study(viewsets.ReadOnlyModelViewSet):
     def types(self, request):
         study_types = self.model.STUDY_TYPE_FIELDS
         return Response(study_types)
+
+    def create(self, request):
+        # permissions check not here; see serializer validation
+        return super().create(request)
 
 
 class FinalRobStudy(Study):
@@ -58,3 +72,4 @@ class FinalRobStudy(Study):
 class StudyCleanupFieldsView(CleanupFieldsBaseViewSet):
     model = models.Study
     serializer_class = serializers.StudyCleanupFieldsSerializer
+    assessment_filter_args = "assessment"

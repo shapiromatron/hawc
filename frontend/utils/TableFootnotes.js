@@ -29,14 +29,14 @@ class TableFootnotes {
             }
             keys.push(key);
         });
-        return "<sup>{0}</sup>".printf(keys.join(","));
+        return `<sup>${keys.join(",")}</sup>`;
     }
 
     html_list() {
         // return an html formatted list of footnotes
         var list = [];
         this.footnotes.forEach(function(v, i) {
-            list.push("<sup>{0}</sup> {1}".printf(v.key, v.text));
+            list.push(`<sup>${v.key}</sup> ${v.text}`);
         });
         return list;
     }

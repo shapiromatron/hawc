@@ -1,6 +1,7 @@
 import pytest
 from django.test.client import Client
 from django.urls import reverse
+from rest_framework.test import APIClient
 
 
 @pytest.mark.django_db
@@ -54,5 +55,81 @@ def test_study_detail_api(db_keys):
         "summary": "",
         "editable": True,
         "url": "/study/1/",
-        "rob_response_values": [27, 26, 25, 22, 24, 20],
+        "rob_response_values": [17, 16, 15, 12, 14, 10],
     }
+
+
+@pytest.mark.django_db
+class TestStudyCreateApi:
+    def test_permissions(self, db_keys):
+        url = reverse("study:api:study-list")
+        data = {
+            "reference_id": db_keys.reference_unlinked,
+            "short_citation": "Short citation.",
+            "full_citation": "Full citation.",
+        }
+
+        # reviewers shouldn't be able to create
+        client = APIClient()
+        assert client.login(username="rev@rev.com", password="pw") is True
+        response = client.post(url, data)
+        assert response.status_code == 403
+
+        # public shouldn't be able to create
+        client = APIClient()
+        response = client.post(url, data)
+        assert response.status_code == 403
+
+    def test_bad_requests(self, db_keys):
+        # payload needs to include the required short_citation and full_citation
+        url = reverse("study:api:study-list")
+        data = {"reference_id": db_keys.reference_unlinked}
+        client = APIClient()
+        assert client.login(username="team@team.com", password="pw") is True
+        response = client.post(url, data)
+        assert response.status_code == 400
+        assert {"short_citation", "full_citation"}.issubset((response.data.keys()))
+
+        # invalid references will not be successful
+        data = {
+            "reference_id": "invalid",
+            "short_citation": "Short citation.",
+            "full_citation": "Full citation.",
+        }
+
+        response = client.post(url, data)
+        assert response.status_code == 400
+        assert str(response.data["non_field_errors"][0]) == "Reference ID must be a number."
+
+        # references can only be linked to one study
+        data["reference_id"] = db_keys.reference_linked
+        response = client.post(url, data)
+        assert response.status_code == 400
+        assert (
+            str(response.data[0])
+            == f"Reference ID {db_keys.reference_linked} already linked with a study."
+        )
+
+    def test_valid_requests(self, db_keys):
+        # this is a correct request
+        url = reverse("study:api:study-list")
+        data = {
+            "reference_id": db_keys.reference_unlinked,
+            "short_citation": "Short citation.",
+            "full_citation": "Full citation.",
+        }
+        client = APIClient()
+        assert client.login(username="team@team.com", password="pw") is True
+        response = client.post(url, data)
+        assert response.status_code == 201
+
+        assert response.data["short_citation"] == data["short_citation"]
+        assert response.data["full_citation"] == data["full_citation"]
+
+        # now that it has been create, we should not be able to create it again
+        response = client.post(url, data)
+        assert response.status_code == 400
+        assert (
+            str(response.data[0])
+            == f"Reference ID {db_keys.reference_unlinked} already linked with a study."
+        )

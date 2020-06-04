@@ -227,8 +227,8 @@ class Barplot extends D3Plot {
 
         _.extend(this, {
             title_str: this.endpoint.data.name,
-            x_label_text: "Doses ({0})".printf(this.endpoint.dose_units),
-            y_label_text: "Response ({0})".printf(this.endpoint.data.response_units),
+            x_label_text: `Doses (${this.endpoint.dose_units})`,
+            y_label_text: `Response (${this.endpoint.data.response_units})`,
             values,
             sigs_data,
             min_y: min,
@@ -307,7 +307,7 @@ class Barplot extends D3Plot {
             .text("*");
 
         this.sigs_labels = this.sigs.append("svg:title").text(function(d) {
-            return "Statistically significant at {0}".printf(d.significance_level);
+            return `Statistically significant at ${d.significance_level}`;
         });
     }
 

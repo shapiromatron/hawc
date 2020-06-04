@@ -299,7 +299,7 @@ class StyleViewer extends D3Plot {
                 .attr("fill-opacity", style_settings["fill-opacity"])
                 .attr("text-anchor", style_settings["text-anchor"])
                 .attr("fill", style_settings.fill)
-                .attr("transform", "rotate({0} 25,25)".printf(style_settings.rotate));
+                .attr("transform", `rotate(${style_settings.rotate} 25,25)`);
         }
 
         if (this.style.type === "rectangle") {

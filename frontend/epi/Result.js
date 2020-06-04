@@ -26,21 +26,15 @@ class Result {
     }
 
     static get_object(id, cb) {
-        $.get("/epi/api/result/{0}/".printf(id), function(d) {
-            cb(new Result(d));
-        });
+        $.get(`/epi/api/result/${id}/`, d => cb(new Result(d)));
     }
 
     static displayFullPager($el, id) {
-        Result.get_object(id, function(d) {
-            d.displayFullPager($el);
-        });
+        Result.get_object(id, d => d.displayFullPager($el));
     }
 
     static displayAsModal(id) {
-        Result.get_object(id, function(d) {
-            d.displayAsModal();
-        });
+        Result.get_object(id, d => d.displayAsModal());
     }
 
     displayFullPager($el) {
@@ -81,21 +75,19 @@ class Result {
     }
 
     build_link() {
-        return '<a href="{0}">{1}</a>'.printf(this.data.url, this.data.name);
+        return `<a href="${this.data.url}">${this.data.name}</a>`;
     }
 
     build_tab(isActive) {
         var cls = isActive === true ? 'class="active"' : "";
-        return '<li {0}><a href="#{1}" data-toggle="tab">{2}</a></li>'.printf(
-            cls,
-            this.get_tab_id(),
+        return `<li ${cls}><a href="#${this.get_tab_id()}" data-toggle="tab">${
             this.data.name
-        );
+        }</a></li>`;
     }
 
     build_content_tab(isActive) {
         var cls = isActive === true ? "active" : "",
-            div = $('<div class="tab-pane {0}" id="{1}">'.printf(cls, this.get_tab_id()));
+            div = $(`<div class="tab-pane ${cls}" id="${this.get_tab_id()}">`);
         this.build_content(div, {tabbed: true});
         return div;
     }

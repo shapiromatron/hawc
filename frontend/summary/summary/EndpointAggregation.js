@@ -108,10 +108,7 @@ class EndpointAggregation extends BaseVisual {
                         colspan = tr.children().length;
 
                     tr.after(
-                        '<tr><td colspan="{0}"><div id="{1}"></div></td></tr>'.printf(
-                            colspan,
-                            div_id
-                        )
+                        `<tr><td colspan="${colspan}"><div id="${div_id}"></div></td></tr>`
                     ).data("detail_row", new EndpointDetailRow(ep, "#" + div_id, 1));
                 }
             };
@@ -128,16 +125,14 @@ class EndpointAggregation extends BaseVisual {
         ]);
 
         this.endpoints.forEach(function(e) {
+            const study = e.data.animal_group.experiment.study,
+                experiment = e.data.animal_group.experiment,
+                animalGroup = e.data.animal_group;
+
             tbl.addRow([
-                '<a href="{0}">{1}</a>'.printf(
-                    e.data.animal_group.experiment.study.url,
-                    e.data.animal_group.experiment.study.short_citation
-                ),
-                '<a href="{0}">{1}</a>'.printf(
-                    e.data.animal_group.experiment.url,
-                    e.data.animal_group.experiment.name
-                ),
-                '<a href="{0}">{1}</a>'.printf(e.data.animal_group.url, e.data.animal_group.name),
+                `<a href="${study.url}">${study.short_citation}</a>`,
+                `<a href="${experiment.url}">${experiment.name}</a>`,
+                `<a href="${animalGroup.url}">${animalGroup.name}</a>`,
                 e._endpoint_detail_td(),
                 e.get_special_dose_text("NOEL"),
                 e.get_special_dose_text("LOEL"),
@@ -155,20 +150,17 @@ class EndpointAggregation extends BaseVisual {
         tbl.addHeaderRow(["Study", "Experiment", "Animal Group", "Endpoint"]);
 
         this.endpoints.forEach(function(e) {
-            var ep_tbl = $("<div>")
-                .append('<a href="{0}">{1}</a>'.printf(e.data.url, e.data.name))
-                .append(e.build_endpoint_table($('<table class="table table-condensed">')));
+            const study = e.data.animal_group.experiment.study,
+                experiment = e.data.animal_group.experiment,
+                animalGroup = e.data.animal_group,
+                ep_tbl = $("<div>")
+                    .append(`<a href="${e.data.url}">${e.data.name}</a>`)
+                    .append(e.build_endpoint_table($('<table class="table table-condensed">')));
 
             tbl.addRow([
-                '<a href="{0}">{1}</a>'.printf(
-                    e.data.animal_group.experiment.study.url,
-                    e.data.animal_group.experiment.study.short_citation
-                ),
-                '<a href="{0}">{1}</a>'.printf(
-                    e.data.animal_group.experiment.url,
-                    e.data.animal_group.experiment.name
-                ),
-                '<a href="{0}">{1}</a>'.printf(e.data.animal_group.url, e.data.animal_group.name),
+                `<a href="${study.url}">${study.short_citation}</a> `,
+                `<a href="${experiment.url}">${experiment.name}</a>`,
+                `<a href="${animalGroup.url}">${animalGroup.name}</a>`,
                 ep_tbl,
             ]);
         });

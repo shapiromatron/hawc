@@ -5,7 +5,6 @@ from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
-from rest_framework_extensions.mixins import ListUpdateModelMixin
 
 from ..assessment.api import (
     AssessmentEditViewset,
@@ -13,13 +12,14 @@ from ..assessment.api import (
     AssessmentViewset,
     DisabledPagination,
     InAssessmentFilter,
-    RequiresAssessmentID,
+    get_assessment_id_param,
 )
 from ..assessment.models import Assessment, TimeSpentEditing
-from ..common.api import BulkIdFilter, LegacyAssessmentAdapterMixin
-from ..common.helper import tryParseInt
+from ..common.api import CleanupFieldsBaseViewSet, LegacyAssessmentAdapterMixin
+from ..common.helper import re_digits, tryParseInt
 from ..common.renderers import PandasRenderers
-from ..common.views import AssessmentPermissionsMixin, TeamMemberOrHigherMixin
+from ..common.serializers import UnusedSerializer
+from ..common.views import AssessmentPermissionsMixin
 from ..mgmt.models import Task
 from ..riskofbias import exports
 from ..study.models import Study
@@ -32,6 +32,8 @@ class RiskOfBiasAssessmentViewset(
     parent_model = Assessment
     model = Study
     permission_classes = (AssessmentLevelPermissions,)
+    serializer_class = UnusedSerializer
+    lookup_value_regex = re_digits
 
     def get_queryset(self):
 
@@ -67,6 +69,7 @@ class RiskOfBiasDomain(viewsets.ReadOnlyModelViewSet):
     permission_classes = (AssessmentLevelPermissions,)
     filter_backends = (InAssessmentFilter, DjangoFilterBackend)
     serializer_class = serializers.AssessmentDomainSerializer
+    lookup_value_regex = re_digits
 
     def get_queryset(self):
         return self.model.objects.all().prefetch_related("metrics")
@@ -79,6 +82,7 @@ class RiskOfBias(viewsets.ModelViewSet):
     permission_classes = (AssessmentLevelPermissions,)
     filter_backends = (InAssessmentFilter, DjangoFilterBackend)
     serializer_class = serializers.RiskOfBiasSerializer
+    lookup_value_regex = re_digits
 
     def get_queryset(self):
         return self.model.objects.all().prefetch_related(
@@ -151,18 +155,14 @@ class AssessmentMetricScoreViewset(AssessmentViewset):
         return self.model.objects.all()
 
 
-class AssessmentScoreViewset(TeamMemberOrHigherMixin, ListUpdateModelMixin, AssessmentEditViewset):
+class AssessmentScoreViewset(AssessmentEditViewset):
     model = models.RiskOfBiasScore
     pagination_class = DisabledPagination
     assessment_filter_args = "metric__domain_assessment"
-    filter_backends = (BulkIdFilter,)
     serializer_class = serializers.RiskOfBiasScoreSerializer
 
     def get_assessment(self, request, *args, **kwargs):
-        assessment_id = request.GET.get("assessment_id", None)
-        if assessment_id is None:
-            raise RequiresAssessmentID
-
+        assessment_id = get_assessment_id_param(request)
         return get_object_or_404(self.parent_model, pk=assessment_id)
 
     @action(detail=False)
@@ -170,13 +170,6 @@ class AssessmentScoreViewset(TeamMemberOrHigherMixin, ListUpdateModelMixin, Asse
         assessment_id = self.get_assessment(request)
         rob_assessment = models.RiskOfBiasAssessment.objects.get(assessment_id=assessment_id)
         return Response(rob_assessment.get_rob_response_values())
-
-    def get_queryset(self):
-        return self.model.objects.all()
-
-    def post_save_bulk(self, queryset, update_bulk_dict):
-        ids = list(queryset.values_list("id", flat=True))
-        queryset.model.delete_caches(ids)
 
     def create(self, request, *args, **kwargs):
         # create using one serializer; return using a different one
@@ -191,3 +184,9 @@ class AssessmentScoreViewset(TeamMemberOrHigherMixin, ListUpdateModelMixin, Asse
         if instance.is_default:
             raise PermissionDenied("Cannot delete a default risk of bias score")
         instance.delete()
+
+
+class ScoreCleanupViewset(CleanupFieldsBaseViewSet):
+    model = models.RiskOfBiasScore
+    serializer_class = serializers.RiskOfBiasScoreCleanupSerializer
+    assessment_filter_args = "metric__domain__assessment"

@@ -164,16 +164,17 @@ class _DataPivot_settings_sorts {
             this.data_pivot._get_header_options(true)
         );
         this.content.ascending = $(
-            '<label class="radio"><input name="asc{0}" type="radio" value="true">Ascending</label><label class="radio"><input name="asc{0}" type="radio" value="false">Descending</label>'.printf(
-                index
-            )
+            `<label class="radio">
+                <input name="asc${index}" type="radio" value="true">Ascending
+            </label>
+            <label class="radio">
+                <input name="asc${index}" type="radio" value="false">Descending
+            </label>`
         );
 
         // set default values
-        this.content.field_name
-            .find('option[value="{0}"]'.printf(values.field_name))
-            .prop("selected", true);
-        this.content.ascending.find("[value={0}]".printf(values.ascending)).prop("checked", true);
+        this.content.field_name.find(`option[value="${values.field_name}"]`).prop("selected", true);
+        this.content.ascending.find(`[value="${values.ascending}"]`).prop("checked", true);
 
         this.tr = $("<tr>")
             .append($("<td>").append(this.content.field_name))
@@ -231,12 +232,8 @@ class _DataPivot_settings_filters {
         });
 
         // set default values
-        this.content.field_name
-            .find('option[value="{0}"]'.printf(values.field_name))
-            .prop("selected", true);
-        this.content.quantifier
-            .find('option[value="{0}"]'.printf(values.quantifier))
-            .prop("selected", true);
+        this.content.field_name.find(`option[value="${values.field_name}"]`).prop("selected", true);
+        this.content.quantifier.find(`option[value="${values.quantifier}"]`).prop("selected", true);
         this.content.value.val(values.value);
 
         var movement_td = DataPivot.build_movement_td(self.data_pivot.settings.filters, this, {
@@ -360,12 +357,10 @@ class _DataPivot_settings_description {
         };
 
         // set default values
-        this.content.field_name
-            .find('option[value="{0}"]'.printf(values.field_name))
-            .prop("selected", true);
+        this.content.field_name.find(`option[value="${values.field_name}"]`).prop("selected", true);
         this.content.header_name.val(values.header_name);
         this.content.max_width.val(values.max_width);
-        this.content.dpe.find('option[value="{0}"]'.printf(values.dpe)).prop("selected", true);
+        this.content.dpe.find(`option[value="${values.dpe}"]`).prop("selected", true);
 
         var header_input = this.content.header_name;
         this.content.field_name.on("change", function() {
@@ -453,7 +448,7 @@ class _DataPivot_settings_pointdata {
         // set default values
         this.content.field_name.find(`option[value="${values.field_name}"]`).prop("selected", true);
         this.content.header_name.val(values.header_name);
-        this.content.dpe.find('option[value="{0}"]'.printf(values.dpe)).prop("selected", true);
+        this.content.dpe.find(`option[value="${values.dpe}"]`).prop("selected", true);
 
         var header_input = this.content.header_name;
         this.content.field_name.on("change", function() {
@@ -550,11 +545,11 @@ class _DataPivot_settings_linedata {
 
         // set default values
         this.content.low_field_name
-            .find('option[value="{0}"]'.printf(values.low_field_name))
+            .find(`option[value="${values.low_field_name}"]`)
             .prop("selected", true);
 
         this.content.high_field_name
-            .find('option[value="{0}"]'.printf(values.high_field_name))
+            .find(`option[value="${values.high_field_name}"]`)
             .prop("selected", true);
 
         this.content.header_name.val(values.header_name);
@@ -634,18 +629,12 @@ class _DataPivot_settings_general {
 
         // create fields
         this.content = {
-            plot_width: $(
-                '<input class="input-xlarge" type="text" value="{0}">'.printf(values.plot_width)
-            ),
+            plot_width: $(`<input class="input-xlarge" type="text" value="${values.plot_width}">`),
             minimum_row_height: $(
-                '<input class="input-xlarge" type="text" value="{0}">'.printf(
-                    values.minimum_row_height
-                )
+                `<input class="input-xlarge" type="text" value="${values.minimum_row_height}">`
             ),
-            title: $('<input class="input-xlarge" type="text" value="{0}">'.printf(values.title)),
-            axis_label: $(
-                '<input class="input-xlarge" type="text" value="{0}">'.printf(values.axis_label)
-            ),
+            title: $(`<input class="input-xlarge" type="text" value="${values.title}">`),
+            axis_label: $(`<input class="input-xlarge" type="text" value="${values.axis_label}">`),
             show_xticks: $('<input type="checkbox">').prop("checked", values.show_xticks),
             show_yticks: $('<input type="checkbox">').prop("checked", values.show_yticks),
             font_style: $("<select></select>").append(
@@ -654,21 +643,23 @@ class _DataPivot_settings_general {
             ),
             logscale: $('<input type="checkbox">').prop("checked", values.logscale),
             domain: $(
-                '<input class="input-xlarge" title="Print the minimum value, a comma, and then the maximum value" type="text" value="{0}">'.printf(
-                    values.domain
-                )
+                `<input
+                    class="input-xlarge"
+                    title="Print the minimum value, a comma, and then the maximum value"
+                    type="text"
+                    value="${values.domain}">`
             ),
             padding_top: $(
-                '<input class="input-xlarge" type="text" value="{0}">'.printf(values.padding.top)
+                `<input class="input-xlarge" type="text" value="${values.padding.top}">`
             ),
             padding_right: $(
-                '<input class="input-xlarge" type="text" value="{0}">'.printf(values.padding.right)
+                `<input class="input-xlarge" type="text" value="${values.padding.right}">`
             ),
             padding_bottom: $(
-                '<input class="input-xlarge" type="text" value="{0}">'.printf(values.padding.bottom)
+                `<input class="input-xlarge" type="text" value="${values.padding.bottom}">`
             ),
             padding_left: $(
-                '<input class="input-xlarge" type="text" value="{0}">'.printf(values.padding.left)
+                `<input class="input-xlarge" type="text" value="${values.padding.left}">`
             ),
             merge_descriptions: $('<input type="checkbox">').prop(
                 "checked",
@@ -681,14 +672,12 @@ class _DataPivot_settings_general {
         };
 
         // set default values
-        this.content.font_style
-            .find('option[value="{0}"]'.printf(values.font_style))
-            .prop("selected", true);
+        this.content.font_style.find(`option[value="${values.font_style}"]`).prop("selected", true);
         this.update_merge_until();
 
         var build_tr = function(name, content) {
             return $("<tr>")
-                .append($("<th>{0}</th>".printf(name)), $("<td>").append(content))
+                .append($(`<th>${name}</th>`), $("<td>").append(content))
                 .on("change", "input,select", function(v) {
                     self.data_push();
                 });

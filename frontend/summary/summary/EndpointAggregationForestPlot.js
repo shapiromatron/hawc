@@ -61,18 +61,15 @@ class EndpointAggregationForestPlot extends D3Visualization {
                 return e.hasEGdata();
             })
             .each(function(e) {
-                egs = _.filter(e.data.groups, function(d) {
-                    return d.isReported;
-                });
+                const shortCitation = e.data.animal_group.experiment.study.short_citation,
+                    experimentName = e.data.animal_group.experiment.name,
+                    animalGroup = e.data.animal_group.name,
+                    endpointName = e.data.name;
+                egs = _.filter(e.data.groups, d => d.isReported);
                 endpoint_labels.push({
                     endpoint: e,
                     y: y + egs.length * 0.5,
-                    label: "{0}- {1}- {2}: {3}".printf(
-                        e.data.animal_group.experiment.study.short_citation,
-                        e.data.animal_group.experiment.name,
-                        e.data.animal_group.name,
-                        e.data.name
-                    ),
+                    label: `${shortCitation}- ${experimentName}- ${animalGroup}: ${endpointName}`,
                 });
 
                 egs.forEach(function(eg, i) {
@@ -156,9 +153,9 @@ class EndpointAggregationForestPlot extends D3Visualization {
             h: plot_height,
             title_str: this.data.title,
             x_label_text: "% change from control (continuous), % incidence (dichotomous)",
-            y_label_text: "Doses ({0})".printf(dose_units),
+            y_label_text: `Doses (${dose_units})`,
         });
-        this.plot_div.css({height: "{0}px".printf(container_height)});
+        this.plot_div.css({height: `${container_height}px`});
     }
 
     add_axes() {

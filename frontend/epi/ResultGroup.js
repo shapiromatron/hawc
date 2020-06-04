@@ -47,9 +47,7 @@ class ResultGroup {
 
         if (this.data.is_main_finding) {
             txt += fn.add_footnote([
-                "Main finding as selected by HAWC assessment authors ({0}).".printf(
-                    this.data.main_finding_support
-                ),
+                `Main finding as selected by HAWC assessment authors (${this.data.main_finding_support}).`,
             ]);
         }
         return $('<a href="#">')

@@ -3,7 +3,9 @@ from io import BytesIO
 
 import pandas as pd
 import pytest
+from rest_framework.exceptions import MethodNotAllowed
 from rest_framework.response import Response
+from rest_framework.test import APIRequestFactory
 
 from hawc.apps.common import renderers
 from hawc.apps.common.helper import FlatExport
@@ -94,3 +96,36 @@ def test_xlsx_renderer(basic_export):
     # with appropriate cast, success!
     df2.loc[:, "when"] = df2.when.astype("datetime64").dt.tz_localize(tz="US/Eastern")
     assert df2.equals(df) is True
+
+
+def test_xlsx_response_error(basic_export):
+    request_exception = MethodNotAllowed(method="POST")
+    response = Response(
+        data={"detail": str(request_exception)}, status=request_exception.status_code
+    )
+    # these properties are usually set by the view;
+    # we will set them manually
+    response.accepted_renderer = renderers.PandasXlsxRenderer()
+    response.accepted_media_type = response.accepted_renderer.media_type
+    response.renderer_context = {"response": response}
+    response.render()
+    # the rendered content should be a binary JSON with the exception details
+    assert response.rendered_content == b'{"detail": "Method \\"POST\\" not allowed."}'
+
+
+def test_xlsx_options_request():
+    """
+    Make sure that sending an OPTIONS to an xlsx-style export doesn't result in server error.
+
+    This test was added based on security scan; please don't remove.
+    """
+    # We will pass in an OPTIONS request to the renderer context
+    factory = APIRequestFactory()
+    request = factory.options(r"\path")
+    # The response data from an OPTIONS request is type dict
+    data = {"dummy": "data"}
+    response = renderers.PandasXlsxRenderer().render(
+        data=data, renderer_context={"response": Response(), "request": request}
+    )
+    # The renderered response should be a JSON string of the passed in data
+    assert response == '{"dummy": "data"}'

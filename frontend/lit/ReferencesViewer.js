@@ -44,17 +44,15 @@ class ReferencesViewer {
             txt = this.options.fixed_title || "References";
 
         if (this.options.tag) {
-            txt = 'References tagged: <span class="refTag">{0}</span>'.printf(
-                this.options.tag.get_full_name()
-            );
+            txt = `References tagged: <span class="refTag">${this.options.tag.get_full_name()}</span>`;
 
             actionLinks.push({
-                url: `${this.options.download_url}?tag_id=${this.options.tag.data.pk}`,
+                url: `/lit/api/tags/${this.options.tag.data.pk}/references/?format=xlsx`,
                 text: "Download references",
             });
 
             actionLinks.push({
-                url: `${this.options.download_url}?tag_id=${this.options.tag.data.pk}&fmt=tb`,
+                url: `/lit/api/tags/${this.options.tag.data.pk}/references-table-builder/?format=xlsx`,
                 text: "Download references (table-builder format)",
             });
 

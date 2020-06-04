@@ -10,21 +10,15 @@ class IVChemical {
     }
 
     static get_object(id, cb) {
-        $.get("/in-vitro/api/chemical/{0}/".printf(id), function(d) {
-            cb(new IVChemical(d));
-        });
+        $.get(`/in-vitro/api/chemical/${id}/`, d => cb(new IVChemical(d)));
     }
 
     static displayAsModal(id) {
-        IVChemical.get_object(id, function(d) {
-            d.displayAsModal();
-        });
+        IVChemical.get_object(id, d => d.displayAsModal());
     }
 
     static displayAsPage(id, div) {
-        IVChemical.get_object(id, function(d) {
-            d.displayAsPage(div);
-        });
+        IVChemical.get_object(id, d => d.displayAsPage(div));
     }
 
     build_title() {

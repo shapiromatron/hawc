@@ -1,0 +1,29 @@
+{
+  "id": 7,
+  "title": "embedded-tableau",
+  "slug": "embedded-tableau",
+  "visual_type": "embedded external website",
+  "prefilters": "{}",
+  "settings": {
+    "external_url": "https://public.tableau.com/views/Iris_15675445278420/Iris-Actual",
+    "external_url_hostname": "https://public.tableau.com",
+    "external_url_path": "/views/Iris_15675445278420/Iris-Actual",
+    "external_url_query_args": [
+      ":showVizHome=no",
+      ":embed=y"
+    ]
+  },
+  "caption": "<p>iris (flowers)</p>",
+  "published": true,
+  "sort_order": "short_citation",
+  "created": "2020-05-08T14:45:29.985823-05:00",
+  "last_updated": "2020-05-08T14:45:29.985848-05:00",
+  "assessment": 2,
+  "dose_units": null,
+  "url": "/summary/visual/7/",
+  "url_update": "/summary/visual/7/update/",
+  "url_delete": "/summary/visual/7/delete/",
+  "endpoints": [],
+  "studies": [],
+  "assessment_rob_name": "Risk of bias"
+}

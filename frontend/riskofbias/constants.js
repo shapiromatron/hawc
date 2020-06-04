@@ -77,6 +77,11 @@ const NA_KEYS = [10, 20],
         26: "Adequate (metric) or Medium confidence (overall)",
         27: "Good (metric) or High confidence (overall)",
     },
+    FOOTNOTES = {
+        MULTIPLE_SCORES: ["✱", "Multiple scores exist"],
+        BIAS_AWAY_NULL: ["▲", "Bias away from null"],
+        BIAS_TOWARDS_NULL: ["▼", "Bias towards null"],
+    },
     BIAS_DIRECTION_UNKNOWN = 0,
     BIAS_DIRECTION_UP = 1,
     BIAS_DIRECTION_DOWN = 2,
@@ -118,7 +123,7 @@ const NA_KEYS = [10, 20],
                 .uniq()
                 .value(),
             symbolText = symbols.join(" / "),
-            symbolShortText = symbols.length === 1 ? symbols[0] : `${defaultScore.score_symbol}*`,
+            symbolShortText = symbols.length === 1 ? symbols[0] : `${defaultScore.score_symbol}✱`,
             directions = _.chain(sortedScores)
                 .map(score => score.bias_direction)
                 .uniq()
@@ -149,7 +154,7 @@ const NA_KEYS = [10, 20],
                     })
                     .join(""),
                 gradientId = `gradient${scores[0].id}`,
-                gradient = `<linearGradient id="${gradientId}" x1="0" y1="0" x2="5%" y2="5%" spreadMethod="repeat">${svgShades}</linearGradient>`;
+                gradient = `<linearGradient id="${gradientId}" x1="0" y1="0" x2="25%" y2="25%" spreadMethod="repeat">${svgShades}</linearGradient>`;
 
             reactStyle = {background: `repeating-linear-gradient(-45deg, ${reactGradients})`};
             cssStyle = reactStyle;
@@ -162,6 +167,7 @@ const NA_KEYS = [10, 20],
         return {
             reactStyle,
             cssStyle,
+            symbols,
             symbolText,
             symbolShortText,
             directions,
@@ -184,6 +190,7 @@ export {
     SCORE_SHADES,
     SCORE_TEXT_DESCRIPTION,
     SCORE_TEXT_DESCRIPTION_LEGEND,
+    FOOTNOTES,
     BIAS_DIRECTION_UNKNOWN,
     BIAS_DIRECTION_UP,
     BIAS_DIRECTION_DOWN,

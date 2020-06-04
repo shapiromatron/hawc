@@ -7,7 +7,6 @@ from . import api, views
 router = DefaultRouter()
 router.register(r"assessment", api.Assessment, basename="assessment")
 router.register(r"dashboard", api.AdminDashboardViewset, basename="admin_dashboard")
-router.register(r"endpoints", api.AssessmentEndpointList, basename="endpoint_type")
 
 app_name = "assessment"
 urlpatterns = [
@@ -73,7 +72,9 @@ urlpatterns = [
         name="effect_tag_create",
     ),
     # helper functions
-    url(r"^cas-details/", views.CASDetails.as_view(), name="cas_details"),
+    url(
+        r"^casrn/(?P<casrn>\d{1,7}-\d{1,3}-\d{1,2})/$", api.CasrnView.as_view(), name="casrn_detail"
+    ),
     url(r"^download-plot/$", views.DownloadPlot.as_view(), name="download_plot"),
     url(r"^close-window/$", views.CloseWindow.as_view(), name="close_window"),
     # assessment level study

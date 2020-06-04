@@ -11,22 +11,14 @@ from django.core.validators import MinValueValidator
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
-from django.utils.http import urlquote
 from reversion import revisions as reversion
 
+from ..common.dsstox import get_casrn_url
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper
 from ..common.models import get_crumbs
 from ..myuser.models import HAWCUser
 from . import managers
 from .tasks import add_time_spent
-
-
-def get_cas_url(cas):
-    if cas:
-        return f"{reverse('assessment:cas_details')}?cas={urlquote(cas)}"
-    else:
-        return None
-
 
 NOEL_NAME_CHOICES_NOEL = 0
 NOEL_NAME_CHOICES_NOAEL = 1
@@ -207,9 +199,8 @@ class Assessment(models.Model):
     def get_absolute_url(self):
         return reverse("assessment:detail", args=[str(self.pk)])
 
-    @property
-    def cas_url(self):
-        return get_cas_url(self.cas)
+    def get_casrn_url(self):
+        return get_casrn_url(self.cas)
 
     class Meta:
         ordering = ("-created",)

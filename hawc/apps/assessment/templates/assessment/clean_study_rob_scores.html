@@ -18,10 +18,10 @@
 <script id="config" type="text/json" charset="utf-8">
     {
         "assessment_id": "{{ assessment.id }}",
-        "assessment": "{% url 'assessment:api:endpoint_type-list' %}",
+        "assessment": "{% url 'assessment:api:assessment-endpoints' assessment.id %}",
         "items": {
             "url": "{% url 'riskofbias:api:metric_scores-list' %}",
-            "patchUrl": "{% url 'riskofbias:api:scores-list' %}",
+            "patchUrl": "{% url 'riskofbias:api:score-cleanup-list' %}",
             "title": "Metric Scores"
         },
         "metrics": {

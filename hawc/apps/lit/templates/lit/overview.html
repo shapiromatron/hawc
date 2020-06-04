@@ -75,7 +75,7 @@
         <a class="btn btn-primary" href="{% url 'lit:ref_visual' assessment.pk %}">Visualization</a>
         {% if user.is_staff or request.user|has_user_group:"beta tester" %}
           {% if can_topic_model %}
-          <a class="btn btn-primary" href="{% url 'lit:topic_model' assessment.literature_settings.pk %}">Topic model</a>
+          <a class="btn btn-primary" href="{% url 'lit:topic_model' assessment.pk %}">Topic model</a>
           {% endif %}
         {% endif %}
         <a class="btn btn-primary" href="{% url 'lit:ref_search' assessment.pk %}">Find a reference</a>

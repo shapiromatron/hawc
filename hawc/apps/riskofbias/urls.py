@@ -10,6 +10,7 @@ router.register(r"review", api.RiskOfBias, basename="review")
 router.register(r"metrics", api.AssessmentMetricViewset, basename="metrics")
 router.register(r"metrics/scores", api.AssessmentMetricScoreViewset, basename="metric_scores")
 router.register(r"scores", api.AssessmentScoreViewset, basename="scores")
+router.register(r"score-cleanup", api.ScoreCleanupViewset, basename="score-cleanup")
 
 app_name = "riskofbias"
 urlpatterns = [

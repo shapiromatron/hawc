@@ -32,7 +32,6 @@ const helpers = {
             body: $(form).serialize(),
         };
     },
-
     fetchBulk(csrf, obj, verb = "PATCH") {
         obj["csrfmiddlewaretoken"] = csrf;
         return {

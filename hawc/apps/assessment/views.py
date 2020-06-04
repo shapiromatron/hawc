@@ -402,7 +402,7 @@ class CleanExtractedData(TeamMemberOrHigherMixin, BaseEndpointList):
     """
     To add a model to clean,
      - add TEXT_CLEANUP_FIELDS = {...fields} to the model
-     - add model count dict to assessment.views.AssessmentEndpointList
+     - add model count dict to assessment.views.Assessment.endpoints
      - add model serializer that uses utils.api.DynamicFieldsMixin
      - add api view that inherits from assessment.api.CleanupFieldsBaseViewSet
         with model={model} & serializer_class={new serializer}
@@ -417,15 +417,6 @@ class CleanExtractedData(TeamMemberOrHigherMixin, BaseEndpointList):
 
 
 # Assorted functionality
-class CASDetails(TemplateView):
-    def get(self, request, *args, **kwargs):
-        cas = self.request.GET.get("cas")
-        payload = tasks.get_dsstox_details.delay(cas).get(timeout=60, disable_sync_subtasks=False)
-        if payload is None:
-            payload = {}
-        return HttpResponse(json.dumps(payload), content_type="application/json")
-
-
 class CloseWindow(TemplateView):
     template_name = "hawc/close_window.html"
 

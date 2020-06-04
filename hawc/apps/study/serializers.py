@@ -1,8 +1,10 @@
-from rest_framework import serializers
+from django.core.exceptions import ObjectDoesNotExist
+from rest_framework import exceptions, serializers
 
 from ..assessment.serializers import AssessmentMiniSerializer
 from ..common.api import DynamicFieldsMixin
 from ..common.helper import SerializerHelper
+from ..lit.models import Reference
 from ..lit.serializers import IdentifiersSerializer, ReferenceTagsSerializer
 from ..riskofbias.serializers import RiskOfBiasSerializer
 from . import models
@@ -21,12 +23,38 @@ class StudySerializer(serializers.ModelSerializer):
 
 
 class SimpleStudySerializer(StudySerializer):
+    def validate(self, data):
+        if "reference_id" in self.initial_data:
+
+            ref_id = self.initial_data.get("reference_id")
+
+            try:
+                Reference.objects.get(id=ref_id)
+            except ValueError:
+                raise serializers.ValidationError("Reference ID must be a number.")
+            except ObjectDoesNotExist:
+                raise serializers.ValidationError(f"Reference ID does not exist.")
+
+        return super().validate(data)
+
+    def create(self, validated_data):
+        ref_id = self.initial_data.get("reference_id")
+        reference = Reference.objects.get(id=ref_id)
+        if models.Study.objects.filter(reference_ptr=ref_id).exists():
+            raise serializers.ValidationError(f"Reference ID {ref_id} already linked with a study.")
+        if not reference.assessment.user_can_edit_object(self.context["request"].user):
+            raise exceptions.PermissionDenied("Invalid permission to edit assessment.")
+        validated_data["assessment"] = reference.assessment.id
+
+        return models.Study.save_new_from_reference(reference, validated_data)
+
     class Meta:
         model = models.Study
         exclude = (
             "searches",
             "identifiers",
         )
+        extra_kwargs = {"assessment": {"required": False}}
 
 
 class StudyAssessmentSerializer(serializers.ModelSerializer):
