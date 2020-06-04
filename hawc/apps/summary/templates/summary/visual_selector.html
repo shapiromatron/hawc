@@ -1,5 +1,4 @@
 {% extends 'portal.html' %}
-{% load has_user_group %}
 {% load static %}
 
 {% block title %}{{assessment}} | New visualization {% endblock title %}
@@ -46,7 +45,7 @@
               Literature tagtree</option>
           <option data-showcase="#visual5" value="{% url 'summary:visualization_create' assessment.id 5 %}">
               Embedded external website</option>
-          {% if user.is_staff or request.user|has_user_group:"beta tester" %}
+          {% if user.is_beta_tester %}
           <option data-showcase="#visual6" value="{% url 'summary:visualization_create' assessment.id 6 %}">
               Exploratory heatmap</option>
           {% endif %}

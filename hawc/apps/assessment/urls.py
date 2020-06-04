@@ -7,6 +7,7 @@ from . import api, views
 router = DefaultRouter()
 router.register(r"assessment", api.Assessment, basename="assessment")
 router.register(r"dashboard", api.AdminDashboardViewset, basename="admin_dashboard")
+router.register(r"dataset", api.DatasetViewset, basename="dataset")
 
 app_name = "assessment"
 urlpatterns = [
@@ -40,6 +41,11 @@ urlpatterns = [
         views.AttachmentDelete.as_view(),
         name="attachment_delete",
     ),
+    # dataset
+    url(r"^(?P<pk>\d+)/dataset/create/$", views.DatasetCreate.as_view(), name="dataset_create"),
+    url(r"^dataset/(?P<pk>\d+)/$", views.DatasetRead.as_view(), name="dataset_detail"),
+    url(r"^dataset/(?P<pk>\d+)/update/$", views.DatasetUpdate.as_view(), name="dataset_update"),
+    url(r"^dataset/(?P<pk>\d+)/delete/$", views.DatasetDelete.as_view(), name="dataset_delete"),
     # species
     url(
         r"^assessment/(?P<pk>\d+)/species/create/$",
