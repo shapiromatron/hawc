@@ -14,6 +14,7 @@ class ExploreHeatmap extends BaseVisual {
         const {settings} = this.data;
         return {
             type: "heatmap",
+            data_url: "",
             plot: {width: undefined, height: undefined}, //svg size, undefined defaults to page content size
             plot_title: settings.title,
             x_label: settings.x_label,
@@ -42,7 +43,8 @@ class ExploreHeatmap extends BaseVisual {
         this.dataset = null;
     }
 
-    getDataset(url) {
+    getDataset() {
+        const url = this.data.settings.data_url;
         if (!this.dataset) {
             this.dataset = JSON.parse(
                 $.ajax(url, {
@@ -61,9 +63,7 @@ class ExploreHeatmap extends BaseVisual {
             $plotDiv = $("<div>"),
             data = {
                 settings: this.getSettings(),
-                dataset: this.getDataset(
-                    `/ani/api/assessment/${this.data.assessment}/endpoint-export/?format=json`
-                ),
+                dataset: this.getDataset(),
             };
         options = options || {};
 

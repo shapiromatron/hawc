@@ -4,7 +4,7 @@ import $ from "$";
 import ExploreHeatmap from "summary/summary/ExploreHeatmap";
 
 import BaseVisualForm from "./BaseVisualForm";
-import {TextField} from "./Fields";
+import {SelectField, TextField} from "./Fields";
 
 class ExploratoryHeatmapForm extends BaseVisualForm {
     constructor(data) {
@@ -25,11 +25,13 @@ class ExploratoryHeatmapForm extends BaseVisualForm {
         });
         this.heatmapDataset = this.heatmap.dataset;
     }
+
     updateSettingsFromPreview() {
         var plotSettings = JSON.stringify(this.preview.data.settings);
         $("#id_settings").val(plotSettings);
         this.unpackSettings();
     }
+
     afterSettingsSetup() {
         const requireNewDataFetch = () => {
             this.heatmapDataset = null;
@@ -60,6 +62,17 @@ _.extend(ExploratoryHeatmapForm, {
             name: "y_label",
             label: "Y label",
             def: "",
+            tab: "overall",
+        },
+        {
+            type: SelectField,
+            name: "data_url",
+            label: "Data URL",
+            opts: [
+                ["/ani/api/assessment/1/endpoint-export/?format=json", "bioassay"],
+                ["/assessment/api/dataset/1/version/1/?format=json", "dataset"],
+            ],
+            def: "bioassay",
             tab: "overall",
         },
     ],
