@@ -168,7 +168,7 @@ class ExploreHeatmapPlot extends D3Visualization {
             )
             .style("vertical-align", "top")
             .style("display", "inline-block")
-            .style("overflow", "scroll");
+            .style("overflow", "auto");
 
         this.blacklist_table = this.blacklist_container
             .append("table")
@@ -191,13 +191,14 @@ class ExploreHeatmapPlot extends D3Visualization {
         // Fill in table body
         this.blacklist_table.append("tbody");
 
-        let button_func = () => {
-            d3.event.stopPropagation();
-            this.modal
-                .addHeader(`<h4>Test</h4>`)
-                .addFooter("")
-                .show();
-        };
+        let modal_table = d3.select(this.modal.getBody()[0]).append("table"),
+            button_func = d => {
+                d3.event.stopPropagation();
+                this.modal
+                    .addHeader(`<h4>Test</h4>`)
+                    .addFooter("")
+                    .show();
+            };
 
         let rows = this.blacklist_table
             .select("tbody")
@@ -211,9 +212,9 @@ class ExploreHeatmapPlot extends D3Visualization {
                 d3.select(this).style("text-decoration", func(d) ? "line-through" : null);
             })
             .append("button")
-            .attr("class", "btn pull-right")
+            .attr("class", "btn btn-mini pull-right")
             .on("click", button_func)
-            .text("test");
+            .html("<i class='icon-eye-open'></i>");
 
         this.blacklist_table.selectAll("th").attr("colspan", 2);
         this.blacklist_table.selectAll("td").attr("colspan", 2);
@@ -270,7 +271,9 @@ class ExploreHeatmapPlot extends D3Visualization {
                     200
                 )}px`
             )
-            .style("overflow", "scroll");
+            .style("overflow", "auto");
+
+        this.detail_container.append("h4").text("Study Details");
 
         this.detail_table = this.detail_container
             .append("table")
