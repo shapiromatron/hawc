@@ -317,7 +317,8 @@ class DatasetForm(forms.ModelForm):
         dataset; the public can only download and see the latest version."""
 
         helper = BaseFormHelper(self, **inputs)
-        helper.add_fluid_row("revision_version", 3, ("span2", "span5", "span5"))
+        helper.add_fluid_row("revision_version", 3, ("span2", "span5", "span5 hidden"))
+        helper.add_fluid_row("revision_notes", 1, ("span12 hidden",))
         helper.form_class = None
         return helper
 

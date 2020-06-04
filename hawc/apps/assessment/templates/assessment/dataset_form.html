@@ -28,17 +28,15 @@
             versionNotes = $("#div_id_revision_notes"),
             handleExcelNameChange = function () {
                 if(reExcelFile.test(this.value)){
-                    excelNameDiv.show();
+                    excelNameDiv.removeClass('hidden');
                 } else {
-                    excelNameDiv.hide();
+                    excelNameDiv.addClass('hidden');
                     excelNameInput.val("");
                 }
-                versionNotes.show();
+                versionNotes.removeClass('hidden');
             };
 
         $('#id_revision_data').change(handleExcelNameChange);
-        excelNameDiv.hide();
-        versionNotes.hide();
     });
 </script>
 {% endblock extrajs %}

@@ -36,7 +36,7 @@ class Migration(migrations.Migration):
                     ),
                 ),
             ],
-            options={"ordering": ("created",), "unique_together": {("assessment", "name")},},
+            options={"ordering": ("created",), "unique_together": {("assessment", "name")}},
         ),
         migrations.CreateModel(
             name="DatasetRevision",
