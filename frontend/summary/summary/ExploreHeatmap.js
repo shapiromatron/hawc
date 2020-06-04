@@ -14,7 +14,6 @@ class ExploreHeatmap extends BaseVisual {
             captionDiv = $("<div>").html(this.data.caption),
             caption = new SmartTagContainer(captionDiv),
             $plotDiv = $("<div>");
-        //data = this.getPlotData();
 
         var data = {};
         data.settings = {
@@ -110,14 +109,6 @@ class ExploreHeatmap extends BaseVisual {
             .addBody([$plotDiv, captionDiv])
             .addFooter("")
             .show({maxWidth: 1200});
-    }
-
-    getPlotData() {
-        return {
-            aggregation: this.roba,
-            settings: this.data.settings,
-            assessment_rob_name: this.data.assessment_rob_name,
-        };
     }
 }
 
