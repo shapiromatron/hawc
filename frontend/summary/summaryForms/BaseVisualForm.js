@@ -28,13 +28,6 @@ class BaseVisualForm {
         $data.find(":input").on("change", setDataChanged);
         $data.on("djselectableadd djselectableremove", setDataChanged);
 
-        // TODO - fix!
-        $data
-            .find(".wysihtml5-sandbox")
-            .contents()
-            .find("body")
-            .on("keyup", setDataChanged);
-
         // whenever data is synced, rebuild
         $settings.on("dataSynched", this.unpackSettings.bind(this));
         $preview.on("dataSynched", this.buildPreviewDiv.bind(this));
