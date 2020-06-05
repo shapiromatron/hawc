@@ -20,14 +20,58 @@ class ExploreHeatmapPlot extends D3Visualization {
 
     render_plot($div) {
         this.plot_div = $div;
-        this.set_padding();
         this.set_color_scale();
-        this.build_plot_skeleton(false);
         this.build_plot();
         this.build_axes();
         this.build_labels();
+        this.set_trigger_resize();
         this.add_menu();
-        this.trigger_resize();
+    }
+
+    set_trigger_resize() {
+        var self = this,
+            w = this.w + this.padding.left + this.padding.right,
+            h = this.h + this.padding.top + this.padding.bottom,
+            chart = $(this.svg),
+            container = chart.parent();
+
+        d3.select(this.svg)
+            .attr("width", w)
+            .attr("height", h)
+            .attr("viewBox", `0 0 ${w} ${h}`);
+
+        this.vis.attr("transform", `translate(${this.padding.left},${this.padding.top})`);
+
+        this.full_width = w;
+        this.full_height = h;
+        this.isFullSize = true;
+        this.trigger_resize = function(forceResize) {
+            var targetWidth = Math.min(container.width(), self.full_width),
+                aspect = self.full_width / self.full_height;
+            if (forceResize === true && !self.isFullSize) targetWidth = self.full_width;
+
+            if (targetWidth !== self.full_width) {
+                // use custom smaller size
+                chart.attr("width", targetWidth);
+                chart.attr("height", Math.round(targetWidth / aspect));
+                self.isFullSize = false;
+                if (self.resize_button) {
+                    self.resize_button.attr("title", "zoom figure to full-size");
+                    self.resize_button.find("i").attr("class", "icon-zoom-in");
+                }
+            } else {
+                // set back to full-size
+                chart.attr("width", self.full_width);
+                chart.attr("height", self.full_height);
+                self.isFullSize = true;
+                if (self.resize_button) {
+                    self.resize_button.attr("title", "zoom figure to fit screen");
+                    self.resize_button.find("i").attr("class", "icon-zoom-out");
+                }
+            }
+        };
+        $(window).resize(this.trigger_resize);
+        this.trigger_resize(false);
     }
 
     set_color_scale() {
@@ -41,20 +85,6 @@ class ExploreHeatmapPlot extends D3Visualization {
                 ),
             ])
             .range(this.color_range);
-    }
-
-    set_padding() {
-        this.padding = {top: 0, left: 0, bottom: 0, right: 200};
-        this.horizontal_margin = 200;
-        this.vertical_margin = 50;
-        this.label_margin = 50;
-
-        if (this.plot_title.length > 0) this.padding.top += this.label_margin;
-        if (this.x_label.length > 0) this.padding.bottom += this.label_margin;
-        if (this.y_label.length > 0) this.padding.left += this.label_margin;
-
-        this.padding.bottom += this.x_fields.length * this.vertical_margin;
-        this.padding.left += this.y_fields.length * this.horizontal_margin;
     }
 
     generate_properties(data) {
@@ -90,6 +120,7 @@ class ExploreHeatmapPlot extends D3Visualization {
         this.cell_height = 100;
         this.w = this.cell_width * this.x_steps;
         this.h = this.cell_height * this.y_steps;
+        this.padding = {top: 0, left: 0, bottom: 0, right: 200};
         this.xy_map = this.create_map();
     }
     build_container($div) {
@@ -312,6 +343,9 @@ class ExploreHeatmapPlot extends D3Visualization {
     };
 
     build_axes() {
+        this.horizontal_margin = 200;
+        this.vertical_margin = 50;
+
         let generate_ticks = domain => {
                 if (domain.length == 0) return [];
                 let ticks = [];
@@ -368,6 +402,7 @@ class ExploreHeatmapPlot extends D3Visualization {
                 .attr("class", "exp_heatmap_axis")
                 .attr("transform", `translate(0,${this.vertical_margin * (x_axes.length - 1 - i)})`)
                 .call(x_axes[i]);
+            this.padding.bottom += this.vertical_margin;
         }
 
         for (let i = 0; i < y_axes.length; i++) {
@@ -376,10 +411,13 @@ class ExploreHeatmapPlot extends D3Visualization {
                 .attr("class", "exp_heatmap_axis")
                 .attr("transform", `translate(${this.horizontal_margin * i},0)`)
                 .call(y_axes[i]);
+            this.padding.left += this.horizontal_margin;
         }
     }
 
     build_labels() {
+        this.label_margin = 50;
+
         // Plot title
         if (this.plot_title.length > 0) {
             this.vis
@@ -389,10 +427,12 @@ class ExploreHeatmapPlot extends D3Visualization {
                 .attr("x", this.w / 2)
                 .attr("y", -this.label_margin / 2)
                 .text(this.plot_title);
+            this.padding.top += this.label_margin;
         }
 
         // X axis
         if (this.x_label.length > 0) {
+            this.padding.bottom += this.label_margin;
             this.vis
                 .append("text")
                 .attr("class", "exp_heatmap_label")
@@ -402,6 +442,7 @@ class ExploreHeatmapPlot extends D3Visualization {
         }
         // Y axis
         if (this.y_label.length > 0) {
+            this.padding.left += this.label_margin;
             this.vis
                 .append("text")
                 .attr("class", "exp_heatmap_label")
@@ -487,7 +528,17 @@ class ExploreHeatmapPlot extends D3Visualization {
         this.cells_data.exit().remove();
     };
 
-    build_plot() {
+    build_plot($div) {
+        //clear plot div and and append new svg object
+        this.plot_div.empty();
+        this.vis = d3
+            .select(this.plot_div[0])
+            .append("svg")
+            .attr("class", "d3")
+            .attr("preserveAspectRatio", "xMinYMin")
+            .append("g");
+        this.svg = this.vis[0][0].parentNode;
+
         // Scales for x axis, y axis, and cell color
         this.x_scale = d3.scale
             .ordinal()
