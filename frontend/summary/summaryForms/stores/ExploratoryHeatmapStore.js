@@ -1,5 +1,7 @@
 import {observable, action, computed} from "mobx";
 
+import h from "shared/utils/helpers";
+
 class ExploratoryHeatmapStore {
     constructor(rootStore) {
         this.root = rootStore;
@@ -15,6 +17,7 @@ class ExploratoryHeatmapStore {
     }
 
     @observable settings = null;
+    @observable datasetOptions = null;
 
     @action setFromJsonSettings(settings, firstTime) {
         this.settings = settings;
@@ -40,6 +43,28 @@ class ExploratoryHeatmapStore {
 
     @computed get hasSettings() {
         return this.settings !== null;
+    }
+
+    @action.bound getDatasetOptions() {
+        const url = this.root.base.config.api_heatmap_datasets;
+        fetch(url, h.fetchGet)
+            .then(response => response.json())
+            .then(json => {
+                let datasets = json.datasets;
+                datasets.unshift({
+                    type: "",
+                    name: "<none>",
+                    url: "",
+                });
+                datasets.forEach(d => {
+                    d.label = d.type === "Dataset" ? `${d.type}: ${d.name}` : d.name;
+                    d.id = d.url;
+                });
+                this.datasetOptions = datasets;
+            })
+            .catch(error => {
+                this.setDataError(error);
+            });
     }
 }
 

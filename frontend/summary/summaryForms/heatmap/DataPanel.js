@@ -8,12 +8,16 @@ import SelectInput from "shared/components/SelectInput";
 class DataPanel extends Component {
     render() {
         const {dataError} = this.props.store.base,
-            {settings, changeDatasetUrl} = this.props.store.subclass,
-            opts = [
-                {id: "", label: "<none>"},
-                {id: "/ani/api/assessment/1/endpoint-export/?format=json", label: "bioassay"},
-                {id: "/assessment/api/dataset/1/data/?format=json", label: "dataset"},
-            ];
+            {datasetOptions} = this.props.store.subclass;
+
+        let content;
+
+        if (!datasetOptions) {
+            content = <p>Available dataset options loading...</p>;
+        } else {
+            content = this.renderForm();
+        }
+
         return (
             <div>
                 <DataStatusIndicator />
@@ -26,18 +30,23 @@ class DataPanel extends Component {
                         {dataError}
                     </div>
                 ) : null}
-                <SelectInput
-                    name="data_url"
-                    label="Data URL"
-                    className="span12"
-                    choices={opts}
-                    multiple={false}
-                    handleSelect={value => {
-                        changeDatasetUrl(value);
-                    }}
-                    value={settings.data_url}
-                />
+                {content}
             </div>
+        );
+    }
+    renderForm() {
+        const {settings, changeDatasetUrl, datasetOptions} = this.props.store.subclass;
+
+        return (
+            <SelectInput
+                name="data_url"
+                label="Data URL"
+                className="span12"
+                choices={datasetOptions}
+                multiple={false}
+                handleSelect={value => changeDatasetUrl(value)}
+                value={settings.data_url}
+            />
         );
     }
 }

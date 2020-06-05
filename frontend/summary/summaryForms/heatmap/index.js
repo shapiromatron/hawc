@@ -10,6 +10,7 @@ const exploratoryHeatmapFormAppStartup = function(el, config, djangoForm) {
     const store = createExploratoryHeatmapStore();
     store.base.setConfig(config);
     store.base.setDjangoForm(djangoForm);
+    store.subclass.getDatasetOptions();
 
     const Root = (
         <Provider store={store}>
