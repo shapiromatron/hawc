@@ -24,6 +24,7 @@ class ExploreHeatmapPlot extends D3Visualization {
         this.build_plot();
         this.build_axes();
         this.build_labels();
+        if (this.show_grid) this.add_grid();
         this.set_trigger_resize();
         this.add_menu();
     }
@@ -116,12 +117,16 @@ class ExploreHeatmapPlot extends D3Visualization {
         );
         this.x_steps = this.x_domain.reduce((total, element) => total * element.length, 1);
         this.y_steps = this.y_domain.reduce((total, element) => total * element.length, 1);
-        this.cell_width = 100;
-        this.cell_height = 100;
+        this.cell_width = 50;
+        this.cell_height = 50;
         this.w = this.cell_width * this.x_steps;
         this.h = this.cell_height * this.y_steps;
         this.padding = {top: 0, left: 0, bottom: 0, right: 200};
         this.xy_map = this.create_map();
+        this.show_grid = true;
+        this.show_axis_border = true;
+        this.x_rotate = 90;
+        this.y_rotate = 0;
     }
     build_container($div) {
         this.viz_container = d3.select($div.html("")[0]);
@@ -361,10 +366,7 @@ class ExploreHeatmapPlot extends D3Visualization {
             y_domains = generate_ticks(this.y_domain).reverse(),
             x_axis_offset = 0,
             y_axis_offset = 0,
-            label_padding = 10;
-
-        this.x_rotate = 45;
-        this.y_rotate = -45;
+            label_padding = 6;
 
         for (let i = 0; i < x_domains.length; i++) {
             let axis = this.vis
@@ -409,7 +411,7 @@ class ExploreHeatmapPlot extends D3Visualization {
                         .attr("stroke", "black");
                 }
             };
-            add_border();
+            if (this.show_axis_border) add_border();
         }
 
         for (let i = 0; i < y_domains.length; i++) {
@@ -453,7 +455,29 @@ class ExploreHeatmapPlot extends D3Visualization {
                         .attr("stroke", "black");
                 }
             };
-            add_border();
+            if (this.show_axis_border) add_border();
+        }
+    }
+
+    add_grid() {
+        let grid = this.vis.append("g"),
+            x_band = this.w / this.x_steps,
+            y_band = this.h / this.y_steps;
+        for (let i = 0; i <= this.x_steps; i++) {
+            grid.append("line")
+                .attr("x1", x_band * i)
+                .attr("y1", 0)
+                .attr("x2", x_band * i)
+                .attr("y2", this.h)
+                .style("stroke", "black");
+        }
+        for (let i = 0; i <= this.y_steps; i++) {
+            grid.append("line")
+                .attr("x1", 0)
+                .attr("y1", y_band * i)
+                .attr("x2", this.w)
+                .attr("y2", y_band * i)
+                .style("stroke", "black");
         }
     }
 
