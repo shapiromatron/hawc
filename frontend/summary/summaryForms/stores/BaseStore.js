@@ -4,6 +4,13 @@ import {observable, action, computed} from "mobx";
 
 import h from "shared/utils/helpers";
 
+const TABS = {
+    OVERALL: 0,
+    DATA: 1,
+    CUSTOMIZATION: 2,
+    PREVIEW: 3,
+};
+
 class BaseStore {
     constructor(rootStore) {
         this.root = rootStore;
@@ -11,6 +18,7 @@ class BaseStore {
 
     config = null;
     djangoForm = null;
+    currentTab = 0;
 
     @observable dataError = null;
     @observable isFetchingData = false;
@@ -24,15 +32,20 @@ class BaseStore {
         this.setInitialData();
     };
     @action setInitialData() {
-        const {initial_data} = this.config;
+        const {initial_data} = this.config,
+            settings =
+                Object.keys(initial_data.settings).length > 0
+                    ? initial_data.settings
+                    : this.root.subclass.getDefaultSettings();
+
         this.djangoFormData = {
             title: initial_data.title,
             slug: initial_data.slug,
-            settings: JSON.stringify(initial_data.settings),
+            settings: JSON.stringify(settings),
             caption: initial_data.caption,
             published: initial_data.published,
         };
-        this.root.subclass.setFromJsonSettings(initial_data.settings, true);
+        this.root.subclass.setFromJsonSettings(settings, true);
     }
     @action setDjangoForm = djangoForm => {
         this.djangoForm = djangoForm;
@@ -41,7 +54,10 @@ class BaseStore {
         this.djangoFormData[name] = value;
     };
     @action.bound handleSubmit() {
-        this.djangoFormData.settings = JSON.stringify(this.root.subclass.settings);
+        // make sure our overall tab form is synced
+        this.handleTabChange(TABS.OVERALL, this.currentTab);
+
+        // insert the data in this form to the from we submit to the server
         const $form = $(this.djangoForm);
         $form.find("#id_title").val(this.djangoFormData.title);
         $form.find("#id_slug").val(this.djangoFormData.slug);
@@ -51,16 +67,26 @@ class BaseStore {
         $form.submit();
     }
 
-    @action.bound onTabChangeFromOverall() {
-        this.root.subclass.setFromJsonSettings(JSON.parse(this.djangoFormData.settings), false);
+    @action.bound handleTabChange(newIndex, lastIndex) {
+        // make sure that data cross tabs are synced
+        this.currentTab = newIndex;
+        switch (lastIndex) {
+            case TABS.OVERALL:
+                this.root.subclass.setFromJsonSettings(
+                    JSON.parse(this.djangoFormData.settings),
+                    false
+                );
+                break;
+            case TABS.DATA:
+                this.djangoFormData.settings = JSON.stringify(this.root.subclass.settings);
+                break;
+            case TABS.CUSTOMIZATION:
+                this.djangoFormData.settings = JSON.stringify(this.root.subclass.settings);
+                break;
+            case TABS.PREVIEW:
+                break;
+        }
     }
-    @action.bound onTabChangeFromData() {
-        this.djangoFormData.settings = JSON.stringify(this.root.subclass.settings);
-    }
-    @action.bound onTabChangeFigureCustomization() {
-        this.djangoFormData.settings = JSON.stringify(this.root.subclass.settings);
-    }
-    @action.bound onTabChangeFromPreview() {}
 
     @action.bound getDataset() {
         this.isFetchingData = true;

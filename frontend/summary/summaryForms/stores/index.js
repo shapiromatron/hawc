@@ -1,15 +1,15 @@
-import BaseStore from "./Base";
-import ExploratoryHeatmap from "./ExploratoryHeatmap";
+import BaseStore from "./BaseStore";
+import ExploratoryHeatmapStore from "./ExploratoryHeatmapStore";
 
-class ExploratoryHeatmapStore {
+class ExploratoryHeatmap {
     constructor() {
         this.base = new BaseStore(this);
-        this.subclass = new ExploratoryHeatmap(this);
+        this.subclass = new ExploratoryHeatmapStore(this);
     }
 }
 
 const createExploratoryHeatmapStore = function() {
-    return new ExploratoryHeatmapStore();
+    return new ExploratoryHeatmap();
 };
 
 export {createExploratoryHeatmapStore};

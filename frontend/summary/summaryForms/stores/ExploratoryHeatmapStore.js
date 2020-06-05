@@ -1,8 +1,17 @@
 import {observable, action, computed} from "mobx";
 
-class ExploratoryHeatmap {
+class ExploratoryHeatmapStore {
     constructor(rootStore) {
         this.root = rootStore;
+    }
+
+    getDefaultSettings() {
+        return {
+            data_url: "",
+            title: "",
+            x_label: "",
+            y_label: "",
+        };
     }
 
     @observable settings = null;
@@ -34,4 +43,4 @@ class ExploratoryHeatmap {
     }
 }
 
-export default ExploratoryHeatmap;
+export default ExploratoryHeatmapStore;
