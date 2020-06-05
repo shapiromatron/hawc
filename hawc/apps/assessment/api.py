@@ -1,4 +1,5 @@
 import logging
+from pathlib import Path
 from typing import Optional
 
 import pandas as pd
@@ -6,13 +7,14 @@ from django.apps import apps
 from django.core import exceptions
 from django.core.cache import cache
 from django.db.models import Count
+from django.http import Http404
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from rest_framework import filters, permissions, status, viewsets
 from rest_framework.decorators import action
-from rest_framework.exceptions import APIException
+from rest_framework.exceptions import APIException, PermissionDenied
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
@@ -381,6 +383,30 @@ class Assessment(AssessmentViewset):
 
         serializer = serializers.AssessmentEndpointSerializer(instance)
         return Response(serializer.data)
+
+
+class DatasetViewset(AssessmentViewset):
+    model = models.Dataset
+    serializer_class = serializers.DatasetSerializer
+    assessment_filter_args = "assessment_id"
+
+    @action(detail=True, renderer_classes=PandasRenderers)
+    def data(self, request, pk: int = None):
+        instance = self.get_object()
+        revision = instance.get_latest_revision()
+        export = FlatExport(df=revision.get_df(), filename=Path(revision.metadata["filename"]).stem)
+        return Response(export)
+
+    @action(detail=True, renderer_classes=PandasRenderers, url_path=r"version/(?P<version>\d+)")
+    def version(self, request, pk: int, version: int):
+        instance = self.get_object()
+        if not self.assessment.user_is_team_member_or_higher(request.user):
+            raise PermissionDenied()
+        revision = instance.revisions.filter(version=version).first()
+        if revision is None:
+            raise Http404()
+        export = FlatExport(df=revision.get_df(), filename=Path(revision.metadata["filename"]).stem)
+        return Response(export)
 
 
 class AdminDashboardViewset(viewsets.ViewSet):

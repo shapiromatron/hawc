@@ -1,0 +1,122 @@
+{% extends 'portal.html' %}
+
+
+{% block title %}
+{% include "hawc/siteTitle.html" with crumbs=object.get_crumbs crud=crud %}
+{% endblock title %}
+
+{% block breadcrumbs %}
+{% include "hawc/breadcrumbs.html" with crumbs=object.get_crumbs crud=crud %}
+{% endblock %}
+
+{% block content %}
+<h1>{{object}}
+    {% if crud == "Read" and obj_perms.edit %}
+    <div class="btn-group pull-right">
+        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions
+            <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+            <li class="disabled"><a tabindex="-1" href="#">Dataset Editing</a></li>
+            <li><a href="{{ object.get_edit_url }}">Update dataset</a></li>
+            <li><a href="{{ object.get_delete_url }}">Delete dataset</a></li>
+        </ul>
+    </div>
+    {% endif %}
+</h1>
+
+<table class="table table-condensed table-striped">
+    <colgroup>
+        <col style="width: 20%;">
+        <col style="width: 80%;">
+    </colgroup>
+    <tbody>
+        <tr>
+            <th>Description</th>
+            <td>{{object.description|safe}}</td>
+        </tr>
+        {% if object.revisions.count > 0 %}
+        {% with revision=object.get_latest_revision %}
+        <tr>
+            <th>Download</th>
+            <td>
+                <i class="fas fa-file-csv"></i>
+                <a class="btn btn-primary" href="{{object.get_api_data_url}}?format=csv">
+                    <i class="fa fa-file-text-o"></i>&nbsp;CSV</a>
+                <a class="btn btn-primary" href="{{object.get_api_data_url}}?format=xlsx">
+                    <i class="fa fa-file-excel-o"></i>&nbsp;Excel</a>
+            </td>
+        </tr>
+        <tr>
+            <th>Metadata</th>
+            <td>
+                <ul>
+                    <li><b>Current version: </b>{{revision.version}}</li>
+                    <li><b>Filename:</b> {{revision.metadata.filename}}</li>
+                    <li><b>Rows:</b> {{revision.metadata.num_rows}}</li>
+                    <li><b>Columns:</b> {{revision.metadata.num_columns}}</li>
+                    <li><b>Revision notes:</b> {{revision.notes|safe}}</li>
+                </ul>
+            </td>
+        </tr>
+        {% endwith %}
+        {% endif %}
+
+        <tr>
+            <th>Created</th>
+            <td>{{object.created}}</td>
+        </tr>
+        <tr>
+            <th>Last updated</th>
+            <td>{{object.last_updated}}</td>
+        </tr>
+    </tbody>
+</table>
+
+{% if crud == "Read" and obj_perms.edit and object.revisions.count > 0 %}
+<h2>Dataset revisions</h2>
+<table class="table table-condensed table-striped">
+    <colgroup>
+        <col style="width: 10%;">
+        <col style="width: 50%;">
+        <col style="width: 15%;">
+        <col style="width: 25%;">
+    </colgroup>
+    <thead>
+        <tr>
+            <th>Version</th>
+            <th>Metadata</th>
+            <th>Download</th>
+            <th>Created/Last updated</th>
+        </tr>
+    </thead>
+    <tbody>
+{% for revision in object.revisions.all %}
+        <tr>
+            <td>{{revision.version}}</td>
+            <td>
+                <ul>
+                    <li><b>Filename:</b> {{revision.metadata.filename}}</li>
+                    <li><b>Rows:</b> {{revision.metadata.num_rows}}</li>
+                    <li><b>Columns:</b> {{revision.metadata.num_columns}}</li>
+                    <li><b>Revision notes:</b> {{revision.notes|safe}}</li>
+                </ul>
+            </td>
+            <td>
+                <i class="fas fa-file-csv"></i>
+                <a class="btn btn-primary" href="{{revision.get_api_data_url}}?format=csv" title="Download CSV">
+                    <i class="fa fa-file-text-o"></i></a>
+                <a class="btn btn-primary" href="{{revision.get_api_data_url}}?format=xlsx" title="Download Excel">
+                    <i class="fa fa-file-excel-o"></i></a>
+            </td>
+            <td>
+                <b>Created:</b>&nbsp;{{revision.created}}<br/>
+                <b>Last updated:</b>&nbsp;{{revision.last_updated}}
+            </td>
+        </tr>
+{% endfor %}
+    </tbody>
+</table>
+{% endif %}
+
+{% endblock content %}

@@ -18,12 +18,17 @@
         <ul class="dropdown-menu">
 
           <!-- assessment editing -->
-          {% if obj_perms.edit_assessment %}
+          {% if obj_perms.edit %}
             <li class="disabled"><a tabindex="-1" href="#">Assessment Editing</a></li>
+            {% if obj_perms.edit_assessment %}
             <li><a href="{% url 'assessment:update' object.pk %}">Update assessment</a></li>
             <li><a href="{% url 'assessment:modules_update' object.pk %}">Update enabled modules</a></li>
             <li><a href="{% url 'assessment:delete' object.pk %}">Delete assessment</a></li>
+            {% endif %}
             <li><a href="{% url 'assessment:attachment_create' object.pk %}">Add an attachment</a></li>
+            {% if user.is_beta_tester %}
+            <li><a href="{% url 'assessment:dataset_create' object.pk %}">Add a dataset</a></li>
+            {% endif %}
             <li class="divider"></li>
           {% endif %}
 
@@ -170,6 +175,9 @@
 
   {% if crud == "Read" %}
     {% include "assessment/_attachment_list.html" with object_list=attachments canEdit=obj_perms.edit_assessment %}
+    {% if user.is_beta_tester %}
+    {% include "assessment/_dataset_list.html" with object_list=object.datasets.all canEdit=obj_perms.edit %}
+    {% endif %}
   {% endif %}
 
 {% endblock content %}
