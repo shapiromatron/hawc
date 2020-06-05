@@ -343,9 +343,6 @@ class ExploreHeatmapPlot extends D3Visualization {
     };
 
     build_axes() {
-        this.horizontal_margin = 200;
-        this.vertical_margin = 50;
-
         let generate_ticks = domain => {
                 if (domain.length == 0) return [];
                 let ticks = [];
@@ -360,58 +357,71 @@ class ExploreHeatmapPlot extends D3Visualization {
                 }
                 return ticks;
             },
-            x_domains = generate_ticks(this.x_domain),
-            y_domains = generate_ticks(this.y_domain);
+            x_domains = generate_ticks(this.x_domain).reverse(),
+            y_domains = generate_ticks(this.y_domain).reverse(),
+            x_axis_offset = 0,
+            y_axis_offset = 0,
+            label_padding = 10;
 
-        let x_axes = x_domains.map((element, index) => {
-                return d3.svg
-                    .axis()
-                    .scale(
-                        d3.scale
-                            .ordinal()
-                            .domain(_.range(0, element.length))
-                            .rangeBands([0, this.w])
-                    )
+        this.x_rotate = 0;
+        this.y_rotate = 0;
 
-                    .tickFormat(d => x_domains[index][d])
-                    .outerTickSize(2)
-                    .innerTickSize(10)
-                    .orient("bottom");
-            }),
-            y_axes = y_domains.map((element, index) => {
-                return d3.svg
-                    .axis()
-                    .scale(
-                        d3.scale
-                            .ordinal()
-                            .domain(_.range(0, element.length))
-                            .rangeBands([0, this.h])
-                    )
-                    .tickFormat(d => y_domains[index][d])
-                    .outerTickSize(2)
-                    .innerTickSize(10)
-                    .orient("left");
-            });
+        for (let i = 0; i < x_domains.length; i++) {
+            let axis = this.vis
+                    .append("g")
+                    .attr("transform", `translate(0,${this.h + x_axis_offset})`),
+                domain = x_domains[i],
+                band = this.w / domain.length,
+                mid = band / 2,
+                max = 0;
+            for (let j = 0; j < domain.length; j++) {
+                let label = axis.append("g"),
+                    label_text = label
+                        .append("text")
+                        .attr("transform", `rotate(${this.x_rotate})`)
+                        .text(domain[j]),
+                    box = label.node().getBBox(),
+                    label_offset = mid - box.width / 2;
+                label.attr(
+                    "transform",
+                    `translate(${label_offset - box.x},${label_padding - box.y})`
+                );
 
-        let x_axes_group = this.vis.append("g").attr("transform", `translate(0,${this.h})`),
-            y_axes_group = this.vis.append("g");
+                max = Math.max(box.height, max);
 
-        for (let i = 0; i < x_axes.length; i++) {
-            x_axes_group
-                .append("g")
-                .attr("class", "exp_heatmap_axis")
-                .attr("transform", `translate(0,${this.vertical_margin * (x_axes.length - 1 - i)})`)
-                .call(x_axes[i]);
-            this.padding.bottom += this.vertical_margin;
+                mid += band;
+            }
+            max += label_padding * 2;
+            this.padding.bottom += max;
+            x_axis_offset += max;
         }
 
-        for (let i = 0; i < y_axes.length; i++) {
-            y_axes_group
-                .append("g")
-                .attr("class", "exp_heatmap_axis")
-                .attr("transform", `translate(${this.horizontal_margin * i},0)`)
-                .call(y_axes[i]);
-            this.padding.left += this.horizontal_margin;
+        for (let i = 0; i < y_domains.length; i++) {
+            let axis = this.vis.append("g").attr("transform", `translate(${-y_axis_offset},0)`),
+                domain = y_domains[i],
+                band = this.h / domain.length,
+                mid = band / 2,
+                max = 0;
+            for (let j = 0; j < domain.length; j++) {
+                let label = axis.append("g"),
+                    label_text = label
+                        .append("text")
+                        .attr("transform", `rotate(${this.y_rotate})`)
+                        .text(domain[j]),
+                    box = label.node().getBBox(),
+                    label_offset = mid - box.height / 2;
+                label.attr(
+                    "transform",
+                    `translate(${-box.width - box.x - label_padding},${label_offset - box.y})`
+                );
+
+                max = Math.max(box.width, max);
+
+                mid += band;
+            }
+            max += label_padding * 2;
+            this.padding.left += max;
+            y_axis_offset += max;
         }
     }
 
