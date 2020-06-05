@@ -16,6 +16,10 @@ class OverallPanel extends Component {
         const {isCreate, djangoFormData, updateDjangoFormData} = this.props.store.base;
         return (
             <div>
+                <legend>Exploratory heatmap settings</legend>
+                <p className="help-block">
+                    Overall plot settings (eg., title, caption, visibility.)
+                </p>
                 <TextInput
                     name="title"
                     label="Title"

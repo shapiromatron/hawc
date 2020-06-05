@@ -3,6 +3,9 @@ import React, {Component} from "react";
 import {inject, observer} from "mobx-react";
 import {Tab, Tabs, TabList, TabPanel} from "react-tabs";
 import OverallPanel from "./OverallPanel";
+import DataPanel from "./DataPanel";
+import VisualCustomizationPanel from "./VisualCustomizationPanel";
+import PreviewPanel from "./PreviewPanel";
 
 @inject("store")
 @observer
@@ -24,13 +27,13 @@ class App extends Component {
                         <OverallPanel />
                     </TabPanel>
                     <TabPanel>
-                        <h1>Data</h1>
+                        <DataPanel />
                     </TabPanel>
                     <TabPanel>
-                        <h1>Figure customization</h1>
+                        <VisualCustomizationPanel />
                     </TabPanel>
                     <TabPanel>
-                        <h1>Preview</h1>
+                        <PreviewPanel />
                     </TabPanel>
                 </Tabs>
                 <div className="form-actions">
