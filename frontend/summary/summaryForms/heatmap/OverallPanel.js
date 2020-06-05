@@ -48,14 +48,14 @@ class OverallPanel extends Component {
                     helpText='Paste from another visualization to copy settings, or set to "undefined".'
                     required
                 />
-                {/* <QuillTextInput
+                <QuillTextInput
                     name="caption"
                     label="Caption"
                     value={djangoFormData.caption}
-                    onChange={e => {
-                        updateDjangoFormData(e.target.name, e.target.value);
+                    onChange={value => {
+                        updateDjangoFormData("caption", value);
                     }}
-                /> */}
+                />
                 <CheckboxInput
                     name="published"
                     label="Publish visual for public viewing"

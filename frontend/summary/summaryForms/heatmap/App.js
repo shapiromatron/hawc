@@ -24,13 +24,13 @@ class App extends Component {
                         <OverallPanel />
                     </TabPanel>
                     <TabPanel>
-                        <h1>Tab 2</h1>
+                        <h1>Data</h1>
                     </TabPanel>
                     <TabPanel>
-                        <h1>Tab 3</h1>
+                        <h1>Figure customization</h1>
                     </TabPanel>
                     <TabPanel>
-                        <h1>Tab 4</h1>
+                        <h1>Preview</h1>
                     </TabPanel>
                 </Tabs>
                 <div className="form-actions">

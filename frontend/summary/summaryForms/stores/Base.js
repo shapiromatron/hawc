@@ -1,3 +1,4 @@
+import $ from "$";
 import {observable, action, computed} from "mobx";
 
 class BaseStore {
@@ -25,6 +26,7 @@ class BaseStore {
             title: initial_data.title,
             slug: initial_data.slug,
             settings: JSON.stringify(initial_data.settings),
+            caption: initial_data.caption,
             published: initial_data.published,
         };
         this.subclass.setInitialData(initial_data);
@@ -35,8 +37,14 @@ class BaseStore {
     @action updateDjangoFormData = (name, value) => {
         this.djangoFormData[name] = value;
     };
-    @action handleSubmit() {
-        console.log("submit!");
+    @action.bound handleSubmit() {
+        const $form = $(this.djangoForm);
+        $form.find("#id_title").val(this.djangoFormData.title);
+        $form.find("#id_slug").val(this.djangoFormData.slug);
+        $form.find("#id_settings").val(this.djangoFormData.settings);
+        $form.find("#id_caption").val(this.djangoFormData.caption);
+        $form.find("#id_published").prop("checked", this.djangoFormData.published);
+        $form.submit();
     }
 
     @action getDataset() {}
