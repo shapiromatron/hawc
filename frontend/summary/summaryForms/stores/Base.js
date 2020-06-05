@@ -1,5 +1,8 @@
+import fetch from "isomorphic-fetch";
 import $ from "$";
 import {observable, action, computed} from "mobx";
+
+import h from "mgmt/utils/helpers";
 
 class BaseStore {
     constructor(rootStore) {
@@ -8,10 +11,10 @@ class BaseStore {
 
     config = null;
     djangoForm = null;
-    get subclass() {
-        return this.root.subclass;
-    }
 
+    @observable dataError = null;
+    @observable isFetchingData = false;
+    @observable dataUrl = null;
     @observable dataRefreshRequired = false;
     @observable dataset = null;
     @observable djangoFormData = {};
@@ -29,7 +32,7 @@ class BaseStore {
             caption: initial_data.caption,
             published: initial_data.published,
         };
-        this.subclass.setInitialData(initial_data);
+        this.root.subclass.setInitialData(initial_data);
     }
     @action setDjangoForm = djangoForm => {
         this.djangoForm = djangoForm;
@@ -47,10 +50,36 @@ class BaseStore {
         $form.submit();
     }
 
-    @action getDataset() {}
+    @action.bound getDataset() {
+        this.isFetchingData = true;
+        fetch(this.dataUrl, h.fetchGet)
+            .then(response => response.json())
+            .then(json => {
+                this.dataset = json;
+                this.dataRefreshRequired = false;
+            })
+            .catch(error => {
+                this.setDataError(error);
+            })
+            .finally(() => {
+                this.isFetchingData = false;
+            });
+    }
+    @action.bound setDataError(dataError) {
+        this.dataError = dataError;
+    }
+    @action setDataRefreshRequired() {
+        this.dataRefreshRequired = true;
+    }
 
     @computed get hasDataset() {
         return this.dataset !== null;
+    }
+    @computed get isDataReady() {
+        return this.hasDataset && !this.dataRefreshRequired;
+    }
+    @computed get canFetchData() {
+        return this.dataUrl && this.dataUrl.length > 0;
     }
     @computed get isCreate() {
         return this.config.crud === "Create";
