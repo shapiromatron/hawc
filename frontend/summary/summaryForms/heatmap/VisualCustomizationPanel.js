@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import React, {Component} from "react";
 import {inject, observer} from "mobx-react";
-
+import TextInput from "shared/components/TextInput";
 import {MissingData, RefreshRequired} from "./common";
 
 @inject("store")
@@ -9,13 +9,13 @@ import {MissingData, RefreshRequired} from "./common";
 class VisualCustomizationPanel extends Component {
     render() {
         const {hasDataset, dataRefreshRequired} = this.props.store.base;
-        let renderMethod;
+        let content;
         if (!hasDataset) {
-            renderMethod = this.renderMissingData;
+            content = <MissingData />;
         } else if (dataRefreshRequired) {
-            renderMethod = this.renderRefreshRequired;
+            content = <RefreshRequired />;
         } else {
-            renderMethod = this.renderForm;
+            content = this.renderForm();
         }
         return (
             <div>
@@ -23,18 +23,34 @@ class VisualCustomizationPanel extends Component {
                 <p className="help-block">
                     Customize the look, feel, and layout of the current visual.
                 </p>
-                {renderMethod()}
+                {content}
             </div>
         );
     }
-    renderMissingData() {
-        return <MissingData />;
-    }
-    renderRefreshRequired() {
-        return <RefreshRequired />;
-    }
     renderForm() {
-        return <p>Render form</p>;
+        const {settings, changeSettings} = this.props.store.subclass;
+        return (
+            <div>
+                <TextInput
+                    name="title"
+                    label="Title"
+                    value={settings.title}
+                    onChange={e => changeSettings(e.target.name, e.target.value)}
+                />
+                <TextInput
+                    name="x_label"
+                    label="X label"
+                    value={settings.x_label}
+                    onChange={e => changeSettings(e.target.name, e.target.value)}
+                />
+                <TextInput
+                    name="y_label"
+                    label="Y label"
+                    value={settings.y_label}
+                    onChange={e => changeSettings(e.target.name, e.target.value)}
+                />
+            </div>
+        );
     }
 }
 VisualCustomizationPanel.propTypes = {

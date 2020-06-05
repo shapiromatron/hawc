@@ -12,11 +12,28 @@ import PreviewPanel from "./PreviewPanel";
 class App extends Component {
     render() {
         const {cancel_url} = this.props.store.base.config,
-            {handleSubmit} = this.props.store.base;
+            {handleSubmit} = this.props.store.base,
+            handleTabSelection = (selectedIndex, lastIndex) => {
+                const {base} = this.props.store;
+                switch (lastIndex) {
+                    case 0:
+                        base.onTabChangeFromOverall();
+                        break;
+                    case 1:
+                        base.onTabChangeFromData();
+                        break;
+                    case 2:
+                        base.onTabChangeFigureCustomization();
+                        break;
+                    case 3:
+                        return base.onTabChangeFromPreview();
+                        break;
+                }
+            };
 
         return (
             <div>
-                <Tabs onSelect={this.handleTabSelection}>
+                <Tabs onSelect={handleTabSelection}>
                     <TabList>
                         <Tab>Overall</Tab>
                         <Tab>Data</Tab>
