@@ -1,4 +1,5 @@
 import json
+from typing import Dict
 
 from django.http import Http404, HttpResponse, HttpResponseNotAllowed, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
@@ -16,7 +17,7 @@ from ..common.views import (
     TeamMemberOrHigherMixin,
 )
 from ..riskofbias.models import RiskOfBiasMetric
-from . import forms, models
+from . import forms, models, serializers
 
 
 # SUMMARY-TEXT
@@ -178,7 +179,15 @@ class VisualizationCreate(BaseCreate):
         context["rob_metrics"] = json.dumps(
             list(RiskOfBiasMetric.objects.get_metrics_for_visuals(self.assessment.id))
         )
+        context["initial_data"] = json.dumps(self.get_initial_visual(context))
         return context
+
+    def get_initial_visual(self, context) -> Dict:
+        instance = self.model()
+        instance.id = 999999999999
+        instance.assessment = self.assessment
+        instance.visual_type = context["visual_type"]
+        return serializers.VisualSerializer().to_representation(instance)
 
 
 class VisualizationCreateTester(VisualizationCreate):
@@ -221,6 +230,9 @@ class VisualizationUpdate(BaseUpdate):
         context["smart_tag_form"] = forms.SmartTagForm(assessment_id=self.assessment.id)
         context["rob_metrics"] = json.dumps(
             list(RiskOfBiasMetric.objects.get_metrics_for_visuals(self.assessment.id))
+        )
+        context["initial_data"] = json.dumps(
+            serializers.VisualSerializer().to_representation(self.object)
         )
         return context
 

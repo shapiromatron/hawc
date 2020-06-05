@@ -45,11 +45,10 @@
   </div>
 </div>
 
-<div id="formMount" style="display:none;"></div>
+<div id="main" style="display:none;"></div>
 {% include "summary/_smartTagEditModal.html" with form=smart_tag_form only %}
 
 {% endblock %}
-
 
 {% block extrajs %}
   {{ smart_tag_form.media }}
@@ -61,31 +60,45 @@
           "dose_units": {{dose_units|safe}},
           "instance": {{instance|safe}},
           "visual_type": {{visual_type}},
-          "cancel_url": "{% url 'summary:visualization_list' pk=assessment.id %}",
+          "cancel_url": "{% if crud == "Create" %}{% url 'summary:visualization_list' pk=assessment.id %}{% else %}{{object.get_absolute_url}}{% endif %}",
           "data_url": "{% url 'summary:api:visual-list' %}",
           "endpoint_url": "{% url 'selectable-lookup' 'animal-endpointidbyassessmentlookup' %}",
           "preview_url": "{% url 'summary:visualization_create_tester' assessment.id visual_type %}",
-          "rob_metrics": {{rob_metrics|safe}}
+          "rob_metrics": {{rob_metrics|safe}},
+          "initial_data": {{initial_data|safe}}
       }
   </script>
   <script type="text/javascript">
     window.app.summaryFormsStartup(function(summaryForms){
-      {% if crud == "Create" %}
-        $('#id_title').on('keyup', function(){
+      const config = JSON.parse(document.getElementById("config").textContent),
+        djangoForm = $('#data form').get(0),
+        mainElement = $("#main");
+
+      if (config.visual_type === 6){
+        window.app.summaryFormsStartup(function (summaryForms) {
+          summaryForms.exploratoryHeatmapFormAppStartup(mainElement.get(0), config, djangoForm);
+          mainElement.show();
+        });
+      } else if (config.visual_type == 0){
+        mainElement.show();
+        summaryForms.VisualForm.create(config.visual_type, mainElement, config);
+      } else {
+        const mountElement = $('.tabbable');
+        mountElement.show();
+        summaryForms.VisualForm.create(config.visual_type, mountElement, config);
+      }
+
+      if (config.visual_type !== 6) {
+        window.app.smartTagsStartup(function (smartTags) {
+          new smartTags.SmartTagEditor($('#id_caption'), { submitEl: '#visualForm' });
+        });
+
+        {% if crud == "Create" %}
+        $('#id_title').on('keyup', function () {
           $('#id_slug').val(URLify($(this).val(), 50));
         });
-      {% endif %}
-
-      const config = JSON.parse(document.getElementById("config").textContent),
-        mountElement = config.visual_type == 0 ? $('#formMount') : $('.tabbable');
-
-      mountElement.show();
-
-      summaryForms.VisualForm.create(config.visual_type, mountElement, config);
-
-      window.app.smartTagsStartup(function(smartTags){
-          new smartTags.SmartTagEditor($('#id_caption'), {submitEl: '#visualForm'});
-      })
+        {% endif %}
+      }
     });
   </script>
 {% endblock %}
