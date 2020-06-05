@@ -38,7 +38,7 @@ class StyleSymbol {
         var settings = {},
             fields = ["name", "size", "fill", "fill-opacity", "stroke", "stroke-width"];
         for (var i = 0; i < fields.length; i++) {
-            settings[fields[i]] = this.$modal.find('input[name="{0}"]'.printf(fields[i])).val();
+            settings[fields[i]] = this.$modal.find(`input[name="${fields[i]}"]`).val();
         }
         settings.type = this.$modal.find('select[name="type"] option:selected').val();
         return settings;
@@ -49,7 +49,7 @@ class StyleSymbol {
             set = this.settings,
             add_horizontal_field = function(label_text, html_obj) {
                 return $('<div class="control-group"></div>')
-                    .append('<label class="control-label">{0}</label>'.printf(label_text))
+                    .append(`<label class="control-label">${label_text}</label>`)
                     .append($('<div class="controls"></div>').append(html_obj));
             },
             image_div = $("<div></div>"),
@@ -77,9 +77,7 @@ class StyleSymbol {
                 "Size",
                 DataPivot.rangeInputDiv(
                     $(
-                        '<input name="size" type="range" min="0" max="500" step="5" value="{0}">'.printf(
-                            set.size
-                        )
+                        `<input name="size" type="range" min="0" max="500" step="5" value="${set.size}">`
                     )
                 )
             )
@@ -95,15 +93,12 @@ class StyleSymbol {
             '<option value="triangle-up">triangle-up</option>',
         ]);
 
-        type.find('option[value="{0}"]'.printf(set.type)).prop("selected", true);
+        type.find(`option[value="${set.type}"]`).prop("selected", true);
         form.append(add_horizontal_field("Type", type));
 
         //fill
         form.append(
-            add_horizontal_field(
-                "Fill",
-                $('<input name="fill" type="color" value="{0}">'.printf(set.fill))
-            )
+            add_horizontal_field("Fill", $(`<input name="fill" type="color" value="${set.fill}">`))
         );
 
         //fill-opacity
@@ -112,9 +107,7 @@ class StyleSymbol {
                 "Fill-opacity",
                 DataPivot.rangeInputDiv(
                     $(
-                        '<input name="fill-opacity" type="range" min="0" max="1" step="0.05" value="{0}">'.printf(
-                            set["fill-opacity"]
-                        )
+                        `<input name="fill-opacity" type="range" min="0" max="1" step="0.05" value="${set["fill-opacity"]}">`
                     )
                 )
             )
@@ -124,7 +117,7 @@ class StyleSymbol {
         form.append(
             add_horizontal_field(
                 "Stroke",
-                $('<input name="stroke" type="color" value="{0}">'.printf(set.stroke))
+                $(`<input name="stroke" type="color" value="${set.stroke}">`)
             )
         );
 
@@ -134,9 +127,7 @@ class StyleSymbol {
                 "Stroke-width",
                 DataPivot.rangeInputDiv(
                     $(
-                        '<input name="stroke-width" type="range" min="0" max="10" step="0.5" value="{0}">'.printf(
-                            set["stroke-width"]
-                        )
+                        `<input name="stroke-width" type="range" min="0" max="10" step="0.5" value="${set["stroke-width"]}">`
                     )
                 )
             )
@@ -205,7 +196,7 @@ class StyleText {
         var settings = {},
             fields = ["name", "font-size", "fill", "fill-opacity", "rotate"];
         for (var i = 0; i < fields.length; i++) {
-            settings[fields[i]] = this.$modal.find('input[name="{0}"]'.printf(fields[i])).val();
+            settings[fields[i]] = this.$modal.find(`input[name="${fields[i]}"]`).val();
         }
         settings["font-size"] = settings["font-size"] + "px";
         settings["text-anchor"] = this.$modal
@@ -222,7 +213,7 @@ class StyleText {
             set = this.settings,
             add_horizontal_field = function(label_text, html_obj) {
                 return $('<div class="control-group"></div>')
-                    .append('<label class="control-label">{0}</label>'.printf(label_text))
+                    .append(`<label class="control-label">${label_text}</label>`)
                     .append($('<div class="controls"></div>').append(html_obj));
             },
             image_div = $("<div></div>"),
@@ -245,14 +236,13 @@ class StyleText {
         update_title();
 
         //size
+        const val = parseInt(set["font-size"], 10);
         form.append(
             add_horizontal_field(
                 "Font Size",
                 DataPivot.rangeInputDiv(
                     $(
-                        '<input name="font-size" type="range" min="8" max="20" step="1" value="{0}">'.printf(
-                            parseInt(set["font-size"], 10)
-                        )
+                        `<input name="font-size" type="range" min="8" max="20" step="1" value="${val}">`
                     )
                 )
             )
@@ -260,10 +250,7 @@ class StyleText {
 
         //fill
         form.append(
-            add_horizontal_field(
-                "Fill",
-                $('<input name="fill" type="color" value="{0}">'.printf(set.fill))
-            )
+            add_horizontal_field("Fill", $(`<input name="fill" type="color" value="${set.fill}">`))
         );
 
         //fill opacity
@@ -272,9 +259,7 @@ class StyleText {
                 "Fill opacity",
                 DataPivot.rangeInputDiv(
                     $(
-                        '<input name="fill-opacity" type="range" min="0" max="1" step="0.05" value="{0}">'.printf(
-                            set["fill-opacity"]
-                        )
+                        `<input name="fill-opacity" type="range" min="0" max="1" step="0.05" value="${set["fill-opacity"]}">`
                     )
                 )
             )
@@ -286,7 +271,7 @@ class StyleText {
             '<option value="middle">middle</option>',
             '<option value="end">end</option>',
         ]);
-        text_anchor.find('option[value="{0}"]'.printf(set["text-anchor"])).prop("selected", true);
+        text_anchor.find(`option[value="${set["text-anchor"]}"]`).prop("selected", true);
         form.append(add_horizontal_field("Type", text_anchor));
 
         //text-anchor
@@ -294,7 +279,7 @@ class StyleText {
             '<option value="normal">normal</option>',
             '<option value="bold">bold</option>',
         ]);
-        font_weight.find('option[value="{0}"]'.printf(set["font-weight"])).prop("selected", true);
+        font_weight.find(`option[value="${set["font-weight"]}"]`).prop("selected", true);
         form.append(add_horizontal_field("Type", font_weight));
 
         //rotate
@@ -303,9 +288,7 @@ class StyleText {
                 "Rotation",
                 DataPivot.rangeInputDiv(
                     $(
-                        '<input name="rotate" type="range" min="0" max="360" step="15" value="{0}">'.printf(
-                            set.rotate
-                        )
+                        `<input name="rotate" type="range" min="0" max="360" step="15" value="${set.rotate}">`
                     )
                 )
             )
@@ -358,7 +341,7 @@ class StyleLine {
         var settings = {},
             fields = ["name", "stroke", "stroke-width", "stroke-opacity"];
         for (var i = 0; i < fields.length; i++) {
-            settings[fields[i]] = this.$modal.find('input[name="{0}"]'.printf(fields[i])).val();
+            settings[fields[i]] = this.$modal.find(`input[name="${fields[i]}"]`).val();
         }
         settings["stroke-dasharray"] = this.$modal
             .find('select[name="stroke-dasharray"] option:selected')
@@ -371,7 +354,7 @@ class StyleLine {
             set = this.settings,
             add_horizontal_field = function(label_text, html_obj) {
                 return $('<div class="control-group"></div>')
-                    .append('<label class="control-label">{0}</label>'.printf(label_text))
+                    .append(`<label class="control-label">${label_text}</label>`)
                     .append($('<div class="controls"></div>').append(html_obj));
             },
             image_div = $("<div></div>"),
@@ -397,7 +380,7 @@ class StyleLine {
         form.append(
             add_horizontal_field(
                 "Stroke",
-                $('<input name="stroke" type="color" value="{0}">'.printf(set.stroke))
+                $(`<input name="stroke" type="color" value="${set.stroke}">`)
             )
         );
 
@@ -407,9 +390,7 @@ class StyleLine {
                 "Stroke-width",
                 DataPivot.rangeInputDiv(
                     $(
-                        '<input name="stroke-width" type="range" min="0" max="10" step="0.5" value="{0}">'.printf(
-                            set["stroke-width"]
-                        )
+                        `<input name="stroke-width" type="range" min="0" max="10" step="0.5" value="${set["stroke-width"]}">`
                     )
                 )
             )
@@ -421,9 +402,7 @@ class StyleLine {
                 "Stroke-opacity",
                 DataPivot.rangeInputDiv(
                     $(
-                        '<input name="stroke-opacity" type="range" min="0" max="1" step="0.05" value="{0}">'.printf(
-                            set["stroke-opacity"]
-                        )
+                        `<input name="stroke-opacity" type="range" min="0" max="1" step="0.05" value="${set["stroke-opacity"]}">`
                     )
                 )
             )
@@ -436,9 +415,7 @@ class StyleLine {
             '<option value="2, 3">dotted</option>',
             '<option value="15, 10, 5, 10">dash-dotted</option>',
         ]);
-        line_style
-            .find('option[value="{0}"]'.printf(set["stroke-dasharray"]))
-            .prop("selected", true);
+        line_style.find(`option[value="${set["stroke-dasharray"]}"]`).prop("selected", true);
         form.append(add_horizontal_field("Line style", line_style));
 
         this.controls = form;
@@ -478,7 +455,7 @@ class StyleRectangle {
         var settings = {},
             fields = ["name", "fill", "fill-opacity", "stroke", "stroke-width"];
         for (var i = 0; i < fields.length; i++) {
-            settings[fields[i]] = this.$modal.find('input[name="{0}"]'.printf(fields[i])).val();
+            settings[fields[i]] = this.$modal.find(`input[name="${fields[i]}"]`).val();
         }
         return settings;
     }
@@ -488,12 +465,13 @@ class StyleRectangle {
             set = this.settings,
             add_horizontal_field = function(label_text, html_obj) {
                 return $('<div class="control-group"></div>')
-                    .append('<label class="control-label">{0}</label>'.printf(label_text))
+                    .append(`<label class="control-label">${label_text}</label>`)
                     .append($('<div class="controls"></div>').append(html_obj));
             },
             image_div = $("<div></div>"),
             sv = new StyleViewer(image_div, this),
-            self = this;
+            self = this,
+            value;
 
         //image
         form.append(image_div).on("change", "input,select", function() {
@@ -512,21 +490,17 @@ class StyleRectangle {
 
         //fill
         form.append(
-            add_horizontal_field(
-                "Fill",
-                $('<input name="fill" type="color" value="{0}">'.printf(set.fill))
-            )
+            add_horizontal_field("Fill", $(`<input name="fill" type="color" value="${set.fill}">`))
         );
 
         //fill-opacity
+        value = set["fill-opacity"];
         form.append(
             add_horizontal_field(
                 "Fill-opacity",
                 DataPivot.rangeInputDiv(
                     $(
-                        '<input name="fill-opacity" type="range" min="0" max="1" step="0.1" value="{0}">'.printf(
-                            set["fill-opacity"]
-                        )
+                        `<input name="fill-opacity" type="range" min="0" max="1" step="0.1" value="${value}">`
                     )
                 )
             )
@@ -536,19 +510,18 @@ class StyleRectangle {
         form.append(
             add_horizontal_field(
                 "Stroke",
-                $('<input name="stroke" type="color" value="{0}">'.printf(set.stroke))
+                $(`<input name="stroke" type="color" value="${set.stroke}">`)
             )
         );
 
         //stroke-width
+        value = set["stroke-width"];
         form.append(
             add_horizontal_field(
                 "Stroke-width",
                 DataPivot.rangeInputDiv(
                     $(
-                        '<input name="stroke-width" type="range" min="0" max="10" step="0.5" value="{0}">'.printf(
-                            set["stroke-width"]
-                        )
+                        `<input name="stroke-width" type="range" min="0" max="10" step="0.5" value="${value}">`
                     )
                 )
             )

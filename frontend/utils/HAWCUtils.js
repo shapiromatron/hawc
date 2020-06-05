@@ -3,6 +3,8 @@ import _ from "lodash";
 import d3 from "d3";
 import slugify from "slugify";
 
+import renderChemicalDetails from "./components/ChemicalDetails";
+
 class HAWCUtils {
     static HAWC_NEW_WINDOW_POPUP_CLOSING = "hawcNewWindowPopupClosing";
 
@@ -33,7 +35,7 @@ class HAWCUtils {
         // builds a string of breadcrumb hyperlinks for navigation
         var links = [];
         arr.forEach(function(v) {
-            links.push('<a target="_blank" href="{0}">{1}</a>'.printf(v.url, v.name));
+            links.push(`<a target="_blank" href="${v.url}">${v.name}</a>`);
         });
         return links.join("<span> / </span>");
     }
@@ -45,7 +47,7 @@ class HAWCUtils {
         submitter.on("click", function() {
             var val = parseInt(selector_val.val(), 10);
             if (val) {
-                submitter.attr("href", "{0}?initial={1}".printf(config.base_url, val));
+                submitter.attr("href", `${config.base_url}?initial=${val}`);
                 return true;
             }
             return false;
@@ -67,13 +69,9 @@ class HAWCUtils {
         var $menu = $('<ul class="dropdown-menu">');
         items.forEach(function(d) {
             if (d instanceof Object) {
-                $menu.append(
-                    '<li><a href="{0}" class="{1}">{2}</a></li>'.printf(d.url, d.cls || "", d.text)
-                );
+                $menu.append(`<li><a href="${d.url}" class="${d.cls || ""}">${d.text}</a></li>`);
             } else if (typeof d === "string") {
-                $menu.append(
-                    '<li class="disabled"><a tabindex="-1" href="#">{0}</a></li>'.printf(d)
-                );
+                $menu.append(`<li class="disabled"><a tabindex="-1" href="#">${d}</a></li>`);
             } else {
                 console.error("unknown input type");
             }
@@ -99,29 +97,21 @@ class HAWCUtils {
     }
 
     static renderChemicalProperties(url, $div, show_header) {
-        $.get(url, function(data) {
-            if (data.status === "success") {
-                var content = [],
-                    ul = $("<ul>");
+        const handleResponse = function(data) {
+                if (data.status === "requesting") {
+                    setTimeout(tryToFetch, 1000);
+                }
+                if (data.status === "success") {
+                    renderChemicalDetails($div.get(0), data.content, show_header);
+                }
+            },
+            tryToFetch = () => {
+                fetch(url)
+                    .then(resp => resp.json())
+                    .then(handleResponse);
+            };
 
-                ul.append(`<li><b>Common name:</b> ${data.CommonName}</li>`)
-                    .append(`<li><b>CASRN:</b> ${data.CASRN}</li>`)
-                    .append(
-                        `<li><b>DTXSID:</b> <a target="_blank" href="https://comptox.epa.gov/dashboard/dsstoxdb/results?search=${data.DTXSID}">${data.DTXSID}</a></li>`
-                    )
-                    .append(`<li><b>SMILES:</b> ${data.SMILES}</li>`)
-                    .append(`<li><b>Molecular Weight:</b> ${data.MW}</li>`)
-                    .append(`<li><img src="data:image/jpeg;base64,${data.image}"></li>`);
-
-                if (show_header) content.push("<h3>Chemical Properties Information</h3>");
-
-                content.push(
-                    ul,
-                    `<p class="help-block">Chemical information provided by <a target="_blank" href="https://comptox.epa.gov/dashboard/">USEPA Chemicals Dashboard</a></p>`
-                );
-                $div.html(content);
-            }
-        });
+        tryToFetch();
     }
 
     static updateDragLocationTransform(setDragCB) {
@@ -231,7 +221,8 @@ class HAWCUtils {
     }
 
     static buildUL(lst, func) {
-        return "<ul>{0}</ul>".printf(_.map(lst, func).join(""));
+        const items = _.map(lst, func).join("");
+        return `<ul>${items}</ul>`;
     }
 
     static isHTML(str) {
@@ -266,6 +257,14 @@ class HAWCUtils {
             }
         }
         return null;
+    }
+
+    static printf(str) {
+        // https://stackoverflow.com/a/4673436/906385
+        const args = Array.prototype.slice.call(arguments, 1);
+        return str.replace(/{(\d+)}/g, (match, number) =>
+            typeof args[number] !== "undefined" ? args[number] : match
+        );
     }
 }
 

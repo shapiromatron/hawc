@@ -28,6 +28,7 @@ class MetaResultFlatComplete(FlatFileExporter):
 
             if len(ser["single_results"]) == 0:
                 # print one-row with no single-results
+                row.extend([None] * 10)
                 rows.append(row)
             else:
                 # print each single-result as a new row
@@ -35,6 +36,7 @@ class MetaResultFlatComplete(FlatFileExporter):
                     row_copy = list(row)  # clone
                     row_copy.extend(models.SingleResult.flat_complete_data_row(sr))
                     rows.append(row_copy)
+
         return rows
 
 

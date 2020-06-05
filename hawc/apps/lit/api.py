@@ -8,8 +8,9 @@ from rest_framework.response import Response
 from ..assessment.api import AssessmentLevelPermissions, AssessmentRootedTagTreeViewset
 from ..assessment.models import Assessment
 from ..common.api import CleanupFieldsBaseViewSet, LegacyAssessmentAdapterMixin
-from ..common.helper import FlatExport
+from ..common.helper import FlatExport, re_digits
 from ..common.renderers import PandasRenderers
+from ..common.serializers import UnusedSerializer
 from . import exports, models, serializers
 
 
@@ -17,6 +18,8 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
     parent_model = Assessment
     model = Assessment
     permission_classes = (AssessmentLevelPermissions,)
+    serializer_class = UnusedSerializer
+    lookup_value_regex = re_digits
 
     def get_queryset(self):
         return self.model.objects.all()
@@ -149,10 +152,11 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         return Response(exporter.build_export())
 
 
-class SearchViewset(viewsets.GenericViewSet, mixins.CreateModelMixin, mixins.RetrieveModelMixin):
+class SearchViewset(mixins.CreateModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     model = models.Search
     serializer_class = serializers.SearchSerializer
     permission_classes = (AssessmentLevelPermissions,)
+    lookup_value_regex = re_digits
 
     def get_queryset(self):
         return self.model.objects.all()
@@ -175,12 +179,41 @@ class SearchViewset(viewsets.GenericViewSet, mixins.CreateModelMixin, mixins.Ret
         return Response(exporter.build_export())
 
 
-class ReferenceFilterTag(AssessmentRootedTagTreeViewset):
+class ReferenceFilterTagViewset(AssessmentRootedTagTreeViewset):
     model = models.ReferenceFilterTag
     serializer_class = serializers.ReferenceFilterTagSerializer
 
+    @action(detail=True, renderer_classes=PandasRenderers)
+    def references(self, request, pk):
+        """
+        Return all references for a selected tag; does not include tag-descendants.
+        """
+        tag = self.get_object()
+        exporter = exports.ReferenceFlatComplete(
+            queryset=models.Reference.objects.filter(tags=tag),
+            filename=f"{self.assessment}-{tag.slug}",
+            assessment=self.assessment,
+            tags=self.model.get_all_tags(self.assessment.id, json_encode=False),
+            include_parent_tag=False,
+        )
+        return Response(exporter.build_export())
 
-class ReferenceCleanup(CleanupFieldsBaseViewSet):
+    @action(detail=True, url_path="references-table-builder", renderer_classes=PandasRenderers)
+    def references_table_builder(self, request, pk):
+        """
+        Return all references for a selected tag in table-builder import format; does not include
+        tag-descendants.
+        """
+        tag = self.get_object()
+        exporter = exports.TableBuilderFormat(
+            queryset=models.Reference.objects.filter(tags=tag),
+            filename=f"{self.assessment}-{tag.slug}",
+            assessment=self.assessment,
+        )
+        return Response(exporter.build_export())
+
+
+class ReferenceCleanupViewset(CleanupFieldsBaseViewSet):
     serializer_class = serializers.ReferenceCleanupFieldsSerializer
     model = models.Reference
     assessment_filter_args = "assessment"

@@ -138,7 +138,7 @@ class TestClient(LiveServerTestCase, TestCase):
         assert isinstance(response, pd.DataFrame)
 
     def test_lit_import_reference_tags(self):
-        csv = "reference_id,tag_id\n2,14"
+        csv = "reference_id,tag_id\n5,14"
         client = HawcClient(self.live_server_url)
         client.authenticate("pm@pm.com", "pw")
         response = client.lit.import_reference_tags(
@@ -178,3 +178,15 @@ class TestClient(LiveServerTestCase, TestCase):
         client = HawcClient(self.live_server_url)
         response = client.summary.visual_list(self.db_keys.assessment_client)
         assert isinstance(response, pd.DataFrame)
+
+    #####################
+    # StudyClient tests #
+    #####################
+
+    def test_study_create(self):
+        client = HawcClient(self.live_server_url)
+        client.authenticate("pm@pm.com", "pw")
+        response = client.study.create(
+            self.db_keys.reference_unlinked, "short citation", "full citation"
+        )
+        assert isinstance(response, dict)

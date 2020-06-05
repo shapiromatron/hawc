@@ -186,7 +186,7 @@ td.scorecell {
 }
 
 td.domain_cell {
-    color: #757575;
+    color: #404040;
 }
 
 ol.score-details {
@@ -207,7 +207,7 @@ path.metric_arc {
 }
 
 text.domain_arc {
-    fill: #757575;
+    fill: #404040;
 }
 
 path.donuts.hovered {

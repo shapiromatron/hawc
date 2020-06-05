@@ -97,14 +97,14 @@ class EndpointAggregationExposureResponsePlot extends D3Visualization {
                 }
 
                 //setup lines information for dose-response line (excluding control)
+                const shortCitation = e.data.animal_group.experiment.study.short_citation,
+                    experimentName = e.data.animal_group.experiment.name,
+                    animalGroup = e.data.animal_group.name,
+                    endpointName = e.data.name;
+
                 lines_data.push({
                     y: e.data.id,
-                    name: "{0}- {1}- {2}: {3}".printf(
-                        e.data.animal_group.experiment.study.short_citation,
-                        e.data.animal_group.experiment.name,
-                        e.data.animal_group.name,
-                        e.data.name
-                    ),
+                    name: `${shortCitation}- ${experimentName}- ${animalGroup}: ${endpointName}`,
                     x_lower: egs[1].dose,
                     x_upper: egs[egs.length - 1].dose,
                 });
@@ -182,10 +182,10 @@ class EndpointAggregationExposureResponsePlot extends D3Visualization {
             w: plot_width,
             h: plot_height,
             title_str: this.data.title,
-            x_label_text: "Dose ({0})".printf(dose_units),
+            x_label_text: `Dose (${dose_units})`,
             y_label_text: "Endpoints",
         });
-        this.plot_div.css({height: "{0}px".printf(container_height)});
+        this.plot_div.css({height: `${container_height}px`});
     }
 
     toggle_x_axis() {

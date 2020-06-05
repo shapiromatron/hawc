@@ -1,32 +1,27 @@
 import json
-from typing import NamedTuple
+from typing import List, NamedTuple
 
+import pandas as pd
 from django.apps import apps
 from django.conf import settings
 from django.contrib.contenttypes import fields
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.postgres.fields import JSONField
 from django.core.cache import cache
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
-from django.utils.http import urlquote
+from pydantic import BaseModel as PydanticModel
 from reversion import revisions as reversion
 
+from ..common.dsstox import get_casrn_url
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper
-from ..common.models import get_crumbs
+from ..common.models import get_crumbs, get_private_data_storage
 from ..myuser.models import HAWCUser
 from . import managers
 from .tasks import add_time_spent
-
-
-def get_cas_url(cas):
-    if cas:
-        return f"{reverse('assessment:cas_details')}?cas={urlquote(cas)}"
-    else:
-        return None
-
 
 NOEL_NAME_CHOICES_NOEL = 0
 NOEL_NAME_CHOICES_NOAEL = 1
@@ -207,9 +202,8 @@ class Assessment(models.Model):
     def get_absolute_url(self):
         return reverse("assessment:detail", args=[str(self.pk)])
 
-    @property
-    def cas_url(self):
-        return get_cas_url(self.cas)
+    def get_casrn_url(self):
+        return get_casrn_url(self.cas)
 
     class Meta:
         ordering = ("-created",)
@@ -283,6 +277,17 @@ class Assessment(models.Model):
                 or (user in self.team_members.all())
                 or (user in self.reviewers.all())
             )
+
+    def user_is_team_member_or_higher(self, user) -> bool:
+        """
+        Check if user is superuser, project-manager, or team-member, otherwise False.
+        """
+        if user.is_superuser:
+            return True
+        elif user.is_anonymous:
+            return False
+        else:
+            return user in self.project_manager.all() or user in self.team_members.all()
 
     def get_crumbs(self):
         return get_crumbs(self)
@@ -551,8 +556,158 @@ class TimeSpentEditing(models.Model):
             cache.delete(cache_name)
 
 
+class Dataset(models.Model):
+    """
+    An external Dataset
+    """
+
+    assessment = models.ForeignKey(
+        Assessment, editable=False, related_name="datasets", on_delete=models.CASCADE
+    )
+    name = models.CharField(max_length=256)
+    description = models.TextField(blank=True)
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    VALID_EXTENSIONS = {".xlsx", ".csv", ".tsv"}
+
+    class Meta:
+        ordering = ("created",)
+        unique_together = (("assessment", "name"),)
+
+    def __str__(self) -> str:
+        return self.name
+
+    def get_absolute_url(self) -> str:
+        return reverse("assessment:dataset_detail", args=(self.id,))
+
+    def get_edit_url(self) -> str:
+        return reverse("assessment:dataset_update", args=(self.id,))
+
+    def get_delete_url(self) -> str:
+        return reverse("assessment:dataset_delete", args=(self.id,))
+
+    def get_assessment(self) -> Assessment:
+        return self.assessment
+
+    def get_api_detail_url(self) -> str:
+        return reverse("assessment:api:dataset-detail", args=(self.id,))
+
+    def get_api_data_url(self) -> str:
+        return reverse("assessment:api:dataset-data", args=(self.id,))
+
+    def get_crumbs(self):
+        return get_crumbs(self, parent=self.assessment)
+
+    def get_latest_revision(self) -> "DatasetRevision":
+        return self.revisions.latest()
+
+    def get_new_version_value(self) -> int:
+        try:
+            return self.get_latest_revision().version + 1
+        except models.ObjectDoesNotExist:
+            return 1
+
+    def get_latest_df(self) -> pd.DataFrame:
+        return self.get_latest_revision().get_df()
+
+
+class DatasetRevision(models.Model):
+    """
+    A specific external dataset revision
+    """
+
+    dataset = models.ForeignKey(Dataset, on_delete=models.CASCADE, related_name="revisions")
+    version = models.PositiveSmallIntegerField(
+        help_text="""The uploaded file is versioned; this is the version of the dataset currently
+            being edited.""",
+    )
+    data = models.FileField(
+        upload_to="assessment/dataset-revision",
+        storage=get_private_data_storage(),
+        help_text=f"""Upload a dataset ({", ".join(sorted(Dataset.VALID_EXTENSIONS))}).
+            Dataset versions cannot be deleted, but if users are not team members, only the most
+            recent dataset version will be visible. Visualizations using a dataset will use the
+            latest version available.""",
+    )
+    metadata = JSONField(default=dict, editable=False)
+    excel_worksheet_name = models.CharField(
+        help_text="Worksheet name to use in Excel file. If blank, the first worksheet is used.",
+        max_length=64,
+        blank=True,
+    )
+    notes = models.TextField(
+        blank=True,
+        help_text="""Notes on specific revision. For example, describe what's different from a
+            previous version. After save, cannot be edited.""",
+    )
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ("created",)
+        get_latest_by = "created"
+        unique_together = (("dataset", "version"),)
+
+    class Metadata(PydanticModel):
+        filename: str
+        extension: str
+        num_rows: int
+        num_columns: int
+        column_names: List[str]
+
+    def __str__(self) -> str:
+        return f"{self.dataset}: v{self.version}"
+
+    def get_api_data_url(self) -> str:
+        return reverse("assessment:api:dataset-version", args=(self.dataset_id, self.version))
+
+    def get_df(self) -> pd.DataFrame:
+        return self.try_read_df(self.data, self.metadata["extension"], self.excel_worksheet_name)
+
+    @classmethod
+    def try_read_df(cls, data, suffix: str, worksheet_name: str = None) -> pd.DataFrame:
+        """
+        Try to load and return a pandas dataframe.
+
+        Args:
+            data: File-like object
+            suffix: str = File suffix
+            worksheet_name: Optional[str] = Excel worksheet name, or empty string
+
+        Returns:
+            pd.DataFrame or throws a ValueError exception
+        """
+        kwargs = {}
+        if suffix == ".xlsx":
+            func = pd.read_excel
+            if worksheet_name:
+                kwargs["sheet_name"] = worksheet_name
+        elif suffix in [".csv", ".tsv"]:
+            func = pd.read_csv
+            if suffix == ".tsv":
+                kwargs["sep"] = "\t"
+        else:
+            raise ValueError(f"Unknown suffix: {suffix}")
+
+        try:
+            df = func(data.file, **kwargs)
+        except Exception:
+            raise ValueError("Unable load dataframe")
+
+        if df.shape[0] == 0:
+            raise ValueError("Dataframe contains no rows")
+
+        if df.shape[1] == 0:
+            raise ValueError("Dataframe contains no columns")
+
+        return df
+
+
 reversion.register(Assessment)
 reversion.register(EffectTag)
 reversion.register(Species)
 reversion.register(Strain)
 reversion.register(BaseEndpoint)
+reversion.register(Dataset)
+reversion.register(DatasetRevision)

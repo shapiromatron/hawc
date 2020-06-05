@@ -67,18 +67,15 @@ class BaseTable {
     }
 
     setColGroup(percents) {
-        this.colgroup.html(
-            percents.map(function(v) {
-                return '<col style="width: {0}%;">'.printf(v);
-            })
-        );
+        this.colgroup.html(percents.map(v => `<col style="width: ${v}%;">`));
     }
 
     _set_footnotes() {
         var txt = this.footnotes.html_list().join("<br>"),
             colspan = this.numCols();
-        if (txt.length > 0)
-            this.tfoot.html('<tr><td colspan="{0}">{1}</td></tr>'.printf(colspan, txt));
+        if (txt.length > 0) {
+            this.tfoot.html(`<tr><td colspan="${colspan}">${txt}</td></tr>`);
+        }
     }
 
     makeHeaderToSortKeyMapFromOrderByDropdown(orderByDropdownSelector, overrides) {

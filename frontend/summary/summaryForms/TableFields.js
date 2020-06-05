@@ -43,7 +43,7 @@ class TableField extends InputField {
     setColgroup() {
         var cw = this.schema.colWidths || [],
             setCol = function(d) {
-                return '<col width="{0}%"'.printf(d);
+                return `<col width="${d}%"`;
             };
         $("<colgroup>")
             .append(_.map(cw, setCol))
@@ -117,69 +117,48 @@ class TableField extends InputField {
 
     addTdText(name, val) {
         val = val || "";
-        return $(
-            '<td><input name="{0}" value="{1}" class="span12" type="text"></td>'.printf(name, val)
-        );
+        return $(`<td><input name="${name}" value="${val}" class="span12" type="text"></td>`);
     }
 
     addTdInt(name, val) {
         val = val || "";
-        return '<td><input name="{0}" value="{1}" class="span12" type="number"></td>'.printf(
-            name,
-            val
-        );
+        return `<td><input name="${name}" value="${val}" class="span12" type="number"></td>`;
     }
 
     addTdFloat(name, val) {
         val = val || "";
-        return '<td><input name="{0}" value="{1}" class="span12" type="number" step="any"></td>'.printf(
-            name,
-            val
-        );
+        return `<td><input name="${name}" value="${val}" class="span12" type="number" step="any"></td>`;
     }
 
     addTdColor(name, val) {
         val = val || "#000000";
         return $("<td>").append(
-            $(
-                '<input type="color" name="{0}" value="{1}" class="span12" required>'.printf(
-                    name,
-                    val
-                )
-            )
+            $(`<input type="color" name="${name}" value="${val}" class="span12" required>`)
         );
     }
 
     addTdCheckbox(name, checked) {
         let checkProp = checked ? "checked" : "";
-        return $("<td>").append(
-            $('<input type="checkbox" name="{0}" {1} required>'.printf(name, checkProp))
-        );
+        return $("<td>").append($(`<input type="checkbox" name="${name}" ${checkProp} required>`));
     }
 
     addTdSelect(name, values) {
-        var sel = $('<select name="{0}" class="span12">'.printf(name)).append(
-            _.map(values, function(d) {
-                return '<option value="{0}">{0}</option>'.printf(d);
-            })
+        var sel = $(`<select name="${name}" class="span12">`).append(
+            _.map(values, d => `<option value="${d}">${d}</option>`)
         );
         return $("<td>").append(sel);
     }
 
     addTdSelectLabels(name, options) {
-        var sel = $('<select name="{0}" class="span12">'.printf(name)).append(
-            _.map(options, function(d) {
-                return '<option value="{0}">{1}</option>'.printf(d.value, d.label);
-            })
+        var sel = $(`<select name="${name}" class="span12">`).append(
+            _.map(options, d => `<option value="${d.value}">${d.label}</option>`)
         );
         return $("<td>").append(sel);
     }
 
     addTdSelectMultiple(name, values) {
-        var sel = $('<select name="{0}" class="span12" multiple>'.printf(name)).append(
-            _.map(values, function(d) {
-                return '<option value="{0}">{0}</option>'.printf(d);
-            })
+        var sel = $(`<select name="${name}" class="span12" multiple>`).append(
+            _.map(values, d => `<option value="${d}">${d}</option>`)
         );
         return $("<td>").append(sel);
     }

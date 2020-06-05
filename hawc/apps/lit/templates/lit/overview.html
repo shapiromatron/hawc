@@ -1,6 +1,4 @@
 {% extends 'portal.html' %}
-{% load has_user_group %}
-
 {% block title %}
   {{assessment}} | Literature Review | HAWC
 {% endblock %}
@@ -11,7 +9,6 @@
 {% endblock %}
 
 {% block content %}
-
   <h2>References for {{assessment}}
       {% if obj_perms.edit %}
       <div class="btn-group pull-right">
@@ -73,9 +70,9 @@
       <div class="well well-small">
         <a class="btn btn-primary" href="{% url 'lit:ref_list' assessment.pk %}">View by tag</a>
         <a class="btn btn-primary" href="{% url 'lit:ref_visual' assessment.pk %}">Visualization</a>
-        {% if user.is_staff or request.user|has_user_group:"beta tester" %}
+        {% if user.is_beta_tester %}
           {% if can_topic_model %}
-          <a class="btn btn-primary" href="{% url 'lit:topic_model' assessment.literature_settings.pk %}">Topic model</a>
+          <a class="btn btn-primary" href="{% url 'lit:topic_model' assessment.pk %}">Topic model</a>
           {% endif %}
         {% endif %}
         <a class="btn btn-primary" href="{% url 'lit:ref_search' assessment.pk %}">Find a reference</a>

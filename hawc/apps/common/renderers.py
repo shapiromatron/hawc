@@ -18,13 +18,16 @@ class PandasBaseRenderer(BaseRenderer):
 
     def render(self, data, accepted_media_type=None, renderer_context=None):
 
-        # return error in JSON
+        # return error or OPTIONS as JSON
         status_code = renderer_context["response"].status_code
-        if not status.is_success(status_code):
+        method = renderer_context["request"].method if "request" in renderer_context else None
+        if not status.is_success(status_code) or method == "OPTIONS":
             if isinstance(data, dict):
                 return json.dumps(data)
+            else:
+                raise ValueError(f"Expecting data as `dict`; got {type(data)}")
 
-        # throw error if we don't have a data frame
+        # throw error if we don't have a FlatExport
         if not isinstance(data, FlatExport):
             raise ValueError(f"Expecting `FlatExport`; got {type(data)}")
 
@@ -89,8 +92,6 @@ class PandasXlsxRenderer(PandasBaseRenderer):
 
     media_type = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     format = "xlsx"
-    charset = None
-    render_style = "binary"
 
     def render_dataframe(self, export: FlatExport, response: Response) -> bytes:
         response["Content-Disposition"] = f"attachment; filename={slugify(export.filename)}.xlsx"

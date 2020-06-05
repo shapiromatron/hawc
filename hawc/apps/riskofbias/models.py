@@ -168,7 +168,7 @@ class RiskOfBias(models.Model):
 
     class Meta:
         verbose_name_plural = "Risk of Biases"
-        ordering = ("final",)
+        ordering = ("final", "id")
 
     def __str__(self):
         return f"{self.study.short_citation} (Risk of bias)"
@@ -481,7 +481,7 @@ class RiskOfBiasScore(models.Model):
     }
 
     SCORE_SHADES = {
-        10: "#FFCC00",
+        10: "#E8E8E8",
         12: "#FFCC00",
         14: "#CC3333",
         15: "#FFCC00",
@@ -502,6 +502,11 @@ class RiskOfBiasScore(models.Model):
         (BIAS_DIRECTION_UNKNOWN, "not entered/unknown"),
         (BIAS_DIRECTION_UP, "⬆ (away from null)"),
         (BIAS_DIRECTION_DOWN, "⬇ (towards null)"),
+    )
+
+    TEXT_CLEANUP_FIELDS = (
+        "score",
+        "notes",
     )
 
     riskofbias = models.ForeignKey(RiskOfBias, on_delete=models.CASCADE, related_name="scores")

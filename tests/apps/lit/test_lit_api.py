@@ -1,10 +1,31 @@
+import json
+from pathlib import Path
+
 import pytest
 from django.urls import reverse
 from rest_framework.test import APIClient
 
+DATA_ROOT = Path(__file__).parents[2] / "data/api"
+
 
 @pytest.mark.django_db
 class TestLiteratureAssessmentViewset:
+    def test_references_download(self, rewrite_data_files: str, db_keys):
+        # make sure this export is the format we expect it to be in
+        fn = Path(DATA_ROOT / f"api-lit-assessment-references-export.json")
+        url = reverse("lit:api:assessment-references-download", args=(db_keys.assessment_final,))
+        client = APIClient()
+        resp = client.get(url)
+        assert resp.status_code == 200
+
+        data = resp.json()
+
+        if rewrite_data_files:
+            Path(fn).write_text(json.dumps(data, indent=2))
+
+        assert len(data) == 4
+        assert data == json.loads(fn.read_text())
+
     def test_tags(self, db_keys):
         url = reverse("lit:api:assessment-tags", kwargs=dict(pk=db_keys.assessment_working))
         c = APIClient()
@@ -24,14 +45,24 @@ class TestLiteratureAssessmentViewset:
         c = APIClient()
         assert c.login(email="pm@pm.com", password="pw") is True
         resp = c.get(url).json()
-        assert resp == [{"reference_id": 2, "pubmed_id": 29641658, "hero_id": None}]
+        assert resp == [
+            {"reference_id": 5, "pubmed_id": 11778423, "hero_id": None},
+            {"reference_id": 6, "pubmed_id": 15907334, "hero_id": None},
+            {"reference_id": 7, "pubmed_id": 21284075, "hero_id": None},
+            {"reference_id": 8, "pubmed_id": 24004895, "hero_id": None},
+        ]
 
     def test_reference_tags(self, db_keys):
         url = reverse("lit:api:assessment-reference-tags", kwargs=dict(pk=db_keys.assessment_final))
         c = APIClient()
         assert c.login(email="pm@pm.com", password="pw") is True
         resp = c.get(url).json()
-        assert resp == [{"reference_id": 2, "tag_id": 13}]
+        assert resp == [
+            {"reference_id": 5, "tag_id": 12},
+            {"reference_id": 6, "tag_id": 13},
+            {"reference_id": 7, "tag_id": 13},
+            {"reference_id": 8, "tag_id": 12},
+        ]
 
     def test_reference_year_histogram(self, db_keys):
         url = reverse(
@@ -42,6 +73,27 @@ class TestLiteratureAssessmentViewset:
         assert c.login(email="pm@pm.com", password="pw") is True
         resp = c.get(url).json()
         assert resp["data"][0]["type"] == "histogram"
+
+
+@pytest.mark.django_db
+class TestReferenceFilterTagViewset:
+    def test_references(self):
+        # ensure we get a valid json return
+        url = reverse("lit:api:tags-references", args=(12,))
+        c = APIClient()
+        assert c.login(email="pm@pm.com", password="pw") is True
+        resp = c.get(url).json()
+        assert len(resp) == 2
+        assert resp[0]["Inclusion"] is True
+
+    def test_references_table_builder(self):
+        # ensure we get the expected return
+        url = reverse("lit:api:tags-references-table-builder", args=(12,))
+        c = APIClient()
+        assert c.login(email="pm@pm.com", password="pw") is True
+        resp = c.get(url).json()
+        assert len(resp) == 2
+        assert resp[0]["Name"] == "Kawana N, Ishimatsu S, and Kanda K 2001"
 
 
 @pytest.mark.vcr
