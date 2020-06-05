@@ -89,6 +89,14 @@ class ExploreHeatmapPlot extends D3Visualization {
     }
 
     generate_properties(data) {
+        this.cell_width = 50;
+        this.cell_height = 50;
+        this.padding = {top: 0, left: 0, bottom: 0, right: 200};
+        this.show_grid = true;
+        this.show_axis_border = true;
+        this.x_rotate = 90;
+        this.y_rotate = 0;
+
         // From constructor parameters
         this.dataset = data.dataset;
         _.assign(this, data.settings);
@@ -117,16 +125,9 @@ class ExploreHeatmapPlot extends D3Visualization {
         );
         this.x_steps = this.x_domain.reduce((total, element) => total * element.length, 1);
         this.y_steps = this.y_domain.reduce((total, element) => total * element.length, 1);
-        this.cell_width = 50;
-        this.cell_height = 50;
         this.w = this.cell_width * this.x_steps;
         this.h = this.cell_height * this.y_steps;
-        this.padding = {top: 0, left: 0, bottom: 0, right: 200};
         this.xy_map = this.create_map();
-        this.show_grid = true;
-        this.show_axis_border = true;
-        this.x_rotate = 90;
-        this.y_rotate = 0;
     }
     build_container($div) {
         this.viz_container = d3.select($div.html("")[0]);
@@ -279,6 +280,7 @@ class ExploreHeatmapPlot extends D3Visualization {
                 })
                 .text("None");
 
+        // Have resize trigger also resize blacklist div
         let old_trigger = this.trigger_resize;
         this.trigger_resize = forceResize => {
             old_trigger(forceResize);
@@ -308,8 +310,6 @@ class ExploreHeatmapPlot extends D3Visualization {
                 )}px`
             )
             .style("overflow", "auto");
-
-        this.detail_container.append("h4").text("Study Details");
 
         this.detail_table = this.detail_container
             .append("table")
@@ -368,6 +368,7 @@ class ExploreHeatmapPlot extends D3Visualization {
             y_axis_offset = 0,
             label_padding = 6;
 
+        // Build x axes
         for (let i = 0; i < x_domains.length; i++) {
             let axis = this.vis
                     .append("g")
@@ -414,6 +415,7 @@ class ExploreHeatmapPlot extends D3Visualization {
             if (this.show_axis_border) add_border();
         }
 
+        // Build y axes
         for (let i = 0; i < y_domains.length; i++) {
             let axis = this.vis.append("g").attr("transform", `translate(${-y_axis_offset},0)`),
                 domain = y_domains[i],
