@@ -363,8 +363,8 @@ class ExploreHeatmapPlot extends D3Visualization {
             y_axis_offset = 0,
             label_padding = 10;
 
-        this.x_rotate = 0;
-        this.y_rotate = 0;
+        this.x_rotate = 45;
+        this.y_rotate = -45;
 
         for (let i = 0; i < x_domains.length; i++) {
             let axis = this.vis
@@ -394,6 +394,22 @@ class ExploreHeatmapPlot extends D3Visualization {
             max += label_padding * 2;
             this.padding.bottom += max;
             x_axis_offset += max;
+
+            let add_border = () => {
+                let borders = axis.append("g");
+                for (let j = 0; j < domain.length; j++) {
+                    borders
+                        .append("polyline")
+                        .attr(
+                            "points",
+                            `${band * j},${max} ${band * j},0 ${band * (j + 1)},0 ${band *
+                                (j + 1)},${max}`
+                        )
+                        .attr("fill", "none")
+                        .attr("stroke", "black");
+                }
+            };
+            add_border();
         }
 
         for (let i = 0; i < y_domains.length; i++) {
@@ -422,6 +438,22 @@ class ExploreHeatmapPlot extends D3Visualization {
             max += label_padding * 2;
             this.padding.left += max;
             y_axis_offset += max;
+
+            let add_border = () => {
+                let borders = axis.append("g");
+                for (let j = 0; j < domain.length; j++) {
+                    borders
+                        .append("polyline")
+                        .attr(
+                            "points",
+                            `${-max},${band * j} 0,${band * j} 0,${band * (j + 1)} ${-max},${band *
+                                (j + 1)}`
+                        )
+                        .attr("fill", "none")
+                        .attr("stroke", "black");
+                }
+            };
+            add_border();
         }
     }
 
