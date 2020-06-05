@@ -228,14 +228,15 @@ class ExploreHeatmapPlot extends D3Visualization {
         // Fill in table body
         this.blacklist_table.append("tbody");
 
-        let modal_table = d3.select(this.modal.getBody()[0]).append("table"),
-            button_func = d => {
-                d3.event.stopPropagation();
-                this.modal
-                    .addHeader(`<h4>Test</h4>`)
-                    .addFooter("")
-                    .show();
-            };
+        d3.select(this.modal.getBody()[0]).append("table");
+
+        let button_func = d => {
+            d3.event.stopPropagation();
+            this.modal
+                .addHeader(`<h4>Test</h4>`)
+                .addFooter("")
+                .show();
+        };
 
         let rows = this.blacklist_table
             .select("tbody")
@@ -256,29 +257,31 @@ class ExploreHeatmapPlot extends D3Visualization {
         this.blacklist_table.selectAll("th").attr("colspan", 2);
         this.blacklist_table.selectAll("td").attr("colspan", 2);
 
-        let mass_select = this.blacklist_table.select("tbody").insert("tr", ":first-child"),
-            select_all = mass_select
-                .append("td")
-                .style("width", "50%")
-                .on("click", d => {
-                    this.blacklist_table.selectAll("tbody>tr+tr>td").style("text-decoration", null);
-                    this.blacklist = [];
-                    this.xy_map = this.create_map();
-                    this.update_plot();
-                })
-                .text("All"),
-            select_none = mass_select
-                .append("td")
-                .style("width", "50%")
-                .on("click", d => {
-                    this.blacklist_table
-                        .selectAll("tbody>tr+tr>td")
-                        .style("text-decoration", "line-through");
-                    this.blacklist = this.blacklist_domain.slice();
-                    this.xy_map = this.create_map();
-                    this.update_plot();
-                })
-                .text("None");
+        let mass_select = this.blacklist_table.select("tbody").insert("tr", ":first-child");
+        // Select all
+        mass_select
+            .append("td")
+            .style("width", "50%")
+            .on("click", d => {
+                this.blacklist_table.selectAll("tbody>tr+tr>td").style("text-decoration", null);
+                this.blacklist = [];
+                this.xy_map = this.create_map();
+                this.update_plot();
+            })
+            .text("All");
+        // Select none
+        mass_select
+            .append("td")
+            .style("width", "50%")
+            .on("click", d => {
+                this.blacklist_table
+                    .selectAll("tbody>tr+tr>td")
+                    .style("text-decoration", "line-through");
+                this.blacklist = this.blacklist_domain.slice();
+                this.xy_map = this.create_map();
+                this.update_plot();
+            })
+            .text("None");
 
         // Have resize trigger also resize blacklist div
         let old_trigger = this.trigger_resize;
@@ -378,12 +381,12 @@ class ExploreHeatmapPlot extends D3Visualization {
                 mid = band / 2,
                 max = 0;
             for (let j = 0; j < domain.length; j++) {
-                let label = axis.append("g"),
-                    label_text = label
-                        .append("text")
-                        .attr("transform", `rotate(${this.x_rotate})`)
-                        .text(domain[j]),
-                    box = label.node().getBBox(),
+                let label = axis.append("g");
+                label
+                    .append("text")
+                    .attr("transform", `rotate(${this.x_rotate})`)
+                    .text(domain[j]);
+                let box = label.node().getBBox(),
                     label_offset = mid - box.width / 2;
                 label.attr(
                     "transform",
@@ -423,12 +426,12 @@ class ExploreHeatmapPlot extends D3Visualization {
                 mid = band / 2,
                 max = 0;
             for (let j = 0; j < domain.length; j++) {
-                let label = axis.append("g"),
-                    label_text = label
-                        .append("text")
-                        .attr("transform", `rotate(${this.y_rotate})`)
-                        .text(domain[j]),
-                    box = label.node().getBBox(),
+                let label = axis.append("g");
+                label
+                    .append("text")
+                    .attr("transform", `rotate(${this.y_rotate})`)
+                    .text(domain[j]);
+                let box = label.node().getBBox(),
                     label_offset = mid - box.height / 2;
                 label.attr(
                     "transform",
