@@ -3,6 +3,7 @@ import json
 import math
 from operator import xor
 
+import pandas as pd
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.urls import reverse
@@ -1432,6 +1433,38 @@ class Result(models.Model):
 
     def get_study(self):
         return self.outcome.get_study()
+
+    @classmethod
+    def heatmap_df(cls, assessment: Assessment) -> pd.DataFrame:
+        # TODO - clean this up and get better information
+        columns = {
+            "id": "result id",
+            "name": "result name",
+            "outcome_id": "outcome id",
+            "outcome__system": "system",
+            "outcome__effect": "effect",
+            "outcome__effect_subtype": "effect_subtype",
+            "comparison_set_id": "comparison set id",
+            "comparison_set__name": "comparison set name",
+            "comparison_set__exposure_id": "exposure id",
+            "comparison_set__exposure__name": "exposure name",
+            "outcome__study_population_id": "study population id",
+            "outcome__study_population__name": "study population name",
+            "outcome__study_population__study_id": "study id",
+            "outcome__study_population__study__short_citation": "study citation",
+        }
+        qs = (
+            cls.objects.select_related(
+                "outcome",
+                "comparison_set",
+                "comparison_set__exposure",
+                "outcome__study_population",
+                "outcome__study_population__study",
+            )
+            .filter(outcome__assessment=assessment)
+            .values_list(*columns.keys())
+        )
+        return pd.DataFrame(data=list(qs), columns=columns.values())
 
 
 class GroupResult(models.Model):

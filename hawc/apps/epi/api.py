@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from ..assessment.api import AssessmentLevelPermissions, AssessmentViewset
 from ..assessment.models import Assessment
 from ..common.api import CleanupFieldsBaseViewSet, LegacyAssessmentAdapterMixin
-from ..common.helper import re_digits
+from ..common.helper import FlatExport, re_digits
 from ..common.renderers import PandasRenderers
 from ..common.serializers import UnusedSerializer
 from ..common.views import AssessmentPermissionsMixin
@@ -35,6 +35,13 @@ class EpiAssessmentViewset(
         self.set_legacy_attr(pk)
         exporter = exports.OutcomeComplete(self.get_queryset(), filename=f"{self.assessment}-epi")
         return Response(exporter.build_export())
+
+    @action(detail=True, url_path="result-heatmap", renderer_classes=PandasRenderers)
+    def result_heatmap(self, request, pk):
+        self.set_legacy_attr(pk)
+        df = models.Result.heatmap_df(self.assessment)
+        export = FlatExport(df=df, filename=f"heatmap-{self.assessment.id}")
+        return Response(export)
 
 
 class StudyPopulation(AssessmentViewset):

@@ -287,9 +287,21 @@ class Visual(models.Model):
     def get_heatmap_datasets(cls, assessment: Assessment) -> HeatmapDatasets:
         return HeatmapDatasets(
             datasets=[
-                HeatmapDataset(type="Literature", name="Literature summary", url="/"),
-                HeatmapDataset(type="Bioassay", name="Bioassay summary", url="/"),
-                HeatmapDataset(type="Epi", name="Epi summary", url="/"),
+                HeatmapDataset(
+                    type="Literature",
+                    name="Literature summary",
+                    url=reverse("lit:api:assessment-tag-heatmap", args=(assessment.id,)),
+                ),
+                HeatmapDataset(
+                    type="Bioassay",
+                    name="Bioassay summary",
+                    url=reverse("animal:api:assessment-endpoint-heatmap", args=(assessment.id,)),
+                ),
+                HeatmapDataset(
+                    type="Epi",
+                    name="Epi summary",
+                    url=reverse("epi:api:assessment-result-heatmap", args=(assessment.id,)),
+                ),
                 *(
                     HeatmapDataset(type="Dataset", name=ds.name, url=ds.get_api_data_url())
                     for ds in assessment.datasets.all()
