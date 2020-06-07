@@ -1,42 +1,111 @@
 import _ from "lodash";
 import d3 from "d3";
 import D3Visualization from "./D3Visualization";
+import h from "shared/utils/helpers";
+import HAWCModal from "utils/HAWCModal";
 
 class ExploreHeatmapPlot extends D3Visualization {
     constructor(parent, data, options) {
         super(...arguments);
         this.generate_properties(data);
+        this.modal = new HAWCModal();
     }
 
     render($div) {
-        this.build_elements($div);
-        this.build_plot();
-        this.build_axes();
-        this.build_labels();
-        this.position_plot();
-        this.build_blacklist_sidebar();
+        this.build_container($div);
+        this.render_plot($("#exp_heatmap_svg_container"));
+        this.build_blacklist();
         this.build_detail_box();
     }
 
+    render_plot($div) {
+        this.plot_div = $div;
+        this.set_color_scale();
+        this.build_plot();
+        this.build_axes();
+        this.build_labels();
+        if (this.show_grid) this.add_grid();
+        this.set_trigger_resize();
+        this.add_menu();
+    }
+
+    set_trigger_resize() {
+        var self = this,
+            w = this.w + this.padding.left + this.padding.right,
+            h = this.h + this.padding.top + this.padding.bottom,
+            chart = $(this.svg),
+            container = chart.parent();
+
+        d3.select(this.svg)
+            .attr("width", w)
+            .attr("height", h)
+            .attr("viewBox", `0 0 ${w} ${h}`);
+
+        this.vis.attr("transform", `translate(${this.padding.left},${this.padding.top})`);
+
+        this.full_width = w;
+        this.full_height = h;
+        this.isFullSize = true;
+        this.trigger_resize = function(forceResize) {
+            var targetWidth = Math.min(container.width(), self.full_width),
+                aspect = self.full_width / self.full_height;
+            if (forceResize === true && !self.isFullSize) targetWidth = self.full_width;
+
+            if (targetWidth !== self.full_width) {
+                // use custom smaller size
+                chart.attr("width", targetWidth);
+                chart.attr("height", Math.round(targetWidth / aspect));
+                self.isFullSize = false;
+                if (self.resize_button) {
+                    self.resize_button.attr("title", "zoom figure to full-size");
+                    self.resize_button.find("i").attr("class", "icon-zoom-in");
+                }
+            } else {
+                // set back to full-size
+                chart.attr("width", self.full_width);
+                chart.attr("height", self.full_height);
+                self.isFullSize = true;
+                if (self.resize_button) {
+                    self.resize_button.attr("title", "zoom figure to fit screen");
+                    self.resize_button.find("i").attr("class", "icon-zoom-out");
+                }
+            }
+        };
+        $(window).resize(this.trigger_resize);
+        this.trigger_resize(false);
+    }
+
+    set_color_scale() {
+        this.color_scale = d3.scale
+            .linear()
+            .domain([
+                0,
+                this.xy_map.reduce(
+                    (current_max, element) => Math.max(current_max, element.dataset.length),
+                    0
+                ),
+            ])
+            .range(this.color_range);
+    }
+
     generate_properties(data) {
+        this.cell_width = 50;
+        this.cell_height = 50;
+        this.padding = {top: 0, left: 0, bottom: 0, right: 200};
+        this.show_grid = true;
+        this.show_axis_border = true;
+        this.x_rotate = 90;
+        this.y_rotate = 0;
+
         // From constructor parameters
         this.dataset = data.dataset;
         _.assign(this, data.settings);
         this.blacklist = [];
 
-        this.plot = _.assign({}, {width: 700, height: 400});
-        _.assign(this.plot, {top: 0, left: 0, bottom: 0, right: 0});
-
-        this.horizontal_margin = 200;
-        this.vertical_margin = 50;
-
-        this.blacklist_map = _.chain(this.dataset)
+        this.blacklist_domain = _.chain(this.dataset)
             .map(d => d[this.blacklist_field])
             .uniq()
             .sort()
-            .map(d => ({
-                [this.blacklist_field]: d,
-            }))
             .value();
 
         this.x_domain = this.x_fields.map(e =>
@@ -51,52 +120,33 @@ class ExploreHeatmapPlot extends D3Visualization {
                 .map(d => d[e])
                 .uniq()
                 .sort()
+                .reverse()
                 .value()
         );
         this.x_steps = this.x_domain.reduce((total, element) => total * element.length, 1);
         this.y_steps = this.y_domain.reduce((total, element) => total * element.length, 1);
+        this.w = this.cell_width * this.x_steps;
+        this.h = this.cell_height * this.y_steps;
         this.xy_map = this.create_map();
     }
-
-    build_elements($div) {
-        this.sidebar = {width: 200, height: this.plot.height};
-        this.box = {width: this.plot.width + this.sidebar.width, height: 400};
-        this.container = {width: this.box.width, height: this.plot.height + this.box.height};
-        this.viz_container = $div.html("")[0];
-        d3.select(this.viz_container)
-            .style("width", `${this.container.width}px`)
-            .style("height", `${this.container.height}px`)
-            .style("outline-style", "solid");
-        this.plot_container = d3
-            .select(this.viz_container)
+    build_container($div) {
+        this.viz_container = d3.select($div.html("")[0]);
+        this.svg_blacklist_container = this.viz_container
             .append("div")
-            .style("float", "left")
-            .style("width", `${this.plot.width}px`)
-            .style("height", `${this.plot.height}px`)
-            .style("outline-style", "solid");
-        this.blacklist_container = d3
-            .select(this.viz_container)
+            .style("white-space", "nowrap");
+        this.svg_container = this.svg_blacklist_container
             .append("div")
-            .style("float", "right")
-            .style("width", `${this.sidebar.width}px`)
-            .style("height", `${this.sidebar.height}px`)
-            .style("outline-style", "solid");
-        this.detail_container = d3
-            .select(this.viz_container)
-            .append("div")
-            .attr("id", "viz-details")
-            .style("clear", "both")
-            .style("width", `${this.box.width}px`)
-            .style("height", `${this.box.height}px`)
-            .style("outline-style", "solid")
-            .style("overflow", "scroll");
+            .style("display", "inline-block")
+            .style("width", "80%")
+            .style("vertical-align", "top")
+            .attr("id", "exp_heatmap_svg_container");
     }
 
     create_map = () => {
         let _step_domain = (domain, field, depth) => {
-                if (depth >= domain.length - 1) {
+                if (depth == domain.length - 1) {
                     return domain[depth].map((element, index) => {
-                        return {filter: {[field[depth]]: element}, step: index + 1};
+                        return {filter: {[field[depth]]: element}, step: index};
                     });
                 } else {
                     return domain[depth]
@@ -142,173 +192,383 @@ class ExploreHeatmapPlot extends D3Visualization {
         return xy_map;
     };
 
-    build_blacklist_sidebar() {
-        let table = this.blacklist_container.append("table"),
-            func = d => {
-                let in_list = _.includes(this.blacklist, d);
-                in_list ? _.pull(this.blacklist, d) : this.blacklist.push(d);
-                in_list = !in_list;
+    build_blacklist() {
+        this.blacklist_container = this.svg_blacklist_container
+            .insert("div", ":first-child")
+            .attr("class", "exp_heatmap_container")
+            .style("width", "20%")
+            .style(
+                "height",
+                `${$(this.svg)
+                    .parent()
+                    .height()}px`
+            )
+            .style("vertical-align", "top")
+            .style("display", "inline-block")
+            .style("overflow", "auto");
+
+        this.blacklist_table = this.blacklist_container
+            .append("table")
+            .attr("class", "table table-striped table-bordered table-hover");
+        let func = d => {
+            let in_list = _.includes(this.blacklist, d);
+            in_list ? _.pull(this.blacklist, d) : this.blacklist.push(d);
+            in_list = !in_list;
+            this.xy_map = this.create_map();
+            this.update_plot();
+            return in_list;
+        };
+
+        // Create the table header
+        this.blacklist_table
+            .append("thead")
+            .append("tr")
+            .append("th")
+            .text(this.blacklist_field);
+        // Fill in table body
+        this.blacklist_table.append("tbody");
+
+        d3.select(this.modal.getBody()[0]).append("table");
+
+        let button_func = d => {
+            d3.event.stopPropagation();
+            this.modal
+                .addHeader(`<h4>Test</h4>`)
+                .addFooter("")
+                .show();
+        };
+
+        let rows = this.blacklist_table
+            .select("tbody")
+            .selectAll("tr")
+            .data(this.blacklist_domain);
+        rows.enter()
+            .append("tr")
+            .append("td")
+            .text(d => d)
+            .on("click", function(d) {
+                d3.select(this).style("text-decoration", func(d) ? "line-through" : null);
+            })
+            .append("button")
+            .attr("class", "btn btn-mini pull-right")
+            .on("click", button_func)
+            .html("<i class='icon-eye-open'></i>");
+
+        this.blacklist_table.selectAll("th").attr("colspan", 2);
+        this.blacklist_table.selectAll("td").attr("colspan", 2);
+
+        let mass_select = this.blacklist_table.select("tbody").insert("tr", ":first-child");
+        // Select all
+        mass_select
+            .append("td")
+            .style("width", "50%")
+            .on("click", d => {
+                this.blacklist_table.selectAll("tbody>tr+tr>td").style("text-decoration", null);
+                this.blacklist = [];
                 this.xy_map = this.create_map();
                 this.update_plot();
-                return in_list;
-            };
+            })
+            .text("All");
+        // Select none
+        mass_select
+            .append("td")
+            .style("width", "50%")
+            .on("click", d => {
+                this.blacklist_table
+                    .selectAll("tbody>tr+tr>td")
+                    .style("text-decoration", "line-through");
+                this.blacklist = this.blacklist_domain.slice();
+                this.xy_map = this.create_map();
+                this.update_plot();
+            })
+            .text("None");
 
-        this.build_table(table, this.blacklist_map, function(d) {
-            d3.select(this).style("text-decoration", func(d) ? "line-through" : null);
-        });
+        // Have resize trigger also resize blacklist div
+        let old_trigger = this.trigger_resize;
+        this.trigger_resize = forceResize => {
+            old_trigger(forceResize);
+            this.blacklist_container.style(
+                "height",
+                `${$(this.svg)
+                    .parent()
+                    .height()}px`
+            );
+        };
+        $(window).resize(this.trigger_resize);
     }
 
     build_detail_box() {
-        let table = this.detail_container.append("table");
-        this.build_table(table, this.dataset);
-    }
+        this.detail_container = this.viz_container
+            .append("div")
+            .attr("class", "exp_heatmap_container")
+            .style("width", "100%")
+            .style(
+                "height",
+                `${Math.max(
+                    h.getHawcContentSize().height -
+                        $(this.svg)
+                            .parent()
+                            .height(),
+                    200
+                )}px`
+            )
+            .style("overflow", "auto");
 
-    build_table = (table, data, func) => {
-        let header = _.keys(data[0]);
-        // Create table header
-        table
+        this.detail_table = this.detail_container
+            .append("table")
+            .attr("class", "table table-striped table-bordered");
+
+        // Create the table header
+        this.detail_table
             .append("thead")
             .append("tr")
             .selectAll("th")
-            .data(header)
+            .data(this.all_fields)
             .enter()
             .append("th")
             .text(d => d);
-        // Fill in body
-        table.append("tbody");
-        this.fill_table(table, data, func);
-    };
+        // Fill in table body
+        this.detail_table.append("tbody");
+        this.fill_detail_table(this.dataset);
+    }
 
-    fill_table = (table, data, func) => {
-        let selection = table.selectAll("thead>tr>th"),
-            header = selection[0].map(e => e.innerText),
-            tbody = table.select("tbody"),
-            rows = tbody.selectAll("tr").data(data);
+    fill_detail_table = data => {
+        let rows = this.detail_table
+            .select("tbody")
+            .selectAll("tr")
+            .data(data);
         rows.enter().append("tr");
         rows.exit().remove();
-        let row_data = rows.selectAll("td").data(d => header.map(e => d[e]));
-        row_data.enter().append("td");
+        let row_data = rows.selectAll("td").data(d => this.all_fields.map(e => d[e]));
+        row_data
+            .enter()
+            .append("td")
+            .append("input")
+            .attr("type", "button")
+            .attr("value", "a");
         row_data.exit().remove();
-        row_data.text(d => d).on("click", func);
+        row_data.text(d => d);
     };
 
     build_axes() {
-        let x_domains = this.x_domain.map((e, i) => {
-                let length = i == 0 ? 1 : this.x_domain[i - 1].length;
-                for (let j = 1; j < length; j++) {
-                    e = e.concat(e);
+        let generate_ticks = domain => {
+                if (domain.length == 0) return [];
+                let ticks = [];
+
+                ticks.push(domain[0]);
+                for (let i = 1; i < domain.length; i++) {
+                    let current_ticks = [];
+                    for (let j = 0; j < ticks[i - 1].length; j++) {
+                        current_ticks = current_ticks.concat(domain[i]);
+                    }
+                    ticks.push(current_ticks);
                 }
-                return e;
-            }),
-            y_domains = this.y_domain.map((e, i) => {
-                let length = i == 0 ? 1 : this.y_domain[i - 1].length;
-                for (let j = 1; j < length; j++) {
-                    e = e.concat(e);
+                return ticks;
+            },
+            x_domains = generate_ticks(this.x_domain).reverse(),
+            y_domains = generate_ticks(this.y_domain).reverse(),
+            x_axis_offset = 0,
+            y_axis_offset = 0,
+            label_padding = 6;
+
+        // Build x axes
+        for (let i = 0; i < x_domains.length; i++) {
+            let axis = this.vis
+                    .append("g")
+                    .attr("transform", `translate(0,${this.h + x_axis_offset})`),
+                domain = x_domains[i],
+                band = this.w / domain.length,
+                mid = band / 2,
+                max = 0;
+            for (let j = 0; j < domain.length; j++) {
+                let label = axis.append("g");
+                label
+                    .append("text")
+                    .attr("transform", `rotate(${this.x_rotate})`)
+                    .text(domain[j]);
+                let box = label.node().getBBox(),
+                    label_offset = mid - box.width / 2;
+                label.attr(
+                    "transform",
+                    `translate(${label_offset - box.x},${label_padding - box.y})`
+                );
+
+                max = Math.max(box.height, max);
+
+                mid += band;
+            }
+            max += label_padding * 2;
+            this.padding.bottom += max;
+            x_axis_offset += max;
+
+            let add_border = () => {
+                let borders = axis.append("g");
+                for (let j = 0; j < domain.length; j++) {
+                    borders
+                        .append("polyline")
+                        .attr(
+                            "points",
+                            `${band * j},${max} ${band * j},0 ${band * (j + 1)},0 ${band *
+                                (j + 1)},${max}`
+                        )
+                        .attr("fill", "none")
+                        .attr("stroke", "black");
                 }
-                return e;
-            });
-
-        let x_axes = x_domains.map((element, index) => {
-                return d3.svg
-                    .axis()
-                    .scale(
-                        d3.scale
-                            .ordinal()
-                            .domain(_.range(0, element.length))
-                            .rangeBands([0, this.plot.width])
-                    )
-                    .tickFormat(d => x_domains[index][d])
-                    .orient("bottom");
-            }),
-            y_axes = y_domains.map((element, index) => {
-                return d3.svg
-                    .axis()
-                    .scale(
-                        d3.scale
-                            .ordinal()
-                            .domain(_.range(0, element.length))
-                            .rangeBands([this.plot.height, 0])
-                    )
-                    .tickFormat(d => y_domains[index][d])
-                    .orient("left");
-            });
-
-        this.plot_svg
-            .append("g")
-            .attr("id", "x-axes")
-            .attr("transform", `translate(0,${this.plot.height})`);
-
-        for (let i = 0; i < x_axes.length; i++) {
-            this.plot_svg
-                .select("g#x-axes")
-                .append("g")
-                .attr("transform", `translate(0,${this.vertical_margin * (x_axes.length - i - 1)})`)
-                .call(x_axes[i]);
-            this.plot.bottom += this.vertical_margin;
+            };
+            if (this.show_axis_border) add_border();
         }
 
-        this.plot_svg.append("g").attr("id", "y-axes");
+        // Build y axes
+        for (let i = 0; i < y_domains.length; i++) {
+            let axis = this.vis.append("g").attr("transform", `translate(${-y_axis_offset},0)`),
+                domain = y_domains[i],
+                band = this.h / domain.length,
+                mid = band / 2,
+                max = 0;
+            for (let j = 0; j < domain.length; j++) {
+                let label = axis.append("g");
+                label
+                    .append("text")
+                    .attr("transform", `rotate(${this.y_rotate})`)
+                    .text(domain[j]);
+                let box = label.node().getBBox(),
+                    label_offset = mid - box.height / 2;
+                label.attr(
+                    "transform",
+                    `translate(${-box.width - box.x - label_padding},${label_offset - box.y})`
+                );
 
-        for (let i = 0; i < y_axes.length; i++) {
-            this.plot_svg
-                .select("g#y-axes")
-                .append("g")
-                .attr("transform", `translate(${this.horizontal_margin * i},0)`)
-                .call(y_axes[i]);
-            this.plot.left += this.horizontal_margin;
+                max = Math.max(box.width, max);
+
+                mid += band;
+            }
+            max += label_padding * 2;
+            this.padding.left += max;
+            y_axis_offset += max;
+
+            let add_border = () => {
+                let borders = axis.append("g");
+                for (let j = 0; j < domain.length; j++) {
+                    borders
+                        .append("polyline")
+                        .attr(
+                            "points",
+                            `${-max},${band * j} 0,${band * j} 0,${band * (j + 1)} ${-max},${band *
+                                (j + 1)}`
+                        )
+                        .attr("fill", "none")
+                        .attr("stroke", "black");
+                }
+            };
+            if (this.show_axis_border) add_border();
+        }
+    }
+
+    add_grid() {
+        let grid = this.vis.append("g"),
+            x_band = this.w / this.x_steps,
+            y_band = this.h / this.y_steps;
+        for (let i = 0; i <= this.x_steps; i++) {
+            grid.append("line")
+                .attr("x1", x_band * i)
+                .attr("y1", 0)
+                .attr("x2", x_band * i)
+                .attr("y2", this.h)
+                .style("stroke", "black");
+        }
+        for (let i = 0; i <= this.y_steps; i++) {
+            grid.append("line")
+                .attr("x1", 0)
+                .attr("y1", y_band * i)
+                .attr("x2", this.w)
+                .attr("y2", y_band * i)
+                .style("stroke", "black");
         }
     }
 
     build_labels() {
-        let label_margin = 50;
+        this.label_margin = 50;
 
         // Plot title
-        if (this.title.length > 0) {
-            this.plot_svg
+        if (this.plot_title.length > 0) {
+            this.vis
                 .append("text")
-                .attr("x", this.plot.width / 2)
-                .attr("y", -label_margin / 2)
-                .style("text-anchor", "middle")
-                .text(this.title);
-            this.plot.top += label_margin;
+                .attr("id", "exp_heatmap_title")
+                .attr("class", "exp_heatmap_label")
+                .attr("x", this.w / 2)
+                .attr("y", -this.label_margin / 2)
+                .text(this.plot_title);
+            this.padding.top += this.label_margin;
         }
+
         // X axis
         if (this.x_label.length > 0) {
-            this.plot_svg
+            this.padding.bottom += this.label_margin;
+            this.vis
                 .append("text")
-                .attr("x", this.plot.width / 2)
-                .attr("y", this.plot.height + this.plot.bottom + label_margin / 2)
-                .style("text-anchor", "middle")
+                .attr("class", "exp_heatmap_label")
+                .attr("x", this.w / 2)
+                .attr("y", this.h + this.padding.bottom - this.label_margin / 2)
                 .text(this.x_label);
-            this.plot.bottom += label_margin;
         }
         // Y axis
         if (this.y_label.length > 0) {
-            this.plot_svg
+            this.padding.left += this.label_margin;
+            this.vis
                 .append("text")
+                .attr("class", "exp_heatmap_label")
                 .attr("x", 0)
                 .attr("y", 0)
                 .attr(
                     "transform",
-                    `translate(${-(this.plot.left + label_margin / 2)},${this.plot.height /
+                    `translate(${-(this.padding.left - this.label_margin / 2)},${this.h /
                         2}) rotate(-90)`
                 )
-                .style("text-anchor", "middle")
                 .text(this.y_label);
-            this.plot.left += label_margin;
         }
     }
 
+    set_cell_behavior() {
+        let fill = d => this.fill_detail_table(d.dataset);
+        this.cells_enter
+            .on("click", function(d) {
+                d3.selectAll(".exp_heatmap_cell_block")
+                    .style("stroke", "none")
+                    .style("stroke-width", 2);
+                d3.select(this)
+                    .select("rect")
+                    .style("stroke", "black")
+                    .style("stroke-width", 2);
+                fill(d);
+            })
+            .on("mouseover", null);
+    }
+
+    update_cell_rect() {
+        this.cells_data.select("rect").style("fill", d => {
+            return this.color_scale(d.dataset.length);
+        });
+    }
+
+    update_cell_text() {
+        this.cells_data
+            .select("text")
+            .style("display", d => (d.dataset.length == 0 ? "none" : null))
+            .text(d => d.dataset.length);
+    }
+
     update_plot = () => {
-        let cells_data = this.cells.data(this.xy_map),
-            cells_text_data = this.cells_text.data(
-                _.filter(this.xy_map, e => e.dataset.length > 0)
-            );
-        // Update cells
-        cells_data
+        this.cells_data = this.cells.selectAll("g").data(this.xy_map);
+        this.cells_enter = this.cells_data
             .enter()
+            .append("g")
+            .attr("class", "exp_heatmap_cell");
+        this.set_cell_behavior();
+
+        // Update cell blocks
+        this.cells_enter
             .append("rect")
-            .attr("class", "cell")
+            .attr("class", "exp_heatmap_cell_block")
             .attr("x", d => {
                 return this.x_scale(d.x_step);
             })
@@ -316,81 +576,51 @@ class ExploreHeatmapPlot extends D3Visualization {
                 return this.y_scale(d.y_step);
             })
             .attr("width", this.x_scale.rangeBand())
-            .attr("height", this.y_scale.rangeBand())
-            .style("stroke", "black")
-            .style("stroke-width", "1")
-            .append("text")
-            .attr("x", d => {
-                return this.x_scale(d.x_step);
-            })
-            .attr("y", d => {
-                return this.y_scale(d.y_step);
-            });
-        cells_data.exit().remove();
-        cells_data
-            .style("fill", d => {
-                return this.color_scale(d.dataset.length);
-            })
-            .on("click", d => this.fill_table(d3.select("div#viz-details>table"), d.dataset));
+            .attr("height", this.y_scale.rangeBand());
+        this.update_cell_rect();
 
-        // Update cells text
-        cells_text_data
-            .enter()
+        // Update cell text
+        this.cells_enter
             .append("text")
-            .attr("class", "cell")
+            .attr("class", "exp_heatmap_cell_text")
             .attr("x", d => {
                 return this.x_scale(d.x_step) + this.x_scale.rangeBand() / 2;
             })
             .attr("y", d => {
                 return this.y_scale(d.y_step) + this.y_scale.rangeBand() / 2;
-            })
-            .style("text-anchor", "middle");
-        cells_text_data.exit().remove();
-        cells_text_data.text(d => d.dataset.length);
+            });
+        this.cells_data.select("text").style("fill", d => {
+            let {r, g, b} = d3.rgb(this.color_scale(d.dataset.length));
+            ({r, g, b} = h.getTextContrastColor(r, g, b));
+            return d3.rgb(r, g, b);
+        });
+        this.update_cell_text();
+
+        this.cells_data.exit().remove();
     };
 
-    position_plot() {
-        let w = this.plot.width + this.plot.left + this.plot.right,
-            h = this.plot.height + this.plot.bottom + this.plot.top;
-
-        this.svg.attr("viewBox", `0 0 ${w} ${h}`);
-        this.plot_svg.attr("transform", `translate(${this.plot.left},${this.plot.top})`);
-    }
-
-    build_plot() {
-        this.svg = this.plot_container
+    build_plot($div) {
+        //clear plot div and and append new svg object
+        this.plot_div.empty();
+        this.vis = d3
+            .select(this.plot_div[0])
             .append("svg")
             .attr("class", "d3")
-            .attr("width", "100%")
-            .attr("height", "100%");
-        this.plot_svg = this.svg.append("g");
+            .attr("preserveAspectRatio", "xMinYMin")
+            .append("g");
+        this.svg = this.vis[0][0].parentNode;
 
         // Scales for x axis, y axis, and cell color
         this.x_scale = d3.scale
             .ordinal()
-            .domain(_.range(1, this.x_steps + 1))
-            .rangeBands([0, this.plot.width]);
+            .domain(_.range(0, this.x_steps))
+            .rangeBands([0, this.w]);
         this.y_scale = d3.scale
             .ordinal()
-            .domain(_.range(1, this.y_steps + 1))
-            .rangeBands([this.plot.height, 0]);
-        this.color_scale = d3.scale
-            .linear()
-            .domain([
-                0,
-                this.xy_map.reduce(
-                    (current_max, element) => Math.max(current_max, element.dataset.length),
-                    0
-                ),
-            ])
-            .range(["white", "red"]);
+            .domain(_.range(0, this.y_steps))
+            .rangeBands([0, this.h]);
 
-        // D3 selection of cells & text
-        this.cells = this.plot_svg
-            .append("g")
-            .attr("id", "cells")
-            .selectAll("rect.cell");
-        this.cells_text = this.plot_svg.select("g#cells").selectAll("text.cell");
+        this.cells = this.vis.append("g").attr("id", "exp_heatmap_cells");
 
         // Draw cells
         this.update_plot();

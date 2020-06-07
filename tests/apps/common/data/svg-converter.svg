@@ -55,6 +55,10 @@ text.heatmap_selectable_bold:hover{font-weight:bold;}
 path.tagslink{fill:none;stroke:#ccc;stroke-width:3.5px;}
 /* * Data Pivot */ .dp_bg{fill:#eee;}
 .dp_header{stroke:#666666;stroke-width:2px;}
+/* * Exploratory heatmap */ .exp_heatmap_container,#exp_heatmap_svg{outline:1px solid black;outline-offset:-1px;}
+.exp_heatmap_cell_text{text-anchor:middle;dominant-baseline:central;}
+.exp_heatmap_label{font-size:larger;text-anchor:middle;}
+#exp_heatmap_title{font-weight:bold;}
 /* * Duplicate of hawc.css but required for image building */ .hidden{display:none;}
 ]]></style></defs>
             <rect x="10" y="10" width="80" height="80" style="fill:red;stroke-width:3;stroke:blue" />

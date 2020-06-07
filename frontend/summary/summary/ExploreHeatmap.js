@@ -19,13 +19,26 @@ class ExploreHeatmap extends BaseVisual {
         var data = {};
         data.settings = {
             type: "heatmap",
-            title: "Exploratory heatmap of experiments by species, sex, and health system",
+            plot: {width: undefined, height: undefined}, //svg size, undefined defaults to page content size
+            plot_title: "Exploratory heatmap of experiments by species, sex, and health system",
             x_label: "Species & Sex",
             y_label: "Health System",
             x_fields: ["species-name", "animal_group-sex"], //nested fields on x axis
             y_fields: ["endpoint-system"], //nested fields on y axis
-            //all_fields: ["foo", "bar"], //all fields we are interested in, ignore excluded fields on detail page
-            blacklist_field: "study-short_citation", //additional filter(s?) / main identifier
+            all_fields: [
+                "study-short_citation",
+                "study-study_identifier",
+                "experiment-chemical",
+                "animal_group-name",
+                "animal_group-sex",
+                "species-name",
+            ], //all fields we are interested in, ignore excluded fields on detail page
+            blacklist_field: "study-short_citation", //additional filter / main identifier
+
+            show_blacklist: true,
+            blacklist_width: undefined,
+            details_height: undefined,
+            color_range: ["white", "green"],
         };
         data.dataset = JSON.parse(
             $.ajax(`/ani/api/assessment/${this.data.assessment}/endpoint-export/?format=json`, {
@@ -59,13 +72,26 @@ class ExploreHeatmap extends BaseVisual {
         var data = {};
         data.settings = {
             type: "heatmap",
-            title: "Exploratory heatmap of experiments by species, sex, and health system",
+            plot: {width: undefined, height: undefined}, //svg size, undefined defaults to page content size
+            plot_title: "Exploratory heatmap of experiments by species, sex, and health system",
             x_label: "Species & Sex",
             y_label: "Health System",
             x_fields: ["species-name", "animal_group-sex"], //nested fields on x axis
             y_fields: ["endpoint-system"], //nested fields on y axis
-            //all_fields: ["foo", "bar"], //all fields we are interested in, ignore excluded fields on detail page
-            blacklist_field: "study-short_citation", //additional filter(s?) / main identifier
+            all_fields: [
+                "study-short_citation",
+                "study-study_identifier",
+                "experiment-chemical",
+                "animal_group-name",
+                "animal_group-sex",
+                "species-name",
+            ], //all fields we are interested in, ignore excluded fields on detail page
+            blacklist_field: "study-short_citation", //additional filter / main identifier
+
+            show_blacklist: true,
+            blacklist_width: undefined,
+            details_height: undefined,
+            color_range: ["white", "green"],
         };
         data.dataset = JSON.parse(
             $.ajax(`/ani/api/assessment/${this.data.assessment}/endpoint-export/?format=json`, {
