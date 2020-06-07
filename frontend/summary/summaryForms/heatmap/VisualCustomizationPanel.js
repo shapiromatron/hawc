@@ -3,6 +3,7 @@ import React, {Component} from "react";
 import {inject, observer} from "mobx-react";
 import TextInput from "shared/components/TextInput";
 import {MissingData, RefreshRequired} from "./common";
+import SelectInput from "shared/components/SelectInput";
 
 @inject("store")
 @observer
@@ -28,7 +29,13 @@ class VisualCustomizationPanel extends Component {
         );
     }
     renderForm() {
-        const {settings, changeSettings} = this.props.store.subclass;
+        const {
+            settings,
+            changeSettings,
+            getColumnsOptions,
+            changeSettingsMultiSelect,
+        } = this.props.store.subclass;
+
         return (
             <div>
                 <TextInput
@@ -48,6 +55,33 @@ class VisualCustomizationPanel extends Component {
                     label="Y label"
                     value={settings.y_label}
                     onChange={e => changeSettings(e.target.name, e.target.value)}
+                />
+                <SelectInput
+                    name="x_fields"
+                    label="X fields"
+                    className="span12"
+                    choices={getColumnsOptions}
+                    multiple={true}
+                    handleSelect={value => changeSettingsMultiSelect("x_fields", value)}
+                    value={settings.x_fields}
+                />
+                <SelectInput
+                    name="y_fields"
+                    label="Y fields"
+                    className="span12"
+                    choices={getColumnsOptions}
+                    multiple={true}
+                    handleSelect={value => changeSettingsMultiSelect("y_fields", value)}
+                    value={settings.y_fields}
+                />
+                <SelectInput
+                    name="all_fields"
+                    label="All fields"
+                    className="span12"
+                    choices={getColumnsOptions}
+                    multiple={true}
+                    handleSelect={value => changeSettingsMultiSelect("all_fields", value)}
+                    value={settings.all_fields}
                 />
             </div>
         );

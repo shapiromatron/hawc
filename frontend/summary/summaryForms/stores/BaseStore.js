@@ -96,6 +96,7 @@ class BaseStore {
             .then(json => {
                 this.dataset = json;
                 this.dataRefreshRequired = false;
+                this.root.subclass.afterGetDataset();
             })
             .catch(error => {
                 this.setDataError(error);

@@ -18,16 +18,9 @@ class ExploreHeatmap extends BaseVisual {
             plot_title: settings.title,
             x_label: settings.x_label,
             y_label: settings.y_label,
-            x_fields: ["species-name", "animal_group-sex"], //nested fields on x axis
-            y_fields: ["endpoint-system"], //nested fields on y axis
-            all_fields: [
-                "study-short_citation",
-                "study-study_identifier",
-                "experiment-chemical",
-                "animal_group-name",
-                "animal_group-sex",
-                "species-name",
-            ], //all fields we are interested in, ignore excluded fields on detail page
+            x_fields: settings.x_fields,
+            y_fields: settings.y_fields,
+            all_fields: settings.all_fields,
             blacklist_field: "study-short_citation", //additional filter / main identifier
             show_blacklist: true,
             blacklist_width: undefined,

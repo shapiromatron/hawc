@@ -1,5 +1,6 @@
 import {observable, action, computed} from "mobx";
 
+import _ from "lodash";
 import h from "shared/utils/helpers";
 
 class ExploratoryHeatmapStore {
@@ -13,11 +14,15 @@ class ExploratoryHeatmapStore {
             title: "",
             x_label: "",
             y_label: "",
+            x_fields: [],
+            y_fields: [],
+            all_fields: [],
         };
     }
 
     @observable settings = null;
     @observable datasetOptions = null;
+    @observable columnNames = null;
 
     @action setFromJsonSettings(settings, firstTime) {
         this.settings = settings;
@@ -31,6 +36,16 @@ class ExploratoryHeatmapStore {
         this.settings[key] = value;
     }
 
+    @action.bound changeSettingsMultiSelect(key, values) {
+        // TODO - move this to a new selectmultiple component; make the select multi false by default
+        let selected = _.chain(event.target.options)
+            .filter(opt => opt.selected)
+            .map(opt => opt.value)
+            .value();
+
+        this.settings[key] = selected;
+    }
+
     @action.bound changeDatasetUrl(value) {
         if (this.settings.data_url === value) {
             return;
@@ -39,6 +54,10 @@ class ExploratoryHeatmapStore {
         this.settings.data_url = value;
         this.root.base.dataRefreshRequired = true;
         this.root.base.dataUrl = value.length > 0 ? value : null;
+    }
+
+    @action.bound afterGetDataset() {
+        this.columnNames = _.keys(this.root.base.dataset[0]);
     }
 
     @computed get hasSettings() {
@@ -65,6 +84,12 @@ class ExploratoryHeatmapStore {
             .catch(error => {
                 this.setDataError(error);
             });
+    }
+
+    @computed get getColumnsOptions() {
+        return this.columnNames.map(d => {
+            return {id: d, label: d};
+        });
     }
 }
 
