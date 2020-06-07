@@ -326,7 +326,7 @@ path.tagslink {
  */
 
 .exp_heatmap_container,#exp_heatmap_svg {
-    outline: 2px solid black;
+    outline: 1px solid black;
     outline-offset: -1px;
 }
 

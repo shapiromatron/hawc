@@ -20,14 +20,59 @@ class ExploreHeatmapPlot extends D3Visualization {
 
     render_plot($div) {
         this.plot_div = $div;
-        this.set_padding();
         this.set_color_scale();
-        this.build_plot_skeleton(false);
         this.build_plot();
         this.build_axes();
         this.build_labels();
+        if (this.show_grid) this.add_grid();
+        this.set_trigger_resize();
         this.add_menu();
-        this.trigger_resize();
+    }
+
+    set_trigger_resize() {
+        var self = this,
+            w = this.w + this.padding.left + this.padding.right,
+            h = this.h + this.padding.top + this.padding.bottom,
+            chart = $(this.svg),
+            container = chart.parent();
+
+        d3.select(this.svg)
+            .attr("width", w)
+            .attr("height", h)
+            .attr("viewBox", `0 0 ${w} ${h}`);
+
+        this.vis.attr("transform", `translate(${this.padding.left},${this.padding.top})`);
+
+        this.full_width = w;
+        this.full_height = h;
+        this.isFullSize = true;
+        this.trigger_resize = function(forceResize) {
+            var targetWidth = Math.min(container.width(), self.full_width),
+                aspect = self.full_width / self.full_height;
+            if (forceResize === true && !self.isFullSize) targetWidth = self.full_width;
+
+            if (targetWidth !== self.full_width) {
+                // use custom smaller size
+                chart.attr("width", targetWidth);
+                chart.attr("height", Math.round(targetWidth / aspect));
+                self.isFullSize = false;
+                if (self.resize_button) {
+                    self.resize_button.attr("title", "zoom figure to full-size");
+                    self.resize_button.find("i").attr("class", "icon-zoom-in");
+                }
+            } else {
+                // set back to full-size
+                chart.attr("width", self.full_width);
+                chart.attr("height", self.full_height);
+                self.isFullSize = true;
+                if (self.resize_button) {
+                    self.resize_button.attr("title", "zoom figure to fit screen");
+                    self.resize_button.find("i").attr("class", "icon-zoom-out");
+                }
+            }
+        };
+        $(window).resize(this.trigger_resize);
+        this.trigger_resize(false);
     }
 
     set_color_scale() {
@@ -43,21 +88,15 @@ class ExploreHeatmapPlot extends D3Visualization {
             .range(this.color_range);
     }
 
-    set_padding() {
-        this.padding = {top: 0, left: 0, bottom: 0, right: 200};
-        this.horizontal_margin = 200;
-        this.vertical_margin = 50;
-        this.label_margin = 50;
-
-        if (this.plot_title.length > 0) this.padding.top += this.label_margin;
-        if (this.x_label.length > 0) this.padding.bottom += this.label_margin;
-        if (this.y_label.length > 0) this.padding.left += this.label_margin;
-
-        this.padding.bottom += this.x_fields.length * this.vertical_margin;
-        this.padding.left += this.y_fields.length * this.horizontal_margin;
-    }
-
     generate_properties(data) {
+        this.cell_width = 50;
+        this.cell_height = 50;
+        this.padding = {top: 0, left: 0, bottom: 0, right: 200};
+        this.show_grid = true;
+        this.show_axis_border = true;
+        this.x_rotate = 90;
+        this.y_rotate = 0;
+
         // From constructor parameters
         this.dataset = data.dataset;
         _.assign(this, data.settings);
@@ -86,8 +125,6 @@ class ExploreHeatmapPlot extends D3Visualization {
         );
         this.x_steps = this.x_domain.reduce((total, element) => total * element.length, 1);
         this.y_steps = this.y_domain.reduce((total, element) => total * element.length, 1);
-        this.cell_width = 100;
-        this.cell_height = 100;
         this.w = this.cell_width * this.x_steps;
         this.h = this.cell_height * this.y_steps;
         this.xy_map = this.create_map();
@@ -168,7 +205,7 @@ class ExploreHeatmapPlot extends D3Visualization {
             )
             .style("vertical-align", "top")
             .style("display", "inline-block")
-            .style("overflow", "scroll");
+            .style("overflow", "auto");
 
         this.blacklist_table = this.blacklist_container
             .append("table")
@@ -191,7 +228,9 @@ class ExploreHeatmapPlot extends D3Visualization {
         // Fill in table body
         this.blacklist_table.append("tbody");
 
-        let button_func = () => {
+        d3.select(this.modal.getBody()[0]).append("table");
+
+        let button_func = d => {
             d3.event.stopPropagation();
             this.modal
                 .addHeader(`<h4>Test</h4>`)
@@ -211,37 +250,40 @@ class ExploreHeatmapPlot extends D3Visualization {
                 d3.select(this).style("text-decoration", func(d) ? "line-through" : null);
             })
             .append("button")
-            .attr("class", "btn pull-right")
+            .attr("class", "btn btn-mini pull-right")
             .on("click", button_func)
-            .text("test");
+            .html("<i class='icon-eye-open'></i>");
 
         this.blacklist_table.selectAll("th").attr("colspan", 2);
         this.blacklist_table.selectAll("td").attr("colspan", 2);
 
-        let mass_select = this.blacklist_table.select("tbody").insert("tr", ":first-child"),
-            select_all = mass_select
-                .append("td")
-                .style("width", "50%")
-                .on("click", d => {
-                    this.blacklist_table.selectAll("tbody>tr+tr>td").style("text-decoration", null);
-                    this.blacklist = [];
-                    this.xy_map = this.create_map();
-                    this.update_plot();
-                })
-                .text("All"),
-            select_none = mass_select
-                .append("td")
-                .style("width", "50%")
-                .on("click", d => {
-                    this.blacklist_table
-                        .selectAll("tbody>tr+tr>td")
-                        .style("text-decoration", "line-through");
-                    this.blacklist = this.blacklist_domain.slice();
-                    this.xy_map = this.create_map();
-                    this.update_plot();
-                })
-                .text("None");
+        let mass_select = this.blacklist_table.select("tbody").insert("tr", ":first-child");
+        // Select all
+        mass_select
+            .append("td")
+            .style("width", "50%")
+            .on("click", d => {
+                this.blacklist_table.selectAll("tbody>tr+tr>td").style("text-decoration", null);
+                this.blacklist = [];
+                this.xy_map = this.create_map();
+                this.update_plot();
+            })
+            .text("All");
+        // Select none
+        mass_select
+            .append("td")
+            .style("width", "50%")
+            .on("click", d => {
+                this.blacklist_table
+                    .selectAll("tbody>tr+tr>td")
+                    .style("text-decoration", "line-through");
+                this.blacklist = this.blacklist_domain.slice();
+                this.xy_map = this.create_map();
+                this.update_plot();
+            })
+            .text("None");
 
+        // Have resize trigger also resize blacklist div
         let old_trigger = this.trigger_resize;
         this.trigger_resize = forceResize => {
             old_trigger(forceResize);
@@ -270,7 +312,7 @@ class ExploreHeatmapPlot extends D3Visualization {
                     200
                 )}px`
             )
-            .style("overflow", "scroll");
+            .style("overflow", "auto");
 
         this.detail_table = this.detail_container
             .append("table")
@@ -323,60 +365,130 @@ class ExploreHeatmapPlot extends D3Visualization {
                 }
                 return ticks;
             },
-            x_domains = generate_ticks(this.x_domain),
-            y_domains = generate_ticks(this.y_domain);
+            x_domains = generate_ticks(this.x_domain).reverse(),
+            y_domains = generate_ticks(this.y_domain).reverse(),
+            x_axis_offset = 0,
+            y_axis_offset = 0,
+            label_padding = 6;
 
-        let x_axes = x_domains.map((element, index) => {
-                return d3.svg
-                    .axis()
-                    .scale(
-                        d3.scale
-                            .ordinal()
-                            .domain(_.range(0, element.length))
-                            .rangeBands([0, this.w])
-                    )
+        // Build x axes
+        for (let i = 0; i < x_domains.length; i++) {
+            let axis = this.vis
+                    .append("g")
+                    .attr("transform", `translate(0,${this.h + x_axis_offset})`),
+                domain = x_domains[i],
+                band = this.w / domain.length,
+                mid = band / 2,
+                max = 0;
+            for (let j = 0; j < domain.length; j++) {
+                let label = axis.append("g");
+                label
+                    .append("text")
+                    .attr("transform", `rotate(${this.x_rotate})`)
+                    .text(domain[j]);
+                let box = label.node().getBBox(),
+                    label_offset = mid - box.width / 2;
+                label.attr(
+                    "transform",
+                    `translate(${label_offset - box.x},${label_padding - box.y})`
+                );
 
-                    .tickFormat(d => x_domains[index][d])
-                    .outerTickSize(2)
-                    .innerTickSize(10)
-                    .orient("bottom");
-            }),
-            y_axes = y_domains.map((element, index) => {
-                return d3.svg
-                    .axis()
-                    .scale(
-                        d3.scale
-                            .ordinal()
-                            .domain(_.range(0, element.length))
-                            .rangeBands([0, this.h])
-                    )
-                    .tickFormat(d => y_domains[index][d])
-                    .outerTickSize(2)
-                    .innerTickSize(10)
-                    .orient("left");
-            });
+                max = Math.max(box.height, max);
 
-        let x_axes_group = this.vis.append("g").attr("transform", `translate(0,${this.h})`),
-            y_axes_group = this.vis.append("g");
+                mid += band;
+            }
+            max += label_padding * 2;
+            this.padding.bottom += max;
+            x_axis_offset += max;
 
-        for (let i = 0; i < x_axes.length; i++) {
-            x_axes_group
-                .append("g")
-                .attr("class", "exp_heatmap_axis")
-                .attr("transform", `translate(0,${this.vertical_margin * (x_axes.length - 1 - i)})`)
-                .call(x_axes[i]);
+            let add_border = () => {
+                let borders = axis.append("g");
+                for (let j = 0; j < domain.length; j++) {
+                    borders
+                        .append("polyline")
+                        .attr(
+                            "points",
+                            `${band * j},${max} ${band * j},0 ${band * (j + 1)},0 ${band *
+                                (j + 1)},${max}`
+                        )
+                        .attr("fill", "none")
+                        .attr("stroke", "black");
+                }
+            };
+            if (this.show_axis_border) add_border();
         }
 
-        for (let i = 0; i < y_axes.length; i++) {
-            y_axes_group
-                .append("g")
-                .attr("class", "exp_heatmap_axis")
-                .attr("transform", `translate(${this.horizontal_margin * i},0)`)
-                .call(y_axes[i]);
+        // Build y axes
+        for (let i = 0; i < y_domains.length; i++) {
+            let axis = this.vis.append("g").attr("transform", `translate(${-y_axis_offset},0)`),
+                domain = y_domains[i],
+                band = this.h / domain.length,
+                mid = band / 2,
+                max = 0;
+            for (let j = 0; j < domain.length; j++) {
+                let label = axis.append("g");
+                label
+                    .append("text")
+                    .attr("transform", `rotate(${this.y_rotate})`)
+                    .text(domain[j]);
+                let box = label.node().getBBox(),
+                    label_offset = mid - box.height / 2;
+                label.attr(
+                    "transform",
+                    `translate(${-box.width - box.x - label_padding},${label_offset - box.y})`
+                );
+
+                max = Math.max(box.width, max);
+
+                mid += band;
+            }
+            max += label_padding * 2;
+            this.padding.left += max;
+            y_axis_offset += max;
+
+            let add_border = () => {
+                let borders = axis.append("g");
+                for (let j = 0; j < domain.length; j++) {
+                    borders
+                        .append("polyline")
+                        .attr(
+                            "points",
+                            `${-max},${band * j} 0,${band * j} 0,${band * (j + 1)} ${-max},${band *
+                                (j + 1)}`
+                        )
+                        .attr("fill", "none")
+                        .attr("stroke", "black");
+                }
+            };
+            if (this.show_axis_border) add_border();
+        }
+    }
+
+    add_grid() {
+        let grid = this.vis.append("g"),
+            x_band = this.w / this.x_steps,
+            y_band = this.h / this.y_steps;
+        for (let i = 0; i <= this.x_steps; i++) {
+            grid.append("line")
+                .attr("x1", x_band * i)
+                .attr("y1", 0)
+                .attr("x2", x_band * i)
+                .attr("y2", this.h)
+                .style("stroke", "black");
+        }
+        for (let i = 0; i <= this.y_steps; i++) {
+            grid.append("line")
+                .attr("x1", 0)
+                .attr("y1", y_band * i)
+                .attr("x2", this.w)
+                .attr("y2", y_band * i)
+                .style("stroke", "black");
         }
     }
 
     build_labels() {
+        this.label_margin = 50;
+
         // Plot title
         if (this.plot_title.length > 0) {
             this.vis
@@ -386,10 +498,12 @@ class ExploreHeatmapPlot extends D3Visualization {
                 .attr("x", this.w / 2)
                 .attr("y", -this.label_margin / 2)
                 .text(this.plot_title);
+            this.padding.top += this.label_margin;
         }
 
         // X axis
         if (this.x_label.length > 0) {
+            this.padding.bottom += this.label_margin;
             this.vis
                 .append("text")
                 .attr("class", "exp_heatmap_label")
@@ -399,6 +513,7 @@ class ExploreHeatmapPlot extends D3Visualization {
         }
         // Y axis
         if (this.y_label.length > 0) {
+            this.padding.left += this.label_margin;
             this.vis
                 .append("text")
                 .attr("class", "exp_heatmap_label")
@@ -484,7 +599,17 @@ class ExploreHeatmapPlot extends D3Visualization {
         this.cells_data.exit().remove();
     };
 
-    build_plot() {
+    build_plot($div) {
+        //clear plot div and and append new svg object
+        this.plot_div.empty();
+        this.vis = d3
+            .select(this.plot_div[0])
+            .append("svg")
+            .attr("class", "d3")
+            .attr("preserveAspectRatio", "xMinYMin")
+            .append("g");
+        this.svg = this.vis[0][0].parentNode;
+
         // Scales for x axis, y axis, and cell color
         this.x_scale = d3.scale
             .ordinal()
