@@ -22,8 +22,6 @@ class ExploreHeatmapPlot extends D3Visualization {
         this.plot_div = $div;
         this.set_color_scale();
         this.build_plot();
-        this.build_axes();
-        this.build_labels();
         if (this.show_grid) this.add_grid();
         this.set_trigger_resize();
         this.add_menu();
@@ -35,13 +33,6 @@ class ExploreHeatmapPlot extends D3Visualization {
             h = this.h + this.padding.top + this.padding.bottom,
             chart = $(this.svg),
             container = chart.parent();
-
-        d3.select(this.svg)
-            .attr("width", w)
-            .attr("height", h)
-            .attr("viewBox", `0 0 ${w} ${h}`);
-
-        this.vis.attr("transform", `translate(${this.padding.left},${this.padding.top})`);
 
         this.full_width = w;
         this.full_height = h;
@@ -129,7 +120,9 @@ class ExploreHeatmapPlot extends D3Visualization {
         this.h = this.cell_height * this.y_steps;
         this.xy_map = this.create_map();
     }
+
     build_container($div) {
+        // Create svg container
         this.viz_container = d3.select($div.html("")[0]);
         this.svg_blacklist_container = this.viz_container
             .append("div")
@@ -193,6 +186,7 @@ class ExploreHeatmapPlot extends D3Visualization {
     };
 
     build_blacklist() {
+        // Create blacklist container
         this.blacklist_container = this.svg_blacklist_container
             .insert("div", ":first-child")
             .attr("class", "exp_heatmap_container")
@@ -207,7 +201,7 @@ class ExploreHeatmapPlot extends D3Visualization {
             .style("display", "inline-block")
             .style("overflow", "auto");
 
-        // Have resize trigger also resize blacklist div
+        // Have resize trigger also resize blacklist container
         let old_trigger = this.trigger_resize;
         this.trigger_resize = forceResize => {
             old_trigger(forceResize);
@@ -220,7 +214,8 @@ class ExploreHeatmapPlot extends D3Visualization {
         };
         $(window).resize(this.trigger_resize);
 
-        let blacklist_select = this.blacklist_container.append("div").attr("class", "btn-group"),
+        let self = this,
+            blacklist_select = this.blacklist_container.append("div").attr("class", "btn-group"),
             blacklist_input = this.blacklist_container.append("div"),
             blacklist_enter = blacklist_input
                 .selectAll("input")
@@ -228,19 +223,48 @@ class ExploreHeatmapPlot extends D3Visualization {
                 .enter()
                 .append("div"),
             blacklist_label = blacklist_enter.append("label"),
-            self = this;
-        let button_func = d => {
-            this.modal
-                .addHeader(`<h4>${d}</h4>`)
-                .addFooter("")
-                .show();
-        };
+            detail_handler = d => {
+                this.modal
+                    .addHeader(`<h4>${d}</h4>`)
+                    .addFooter("")
+                    .show();
+            };
+
+        // Button to check all boxes
+        blacklist_select
+            .append("button")
+            .attr("class", "btn")
+            .text("All")
+            .on("click", () => {
+                blacklist_input.selectAll("label").each(function() {
+                    d3.select(this)
+                        .select("input")
+                        .property("checked", true);
+                });
+                blacklist_input.node().dispatchEvent(new Event("change"));
+            });
+        // Button to uncheck all boxes
+        blacklist_select
+            .append("button")
+            .attr("class", "btn")
+            .text("None")
+            .on("click", () => {
+                blacklist_input.selectAll("label").each(function() {
+                    d3.select(this)
+                        .select("input")
+                        .property("checked", false);
+                });
+                blacklist_input.node().dispatchEvent(new Event("change"));
+            });
+
+        // Before each label is a detail button
         blacklist_enter
             .insert("button", ":first-child")
             .attr("class", "btn btn-mini pull-left")
-            .on("click", button_func)
+            .on("click", detail_handler)
             .html("<i class='icon-eye-open'></i>");
 
+        // Each label has a checkbox and the value of the blacklisted item
         blacklist_label
             .append("input")
             .attr("type", "checkbox")
@@ -262,34 +286,10 @@ class ExploreHeatmapPlot extends D3Visualization {
             self.xy_map = self.create_map();
             self.update_plot();
         });
-
-        blacklist_select
-            .append("button")
-            .attr("class", "btn")
-            .text("All")
-            .on("click", () => {
-                blacklist_input.selectAll("label").each(function() {
-                    d3.select(this)
-                        .select("input")
-                        .property("checked", true);
-                });
-                blacklist_input.node().dispatchEvent(new Event("change"));
-            });
-        blacklist_select
-            .append("button")
-            .attr("class", "btn")
-            .text("None")
-            .on("click", () => {
-                blacklist_input.selectAll("label").each(function() {
-                    d3.select(this)
-                        .select("input")
-                        .property("checked", false);
-                });
-                blacklist_input.node().dispatchEvent(new Event("change"));
-            });
     }
 
     build_detail_box() {
+        // Create detail container
         this.detail_container = this.viz_container
             .append("div")
             .attr("class", "exp_heatmap_container")
@@ -306,6 +306,7 @@ class ExploreHeatmapPlot extends D3Visualization {
             )
             .style("overflow", "auto");
 
+        // Create detail table
         this.detail_table = this.detail_container
             .append("table")
             .attr("class", "table table-striped table-bordered");
@@ -319,12 +320,14 @@ class ExploreHeatmapPlot extends D3Visualization {
             .enter()
             .append("th")
             .text(d => d);
+
         // Fill in table body
         this.detail_table.append("tbody");
         this.fill_detail_table(this.dataset);
     }
 
     fill_detail_table = data => {
+        // Fills detail table
         let rows = this.detail_table
             .select("tbody")
             .selectAll("tr")
@@ -332,12 +335,7 @@ class ExploreHeatmapPlot extends D3Visualization {
         rows.enter().append("tr");
         rows.exit().remove();
         let row_data = rows.selectAll("td").data(d => this.all_fields.map(e => d[e]));
-        row_data
-            .enter()
-            .append("td")
-            .append("input")
-            .attr("type", "button")
-            .attr("value", "a");
+        row_data.enter().append("td");
         row_data.exit().remove();
         row_data.text(d => d);
     };
@@ -363,7 +361,8 @@ class ExploreHeatmapPlot extends D3Visualization {
             y_axis_offset = 0,
             label_padding = 6;
 
-        // Build x axes
+        /// Build x axes
+        // For each axis...
         for (let i = 0; i < x_domains.length; i++) {
             let axis = this.vis
                     .append("g")
@@ -372,6 +371,7 @@ class ExploreHeatmapPlot extends D3Visualization {
                 band = this.w / domain.length,
                 mid = band / 2,
                 max = 0;
+            // For each tick...
             for (let j = 0; j < domain.length; j++) {
                 let label = axis.append("g");
                 label
@@ -384,15 +384,14 @@ class ExploreHeatmapPlot extends D3Visualization {
                     "transform",
                     `translate(${label_offset - box.x},${label_padding - box.y})`
                 );
-
                 max = Math.max(box.height, max);
-
                 mid += band;
             }
             max += label_padding * 2;
             this.padding.bottom += max;
             x_axis_offset += max;
 
+            // Adds a border around tick labels
             let add_border = () => {
                 let borders = axis.append("g");
                 for (let j = 0; j < domain.length; j++) {
@@ -410,13 +409,15 @@ class ExploreHeatmapPlot extends D3Visualization {
             if (this.show_axis_border) add_border();
         }
 
-        // Build y axes
+        /// Build y axes
+        // For each axis...
         for (let i = 0; i < y_domains.length; i++) {
             let axis = this.vis.append("g").attr("transform", `translate(${-y_axis_offset},0)`),
                 domain = y_domains[i],
                 band = this.h / domain.length,
                 mid = band / 2,
                 max = 0;
+            // For each tick...
             for (let j = 0; j < domain.length; j++) {
                 let label = axis.append("g");
                 label
@@ -429,15 +430,14 @@ class ExploreHeatmapPlot extends D3Visualization {
                     "transform",
                     `translate(${-box.width - box.x - label_padding},${label_offset - box.y})`
                 );
-
                 max = Math.max(box.width, max);
-
                 mid += band;
             }
             max += label_padding * 2;
             this.padding.left += max;
             y_axis_offset += max;
 
+            // Adds a border around tick labels
             let add_border = () => {
                 let borders = axis.append("g");
                 for (let j = 0; j < domain.length; j++) {
@@ -457,6 +457,7 @@ class ExploreHeatmapPlot extends D3Visualization {
     }
 
     add_grid() {
+        // Draws lines on plot
         let grid = this.vis.append("g"),
             x_band = this.w / this.x_steps,
             y_band = this.h / this.y_steps;
@@ -521,6 +522,7 @@ class ExploreHeatmapPlot extends D3Visualization {
     }
 
     set_cell_behavior() {
+        // Cell group click fills out details table
         let fill = d => this.fill_detail_table(d.dataset);
         this.cells_enter
             .on("click", function(d) {
@@ -537,12 +539,14 @@ class ExploreHeatmapPlot extends D3Visualization {
     }
 
     update_cell_rect() {
+        // Cell rect fill based on number of records
         this.cells_data.select("rect").style("fill", d => {
             return this.color_scale(d.dataset.length);
         });
     }
 
     update_cell_text() {
+        // Cell text shows number of records
         this.cells_data
             .select("text")
             .style("display", d => (d.dataset.length == 0 ? "none" : null))
@@ -550,6 +554,8 @@ class ExploreHeatmapPlot extends D3Visualization {
     }
 
     update_plot = () => {
+        /// Cell group behavior
+        // On enter
         this.cells_data = this.cells.selectAll("g").data(this.xy_map);
         this.cells_enter = this.cells_data
             .enter()
@@ -557,7 +563,8 @@ class ExploreHeatmapPlot extends D3Visualization {
             .attr("class", "exp_heatmap_cell");
         this.set_cell_behavior();
 
-        // Update cell blocks
+        /// Cell rect behavior
+        // On enter
         this.cells_enter
             .append("rect")
             .attr("class", "exp_heatmap_cell_block")
@@ -569,9 +576,11 @@ class ExploreHeatmapPlot extends D3Visualization {
             })
             .attr("width", this.x_scale.rangeBand())
             .attr("height", this.y_scale.rangeBand());
+        // On update
         this.update_cell_rect();
 
-        // Update cell text
+        /// Cell text behavior
+        // On enter
         this.cells_enter
             .append("text")
             .attr("class", "exp_heatmap_cell_text")
@@ -586,13 +595,14 @@ class ExploreHeatmapPlot extends D3Visualization {
             ({r, g, b} = h.getTextContrastColor(r, g, b));
             return d3.rgb(r, g, b);
         });
+        // On update
         this.update_cell_text();
 
         this.cells_data.exit().remove();
     };
 
-    build_plot($div) {
-        //clear plot div and and append new svg object
+    build_plot() {
+        // Clear plot div and and append new svg object
         this.plot_div.empty();
         this.vis = d3
             .select(this.plot_div[0])
@@ -602,7 +612,7 @@ class ExploreHeatmapPlot extends D3Visualization {
             .append("g");
         this.svg = this.vis[0][0].parentNode;
 
-        // Scales for x axis, y axis, and cell color
+        // Scales for x axis and y axis
         this.x_scale = d3.scale
             .ordinal()
             .domain(_.range(0, this.x_steps))
@@ -612,10 +622,26 @@ class ExploreHeatmapPlot extends D3Visualization {
             .domain(_.range(0, this.y_steps))
             .rangeBands([0, this.h]);
 
-        this.cells = this.vis.append("g").attr("id", "exp_heatmap_cells");
-
         // Draw cells
+        this.cells = this.vis.append("g").attr("id", "exp_heatmap_cells");
         this.update_plot();
+
+        // Draw axes
+        this.build_axes();
+
+        // Draw labels
+        this.build_labels();
+
+        // Set plot dimensions and viewbox
+        let w = this.w + this.padding.left + this.padding.right,
+            h = this.h + this.padding.top + this.padding.bottom;
+        d3.select(this.svg)
+            .attr("width", w)
+            .attr("height", h)
+            .attr("viewBox", `0 0 ${w} ${h}`);
+
+        // Position plot
+        this.vis.attr("transform", `translate(${this.padding.left},${this.padding.top})`);
     }
 }
 
