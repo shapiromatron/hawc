@@ -30,6 +30,7 @@ def build_tree_node_dict(tree: Dict) -> TreeNodeDict:
     Returns:
         TreeNodeDict: An instance of the tree.
     """
+    # TODO HEATMAP - test w/ synthetic tree
     leaves: TreeNodeDict = {}
 
     def get_leaves(tag, parent_id=None):
@@ -62,6 +63,7 @@ def create_df(tag_qs: QuerySet, tree_dict: TreeNodeDict, sep: str = "|") -> pd.D
     Returns:
         pd.DataFrame: the resulting dataframe.
     """
+    # TODO HEATMAP - test w/ synthetic tree and dataset
     data = []
 
     def add_data(ref_id: int, node: TreeNode):

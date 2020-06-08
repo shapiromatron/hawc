@@ -37,7 +37,7 @@ class ExploratoryHeatmapStore {
     }
 
     @action.bound changeSettingsMultiSelect(key, values) {
-        // TODO - move this to a new selectmultiple component; make the select multi false by default
+        // TODO HEATMAP - create new SelectMultiple; remove Select multi={true/false} property
         let selected = _.chain(event.target.options)
             .filter(opt => opt.selected)
             .map(opt => opt.value)

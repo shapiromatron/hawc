@@ -157,7 +157,6 @@ class BaseVisualForm {
             d.render();
         });
         this.addPsuedoSubmitDiv($parent, this.packSettings);
-        this.afterSettingsSetup();
     }
 
     addPsuedoSubmitDiv($parent, beforeSubmit) {
@@ -175,8 +174,6 @@ class BaseVisualForm {
             .append(`<a class="btn btn-default" href="${cancel_url}">Cancel</a>`)
             .appendTo($parent);
     }
-
-    afterSettingsSetup() {}
 
     buildSettingsSubtabs($parent) {
         var self = this,

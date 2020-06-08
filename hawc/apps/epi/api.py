@@ -38,6 +38,7 @@ class EpiAssessmentViewset(
 
     @action(detail=True, url_path="result-heatmap", renderer_classes=PandasRenderers)
     def result_heatmap(self, request, pk):
+        # TODO HEATMAP - tests
         self.set_legacy_attr(pk)
         df = models.Result.heatmap_df(self.assessment)
         export = FlatExport(df=df, filename=f"heatmap-{self.assessment.id}")

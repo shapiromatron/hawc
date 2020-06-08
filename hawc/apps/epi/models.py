@@ -1436,7 +1436,7 @@ class Result(models.Model):
 
     @classmethod
     def heatmap_df(cls, assessment: Assessment) -> pd.DataFrame:
-        # TODO - clean this up and get better information
+        # TODO HEATMAP - tests / get verbose names, check for other valuable fields for info?
         columns = {
             "id": "result id",
             "name": "result name",

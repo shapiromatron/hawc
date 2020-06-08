@@ -918,7 +918,7 @@ class Endpoint(BaseEndpoint):
 
     @classmethod
     def heatmap_df(cls, assessment: Assessment) -> pd.DataFrame:
-        # TODO - clean this up and get the verbose name fo fields for route, sex, etc.
+        # TODO HEATMAP - tests / get verbose name for route, sex, etc.
         columns = {
             "id": "endpoint id",
             "name": "endpoint name",
