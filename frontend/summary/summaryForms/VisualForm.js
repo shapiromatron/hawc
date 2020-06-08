@@ -4,7 +4,7 @@ import RoBHeatmapForm from "./RoBHeatmapForm";
 import RoBBarchartForm from "./RoBBarchartForm";
 
 class VisualForm {
-    static create(visual_type, $el) {
+    static create(visual_type, $el, config) {
         var Cls;
         switch (visual_type) {
             case 0:
@@ -28,7 +28,7 @@ class VisualForm {
                 throw `Error - unknown visualization-type: ${visual_type}`;
         }
         if (Cls) {
-            return new Cls($el);
+            return new Cls($el, config);
         }
     }
 }

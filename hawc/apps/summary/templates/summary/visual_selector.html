@@ -25,10 +25,13 @@
             data-showcase="#dataPivot"
             value="{% url 'summary:dp_new-prompt' assessment.id %}">
             Data pivot</option>
+          {% comment %}
+          <!-- deprecate; let's see if anyone requests it..  -->
           <option
             data-showcase="#visual0"
             value="{% url 'summary:visualization_create' assessment.id 0 %}">
             Bioassay endpoint aggregation</option>
+          {% endcomment %}
           <option
             data-showcase="#visual1"
             value="{% url 'summary:visualization_create' assessment.id 1 %}">

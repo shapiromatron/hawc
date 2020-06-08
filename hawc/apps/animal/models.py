@@ -3,6 +3,7 @@ import json
 import math
 from itertools import chain
 
+import pandas as pd
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
@@ -914,6 +915,40 @@ class Endpoint(BaseEndpoint):
     @classmethod
     def delete_caches(cls, ids):
         SerializerHelper.delete_caches(cls, ids)
+
+    @classmethod
+    def heatmap_df(cls, assessment: Assessment) -> pd.DataFrame:
+        # TODO HEATMAP - tests / get verbose name for route, sex, etc.
+        columns = {
+            "id": "endpoint id",
+            "name": "endpoint name",
+            "system": "system",
+            "organ": "organ",
+            "effect": "effect",
+            "effect_subtype": "effect subtype",
+            "animal_group__dosing_regime__route_of_exposure": "route of exposure",
+            "animal_group__species__name": "species",
+            "animal_group__strain__name": "strain",
+            "animal_group__sex": "sex",
+            "animal_group_id": "animal group id",
+            "animal_group__experiment_id": "experiment id",
+            "animal_group__experiment__name": "experiment name",
+            "animal_group__experiment__study_id": "study id",
+            "animal_group__experiment__study__short_citation": "study citation",
+        }
+        qs = (
+            cls.objects.select_related(
+                "animal_group",
+                "animal_group__dosing_regime",
+                "animal_group__species",
+                "animal_group__strain",
+                "animal_group__experiment",
+                "animal_group__experiment__study",
+            )
+            .filter(assessment=assessment)
+            .values_list(*columns.keys())
+        )
+        return pd.DataFrame(data=list(qs), columns=columns.values())
 
     def __str__(self):
         return self.name

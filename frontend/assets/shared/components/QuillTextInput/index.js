@@ -3,15 +3,6 @@ import PropTypes from "prop-types";
 import ReactQuill from "react-quill";
 
 class QuillTextInput extends Component {
-    /**
-     * Wraps ReactQuill to add a hidden named textarea input for form submission.
-     *
-     */
-
-    onChange = value => {
-        this.props.onChange({target: {name: this.props.name, value}});
-    };
-
     render() {
         return (
             <div className="control-group">
@@ -26,12 +17,7 @@ class QuillTextInput extends Component {
                         type="text"
                         required={this.props.required}
                         value={this.props.value}
-                        onChange={this.onChange}
-                    />
-                    <textarea
-                        name={this.props.name}
-                        value={this.props.value}
-                        style={{display: "none"}}
+                        onChange={value => this.props.onChange(value)}
                     />
                     {this.props.helpText ? (
                         <p className="help-block">{this.props.helpText}</p>

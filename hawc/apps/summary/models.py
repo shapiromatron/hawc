@@ -2,7 +2,7 @@ import json
 import logging
 import os
 from operator import methodcaller
-from typing import Dict
+from typing import Dict, List
 
 import pandas as pd
 from django.apps import apps
@@ -12,6 +12,7 @@ from django.db import models
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.html import strip_tags
+from pydantic import BaseModel as PydanticModel
 from reversion import revisions as reversion
 from treebeard.mp_tree import MP_Node
 
@@ -183,6 +184,16 @@ class SummaryText(MP_Node):
                 print_node(node, 2)
 
 
+class HeatmapDataset(PydanticModel):
+    type: str
+    name: str
+    url: str
+
+
+class HeatmapDatasets(PydanticModel):
+    datasets: List[HeatmapDataset]
+
+
 class Visual(models.Model):
     objects = managers.VisualManager()
 
@@ -268,6 +279,35 @@ class Visual(models.Model):
 
     def get_api_detail(self):
         return reverse("summary:api:visual-detail", args=(self.id,))
+
+    def get_api_heatmap_datasets(self):
+        return reverse("summary:api:assessment-heatmap-datasets", args=(self.assessment_id,))
+
+    @classmethod
+    def get_heatmap_datasets(cls, assessment: Assessment) -> HeatmapDatasets:
+        return HeatmapDatasets(
+            datasets=[
+                HeatmapDataset(
+                    type="Literature",
+                    name="Literature summary",
+                    url=reverse("lit:api:assessment-tag-heatmap", args=(assessment.id,)),
+                ),
+                HeatmapDataset(
+                    type="Bioassay",
+                    name="Bioassay summary",
+                    url=reverse("animal:api:assessment-endpoint-heatmap", args=(assessment.id,)),
+                ),
+                HeatmapDataset(
+                    type="Epi",
+                    name="Epi summary",
+                    url=reverse("epi:api:assessment-result-heatmap", args=(assessment.id,)),
+                ),
+                *(
+                    HeatmapDataset(type="Dataset", name=ds.name, url=ds.get_api_data_url())
+                    for ds in assessment.datasets.all()
+                ),
+            ]
+        )
 
     @staticmethod
     def get_dose_units():
@@ -362,6 +402,7 @@ class Visual(models.Model):
             pass
 
         data = {
+            "assessment": self.assessment_id,
             "title": request.POST.get("title"),
             "slug": request.POST.get("slug"),
             "caption": request.POST.get("caption"),

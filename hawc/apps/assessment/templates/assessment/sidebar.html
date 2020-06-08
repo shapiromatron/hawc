@@ -22,8 +22,9 @@
         {% endif %}
 
         <li><a href="{% url 'assessment:endpoint_list' assessment.pk %}">Endpoint list</a></li>
-        <li><a href="{% url 'summary:visualization_list' assessment.pk %}">Visualizations</a></li>
     {% endif %}
+
+    <li><a href="{% url 'summary:visualization_list' assessment.pk %}">Visualizations</a></li>
 
     {% if assessment.enable_summary_text %}
         <li><a href="{% url 'summary:list' assessment.pk %}">Executive summary</a></li>
