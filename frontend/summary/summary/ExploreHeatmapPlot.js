@@ -207,82 +207,6 @@ class ExploreHeatmapPlot extends D3Visualization {
             .style("display", "inline-block")
             .style("overflow", "auto");
 
-        this.blacklist_table = this.blacklist_container
-            .append("table")
-            .attr("class", "table table-striped table-bordered table-hover");
-        let func = d => {
-            let in_list = _.includes(this.blacklist, d);
-            in_list ? _.pull(this.blacklist, d) : this.blacklist.push(d);
-            in_list = !in_list;
-            this.xy_map = this.create_map();
-            this.update_plot();
-            return in_list;
-        };
-
-        // Create the table header
-        this.blacklist_table
-            .append("thead")
-            .append("tr")
-            .append("th")
-            .text(this.blacklist_field);
-        // Fill in table body
-        this.blacklist_table.append("tbody");
-
-        d3.select(this.modal.getBody()[0]).append("table");
-
-        let button_func = d => {
-            d3.event.stopPropagation();
-            this.modal
-                .addHeader(`<h4>Test</h4>`)
-                .addFooter("")
-                .show();
-        };
-
-        let rows = this.blacklist_table
-            .select("tbody")
-            .selectAll("tr")
-            .data(this.blacklist_domain);
-        rows.enter()
-            .append("tr")
-            .append("td")
-            .text(d => d)
-            .on("click", function(d) {
-                d3.select(this).style("text-decoration", func(d) ? "line-through" : null);
-            })
-            .append("button")
-            .attr("class", "btn btn-mini pull-right")
-            .on("click", button_func)
-            .html("<i class='icon-eye-open'></i>");
-
-        this.blacklist_table.selectAll("th").attr("colspan", 2);
-        this.blacklist_table.selectAll("td").attr("colspan", 2);
-
-        let mass_select = this.blacklist_table.select("tbody").insert("tr", ":first-child");
-        // Select all
-        mass_select
-            .append("td")
-            .style("width", "50%")
-            .on("click", d => {
-                this.blacklist_table.selectAll("tbody>tr+tr>td").style("text-decoration", null);
-                this.blacklist = [];
-                this.xy_map = this.create_map();
-                this.update_plot();
-            })
-            .text("All");
-        // Select none
-        mass_select
-            .append("td")
-            .style("width", "50%")
-            .on("click", d => {
-                this.blacklist_table
-                    .selectAll("tbody>tr+tr>td")
-                    .style("text-decoration", "line-through");
-                this.blacklist = this.blacklist_domain.slice();
-                this.xy_map = this.create_map();
-                this.update_plot();
-            })
-            .text("None");
-
         // Have resize trigger also resize blacklist div
         let old_trigger = this.trigger_resize;
         this.trigger_resize = forceResize => {
@@ -295,6 +219,74 @@ class ExploreHeatmapPlot extends D3Visualization {
             );
         };
         $(window).resize(this.trigger_resize);
+
+        let blacklist_select = this.blacklist_container.append("div").attr("class", "btn-group"),
+            blacklist_input = this.blacklist_container.append("div"),
+            blacklist_enter = blacklist_input
+                .selectAll("input")
+                .data(this.blacklist_domain)
+                .enter()
+                .append("div"),
+            blacklist_label = blacklist_enter.append("label"),
+            self = this;
+        let button_func = d => {
+            this.modal
+                .addHeader(`<h4>${d}</h4>`)
+                .addFooter("")
+                .show();
+        };
+        blacklist_enter
+            .insert("button", ":first-child")
+            .attr("class", "btn btn-mini pull-left")
+            .on("click", button_func)
+            .html("<i class='icon-eye-open'></i>");
+
+        blacklist_label
+            .append("input")
+            .attr("type", "checkbox")
+            .property("checked", true);
+        blacklist_label.append("span").text(d => d);
+        blacklist_input.on("change", function() {
+            self.blacklist = [];
+            d3.select(this)
+                .selectAll("label")
+                .each(function(d) {
+                    if (
+                        !d3
+                            .select(this)
+                            .select("input")
+                            .property("checked")
+                    )
+                        self.blacklist.push(d);
+                });
+            self.xy_map = self.create_map();
+            self.update_plot();
+        });
+
+        blacklist_select
+            .append("button")
+            .attr("class", "btn")
+            .text("All")
+            .on("click", () => {
+                blacklist_input.selectAll("label").each(function() {
+                    d3.select(this)
+                        .select("input")
+                        .property("checked", true);
+                });
+                blacklist_input.node().dispatchEvent(new Event("change"));
+            });
+        blacklist_select
+            .append("button")
+            .attr("class", "btn")
+            .text("None")
+            .on("click", () => {
+                blacklist_input.selectAll("label").each(function() {
+                    d3.select(this)
+                        .select("input")
+                        .property("checked", false);
+                });
+                blacklist_input.node().dispatchEvent(new Event("change"));
+            });
     }
 
     build_detail_box() {
