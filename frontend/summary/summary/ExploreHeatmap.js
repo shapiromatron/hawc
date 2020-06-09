@@ -5,6 +5,7 @@ import ExploreHeatmapPlot from "./ExploreHeatmapPlot";
 import $ from "$";
 
 import h from "shared/utils/helpers";
+import {NULL_VALUE} from "./constants";
 
 class ExploreHeatmap extends BaseVisual {
     constructor(data, dataset) {
@@ -20,8 +21,8 @@ class ExploreHeatmap extends BaseVisual {
             plot_title: settings.title,
             x_label: settings.x_label,
             y_label: settings.y_label,
-            x_fields: settings.x_fields,
-            y_fields: settings.y_fields,
+            x_fields: settings.x_fields.filter(d => d.column !== NULL_VALUE).map(d => d.column),
+            y_fields: settings.y_fields.filter(d => d.column !== NULL_VALUE).map(d => d.column),
             all_fields: settings.all_fields,
             blacklist_field: "study-short_citation", //additional filter / main identifier
             show_blacklist: true,

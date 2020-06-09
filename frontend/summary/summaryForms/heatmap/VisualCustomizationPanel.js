@@ -41,9 +41,9 @@ class VisualCustomizationPanel extends Component {
         return (
             <div>
                 <h4>X fields</h4>
-                <AxisLabelTable settingsKey={"x_fields_temp"} />
+                <AxisLabelTable settingsKey={"x_fields"} />
                 <h4>Y fields</h4>
-                <AxisLabelTable settingsKey={"y_fields_temp"} />
+                <AxisLabelTable settingsKey={"y_fields"} />
                 <TextInput
                     name="title"
                     label="Title"
@@ -62,23 +62,6 @@ class VisualCustomizationPanel extends Component {
                     value={settings.y_label}
                     onChange={e => changeSettings(e.target.name, e.target.value)}
                 />
-                <SelectInput
-                    name="x_fields"
-                    label="X fields"
-                    className="span12"
-                    choices={getColumnsOptions}
-                    multiple={true}
-                    handleSelect={value => changeSettingsMultiSelect("x_fields", value)}
-                    value={settings.x_fields}
-                />
-                <SelectInput
-                    name="y_fields"
-                    label="Y fields"
-                    className="span12"
-                    choices={getColumnsOptions}
-                    multiple={true}
-                    handleSelect={value => changeSettingsMultiSelect("y_fields", value)}
-                    value={settings.y_fields}
                 />
                 <SelectInput
                     name="all_fields"

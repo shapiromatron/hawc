@@ -19,10 +19,8 @@ class ExploratoryHeatmapStore {
             title: "",
             x_label: "",
             y_label: "",
-            x_fields_temp: [getDefaultAxisItem()],
-            y_fields_temp: [getDefaultAxisItem()],
-            x_fields: [],
-            y_fields: [],
+            x_fields: [getDefaultAxisItem()],
+            y_fields: [getDefaultAxisItem()],
             all_fields: [],
         };
     }
