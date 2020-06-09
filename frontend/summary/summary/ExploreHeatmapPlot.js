@@ -87,7 +87,7 @@ class ExploreHeatmapPlot extends D3Visualization {
         if (this.selected_cells.length == 0) return this.filtered_dataset;
         return _.filter(this.filtered_dataset, e => {
             for (let cell of this.selected_cells) {
-                if (_.isMatch(e, _.assign({}, cell.x_filter, cell.y_filter))) return true;
+                if (_.isMatch(e, cell.x_filter) && _.isMatch(e, cell.y_filter)) return true;
             }
             return false;
         });
@@ -573,7 +573,10 @@ class ExploreHeatmapPlot extends D3Visualization {
     }
 
     cell_dataset(x_filter, y_filter) {
-        return _.filter(this.filtered_dataset, _.matches(_.assign({}, x_filter, y_filter)));
+        return _.filter(
+            this.filtered_dataset,
+            e => _.isMatch(e, x_filter) && _.isMatch(e, y_filter)
+        );
     }
 
     update_plot = () => {
