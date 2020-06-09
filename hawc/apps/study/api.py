@@ -62,13 +62,6 @@ class Study(
         return super().create(request)
 
 
-class FinalRobStudy(Study):
-    list_actions = ["list"]
-
-    def get_serializer_class(self):
-        return serializers.FinalRobStudySerializer
-
-
 class StudyCleanupFieldsView(CleanupFieldsBaseViewSet):
     model = models.Study
     serializer_class = serializers.StudyCleanupFieldsSerializer
