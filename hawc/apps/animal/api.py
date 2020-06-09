@@ -12,7 +12,7 @@ from ..assessment.api import (
 )
 from ..assessment.models import Assessment
 from ..common.api import CleanupFieldsBaseViewSet, LegacyAssessmentAdapterMixin
-from ..common.helper import re_digits
+from ..common.helper import FlatExport, re_digits
 from ..common.renderers import PandasRenderers
 from ..common.serializers import UnusedSerializer
 from ..common.views import AssessmentPermissionsMixin
@@ -61,6 +61,14 @@ class AnimalAssessmentViewset(
             assessment=self.assessment,
         )
         return Response(exporter.build_export())
+
+    @action(detail=True, url_path="endpoint-heatmap", renderer_classes=PandasRenderers)
+    def endpoint_heatmap(self, request, pk):
+        # TODO HEATMAP - add tests
+        self.set_legacy_attr(pk)
+        df = models.Endpoint.heatmap_df(self.assessment)
+        export = FlatExport(df=df, filename=f"heatmap-{self.assessment.id}")
+        return Response(export)
 
 
 class Experiment(AssessmentViewset):

@@ -4,8 +4,9 @@ import $ from "$";
 import HAWCUtils from "utils/HAWCUtils";
 
 class BaseVisualForm {
-    constructor($el) {
+    constructor($el, config) {
         this.$el = $el;
+        this.config = config;
         this.fields = [];
         this.settings = {};
         this.initDataForm();
@@ -28,16 +29,9 @@ class BaseVisualForm {
         $data.find(":input").on("change", setDataChanged);
         $data.on("djselectableadd djselectableremove", setDataChanged);
 
-        // TODO - fix!
-        $data
-            .find(".wysihtml5-sandbox")
-            .contents()
-            .find("body")
-            .on("keyup", setDataChanged);
-
         // whenever data is synced, rebuild
-        $settings.on("dataSynched", this.unpackSettings.bind(this));
-        $preview.on("dataSynched", this.buildPreviewDiv.bind(this));
+        $settings.on("dataSynced", this.unpackSettings.bind(this));
+        $preview.on("dataSynced", this.buildPreviewDiv.bind(this));
 
         $('a[data-toggle="tab"]').on("show", function(e) {
             var toShow = $(e.target).attr("href"),
@@ -83,7 +77,7 @@ class BaseVisualForm {
         if (this.isSynching) return;
         this.dataSynced = false;
         this.isSynching = true;
-        $.post(window.test_url, form, function(d) {
+        $.post(this.config.preview_url, form, function(d) {
             self.data = d;
             if (self.afterGetDataHook) self.afterGetDataHook(d);
         })
@@ -95,7 +89,7 @@ class BaseVisualForm {
             .always(function() {
                 self.isSynching = false;
                 self.dataSynced = true;
-                $("#preview, #settings").trigger("dataSynched");
+                $("#preview, #settings").trigger("dataSynced");
             });
     }
 

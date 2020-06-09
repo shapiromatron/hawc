@@ -5,48 +5,52 @@ import ExploreHeatmapPlot from "./ExploreHeatmapPlot";
 import $ from "$";
 
 class ExploreHeatmap extends BaseVisual {
-    constructor(data) {
+    constructor(data, dataset) {
         super(data);
+        this.dataset = dataset || null;
+    }
+
+    getSettings() {
+        const {settings} = this.data;
+        return {
+            type: "heatmap",
+            plot: {width: undefined, height: undefined}, //svg size, undefined defaults to page content size
+            plot_title: settings.title,
+            x_label: settings.x_label,
+            y_label: settings.y_label,
+            x_fields: settings.x_fields,
+            y_fields: settings.y_fields,
+            all_fields: settings.all_fields,
+            blacklist_field: "study-short_citation", //additional filter / main identifier
+            show_blacklist: true,
+            blacklist_width: undefined,
+            details_height: undefined,
+            color_range: ["white", "green"],
+        };
+    }
+
+    getDataset() {
+        const url = this.data.settings.data_url;
+        if (!this.dataset) {
+            this.dataset = JSON.parse(
+                $.ajax(url, {
+                    async: false,
+                    dataType: "json",
+                }).responseText
+            );
+        }
+        return this.dataset;
     }
 
     displayAsPage($el, options) {
         var title = $("<h1>").text(this.data.title),
             captionDiv = $("<div>").html(this.data.caption),
             caption = new SmartTagContainer(captionDiv),
-            $plotDiv = $("<div>");
-        //data = this.getPlotData();
-
-        var data = {};
-        data.settings = {
-            type: "heatmap",
-            plot: {width: undefined, height: undefined}, //svg size, undefined defaults to page content size
-            plot_title: "Exploratory heatmap of experiments by species, sex, and health system",
-            x_label: "Species & Sex",
-            y_label: "Health System",
-            x_fields: ["species-name", "animal_group-sex"], //nested fields on x axis
-            y_fields: ["endpoint-system"], //nested fields on y axis
-            all_fields: [
-                "study-short_citation",
-                "study-study_identifier",
-                "experiment-chemical",
-                "animal_group-name",
-                "animal_group-sex",
-                "species-name",
-            ], //all fields we are interested in, ignore excluded fields on detail page
-            blacklist_field: "study-short_citation", //additional filter / main identifier
-
-            show_blacklist: true,
-            blacklist_width: undefined,
-            details_height: undefined,
-            color_range: ["white", "green"],
-        };
-        data.dataset = JSON.parse(
-            $.ajax(`/ani/api/assessment/${this.data.assessment}/endpoint-export/?format=json`, {
-                async: false,
-                dataType: "json",
-            }).responseText
-        );
-
+            $plotDiv = $("<div>"),
+            data = {
+                settings: this.getSettings(),
+                dataset: this.getDataset(),
+            };
         options = options || {};
 
         if (window.isEditable) title.append(this.addActionsMenu());
@@ -63,42 +67,14 @@ class ExploreHeatmap extends BaseVisual {
         options = options || {};
 
         var self = this,
-            //data = this.getPlotData(),
             captionDiv = $("<div>").html(this.data.caption),
             caption = new SmartTagContainer(captionDiv),
             $plotDiv = $("<div>"),
-            modal = new HAWCModal();
-
-        var data = {};
-        data.settings = {
-            type: "heatmap",
-            plot: {width: undefined, height: undefined}, //svg size, undefined defaults to page content size
-            plot_title: "Exploratory heatmap of experiments by species, sex, and health system",
-            x_label: "Species & Sex",
-            y_label: "Health System",
-            x_fields: ["species-name", "animal_group-sex"], //nested fields on x axis
-            y_fields: ["endpoint-system"], //nested fields on y axis
-            all_fields: [
-                "study-short_citation",
-                "study-study_identifier",
-                "experiment-chemical",
-                "animal_group-name",
-                "animal_group-sex",
-                "species-name",
-            ], //all fields we are interested in, ignore excluded fields on detail page
-            blacklist_field: "study-short_citation", //additional filter / main identifier
-
-            show_blacklist: true,
-            blacklist_width: undefined,
-            details_height: undefined,
-            color_range: ["white", "green"],
-        };
-        data.dataset = JSON.parse(
-            $.ajax(`/ani/api/assessment/${this.data.assessment}/endpoint-export/?format=json`, {
-                async: false,
-                dataType: "json",
-            }).responseText
-        );
+            modal = new HAWCModal(),
+            data = {
+                settings: this.getSettings(),
+                dataset: this.getDataset(),
+            };
 
         modal.getModal().on("shown", function() {
             new ExploreHeatmapPlot(self, data, options).render($plotDiv);
@@ -110,14 +86,6 @@ class ExploreHeatmap extends BaseVisual {
             .addBody([$plotDiv, captionDiv])
             .addFooter("")
             .show({maxWidth: 1200});
-    }
-
-    getPlotData() {
-        return {
-            aggregation: this.roba,
-            settings: this.data.settings,
-            assessment_rob_name: this.data.assessment_rob_name,
-        };
     }
 }
 
