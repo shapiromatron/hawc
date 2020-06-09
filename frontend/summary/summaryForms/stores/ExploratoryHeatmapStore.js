@@ -5,7 +5,7 @@ import h from "shared/utils/helpers";
 import {NULL_VALUE} from "../../summary/constants";
 
 let getDefaultAxisItem = function() {
-    return {column: NULL_VALUE, rotation: 0};
+    return {column: NULL_VALUE, tick_rotation: 0, delimiter: ""};
 };
 
 class ExploratoryHeatmapStore {
@@ -130,7 +130,7 @@ class ExploratoryHeatmapStore {
         });
     }
     @computed get getColumnsOptionsWithNull() {
-        let columns = this.getColumnsOptions;
+        let columns = [...this.getColumnsOptions]; // shallow-copy
         columns.unshift({id: NULL_VALUE, label: "<none>"});
         return columns;
     }

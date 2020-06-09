@@ -15,14 +15,16 @@ class AxisLabelTable extends Component {
         return (
             <table className="table table-condensed table-striped">
                 <colgroup>
-                    <col width="60%" />
-                    <col width="30%" />
+                    <col width="50%" />
+                    <col width="20%" />
+                    <col width="20%" />
                     <col width="10%" />
                 </colgroup>
                 <thead>
                     <tr>
                         <th>Column</th>
                         <th>Rotation</th>
+                        <th>Delimiter</th>
                         <th>
                             Actions&nbsp;
                             <button
@@ -63,9 +65,23 @@ class AxisLabelTable extends Component {
                 <td>
                     <TextInput
                         name={`${key}-rotation-${index}`}
-                        value={row.rotation}
+                        value={row.tick_rotation}
                         onChange={e =>
-                            changeArraySettings(key, index, "rotation", parseInt(e.target.value))
+                            changeArraySettings(
+                                key,
+                                index,
+                                "tick_rotation",
+                                parseInt(e.target.value)
+                            )
+                        }
+                    />
+                </td>
+                <td>
+                    <TextInput
+                        name={`${key}-delimiter-${index}`}
+                        value={row.delimiter}
+                        onChange={e =>
+                            changeArraySettings(key, index, "delimiter", e.target.value.trim())
                         }
                     />
                 </td>

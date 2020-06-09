@@ -62,7 +62,6 @@ class VisualCustomizationPanel extends Component {
                     value={settings.y_label}
                     onChange={e => changeSettings(e.target.name, e.target.value)}
                 />
-                />
                 <SelectInput
                     name="all_fields"
                     label="All fields"
