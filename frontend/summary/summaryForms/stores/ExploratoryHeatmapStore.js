@@ -2,6 +2,11 @@ import {observable, action, computed} from "mobx";
 
 import _ from "lodash";
 import h from "shared/utils/helpers";
+import {NULL_VALUE} from "../../summary/constants";
+
+let getDefaultAxisItem = function() {
+    return {column: NULL_VALUE, rotation: 0};
+};
 
 class ExploratoryHeatmapStore {
     constructor(rootStore) {
@@ -14,6 +19,8 @@ class ExploratoryHeatmapStore {
             title: "",
             x_label: "",
             y_label: "",
+            x_fields_temp: [getDefaultAxisItem()],
+            y_fields_temp: [getDefaultAxisItem()],
             x_fields: [],
             y_fields: [],
             all_fields: [],
@@ -23,6 +30,35 @@ class ExploratoryHeatmapStore {
     @observable settings = null;
     @observable datasetOptions = null;
     @observable columnNames = null;
+
+    @action.bound moveArrayElementUp(key, index) {
+        const arr = this.settings[key];
+        if (index === 0) {
+            return;
+        }
+        let b = arr[index];
+        arr[index] = arr[index - 1];
+        arr[index - 1] = b;
+    }
+
+    @action.bound moveArrayElementDown(key, index) {
+        const arr = this.settings[key];
+        if (index + 1 >= arr.length) {
+            return;
+        }
+        let b = arr[index];
+        arr[index] = arr[index + 1];
+        arr[index + 1] = b;
+    }
+
+    @action.bound deleteArrayElement(key, index) {
+        const arr = this.settings[key];
+        arr.splice(index, 1);
+    }
+
+    @action.bound createNewAxisLabel(key) {
+        this.settings[key].push(getDefaultAxisItem());
+    }
 
     @action setFromJsonSettings(settings, firstTime) {
         this.settings = settings;
@@ -34,6 +70,10 @@ class ExploratoryHeatmapStore {
 
     @action.bound changeSettings(key, value) {
         this.settings[key] = value;
+    }
+
+    @action.bound changeArraySettings(arrayKey, index, key, value) {
+        this.settings[arrayKey][index][key] = value;
     }
 
     @action.bound changeSettingsMultiSelect(key, values) {
@@ -90,6 +130,11 @@ class ExploratoryHeatmapStore {
         return this.columnNames.map(d => {
             return {id: d, label: d};
         });
+    }
+    @computed get getColumnsOptionsWithNull() {
+        let columns = this.getColumnsOptions;
+        columns.unshift({id: NULL_VALUE, label: "<none>"});
+        return columns;
     }
 }
 

@@ -2,8 +2,10 @@ import PropTypes from "prop-types";
 import React, {Component} from "react";
 import {inject, observer} from "mobx-react";
 import TextInput from "shared/components/TextInput";
-import {MissingData, RefreshRequired} from "./common";
 import SelectInput from "shared/components/SelectInput";
+
+import {MissingData, RefreshRequired} from "./common";
+import AxisLabelTable from "./AxisLabelTable";
 
 @inject("store")
 @observer
@@ -38,6 +40,10 @@ class VisualCustomizationPanel extends Component {
 
         return (
             <div>
+                <h4>X fields</h4>
+                <AxisLabelTable settingsKey={"x_fields_temp"} />
+                <h4>Y fields</h4>
+                <AxisLabelTable settingsKey={"y_fields_temp"} />
                 <TextInput
                     name="title"
                     label="Title"
