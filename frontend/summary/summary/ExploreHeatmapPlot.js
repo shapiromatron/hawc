@@ -71,12 +71,26 @@ class ExploreHeatmapPlot extends D3Visualization {
             .linear()
             .domain([
                 0,
-                this.xy_map.reduce(
-                    (current_max, element) => Math.max(current_max, element.dataset.length),
+                this.cell_map.reduce(
+                    (current_max, element) =>
+                        Math.max(
+                            current_max,
+                            this.cell_dataset(element.x_filter, element.y_filter).length
+                        ),
                     0
                 ),
             ])
             .range(this.color_range);
+    }
+
+    select_dataset() {
+        if (this.selected_cells.length == 0) return this.filtered_dataset;
+        return _.filter(this.filtered_dataset, e => {
+            for (let cell of this.selected_cells) {
+                if (_.isMatch(e, _.assign({}, cell.x_filter, cell.y_filter))) return true;
+            }
+            return false;
+        });
     }
 
     generate_properties(data) {
@@ -90,6 +104,8 @@ class ExploreHeatmapPlot extends D3Visualization {
 
         // From constructor parameters
         this.dataset = data.dataset;
+        this.filtered_dataset = this.dataset;
+        this.selected_cells = [];
         _.assign(this, data.settings);
         this.blacklist = [];
 
@@ -118,7 +134,7 @@ class ExploreHeatmapPlot extends D3Visualization {
         this.y_steps = this.y_domain.reduce((total, element) => total * element.length, 1);
         this.w = this.cell_width * this.x_steps;
         this.h = this.cell_height * this.y_steps;
-        this.xy_map = this.create_map();
+        this.cell_map = this.create_map();
     }
 
     build_container($div) {
@@ -165,18 +181,6 @@ class ExploreHeatmapPlot extends D3Visualization {
                             x_step: x_element.step,
                             y_step: y_element.step,
                         };
-                        new_element["dataset"] = _.filter(
-                            this.dataset,
-                            _.matches(
-                                _.assign({}, new_element["x_filter"], new_element["y_filter"])
-                            )
-                        );
-                        if (this.blacklist.length > 0) {
-                            new_element["dataset"] = _.filter(
-                                new_element["dataset"],
-                                e => !_.includes(this.blacklist, e[this.blacklist_field])
-                            );
-                        }
                         return new_element;
                     });
                 })
@@ -283,8 +287,9 @@ class ExploreHeatmapPlot extends D3Visualization {
                     )
                         self.blacklist.push(d);
                 });
-            self.xy_map = self.create_map();
+            self.filter_dataset();
             self.update_plot();
+            self.fill_detail_table(self.select_dataset());
         });
     }
 
@@ -323,7 +328,18 @@ class ExploreHeatmapPlot extends D3Visualization {
 
         // Fill in table body
         this.detail_table.append("tbody");
-        this.fill_detail_table(this.dataset);
+        this.fill_detail_table(this.select_dataset());
+    }
+
+    filter_dataset() {
+        if (this.blacklist.length > 0) {
+            this.filtered_dataset = _.filter(
+                this.dataset,
+                e => !_.includes(this.blacklist, e[this.blacklist_field])
+            );
+        } else {
+            this.filtered_dataset = this.dataset;
+        }
     }
 
     fill_detail_table = data => {
@@ -523,7 +539,7 @@ class ExploreHeatmapPlot extends D3Visualization {
 
     set_cell_behavior() {
         // Cell group click fills out details table
-        let fill = d => this.fill_detail_table(d.dataset);
+        let self = this;
         this.cells_enter
             .on("click", function(d) {
                 d3.selectAll(".exp_heatmap_cell_block")
@@ -533,7 +549,8 @@ class ExploreHeatmapPlot extends D3Visualization {
                     .select("rect")
                     .style("stroke", "black")
                     .style("stroke-width", 2);
-                fill(d);
+                self.selected_cells = [d];
+                self.fill_detail_table(self.select_dataset());
             })
             .on("mouseover", null);
     }
@@ -541,7 +558,7 @@ class ExploreHeatmapPlot extends D3Visualization {
     update_cell_rect() {
         // Cell rect fill based on number of records
         this.cells_data.select("rect").style("fill", d => {
-            return this.color_scale(d.dataset.length);
+            return this.color_scale(this.cell_dataset(d.x_filter, d.y_filter).length);
         });
     }
 
@@ -549,14 +566,20 @@ class ExploreHeatmapPlot extends D3Visualization {
         // Cell text shows number of records
         this.cells_data
             .select("text")
-            .style("display", d => (d.dataset.length == 0 ? "none" : null))
-            .text(d => d.dataset.length);
+            .style("display", d =>
+                this.cell_dataset(d.x_filter, d.y_filter).length == 0 ? "none" : null
+            )
+            .text(d => this.cell_dataset(d.x_filter, d.y_filter).length);
+    }
+
+    cell_dataset(x_filter, y_filter) {
+        return _.filter(this.filtered_dataset, _.matches(_.assign({}, x_filter, y_filter)));
     }
 
     update_plot = () => {
         /// Cell group behavior
         // On enter
-        this.cells_data = this.cells.selectAll("g").data(this.xy_map);
+        this.cells_data = this.cells.selectAll("g").data(this.cell_map);
         this.cells_enter = this.cells_data
             .enter()
             .append("g")
@@ -591,7 +614,9 @@ class ExploreHeatmapPlot extends D3Visualization {
                 return this.y_scale(d.y_step) + this.y_scale.rangeBand() / 2;
             });
         this.cells_data.select("text").style("fill", d => {
-            let {r, g, b} = d3.rgb(this.color_scale(d.dataset.length));
+            let {r, g, b} = d3.rgb(
+                this.color_scale(this.cell_dataset(d.x_filter, d.y_filter).length)
+            );
             ({r, g, b} = h.getTextContrastColor(r, g, b));
             return d3.rgb(r, g, b);
         });
