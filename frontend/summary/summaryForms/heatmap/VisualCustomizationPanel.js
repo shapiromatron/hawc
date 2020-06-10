@@ -4,7 +4,7 @@ import {inject, observer} from "mobx-react";
 import TextInput from "shared/components/TextInput";
 import {MissingData, RefreshRequired} from "./common";
 import SelectInput from "shared/components/SelectInput";
-import NumberInput from "shared/components/NumberInput";
+import IntInput from "shared/components/IntInput";
 
 @inject("store")
 @observer
@@ -47,7 +47,7 @@ class VisualCustomizationPanel extends Component {
                 />
                 <div className="row-fluid">
                     <div className="span4">
-                        <NumberInput
+                        <IntInput
                             name="title.x"
                             label="Title x-coordinate"
                             value={settings.title.x}
@@ -55,7 +55,7 @@ class VisualCustomizationPanel extends Component {
                         />
                     </div>
                     <div className="span4">
-                        <NumberInput
+                        <IntInput
                             name="title.y"
                             label="Title y-coordinate"
                             value={settings.title.y}
@@ -63,7 +63,7 @@ class VisualCustomizationPanel extends Component {
                         />
                     </div>
                     <div className="span4">
-                        <NumberInput
+                        <IntInput
                             name="title.rotate"
                             label="Title rotation"
                             value={settings.title.rotate}
@@ -83,7 +83,7 @@ class VisualCustomizationPanel extends Component {
                     handleSelect={value => changeSettingsMultiSelect("x_fields", value)}
                     value={settings.x_fields}
                 />
-                <NumberInput
+                <IntInput
                     name="x_tick_rotate"
                     label="X-axis tick rotation"
                     value={settings.x_tick_rotate}
@@ -98,7 +98,7 @@ class VisualCustomizationPanel extends Component {
                 />
                 <div className="row-fluid">
                     <div className="span4">
-                        <NumberInput
+                        <IntInput
                             name="x_label.x"
                             label="X-axis label x-coordinate"
                             value={settings.x_label.x}
@@ -106,7 +106,7 @@ class VisualCustomizationPanel extends Component {
                         />
                     </div>
                     <div className="span4">
-                        <NumberInput
+                        <IntInput
                             name="x_label.y"
                             label="X-axis label y-coordinate"
                             value={settings.x_label.y}
@@ -114,7 +114,7 @@ class VisualCustomizationPanel extends Component {
                         />
                     </div>
                     <div className="span4">
-                        <NumberInput
+                        <IntInput
                             name="x_label.rotate"
                             label="X-axis label rotation"
                             value={settings.x_label.rotate}
@@ -134,7 +134,7 @@ class VisualCustomizationPanel extends Component {
                     handleSelect={value => changeSettingsMultiSelect("y_fields", value)}
                     value={settings.y_fields}
                 />
-                <NumberInput
+                <IntInput
                     name="y_tick_rotate"
                     label="Y-axis tick rotation"
                     value={settings.y_tick_rotate}
@@ -148,7 +148,7 @@ class VisualCustomizationPanel extends Component {
                 />
                 <div className="row-fluid">
                     <div className="span4">
-                        <NumberInput
+                        <IntInput
                             name="y_label.x"
                             label="Y-axis label x-coordinate"
                             value={settings.y_label.x}
@@ -156,7 +156,7 @@ class VisualCustomizationPanel extends Component {
                         />
                     </div>
                     <div className="span4">
-                        <NumberInput
+                        <IntInput
                             name="y_label.y"
                             label="Y-axis label y-coordinate"
                             value={settings.y_label.y}
@@ -164,7 +164,7 @@ class VisualCustomizationPanel extends Component {
                         />
                     </div>
                     <div className="span4">
-                        <NumberInput
+                        <IntInput
                             name="y_label.rotate"
                             label="Y-axis label rotation"
                             value={settings.y_label.rotate}
@@ -188,7 +188,7 @@ class VisualCustomizationPanel extends Component {
                 <hr />
                 <div className="row-fluid">
                     <div className="span6">
-                        <NumberInput
+                        <IntInput
                             name="cell_width"
                             label="Cell width"
                             value={settings.cell_width}
@@ -196,7 +196,7 @@ class VisualCustomizationPanel extends Component {
                         />
                     </div>
                     <div className="span6">
-                        <NumberInput
+                        <IntInput
                             name="cell_height"
                             label="Cell height"
                             value={settings.cell_height}
@@ -209,7 +209,7 @@ class VisualCustomizationPanel extends Component {
 
                 <div className="row-fluid">
                     <div className="span3">
-                        <NumberInput
+                        <IntInput
                             name="padding.top"
                             label="Padding top"
                             value={settings.padding.top}
@@ -217,7 +217,7 @@ class VisualCustomizationPanel extends Component {
                         />
                     </div>
                     <div className="span3">
-                        <NumberInput
+                        <IntInput
                             name="padding.left"
                             label="Padding left"
                             value={settings.padding.left}
@@ -225,7 +225,7 @@ class VisualCustomizationPanel extends Component {
                         />
                     </div>
                     <div className="span3">
-                        <NumberInput
+                        <IntInput
                             name="padding.bottom"
                             label="Padding bottom"
                             value={settings.padding.bottom}
@@ -233,7 +233,7 @@ class VisualCustomizationPanel extends Component {
                         />
                     </div>
                     <div className="span3">
-                        <NumberInput
+                        <IntInput
                             name="padding.right"
                             label="Padding right"
                             value={settings.padding.right}
