@@ -45,36 +45,111 @@ class VisualCustomizationPanel extends Component {
                     value={settings.title.text}
                     onChange={e => changeSettings(e.target.name, e.target.value)}
                 />
-                <TextInput
-                    name="x_label.text"
-                    label="X label"
-                    value={settings.x_label.text}
-                    onChange={e => changeSettings(e.target.name, e.target.value)}
+                <NumberInput
+                    name="title.x"
+                    label="Title x-coordinate"
+                    value={settings.title.x}
+                    onChange={e => changeSettings(e.target.name, parseInt(e.target.value))}
                 />
-                <TextInput
-                    name="y_label.text"
-                    label="Y label"
-                    value={settings.y_label.text}
-                    onChange={e => changeSettings(e.target.name, e.target.value)}
+                <NumberInput
+                    name="title.y"
+                    label="Title y-coordinate"
+                    value={settings.title.y}
+                    onChange={e => changeSettings(e.target.name, parseInt(e.target.value))}
                 />
+                <NumberInput
+                    name="title.rotate"
+                    label="Title rotation"
+                    value={settings.title.rotate}
+                    onChange={e => changeSettings(e.target.name, parseInt(e.target.value))}
+                />
+
+                <hr />
+
                 <SelectInput
                     name="x_fields"
-                    label="X fields"
+                    label="X-axis fields"
                     className="span12"
                     choices={getColumnsOptions}
                     multiple={true}
                     handleSelect={value => changeSettingsMultiSelect("x_fields", value)}
                     value={settings.x_fields}
                 />
+                <TextInput
+                    name="x_label.text"
+                    label="X-axis label"
+                    value={settings.x_label.text}
+                    onChange={e => changeSettings(e.target.name, e.target.value)}
+                />
+                <NumberInput
+                    name="x_label.x"
+                    label="X-axis label x-coordinate"
+                    value={settings.x_label.x}
+                    onChange={e => changeSettings(e.target.name, parseInt(e.target.value))}
+                />
+                <NumberInput
+                    name="x_label.y"
+                    label="X-axis label y-coordinate"
+                    value={settings.x_label.y}
+                    onChange={e => changeSettings(e.target.name, parseInt(e.target.value))}
+                />
+                <NumberInput
+                    name="x_label.rotate"
+                    label="X-axis label rotation"
+                    value={settings.x_label.rotate}
+                    onChange={e => changeSettings(e.target.name, parseInt(e.target.value))}
+                />
+                <NumberInput
+                    name="x_tick_rotate"
+                    label="X-axis tick rotation"
+                    value={settings.x_tick_rotate}
+                    onChange={e => changeSettings(e.target.name, parseInt(e.target.value))}
+                />
+
+                <hr />
+
                 <SelectInput
                     name="y_fields"
-                    label="Y fields"
+                    label="Y-axis fields"
                     className="span12"
                     choices={getColumnsOptions}
                     multiple={true}
                     handleSelect={value => changeSettingsMultiSelect("y_fields", value)}
                     value={settings.y_fields}
                 />
+                <TextInput
+                    name="y_label.text"
+                    label="Y-axis label"
+                    value={settings.y_label.text}
+                    onChange={e => changeSettings(e.target.name, e.target.value)}
+                />
+                <NumberInput
+                    name="y_label.x"
+                    label="Y-axis label x-coordinate"
+                    value={settings.y_label.x}
+                    onChange={e => changeSettings(e.target.name, parseInt(e.target.value))}
+                />
+                <NumberInput
+                    name="y_label.y"
+                    label="Y-axis label y-coordinate"
+                    value={settings.y_label.y}
+                    onChange={e => changeSettings(e.target.name, parseInt(e.target.value))}
+                />
+                <NumberInput
+                    name="y_label.rotate"
+                    label="Y-axis label rotation"
+                    value={settings.y_label.rotate}
+                    onChange={e => changeSettings(e.target.name, parseInt(e.target.value))}
+                />
+                <NumberInput
+                    name="y_tick_rotate"
+                    label="Y-axis tick rotation"
+                    value={settings.y_tick_rotate}
+                    onChange={e => changeSettings(e.target.name, parseInt(e.target.value))}
+                />
+
+                <hr />
+
                 <SelectInput
                     name="all_fields"
                     label="All fields"
@@ -84,6 +159,23 @@ class VisualCustomizationPanel extends Component {
                     handleSelect={value => changeSettingsMultiSelect("all_fields", value)}
                     value={settings.all_fields}
                 />
+
+                <hr />
+
+                <NumberInput
+                    name="cell_width"
+                    label="Cell width"
+                    value={settings.cell_width}
+                    onChange={e => changeSettings(e.target.name, parseInt(e.target.value))}
+                />
+                <NumberInput
+                    name="cell_height"
+                    label="Cell height"
+                    value={settings.cell_height}
+                    onChange={e => changeSettings(e.target.name, parseInt(e.target.value))}
+                />
+
+                <hr />
 
                 <NumberInput
                     name="padding.top"
@@ -107,76 +199,6 @@ class VisualCustomizationPanel extends Component {
                     name="padding.right"
                     label="Padding right"
                     value={settings.padding.right}
-                    onChange={e => changeSettings(e.target.name, parseInt(e.target.value))}
-                />
-
-                <NumberInput
-                    name="title.x"
-                    label="Title x"
-                    value={settings.title.x}
-                    onChange={e => changeSettings(e.target.name, parseInt(e.target.value))}
-                />
-                <NumberInput
-                    name="title.y"
-                    label="Title y"
-                    value={settings.title.y}
-                    onChange={e => changeSettings(e.target.name, parseInt(e.target.value))}
-                />
-                <NumberInput
-                    name="title.rotate"
-                    label="Title rotate"
-                    value={settings.title.rotate}
-                    onChange={e => changeSettings(e.target.name, parseInt(e.target.value))}
-                />
-
-                <NumberInput
-                    name="x_label.x"
-                    label="x_Label x"
-                    value={settings.x_label.x}
-                    onChange={e => changeSettings(e.target.name, parseInt(e.target.value))}
-                />
-                <NumberInput
-                    name="x_label.y"
-                    label="x_Label y"
-                    value={settings.x_label.y}
-                    onChange={e => changeSettings(e.target.name, parseInt(e.target.value))}
-                />
-                <NumberInput
-                    name="x_label.rotate"
-                    label="x_Label rotate"
-                    value={settings.x_label.rotate}
-                    onChange={e => changeSettings(e.target.name, parseInt(e.target.value))}
-                />
-
-                <NumberInput
-                    name="y_label.x"
-                    label="y_Label x"
-                    value={settings.y_label.x}
-                    onChange={e => changeSettings(e.target.name, parseInt(e.target.value))}
-                />
-                <NumberInput
-                    name="y_label.y"
-                    label="y_Label y"
-                    value={settings.y_label.y}
-                    onChange={e => changeSettings(e.target.name, parseInt(e.target.value))}
-                />
-                <NumberInput
-                    name="y_label.rotate"
-                    label="y_Label rotate"
-                    value={settings.y_label.rotate}
-                    onChange={e => changeSettings(e.target.name, parseInt(e.target.value))}
-                />
-
-                <NumberInput
-                    name="x_tick_rotate"
-                    label="x_Tick rotate"
-                    value={settings.x_tick_rotate}
-                    onChange={e => changeSettings(e.target.name, parseInt(e.target.value))}
-                />
-                <NumberInput
-                    name="y_tick_rotate"
-                    label="y_Tick rotate"
-                    value={settings.y_tick_rotate}
                     onChange={e => changeSettings(e.target.name, parseInt(e.target.value))}
                 />
             </div>
