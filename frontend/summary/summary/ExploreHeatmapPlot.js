@@ -500,31 +500,37 @@ class ExploreHeatmapPlot extends D3Visualization {
     build_labels() {
         // Plot title
         if (this.settings.title.text.length > 0) {
-            this.vis
+            d3.select(this.svg)
                 .append("text")
                 .attr("id", "exp_heatmap_title")
                 .attr("class", "exp_heatmap_label")
-                .attr("x", this.settings.title.x)
-                .attr("y", this.settings.title.y)
+                .attr(
+                    "transform",
+                    `translate(${this.settings.title.x},${this.settings.title.y}) rotate(${this.settings.title.rotate})`
+                )
                 .text(this.settings.title.text);
         }
 
         // X axis
         if (this.settings.x_label.text.length > 0) {
-            this.vis
+            d3.select(this.svg)
                 .append("text")
                 .attr("class", "exp_heatmap_label")
-                .attr("x", this.settings.x_label.x)
-                .attr("y", this.settings.x_label.y)
+                .attr(
+                    "transform",
+                    `translate(${this.settings.x_label.x},${this.settings.x_label.y}) rotate(${this.settings.x_label.rotate})`
+                )
                 .text(this.settings.x_label.text);
         }
         // Y axis
         if (this.settings.y_label.text.length > 0) {
-            this.vis
+            d3.select(this.svg)
                 .append("text")
                 .attr("class", "exp_heatmap_label")
-                .attr("x", this.settings.y_label.x)
-                .attr("y", this.settings.y_label.y)
+                .attr(
+                    "transform",
+                    `translate(${this.settings.y_label.x},${this.settings.y_label.y}) rotate(${this.settings.y_label.rotate})`
+                )
                 .text(this.settings.y_label.text);
         }
     }
