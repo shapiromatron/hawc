@@ -25,7 +25,7 @@ class ExploreHeatmap extends BaseVisual {
             x_tick_rotate: settings.x_tick_rotate,
             y_tick_rotate: settings.y_tick_rotate,
             blacklist_field: "study-short_citation",
-            color_range: ["white", "green"],
+            color_range: settings.color_range,
         };
     }
 

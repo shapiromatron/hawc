@@ -34,7 +34,6 @@ class FloatInput extends Component {
                             ) {
                                 this.setState({value: this.props.value.toString()});
                             } else {
-                                e.target.value = valueFloat;
                                 this.props.onChange(e);
                                 this.setState({value: valueFloat.toString()});
                             }

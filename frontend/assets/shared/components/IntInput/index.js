@@ -34,7 +34,6 @@ class IntInput extends Component {
                             ) {
                                 this.setState({value: this.props.value.toString()});
                             } else {
-                                e.target.value = valueInt;
                                 this.props.onChange(e);
                                 this.setState({value: valueInt.toString()});
                             }

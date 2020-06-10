@@ -4,7 +4,8 @@ import {inject, observer} from "mobx-react";
 import TextInput from "shared/components/TextInput";
 import {MissingData, RefreshRequired} from "./common";
 import SelectInput from "shared/components/SelectInput";
-import IntInput from "shared/components/IntInput";
+import FloatInput from "shared/components/FloatInput";
+import RangeInput from "shared/components/RangeInput";
 
 @inject("store")
 @observer
@@ -47,27 +48,33 @@ class VisualCustomizationPanel extends Component {
                 />
                 <div className="row-fluid">
                     <div className="span4">
-                        <IntInput
+                        <FloatInput
                             name="title.x"
                             label="Title x-coordinate"
                             value={settings.title.x}
-                            onChange={e => changeSettings(e.target.name, parseInt(e.target.value))}
+                            onChange={e =>
+                                changeSettings(e.target.name, parseFloat(e.target.value))
+                            }
                         />
                     </div>
                     <div className="span4">
-                        <IntInput
+                        <FloatInput
                             name="title.y"
                             label="Title y-coordinate"
                             value={settings.title.y}
-                            onChange={e => changeSettings(e.target.name, parseInt(e.target.value))}
+                            onChange={e =>
+                                changeSettings(e.target.name, parseFloat(e.target.value))
+                            }
                         />
                     </div>
                     <div className="span4">
-                        <IntInput
+                        <FloatInput
                             name="title.rotate"
                             label="Title rotation"
                             value={settings.title.rotate}
-                            onChange={e => changeSettings(e.target.name, parseInt(e.target.value))}
+                            onChange={e =>
+                                changeSettings(e.target.name, parseFloat(e.target.value))
+                            }
                         />
                     </div>
                 </div>
@@ -83,11 +90,11 @@ class VisualCustomizationPanel extends Component {
                     handleSelect={value => changeSettingsMultiSelect("x_fields", value)}
                     value={settings.x_fields}
                 />
-                <IntInput
+                <FloatInput
                     name="x_tick_rotate"
                     label="X-axis tick rotation"
                     value={settings.x_tick_rotate}
-                    onChange={e => changeSettings(e.target.name, parseInt(e.target.value))}
+                    onChange={e => changeSettings(e.target.name, parseFloat(e.target.value))}
                 />
 
                 <TextInput
@@ -98,27 +105,33 @@ class VisualCustomizationPanel extends Component {
                 />
                 <div className="row-fluid">
                     <div className="span4">
-                        <IntInput
+                        <FloatInput
                             name="x_label.x"
                             label="X-axis label x-coordinate"
                             value={settings.x_label.x}
-                            onChange={e => changeSettings(e.target.name, parseInt(e.target.value))}
+                            onChange={e =>
+                                changeSettings(e.target.name, parseFloat(e.target.value))
+                            }
                         />
                     </div>
                     <div className="span4">
-                        <IntInput
+                        <FloatInput
                             name="x_label.y"
                             label="X-axis label y-coordinate"
                             value={settings.x_label.y}
-                            onChange={e => changeSettings(e.target.name, parseInt(e.target.value))}
+                            onChange={e =>
+                                changeSettings(e.target.name, parseFloat(e.target.value))
+                            }
                         />
                     </div>
                     <div className="span4">
-                        <IntInput
+                        <FloatInput
                             name="x_label.rotate"
                             label="X-axis label rotation"
                             value={settings.x_label.rotate}
-                            onChange={e => changeSettings(e.target.name, parseInt(e.target.value))}
+                            onChange={e =>
+                                changeSettings(e.target.name, parseFloat(e.target.value))
+                            }
                         />
                     </div>
                 </div>
@@ -134,11 +147,11 @@ class VisualCustomizationPanel extends Component {
                     handleSelect={value => changeSettingsMultiSelect("y_fields", value)}
                     value={settings.y_fields}
                 />
-                <IntInput
+                <FloatInput
                     name="y_tick_rotate"
                     label="Y-axis tick rotation"
                     value={settings.y_tick_rotate}
-                    onChange={e => changeSettings(e.target.name, parseInt(e.target.value))}
+                    onChange={e => changeSettings(e.target.name, parseFloat(e.target.value))}
                 />
                 <TextInput
                     name="y_label.text"
@@ -148,27 +161,33 @@ class VisualCustomizationPanel extends Component {
                 />
                 <div className="row-fluid">
                     <div className="span4">
-                        <IntInput
+                        <FloatInput
                             name="y_label.x"
                             label="Y-axis label x-coordinate"
                             value={settings.y_label.x}
-                            onChange={e => changeSettings(e.target.name, parseInt(e.target.value))}
+                            onChange={e =>
+                                changeSettings(e.target.name, parseFloat(e.target.value))
+                            }
                         />
                     </div>
                     <div className="span4">
-                        <IntInput
+                        <FloatInput
                             name="y_label.y"
                             label="Y-axis label y-coordinate"
                             value={settings.y_label.y}
-                            onChange={e => changeSettings(e.target.name, parseInt(e.target.value))}
+                            onChange={e =>
+                                changeSettings(e.target.name, parseFloat(e.target.value))
+                            }
                         />
                     </div>
                     <div className="span4">
-                        <IntInput
+                        <FloatInput
                             name="y_label.rotate"
                             label="Y-axis label rotation"
                             value={settings.y_label.rotate}
-                            onChange={e => changeSettings(e.target.name, parseInt(e.target.value))}
+                            onChange={e =>
+                                changeSettings(e.target.name, parseFloat(e.target.value))
+                            }
                         />
                     </div>
                 </div>
@@ -188,56 +207,74 @@ class VisualCustomizationPanel extends Component {
                 <hr />
                 <div className="row-fluid">
                     <div className="span6">
-                        <IntInput
+                        <FloatInput
                             name="cell_width"
                             label="Cell width"
                             value={settings.cell_width}
-                            onChange={e => changeSettings(e.target.name, parseInt(e.target.value))}
+                            onChange={e =>
+                                changeSettings(e.target.name, parseFloat(e.target.value))
+                            }
                         />
                     </div>
                     <div className="span6">
-                        <IntInput
+                        <FloatInput
                             name="cell_height"
                             label="Cell height"
                             value={settings.cell_height}
-                            onChange={e => changeSettings(e.target.name, parseInt(e.target.value))}
+                            onChange={e =>
+                                changeSettings(e.target.name, parseFloat(e.target.value))
+                            }
                         />
                     </div>
+                    <RangeInput
+                        name="color_range"
+                        label="Color range"
+                        value={settings.color_range}
+                        onChange={e => changeSettings(e.target.name, e.target.value)}
+                    />
                 </div>
 
                 <hr />
 
                 <div className="row-fluid">
                     <div className="span3">
-                        <IntInput
+                        <FloatInput
                             name="padding.top"
                             label="Padding top"
                             value={settings.padding.top}
-                            onChange={e => changeSettings(e.target.name, parseInt(e.target.value))}
+                            onChange={e =>
+                                changeSettings(e.target.name, parseFloat(e.target.value))
+                            }
                         />
                     </div>
                     <div className="span3">
-                        <IntInput
+                        <FloatInput
                             name="padding.left"
                             label="Padding left"
                             value={settings.padding.left}
-                            onChange={e => changeSettings(e.target.name, parseInt(e.target.value))}
+                            onChange={e =>
+                                changeSettings(e.target.name, parseFloat(e.target.value))
+                            }
                         />
                     </div>
                     <div className="span3">
-                        <IntInput
+                        <FloatInput
                             name="padding.bottom"
                             label="Padding bottom"
                             value={settings.padding.bottom}
-                            onChange={e => changeSettings(e.target.name, parseInt(e.target.value))}
+                            onChange={e =>
+                                changeSettings(e.target.name, parseFloat(e.target.value))
+                            }
                         />
                     </div>
                     <div className="span3">
-                        <IntInput
+                        <FloatInput
                             name="padding.right"
                             label="Padding right"
                             value={settings.padding.right}
-                            onChange={e => changeSettings(e.target.name, parseInt(e.target.value))}
+                            onChange={e =>
+                                changeSettings(e.target.name, parseFloat(e.target.value))
+                            }
                         />
                     </div>
                 </div>

@@ -22,6 +22,7 @@ class ExploratoryHeatmapStore {
             cell_height: 50,
             x_tick_rotate: 0,
             y_tick_rotate: 0,
+            color_range: ["white", "green"],
         };
     }
 
