@@ -11,6 +11,8 @@ class DatasetTable {
     */
     constructor(plot) {
         this.plot = plot;
+        // todo - move all the this stuff to settings
+        // todo - add some additional setting to enable or disable
     }
 
     renderTable() {
@@ -39,7 +41,7 @@ class DatasetTable {
             .append("thead")
             .append("tr")
             .selectAll("th")
-            .data(this.plot.all_fields)
+            .data(this.plot.table_fields)
             .enter()
             .append("th")
             .text(d => d);
@@ -68,7 +70,7 @@ class DatasetTable {
             .enter()
             .append("tr")
             .selectAll("td")
-            .data(d => this.plot.all_fields.map(e => d[e]))
+            .data(d => this.plot.table_fields.map(e => d[e]))
             .enter()
             .append("td")
             .text(d => d);

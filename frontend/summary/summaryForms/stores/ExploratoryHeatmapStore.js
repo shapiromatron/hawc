@@ -4,9 +4,12 @@ import _ from "lodash";
 import h from "shared/utils/helpers";
 import {NULL_VALUE} from "../../summary/constants";
 
-let getDefaultAxisItem = function() {
-    return {column: NULL_VALUE, tick_rotation: 0, delimiter: ""};
-};
+let createDefaultAxisItem = function() {
+        return {column: NULL_VALUE, tick_rotation: 0, delimiter: ""};
+    },
+    createDefaultFilterWidget = function() {
+        return {column: NULL_VALUE, delimiter: "", on_click_event: ""};
+    };
 
 class ExploratoryHeatmapStore {
     constructor(rootStore) {
@@ -19,9 +22,10 @@ class ExploratoryHeatmapStore {
             title: "",
             x_label: "",
             y_label: "",
-            x_fields: [getDefaultAxisItem()],
-            y_fields: [getDefaultAxisItem()],
-            all_fields: [],
+            x_fields: [createDefaultAxisItem()],
+            y_fields: [createDefaultAxisItem()],
+            filter_widgets: [],
+            table_fields: [],
         };
     }
 
@@ -55,7 +59,11 @@ class ExploratoryHeatmapStore {
     }
 
     @action.bound createNewAxisLabel(key) {
-        this.settings[key].push(getDefaultAxisItem());
+        this.settings[key].push(createDefaultAxisItem());
+    }
+
+    @action.bound createNewFilterWidget() {
+        this.settings.filter_widgets.push(createDefaultFilterWidget());
     }
 
     @action setFromJsonSettings(settings, firstTime) {

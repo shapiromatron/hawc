@@ -6,6 +6,7 @@ import SelectInput from "shared/components/SelectInput";
 
 import {MissingData, RefreshRequired} from "./common";
 import AxisLabelTable from "./AxisLabelTable";
+import FilterWidgetTable from "./FilterWidgetTable";
 
 @inject("store")
 @observer
@@ -44,6 +45,8 @@ class VisualCustomizationPanel extends Component {
                 <AxisLabelTable settingsKey={"x_fields"} />
                 <h4>Y fields</h4>
                 <AxisLabelTable settingsKey={"y_fields"} />
+                <h4>Filter widgets</h4>
+                <FilterWidgetTable />
                 <TextInput
                     name="title"
                     label="Title"
@@ -63,13 +66,13 @@ class VisualCustomizationPanel extends Component {
                     onChange={e => changeSettings(e.target.name, e.target.value)}
                 />
                 <SelectInput
-                    name="all_fields"
-                    label="All fields"
+                    name="table_fields"
+                    label="Table fields"
                     className="span12"
                     choices={getColumnsOptions}
                     multiple={true}
-                    handleSelect={value => changeSettingsMultiSelect("all_fields", value)}
-                    value={settings.all_fields}
+                    handleSelect={value => changeSettingsMultiSelect("table_fields", value)}
+                    value={settings.table_fields}
                 />
             </div>
         );

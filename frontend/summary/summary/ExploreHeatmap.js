@@ -17,7 +17,6 @@ class ExploreHeatmap extends BaseVisual {
         const {settings} = this.data;
         return {
             type: "heatmap",
-            plot: {width: undefined, height: undefined}, //svg size, undefined defaults to page content size
             plot_title: settings.title,
             x_label: settings.x_label,
             y_label: settings.y_label,
@@ -25,12 +24,10 @@ class ExploreHeatmap extends BaseVisual {
             y_fields: settings.y_fields.filter(d => d.column !== NULL_VALUE).map(d => d.column),
             x_fields_new: settings.x_fields.filter(d => d.column !== NULL_VALUE),
             y_fields_new: settings.y_fields.filter(d => d.column !== NULL_VALUE),
-            all_fields: settings.all_fields,
+            table_fields: settings.table_fields,
+            filter_widgets: settings.filter_widgets,
             blacklist_field: "study-short_citation", //additional filter / main identifier
-            show_blacklist: true,
-            blacklist_width: undefined,
-            details_height: undefined,
-            color_range: ["white", "green"],
+            color_range: ["white", "black"],
         };
     }
 
