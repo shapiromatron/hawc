@@ -4,98 +4,10 @@ import D3Visualization from "./D3Visualization";
 import h from "shared/utils/helpers";
 import HAWCModal from "utils/HAWCModal";
 
-import {observable, action, autorun, toJS} from "mobx";
-
-class HeatmapDatastore {
-    @observable dataset = null;
-    @observable settings = null;
-    @observable selectedTableData = [];
-
-    constructor(settings, dataset) {
-        this.settings = settings;
-        this.dataset = dataset;
-    }
-
-    @action.bound updateSelectedTableData(selectedTableData) {
-        this.selectedTableData = selectedTableData;
-    }
-}
-
-class DatasetTable {
-    /*
-    A DatasetTable is the detailed table below a heatmap which shows details on a given cell when
-    selected or filtered.
-    */
-    constructor(store) {
-        this.store = store;
-        this.table = null;
-        // todo - move all the this stuff to settings
-        // todo - add some additional setting to enable or disable
-
-        autorun(() => {
-            this.updateTableBody(toJS(this.store.selectedTableData));
-        });
-    }
-
-    renderTable(el, parentEl) {
-        const svgHeight =
-                h.getHawcContentSize().height -
-                $(parentEl)
-                    .parent()
-                    .height(),
-            {table_fields} = this.store.settings;
-
-        // Create detail container
-        let container = el
-            .append("div")
-            .attr("class", "exp_heatmap_container")
-            .style("width", "100%")
-            .style("height", `${Math.max(svgHeight, 200)}px`)
-            .style("overflow", "auto");
-
-        // Create detail table
-        let table = container.append("table").attr("class", "table table-striped table-bordered");
-
-        // Create the table header
-        table
-            .append("thead")
-            .append("tr")
-            .selectAll("th")
-            .data(table_fields)
-            .enter()
-            .append("th")
-            .text(d => d);
-
-        // Fill in table body
-        table.append("tbody");
-
-        this.table = table;
-    }
-
-    updateTableBody(data) {
-        const {table_fields} = this.store.settings;
-        this.table
-            .select("tbody")
-            .selectAll("tr")
-            .remove();
-
-        if (!data) {
-            return;
-        }
-
-        this.table
-            .select("tbody")
-            .selectAll("tr")
-            .data(data)
-            .enter()
-            .append("tr")
-            .selectAll("td")
-            .data(d => table_fields.map(e => d[e]))
-            .enter()
-            .append("td")
-            .text(d => d);
-    }
-}
+import React from "react";
+import ReactDOM from "react-dom";
+import HeatmapDatastore from "./heatmap/HeatmapDatastore";
+import DatasetTable from "./heatmap/DatasetTable";
 
 class ExploreHeatmapPlot extends D3Visualization {
     constructor(parent, data, options) {
@@ -110,7 +22,9 @@ class ExploreHeatmapPlot extends D3Visualization {
         this.build_container($div);
         this.render_plot($("#exp_heatmap_svg_container"));
         this.build_blacklist();
-        this.datasetTable.renderTable(this.viz_container, this.svg);
+        // this.datasetTable.renderTable(this.viz_container, this.svg);
+        const tblDiv = $("<div>").appendTo($(this.viz_container[0][0]));
+        ReactDOM.render(<DatasetTable store={this.store} />, tblDiv.get(0));
     }
 
     render_plot($div) {
