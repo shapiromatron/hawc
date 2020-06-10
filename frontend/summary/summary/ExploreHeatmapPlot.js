@@ -8,6 +8,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import HeatmapDatastore from "./heatmap/HeatmapDatastore";
 import DatasetTable from "./heatmap/DatasetTable";
+import FilterWidgetContainer from "./heatmap/FilterWidgetContainer";
 
 class ExploreHeatmapPlot extends D3Visualization {
     constructor(parent, data, options) {
@@ -15,16 +16,16 @@ class ExploreHeatmapPlot extends D3Visualization {
         this.generate_properties(data);
         this.store = new HeatmapDatastore(data.settings, data.dataset);
         this.modal = new HAWCModal();
-        this.datasetTable = new DatasetTable(this.store);
     }
 
     render($div) {
         this.build_container($div);
         this.render_plot($("#exp_heatmap_svg_container"));
         this.build_blacklist();
-        // this.datasetTable.renderTable(this.viz_container, this.svg);
-        const tblDiv = $("<div>").appendTo($(this.viz_container[0][0]));
+        const filterWidgetsDiv = $("<div>").appendTo($(this.viz_container[0][0])),
+            tblDiv = $("<div>").appendTo($(this.viz_container[0][0]));
         ReactDOM.render(<DatasetTable store={this.store} />, tblDiv.get(0));
+        ReactDOM.render(<FilterWidgetContainer store={this.store} />, filterWidgetsDiv.get(0));
     }
 
     render_plot($div) {
@@ -241,109 +242,7 @@ class ExploreHeatmapPlot extends D3Visualization {
         return xy_map;
     };
 
-    build_blacklist() {
-        // Create blacklist container
-        this.blacklist_container = this.svg_blacklist_container
-            .insert("div", ":first-child")
-            .attr("class", "exp_heatmap_container")
-            .style("width", "20%")
-            .style(
-                "height",
-                `${$(this.svg)
-                    .parent()
-                    .height()}px`
-            )
-            .style("vertical-align", "top")
-            .style("display", "inline-block")
-            .style("overflow", "auto");
-
-        // Have resize trigger also resize blacklist container
-        let old_trigger = this.trigger_resize;
-        this.trigger_resize = forceResize => {
-            old_trigger(forceResize);
-            this.blacklist_container.style(
-                "height",
-                `${$(this.svg)
-                    .parent()
-                    .height()}px`
-            );
-        };
-        $(window).resize(this.trigger_resize);
-
-        let self = this,
-            blacklist_select = this.blacklist_container.append("div").attr("class", "btn-group"),
-            blacklist_input = this.blacklist_container.append("div"),
-            blacklist_enter = blacklist_input
-                .selectAll("input")
-                .data(this.blacklist_domain)
-                .enter()
-                .append("div"),
-            blacklist_label = blacklist_enter.append("label"),
-            detail_handler = d => {
-                this.modal
-                    .addHeader(`<h4>${d}</h4>`)
-                    .addFooter("")
-                    .show();
-            };
-
-        // Button to check all boxes
-        blacklist_select
-            .append("button")
-            .attr("class", "btn")
-            .text("All")
-            .on("click", () => {
-                blacklist_input.selectAll("label").each(function() {
-                    d3.select(this)
-                        .select("input")
-                        .property("checked", true);
-                });
-                blacklist_input.node().dispatchEvent(new Event("change"));
-            });
-        // Button to uncheck all boxes
-        blacklist_select
-            .append("button")
-            .attr("class", "btn")
-            .text("None")
-            .on("click", () => {
-                blacklist_input.selectAll("label").each(function() {
-                    d3.select(this)
-                        .select("input")
-                        .property("checked", false);
-                });
-                blacklist_input.node().dispatchEvent(new Event("change"));
-            });
-
-        // Before each label is a detail button
-        blacklist_enter
-            .insert("button", ":first-child")
-            .attr("class", "btn btn-mini pull-left")
-            .on("click", detail_handler)
-            .html("<i class='icon-eye-open'></i>");
-
-        // Each label has a checkbox and the value of the blacklisted item
-        blacklist_label
-            .append("input")
-            .attr("type", "checkbox")
-            .property("checked", true);
-        blacklist_label.append("span").text(d => d);
-        blacklist_input.on("change", function() {
-            self.blacklist = [];
-            d3.select(this)
-                .selectAll("label")
-                .each(function(d) {
-                    if (
-                        !d3
-                            .select(this)
-                            .select("input")
-                            .property("checked")
-                    )
-                        self.blacklist.push(d);
-                });
-            self.filter_dataset();
-            self.update_plot();
-            // this.datasetTable.updateTableBody(data);
-        });
-    }
+    build_blacklist() {}
 
     filter_dataset() {
         if (this.blacklist.length > 0) {
