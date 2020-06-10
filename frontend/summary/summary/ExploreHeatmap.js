@@ -23,6 +23,8 @@ class ExploreHeatmap extends BaseVisual {
             y_label: settings.y_label,
             x_fields: settings.x_fields.filter(d => d.column !== NULL_VALUE).map(d => d.column),
             y_fields: settings.y_fields.filter(d => d.column !== NULL_VALUE).map(d => d.column),
+            x_fields_new: settings.x_fields.filter(d => d.column !== NULL_VALUE),
+            y_fields_new: settings.y_fields.filter(d => d.column !== NULL_VALUE),
             all_fields: settings.all_fields,
             blacklist_field: "study-short_citation", //additional filter / main identifier
             show_blacklist: true,
@@ -41,11 +43,12 @@ class ExploreHeatmap extends BaseVisual {
                 .then(response => response.json())
                 .then(json => {
                     this.dataset = json;
-                    callback({dataset: json});
+                    return {dataset: json};
                 })
                 .catch(error => {
                     callback({error});
-                });
+                })
+                .then(callback);
         }
     }
 

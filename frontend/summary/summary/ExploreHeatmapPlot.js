@@ -20,9 +20,10 @@ class ExploreHeatmapPlot extends D3Visualization {
 
     render_plot($div) {
         this.plot_div = $div;
-        this.set_color_scale();
         this.build_plot();
-        if (this.show_grid) this.add_grid();
+        if (this.show_grid) {
+            this.add_grid();
+        }
         this.set_trigger_resize();
         this.add_menu();
     }
@@ -66,34 +67,25 @@ class ExploreHeatmapPlot extends D3Visualization {
         this.trigger_resize(false);
     }
 
-    set_color_scale() {
-        this.color_scale = d3.scale
-            .linear()
-            .domain([
-                0,
-                this.cell_map.reduce(
-                    (current_max, element) =>
-                        Math.max(
-                            current_max,
-                            this.cell_dataset(element.x_filter, element.y_filter).length
-                        ),
-                    0
-                ),
-            ])
-            .range(this.color_range);
-    }
-
     select_dataset() {
-        if (this.selected_cells.length == 0) return this.filtered_dataset;
+        // filters dataset to what a user has selected.
+        if (this.selected_cells.length == 0) {
+            return this.filtered_dataset;
+        }
+
         return _.filter(this.filtered_dataset, e => {
             for (let cell of this.selected_cells) {
-                if (_.isMatch(e, cell.x_filter) && _.isMatch(e, cell.y_filter)) return true;
+                if (_.isMatch(e, cell.x_filter) && _.isMatch(e, cell.y_filter)) {
+                    return true;
+                }
             }
             return false;
         });
     }
 
     generate_properties(data) {
+        this.processedData = this.preprocess_data(data.dataset, data.settings);
+
         this.cell_width = 50;
         this.cell_height = 50;
         this.padding = {top: 0, left: 0, bottom: 0, right: 200};
@@ -115,26 +107,64 @@ class ExploreHeatmapPlot extends D3Visualization {
             .sort()
             .value();
 
-        this.x_domain = this.x_fields.map(e =>
-            _.chain(this.dataset)
-                .map(d => d[e])
-                .uniq()
-                .sort()
-                .value()
+        this.x_domain = this.x_fields_new.map(e =>
+            _.keys(this.processedData.intersection[e.column])
         );
-        this.y_domain = this.y_fields.map(e =>
-            _.chain(this.dataset)
-                .map(d => d[e])
-                .uniq()
-                .sort()
-                .reverse()
-                .value()
+        this.y_domain = this.y_fields_new.map(e =>
+            _.keys(this.processedData.intersection[e.column])
         );
         this.x_steps = this.x_domain.reduce((total, element) => total * element.length, 1);
         this.y_steps = this.y_domain.reduce((total, element) => total * element.length, 1);
         this.w = this.cell_width * this.x_steps;
         this.h = this.cell_height * this.y_steps;
         this.cell_map = this.create_map();
+
+        // set colorscale
+        this.color_scale = d3.scale
+            .linear()
+            .domain([
+                0,
+                this.cell_map.reduce((current_max, e) => Math.max(current_max, e.rows.length), 0),
+            ])
+            .range(this.color_range);
+    }
+
+    preprocess_data(dataset, settings) {
+        /*
+        here, we have "red" in the color column with element index 1, 2, and 3
+        intersection["color"]["red"] = Set([1,2,3])
+        */
+        let intersection = {},
+            addColumnsToMap = row => {
+                const columnName = row.column,
+                    delimiter = row.delimiter;
+                // create column array if needed
+                if (intersection[columnName] === undefined) {
+                    intersection[columnName] = {};
+                }
+                dataset.forEach((d, idx) => {
+                    const values =
+                        delimiter !== "" ? d[columnName].split(delimiter) : [d[columnName]];
+                    for (let value of values) {
+                        if (intersection[columnName][value] === undefined) {
+                            intersection[columnName][value] = [];
+                        }
+                        intersection[columnName][value].push(idx);
+                    }
+                });
+            };
+
+        settings.x_fields_new.map(addColumnsToMap);
+        settings.y_fields_new.map(addColumnsToMap);
+
+        // convert arrays to Sets
+        _.each(intersection, (dataColumn, columnName) => {
+            _.each(dataColumn, (rows, value) => {
+                dataColumn[value] = new Set(rows);
+            });
+        });
+
+        return {intersection};
     }
 
     build_container($div) {
@@ -170,6 +200,21 @@ class ExploreHeatmapPlot extends D3Visualization {
                         .flat();
                 }
             },
+            getIntersection = function(arr, set2) {
+                return arr.filter(x => set2.has(x));
+            },
+            {intersection} = this.processedData,
+            getRows = filters => {
+                let rows = [];
+                _.each(_.keys(filters), (columnName, idx) => {
+                    if (idx === 0) {
+                        rows = [...intersection[columnName][filters[columnName]]];
+                    } else {
+                        rows = getIntersection(rows, intersection[columnName][filters[columnName]]);
+                    }
+                });
+                return rows;
+            },
             x_map = _step_domain(this.x_domain, this.x_fields, 0),
             y_map = _step_domain(this.y_domain, this.y_fields, 0),
             xy_map = x_map
@@ -180,12 +225,12 @@ class ExploreHeatmapPlot extends D3Visualization {
                             y_filter: y_element.filter,
                             x_step: x_element.step,
                             y_step: y_element.step,
+                            rows: getRows(Object.assign({}, x_element.filter, y_element.filter)),
                         };
                         return new_element;
                     });
                 })
                 .flat();
-
         return xy_map;
     };
 
@@ -422,7 +467,9 @@ class ExploreHeatmapPlot extends D3Visualization {
                         .attr("stroke", "black");
                 }
             };
-            if (this.show_axis_border) add_border();
+            if (this.show_axis_border) {
+                add_border();
+            }
         }
 
         /// Build y axes
@@ -477,22 +524,26 @@ class ExploreHeatmapPlot extends D3Visualization {
         let grid = this.vis.append("g"),
             x_band = this.w / this.x_steps,
             y_band = this.h / this.y_steps;
-        for (let i = 0; i <= this.x_steps; i++) {
-            grid.append("line")
-                .attr("x1", x_band * i)
-                .attr("y1", 0)
-                .attr("x2", x_band * i)
-                .attr("y2", this.h)
-                .style("stroke", "black");
-        }
-        for (let i = 0; i <= this.y_steps; i++) {
-            grid.append("line")
-                .attr("x1", 0)
-                .attr("y1", y_band * i)
-                .attr("x2", this.w)
-                .attr("y2", y_band * i)
-                .style("stroke", "black");
-        }
+
+        grid.selectAll("g.none")
+            .data(_.range(this.x_steps))
+            .enter()
+            .append("line")
+            .attr("x1", i => x_band * i)
+            .attr("y1", 0)
+            .attr("x2", i => x_band * i)
+            .attr("y2", this.h)
+            .style("stroke", "black");
+
+        grid.selectAll("g.none")
+            .data(_.range(this.y_steps))
+            .enter()
+            .append("line")
+            .attr("x1", 0)
+            .attr("y1", i => y_band * i)
+            .attr("x2", this.w)
+            .attr("y2", i => y_band * i)
+            .style("stroke", "black");
     }
 
     build_labels() {
@@ -537,10 +588,15 @@ class ExploreHeatmapPlot extends D3Visualization {
         }
     }
 
-    set_cell_behavior() {
-        // Cell group click fills out details table
-        let self = this;
-        this.cells_enter
+    update_plot = () => {
+        const self = this,
+            cell_group = this.cells.selectAll("g").data(this.cell_map);
+
+        // add cell group and interactivity
+        this.cells_enter = cell_group
+            .enter()
+            .append("g")
+            .attr("class", "exp_heatmap_cell")
             .on("click", function(d) {
                 d3.selectAll(".exp_heatmap_cell_block")
                     .style("stroke", "none")
@@ -553,80 +609,30 @@ class ExploreHeatmapPlot extends D3Visualization {
                 self.fill_detail_table(self.select_dataset());
             })
             .on("mouseover", null);
-    }
 
-    update_cell_rect() {
-        // Cell rect fill based on number of records
-        this.cells_data.select("rect").style("fill", d => {
-            return this.color_scale(this.cell_dataset(d.x_filter, d.y_filter).length);
-        });
-    }
-
-    update_cell_text() {
-        // Cell text shows number of records
-        this.cells_data
-            .select("text")
-            .style("display", d =>
-                this.cell_dataset(d.x_filter, d.y_filter).length == 0 ? "none" : null
-            )
-            .text(d => this.cell_dataset(d.x_filter, d.y_filter).length);
-    }
-
-    cell_dataset(x_filter, y_filter) {
-        return _.filter(
-            this.filtered_dataset,
-            e => _.isMatch(e, x_filter) && _.isMatch(e, y_filter)
-        );
-    }
-
-    update_plot = () => {
-        /// Cell group behavior
-        // On enter
-        this.cells_data = this.cells.selectAll("g").data(this.cell_map);
-        this.cells_enter = this.cells_data
-            .enter()
-            .append("g")
-            .attr("class", "exp_heatmap_cell");
-        this.set_cell_behavior();
-
-        /// Cell rect behavior
-        // On enter
+        // add cell fill
         this.cells_enter
             .append("rect")
             .attr("class", "exp_heatmap_cell_block")
-            .attr("x", d => {
-                return this.x_scale(d.x_step);
-            })
-            .attr("y", d => {
-                return this.y_scale(d.y_step);
-            })
+            .attr("x", d => this.x_scale(d.x_step))
+            .attr("y", d => this.y_scale(d.y_step))
             .attr("width", this.x_scale.rangeBand())
-            .attr("height", this.y_scale.rangeBand());
-        // On update
-        this.update_cell_rect();
+            .attr("height", this.y_scale.rangeBand())
+            .style("fill", d => this.color_scale(d.rows.length));
 
-        /// Cell text behavior
-        // On enter
+        /// add cell text
         this.cells_enter
             .append("text")
             .attr("class", "exp_heatmap_cell_text")
-            .attr("x", d => {
-                return this.x_scale(d.x_step) + this.x_scale.rangeBand() / 2;
+            .attr("x", d => this.x_scale(d.x_step) + this.x_scale.rangeBand() / 2)
+            .attr("y", d => this.y_scale(d.y_step) + this.y_scale.rangeBand() / 2)
+            .style("fill", d => {
+                let {r, g, b} = d3.rgb(this.color_scale(d.rows.length));
+                ({r, g, b} = h.getTextContrastColor(r, g, b));
+                return d3.rgb(r, g, b);
             })
-            .attr("y", d => {
-                return this.y_scale(d.y_step) + this.y_scale.rangeBand() / 2;
-            });
-        this.cells_data.select("text").style("fill", d => {
-            let {r, g, b} = d3.rgb(
-                this.color_scale(this.cell_dataset(d.x_filter, d.y_filter).length)
-            );
-            ({r, g, b} = h.getTextContrastColor(r, g, b));
-            return d3.rgb(r, g, b);
-        });
-        // On update
-        this.update_cell_text();
-
-        this.cells_data.exit().remove();
+            .style("display", d => (d.rows.length == 0 ? "none" : null))
+            .text(d => d.rows.length);
     };
 
     build_plot() {
