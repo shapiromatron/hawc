@@ -13,18 +13,18 @@ class ExploreHeatmap extends BaseVisual {
     getSettings() {
         const {settings} = this.data;
         return {
-            type: "heatmap",
-            plot: {width: undefined, height: undefined}, //svg size, undefined defaults to page content size
-            plot_title: settings.title,
+            title: settings.title,
             x_label: settings.x_label,
             y_label: settings.y_label,
             x_fields: settings.x_fields,
             y_fields: settings.y_fields,
             all_fields: settings.all_fields,
-            blacklist_field: "study-short_citation", //additional filter / main identifier
-            show_blacklist: true,
-            blacklist_width: undefined,
-            details_height: undefined,
+            padding: settings.padding,
+            cell_width: settings.cell_width,
+            cell_height: settings.cell_height,
+            x_tick_rotate: settings.x_tick_rotate,
+            y_tick_rotate: settings.y_tick_rotate,
+            blacklist_field: "study-short_citation",
             color_range: ["white", "green"],
         };
     }

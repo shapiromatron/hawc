@@ -80,7 +80,7 @@ class ExploreHeatmapPlot extends D3Visualization {
                     0
                 ),
             ])
-            .range(this.color_range);
+            .range(this.settings.color_range);
     }
 
     select_dataset() {
@@ -94,19 +94,15 @@ class ExploreHeatmapPlot extends D3Visualization {
     }
 
     generate_properties(data) {
-        this.cell_width = 50;
-        this.cell_height = 50;
-        this.padding = {top: 0, left: 0, bottom: 0, right: 200};
+        this.settings = data.settings;
+        this.padding = _.assign({}, this.settings.padding);
         this.show_grid = true;
         this.show_axis_border = true;
-        this.x_rotate = 90;
-        this.y_rotate = 0;
 
         // From constructor parameters
         this.dataset = data.dataset;
         this.filtered_dataset = this.dataset;
         this.selected_cells = [];
-        _.assign(this, data.settings);
         this.blacklist = [];
 
         this.blacklist_domain = _.chain(this.dataset)
@@ -115,14 +111,14 @@ class ExploreHeatmapPlot extends D3Visualization {
             .sort()
             .value();
 
-        this.x_domain = this.x_fields.map(e =>
+        this.x_domain = this.settings.x_fields.map(e =>
             _.chain(this.dataset)
                 .map(d => d[e])
                 .uniq()
                 .sort()
                 .value()
         );
-        this.y_domain = this.y_fields.map(e =>
+        this.y_domain = this.settings.y_fields.map(e =>
             _.chain(this.dataset)
                 .map(d => d[e])
                 .uniq()
@@ -132,8 +128,8 @@ class ExploreHeatmapPlot extends D3Visualization {
         );
         this.x_steps = this.x_domain.reduce((total, element) => total * element.length, 1);
         this.y_steps = this.y_domain.reduce((total, element) => total * element.length, 1);
-        this.w = this.cell_width * this.x_steps;
-        this.h = this.cell_height * this.y_steps;
+        this.w = this.settings.cell_width * this.x_steps;
+        this.h = this.settings.cell_height * this.y_steps;
         this.cell_map = this.create_map();
     }
 
@@ -170,8 +166,14 @@ class ExploreHeatmapPlot extends D3Visualization {
                         .flat();
                 }
             },
-            x_map = _step_domain(this.x_domain, this.x_fields, 0),
-            y_map = _step_domain(this.y_domain, this.y_fields, 0),
+            x_map =
+                this.x_domain.length == 0
+                    ? []
+                    : _step_domain(this.x_domain, this.settings.x_fields, 0),
+            y_map =
+                this.y_domain.length == 0
+                    ? []
+                    : _step_domain(this.y_domain, this.settings.y_fields, 0),
             xy_map = x_map
                 .map(x_element => {
                     return y_map.map(y_element => {
@@ -321,7 +323,7 @@ class ExploreHeatmapPlot extends D3Visualization {
             .append("thead")
             .append("tr")
             .selectAll("th")
-            .data(this.all_fields)
+            .data(this.settings.all_fields)
             .enter()
             .append("th")
             .text(d => d);
@@ -350,7 +352,7 @@ class ExploreHeatmapPlot extends D3Visualization {
             .data(data);
         rows.enter().append("tr");
         rows.exit().remove();
-        let row_data = rows.selectAll("td").data(d => this.all_fields.map(e => d[e]));
+        let row_data = rows.selectAll("td").data(d => this.settings.all_fields.map(e => d[e]));
         row_data.enter().append("td");
         row_data.exit().remove();
         row_data.text(d => d);
@@ -392,7 +394,7 @@ class ExploreHeatmapPlot extends D3Visualization {
                 let label = axis.append("g");
                 label
                     .append("text")
-                    .attr("transform", `rotate(${this.x_rotate})`)
+                    .attr("transform", `rotate(${this.settings.x_tick_rotate})`)
                     .text(domain[j]);
                 let box = label.node().getBBox(),
                     label_offset = mid - box.width / 2;
@@ -438,7 +440,7 @@ class ExploreHeatmapPlot extends D3Visualization {
                 let label = axis.append("g");
                 label
                     .append("text")
-                    .attr("transform", `rotate(${this.y_rotate})`)
+                    .attr("transform", `rotate(${this.settings.y_tick_rotate})`)
                     .text(domain[j]);
                 let box = label.node().getBBox(),
                     label_offset = mid - box.height / 2;
@@ -496,44 +498,34 @@ class ExploreHeatmapPlot extends D3Visualization {
     }
 
     build_labels() {
-        this.label_margin = 50;
-
         // Plot title
-        if (this.plot_title.length > 0) {
+        if (this.settings.title.text.length > 0) {
             this.vis
                 .append("text")
                 .attr("id", "exp_heatmap_title")
                 .attr("class", "exp_heatmap_label")
-                .attr("x", this.w / 2)
-                .attr("y", -this.label_margin / 2)
-                .text(this.plot_title);
-            this.padding.top += this.label_margin;
+                .attr("x", this.settings.title.x)
+                .attr("y", this.settings.title.y)
+                .text(this.settings.title.text);
         }
 
         // X axis
-        if (this.x_label.length > 0) {
-            this.padding.bottom += this.label_margin;
+        if (this.settings.x_label.text.length > 0) {
             this.vis
                 .append("text")
                 .attr("class", "exp_heatmap_label")
-                .attr("x", this.w / 2)
-                .attr("y", this.h + this.padding.bottom - this.label_margin / 2)
-                .text(this.x_label);
+                .attr("x", this.settings.x_label.x)
+                .attr("y", this.settings.x_label.y)
+                .text(this.settings.x_label.text);
         }
         // Y axis
-        if (this.y_label.length > 0) {
-            this.padding.left += this.label_margin;
+        if (this.settings.y_label.text.length > 0) {
             this.vis
                 .append("text")
                 .attr("class", "exp_heatmap_label")
-                .attr("x", 0)
-                .attr("y", 0)
-                .attr(
-                    "transform",
-                    `translate(${-(this.padding.left - this.label_margin / 2)},${this.h /
-                        2}) rotate(-90)`
-                )
-                .text(this.y_label);
+                .attr("x", this.settings.y_label.x)
+                .attr("y", this.settings.y_label.y)
+                .text(this.settings.y_label.text);
         }
     }
 
