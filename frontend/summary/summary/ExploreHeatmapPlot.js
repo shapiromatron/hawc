@@ -4,18 +4,90 @@ import D3Visualization from "./D3Visualization";
 import h from "shared/utils/helpers";
 import HAWCModal from "utils/HAWCModal";
 
+class DatasetTable {
+    /*
+    A DatasetTable is the detailed table below a heatmap which shows details on a given cell when
+    selected or filtered.
+    */
+    constructor(plot) {
+        this.plot = plot;
+    }
+
+    renderTable() {
+        // Create detail container
+        let container = this.plot.viz_container
+            .append("div")
+            .attr("class", "exp_heatmap_container")
+            .style("width", "100%")
+            .style(
+                "height",
+                `${Math.max(
+                    h.getHawcContentSize().height -
+                        $(this.svg)
+                            .parent()
+                            .height(),
+                    200
+                )}px`
+            )
+            .style("overflow", "auto");
+
+        // Create detail table
+        let table = container.append("table").attr("class", "table table-striped table-bordered");
+
+        // Create the table header
+        table
+            .append("thead")
+            .append("tr")
+            .selectAll("th")
+            .data(this.plot.all_fields)
+            .enter()
+            .append("th")
+            .text(d => d);
+
+        // Fill in table body
+        table.append("tbody");
+
+        this.table = table;
+        this.updateTableBody(null);
+    }
+
+    updateTableBody(data) {
+        this.table
+            .select("tbody")
+            .selectAll("tr")
+            .remove();
+
+        if (!data) {
+            return;
+        }
+
+        this.table
+            .select("tbody")
+            .selectAll("tr")
+            .data(data)
+            .enter()
+            .append("tr")
+            .selectAll("td")
+            .data(d => this.plot.all_fields.map(e => d[e]))
+            .enter()
+            .append("td")
+            .text(d => d);
+    }
+}
+
 class ExploreHeatmapPlot extends D3Visualization {
     constructor(parent, data, options) {
         super(...arguments);
         this.generate_properties(data);
         this.modal = new HAWCModal();
+        this.datasetTable = new DatasetTable(this);
     }
 
     render($div) {
         this.build_container($div);
         this.render_plot($("#exp_heatmap_svg_container"));
         this.build_blacklist();
-        this.build_detail_box();
+        this.datasetTable.renderTable();
     }
 
     render_plot($div) {
@@ -65,6 +137,11 @@ class ExploreHeatmapPlot extends D3Visualization {
         this.trigger_resize(false);
     }
 
+    update_detail_table(d) {
+        const data = d.rows.map(index => this.filtered_dataset[index]);
+        this.datasetTable.updateTableBody(data);
+    }
+
     select_dataset() {
         // filters dataset to what a user has selected.
         if (this.selected_cells.length == 0) {
@@ -94,7 +171,6 @@ class ExploreHeatmapPlot extends D3Visualization {
         this.dataset = data.dataset;
         this.filtered_dataset = this.dataset;
         this.processedData = this.preprocess_data(data.dataset, data.settings);
-        this.selected_cells = [];
         _.assign(this, data.settings);
         this.blacklist = [];
 
@@ -119,10 +195,7 @@ class ExploreHeatmapPlot extends D3Visualization {
         // set colorscale
         this.color_scale = d3.scale
             .linear()
-            .domain([
-                0,
-                this.cell_map.reduce((current_max, e) => Math.max(current_max, e.rows.length), 0),
-            ])
+            .domain([0, d3.max(this.cell_map, d => d.rows.length)])
             .range(this.color_range);
     }
 
@@ -331,46 +404,8 @@ class ExploreHeatmapPlot extends D3Visualization {
                 });
             self.filter_dataset();
             self.update_plot();
-            self.fill_detail_table(self.select_dataset());
+            // this.datasetTable.updateTableBody(data);
         });
-    }
-
-    build_detail_box() {
-        // Create detail container
-        this.detail_container = this.viz_container
-            .append("div")
-            .attr("class", "exp_heatmap_container")
-            .style("width", "100%")
-            .style(
-                "height",
-                `${Math.max(
-                    h.getHawcContentSize().height -
-                        $(this.svg)
-                            .parent()
-                            .height(),
-                    200
-                )}px`
-            )
-            .style("overflow", "auto");
-
-        // Create detail table
-        this.detail_table = this.detail_container
-            .append("table")
-            .attr("class", "table table-striped table-bordered");
-
-        // Create the table header
-        this.detail_table
-            .append("thead")
-            .append("tr")
-            .selectAll("th")
-            .data(this.all_fields)
-            .enter()
-            .append("th")
-            .text(d => d);
-
-        // Fill in table body
-        this.detail_table.append("tbody");
-        this.fill_detail_table(this.select_dataset());
     }
 
     filter_dataset() {
@@ -383,20 +418,6 @@ class ExploreHeatmapPlot extends D3Visualization {
             this.filtered_dataset = this.dataset;
         }
     }
-
-    fill_detail_table = data => {
-        // Fills detail table
-        let rows = this.detail_table
-            .select("tbody")
-            .selectAll("tr")
-            .data(data);
-        rows.enter().append("tr");
-        rows.exit().remove();
-        let row_data = rows.selectAll("td").data(d => this.all_fields.map(e => d[e]));
-        row_data.enter().append("td");
-        row_data.exit().remove();
-        row_data.text(d => d);
-    };
 
     build_axes() {
         let generate_ticks = domain => {
@@ -607,8 +628,8 @@ class ExploreHeatmapPlot extends D3Visualization {
                     .select("rect")
                     .style("stroke", "black")
                     .style("stroke-width", 2);
-                self.selected_cells = [d];
-                self.fill_detail_table(self.select_dataset());
+
+                self.update_detail_table(d);
             })
             .on("mouseover", null);
 
