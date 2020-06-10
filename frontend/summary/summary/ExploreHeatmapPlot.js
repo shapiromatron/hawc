@@ -21,9 +21,7 @@ class ExploreHeatmapPlot extends D3Visualization {
     render_plot($div) {
         this.plot_div = $div;
         this.build_plot();
-        if (this.show_grid) {
-            this.add_grid();
-        }
+        this.add_grid();
         this.set_trigger_resize();
         this.add_menu();
     }
@@ -84,8 +82,6 @@ class ExploreHeatmapPlot extends D3Visualization {
     }
 
     generate_properties(data) {
-        this.processedData = this.preprocess_data(data.dataset, data.settings);
-
         this.cell_width = 50;
         this.cell_height = 50;
         this.padding = {top: 0, left: 0, bottom: 0, right: 200};
@@ -97,6 +93,7 @@ class ExploreHeatmapPlot extends D3Visualization {
         // From constructor parameters
         this.dataset = data.dataset;
         this.filtered_dataset = this.dataset;
+        this.processedData = this.preprocess_data(data.dataset, data.settings);
         this.selected_cells = [];
         _.assign(this, data.settings);
         this.blacklist = [];
@@ -515,18 +512,23 @@ class ExploreHeatmapPlot extends D3Visualization {
                         .attr("stroke", "black");
                 }
             };
-            if (this.show_axis_border) add_border();
+            if (this.show_axis_border) {
+                add_border();
+            }
         }
     }
 
     add_grid() {
+        if (!this.show_grid) {
+            return;
+        }
         // Draws lines on plot
         let grid = this.vis.append("g"),
             x_band = this.w / this.x_steps,
             y_band = this.h / this.y_steps;
 
         grid.selectAll("g.none")
-            .data(_.range(this.x_steps))
+            .data(_.range(this.x_steps + 1))
             .enter()
             .append("line")
             .attr("x1", i => x_band * i)
@@ -536,7 +538,7 @@ class ExploreHeatmapPlot extends D3Visualization {
             .style("stroke", "black");
 
         grid.selectAll("g.none")
-            .data(_.range(this.y_steps))
+            .data(_.range(this.y_steps + 1))
             .enter()
             .append("line")
             .attr("x1", 0)
