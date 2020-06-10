@@ -4,6 +4,10 @@ import {observer} from "mobx-react";
 
 @observer
 class DatasetTable extends Component {
+    constructor(props) {
+        super(props);
+        this.renderRow = this.renderRow.bind(this);
+    }
     render() {
         const {table_fields} = this.props.store.settings,
             data = this.props.store.selectedTableData;

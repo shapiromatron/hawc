@@ -13,9 +13,9 @@ import FilterWidgetContainer from "./heatmap/FilterWidgetContainer";
 class ExploreHeatmapPlot extends D3Visualization {
     constructor(parent, data, options) {
         super(...arguments);
-        this.generate_properties(data);
-        this.store = new HeatmapDatastore(data.settings, data.dataset);
         this.modal = new HAWCModal();
+        this.store = new HeatmapDatastore(data.settings, data.dataset);
+        this.generate_properties(data);
     }
 
     render($div) {
@@ -108,7 +108,7 @@ class ExploreHeatmapPlot extends D3Visualization {
         // From constructor parameters
         this.dataset = data.dataset;
         this.filtered_dataset = this.dataset;
-        this.processedData = this.preprocess_data(data.dataset, data.settings);
+        this.processedData = {intersection: this.store.intersection};
         _.assign(this, data.settings);
         this.blacklist = [];
 
@@ -136,45 +136,6 @@ class ExploreHeatmapPlot extends D3Visualization {
             .domain([0, d3.max(this.cell_map, d => d.rows.length)])
             .range(this.color_range);
     }
-
-    preprocess_data(dataset, settings) {
-        /*
-        here, we have "red" in the color column with element index 1, 2, and 3
-        intersection["color"]["red"] = Set([1,2,3])
-        */
-        let intersection = {},
-            addColumnsToMap = row => {
-                const columnName = row.column,
-                    delimiter = row.delimiter;
-                // create column array if needed
-                if (intersection[columnName] === undefined) {
-                    intersection[columnName] = {};
-                }
-                dataset.forEach((d, idx) => {
-                    const values =
-                        delimiter !== "" ? d[columnName].split(delimiter) : [d[columnName]];
-                    for (let value of values) {
-                        if (intersection[columnName][value] === undefined) {
-                            intersection[columnName][value] = [];
-                        }
-                        intersection[columnName][value].push(idx);
-                    }
-                });
-            };
-
-        settings.x_fields_new.map(addColumnsToMap);
-        settings.y_fields_new.map(addColumnsToMap);
-
-        // convert arrays to Sets
-        _.each(intersection, (dataColumn, columnName) => {
-            _.each(dataColumn, (rows, value) => {
-                dataColumn[value] = new Set(rows);
-            });
-        });
-
-        return {intersection};
-    }
-
     build_container($div) {
         // Create svg container
         this.viz_container = d3.select($div.html("")[0]);
