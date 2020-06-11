@@ -10,7 +10,7 @@ class DatasetTable extends Component {
     }
     render() {
         const {table_fields} = this.props.store.settings,
-            data = this.props.store.selectedTableData;
+            data = this.props.store.getTableData;
 
         return (
             <table className="table table-striped table-bordered">

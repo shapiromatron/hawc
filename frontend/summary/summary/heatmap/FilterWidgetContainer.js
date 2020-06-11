@@ -36,7 +36,9 @@ class FilterWidget extends Component {
                 </h4>
                 <div className="clearfix"></div>
                 <div>
-                    {items.map((item, index) => this.renderItem(widget, item, index, itemStore))}
+                    {items
+                        .sort()
+                        .map((item, index) => this.renderItem(widget, item, index, itemStore))}
                 </div>
             </div>
         );

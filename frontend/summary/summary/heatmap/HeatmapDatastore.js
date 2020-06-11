@@ -14,6 +14,7 @@ class HeatmapDatastore {
     @observable settings = null;
     @observable selectedTableData = [];
     @observable filterWidgetState = null;
+    @observable tableDataFilters = null;
 
     constructor(settings, dataset) {
         this.modal = new HAWCModal();
@@ -49,12 +50,12 @@ class HeatmapDatastore {
                 });
             };
 
-        this.settings.x_fields_new.map(addColumnsToMap);
-        this.settings.y_fields_new.map(addColumnsToMap);
+        this.settings.x_fields.map(addColumnsToMap);
+        this.settings.y_fields.map(addColumnsToMap);
         this.settings.filter_widgets.map(addColumnsToMap);
 
         // convert arrays to Sets
-        _.each(intersection, (dataColumn, columnName) => {
+        _.each(_.values(intersection), dataColumn => {
             _.each(dataColumn, (rows, value) => {
                 dataColumn[value] = new Set(rows);
             });
@@ -90,8 +91,8 @@ class HeatmapDatastore {
                 });
             }
         };
-        const x = setScales(toJS(this.settings.x_fields_new), toJS(this.intersection)),
-            y = setScales(toJS(this.settings.y_fields_new), toJS(this.intersection));
+        const x = setScales(toJS(this.settings.x_fields), toJS(this.intersection)),
+            y = setScales(toJS(this.settings.y_fields), toJS(this.intersection));
 
         return {x, y};
     }
@@ -161,8 +162,27 @@ class HeatmapDatastore {
         return xy_map;
     }
 
-    @action.bound updateSelectedTableData(selectedTableData) {
-        this.selectedTableData = selectedTableData;
+    @computed
+    get getTableData() {
+        let rows;
+        if (this.tableDataFilters) {
+            rows = _.find(this.matrixDataset, {
+                x_step: this.tableDataFilters.x_step,
+                y_step: this.tableDataFilters.y_step,
+            }).rows;
+        } else {
+            rows = [
+                ...h.setDifference(
+                    new Set(_.range(this.dataset.length)),
+                    this.rowsRemovedByFilters
+                ),
+            ];
+        }
+        return rows.map(index => this.dataset[index]);
+    }
+
+    @action.bound updateTableDataFilters(d) {
+        this.tableDataFilters = d;
     }
 
     @action.bound selectAllFilterWidget(column) {

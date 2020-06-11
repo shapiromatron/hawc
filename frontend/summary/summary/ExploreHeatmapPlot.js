@@ -16,7 +16,9 @@ class ExploreHeatmapPlot extends D3Visualization {
         super(...arguments);
         this.modal = new HAWCModal();
         this.store = new HeatmapDatastore(data.settings, data.dataset);
-        this.generate_properties(data);
+        this.dataset = data.dataset;
+        this.settings = data.settings;
+        this.generate_properties();
     }
 
     render($div) {
@@ -32,22 +34,18 @@ class ExploreHeatmapPlot extends D3Visualization {
             filters = $div.find(".heatmap-filters")[0];
 
         this.plot_div = $(viz);
-        this.render_plot();
-        ReactDOM.render(<DatasetTable store={this.store} />, tbl);
-        ReactDOM.render(<FilterWidgetContainer store={this.store} />, filters);
-    }
-
-    render_plot() {
         this.build_plot();
         this.add_grid();
         this.set_trigger_resize();
         this.add_menu();
+        ReactDOM.render(<DatasetTable store={this.store} />, tbl);
+        ReactDOM.render(<FilterWidgetContainer store={this.store} />, filters);
     }
 
     set_trigger_resize() {
         var self = this,
-            w = this.w + this.padding.left + this.padding.right,
-            h = this.h + this.padding.top + this.padding.bottom,
+            w = this.w + this.settings.padding.left + this.settings.padding.right,
+            h = this.h + this.settings.padding.top + this.settings.padding.bottom,
             chart = $(this.svg),
             container = chart.parent();
 
@@ -83,49 +81,23 @@ class ExploreHeatmapPlot extends D3Visualization {
         this.trigger_resize(false);
     }
 
-    update_detail_table(d) {
-        const data = d.rows.map(index => this.filtered_dataset[index]);
-        this.store.updateSelectedTableData(data);
-    }
+    generate_properties() {
+        // `this.padding` required for D3Plot
+        this.padding = this.settings.padding;
 
-    generate_properties(data) {
-        this.cell_width = 50;
-        this.cell_height = 50;
-        this.padding = {top: 0, left: 0, bottom: 0, right: 200};
-        this.show_grid = true;
-        this.show_axis_border = true;
-        this.x_rotate = 90;
-        this.y_rotate = 0;
+        this.x_domain = this.settings.x_fields.map(e => _.keys(this.store.intersection[e.column]));
+        this.y_domain = this.settings.y_fields.map(e => _.keys(this.store.intersection[e.column]));
+        this.x_steps = this.store.scales.x.length;
+        this.y_steps = this.store.scales.y.length;
 
-        // From constructor parameters
-        this.dataset = data.dataset;
-        this.filtered_dataset = this.dataset;
-        this.processedData = {intersection: this.store.intersection};
-        _.assign(this, data.settings);
-        this.blacklist = [];
-
-        this.blacklist_domain = _.chain(this.dataset)
-            .map(d => d[this.blacklist_field])
-            .uniq()
-            .sort()
-            .value();
-
-        this.x_domain = this.x_fields_new.map(e =>
-            _.keys(this.processedData.intersection[e.column])
-        );
-        this.y_domain = this.y_fields_new.map(e =>
-            _.keys(this.processedData.intersection[e.column])
-        );
-        this.x_steps = this.x_domain.reduce((total, element) => total * element.length, 1);
-        this.y_steps = this.y_domain.reduce((total, element) => total * element.length, 1);
-        this.w = this.cell_width * this.x_steps;
-        this.h = this.cell_height * this.y_steps;
+        this.w = this.settings.cell_width * this.x_steps;
+        this.h = this.settings.cell_height * this.y_steps;
 
         // set colorscale
         this.color_scale = d3.scale
             .linear()
             .domain([0, d3.max(this.store.matrixDataset, d => d.rows.length)])
-            .range(this.color_range);
+            .range(this.settings.color_range);
     }
 
     build_axes() {
@@ -164,7 +136,7 @@ class ExploreHeatmapPlot extends D3Visualization {
                 let label = axis.append("g");
                 label
                     .append("text")
-                    .attr("transform", `rotate(${this.x_rotate})`)
+                    .attr("transform", `rotate(${this.settings.x_rotate})`)
                     .text(domain[j]);
                 let box = label.node().getBBox(),
                     label_offset = mid - box.width / 2;
@@ -176,7 +148,7 @@ class ExploreHeatmapPlot extends D3Visualization {
                 mid += band;
             }
             max += label_padding * 2;
-            this.padding.bottom += max;
+            this.settings.padding.bottom += max;
             x_axis_offset += max;
 
             // Adds a border around tick labels
@@ -194,7 +166,7 @@ class ExploreHeatmapPlot extends D3Visualization {
                         .attr("stroke", "black");
                 }
             };
-            if (this.show_axis_border) {
+            if (this.settings.show_axis_border) {
                 add_border();
             }
         }
@@ -212,7 +184,7 @@ class ExploreHeatmapPlot extends D3Visualization {
                 let label = axis.append("g");
                 label
                     .append("text")
-                    .attr("transform", `rotate(${this.y_rotate})`)
+                    .attr("transform", `rotate(${this.settings.y_rotate})`)
                     .text(domain[j]);
                 let box = label.node().getBBox(),
                     label_offset = mid - box.height / 2;
@@ -224,7 +196,7 @@ class ExploreHeatmapPlot extends D3Visualization {
                 mid += band;
             }
             max += label_padding * 2;
-            this.padding.left += max;
+            this.settings.padding.left += max;
             y_axis_offset += max;
 
             // Adds a border around tick labels
@@ -242,14 +214,14 @@ class ExploreHeatmapPlot extends D3Visualization {
                         .attr("stroke", "black");
                 }
             };
-            if (this.show_axis_border) {
+            if (this.settings.show_axis_border) {
                 add_border();
             }
         }
     }
 
     add_grid() {
-        if (!this.show_grid) {
+        if (!this.settings.show_grid) {
             return;
         }
         // Draws lines on plot
@@ -282,30 +254,30 @@ class ExploreHeatmapPlot extends D3Visualization {
         this.label_margin = 50;
 
         // Plot title
-        if (this.plot_title.length > 0) {
+        if (this.settings.plot_title.length > 0) {
             this.vis
                 .append("text")
                 .attr("id", "exp_heatmap_title")
                 .attr("class", "exp_heatmap_label")
                 .attr("x", this.w / 2)
                 .attr("y", -this.label_margin / 2)
-                .text(this.plot_title);
-            this.padding.top += this.label_margin;
+                .text(this.settings.plot_title);
+            this.settings.padding.top += this.label_margin;
         }
 
         // X axis
-        if (this.x_label.length > 0) {
-            this.padding.bottom += this.label_margin;
+        if (this.settings.x_label.length > 0) {
+            this.settings.padding.bottom += this.label_margin;
             this.vis
                 .append("text")
                 .attr("class", "exp_heatmap_label")
                 .attr("x", this.w / 2)
-                .attr("y", this.h + this.padding.bottom - this.label_margin / 2)
-                .text(this.x_label);
+                .attr("y", this.h + this.settings.padding.bottom - this.label_margin / 2)
+                .text(this.settings.x_label);
         }
         // Y axis
-        if (this.y_label.length > 0) {
-            this.padding.left += this.label_margin;
+        if (this.settings.y_label.length > 0) {
+            this.settings.padding.left += this.label_margin;
             this.vis
                 .append("text")
                 .attr("class", "exp_heatmap_label")
@@ -313,10 +285,10 @@ class ExploreHeatmapPlot extends D3Visualization {
                 .attr("y", 0)
                 .attr(
                     "transform",
-                    `translate(${-(this.padding.left - this.label_margin / 2)},${this.h /
+                    `translate(${-(this.settings.padding.left - this.label_margin / 2)},${this.h /
                         2}) rotate(-90)`
                 )
-                .text(this.y_label);
+                .text(this.settings.y_label);
         }
     }
 
@@ -338,7 +310,7 @@ class ExploreHeatmapPlot extends D3Visualization {
                     .style("stroke", "black")
                     .style("stroke-width", 2);
 
-                self.update_detail_table(d);
+                self.store.updateTableDataFilters(d);
             })
             .on("mouseover", null);
 
@@ -400,7 +372,7 @@ class ExploreHeatmapPlot extends D3Visualization {
             .rangeBands([0, this.h]);
 
         // Draw cells
-        this.cells = this.vis.append("g").attr("id", "exp_heatmap_cells");
+        this.cells = this.vis.append("g");
 
         autorun(() => this.update_plot(this.store.matrixDataset));
 
@@ -411,15 +383,18 @@ class ExploreHeatmapPlot extends D3Visualization {
         this.build_labels();
 
         // Set plot dimensions and viewbox
-        let w = this.w + this.padding.left + this.padding.right,
-            h = this.h + this.padding.top + this.padding.bottom;
+        let w = this.w + this.settings.padding.left + this.settings.padding.right,
+            h = this.h + this.settings.padding.top + this.settings.padding.bottom;
         d3.select(this.svg)
             .attr("width", w)
             .attr("height", h)
             .attr("viewBox", `0 0 ${w} ${h}`);
 
         // Position plot
-        this.vis.attr("transform", `translate(${this.padding.left},${this.padding.top})`);
+        this.vis.attr(
+            "transform",
+            `translate(${this.settings.padding.left},${this.settings.padding.top})`
+        );
     }
 }
 
