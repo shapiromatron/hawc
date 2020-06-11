@@ -20,16 +20,24 @@ class ExploreHeatmapPlot extends D3Visualization {
     }
 
     render($div) {
-        this.build_container($div);
-        this.render_plot($("#exp_heatmap_svg_container"));
-        const filterWidgetsDiv = $("<div>").appendTo($(this.viz_container[0][0])),
-            tblDiv = $("<div>").appendTo($(this.viz_container[0][0]));
-        ReactDOM.render(<DatasetTable store={this.store} />, tblDiv.get(0));
-        ReactDOM.render(<FilterWidgetContainer store={this.store} />, filterWidgetsDiv.get(0));
+        // Create svg container
+        $div.html(`<div class="row-fluid">
+            <div class="span9 heatmap-viz"></div>
+            <div class="span3 heatmap-filters"></div>
+            <div class="span9 heatmap-tables"></div>
+        </div>`);
+
+        const viz = $div.find(".heatmap-viz")[0],
+            tbl = $div.find(".heatmap-tables")[0],
+            filters = $div.find(".heatmap-filters")[0];
+
+        this.plot_div = $(viz);
+        this.render_plot();
+        ReactDOM.render(<DatasetTable store={this.store} />, tbl);
+        ReactDOM.render(<FilterWidgetContainer store={this.store} />, filters);
     }
 
-    render_plot($div) {
-        this.plot_div = $div;
+    render_plot() {
         this.build_plot();
         this.add_grid();
         this.set_trigger_resize();
@@ -118,20 +126,6 @@ class ExploreHeatmapPlot extends D3Visualization {
             .linear()
             .domain([0, d3.max(this.store.matrixDataset, d => d.rows.length)])
             .range(this.color_range);
-    }
-
-    build_container($div) {
-        // Create svg container
-        this.viz_container = d3.select($div.html("")[0]);
-        this.svg_blacklist_container = this.viz_container
-            .append("div")
-            .style("white-space", "nowrap");
-        this.svg_container = this.svg_blacklist_container
-            .append("div")
-            .style("display", "inline-block")
-            .style("width", "80%")
-            .style("vertical-align", "top")
-            .attr("id", "exp_heatmap_svg_container");
     }
 
     build_axes() {
@@ -328,8 +322,7 @@ class ExploreHeatmapPlot extends D3Visualization {
 
     update_plot = data => {
         const self = this,
-            cells_data = this.cells.selectAll("g").data(data),
-            t = d3.transition().duration(1000);
+            cells_data = this.cells.selectAll("g").data(data);
 
         // add cell group and interactivity
         this.cells_enter = cells_data
@@ -358,12 +351,6 @@ class ExploreHeatmapPlot extends D3Visualization {
             .attr("width", this.x_scale.rangeBand())
             .attr("height", this.y_scale.rangeBand());
 
-        // enter/update
-        cells_data
-            .select(".exp_heatmap_cell_block")
-            .transition(t)
-            .style("fill", d => this.color_scale(d.rows.length));
-
         /// add cell text
         this.cells_enter
             .append("text")
@@ -371,9 +358,15 @@ class ExploreHeatmapPlot extends D3Visualization {
             .attr("x", d => this.x_scale(d.x_step) + this.x_scale.rangeBand() / 2)
             .attr("y", d => this.y_scale(d.y_step) + this.y_scale.rangeBand() / 2);
 
+        // enter/update
+        cells_data
+            .select(".exp_heatmap_cell_block")
+            .transition()
+            .style("fill", d => this.color_scale(d.rows.length));
+
         cells_data
             .select(".exp_heatmap_cell_text")
-            .transition(t)
+            .transition()
             .style("fill", d => {
                 let {r, g, b} = d3.rgb(this.color_scale(d.rows.length));
                 ({r, g, b} = h.getTextContrastColor(r, g, b));

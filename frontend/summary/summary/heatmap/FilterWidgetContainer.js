@@ -16,16 +16,25 @@ class FilterWidget extends Component {
             itemStore = this.props.store.filterWidgetState[widget.column];
 
         return (
-            <div className="container-fluid exp_heatmap_container">
-                <h4>{widget.column}</h4>
-                <div className="btn-group">
-                    <button className="btn" onClick={() => selectAllFilterWidget(widget.column)}>
-                        All
-                    </button>
-                    <button className="btn" onClick={() => selectNoneFilterWidget(widget.column)}>
-                        None
-                    </button>
-                </div>
+            <div className="well">
+                <h4>
+                    {widget.column}
+                    <div className="btn-group pull-right">
+                        <button
+                            className="btn btn-small"
+                            onClick={() => selectAllFilterWidget(widget.column)}
+                            title="Select all items">
+                            <i className="fa fa-check-circle"></i>
+                        </button>
+                        <button
+                            className="btn btn-small"
+                            onClick={() => selectNoneFilterWidget(widget.column)}
+                            title="De-select all items">
+                            <i className="fa fa-times-circle"></i>
+                        </button>
+                    </div>
+                </h4>
+                <div className="clearfix"></div>
                 <div>
                     {items.map((item, index) => this.renderItem(widget, item, index, itemStore))}
                 </div>
@@ -44,7 +53,8 @@ class FilterWidget extends Component {
                             .addHeader(`<h4>${widget.column}: ${item}</h4>`)
                             .addFooter("")
                             .show()
-                    }>
+                    }
+                    title="View additional information">
                     <i className="icon-eye-open"></i>
                 </button>
                 <label className="checkbox">

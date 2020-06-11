@@ -13,18 +13,16 @@ class DatasetTable extends Component {
             data = this.props.store.selectedTableData;
 
         return (
-            <div className="exp_heatmap_container">
-                <table className="table table-striped table-bordered">
-                    <thead>
-                        <tr>
-                            {table_fields.map((name, i) => (
-                                <th key={i}>{name}</th>
-                            ))}
-                        </tr>
-                    </thead>
-                    <tbody>{data.map((row, i) => this.renderRow(row, i, table_fields))}</tbody>
-                </table>
-            </div>
+            <table className="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        {table_fields.map((name, i) => (
+                            <th key={i}>{name}</th>
+                        ))}
+                    </tr>
+                </thead>
+                <tbody>{data.map((row, i) => this.renderRow(row, i, table_fields))}</tbody>
+            </table>
         );
     }
     renderRow(row, index, table_fields) {
