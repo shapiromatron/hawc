@@ -161,6 +161,21 @@ const helpers = {
         }
         return `hash-${hash}`;
     },
+    setDifference(arr, removeSet) {
+        // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set
+        let _difference = new Set(arr);
+        for (let elem of removeSet) {
+            _difference.delete(elem);
+        }
+        return [..._difference];
+    },
+    cartesian(arrs) {
+        // arrs is an array of arrays
+        // https://stackoverflow.com/a/43053803/906385
+        const f = (a, b) => [].concat(...a.map(d => b.map(e => [].concat(d, e))));
+        const _cartesian = (a, b, ...c) => (b ? _cartesian(f(a, b), ...c) : a);
+        return _cartesian(...arrs);
+    },
 };
 
 export default helpers;

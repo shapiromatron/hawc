@@ -27,7 +27,7 @@ class ExploreHeatmap extends BaseVisual {
             table_fields: settings.table_fields,
             filter_widgets: settings.filter_widgets,
             blacklist_field: "study-short_citation", //additional filter / main identifier
-            color_range: ["white", "black"],
+            color_range: ["white", "seagreen"],
         };
     }
 
