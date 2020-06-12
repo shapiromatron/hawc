@@ -81,13 +81,11 @@ class HeatmapDatastore {
 
             if (columns.length <= 1) {
                 return permutations.map(item => {
-                    return {
-                        [columns[0]]: item,
-                    };
+                    return [[columns[0], item]];
                 });
             } else {
                 return permutations.map(permutation => {
-                    return _.zipObject(columns, permutation);
+                    return _.zip(columns, permutation);
                 });
             }
         };
@@ -136,11 +134,11 @@ class HeatmapDatastore {
             },
             getRows = filters => {
                 let rows;
-                _.each(_.keys(filters), (columnName, idx) => {
+                _.each(filters, (filter, idx) => {
                     if (idx === 0) {
-                        rows = [...intersection[columnName][filters[columnName]]];
+                        rows = [...intersection[filter[0]][filter[1]]];
                     } else {
-                        rows = getIntersection(rows, intersection[columnName][filters[columnName]]);
+                        rows = getIntersection(rows, intersection[filter[0]][filter[1]]);
                     }
                 });
                 return h.setDifference(rows, removedRows);
@@ -149,11 +147,11 @@ class HeatmapDatastore {
                 .map((x, i) => {
                     return scales.y.map((y, j) => {
                         return {
-                            x_filter: x,
-                            y_filter: y,
+                            x_filters: x,
+                            y_filters: y,
                             x_step: i,
                             y_step: j,
-                            rows: getRows(Object.assign({}, x, y)),
+                            rows: getRows(x.concat(y)),
                         };
                     });
                 })

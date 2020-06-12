@@ -1,6 +1,6 @@
 import _ from "lodash";
 import d3 from "d3";
-import {autorun} from "mobx";
+import {autorun, toJS} from "mobx";
 import D3Visualization from "./D3Visualization";
 import h from "shared/utils/helpers";
 import HAWCModal from "utils/HAWCModal";
@@ -10,6 +10,7 @@ import ReactDOM from "react-dom";
 import HeatmapDatastore from "./heatmap/HeatmapDatastore";
 import DatasetTable from "./heatmap/DatasetTable";
 import FilterWidgetContainer from "./heatmap/FilterWidgetContainer";
+import Tooltip from "./heatmap/Tooltip";
 
 class ExploreHeatmapPlot extends D3Visualization {
     constructor(parent, data, options) {
@@ -27,6 +28,7 @@ class ExploreHeatmapPlot extends D3Visualization {
             <div class="span9 heatmap-viz"></div>
             <div class="span3 heatmap-filters"></div>
             <div class="span9 heatmap-tables"></div>
+            <div style="position:absolute;" id="exp_heatmap_tooltip"></div>
         </div>`);
 
         const viz = $div.find(".heatmap-viz")[0],
@@ -100,23 +102,49 @@ class ExploreHeatmapPlot extends D3Visualization {
             .range(this.settings.color_range);
     }
 
+    bind_tooltip(d3_object) {
+        let tooltip_x_offset = 20,
+            tooltip_y_offset = 20;
+        d3_object
+            .on("mouseenter", d => {
+                $("#exp_heatmap_tooltip").css("display", "block");
+                ReactDOM.render(<Tooltip datum={d} />, $("#exp_heatmap_tooltip")[0]);
+            })
+            .on("mousemove", d =>
+                $("#exp_heatmap_tooltip").css({
+                    top: `${d3.event.pageY + tooltip_y_offset}px`,
+                    left: `${d3.event.pageX + tooltip_x_offset}px`,
+                })
+            )
+            .on("mouseleave", d => $("#exp_heatmap_tooltip").css("display", "none"));
+    }
+
     build_axes() {
-        let generate_ticks = domain => {
-                if (domain.length == 0) return [];
+        let generate_ticks = (domain, fields) => {
                 let ticks = [];
 
-                ticks.push(domain[0]);
-                for (let i = 1; i < domain.length; i++) {
-                    let current_ticks = [];
-                    for (let j = 0; j < ticks[i - 1].length; j++) {
-                        current_ticks = current_ticks.concat(domain[i]);
+                for (let i = 0; i < domain.length; i++) {
+                    let tick = domain[i].map(e => {
+                        return {label: e, filters: [[fields[i], e]]};
+                    });
+                    if (i == 0) {
+                        ticks.push(tick);
+                    } else {
+                        tick = ticks[i - 1]
+                            .map(a =>
+                                tick.map(b => {
+                                    b.filters.concat(a.filters);
+                                    return b;
+                                })
+                            )
+                            .flat();
+                        ticks.push(tick);
                     }
-                    ticks.push(current_ticks);
                 }
                 return ticks;
             },
-            x_domains = generate_ticks(this.x_domain).reverse(),
-            y_domains = generate_ticks(this.y_domain).reverse(),
+            x_domains = generate_ticks(this.x_domain, toJS(this.settings.x_fields)).reverse(),
+            y_domains = generate_ticks(this.y_domain, toJS(this.settings.y_fields)).reverse(),
             x_axis_offset = 0,
             y_axis_offset = 0,
             label_padding = 6;
@@ -137,7 +165,7 @@ class ExploreHeatmapPlot extends D3Visualization {
                 label
                     .append("text")
                     .attr("transform", `rotate(${this.settings.x_rotate})`)
-                    .text(domain[j]);
+                    .text(domain[j].label);
                 let box = label.node().getBBox(),
                     label_offset = mid - box.width / 2;
                 label.attr(
@@ -152,6 +180,7 @@ class ExploreHeatmapPlot extends D3Visualization {
             x_axis_offset += max;
 
             // Adds a border around tick labels
+
             let add_border = () => {
                 let borders = axis.append("g");
                 for (let j = 0; j < domain.length; j++) {
@@ -162,8 +191,9 @@ class ExploreHeatmapPlot extends D3Visualization {
                             `${band * j},${max} ${band * j},0 ${band * (j + 1)},0 ${band *
                                 (j + 1)},${max}`
                         )
-                        .attr("fill", "none")
+                        .attr("fill", "transparent")
                         .attr("stroke", "black");
+                    this.bind_tooltip(borders);
                 }
             };
             if (this.settings.show_axis_border) {
@@ -185,7 +215,7 @@ class ExploreHeatmapPlot extends D3Visualization {
                 label
                     .append("text")
                     .attr("transform", `rotate(${this.settings.y_rotate})`)
-                    .text(domain[j]);
+                    .text(domain[j].label);
                 let box = label.node().getBBox(),
                     label_offset = mid - box.height / 2;
                 label.attr(
@@ -294,7 +324,9 @@ class ExploreHeatmapPlot extends D3Visualization {
 
     update_plot = data => {
         const self = this,
-            cells_data = this.cells.selectAll("g").data(data);
+            cells_data = this.cells.selectAll("g").data(data),
+            tooltip_x_offset = 20,
+            tooltip_y_offset = 20;
 
         // add cell group and interactivity
         this.cells_enter = cells_data
@@ -311,8 +343,8 @@ class ExploreHeatmapPlot extends D3Visualization {
                     .style("stroke-width", 2);
 
                 self.store.updateTableDataFilters(d);
-            })
-            .on("mouseover", null);
+            });
+        this.bind_tooltip(this.cells_enter);
 
         // add cell fill
         this.cells_enter
