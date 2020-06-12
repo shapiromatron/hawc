@@ -23,7 +23,7 @@ class ExploreHeatmap extends BaseVisual {
             padding: settings.padding,
             show_axis_border: true,
             show_grid: true,
-            table_fields: settings.table_fields,
+            table_fields: settings.table_fields.filter(d => d.column !== NULL_VALUE),
             title: settings.title,
             x_fields: settings.x_fields.filter(d => d.column !== NULL_VALUE),
             x_label: settings.x_label,

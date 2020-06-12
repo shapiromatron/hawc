@@ -17,7 +17,7 @@ class DatasetTable extends Component {
                 <thead>
                     <tr>
                         {table_fields.map((name, i) => (
-                            <th key={i}>{name}</th>
+                            <th key={i}>{name.column}</th>
                         ))}
                     </tr>
                 </thead>
@@ -28,8 +28,8 @@ class DatasetTable extends Component {
     renderRow(row, index, table_fields) {
         return (
             <tr key={index}>
-                {table_fields.map((name, i2) => (
-                    <td key={i2}>{row[name]}</td>
+                {table_fields.map((field, i2) => (
+                    <td key={i2}>{row[field.column]}</td>
                 ))}
             </tr>
         );

@@ -10,6 +10,7 @@ import FloatInput from "shared/components/FloatInput";
 import {MissingData, RefreshRequired} from "./common";
 import AxisLabelTable from "./AxisLabelTable";
 import FilterWidgetTable from "./FilterWidgetTable";
+import DetailTable from "./DetailTable";
 
 @inject("store")
 @observer
@@ -86,6 +87,8 @@ class VisualCustomizationPanel extends Component {
                     </div>
                 </div>
 
+                <hr />
+
                 <h4>X fields</h4>
                 <AxisLabelTable settingsKey={"x_fields"} />
 
@@ -95,22 +98,13 @@ class VisualCustomizationPanel extends Component {
         );
     }
     renderFiltersTab() {
-        const {settings, getColumnsOptions, changeSettingsMultiSelect} = this.props.store.subclass;
         return (
             <div>
                 <h4>Filter widgets</h4>
                 <FilterWidgetTable />
-
+                <hr />
                 <h4>Table display</h4>
-                <SelectInput
-                    name="table_fields"
-                    label="Table fields"
-                    className="span12"
-                    choices={getColumnsOptions}
-                    multiple={true}
-                    handleSelect={value => changeSettingsMultiSelect("table_fields", value)}
-                    value={settings.table_fields}
-                />
+                <DetailTable />
             </div>
         );
     }

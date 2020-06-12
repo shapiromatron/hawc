@@ -9,6 +9,9 @@ let createDefaultAxisItem = function() {
     },
     createDefaultFilterWidget = function() {
         return {column: NULL_VALUE, delimiter: "", on_click_event: ""};
+    },
+    createTableRow = function() {
+        return {column: NULL_VALUE, on_click_event: ""};
     };
 
 class ExploratoryHeatmapStore {
@@ -24,7 +27,13 @@ class ExploratoryHeatmapStore {
             data_url: "",
             filter_widgets: [],
             padding: {top: 30, left: 30, bottom: 30, right: 30},
-            table_fields: [],
+            table_fields: [
+                createTableRow(),
+                createTableRow(),
+                createTableRow(),
+                createTableRow(),
+                createTableRow(),
+            ],
             title: {text: "", x: 0, y: 0, rotate: 0},
             x_fields: [createDefaultAxisItem()],
             x_label: {text: "", x: 0, y: 0, rotate: 0},
@@ -70,6 +79,10 @@ class ExploratoryHeatmapStore {
 
     @action.bound createNewFilterWidget() {
         this.settings.filter_widgets.push(createDefaultFilterWidget());
+    }
+
+    @action.bound createNewTableRow() {
+        this.settings.table_fields.push(createTableRow());
     }
 
     @action setFromJsonSettings(settings, firstTime) {

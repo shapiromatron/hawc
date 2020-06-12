@@ -4,34 +4,32 @@ import {inject, observer} from "mobx-react";
 import TextInput from "shared/components/TextInput";
 import SelectInput from "shared/components/SelectInput";
 
-const key = "filter_widgets";
+const key = "table_fields";
 
 @inject("store")
 @observer
-class FilterWidgetTable extends Component {
+class DetailTable extends Component {
     render() {
         const items = this.props.store.subclass.settings[key],
-            {createNewFilterWidget} = this.props.store.subclass;
+            {createNewTableRow} = this.props.store.subclass;
 
         return (
             <table className="table table-condensed table-striped">
                 <colgroup>
                     <col width="50%" />
-                    <col width="20%" />
-                    <col width="20%" />
+                    <col width="40%" />
                     <col width="10%" />
                 </colgroup>
                 <thead>
                     <tr>
                         <th>Column</th>
-                        <th>Delimiter</th>
                         <th>Interactivity</th>
                         <th>
                             Actions&nbsp;
                             <button
                                 className="btn btn-small btn-primary"
                                 title="New row"
-                                onClick={() => createNewFilterWidget()}>
+                                onClick={createNewTableRow}>
                                 <i className="fa fa-plus"></i>
                             </button>
                         </th>
@@ -60,15 +58,6 @@ class FilterWidgetTable extends Component {
                         multiple={false}
                         handleSelect={value => changeArraySettings(key, index, "column", value)}
                         value={row.column}
-                    />
-                </td>
-                <td>
-                    <TextInput
-                        name={`${key}-delimiter-${index}`}
-                        value={row.delimiter}
-                        onChange={e =>
-                            changeArraySettings(key, index, "delimiter", e.target.value.trim())
-                        }
                     />
                 </td>
                 <td>
@@ -104,8 +93,8 @@ class FilterWidgetTable extends Component {
         );
     }
 }
-FilterWidgetTable.propTypes = {
+DetailTable.propTypes = {
     store: PropTypes.object,
 };
 
-export default FilterWidgetTable;
+export default DetailTable;
