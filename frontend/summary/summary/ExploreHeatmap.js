@@ -24,6 +24,7 @@ class ExploreHeatmap extends BaseVisual {
             show_axis_border: true,
             show_grid: true,
             table_fields: settings.table_fields.filter(d => d.column !== NULL_VALUE),
+            hawc_interactivity: true, // special field; if true then modals
             title: settings.title,
             x_fields: settings.x_fields.filter(d => d.column !== NULL_VALUE),
             x_label: settings.x_label,

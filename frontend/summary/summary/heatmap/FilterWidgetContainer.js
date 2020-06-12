@@ -3,6 +3,8 @@ import React, {Component} from "react";
 import PropTypes from "prop-types";
 import {observer} from "mobx-react";
 
+import {NULL_VALUE} from "../../summary/constants";
+
 @observer
 class FilterWidget extends Component {
     constructor(props) {
@@ -13,7 +15,8 @@ class FilterWidget extends Component {
         const {widget} = this.props,
             items = _.keys(this.props.store.intersection[widget.column]),
             {selectAllFilterWidget, selectNoneFilterWidget} = this.props.store,
-            itemStore = this.props.store.filterWidgetState[widget.column];
+            itemStore = this.props.store.filterWidgetState[widget.column],
+            showClickEvent = widget.on_click_event !== NULL_VALUE;
 
         return (
             <div className="well">
@@ -38,27 +41,25 @@ class FilterWidget extends Component {
                 <div>
                     {items
                         .sort()
-                        .map((item, index) => this.renderItem(widget, item, index, itemStore))}
+                        .map((item, index) =>
+                            this.renderItem(widget, item, index, itemStore, showClickEvent)
+                        )}
                 </div>
             </div>
         );
     }
-    renderItem(widget, item, index, itemStore) {
-        const {toggleItemSelection, modal} = this.props.store;
-
+    renderItem(widget, item, index, itemStore, showClickEvent) {
+        const {toggleItemSelection, showModalClick} = this.props.store;
         return (
             <div key={index}>
-                <button
-                    className="btn btn-mini pull-right"
-                    onClick={() =>
-                        modal
-                            .addHeader(`<h4>${widget.column}: ${item}</h4>`)
-                            .addFooter("")
-                            .show()
-                    }
-                    title="View additional information">
-                    <i className="icon-eye-open"></i>
-                </button>
+                {showClickEvent ? (
+                    <button
+                        className="btn btn-mini pull-right"
+                        onClick={() => showModalClick(widget.on_click_event, widget.column, item)}
+                        title="View additional information">
+                        <i className="icon-eye-open"></i>
+                    </button>
+                ) : null}
                 <label className="checkbox">
                     <input
                         checked={itemStore[item]}

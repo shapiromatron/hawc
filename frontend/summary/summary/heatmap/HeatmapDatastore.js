@@ -5,10 +5,13 @@ import h from "shared/utils/helpers";
 
 import HAWCModal from "utils/HAWCModal";
 
+import DataPivotExtension from "summary/dataPivot/DataPivotExtension";
+
 class HeatmapDatastore {
     scales = null;
     intersection = null;
     matrixDatasetCache = {};
+    dpe = null;
 
     @observable dataset = null;
     @observable settings = null;
@@ -20,6 +23,7 @@ class HeatmapDatastore {
         this.modal = new HAWCModal();
         this.settings = settings;
         this.dataset = dataset;
+        this.dpe = new DataPivotExtension();
         this.intersection = this.setIntersection();
         this.filterWidgetState = this.setFilterWidgetState();
         this.scales = this.setScales();
@@ -204,6 +208,13 @@ class HeatmapDatastore {
 
     @action.bound toggleItemSelection(column, item, visible) {
         this.filterWidgetState[column][item] = visible;
+    }
+
+    @action.bound showModalClick(on_click_event, column, item) {
+        let row = _.find(this.dataset, {[column]: item}),
+            extension = _.find(DataPivotExtension.values, {_dpe_name: on_click_event});
+        // TODO HEATMAP - handle case where row ids are non-unique
+        this.dpe.render_plottip(extension, row);
     }
 }
 
