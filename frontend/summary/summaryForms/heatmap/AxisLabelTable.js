@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import React, {Component} from "react";
 import {inject, observer} from "mobx-react";
 import TextInput from "shared/components/TextInput";
-import IntInput from "shared/components/IntInput";
+import IntegerInput from "shared/components/IntegerInput";
 import SelectInput from "shared/components/SelectInput";
 
 @inject("store")
@@ -17,14 +17,12 @@ class AxisLabelTable extends Component {
             <table className="table table-condensed table-striped">
                 <colgroup>
                     <col width="50%" />
-                    <col width="20%" />
-                    <col width="20%" />
+                    <col width="40%" />
                     <col width="10%" />
                 </colgroup>
                 <thead>
                     <tr>
                         <th>Column</th>
-                        <th>Rotation</th>
                         <th>Delimiter</th>
                         <th>
                             Actions&nbsp;
@@ -61,22 +59,6 @@ class AxisLabelTable extends Component {
                         multiple={false}
                         handleSelect={value => changeArraySettings(key, index, "column", value)}
                         value={row.column}
-                    />
-                </td>
-                <td>
-                    <IntInput
-                        name={`${key}-rotation-${index}`}
-                        value={row.tick_rotation}
-                        minimum={-90}
-                        maximum={90}
-                        onChange={e =>
-                            changeArraySettings(
-                                key,
-                                index,
-                                "tick_rotation",
-                                parseInt(e.target.value)
-                            )
-                        }
                     />
                 </td>
                 <td>

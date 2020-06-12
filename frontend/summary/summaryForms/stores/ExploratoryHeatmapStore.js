@@ -5,7 +5,7 @@ import h from "shared/utils/helpers";
 import {NULL_VALUE} from "../../summary/constants";
 
 let createDefaultAxisItem = function() {
-        return {column: NULL_VALUE, tick_rotation: 0, delimiter: ""};
+        return {column: NULL_VALUE, delimiter: ""};
     },
     createDefaultFilterWidget = function() {
         return {column: NULL_VALUE, delimiter: "", on_click_event: ""};
@@ -23,7 +23,7 @@ class ExploratoryHeatmapStore {
             color_range: ["white", "green"],
             data_url: "",
             filter_widgets: [],
-            padding: {top: 0, left: 0, bottom: 0, right: 0},
+            padding: {top: 30, left: 30, bottom: 30, right: 30},
             table_fields: [],
             title: {text: "", x: 0, y: 0, rotate: 0},
             x_fields: [createDefaultAxisItem()],
@@ -31,7 +31,7 @@ class ExploratoryHeatmapStore {
             x_tick_rotate: 0,
             y_fields: [createDefaultAxisItem()],
             y_label: {text: "", x: 0, y: 0, rotate: 0},
-            y_tick_rotate: 0,
+            y_tick_rotate: -90,
         };
     }
 
