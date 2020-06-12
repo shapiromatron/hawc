@@ -25,6 +25,7 @@ class FilterWidgetTable extends Component {
                     <tr>
                         <th>Column</th>
                         <th>Delimiter</th>
+                        <th>Interactivity</th>
                         <th>
                             Actions&nbsp;
                             <button

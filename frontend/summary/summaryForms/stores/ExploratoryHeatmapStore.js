@@ -143,10 +143,18 @@ class ExploratoryHeatmapStore {
             return {id: d, label: d};
         });
     }
+
     @computed get getColumnsOptionsWithNull() {
         let columns = [...this.getColumnsOptions]; // shallow-copy
         columns.unshift({id: NULL_VALUE, label: "<none>"});
         return columns;
+    }
+
+    @observable visualCustomizationPanelActiveTab = 0;
+
+    @action.bound changeActiveVisualCustomizationTab(index) {
+        this.visualCustomizationPanelActiveTab = index;
+        return true;
     }
 }
 
