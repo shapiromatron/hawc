@@ -102,9 +102,10 @@ class ExploreHeatmapPlot extends D3Visualization {
         this.h = this.settings.cell_height * this.y_steps;
 
         // set color scale
+        this.max_value = d3.max(this.store.matrixDataset, d => d.rows.length);
         this.color_scale = d3.scale
             .linear()
-            .domain([0, d3.max(this.store.matrixDataset, d => d.rows.length)])
+            .domain([0, this.max_value])
             .range(this.settings.color_range);
 
         // calculated padding based on labels
@@ -352,7 +353,8 @@ class ExploreHeatmapPlot extends D3Visualization {
 
     update_plot = data => {
         const self = this,
-            cells_data = this.cells.selectAll("g").data(data);
+            cells_data = this.cells.selectAll("g").data(data),
+            {tableDataFilters} = this.store;
 
         // add cell group and interactivity
         this.cells_enter = cells_data
@@ -363,12 +365,17 @@ class ExploreHeatmapPlot extends D3Visualization {
                 d3.selectAll(".exp_heatmap_cell_block")
                     .style("stroke", "none")
                     .style("stroke-width", 2);
-                d3.select(this)
-                    .select("rect")
-                    .style("stroke", "black")
-                    .style("stroke-width", 2);
 
-                self.store.updateTableDataFilters(d);
+                if (d.rows.length > 0) {
+                    d3.select(this)
+                        .select("rect")
+                        .style("stroke", "black")
+                        .style("stroke-width", 2);
+
+                    self.store.updateTableDataFilters(d);
+                } else {
+                    self.store.updateTableDataFilters(null);
+                }
             })
             .on("mouseover", null);
 
@@ -392,13 +399,27 @@ class ExploreHeatmapPlot extends D3Visualization {
         cells_data
             .select(".exp_heatmap_cell_block")
             .transition()
-            .style("fill", d => this.color_scale(d.rows.length));
+            .style("fill", d => {
+                const value =
+                    tableDataFilters == null
+                        ? d.rows.length
+                        : tableDataFilters.index === d.index
+                        ? this.max_value
+                        : d.rows.length / 3;
+                return this.color_scale(value);
+            });
 
         cells_data
             .select(".exp_heatmap_cell_text")
             .transition()
             .style("fill", d => {
-                let {r, g, b} = d3.rgb(this.color_scale(d.rows.length));
+                const value =
+                    tableDataFilters == null
+                        ? d.rows.length
+                        : tableDataFilters.index === d.index
+                        ? this.max_value
+                        : d.rows.length / 3;
+                let {r, g, b} = d3.rgb(this.color_scale(value));
                 ({r, g, b} = h.getTextContrastColor(r, g, b));
                 return d3.rgb(r, g, b);
             })

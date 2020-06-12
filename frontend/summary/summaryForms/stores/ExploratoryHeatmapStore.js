@@ -1,4 +1,4 @@
-import {observable, action, computed, toJS} from "mobx";
+import {observable, action, computed} from "mobx";
 
 import _ from "lodash";
 import h from "shared/utils/helpers";

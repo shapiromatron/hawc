@@ -137,6 +137,7 @@ class HeatmapDatastore {
         }
         // we need to compute again
         let {scales, intersection} = this,
+            index = -1,
             removedRows = this.rowsRemovedByFilters,
             getIntersection = function(arr, set2) {
                 return arr.filter(x => set2.has(x));
@@ -155,7 +156,9 @@ class HeatmapDatastore {
             xy_map = scales.x
                 .map((x, i) => {
                     return scales.y.map((y, j) => {
+                        index += 1;
                         return {
+                            index,
                             x_filter: x,
                             y_filter: y,
                             x_step: i,

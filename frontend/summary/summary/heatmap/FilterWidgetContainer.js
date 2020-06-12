@@ -13,7 +13,11 @@ class FilterWidget extends Component {
     }
     render() {
         const {widget} = this.props,
-            items = _.keys(this.props.store.intersection[widget.column]),
+            data = this.props.store.getTableData,
+            items = _.chain(data)
+                .map(d => d[widget.column])
+                .uniq()
+                .value(),
             {selectAllFilterWidget, selectNoneFilterWidget} = this.props.store,
             itemStore = this.props.store.filterWidgetState[widget.column],
             showClickEvent = widget.on_click_event !== NULL_VALUE;

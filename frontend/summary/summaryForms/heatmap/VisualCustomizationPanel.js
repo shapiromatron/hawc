@@ -4,7 +4,6 @@ import {inject, observer} from "mobx-react";
 import {Tab, Tabs, TabList, TabPanel} from "react-tabs";
 
 import TextInput from "shared/components/TextInput";
-import SelectInput from "shared/components/SelectInput";
 import FloatInput from "shared/components/FloatInput";
 
 import {MissingData, RefreshRequired} from "./common";
