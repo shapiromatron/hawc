@@ -6,7 +6,6 @@ import {Tab, Tabs, TabList, TabPanel} from "react-tabs";
 import TextInput from "shared/components/TextInput";
 import SelectInput from "shared/components/SelectInput";
 import FloatInput from "shared/components/FloatInput";
-import RangeInput from "shared/components/RangeInput";
 
 import {MissingData, RefreshRequired} from "./common";
 import AxisLabelTable from "./AxisLabelTable";
@@ -203,12 +202,26 @@ class VisualCustomizationPanel extends Component {
                             }
                         />
                     </div>
-                    <RangeInput
-                        name="color_range"
-                        label="Color range"
-                        value={settings.color_range}
-                        onChange={e => changeSettings(e.target.name, e.target.value)}
-                    />
+                </div>
+                <div className="row-fluid">
+                    <div className="span3">
+                        <TextInput
+                            label="Color range (start)"
+                            name="color_range1"
+                            type="color"
+                            value={settings.color_range[0]}
+                            onChange={e => changeSettings("color_range.0", e.target.value)}
+                        />
+                    </div>
+                    <div className="span3">
+                        <TextInput
+                            label="Color range (end)"
+                            name="color_range2"
+                            type="color"
+                            value={settings.color_range[1]}
+                            onChange={e => changeSettings("color_range.1", e.target.value)}
+                        />
+                    </div>
                 </div>
 
                 <h4>Label coordinates</h4>

@@ -20,7 +20,7 @@ class ExploratoryHeatmapStore {
         return {
             cell_height: 50,
             cell_width: 50,
-            color_range: ["white", "green"],
+            color_range: [h.COLORS.WHITE, h.COLORS.BLUE],
             data_url: "",
             filter_widgets: [],
             padding: {top: 30, left: 30, bottom: 30, right: 30},

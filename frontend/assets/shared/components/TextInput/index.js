@@ -15,6 +15,7 @@ class TextInput extends Component {
     }
 
     render() {
+        const type = this.props.type || "text";
         return (
             <div className="control-group">
                 {this.renderLabel()}
@@ -23,7 +24,7 @@ class TextInput extends Component {
                         className="span12 textinput"
                         id={`id_${this.props.name}`}
                         name={this.props.name}
-                        type="text"
+                        type={type}
                         required={this.props.required}
                         value={this.props.value}
                         onChange={this.props.onChange}
@@ -44,6 +45,7 @@ TextInput.propTypes = {
     onChange: PropTypes.func.isRequired,
     required: PropTypes.bool,
     value: PropTypes.string.isRequired,
+    type: PropTypes.string,
 };
 
 export default TextInput;
