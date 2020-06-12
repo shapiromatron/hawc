@@ -93,7 +93,7 @@ class ExploreHeatmapPlot extends D3Visualization {
         this.w = this.settings.cell_width * this.x_steps;
         this.h = this.settings.cell_height * this.y_steps;
 
-        // set colorscale
+        // set color scale
         this.color_scale = d3.scale
             .linear()
             .domain([0, d3.max(this.store.matrixDataset, d => d.rows.length)])
@@ -136,7 +136,7 @@ class ExploreHeatmapPlot extends D3Visualization {
                 let label = axis.append("g");
                 label
                     .append("text")
-                    .attr("transform", `rotate(${this.settings.x_rotate})`)
+                    .attr("transform", `rotate(${this.settings.x_tick_rotate})`)
                     .text(domain[j]);
                 let box = label.node().getBBox(),
                     label_offset = mid - box.width / 2;
@@ -184,7 +184,7 @@ class ExploreHeatmapPlot extends D3Visualization {
                 let label = axis.append("g");
                 label
                     .append("text")
-                    .attr("transform", `rotate(${this.settings.y_rotate})`)
+                    .attr("transform", `rotate(${this.settings.y_tick_rotate})`)
                     .text(domain[j]);
                 let box = label.node().getBBox(),
                     label_offset = mid - box.height / 2;
@@ -251,44 +251,40 @@ class ExploreHeatmapPlot extends D3Visualization {
     }
 
     build_labels() {
-        this.label_margin = 50;
-
         // Plot title
-        if (this.settings.plot_title.length > 0) {
-            this.vis
+        if (this.settings.title.text.length > 0) {
+            d3.select(this.svg)
                 .append("text")
-                .attr("id", "exp_heatmap_title")
-                .attr("class", "exp_heatmap_label")
-                .attr("x", this.w / 2)
-                .attr("y", -this.label_margin / 2)
-                .text(this.settings.plot_title);
-            this.settings.padding.top += this.label_margin;
+                .attr("class", "exp_heatmap_title exp_heatmap_label")
+                .attr(
+                    "transform",
+                    `translate(${this.settings.title.x},${this.settings.title.y}) rotate(${this.settings.title.rotate})`
+                )
+                .text(this.settings.title.text);
         }
 
         // X axis
-        if (this.settings.x_label.length > 0) {
-            this.settings.padding.bottom += this.label_margin;
-            this.vis
+        if (this.settings.x_label.text.length > 0) {
+            d3.select(this.svg)
                 .append("text")
                 .attr("class", "exp_heatmap_label")
-                .attr("x", this.w / 2)
-                .attr("y", this.h + this.settings.padding.bottom - this.label_margin / 2)
-                .text(this.settings.x_label);
-        }
-        // Y axis
-        if (this.settings.y_label.length > 0) {
-            this.settings.padding.left += this.label_margin;
-            this.vis
-                .append("text")
-                .attr("class", "exp_heatmap_label")
-                .attr("x", 0)
-                .attr("y", 0)
                 .attr(
                     "transform",
-                    `translate(${-(this.settings.padding.left - this.label_margin / 2)},${this.h /
-                        2}) rotate(-90)`
+                    `translate(${this.settings.x_label.x},${this.settings.x_label.y}) rotate(${this.settings.x_label.rotate})`
                 )
-                .text(this.settings.y_label);
+                .text(this.settings.x_label.text);
+        }
+
+        // Y axis
+        if (this.settings.y_label.text.length > 0) {
+            d3.select(this.svg)
+                .append("text")
+                .attr("class", "exp_heatmap_label")
+                .attr(
+                    "transform",
+                    `translate(${this.settings.y_label.x},${this.settings.y_label.y}) rotate(${this.settings.y_label.rotate})`
+                )
+                .text(this.settings.y_label.text);
         }
     }
 
@@ -382,7 +378,7 @@ class ExploreHeatmapPlot extends D3Visualization {
         // Draw labels
         this.build_labels();
 
-        // Set plot dimensions and viewbox
+        // Set plot dimensions and viewBox
         let w = this.w + this.settings.padding.left + this.settings.padding.right,
             h = this.h + this.settings.padding.top + this.settings.padding.bottom;
         d3.select(this.svg)

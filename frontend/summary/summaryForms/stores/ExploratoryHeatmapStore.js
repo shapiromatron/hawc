@@ -18,14 +18,20 @@ class ExploratoryHeatmapStore {
 
     getDefaultSettings() {
         return {
+            cell_height: 50,
+            cell_width: 50,
+            color_range: ["white", "green"],
             data_url: "",
-            title: "",
-            x_label: "",
-            y_label: "",
-            x_fields: [createDefaultAxisItem()],
-            y_fields: [createDefaultAxisItem()],
             filter_widgets: [],
+            padding: {top: 0, left: 0, bottom: 0, right: 0},
             table_fields: [],
+            title: {text: "", x: 0, y: 0, rotate: 0},
+            x_fields: [createDefaultAxisItem()],
+            x_label: {text: "", x: 0, y: 0, rotate: 0},
+            x_tick_rotate: 0,
+            y_fields: [createDefaultAxisItem()],
+            y_label: {text: "", x: 0, y: 0, rotate: 0},
+            y_tick_rotate: 0,
         };
     }
 
@@ -74,8 +80,8 @@ class ExploratoryHeatmapStore {
         }
     }
 
-    @action.bound changeSettings(key, value) {
-        this.settings[key] = value;
+    @action.bound changeSettings(path, value) {
+        _.set(this.settings, path, value);
     }
 
     @action.bound changeArraySettings(arrayKey, index, key, value) {

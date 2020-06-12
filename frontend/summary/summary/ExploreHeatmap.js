@@ -16,22 +16,23 @@ class ExploreHeatmap extends BaseVisual {
     getSettings() {
         const {settings} = this.data;
         return {
-            cell_height: 50,
-            cell_width: 50,
-            color_range: ["white", "seagreen"],
+            cell_height: settings.cell_height,
+            cell_width: settings.cell_width,
+            color_range: settings.color_range,
             filter_widgets: settings.filter_widgets,
-            padding: {top: 0, left: 0, bottom: 0, right: 200},
-            plot_title: settings.title,
+            padding: settings.padding,
             show_axis_border: true,
             show_grid: true,
             table_fields: settings.table_fields,
-            type: "heatmap",
+            title: settings.title,
             x_fields: settings.x_fields.filter(d => d.column !== NULL_VALUE),
             x_label: settings.x_label,
             x_rotate: 90,
+            x_tick_rotate: settings.x_tick_rotate,
             y_fields: settings.y_fields.filter(d => d.column !== NULL_VALUE),
             y_label: settings.y_label,
             y_rotate: 0,
+            y_tick_rotate: settings.y_tick_rotate,
         };
     }
 

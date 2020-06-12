@@ -2,6 +2,7 @@ import PropTypes from "prop-types";
 import React, {Component} from "react";
 import {inject, observer} from "mobx-react";
 import TextInput from "shared/components/TextInput";
+import IntInput from "shared/components/IntInput";
 import SelectInput from "shared/components/SelectInput";
 
 @inject("store")
@@ -63,9 +64,11 @@ class AxisLabelTable extends Component {
                     />
                 </td>
                 <td>
-                    <TextInput
+                    <IntInput
                         name={`${key}-rotation-${index}`}
                         value={row.tick_rotation}
+                        minimum={-90}
+                        maximum={90}
                         onChange={e =>
                             changeArraySettings(
                                 key,
