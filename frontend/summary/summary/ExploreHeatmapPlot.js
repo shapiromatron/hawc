@@ -102,13 +102,13 @@ class ExploreHeatmapPlot extends D3Visualization {
             .range(this.settings.color_range);
     }
 
-    bind_tooltip(d3_object) {
+    bind_tooltip(selection, type) {
         let tooltip_x_offset = 20,
             tooltip_y_offset = 20;
-        d3_object
+        selection
             .on("mouseenter", d => {
                 $("#exp_heatmap_tooltip").css("display", "block");
-                ReactDOM.render(<Tooltip datum={d} />, $("#exp_heatmap_tooltip")[0]);
+                ReactDOM.render(<Tooltip data={d} type={type} />, $("#exp_heatmap_tooltip")[0]);
             })
             .on("mousemove", d =>
                 $("#exp_heatmap_tooltip").css({
@@ -125,7 +125,7 @@ class ExploreHeatmapPlot extends D3Visualization {
 
                 for (let i = 0; i < domain.length; i++) {
                     let tick = domain[i].map(e => {
-                        return {label: e, filters: [[fields[i], e]]};
+                        return {label: e, filters: [[fields[i].column, e]]};
                     });
                     if (i == 0) {
                         ticks.push(tick);
@@ -133,8 +133,7 @@ class ExploreHeatmapPlot extends D3Visualization {
                         tick = ticks[i - 1]
                             .map(a =>
                                 tick.map(b => {
-                                    b.filters.concat(a.filters);
-                                    return b;
+                                    return _.assign({}, b, {filters: b.filters.concat(a.filters)});
                                 })
                             )
                             .flat();
@@ -179,25 +178,21 @@ class ExploreHeatmapPlot extends D3Visualization {
             this.settings.padding.bottom += max;
             x_axis_offset += max;
 
-            // Adds a border around tick labels
+            // Adds a box around tick labels
+            let bbox_group = axis.append("g");
+            for (let j = 0; j < domain.length; j++) {
+                let bbox = bbox_group
+                    .append("polyline")
+                    .datum(domain[j])
+                    .attr(
+                        "points",
+                        `${band * j},${max} ${band * j},0 ${band * (j + 1)},0 ${band *
+                            (j + 1)},${max}`
+                    )
+                    .attr("fill", "transparent")
+                    .attr("stroke", this.settings.show_axis_border ? "black" : null);
 
-            let add_border = () => {
-                let borders = axis.append("g");
-                for (let j = 0; j < domain.length; j++) {
-                    borders
-                        .append("polyline")
-                        .attr(
-                            "points",
-                            `${band * j},${max} ${band * j},0 ${band * (j + 1)},0 ${band *
-                                (j + 1)},${max}`
-                        )
-                        .attr("fill", "transparent")
-                        .attr("stroke", "black");
-                    this.bind_tooltip(borders);
-                }
-            };
-            if (this.settings.show_axis_border) {
-                add_border();
+                this.bind_tooltip(bbox, "axis");
             }
         }
 
@@ -229,23 +224,20 @@ class ExploreHeatmapPlot extends D3Visualization {
             this.settings.padding.left += max;
             y_axis_offset += max;
 
-            // Adds a border around tick labels
-            let add_border = () => {
-                let borders = axis.append("g");
-                for (let j = 0; j < domain.length; j++) {
-                    borders
-                        .append("polyline")
-                        .attr(
-                            "points",
-                            `${-max},${band * j} 0,${band * j} 0,${band * (j + 1)} ${-max},${band *
-                                (j + 1)}`
-                        )
-                        .attr("fill", "none")
-                        .attr("stroke", "black");
-                }
-            };
-            if (this.settings.show_axis_border) {
-                add_border();
+            // Adds a box around tick labels
+            let bbox_group = axis.append("g");
+            for (let j = 0; j < domain.length; j++) {
+                let bbox = bbox_group
+                    .append("polyline")
+                    .datum(domain[j])
+                    .attr(
+                        "points",
+                        `${-max},${band * j} 0,${band * j} 0,${band * (j + 1)} ${-max},${band *
+                            (j + 1)}`
+                    )
+                    .attr("fill", "transparent")
+                    .attr("stroke", this.settings.show_axis_border ? "black" : null);
+                this.bind_tooltip(bbox, "axis");
             }
         }
     }
@@ -344,7 +336,7 @@ class ExploreHeatmapPlot extends D3Visualization {
 
                 self.store.updateTableDataFilters(d);
             });
-        this.bind_tooltip(this.cells_enter);
+        this.bind_tooltip(this.cells_enter, "cell");
 
         // add cell fill
         this.cells_enter
