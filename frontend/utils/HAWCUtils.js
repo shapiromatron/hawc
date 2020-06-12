@@ -117,12 +117,12 @@ class HAWCUtils {
     static updateDragLocationTransform(setDragCB) {
         // a new drag location, requires binding to d3.behavior.drag,
         // and requires a _.partial injection of th settings module.
-        var getXY = function(txt) {
-            // expects an attribute like 'translate(277', '1.1920928955078125e-7)'
-            if (_.isNull(txt) || txt.indexOf("translate") !== 0) return;
-            var cmps = txt.split(",");
-            return [parseFloat(cmps[0].split("(")[1], 10), parseFloat(cmps[1].split(")")[0], 10)];
-        };
+        const re_floats = /(-?[0-9]*\.?[0-9]+)/gm,
+            getFloats = function(txt) {
+                // expects an attribute like 'translate(277', '1.1920928955078125e-7)'
+                if (_.isNull(txt) || txt.indexOf("translate") !== 0) return;
+                return [...txt.matchAll(re_floats)].map(d => parseFloat(d[0]));
+            };
 
         return d3.behavior
             .drag()
@@ -131,14 +131,28 @@ class HAWCUtils {
                 var x,
                     y,
                     p = d3.select(this),
-                    coords = getXY(p.attr("transform"));
+                    text = p.attr("transform"),
+                    coords = getFloats(text);
 
-                if (coords) {
-                    x = parseInt(coords[0] + d3.event.dx, 10);
-                    y = parseInt(coords[1] + d3.event.dy, 10);
-                    p.attr("transform", `translate(${x},${y})`);
-                    if (setDragCB) {
-                        setDragCB.bind(this)(x, y);
+                if (coords && coords.length >= 2) {
+                    if (coords.length === 2) {
+                        // no rotation
+                        x = parseInt(coords[0] + d3.event.dx);
+                        y = parseInt(coords[1] + d3.event.dy);
+                        p.attr("transform", `translate(${x},${y})`);
+                        if (setDragCB) {
+                            setDragCB.bind(this)(x, y);
+                        }
+                    } else if (coords.length === 3) {
+                        // has rotation
+                        x = parseInt(coords[0] + d3.event.dx);
+                        y = parseInt(coords[1] + d3.event.dy);
+                        p.attr("transform", `translate(${x},${y}) rotate(${coords[2]})`);
+                        if (setDragCB) {
+                            setDragCB.bind(this)(x, y);
+                        }
+                    } else {
+                        console.error(`Unknown parsing of string ${text}`);
                     }
                 }
             });

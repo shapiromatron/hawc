@@ -4,6 +4,7 @@ import {autorun} from "mobx";
 import D3Visualization from "./D3Visualization";
 import h from "shared/utils/helpers";
 import HAWCModal from "utils/HAWCModal";
+import HAWCUtils from "utils/HAWCUtils";
 
 import React from "react";
 import ReactDOM from "react-dom";
@@ -18,6 +19,7 @@ class ExploreHeatmapPlot extends D3Visualization {
         this.store = new HeatmapDatastore(data.settings, data.dataset);
         this.dataset = data.dataset;
         this.settings = data.settings;
+        this.options = options || {};
         this.generate_properties();
     }
 
@@ -263,24 +265,30 @@ class ExploreHeatmapPlot extends D3Visualization {
     }
 
     build_labels() {
-        let label_margin = 20;
+        let label_margin = 20,
+            isDev = this.options.dev;
+
         // Plot title
         if (this.settings.title.text.length > 0) {
             let titleSettings = this.settings.title,
+                x =
+                    titleSettings.x === 0
+                        ? this.padding.left + this.x_axis_label_padding + this.w / 2
+                        : titleSettings.x,
+                y = titleSettings.y === 0 ? label_margin : titleSettings.y,
                 title = d3
                     .select(this.svg)
                     .append("text")
                     .attr("class", "exp_heatmap_title exp_heatmap_label")
+                    .attr("transform", `translate(${x},${y}) rotate(${titleSettings.rotate})`)
                     .text(titleSettings.text);
 
-            if (titleSettings.x === 0 && titleSettings.y === 0) {
-                title
-                    .attr("x", this.padding.left + this.x_axis_label_padding + this.w / 2)
-                    .attr("y", label_margin);
-            } else {
-                title.attr(
-                    "transform",
-                    `translate(${titleSettings.x},${titleSettings.y}) rotate(${titleSettings.rotate})`
+            if (isDev) {
+                title.attr("cursor", "pointer").call(
+                    HAWCUtils.updateDragLocationTransform((x, y) => {
+                        this.settings.title.x = parseInt(x);
+                        this.settings.title.y = parseInt(y);
+                    })
                 );
             }
         }
@@ -288,22 +296,27 @@ class ExploreHeatmapPlot extends D3Visualization {
         // X axis
         if (this.settings.x_label.text.length > 0) {
             let xLabelSettings = this.settings.x_label,
+                x =
+                    xLabelSettings.x === 0
+                        ? this.padding.left + this.x_axis_label_padding + this.w / 2
+                        : xLabelSettings.x,
+                y =
+                    xLabelSettings.y === 0
+                        ? this.padding.top + this.h + this.y_axis_label_padding + label_margin
+                        : xLabelSettings.y,
                 xLabel = d3
                     .select(this.svg)
                     .append("text")
                     .attr("class", "exp_heatmap_label")
+                    .attr("transform", `translate(${x},${y}) rotate(${xLabelSettings.rotate})`)
                     .text(xLabelSettings.text);
-            if (xLabelSettings.x === 0 && xLabelSettings.y === 0) {
-                xLabel
-                    .attr("x", this.padding.left + this.x_axis_label_padding + this.w / 2)
-                    .attr(
-                        "y",
-                        this.padding.top + this.h + this.y_axis_label_padding + label_margin
-                    );
-            } else {
-                xLabel.attr(
-                    "transform",
-                    `translate(${xLabelSettings.x},${xLabelSettings.y}) rotate(${xLabelSettings.rotate})`
+
+            if (isDev) {
+                xLabel.attr("cursor", "pointer").call(
+                    HAWCUtils.updateDragLocationTransform((x, y) => {
+                        this.settings.x_label.x = parseInt(x);
+                        this.settings.x_label.y = parseInt(y);
+                    })
                 );
             }
         }
@@ -311,22 +324,27 @@ class ExploreHeatmapPlot extends D3Visualization {
         // Y axis
         if (this.settings.y_label.text.length > 0) {
             let yLabelSettings = this.settings.y_label,
+                x =
+                    yLabelSettings.x === 0
+                        ? this.settings.padding.left - label_margin / 2
+                        : yLabelSettings.x,
+                y =
+                    yLabelSettings.y === 0
+                        ? this.settings.padding.top + this.h / 2
+                        : yLabelSettings.y,
                 yLabel = d3
                     .select(this.svg)
                     .append("text")
                     .attr("class", "exp_heatmap_label")
+                    .attr("transform", `translate(${x},${y}) rotate(${yLabelSettings.rotate})`)
                     .text(yLabelSettings.text);
-            if (yLabelSettings.x === 0 && yLabelSettings.y === 0) {
-                yLabel.attr(
-                    "transform",
-                    `translate(${this.settings.padding.left - label_margin / 2},${this.settings
-                        .padding.top +
-                        this.h / 2}) rotate(-90)`
-                );
-            } else {
-                yLabel.attr(
-                    "transform",
-                    `translate(${yLabelSettings.x},${yLabelSettings.y}) rotate(${yLabelSettings.rotate})`
+
+            if (isDev) {
+                yLabel.attr("cursor", "pointer").call(
+                    HAWCUtils.updateDragLocationTransform((x, y) => {
+                        this.settings.y_label.x = parseInt(x);
+                        this.settings.y_label.y = parseInt(y);
+                    })
                 );
             }
         }
