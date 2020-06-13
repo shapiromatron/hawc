@@ -20,6 +20,7 @@ class HeatmapDatastore {
     @observable tableDataFilters = null;
 
     constructor(settings, dataset) {
+        this.getDetailUrl = this.getDetailUrl.bind(this);
         this.modal = new HAWCModal();
         this.settings = settings;
         this.dataset = dataset;
@@ -218,6 +219,11 @@ class HeatmapDatastore {
             extension = _.find(DataPivotExtension.values, {_dpe_name: on_click_event});
         // TODO HEATMAP - handle case where row ids are non-unique
         this.dpe.render_plottip(extension, row);
+    }
+
+    getDetailUrl(on_click_event, row) {
+        let extension = _.find(DataPivotExtension.values, {_dpe_name: on_click_event});
+        return this.dpe.get_detail_url(extension, row);
     }
 }
 

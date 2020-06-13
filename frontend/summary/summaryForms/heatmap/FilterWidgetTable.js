@@ -66,6 +66,7 @@ class FilterWidgetTable extends Component {
                 <td>
                     <TextInput
                         name={`${key}-delimiter-${index}`}
+                        className="span12"
                         value={row.delimiter}
                         onChange={e =>
                             changeArraySettings(key, index, "delimiter", e.target.value.trim())
@@ -75,6 +76,7 @@ class FilterWidgetTable extends Component {
                 <td>
                     <SelectInput
                         name={`${key}-on_click_event-${index}`}
+                        className="span12"
                         choices={getDpeSettings}
                         multiple={false}
                         handleSelect={value =>

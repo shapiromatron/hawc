@@ -19,6 +19,10 @@ class StudyPopulation {
         });
     }
 
+    static get_detail_url(id) {
+        return `/epi/study-population/${id}/`;
+    }
+
     static get_object(id, cb) {
         $.get(`/epi/api/study-population/${id}/`, d => cb(new StudyPopulation(d)));
     }

@@ -1,7 +1,6 @@
 import PropTypes from "prop-types";
 import React, {Component} from "react";
 import {inject, observer} from "mobx-react";
-import TextInput from "shared/components/TextInput";
 import SelectInput from "shared/components/SelectInput";
 
 const key = "table_fields";
@@ -42,6 +41,7 @@ class DetailTable extends Component {
     renderRow(row, index) {
         const {
             getColumnsOptionsWithNull,
+            getDpeSettings,
             changeArraySettings,
             moveArrayElementUp,
             moveArrayElementDown,
@@ -61,12 +61,15 @@ class DetailTable extends Component {
                     />
                 </td>
                 <td>
-                    <TextInput
+                    <SelectInput
                         name={`${key}-on_click_event-${index}`}
-                        value={row.on_click_event}
-                        onChange={e =>
-                            changeArraySettings(key, index, "on_click_event", e.target.value)
+                        className="span12"
+                        choices={getDpeSettings}
+                        multiple={false}
+                        handleSelect={value =>
+                            changeArraySettings(key, index, "on_click_event", value)
                         }
+                        value={row.on_click_event}
                     />
                 </td>
                 <td>

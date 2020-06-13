@@ -9,6 +9,10 @@ class MetaProtocol {
         this.data = data;
     }
 
+    static get_detail_url(id) {
+        return `/epi-meta/protocol/${id}/`;
+    }
+
     static get_object(id, cb) {
         $.get(`/epi-meta/api/protocol/${id}/`, d => cb(new MetaProtocol(d)));
     }

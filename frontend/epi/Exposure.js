@@ -9,6 +9,10 @@ class Exposure {
         this.data = data;
     }
 
+    static get_detail_url(id) {
+        return `/epi/exposure/${id}/`;
+    }
+
     static get_object(id, cb) {
         $.get(`/epi/api/exposure/${id}/`, d => cb(new Exposure(d)));
     }

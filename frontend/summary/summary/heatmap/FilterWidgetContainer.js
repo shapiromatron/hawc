@@ -13,17 +13,23 @@ class FilterWidget extends Component {
     }
     render() {
         const {widget} = this.props,
+            {selectAllFilterWidget, selectNoneFilterWidget} = this.props.store,
             data = this.props.store.getTableData,
-            items = _.chain(data)
+            availableItems = _.chain(data)
                 .map(d => d[widget.column])
                 .uniq()
                 .value(),
-            {selectAllFilterWidget, selectNoneFilterWidget} = this.props.store,
             itemStore = this.props.store.filterWidgetState[widget.column],
-            showClickEvent = widget.on_click_event !== NULL_VALUE;
+            hiddenItems = _.chain(itemStore)
+                .keys()
+                .filter(d => itemStore[d] === false)
+                .value(),
+            showClickEvent = widget.on_click_event !== NULL_VALUE,
+            items = [...availableItems, ...hiddenItems].sort();
 
+        // TODO HEATMAP: fix 20vh to be better calculated
         return (
-            <div className="well">
+            <div className="well" style={{maxHeight: "20vh", overflow: "auto"}}>
                 <h4>
                     {widget.column}
                     <div className="btn-group pull-right">

@@ -28,12 +28,16 @@ class Endpoint extends Observee {
         this.unpack_doses();
     }
 
-    static get_endpoint_url(id) {
+    static get_detail_url(id) {
+        return `/ani/endpoint/${id}/`;
+    }
+
+    static get_api_url(id) {
         return `/ani/api/endpoint/${id}/`;
     }
 
     static get_object(id, cb) {
-        $.get(Endpoint.get_endpoint_url(id), d => cb(new Endpoint(d)));
+        $.get(Endpoint.get_api_url(id), d => cb(new Endpoint(d)));
     }
 
     static getTagURL(assessment, slug) {

@@ -9,6 +9,10 @@ class IVChemical {
         this.data = data;
     }
 
+    static get_detail_url(id) {
+        return `/in-vitro/chemical/${id}/`;
+    }
+
     static get_object(id, cb) {
         $.get(`/in-vitro/api/chemical/${id}/`, d => cb(new IVChemical(d)));
     }
