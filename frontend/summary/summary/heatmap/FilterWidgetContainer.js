@@ -1,3 +1,4 @@
+import h from "shared/utils/helpers";
 import _ from "lodash";
 import React, {Component} from "react";
 import PropTypes from "prop-types";
@@ -59,7 +60,9 @@ class FilterWidget extends Component {
         );
     }
     renderItem(widget, item, index, itemStore, showClickEvent) {
-        const {toggleItemSelection, showModalClick} = this.props.store;
+        const {toggleItemSelection, showModalClick, colorScale} = this.props.store,
+            data = this.props.store.getTableData,
+            numItems = data.filter(d => d[widget.column] === item).length;
         return (
             <div key={index}>
                 {showClickEvent ? (
@@ -71,6 +74,18 @@ class FilterWidget extends Component {
                     </button>
                 ) : null}
                 <label className="checkbox">
+                    <div
+                        style={{
+                            backgroundColor: colorScale(numItems),
+                            color: h.getTextContrastColor(colorScale(numItems)),
+                            display: "inline-flex",
+                            height: "1.5em",
+                            width: "2em",
+                            justifyContent: "center",
+                            alignItems: "center",
+                        }}>
+                        <span>{numItems}</span>
+                    </div>
                     <input
                         checked={itemStore[item]}
                         type="checkbox"

@@ -1,4 +1,5 @@
 import _ from "lodash";
+import d3 from "d3";
 import {observable, computed, action, toJS} from "mobx";
 
 import h from "shared/utils/helpers";
@@ -12,6 +13,8 @@ class HeatmapDatastore {
     intersection = null;
     matrixDatasetCache = {};
     dpe = null;
+    colorScale = null;
+    maxValue = null;
 
     @observable dataset = null;
     @observable settings = null;
@@ -28,6 +31,7 @@ class HeatmapDatastore {
         this.intersection = this.setIntersection();
         this.filterWidgetState = this.setFilterWidgetState();
         this.scales = this.setScales();
+        this.setColorScale();
     }
 
     setIntersection() {
@@ -103,6 +107,14 @@ class HeatmapDatastore {
             y = setScales(toJS(this.settings.y_fields), toJS(this.intersection));
 
         return {x, y};
+    }
+
+    setColorScale() {
+        this.maxValue = d3.max(this.matrixDataset, d => d.rows.length);
+        this.colorScale = d3.scale
+            .linear()
+            .domain([0, this.maxValue])
+            .range(this.settings.color_range);
     }
 
     @computed

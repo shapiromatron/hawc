@@ -101,13 +101,6 @@ class ExploreHeatmapPlot extends D3Visualization {
         this.w = this.settings.cell_width * this.x_steps;
         this.h = this.settings.cell_height * this.y_steps;
 
-        // set color scale
-        this.max_value = d3.max(this.store.matrixDataset, d => d.rows.length);
-        this.color_scale = d3.scale
-            .linear()
-            .domain([0, this.max_value])
-            .range(this.settings.color_range);
-
         // calculated padding based on labels
         this.x_axis_label_padding = 0;
         this.y_axis_label_padding = 0;
@@ -354,7 +347,7 @@ class ExploreHeatmapPlot extends D3Visualization {
     update_plot = data => {
         const self = this,
             cells_data = this.cells.selectAll("g").data(data),
-            {tableDataFilters} = this.store;
+            {tableDataFilters, maxValue, colorScale} = this.store;
 
         // add cell group and interactivity
         this.cells_enter = cells_data
@@ -404,9 +397,9 @@ class ExploreHeatmapPlot extends D3Visualization {
                     tableDataFilters == null
                         ? d.rows.length
                         : tableDataFilters.index === d.index
-                        ? this.max_value
+                        ? maxValue
                         : d.rows.length / 3;
-                return this.color_scale(value);
+                return colorScale(value);
             });
 
         cells_data
@@ -417,11 +410,9 @@ class ExploreHeatmapPlot extends D3Visualization {
                     tableDataFilters == null
                         ? d.rows.length
                         : tableDataFilters.index === d.index
-                        ? this.max_value
+                        ? maxValue
                         : d.rows.length / 3;
-                let {r, g, b} = d3.rgb(this.color_scale(value));
-                ({r, g, b} = h.getTextContrastColor(r, g, b));
-                return d3.rgb(r, g, b);
+                return h.getTextContrastColor(colorScale(value));
             })
             .style("display", d => (d.rows.length == 0 ? "none" : null))
             .text(d => d.rows.length);
