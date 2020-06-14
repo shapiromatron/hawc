@@ -52,8 +52,16 @@ class ExploreHeatmapPlot extends D3Visualization {
 
     set_trigger_resize() {
         var self = this,
-            w = this.w + this.settings.padding.left + this.settings.padding.right,
-            h = this.h + this.settings.padding.top + this.settings.padding.bottom,
+            w =
+                this.w +
+                this.settings.padding.left +
+                this.x_axis_label_padding +
+                this.settings.padding.right,
+            h =
+                this.h +
+                this.settings.padding.top +
+                this.y_axis_label_padding +
+                this.settings.padding.bottom,
             chart = $(this.svg),
             container = chart.parent();
 
