@@ -134,7 +134,11 @@ class ExploreHeatmapPlot extends D3Visualization {
             .on("mouseleave", d => $("#exp_heatmap_tooltip").css("display", "none"));
     }
 
-    get_matching_cells(property, filters) {
+    get_matching_cells(filters, axis) {
+        let property;
+        if (axis == "x") property = "x_filters";
+        else if (axis == "y") property = "y_filters";
+
         let filtered_selection = this.cells_data.filter(d => {
             for (const filter of filters) {
                 let included = false;
@@ -232,7 +236,11 @@ class ExploreHeatmapPlot extends D3Visualization {
                                 d.width},${yOffset} ${d.x1 + d.width},${newYOffset}`
                     )
                     .attr("fill", "transparent")
-                    .attr("stroke", "black");
+                    .attr("stroke", "black")
+                    .on("click", d => {
+                        const cells = this.get_matching_cells(d.filters, "x");
+                        this.store.setTableDataFilters(new Set(cells));
+                    });
                 this.bind_tooltip(border, "axis");
             }
             yOffset = newYOffset;
@@ -298,7 +306,11 @@ class ExploreHeatmapPlot extends D3Visualization {
                                 d.height} ${-newXOffset},${d.y1 + d.height}`
                     )
                     .attr("fill", "transparent")
-                    .attr("stroke", "black");
+                    .attr("stroke", "black")
+                    .on("click", d => {
+                        const cells = this.get_matching_cells(d.filters, "y");
+                        this.store.setTableDataFilters(new Set(cells));
+                    });
                 this.bind_tooltip(border, "axis");
             }
             xOffset = newXOffset;
@@ -426,11 +438,12 @@ class ExploreHeatmapPlot extends D3Visualization {
 
     update_plot = data => {
         const self = this,
-            cells_data = this.cells.selectAll("g").data(data),
             {tableDataFilters, maxValue, colorScale} = this.store;
 
+        this.cells_data = this.cells.selectAll("g").data(data);
+
         // add cell group and interactivity
-        this.cells_enter = cells_data
+        this.cells_enter = this.cells_data
             .enter()
             .append("g")
             .attr("class", "exp_heatmap_cell")
@@ -468,7 +481,7 @@ class ExploreHeatmapPlot extends D3Visualization {
             .attr("y", d => this.y_scale(d.y_step) + this.y_scale.rangeBand() / 2);
 
         // enter/update
-        cells_data
+        this.cells_data
             .select(".exp_heatmap_cell_block")
             .transition()
             .style("fill", d => {
@@ -481,7 +494,7 @@ class ExploreHeatmapPlot extends D3Visualization {
                 return colorScale(value);
             });
 
-        cells_data
+        this.cells_data
             .select(".exp_heatmap_cell_text")
             .transition()
             .style("fill", d => {
@@ -496,7 +509,7 @@ class ExploreHeatmapPlot extends D3Visualization {
             .style("display", d => (d.rows.length == 0 ? "none" : null))
             .text(d => d.rows.length);
 
-        cells_data.exit().remove();
+        this.cells_data.exit().remove();
     };
 
     build_plot() {
