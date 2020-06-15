@@ -20,22 +20,28 @@ class Tooltip extends Component {
         const {x_filters, y_filters} = this.props.data,
             count = this.props.data.rows.length;
         let html = [];
+        html.push(
+            ...x_filters.map((e, i) => {
+                let key = _.keys(e)[0];
+                return (
+                    <p key={`x_filter_${i}`}>
+                        {key}: {e[key]}
+                    </p>
+                );
+            })
+        );
+        html.push(
+            ...y_filters.map((e, i) => {
+                let key = _.keys(e)[0];
+                return (
+                    <p key={`y_filter_${i}`}>
+                        {key}: {e[key]}
+                    </p>
+                );
+            })
+        );
 
-        for (const filter of x_filters) {
-            html.push(
-                <p>
-                    {filter[0]}: {filter[1]}
-                </p>
-            );
-        }
-        for (const filter of y_filters) {
-            html.push(
-                <p>
-                    {filter[0]}: {filter[1]}
-                </p>
-            );
-        }
-        html.push(<p>Count: {count}</p>);
+        html.push(<p key="count">Count: {count}</p>);
 
         return html;
     }
@@ -43,13 +49,16 @@ class Tooltip extends Component {
         const {filters} = this.props.data;
         let html = [];
 
-        for (const filter of filters) {
-            html.push(
-                <p>
-                    {filter[0]}: {filter[1]}
-                </p>
-            );
-        }
+        html.push(
+            ...filters.map((e, i) => {
+                let key = _.keys(e)[0];
+                return (
+                    <p key={`filter_${i}`}>
+                        {key}: {e[key]}
+                    </p>
+                );
+            })
+        );
 
         return html;
     }

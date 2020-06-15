@@ -119,13 +119,29 @@ class ExploreHeatmapPlot extends D3Visualization {
             .on("mouseleave", d => $("#exp_heatmap_tooltip").css("display", "none"));
     }
 
+    get_matching_cells(property, filters) {
+        let filtered_selection = this.cells_data.filter(d => {
+            for (const filter of filters) {
+                let included = false;
+                for (const cell_filter of d[property]) {
+                    if (_.isMatch(cell_filter, filter)) included = true;
+                }
+                if (!included) return false;
+            }
+            return true;
+        });
+        return filtered_selection.data();
+    }
+
+    select_cells(selection) {}
+
     build_axes() {
         let generate_ticks = (domain, fields) => {
                 let ticks = [];
 
                 for (let i = 0; i < domain.length; i++) {
                     let tick = domain[i].map(e => {
-                        return {label: e, filters: [[fields[i].column, e]]};
+                        return {label: e, filters: [{[fields[i].column]: e}]};
                     });
                     if (i == 0) {
                         ticks.push(tick);
@@ -146,7 +162,8 @@ class ExploreHeatmapPlot extends D3Visualization {
             y_domains = generate_ticks(this.y_domain, toJS(this.settings.y_fields)).reverse(),
             x_axis_offset = 0,
             y_axis_offset = 0,
-            label_padding = 6;
+            label_padding = 6,
+            self = this;
 
         /// Build x axes
         // For each axis...
@@ -190,7 +207,11 @@ class ExploreHeatmapPlot extends D3Visualization {
                             (j + 1)},${max}`
                     )
                     .attr("fill", "transparent")
-                    .attr("stroke", this.settings.show_axis_border ? "black" : null);
+                    .attr("stroke", this.settings.show_axis_border ? "black" : null)
+                    .on("click", d => {
+                        const cells = self.get_matching_cells("x_filters", d.filters);
+                        this.store.setTableDataFilters(new Set(cells));
+                    });
 
                 this.bind_tooltip(bbox, "axis");
             }
@@ -236,7 +257,11 @@ class ExploreHeatmapPlot extends D3Visualization {
                             (j + 1)}`
                     )
                     .attr("fill", "transparent")
-                    .attr("stroke", this.settings.show_axis_border ? "black" : null);
+                    .attr("stroke", this.settings.show_axis_border ? "black" : null)
+                    .on("click", d => {
+                        const cells = this.get_matching_cells("y_filters", d.filters);
+                        this.store.setTableDataFilters(new Set(cells));
+                    });
                 this.bind_tooltip(bbox, "axis");
             }
         }
@@ -316,12 +341,13 @@ class ExploreHeatmapPlot extends D3Visualization {
 
     update_plot = data => {
         const self = this,
-            cells_data = this.cells.selectAll("g").data(data),
             tooltip_x_offset = 20,
             tooltip_y_offset = 20;
 
+        this.cells_data = this.cells.selectAll("g").data(data);
+
         // add cell group and interactivity
-        this.cells_enter = cells_data
+        this.cells_enter = this.cells_data
             .enter()
             .append("g")
             .attr("class", "exp_heatmap_cell")
@@ -334,7 +360,7 @@ class ExploreHeatmapPlot extends D3Visualization {
                     .style("stroke", "black")
                     .style("stroke-width", 2);
 
-                self.store.updateTableDataFilters(d);
+                self.store.setTableDataFilters(d);
             });
         this.bind_tooltip(this.cells_enter, "cell");
 
@@ -355,12 +381,12 @@ class ExploreHeatmapPlot extends D3Visualization {
             .attr("y", d => this.y_scale(d.y_step) + this.y_scale.rangeBand() / 2);
 
         // enter/update
-        cells_data
+        this.cells_data
             .select(".exp_heatmap_cell_block")
             .transition()
             .style("fill", d => this.color_scale(d.rows.length));
 
-        cells_data
+        this.cells_data
             .select(".exp_heatmap_cell_text")
             .transition()
             .style("fill", d => {
@@ -371,7 +397,7 @@ class ExploreHeatmapPlot extends D3Visualization {
             .style("display", d => (d.rows.length == 0 ? "none" : null))
             .text(d => d.rows.length);
 
-        cells_data.exit().remove();
+        this.cells_data.exit().remove();
     };
 
     build_plot() {

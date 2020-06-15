@@ -14,7 +14,7 @@ class HeatmapDatastore {
     @observable settings = null;
     @observable selectedTableData = [];
     @observable filterWidgetState = null;
-    @observable tableDataFilters = null;
+    @observable tableDataFilters = new Set();
 
     constructor(settings, dataset) {
         this.modal = new HAWCModal();
@@ -81,11 +81,13 @@ class HeatmapDatastore {
 
             if (columns.length <= 1) {
                 return permutations.map(item => {
-                    return [[columns[0], item]];
+                    return [{[columns[0]]: item}];
                 });
             } else {
                 return permutations.map(permutation => {
-                    return _.zip(columns, permutation);
+                    return _.zipWith(columns, permutation, (c, p) => {
+                        return {[c]: p};
+                    });
                 });
             }
         };
@@ -135,10 +137,11 @@ class HeatmapDatastore {
             getRows = filters => {
                 let rows;
                 _.each(filters, (filter, idx) => {
+                    let columnName = _.keys(filter)[0];
                     if (idx === 0) {
-                        rows = [...intersection[filter[0]][filter[1]]];
+                        rows = [...intersection[columnName][filter[columnName]]];
                     } else {
-                        rows = getIntersection(rows, intersection[filter[0]][filter[1]]);
+                        rows = getIntersection(rows, intersection[columnName][filter[columnName]]);
                     }
                 });
                 return h.setDifference(rows, removedRows);
@@ -163,11 +166,11 @@ class HeatmapDatastore {
     @computed
     get getTableData() {
         let rows;
-        if (this.tableDataFilters) {
-            rows = _.find(this.matrixDataset, {
-                x_step: this.tableDataFilters.x_step,
-                y_step: this.tableDataFilters.y_step,
-            }).rows;
+        if (this.tableDataFilters.size > 0) {
+            let all_rows = [...this.tableDataFilters].map(
+                d => _.find(this.matrixDataset, {x_step: d.x_step, y_step: d.y_step}).rows
+            );
+            rows = _.union(...all_rows);
         } else {
             rows = [
                 ...h.setDifference(
@@ -179,8 +182,25 @@ class HeatmapDatastore {
         return rows.map(index => this.dataset[index]);
     }
 
-    @action.bound updateTableDataFilters(d) {
-        this.tableDataFilters = d;
+    @action.bound setTableDataFilters(d) {
+        if (d instanceof Set) this.tableDataFilters = d;
+        else {
+            this.tableDataFilters.clear();
+            this.tableDataFilters.add(d);
+        }
+    }
+
+    @action.bound addTableDataFilters(d) {
+        this.tableDataFilters.add(d);
+    }
+
+    @action.bound deleteTableDataFilters(d) {
+        this.tableDataFilters.delete(d);
+    }
+
+    @action.bound toggleTableDataFilters(d) {
+        let value = this.tableDataFilters.delete(d);
+        if (!value) this.tableDataFilters.add(d);
     }
 
     @action.bound selectAllFilterWidget(column) {
