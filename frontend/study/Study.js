@@ -24,6 +24,10 @@ class Study {
         }
     }
 
+    static get_detail_url(id) {
+        return `/study/${id}/`;
+    }
+
     static get_object(id, cb) {
         $.get(`/study/api/study/${id}/`, d => cb(new Study(d)));
     }

@@ -3,12 +3,16 @@ import {observable, action, computed} from "mobx";
 import _ from "lodash";
 import h from "shared/utils/helpers";
 import {NULL_VALUE} from "../../summary/constants";
+import DataPivotExtension from "summary/dataPivot/DataPivotExtension";
 
 let createDefaultAxisItem = function() {
-        return {column: NULL_VALUE, tick_rotation: 0, delimiter: ""};
+        return {column: NULL_VALUE, delimiter: ""};
     },
     createDefaultFilterWidget = function() {
-        return {column: NULL_VALUE, delimiter: "", on_click_event: ""};
+        return {column: NULL_VALUE, delimiter: "", on_click_event: NULL_VALUE};
+    },
+    createTableRow = function() {
+        return {column: NULL_VALUE, on_click_event: NULL_VALUE};
     };
 
 class ExploratoryHeatmapStore {
@@ -18,20 +22,38 @@ class ExploratoryHeatmapStore {
 
     getDefaultSettings() {
         return {
+            cell_height: 50,
+            cell_width: 50,
+            color_range: [h.COLORS.WHITE, h.COLORS.BLUE],
+            compress_x: false,
+            compress_y: false,
             data_url: "",
-            title: "",
-            x_label: "",
-            y_label: "",
-            x_fields: [createDefaultAxisItem()],
-            y_fields: [createDefaultAxisItem()],
+            hawc_interactivity: true,
             filter_widgets: [],
-            table_fields: [],
+            padding: {top: 30, left: 30, bottom: 30, right: 30},
+            show_axis_border: true,
+            show_grid: true,
+            table_fields: [
+                createTableRow(),
+                createTableRow(),
+                createTableRow(),
+                createTableRow(),
+                createTableRow(),
+            ],
+            title: {text: "", x: 0, y: 0, rotate: 0},
+            x_fields: [createDefaultAxisItem()],
+            x_label: {text: "", x: 0, y: 0, rotate: 0},
+            x_tick_rotate: 0,
+            y_fields: [createDefaultAxisItem()],
+            y_label: {text: "", x: 0, y: 0, rotate: 0},
+            y_tick_rotate: -90,
         };
     }
 
     @observable settings = null;
     @observable datasetOptions = null;
     @observable columnNames = null;
+    @observable dpeOptions = [];
 
     @action.bound moveArrayElementUp(key, index) {
         const arr = this.settings[key];
@@ -66,6 +88,10 @@ class ExploratoryHeatmapStore {
         this.settings.filter_widgets.push(createDefaultFilterWidget());
     }
 
+    @action.bound createNewTableRow() {
+        this.settings.table_fields.push(createTableRow());
+    }
+
     @action setFromJsonSettings(settings, firstTime) {
         this.settings = settings;
         if (this.settings.data_url && firstTime) {
@@ -74,8 +100,8 @@ class ExploratoryHeatmapStore {
         }
     }
 
-    @action.bound changeSettings(key, value) {
-        this.settings[key] = value;
+    @action.bound changeSettings(path, value) {
+        _.set(this.settings, path, value);
     }
 
     @action.bound changeArraySettings(arrayKey, index, key, value) {
@@ -104,6 +130,19 @@ class ExploratoryHeatmapStore {
 
     @action.bound afterGetDataset() {
         this.columnNames = _.keys(this.root.base.dataset[0]);
+        if (this.settings.hawc_interactivity) {
+            this.dpeOptions = DataPivotExtension.values.filter(d =>
+                _.includes(this.columnNames, d._dpe_key)
+            );
+        }
+    }
+
+    @computed get getDpeSettings() {
+        let options = this.dpeOptions.map(d => {
+            return {id: d._dpe_name, label: d._dpe_option_txt};
+        });
+        options.unshift({id: NULL_VALUE, label: "<none>"});
+        return options;
     }
 
     @computed get hasSettings() {
@@ -137,10 +176,18 @@ class ExploratoryHeatmapStore {
             return {id: d, label: d};
         });
     }
+
     @computed get getColumnsOptionsWithNull() {
         let columns = [...this.getColumnsOptions]; // shallow-copy
         columns.unshift({id: NULL_VALUE, label: "<none>"});
         return columns;
+    }
+
+    @observable visualCustomizationPanelActiveTab = 0;
+
+    @action.bound changeActiveVisualCustomizationTab(index) {
+        this.visualCustomizationPanelActiveTab = index;
+        return true;
     }
 }
 

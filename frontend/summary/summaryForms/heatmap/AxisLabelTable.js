@@ -16,14 +16,12 @@ class AxisLabelTable extends Component {
             <table className="table table-condensed table-striped">
                 <colgroup>
                     <col width="50%" />
-                    <col width="20%" />
-                    <col width="20%" />
+                    <col width="40%" />
                     <col width="10%" />
                 </colgroup>
                 <thead>
                     <tr>
                         <th>Column</th>
-                        <th>Rotation</th>
                         <th>Delimiter</th>
                         <th>
                             Actions&nbsp;
@@ -60,20 +58,6 @@ class AxisLabelTable extends Component {
                         multiple={false}
                         handleSelect={value => changeArraySettings(key, index, "column", value)}
                         value={row.column}
-                    />
-                </td>
-                <td>
-                    <TextInput
-                        name={`${key}-rotation-${index}`}
-                        value={row.tick_rotation}
-                        onChange={e =>
-                            changeArraySettings(
-                                key,
-                                index,
-                                "tick_rotation",
-                                parseInt(e.target.value)
-                            )
-                        }
                     />
                 </td>
                 <td>

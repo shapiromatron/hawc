@@ -1,3 +1,4 @@
+import d3 from "d3";
 import $ from "$";
 import React from "react";
 import _ from "lodash";
@@ -134,10 +135,11 @@ const helpers = {
             height: windowHeight - contentSize.top,
         };
     },
-    getTextContrastColor(r, g, b) {
+    getTextContrastColor(hex) {
         /* Returns white or black based on best contrast for given background color
            Based on W3C guidelines: https://www.w3.org/TR/UNDERSTANDING-WCAG20/visual-audio-contrast-contrast.html
          */
+        let {r, b, g} = d3.rgb(hex);
         if (r > 255 || r < 0) throw `RGB values must be between 0 and 255. R value was ${r}.`;
         if (g > 255 || g < 0) throw `RGB values must be between 0 and 255. G value was ${g}.`;
         if (b > 255 || b < 0) throw `RGB values must be between 0 and 255. B value was ${b}.`;
@@ -146,9 +148,7 @@ const helpers = {
             g_component = g <= 0.03928 ? g / 12.92 : ((g + 0.055) / 1.055) ** 2.4,
             b_component = b <= 0.03928 ? b / 12.92 : ((b + 0.055) / 1.055) ** 2.4,
             luminance = 0.2126 * r_component + 0.7152 * g_component + 0.0722 * b_component;
-        return luminance > Math.sqrt(1.05 * 0.05) - 0.05
-            ? {r: 0, g: 0, b: 0}
-            : {r: 255, g: 255, b: 255};
+        return luminance > Math.sqrt(1.05 * 0.05) - 0.05 ? "#000000" : "#ffffff";
     },
     hashString(string) {
         let hash = 0,
@@ -160,6 +160,9 @@ const helpers = {
             hash |= 0; // Convert to 32bit integer
         }
         return `hash-${hash}`;
+    },
+    setIntersection(set1, set2) {
+        return new Set([...set1].filter(x => set2.has(x)));
     },
     setDifference(arr, removeSet) {
         // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set
@@ -175,6 +178,10 @@ const helpers = {
         const f = (a, b) => [].concat(...a.map(d => b.map(e => [].concat(d, e))));
         const _cartesian = (a, b, ...c) => (b ? _cartesian(f(a, b), ...c) : a);
         return _cartesian(...arrs);
+    },
+    COLORS: {
+        WHITE: "#ffffff",
+        BLUE: "#003d7b",
     },
 };
 

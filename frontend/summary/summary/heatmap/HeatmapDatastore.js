@@ -1,14 +1,21 @@
 import _ from "lodash";
+import d3 from "d3";
 import {observable, computed, action, toJS} from "mobx";
 
 import h from "shared/utils/helpers";
 
 import HAWCModal from "utils/HAWCModal";
 
+import DataPivotExtension from "summary/dataPivot/DataPivotExtension";
+
 class HeatmapDatastore {
     scales = null;
+    totals = null;
     intersection = null;
     matrixDatasetCache = {};
+    dpe = null;
+    colorScale = null;
+    maxValue = null;
 
     @observable dataset = null;
     @observable settings = null;
@@ -17,12 +24,16 @@ class HeatmapDatastore {
     @observable tableDataFilters = new Set();
 
     constructor(settings, dataset) {
+        this.getDetailUrl = this.getDetailUrl.bind(this);
         this.modal = new HAWCModal();
         this.settings = settings;
         this.dataset = dataset;
+        this.dpe = new DataPivotExtension();
         this.intersection = this.setIntersection();
         this.filterWidgetState = this.setFilterWidgetState();
         this.scales = this.setScales();
+        this.totals = this.setTotals();
+        this.setColorScale();
     }
 
     setIntersection() {
@@ -91,10 +102,45 @@ class HeatmapDatastore {
                 });
             }
         };
+
         const x = setScales(toJS(this.settings.x_fields), toJS(this.intersection)),
             y = setScales(toJS(this.settings.y_fields), toJS(this.intersection));
 
         return {x, y};
+    }
+
+    setTotals() {
+        // set grand totals for all x and y items, indexed based
+        const setGrandTotals = (intersection, scale) => {
+                return scale
+                    .map(d => {
+                        let rows,
+                            first = true;
+                        _.each(d, e => {
+                            let key = _.keys(e)[0];
+                            rows = first
+                                ? intersection[key][e[key]]
+                                : h.setIntersection(rows, intersection[key][e[key]]);
+                            first = false;
+                        });
+                        return rows;
+                    })
+                    .map(d => {
+                        return d.size;
+                    });
+            },
+            x = setGrandTotals(toJS(this.intersection), this.scales.x),
+            y = setGrandTotals(toJS(this.intersection), this.scales.y);
+
+        return {x, y};
+    }
+
+    setColorScale() {
+        this.maxValue = d3.max(this.matrixDataset, d => d.rows.length);
+        this.colorScale = d3.scale
+            .linear()
+            .domain([0, this.maxValue])
+            .range(this.settings.color_range);
     }
 
     @computed
@@ -130,6 +176,7 @@ class HeatmapDatastore {
         }
         // we need to compute again
         let {scales, intersection} = this,
+            index = -1,
             removedRows = this.rowsRemovedByFilters,
             getIntersection = function(arr, set2) {
                 return arr.filter(x => set2.has(x));
@@ -138,7 +185,7 @@ class HeatmapDatastore {
                 let rows;
                 _.each(filters, (filter, idx) => {
                     let columnName = _.keys(filter)[0];
-                    if (idx === 0) {
+                    if (idx == 0) {
                         rows = [...intersection[columnName][filter[columnName]]];
                     } else {
                         rows = getIntersection(rows, intersection[columnName][filter[columnName]]);
@@ -146,17 +193,23 @@ class HeatmapDatastore {
                 });
                 return h.setDifference(rows, removedRows);
             },
+            {compress_x, compress_y} = this.settings,
             xy_map = scales.x
+                .filter((d, i) => (compress_x ? this.totals.x[i] > 0 : true))
                 .map((x, i) => {
-                    return scales.y.map((y, j) => {
-                        return {
-                            x_filters: x,
-                            y_filters: y,
-                            x_step: i,
-                            y_step: j,
-                            rows: getRows(x.concat(y)),
-                        };
-                    });
+                    return scales.y
+                        .filter((d, i) => (compress_y ? this.totals.y[i] > 0 : true))
+                        .map((y, j) => {
+                            index += 1;
+                            return {
+                                index,
+                                x_filter: x,
+                                y_filter: y,
+                                x_step: i,
+                                y_step: j,
+                                rows: getRows(x.concat(y)),
+                            };
+                        });
                 })
                 .flat();
         this.matrixDatasetCache[hash] = xy_map;
@@ -219,6 +272,18 @@ class HeatmapDatastore {
 
     @action.bound toggleItemSelection(column, item, visible) {
         this.filterWidgetState[column][item] = visible;
+    }
+
+    @action.bound showModalClick(on_click_event, column, item) {
+        let row = _.find(this.dataset, {[column]: item}),
+            extension = _.find(DataPivotExtension.values, {_dpe_name: on_click_event});
+        // TODO HEATMAP - handle case where row ids are non-unique
+        this.dpe.render_plottip(extension, row);
+    }
+
+    getDetailUrl(on_click_event, row) {
+        let extension = _.find(DataPivotExtension.values, {_dpe_name: on_click_event});
+        return this.dpe.get_detail_url(extension, row);
     }
 }
 

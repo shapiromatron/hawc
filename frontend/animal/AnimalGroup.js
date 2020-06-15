@@ -11,6 +11,10 @@ class AnimalGroup {
         this.data = data;
     }
 
+    static get_detail_url(id) {
+        return `/ani/animal-group/${id}/`;
+    }
+
     static get_object(id, cb) {
         $.get(`/ani/api/animal-group/${id}/`, d => cb(new AnimalGroup(d)));
     }

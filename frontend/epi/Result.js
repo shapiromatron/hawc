@@ -25,6 +25,10 @@ class Result {
         });
     }
 
+    static get_detail_url(id) {
+        return `/epi/result/${id}/`;
+    }
+
     static get_object(id, cb) {
         $.get(`/epi/api/result/${id}/`, d => cb(new Result(d)));
     }

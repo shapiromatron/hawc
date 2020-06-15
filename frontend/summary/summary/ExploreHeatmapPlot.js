@@ -4,6 +4,7 @@ import {autorun, toJS} from "mobx";
 import D3Visualization from "./D3Visualization";
 import h from "shared/utils/helpers";
 import HAWCModal from "utils/HAWCModal";
+import HAWCUtils from "utils/HAWCUtils";
 
 import React from "react";
 import ReactDOM from "react-dom";
@@ -19,16 +20,20 @@ class ExploreHeatmapPlot extends D3Visualization {
         this.store = new HeatmapDatastore(data.settings, data.dataset);
         this.dataset = data.dataset;
         this.settings = data.settings;
+        this.options = options || {};
         this.generate_properties();
     }
 
     render($div) {
+        const hasFilters = this.settings.filter_widgets.length > 0,
+            text1 = hasFilters
+                ? `<div class="span9 heatmap-viz"></div><div class="span3 heatmap-filters"></div>`
+                : `<div class="span12 heatmap-viz"></div>`;
+
         // Create svg container
         $div.html(`<div class="row-fluid">
-            <div class="span9 heatmap-viz"></div>
-            <div class="span3 heatmap-filters"></div>
-            <div class="span9 heatmap-tables"></div>
-            <div style="position:absolute;" id="exp_heatmap_tooltip"></div>
+            ${text1}
+            <div class="${hasFilters ? "span9" : "span12"} heatmap-tables"></div>
         </div>`);
 
         const viz = $div.find(".heatmap-viz")[0],
@@ -41,13 +46,24 @@ class ExploreHeatmapPlot extends D3Visualization {
         this.set_trigger_resize();
         this.add_menu();
         ReactDOM.render(<DatasetTable store={this.store} />, tbl);
-        ReactDOM.render(<FilterWidgetContainer store={this.store} />, filters);
+
+        if (hasFilters) {
+            ReactDOM.render(<FilterWidgetContainer store={this.store} />, filters);
+        }
     }
 
     set_trigger_resize() {
         var self = this,
-            w = this.w + this.settings.padding.left + this.settings.padding.right,
-            h = this.h + this.settings.padding.top + this.settings.padding.bottom,
+            w =
+                this.w +
+                this.settings.padding.left +
+                this.x_axis_label_padding +
+                this.settings.padding.right,
+            h =
+                this.h +
+                this.settings.padding.top +
+                this.y_axis_label_padding +
+                this.settings.padding.bottom,
             chart = $(this.svg),
             container = chart.parent();
 
@@ -87,19 +103,17 @@ class ExploreHeatmapPlot extends D3Visualization {
         // `this.padding` required for D3Plot
         this.padding = this.settings.padding;
 
-        this.x_domain = this.settings.x_fields.map(e => _.keys(this.store.intersection[e.column]));
-        this.y_domain = this.settings.y_fields.map(e => _.keys(this.store.intersection[e.column]));
-        this.x_steps = this.store.scales.x.length;
-        this.y_steps = this.store.scales.y.length;
+        const {compress_x, compress_y} = this.settings,
+            {scales, totals} = this.store;
+        this.x_steps = scales.x.filter((d, i) => (compress_x ? totals.x[i] > 0 : true)).length;
+        this.y_steps = scales.y.filter((d, i) => (compress_y ? totals.y[i] > 0 : true)).length;
 
         this.w = this.settings.cell_width * this.x_steps;
         this.h = this.settings.cell_height * this.y_steps;
 
-        // set colorscale
-        this.color_scale = d3.scale
-            .linear()
-            .domain([0, d3.max(this.store.matrixDataset, d => d.rows.length)])
-            .range(this.settings.color_range);
+        // calculated padding based on labels
+        this.x_axis_label_padding = 0;
+        this.y_axis_label_padding = 0;
     }
 
     bind_tooltip(selection, type) {
@@ -136,135 +150,149 @@ class ExploreHeatmapPlot extends D3Visualization {
     select_cells(selection) {}
 
     build_axes() {
-        let generate_ticks = (domain, fields) => {
-                let ticks = [];
+        let xDomains = this.settings.x_fields.map(d => d.column),
+            yDomains = this.settings.y_fields.map(d => d.column),
+            xs = this.store.scales.x.filter((d, i) =>
+                this.store.settings.compress_x ? this.store.totals.x[i] > 0 : true
+            ),
+            ys = this.store.scales.y.filter((d, i) =>
+                this.store.settings.compress_y ? this.store.totals.y[i] > 0 : true
+            ),
+            xAxis = this.vis
+                .append("g")
+                .attr("class", ".xAxis")
+                .attr("transform", `translate(0,${this.h})`),
+            yAxis = this.vis.append("g").attr("class", ".yAxis"),
+            thisItem,
+            label_padding = 6;
 
-                for (let i = 0; i < domain.length; i++) {
-                    let tick = domain[i].map(e => {
-                        return {label: e, filters: [{[fields[i].column]: e}]};
+        // build x-axis
+        let yOffset = 0,
+            {cell_width, show_axis_border} = this.store.settings;
+        for (let i = 0; i < xs[0].length; i++) {
+            let axis = xAxis.append("g").attr("transform", `translate(0,${yOffset})`),
+                lastItem = xs[0][i],
+                itemStartIndex = 0,
+                numItems = 0,
+                borderData = [];
+
+            for (let j = 0; j <= xs.length; j++) {
+                thisItem = j < xs.length ? xs[j][i] : null;
+                if (!_.isMatch(thisItem, lastItem)) {
+                    let label = axis.append("g"),
+                        key = _.keys(lastItem)[0];
+
+                    label
+                        .append("text")
+                        .attr("transform", `rotate(${this.settings.x_tick_rotate})`)
+                        .text(lastItem[key]);
+
+                    let box = label.node().getBBox(),
+                        label_offset =
+                            itemStartIndex * cell_width +
+                            (numItems * cell_width) / 2 -
+                            box.width / 2;
+
+                    label.attr(
+                        "transform",
+                        `translate(${label_offset - box.x},${label_padding - box.y})`
+                    );
+
+                    borderData.push({
+                        x1: itemStartIndex * cell_width,
+                        width: numItems * cell_width,
                     });
-                    if (i == 0) {
-                        ticks.push(tick);
-                    } else {
-                        tick = ticks[i - 1]
-                            .map(a =>
-                                tick.map(b => {
-                                    return _.assign({}, b, {filters: b.filters.concat(a.filters)});
-                                })
-                            )
-                            .flat();
-                        ticks.push(tick);
-                    }
+
+                    itemStartIndex = j;
+                    numItems = 0;
                 }
-                return ticks;
-            },
-            x_domains = generate_ticks(this.x_domain, toJS(this.settings.x_fields)).reverse(),
-            y_domains = generate_ticks(this.y_domain, toJS(this.settings.y_fields)).reverse(),
-            x_axis_offset = 0,
-            y_axis_offset = 0,
-            label_padding = 6,
-            self = this;
-
-        /// Build x axes
-        // For each axis...
-        for (let i = 0; i < x_domains.length; i++) {
-            let axis = this.vis
-                    .append("g")
-                    .attr("transform", `translate(0,${this.h + x_axis_offset})`),
-                domain = x_domains[i],
-                band = this.w / domain.length,
-                mid = band / 2,
-                max = 0;
-            // For each tick...
-            for (let j = 0; j < domain.length; j++) {
-                let label = axis.append("g");
-                label
-                    .append("text")
-                    .attr("transform", `rotate(${this.settings.x_rotate})`)
-                    .text(domain[j].label);
-                let box = label.node().getBBox(),
-                    label_offset = mid - box.width / 2;
-                label.attr(
-                    "transform",
-                    `translate(${label_offset - box.x},${label_padding - box.y})`
-                );
-                max = Math.max(box.height, max);
-                mid += band;
+                numItems += 1;
+                lastItem = thisItem;
             }
-            max += label_padding * 2;
-            this.settings.padding.bottom += max;
-            x_axis_offset += max;
 
-            // Adds a box around tick labels
-            let bbox_group = axis.append("g");
-            for (let j = 0; j < domain.length; j++) {
-                let bbox = bbox_group
+            let box = axis.node().getBBox();
+
+            let newYOffset = yOffset + box.height + label_padding * 2;
+            if (show_axis_border) {
+                xAxis
+                    .selectAll(".none")
+                    .data(borderData)
+                    .enter()
                     .append("polyline")
-                    .datum(domain[j])
                     .attr(
                         "points",
-                        `${band * j},${max} ${band * j},0 ${band * (j + 1)},0 ${band *
-                            (j + 1)},${max}`
+                        d =>
+                            `${d.x1},${newYOffset} ${d.x1},${yOffset} ${d.x1 +
+                                d.width},${yOffset} ${d.x1 + d.width},${newYOffset}`
                     )
-                    .attr("fill", "transparent")
-                    .attr("stroke", this.settings.show_axis_border ? "black" : null)
-                    .on("click", d => {
-                        const cells = self.get_matching_cells("x_filters", d.filters);
-                        this.store.setTableDataFilters(new Set(cells));
-                    });
-
-                this.bind_tooltip(bbox, "axis");
+                    .attr("fill", "none")
+                    .attr("stroke", "black");
             }
+            yOffset = newYOffset;
         }
 
-        /// Build y axes
-        // For each axis...
-        for (let i = 0; i < y_domains.length; i++) {
-            let axis = this.vis.append("g").attr("transform", `translate(${-y_axis_offset},0)`),
-                domain = y_domains[i],
-                band = this.h / domain.length,
-                mid = band / 2,
-                max = 0;
-            // For each tick...
-            for (let j = 0; j < domain.length; j++) {
-                let label = axis.append("g");
-                label
-                    .append("text")
-                    .attr("transform", `rotate(${this.settings.y_rotate})`)
-                    .text(domain[j].label);
-                let box = label.node().getBBox(),
-                    label_offset = mid - box.height / 2;
-                label.attr(
-                    "transform",
-                    `translate(${-box.width - box.x - label_padding},${label_offset - box.y})`
-                );
-                max = Math.max(box.width, max);
-                mid += band;
-            }
-            max += label_padding * 2;
-            this.settings.padding.left += max;
-            y_axis_offset += max;
+        // build y-axis
+        let xOffset = 0,
+            {cell_height} = this.store.settings;
+        for (let i = 0; i < ys[0].length; i++) {
+            let axis = yAxis.append("g").attr("transform", `translate(${-xOffset},0)`),
+                lastItem = ys[0][i],
+                itemStartIndex = 0,
+                numItems = 0,
+                borderData = [];
+            for (let j = 0; j <= ys.length; j++) {
+                thisItem = j < ys.length ? ys[j][i] : null;
+                if (!_.isMatch(thisItem, lastItem)) {
+                    let label = axis.append("g"),
+                        key = _.keys(lastItem)[0];
+                    label
+                        .append("text")
+                        .attr("transform", `rotate(${this.settings.y_tick_rotate})`)
+                        .text(lastItem[key]);
+                    let box = label.node().getBBox(),
+                        label_offset =
+                            itemStartIndex * cell_height +
+                            (numItems * cell_height) / 2 -
+                            box.height / 2;
+                    label.attr(
+                        "transform",
+                        `translate(${-box.width - box.x - label_padding},${label_offset - box.y})`
+                    );
 
-            // Adds a box around tick labels
-            let bbox_group = axis.append("g");
-            for (let j = 0; j < domain.length; j++) {
-                let bbox = bbox_group
+                    borderData.push({
+                        y1: itemStartIndex * cell_height,
+                        height: numItems * cell_height,
+                    });
+
+                    itemStartIndex = j;
+                    numItems = 0;
+                }
+                numItems += 1;
+                lastItem = thisItem;
+            }
+
+            let box = axis.node().getBBox(),
+                newXOffset = xOffset + box.width + label_padding * 2;
+            if (show_axis_border) {
+                yAxis
+                    .selectAll(".none")
+                    .data(borderData)
+                    .enter()
                     .append("polyline")
-                    .datum(domain[j])
                     .attr(
                         "points",
-                        `${-max},${band * j} 0,${band * j} 0,${band * (j + 1)} ${-max},${band *
-                            (j + 1)}`
+                        d =>
+                            `${-newXOffset},${d.y1} ${-xOffset},${d.y1} ${-xOffset},${d.y1 +
+                                d.height} ${-newXOffset},${d.y1 + d.height}`
                     )
-                    .attr("fill", "transparent")
-                    .attr("stroke", this.settings.show_axis_border ? "black" : null)
-                    .on("click", d => {
-                        const cells = this.get_matching_cells("y_filters", d.filters);
-                        this.store.setTableDataFilters(new Set(cells));
-                    });
-                this.bind_tooltip(bbox, "axis");
+                    .attr("fill", "none")
+                    .attr("stroke", "black");
             }
+            xOffset = newXOffset;
         }
+
+        this.x_axis_label_padding = yAxis.node().getBoundingClientRect().width;
+        this.y_axis_label_padding = xAxis.node().getBoundingClientRect().height;
     }
 
     add_grid() {
@@ -298,56 +326,98 @@ class ExploreHeatmapPlot extends D3Visualization {
     }
 
     build_labels() {
-        this.label_margin = 50;
+        let label_margin = 20,
+            isDev = this.options.dev;
 
         // Plot title
-        if (this.settings.plot_title.length > 0) {
-            this.vis
-                .append("text")
-                .attr("id", "exp_heatmap_title")
-                .attr("class", "exp_heatmap_label")
-                .attr("x", this.w / 2)
-                .attr("y", -this.label_margin / 2)
-                .text(this.settings.plot_title);
-            this.settings.padding.top += this.label_margin;
+        if (this.settings.title.text.length > 0) {
+            let titleSettings = this.settings.title,
+                x =
+                    titleSettings.x === 0
+                        ? this.padding.left + this.x_axis_label_padding + this.w / 2
+                        : titleSettings.x,
+                y = titleSettings.y === 0 ? label_margin : titleSettings.y,
+                title = d3
+                    .select(this.svg)
+                    .append("text")
+                    .attr("class", "exp_heatmap_title exp_heatmap_label")
+                    .attr("transform", `translate(${x},${y}) rotate(${titleSettings.rotate})`)
+                    .text(titleSettings.text);
+
+            if (isDev) {
+                title.attr("cursor", "pointer").call(
+                    HAWCUtils.updateDragLocationTransform((x, y) => {
+                        this.settings.title.x = parseInt(x);
+                        this.settings.title.y = parseInt(y);
+                    })
+                );
+            }
         }
 
         // X axis
-        if (this.settings.x_label.length > 0) {
-            this.settings.padding.bottom += this.label_margin;
-            this.vis
-                .append("text")
-                .attr("class", "exp_heatmap_label")
-                .attr("x", this.w / 2)
-                .attr("y", this.h + this.settings.padding.bottom - this.label_margin / 2)
-                .text(this.settings.x_label);
+        if (this.settings.x_label.text.length > 0) {
+            let xLabelSettings = this.settings.x_label,
+                x =
+                    xLabelSettings.x === 0
+                        ? this.padding.left + this.x_axis_label_padding + this.w / 2
+                        : xLabelSettings.x,
+                y =
+                    xLabelSettings.y === 0
+                        ? this.padding.top + this.h + this.y_axis_label_padding + label_margin
+                        : xLabelSettings.y,
+                xLabel = d3
+                    .select(this.svg)
+                    .append("text")
+                    .attr("class", "exp_heatmap_label")
+                    .attr("transform", `translate(${x},${y}) rotate(${xLabelSettings.rotate})`)
+                    .text(xLabelSettings.text);
+
+            if (isDev) {
+                xLabel.attr("cursor", "pointer").call(
+                    HAWCUtils.updateDragLocationTransform((x, y) => {
+                        this.settings.x_label.x = parseInt(x);
+                        this.settings.x_label.y = parseInt(y);
+                    })
+                );
+            }
         }
+
         // Y axis
-        if (this.settings.y_label.length > 0) {
-            this.settings.padding.left += this.label_margin;
-            this.vis
-                .append("text")
-                .attr("class", "exp_heatmap_label")
-                .attr("x", 0)
-                .attr("y", 0)
-                .attr(
-                    "transform",
-                    `translate(${-(this.settings.padding.left - this.label_margin / 2)},${this.h /
-                        2}) rotate(-90)`
-                )
-                .text(this.settings.y_label);
+        if (this.settings.y_label.text.length > 0) {
+            let yLabelSettings = this.settings.y_label,
+                x =
+                    yLabelSettings.x === 0
+                        ? this.settings.padding.left - label_margin / 2
+                        : yLabelSettings.x,
+                y =
+                    yLabelSettings.y === 0
+                        ? this.settings.padding.top + this.h / 2
+                        : yLabelSettings.y,
+                yLabel = d3
+                    .select(this.svg)
+                    .append("text")
+                    .attr("class", "exp_heatmap_label")
+                    .attr("transform", `translate(${x},${y}) rotate(${yLabelSettings.rotate})`)
+                    .text(yLabelSettings.text);
+
+            if (isDev) {
+                yLabel.attr("cursor", "pointer").call(
+                    HAWCUtils.updateDragLocationTransform((x, y) => {
+                        this.settings.y_label.x = parseInt(x);
+                        this.settings.y_label.y = parseInt(y);
+                    })
+                );
+            }
         }
     }
 
     update_plot = data => {
         const self = this,
-            tooltip_x_offset = 20,
-            tooltip_y_offset = 20;
-
-        this.cells_data = this.cells.selectAll("g").data(data);
+            cells_data = this.cells.selectAll("g").data(data),
+            {tableDataFilters, maxValue, colorScale} = this.store;
 
         // add cell group and interactivity
-        this.cells_enter = this.cells_data
+        this.cells_enter = cells_data
             .enter()
             .append("g")
             .attr("class", "exp_heatmap_cell")
@@ -355,14 +425,18 @@ class ExploreHeatmapPlot extends D3Visualization {
                 d3.selectAll(".exp_heatmap_cell_block")
                     .style("stroke", "none")
                     .style("stroke-width", 2);
-                d3.select(this)
-                    .select("rect")
-                    .style("stroke", "black")
-                    .style("stroke-width", 2);
+                if (d.rows.length > 0) {
+                    d3.select(this)
+                        .select("rect")
+                        .style("stroke", "black")
+                        .style("stroke-width", 2);
 
-                self.store.setTableDataFilters(d);
-            });
-        this.bind_tooltip(this.cells_enter, "cell");
+                    self.store.setTableDataFilters(d);
+                } else {
+                    self.store.setTableDataFilters(new Set());
+                }
+            })
+            .on("mouseover", null);
 
         // add cell fill
         this.cells_enter
@@ -381,23 +455,35 @@ class ExploreHeatmapPlot extends D3Visualization {
             .attr("y", d => this.y_scale(d.y_step) + this.y_scale.rangeBand() / 2);
 
         // enter/update
-        this.cells_data
+        cells_data
             .select(".exp_heatmap_cell_block")
             .transition()
-            .style("fill", d => this.color_scale(d.rows.length));
+            .style("fill", d => {
+                const value =
+                    tableDataFilters == null
+                        ? d.rows.length
+                        : tableDataFilters.index === d.index
+                        ? maxValue
+                        : d.rows.length / 3;
+                return colorScale(value);
+            });
 
-        this.cells_data
+        cells_data
             .select(".exp_heatmap_cell_text")
             .transition()
             .style("fill", d => {
-                let {r, g, b} = d3.rgb(this.color_scale(d.rows.length));
-                ({r, g, b} = h.getTextContrastColor(r, g, b));
-                return d3.rgb(r, g, b);
+                const value =
+                    tableDataFilters == null
+                        ? d.rows.length
+                        : tableDataFilters.index === d.index
+                        ? maxValue
+                        : d.rows.length / 3;
+                return h.getTextContrastColor(colorScale(value));
             })
             .style("display", d => (d.rows.length == 0 ? "none" : null))
             .text(d => d.rows.length);
 
-        this.cells_data.exit().remove();
+        cells_data.exit().remove();
     };
 
     build_plot() {
@@ -432,9 +518,18 @@ class ExploreHeatmapPlot extends D3Visualization {
         // Draw labels
         this.build_labels();
 
-        // Set plot dimensions and viewbox
-        let w = this.w + this.settings.padding.left + this.settings.padding.right,
-            h = this.h + this.settings.padding.top + this.settings.padding.bottom;
+        // Set plot dimensions and viewBox
+        let w =
+                this.settings.padding.left +
+                this.x_axis_label_padding +
+                this.w +
+                this.settings.padding.right,
+            h =
+                this.settings.padding.top +
+                this.h +
+                this.y_axis_label_padding +
+                this.settings.padding.bottom;
+
         d3.select(this.svg)
             .attr("width", w)
             .attr("height", h)
@@ -443,7 +538,9 @@ class ExploreHeatmapPlot extends D3Visualization {
         // Position plot
         this.vis.attr(
             "transform",
-            `translate(${this.settings.padding.left},${this.settings.padding.top})`
+            `translate(${this.settings.padding.left + this.x_axis_label_padding},${
+                this.settings.padding.top
+            })`
         );
     }
 }
