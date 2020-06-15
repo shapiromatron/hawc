@@ -3,6 +3,7 @@ import React, {Component} from "react";
 import {inject, observer} from "mobx-react";
 import {Tab, Tabs, TabList, TabPanel} from "react-tabs";
 
+import CheckboxInput from "shared/components/CheckboxInput";
 import TextInput from "shared/components/TextInput";
 import FloatInput from "shared/components/FloatInput";
 
@@ -213,6 +214,38 @@ class VisualCustomizationPanel extends Component {
                             type="color"
                             value={settings.color_range[1]}
                             onChange={e => changeSettings("color_range.1", e.target.value)}
+                        />
+                    </div>
+                    <div className="span3">
+                        <CheckboxInput
+                            id="compress_x"
+                            label="Compress X fields?"
+                            name="compress_x"
+                            onChange={e => changeSettings(e.target.name, e.target.checked)}
+                            checked={settings.compress_x}
+                        />
+                        <CheckboxInput
+                            id="compress_y"
+                            label="Compress Y fields?"
+                            name="compress_y"
+                            onChange={e => changeSettings(e.target.name, e.target.checked)}
+                            checked={settings.compress_y}
+                        />
+                    </div>
+                    <div className="span3">
+                        <CheckboxInput
+                            id="show_grid"
+                            label="Show grid"
+                            name="show_grid"
+                            onChange={e => changeSettings(e.target.name, e.target.checked)}
+                            checked={settings.show_grid}
+                        />
+                        <CheckboxInput
+                            id="show_axis_border"
+                            label="Show axis border"
+                            name="show_axis_border"
+                            onChange={e => changeSettings(e.target.name, e.target.checked)}
+                            checked={settings.show_axis_border}
                         />
                     </div>
                 </div>

@@ -133,12 +133,13 @@ class ExploreHeatmapPlot extends D3Visualization {
 
         // build x-axis
         let yOffset = 0,
-            {cell_width} = this.store.settings;
+            {cell_width, show_axis_border} = this.store.settings;
         _.reverse(xDomains).map(domain => {
             let axis = xAxis.append("g").attr("transform", `translate(0,${yOffset})`),
                 lastItem = xs[0][domain],
                 itemStartIndex = 0,
-                numItems = 0;
+                numItems = 0,
+                borderData = [];
 
             for (let i = 0; i <= xs.length; i++) {
                 thisItem = i < xs.length ? xs[i][domain] : null;
@@ -161,6 +162,11 @@ class ExploreHeatmapPlot extends D3Visualization {
                         `translate(${label_offset - box.x},${label_padding - box.y})`
                     );
 
+                    borderData.push({
+                        x1: itemStartIndex * cell_width,
+                        width: numItems * cell_width,
+                    });
+
                     itemStartIndex = i;
                     numItems = 0;
                 }
@@ -169,7 +175,24 @@ class ExploreHeatmapPlot extends D3Visualization {
             }
 
             let box = axis.node().getBBox();
-            yOffset += box.height + label_padding;
+
+            let newYOffset = yOffset + box.height + label_padding * 2;
+            if (show_axis_border) {
+                xAxis
+                    .selectAll(".none")
+                    .data(borderData)
+                    .enter()
+                    .append("polyline")
+                    .attr(
+                        "points",
+                        d =>
+                            `${d.x1},${newYOffset} ${d.x1},${yOffset} ${d.x1 +
+                                d.width},${yOffset} ${d.x1 + d.width},${newYOffset}`
+                    )
+                    .attr("fill", "none")
+                    .attr("stroke", "black");
+            }
+            yOffset = newYOffset;
         });
 
         // build y-axis
@@ -179,7 +202,8 @@ class ExploreHeatmapPlot extends D3Visualization {
             let axis = yAxis.append("g").attr("transform", `translate(${-xOffset},0)`),
                 lastItem = ys[0][domain],
                 itemStartIndex = 0,
-                numItems = 0;
+                numItems = 0,
+                borderData = [];
             for (let i = 0; i <= ys.length; i++) {
                 thisItem = i < ys.length ? ys[i][domain] : null;
                 if (thisItem !== lastItem) {
@@ -198,6 +222,11 @@ class ExploreHeatmapPlot extends D3Visualization {
                         `translate(${-box.width - box.x - label_padding},${label_offset - box.y})`
                     );
 
+                    borderData.push({
+                        y1: itemStartIndex * cell_height,
+                        height: numItems * cell_height,
+                    });
+
                     itemStartIndex = i;
                     numItems = 0;
                 }
@@ -205,134 +234,26 @@ class ExploreHeatmapPlot extends D3Visualization {
                 lastItem = thisItem;
             }
 
-            let box = axis.node().getBBox();
-            xOffset += box.width + label_padding * 2;
+            let box = axis.node().getBBox(),
+                newXOffset = xOffset + box.width + label_padding * 2;
+            if (show_axis_border) {
+                yAxis
+                    .selectAll(".none")
+                    .data(borderData)
+                    .enter()
+                    .append("polyline")
+                    .attr(
+                        "points",
+                        d =>
+                            `${-newXOffset},${d.y1} ${-xOffset},${d.y1} ${-xOffset},${d.y1 +
+                                d.height} ${-newXOffset},${d.y1 + d.height}`
+                    )
+                    .attr("fill", "none")
+                    .attr("stroke", "black");
+            }
+            xOffset = newXOffset;
         });
 
-        this.x_axis_label_padding = yAxis.node().getBoundingClientRect().width;
-        this.y_axis_label_padding = xAxis.node().getBoundingClientRect().height;
-    }
-    build_axes2() {
-        this.x_domain = this.settings.x_fields.map(e => _.keys(this.store.intersection[e.column]));
-        this.y_domain = this.settings.y_fields.map(e => _.keys(this.store.intersection[e.column]));
-
-        let generate_ticks = domain => {
-                if (domain.length == 0) return [];
-                let ticks = [];
-
-                ticks.push(domain[0]);
-                for (let i = 1; i < domain.length; i++) {
-                    let current_ticks = [];
-                    for (let j = 0; j < ticks[i - 1].length; j++) {
-                        current_ticks = current_ticks.concat(domain[i]);
-                    }
-                    ticks.push(current_ticks);
-                }
-                return ticks;
-            },
-            x_domains = generate_ticks(this.x_domain).reverse(),
-            y_domains = generate_ticks(this.y_domain).reverse(),
-            x_axis_offset = 0,
-            y_axis_offset = 0,
-            label_padding = 6;
-
-        /// Build x axes
-        // For each axis...
-        let xAxis = this.vis.append("g").attr("class", ".xAxis");
-        for (let i = 0; i < x_domains.length; i++) {
-            let axis = xAxis
-                    .append("g")
-                    .attr("transform", `translate(0,${this.h + x_axis_offset})`),
-                domain = x_domains[i],
-                band = this.w / domain.length,
-                mid = band / 2,
-                max = 0;
-            // For each tick...
-            for (let j = 0; j < domain.length; j++) {
-                let label = axis.append("g");
-                label
-                    .append("text")
-                    .attr("transform", `rotate(${this.settings.x_tick_rotate})`)
-                    .text(domain[j]);
-                let box = label.node().getBBox(),
-                    label_offset = mid - box.width / 2;
-                label.attr(
-                    "transform",
-                    `translate(${label_offset - box.x},${label_padding - box.y})`
-                );
-                max = Math.max(box.height, max);
-                mid += band;
-            }
-            max += label_padding * 2;
-            x_axis_offset += max;
-
-            // Adds a border around tick labels
-            let add_border = () => {
-                let borders = axis.append("g");
-                for (let j = 0; j < domain.length; j++) {
-                    borders
-                        .append("polyline")
-                        .attr(
-                            "points",
-                            `${band * j},${max} ${band * j},0 ${band * (j + 1)},0 ${band *
-                                (j + 1)},${max}`
-                        )
-                        .attr("fill", "none")
-                        .attr("stroke", "black");
-                }
-            };
-            if (this.settings.show_axis_border) {
-                add_border();
-            }
-        }
-
-        /// Build y axes
-        // For each axis...
-        let yAxis = this.vis.append("g").attr("class", ".yAxis");
-        for (let i = 0; i < y_domains.length; i++) {
-            let axis = yAxis.append("g").attr("transform", `translate(${-y_axis_offset},0)`),
-                domain = y_domains[i],
-                band = this.h / domain.length,
-                mid = band / 2,
-                max = 0;
-            // For each tick...
-            for (let j = 0; j < domain.length; j++) {
-                let label = axis.append("g");
-                label
-                    .append("text")
-                    .attr("transform", `rotate(${this.settings.y_tick_rotate})`)
-                    .text(domain[j]);
-                let box = label.node().getBBox(),
-                    label_offset = mid - box.height / 2;
-                label.attr(
-                    "transform",
-                    `translate(${-box.width - box.x - label_padding},${label_offset - box.y})`
-                );
-                max = Math.max(box.width, max);
-                mid += band;
-            }
-            max += label_padding * 2;
-            y_axis_offset += max;
-
-            // Adds a border around tick labels
-            let add_border = () => {
-                let borders = axis.append("g");
-                for (let j = 0; j < domain.length; j++) {
-                    borders
-                        .append("polyline")
-                        .attr(
-                            "points",
-                            `${-max},${band * j} 0,${band * j} 0,${band * (j + 1)} ${-max},${band *
-                                (j + 1)}`
-                        )
-                        .attr("fill", "none")
-                        .attr("stroke", "black");
-                }
-            };
-            if (this.settings.show_axis_border) {
-                add_border();
-            }
-        }
         this.x_axis_label_padding = yAxis.node().getBoundingClientRect().width;
         this.y_axis_label_padding = xAxis.node().getBoundingClientRect().height;
     }
