@@ -204,6 +204,7 @@ class ExploreHeatmapPlot extends D3Visualization {
                     );
 
                     borderData.push({
+                        filters: _.slice(lastItem, 0, i + 1),
                         x1: itemStartIndex * cell_width,
                         width: numItems * cell_width,
                     });
@@ -219,7 +220,7 @@ class ExploreHeatmapPlot extends D3Visualization {
 
             let newYOffset = yOffset + box.height + label_padding * 2;
             if (show_axis_border) {
-                xAxis
+                let border = xAxis
                     .selectAll(".none")
                     .data(borderData)
                     .enter()
@@ -230,8 +231,9 @@ class ExploreHeatmapPlot extends D3Visualization {
                             `${d.x1},${newYOffset} ${d.x1},${yOffset} ${d.x1 +
                                 d.width},${yOffset} ${d.x1 + d.width},${newYOffset}`
                     )
-                    .attr("fill", "none")
+                    .attr("fill", "transparent")
                     .attr("stroke", "black");
+                this.bind_tooltip(border, "axis");
             }
             yOffset = newYOffset;
         }
@@ -269,6 +271,7 @@ class ExploreHeatmapPlot extends D3Visualization {
                     );
 
                     borderData.push({
+                        filters: _.slice(lastItem, 0, i + 1),
                         y1: itemStartIndex * cell_height,
                         height: numItems * cell_height,
                     });
@@ -283,7 +286,7 @@ class ExploreHeatmapPlot extends D3Visualization {
             let box = axis.node().getBBox(),
                 newXOffset = xOffset + box.width + label_padding * 2;
             if (show_axis_border) {
-                yAxis
+                let border = yAxis
                     .selectAll(".none")
                     .data(borderData)
                     .enter()
@@ -294,8 +297,9 @@ class ExploreHeatmapPlot extends D3Visualization {
                             `${-newXOffset},${d.y1} ${-xOffset},${d.y1} ${-xOffset},${d.y1 +
                                 d.height} ${-newXOffset},${d.y1 + d.height}`
                     )
-                    .attr("fill", "none")
+                    .attr("fill", "transparent")
                     .attr("stroke", "black");
+                this.bind_tooltip(border, "axis");
             }
             xOffset = newXOffset;
         }
