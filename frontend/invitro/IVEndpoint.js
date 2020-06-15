@@ -16,6 +16,10 @@ class IVEndpoint {
         this._build_chemical();
     }
 
+    static get_detail_url(id) {
+        return `/in-vitro/endpoint/${id}/`;
+    }
+
     static get_object(id, cb) {
         $.get(`/in-vitro/api/endpoint/${id}/`, d => cb(new IVEndpoint(d)));
     }

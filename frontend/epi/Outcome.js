@@ -15,6 +15,10 @@ class Outcome {
         this.comparison_sets = _.map(data.comparison_sets, d => new ComparisonSet(d));
     }
 
+    static get_detail_url(id) {
+        return `/epi/outcome/${id}/`;
+    }
+
     static get_object(id, cb) {
         $.get(`/epi/api/outcome/${id}/`, d => cb(new Outcome(d)));
     }

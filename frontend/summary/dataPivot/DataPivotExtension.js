@@ -69,6 +69,10 @@ class DataPivotExtension {
     render_plottip(settings, datarow) {
         settings._dpe_cls.displayAsModal(datarow[settings._dpe_key], settings._dpe_options);
     }
+
+    get_detail_url(settings, datarow) {
+        return settings._dpe_cls.get_detail_url(datarow[settings._dpe_key]);
+    }
 }
 
 _.extend(DataPivotExtension, {

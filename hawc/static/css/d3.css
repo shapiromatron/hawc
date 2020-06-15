@@ -325,11 +325,6 @@ path.tagslink {
  * Exploratory heatmap
  */
 
-.exp_heatmap_container,#exp_heatmap_svg {
-    outline: 1px solid black;
-    outline-offset: -1px;
-}
-
 .exp_heatmap_cell_text {
     text-anchor:middle;
     dominant-baseline:central;
@@ -340,7 +335,7 @@ path.tagslink {
     text-anchor:middle;
 }
 
-#exp_heatmap_title {
+.exp_heatmap_title {
     font-weight:bold;
 }
 
