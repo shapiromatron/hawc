@@ -55,20 +55,20 @@ class DatasetTable extends Component {
         const {table_fields} = this.props.store.settings,
             data = this.props.store.getTableData;
 
-        // TODO HEATMAP: fix 30vh to be better calculated
+        // TODO HEATMAP: fix 40vh to be better calculated
         return (
-            <table
-                className="table table-striped table-bordered"
-                style={{maxHeight: "30vh", overflow: "auto"}}>
-                <thead>
-                    <tr>
-                        {table_fields.map((name, i) => (
-                            <th key={i}>{name.column}</th>
-                        ))}
-                    </tr>
-                </thead>
-                <tbody>{data.map((row, i) => this.renderRow(row, i, table_fields))}</tbody>
-            </table>
+            <div style={{maxHeight: "40vh", overflow: "auto"}}>
+                <table className="table table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            {table_fields.map((name, i) => (
+                                <th key={i}>{name.column}</th>
+                            ))}
+                        </tr>
+                    </thead>
+                    <tbody>{data.map((row, i) => this.renderRow(row, i, table_fields))}</tbody>
+                </table>
+            </div>
         );
     }
     renderRow(row, index, table_fields) {

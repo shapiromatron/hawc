@@ -101,10 +101,10 @@ class ExploreHeatmapPlot extends D3Visualization {
         // `this.padding` required for D3Plot
         this.padding = this.settings.padding;
 
-        this.x_domain = this.settings.x_fields.map(e => _.keys(this.store.intersection[e.column]));
-        this.y_domain = this.settings.y_fields.map(e => _.keys(this.store.intersection[e.column]));
-        this.x_steps = this.store.scales.x.length;
-        this.y_steps = this.store.scales.y.length;
+        const {compress_x, compress_y} = this.settings,
+            {scales, totals} = this.store;
+        this.x_steps = scales.x.filter((d, i) => (compress_x ? totals.x[i] > 0 : true)).length;
+        this.y_steps = scales.y.filter((d, i) => (compress_y ? totals.y[i] > 0 : true)).length;
 
         this.w = this.settings.cell_width * this.x_steps;
         this.h = this.settings.cell_height * this.y_steps;
@@ -115,6 +115,107 @@ class ExploreHeatmapPlot extends D3Visualization {
     }
 
     build_axes() {
+        let xDomains = this.settings.x_fields.map(d => d.column),
+            yDomains = this.settings.y_fields.map(d => d.column),
+            xs = this.store.scales.x.filter((d, i) =>
+                this.store.settings.compress_x ? this.store.totals.x[i] > 0 : true
+            ),
+            ys = this.store.scales.y.filter((d, i) =>
+                this.store.settings.compress_y ? this.store.totals.y[i] > 0 : true
+            ),
+            xAxis = this.vis
+                .append("g")
+                .attr("class", ".xAxis")
+                .attr("transform", `translate(0,${this.h})`),
+            yAxis = this.vis.append("g").attr("class", ".yAxis"),
+            thisItem,
+            label_padding = 6;
+
+        // build x-axis
+        let yOffset = 0,
+            {cell_width} = this.store.settings;
+        _.reverse(xDomains).map(domain => {
+            let axis = xAxis.append("g").attr("transform", `translate(0,${yOffset})`),
+                lastItem = xs[0][domain],
+                itemStartIndex = 0,
+                numItems = 0;
+
+            for (let i = 0; i <= xs.length; i++) {
+                thisItem = i < xs.length ? xs[i][domain] : null;
+                if (thisItem !== lastItem) {
+                    let label = axis.append("g");
+
+                    label
+                        .append("text")
+                        .attr("transform", `rotate(${this.settings.x_tick_rotate})`)
+                        .text(lastItem);
+
+                    let box = label.node().getBBox(),
+                        label_offset =
+                            itemStartIndex * cell_width +
+                            (numItems * cell_width) / 2 -
+                            box.width / 2;
+
+                    label.attr(
+                        "transform",
+                        `translate(${label_offset - box.x},${label_padding - box.y})`
+                    );
+
+                    itemStartIndex = i;
+                    numItems = 0;
+                }
+                numItems += 1;
+                lastItem = thisItem;
+            }
+
+            let box = axis.node().getBBox();
+            yOffset += box.height + label_padding;
+        });
+
+        // build y-axis
+        let xOffset = 0,
+            {cell_height} = this.store.settings;
+        _.reverse(yDomains).map(domain => {
+            let axis = yAxis.append("g").attr("transform", `translate(${-xOffset},0)`),
+                lastItem = ys[0][domain],
+                itemStartIndex = 0,
+                numItems = 0;
+            for (let i = 0; i <= ys.length; i++) {
+                thisItem = i < ys.length ? ys[i][domain] : null;
+                if (thisItem !== lastItem) {
+                    let label = axis.append("g");
+                    label
+                        .append("text")
+                        .attr("transform", `rotate(${this.settings.y_tick_rotate})`)
+                        .text(lastItem);
+                    let box = label.node().getBBox(),
+                        label_offset =
+                            itemStartIndex * cell_height +
+                            (numItems * cell_height) / 2 -
+                            box.height / 2;
+                    label.attr(
+                        "transform",
+                        `translate(${-box.width - box.x - label_padding},${label_offset - box.y})`
+                    );
+
+                    itemStartIndex = i;
+                    numItems = 0;
+                }
+                numItems += 1;
+                lastItem = thisItem;
+            }
+
+            let box = axis.node().getBBox();
+            xOffset += box.width + label_padding * 2;
+        });
+
+        this.x_axis_label_padding = yAxis.node().getBoundingClientRect().width;
+        this.y_axis_label_padding = xAxis.node().getBoundingClientRect().height;
+    }
+    build_axes2() {
+        this.x_domain = this.settings.x_fields.map(e => _.keys(this.store.intersection[e.column]));
+        this.y_domain = this.settings.y_fields.map(e => _.keys(this.store.intersection[e.column]));
+
         let generate_ticks = domain => {
                 if (domain.length == 0) return [];
                 let ticks = [];

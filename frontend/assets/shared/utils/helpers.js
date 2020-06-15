@@ -161,6 +161,9 @@ const helpers = {
         }
         return `hash-${hash}`;
     },
+    setIntersection(set1, set2) {
+        return new Set([...set1].filter(x => set2.has(x)));
+    },
     setDifference(arr, removeSet) {
         // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set
         let _difference = new Set(arr);

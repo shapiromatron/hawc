@@ -19,6 +19,8 @@ class ExploreHeatmap extends BaseVisual {
             cell_height: settings.cell_height,
             cell_width: settings.cell_width,
             color_range: settings.color_range,
+            compress_x: true,
+            compress_y: true,
             filter_widgets: settings.filter_widgets,
             padding: settings.padding,
             show_axis_border: true,

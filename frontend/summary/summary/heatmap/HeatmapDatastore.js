@@ -10,6 +10,7 @@ import DataPivotExtension from "summary/dataPivot/DataPivotExtension";
 
 class HeatmapDatastore {
     scales = null;
+    totals = null;
     intersection = null;
     matrixDatasetCache = {};
     dpe = null;
@@ -31,6 +32,7 @@ class HeatmapDatastore {
         this.intersection = this.setIntersection();
         this.filterWidgetState = this.setFilterWidgetState();
         this.scales = this.setScales();
+        this.totals = this.setTotals();
         this.setColorScale();
     }
 
@@ -109,6 +111,31 @@ class HeatmapDatastore {
         return {x, y};
     }
 
+    setTotals() {
+        // set grand totals for all x and y items, indexed based
+        const setGrandTotals = (intersection, scale) => {
+                return scale
+                    .map(d => {
+                        let rows,
+                            first = true;
+                        _.each(d, (val, keys, idx) => {
+                            rows = first
+                                ? intersection[keys][val]
+                                : h.setIntersection(rows, intersection[keys][val]);
+                            first = false;
+                        });
+                        return rows;
+                    })
+                    .map(d => {
+                        return d.size;
+                    });
+            },
+            x = setGrandTotals(toJS(this.intersection), this.scales.x),
+            y = setGrandTotals(toJS(this.intersection), this.scales.y);
+
+        return {x, y};
+    }
+
     setColorScale() {
         this.maxValue = d3.max(this.matrixDataset, d => d.rows.length);
         this.colorScale = d3.scale
@@ -152,9 +179,7 @@ class HeatmapDatastore {
         let {scales, intersection} = this,
             index = -1,
             removedRows = this.rowsRemovedByFilters,
-            getIntersection = function(arr, set2) {
-                return arr.filter(x => set2.has(x));
-            },
+            getIntersection = (arr, set2) => arr.filter(x => set2.has(x)),
             getRows = filters => {
                 let rows;
                 _.each(_.keys(filters), (columnName, idx) => {
@@ -166,19 +191,23 @@ class HeatmapDatastore {
                 });
                 return h.setDifference(rows, removedRows);
             },
+            {compress_x, compress_y} = this.settings,
             xy_map = scales.x
+                .filter((d, i) => (compress_x ? this.totals.x[i] > 0 : true))
                 .map((x, i) => {
-                    return scales.y.map((y, j) => {
-                        index += 1;
-                        return {
-                            index,
-                            x_filter: x,
-                            y_filter: y,
-                            x_step: i,
-                            y_step: j,
-                            rows: getRows(Object.assign({}, x, y)),
-                        };
-                    });
+                    return scales.y
+                        .filter((d, i) => (compress_y ? this.totals.y[i] > 0 : true))
+                        .map((y, j) => {
+                            index += 1;
+                            return {
+                                index,
+                                x_filter: x,
+                                y_filter: y,
+                                x_step: i,
+                                y_step: j,
+                                rows: getRows(Object.assign({}, x, y)),
+                            };
+                        });
                 })
                 .flat();
         this.matrixDatasetCache[hash] = xy_map;
