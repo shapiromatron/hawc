@@ -13,6 +13,10 @@ class IVExperiment {
         this.initEndpoints();
     }
 
+    static get_detail_url(id) {
+        return `/in-vitro/experiment/${id}/`;
+    }
+
     static get_object(id, cb) {
         $.get(`/in-vitro/api/experiment/${id}/`, d => cb(new IVExperiment(d)));
     }

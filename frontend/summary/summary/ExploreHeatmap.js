@@ -4,6 +4,9 @@ import HAWCModal from "utils/HAWCModal";
 import ExploreHeatmapPlot from "./ExploreHeatmapPlot";
 import $ from "$";
 
+import h from "shared/utils/helpers";
+import {NULL_VALUE} from "./constants";
+
 class ExploreHeatmap extends BaseVisual {
     constructor(data, dataset) {
         super(data);
@@ -13,33 +16,43 @@ class ExploreHeatmap extends BaseVisual {
     getSettings() {
         const {settings} = this.data;
         return {
-            title: settings.title,
-            x_label: settings.x_label,
-            y_label: settings.y_label,
-            x_fields: settings.x_fields,
-            y_fields: settings.y_fields,
-            all_fields: settings.all_fields,
-            padding: settings.padding,
-            cell_width: settings.cell_width,
             cell_height: settings.cell_height,
-            x_tick_rotate: settings.x_tick_rotate,
-            y_tick_rotate: settings.y_tick_rotate,
-            blacklist_field: "study-short_citation",
+            cell_width: settings.cell_width,
             color_range: settings.color_range,
+            compress_x: settings.compress_x,
+            compress_y: settings.compress_y,
+            filter_widgets: settings.filter_widgets,
+            padding: settings.padding,
+            show_axis_border: settings.show_axis_border,
+            show_grid: settings.show_grid,
+            table_fields: settings.table_fields.filter(d => d.column !== NULL_VALUE),
+            hawc_interactivity: true, // special field; if true then data pivot extensions available
+            title: settings.title,
+            x_fields: settings.x_fields.filter(d => d.column !== NULL_VALUE),
+            x_label: settings.x_label,
+            x_tick_rotate: settings.x_tick_rotate,
+            y_fields: settings.y_fields.filter(d => d.column !== NULL_VALUE),
+            y_label: settings.y_label,
+            y_tick_rotate: settings.y_tick_rotate,
         };
     }
 
-    getDataset() {
+    getDataset(callback) {
         const url = this.data.settings.data_url;
-        if (!this.dataset) {
-            this.dataset = JSON.parse(
-                $.ajax(url, {
-                    async: false,
-                    dataType: "json",
-                }).responseText
-            );
+        if (this.dataset) {
+            callback({dataset: this.dataset});
+        } else {
+            fetch(url, h.fetchGet)
+                .then(response => response.json())
+                .then(json => {
+                    this.dataset = json;
+                    return {dataset: json};
+                })
+                .catch(error => {
+                    callback({error});
+                })
+                .then(callback);
         }
-        return this.dataset;
     }
 
     displayAsPage($el, options) {
@@ -47,20 +60,35 @@ class ExploreHeatmap extends BaseVisual {
             captionDiv = $("<div>").html(this.data.caption),
             caption = new SmartTagContainer(captionDiv),
             $plotDiv = $("<div>"),
-            data = {
-                settings: this.getSettings(),
-                dataset: this.getDataset(),
+            callback = resp => {
+                if (window.isEditable) {
+                    title.append(this.addActionsMenu());
+                }
+                if (resp.dataset) {
+                    const data = {
+                        settings: this.getSettings(),
+                        dataset: resp.dataset,
+                    };
+
+                    $el.empty().append($plotDiv);
+                    if (!options.visualOnly) {
+                        $el.prepend(title).append(captionDiv);
+                    }
+
+                    new ExploreHeatmapPlot(this, data, options).render($plotDiv);
+
+                    caption.renderAndEnable();
+                } else if (resp.error) {
+                    $el.empty()
+                        .prepend(title)
+                        .append(this.getErrorDiv());
+                } else {
+                    throw "Unknown status.";
+                }
             };
+
         options = options || {};
-
-        if (window.isEditable) title.append(this.addActionsMenu());
-
-        $el.empty().append($plotDiv);
-        if (!options.visualOnly) $el.prepend(title).append(captionDiv);
-
-        new ExploreHeatmapPlot(this, data, options).render($plotDiv);
-        caption.renderAndEnable();
-        return this;
+        this.getDataset(callback);
     }
 
     displayAsModal(options) {
@@ -71,21 +99,42 @@ class ExploreHeatmap extends BaseVisual {
             caption = new SmartTagContainer(captionDiv),
             $plotDiv = $("<div>"),
             modal = new HAWCModal(),
-            data = {
-                settings: this.getSettings(),
-                dataset: this.getDataset(),
+            callback = resp => {
+                if (resp.error) {
+                    const data = {
+                        settings: this.getSettings(),
+                        dataset: resp.dataset,
+                    };
+
+                    modal.getModal().on("shown", function() {
+                        new ExploreHeatmapPlot(self, data, options).render($plotDiv);
+                        caption.renderAndEnable();
+                    });
+
+                    modal
+                        .addHeader($("<h4>").text(this.data.title))
+                        .addBody([$plotDiv, captionDiv])
+                        .addFooter("")
+                        .show({maxWidth: 1200});
+                } else if (resp.error) {
+                    modal
+                        .addHeader($("<h4>").text(this.data.title))
+                        .addBody(this.getErrorDiv())
+                        .addFooter("")
+                        .show({maxWidth: 1200});
+                } else {
+                    throw "Unknown status.";
+                }
             };
 
-        modal.getModal().on("shown", function() {
-            new ExploreHeatmapPlot(self, data, options).render($plotDiv);
-            caption.renderAndEnable();
-        });
+        options = options || {};
+        this.getDataset(callback);
+    }
 
-        modal
-            .addHeader($("<h4>").text(this.data.title))
-            .addBody([$plotDiv, captionDiv])
-            .addFooter("")
-            .show({maxWidth: 1200});
+    getErrorDiv() {
+        return `<div class="alert alert-danger" role="alert">
+            <i class="fa fa-exclamation-circle"></i>&nbsp;An error occurred; please modify settings...
+        </div>`;
     }
 }
 

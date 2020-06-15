@@ -9,6 +9,10 @@ class IVCellType {
         this.data = data;
     }
 
+    static get_detail_url(id) {
+        return `/in-vitro/cell-type/${id}/`;
+    }
+
     static get_object(id, cb) {
         $.get(`/in-vitro/api/celltype/${id}/`, d => cb(new IVCellType(d)));
     }

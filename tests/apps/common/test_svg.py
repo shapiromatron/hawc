@@ -1,4 +1,5 @@
 import base64
+import xml.etree.ElementTree as ET
 from io import BytesIO
 from pathlib import Path
 from shutil import which
@@ -23,9 +24,22 @@ class TestSvgConverter:
     def test_svg(self, svg_data):
         conv = SVGConverter(*svg_data)
         resp = conv.to_svg()
-        # assert html is returned
-        assert '<style type="text/css">' in resp
-        assert (DATA_PATH / "svg-converter.svg").read_text() == resp
+
+        # svg can be parsed
+        tree = ET.fromstring(resp)
+
+        # we have defs added
+        defs = tree.find(".{http://www.w3.org/2000/svg}defs")
+        assert defs is not None
+
+        # we have styles added and the text is non-empty
+        styles = tree.find(".{http://www.w3.org/2000/svg}defs/{http://www.w3.org/2000/svg}style")
+        assert styles.attrib["type"] == "text/css"
+        assert styles is not None and len(styles.text) > 0
+
+        # and we still have our rect
+        rect = tree.find(".{http://www.w3.org/2000/svg}rect")
+        assert rect is not None
 
     def test_png(self, svg_data):
         conv = SVGConverter(*svg_data)

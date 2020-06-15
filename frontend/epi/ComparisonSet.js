@@ -17,6 +17,10 @@ class ComparisonSet {
         if (this.data.exposure) this.exposure = new Exposure(this.data.exposure);
     }
 
+    static get_detail_url(id) {
+        return `/epi/comparison-set/${id}/`;
+    }
+
     static get_object(id, cb) {
         $.get(`/epi/api/comparison-set/${id}/`, d => cb(new ComparisonSet(d)));
     }

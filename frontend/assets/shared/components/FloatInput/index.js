@@ -9,13 +9,22 @@ class FloatInput extends Component {
         };
     }
 
+    renderLabel() {
+        if (!this.props.label) {
+            return null;
+        }
+        return (
+            <label htmlFor={`id_${this.props.name}`} className="control-label">
+                {this.props.label}
+                {this.props.required ? <span className="asteriskField">*</span> : null}
+            </label>
+        );
+    }
+
     render() {
         return (
             <div className="control-group">
-                <label htmlFor={`id_${this.props.name}`} className="control-label">
-                    {this.props.label}
-                    {this.props.required ? <span className="asteriskField">*</span> : null}
-                </label>
+                {this.renderLabel()}
                 <div className="controls">
                     <input
                         className="span12"
@@ -51,7 +60,7 @@ class FloatInput extends Component {
 
 FloatInput.propTypes = {
     helpText: PropTypes.string,
-    label: PropTypes.string.isRequired,
+    label: PropTypes.string,
     name: PropTypes.string.isRequired,
     onChange: PropTypes.func.isRequired,
     required: PropTypes.bool,

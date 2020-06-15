@@ -24,7 +24,7 @@ var showModal = function(name) {
     },
     fetchEndpoint = function(id) {
         return (dispatch, getState) => {
-            const url = Endpoint.get_endpoint_url(id);
+            const url = Endpoint.get_api_url(id);
             return fetch(url, h.fetchGet)
                 .then(response => response.json())
                 .then(json => dispatch(receiveEndpoint(new Endpoint(json))))

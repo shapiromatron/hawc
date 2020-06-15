@@ -1,36 +1,67 @@
 import _ from "lodash";
 import d3 from "d3";
+import {autorun} from "mobx";
 import D3Visualization from "./D3Visualization";
 import h from "shared/utils/helpers";
 import HAWCModal from "utils/HAWCModal";
+import HAWCUtils from "utils/HAWCUtils";
+
+import React from "react";
+import ReactDOM from "react-dom";
+import HeatmapDatastore from "./heatmap/HeatmapDatastore";
+import DatasetTable from "./heatmap/DatasetTable";
+import FilterWidgetContainer from "./heatmap/FilterWidgetContainer";
 
 class ExploreHeatmapPlot extends D3Visualization {
     constructor(parent, data, options) {
         super(...arguments);
-        this.generate_properties(data);
         this.modal = new HAWCModal();
+        this.store = new HeatmapDatastore(data.settings, data.dataset);
+        this.dataset = data.dataset;
+        this.settings = data.settings;
+        this.options = options || {};
+        this.generate_properties();
     }
 
     render($div) {
-        this.build_container($div);
-        this.render_plot($("#exp_heatmap_svg_container"));
-        this.build_blacklist();
-        this.build_detail_box();
-    }
+        const hasFilters = this.settings.filter_widgets.length > 0,
+            text1 = hasFilters
+                ? `<div class="span9 heatmap-viz"></div><div class="span3 heatmap-filters"></div>`
+                : `<div class="span12 heatmap-viz"></div>`;
 
-    render_plot($div) {
-        this.plot_div = $div;
-        this.set_color_scale();
+        // Create svg container
+        $div.html(`<div class="row-fluid">
+            ${text1}
+            <div class="${hasFilters ? "span9" : "span12"} heatmap-tables"></div>
+        </div>`);
+
+        const viz = $div.find(".heatmap-viz")[0],
+            tbl = $div.find(".heatmap-tables")[0],
+            filters = $div.find(".heatmap-filters")[0];
+
+        this.plot_div = $(viz);
         this.build_plot();
-        if (this.show_grid) this.add_grid();
+        this.add_grid();
         this.set_trigger_resize();
         this.add_menu();
+        ReactDOM.render(<DatasetTable store={this.store} />, tbl);
+        if (hasFilters) {
+            ReactDOM.render(<FilterWidgetContainer store={this.store} />, filters);
+        }
     }
 
     set_trigger_resize() {
         var self = this,
-            w = this.w + this.padding.left + this.padding.right,
-            h = this.h + this.padding.top + this.padding.bottom,
+            w =
+                this.w +
+                this.settings.padding.left +
+                this.x_axis_label_padding +
+                this.settings.padding.right,
+            h =
+                this.h +
+                this.settings.padding.top +
+                this.y_axis_label_padding +
+                this.settings.padding.bottom,
             chart = $(this.svg),
             container = chart.parent();
 
@@ -66,565 +97,357 @@ class ExploreHeatmapPlot extends D3Visualization {
         this.trigger_resize(false);
     }
 
-    set_color_scale() {
-        this.color_scale = d3.scale
-            .linear()
-            .domain([
-                0,
-                this.cell_map.reduce(
-                    (current_max, element) =>
-                        Math.max(
-                            current_max,
-                            this.cell_dataset(element.x_filter, element.y_filter).length
-                        ),
-                    0
-                ),
-            ])
-            .range(this.settings.color_range);
-    }
+    generate_properties() {
+        // `this.padding` required for D3Plot
+        this.padding = this.settings.padding;
 
-    select_dataset() {
-        if (this.selected_cells.length == 0) return this.filtered_dataset;
-        return _.filter(this.filtered_dataset, e => {
-            for (let cell of this.selected_cells) {
-                if (_.isMatch(e, cell.x_filter) && _.isMatch(e, cell.y_filter)) return true;
-            }
-            return false;
-        });
-    }
+        const {compress_x, compress_y} = this.settings,
+            {scales, totals} = this.store;
+        this.x_steps = scales.x.filter((d, i) => (compress_x ? totals.x[i] > 0 : true)).length;
+        this.y_steps = scales.y.filter((d, i) => (compress_y ? totals.y[i] > 0 : true)).length;
 
-    generate_properties(data) {
-        this.settings = data.settings;
-        this.padding = _.assign({}, this.settings.padding);
-        this.show_grid = true;
-        this.show_axis_border = true;
-
-        // From constructor parameters
-        this.dataset = data.dataset;
-        this.filtered_dataset = this.dataset;
-        this.selected_cells = [];
-        this.blacklist = [];
-
-        this.blacklist_domain = _.chain(this.dataset)
-            .map(d => d[this.blacklist_field])
-            .uniq()
-            .sort()
-            .value();
-
-        this.x_domain = this.settings.x_fields.map(e =>
-            _.chain(this.dataset)
-                .map(d => d[e])
-                .uniq()
-                .sort()
-                .value()
-        );
-        this.y_domain = this.settings.y_fields.map(e =>
-            _.chain(this.dataset)
-                .map(d => d[e])
-                .uniq()
-                .sort()
-                .reverse()
-                .value()
-        );
-        this.x_steps = this.x_domain.reduce((total, element) => total * element.length, 1);
-        this.y_steps = this.y_domain.reduce((total, element) => total * element.length, 1);
         this.w = this.settings.cell_width * this.x_steps;
         this.h = this.settings.cell_height * this.y_steps;
-        this.cell_map = this.create_map();
+
+        // calculated padding based on labels
+        this.x_axis_label_padding = 0;
+        this.y_axis_label_padding = 0;
     }
-
-    build_container($div) {
-        // Create svg container
-        this.viz_container = d3.select($div.html("")[0]);
-        this.svg_blacklist_container = this.viz_container
-            .append("div")
-            .style("white-space", "nowrap");
-        this.svg_container = this.svg_blacklist_container
-            .append("div")
-            .style("display", "inline-block")
-            .style("width", "80%")
-            .style("vertical-align", "top")
-            .attr("id", "exp_heatmap_svg_container");
-    }
-
-    create_map = () => {
-        let _step_domain = (domain, field, depth) => {
-                if (depth == domain.length - 1) {
-                    return domain[depth].map((element, index) => {
-                        return {filter: {[field[depth]]: element}, step: index};
-                    });
-                } else {
-                    return domain[depth]
-                        .map((element, index) => {
-                            let inner = _step_domain(domain, field, depth + 1);
-                            return inner.map((inner_element, inner_index) => {
-                                inner_element["filter"][field[depth]] = element;
-                                inner_element["step"] += index * inner.length;
-                                return inner_element;
-                            });
-                        })
-                        .flat();
-                }
-            },
-            x_map =
-                this.x_domain.length == 0
-                    ? []
-                    : _step_domain(this.x_domain, this.settings.x_fields, 0),
-            y_map =
-                this.y_domain.length == 0
-                    ? []
-                    : _step_domain(this.y_domain, this.settings.y_fields, 0),
-            xy_map = x_map
-                .map(x_element => {
-                    return y_map.map(y_element => {
-                        let new_element = {
-                            x_filter: x_element.filter,
-                            y_filter: y_element.filter,
-                            x_step: x_element.step,
-                            y_step: y_element.step,
-                        };
-                        return new_element;
-                    });
-                })
-                .flat();
-
-        return xy_map;
-    };
-
-    build_blacklist() {
-        // Create blacklist container
-        this.blacklist_container = this.svg_blacklist_container
-            .insert("div", ":first-child")
-            .attr("class", "exp_heatmap_container")
-            .style("width", "20%")
-            .style(
-                "height",
-                `${$(this.svg)
-                    .parent()
-                    .height()}px`
-            )
-            .style("vertical-align", "top")
-            .style("display", "inline-block")
-            .style("overflow", "auto");
-
-        // Have resize trigger also resize blacklist container
-        let old_trigger = this.trigger_resize;
-        this.trigger_resize = forceResize => {
-            old_trigger(forceResize);
-            this.blacklist_container.style(
-                "height",
-                `${$(this.svg)
-                    .parent()
-                    .height()}px`
-            );
-        };
-        $(window).resize(this.trigger_resize);
-
-        let self = this,
-            blacklist_select = this.blacklist_container.append("div").attr("class", "btn-group"),
-            blacklist_input = this.blacklist_container.append("div"),
-            blacklist_enter = blacklist_input
-                .selectAll("input")
-                .data(this.blacklist_domain)
-                .enter()
-                .append("div"),
-            blacklist_label = blacklist_enter.append("label"),
-            detail_handler = d => {
-                this.modal
-                    .addHeader(`<h4>${d}</h4>`)
-                    .addFooter("")
-                    .show();
-            };
-
-        // Button to check all boxes
-        blacklist_select
-            .append("button")
-            .attr("class", "btn")
-            .text("All")
-            .on("click", () => {
-                blacklist_input.selectAll("label").each(function() {
-                    d3.select(this)
-                        .select("input")
-                        .property("checked", true);
-                });
-                blacklist_input.node().dispatchEvent(new Event("change"));
-            });
-        // Button to uncheck all boxes
-        blacklist_select
-            .append("button")
-            .attr("class", "btn")
-            .text("None")
-            .on("click", () => {
-                blacklist_input.selectAll("label").each(function() {
-                    d3.select(this)
-                        .select("input")
-                        .property("checked", false);
-                });
-                blacklist_input.node().dispatchEvent(new Event("change"));
-            });
-
-        // Before each label is a detail button
-        blacklist_enter
-            .insert("button", ":first-child")
-            .attr("class", "btn btn-mini pull-left")
-            .on("click", detail_handler)
-            .html("<i class='icon-eye-open'></i>");
-
-        // Each label has a checkbox and the value of the blacklisted item
-        blacklist_label
-            .append("input")
-            .attr("type", "checkbox")
-            .property("checked", true);
-        blacklist_label.append("span").text(d => d);
-        blacklist_input.on("change", function() {
-            self.blacklist = [];
-            d3.select(this)
-                .selectAll("label")
-                .each(function(d) {
-                    if (
-                        !d3
-                            .select(this)
-                            .select("input")
-                            .property("checked")
-                    )
-                        self.blacklist.push(d);
-                });
-            self.filter_dataset();
-            self.update_plot();
-            self.fill_detail_table(self.select_dataset());
-        });
-    }
-
-    build_detail_box() {
-        // Create detail container
-        this.detail_container = this.viz_container
-            .append("div")
-            .attr("class", "exp_heatmap_container")
-            .style("width", "100%")
-            .style(
-                "height",
-                `${Math.max(
-                    h.getHawcContentSize().height -
-                        $(this.svg)
-                            .parent()
-                            .height(),
-                    200
-                )}px`
-            )
-            .style("overflow", "auto");
-
-        // Create detail table
-        this.detail_table = this.detail_container
-            .append("table")
-            .attr("class", "table table-striped table-bordered");
-
-        // Create the table header
-        this.detail_table
-            .append("thead")
-            .append("tr")
-            .selectAll("th")
-            .data(this.settings.all_fields)
-            .enter()
-            .append("th")
-            .text(d => d);
-
-        // Fill in table body
-        this.detail_table.append("tbody");
-        this.fill_detail_table(this.select_dataset());
-    }
-
-    filter_dataset() {
-        if (this.blacklist.length > 0) {
-            this.filtered_dataset = _.filter(
-                this.dataset,
-                e => !_.includes(this.blacklist, e[this.blacklist_field])
-            );
-        } else {
-            this.filtered_dataset = this.dataset;
-        }
-    }
-
-    fill_detail_table = data => {
-        // Fills detail table
-        let rows = this.detail_table
-            .select("tbody")
-            .selectAll("tr")
-            .data(data);
-        rows.enter().append("tr");
-        rows.exit().remove();
-        let row_data = rows.selectAll("td").data(d => this.settings.all_fields.map(e => d[e]));
-        row_data.enter().append("td");
-        row_data.exit().remove();
-        row_data.text(d => d);
-    };
 
     build_axes() {
-        let generate_ticks = domain => {
-                if (domain.length == 0) return [];
-                let ticks = [];
-
-                ticks.push(domain[0]);
-                for (let i = 1; i < domain.length; i++) {
-                    let current_ticks = [];
-                    for (let j = 0; j < ticks[i - 1].length; j++) {
-                        current_ticks = current_ticks.concat(domain[i]);
-                    }
-                    ticks.push(current_ticks);
-                }
-                return ticks;
-            },
-            x_domains = generate_ticks(this.x_domain).reverse(),
-            y_domains = generate_ticks(this.y_domain).reverse(),
-            x_axis_offset = 0,
-            y_axis_offset = 0,
+        let xDomains = this.settings.x_fields.map(d => d.column),
+            yDomains = this.settings.y_fields.map(d => d.column),
+            xs = this.store.scales.x.filter((d, i) =>
+                this.store.settings.compress_x ? this.store.totals.x[i] > 0 : true
+            ),
+            ys = this.store.scales.y.filter((d, i) =>
+                this.store.settings.compress_y ? this.store.totals.y[i] > 0 : true
+            ),
+            xAxis = this.vis
+                .append("g")
+                .attr("class", ".xAxis")
+                .attr("transform", `translate(0,${this.h})`),
+            yAxis = this.vis.append("g").attr("class", ".yAxis"),
+            thisItem,
             label_padding = 6;
 
-        /// Build x axes
-        // For each axis...
-        for (let i = 0; i < x_domains.length; i++) {
-            let axis = this.vis
-                    .append("g")
-                    .attr("transform", `translate(0,${this.h + x_axis_offset})`),
-                domain = x_domains[i],
-                band = this.w / domain.length,
-                mid = band / 2,
-                max = 0;
-            // For each tick...
-            for (let j = 0; j < domain.length; j++) {
-                let label = axis.append("g");
-                label
-                    .append("text")
-                    .attr("transform", `rotate(${this.settings.x_tick_rotate})`)
-                    .text(domain[j]);
-                let box = label.node().getBBox(),
-                    label_offset = mid - box.width / 2;
-                label.attr(
-                    "transform",
-                    `translate(${label_offset - box.x},${label_padding - box.y})`
-                );
-                max = Math.max(box.height, max);
-                mid += band;
-            }
-            max += label_padding * 2;
-            this.padding.bottom += max;
-            x_axis_offset += max;
+        // build x-axis
+        let yOffset = 0,
+            {cell_width, show_axis_border} = this.store.settings;
+        _.reverse(xDomains).map(domain => {
+            let axis = xAxis.append("g").attr("transform", `translate(0,${yOffset})`),
+                lastItem = xs[0][domain],
+                itemStartIndex = 0,
+                numItems = 0,
+                borderData = [];
 
-            // Adds a border around tick labels
-            let add_border = () => {
-                let borders = axis.append("g");
-                for (let j = 0; j < domain.length; j++) {
-                    borders
-                        .append("polyline")
-                        .attr(
-                            "points",
-                            `${band * j},${max} ${band * j},0 ${band * (j + 1)},0 ${band *
-                                (j + 1)},${max}`
-                        )
-                        .attr("fill", "none")
-                        .attr("stroke", "black");
+            for (let i = 0; i <= xs.length; i++) {
+                thisItem = i < xs.length ? xs[i][domain] : null;
+                if (thisItem !== lastItem) {
+                    let label = axis.append("g");
+
+                    label
+                        .append("text")
+                        .attr("transform", `rotate(${this.settings.x_tick_rotate})`)
+                        .text(lastItem);
+
+                    let box = label.node().getBBox(),
+                        label_offset =
+                            itemStartIndex * cell_width +
+                            (numItems * cell_width) / 2 -
+                            box.width / 2;
+
+                    label.attr(
+                        "transform",
+                        `translate(${label_offset - box.x},${label_padding - box.y})`
+                    );
+
+                    borderData.push({
+                        x1: itemStartIndex * cell_width,
+                        width: numItems * cell_width,
+                    });
+
+                    itemStartIndex = i;
+                    numItems = 0;
                 }
-            };
-            if (this.show_axis_border) add_border();
-        }
-
-        /// Build y axes
-        // For each axis...
-        for (let i = 0; i < y_domains.length; i++) {
-            let axis = this.vis.append("g").attr("transform", `translate(${-y_axis_offset},0)`),
-                domain = y_domains[i],
-                band = this.h / domain.length,
-                mid = band / 2,
-                max = 0;
-            // For each tick...
-            for (let j = 0; j < domain.length; j++) {
-                let label = axis.append("g");
-                label
-                    .append("text")
-                    .attr("transform", `rotate(${this.settings.y_tick_rotate})`)
-                    .text(domain[j]);
-                let box = label.node().getBBox(),
-                    label_offset = mid - box.height / 2;
-                label.attr(
-                    "transform",
-                    `translate(${-box.width - box.x - label_padding},${label_offset - box.y})`
-                );
-                max = Math.max(box.width, max);
-                mid += band;
+                numItems += 1;
+                lastItem = thisItem;
             }
-            max += label_padding * 2;
-            this.padding.left += max;
-            y_axis_offset += max;
 
-            // Adds a border around tick labels
-            let add_border = () => {
-                let borders = axis.append("g");
-                for (let j = 0; j < domain.length; j++) {
-                    borders
-                        .append("polyline")
-                        .attr(
-                            "points",
-                            `${-max},${band * j} 0,${band * j} 0,${band * (j + 1)} ${-max},${band *
-                                (j + 1)}`
-                        )
-                        .attr("fill", "none")
-                        .attr("stroke", "black");
+            let box = axis.node().getBBox();
+
+            let newYOffset = yOffset + box.height + label_padding * 2;
+            if (show_axis_border) {
+                xAxis
+                    .selectAll(".none")
+                    .data(borderData)
+                    .enter()
+                    .append("polyline")
+                    .attr(
+                        "points",
+                        d =>
+                            `${d.x1},${newYOffset} ${d.x1},${yOffset} ${d.x1 +
+                                d.width},${yOffset} ${d.x1 + d.width},${newYOffset}`
+                    )
+                    .attr("fill", "none")
+                    .attr("stroke", "black");
+            }
+            yOffset = newYOffset;
+        });
+
+        // build y-axis
+        let xOffset = 0,
+            {cell_height} = this.store.settings;
+        _.reverse(yDomains).map(domain => {
+            let axis = yAxis.append("g").attr("transform", `translate(${-xOffset},0)`),
+                lastItem = ys[0][domain],
+                itemStartIndex = 0,
+                numItems = 0,
+                borderData = [];
+            for (let i = 0; i <= ys.length; i++) {
+                thisItem = i < ys.length ? ys[i][domain] : null;
+                if (thisItem !== lastItem) {
+                    let label = axis.append("g");
+                    label
+                        .append("text")
+                        .attr("transform", `rotate(${this.settings.y_tick_rotate})`)
+                        .text(lastItem);
+                    let box = label.node().getBBox(),
+                        label_offset =
+                            itemStartIndex * cell_height +
+                            (numItems * cell_height) / 2 -
+                            box.height / 2;
+                    label.attr(
+                        "transform",
+                        `translate(${-box.width - box.x - label_padding},${label_offset - box.y})`
+                    );
+
+                    borderData.push({
+                        y1: itemStartIndex * cell_height,
+                        height: numItems * cell_height,
+                    });
+
+                    itemStartIndex = i;
+                    numItems = 0;
                 }
-            };
-            if (this.show_axis_border) add_border();
-        }
+                numItems += 1;
+                lastItem = thisItem;
+            }
+
+            let box = axis.node().getBBox(),
+                newXOffset = xOffset + box.width + label_padding * 2;
+            if (show_axis_border) {
+                yAxis
+                    .selectAll(".none")
+                    .data(borderData)
+                    .enter()
+                    .append("polyline")
+                    .attr(
+                        "points",
+                        d =>
+                            `${-newXOffset},${d.y1} ${-xOffset},${d.y1} ${-xOffset},${d.y1 +
+                                d.height} ${-newXOffset},${d.y1 + d.height}`
+                    )
+                    .attr("fill", "none")
+                    .attr("stroke", "black");
+            }
+            xOffset = newXOffset;
+        });
+
+        this.x_axis_label_padding = yAxis.node().getBoundingClientRect().width;
+        this.y_axis_label_padding = xAxis.node().getBoundingClientRect().height;
     }
 
     add_grid() {
+        if (!this.settings.show_grid) {
+            return;
+        }
         // Draws lines on plot
         let grid = this.vis.append("g"),
             x_band = this.w / this.x_steps,
             y_band = this.h / this.y_steps;
-        for (let i = 0; i <= this.x_steps; i++) {
-            grid.append("line")
-                .attr("x1", x_band * i)
-                .attr("y1", 0)
-                .attr("x2", x_band * i)
-                .attr("y2", this.h)
-                .style("stroke", "black");
-        }
-        for (let i = 0; i <= this.y_steps; i++) {
-            grid.append("line")
-                .attr("x1", 0)
-                .attr("y1", y_band * i)
-                .attr("x2", this.w)
-                .attr("y2", y_band * i)
-                .style("stroke", "black");
-        }
+
+        grid.selectAll("g.none")
+            .data(_.range(this.x_steps + 1))
+            .enter()
+            .append("line")
+            .attr("x1", i => x_band * i)
+            .attr("y1", 0)
+            .attr("x2", i => x_band * i)
+            .attr("y2", this.h)
+            .style("stroke", "black");
+
+        grid.selectAll("g.none")
+            .data(_.range(this.y_steps + 1))
+            .enter()
+            .append("line")
+            .attr("x1", 0)
+            .attr("y1", i => y_band * i)
+            .attr("x2", this.w)
+            .attr("y2", i => y_band * i)
+            .style("stroke", "black");
     }
 
     build_labels() {
+        let label_margin = 20,
+            isDev = this.options.dev;
+
         // Plot title
         if (this.settings.title.text.length > 0) {
-            d3.select(this.svg)
-                .append("text")
-                .attr("id", "exp_heatmap_title")
-                .attr("class", "exp_heatmap_label")
-                .attr(
-                    "transform",
-                    `translate(${this.settings.title.x},${this.settings.title.y}) rotate(${this.settings.title.rotate})`
-                )
-                .text(this.settings.title.text);
+            let titleSettings = this.settings.title,
+                x =
+                    titleSettings.x === 0
+                        ? this.padding.left + this.x_axis_label_padding + this.w / 2
+                        : titleSettings.x,
+                y = titleSettings.y === 0 ? label_margin : titleSettings.y,
+                title = d3
+                    .select(this.svg)
+                    .append("text")
+                    .attr("class", "exp_heatmap_title exp_heatmap_label")
+                    .attr("transform", `translate(${x},${y}) rotate(${titleSettings.rotate})`)
+                    .text(titleSettings.text);
+
+            if (isDev) {
+                title.attr("cursor", "pointer").call(
+                    HAWCUtils.updateDragLocationTransform((x, y) => {
+                        this.settings.title.x = parseInt(x);
+                        this.settings.title.y = parseInt(y);
+                    })
+                );
+            }
         }
 
         // X axis
         if (this.settings.x_label.text.length > 0) {
-            d3.select(this.svg)
-                .append("text")
-                .attr("class", "exp_heatmap_label")
-                .attr(
-                    "transform",
-                    `translate(${this.settings.x_label.x},${this.settings.x_label.y}) rotate(${this.settings.x_label.rotate})`
-                )
-                .text(this.settings.x_label.text);
+            let xLabelSettings = this.settings.x_label,
+                x =
+                    xLabelSettings.x === 0
+                        ? this.padding.left + this.x_axis_label_padding + this.w / 2
+                        : xLabelSettings.x,
+                y =
+                    xLabelSettings.y === 0
+                        ? this.padding.top + this.h + this.y_axis_label_padding + label_margin
+                        : xLabelSettings.y,
+                xLabel = d3
+                    .select(this.svg)
+                    .append("text")
+                    .attr("class", "exp_heatmap_label")
+                    .attr("transform", `translate(${x},${y}) rotate(${xLabelSettings.rotate})`)
+                    .text(xLabelSettings.text);
+
+            if (isDev) {
+                xLabel.attr("cursor", "pointer").call(
+                    HAWCUtils.updateDragLocationTransform((x, y) => {
+                        this.settings.x_label.x = parseInt(x);
+                        this.settings.x_label.y = parseInt(y);
+                    })
+                );
+            }
         }
+
         // Y axis
         if (this.settings.y_label.text.length > 0) {
-            d3.select(this.svg)
-                .append("text")
-                .attr("class", "exp_heatmap_label")
-                .attr(
-                    "transform",
-                    `translate(${this.settings.y_label.x},${this.settings.y_label.y}) rotate(${this.settings.y_label.rotate})`
-                )
-                .text(this.settings.y_label.text);
+            let yLabelSettings = this.settings.y_label,
+                x =
+                    yLabelSettings.x === 0
+                        ? this.settings.padding.left - label_margin / 2
+                        : yLabelSettings.x,
+                y =
+                    yLabelSettings.y === 0
+                        ? this.settings.padding.top + this.h / 2
+                        : yLabelSettings.y,
+                yLabel = d3
+                    .select(this.svg)
+                    .append("text")
+                    .attr("class", "exp_heatmap_label")
+                    .attr("transform", `translate(${x},${y}) rotate(${yLabelSettings.rotate})`)
+                    .text(yLabelSettings.text);
+
+            if (isDev) {
+                yLabel.attr("cursor", "pointer").call(
+                    HAWCUtils.updateDragLocationTransform((x, y) => {
+                        this.settings.y_label.x = parseInt(x);
+                        this.settings.y_label.y = parseInt(y);
+                    })
+                );
+            }
         }
     }
 
-    set_cell_behavior() {
-        // Cell group click fills out details table
-        let self = this;
-        this.cells_enter
+    update_plot = data => {
+        const self = this,
+            cells_data = this.cells.selectAll("g").data(data),
+            {tableDataFilters, maxValue, colorScale} = this.store;
+
+        // add cell group and interactivity
+        this.cells_enter = cells_data
+            .enter()
+            .append("g")
+            .attr("class", "exp_heatmap_cell")
             .on("click", function(d) {
                 d3.selectAll(".exp_heatmap_cell_block")
                     .style("stroke", "none")
                     .style("stroke-width", 2);
-                d3.select(this)
-                    .select("rect")
-                    .style("stroke", "black")
-                    .style("stroke-width", 2);
-                self.selected_cells = [d];
-                self.fill_detail_table(self.select_dataset());
+
+                if (d.rows.length > 0) {
+                    d3.select(this)
+                        .select("rect")
+                        .style("stroke", "black")
+                        .style("stroke-width", 2);
+
+                    self.store.updateTableDataFilters(d);
+                } else {
+                    self.store.updateTableDataFilters(null);
+                }
             })
             .on("mouseover", null);
-    }
 
-    update_cell_rect() {
-        // Cell rect fill based on number of records
-        this.cells_data.select("rect").style("fill", d => {
-            return this.color_scale(this.cell_dataset(d.x_filter, d.y_filter).length);
-        });
-    }
-
-    update_cell_text() {
-        // Cell text shows number of records
-        this.cells_data
-            .select("text")
-            .style("display", d =>
-                this.cell_dataset(d.x_filter, d.y_filter).length == 0 ? "none" : null
-            )
-            .text(d => this.cell_dataset(d.x_filter, d.y_filter).length);
-    }
-
-    cell_dataset(x_filter, y_filter) {
-        return _.filter(
-            this.filtered_dataset,
-            e => _.isMatch(e, x_filter) && _.isMatch(e, y_filter)
-        );
-    }
-
-    update_plot = () => {
-        /// Cell group behavior
-        // On enter
-        this.cells_data = this.cells.selectAll("g").data(this.cell_map);
-        this.cells_enter = this.cells_data
-            .enter()
-            .append("g")
-            .attr("class", "exp_heatmap_cell");
-        this.set_cell_behavior();
-
-        /// Cell rect behavior
-        // On enter
+        // add cell fill
         this.cells_enter
             .append("rect")
             .attr("class", "exp_heatmap_cell_block")
-            .attr("x", d => {
-                return this.x_scale(d.x_step);
-            })
-            .attr("y", d => {
-                return this.y_scale(d.y_step);
-            })
+            .attr("x", d => this.x_scale(d.x_step))
+            .attr("y", d => this.y_scale(d.y_step))
             .attr("width", this.x_scale.rangeBand())
             .attr("height", this.y_scale.rangeBand());
-        // On update
-        this.update_cell_rect();
 
-        /// Cell text behavior
-        // On enter
+        /// add cell text
         this.cells_enter
             .append("text")
             .attr("class", "exp_heatmap_cell_text")
-            .attr("x", d => {
-                return this.x_scale(d.x_step) + this.x_scale.rangeBand() / 2;
-            })
-            .attr("y", d => {
-                return this.y_scale(d.y_step) + this.y_scale.rangeBand() / 2;
-            });
-        this.cells_data.select("text").style("fill", d => {
-            let {r, g, b} = d3.rgb(
-                this.color_scale(this.cell_dataset(d.x_filter, d.y_filter).length)
-            );
-            ({r, g, b} = h.getTextContrastColor(r, g, b));
-            return d3.rgb(r, g, b);
-        });
-        // On update
-        this.update_cell_text();
+            .attr("x", d => this.x_scale(d.x_step) + this.x_scale.rangeBand() / 2)
+            .attr("y", d => this.y_scale(d.y_step) + this.y_scale.rangeBand() / 2);
 
-        this.cells_data.exit().remove();
+        // enter/update
+        cells_data
+            .select(".exp_heatmap_cell_block")
+            .transition()
+            .style("fill", d => {
+                const value =
+                    tableDataFilters == null
+                        ? d.rows.length
+                        : tableDataFilters.index === d.index
+                        ? maxValue
+                        : d.rows.length / 3;
+                return colorScale(value);
+            });
+
+        cells_data
+            .select(".exp_heatmap_cell_text")
+            .transition()
+            .style("fill", d => {
+                const value =
+                    tableDataFilters == null
+                        ? d.rows.length
+                        : tableDataFilters.index === d.index
+                        ? maxValue
+                        : d.rows.length / 3;
+                return h.getTextContrastColor(colorScale(value));
+            })
+            .style("display", d => (d.rows.length == 0 ? "none" : null))
+            .text(d => d.rows.length);
+
+        cells_data.exit().remove();
     };
 
     build_plot() {
@@ -649,8 +472,9 @@ class ExploreHeatmapPlot extends D3Visualization {
             .rangeBands([0, this.h]);
 
         // Draw cells
-        this.cells = this.vis.append("g").attr("id", "exp_heatmap_cells");
-        this.update_plot();
+        this.cells = this.vis.append("g");
+
+        autorun(() => this.update_plot(this.store.matrixDataset));
 
         // Draw axes
         this.build_axes();
@@ -658,16 +482,30 @@ class ExploreHeatmapPlot extends D3Visualization {
         // Draw labels
         this.build_labels();
 
-        // Set plot dimensions and viewbox
-        let w = this.w + this.padding.left + this.padding.right,
-            h = this.h + this.padding.top + this.padding.bottom;
+        // Set plot dimensions and viewBox
+        let w =
+                this.settings.padding.left +
+                this.x_axis_label_padding +
+                this.w +
+                this.settings.padding.right,
+            h =
+                this.settings.padding.top +
+                this.h +
+                this.y_axis_label_padding +
+                this.settings.padding.bottom;
+
         d3.select(this.svg)
             .attr("width", w)
             .attr("height", h)
             .attr("viewBox", `0 0 ${w} ${h}`);
 
         // Position plot
-        this.vis.attr("transform", `translate(${this.padding.left},${this.padding.top})`);
+        this.vis.attr(
+            "transform",
+            `translate(${this.settings.padding.left + this.x_axis_label_padding},${
+                this.settings.padding.top
+            })`
+        );
     }
 }
 
