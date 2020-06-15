@@ -1,7 +1,7 @@
 from django.db.models import Q
 from rest_framework import viewsets
 from rest_framework.decorators import action
-from rest_framework.exceptions import NotAcceptable
+from rest_framework.exceptions import NotAcceptable, PermissionDenied
 from rest_framework.response import Response
 
 from ..assessment.api import (
@@ -66,10 +66,19 @@ class AnimalAssessmentViewset(
 
     @action(detail=True, url_path="endpoint-heatmap", renderer_classes=PandasRenderers)
     def endpoint_heatmap(self, request, pk):
+        """
+        Return heatmap data for assessment.
+
+        By default only shows data from published studies. If the query param `unpublished=true`
+        is present then results from all studies are shown.
+        """
         # TODO HEATMAP - add tests
         self.set_legacy_attr(pk)
-        df = models.Endpoint.heatmap_df(self.assessment)
         self.permission_check_user_can_view()
+        unpublished = request.query_params.get("unpublished", "false").lower() == "true"
+        if unpublished and not self.assessment.user_is_part_of_team(self.request.user):
+            raise PermissionDenied("You must be part of the team to view unpublished data")
+        df = models.Endpoint.heatmap_df(self.assessment, published_only=not unpublished)
         export = FlatExport(df=df, filename=f"heatmap-{self.assessment.id}")
         return Response(export)
 

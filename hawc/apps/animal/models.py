@@ -917,8 +917,11 @@ class Endpoint(BaseEndpoint):
         SerializerHelper.delete_caches(cls, ids)
 
     @classmethod
-    def heatmap_df(cls, assessment: Assessment) -> pd.DataFrame:
+    def heatmap_df(cls, assessment: Assessment, published_only: bool) -> pd.DataFrame:
         # TODO HEATMAP - tests / get verbose name for route, sex, etc.
+        filters = {"assessment": assessment}
+        if published_only:
+            filters["animal_group__experiment__study__published"] = True
         columns = {
             "id": "endpoint id",
             "name": "endpoint name",
@@ -945,7 +948,7 @@ class Endpoint(BaseEndpoint):
                 "animal_group__experiment",
                 "animal_group__experiment__study",
             )
-            .filter(assessment=assessment)
+            .filter(**filters)
             .values_list(*columns.keys())
         )
         return pd.DataFrame(data=list(qs), columns=columns.values())
