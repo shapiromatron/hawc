@@ -33,6 +33,7 @@ class EpiAssessmentViewset(
         Retrieve epidemiology data for assessment.
         """
         self.set_legacy_attr(pk)
+        self.permission_check_user_can_view()
         exporter = exports.OutcomeComplete(self.get_queryset(), filename=f"{self.assessment}-epi")
         return Response(exporter.build_export())
 
@@ -41,6 +42,7 @@ class EpiAssessmentViewset(
         # TODO HEATMAP - tests
         self.set_legacy_attr(pk)
         df = models.Result.heatmap_df(self.assessment)
+        self.permission_check_user_can_view()
         export = FlatExport(df=df, filename=f"heatmap-{self.assessment.id}")
         return Response(export)
 

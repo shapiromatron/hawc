@@ -34,6 +34,7 @@ class IVAssessmentViewset(
     @action(detail=True, methods=("get",), url_path="full-export", renderer_classes=PandasRenderers)
     def full_export(self, request, pk):
         self.set_legacy_attr(pk)
+        self.permission_check_user_can_view()
         self.object_list = self.get_queryset()
         exporter = exports.DataPivotEndpoint(
             self.object_list, filename=f"{self.assessment}-invitro"

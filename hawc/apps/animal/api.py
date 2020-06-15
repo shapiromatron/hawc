@@ -40,6 +40,7 @@ class AnimalAssessmentViewset(
         Retrieve complete animal data
         """
         self.set_legacy_attr(pk)
+        self.permission_check_user_can_view()
         exporter = exports.EndpointGroupFlatComplete(
             self.get_queryset(),
             filename=f"{self.assessment}-bioassay-complete",
@@ -55,6 +56,7 @@ class AnimalAssessmentViewset(
         Retrieve endpoint animal data
         """
         self.set_legacy_attr(pk)
+        self.permission_check_user_can_view()
         exporter = exports.EndpointSummary(
             self.get_queryset(),
             filename=f"{self.assessment}-bioassay-summary",
@@ -67,6 +69,7 @@ class AnimalAssessmentViewset(
         # TODO HEATMAP - add tests
         self.set_legacy_attr(pk)
         df = models.Endpoint.heatmap_df(self.assessment)
+        self.permission_check_user_can_view()
         export = FlatExport(df=df, filename=f"heatmap-{self.assessment.id}")
         return Response(export)
 
