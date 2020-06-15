@@ -203,8 +203,8 @@ class HeatmapDatastore {
                             index += 1;
                             return {
                                 index,
-                                x_filter: x,
-                                y_filter: y,
+                                x_filters: x,
+                                y_filters: y,
                                 x_step: i,
                                 y_step: j,
                                 rows: getRows(x.concat(y)),

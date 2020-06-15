@@ -34,6 +34,7 @@ class ExploreHeatmapPlot extends D3Visualization {
         $div.html(`<div class="row-fluid">
             ${text1}
             <div class="${hasFilters ? "span9" : "span12"} heatmap-tables"></div>
+            <div style="position:absolute;" id="exp_heatmap_tooltip"></div>
         </div>`);
 
         const viz = $div.find(".heatmap-viz")[0],
@@ -177,15 +178,19 @@ class ExploreHeatmapPlot extends D3Visualization {
                 borderData = [];
 
             for (let j = 0; j <= xs.length; j++) {
-                thisItem = j < xs.length ? xs[j][i] : null;
-                if (!_.isMatch(thisItem, lastItem)) {
+                thisItem = j < xs.length ? xs[j] : null;
+                if (
+                    thisItem == null ||
+                    !_.isMatch(thisItem[i], lastItem[i]) ||
+                    (i > 0 && !_.isMatch(thisItem[i - 1], lastItem[i - 1]))
+                ) {
                     let label = axis.append("g"),
-                        key = _.keys(lastItem)[0];
+                        key = _.keys(lastItem[i])[0];
 
                     label
                         .append("text")
                         .attr("transform", `rotate(${this.settings.x_tick_rotate})`)
-                        .text(lastItem[key]);
+                        .text(lastItem[i][key]);
 
                     let box = label.node().getBBox(),
                         label_offset =
@@ -241,14 +246,18 @@ class ExploreHeatmapPlot extends D3Visualization {
                 numItems = 0,
                 borderData = [];
             for (let j = 0; j <= ys.length; j++) {
-                thisItem = j < ys.length ? ys[j][i] : null;
-                if (!_.isMatch(thisItem, lastItem)) {
+                thisItem = j < ys.length ? ys[j] : null;
+                if (
+                    thisItem == null ||
+                    !_.isMatch(thisItem[i], lastItem[i]) ||
+                    (i > 0 && !_.isMatch(thisItem[i - 1], lastItem[i - 1]))
+                ) {
                     let label = axis.append("g"),
-                        key = _.keys(lastItem)[0];
+                        key = _.keys(lastItem[i])[0];
                     label
                         .append("text")
                         .attr("transform", `rotate(${this.settings.y_tick_rotate})`)
-                        .text(lastItem[key]);
+                        .text(lastItem[i][key]);
                     let box = label.node().getBBox(),
                         label_offset =
                             itemStartIndex * cell_height +
@@ -435,8 +444,8 @@ class ExploreHeatmapPlot extends D3Visualization {
                 } else {
                     self.store.setTableDataFilters(new Set());
                 }
-            })
-            .on("mouseover", null);
+            });
+        this.bind_tooltip(this.cells_enter, "cell");
 
         // add cell fill
         this.cells_enter
