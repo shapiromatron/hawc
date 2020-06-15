@@ -18,7 +18,10 @@ class FilterWidget extends Component {
             data = this.props.store.getTableData,
             availableItems = _.chain(data)
                 .map(d => d[widget.column])
+                .map(d => (widget.delimiter ? d.split(widget.delimiter) : d))
+                .flatten()
                 .uniq()
+                .filter(d => d && d.length > 0)
                 .value(),
             itemStore = this.props.store.filterWidgetState[widget.column],
             hiddenItems = _.chain(itemStore)
