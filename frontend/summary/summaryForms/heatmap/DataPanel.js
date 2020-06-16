@@ -49,6 +49,9 @@ class DataPanel extends Component {
                     choices={datasetOptions}
                     multiple={false}
                     handleSelect={value => changeDatasetUrl(value)}
+                    helpText={`Select the dataset you'd like to use. Note that if you select a
+                    dataset that contains "unpublished HAWC data", then if this assessment is
+                    made public, users without team-level access will be unable to view the visual.`}
                     value={settings.data_url}
                 />
             </div>
