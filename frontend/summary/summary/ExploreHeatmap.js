@@ -25,6 +25,7 @@ class ExploreHeatmap extends BaseVisual {
             padding: settings.padding,
             show_axis_border: settings.show_axis_border,
             show_grid: settings.show_grid,
+            show_tooltip: settings.show_tooltip,
             table_fields: settings.table_fields.filter(d => d.column !== NULL_VALUE),
             hawc_interactivity: true, // special field; if true then data pivot extensions available
             title: settings.title,
