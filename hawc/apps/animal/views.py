@@ -4,6 +4,7 @@ from django.db.models import Q
 from django.db.models.expressions import RawSQL
 from django.forms.models import modelformset_factory
 from django.http import HttpResponseRedirect
+from django.urls import reverse
 
 from ..assessment.models import Assessment, DoseUnits
 from ..common.forms import form_error_lis_to_ul, form_error_list_to_lis
@@ -12,6 +13,7 @@ from ..common.views import (
     BaseCreateWithFormset,
     BaseDelete,
     BaseDetail,
+    BaseList,
     BaseEndpointFilterList,
     BaseUpdate,
     BaseUpdateWithFormset,
@@ -21,6 +23,38 @@ from ..mgmt.views import EnsureExtractionStartedMixin
 from ..study.models import Study
 from ..study.views import StudyRead
 from . import forms, models
+
+
+class HeatmapStudyDesign(BaseList):
+    parent_model = Assessment
+    model = models.Study
+    template_name = "animal/heatmap_study_design.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["heatmap_class"] = "bioassay-study-design"
+        context["data_url"] = reverse(
+            "animal:api:assessment-endpoint-heatmap", args=(self.assessment.id,)
+        )
+        if self.request.GET.get("unpublished", "false").lower() == "true":
+            context["data_url"] += "?unpublished=true"
+        return context
+
+
+class HeatmapEndpoint(BaseList):
+    parent_model = Assessment
+    model = models.Endpoint
+    template_name = "animal/heatmap_endpoints.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["heatmap_class"] = "bioassay-endpoints"
+        context["data_url"] = reverse(
+            "animal:api:assessment-endpoint-heatmap", args=(self.assessment.id,)
+        )
+        if self.request.GET.get("unpublished", "false").lower() == "true":
+            context["data_url"] += "?unpublished=true"
+        return context
 
 
 # Experiment Views
