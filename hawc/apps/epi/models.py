@@ -1435,8 +1435,11 @@ class Result(models.Model):
         return self.outcome.get_study()
 
     @classmethod
-    def heatmap_df(cls, assessment: Assessment) -> pd.DataFrame:
+    def heatmap_df(cls, assessment: Assessment, published_only: bool) -> pd.DataFrame:
         # TODO HEATMAP - tests / get verbose names, check for other valuable fields for info?
+        filters = {"outcome__assessment": assessment}
+        if published_only:
+            filters["outcome__study_population__study__published"] = True
         columns = {
             "id": "result id",
             "name": "result name",
@@ -1461,7 +1464,7 @@ class Result(models.Model):
                 "outcome__study_population",
                 "outcome__study_population__study",
             )
-            .filter(outcome__assessment=assessment)
+            .filter(**filters)
             .values_list(*columns.keys())
         )
         return pd.DataFrame(data=list(qs), columns=columns.values())

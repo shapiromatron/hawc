@@ -11,7 +11,6 @@ from ..assessment.api import (
     InAssessmentFilter,
 )
 from ..assessment.models import Assessment
-from ..common.api import LegacyAssessmentAdapterMixin
 from ..common.helper import re_digits
 from ..common.renderers import PandasRenderers
 from ..common.serializers import UnusedSerializer
@@ -34,7 +33,7 @@ class UnpublishedFilter(BaseFilterBackend):
         return queryset
 
 
-class SummaryAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.GenericViewSet):
+class SummaryAssessmentViewset(viewsets.GenericViewSet):
     parent_model = Assessment
     model = Assessment
     permission_classes = (AssessmentLevelPermissions,)

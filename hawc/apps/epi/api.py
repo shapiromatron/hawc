@@ -1,5 +1,6 @@
 from rest_framework import viewsets
 from rest_framework.decorators import action
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 
 from ..assessment.api import AssessmentLevelPermissions, AssessmentViewset
@@ -33,14 +34,25 @@ class EpiAssessmentViewset(
         Retrieve epidemiology data for assessment.
         """
         self.set_legacy_attr(pk)
+        self.permission_check_user_can_view()
         exporter = exports.OutcomeComplete(self.get_queryset(), filename=f"{self.assessment}-epi")
         return Response(exporter.build_export())
 
     @action(detail=True, url_path="result-heatmap", renderer_classes=PandasRenderers)
     def result_heatmap(self, request, pk):
+        """
+        Return heatmap data for assessment.
+
+        By default only shows data from published studies. If the query param `unpublished=true`
+        is present then results from all studies are shown.
+        """
         # TODO HEATMAP - tests
         self.set_legacy_attr(pk)
-        df = models.Result.heatmap_df(self.assessment)
+        self.permission_check_user_can_view()
+        unpublished = request.query_params.get("unpublished", "false").lower() == "true"
+        if unpublished and not self.assessment.user_is_part_of_team(self.request.user):
+            raise PermissionDenied("You must be part of the team to view unpublished data")
+        df = models.Result.heatmap_df(self.assessment, published_only=not unpublished)
         export = FlatExport(df=df, filename=f"heatmap-{self.assessment.id}")
         return Response(export)
 
