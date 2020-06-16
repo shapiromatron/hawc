@@ -1,6 +1,6 @@
 import _ from "lodash";
 import d3 from "d3";
-import {autorun, toJS} from "mobx";
+import {autorun} from "mobx";
 import D3Visualization from "./D3Visualization";
 import h from "shared/utils/helpers";
 import HAWCModal from "utils/HAWCModal";
