@@ -25,6 +25,20 @@ class TestAssessmentViewset:
 
         assert data == json.loads(fn.read_text())
 
+    def test_permissions(self, db_keys):
+        rev_client = APIClient()
+        assert rev_client.login(username="rev@rev.com", password="pw") is True
+        anon_client = APIClient()
+
+        urls = [
+            reverse("animal:api:assessment-full-export", args=(db_keys.assessment_working,)),
+            reverse("animal:api:assessment-endpoint-export", args=(db_keys.assessment_working,)),
+            reverse("animal:api:assessment-endpoint-heatmap", args=(db_keys.assessment_working,)),
+        ]
+        for url in urls:
+            assert anon_client.get(url).status_code == 403
+            assert rev_client.get(url).status_code == 200
+
     def test_full_export(self, rewrite_data_files: bool, db_keys):
         self._test_animal_export(rewrite_data_files, "full-export", db_keys.assessment_final)
 

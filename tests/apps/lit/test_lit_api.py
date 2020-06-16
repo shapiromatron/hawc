@@ -10,6 +10,31 @@ DATA_ROOT = Path(__file__).parents[2] / "data/api"
 
 @pytest.mark.django_db
 class TestLiteratureAssessmentViewset:
+    def test_permissions(self, db_keys):
+        rev_client = APIClient()
+        assert rev_client.login(username="rev@rev.com", password="pw") is True
+        anon_client = APIClient()
+
+        urls = [
+            reverse("lit:api:assessment-tags", args=(db_keys.assessment_working,)),
+            reverse("lit:api:assessment-reference-ids", args=(db_keys.assessment_working,)),
+            reverse("lit:api:assessment-reference-tags", args=(db_keys.assessment_working,)),
+            reverse(
+                "lit:api:assessment-reference-year-histogram", args=(db_keys.assessment_working,)
+            ),
+            reverse("lit:api:assessment-references-download", args=(db_keys.assessment_working,)),
+            reverse("lit:api:assessment-tag-heatmap", args=(db_keys.assessment_working,)),
+        ]
+        for url in urls:
+            assert anon_client.get(url).status_code == 403
+            assert rev_client.get(url).status_code == 200
+
+        # check permissions for this one; raises an error
+        url = reverse("lit:api:assessment-topic-model", args=(db_keys.assessment_working,))
+        assert anon_client.get(url).status_code == 403
+        with pytest.raises(ValueError):
+            assert rev_client.get(url).status_code == 200
+
     def test_references_download(self, rewrite_data_files: str, db_keys):
         # make sure this export is the format we expect it to be in
         fn = Path(DATA_ROOT / f"api-lit-assessment-references-export.json")

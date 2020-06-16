@@ -140,15 +140,12 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         """
         Get all references in an assessment.
         """
-
-        self.set_legacy_attr(pk)
-
-        tags = models.ReferenceFilterTag.get_all_tags(self.assessment.id, json_encode=False)
-
+        assessment = self.get_object()
+        tags = models.ReferenceFilterTag.get_all_tags(assessment.id, json_encode=False)
         exporter = exports.ReferenceFlatComplete(
-            models.Reference.objects.get_qs(self.assessment).prefetch_related("identifiers"),
-            filename=f"references-{self.assessment}",
-            assessment=self.assessment,
+            models.Reference.objects.get_qs(assessment).prefetch_related("identifiers"),
+            filename=f"references-{assessment}",
+            assessment=assessment,
             tags=tags,
         )
         return Response(exporter.build_export())
