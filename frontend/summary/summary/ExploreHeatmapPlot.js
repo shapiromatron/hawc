@@ -474,13 +474,13 @@ class ExploreHeatmapPlot extends D3Visualization {
             .select(".exp_heatmap_cell_block")
             .transition()
             .style("fill", d => {
-                const value =
-                    tableDataFilters.size == 0
-                        ? d.rows.length
-                        : typeof _.find([...tableDataFilters], e => e.index === d.index) !==
-                          "undefined"
-                        ? maxValue
-                        : d.rows.length / 3;
+                const filterIndices = [...tableDataFilters].map(e => e.index),
+                    value =
+                        tableDataFilters.size == 0
+                            ? d.rows.length
+                            : _.includes(filterIndices, d.index)
+                            ? maxValue
+                            : d.rows.length / 3;
                 return colorScale(value);
             });
 
@@ -488,13 +488,13 @@ class ExploreHeatmapPlot extends D3Visualization {
             .select(".exp_heatmap_cell_text")
             .transition()
             .style("fill", d => {
-                const value =
-                    tableDataFilters.size == 0
-                        ? d.rows.length
-                        : typeof _.find([...tableDataFilters], e => e.index === d.index) !==
-                          "undefined"
-                        ? maxValue
-                        : d.rows.length / 3;
+                const filterIndices = [...tableDataFilters].map(e => e.index),
+                    value =
+                        tableDataFilters.size == 0
+                            ? d.rows.length
+                            : _.includes(filterIndices, d.index)
+                            ? maxValue
+                            : d.rows.length / 3;
                 return h.getTextContrastColor(colorScale(value));
             })
             .style("display", d => (d.rows.length == 0 ? "none" : null))
