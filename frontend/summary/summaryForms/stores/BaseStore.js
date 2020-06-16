@@ -1,4 +1,5 @@
 import fetch from "isomorphic-fetch";
+import _ from "lodash";
 import $ from "$";
 import {observable, action, computed} from "mobx";
 
@@ -25,6 +26,7 @@ class BaseStore {
     @observable dataUrl = null;
     @observable dataRefreshRequired = false;
     @observable dataset = null;
+    @observable datasetSummary = null;
     @observable djangoFormData = {};
 
     @action setConfig = config => {
@@ -90,10 +92,17 @@ class BaseStore {
 
     @action.bound getDataset() {
         this.isFetchingData = true;
+        this.datasetSummary = null;
         fetch(this.dataUrl, h.fetchGet)
             .then(response => response.json())
             .then(json => {
+                const firstRow = json.length > 0 ? json[0] : null;
                 this.dataset = json;
+                this.datasetSummary = {
+                    numRows: this.dataset.length,
+                    numColumns: firstRow ? _.keys(firstRow).length : 0,
+                    columnNames: firstRow ? _.keys(firstRow) : [],
+                };
                 this.dataRefreshRequired = false;
                 this.root.subclass.afterGetDataset();
             })
@@ -110,7 +119,6 @@ class BaseStore {
     @action setDataRefreshRequired() {
         this.dataRefreshRequired = true;
     }
-
     @computed get hasDataset() {
         return this.dataset !== null;
     }
