@@ -6,6 +6,7 @@ class Tooltip extends Component {
     render() {
         const style = {
             position: "absolute",
+            backgroundColor: "white",
         };
 
         let tooltip = null;
@@ -13,54 +14,66 @@ class Tooltip extends Component {
         if (this.props.type == "cell") tooltip = this.renderCellTooltip();
         if (this.props.type == "axis") tooltip = this.renderAxisTooltip();
 
-        return <div style={style}>{tooltip}</div>;
+        return (
+            <table className="table table-condensed table-bordered" style={style}>
+                <tbody>{tooltip}</tbody>
+            </table>
+        );
     }
 
     renderCellTooltip() {
         const {x_filters, y_filters} = this.props.data,
             count = this.props.data.rows.length;
-        let html = [];
-        html.push(
+        let rows = [];
+        rows.push(
             ...x_filters.map((e, i) => {
                 let key = _.keys(e)[0];
                 return (
-                    <p key={`x_filter_${i}`}>
-                        {key}: {e[key]}
-                    </p>
+                    <tr key={`x_filter_${i}`}>
+                        <td>{key}</td>
+                        <td>{e[key]}</td>
+                    </tr>
                 );
             })
         );
-        html.push(
+        rows.push(
             ...y_filters.map((e, i) => {
                 let key = _.keys(e)[0];
                 return (
-                    <p key={`y_filter_${i}`}>
-                        {key}: {e[key]}
-                    </p>
+                    <tr key={`y_filter_${i}`}>
+                        <td>{key}</td>
+                        <td>{e[key]}</td>
+                    </tr>
                 );
             })
         );
 
-        html.push(<p key="count">Count: {count}</p>);
+        rows.push(
+            <tr key="count">
+                <td>Count</td>
+                <td>{count}</td>
+            </tr>
+        );
 
-        return html;
+        return rows;
     }
     renderAxisTooltip() {
         const {filters} = this.props.data;
-        let html = [];
+        let rows = [];
 
-        html.push(
+        rows.push(
             ...filters.map((e, i) => {
                 let key = _.keys(e)[0];
                 return (
-                    <p key={`filter_${i}`}>
-                        {key}: {e[key]}
-                    </p>
+                    <tr key={`filter_${i}`}>
+                        <td>{key}</td>
+                        <td>{e[key]}</td>
+                    </tr>
                 );
             })
         );
 
-        return html;
+        return rows;
     }
 }
 Tooltip.propTypes = {
