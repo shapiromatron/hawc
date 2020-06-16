@@ -4,6 +4,7 @@ from pathlib import Path
 import pytest
 from django.test.client import Client
 from django.urls import reverse
+from rest_framework.test import APIClient
 
 from hawc.apps.summary import models
 
@@ -183,3 +184,43 @@ class TestDataPivot:
         self._test_dp_data(
             rewrite_data_files, "data-pivot-invitro-endpoint-group", "invitro-endpoint-group"
         )
+
+
+@pytest.mark.django_db
+class TestSummaryAssessmentViewset:
+    def test_heatmap_datasets(self, db_keys):
+        rev_client = APIClient()
+        assert rev_client.login(username="rev@rev.com", password="pw") is True
+        anon_client = APIClient()
+
+        urls = [
+            reverse("summary:api:assessment-heatmap-datasets", args=(db_keys.assessment_working,)),
+        ]
+        for url in urls:
+            assert anon_client.get(url).status_code == 403
+            resp = rev_client.get(url)
+            assert resp.status_code == 200
+            assert resp.json() == {
+                "datasets": [
+                    {
+                        "type": "Literature",
+                        "name": "Literature summary",
+                        "url": "/lit/api/assessment/1/tag-heatmap/",
+                    },
+                    {
+                        "type": "Bioassay",
+                        "name": "Bioassay summary",
+                        "url": "/ani/api/assessment/1/endpoint-heatmap/",
+                    },
+                    {
+                        "type": "Epi",
+                        "name": "Epi summary",
+                        "url": "/epi/api/assessment/1/result-heatmap/",
+                    },
+                    {
+                        "type": "Dataset",
+                        "name": "iris flowers",
+                        "url": "/assessment/api/dataset/1/data/",
+                    },
+                ]
+            }

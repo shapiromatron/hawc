@@ -83,23 +83,6 @@ class VerboseStudySerializer(StudySerializer):
         fields = "__all__"
 
 
-class FinalRobStudySerializer(StudySerializer):
-    assessment = serializers.PrimaryKeyRelatedField(read_only=True)
-    riskofbiases = RiskOfBiasSerializer(many=True, read_only=True)
-
-    class Meta:
-        model = models.Study
-        exclude = (
-            "searches",
-            "identifiers",
-        )
-
-    def to_representation(self, instance):
-        instance.riskofbiases = instance.riskofbiases.filter(final=True)
-        ret = super().to_representation(instance)
-        return ret
-
-
 class StudyCleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     class Meta:
         model = models.Study
