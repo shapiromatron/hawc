@@ -183,13 +183,12 @@ class ExploreHeatmapPlot extends D3Visualization {
                     !_.isMatch(thisItem[i], lastItem[i]) ||
                     (i > 0 && !_.isMatch(thisItem[i - 1], lastItem[i - 1]))
                 ) {
-                    let label = axis.append("g"),
-                        key = _.keys(lastItem[i])[0];
+                    let label = axis.append("g");
 
                     label
                         .append("text")
                         .attr("transform", `rotate(${this.settings.x_tick_rotate})`)
-                        .text(lastItem[i][key]);
+                        .text(lastItem[i].value);
 
                     let box = label.node().getBBox(),
                         label_offset =
@@ -255,12 +254,11 @@ class ExploreHeatmapPlot extends D3Visualization {
                     !_.isMatch(thisItem[i], lastItem[i]) ||
                     (i > 0 && !_.isMatch(thisItem[i - 1], lastItem[i - 1]))
                 ) {
-                    let label = axis.append("g"),
-                        key = _.keys(lastItem[i])[0];
+                    let label = axis.append("g");
                     label
                         .append("text")
                         .attr("transform", `rotate(${this.settings.y_tick_rotate})`)
-                        .text(lastItem[i][key]);
+                        .text(lastItem[i].value);
                     let box = label.node().getBBox(),
                         label_offset =
                             itemStartIndex * cell_height +

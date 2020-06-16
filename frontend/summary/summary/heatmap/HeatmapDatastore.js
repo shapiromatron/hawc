@@ -92,12 +92,12 @@ class HeatmapDatastore {
 
             if (columns.length <= 1) {
                 return permutations.map(item => {
-                    return [{[columns[0]]: item}];
+                    return [{column: [columns[0]], value: item}];
                 });
             } else {
                 return permutations.map(permutation => {
                     return _.zipWith(columns, permutation, (c, p) => {
-                        return {[c]: p};
+                        return {column: c, value: p};
                     });
                 });
             }
@@ -117,10 +117,9 @@ class HeatmapDatastore {
                         let rows,
                             first = true;
                         _.each(d, e => {
-                            let key = _.keys(e)[0];
                             rows = first
-                                ? intersection[key][e[key]]
-                                : h.setIntersection(rows, intersection[key][e[key]]);
+                                ? intersection[e.column][e.value]
+                                : h.setIntersection(rows, intersection[e.column][e.value]);
                             first = false;
                         });
                         return rows;
@@ -184,11 +183,10 @@ class HeatmapDatastore {
             getRows = filters => {
                 let rows;
                 _.each(filters, (filter, idx) => {
-                    let columnName = _.keys(filter)[0];
                     if (idx == 0) {
-                        rows = [...intersection[columnName][filter[columnName]]];
+                        rows = [...intersection[filter.column][filter.value]];
                     } else {
-                        rows = getIntersection(rows, intersection[columnName][filter[columnName]]);
+                        rows = getIntersection(rows, intersection[filter.column][filter.value]);
                     }
                 });
                 return h.setDifference(rows, removedRows);

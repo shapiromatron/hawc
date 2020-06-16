@@ -27,22 +27,20 @@ class Tooltip extends Component {
         let rows = [];
         rows.push(
             ...x_filters.map((e, i) => {
-                let key = _.keys(e)[0];
                 return (
                     <tr key={`x_filter_${i}`}>
-                        <td>{key}</td>
-                        <td>{e[key]}</td>
+                        <td>{e.column}</td>
+                        <td>{e.value}</td>
                     </tr>
                 );
             })
         );
         rows.push(
             ...y_filters.map((e, i) => {
-                let key = _.keys(e)[0];
                 return (
                     <tr key={`y_filter_${i}`}>
-                        <td>{key}</td>
-                        <td>{e[key]}</td>
+                        <td>{e.column}</td>
+                        <td>{e.value}</td>
                     </tr>
                 );
             })
@@ -63,11 +61,10 @@ class Tooltip extends Component {
 
         rows.push(
             ...filters.map((e, i) => {
-                let key = _.keys(e)[0];
                 return (
                     <tr key={`filter_${i}`}>
-                        <td>{key}</td>
-                        <td>{e[key]}</td>
+                        <td>{e.column}</td>
+                        <td>{e.value}</td>
                     </tr>
                 );
             })
