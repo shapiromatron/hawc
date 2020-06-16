@@ -89,8 +89,9 @@ class HeatmapDatastore {
             const columns = fields.map(field => field.column),
                 items = columns.map(column => _.keys(intersection[column])),
                 permutations = h.cartesian(items);
-
-            if (columns.length <= 1) {
+            if (columns.length == 0) {
+                return [];
+            } else if (columns.length == 1) {
                 return permutations.map(item => {
                     return [{column: [columns[0]], value: item}];
                 });

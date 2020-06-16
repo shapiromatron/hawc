@@ -33,6 +33,7 @@ class ExploratoryHeatmapStore {
             padding: {top: 30, left: 30, bottom: 30, right: 30},
             show_axis_border: true,
             show_grid: true,
+            show_tooltip: true,
             table_fields: [
                 createTableRow(),
                 createTableRow(),

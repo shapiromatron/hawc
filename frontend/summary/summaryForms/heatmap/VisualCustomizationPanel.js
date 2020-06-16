@@ -217,7 +217,7 @@ class VisualCustomizationPanel extends Component {
                             onChange={e => changeSettings("color_range.1", e.target.value)}
                         />
                     </div>
-                    <div className="span3">
+                    <div className="span2">
                         <CheckboxInput
                             id="compress_x"
                             label="Compress X fields?"
@@ -233,7 +233,7 @@ class VisualCustomizationPanel extends Component {
                             checked={settings.compress_y}
                         />
                     </div>
-                    <div className="span3">
+                    <div className="span2">
                         <CheckboxInput
                             id="show_grid"
                             label="Show grid"
@@ -247,6 +247,15 @@ class VisualCustomizationPanel extends Component {
                             name="show_axis_border"
                             onChange={e => changeSettings(e.target.name, e.target.checked)}
                             checked={settings.show_axis_border}
+                        />
+                    </div>
+                    <div className="span2">
+                        <CheckboxInput
+                            id="show_tooltip"
+                            label="Show tooltip"
+                            name="show_tooltip"
+                            onChange={e => changeSettings(e.target.name, e.target.checked)}
+                            checked={settings.show_tooltip}
                         />
                     </div>
                 </div>

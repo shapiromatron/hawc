@@ -118,8 +118,13 @@ class ExploreHeatmapPlot extends D3Visualization {
     }
 
     bind_tooltip(selection, type) {
+        if (!this.settings.show_tooltip) {
+            return;
+        }
+
         let tooltip_x_offset = 20,
             tooltip_y_offset = 20;
+
         selection
             .on("mouseenter", d => {
                 $("#exp_heatmap_tooltip").css("display", "block");
@@ -168,10 +173,11 @@ class ExploreHeatmapPlot extends D3Visualization {
 
         // build x-axis
         let yOffset = 0,
+            numXAxes = xs.length == 0 ? 0 : xs[0].length,
             {cell_width, show_axis_border} = this.store.settings;
-        for (let i = xs[0].length - 1; i >= 0; i--) {
+        for (let i = numXAxes - 1; i >= 0; i--) {
             let axis = xAxis.append("g").attr("transform", `translate(0,${yOffset})`),
-                lastItem = xs[0][i],
+                lastItem = xs[0],
                 itemStartIndex = 0,
                 numItems = 0,
                 borderData = [];
@@ -240,10 +246,11 @@ class ExploreHeatmapPlot extends D3Visualization {
 
         // build y-axis
         let xOffset = 0,
+            numYAxes = ys.length == 0 ? 0 : ys[0].length,
             {cell_height} = this.store.settings;
-        for (let i = ys[0].length - 1; i >= 0; i--) {
+        for (let i = numYAxes - 1; i >= 0; i--) {
             let axis = yAxis.append("g").attr("transform", `translate(${-xOffset},0)`),
-                lastItem = ys[0][i],
+                lastItem = ys[0],
                 itemStartIndex = 0,
                 numItems = 0,
                 borderData = [];
@@ -315,8 +322,8 @@ class ExploreHeatmapPlot extends D3Visualization {
         }
         // Draws lines on plot
         let grid = this.vis.append("g"),
-            x_band = this.w / this.x_steps,
-            y_band = this.h / this.y_steps;
+            x_band = this.x_steps == 0 ? 0 : this.w / this.x_steps,
+            y_band = this.y_steps == 0 ? 0 : this.h / this.y_steps;
 
         grid.selectAll("g.none")
             .data(_.range(this.x_steps + 1))
