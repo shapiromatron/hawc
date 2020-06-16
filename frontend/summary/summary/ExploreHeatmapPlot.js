@@ -11,6 +11,7 @@ import ReactDOM from "react-dom";
 import HeatmapDatastore from "./heatmap/HeatmapDatastore";
 import DatasetTable from "./heatmap/DatasetTable";
 import FilterWidgetContainer from "./heatmap/FilterWidgetContainer";
+import Tooltip from "./heatmap/Tooltip";
 
 class ExploreHeatmapPlot extends D3Visualization {
     constructor(parent, data, options) {
@@ -33,6 +34,7 @@ class ExploreHeatmapPlot extends D3Visualization {
         $div.html(`<div class="row-fluid">
             ${text1}
             <div class="${hasFilters ? "span9" : "span12"} heatmap-tables"></div>
+            <div style="position:absolute;" id="exp_heatmap_tooltip"></div>
         </div>`);
 
         const viz = $div.find(".heatmap-viz")[0],
@@ -45,6 +47,7 @@ class ExploreHeatmapPlot extends D3Visualization {
         this.set_trigger_resize();
         this.add_menu();
         ReactDOM.render(<DatasetTable store={this.store} />, tbl);
+
         if (hasFilters) {
             ReactDOM.render(<FilterWidgetContainer store={this.store} />, filters);
         }
@@ -114,10 +117,47 @@ class ExploreHeatmapPlot extends D3Visualization {
         this.y_axis_label_padding = 0;
     }
 
+    bind_tooltip(selection, type) {
+        if (!this.settings.show_tooltip) {
+            return;
+        }
+
+        let tooltip_x_offset = 20,
+            tooltip_y_offset = 20;
+
+        selection
+            .on("mouseenter", d => {
+                $("#exp_heatmap_tooltip").css("display", "block");
+                ReactDOM.render(<Tooltip data={d} type={type} />, $("#exp_heatmap_tooltip")[0]);
+            })
+            .on("mousemove", d =>
+                $("#exp_heatmap_tooltip").css({
+                    top: `${d3.event.pageY + tooltip_y_offset}px`,
+                    left: `${d3.event.pageX + tooltip_x_offset}px`,
+                })
+            )
+            .on("mouseleave", d => $("#exp_heatmap_tooltip").css("display", "none"));
+    }
+
+    get_matching_cells(filters, axis) {
+        let property;
+        if (axis == "x") property = "x_filters";
+        else if (axis == "y") property = "y_filters";
+
+        return this.store.matrixDataset.filter(d => {
+            for (const filter of filters) {
+                let included = false;
+                for (const cell_filter of d[property]) {
+                    if (_.isMatch(cell_filter, filter) && d.rows.length > 0) included = true;
+                }
+                if (!included) return false;
+            }
+            return true;
+        });
+    }
+
     build_axes() {
-        let xDomains = this.settings.x_fields.map(d => d.column),
-            yDomains = this.settings.y_fields.map(d => d.column),
-            xs = this.store.scales.x.filter((d, i) =>
+        let xs = this.store.scales.x.filter((d, i) =>
                 this.store.settings.compress_x ? this.store.totals.x[i] > 0 : true
             ),
             ys = this.store.scales.y.filter((d, i) =>
@@ -133,23 +173,28 @@ class ExploreHeatmapPlot extends D3Visualization {
 
         // build x-axis
         let yOffset = 0,
+            numXAxes = xs.length == 0 ? 0 : xs[0].length,
             {cell_width, show_axis_border} = this.store.settings;
-        _.reverse(xDomains).map(domain => {
+        for (let i = numXAxes - 1; i >= 0; i--) {
             let axis = xAxis.append("g").attr("transform", `translate(0,${yOffset})`),
-                lastItem = xs[0][domain],
+                lastItem = xs[0],
                 itemStartIndex = 0,
                 numItems = 0,
                 borderData = [];
 
-            for (let i = 0; i <= xs.length; i++) {
-                thisItem = i < xs.length ? xs[i][domain] : null;
-                if (thisItem !== lastItem) {
+            for (let j = 0; j <= xs.length; j++) {
+                thisItem = j < xs.length ? xs[j] : null;
+                if (
+                    thisItem == null ||
+                    !_.isMatch(thisItem[i], lastItem[i]) ||
+                    (i > 0 && !_.isMatch(thisItem[i - 1], lastItem[i - 1]))
+                ) {
                     let label = axis.append("g");
 
                     label
                         .append("text")
                         .attr("transform", `rotate(${this.settings.x_tick_rotate})`)
-                        .text(lastItem);
+                        .text(lastItem[i].value);
 
                     let box = label.node().getBBox(),
                         label_offset =
@@ -163,11 +208,12 @@ class ExploreHeatmapPlot extends D3Visualization {
                     );
 
                     borderData.push({
+                        filters: _.slice(lastItem, 0, i + 1),
                         x1: itemStartIndex * cell_width,
                         width: numItems * cell_width,
                     });
 
-                    itemStartIndex = i;
+                    itemStartIndex = j;
                     numItems = 0;
                 }
                 numItems += 1;
@@ -177,41 +223,49 @@ class ExploreHeatmapPlot extends D3Visualization {
             let box = axis.node().getBBox();
 
             let newYOffset = yOffset + box.height + label_padding * 2;
-            if (show_axis_border) {
-                xAxis
-                    .selectAll(".none")
-                    .data(borderData)
-                    .enter()
-                    .append("polyline")
-                    .attr(
-                        "points",
-                        d =>
-                            `${d.x1},${newYOffset} ${d.x1},${yOffset} ${d.x1 +
-                                d.width},${yOffset} ${d.x1 + d.width},${newYOffset}`
-                    )
-                    .attr("fill", "none")
-                    .attr("stroke", "black");
-            }
+            let border = xAxis
+                .selectAll(".none")
+                .data(borderData)
+                .enter()
+                .append("polyline")
+                .attr(
+                    "points",
+                    d =>
+                        `${d.x1},${newYOffset} ${d.x1},${yOffset} ${d.x1 +
+                            d.width},${yOffset} ${d.x1 + d.width},${newYOffset}`
+                )
+                .attr("fill", "transparent")
+                .attr("stroke", show_axis_border ? "black" : null)
+                .on("click", d => {
+                    const cells = this.get_matching_cells(d.filters, "x");
+                    this.store.setTableDataFilters(new Set(cells));
+                });
+            this.bind_tooltip(border, "axis");
             yOffset = newYOffset;
-        });
+        }
 
         // build y-axis
         let xOffset = 0,
+            numYAxes = ys.length == 0 ? 0 : ys[0].length,
             {cell_height} = this.store.settings;
-        _.reverse(yDomains).map(domain => {
+        for (let i = numYAxes - 1; i >= 0; i--) {
             let axis = yAxis.append("g").attr("transform", `translate(${-xOffset},0)`),
-                lastItem = ys[0][domain],
+                lastItem = ys[0],
                 itemStartIndex = 0,
                 numItems = 0,
                 borderData = [];
-            for (let i = 0; i <= ys.length; i++) {
-                thisItem = i < ys.length ? ys[i][domain] : null;
-                if (thisItem !== lastItem) {
+            for (let j = 0; j <= ys.length; j++) {
+                thisItem = j < ys.length ? ys[j] : null;
+                if (
+                    thisItem == null ||
+                    !_.isMatch(thisItem[i], lastItem[i]) ||
+                    (i > 0 && !_.isMatch(thisItem[i - 1], lastItem[i - 1]))
+                ) {
                     let label = axis.append("g");
                     label
                         .append("text")
                         .attr("transform", `rotate(${this.settings.y_tick_rotate})`)
-                        .text(lastItem);
+                        .text(lastItem[i].value);
                     let box = label.node().getBBox(),
                         label_offset =
                             itemStartIndex * cell_height +
@@ -223,11 +277,12 @@ class ExploreHeatmapPlot extends D3Visualization {
                     );
 
                     borderData.push({
+                        filters: _.slice(lastItem, 0, i + 1),
                         y1: itemStartIndex * cell_height,
                         height: numItems * cell_height,
                     });
 
-                    itemStartIndex = i;
+                    itemStartIndex = j;
                     numItems = 0;
                 }
                 numItems += 1;
@@ -236,23 +291,26 @@ class ExploreHeatmapPlot extends D3Visualization {
 
             let box = axis.node().getBBox(),
                 newXOffset = xOffset + box.width + label_padding * 2;
-            if (show_axis_border) {
-                yAxis
-                    .selectAll(".none")
-                    .data(borderData)
-                    .enter()
-                    .append("polyline")
-                    .attr(
-                        "points",
-                        d =>
-                            `${-newXOffset},${d.y1} ${-xOffset},${d.y1} ${-xOffset},${d.y1 +
-                                d.height} ${-newXOffset},${d.y1 + d.height}`
-                    )
-                    .attr("fill", "none")
-                    .attr("stroke", "black");
-            }
+            let border = yAxis
+                .selectAll(".none")
+                .data(borderData)
+                .enter()
+                .append("polyline")
+                .attr(
+                    "points",
+                    d =>
+                        `${-newXOffset},${d.y1} ${-xOffset},${d.y1} ${-xOffset},${d.y1 +
+                            d.height} ${-newXOffset},${d.y1 + d.height}`
+                )
+                .attr("fill", "transparent")
+                .attr("stroke", show_axis_border ? "black" : null)
+                .on("click", d => {
+                    const cells = this.get_matching_cells(d.filters, "y");
+                    this.store.setTableDataFilters(new Set(cells));
+                });
+            this.bind_tooltip(border, "axis");
             xOffset = newXOffset;
-        });
+        }
 
         this.x_axis_label_padding = yAxis.node().getBoundingClientRect().width;
         this.y_axis_label_padding = xAxis.node().getBoundingClientRect().height;
@@ -264,8 +322,8 @@ class ExploreHeatmapPlot extends D3Visualization {
         }
         // Draws lines on plot
         let grid = this.vis.append("g"),
-            x_band = this.w / this.x_steps,
-            y_band = this.h / this.y_steps;
+            x_band = this.x_steps == 0 ? 0 : this.w / this.x_steps,
+            y_band = this.y_steps == 0 ? 0 : this.h / this.y_steps;
 
         grid.selectAll("g.none")
             .data(_.range(this.x_steps + 1))
@@ -376,11 +434,12 @@ class ExploreHeatmapPlot extends D3Visualization {
 
     update_plot = data => {
         const self = this,
-            cells_data = this.cells.selectAll("g").data(data),
             {tableDataFilters, maxValue, colorScale} = this.store;
 
+        this.cells_data = this.cells.selectAll("g").data(data);
+
         // add cell group and interactivity
-        this.cells_enter = cells_data
+        this.cells_enter = this.cells_data
             .enter()
             .append("g")
             .attr("class", "exp_heatmap_cell")
@@ -388,19 +447,18 @@ class ExploreHeatmapPlot extends D3Visualization {
                 d3.selectAll(".exp_heatmap_cell_block")
                     .style("stroke", "none")
                     .style("stroke-width", 2);
-
                 if (d.rows.length > 0) {
                     d3.select(this)
                         .select("rect")
                         .style("stroke", "black")
                         .style("stroke-width", 2);
 
-                    self.store.updateTableDataFilters(d);
+                    self.store.setTableDataFilters(d);
                 } else {
-                    self.store.updateTableDataFilters(null);
+                    self.store.setTableDataFilters(new Set());
                 }
-            })
-            .on("mouseover", null);
+            });
+        this.bind_tooltip(this.cells_enter, "cell");
 
         // add cell fill
         this.cells_enter
@@ -419,35 +477,37 @@ class ExploreHeatmapPlot extends D3Visualization {
             .attr("y", d => this.y_scale(d.y_step) + this.y_scale.rangeBand() / 2);
 
         // enter/update
-        cells_data
+        this.cells_data
             .select(".exp_heatmap_cell_block")
             .transition()
             .style("fill", d => {
-                const value =
-                    tableDataFilters == null
-                        ? d.rows.length
-                        : tableDataFilters.index === d.index
-                        ? maxValue
-                        : d.rows.length / 3;
+                const filterIndices = [...tableDataFilters].map(e => e.index),
+                    value =
+                        tableDataFilters.size == 0
+                            ? d.rows.length
+                            : _.includes(filterIndices, d.index)
+                            ? maxValue
+                            : d.rows.length / 3;
                 return colorScale(value);
             });
 
-        cells_data
+        this.cells_data
             .select(".exp_heatmap_cell_text")
             .transition()
             .style("fill", d => {
-                const value =
-                    tableDataFilters == null
-                        ? d.rows.length
-                        : tableDataFilters.index === d.index
-                        ? maxValue
-                        : d.rows.length / 3;
+                const filterIndices = [...tableDataFilters].map(e => e.index),
+                    value =
+                        tableDataFilters.size == 0
+                            ? d.rows.length
+                            : _.includes(filterIndices, d.index)
+                            ? maxValue
+                            : d.rows.length / 3;
                 return h.getTextContrastColor(colorScale(value));
             })
             .style("display", d => (d.rows.length == 0 ? "none" : null))
             .text(d => d.rows.length);
 
-        cells_data.exit().remove();
+        this.cells_data.exit().remove();
     };
 
     build_plot() {

@@ -62,6 +62,7 @@ class FilterWidget extends Component {
             </div>
         );
     }
+
     renderItem(widget, item, index, itemStore, showClickEvent) {
         const {toggleItemSelection, showModalClick, colorScale} = this.props.store,
             data = this.props.store.getTableData,

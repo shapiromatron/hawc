@@ -21,7 +21,7 @@ class HeatmapDatastore {
     @observable settings = null;
     @observable selectedTableData = [];
     @observable filterWidgetState = null;
-    @observable tableDataFilters = null;
+    @observable tableDataFilters = new Set();
 
     constructor(settings, dataset) {
         this.getDetailUrl = this.getDetailUrl.bind(this);
@@ -89,18 +89,17 @@ class HeatmapDatastore {
             const columns = fields.map(field => field.column),
                 items = columns.map(column => _.keys(intersection[column])),
                 permutations = h.cartesian(items);
-
-            if (columns.length === 0) {
-                return {};
-            } else if (columns.length === 1) {
+            if (columns.length == 0) {
+                return [];
+            } else if (columns.length == 1) {
                 return permutations.map(item => {
-                    return {
-                        [columns[0]]: item,
-                    };
+                    return [{column: [columns[0]], value: item}];
                 });
             } else {
                 return permutations.map(permutation => {
-                    return _.zipObject(columns, permutation);
+                    return _.zipWith(columns, permutation, (c, p) => {
+                        return {column: c, value: p};
+                    });
                 });
             }
         };
@@ -118,10 +117,10 @@ class HeatmapDatastore {
                     .map(d => {
                         let rows,
                             first = true;
-                        _.each(d, (val, keys, idx) => {
+                        _.each(d, e => {
                             rows = first
-                                ? intersection[keys][val]
-                                : h.setIntersection(rows, intersection[keys][val]);
+                                ? intersection[e.column][e.value]
+                                : h.setIntersection(rows, intersection[e.column][e.value]);
                             first = false;
                         });
                         return rows;
@@ -179,14 +178,16 @@ class HeatmapDatastore {
         let {scales, intersection} = this,
             index = -1,
             removedRows = this.rowsRemovedByFilters,
-            getIntersection = (arr, set2) => arr.filter(x => set2.has(x)),
+            getIntersection = function(arr, set2) {
+                return arr.filter(x => set2.has(x));
+            },
             getRows = filters => {
                 let rows;
-                _.each(_.keys(filters), (columnName, idx) => {
-                    if (idx === 0) {
-                        rows = [...intersection[columnName][filters[columnName]]];
+                _.each(filters, (filter, idx) => {
+                    if (idx == 0) {
+                        rows = [...intersection[filter.column][filter.value]];
                     } else {
-                        rows = getIntersection(rows, intersection[columnName][filters[columnName]]);
+                        rows = getIntersection(rows, intersection[filter.column][filter.value]);
                     }
                 });
                 return h.setDifference(rows, removedRows);
@@ -201,11 +202,11 @@ class HeatmapDatastore {
                             index += 1;
                             return {
                                 index,
-                                x_filter: x,
-                                y_filter: y,
+                                x_filters: x,
+                                y_filters: y,
                                 x_step: i,
                                 y_step: j,
-                                rows: getRows(Object.assign({}, x, y)),
+                                rows: getRows(x.concat(y)),
                             };
                         });
                 })
@@ -217,11 +218,11 @@ class HeatmapDatastore {
     @computed
     get getTableData() {
         let rows;
-        if (this.tableDataFilters) {
-            rows = _.find(this.matrixDataset, {
-                x_step: this.tableDataFilters.x_step,
-                y_step: this.tableDataFilters.y_step,
-            }).rows;
+        if (this.tableDataFilters.size > 0) {
+            let all_rows = [...this.tableDataFilters].map(
+                d => _.find(this.matrixDataset, {x_step: d.x_step, y_step: d.y_step}).rows
+            );
+            rows = _.union(...all_rows);
         } else {
             rows = [
                 ...h.setDifference(
@@ -233,8 +234,25 @@ class HeatmapDatastore {
         return rows.map(index => this.dataset[index]);
     }
 
-    @action.bound updateTableDataFilters(d) {
-        this.tableDataFilters = d;
+    @action.bound setTableDataFilters(d) {
+        if (d instanceof Set) this.tableDataFilters = d;
+        else {
+            this.tableDataFilters.clear();
+            this.tableDataFilters.add(d);
+        }
+    }
+
+    @action.bound addTableDataFilters(d) {
+        this.tableDataFilters.add(d);
+    }
+
+    @action.bound deleteTableDataFilters(d) {
+        this.tableDataFilters.delete(d);
+    }
+
+    @action.bound toggleTableDataFilters(d) {
+        let value = this.tableDataFilters.delete(d);
+        if (!value) this.tableDataFilters.add(d);
     }
 
     @action.bound selectAllFilterWidget(column) {
