@@ -315,7 +315,9 @@ class Visual(models.Model):
                     + "?unpublished=true",
                 ),
                 *(
-                    HeatmapDataset(type="Dataset", name=ds.name, url=ds.get_api_data_url())
+                    HeatmapDataset(
+                        type="Dataset", name=f"Dataset: {ds.name}", url=ds.get_api_data_url()
+                    )
                     for ds in assessment.datasets.all()
                 ),
             ]
