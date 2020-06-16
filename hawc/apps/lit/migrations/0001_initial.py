@@ -231,4 +231,5 @@ class Migration(migrations.Migration):
         migrations.AlterUniqueTogether(
             name="identifiers", unique_together=set([("database", "unique_id")]),
         ),
+        migrations.AlterModelOptions(name="reference", options={"ordering": ("id",)},),
     ]
