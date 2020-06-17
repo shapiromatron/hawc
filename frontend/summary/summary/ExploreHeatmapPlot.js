@@ -42,6 +42,7 @@ class ExploreHeatmapPlot extends D3Visualization {
             filters = $div.find(".heatmap-filters")[0];
 
         this.plot_div = $(viz);
+        this.set_autosize();
         this.build_plot();
         this.add_grid();
         this.set_trigger_resize();
@@ -117,6 +118,24 @@ class ExploreHeatmapPlot extends D3Visualization {
         this.y_axis_label_padding = 0;
     }
 
+    set_autosize() {
+        if (!this.settings.autosize) {
+            return;
+        }
+
+        const minWidth = 50,
+            minHeight = 50,
+            plotWidth = this.plot_div.width(),
+            cellWidth = this.x_steps == 0 ? 0 : plotWidth / this.x_steps,
+            plotHeight = (plotWidth / $(window).width()) * $(window).height(),
+            cellHeight = this.y_steps == 0 ? 0 : plotHeight / this.y_steps;
+        this.settings.cell_width = Math.max(cellWidth, minWidth);
+        this.settings.cell_height = Math.max(cellHeight, minHeight);
+
+        this.w = this.settings.cell_width * this.x_steps;
+        this.h = this.settings.cell_height * this.y_steps;
+    }
+
     bind_tooltip(selection, type) {
         if (!this.settings.show_tooltip) {
             return;
@@ -158,10 +177,10 @@ class ExploreHeatmapPlot extends D3Visualization {
 
     build_axes() {
         let xs = this.store.scales.x.filter((d, i) =>
-                this.store.settings.compress_x ? this.store.totals.x[i] > 0 : true
+                this.settings.compress_x ? this.store.totals.x[i] > 0 : true
             ),
             ys = this.store.scales.y.filter((d, i) =>
-                this.store.settings.compress_y ? this.store.totals.y[i] > 0 : true
+                this.settings.compress_y ? this.store.totals.y[i] > 0 : true
             ),
             xAxis = this.vis
                 .append("g")
@@ -174,7 +193,7 @@ class ExploreHeatmapPlot extends D3Visualization {
         // build x-axis
         let yOffset = 0,
             numXAxes = xs.length == 0 ? 0 : xs[0].length,
-            {cell_width, show_axis_border} = this.store.settings;
+            {cell_width, show_axis_border} = this.settings;
         for (let i = numXAxes - 1; i >= 0; i--) {
             let axis = xAxis.append("g").attr("transform", `translate(0,${yOffset})`),
                 lastItem = xs[0],
@@ -247,7 +266,7 @@ class ExploreHeatmapPlot extends D3Visualization {
         // build y-axis
         let xOffset = 0,
             numYAxes = ys.length == 0 ? 0 : ys[0].length,
-            {cell_height} = this.store.settings;
+            {cell_height} = this.settings;
         for (let i = numYAxes - 1; i >= 0; i--) {
             let axis = yAxis.append("g").attr("transform", `translate(${-xOffset},0)`),
                 lastItem = ys[0],
