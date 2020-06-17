@@ -1,4 +1,3 @@
-import _ from "lodash";
 import React, {Component} from "react";
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
@@ -59,63 +58,4 @@ DataStatusIndicator.propTypes = {
     store: PropTypes.object,
 };
 
-class DatasetProperties extends Component {
-    render() {
-        const {summary, dataset} = this.props;
-
-        if (!summary) {
-            return null;
-        }
-
-        return (
-            <div>
-                <h4>Dataset overview</h4>
-                <ul>
-                    <li>
-                        <b>Number of rows:</b>&nbsp;{summary.numRows}
-                    </li>
-                    <li>
-                        <b>Number of columns:</b>&nbsp;{summary.numColumns}
-                    </li>
-                    <li>
-                        <b>Columns:</b>&nbsp;{summary.columnNames.join(", ") || "<none>"}
-                    </li>
-                </ul>
-                <h4>
-                    {summary.numRows > 0
-                        ? "Showing the first 10 rows ..."
-                        : "No data available, select a different dataset ..."}
-                </h4>
-                <table className="table table-condensed table-striped">
-                    <thead>
-                        <tr>
-                            {summary.columnNames.map((d, i) => (
-                                <th key={i}>{d}</th>
-                            ))}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {_.slice(dataset, 0, 10).map((row, i) => {
-                            return (
-                                <tr key={i}>
-                                    {summary.columnNames.map((colName, i2) => (
-                                        <td key={i2}>{row[colName]}</td>
-                                    ))}
-                                </tr>
-                            );
-                        })}
-                    </tbody>
-                </table>
-                {summary.numRows > 10 ? (
-                    <p>An additional {summary.numRows - 10} rows are not shown...</p>
-                ) : null}
-            </div>
-        );
-    }
-}
-DatasetProperties.propTypes = {
-    dataset: PropTypes.array,
-    summary: PropTypes.object,
-};
-
-export {MissingData, RefreshRequired, DataStatusIndicator, DatasetProperties};
+export {MissingData, RefreshRequired, DataStatusIndicator};

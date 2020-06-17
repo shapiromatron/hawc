@@ -1,14 +1,15 @@
 import PropTypes from "prop-types";
 import React, {Component} from "react";
 import {inject, observer} from "mobx-react";
-import {DataStatusIndicator, DatasetProperties} from "./common";
+import {DataStatusIndicator} from "./common";
+import DatasetPreview from "../../summary/heatmap/DatasetPreview";
 import SelectInput from "shared/components/SelectInput";
 
 @inject("store")
 @observer
 class DataPanel extends Component {
     render() {
-        const {dataError, dataset, datasetSummary} = this.props.store.base,
+        const {dataError, dataset} = this.props.store.base,
             {datasetOptions} = this.props.store.subclass;
 
         let content;
@@ -33,7 +34,7 @@ class DataPanel extends Component {
                 ) : null}
                 {content}
                 <hr />
-                <DatasetProperties dataset={dataset} summary={datasetSummary} />
+                <DatasetPreview dataset={dataset} />
             </div>
         );
     }

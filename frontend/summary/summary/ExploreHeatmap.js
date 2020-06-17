@@ -78,6 +78,10 @@ class ExploreHeatmap extends BaseVisual {
 
                     new ExploreHeatmapPlot(this, data, options).render($plotDiv);
 
+                    if (options.cb) {
+                        options.cb(this);
+                    }
+
                     caption.renderAndEnable();
                 } else if (resp.error) {
                     $el.empty()
