@@ -8,7 +8,7 @@ import ExploreHeatmap from "summary/summary/ExploreHeatmap";
 @observer
 class VisualTab extends Component {
     componentDidMount() {
-        const {settings, settingsHash, dataset, setDataset} = this.props.store,
+        const {settingsHash, dataset, setDataset, settings} = this.props.store,
             el = document.getElementById(settingsHash),
             thisDataset = dataset && dataset.length > 0 ? dataset : undefined;
 

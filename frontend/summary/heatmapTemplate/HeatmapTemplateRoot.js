@@ -5,6 +5,7 @@ import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import VisualTab from "./VisualTab";
 import DataTab from "./DataTab";
+import SettingsTab from "./SettingsTab";
 
 @inject("store")
 @observer
@@ -24,7 +25,7 @@ class HeatmapTemplateRoot extends React.Component {
                     <DataTab />
                 </TabPanel>
                 <TabPanel>
-                    <p>Settings</p>
+                    <SettingsTab />
                 </TabPanel>
             </Tabs>
         );

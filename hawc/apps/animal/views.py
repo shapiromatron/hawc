@@ -32,7 +32,7 @@ class HeatmapStudyDesign(BaseList):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["heatmap_class"] = "bioassay-study-design"
+        context["data_class"] = "bioassay-study-design"
         context["data_url"] = reverse(
             "animal:api:assessment-endpoint-heatmap", args=(self.assessment.id,)
         )
@@ -48,7 +48,7 @@ class HeatmapEndpoint(BaseList):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["heatmap_class"] = "bioassay-endpoints"
+        context["data_class"] = "bioassay-endpoint-summary"
         context["data_url"] = reverse(
             "animal:api:assessment-endpoint-heatmap", args=(self.assessment.id,)
         )
