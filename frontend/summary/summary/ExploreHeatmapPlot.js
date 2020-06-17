@@ -463,15 +463,7 @@ class ExploreHeatmapPlot extends D3Visualization {
             .append("g")
             .attr("class", "exp_heatmap_cell")
             .on("click", function(d) {
-                d3.selectAll(".exp_heatmap_cell_block")
-                    .style("stroke", "none")
-                    .style("stroke-width", 2);
                 if (d.rows.length > 0) {
-                    d3.select(this)
-                        .select("rect")
-                        .style("stroke", "black")
-                        .style("stroke-width", 2);
-
                     self.store.setTableDataFilters(d);
                 } else {
                     self.store.setTableDataFilters(new Set());
