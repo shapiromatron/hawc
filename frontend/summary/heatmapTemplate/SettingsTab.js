@@ -9,14 +9,7 @@ import SelectInput from "shared/components/SelectInput";
 @observer
 class SettingsTab extends Component {
     render() {
-        const {store} = this.props,
-            handleFilterChange = () => {
-                const values = _.chain(event.target.options)
-                    .filter(o => o.selected)
-                    .map(o => o.value)
-                    .value();
-                store.changeSelectedFilters(values);
-            };
+        const {store} = this.props;
         return (
             <div>
                 <SelectInput
@@ -36,7 +29,7 @@ class SettingsTab extends Component {
                 <SelectInput
                     choices={store.filterOptions}
                     value={store.selectedFilters.map(d => d.id)}
-                    handleSelect={handleFilterChange}
+                    handleSelect={values => store.changeSelectedFilters(values)}
                     multiple={true}
                     label="Selected filters"
                 />

@@ -88,16 +88,13 @@ class ScoreOverrideForm extends Component {
                 <OverrideObjectsSelector
                     choices={overrideObjectChoices}
                     value={overrideOptionValues}
-                    onChange={() => {
-                        let selected = _.chain(event.target.options)
-                            .filter(opt => opt.selected)
-                            .map(opt => {
-                                return {
-                                    content_type_name: overrideDataTypeValue,
-                                    object_id: parseInt(opt.value),
-                                };
-                            })
-                            .value();
+                    onChange={values => {
+                        let selected = _.map(values, value => {
+                            return {
+                                content_type_name: overrideDataTypeValue,
+                                object_id: parseInt(value),
+                            };
+                        });
                         store.updateFormState(id, "overridden_objects", selected);
                     }}
                 />
