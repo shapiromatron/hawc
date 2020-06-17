@@ -522,3 +522,11 @@ class AdminDashboard(TemplateView):
     @method_decorator(staff_member_required)
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
+
+
+class AdminAssessmentSize(TemplateView):
+    template_name = "admin/assessment-size.html"
+
+    @method_decorator(staff_member_required)
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)

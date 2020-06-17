@@ -8,6 +8,4 @@ let func = function(el) {
     ReactDOM.render(<Root store={store} />, el);
 };
 
-export default {
-    func,
-};
+export default func;

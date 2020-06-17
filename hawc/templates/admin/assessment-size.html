@@ -7,23 +7,16 @@
 <div class="breadcrumbs">
     <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
     &rsaquo;
-    Insights
+    Assessment size
 </div>
 {% endblock %}
 
 {% block content %}
 <div class="container-fluid" id="main"></div>
-
-{% if debug %}
-<script type="text/javascript" src="{% static 'debug/jquery/1.9.1/jquery.js' %}"></script>
-{% else %}
-<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-{% endif %}
-
 {% render_bundle "main" %}
 <script type="text/javascript">
-window.app.adminStartup(function (app) {
-    app.growthStartup(document.getElementById("main"));
-});
+    window.app.adminStartup(function (app) {
+        app.assessmentSizeStartup(document.getElementById("main"));
+    });
 </script>
 {% endblock content %}

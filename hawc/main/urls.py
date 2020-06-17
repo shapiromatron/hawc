@@ -69,6 +69,11 @@ urlpatterns = [
         views.AdminDashboard.as_view(),
         name="admin_dashboard",
     ),
+    url(
+        rf"^admin/{settings.ADMIN_URL_PREFIX}/assessment-size/$",
+        views.AdminAssessmentSize.as_view(),
+        name="admin_assessment_size",
+    ),
     url(rf"^admin/{settings.ADMIN_URL_PREFIX}/", admin.site.urls),
     url(r"^selectable/", include("selectable.urls")),
     url(
