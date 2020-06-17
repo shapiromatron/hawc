@@ -10,7 +10,7 @@ import SelectInput from "shared/components/SelectInput";
 class DataPanel extends Component {
     render() {
         const {dataError, dataset} = this.props.store.base,
-            {datasetOptions} = this.props.store.subclass;
+            {datasetOptions, settings} = this.props.store.subclass;
 
         let content;
 
@@ -34,7 +34,7 @@ class DataPanel extends Component {
                 ) : null}
                 {content}
                 <hr />
-                <DatasetPreview dataset={dataset} />
+                <DatasetPreview dataset={dataset} url={settings.data_url} />
             </div>
         );
     }

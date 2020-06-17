@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 
 class DatasetPreview extends Component {
     render() {
-        const {dataset} = this.props;
+        const {dataset, url} = this.props;
 
         if (!dataset || dataset.length === 0) {
             return <div className="alert alert-danger">No data are available.</div>;
@@ -19,7 +19,37 @@ class DatasetPreview extends Component {
 
         return (
             <div>
-                <h4>Dataset overview</h4>
+                <h4>
+                    Dataset overview
+                    <div className="btn-group pull-right">
+                        <a className="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                            Actions&nbsp;
+                            <span className="caret"></span>
+                        </a>
+                        <ul className="dropdown-menu">
+                            <li>
+                                <a
+                                    href={
+                                        url.includes("?")
+                                            ? `${url}&format=csv`
+                                            : `${url}?format=csv`
+                                    }>
+                                    <i className="fa fa-file-text-o"></i>&nbsp;Download dataset
+                                    (csv)
+                                </a>
+                                <a
+                                    href={
+                                        url.includes("?")
+                                            ? `${url}&format=xlsx`
+                                            : `${url}?format=xlsx`
+                                    }>
+                                    <i className="fa fa-file-excel-o"></i>&nbsp;Download dataset
+                                    (xlsx)
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </h4>
                 <ul>
                     <li>
                         <b>Number of rows:</b>&nbsp;{summary.numRows}
@@ -64,6 +94,7 @@ class DatasetPreview extends Component {
     }
 }
 DatasetPreview.propTypes = {
+    url: PropTypes.string,
     dataset: PropTypes.array,
 };
 
