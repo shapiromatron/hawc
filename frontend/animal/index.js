@@ -4,7 +4,6 @@ const animalStartup = function(cb) {
     });
 };
 
-window.app = {};
 window.app.animalStartup = animalStartup;
 
 export default animalStartup;
