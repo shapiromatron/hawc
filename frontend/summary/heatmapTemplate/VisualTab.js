@@ -2,6 +2,7 @@ import PropTypes from "prop-types";
 import React, {Component} from "react";
 import {inject, observer} from "mobx-react";
 
+import Loading from "shared/components/Loading";
 import ExploreHeatmap from "summary/summary/ExploreHeatmap";
 
 @inject("store")
@@ -22,7 +23,11 @@ class VisualTab extends Component {
     }
     render() {
         const {settingsHash} = this.props.store;
-        return <div id={settingsHash}></div>;
+        return (
+            <div id={settingsHash}>
+                <Loading />
+            </div>
+        );
     }
 }
 VisualTab.propTypes = {
