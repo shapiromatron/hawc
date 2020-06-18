@@ -6,7 +6,7 @@ import {NULL_VALUE} from "../../summary/constants";
 import DataPivotExtension from "summary/dataPivot/DataPivotExtension";
 
 let createDefaultAxisItem = function() {
-        return {column: NULL_VALUE, delimiter: ""};
+        return {column: NULL_VALUE, wrap_text: 0, delimiter: ""};
     },
     createDefaultFilterWidget = function() {
         return {column: NULL_VALUE, delimiter: "", on_click_event: NULL_VALUE};

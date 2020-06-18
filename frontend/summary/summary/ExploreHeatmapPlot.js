@@ -13,8 +13,7 @@ import DatasetTable from "./heatmap/DatasetTable";
 import FilterWidgetContainer from "./heatmap/FilterWidgetContainer";
 import Tooltip from "./heatmap/Tooltip";
 
-const AXIS_WIDTH_GUESS = 120,
-    WRAP_TEXT_THRESHOLD = 150;
+const AXIS_WIDTH_GUESS = 120;
 
 class ExploreHeatmapPlot extends D3Visualization {
     constructor(parent, data, options) {
@@ -225,7 +224,8 @@ class ExploreHeatmapPlot extends D3Visualization {
                 lastItem = xs[0],
                 itemStartIndex = 0,
                 numItems = 0,
-                borderData = [];
+                borderData = [],
+                wrap_text = this.settings.x_fields[i].wrap_text;
 
             for (let j = 0; j <= xs.length; j++) {
                 thisItem = j < xs.length ? xs[j] : null;
@@ -243,7 +243,9 @@ class ExploreHeatmapPlot extends D3Visualization {
                         .attr("transform", `rotate(${this.settings.x_tick_rotate})`)
                         .text(lastItem[i].value || "<null>")
                         .each(function() {
-                            HAWCUtils.wrapText(this, WRAP_TEXT_THRESHOLD);
+                            if (wrap_text) {
+                                HAWCUtils.wrapText(this, wrap_text);
+                            }
                         });
 
                     let box = label.node().getBBox(),
@@ -302,7 +304,9 @@ class ExploreHeatmapPlot extends D3Visualization {
                 lastItem = ys[0],
                 itemStartIndex = 0,
                 numItems = 0,
-                borderData = [];
+                borderData = [],
+                wrap_text = this.settings.y_fields[i].wrap_text;
+
             for (let j = 0; j <= ys.length; j++) {
                 thisItem = j < ys.length ? ys[j] : null;
                 if (
@@ -318,7 +322,9 @@ class ExploreHeatmapPlot extends D3Visualization {
                         .attr("transform", `rotate(${this.settings.y_tick_rotate})`)
                         .text(lastItem[i].value || "<null>")
                         .each(function() {
-                            HAWCUtils.wrapText(this, WRAP_TEXT_THRESHOLD);
+                            if (wrap_text) {
+                                HAWCUtils.wrapText(this, wrap_text);
+                            }
                         });
                     let box = label.node().getBBox(),
                         label_offset =
