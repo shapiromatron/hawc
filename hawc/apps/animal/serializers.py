@@ -2,12 +2,20 @@ import json
 
 from rest_framework import serializers
 
+from ..assessment.models import DoseUnits
 from ..assessment.serializers import EffectTagsSerializer
 from ..bmd.serializers import ModelSerializer
 from ..common.api import DynamicFieldsMixin
 from ..common.helper import SerializerHelper
 from ..study.serializers import StudySerializer
 from . import models
+
+
+class HeatmapQuerySerializer(serializers.Serializer):
+    unpublished = serializers.BooleanField(default=False)
+    dose_units = serializers.PrimaryKeyRelatedField(
+        queryset=DoseUnits.objects.all(), required=False
+    )
 
 
 class ExperimentSerializer(serializers.ModelSerializer):

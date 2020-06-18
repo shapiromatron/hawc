@@ -5,19 +5,31 @@ const DC_BIO_SD = "bioassay-study-design",
     DATA_CLASSES = [DC_BIO_SD, DC_BIO_EP, DC_EPI_SD, DC_EPI_RE],
     AXIS_OPTIONS = [
         {
+            data_classes: [DC_BIO_SD],
+            id: "dose-units",
+            label: "Dose units",
+            settings: [{column: "dose units", delimiter: "|", wrap_text: 0}],
+        },
+        {
+            data_classes: [DC_BIO_SD],
+            id: "study-citation",
+            label: "Study citation",
+            settings: [{column: "study citation", delimiter: "", wrap_text: 0}],
+        },
+        {
             data_classes: [DC_BIO_EP],
             id: "species-sex",
             label: "Species & Sex",
             settings: [
-                {column: "species", delimiter: ""},
-                {column: "sex", delimiter: ""},
+                {column: "species", delimiter: "", wrap_text: 0},
+                {column: "sex", delimiter: "", wrap_text: 0},
             ],
         },
         {
             data_classes: [DC_BIO_EP],
             id: "system",
             label: "System",
-            settings: [{column: "system", delimiter: ""}],
+            settings: [{column: "system", delimiter: "", wrap_text: 0}],
         },
     ],
     FILTER_OPTIONS = [
@@ -47,19 +59,23 @@ const DC_BIO_SD = "bioassay-study-design",
         },
     ],
     TABLE_FIELDS = {
-        [DC_BIO_SD]: [{column: "study citation", on_click_event: "study"}],
-        [DC_BIO_EP]: [
-            {column: "study citation", on_click_event: "study"},
-            {column: "experiment name", on_click_event: "experiment"},
-            {column: "species", on_click_event: "animal_group"},
-            {column: "strain", on_click_event: "---"},
-            {column: "system", on_click_event: "---"},
-            {column: "organ", on_click_event: "---"},
-            {column: "effect", on_click_event: "---"},
-            {column: "endpoint name", on_click_event: "endpoint_complete"},
+        [DC_BIO_SD]: [
+            {column: "study citation", delimiter: "", on_click_event: "study"},
+            {column: "system", delimiter: "|", on_click_event: "---"},
+            {column: "dose units", delimiter: "|", on_click_event: "---"},
         ],
-        [DC_EPI_SD]: [{column: "study citation", on_click_event: "study"}],
-        [DC_EPI_RE]: [{column: "study citation", on_click_event: "study"}],
+        [DC_BIO_EP]: [
+            {column: "study citation", delimiter: "", on_click_event: "study"},
+            {column: "experiment name", delimiter: "", on_click_event: "experiment"},
+            {column: "species", delimiter: "", on_click_event: "animal_group"},
+            {column: "strain", delimiter: "", on_click_event: "---"},
+            {column: "system", delimiter: "", on_click_event: "---"},
+            {column: "organ", delimiter: "", on_click_event: "---"},
+            {column: "effect", delimiter: "", on_click_event: "---"},
+            {column: "endpoint name", delimiter: "", on_click_event: "endpoint_complete"},
+        ],
+        [DC_EPI_SD]: [{column: "study citation", delimiter: "", on_click_event: "study"}],
+        [DC_EPI_RE]: [{column: "study citation", delimiter: "", on_click_event: "study"}],
     };
 
 export {DATA_CLASSES, AXIS_OPTIONS, FILTER_OPTIONS, TABLE_FIELDS};
