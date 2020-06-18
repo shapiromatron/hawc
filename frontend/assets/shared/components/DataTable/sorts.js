@@ -1,6 +1,8 @@
+/* eslint-disable */
+
+// copied from `tablesort/src/sorts/tablesort.number.js`
 import Tablesort from "tablesort";
 
-// from tablesort/src/sorts/tablesort.number.js
 
 (function() {
     var cleanNumber = function(i) {
