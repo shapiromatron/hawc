@@ -13,7 +13,9 @@ class FilterWidget extends Component {
         this.renderItem = this.renderItem.bind(this);
     }
     render() {
-        const {widget} = this.props,
+        const {widget, numWidgets} = this.props,
+            {colorScale, maxValue} = this.props.store,
+            maxHeight = `${Math.floor(1/numWidgets*100)}vh`,
             {selectAllFilterWidget, selectNoneFilterWidget} = this.props.store,
             data = this.props.store.getTableData,
             availableItems = _.chain(data)
@@ -30,28 +32,45 @@ class FilterWidget extends Component {
             showClickEvent = widget.on_click_event !== NULL_VALUE,
             items = [...availableItems, ...hiddenItems].sort();
 
-        // TODO HEATMAP: fix 20vh to be better calculated
         return (
-            <div className="well" style={{flex: "1", overflow: "auto"}}>
-                <h4>
-                    {widget.column}
-                    <div className="btn-group pull-right">
-                        <button
-                            className="btn btn-small"
-                            onClick={() => selectAllFilterWidget(widget.column)}
-                            title="Select all items">
-                            <i className="fa fa-check-circle"></i>
-                        </button>
-                        <button
-                            className="btn btn-small"
-                            onClick={() => selectNoneFilterWidget(widget.column)}
-                            title="De-select all items">
-                            <i className="fa fa-times-circle"></i>
-                        </button>
-                    </div>
-                </h4>
-                <div className="clearfix"></div>
-                <div>
+            <div
+                style={{
+                    height: "30vh",
+                    padding: "10px 0",
+                    overflow: "hidden",
+                    display: "flex",
+                    flexDirection: "column",
+                }}>
+                <div
+                    style={{
+                        backgroundColor: colorScale(maxValue),
+                        color: h.getTextContrastColor(colorScale(maxValue)),
+                        padding: "2px 10px",
+                        flex: 0,
+                    }}>
+                    <h4>
+                        {widget.column}
+                        <div className="btn-group pull-right">
+                            <button
+                                className="btn btn-small"
+                                onClick={() => selectAllFilterWidget(widget.column)}
+                                title="Select all items">
+                                <i className="fa fa-check-circle"></i>
+                            </button>
+                            <button
+                                className="btn btn-small"
+                                onClick={() => selectNoneFilterWidget(widget.column)}
+                                title="De-select all items">
+                                <i className="fa fa-times-circle"></i>
+                            </button>
+                        </div>
+                    </h4>
+                </div>
+                <div
+                    style={{
+                        overflowY: "scroll",
+                        flex: 1
+                    }}>
                     {items
                         .sort()
                         .map((item, index) =>
@@ -103,8 +122,9 @@ class FilterWidget extends Component {
     }
 }
 FilterWidget.propTypes = {
-    store: PropTypes.object,
-    widget: PropTypes.object,
+    store: PropTypes.object.isRequired,
+    widget: PropTypes.object.isRequired,
+    numWidgets: PropTypes.number.isRequired,
 };
 
 @observer
@@ -113,9 +133,14 @@ class FilterWidgetContainer extends Component {
         const {store} = this.props,
             {filter_widgets} = this.props.store.settings;
         return (
-            <div style={{display: "flex", flexDirection: "column"}}>
+            <div style={{display: "flex", flexDirection: "column", width: "100%"}}>
                 {filter_widgets.map((widget, idx) => (
-                    <FilterWidget key={idx} store={store} widget={widget} />
+                    <FilterWidget
+                        key={idx}
+                        store={store}
+                        widget={widget}
+                        numWidgets={filter_widgets.length}
+                    />
                 ))}
             </div>
         );
