@@ -8,11 +8,10 @@ import ExploreHeatmap from "summary/summary/ExploreHeatmap";
 @inject("store")
 @observer
 class VisualTab extends Component {
-    componentDidMount() {
+    updatePlot() {
         const {settingsHash, dataset, setDataset, settings} = this.props.store,
             el = document.getElementById(settingsHash),
             thisDataset = dataset && dataset.length > 0 ? dataset : undefined;
-
         if (el) {
             new ExploreHeatmap({settings}, thisDataset).displayAsPage($(el), {
                 cb: self => {
@@ -20,6 +19,12 @@ class VisualTab extends Component {
                 },
             });
         }
+    }
+    componentDidMount() {
+        this.updatePlot();
+    }
+    componentDidUpdate() {
+        this.updatePlot();
     }
     render() {
         const {settingsHash} = this.props.store;

@@ -12,6 +12,12 @@ const DC_BIO_SD = "bioassay-study-design",
         },
         {
             data_classes: [DC_BIO_SD],
+            id: "route-of-exposure",
+            label: "Route of exposure",
+            settings: [{column: "route of exposure", delimiter: "|", wrap_text: 0}],
+        },
+        {
+            data_classes: [DC_BIO_SD],
             id: "study-citation",
             label: "Study citation",
             settings: [{column: "study citation", delimiter: "", wrap_text: 0}],
@@ -40,22 +46,22 @@ const DC_BIO_SD = "bioassay-study-design",
             settings: {column: "study citation", delimiter: "", on_click_event: "study"},
         },
         {
-            data_classes: [DC_BIO_EP],
+            data_classes: [DC_BIO_SD, DC_BIO_EP],
             id: "system",
             label: "system",
-            settings: {column: "system", delimiter: "", on_click_event: "endpoint_complete"},
+            settings: {column: "system", delimiter: "|", on_click_event: "endpoint_complete"},
         },
         {
-            data_classes: [DC_BIO_EP],
+            data_classes: [DC_BIO_SD, DC_BIO_EP],
             id: "organ",
             label: "organ",
-            settings: {column: "organ", delimiter: "", on_click_event: "endpoint_complete"},
+            settings: {column: "organ", delimiter: "|", on_click_event: "endpoint_complete"},
         },
         {
-            data_classes: [DC_BIO_EP],
+            data_classes: [DC_BIO_SD, DC_BIO_EP],
             id: "effect",
             label: "effect",
-            settings: {column: "effect", delimiter: "", on_click_event: "endpoint_complete"},
+            settings: {column: "effect", delimiter: "|", on_click_event: "endpoint_complete"},
         },
     ],
     TABLE_FIELDS = {
@@ -76,6 +82,32 @@ const DC_BIO_SD = "bioassay-study-design",
         ],
         [DC_EPI_SD]: [{column: "study citation", delimiter: "", on_click_event: "study"}],
         [DC_EPI_RE]: [{column: "study citation", delimiter: "", on_click_event: "study"}],
-    };
+    },
+    DASHBOARDS = [
+        {
+            data_class: DC_BIO_SD,
+            id: "bioassay-dose-units",
+            label: "dose units",
+            x_axis: "dose-units",
+            y_axis: "study-citation",
+            filters: [],
+        },
+        {
+            data_class: DC_BIO_SD,
+            id: "bioassay-dose-units-route",
+            label: "dose units by route of exposure",
+            x_axis: "dose-units",
+            y_axis: "route-of-exposure",
+            filters: ["study-citation"],
+        },
+        {
+            data_class: DC_BIO_EP,
+            id: "bioassay-endpoint-system",
+            label: "dose units by route of exposure",
+            x_axis: "species-sex",
+            y_axis: "system",
+            filters: ["study-citation", "organ", "effect"],
+        },
+    ];
 
-export {DATA_CLASSES, AXIS_OPTIONS, FILTER_OPTIONS, TABLE_FIELDS};
+export {DATA_CLASSES, AXIS_OPTIONS, FILTER_OPTIONS, TABLE_FIELDS, DASHBOARDS};
