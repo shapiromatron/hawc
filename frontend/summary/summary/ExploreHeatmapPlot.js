@@ -35,7 +35,7 @@ class ExploreHeatmapPlot extends D3Visualization {
 
         const hasFilters = this.settings.filter_widgets.length > 0,
             text1 = hasFilters
-                ? `<div class="span3 heatmap-filters" style="display:flex;align-items:stretch;flex:none;"></div>`
+                ? `<div class="span3 heatmap-filters" style="display:flex;flex:none;"></div>`
                 : ``;
 
         // Create svg container
