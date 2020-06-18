@@ -35,13 +35,17 @@ class ExploreHeatmapPlot extends D3Visualization {
 
         const hasFilters = this.settings.filter_widgets.length > 0,
             text1 = hasFilters
-                ? `<div class="span9 heatmap-viz"></div><div class="span3 heatmap-filters"></div>`
-                : `<div class="span12 heatmap-viz"></div>`;
+                ? `<div class="span3 heatmap-filters" style="display:flex;align-items:stretch;flex:none;"></div>`
+                : ``;
 
         // Create svg container
-        $div.html(`<div class="row-fluid">
+        $div.html(`<div class="span12" style="display:flex;">
+            <div class="${
+                hasFilters ? "span9" : "span12"
+            }" style="display:flex;flex-direction:column;flex:none;">
+                <div class="heatmap-viz" style="flex:0 0 0;"></div><div class="heatmap-tables" style="flex:1 1 0;min-height:40vh;overflow:auto"></div>
+            </div>
             ${text1}
-            <div class="${hasFilters ? "span9" : "span12"} heatmap-tables"></div>
             <div style="position:absolute;" id="exp_heatmap_tooltip"></div>
         </div>`);
 

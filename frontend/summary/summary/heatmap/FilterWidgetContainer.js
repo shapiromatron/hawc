@@ -32,7 +32,7 @@ class FilterWidget extends Component {
 
         // TODO HEATMAP: fix 20vh to be better calculated
         return (
-            <div className="well" style={{maxHeight: "20vh", overflow: "auto"}}>
+            <div className="well" style={{flex: "1", overflow: "auto"}}>
                 <h4>
                     {widget.column}
                     <div className="btn-group pull-right">
@@ -113,7 +113,7 @@ class FilterWidgetContainer extends Component {
         const {store} = this.props,
             {filter_widgets} = this.props.store.settings;
         return (
-            <div>
+            <div style={{display: "flex", flexDirection: "column"}}>
                 {filter_widgets.map((widget, idx) => (
                     <FilterWidget key={idx} store={store} widget={widget} />
                 ))}

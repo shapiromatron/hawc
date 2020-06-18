@@ -58,7 +58,7 @@ class DatasetTable extends Component {
 
         // TODO HEATMAP: fix 40vh to be better calculated
         return (
-            <div style={{maxHeight: "40vh", overflow: "auto"}}>
+            <div>
                 <table className="table table-striped table-bordered">
                     <thead>
                         <tr>
