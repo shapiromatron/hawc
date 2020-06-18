@@ -241,7 +241,7 @@ class ExploreHeatmapPlot extends D3Visualization {
                         .attr("x", 0)
                         .attr("y", 0)
                         .attr("transform", `rotate(${this.settings.x_tick_rotate})`)
-                        .text(lastItem[i].value)
+                        .text(lastItem[i].value || "<null>")
                         .each(function() {
                             HAWCUtils.wrapText(this, WRAP_TEXT_THRESHOLD);
                         });
@@ -316,7 +316,7 @@ class ExploreHeatmapPlot extends D3Visualization {
                         .attr("x", 0)
                         .attr("y", 0)
                         .attr("transform", `rotate(${this.settings.y_tick_rotate})`)
-                        .text(lastItem[i].value)
+                        .text(lastItem[i].value || "<null>")
                         .each(function() {
                             HAWCUtils.wrapText(this, WRAP_TEXT_THRESHOLD);
                         });
