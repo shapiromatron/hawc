@@ -44,29 +44,36 @@
 
     {% if user.is_beta_tester %}
     <h2 class="betatester">Dataset overview dashboards</h2>
-
     <ul>
         {% if endpoints > 0 %}
-        <li><a href="{% url 'animal:heatmap_study_design' assessment.id %}">
-            Bioassay study design</a></li>
-        <li><a href="{% url 'animal:heatmap_study_design' assessment.id %}?unpublished=true">
-            Bioassay study design (with unpublished HAWC studies)</a></li>
-        <li><a href="{% url 'animal:heatmap_endpoints' assessment.id %}">
-            Bioassay endpoint summary</a></li>
-        <li><a href="{% url 'animal:heatmap_endpoints' assessment.id %}?unpublished=true">
-            Bioassay endpoint summary (with unpublished HAWC studies)</a></li>
+        <li>
+            Bioassay study design
+                (<a href="{% url 'animal:heatmap_study_design' assessment.id %}?unpublished=true">published + unpublished HAWC
+                    data</a>)
+                (<a href="{% url 'animal:heatmap_study_design' assessment.id %}">published HAWC data</a>)
+        </li>
+        <li>
+            Bioassay endpoint summary
+            (<a href="{% url 'animal:heatmap_endpoints' assessment.id %}?unpublished=true">published + unpublished HAWC
+                data</a>)
+            (<a href="{% url 'animal:heatmap_endpoints' assessment.id %}">published HAWC data</a>)
+        </li>
         {% endif %}
 
-
         {% if outcomes > 0 %}
-        <li><a href="/">
-                Epidemiology study design</a></li>
-        <li><a href="/">
-                Epidemiology study design (with unpublished HAWC studies)</a></li>
-        <li><a href="/">
-                Epidemiology result summary</a></li>
-        <li><a href="/">
-                Epidemiology result summary (with unpublished HAWC studies)</a></li>
+        <li>
+            Epidemiology study design
+            (<a href="{% url 'animal:heatmap_study_design' assessment.id %}?unpublished=true">published + unpublished HAWC
+                data</a>)
+            (<a href="{% url 'animal:heatmap_study_design' assessment.id %}">published HAWC data</a>)
+
+        </li>
+        <li>
+            Epidemiology result summary
+            (<a href="{% url 'animal:heatmap_endpoints' assessment.id %}?unpublished=true">published + unpublished HAWC
+                data</a>)
+            (<a href="{% url 'animal:heatmap_endpoints' assessment.id %}">published HAWC data</a>)
+        </li>
         {% endif %}
     </ul>
     {% endif %}

@@ -45,6 +45,7 @@ class HeatmapTemplateStore {
 
     @computed get settings() {
         return {
+            autosize: true,
             cell_height: 25,
             cell_width: 75,
             hawc_interactivity: true,
