@@ -8,3 +8,7 @@ class UnusedSerializer(serializers.Serializer):
     """
 
     pass
+
+
+class HeatmapQuerySerializer(serializers.Serializer):
+    unpublished = serializers.BooleanField(default=False)

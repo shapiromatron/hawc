@@ -11,13 +11,6 @@ from ..study.serializers import StudySerializer
 from . import models
 
 
-class HeatmapQuerySerializer(serializers.Serializer):
-    unpublished = serializers.BooleanField(default=False)
-    dose_units = serializers.PrimaryKeyRelatedField(
-        queryset=DoseUnits.objects.all(), required=False
-    )
-
-
 class ExperimentSerializer(serializers.ModelSerializer):
     study = StudySerializer()
 
