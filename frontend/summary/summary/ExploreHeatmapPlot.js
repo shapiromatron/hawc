@@ -40,12 +40,12 @@ class ExploreHeatmapPlot extends D3Visualization {
 
         // Create svg container
         $div.html(`<div class="span12" style="display:flex;">
-            ${text1}
             <div class="${
                 hasFilters ? "span9" : "span12"
             }" style="display:flex;flex-direction:column;flex:none;">
-                <div class="heatmap-viz" style="flex:0 0 0;"></div><div class="heatmap-tables" style="flex:1 1 0;min-height:40vh;overflow:auto"></div>
+                <div style="flex:0 0 0;"><div class="heatmap-viz" style="overflow:auto;"></div></div><div class="heatmap-tables" style="flex:1 1 0;min-height:40vh;overflow:auto"></div>
             </div>
+            ${text1}
             <div style="position:absolute;" id="exp_heatmap_tooltip"></div>
         </div>`);
 
