@@ -4,6 +4,16 @@ import {observer} from "mobx-react";
 
 import {NULL_VALUE} from "../constants";
 
+const pillItems = function(text, delimiter) {
+    if (!delimiter) {
+        return text;
+    }
+    return text.split(delimiter).map((item, i) => (
+        <span key={i} className="label" style={{marginRight: 3}}>
+            {item}
+        </span>
+    ));
+};
 @observer
 class InteractiveCell extends Component {
     constructor(props) {
@@ -20,7 +30,9 @@ class InteractiveCell extends Component {
 
         return (
             <td onMouseEnter={showButton} onMouseLeave={hideButton}>
-                <a href={store.getDetailUrl(field.on_click_event, row)}>{row[field.column]}</a>
+                <a href={store.getDetailUrl(field.on_click_event, row)}>
+                    {pillItems(row[field.column], field.delimiter)}
+                </a>
                 {this.state.isHovering ? (
                     <button
                         className="btn btn-mini pull-right"
@@ -77,7 +89,7 @@ class DatasetTable extends Component {
             <tr key={index}>
                 {table_fields.map((field, i2) => {
                     return field.on_click_event === NULL_VALUE ? (
-                        <td key={i2}>{row[field.column]}</td>
+                        <td key={i2}>{pillItems(row[field.column], field.delimiter)}</td>
                     ) : (
                         <InteractiveCell
                             key={i2}

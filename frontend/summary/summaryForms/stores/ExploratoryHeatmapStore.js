@@ -12,7 +12,7 @@ let createDefaultAxisItem = function() {
         return {column: NULL_VALUE, delimiter: "", on_click_event: NULL_VALUE};
     },
     createTableRow = function() {
-        return {column: NULL_VALUE, on_click_event: NULL_VALUE};
+        return {column: NULL_VALUE, delimiter: "", on_click_event: NULL_VALUE};
     };
 
 class ExploratoryHeatmapStore {
