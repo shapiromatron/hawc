@@ -48,11 +48,16 @@ class HeatmapTemplateStore {
             autosize: true,
             cell_height: 25,
             cell_width: 75,
-            hawc_interactivity: true,
             color_range: ["#ffffff", "#2339a9"],
+            compress_x: true,
+            compress_y: true,
             data_url: this.config.data_url,
             filter_widgets: toJS(this.selectedFilters.map(d => d.settings)),
+            hawc_interactivity: true,
             padding: {top: 30, left: 30, bottom: 30, right: 30},
+            show_axis_border: true,
+            show_grid: true,
+            show_tooltip: true,
             table_fields: TABLE_FIELDS[this.config.data_class],
             title: {text: this.config.title, x: 0, y: 0, rotate: 0},
             x_fields: toJS(this.selectedXAxis.settings),
@@ -61,10 +66,6 @@ class HeatmapTemplateStore {
             y_fields: toJS(this.selectedYAxis.settings),
             y_label: {text: this.selectedYAxis.label, x: 0, y: 0, rotate: -90},
             y_tick_rotate: 0,
-            show_grid: true,
-            show_axis_border: true,
-            show_tooltip: true,
-            compress_y: true,
         };
     }
 
