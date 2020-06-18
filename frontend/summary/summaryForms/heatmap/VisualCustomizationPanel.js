@@ -251,6 +251,13 @@ class VisualCustomizationPanel extends Component {
                     </div>
                     <div className="span2">
                         <CheckboxInput
+                            id="autosize"
+                            label="Autosize plot"
+                            name="autosize"
+                            onChange={e => changeSettings(e.target.name, e.target.checked)}
+                            checked={settings.autosize}
+                        />
+                        <CheckboxInput
                             id="show_tooltip"
                             label="Show tooltip"
                             name="show_tooltip"

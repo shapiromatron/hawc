@@ -13,6 +13,9 @@ import DatasetTable from "./heatmap/DatasetTable";
 import FilterWidgetContainer from "./heatmap/FilterWidgetContainer";
 import Tooltip from "./heatmap/Tooltip";
 
+const AXIS_WIDTH_GUESS = 120,
+    WRAP_TEXT_THRESHOLD = 150;
+
 class ExploreHeatmapPlot extends D3Visualization {
     constructor(parent, data, options) {
         super(...arguments);
@@ -21,7 +24,6 @@ class ExploreHeatmapPlot extends D3Visualization {
         this.dataset = data.dataset;
         this.settings = data.settings;
         this.options = options || {};
-        this.generate_properties();
     }
 
     render($div) {
@@ -42,6 +44,7 @@ class ExploreHeatmapPlot extends D3Visualization {
             filters = $div.find(".heatmap-filters")[0];
 
         this.plot_div = $(viz);
+        this.generate_properties();
         this.build_plot();
         this.add_grid();
         this.set_trigger_resize();
@@ -109,12 +112,48 @@ class ExploreHeatmapPlot extends D3Visualization {
         this.x_steps = scales.x.filter((d, i) => (compress_x ? totals.x[i] > 0 : true)).length;
         this.y_steps = scales.y.filter((d, i) => (compress_y ? totals.y[i] > 0 : true)).length;
 
-        this.w = this.settings.cell_width * this.x_steps;
-        this.h = this.settings.cell_height * this.y_steps;
+        this.cellDimensions = this.get_cell_dimensions();
+        this.w = this.cellDimensions.width * this.x_steps;
+        this.h = this.cellDimensions.height * this.y_steps;
 
         // calculated padding based on labels
         this.x_axis_label_padding = 0;
         this.y_axis_label_padding = 0;
+    }
+
+    get_cell_dimensions() {
+        let cellDimensions = {};
+        if (this.settings.autosize) {
+            /*
+            Assume plot has the the same width/height ratio as browser window.
+
+            Calculate total plotHeight and plotWidth but getting available room, and then subtracting
+            padding. In addition, subtract AXIS_WIDTH_GUESS for each axis.  This could be improved
+            in the future by laying-out the largest text label by text-size and getting the size.
+            */
+            const minWidth = 50,
+                minHeight = 25,
+                plotWidth =
+                    this.plot_div.width() -
+                    this.settings.padding.left -
+                    this.settings.padding.right -
+                    this.settings.y_fields.length * AXIS_WIDTH_GUESS,
+                plotHeight =
+                    (plotWidth / $(window).width()) * $(window).height() -
+                    this.settings.padding.top -
+                    this.settings.padding.bottom -
+                    this.settings.x_fields.length * AXIS_WIDTH_GUESS,
+                cellWidth = this.x_steps == 0 ? 0 : plotWidth / this.x_steps,
+                cellHeight = this.y_steps == 0 ? 0 : plotHeight / this.y_steps;
+
+            cellDimensions = {
+                width: Math.max(cellWidth, minWidth),
+                height: Math.max(cellHeight, minHeight),
+            };
+        } else {
+            cellDimensions = {width: this.settings.cell_width, height: this.settings.cell_height};
+        }
+        return cellDimensions;
     }
 
     bind_tooltip(selection, type) {
@@ -158,10 +197,10 @@ class ExploreHeatmapPlot extends D3Visualization {
 
     build_axes() {
         let xs = this.store.scales.x.filter((d, i) =>
-                this.store.settings.compress_x ? this.store.totals.x[i] > 0 : true
+                this.settings.compress_x ? this.store.totals.x[i] > 0 : true
             ),
             ys = this.store.scales.y.filter((d, i) =>
-                this.store.settings.compress_y ? this.store.totals.y[i] > 0 : true
+                this.settings.compress_y ? this.store.totals.y[i] > 0 : true
             ),
             xAxis = this.vis
                 .append("g")
@@ -174,7 +213,7 @@ class ExploreHeatmapPlot extends D3Visualization {
         // build x-axis
         let yOffset = 0,
             numXAxes = xs.length == 0 ? 0 : xs[0].length,
-            {cell_width, show_axis_border} = this.store.settings;
+            {show_axis_border} = this.settings;
         for (let i = numXAxes - 1; i >= 0; i--) {
             let axis = xAxis.append("g").attr("transform", `translate(0,${yOffset})`),
                 lastItem = xs[0],
@@ -193,13 +232,18 @@ class ExploreHeatmapPlot extends D3Visualization {
 
                     label
                         .append("text")
+                        .attr("x", 0)
+                        .attr("y", 0)
                         .attr("transform", `rotate(${this.settings.x_tick_rotate})`)
-                        .text(lastItem[i].value);
+                        .text(lastItem[i].value)
+                        .each(function() {
+                            HAWCUtils.wrapText(this, WRAP_TEXT_THRESHOLD);
+                        });
 
                     let box = label.node().getBBox(),
                         label_offset =
-                            itemStartIndex * cell_width +
-                            (numItems * cell_width) / 2 -
+                            itemStartIndex * this.cellDimensions.width +
+                            (numItems * this.cellDimensions.width) / 2 -
                             box.width / 2;
 
                     label.attr(
@@ -209,8 +253,8 @@ class ExploreHeatmapPlot extends D3Visualization {
 
                     borderData.push({
                         filters: _.slice(lastItem, 0, i + 1),
-                        x1: itemStartIndex * cell_width,
-                        width: numItems * cell_width,
+                        x1: itemStartIndex * this.cellDimensions.width,
+                        width: numItems * this.cellDimensions.width,
                     });
 
                     itemStartIndex = j;
@@ -246,8 +290,7 @@ class ExploreHeatmapPlot extends D3Visualization {
 
         // build y-axis
         let xOffset = 0,
-            numYAxes = ys.length == 0 ? 0 : ys[0].length,
-            {cell_height} = this.store.settings;
+            numYAxes = ys.length == 0 ? 0 : ys[0].length;
         for (let i = numYAxes - 1; i >= 0; i--) {
             let axis = yAxis.append("g").attr("transform", `translate(${-xOffset},0)`),
                 lastItem = ys[0],
@@ -264,12 +307,17 @@ class ExploreHeatmapPlot extends D3Visualization {
                     let label = axis.append("g");
                     label
                         .append("text")
+                        .attr("x", 0)
+                        .attr("y", 0)
                         .attr("transform", `rotate(${this.settings.y_tick_rotate})`)
-                        .text(lastItem[i].value);
+                        .text(lastItem[i].value)
+                        .each(function() {
+                            HAWCUtils.wrapText(this, WRAP_TEXT_THRESHOLD);
+                        });
                     let box = label.node().getBBox(),
                         label_offset =
-                            itemStartIndex * cell_height +
-                            (numItems * cell_height) / 2 -
+                            itemStartIndex * this.cellDimensions.height +
+                            (numItems * this.cellDimensions.height) / 2 -
                             box.height / 2;
                     label.attr(
                         "transform",
@@ -278,8 +326,8 @@ class ExploreHeatmapPlot extends D3Visualization {
 
                     borderData.push({
                         filters: _.slice(lastItem, 0, i + 1),
-                        y1: itemStartIndex * cell_height,
-                        height: numItems * cell_height,
+                        y1: itemStartIndex * this.cellDimensions.height,
+                        height: numItems * this.cellDimensions.height,
                     });
 
                     itemStartIndex = j;
@@ -444,15 +492,7 @@ class ExploreHeatmapPlot extends D3Visualization {
             .append("g")
             .attr("class", "exp_heatmap_cell")
             .on("click", function(d) {
-                d3.selectAll(".exp_heatmap_cell_block")
-                    .style("stroke", "none")
-                    .style("stroke-width", 2);
                 if (d.rows.length > 0) {
-                    d3.select(this)
-                        .select("rect")
-                        .style("stroke", "black")
-                        .style("stroke-width", 2);
-
                     self.store.setTableDataFilters(d);
                 } else {
                     self.store.setTableDataFilters(new Set());
