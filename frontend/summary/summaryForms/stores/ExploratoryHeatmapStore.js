@@ -156,15 +156,13 @@ class ExploratoryHeatmapStore {
         fetch(url, h.fetchGet)
             .then(response => response.json())
             .then(json => {
-                let datasets = json.datasets;
+                let datasets = json.datasets.map(d => {
+                    return {id: d.url, label: d.name};
+                });
                 datasets.unshift({
                     type: "",
-                    name: "<none>",
+                    name: "<none selected>",
                     url: "",
-                });
-                datasets.forEach(d => {
-                    d.label = d.type === "Dataset" ? `${d.type}: ${d.name}` : d.name;
-                    d.id = d.url;
                 });
                 this.datasetOptions = datasets;
             })

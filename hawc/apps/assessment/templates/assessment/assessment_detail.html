@@ -27,7 +27,7 @@
             {% endif %}
             <li><a href="{% url 'assessment:attachment_create' object.pk %}">Add an attachment</a></li>
             {% if user.is_beta_tester %}
-            <li><a href="{% url 'assessment:dataset_create' object.pk %}">Add a dataset</a></li>
+            <li class="betatester"><a href="{% url 'assessment:dataset_create' object.pk %}">Add a dataset</a></li>
             {% endif %}
             <li class="divider"></li>
           {% endif %}

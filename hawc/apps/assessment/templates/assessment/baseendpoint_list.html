@@ -42,4 +42,40 @@
 
     </ul>
 
+    {% if user.is_beta_tester %}
+    <h2 class="betatester">Dataset overview dashboards</h2>
+    <ul>
+        {% if endpoints > 0 %}
+        <li>
+            Bioassay study design
+                (<a href="{% url 'animal:heatmap_study_design' assessment.id %}?unpublished=true">published + unpublished HAWC
+                    data</a>)
+                (<a href="{% url 'animal:heatmap_study_design' assessment.id %}">published HAWC data</a>)
+        </li>
+        <li>
+            Bioassay endpoint summary
+            (<a href="{% url 'animal:heatmap_endpoints' assessment.id %}?unpublished=true">published + unpublished HAWC
+                data</a>)
+            (<a href="{% url 'animal:heatmap_endpoints' assessment.id %}">published HAWC data</a>)
+        </li>
+        {% endif %}
+
+        {% if outcomes > 0 %}
+        <li>
+            Epidemiology study design
+            (<a href="{% url 'animal:heatmap_study_design' assessment.id %}?unpublished=true">published + unpublished HAWC
+                data</a>)
+            (<a href="{% url 'animal:heatmap_study_design' assessment.id %}">published HAWC data</a>)
+
+        </li>
+        <li>
+            Epidemiology result summary
+            (<a href="{% url 'animal:heatmap_endpoints' assessment.id %}?unpublished=true">published + unpublished HAWC
+                data</a>)
+            (<a href="{% url 'animal:heatmap_endpoints' assessment.id %}">published HAWC data</a>)
+        </li>
+        {% endif %}
+    </ul>
+    {% endif %}
+
 {% endblock %}

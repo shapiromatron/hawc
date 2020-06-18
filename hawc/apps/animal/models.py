@@ -219,6 +219,8 @@ class AnimalGroup(models.Model):
         ("R", "Not reported"),
     )
 
+    SEX_DICT = {el[0]: el[1] for el in SEX_CHOICES}
+
     GENERATION_CHOICES = (
         ("", "N/A (not generational-study)"),
         ("P0", "Parent-generation (P0)"),
@@ -228,6 +230,8 @@ class AnimalGroup(models.Model):
         ("F4", "Fourth-generation (F4)"),
         ("Ot", "Other"),
     )
+
+    GENERATION_DICT = {el[0]: el[1] for el in GENERATION_CHOICES}
 
     # these choices for lifesage expose/assessed were added ~Sept 2018. B/c there
     # are existing values in the database, we are not going to enforce these choices on
@@ -467,6 +471,7 @@ class DosingRegime(models.Model):
         ("U", "Unknown"),
         ("O", "Other"),
     )
+    ROUTE_EXPOSURE_CHOICES_DICT = {el[0]: el[1] for el in ROUTE_EXPOSURE_CHOICES}
 
     POSITIVE_CONTROL_CHOICES = ((True, "Yes"), (False, "No"), (None, "Unknown"))
 
@@ -933,11 +938,15 @@ class Endpoint(BaseEndpoint):
             "animal_group__species__name": "species",
             "animal_group__strain__name": "strain",
             "animal_group__sex": "sex",
+            "animal_group__generation": "generation",
             "animal_group_id": "animal group id",
             "animal_group__experiment_id": "experiment id",
             "animal_group__experiment__name": "experiment name",
+            "animal_group__experiment__cas": "experiment cas",
+            "animal_group__experiment__chemical": "experiment chemical",
             "animal_group__experiment__study_id": "study id",
             "animal_group__experiment__study__short_citation": "study citation",
+            "animal_group__experiment__study__study_identifier": "study identifier",
         }
         qs = (
             cls.objects.select_related(
@@ -951,7 +960,13 @@ class Endpoint(BaseEndpoint):
             .filter(**filters)
             .values_list(*columns.keys())
         )
-        return pd.DataFrame(data=list(qs), columns=columns.values())
+        df = pd.DataFrame(data=list(qs), columns=columns.values())
+        df["route of exposure"] = df["route of exposure"].map(
+            DosingRegime.ROUTE_EXPOSURE_CHOICES_DICT
+        )
+        df["sex"] = df["sex"].map(AnimalGroup.SEX_DICT)
+        df["generation"] = df["generation"].map(AnimalGroup.GENERATION_DICT)
+        return df
 
     def __str__(self):
         return self.name

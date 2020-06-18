@@ -110,7 +110,6 @@ class BaseStore {
     @action setDataRefreshRequired() {
         this.dataRefreshRequired = true;
     }
-
     @computed get hasDataset() {
         return this.dataset !== null;
     }

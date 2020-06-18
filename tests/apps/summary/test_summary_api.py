@@ -209,17 +209,27 @@ class TestSummaryAssessmentViewset:
                     },
                     {
                         "type": "Bioassay",
-                        "name": "Bioassay summary",
+                        "name": "Bioassay endpoints (published only)",
                         "url": "/ani/api/assessment/1/endpoint-heatmap/",
                     },
                     {
+                        "type": "Bioassay",
+                        "name": "Bioassay endpoints (with unpublished HAWC data)",
+                        "url": "/ani/api/assessment/1/endpoint-heatmap/?unpublished=true",
+                    },
+                    {
                         "type": "Epi",
-                        "name": "Epi summary",
+                        "name": "Epidemiology results (published only)",
                         "url": "/epi/api/assessment/1/result-heatmap/",
                     },
                     {
+                        "type": "Epi",
+                        "name": "Epidemiology results (with unpublished HAWC data)",
+                        "url": "/epi/api/assessment/1/result-heatmap/?unpublished=true",
+                    },
+                    {
                         "type": "Dataset",
-                        "name": "iris flowers",
+                        "name": "Dataset: iris flowers",
                         "url": "/assessment/api/dataset/1/data/",
                     },
                 ]

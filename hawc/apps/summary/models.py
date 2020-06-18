@@ -294,16 +294,30 @@ class Visual(models.Model):
                 ),
                 HeatmapDataset(
                     type="Bioassay",
-                    name="Bioassay summary",
+                    name="Bioassay endpoints (published only)",
                     url=reverse("animal:api:assessment-endpoint-heatmap", args=(assessment.id,)),
                 ),
                 HeatmapDataset(
+                    type="Bioassay",
+                    name="Bioassay endpoints (with unpublished HAWC data)",
+                    url=reverse("animal:api:assessment-endpoint-heatmap", args=(assessment.id,))
+                    + "?unpublished=true",
+                ),
+                HeatmapDataset(
                     type="Epi",
-                    name="Epi summary",
+                    name="Epidemiology results (published only)",
                     url=reverse("epi:api:assessment-result-heatmap", args=(assessment.id,)),
                 ),
+                HeatmapDataset(
+                    type="Epi",
+                    name="Epidemiology results (with unpublished HAWC data)",
+                    url=reverse("epi:api:assessment-result-heatmap", args=(assessment.id,))
+                    + "?unpublished=true",
+                ),
                 *(
-                    HeatmapDataset(type="Dataset", name=ds.name, url=ds.get_api_data_url())
+                    HeatmapDataset(
+                        type="Dataset", name=f"Dataset: {ds.name}", url=ds.get_api_data_url()
+                    )
                     for ds in assessment.datasets.all()
                 ),
             ]

@@ -6,6 +6,7 @@ module.exports = {
 
     entry: {
         main: [
+            "./admin/index",
             "./animal/index",
             "./assessment/index",
             "./assets/index",
@@ -67,6 +68,7 @@ module.exports = {
     resolve: {
         alias: {
             assets: path.join(__dirname, "assets"),
+            admin: path.join(__dirname, "admin"),
             animal: path.join(__dirname, "animal"),
             assessment: path.join(__dirname, "assessment"),
             bmd: path.join(__dirname, "bmd"),
@@ -81,6 +83,7 @@ module.exports = {
             utils: path.join(__dirname, "utils"),
         },
         modules: [
+            path.join(__dirname, "admin"),
             path.join(__dirname, "animal"),
             path.join(__dirname, "assessment"),
             path.join(__dirname, "assets"),

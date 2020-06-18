@@ -1455,6 +1455,7 @@ class Result(models.Model):
             "outcome__study_population__name": "study population name",
             "outcome__study_population__study_id": "study id",
             "outcome__study_population__study__short_citation": "study citation",
+            "outcome__study_population__study__study_identifier": "study identifier",
         }
         qs = (
             cls.objects.select_related(

@@ -27,6 +27,12 @@ class ExploreHeatmapPlot extends D3Visualization {
     }
 
     render($div) {
+        if (this.dataset === null || this.dataset.length === 0) {
+            return $div.html(`<div class="alert alert-danger">
+            No data are available.
+            </div>`);
+        }
+
         const hasFilters = this.settings.filter_widgets.length > 0,
             text1 = hasFilters
                 ? `<div class="span9 heatmap-viz"></div><div class="span3 heatmap-filters"></div>`

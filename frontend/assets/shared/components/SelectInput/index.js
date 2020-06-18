@@ -19,7 +19,14 @@ class SelectInput extends Component {
     }
 
     handleSelect(e) {
-        this.props.handleSelect(e.target.value);
+        let value = e.target.value;
+        if (this.props.multiple) {
+            value = _.chain(event.target.options)
+                .filter(o => o.selected)
+                .map(o => o.value)
+                .value();
+        }
+        this.props.handleSelect(value);
     }
 
     renderLabel() {

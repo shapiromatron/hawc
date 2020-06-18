@@ -2,13 +2,15 @@ import PropTypes from "prop-types";
 import React, {Component} from "react";
 import {inject, observer} from "mobx-react";
 import {DataStatusIndicator} from "./common";
+import DatasetPreview from "../../summary/heatmap/DatasetPreview";
 import SelectInput from "shared/components/SelectInput";
+
 @inject("store")
 @observer
 class DataPanel extends Component {
     render() {
-        const {dataError} = this.props.store.base,
-            {datasetOptions} = this.props.store.subclass;
+        const {dataError, dataset} = this.props.store.base,
+            {datasetOptions, settings} = this.props.store.subclass;
 
         let content;
 
@@ -31,6 +33,8 @@ class DataPanel extends Component {
                     </div>
                 ) : null}
                 {content}
+                <hr />
+                <DatasetPreview dataset={dataset} url={settings.data_url} />
             </div>
         );
     }
@@ -38,15 +42,20 @@ class DataPanel extends Component {
         const {settings, changeDatasetUrl, datasetOptions} = this.props.store.subclass;
 
         return (
-            <SelectInput
-                name="data_url"
-                label="Data URL"
-                className="span12"
-                choices={datasetOptions}
-                multiple={false}
-                handleSelect={value => changeDatasetUrl(value)}
-                value={settings.data_url}
-            />
+            <div>
+                <SelectInput
+                    name="data_url"
+                    label="Data URL"
+                    className="span12"
+                    choices={datasetOptions}
+                    multiple={false}
+                    handleSelect={value => changeDatasetUrl(value)}
+                    helpText={`Select the dataset you'd like to use. Note that if you select a
+                    dataset that contains "unpublished HAWC data", then if this assessment is
+                    made public, users without team-level access will be unable to view the visual.`}
+                    value={settings.data_url}
+                />
+            </div>
         );
     }
 }
