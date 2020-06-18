@@ -199,7 +199,7 @@ class VisualCustomizationPanel extends Component {
                     </div>
                 </div>
                 <div className="row-fluid">
-                    <div className="span3">
+                    <div className="span2">
                         <TextInput
                             label="Color range (start)"
                             name="color_range1"
@@ -208,7 +208,7 @@ class VisualCustomizationPanel extends Component {
                             onChange={e => changeSettings("color_range.0", e.target.value)}
                         />
                     </div>
-                    <div className="span3">
+                    <div className="span2">
                         <TextInput
                             label="Color range (end)"
                             name="color_range2"
@@ -259,10 +259,19 @@ class VisualCustomizationPanel extends Component {
                         />
                         <CheckboxInput
                             id="show_tooltip"
-                            label="Show tooltip"
+                            label="Show tooltips"
                             name="show_tooltip"
                             onChange={e => changeSettings(e.target.name, e.target.checked)}
                             checked={settings.show_tooltip}
+                        />
+                    </div>
+                    <div className="span2">
+                        <CheckboxInput
+                            id="hawc_interactivity"
+                            label="HAWC interactivity"
+                            name="hawc_interactivity"
+                            onChange={e => changeSettings(e.target.name, e.target.checked)}
+                            checked={settings.hawc_interactivity}
                         />
                     </div>
                 </div>
