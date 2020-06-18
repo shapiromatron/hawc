@@ -21,7 +21,6 @@ class FilterWidget extends Component {
                 .map(d => (widget.delimiter ? d.split(widget.delimiter) : d))
                 .flatten()
                 .uniq()
-                .filter(d => d && d.length > 0)
                 .value(),
             itemStore = this.props.store.filterWidgetState[widget.column],
             hiddenItems = _.chain(itemStore)
@@ -97,7 +96,7 @@ class FilterWidget extends Component {
                             toggleItemSelection(widget.column, item, e.target.checked);
                         }}
                     />
-                    <span>&nbsp;{item}</span>
+                    <span>&nbsp;{item == "" ? "<null>" : item}</span>
                 </label>
             </div>
         );
