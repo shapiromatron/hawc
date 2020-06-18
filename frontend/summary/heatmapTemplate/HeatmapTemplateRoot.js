@@ -12,7 +12,7 @@ import SelectInput from "shared/components/SelectInput";
 @observer
 class HeatmapTemplateRoot extends React.Component {
     render() {
-        const {selectedDashboard, dashboardOptions, changeDashboard} = this.props.store;
+        const {selectedDashboard, dashboardOptions, changeDashboard, flipAxes} = this.props.store;
         return (
             <Tabs>
                 <TabList>
@@ -29,6 +29,13 @@ class HeatmapTemplateRoot extends React.Component {
                             value={selectedDashboard.id}
                             fieldOnly={true}
                         />
+                        <button
+                            style={{marginBottom: 10}}
+                            className="btn"
+                            onClick={() => flipAxes()}
+                            title="flip axes">
+                            <i className="fa fa-undo"></i>
+                        </button>
                     </div>
                 </TabList>
                 <TabPanel>

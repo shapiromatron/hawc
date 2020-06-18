@@ -44,6 +44,12 @@ class HeatmapTemplateStore {
         }
     }
 
+    @action.bound flipAxes() {
+        const temp = this.selectedXAxis;
+        this.selectedXAxis = this.selectedYAxis;
+        this.selectedYAxis = temp;
+    }
+
     @action.bound changeSelectedFilters(values) {
         this.selectedFilters = values.map(value => _.find(this.filterOptions, {id: value}));
     }
