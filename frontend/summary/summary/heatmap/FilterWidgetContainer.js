@@ -96,7 +96,7 @@ class FilterWidget extends Component {
                             toggleItemSelection(widget.column, item, e.target.checked);
                         }}
                     />
-                    <span>&nbsp;{item == "" ? "<Empty>" : item}</span>
+                    <span>&nbsp;{item == "" ? "<null>" : item}</span>
                 </label>
             </div>
         );

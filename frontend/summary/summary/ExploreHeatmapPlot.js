@@ -13,6 +13,9 @@ import DatasetTable from "./heatmap/DatasetTable";
 import FilterWidgetContainer from "./heatmap/FilterWidgetContainer";
 import Tooltip from "./heatmap/Tooltip";
 
+const AXIS_WIDTH_GUESS = 120,
+    WRAP_TEXT_THRESHOLD = 150;
+
 class ExploreHeatmapPlot extends D3Visualization {
     constructor(parent, data, options) {
         super(...arguments);
@@ -121,12 +124,26 @@ class ExploreHeatmapPlot extends D3Visualization {
     get_cell_dimensions() {
         let cellDimensions = {};
         if (this.settings.autosize) {
-            // assume plot has the the same width/height ratio as browser winodw
+            /*
+            Assume plot has the the same width/height ratio as browser window.
+
+            Calculate total plotHeight and plotWidth but getting available room, and then subtracting
+            padding. In addition, subtract AXIS_WIDTH_GUESS for each axis.  This could be improved
+            in the future by laying-out the largest text label by text-size and getting the size.
+            */
             const minWidth = 50,
                 minHeight = 25,
-                plotWidth = this.plot_div.width(),
+                plotWidth =
+                    this.plot_div.width() -
+                    this.settings.padding.left -
+                    this.settings.padding.right -
+                    this.settings.y_fields.length * AXIS_WIDTH_GUESS,
+                plotHeight =
+                    (plotWidth / $(window).width()) * $(window).height() -
+                    this.settings.padding.top -
+                    this.settings.padding.bottom -
+                    this.settings.x_fields.length * AXIS_WIDTH_GUESS,
                 cellWidth = this.x_steps == 0 ? 0 : plotWidth / this.x_steps,
-                plotHeight = (plotWidth / $(window).width()) * $(window).height(),
                 cellHeight = this.y_steps == 0 ? 0 : plotHeight / this.y_steps;
 
             cellDimensions = {
@@ -215,8 +232,13 @@ class ExploreHeatmapPlot extends D3Visualization {
 
                     label
                         .append("text")
+                        .attr("x", 0)
+                        .attr("y", 0)
                         .attr("transform", `rotate(${this.settings.x_tick_rotate})`)
-                        .text(lastItem[i].value);
+                        .text(lastItem[i].value)
+                        .each(function() {
+                            HAWCUtils.wrapText(this, WRAP_TEXT_THRESHOLD);
+                        });
 
                     let box = label.node().getBBox(),
                         label_offset =
@@ -285,8 +307,13 @@ class ExploreHeatmapPlot extends D3Visualization {
                     let label = axis.append("g");
                     label
                         .append("text")
+                        .attr("x", 0)
+                        .attr("y", 0)
                         .attr("transform", `rotate(${this.settings.y_tick_rotate})`)
-                        .text(lastItem[i].value);
+                        .text(lastItem[i].value)
+                        .each(function() {
+                            HAWCUtils.wrapText(this, WRAP_TEXT_THRESHOLD);
+                        });
                     let box = label.node().getBBox(),
                         label_offset =
                             itemStartIndex * this.cellDimensions.height +
