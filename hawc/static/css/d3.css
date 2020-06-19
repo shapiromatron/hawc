@@ -325,16 +325,17 @@ path.tagslink {
  * Exploratory heatmap
  */
 
+.exp_heatmap_cell, .exp-heatmap-axis {
+    cursor: pointer;
+}
 .exp_heatmap_cell_text {
     text-anchor:middle;
     dominant-baseline:central;
 }
-
 .exp_heatmap_label {
     font-size:larger;
     text-anchor:middle;
 }
-
 .exp_heatmap_title {
     font-weight:bold;
 }

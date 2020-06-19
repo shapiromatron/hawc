@@ -1,121 +1,43 @@
 import _ from "lodash";
 import d3 from "d3";
 import {autorun} from "mobx";
-import D3Visualization from "./D3Visualization";
+import VisualToolbar from "shared/components/VisualToolbar";
 import h from "shared/utils/helpers";
 import HAWCModal from "utils/HAWCModal";
 import HAWCUtils from "utils/HAWCUtils";
 
 import React from "react";
 import ReactDOM from "react-dom";
-import HeatmapDatastore from "./heatmap/HeatmapDatastore";
-import DatasetTable from "./heatmap/DatasetTable";
-import FilterWidgetContainer from "./heatmap/FilterWidgetContainer";
 import Tooltip from "./heatmap/Tooltip";
 
 const AXIS_WIDTH_GUESS = 120;
 
-class ExploreHeatmapPlot extends D3Visualization {
-    constructor(parent, data, options) {
-        super(...arguments);
+class ExploreHeatmapPlot {
+    constructor(store, options) {
         this.modal = new HAWCModal();
-        this.store = new HeatmapDatastore(data.settings, data.dataset);
-        this.dataset = data.dataset;
-        this.settings = data.settings;
-        this.options = options || {};
+        this.store = store;
+        this.options = options;
     }
 
-    render($div) {
-        if (this.dataset === null || this.dataset.length === 0) {
-            return $div.html(`<div class="alert alert-danger">
-            No data are available.
-            </div>`);
-        }
-
-        const hasFilters = this.settings.filter_widgets.length > 0,
-            text1 = hasFilters
-                ? `<div class="span9 heatmap-viz"></div><div class="span3 heatmap-filters"></div>`
-                : `<div class="span12 heatmap-viz"></div>`;
-
-        // Create svg container
-        $div.html(`<div class="row-fluid">
-            ${text1}
-            <div class="${hasFilters ? "span9" : "span12"} heatmap-tables"></div>
-            <div style="position:absolute;" id="exp_heatmap_tooltip"></div>
-        </div>`);
-
-        const viz = $div.find(".heatmap-viz")[0],
-            tbl = $div.find(".heatmap-tables")[0],
-            filters = $div.find(".heatmap-filters")[0];
-
-        this.plot_div = $(viz);
+    render(div, tooltipDiv) {
+        this.plot_div = $(div);
+        this.$tooltipDiv = $(tooltipDiv);
         this.generate_properties();
         this.build_plot();
-        this.add_grid();
-        this.set_trigger_resize();
-        this.add_menu();
-        ReactDOM.render(<DatasetTable store={this.store} />, tbl);
-
-        if (hasFilters) {
-            ReactDOM.render(<FilterWidgetContainer store={this.store} />, filters);
-        }
-    }
-
-    set_trigger_resize() {
-        var self = this,
-            w =
-                this.w +
-                this.settings.padding.left +
-                this.x_axis_label_padding +
-                this.settings.padding.right,
-            h =
-                this.h +
-                this.settings.padding.top +
-                this.y_axis_label_padding +
-                this.settings.padding.bottom,
-            chart = $(this.svg),
-            container = chart.parent();
-
-        this.full_width = w;
-        this.full_height = h;
-        this.isFullSize = true;
-        this.trigger_resize = function(forceResize) {
-            var targetWidth = Math.min(container.width(), self.full_width),
-                aspect = self.full_width / self.full_height;
-            if (forceResize === true && !self.isFullSize) targetWidth = self.full_width;
-
-            if (targetWidth !== self.full_width) {
-                // use custom smaller size
-                chart.attr("width", targetWidth);
-                chart.attr("height", Math.round(targetWidth / aspect));
-                self.isFullSize = false;
-                if (self.resize_button) {
-                    self.resize_button.attr("title", "zoom figure to full-size");
-                    self.resize_button.find("i").attr("class", "icon-zoom-in");
-                }
-            } else {
-                // set back to full-size
-                chart.attr("width", self.full_width);
-                chart.attr("height", self.full_height);
-                self.isFullSize = true;
-                if (self.resize_button) {
-                    self.resize_button.attr("title", "zoom figure to fit screen");
-                    self.resize_button.find("i").attr("class", "icon-zoom-out");
-                }
-            }
-        };
-        $(window).resize(this.trigger_resize);
-        this.trigger_resize(false);
     }
 
     generate_properties() {
-        // `this.padding` required for D3Plot
-        this.padding = this.settings.padding;
+        const {settings, scales, totals} = this.store;
 
-        const {compress_x, compress_y} = this.settings,
-            {scales, totals} = this.store;
-        this.x_steps = scales.x.filter((d, i) => (compress_x ? totals.x[i] > 0 : true)).length;
-        this.y_steps = scales.y.filter((d, i) => (compress_y ? totals.y[i] > 0 : true)).length;
+        // `this.padding` required for D3Plot
+        this.padding = settings.padding;
+
+        this.x_steps = scales.x.filter((d, i) =>
+            settings.compress_x ? totals.x[i] > 0 : true
+        ).length;
+        this.y_steps = scales.y.filter((d, i) =>
+            settings.compress_y ? totals.y[i] > 0 : true
+        ).length;
 
         this.cellDimensions = this.get_cell_dimensions();
         this.w = this.cellDimensions.width * this.x_steps;
@@ -127,6 +49,7 @@ class ExploreHeatmapPlot extends D3Visualization {
     }
 
     get_cell_dimensions() {
+        const {settings} = this.store;
         let cellDimensions = {};
         if (this.settings.autosize_cells) {
             /*
@@ -140,14 +63,14 @@ class ExploreHeatmapPlot extends D3Visualization {
                 minHeight = 25,
                 plotWidth =
                     this.plot_div.width() -
-                    this.settings.padding.left -
-                    this.settings.padding.right -
-                    this.settings.y_fields.length * AXIS_WIDTH_GUESS,
+                    settings.padding.left -
+                    settings.padding.right -
+                    settings.y_fields.length * AXIS_WIDTH_GUESS,
                 plotHeight =
                     (plotWidth / $(window).width()) * $(window).height() -
-                    this.settings.padding.top -
-                    this.settings.padding.bottom -
-                    this.settings.x_fields.length * AXIS_WIDTH_GUESS,
+                    settings.padding.top -
+                    settings.padding.bottom -
+                    settings.x_fields.length * AXIS_WIDTH_GUESS,
                 cellWidth = this.x_steps == 0 ? 0 : plotWidth / this.x_steps,
                 cellHeight = this.y_steps == 0 ? 0 : plotHeight / this.y_steps;
 
@@ -162,7 +85,7 @@ class ExploreHeatmapPlot extends D3Visualization {
     }
 
     bind_tooltip(selection, type) {
-        if (!this.settings.show_tooltip) {
+        if (!this.store.settings.show_tooltip) {
             return;
         }
 
@@ -171,16 +94,16 @@ class ExploreHeatmapPlot extends D3Visualization {
 
         selection
             .on("mouseenter", d => {
-                $("#exp_heatmap_tooltip").css("display", "block");
-                ReactDOM.render(<Tooltip data={d} type={type} />, $("#exp_heatmap_tooltip")[0]);
+                this.$tooltipDiv.css("display", "block");
+                ReactDOM.render(<Tooltip data={d} type={type} />, this.$tooltipDiv[0]);
             })
             .on("mousemove", d =>
-                $("#exp_heatmap_tooltip").css({
+                this.$tooltipDiv.css({
                     top: `${d3.event.pageY + tooltip_y_offset}px`,
                     left: `${d3.event.pageX + tooltip_x_offset}px`,
                 })
             )
-            .on("mouseleave", d => $("#exp_heatmap_tooltip").css("display", "none"));
+            .on("mouseleave", d => this.$tooltipDiv.css("display", "none"));
     }
 
     get_matching_cells(filters, axis) {
@@ -201,17 +124,19 @@ class ExploreHeatmapPlot extends D3Visualization {
     }
 
     build_axes() {
+        const {settings} = this.store;
+
         let xs = this.store.scales.x.filter((d, i) =>
-                this.settings.compress_x ? this.store.totals.x[i] > 0 : true
+                settings.compress_x ? this.store.totals.x[i] > 0 : true
             ),
             ys = this.store.scales.y.filter((d, i) =>
-                this.settings.compress_y ? this.store.totals.y[i] > 0 : true
+                settings.compress_y ? this.store.totals.y[i] > 0 : true
             ),
             xAxis = this.vis
                 .append("g")
-                .attr("class", ".xAxis")
+                .attr("class", "xAxis exp-heatmap-axis")
                 .attr("transform", `translate(0,${this.h})`),
-            yAxis = this.vis.append("g").attr("class", ".yAxis"),
+            yAxis = this.vis.append("g").attr("class", "yAxis exp-heatmap-axis"),
             thisItem,
             label_padding = 6,
             get_max_tick_dimensions = (scale, fields) => {
@@ -255,7 +180,7 @@ class ExploreHeatmapPlot extends D3Visualization {
         // build x-axis
         let yOffset = 0,
             numXAxes = xs.length == 0 ? 0 : xs[0].length,
-            {show_axis_border} = this.settings;
+            {show_axis_border} = settings;
         for (let i = numXAxes - 1; i >= 0; i--) {
             let axis = xAxis.append("g").attr("transform", `translate(0,${yOffset})`),
                 lastItem = xs[0],
@@ -414,7 +339,7 @@ class ExploreHeatmapPlot extends D3Visualization {
     }
 
     add_grid() {
-        if (!this.settings.show_grid) {
+        if (!this.store.settings.show_grid) {
             return;
         }
         // Draws lines on plot
@@ -444,12 +369,13 @@ class ExploreHeatmapPlot extends D3Visualization {
     }
 
     build_labels() {
+        const {settings} = this.store;
         let label_margin = 20,
             isDev = this.options.dev;
 
         // Plot title
-        if (this.settings.title.text.length > 0) {
-            let titleSettings = this.settings.title,
+        if (settings.title.text.length > 0) {
+            let titleSettings = settings.title,
                 x =
                     titleSettings.x === 0
                         ? this.padding.left + this.x_axis_label_padding + this.w / 2
@@ -465,16 +391,16 @@ class ExploreHeatmapPlot extends D3Visualization {
             if (isDev) {
                 title.attr("cursor", "pointer").call(
                     HAWCUtils.updateDragLocationTransform((x, y) => {
-                        this.settings.title.x = parseInt(x);
-                        this.settings.title.y = parseInt(y);
+                        settings.title.x = parseInt(x);
+                        settings.title.y = parseInt(y);
                     })
                 );
             }
         }
 
         // X axis
-        if (this.settings.x_label.text.length > 0) {
-            let xLabelSettings = this.settings.x_label,
+        if (settings.x_label.text.length > 0) {
+            let xLabelSettings = settings.x_label,
                 x =
                     xLabelSettings.x === 0
                         ? this.padding.left + this.x_axis_label_padding + this.w / 2
@@ -493,24 +419,21 @@ class ExploreHeatmapPlot extends D3Visualization {
             if (isDev) {
                 xLabel.attr("cursor", "pointer").call(
                     HAWCUtils.updateDragLocationTransform((x, y) => {
-                        this.settings.x_label.x = parseInt(x);
-                        this.settings.x_label.y = parseInt(y);
+                        settings.x_label.x = parseInt(x);
+                        settings.x_label.y = parseInt(y);
                     })
                 );
             }
         }
 
         // Y axis
-        if (this.settings.y_label.text.length > 0) {
-            let yLabelSettings = this.settings.y_label,
+        if (settings.y_label.text.length > 0) {
+            let yLabelSettings = settings.y_label,
                 x =
                     yLabelSettings.x === 0
-                        ? this.settings.padding.left - label_margin / 2
+                        ? settings.padding.left - label_margin / 2
                         : yLabelSettings.x,
-                y =
-                    yLabelSettings.y === 0
-                        ? this.settings.padding.top + this.h / 2
-                        : yLabelSettings.y,
+                y = yLabelSettings.y === 0 ? settings.padding.top + this.h / 2 : yLabelSettings.y,
                 yLabel = d3
                     .select(this.svg)
                     .append("text")
@@ -521,8 +444,8 @@ class ExploreHeatmapPlot extends D3Visualization {
             if (isDev) {
                 yLabel.attr("cursor", "pointer").call(
                     HAWCUtils.updateDragLocationTransform((x, y) => {
-                        this.settings.y_label.x = parseInt(x);
-                        this.settings.y_label.y = parseInt(y);
+                        settings.y_label.x = parseInt(x);
+                        settings.y_label.y = parseInt(y);
                     })
                 );
             }
@@ -600,13 +523,14 @@ class ExploreHeatmapPlot extends D3Visualization {
     };
 
     build_plot() {
+        const {settings} = this.store;
+
         // Clear plot div and and append new svg object
         this.plot_div.empty();
         this.vis = d3
             .select(this.plot_div[0])
             .append("svg")
             .attr("class", "d3")
-            .attr("preserveAspectRatio", "xMinYMin")
             .append("g");
         this.svg = this.vis[0][0].parentNode;
 
@@ -623,6 +547,7 @@ class ExploreHeatmapPlot extends D3Visualization {
         // Draw cells
         this.cells = this.vis.append("g");
 
+        // draw the cells
         autorun(() => this.update_plot(this.store.matrixDataset));
 
         // Draw axes
@@ -631,29 +556,56 @@ class ExploreHeatmapPlot extends D3Visualization {
         // Draw labels
         this.build_labels();
 
-        // Set plot dimensions and viewBox
-        let w =
-                this.settings.padding.left +
-                this.x_axis_label_padding +
-                this.w +
-                this.settings.padding.right,
-            h =
-                this.settings.padding.top +
-                this.h +
-                this.y_axis_label_padding +
-                this.settings.padding.bottom;
-
-        d3.select(this.svg)
-            .attr("width", w)
-            .attr("height", h)
-            .attr("viewBox", `0 0 ${w} ${h}`);
-
         // Position plot
         this.vis.attr(
             "transform",
-            `translate(${this.settings.padding.left + this.x_axis_label_padding},${
-                this.settings.padding.top
+            `translate(${settings.padding.left + this.x_axis_label_padding},${
+                settings.padding.top
             })`
+        );
+
+        this.add_grid();
+        this.add_resize_and_toolbar();
+    }
+
+    add_resize_and_toolbar() {
+        const {settings} = this.store,
+            parentContainer = $(this.svg).parent()[0],
+            nativeSize = {
+                width: Math.ceil(
+                    settings.padding.left +
+                        this.x_axis_label_padding +
+                        this.w +
+                        settings.padding.right
+                ),
+                height: Math.ceil(
+                    settings.padding.top +
+                        this.h +
+                        this.y_axis_label_padding +
+                        settings.padding.bottom
+                ),
+            },
+            div = $("<div>")
+                .css({
+                    position: "relative",
+                    display: "block",
+                    top: "-30px",
+                    left: "-3px",
+                })
+                .appendTo(this.plot_div);
+
+        // set correct aspect ratio to get proper height/widths set on parent elements
+        d3.select(this.svg)
+            .attr("preserveAspectRatio", "xMidYMid meet")
+            .attr("viewBox", `0 0 ${nativeSize.width} ${nativeSize.height}`);
+
+        ReactDOM.render(
+            <VisualToolbar
+                svg={this.svg}
+                parentContainer={parentContainer}
+                nativeSize={nativeSize}
+            />,
+            div[0]
         );
     }
 }
