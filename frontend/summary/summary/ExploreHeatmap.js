@@ -95,9 +95,10 @@ class ExploreHeatmap extends BaseVisual {
             show_axis_border: settings.show_axis_border,
             show_grid: settings.show_grid,
             show_tooltip: settings.show_tooltip,
-            autosize: settings.autosize,
+            autosize_cells: settings.autosize_cells,
+            autorotate_tick_labels: settings.autorotate_tick_labels,
             table_fields: settings.table_fields.filter(d => d.column !== NULL_VALUE),
-            hawc_interactivity: true, // special field; if true then data pivot extensions available
+            hawc_interactivity: settings.hawc_interactivity,
             title: settings.title,
             x_fields: settings.x_fields.filter(d => d.column !== NULL_VALUE),
             x_label: settings.x_label,

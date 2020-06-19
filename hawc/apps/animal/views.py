@@ -25,6 +25,7 @@ from ..study.views import StudyRead
 from . import forms, models
 
 
+# Heatmap views
 class HeatmapStudyDesign(BaseList):
     parent_model = Assessment
     model = models.Study
@@ -34,7 +35,7 @@ class HeatmapStudyDesign(BaseList):
         context = super().get_context_data(**kwargs)
         context["data_class"] = "bioassay-study-design"
         context["data_url"] = reverse(
-            "animal:api:assessment-endpoint-heatmap", args=(self.assessment.id,)
+            "animal:api:assessment-study-heatmap", args=(self.assessment.id,)
         )
         if self.request.GET.get("unpublished", "false").lower() == "true":
             context["data_url"] += "?unpublished=true"

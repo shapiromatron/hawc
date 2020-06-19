@@ -2,6 +2,7 @@ import PropTypes from "prop-types";
 import React, {Component} from "react";
 import {inject, observer} from "mobx-react";
 import SelectInput from "shared/components/SelectInput";
+import TextInput from "shared/components/TextInput";
 
 const key = "table_fields";
 
@@ -16,12 +17,14 @@ class DetailTable extends Component {
             <table className="table table-condensed table-striped">
                 <colgroup>
                     <col width="50%" />
-                    <col width="40%" />
+                    <col width="10%" />
+                    <col width="30%" />
                     <col width="10%" />
                 </colgroup>
                 <thead>
                     <tr>
                         <th>Column</th>
+                        <th>Delimiter</th>
                         <th>Interactivity</th>
                         <th>
                             Actions&nbsp;
@@ -58,6 +61,15 @@ class DetailTable extends Component {
                         multiple={false}
                         handleSelect={value => changeArraySettings(key, index, "column", value)}
                         value={row.column}
+                    />
+                </td>
+                <td>
+                    <TextInput
+                        name={`${key}-delimiter-${index}`}
+                        value={row.delimiter}
+                        onChange={e =>
+                            changeArraySettings(key, index, "delimiter", e.target.value.trim())
+                        }
                     />
                 </td>
                 <td>

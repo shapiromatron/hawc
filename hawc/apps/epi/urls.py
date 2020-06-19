@@ -21,6 +21,17 @@ router.register(r"exposure-cleanup", api.ExposureCleanup, basename="exposure-cle
 app_name = "epi"
 urlpatterns = [
     url(r"^api/", include((router.urls, "api"))),
+    # Heatmap views
+    url(
+        r"^assessment/(?P<pk>\d+)/heatmap-study-design/$",
+        views.HeatmapStudyDesign.as_view(),
+        name="heatmap_study_design",
+    ),
+    url(
+        r"^assessment/(?P<pk>\d+)/heatmap-results/$",
+        views.HeatmapResults.as_view(),
+        name="heatmap_results",
+    ),
     # Criteria
     url(
         r"^assessment/(?P<pk>\d+)/study-criteria/create/$",

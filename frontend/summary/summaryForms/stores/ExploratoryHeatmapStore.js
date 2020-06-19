@@ -6,13 +6,13 @@ import {NULL_VALUE} from "../../summary/constants";
 import DataPivotExtension from "summary/dataPivot/DataPivotExtension";
 
 let createDefaultAxisItem = function() {
-        return {column: NULL_VALUE, delimiter: ""};
+        return {column: NULL_VALUE, wrap_text: 0, delimiter: ""};
     },
     createDefaultFilterWidget = function() {
         return {column: NULL_VALUE, delimiter: "", on_click_event: NULL_VALUE};
     },
     createTableRow = function() {
-        return {column: NULL_VALUE, on_click_event: NULL_VALUE};
+        return {column: NULL_VALUE, delimiter: "", on_click_event: NULL_VALUE};
     };
 
 class ExploratoryHeatmapStore {
@@ -34,7 +34,8 @@ class ExploratoryHeatmapStore {
             show_axis_border: true,
             show_grid: true,
             show_tooltip: true,
-            autosize: true,
+            autosize_cells: true,
+            autorotate_tick_labels: true,
             table_fields: [
                 createTableRow(),
                 createTableRow(),

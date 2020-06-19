@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
 import React, {Component} from "react";
 import {inject, observer} from "mobx-react";
+import IntegerInput from "shared/components/IntegerInput";
 import TextInput from "shared/components/TextInput";
 import SelectInput from "shared/components/SelectInput";
 
@@ -16,13 +17,15 @@ class AxisLabelTable extends Component {
             <table className="table table-condensed table-striped">
                 <colgroup>
                     <col width="50%" />
-                    <col width="40%" />
+                    <col width="20%" />
+                    <col width="20%" />
                     <col width="10%" />
                 </colgroup>
                 <thead>
                     <tr>
                         <th>Column</th>
                         <th>Delimiter</th>
+                        <th>Wrap text</th>
                         <th>
                             Actions&nbsp;
                             <button
@@ -66,6 +69,20 @@ class AxisLabelTable extends Component {
                         value={row.delimiter}
                         onChange={e =>
                             changeArraySettings(key, index, "delimiter", e.target.value.trim())
+                        }
+                    />
+                </td>
+                <td>
+                    <IntegerInput
+                        name={`${key}-wrap_text-${index}`}
+                        value={row.wrap_text}
+                        onChange={e =>
+                            changeArraySettings(
+                                key,
+                                index,
+                                "wrap_text",
+                                parseInt(e.target.value) || 0
+                            )
                         }
                     />
                 </td>

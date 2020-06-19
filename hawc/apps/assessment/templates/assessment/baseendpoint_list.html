@@ -63,16 +63,16 @@
         {% if outcomes > 0 %}
         <li>
             Epidemiology study design
-            (<a href="{% url 'animal:heatmap_study_design' assessment.id %}?unpublished=true">published + unpublished HAWC
+            (<a href="{% url 'epi:heatmap_study_design' assessment.id %}?unpublished=true">published + unpublished HAWC
                 data</a>)
-            (<a href="{% url 'animal:heatmap_study_design' assessment.id %}">published HAWC data</a>)
+            (<a href="{% url 'epi:heatmap_study_design' assessment.id %}">published HAWC data</a>)
 
         </li>
         <li>
             Epidemiology result summary
-            (<a href="{% url 'animal:heatmap_endpoints' assessment.id %}?unpublished=true">published + unpublished HAWC
+            (<a href="{% url 'epi:heatmap_results' assessment.id %}?unpublished=true">published + unpublished HAWC
                 data</a>)
-            (<a href="{% url 'animal:heatmap_endpoints' assessment.id %}">published HAWC data</a>)
+            (<a href="{% url 'epi:heatmap_results' assessment.id %}">published HAWC data</a>)
         </li>
         {% endif %}
     </ul>

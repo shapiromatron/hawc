@@ -199,7 +199,7 @@ class VisualCustomizationPanel extends Component {
                     </div>
                 </div>
                 <div className="row-fluid">
-                    <div className="span3">
+                    <div className="span2">
                         <TextInput
                             label="Color range (start)"
                             name="color_range1"
@@ -208,7 +208,7 @@ class VisualCustomizationPanel extends Component {
                             onChange={e => changeSettings("color_range.0", e.target.value)}
                         />
                     </div>
-                    <div className="span3">
+                    <div className="span2">
                         <TextInput
                             label="Color range (end)"
                             name="color_range2"
@@ -251,15 +251,31 @@ class VisualCustomizationPanel extends Component {
                     </div>
                     <div className="span2">
                         <CheckboxInput
-                            id="autosize"
-                            label="Autosize plot"
-                            name="autosize"
+                            id="autosize_cells"
+                            label="Auto-size heatmap cells"
+                            name="autosize_cells"
                             onChange={e => changeSettings(e.target.name, e.target.checked)}
-                            checked={settings.autosize}
+                            checked={settings.autosize_cells}
+                        />
+                        <CheckboxInput
+                            id="autorotate_tick_labels"
+                            label="Auto-rotate tick labels"
+                            name="autorotate_tick_labels"
+                            onChange={e => changeSettings(e.target.name, e.target.checked)}
+                            checked={settings.autorotate_tick_labels}
+                        />
+                    </div>
+                    <div className="span2">
+                        <CheckboxInput
+                            id="hawc_interactivity"
+                            label="HAWC interactivity"
+                            name="hawc_interactivity"
+                            onChange={e => changeSettings(e.target.name, e.target.checked)}
+                            checked={settings.hawc_interactivity}
                         />
                         <CheckboxInput
                             id="show_tooltip"
-                            label="Show tooltip"
+                            label="Show tooltips"
                             name="show_tooltip"
                             onChange={e => changeSettings(e.target.name, e.target.checked)}
                             checked={settings.show_tooltip}

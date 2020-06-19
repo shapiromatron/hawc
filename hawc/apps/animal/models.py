@@ -2,6 +2,7 @@ import collections
 import json
 import math
 from itertools import chain
+from typing import Any, Dict
 
 import pandas as pd
 from django.core.exceptions import ObjectDoesNotExist
@@ -37,6 +38,8 @@ class Experiment(models.Model):
         ("Ot", "Other"),
         ("NR", "Not-reported"),
     )
+
+    EXPERIMENT_TYPE_DICT = {el[0]: el[1] for el in EXPERIMENT_TYPE_CHOICES}
 
     PURITY_QUALIFIER_CHOICES = ((">", ">"), ("≥", "≥"), ("=", "="), ("", ""))
 
@@ -924,7 +927,7 @@ class Endpoint(BaseEndpoint):
     @classmethod
     def heatmap_df(cls, assessment: Assessment, published_only: bool) -> pd.DataFrame:
         # TODO HEATMAP - tests / get verbose name for route, sex, etc.
-        filters = {"assessment": assessment}
+        filters: Dict[str, Any] = {"assessment_id": assessment}
         if published_only:
             filters["animal_group__experiment__study__published"] = True
         columns = {
@@ -942,6 +945,7 @@ class Endpoint(BaseEndpoint):
             "animal_group_id": "animal group id",
             "animal_group__experiment_id": "experiment id",
             "animal_group__experiment__name": "experiment name",
+            "animal_group__experiment__type": "experiment type",
             "animal_group__experiment__cas": "experiment cas",
             "animal_group__experiment__chemical": "experiment chemical",
             "animal_group__experiment__study_id": "study id",
@@ -966,6 +970,72 @@ class Endpoint(BaseEndpoint):
         )
         df["sex"] = df["sex"].map(AnimalGroup.SEX_DICT)
         df["generation"] = df["generation"].map(AnimalGroup.GENERATION_DICT)
+        df["experiment type"] = df["experiment type"].map(Experiment.EXPERIMENT_TYPE_DICT)
+        return df
+
+    @classmethod
+    def heatmap_study_df(cls, assessment: Assessment, published_only: bool) -> pd.DataFrame:
+        def unique_items(els):
+            return "|".join(sorted(set(els)))
+
+        # get all studies,even if no endpoint data is extracted
+        filters: Dict[str, Any] = {"assessment_id": assessment, "bioassay": True}
+        if published_only:
+            filters["published"] = True
+        columns = {
+            "id": "study id",
+            "short_citation": "study citation",
+            "study_identifier": "study identifier",
+        }
+        qs = Study.objects.filter(**filters).values_list(*columns.keys())
+        df1 = pd.DataFrame(data=list(qs), columns=columns.values()).set_index("study id")
+
+        # rollup endpoint-level data to studies
+        df2 = (
+            cls.heatmap_df(assessment, published_only)
+            .groupby("study id")
+            .agg(
+                {
+                    "experiment type": unique_items,
+                    "species": unique_items,
+                    "strain": unique_items,
+                    "route of exposure": unique_items,
+                    "experiment chemical": unique_items,
+                    "sex": unique_items,
+                    "system": unique_items,
+                    "organ": unique_items,
+                    "effect": unique_items,
+                }
+            )
+        )
+
+        # rollup dose-units to study
+        values = dict(
+            dose_regime__dosed_animals__experiment__study_id="study id",
+            dose_units__name="dose units",
+        )
+        qs = (
+            DoseGroup.objects.filter(
+                dose_regime__dosed_animals__experiment__study__assessment_id=assessment
+            )
+            .select_related("dose_regime__dosed_animals__experiment__study",)
+            .values_list(*values.keys())
+            .distinct("dose_regime__dosed_animals__experiment__study_id", "dose_units__id")
+            .order_by()
+        )
+        df3 = (
+            pd.DataFrame(data=qs, columns=values.values())
+            .groupby("study id")
+            .agg({"dose units": unique_items})
+        )
+
+        # merge all the data frames together
+        df = (
+            df1.merge(df2, how="left", left_index=True, right_index=True)
+            .merge(df3, how="left", left_index=True, right_index=True)
+            .fillna("")
+            .reset_index()
+        )
         return df
 
     def __str__(self):

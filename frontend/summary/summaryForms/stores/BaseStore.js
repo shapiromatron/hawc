@@ -41,7 +41,7 @@ class BaseStore {
         this.djangoFormData = {
             title: initial_data.title,
             slug: initial_data.slug,
-            settings: JSON.stringify(settings),
+            settings: JSON.stringify(settings, null, 2),
             caption: initial_data.caption,
             published: initial_data.published,
         };
@@ -78,10 +78,10 @@ class BaseStore {
                 );
                 break;
             case TABS.DATA:
-                this.djangoFormData.settings = JSON.stringify(this.root.subclass.settings);
+                this.djangoFormData.settings = JSON.stringify(this.root.subclass.settings, null, 2);
                 break;
             case TABS.CUSTOMIZATION:
-                this.djangoFormData.settings = JSON.stringify(this.root.subclass.settings);
+                this.djangoFormData.settings = JSON.stringify(this.root.subclass.settings, null, 2);
                 break;
             case TABS.PREVIEW:
                 break;

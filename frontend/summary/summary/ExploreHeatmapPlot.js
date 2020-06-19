@@ -10,8 +10,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import Tooltip from "./heatmap/Tooltip";
 
-const AXIS_WIDTH_GUESS = 120,
-    WRAP_TEXT_THRESHOLD = 150;
+const AXIS_WIDTH_GUESS = 120;
 
 class ExploreHeatmapPlot {
     constructor(store, options) {
@@ -52,7 +51,7 @@ class ExploreHeatmapPlot {
     get_cell_dimensions() {
         const {settings} = this.store;
         let cellDimensions = {};
-        if (settings.autosize) {
+        if (settings.autosize_cells) {
             /*
             Assume plot has the the same width/height ratio as browser window.
 
@@ -80,7 +79,7 @@ class ExploreHeatmapPlot {
                 height: Math.max(cellHeight, minHeight),
             };
         } else {
-            cellDimensions = {width: this.settings.cell_width, height: this.settings.cell_height};
+            cellDimensions = {width: settings.cell_width, height: settings.cell_height};
         }
         return cellDimensions;
     }
@@ -139,7 +138,45 @@ class ExploreHeatmapPlot {
                 .attr("transform", `translate(0,${this.h})`),
             yAxis = this.vis.append("g").attr("class", "yAxis exp-heatmap-axis"),
             thisItem,
-            label_padding = 6;
+            label_padding = 6,
+            get_max_tick_dimensions = (scale, fields) => {
+                let tempText = this.vis
+                        .append("text")
+                        .attr("x", 0)
+                        .attr("y", 0),
+                    maxWidth = 0,
+                    maxHeight = 0;
+                _.each(scale, column =>
+                    _.each(column, (filter, index) => {
+                        let wrap_text = fields[index].wrap_text;
+                        tempText.html("").text(filter.value);
+                        if (wrap_text) {
+                            HAWCUtils.wrapText(tempText.node(), wrap_text);
+                        }
+                        const box = tempText.node().getBBox();
+                        maxWidth = Math.max(box.width, maxWidth);
+                        maxHeight = Math.max(box.height, maxHeight);
+                    })
+                );
+                tempText.remove();
+                return {width: maxWidth, height: maxHeight};
+            },
+            {x_tick_rotate, y_tick_rotate, autorotate_tick_labels} = settings,
+            autorotate_wrap = 150;
+
+        if (autorotate_tick_labels) {
+            const xMax = get_max_tick_dimensions(xs, settings.x_fields),
+                {width} = this.cellDimensions;
+            x_tick_rotate =
+                width > xMax.width
+                    ? 0
+                    : width > xMax.height
+                    ? -90
+                    : xMax.width < xMax.height
+                    ? 0
+                    : -90;
+            y_tick_rotate = 0;
+        }
 
         // build x-axis
         let yOffset = 0,
@@ -150,7 +187,9 @@ class ExploreHeatmapPlot {
                 lastItem = xs[0],
                 itemStartIndex = 0,
                 numItems = 0,
-                borderData = [];
+                borderData = [],
+                wrap_text =
+                    settings.x_fields[i].wrap_text || autorotate_tick_labels ? autorotate_wrap : 0;
 
             for (let j = 0; j <= xs.length; j++) {
                 thisItem = j < xs.length ? xs[j] : null;
@@ -165,10 +204,12 @@ class ExploreHeatmapPlot {
                         .append("text")
                         .attr("x", 0)
                         .attr("y", 0)
-                        .attr("transform", `rotate(${settings.x_tick_rotate})`)
-                        .text(lastItem[i].value)
+                        .attr("transform", `rotate(${x_tick_rotate})`)
+                        .text(lastItem[i].value || "<null>")
                         .each(function() {
-                            HAWCUtils.wrapText(this, WRAP_TEXT_THRESHOLD);
+                            if (wrap_text) {
+                                HAWCUtils.wrapText(this, wrap_text);
+                            }
                         });
 
                     let box = label.node().getBBox(),
@@ -227,7 +268,10 @@ class ExploreHeatmapPlot {
                 lastItem = ys[0],
                 itemStartIndex = 0,
                 numItems = 0,
-                borderData = [];
+                borderData = [],
+                wrap_text =
+                    settings.y_fields[i].wrap_text || autorotate_tick_labels ? autorotate_wrap : 0;
+
             for (let j = 0; j <= ys.length; j++) {
                 thisItem = j < ys.length ? ys[j] : null;
                 if (
@@ -240,10 +284,12 @@ class ExploreHeatmapPlot {
                         .append("text")
                         .attr("x", 0)
                         .attr("y", 0)
-                        .attr("transform", `rotate(${settings.y_tick_rotate})`)
-                        .text(lastItem[i].value)
+                        .attr("transform", `rotate(${y_tick_rotate})`)
+                        .text(lastItem[i].value || "<null>")
                         .each(function() {
-                            HAWCUtils.wrapText(this, WRAP_TEXT_THRESHOLD);
+                            if (wrap_text) {
+                                HAWCUtils.wrapText(this, wrap_text);
+                            }
                         });
                     let box = label.node().getBBox(),
                         label_offset =

@@ -84,7 +84,11 @@ class FilterWidget extends Component {
     renderItem(widget, item, index, itemStore, showClickEvent) {
         const {toggleItemSelection, showModalClick, colorScale} = this.props.store,
             data = this.props.store.getTableData,
-            numItems = data.filter(d => d[widget.column] === item).length;
+            numItems = data.filter(d =>
+                widget.delimiter
+                    ? _.includes(d[widget.column].split(widget.delimiter), item)
+                    : d[widget.column] === item
+            ).length;
         return (
             <div key={index}>
                 {showClickEvent ? (
@@ -102,7 +106,7 @@ class FilterWidget extends Component {
                             color: h.getTextContrastColor(colorScale(numItems)),
                             display: "inline-flex",
                             height: "1.5em",
-                            width: "2em",
+                            width: "2.5em",
                             justifyContent: "center",
                             alignItems: "center",
                         }}>

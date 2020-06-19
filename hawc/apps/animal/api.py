@@ -1,3 +1,5 @@
+from django.conf import settings
+from django.core.cache import cache
 from django.db.models import Q
 from rest_framework import viewsets
 from rest_framework.decorators import action
@@ -14,7 +16,7 @@ from ..assessment.models import Assessment
 from ..common.api import CleanupFieldsBaseViewSet, LegacyAssessmentAdapterMixin
 from ..common.helper import FlatExport, re_digits
 from ..common.renderers import PandasRenderers
-from ..common.serializers import UnusedSerializer
+from ..common.serializers import HeatmapQuerySerializer, UnusedSerializer
 from ..common.views import AssessmentPermissionsMixin
 from . import exports, models, serializers
 
@@ -64,10 +66,10 @@ class AnimalAssessmentViewset(
         )
         return Response(exporter.build_export())
 
-    @action(detail=True, url_path="endpoint-heatmap", renderer_classes=PandasRenderers)
-    def endpoint_heatmap(self, request, pk):
+    @action(detail=True, url_path="study-heatmap", renderer_classes=PandasRenderers)
+    def study_heatmap(self, request, pk):
         """
-        Return heatmap data for assessment.
+        Return heatmap data for assessment, at the study-level (one row per study).
 
         By default only shows data from published studies. If the query param `unpublished=true`
         is present then results from all studies are shown.
@@ -75,11 +77,41 @@ class AnimalAssessmentViewset(
         # TODO HEATMAP - add tests
         self.set_legacy_attr(pk)
         self.permission_check_user_can_view()
-        unpublished = request.query_params.get("unpublished", "false").lower() == "true"
+        ser = HeatmapQuerySerializer(data=request.query_params)
+        ser.is_valid(raise_exception=True)
+        unpublished = ser.data["unpublished"]
         if unpublished and not self.assessment.user_is_part_of_team(self.request.user):
             raise PermissionDenied("You must be part of the team to view unpublished data")
-        df = models.Endpoint.heatmap_df(self.assessment, published_only=not unpublished)
-        export = FlatExport(df=df, filename=f"heatmap-{self.assessment.id}")
+        key = f"assessment-{self.assessment.id}-bioassay-study-heatmap-pub-{unpublished}"
+        df = cache.get(key)
+        if df is None:
+            df = models.Endpoint.heatmap_study_df(self.assessment, published_only=not unpublished)
+            cache.set(key, df, settings.CACHE_10_MIN)
+        export = FlatExport(df=df, filename=f"bio-study-heatmap-{self.assessment.id}")
+        return Response(export)
+
+    @action(detail=True, url_path="endpoint-heatmap", renderer_classes=PandasRenderers)
+    def endpoint_heatmap(self, request, pk):
+        """
+        Return heatmap data for assessment, at the endpoint level (one row per endpoint).
+
+        By default only shows data from published studies. If the query param `unpublished=true`
+        is present then results from all studies are shown.
+        """
+        # TODO HEATMAP - add tests
+        self.set_legacy_attr(pk)
+        self.permission_check_user_can_view()
+        ser = HeatmapQuerySerializer(data=request.query_params)
+        ser.is_valid(raise_exception=True)
+        unpublished = ser.data["unpublished"]
+        if unpublished and not self.assessment.user_is_part_of_team(self.request.user):
+            raise PermissionDenied("You must be part of the team to view unpublished data")
+        key = f"assessment-{self.assessment.id}-bioassay-endpoint-heatmap-unpublished-{unpublished}"
+        df = cache.get(key)
+        if df is None:
+            df = models.Endpoint.heatmap_df(self.assessment, published_only=not unpublished)
+            cache.set(key, df, settings.CACHE_10_MIN)
+        export = FlatExport(df=df, filename=f"bio-result-heatmap-{self.assessment.id}")
         return Response(export)
 
 

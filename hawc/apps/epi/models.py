@@ -2,6 +2,7 @@ import itertools
 import json
 import math
 from operator import xor
+from typing import Any, Dict
 
 import pandas as pd
 from django.core.validators import MaxValueValidator, MinValueValidator
@@ -155,6 +156,8 @@ class StudyPopulation(models.Model):
         ("NT", "Non-randomized controlled trial"),
         ("CS", "Cross-sectional"),
     )
+
+    DESIGN_CHOICES_DICT = {el[0]: el[1] for el in DESIGN_CHOICES}
 
     OUTCOME_GROUP_DESIGNS = ("CC", "NC")
 
@@ -1435,6 +1438,41 @@ class Result(models.Model):
         return self.outcome.get_study()
 
     @classmethod
+    def heatmap_study_df(cls, assessment: Assessment, published_only: bool) -> pd.DataFrame:
+        def unique_items(els):
+            return "|".join(sorted(set(els)))
+
+        # get all studies,even if no endpoint data is extracted
+        filters: Dict[str, Any] = {"assessment_id": assessment, "epi": True}
+        if published_only:
+            filters["published"] = True
+        columns = {
+            "id": "study id",
+            "short_citation": "study citation",
+            "study_identifier": "study identifier",
+        }
+        qs = Study.objects.filter(**filters).values_list(*columns.keys())
+        df1 = pd.DataFrame(data=list(qs), columns=columns.values()).set_index("study id")
+
+        # rollup endpoint-level data to studies
+        df2 = (
+            cls.heatmap_df(assessment, published_only)
+            .groupby("study id")
+            .agg(
+                {
+                    "system": unique_items,
+                    "effect": unique_items,
+                    "exposure name": unique_items,
+                    "study design": unique_items,
+                }
+            )
+        )
+
+        # merge all the data frames together
+        df = df1.merge(df2, how="left", left_index=True, right_index=True).fillna("").reset_index()
+        return df
+
+    @classmethod
     def heatmap_df(cls, assessment: Assessment, published_only: bool) -> pd.DataFrame:
         # TODO HEATMAP - tests / get verbose names, check for other valuable fields for info?
         filters = {"outcome__assessment": assessment}
@@ -1453,6 +1491,7 @@ class Result(models.Model):
             "comparison_set__exposure__name": "exposure name",
             "outcome__study_population_id": "study population id",
             "outcome__study_population__name": "study population name",
+            "outcome__study_population__design": "study design",
             "outcome__study_population__study_id": "study id",
             "outcome__study_population__study__short_citation": "study citation",
             "outcome__study_population__study__study_identifier": "study identifier",
@@ -1468,7 +1507,11 @@ class Result(models.Model):
             .filter(**filters)
             .values_list(*columns.keys())
         )
-        return pd.DataFrame(data=list(qs), columns=columns.values())
+
+        df = pd.DataFrame(data=list(qs), columns=columns.values())
+        df["study design"] = df["study design"].map(StudyPopulation.DESIGN_CHOICES_DICT)
+
+        return df
 
 
 class GroupResult(models.Model):

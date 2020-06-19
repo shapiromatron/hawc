@@ -50,8 +50,11 @@ class HeatmapDatastore {
                     intersection[columnName] = {};
                 }
                 this.dataset.forEach((d, idx) => {
-                    const values =
-                        delimiter !== "" ? d[columnName].split(delimiter) : [d[columnName]];
+                    // get column value or empty string to handle null or undefined edge cases,
+                    // such as when an epi outcome is created but with no associated exposure.
+                    const text = d[columnName] || "",
+                        values = delimiter ? text.split(delimiter) : [text];
+
                     for (let value of values) {
                         if (intersection[columnName][value] === undefined) {
                             intersection[columnName][value] = [];
@@ -93,7 +96,7 @@ class HeatmapDatastore {
                 return [];
             } else if (columns.length == 1) {
                 return permutations.map(item => {
-                    return [{column: [columns[0]], value: item}];
+                    return [{column: columns[0], value: item}];
                 });
             } else {
                 return permutations.map(permutation => {
