@@ -93,7 +93,7 @@ class HeatmapDatastore {
                 return [];
             } else if (columns.length == 1) {
                 return permutations.map(item => {
-                    return [{column: [columns[0]], value: item}];
+                    return [{column: columns[0], value: item}];
                 });
             } else {
                 return permutations.map(permutation => {

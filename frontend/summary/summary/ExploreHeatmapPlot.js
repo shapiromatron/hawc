@@ -200,6 +200,24 @@ class ExploreHeatmapPlot extends D3Visualization {
         });
     }
 
+    get_max_tick_dimensions(scale, fields) {
+        let tempText = this.vis.append("text"),
+            maxWidth = 0,
+            maxHeight = 0;
+        _.each(scale, column =>
+            _.each(column, (filter, index) => {
+                tempText.text(filter.value);
+                const wrap_text = fields[index].wrap_text;
+                if (wrap_text) HAWCUtils.wrapText(tempText, wrap_text);
+                const box = tempText.node().getBBox();
+                maxWidth = Math.max(box.width, maxWidth);
+                maxHeight = Math.max(box.height, maxHeight);
+            })
+        );
+        tempText.remove();
+        return {width: maxWidth, height: maxHeight};
+    }
+
     build_axes() {
         let xs = this.store.scales.x.filter((d, i) =>
                 this.settings.compress_x ? this.store.totals.x[i] > 0 : true
@@ -214,6 +232,28 @@ class ExploreHeatmapPlot extends D3Visualization {
             yAxis = this.vis.append("g").attr("class", ".yAxis"),
             thisItem,
             label_padding = 6;
+
+        if (this.settings.autorotate) {
+            const xMax = this.get_max_tick_dimensions(xs, this.settings.x_fields),
+                yMax = this.get_max_tick_dimensions(ys, this.settings.y_fields),
+                {width, height} = this.cellDimensions;
+            this.settings.x_tick_rotate =
+                width > xMax.width
+                    ? 0
+                    : width > xMax.height
+                    ? -90
+                    : xMax.width < xMax.height
+                    ? 0
+                    : -90;
+            this.settings.y_tick_rotate =
+                height > xMax.height
+                    ? 0
+                    : height > xMax.width
+                    ? -90
+                    : xMax.height < xMax.width
+                    ? 0
+                    : -90;
+        }
 
         // build x-axis
         let yOffset = 0,

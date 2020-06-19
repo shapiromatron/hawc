@@ -258,11 +258,11 @@ class VisualCustomizationPanel extends Component {
                             checked={settings.autosize}
                         />
                         <CheckboxInput
-                            id="show_tooltip"
-                            label="Show tooltips"
-                            name="show_tooltip"
+                            id="autorotate"
+                            label="Auto-rotate ticks"
+                            name="autorotate"
                             onChange={e => changeSettings(e.target.name, e.target.checked)}
-                            checked={settings.show_tooltip}
+                            checked={settings.autorotate}
                         />
                     </div>
                     <div className="span2">
@@ -272,6 +272,13 @@ class VisualCustomizationPanel extends Component {
                             name="hawc_interactivity"
                             onChange={e => changeSettings(e.target.name, e.target.checked)}
                             checked={settings.hawc_interactivity}
+                        />
+                        <CheckboxInput
+                            id="show_tooltip"
+                            label="Show tooltips"
+                            name="show_tooltip"
+                            onChange={e => changeSettings(e.target.name, e.target.checked)}
+                            checked={settings.show_tooltip}
                         />
                     </div>
                 </div>

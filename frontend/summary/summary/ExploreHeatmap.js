@@ -27,6 +27,7 @@ class ExploreHeatmap extends BaseVisual {
             show_grid: settings.show_grid,
             show_tooltip: settings.show_tooltip,
             autosize: settings.autosize,
+            autorotate: settings.autorotate,
             table_fields: settings.table_fields.filter(d => d.column !== NULL_VALUE),
             hawc_interactivity: settings.hawc_interactivity,
             title: settings.title,

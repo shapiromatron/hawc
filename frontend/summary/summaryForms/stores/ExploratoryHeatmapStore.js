@@ -35,6 +35,7 @@ class ExploratoryHeatmapStore {
             show_grid: true,
             show_tooltip: true,
             autosize: true,
+            autorotate: true,
             table_fields: [
                 createTableRow(),
                 createTableRow(),
