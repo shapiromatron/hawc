@@ -1,11 +1,80 @@
-import SmartTagContainer from "assets/smartTags/SmartTagContainer";
-import BaseVisual from "./BaseVisual";
-import HAWCModal from "utils/HAWCModal";
-import ExploreHeatmapPlot from "./ExploreHeatmapPlot";
 import $ from "$";
+import ReactDOM from "react-dom";
+import PropTypes from "prop-types";
+import React, {Component} from "react";
+import {inject, observer, Provider} from "mobx-react";
 
 import h from "shared/utils/helpers";
+import SmartTagContainer from "assets/smartTags/SmartTagContainer";
+import Loading from "shared/components/Loading";
+import BaseVisual from "./BaseVisual";
+import HAWCModal from "utils/HAWCModal";
+import DatasetTable from "./heatmap/DatasetTable";
+import FilterWidgetContainer from "./heatmap/FilterWidgetContainer";
+import ExploreHeatmapPlot from "./ExploreHeatmapPlot";
 import {NULL_VALUE} from "./constants";
+import HeatmapDatastore from "./heatmap/HeatmapDatastore";
+
+let startupHeatmapAppRender = function(el, settings, datastore, options) {
+    const store = new HeatmapDatastore(settings, datastore, options);
+    ReactDOM.render(
+        <Provider store={store}>
+            <ExploreHeatmapComponent options={options} />
+        </Provider>,
+        el
+    );
+};
+
+@inject("store")
+@observer
+class ExploreHeatmapComponent extends Component {
+    componentDidMount() {
+        const {store} = this.props,
+            {settings} = store,
+            id = h.hashString(JSON.stringify(settings)),
+            el = document.getElementById(id),
+            tooltipEl = document.getElementById(`tooltip-${id}`);
+        new ExploreHeatmapPlot(store, this.props.options).render(el, tooltipEl);
+    }
+    render() {
+        const {store} = this.props,
+            {dataset, settings} = store,
+            id = h.hashString(JSON.stringify(settings)),
+            hasFilters = settings.filter_widgets.length > 0;
+
+        if (dataset === null || dataset.length === 0) {
+            return <div className="alert alert-danger">No data are available.</div>;
+        }
+
+        return (
+            <div style={{display: "flex", flexDirection: "row"}}>
+                <div style={{flex: 9}}>
+                    <div id={id}>
+                        <Loading />
+                    </div>
+                    <DatasetTable />
+                </div>
+                {hasFilters ? (
+                    <div
+                        style={{
+                            marginLeft: 10,
+                            display: "flex",
+                            flex: 3,
+                            minWidth: 300,
+                            maxWidth: 400,
+                        }}>
+                        <FilterWidgetContainer />
+                    </div>
+                ) : null}
+                <div id={`tooltip-${id}`} style={{position: "absolute"}}></div>
+            </div>
+        );
+    }
+}
+ExploreHeatmapComponent.propTypes = {
+    store: PropTypes.object,
+    options: PropTypes.object.isRequired,
+};
 
 class ExploreHeatmap extends BaseVisual {
     constructor(data, dataset) {
@@ -58,6 +127,8 @@ class ExploreHeatmap extends BaseVisual {
     }
 
     displayAsPage($el, options) {
+        options = options || {};
+
         var title = $("<h1>").text(this.data.title),
             captionDiv = $("<div>").html(this.data.caption),
             caption = new SmartTagContainer(captionDiv),
@@ -67,17 +138,15 @@ class ExploreHeatmap extends BaseVisual {
                     title.append(this.addActionsMenu());
                 }
                 if (resp.dataset) {
-                    const data = {
-                        settings: this.getSettings(),
-                        dataset: resp.dataset,
-                    };
+                    const settings = this.getSettings(),
+                        dataset = resp.dataset;
 
                     $el.empty().append($plotDiv);
                     if (!options.visualOnly) {
                         $el.prepend(title).append(captionDiv);
                     }
 
-                    new ExploreHeatmapPlot(this, data, options).render($plotDiv);
+                    startupHeatmapAppRender($plotDiv[0], settings, dataset, options);
 
                     if (options.cb) {
                         options.cb(this);
@@ -93,27 +162,24 @@ class ExploreHeatmap extends BaseVisual {
                 }
             };
 
-        options = options || {};
         this.getDataset(callback);
     }
 
     displayAsModal(options) {
+        // TODO HEATMAP  - check!
         options = options || {};
 
-        var self = this,
-            captionDiv = $("<div>").html(this.data.caption),
+        var captionDiv = $("<div>").html(this.data.caption),
             caption = new SmartTagContainer(captionDiv),
             $plotDiv = $("<div>"),
             modal = new HAWCModal(),
             callback = resp => {
                 if (resp.error) {
-                    const data = {
-                        settings: this.getSettings(),
-                        dataset: resp.dataset,
-                    };
+                    const settings = this.getSettings(),
+                        dataset = resp.dataset;
 
                     modal.getModal().on("shown", function() {
-                        new ExploreHeatmapPlot(self, data, options).render($plotDiv);
+                        startupHeatmapAppRender($plotDiv[0], settings, dataset, options);
                         caption.renderAndEnable();
                     });
 
