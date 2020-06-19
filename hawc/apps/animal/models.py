@@ -39,6 +39,8 @@ class Experiment(models.Model):
         ("NR", "Not-reported"),
     )
 
+    EXPERIMENT_TYPE_DICT = {el[0]: el[1] for el in EXPERIMENT_TYPE_CHOICES}
+
     PURITY_QUALIFIER_CHOICES = ((">", ">"), ("≥", "≥"), ("=", "="), ("", ""))
 
     TEXT_CLEANUP_FIELDS = (
@@ -943,6 +945,7 @@ class Endpoint(BaseEndpoint):
             "animal_group_id": "animal group id",
             "animal_group__experiment_id": "experiment id",
             "animal_group__experiment__name": "experiment name",
+            "animal_group__experiment__type": "experiment type",
             "animal_group__experiment__cas": "experiment cas",
             "animal_group__experiment__chemical": "experiment chemical",
             "animal_group__experiment__study_id": "study id",
@@ -967,6 +970,7 @@ class Endpoint(BaseEndpoint):
         )
         df["sex"] = df["sex"].map(AnimalGroup.SEX_DICT)
         df["generation"] = df["generation"].map(AnimalGroup.GENERATION_DICT)
+        df["experiment type"] = df["experiment type"].map(Experiment.EXPERIMENT_TYPE_DICT)
         return df
 
     @classmethod
@@ -977,7 +981,7 @@ class Endpoint(BaseEndpoint):
         # get all studies,even if no endpoint data is extracted
         filters: Dict[str, Any] = {"assessment_id": assessment, "bioassay": True}
         if published_only:
-            filters["animal_group__experiment__study__published"] = True
+            filters["published"] = True
         columns = {
             "id": "study id",
             "short_citation": "study citation",
@@ -992,6 +996,7 @@ class Endpoint(BaseEndpoint):
             .groupby("study id")
             .agg(
                 {
+                    "experiment type": unique_items,
                     "species": unique_items,
                     "strain": unique_items,
                     "route of exposure": unique_items,

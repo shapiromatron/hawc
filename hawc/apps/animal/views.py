@@ -25,6 +25,7 @@ from ..study.views import StudyRead
 from . import forms, models
 
 
+# Heatmap views
 class HeatmapStudyDesign(BaseList):
     parent_model = Assessment
     model = models.Study
