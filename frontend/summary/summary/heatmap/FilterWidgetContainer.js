@@ -35,7 +35,7 @@ class FilterWidget extends Component {
         return (
             <div
                 style={{
-                    height: maxHeight,
+                    maxHeight,
                     padding: "10px 0",
                     overflow: "hidden",
                     display: "flex",
@@ -68,7 +68,7 @@ class FilterWidget extends Component {
                 </div>
                 <div
                     style={{
-                        overflowY: "scroll",
+                        overflowY: "auto",
                         flex: 1,
                     }}>
                     {items

@@ -1,6 +1,19 @@
 import React, {Component} from "react";
 import PropTypes from "prop-types";
 import d3 from "d3";
+import {action, observable} from "mobx";
+import {observer} from "mobx-react";
+
+/*
+Utility toolbelt for visualizations. Adds a few key attributes:
+
+1) adds ability to download SVG
+2) adds resizing button and triggering (note that this has side-effects)
+
+Note that creating an instances registers an listener on window resize that is not currently
+cleaned up after being destroyed.
+
+*/
 
 const getSvgObject = function(svgElement) {
         // save svg and css styles to this document as a blob.
@@ -41,14 +54,66 @@ const getSvgObject = function(svgElement) {
         )
             .appendTo("body")
             .submit();
+    },
+    getDomSize = $el => {
+        return {width: $el.width(), height: $el.height()};
     };
 
+class ToolbarStore {
+    @observable currentParentSize = null;
+
+    constructor(svg, parentContainer, nativeSize) {
+        this.svg = svg;
+        this.d3svg = d3.select(svg);
+        this.$parentContainer = $(parentContainer);
+        this.nativeSize = nativeSize;
+        this.nativeAspectRatio = nativeSize.height / nativeSize.width;
+        this.updateCurrentParentSize();
+    }
+
+    @action.bound updateCurrentParentSize() {
+        this.currentParentSize = getDomSize($(this.parentContainer));
+    }
+
+    @action.bound isFullSize() {
+        let currentSize = getDomSize(this.$parentContainer);
+        return (
+            currentSize.width >= this.nativeSize.width &&
+            currentSize.height >= this.nativeSize.height
+        );
+    }
+}
+
+@observer
 class VisualToolbar extends Component {
     constructor(props) {
         super(props);
-        this.state = {
-            canZoomIn: true,
-        };
+        this.store = new ToolbarStore(props.svg, props.parentContainer, props.nativeSize);
+    }
+    componentDidMount() {
+        const {
+                $parentContainer,
+                d3svg,
+                nativeAspectRatio,
+                isFullSize,
+                updateCurrentParentSize,
+            } = this.store,
+            onPageResize = () => {
+                const targetWidth = $parentContainer.width(),
+                    targetHeight = targetWidth * nativeAspectRatio;
+
+                $parentContainer.attr("width", targetWidth).attr("height", targetHeight);
+                d3svg.attr("width", targetWidth).attr("height", targetHeight);
+                if (!isFullSize()) {
+                    updateCurrentParentSize();
+                }
+            };
+
+        let resizeTimer;
+        $(window).resize(() => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(onPageResize, 1000);
+        });
     }
     renderDownload() {
         const {svg} = this.props;
@@ -77,19 +142,31 @@ class VisualToolbar extends Component {
         );
     }
     renderZoom() {
-        const {canZoomIn} = this.state,
-            {makeFullSize, fitPage} = this.props,
+        const {$parentContainer, d3svg, nativeSize, currentParentSize, isFullSize} = this.store,
+            makeFullSize = () => {
+                $parentContainer
+                    .attr("width", $parentContainer.width())
+                    .attr("height", $parentContainer.height());
+                d3svg.attr("width", nativeSize.width).attr("height", nativeSize.height);
+            },
+            setOriginalSize = () => {
+                $parentContainer
+                    .attr("width", currentParentSize.width)
+                    .attr("height", currentParentSize.height);
+                d3svg
+                    .attr("width", currentParentSize.width)
+                    .attr("height", currentParentSize.height);
+            },
             handleClick = () => {
-                if (canZoomIn) {
-                    makeFullSize();
+                if (isFullSize()) {
+                    setOriginalSize();
                 } else {
-                    fitPage();
+                    makeFullSize();
                 }
-                this.setState({canZoomIn: !canZoomIn});
             };
         return (
             <button className="btn btn-mini" title="Zoom in/out" onClick={handleClick}>
-                <i className={canZoomIn ? "fa fa-search-plus" : "fa fa-search-minus"}></i>
+                <i className={isFullSize() ? "fa fa-search-minus" : "fa fa-search-plus"}></i>
             </button>
         );
     }
@@ -105,8 +182,11 @@ class VisualToolbar extends Component {
 
 VisualToolbar.propTypes = {
     svg: PropTypes.object.isRequired,
-    makeFullSize: PropTypes.func.isRequired,
-    fitPage: PropTypes.func.isRequired,
+    parentContainer: PropTypes.object.isRequired,
+    nativeSize: PropTypes.shape({
+        width: PropTypes.number.isRequired,
+        height: PropTypes.number.isRequired,
+    }).isRequired,
 };
 
 export default VisualToolbar;

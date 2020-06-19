@@ -135,9 +135,9 @@ class ExploreHeatmapPlot {
             ),
             xAxis = this.vis
                 .append("g")
-                .attr("class", ".xAxis")
+                .attr("class", "xAxis exp-heatmap-axis")
                 .attr("transform", `translate(0,${this.h})`),
-            yAxis = this.vis.append("g").attr("class", ".yAxis"),
+            yAxis = this.vis.append("g").attr("class", "yAxis exp-heatmap-axis"),
             thisItem,
             label_padding = 6;
 
@@ -527,7 +527,7 @@ class ExploreHeatmapPlot {
 
     add_resize_and_toolbar() {
         const {settings} = this.store,
-            svg = d3.select(this.svg),
+            parentContainer = $(this.svg).parent()[0],
             nativeSize = {
                 width: Math.ceil(
                     settings.padding.left +
@@ -542,45 +542,6 @@ class ExploreHeatmapPlot {
                         settings.padding.bottom
                 ),
             },
-            parentContainer = $(this.svg).parent(),
-            nativeAspectRatio = nativeSize.height / nativeSize.width,
-            getOriginalSize = () => {
-                return {width: parentContainer.width(), height: parentContainer.height()};
-            };
-
-        // set correct aspect ratio to get proper heigh/widths set on parent elements
-        svg.attr("preserveAspectRatio", "xMidYMid meet").attr(
-            "viewBox",
-            `0 0 ${nativeSize.width} ${nativeSize.height}`
-        );
-        let originalSize = getOriginalSize(),
-            isFullSize =
-                originalSize.width >= nativeSize.width && originalSize.height >= nativeSize.height;
-
-        const makeFullSize = () => {
-                parentContainer
-                    .attr("width", parentContainer.width())
-                    .attr("height", parentContainer.height());
-                svg.attr("width", nativeSize.width).attr("height", nativeSize.height);
-                isFullSize = true;
-            },
-            setOriginalSize = () => {
-                parentContainer
-                    .attr("width", originalSize.width)
-                    .attr("height", originalSize.height);
-                svg.attr("width", originalSize.width).attr("height", originalSize.height);
-                isFullSize = false;
-            },
-            onPageResize = () => {
-                let targetWidth = parentContainer.width(),
-                    targetHeight = targetWidth * nativeAspectRatio;
-
-                parentContainer.attr("width", targetWidth).attr("height", targetHeight);
-                svg.attr("width", targetWidth).attr("height", targetHeight);
-                if (!isFullSize) {
-                    originalSize = getOriginalSize();
-                }
-            },
             div = $("<div>")
                 .css({
                     position: "relative",
@@ -590,13 +551,17 @@ class ExploreHeatmapPlot {
                 })
                 .appendTo(this.plot_div);
 
-        let resizeTimer;
-        $(window).resize(() => {
-            clearTimeout(resizeTimer);
-            resizeTimer = setTimeout(onPageResize, 1000);
-        });
+        // set correct aspect ratio to get proper height/widths set on parent elements
+        d3.select(this.svg)
+            .attr("preserveAspectRatio", "xMidYMid meet")
+            .attr("viewBox", `0 0 ${nativeSize.width} ${nativeSize.height}`);
+
         ReactDOM.render(
-            <VisualToolbar svg={this.svg} makeFullSize={makeFullSize} fitPage={setOriginalSize} />,
+            <VisualToolbar
+                svg={this.svg}
+                parentContainer={parentContainer}
+                nativeSize={nativeSize}
+            />,
             div[0]
         );
     }
