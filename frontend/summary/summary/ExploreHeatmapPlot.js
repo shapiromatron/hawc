@@ -128,7 +128,7 @@ class ExploreHeatmapPlot extends D3Visualization {
 
     get_cell_dimensions() {
         let cellDimensions = {};
-        if (this.settings.autosize) {
+        if (this.settings.autosize_cells) {
             /*
             Assume plot has the the same width/height ratio as browser window.
 
@@ -200,24 +200,6 @@ class ExploreHeatmapPlot extends D3Visualization {
         });
     }
 
-    get_max_tick_dimensions(scale, fields) {
-        let tempText = this.vis.append("text"),
-            maxWidth = 0,
-            maxHeight = 0;
-        _.each(scale, column =>
-            _.each(column, (filter, index) => {
-                tempText.text(filter.value);
-                const wrap_text = fields[index].wrap_text;
-                if (wrap_text) HAWCUtils.wrapText(tempText, wrap_text);
-                const box = tempText.node().getBBox();
-                maxWidth = Math.max(box.width, maxWidth);
-                maxHeight = Math.max(box.height, maxHeight);
-            })
-        );
-        tempText.remove();
-        return {width: maxWidth, height: maxHeight};
-    }
-
     build_axes() {
         let xs = this.store.scales.x.filter((d, i) =>
                 this.settings.compress_x ? this.store.totals.x[i] > 0 : true
@@ -231,13 +213,35 @@ class ExploreHeatmapPlot extends D3Visualization {
                 .attr("transform", `translate(0,${this.h})`),
             yAxis = this.vis.append("g").attr("class", ".yAxis"),
             thisItem,
-            label_padding = 6;
+            label_padding = 6,
+            get_max_tick_dimensions = (scale, fields) => {
+                let tempText = this.vis
+                        .append("text")
+                        .attr("x", 0)
+                        .attr("y", 0),
+                    maxWidth = 0,
+                    maxHeight = 0;
+                _.each(scale, column =>
+                    _.each(column, (filter, index) => {
+                        let wrap_text = fields[index].wrap_text;
+                        tempText.html("").text(filter.value);
+                        if (wrap_text) {
+                            HAWCUtils.wrapText(tempText.node(), wrap_text);
+                        }
+                        const box = tempText.node().getBBox();
+                        maxWidth = Math.max(box.width, maxWidth);
+                        maxHeight = Math.max(box.height, maxHeight);
+                    })
+                );
+                tempText.remove();
+                return {width: maxWidth, height: maxHeight};
+            },
+            {x_tick_rotate, y_tick_rotate, autorotate_tick_labels} = this.settings;
 
-        if (this.settings.autorotate) {
-            const xMax = this.get_max_tick_dimensions(xs, this.settings.x_fields),
-                yMax = this.get_max_tick_dimensions(ys, this.settings.y_fields),
-                {width, height} = this.cellDimensions;
-            this.settings.x_tick_rotate =
+        if (autorotate_tick_labels) {
+            const xMax = get_max_tick_dimensions(xs, this.settings.x_fields),
+                {width} = this.cellDimensions;
+            x_tick_rotate =
                 width > xMax.width
                     ? 0
                     : width > xMax.height
@@ -245,14 +249,7 @@ class ExploreHeatmapPlot extends D3Visualization {
                     : xMax.width < xMax.height
                     ? 0
                     : -90;
-            this.settings.y_tick_rotate =
-                height > xMax.height
-                    ? 0
-                    : height > xMax.width
-                    ? -90
-                    : xMax.height < xMax.width
-                    ? 0
-                    : -90;
+            y_tick_rotate = 0;
         }
 
         // build x-axis
@@ -280,7 +277,7 @@ class ExploreHeatmapPlot extends D3Visualization {
                         .append("text")
                         .attr("x", 0)
                         .attr("y", 0)
-                        .attr("transform", `rotate(${this.settings.x_tick_rotate})`)
+                        .attr("transform", `rotate(${x_tick_rotate})`)
                         .text(lastItem[i].value || "<null>")
                         .each(function() {
                             if (wrap_text) {
@@ -359,7 +356,7 @@ class ExploreHeatmapPlot extends D3Visualization {
                         .append("text")
                         .attr("x", 0)
                         .attr("y", 0)
-                        .attr("transform", `rotate(${this.settings.y_tick_rotate})`)
+                        .attr("transform", `rotate(${y_tick_rotate})`)
                         .text(lastItem[i].value || "<null>")
                         .each(function() {
                             if (wrap_text) {
