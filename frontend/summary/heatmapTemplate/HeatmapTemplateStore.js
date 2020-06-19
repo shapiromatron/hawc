@@ -60,7 +60,8 @@ class HeatmapTemplateStore {
 
     @computed get settings() {
         return {
-            autosize: true,
+            autosize_cells: true,
+            autorotate_tick_labels: true,
             cell_height: 25,
             cell_width: 75,
             color_range: ["#ffffff", "#2339a9"],

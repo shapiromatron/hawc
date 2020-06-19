@@ -1,6 +1,5 @@
 from django.conf import settings
 from django.core.cache import cache
-
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied
@@ -11,7 +10,7 @@ from ..assessment.models import Assessment
 from ..common.api import CleanupFieldsBaseViewSet, LegacyAssessmentAdapterMixin
 from ..common.helper import FlatExport, re_digits
 from ..common.renderers import PandasRenderers
-from ..common.serializers import UnusedSerializer, HeatmapQuerySerializer
+from ..common.serializers import HeatmapQuerySerializer, UnusedSerializer
 from ..common.views import AssessmentPermissionsMixin
 from . import exports, models, serializers
 

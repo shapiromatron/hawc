@@ -51,7 +51,7 @@ class ExploreHeatmapPlot {
     get_cell_dimensions() {
         const {settings} = this.store;
         let cellDimensions = {};
-        if (this.settings.autosize_cells) {
+        if (settings.autosize_cells) {
             /*
             Assume plot has the the same width/height ratio as browser window.
 
@@ -79,7 +79,7 @@ class ExploreHeatmapPlot {
                 height: Math.max(cellHeight, minHeight),
             };
         } else {
-            cellDimensions = {width: this.settings.cell_width, height: this.settings.cell_height};
+            cellDimensions = {width: settings.cell_width, height: settings.cell_height};
         }
         return cellDimensions;
     }
@@ -161,10 +161,10 @@ class ExploreHeatmapPlot {
                 tempText.remove();
                 return {width: maxWidth, height: maxHeight};
             },
-            {x_tick_rotate, y_tick_rotate, autorotate_tick_labels} = this.settings;
+            {x_tick_rotate, y_tick_rotate, autorotate_tick_labels} = settings;
 
         if (autorotate_tick_labels) {
-            const xMax = get_max_tick_dimensions(xs, this.settings.x_fields),
+            const xMax = get_max_tick_dimensions(xs, settings.x_fields),
                 {width} = this.cellDimensions;
             x_tick_rotate =
                 width > xMax.width
@@ -187,7 +187,7 @@ class ExploreHeatmapPlot {
                 itemStartIndex = 0,
                 numItems = 0,
                 borderData = [],
-                wrap_text = this.settings.x_fields[i].wrap_text;
+                wrap_text = settings.x_fields[i].wrap_text;
 
             for (let j = 0; j <= xs.length; j++) {
                 thisItem = j < xs.length ? xs[j] : null;
@@ -267,7 +267,7 @@ class ExploreHeatmapPlot {
                 itemStartIndex = 0,
                 numItems = 0,
                 borderData = [],
-                wrap_text = this.settings.y_fields[i].wrap_text;
+                wrap_text = settings.y_fields[i].wrap_text;
 
             for (let j = 0; j <= ys.length; j++) {
                 thisItem = j < ys.length ? ys[j] : null;

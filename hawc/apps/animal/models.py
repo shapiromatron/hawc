@@ -2,7 +2,7 @@ import collections
 import json
 import math
 from itertools import chain
-from typing import Dict, Any
+from typing import Any, Dict
 
 import pandas as pd
 from django.core.exceptions import ObjectDoesNotExist

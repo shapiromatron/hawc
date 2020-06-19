@@ -2,7 +2,6 @@ import json
 
 from rest_framework import serializers
 
-from ..assessment.models import DoseUnits
 from ..assessment.serializers import EffectTagsSerializer
 from ..bmd.serializers import ModelSerializer
 from ..common.api import DynamicFieldsMixin
