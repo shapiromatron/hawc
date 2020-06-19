@@ -8,11 +8,17 @@ const pillItems = function(text, delimiter) {
     if (!delimiter) {
         return text;
     }
-    return text.split(delimiter).map((item, i) => (
-        <span key={i} className="label" style={{marginRight: 3}}>
-            {item}
-        </span>
-    ));
+    if (!text) {
+        return "";
+    }
+    return text
+        .toString()
+        .split(delimiter)
+        .map((item, i) => (
+            <span key={i} className="label" style={{marginRight: 3}}>
+                {item}
+            </span>
+        ));
 };
 @observer
 class InteractiveCell extends Component {

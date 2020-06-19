@@ -84,7 +84,11 @@ class FilterWidget extends Component {
     renderItem(widget, item, index, itemStore, showClickEvent) {
         const {toggleItemSelection, showModalClick, colorScale} = this.props.store,
             data = this.props.store.getTableData,
-            numItems = data.filter(d => d[widget.column] === item).length;
+            numItems = data.filter(d =>
+                widget.delimiter
+                    ? _.includes(d[widget.column].split(widget.delimiter), item)
+                    : d[widget.column] === item
+            ).length;
         return (
             <div key={index}>
                 {showClickEvent ? (
