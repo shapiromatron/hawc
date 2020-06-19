@@ -2,7 +2,7 @@ import h from "shared/utils/helpers";
 import _ from "lodash";
 import React, {Component} from "react";
 import PropTypes from "prop-types";
-import {observer} from "mobx-react";
+import {inject, observer} from "mobx-react";
 
 import {NULL_VALUE} from "../../summary/constants";
 
@@ -15,7 +15,7 @@ class FilterWidget extends Component {
     render() {
         const {widget, numWidgets} = this.props,
             {colorScale, maxValue} = this.props.store,
-            maxHeight = `${Math.floor(1/numWidgets*100)}vh`,
+            maxHeight = `${Math.floor((1 / numWidgets) * 100)}vh`,
             {selectAllFilterWidget, selectNoneFilterWidget} = this.props.store,
             data = this.props.store.getTableData,
             availableItems = _.chain(data)
@@ -35,7 +35,7 @@ class FilterWidget extends Component {
         return (
             <div
                 style={{
-                    height: "30vh",
+                    height: maxHeight,
                     padding: "10px 0",
                     overflow: "hidden",
                     display: "flex",
@@ -69,7 +69,7 @@ class FilterWidget extends Component {
                 <div
                     style={{
                         overflowY: "scroll",
-                        flex: 1
+                        flex: 1,
                     }}>
                     {items
                         .sort()
@@ -127,6 +127,7 @@ FilterWidget.propTypes = {
     numWidgets: PropTypes.number.isRequired,
 };
 
+@inject("store")
 @observer
 class FilterWidgetContainer extends Component {
     render() {

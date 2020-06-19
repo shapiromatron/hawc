@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import PropTypes from "prop-types";
-import {observer} from "mobx-react";
+import {inject, observer} from "mobx-react";
 
 import {NULL_VALUE} from "../constants";
 
@@ -46,6 +46,7 @@ InteractiveCell.propTypes = {
     field: PropTypes.object.isRequired,
 };
 
+@inject("store")
 @observer
 class DatasetTable extends Component {
     constructor(props) {
@@ -56,7 +57,6 @@ class DatasetTable extends Component {
         const {table_fields} = this.props.store.settings,
             data = this.props.store.getTableData;
 
-        // TODO HEATMAP: fix 40vh to be better calculated
         return (
             <div>
                 <table className="table table-striped table-bordered">
@@ -92,7 +92,7 @@ class DatasetTable extends Component {
     }
 }
 DatasetTable.propTypes = {
-    store: PropTypes.object.isRequired,
+    store: PropTypes.object,
 };
 
 export default DatasetTable;
