@@ -102,7 +102,7 @@ class FilterWidget extends Component {
                             color: h.getTextContrastColor(colorScale(numItems)),
                             display: "inline-flex",
                             height: "1.5em",
-                            width: "2em",
+                            width: "2.5em",
                             justifyContent: "center",
                             alignItems: "center",
                         }}>

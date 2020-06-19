@@ -161,7 +161,8 @@ class ExploreHeatmapPlot {
                 tempText.remove();
                 return {width: maxWidth, height: maxHeight};
             },
-            {x_tick_rotate, y_tick_rotate, autorotate_tick_labels} = settings;
+            {x_tick_rotate, y_tick_rotate, autorotate_tick_labels} = settings,
+            autorotate_wrap = 150;
 
         if (autorotate_tick_labels) {
             const xMax = get_max_tick_dimensions(xs, settings.x_fields),
@@ -187,7 +188,8 @@ class ExploreHeatmapPlot {
                 itemStartIndex = 0,
                 numItems = 0,
                 borderData = [],
-                wrap_text = settings.x_fields[i].wrap_text;
+                wrap_text =
+                    settings.x_fields[i].wrap_text || autorotate_tick_labels ? autorotate_wrap : 0;
 
             for (let j = 0; j <= xs.length; j++) {
                 thisItem = j < xs.length ? xs[j] : null;
@@ -267,7 +269,8 @@ class ExploreHeatmapPlot {
                 itemStartIndex = 0,
                 numItems = 0,
                 borderData = [],
-                wrap_text = settings.y_fields[i].wrap_text;
+                wrap_text =
+                    settings.y_fields[i].wrap_text || autorotate_tick_labels ? autorotate_wrap : 0;
 
             for (let j = 0; j <= ys.length; j++) {
                 thisItem = j < ys.length ? ys[j] : null;
