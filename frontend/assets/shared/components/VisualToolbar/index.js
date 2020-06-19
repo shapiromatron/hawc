@@ -44,6 +44,12 @@ const getSvgObject = function(svgElement) {
     };
 
 class VisualToolbar extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            canZoomIn: true,
+        };
+    }
     renderDownload() {
         const {svg} = this.props;
         return (
@@ -71,9 +77,19 @@ class VisualToolbar extends Component {
         );
     }
     renderZoom() {
+        const {canZoomIn} = this.state,
+            {makeFullSize, fitPage} = this.props,
+            handleClick = () => {
+                if (canZoomIn) {
+                    makeFullSize();
+                } else {
+                    fitPage();
+                }
+                this.setState({canZoomIn: !canZoomIn});
+            };
         return (
-            <button className="btn btn-mini" title="Zoom in/out">
-                <i className="fa fa-search-plus"></i>
+            <button className="btn btn-mini" title="Zoom in/out" onClick={handleClick}>
+                <i className={canZoomIn ? "fa fa-search-plus" : "fa fa-search-minus"}></i>
             </button>
         );
     }
@@ -89,6 +105,8 @@ class VisualToolbar extends Component {
 
 VisualToolbar.propTypes = {
     svg: PropTypes.object.isRequired,
+    makeFullSize: PropTypes.func.isRequired,
+    fitPage: PropTypes.func.isRequired,
 };
 
 export default VisualToolbar;

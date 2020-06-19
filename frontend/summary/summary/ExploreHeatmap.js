@@ -49,19 +49,10 @@ class ExploreHeatmapComponent extends Component {
         return (
             <div style={{display: "flex", flexDirection: "row"}}>
                 <div style={{flex: 9}}>
-                    <div style={{overflow: "auto"}}>
-                        <div id={id}>
-                            <Loading />
-                        </div>
+                    <div id={id}>
+                        <Loading />
                     </div>
-                    <div
-                        style={{
-                            minHeight: "40vh",
-                            maxHeight: "80vh",
-                            overflow: "auto",
-                        }}>
-                        <DatasetTable />
-                    </div>
+                    <DatasetTable />
                 </div>
                 {hasFilters ? (
                     <div

@@ -27,46 +27,6 @@ class ExploreHeatmapPlot {
         this.build_plot();
     }
 
-    set_trigger_resize() {
-        const {settings} = this.store;
-        var self = this,
-            w = this.w + settings.padding.left + this.x_axis_label_padding + settings.padding.right,
-            h = this.h + settings.padding.top + this.y_axis_label_padding + settings.padding.bottom,
-            chart = $(this.svg),
-            container = chart.parent();
-
-        this.full_width = w;
-        this.full_height = h;
-        this.isFullSize = true;
-        this.trigger_resize = function(forceResize) {
-            var targetWidth = Math.min(container.width(), self.full_width),
-                aspect = self.full_width / self.full_height;
-            if (forceResize === true && !self.isFullSize) targetWidth = self.full_width;
-
-            if (targetWidth !== self.full_width) {
-                // use custom smaller size
-                chart.attr("width", targetWidth);
-                chart.attr("height", Math.round(targetWidth / aspect));
-                self.isFullSize = false;
-                if (self.resize_button) {
-                    self.resize_button.attr("title", "zoom figure to full-size");
-                    self.resize_button.find("i").attr("class", "icon-zoom-in");
-                }
-            } else {
-                // set back to full-size
-                chart.attr("width", self.full_width);
-                chart.attr("height", self.full_height);
-                self.isFullSize = true;
-                if (self.resize_button) {
-                    self.resize_button.attr("title", "zoom figure to fit screen");
-                    self.resize_button.find("i").attr("class", "icon-zoom-out");
-                }
-            }
-        };
-        $(window).resize(this.trigger_resize);
-        this.trigger_resize(false);
-    }
-
     generate_properties() {
         const {settings, scales, totals} = this.store;
 
@@ -562,38 +522,83 @@ class ExploreHeatmapPlot {
         );
 
         this.add_grid();
-        this.add_resize();
-        this.add_toolbar();
+        this.add_resize_and_toolbar();
     }
 
-    add_resize() {
+    add_resize_and_toolbar() {
         const {settings} = this.store,
-            svg = d3.select(this.svg);
+            svg = d3.select(this.svg),
+            nativeSize = {
+                width: Math.ceil(
+                    settings.padding.left +
+                        this.x_axis_label_padding +
+                        this.w +
+                        settings.padding.right
+                ),
+                height: Math.ceil(
+                    settings.padding.top +
+                        this.h +
+                        this.y_axis_label_padding +
+                        settings.padding.bottom
+                ),
+            },
+            parentContainer = $(this.svg).parent(),
+            nativeAspectRatio = nativeSize.height / nativeSize.width,
+            getOriginalSize = () => {
+                return {width: parentContainer.width(), height: parentContainer.height()};
+            };
 
-        // Set plot dimensions and viewBox
-        this.nativeWidth = Math.ceil(
-            settings.padding.left + this.x_axis_label_padding + this.w + settings.padding.right
-        );
-        this.nativeHeight = Math.ceil(
-            settings.padding.top + this.h + this.y_axis_label_padding + settings.padding.bottom
-        );
-
+        // set correct aspect ratio to get proper heigh/widths set on parent elements
         svg.attr("preserveAspectRatio", "xMidYMid meet").attr(
             "viewBox",
-            `0 0 ${this.nativeWidth} ${this.nativeHeight}`
+            `0 0 ${nativeSize.width} ${nativeSize.height}`
         );
-    }
+        let originalSize = getOriginalSize(),
+            isFullSize =
+                originalSize.width >= nativeSize.width && originalSize.height >= nativeSize.height;
 
-    add_toolbar() {
-        const div = $("<div>")
-            .css({
-                position: "relative",
-                display: "inline-block",
-                top: "-30px",
-                left: "calc(100% - 49px)",
-            })
-            .appendTo(this.plot_div);
-        ReactDOM.render(<VisualToolbar svg={this.svg} />, div[0]);
+        const makeFullSize = () => {
+                parentContainer
+                    .attr("width", parentContainer.width())
+                    .attr("height", parentContainer.height());
+                svg.attr("width", nativeSize.width).attr("height", nativeSize.height);
+                isFullSize = true;
+            },
+            setOriginalSize = () => {
+                parentContainer
+                    .attr("width", originalSize.width)
+                    .attr("height", originalSize.height);
+                svg.attr("width", originalSize.width).attr("height", originalSize.height);
+                isFullSize = false;
+            },
+            onPageResize = () => {
+                let targetWidth = parentContainer.width(),
+                    targetHeight = targetWidth * nativeAspectRatio;
+
+                parentContainer.attr("width", targetWidth).attr("height", targetHeight);
+                svg.attr("width", targetWidth).attr("height", targetHeight);
+                if (!isFullSize) {
+                    originalSize = getOriginalSize();
+                }
+            },
+            div = $("<div>")
+                .css({
+                    position: "relative",
+                    display: "block",
+                    top: "-30px",
+                    left: "-3px",
+                })
+                .appendTo(this.plot_div);
+
+        let resizeTimer;
+        $(window).resize(() => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(onPageResize, 1000);
+        });
+        ReactDOM.render(
+            <VisualToolbar svg={this.svg} makeFullSize={makeFullSize} fitPage={setOriginalSize} />,
+            div[0]
+        );
     }
 }
 
