@@ -114,6 +114,18 @@ class AnimalAssessmentViewset(
         export = FlatExport(df=df, filename=f"bio-result-heatmap-{self.assessment.id}")
         return Response(export)
 
+    @action(detail=True, renderer_classes=PandasRenderers)
+    def endpoints(self, request, pk):
+        self.set_legacy_attr(pk)
+        self.permission_check_user_can_view()
+        key = f"assessment-{self.assessment.id}-bioassay-endpoint-list"
+        df = cache.get(key)
+        if df is None:
+            df = models.Endpoint.objects.endpoint_df(self.assessment)
+            cache.set(key, df, settings.CACHE_10_MIN)
+        export = FlatExport(df=df, filename=f"bio-endpoint-lis-{self.assessment.id}")
+        return Response(export)
+
 
 class Experiment(AssessmentViewset):
     assessment_filter_args = "study__assessment"

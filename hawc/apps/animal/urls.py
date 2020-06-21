@@ -97,6 +97,11 @@ urlpatterns = [
         r"^assessment/(?P<pk>\d+)/endpoints/$", views.EndpointList.as_view(), name="endpoint_list",
     ),
     url(
+        r"^assessment/(?P<pk>\d+)/endpoints-v2/$",
+        views.EndpointListV2.as_view(),
+        name="endpoint_list_v2",
+    ),
+    url(
         r"^assessment/(?P<pk>\d+)/endpoints/tags/(?P<tag_slug>[-\w]+)/$",
         views.EndpointTags.as_view(),
         name="assessment_endpoint_taglist",

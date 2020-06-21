@@ -370,6 +370,17 @@ class EndpointUpdate(BaseUpdateWithFormset):
         return context
 
 
+class EndpointListV2(BaseList):
+    parent_model = Assessment
+    model = models.Endpoint
+    template_name = "animal/endpoint_list_v2.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["data_url"] = reverse("animal:api:assessment-endpoints", args=(self.assessment.id,))
+        return context
+
+
 class EndpointList(BaseEndpointFilterList):
     # List of Endpoints associated with assessment
     parent_model = Assessment
