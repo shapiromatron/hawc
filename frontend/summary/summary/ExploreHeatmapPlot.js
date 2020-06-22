@@ -238,6 +238,26 @@ class ExploreHeatmapPlot {
                 numItems += 1;
                 lastItem = thisItem;
             }
+            if (i == numXAxes - 1) {
+                let label = axis.append("g");
+                label
+                    .append("text")
+                    .attr("x", 0)
+                    .attr("y", 0)
+                    .attr("transform", `rotate(${x_tick_rotate})`)
+                    .text("Total");
+
+                let box = label.node().getBBox(),
+                    label_offset =
+                        xs.length * this.cellDimensions.width +
+                        this.cellDimensions.width / 2 -
+                        box.width / 2;
+
+                label.attr(
+                    "transform",
+                    `translate(${label_offset - box.x},${label_padding - box.y})`
+                );
+            }
 
             let box = axis.node().getBBox();
 
@@ -256,11 +276,24 @@ class ExploreHeatmapPlot {
                 .attr("fill", "transparent")
                 .attr("stroke", show_axis_border ? "black" : null)
                 .on("click", d => {
+                    if (d.filter.length == 0) return;
                     const cells = this.get_matching_cells(d.filters, "x");
                     this.store.setTableDataFilters(new Set(cells));
                 });
             this.bind_tooltip(border, "axis");
             yOffset = newYOffset;
+        }
+
+        if (true) {
+            const x1 = xs.length * this.cellDimensions.width,
+                x2 = x1 + this.cellDimensions.width,
+                y1 = xAxis.node().getBBox().height,
+                y2 = 0;
+            xAxis
+                .append("polyline")
+                .attr("points", d => `${x1},${y1} ${x1},${y2} ${x2},${y2} ${x2},${y1}`)
+                .attr("fill", "transparent")
+                .attr("stroke", show_axis_border ? "black" : null);
         }
 
         // build y-axis
@@ -316,6 +349,26 @@ class ExploreHeatmapPlot {
                 numItems += 1;
                 lastItem = thisItem;
             }
+            if (i == numYAxes - 1) {
+                let label = axis.append("g");
+                label
+                    .append("text")
+                    .attr("x", 0)
+                    .attr("y", 0)
+                    .attr("transform", `rotate(${y_tick_rotate})`)
+                    .text("Total");
+
+                let box = label.node().getBBox(),
+                    label_offset =
+                        ys.length * this.cellDimensions.height +
+                        this.cellDimensions.height / 2 -
+                        box.height / 2;
+
+                label.attr(
+                    "transform",
+                    `translate(${-box.width - box.x - label_padding},${label_offset - box.y})`
+                );
+            }
 
             let box = axis.node().getBBox(),
                 newXOffset = xOffset + box.width + label_padding * 2;
@@ -338,6 +391,17 @@ class ExploreHeatmapPlot {
                 });
             this.bind_tooltip(border, "axis");
             xOffset = newXOffset;
+        }
+        if (true) {
+            const x1 = -yAxis.node().getBBox().width,
+                x2 = 0,
+                y1 = ys.length * this.cellDimensions.height,
+                y2 = y1 + this.cellDimensions.height;
+            yAxis
+                .append("polyline")
+                .attr("points", d => `${x1},${y1} ${x2},${y1} ${x2},${y2} ${x1},${y2}`)
+                .attr("fill", "transparent")
+                .attr("stroke", show_axis_border ? "black" : null);
         }
 
         this.x_axis_label_padding = yAxis.node().getBoundingClientRect().width;
