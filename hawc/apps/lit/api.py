@@ -1,11 +1,11 @@
 import pandas as pd
 import plotly.express as px
+from django.core.cache import cache
+from django.conf import settings
 from django.utils import timezone
 from rest_framework import exceptions, mixins, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
-
-from hawc.refml import tags as refmltags
 
 from ..assessment.api import AssessmentLevelPermissions, AssessmentRootedTagTreeViewset
 from ..assessment.models import Assessment
@@ -157,12 +157,11 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         """
         # TODO HEATMAP - tests
         instance = self.get_object()
-        tree = models.ReferenceFilterTag.get_all_tags(instance.id, json_encode=False)
-        tag_qs = models.ReferenceTags.objects.assessment_qs(instance.id)
-
-        node_dict = refmltags.build_tree_node_dict(tree)
-        df = refmltags.create_df(tag_qs, node_dict)
-
+        key = f"assessment-{instance.id}-lit-tag-heatmap"
+        df = cache.get(key)
+        if df is None:
+            df = models.Reference.objects.heatmap_dataframe(instance.id)
+            cache.set(key, df, settings.CACHE_10_MIN)
         export = FlatExport(df=df, filename=f"df-{instance.id}")
         return Response(export)
 
