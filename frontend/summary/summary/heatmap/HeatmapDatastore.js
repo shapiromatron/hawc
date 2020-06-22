@@ -139,7 +139,7 @@ class HeatmapDatastore {
     }
 
     setColorScale() {
-        this.maxValue = d3.max(this.matrixDataset, d => d.rows.length);
+        this.maxValue = d3.max(this.matrixDataset, d => (d.type == "cell" ? d.rows.length : 0));
         this.colorScale = d3.scale
             .linear()
             .domain([0, this.maxValue])
@@ -205,6 +205,7 @@ class HeatmapDatastore {
                             index += 1;
                             return {
                                 index,
+                                type: "cell",
                                 x_filters: x,
                                 y_filters: y,
                                 x_step: i,
@@ -214,6 +215,54 @@ class HeatmapDatastore {
                         });
                 })
                 .flat();
+        if (true) {
+            const x_steps = scales.x.filter((d, i) => (compress_x ? this.totals.x[i] > 0 : true))
+                    .length,
+                y_steps = scales.y.filter((d, i) => (compress_y ? this.totals.y[i] > 0 : true))
+                    .length;
+            xy_map.push(
+                ...scales.x
+                    .filter((d, i) => (compress_x ? this.totals.x[i] > 0 : true))
+                    .map((x, i) => {
+                        index += 1;
+                        return {
+                            index,
+                            type: "total",
+                            x_filters: x,
+                            y_filters: [],
+                            x_step: i,
+                            y_step: y_steps,
+                            rows: getRows(x),
+                        };
+                    }),
+                ...scales.y
+                    .filter((d, i) => (compress_y ? this.totals.y[i] > 0 : true))
+                    .map((y, i) => {
+                        index += 1;
+                        return {
+                            index,
+                            type: "total",
+                            x_filters: [],
+                            y_filters: y,
+                            x_step: x_steps,
+                            y_step: i,
+                            rows: getRows(y),
+                        };
+                    }),
+                {
+                    index: ++index,
+                    type: "total",
+                    x_filters: [],
+                    y_filters: [],
+                    x_step: x_steps,
+                    y_step: y_steps,
+                    rows: h.setDifference(
+                        new Set(_.range(this.dataset.length)),
+                        this.rowsRemovedByFilters
+                    ),
+                }
+            );
+        }
         this.matrixDatasetCache[hash] = xy_map;
         return xy_map;
     }

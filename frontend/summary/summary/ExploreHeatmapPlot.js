@@ -39,6 +39,9 @@ class ExploreHeatmapPlot {
             settings.compress_y ? totals.y[i] > 0 : true
         ).length;
 
+        this.x_steps = true ? this.x_steps + 1 : this.x_steps;
+        this.y_steps = true ? this.y_steps + 1 : this.y_steps;
+
         this.cellDimensions = this.get_cell_dimensions();
         this.w = this.cellDimensions.width * this.x_steps;
         this.h = this.cellDimensions.height * this.y_steps;
@@ -466,13 +469,17 @@ class ExploreHeatmapPlot {
             .enter()
             .append("g")
             .attr("class", "exp_heatmap_cell")
-            .on("click", function(d) {
-                if (d.rows.length > 0) {
-                    self.store.setTableDataFilters(d);
-                } else {
-                    self.store.setTableDataFilters(new Set());
-                }
-            });
+            .on("click", d =>
+                d.type == "cell"
+                    ? function(d) {
+                          if (d.rows.length > 0) {
+                              self.store.setTableDataFilters(d);
+                          } else {
+                              self.store.setTableDataFilters(new Set());
+                          }
+                      }
+                    : null
+            );
         this.bind_tooltip(this.cells_enter, "cell");
 
         // add cell fill
@@ -491,11 +498,7 @@ class ExploreHeatmapPlot {
             .attr("x", d => this.x_scale(d.x_step) + this.x_scale.rangeBand() / 2)
             .attr("y", d => this.y_scale(d.y_step) + this.y_scale.rangeBand() / 2);
 
-        // enter/update
-        this.cells_data
-            .select(".exp_heatmap_cell_block")
-            .transition()
-            .style("fill", d => {
+        let fillRect = d => {
                 const filterIndices = [...tableDataFilters].map(e => e.index),
                     value =
                         tableDataFilters.size == 0
@@ -504,12 +507,8 @@ class ExploreHeatmapPlot {
                             ? maxValue
                             : d.rows.length / 3;
                 return colorScale(value);
-            });
-
-        this.cells_data
-            .select(".exp_heatmap_cell_text")
-            .transition()
-            .style("fill", d => {
+            },
+            fillText = d => {
                 const filterIndices = [...tableDataFilters].map(e => e.index),
                     value =
                         tableDataFilters.size == 0
@@ -518,8 +517,20 @@ class ExploreHeatmapPlot {
                             ? maxValue
                             : d.rows.length / 3;
                 return h.getTextContrastColor(colorScale(value));
-            })
-            .style("display", d => (d.rows.length == 0 ? "none" : null))
+            };
+
+        // enter/update
+        this.cells_data
+            .select(".exp_heatmap_cell_block")
+            .transition()
+            .style("fill", d => (d.type == "cell" ? fillRect(d) : "transparent"));
+
+        this.cells_data
+            .select(".exp_heatmap_cell_text")
+            .transition()
+            .style("fill", d => (d.type == "cell" ? fillText(d) : null))
+            .style("display", d => (d.type == "cell" && d.rows.length == 0 ? "none" : null))
+            .style("font-weight", d => (d.type == "total" ? "bold" : null))
             .text(d => d.rows.length);
 
         this.cells_data.exit().remove();
