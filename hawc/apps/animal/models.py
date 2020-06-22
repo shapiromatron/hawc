@@ -976,7 +976,7 @@ class Endpoint(BaseEndpoint):
     @classmethod
     def heatmap_study_df(cls, assessment: Assessment, published_only: bool) -> pd.DataFrame:
         def unique_items(els):
-            return "|".join(sorted(set(els)))
+            return "|".join(sorted(set(el for el in els if el is not None)))
 
         # get all studies,even if no endpoint data is extracted
         filters: Dict[str, Any] = {"assessment_id": assessment, "bioassay": True}

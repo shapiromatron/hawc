@@ -294,23 +294,45 @@ class Visual(models.Model):
                 ),
                 HeatmapDataset(
                     type="Bioassay",
-                    name="Bioassay endpoints (published only)",
+                    name="Bioassay study design (published HAWC data)",
+                    url=reverse("animal:api:assessment-study-heatmap", args=(assessment.id,)),
+                ),
+                HeatmapDataset(
+                    type="Bioassay",
+                    name="Bioassay study design (published + unpublished HAWC data)",
+                    url=reverse("animal:api:assessment-study-heatmap", args=(assessment.id,))
+                    + "?unpublished=true",
+                ),
+                HeatmapDataset(
+                    type="Bioassay",
+                    name="Bioassay endpoint summary (published HAWC data)",
                     url=reverse("animal:api:assessment-endpoint-heatmap", args=(assessment.id,)),
                 ),
                 HeatmapDataset(
                     type="Bioassay",
-                    name="Bioassay endpoints (with unpublished HAWC data)",
+                    name="Bioassay endpoint summary (published + unpublished HAWC data)",
                     url=reverse("animal:api:assessment-endpoint-heatmap", args=(assessment.id,))
                     + "?unpublished=true",
                 ),
                 HeatmapDataset(
                     type="Epi",
-                    name="Epidemiology results (published only)",
+                    name="Epidemiology study design (published HAWC data)",
+                    url=reverse("epi:api:assessment-study-heatmap", args=(assessment.id,)),
+                ),
+                HeatmapDataset(
+                    type="Epi",
+                    name="Epidemiology study design (published + unpublished HAWC data)",
+                    url=reverse("epi:api:assessment-study-heatmap", args=(assessment.id,))
+                    + "?unpublished=true",
+                ),
+                HeatmapDataset(
+                    type="Epi",
+                    name="Epidemiology result summary (published HAWC data)",
                     url=reverse("epi:api:assessment-result-heatmap", args=(assessment.id,)),
                 ),
                 HeatmapDataset(
                     type="Epi",
-                    name="Epidemiology results (with unpublished HAWC data)",
+                    name="Epidemiology result summary (published + unpublished HAWC data)",
                     url=reverse("epi:api:assessment-result-heatmap", args=(assessment.id,))
                     + "?unpublished=true",
                 ),
