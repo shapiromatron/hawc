@@ -19,7 +19,9 @@ class TestLiteratureAssessmentViewset:
             reverse("lit:api:assessment-tags", args=(db_keys.assessment_working,)),
             reverse("lit:api:assessment-reference-ids", args=(db_keys.assessment_working,)),
             reverse("lit:api:assessment-reference-tags", args=(db_keys.assessment_working,)),
-            reverse("lit:api:assessment-reference-year-histogram", args=(db_keys.assessment_working,)),
+            reverse(
+                "lit:api:assessment-reference-year-histogram", args=(db_keys.assessment_working,)
+            ),
             reverse("lit:api:assessment-references-download", args=(db_keys.assessment_working,)),
             reverse("lit:api:assessment-tag-heatmap", args=(db_keys.assessment_working,)),
         ]
@@ -88,7 +90,10 @@ class TestLiteratureAssessmentViewset:
         ]
 
     def test_reference_year_histogram(self, db_keys):
-        url = reverse("lit:api:assessment-reference-year-histogram", kwargs=dict(pk=db_keys.assessment_working),)
+        url = reverse(
+            "lit:api:assessment-reference-year-histogram",
+            kwargs=dict(pk=db_keys.assessment_working),
+        )
         c = APIClient()
         assert c.login(email="pm@pm.com", password="pw") is True
         resp = c.get(url).json()
@@ -96,7 +101,10 @@ class TestLiteratureAssessmentViewset:
 
     def test_tag_heatmap(self, rewrite_data_files: str, db_keys):
         fn = Path(DATA_ROOT / f"api-lit-assessment-tag-heatmap.json")
-        url = reverse(f"lit:api:assessment-tag-heatmap", args=(db_keys.assessment_final,)) + "?format=json"
+        url = (
+            reverse(f"lit:api:assessment-tag-heatmap", args=(db_keys.assessment_final,))
+            + "?format=json"
+        )
 
         client = APIClient()
         assert client.login(username="rev@rev.com", password="pw") is True
@@ -199,7 +207,11 @@ class TestSearchViewset:
             new_payload = {**payload, **{"search_string": bad_search_string}}
             resp = c.post(url, new_payload, format="json")
             assert resp.status_code == 400
-            assert resp.data == {"non_field_errors": ["Must be a comma-separated list of positive integer identifiers"]}
+            assert resp.data == {
+                "non_field_errors": [
+                    "Must be a comma-separated list of positive integer identifiers"
+                ]
+            }
 
         # check bad id lists
         bad_search_strings = ["-1", "123,123"]
@@ -207,7 +219,11 @@ class TestSearchViewset:
             new_payload = {**payload, **{"search_string": bad_search_string}}
             resp = c.post(url, new_payload, format="json")
             assert resp.status_code == 400
-            assert resp.data == {"non_field_errors": ["At least one positive identifer must exist and must be unique"]}
+            assert resp.data == {
+                "non_field_errors": [
+                    "At least one positive identifer must exist and must be unique"
+                ]
+            }
 
     def test_missing_id_in_hero(self, db_keys):
         """
@@ -236,5 +252,8 @@ class TestSearchViewset:
         }
         resp = c.post(url, payload, format="json")
         assert resp.status_code == 400
-        assert resp.data == {"non_field_errors": ["Import failed; the following HERO IDs could not be imported: 41589"]}
-
+        assert resp.data == {
+            "non_field_errors": [
+                "Import failed; the following HERO IDs could not be imported: 41589"
+            ]
+        }

@@ -12,7 +12,10 @@ DATA_ROOT = Path(__file__).parents[2] / "data/api"
 class TestEpiAssessmentViewset:
     def _test_heatmap(self, rewrite_data_files: bool, slug: str, key: int, unpublished: bool):
         fn = Path(DATA_ROOT / f"api-epi-assessment-{slug}-unpublished-{unpublished}.json")
-        url = reverse(f"epi:api:assessment-{slug}", args=(key,)) + f"?format=json&unpublished={unpublished}"
+        url = (
+            reverse(f"epi:api:assessment-{slug}", args=(key,))
+            + f"?format=json&unpublished={unpublished}"
+        )
 
         client = APIClient()
         assert client.login(username="rev@rev.com", password="pw") is True
@@ -41,7 +44,9 @@ class TestEpiAssessmentViewset:
 
     def test_full_export(self, rewrite_data_files: bool, db_keys):
         fn = Path(DATA_ROOT / f"api-epi-assessment-export.json")
-        url = reverse("epi:api:assessment-export", args=(db_keys.assessment_final,)) + "?format=json"
+        url = (
+            reverse("epi:api:assessment-export", args=(db_keys.assessment_final,)) + "?format=json"
+        )
 
         client = APIClient()
         resp = client.get(url)

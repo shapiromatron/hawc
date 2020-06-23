@@ -21,7 +21,9 @@ from ..common.views import AssessmentPermissionsMixin
 from . import exports, models, serializers
 
 
-class AnimalAssessmentViewset(AssessmentPermissionsMixin, LegacyAssessmentAdapterMixin, viewsets.GenericViewSet):
+class AnimalAssessmentViewset(
+    AssessmentPermissionsMixin, LegacyAssessmentAdapterMixin, viewsets.GenericViewSet
+):
     parent_model = Assessment
     model = models.Endpoint
     permission_classes = (AssessmentLevelPermissions,)
@@ -42,11 +44,15 @@ class AnimalAssessmentViewset(AssessmentPermissionsMixin, LegacyAssessmentAdapte
         self.set_legacy_attr(pk)
         self.permission_check_user_can_view()
         exporter = exports.EndpointGroupFlatComplete(
-            self.get_queryset(), filename=f"{self.assessment}-bioassay-complete", assessment=self.assessment,
+            self.get_queryset(),
+            filename=f"{self.assessment}-bioassay-complete",
+            assessment=self.assessment,
         )
         return Response(exporter.build_export())
 
-    @action(detail=True, methods=("get",), url_path="endpoint-export", renderer_classes=PandasRenderers)
+    @action(
+        detail=True, methods=("get",), url_path="endpoint-export", renderer_classes=PandasRenderers
+    )
     def endpoint_export(self, request, pk):
         """
         Retrieve endpoint animal data
@@ -54,7 +60,9 @@ class AnimalAssessmentViewset(AssessmentPermissionsMixin, LegacyAssessmentAdapte
         self.set_legacy_attr(pk)
         self.permission_check_user_can_view()
         exporter = exports.EndpointSummary(
-            self.get_queryset(), filename=f"{self.assessment}-bioassay-summary", assessment=self.assessment,
+            self.get_queryset(),
+            filename=f"{self.assessment}-bioassay-summary",
+            assessment=self.assessment,
         )
         return Response(exporter.build_export())
 

@@ -47,7 +47,8 @@ class Criteria(models.Model):
 
     def copy_across_assessments(self, cw):
         new_obj, _ = self._meta.model.objects.get_or_create(
-            assessment_id=cw[Assessment.COPY_NAME][self.assessment_id], description=self.description,
+            assessment_id=cw[Assessment.COPY_NAME][self.assessment_id],
+            description=self.description,
         )
         cw[self.COPY_NAME][self.id] = new_obj.id
 
@@ -85,7 +86,8 @@ class AdjustmentFactor(models.Model):
 
     def copy_across_assessments(self, cw):
         new_obj, _ = self._meta.model.objects.get_or_create(
-            assessment_id=cw[Assessment.COPY_NAME][self.assessment_id], description=self.description,
+            assessment_id=cw[Assessment.COPY_NAME][self.assessment_id],
+            description=self.description,
         )
         cw[self.COPY_NAME][self.id] = new_obj.id
 
@@ -109,7 +111,9 @@ class StudyPopulationCriteria(models.Model):
 
     CRITERIA_TYPE = (("I", "Inclusion"), ("E", "Exclusion"), ("C", "Confounding"))
     criteria = models.ForeignKey("Criteria", on_delete=models.CASCADE, related_name="spcriteria")
-    study_population = models.ForeignKey("StudyPopulation", on_delete=models.CASCADE, related_name="spcriteria")
+    study_population = models.ForeignKey(
+        "StudyPopulation", on_delete=models.CASCADE, related_name="spcriteria"
+    )
     criteria_type = models.CharField(max_length=1, choices=CRITERIA_TYPE)
 
     COPY_NAME = "spcriterias"
@@ -157,7 +161,9 @@ class StudyPopulation(models.Model):
 
     OUTCOME_GROUP_DESIGNS = ("CC", "NC")
 
-    study = models.ForeignKey("study.Study", on_delete=models.CASCADE, related_name="study_populations")
+    study = models.ForeignKey(
+        "study.Study", on_delete=models.CASCADE, related_name="study_populations"
+    )
     name = models.CharField(
         max_length=256,
         help_text="Name the population associated with the study, following the format <b>Study name (years study conducted), Country, number participants "
@@ -185,7 +191,9 @@ class StudyPopulation(models.Model):
             + '"Infancy" (0-12 months), "Childhood" (0-11 years), "Adolescence" (12-18 years), "Adulthood" '
             + "(>18 years); may be assessment specific."
         )
-        + formatHelpTextNotes('Note "Pregnancy" instead of "Adolescence" or "Adulthood" if applicable.')
+        + formatHelpTextNotes(
+            'Note "Pregnancy" instead of "Adolescence" or "Adulthood" if applicable.'
+        )
         + formatHelpTextNotes("If multiple, separate with semicolons.")
         + formatHelpTextNotes("Add units for quantitative measurements (days, months, years)."),
     )
@@ -216,9 +224,13 @@ class StudyPopulation(models.Model):
         null=True,
         verbose_name="Participant N",
         help_text="How many individuals participated in the study? Ex. 1321<br/>"
-        + formatHelpTextNotes("If mother-infant pairs, note number of pairs, not total individuals studied"),
+        + formatHelpTextNotes(
+            "If mother-infant pairs, note number of pairs, not total individuals studied"
+        ),
     )
-    criteria = models.ManyToManyField(Criteria, through=StudyPopulationCriteria, related_name="populations")
+    criteria = models.ManyToManyField(
+        Criteria, through=StudyPopulationCriteria, related_name="populations"
+    )
     comments = models.TextField(
         blank=True,
         help_text="Copy-paste text describing study population selection <br/>"
@@ -261,7 +273,9 @@ class StudyPopulation(models.Model):
     @staticmethod
     def flat_complete_data_row(ser):
         def getCriteriaList(lst, filt):
-            return "|".join([d["description"] for d in [d for d in lst if d["criteria_type"] == filt]])
+            return "|".join(
+                [d["description"] for d in [d for d in lst if d["criteria_type"] == filt]]
+            )
 
         return (
             ser["id"],
@@ -363,8 +377,12 @@ class Outcome(BaseEndpoint):
         (6, "other"),
     )
 
-    study_population = models.ForeignKey(StudyPopulation, on_delete=models.CASCADE, related_name="outcomes")
-    system = models.CharField(max_length=128, blank=True, help_text="Primary biological system affected")
+    study_population = models.ForeignKey(
+        StudyPopulation, on_delete=models.CASCADE, related_name="outcomes"
+    )
+    system = models.CharField(
+        max_length=128, blank=True, help_text="Primary biological system affected"
+    )
     effect = models.CharField(
         max_length=128,
         blank=True,
@@ -399,7 +417,9 @@ class Outcome(BaseEndpoint):
             + '"Neonatal" (0-4 weeks), "Infancy" (0-12 months), "Childhood" (0-11 years), '
             + '"Adolescence" (12-18 years), "Adulthood" (>18 years); may be assessment specific'
         )
-        + formatHelpTextNotes('Note "Pregnancy" instead of "Adolescence" or "Adulthood" if applicable')
+        + formatHelpTextNotes(
+            'Note "Pregnancy" instead of "Adolescence" or "Adulthood" if applicable'
+        )
         + formatHelpTextNotes("If multiple, separate with semicolons")
         + formatHelpTextNotes("Add units for quantitative measurements (days, months, years)"),
     )
@@ -474,7 +494,11 @@ class Outcome(BaseEndpoint):
 
     def copy_across_assessments(self, cw):
         effects = list(self.effects.all().order_by("id"))
-        children = list(itertools.chain(self.comparison_sets.all().order_by("id"), self.results.all().order_by("id"),))
+        children = list(
+            itertools.chain(
+                self.comparison_sets.all().order_by("id"), self.results.all().order_by("id"),
+            )
+        )
 
         old_id = self.id
         new_assessment_id = cw[Assessment.COPY_NAME][self.assessment_id]
@@ -509,7 +533,9 @@ class ComparisonSet(models.Model):
     study_population = models.ForeignKey(
         StudyPopulation, on_delete=models.SET_NULL, related_name="comparison_sets", null=True
     )
-    outcome = models.ForeignKey(Outcome, on_delete=models.SET_NULL, related_name="comparison_sets", null=True)
+    outcome = models.ForeignKey(
+        Outcome, on_delete=models.SET_NULL, related_name="comparison_sets", null=True
+    )
     name = models.CharField(
         max_length=256,
         help_text="Name the comparison set, following the format <b>Exposure (If log transformed indicate Ln or Logbase) "
@@ -531,7 +557,8 @@ class ComparisonSet(models.Model):
         null=True,
     )
     description = models.TextField(
-        blank=True, help_text="Provide additional comparison set or extraction details if necessary",
+        blank=True,
+        help_text="Provide additional comparison set or extraction details if necessary",
     )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
@@ -626,7 +653,9 @@ class Group(models.Model):
         (None, "N/A"),
     )
 
-    comparison_set = models.ForeignKey(ComparisonSet, on_delete=models.CASCADE, related_name="groups")
+    comparison_set = models.ForeignKey(
+        ComparisonSet, on_delete=models.CASCADE, related_name="groups"
+    )
     group_id = models.PositiveSmallIntegerField()
     name = models.CharField(
         max_length=256,
@@ -653,8 +682,12 @@ class Group(models.Model):
     )
     sex = models.CharField(max_length=1, default="U", choices=SEX_CHOICES)
     ethnicities = models.ManyToManyField(Ethnicity, blank=True, help_text="Optional")
-    eligible_n = models.PositiveIntegerField(blank=True, null=True, verbose_name="Eligible N", help_text="Optional")
-    invited_n = models.PositiveIntegerField(blank=True, null=True, verbose_name="Invited N", help_text="Optional")
+    eligible_n = models.PositiveIntegerField(
+        blank=True, null=True, verbose_name="Eligible N", help_text="Optional"
+    )
+    invited_n = models.PositiveIntegerField(
+        blank=True, null=True, verbose_name="Invited N", help_text="Optional"
+    )
     participant_n = models.PositiveIntegerField(
         blank=True, null=True, verbose_name="Participant N", help_text="Ex. 1400"
     )
@@ -664,7 +697,9 @@ class Group(models.Model):
         choices=IS_CONTROL_CHOICES,
         help_text="Should this group be interpreted as a null/control group, if applicable",
     )
-    comments = models.TextField(blank=True, help_text="Provide additional group or extraction details if necessary",)
+    comments = models.TextField(
+        blank=True, help_text="Provide additional group or extraction details if necessary",
+    )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
@@ -750,8 +785,12 @@ class Exposure(models.Model):
         "analytical_method",
     )
 
-    study_population = models.ForeignKey(StudyPopulation, on_delete=models.CASCADE, related_name="exposures")
-    name = models.CharField(max_length=128, help_text="Name of chemical exposure; use abbreviation. Ex. PFNA; DEHP",)
+    study_population = models.ForeignKey(
+        StudyPopulation, on_delete=models.CASCADE, related_name="exposures"
+    )
+    name = models.CharField(
+        max_length=128, help_text="Name of chemical exposure; use abbreviation. Ex. PFNA; DEHP",
+    )
 
     # for help_text for these fields, see ROUTE_HELP_TEXT
     inhalation = models.BooleanField(default=False)
@@ -790,7 +829,9 @@ class Exposure(models.Model):
         verbose_name="Measurement description",
         help_text="Briefly describe how chemical levels in measurement metric were assessed. Ex. Single plasma sample collected for "
         + "each pregnant woman during the first trimester"
-        + formatHelpTextNotes("Note key details or if measurement details not provided. May vary by assessment."),
+        + formatHelpTextNotes(
+            "Note key details or if measurement details not provided. May vary by assessment."
+        ),
     )
     analytical_method = models.TextField(
         help_text="Lab technique and related information (such as system, corporation name and location) used to measure "
@@ -798,7 +839,9 @@ class Exposure(models.Model):
         + "liquid chromatography (ACQUITY UPLC System; Waters Corporation, Milford, Massachusetts) coupled with tandem mass spectrometry, "
         + 'operated in the multiple reaction monitoring mode with an electrospray ion source in negative mode."'
     )
-    sampling_period = models.CharField(max_length=128, help_text="Exposure sampling period" + OPTIONAL_NOTE, blank=True)
+    sampling_period = models.CharField(
+        max_length=128, help_text="Exposure sampling period" + OPTIONAL_NOTE, blank=True
+    )
     age_of_exposure = models.CharField(
         max_length=32,
         blank=True,
@@ -810,7 +853,9 @@ class Exposure(models.Model):
             + '"Neonatal" (0-4 weeks), "Infancy" (0-12 months), "Childhood" (0-11 years), "Adolescence" (12-18 years), '
             + '"Adulthood" (>18 years); may be assessment specific'
         )
-        + formatHelpTextNotes('Note "Pregnancy" instead of "Adolescence" or "Adulthood" if applicable')
+        + formatHelpTextNotes(
+            'Note "Pregnancy" instead of "Adolescence" or "Adulthood" if applicable'
+        )
         + formatHelpTextNotes("If multiple, separate with semicolons")
         + formatHelpTextNotes("Add units for quantitative measurements (days, months, years)"),
     )
@@ -828,12 +873,15 @@ class Exposure(models.Model):
         max_length=128,
         blank=True,
         help_text="Enter exposure distribution details not noted in fields below. Ex. 25th percentile=1.18; 75th percentile=3.33"
-        + formatHelpTextNotes("Typically 25th and 75th percentiles or alternative central tendency estimate"),
+        + formatHelpTextNotes(
+            "Typically 25th and 75th percentiles or alternative central tendency estimate"
+        ),
     )
     n = models.PositiveIntegerField(
         blank=True,
         null=True,
-        help_text=OPTIONAL_NOTE + "<span class='optional'>Number of individuals where exposure was measured</span>",
+        help_text=OPTIONAL_NOTE
+        + "<span class='optional'>Number of individuals where exposure was measured</span>",
     )
     description = models.TextField(blank=True)
     created = models.DateTimeField(auto_now_add=True)
@@ -957,7 +1005,9 @@ class CentralTendency(models.Model):
         (5, "other"),
     )
 
-    exposure = models.ForeignKey(Exposure, on_delete=models.CASCADE, related_name="central_tendencies")
+    exposure = models.ForeignKey(
+        Exposure, on_delete=models.CASCADE, related_name="central_tendencies"
+    )
 
     estimate = models.FloatField(
         blank=True,
@@ -972,10 +1022,18 @@ class CentralTendency(models.Model):
     )
     variance = models.FloatField(blank=True, null=True, verbose_name="Variance")
     variance_type = models.PositiveSmallIntegerField(choices=VARIANCE_TYPE_CHOICES, default=0)
-    lower_ci = models.FloatField(blank=True, null=True, verbose_name="Lower CI", help_text="Numerical value")
-    upper_ci = models.FloatField(blank=True, null=True, verbose_name="Upper CI", help_text="Numerical value")
-    lower_range = models.FloatField(blank=True, null=True, verbose_name="Lower range", help_text="Numerical value")
-    upper_range = models.FloatField(blank=True, null=True, verbose_name="Upper range", help_text="Numerical value")
+    lower_ci = models.FloatField(
+        blank=True, null=True, verbose_name="Lower CI", help_text="Numerical value"
+    )
+    upper_ci = models.FloatField(
+        blank=True, null=True, verbose_name="Upper CI", help_text="Numerical value"
+    )
+    lower_range = models.FloatField(
+        blank=True, null=True, verbose_name="Lower range", help_text="Numerical value"
+    )
+    upper_range = models.FloatField(
+        blank=True, null=True, verbose_name="Upper range", help_text="Numerical value"
+    )
     description = models.TextField(
         blank=True, help_text="Provide additional exposure or extraction details if necessary",
     )
@@ -1070,7 +1128,9 @@ class GroupNumericalDescriptions(models.Model):
     mean_type = models.PositiveSmallIntegerField(
         choices=MEAN_TYPE_CHOICES, verbose_name="Central estimate type", default=0
     )
-    is_calculated = models.BooleanField(default=False, help_text="Was value calculated/estimated from literature?")
+    is_calculated = models.BooleanField(
+        default=False, help_text="Was value calculated/estimated from literature?"
+    )
     variance = models.FloatField(blank=True, null=True)
     variance_type = models.PositiveSmallIntegerField(choices=VARIANCE_TYPE_CHOICES, default=0)
     lower = models.FloatField(blank=True, null=True)
@@ -1097,7 +1157,9 @@ class ResultMetric(models.Model):
     metric = models.CharField(max_length=128, unique=True)
     abbreviation = models.CharField(max_length=32)
     isLog = models.BooleanField(
-        default=True, verbose_name="Display as log", help_text="When plotting, use a log base 10 scale",
+        default=True,
+        verbose_name="Display as log",
+        help_text="When plotting, use a log base 10 scale",
     )
     showForestPlot = models.BooleanField(
         default=True,
@@ -1105,7 +1167,10 @@ class ResultMetric(models.Model):
         help_text="Does forest-plot representation of result make sense?",
     )
     reference_value = models.FloatField(
-        help_text="Null hypothesis value for reference, if applicable", default=1, blank=True, null=True,
+        help_text="Null hypothesis value for reference, if applicable",
+        default=1,
+        blank=True,
+        null=True,
     )
     order = models.PositiveSmallIntegerField(help_text="Order as they appear in option-list")
 
@@ -1119,7 +1184,9 @@ class ResultMetric(models.Model):
 class ResultAdjustmentFactor(models.Model):
     objects = managers.ResultAdjustmentFactorManager()
 
-    adjustment_factor = models.ForeignKey("AdjustmentFactor", on_delete=models.CASCADE, related_name="resfactors")
+    adjustment_factor = models.ForeignKey(
+        "AdjustmentFactor", on_delete=models.CASCADE, related_name="resfactors"
+    )
     result = models.ForeignKey("Result", on_delete=models.CASCADE, related_name="resfactors")
     included_in_final_model = models.BooleanField(default=True)
 
@@ -1178,7 +1245,9 @@ class Result(models.Model):
         + HAWC_VIS_NOTE,
     )
     outcome = models.ForeignKey(Outcome, on_delete=models.CASCADE, related_name="results")
-    comparison_set = models.ForeignKey(ComparisonSet, on_delete=models.CASCADE, related_name="results")
+    comparison_set = models.ForeignKey(
+        ComparisonSet, on_delete=models.CASCADE, related_name="results"
+    )
     metric = models.ForeignKey(
         ResultMetric,
         on_delete=models.CASCADE,
@@ -1190,7 +1259,8 @@ class Result(models.Model):
         help_text='Specify metric if "other"; optionally, provide details. Ex. Bayesian hierarchical linear regression estimates (betas) and 95% CI between quartile increases in maternal plasma PFAS concentrations (ug/L) and ponderal index (kg/m^3)',
     )
     metric_units = models.TextField(
-        blank=True, help_text="Note Units: Ex. IQR increase, unit (ng/mL) increase, ln-unit (ng/mL) increase",
+        blank=True,
+        help_text="Note Units: Ex. IQR increase, unit (ng/mL) increase, ln-unit (ng/mL) increase",
     )
     data_location = models.CharField(
         max_length=128,
@@ -1205,14 +1275,22 @@ class Result(models.Model):
         blank=True,
     )
     dose_response = models.PositiveSmallIntegerField(
-        verbose_name="Dose Response Trend", help_text=OPTIONAL_NOTE, default=0, choices=DOSE_RESPONSE_CHOICES,
+        verbose_name="Dose Response Trend",
+        help_text=OPTIONAL_NOTE,
+        default=0,
+        choices=DOSE_RESPONSE_CHOICES,
     )
     dose_response_details = models.TextField(blank=True, help_text=OPTIONAL_NOTE)
     prevalence_incidence = models.CharField(
-        max_length=128, verbose_name="Overall incidence prevalence", help_text=OPTIONAL_NOTE, blank=True,
+        max_length=128,
+        verbose_name="Overall incidence prevalence",
+        help_text=OPTIONAL_NOTE,
+        blank=True,
     )
     statistical_power = models.PositiveSmallIntegerField(
-        help_text="Is the study sufficiently powered?" + OPTIONAL_NOTE, default=0, choices=STATISTICAL_POWER_CHOICES,
+        help_text="Is the study sufficiently powered?" + OPTIONAL_NOTE,
+        default=0,
+        choices=STATISTICAL_POWER_CHOICES,
     )
     statistical_power_details = models.TextField(blank=True, help_text=OPTIONAL_NOTE)
     statistical_test_results = models.TextField(blank=True, help_text=OPTIONAL_NOTE)
@@ -1301,7 +1379,12 @@ class Result(models.Model):
     @staticmethod
     def flat_complete_data_row(ser):
         def getFactorList(lst, isIncluded):
-            return "|".join([d["description"] for d in [d for d in lst if d["included_in_final_model"] == isIncluded]])
+            return "|".join(
+                [
+                    d["description"]
+                    for d in [d for d in lst if d["included_in_final_model"] == isIncluded]
+                ]
+            )
 
         return (
             ser["metric"]["id"],
@@ -1451,10 +1534,14 @@ class GroupResult(models.Model):
     result = models.ForeignKey(Result, on_delete=models.CASCADE, related_name="results")
     group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name="results")
     n = models.PositiveIntegerField(
-        blank=True, null=True, help_text="Individuals in group where outcome was measured." + HAWC_VIS_NOTE_UNSTYLED,
+        blank=True,
+        null=True,
+        help_text="Individuals in group where outcome was measured." + HAWC_VIS_NOTE_UNSTYLED,
     )
     estimate = models.FloatField(
-        blank=True, null=True, help_text="Central tendency estimate for group." + HAWC_VIS_NOTE_UNSTYLED,
+        blank=True,
+        null=True,
+        help_text="Central tendency estimate for group." + HAWC_VIS_NOTE_UNSTYLED,
     )
     variance = models.FloatField(
         blank=True,
@@ -1466,13 +1553,15 @@ class GroupResult(models.Model):
         blank=True,
         null=True,
         verbose_name="Lower CI",
-        help_text="Numerical value for lower-confidence interval, when available." + HAWC_VIS_NOTE_UNSTYLED,
+        help_text="Numerical value for lower-confidence interval, when available."
+        + HAWC_VIS_NOTE_UNSTYLED,
     )
     upper_ci = models.FloatField(
         blank=True,
         null=True,
         verbose_name="Upper CI",
-        help_text="Numerical value for upper-confidence interval, when available." + HAWC_VIS_NOTE_UNSTYLED,
+        help_text="Numerical value for upper-confidence interval, when available."
+        + HAWC_VIS_NOTE_UNSTYLED,
     )
     lower_range = models.FloatField(
         blank=True,
@@ -1701,7 +1790,10 @@ class GroupResult(models.Model):
                     if sd_1 and sd_2 and n_1 and n_2:
                         sd = math.sqrt(
                             pow(mu_1, -2)
-                            * ((pow(sd_2, 2) / n_2) + (pow(mu_2, 2) * pow(sd_1, 2)) / (n_1 * pow(mu_1, 2)))
+                            * (
+                                (pow(sd_2, 2) / n_2)
+                                + (pow(mu_2, 2) * pow(sd_1, 2)) / (n_1 * pow(mu_1, 2))
+                            )
                         )
                         ci = (1.96 * sd) * 100
                         rng = sorted([mean - ci, mean + ci])

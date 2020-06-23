@@ -27,7 +27,10 @@ class TestAssessmentViewset:
 
     def _test_heatmap(self, rewrite_data_files: bool, slug: str, key: int, unpublished: bool):
         fn = Path(DATA_ROOT / f"api-animal-assessment-{slug}-unpublished-{unpublished}.json")
-        url = reverse(f"animal:api:assessment-{slug}", args=(key,)) + f"?format=json&unpublished={unpublished}"
+        url = (
+            reverse(f"animal:api:assessment-{slug}", args=(key,))
+            + f"?format=json&unpublished={unpublished}"
+        )
 
         client = APIClient()
         assert client.login(username="rev@rev.com", password="pw") is True
