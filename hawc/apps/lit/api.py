@@ -36,9 +36,7 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         export = FlatExport(df=df, filename=f"reference-tags-{self.assessment.id}")
         return Response(export)
 
-    @action(
-        detail=True, methods=("get",), renderer_classes=PandasRenderers, url_path="reference-ids"
-    )
+    @action(detail=True, methods=("get",), renderer_classes=PandasRenderers, url_path="reference-ids")
     def reference_ids(self, request, pk):
         """
         Get literature reference ids for all assessment references
@@ -50,10 +48,7 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         return Response(export)
 
     @action(
-        detail=True,
-        methods=("get", "post"),
-        url_path="reference-tags",
-        renderer_classes=PandasRenderers,
+        detail=True, methods=("get", "post"), url_path="reference-tags", renderer_classes=PandasRenderers,
     )
     def reference_tags(self, request, pk):
         """
@@ -62,9 +57,7 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         instance = self.get_object()
 
         if self.request.method == "POST":
-            serializer = serializers.BulkReferenceTagSerializer(
-                data=request.data, context={"assessment": instance}
-            )
+            serializer = serializers.BulkReferenceTagSerializer(data=request.data, context={"assessment": instance})
             serializer.is_valid(raise_exception=True)
             serializer.bulk_create_tags()
 
@@ -79,9 +72,7 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         instance = self.get_object()
         # get all the years for a given assessment
         years = list(
-            models.Reference.objects.filter(assessment_id=instance.id, year__gt=0).values_list(
-                "year", flat=True
-            )
+            models.Reference.objects.filter(assessment_id=instance.id, year__gt=0).values_list("year", flat=True)
         )
         payload = {}
         if len(years) > 0:
@@ -102,10 +93,7 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
             fig.update_traces(marker=dict(color="#003d7b"))
 
             fig.update_layout(
-                bargap=0.1,
-                plot_bgcolor="white",
-                autosize=True,
-                margin=dict(l=0, r=0, t=30, b=0),  # noqa: E741
+                bargap=0.1, plot_bgcolor="white", autosize=True, margin=dict(l=0, r=0, t=30, b=0),  # noqa: E741
             )
             payload = fig.to_dict()
 
@@ -131,10 +119,7 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(
-        detail=True,
-        methods=("get",),
-        url_path="references-download",
-        renderer_classes=PandasRenderers,
+        detail=True, methods=("get",), url_path="references-download", renderer_classes=PandasRenderers,
     )
     def references_download(self, request, pk):
         """
@@ -155,7 +140,6 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         """
         Get tags formatted in a long format desireable for heatmaps.
         """
-        # TODO HEATMAP - tests
         instance = self.get_object()
         tree = models.ReferenceFilterTag.get_all_tags(instance.id, json_encode=False)
         tag_qs = models.ReferenceTags.objects.assessment_qs(instance.id)

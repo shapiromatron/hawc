@@ -15,9 +15,7 @@ from ..common.views import AssessmentPermissionsMixin
 from . import exports, models, serializers
 
 
-class EpiAssessmentViewset(
-    AssessmentPermissionsMixin, LegacyAssessmentAdapterMixin, viewsets.GenericViewSet
-):
+class EpiAssessmentViewset(AssessmentPermissionsMixin, LegacyAssessmentAdapterMixin, viewsets.GenericViewSet):
     parent_model = Assessment
     model = models.Outcome
     permission_classes = (AssessmentLevelPermissions,)
@@ -48,7 +46,6 @@ class EpiAssessmentViewset(
         By default only shows data from published studies. If the query param `unpublished=true`
         is present then results from all studies are shown.
         """
-        # TODO HEATMAP - tests
         self.set_legacy_attr(pk)
         self.permission_check_user_can_view()
         ser = HeatmapQuerySerializer(data=request.query_params)
@@ -72,7 +69,6 @@ class EpiAssessmentViewset(
         By default only shows data from published studies. If the query param `unpublished=true`
         is present then results from all studies are shown.
         """
-        # TODO HEATMAP - tests
         self.set_legacy_attr(pk)
         self.permission_check_user_can_view()
         ser = HeatmapQuerySerializer(data=request.query_params)
