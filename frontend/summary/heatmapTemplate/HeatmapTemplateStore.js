@@ -2,7 +2,7 @@ import _ from "lodash";
 import h from "shared/utils/helpers";
 import {action, computed, observable, toJS} from "mobx";
 
-import {AXIS_OPTIONS, FILTER_OPTIONS, TABLE_FIELDS, DASHBOARDS} from "./constants";
+import {OPTIONS} from "./constants";
 
 class HeatmapTemplateStore {
     config = null;
@@ -11,6 +11,7 @@ class HeatmapTemplateStore {
     @observable dashboardOptions = [];
     @observable filterOptions = [];
     @observable axisOptions = [];
+    @observable tableFields = [];
 
     @observable selectedDashboard = null;
     @observable selectedXAxis = null;
@@ -19,11 +20,11 @@ class HeatmapTemplateStore {
 
     constructor(config) {
         this.config = config;
-        this.dashboardOptions = DASHBOARDS.filter(d => d.data_class === config.data_class);
-        this.axisOptions = AXIS_OPTIONS.filter(d => _.includes(d.data_classes, config.data_class));
-        this.filterOptions = FILTER_OPTIONS.filter(d =>
-            _.includes(d.data_classes, config.data_class)
-        );
+        const options = OPTIONS[config.data_class];
+        this.dashboardOptions = options.DASHBOARDS;
+        this.axisOptions = options.AXIS_OPTIONS;
+        this.filterOptions = options.FILTER_OPTIONS;
+        this.tableFields = options.TABLE_FIELDS;
         this.changeDashboard(this.dashboardOptions[0].id);
     }
 
@@ -75,7 +76,7 @@ class HeatmapTemplateStore {
             show_axis_border: true,
             show_grid: true,
             show_tooltip: true,
-            table_fields: TABLE_FIELDS[this.config.data_class],
+            table_fields: this.tableFields,
             title: {text: title, x: 0, y: 0, rotate: 0},
             x_fields: this.selectedXAxis.settings,
             x_label: {text: this.selectedXAxis.label, x: 0, y: 0, rotate: 0},
