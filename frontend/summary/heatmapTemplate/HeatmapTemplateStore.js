@@ -59,6 +59,7 @@ class HeatmapTemplateStore {
     }
 
     @computed get settings() {
+        const title = `${this.config.assessment}: ${this.selectedDashboard.label}`;
         return {
             autosize_cells: true,
             autorotate_tick_labels: true,
@@ -75,7 +76,7 @@ class HeatmapTemplateStore {
             show_grid: true,
             show_tooltip: true,
             table_fields: TABLE_FIELDS[this.config.data_class],
-            title: {text: this.config.title, x: 0, y: 0, rotate: 0},
+            title: {text: title, x: 0, y: 0, rotate: 0},
             x_fields: this.selectedXAxis.settings,
             x_label: {text: this.selectedXAxis.label, x: 0, y: 0, rotate: 0},
             x_tick_rotate: 0,
