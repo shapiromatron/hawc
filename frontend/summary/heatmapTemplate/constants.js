@@ -6,9 +6,19 @@ const BIO_STUDY_DESIGN = "bioassay-study-design",
         [BIO_STUDY_DESIGN]: {
             AXIS_OPTIONS: [
                 {
+                    id: "study-citation",
+                    label: "Study citation",
+                    settings: [{column: "study citation", delimiter: "", wrap_text: 0}],
+                },
+                {
                     id: "dose-units",
                     label: "Dose units",
                     settings: [{column: "dose units", delimiter: "|", wrap_text: 0}],
+                },
+                {
+                    id: "experiment-type",
+                    label: "Study design",
+                    settings: [{column: "experiment type", delimiter: "|", wrap_text: 0}],
                 },
                 {
                     id: "route-of-exposure",
@@ -16,12 +26,12 @@ const BIO_STUDY_DESIGN = "bioassay-study-design",
                     settings: [{column: "route of exposure", delimiter: "|", wrap_text: 0}],
                 },
                 {
-                    id: "study-citation",
-                    label: "Study citation",
-                    settings: [{column: "study citation", delimiter: "", wrap_text: 0}],
+                    id: "chemical",
+                    label: "Chemical",
+                    settings: [{column: "experiment chemical", delimiter: "|", wrap_text: 0}],
                 },
                 {
-                    id: "test-subject",
+                    id: "species-sex",
                     label: "Species & Sex",
                     settings: [
                         {column: "species", delimiter: "|", wrap_text: 0},
@@ -29,21 +39,101 @@ const BIO_STUDY_DESIGN = "bioassay-study-design",
                     ],
                 },
                 {
-                    id: "study-design",
-                    label: "Study design",
-                    settings: [{column: "experiment type", delimiter: "|", wrap_text: 0}],
+                    id: "species-strain",
+                    label: "Species & Strain",
+                    settings: [
+                        {column: "species", delimiter: "|", wrap_text: 0},
+                        {column: "strain", delimiter: "|", wrap_text: 0},
+                    ],
                 },
                 {
                     id: "system",
                     label: "System",
                     settings: [{column: "system", delimiter: "|", wrap_text: 0}],
                 },
+                {
+                    id: "organ",
+                    label: "Organ",
+                    settings: [{column: "organ", delimiter: "|", wrap_text: 0}],
+                },
+                {
+                    id: "effect",
+                    label: "Effect",
+                    settings: [{column: "effect", delimiter: "|", wrap_text: 0}],
+                },
             ],
             FILTER_OPTIONS: [
                 {
                     id: "study-citation",
                     label: "study citation",
-                    settings: {column: "study citation", delimiter: "", on_click_event: "study"},
+                    settings: {
+                        column: "study citation",
+                        delimiter: "",
+                        on_click_event: "study",
+                    },
+                },
+                {
+                    id: "study-identifier",
+                    label: "study identifier",
+                    settings: {
+                        column: "study identifier",
+                        delimiter: "",
+                        on_click_event: "study",
+                    },
+                },
+                {
+                    id: "experiment-type",
+                    label: "experiment type",
+                    settings: {
+                        column: "experiment type",
+                        delimiter: "|",
+                        on_click_event: "---",
+                    },
+                },
+                {
+                    id: "species",
+                    label: "species",
+                    settings: {
+                        column: "species",
+                        delimiter: "|",
+                        on_click_event: "---",
+                    },
+                },
+                {
+                    id: "strain",
+                    label: "strain",
+                    settings: {
+                        column: "strain",
+                        delimiter: "|",
+                        on_click_event: "---",
+                    },
+                },
+                {
+                    id: "route-of-exposure",
+                    label: "route of exposure",
+                    settings: {
+                        column: "route of exposure",
+                        delimiter: "|",
+                        on_click_event: "---",
+                    },
+                },
+                {
+                    id: "experiment-chemical",
+                    label: "experiment chemical",
+                    settings: {
+                        column: "experiment chemical",
+                        delimiter: "|",
+                        on_click_event: "---",
+                    },
+                },
+                {
+                    id: "sex",
+                    label: "sex",
+                    settings: {
+                        column: "sex",
+                        delimiter: "|",
+                        on_click_event: "---",
+                    },
                 },
                 {
                     id: "system",
@@ -51,7 +141,7 @@ const BIO_STUDY_DESIGN = "bioassay-study-design",
                     settings: {
                         column: "system",
                         delimiter: "|",
-                        on_click_event: "endpoint_complete",
+                        on_click_event: "---",
                     },
                 },
                 {
@@ -60,7 +150,7 @@ const BIO_STUDY_DESIGN = "bioassay-study-design",
                     settings: {
                         column: "organ",
                         delimiter: "|",
-                        on_click_event: "endpoint_complete",
+                        on_click_event: "---",
                     },
                 },
                 {
@@ -69,7 +159,16 @@ const BIO_STUDY_DESIGN = "bioassay-study-design",
                     settings: {
                         column: "effect",
                         delimiter: "|",
-                        on_click_event: "endpoint_complete",
+                        on_click_event: "---",
+                    },
+                },
+                {
+                    id: "dose-units",
+                    label: "dose units",
+                    settings: {
+                        column: "dose units",
+                        delimiter: "|",
+                        on_click_event: "---",
                     },
                 },
             ],
@@ -77,24 +176,117 @@ const BIO_STUDY_DESIGN = "bioassay-study-design",
                 {
                     id: "study-citation",
                     label: "study citation",
-                    settings: {column: "study citation", delimiter: "", on_click_event: "study"},
+                    settings: {
+                        column: "study citation",
+                        delimiter: "",
+                        on_click_event: "study",
+                    },
+                },
+                {
+                    id: "study-identifier",
+                    label: "study identifier",
+                    settings: {
+                        column: "study identifier",
+                        delimiter: "",
+                        on_click_event: "study",
+                    },
+                },
+                {
+                    id: "experiment-type",
+                    label: "experiment type",
+                    settings: {
+                        column: "experiment type",
+                        delimiter: "|",
+                        on_click_event: "---",
+                    },
+                },
+                {
+                    id: "species",
+                    label: "species",
+                    settings: {
+                        column: "species",
+                        delimiter: "|",
+                        on_click_event: "---",
+                    },
+                },
+                {
+                    id: "strain",
+                    label: "strain",
+                    settings: {
+                        column: "strain",
+                        delimiter: "|",
+                        on_click_event: "---",
+                    },
+                },
+                {
+                    id: "route-of-exposure",
+                    label: "route of exposure",
+                    settings: {
+                        column: "route of exposure",
+                        delimiter: "|",
+                        on_click_event: "---",
+                    },
+                },
+                {
+                    id: "experiment-chemical",
+                    label: "experiment chemical",
+                    settings: {
+                        column: "experiment chemical",
+                        delimiter: "|",
+                        on_click_event: "---",
+                    },
+                },
+                {
+                    id: "sex",
+                    label: "sex",
+                    settings: {
+                        column: "sex",
+                        delimiter: "|",
+                        on_click_event: "---",
+                    },
                 },
                 {
                     id: "system",
                     label: "system",
-                    settings: {column: "system", delimiter: "|", on_click_event: "---"},
+                    settings: {
+                        column: "system",
+                        delimiter: "|",
+                        on_click_event: "---",
+                    },
+                },
+                {
+                    id: "organ",
+                    label: "organ",
+                    settings: {
+                        column: "organ",
+                        delimiter: "|",
+                        on_click_event: "---",
+                    },
+                },
+                {
+                    id: "effect",
+                    label: "effect",
+                    settings: {
+                        column: "effect",
+                        delimiter: "|",
+                        on_click_event: "---",
+                    },
                 },
                 {
                     id: "dose-units",
                     label: "dose units",
-                    settings: {column: "dose units", delimiter: "|", on_click_event: "---"},
+                    settings: {
+                        column: "dose units",
+                        delimiter: "|",
+                        on_click_event: "---",
+                    },
                 },
             ],
             DASHBOARDS: [
                 {
                     id: "bio-sd-system-vs-study-design",
                     label: "system vs. study design",
-                    x_axis: "study-design",
+                    x_axis: "experiment-type",
                     y_axis: "system",
                     filters: ["study-citation", "effect"],
                     table_fields: ["study-citation", "system", "dose-units"],
@@ -102,7 +294,7 @@ const BIO_STUDY_DESIGN = "bioassay-study-design",
                 {
                     id: "bio-sd-system-vs-test-subject",
                     label: "system vs. test subject",
-                    x_axis: "test-subject",
+                    x_axis: "species-sex",
                     y_axis: "system",
                     filters: ["study-citation", "effect"],
                     table_fields: ["study-citation", "system", "dose-units"],

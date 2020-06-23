@@ -4,6 +4,7 @@ import React from "react";
 import _ from "lodash";
 import moment from "moment";
 
+const stopwords = new Set("the is at which of on".split(" "));
 const helpers = {
     noop() {},
     fetchGet: {
@@ -122,6 +123,20 @@ const helpers = {
                 })
         );
     },
+    titleCase(string) {
+        // convert lower case "reference id " -> "Reference ID"
+        // special case acronyms include:
+        // ID, HERO, NOEL (and NEL/NOAEL, FEL, LEL variants) and BMD (BMDL/U)
+        return string
+            .toLowerCase()
+            .replace(/[_-]/g, " ")
+            .replace(/\b\w+/g, match => {
+                return stopwords.has(match)
+                    ? match
+                    : match.charAt(0).toUpperCase() + match.substr(1).toLowerCase();
+            })
+            .replace(/\b(?:id|hero|[nfl]o?a?el|bmd[lu]?)\b/gi, match => match.toUpperCase());
+    },
     hideRobScore(assessment_id) {
         // TODO - remove 100500031 hack
         return assessment_id === 100500031;
@@ -149,6 +164,11 @@ const helpers = {
             b_component = b <= 0.03928 ? b / 12.92 : ((b + 0.055) / 1.055) ** 2.4,
             luminance = 0.2126 * r_component + 0.7152 * g_component + 0.0722 * b_component;
         return luminance > Math.sqrt(1.05 * 0.05) - 0.05 ? "#000000" : "#ffffff";
+    },
+    randomString() {
+        return "xxxxxxxxxxxxxxx".replace(/x/g, c =>
+            String.fromCharCode(97 + parseInt(26 * Math.random()))
+        );
     },
     hashString(string) {
         let hash = 0,

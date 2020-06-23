@@ -2,6 +2,7 @@ import React, {Component} from "react";
 import PropTypes from "prop-types";
 import {inject, observer} from "mobx-react";
 
+import h from "shared/utils/helpers";
 import {NULL_VALUE} from "../constants";
 
 const pillItems = function(text, delimiter) {
@@ -81,7 +82,7 @@ class DatasetTable extends Component {
                     <thead>
                         <tr>
                             {table_fields.map((name, i) => (
-                                <th key={i}>{name.column}</th>
+                                <th key={i}>{h.titleCase(name.column)}</th>
                             ))}
                         </tr>
                     </thead>

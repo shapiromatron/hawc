@@ -1,9 +1,9 @@
-import h from "shared/utils/helpers";
 import _ from "lodash";
 import React, {Component} from "react";
 import PropTypes from "prop-types";
 import {inject, observer} from "mobx-react";
 
+import h from "shared/utils/helpers";
 import {NULL_VALUE} from "../../summary/constants";
 
 @observer
@@ -49,7 +49,7 @@ class FilterWidget extends Component {
                         flex: 0,
                     }}>
                     <h4>
-                        {widget.column}
+                        {h.titleCase(widget.column)}
                         <div className="btn-group pull-right">
                             <button
                                 className="btn btn-small"
