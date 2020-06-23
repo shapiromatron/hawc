@@ -42,40 +42,52 @@
 
     </ul>
 
-    {% if user.is_beta_tester %}
+    {% if user.is_beta_tester and total_endpoints > 0  %}
     <h2 class="betatester">Dataset overview dashboards</h2>
-    <ul>
-        {% if endpoints > 0 %}
-        <li>
-            Bioassay study design
-                (<a href="{% url 'animal:heatmap_study_design' assessment.id %}?unpublished=true">published + unpublished HAWC
-                    data</a>)
-                (<a href="{% url 'animal:heatmap_study_design' assessment.id %}">published HAWC data</a>)
-        </li>
-        <li>
-            Bioassay endpoint summary
-            (<a href="{% url 'animal:heatmap_endpoints' assessment.id %}?unpublished=true">published + unpublished HAWC
-                data</a>)
-            (<a href="{% url 'animal:heatmap_endpoints' assessment.id %}">published HAWC data</a>)
-        </li>
-        {% endif %}
-
-        {% if outcomes > 0 %}
-        <li>
-            Epidemiology study design
-            (<a href="{% url 'epi:heatmap_study_design' assessment.id %}?unpublished=true">published + unpublished HAWC
-                data</a>)
-            (<a href="{% url 'epi:heatmap_study_design' assessment.id %}">published HAWC data</a>)
-
-        </li>
-        <li>
-            Epidemiology result summary
-            (<a href="{% url 'epi:heatmap_results' assessment.id %}?unpublished=true">published + unpublished HAWC
-                data</a>)
-            (<a href="{% url 'epi:heatmap_results' assessment.id %}">published HAWC data</a>)
-        </li>
-        {% endif %}
-    </ul>
+    <table class='table table-condensed table-striped'>
+        <colgroup>
+            <col style="width: 40%" />
+            <col style="width: 30%" />
+            <col style="width: 30%" />
+        </colgroup>
+        <thead>
+            <tr>
+                <th>Data type</th>
+                <th>Study summary</th>
+                <th>Outcome/Results</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if endpoints > 0 %}
+            <tr>
+                <td>Bioassay{% if obj_perms.edit %}&nbsp;(published HAWC data){% endif %}</td>
+                <td><a href="{% url 'animal:heatmap_study_design' assessment.id %}">Study summary</a></td>
+                <td><a href="{% url 'animal:heatmap_endpoints' assessment.id %}">Endpoints</a></td>
+            </tr>
+            {% if obj_perms.edit %}
+            <tr>
+                <td>Bioassay (published + unpublished HAWC data)</td>
+                <td><a href="{% url 'animal:heatmap_study_design' assessment.id %}?unpublished=true">Study summary</a></td>
+                <td><a href="{% url 'animal:heatmap_endpoints' assessment.id %}?unpublished=true">Endpoints</a></td>
+            </tr>
+            {% endif %}
+            {% endif %}
+            {% if outcomes > 0 %}
+            <tr>
+                <td>Epidemiology{% if obj_perms.edit %}&nbsp;(published HAWC data){% endif %}</td>
+                <td><a href="{% url 'epi:heatmap_study_design' assessment.id %}">Study summary</a></td>
+                <td><a href="{% url 'epi:heatmap_results' assessment.id %}">Results</a></td>
+            </tr>
+            {% if obj_perms.edit %}
+            <tr>
+                <td>Epidemiology (published + unpublished HAWC data)</td>
+                <td><a href="{% url 'epi:heatmap_study_design' assessment.id %}?unpublished=true">Study summary</a></td>
+                <td><a href="{% url 'epi:heatmap_results' assessment.id %}?unpublished=true">Results</a></td>
+            </tr>
+            {% endif %}
+            {% endif %}
+        </tbody>
+    </table>
     {% endif %}
 
 {% endblock %}

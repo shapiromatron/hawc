@@ -25,7 +25,7 @@ class CustomizeTab extends Component {
                             choices={store.axisOptions}
                             handleSelect={value => store.changeAxis("selectedXAxis", value)}
                             value={store.selectedXAxis.id}
-                            label="Selected X axis"
+                            label="X axis"
                             multiple={false}
                         />
                     </div>
@@ -35,7 +35,7 @@ class CustomizeTab extends Component {
                             choices={store.axisOptions}
                             handleSelect={value => store.changeAxis("selectedYAxis", value)}
                             value={store.selectedYAxis.id}
-                            label="Selected Y axis"
+                            label="Y axis"
                             multiple={false}
                         />
                     </div>
@@ -48,7 +48,8 @@ class CustomizeTab extends Component {
                             value={store.selectedFilters.map(d => d.id)}
                             handleSelect={values => store.changeSelectedFilters(values)}
                             multiple={true}
-                            label="Selected filters"
+                            selectSize={10}
+                            label="Data filters"
                         />
                     </div>
                     <div className="span6">
@@ -58,7 +59,8 @@ class CustomizeTab extends Component {
                             value={store.selectedTableFields.map(d => d.id)}
                             handleSelect={values => store.changeSelectedTableFields(values)}
                             multiple={true}
-                            label="Selected table fields"
+                            selectSize={10}
+                            label="Table fields"
                         />
                     </div>
                 </div>
