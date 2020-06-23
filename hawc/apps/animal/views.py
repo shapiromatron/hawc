@@ -17,6 +17,7 @@ from ..common.views import (
     BaseList,
     BaseUpdate,
     BaseUpdateWithFormset,
+    HeatmapBase,
     CopyAsNewSelectorMixin,
 )
 from ..mgmt.views import EnsureExtractionStartedMixin
@@ -26,36 +27,16 @@ from . import forms, models
 
 
 # Heatmap views
-class HeatmapStudyDesign(BaseList):
-    parent_model = Assessment
-    model = models.Study
-    template_name = "animal/heatmap_study_design.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["data_class"] = "bioassay-study-design"
-        context["data_url"] = reverse(
-            "animal:api:assessment-study-heatmap", args=(self.assessment.id,)
-        )
-        if self.request.GET.get("unpublished", "false").lower() == "true":
-            context["data_url"] += "?unpublished=true"
-        return context
+class HeatmapStudyDesign(HeatmapBase):
+    heatmap_data_class = "bioassay-study-design"
+    heatmap_data_url = "animal:api:assessment-study-heatmap"
+    heatmap_view_title = "Bioassay study design summary"
 
 
-class HeatmapEndpoint(BaseList):
-    parent_model = Assessment
-    model = models.Endpoint
-    template_name = "animal/heatmap_endpoints.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["data_class"] = "bioassay-endpoint-summary"
-        context["data_url"] = reverse(
-            "animal:api:assessment-endpoint-heatmap", args=(self.assessment.id,)
-        )
-        if self.request.GET.get("unpublished", "false").lower() == "true":
-            context["data_url"] += "?unpublished=true"
-        return context
+class HeatmapEndpoint(HeatmapBase):
+    heatmap_data_class = "bioassay-endpoint-summary"
+    heatmap_data_url = "animal:api:assessment-endpoint-heatmap"
+    heatmap_view_title = "Bioassay endpoint heatmap summary"
 
 
 # Experiment Views
