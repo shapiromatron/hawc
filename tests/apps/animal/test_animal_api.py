@@ -25,6 +25,25 @@ class TestAssessmentViewset:
 
         assert data == json.loads(fn.read_text())
 
+    def _test_heatmap(self, rewrite_data_files: bool, slug: str, key: int, published: bool):
+        fn = Path(DATA_ROOT / f"api-animal-assessment-{slug}-published-{published}.json")
+        url = reverse(f"animal:api:assessment-{slug}", args=(key,)) + f"?format=json&published={published}"
+        import pdb
+
+        pdb.set_trace()
+
+        client = APIClient()
+        assert client.login(username="rev@rev.com", password="pw") is True
+        resp = client.get(url)
+        assert resp.status_code == 200
+
+        data = resp.json()
+
+        if rewrite_data_files:
+            Path(fn).write_text(json.dumps(data, indent=2))
+
+        assert data == json.loads(fn.read_text())
+
     def test_permissions(self, db_keys):
         rev_client = APIClient()
         assert rev_client.login(username="rev@rev.com", password="pw") is True
@@ -44,3 +63,11 @@ class TestAssessmentViewset:
 
     def test_endpoint_export(self, rewrite_data_files: bool, db_keys):
         self._test_animal_export(rewrite_data_files, "endpoint-export", db_keys.assessment_final)
+
+    def test_study_heatmap(self, rewrite_data_files: bool, db_keys):
+        self._test_heatmap(rewrite_data_files, "study-heatmap", db_keys.assessment_working, True)
+        self._test_heatmap(rewrite_data_files, "study-heatmap", db_keys.assessment_working, False)
+
+    def test_endpoint_heatmap(self, rewrite_data_files: bool, db_keys):
+        self._test_heatmap(rewrite_data_files, "endpoint-heatmap", db_keys.assessment_working, True)
+        self._test_heatmap(rewrite_data_files, "endpoint-heatmap", db_keys.assessment_working, False)
