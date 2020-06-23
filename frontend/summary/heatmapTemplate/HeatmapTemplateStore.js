@@ -11,12 +11,13 @@ class HeatmapTemplateStore {
     @observable dashboardOptions = [];
     @observable filterOptions = [];
     @observable axisOptions = [];
-    @observable tableFields = [];
+    @observable tableOptions = [];
 
     @observable selectedDashboard = null;
     @observable selectedXAxis = null;
     @observable selectedYAxis = null;
     @observable selectedFilters = [];
+    @observable selectedTableFields = [];
 
     constructor(config) {
         this.config = config;
@@ -24,7 +25,7 @@ class HeatmapTemplateStore {
         this.dashboardOptions = options.DASHBOARDS;
         this.axisOptions = options.AXIS_OPTIONS;
         this.filterOptions = options.FILTER_OPTIONS;
-        this.tableFields = options.TABLE_FIELDS;
+        this.tableOptions = options.TABLE_FIELDS;
         this.changeDashboard(this.dashboardOptions[0].id);
     }
 
@@ -34,6 +35,9 @@ class HeatmapTemplateStore {
         this.selectedXAxis = _.find(this.axisOptions, {id: dashboard.x_axis});
         this.selectedYAxis = _.find(this.axisOptions, {id: dashboard.y_axis});
         this.selectedFilters = dashboard.filters.map(id => _.find(this.filterOptions, {id}));
+        this.selectedTableFields = dashboard.table_fields.map(id =>
+            _.find(this.tableOptions, {id})
+        );
     }
 
     @action.bound changeAxis(name, key) {
@@ -53,6 +57,10 @@ class HeatmapTemplateStore {
 
     @action.bound changeSelectedFilters(values) {
         this.selectedFilters = values.map(value => _.find(this.filterOptions, {id: value}));
+    }
+
+    @action.bound changeSelectedTableFields(values) {
+        this.selectedTableFields = values.map(value => _.find(this.tableOptions, {id: value}));
     }
 
     @action.bound setDataset(dataset) {
@@ -76,7 +84,7 @@ class HeatmapTemplateStore {
             show_axis_border: true,
             show_grid: true,
             show_tooltip: true,
-            table_fields: this.tableFields,
+            table_fields: this.selectedTableFields.map(d => d.settings),
             title: {text: title, x: 0, y: 0, rotate: 0},
             x_fields: this.selectedXAxis.settings,
             x_label: {text: this.selectedXAxis.label, x: 0, y: 0, rotate: 0},

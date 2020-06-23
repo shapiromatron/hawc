@@ -32,6 +32,13 @@ class SettingsTab extends Component {
                     multiple={true}
                     label="Selected filters"
                 />
+                <SelectInput
+                    choices={store.tableOptions}
+                    value={store.selectedTableFields.map(d => d.id)}
+                    handleSelect={values => store.changeSelectedTableFields(values)}
+                    multiple={true}
+                    label="Selected table fields"
+                />
             </div>
         );
     }

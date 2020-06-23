@@ -1,5 +1,4 @@
 from django.db.models import Q
-from django.urls import reverse
 
 from ..assessment.models import Assessment
 from ..common.views import (
@@ -8,12 +7,11 @@ from ..common.views import (
     BaseDelete,
     BaseDetail,
     BaseEndpointFilterList,
-    BaseList,
     BaseUpdate,
     BaseUpdateWithFormset,
-    HeatmapBase,
     CloseIfSuccessMixin,
     CopyAsNewSelectorMixin,
+    HeatmapBase,
 )
 from ..mgmt.views import EnsureExtractionStartedMixin
 from ..study.models import Study

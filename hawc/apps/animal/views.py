@@ -4,7 +4,6 @@ from django.db.models import Q
 from django.db.models.expressions import RawSQL
 from django.forms.models import modelformset_factory
 from django.http import HttpResponseRedirect
-from django.urls import reverse
 
 from ..assessment.models import Assessment, DoseUnits
 from ..common.forms import form_error_lis_to_ul, form_error_list_to_lis
@@ -14,11 +13,10 @@ from ..common.views import (
     BaseDelete,
     BaseDetail,
     BaseEndpointFilterList,
-    BaseList,
     BaseUpdate,
     BaseUpdateWithFormset,
-    HeatmapBase,
     CopyAsNewSelectorMixin,
+    HeatmapBase,
 )
 from ..mgmt.views import EnsureExtractionStartedMixin
 from ..study.models import Study
