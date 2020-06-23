@@ -209,42 +209,42 @@ class TestSummaryAssessmentViewset:
                     },
                     {
                         "type": "Bioassay",
-                        "name": "Bioassay study design (published HAWC data)",
+                        "name": "Bioassay study design",
                         "url": "/ani/api/assessment/1/study-heatmap/",
                     },
                     {
                         "type": "Bioassay",
-                        "name": "Bioassay study design (published + unpublished HAWC data)",
+                        "name": "Bioassay study design (including unpublished HAWC data)",
                         "url": "/ani/api/assessment/1/study-heatmap/?unpublished=true",
                     },
                     {
                         "type": "Bioassay",
-                        "name": "Bioassay endpoint summary (published HAWC data)",
+                        "name": "Bioassay endpoint summary",
                         "url": "/ani/api/assessment/1/endpoint-heatmap/",
                     },
                     {
                         "type": "Bioassay",
-                        "name": "Bioassay endpoint summary (published + unpublished HAWC data)",
+                        "name": "Bioassay endpoint summary (including unpublished HAWC data)",
                         "url": "/ani/api/assessment/1/endpoint-heatmap/?unpublished=true",
                     },
                     {
                         "type": "Epi",
-                        "name": "Epidemiology study design (published HAWC data)",
+                        "name": "Epidemiology study design",
                         "url": "/epi/api/assessment/1/study-heatmap/",
                     },
                     {
                         "type": "Epi",
-                        "name": "Epidemiology study design (published + unpublished HAWC data)",
+                        "name": "Epidemiology study design (including unpublished HAWC data)",
                         "url": "/epi/api/assessment/1/study-heatmap/?unpublished=true",
                     },
                     {
                         "type": "Epi",
-                        "name": "Epidemiology result summary (published HAWC data)",
+                        "name": "Epidemiology result summary",
                         "url": "/epi/api/assessment/1/result-heatmap/",
                     },
                     {
                         "type": "Epi",
-                        "name": "Epidemiology result summary (published + unpublished HAWC data)",
+                        "name": "Epidemiology result summary (including unpublished HAWC data)",
                         "url": "/epi/api/assessment/1/result-heatmap/?unpublished=true",
                     },
                     {

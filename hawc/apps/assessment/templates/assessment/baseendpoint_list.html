@@ -60,13 +60,17 @@
         <tbody>
             {% if endpoints > 0 %}
             <tr>
-                <td>Bioassay{% if obj_perms.edit %}&nbsp;(published HAWC data){% endif %}</td>
+                <td>Bioassay</td>
                 <td><a href="{% url 'animal:heatmap_study_design' assessment.id %}">Study summary</a></td>
                 <td><a href="{% url 'animal:heatmap_endpoints' assessment.id %}">Endpoints</a></td>
             </tr>
             {% if obj_perms.edit %}
             <tr>
-                <td>Bioassay (published + unpublished HAWC data)</td>
+                <td>Bioassay (including unpublished HAWC data)
+                    &nbsp;
+                    <i title="Include published & unpublished HAWC studies (not visible to the public)" class="fa fa-eye-slash"
+                        aria-hidden="true"></i>
+                </td>
                 <td><a href="{% url 'animal:heatmap_study_design' assessment.id %}?unpublished=true">Study summary</a></td>
                 <td><a href="{% url 'animal:heatmap_endpoints' assessment.id %}?unpublished=true">Endpoints</a></td>
             </tr>
@@ -74,13 +78,17 @@
             {% endif %}
             {% if outcomes > 0 %}
             <tr>
-                <td>Epidemiology{% if obj_perms.edit %}&nbsp;(published HAWC data){% endif %}</td>
+                <td>Epidemiology</td>
                 <td><a href="{% url 'epi:heatmap_study_design' assessment.id %}">Study summary</a></td>
                 <td><a href="{% url 'epi:heatmap_results' assessment.id %}">Results</a></td>
             </tr>
             {% if obj_perms.edit %}
             <tr>
-                <td>Epidemiology (published + unpublished HAWC data)</td>
+                <td>Epidemiology (including unpublished HAWC data)
+                    &nbsp;
+                    <i title="Include published & unpublished HAWC studies (not visible to the public)" class="fa fa-eye-slash"
+                        aria-hidden="true"></i>
+                </td>
                 <td><a href="{% url 'epi:heatmap_study_design' assessment.id %}?unpublished=true">Study summary</a></td>
                 <td><a href="{% url 'epi:heatmap_results' assessment.id %}?unpublished=true">Results</a></td>
             </tr>

@@ -34,7 +34,10 @@ class ExploreHeatmapComponent extends Component {
             id = h.hashString(JSON.stringify(settings)),
             el = document.getElementById(id),
             tooltipEl = document.getElementById(`tooltip-${id}`);
-        new ExploreHeatmapPlot(store, this.props.options).render(el, tooltipEl);
+
+        if (el) {
+            new ExploreHeatmapPlot(store, this.props.options).render(el, tooltipEl);
+        }
     }
     render() {
         const {store} = this.props,
