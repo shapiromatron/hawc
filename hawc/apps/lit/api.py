@@ -161,7 +161,7 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         df = cache.get(key)
         if df is None:
             df = models.Reference.objects.heatmap_dataframe(instance.id)
-            cache.set(key, df, settings.CACHE_10_MIN)
+            cache.set(key, df, settings.CACHE_1_HR)
         export = FlatExport(df=df, filename=f"df-{instance.id}")
         return Response(export)
 
