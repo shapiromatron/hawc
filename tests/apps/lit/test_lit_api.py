@@ -10,6 +10,29 @@ DATA_ROOT = Path(__file__).parents[2] / "data/api"
 
 @pytest.mark.django_db
 class TestLiteratureAssessmentViewset:
+    def _test_lit_export(
+        self,
+        rewrite_data_files: bool,
+        url_path: str,
+        file_slug: str,
+        key: int,
+        query_string: str = "",
+    ):
+        fn = Path(DATA_ROOT / f"api-lit-assessment-{file_slug}.json")
+        url = reverse(f"lit:api:assessment-{url_path}", args=(key,)) + query_string
+
+        client = APIClient()
+        assert client.login(username="rev@rev.com", password="pw") is True
+        resp = client.get(url)
+        assert resp.status_code == 200
+
+        data = resp.json()
+
+        if rewrite_data_files:
+            Path(fn).write_text(json.dumps(data, indent=2))
+
+        assert data == json.loads(fn.read_text())
+
     def test_permissions(self, db_keys):
         rev_client = APIClient()
         assert rev_client.login(username="rev@rev.com", password="pw") is True
@@ -35,21 +58,10 @@ class TestLiteratureAssessmentViewset:
         with pytest.raises(ValueError):
             assert rev_client.get(url).status_code == 200
 
-    def test_references_download(self, rewrite_data_files: str, db_keys):
-        # make sure this export is the format we expect it to be in
-        fn = Path(DATA_ROOT / f"api-lit-assessment-references-export.json")
-        url = reverse("lit:api:assessment-references-download", args=(db_keys.assessment_final,))
-        client = APIClient()
-        resp = client.get(url)
-        assert resp.status_code == 200
-
-        data = resp.json()
-
-        if rewrite_data_files:
-            Path(fn).write_text(json.dumps(data, indent=2))
-
-        assert len(data) == 4
-        assert data == json.loads(fn.read_text())
+    def test_references_download(self, rewrite_data_files: bool, db_keys):
+        self._test_lit_export(
+            rewrite_data_files, "references-download", "references-export", db_keys.assessment_final
+        )
 
     def test_tags(self, db_keys):
         url = reverse("lit:api:assessment-tags", kwargs=dict(pk=db_keys.assessment_working))
@@ -99,24 +111,10 @@ class TestLiteratureAssessmentViewset:
         resp = c.get(url).json()
         assert resp["data"][0]["type"] == "histogram"
 
-    def test_tag_heatmap(self, rewrite_data_files: str, db_keys):
-        fn = Path(DATA_ROOT / f"api-lit-assessment-tag-heatmap.json")
-        url = (
-            reverse(f"lit:api:assessment-tag-heatmap", args=(db_keys.assessment_final,))
-            + "?format=json"
+    def test_tag_heatmap(self, rewrite_data_files: bool, db_keys):
+        self._test_lit_export(
+            rewrite_data_files, "tag-heatmap", "tag-heatmap", db_keys.assessment_final
         )
-
-        client = APIClient()
-        assert client.login(username="rev@rev.com", password="pw") is True
-        resp = client.get(url)
-        assert resp.status_code == 200
-
-        data = resp.json()
-
-        if rewrite_data_files:
-            Path(fn).write_text(json.dumps(data, indent=2))
-
-        assert data == json.loads(fn.read_text())
 
 
 @pytest.mark.django_db

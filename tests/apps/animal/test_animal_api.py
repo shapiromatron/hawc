@@ -10,27 +10,22 @@ DATA_ROOT = Path(__file__).parents[2] / "data/api"
 
 @pytest.mark.django_db
 class TestAssessmentViewset:
-    def _test_animal_export(self, rewrite_data_files: bool, slug: str, key: int):
-        fn = Path(DATA_ROOT / f"api-animal-assessment-{slug}.json")
-        url = reverse(f"animal:api:assessment-{slug}", args=(key,)) + "?format=json"
+    def _test_animal_export(
+        self,
+        rewrite_data_files: bool,
+        url_path: str,
+        file_slug: str,
+        key: int,
+        query_string: str = "",
+    ):
+        # Add json format to query string
+        if query_string:
+            query_string += "&format=json"
+        else:
+            query_string = "?format=json"
 
-        client = APIClient()
-        resp = client.get(url)
-        assert resp.status_code == 200
-
-        data = resp.json()
-
-        if rewrite_data_files:
-            Path(fn).write_text(json.dumps(data, indent=2))
-
-        assert data == json.loads(fn.read_text())
-
-    def _test_heatmap(self, rewrite_data_files: bool, slug: str, key: int, unpublished: bool):
-        fn = Path(DATA_ROOT / f"api-animal-assessment-{slug}-unpublished-{unpublished}.json")
-        url = (
-            reverse(f"animal:api:assessment-{slug}", args=(key,))
-            + f"?format=json&unpublished={unpublished}"
-        )
+        fn = Path(DATA_ROOT / f"api-animal-assessment-{file_slug}.json")
+        url = reverse(f"animal:api:assessment-{url_path}", args=(key,)) + query_string
 
         client = APIClient()
         assert client.login(username="rev@rev.com", password="pw") is True
@@ -59,15 +54,43 @@ class TestAssessmentViewset:
             assert rev_client.get(url).status_code == 200
 
     def test_full_export(self, rewrite_data_files: bool, db_keys):
-        self._test_animal_export(rewrite_data_files, "full-export", db_keys.assessment_final)
+        self._test_animal_export(
+            rewrite_data_files, "full-export", "full-export", db_keys.assessment_final
+        )
 
     def test_endpoint_export(self, rewrite_data_files: bool, db_keys):
-        self._test_animal_export(rewrite_data_files, "endpoint-export", db_keys.assessment_final)
+        self._test_animal_export(
+            rewrite_data_files, "endpoint-export", "endpoint-export", db_keys.assessment_final
+        )
 
     def test_study_heatmap(self, rewrite_data_files: bool, db_keys):
-        self._test_heatmap(rewrite_data_files, "study-heatmap", db_keys.assessment_final, True)
-        self._test_heatmap(rewrite_data_files, "study-heatmap", db_keys.assessment_final, False)
+        self._test_animal_export(
+            rewrite_data_files,
+            "study-heatmap",
+            "study-heatmap-unpublished-True",
+            db_keys.assessment_final,
+            "?unpublished=True",
+        )
+        self._test_animal_export(
+            rewrite_data_files,
+            "study-heatmap",
+            "study-heatmap-unpublished-False",
+            db_keys.assessment_final,
+            "?unpublished=False",
+        )
 
     def test_endpoint_heatmap(self, rewrite_data_files: bool, db_keys):
-        self._test_heatmap(rewrite_data_files, "endpoint-heatmap", db_keys.assessment_final, True)
-        self._test_heatmap(rewrite_data_files, "endpoint-heatmap", db_keys.assessment_final, False)
+        self._test_animal_export(
+            rewrite_data_files,
+            "endpoint-heatmap",
+            "endpoint-heatmap-unpublished-True",
+            db_keys.assessment_final,
+            "?unpublished=True",
+        )
+        self._test_animal_export(
+            rewrite_data_files,
+            "endpoint-heatmap",
+            "endpoint-heatmap-unpublished-False",
+            db_keys.assessment_final,
+            "?unpublished=False",
+        )

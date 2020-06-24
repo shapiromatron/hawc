@@ -1,6 +1,6 @@
 import pytest
 
-from hawc.apps.animal import models
+from hawc.apps.epi import models
 
 
 @pytest.mark.django_db
