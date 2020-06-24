@@ -43,11 +43,7 @@ class InteractiveCell extends Component {
                     <button
                         className="btn btn-mini pull-right"
                         onClick={() => {
-                            store.showModalClick(
-                                field.on_click_event,
-                                field.column,
-                                row[field.column]
-                            );
+                            store.showModalClick(field.on_click_event, row);
                             hideButton();
                         }}
                         title="View additional information">

@@ -278,10 +278,8 @@ class HeatmapDatastore {
         this.filterWidgetState[column][item] = visible;
     }
 
-    @action.bound showModalClick(on_click_event, column, item) {
-        let row = _.find(this.dataset, {[column]: item}),
-            extension = _.find(DataPivotExtension.values, {_dpe_name: on_click_event});
-        // TODO HEATMAP - handle case where row ids are non-unique
+    @action.bound showModalClick(on_click_event, row) {
+        let extension = _.find(DataPivotExtension.values, {_dpe_name: on_click_event});
         this.dpe.render_plottip(extension, row);
     }
 

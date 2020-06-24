@@ -5,6 +5,7 @@ import PropTypes from "prop-types";
 import {inject, observer} from "mobx-react";
 
 import {NULL_VALUE} from "../../summary/constants";
+import DataPivotExtension from "summary/dataPivot/DataPivotExtension";
 
 @observer
 class FilterWidget extends Component {
@@ -83,6 +84,17 @@ class FilterWidget extends Component {
 
     renderItem(widget, item, index, itemStore, showClickEvent) {
         const {toggleItemSelection, showModalClick, colorScale} = this.props.store,
+            modalTarget = showClickEvent
+                ? _.find(DataPivotExtension.values, {_dpe_name: widget.on_click_event})._dpe_key
+                : null,
+            modalRows = showClickEvent
+                ? _.chain(this.props.store.dataset)
+                      .filter({
+                          [widget.column]: item,
+                      })
+                      .uniqBy(modalTarget)
+                      .value()
+                : null,
             data = this.props.store.getTableData,
             numItems = data.filter(d =>
                 widget.delimiter
@@ -91,10 +103,10 @@ class FilterWidget extends Component {
             ).length;
         return (
             <div key={index}>
-                {showClickEvent ? (
+                {showClickEvent && modalRows.length == 1 ? (
                     <button
                         className="btn btn-mini pull-right"
-                        onClick={() => showModalClick(widget.on_click_event, widget.column, item)}
+                        onClick={() => showModalClick(widget.on_click_event, modalRows[0])}
                         title="View additional information">
                         <i className="icon-eye-open"></i>
                     </button>
