@@ -154,19 +154,21 @@ class HeatmapDatastore {
     @computed
     get rowsRemovedByFilters() {
         // returns a Set of row indexes to remove
-        let removedRows = new Set(),
-            i;
+        let removedRows = [];
         const {intersection} = this;
         _.each(this.filterWidgetState, (items, column) => {
+            let removed = [],
+                included = [];
             _.each(items, (include, name) => {
                 if (include === false) {
-                    for (i of intersection[column][name]) {
-                        removedRows.add(i);
-                    }
+                    removed.push(...intersection[column][name]);
+                } else {
+                    included.push(...intersection[column][name]);
                 }
             });
+            removedRows.push(..._.without(removed, ...included));
         });
-        return removedRows;
+        return new Set(removedRows);
     }
 
     @computed

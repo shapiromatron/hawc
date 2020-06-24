@@ -30,7 +30,7 @@ class FilterWidget extends Component {
                 .filter(d => itemStore[d] === false)
                 .value(),
             showClickEvent = widget.on_click_event !== NULL_VALUE,
-            items = [...availableItems, ...hiddenItems].sort();
+            items = _.sortedUniq([...availableItems, ...hiddenItems].sort());
 
         return (
             <div
