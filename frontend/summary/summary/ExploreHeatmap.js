@@ -107,6 +107,7 @@ class ExploreHeatmap extends BaseVisual {
             y_fields: settings.y_fields.filter(d => d.column !== NULL_VALUE),
             y_label: settings.y_label,
             y_tick_rotate: settings.y_tick_rotate,
+            x_axis_bottom: settings.x_axis_bottom,
         };
     }
 

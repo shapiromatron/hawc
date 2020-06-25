@@ -5,6 +5,7 @@ import {Tab, Tabs, TabList, TabPanel} from "react-tabs";
 
 import CheckboxInput from "shared/components/CheckboxInput";
 import TextInput from "shared/components/TextInput";
+import SelectInput from "shared/components/SelectInput";
 
 import FloatInput from "shared/components/FloatInput";
 
@@ -113,7 +114,38 @@ class VisualCustomizationPanel extends Component {
         const {settings, changeSettings} = this.props.store.subclass;
         return (
             <div>
-                <h4>Plot padding</h4>
+                <h4>Plot</h4>
+                <div className="row-fluid">
+                    <div className="span3">
+                        <FloatInput
+                            name="cell_width"
+                            label="Cell width"
+                            value={settings.cell_width}
+                            onChange={e =>
+                                changeSettings(e.target.name, parseFloat(e.target.value))
+                            }
+                        />
+                    </div>
+                    <div className="span3">
+                        <FloatInput
+                            name="cell_height"
+                            label="Cell height"
+                            value={settings.cell_height}
+                            onChange={e =>
+                                changeSettings(e.target.name, parseFloat(e.target.value))
+                            }
+                        />
+                    </div>
+                    <div className="span3">
+                        <CheckboxInput
+                            id="autosize_cells"
+                            label="Auto-size cells"
+                            name="autosize_cells"
+                            onChange={e => changeSettings(e.target.name, e.target.checked)}
+                            checked={settings.autosize_cells}
+                        />
+                    </div>
+                </div>
                 <div className="row-fluid">
                     <div className="span3">
                         <FloatInput
@@ -158,6 +190,56 @@ class VisualCustomizationPanel extends Component {
                 </div>
                 <div className="row-fluid">
                     <div className="span3">
+                        <TextInput
+                            label="Color range (start)"
+                            name="color_range1"
+                            type="color"
+                            value={settings.color_range[0]}
+                            onChange={e => changeSettings("color_range.0", e.target.value)}
+                        />
+                    </div>
+                    <div className="span3">
+                        <TextInput
+                            label="Color range (end)"
+                            name="color_range2"
+                            type="color"
+                            value={settings.color_range[1]}
+                            onChange={e => changeSettings("color_range.1", e.target.value)}
+                        />
+                    </div>
+                </div>
+                <div className="row-fluid">
+                    <div className="span3">
+                        <CheckboxInput
+                            id="compress_x"
+                            label="Compress X fields?"
+                            name="compress_x"
+                            onChange={e => changeSettings(e.target.name, e.target.checked)}
+                            checked={settings.compress_x}
+                        />
+                    </div>
+                    <div className="span3">
+                        <CheckboxInput
+                            id="compress_y"
+                            label="Compress Y fields?"
+                            name="compress_y"
+                            onChange={e => changeSettings(e.target.name, e.target.checked)}
+                            checked={settings.compress_y}
+                        />
+                    </div>
+                    <div className="span3">
+                        <CheckboxInput
+                            id="show_grid"
+                            label="Show cell grid"
+                            name="show_grid"
+                            onChange={e => changeSettings(e.target.name, e.target.checked)}
+                            checked={settings.show_grid}
+                        />
+                    </div>
+                </div>
+                <h4>Axes</h4>
+                <div className="row-fluid">
+                    <div className="span3">
                         <FloatInput
                             name="x_tick_rotate"
                             label="X-axis tick rotation"
@@ -178,85 +260,6 @@ class VisualCustomizationPanel extends Component {
                         />
                     </div>
                     <div className="span3">
-                        <FloatInput
-                            name="cell_width"
-                            label="Cell width"
-                            value={settings.cell_width}
-                            onChange={e =>
-                                changeSettings(e.target.name, parseFloat(e.target.value))
-                            }
-                        />
-                    </div>
-                    <div className="span3">
-                        <FloatInput
-                            name="cell_height"
-                            label="Cell height"
-                            value={settings.cell_height}
-                            onChange={e =>
-                                changeSettings(e.target.name, parseFloat(e.target.value))
-                            }
-                        />
-                    </div>
-                </div>
-                <div className="row-fluid">
-                    <div className="span2">
-                        <TextInput
-                            label="Color range (start)"
-                            name="color_range1"
-                            type="color"
-                            value={settings.color_range[0]}
-                            onChange={e => changeSettings("color_range.0", e.target.value)}
-                        />
-                    </div>
-                    <div className="span2">
-                        <TextInput
-                            label="Color range (end)"
-                            name="color_range2"
-                            type="color"
-                            value={settings.color_range[1]}
-                            onChange={e => changeSettings("color_range.1", e.target.value)}
-                        />
-                    </div>
-                    <div className="span2">
-                        <CheckboxInput
-                            id="compress_x"
-                            label="Compress X fields?"
-                            name="compress_x"
-                            onChange={e => changeSettings(e.target.name, e.target.checked)}
-                            checked={settings.compress_x}
-                        />
-                        <CheckboxInput
-                            id="compress_y"
-                            label="Compress Y fields?"
-                            name="compress_y"
-                            onChange={e => changeSettings(e.target.name, e.target.checked)}
-                            checked={settings.compress_y}
-                        />
-                    </div>
-                    <div className="span2">
-                        <CheckboxInput
-                            id="show_grid"
-                            label="Show grid"
-                            name="show_grid"
-                            onChange={e => changeSettings(e.target.name, e.target.checked)}
-                            checked={settings.show_grid}
-                        />
-                        <CheckboxInput
-                            id="show_axis_border"
-                            label="Show axis border"
-                            name="show_axis_border"
-                            onChange={e => changeSettings(e.target.name, e.target.checked)}
-                            checked={settings.show_axis_border}
-                        />
-                    </div>
-                    <div className="span2">
-                        <CheckboxInput
-                            id="autosize_cells"
-                            label="Auto-size heatmap cells"
-                            name="autosize_cells"
-                            onChange={e => changeSettings(e.target.name, e.target.checked)}
-                            checked={settings.autosize_cells}
-                        />
                         <CheckboxInput
                             id="autorotate_tick_labels"
                             label="Auto-rotate tick labels"
@@ -265,25 +268,32 @@ class VisualCustomizationPanel extends Component {
                             checked={settings.autorotate_tick_labels}
                         />
                     </div>
-                    <div className="span2">
+                </div>
+                <div className="row-fluid">
+                    <SelectInput
+                        handleSelect={value => changeSettings("x_axis_bottom", value == "bottom")}
+                        choices={[
+                            {id: "top", label: "Top"},
+                            {id: "bottom", label: "Bottom"},
+                        ]}
+                        value={settings.x_axis_bottom ? "bottom" : "top"}
+                        multiple={false}
+                        label="X-axis position"
+                    />
+                </div>
+                <div className="row-fluid">
+                    <div className="span3">
                         <CheckboxInput
-                            id="hawc_interactivity"
-                            label="HAWC interactivity"
-                            name="hawc_interactivity"
+                            id="show_axis_border"
+                            label="Show axis border"
+                            name="show_axis_border"
                             onChange={e => changeSettings(e.target.name, e.target.checked)}
-                            checked={settings.hawc_interactivity}
-                        />
-                        <CheckboxInput
-                            id="show_tooltip"
-                            label="Show tooltips"
-                            name="show_tooltip"
-                            onChange={e => changeSettings(e.target.name, e.target.checked)}
-                            checked={settings.show_tooltip}
+                            checked={settings.show_axis_border}
                         />
                     </div>
                 </div>
 
-                <h4>Label coordinates</h4>
+                <h4>Labels</h4>
                 <div className="row-fluid">
                     <div className="span4">
                         <FloatInput
@@ -377,6 +387,27 @@ class VisualCustomizationPanel extends Component {
                             onChange={e =>
                                 changeSettings(e.target.name, parseFloat(e.target.value))
                             }
+                        />
+                    </div>
+                </div>
+                <h4>Interactivity</h4>
+                <div className="row-fluid">
+                    <div className="span3">
+                        <CheckboxInput
+                            id="hawc_interactivity"
+                            label="HAWC interactivity"
+                            name="hawc_interactivity"
+                            onChange={e => changeSettings(e.target.name, e.target.checked)}
+                            checked={settings.hawc_interactivity}
+                        />
+                    </div>
+                    <div className="span3">
+                        <CheckboxInput
+                            id="show_tooltip"
+                            label="Show tooltips"
+                            name="show_tooltip"
+                            onChange={e => changeSettings(e.target.name, e.target.checked)}
+                            checked={settings.show_tooltip}
                         />
                     </div>
                 </div>

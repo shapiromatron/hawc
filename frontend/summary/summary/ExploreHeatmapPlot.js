@@ -583,7 +583,11 @@ class ExploreHeatmapPlot {
 
     build_axes() {
         this.build_left_axis();
-        this.build_top_axis();
+        if (this.store.settings.x_axis_bottom) {
+            this.build_bottom_axis();
+        } else {
+            this.build_top_axis();
+        }
     }
 
     add_grid() {
@@ -628,7 +632,10 @@ class ExploreHeatmapPlot {
                     titleSettings.x === 0
                         ? this.padding.left + this.x_axis_label_padding + this.w / 2
                         : titleSettings.x,
-                y = titleSettings.y === 0 ? label_margin : titleSettings.y,
+                y =
+                    titleSettings.y === 0
+                        ? (settings.x_axis_bottom ? 0 : -this.y_axis_label_padding) + label_margin
+                        : titleSettings.y,
                 title = d3
                     .select(this.svg)
                     .append("text")
@@ -655,7 +662,10 @@ class ExploreHeatmapPlot {
                         : xLabelSettings.x,
                 y =
                     xLabelSettings.y === 0
-                        ? this.padding.top + this.h + this.y_axis_label_padding + label_margin
+                        ? this.padding.top +
+                          this.h +
+                          (settings.x_axis_bottom ? this.y_axis_label_padding : 0) +
+                          label_margin
                         : xLabelSettings.y,
                 xLabel = d3
                     .select(this.svg)
@@ -855,7 +865,9 @@ class ExploreHeatmapPlot {
             .attr("preserveAspectRatio", "xMidYMid meet")
             .attr(
                 "viewBox",
-                `0 ${-this.y_axis_label_padding} ${nativeSize.width} ${nativeSize.height}`
+                `0 ${settings.x_axis_bottom ? 0 : -this.y_axis_label_padding} ${nativeSize.width} ${
+                    nativeSize.height
+                }`
             );
 
         ReactDOM.render(
