@@ -1,7 +1,8 @@
-from io import StringIO
 import time
+from io import StringIO
 
 import pandas as pd
+
 from hawc.apps.common import helper
 
 

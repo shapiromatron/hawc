@@ -5,7 +5,7 @@ import re
 import uuid
 from collections import OrderedDict
 from dataclasses import dataclass
-from typing import Dict, Optional, List
+from typing import Dict, List, Optional
 
 import pandas as pd
 from django.conf import settings
@@ -101,6 +101,7 @@ def df_move_column(df: pd.DataFrame, target: str, after: Optional[str] = None) -
     insert_index = cols.index(after) + 1 if after else 0
     cols.insert(insert_index, target_name)
     return df[cols]
+
 
 class HAWCDjangoJSONEncoder(DjangoJSONEncoder):
     """

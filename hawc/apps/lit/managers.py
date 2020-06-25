@@ -535,6 +535,23 @@ class ReferenceManager(BaseManager):
         )
         df1 = pd.DataFrame(data=qs, columns=values.values()).set_index("reference id")
 
+        # build full citation column
+        # TODO - replace `ref_full_citation`?
+        df1["full citation"] = (
+            (
+                df1.authors
+                + "|"
+                + df1.year.fillna(-999).astype(int).astype(str)
+                + "|"
+                + df1.title
+                + "|"
+                + df1.journal
+            )
+            .str.replace(r"-999", "", regex=True)  # remove flag number
+            .str.replace(r"^\|+|\|+$", "", regex=True)  # remove pipes at beginning/end
+            .str.replace("|", ". ")  # change pipes to periods
+        )
+
         tree = ReferenceFilterTag.get_all_tags(assessment_id, json_encode=False)
         tag_qs = ReferenceTags.objects.assessment_qs(assessment_id)
         node_dict = refmltags.build_tree_node_dict(tree)
