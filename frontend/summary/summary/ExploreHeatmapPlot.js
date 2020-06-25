@@ -853,7 +853,10 @@ class ExploreHeatmapPlot {
         // set correct aspect ratio to get proper height/widths set on parent elements
         d3.select(this.svg)
             .attr("preserveAspectRatio", "xMidYMid meet")
-            .attr("viewBox", `0 0 ${nativeSize.width} ${nativeSize.height}`);
+            .attr(
+                "viewBox",
+                `0 ${-this.y_axis_label_padding} ${nativeSize.width} ${nativeSize.height}`
+            );
 
         ReactDOM.render(
             <VisualToolbar
