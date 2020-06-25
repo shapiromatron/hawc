@@ -215,7 +215,7 @@ class HeatmapDatastore {
                         });
                 })
                 .flat();
-        if (true) {
+        if (this.settings.show_totals) {
             const x_steps = scales.x.filter((d, i) => (compress_x ? this.totals.x[i] > 0 : true))
                     .length,
                 y_steps = scales.y.filter((d, i) => (compress_y ? this.totals.y[i] > 0 : true))

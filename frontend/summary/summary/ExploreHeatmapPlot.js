@@ -39,8 +39,8 @@ class ExploreHeatmapPlot {
             settings.compress_y ? totals.y[i] > 0 : true
         ).length;
 
-        this.x_steps = true ? this.x_steps + 1 : this.x_steps;
-        this.y_steps = true ? this.y_steps + 1 : this.y_steps;
+        this.x_steps = settings.show_totals ? this.x_steps + 1 : this.x_steps;
+        this.y_steps = settings.show_totals ? this.y_steps + 1 : this.y_steps;
 
         this.cellDimensions = this.get_cell_dimensions();
         this.w = this.cellDimensions.width * this.x_steps;
@@ -238,7 +238,7 @@ class ExploreHeatmapPlot {
                 numItems += 1;
                 lastItem = thisItem;
             }
-            if (i == numXAxes - 1) {
+            if (settings.show_totals && i == numXAxes - 1) {
                 let label = axis.append("g");
                 label
                     .append("text")
@@ -284,7 +284,7 @@ class ExploreHeatmapPlot {
             yOffset = newYOffset;
         }
 
-        if (true) {
+        if (settings.show_totals) {
             const x1 = xs.length * this.cellDimensions.width,
                 x2 = x1 + this.cellDimensions.width,
                 y1 = xAxis.node().getBBox().height,
@@ -349,7 +349,7 @@ class ExploreHeatmapPlot {
                 numItems += 1;
                 lastItem = thisItem;
             }
-            if (i == numYAxes - 1) {
+            if (settings.show_totals && i == numYAxes - 1) {
                 let label = axis.append("g");
                 label
                     .append("text")
@@ -392,7 +392,7 @@ class ExploreHeatmapPlot {
             this.bind_tooltip(border, "axis");
             xOffset = newXOffset;
         }
-        if (true) {
+        if (settings.show_totals) {
             const x1 = -yAxis.node().getBBox().width,
                 x2 = 0,
                 y1 = ys.length * this.cellDimensions.height,
