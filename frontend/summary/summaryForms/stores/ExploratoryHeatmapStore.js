@@ -34,7 +34,7 @@ class ExploratoryHeatmapStore {
             show_axis_border: true,
             show_grid: true,
             show_tooltip: true,
-            show_totals: false,
+            show_totals: true,
             autosize_cells: true,
             autorotate_tick_labels: true,
             table_fields: [
