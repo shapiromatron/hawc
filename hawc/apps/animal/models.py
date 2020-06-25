@@ -940,6 +940,7 @@ class Endpoint(BaseEndpoint):
             "animal_group__dosing_regime__route_of_exposure": "route of exposure",
             "animal_group__species__name": "species",
             "animal_group__strain__name": "strain",
+            "animal_group__name": "animal group name",
             "animal_group__sex": "sex",
             "animal_group__generation": "generation",
             "animal_group_id": "animal group id",

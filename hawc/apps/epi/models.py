@@ -12,7 +12,7 @@ from reversion import revisions as reversion
 from scipy.stats import t
 
 from ..assessment.models import Assessment, BaseEndpoint, EffectTag
-from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper
+from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper, df_move_column
 from ..common.models import get_crumbs
 from ..study.models import Study
 from . import managers
@@ -1442,6 +1442,10 @@ class Result(models.Model):
         def unique_items(els):
             return "|".join(sorted(set(el for el in els if el is not None)))
 
+        def unique_list_items(rows):
+            items = set(itertools.chain.from_iterable(row.split("|") for row in rows.unique()))
+            return "|".join(sorted(items))
+
         # get all studies,even if no endpoint data is extracted
         filters: Dict[str, Any] = {"assessment_id": assessment, "epi": True}
         if published_only:
@@ -1460,10 +1464,13 @@ class Result(models.Model):
             .groupby("study id")
             .agg(
                 {
+                    "study design": unique_items,
+                    "study population source": unique_items,
+                    "exposure name": unique_items,
+                    "exposure route": unique_list_items,
                     "system": unique_items,
                     "effect": unique_items,
-                    "exposure name": unique_items,
-                    "study design": unique_items,
+                    "effect subtype": unique_items,
                 }
             )
         )
@@ -1479,22 +1486,23 @@ class Result(models.Model):
         if published_only:
             filters["outcome__study_population__study__published"] = True
         columns = {
-            "id": "result id",
-            "name": "result name",
-            "outcome_id": "outcome id",
-            "outcome__system": "system",
-            "outcome__effect": "effect",
-            "outcome__effect_subtype": "effect_subtype",
+            "outcome__study_population__study_id": "study id",
+            "outcome__study_population__study__short_citation": "study citation",
+            "outcome__study_population__study__study_identifier": "study identifier",
+            "outcome__study_population_id": "study population id",
+            "outcome__study_population__name": "study population name",
+            "outcome__study_population__source": "study population source",
+            "outcome__study_population__design": "study design",
             "comparison_set_id": "comparison set id",
             "comparison_set__name": "comparison set name",
             "comparison_set__exposure_id": "exposure id",
             "comparison_set__exposure__name": "exposure name",
-            "outcome__study_population_id": "study population id",
-            "outcome__study_population__name": "study population name",
-            "outcome__study_population__design": "study design",
-            "outcome__study_population__study_id": "study id",
-            "outcome__study_population__study__short_citation": "study citation",
-            "outcome__study_population__study__study_identifier": "study identifier",
+            "outcome_id": "outcome id",
+            "outcome__system": "system",
+            "outcome__effect": "effect",
+            "outcome__effect_subtype": "effect subtype",
+            "id": "result id",
+            "name": "result name",
         }
         qs = (
             cls.objects.select_related(
@@ -1508,8 +1516,24 @@ class Result(models.Model):
             .values_list(*columns.keys())
         )
 
-        df = pd.DataFrame(data=list(qs), columns=columns.values())
-        df["study design"] = df["study design"].map(StudyPopulation.DESIGN_CHOICES_DICT)
+        df1 = pd.DataFrame(data=list(qs), columns=columns.values())
+        df1["study design"] = df1["study design"].map(StudyPopulation.DESIGN_CHOICES_DICT)
+
+        # add exposure column
+        exposure_cols = ["inhalation", "dermal", "oral", "in_utero", "iv", "unknown_route"]
+        qs = Exposure.objects.filter(study_population__study__assessment=assessment).values(
+            "id", *exposure_cols
+        )
+        df2 = pd.DataFrame(qs).set_index("id")
+        df2["exposure route"] = df2[exposure_cols].apply(
+            lambda x: "|".join(x.index[x == True]).replace("_", " "), axis=1  # noqa: E712
+        )
+        df2 = df2.drop(columns=exposure_cols)
+
+        # join data together
+        df = df1.merge(df2, how="left", left_on="exposure id", right_index=True)
+        df = df_move_column(df, "exposure route", "exposure name")
+        df["exposure route"].fillna("", inplace=True)
 
         return df
 
