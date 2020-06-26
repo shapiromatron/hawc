@@ -370,7 +370,10 @@ class EndpointListV2(BaseList):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["data_url"] = reverse("animal:api:assessment-endpoints", args=(self.assessment.id,))
+        url = reverse("animal:api:assessment-endpoints", args=(self.assessment.id,))
+        if self.request.GET.get("unpublished", "false").lower() == "true":
+            url += "?unpublished=true"
+        context["data_url"] = url
         return context
 
 

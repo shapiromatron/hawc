@@ -104,4 +104,10 @@
     </table>
     {% endif %}
 
+    {% if user.is_beta_tester  %}
+    <h2 class="betatester">Critical effects by dose</h2>
+    <p><a href="{% url 'animal:endpoint_list_v2' assessment.id %}">WIP</a></p>
+    <p><a href="{% url 'animal:endpoint_list_v2' assessment.id %}?unpublished=true">WIP (unpublished)</a></p>
+    {% endif %}
+
 {% endblock %}

@@ -979,7 +979,7 @@ class Endpoint(BaseEndpoint):
         df1 = cls.heatmap_df(assessment, published_only).set_index("endpoint id")
 
         columns = "dose units id|dose units name|doses|noel|loel|fel|bmd|bmdl".split("|")
-        df2 = cls.objects.endpoint_df(assessment).set_index("endpoint id")[columns]
+        df2 = cls.objects.endpoint_df(assessment, published_only).set_index("endpoint id")[columns]
 
         df3 = df1.merge(df2, how="left", left_index=True, right_index=True).reset_index()
         return df3

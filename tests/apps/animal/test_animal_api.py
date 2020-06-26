@@ -71,4 +71,3 @@ class TestAssessmentViewset:
             + "?format=json"
         )
         self._test_animal_export(rewrite_data_files, fn, url)
-

@@ -141,10 +141,17 @@ class AnimalAssessmentViewset(
     def endpoints(self, request, pk):
         self.set_legacy_attr(pk)
         self.permission_check_user_can_view()
+        ser = HeatmapQuerySerializer(data=request.query_params)
+        ser.is_valid(raise_exception=True)
+        unpublished = ser.data["unpublished"]
+        if unpublished and not self.assessment.user_is_part_of_team(self.request.user):
+            raise PermissionDenied("You must be part of the team to view unpublished data")
         key = f"assessment-{self.assessment.id}-bioassay-endpoint-list"
         df = cache.get(key)
         if df is None:
-            df = models.Endpoint.objects.endpoint_df(self.assessment)
+            df = models.Endpoint.objects.endpoint_df(
+                self.assessment, published_only=not unpublished
+            )
             cache.set(key, df, settings.CACHE_10_MIN)
         export = FlatExport(df=df, filename=f"bio-endpoint-lis-{self.assessment.id}")
         return Response(export)

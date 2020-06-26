@@ -1,7 +1,10 @@
+from typing import Any, Dict
+
 import numpy as np
 import pandas as pd
 from django.apps import apps
 
+from ..assessment.models import Assessment
 from ..common.models import BaseManager, get_distinct_charfield, get_distinct_charfield_opts
 
 
@@ -74,8 +77,11 @@ class EndpointManager(BaseManager):
     def get_effects(self, assessment_id):
         return get_distinct_charfield(self, assessment_id, "effect")
 
-    def endpoint_df(self, assessment_id: int) -> pd.DataFrame:
-        # TODO - add published/unpublished check
+    def endpoint_df(self, assessment: Assessment, published_only: bool) -> pd.DataFrame:
+        filters: Dict[str, Any] = {"assessment_id": assessment}
+        if published_only:
+            filters["animal_group__experiment__study__published"] = True
+
         DoseGroup = apps.get_model("animal", "DoseGroup")
         Endpoint = apps.get_model("animal", "Endpoint")
         SelectedModel = apps.get_model("bmd", "SelectedModel")
@@ -94,9 +100,7 @@ class EndpointManager(BaseManager):
             LOEL="loel",
             FEL="fel",
         )
-        qs = Endpoint.objects.filter(
-            animal_group__experiment__study__assessment_id=assessment_id
-        ).values_list(*values.keys())
+        qs = Endpoint.objects.filter(**filters).values_list(*values.keys())
         df1 = pd.DataFrame(data=qs, columns=values.values())
 
         # get BMD values
@@ -106,7 +110,7 @@ class EndpointManager(BaseManager):
             model__output__BMDL="BMDL",
             model__session__dose_units_id="dose units id",
         )
-        qs = SelectedModel.objects.filter(endpoint__assessment_id=assessment_id).values_list(
+        qs = SelectedModel.objects.filter(endpoint__assessment=assessment).values_list(
             *values.keys()
         )
         df2 = (
@@ -117,7 +121,7 @@ class EndpointManager(BaseManager):
         )
 
         # get dose regime values
-        filters = dict(dose_regime__dosed_animals__experiment__study__assessment_id=assessment_id)
+        filters = dict(dose_regime__dosed_animals__experiment__study__assessment=assessment)
         values = dict(
             dose_regime_id="dose regime id",
             dose_units_id="dose units id",
@@ -134,6 +138,7 @@ class EndpointManager(BaseManager):
             df1.set_index("dose regime id")
             .merge(
                 subset.set_index("dose regime id")[["dose units name", "dose units id"]],
+                how="left",
                 left_index=True,
                 right_index=True,
             )
@@ -141,7 +146,7 @@ class EndpointManager(BaseManager):
         )
 
         # fetch all the dose units tested
-        df4["doses"] = (
+        doses = (
             df3.sort_values("dose_group_id")
             .groupby(["dose regime id", "dose units id"])
             .agg(
@@ -151,8 +156,9 @@ class EndpointManager(BaseManager):
                     )
                 )
             )
-            .dose
+            .rename(columns=dict(dose="doses"))[["doses"]]
         )
+        df4 = df4.merge(doses, how="left", left_index=True, right_index=True)
 
         # replace {NOEL, LOEL, FEL} dose group index with values
         def get_doses(r, col):
