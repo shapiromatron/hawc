@@ -113,16 +113,6 @@ class ExploratoryHeatmapStore {
         this.settings[arrayKey][index][key] = value;
     }
 
-    @action.bound changeSettingsMultiSelect(key, values) {
-        // TODO HEATMAP - create new SelectMultiple; remove Select multi={true/false} property
-        let selected = _.chain(event.target.options)
-            .filter(opt => opt.selected)
-            .map(opt => opt.value)
-            .value();
-
-        this.settings[key] = selected;
-    }
-
     @action.bound changeDatasetUrl(value) {
         if (this.settings.data_url === value) {
             return;
