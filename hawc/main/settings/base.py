@@ -148,7 +148,7 @@ CACHES = {
         "TIMEOUT": None,
     }
 }
-CACHE_10_MIN = 60 * 10
+CACHE_1_HR = 60 * 60
 
 
 # Email settings

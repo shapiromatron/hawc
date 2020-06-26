@@ -22,6 +22,17 @@ class Reference extends Observee {
         return 0;
     }
 
+    static get_detail_url(id, subtype) {
+        switch (subtype) {
+            case "hero":
+                return `https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/${id}`;
+            case "pubmed":
+                return `https://pubmed.ncbi.nlm.nih.gov/${id}/`;
+            case "reference":
+            default:
+                return `/lit/reference/${id}/`;
+        }
+    }
     print_self(options) {
         options = options || {};
         let content = [],

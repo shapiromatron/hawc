@@ -1,5 +1,4 @@
 from django.db.models import Q
-from django.urls import reverse
 
 from ..assessment.models import Assessment
 from ..common.views import (
@@ -8,11 +7,11 @@ from ..common.views import (
     BaseDelete,
     BaseDetail,
     BaseEndpointFilterList,
-    BaseList,
     BaseUpdate,
     BaseUpdateWithFormset,
     CloseIfSuccessMixin,
     CopyAsNewSelectorMixin,
+    HeatmapBase,
 )
 from ..mgmt.views import EnsureExtractionStartedMixin
 from ..study.models import Study
@@ -21,36 +20,16 @@ from . import forms, models
 
 
 # Heatmap views
-class HeatmapStudyDesign(BaseList):
-    parent_model = Assessment
-    model = models.Study
-    template_name = "epi/heatmap_study_design.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["data_class"] = "epidemiology-study-design"
-        context["data_url"] = reverse(
-            "epi:api:assessment-study-heatmap", args=(self.assessment.id,)
-        )
-        if self.request.GET.get("unpublished", "false").lower() == "true":
-            context["data_url"] += "?unpublished=true"
-        return context
+class HeatmapStudyDesign(HeatmapBase):
+    heatmap_data_class = "epidemiology-study-design"
+    heatmap_data_url = "epi:api:assessment-study-heatmap"
+    heatmap_view_title = "Epidemiology study design summary"
 
 
-class HeatmapResults(BaseList):
-    parent_model = Assessment
-    model = models.Result
-    template_name = "epi/heatmap_results.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["data_class"] = "epidemiology-result-summary"
-        context["data_url"] = reverse(
-            "epi:api:assessment-result-heatmap", args=(self.assessment.id,)
-        )
-        if self.request.GET.get("unpublished", "false").lower() == "true":
-            context["data_url"] += "?unpublished=true"
-        return context
+class HeatmapResults(HeatmapBase):
+    heatmap_data_class = "epidemiology-result-summary"
+    heatmap_data_url = "epi:api:assessment-result-heatmap"
+    heatmap_view_title = "Epidemiology result summary"
 
 
 # Study criteria

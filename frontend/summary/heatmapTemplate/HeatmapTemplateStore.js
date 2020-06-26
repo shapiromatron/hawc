@@ -2,7 +2,7 @@ import _ from "lodash";
 import h from "shared/utils/helpers";
 import {action, computed, observable, toJS} from "mobx";
 
-import {AXIS_OPTIONS, FILTER_OPTIONS, TABLE_FIELDS, DASHBOARDS} from "./constants";
+import {OPTIONS} from "./constants";
 
 class HeatmapTemplateStore {
     config = null;
@@ -11,19 +11,21 @@ class HeatmapTemplateStore {
     @observable dashboardOptions = [];
     @observable filterOptions = [];
     @observable axisOptions = [];
+    @observable tableOptions = [];
 
     @observable selectedDashboard = null;
     @observable selectedXAxis = null;
     @observable selectedYAxis = null;
     @observable selectedFilters = [];
+    @observable selectedTableFields = [];
 
     constructor(config) {
         this.config = config;
-        this.dashboardOptions = DASHBOARDS.filter(d => d.data_class === config.data_class);
-        this.axisOptions = AXIS_OPTIONS.filter(d => _.includes(d.data_classes, config.data_class));
-        this.filterOptions = FILTER_OPTIONS.filter(d =>
-            _.includes(d.data_classes, config.data_class)
-        );
+        const options = OPTIONS[config.data_class];
+        this.dashboardOptions = options.DASHBOARDS;
+        this.axisOptions = options.AXIS_OPTIONS;
+        this.filterOptions = options.FILTER_OPTIONS;
+        this.tableOptions = options.TABLE_FIELDS;
         this.changeDashboard(this.dashboardOptions[0].id);
     }
 
@@ -33,6 +35,9 @@ class HeatmapTemplateStore {
         this.selectedXAxis = _.find(this.axisOptions, {id: dashboard.x_axis});
         this.selectedYAxis = _.find(this.axisOptions, {id: dashboard.y_axis});
         this.selectedFilters = dashboard.filters.map(id => _.find(this.filterOptions, {id}));
+        this.selectedTableFields = dashboard.table_fields.map(id =>
+            _.find(this.tableOptions, {id})
+        );
     }
 
     @action.bound changeAxis(name, key) {
@@ -54,11 +59,16 @@ class HeatmapTemplateStore {
         this.selectedFilters = values.map(value => _.find(this.filterOptions, {id: value}));
     }
 
+    @action.bound changeSelectedTableFields(values) {
+        this.selectedTableFields = values.map(value => _.find(this.tableOptions, {id: value}));
+    }
+
     @action.bound setDataset(dataset) {
         this.dataset = dataset;
     }
 
     @computed get settings() {
+        const title = `${this.config.assessment}: ${this.selectedDashboard.label}`;
         return {
             autosize_cells: true,
             autorotate_tick_labels: true,
@@ -74,8 +84,8 @@ class HeatmapTemplateStore {
             show_axis_border: true,
             show_grid: true,
             show_tooltip: true,
-            table_fields: TABLE_FIELDS[this.config.data_class],
-            title: {text: this.config.title, x: 0, y: 0, rotate: 0},
+            table_fields: this.selectedTableFields.map(d => d.settings),
+            title: {text: title, x: 0, y: 0, rotate: 0},
             x_fields: this.selectedXAxis.settings,
             x_label: {text: this.selectedXAxis.label, x: 0, y: 0, rotate: 0},
             x_tick_rotate: 0,

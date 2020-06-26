@@ -1,10 +1,9 @@
-import h from "shared/utils/helpers";
 import _ from "lodash";
 import React, {Component} from "react";
 import PropTypes from "prop-types";
 import {inject, observer} from "mobx-react";
 
-import {NULL_VALUE} from "../../summary/constants";
+import h from "shared/utils/helpers";
 
 @observer
 class FilterWidget extends Component {
@@ -20,7 +19,7 @@ class FilterWidget extends Component {
             data = this.props.store.getTableData,
             availableItems = _.chain(data)
                 .map(d => d[widget.column])
-                .map(d => (widget.delimiter ? d.split(widget.delimiter) : d))
+                .map(d => (widget.delimiter && d ? d.split(widget.delimiter) : d))
                 .flatten()
                 .uniq()
                 .value(),
@@ -29,7 +28,7 @@ class FilterWidget extends Component {
                 .keys()
                 .filter(d => itemStore[d] === false)
                 .value(),
-            showClickEvent = widget.on_click_event !== NULL_VALUE,
+            filterWidgetExtension = this.props.store.extensions.filterWidgets[widget.column],
             items = [...availableItems, ...hiddenItems].sort();
 
         return (
@@ -49,7 +48,7 @@ class FilterWidget extends Component {
                         flex: 0,
                     }}>
                     <h4>
-                        {widget.column}
+                        {h.titleCase(widget.column)}
                         <div className="btn-group pull-right">
                             <button
                                 className="btn btn-small"
@@ -74,24 +73,24 @@ class FilterWidget extends Component {
                     {items
                         .sort()
                         .map((item, index) =>
-                            this.renderItem(widget, item, index, itemStore, showClickEvent)
+                            this.renderItem(widget, item, index, itemStore, filterWidgetExtension)
                         )}
                 </div>
             </div>
         );
     }
 
-    renderItem(widget, item, index, itemStore, showClickEvent) {
+    renderItem(widget, item, index, itemStore, filterWidgetExtension) {
         const {toggleItemSelection, showModalClick, colorScale} = this.props.store,
             data = this.props.store.getTableData,
             numItems = data.filter(d =>
-                widget.delimiter
+                widget.delimiter && d[widget.column]
                     ? _.includes(d[widget.column].split(widget.delimiter), item)
                     : d[widget.column] === item
             ).length;
         return (
             <div key={index}>
-                {showClickEvent ? (
+                {filterWidgetExtension && filterWidgetExtension.hasModal ? (
                     <button
                         className="btn btn-mini pull-right"
                         onClick={() => showModalClick(widget.on_click_event, widget.column, item)}

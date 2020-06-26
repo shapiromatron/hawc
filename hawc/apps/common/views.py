@@ -12,7 +12,7 @@ from django.utils.decorators import method_decorator
 from django.views.generic import DetailView, ListView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
-from ..assessment.models import Assessment, TimeSpentEditing
+from ..assessment.models import Assessment, BaseEndpoint, TimeSpentEditing
 from .helper import tryParseInt
 
 
@@ -644,4 +644,32 @@ class BaseEndpointFilterList(BaseList):
         context = super().get_context_data(**kwargs)
         context["form"] = self.form
         context["list_json"] = self.model.get_qs_json(context["object_list"], json_encode=True)
+        return context
+
+
+class HeatmapBase(BaseList):
+    parent_model = Assessment
+    model = BaseEndpoint
+    template_name = "common/heatmap.html"
+    heatmap_data_class: str = ""
+    heatmap_data_url: str = ""
+    heatmap_view_title: str = ""
+
+    def get_template_names(self):
+        return [self.template_name]
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        url_args = (
+            "?unpublished=true"
+            if self.request.GET.get("unpublished", "false").lower() == "true"
+            else ""
+        )
+        context.update(
+            dict(
+                data_class=self.heatmap_data_class,
+                data_url=reverse(self.heatmap_data_url, args=(self.assessment.id,)) + url_args,
+                heatmap_view_title=self.heatmap_view_title,
+            )
+        )
         return context

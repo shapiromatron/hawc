@@ -2,7 +2,7 @@ import React, {Component} from "react";
 import PropTypes from "prop-types";
 import {inject, observer} from "mobx-react";
 
-import {NULL_VALUE} from "../constants";
+import h from "shared/utils/helpers";
 
 const pillItems = function(text, delimiter) {
     if (!delimiter) {
@@ -30,7 +30,8 @@ class InteractiveCell extends Component {
     }
 
     render() {
-        const {store, row, field} = this.props,
+        const {store, row, field, extension} = this.props,
+            {isHovering} = this.state,
             showButton = () => this.setState({isHovering: true}),
             hideButton = () => this.setState({isHovering: false});
 
@@ -39,8 +40,9 @@ class InteractiveCell extends Component {
                 <a href={store.getDetailUrl(field.on_click_event, row)}>
                     {pillItems(row[field.column], field.delimiter)}
                 </a>
-                {this.state.isHovering ? (
+                {extension.hasModal ? (
                     <button
+                        style={{opacity: isHovering ? 1 : 0}}
                         className="btn btn-mini pull-right"
                         onClick={() => {
                             store.showModalClick(
@@ -48,7 +50,6 @@ class InteractiveCell extends Component {
                                 field.column,
                                 row[field.column]
                             );
-                            hideButton();
                         }}
                         title="View additional information">
                         <i className="icon-eye-open"></i>
@@ -62,6 +63,7 @@ InteractiveCell.propTypes = {
     store: PropTypes.object.isRequired,
     row: PropTypes.object.isRequired,
     field: PropTypes.object.isRequired,
+    extension: PropTypes.object.isRequired,
 };
 
 @inject("store")
@@ -73,37 +75,46 @@ class DatasetTable extends Component {
     }
     render() {
         const {table_fields} = this.props.store.settings,
+            tableRowExtensions = this.props.store.extensions.tableRows,
             data = this.props.store.getTableData;
 
         return (
-            <div>
+            <div style={{maxHeight: "50vh", overflow: "auto"}}>
                 <table className="table table-striped table-bordered">
                     <thead>
                         <tr>
                             {table_fields.map((name, i) => (
-                                <th key={i}>{name.column}</th>
+                                <th key={i}>{h.titleCase(name.column)}</th>
                             ))}
                         </tr>
                     </thead>
-                    <tbody>{data.map((row, i) => this.renderRow(row, i, table_fields))}</tbody>
+                    <tbody>
+                        {data.map((row, i) =>
+                            this.renderRow(row, i, table_fields, tableRowExtensions)
+                        )}
+                    </tbody>
                 </table>
             </div>
         );
     }
-    renderRow(row, index, table_fields) {
+    renderRow(row, index, table_fields, tableRowExtensions) {
         return (
             <tr key={index}>
                 {table_fields.map((field, i2) => {
-                    return field.on_click_event === NULL_VALUE ? (
-                        <td key={i2}>{pillItems(row[field.column], field.delimiter)}</td>
-                    ) : (
-                        <InteractiveCell
-                            key={i2}
-                            store={this.props.store}
-                            row={row}
-                            field={field}
-                        />
-                    );
+                    const extension = tableRowExtensions[field.column];
+                    if (extension) {
+                        return (
+                            <InteractiveCell
+                                key={i2}
+                                store={this.props.store}
+                                row={row}
+                                field={field}
+                                extension={extension}
+                            />
+                        );
+                    } else {
+                        return <td key={i2}>{pillItems(row[field.column], field.delimiter)}</td>;
+                    }
                 })}
             </tr>
         );

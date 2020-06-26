@@ -60,7 +60,7 @@ class EpiAssessmentViewset(
         df = cache.get(key)
         if df is None:
             df = models.Result.heatmap_study_df(self.assessment, published_only=not unpublished)
-            cache.set(key, df, settings.CACHE_10_MIN)
+            cache.set(key, df, settings.CACHE_1_HR)
         export = FlatExport(df=df, filename=f"epi-study-heatmap-{self.assessment.id}")
         return Response(export)
 
@@ -84,7 +84,7 @@ class EpiAssessmentViewset(
         df = cache.get(key)
         if df is None:
             df = models.Result.heatmap_df(self.assessment, published_only=not unpublished)
-            cache.set(key, df, settings.CACHE_10_MIN)
+            cache.set(key, df, settings.CACHE_1_HR)
         export = FlatExport(df=df, filename=f"epi-result-heatmap-{self.assessment.id}")
         return Response(export)
 
