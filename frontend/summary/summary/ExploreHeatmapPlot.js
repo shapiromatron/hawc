@@ -271,7 +271,6 @@ class ExploreHeatmapPlot {
                 .attr("fill", "transparent")
                 .attr("stroke", show_axis_border ? "black" : null)
                 .on("click", d => {
-                    if (d.filter.length == 0) return;
                     const cells = this.get_matching_cells(d.filters, "x");
                     this.store.setTableDataFilters(new Set(cells));
                 });
@@ -430,7 +429,6 @@ class ExploreHeatmapPlot {
                 .attr("fill", "transparent")
                 .attr("stroke", show_axis_border ? "black" : null)
                 .on("click", d => {
-                    if (d.filter.length == 0) return;
                     const cells = this.get_matching_cells(d.filters, "x");
                     this.store.setTableDataFilters(new Set(cells));
                 });
@@ -721,17 +719,13 @@ class ExploreHeatmapPlot {
             .enter()
             .append("g")
             .attr("class", "exp_heatmap_cell")
-            .on("click", d =>
-                d.type == "cell"
-                    ? function(d) {
-                          if (d.rows.length > 0) {
-                              self.store.setTableDataFilters(d);
-                          } else {
-                              self.store.setTableDataFilters(new Set());
-                          }
-                      }
-                    : null
-            );
+            .on("click", d => {
+                if (d.rows.length > 0) {
+                    self.store.setTableDataFilters(d);
+                } else {
+                    self.store.setTableDataFilters(new Set());
+                }
+            });
         this.bind_tooltip(this.cells_enter, "cell");
 
         // add cell fill
@@ -750,7 +744,7 @@ class ExploreHeatmapPlot {
             .attr("x", d => this.x_scale(d.x_step) + this.x_scale.rangeBand() / 2)
             .attr("y", d => this.y_scale(d.y_step) + this.y_scale.rangeBand() / 2);
 
-        let fillRect = d => {
+        let cellColor = d => {
                 const filterIndices = [...tableDataFilters].map(e => e.index),
                     value =
                         tableDataFilters.size == 0
@@ -760,28 +754,26 @@ class ExploreHeatmapPlot {
                             : d.rows.length / 3;
                 return colorScale(value);
             },
-            fillText = d => {
-                const filterIndices = [...tableDataFilters].map(e => e.index),
-                    value =
-                        tableDataFilters.size == 0
-                            ? d.rows.length
-                            : _.includes(filterIndices, d.index)
-                            ? maxValue
-                            : d.rows.length / 3;
-                return h.getTextContrastColor(colorScale(value));
+            totalColor = d => {
+                const filterIndices = [...tableDataFilters].map(e => e.index);
+                return _.includes(filterIndices, d.index) ? colorScale(maxValue) : "#eeeeee";
+            },
+            textColor = d => {
+                const backgroundColor = d.type == "cell" ? cellColor(d) : totalColor(d);
+                return h.getTextContrastColor(backgroundColor);
             };
 
         // enter/update
         this.cells_data
             .select(".exp_heatmap_cell_block")
             .transition()
-            .style("fill", d => (d.type == "cell" ? fillRect(d) : "transparent"));
+            .style("fill", d => (d.type == "cell" ? cellColor(d) : totalColor(d)));
 
         this.cells_data
             .select(".exp_heatmap_cell_text")
             .transition()
-            .style("fill", d => (d.type == "cell" ? fillText(d) : null))
-            .style("display", d => (d.type == "cell" && d.rows.length == 0 ? "none" : null))
+            .style("fill", textColor)
+            .style("display", d => (d.rows.length == 0 ? "none" : null))
             .style("font-weight", d => (d.type == "total" ? "bold" : null))
             .text(d => d.rows.length);
 
