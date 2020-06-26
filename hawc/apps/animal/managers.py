@@ -138,6 +138,21 @@ class EndpointManager(BaseManager):
             .set_index("dose units id", append=True)
         )
 
+        # fetch all the dose units tested
+        df4["doses"] = (
+            df3.sort_values("dose_group_id")
+            .groupby(["dose regime id", "dose units id"])
+            .agg(
+                dict(
+                    dose=lambda els: ", ".join(
+                        str(int(el)) if el.is_integer() else str(el) for el in els
+                    )
+                )
+            )
+            .dose
+        )
+
+        # replace {NOEL, LOEL, FEL} dose group index with values
         def get_doses(r, col):
             el = r[col]
             if el == -999:
@@ -148,15 +163,15 @@ class EndpointManager(BaseManager):
                 return np.NaN
 
         df3 = df3.reset_index().set_index(["dose regime id", "dose units id", "dose_group_id"])
-        df5 = df4.copy().reset_index()
-        df5.loc[:, "noel"] = df5.apply(get_doses, axis=1, args=("noel",))
-        df5.loc[:, "loel"] = df5.apply(get_doses, axis=1, args=("loel",))
-        df5.loc[:, "fel"] = df5.apply(get_doses, axis=1, args=("fel",))
-        df5 = df5.drop(columns="dose regime id").set_index(["id", "dose units id"])
 
-        df6 = df5.merge(df2, how="left", left_index=True, right_index=True).reset_index()
+        df4 = df4.reset_index()
+        df4.loc[:, "noel"] = df4.apply(get_doses, axis=1, args=("noel",))
+        df4.loc[:, "loel"] = df4.apply(get_doses, axis=1, args=("loel",))
+        df4.loc[:, "fel"] = df4.apply(get_doses, axis=1, args=("fel",))
+        df4 = df4.drop(columns="dose regime id").set_index(["id", "dose units id"])
 
-        return df6
+        # merge everything together
+        return df4.merge(df2, how="left", left_index=True, right_index=True).reset_index()
 
 
 class EndpointGroupManager(BaseManager):
