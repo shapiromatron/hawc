@@ -975,6 +975,16 @@ class Endpoint(BaseEndpoint):
         return df
 
     @classmethod
+    def heatmap_doses_df(cls, assessment: Assessment, published_only: bool) -> pd.DataFrame:
+        df1 = cls.heatmap_df(assessment, published_only).set_index("endpoint id")
+
+        columns = "dose units id|dose units name|doses|noel|loel|fel|bmd|bmdl".split("|")
+        df2 = cls.objects.endpoint_df(assessment).set_index("endpoint id")[columns]
+
+        df3 = df1.merge(df2, how="left", left_index=True, right_index=True).reset_index()
+        return df3
+
+    @classmethod
     def heatmap_study_df(cls, assessment: Assessment, published_only: bool) -> pd.DataFrame:
         def unique_items(els):
             return "|".join(sorted(set(el for el in els if el is not None)))

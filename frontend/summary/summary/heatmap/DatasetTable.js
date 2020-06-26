@@ -44,13 +44,7 @@ class InteractiveCell extends Component {
                     <button
                         style={{opacity: isHovering ? 1 : 0}}
                         className="btn btn-mini pull-right"
-                        onClick={() => {
-                            store.showModalClick(
-                                field.on_click_event,
-                                field.column,
-                                row[field.column]
-                            );
-                        }}
+                        onClick={() => store.showModalOnRow(extension, row)}
                         title="View additional information">
                         <i className="icon-eye-open"></i>
                     </button>

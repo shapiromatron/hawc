@@ -21,7 +21,7 @@ class EndpointListApp extends React.Component {
         return (
             <div>
                 <Plot />
-                {/* <DataTable dataset={store.dataset} /> */}
+                <DataTable dataset={store.dataset} />
             </div>
         );
     }

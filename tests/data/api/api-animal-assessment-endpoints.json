@@ -1,0 +1,19 @@
+[
+  {
+    "study id": 7,
+    "study citation": "Biesemeier JA et al. 2011",
+    "experiment id": 3,
+    "experiment name": "developmental",
+    "animal group id": 3,
+    "animal group name": "sd rats",
+    "dose units id": 1,
+    "dose units name": "mg/kg/d",
+    "endpoint id": 3,
+    "doses": "0, 1, 10, 100, 1000",
+    "noel": null,
+    "loel": 1000.0,
+    "fel": null,
+    "bmd": null,
+    "bmdl": null
+  }
+]

@@ -1,6 +1,6 @@
-from django.apps import apps
 import numpy as np
 import pandas as pd
+from django.apps import apps
 
 from ..common.models import BaseManager, get_distinct_charfield, get_distinct_charfield_opts
 
@@ -75,6 +75,7 @@ class EndpointManager(BaseManager):
         return get_distinct_charfield(self, assessment_id, "effect")
 
     def endpoint_df(self, assessment_id: int) -> pd.DataFrame:
+        # TODO - add published/unpublished check
         DoseGroup = apps.get_model("animal", "DoseGroup")
         Endpoint = apps.get_model("animal", "Endpoint")
         SelectedModel = apps.get_model("bmd", "SelectedModel")
@@ -88,7 +89,7 @@ class EndpointManager(BaseManager):
             animal_group__id="animal group id",
             animal_group__name="animal group name",
             animal_group__dosing_regime_id="dose regime id",
-            id="id",
+            id="endpoint id",
             NOEL="noel",
             LOEL="loel",
             FEL="fel",
@@ -100,7 +101,7 @@ class EndpointManager(BaseManager):
 
         # get BMD values
         values = dict(
-            endpoint_id="id",
+            endpoint_id="endpoint id",
             model__output__BMD="BMD",
             model__output__BMDL="BMDL",
             model__session__dose_units_id="dose units id",
@@ -111,7 +112,8 @@ class EndpointManager(BaseManager):
         df2 = (
             pd.DataFrame(data=qs, columns=values.values())
             .dropna()
-            .set_index(["id", "dose units id"])
+            .set_index(["endpoint id", "dose units id"])
+            .rename(columns=dict(BMD="bmd", BMDL="bmdl"))
         )
 
         # get dose regime values
@@ -168,10 +170,29 @@ class EndpointManager(BaseManager):
         df4.loc[:, "noel"] = df4.apply(get_doses, axis=1, args=("noel",))
         df4.loc[:, "loel"] = df4.apply(get_doses, axis=1, args=("loel",))
         df4.loc[:, "fel"] = df4.apply(get_doses, axis=1, args=("fel",))
-        df4 = df4.drop(columns="dose regime id").set_index(["id", "dose units id"])
+        df4 = df4.drop(columns="dose regime id").set_index(["endpoint id", "dose units id"])
 
         # merge everything together
-        return df4.merge(df2, how="left", left_index=True, right_index=True).reset_index()
+        df5 = df4.merge(df2, how="left", left_index=True, right_index=True).reset_index()
+        return df5[
+            [
+                "study id",
+                "study citation",
+                "experiment id",
+                "experiment name",
+                "animal group id",
+                "animal group name",
+                "dose units id",
+                "dose units name",
+                "endpoint id",
+                "doses",
+                "noel",
+                "loel",
+                "fel",
+                "bmd",
+                "bmdl",
+            ]
+        ]
 
 
 class EndpointGroupManager(BaseManager):

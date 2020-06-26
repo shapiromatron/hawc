@@ -315,6 +315,10 @@ class HeatmapDatastore {
         this.dpe.render_plottip(extension, row);
     }
 
+    @action.bound showModalOnRow(extension, row) {
+        this.dpe.render_plottip(extension, row);
+    }
+
     getDetailUrl(on_click_event, row) {
         let extension = _.find(DataPivotExtension.values, {_dpe_name: on_click_event});
         return this.dpe.get_detail_url(extension, row);

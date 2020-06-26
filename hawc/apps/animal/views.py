@@ -4,6 +4,8 @@ from django.db.models import Q
 from django.db.models.expressions import RawSQL
 from django.forms.models import modelformset_factory
 from django.http import HttpResponseRedirect
+from django.urls import reverse
+from django.utils.decorators import method_decorator
 
 from ..assessment.models import Assessment, DoseUnits
 from ..common.forms import form_error_lis_to_ul, form_error_list_to_lis
@@ -13,10 +15,12 @@ from ..common.views import (
     BaseDelete,
     BaseDetail,
     BaseEndpointFilterList,
+    BaseList,
     BaseUpdate,
     BaseUpdateWithFormset,
     CopyAsNewSelectorMixin,
     HeatmapBase,
+    beta_tester_required,
 )
 from ..mgmt.views import EnsureExtractionStartedMixin
 from ..study.models import Study
@@ -35,6 +39,12 @@ class HeatmapEndpoint(HeatmapBase):
     heatmap_data_class = "bioassay-endpoint-summary"
     heatmap_data_url = "animal:api:assessment-endpoint-heatmap"
     heatmap_view_title = "Bioassay endpoint heatmap summary"
+
+
+class HeatmapEndpointDose(HeatmapBase):
+    heatmap_data_class = "bioassay-endpoint-doses-summary"
+    heatmap_data_url = "animal:api:assessment-endpoint-doses-heatmap"
+    heatmap_view_title = "Bioassay endpoint + doses heatmap summary"
 
 
 # Experiment Views
@@ -353,6 +363,10 @@ class EndpointListV2(BaseList):
     parent_model = Assessment
     model = models.Endpoint
     template_name = "animal/endpoint_list_v2.html"
+
+    @method_decorator(beta_tester_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
