@@ -1,14 +1,16 @@
 import _ from "lodash";
 import d3 from "d3";
 import {autorun} from "mobx";
+import React from "react";
+import ReactDOM from "react-dom";
+
 import VisualToolbar from "shared/components/VisualToolbar";
+import bindTooltip from "shared/components/Tooltip";
 import h from "shared/utils/helpers";
 import HAWCModal from "utils/HAWCModal";
 import HAWCUtils from "utils/HAWCUtils";
 
-import React from "react";
-import ReactDOM from "react-dom";
-import Tooltip from "./heatmap/Tooltip";
+import {AxisTooltip, CellTooltip} from "./heatmap/Tooltip";
 
 const AXIS_WIDTH_GUESS = 120,
     AUTOROTATE_TEXT_WRAP_X = 100,
@@ -91,21 +93,13 @@ class ExploreHeatmapPlot {
             return;
         }
 
-        let tooltip_x_offset = 20,
-            tooltip_y_offset = 20;
-
-        selection
-            .on("mouseenter", d => {
-                this.$tooltipDiv.css("display", "block");
-                ReactDOM.render(<Tooltip data={d} type={type} />, this.$tooltipDiv[0]);
-            })
-            .on("mousemove", d =>
-                this.$tooltipDiv.css({
-                    top: `${d3.event.pageY + tooltip_y_offset}px`,
-                    left: `${d3.event.pageX + tooltip_x_offset}px`,
-                })
-            )
-            .on("mouseleave", d => this.$tooltipDiv.css("display", "none"));
+        if (type === "cell") {
+            bindTooltip(this.$tooltipDiv, selection, d => <CellTooltip data={d} />);
+        } else if (type === "axis") {
+            bindTooltip(this.$tooltipDiv, selection, d => <AxisTooltip data={d} />);
+        } else {
+            throw `Unknown type: ${type}`;
+        }
     }
 
     get_matching_cells(filters, axis) {

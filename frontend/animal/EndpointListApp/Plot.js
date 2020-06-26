@@ -1,16 +1,39 @@
+import $ from "$";
 import d3 from "d3";
 import h from "shared/utils/helpers";
-import React from "react";
-import "react-tabs/style/react-tabs.css";
+import React, {Component} from "react";
 import {inject, observer} from "mobx-react";
 import {toJS} from "mobx";
 import PropTypes from "prop-types";
 
-const renderPlot = function(el, dataset) {
-    var values = dataset.map(d => d.loel).filter(d => d !== null && d > 0);
+import bindTooltip from "shared/components/Tooltip";
 
-    // A formatter for counts.
-    var formatCount = d3.format(",.0f");
+class Tooltip extends Component {
+    render() {
+        const {d} = this.props;
+        return (
+            <div style={{minWidth: 300, minHeight: 100}}>
+                <p>
+                    <b>{d["study citation"]}</b>
+                </p>
+                <p>{d["endpoint name"]}</p>
+                <p>{d["system"]}</p>
+                <p>{d["organ"]}</p>
+                <p>{d["effect"]}</p>
+                <p>{d["effect subtype"]}</p>
+                <p>
+                    Dose value: {d.loel} {d["dose units name"]}.
+                </p>
+            </div>
+        );
+    }
+}
+Tooltip.propTypes = {
+    d: PropTypes.object.isRequired,
+};
+
+const renderPlot = function(el, dataset) {
+    var values = dataset.filter(d => d.loel !== null && d.loel > 0);
 
     var margin = {top: 20, right: 30, bottom: 30, left: 30},
         width = 960 - margin.left - margin.right,
@@ -18,11 +41,11 @@ const renderPlot = function(el, dataset) {
 
     var x = d3.scale
         .linear()
-        .domain(d3.extent(values))
+        .domain(d3.extent(values, d => d.loel))
         .range([0, width]);
 
     // Generate a histogram using twenty uniformly-spaced bins.
-    var data = d3.layout.histogram().bins(x.ticks(20))(values);
+    var data = d3.layout.histogram().bins(x.ticks(20))(values, d => d.loel);
 
     var y = d3.scale
         .linear()
@@ -34,6 +57,8 @@ const renderPlot = function(el, dataset) {
         .scale(x)
         .orient("bottom");
 
+    var $tooltip = $("<div>").appendTo(el);
+
     var svg = d3
         .select(el)
         .append("svg")
@@ -41,31 +66,6 @@ const renderPlot = function(el, dataset) {
         .attr("height", height + margin.top + margin.bottom)
         .append("g")
         .attr("transform", `translate(${margin.left},${margin.top})`);
-
-    var bar = svg
-        .selectAll(".bar")
-        .data(data)
-        .enter()
-        .append("g")
-        .attr("class", "bar")
-        .attr("transform", d => `translate(${x(d.x)},${y(d.y)})`);
-
-    bar.append("rect")
-        .attr("x", 1)
-        .attr("width", x(data[0].dx) - x(0) - 1)
-        .attr("height", function(d) {
-            return height - y(d.y);
-        })
-        .attr("fill", "steelblue");
-
-    bar.append("text")
-        .attr("dy", ".75em")
-        .attr("y", -12)
-        .attr("x", (x(data[0].dx) - x(0)) / 2)
-        .attr("text-anchor", "middle")
-        .text(function(d) {
-            return formatCount(d.y);
-        });
 
     svg.append("g")
         .attr("class", "x axis")
@@ -86,48 +86,22 @@ const renderPlot = function(el, dataset) {
         .append("circle")
         .attr("class", "line-class")
         .attr("style", "fill: red; fill-opacity: 0.5; stroke: black; stroke-width: 2")
-        .attr("cx", d => -Math.random() * xjitter + xjitter / 2 + x(d))
-        .attr("cy", 0)
+        .attr("cx", 0)
+        .attr("cy", height)
         .attr("r", 0);
+
+    bindTooltip($tooltip, items, d => <Tooltip d={d} />);
 
     /*
      * Adding refresh method to reload new data
      */
     function refresh(values) {
         // var values = d3.range(1000).map(d3.random.normal(20, 5));
-        var data = d3.layout.histogram().bins(x.ticks(20))(values);
+        var data = d3.layout.histogram().bins(x.ticks(20))(values, d => d.loel);
 
         // Reset y domain using new data
-        var yMax = d3.max(data, function(d) {
-            return d.length;
-        });
+        var yMax = d3.max(data, d => d.length);
         y.domain([0, yMax]);
-
-        var bar = svg.selectAll(".bar").data(data);
-
-        // Remove object with data
-        bar.exit().remove();
-
-        bar.transition()
-            .duration(1000)
-            .attr("transform", function(d) {
-                return "translate(" + x(d.x) + "," + y(d.y) + ")";
-            });
-
-        bar.select("rect")
-            .transition()
-            .duration(1000)
-            .attr("height", function(d) {
-                return height - y(d.y);
-            })
-            .attr("fill", "steelblue");
-
-        bar.select("text")
-            .transition()
-            .duration(1000)
-            .text(function(d) {
-                return formatCount(d.y);
-            });
 
         // Remove object with data
         var items = svg.selectAll(".items").data(values);
@@ -136,6 +110,7 @@ const renderPlot = function(el, dataset) {
             .select("circle")
             .transition()
             .duration(1000)
+            .attr("cx", d => -Math.random() * xjitter + xjitter / 2 + x(d.loel))
             .attr("cy", d => -Math.random() * yjitter + (height - 10))
             .attr("r", 5);
     }

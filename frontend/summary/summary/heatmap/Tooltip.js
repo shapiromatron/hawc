@@ -1,26 +1,10 @@
 import React, {Component} from "react";
 import PropTypes from "prop-types";
 
-class Tooltip extends Component {
-    render() {
-        const style = {
-            position: "absolute",
-            backgroundColor: "white",
-        };
+import h from "shared/utils/helpers";
 
-        let tooltip = null;
-
-        if (this.props.type == "cell") tooltip = this.renderCellTooltip();
-        if (this.props.type == "axis") tooltip = this.renderAxisTooltip();
-
-        return (
-            <table className="table table-condensed table-bordered" style={style}>
-                <tbody>{tooltip}</tbody>
-            </table>
-        );
-    }
-
-    renderCellTooltip() {
+class CellTooltip extends Component {
+    getRows() {
         const {x_filters, y_filters} = this.props.data,
             count = this.props.data.rows.length;
         let rows = [];
@@ -28,7 +12,7 @@ class Tooltip extends Component {
             ...x_filters.map((e, i) => {
                 return (
                     <tr key={`x_filter_${i}`}>
-                        <td>{e.column}</td>
+                        <th>{h.titleCase(e.column)}</th>
                         <td>{e.value}</td>
                     </tr>
                 );
@@ -38,7 +22,7 @@ class Tooltip extends Component {
             ...y_filters.map((e, i) => {
                 return (
                     <tr key={`y_filter_${i}`}>
-                        <td>{e.column}</td>
+                        <th>{h.titleCase(e.column)}</th>
                         <td>{e.value}</td>
                     </tr>
                 );
@@ -47,34 +31,50 @@ class Tooltip extends Component {
 
         rows.push(
             <tr key="count">
-                <td>Count</td>
+                <th>Count</th>
                 <td>{count}</td>
             </tr>
         );
 
         return rows;
     }
-    renderAxisTooltip() {
-        const {filters} = this.props.data;
-        let rows = [];
-
-        rows.push(
-            ...filters.map((e, i) => {
-                return (
-                    <tr key={`filter_${i}`}>
-                        <td>{e.column}</td>
-                        <td>{e.value}</td>
-                    </tr>
-                );
-            })
+    render() {
+        return (
+            <table
+                className="table table-condensed table-bordered"
+                style={{minWidth: 300, marginBottom: 0}}>
+                <tbody>{this.getRows()}</tbody>
+            </table>
         );
-
-        return rows;
     }
 }
-Tooltip.propTypes = {
+CellTooltip.propTypes = {
     data: PropTypes.object,
-    type: PropTypes.string,
 };
 
-export default Tooltip;
+class AxisTooltip extends Component {
+    render() {
+        const {filters} = this.props.data;
+        return (
+            <table
+                className="table table-condensed table-bordered"
+                style={{minWidth: 300, marginBottom: 0}}>
+                <tbody>
+                    {filters.map((e, i) => {
+                        return (
+                            <tr key={i}>
+                                <th>{h.titleCase(e.column)}</th>
+                                <td>{e.value}</td>
+                            </tr>
+                        );
+                    })}
+                </tbody>
+            </table>
+        );
+    }
+}
+AxisTooltip.propTypes = {
+    data: PropTypes.object,
+};
+
+export {CellTooltip, AxisTooltip};
