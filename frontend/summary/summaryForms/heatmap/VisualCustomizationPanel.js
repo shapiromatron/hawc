@@ -236,6 +236,15 @@ class VisualCustomizationPanel extends Component {
                             checked={settings.show_grid}
                         />
                     </div>
+                    <div className="span3">
+                        <CheckboxInput
+                            id="show_totals"
+                            label="Show row/column totals"
+                            name="show_totals"
+                            onChange={e => changeSettings(e.target.name, e.target.checked)}
+                            checked={settings.show_totals}
+                        />
+                    </div>
                 </div>
                 <h4>Axes</h4>
                 <div className="row-fluid">
