@@ -1,7 +1,7 @@
 import pytest
 
-from hawc.refml import tags
 from hawc.apps.lit import models
+from hawc.refml import tags
 
 
 @pytest.mark.django_db
