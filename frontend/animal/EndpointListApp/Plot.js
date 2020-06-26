@@ -6,6 +6,7 @@ import {inject, observer} from "mobx-react";
 import {toJS} from "mobx";
 import PropTypes from "prop-types";
 
+import Endpoint from "animal/Endpoint";
 import bindTooltip from "shared/components/Tooltip";
 
 class Tooltip extends Component {
@@ -84,11 +85,20 @@ const renderPlot = function(el, dataset) {
 
     items
         .append("circle")
-        .attr("class", "line-class")
-        .attr("style", "fill: red; fill-opacity: 0.5; stroke: black; stroke-width: 2")
+        .attr("class", "dose_points")
+        .attr("style", "cursor: pointer; opacity: 0.7")
         .attr("cx", 0)
         .attr("cy", height)
-        .attr("r", 0);
+        .attr("r", 0)
+        .on("mouseenter", function() {
+            d3.select(this).style("opacity", 1.0);
+        })
+        .on("mouseout", function() {
+            d3.select(this).style("opacity", 0.7);
+        })
+        .on("click", d => {
+            Endpoint.displayAsModal(d["endpoint id"]);
+        });
 
     bindTooltip($tooltip, items, d => <Tooltip d={d} />);
 
