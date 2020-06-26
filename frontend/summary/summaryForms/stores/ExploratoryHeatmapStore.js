@@ -34,6 +34,7 @@ class ExploratoryHeatmapStore {
             show_axis_border: true,
             show_grid: true,
             show_tooltip: true,
+            show_totals: true,
             autosize_cells: true,
             autorotate_tick_labels: true,
             table_fields: [
@@ -50,6 +51,7 @@ class ExploratoryHeatmapStore {
             y_fields: [createDefaultAxisItem()],
             y_label: {text: "", x: 0, y: 0, rotate: 0},
             y_tick_rotate: -90,
+            x_axis_bottom: true,
         };
     }
 
