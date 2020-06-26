@@ -55,6 +55,10 @@ class DataPanel extends Component {
                     made public, users without team-level access will be unable to view the visual.`}
                     value={settings.data_url}
                 />
+                <p className="help-block">
+                    <span className="label">Note</span> Data used for rendered visual are cached for
+                    10 minutes.
+                </p>
             </div>
         );
     }
