@@ -27,13 +27,30 @@ class HeatmapDatastore {
         this.getDetailUrl = this.getDetailUrl.bind(this);
         this.modal = new HAWCModal();
         this.settings = settings;
-        this.dataset = dataset;
+        this.dataset = this.setDataset(dataset);
         this.dpe = new DataPivotExtension();
         this.intersection = this.setIntersection();
         this.filterWidgetState = this.setFilterWidgetState();
         this.scales = this.setScales();
         this.totals = this.setTotals();
         this.setColorScale();
+    }
+
+    setDataset(dataset) {
+        if (this.settings.show_null) {
+            return dataset;
+        } else {
+            let x_fields = toJS(this.settings.x_fields),
+                y_fields = toJS(this.settings.y_fields);
+            return dataset.filter(row => {
+                for (const field of [...x_fields, ...y_fields]) {
+                    if (!row[field.column]) {
+                        return false;
+                    }
+                }
+                return true;
+            });
+        }
     }
 
     setIntersection() {
@@ -88,7 +105,7 @@ class HeatmapDatastore {
     }
 
     setScales() {
-        const setScales = function(fields, intersection) {
+        const setScales = (fields, intersection) => {
             const columns = fields.map(field => field.column),
                 items = columns.map(column => _.keys(intersection[column]).sort()),
                 permutations = h.cartesian(items);

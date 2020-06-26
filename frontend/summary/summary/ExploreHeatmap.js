@@ -97,6 +97,7 @@ class ExploreHeatmap extends BaseVisual {
             show_grid: settings.show_grid,
             show_tooltip: settings.show_tooltip,
             show_totals: settings.show_totals,
+            show_null: settings.show_null,
             autosize_cells: settings.autosize_cells,
             autorotate_tick_labels: settings.autorotate_tick_labels,
             table_fields: settings.table_fields.filter(d => d.column !== NULL_VALUE),

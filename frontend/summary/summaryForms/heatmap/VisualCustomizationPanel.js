@@ -143,6 +143,7 @@ class VisualCustomizationPanel extends Component {
                             name="autosize_cells"
                             onChange={e => changeSettings(e.target.name, e.target.checked)}
                             checked={settings.autosize_cells}
+                            helpText={"Overrides cell dimensions for calculated best fit"}
                         />
                     </div>
                 </div>
@@ -212,19 +213,21 @@ class VisualCustomizationPanel extends Component {
                     <div className="span3">
                         <CheckboxInput
                             id="compress_x"
-                            label="Compress X fields?"
+                            label="Compress X fields"
                             name="compress_x"
                             onChange={e => changeSettings(e.target.name, e.target.checked)}
                             checked={settings.compress_x}
+                            helpText={"Hides columns with no datapoints"}
                         />
                     </div>
                     <div className="span3">
                         <CheckboxInput
                             id="compress_y"
-                            label="Compress Y fields?"
+                            label="Compress Y fields"
                             name="compress_y"
                             onChange={e => changeSettings(e.target.name, e.target.checked)}
                             checked={settings.compress_y}
+                            helpText={"Hides rows with no datapoints"}
                         />
                     </div>
                     <div className="span3">
@@ -239,10 +242,21 @@ class VisualCustomizationPanel extends Component {
                     <div className="span3">
                         <CheckboxInput
                             id="show_totals"
-                            label="Show row/column totals"
+                            label="Show grand totals"
                             name="show_totals"
                             onChange={e => changeSettings(e.target.name, e.target.checked)}
                             checked={settings.show_totals}
+                        />
+                    </div>
+                </div>
+                <div className="row-fluid">
+                    <div className="span3">
+                        <CheckboxInput
+                            id="show_null"
+                            label="Show null field values"
+                            name="show_null"
+                            onChange={e => changeSettings(e.target.name, e.target.checked)}
+                            checked={settings.show_null}
                         />
                     </div>
                 </div>
@@ -275,6 +289,7 @@ class VisualCustomizationPanel extends Component {
                             name="autorotate_tick_labels"
                             onChange={e => changeSettings(e.target.name, e.target.checked)}
                             checked={settings.autorotate_tick_labels}
+                            helpText={"Overrides tick rotations with calculated fit"}
                         />
                     </div>
                 </div>
@@ -294,7 +309,7 @@ class VisualCustomizationPanel extends Component {
                     <div className="span3">
                         <CheckboxInput
                             id="show_axis_border"
-                            label="Show axis border"
+                            label="Show tick border"
                             name="show_axis_border"
                             onChange={e => changeSettings(e.target.name, e.target.checked)}
                             checked={settings.show_axis_border}
@@ -302,12 +317,12 @@ class VisualCustomizationPanel extends Component {
                     </div>
                 </div>
 
-                <h4>Labels</h4>
+                <h4>Title</h4>
                 <div className="row-fluid">
                     <div className="span4">
                         <FloatInput
                             name="title.x"
-                            label="Title x-coordinate"
+                            label="X-coordinate"
                             value={settings.title.x}
                             onChange={e =>
                                 changeSettings(e.target.name, parseFloat(e.target.value))
@@ -317,7 +332,7 @@ class VisualCustomizationPanel extends Component {
                     <div className="span4">
                         <FloatInput
                             name="title.y"
-                            label="Title y-coordinate"
+                            label="Y-coordinate"
                             value={settings.title.y}
                             onChange={e =>
                                 changeSettings(e.target.name, parseFloat(e.target.value))
@@ -327,7 +342,7 @@ class VisualCustomizationPanel extends Component {
                     <div className="span4">
                         <FloatInput
                             name="title.rotate"
-                            label="Title rotation"
+                            label="Rotation"
                             value={settings.title.rotate}
                             onChange={e =>
                                 changeSettings(e.target.name, parseFloat(e.target.value))
@@ -335,11 +350,12 @@ class VisualCustomizationPanel extends Component {
                         />
                     </div>
                 </div>
+                <h4>X-axis label</h4>
                 <div className="row-fluid">
                     <div className="span4">
                         <FloatInput
                             name="x_label.x"
-                            label="X-axis label x-coordinate"
+                            label="X-coordinate"
                             value={settings.x_label.x}
                             onChange={e =>
                                 changeSettings(e.target.name, parseFloat(e.target.value))
@@ -349,7 +365,7 @@ class VisualCustomizationPanel extends Component {
                     <div className="span4">
                         <FloatInput
                             name="x_label.y"
-                            label="X-axis label y-coordinate"
+                            label="Y-coordinate"
                             value={settings.x_label.y}
                             onChange={e =>
                                 changeSettings(e.target.name, parseFloat(e.target.value))
@@ -359,7 +375,7 @@ class VisualCustomizationPanel extends Component {
                     <div className="span4">
                         <FloatInput
                             name="x_label.rotate"
-                            label="X-axis label rotation"
+                            label="Rotation"
                             value={settings.x_label.rotate}
                             onChange={e =>
                                 changeSettings(e.target.name, parseFloat(e.target.value))
@@ -367,11 +383,12 @@ class VisualCustomizationPanel extends Component {
                         />
                     </div>
                 </div>
+                <h4>Y-axis label</h4>
                 <div className="row-fluid">
                     <div className="span4">
                         <FloatInput
                             name="y_label.x"
-                            label="Y-axis label x-coordinate"
+                            label="X-coordinate"
                             value={settings.y_label.x}
                             onChange={e =>
                                 changeSettings(e.target.name, parseFloat(e.target.value))
@@ -381,7 +398,7 @@ class VisualCustomizationPanel extends Component {
                     <div className="span4">
                         <FloatInput
                             name="y_label.y"
-                            label="Y-axis label y-coordinate"
+                            label="Y-coordinate"
                             value={settings.y_label.y}
                             onChange={e =>
                                 changeSettings(e.target.name, parseFloat(e.target.value))
@@ -391,7 +408,7 @@ class VisualCustomizationPanel extends Component {
                     <div className="span4">
                         <FloatInput
                             name="y_label.rotate"
-                            label="Y-axis label rotation"
+                            label="Rotation"
                             value={settings.y_label.rotate}
                             onChange={e =>
                                 changeSettings(e.target.name, parseFloat(e.target.value))
