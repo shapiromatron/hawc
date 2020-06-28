@@ -13,15 +13,11 @@ import Endpoint from "animal/Endpoint";
 import Tooltip from "./Tooltip";
 
 const renderPlot = function(el, values) {
-    const margin = {top: 20, right: 30, bottom: 30, left: 30},
-        width = 960 - margin.left - margin.right,
+    const margin = {top: 20, right: 100, bottom: 30, left: 30},
+        width = Math.max($(el).width(), 800) - margin.left - margin.right,
         height = 300 - margin.top - margin.bottom,
         xjitter = width / 100,
-        yjitter = height,
-        valueTypes = _.chain(values)
-            .map(d => d.type)
-            .uniq()
-            .value();
+        yjitter = height;
 
     let xExtent = d3.extent(values, d => d.dose),
         xFloor = 10 ** Math.floor(Math.log10(xExtent[0])),
@@ -46,7 +42,7 @@ const renderPlot = function(el, values) {
         .domain(["noel", "loel", "fel", "bmd", "bmdl"])
         .range(["#ff7f0e", "#1f77b4", "#d62728", "#2ca02c", "#9467bd"]);
 
-    let numTicks = (Math.ceil(Math.log10(xExtent[1])) - Math.floor(Math.log10(xExtent[0]))) * 2,
+    let numTicks = Math.ceil(Math.log10(xExtent[1])) - Math.floor(Math.log10(xExtent[0])),
         xAxis = d3.svg
             .axis()
             .scale(x)
@@ -108,13 +104,15 @@ const renderPlot = function(el, values) {
             let legend = svg
                 .append("g")
                 .attr("class", "color-legend")
-                .attr("transform", `translate(${width - 80},${15})`);
+                .attr("transform", `translate(${width + 5},${15})`);
 
             legend
                 .append("text")
+                .attr("class", "critical-dose-legend-text")
+                .attr("style", "font-weight: bold;")
                 .attr("dx", -6)
                 .attr("dy", -15)
-                .text("Critical value type");
+                .text("Critical value");
 
             legend
                 .selectAll(".item")
@@ -130,6 +128,7 @@ const renderPlot = function(el, values) {
                         .attr("r", 6);
                     d3.select(this)
                         .append("text")
+                        .attr("class", "critical-dose-legend-text")
                         .attr("dx", 10)
                         .attr("dy", 4)
                         .text(d.toUpperCase());

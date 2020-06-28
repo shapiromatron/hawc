@@ -84,6 +84,10 @@ unrecognized HTML expressions.
     stroke: black;
     stroke-width: 3px;
 }
+.critical-dose-legend-text{
+    font-size: 0.9em;
+    fill: #646464;
+}
 
 
 /* dose-response data points */
