@@ -7,6 +7,7 @@ import Loading from "shared/components/Loading";
 import DataTable from "shared/components/DataTable";
 
 import Plot from "./Plot";
+import Widgets from "./Widgets";
 
 @inject("store")
 @observer
@@ -14,15 +15,18 @@ class EndpointListApp extends React.Component {
     render() {
         const {store} = this.props;
 
-        if (!store.plottingDataset) {
+        if (!store.plotData) {
             return <Loading />;
         }
 
         return (
             <div>
+                <Widgets />
                 <Plot />
-                <p>Num items {store.plottingDataset.length}</p>
-                {/* <DataTable dataset={store.plottingDataset} /> */}
+                <p>
+                    <b>{store.filteredData.length}</b> endpoints selected.
+                </p>
+                <DataTable dataset={store.filteredData} />
             </div>
         );
     }

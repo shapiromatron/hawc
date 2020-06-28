@@ -1,3 +1,4 @@
+import d3 from "d3";
 import $ from "$";
 import _ from "lodash";
 
@@ -282,3 +283,9 @@ $.ajaxSetup({
         }
     },
 });
+
+d3.selection.prototype.moveToFront = function() {
+    return this.each(function() {
+        this.parentNode.appendChild(this);
+    });
+};

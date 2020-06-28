@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import React from "react";
 import d3 from "d3";
 import {inject, observer} from "mobx-react";
-import {toJS} from "mobx";
+import {autorun, toJS} from "mobx";
 
 import h from "shared/utils/helpers";
 import bindTooltip from "shared/components/Tooltip";
@@ -11,7 +11,7 @@ import Endpoint from "animal/Endpoint";
 
 import Tooltip from "./Tooltip";
 
-const dodgeLogararithmic = (data, x, radius) => {
+const dodgeLogarithmic = (data, x, radius) => {
         // https://observablehq.com/@d3/beeswarm-iii
         const radius2 = radius ** 2,
             circles = data.map(d => ({x: x(d.dose), data: d})).sort((a, b) => a.x - b.x),
@@ -56,15 +56,21 @@ const dodgeLogararithmic = (data, x, radius) => {
         return circles;
     },
     renderPlot = function(el, values) {
+        // always start fresh
+        $(el).empty();
+
         const margin = {top: 20, right: 100, bottom: 30, left: 30},
             width = Math.max($(el).width(), 800) - margin.left - margin.right,
             height =
-                Math.max(
-                    window.innerHeight -
-                        el.getBoundingClientRect().top -
-                        margin.top -
-                        margin.bottom,
-                    400
+                Math.min(
+                    600,
+                    Math.max(
+                        window.innerHeight -
+                            el.getBoundingClientRect().top -
+                            margin.top -
+                            margin.bottom,
+                        400
+                    )
                 ) -
                 margin.top -
                 margin.bottom,
@@ -78,13 +84,13 @@ const dodgeLogararithmic = (data, x, radius) => {
                 .domain([xFloor, xCeil])
                 .range([0, width]);
 
-        // Generate a histogram using twenty uniformly-spaced bins.
-        let data = d3.layout.histogram().bins(x.ticks(20))(values, d => d.dose);
+        let scaledData = dodgeLogarithmic(values, x, itemRadius);
 
-        let y = d3.scale
-            .linear()
-            .domain(d3.extent(data))
-            .range([height, 10]);
+        let yBaseMaxRange = height - itemRadius - 2,
+            y = d3.scale
+                .linear()
+                .domain(d3.extent(scaledData.map(d => d.y)))
+                .range([yBaseMaxRange, 0]);
 
         // hard code values for consistency
         // using d3.category10
@@ -116,8 +122,6 @@ const dodgeLogararithmic = (data, x, radius) => {
             .attr("transform", `translate(0,${height})`)
             .call(xAxis);
 
-        let scaledData = dodgeLogararithmic(values, x, itemRadius);
-
         let items = svg
             .selectAll(".items")
             .data(scaledData)
@@ -132,15 +136,19 @@ const dodgeLogararithmic = (data, x, radius) => {
             .attr("cy", height)
             .attr("r", 0)
             .attr("fill", d => colorScale(d.data.type))
+            .on("mouseenter", function() {
+                d3.select(this).moveToFront();
+            })
             .on("click", d => Endpoint.displayAsModal(d.data.data["endpoint id"]));
 
         bindTooltip($tooltip, items, d => <Tooltip d={d.data} />);
 
         const refresh = function(values) {
-                let data = dodgeLogararithmic(values, x, itemRadius);
+                let data = dodgeLogarithmic(values, x, itemRadius),
+                    maxY = d3.max(data, d => d.y);
 
                 // Reset y domain using new data
-                y.domain([0, d3.max(data, d => d.y)]);
+                y.domain([0, Math.max(yBaseMaxRange / Math.sqrt(itemRadius), maxY)]);
 
                 // Remove object with data
                 let items = svg.selectAll(".items").data(data);
@@ -156,7 +164,7 @@ const dodgeLogararithmic = (data, x, radius) => {
                 let legend = svg
                     .append("g")
                     .attr("class", "color-legend")
-                    .attr("transform", `translate(${width + 5},${15})`);
+                    .attr("transform", `translate(${width + 15},${15})`);
 
                 legend
                     .append("text")
@@ -194,11 +202,12 @@ const dodgeLogararithmic = (data, x, radius) => {
 @observer
 class Plot extends React.Component {
     componentDidMount() {
-        const el = document.getElementById(h.hashString("a"));
-        renderPlot(el, toJS(this.props.store.plottingDataset));
+        const el = document.getElementById(this.divId);
+        autorun(() => renderPlot(el, toJS(this.props.store.plotData)));
     }
     render() {
-        return <div id={h.hashString("a")}></div>;
+        this.divId = h.randomString();
+        return <div id={this.divId}></div>;
     }
 }
 Plot.propTypes = {
