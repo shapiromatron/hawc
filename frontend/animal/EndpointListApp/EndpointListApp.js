@@ -14,14 +14,15 @@ class EndpointListApp extends React.Component {
     render() {
         const {store} = this.props;
 
-        if (!store.hasDataset) {
+        if (!store.plottingDataset) {
             return <Loading />;
         }
 
         return (
             <div>
                 <Plot />
-                <DataTable dataset={store.dataset} />
+                <p>Num items {store.plottingDataset.length}</p>
+                {/* <DataTable dataset={store.plottingDataset} /> */}
             </div>
         );
     }
