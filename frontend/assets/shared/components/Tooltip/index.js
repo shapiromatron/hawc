@@ -20,7 +20,7 @@ TooltipContainer.propTypes = {
     children: PropTypes.element.isRequired,
 };
 
-const bindTooltip = function($el, d3Selection, buildChildComponent) {
+const bindTooltip = function($el, d3Selection, buildChildComponent, mouseEnterExtra) {
     /*
 
     Add tooltip to d3 selection. To use this method:
@@ -41,6 +41,9 @@ const bindTooltip = function($el, d3Selection, buildChildComponent) {
                 <TooltipContainer>{buildChildComponent(...arguments)}</TooltipContainer>,
                 $el[0]
             );
+            if (mouseEnterExtra) {
+                mouseEnterExtra();
+            }
         })
         .on("mousemove", () =>
             $el.css({

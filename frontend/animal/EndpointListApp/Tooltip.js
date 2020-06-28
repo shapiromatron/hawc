@@ -10,6 +10,10 @@ class Tooltip extends Component {
         return (
             <div style={{minWidth: 300}}>
                 <table className="table table-condensed table-striped">
+                    <colgroup>
+                        <col width={"100px"} />
+                        <col width={"200px"} />
+                    </colgroup>
                     <tbody>
                         <tr>
                             <th>Study</th>
@@ -20,7 +24,13 @@ class Tooltip extends Component {
                             <td>{d.data["animal group name"]}</td>
                         </tr>
                         <tr>
-                            <th>System, organ, etc</th>
+                            <th>
+                                System,
+                                <br />
+                                organ,
+                                <br />
+                                effect, etc.
+                            </th>
                             <td dangerouslySetInnerHTML={{__html: classification}}></td>
                         </tr>
                         <tr>

@@ -122,26 +122,26 @@ const dodgeLogarithmic = (data, x, radius) => {
             .attr("transform", `translate(0,${height})`)
             .call(xAxis);
 
-        let items = svg
-            .selectAll(".items")
+        let itemsGroup = svg.append("g").attr("class", "items");
+
+        let items = itemsGroup
+            .selectAll(".critical-dose")
             .data(scaledData)
             .enter()
-            .append("g")
-            .attr("class", "items");
-
-        items
             .append("circle")
             .attr("class", "critical-dose")
             .attr("cx", d => d.x)
             .attr("cy", height)
             .attr("r", 0)
             .attr("fill", d => colorScale(d.data.type))
-            .on("mouseenter", function() {
-                d3.select(this).moveToFront();
-            })
             .on("click", d => Endpoint.displayAsModal(d.data.data["endpoint id"]));
 
-        bindTooltip($tooltip, items, d => <Tooltip d={d.data} />);
+        bindTooltip(
+            $tooltip,
+            items,
+            d => <Tooltip d={d.data} />,
+            () => d3.select(event.target).moveToFront()
+        );
 
         const refresh = function(values) {
                 let data = dodgeLogarithmic(values, x, itemRadius),
@@ -151,10 +151,9 @@ const dodgeLogarithmic = (data, x, radius) => {
                 y.domain([0, Math.max(yBaseMaxRange / Math.sqrt(itemRadius), maxY)]);
 
                 // Remove object with data
-                let items = svg.selectAll(".items").data(data);
+                let items = svg.selectAll(".critical-dose").data(data);
                 items.exit().remove();
                 items
-                    .select("circle")
                     .transition()
                     .delay((d, i) => i)
                     .attr("cy", d => y(d.y))
