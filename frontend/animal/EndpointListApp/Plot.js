@@ -1,4 +1,3 @@
-import _ from "lodash";
 import $ from "$";
 import PropTypes from "prop-types";
 import React from "react";
@@ -12,131 +11,184 @@ import Endpoint from "animal/Endpoint";
 
 import Tooltip from "./Tooltip";
 
-const renderPlot = function(el, values) {
-    const margin = {top: 20, right: 100, bottom: 30, left: 30},
-        width = Math.max($(el).width(), 800) - margin.left - margin.right,
-        height = 300 - margin.top - margin.bottom,
-        xjitter = width / 100,
-        yjitter = height;
+const dodgeLogararithmic = (data, x, radius) => {
+        // https://observablehq.com/@d3/beeswarm-iii
+        const radius2 = radius ** 2,
+            circles = data.map(d => ({x: x(d.dose), data: d})).sort((a, b) => a.x - b.x),
+            epsilon = 1e-3;
+        let head = null,
+            tail = null;
 
-    let xExtent = d3.extent(values, d => d.dose),
-        xFloor = 10 ** Math.floor(Math.log10(xExtent[0])),
-        xCeil = 10 ** Math.ceil(Math.log10(xExtent[1])),
-        x = d3.scale
-            .log()
-            .domain([xFloor, xCeil])
-            .range([0, width]);
+        // Returns true if circle ⟨x,y⟩ intersects with any circle in the queue.
+        function intersects(x, y) {
+            let a = head;
+            while (a) {
+                if (radius2 - epsilon > (a.x - x) ** 2 + (a.y - y) ** 2) {
+                    return true;
+                }
+                a = a.next;
+            }
+            return false;
+        }
 
-    // Generate a histogram using twenty uniformly-spaced bins.
-    let data = d3.layout.histogram().bins(x.ticks(20))(values, d => d.dose);
+        // Place each circle sequentially.
+        for (const b of circles) {
+            // Remove circles from the queue that can’t intersect the new circle b.
+            while (head && head.x < b.x - radius2) head = head.next;
 
-    let y = d3.scale
-        .linear()
-        .domain(d3.extent(data))
-        .range([height, 0]);
+            // Choose the minimum non-intersecting tangent.
+            if (intersects(b.x, (b.y = 0))) {
+                let a = head;
+                b.y = Infinity;
+                do {
+                    let y = a.y + Math.sqrt(radius2 - (a.x - b.x) ** 2);
+                    if (y < b.y && !intersects(b.x, y)) b.y = y;
+                    a = a.next;
+                } while (a);
+            }
 
-    // hard code values for consistency
-    // using d3.category10
-    let colorScale = d3.scale
-        .ordinal()
-        .domain(["noel", "loel", "fel", "bmd", "bmdl"])
-        .range(["#ff7f0e", "#1f77b4", "#d62728", "#2ca02c", "#9467bd"]);
+            // Add b to the queue.
+            b.next = null;
+            if (head === null) head = tail = b;
+            else tail = tail.next = b;
+        }
 
-    let numTicks = Math.ceil(Math.log10(xExtent[1])) - Math.floor(Math.log10(xExtent[0])),
-        xAxis = d3.svg
-            .axis()
-            .scale(x)
-            .orient("bottom")
-            .ticks(numTicks, ",.f")
-            .tickSize(6, 0);
+        return circles;
+    },
+    renderPlot = function(el, values) {
+        const margin = {top: 20, right: 100, bottom: 30, left: 30},
+            width = Math.max($(el).width(), 800) - margin.left - margin.right,
+            height =
+                Math.max(
+                    window.innerHeight -
+                        el.getBoundingClientRect().top -
+                        margin.top -
+                        margin.bottom,
+                    400
+                ) -
+                margin.top -
+                margin.bottom,
+            itemRadius = 5;
 
-    let $tooltip = $("<div>").appendTo(el);
+        let xExtent = d3.extent(values, d => d.dose),
+            xFloor = 10 ** Math.floor(Math.log10(xExtent[0])),
+            xCeil = 10 ** Math.ceil(Math.log10(xExtent[1])),
+            x = d3.scale
+                .log()
+                .domain([xFloor, xCeil])
+                .range([0, width]);
 
-    let svg = d3
-        .select(el)
-        .append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
-        .append("g")
-        .attr("transform", `translate(${margin.left},${margin.top})`);
+        // Generate a histogram using twenty uniformly-spaced bins.
+        let data = d3.layout.histogram().bins(x.ticks(20))(values, d => d.dose);
 
-    svg.append("g")
-        .attr("class", "x axis")
-        .attr("transform", "translate(0," + height + ")")
-        .call(xAxis);
+        let y = d3.scale
+            .linear()
+            .domain(d3.extent(data))
+            .range([height, 10]);
 
-    let items = svg
-        .selectAll(".items")
-        .data(values)
-        .enter()
-        .append("g")
-        .attr("class", "items");
+        // hard code values for consistency
+        // using d3.category10
+        let colorScale = d3.scale
+            .ordinal()
+            .domain(["noel", "loel", "fel", "bmd", "bmdl"])
+            .range(["#ff7f0e", "#1f77b4", "#d62728", "#2ca02c", "#9467bd"]);
 
-    items
-        .append("circle")
-        .attr("class", "critical-dose")
-        .attr("cx", d => -Math.random() * xjitter + xjitter / 2 + x(d.dose))
-        .attr("cy", height)
-        .attr("r", 0)
-        .attr("fill", d => colorScale(d.type))
-        .on("click", d => Endpoint.displayAsModal(d["endpoint id"]));
+        let numTicks = Math.ceil(Math.log10(xExtent[1])) - Math.floor(Math.log10(xExtent[0])),
+            xAxis = d3.svg
+                .axis()
+                .scale(x)
+                .orient("bottom")
+                .ticks(numTicks, ",.f")
+                .tickSize(6, 0);
 
-    bindTooltip($tooltip, items, d => <Tooltip d={d} />);
+        let $tooltip = $("<div>").appendTo(el);
 
-    const refresh = function(values) {
-            let data = d3.layout.histogram().bins(x.ticks(20))(values, d => d.dose);
+        let svg = d3
+            .select(el)
+            .append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", `translate(${margin.left},${margin.top})`);
 
-            // Reset y domain using new data
-            let yMax = d3.max(data, d => d.length);
-            y.domain([0, yMax]);
+        svg.append("g")
+            .attr("class", "x axis")
+            .attr("transform", `translate(0,${height})`)
+            .call(xAxis);
 
-            // Remove object with data
-            let items = svg.selectAll(".items").data(values);
-            items.exit().remove();
-            items
-                .select("circle")
-                .transition()
-                .delay((d, i) => i)
-                .attr("cy", d => -Math.random() * yjitter + (height - 10))
-                .attr("r", 6);
-        },
-        colorLegend = function() {
-            let legend = svg
-                .append("g")
-                .attr("class", "color-legend")
-                .attr("transform", `translate(${width + 5},${15})`);
+        let scaledData = dodgeLogararithmic(values, x, itemRadius);
 
-            legend
-                .append("text")
-                .attr("class", "critical-dose-legend-text")
-                .attr("style", "font-weight: bold;")
-                .attr("dx", -6)
-                .attr("dy", -15)
-                .text("Critical value");
+        let items = svg
+            .selectAll(".items")
+            .data(scaledData)
+            .enter()
+            .append("g")
+            .attr("class", "items");
 
-            legend
-                .selectAll(".item")
-                .data(colorScale.domain())
-                .enter()
-                .append("g")
-                .attr("transform", (d, i) => `translate(0,${i * 15})`)
-                .each(function(d) {
-                    d3.select(this)
-                        .append("circle")
-                        .attr("class", "critical-dose-legend")
-                        .attr("fill", colorScale(d))
-                        .attr("r", 6);
-                    d3.select(this)
-                        .append("text")
-                        .attr("class", "critical-dose-legend-text")
-                        .attr("dx", 10)
-                        .attr("dy", 4)
-                        .text(d.toUpperCase());
-                });
-        };
-    colorLegend();
-    refresh(values);
-};
+        items
+            .append("circle")
+            .attr("class", "critical-dose")
+            .attr("cx", d => d.x)
+            .attr("cy", height)
+            .attr("r", 0)
+            .attr("fill", d => colorScale(d.data.type))
+            .on("click", d => Endpoint.displayAsModal(d.data.data["endpoint id"]));
+
+        bindTooltip($tooltip, items, d => <Tooltip d={d.data} />);
+
+        const refresh = function(values) {
+                let data = dodgeLogararithmic(values, x, itemRadius);
+
+                // Reset y domain using new data
+                y.domain([0, d3.max(data, d => d.y)]);
+
+                // Remove object with data
+                let items = svg.selectAll(".items").data(data);
+                items.exit().remove();
+                items
+                    .select("circle")
+                    .transition()
+                    .delay((d, i) => i)
+                    .attr("cy", d => y(d.y))
+                    .attr("r", itemRadius);
+            },
+            colorLegend = function() {
+                let legend = svg
+                    .append("g")
+                    .attr("class", "color-legend")
+                    .attr("transform", `translate(${width + 5},${15})`);
+
+                legend
+                    .append("text")
+                    .attr("class", "critical-dose-legend-text")
+                    .attr("style", "font-weight: bold;")
+                    .attr("dx", -6)
+                    .attr("dy", -15)
+                    .text("Critical value");
+
+                legend
+                    .selectAll(".item")
+                    .data(colorScale.domain())
+                    .enter()
+                    .append("g")
+                    .attr("transform", (d, i) => `translate(0,${i * 15})`)
+                    .each(function(d) {
+                        d3.select(this)
+                            .append("circle")
+                            .attr("class", "critical-dose-legend")
+                            .attr("fill", colorScale(d))
+                            .attr("r", itemRadius);
+                        d3.select(this)
+                            .append("text")
+                            .attr("class", "critical-dose-legend-text")
+                            .attr("dx", 10)
+                            .attr("dy", 4)
+                            .text(d.toUpperCase());
+                    });
+            };
+        colorLegend();
+        refresh(values);
+    };
 
 @inject("store")
 @observer
