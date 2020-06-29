@@ -138,7 +138,6 @@ class FilterWidget extends Component {
             return (
                 <button
                     className="btn btn-mini pull-right disabled"
-                    onClick={() => showModalClick(widget.on_click_event, modalRows[0])}
                     title="No additional information">
                     <i className="icon-eye-close"></i>
                 </button>
@@ -147,10 +146,7 @@ class FilterWidget extends Component {
         // If there are too many results disable button
         else if (modalRows.length > 10) {
             return (
-                <button
-                    className="btn btn-mini pull-right disabled"
-                    onClick={() => showModalClick(widget.on_click_event, modalRows[0])}
-                    title="Too many results">
+                <button className="btn btn-mini pull-right disabled" title="Too many results">
                     <i className="icon-eye-open"></i>
                 </button>
             );
