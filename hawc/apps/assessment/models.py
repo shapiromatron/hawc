@@ -23,7 +23,6 @@ from ..myuser.models import HAWCUser
 from . import managers
 from .tasks import add_time_spent
 
-
 NOEL_NAME_CHOICES_NOEL = 0
 NOEL_NAME_CHOICES_NOAEL = 1
 NOEL_NAME_CHOICES_NEL = 2
