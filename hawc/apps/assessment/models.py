@@ -200,10 +200,13 @@ class Assessment(models.Model):
         return self
 
     def get_absolute_url(self):
-        return reverse("assessment:detail", args=[str(self.pk)])
+        return reverse("assessment:detail", args=(self.id,))
 
     def get_casrn_url(self):
         return get_casrn_url(self.cas)
+
+    def get_clear_cache_url(self):
+        return reverse("assessment:clear_cache", args=(self.id,))
 
     class Meta:
         ordering = ("-created",)
