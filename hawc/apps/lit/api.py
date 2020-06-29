@@ -155,7 +155,6 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         """
         Get tags formatted in a long format desireable for heatmaps.
         """
-        # TODO HEATMAP - tests
         instance = self.get_object()
         tree = models.ReferenceFilterTag.get_all_tags(instance.id, json_encode=False)
         tag_qs = models.ReferenceTags.objects.assessment_qs(instance.id)

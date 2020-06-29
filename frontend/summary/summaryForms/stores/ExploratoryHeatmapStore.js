@@ -34,6 +34,8 @@ class ExploratoryHeatmapStore {
             show_axis_border: true,
             show_grid: true,
             show_tooltip: true,
+            show_totals: true,
+            show_null: true,
             autosize_cells: true,
             autorotate_tick_labels: true,
             table_fields: [
@@ -50,6 +52,7 @@ class ExploratoryHeatmapStore {
             y_fields: [createDefaultAxisItem()],
             y_label: {text: "", x: 0, y: 0, rotate: 0},
             y_tick_rotate: -90,
+            x_axis_bottom: true,
         };
     }
 
@@ -109,16 +112,6 @@ class ExploratoryHeatmapStore {
 
     @action.bound changeArraySettings(arrayKey, index, key, value) {
         this.settings[arrayKey][index][key] = value;
-    }
-
-    @action.bound changeSettingsMultiSelect(key, values) {
-        // TODO HEATMAP - create new SelectMultiple; remove Select multi={true/false} property
-        let selected = _.chain(event.target.options)
-            .filter(opt => opt.selected)
-            .map(opt => opt.value)
-            .value();
-
-        this.settings[key] = selected;
     }
 
     @action.bound changeDatasetUrl(value) {
