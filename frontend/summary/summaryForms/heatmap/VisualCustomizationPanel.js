@@ -5,6 +5,7 @@ import {Tab, Tabs, TabList, TabPanel} from "react-tabs";
 
 import CheckboxInput from "shared/components/CheckboxInput";
 import TextInput from "shared/components/TextInput";
+import SelectInput from "shared/components/SelectInput";
 
 import FloatInput from "shared/components/FloatInput";
 
@@ -113,7 +114,38 @@ class VisualCustomizationPanel extends Component {
         const {settings, changeSettings} = this.props.store.subclass;
         return (
             <div>
-                <h4>Plot padding</h4>
+                <h4>Plot</h4>
+                <div className="row-fluid">
+                    <div className="span3">
+                        <FloatInput
+                            name="cell_width"
+                            label="Cell width"
+                            value={settings.cell_width}
+                            onChange={e =>
+                                changeSettings(e.target.name, parseFloat(e.target.value))
+                            }
+                        />
+                    </div>
+                    <div className="span3">
+                        <FloatInput
+                            name="cell_height"
+                            label="Cell height"
+                            value={settings.cell_height}
+                            onChange={e =>
+                                changeSettings(e.target.name, parseFloat(e.target.value))
+                            }
+                        />
+                    </div>
+                    <div className="span3">
+                        <CheckboxInput
+                            label="Auto-size cells"
+                            name="autosize_cells"
+                            onChange={e => changeSettings(e.target.name, e.target.checked)}
+                            checked={settings.autosize_cells}
+                            helpText={"Overrides cell dimensions for calculated best fit"}
+                        />
+                    </div>
+                </div>
                 <div className="row-fluid">
                     <div className="span3">
                         <FloatInput
@@ -158,6 +190,73 @@ class VisualCustomizationPanel extends Component {
                 </div>
                 <div className="row-fluid">
                     <div className="span3">
+                        <TextInput
+                            label="Color range (start)"
+                            name="color_range1"
+                            type="color"
+                            value={settings.color_range[0]}
+                            onChange={e => changeSettings("color_range.0", e.target.value)}
+                        />
+                    </div>
+                    <div className="span3">
+                        <TextInput
+                            label="Color range (end)"
+                            name="color_range2"
+                            type="color"
+                            value={settings.color_range[1]}
+                            onChange={e => changeSettings("color_range.1", e.target.value)}
+                        />
+                    </div>
+                </div>
+                <div className="row-fluid">
+                    <div className="span3">
+                        <CheckboxInput
+                            label="Compress X fields?"
+                            name="compress_x"
+                            onChange={e => changeSettings(e.target.name, e.target.checked)}
+                            checked={settings.compress_x}
+                            helpText={"Hides columns with no datapoints"}
+                        />
+                    </div>
+                    <div className="span3">
+                        <CheckboxInput
+                            label="Compress Y fields?"
+                            name="compress_y"
+                            onChange={e => changeSettings(e.target.name, e.target.checked)}
+                            checked={settings.compress_y}
+                            helpText={"Hides rows with no datapoints"}
+                        />
+                    </div>
+                    <div className="span3">
+                        <CheckboxInput
+                            label="Show cell grid"
+                            name="show_grid"
+                            onChange={e => changeSettings(e.target.name, e.target.checked)}
+                            checked={settings.show_grid}
+                        />
+                    </div>
+                    <div className="span3">
+                        <CheckboxInput
+                            label="Show grand totals"
+                            name="show_totals"
+                            onChange={e => changeSettings(e.target.name, e.target.checked)}
+                            checked={settings.show_totals}
+                        />
+                    </div>
+                </div>
+                <div className="row-fluid">
+                    <div className="span3">
+                        <CheckboxInput
+                            label="Show null field values"
+                            name="show_null"
+                            onChange={e => changeSettings(e.target.name, e.target.checked)}
+                            checked={settings.show_null}
+                        />
+                    </div>
+                </div>
+                <h4>Axes</h4>
+                <div className="row-fluid">
+                    <div className="span3">
                         <FloatInput
                             name="x_tick_rotate"
                             label="X-axis tick rotation"
@@ -178,109 +277,45 @@ class VisualCustomizationPanel extends Component {
                         />
                     </div>
                     <div className="span3">
-                        <FloatInput
-                            name="cell_width"
-                            label="Cell width"
-                            value={settings.cell_width}
-                            onChange={e =>
-                                changeSettings(e.target.name, parseFloat(e.target.value))
-                            }
-                        />
-                    </div>
-                    <div className="span3">
-                        <FloatInput
-                            name="cell_height"
-                            label="Cell height"
-                            value={settings.cell_height}
-                            onChange={e =>
-                                changeSettings(e.target.name, parseFloat(e.target.value))
-                            }
-                        />
-                    </div>
-                </div>
-                <div className="row-fluid">
-                    <div className="span2">
-                        <TextInput
-                            label="Color range (start)"
-                            name="color_range1"
-                            type="color"
-                            value={settings.color_range[0]}
-                            onChange={e => changeSettings("color_range.0", e.target.value)}
-                        />
-                    </div>
-                    <div className="span2">
-                        <TextInput
-                            label="Color range (end)"
-                            name="color_range2"
-                            type="color"
-                            value={settings.color_range[1]}
-                            onChange={e => changeSettings("color_range.1", e.target.value)}
-                        />
-                    </div>
-                    <div className="span2">
-                        <CheckboxInput
-                            label="Compress X fields?"
-                            name="compress_x"
-                            onChange={e => changeSettings(e.target.name, e.target.checked)}
-                            checked={settings.compress_x}
-                        />
-                        <CheckboxInput
-                            label="Compress Y fields?"
-                            name="compress_y"
-                            onChange={e => changeSettings(e.target.name, e.target.checked)}
-                            checked={settings.compress_y}
-                        />
-                    </div>
-                    <div className="span2">
-                        <CheckboxInput
-                            label="Show grid"
-                            name="show_grid"
-                            onChange={e => changeSettings(e.target.name, e.target.checked)}
-                            checked={settings.show_grid}
-                        />
-                        <CheckboxInput
-                            label="Show axis border"
-                            name="show_axis_border"
-                            onChange={e => changeSettings(e.target.name, e.target.checked)}
-                            checked={settings.show_axis_border}
-                        />
-                    </div>
-                    <div className="span2">
-                        <CheckboxInput
-                            label="Auto-size heatmap cells"
-                            name="autosize_cells"
-                            onChange={e => changeSettings(e.target.name, e.target.checked)}
-                            checked={settings.autosize_cells}
-                        />
                         <CheckboxInput
                             label="Auto-rotate tick labels"
                             name="autorotate_tick_labels"
                             onChange={e => changeSettings(e.target.name, e.target.checked)}
                             checked={settings.autorotate_tick_labels}
+                            helpText={"Overrides tick rotations with calculated fit"}
                         />
                     </div>
-                    <div className="span2">
+                </div>
+                <div className="row-fluid">
+                    <SelectInput
+                        handleSelect={value => changeSettings("x_axis_bottom", value == "bottom")}
+                        choices={[
+                            {id: "top", label: "Top"},
+                            {id: "bottom", label: "Bottom"},
+                        ]}
+                        value={settings.x_axis_bottom ? "bottom" : "top"}
+                        multiple={false}
+                        label="X-axis position"
+                    />
+                </div>
+                <div className="row-fluid">
+                    <div className="span3">
                         <CheckboxInput
-                            label="HAWC interactivity"
-                            name="hawc_interactivity"
+                            id="show_axis_border"
+                            label="Show tick border"
+                            name="show_axis_border"
                             onChange={e => changeSettings(e.target.name, e.target.checked)}
-                            checked={settings.hawc_interactivity}
-                        />
-                        <CheckboxInput
-                            label="Show tooltips"
-                            name="show_tooltip"
-                            onChange={e => changeSettings(e.target.name, e.target.checked)}
-                            checked={settings.show_tooltip}
+                            checked={settings.show_axis_border}
                         />
                     </div>
                 </div>
 
-                <h4>Label coordinates</h4>
+                <h4>Title</h4>
                 <div className="row-fluid">
                     <div className="span4">
                         <FloatInput
                             name="title.x"
-                            label="Title x-coordinate"
+                            label="X-coordinate"
                             value={settings.title.x}
                             onChange={e =>
                                 changeSettings(e.target.name, parseFloat(e.target.value))
@@ -290,7 +325,7 @@ class VisualCustomizationPanel extends Component {
                     <div className="span4">
                         <FloatInput
                             name="title.y"
-                            label="Title y-coordinate"
+                            label="Y-coordinate"
                             value={settings.title.y}
                             onChange={e =>
                                 changeSettings(e.target.name, parseFloat(e.target.value))
@@ -300,7 +335,7 @@ class VisualCustomizationPanel extends Component {
                     <div className="span4">
                         <FloatInput
                             name="title.rotate"
-                            label="Title rotation"
+                            label="Rotation"
                             value={settings.title.rotate}
                             onChange={e =>
                                 changeSettings(e.target.name, parseFloat(e.target.value))
@@ -308,11 +343,12 @@ class VisualCustomizationPanel extends Component {
                         />
                     </div>
                 </div>
+                <h4>X-axis label</h4>
                 <div className="row-fluid">
                     <div className="span4">
                         <FloatInput
                             name="x_label.x"
-                            label="X-axis label x-coordinate"
+                            label="X-coordinate"
                             value={settings.x_label.x}
                             onChange={e =>
                                 changeSettings(e.target.name, parseFloat(e.target.value))
@@ -322,7 +358,7 @@ class VisualCustomizationPanel extends Component {
                     <div className="span4">
                         <FloatInput
                             name="x_label.y"
-                            label="X-axis label y-coordinate"
+                            label="Y-coordinate"
                             value={settings.x_label.y}
                             onChange={e =>
                                 changeSettings(e.target.name, parseFloat(e.target.value))
@@ -332,7 +368,7 @@ class VisualCustomizationPanel extends Component {
                     <div className="span4">
                         <FloatInput
                             name="x_label.rotate"
-                            label="X-axis label rotation"
+                            label="Rotation"
                             value={settings.x_label.rotate}
                             onChange={e =>
                                 changeSettings(e.target.name, parseFloat(e.target.value))
@@ -340,11 +376,12 @@ class VisualCustomizationPanel extends Component {
                         />
                     </div>
                 </div>
+                <h4>Y-axis label</h4>
                 <div className="row-fluid">
                     <div className="span4">
                         <FloatInput
                             name="y_label.x"
-                            label="Y-axis label x-coordinate"
+                            label="X-coordinate"
                             value={settings.y_label.x}
                             onChange={e =>
                                 changeSettings(e.target.name, parseFloat(e.target.value))
@@ -354,7 +391,7 @@ class VisualCustomizationPanel extends Component {
                     <div className="span4">
                         <FloatInput
                             name="y_label.y"
-                            label="Y-axis label y-coordinate"
+                            label="Y-coordinate"
                             value={settings.y_label.y}
                             onChange={e =>
                                 changeSettings(e.target.name, parseFloat(e.target.value))
@@ -364,11 +401,32 @@ class VisualCustomizationPanel extends Component {
                     <div className="span4">
                         <FloatInput
                             name="y_label.rotate"
-                            label="Y-axis label rotation"
+                            label="Rotation"
                             value={settings.y_label.rotate}
                             onChange={e =>
                                 changeSettings(e.target.name, parseFloat(e.target.value))
                             }
+                        />
+                    </div>
+                </div>
+                <h4>Interactivity</h4>
+                <div className="row-fluid">
+                    <div className="span3">
+                        <CheckboxInput
+                            id="hawc_interactivity"
+                            label="HAWC interactivity"
+                            name="hawc_interactivity"
+                            onChange={e => changeSettings(e.target.name, e.target.checked)}
+                            checked={settings.hawc_interactivity}
+                        />
+                    </div>
+                    <div className="span3">
+                        <CheckboxInput
+                            id="show_tooltip"
+                            label="Show tooltips"
+                            name="show_tooltip"
+                            onChange={e => changeSettings(e.target.name, e.target.checked)}
+                            checked={settings.show_tooltip}
                         />
                     </div>
                 </div>

@@ -46,7 +46,6 @@ class SummaryAssessmentViewset(viewsets.GenericViewSet):
     @action(detail=True, url_path="visual-heatmap-datasets")
     def heatmap_datasets(self, request, pk):
         """Returns a list of the heatmap datasets available for an assessment."""
-        # TODO HEATMAP - tests
         instance = self.get_object()
         datasets = models.Visual.get_heatmap_datasets(instance).dict()
         return Response(datasets)

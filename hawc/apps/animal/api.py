@@ -74,7 +74,6 @@ class AnimalAssessmentViewset(
         By default only shows data from published studies. If the query param `unpublished=true`
         is present then results from all studies are shown.
         """
-        # TODO HEATMAP - add tests
         self.set_legacy_attr(pk)
         self.permission_check_user_can_view()
         ser = HeatmapQuerySerializer(data=request.query_params)
@@ -98,7 +97,6 @@ class AnimalAssessmentViewset(
         By default only shows data from published studies. If the query param `unpublished=true`
         is present then results from all studies are shown.
         """
-        # TODO HEATMAP - add tests
         self.set_legacy_attr(pk)
         self.permission_check_user_can_view()
         ser = HeatmapQuerySerializer(data=request.query_params)

@@ -1481,7 +1481,6 @@ class Result(models.Model):
 
     @classmethod
     def heatmap_df(cls, assessment: Assessment, published_only: bool) -> pd.DataFrame:
-        # TODO HEATMAP - tests / get verbose names, check for other valuable fields for info?
         filters = {"outcome__assessment": assessment}
         if published_only:
             filters["outcome__study_population__study__published"] = True

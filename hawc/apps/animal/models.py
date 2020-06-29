@@ -926,7 +926,6 @@ class Endpoint(BaseEndpoint):
 
     @classmethod
     def heatmap_df(cls, assessment: Assessment, published_only: bool) -> pd.DataFrame:
-        # TODO HEATMAP - tests / get verbose name for route, sex, etc.
         filters: Dict[str, Any] = {"assessment_id": assessment}
         if published_only:
             filters["animal_group__experiment__study__published"] = True

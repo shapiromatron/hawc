@@ -9,6 +9,7 @@ import SmartTagContainer from "assets/smartTags/SmartTagContainer";
 import Loading from "shared/components/Loading";
 import BaseVisual from "./BaseVisual";
 import HAWCModal from "utils/HAWCModal";
+import HAWCUtils from "utils/HAWCUtils";
 import DatasetTable from "./heatmap/DatasetTable";
 import FilterWidgetContainer from "./heatmap/FilterWidgetContainer";
 import ExploreHeatmapPlot from "./ExploreHeatmapPlot";
@@ -98,6 +99,8 @@ class ExploreHeatmap extends BaseVisual {
             show_axis_border: settings.show_axis_border,
             show_grid: settings.show_grid,
             show_tooltip: settings.show_tooltip,
+            show_totals: settings.show_totals,
+            show_null: settings.show_null,
             autosize_cells: settings.autosize_cells,
             autorotate_tick_labels: settings.autorotate_tick_labels,
             table_fields: settings.table_fields.filter(d => d.column !== NULL_VALUE),
@@ -109,6 +112,7 @@ class ExploreHeatmap extends BaseVisual {
             y_fields: settings.y_fields.filter(d => d.column !== NULL_VALUE),
             y_label: settings.y_label,
             y_tick_rotate: settings.y_tick_rotate,
+            x_axis_bottom: settings.x_axis_bottom,
         };
     }
 
@@ -128,6 +132,24 @@ class ExploreHeatmap extends BaseVisual {
                 })
                 .then(callback);
         }
+    }
+
+    addActionsMenu() {
+        let {data_url} = this.data.settings,
+            csv_url = data_url.includes("?") ? `${data_url}&format=csv` : `${data_url}?format=csv`,
+            csv_text = `<i class="fa fa-file-text-o"></i> Download dataset (csv)`,
+            xlsx_url = data_url.includes("?")
+                ? `${data_url}&format=xlsx`
+                : `${data_url}?format=xlsx`,
+            xlsx_text = `<i class="fa fa-file-excel-o"></i> Download dataset (xlsx)`;
+        return HAWCUtils.pageActionsButton([
+            "Visualization editing",
+            {url: this.data.url_update, text: "Update"},
+            {url: this.data.url_delete, text: "Delete"},
+            "Dataset",
+            {url: csv_url, text: csv_text},
+            {url: xlsx_url, text: xlsx_text},
+        ]);
     }
 
     displayAsPage($el, options) {

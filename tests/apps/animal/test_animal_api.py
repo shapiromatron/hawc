@@ -13,6 +13,7 @@ class TestAssessmentViewset:
     def _test_animal_export(self, rewrite_data_files: bool, fn: str, url: str):
 
         client = APIClient()
+        assert client.login(username="rev@rev.com", password="pw") is True
         resp = client.get(url)
         assert resp.status_code == 200
 
@@ -69,5 +70,40 @@ class TestAssessmentViewset:
                 f"animal:api:assessment-endpoint-doses-heatmap", args=(db_keys.assessment_final,)
             )
             + "?format=json"
+        )
+        self._test_animal_export(rewrite_data_files, fn, url)
+
+    def test_study_heatmap(self, rewrite_data_files: bool, db_keys):
+
+        # published
+        fn = "api-animal-assessment-study-heatmap-unpublished-False.json"
+        url = (
+            reverse(f"animal:api:assessment-study-heatmap", args=(db_keys.assessment_final,))
+            + "?format=json&unpublished=false"
+        )
+        self._test_animal_export(rewrite_data_files, fn, url)
+
+        # unpublished
+        fn = "api-animal-assessment-study-heatmap-unpublished-True.json"
+        url = (
+            reverse(f"animal:api:assessment-study-heatmap", args=(db_keys.assessment_final,))
+            + "?format=json&unpublished=true"
+        )
+        self._test_animal_export(rewrite_data_files, fn, url)
+
+    def test_endpoint_heatmap(self, rewrite_data_files: bool, db_keys):
+        # published
+        fn = "api-animal-assessment-endpoint-heatmap-unpublished-False.json"
+        url = (
+            reverse(f"animal:api:assessment-endpoint-heatmap", args=(db_keys.assessment_final,))
+            + "?format=json&unpublished=false"
+        )
+        self._test_animal_export(rewrite_data_files, fn, url)
+
+        # unpublished
+        fn = "api-animal-assessment-endpoint-heatmap-unpublished-True.json"
+        url = (
+            reverse(f"animal:api:assessment-endpoint-heatmap", args=(db_keys.assessment_final,))
+            + "?format=json&unpublished=true"
         )
         self._test_animal_export(rewrite_data_files, fn, url)

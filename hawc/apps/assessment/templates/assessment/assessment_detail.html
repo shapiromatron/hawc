@@ -25,6 +25,7 @@
             <li><a href="{% url 'assessment:modules_update' object.pk %}">Update enabled modules</a></li>
             <li><a href="{% url 'assessment:delete' object.pk %}">Delete assessment</a></li>
             {% endif %}
+            <li><a href="{{ object.get_clear_cache_url }}">Clear assessment cache</a></li>
             <li><a href="{% url 'assessment:attachment_create' object.pk %}">Add an attachment</a></li>
             {% if user.is_beta_tester %}
             <li class="betatester"><a href="{% url 'assessment:dataset_create' object.pk %}">Add a dataset</a></li>
