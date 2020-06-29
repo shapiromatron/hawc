@@ -1,11 +1,9 @@
-import h from "shared/utils/helpers";
 import _ from "lodash";
 import React, {Component} from "react";
 import PropTypes from "prop-types";
 import {inject, observer} from "mobx-react";
 
-import {NULL_VALUE} from "../../summary/constants";
-import DataPivotExtension from "summary/dataPivot/DataPivotExtension";
+import h from "shared/utils/helpers";
 
 @observer
 class FilterWidget extends Component {
@@ -21,7 +19,7 @@ class FilterWidget extends Component {
             data = this.props.store.getTableData,
             availableItems = _.chain(data)
                 .map(d => d[widget.column])
-                .map(d => (widget.delimiter ? d.split(widget.delimiter) : d))
+                .map(d => (widget.delimiter && d ? d.split(widget.delimiter) : d))
                 .flatten()
                 .uniq()
                 .value(),
@@ -30,7 +28,7 @@ class FilterWidget extends Component {
                 .keys()
                 .filter(d => itemStore[d] === false)
                 .value(),
-            showClickEvent = widget.on_click_event !== NULL_VALUE,
+            filterWidgetExtension = this.props.store.extensions.filterWidgets[widget.column],
             items = _.sortedUniq([...availableItems, ...hiddenItems].sort());
 
         return (
@@ -50,7 +48,7 @@ class FilterWidget extends Component {
                         flex: 0,
                     }}>
                     <h4>
-                        {widget.column}
+                        {h.titleCase(widget.column)}
                         <div className="btn-group pull-right">
                             <button
                                 className="btn btn-small"
@@ -75,24 +73,26 @@ class FilterWidget extends Component {
                     {items
                         .sort()
                         .map((item, index) =>
-                            this.renderItem(widget, item, index, itemStore, showClickEvent)
+                            this.renderItem(widget, item, index, itemStore, filterWidgetExtension)
                         )}
                 </div>
             </div>
         );
     }
 
-    renderItem(widget, item, index, itemStore, showClickEvent) {
+    renderItem(widget, item, index, itemStore, filterWidgetExtension) {
         const {toggleItemSelection, colorScale} = this.props.store,
             data = this.props.store.getTableData,
             numItems = data.filter(d =>
-                widget.delimiter
+                widget.delimiter && d[widget.column]
                     ? _.includes(d[widget.column].split(widget.delimiter), item)
                     : d[widget.column] === item
             ).length;
         return (
             <div key={index}>
-                {this.renderButton(widget, item, showClickEvent)}
+                {filterWidgetExtension && filterWidgetExtension.hasModal
+                    ? this.renderButton(widget, item)
+                    : null}
                 <label className="checkbox">
                     <div
                         style={{
@@ -119,30 +119,28 @@ class FilterWidget extends Component {
         );
     }
 
-    renderButton(widget, item, showClickEvent) {
-        if (!showClickEvent) {
-            return null;
-        }
-        const {showModalClick} = this.props.store,
-            modalTarget = _.find(DataPivotExtension.values, {_dpe_name: widget.on_click_event})
-                ._dpe_key,
+    renderButton(widget, item) {
+        const extensions = this.props.store.extensions.filterWidgets,
+            {showModalOnRow} = this.props.store,
+            extension = extensions[widget.column],
+            row_key = extension._dpe_key,
             modalRows = _.chain(this.props.store.dataset)
                 .filter({
                     [widget.column]: item,
                 })
-                .uniqBy(modalTarget)
-                .sortBy(modalTarget)
+                .uniqBy(row_key)
+                .sortBy(row_key)
                 .value();
+
         // If there are no results disable button
         if (modalRows.length == 0) {
             return (
-                <button
-                    className="btn btn-mini pull-right disabled"
-                    title="No additional information">
+                <button className="btn btn-mini pull-right disabled" title="No content found">
                     <i className="icon-eye-close"></i>
                 </button>
             );
         }
+
         // If there are too many results disable button
         else if (modalRows.length > 10) {
             return (
@@ -151,17 +149,19 @@ class FilterWidget extends Component {
                 </button>
             );
         }
+
         // If there is one result link it to the button
         else if (modalRows.length == 1) {
             return (
                 <button
                     className="btn btn-mini pull-right"
-                    onClick={() => showModalClick(widget.on_click_event, modalRows[0])}
+                    onClick={() => showModalOnRow(extension, modalRows[0])}
                     title="View additional information">
                     <i className="icon-eye-open"></i>
                 </button>
             );
         }
+
         // If there are multiple results make the button a dropdown
         else {
             return (
@@ -175,15 +175,13 @@ class FilterWidget extends Component {
                         <i className="icon-eye-open"></i>
                     </a>
                     <ul className="dropdown-menu">
-                        <li className="nav-header">{modalTarget}</li>
+                        <li className="nav-header">{row_key}</li>
                         <li className="divider"></li>
                         {modalRows.map((row, idx) => {
                             return (
                                 <li key={idx}>
-                                    <a
-                                        href="#"
-                                        onClick={() => showModalClick(widget.on_click_event, row)}>
-                                        {row[modalTarget]}
+                                    <a href="#" onClick={() => showModalOnRow(extension, row)}>
+                                        {row[row_key]}
                                     </a>
                                 </li>
                             );

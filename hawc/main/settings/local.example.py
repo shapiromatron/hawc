@@ -21,4 +21,4 @@ BMD_HOST = "http://example.com"  # optional; used for BMD module
 HAWC_FLAVOR = "PRIME"
 
 # cache for 1 sec instead
-CACHE_10_MIN = 1
+CACHE_1_HR = 1

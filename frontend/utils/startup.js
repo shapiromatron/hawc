@@ -1,3 +1,4 @@
+import d3 from "d3";
 import $ from "$";
 import _ from "lodash";
 
@@ -53,11 +54,6 @@ _.extend(String, {
         var rgb = String.hex_to_rgb(hex),
             a = 1 - (0.299 * rgb.r + 0.587 * rgb.g + 0.114 * rgb.b) / 255;
         return a < 0.5 ? "#404040" : "#ffffff";
-    },
-    random_string() {
-        return "xxxxxxxxxxxxxxx".replace(/x/g, function(c) {
-            return String.fromCharCode(97 + parseInt(26 * Math.random()));
-        });
     },
 });
 
@@ -287,3 +283,9 @@ $.ajaxSetup({
         }
     },
 });
+
+d3.selection.prototype.moveToFront = function() {
+    return this.each(function() {
+        this.parentNode.appendChild(this);
+    });
+};

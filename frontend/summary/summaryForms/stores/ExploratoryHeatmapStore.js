@@ -154,9 +154,8 @@ class ExploratoryHeatmapStore {
                     return {id: d.url, label: d.name};
                 });
                 datasets.unshift({
-                    type: "",
-                    name: "<none selected>",
-                    url: "",
+                    id: NULL_VALUE,
+                    label: "<none>",
                 });
                 this.datasetOptions = datasets;
             })

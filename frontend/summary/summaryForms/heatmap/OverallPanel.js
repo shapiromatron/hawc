@@ -36,9 +36,7 @@ class OverallPanel extends Component {
                     name="slug"
                     label="URL Name"
                     value={djangoFormData.slug}
-                    onChange={e => {
-                        updateDjangoFormData(e.target.name, e.target.value);
-                    }}
+                    onChange={e => updateDjangoFormData(e.target.name, e.target.value)}
                     helpText="The URL (web address) used to describe this object (no spaces or special-characters)."
                     required
                 />
@@ -46,9 +44,7 @@ class OverallPanel extends Component {
                     name="settings"
                     label="Settings"
                     value={djangoFormData.settings}
-                    onChange={e => {
-                        updateDjangoFormData(e.target.name, e.target.value);
-                    }}
+                    onChange={e => updateDjangoFormData(e.target.name, e.target.value)}
                     helpText='Paste from another visualization to copy settings, or set to "undefined".'
                     required
                 />
@@ -56,19 +52,14 @@ class OverallPanel extends Component {
                     name="caption"
                     label="Caption"
                     value={djangoFormData.caption}
-                    onChange={value => {
-                        updateDjangoFormData("caption", value);
-                    }}
+                    onChange={value => updateDjangoFormData("caption", value)}
                 />
                 <CheckboxInput
                     name="published"
                     label="Publish visual for public viewing"
                     checked={djangoFormData.published}
-                    onChange={e => {
-                        updateDjangoFormData(e.target.name, e.target.checked);
-                    }}
+                    onChange={e => updateDjangoFormData(e.target.name, e.target.checked)}
                     helpText="For assessments marked for public viewing, mark visual to be viewable by public"
-                    id="isPublished"
                 />
             </div>
         );

@@ -35,7 +35,10 @@ class ExploreHeatmapComponent extends Component {
             id = h.hashString(JSON.stringify(settings)),
             el = document.getElementById(id),
             tooltipEl = document.getElementById(`tooltip-${id}`);
-        new ExploreHeatmapPlot(store, this.props.options).render(el, tooltipEl);
+
+        if (el) {
+            new ExploreHeatmapPlot(store, this.props.options).render(el, tooltipEl);
+        }
     }
     render() {
         const {store} = this.props,
@@ -131,22 +134,27 @@ class ExploreHeatmap extends BaseVisual {
         }
     }
 
-    addActionsMenu() {
+    addActionsMenu(isEditable) {
         let {data_url} = this.data.settings,
             csv_url = data_url.includes("?") ? `${data_url}&format=csv` : `${data_url}?format=csv`,
             csv_text = `<i class="fa fa-file-text-o"></i> Download dataset (csv)`,
             xlsx_url = data_url.includes("?")
                 ? `${data_url}&format=xlsx`
                 : `${data_url}?format=xlsx`,
-            xlsx_text = `<i class="fa fa-file-excel-o"></i> Download dataset (xlsx)`;
-        return HAWCUtils.pageActionsButton([
-            "Visualization editing",
-            {url: this.data.url_update, text: "Update"},
-            {url: this.data.url_delete, text: "Delete"},
-            "Dataset",
-            {url: csv_url, text: csv_text},
-            {url: xlsx_url, text: xlsx_text},
-        ]);
+            xlsx_text = `<i class="fa fa-file-excel-o"></i> Download dataset (xlsx)`,
+            opts = [];
+
+        if (isEditable) {
+            opts.push(
+                ...[
+                    "Visualization editing",
+                    {url: this.data.url_update, text: '<i class="fa fa-edit"></i>&nbsp;Update'},
+                    {url: this.data.url_delete, text: '<i class="fa fa-trash"></i>&nbsp;Delete'},
+                ]
+            );
+        }
+        opts.push(...["Dataset", {url: csv_url, text: csv_text}, {url: xlsx_url, text: xlsx_text}]);
+        return HAWCUtils.pageActionsButton(opts);
     }
 
     displayAsPage($el, options) {
@@ -157,8 +165,8 @@ class ExploreHeatmap extends BaseVisual {
             caption = new SmartTagContainer(captionDiv),
             $plotDiv = $("<div>"),
             callback = resp => {
-                if (window.isEditable) {
-                    title.append(this.addActionsMenu());
+                if (this.data.title) {
+                    title.append(this.addActionsMenu(window.isEditable));
                 }
                 if (resp.dataset) {
                     const settings = this.getSettings(),

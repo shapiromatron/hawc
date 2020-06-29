@@ -939,6 +939,7 @@ class Endpoint(BaseEndpoint):
             "animal_group__dosing_regime__route_of_exposure": "route of exposure",
             "animal_group__species__name": "species",
             "animal_group__strain__name": "strain",
+            "animal_group__name": "animal group name",
             "animal_group__sex": "sex",
             "animal_group__generation": "generation",
             "animal_group_id": "animal group id",
@@ -962,6 +963,7 @@ class Endpoint(BaseEndpoint):
             )
             .filter(**filters)
             .values_list(*columns.keys())
+            .order_by("id")
         )
         df = pd.DataFrame(data=list(qs), columns=columns.values())
         df["route of exposure"] = df["route of exposure"].map(
@@ -973,9 +975,19 @@ class Endpoint(BaseEndpoint):
         return df
 
     @classmethod
+    def heatmap_doses_df(cls, assessment: Assessment, published_only: bool) -> pd.DataFrame:
+        df1 = cls.heatmap_df(assessment, published_only).set_index("endpoint id")
+
+        columns = "dose units id|dose units name|doses|noel|loel|fel|bmd|bmdl".split("|")
+        df2 = cls.objects.endpoint_df(assessment, published_only).set_index("endpoint id")[columns]
+
+        df3 = df1.merge(df2, how="left", left_index=True, right_index=True).reset_index()
+        return df3
+
+    @classmethod
     def heatmap_study_df(cls, assessment: Assessment, published_only: bool) -> pd.DataFrame:
         def unique_items(els):
-            return "|".join(sorted(set(els)))
+            return "|".join(sorted(set(el for el in els if el is not None)))
 
         # get all studies,even if no endpoint data is extracted
         filters: Dict[str, Any] = {"assessment_id": assessment, "bioassay": True}
@@ -986,7 +998,7 @@ class Endpoint(BaseEndpoint):
             "short_citation": "study citation",
             "study_identifier": "study identifier",
         }
-        qs = Study.objects.filter(**filters).values_list(*columns.keys())
+        qs = Study.objects.filter(**filters).values_list(*columns.keys()).order_by("id")
         df1 = pd.DataFrame(data=list(qs), columns=columns.values()).set_index("study id")
 
         # rollup endpoint-level data to studies

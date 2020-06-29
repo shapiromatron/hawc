@@ -66,7 +66,8 @@
           "preview_url": "{% url 'summary:visualization_create_tester' assessment.id visual_type %}",
           "rob_metrics": {{rob_metrics|safe}},
           "initial_data": {{initial_data|safe}},
-          "api_heatmap_datasets": "{{form.instance.get_api_heatmap_datasets}}"
+          "api_heatmap_datasets": "{{form.instance.get_api_heatmap_datasets}}",
+          "clear_cache_url": "{{assessment.get_clear_cache_url}}"
       }
   </script>
   <script type="text/javascript">

@@ -2,7 +2,8 @@ import abc
 import logging
 
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth import REDIRECT_FIELD_NAME
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.exceptions import EmptyResultSet, PermissionDenied
 from django.forms.models import model_to_dict
 from django.http import HttpResponseRedirect
@@ -12,8 +13,23 @@ from django.utils.decorators import method_decorator
 from django.views.generic import DetailView, ListView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
-from ..assessment.models import Assessment, TimeSpentEditing
+from ..assessment.models import Assessment, BaseEndpoint, TimeSpentEditing
 from .helper import tryParseInt
+
+
+def beta_tester_required(function=None, redirect_field_name=REDIRECT_FIELD_NAME, login_url=None):
+    """
+    Decorator for views that checks that the user is logged in and a beta-tester, redirecting
+    to the log-in page if necessary.
+    """
+    actual_decorator = user_passes_test(
+        lambda u: u.is_authenticated and u.is_beta_tester(),
+        login_url=login_url,
+        redirect_field_name=redirect_field_name,
+    )
+    if function:
+        return actual_decorator(function)
+    return actual_decorator
 
 
 class MessageMixin:
@@ -644,4 +660,33 @@ class BaseEndpointFilterList(BaseList):
         context = super().get_context_data(**kwargs)
         context["form"] = self.form
         context["list_json"] = self.model.get_qs_json(context["object_list"], json_encode=True)
+        return context
+
+
+class HeatmapBase(BaseList):
+    parent_model = Assessment
+    model = BaseEndpoint
+    template_name = "common/heatmap.html"
+    heatmap_data_class: str = ""
+    heatmap_data_url: str = ""
+    heatmap_view_title: str = ""
+
+    def get_template_names(self):
+        return [self.template_name]
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        url_args = (
+            "?unpublished=true"
+            if self.request.GET.get("unpublished", "false").lower() == "true"
+            else ""
+        )
+        context.update(
+            dict(
+                data_class=self.heatmap_data_class,
+                data_url=reverse(self.heatmap_data_url, args=(self.assessment.id,)) + url_args,
+                heatmap_view_title=self.heatmap_view_title,
+                obj_perms=self.assessment.user_permissions(self.request.user),
+            )
+        )
         return context

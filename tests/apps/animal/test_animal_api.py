@@ -10,34 +10,20 @@ DATA_ROOT = Path(__file__).parents[2] / "data/api"
 
 @pytest.mark.django_db
 class TestAssessmentViewset:
-    def _test_animal_export(
-        self,
-        rewrite_data_files: bool,
-        url_path: str,
-        file_slug: str,
-        key: int,
-        query_string: str = "",
-    ):
-        # Add json format to query string
-        if query_string:
-            query_string += "&format=json"
-        else:
-            query_string = "?format=json"
-
-        fn = Path(DATA_ROOT / f"api-animal-assessment-{file_slug}.json")
-        url = reverse(f"animal:api:assessment-{url_path}", args=(key,)) + query_string
+    def _test_flat_export(self, rewrite_data_files: bool, fn: str, url: str):
 
         client = APIClient()
         assert client.login(username="rev@rev.com", password="pw") is True
         resp = client.get(url)
         assert resp.status_code == 200
 
+        path = Path(DATA_ROOT / fn)
         data = resp.json()
 
         if rewrite_data_files:
-            Path(fn).write_text(json.dumps(data, indent=2))
+            path.write_text(json.dumps(data, indent=2))
 
-        assert data == json.loads(fn.read_text())
+        assert data == json.loads(path.read_text())
 
     def test_permissions(self, db_keys):
         rev_client = APIClient()
@@ -48,49 +34,80 @@ class TestAssessmentViewset:
             reverse("animal:api:assessment-full-export", args=(db_keys.assessment_working,)),
             reverse("animal:api:assessment-endpoint-export", args=(db_keys.assessment_working,)),
             reverse("animal:api:assessment-endpoint-heatmap", args=(db_keys.assessment_working,)),
+            reverse(
+                "animal:api:assessment-endpoint-doses-heatmap", args=(db_keys.assessment_working,)
+            ),
+            reverse("animal:api:assessment-endpoints", args=(db_keys.assessment_working,)),
         ]
         for url in urls:
             assert anon_client.get(url).status_code == 403
             assert rev_client.get(url).status_code == 200
 
     def test_full_export(self, rewrite_data_files: bool, db_keys):
-        self._test_animal_export(
-            rewrite_data_files, "full-export", "full-export", db_keys.assessment_final
+        fn = "api-animal-assessment-full-export.json"
+        url = (
+            reverse(f"animal:api:assessment-full-export", args=(db_keys.assessment_final,))
+            + "?format=json"
         )
+        self._test_flat_export(rewrite_data_files, fn, url)
 
     def test_endpoint_export(self, rewrite_data_files: bool, db_keys):
-        self._test_animal_export(
-            rewrite_data_files, "endpoint-export", "endpoint-export", db_keys.assessment_final
+        fn = "api-animal-assessment-endpoint-export.json"
+        url = (
+            reverse(f"animal:api:assessment-endpoint-export", args=(db_keys.assessment_final,))
+            + "?format=json"
         )
+        self._test_flat_export(rewrite_data_files, fn, url)
+
+    def test_endpoints(self, rewrite_data_files: bool, db_keys):
+        fn = "api-animal-assessment-endpoints.json"
+        url = (
+            reverse(f"animal:api:assessment-endpoints", args=(db_keys.assessment_final,))
+            + "?format=json"
+        )
+        self._test_flat_export(rewrite_data_files, fn, url)
 
     def test_study_heatmap(self, rewrite_data_files: bool, db_keys):
-        self._test_animal_export(
-            rewrite_data_files,
-            "study-heatmap",
-            "study-heatmap-unpublished-True",
-            db_keys.assessment_final,
-            "?unpublished=True",
+
+        # published
+        fn = "api-animal-assessment-study-heatmap-unpublished-False.json"
+        url = (
+            reverse(f"animal:api:assessment-study-heatmap", args=(db_keys.assessment_final,))
+            + "?format=json"
         )
-        self._test_animal_export(
-            rewrite_data_files,
-            "study-heatmap",
-            "study-heatmap-unpublished-False",
-            db_keys.assessment_final,
-            "?unpublished=False",
+        self._test_flat_export(rewrite_data_files, fn, url)
+
+        # unpublished
+        fn = "api-animal-assessment-study-heatmap-unpublished-True.json"
+        url = (
+            reverse(f"animal:api:assessment-study-heatmap", args=(db_keys.assessment_final,))
+            + "?format=json&unpublished=true"
         )
+        self._test_flat_export(rewrite_data_files, fn, url)
 
     def test_endpoint_heatmap(self, rewrite_data_files: bool, db_keys):
-        self._test_animal_export(
-            rewrite_data_files,
-            "endpoint-heatmap",
-            "endpoint-heatmap-unpublished-True",
-            db_keys.assessment_final,
-            "?unpublished=True",
+        # published
+        fn = "api-animal-assessment-endpoint-heatmap-unpublished-False.json"
+        url = (
+            reverse(f"animal:api:assessment-endpoint-heatmap", args=(db_keys.assessment_final,))
+            + "?format=json"
         )
-        self._test_animal_export(
-            rewrite_data_files,
-            "endpoint-heatmap",
-            "endpoint-heatmap-unpublished-False",
-            db_keys.assessment_final,
-            "?unpublished=False",
+        self._test_flat_export(rewrite_data_files, fn, url)
+
+        # unpublished
+        fn = "api-animal-assessment-endpoint-heatmap-unpublished-True.json"
+        url = (
+            reverse(f"animal:api:assessment-endpoint-heatmap", args=(db_keys.assessment_final,))
+            + "?format=json&unpublished=true"
         )
+        self._test_flat_export(rewrite_data_files, fn, url)
+
+    def test_endpoint_doses_heatmap(self, rewrite_data_files: bool, db_keys):
+        fn = "api-animal-assessment-endpoint-doses-heatmap.json"
+        url = (
+            reverse(
+                f"animal:api:assessment-endpoint-doses-heatmap", args=(db_keys.assessment_final,)
+            )
+            + "?format=json"
+        )
+        self._test_flat_export(rewrite_data_files, fn, url)

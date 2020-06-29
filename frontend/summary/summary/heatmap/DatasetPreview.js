@@ -1,10 +1,11 @@
 import _ from "lodash";
 import React, {Component} from "react";
 import PropTypes from "prop-types";
+import DataTable from "shared/components/DataTable";
 
 class DatasetPreview extends Component {
     render() {
-        const {dataset, url} = this.props;
+        const {dataset, url, clearCacheUrl} = this.props;
 
         if (!dataset || dataset.length === 0) {
             return <div className="alert alert-danger">No data are available.</div>;
@@ -15,7 +16,8 @@ class DatasetPreview extends Component {
                 numRows: dataset.length,
                 numColumns: _.keys(firstRow).length,
                 columnNames: _.keys(firstRow),
-            };
+            },
+            rowsToShow = 50;
 
         return (
             <div>
@@ -28,6 +30,12 @@ class DatasetPreview extends Component {
                         </a>
                         <ul className="dropdown-menu">
                             <li>
+                                {clearCacheUrl ? (
+                                    <a href={clearCacheUrl}>
+                                        <i className="fa fa-refresh"></i>&nbsp;Clear assessment
+                                        cache
+                                    </a>
+                                ) : null}
                                 <a
                                     href={
                                         url.includes("?")
@@ -61,33 +69,25 @@ class DatasetPreview extends Component {
                         <b>Columns:</b>&nbsp;{summary.columnNames.join(", ") || "<none>"}
                     </li>
                 </ul>
+                {clearCacheUrl ? (
+                    <p className="help-block">
+                        <span className="label label-info">Note</span> To improve performance, the
+                        data retrieved from this request are cached and reused for future requests.
+                        Therefore, changes made to the underlying data are not immediately reflected
+                        in visuals (and may take hours to update). To see changes immediately,&nbsp;
+                        <a href={clearCacheUrl}>refresh the cache</a>.
+                    </p>
+                ) : null}
                 <h4>
                     {summary.numRows > 0
-                        ? "Showing the first 10 rows ..."
+                        ? `Showing the first ${rowsToShow} rows ...`
                         : "No data available, select a different dataset ..."}
                 </h4>
-                <table className="table table-condensed table-striped">
-                    <thead>
-                        <tr>
-                            {summary.columnNames.map((d, i) => (
-                                <th key={i}>{d}</th>
-                            ))}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {_.slice(dataset, 0, 10).map((row, i) => {
-                            return (
-                                <tr key={i}>
-                                    {summary.columnNames.map((colName, i2) => (
-                                        <td key={i2}>{row[colName]}</td>
-                                    ))}
-                                </tr>
-                            );
-                        })}
-                    </tbody>
-                </table>
-                {summary.numRows > 10 ? (
-                    <p>An additional {summary.numRows - 10} rows are not shown...</p>
+                {summary.numRows > 0 ? (
+                    <DataTable dataset={_.slice(dataset, 0, rowsToShow)} />
+                ) : null}
+                {summary.numRows > rowsToShow ? (
+                    <p>An additional {summary.numRows - rowsToShow} rows are not shown...</p>
                 ) : null}
             </div>
         );
@@ -96,6 +96,7 @@ class DatasetPreview extends Component {
 DatasetPreview.propTypes = {
     url: PropTypes.string,
     dataset: PropTypes.array,
+    clearCacheUrl: PropTypes.string,
 };
 
 export default DatasetPreview;

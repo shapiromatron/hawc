@@ -5,7 +5,7 @@ import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import VisualTab from "./VisualTab";
 import DataTab from "./DataTab";
-import SettingsTab from "./SettingsTab";
+import CustomizeTab from "./CustomizeTab";
 import SelectInput from "shared/components/SelectInput";
 
 @inject("store")
@@ -18,7 +18,7 @@ class HeatmapTemplateRoot extends React.Component {
                 <TabList>
                     <Tab>Visual</Tab>
                     <Tab>Data</Tab>
-                    <Tab>Settings</Tab>
+                    <Tab>Customize</Tab>
                     <div className="pull-right">
                         <b>Dashboard selection:&nbsp;</b>
                         <SelectInput
@@ -45,7 +45,7 @@ class HeatmapTemplateRoot extends React.Component {
                     <DataTab />
                 </TabPanel>
                 <TabPanel>
-                    <SettingsTab />
+                    <CustomizeTab />
                 </TabPanel>
             </Tabs>
         );

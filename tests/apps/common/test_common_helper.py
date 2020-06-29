@@ -1,4 +1,7 @@
 import time
+from io import StringIO
+
+import pandas as pd
 
 from hawc.apps.common import helper
 
@@ -31,7 +34,24 @@ class TestFlatFileExporter:
         )
 
 
-class test_try_parse_list_ints:
+def test_df_move_column():
+    df = pd.read_csv(StringIO("a,b,c\n1,2,3"))
+
+    # check expected behavior
+    df2 = helper.df_move_column(df, "c", "a")
+    assert df2.columns.tolist() == ["a", "c", "b"]
+    assert df2.c.iloc[0] == 3
+
+    # check optional argument
+    df2 = helper.df_move_column(df, "c")
+    assert df2.columns.tolist() == ["c", "a", "b"]
+    assert df2.c.iloc[0] == 3
+
+    # no change to original dataframe
+    assert df.columns.tolist() == ["a", "b", "c"]
+
+
+def test_try_parse_list_ints():
     # expected None case
     assert helper.try_parse_list_ints(None) == []
 

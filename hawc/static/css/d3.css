@@ -70,6 +70,26 @@ unrecognized HTML expressions.
     fill: yellow;
 }
 
+/* critical dose points */
+.critical-dose {
+    opacity: 0.7;
+    cursor: pointer
+}
+.critical-dose-legend {
+    opacity: 0.7;
+}
+.critical-dose:hover {
+    fill: white;
+    opacity: 1;
+    stroke: black;
+    stroke-width: 3px;
+}
+.critical-dose-legend-text{
+    font-size: 0.9em;
+    fill: #646464;
+}
+
+
 /* dose-response data points */
 .dose_bars {
     fill: #a8b2d3;

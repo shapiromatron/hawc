@@ -1,11 +1,12 @@
 {% extends 'portal.html' %}
 
-{% block title %}{{assessment}} | Bioassay study design | HAWC {% endblock title %}
+{% block title %}{{assessment}} | {{heatmap_view_title}} | HAWC {% endblock title %}
 
 {% block breadcrumbs %}
+
 <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{ assessment }}</a><span class="divider">/</span></li>
 <li><a href="{% url 'assessment:endpoint_list' assessment.pk %}">Endpoints</a><span class="divider">/</span></li>
-<li class="active">Study design summary<span class="divider">/</span></li>
+<li class="active">{{heatmap_view_title}}<span class="divider">/</span></li>
 {% endblock %}
 
 {% block content %}
@@ -15,7 +16,8 @@
 {% block extrajs %}
 <script id="config" type="text/json" charset="utf-8">
 {
-    "title": "{{assessment}} bioassay study design",
+    "assessment": "{{assessment}}",
+    "clear_cache_url": {% if obj_perms.edit %}"{{assessment.get_clear_cache_url}}"{% else %}null{% endif %},
     "data_class": "{{data_class}}",
     "data_url": "{{data_url}}"
 }

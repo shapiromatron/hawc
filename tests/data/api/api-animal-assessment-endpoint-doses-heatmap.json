@@ -20,6 +20,14 @@
     "experiment chemical": "PBDE 209",
     "study id": 7,
     "study citation": "Biesemeier JA et al. 2011",
-    "study identifier": ""
+    "study identifier": "",
+    "dose units id": 1,
+    "dose units name": "mg/kg/d",
+    "doses": "0, 1, 10, 100, 1000",
+    "noel": null,
+    "loel": 1000.0,
+    "fel": null,
+    "bmd": null,
+    "bmdl": null
   }
 ]

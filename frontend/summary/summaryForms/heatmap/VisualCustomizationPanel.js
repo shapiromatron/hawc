@@ -138,7 +138,6 @@ class VisualCustomizationPanel extends Component {
                     </div>
                     <div className="span3">
                         <CheckboxInput
-                            id="autosize_cells"
                             label="Auto-size cells"
                             name="autosize_cells"
                             onChange={e => changeSettings(e.target.name, e.target.checked)}
@@ -212,7 +211,6 @@ class VisualCustomizationPanel extends Component {
                 <div className="row-fluid">
                     <div className="span3">
                         <CheckboxInput
-                            id="compress_x"
                             label="Compress X fields"
                             name="compress_x"
                             onChange={e => changeSettings(e.target.name, e.target.checked)}
@@ -222,7 +220,6 @@ class VisualCustomizationPanel extends Component {
                     </div>
                     <div className="span3">
                         <CheckboxInput
-                            id="compress_y"
                             label="Compress Y fields"
                             name="compress_y"
                             onChange={e => changeSettings(e.target.name, e.target.checked)}
@@ -232,7 +229,6 @@ class VisualCustomizationPanel extends Component {
                     </div>
                     <div className="span3">
                         <CheckboxInput
-                            id="show_grid"
                             label="Show cell grid"
                             name="show_grid"
                             onChange={e => changeSettings(e.target.name, e.target.checked)}
@@ -241,7 +237,6 @@ class VisualCustomizationPanel extends Component {
                     </div>
                     <div className="span3">
                         <CheckboxInput
-                            id="show_totals"
                             label="Show grand totals"
                             name="show_totals"
                             onChange={e => changeSettings(e.target.name, e.target.checked)}
@@ -252,7 +247,6 @@ class VisualCustomizationPanel extends Component {
                 <div className="row-fluid">
                     <div className="span3">
                         <CheckboxInput
-                            id="show_null"
                             label="Show null field values"
                             name="show_null"
                             onChange={e => changeSettings(e.target.name, e.target.checked)}
@@ -284,7 +278,6 @@ class VisualCustomizationPanel extends Component {
                     </div>
                     <div className="span3">
                         <CheckboxInput
-                            id="autorotate_tick_labels"
                             label="Auto-rotate tick labels"
                             name="autorotate_tick_labels"
                             onChange={e => changeSettings(e.target.name, e.target.checked)}

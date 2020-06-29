@@ -35,6 +35,11 @@ urlpatterns = [
         views.HeatmapEndpoint.as_view(),
         name="heatmap_endpoints",
     ),
+    url(
+        r"^assessment/(?P<pk>\d+)/heatmap-endpoints-doses/$",
+        views.HeatmapEndpointDose.as_view(),
+        name="heatmap_endpoints_doses",
+    ),
     # Experiment
     url(
         r"^study/(?P<pk>\d+)/experiment/new/$",
@@ -95,6 +100,11 @@ urlpatterns = [
     # Endpoint
     url(
         r"^assessment/(?P<pk>\d+)/endpoints/$", views.EndpointList.as_view(), name="endpoint_list",
+    ),
+    url(
+        r"^assessment/(?P<pk>\d+)/endpoints-v2/$",
+        views.EndpointListV2.as_view(),
+        name="endpoint_list_v2",
     ),
     url(
         r"^assessment/(?P<pk>\d+)/endpoints/tags/(?P<tag_slug>[-\w]+)/$",

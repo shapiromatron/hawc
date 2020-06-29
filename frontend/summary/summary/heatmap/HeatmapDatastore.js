@@ -6,6 +6,7 @@ import h from "shared/utils/helpers";
 
 import HAWCModal from "utils/HAWCModal";
 
+import {NULL_VALUE} from "../../summary/constants";
 import DataPivotExtension from "summary/dataPivot/DataPivotExtension";
 
 class HeatmapDatastore {
@@ -16,6 +17,7 @@ class HeatmapDatastore {
     dpe = null;
     colorScale = null;
     maxValue = null;
+    extensions = null;
 
     @observable dataset = null;
     @observable settings = null;
@@ -33,6 +35,7 @@ class HeatmapDatastore {
         this.filterWidgetState = this.setFilterWidgetState();
         this.scales = this.setScales();
         this.totals = this.setTotals();
+        this.extensions = this.setDataExtensions();
         this.setColorScale();
     }
 
@@ -153,6 +156,35 @@ class HeatmapDatastore {
             y = setGrandTotals(toJS(this.intersection), this.scales.y);
 
         return {x, y};
+    }
+
+    setDataExtensions() {
+        let extensions = {
+            filterWidgets: {},
+            tableRows: {},
+        };
+
+        toJS(this.settings.filter_widgets)
+            .filter(d => {
+                return d.on_click_event !== NULL_VALUE;
+            })
+            .forEach(d => {
+                extensions.filterWidgets[d.column] = _.find(DataPivotExtension.values, {
+                    _dpe_name: d.on_click_event,
+                });
+            });
+
+        toJS(this.settings.table_fields)
+            .filter(d => {
+                return d.on_click_event !== NULL_VALUE;
+            })
+            .forEach(d => {
+                extensions.tableRows[d.column] = _.find(DataPivotExtension.values, {
+                    _dpe_name: d.on_click_event,
+                });
+            });
+
+        return extensions;
     }
 
     setColorScale() {
@@ -344,8 +376,7 @@ class HeatmapDatastore {
         this.filterWidgetState[column][item] = visible;
     }
 
-    @action.bound showModalClick(on_click_event, row) {
-        let extension = _.find(DataPivotExtension.values, {_dpe_name: on_click_event});
+    @action.bound showModalOnRow(extension, row) {
         this.dpe.render_plottip(extension, row);
     }
 
