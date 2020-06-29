@@ -9,6 +9,10 @@ class Experiment {
         this.data = data;
     }
 
+    static get_detail_url(id) {
+        return `/ani/experiment/${id}/`;
+    }
+
     static get_object(id, cb) {
         $.get(`/ani/api/experiment/${id}/`, d => cb(new Experiment(d)));
     }

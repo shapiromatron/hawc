@@ -5,7 +5,6 @@ from . import api, views
 
 router = DefaultRouter()
 router.register(r"study", api.Study, basename="study")
-router.register(r"final", api.FinalRobStudy, basename="final")
 router.register(r"study-cleanup", api.StudyCleanupFieldsView, basename="study-cleanup")
 
 app_name = "study"

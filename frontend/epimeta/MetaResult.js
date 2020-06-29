@@ -15,6 +15,10 @@ class MetaResult {
         this._unpack_single_results();
     }
 
+    static get_detail_url(id) {
+        return `/epi-meta/result/${id}/`;
+    }
+
     static get_object(id, cb) {
         $.get(`/epi-meta/api/result/${id}/`, d => cb(new MetaResult(d)));
     }

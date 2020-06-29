@@ -1,4 +1,5 @@
 import logging
+from pathlib import Path
 from typing import Optional
 
 import pandas as pd
@@ -6,13 +7,14 @@ from django.apps import apps
 from django.core import exceptions
 from django.core.cache import cache
 from django.db.models import Count
+from django.http import Http404
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from rest_framework import filters, permissions, status, viewsets
 from rest_framework.decorators import action
-from rest_framework.exceptions import APIException
+from rest_framework.exceptions import APIException, PermissionDenied
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
@@ -96,6 +98,9 @@ class InAssessmentFilter(filters.BaseFilterBackend):
 
         if view.assessment is None:
             return queryset.none()
+
+        if not view.assessment_filter_args:
+            raise ValueError("Viewset requires the `assessment_filter_args` argument")
 
         filters = {view.assessment_filter_args: view.assessment.id}
         return queryset.filter(**filters)
@@ -181,8 +186,8 @@ class DoseUnitsViewset(viewsets.ReadOnlyModelViewSet):
 
 class Assessment(AssessmentViewset):
     model = models.Assessment
-    permission_classes = (AssessmentLevelPermissions,)
     serializer_class = serializers.AssessmentSerializer
+    assessment_filter_args = "id"
 
     @action(detail=False, methods=("get",), permission_classes=(permissions.AllowAny,))
     def public(self, request):
@@ -247,21 +252,25 @@ class Assessment(AssessmentViewset):
         export = FlatExport(df=df, filename=f"hawc-bioassay-dataset-{today}")
         return Response(export)
 
-
-class AssessmentEndpointList(AssessmentViewset):
-    serializer_class = serializers.AssessmentEndpointSerializer
-    assessment_filter_args = "id"
-    model = models.Assessment
-    pagination_class = DisabledPagination
-
-    def list(self, request, *args, **kwargs):
+    @action(detail=True)
+    def endpoints(self, request, pk: int = None):
         """
-        List has been optimized for queryset speed; some counts in get_queryset
+        Optimized for queryset speed; some counts in get_queryset
         and others in the list here; depends on if a "select distinct" is
         required which significantly decreases query speed.
         """
 
-        instance = self.filter_queryset(self.get_queryset())[0]
+        # check permissions
+        instance = self.get_object()
+
+        # re-query w/ annotations
+        instance = (
+            self.model.objects.get_qs(instance.id)
+            .annotate(endpoint_count=Count("baseendpoint__endpoint"))
+            .annotate(outcome_count=Count("baseendpoint__outcome"))
+            .annotate(ivendpoint_count=Count("baseendpoint__ivendpoint"))
+        ).first()
+
         app_url = reverse("assessment:clean_extracted_data", kwargs={"pk": instance.id})
         instance.items = []
 
@@ -372,18 +381,32 @@ class AssessmentEndpointList(AssessmentViewset):
             }
         )
 
-        serializer = self.get_serializer(instance)
+        serializer = serializers.AssessmentEndpointSerializer(instance)
         return Response(serializer.data)
 
-    def get_queryset(self):
-        assessment_id = get_assessment_id_param(self.request)
-        queryset = (
-            self.model.objects.get_qs(assessment_id)
-            .annotate(endpoint_count=Count("baseendpoint__endpoint"))
-            .annotate(outcome_count=Count("baseendpoint__outcome"))
-            .annotate(ivendpoint_count=Count("baseendpoint__ivendpoint"))
-        )
-        return queryset
+
+class DatasetViewset(AssessmentViewset):
+    model = models.Dataset
+    serializer_class = serializers.DatasetSerializer
+    assessment_filter_args = "assessment_id"
+
+    @action(detail=True, renderer_classes=PandasRenderers)
+    def data(self, request, pk: int = None):
+        instance = self.get_object()
+        revision = instance.get_latest_revision()
+        export = FlatExport(df=revision.get_df(), filename=Path(revision.metadata["filename"]).stem)
+        return Response(export)
+
+    @action(detail=True, renderer_classes=PandasRenderers, url_path=r"version/(?P<version>\d+)")
+    def version(self, request, pk: int, version: int):
+        instance = self.get_object()
+        if not self.assessment.user_is_team_member_or_higher(request.user):
+            raise PermissionDenied()
+        revision = instance.revisions.filter(version=version).first()
+        if revision is None:
+            raise Http404()
+        export = FlatExport(df=revision.get_df(), filename=Path(revision.metadata["filename"]).stem)
+        return Response(export)
 
 
 class AdminDashboardViewset(viewsets.ViewSet):
@@ -397,6 +420,13 @@ class AdminDashboardViewset(viewsets.ViewSet):
         serializer.is_valid(raise_exception=True)
         fig = serializer.create_figure()
         return Response(fig.to_dict())
+
+    @method_decorator(cache_page(60 * 60))
+    @action(detail=False, url_path="assessment-size", renderer_classes=PandasRenderers)
+    def assessment_size(self, request):
+        df = models.Assessment.size_df()
+        export = FlatExport(df=df, filename="assessment-size")
+        return Response(export)
 
 
 class CasrnView(APIView):

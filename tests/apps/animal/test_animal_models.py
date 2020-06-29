@@ -97,3 +97,31 @@ def test_percent_control():
     assert 1 == pytest.approx(egs[0]["percentControlMean"])
     assert 2 == pytest.approx(egs[0]["percentControlLow"])
     assert 3 == pytest.approx(egs[0]["percentControlHigh"])
+
+
+@pytest.mark.django_db
+def test_heatmap_df(db_keys):
+    df = models.Endpoint.heatmap_df(db_keys.assessment_final, True)
+    expected_columns = [
+        "endpoint id",
+        "endpoint name",
+        "system",
+        "organ",
+        "effect",
+        "effect subtype",
+        "route of exposure",
+        "species",
+        "strain",
+        "sex",
+        "generation",
+        "animal group id",
+        "experiment id",
+        "experiment name",
+        "experiment type",
+        "experiment cas",
+        "experiment chemical",
+        "study id",
+        "study citation",
+        "study identifier",
+    ]
+    assert df.columns.tolist().sort() == expected_columns.sort()

@@ -11,11 +11,25 @@ from ..common.views import (
     BaseUpdateWithFormset,
     CloseIfSuccessMixin,
     CopyAsNewSelectorMixin,
+    HeatmapBase,
 )
 from ..mgmt.views import EnsureExtractionStartedMixin
 from ..study.models import Study
 from ..study.views import StudyRead
 from . import forms, models
+
+
+# Heatmap views
+class HeatmapStudyDesign(HeatmapBase):
+    heatmap_data_class = "epidemiology-study-design"
+    heatmap_data_url = "epi:api:assessment-study-heatmap"
+    heatmap_view_title = "Epidemiology study design summary"
+
+
+class HeatmapResults(HeatmapBase):
+    heatmap_data_class = "epidemiology-result-summary"
+    heatmap_data_url = "epi:api:assessment-result-heatmap"
+    heatmap_view_title = "Epidemiology result summary"
 
 
 # Study criteria

@@ -1,13 +1,15 @@
 import $ from "$";
 
+import h from "shared/utils/helpers";
+
 class EndpointDetailRow {
     constructor(endpoint, div, hide_level, options) {
         /*
          * Prints the endpoint as row containing consisting of an EndpointTable and
          * a DRPlot.
          */
-        var plot_div_id = String.random_string(),
-            table_id = String.random_string(),
+        var plot_div_id = h.randomString(),
+            table_id = h.randomString(),
             self = this;
         this.options = options || {};
         this.div = $(div);

@@ -1,5 +1,7 @@
 import pandas as pd
 import plotly.express as px
+from django.conf import settings
+from django.core.cache import cache
 from django.utils import timezone
 from rest_framework import exceptions, mixins, status, viewsets
 from rest_framework.decorators import action
@@ -138,18 +140,31 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         """
         Get all references in an assessment.
         """
-
-        self.set_legacy_attr(pk)
-
-        tags = models.ReferenceFilterTag.get_all_tags(self.assessment.id, json_encode=False)
-
+        assessment = self.get_object()
+        tags = models.ReferenceFilterTag.get_all_tags(assessment.id, json_encode=False)
         exporter = exports.ReferenceFlatComplete(
-            models.Reference.objects.get_qs(self.assessment).prefetch_related("identifiers"),
-            filename=f"references-{self.assessment}",
-            assessment=self.assessment,
+            models.Reference.objects.get_qs(assessment)
+            .prefetch_related("identifiers")
+            .order_by("id"),
+            filename=f"references-{assessment}",
+            assessment=assessment,
             tags=tags,
         )
         return Response(exporter.build_export())
+
+    @action(detail=True, renderer_classes=PandasRenderers, url_path="tag-heatmap")
+    def tag_heatmap(self, request, pk):
+        """
+        Get tags formatted in a long format desireable for heatmaps.
+        """
+        instance = self.get_object()
+        key = f"assessment-{instance.id}-lit-tag-heatmap"
+        df = cache.get(key)
+        if df is None:
+            df = models.Reference.objects.heatmap_dataframe(instance.id)
+            cache.set(key, df, settings.CACHE_1_HR)
+        export = FlatExport(df=df, filename=f"df-{instance.id}")
+        return Response(export)
 
 
 class SearchViewset(mixins.CreateModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
@@ -190,7 +205,7 @@ class ReferenceFilterTagViewset(AssessmentRootedTagTreeViewset):
         """
         tag = self.get_object()
         exporter = exports.ReferenceFlatComplete(
-            queryset=models.Reference.objects.filter(tags=tag),
+            queryset=models.Reference.objects.filter(tags=tag).order_by("id"),
             filename=f"{self.assessment}-{tag.slug}",
             assessment=self.assessment,
             tags=self.model.get_all_tags(self.assessment.id, json_encode=False),
@@ -206,7 +221,7 @@ class ReferenceFilterTagViewset(AssessmentRootedTagTreeViewset):
         """
         tag = self.get_object()
         exporter = exports.TableBuilderFormat(
-            queryset=models.Reference.objects.filter(tags=tag),
+            queryset=models.Reference.objects.filter(tags=tag).order_by("id"),
             filename=f"{self.assessment}-{tag.slug}",
             assessment=self.assessment,
         )

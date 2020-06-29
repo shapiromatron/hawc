@@ -27,7 +27,7 @@ class PandasBaseRenderer(BaseRenderer):
             else:
                 raise ValueError(f"Expecting data as `dict`; got {type(data)}")
 
-        # throw error if we don't have a data frame
+        # throw error if we don't have a FlatExport
         if not isinstance(data, FlatExport):
             raise ValueError(f"Expecting `FlatExport`; got {type(data)}")
 

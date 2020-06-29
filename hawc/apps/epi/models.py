@@ -2,7 +2,9 @@ import itertools
 import json
 import math
 from operator import xor
+from typing import Any, Dict
 
+import pandas as pd
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.urls import reverse
@@ -10,7 +12,7 @@ from reversion import revisions as reversion
 from scipy.stats import t
 
 from ..assessment.models import Assessment, BaseEndpoint, EffectTag
-from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper
+from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper, df_move_column
 from ..common.models import get_crumbs
 from ..study.models import Study
 from . import managers
@@ -154,6 +156,8 @@ class StudyPopulation(models.Model):
         ("NT", "Non-randomized controlled trial"),
         ("CS", "Cross-sectional"),
     )
+
+    DESIGN_CHOICES_DICT = {el[0]: el[1] for el in DESIGN_CHOICES}
 
     OUTCOME_GROUP_DESIGNS = ("CC", "NC")
 
@@ -1432,6 +1436,107 @@ class Result(models.Model):
 
     def get_study(self):
         return self.outcome.get_study()
+
+    @classmethod
+    def heatmap_study_df(cls, assessment: Assessment, published_only: bool) -> pd.DataFrame:
+        def unique_items(els):
+            return "|".join(sorted(set(el for el in els if el is not None)))
+
+        def unique_list_items(rows):
+            items = set(itertools.chain.from_iterable(row.split("|") for row in rows.unique()))
+            return "|".join(sorted(items))
+
+        # get all studies,even if no endpoint data is extracted
+        filters: Dict[str, Any] = {"assessment_id": assessment, "epi": True}
+        if published_only:
+            filters["published"] = True
+        columns = {
+            "id": "study id",
+            "short_citation": "study citation",
+            "study_identifier": "study identifier",
+        }
+        qs = Study.objects.filter(**filters).values_list(*columns.keys()).order_by("id")
+        df1 = pd.DataFrame(data=list(qs), columns=columns.values()).set_index("study id")
+
+        # rollup endpoint-level data to studies
+        df2 = (
+            cls.heatmap_df(assessment, published_only)
+            .groupby("study id")
+            .agg(
+                {
+                    "study design": unique_items,
+                    "study population source": unique_items,
+                    "exposure name": unique_items,
+                    "exposure route": unique_list_items,
+                    "system": unique_items,
+                    "effect": unique_items,
+                    "effect subtype": unique_items,
+                }
+            )
+        )
+
+        # merge all the data frames together
+        df = df1.merge(df2, how="left", left_index=True, right_index=True).fillna("").reset_index()
+        return df
+
+    @classmethod
+    def heatmap_df(cls, assessment: Assessment, published_only: bool) -> pd.DataFrame:
+        filters = {"outcome__assessment": assessment}
+        if published_only:
+            filters["outcome__study_population__study__published"] = True
+        columns = {
+            "outcome__study_population__study_id": "study id",
+            "outcome__study_population__study__short_citation": "study citation",
+            "outcome__study_population__study__study_identifier": "study identifier",
+            "outcome__study_population_id": "study population id",
+            "outcome__study_population__name": "study population name",
+            "outcome__study_population__source": "study population source",
+            "outcome__study_population__design": "study design",
+            "comparison_set_id": "comparison set id",
+            "comparison_set__name": "comparison set name",
+            "comparison_set__exposure_id": "exposure id",
+            "comparison_set__exposure__name": "exposure name",
+            "outcome_id": "outcome id",
+            "outcome__system": "system",
+            "outcome__effect": "effect",
+            "outcome__effect_subtype": "effect subtype",
+            "id": "result id",
+            "name": "result name",
+        }
+        qs = (
+            cls.objects.select_related(
+                "outcome",
+                "comparison_set",
+                "comparison_set__exposure",
+                "outcome__study_population",
+                "outcome__study_population__study",
+            )
+            .filter(**filters)
+            .values_list(*columns.keys())
+            .order_by("id")
+        )
+
+        df1 = pd.DataFrame(data=list(qs), columns=columns.values())
+        df1["study design"] = df1["study design"].map(StudyPopulation.DESIGN_CHOICES_DICT)
+
+        # add exposure column
+        exposure_cols = ["inhalation", "dermal", "oral", "in_utero", "iv", "unknown_route"]
+        qs = Exposure.objects.filter(study_population__study__assessment=assessment).values(
+            "id", *exposure_cols
+        )
+
+        df2 = pd.DataFrame(data=qs, columns=["id", *exposure_cols]).set_index("id")
+        df2["exposure route"] = df2[exposure_cols].apply(
+            lambda x: "|".join(x.index[x == True]).replace("_", " "), axis=1  # noqa: E712
+        )
+        df2 = df2.drop(columns=exposure_cols)
+
+        # join data together
+        df = df1.merge(df2, how="left", left_on="exposure id", right_index=True)
+        df = df_move_column(df, "exposure route", "exposure name")
+        df["exposure route"].fillna("", inplace=True)
+
+        return df
 
 
 class GroupResult(models.Model):

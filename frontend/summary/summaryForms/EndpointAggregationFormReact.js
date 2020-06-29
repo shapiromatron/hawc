@@ -90,10 +90,13 @@ class EndpointAggregationForm extends BaseVisualForm {
                     required
                 />
                 <QuillTextInput
+                    id="id_caption"
                     name="caption"
                     label="Caption"
                     value={this.state.caption}
-                    onChange={this.handleInputChange}
+                    onChange={value => {
+                        this.handleQuillInputChange("caption", value);
+                    }}
                 />
                 <div id="div_id_published" className="control-group">
                     <div className="controls">

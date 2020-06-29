@@ -2,7 +2,9 @@ import collections
 import json
 import math
 from itertools import chain
+from typing import Any, Dict
 
+import pandas as pd
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
@@ -36,6 +38,8 @@ class Experiment(models.Model):
         ("Ot", "Other"),
         ("NR", "Not-reported"),
     )
+
+    EXPERIMENT_TYPE_DICT = {el[0]: el[1] for el in EXPERIMENT_TYPE_CHOICES}
 
     PURITY_QUALIFIER_CHOICES = ((">", ">"), ("≥", "≥"), ("=", "="), ("", ""))
 
@@ -218,6 +222,8 @@ class AnimalGroup(models.Model):
         ("R", "Not reported"),
     )
 
+    SEX_DICT = {el[0]: el[1] for el in SEX_CHOICES}
+
     GENERATION_CHOICES = (
         ("", "N/A (not generational-study)"),
         ("P0", "Parent-generation (P0)"),
@@ -227,6 +233,8 @@ class AnimalGroup(models.Model):
         ("F4", "Fourth-generation (F4)"),
         ("Ot", "Other"),
     )
+
+    GENERATION_DICT = {el[0]: el[1] for el in GENERATION_CHOICES}
 
     # these choices for lifesage expose/assessed were added ~Sept 2018. B/c there
     # are existing values in the database, we are not going to enforce these choices on
@@ -466,6 +474,7 @@ class DosingRegime(models.Model):
         ("U", "Unknown"),
         ("O", "Other"),
     )
+    ROUTE_EXPOSURE_CHOICES_DICT = {el[0]: el[1] for el in ROUTE_EXPOSURE_CHOICES}
 
     POSITIVE_CONTROL_CHOICES = ((True, "Yes"), (False, "No"), (None, "Unknown"))
 
@@ -914,6 +923,131 @@ class Endpoint(BaseEndpoint):
     @classmethod
     def delete_caches(cls, ids):
         SerializerHelper.delete_caches(cls, ids)
+
+    @classmethod
+    def heatmap_df(cls, assessment: Assessment, published_only: bool) -> pd.DataFrame:
+        filters: Dict[str, Any] = {"assessment_id": assessment}
+        if published_only:
+            filters["animal_group__experiment__study__published"] = True
+        columns = {
+            "id": "endpoint id",
+            "name": "endpoint name",
+            "system": "system",
+            "organ": "organ",
+            "effect": "effect",
+            "effect_subtype": "effect subtype",
+            "animal_group__dosing_regime__route_of_exposure": "route of exposure",
+            "animal_group__species__name": "species",
+            "animal_group__strain__name": "strain",
+            "animal_group__name": "animal group name",
+            "animal_group__sex": "sex",
+            "animal_group__generation": "generation",
+            "animal_group_id": "animal group id",
+            "animal_group__experiment_id": "experiment id",
+            "animal_group__experiment__name": "experiment name",
+            "animal_group__experiment__type": "experiment type",
+            "animal_group__experiment__cas": "experiment cas",
+            "animal_group__experiment__chemical": "experiment chemical",
+            "animal_group__experiment__study_id": "study id",
+            "animal_group__experiment__study__short_citation": "study citation",
+            "animal_group__experiment__study__study_identifier": "study identifier",
+        }
+        qs = (
+            cls.objects.select_related(
+                "animal_group",
+                "animal_group__dosing_regime",
+                "animal_group__species",
+                "animal_group__strain",
+                "animal_group__experiment",
+                "animal_group__experiment__study",
+            )
+            .filter(**filters)
+            .values_list(*columns.keys())
+            .order_by("id")
+        )
+        df = pd.DataFrame(data=list(qs), columns=columns.values())
+        df["route of exposure"] = df["route of exposure"].map(
+            DosingRegime.ROUTE_EXPOSURE_CHOICES_DICT
+        )
+        df["sex"] = df["sex"].map(AnimalGroup.SEX_DICT)
+        df["generation"] = df["generation"].map(AnimalGroup.GENERATION_DICT)
+        df["experiment type"] = df["experiment type"].map(Experiment.EXPERIMENT_TYPE_DICT)
+        return df
+
+    @classmethod
+    def heatmap_doses_df(cls, assessment: Assessment, published_only: bool) -> pd.DataFrame:
+        df1 = cls.heatmap_df(assessment, published_only).set_index("endpoint id")
+
+        columns = "dose units id|dose units name|doses|noel|loel|fel|bmd|bmdl".split("|")
+        df2 = cls.objects.endpoint_df(assessment, published_only).set_index("endpoint id")[columns]
+
+        df3 = df1.merge(df2, how="left", left_index=True, right_index=True).reset_index()
+        return df3
+
+    @classmethod
+    def heatmap_study_df(cls, assessment: Assessment, published_only: bool) -> pd.DataFrame:
+        def unique_items(els):
+            return "|".join(sorted(set(el for el in els if el is not None)))
+
+        # get all studies,even if no endpoint data is extracted
+        filters: Dict[str, Any] = {"assessment_id": assessment, "bioassay": True}
+        if published_only:
+            filters["published"] = True
+        columns = {
+            "id": "study id",
+            "short_citation": "study citation",
+            "study_identifier": "study identifier",
+        }
+        qs = Study.objects.filter(**filters).values_list(*columns.keys()).order_by("id")
+        df1 = pd.DataFrame(data=list(qs), columns=columns.values()).set_index("study id")
+
+        # rollup endpoint-level data to studies
+        df2 = (
+            cls.heatmap_df(assessment, published_only)
+            .groupby("study id")
+            .agg(
+                {
+                    "experiment type": unique_items,
+                    "species": unique_items,
+                    "strain": unique_items,
+                    "route of exposure": unique_items,
+                    "experiment chemical": unique_items,
+                    "sex": unique_items,
+                    "system": unique_items,
+                    "organ": unique_items,
+                    "effect": unique_items,
+                }
+            )
+        )
+
+        # rollup dose-units to study
+        values = dict(
+            dose_regime__dosed_animals__experiment__study_id="study id",
+            dose_units__name="dose units",
+        )
+        qs = (
+            DoseGroup.objects.filter(
+                dose_regime__dosed_animals__experiment__study__assessment_id=assessment
+            )
+            .select_related("dose_regime__dosed_animals__experiment__study",)
+            .values_list(*values.keys())
+            .distinct("dose_regime__dosed_animals__experiment__study_id", "dose_units__id")
+            .order_by()
+        )
+        df3 = (
+            pd.DataFrame(data=qs, columns=values.values())
+            .groupby("study id")
+            .agg({"dose units": unique_items})
+        )
+
+        # merge all the data frames together
+        df = (
+            df1.merge(df2, how="left", left_index=True, right_index=True)
+            .merge(df3, how="left", left_index=True, right_index=True)
+            .fillna("")
+            .reset_index()
+        )
+        return df
 
     def __str__(self):
         return self.name

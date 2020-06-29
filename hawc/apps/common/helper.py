@@ -5,7 +5,7 @@ import re
 import uuid
 from collections import OrderedDict
 from dataclasses import dataclass
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 import pandas as pd
 from django.conf import settings
@@ -83,6 +83,24 @@ def create_uuid(id: int) -> str:
     hashed_id = hashlib.md5(str(id).encode())
     hashed_id.update(settings.SECRET_KEY.encode())
     return str(uuid.UUID(bytes=hashed_id.digest()))
+
+
+def df_move_column(df: pd.DataFrame, target: str, after: Optional[str] = None) -> pd.DataFrame:
+    """Move target column after another column.
+
+    Args:
+        df (pd.DataFrame): The dataframe to modify.
+        target (str): Name of the column to move
+        after (Optional[str], optional): Name of column to move after; if None, puts first.
+
+    Returns:
+        pd.DataFrame: The mutated dataframe.
+    """
+    cols = df.columns.tolist()
+    target_name = cols.pop(cols.index(target))
+    insert_index = cols.index(after) + 1 if after else 0
+    cols.insert(insert_index, target_name)
+    return df[cols]
 
 
 class HAWCDjangoJSONEncoder(DjangoJSONEncoder):

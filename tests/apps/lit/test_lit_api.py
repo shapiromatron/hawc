@@ -10,21 +10,50 @@ DATA_ROOT = Path(__file__).parents[2] / "data/api"
 
 @pytest.mark.django_db
 class TestLiteratureAssessmentViewset:
-    def test_references_download(self, rewrite_data_files: str, db_keys):
-        # make sure this export is the format we expect it to be in
-        fn = Path(DATA_ROOT / f"api-lit-assessment-references-export.json")
-        url = reverse("lit:api:assessment-references-download", args=(db_keys.assessment_final,))
+    def _test_flat_export(self, rewrite_data_files: bool, fn: str, url: str):
+
         client = APIClient()
+        assert client.login(username="rev@rev.com", password="pw") is True
         resp = client.get(url)
         assert resp.status_code == 200
 
+        path = Path(DATA_ROOT / fn)
         data = resp.json()
 
         if rewrite_data_files:
-            Path(fn).write_text(json.dumps(data, indent=2))
+            path.write_text(json.dumps(data, indent=2))
 
-        assert len(data) == 4
-        assert data == json.loads(fn.read_text())
+        assert data == json.loads(path.read_text())
+
+    def test_permissions(self, db_keys):
+        rev_client = APIClient()
+        assert rev_client.login(username="rev@rev.com", password="pw") is True
+        anon_client = APIClient()
+
+        urls = [
+            reverse("lit:api:assessment-tags", args=(db_keys.assessment_working,)),
+            reverse("lit:api:assessment-reference-ids", args=(db_keys.assessment_working,)),
+            reverse("lit:api:assessment-reference-tags", args=(db_keys.assessment_working,)),
+            reverse(
+                "lit:api:assessment-reference-year-histogram", args=(db_keys.assessment_working,)
+            ),
+            reverse("lit:api:assessment-references-download", args=(db_keys.assessment_working,)),
+            reverse("lit:api:assessment-tag-heatmap", args=(db_keys.assessment_working,)),
+        ]
+        for url in urls:
+            assert anon_client.get(url).status_code == 403
+            assert rev_client.get(url).status_code == 200
+
+        # check permissions for this one; raises an error
+        url = reverse("lit:api:assessment-topic-model", args=(db_keys.assessment_working,))
+        assert anon_client.get(url).status_code == 403
+        with pytest.raises(ValueError):
+            assert rev_client.get(url).status_code == 200
+
+    def test_references_download(self, rewrite_data_files: bool, db_keys):
+        url = reverse("lit:api:assessment-references-download", args=(db_keys.assessment_final,))
+        fn = "api-lit-assessment-references-export.json"
+        self._test_flat_export(rewrite_data_files, fn, url)
 
     def test_tags(self, db_keys):
         url = reverse("lit:api:assessment-tags", kwargs=dict(pk=db_keys.assessment_working))
@@ -73,6 +102,11 @@ class TestLiteratureAssessmentViewset:
         assert c.login(email="pm@pm.com", password="pw") is True
         resp = c.get(url).json()
         assert resp["data"][0]["type"] == "histogram"
+
+    def test_tag_heatmap(self, rewrite_data_files: bool, db_keys):
+        url = reverse("lit:api:assessment-tag-heatmap", args=(db_keys.assessment_final,))
+        fn = "api-lit-assessment-tag-heatmap.json"
+        self._test_flat_export(rewrite_data_files, fn, url)
 
 
 @pytest.mark.django_db

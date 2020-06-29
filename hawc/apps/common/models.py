@@ -351,8 +351,8 @@ class AssessmentRootMixin:
         assert old_names[1:] == new_names[1:]  # everything else should be the same
         return {old_id: new_id for old_id, new_id in zip(old_ids, new_ids)}
 
-    def get_assessment_id(self):
-        name = self.get_ancestors()[0].name
+    def get_assessment_id(self) -> int:
+        name = self.name if self.is_root() else self.get_ancestors()[0].name
         return int(name[name.find("-") + 1 :])
 
     def get_assessment(self):

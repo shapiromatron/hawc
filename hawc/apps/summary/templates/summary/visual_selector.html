@@ -1,5 +1,4 @@
 {% extends 'portal.html' %}
-{% load has_user_group %}
 {% load static %}
 
 {% block title %}{{assessment}} | New visualization {% endblock title %}
@@ -26,10 +25,13 @@
             data-showcase="#dataPivot"
             value="{% url 'summary:dp_new-prompt' assessment.id %}">
             Data pivot</option>
+          {% comment %}
+          <!-- deprecate; let's see if anyone requests it..  -->
           <option
             data-showcase="#visual0"
             value="{% url 'summary:visualization_create' assessment.id 0 %}">
             Bioassay endpoint aggregation</option>
+          {% endcomment %}
           <option
             data-showcase="#visual1"
             value="{% url 'summary:visualization_create' assessment.id 1 %}">
@@ -46,7 +48,7 @@
               Literature tagtree</option>
           <option data-showcase="#visual5" value="{% url 'summary:visualization_create' assessment.id 5 %}">
               Embedded external website</option>
-          {% if user.is_staff or request.user|has_user_group:"beta tester" %}
+          {% if user.is_beta_tester %}
           <option data-showcase="#visual6" value="{% url 'summary:visualization_create' assessment.id 6 %}">
               Exploratory heatmap</option>
           {% endif %}
@@ -166,7 +168,7 @@
     </div>
 
     <div id="visual6">
-      <h2>Exploratory heatmap</h2>
+      <h2 class="betatester">Exploratory heatmap</h2>
       <div class="row">
       </div>
       <p class="help-block">

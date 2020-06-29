@@ -19,7 +19,14 @@ class SelectInput extends Component {
     }
 
     handleSelect(e) {
-        this.props.handleSelect(e.target.value);
+        let value = e.target.value;
+        if (this.props.multiple) {
+            value = _.chain(event.target.options)
+                .filter(o => o.selected)
+                .map(o => o.value)
+                .value();
+        }
+        this.props.handleSelect(value);
     }
 
     renderLabel() {
@@ -34,29 +41,41 @@ class SelectInput extends Component {
         );
     }
 
-    render() {
-        let {id, choices, helpText, name, multiple} = this.props,
+    renderField() {
+        let {id, choices, name, multiple, selectSize} = this.props,
             className = this.props.className || "react-select",
             value = this.props.value || _.first(choices).id;
+
         return (
-            <div className="control-group">
-                {this.renderLabel()}
-                <div className="controls">
-                    <select
-                        id={id || null}
-                        className={className}
-                        value={value}
-                        onChange={this.handleSelect}
-                        multiple={multiple}
-                        name={name}>
-                        {_.map(choices, choice => {
-                            return (
-                                <option key={choice.id} value={choice.id}>
-                                    {choice.label}
-                                </option>
-                            );
-                        })}
-                    </select>
+            <select
+                id={id || null}
+                className={className}
+                value={value}
+                onChange={this.handleSelect}
+                multiple={multiple}
+                size={selectSize}
+                name={name}>
+                {_.map(choices, choice => {
+                    return (
+                        <option key={choice.id} value={choice.id}>
+                            {choice.label}
+                        </option>
+                    );
+                })}
+            </select>
+        );
+    }
+
+    render() {
+        let {fieldOnly, helpText} = this.props;
+        if (fieldOnly) {
+            return this.renderField();
+        }
+        return (
+            <div className="controls">
+                <div className="control-group">
+                    {this.renderLabel()}
+                    {this.renderField()}
                     {helpText ? <p className="help-block">{this.props.helpText}</p> : null}
                 </div>
             </div>
@@ -77,9 +96,11 @@ SelectInput.propTypes = {
     value: PropTypes.any.isRequired,
     name: PropTypes.string,
     multiple: PropTypes.bool.isRequired,
+    selectSize: PropTypes.number,
     helpText: PropTypes.string,
     label: PropTypes.string,
     required: PropTypes.bool,
+    fieldOnly: PropTypes.bool,
 };
 
 export default SelectInput;

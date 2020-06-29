@@ -6,7 +6,8 @@
     <div class="module" id="recent-actions-module">
         <h2>{% trans 'Dashboard' %}</h2>
         <ul class="actionlist">
-            <a href="{% url 'admin_dashboard' %}">Insights</a>
+            <li><a href="{% url 'admin_dashboard' %}">Insights</a></li>
+            <li><a href="{% url 'admin_assessment_size' %}">Assessment size</a></li>
         </ul>
 
         <h2>{% trans 'Recent actions' %}</h2>

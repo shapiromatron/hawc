@@ -52,17 +52,18 @@
 {{form.media}}
 <script type="text/javascript">
 $(document).ready(function() {
-    var animalGroupSetup = function(){
+    var printf = window.app.utils.HAWCUtils.printf,
+        animalGroupSetup = function(){
             var onSpeciesChange = function(e, onStrainUpdateComplete){
                 // only show proper strains for a given species
                 var selected = $('#id_strain option:selected').val(),
                     update_strain_opts = function(d){
                         var opts = _.map(d, function(v, i){
-                            return '<option value="{0}">{1}</option>'.printf(v.id, v.name);
+                            return printf('<option value="{0}">{1}</option>', v.id, v.name);
                         }).join('');
 
                         $('#id_strain').html(opts);
-                        $('#id_strain option[value="{0}"]'.printf(selected))
+                        $(printf('#id_strain option[value="{0}"]', selected))
                             .prop('selected', true);
 
                         if (onStrainUpdateComplete !== undefined) {
