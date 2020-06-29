@@ -63,23 +63,13 @@ class TestAssessmentViewset:
         )
         self._test_animal_export(rewrite_data_files, fn, url)
 
-    def test_endpoint_doses_heatmap(self, rewrite_data_files: bool, db_keys):
-        fn = "api-animal-assessment-endpoint-doses-heatmap.json"
-        url = (
-            reverse(
-                f"animal:api:assessment-endpoint-doses-heatmap", args=(db_keys.assessment_final,)
-            )
-            + "?format=json"
-        )
-        self._test_animal_export(rewrite_data_files, fn, url)
-
     def test_study_heatmap(self, rewrite_data_files: bool, db_keys):
 
         # published
         fn = "api-animal-assessment-study-heatmap-unpublished-False.json"
         url = (
             reverse(f"animal:api:assessment-study-heatmap", args=(db_keys.assessment_final,))
-            + "?format=json&unpublished=false"
+            + "?format=json"
         )
         self._test_animal_export(rewrite_data_files, fn, url)
 
@@ -96,7 +86,7 @@ class TestAssessmentViewset:
         fn = "api-animal-assessment-endpoint-heatmap-unpublished-False.json"
         url = (
             reverse(f"animal:api:assessment-endpoint-heatmap", args=(db_keys.assessment_final,))
-            + "?format=json&unpublished=false"
+            + "?format=json"
         )
         self._test_animal_export(rewrite_data_files, fn, url)
 
@@ -105,5 +95,15 @@ class TestAssessmentViewset:
         url = (
             reverse(f"animal:api:assessment-endpoint-heatmap", args=(db_keys.assessment_final,))
             + "?format=json&unpublished=true"
+        )
+        self._test_animal_export(rewrite_data_files, fn, url)
+
+    def test_endpoint_doses_heatmap(self, rewrite_data_files: bool, db_keys):
+        fn = "api-animal-assessment-endpoint-doses-heatmap.json"
+        url = (
+            reverse(
+                f"animal:api:assessment-endpoint-doses-heatmap", args=(db_keys.assessment_final,)
+            )
+            + "?format=json"
         )
         self._test_animal_export(rewrite_data_files, fn, url)
