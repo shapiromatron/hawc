@@ -83,18 +83,7 @@ class FilterWidget extends Component {
     }
 
     renderItem(widget, item, index, itemStore, showClickEvent) {
-        const {toggleItemSelection, showModalClick, colorScale} = this.props.store,
-            modalTarget = showClickEvent
-                ? _.find(DataPivotExtension.values, {_dpe_name: widget.on_click_event})._dpe_key
-                : null,
-            modalRows = showClickEvent
-                ? _.chain(this.props.store.dataset)
-                      .filter({
-                          [widget.column]: item,
-                      })
-                      .uniqBy(modalTarget)
-                      .value()
-                : null,
+        const {toggleItemSelection, colorScale} = this.props.store,
             data = this.props.store.getTableData,
             numItems = data.filter(d =>
                 widget.delimiter
@@ -103,14 +92,7 @@ class FilterWidget extends Component {
             ).length;
         return (
             <div key={index}>
-                {showClickEvent && modalRows.length == 1 ? (
-                    <button
-                        className="btn btn-mini pull-right"
-                        onClick={() => showModalClick(widget.on_click_event, modalRows[0])}
-                        title="View additional information">
-                        <i className="icon-eye-open"></i>
-                    </button>
-                ) : null}
+                {this.renderButton(widget, item, showClickEvent)}
                 <label className="checkbox">
                     <div
                         style={{
@@ -135,6 +117,85 @@ class FilterWidget extends Component {
                 </label>
             </div>
         );
+    }
+
+    renderButton(widget, item, showClickEvent) {
+        if (!showClickEvent) {
+            return null;
+        }
+        const {showModalClick} = this.props.store,
+            modalTarget = _.find(DataPivotExtension.values, {_dpe_name: widget.on_click_event})
+                ._dpe_key,
+            modalRows = _.chain(this.props.store.dataset)
+                .filter({
+                    [widget.column]: item,
+                })
+                .uniqBy(modalTarget)
+                .sortBy(modalTarget)
+                .value();
+        // If there are no results disable button
+        if (modalRows.length == 0) {
+            return (
+                <button
+                    className="btn btn-mini pull-right disabled"
+                    onClick={() => showModalClick(widget.on_click_event, modalRows[0])}
+                    title="No additional information">
+                    <i className="icon-eye-close"></i>
+                </button>
+            );
+        }
+        // If there are too many results disable button
+        else if (modalRows.length > 10) {
+            return (
+                <button
+                    className="btn btn-mini pull-right disabled"
+                    onClick={() => showModalClick(widget.on_click_event, modalRows[0])}
+                    title="Too many results">
+                    <i className="icon-eye-open"></i>
+                </button>
+            );
+        }
+        // If there is one result link it to the button
+        else if (modalRows.length == 1) {
+            return (
+                <button
+                    className="btn btn-mini pull-right"
+                    onClick={() => showModalClick(widget.on_click_event, modalRows[0])}
+                    title="View additional information">
+                    <i className="icon-eye-open"></i>
+                </button>
+            );
+        }
+        // If there are multiple results make the button a dropdown
+        else {
+            return (
+                <div className="btn-group pull-right">
+                    <a
+                        className="btn btn-mini dropdown-toggle"
+                        data-toggle="dropdown"
+                        href="#"
+                        title="View additional information">
+                        <span className="caret"></span>
+                        <i className="icon-eye-open"></i>
+                    </a>
+                    <ul className="dropdown-menu">
+                        <li className="nav-header">{modalTarget}</li>
+                        <li className="divider"></li>
+                        {modalRows.map((row, idx) => {
+                            return (
+                                <li key={idx}>
+                                    <a
+                                        href="#"
+                                        onClick={() => showModalClick(widget.on_click_event, row)}>
+                                        {row[modalTarget]}
+                                    </a>
+                                </li>
+                            );
+                        })}
+                    </ul>
+                </div>
+            );
+        }
     }
 }
 FilterWidget.propTypes = {
