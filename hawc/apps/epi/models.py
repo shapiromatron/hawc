@@ -1513,7 +1513,7 @@ class Result(models.Model):
             )
             .filter(**filters)
             .values_list(*columns.keys())
-            .order_by('id')
+            .order_by("id")
         )
 
         df1 = pd.DataFrame(data=list(qs), columns=columns.values())
