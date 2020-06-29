@@ -200,10 +200,13 @@ class Assessment(models.Model):
         return self
 
     def get_absolute_url(self):
-        return reverse("assessment:detail", args=[str(self.pk)])
+        return reverse("assessment:detail", args=(self.id,))
 
     def get_casrn_url(self):
         return get_casrn_url(self.cas)
+
+    def get_clear_cache_url(self):
+        return reverse("assessment:clear_cache", args=(self.id,))
 
     class Meta:
         ordering = ("-created",)
@@ -335,6 +338,17 @@ class Assessment(models.Model):
             SerializerHelper.delete_caches(Model, ids)
 
         apps.get_model("study", "Study").delete_cache(self.id)
+
+        try:
+            # django-redis can delete by key pattern
+            cache.delete_pattern(f"assessment-{self.id}-*")
+        except AttributeError:
+            if settings.DEBUG:
+                # no big-deal in debug, just wipe the whole cache
+                cache.clear()
+            else:
+                # in prod, throw exception
+                raise NotImplementedError("Cannot wipe assessment cache using this cache backend")
 
     @classmethod
     def size_df(cls) -> pd.DataFrame:

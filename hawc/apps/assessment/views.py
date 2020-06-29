@@ -277,6 +277,21 @@ class AssessmentDelete(BaseDelete):
     success_message = "Assessment deleted."
 
 
+class AssessmentClearCache(MessageMixin, View):
+    model = models.Assessment
+    success_message = "Assessment cache cleared."
+
+    def get(self, request, *args, **kwargs):
+        assessment = get_object_or_404(self.model, pk=kwargs["pk"])
+        url = self.request.META.get("HTTP_REFERER", assessment.get_absolute_url())
+        if not assessment.user_can_edit_object(request.user):
+            raise PermissionDenied()
+
+        assessment.bust_cache()
+        self.send_message()
+        return HttpResponseRedirect(url)
+
+
 class AssessmentDownloads(BaseDetail):
     """
     Download assessment-level Microsoft Excel reports
