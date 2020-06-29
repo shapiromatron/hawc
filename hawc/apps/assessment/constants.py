@@ -3,4 +3,3 @@ class AssessmentCacheKeys:
         return (
             f"assessment-{assessment_id}-bioassay-endpoint-doses-heatmap-unpublished-{unpublished}"
         )
-

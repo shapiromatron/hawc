@@ -457,8 +457,7 @@ class ExploreHeatmapPlot {
             yAxis = this.vis.append("g").attr("class", "yAxis exp-heatmap-axis"),
             thisItem,
             label_padding = 6,
-            {y_tick_rotate, autorotate_tick_labels} = settings,
-            autorotate_wrap = 150;
+            {y_tick_rotate, autorotate_tick_labels} = settings;
 
         if (autorotate_tick_labels) {
             y_tick_rotate = 0;

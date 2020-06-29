@@ -4,7 +4,6 @@ import PropTypes from "prop-types";
 import {inject, observer} from "mobx-react";
 
 import h from "shared/utils/helpers";
-import DataPivotExtension from "summary/dataPivot/DataPivotExtension";
 
 @observer
 class FilterWidget extends Component {
@@ -82,7 +81,7 @@ class FilterWidget extends Component {
     }
 
     renderItem(widget, item, index, itemStore, filterWidgetExtension) {
-        const {toggleItemSelection, showModalClick, colorScale} = this.props.store,
+        const {toggleItemSelection, colorScale} = this.props.store,
             data = this.props.store.getTableData,
             numItems = data.filter(d =>
                 widget.delimiter && d[widget.column]
@@ -121,15 +120,16 @@ class FilterWidget extends Component {
     }
 
     renderButton(widget, item) {
-        const {showModalClick} = this.props.store,
-            modalTarget = _.find(DataPivotExtension.values, {_dpe_name: widget.on_click_event})
-                ._dpe_key,
+        const extensions = this.props.store.extensions.filterWidgets,
+            {showModalOnRow} = this.props.store,
+            extension = extensions[widget.column],
+            row_key = extension._dpe_key,
             modalRows = _.chain(this.props.store.dataset)
                 .filter({
                     [widget.column]: item,
                 })
-                .uniqBy(modalTarget)
-                .sortBy(modalTarget)
+                .uniqBy(row_key)
+                .sortBy(row_key)
                 .value();
 
         // If there are no results disable button
@@ -155,7 +155,7 @@ class FilterWidget extends Component {
             return (
                 <button
                     className="btn btn-mini pull-right"
-                    onClick={() => showModalClick(widget.on_click_event, modalRows[0])}
+                    onClick={() => showModalOnRow(extension, modalRows[0])}
                     title="View additional information">
                     <i className="icon-eye-open"></i>
                 </button>
@@ -175,15 +175,13 @@ class FilterWidget extends Component {
                         <i className="icon-eye-open"></i>
                     </a>
                     <ul className="dropdown-menu">
-                        <li className="nav-header">{modalTarget}</li>
+                        <li className="nav-header">{row_key}</li>
                         <li className="divider"></li>
                         {modalRows.map((row, idx) => {
                             return (
                                 <li key={idx}>
-                                    <a
-                                        href="#"
-                                        onClick={() => showModalClick(widget.on_click_event, row)}>
-                                        {row[modalTarget]}
+                                    <a href="#" onClick={() => showModalOnRow(extension, row)}>
+                                        {row[row_key]}
                                     </a>
                                 </li>
                             );
