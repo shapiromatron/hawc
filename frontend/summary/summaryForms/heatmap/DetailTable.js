@@ -16,9 +16,9 @@ class DetailTable extends Component {
         return (
             <table className="table table-condensed table-striped">
                 <colgroup>
-                    <col width="50%" />
-                    <col width="10%" />
-                    <col width="30%" />
+                    <col width="40%" />
+                    <col width="25%" />
+                    <col width="25%" />
                     <col width="10%" />
                 </colgroup>
                 <thead>

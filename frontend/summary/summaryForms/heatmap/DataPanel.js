@@ -9,7 +9,7 @@ import SelectInput from "shared/components/SelectInput";
 @observer
 class DataPanel extends Component {
     render() {
-        const {dataError, dataset} = this.props.store.base,
+        const {dataError, config, dataset} = this.props.store.base,
             {datasetOptions, settings} = this.props.store.subclass;
 
         let content;
@@ -34,7 +34,11 @@ class DataPanel extends Component {
                 ) : null}
                 {content}
                 <hr />
-                <DatasetPreview dataset={dataset} url={settings.data_url} />
+                <DatasetPreview
+                    dataset={dataset}
+                    url={settings.data_url}
+                    clearCacheUrl={config.clear_cache_url}
+                />
             </div>
         );
     }
@@ -55,10 +59,6 @@ class DataPanel extends Component {
                     made public, users without team-level access will be unable to view the visual.`}
                     value={settings.data_url}
                 />
-                <p className="help-block">
-                    <span className="label">Note</span> Data used for rendered visual are cached for
-                    10 minutes.
-                </p>
             </div>
         );
     }

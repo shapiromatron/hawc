@@ -9,8 +9,14 @@ import DatasetPreview from "../summary/heatmap/DatasetPreview";
 @observer
 class DataTab extends Component {
     render() {
-        const {dataset, settings} = this.props.store;
-        return <DatasetPreview dataset={toJS(dataset)} url={settings.data_url} />;
+        const {config, dataset, settings} = this.props.store;
+        return (
+            <DatasetPreview
+                dataset={toJS(dataset)}
+                url={settings.data_url}
+                clearCacheUrl={config.clear_cache_url}
+            />
+        );
     }
 }
 DataTab.propTypes = {

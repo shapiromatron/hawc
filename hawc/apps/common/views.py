@@ -686,6 +686,7 @@ class HeatmapBase(BaseList):
                 data_class=self.heatmap_data_class,
                 data_url=reverse(self.heatmap_data_url, args=(self.assessment.id,)) + url_args,
                 heatmap_view_title=self.heatmap_view_title,
+                obj_perms=self.assessment.user_permissions(self.request.user),
             )
         )
         return context

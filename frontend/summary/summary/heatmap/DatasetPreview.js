@@ -5,7 +5,7 @@ import DataTable from "shared/components/DataTable";
 
 class DatasetPreview extends Component {
     render() {
-        const {dataset, url} = this.props;
+        const {dataset, url, clearCacheUrl} = this.props;
 
         if (!dataset || dataset.length === 0) {
             return <div className="alert alert-danger">No data are available.</div>;
@@ -30,6 +30,12 @@ class DatasetPreview extends Component {
                         </a>
                         <ul className="dropdown-menu">
                             <li>
+                                {clearCacheUrl ? (
+                                    <a href={clearCacheUrl}>
+                                        <i className="fa fa-refresh"></i>&nbsp;Clear assessment
+                                        cache
+                                    </a>
+                                ) : null}
                                 <a
                                     href={
                                         url.includes("?")
@@ -63,6 +69,15 @@ class DatasetPreview extends Component {
                         <b>Columns:</b>&nbsp;{summary.columnNames.join(", ") || "<none>"}
                     </li>
                 </ul>
+                {clearCacheUrl ? (
+                    <p className="help-block">
+                        <span className="label label-info">Note</span> To improve performance, the
+                        data retrieved from this request are cached and reused for future requests.
+                        Therefore, changes made to the underlying data are not immediately reflected
+                        in visuals (and may take hours to update). To see changes immediately,&nbsp;
+                        <a href={clearCacheUrl}>refresh the cache</a>.
+                    </p>
+                ) : null}
                 <h4>
                     {summary.numRows > 0
                         ? `Showing the first ${rowsToShow} rows ...`
@@ -81,6 +96,7 @@ class DatasetPreview extends Component {
 DatasetPreview.propTypes = {
     url: PropTypes.string,
     dataset: PropTypes.array,
+    clearCacheUrl: PropTypes.string,
 };
 
 export default DatasetPreview;

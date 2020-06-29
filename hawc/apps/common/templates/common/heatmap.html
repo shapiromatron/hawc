@@ -17,6 +17,7 @@
 <script id="config" type="text/json" charset="utf-8">
 {
     "assessment": "{{assessment}}",
+    "clear_cache_url": {% if obj_perms.edit %}"{{assessment.get_clear_cache_url}}"{% else %}null{% endif %},
     "data_class": "{{data_class}}",
     "data_url": "{{data_url}}"
 }
