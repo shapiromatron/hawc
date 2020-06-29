@@ -1524,7 +1524,8 @@ class Result(models.Model):
         qs = Exposure.objects.filter(study_population__study__assessment=assessment).values(
             "id", *exposure_cols
         )
-        df2 = pd.DataFrame(qs).set_index("id")
+
+        df2 = pd.DataFrame(data=qs, columns=["id", *exposure_cols]).set_index("id")
         df2["exposure route"] = df2[exposure_cols].apply(
             lambda x: "|".join(x.index[x == True]).replace("_", " "), axis=1  # noqa: E712
         )

@@ -3,20 +3,12 @@
     "study id": 5,
     "study citation": "Kawana N, Ishimatsu S, and Kanda K 2001",
     "study identifier": "",
-    "study population id": 1,
-    "study population name": "Tokyo subway victims",
-    "study population source": "",
     "study design": "Case series",
-    "comparison set id": 1,
-    "comparison set name": "Tokyo subway victims (different groups)",
-    "exposure id": 1,
+    "study population source": "",
     "exposure name": "sarin poisoning",
     "exposure route": "inhalation",
-    "outcome id": 4,
     "system": "nervous system and special sense organs",
     "effect": "neurological: behavior",
-    "effect subtype": "",
-    "result id": 1,
-    "result name": "partial PTSD"
+    "effect subtype": ""
   }
 ]

@@ -32,8 +32,8 @@ class TestEpiAssessmentViewset:
 
         urls = [
             reverse("epi:api:assessment-export", args=(db_keys.assessment_working,)),
-            # reverse("epi:api:assessment-study-heatmap", args=(db_keys.assessment_working,)),
-            # reverse("epi:api:assessment-result-heatmap", args=(db_keys.assessment_working,)),
+            reverse("epi:api:assessment-study-heatmap", args=(db_keys.assessment_working,)),
+            reverse("epi:api:assessment-result-heatmap", args=(db_keys.assessment_working,)),
         ]
         for url in urls:
             assert anon_client.get(url).status_code == 403
@@ -60,12 +60,12 @@ class TestEpiAssessmentViewset:
 
     def test_result_heatmap(self, rewrite_data_files: bool, db_keys):
         # published
-        fn = "api-epi-assessment-study-heatmap-unpublished-False.json"
+        fn = "api-epi-assessment-result-heatmap-unpublished-False.json"
         url = reverse(f"epi:api:assessment-result-heatmap", args=(db_keys.assessment_final,))
         self._test_flat_export(rewrite_data_files, fn, url)
 
         # unpublished
-        fn = "api-epi-assessment-study-heatmap-unpublished-True.json"
+        fn = "api-epi-assessment-result-heatmap-unpublished-True.json"
         url = (
             reverse(f"epi:api:assessment-result-heatmap", args=(db_keys.assessment_final,))
             + "?format=json&unpublished=true"

@@ -34,6 +34,10 @@ class TestAssessmentViewset:
             reverse("animal:api:assessment-full-export", args=(db_keys.assessment_working,)),
             reverse("animal:api:assessment-endpoint-export", args=(db_keys.assessment_working,)),
             reverse("animal:api:assessment-endpoint-heatmap", args=(db_keys.assessment_working,)),
+            reverse(
+                "animal:api:assessment-endpoint-doses-heatmap", args=(db_keys.assessment_working,)
+            ),
+            reverse("animal:api:assessment-endpoints", args=(db_keys.assessment_working,)),
         ]
         for url in urls:
             assert anon_client.get(url).status_code == 403

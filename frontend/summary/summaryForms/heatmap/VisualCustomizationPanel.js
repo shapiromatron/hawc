@@ -211,7 +211,7 @@ class VisualCustomizationPanel extends Component {
                 <div className="row-fluid">
                     <div className="span3">
                         <CheckboxInput
-                            label="Compress X fields?"
+                            label="Compress X fields"
                             name="compress_x"
                             onChange={e => changeSettings(e.target.name, e.target.checked)}
                             checked={settings.compress_x}
@@ -220,7 +220,7 @@ class VisualCustomizationPanel extends Component {
                     </div>
                     <div className="span3">
                         <CheckboxInput
-                            label="Compress Y fields?"
+                            label="Compress Y fields"
                             name="compress_y"
                             onChange={e => changeSettings(e.target.name, e.target.checked)}
                             checked={settings.compress_y}
