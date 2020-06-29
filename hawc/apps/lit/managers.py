@@ -532,6 +532,7 @@ class ReferenceManager(BaseManager):
             .annotate(hero_id=Cast(hero_qs, models.IntegerField()))
             .annotate(doi=doi_qs)
             .values_list(*values.keys())
+            .order_by("id")
         )
         df1 = pd.DataFrame(data=qs, columns=values.values()).set_index("reference id")
 

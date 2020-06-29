@@ -143,7 +143,9 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         assessment = self.get_object()
         tags = models.ReferenceFilterTag.get_all_tags(assessment.id, json_encode=False)
         exporter = exports.ReferenceFlatComplete(
-            models.Reference.objects.get_qs(assessment).prefetch_related("identifiers"),
+            models.Reference.objects.get_qs(assessment)
+            .prefetch_related("identifiers")
+            .order_by("id"),
             filename=f"references-{assessment}",
             assessment=assessment,
             tags=tags,
@@ -203,7 +205,7 @@ class ReferenceFilterTagViewset(AssessmentRootedTagTreeViewset):
         """
         tag = self.get_object()
         exporter = exports.ReferenceFlatComplete(
-            queryset=models.Reference.objects.filter(tags=tag),
+            queryset=models.Reference.objects.filter(tags=tag).order_by("id"),
             filename=f"{self.assessment}-{tag.slug}",
             assessment=self.assessment,
             tags=self.model.get_all_tags(self.assessment.id, json_encode=False),
@@ -219,7 +221,7 @@ class ReferenceFilterTagViewset(AssessmentRootedTagTreeViewset):
         """
         tag = self.get_object()
         exporter = exports.TableBuilderFormat(
-            queryset=models.Reference.objects.filter(tags=tag),
+            queryset=models.Reference.objects.filter(tags=tag).order_by("id"),
             filename=f"{self.assessment}-{tag.slug}",
             assessment=self.assessment,
         )

@@ -10,28 +10,20 @@ DATA_ROOT = Path(__file__).parents[2] / "data/api"
 
 @pytest.mark.django_db
 class TestLiteratureAssessmentViewset:
-    def _test_lit_export(
-        self,
-        rewrite_data_files: bool,
-        url_path: str,
-        file_slug: str,
-        key: int,
-        query_string: str = "",
-    ):
-        fn = Path(DATA_ROOT / f"api-lit-assessment-{file_slug}.json")
-        url = reverse(f"lit:api:assessment-{url_path}", args=(key,)) + query_string
+    def _test_flat_export(self, rewrite_data_files: bool, fn: str, url: str):
 
         client = APIClient()
         assert client.login(username="rev@rev.com", password="pw") is True
         resp = client.get(url)
         assert resp.status_code == 200
 
+        path = Path(DATA_ROOT / fn)
         data = resp.json()
 
         if rewrite_data_files:
-            Path(fn).write_text(json.dumps(data, indent=2))
+            path.write_text(json.dumps(data, indent=2))
 
-        assert data == json.loads(fn.read_text())
+        assert data == json.loads(path.read_text())
 
     def test_permissions(self, db_keys):
         rev_client = APIClient()
@@ -59,9 +51,9 @@ class TestLiteratureAssessmentViewset:
             assert rev_client.get(url).status_code == 200
 
     def test_references_download(self, rewrite_data_files: bool, db_keys):
-        self._test_lit_export(
-            rewrite_data_files, "references-download", "references-export", db_keys.assessment_final
-        )
+        url = reverse("lit:api:assessment-references-download", args=(db_keys.assessment_final,))
+        fn = "api-lit-assessment-references-export.json"
+        self._test_flat_export(rewrite_data_files, fn, url)
 
     def test_tags(self, db_keys):
         url = reverse("lit:api:assessment-tags", kwargs=dict(pk=db_keys.assessment_working))
@@ -112,9 +104,9 @@ class TestLiteratureAssessmentViewset:
         assert resp["data"][0]["type"] == "histogram"
 
     def test_tag_heatmap(self, rewrite_data_files: bool, db_keys):
-        self._test_lit_export(
-            rewrite_data_files, "tag-heatmap", "tag-heatmap", db_keys.assessment_final
-        )
+        url = reverse("lit:api:assessment-tag-heatmap", args=(db_keys.assessment_final,))
+        fn = "api-lit-assessment-tag-heatmap.json"
+        self._test_flat_export(rewrite_data_files, fn, url)
 
 
 @pytest.mark.django_db

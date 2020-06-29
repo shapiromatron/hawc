@@ -10,7 +10,7 @@ DATA_ROOT = Path(__file__).parents[2] / "data/api"
 
 @pytest.mark.django_db
 class TestEpiAssessmentViewset:
-    def _test_export(self, rewrite_data_files: bool, fn: str, url: str):
+    def _test_flat_export(self, rewrite_data_files: bool, fn: str, url: str):
 
         client = APIClient()
         assert client.login(username="rev@rev.com", password="pw") is True
@@ -42,13 +42,13 @@ class TestEpiAssessmentViewset:
     def test_full_export(self, rewrite_data_files: bool, db_keys):
         fn = "api-epi-assessment-export.json"
         url = reverse(f"epi:api:assessment-export", args=(db_keys.assessment_final,))
-        self._test_export(rewrite_data_files, fn, url)
+        self._test_flat_export(rewrite_data_files, fn, url)
 
     def test_study_heatmap(self, rewrite_data_files: bool, db_keys):
         # published
         fn = "api-epi-assessment-study-heatmap-unpublished-False.json"
         url = reverse(f"epi:api:assessment-study-heatmap", args=(db_keys.assessment_final,))
-        self._test_export(rewrite_data_files, fn, url)
+        self._test_flat_export(rewrite_data_files, fn, url)
 
         # unpublished
         fn = "api-epi-assessment-study-heatmap-unpublished-True.json"
@@ -56,13 +56,13 @@ class TestEpiAssessmentViewset:
             reverse(f"epi:api:assessment-study-heatmap", args=(db_keys.assessment_final,))
             + "?format=json&unpublished=true"
         )
-        self._test_export(rewrite_data_files, fn, url)
+        self._test_flat_export(rewrite_data_files, fn, url)
 
     def test_result_heatmap(self, rewrite_data_files: bool, db_keys):
         # published
         fn = "api-epi-assessment-study-heatmap-unpublished-False.json"
         url = reverse(f"epi:api:assessment-result-heatmap", args=(db_keys.assessment_final,))
-        self._test_export(rewrite_data_files, fn, url)
+        self._test_flat_export(rewrite_data_files, fn, url)
 
         # unpublished
         fn = "api-epi-assessment-study-heatmap-unpublished-True.json"
@@ -70,4 +70,4 @@ class TestEpiAssessmentViewset:
             reverse(f"epi:api:assessment-result-heatmap", args=(db_keys.assessment_final,))
             + "?format=json&unpublished=true"
         )
-        self._test_export(rewrite_data_files, fn, url)
+        self._test_flat_export(rewrite_data_files, fn, url)

@@ -105,7 +105,7 @@ class EndpointManager(BaseManager):
             LOEL="loel",
             FEL="fel",
         )
-        qs = Endpoint.objects.filter(**filters).values_list(*values.keys())
+        qs = Endpoint.objects.filter(**filters).values_list(*values.keys()).order_by("id")
         df1 = pd.DataFrame(data=qs, columns=values.values())
 
         # get BMD values

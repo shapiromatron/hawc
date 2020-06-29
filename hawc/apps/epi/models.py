@@ -1455,7 +1455,7 @@ class Result(models.Model):
             "short_citation": "study citation",
             "study_identifier": "study identifier",
         }
-        qs = Study.objects.filter(**filters).values_list(*columns.keys())
+        qs = Study.objects.filter(**filters).values_list(*columns.keys()).order_by("id")
         df1 = pd.DataFrame(data=list(qs), columns=columns.values()).set_index("study id")
 
         # rollup endpoint-level data to studies
@@ -1513,6 +1513,7 @@ class Result(models.Model):
             )
             .filter(**filters)
             .values_list(*columns.keys())
+            .order_by('id')
         )
 
         df1 = pd.DataFrame(data=list(qs), columns=columns.values())
