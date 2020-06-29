@@ -23,6 +23,7 @@ from ..myuser.models import HAWCUser
 from . import managers
 from .tasks import add_time_spent
 
+
 NOEL_NAME_CHOICES_NOEL = 0
 NOEL_NAME_CHOICES_NOAEL = 1
 NOEL_NAME_CHOICES_NEL = 2
@@ -335,6 +336,17 @@ class Assessment(models.Model):
             SerializerHelper.delete_caches(Model, ids)
 
         apps.get_model("study", "Study").delete_cache(self.id)
+
+        try:
+            # django-redis can delete by key pattern
+            cache.delete_pattern(f"assessment-{self.id}-*")
+        except AttributeError:
+            if settings.DEBUG:
+                # no big-deal in debug, just wipe the whole cache
+                cache.clear()
+            else:
+                # in prod, throw exception
+                raise NotImplementedError("Cannot wipe assessment cache using this cache backend")
 
     @classmethod
     def size_df(cls) -> pd.DataFrame:
