@@ -80,6 +80,7 @@ class EndpointListStore {
                 doses: doseOptions.map(d => d.id),
                 systems: systemOptions.map(d => d.id),
                 criticalValues: criticalValueOptions.map(d => d.id),
+                approximateXValues: true,
             };
 
         this.settings = settings;

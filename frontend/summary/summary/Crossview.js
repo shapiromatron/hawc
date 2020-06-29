@@ -1,5 +1,4 @@
 import $ from "$";
-import d3 from "d3";
 
 import HAWCModal from "utils/HAWCModal";
 

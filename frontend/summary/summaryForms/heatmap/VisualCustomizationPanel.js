@@ -219,14 +219,12 @@ class VisualCustomizationPanel extends Component {
                     </div>
                     <div className="span2">
                         <CheckboxInput
-                            id="compress_x"
                             label="Compress X fields?"
                             name="compress_x"
                             onChange={e => changeSettings(e.target.name, e.target.checked)}
                             checked={settings.compress_x}
                         />
                         <CheckboxInput
-                            id="compress_y"
                             label="Compress Y fields?"
                             name="compress_y"
                             onChange={e => changeSettings(e.target.name, e.target.checked)}
@@ -235,14 +233,12 @@ class VisualCustomizationPanel extends Component {
                     </div>
                     <div className="span2">
                         <CheckboxInput
-                            id="show_grid"
                             label="Show grid"
                             name="show_grid"
                             onChange={e => changeSettings(e.target.name, e.target.checked)}
                             checked={settings.show_grid}
                         />
                         <CheckboxInput
-                            id="show_axis_border"
                             label="Show axis border"
                             name="show_axis_border"
                             onChange={e => changeSettings(e.target.name, e.target.checked)}
@@ -251,14 +247,12 @@ class VisualCustomizationPanel extends Component {
                     </div>
                     <div className="span2">
                         <CheckboxInput
-                            id="autosize_cells"
                             label="Auto-size heatmap cells"
                             name="autosize_cells"
                             onChange={e => changeSettings(e.target.name, e.target.checked)}
                             checked={settings.autosize_cells}
                         />
                         <CheckboxInput
-                            id="autorotate_tick_labels"
                             label="Auto-rotate tick labels"
                             name="autorotate_tick_labels"
                             onChange={e => changeSettings(e.target.name, e.target.checked)}
@@ -267,14 +261,12 @@ class VisualCustomizationPanel extends Component {
                     </div>
                     <div className="span2">
                         <CheckboxInput
-                            id="hawc_interactivity"
                             label="HAWC interactivity"
                             name="hawc_interactivity"
                             onChange={e => changeSettings(e.target.name, e.target.checked)}
                             checked={settings.hawc_interactivity}
                         />
                         <CheckboxInput
-                            id="show_tooltip"
                             label="Show tooltips"
                             name="show_tooltip"
                             onChange={e => changeSettings(e.target.name, e.target.checked)}

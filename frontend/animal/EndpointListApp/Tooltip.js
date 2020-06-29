@@ -8,7 +8,7 @@ class Tooltip extends Component {
             .filter(el => el != null && el !== "")
             .join("<br/>");
         return (
-            <div style={{minWidth: 300}}>
+            <div style={{width: 300}}>
                 <table className="table table-condensed table-striped">
                     <colgroup>
                         <col width={"100px"} />

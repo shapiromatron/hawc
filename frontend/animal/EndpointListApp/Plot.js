@@ -11,10 +11,13 @@ import Endpoint from "animal/Endpoint";
 
 import Tooltip from "./Tooltip";
 
-const dodgeLogarithmic = (data, x, radius) => {
+const dodgeLogarithmic = (data, x, radius, approximateXValues) => {
         // https://observablehq.com/@d3/beeswarm-iii
         const radius2 = radius ** 2,
-            circles = data.map(d => ({x: x(d.dose), data: d})).sort((a, b) => a.x - b.x),
+            xJitter = d3.random.normal(0, radius * 1.5), // equally space
+            circles = data
+                .map(d => ({x: x(d.dose) + (approximateXValues ? xJitter() : 0), data: d}))
+                .sort((a, b) => a.x - b.x),
             epsilon = 1e-3;
         let head = null,
             tail = null;
@@ -55,7 +58,7 @@ const dodgeLogarithmic = (data, x, radius) => {
 
         return circles;
     },
-    renderPlot = function(el, values) {
+    renderPlot = function(el, values, settings) {
         // always start fresh
         $(el).empty();
 
@@ -84,7 +87,7 @@ const dodgeLogarithmic = (data, x, radius) => {
                 .domain([xFloor, xCeil])
                 .range([0, width]);
 
-        let scaledData = dodgeLogarithmic(values, x, itemRadius);
+        let scaledData = dodgeLogarithmic(values, x, itemRadius, settings.approximateXValues);
 
         let yBaseMaxRange = height - itemRadius - 2,
             y = d3.scale
@@ -136,15 +139,12 @@ const dodgeLogarithmic = (data, x, radius) => {
             .attr("fill", d => colorScale(d.data.type))
             .on("click", d => Endpoint.displayAsModal(d.data.data["endpoint id"]));
 
-        bindTooltip(
-            $tooltip,
-            items,
-            d => <Tooltip d={d.data} />,
-            () => d3.select(event.target).moveToFront()
-        );
+        bindTooltip($tooltip, items, d => <Tooltip d={d.data} />, {
+            mouseEnterExtra: () => d3.select(event.target).moveToFront(),
+        });
 
         const refresh = function(values) {
-                let data = dodgeLogarithmic(values, x, itemRadius),
+                let data = dodgeLogarithmic(values, x, itemRadius, settings.approximateXValues),
                     maxY = d3.max(data, d => d.y);
 
                 // Reset y domain using new data
@@ -201,8 +201,9 @@ const dodgeLogarithmic = (data, x, radius) => {
 @observer
 class Plot extends React.Component {
     componentDidMount() {
-        const el = document.getElementById(this.divId);
-        autorun(() => renderPlot(el, toJS(this.props.store.plotData)));
+        const el = document.getElementById(this.divId),
+            {store} = this.props;
+        autorun(() => renderPlot(el, toJS(store.plotData), toJS(store.settings)));
     }
     render() {
         this.divId = h.randomString();

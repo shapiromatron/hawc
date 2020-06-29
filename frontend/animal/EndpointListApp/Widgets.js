@@ -2,6 +2,7 @@ import PropTypes from "prop-types";
 import React from "react";
 import {inject, observer} from "mobx-react";
 
+import CheckboxInput from "shared/components/CheckboxInput";
 import SelectInput from "shared/components/SelectInput";
 
 @inject("store")
@@ -48,8 +49,17 @@ class Widgets extends React.Component {
                             store.changeSettingsSelection("criticalValues", values)
                         }
                         multiple={true}
-                        selectSize={10}
+                        selectSize={5}
                         label="Critical value(s)"
+                    />
+                    <CheckboxInput
+                        label="Approximate x-values"
+                        checked={store.settings.approximateXValues}
+                        onChange={e =>
+                            store.changeSettingsSelection(e.target.name, e.target.checked)
+                        }
+                        name="approximateXValues"
+                        helpText="Add jitter to x-axis to reduce peaks; values on x axis are approximate"
                     />
                 </div>
             </div>

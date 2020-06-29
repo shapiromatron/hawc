@@ -8,7 +8,6 @@ class TooltipContainer extends Component {
         return (
             <div
                 style={{
-                    position: "absolute",
                     backgroundColor: "white",
                 }}>
                 {this.props.children}
@@ -20,7 +19,7 @@ TooltipContainer.propTypes = {
     children: PropTypes.element.isRequired,
 };
 
-const bindTooltip = function($el, d3Selection, buildChildComponent, mouseEnterExtra) {
+const bindTooltip = function($el, d3Selection, buildChildComponent, options) {
     /*
 
     Add tooltip to d3 selection. To use this method:
@@ -28,9 +27,11 @@ const bindTooltip = function($el, d3Selection, buildChildComponent, mouseEnterEx
     - $el is a jQuery element where the tooltip is to be append
     - $d3Selection is a d3 selection of content
     - buildChildComponent builds the child
+    - mouseEnterExtra (optional) is any extra methods called on `mouseenter` event
     */
     const xOffset = 10,
-        yOffset = 10;
+        yOffset = 10,
+        opts = options || {};
 
     $el.css("position", "absolute");
 
@@ -41,16 +42,26 @@ const bindTooltip = function($el, d3Selection, buildChildComponent, mouseEnterEx
                 <TooltipContainer>{buildChildComponent(...arguments)}</TooltipContainer>,
                 $el[0]
             );
-            if (mouseEnterExtra) {
-                mouseEnterExtra();
+            if (opts.mouseEnterExtra) {
+                opts.mouseEnterExtra(...arguments);
             }
         })
-        .on("mousemove", () =>
+        .on("mousemove", () => {
+            const box = $el[0].getBoundingClientRect();
             $el.css({
-                top: `${d3.event.pageY + xOffset}px`,
-                left: `${d3.event.pageX + yOffset}px`,
-            })
-        )
+                left: `${
+                    d3.event.pageX + xOffset + box.width < window.pageXOffset + window.innerWidth
+                        ? d3.event.pageX + xOffset
+                        : d3.event.pageX - xOffset - box.width
+                }px`,
+                top: `${
+                    d3.event.pageY + yOffset + box.height * 0.5 <
+                    window.pageYOffset + window.innerHeight
+                        ? d3.event.pageY + yOffset - box.height * 0.5
+                        : window.pageYOffset + window.innerHeight - yOffset - box.height
+                }px`,
+            });
+        })
         .on("mouseleave", () => $el.css("display", "none"));
 };
 

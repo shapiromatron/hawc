@@ -29,9 +29,9 @@ class CheckboxInput extends Component {
 
 CheckboxInput.propTypes = {
     helpText: PropTypes.string,
-    id: PropTypes.string.isRequired,
+    id: PropTypes.string,
     label: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired,
+    name: PropTypes.string,
     onChange: PropTypes.func.isRequired,
     required: PropTypes.bool,
     checked: PropTypes.bool.isRequired,
