@@ -320,7 +320,7 @@ class HeatmapDatastore {
 
     @computed
     get getTableData() {
-        let rows;
+        let rows, data;
         if (this.tableDataFilters.size > 0) {
             let all_rows = [...this.tableDataFilters].map(
                 d => _.find(this.matrixDataset, {x_step: d.x_step, y_step: d.y_step}).rows
@@ -334,7 +334,8 @@ class HeatmapDatastore {
                 ),
             ];
         }
-        return rows.map(index => this.dataset[index]);
+        data = rows.map(index => this.dataset[index]);
+        return {rows, data};
     }
 
     @action.bound setTableDataFilters(d) {

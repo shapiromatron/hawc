@@ -16,13 +16,17 @@ class FilterWidget extends Component {
             {colorScale, maxValue} = this.props.store,
             maxHeight = `${Math.floor((1 / numWidgets) * 100)}vh`,
             {selectAllFilterWidget, selectNoneFilterWidget} = this.props.store,
-            data = this.props.store.getTableData,
-            availableItems = _.chain(data)
-                .map(d => d[widget.column])
-                .map(d => (widget.delimiter && d ? d.split(widget.delimiter) : d))
-                .flatten()
-                .uniq()
-                .value(),
+            {rows} = this.props.store.getTableData,
+            allItems = _.keys(this.props.store.intersection[widget.column]),
+            availableItems = allItems.filter(item => {
+                let itemRows = [...this.props.store.intersection[widget.column][item]];
+                for (let itemRow of itemRows) {
+                    if (rows.includes(itemRow)) {
+                        return true;
+                    }
+                }
+                return false;
+            }),
             itemStore = this.props.store.filterWidgetState[widget.column],
             hiddenItems = _.chain(itemStore)
                 .keys()
@@ -82,12 +86,9 @@ class FilterWidget extends Component {
 
     renderItem(widget, item, index, itemStore, filterWidgetExtension) {
         const {toggleItemSelection, colorScale} = this.props.store,
-            data = this.props.store.getTableData,
-            numItems = data.filter(d =>
-                widget.delimiter && d[widget.column]
-                    ? _.includes(d[widget.column].split(widget.delimiter), item)
-                    : d[widget.column] === item
-            ).length;
+            {rows} = this.props.store.getTableData,
+            itemRows = [...this.props.store.intersection[widget.column][item]],
+            numItems = itemRows.filter(itemRow => rows.includes(itemRow)).length;
         return (
             <div key={index}>
                 {filterWidgetExtension && filterWidgetExtension.hasModal
