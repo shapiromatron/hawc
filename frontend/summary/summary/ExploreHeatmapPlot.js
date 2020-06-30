@@ -237,7 +237,8 @@ class ExploreHeatmapPlot {
                     .attr("x", 0)
                     .attr("y", 0)
                     .attr("transform", `rotate(${x_tick_rotate})`)
-                    .text("Total");
+                    .text("Grand Total")
+                    .style("font-weight", "bold");
 
                 let box = label.node().getBBox(),
                     label_offset =
@@ -401,7 +402,8 @@ class ExploreHeatmapPlot {
                     .attr("x", 0)
                     .attr("y", 0)
                     .attr("transform", `rotate(${x_tick_rotate})`)
-                    .text("Total");
+                    .text("Grand Total")
+                    .style("font-weight", "bold");
 
                 let box = label.node().getBBox(),
                     label_offset =
@@ -532,7 +534,8 @@ class ExploreHeatmapPlot {
                     .attr("x", 0)
                     .attr("y", 0)
                     .attr("transform", `rotate(${y_tick_rotate})`)
-                    .text("Total");
+                    .text("Grand Total")
+                    .style("font-weight", "bold");
 
                 let box = label.node().getBBox(),
                     label_offset =
