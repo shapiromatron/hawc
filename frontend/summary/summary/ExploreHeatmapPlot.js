@@ -215,7 +215,7 @@ class ExploreHeatmapPlot {
 
                     label.attr(
                         "transform",
-                        `translate(${label_offset - box.x},${label_padding - box.y})`
+                        `translate(${-box.x + label_offset},${-box.y + label_padding})`
                     );
 
                     borderData.push({
@@ -247,7 +247,7 @@ class ExploreHeatmapPlot {
 
                 label.attr(
                     "transform",
-                    `translate(${label_offset - box.x},${label_padding - box.y})`
+                    `translate(${-box.x + label_offset},${-box.y + label_padding})`
                 );
             }
 
@@ -377,7 +377,10 @@ class ExploreHeatmapPlot {
                             (numItems * this.cellDimensions.width) / 2 -
                             box.width / 2;
 
-                    label.attr("transform", `translate(${label_offset - box.x},${-label_padding})`);
+                    label.attr(
+                        "transform",
+                        `translate(${-box.x + label_offset},${-box.y - box.height - label_padding})`
+                    );
 
                     borderData.push({
                         filters: _.slice(lastItem, 0, i + 1),
@@ -406,7 +409,10 @@ class ExploreHeatmapPlot {
                         this.cellDimensions.width / 2 -
                         box.width / 2;
 
-                label.attr("transform", `translate(${label_offset - box.x},${-label_padding})`);
+                label.attr(
+                    "transform",
+                    `translate(${-box.x + label_offset},${-box.y - box.height - label_padding})`
+                );
             }
 
             let box = axis.node().getBBox();
@@ -504,7 +510,7 @@ class ExploreHeatmapPlot {
                             box.height / 2;
                     label.attr(
                         "transform",
-                        `translate(${-box.width - box.x - label_padding},${label_offset - box.y})`
+                        `translate(${-box.x - box.width - label_padding},${-box.y + label_offset})`
                     );
 
                     borderData.push({
@@ -536,7 +542,7 @@ class ExploreHeatmapPlot {
 
                 label.attr(
                     "transform",
-                    `translate(${-box.width - box.x - label_padding},${label_offset - box.y})`
+                    `translate(${-box.x - box.width - label_padding},${-box.y + label_offset})`
                 );
             }
 
