@@ -125,7 +125,7 @@ class FilterWidget extends Component {
             {showModalOnRow} = this.props.store,
             extension = extensions[widget.column],
             row_key = extension._dpe_key,
-            modalRows = _.chain(this.props.store.dataset)
+            modalRows = _.chain(this.props.store.getTableData.data)
                 .filter({
                     [widget.column]: item,
                 })
