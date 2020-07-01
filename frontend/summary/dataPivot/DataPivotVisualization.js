@@ -168,7 +168,7 @@ class DataPivotVisualization extends D3Plot {
                     });
                 }
             } else {
-                console.log(`Unrecognized filter: ${filters[i].quantifier}`);
+                console.error(`Unrecognized filter: ${filters[i].quantifier}`);
             }
         }
 
@@ -465,7 +465,7 @@ class DataPivotVisualization extends D3Plot {
                         break;
 
                     default:
-                        console.log(`Unrecognized condition_type: ${cf.condition_type}`);
+                        console.error(`Unrecognized condition_type: ${cf.condition_type}`);
                 }
             });
         } else {
@@ -487,7 +487,7 @@ class DataPivotVisualization extends D3Plot {
 
                             break;
                         default:
-                            console.log(`Unrecognized condition_type: ${cf.condition_type}`);
+                            console.error(`Unrecognized condition_type: ${cf.condition_type}`);
                     }
                 });
             });
@@ -546,7 +546,7 @@ class DataPivotVisualization extends D3Plot {
 
                             break;
                         default:
-                            console.log(`Unrecognized condition_type: ${cf.condition_type}`);
+                            console.error(`Unrecognized condition_type: ${cf.condition_type}`);
                     }
                 });
             });

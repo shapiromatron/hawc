@@ -3,7 +3,15 @@
         "generator-star-spacing": 1,
         "linebreak-style": [2, "unix"],
         "no-await-in-loop": 1,
-        "no-console": 1,
+        "no-console": [
+            2,
+            {
+                "allow": [
+                    "warn",
+                    "error"
+                ]
+            }
+        ],
         "no-sparse-arrays": 2,
         "no-unused-vars": [2, { "args": "none" }],
         "object-shorthand": 1,

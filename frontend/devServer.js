@@ -21,8 +21,9 @@ app.use(function(req, res, next) {
 
 app.listen(port, "0.0.0.0", function(err) {
     if (err) {
-        console.log(err);
+        console.error(err);
         return;
     }
-    console.log("Listening at http://localhost:" + port);
+    // eslint-disable-next-line no-console
+    console.info("Listening at http://localhost:" + port);
 });
