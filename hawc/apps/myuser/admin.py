@@ -54,9 +54,13 @@ class HAWCUserAdmin(admin.ModelAdmin):
 
     def diagnostic_cache(modeladmin, request, queryset):
         cache.set("foo", "bar")
-        assert cache.get("foo") == "bar"
+        if cache.get("foo") != "bar":
+            raise RuntimeError("Cache did not successfully set variable.")
+
         cache.delete("foo")
-        assert cache.get("foo") is None
+        if cache.get("foo") is not None:
+            raise RuntimeError("Cache did not successfully delete variable.")
+
         message = "Cache test executed successfully"
         modeladmin.message_user(request, message)
 
