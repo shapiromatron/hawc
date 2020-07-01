@@ -25,7 +25,7 @@ class ListApp extends Component {
         this.updateForm = this.updateForm.bind(this);
     }
 
-    componentWillMount() {
+    componentDidMount() {
         this.props.dispatch(fetchTasks());
         this.props.dispatch(fetchStudies());
     }

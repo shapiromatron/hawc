@@ -14,7 +14,7 @@ class Root extends Component {
         props.dispatch(loadConfig());
     }
 
-    componentWillMount() {
+    componentDidMount() {
         this.props.dispatch(fetchTasks());
     }
 

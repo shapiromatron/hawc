@@ -34,7 +34,7 @@ import {
 } from "bmd/actions";
 
 class Tabs extends React.Component {
-    componentWillMount() {
+    componentDidMount() {
         this.props.dispatch(fetchEndpoint(this.props.config.endpoint_id));
         this.props.dispatch(fetchSessionSettings(this.props.config.session_url));
     }
@@ -45,7 +45,7 @@ class Tabs extends React.Component {
         }
     }
 
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
         if (nextProps.logicApplied === false && nextProps.hasSession && nextProps.hasEndpoint) {
             this.props.dispatch(applyLogic());
         }

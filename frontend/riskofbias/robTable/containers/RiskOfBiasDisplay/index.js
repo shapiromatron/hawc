@@ -12,7 +12,7 @@ class RiskOfBiasDisplay extends Component {
         this.handleShowAllClick = this.handleShowAllClick.bind(this);
     }
 
-    componentWillMount() {
+    componentDidMount() {
         this.props.dispatch(fetchFullStudyIfNeeded());
     }
 

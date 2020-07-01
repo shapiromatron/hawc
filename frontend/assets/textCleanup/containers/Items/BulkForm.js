@@ -13,7 +13,7 @@ class BulkForm extends Component {
         this.handleDetailSubmit = this.handleDetailSubmit.bind(this);
     }
 
-    componentWillMount() {
+    componentDidMount() {
         this.props.dispatch(
             initializeBulkEditForm(this.getIDs(this.props), this.props.params.field)
         );

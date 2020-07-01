@@ -22,7 +22,7 @@ class ModelOptionModal extends BaseModal {
         return defaults;
     }
 
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
         if (nextProps.model) {
             var props = Object.assign(
                 this._getDefaults(nextProps.model),

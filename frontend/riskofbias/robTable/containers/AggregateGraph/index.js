@@ -13,7 +13,7 @@ class AggregateGraph extends Component {
         this.selectActiveWithName = this.selectActiveWithName.bind(this);
     }
 
-    componentWillMount() {
+    componentDidMount() {
         this.props.dispatch(fetchFullStudyIfNeeded());
     }
 

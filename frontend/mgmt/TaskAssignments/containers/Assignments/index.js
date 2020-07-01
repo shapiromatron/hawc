@@ -20,7 +20,7 @@ class Assignments extends Component {
         };
     }
 
-    componentWillMount() {
+    componentDidMount() {
         this.props.dispatch(hydrateTasks());
         this.props.dispatch(fetchTasks());
     }

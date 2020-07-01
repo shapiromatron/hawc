@@ -6,7 +6,7 @@ import {loadConfig} from "shared/actions/Config";
 import Assignments from "mgmt/TaskAssignments/containers/Assignments";
 
 class Root extends Component {
-    componentWillMount() {
+    componentDidMount() {
         this.props.store.dispatch(loadConfig());
     }
 

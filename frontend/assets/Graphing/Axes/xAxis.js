@@ -3,16 +3,13 @@ import PropTypes from "prop-types";
 import d3 from "d3";
 
 class xAxis extends Component {
-    componentWillMount() {
+    componentDidMount() {
         let {xScale, ticks} = this.props;
         this.xAxis = d3.svg
             .axis()
             .scale(xScale)
             .orient("bottom")
             .ticks(ticks);
-    }
-
-    componentDidMount() {
         this.renderAxis();
     }
 

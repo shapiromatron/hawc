@@ -7,7 +7,7 @@ import Assessment from "textCleanup/components/Assessment";
 import Loading from "shared/components/Loading";
 
 class App extends Component {
-    componentWillMount() {
+    componentDidMount() {
         this.props.dispatch(fetchAssessment());
     }
 

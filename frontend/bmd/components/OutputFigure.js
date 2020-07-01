@@ -47,7 +47,7 @@ class OutputFigure extends React.Component {
         }
     }
 
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
         if (nextProps.hoverModel !== this.props.hoverModel) {
             this.renderHoverLine(nextProps.hoverModel);
         }

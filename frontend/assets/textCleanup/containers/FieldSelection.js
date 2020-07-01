@@ -10,13 +10,10 @@ import urls from "textCleanup/constants/urls";
 import h from "textCleanup/utils/helpers";
 
 class FieldSelection extends Component {
-    componentWillMount() {
+    componentDidMount() {
         if (!this.props.types) {
             this.props.dispatch(fetchAssessment());
         }
-    }
-
-    componentDidMount() {
         this.props.dispatch(fetchModel(this.props.match.params));
     }
 

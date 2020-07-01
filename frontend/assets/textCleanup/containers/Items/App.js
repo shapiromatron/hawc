@@ -7,7 +7,7 @@ import ItemList from "textCleanup/components/Items/ItemList";
 import Loading from "shared/components/Loading";
 
 class Items extends Component {
-    componentWillMount() {
+    componentDidMount() {
         this.props.dispatch(fetchObjects({routerParams: this.props.match.params}));
     }
 

@@ -7,7 +7,7 @@ import List from "mgmt/TaskTable/containers/List";
 import Loading from "shared/components/Loading";
 
 class Root extends Component {
-    componentWillMount() {
+    componentDidMount() {
         this.props.store.dispatch(loadConfig());
     }
 

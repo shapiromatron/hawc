@@ -8,7 +8,7 @@ import Tabs from "bmd/containers/Tabs";
 import Modals from "bmd/containers/Modals";
 
 class Root extends React.Component {
-    componentWillMount() {
+    componentDidMount() {
         this.props.store.dispatch(loadConfig());
     }
 

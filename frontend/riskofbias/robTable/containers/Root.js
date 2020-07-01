@@ -7,7 +7,7 @@ import Header from "./Header";
 import RiskOfBias from "./RiskOfBias";
 
 class Root extends Component {
-    componentWillMount() {
+    componentDidMount() {
         this.props.store.dispatch(loadConfig());
     }
 

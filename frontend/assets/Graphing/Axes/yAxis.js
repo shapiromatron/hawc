@@ -3,16 +3,13 @@ import PropTypes from "prop-types";
 import d3 from "d3";
 
 class yAxis extends Component {
-    componentWillMount() {
+    componentDidMount() {
         let {yScale} = this.props;
         this.yAxis = d3.svg
             .axis()
             .scale(yScale)
             .orient("left")
             .ticks(5);
-    }
-
-    componentDidMount() {
         this.renderAxis();
     }
 
