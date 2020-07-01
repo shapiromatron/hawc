@@ -3,7 +3,7 @@ from typing import Dict
 
 from django.http import Http404, HttpResponse, HttpResponseNotAllowed, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.views.generic import FormView, RedirectView, TemplateView
 
 from ..assessment.models import Assessment
@@ -319,6 +319,7 @@ class DataPivotCopyAsNewSelector(TeamMemberOrHigherMixin, FormView):
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs["user"] = self.request.user
+        kwargs["cancel_url"] = reverse("summary:visualization_list", args=(self.assessment.id,))
         return kwargs
 
     def form_valid(self, form):
