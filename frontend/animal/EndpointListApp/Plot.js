@@ -1,7 +1,8 @@
+import _ from "lodash";
 import $ from "$";
 import PropTypes from "prop-types";
 import React from "react";
-import d3 from "d3";
+import * as d3 from "d3";
 import {inject, observer} from "mobx-react";
 import {autorun, toJS} from "mobx";
 
@@ -13,14 +14,19 @@ import Tooltip from "./Tooltip";
 
 const dodgeLogarithmic = (data, x, radius, approximateXValues) => {
         // https://observablehq.com/@d3/beeswarm-iii
+        // modified to mutate data instead of creating a copy data
         const radius2 = radius ** 2,
-            xJitter = d3.random.normal(0, radius * 1.5), // equally space
-            circles = data
-                .map(d => ({x: x(d.dose) + (approximateXValues ? xJitter() : 0), data: d}))
-                .sort((a, b) => a.x - b.x),
+            xJitter = d3.randomNormal(0, radius * 1.5), // equally space
             epsilon = 1e-3;
+
         let head = null,
             tail = null;
+
+        data.forEach(d => {
+            d.x = x(d.dose) + (approximateXValues ? xJitter() : 0);
+        });
+
+        data.sort((a, b) => a.x - b.x);
 
         // Returns true if circle ⟨x,y⟩ intersects with any circle in the queue.
         function intersects(x, y) {
@@ -35,7 +41,7 @@ const dodgeLogarithmic = (data, x, radius, approximateXValues) => {
         }
 
         // Place each circle sequentially.
-        for (const b of circles) {
+        for (const b of data) {
             // Remove circles from the queue that can’t intersect the new circle b.
             while (head && head.x < b.x - radius2) head = head.next;
 
@@ -55,10 +61,8 @@ const dodgeLogarithmic = (data, x, radius, approximateXValues) => {
             if (head === null) head = tail = b;
             else tail = tail.next = b;
         }
-
-        return circles;
     },
-    renderPlot = function(el, values, settings) {
+    renderPlot = function(el, store) {
         // always start fresh
         $(el).empty();
 
@@ -77,37 +81,44 @@ const dodgeLogarithmic = (data, x, radius, approximateXValues) => {
                 ) -
                 margin.top -
                 margin.bottom,
-            itemRadius = 5;
+            itemRadius = 5,
+            fullDataset = toJS(store.plotData),
+            settings = toJS(store.settings);
 
-        let xExtent = d3.extent(values, d => d.dose),
+        fullDataset.forEach((d, i) => {
+            d.idx = i;
+            d.x = null;
+            d.y = null;
+            d.next = null;
+        });
+
+        let xExtent = d3.extent(fullDataset, d => d.dose),
             xFloor = 10 ** Math.floor(Math.log10(xExtent[0])),
             xCeil = 10 ** Math.ceil(Math.log10(xExtent[1])),
-            x = d3.scale
-                .log()
+            x = d3
+                .scaleLog()
                 .domain([xFloor, xCeil])
                 .range([0, width]);
 
-        let scaledData = dodgeLogarithmic(values, x, itemRadius, settings.approximateXValues);
+        dodgeLogarithmic(fullDataset, x, itemRadius, settings.approximateXValues);
 
         let yBaseMaxRange = height - itemRadius - 2,
-            y = d3.scale
-                .linear()
-                .domain(d3.extent(scaledData.map(d => d.y)))
+            y = d3
+                .scaleLinear()
+                .domain(d3.extent(fullDataset.map(d => d.y)))
                 .range([yBaseMaxRange, 0]);
 
         // hard code values for consistency
         // using d3.category10
-        let colorScale = d3.scale
-            .ordinal()
+        let colorScale = d3
+            .scaleOrdinal()
             .domain(["noel", "loel", "fel", "bmd", "bmdl"])
             .range(["#ff7f0e", "#1f77b4", "#d62728", "#2ca02c", "#9467bd"]);
 
         let numTicks = Math.ceil(Math.log10(xExtent[1])) - Math.floor(Math.log10(xExtent[0])),
-            xAxis = d3.svg
-                .axis()
-                .scale(x)
-                .orient("bottom")
-                .ticks(numTicks, ",.f")
+            xAxis = d3
+                .axisBottom(x)
+                .ticks(numTicks, ",")
                 .tickSize(6, 0);
 
         let $tooltip = $("<div>").appendTo(el);
@@ -127,37 +138,62 @@ const dodgeLogarithmic = (data, x, radius, approximateXValues) => {
 
         let itemsGroup = svg.append("g").attr("class", "items");
 
-        let items = itemsGroup
-            .selectAll(".critical-dose")
-            .data(scaledData)
-            .enter()
-            .append("circle")
-            .attr("class", "critical-dose")
-            .attr("cx", d => d.x)
-            .attr("cy", height)
-            .attr("r", 0)
-            .attr("fill", d => colorScale(d.data.type))
-            .on("click", d => Endpoint.displayAsModal(d.data.data["endpoint id"]));
+        const refresh = function(settings) {
+                const filterDataset = function() {
+                        return fullDataset
+                            .filter(d => _.includes(settings.doses, d.data["dose units id"]))
+                            .filter(d => _.includes(settings.systems, d.data.system))
+                            .filter(d => _.includes(settings.criticalValues, d.type));
+                    },
+                    filteredData = filterDataset();
 
-        bindTooltip($tooltip, items, d => <Tooltip d={d.data} />, {
-            mouseEnterExtra: () => d3.select(event.target).moveToFront(),
-        });
+                dodgeLogarithmic(filteredData, x, itemRadius, settings.approximateXValues);
 
-        const refresh = function(values) {
-                let data = dodgeLogarithmic(values, x, itemRadius, settings.approximateXValues),
-                    maxY = d3.max(data, d => d.y);
+                let maxY = d3.max(filteredData, d => d.y);
 
                 // Reset y domain using new data
                 y.domain([0, Math.max(yBaseMaxRange / Math.sqrt(itemRadius), maxY)]);
 
+                const t = svg.transition();
+
                 // Remove object with data
-                let items = svg.selectAll(".critical-dose").data(data);
-                items.exit().remove();
-                items
-                    .transition()
-                    .delay((d, i) => i)
+                let items = itemsGroup
+                    .selectAll(".critical-dose")
+                    .data(filteredData, d => d.idx)
+                    .join(
+                        enter =>
+                            enter
+                                .append("circle")
+                                .attr("class", "critical-dose")
+                                .attr("cx", d => d.x)
+                                .attr("cy", height)
+                                .attr("r", 0)
+                                .attr("fill", d => colorScale(d.type))
+                                .on("click", d =>
+                                    Endpoint.displayAsModal(d.data.data["endpoint id"])
+                                ),
+                        update =>
+                            update
+                                .transition(t)
+                                .delay((d, i) => i * 2)
+                                .attr("cx", d => d.x)
+                                .attr("fill", d => colorScale(d.type)),
+                        exit =>
+                            exit
+                                .transition(t)
+                                .delay((d, i) => i * 2)
+                                .attr("r", 0)
+                                .style("opacity", 0)
+                                .on("end", function() {
+                                    d3.select(this).remove();
+                                })
+                    )
+                    .transition(t)
+                    .delay((d, i) => i * 2)
                     .attr("cy", d => y(d.y))
                     .attr("r", itemRadius);
+                // TODO - figure out tooltips and clicks
+                // bindTooltip($tooltip, items, d => <Tooltip d={d.data} />);
             },
             colorLegend = function() {
                 let legend = svg
@@ -174,7 +210,7 @@ const dodgeLogarithmic = (data, x, radius, approximateXValues) => {
                     .text("Critical value");
 
                 legend
-                    .selectAll(".item")
+                    .selectAll(".none")
                     .data(colorScale.domain())
                     .enter()
                     .append("g")
@@ -194,7 +230,7 @@ const dodgeLogarithmic = (data, x, radius, approximateXValues) => {
                     });
             };
         colorLegend();
-        refresh(values);
+        autorun(() => refresh(toJS(store.settings)));
     };
 
 @inject("store")
@@ -203,7 +239,7 @@ class Plot extends React.Component {
     componentDidMount() {
         const el = document.getElementById(this.divId),
             {store} = this.props;
-        autorun(() => renderPlot(el, toJS(store.plotData), toJS(store.settings)));
+        renderPlot(el, store);
     }
     render() {
         this.divId = h.randomString();
