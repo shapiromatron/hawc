@@ -108,20 +108,15 @@ const dodgeLogarithmic = (data, x, radius, approximateXValues) => {
                 .domain(d3.extent(fullDataset.map(d => d.y)))
                 .range([yBaseMaxRange, 0]);
 
-        // hard code values for consistency
-        // using d3.category10
+        // hard code values for consistency, taken from `d3.schemeCategory10`
         let colorScale = d3
             .scaleOrdinal()
             .domain(["noel", "loel", "fel", "bmd", "bmdl"])
             .range(["#ff7f0e", "#1f77b4", "#d62728", "#2ca02c", "#9467bd"]);
 
         let numTicks = Math.ceil(Math.log10(xExtent[1])) - Math.floor(Math.log10(xExtent[0])),
-            xAxis = d3
-                .axisBottom(x)
-                .ticks(numTicks, ",")
-                .tickSize(6, 0);
-
-        let $tooltip = $("<div>").appendTo(el);
+            xAxis = d3.axisBottom(x).ticks(numTicks + 1, ","),
+            $tooltip = $("<div>").appendTo(el);
 
         let svg = d3
             .select(el)
