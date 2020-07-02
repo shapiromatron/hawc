@@ -1,6 +1,6 @@
 import $ from "$";
 import _ from "lodash";
-import d3 from "d3";
+import * as d3 from "d3";
 
 import D3Plot from "utils/D3Plot";
 import HAWCUtils from "utils/HAWCUtils";
@@ -500,8 +500,8 @@ class DataPivotVisualization extends D3Plot {
                     switch (cf.condition_type) {
                         case "point-size":
                             if (vals.range) {
-                                var pscale = d3.scale
-                                    .pow()
+                                var pscale = d3
+                                    .scalePow()
                                     .exponent(0.5)
                                     .domain(vals.range)
                                     .range([cf.min_size, cf.max_size]);
@@ -517,8 +517,8 @@ class DataPivotVisualization extends D3Plot {
 
                         case "point-color":
                             if (vals.range) {
-                                var cscale = d3.scale
-                                    .linear()
+                                var cscale = d3
+                                    .scaleLinear()
                                     .domain(vals.range)
                                     .interpolate(d3.interpolateRgb)
                                     .range([cf.min_color, cf.max_color]);

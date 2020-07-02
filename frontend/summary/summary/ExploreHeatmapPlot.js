@@ -1,5 +1,5 @@
 import _ from "lodash";
-import d3 from "d3";
+import * as d3 from "d3";
 import {autorun} from "mobx";
 import React from "react";
 import ReactDOM from "react-dom";
@@ -791,14 +791,14 @@ class ExploreHeatmapPlot {
         this.svg = this.vis[0][0].parentNode;
 
         // Scales for x axis and y axis
-        this.x_scale = d3.scale
-            .ordinal()
+        this.x_scale = d3
+            .scaleBand()
             .domain(_.range(0, this.x_steps))
-            .rangeBands([0, this.w]);
-        this.y_scale = d3.scale
-            .ordinal()
+            .range([0, this.w]);
+        this.y_scale = d3
+            .scaleBand()
             .domain(_.range(0, this.y_steps))
-            .rangeBands([0, this.h]);
+            .range([0, this.h]);
 
         // Draw cells
         this.cells = this.vis.append("g");

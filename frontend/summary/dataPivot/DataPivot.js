@@ -1,5 +1,5 @@
 import $ from "$";
-import d3 from "d3";
+import * as d3 from "d3";
 
 import {saveAs} from "filesaver.js";
 

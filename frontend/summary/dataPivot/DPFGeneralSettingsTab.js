@@ -1,5 +1,5 @@
 import $ from "$";
-import d3 from "d3";
+import * as d3 from "d3";
 import DataPivotLegend from "./DataPivotLegend";
 import {_DataPivot_settings_general} from "./DataPivotUtilities";
 import {NULL_CASE} from "./shared";

@@ -1,5 +1,5 @@
 import $ from "$";
-import d3 from "d3";
+import * as d3 from "d3";
 
 import D3Plot from "utils/D3Plot";
 import HAWCModal from "utils/HAWCModal";
@@ -237,8 +237,8 @@ class TagTreeViz extends D3Plot {
         rootNode.x0 = this.h / 2;
         rootNode.y0 = 0;
 
-        var radius_scale = d3.scale
-            .pow()
+        var radius_scale = d3
+            .scalePow()
             .exponent(0.5)
             .domain([0, rootNode.numReferencesDeep])
             .range([this.minimum_radius, this.maximum_radius]);

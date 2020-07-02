@@ -1,5 +1,5 @@
 import $ from "$";
-import d3 from "d3";
+import * as d3 from "d3";
 
 import D3Plot from "utils/D3Plot";
 

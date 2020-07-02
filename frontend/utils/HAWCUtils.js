@@ -1,6 +1,6 @@
 import $ from "$";
 import _ from "lodash";
-import d3 from "d3";
+import * as d3 from "d3";
 import slugify from "slugify";
 
 import renderChemicalDetails from "./components/ChemicalDetails";

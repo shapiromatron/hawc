@@ -1,5 +1,5 @@
 import _ from "lodash";
-import d3 from "d3";
+import * as d3 from "d3";
 
 import D3Visualization from "./D3Visualization";
 import RoBLegend from "./RoBLegend";
@@ -83,7 +83,7 @@ class RoBBarchartPlot extends D3Visualization {
                 label_format: undefined,
             },
             score_ids,
-            color_scale: d3.scale.ordinal().range(score_ids.map(d => SCORE_SHADES[d])),
+            color_scale: d3.scaleOrdinal().range(score_ids.map(d => SCORE_SHADES[d])),
         });
     }
 

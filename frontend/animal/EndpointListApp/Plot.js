@@ -145,7 +145,8 @@ const dodgeLogarithmic = (data, x, radius, approximateXValues) => {
                             .filter(d => _.includes(settings.systems, d.data.system))
                             .filter(d => _.includes(settings.criticalValues, d.type));
                     },
-                    filteredData = filterDataset();
+                    filteredData = filterDataset(),
+                    t = svg.transition();
 
                 dodgeLogarithmic(filteredData, x, itemRadius, settings.approximateXValues);
 
@@ -153,8 +154,6 @@ const dodgeLogarithmic = (data, x, radius, approximateXValues) => {
 
                 // Reset y domain using new data
                 y.domain([0, Math.max(yBaseMaxRange / Math.sqrt(itemRadius), maxY)]);
-
-                const t = svg.transition();
 
                 // Remove object with data
                 let items = itemsGroup
@@ -169,9 +168,7 @@ const dodgeLogarithmic = (data, x, radius, approximateXValues) => {
                                 .attr("cy", height)
                                 .attr("r", 0)
                                 .attr("fill", d => colorScale(d.type))
-                                .on("click", d =>
-                                    Endpoint.displayAsModal(d.data.data["endpoint id"])
-                                ),
+                                .on("click", d => Endpoint.displayAsModal(d.data["endpoint id"])),
                         update =>
                             update
                                 .transition(t)
@@ -187,13 +184,17 @@ const dodgeLogarithmic = (data, x, radius, approximateXValues) => {
                                 .on("end", function() {
                                     d3.select(this).remove();
                                 })
-                    )
+                    );
+
+                items
                     .transition(t)
                     .delay((d, i) => i * 2)
                     .attr("cy", d => y(d.y))
                     .attr("r", itemRadius);
-                // TODO - figure out tooltips and clicks
-                // bindTooltip($tooltip, items, d => <Tooltip d={d.data} />);
+
+                bindTooltip($tooltip, items, d => <Tooltip d={d} />, {
+                    mouseEnterExtra: () => d3.select(event.target).moveToFront(),
+                });
             },
             colorLegend = function() {
                 let legend = svg

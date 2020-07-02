@@ -1,6 +1,6 @@
 import $ from "$";
 import _ from "lodash";
-import d3 from "d3";
+import * as d3 from "d3";
 
 import HAWCModal from "utils/HAWCModal";
 

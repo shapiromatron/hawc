@@ -1,5 +1,5 @@
 import $ from "$";
-import d3 from "d3";
+import * as d3 from "d3";
 
 // Generic parent for all d3.js visualizations
 class D3Plot {
@@ -218,26 +218,26 @@ class D3Plot {
         var scale;
         switch (settings.scale_type) {
             case "log":
-                scale = d3.scale
-                    .log()
+                scale = d3
+                    .scaleLog()
                     .clamp(true)
                     .domain(settings.domain)
                     .rangeRound(settings.rangeRound)
                     .nice();
                 break;
             case "linear":
-                scale = d3.scale
-                    .linear()
+                scale = d3
+                    .scaleLinear()
                     .clamp(true)
                     .domain(settings.domain)
                     .rangeRound(settings.rangeRound)
                     .nice();
                 break;
             case "ordinal":
-                scale = d3.scale
-                    .ordinal()
+                scale = d3
+                    .scaleBand()
                     .domain(settings.domain)
-                    .rangeRoundBands(settings.rangeRound);
+                    .rangeRound(settings.rangeRound);
                 break;
             default:
                 console.log("Error- settings.scale_type is not defined: " + settings.scale_type);
