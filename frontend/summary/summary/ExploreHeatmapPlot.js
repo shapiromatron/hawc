@@ -708,41 +708,8 @@ class ExploreHeatmapPlot {
 
     update_plot = data => {
         const self = this,
-            {tableDataFilters, maxValue, colorScale} = this.store;
-
-        this.cells_data = this.cells.selectAll("g").data(data);
-
-        // add cell group and interactivity
-        this.cells_enter = this.cells_data
-            .enter()
-            .append("g")
-            .attr("class", "exp_heatmap_cell")
-            .on("click", d => {
-                if (d.rows.length > 0) {
-                    self.store.setTableDataFilters(d);
-                } else {
-                    self.store.setTableDataFilters(new Set());
-                }
-            });
-        this.bind_tooltip(this.cells_enter, "cell");
-
-        // add cell fill
-        this.cells_enter
-            .append("rect")
-            .attr("class", "exp_heatmap_cell_block")
-            .attr("x", d => this.x_scale(d.x_step))
-            .attr("y", d => this.y_scale(d.y_step))
-            .attr("width", this.x_scale.rangeBand())
-            .attr("height", this.y_scale.rangeBand());
-
-        /// add cell text
-        this.cells_enter
-            .append("text")
-            .attr("class", "exp_heatmap_cell_text")
-            .attr("x", d => this.x_scale(d.x_step) + this.x_scale.rangeBand() / 2)
-            .attr("y", d => this.y_scale(d.y_step) + this.y_scale.rangeBand() / 2);
-
-        let cellColor = d => {
+            {tableDataFilters, maxValue, colorScale} = this.store,
+            cellColor = d => {
                 const filterIndices = [...tableDataFilters].map(e => e.index),
                     value =
                         tableDataFilters.size == 0
@@ -759,23 +726,52 @@ class ExploreHeatmapPlot {
             textColor = d => {
                 const backgroundColor = d.type == "cell" ? cellColor(d) : totalColor(d);
                 return h.getTextContrastColor(backgroundColor);
-            };
+            },
+            t = this.cells.transition().duration(500);
+
+        this.cells
+            .selectAll(".exp_heatmap_cell")
+            .data(data, d => d.index)
+            .join(enter => {
+                let g = enter
+                    .append("g")
+                    .attr("class", "exp_heatmap_cell")
+                    .on("click", d => {
+                        if (d.rows.length > 0) {
+                            self.store.setTableDataFilters(d);
+                        } else {
+                            self.store.setTableDataFilters(new Set());
+                        }
+                    });
+
+                g.append("rect")
+                    .attr("class", "exp_heatmap_cell_block")
+                    .attr("x", d => this.x_scale(d.x_step))
+                    .attr("y", d => this.y_scale(d.y_step))
+                    .attr("width", this.x_scale.bandwidth())
+                    .attr("height", this.y_scale.bandwidth());
+
+                g.append("text")
+                    .attr("class", "exp_heatmap_cell_text")
+                    .attr("x", d => this.x_scale(d.x_step) + this.x_scale.bandwidth() / 2)
+                    .attr("y", d => this.y_scale(d.y_step) + this.y_scale.bandwidth() / 2)
+                    .style("font-weight", d => (d.type == "total" ? "bold" : null));
+            });
 
         // enter/update
-        this.cells_data
-            .select(".exp_heatmap_cell_block")
-            .transition()
+        this.cells
+            .selectAll(".exp_heatmap_cell_block")
+            .transition(t)
+            .delay((d, i) => i * 5)
             .style("fill", d => (d.type == "cell" ? cellColor(d) : totalColor(d)));
 
-        this.cells_data
-            .select(".exp_heatmap_cell_text")
-            .transition()
+        this.cells
+            .selectAll(".exp_heatmap_cell_text")
+            .transition(t)
+            .delay((d, i) => i * 5)
             .style("fill", textColor)
             .style("display", d => (d.rows.length == 0 ? "none" : null))
-            .style("font-weight", d => (d.type == "total" ? "bold" : null))
             .text(d => d.rows.length);
-
-        this.cells_data.exit().remove();
     };
 
     build_plot() {
@@ -783,12 +779,12 @@ class ExploreHeatmapPlot {
 
         // Clear plot div and and append new svg object
         this.plot_div.empty();
-        this.vis = d3
+        this.svg = d3
             .select(this.plot_div[0])
             .append("svg")
             .attr("class", "d3")
-            .append("g");
-        this.svg = this.vis[0][0].parentNode;
+            .node();
+        this.vis = d3.select(this.svg).append("g");
 
         // Scales for x axis and y axis
         this.x_scale = d3

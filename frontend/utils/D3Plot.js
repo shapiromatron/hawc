@@ -75,16 +75,10 @@ class D3Plot {
             .enter()
             .append("circle")
             .attr("cx", settings.dot_r + buffer)
-            .attr("cy", function(d, i) {
-                return buffer * 2 + i * settings.item_height;
-            })
+            .attr("cy", (d, i) => buffer * 2 + i * settings.item_height)
             .attr("r", settings.dot_r)
-            .attr("class", function(d, i) {
-                return "legend_circle " + d.classes;
-            })
-            .attr("fill", function(d, i) {
-                return d.color;
-            });
+            .attr("class", d => "legend_circle " + d.classes)
+            .attr("fill", d => d.color);
 
         this.legend
             .selectAll("legend_text")
@@ -93,12 +87,8 @@ class D3Plot {
             .append("svg:text")
             .attr("x", 2 * settings.dot_r + buffer * 2)
             .attr("class", "legend_text")
-            .attr("y", function(d, i) {
-                return buffer * 2 + settings.dot_r + i * settings.item_height;
-            })
-            .text(function(d, i) {
-                return d.text;
-            });
+            .attr("y", (d, i) => buffer * 2 + settings.dot_r + i * settings.item_height)
+            .text(d => d.text);
 
         this.resize_legend();
     }
@@ -124,7 +114,8 @@ class D3Plot {
 
         //clear plot div and and append new svg object
         this.plot_div.empty();
-        this.vis = d3
+
+        this.svg = d3
             .select(this.plot_div[0])
             .append("svg")
             .attr("width", w)
@@ -132,9 +123,12 @@ class D3Plot {
             .attr("class", "d3")
             .attr("viewBox", `0 0 ${w} ${h}`)
             .attr("preserveAspectRatio", "xMinYMin")
+            .node();
+
+        this.vis = d3
+            .select(this.svg)
             .append("g")
             .attr("transform", `translate(${this.padding.left},${this.padding.top})`);
-        this.svg = this.vis[0][0].parentNode;
 
         var chart = $(this.svg),
             container = chart.parent();
@@ -245,12 +239,8 @@ class D3Plot {
         return scale;
     }
 
-    _print_axis(scale, settings) {
-        var axis = d3.svg
-            .axis()
-            .scale(scale)
-            .orient(settings.text_orient);
-
+    _print_axis(axisFunc, scale, settings) {
+        var axis = axisFunc(scale);
         switch (settings.scale_type) {
             case "log":
                 axis.ticks(1, settings.label_format);
@@ -410,7 +400,7 @@ class D3Plot {
     build_y_axis() {
         // build y-axis based on plot-settings
         this.y_scale = this._build_scale(this.y_axis_settings);
-        this.yAxis = this._print_axis(this.y_scale, this.y_axis_settings);
+        this.yAxis = this._print_axis(d3.axisLeft, this.y_scale, this.y_axis_settings);
         this.y_primary_gridlines = this._print_gridlines(this.y_scale, this.y_axis_settings, [
             0,
             this.w,
@@ -422,7 +412,7 @@ class D3Plot {
     build_x_axis() {
         // build x-axis based on plot-settings
         this.x_scale = this._build_scale(this.x_axis_settings);
-        this.xAxis = this._print_axis(this.x_scale, this.x_axis_settings);
+        this.xAxis = this._print_axis(d3.axisBottom, this.x_scale, this.x_axis_settings);
         this.x_primary_gridlines = this._print_gridlines(this.x_scale, this.x_axis_settings, [
             this.x_scale,
             this.x_scale,

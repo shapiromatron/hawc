@@ -269,12 +269,12 @@ class Barplot extends D3Plot {
             .enter()
             .append("rect")
             .attr("x", function(d, i) {
-                return x(d.dose) + x.rangeBand() * bar_spacing;
+                return x(d.dose) + x.bandwidth() * bar_spacing;
             })
             .attr("y", function(d, i) {
                 return y(d.value);
             })
-            .attr("width", x.rangeBand() * (1 - 2 * bar_spacing))
+            .attr("width", x.bandwidth() * (1 - 2 * bar_spacing))
             .attr("height", function(d) {
                 return min - y(d.value);
             })
@@ -292,12 +292,8 @@ class Barplot extends D3Plot {
             .data(this.sigs_data)
             .enter()
             .append("svg:text")
-            .attr("x", function(d) {
-                return x(d.x) + x.rangeBand() / 2;
-            })
-            .attr("y", function(d) {
-                return y(d.y);
-            })
+            .attr("x", d => x(d.x) + x.bandwidth() / 2)
+            .attr("y", d => y(d.y))
             .attr("text-anchor", "middle")
             .style({
                 "font-size": "18px",
@@ -397,13 +393,13 @@ class Barplot extends D3Plot {
         var bar_options = {
             data: bars,
             x1(d) {
-                return x(d.dose) + x.rangeBand() / 2;
+                return x(d.dose) + x.bandwidth() / 2;
             },
             y1(d) {
                 return y(d.low);
             },
             x2(d) {
-                return x(d.dose) + x.rangeBand() / 2;
+                return x(d.dose) + x.bandwidth() / 2;
             },
             y2(d) {
                 return y(d.high);
@@ -415,13 +411,13 @@ class Barplot extends D3Plot {
 
         $.extend(bar_options, {
             x1(d, i) {
-                return x(d.dose) + x.rangeBand() / 2 - hline_width;
+                return x(d.dose) + x.bandwidth() / 2 - hline_width;
             },
             y1(d) {
                 return y(d.low);
             },
             x2(d, i) {
-                return x(d.dose) + x.rangeBand() / 2 + hline_width;
+                return x(d.dose) + x.bandwidth() / 2 + hline_width;
             },
             y2(d) {
                 return y(d.low);

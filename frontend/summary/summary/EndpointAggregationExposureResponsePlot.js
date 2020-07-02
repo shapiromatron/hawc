@@ -296,7 +296,7 @@ class EndpointAggregationExposureResponsePlot extends D3Visualization {
     add_dose_lines() {
         var x = this.x_scale,
             y = this.y_scale,
-            halfway = y.rangeBand() / 2;
+            halfway = y.bandwidth() / 2;
 
         this.dosing_lines = this.vis.append("g");
         this.dosing_lines
@@ -323,7 +323,7 @@ class EndpointAggregationExposureResponsePlot extends D3Visualization {
         var x = this.x_scale,
             y = this.y_scale,
             tt_width = 400,
-            halfway = y.rangeBand() / 2;
+            halfway = y.bandwidth() / 2;
 
         var tooltip = d3
             .select("body")

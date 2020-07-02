@@ -525,12 +525,8 @@ class DRPlot extends D3Plot {
                 .data(this.sigs_data)
                 .enter()
                 .append("svg:text")
-                .attr("x", function(d) {
-                    return x(d.x);
-                })
-                .attr("y", function(d) {
-                    return y(d.y);
-                })
+                .attr("x", d => x(d.x))
+                .attr("y", y => y(d.y))
                 .attr("text-anchor", "middle")
                 .style({
                     "font-size": "18px",
