@@ -19,6 +19,8 @@ class HeatmapTemplateStore {
     @observable selectedFilters = [];
     @observable selectedTableFields = [];
 
+    @observable showNull = false;
+
     constructor(config) {
         this.config = config;
         const options = OPTIONS[config.data_class];
@@ -27,6 +29,11 @@ class HeatmapTemplateStore {
         this.filterOptions = options.FILTER_OPTIONS;
         this.tableOptions = options.TABLE_FIELDS;
         this.changeDashboard(this.dashboardOptions[0].id);
+        this.showNull = false;
+    }
+
+    @action.bound changeShowNull(bool) {
+        this.showNull = bool;
     }
 
     @action.bound changeDashboard(id) {
@@ -85,7 +92,7 @@ class HeatmapTemplateStore {
             show_grid: true,
             show_tooltip: true,
             show_totals: true,
-            show_null: false,
+            show_null: this.showNull,
             table_fields: this.selectedTableFields.map(d => d.settings),
             title: {text: title, x: 0, y: 0, rotate: 0},
             x_axis_bottom: false,

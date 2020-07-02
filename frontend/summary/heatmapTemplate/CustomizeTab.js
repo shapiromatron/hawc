@@ -3,6 +3,7 @@ import React, {Component} from "react";
 import {inject, observer} from "mobx-react";
 
 import SelectInput from "shared/components/SelectInput";
+import CheckboxInput from "shared/components/CheckboxInput";
 
 @inject("store")
 @observer
@@ -62,6 +63,19 @@ class CustomizeTab extends Component {
                             selectSize={10}
                             label="Table fields"
                         />
+                    </div>
+                    <div className="row-fluid">
+                        <div className="span3">
+                            <CheckboxInput
+                                label="Show null field values"
+                                name="show_null"
+                                onChange={e => store.changeShowNull(e.target.checked)}
+                                checked={store.showNull}
+                                helpText={
+                                    "Whether null axis values and associated records are shown."
+                                }
+                            />
+                        </div>
                     </div>
                 </div>
             </div>
