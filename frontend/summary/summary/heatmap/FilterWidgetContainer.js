@@ -38,6 +38,7 @@ class FilterWidget extends Component {
         return (
             <div
                 style={{
+                    minHeight: "100px",
                     maxHeight,
                     padding: "10px 0",
                     overflow: "hidden",
@@ -136,17 +137,10 @@ class FilterWidget extends Component {
         // If there are no results disable button
         if (modalRows.length == 0) {
             return (
-                <button className="btn btn-mini pull-right disabled" title="No content found">
+                <button
+                    className="btn btn-mini pull-right disabled"
+                    title="No additional information">
                     <i className="icon-eye-close"></i>
-                </button>
-            );
-        }
-
-        // If there are too many results disable button
-        else if (modalRows.length > 10) {
-            return (
-                <button className="btn btn-mini pull-right disabled" title="Too many results">
-                    <i className="icon-eye-open"></i>
                 </button>
             );
         }
@@ -163,32 +157,12 @@ class FilterWidget extends Component {
             );
         }
 
-        // If there are multiple results make the button a dropdown
+        // If there are too many results disable button
         else {
             return (
-                <div className="btn-group pull-right">
-                    <a
-                        className="btn btn-mini dropdown-toggle"
-                        data-toggle="dropdown"
-                        href="#"
-                        title="View additional information">
-                        <span className="caret"></span>
-                        <i className="icon-eye-open"></i>
-                    </a>
-                    <ul className="dropdown-menu">
-                        <li className="nav-header">{row_key}</li>
-                        <li className="divider"></li>
-                        {modalRows.map((row, idx) => {
-                            return (
-                                <li key={idx}>
-                                    <a href="#" onClick={() => showModalOnRow(extension, row)}>
-                                        {row[row_key]}
-                                    </a>
-                                </li>
-                            );
-                        })}
-                    </ul>
-                </div>
+                <button className="btn btn-mini pull-right disabled" title="Too many results">
+                    <i className="icon-eye-open"></i>
+                </button>
             );
         }
     }
