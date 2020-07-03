@@ -528,11 +528,9 @@ class DRPlot extends D3Plot {
                 .attr("x", d => x(d.x))
                 .attr("y", y => y(d.y))
                 .attr("text-anchor", "middle")
-                .style({
-                    "font-size": "18px",
-                    "font-weight": "bold",
-                    cursor: "pointer",
-                })
+                .style("font-size", "18px")
+                .style("font-weight", "bold")
+                .style("cursor", "pointer")
                 .text("*");
 
             this.sigs_labels = this.sigs
