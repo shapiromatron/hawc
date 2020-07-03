@@ -115,7 +115,7 @@ class HAWCUtils {
     }
 
     static updateDragLocationTransform(setDragCB) {
-        // a new drag location, requires binding to d3.behavior.drag,
+        // a new drag location, requires binding to d3.drag,
         // and requires a _.partial injection of th settings module.
         const re_floats = /(-?[0-9]*\.?[0-9]+)/gm,
             getFloats = function(txt) {
@@ -124,7 +124,7 @@ class HAWCUtils {
                 return [...txt.matchAll(re_floats)].map(d => parseFloat(d[0]));
             };
 
-        return d3.behavior
+        return d3
             .drag()
             .origin(Object)
             .on("drag", function() {
@@ -159,9 +159,9 @@ class HAWCUtils {
     }
 
     static updateDragLocationXY(setDragCB) {
-        // a new drag location, requires binding to d3.behavior.drag,
+        // a new drag location, requires binding to d3.drag,
         // and requires a _.partial injection of th settings module.
-        return d3.behavior
+        return d3
             .drag()
             .origin(Object)
             .on("drag", function() {

@@ -68,7 +68,7 @@ class TagTreeViz extends D3Plot {
     draw_visualization() {
         var i = 0,
             vis = this.vis,
-            tree = d3.layout.tree().size([this.h, this.w]),
+            tree = d3.tree().size([this.h, this.w]),
             diagonal = d3.svg.diagonal().projection(d => [d.y, d.x]),
             self = this,
             buildVizDatasetNode = function(nestedTag) {

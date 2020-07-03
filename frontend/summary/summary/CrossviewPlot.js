@@ -106,7 +106,7 @@ class CrossviewPlot extends D3Visualization {
                   })
                 : function() {},
             dragY = this.options.dev
-                ? d3.behavior
+                ? d3
                       .drag()
                       .origin(Object)
                       .on("drag", function(d, i) {
@@ -584,7 +584,7 @@ class CrossviewPlot extends D3Visualization {
 
         // add labels
         if (this.options.dev) {
-            drag = d3.behavior
+            drag = d3
                 .drag()
                 .origin(Object)
                 .on("drag", function(d, i) {

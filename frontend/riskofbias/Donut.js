@@ -196,7 +196,7 @@ class Donut extends D3Plot {
         }
 
         // setup pie layout generator
-        this.pie_layout = d3.layout
+        this.pie_layout = d3
             .pie()
             .sort(null)
             .value(d => d.weight);

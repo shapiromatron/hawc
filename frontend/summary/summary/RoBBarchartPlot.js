@@ -129,7 +129,7 @@ class RoBBarchartPlot extends D3Visualization {
             .uniq()
             .value();
 
-        stack = d3.layout.stack()(
+        stack = d3.stack()(
             _.map(stack_order, function(score) {
                 return _.map(dataset, function(d) {
                     return {x: d.label, y: d[score]};

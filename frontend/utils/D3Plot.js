@@ -37,7 +37,7 @@ class D3Plot {
     build_legend(settings) {
         var plot = this,
             buffer = settings.box_padding, //shortcut reference
-            drag = d3.behavior
+            drag = d3
                 .drag()
                 .origin(Object)
                 .on("drag", function(d, i) {
@@ -610,7 +610,7 @@ class D3Plot {
 
         function get_selected_svg(svg) {
             svg.attr("version", "1.1");
-            svg.attr("xmlns", d3.ns.prefix.svg);
+            svg.attr("xmlns", d3.namespaces.svg);
             var source = new XMLSerializer().serializeToString(svg.node()),
                 rect = svg.node().getBoundingClientRect();
             return {
