@@ -12,7 +12,8 @@ import Endpoint from "animal/Endpoint";
 
 import Tooltip from "./Tooltip";
 
-const dodgeLogarithmic = (data, x, radius, approximateXValues) => {
+const dodgeLogarithmic = (data, x, radius, options) => {
+        // https://observablehq.com/@d3/beeswarm-ii
         // https://observablehq.com/@d3/beeswarm-iii
         // modified to mutate data instead of creating a copy data
         const radius2 = radius ** 2,
@@ -23,7 +24,7 @@ const dodgeLogarithmic = (data, x, radius, approximateXValues) => {
             tail = null;
 
         data.forEach(d => {
-            d.x = x(d.dose) + (approximateXValues ? xJitter() : 0);
+            d.x = x(d.dose) + (options.approximateXValues ? xJitter() : 0);
         });
 
         data.sort((a, b) => a.x - b.x);
@@ -50,8 +51,12 @@ const dodgeLogarithmic = (data, x, radius, approximateXValues) => {
                 let a = head;
                 b.y = Infinity;
                 do {
-                    let y = a.y + Math.sqrt(radius2 - (a.x - b.x) ** 2);
-                    if (y < b.y && !intersects(b.x, y)) b.y = y;
+                    let y1 = a.y + Math.sqrt(radius2 - (a.x - b.x) ** 2);
+                    let y2 = a.y - Math.sqrt(radius2 - (a.x - b.x) ** 2);
+                    if (Math.abs(y1) < Math.abs(b.y) && !intersects(b.x, y1)) b.y = y1;
+                    if (options.twoSided) {
+                        if (Math.abs(y2) < Math.abs(b.y) && !intersects(b.x, y2)) b.y = y2;
+                    }
                     a = a.next;
                 } while (a);
             }
@@ -100,7 +105,10 @@ const dodgeLogarithmic = (data, x, radius, approximateXValues) => {
                 .domain([xFloor, xCeil])
                 .range([0, width]);
 
-        dodgeLogarithmic(fullDataset, x, itemRadius, settings.approximateXValues);
+        dodgeLogarithmic(fullDataset, x, itemRadius, {
+            approximateXValues: settings.approximateXValues,
+            twoSided: false,
+        });
 
         let yBaseMaxRange = height - itemRadius - 2,
             y = d3
@@ -143,7 +151,10 @@ const dodgeLogarithmic = (data, x, radius, approximateXValues) => {
                     filteredData = filterDataset(),
                     t = svg.transition();
 
-                dodgeLogarithmic(filteredData, x, itemRadius, settings.approximateXValues);
+                dodgeLogarithmic(filteredData, x, itemRadius, {
+                    approximateXValues: settings.approximateXValues,
+                    twoSided: false,
+                });
 
                 let maxY = d3.max(filteredData, d => d.y);
 
