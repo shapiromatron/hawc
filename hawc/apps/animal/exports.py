@@ -424,10 +424,10 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
             "response units",
             "expected adversity direction",
             "low_dose",
+            "high_dose",
             noel_names.noel,
             noel_names.loel,
             "FEL",
-            "high_dose",
             "BMD",
             "BMDL",
             "trend test value",
@@ -524,17 +524,22 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
                 low_index = dose_exists_list[1:].index(True) + 1
                 # last non-empty dose after 0
                 high_index = len(dose_list) - 1 - dose_exists_list[1:][::-1].index(True)
-                row.extend(
-                    [
-                        self._get_dose(doses, low_index),  # first non-zero dose
-                        self._get_dose(doses, ser["NOEL"]),
-                        self._get_dose(doses, ser["LOEL"]),
-                        self._get_dose(doses, ser["FEL"]),
-                        self._get_dose(doses, high_index),
-                    ]
-                )
+                row.extend([dose_list[low_index], dose_list[high_index]])  # first non-zero dose
             except ValueError:
-                row.extend([None] * 5)
+                row.extend([None] * 2)
+
+            try:
+                row.append(dose_list[ser["NOEL"]])
+            except IndexError:
+                row.append(None)
+            try:
+                row.append(dose_list[ser["LOEL"]])
+            except IndexError:
+                row.append(None)
+            try:
+                row.append(dose_list[ser["FEL"]])
+            except IndexError:
+                row.append(None)
 
             dose_list.extend([None] * (self.num_doses - len(dose_list)))
 
