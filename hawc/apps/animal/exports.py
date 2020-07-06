@@ -23,9 +23,7 @@ def get_gen_species_strain_sex(e, withN=False):
     if sex_symbol == "NR":
         sex_symbol = "sex=NR"
 
-    return (
-        f"{gen}{e['animal_group']['species']}, {e['animal_group']['strain']} ({sex_symbol}{ns_txt})"
-    )
+    return f"{gen}{e['animal_group']['species']}, {e['animal_group']['strain']} ({sex_symbol}{ns_txt})"
 
 
 def get_treatment_period(exp, dr):
@@ -114,9 +112,7 @@ class EndpointGroupFlatComplete(FlatFileExporter):
             row.extend(Study.flat_complete_data_row(ser["animal_group"]["experiment"]["study"]))
             row.extend(models.Experiment.flat_complete_data_row(ser["animal_group"]["experiment"]))
             row.extend(models.AnimalGroup.flat_complete_data_row(ser["animal_group"]))
-            row.extend(
-                models.DosingRegime.flat_complete_data_row(ser["animal_group"]["dosing_regime"])
-            )
+            row.extend(models.DosingRegime.flat_complete_data_row(ser["animal_group"]["dosing_regime"]))
             row.extend(models.Endpoint.flat_complete_data_row(ser))
             for i, eg in enumerate(ser["groups"]):
                 row_copy = copy(row)
@@ -144,9 +140,7 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
         units_id = None
 
         if preferred_units:
-            available_units = set(
-                [d["dose_units"]["id"] for d in ser["animal_group"]["dosing_regime"]["doses"]]
-            )
+            available_units = set([d["dose_units"]["id"] for d in ser["animal_group"]["dosing_regime"]["doses"]])
             for units in preferred_units:
                 if units in available_units:
                     units_id = units
@@ -155,11 +149,7 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
         if units_id is None:
             units_id = ser["animal_group"]["dosing_regime"]["doses"][0]["dose_units"]["id"]
 
-        return [
-            d
-            for d in ser["animal_group"]["dosing_regime"]["doses"]
-            if units_id == d["dose_units"]["id"]
-        ]
+        return [d for d in ser["animal_group"]["dosing_regime"]["doses"] if units_id == d["dose_units"]["id"]]
 
     @classmethod
     def _get_dose_units(cls, doses):
@@ -193,11 +183,7 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
         else:
             self.rob_headers, self.rob_data = RiskOfBias.get_dp_export(
                 self.queryset.first().assessment_id,
-                list(
-                    self.queryset.values_list(
-                        "animal_group__experiment__study_id", flat=True
-                    ).distinct()
-                ),
+                list(self.queryset.values_list("animal_group__experiment__study_id", flat=True).distinct()),
                 "animal",
             )
 
@@ -278,9 +264,7 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
             ser = obj.get_json(json_encode=False)
             doses = self._get_doses_list(ser, preferred_units)
             study_id = ser["animal_group"]["experiment"]["study"]["id"]
-            study_robs = [
-                self.rob_data[(study_id, metric_id)] for metric_id in self.rob_headers.keys()
-            ]
+            study_robs = [self.rob_data[(study_id, metric_id)] for metric_id in self.rob_headers.keys()]
 
             # build endpoint-group independent data
             row = [
@@ -302,9 +286,7 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
                 get_gen_species_strain_sex(ser, withN=True),
                 ser["animal_group"]["sex"],
                 ser["animal_group"]["dosing_regime"]["route_of_exposure"].lower(),
-                get_treatment_period(
-                    ser["animal_group"]["experiment"], ser["animal_group"]["dosing_regime"],
-                ),
+                get_treatment_period(ser["animal_group"]["experiment"], ser["animal_group"]["dosing_regime"],),
                 ser["animal_group"]["dosing_regime"]["duration_exposure_text"],
                 ser["id"],
                 ser["name"],
@@ -378,11 +360,7 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
         else:
             self.rob_headers, self.rob_data = RiskOfBias.get_dp_export(
                 self.queryset.first().assessment_id,
-                list(
-                    self.queryset.values_list(
-                        "animal_group__experiment__study_id", flat=True
-                    ).distinct()
-                ),
+                list(self.queryset.values_list("animal_group__experiment__study_id", flat=True).distinct()),
                 "animal",
             )
 
@@ -454,6 +432,13 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
             return [bmd["output"]["BMD"], bmd["output"]["BMDL"]]
         return [None, None]
 
+    @staticmethod
+    def _get_incidence(dose_group_id, groups):
+        for group in groups:
+            if group["dose_group_id"] == dose_group_id:
+                return group["incidence"]
+        return None
+
     def _get_data_rows(self):
 
         preferred_units = self.kwargs.get("preferred_units", None)
@@ -483,9 +468,7 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
                 get_gen_species_strain_sex(ser, withN=True),
                 ser["animal_group"]["sex"],
                 ser["animal_group"]["dosing_regime"]["route_of_exposure"].lower(),
-                get_treatment_period(
-                    ser["animal_group"]["experiment"], ser["animal_group"]["dosing_regime"],
-                ),
+                get_treatment_period(ser["animal_group"]["experiment"], ser["animal_group"]["dosing_regime"],),
                 ser["animal_group"]["dosing_regime"]["duration_exposure_text"],
                 ser["id"],
                 ser["name"],
@@ -504,6 +487,19 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
                 ser["expected_adversity_direction"],
             ]
 
+            for i in range(len(doses)):
+                self._get_incidence(i, ser["groups"])
+
+            # get dose only if dose group is used
+            dose_list = [
+                None if self._get_incidence(i, ser["groups"]) is None else self._get_dose(doses, i)
+                for i in range(len(doses))
+            ]
+
+            # remove tailing unused doses for "high_dose" calculation
+            while len(dose_list) > 0 and dose_list[-1] is None:
+                del dose_list[-1]
+
             # dose-group specific information
             if len(ser["groups"]) > 1:
                 row.extend(
@@ -512,30 +508,28 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
                         self._get_dose(doses, ser["NOEL"]),
                         self._get_dose(doses, ser["LOEL"]),
                         self._get_dose(doses, ser["FEL"]),
-                        self._get_dose(doses, len(ser["groups"]) - 1),
+                        self._get_dose(doses, len(dose_list) - 1),
                     ]
                 )
             else:
                 row.extend([None] * 5)
+
+            dose_list.extend([None] * (self.num_doses - len(dose_list)))
 
             # bmd/bmdl information
             row.extend(self._get_bmd_values(ser["bmd"], preferred_units))
 
             row.extend([ser["trend_value"], ser["trend_result"]])
 
-            dose_list = [self._get_dose(doses, i) for i in range(len(doses))]
-            sigs = get_significance_and_direction(ser["data_type"], ser["groups"])
+            row.extend(dose_list)
 
-            dose_list.extend([None] * (self.num_doses - len(dose_list)))
+            sigs = get_significance_and_direction(ser["data_type"], ser["groups"])
             sigs.extend([None] * (self.num_doses - len(sigs)))
 
-            row.extend(dose_list)
             row.extend(sigs)
 
             study_id = ser["animal_group"]["experiment"]["study"]["id"]
-            row.extend(
-                [self.rob_data[(study_id, metric_id)] for metric_id in self.rob_headers.keys()]
-            )
+            row.extend([self.rob_data[(study_id, metric_id)] for metric_id in self.rob_headers.keys()])
 
             rows.append(row)
 
@@ -635,9 +629,7 @@ class EndpointSummary(FlatFileExporter):
                 ser["animal_group"]["sex"],
                 get_gen_species_strain_sex(ser, withN=True),
                 ser["animal_group"]["dosing_regime"]["route_of_exposure"],
-                get_treatment_period(
-                    ser["animal_group"]["experiment"], ser["animal_group"]["dosing_regime"],
-                ),
+                get_treatment_period(ser["animal_group"]["experiment"], ser["animal_group"]["dosing_regime"],),
                 ser["animal_group"]["species"],
                 ser["animal_group"]["strain"],
                 ser["id"],
