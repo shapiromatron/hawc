@@ -459,7 +459,7 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
         for group in groups:
             if group["dose_group_id"] == dose_group_id:
                 return group["n"]
-        return 0
+        return None
 
     def _get_data_rows(self):
 
@@ -513,7 +513,7 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
 
             # get dose only if used
             dose_list = [
-                None if self._get_dose_n(i, ser["groups"]) == 0 else self._get_dose(doses, i)
+                None if self._get_dose_n(i, ser["groups"]) is None else self._get_dose(doses, i)
                 for i in range(len(doses))
             ]
 
