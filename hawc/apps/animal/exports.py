@@ -455,11 +455,11 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
         return [None, None]
 
     @staticmethod
-    def _get_incidence(dose_group_id, groups):
+    def _get_dose_n(dose_group_id, groups):
         for group in groups:
             if group["dose_group_id"] == dose_group_id:
-                return group["incidence"]
-        return None
+                return group["n"]
+        return 0
 
     def _get_data_rows(self):
 
@@ -511,17 +511,19 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
                 ser["expected_adversity_direction"],
             ]
 
-            # get dose only if dose group is used
+            # get dose only if used
             dose_list = [
-                None if self._get_incidence(i, ser["groups"]) is None else self._get_dose(doses, i)
+                None if self._get_dose_n(i, ser["groups"]) == 0 else self._get_dose(doses, i)
                 for i in range(len(doses))
             ]
 
             # dose-group specific information
-            if len(dose_list) > 1:
+            try:
                 dose_exists_list = list(map(lambda x: x is not None, dose_list))
+                # first non-empty dose after 0
                 low_index = dose_exists_list[1:].index(True) + 1
-                high_index = len(dose_list) - 1 - dose_exists_list[::-1].index(True)
+                # last non-empty dose after 0
+                high_index = len(dose_list) - 1 - dose_exists_list[1::-1].index(True)
                 row.extend(
                     [
                         self._get_dose(doses, low_index),  # first non-zero dose
@@ -531,7 +533,7 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
                         self._get_dose(doses, high_index),
                     ]
                 )
-            else:
+            except ValueError:
                 row.extend([None] * 5)
 
             dose_list.extend([None] * (self.num_doses - len(dose_list)))
