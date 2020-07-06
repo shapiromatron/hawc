@@ -499,9 +499,6 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
                 # first non-empty dose after 0
                 low_index = dose_exists_list[1:].index(True) + 1
                 # last non-empty dose after 0
-                import pdb
-
-                pdb.set_trace()
                 high_index = len(dose_list) - 1 - dose_exists_list[1:][::-1].index(True)
                 row.extend(
                     [
