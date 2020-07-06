@@ -16,13 +16,17 @@ class FilterWidget extends Component {
             {colorScale, maxValue} = this.props.store,
             maxHeight = `${Math.floor((1 / numWidgets) * 100)}vh`,
             {selectAllFilterWidget, selectNoneFilterWidget} = this.props.store,
-            data = this.props.store.getTableData,
-            availableItems = _.chain(data)
-                .map(d => d[widget.column])
-                .map(d => (widget.delimiter && d ? d.split(widget.delimiter) : d))
-                .flatten()
-                .uniq()
-                .value(),
+            {rows} = this.props.store.getTableData,
+            allItems = _.keys(this.props.store.intersection[widget.column]),
+            availableItems = allItems.filter(item => {
+                let itemRows = [...this.props.store.intersection[widget.column][item]];
+                for (let itemRow of itemRows) {
+                    if (rows.includes(itemRow)) {
+                        return true;
+                    }
+                }
+                return false;
+            }),
             itemStore = this.props.store.filterWidgetState[widget.column],
             hiddenItems = _.chain(itemStore)
                 .keys()
@@ -34,6 +38,7 @@ class FilterWidget extends Component {
         return (
             <div
                 style={{
+                    minHeight: "100px",
                     maxHeight,
                     padding: "10px 0",
                     overflow: "hidden",
@@ -82,12 +87,9 @@ class FilterWidget extends Component {
 
     renderItem(widget, item, index, itemStore, filterWidgetExtension) {
         const {toggleItemSelection, colorScale} = this.props.store,
-            data = this.props.store.getTableData,
-            numItems = data.filter(d =>
-                widget.delimiter && d[widget.column]
-                    ? _.includes(d[widget.column].split(widget.delimiter), item)
-                    : d[widget.column] === item
-            ).length;
+            {rows} = this.props.store.getTableData,
+            itemRows = [...this.props.store.intersection[widget.column][item]],
+            numItems = itemRows.filter(itemRow => rows.includes(itemRow)).length;
         return (
             <div key={index}>
                 {filterWidgetExtension && filterWidgetExtension.hasModal
@@ -124,7 +126,7 @@ class FilterWidget extends Component {
             {showModalOnRow} = this.props.store,
             extension = extensions[widget.column],
             row_key = extension._dpe_key,
-            modalRows = _.chain(this.props.store.dataset)
+            modalRows = _.chain(this.props.store.getTableData.data)
                 .filter({
                     [widget.column]: item,
                 })
@@ -135,17 +137,10 @@ class FilterWidget extends Component {
         // If there are no results disable button
         if (modalRows.length == 0) {
             return (
-                <button className="btn btn-mini pull-right disabled" title="No content found">
+                <button
+                    className="btn btn-mini pull-right disabled"
+                    title="No additional information">
                     <i className="icon-eye-close"></i>
-                </button>
-            );
-        }
-
-        // If there are too many results disable button
-        else if (modalRows.length > 10) {
-            return (
-                <button className="btn btn-mini pull-right disabled" title="Too many results">
-                    <i className="icon-eye-open"></i>
                 </button>
             );
         }
@@ -162,32 +157,12 @@ class FilterWidget extends Component {
             );
         }
 
-        // If there are multiple results make the button a dropdown
+        // If there are too many results disable button
         else {
             return (
-                <div className="btn-group pull-right">
-                    <a
-                        className="btn btn-mini dropdown-toggle"
-                        data-toggle="dropdown"
-                        href="#"
-                        title="View additional information">
-                        <span className="caret"></span>
-                        <i className="icon-eye-open"></i>
-                    </a>
-                    <ul className="dropdown-menu">
-                        <li className="nav-header">{row_key}</li>
-                        <li className="divider"></li>
-                        {modalRows.map((row, idx) => {
-                            return (
-                                <li key={idx}>
-                                    <a href="#" onClick={() => showModalOnRow(extension, row)}>
-                                        {row[row_key]}
-                                    </a>
-                                </li>
-                            );
-                        })}
-                    </ul>
-                </div>
+                <button className="btn btn-mini pull-right disabled" title="Too many results">
+                    <i className="icon-eye-open"></i>
+                </button>
             );
         }
     }
