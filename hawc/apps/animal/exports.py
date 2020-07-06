@@ -487,28 +487,24 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
                 ser["expected_adversity_direction"],
             ]
 
-            for i in range(len(doses)):
-                self._get_incidence(i, ser["groups"])
-
             # get dose only if dose group is used
             dose_list = [
                 None if self._get_incidence(i, ser["groups"]) is None else self._get_dose(doses, i)
                 for i in range(len(doses))
             ]
 
-            # remove tailing unused doses for "high_dose" calculation
-            while len(dose_list) > 0 and dose_list[-1] is None:
-                del dose_list[-1]
-
             # dose-group specific information
-            if len(ser["groups"]) > 1:
+            if len(dose_list) > 1:
+                dose_exists_list = list(map(lambda x: x is not None, dose_list))
+                low_index = dose_exists_list[1:].index(True) + 1
+                high_index = len(dose_list) - 1 - dose_exists_list[::-1].index(True)
                 row.extend(
                     [
-                        self._get_dose(doses, 1),  # first non-zero dose
+                        self._get_dose(doses, low_index),  # first non-zero dose
                         self._get_dose(doses, ser["NOEL"]),
                         self._get_dose(doses, ser["LOEL"]),
                         self._get_dose(doses, ser["FEL"]),
-                        self._get_dose(doses, len(dose_list) - 1),
+                        self._get_dose(doses, high_index),
                     ]
                 )
             else:
