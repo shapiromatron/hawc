@@ -45,7 +45,7 @@ class HeatmapDatastore {
         intersection["color"]["red"] = Set([1,2,3])
         */
         let intersection = {},
-            allRows = [...this.allRows],
+            allRows = [...this.usableRows],
             addColumnsToMap = row => {
                 const columnName = row.column,
                     delimiter = row.delimiter;
@@ -209,7 +209,12 @@ class HeatmapDatastore {
     }
 
     @computed
-    get allRows() {
+    get usableRows() {
+        /*
+        Return a Set of row indices which should be presented in heatmap.
+        If `settings.show_null`, use all row indices. If false, filter rows which are non-null for
+        all x and y axes on the heatmap.
+        */
         let {x_fields, y_fields} = toJS(this.settings),
             fields = [...x_fields, ...y_fields],
             rows = _.range(0, this.dataset.length);
@@ -217,21 +222,13 @@ class HeatmapDatastore {
             return new Set(rows);
         } else {
             let validRows = rows.filter(index => {
-                const d = this.dataset[index];
-                for (const f of fields) {
-                    const text = d[f.column] || "",
-                        values = f.delimiter ? text.split(f.delimiter) : [text];
-                    let valid = false;
-                    for (const value of values) {
-                        if (value) {
-                            valid = true;
-                        }
-                    }
-                    if (!valid) {
-                        return false;
-                    }
-                }
-                return true;
+                const d = this.dataset[index],
+                    nonNull = _.map(fields, field => {
+                        const text = d[field.column] || "",
+                            values = field.delimiter ? text.split(field.delimiter) : [text];
+                        return _.some(values, d => d.length > 0);
+                    });
+                return _.every(nonNull);
             });
             return new Set(validRows);
         }
@@ -324,7 +321,7 @@ class HeatmapDatastore {
                     y_filters: [],
                     x_step: x_steps,
                     y_step: y_steps,
-                    rows: h.setDifference(this.allRows, this.rowsRemovedByFilters),
+                    rows: h.setDifference(this.usableRows, this.rowsRemovedByFilters),
                 }
             );
         }
@@ -341,7 +338,7 @@ class HeatmapDatastore {
             );
             rows = _.union(...filtered_rows);
         } else {
-            rows = [...h.setDifference(this.allRows, this.rowsRemovedByFilters)];
+            rows = [...h.setDifference(this.usableRows, this.rowsRemovedByFilters)];
         }
         data = rows.map(index => this.dataset[index]);
         return {rows, data};
