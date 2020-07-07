@@ -2,6 +2,7 @@ import React from "react";
 import {connect} from "react-redux";
 import _ from "lodash";
 import $ from "$";
+import PropTypes from "prop-types";
 
 import Loading from "shared/components/Loading";
 
@@ -275,4 +276,29 @@ function mapStateToProps(state) {
     };
 }
 
+Tabs.propTypes = {
+    dispatch: PropTypes.object,
+    config: PropTypes.shape({
+        endpoint_id: PropTypes.object,
+        session_url: PropTypes.object,
+        editMode: PropTypes.object,
+        bmds_version: PropTypes.object,
+    }),
+    logicApplied: PropTypes.object,
+    hasSession: PropTypes.object,
+    hasEndpoint: PropTypes.object,
+    endpoint: PropTypes.object,
+    dataType: PropTypes.object,
+    validationErrors: PropTypes.object,
+    isExecuting: PropTypes.object,
+    doseUnits: PropTypes.object,
+    modelSettings: PropTypes.object,
+    allModelOptions: PropTypes.object,
+    bmrs: PropTypes.object,
+    models: PropTypes.object,
+    selectedModelId: PropTypes.object,
+    hoverModel: PropTypes.object,
+    hasExecuted: PropTypes.object,
+    selectedModelNotes: PropTypes.object,
+};
 export default connect(mapStateToProps)(Tabs);

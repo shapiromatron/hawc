@@ -1,4 +1,5 @@
 import React, {Component} from "react";
+import PropTypes from "prop-types";
 import {connect} from "react-redux";
 
 import {fetchFullStudyIfNeeded, selectActive} from "riskofbias/robTable/actions";
@@ -47,5 +48,13 @@ function mapStateToProps(state) {
         config: state.config,
     };
 }
+
+RiskOfBiasDisplay.propTypes = {
+    dispatch: PropTypes.object,
+    active: PropTypes.object,
+    riskofbiases: PropTypes.object,
+    itemsLoaded: PropTypes.object,
+    config: PropTypes.object,
+};
 
 export default connect(mapStateToProps)(RiskOfBiasDisplay);

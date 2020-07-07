@@ -61,6 +61,7 @@ class StatusSelection extends Component {
 StatusSelection.propTypes = {
     task: PropTypes.shape({
         id: PropTypes.number.isRequired,
+        status: PropTypes.object,
     }).isRequired,
     onChange: PropTypes.func.isRequired,
 };

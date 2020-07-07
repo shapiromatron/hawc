@@ -70,7 +70,7 @@ class DatasetTable extends Component {
     render() {
         const {table_fields} = this.props.store.settings,
             tableRowExtensions = this.props.store.extensions.tableRows,
-            data = this.props.store.getTableData;
+            data = this.props.store.getTableData.data;
 
         return (
             <div style={{maxHeight: "50vh", overflow: "auto"}}>

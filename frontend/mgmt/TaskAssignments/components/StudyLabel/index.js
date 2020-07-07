@@ -16,6 +16,7 @@ StudyLabel.propTypes = {
         url: PropTypes.string.isRequired,
         short_citation: PropTypes.string.isRequired,
     }).isRequired,
+    className: PropTypes.object,
 };
 
 export default StudyLabel;

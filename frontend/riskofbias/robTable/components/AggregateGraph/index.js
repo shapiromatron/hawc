@@ -1,6 +1,7 @@
 import _ from "lodash";
 import React from "react";
 import ReactDOM from "react-dom";
+import PropTypes from "prop-types";
 
 import DomainCell from "riskofbias/robTable/components/DomainCell";
 import "./AggregateGraph.css";
@@ -30,5 +31,10 @@ export function renderAggregateGraph(data, element) {
         element
     );
 }
+
+AggregateGraph.propTypes = {
+    domains: PropTypes.object,
+    handleClick: PropTypes.object,
+};
 
 export default AggregateGraph;

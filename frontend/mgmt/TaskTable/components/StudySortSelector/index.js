@@ -89,6 +89,7 @@ StudySortSelector.propTypes = {
     }).isRequired,
     fieldOptions: PropTypes.array.isRequired,
     orderOptions: PropTypes.array.isRequired,
+    className: PropTypes.object,
 };
 
 export default StudySortSelector;

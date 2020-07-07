@@ -21,4 +21,5 @@ export default class StatusIcon extends Component {
 
 StatusIcon.propTypes = {
     status: PropTypes.number.isRequired,
+    style: PropTypes.object,
 };

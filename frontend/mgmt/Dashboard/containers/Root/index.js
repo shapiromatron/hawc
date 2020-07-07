@@ -1,6 +1,7 @@
 import _ from "lodash";
 import React, {Component} from "react";
 import {connect} from "react-redux";
+import PropTypes from "prop-types";
 
 import {loadConfig} from "shared/actions/Config";
 import {fetchTasks} from "mgmt/Dashboard/actions";
@@ -99,5 +100,13 @@ class Root extends Component {
 function mapStateToProps(state) {
     return state;
 }
+
+Root.propTypes = {
+    dispatch: PropTypes.object,
+    tasks: PropTypes.shape({
+        isLoaded: PropTypes.object,
+        list: PropTypes.object,
+    }),
+};
 
 export default connect(mapStateToProps)(Root);
