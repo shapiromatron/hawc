@@ -325,7 +325,13 @@ const ER = {
         },
         FILTER_OPTIONS: {
             studyCitation: defineFilter(ER.studyCitation, {on_click_event: "study"}),
-            exposureMetric: defineFilter(ER.exposureMetric, {on_click_event: "exposure"}),
+            studyDesign: defineFilter(ER.studyDesign),
+            exposureRoute: defineFilter(ER.exposureRoute, {delimiter: "|"}),
+            exposureMeasure: defineFilter(ER.exposureMeasure),
+            exposureMetric: defineFilter(ER.exposureMetric),
+            system: defineFilter(ER.system),
+            effect: defineFilter(ER.effect),
+            effectSubtype: defineFilter(ER.effectSubtype),
         },
         TABLE_FIELDS: {
             studyCitation: defineTable(ER.studyCitation, {on_click_event: "study"}),

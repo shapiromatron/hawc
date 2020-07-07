@@ -147,11 +147,14 @@ const BE = {
             speciesSex: defineMultiAxis([BE.species, BE.sex], "speciesSex", "Species & Sex"),
             experimentType: defineAxis(BE.experimentType),
             system: defineAxis(BE.system),
+            organ: defineAxis(BE.organ),
+            systemOrgan: defineMultiAxis([BE.system, BE.organ], "systemOrgan", "System & organ"),
             experimentTypeSystem: defineMultiAxis(
                 [BE.experimentType, BE.system],
                 "experimentTypeSystem",
                 "Study design & system"
             ),
+            endpointName: defineAxis(BE.endpointName),
         },
         FILTER_OPTIONS: {
             studyCitation: defineFilter(BE.studyCitation, {on_click_event: "study"}),
@@ -163,6 +166,7 @@ const BE = {
             organ: defineFilter(BE.organ),
             effect: defineFilter(BE.effect),
             effectSubtype: defineFilter(BE.effectSubtype),
+            endpointName: defineFilter(BE.endpointName),
         },
         TABLE_FIELDS: {
             studyCitation: defineTable(BE.studyCitation, {on_click_event: "study"}),
@@ -298,11 +302,14 @@ const BED = {
             speciesSex: defineMultiAxis([BED.species, BED.sex], "speciesSex", "Species & Sex"),
             experimentType: defineAxis(BED.experimentType),
             system: defineAxis(BED.system),
+            organ: defineAxis(BED.organ),
+            systemOrgan: defineMultiAxis([BED.system, BED.organ], "systemOrgan", "System & organ"),
             experimentTypeSystem: defineMultiAxis(
                 [BED.experimentType, BED.system],
                 "experimentTypeSystem",
                 "Study design & system"
             ),
+            endpointName: defineAxis(BED.endpointName),
         },
         FILTER_OPTIONS: {
             doseUnitsName: defineFilter(BED.doseUnitsName),
@@ -315,6 +322,7 @@ const BED = {
             organ: defineFilter(BED.organ),
             effect: defineFilter(BED.effect, {on_click_event: "endpoint_complete"}),
             effectSubtype: defineFilter(BED.effectSubtype, {on_click_event: "endpoint_complete"}),
+            endpointName: defineFilter(BED.endpointName),
         },
         TABLE_FIELDS: {
             studyCitation: defineTable(BED.studyCitation, {on_click_event: "study"}),
