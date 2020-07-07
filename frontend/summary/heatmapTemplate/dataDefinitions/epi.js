@@ -1,4 +1,11 @@
-import {defineProps, defineAxis, defineMultiAxis, defineFilter, defineTable} from "./shared";
+import {
+    defineProps,
+    defineAxis,
+    defineMultiAxis,
+    defineFilter,
+    defineTable,
+    COLORS,
+} from "./shared";
 
 // ESD = epi study design
 const ESD = {
@@ -48,7 +55,11 @@ const ESD = {
             studyDesign: defineFilter(ESD.studyDesign, {delimiter: "|"}),
             studyPopulationSource: defineFilter(ESD.studyPopulationSource, {delimiter: "|"}),
             exposureMeasure: defineFilter(ESD.exposureMeasure, {delimiter: "|"}),
+            exposureMetric: defineFilter(ESD.exposureMetric, {delimiter: "|"}),
             exposureRoute: defineFilter(ESD.exposureRoute, {delimiter: "|"}),
+            system: defineFilter(ESD.system, {delimiter: "|"}),
+            effect: defineFilter(ESD.effect, {delimiter: "|"}),
+            effectSubtype: defineFilter(ESD.effectSubtype, {delimiter: "|"}),
         },
         TABLE_FIELDS: {
             studyCitation: defineTable(ESD.studyCitation, {on_click_event: "study"}),
@@ -63,75 +74,12 @@ const ESD = {
             effect: defineTable(ESD.effect, {delimiter: "|"}),
             effectSubtype: defineTable(ESD.effectSubtype, {delimiter: "|"}),
         },
-        DASHBOARDS: [
-            {
-                id: "epi-sd-study-design-vs-system-effect",
-                label: "study design vs. system & effect",
-                x_axis: "study-design",
-                y_axis: "system+effect",
-                filters: ["study-citation", "exposure-measured"],
-                table_fields: [
-                    "study-citation",
-                    "study-design",
-                    "exposure-measured",
-                    "system",
-                    "effect",
-                ],
-            },
-            {
-                id: "epi-sd-exposure-vs-system-effect",
-                label: "exposure vs. system & effect",
-                x_axis: "exposure-measured",
-                y_axis: "system+effect",
-                filters: ["study-citation", "exposure-metric"],
-                table_fields: ["study-citation", "exposure-name", "system", "effect"],
-            },
-            {
-                id: "epi-sd-exposure-route-vs-system-effect",
-                label: "exposure route vs. system & effect",
-                x_axis: "exposure-route",
-                y_axis: "system+effect",
-                filters: ["study-citation", "exposure-measured"],
-                table_fields: ["study-citation", "exposure-name", "system", "effect"],
-            },
-            {
-                id: "epi-sd-exposure-metric-vs-system-effect",
-                label: "exposure metric vs. system & effect",
-                x_axis: "exposure-metric",
-                y_axis: "system+effect",
-                filters: ["study-citation", "exposure-measured"],
-                table_fields: ["study-citation", "exposure-name", "system", "effect"],
-            },
-            {
-                id: "epi-sd-study-pop-source-vs-system-effect",
-                label: "study population source vs. system & effect",
-                x_axis: "study-pop-source",
-                y_axis: "system+effect",
-                filters: ["study-citation", "exposure-measured"],
-                table_fields: ["study-citation", "exposure-name", "system", "effect"],
-            },
-            {
-                id: "epi-sd-study-citation-vs-system-effect",
-                label: "study citation vs. system & effect",
-                x_axis: "study-citation",
-                y_axis: "system+effect",
-                filters: ["study-citation", "exposure-measured"],
-                table_fields: ["study-citation", "exposure-name", "system", "effect"],
-            },
-            {
-                id: "epi-sd-study-citation-vs-system",
-                label: "study citation vs. system",
-                x_axis: "study-citation",
-                y_axis: "system",
-                filters: ["study-citation", "exposure-measured"],
-                table_fields: ["study-citation", "exposure-name", "system", "effect"],
-            },
-        ],
     };
 ESDSettings.DASHBOARDS = [
     {
-        id: "epi-sd-study-design-vs-system-effect",
+        id: "study design vs. system & effect",
         label: "study design vs. system & effect",
+        upperColor: COLORS.blue,
         x_axis: ESDSettings.AXIS_OPTIONS.studyDesign.id,
         y_axis: ESDSettings.AXIS_OPTIONS.systemEffect.id,
         filters: [
@@ -140,71 +88,56 @@ ESDSettings.DASHBOARDS = [
         ],
         table_fields: [
             ESDSettings.TABLE_FIELDS.studyCitation.id,
-            ESDSettings.TABLE_FIELDS.exposureName.id,
+            ESDSettings.TABLE_FIELDS.studyDesign.id,
+            ESDSettings.TABLE_FIELDS.studyPopulationSource.id,
+            ESDSettings.TABLE_FIELDS.exposureRoute.id,
+            ESDSettings.TABLE_FIELDS.exposureMeasure.id,
+            ESDSettings.TABLE_FIELDS.exposureMetric.id,
             ESDSettings.TABLE_FIELDS.system.id,
             ESDSettings.TABLE_FIELDS.effect.id,
         ],
     },
     {
-        id: "epi-sd-exposure-vs-system-effect",
-        label: "exposure vs. system & effect",
-        x_axis: ESDSettings.AXIS_OPTIONS.exposureName.id,
+        id: "exposure measure vs. system & effect",
+        label: "exposure measure vs. system & effect",
+        upperColor: COLORS.red,
+        x_axis: ESDSettings.AXIS_OPTIONS.exposureMeasure.id,
         y_axis: ESDSettings.AXIS_OPTIONS.systemEffect.id,
         filters: [
             ESDSettings.FILTER_OPTIONS.studyCitation.id,
-            ESDSettings.FILTER_OPTIONS.exposureMeasure.id,
+            ESDSettings.FILTER_OPTIONS.studyDesign.id,
+            ESDSettings.FILTER_OPTIONS.exposureMetric.id,
         ],
         table_fields: [
             ESDSettings.TABLE_FIELDS.studyCitation.id,
-            ESDSettings.TABLE_FIELDS.exposureName.id,
+            ESDSettings.TABLE_FIELDS.studyDesign.id,
+            ESDSettings.TABLE_FIELDS.studyPopulationSource.id,
+            ESDSettings.TABLE_FIELDS.exposureRoute.id,
+            ESDSettings.TABLE_FIELDS.exposureMeasure.id,
+            ESDSettings.TABLE_FIELDS.exposureMetric.id,
             ESDSettings.TABLE_FIELDS.system.id,
             ESDSettings.TABLE_FIELDS.effect.id,
         ],
     },
     {
-        id: "epi-sd-measured-metric-vs-system-effect",
-        label: "chemical & metric vs. system & effect",
-        x_axis: ESDSettings.AXIS_OPTIONS.exposureMeasureMetric.id,
-        y_axis: ESDSettings.AXIS_OPTIONS.systemEffect.id,
-        filters: [
-            ESDSettings.FILTER_OPTIONS.studyCitation.id,
-            ESDSettings.FILTER_OPTIONS.exposureMeasure.id,
-        ],
-        table_fields: [
-            ESDSettings.TABLE_FIELDS.studyCitation.id,
-            ESDSettings.TABLE_FIELDS.exposureName.id,
-            ESDSettings.TABLE_FIELDS.system.id,
-            ESDSettings.TABLE_FIELDS.effect.id,
-        ],
-    },
-    {
-        id: "epi-sd-exposure-route-vs-system-effect",
+        id: "exposure route vs. system & effect",
         label: "exposure route vs. system & effect",
+        upperColor: COLORS.purple,
         x_axis: ESDSettings.AXIS_OPTIONS.exposureRoute.id,
         y_axis: ESDSettings.AXIS_OPTIONS.systemEffect.id,
         filters: [
             ESDSettings.FILTER_OPTIONS.studyCitation.id,
+            ESDSettings.FILTER_OPTIONS.studyDesign.id,
+            ESDSettings.FILTER_OPTIONS.exposureMetric.id,
             ESDSettings.FILTER_OPTIONS.exposureMeasure.id,
         ],
         table_fields: [
             ESDSettings.TABLE_FIELDS.studyCitation.id,
-            ESDSettings.TABLE_FIELDS.exposureName.id,
-            ESDSettings.TABLE_FIELDS.system.id,
-            ESDSettings.TABLE_FIELDS.effect.id,
-        ],
-    },
-    {
-        id: "epi-sd-exposure-metric-vs-system-effect",
-        label: "exposure metric vs. system & effect",
-        x_axis: ESDSettings.AXIS_OPTIONS.exposureMetric.id,
-        y_axis: ESDSettings.AXIS_OPTIONS.systemEffect.id,
-        filters: [
-            ESDSettings.FILTER_OPTIONS.studyCitation.id,
-            ESDSettings.FILTER_OPTIONS.exposureMeasure.id,
-        ],
-        table_fields: [
-            ESDSettings.TABLE_FIELDS.studyCitation.id,
-            ESDSettings.TABLE_FIELDS.exposureName.id,
+            ESDSettings.TABLE_FIELDS.studyDesign.id,
+            ESDSettings.TABLE_FIELDS.studyPopulationSource.id,
+            ESDSettings.TABLE_FIELDS.exposureRoute.id,
+            ESDSettings.TABLE_FIELDS.exposureMeasure.id,
+            ESDSettings.TABLE_FIELDS.exposureMetric.id,
             ESDSettings.TABLE_FIELDS.system.id,
             ESDSettings.TABLE_FIELDS.effect.id,
         ],
@@ -212,47 +145,67 @@ ESDSettings.DASHBOARDS = [
     {
         id: "epi-sd-study-pop-source-vs-system-effect",
         label: "study population source vs. system & effect",
+        upperColor: COLORS.orange,
         x_axis: ESDSettings.AXIS_OPTIONS.studyPopulationSource.id,
         y_axis: ESDSettings.AXIS_OPTIONS.systemEffect.id,
         filters: [
             ESDSettings.FILTER_OPTIONS.studyCitation.id,
+            ESDSettings.FILTER_OPTIONS.studyDesign.id,
             ESDSettings.FILTER_OPTIONS.exposureMeasure.id,
         ],
         table_fields: [
             ESDSettings.TABLE_FIELDS.studyCitation.id,
-            ESDSettings.TABLE_FIELDS.exposureName.id,
+            ESDSettings.TABLE_FIELDS.studyDesign.id,
+            ESDSettings.TABLE_FIELDS.studyPopulationSource.id,
+            ESDSettings.TABLE_FIELDS.exposureRoute.id,
+            ESDSettings.TABLE_FIELDS.exposureMeasure.id,
+            ESDSettings.TABLE_FIELDS.exposureMetric.id,
             ESDSettings.TABLE_FIELDS.system.id,
             ESDSettings.TABLE_FIELDS.effect.id,
         ],
     },
     {
-        id: "epi-sd-study-citation-vs-system-effect",
-        label: "study citation vs. system & effect",
-        x_axis: ESDSettings.AXIS_OPTIONS.studyCitation.id,
-        y_axis: ESDSettings.AXIS_OPTIONS.systemEffect.id,
+        id: "system vs. citation",
+        label: "system vs. citation",
+        upperColor: COLORS.green,
+        x_axis: ESDSettings.AXIS_OPTIONS.system.id,
+        y_axis: ESDSettings.AXIS_OPTIONS.studyCitation.id,
         filters: [
-            ESDSettings.FILTER_OPTIONS.studyCitation.id,
+            ESDSettings.FILTER_OPTIONS.studyDesign.id,
+            ESDSettings.FILTER_OPTIONS.studyPopulationSource.id,
             ESDSettings.FILTER_OPTIONS.exposureMeasure.id,
+            ESDSettings.FILTER_OPTIONS.effect.id,
         ],
         table_fields: [
             ESDSettings.TABLE_FIELDS.studyCitation.id,
-            ESDSettings.TABLE_FIELDS.exposureName.id,
+            ESDSettings.TABLE_FIELDS.studyDesign.id,
+            ESDSettings.TABLE_FIELDS.studyPopulationSource.id,
+            ESDSettings.TABLE_FIELDS.exposureRoute.id,
+            ESDSettings.TABLE_FIELDS.exposureMeasure.id,
+            ESDSettings.TABLE_FIELDS.exposureMetric.id,
             ESDSettings.TABLE_FIELDS.system.id,
             ESDSettings.TABLE_FIELDS.effect.id,
         ],
     },
     {
-        id: "epi-sd-study-citation-vs-system",
-        label: "study citation vs. system",
-        x_axis: ESDSettings.AXIS_OPTIONS.studyCitation.id,
-        y_axis: ESDSettings.AXIS_OPTIONS.system.id,
+        id: "system & effect vs. citation",
+        label: "system & effect vs. citation",
+        upperColor: COLORS.red,
+        x_axis: ESDSettings.AXIS_OPTIONS.systemEffect.id,
+        y_axis: ESDSettings.AXIS_OPTIONS.studyCitation.id,
         filters: [
-            ESDSettings.FILTER_OPTIONS.studyCitation.id,
+            ESDSettings.FILTER_OPTIONS.studyDesign.id,
+            ESDSettings.FILTER_OPTIONS.studyPopulationSource.id,
             ESDSettings.FILTER_OPTIONS.exposureMeasure.id,
+            ESDSettings.FILTER_OPTIONS.exposureMetric.id,
         ],
         table_fields: [
             ESDSettings.TABLE_FIELDS.studyCitation.id,
-            ESDSettings.TABLE_FIELDS.exposureName.id,
+            ESDSettings.TABLE_FIELDS.studyDesign.id,
+            ESDSettings.TABLE_FIELDS.studyPopulationSource.id,
+            ESDSettings.TABLE_FIELDS.exposureRoute.id,
+            ESDSettings.TABLE_FIELDS.exposureMeasure.id,
+            ESDSettings.TABLE_FIELDS.exposureMetric.id,
             ESDSettings.TABLE_FIELDS.system.id,
             ESDSettings.TABLE_FIELDS.effect.id,
         ],
@@ -359,6 +312,7 @@ ERSettings.DASHBOARDS = [
     {
         id: "epi-res-study-design-vs-system-effect",
         label: "study design vs. system & effect",
+        upperColor: COLORS.blue,
         x_axis: ERSettings.AXIS_OPTIONS.studyDesign.id,
         y_axis: ERSettings.AXIS_OPTIONS.systemEffect.id,
         filters: [
@@ -375,6 +329,7 @@ ERSettings.DASHBOARDS = [
     {
         id: "epi-res-measured-metric-vs-system-effect",
         label: "chemical & metric vs. system & effect",
+        upperColor: COLORS.orange,
         x_axis: ERSettings.AXIS_OPTIONS.exposureMeasureMetric.id,
         y_axis: ERSettings.AXIS_OPTIONS.systemEffect.id,
         filters: [
@@ -390,6 +345,7 @@ ERSettings.DASHBOARDS = [
     {
         id: "epi-res-exposure-route-vs-system-effect",
         label: "exposure route vs. system & effect",
+        upperColor: COLORS.green,
         x_axis: ERSettings.AXIS_OPTIONS.exposureRoute.id,
         y_axis: ERSettings.AXIS_OPTIONS.systemEffect.id,
         filters: [
@@ -405,6 +361,7 @@ ERSettings.DASHBOARDS = [
     {
         id: "epi-res-exposure-metric-vs-system-effect",
         label: "exposure metric vs. system & effect",
+        upperColor: COLORS.red,
         x_axis: ERSettings.AXIS_OPTIONS.exposureMetric.id,
         y_axis: ERSettings.AXIS_OPTIONS.systemEffect.id,
         filters: [
@@ -420,6 +377,7 @@ ERSettings.DASHBOARDS = [
     {
         id: "epi-res-study-pop-source-vs-system-effect",
         label: "study population source vs. system & effect",
+        upperColor: COLORS.purple,
         x_axis: ERSettings.AXIS_OPTIONS.studyPopulationSource.id,
         y_axis: ERSettings.AXIS_OPTIONS.systemEffect.id,
         filters: [
@@ -435,6 +393,7 @@ ERSettings.DASHBOARDS = [
     {
         id: "epi-res-study-citation-vs-system-effect",
         label: "study citation vs. system & effect",
+        upperColor: COLORS.black,
         x_axis: ERSettings.AXIS_OPTIONS.systemEffect.id,
         y_axis: ERSettings.AXIS_OPTIONS.studyCitation.id,
         filters: [
@@ -450,6 +409,7 @@ ERSettings.DASHBOARDS = [
     {
         id: "epi-res-study-citation-vs-system",
         label: "study citation vs. system",
+        upperColor: COLORS.blue,
         x_axis: ERSettings.AXIS_OPTIONS.system.id,
         y_axis: ERSettings.AXIS_OPTIONS.studyCitation.id,
         filters: [
