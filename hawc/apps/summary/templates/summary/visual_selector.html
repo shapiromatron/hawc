@@ -48,10 +48,8 @@
               Literature tagtree</option>
           <option data-showcase="#visual5" value="{% url 'summary:visualization_create' assessment.id 5 %}">
               Embedded external website</option>
-          {% if user.is_beta_tester %}
           <option data-showcase="#visual6" value="{% url 'summary:visualization_create' assessment.id 6 %}">
               Exploratory heatmap</option>
-          {% endif %}
         </select>
         <a id="create_btn" class="pull-right btn btn-primary span2" href="#">Select</a>
       </div>
@@ -168,11 +166,12 @@
     </div>
 
     <div id="visual6">
-      <h2 class="betatester">Exploratory heatmap</h2>
+      <h2>Exploratory heatmap</h2>
       <div class="row">
+        <img class="span10 offset1" src="{% static '/img/summary/exploratory-heatmap.png' %}">
       </div>
       <p class="help-block">
-        A heatmap with customizable axes, filters, and interactivity to explore a dataset visually.
+        A heatmap with customizable axes, filters, and interactivity to explore a dataset visually. The data presented in the heatmap can be content extracted for this assessment (bioassay or epidemiology), or you can upload a <a href="{% url 'assessment:dataset_create' assessment.id %}">tabular dataset</a> for analysis.
       </p>
     </div>
 
