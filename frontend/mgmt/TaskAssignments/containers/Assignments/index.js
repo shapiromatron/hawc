@@ -1,4 +1,5 @@
 import React, {Component} from "react";
+import PropTypes from "prop-types";
 import {connect} from "react-redux";
 import _ from "lodash";
 
@@ -88,5 +89,18 @@ function mapStateToProps(state) {
         tasks,
     };
 }
+
+Assignments.propTypes = {
+    dispatch: PropTypes.object,
+    tasks: PropTypes.shape({
+        list: PropTypes.object,
+        isLoaded: PropTypes.object,
+        robTasks: PropTypes.object,
+    }),
+    config: PropTypes.shape({
+        user: PropTypes.object,
+        assessment_id: PropTypes.object,
+    }),
+};
 
 export default connect(mapStateToProps)(Assignments);

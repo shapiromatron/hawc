@@ -146,6 +146,7 @@ TaskChart.propTypes = {
         }).isRequired,
         xTransform: PropTypes.array.isRequired,
         yTransform: PropTypes.array.isRequired,
+        label: PropTypes.string,
     }).isRequired,
 };
 

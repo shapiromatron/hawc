@@ -17,6 +17,7 @@ AssessmentLabel.propTypes = {
         url: PropTypes.string.isRequired,
         id: PropTypes.number,
     }).isRequired,
+    className: PropTypes.object,
 };
 
 export default AssessmentLabel;

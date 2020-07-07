@@ -30,6 +30,7 @@ Task.propTypes = {
         study: PropTypes.shape({
             url: PropTypes.string.isRequired,
             short_citation: PropTypes.string.isRequired,
+            assessment: PropTypes.object,
         }).isRequired,
         status_display: PropTypes.string.isRequired,
         type: PropTypes.number.isRequired,

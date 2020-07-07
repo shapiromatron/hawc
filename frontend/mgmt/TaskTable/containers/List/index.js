@@ -1,4 +1,5 @@
 import React, {Component} from "react";
+import PropTypes from "prop-types";
 import {connect} from "react-redux";
 import _ from "lodash";
 
@@ -106,5 +107,24 @@ function mapStateToProps(state) {
         studies,
     };
 }
+
+ListApp.propTypes = {
+    dispatch: PropTypes.object,
+    tasks: PropTypes.shape({
+        list: PropTypes.object,
+        isLoaded: PropTypes.object,
+    }),
+    studies: PropTypes.shape({
+        visibleList: PropTypes.shape({
+            map: PropTypes.object,
+        }),
+    }),
+    config: PropTypes.shape({
+        cancelUrl: PropTypes.object,
+        type: PropTypes.object,
+        autocomplete: PropTypes.object,
+    }),
+    error: PropTypes.object,
+};
 
 export default connect(mapStateToProps)(ListApp);
