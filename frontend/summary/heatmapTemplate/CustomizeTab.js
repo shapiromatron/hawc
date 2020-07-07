@@ -3,6 +3,7 @@ import React, {Component} from "react";
 import {inject, observer} from "mobx-react";
 
 import SelectInput from "shared/components/SelectInput";
+import TextInput from "shared/components/TextInput";
 import CheckboxInput from "shared/components/CheckboxInput";
 
 @inject("store")
@@ -66,13 +67,22 @@ class CustomizeTab extends Component {
                         />
                     </div>
                     <div className="row-fluid">
-                        <div className="span3">
+                        <div className="span6">
                             <CheckboxInput
                                 label="Show null field values"
                                 name="show_null"
                                 onChange={e => store.changeShowNull(e.target.checked)}
                                 checked={store.showNull}
                                 helpText={"Display data with <null> values in selected axes."}
+                            />
+                        </div>
+                        <div className="span6">
+                            <TextInput
+                                label="Color"
+                                name="upperColor"
+                                type="color"
+                                value={store.upperColor}
+                                onChange={e => store.changeUpperColor(e.target.value)}
                             />
                         </div>
                     </div>

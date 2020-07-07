@@ -44,6 +44,14 @@ const defineProps = function(id, label, column) {
                 on_click_event: opts.on_click_event || NULL_VALUE,
             },
         };
+    },
+    COLORS = {
+        black: "#000000",
+        blue: "#2339a9",
+        green: "#006570",
+        orange: "#b35b0b",
+        purple: "#47378b",
+        red: "#66002b",
     };
 
-export {defineProps, defineAxis, defineMultiAxis, defineFilter, defineTable};
+export {defineProps, defineAxis, defineMultiAxis, defineFilter, defineTable, COLORS};

@@ -20,6 +20,7 @@ class HeatmapTemplateStore {
     @observable selectedTableFields = [];
 
     @observable showNull = false;
+    @observable upperColor = null;
 
     constructor(config) {
         this.config = config;
@@ -35,6 +36,9 @@ class HeatmapTemplateStore {
     @action.bound changeShowNull(bool) {
         this.showNull = bool;
     }
+    @action.bound changeUpperColor(color) {
+        this.upperColor = color;
+    }
 
     @action.bound changeDashboard(id) {
         const dashboard = _.find(this.dashboardOptions, {id});
@@ -45,6 +49,7 @@ class HeatmapTemplateStore {
         this.selectedTableFields = dashboard.table_fields.map(id =>
             _.find(this.tableOptions, {id})
         );
+        this.upperColor = dashboard.upperColor;
     }
 
     @action.bound changeAxis(name, key) {
@@ -80,7 +85,7 @@ class HeatmapTemplateStore {
             autorotate_tick_labels: true,
             cell_height: 25,
             cell_width: 75,
-            color_range: ["#ffffff", "#2339a9"],
+            color_range: ["#ffffff", this.upperColor],
             compress_x: true,
             compress_y: true,
             data_url: this.config.data_url,

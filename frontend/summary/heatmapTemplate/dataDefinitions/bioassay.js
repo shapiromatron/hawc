@@ -1,4 +1,11 @@
-import {defineProps, defineAxis, defineMultiAxis, defineFilter, defineTable} from "./shared";
+import {
+    defineProps,
+    defineAxis,
+    defineMultiAxis,
+    defineFilter,
+    defineTable,
+    COLORS,
+} from "./shared";
 
 // BSD = bioassay study design
 const BSD = {
@@ -72,6 +79,7 @@ BSDSettings.DASHBOARDS = [
     {
         id: "study design vs. system",
         label: "study design vs. system",
+        upperColor: COLORS.blue,
         x_axis: BSDSettings.AXIS_OPTIONS.experimentType.id,
         y_axis: BSDSettings.AXIS_OPTIONS.system.id,
         filters: [
@@ -91,6 +99,7 @@ BSDSettings.DASHBOARDS = [
     {
         id: "test subject vs. system",
         label: "test subject vs. system",
+        upperColor: COLORS.red,
         x_axis: BSDSettings.AXIS_OPTIONS.speciesSex.id,
         y_axis: BSDSettings.AXIS_OPTIONS.system.id,
         filters: [
@@ -111,6 +120,7 @@ BSDSettings.DASHBOARDS = [
     {
         id: "system vs. study citation",
         label: "system vs. study citation",
+        upperColor: COLORS.green,
         x_axis: BSDSettings.AXIS_OPTIONS.system.id,
         y_axis: BSDSettings.AXIS_OPTIONS.studyCitation.id,
         filters: [],
@@ -130,6 +140,7 @@ BSDSettings.DASHBOARDS = [
     {
         id: "dose units vs. study citation",
         label: "dose units vs. study citation",
+        upperColor: COLORS.purple,
         x_axis: BSDSettings.AXIS_OPTIONS.doseUnits.id,
         y_axis: BSDSettings.AXIS_OPTIONS.studyCitation.id,
         filters: [
@@ -151,6 +162,7 @@ BSDSettings.DASHBOARDS = [
     {
         id: "chemical vs. study citation",
         label: "chemical vs. study citation",
+        upperColor: COLORS.orange,
         x_axis: BSDSettings.AXIS_OPTIONS.experimentChemical.id,
         y_axis: BSDSettings.AXIS_OPTIONS.studyCitation.id,
         filters: [
@@ -202,8 +214,11 @@ const BE = {
             studyCitation: defineAxis(BE.studyCitation),
             speciesSex: defineMultiAxis([BE.species, BE.sex], "speciesSex", "Species & Sex"),
             experimentType: defineAxis(BE.experimentType),
+            experimentChemical: defineAxis(BE.experimentChemical),
+            routeOfExposure: defineAxis(BE.routeOfExposure),
             system: defineAxis(BE.system),
             organ: defineAxis(BE.organ),
+            effect: defineAxis(BE.effect),
             systemOrgan: defineMultiAxis([BE.system, BE.organ], "systemOrgan", "System & organ"),
             experimentTypeSystem: defineMultiAxis(
                 [BE.experimentType, BE.system],
@@ -218,6 +233,7 @@ const BE = {
             species: defineFilter(BE.species),
             strain: defineFilter(BE.strain),
             sex: defineFilter(BE.sex),
+            generation: defineFilter(BE.generation),
             system: defineFilter(BE.system),
             organ: defineFilter(BE.organ),
             effect: defineFilter(BE.effect),
@@ -243,14 +259,15 @@ const BE = {
 // define dashboards after building-blocks are defined
 BESettings.DASHBOARDS = [
     {
-        id: "system-vs-test-subject",
+        id: "system vs. test subject",
         label: "system vs. test subject",
+        upperColor: COLORS.blue,
         x_axis: BESettings.AXIS_OPTIONS.speciesSex.id,
         y_axis: BESettings.AXIS_OPTIONS.system.id,
         filters: [
-            BESettings.FILTER_OPTIONS.experimentType.id,
             BESettings.FILTER_OPTIONS.studyCitation.id,
-            BESettings.FILTER_OPTIONS.effect.id,
+            BESettings.FILTER_OPTIONS.experimentType.id,
+            BESettings.FILTER_OPTIONS.generation.id,
         ],
         table_fields: [
             BESettings.TABLE_FIELDS.studyCitation.id,
@@ -263,13 +280,14 @@ BESettings.DASHBOARDS = [
         ],
     },
     {
-        id: "test-subject-vs-study-design-system",
-        label: "test subjects vs. study design & system",
+        id: "test subject vs. study design & system",
+        label: "test subject vs. study design & system",
+        upperColor: COLORS.red,
         x_axis: BESettings.AXIS_OPTIONS.speciesSex.id,
         y_axis: BESettings.AXIS_OPTIONS.experimentTypeSystem.id,
         filters: [
-            BESettings.FILTER_OPTIONS.experimentType.id,
-            BESettings.FILTER_OPTIONS.organ.id,
+            BESettings.FILTER_OPTIONS.studyCitation.id,
+            BESettings.FILTER_OPTIONS.generation.id,
             BESettings.FILTER_OPTIONS.effect.id,
         ],
         table_fields: [
@@ -283,8 +301,9 @@ BESettings.DASHBOARDS = [
         ],
     },
     {
-        id: "reference-vs-system",
+        id: "reference vs. system",
         label: "reference vs. system",
+        upperColor: COLORS.green,
         x_axis: BESettings.AXIS_OPTIONS.studyCitation.id,
         y_axis: BESettings.AXIS_OPTIONS.system.id,
         filters: [],
@@ -299,8 +318,9 @@ BESettings.DASHBOARDS = [
         ],
     },
     {
-        id: "reference-vs-study-design-system",
+        id: "reference vs. study design & system",
         label: "reference vs. study design & system",
+        upperColor: COLORS.purple,
         x_axis: BESettings.AXIS_OPTIONS.studyCitation.id,
         y_axis: BESettings.AXIS_OPTIONS.experimentTypeSystem.id,
         filters: [],
@@ -406,8 +426,9 @@ const BED = {
 // define dashboards after building-blocks are defined
 BEDSettings.DASHBOARDS = [
     {
-        id: "system-vs-test-subject",
-        label: "system vs. test subject",
+        id: "study design vs. system",
+        label: "study design vs. system",
+        upperColor: COLORS.blue,
         x_axis: BEDSettings.AXIS_OPTIONS.experimentType.id,
         y_axis: BEDSettings.AXIS_OPTIONS.system.id,
         filters: [
@@ -433,8 +454,35 @@ BEDSettings.DASHBOARDS = [
         ],
     },
     {
-        id: "test-subject-vs-study-design-system",
-        label: "test subjects vs. study design & system",
+        id: "study design vs. test subject",
+        label: "study design vs. test subject",
+        upperColor: COLORS.black,
+        x_axis: BEDSettings.AXIS_OPTIONS.experimentType.id,
+        y_axis: BEDSettings.AXIS_OPTIONS.speciesSex.id,
+        filters: [
+            BEDSettings.FILTER_OPTIONS.doseUnitsName.id,
+            BEDSettings.FILTER_OPTIONS.system.id,
+        ],
+        table_fields: [
+            BEDSettings.TABLE_FIELDS.studyCitation.id,
+            BEDSettings.TABLE_FIELDS.experimentName.id,
+            BEDSettings.TABLE_FIELDS.animalGroupName.id,
+            BEDSettings.TABLE_FIELDS.system.id,
+            BEDSettings.TABLE_FIELDS.organ.id,
+            BEDSettings.TABLE_FIELDS.effect.id,
+            BEDSettings.TABLE_FIELDS.endpointName.id,
+            BEDSettings.TABLE_FIELDS.doses.id,
+            BEDSettings.TABLE_FIELDS.doseUnitsName.id,
+            BEDSettings.TABLE_FIELDS.noel.id,
+            BEDSettings.TABLE_FIELDS.loel.id,
+            BEDSettings.TABLE_FIELDS.bmd.id,
+            BEDSettings.TABLE_FIELDS.bmdl.id,
+        ],
+    },
+    {
+        id: "test subject vs. study design & system",
+        label: "test subject vs. study design & system",
+        upperColor: COLORS.orange,
         x_axis: BEDSettings.AXIS_OPTIONS.speciesSex.id,
         y_axis: BEDSettings.AXIS_OPTIONS.experimentTypeSystem.id,
         filters: [
@@ -460,11 +508,15 @@ BEDSettings.DASHBOARDS = [
         ],
     },
     {
-        id: "reference-vs-system",
+        id: "reference vs. system",
         label: "reference vs. system",
+        upperColor: COLORS.green,
         x_axis: BEDSettings.AXIS_OPTIONS.studyCitation.id,
         y_axis: BEDSettings.AXIS_OPTIONS.system.id,
-        filters: [BEDSettings.FILTER_OPTIONS.doseUnitsName.id],
+        filters: [
+            BEDSettings.FILTER_OPTIONS.doseUnitsName.id,
+            BEDSettings.FILTER_OPTIONS.effect.id,
+        ],
         table_fields: [
             BEDSettings.TABLE_FIELDS.studyCitation.id,
             BEDSettings.TABLE_FIELDS.experimentName.id,
@@ -482,8 +534,9 @@ BEDSettings.DASHBOARDS = [
         ],
     },
     {
-        id: "reference-vs-study-design-system",
+        id: "reference vs. study design & system",
         label: "reference vs. study design & system",
+        upperColor: COLORS.purple,
         x_axis: BEDSettings.AXIS_OPTIONS.studyCitation.id,
         y_axis: BEDSettings.AXIS_OPTIONS.experimentTypeSystem.id,
         filters: [BEDSettings.FILTER_OPTIONS.doseUnitsName.id],
