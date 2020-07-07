@@ -2,7 +2,7 @@ import _ from "lodash";
 import h from "shared/utils/helpers";
 import {action, computed, observable, toJS} from "mobx";
 
-import {OPTIONS} from "./dataDefinitions";
+import OPTIONS from "./dataDefinitions";
 
 class HeatmapTemplateStore {
     config = null;

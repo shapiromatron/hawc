@@ -1501,6 +1501,7 @@ class Result(models.Model):
             "comparison_set__exposure__measured": "exposure measure",
             "comparison_set__exposure__metric": "exposure metric",
             "outcome_id": "outcome id",
+            "outcome__name": "outcome name",
             "outcome__system": "system",
             "outcome__effect": "effect",
             "outcome__effect_subtype": "effect subtype",
