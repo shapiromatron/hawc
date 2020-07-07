@@ -1,5 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import PropTypes from "prop-types";
 
 const Renderer = function(props) {
     return (
@@ -30,5 +31,10 @@ class EndpointCriticalDose {
         ReactDOM.render(<Renderer dose={dose} units={units} />, this.span[0]);
     }
 }
+
+Renderer.propTypes = {
+    dose: PropTypes.object,
+    units: PropTypes.object,
+};
 
 export default EndpointCriticalDose;

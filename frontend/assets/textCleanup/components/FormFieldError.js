@@ -1,5 +1,6 @@
 import React from "react";
 import _ from "lodash";
+import PropTypes from "prop-types";
 
 class FormFieldError extends React.Component {
     render() {
@@ -17,5 +18,9 @@ class FormFieldError extends React.Component {
         );
     }
 }
+
+FormFieldError.propTypes = {
+    errors: PropTypes.object,
+};
 
 export default FormFieldError;

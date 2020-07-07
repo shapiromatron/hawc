@@ -8,6 +8,7 @@ import Sortable from "sortablejs";
 
 import {createTag, updateTag, deleteTag, moveTag} from "nestedTagEditor/actions";
 import {NO_PARENT} from "nestedTagEditor/constants";
+import { PropTypes } from "mobx-react";
 
 class Tree extends React.Component {
     constructor() {
@@ -150,5 +151,15 @@ function mapStateToProps(state) {
         btnLabel: state.config.btnLabel,
     };
 }
+
+Tree.propTypes = {
+    dispatch: PropTypes.object,
+    parentOptions: PropTypes.object,
+    tags: PropTypes.object,
+    tagsLoaded: PropTypes.object,
+    title: PropTypes.object,
+    btnLabel: PropTypes.object,
+    extraHelpHtml: PropTypes.object,
+};
 
 export default connect(mapStateToProps)(Tree);

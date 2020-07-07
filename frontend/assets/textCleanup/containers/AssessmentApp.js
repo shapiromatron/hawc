@@ -1,4 +1,5 @@
 import React, {Component} from "react";
+import PropTypes from "prop-types";
 import {connect} from "react-redux";
 import _ from "lodash";
 
@@ -30,4 +31,10 @@ function mapStateToProps(state) {
         assessment: state.assessment.active,
     };
 }
+
+App.propTypes = {
+    dispatch: PropTypes.object,
+    assessment: PropTypes.object,
+};
+
 export default connect(mapStateToProps)(App);

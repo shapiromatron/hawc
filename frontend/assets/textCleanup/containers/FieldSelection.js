@@ -1,4 +1,5 @@
 import React, {Component} from "react";
+import PropTypes from "prop-types";
 import {connect} from "react-redux";
 import _ from "lodash";
 
@@ -40,5 +41,19 @@ function mapStateToProps(state) {
         objects: state.items.model,
     };
 }
+
+FieldSelection.propTypes = {
+    types: PropTypes.object,
+    dispatch: PropTypes.object,
+    match: PropTypes.shape({
+        params: PropTypes.shape({
+            type: PropTypes.object,
+        })
+    }),
+    location: PropTypes.shape({
+        pathname: PropTypes.object,
+    }),
+    objects: PropTypes.object,
+};
 
 export default connect(mapStateToProps)(FieldSelection);

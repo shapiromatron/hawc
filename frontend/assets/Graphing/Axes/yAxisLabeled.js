@@ -67,6 +67,7 @@ yAxisLabeled.propTypes = {
     label: PropTypes.string.isRequired,
     renderScale: PropTypes.bool,
     yScale: PropTypes.func.isRequired,
+    ticks: PropTypes.object,
 };
 
 export default yAxisLabeled;

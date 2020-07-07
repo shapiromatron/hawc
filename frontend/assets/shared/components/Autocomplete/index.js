@@ -128,6 +128,10 @@ Autocomplete.propTypes = {
     placeholder: PropTypes.string,
     url: PropTypes.string.isRequired,
     onChange: PropTypes.func.isRequired,
+    loaded: PropTypes.shape({
+        display: PropTypes.object,
+        id: PropTypes.object,
+    })
 };
 
 export default Autocomplete;

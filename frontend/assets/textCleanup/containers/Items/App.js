@@ -1,4 +1,5 @@
 import React, {Component} from "react";
+import PropTypes from "prop-types";
 import {connect} from "react-redux";
 import _ from "lodash";
 
@@ -23,4 +24,13 @@ function mapStateToProps(state) {
         items: state.items.list,
     };
 }
+
+Items.propTypes = {
+    dispatch: PropTypes.object,
+    match: PropTypes.shape({
+        params: PropTypes.object,
+    }),
+    items: PropTypes.object,
+};
+
 export default connect(mapStateToProps)(Items);
