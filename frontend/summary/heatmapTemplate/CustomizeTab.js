@@ -9,15 +9,16 @@ import CheckboxInput from "shared/components/CheckboxInput";
 @observer
 class CustomizeTab extends Component {
     render() {
-        const {store} = this.props;
+        const {store} = this.props,
+            {create_visual_url} = store.config;
         return (
             <div>
                 <p className="help-block">
                     Use the dashboard-selection in the top-right corner to select predefined data
                     visualizations for this dataset. You can further customize the visualization by
-                    modifying the settings below. If you are part of the project-team, you can
-                    create a fully customized heatmap visual using data internal or external to HAWC
-                    by creating a custom visual.
+                    modifying the settings below. If you are part of the project-team, you can&nbsp;
+                    {create_visual_url ? <a href={create_visual_url}>create</a> : "create"}&nbsp;a
+                    fully customized heatmap visual using data internal or external to HAWC.
                 </p>
                 <div className="row-fluid">
                     <div className="span6">
