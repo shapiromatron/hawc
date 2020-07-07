@@ -2,7 +2,7 @@ import _ from "lodash";
 import h from "shared/utils/helpers";
 import {action, computed, observable, toJS} from "mobx";
 
-import {OPTIONS} from "./constants";
+import {OPTIONS} from "./dataDefinitions";
 
 class HeatmapTemplateStore {
     config = null;
@@ -24,10 +24,10 @@ class HeatmapTemplateStore {
     constructor(config) {
         this.config = config;
         const options = OPTIONS[config.data_class];
-        this.dashboardOptions = options.DASHBOARDS;
-        this.axisOptions = options.AXIS_OPTIONS;
-        this.filterOptions = options.FILTER_OPTIONS;
-        this.tableOptions = options.TABLE_FIELDS;
+        this.dashboardOptions = _.values(options.DASHBOARDS);
+        this.axisOptions = _.values(options.AXIS_OPTIONS);
+        this.filterOptions = _.values(options.FILTER_OPTIONS);
+        this.tableOptions = _.values(options.TABLE_FIELDS);
         this.changeDashboard(this.dashboardOptions[0].id);
         this.showNull = false;
     }

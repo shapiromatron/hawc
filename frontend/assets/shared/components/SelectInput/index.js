@@ -42,13 +42,14 @@ class SelectInput extends Component {
     }
 
     renderField() {
-        let {id, choices, name, multiple, selectSize} = this.props,
+        let {id, choices, name, multiple, selectSize, style} = this.props,
             className = this.props.className || "react-select",
             value = this.props.value || _.first(choices).id;
 
         return (
             <select
                 id={id || null}
+                style={style}
                 className={className}
                 value={value}
                 onChange={this.handleSelect}
@@ -93,6 +94,7 @@ SelectInput.propTypes = {
         })
     ).isRequired,
     id: PropTypes.string,
+    style: PropTypes.object,
     value: PropTypes.any.isRequired,
     name: PropTypes.string,
     multiple: PropTypes.bool.isRequired,

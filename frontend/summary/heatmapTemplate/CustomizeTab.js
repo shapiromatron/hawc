@@ -71,9 +71,7 @@ class CustomizeTab extends Component {
                                 name="show_null"
                                 onChange={e => store.changeShowNull(e.target.checked)}
                                 checked={store.showNull}
-                                helpText={
-                                    "Whether null axis values and associated records are shown."
-                                }
+                                helpText={"Display data with <null> values in selected axes."}
                             />
                         </div>
                     </div>

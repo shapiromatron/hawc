@@ -24,6 +24,7 @@ class HeatmapTemplateRoot extends React.Component {
                         <SelectInput
                             name="dashboard"
                             choices={dashboardOptions}
+                            style={{width: 300}}
                             multiple={false}
                             handleSelect={value => changeDashboard(value)}
                             value={selectedDashboard.id}
