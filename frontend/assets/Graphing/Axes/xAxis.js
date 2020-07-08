@@ -38,7 +38,7 @@ class xAxis extends Component {
             labelElement = this.getLabelElement(axisLabel);
         return (
             <g
-                ref={c => this.xAxisContainer = c}
+                ref={c => (this.xAxisContainer = c)}
                 className="x axis"
                 transform={`translate(${transform[0]}, ${transform[1]})`}>
                 {labelElement}

@@ -22,7 +22,7 @@ class ParameterField extends React.Component {
                         className="span4"
                         style={{marginRight: "1em"}}
                         value={vals[0]}
-                        ref={c => this.selector = c}
+                        ref={c => (this.selector = c)}
                         onChange={this.handleChange.bind(this)}>
                         <option value="d">Default</option>
                         <option value="s">Specified</option>
@@ -34,7 +34,7 @@ class ParameterField extends React.Component {
                         type="number"
                         step="1e-8"
                         value={vals[1]}
-                        ref={c => this.value = c}
+                        ref={c => (this.value = c)}
                         onChange={this.handleChange.bind(this)}
                     />
                 </div>

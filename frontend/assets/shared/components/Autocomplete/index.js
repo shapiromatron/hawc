@@ -131,7 +131,7 @@ Autocomplete.propTypes = {
     loaded: PropTypes.shape({
         display: PropTypes.object,
         id: PropTypes.object,
-    })
+    }),
 };
 
 export default Autocomplete;

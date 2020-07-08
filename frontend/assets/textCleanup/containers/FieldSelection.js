@@ -48,7 +48,7 @@ FieldSelection.propTypes = {
     match: PropTypes.shape({
         params: PropTypes.shape({
             type: PropTypes.object,
-        })
+        }),
     }),
     location: PropTypes.shape({
         pathname: PropTypes.object,

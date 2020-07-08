@@ -8,7 +8,7 @@ import Sortable from "sortablejs";
 
 import {createTag, updateTag, deleteTag, moveTag} from "nestedTagEditor/actions";
 import {NO_PARENT} from "nestedTagEditor/constants";
-import { PropTypes } from "mobx-react";
+import {PropTypes} from "mobx-react";
 
 class Tree extends React.Component {
     constructor() {

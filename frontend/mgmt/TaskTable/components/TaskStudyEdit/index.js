@@ -25,7 +25,7 @@ class TaskStudyEdit extends Component {
     render() {
         const {tasks, study} = this.props.item;
 
-        this.components = []
+        this.components = [];
 
         return (
             <div>

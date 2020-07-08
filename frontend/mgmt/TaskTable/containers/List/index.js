@@ -88,7 +88,7 @@ class ListApp extends Component {
                         component={displayForm ? TaskStudyEdit : TaskStudy}
                         items={taskList}
                         autocompleteUrl={this.props.config.autocomplete.url}
-                        ref={c => this.list = c}
+                        ref={c => (this.list = c)}
                     />
                 )}
                 {displayForm ? <SubmitButton submitForm={this.updateForm} /> : null}

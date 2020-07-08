@@ -7,7 +7,7 @@ class List extends Component {
             ComponentToRender = component;
         let content = <div />;
 
-        this.components = []
+        this.components = [];
 
         if (items) {
             content = this.props.items.map((item, index) => (

@@ -41,7 +41,7 @@ class OutputModal extends BaseModal {
                     <h3>{models[0].name} model output</h3>
                 </div>
 
-                <div className="modal-body" ref={c => this.modalBody = c}>
+                <div className="modal-body" ref={c => (this.modalBody = c)}>
                     {models.map(this.renderBody)}
                 </div>
 

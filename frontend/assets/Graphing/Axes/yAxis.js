@@ -39,7 +39,7 @@ class yAxis extends Component {
             labelElement = this.getLabelElement(axisLabel);
         return (
             <g
-                ref={c => this.yAxisContainer = c}
+                ref={c => (this.yAxisContainer = c)}
                 className="y axis"
                 transform={`translate(${transform[0]}, ${transform[1]})`}>
                 {labelElement}

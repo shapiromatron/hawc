@@ -31,7 +31,9 @@ class ModelOptionTable extends React.Component {
             <div className="row-fluid">
                 <label className="control-label">Add new model</label>
                 <div className="controls">
-                    <select style={{ marginBottom: 0, marginRight: "1em" }} ref={c => this.modelName = c}>
+                    <select
+                        style={{marginBottom: 0, marginRight: "1em"}}
+                        ref={c => (this.modelName = c)}>
                         {allOptions.map(this.renderOption)}
                     </select>
                     <button

@@ -61,7 +61,13 @@ class OutputFigure extends React.Component {
     }
 
     render() {
-        return <div className="span4" style={{ height: "300px", width: "300px" }} ref={c => this.epFigure = c} />;
+        return (
+            <div
+                className="span4"
+                style={{height: "300px", width: "300px"}}
+                ref={c => (this.epFigure = c)}
+            />
+        );
     }
 }
 
