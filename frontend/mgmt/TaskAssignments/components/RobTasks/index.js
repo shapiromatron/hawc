@@ -30,7 +30,7 @@ class RobTasks extends Component {
 
 RobTasks.propTypes = {
     tasks: PropTypes.array,
-    showAssessment: PropTypes.object,
+    showAssessment: PropTypes.bool,
 };
 
 export default RobTasks;

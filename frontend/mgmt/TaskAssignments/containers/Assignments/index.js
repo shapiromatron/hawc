@@ -91,15 +91,15 @@ function mapStateToProps(state) {
 }
 
 Assignments.propTypes = {
-    dispatch: PropTypes.object,
+    dispatch: PropTypes.func,
     tasks: PropTypes.shape({
-        list: PropTypes.object,
-        isLoaded: PropTypes.object,
-        robTasks: PropTypes.object,
+        list: PropTypes.array,
+        isLoaded: PropTypes.bool,
+        robTasks: PropTypes.array,
     }),
     config: PropTypes.shape({
-        user: PropTypes.object,
-        assessment_id: PropTypes.object,
+        user: PropTypes.string,
+        assessment_id: PropTypes.string,
     }),
 };
 
