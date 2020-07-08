@@ -1,0 +1,17 @@
+[
+  {
+    "study id": 7,
+    "study citation": "Biesemeier JA et al. 2011",
+    "study identifier": "",
+    "experiment type": "Developmental",
+    "species": "rat",
+    "strain": "sprague dawley",
+    "route of exposure": "Oral gavage",
+    "experiment chemical": "PBDE 209",
+    "sex": "Combined",
+    "system": "|developmental",
+    "organ": "|brain",
+    "effect": "|learning and memory",
+    "dose units": "mg/kg/d"
+  }
+]

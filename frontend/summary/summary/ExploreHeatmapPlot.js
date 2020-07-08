@@ -1,399 +1,882 @@
 import _ from "lodash";
 import d3 from "d3";
-import D3Visualization from "./D3Visualization";
+import {autorun} from "mobx";
+import React from "react";
+import ReactDOM from "react-dom";
 
-class ExploreHeatmapPlot extends D3Visualization {
-    constructor(parent, data, options) {
-        super(...arguments);
-        this.generate_properties(data);
+import VisualToolbar from "shared/components/VisualToolbar";
+import bindTooltip from "shared/components/Tooltip";
+import h from "shared/utils/helpers";
+import HAWCModal from "utils/HAWCModal";
+import HAWCUtils from "utils/HAWCUtils";
+
+import {AxisTooltip, CellTooltip} from "./heatmap/Tooltip";
+
+const AXIS_WIDTH_GUESS = 120,
+    AUTOROTATE_TEXT_WRAP_X = 100,
+    AUTOROTATE_TEXT_WRAP_Y = 200;
+
+class ExploreHeatmapPlot {
+    constructor(store, options) {
+        this.modal = new HAWCModal();
+        this.store = store;
+        this.options = options;
     }
 
-    render($div) {
-        this.build_elements($div);
+    render(div, tooltipDiv) {
+        this.plot_div = $(div);
+        this.$tooltipDiv = $(tooltipDiv);
+        this.generate_properties();
         this.build_plot();
-        this.build_axes();
-        this.build_labels();
-        this.position_plot();
-        this.build_blacklist_sidebar();
-        this.build_detail_box();
     }
 
-    generate_properties(data) {
-        // From constructor parameters
-        this.dataset = data.dataset;
-        _.assign(this, data.settings);
-        this.blacklist = [];
+    generate_properties() {
+        const {settings, scales, totals} = this.store;
 
-        this.plot = _.assign({}, {width: 700, height: 400});
-        _.assign(this.plot, {top: 0, left: 0, bottom: 0, right: 0});
+        // `this.padding` required for D3Plot
+        this.padding = settings.padding;
 
-        this.horizontal_margin = 200;
-        this.vertical_margin = 50;
+        this.x_steps = scales.x.filter((d, i) =>
+            settings.compress_x ? totals.x[i] > 0 : true
+        ).length;
+        this.y_steps = scales.y.filter((d, i) =>
+            settings.compress_y ? totals.y[i] > 0 : true
+        ).length;
 
-        this.blacklist_map = _.chain(this.dataset)
-            .map(d => d[this.blacklist_field])
-            .uniq()
-            .sort()
-            .map(d => ({
-                [this.blacklist_field]: d,
-            }))
-            .value();
+        this.x_steps = settings.show_totals ? this.x_steps + 1 : this.x_steps;
+        this.y_steps = settings.show_totals ? this.y_steps + 1 : this.y_steps;
 
-        this.x_domain = this.x_fields.map(e =>
-            _.chain(this.dataset)
-                .map(d => d[e])
-                .uniq()
-                .sort()
-                .value()
-        );
-        this.y_domain = this.y_fields.map(e =>
-            _.chain(this.dataset)
-                .map(d => d[e])
-                .uniq()
-                .sort()
-                .value()
-        );
-        this.x_steps = this.x_domain.reduce((total, element) => total * element.length, 1);
-        this.y_steps = this.y_domain.reduce((total, element) => total * element.length, 1);
-        this.xy_map = this.create_map();
+        this.cellDimensions = this.get_cell_dimensions();
+        this.w = this.cellDimensions.width * this.x_steps;
+        this.h = this.cellDimensions.height * this.y_steps;
+
+        // calculated padding based on labels
+        this.x_axis_label_padding = 0;
+        this.y_axis_label_padding = 0;
     }
 
-    build_elements($div) {
-        this.sidebar = {width: 200, height: this.plot.height};
-        this.box = {width: this.plot.width + this.sidebar.width, height: 400};
-        this.container = {width: this.box.width, height: this.plot.height + this.box.height};
-        this.viz_container = $div.html("")[0];
-        d3.select(this.viz_container)
-            .style("width", `${this.container.width}px`)
-            .style("height", `${this.container.height}px`)
-            .style("outline-style", "solid");
-        this.plot_container = d3
-            .select(this.viz_container)
-            .append("div")
-            .style("float", "left")
-            .style("width", `${this.plot.width}px`)
-            .style("height", `${this.plot.height}px`)
-            .style("outline-style", "solid");
-        this.blacklist_container = d3
-            .select(this.viz_container)
-            .append("div")
-            .style("float", "right")
-            .style("width", `${this.sidebar.width}px`)
-            .style("height", `${this.sidebar.height}px`)
-            .style("outline-style", "solid");
-        this.detail_container = d3
-            .select(this.viz_container)
-            .append("div")
-            .attr("id", "viz-details")
-            .style("clear", "both")
-            .style("width", `${this.box.width}px`)
-            .style("height", `${this.box.height}px`)
-            .style("outline-style", "solid")
-            .style("overflow", "scroll");
-    }
+    get_cell_dimensions() {
+        const {settings} = this.store;
+        let cellDimensions = {};
+        if (settings.autosize_cells) {
+            /*
+            Assume plot has the the same width/height ratio as browser window.
 
-    create_map = () => {
-        let _step_domain = (domain, field, depth) => {
-                if (depth >= domain.length - 1) {
-                    return domain[depth].map((element, index) => {
-                        return {filter: {[field[depth]]: element}, step: index + 1};
-                    });
-                } else {
-                    return domain[depth]
-                        .map((element, index) => {
-                            let inner = _step_domain(domain, field, depth + 1);
-                            return inner.map((inner_element, inner_index) => {
-                                inner_element["filter"][field[depth]] = element;
-                                inner_element["step"] += index * inner.length;
-                                return inner_element;
-                            });
-                        })
-                        .flat();
-                }
-            },
-            x_map = _step_domain(this.x_domain, this.x_fields, 0),
-            y_map = _step_domain(this.y_domain, this.y_fields, 0),
-            xy_map = x_map
-                .map(x_element => {
-                    return y_map.map(y_element => {
-                        let new_element = {
-                            x_filter: x_element.filter,
-                            y_filter: y_element.filter,
-                            x_step: x_element.step,
-                            y_step: y_element.step,
-                        };
-                        new_element["dataset"] = _.filter(
-                            this.dataset,
-                            _.matches(
-                                _.assign({}, new_element["x_filter"], new_element["y_filter"])
-                            )
-                        );
-                        if (this.blacklist.length > 0) {
-                            new_element["dataset"] = _.filter(
-                                new_element["dataset"],
-                                e => !_.includes(this.blacklist, e[this.blacklist_field])
-                            );
-                        }
-                        return new_element;
-                    });
-                })
-                .flat();
+            Calculate total plotHeight and plotWidth but getting available room, and then subtracting
+            padding. In addition, subtract AXIS_WIDTH_GUESS for each axis.  This could be improved
+            in the future by laying-out the largest text label by text-size and getting the size.
+            */
+            const minWidth = 50,
+                minHeight = 25,
+                plotWidth =
+                    this.plot_div.width() -
+                    settings.padding.left -
+                    settings.padding.right -
+                    settings.y_fields.length * AXIS_WIDTH_GUESS,
+                plotHeight =
+                    (plotWidth / $(window).width()) * $(window).height() -
+                    settings.padding.top -
+                    settings.padding.bottom -
+                    settings.x_fields.length * AXIS_WIDTH_GUESS,
+                cellWidth = this.x_steps == 0 ? 0 : plotWidth / this.x_steps,
+                cellHeight = this.y_steps == 0 ? 0 : plotHeight / this.y_steps;
 
-        return xy_map;
-    };
-
-    build_blacklist_sidebar() {
-        let table = this.blacklist_container.append("table"),
-            func = d => {
-                let in_list = _.includes(this.blacklist, d);
-                in_list ? _.pull(this.blacklist, d) : this.blacklist.push(d);
-                in_list = !in_list;
-                this.xy_map = this.create_map();
-                this.update_plot();
-                return in_list;
+            cellDimensions = {
+                width: Math.max(cellWidth, minWidth),
+                height: Math.max(cellHeight, minHeight),
             };
+        } else {
+            cellDimensions = {width: settings.cell_width, height: settings.cell_height};
+        }
+        return cellDimensions;
+    }
 
-        this.build_table(table, this.blacklist_map, function(d) {
-            d3.select(this).style("text-decoration", func(d) ? "line-through" : null);
+    bind_tooltip(selection, type) {
+        if (!this.store.settings.show_tooltip) {
+            return;
+        }
+
+        if (type === "cell") {
+            bindTooltip(this.$tooltipDiv, selection, d => <CellTooltip data={d} />);
+        } else if (type === "axis") {
+            bindTooltip(this.$tooltipDiv, selection, d => <AxisTooltip data={d} />);
+        } else {
+            throw `Unknown type: ${type}`;
+        }
+    }
+
+    get_matching_cells(filters, axis) {
+        let property;
+        if (axis == "x") property = "x_filters";
+        else if (axis == "y") property = "y_filters";
+
+        return this.store.matrixDataset.filter(d => {
+            for (const filter of filters) {
+                let included = false;
+                for (const cell_filter of d[property]) {
+                    if (_.isMatch(cell_filter, filter) && d.rows.length > 0) included = true;
+                }
+                if (!included) return false;
+            }
+            return true;
         });
     }
 
-    build_detail_box() {
-        let table = this.detail_container.append("table");
-        this.build_table(table, this.dataset);
+    build_bottom_axis() {
+        const {settings} = this.store;
+
+        let xs = this.store.scales.x.filter((d, i) =>
+                settings.compress_x ? this.store.totals.x[i] > 0 : true
+            ),
+            xAxis = this.vis
+                .append("g")
+                .attr("class", "xAxis exp-heatmap-axis")
+                .attr("transform", `translate(0,${this.h})`),
+            thisItem,
+            label_padding = 6,
+            get_max_tick_dimensions = (scale, fields) => {
+                let tempText = this.vis
+                        .append("text")
+                        .attr("x", 0)
+                        .attr("y", 0),
+                    maxWidth = 0,
+                    maxHeight = 0;
+                _.each(scale, column =>
+                    _.each(column, (filter, index) => {
+                        let wrap_text = fields[index].wrap_text;
+                        tempText.html("").text(filter.value);
+                        if (wrap_text) {
+                            HAWCUtils.wrapText(tempText.node(), wrap_text);
+                        }
+                        const box = tempText.node().getBBox();
+                        maxWidth = Math.max(box.width, maxWidth);
+                        maxHeight = Math.max(box.height, maxHeight);
+                    })
+                );
+                tempText.remove();
+                return {width: maxWidth, height: maxHeight};
+            },
+            {x_tick_rotate, autorotate_tick_labels} = settings;
+
+        if (autorotate_tick_labels) {
+            const xMax = get_max_tick_dimensions(xs, settings.x_fields),
+                {width} = this.cellDimensions;
+            x_tick_rotate =
+                width > xMax.width
+                    ? 0
+                    : width > xMax.height
+                    ? -90
+                    : xMax.width < xMax.height
+                    ? 0
+                    : -90;
+        }
+
+        // build x-axis
+        let yOffset = 0,
+            numXAxes = xs.length == 0 ? 0 : xs[0].length,
+            {show_axis_border} = settings;
+        for (let i = numXAxes - 1; i >= 0; i--) {
+            let axis = xAxis.append("g").attr("transform", `translate(0,${yOffset})`),
+                lastItem = xs[0],
+                itemStartIndex = 0,
+                numItems = 0,
+                borderData = [],
+                wrap_text =
+                    settings.x_fields[i].wrap_text || autorotate_tick_labels
+                        ? AUTOROTATE_TEXT_WRAP_X
+                        : 0;
+
+            for (let j = 0; j <= xs.length; j++) {
+                thisItem = j < xs.length ? xs[j] : null;
+                if (
+                    thisItem == null ||
+                    !_.isMatch(thisItem[i], lastItem[i]) ||
+                    (i > 0 && !_.isMatch(thisItem[i - 1], lastItem[i - 1]))
+                ) {
+                    let label = axis.append("g");
+
+                    label
+                        .append("text")
+                        .attr("x", 0)
+                        .attr("y", 0)
+                        .attr("transform", `rotate(${x_tick_rotate})`)
+                        .text(lastItem[i].value || "<null>")
+                        .each(function() {
+                            if (wrap_text) {
+                                HAWCUtils.wrapText(this, wrap_text);
+                            }
+                        });
+
+                    let box = label.node().getBBox(),
+                        label_offset =
+                            itemStartIndex * this.cellDimensions.width +
+                            (numItems * this.cellDimensions.width) / 2 -
+                            box.width / 2;
+
+                    label.attr(
+                        "transform",
+                        `translate(${-box.x + label_offset},${-box.y + label_padding})`
+                    );
+
+                    borderData.push({
+                        filters: _.slice(lastItem, 0, i + 1),
+                        x1: itemStartIndex * this.cellDimensions.width,
+                        width: numItems * this.cellDimensions.width,
+                    });
+
+                    itemStartIndex = j;
+                    numItems = 0;
+                }
+                numItems += 1;
+                lastItem = thisItem;
+            }
+            if (settings.show_totals && i == numXAxes - 1) {
+                let label = axis.append("g");
+                label
+                    .append("text")
+                    .attr("x", 0)
+                    .attr("y", 0)
+                    .attr("transform", `rotate(${x_tick_rotate})`)
+                    .text("Grand Total")
+                    .style("font-weight", "bold");
+
+                let box = label.node().getBBox(),
+                    label_offset =
+                        xs.length * this.cellDimensions.width +
+                        this.cellDimensions.width / 2 -
+                        box.width / 2;
+
+                label.attr(
+                    "transform",
+                    `translate(${-box.x + label_offset},${-box.y + label_padding})`
+                );
+            }
+
+            let box = axis.node().getBBox();
+
+            let newYOffset = yOffset + box.height + label_padding * 2;
+            let border = xAxis
+                .selectAll(".none")
+                .data(borderData)
+                .enter()
+                .append("polyline")
+                .attr(
+                    "points",
+                    d =>
+                        `${d.x1},${newYOffset} ${d.x1},${yOffset} ${d.x1 +
+                            d.width},${yOffset} ${d.x1 + d.width},${newYOffset}`
+                )
+                .attr("fill", "transparent")
+                .attr("stroke", show_axis_border ? "black" : null)
+                .on("click", d => {
+                    const cells = this.get_matching_cells(d.filters, "x");
+                    this.store.setTableDataFilters(new Set(cells));
+                });
+            this.bind_tooltip(border, "axis");
+            yOffset = newYOffset;
+        }
+
+        if (settings.show_totals) {
+            const x1 = xs.length * this.cellDimensions.width,
+                x2 = x1 + this.cellDimensions.width,
+                y1 = xAxis.node().getBBox().height,
+                y2 = 0;
+            xAxis
+                .append("polyline")
+                .attr("points", d => `${x1},${y1} ${x1},${y2} ${x2},${y2} ${x2},${y1}`)
+                .attr("fill", "transparent")
+                .attr("stroke", show_axis_border ? "black" : null);
+        }
+
+        this.y_axis_label_padding = xAxis.node().getBoundingClientRect().height;
     }
 
-    build_table = (table, data, func) => {
-        let header = _.keys(data[0]);
-        // Create table header
-        table
-            .append("thead")
-            .append("tr")
-            .selectAll("th")
-            .data(header)
-            .enter()
-            .append("th")
-            .text(d => d);
-        // Fill in body
-        table.append("tbody");
-        this.fill_table(table, data, func);
-    };
+    build_top_axis() {
+        const {settings} = this.store;
 
-    fill_table = (table, data, func) => {
-        let selection = table.selectAll("thead>tr>th"),
-            header = selection[0].map(e => e.innerText),
-            tbody = table.select("tbody"),
-            rows = tbody.selectAll("tr").data(data);
-        rows.enter().append("tr");
-        rows.exit().remove();
-        let row_data = rows.selectAll("td").data(d => header.map(e => d[e]));
-        row_data.enter().append("td");
-        row_data.exit().remove();
-        row_data.text(d => d).on("click", func);
-    };
+        let xs = this.store.scales.x.filter((d, i) =>
+                settings.compress_x ? this.store.totals.x[i] > 0 : true
+            ),
+            xAxis = this.vis.append("g").attr("class", "xAxis exp-heatmap-axis"),
+            thisItem,
+            label_padding = 6,
+            get_max_tick_dimensions = (scale, fields) => {
+                let tempText = this.vis
+                        .append("text")
+                        .attr("x", 0)
+                        .attr("y", 0),
+                    maxWidth = 0,
+                    maxHeight = 0;
+                _.each(scale, column =>
+                    _.each(column, (filter, index) => {
+                        let wrap_text = fields[index].wrap_text;
+                        tempText.html("").text(filter.value);
+                        if (wrap_text) {
+                            HAWCUtils.wrapText(tempText.node(), wrap_text);
+                        }
+                        const box = tempText.node().getBBox();
+                        maxWidth = Math.max(box.width, maxWidth);
+                        maxHeight = Math.max(box.height, maxHeight);
+                    })
+                );
+                tempText.remove();
+                return {width: maxWidth, height: maxHeight};
+            },
+            {x_tick_rotate, autorotate_tick_labels} = settings,
+            autorotate_wrap = 150;
+
+        if (autorotate_tick_labels) {
+            const xMax = get_max_tick_dimensions(xs, settings.x_fields),
+                {width} = this.cellDimensions;
+            x_tick_rotate =
+                width > xMax.width
+                    ? 0
+                    : width > xMax.height
+                    ? -90
+                    : xMax.width < xMax.height
+                    ? 0
+                    : -90;
+        }
+
+        // build x-axis
+        let yOffset = 0,
+            numXAxes = xs.length == 0 ? 0 : xs[0].length,
+            {show_axis_border} = settings;
+        for (let i = numXAxes - 1; i >= 0; i--) {
+            let axis = xAxis.append("g").attr("transform", `translate(0,${yOffset})`),
+                lastItem = xs[0],
+                itemStartIndex = 0,
+                numItems = 0,
+                borderData = [],
+                wrap_text =
+                    settings.x_fields[i].wrap_text || autorotate_tick_labels ? autorotate_wrap : 0;
+
+            for (let j = 0; j <= xs.length; j++) {
+                thisItem = j < xs.length ? xs[j] : null;
+                if (
+                    thisItem == null ||
+                    !_.isMatch(thisItem[i], lastItem[i]) ||
+                    (i > 0 && !_.isMatch(thisItem[i - 1], lastItem[i - 1]))
+                ) {
+                    let label = axis.append("g");
+
+                    label
+                        .append("text")
+                        .attr("x", 0)
+                        .attr("y", 0)
+                        .attr("transform", `rotate(${x_tick_rotate})`)
+                        .text(lastItem[i].value || "<null>")
+                        .each(function() {
+                            if (wrap_text) {
+                                HAWCUtils.wrapText(this, wrap_text);
+                            }
+                        });
+
+                    let box = label.node().getBBox(),
+                        label_offset =
+                            itemStartIndex * this.cellDimensions.width +
+                            (numItems * this.cellDimensions.width) / 2 -
+                            box.width / 2;
+
+                    label.attr(
+                        "transform",
+                        `translate(${-box.x + label_offset},${-box.y - box.height - label_padding})`
+                    );
+
+                    borderData.push({
+                        filters: _.slice(lastItem, 0, i + 1),
+                        x1: itemStartIndex * this.cellDimensions.width,
+                        width: numItems * this.cellDimensions.width,
+                    });
+
+                    itemStartIndex = j;
+                    numItems = 0;
+                }
+                numItems += 1;
+                lastItem = thisItem;
+            }
+            if (settings.show_totals && i == numXAxes - 1) {
+                let label = axis.append("g");
+                label
+                    .append("text")
+                    .attr("x", 0)
+                    .attr("y", 0)
+                    .attr("transform", `rotate(${x_tick_rotate})`)
+                    .text("Grand Total")
+                    .style("font-weight", "bold");
+
+                let box = label.node().getBBox(),
+                    label_offset =
+                        xs.length * this.cellDimensions.width +
+                        this.cellDimensions.width / 2 -
+                        box.width / 2;
+
+                label.attr(
+                    "transform",
+                    `translate(${-box.x + label_offset},${-box.y - box.height - label_padding})`
+                );
+            }
+
+            let box = axis.node().getBBox();
+
+            let newYOffset = yOffset - (box.height + label_padding * 2);
+            let border = xAxis
+                .selectAll(".none")
+                .data(borderData)
+                .enter()
+                .append("polyline")
+                .attr(
+                    "points",
+                    d =>
+                        `${d.x1},${newYOffset} ${d.x1},${yOffset} ${d.x1 +
+                            d.width},${yOffset} ${d.x1 + d.width},${newYOffset}`
+                )
+                .attr("fill", "transparent")
+                .attr("stroke", show_axis_border ? "black" : null)
+                .on("click", d => {
+                    const cells = this.get_matching_cells(d.filters, "x");
+                    this.store.setTableDataFilters(new Set(cells));
+                });
+            this.bind_tooltip(border, "axis");
+            yOffset = newYOffset;
+        }
+
+        if (settings.show_totals) {
+            const x1 = xs.length * this.cellDimensions.width,
+                x2 = x1 + this.cellDimensions.width,
+                y1 = -xAxis.node().getBBox().height,
+                y2 = 0;
+            xAxis
+                .append("polyline")
+                .attr("points", d => `${x1},${y1} ${x1},${y2} ${x2},${y2} ${x2},${y1}`)
+                .attr("fill", "transparent")
+                .attr("stroke", show_axis_border ? "black" : null);
+        }
+
+        this.y_axis_label_padding = xAxis.node().getBoundingClientRect().height;
+    }
+
+    build_left_axis() {
+        const {settings} = this.store;
+
+        let ys = this.store.scales.y.filter((d, i) =>
+                settings.compress_y ? this.store.totals.y[i] > 0 : true
+            ),
+            yAxis = this.vis.append("g").attr("class", "yAxis exp-heatmap-axis"),
+            thisItem,
+            label_padding = 6,
+            {y_tick_rotate, autorotate_tick_labels} = settings;
+
+        if (autorotate_tick_labels) {
+            y_tick_rotate = 0;
+        }
+
+        // build y-axis
+        let xOffset = 0,
+            numYAxes = ys.length == 0 ? 0 : ys[0].length,
+            {show_axis_border} = settings;
+        for (let i = numYAxes - 1; i >= 0; i--) {
+            let axis = yAxis.append("g").attr("transform", `translate(${-xOffset},0)`),
+                lastItem = ys[0],
+                itemStartIndex = 0,
+                numItems = 0,
+                borderData = [],
+                wrap_text =
+                    settings.y_fields[i].wrap_text || autorotate_tick_labels
+                        ? AUTOROTATE_TEXT_WRAP_Y
+                        : 0;
+
+            for (let j = 0; j <= ys.length; j++) {
+                thisItem = j < ys.length ? ys[j] : null;
+                if (
+                    thisItem == null ||
+                    !_.isMatch(thisItem[i], lastItem[i]) ||
+                    (i > 0 && !_.isMatch(thisItem[i - 1], lastItem[i - 1]))
+                ) {
+                    let label = axis.append("g");
+                    label
+                        .append("text")
+                        .attr("x", 0)
+                        .attr("y", 0)
+                        .attr("transform", `rotate(${y_tick_rotate})`)
+                        .text(lastItem[i].value || "<null>")
+                        .each(function() {
+                            if (wrap_text) {
+                                HAWCUtils.wrapText(this, wrap_text);
+                            }
+                        });
+                    let box = label.node().getBBox(),
+                        label_offset =
+                            itemStartIndex * this.cellDimensions.height +
+                            (numItems * this.cellDimensions.height) / 2 -
+                            box.height / 2;
+                    label.attr(
+                        "transform",
+                        `translate(${-box.x - box.width - label_padding},${-box.y + label_offset})`
+                    );
+
+                    borderData.push({
+                        filters: _.slice(lastItem, 0, i + 1),
+                        y1: itemStartIndex * this.cellDimensions.height,
+                        height: numItems * this.cellDimensions.height,
+                    });
+
+                    itemStartIndex = j;
+                    numItems = 0;
+                }
+                numItems += 1;
+                lastItem = thisItem;
+            }
+            if (settings.show_totals && i == numYAxes - 1) {
+                let label = axis.append("g");
+                label
+                    .append("text")
+                    .attr("x", 0)
+                    .attr("y", 0)
+                    .attr("transform", `rotate(${y_tick_rotate})`)
+                    .text("Grand Total")
+                    .style("font-weight", "bold");
+
+                let box = label.node().getBBox(),
+                    label_offset =
+                        ys.length * this.cellDimensions.height +
+                        this.cellDimensions.height / 2 -
+                        box.height / 2;
+
+                label.attr(
+                    "transform",
+                    `translate(${-box.x - box.width - label_padding},${-box.y + label_offset})`
+                );
+            }
+
+            let box = axis.node().getBBox(),
+                newXOffset = xOffset + box.width + label_padding * 2;
+            let border = yAxis
+                .selectAll(".none")
+                .data(borderData)
+                .enter()
+                .append("polyline")
+                .attr(
+                    "points",
+                    d =>
+                        `${-newXOffset},${d.y1} ${-xOffset},${d.y1} ${-xOffset},${d.y1 +
+                            d.height} ${-newXOffset},${d.y1 + d.height}`
+                )
+                .attr("fill", "transparent")
+                .attr("stroke", show_axis_border ? "black" : null)
+                .on("click", d => {
+                    const cells = this.get_matching_cells(d.filters, "y");
+                    this.store.setTableDataFilters(new Set(cells));
+                });
+            this.bind_tooltip(border, "axis");
+            xOffset = newXOffset;
+        }
+        if (settings.show_totals) {
+            const x1 = -yAxis.node().getBBox().width,
+                x2 = 0,
+                y1 = ys.length * this.cellDimensions.height,
+                y2 = y1 + this.cellDimensions.height;
+            yAxis
+                .append("polyline")
+                .attr("points", d => `${x1},${y1} ${x2},${y1} ${x2},${y2} ${x1},${y2}`)
+                .attr("fill", "transparent")
+                .attr("stroke", show_axis_border ? "black" : null);
+        }
+
+        this.x_axis_label_padding = yAxis.node().getBoundingClientRect().width;
+    }
 
     build_axes() {
-        let x_domains = this.x_domain.map((e, i) => {
-                let length = i == 0 ? 1 : this.x_domain[i - 1].length;
-                for (let j = 1; j < length; j++) {
-                    e = e.concat(e);
-                }
-                return e;
-            }),
-            y_domains = this.y_domain.map((e, i) => {
-                let length = i == 0 ? 1 : this.y_domain[i - 1].length;
-                for (let j = 1; j < length; j++) {
-                    e = e.concat(e);
-                }
-                return e;
-            });
-
-        let x_axes = x_domains.map((element, index) => {
-                return d3.svg
-                    .axis()
-                    .scale(
-                        d3.scale
-                            .ordinal()
-                            .domain(_.range(0, element.length))
-                            .rangeBands([0, this.plot.width])
-                    )
-                    .tickFormat(d => x_domains[index][d])
-                    .orient("bottom");
-            }),
-            y_axes = y_domains.map((element, index) => {
-                return d3.svg
-                    .axis()
-                    .scale(
-                        d3.scale
-                            .ordinal()
-                            .domain(_.range(0, element.length))
-                            .rangeBands([this.plot.height, 0])
-                    )
-                    .tickFormat(d => y_domains[index][d])
-                    .orient("left");
-            });
-
-        this.plot_svg
-            .append("g")
-            .attr("id", "x-axes")
-            .attr("transform", `translate(0,${this.plot.height})`);
-
-        for (let i = 0; i < x_axes.length; i++) {
-            this.plot_svg
-                .select("g#x-axes")
-                .append("g")
-                .attr("transform", `translate(0,${this.vertical_margin * (x_axes.length - i - 1)})`)
-                .call(x_axes[i]);
-            this.plot.bottom += this.vertical_margin;
+        this.build_left_axis();
+        if (this.store.settings.x_axis_bottom) {
+            this.build_bottom_axis();
+        } else {
+            this.build_top_axis();
         }
+    }
 
-        this.plot_svg.append("g").attr("id", "y-axes");
-
-        for (let i = 0; i < y_axes.length; i++) {
-            this.plot_svg
-                .select("g#y-axes")
-                .append("g")
-                .attr("transform", `translate(${this.horizontal_margin * i},0)`)
-                .call(y_axes[i]);
-            this.plot.left += this.horizontal_margin;
+    add_grid() {
+        if (!this.store.settings.show_grid) {
+            return;
         }
+        // Draws lines on plot
+        let grid = this.vis.append("g"),
+            x_band = this.x_steps == 0 ? 0 : this.w / this.x_steps,
+            y_band = this.y_steps == 0 ? 0 : this.h / this.y_steps;
+
+        grid.selectAll("g.none")
+            .data(_.range(this.x_steps + 1))
+            .enter()
+            .append("line")
+            .attr("x1", i => x_band * i)
+            .attr("y1", 0)
+            .attr("x2", i => x_band * i)
+            .attr("y2", this.h)
+            .style("stroke", "black");
+
+        grid.selectAll("g.none")
+            .data(_.range(this.y_steps + 1))
+            .enter()
+            .append("line")
+            .attr("x1", 0)
+            .attr("y1", i => y_band * i)
+            .attr("x2", this.w)
+            .attr("y2", i => y_band * i)
+            .style("stroke", "black");
     }
 
     build_labels() {
-        let label_margin = 50;
+        const {settings} = this.store;
+        let label_margin = 20,
+            isDev = this.options.dev;
 
         // Plot title
-        if (this.title.length > 0) {
-            this.plot_svg
-                .append("text")
-                .attr("x", this.plot.width / 2)
-                .attr("y", -label_margin / 2)
-                .style("text-anchor", "middle")
-                .text(this.title);
-            this.plot.top += label_margin;
+        if (settings.title.text.length > 0) {
+            let titleSettings = settings.title,
+                x =
+                    titleSettings.x === 0
+                        ? this.padding.left + this.x_axis_label_padding + this.w / 2
+                        : titleSettings.x,
+                y =
+                    titleSettings.y === 0
+                        ? (settings.x_axis_bottom ? 0 : -this.y_axis_label_padding) + label_margin
+                        : titleSettings.y,
+                title = d3
+                    .select(this.svg)
+                    .append("text")
+                    .attr("class", "exp_heatmap_title exp_heatmap_label")
+                    .attr("transform", `translate(${x},${y}) rotate(${titleSettings.rotate})`)
+                    .text(titleSettings.text);
+
+            if (isDev) {
+                title.attr("cursor", "pointer").call(
+                    HAWCUtils.updateDragLocationTransform((x, y) => {
+                        settings.title.x = parseInt(x);
+                        settings.title.y = parseInt(y);
+                    })
+                );
+            }
         }
+
         // X axis
-        if (this.x_label.length > 0) {
-            this.plot_svg
-                .append("text")
-                .attr("x", this.plot.width / 2)
-                .attr("y", this.plot.height + this.plot.bottom + label_margin / 2)
-                .style("text-anchor", "middle")
-                .text(this.x_label);
-            this.plot.bottom += label_margin;
+        if (settings.x_label.text.length > 0) {
+            let xLabelSettings = settings.x_label,
+                x =
+                    xLabelSettings.x === 0
+                        ? this.padding.left + this.x_axis_label_padding + this.w / 2
+                        : xLabelSettings.x,
+                y =
+                    xLabelSettings.y === 0
+                        ? this.padding.top +
+                          this.h +
+                          (settings.x_axis_bottom ? this.y_axis_label_padding : 0) +
+                          label_margin
+                        : xLabelSettings.y,
+                xLabel = d3
+                    .select(this.svg)
+                    .append("text")
+                    .attr("class", "exp_heatmap_label")
+                    .attr("transform", `translate(${x},${y}) rotate(${xLabelSettings.rotate})`)
+                    .text(xLabelSettings.text);
+
+            if (isDev) {
+                xLabel.attr("cursor", "pointer").call(
+                    HAWCUtils.updateDragLocationTransform((x, y) => {
+                        settings.x_label.x = parseInt(x);
+                        settings.x_label.y = parseInt(y);
+                    })
+                );
+            }
         }
+
         // Y axis
-        if (this.y_label.length > 0) {
-            this.plot_svg
-                .append("text")
-                .attr("x", 0)
-                .attr("y", 0)
-                .attr(
-                    "transform",
-                    `translate(${-(this.plot.left + label_margin / 2)},${this.plot.height /
-                        2}) rotate(-90)`
-                )
-                .style("text-anchor", "middle")
-                .text(this.y_label);
-            this.plot.left += label_margin;
+        if (settings.y_label.text.length > 0) {
+            let yLabelSettings = settings.y_label,
+                x =
+                    yLabelSettings.x === 0
+                        ? settings.padding.left - label_margin / 2
+                        : yLabelSettings.x,
+                y = yLabelSettings.y === 0 ? settings.padding.top + this.h / 2 : yLabelSettings.y,
+                yLabel = d3
+                    .select(this.svg)
+                    .append("text")
+                    .attr("class", "exp_heatmap_label")
+                    .attr("transform", `translate(${x},${y}) rotate(${yLabelSettings.rotate})`)
+                    .text(yLabelSettings.text);
+
+            if (isDev) {
+                yLabel.attr("cursor", "pointer").call(
+                    HAWCUtils.updateDragLocationTransform((x, y) => {
+                        settings.y_label.x = parseInt(x);
+                        settings.y_label.y = parseInt(y);
+                    })
+                );
+            }
         }
     }
 
-    update_plot = () => {
-        let cells_data = this.cells.data(this.xy_map),
-            cells_text_data = this.cells_text.data(
-                _.filter(this.xy_map, e => e.dataset.length > 0)
-            );
-        // Update cells
-        cells_data
-            .enter()
-            .append("rect")
-            .attr("class", "cell")
-            .attr("x", d => {
-                return this.x_scale(d.x_step);
-            })
-            .attr("y", d => {
-                return this.y_scale(d.y_step);
-            })
-            .attr("width", this.x_scale.rangeBand())
-            .attr("height", this.y_scale.rangeBand())
-            .style("stroke", "black")
-            .style("stroke-width", "1")
-            .append("text")
-            .attr("x", d => {
-                return this.x_scale(d.x_step);
-            })
-            .attr("y", d => {
-                return this.y_scale(d.y_step);
-            });
-        cells_data.exit().remove();
-        cells_data
-            .style("fill", d => {
-                return this.color_scale(d.dataset.length);
-            })
-            .on("click", d => this.fill_table(d3.select("div#viz-details>table"), d.dataset));
+    update_plot = data => {
+        const self = this,
+            {tableDataFilters, maxValue, colorScale} = this.store;
 
-        // Update cells text
-        cells_text_data
+        this.cells_data = this.cells.selectAll("g").data(data);
+
+        // add cell group and interactivity
+        this.cells_enter = this.cells_data
             .enter()
+            .append("g")
+            .attr("class", "exp_heatmap_cell")
+            .on("click", d => {
+                if (d.rows.length > 0) {
+                    self.store.setTableDataFilters(d);
+                } else {
+                    self.store.setTableDataFilters(new Set());
+                }
+            });
+        this.bind_tooltip(this.cells_enter, "cell");
+
+        // add cell fill
+        this.cells_enter
+            .append("rect")
+            .attr("class", "exp_heatmap_cell_block")
+            .attr("x", d => this.x_scale(d.x_step))
+            .attr("y", d => this.y_scale(d.y_step))
+            .attr("width", this.x_scale.rangeBand())
+            .attr("height", this.y_scale.rangeBand());
+
+        /// add cell text
+        this.cells_enter
             .append("text")
-            .attr("class", "cell")
-            .attr("x", d => {
-                return this.x_scale(d.x_step) + this.x_scale.rangeBand() / 2;
-            })
-            .attr("y", d => {
-                return this.y_scale(d.y_step) + this.y_scale.rangeBand() / 2;
-            })
-            .style("text-anchor", "middle");
-        cells_text_data.exit().remove();
-        cells_text_data.text(d => d.dataset.length);
+            .attr("class", "exp_heatmap_cell_text")
+            .attr("x", d => this.x_scale(d.x_step) + this.x_scale.rangeBand() / 2)
+            .attr("y", d => this.y_scale(d.y_step) + this.y_scale.rangeBand() / 2);
+
+        let cellColor = d => {
+                const filterIndices = [...tableDataFilters].map(e => e.index),
+                    value =
+                        tableDataFilters.size == 0
+                            ? d.rows.length
+                            : _.includes(filterIndices, d.index)
+                            ? maxValue
+                            : d.rows.length / 3;
+                return colorScale(value);
+            },
+            totalColor = d => {
+                const filterIndices = [...tableDataFilters].map(e => e.index);
+                return _.includes(filterIndices, d.index) ? colorScale(maxValue) : "#eeeeee";
+            },
+            textColor = d => {
+                const backgroundColor = d.type == "cell" ? cellColor(d) : totalColor(d);
+                return h.getTextContrastColor(backgroundColor);
+            };
+
+        // enter/update
+        this.cells_data
+            .select(".exp_heatmap_cell_block")
+            .transition()
+            .style("fill", d => (d.type == "cell" ? cellColor(d) : totalColor(d)));
+
+        this.cells_data
+            .select(".exp_heatmap_cell_text")
+            .transition()
+            .style("fill", textColor)
+            .style("display", d => (d.rows.length == 0 ? "none" : null))
+            .style("font-weight", d => (d.type == "total" ? "bold" : null))
+            .text(d => d.rows.length);
+
+        this.cells_data.exit().remove();
     };
 
-    position_plot() {
-        let w = this.plot.width + this.plot.left + this.plot.right,
-            h = this.plot.height + this.plot.bottom + this.plot.top;
-
-        this.svg.attr("viewBox", `0 0 ${w} ${h}`);
-        this.plot_svg.attr("transform", `translate(${this.plot.left},${this.plot.top})`);
-    }
-
     build_plot() {
-        this.svg = this.plot_container
+        const {settings} = this.store;
+
+        // Clear plot div and and append new svg object
+        this.plot_div.empty();
+        this.vis = d3
+            .select(this.plot_div[0])
             .append("svg")
             .attr("class", "d3")
-            .attr("width", "100%")
-            .attr("height", "100%");
-        this.plot_svg = this.svg.append("g");
+            .append("g");
+        this.svg = this.vis[0][0].parentNode;
 
-        // Scales for x axis, y axis, and cell color
+        // Scales for x axis and y axis
         this.x_scale = d3.scale
             .ordinal()
-            .domain(_.range(1, this.x_steps + 1))
-            .rangeBands([0, this.plot.width]);
+            .domain(_.range(0, this.x_steps))
+            .rangeBands([0, this.w]);
         this.y_scale = d3.scale
             .ordinal()
-            .domain(_.range(1, this.y_steps + 1))
-            .rangeBands([this.plot.height, 0]);
-        this.color_scale = d3.scale
-            .linear()
-            .domain([
-                0,
-                this.xy_map.reduce(
-                    (current_max, element) => Math.max(current_max, element.dataset.length),
-                    0
-                ),
-            ])
-            .range(["white", "red"]);
-
-        // D3 selection of cells & text
-        this.cells = this.plot_svg
-            .append("g")
-            .attr("id", "cells")
-            .selectAll("rect.cell");
-        this.cells_text = this.plot_svg.select("g#cells").selectAll("text.cell");
+            .domain(_.range(0, this.y_steps))
+            .rangeBands([0, this.h]);
 
         // Draw cells
-        this.update_plot();
+        this.cells = this.vis.append("g");
+
+        // draw the cells
+        autorun(() => this.update_plot(this.store.matrixDataset));
+
+        // Draw axes
+        this.build_axes();
+
+        // Draw labels
+        this.build_labels();
+
+        // Position plot
+        this.vis.attr(
+            "transform",
+            `translate(${settings.padding.left + this.x_axis_label_padding},${
+                settings.padding.top
+            })`
+        );
+
+        this.add_grid();
+        this.add_resize_and_toolbar();
+    }
+
+    add_resize_and_toolbar() {
+        const {settings} = this.store,
+            parentContainer = $(this.svg).parent()[0],
+            nativeSize = {
+                width: Math.ceil(
+                    settings.padding.left +
+                        this.x_axis_label_padding +
+                        this.w +
+                        settings.padding.right
+                ),
+                height: Math.ceil(
+                    settings.padding.top +
+                        this.h +
+                        this.y_axis_label_padding +
+                        settings.padding.bottom
+                ),
+            },
+            div = $("<div>")
+                .css({
+                    position: "relative",
+                    display: "block",
+                    top: "-30px",
+                    left: "-3px",
+                })
+                .appendTo(this.plot_div);
+
+        // set correct aspect ratio to get proper height/widths set on parent elements
+        d3.select(this.svg)
+            .attr("preserveAspectRatio", "xMidYMid meet")
+            .attr(
+                "viewBox",
+                `0 ${settings.x_axis_bottom ? 0 : -this.y_axis_label_padding} ${nativeSize.width} ${
+                    nativeSize.height
+                }`
+            );
+
+        ReactDOM.render(
+            <VisualToolbar
+                svg={this.svg}
+                parentContainer={parentContainer}
+                nativeSize={nativeSize}
+            />,
+            div[0]
+        );
     }
 }
 

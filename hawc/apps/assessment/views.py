@@ -277,6 +277,21 @@ class AssessmentDelete(BaseDelete):
     success_message = "Assessment deleted."
 
 
+class AssessmentClearCache(MessageMixin, View):
+    model = models.Assessment
+    success_message = "Assessment cache cleared."
+
+    def get(self, request, *args, **kwargs):
+        assessment = get_object_or_404(self.model, pk=kwargs["pk"])
+        url = self.request.META.get("HTTP_REFERER", assessment.get_absolute_url())
+        if not assessment.user_can_edit_object(request.user):
+            raise PermissionDenied()
+
+        assessment.bust_cache()
+        self.send_message()
+        return HttpResponseRedirect(url)
+
+
 class AssessmentDownloads(BaseDetail):
     """
     Download assessment-level Microsoft Excel reports
@@ -318,6 +333,33 @@ class AttachmentDelete(BaseDelete):
 
     def get_success_url(self):
         return self.object.get_absolute_url()
+
+
+# Dataset views
+class DatasetCreate(BaseCreate):
+    success_message = "Dataset created."
+    parent_model = models.Assessment
+    parent_template_name = "parent"
+    model = models.Dataset
+    form_class = forms.DatasetForm
+
+
+class DatasetRead(BaseDetail):
+    model = models.Dataset
+
+
+class DatasetUpdate(BaseUpdate):
+    success_message = "Dataset updated."
+    model = models.Dataset
+    form_class = forms.DatasetForm
+
+
+class DatasetDelete(BaseDelete):
+    success_message = "Dataset deleted."
+    model = models.Dataset
+
+    def get_success_url(self):
+        return self.object.assessment.get_absolute_url()
 
 
 # Endpoint objects
@@ -402,7 +444,7 @@ class CleanExtractedData(TeamMemberOrHigherMixin, BaseEndpointList):
     """
     To add a model to clean,
      - add TEXT_CLEANUP_FIELDS = {...fields} to the model
-     - add model count dict to assessment.views.AssessmentEndpointList
+     - add model count dict to assessment.views.Assessment.endpoints
      - add model serializer that uses utils.api.DynamicFieldsMixin
      - add api view that inherits from assessment.api.CleanupFieldsBaseViewSet
         with model={model} & serializer_class={new serializer}
@@ -491,6 +533,14 @@ class CleanStudyRoB(ProjectManagerOrHigherMixin, BaseDetail):
 
 class AdminDashboard(TemplateView):
     template_name = "admin/dashboard.html"
+
+    @method_decorator(staff_member_required)
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+
+
+class AdminAssessmentSize(TemplateView):
+    template_name = "admin/assessment-size.html"
 
     @method_decorator(staff_member_required)
     def dispatch(self, *args, **kwargs):

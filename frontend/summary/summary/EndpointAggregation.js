@@ -1,5 +1,6 @@
 import $ from "$";
 
+import h from "shared/utils/helpers";
 import BaseTable from "utils/BaseTable";
 import HAWCModal from "utils/HAWCModal";
 
@@ -104,7 +105,7 @@ class EndpointAggregation extends BaseVisual {
                     tr.data("detail_row").toggle_view(!tr.data("detail_row").object_visible);
                 } else {
                     var ep = tr.data("endpoint"),
-                        div_id = String.random_string(),
+                        div_id = h.randomString(),
                         colspan = tr.children().length;
 
                     tr.after(

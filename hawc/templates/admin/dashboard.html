@@ -22,8 +22,8 @@
 
 {% render_bundle "main" %}
 <script type="text/javascript">
-window.app.adminInsightStartup(function (app) {
-    app.func(document.getElementById("main"));
+window.app.adminStartup(function (app) {
+    app.growthStartup(document.getElementById("main"));
 });
 </script>
 {% endblock content %}

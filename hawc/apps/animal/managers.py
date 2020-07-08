@@ -1,5 +1,10 @@
+from typing import Any, Dict
+
+import numpy as np
+import pandas as pd
 from django.apps import apps
 
+from ..assessment.models import Assessment
 from ..common.models import BaseManager, get_distinct_charfield, get_distinct_charfield_opts
 
 
@@ -71,6 +76,139 @@ class EndpointManager(BaseManager):
 
     def get_effects(self, assessment_id):
         return get_distinct_charfield(self, assessment_id, "effect")
+
+    def endpoint_df(self, assessment: Assessment, published_only: bool) -> pd.DataFrame:
+        filters: Dict[str, Any] = {"assessment_id": assessment}
+        if published_only:
+            filters["animal_group__experiment__study__published"] = True
+
+        DoseGroup = apps.get_model("animal", "DoseGroup")
+        Endpoint = apps.get_model("animal", "Endpoint")
+        SelectedModel = apps.get_model("bmd", "SelectedModel")
+
+        # get endpoint level data
+        values = dict(
+            animal_group__experiment__study__id="study id",
+            animal_group__experiment__study__short_citation="study citation",
+            animal_group__experiment_id="experiment id",
+            animal_group__experiment__name="experiment name",
+            animal_group__id="animal group id",
+            animal_group__name="animal group name",
+            animal_group__dosing_regime_id="dose regime id",
+            id="endpoint id",
+            name="endpoint name",
+            system="system",
+            organ="organ",
+            effect="effect",
+            effect_subtype="effect subtype",
+            NOEL="noel",
+            LOEL="loel",
+            FEL="fel",
+        )
+        qs = Endpoint.objects.filter(**filters).values_list(*values.keys()).order_by("id")
+        df1 = pd.DataFrame(data=qs, columns=values.values())
+
+        # get BMD values
+        values = dict(
+            endpoint_id="endpoint id",
+            model__output__BMD="BMD",
+            model__output__BMDL="BMDL",
+            model__session__dose_units_id="dose units id",
+        )
+        qs = SelectedModel.objects.filter(endpoint__assessment=assessment).values_list(
+            *values.keys()
+        )
+        df2 = (
+            pd.DataFrame(data=qs, columns=values.values())
+            .dropna()
+            .set_index(["endpoint id", "dose units id"])
+            .rename(columns=dict(BMD="bmd", BMDL="bmdl"))
+        )
+
+        # get dose regime values
+        filters = dict(dose_regime__dosed_animals__experiment__study__assessment=assessment)
+        values = dict(
+            dose_regime_id="dose regime id",
+            dose_units_id="dose units id",
+            dose_units__name="dose units name",
+            dose_group_id="dose_group_id",
+            dose="dose",
+        )
+        qs = DoseGroup.objects.filter(**filters).values_list(*values.keys())
+        df3 = pd.DataFrame(data=qs, columns=values.values())
+
+        # merge dose units and endpoint id
+        subset = df3[["dose regime id", "dose units id", "dose units name"]].drop_duplicates()
+        df4 = (
+            df1.set_index("dose regime id")
+            .merge(
+                subset.set_index("dose regime id")[["dose units name", "dose units id"]],
+                how="left",
+                left_index=True,
+                right_index=True,
+            )
+            .set_index("dose units id", append=True)
+        )
+
+        # fetch all the dose units tested
+        doses = (
+            df3.sort_values("dose_group_id")
+            .groupby(["dose regime id", "dose units id"])
+            .agg(
+                dict(
+                    dose=lambda els: ", ".join(
+                        str(int(el)) if el.is_integer() else str(el) for el in els
+                    )
+                )
+            )
+            .rename(columns=dict(dose="doses"))[["doses"]]
+        )
+        df4 = df4.merge(doses, how="left", left_index=True, right_index=True)
+
+        # replace {NOEL, LOEL, FEL} dose group index with values
+        def get_doses(r, col):
+            el = r[col]
+            if el == -999:
+                return np.NaN
+            try:
+                return df3.loc[(r["dose regime id"], r["dose units id"], el), "dose"]
+            except KeyError:
+                return np.NaN
+
+        df3 = df3.reset_index().set_index(["dose regime id", "dose units id", "dose_group_id"])
+
+        df4 = df4.reset_index()
+        df4.loc[:, "noel"] = df4.apply(get_doses, axis=1, args=("noel",))
+        df4.loc[:, "loel"] = df4.apply(get_doses, axis=1, args=("loel",))
+        df4.loc[:, "fel"] = df4.apply(get_doses, axis=1, args=("fel",))
+        df4 = df4.drop(columns="dose regime id").set_index(["endpoint id", "dose units id"])
+
+        # merge everything together
+        df5 = df4.merge(df2, how="left", left_index=True, right_index=True).reset_index()
+        return df5[
+            [
+                "study id",
+                "study citation",
+                "experiment id",
+                "experiment name",
+                "animal group id",
+                "animal group name",
+                "dose units id",
+                "dose units name",
+                "endpoint id",
+                "endpoint name",
+                "system",
+                "organ",
+                "effect",
+                "effect subtype",
+                "doses",
+                "noel",
+                "loel",
+                "fel",
+                "bmd",
+                "bmdl",
+            ]
+        ]
 
 
 class EndpointGroupManager(BaseManager):

@@ -1,0 +1,14 @@
+{% extends 'assessment/dataset_detail.html' %}
+
+{% block title %}
+{% include "hawc/siteTitle.html" with crumbs=object.get_crumbs crud=crud %}
+{% endblock title %}
+
+{% block breadcrumbs %}
+{% include "hawc/breadcrumbs.html" with crumbs=object.get_crumbs crud=crud %}
+{% endblock %}
+
+{% block content %}
+{{ block.super }}
+{% include "hawc/_delete_block.html" with name="dataset" notes="This will delete all associated data, and may break any visualizations that were created using this dataset." %}
+{% endblock content %}

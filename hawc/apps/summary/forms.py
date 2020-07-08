@@ -602,10 +602,12 @@ class EndpointAggregationSelectMultipleWidget(selectable.AutoCompleteSelectMulti
     properly returns IDs instead of strings.
     """
 
-    def render(self, name, value, attrs=None):
+    def render(self, name, value, attrs=None, renderer=None):
         if value:
             value = [value.id for value in value]
-        return super(selectable.AutoCompleteSelectMultipleWidget, self).render(name, value, attrs)
+        return super(selectable.AutoCompleteSelectMultipleWidget, self).render(
+            name, value, attrs, renderer
+        )
 
 
 class EndpointAggregationForm(VisualForm):
@@ -992,12 +994,33 @@ class DataPivotSelectorForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop("user")
+        cancel_url = kwargs.pop("cancel_url")
         super().__init__(*args, **kwargs)
-
-        for fld in list(self.fields.keys()):
-            self.fields[fld].widget.attrs["class"] = "span12"
-
         self.fields["dp"].queryset = models.DataPivot.objects.clonable_queryset(user)
+        self.helper = self.setHelper(cancel_url)
+
+    def setHelper(self, cancel_url: str):
+        for fld in list(self.fields.keys()):
+            widget = self.fields[fld].widget
+            if type(widget) != forms.CheckboxInput:
+                widget.attrs["class"] = "span12"
+
+        inputs = {
+            "legend_text": "Copy data pivot",
+            "help_text": """
+                Select an existing data pivot and copy as a new data pivot. This includes all
+                model-settings, and the selected dataset. You will be taken to a new view to
+                create a new data pivot, but the form will be pre-populated using the values from
+                the currently-selected data pivot.""",
+            "form_actions": [
+                cfl.Submit("save", "Copy selected as new"),
+                cfl.HTML(f'<a href="{cancel_url}" class="btn">Cancel</a>'),
+            ],
+        }
+
+        helper = BaseFormHelper(self, **inputs)
+        helper.form_class = None
+        return helper
 
 
 class SmartTagForm(forms.Form):

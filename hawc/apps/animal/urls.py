@@ -24,6 +24,22 @@ router.register(r"dose-units", api.DoseUnits, basename="dose_units")
 app_name = "animal"
 urlpatterns = [
     url(r"^api/", include((router.urls, "api"))),
+    # Heatmap views
+    url(
+        r"^assessment/(?P<pk>\d+)/heatmap-study-design/$",
+        views.HeatmapStudyDesign.as_view(),
+        name="heatmap_study_design",
+    ),
+    url(
+        r"^assessment/(?P<pk>\d+)/heatmap-endpoints/$",
+        views.HeatmapEndpoint.as_view(),
+        name="heatmap_endpoints",
+    ),
+    url(
+        r"^assessment/(?P<pk>\d+)/heatmap-endpoints-doses/$",
+        views.HeatmapEndpointDose.as_view(),
+        name="heatmap_endpoints_doses",
+    ),
     # Experiment
     url(
         r"^study/(?P<pk>\d+)/experiment/new/$",
@@ -84,6 +100,11 @@ urlpatterns = [
     # Endpoint
     url(
         r"^assessment/(?P<pk>\d+)/endpoints/$", views.EndpointList.as_view(), name="endpoint_list",
+    ),
+    url(
+        r"^assessment/(?P<pk>\d+)/endpoints-v2/$",
+        views.EndpointListV2.as_view(),
+        name="endpoint_list_v2",
     ),
     url(
         r"^assessment/(?P<pk>\d+)/endpoints/tags/(?P<tag_slug>[-\w]+)/$",

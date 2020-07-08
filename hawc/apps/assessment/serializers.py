@@ -175,3 +175,20 @@ class GrowthPlotSerializer(serializers.Serializer):
             raise Exception("Unreachable code.")
 
         return fig
+
+
+class DatasetRevisionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.DatasetRevision
+        exclude = ("data",)
+
+
+class DatasetSerializer(serializers.ModelSerializer):
+    absolute_url = serializers.URLField(source="get_absolute_url")
+    api_detail_url = serializers.URLField(source="get_api_detail_url")
+    api_data_url = serializers.URLField(source="get_api_data_url")
+    latest_revision = DatasetRevisionSerializer(many=False, source="get_latest_revision")
+
+    class Meta:
+        model = models.Dataset
+        fields = "__all__"

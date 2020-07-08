@@ -1,8 +1,10 @@
+from pathlib import Path
 from textwrap import dedent
 
 from django import forms
 from django.contrib.contenttypes.models import ContentType
 from django.core.mail import mail_admins
+from django.db import transaction
 from django.urls import reverse_lazy
 from selectable.forms import AutoCompleteSelectMultipleWidget, AutoCompleteWidget
 
@@ -250,3 +252,134 @@ class ContactForm(forms.Form):
         helper = BaseFormHelper(self, **inputs)
         helper.form_class = "loginForm"
         return helper
+
+
+class DatasetForm(forms.ModelForm):
+    revision_version = forms.IntegerField(
+        disabled=True,
+        help_text=models.DatasetRevision._meta.get_field("version").help_text,
+        required=False,
+    )
+    revision_data = forms.FileField(
+        label="Dataset", help_text=models.DatasetRevision.data.field.help_text, required=False,
+    )
+    revision_excel_worksheet_name = forms.CharField(
+        max_length=64,
+        label="Excel worksheet name",
+        help_text=models.DatasetRevision._meta.get_field("excel_worksheet_name").help_text,
+        required=False,
+    )
+    revision_notes = forms.CharField(
+        widget=forms.Textarea(),
+        label="Dataset version notes",
+        help_text=models.DatasetRevision._meta.get_field("notes").help_text,
+        required=False,
+    )
+
+    def __init__(self, *args, **kwargs):
+        assessment = kwargs.pop("parent", None)
+        super().__init__(*args, **kwargs)
+        if assessment:
+            self.instance.assessment = assessment
+        if self.instance.id is None:
+            self.fields["revision_data"].required = True
+        self.fields["revision_version"].initial = self.instance.get_new_version_value()
+        self.helper = self.setHelper()
+
+    def setHelper(self):
+        # by default take-up the whole row-fluid
+        for fld in self.fields.keys():
+            widget = self.fields[fld].widget
+            if type(widget) != forms.CheckboxInput:
+                widget.attrs["class"] = "span12"
+            if type(widget) == forms.Textarea:
+                widget.attrs["rows"] = 3
+                widget.attrs["class"] += " html5text"
+
+        if self.instance.id:
+            inputs = {
+                "legend_text": f"Update {self.instance}",
+                "cancel_url": self.instance.get_absolute_url(),
+            }
+
+        else:
+            inputs = {
+                "legend_text": "Create new dataset",
+                "cancel_url": self.instance.assessment.get_absolute_url(),
+            }
+
+        inputs[
+            "help_text"
+        ] = """Datasets are tabular data files that may contain information
+        which was captured in external data systems.  A dataset can be used for generating a
+        custom visualization. All datasets are public and can be downloaded if an assessment
+        is made public. Only team-members or higher can view or download older versions of a
+        dataset; the public can only download and see the latest version."""
+
+        helper = BaseFormHelper(self, **inputs)
+        helper.add_fluid_row("revision_version", 3, ("span2", "span5", "span5 hidden"))
+        helper.add_fluid_row("revision_notes", 1, ("span12 hidden",))
+        helper.form_class = None
+        return helper
+
+    def clean(self):
+        cleaned_data = super().clean()
+        revision_data = cleaned_data.get("revision_data")
+        revision_excel_worksheet_name = cleaned_data.get("revision_excel_worksheet_name")
+
+        if revision_data is not None:
+
+            valid_extensions = self.instance.VALID_EXTENSIONS
+
+            suffix = Path(revision_data.name).suffix
+
+            if suffix not in valid_extensions:
+                self.add_error(
+                    "revision_data",
+                    f"Invalid file extension: must be one of: {', '.join(sorted(valid_extensions))}",
+                )
+                return cleaned_data
+
+            df = None
+            try:
+                df = models.DatasetRevision.try_read_df(
+                    revision_data, suffix, revision_excel_worksheet_name,
+                )
+            except ValueError:
+                self.add_error(
+                    "revision_data",
+                    "Unable to read the submitted dataset file. Please validate that the uploaded file can be read.",
+                )
+
+            if df is not None:
+                self.revision_df = df
+                self.revision_metadata = models.DatasetRevision.Metadata(
+                    filename=revision_data.name,
+                    extension=suffix,
+                    num_rows=df.shape[0],
+                    num_columns=df.shape[1],
+                    column_names=df.columns.tolist(),
+                )
+
+        return cleaned_data
+
+    @transaction.atomic
+    def save(self, commit=True):
+        """
+        Save dataset and create new dataset revision if one was uploaded.
+        """
+        instance = super().save(commit=commit)
+        if self.cleaned_data.get("revision_data"):
+            models.DatasetRevision.objects.create(
+                dataset=instance,
+                version=instance.get_new_version_value(),
+                data=self.cleaned_data["revision_data"],
+                metadata=self.revision_metadata.dict(),
+                excel_worksheet_name=self.cleaned_data["revision_excel_worksheet_name"],
+                notes=self.cleaned_data["revision_notes"],
+            )
+        return instance
+
+    class Meta:
+        model = models.Dataset
+        fields = ("name", "description")
