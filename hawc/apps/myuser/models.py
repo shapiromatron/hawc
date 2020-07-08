@@ -71,6 +71,13 @@ class HAWCUser(AbstractBaseUser, PermissionsMixin):
         msg.attach_alternative(html, "text/html")
         msg.send()
 
+    def create_profile(self) -> "UserProfile":
+        HERO_access = True if "@epa.gov" in self.email else False
+        return UserProfile.objects.create(user=self, HERO_access=HERO_access)
+
+    def is_beta_tester(self):
+        return self.is_staff or self.groups.filter(name="beta tester").exists()
+
 
 class UserProfile(models.Model):
     objects = managers.UserProfileManager()

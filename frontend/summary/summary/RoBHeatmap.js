@@ -12,9 +12,7 @@ import BaseVisual from "./BaseVisual";
 class RoBHeatmap extends BaseVisual {
     constructor(data) {
         super(data);
-        var studies = _.map(data.studies, function(d) {
-            return new Study(d);
-        });
+        var studies = _.map(data.studies, d => new Study(d));
         this.roba = new Aggregation(studies);
         delete this.data.studies;
     }

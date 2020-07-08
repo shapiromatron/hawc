@@ -19,10 +19,17 @@ class Keys:
     def __init__(self):
         self.assessment_working = 1
         self.assessment_final = 2
+        self.assessment_client = 3
         self.assessment_keys = [1, 2]
 
+        self.dataset_final = 2
+        self.dataset_working = 1
+
         self.study_working = 1
-        self.study_final = 2
+        self.study_final_bioassay = 7
+
+        self.reference_linked = 1
+        self.reference_unlinked = 3
 
         self.visual_heatmap = 1
         self.visual_barchart = 2
@@ -45,6 +52,11 @@ def db_keys():
     return _keys
 
 
+@pytest.fixture
+def set_db_keys(request):
+    request.cls.db_keys = _keys
+
+
 @pytest.fixture(scope="session")
 def vcr_config():
     return {
@@ -57,3 +69,16 @@ def vcr_config():
 def vcr_cassette_dir(request):
     cassette_dir = Path(__file__).parent.absolute() / "data/cassettes" / request.module.__name__
     return str(cassette_dir)
+
+
+@pytest.fixture(scope="session")
+def rewrite_data_files():
+    """
+    If you're making changes to datasets and it's expected that previously saved data will need to
+    be written, then you can set this flag to True and then all saved data will be rewritten.
+
+    Please review changes to ensure they're expected after modifying this flag.
+
+    A test exists in CI to ensure that this flag is set to False on commit.
+    """
+    return False

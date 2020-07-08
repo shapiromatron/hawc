@@ -1,5 +1,4 @@
 {% extends 'portal.html' %}
-
 {% block title %}
   {{assessment}} | Literature Review | HAWC
 {% endblock %}
@@ -10,7 +9,6 @@
 {% endblock %}
 
 {% block content %}
-
   <h2>References for {{assessment}}
       {% if obj_perms.edit %}
       <div class="btn-group pull-right">
@@ -34,7 +32,7 @@
             <li><a href="{% url 'lit:ref_upload' assessment.pk %}">Upload full-text URLs</a></li>
           {% endif %}
           <li class="disabled"><a tabindex="-1" href="#">Exports</a></li>
-          <li><a href="{% url 'lit:api:assessment-references-download' assessment.pk %}">Download all references</a></li>
+          <li><a href="{% url 'lit:api:assessment-references-download' assessment.pk %}?format=xlsx">Download all references</a></li>
         </ul>
       </div>
     {% endif %}
@@ -73,6 +71,11 @@
       <div class="well well-small">
         <a class="btn btn-primary" href="{% url 'lit:ref_list' assessment.pk %}">View by tag</a>
         <a class="btn btn-primary" href="{% url 'lit:ref_visual' assessment.pk %}">Visualization</a>
+        {% if user.is_beta_tester %}
+          {% if can_topic_model %}
+          <a class="betatester btn btn-primary" href="{% url 'lit:topic_model' assessment.pk %}">Topic model</a>
+          {% endif %}
+        {% endif %}
         <a class="btn btn-primary" href="{% url 'lit:ref_search' assessment.pk %}">Find a reference</a>
       </div>
     </div>

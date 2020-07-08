@@ -9,6 +9,7 @@ from django.apps import apps
 from django.conf import settings
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist, SuspiciousOperation
+from django.core.files.storage import FileSystemStorage
 from django.db import IntegrityError, connection, models, transaction
 from django.db.models import Q, QuerySet, URLField
 from django.template.defaultfilters import slugify as default_slugify
@@ -19,6 +20,12 @@ from . import forms, validators
 from .flavors import help_text as help_text_flavors
 from .flavors.text import text_mapping
 from .helper import HAWCDjangoJSONEncoder
+
+_private_storage = FileSystemStorage(location=str(settings.PRIVATE_DATA_ROOT))
+
+
+def get_private_data_storage() -> FileSystemStorage:
+    return _private_storage
 
 
 class BaseManager(models.Manager):
@@ -104,7 +111,7 @@ class NonUniqueTagBase(models.Model):
         return slug
 
 
-class AssessmentRootMixin(object):
+class AssessmentRootMixin:
 
     cache_template_taglist = NotImplementedAttribute
     cache_template_tagtree = NotImplementedAttribute
@@ -344,8 +351,8 @@ class AssessmentRootMixin(object):
         assert old_names[1:] == new_names[1:]  # everything else should be the same
         return {old_id: new_id for old_id, new_id in zip(old_ids, new_ids)}
 
-    def get_assessment_id(self):
-        name = self.get_ancestors()[0].name
+    def get_assessment_id(self) -> int:
+        name = self.name if self.is_root() else self.get_ancestors()[0].name
         return int(name[name.find("-") + 1 :])
 
     def get_assessment(self):

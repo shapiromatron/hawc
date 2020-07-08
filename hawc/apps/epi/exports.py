@@ -155,7 +155,7 @@ class OutcomeDataPivot(FlatFileExporter):
                 ser["effect_subtype"],
                 ser["diagnostic"],
                 ser["age_of_measurement"],
-                self._get_tags(ser),
+                self.get_flattened_tags(ser, "effects"),
             ]
             study_id = ser["study_population"]["study"]["id"]
             study_robs = [
@@ -217,7 +217,7 @@ class OutcomeDataPivot(FlatFileExporter):
                 res["id"],
                 res["name"],
                 res["population_description"],
-                self._get_tags(res),
+                self.get_flattened_tags(res, "resulttags"),
                 res["metric"]["metric"],
                 res["metric"]["abbreviation"],
                 res["metric_description"],

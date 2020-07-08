@@ -38,7 +38,7 @@ class DataPivotLegend {
             var select = this.selects[i],
                 sel = select.find("option:selected").val();
             select.html(this._build_options());
-            select.find('option[value="{0}"]'.printf(sel)).prop("selected", true);
+            select.find(`option[value="${sel}"]`).prop("selected", true);
         }
     }
 

@@ -4,8 +4,9 @@ import $ from "$";
 import HAWCUtils from "utils/HAWCUtils";
 
 class BaseVisualForm {
-    constructor($el) {
+    constructor($el, config) {
         this.$el = $el;
+        this.config = config;
         this.fields = [];
         this.settings = {};
         this.initDataForm();
@@ -28,16 +29,9 @@ class BaseVisualForm {
         $data.find(":input").on("change", setDataChanged);
         $data.on("djselectableadd djselectableremove", setDataChanged);
 
-        // TODO - fix!
-        $data
-            .find(".wysihtml5-sandbox")
-            .contents()
-            .find("body")
-            .on("keyup", setDataChanged);
-
         // whenever data is synced, rebuild
-        $settings.on("dataSynched", this.unpackSettings.bind(this));
-        $preview.on("dataSynched", this.buildPreviewDiv.bind(this));
+        $settings.on("dataSynced", this.unpackSettings.bind(this));
+        $preview.on("dataSynced", this.buildPreviewDiv.bind(this));
 
         $('a[data-toggle="tab"]').on("show", function(e) {
             var toShow = $(e.target).attr("href"),
@@ -83,7 +77,7 @@ class BaseVisualForm {
         if (this.isSynching) return;
         this.dataSynced = false;
         this.isSynching = true;
-        $.post(window.test_url, form, function(d) {
+        $.post(this.config.preview_url, form, function(d) {
             self.data = d;
             if (self.afterGetDataHook) self.afterGetDataHook(d);
         })
@@ -95,7 +89,7 @@ class BaseVisualForm {
             .always(function() {
                 self.isSynching = false;
                 self.dataSynced = true;
-                $("#preview, #settings").trigger("dataSynched");
+                $("#preview, #settings").trigger("dataSynced");
             });
     }
 
@@ -177,7 +171,7 @@ class BaseVisualForm {
                     submitter.trigger("click");
                 })
             )
-            .append('<a class="btn btn-default" href="{0}">Cancel</a>'.printf(cancel_url))
+            .append(`<a class="btn btn-default" href="${cancel_url}">Cancel</a>`)
             .appendTo($parent);
     }
 
@@ -194,14 +188,12 @@ class BaseVisualForm {
         _.each(tabs, function(d, i) {
             isActive = i === 0 ? "active" : "";
             self.settingsTabs[d.name] = $(
-                '<div id="settings_{0}" class="tab-pane {1}">'.printf(d.name, isActive)
+                `<div id="settings_${d.name}" class="tab-pane ${isActive}">`
             );
             tablinks.push(
-                '<li class="{0}"><a href="#settings_{1}" data-toggle="tab">{2}</a></li>'.printf(
-                    isActive,
-                    d.name,
-                    d.label
-                )
+                `<li class="${isActive}">
+                    <a href="#settings_${d.name}" data-toggle="tab">${d.label}</a>
+                </li>`
             );
         });
 

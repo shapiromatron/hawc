@@ -1,0 +1,42 @@
+{% extends 'portal.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block title %}
+{% include "hawc/siteTitle.html" with crumbs=form.instance.get_crumbs crud=crud %}
+{% endblock title %}
+
+{% block breadcrumbs %}
+{% include "hawc/breadcrumbs.html" with crumbs=form.instance.get_crumbs crud=crud %}
+{% endblock %}
+
+{% block content %}
+{% crispy form %}
+{% endblock content %}
+
+
+{% block extrajs %}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('.html5text').quillify();
+        $('#id_name').focus();
+
+        // show/hide excel worksheet name depending on what was file was selected
+        const reExcelFile = RegExp("\.xlsx$"),
+            excelNameDiv = $("#div_id_revision_excel_worksheet_name"),
+            excelNameInput = $("#id_revision_excel_worksheet_name"),
+            versionNotes = $("#div_id_revision_notes"),
+            handleExcelNameChange = function () {
+                if(reExcelFile.test(this.value)){
+                    excelNameDiv.removeClass('hidden');
+                } else {
+                    excelNameDiv.addClass('hidden');
+                    excelNameInput.val("");
+                }
+                versionNotes.removeClass('hidden');
+            };
+
+        $('#id_revision_data').change(handleExcelNameChange);
+    });
+</script>
+{% endblock extrajs %}

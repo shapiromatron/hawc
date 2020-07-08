@@ -1,8 +1,10 @@
 import json
 import logging
+import os
 from operator import methodcaller
-from typing import Dict
+from typing import Dict, List
 
+import pandas as pd
 from django.apps import apps
 from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
@@ -10,13 +12,20 @@ from django.db import models
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.html import strip_tags
+from pydantic import BaseModel as PydanticModel
 from reversion import revisions as reversion
 from treebeard.mp_tree import MP_Node
 
 from ..animal.exports import EndpointFlatDataPivot, EndpointGroupFlatDataPivot
 from ..animal.models import Endpoint
 from ..assessment.models import Assessment, BaseEndpoint, DoseUnits
-from ..common.helper import HAWCDjangoJSONEncoder, HAWCtoDateString, SerializerHelper, tryParseInt
+from ..common.helper import (
+    FlatExport,
+    HAWCDjangoJSONEncoder,
+    HAWCtoDateString,
+    SerializerHelper,
+    tryParseInt,
+)
 from ..common.models import get_model_copy_name
 from ..epi.exports import OutcomeDataPivot
 from ..epi.models import Outcome
@@ -175,6 +184,16 @@ class SummaryText(MP_Node):
                 print_node(node, 2)
 
 
+class HeatmapDataset(PydanticModel):
+    type: str
+    name: str
+    url: str
+
+
+class HeatmapDatasets(PydanticModel):
+    datasets: List[HeatmapDataset]
+
+
 class Visual(models.Model):
     objects = managers.VisualManager()
 
@@ -183,6 +202,8 @@ class Visual(models.Model):
     ROB_HEATMAP = 2
     ROB_BARCHART = 3
     LITERATURE_TAGTREE = 4
+    EXTERNAL_SITE = 5
+    EXPLORE_HEATMAP = 6
 
     VISUAL_CHOICES = (
         (BIOASSAY_AGGREGATION, "animal bioassay endpoint aggregation"),
@@ -190,6 +211,8 @@ class Visual(models.Model):
         (ROB_HEATMAP, "risk of bias heatmap"),
         (ROB_BARCHART, "risk of bias barchart"),
         (LITERATURE_TAGTREE, "literature tagtree"),
+        (EXTERNAL_SITE, "embedded external website"),
+        (EXPLORE_HEATMAP, "exploratory heatmap"),
     )
 
     SORT_ORDER_CHOICES = (
@@ -253,6 +276,74 @@ class Visual(models.Model):
 
     def get_assessment(self):
         return self.assessment
+
+    def get_api_detail(self):
+        return reverse("summary:api:visual-detail", args=(self.id,))
+
+    def get_api_heatmap_datasets(self):
+        return reverse("summary:api:assessment-heatmap-datasets", args=(self.assessment_id,))
+
+    @classmethod
+    def get_heatmap_datasets(cls, assessment: Assessment) -> HeatmapDatasets:
+        return HeatmapDatasets(
+            datasets=[
+                HeatmapDataset(
+                    type="Literature",
+                    name="Literature summary",
+                    url=reverse("lit:api:assessment-tag-heatmap", args=(assessment.id,)),
+                ),
+                HeatmapDataset(
+                    type="Bioassay",
+                    name="Bioassay study design",
+                    url=reverse("animal:api:assessment-study-heatmap", args=(assessment.id,)),
+                ),
+                HeatmapDataset(
+                    type="Bioassay",
+                    name="Bioassay study design (including unpublished HAWC data)",
+                    url=reverse("animal:api:assessment-study-heatmap", args=(assessment.id,))
+                    + "?unpublished=true",
+                ),
+                HeatmapDataset(
+                    type="Bioassay",
+                    name="Bioassay endpoint summary",
+                    url=reverse("animal:api:assessment-endpoint-heatmap", args=(assessment.id,)),
+                ),
+                HeatmapDataset(
+                    type="Bioassay",
+                    name="Bioassay endpoint summary (including unpublished HAWC data)",
+                    url=reverse("animal:api:assessment-endpoint-heatmap", args=(assessment.id,))
+                    + "?unpublished=true",
+                ),
+                HeatmapDataset(
+                    type="Epi",
+                    name="Epidemiology study design",
+                    url=reverse("epi:api:assessment-study-heatmap", args=(assessment.id,)),
+                ),
+                HeatmapDataset(
+                    type="Epi",
+                    name="Epidemiology study design (including unpublished HAWC data)",
+                    url=reverse("epi:api:assessment-study-heatmap", args=(assessment.id,))
+                    + "?unpublished=true",
+                ),
+                HeatmapDataset(
+                    type="Epi",
+                    name="Epidemiology result summary",
+                    url=reverse("epi:api:assessment-result-heatmap", args=(assessment.id,)),
+                ),
+                HeatmapDataset(
+                    type="Epi",
+                    name="Epidemiology result summary (including unpublished HAWC data)",
+                    url=reverse("epi:api:assessment-result-heatmap", args=(assessment.id,))
+                    + "?unpublished=true",
+                ),
+                *(
+                    HeatmapDataset(
+                        type="Dataset", name=f"Dataset: {ds.name}", url=ds.get_api_data_url()
+                    )
+                    for ds in assessment.datasets.all()
+                ),
+            ]
+        )
 
     @staticmethod
     def get_dose_units():
@@ -347,6 +438,7 @@ class Visual(models.Model):
             pass
 
         data = {
+            "assessment": self.assessment_id,
             "title": request.POST.get("title"),
             "slug": request.POST.get("slug"),
             "caption": request.POST.get("caption"),
@@ -460,11 +552,20 @@ class DataPivot(models.Model):
     def get_assessment(self):
         return self.assessment
 
+    def get_api_detail(self):
+        return reverse("summary:api:data_pivot-detail", args=(self.id,))
+
     def get_download_url(self):
-        return reverse("summary:dp_data", kwargs={"pk": self.assessment_id, "slug": self.slug})
+        return reverse("summary:api:data_pivot-data", args=(self.id,))
 
     def get_data_url(self):
         return self.get_download_url() + "?format=tsv"
+
+    def get_dataset(self) -> FlatExport:
+        if hasattr(self, "datapivotupload"):
+            return self.datapivotupload.get_dataset()
+        else:
+            return self.datapivotquery.get_dataset()
 
     @property
     def visual_type(self):
@@ -532,6 +633,12 @@ class DataPivotUpload(DataPivot):
     def _update_settings_across_assessments(self, cw: Dict) -> str:
         # no changes required
         return self.settings
+
+    def get_dataset(self) -> FlatExport:
+        worksheet_name = self.worksheet_name if len(self.worksheet_name) > 0 else 0
+        df = pd.read_excel(self.excel_file.file, sheet_name=worksheet_name)
+        filename = os.path.splitext(os.path.basename(self.excel_file.file.name))[0]
+        return FlatExport(df=df, filename=filename)
 
 
 class DataPivotQuery(DataPivot):
@@ -644,37 +751,30 @@ class DataPivotQuery(DataPivot):
 
         return qs
 
-    def _get_dataset_exporter(self, qs, format_):
+    def _get_dataset_exporter(self, qs):
         if self.evidence_type == BIOASSAY:
 
             # select export class
             if self.export_style == self.EXPORT_GROUP:
-                Exporter = EndpointGroupFlatDataPivot
+                ExportClass = EndpointGroupFlatDataPivot
             elif self.export_style == self.EXPORT_ENDPOINT:
-                Exporter = EndpointFlatDataPivot
+                ExportClass = EndpointFlatDataPivot
 
-            exporter = Exporter(
+            exporter = ExportClass(
                 qs,
                 assessment=self.assessment,
-                export_format=format_,
                 filename=f"{self.assessment}-animal-bioassay",
                 preferred_units=self.preferred_units,
             )
 
         elif self.evidence_type == EPI:
             exporter = OutcomeDataPivot(
-                qs,
-                assessment=self.assessment,
-                export_format=format_,
-                filename=f"{self.assessment}-epi",
+                qs, assessment=self.assessment, filename=f"{self.assessment}-epi",
             )
 
         elif self.evidence_type == EPI_META:
             exporter = MetaResultFlatDataPivot(
-                qs,
-                assessment=self.assessment,
-                export_format=format_,
-                filename=f"{self.assessment}-epi-meta-analysis",
+                qs, assessment=self.assessment, filename=f"{self.assessment}-epi",
             )
 
         elif self.evidence_type == IN_VITRO:
@@ -687,10 +787,7 @@ class DataPivotQuery(DataPivot):
 
             # generate export
             exporter = Exporter(
-                qs,
-                assessment=self.assessment,
-                export_format=format_,
-                filename=f"{self.assessment}-invitro",
+                qs, assessment=self.assessment, filename=f"{self.assessment}-invitro",
             )
 
         return exporter
@@ -699,10 +796,10 @@ class DataPivotQuery(DataPivot):
         filters = self._get_dataset_filters()
         return self._get_dataset_queryset(filters)
 
-    def get_dataset(self, format_):
+    def get_dataset(self) -> FlatExport:
         qs = self.get_queryset()
-        exporter = self._get_dataset_exporter(qs, format_)
-        return exporter.build_response()
+        exporter = self._get_dataset_exporter(qs)
+        return exporter.build_export()
 
     @property
     def visual_type(self):
@@ -761,7 +858,7 @@ class DataPivotQuery(DataPivot):
         return json.dumps(settings)
 
 
-class Prefilter(object):
+class Prefilter:
     """
     Helper-object to deal with DataPivot and Visual prefilters fields.
     """

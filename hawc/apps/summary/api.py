@@ -1,7 +1,19 @@
 from django.shortcuts import get_object_or_404
+from rest_framework import viewsets
+from rest_framework.decorators import action
 from rest_framework.filters import BaseFilterBackend
+from rest_framework.response import Response
 
-from ..assessment.api import AssessmentViewset, DisabledPagination, InAssessmentFilter
+from ..assessment.api import (
+    AssessmentLevelPermissions,
+    AssessmentViewset,
+    DisabledPagination,
+    InAssessmentFilter,
+)
+from ..assessment.models import Assessment
+from ..common.helper import re_digits
+from ..common.renderers import PandasRenderers
+from ..common.serializers import UnusedSerializer
 from . import models, serializers
 
 
@@ -21,7 +33,25 @@ class UnpublishedFilter(BaseFilterBackend):
         return queryset
 
 
-class DataPivot(AssessmentViewset):
+class SummaryAssessmentViewset(viewsets.GenericViewSet):
+    parent_model = Assessment
+    model = Assessment
+    permission_classes = (AssessmentLevelPermissions,)
+    serializer_class = UnusedSerializer
+    lookup_value_regex = re_digits
+
+    def get_queryset(self):
+        return self.model.objects.all()
+
+    @action(detail=True, url_path="visual-heatmap-datasets")
+    def heatmap_datasets(self, request, pk):
+        """Returns a list of the heatmap datasets available for an assessment."""
+        instance = self.get_object()
+        datasets = models.Visual.get_heatmap_datasets(instance).dict()
+        return Response(datasets)
+
+
+class DataPivotViewset(AssessmentViewset):
     """
     For list view, return simplified data-pivot view.
 
@@ -39,8 +69,14 @@ class DataPivot(AssessmentViewset):
             cls = serializers.CollectionDataPivotSerializer
         return cls
 
+    @action(detail=True, methods=("get",), renderer_classes=PandasRenderers)
+    def data(self, request, pk):
+        obj = self.get_object()
+        export = obj.get_dataset()
+        return Response(export)
 
-class Visual(AssessmentViewset):
+
+class VisualViewset(AssessmentViewset):
     """
     For list view, return all Visual objects for an assessment, but using the
     simplified collection view.

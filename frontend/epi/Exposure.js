@@ -9,22 +9,20 @@ class Exposure {
         this.data = data;
     }
 
+    static get_detail_url(id) {
+        return `/epi/exposure/${id}/`;
+    }
+
     static get_object(id, cb) {
-        $.get("/epi/api/exposure/{0}/".printf(id), function(d) {
-            cb(new Exposure(d));
-        });
+        $.get(`/epi/api/exposure/${id}/`, d => cb(new Exposure(d)));
     }
 
     static displayAsModal(id) {
-        Exposure.get_object(id, function(d) {
-            d.displayAsModal();
-        });
+        Exposure.get_object(id, d => d.displayAsModal());
     }
 
     static displayFullPager($el, id) {
-        Exposure.get_object(id, function(d) {
-            d.displayFullPager($el);
-        });
+        Exposure.get_object(id, d => d.displayFullPager($el));
     }
 
     build_breadcrumbs() {
@@ -140,7 +138,7 @@ class Exposure {
     }
 
     build_link() {
-        return '<a href="{0}">{1}</a>'.printf(this.data.url, this.data.name);
+        return `<a href="${this.data.url}">${this.data.name}</a>`;
     }
 }
 

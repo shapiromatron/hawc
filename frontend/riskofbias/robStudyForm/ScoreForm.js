@@ -10,7 +10,56 @@ import TextInput from "shared/components/TextInput";
 import h from "shared/utils/helpers";
 import "./ScoreForm.css";
 import ScoreOverrideForm from "./ScoreOverrideForm";
-import {SCORE_TEXT_DESCRIPTION} from "riskofbias/constants";
+import {SCORE_TEXT_DESCRIPTION, BIAS_DIRECTION_CHOICES} from "riskofbias/constants";
+
+class ScoreInput extends Component {
+    render() {
+        const {scoreId, choices, value, handleChange} = this.props,
+            scoreChoices = choices.map(d => {
+                return {id: parseInt(d), label: SCORE_TEXT_DESCRIPTION[d]};
+            });
+
+        return (
+            <>
+                <SelectInput
+                    className="span12"
+                    id={`${scoreId}-score`}
+                    label="Score"
+                    choices={scoreChoices}
+                    multiple={false}
+                    value={value}
+                    handleSelect={handleChange}
+                />
+                <ScoreIcon score={value} />
+            </>
+        );
+    }
+}
+ScoreInput.propTypes = {
+    scoreId: PropTypes.number.isRequired,
+    choices: PropTypes.arrayOf(PropTypes.number),
+    value: PropTypes.number.isRequired,
+    handleChange: PropTypes.func.isRequired,
+};
+
+class ScoreNotesInput extends Component {
+    render() {
+        const {scoreId, value, handleChange} = this.props;
+        return (
+            <ReactQuill
+                id={`${scoreId}-notes`}
+                value={value}
+                onChange={handleChange}
+                className="score-editor"
+            />
+        );
+    }
+}
+ScoreNotesInput.propTypes = {
+    scoreId: PropTypes.number.isRequired,
+    value: PropTypes.string.isRequired,
+    handleChange: PropTypes.func.isRequired,
+};
 
 @inject("store")
 @observer
@@ -19,8 +68,8 @@ class ScoreForm extends Component {
         let {scoreId, store} = this.props,
             score = store.getEditableScore(scoreId),
             editableMetricHasOverride = store.editableMetricHasOverride(score.metric.id),
-            choices = store.study.rob_response_values.map(d => {
-                return {id: parseInt(d), label: SCORE_TEXT_DESCRIPTION[d]};
+            direction_choices = Object.entries(BIAS_DIRECTION_CHOICES).map(kv => {
+                return {id: kv[0], label: kv[1]};
             }),
             showScoreInput = !h.hideRobScore(parseInt(store.config.assessment_id)),
             showOverrideCreate = score.is_default === true,
@@ -85,29 +134,39 @@ class ScoreForm extends Component {
                     <div className="span3">
                         {showScoreInput ? (
                             <div>
-                                <SelectInput
-                                    className="span12"
-                                    id={`${score.id}-score`}
-                                    label="Score"
-                                    choices={choices}
-                                    multiple={false}
+                                <ScoreInput
+                                    scoreId={score.id}
+                                    choices={store.study.rob_response_values}
                                     value={score.score}
-                                    handleSelect={value => {
+                                    handleChange={value => {
                                         store.updateFormState(scoreId, "score", parseInt(value));
                                     }}
                                 />
-                                <ScoreIcon score={score.score} />
+                                <SelectInput
+                                    className="span12"
+                                    id={`${score.id}-direction`}
+                                    label="Bias direction"
+                                    choices={direction_choices}
+                                    multiple={false}
+                                    value={score.bias_direction}
+                                    handleSelect={value => {
+                                        store.updateFormState(
+                                            scoreId,
+                                            "bias_direction",
+                                            parseInt(value)
+                                        );
+                                    }}
+                                />
                             </div>
                         ) : null}
                     </div>
                     <div className="span9">
-                        <ReactQuill
-                            id={`${score.id}-notes`}
+                        <ScoreNotesInput
+                            scoreId={score.id}
                             value={score.notes}
-                            onChange={htmlContent => {
+                            handleChange={htmlContent => {
                                 store.updateFormState(scoreId, "notes", htmlContent);
                             }}
-                            className="score-editor"
                         />
                     </div>
                     {score.is_default ? null : <ScoreOverrideForm score={score} />}
@@ -123,4 +182,4 @@ ScoreForm.propTypes = {
     store: PropTypes.object,
 };
 
-export default ScoreForm;
+export {ScoreForm, ScoreInput, ScoreNotesInput};

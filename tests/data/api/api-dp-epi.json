@@ -1,0 +1,982 @@
+{
+  "id": 4,
+  "title": "data pivot - epi",
+  "slug": "data-pivot-epi",
+  "caption": "<p>Example.</p>",
+  "published": true,
+  "created": "2020-05-10T21:26:51.725098-05:00",
+  "last_updated": "2020-05-10T21:46:43.863863-05:00",
+  "assessment": 2,
+  "url": "/summary/data-pivot/assessment/2/data-pivot-epi/",
+  "visual_type": "Data pivot (epidemiology)",
+  "settings": {
+    "plot_settings": {
+      "plot_width": 400,
+      "minimum_row_height": 12,
+      "padding": {
+        "top": 25,
+        "right": 25,
+        "bottom": 40,
+        "left": 20
+      },
+      "title": "Title",
+      "axis_label": "#",
+      "logscale": false,
+      "show_xticks": true,
+      "show_yticks": true,
+      "domain": "1,30",
+      "filter_logic": "and",
+      "font_style": "Arial",
+      "merge_descriptions": true,
+      "merge_aggressive": true,
+      "text_background": true,
+      "text_background_color": "#eeeeee",
+      "as_barchart": false,
+      "merge_until": 3
+    },
+    "legend": {
+      "show": true,
+      "left": 322,
+      "top": -32,
+      "columns": 1,
+      "style": {
+        "border_color": "#666666",
+        "border_width": "2px"
+      },
+      "fields": [
+        {
+          "symbol_index": 0,
+          "label": "estimate",
+          "symbol_style": "base",
+          "line_style": "---",
+          "rect_style": "---"
+        }
+      ]
+    },
+    "dataline_settings": [
+      {
+        "low_field_name": "---",
+        "high_field_name": "---",
+        "header_name": "---",
+        "marker_style": "base",
+        "conditional_formatting": []
+      }
+    ],
+    "datapoint_settings": [
+      {
+        "field_name": "estimate",
+        "header_name": "estimate",
+        "marker_style": "base",
+        "dpe": "---",
+        "conditional_formatting": []
+      }
+    ],
+    "description_settings": [
+      {
+        "field_name": "study name",
+        "header_name": "study name",
+        "header_style": "header",
+        "text_style": "base",
+        "dpe": "---",
+        "max_width": 150,
+        "field_index": "study name"
+      },
+      {
+        "field_name": "study population name",
+        "header_name": "study population name",
+        "header_style": "header",
+        "text_style": "base",
+        "dpe": "---",
+        "max_width": 100,
+        "field_index": "study population name"
+      },
+      {
+        "field_name": "outcome name",
+        "header_name": "outcome name",
+        "header_style": "header",
+        "text_style": "base",
+        "dpe": "---",
+        "field_index": "outcome name"
+      },
+      {
+        "field_name": "comparison set name",
+        "header_name": "comparison set name",
+        "header_style": "header",
+        "text_style": "base",
+        "dpe": "---",
+        "max_width": 100,
+        "field_index": "comparison set name"
+      },
+      {
+        "field_name": "exposure group name",
+        "header_name": "exposure group name",
+        "header_style": "header",
+        "text_style": "base",
+        "dpe": "---",
+        "max_width": 100,
+        "field_index": "exposure group name"
+      },
+      {
+        "field_name": "N",
+        "header_name": "N",
+        "header_style": "header",
+        "text_style": "base",
+        "dpe": "---",
+        "field_index": "N"
+      }
+    ],
+    "barchart": {
+      "dpe": "---",
+      "field_name": "---",
+      "error_low_field_name": "---",
+      "error_high_field_name": "---",
+      "header_name": "",
+      "error_header_name": "",
+      "bar_style": "base",
+      "error_marker_style": "base",
+      "conditional_formatting": [],
+      "error_show_tails": true
+    },
+    "spacers": [
+      {
+        "index": -1,
+        "show_line": true,
+        "line_style": "reference line",
+        "extra_space": false
+      }
+    ],
+    "sorts": [
+      {
+        "field_name": "---",
+        "ascending": true
+      },
+      {
+        "field_name": "---",
+        "ascending": true
+      }
+    ],
+    "filters": [
+      {
+        "field_name": "---",
+        "quantifier": "contains",
+        "value": ""
+      },
+      {
+        "field_name": "---",
+        "quantifier": "contains",
+        "value": ""
+      }
+    ],
+    "reference_lines": [
+      {
+        "value": null,
+        "line_style": "reference line"
+      }
+    ],
+    "reference_rectangles": [
+      {
+        "x1": null,
+        "x2": null,
+        "rectangle_style": "base"
+      }
+    ],
+    "labels": [
+      {
+        "text": "",
+        "style": "title",
+        "x": 10,
+        "y": 10,
+        "_style": {
+          "name": "title",
+          "fill": "#000",
+          "rotate": "0",
+          "font-size": "12px",
+          "font-weight": "bold",
+          "text-anchor": "middle",
+          "fill-opacity": 1
+        }
+      }
+    ],
+    "row_overrides": [],
+    "styles": {
+      "symbols": [
+        {
+          "name": "base",
+          "type": "circle",
+          "size": 130,
+          "fill": "#000",
+          "fill-opacity": 1,
+          "stroke": "#fff",
+          "stroke-width": 1
+        },
+        {
+          "name": "transparent",
+          "type": "circle",
+          "size": 90,
+          "stroke": "#000000",
+          "fill-opacity": 0,
+          "stroke-width": 0,
+          "fill": "#000000"
+        },
+        {
+          "name": "circle | black",
+          "type": "circle",
+          "size": 90,
+          "stroke": "#000000",
+          "fill-opacity": 0.8,
+          "stroke-width": 2,
+          "fill": "#000000"
+        },
+        {
+          "name": "circle | red",
+          "type": "circle",
+          "size": 90,
+          "stroke": "#6f0000",
+          "fill-opacity": 0.8,
+          "stroke-width": 2,
+          "fill": "#e32727"
+        },
+        {
+          "name": "circle | green",
+          "type": "circle",
+          "size": 90,
+          "stroke": "#006a1e",
+          "fill-opacity": 0.8,
+          "stroke-width": 2,
+          "fill": "#22ba53"
+        },
+        {
+          "name": "circle | blue",
+          "type": "circle",
+          "size": 90,
+          "stroke": "#006dbe",
+          "fill-opacity": 0.8,
+          "stroke-width": 2,
+          "fill": "#3aa4e5"
+        },
+        {
+          "name": "circle | orange",
+          "type": "circle",
+          "size": 90,
+          "stroke": "#dc8f00",
+          "fill-opacity": 0.8,
+          "stroke-width": 2,
+          "fill": "#ffb100"
+        },
+        {
+          "name": "circle | purple",
+          "type": "circle",
+          "size": 90,
+          "stroke": "#5e5e5e",
+          "fill-opacity": 0.8,
+          "stroke-width": 2,
+          "fill": "#b82cff"
+        },
+        {
+          "name": "circle | fuschia",
+          "type": "circle",
+          "size": 90,
+          "stroke": "#ab006c",
+          "fill-opacity": 0.8,
+          "stroke-width": 2,
+          "fill": "#d4266e"
+        },
+        {
+          "name": "triangle up | black",
+          "type": "triangle-up",
+          "size": 90,
+          "stroke": "#000000",
+          "fill-opacity": 0.8,
+          "stroke-width": 2,
+          "fill": "#000000"
+        },
+        {
+          "name": "triangle up | red",
+          "type": "triangle-up",
+          "size": 90,
+          "stroke": "#6f0000",
+          "fill-opacity": 0.8,
+          "stroke-width": 2,
+          "fill": "#e32727"
+        },
+        {
+          "name": "triangle up | green",
+          "type": "triangle-up",
+          "size": 90,
+          "stroke": "#006a1e",
+          "fill-opacity": 0.8,
+          "stroke-width": 2,
+          "fill": "#22ba53"
+        },
+        {
+          "name": "triangle up | blue",
+          "type": "triangle-up",
+          "size": 90,
+          "stroke": "#006dbe",
+          "fill-opacity": 0.8,
+          "stroke-width": 2,
+          "fill": "#3aa4e5"
+        },
+        {
+          "name": "triangle up | orange",
+          "type": "triangle-up",
+          "size": 90,
+          "stroke": "#dc8f00",
+          "fill-opacity": 0.8,
+          "stroke-width": 2,
+          "fill": "#ffb100"
+        },
+        {
+          "name": "triangle up | purple",
+          "type": "triangle-up",
+          "size": 90,
+          "stroke": "#5e5e5e",
+          "fill-opacity": 0.8,
+          "stroke-width": 2,
+          "fill": "#b82cff"
+        },
+        {
+          "name": "triangle up | fuschia",
+          "type": "triangle-up",
+          "size": 90,
+          "stroke": "#ab006c",
+          "fill-opacity": 0.8,
+          "stroke-width": 2,
+          "fill": "#d4266e"
+        },
+        {
+          "name": "triangle down | black",
+          "type": "triangle-down",
+          "size": 90,
+          "stroke": "#000000",
+          "fill-opacity": 0.8,
+          "stroke-width": 2,
+          "fill": "#000000"
+        },
+        {
+          "name": "triangle down | red",
+          "type": "triangle-down",
+          "size": 90,
+          "stroke": "#6f0000",
+          "fill-opacity": 0.8,
+          "stroke-width": 2,
+          "fill": "#e32727"
+        },
+        {
+          "name": "triangle down | green",
+          "type": "triangle-down",
+          "size": 90,
+          "stroke": "#006a1e",
+          "fill-opacity": 0.8,
+          "stroke-width": 2,
+          "fill": "#22ba53"
+        },
+        {
+          "name": "triangle down | blue",
+          "type": "triangle-down",
+          "size": 90,
+          "stroke": "#006dbe",
+          "fill-opacity": 0.8,
+          "stroke-width": 2,
+          "fill": "#3aa4e5"
+        },
+        {
+          "name": "triangle down | orange",
+          "type": "triangle-down",
+          "size": 90,
+          "stroke": "#dc8f00",
+          "fill-opacity": 0.8,
+          "stroke-width": 2,
+          "fill": "#ffb100"
+        },
+        {
+          "name": "triangle down | purple",
+          "type": "triangle-down",
+          "size": 90,
+          "stroke": "#5e5e5e",
+          "fill-opacity": 0.8,
+          "stroke-width": 2,
+          "fill": "#b82cff"
+        },
+        {
+          "name": "triangle down | fuschia",
+          "type": "triangle-down",
+          "size": 90,
+          "stroke": "#ab006c",
+          "fill-opacity": 0.8,
+          "stroke-width": 2,
+          "fill": "#d4266e"
+        },
+        {
+          "name": "diamond | black",
+          "type": "diamond",
+          "size": 90,
+          "stroke": "#000000",
+          "fill-opacity": 0.8,
+          "stroke-width": 2,
+          "fill": "#000000"
+        },
+        {
+          "name": "diamond | red",
+          "type": "diamond",
+          "size": 90,
+          "stroke": "#6f0000",
+          "fill-opacity": 0.8,
+          "stroke-width": 2,
+          "fill": "#e32727"
+        },
+        {
+          "name": "diamond | green",
+          "type": "diamond",
+          "size": 90,
+          "stroke": "#006a1e",
+          "fill-opacity": 0.8,
+          "stroke-width": 2,
+          "fill": "#22ba53"
+        },
+        {
+          "name": "diamond | blue",
+          "type": "diamond",
+          "size": 90,
+          "stroke": "#006dbe",
+          "fill-opacity": 0.8,
+          "stroke-width": 2,
+          "fill": "#3aa4e5"
+        },
+        {
+          "name": "diamond | orange",
+          "type": "diamond",
+          "size": 90,
+          "stroke": "#dc8f00",
+          "fill-opacity": 0.8,
+          "stroke-width": 2,
+          "fill": "#ffb100"
+        },
+        {
+          "name": "diamond | purple",
+          "type": "diamond",
+          "size": 90,
+          "stroke": "#5e5e5e",
+          "fill-opacity": 0.8,
+          "stroke-width": 2,
+          "fill": "#b82cff"
+        },
+        {
+          "name": "diamond | fuschia",
+          "type": "diamond",
+          "size": 90,
+          "stroke": "#ab006c",
+          "fill-opacity": 0.8,
+          "stroke-width": 2,
+          "fill": "#d4266e"
+        },
+        {
+          "name": "square | black",
+          "type": "square",
+          "size": 90,
+          "stroke": "#000000",
+          "fill-opacity": 0.8,
+          "stroke-width": 2,
+          "fill": "#000000"
+        },
+        {
+          "name": "square | red",
+          "type": "square",
+          "size": 90,
+          "stroke": "#6f0000",
+          "fill-opacity": 0.8,
+          "stroke-width": 2,
+          "fill": "#e32727"
+        },
+        {
+          "name": "square | green",
+          "type": "square",
+          "size": 90,
+          "stroke": "#006a1e",
+          "fill-opacity": 0.8,
+          "stroke-width": 2,
+          "fill": "#22ba53"
+        },
+        {
+          "name": "square | blue",
+          "type": "square",
+          "size": 90,
+          "stroke": "#006dbe",
+          "fill-opacity": 0.8,
+          "stroke-width": 2,
+          "fill": "#3aa4e5"
+        },
+        {
+          "name": "square | orange",
+          "type": "square",
+          "size": 90,
+          "stroke": "#dc8f00",
+          "fill-opacity": 0.8,
+          "stroke-width": 2,
+          "fill": "#ffb100"
+        },
+        {
+          "name": "square | purple",
+          "type": "square",
+          "size": 90,
+          "stroke": "#5e5e5e",
+          "fill-opacity": 0.8,
+          "stroke-width": 2,
+          "fill": "#b82cff"
+        },
+        {
+          "name": "square | fuschia",
+          "type": "square",
+          "size": 90,
+          "stroke": "#ab006c",
+          "fill-opacity": 0.8,
+          "stroke-width": 2,
+          "fill": "#d4266e"
+        },
+        {
+          "name": "cross | black",
+          "type": "cross",
+          "size": 90,
+          "stroke": "#000000",
+          "fill-opacity": 0.8,
+          "stroke-width": 2,
+          "fill": "#000000"
+        },
+        {
+          "name": "cross | red",
+          "type": "cross",
+          "size": 90,
+          "stroke": "#6f0000",
+          "fill-opacity": 0.8,
+          "stroke-width": 2,
+          "fill": "#e32727"
+        },
+        {
+          "name": "cross | green",
+          "type": "cross",
+          "size": 90,
+          "stroke": "#006a1e",
+          "fill-opacity": 0.8,
+          "stroke-width": 2,
+          "fill": "#22ba53"
+        },
+        {
+          "name": "cross | blue",
+          "type": "cross",
+          "size": 90,
+          "stroke": "#006dbe",
+          "fill-opacity": 0.8,
+          "stroke-width": 2,
+          "fill": "#3aa4e5"
+        },
+        {
+          "name": "cross | orange",
+          "type": "cross",
+          "size": 90,
+          "stroke": "#dc8f00",
+          "fill-opacity": 0.8,
+          "stroke-width": 2,
+          "fill": "#ffb100"
+        },
+        {
+          "name": "cross | purple",
+          "type": "cross",
+          "size": 90,
+          "stroke": "#5e5e5e",
+          "fill-opacity": 0.8,
+          "stroke-width": 2,
+          "fill": "#b82cff"
+        },
+        {
+          "name": "cross | fuschia",
+          "type": "cross",
+          "size": 90,
+          "stroke": "#ab006c",
+          "fill-opacity": 0.8,
+          "stroke-width": 2,
+          "fill": "#d4266e"
+        }
+      ],
+      "lines": [
+        {
+          "name": "base",
+          "stroke": "#708090",
+          "stroke-dasharray": "none",
+          "stroke-opacity": 0.9,
+          "stroke-width": 3
+        },
+        {
+          "name": "reference line",
+          "stroke": "#000000",
+          "stroke-dasharray": "none",
+          "stroke-opacity": 0.8,
+          "stroke-width": 3
+        },
+        {
+          "name": "transparent",
+          "stroke": "#000000",
+          "stroke-dasharray": "none",
+          "stroke-opacity": 0,
+          "stroke-width": 0
+        },
+        {
+          "name": "solid | black",
+          "stroke": "#000000",
+          "stroke-dasharray": "none",
+          "stroke-opacity": 0.9,
+          "stroke-width": 3
+        },
+        {
+          "name": "solid | red",
+          "stroke": "#e32727",
+          "stroke-dasharray": "none",
+          "stroke-opacity": 0.9,
+          "stroke-width": 3
+        },
+        {
+          "name": "solid | green",
+          "stroke": "#006a1e",
+          "stroke-dasharray": "none",
+          "stroke-opacity": 0.9,
+          "stroke-width": 3
+        },
+        {
+          "name": "solid | blue",
+          "stroke": "#006dbe",
+          "stroke-dasharray": "none",
+          "stroke-opacity": 0.9,
+          "stroke-width": 3
+        },
+        {
+          "name": "solid | orange",
+          "stroke": "#dc8f00",
+          "stroke-dasharray": "none",
+          "stroke-opacity": 0.9,
+          "stroke-width": 3
+        },
+        {
+          "name": "solid | purple",
+          "stroke": "#b82cff",
+          "stroke-dasharray": "none",
+          "stroke-opacity": 0.9,
+          "stroke-width": 3
+        },
+        {
+          "name": "solid | fuschia",
+          "stroke": "#ab006c",
+          "stroke-dasharray": "none",
+          "stroke-opacity": 0.9,
+          "stroke-width": 3
+        },
+        {
+          "name": "dashed | black",
+          "stroke": "#000000",
+          "stroke-dasharray": "10, 10",
+          "stroke-opacity": 0.9,
+          "stroke-width": 3
+        },
+        {
+          "name": "dashed | red",
+          "stroke": "#e32727",
+          "stroke-dasharray": "10, 10",
+          "stroke-opacity": 0.9,
+          "stroke-width": 3
+        },
+        {
+          "name": "dashed | green",
+          "stroke": "#006a1e",
+          "stroke-dasharray": "10, 10",
+          "stroke-opacity": 0.9,
+          "stroke-width": 3
+        },
+        {
+          "name": "dashed | blue",
+          "stroke": "#006dbe",
+          "stroke-dasharray": "10, 10",
+          "stroke-opacity": 0.9,
+          "stroke-width": 3
+        },
+        {
+          "name": "dashed | orange",
+          "stroke": "#dc8f00",
+          "stroke-dasharray": "10, 10",
+          "stroke-opacity": 0.9,
+          "stroke-width": 3
+        },
+        {
+          "name": "dashed | purple",
+          "stroke": "#b82cff",
+          "stroke-dasharray": "10, 10",
+          "stroke-opacity": 0.9,
+          "stroke-width": 3
+        },
+        {
+          "name": "dashed | fuschia",
+          "stroke": "#ab006c",
+          "stroke-dasharray": "10, 10",
+          "stroke-opacity": 0.9,
+          "stroke-width": 3
+        },
+        {
+          "name": "dotted | black",
+          "stroke": "#000000",
+          "stroke-dasharray": "4, 3",
+          "stroke-opacity": 0.9,
+          "stroke-width": 3
+        },
+        {
+          "name": "dotted | red",
+          "stroke": "#e32727",
+          "stroke-dasharray": "4, 3",
+          "stroke-opacity": 0.9,
+          "stroke-width": 3
+        },
+        {
+          "name": "dotted | green",
+          "stroke": "#006a1e",
+          "stroke-dasharray": "4, 3",
+          "stroke-opacity": 0.9,
+          "stroke-width": 3
+        },
+        {
+          "name": "dotted | blue",
+          "stroke": "#006dbe",
+          "stroke-dasharray": "4, 3",
+          "stroke-opacity": 0.9,
+          "stroke-width": 3
+        },
+        {
+          "name": "dotted | orange",
+          "stroke": "#dc8f00",
+          "stroke-dasharray": "4, 3",
+          "stroke-opacity": 0.9,
+          "stroke-width": 3
+        },
+        {
+          "name": "dotted | purple",
+          "stroke": "#b82cff",
+          "stroke-dasharray": "4, 3",
+          "stroke-opacity": 0.9,
+          "stroke-width": 3
+        },
+        {
+          "name": "dotted | fuschia",
+          "stroke": "#ab006c",
+          "stroke-dasharray": "4, 3",
+          "stroke-opacity": 0.9,
+          "stroke-width": 3
+        },
+        {
+          "name": "dash-dotted | black",
+          "stroke": "#000000",
+          "stroke-dasharray": "15, 10, 5, 10",
+          "stroke-opacity": 0.9,
+          "stroke-width": 3
+        },
+        {
+          "name": "dash-dotted | red",
+          "stroke": "#e32727",
+          "stroke-dasharray": "15, 10, 5, 10",
+          "stroke-opacity": 0.9,
+          "stroke-width": 3
+        },
+        {
+          "name": "dash-dotted | green",
+          "stroke": "#006a1e",
+          "stroke-dasharray": "15, 10, 5, 10",
+          "stroke-opacity": 0.9,
+          "stroke-width": 3
+        },
+        {
+          "name": "dash-dotted | blue",
+          "stroke": "#006dbe",
+          "stroke-dasharray": "15, 10, 5, 10",
+          "stroke-opacity": 0.9,
+          "stroke-width": 3
+        },
+        {
+          "name": "dash-dotted | orange",
+          "stroke": "#dc8f00",
+          "stroke-dasharray": "15, 10, 5, 10",
+          "stroke-opacity": 0.9,
+          "stroke-width": 3
+        },
+        {
+          "name": "dash-dotted | purple",
+          "stroke": "#b82cff",
+          "stroke-dasharray": "15, 10, 5, 10",
+          "stroke-opacity": 0.9,
+          "stroke-width": 3
+        },
+        {
+          "name": "dash-dotted | fuschia",
+          "stroke": "#ab006c",
+          "stroke-dasharray": "15, 10, 5, 10",
+          "stroke-opacity": 0.9,
+          "stroke-width": 3
+        }
+      ],
+      "texts": [
+        {
+          "name": "base",
+          "fill": "#000",
+          "rotate": "0",
+          "font-size": "12px",
+          "font-weight": "normal",
+          "text-anchor": "start",
+          "fill-opacity": 1
+        },
+        {
+          "name": "header",
+          "fill": "#000",
+          "rotate": "0",
+          "font-size": "12px",
+          "font-weight": "bold",
+          "text-anchor": "middle",
+          "fill-opacity": 1
+        },
+        {
+          "name": "title",
+          "fill": "#000",
+          "rotate": "0",
+          "font-size": "12px",
+          "font-weight": "bold",
+          "text-anchor": "middle",
+          "fill-opacity": 1
+        },
+        {
+          "name": "transparent",
+          "font-size": "12px",
+          "rotate": "0",
+          "font-weight": "normal",
+          "text-anchor": "start",
+          "fill": "#000000",
+          "fill-opacity": 0
+        },
+        {
+          "name": "normal | black",
+          "font-size": "12px",
+          "rotate": "0",
+          "font-weight": "normal",
+          "text-anchor": "start",
+          "fill": "#000000",
+          "fill-opacity": 1
+        },
+        {
+          "name": "normal | red",
+          "font-size": "12px",
+          "rotate": "0",
+          "font-weight": "normal",
+          "text-anchor": "start",
+          "fill": "#6f0000",
+          "fill-opacity": 1
+        },
+        {
+          "name": "normal | green",
+          "font-size": "12px",
+          "rotate": "0",
+          "font-weight": "normal",
+          "text-anchor": "start",
+          "fill": "#006a1e",
+          "fill-opacity": 1
+        },
+        {
+          "name": "normal | blue",
+          "font-size": "12px",
+          "rotate": "0",
+          "font-weight": "normal",
+          "text-anchor": "start",
+          "fill": "#006dbe",
+          "fill-opacity": 1
+        },
+        {
+          "name": "normal | orange",
+          "font-size": "12px",
+          "rotate": "0",
+          "font-weight": "normal",
+          "text-anchor": "start",
+          "fill": "#dc8f00",
+          "fill-opacity": 1
+        },
+        {
+          "name": "normal | purple",
+          "font-size": "12px",
+          "rotate": "0",
+          "font-weight": "normal",
+          "text-anchor": "start",
+          "fill": "#b82cff",
+          "fill-opacity": 1
+        },
+        {
+          "name": "normal | fuschia",
+          "font-size": "12px",
+          "rotate": "0",
+          "font-weight": "normal",
+          "text-anchor": "start",
+          "fill": "#ab006c",
+          "fill-opacity": 1
+        }
+      ],
+      "rectangles": [
+        {
+          "name": "base",
+          "fill": "#999999",
+          "stroke": "#000000",
+          "fill-opacity": 0.8,
+          "stroke-width": 1
+        },
+        {
+          "name": "black",
+          "fill": "#000000",
+          "fill-opacity": 0.8,
+          "stroke": "#FFFFFF",
+          "stroke-width": 1
+        },
+        {
+          "name": "red",
+          "fill": "#e32727",
+          "fill-opacity": 0.8,
+          "stroke": "#6f0000",
+          "stroke-width": 1
+        },
+        {
+          "name": "green",
+          "fill": "#22ba53",
+          "fill-opacity": 0.8,
+          "stroke": "#006a1e",
+          "stroke-width": 1
+        },
+        {
+          "name": "blue",
+          "fill": "#3aa4e5",
+          "fill-opacity": 0.8,
+          "stroke": "#006dbe",
+          "stroke-width": 1
+        },
+        {
+          "name": "orange",
+          "fill": "#ffb100",
+          "fill-opacity": 0.8,
+          "stroke": "#dc8f00",
+          "stroke-width": 1
+        },
+        {
+          "name": "purple",
+          "fill": "#b82cff",
+          "fill-opacity": 0.8,
+          "stroke": "#5e5e5e",
+          "stroke-width": 1
+        },
+        {
+          "name": "fuschia",
+          "fill": "#d4266e",
+          "fill-opacity": 0.8,
+          "stroke": "#ab006c",
+          "stroke-width": 1
+        }
+      ]
+    }
+  },
+  "data_url": "/summary/api/data_pivot/4/data/?format=tsv",
+  "download_url": "/summary/api/data_pivot/4/data/"
+}

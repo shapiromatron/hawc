@@ -9,22 +9,20 @@ class MetaProtocol {
         this.data = data;
     }
 
+    static get_detail_url(id) {
+        return `/epi-meta/protocol/${id}/`;
+    }
+
     static get_object(id, cb) {
-        $.get("/epi-meta/api/protocol/{0}/".printf(id), function(d) {
-            cb(new MetaProtocol(d));
-        });
+        $.get(`/epi-meta/api/protocol/${id}/`, d => cb(new MetaProtocol(d)));
     }
 
     static displayAsModal(id) {
-        MetaProtocol.get_object(id, function(d) {
-            d.displayAsModal();
-        });
+        MetaProtocol.get_object(id, d => d.displayAsModal());
     }
 
     static displayFullPager($el, id) {
-        MetaProtocol.get_object(id, function(d) {
-            d.displayFullPager($el);
-        });
+        MetaProtocol.get_object(id, d => d.displayFullPager($el));
     }
 
     build_details_table(div) {
@@ -56,7 +54,7 @@ class MetaProtocol {
 
     displayAsModal() {
         var modal = new HAWCModal(),
-            title = "<h4>{0}</h4>".printf(this.build_breadcrumbs()),
+            title = `<h4>${this.build_breadcrumbs()}</h4>`,
             $content = $('<div class="container-fluid">')
                 .append(this.build_details_table())
                 .append(this.build_links_div());
@@ -77,9 +75,7 @@ class MetaProtocol {
 
     build_links_div() {
         var $el = $("<div>"),
-            liFunc = function(d) {
-                return '<li><a href="{0}">{1}</a></li>'.printf(d.url, d.label);
-            };
+            liFunc = d => `<li><a href="${d.url}">${d.label}</a></li>`;
 
         $el.append("<h2>Results</h2>");
         if (this.data.results.length > 0) {

@@ -1,4 +1,5 @@
 from django.contrib import admin, messages
+from django.core.cache import cache
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 
@@ -51,12 +52,31 @@ class HAWCUserAdmin(admin.ModelAdmin):
         message = f"Celery task executed successfully: {response}"
         modeladmin.message_user(request, message)
 
+    def diagnostic_cache(modeladmin, request, queryset):
+        cache.set("foo", "bar")
+        if cache.get("foo") != "bar":
+            raise RuntimeError("Cache did not successfully set variable.")
+
+        cache.delete("foo")
+        if cache.get("foo") is not None:
+            raise RuntimeError("Cache did not successfully delete variable.")
+
+        message = "Cache test executed successfully"
+        modeladmin.message_user(request, message)
+
     def save_model(self, request, obj, form, change):
         form.save(commit=True)
 
     set_password.short_description = "Set user-password"
     send_welcome_emails.short_description = "Send welcome email"
     throw_500.short_description = "Intentionally throw a server error (500)"
-    diagnostic_celery_task.short_description = "Run a diagnostic celery task"
+    diagnostic_celery_task.short_description = "Diagnostic celery task test"
+    diagnostic_cache.short_description = "Diagnostic cache test"
 
-    actions = (send_welcome_emails, set_password, throw_500, diagnostic_celery_task)
+    actions = (
+        send_welcome_emails,
+        set_password,
+        throw_500,
+        diagnostic_celery_task,
+        diagnostic_cache,
+    )

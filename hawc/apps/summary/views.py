@@ -1,10 +1,9 @@
 import json
-import os
+from typing import Dict
 
-import pandas as pd
 from django.http import Http404, HttpResponse, HttpResponseNotAllowed, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.views.generic import FormView, RedirectView, TemplateView
 
 from ..assessment.models import Assessment
@@ -18,7 +17,7 @@ from ..common.views import (
     TeamMemberOrHigherMixin,
 )
 from ..riskofbias.models import RiskOfBiasMetric
-from . import forms, models
+from . import forms, models, serializers
 
 
 # SUMMARY-TEXT
@@ -163,8 +162,11 @@ class VisualizationCreate(BaseCreate):
 
     def get_template_names(self):
         visual_type = int(self.kwargs.get("visual_type"))
-        if visual_type == models.Visual.LITERATURE_TAGTREE:
-            return "summary/visual_form_literature_tagtree.html"
+        if visual_type in {
+            models.Visual.LITERATURE_TAGTREE,
+            models.Visual.EXTERNAL_SITE,
+        }:
+            return "summary/visual_form_django.html"
         else:
             return super().get_template_names()
 
@@ -177,7 +179,15 @@ class VisualizationCreate(BaseCreate):
         context["rob_metrics"] = json.dumps(
             list(RiskOfBiasMetric.objects.get_metrics_for_visuals(self.assessment.id))
         )
+        context["initial_data"] = json.dumps(self.get_initial_visual(context))
         return context
+
+    def get_initial_visual(self, context) -> Dict:
+        instance = self.model()
+        instance.id = 999999999999
+        instance.assessment = self.assessment
+        instance.visual_type = context["visual_type"]
+        return serializers.VisualSerializer().to_representation(instance)
 
 
 class VisualizationCreateTester(VisualizationCreate):
@@ -203,8 +213,12 @@ class VisualizationUpdate(BaseUpdate):
             raise Http404
 
     def get_template_names(self):
-        if self.object.visual_type == models.Visual.LITERATURE_TAGTREE:
-            return "summary/visual_form_literature_tagtree.html"
+        visual_type = self.object.visual_type
+        if visual_type in {
+            models.Visual.LITERATURE_TAGTREE,
+            models.Visual.EXTERNAL_SITE,
+        }:
+            return "summary/visual_form_django.html"
         else:
             return super().get_template_names()
 
@@ -216,6 +230,9 @@ class VisualizationUpdate(BaseUpdate):
         context["smart_tag_form"] = forms.SmartTagForm(assessment_id=self.assessment.id)
         context["rob_metrics"] = json.dumps(
             list(RiskOfBiasMetric.objects.get_metrics_for_visuals(self.assessment.id))
+        )
+        context["initial_data"] = json.dumps(
+            serializers.VisualSerializer().to_representation(self.object)
         )
         return context
 
@@ -302,6 +319,7 @@ class DataPivotCopyAsNewSelector(TeamMemberOrHigherMixin, FormView):
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs["user"] = self.request.user
+        kwargs["cancel_url"] = reverse("summary:visualization_list", args=(self.assessment.id,))
         return kwargs
 
     def form_valid(self, form):
@@ -320,7 +338,7 @@ class DataPivotCopyAsNewSelector(TeamMemberOrHigherMixin, FormView):
         return HttpResponseRedirect(url)
 
 
-class GetDataPivotObjectMixin(object):
+class GetDataPivotObjectMixin:
     def get_object(self):
         slug = self.kwargs.get("slug")
         assessment = self.kwargs.get("pk")
@@ -344,44 +362,6 @@ class DataPivotByIdDetail(RedirectView):
 class DataPivotDetail(GetDataPivotObjectMixin, BaseDetail):
     model = models.DataPivot
     template_name = "summary/datapivot_detail.html"
-
-
-class DataPivotData(GetDataPivotObjectMixin, BaseDetail):
-    model = models.DataPivot
-
-    def get_export_format(self):
-        format_ = self.request.GET.get("format", "excel")
-        if format_ not in ["tsv", "excel"]:
-            raise Http404()
-        return format_
-
-    def get(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        format_ = self.get_export_format()
-        if hasattr(self.object, "datapivotupload"):
-            if format_ == "excel":
-                response = HttpResponse(
-                    self.object.excel_file.file.read(),
-                    content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                )
-                fn = os.path.basename(self.object.excel_file.name)
-            else:
-                worksheet_name = self.object.worksheet_name
-                if worksheet_name == "":
-                    worksheet_name = 0
-                response = HttpResponse(
-                    pd.read_excel(self.object.excel_file.file, sheet_name=worksheet_name).to_csv(
-                        index=False, sep="\t"
-                    ),
-                    content_type="text/tab-separated-values",
-                )
-                fn = os.path.basename(os.path.basename(self.object.excel_file.name)) + ".tsv"
-            response["Content-Disposition"] = f'attachment; filename="{fn}"'
-            return response
-        elif hasattr(self.object, "datapivotquery"):
-            return self.object.get_dataset(format_)
-        else:
-            raise Http404()
 
 
 class DataPivotUpdateSettings(GetDataPivotObjectMixin, BaseUpdate):

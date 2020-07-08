@@ -9,7 +9,9 @@ from ..assessment.api import (
 )
 from ..assessment.models import Assessment
 from ..common.api import CleanupFieldsBaseViewSet, LegacyAssessmentAdapterMixin
+from ..common.helper import re_digits
 from ..common.renderers import PandasRenderers
+from ..common.serializers import UnusedSerializer
 from ..common.views import AssessmentPermissionsMixin
 from . import exports, models, serializers
 
@@ -20,6 +22,8 @@ class IVAssessmentViewset(
     parent_model = Assessment
     model = models.IVEndpoint
     permission_classes = (AssessmentLevelPermissions,)
+    serializer_class = UnusedSerializer
+    lookup_value_regex = re_digits
 
     def get_queryset(self):
         perms = self.get_obj_perms()
@@ -30,11 +34,12 @@ class IVAssessmentViewset(
     @action(detail=True, methods=("get",), url_path="full-export", renderer_classes=PandasRenderers)
     def full_export(self, request, pk):
         self.set_legacy_attr(pk)
+        self.permission_check_user_can_view()
         self.object_list = self.get_queryset()
         exporter = exports.DataPivotEndpoint(
-            self.object_list, export_format="excel", filename=f"{self.assessment}-invitro",
+            self.object_list, filename=f"{self.assessment}-invitro"
         )
-        return Response(exporter.build_dataframe())
+        return Response(exporter.build_export())
 
 
 class IVChemical(AssessmentViewset):
@@ -69,6 +74,7 @@ class IVEndpoint(AssessmentViewset):
 class IVEndpointCleanup(CleanupFieldsBaseViewSet):
     serializer_class = serializers.IVEndpointCleanupFieldsSerializer
     model = models.IVEndpoint
+    assessment_filter_args = "assessment"
 
 
 class IVChemicalCleanup(CleanupFieldsBaseViewSet):

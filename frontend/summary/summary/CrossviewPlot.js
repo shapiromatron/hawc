@@ -357,7 +357,7 @@ class CrossviewPlot extends D3Visualization {
             },
         });
         this._set_ranges();
-        this.plot_div.css({height: "{0}px".printf(container_height)});
+        this.plot_div.css({height: `${container_height}px`});
     }
 
     _set_ranges() {
@@ -1066,6 +1066,7 @@ CrossviewPlot._filters = {
     organ: "Organ",
     effect: "Effect",
     effect_subtype: "Effect subtype",
+    endpoint_name: "Endpoint name",
     monotonicity: "Monotonicity",
     chemical: "Chemical",
 };

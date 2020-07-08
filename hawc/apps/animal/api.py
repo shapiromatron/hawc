@@ -1,14 +1,22 @@
+from django.conf import settings
+from django.core.cache import cache
 from django.db.models import Q
 from rest_framework import viewsets
 from rest_framework.decorators import action
-from rest_framework.exceptions import NotAcceptable
+from rest_framework.exceptions import NotAcceptable, PermissionDenied
 from rest_framework.response import Response
 
-from ..assessment.api import AssessmentLevelPermissions, AssessmentViewset, DoseUnitsViewset
+from ..assessment.api import (
+    AssessmentLevelPermissions,
+    AssessmentViewset,
+    DoseUnitsViewset,
+    get_assessment_id_param,
+)
 from ..assessment.models import Assessment
 from ..common.api import CleanupFieldsBaseViewSet, LegacyAssessmentAdapterMixin
-from ..common.helper import tryParseInt
+from ..common.helper import FlatExport, re_digits
 from ..common.renderers import PandasRenderers
+from ..common.serializers import HeatmapQuerySerializer, UnusedSerializer
 from ..common.views import AssessmentPermissionsMixin
 from . import exports, models, serializers
 
@@ -19,6 +27,8 @@ class AnimalAssessmentViewset(
     parent_model = Assessment
     model = models.Endpoint
     permission_classes = (AssessmentLevelPermissions,)
+    serializer_class = UnusedSerializer
+    lookup_value_regex = re_digits
 
     def get_queryset(self):
         perms = self.get_obj_perms()
@@ -32,10 +42,13 @@ class AnimalAssessmentViewset(
         Retrieve complete animal data
         """
         self.set_legacy_attr(pk)
+        self.permission_check_user_can_view()
         exporter = exports.EndpointGroupFlatComplete(
-            self.get_queryset(), export_format="excel", assessment=self.assessment,
+            self.get_queryset(),
+            filename=f"{self.assessment}-bioassay-complete",
+            assessment=self.assessment,
         )
-        return Response(exporter.build_dataframe())
+        return Response(exporter.build_export())
 
     @action(
         detail=True, methods=("get",), url_path="endpoint-export", renderer_classes=PandasRenderers
@@ -45,10 +58,101 @@ class AnimalAssessmentViewset(
         Retrieve endpoint animal data
         """
         self.set_legacy_attr(pk)
+        self.permission_check_user_can_view()
         exporter = exports.EndpointSummary(
-            self.get_queryset(), export_format="excel", assessment=self.assessment,
+            self.get_queryset(),
+            filename=f"{self.assessment}-bioassay-summary",
+            assessment=self.assessment,
         )
-        return Response(exporter.build_dataframe())
+        return Response(exporter.build_export())
+
+    @action(detail=True, url_path="study-heatmap", renderer_classes=PandasRenderers)
+    def study_heatmap(self, request, pk):
+        """
+        Return heatmap data for assessment, at the study-level (one row per study).
+
+        By default only shows data from published studies. If the query param `unpublished=true`
+        is present then results from all studies are shown.
+        """
+        self.set_legacy_attr(pk)
+        self.permission_check_user_can_view()
+        ser = HeatmapQuerySerializer(data=request.query_params)
+        ser.is_valid(raise_exception=True)
+        unpublished = ser.data["unpublished"]
+        if unpublished and not self.assessment.user_is_part_of_team(self.request.user):
+            raise PermissionDenied("You must be part of the team to view unpublished data")
+        key = f"assessment-{self.assessment.id}-bioassay-study-heatmap-pub-{unpublished}"
+        df = cache.get(key)
+        if df is None:
+            df = models.Endpoint.heatmap_study_df(self.assessment, published_only=not unpublished)
+            cache.set(key, df, settings.CACHE_1_HR)
+        export = FlatExport(df=df, filename=f"bio-study-heatmap-{self.assessment.id}")
+        return Response(export)
+
+    @action(detail=True, url_path="endpoint-heatmap", renderer_classes=PandasRenderers)
+    def endpoint_heatmap(self, request, pk):
+        """
+        Return heatmap data for assessment, at the endpoint level (one row per endpoint).
+
+        By default only shows data from published studies. If the query param `unpublished=true`
+        is present then results from all studies are shown.
+        """
+        self.set_legacy_attr(pk)
+        self.permission_check_user_can_view()
+        ser = HeatmapQuerySerializer(data=request.query_params)
+        ser.is_valid(raise_exception=True)
+        unpublished = ser.data["unpublished"]
+        if unpublished and not self.assessment.user_is_part_of_team(self.request.user):
+            raise PermissionDenied("You must be part of the team to view unpublished data")
+        key = f"assessment-{self.assessment.id}-bioassay-endpoint-heatmap-unpublished-{unpublished}"
+        df = cache.get(key)
+        if df is None:
+            df = models.Endpoint.heatmap_df(self.assessment, published_only=not unpublished)
+            cache.set(key, df, settings.CACHE_1_HR)
+        export = FlatExport(df=df, filename=f"bio-endpoint-heatmap-{self.assessment.id}")
+        return Response(export)
+
+    @action(detail=True, url_path="endpoint-doses-heatmap", renderer_classes=PandasRenderers)
+    def endpoint_doses_heatmap(self, request, pk):
+        """
+        Return heatmap data with doses for assessment, at the {endpoint + dose unit} level.
+
+        By default only shows data from published studies. If the query param `unpublished=true`
+        is present then results from all studies are shown.
+        """
+        self.set_legacy_attr(pk)
+        self.permission_check_user_can_view()
+        ser = HeatmapQuerySerializer(data=request.query_params)
+        ser.is_valid(raise_exception=True)
+        unpublished = ser.data["unpublished"]
+        if unpublished and not self.assessment.user_is_part_of_team(self.request.user):
+            raise PermissionDenied("You must be part of the team to view unpublished data")
+        key = f"assessment-{self.assessment.id}-bioassay-endpoint-doses-heatmap-unpublished-{unpublished}"
+        df = cache.get(key)
+        if df is None:
+            df = models.Endpoint.heatmap_doses_df(self.assessment, published_only=not unpublished)
+            cache.set(key, df, settings.CACHE_1_HR)
+        export = FlatExport(df=df, filename=f"bio-endpoint-doses-heatmap-{self.assessment.id}")
+        return Response(export)
+
+    @action(detail=True, renderer_classes=PandasRenderers)
+    def endpoints(self, request, pk):
+        self.set_legacy_attr(pk)
+        self.permission_check_user_can_view()
+        ser = HeatmapQuerySerializer(data=request.query_params)
+        ser.is_valid(raise_exception=True)
+        unpublished = ser.data["unpublished"]
+        if unpublished and not self.assessment.user_is_part_of_team(self.request.user):
+            raise PermissionDenied("You must be part of the team to view unpublished data")
+        key = f"assessment-{self.assessment.id}-bioassay-endpoint-list"
+        df = cache.get(key)
+        if df is None:
+            df = models.Endpoint.objects.endpoint_df(
+                self.assessment, published_only=not unpublished
+            )
+            cache.set(key, df, settings.CACHE_1_HR)
+        export = FlatExport(df=df, filename=f"bio-endpoint-lis-{self.assessment.id}")
+        return Response(export)
 
 
 class Experiment(AssessmentViewset):
@@ -78,15 +182,16 @@ class Endpoint(AssessmentViewset):
 
     @action(detail=False)
     def effects(self, request):
-        assessment_id = tryParseInt(self.request.query_params.get("assessment_id"), -1)
+        assessment_id = get_assessment_id_param(self.request)
         effects = models.Endpoint.objects.get_effects(assessment_id)
         return Response(effects)
 
     @action(detail=False)
     def rob_filter(self, request):
-        params = self.request.query_params
 
-        assessment_id = tryParseInt(params.get("assessment_id"), -1)
+        params = request.query_params
+        assessment_id = get_assessment_id_param(request)
+
         query = Q(assessment_id=assessment_id)
 
         effects = params.get("effect[]")
@@ -121,6 +226,7 @@ class AnimalGroupCleanupFieldsView(CleanupFieldsBaseViewSet):
 class EndpointCleanupFieldsView(CleanupFieldsBaseViewSet):
     serializer_class = serializers.EndpointCleanupFieldsSerializer
     model = models.Endpoint
+    assessment_filter_args = "assessment"
 
 
 class DosingRegimeCleanupFieldsView(CleanupFieldsBaseViewSet):

@@ -3,6 +3,8 @@ import _ from "lodash";
 import d3 from "d3";
 import slugify from "slugify";
 
+import renderChemicalDetails from "./components/ChemicalDetails";
+
 class HAWCUtils {
     static HAWC_NEW_WINDOW_POPUP_CLOSING = "hawcNewWindowPopupClosing";
 
@@ -33,7 +35,7 @@ class HAWCUtils {
         // builds a string of breadcrumb hyperlinks for navigation
         var links = [];
         arr.forEach(function(v) {
-            links.push('<a target="_blank" href="{0}">{1}</a>'.printf(v.url, v.name));
+            links.push(`<a target="_blank" href="${v.url}">${v.name}</a>`);
         });
         return links.join("<span> / </span>");
     }
@@ -45,7 +47,7 @@ class HAWCUtils {
         submitter.on("click", function() {
             var val = parseInt(selector_val.val(), 10);
             if (val) {
-                submitter.attr("href", "{0}?initial={1}".printf(config.base_url, val));
+                submitter.attr("href", `${config.base_url}?initial=${val}`);
                 return true;
             }
             return false;
@@ -67,13 +69,9 @@ class HAWCUtils {
         var $menu = $('<ul class="dropdown-menu">');
         items.forEach(function(d) {
             if (d instanceof Object) {
-                $menu.append(
-                    '<li><a href="{0}" class="{1}">{2}</a></li>'.printf(d.url, d.cls || "", d.text)
-                );
+                $menu.append(`<li><a href="${d.url}" class="${d.cls || ""}">${d.text}</a></li>`);
             } else if (typeof d === "string") {
-                $menu.append(
-                    '<li class="disabled"><a tabindex="-1" href="#">{0}</a></li>'.printf(d)
-                );
+                $menu.append(`<li class="disabled"><a tabindex="-1" href="#">${d}</a></li>`);
             } else {
                 console.error("unknown input type");
             }
@@ -99,40 +97,32 @@ class HAWCUtils {
     }
 
     static renderChemicalProperties(url, $div, show_header) {
-        $.get(url, function(data) {
-            if (data.status === "success") {
-                var content = [],
-                    ul = $("<ul>");
+        const handleResponse = function(data) {
+                if (data.status === "requesting") {
+                    setTimeout(tryToFetch, 1000);
+                }
+                if (data.status === "success") {
+                    renderChemicalDetails($div.get(0), data.content, show_header);
+                }
+            },
+            tryToFetch = () => {
+                fetch(url)
+                    .then(resp => resp.json())
+                    .then(handleResponse);
+            };
 
-                ul.append(`<li><b>Common name:</b> ${data.CommonName}</li>`)
-                    .append(`<li><b>CASRN:</b> ${data.CASRN}</li>`)
-                    .append(
-                        `<li><b>DTXSID:</b> <a target="_blank" href="https://comptox.epa.gov/dashboard/dsstoxdb/results?search=${data.DTXSID}">${data.DTXSID}</a></li>`
-                    )
-                    .append(`<li><b>SMILES:</b> ${data.SMILES}</li>`)
-                    .append(`<li><b>Molecular Weight:</b> ${data.MW}</li>`)
-                    .append(`<li><img src="data:image/jpeg;base64,${data.image}"></li>`);
-
-                if (show_header) content.push("<h3>Chemical Properties Information</h3>");
-
-                content.push(
-                    ul,
-                    `<p class="help-block">Chemical information provided by <a target="_blank" href="https://comptox.epa.gov/dashboard/">USEPA Chemistry Dashboard</a></p>`
-                );
-                $div.html(content);
-            }
-        });
+        tryToFetch();
     }
 
     static updateDragLocationTransform(setDragCB) {
         // a new drag location, requires binding to d3.behavior.drag,
         // and requires a _.partial injection of th settings module.
-        var getXY = function(txt) {
-            // expects an attribute like 'translate(277', '1.1920928955078125e-7)'
-            if (_.isNull(txt) || txt.indexOf("translate") !== 0) return;
-            var cmps = txt.split(",");
-            return [parseFloat(cmps[0].split("(")[1], 10), parseFloat(cmps[1].split(")")[0], 10)];
-        };
+        const re_floats = /(-?[0-9]*\.?[0-9]+)/gm,
+            getFloats = function(txt) {
+                // expects an attribute like 'translate(277', '1.1920928955078125e-7)'
+                if (_.isNull(txt) || txt.indexOf("translate") !== 0) return;
+                return [...txt.matchAll(re_floats)].map(d => parseFloat(d[0]));
+            };
 
         return d3.behavior
             .drag()
@@ -141,14 +131,28 @@ class HAWCUtils {
                 var x,
                     y,
                     p = d3.select(this),
-                    coords = getXY(p.attr("transform"));
+                    text = p.attr("transform"),
+                    coords = getFloats(text);
 
-                if (coords) {
-                    x = parseInt(coords[0] + d3.event.dx, 10);
-                    y = parseInt(coords[1] + d3.event.dy, 10);
-                    p.attr("transform", `translate(${x},${y})`);
-                    if (setDragCB) {
-                        setDragCB.bind(this)(x, y);
+                if (coords && coords.length >= 2) {
+                    if (coords.length === 2) {
+                        // no rotation
+                        x = parseInt(coords[0] + d3.event.dx);
+                        y = parseInt(coords[1] + d3.event.dy);
+                        p.attr("transform", `translate(${x},${y})`);
+                        if (setDragCB) {
+                            setDragCB.bind(this)(x, y);
+                        }
+                    } else if (coords.length === 3) {
+                        // has rotation
+                        x = parseInt(coords[0] + d3.event.dx);
+                        y = parseInt(coords[1] + d3.event.dy);
+                        p.attr("transform", `translate(${x},${y}) rotate(${coords[2]})`);
+                        if (setDragCB) {
+                            setDragCB.bind(this)(x, y);
+                        }
+                    } else {
+                        console.error(`Unknown parsing of string ${text}`);
                     }
                 }
             });
@@ -231,7 +235,8 @@ class HAWCUtils {
     }
 
     static buildUL(lst, func) {
-        return "<ul>{0}</ul>".printf(_.map(lst, func).join(""));
+        const items = _.map(lst, func).join("");
+        return `<ul>${items}</ul>`;
     }
 
     static isHTML(str) {
@@ -266,6 +271,14 @@ class HAWCUtils {
             }
         }
         return null;
+    }
+
+    static printf(str) {
+        // https://stackoverflow.com/a/4673436/906385
+        const args = Array.prototype.slice.call(arguments, 1);
+        return str.replace(/{(\d+)}/g, (match, number) =>
+            typeof args[number] !== "undefined" ? args[number] : match
+        );
     }
 }
 

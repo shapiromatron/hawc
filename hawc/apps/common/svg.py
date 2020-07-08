@@ -68,7 +68,7 @@ class HawcStyles:
 Styles = HawcStyles()
 
 
-class SVGConverter(object):
+class SVGConverter:
     def __init__(self, svg, url, width, height):
         self.url = url
         self.width = width

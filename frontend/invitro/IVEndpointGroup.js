@@ -19,21 +19,35 @@ class IVEndpointGroup {
                 return $.isNumeric(val) ? val.toHawcString() : "-";
             };
 
-        tr.append("<td>{0}</td>".printf(getDose(this.data.dose)));
+        tr.append(`<td>${getDose(this.data.dose)}</td>`);
 
-        if (opts.hasN) tr.append("<td>{0}</td>".printf(getNumeric(this.data.n)));
+        if (opts.hasN) {
+            tr.append(`<td>${getNumeric(this.data.n)}</td>`);
+        }
 
-        if (opts.hasResponse) tr.append("<td>{0}</td>".printf(getNumeric(this.data.response)));
+        if (opts.hasResponse) {
+            tr.append(`<td>${getNumeric(this.data.response)}</td>`);
+        }
 
-        if (opts.hasVariance) tr.append("<td>{0}</td>".printf(getNumeric(this.data.variance)));
+        if (opts.hasVariance) {
+            tr.append(`<td>${getNumeric(this.data.variance)}</td>`);
+        }
 
-        if (opts.hasDiffControl) tr.append("<td>{0}</td>".printf(this.data.difference_control));
+        if (opts.hasDiffControl) {
+            tr.append(`<td>${this.data.difference_control}</td>`);
+        }
 
-        if (opts.hasSigControl) tr.append("<td>{0}</td>".printf(this.data.significant_control));
+        if (opts.hasSigControl) {
+            tr.append(`<td>${this.data.significant_control}</td>`);
+        }
 
-        if (opts.hasCytotox) tr.append("<td>{0}</td>".printf(this.data.cytotoxicity_observed));
+        if (opts.hasCytotox) {
+            tr.append(`<td>${this.data.cytotoxicity_observed}</td>`);
+        }
 
-        if (opts.hasPrecip) tr.append("<td>{0}</td>".printf(this.data.precipitation_observed));
+        if (opts.hasPrecip) {
+            tr.append(`<td>${this.data.precipitation_observed}</td>`);
+        }
 
         return tr;
     }

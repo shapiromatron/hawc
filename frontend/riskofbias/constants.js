@@ -77,6 +77,34 @@ const NA_KEYS = [10, 20],
         26: "Adequate (metric) or Medium confidence (overall)",
         27: "Good (metric) or High confidence (overall)",
     },
+    FOOTNOTES = {
+        MULTIPLE_SCORES: ["✱", "Multiple scores exist"],
+        BIAS_AWAY_NULL: ["▲", "Bias away from null"],
+        BIAS_TOWARDS_NULL: ["▼", "Bias towards null"],
+    },
+    BIAS_DIRECTION_UNKNOWN = 0,
+    BIAS_DIRECTION_UP = 1,
+    BIAS_DIRECTION_DOWN = 2,
+    BIAS_DIRECTION_CHOICES = {
+        [BIAS_DIRECTION_UNKNOWN]: "? (Unknown/not specified)",
+        [BIAS_DIRECTION_UP]: "⬆ (Away from null)",
+        [BIAS_DIRECTION_DOWN]: "⬇ (Towards null)",
+    },
+    BIAS_DIRECTION_COMPACT = {
+        [BIAS_DIRECTION_UNKNOWN]: "",
+        [BIAS_DIRECTION_UP]: "▲",
+        [BIAS_DIRECTION_DOWN]: "▼",
+    },
+    BIAS_DIRECTION_SIMPLE = {
+        [BIAS_DIRECTION_UNKNOWN]: "",
+        [BIAS_DIRECTION_UP]: "⬆",
+        [BIAS_DIRECTION_DOWN]: "⬇",
+    },
+    BIAS_DIRECTION_VERBOSE = {
+        [BIAS_DIRECTION_UNKNOWN]: "",
+        [BIAS_DIRECTION_UP]: "Bias direction up (Away from null)",
+        [BIAS_DIRECTION_DOWN]: "Bias direction down (Towards null)",
+    },
     COLLAPSED_NR_FIELDS_DESCRIPTION = {
         15: "Probably high risk of bias/not reported",
         25: "Deficient/not reported",
@@ -95,7 +123,15 @@ const NA_KEYS = [10, 20],
                 .uniq()
                 .value(),
             symbolText = symbols.join(" / "),
-            symbolShortText = symbols.length === 1 ? symbols[0] : `${defaultScore.score_symbol}*`,
+            symbolShortText = symbols.length === 1 ? symbols[0] : `${defaultScore.score_symbol}✱`,
+            directions = _.chain(sortedScores)
+                .map(score => score.bias_direction)
+                .uniq()
+                .value(),
+            directionText = _.chain(directions)
+                .map(d => BIAS_DIRECTION_SIMPLE[d])
+                .value()
+                .join(""),
             reactStyle,
             svgStyle,
             cssStyle;
@@ -118,7 +154,7 @@ const NA_KEYS = [10, 20],
                     })
                     .join(""),
                 gradientId = `gradient${scores[0].id}`,
-                gradient = `<linearGradient id="${gradientId}" x1="0" y1="0" x2="5%" y2="5%" spreadMethod="repeat">${svgShades}</linearGradient>`;
+                gradient = `<linearGradient id="${gradientId}" x1="0" y1="0" x2="25%" y2="25%" spreadMethod="repeat">${svgShades}</linearGradient>`;
 
             reactStyle = {background: `repeating-linear-gradient(-45deg, ${reactGradients})`};
             cssStyle = reactStyle;
@@ -131,8 +167,11 @@ const NA_KEYS = [10, 20],
         return {
             reactStyle,
             cssStyle,
+            symbols,
             symbolText,
             symbolShortText,
+            directions,
+            directionText,
             svgStyle,
         };
     },
@@ -151,6 +190,14 @@ export {
     SCORE_SHADES,
     SCORE_TEXT_DESCRIPTION,
     SCORE_TEXT_DESCRIPTION_LEGEND,
+    FOOTNOTES,
+    BIAS_DIRECTION_UNKNOWN,
+    BIAS_DIRECTION_UP,
+    BIAS_DIRECTION_DOWN,
+    BIAS_DIRECTION_CHOICES,
+    BIAS_DIRECTION_SIMPLE,
+    BIAS_DIRECTION_VERBOSE,
+    BIAS_DIRECTION_COMPACT,
     SCORE_BAR_WIDTH_PERCENTAGE,
     COLLAPSED_NR_FIELDS_DESCRIPTION,
     getMultiScoreDisplaySettings,

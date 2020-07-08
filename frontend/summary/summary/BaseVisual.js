@@ -5,13 +5,17 @@ import HAWCUtils from "utils/HAWCUtils";
 class BaseVisual {
     constructor(data) {
         this.data = data;
-        this.data.created = new Date(this.data.created);
-        this.data.last_updated = new Date(this.data.last_updated);
+        if (this.data.created) {
+            this.data.created = new Date(this.data.created);
+        }
+        if (this.data.last_updated) {
+            this.data.last_updated = new Date(this.data.last_updated);
+        }
     }
 
     build_row(opts) {
         let arr = [
-            '<a href="{0}">{1}</a>'.printf(this.data.url, this.data.title),
+            `<a href="${this.data.url}">${this.data.title}</a>`,
             this.data.visual_type,
             HAWCUtils.truncateChars(this.data.caption),
             this.data.created.toString(),

@@ -1,13 +1,15 @@
 import $ from "$";
 
+import h from "shared/utils/helpers";
+
 class EndpointDetailRow {
     constructor(endpoint, div, hide_level, options) {
         /*
          * Prints the endpoint as row containing consisting of an EndpointTable and
          * a DRPlot.
          */
-        var plot_div_id = String.random_string(),
-            table_id = String.random_string(),
+        var plot_div_id = h.randomString(),
+            table_id = h.randomString(),
             self = this;
         this.options = options || {};
         this.div = $(div);
@@ -16,13 +18,17 @@ class EndpointDetailRow {
 
         this.div.empty();
         this.div.append('<a class="close" href="#" style="z-index:right;">×</a>');
-        this.div.append("<h4>{0}</h4>".printf(endpoint.build_breadcrumbs()));
+        this.div.append(`<h4>${endpoint.build_breadcrumbs()}</h4>`);
         this.div.data("pk", endpoint.data.pk);
         this.div.append(
-            '<div class="row-fluid"><div class="span7"><table id="{0}" class="table table-condensed table-striped"></table></div><div class="span5"><div id="{1}" style="max-width:400px;" class="d3_container"></div></div></div>'.printf(
-                table_id,
-                plot_div_id
-            )
+            `<div class="row-fluid">
+                <div class="span7">
+                    <table id="${table_id}" class="table table-condensed table-striped"></table>
+                </div>
+                <div class="span5">
+                    <div id="${plot_div_id}" style="max-width:400px;" class="d3_container"></div>
+                </div>
+            </div>`
         );
 
         this.endpoint.build_endpoint_table($("#" + table_id));

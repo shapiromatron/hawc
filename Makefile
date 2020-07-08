@@ -1,4 +1,4 @@
-.PHONY: dev docs servedocs lint format lint-py format-py lint-js format-js test
+.PHONY: build dev docs servedocs lint format lint-py format-py lint-js format-js test test-refresh coverage flynt
 .DEFAULT_GOAL := help
 define BROWSER_PYSCRIPT
 import os, webbrowser, sys
@@ -69,6 +69,11 @@ test:  ## Run python tests
 test-refresh: ## Removes mock requests and runs python tests
 	rm -rf tests/data/cassettes
 	@py.test
+
+coverage:  ## Run coverage and create html report
+	coverage run -m pytest
+	coverage html -d coverage_html
+	@echo "Report ready: ./coverage_html/index.html"
 
 flynt:  ## Run flynt (optional) using preferred config
 	@flynt --verbose --line_length=120 hawc/

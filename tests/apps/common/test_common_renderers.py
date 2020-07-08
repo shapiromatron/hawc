@@ -3,9 +3,18 @@ from io import BytesIO
 
 import pandas as pd
 import pytest
+from rest_framework.exceptions import MethodNotAllowed
 from rest_framework.response import Response
+from rest_framework.test import APIRequestFactory
 
 from hawc.apps.common import renderers
+from hawc.apps.common.helper import FlatExport
+
+
+@pytest.fixture
+def basic_export():
+    df = pd.DataFrame(data=[[1, 2], [3, 4]], columns=["a", "b"])
+    return FlatExport(df=df, filename="fn")
 
 
 def test_base_renderer():
@@ -16,18 +25,23 @@ def test_base_renderer():
         )
 
 
-def test_csv_renderer():
-    df = pd.DataFrame(data=[[1, 2], [3, 4]], columns=["a", "b"])
+def test_csv_renderer(basic_export):
     response = renderers.PandasCsvRenderer().render(
-        data=df, renderer_context={"response": Response()}
+        data=basic_export, renderer_context={"response": Response()}
     )
     assert response == "a,b\n1,2\n3,4\n"
 
 
-def test_html_renderer():
-    df = pd.DataFrame(data=[[1, 2], [3, 4]], columns=["a", "b"])
+def test_tsv_renderer(basic_export):
+    response = renderers.PandasTsvRenderer().render(
+        data=basic_export, renderer_context={"response": Response()}
+    )
+    assert response == "a\tb\n1\t2\n3\t4\n"
+
+
+def test_html_renderer(basic_export):
     response = renderers.PandasHtmlRenderer().render(
-        data=df, renderer_context={"response": Response()}
+        data=basic_export, renderer_context={"response": Response()}
     )
     assert (
         response
@@ -35,25 +49,83 @@ def test_html_renderer():
     )
 
 
-def test_json_renderer():
-    df = pd.DataFrame(data=[[1, 2], [3, 4]], columns=["a", "b"])
+def test_json_renderer(basic_export):
     response = renderers.PandasJsonRenderer().render(
-        data=df, renderer_context={"response": Response()}
+        data=basic_export, renderer_context={"response": Response()}
     )
     assert json.loads(response) == [{"a": 1, "b": 2}, {"a": 3, "b": 4}]
 
 
-def test_xlsx_renderer():
-    df = pd.DataFrame(data=[[1, 2], [3, 4]], columns=["a", "b"])
+def test_xlsx_renderer(basic_export):
     resp_obj = Response()
     assert "Content-Disposition" not in resp_obj
 
     response = renderers.PandasXlsxRenderer().render(
-        data=df, renderer_context={"response": resp_obj}
+        data=basic_export, renderer_context={"response": resp_obj}
     )
     df2 = pd.read_excel(BytesIO(response))
     assert df2.to_dict(orient="records") == [{"a": 1, "b": 2}, {"a": 3, "b": 4}]
-    assert (
-        "Content-Disposition" in "Content-Disposition"
-        and "attachment; filename=" in resp_obj["Content-Disposition"]
+    assert resp_obj["Content-Disposition"] == "attachment; filename=fn.xlsx"
+
+    # Datetimes with timezones are incompatible with Excel. Make sure that the renderer can handle DataFrames with timezoned datetimes.
+    df = pd.DataFrame(
+        data=[[1, "2000-01-01 01:00:00"], [2, "2005-12-31 02:10:00"]], columns=["count", "when"],
     )
+    df.loc[:, "when"] = df.when.astype("datetime64")
+    basic_export
+
+    # naive datetime
+    response = renderers.PandasXlsxRenderer().render(
+        data=FlatExport(df=df, filename="fn"), renderer_context={"response": Response()}
+    )
+    df2 = pd.read_excel(BytesIO(response))
+    assert df2.equals(df)
+
+    # with timezone
+    df.loc[:, "when"] = df.when.dt.tz_localize(tz="US/Eastern")
+    response = renderers.PandasXlsxRenderer().render(
+        data=FlatExport(df=df, filename="fn"), renderer_context={"response": Response()}
+    )
+    df2 = pd.read_excel(BytesIO(response))
+
+    # expected; we lost the timezone
+    with pytest.raises(TypeError) as err:
+        assert df2.equals(df) is False
+    assert "data type not understood" in str(err)
+
+    # with appropriate cast, success!
+    df2.loc[:, "when"] = df2.when.astype("datetime64").dt.tz_localize(tz="US/Eastern")
+    assert df2.equals(df) is True
+
+
+def test_xlsx_response_error(basic_export):
+    request_exception = MethodNotAllowed(method="POST")
+    response = Response(
+        data={"detail": str(request_exception)}, status=request_exception.status_code
+    )
+    # these properties are usually set by the view;
+    # we will set them manually
+    response.accepted_renderer = renderers.PandasXlsxRenderer()
+    response.accepted_media_type = response.accepted_renderer.media_type
+    response.renderer_context = {"response": response}
+    response.render()
+    # the rendered content should be a binary JSON with the exception details
+    assert response.rendered_content == b'{"detail": "Method \\"POST\\" not allowed."}'
+
+
+def test_xlsx_options_request():
+    """
+    Make sure that sending an OPTIONS to an xlsx-style export doesn't result in server error.
+
+    This test was added based on security scan; please don't remove.
+    """
+    # We will pass in an OPTIONS request to the renderer context
+    factory = APIRequestFactory()
+    request = factory.options(r"\path")
+    # The response data from an OPTIONS request is type dict
+    data = {"dummy": "data"}
+    response = renderers.PandasXlsxRenderer().render(
+        data=data, renderer_context={"response": Response(), "request": request}
+    )
+    # The renderered response should be a JSON string of the passed in data
+    assert response == '{"dummy": "data"}'

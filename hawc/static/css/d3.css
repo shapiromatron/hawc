@@ -70,6 +70,26 @@ unrecognized HTML expressions.
     fill: yellow;
 }
 
+/* critical dose points */
+.critical-dose {
+    opacity: 0.7;
+    cursor: pointer
+}
+.critical-dose-legend {
+    opacity: 0.7;
+}
+.critical-dose:hover {
+    fill: white;
+    opacity: 1;
+    stroke: black;
+    stroke-width: 3px;
+}
+.critical-dose-legend-text{
+    font-size: 0.9em;
+    fill: #646464;
+}
+
+
 /* dose-response data points */
 .dose_bars {
     fill: #a8b2d3;
@@ -186,7 +206,7 @@ td.scorecell {
 }
 
 td.domain_cell {
-    color: #757575;
+    color: #404040;
 }
 
 ol.score-details {
@@ -207,7 +227,7 @@ path.metric_arc {
 }
 
 text.domain_arc {
-    fill: #757575;
+    fill: #404040;
 }
 
 path.donuts.hovered {
@@ -319,6 +339,25 @@ path.tagslink {
 .dp_header {
     stroke: #666666;
     stroke-width: 2px;
+}
+
+/*
+ * Exploratory heatmap
+ */
+
+.exp_heatmap_cell, .exp-heatmap-axis {
+    cursor: pointer;
+}
+.exp_heatmap_cell_text {
+    text-anchor:middle;
+    dominant-baseline:central;
+}
+.exp_heatmap_label {
+    font-size:larger;
+    text-anchor:middle;
+}
+.exp_heatmap_title {
+    font-weight:bold;
 }
 
 /*

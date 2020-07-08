@@ -21,7 +21,7 @@ from ..common.views import (
     ProjectManagerOrHigherMixin,
     TeamMemberOrHigherMixin,
 )
-from . import constants, exports, forms, models
+from . import constants, forms, models
 
 
 class LitOverview(BaseList):
@@ -36,9 +36,11 @@ class LitOverview(BaseList):
         context = super().get_context_data(**kwargs)
         context["overview"] = models.Reference.objects.get_overview_details(self.assessment)
         context["manual_import"] = models.Search.objects.get_manually_added(self.assessment)
-        if context["obj_perms"]["edit"]:  # expensive, only calculate if needed
-            qryset = models.Reference.objects.get_references_ready_for_import(self.assessment)
-            context["need_import_count"] = qryset.count()
+        if context["obj_perms"]["edit"]:
+            context["need_import_count"] = models.Reference.objects.get_references_ready_for_import(
+                self.assessment
+            ).count()
+        context["can_topic_model"] = self.assessment.literature_settings.can_topic_model()
         context["tags"] = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
         return context
 
@@ -197,31 +199,6 @@ class SearchDelete(BaseDelete):
 
     def get_success_url(self):
         return reverse_lazy("lit:search_list", kwargs={"pk": self.assessment.pk})
-
-
-class SearchDownloadExcel(BaseDetail):
-    model = models.Search
-
-    def get_object(self, **kwargs):
-        obj = get_object_or_404(
-            models.Search,
-            slug=self.kwargs.get(self.slug_url_kwarg),
-            assessment=self.kwargs.get("pk"),
-        )
-        return super().get_object(object=obj)
-
-    def get(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        exporter = exports.ReferenceFlatComplete(
-            self.object.references.all(),
-            export_format="excel",
-            filename=self.object.slug,
-            sheet_name=self.object.slug,
-            assessment=self.assessment,
-            tags=models.ReferenceFilterTag.get_all_tags(self.assessment.id, json_encode=False),
-            include_parent_tag=False,
-        )
-        return exporter.build_response()
 
 
 class SearchQuery(BaseUpdate):
@@ -565,6 +542,28 @@ class RefVisualization(BaseDetail):
         return context
 
 
+class RefTopicModel(BaseDetail):
+    model = models.LiteratureAssessment
+    template_name = "lit/topic_model.html"
+
+    def get_object(self, queryset=None):
+        # use the assessment_id as the primary key instead of the models.LiteratureAssessment
+        assessment_id = self.kwargs.get(self.pk_url_kwarg)
+        object_ = get_object_or_404(self.model, assessment_id=assessment_id)
+        return super().get_object(object=object_)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["num_references"] = self.object.assessment.references.count()
+        context["data"] = json.dumps(
+            dict(
+                topicModelUrl=self.object.get_topic_model_url(),
+                topicModelRefreshUrl=self.object.get_topic_model_refresh_url(),
+            )
+        )
+        return context
+
+
 class TagsJSON(BaseDetail):
     model = Assessment
 
@@ -591,6 +590,23 @@ class TagsUpdate(ProjectManagerOrHigherMixin, DetailView):
 
     def get_assessment(self, request, *args, **kwargs):
         return self.get_object()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["lit_assesment_update_url"] = self.assessment.literature_settings.get_update_url()
+        return context
+
+
+class LiteratureAssessmentUpdate(ProjectManagerOrHigherMixin, BaseUpdate):
+    success_message = "Literature assessment settings updated."
+    model = models.LiteratureAssessment
+    form_class = forms.LiteratureAssessmentForm
+
+    def get_assessment(self, request, *args, **kwargs):
+        return self.get_object().assessment
+
+    def get_success_url(self):
+        return reverse_lazy("lit:tags_update", args=(self.assessment.id,))
 
 
 class TagsCopy(AssessmentPermissionsMixin, MessageMixin, FormView):

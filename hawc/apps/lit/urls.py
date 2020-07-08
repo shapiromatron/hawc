@@ -7,8 +7,8 @@ router = DefaultRouter()
 router.register(r"assessment", api.LiteratureAssessmentViewset, basename="assessment")
 router.register(r"reference", api.Reference, basename="reference")
 router.register(r"search", api.SearchViewset, basename="search")
-router.register(r"tags", api.ReferenceFilterTag, basename="tags")
-router.register(r"reference-cleanup", api.ReferenceCleanup, basename="reference-cleanup")
+router.register(r"tags", api.ReferenceFilterTagViewset, basename="tags")
+router.register(r"reference-cleanup", api.ReferenceCleanupViewset, basename="reference-cleanup")
 
 app_name = "lit"
 urlpatterns = [
@@ -18,6 +18,11 @@ urlpatterns = [
     url(r"^assessment/tags/json/$", views.TagsJSON.as_view(), name="tags_list"),
     url(r"^assessment/(?P<pk>\d+)/tags/update/$", views.TagsUpdate.as_view(), name="tags_update",),
     url(r"^assessment/(?P<pk>\d+)/tags/update/copy/$", views.TagsCopy.as_view(), name="tags_copy",),
+    url(
+        r"^assessment/(?P<pk>\d+)/update/$",
+        views.LiteratureAssessmentUpdate.as_view(),
+        name="literature_assessment_update",
+    ),
     # Reference-level details
     url(r"^reference/(?P<pk>\d+)/$", views.RefDetail.as_view(), name="ref_detail"),
     url(r"^reference/(?P<pk>\d+)/edit/$", views.RefEdit.as_view(), name="ref_edit"),
@@ -40,6 +45,11 @@ urlpatterns = [
         r"^assessment/(?P<pk>\d+)/references/visualization/$",
         views.RefVisualization.as_view(),
         name="ref_visual",
+    ),
+    url(
+        r"^assessment/(?P<pk>\d+)/references/topic-model/$",
+        views.RefTopicModel.as_view(),
+        name="topic_model",
     ),
     url(
         r"^assessment/(?P<pk>\d+)/references/search/$",
@@ -83,11 +93,6 @@ urlpatterns = [
         r"^assessment/(?P<pk>\d+)/search/(?P<slug>[\w-]+)/query/$",
         views.SearchQuery.as_view(),
         name="search_query",
-    ),
-    url(
-        r"^assessment/(?P<pk>\d+)/search/(?P<slug>[\w-]+)/download/$",
-        views.SearchDownloadExcel.as_view(),
-        name="search_download_excel",
     ),
     # CRUD import
     url(r"^assessment/(?P<pk>\d+)/import/new/$", views.ImportNew.as_view(), name="import_new",),

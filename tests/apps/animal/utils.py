@@ -12,7 +12,10 @@ def build_experiments_for_permission_testing(obj):
     )
 
     obj.experiment_final = models.Experiment.objects.create(
-        study=obj.study_final, name="experiment name", type="Ac", description="No description.",
+        study=obj.study_final_bioassay,
+        name="experiment name",
+        type="Ac",
+        description="No description.",
     )
 
 

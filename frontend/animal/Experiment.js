@@ -9,16 +9,16 @@ class Experiment {
         this.data = data;
     }
 
+    static get_detail_url(id) {
+        return `/ani/experiment/${id}/`;
+    }
+
     static get_object(id, cb) {
-        $.get("/ani/api/experiment/{0}/".printf(id), function(d) {
-            cb(new Experiment(d));
-        });
+        $.get(`/ani/api/experiment/${id}/`, d => cb(new Experiment(d)));
     }
 
     static displayAsModal(id) {
-        Experiment.get_object(id, function(d) {
-            d.displayAsModal();
-        });
+        Experiment.get_object(id, d => d.displayAsModal());
     }
 
     build_breadcrumbs() {
@@ -46,7 +46,7 @@ class Experiment {
             getPurity = function() {
                 var qualifier =
                     self.data.purity_qualifier === "=" ? "" : self.data.purity_qualifier;
-                return self.data.purity ? "{0}{1}%".printf(qualifier, self.data.purity) : "No";
+                return self.data.purity ? `${qualifier}${self.data.purity}%` : "No";
             },
             tbl,
             casTd;

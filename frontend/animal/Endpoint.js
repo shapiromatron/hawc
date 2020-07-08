@@ -28,18 +28,20 @@ class Endpoint extends Observee {
         this.unpack_doses();
     }
 
-    static get_endpoint_url(id) {
-        return "/ani/api/endpoint/{0}/".printf(id);
+    static get_detail_url(id) {
+        return `/ani/endpoint/${id}/`;
+    }
+
+    static get_api_url(id) {
+        return `/ani/api/endpoint/${id}/`;
     }
 
     static get_object(id, cb) {
-        $.get(Endpoint.get_endpoint_url(id), function(d) {
-            cb(new Endpoint(d));
-        });
+        $.get(Endpoint.get_api_url(id), d => cb(new Endpoint(d)));
     }
 
     static getTagURL(assessment, slug) {
-        return "/ani/assessment/{0}/endpoints/tags/{1}/".printf(assessment, slug);
+        return `/ani/assessment/${assessment}/endpoints/tags/${slug}/`;
     }
 
     static displayAsModal(id, opts) {
@@ -206,8 +208,10 @@ class Endpoint extends Observee {
     }
 
     get_pd_string(eg) {
-        var txt = "{0}%".printf(eg.response);
-        if (eg.lower_ci && eg.upper_ci) txt += " ({0}-{1})".printf(eg.lower_ci, eg.upper_ci);
+        var txt = `${eg.response}%`;
+        if (eg.lower_ci && eg.upper_ci) {
+            txt += ` (${eg.lower_ci}-${eg.upper_ci})`;
+        }
         return txt;
     }
 
@@ -234,9 +238,9 @@ class Endpoint extends Observee {
             txt;
 
         // build top-row
-        txt = "Groups ".printf(this.doses[0].name);
+        txt = "Groups ";
         this.doses.forEach(function(v, i) {
-            txt += i === 0 ? v.name : " ({0})".printf(v.name);
+            txt += i === 0 ? v.name : ` (${v.name})`;
         });
 
         tr1.append(
@@ -257,31 +261,28 @@ class Endpoint extends Observee {
                 return v.values[i].dose.toHawcString();
             });
             txt = doses[0];
-            if (doses.length > 1) txt += " ({0})".printf(doses.slice(1, doses.length).join(", "));
-            tr2.append("<th>{0}</th>".printf(txt));
+            if (doses.length > 1) {
+                txt += ` (${doses.slice(1, doses.length).join(", ")})`;
+            }
+            tr2.append(`<th>${txt}</th>`);
         }
 
         return {html: [tr1, tr2], ncols: nCols};
     }
 
     build_ag_no_dr_li() {
-        return '<li><a href="{0}">{1}</a></li>'.printf(this.data.url, this.data.name);
+        return `<li><a href="${this.data.url}">${this.data.name}</a></li>`;
     }
 
     build_ag_n_key() {
         return _.map(this.data.groups, function(v, i) {
-            return v.n || "NR-{}".printf(i);
+            return v.n || `NR-${i}`;
         }).join("-");
     }
 
     _build_ag_n_row(options) {
-        return $(
-            "<tr><td>Sample Size</td><td>-</td><td>-</td>{0}</tr>".printf(
-                this.data.groups.map(function(v) {
-                    return "<td>{0}</td>".printf(v.n || "-");
-                })
-            )
-        );
+        const tds = this.data.groups.map(v => `<td>${v.n || "-"}</td>`);
+        return $(`<tr><td>Sample Size</td><td>-</td><td>-</td>${tds}</tr>`);
     }
 
     _build_ag_response_row(footnote_object) {
@@ -317,20 +318,15 @@ class Endpoint extends Observee {
                     txt = "";
                     if (i > 0 && _.isNumber(v.response) && dr_control.response > 0) {
                         txt = self._continuous_percent_difference_from_control(v, dr_control);
-                        txt = txt === "NR" ? "" : " ({0}%)".printf(txt);
+                        txt = txt === "NR" ? "" : `" (${txt}%)"`;
                     }
-                    td.html("{0}{1}{2}".printf(response, txt, footnotes));
+                    td.html(`${response}${txt}${footnotes}`);
                 } else if (data_type === "P") {
-                    td.html("{0}{1}".printf(self.get_pd_string(v), footnotes));
+                    td.html(`${self.get_pd_string(v)}${footnotes}`);
                 } else if (["D", "DC"].indexOf(data_type) >= 0) {
-                    td.html(
-                        "{0}/{1} ({2}%){3}".printf(
-                            v.incidence,
-                            v.n,
-                            self._dichotomous_percent_change_incidence(v),
-                            self.add_endpoint_group_footnotes(footnote_object, i)
-                        )
-                    );
+                    const percentChange = self._dichotomous_percent_change_incidence(v),
+                        footnotes = self.add_endpoint_group_footnotes(footnote_object, i);
+                    td.html(`${v.incidence}/${v.n} (${percentChange}%)${footnotes}`);
                 } else {
                     console.log("unknown data-type");
                 }
@@ -341,13 +337,17 @@ class Endpoint extends Observee {
     }
 
     _endpoint_detail_td() {
-        return '<a class="endpoint-selector" href="#">{0} ({1})</a> \
-                <a class="pull-right" title="View endpoint details (new window)" href="{2}"> \
-                <i class="icon-share-alt"></i></a>'.printf(
-            this.data.name,
-            this.data.response_units,
-            this.data.url
-        );
+        return `
+            <a
+                class="endpoint-selector"
+                href="#">${this.data.name} (${this.data.response_units})</a>
+            <a
+                class="pull-right"
+                title="View endpoint details (new window)"
+                href="${this.data.url}">
+                <i class="icon-share-alt"></i>
+            </a>
+        `;
     }
 
     build_details_table(div) {
@@ -368,14 +368,15 @@ class Endpoint extends Observee {
                 return el;
             },
             getTaglist = function(tags, assessment_id) {
-                if (tags.length === 0) return false;
+                if (tags.length === 0) {
+                    return false;
+                }
                 var ul = $('<ul class="nav nav-pills nav-stacked">');
                 tags.forEach(function(v) {
                     ul.append(
-                        '<li><a href="{0}">{1}</a></li>'.printf(
-                            Endpoint.getTagURL(assessment_id, v.slug),
+                        `<li><a href="${Endpoint.getTagURL(assessment_id, v.slug)}">${
                             v.name
-                        )
+                        }</a></li>`
                     );
                 });
                 return ul;
@@ -468,11 +469,8 @@ class Endpoint extends Observee {
         var footnotes = [],
             self = this;
         if (self.data.groups[endpoint_group_index].significant) {
-            footnotes.push(
-                "Significantly different from control (<i>p</i> < {0})".printf(
-                    self.data.groups[endpoint_group_index].significance_level
-                )
-            );
+            const sigLevel = self.data.groups[endpoint_group_index].significance_level;
+            footnotes.push(`Significantly different from control (<i>p</i> < ${sigLevel})`);
         }
         if (self.data.NOEL == endpoint_group_index) {
             footnotes.push(`${this.data.noel_names.noel} (${this.data.noel_names.noel_help_text})`);
@@ -488,7 +486,7 @@ class Endpoint extends Observee {
 
     build_endpoint_list_row() {
         var self = this,
-            link = '<a href="{0}" target="_blank">{1}</a>'.printf(this.data.url, this.data.name),
+            link = `<a href="${this.data.url}" target="_blank">${this.data.name}</a>`,
             detail = $(
                 '<i class="fa fa-eye eyeEndpointModal" title="quick view" style="display: none">'
             ).click(function() {
@@ -496,21 +494,15 @@ class Endpoint extends Observee {
             }),
             ep = $("<span>")
                 .append(link, detail)
-                .hover(detail.fadeIn.bind(detail), detail.fadeOut.bind(detail));
+                .hover(detail.fadeIn.bind(detail), detail.fadeOut.bind(detail)),
+            study = this.data.animal_group.experiment.study,
+            experiment = this.data.animal_group.experiment,
+            animalGroup = this.data.animal_group;
 
         return [
-            '<a href="{0}" target="_blank">{1}</a>'.printf(
-                this.data.animal_group.experiment.study.url,
-                this.data.animal_group.experiment.study.short_citation
-            ),
-            '<a href="{0}" target="_blank">{1}</a>'.printf(
-                this.data.animal_group.experiment.url,
-                this.data.animal_group.experiment.name
-            ),
-            '<a href="{0}" target="_blank">{1}</a>'.printf(
-                this.data.animal_group.url,
-                this.data.animal_group.name
-            ),
+            `<a href="${study.url}" target="_blank">${study.short_citation}</a>`,
+            `<a href="${experiment.url}" target="_blank">${experiment.name}</a>`,
+            `<a href="${animalGroup.url}" target="_blank">${animalGroup.name}</a>`,
             ep,
             this.dose_units,
             this.get_special_dose_text("NOEL"),
@@ -541,7 +533,7 @@ class Endpoint extends Observee {
         var complete = opts ? opts.complete : true,
             self = this,
             modal = new HAWCModal(),
-            title = "<h4>{0}</h4>".printf(this.build_breadcrumbs()),
+            title = `<h4>${this.build_breadcrumbs()}</h4>`,
             $details = $('<div class="span12">'),
             $plot = $('<div style="height:300px; width:300px">'),
             $tbl = $('<table class="table table-condensed table-striped">'),

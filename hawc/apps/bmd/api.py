@@ -8,6 +8,7 @@ from . import models, serializers, tasks
 class Session(AssessmentViewset):
     assessment_filter_args = "endpoint__assessment"
     model = models.Session
+    lookup_value_regex = r"\d+"
 
     def get_serializer_class(self):
         if self.action == "execute":

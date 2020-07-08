@@ -1,8 +1,11 @@
 import pandas as pd
 import plotly.express as px
+from django.conf import settings
+from django.core.cache import cache
 from django.db.models import Count
+from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, mixins, viewsets
+from rest_framework import exceptions, filters, mixins, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
@@ -14,7 +17,9 @@ from ..assessment.api import (
 )
 from ..assessment.models import Assessment
 from ..common.api import CleanupFieldsBaseViewSet, LegacyAssessmentAdapterMixin
+from ..common.helper import FlatExport, re_digits
 from ..common.renderers import PandasRenderers
+from ..common.serializers import UnusedSerializer
 from . import exports, models, serializers
 
 
@@ -22,6 +27,8 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
     parent_model = Assessment
     model = Assessment
     permission_classes = (AssessmentLevelPermissions,)
+    serializer_class = UnusedSerializer
+    lookup_value_regex = re_digits
 
     def get_queryset(self):
         return self.model.objects.all()
@@ -33,7 +40,8 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         """
         instance = self.get_object()
         df = models.ReferenceFilterTag.as_dataframe(instance.id)
-        return Response(df)
+        export = FlatExport(df=df, filename=f"reference-tags-{self.assessment.id}")
+        return Response(export)
 
     @action(
         detail=True, methods=("get",), renderer_classes=PandasRenderers, url_path="reference-ids"
@@ -45,7 +53,8 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         instance = self.get_object()
         qs = models.Reference.objects.assessment_qs(instance.id)
         df = models.Reference.objects.identifiers_dataframe(qs)
-        return Response(df)
+        export = FlatExport(df=df, filename=f"reference-ids-{self.assessment.id}")
+        return Response(export)
 
     @action(
         detail=True,
@@ -67,7 +76,8 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
             serializer.bulk_create_tags()
 
         df = models.ReferenceTags.objects.as_dataframe(instance.id)
-        return Response(df)
+        export = FlatExport(df=df, filename=f"reference-tags-{self.assessment.id}")
+        return Response(export)
 
     @action(
         detail=True, methods=("get",), url_path="reference-year-histogram",
@@ -109,6 +119,25 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         return Response(payload)
 
     @action(
+        detail=True, methods=("get",), url_path="topic-model",
+    )
+    def topic_model(self, request, pk):
+        assessment = self.get_object()
+        fig_dict = assessment.literature_settings.get_topic_tsne_fig_dict()
+        return Response(fig_dict)
+
+    @action(
+        detail=True, methods=("post",), url_path="topic-model-request-refresh",
+    )
+    def topic_model_request_refresh(self, request, pk):
+        assessment = self.get_object()
+        if not assessment.user_can_edit_object(request.user):
+            raise exceptions.PermissionDenied()
+        assessment.literature_settings.topic_tsne_refresh_requested = timezone.now()
+        assessment.literature_settings.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @action(
         detail=True,
         methods=("get",),
         url_path="references-download",
@@ -118,36 +147,95 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         """
         Get all references in an assessment.
         """
-
-        self.set_legacy_attr(pk)
-
-        tags = models.ReferenceFilterTag.get_all_tags(self.assessment.id, json_encode=False)
-
+        assessment = self.get_object()
+        tags = models.ReferenceFilterTag.get_all_tags(assessment.id, json_encode=False)
         exporter = exports.ReferenceFlatComplete(
-            models.Reference.objects.get_qs(self.assessment).prefetch_related("identifiers"),
-            export_format="excel",
-            assessment=self.assessment,
+            models.Reference.objects.get_qs(assessment)
+            .prefetch_related("identifiers")
+            .order_by("id"),
+            filename=f"references-{assessment}",
+            assessment=assessment,
             tags=tags,
         )
+        return Response(exporter.build_export())
 
-        return Response(exporter.build_dataframe())
+    @action(detail=True, renderer_classes=PandasRenderers, url_path="tag-heatmap")
+    def tag_heatmap(self, request, pk):
+        """
+        Get tags formatted in a long format desireable for heatmaps.
+        """
+        instance = self.get_object()
+        key = f"assessment-{instance.id}-lit-tag-heatmap"
+        df = cache.get(key)
+        if df is None:
+            df = models.Reference.objects.heatmap_dataframe(instance.id)
+            cache.set(key, df, settings.CACHE_1_HR)
+        export = FlatExport(df=df, filename=f"df-{instance.id}")
+        return Response(export)
 
 
-class SearchViewset(viewsets.GenericViewSet, mixins.CreateModelMixin):
+class SearchViewset(mixins.CreateModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     model = models.Search
     serializer_class = serializers.SearchSerializer
     permission_classes = (AssessmentLevelPermissions,)
+    lookup_value_regex = re_digits
 
     def get_queryset(self):
         return self.model.objects.all()
 
+    @action(
+        detail=True, methods=("get",), renderer_classes=PandasRenderers,
+    )
+    def references(self, request, pk):
+        """
+        Return all references for a given Search
+        """
+        instance = self.get_object()
+        exporter = exports.ReferenceFlatComplete(
+            instance.references.all(),
+            filename=f"{instance.assessment}-search-{instance.slug}",
+            assessment=self.assessment,
+            tags=models.ReferenceFilterTag.get_all_tags(self.assessment.id, json_encode=False),
+            include_parent_tag=False,
+        )
+        return Response(exporter.build_export())
 
-class ReferenceFilterTag(AssessmentRootedTagTreeViewset):
+
+class ReferenceFilterTagViewset(AssessmentRootedTagTreeViewset):
     model = models.ReferenceFilterTag
     serializer_class = serializers.ReferenceFilterTagSerializer
 
+    @action(detail=True, renderer_classes=PandasRenderers)
+    def references(self, request, pk):
+        """
+        Return all references for a selected tag; does not include tag-descendants.
+        """
+        tag = self.get_object()
+        exporter = exports.ReferenceFlatComplete(
+            queryset=models.Reference.objects.filter(tags=tag).order_by("id"),
+            filename=f"{self.assessment}-{tag.slug}",
+            assessment=self.assessment,
+            tags=self.model.get_all_tags(self.assessment.id, json_encode=False),
+            include_parent_tag=False,
+        )
+        return Response(exporter.build_export())
 
-class ReferenceCleanup(CleanupFieldsBaseViewSet):
+    @action(detail=True, url_path="references-table-builder", renderer_classes=PandasRenderers)
+    def references_table_builder(self, request, pk):
+        """
+        Return all references for a selected tag in table-builder import format; does not include
+        tag-descendants.
+        """
+        tag = self.get_object()
+        exporter = exports.TableBuilderFormat(
+            queryset=models.Reference.objects.filter(tags=tag).order_by("id"),
+            filename=f"{self.assessment}-{tag.slug}",
+            assessment=self.assessment,
+        )
+        return Response(exporter.build_export())
+
+
+class ReferenceCleanupViewset(CleanupFieldsBaseViewSet):
     serializer_class = serializers.ReferenceCleanupFieldsSerializer
     model = models.Reference
     assessment_filter_args = "assessment"

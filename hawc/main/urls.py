@@ -3,8 +3,36 @@ from django.conf import settings
 from django.conf.urls import include, url
 from django.contrib import admin
 from django.views.generic import TemplateView
+from rest_framework import permissions
+from rest_framework.schemas import get_schema_view
 
+import hawc.apps.animal.urls
+import hawc.apps.assessment.urls
+import hawc.apps.bmd.urls
+import hawc.apps.epi.urls
+import hawc.apps.epimeta.urls
+import hawc.apps.invitro.urls
+import hawc.apps.lit.urls
+import hawc.apps.mgmt.urls
+import hawc.apps.riskofbias.urls
+import hawc.apps.study.urls
+import hawc.apps.summary.urls
+from hawc import __version__
 from hawc.apps.assessment import views
+
+open_api_patterns = [
+    url(r"^ani/api/", include(hawc.apps.animal.urls.router.urls)),
+    url(r"^assessment/api/", include(hawc.apps.assessment.urls.router.urls)),
+    url(r"^bmd/api/", include(hawc.apps.bmd.urls.router.urls)),
+    url(r"^epi/api/", include(hawc.apps.epi.urls.router.urls)),
+    url(r"^epi-meta/api/", include(hawc.apps.epimeta.urls.router.urls)),
+    url(r"^in-vitro/api/", include(hawc.apps.invitro.urls.router.urls)),
+    url(r"^lit/api/", include(hawc.apps.lit.urls.router.urls)),
+    url(r"^mgmt/api/", include(hawc.apps.mgmt.urls.router.urls)),
+    url(r"^rob/api/", include(hawc.apps.riskofbias.urls.router.urls)),
+    url(r"^study/api/", include(hawc.apps.study.urls.router.urls)),
+    url(r"^summary/api/", include(hawc.apps.summary.urls.router.urls)),
+]
 
 urlpatterns = [
     # Portal
@@ -41,8 +69,23 @@ urlpatterns = [
         views.AdminDashboard.as_view(),
         name="admin_dashboard",
     ),
+    url(
+        rf"^admin/{settings.ADMIN_URL_PREFIX}/assessment-size/$",
+        views.AdminAssessmentSize.as_view(),
+        name="admin_assessment_size",
+    ),
     url(rf"^admin/{settings.ADMIN_URL_PREFIX}/", admin.site.urls),
     url(r"^selectable/", include("selectable.urls")),
+    url(
+        r"^openapi/$",
+        get_schema_view(
+            title="HAWC",
+            version=__version__,
+            patterns=open_api_patterns,
+            permission_classes=(permissions.IsAdminUser,),
+        ),
+        name="openapi",
+    ),
 ]
 
 # only for DEBUG, want to use static server otherwise

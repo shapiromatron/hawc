@@ -1,7 +1,7 @@
 import pytest
 
 from hawc.apps.assessment.models import Assessment
-from hawc.apps.lit.models import Reference
+from hawc.apps.lit.models import Reference, ReferenceTags
 from hawc.apps.lit.serializers import BulkReferenceTagSerializer
 
 
@@ -32,6 +32,12 @@ def test_BulkReferenceTagSerializer(db_keys):
     assert serializer.is_valid() is False
     assert serializer.errors["csv"][0] == "All tag ids are not from assessment 1"
 
+    # invalid ids
+    data = {"operation": "append", "csv": "reference_id,tag_id\n-1,-1"}
+    serializer = BulkReferenceTagSerializer(data=data, context=context)
+    assert serializer.is_valid() is False
+    assert serializer.errors["csv"][0] == "All reference ids are not from assessment 1"
+
     # check success
     reference = Reference.objects.get(id=db_keys.study_working)
     assert reference.tags.count() == 0
@@ -60,3 +66,22 @@ def test_BulkReferenceTagSerializer(db_keys):
     reference.refresh_from_db()
     assert reference.tags.count() == 1
     reference.tags.all()[0].id == 4
+
+    # check duplicates
+    data = {"operation": "replace", "csv": "reference_id,tag_id\n1,3\n1,3"}
+    serializer = BulkReferenceTagSerializer(data=data, context=context)
+    assert serializer.is_valid() is False
+    assert serializer.errors["csv"][0] == "CSV contained duplicates; please remove before importing"
+
+    # check that a 2x2 table works
+    csv = "reference_id,tag_id\n1,3\n1,4\n3,3\n3,4\n"
+    data = {"operation": "replace", "csv": csv}
+    serializer = BulkReferenceTagSerializer(data=data, context=context)
+    assert serializer.is_valid() is True
+    serializer.bulk_create_tags()
+    assert (
+        ReferenceTags.objects.as_dataframe(db_keys.assessment_working).to_csv(
+            index=False, line_terminator="\n"
+        )
+        == csv
+    )

@@ -1,14 +1,19 @@
 import html
 import json
 import logging
+import pickle
 import re
+from io import BytesIO
 from math import ceil
 from typing import Dict, List, Optional
 from urllib import parse
 
+import pandas as pd
 from django.apps import apps
 from django.conf import settings
-from django.core.exceptions import ValidationError
+from django.core.cache import cache
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
+from django.core.files.base import ContentFile
 from django.db import models, transaction
 from django.urls import reverse
 from django.utils import timezone
@@ -17,8 +22,15 @@ from litter_getter import pubmed, ris
 from taggit.models import ItemBase
 from treebeard.mp_tree import MP_Node
 
+from ...refml import topics
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper
-from ..common.models import AssessmentRootMixin, CustomURLField, NonUniqueTagBase, get_crumbs
+from ..common.models import (
+    AssessmentRootMixin,
+    CustomURLField,
+    NonUniqueTagBase,
+    get_crumbs,
+    get_private_data_storage,
+)
 from . import constants, managers, tasks
 
 
@@ -32,6 +44,121 @@ class TooManyPubMedResults(Exception):
 
     def __str__(self):
         return repr(self.value)
+
+
+class LiteratureAssessment(models.Model):
+
+    DEFAULT_EXTRACTION_TAG = "Inclusion"
+    TOPIC_MODEL_MIN_REFERENCES = 50
+
+    assessment = models.OneToOneField(
+        "assessment.Assessment",
+        editable=False,
+        on_delete=models.CASCADE,
+        related_name="literature_settings",
+    )
+    extraction_tag = models.ForeignKey(
+        "lit.ReferenceFilterTag",
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+        help_text="All references or child references of this tag will be marked as ready for extraction.",
+    )
+    topic_tsne_data = models.FileField(
+        blank=True,
+        null=True,
+        editable=False,
+        upload_to="lit/topic_model",
+        storage=get_private_data_storage(),
+    )
+    topic_tsne_refresh_requested = models.DateTimeField(null=True)
+    topic_tsne_last_refresh = models.DateTimeField(null=True)
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    @classmethod
+    def build_default(cls, assessment: "assessment.Assessment") -> "LiteratureAssessment":
+        extraction_tag = (
+            ReferenceFilterTag.get_assessment_root(assessment.id)
+            .get_children()
+            .filter(name=cls.DEFAULT_EXTRACTION_TAG)
+            .first()
+        )
+
+        return cls.objects.create(
+            assessment=assessment, extraction_tag_id=extraction_tag.id if extraction_tag else None
+        )
+
+    def get_assessment(self):
+        return self.assessment
+
+    def get_update_url(self) -> str:
+        return reverse("lit:literature_assessment_update", args=(self.id,))
+
+    def get_topic_model_url(self) -> str:
+        return reverse("lit:api:assessment-topic-model", args=(self.assessment_id,))
+
+    def get_topic_model_refresh_url(self) -> str:
+        return reverse("lit:api:assessment-topic-model-request-refresh", args=(self.assessment_id,))
+
+    @property
+    def topic_tsne_fig_dict_cache_key(self) -> str:
+        return f"{self.assessment_id}_topic_tsne_data"
+
+    @property
+    def topic_tsne_data_filename(self) -> str:
+        return f"assessment-{self.assessment_id}.pkl"
+
+    def create_topic_tsne_data(self) -> None:
+        columns = ("id", "title", "abstract")
+        refs = Reference.objects.filter(assessment=self.assessment_id).values_list(*columns)
+        df = pd.DataFrame(data=refs, columns=columns)
+        df.loc[:, "text"] = df.title + " " + df.abstract
+        df.loc[:, "title"] = df.title.apply(topics.textwrapper)
+        df.drop(columns=["abstract"], inplace=True)
+
+        df, topics_df = topics.topic_model_tsne(df)
+
+        f1 = BytesIO()
+        df.to_parquet(f1, engine="pyarrow", index=False)
+
+        f2 = BytesIO()
+        topics_df.to_parquet(f2, engine="pyarrow", index=False)
+
+        data = dict(df=f1.getvalue(), topics=f2.getvalue())
+
+        if self.has_topic_model():
+            self.topic_tsne_data.delete(save=False)
+        self.topic_tsne_refresh_requested = None
+        self.topic_tsne_last_refresh = timezone.now()
+        self.topic_tsne_data.save(self.topic_tsne_data_filename, ContentFile(pickle.dumps(data)))
+        cache.delete(self.topic_tsne_fig_dict_cache_key)
+
+    def get_topic_tsne_data(self) -> Dict:
+        if not self.has_topic_model():
+            raise ValueError("No data available.")
+        data = pickle.load(self.topic_tsne_data.file.file)
+        data["df"] = pd.read_parquet(BytesIO(data["df"]), engine="pyarrow")
+        data["topics"] = pd.read_parquet(BytesIO(data["topics"]), engine="pyarrow")
+        return data
+
+    def get_topic_tsne_fig_dict(self) -> Dict:
+        fig_dict = cache.get(self.topic_tsne_fig_dict_cache_key)
+        if fig_dict is None:
+            data = self.get_topic_tsne_data()
+            fig = topics.tsne_to_scatterplot(data)
+            fig_dict = fig.to_dict()
+            cache.set(self.topic_tsne_fig_dict_cache_key, fig_dict, 60 * 60)  # cache for 1 hour
+        return fig_dict
+
+    def has_topic_model(self) -> bool:
+        return self.topic_tsne_data.name is not None and self.topic_tsne_data.name != ""
+
+    def can_topic_model(self) -> bool:
+        return self.assessment.references.count() >= self.TOPIC_MODEL_MIN_REFERENCES
+
+    def can_request_refresh(self) -> bool:
+        return self.can_topic_model and self.topic_tsne_refresh_requested is None
 
 
 class Search(models.Model):
@@ -128,7 +255,7 @@ class Search(models.Model):
             prior_query = None
             try:
                 prior_query = PubMedQuery.objects.filter(search=self.pk).latest("query_date")
-            except Exception:
+            except ObjectDoesNotExist:
                 pass
             pubmed = PubMedQuery(search=self)
             results_dictionary = pubmed.run_new_query(prior_query)
@@ -361,12 +488,13 @@ class PubMedQuery(models.Model):
         # Create new PubMed identifiers for any PMIDs which are not already in
         # our database.
         new_ids = json.loads(self.results)["added"]
-        existing_pmids = list(
-            Identifiers.objects.filter(
+        existing_pmids = [
+            int(id_)
+            for id_ in Identifiers.objects.filter(
                 database=constants.PUBMED, unique_id__in=new_ids
             ).values_list("unique_id", flat=True)
-        )
-        ids_to_add = [int(id) for id in set(new_ids) - set(existing_pmids)]
+        ]
+        ids_to_add = list(set(new_ids) - set(existing_pmids))
         ids_to_add_len = len(ids_to_add)
 
         block_size = 1000.0
@@ -517,7 +645,7 @@ class ReferenceFilterTag(NonUniqueTagBase, AssessmentRootMixin, MP_Node):
         """
         root = cls.add_root(name=cls.get_assessment_root_name(assessment.pk))
 
-        inc = root.add_child(name="Inclusion")
+        inc = root.add_child(name=LiteratureAssessment.DEFAULT_EXTRACTION_TAG)
         inc.add_child(name="Human Study")
         inc.add_child(name="Animal Study")
         inc.add_child(name="Mechanistic Study")

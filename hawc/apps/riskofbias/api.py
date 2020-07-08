@@ -1,10 +1,10 @@
-from django.core.exceptions import PermissionDenied
+from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework_extensions.mixins import ListUpdateModelMixin
+from rest_framework.serializers import ValidationError
 
 from ..assessment.api import (
     AssessmentEditViewset,
@@ -12,12 +12,14 @@ from ..assessment.api import (
     AssessmentViewset,
     DisabledPagination,
     InAssessmentFilter,
-    RequiresAssessmentID,
+    get_assessment_id_param,
 )
 from ..assessment.models import Assessment, TimeSpentEditing
-from ..common.api import BulkIdFilter, LegacyAssessmentAdapterMixin
+from ..common.api import CleanupFieldsBaseViewSet, LegacyAssessmentAdapterMixin
+from ..common.helper import re_digits, tryParseInt
 from ..common.renderers import PandasRenderers
-from ..common.views import AssessmentPermissionsMixin, TeamMemberOrHigherMixin
+from ..common.serializers import UnusedSerializer
+from ..common.views import AssessmentPermissionsMixin
 from ..mgmt.models import Task
 from ..riskofbias import exports
 from ..study.models import Study
@@ -30,6 +32,8 @@ class RiskOfBiasAssessmentViewset(
     parent_model = Assessment
     model = Study
     permission_classes = (AssessmentLevelPermissions,)
+    serializer_class = UnusedSerializer
+    lookup_value_regex = re_digits
 
     def get_queryset(self):
 
@@ -41,28 +45,23 @@ class RiskOfBiasAssessmentViewset(
     @action(detail=True, methods=("get",), url_path="export", renderer_classes=PandasRenderers)
     def export(self, request, pk):
         self.set_legacy_attr(pk)
+        self.permission_check_user_can_view()
         rob_name = self.assessment.get_rob_name_display().lower()
         exporter = exports.RiskOfBiasFlat(
-            self.get_queryset(),
-            export_format="excel",
-            filename=f'{self.assessment}-{rob_name.replace(" ", "-")}',
-            sheet_name=rob_name,
+            self.get_queryset(), filename=f"{self.assessment}-{rob_name}"
         )
 
-        return Response(exporter.build_dataframe())
+        return Response(exporter.build_export())
 
     @action(detail=True, methods=("get",), url_path="full-export", renderer_classes=PandasRenderers)
     def full_export(self, request, pk):
         self.set_legacy_attr(pk)
+        self.permission_check_user_can_view()
         rob_name = self.assessment.get_rob_name_display().lower()
         exporter = exports.RiskOfBiasCompleteFlat(
-            self.get_queryset(),
-            export_format="excel",
-            filename=f'{self.assessment}-{rob_name.replace(" ", "-")}-complete',
-            sheet_name=rob_name,
+            self.get_queryset(), filename=f"{self.assessment}-{rob_name}-complete"
         )
-
-        return Response(exporter.build_dataframe())
+        return Response(exporter.build_export())
 
 
 class RiskOfBiasDomain(viewsets.ReadOnlyModelViewSet):
@@ -72,6 +71,7 @@ class RiskOfBiasDomain(viewsets.ReadOnlyModelViewSet):
     permission_classes = (AssessmentLevelPermissions,)
     filter_backends = (InAssessmentFilter, DjangoFilterBackend)
     serializer_class = serializers.AssessmentDomainSerializer
+    lookup_value_regex = re_digits
 
     def get_queryset(self):
         return self.model.objects.all().prefetch_related("metrics")
@@ -84,6 +84,7 @@ class RiskOfBias(viewsets.ModelViewSet):
     permission_classes = (AssessmentLevelPermissions,)
     filter_backends = (InAssessmentFilter, DjangoFilterBackend)
     serializer_class = serializers.RiskOfBiasSerializer
+    lookup_value_regex = re_digits
 
     def get_queryset(self):
         return self.model.objects.all().prefetch_related(
@@ -106,6 +107,29 @@ class RiskOfBias(viewsets.ModelViewSet):
                 serializer.instance,
                 serializer.instance.get_assessment().id,
             )
+
+    def create(self, request, *args, **kwargs):
+        study_id = tryParseInt(request.data.get("study_id"), -1)
+
+        try:
+            study = Study.objects.get(id=study_id)
+        except ObjectDoesNotExist:
+            raise ValidationError("Invalid study_id")
+
+        # permission check using the user submitting the request
+        if not study.user_can_edit_study(study.assessment, request.user):
+            raise PermissionDenied(
+                f"Submitter '{request.user}' has invalid permissions to edit Risk of Bias for this study"
+            )
+
+        # overridden_objects is not marked as optional in RiskOfBiasScoreSerializerSlim; if it's not present
+        # in the payload, let's just add an empty array.
+        scores = request.data.get("scores")
+        for score in scores:
+            if "overridden_objects" not in score:
+                score["overridden_objects"] = []
+
+        return super().create(request, args, kwargs)
 
     @action(detail=True, methods=["get"])
     def override_options(self, request, pk=None):
@@ -133,18 +157,14 @@ class AssessmentMetricScoreViewset(AssessmentViewset):
         return self.model.objects.all()
 
 
-class AssessmentScoreViewset(TeamMemberOrHigherMixin, ListUpdateModelMixin, AssessmentEditViewset):
+class AssessmentScoreViewset(AssessmentEditViewset):
     model = models.RiskOfBiasScore
     pagination_class = DisabledPagination
     assessment_filter_args = "metric__domain_assessment"
-    filter_backends = (BulkIdFilter,)
     serializer_class = serializers.RiskOfBiasScoreSerializer
 
     def get_assessment(self, request, *args, **kwargs):
-        assessment_id = request.GET.get("assessment_id", None)
-        if assessment_id is None:
-            raise RequiresAssessmentID
-
+        assessment_id = get_assessment_id_param(request)
         return get_object_or_404(self.parent_model, pk=assessment_id)
 
     @action(detail=False)
@@ -152,13 +172,6 @@ class AssessmentScoreViewset(TeamMemberOrHigherMixin, ListUpdateModelMixin, Asse
         assessment_id = self.get_assessment(request)
         rob_assessment = models.RiskOfBiasAssessment.objects.get(assessment_id=assessment_id)
         return Response(rob_assessment.get_rob_response_values())
-
-    def get_queryset(self):
-        return self.model.objects.all()
-
-    def post_save_bulk(self, queryset, update_bulk_dict):
-        ids = list(queryset.values_list("id", flat=True))
-        queryset.model.delete_caches(ids)
 
     def create(self, request, *args, **kwargs):
         # create using one serializer; return using a different one
@@ -173,3 +186,9 @@ class AssessmentScoreViewset(TeamMemberOrHigherMixin, ListUpdateModelMixin, Asse
         if instance.is_default:
             raise PermissionDenied("Cannot delete a default risk of bias score")
         instance.delete()
+
+
+class ScoreCleanupViewset(CleanupFieldsBaseViewSet):
+    model = models.RiskOfBiasScore
+    serializer_class = serializers.RiskOfBiasScoreCleanupSerializer
+    assessment_filter_args = "metric__domain__assessment"

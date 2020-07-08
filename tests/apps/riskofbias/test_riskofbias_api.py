@@ -1,10 +1,102 @@
+import json
 from copy import deepcopy
+from pathlib import Path
 
 import pytest
 from django.urls import reverse
 from rest_framework.test import APIClient
 
-from hawc.apps.riskofbias.models import RiskOfBias, RiskOfBiasScore
+from hawc.apps.myuser.models import HAWCUser
+from hawc.apps.riskofbias.models import (
+    RiskOfBias,
+    RiskOfBiasAssessment,
+    RiskOfBiasMetric,
+    RiskOfBiasScore,
+)
+from hawc.apps.study.models import Study
+
+DATA_ROOT = Path(__file__).parents[2] / "data/api"
+
+
+@pytest.mark.django_db
+class TestRiskOfBiasAssessmentViewset:
+    def test_permissions(self, db_keys):
+        rev_client = APIClient()
+        assert rev_client.login(username="rev@rev.com", password="pw") is True
+        anon_client = APIClient()
+
+        urls = [
+            reverse("riskofbias:api:assessment-export", args=(db_keys.assessment_working,)),
+            reverse("riskofbias:api:assessment-full-export", args=(db_keys.assessment_working,)),
+        ]
+        for url in urls:
+            assert anon_client.get(url).status_code == 403
+            assert rev_client.get(url).status_code == 200
+
+    def test_full_export(self, rewrite_data_files: bool, db_keys):
+        fn = Path(DATA_ROOT / f"api-rob-assessment-full-export.json")
+        url = (
+            reverse("riskofbias:api:assessment-full-export", args=(db_keys.assessment_final,))
+            + "?format=json"
+        )
+
+        client = APIClient()
+        resp = client.get(url)
+        assert resp.status_code == 200
+
+        data = resp.json()
+
+        if rewrite_data_files:
+            Path(fn).write_text(json.dumps(data, indent=2))
+        assert data == json.loads(fn.read_text())
+
+    def test_export(self, rewrite_data_files: bool, db_keys):
+        fn = Path(DATA_ROOT / f"api-rob-assessment-export.json")
+        url = (
+            reverse("riskofbias:api:assessment-export", args=(db_keys.assessment_final,))
+            + "?format=json"
+        )
+
+        client = APIClient()
+        resp = client.get(url)
+        assert resp.status_code == 200
+
+        data = resp.json()
+
+        if rewrite_data_files:
+            Path(fn).write_text(json.dumps(data, indent=2))
+
+        assert data == json.loads(fn.read_text())
+
+    def test_PandasXlsxRenderer(self, db_keys):
+        """
+        Make sure that our pandas xlsx serializer effectively returns JSON when needed.
+
+        We add this test to this viewset because it's related to a full Viewset lifecycle and
+        not just the logic in a Renderer; thus it's essentially an integration test for this
+        renderer type; test was added based on security scan.
+        """
+        client = APIClient()
+
+        url = (
+            reverse("riskofbias:api:assessment-export", args=(db_keys.assessment_final,))
+            + "?format=xlsx"
+        )
+
+        # the normal path worth via GET
+        response = client.get(url)
+        assert response.status_code == 200
+
+        # an OPTIONS returns JSON
+        response = client.options(url)
+        assert response.status_code == 200
+        expected_keys = {"name", "description", "renders", "parses"}
+        assert set(json.loads(response.content).keys()) == expected_keys
+
+        # a POST returns JSON and status_code
+        response = client.post(url)
+        assert response.status_code == 405
+        assert json.loads(response.content) == {"detail": 'Method "POST" not allowed.'}
 
 
 @pytest.mark.django_db
@@ -93,6 +185,7 @@ def test_riskofbias_post_overrides():
                 label=score.label,
                 notes="<p>my new notes!</p>",
                 score=score.score,
+                bias_direction=score.bias_direction,
                 overridden_objects=[],
             )
             for score in rob.scores.all()
@@ -148,3 +241,231 @@ def test_riskofbias_post_overrides():
 
     # ensure we can delete
     assert c.delete(url).status_code == 204
+
+
+def build_upload_payload(study, author, metrics, dummy_score):
+    payload = {
+        "study_id": study.id if study is not None else -1,
+        "author_id": author.id if author is not None else -1,
+        "active": True,
+        "final": True,
+        "scores": [
+            dict(
+                metric_id=metric.id,
+                is_default=True,
+                label="",
+                bias_direction=0,
+                score=dummy_score,
+                notes="sample note",
+            )
+            for metric in metrics
+        ],
+    }
+    return payload
+
+
+@pytest.mark.django_db
+def test_riskofbias_create():
+    # check upload version of RoB api
+    client = APIClient()
+    assert client.login(username="team@team.com", password="pw") is True
+
+    url = reverse("riskofbias:api:review-list")
+
+    rev_author = HAWCUser.objects.get(email="rev@rev.com")
+    pm_author = HAWCUser.objects.get(email="pm@pm.com")
+    study = Study.objects.get(id=1)
+
+    required_metrics = RiskOfBiasMetric.objects.get_required_metrics(study.assessment, study)
+    first_valid_score = RiskOfBiasAssessment().get_rob_response_values()[0]
+
+    # failed uploading for a study that already has an active & final RoB
+    payload = build_upload_payload(study, pm_author, required_metrics, first_valid_score)
+    resp = client.post(url, payload, format="json")
+    assert resp.status_code == 400
+    assert b"already has an active" in resp.content
+
+    # bad score value
+    payload = build_upload_payload(study, pm_author, required_metrics, -999)
+    payload["scores"][0]["score"] *= -1
+    resp = client.post(url, payload, format="json")
+    assert resp.status_code == 400
+    assert b"is not a valid choice" in resp.content
+
+    # author without permissions for the study/assessment
+    payload = build_upload_payload(study, rev_author, required_metrics, first_valid_score)
+    resp = client.post(url, payload, format="json")
+    assert resp.status_code == 400
+    assert b"has invalid permissions" in resp.content
+
+    # invalid study_id
+    payload = build_upload_payload(None, pm_author, required_metrics, first_valid_score)
+    resp = client.post(url, payload, format="json")
+    assert resp.status_code == 400
+    assert b"Invalid study_id" in resp.content
+
+    # invalid author_id
+    payload = build_upload_payload(study, None, required_metrics, first_valid_score)
+    resp = client.post(url, payload, format="json")
+    assert resp.status_code == 400
+    assert b"Invalid author_id" in resp.content
+
+    # delete existing RoBs so we can insert (study already has active/final)
+    RiskOfBias.objects.all().delete()
+    payload = build_upload_payload(study, pm_author, required_metrics, first_valid_score)
+    resp = client.post(url, payload, format="json")
+    assert resp.status_code == 201
+    assert "created" in resp.data
+    assert "scores" in resp.data and len(resp.data["scores"]) == 2
+
+    # no scores submitted for a metric
+    RiskOfBias.objects.all().delete()
+    payload = build_upload_payload(study, pm_author, required_metrics, first_valid_score)
+    payload["scores"].pop()
+    resp = client.post(url, payload, format="json")
+    assert resp.status_code == 400
+    assert b"No score for metric" in resp.content
+
+    # no default score submitted for a metric
+    RiskOfBias.objects.all().delete()
+    payload = build_upload_payload(study, pm_author, required_metrics, first_valid_score)
+    payload["scores"][0]["is_default"] = False
+    resp = client.post(url, payload, format="json")
+    assert resp.status_code == 400
+    assert b"No default score for metric" in resp.content
+
+    # multiple default scores submitted for a metric
+    payload = build_upload_payload(study, pm_author, required_metrics, first_valid_score)
+    payload["scores"].append(payload["scores"][0])
+    resp = client.post(url, payload, format="json")
+    assert resp.status_code == 400
+    assert b"Multiple default scores for metric" in resp.content
+
+    # demonstrate overridden objects with a unsupported content type
+    RiskOfBias.objects.all().delete()
+    payload = build_upload_payload(study, pm_author, required_metrics, first_valid_score)
+    payload["scores"][0]["overridden_objects"] = [
+        {"content_type_name": "animal.dosingregime", "object_id": 999}
+    ]
+    resp = client.post(url, payload, format="json")
+    assert resp.status_code == 400
+    assert b"Invalid content type name" in resp.content
+
+    # demonstrate overridden objects with a valid content type but a bad object_id
+    RiskOfBias.objects.all().delete()
+    payload = build_upload_payload(study, pm_author, required_metrics, first_valid_score)
+    payload["scores"][0]["overridden_objects"] = [
+        {"content_type_name": "animal.animalgroup", "object_id": 999}
+    ]
+    resp = client.post(url, payload, format="json")
+    assert resp.status_code == 400
+    assert b"Invalid content object" in resp.content
+
+    # demonstrate valid overridden objects
+    RiskOfBias.objects.all().delete()
+    payload = build_upload_payload(study, pm_author, required_metrics, first_valid_score)
+    payload["scores"][0]["overridden_objects"] = [
+        {"content_type_name": "animal.animalgroup", "object_id": 1}
+    ]
+    resp = client.post(url, payload, format="json")
+    assert resp.status_code == 201
+    assert "created" in resp.data
+    assert "scores" in resp.data and len(resp.data["scores"]) == 2
+
+
+@pytest.mark.django_db
+class TestBulkRobCleanupApis:
+    """
+    Make sure all the APIs we're using for the risk of bias score cleanup are working and return
+    data as expected.
+    """
+
+    def test_study_types(self, db_keys):
+        c = APIClient()
+        assert c.login(username="team@team.com", password="pw") is True
+        assessment_query = f"?assessment_id={db_keys.assessment_working}"
+        url = reverse("study:api:study-types") + assessment_query
+
+        resp = c.get(url, format="json")
+        assert resp.status_code == 200
+        assert set(resp.json()) == {"in_vitro", "bioassay", "epi_meta", "epi"}
+
+    def test_score_choices(self, db_keys):
+        c = APIClient()
+        assert c.login(username="team@team.com", password="pw") is True
+        assessment_query = f"?assessment_id={db_keys.assessment_working}"
+
+        url = reverse("riskofbias:api:scores-choices") + assessment_query
+        resp = c.get(url, format="json")
+        assert resp.status_code == 200
+        assert resp.json() == [17, 16, 15, 12, 14, 10]
+
+    def test_metrics_list(self, db_keys):
+        c = APIClient()
+        assert c.login(username="team@team.com", password="pw") is True
+        assessment_query = f"?assessment_id={db_keys.assessment_working}"
+
+        url = reverse("riskofbias:api:metrics-list") + assessment_query
+        resp = c.get(url, format="json")
+        assert resp.status_code == 200
+        assert resp.json() == [
+            {"id": 1, "name": "example metric", "description": "<p>Is this a good study?</p>"},
+            {"id": 2, "name": "final domain", "description": ""},
+        ]
+
+    def test_rob_scores(self, db_keys):
+        c = APIClient()
+        assert c.login(username="team@team.com", password="pw") is True
+        assessment_query = f"?assessment_id={db_keys.assessment_working}"
+
+        # get metrics for score
+        url = reverse("riskofbias:api:metrics-list") + assessment_query
+        metrics = c.get(url, format="json").json()
+
+        # get available rob scores for a metric
+        detail_url = (
+            reverse("riskofbias:api:scores-detail", args=(metrics[0]["id"],)) + assessment_query
+        )
+        resp = c.get(detail_url, format="json")
+        assert resp.status_code == 200
+
+        data = resp.json()
+        data.pop("metric")
+        assert data == {
+            "id": 1,
+            "score": 17,
+            "is_default": True,
+            "label": "",
+            "bias_direction": 0,
+            "notes": "<p>Content here.</p>",
+            "overridden_objects": [],
+            "riskofbias_id": 1,
+            "score_description": "Definitely low risk of bias",
+            "score_symbol": "++",
+            "score_shade": "#00CC00",
+            "bias_direction_description": "not entered/unknown",
+            "url_edit": "/rob/1/edit/",
+            "study_name": "Foo et al.",
+            "study_id": 1,
+            "study_types": ["bioassay"],
+        }
+
+        # TODO: evaluate how to correctly add header
+
+        # # patch
+        # url = reverse("riskofbias:api:scores-list") + assessment_query + f"&ids={data['id']}"
+        # resp = c.patch(
+        #     url,
+        #     {"score": 16, "notes": "<p>More content here.</p>"},
+        #     headers={"X-CUSTOM-BULK-OPERATION": "true"},
+        #     format="json",
+        # )
+        # assert resp.status_code == 201
+
+        # # ensure patch went through
+        # resp = c.get(detail_url, format="json")
+        # data = resp.json()
+        # assert resp.status_code == 200
+        # assert data["id"] == 1
+        # assert data["score"] == 16
+        # assert data["notes"] == "<p>More content here.</p>"

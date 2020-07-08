@@ -2,7 +2,8 @@ import abc
 import logging
 
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth import REDIRECT_FIELD_NAME
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.exceptions import EmptyResultSet, PermissionDenied
 from django.forms.models import model_to_dict
 from django.http import HttpResponseRedirect
@@ -12,11 +13,26 @@ from django.utils.decorators import method_decorator
 from django.views.generic import DetailView, ListView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
-from ..assessment.models import Assessment, TimeSpentEditing
+from ..assessment.models import Assessment, BaseEndpoint, TimeSpentEditing
 from .helper import tryParseInt
 
 
-class MessageMixin(object):
+def beta_tester_required(function=None, redirect_field_name=REDIRECT_FIELD_NAME, login_url=None):
+    """
+    Decorator for views that checks that the user is logged in and a beta-tester, redirecting
+    to the log-in page if necessary.
+    """
+    actual_decorator = user_passes_test(
+        lambda u: u.is_authenticated and u.is_beta_tester(),
+        login_url=login_url,
+        redirect_field_name=redirect_field_name,
+    )
+    if function:
+        return actual_decorator(function)
+    return actual_decorator
+
+
+class MessageMixin:
     """
     Make it easy to display notification messages when using Class Based Views.
     Originally from http://stackoverflow.com/questions/5531258/
@@ -36,7 +52,7 @@ class MessageMixin(object):
         return super().form_valid(form)
 
 
-class CloseIfSuccessMixin(object):
+class CloseIfSuccessMixin:
     """
     Mixin designed to close-window if form executes successfully.
     """
@@ -45,7 +61,7 @@ class CloseIfSuccessMixin(object):
         return reverse("assessment:close_window")
 
 
-class LoginRequiredMixin(object):
+class LoginRequiredMixin:
     """
     A mixin requiring a user to be logged in.
     """
@@ -55,7 +71,7 @@ class LoginRequiredMixin(object):
         return super().dispatch(request, *args, **kwargs)
 
 
-class AssessmentPermissionsMixin(object):
+class AssessmentPermissionsMixin:
     """
     Mixin to check permissions for an object of interest to determine if a user
     is able to view and delete the object. Will return an object or issue an
@@ -203,7 +219,7 @@ class AssessmentPermissionsMixin(object):
         return user_perms
 
 
-class TimeSpentOnPageMixin(object):
+class TimeSpentOnPageMixin:
     def get(self, request, *args, **kwargs):
         TimeSpentEditing.set_start_time(
             self.request.session.session_key, self.request.path,
@@ -218,7 +234,7 @@ class TimeSpentOnPageMixin(object):
         return response
 
 
-class ProjectManagerOrHigherMixin(object):
+class ProjectManagerOrHigherMixin:
     """
     Mixin for project-manager access to page.
     Requires a get_assessment method; checked for all HTTP verbs.
@@ -241,7 +257,7 @@ class ProjectManagerOrHigherMixin(object):
         return context
 
 
-class TeamMemberOrHigherMixin(object):
+class TeamMemberOrHigherMixin:
     """
     Mixin for team-member access to page.
     Requires a get_assessment method; checked for all HTTP verbs.
@@ -264,7 +280,7 @@ class TeamMemberOrHigherMixin(object):
         return context
 
 
-class IsAuthorMixin(object):
+class IsAuthorMixin:
     # Throw error if user is not author
 
     owner_field = "author"
@@ -276,7 +292,7 @@ class IsAuthorMixin(object):
         return obj
 
 
-class CanCreateMixin(object):
+class CanCreateMixin:
     """
     Checks to make sure that the user has appropriate permissions before adding
     a new object to the assessment. Requires a self.assessment variable to be
@@ -312,7 +328,7 @@ class CanCreateMixin(object):
             raise PermissionDenied
 
 
-class CopyAsNewSelectorMixin(object):
+class CopyAsNewSelectorMixin:
     form_class = None  # required
     copy_model = None  # required
     template_name_suffix = "_copy_selector"
@@ -396,7 +412,7 @@ class BaseUpdate(TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin,
 
 class BaseCreate(TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin, CreateView):
     parent_model = None  # required
-    parent_template_name = None  # required
+    parent_template_name: str = None  # required
     crud = "Create"
 
     def dispatch(self, *args, **kwargs):
@@ -644,4 +660,33 @@ class BaseEndpointFilterList(BaseList):
         context = super().get_context_data(**kwargs)
         context["form"] = self.form
         context["list_json"] = self.model.get_qs_json(context["object_list"], json_encode=True)
+        return context
+
+
+class HeatmapBase(BaseList):
+    parent_model = Assessment
+    model = BaseEndpoint
+    template_name = "common/heatmap.html"
+    heatmap_data_class: str = ""
+    heatmap_data_url: str = ""
+    heatmap_view_title: str = ""
+
+    def get_template_names(self):
+        return [self.template_name]
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        url_args = (
+            "?unpublished=true"
+            if self.request.GET.get("unpublished", "false").lower() == "true"
+            else ""
+        )
+        context.update(
+            dict(
+                data_class=self.heatmap_data_class,
+                data_url=reverse(self.heatmap_data_url, args=(self.assessment.id,)) + url_args,
+                heatmap_view_title=self.heatmap_view_title,
+                obj_perms=self.assessment.user_permissions(self.request.user),
+            )
+        )
         return context

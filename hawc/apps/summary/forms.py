@@ -1,5 +1,6 @@
 import json
 from collections import OrderedDict
+from urllib.parse import urlparse, urlunparse
 
 import pandas as pd
 from crispy_forms import layout as cfl
@@ -33,7 +34,7 @@ def clean_slug(form):
     return slug
 
 
-class PrefilterMixin(object):
+class PrefilterMixin:
 
     PREFILTER_COMBO_FIELDS = [
         "studies",
@@ -552,6 +553,8 @@ class VisualForm(forms.ModelForm):
         if self.instance.visual_type not in [
             models.Visual.ROB_HEATMAP,
             models.Visual.LITERATURE_TAGTREE,
+            models.Visual.EXTERNAL_SITE,
+            models.Visual.EXPLORE_HEATMAP,
         ]:
             self.fields["sort_order"].widget = forms.HiddenInput()
 
@@ -599,10 +602,12 @@ class EndpointAggregationSelectMultipleWidget(selectable.AutoCompleteSelectMulti
     properly returns IDs instead of strings.
     """
 
-    def render(self, name, value, attrs=None):
+    def render(self, name, value, attrs=None, renderer=None):
         if value:
             value = [value.id for value in value]
-        return super(selectable.AutoCompleteSelectMultipleWidget, self).render(name, value, attrs)
+        return super(selectable.AutoCompleteSelectMultipleWidget, self).render(
+            name, value, attrs, renderer
+        )
 
 
 class EndpointAggregationForm(VisualForm):
@@ -725,6 +730,102 @@ class TagtreeForm(VisualForm):
         )
 
 
+class ExternalSiteForm(VisualForm):
+
+    external_url = forms.URLField(
+        label="External URL",
+        help_text=f"""
+        <p class="help-block">
+            Embed an external website. The following websites can be linked to:
+        </p>
+        <ul class="help-block">
+            <li><a href="https://public.tableau.com/">Tableau (public)</a> - press the "share" icon and then select the URL in the "link" text box</li>
+        </ul>
+        <p class="help-block">
+            If you'd like to link to another website, please contact us.
+        </p>
+        """,
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        data = json.loads(self.instance.settings)
+        if "external_url" in data:
+            self.fields["external_url"].initial = data["external_url"]
+
+        self.helper = self.setHelper()
+
+    def save(self, commit=True):
+        self.instance.settings = json.dumps(
+            dict(
+                external_url=self.cleaned_data["external_url"],
+                external_url_hostname=self.cleaned_data["external_url_hostname"],
+                external_url_path=self.cleaned_data["external_url_path"],
+                external_url_query_args=self.cleaned_data["external_url_query_args"],
+            )
+        )
+        return super().save(commit)
+
+    class Meta:
+        model = models.Visual
+        fields = (
+            "title",
+            "slug",
+            "caption",
+            "published",
+        )
+
+    DOMAIN_TABLEAU = "public.tableau.com"
+    VALID_DOMAINS = {
+        DOMAIN_TABLEAU,
+    }
+
+    def clean_external_url(self):
+        external_url = self.cleaned_data.get("external_url")
+        url = urlparse(external_url)
+
+        # check whitelist
+        if url.netloc not in self.VALID_DOMAINS:
+            msg = f"{url.netloc} not on the list of accepted domains, please contact webmasters to request additions"
+            raise forms.ValidationError(msg)
+
+        external_url = urlunparse(("https", url.netloc, url.path, "", "", ""))
+        external_url_hostname = urlunparse(("https", url.netloc, "", "", "", ""))
+
+        if url.path == "" or url.path == "/":
+            raise forms.ValidationError("A URL path must be specified.")
+
+        external_url_query_args = []
+        if url.netloc == self.DOMAIN_TABLEAU:
+            external_url_query_args = [":showVizHome=no", ":embed=y"]
+
+        self.cleaned_data.update(
+            external_url=external_url,
+            external_url_hostname=external_url_hostname,
+            external_url_path=url.path,
+            external_url_query_args=external_url_query_args,
+        )
+
+        return external_url
+
+
+class ExploreHeatmapForm(VisualForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = self.setHelper()
+
+    class Meta:
+        model = models.Visual
+        fields = (
+            "title",
+            "slug",
+            "settings",
+            "caption",
+            "published",
+        )
+
+
 def get_visual_form(visual_type):
     try:
         return {
@@ -733,6 +834,8 @@ def get_visual_form(visual_type):
             models.Visual.ROB_HEATMAP: RoBForm,
             models.Visual.ROB_BARCHART: RoBForm,
             models.Visual.LITERATURE_TAGTREE: TagtreeForm,
+            models.Visual.EXTERNAL_SITE: ExternalSiteForm,
+            models.Visual.EXPLORE_HEATMAP: ExploreHeatmapForm,
         }[visual_type]
     except Exception:
         raise ValueError()
@@ -891,12 +994,33 @@ class DataPivotSelectorForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop("user")
+        cancel_url = kwargs.pop("cancel_url")
         super().__init__(*args, **kwargs)
-
-        for fld in list(self.fields.keys()):
-            self.fields[fld].widget.attrs["class"] = "span12"
-
         self.fields["dp"].queryset = models.DataPivot.objects.clonable_queryset(user)
+        self.helper = self.setHelper(cancel_url)
+
+    def setHelper(self, cancel_url: str):
+        for fld in list(self.fields.keys()):
+            widget = self.fields[fld].widget
+            if type(widget) != forms.CheckboxInput:
+                widget.attrs["class"] = "span12"
+
+        inputs = {
+            "legend_text": "Copy data pivot",
+            "help_text": """
+                Select an existing data pivot and copy as a new data pivot. This includes all
+                model-settings, and the selected dataset. You will be taken to a new view to
+                create a new data pivot, but the form will be pre-populated using the values from
+                the currently-selected data pivot.""",
+            "form_actions": [
+                cfl.Submit("save", "Copy selected as new"),
+                cfl.HTML(f'<a href="{cancel_url}" class="btn">Cancel</a>'),
+            ],
+        }
+
+        helper = BaseFormHelper(self, **inputs)
+        helper.form_class = None
+        return helper
 
 
 class SmartTagForm(forms.Form):

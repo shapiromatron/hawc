@@ -16,15 +16,11 @@ class Group {
     }
 
     static get_object(id, cb) {
-        $.get("/epi/api/group/{0}/".printf(id), function(d) {
-            cb(new Group(d));
-        });
+        $.get(`/epi/api/group/${id}/`, d => cb(new Group(d)));
     }
 
     static displayFullPager($el, id) {
-        Group.get_object(id, function(d) {
-            d.displayFullPager($el);
-        });
+        Group.get_object(id, d => d.displayFullPager($el));
     }
 
     displayFullPager($el) {
@@ -66,7 +62,7 @@ class Group {
                 .text(d.name),
             addLI = function(key, val) {
                 if (val) {
-                    ul.append("<li><strong>{0}:</strong> {1}</li>".printf(key, val));
+                    ul.append(`<li><strong>${key}:</strong> ${val}</li>`);
                 }
             },
             content = this.get_content();

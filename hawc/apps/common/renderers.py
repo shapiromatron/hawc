@@ -2,9 +2,12 @@ import json
 from io import BytesIO
 
 import pandas as pd
+from django.utils.text import slugify
 from rest_framework import status
 from rest_framework.renderers import BaseRenderer
 from rest_framework.response import Response
+
+from .helper import FlatExport
 
 
 class PandasBaseRenderer(BaseRenderer):
@@ -15,15 +18,18 @@ class PandasBaseRenderer(BaseRenderer):
 
     def render(self, data, accepted_media_type=None, renderer_context=None):
 
-        # return error in JSON
+        # return error or OPTIONS as JSON
         status_code = renderer_context["response"].status_code
-        if not status.is_success(status_code):
+        method = renderer_context["request"].method if "request" in renderer_context else None
+        if not status.is_success(status_code) or method == "OPTIONS":
             if isinstance(data, dict):
                 return json.dumps(data)
+            else:
+                raise ValueError(f"Expecting data as `dict`; got {type(data)}")
 
-        # throw error if we don't have a data frame
-        if not isinstance(data, pd.DataFrame):
-            raise ValueError(f"Expecting data frame; got {type(data)}")
+        # throw error if we don't have a FlatExport
+        if not isinstance(data, FlatExport):
+            raise ValueError(f"Expecting `FlatExport`; got {type(data)}")
 
         return self.render_dataframe(data, renderer_context["response"])
 
@@ -36,9 +42,9 @@ class PandasHtmlRenderer(PandasBaseRenderer):
     media_type = "text/html"
     format = "html"
 
-    def render_dataframe(self, df: pd.DataFrame, response: Response) -> str:
+    def render_dataframe(self, export: FlatExport, response: Response) -> str:
         with pd.option_context("display.max_colwidth", -1):
-            return df.fillna("-").to_html(index=False)
+            return export.df.fillna("-").to_html(index=False)
 
 
 class PandasCsvRenderer(PandasBaseRenderer):
@@ -49,9 +55,22 @@ class PandasCsvRenderer(PandasBaseRenderer):
     media_type = "text/csv"
     format = "csv"
 
-    def render_dataframe(self, df: pd.DataFrame, response: Response) -> str:
+    def render_dataframe(self, export: FlatExport, response: Response) -> str:
         # set line terminator to keep consistent on windows too
-        return df.to_csv(index=False, line_terminator="\n")
+        return export.df.to_csv(index=False, line_terminator="\n")
+
+
+class PandasTsvRenderer(PandasBaseRenderer):
+    """
+    Renders dataframe as TSV
+    """
+
+    media_type = "text/tab-separated-values"
+    format = "tsv"
+
+    def render_dataframe(self, export: FlatExport, response: Response) -> str:
+        # set line terminator to keep consistent on windows too
+        return export.df.to_csv(index=False, sep="\t", line_terminator="\n")
 
 
 class PandasJsonRenderer(PandasBaseRenderer):
@@ -62,8 +81,8 @@ class PandasJsonRenderer(PandasBaseRenderer):
     media_type = "application/json"
     format = "json"
 
-    def render_dataframe(self, df: pd.DataFrame, response: Response) -> str:
-        return df.to_json(orient="records")
+    def render_dataframe(self, export: FlatExport, response: Response) -> str:
+        return export.df.to_json(orient="records")
 
 
 class PandasXlsxRenderer(PandasBaseRenderer):
@@ -73,14 +92,28 @@ class PandasXlsxRenderer(PandasBaseRenderer):
 
     media_type = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     format = "xlsx"
-    charset = None
-    render_style = "binary"
 
-    def render_dataframe(self, df: pd.DataFrame, response: Response) -> bytes:
-        response["Content-Disposition"] = "attachment; filename=hawc-export.xlsx"
+    def render_dataframe(self, export: FlatExport, response: Response) -> bytes:
+        response["Content-Disposition"] = f"attachment; filename={slugify(export.filename)}.xlsx"
+
+        # Remove timezone from datetime objects to make Excel compatible
+        df = export.df.copy()
+        df_datetime = df.select_dtypes(include="datetimetz").apply(lambda x: x.dt.tz_localize(None))
+        for col in df_datetime.columns:
+            df[col] = df_datetime[col]
+
         f = BytesIO()
-        df.to_excel(f, index=False)
+        with pd.ExcelWriter(
+            f, date_format="YYYY-MM-DD", datetime_format="YYYY-MM-DD HH:MM:SS"
+        ) as writer:
+            df.to_excel(writer, index=False)
         return f.getvalue()
 
 
-PandasRenderers = (PandasJsonRenderer, PandasHtmlRenderer, PandasCsvRenderer, PandasXlsxRenderer)
+PandasRenderers = (
+    PandasJsonRenderer,
+    PandasHtmlRenderer,
+    PandasCsvRenderer,
+    PandasTsvRenderer,
+    PandasXlsxRenderer,
+)

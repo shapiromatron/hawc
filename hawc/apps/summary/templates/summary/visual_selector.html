@@ -25,10 +25,13 @@
             data-showcase="#dataPivot"
             value="{% url 'summary:dp_new-prompt' assessment.id %}">
             Data pivot</option>
+          {% comment %}
+          <!-- deprecate; let's see if anyone requests it..  -->
           <option
             data-showcase="#visual0"
             value="{% url 'summary:visualization_create' assessment.id 0 %}">
             Bioassay endpoint aggregation</option>
+          {% endcomment %}
           <option
             data-showcase="#visual1"
             value="{% url 'summary:visualization_create' assessment.id 1 %}">
@@ -43,6 +46,12 @@
             {{assessment.get_rob_name_display}} barchart</option>
           <option data-showcase="#visual4" value="{% url 'summary:visualization_create' assessment.id 4 %}">
               Literature tagtree</option>
+          <option data-showcase="#visual5" value="{% url 'summary:visualization_create' assessment.id 5 %}">
+              Embedded external website</option>
+          {% if user.is_beta_tester %}
+          <option data-showcase="#visual6" value="{% url 'summary:visualization_create' assessment.id 6 %}">
+              Exploratory heatmap</option>
+          {% endif %}
         </select>
         <a id="create_btn" class="pull-right btn btn-primary span2" href="#">Select</a>
       </div>
@@ -139,6 +148,31 @@
       </div>
       <p class="help-block">
         A customizable dendrogram aka "tagtree" to display literature tags applied to references in a HAWC assessment.
+      </p>
+    </div>
+
+    <div id="visual5">
+      <h2>Embedded external website</h2>
+      <div class="row">
+        <img class="span10 offset1" src="{% static '/img/summary/external-tableau.png' %}">
+      </div>
+      <p class="help-block">
+        Embed an external website. The following websites can be linked to:
+      </p>
+      <ul>
+        <li><a href="https://public.tableau.com/">Tableau (public)</a></li>
+      </ul>
+      <p class="help-block">
+        If you'd like to link to another website, please <a href="{% url 'contact' %}">contact us</a>.
+      </p>
+    </div>
+
+    <div id="visual6">
+      <h2 class="betatester">Exploratory heatmap</h2>
+      <div class="row">
+      </div>
+      <p class="help-block">
+        A heatmap with customizable axes, filters, and interactivity to explore a dataset visually.
       </p>
     </div>
 

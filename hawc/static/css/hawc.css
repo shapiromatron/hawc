@@ -287,6 +287,21 @@ div.smart-tag.active {
     background-color: #0044cc;
 }
 
+
+/* literature bulk tagging */
+#bulkTaggingForm table {
+    border: 1px solid #eeeeee;
+    margin: 10px;
+}
+
+#bulkTaggingForm td {
+    border: 1px solid #eeeeee;
+}
+
+#bulkTaggingForm a {
+    cursor: pointer;
+}
+
 /* animal endpoint list */
 .eyeEndpointModal {
     padding-left: 1em;
@@ -387,59 +402,6 @@ div.smart-tag.active {
 }
 .adders {
     margin-left: 5px;
-}
-
-/* wysihtml5 color settings */
-.wysiwyg-color-black {
-    color: black;
-}
-.wysiwyg-color-silver {
-    color: silver;
-}
-.wysiwyg-color-gray {
-    color: gray;
-}
-.wysiwyg-color-white {
-    color: white;
-}
-.wysiwyg-color-maroon {
-    color: maroon;
-}
-.wysiwyg-color-red {
-    color: red;
-}
-.wysiwyg-color-purple {
-    color: purple;
-}
-.wysiwyg-color-fuchsia {
-    color: fuchsia;
-}
-.wysiwyg-color-green {
-    color: green;
-}
-.wysiwyg-color-lime {
-    color: lime;
-}
-.wysiwyg-color-olive {
-    color: olive;
-}
-.wysiwyg-color-yellow {
-    color: yellow;
-}
-.wysiwyg-color-navy {
-    color: navy;
-}
-.wysiwyg-color-blue {
-    color: blue;
-}
-.wysiwyg-color-teal {
-    color: teal;
-}
-.wysiwyg-color-aqua {
-    color: aqua;
-}
-.wysiwyg-color-orange {
-    color: orange;
 }
 
 /*
@@ -543,17 +505,10 @@ table.bordered td {
     border: 1px solid #dddddd;
 }
 
-/* bulk tagging - start */
-form#bulkTaggingForm table {
-    border: 1px solid #eeeeee;
-    margin: 10px;
+/*
+Beta tester
+*/
+.betatester {
+    background-color: darksalmon;
+    background: darksalmon;
 }
-
-form#bulkTaggingForm td {
-    border: 1px solid #eeeeee;
-}
-
-form#bulkTaggingForm a {
-    cursor: pointer;
-}
-/* bulk tagging - end */

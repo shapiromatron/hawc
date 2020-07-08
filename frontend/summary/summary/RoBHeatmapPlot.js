@@ -4,7 +4,13 @@ import d3 from "d3";
 
 import HAWCModal from "utils/HAWCModal";
 
-import {getMultiScoreDisplaySettings} from "riskofbias/constants";
+import {
+    getMultiScoreDisplaySettings,
+    BIAS_DIRECTION_UP,
+    BIAS_DIRECTION_DOWN,
+    BIAS_DIRECTION_COMPACT,
+    FOOTNOTES,
+} from "riskofbias/constants";
 import RiskOfBiasScore from "riskofbias/RiskOfBiasScore";
 import {renderCrossStudyDisplay} from "riskofbias/robTable/components/CrossStudyDisplay";
 import {renderRiskOfBiasDisplay} from "riskofbias/robTable/components/RiskOfBiasDisplay";
@@ -104,13 +110,15 @@ class RoBHeatmapPlot extends D3Visualization {
                     }
                     cells_data.push({
                         robArray,
-                        study: robArray[0].study,
-                        study_label: robArray[0].study.data[study_label_field],
+                        directions: displayData.directions,
                         metric: robArray[0].data.metric,
                         metric_label: metric_name,
-                        score_text: displayData.symbolShortText,
                         score_color: displayData.svgStyle.fill,
+                        score_text: displayData.symbolShortText,
                         score_text_color: robArray[0].data.score_text_color,
+                        study: robArray[0].study,
+                        study_label: robArray[0].study.data[study_label_field],
+                        symbols: displayData.symbols,
                     });
                 })
                 .value();
@@ -144,6 +152,8 @@ class RoBHeatmapPlot extends D3Visualization {
         _.extend(this, {
             cell_size: this.data.settings.cell_size,
             cells_data,
+            cells_data_up: cells_data.filter(d => _.includes(d.directions, BIAS_DIRECTION_UP)),
+            cells_data_down: cells_data.filter(d => _.includes(d.directions, BIAS_DIRECTION_DOWN)),
             gradients_data,
             studies,
             metrics,
@@ -192,6 +202,8 @@ class RoBHeatmapPlot extends D3Visualization {
             y = this.y_scale,
             width = this.cell_size,
             half_width = width / 2,
+            quarter_width = width * 0.25,
+            three_quarter_width = width * 0.75,
             robName = this.data.assessment_rob_name,
             showSQs = function(v) {
                 self.print_details(self.modal.getBody(), $(this).data("robs"));
@@ -283,21 +295,48 @@ class RoBHeatmapPlot extends D3Visualization {
             .style("fill", d => d.score_text_color)
             .text(d => d.score_text);
 
+        this.direction_up = this.cells_group
+            .selectAll("svg.text")
+            .data(this.cells_data_up)
+            .enter()
+            .append("text")
+            .attr("x", d => x(d[self.xField]) + half_width)
+            .attr("y", d => y(d[self.yField]) + quarter_width)
+            .attr("text-anchor", "middle")
+            .attr("class", d =>
+                d.metric.domain.is_overall_confidence ? "heatmap_selectable_bold" : "centeredLabel"
+            )
+            .style("font-size", "10px")
+            .style("fill", d => d.score_text_color)
+            .text(BIAS_DIRECTION_COMPACT[BIAS_DIRECTION_UP]);
+
+        this.direction_down = this.cells_group
+            .selectAll("svg.text")
+            .data(this.cells_data_down)
+            .enter()
+            .append("text")
+            .attr("x", d => x(d[self.xField]) + half_width)
+            .attr("y", d => y(d[self.yField]) + three_quarter_width)
+            .attr("dy", "3.5px")
+            .attr("text-anchor", "middle")
+            .attr("class", d =>
+                d.metric.domain.is_overall_confidence ? "heatmap_selectable_bold" : "centeredLabel"
+            )
+            .style("font-size", "10px")
+            .style("fill", d => d.score_text_color)
+            .text(BIAS_DIRECTION_COMPACT[BIAS_DIRECTION_DOWN]);
+
         $(".x_axis text")
             .each(this.xIsStudy ? getStudySQs : getMetricSQs)
             .attr("class", "heatmap_selectable")
-            .on("mouseover", function(v) {
-                self.draw_hovers(this, {draw: true, type: "column"});
-            })
+            .on("mouseover", v => self.draw_hovers(this, {draw: true, type: "column"}))
             .on("mouseout", hideHovers)
             .on("click", showSQs);
 
         $(".y_axis text")
             .each(!this.xIsStudy ? getStudySQs : getMetricSQs)
             .attr("class", "heatmap_selectable")
-            .on("mouseover", function(v) {
-                self.draw_hovers(this, {draw: true, type: "row"});
-            })
+            .on("mouseover", v => self.draw_hovers(this, {draw: true, type: "row"}))
             .on("mouseout", hideHovers)
             .on("click", showSQs);
 
@@ -406,20 +445,43 @@ class RoBHeatmapPlot extends D3Visualization {
         svg.append("svg:text")
             .attr("x", 15)
             .attr("y", yLoc)
-            .attr("transform", "rotate(270, {0}, {1})".printf(15, yLoc))
+            .attr("transform", `rotate(270, 15, ${yLoc})`)
             .text(this.y_label_text)
             .attr("text-anchor", "middle")
             .attr("class", "dr_axis_labels y_axis_label");
     }
 
     build_legend() {
-        if (this.legend || !this.data.settings.show_legend) return;
-        let rob_response_values = this.data.aggregation.studies[0].data.rob_response_values,
+        if (this.legend || !this.data.settings.show_legend) {
+            return;
+        }
+        const rob_response_values = this.data.aggregation.studies[0].data.rob_response_values,
             options = {
                 dev: this.options.dev || false,
                 collapseNR: false,
-            };
-        this.legend = new RoBLegend(this.svg, this.data.settings, rob_response_values, options);
+            },
+            getFootnoteOptions = () => {
+                let footnotes = [];
+                if (this.cells_data.filter(d => d.symbols.length > 1).length > 0) {
+                    footnotes.push(FOOTNOTES.MULTIPLE_SCORES);
+                }
+                if (this.cells_data_up.length > 0) {
+                    footnotes.push(FOOTNOTES.BIAS_AWAY_NULL);
+                }
+                if (this.cells_data_down.length > 0) {
+                    footnotes.push(FOOTNOTES.BIAS_TOWARDS_NULL);
+                }
+                return footnotes;
+            },
+            footnotes = getFootnoteOptions();
+
+        this.legend = new RoBLegend(
+            this.svg,
+            this.data.settings,
+            rob_response_values,
+            footnotes,
+            options
+        );
     }
 
     print_details($div, d) {

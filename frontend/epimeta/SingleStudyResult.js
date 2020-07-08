@@ -17,11 +17,7 @@ class SingleStudyResult {
         var txt = this.data.exposure_name;
 
         if (this.data.study) {
-            txt =
-                '<a href="{0}">{1}</a>: '.printf(
-                    this.data.study.url,
-                    this.data.study.short_citation
-                ) + txt;
+            txt = `<a href="${this.data.study.url}">${this.data.study.short_citation}</a>: ${txt}`;
         }
 
         return txt;

@@ -9,9 +9,12 @@ from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
 from django.db import models
 from django.db.models import QuerySet
+from django.db.models.functions import Cast
 from litter_getter import hero, pubmed
 from taggit.managers import TaggableManager, _TaggableManager
 from taggit.utils import require_instance_manager
+
+from hawc.refml import tags as refmltags
 
 from ..common.helper import HAWCDjangoJSONEncoder
 from ..common.models import BaseManager
@@ -357,25 +360,22 @@ class ReferenceManager(BaseManager):
         return refs
 
     def get_references_ready_for_import(self, assessment):
-        ReferenceFilterTag = apps.get_model("lit", "ReferenceFilterTag")
         Study = apps.get_model("study", "Study")
-        try:
-            root_inclusion = (
-                ReferenceFilterTag.objects.get(name=f"assessment-{assessment.pk}")
-                .get_descendants()
-                .get(name="Inclusion")
-            )
+
+        root_inclusion = assessment.literature_settings.extraction_tag
+        inclusion_tags = []
+        if root_inclusion:
             inclusion_tags = list(root_inclusion.get_descendants().values_list("pk", flat=True))
             inclusion_tags.append(root_inclusion.pk)
-        except Exception:
-            inclusion_tags = []
-
-        return (
-            self.get_qs(assessment)
-            .filter(referencetags__tag_id__in=inclusion_tags)
-            .exclude(pk__in=Study.objects.get_qs(assessment).values_list("pk", flat=True))
-            .distinct()
-        )
+            return (
+                self.get_qs(assessment)
+                .filter(referencetags__tag_id__in=inclusion_tags)
+                .exclude(pk__in=Study.objects.get_qs(assessment).values_list("pk", flat=True))
+                .order_by("authors")
+                .distinct()
+            )
+        else:
+            return self.none()
 
     def get_references_with_tag(self, tag, descendants=False):
         tag_ids = [tag.id]
@@ -494,6 +494,76 @@ class ReferenceManager(BaseManager):
 
         return df
 
+    def heatmap_dataframe(self, assessment_id: int) -> pd.DataFrame:
+        Identifiers = apps.get_model("lit", "Identifiers")
+        ReferenceFilterTag = apps.get_model("lit", "ReferenceFilterTag")
+        ReferenceTags = apps.get_model("lit", "ReferenceTags")
+
+        values = dict(
+            id="reference id",
+            hero_id="hero id",
+            pubmed_id="pubmed id",
+            doi="doi",
+            authors_short="authors short",
+            authors="authors",
+            title="title",
+            year="year",
+            journal="journal",
+            abstract="abstract",
+        )
+        pubmed_qs = models.Subquery(
+            Identifiers.objects.filter(
+                references=models.OuterRef("id"), database=constants.PUBMED
+            ).values("unique_id")[:1]
+        )
+        hero_qs = models.Subquery(
+            Identifiers.objects.filter(
+                references=models.OuterRef("id"), database=constants.HERO
+            ).values("unique_id")[:1]
+        )
+        doi_qs = models.Subquery(
+            Identifiers.objects.filter(
+                references=models.OuterRef("id"), database=constants.DOI
+            ).values("unique_id")[:1]
+        )
+        qs = (
+            self.filter(assessment_id=assessment_id)
+            .annotate(pubmed_id=Cast(pubmed_qs, models.IntegerField()))
+            .annotate(hero_id=Cast(hero_qs, models.IntegerField()))
+            .annotate(doi=doi_qs)
+            .values_list(*values.keys())
+            .order_by("id")
+        )
+        df1 = pd.DataFrame(data=qs, columns=values.values()).set_index("reference id")
+
+        # build full citation column
+        # TODO - replace `ref_full_citation`?
+        df1["full citation"] = (
+            (
+                df1.authors
+                + "|"
+                + df1.year.fillna(-999).astype(int).astype(str)
+                + "|"
+                + df1.title
+                + "|"
+                + df1.journal
+            )
+            .str.replace(r"-999", "", regex=True)  # remove flag number
+            .str.replace(r"^\|+|\|+$", "", regex=True)  # remove pipes at beginning/end
+            .str.replace("|", ". ")  # change pipes to periods
+        )
+
+        tree = ReferenceFilterTag.get_all_tags(assessment_id, json_encode=False)
+        tag_qs = ReferenceTags.objects.assessment_qs(assessment_id)
+        node_dict = refmltags.build_tree_node_dict(tree)
+        df2 = (
+            refmltags.create_df(tag_qs, node_dict)
+            .rename(columns={"ref_id": "reference id"})
+            .set_index("reference id")
+        )
+
+        return df1.merge(df2, how="left", left_index=True, right_index=True).reset_index()
+
 
 class ReferenceTagsManager(BaseManager):
     assessment_relation = "content_object__assessment"
@@ -508,8 +578,11 @@ class ReferenceTagsManager(BaseManager):
         Returns:
             pd.DataFrame: A pandas dataframe
         """
-        df = pd.DataFrame(
-            data=list(self.assessment_qs(assessment_id).values("tag_id", "content_object_id"))
-        )
-        df = df.rename(columns=dict(content_object_id="reference_id"))
+        qs = self.assessment_qs(assessment_id).values("content_object_id", "tag_id")
+        df = pd.DataFrame(columns=["reference_id", "tag_id"])
+        if qs.count() > 0:
+            df = pd.DataFrame(data=list(qs))
+            df = df.rename(columns=dict(content_object_id="reference_id")).sort_values(
+                by=["reference_id", "tag_id"]
+            )
         return df

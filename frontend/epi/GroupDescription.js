@@ -13,16 +13,13 @@ class GroupDescription {
             lower = "-";
 
         if (_.isNumber(d.mean))
-            mean = '{0}<br><span class="help-inline">{1}</span>'.printf(d.mean, d.mean_type);
+            mean = `${d.mean}<br><span class="help-inline">${d.mean_type}</span>`;
         if (_.isNumber(d.variance))
-            variance = '{0}<br><span class="help-inline">{1}</span>'.printf(
-                d.variance,
-                d.variance_type
-            );
+            variance = `${d.variance}<br><span class="help-inline">${d.variance_type}</span>`;
         if (_.isNumber(d.upper))
-            upper = '{0}<br><span class="help-inline">{1}</span>'.printf(d.upper, d.upper_type);
+            upper = `${d.upper}<br><span class="help-inline">${d.upper_type}</span>`;
         if (_.isNumber(d.lower))
-            lower = '{0}<br><span class="help-inline">{1}</span>'.printf(d.lower, d.lower_type);
+            lower = `${d.lower}<br><span class="help-inline">${d.lower_type}</span>`;
 
         return [d.description, mean, variance, lower, upper, d.is_calculated];
     }

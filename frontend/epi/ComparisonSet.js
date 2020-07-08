@@ -17,16 +17,16 @@ class ComparisonSet {
         if (this.data.exposure) this.exposure = new Exposure(this.data.exposure);
     }
 
+    static get_detail_url(id) {
+        return `/epi/comparison-set/${id}/`;
+    }
+
     static get_object(id, cb) {
-        $.get("/epi/api/comparison-set/{0}/".printf(id), function(d) {
-            cb(new ComparisonSet(d));
-        });
+        $.get(`/epi/api/comparison-set/${id}/`, d => cb(new ComparisonSet(d)));
     }
 
     static displayFullPager($el, id) {
-        ComparisonSet.get_object(id, function(d) {
-            d.displayFullPager($el);
-        });
+        ComparisonSet.get_object(id, d => d.displayFullPager($el));
     }
 
     static displayAsModal(id) {
@@ -124,7 +124,7 @@ class ComparisonSet {
     }
 
     build_link() {
-        return '<a href="{0}">{1}</a>'.printf(this.data.url, this.data.name);
+        return `<a href="${this.data.url}">${this.data.name}</a>`;
     }
 }
 

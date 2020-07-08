@@ -182,13 +182,6 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
         return f"{e['animal_group']['species']} {e['animal_group']['strain']}"
 
     @classmethod
-    def _get_tags(cls, e):
-        effs = [tag["name"] for tag in e["effects"]]
-        if len(effs) > 0:
-            return f"|{'|'.join(effs)}|"
-        return ""
-
-    @classmethod
     def _get_observation_time_and_time_units(cls, e):
         return f"{e['observation_time']} {e['observation_time_units']}"
 
@@ -320,7 +313,7 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
                 ser["effect"],
                 ser["effect_subtype"],
                 ser["diagnostic"],
-                self._get_tags(ser),
+                self.get_flattened_tags(ser, "effects"),
                 self._get_observation_time_and_time_units(ser),
                 ser["observation_time_text"],
                 ser["data_type_label"],
@@ -501,7 +494,7 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
                 ser["effect"],
                 ser["effect_subtype"],
                 ser["diagnostic"],
-                self._get_tags(ser),
+                self.get_flattened_tags(ser, "effects"),
                 self._get_observation_time_and_time_units(ser),
                 ser["observation_time_text"],
                 ser["data_type_label"],

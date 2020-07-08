@@ -1,6 +1,7 @@
 from textwrap import dedent
 
 from django.contrib.auth import get_user_model
+from django.contrib.auth.hashers import make_password
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 from faker import Faker
@@ -36,12 +37,15 @@ class Command(BaseCommand):
         fake = Faker()
         Faker.seed(555)
 
+        # slow; since we're using the same password for everyone... cache it
+        hash_password = make_password("password")
+
         # generate
         for user in get_user_model().objects.all():
             user.first_name = fake.first_name()
             user.last_name = fake.last_name()
             user.email = f"{user.first_name.lower()}.{user.last_name.lower()}@{fake.domain_name()}"
-            user.set_password("password")
+            user.password = hash_password
             user.save()
 
         # save superuser
@@ -49,7 +53,7 @@ class Command(BaseCommand):
         superuser.first_name = "Super"
         superuser.last_name = "Duper"
         superuser.email = "webmaster@hawcproject.org"
-        superuser.set_password("password")
+        user.password = hash_password
         superuser.save()
 
         num_users = get_user_model().objects.count()

@@ -18,12 +18,18 @@
         <ul class="dropdown-menu">
 
           <!-- assessment editing -->
-          {% if obj_perms.edit_assessment %}
+          {% if obj_perms.edit %}
             <li class="disabled"><a tabindex="-1" href="#">Assessment Editing</a></li>
+            {% if obj_perms.edit_assessment %}
             <li><a href="{% url 'assessment:update' object.pk %}">Update assessment</a></li>
             <li><a href="{% url 'assessment:modules_update' object.pk %}">Update enabled modules</a></li>
             <li><a href="{% url 'assessment:delete' object.pk %}">Delete assessment</a></li>
+            {% endif %}
+            <li><a href="{{ object.get_clear_cache_url }}">Clear assessment cache</a></li>
             <li><a href="{% url 'assessment:attachment_create' object.pk %}">Add an attachment</a></li>
+            {% if user.is_beta_tester %}
+            <li class="betatester"><a href="{% url 'assessment:dataset_create' object.pk %}">Add a dataset</a></li>
+            {% endif %}
             <li class="divider"></li>
           {% endif %}
 
@@ -138,6 +144,11 @@
           <td>{{object.public}}</td>
         </tr>
 
+        <tr>
+          <th>Public training data</th>
+          <td>{{object.is_public_training_data}}</td>
+        </tr>
+
         {% if object.public %}
           <tr>
             <th>Hidden on public page?</th>
@@ -165,6 +176,9 @@
 
   {% if crud == "Read" %}
     {% include "assessment/_attachment_list.html" with object_list=attachments canEdit=obj_perms.edit_assessment %}
+    {% if user.is_beta_tester %}
+    {% include "assessment/_dataset_list.html" with object_list=object.datasets.all canEdit=obj_perms.edit %}
+    {% endif %}
   {% endif %}
 
 {% endblock content %}
@@ -173,10 +187,13 @@
 {% if crud == "Read" and object.cas %}
 <script type="text/javascript">
     $(document).on('ready', function(){
-        var url = '{{object.cas_url}}',
+      {% with url=object.get_casrn_url %}
+        {% if url %}
+          var url = "{{url}}",
             div = $('<div>').insertAfter($('#assessment_table'));
-
-        window.app.utils.HAWCUtils.renderChemicalProperties(url, div, true);
+          window.app.utils.HAWCUtils.renderChemicalProperties(url, div, true);
+        {% endif %}
+      {% endwith %}
     });
 </script>
 {% endif %}

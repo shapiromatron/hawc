@@ -18,6 +18,7 @@ def default_configuration(sender, instance, created, **kwargs):
 
         logging.info("Creating default literature inclusion/exclusion tags")
         apps.get_model("lit", "ReferenceFilterTag").build_default(instance)
+        apps.get_model("lit", "LiteratureAssessment").build_default(instance)
         apps.get_model("lit", "Search").build_default(instance)
 
         logging.info(

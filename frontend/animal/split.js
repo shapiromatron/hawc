@@ -3,6 +3,7 @@ import AnimalGroupTable from "./AnimalGroupTable";
 import DosingRegimeForm from "./DosingRegimeForm";
 import EditEndpoint from "./EditEndpoint";
 import Endpoint from "./Endpoint";
+import EndpointListApp from "./EndpointListApp";
 import EndpointListTable from "./EndpointListTable";
 import Experiment from "./Experiment";
 import SampleSizeWidget from "./SampleSizeWidget";
@@ -13,6 +14,7 @@ export default {
     DosingRegimeForm,
     EditEndpoint,
     Endpoint,
+    EndpointListApp,
     EndpointListTable,
     Experiment,
     SampleSizeWidget,

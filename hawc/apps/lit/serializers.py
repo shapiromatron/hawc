@@ -89,6 +89,10 @@ class ReferenceTagsSerializer(serializers.ModelSerializer):
         # obj is a model-manager in this case; convert to list to serialize
         return list(obj.values("id", "name"))
 
+    class Meta:
+        model = models.ReferenceTags
+        fields = "__all__"
+
 
 class ReferenceFilterTagSerializer(AssessmentRootedSerializer):
     parent = serializers.IntegerField(write_only=True, required=False)
@@ -136,7 +140,7 @@ class BulkReferenceTagSerializer(serializers.Serializer):
             .values_list("assessment_id", flat=True)
             .distinct()
         )
-        if len(assessments) > 1 or assessments[0] != expected_assessment_id:
+        if len(assessments) != 1 or assessments[0] != expected_assessment_id:
             raise serializers.ValidationError(
                 f"All reference ids are not from assessment {expected_assessment_id}"
             )
@@ -147,6 +151,14 @@ class BulkReferenceTagSerializer(serializers.Serializer):
         if len(additional_tags) > 0:
             raise serializers.ValidationError(
                 f"All tag ids are not from assessment {expected_assessment_id}"
+            )
+
+        # check to make sure we have no duplicates
+        df_nrows = df.shape[0]
+        df = df.drop_duplicates()
+        if df.shape[0] != df_nrows:
+            raise serializers.ValidationError(
+                "CSV contained duplicates; please remove before importing"
             )
 
         # success! save dataframe

@@ -50,6 +50,10 @@ class BaseVisualForm extends Component {
         this.setState({[e.target.name]: e.target.value, dataRefreshRequired: true});
     };
 
+    handleQuillInputChange = (name, value) => {
+        this.setState({[name]: value, dataRefreshRequired: true});
+    };
+
     handleCheckboxChange = e => {
         this.setState({[e.target.name]: e.target.checked, dataRefreshRequired: true});
     };
