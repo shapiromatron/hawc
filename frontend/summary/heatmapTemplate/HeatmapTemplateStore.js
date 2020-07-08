@@ -2,7 +2,7 @@ import _ from "lodash";
 import h from "shared/utils/helpers";
 import {action, computed, observable, toJS} from "mobx";
 
-import {OPTIONS} from "./constants";
+import OPTIONS from "./dataDefinitions";
 
 class HeatmapTemplateStore {
     config = null;
@@ -19,14 +19,25 @@ class HeatmapTemplateStore {
     @observable selectedFilters = [];
     @observable selectedTableFields = [];
 
+    @observable showNull = false;
+    @observable upperColor = null;
+
     constructor(config) {
         this.config = config;
         const options = OPTIONS[config.data_class];
-        this.dashboardOptions = options.DASHBOARDS;
-        this.axisOptions = options.AXIS_OPTIONS;
-        this.filterOptions = options.FILTER_OPTIONS;
-        this.tableOptions = options.TABLE_FIELDS;
+        this.dashboardOptions = _.values(options.DASHBOARDS);
+        this.axisOptions = _.values(options.AXIS_OPTIONS);
+        this.filterOptions = _.values(options.FILTER_OPTIONS);
+        this.tableOptions = _.values(options.TABLE_FIELDS);
         this.changeDashboard(this.dashboardOptions[0].id);
+        this.showNull = false;
+    }
+
+    @action.bound changeShowNull(bool) {
+        this.showNull = bool;
+    }
+    @action.bound changeUpperColor(color) {
+        this.upperColor = color;
     }
 
     @action.bound changeDashboard(id) {
@@ -38,6 +49,7 @@ class HeatmapTemplateStore {
         this.selectedTableFields = dashboard.table_fields.map(id =>
             _.find(this.tableOptions, {id})
         );
+        this.upperColor = dashboard.upperColor;
     }
 
     @action.bound changeAxis(name, key) {
@@ -68,13 +80,12 @@ class HeatmapTemplateStore {
     }
 
     @computed get settings() {
-        const title = `${this.config.assessment}: ${this.selectedDashboard.label}`;
         return {
             autosize_cells: true,
             autorotate_tick_labels: true,
             cell_height: 25,
             cell_width: 75,
-            color_range: ["#ffffff", "#2339a9"],
+            color_range: ["#ffffff", this.upperColor],
             compress_x: true,
             compress_y: true,
             data_url: this.config.data_url,
@@ -85,9 +96,9 @@ class HeatmapTemplateStore {
             show_grid: true,
             show_tooltip: true,
             show_totals: true,
-            show_null: false,
+            show_null: this.showNull,
             table_fields: this.selectedTableFields.map(d => d.settings),
-            title: {text: title, x: 0, y: 0, rotate: 0},
+            title: {text: this.selectedDashboard.label, x: 0, y: 0, rotate: 0},
             x_axis_bottom: false,
             x_fields: this.selectedXAxis.settings,
             x_label: {text: this.selectedXAxis.label, x: 0, y: 0, rotate: 0},
