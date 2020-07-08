@@ -102,10 +102,10 @@ function mapStateToProps(state) {
 }
 
 Root.propTypes = {
-    dispatch: PropTypes.object,
+    dispatch: PropTypes.func,
     tasks: PropTypes.shape({
-        isLoaded: PropTypes.object,
-        list: PropTypes.object,
+        isLoaded: PropTypes.bool,
+        list: PropTypes.array,
     }),
 };
 

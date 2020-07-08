@@ -33,8 +33,8 @@ class EndpointCriticalDose {
 }
 
 Renderer.propTypes = {
-    dose: PropTypes.object,
-    units: PropTypes.object,
+    dose: PropTypes.string,
+    units: PropTypes.string,
 };
 
 export default EndpointCriticalDose;
