@@ -186,7 +186,7 @@ class ModelOptionModal extends BaseModal {
         return (
             <div className="modal hide fade" id={types.OPTION_MODAL_ID}>
                 <div className="modal-header">
-                    <button ref="closer" className="close" type="button" data-dismiss="modal">
+                    <button ref={c => this.closer = c} className="close" type="button" data-dismiss="modal">
                         ×
                     </button>
                     <h3>{title}</h3>

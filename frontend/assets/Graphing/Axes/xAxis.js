@@ -38,7 +38,7 @@ class xAxis extends Component {
             labelElement = this.getLabelElement(axisLabel);
         return (
             <g
-                ref="xAxis"
+                ref={c => this.xAxisContainer = c}
                 className="x axis"
                 transform={`translate(${transform[0]}, ${transform[1]})`}>
                 {labelElement}
@@ -48,7 +48,7 @@ class xAxis extends Component {
 
     renderAxis() {
         this.props.xScale();
-        this.props.renderScale ? d3.select(this.refs.xAxis).call(this.xAxis) : null;
+        this.props.renderScale ? d3.select(this.xAxisContainer).call(this.xAxis) : null;
     }
 }
 

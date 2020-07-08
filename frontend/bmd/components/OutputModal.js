@@ -7,7 +7,7 @@ import BaseModal from "./BaseModal";
 
 class OutputModal extends BaseModal {
     componentDidUpdate() {
-        $(this.refs.modalBody).animate({scrollTop: 0}, "fast");
+        $(this.modalBody).animate({scrollTop: 0}, "fast");
     }
 
     renderBody(model, i) {
@@ -41,7 +41,7 @@ class OutputModal extends BaseModal {
                     <h3>{models[0].name} model output</h3>
                 </div>
 
-                <div className="modal-body" ref="modalBody">
+                <div className="modal-body" ref={c => this.modalBody = c}>
                     {models.map(this.renderBody)}
                 </div>
 

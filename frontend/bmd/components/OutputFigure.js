@@ -6,7 +6,7 @@ import {BMDLine} from "bmd/models/model";
 class OutputFigure extends React.Component {
     componentDidMount() {
         let {endpoint} = this.props;
-        this.plt = endpoint.renderPlot($(this.refs.epFigure), false).plot;
+        this.plt = endpoint.renderPlot($(this.epFigure), false).plot;
         this.renderSelectedLine(this.props.selectedModel);
     }
 
@@ -57,11 +57,11 @@ class OutputFigure extends React.Component {
     }
 
     componentWillUnmount() {
-        $(this.refs.epFigure).empty();
+        $(this.epFigure).empty();
     }
 
     render() {
-        return <div className="span4" style={{height: "300px", width: "300px"}} ref="epFigure" />;
+        return <div className="span4" style={{ height: "300px", width: "300px" }} ref={c => this.epFigure = c} />;
     }
 }
 

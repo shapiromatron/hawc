@@ -26,7 +26,7 @@ class BaseModal extends React.Component {
 
     handleEscPress = e => {
         if (e.keyCode === 27) {
-            $(this.refs.closer).click();
+            $(this.closer).click();
         }
     };
 }
