@@ -86,6 +86,7 @@ BSDSettings.DASHBOARDS = [
             BSDSettings.FILTER_OPTIONS.studyCitation.id,
             BSDSettings.FILTER_OPTIONS.routeOfExposure.id,
             BSDSettings.FILTER_OPTIONS.experimentChemical.id,
+            BSDSettings.FILTER_OPTIONS.effect.id,
         ],
         table_fields: [
             BSDSettings.TABLE_FIELDS.studyCitation.id,
@@ -106,6 +107,7 @@ BSDSettings.DASHBOARDS = [
             BSDSettings.FILTER_OPTIONS.studyCitation.id,
             BSDSettings.FILTER_OPTIONS.experimentType.id,
             BSDSettings.FILTER_OPTIONS.experimentChemical.id,
+            BSDSettings.FILTER_OPTIONS.effect.id,
         ],
         table_fields: [
             BSDSettings.TABLE_FIELDS.studyCitation.id,
@@ -138,6 +140,26 @@ BSDSettings.DASHBOARDS = [
         ],
     },
     {
+        id: "chemical vs. study citation",
+        label: "chemical vs. study citation",
+        upperColor: COLORS.orange,
+        x_axis: BSDSettings.AXIS_OPTIONS.experimentChemical.id,
+        y_axis: BSDSettings.AXIS_OPTIONS.studyCitation.id,
+        filters: [
+            BSDSettings.FILTER_OPTIONS.experimentType.id,
+            BSDSettings.FILTER_OPTIONS.routeOfExposure.id,
+            BSDSettings.FILTER_OPTIONS.system.id,
+        ],
+        table_fields: [
+            BSDSettings.TABLE_FIELDS.studyCitation.id,
+            BSDSettings.TABLE_FIELDS.species.id,
+            BSDSettings.TABLE_FIELDS.sex.id,
+            BSDSettings.TABLE_FIELDS.system.id,
+            BSDSettings.TABLE_FIELDS.organ.id,
+            BSDSettings.TABLE_FIELDS.effect.id,
+        ],
+    },
+    {
         id: "dose units vs. study citation",
         label: "dose units vs. study citation",
         upperColor: COLORS.purple,
@@ -156,27 +178,6 @@ BSDSettings.DASHBOARDS = [
             BSDSettings.TABLE_FIELDS.organ.id,
             BSDSettings.TABLE_FIELDS.effect.id,
             BSDSettings.TABLE_FIELDS.doseUnits.id,
-        ],
-    },
-
-    {
-        id: "chemical vs. study citation",
-        label: "chemical vs. study citation",
-        upperColor: COLORS.orange,
-        x_axis: BSDSettings.AXIS_OPTIONS.experimentChemical.id,
-        y_axis: BSDSettings.AXIS_OPTIONS.studyCitation.id,
-        filters: [
-            BSDSettings.FILTER_OPTIONS.experimentType.id,
-            BSDSettings.FILTER_OPTIONS.routeOfExposure.id,
-            BSDSettings.FILTER_OPTIONS.system.id,
-        ],
-        table_fields: [
-            BSDSettings.TABLE_FIELDS.studyCitation.id,
-            BSDSettings.TABLE_FIELDS.species.id,
-            BSDSettings.TABLE_FIELDS.sex.id,
-            BSDSettings.TABLE_FIELDS.system.id,
-            BSDSettings.TABLE_FIELDS.organ.id,
-            BSDSettings.TABLE_FIELDS.effect.id,
         ],
     },
 ];
