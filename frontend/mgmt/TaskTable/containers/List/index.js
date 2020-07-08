@@ -115,9 +115,7 @@ ListApp.propTypes = {
         isLoaded: PropTypes.object,
     }),
     studies: PropTypes.shape({
-        visibleList: PropTypes.shape({
-            map: PropTypes.object,
-        }),
+        visibleList: PropTypes.object,
     }),
     config: PropTypes.shape({
         cancelUrl: PropTypes.object,
