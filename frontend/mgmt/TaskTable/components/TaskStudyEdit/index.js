@@ -12,18 +12,21 @@ class TaskStudyEdit extends Component {
     }
 
     getChangedData() {
-        return _.chain(this.refs)
-            .filter(ref => {
-                return ref.formDidChange();
+        return _.chain(this.components)
+            .filter(component => {
+                return component.formDidChange();
             })
-            .map(ref => {
-                return ref.state;
+            .map(component => {
+                return component.state;
             })
             .value();
     }
 
     render() {
         const {tasks, study} = this.props.item;
+
+        this.components = []
+
         return (
             <div>
                 <hr className="hr-tight" />
@@ -32,7 +35,7 @@ class TaskStudyEdit extends Component {
                     {tasks.map((task, index) => (
                         <TaskForm
                             key={task.id}
-                            ref={`form-${index}`}
+                            ref={c => this.components.push(c)}
                             task={task}
                             className={`task-${index} flex-1`}
                             autocompleteUrl={this.props.autocompleteUrl}

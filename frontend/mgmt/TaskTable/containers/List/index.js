@@ -55,9 +55,9 @@ class ListApp extends Component {
 
     updateForm(e) {
         e.preventDefault();
-        const updatedData = _.chain(this.refs.list.refs)
-            .map(ref => {
-                return ref.getChangedData();
+        const updatedData = _.chain(this.list.components)
+            .map(component => {
+                return component.getChangedData();
             })
             .filter(data => {
                 return !_.isEmpty(data);
@@ -88,7 +88,7 @@ class ListApp extends Component {
                         component={displayForm ? TaskStudyEdit : TaskStudy}
                         items={taskList}
                         autocompleteUrl={this.props.config.autocomplete.url}
-                        ref="list"
+                        ref={c => this.list = c}
                     />
                 )}
                 {displayForm ? <SubmitButton submitForm={this.updateForm} /> : null}
