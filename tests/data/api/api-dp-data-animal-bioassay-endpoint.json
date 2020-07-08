@@ -89,7 +89,7 @@
     "observation time": "None not reported",
     "observation time text": "",
     "data type": "Continuous",
-    "doses": "0.0, 1.0, 10.0, 100.0, 1000.0 mg/kg/d",
+    "doses": "10.0, 100.0 mg/kg/d",
     "dose units": "mg/kg/d",
     "response units": "%",
     "expected adversity direction": 4,
