@@ -56,10 +56,10 @@ def test_get_significance_and_direction():
 
 
 class TestEndpointFlatDataPivot:
-    def test_dose_index_low_high(self):
+    def test_dose_low_high(self):
         # returns a tuple of the lowest non-zero dose
         # and the highest dose
-        func = EndpointFlatDataPivot._dose_index_low_high
+        func = EndpointFlatDataPivot._dose_low_high
 
         # all of these doses are present
         valid_doses = [0.0, 1.0, 20.0, 300.0]

@@ -1,5 +1,5 @@
 from copy import copy
-from typing import Dict, List, Tuple
+from typing import Dict, List, Optional, Tuple
 
 from ..assessment.models import DoseUnits
 from ..common.helper import FlatFileExporter
@@ -163,18 +163,18 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
         ]
 
     @classmethod
-    def _get_dose_units(cls, doses):
+    def _get_dose_units(cls, doses: List[Dict]) -> str:
         return doses[0]["dose_units"]["name"]
 
     @classmethod
-    def _get_doses_str(cls, doses):
+    def _get_doses_str(cls, doses: List[Dict]) -> str:
         if len(doses) == 0:
             return ""
         values = ", ".join([str(float(d["dose"])) for d in doses])
         return f"{values} {cls._get_dose_units(doses)}"
 
     @classmethod
-    def _get_dose(cls, doses, idx):
+    def _get_dose(cls, doses: List[Dict], idx: int) -> Optional[float]:
         for dose in doses:
             if dose["dose_group_id"] == idx:
                 return float(dose["dose"])
@@ -465,7 +465,19 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
         return False
 
     @staticmethod
-    def _dose_index_low_high(dose_list: List[float]) -> Tuple:
+    def _dose_low_high(dose_list: List[Optional[float]]) -> Tuple[Optional[float], Optional[float]]:
+        """
+        Finds the lowest and highest non-zero dose from a given list of doses,
+        ignoring None values. If there are no valid doses, returns None for both
+        lowest and highest dose.
+
+        Args:
+            dose_list (List[Optional[float]]): List of doses
+
+        Returns:
+            Tuple[Optional[float], Optional[float]]: Lowest dose and highest dose,
+            in that order.
+        """
         try:
             # map dose list to whether there is recorded data (valid)
             dose_validity_list = list(map(lambda d: d is not None, dose_list))
@@ -473,7 +485,7 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
             low_index = dose_validity_list[1:].index(True) + 1
             # last valid dose
             high_index = len(dose_list) - 1 - dose_validity_list[1:][::-1].index(True)
-            return [dose_list[low_index], dose_list[high_index]]
+            return (dose_list[low_index], dose_list[high_index])
         except ValueError:
             return (None, None)
 
@@ -540,7 +552,7 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
             ]
 
             # dose-group specific information
-            row.extend(self._dose_index_low_high(dose_list))
+            row.extend(self._dose_low_high(dose_list))
             try:
                 row.append(dose_list[ser["NOEL"]])
             except IndexError:
