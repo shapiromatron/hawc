@@ -7,6 +7,8 @@
     "study population source": "",
     "exposure name": "sarin poisoning",
     "exposure route": "inhalation",
+    "exposure measure": "Sarin",
+    "exposure metric": "air",
     "system": "nervous system and special sense organs",
     "effect": "neurological: behavior",
     "effect subtype": ""

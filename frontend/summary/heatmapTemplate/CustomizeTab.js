@@ -3,20 +3,23 @@ import React, {Component} from "react";
 import {inject, observer} from "mobx-react";
 
 import SelectInput from "shared/components/SelectInput";
+import TextInput from "shared/components/TextInput";
+import CheckboxInput from "shared/components/CheckboxInput";
 
 @inject("store")
 @observer
 class CustomizeTab extends Component {
     render() {
-        const {store} = this.props;
+        const {store} = this.props,
+            {create_visual_url} = store.config;
         return (
             <div>
                 <p className="help-block">
                     Use the dashboard-selection in the top-right corner to select predefined data
                     visualizations for this dataset. You can further customize the visualization by
-                    modifying the settings below. If you are part of the project-team, you can
-                    create a fully customized heatmap visual using data internal or external to HAWC
-                    by creating a custom visual.
+                    modifying the settings below. If you are part of the project-team, you can&nbsp;
+                    {create_visual_url ? <a href={create_visual_url}>create</a> : "create"}&nbsp;a
+                    fully customized heatmap visual using data internal or external to HAWC.
                 </p>
                 <div className="row-fluid">
                     <div className="span6">
@@ -62,6 +65,26 @@ class CustomizeTab extends Component {
                             selectSize={10}
                             label="Table fields"
                         />
+                    </div>
+                    <div className="row-fluid">
+                        <div className="span6">
+                            <CheckboxInput
+                                label="Show null field values"
+                                name="show_null"
+                                onChange={e => store.changeShowNull(e.target.checked)}
+                                checked={store.showNull}
+                                helpText={"Display data with <null> values in selected axes."}
+                            />
+                        </div>
+                        <div className="span6">
+                            <TextInput
+                                label="Color"
+                                name="upperColor"
+                                type="color"
+                                value={store.upperColor}
+                                onChange={e => store.changeUpperColor(e.target.value)}
+                            />
+                        </div>
                     </div>
                 </div>
             </div>
