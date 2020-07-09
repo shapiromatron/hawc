@@ -1,13 +1,15 @@
 import json
 
 from django.core.exceptions import ObjectDoesNotExist
-from rest_framework import exceptions, serializers
+from django.db import transaction
+from rest_framework import serializers
 
 from ..assessment.models import DoseUnits
 from ..assessment.serializers import EffectTagsSerializer
 from ..bmd.serializers import ModelSerializer
-from ..common.api import DynamicFieldsMixin
+from ..common.api import DynamicFieldsMixin, user_can_edit_object
 from ..common.helper import SerializerHelper
+from ..common.serializers import get_matching_instance
 from ..study.models import Study
 from ..study.serializers import StudySerializer
 from . import forms, models
@@ -25,54 +27,19 @@ class ExperimentSerializer(serializers.ModelSerializer):
         return ret
 
     def validate(self, data):
-        if "study_id" in self.initial_data:
-            # Get study instance
-            study_id = self.initial_data.get("study_id")
-            try:
-                study = Study.objects.get(id=study_id)
-                data["study"] = StudySerializer(study).data
-            except ValueError:
-                raise serializers.ValidationError("Study ID must be a number.")
-            except ObjectDoesNotExist:
-                raise serializers.ValidationError(f"Study ID does not exist.")
-        elif "study" in self.initial_data:
-            study_serializer = StudySerializer(data=self.initial_data.get("study"))
-            study_serializer.is_valid(raise_exception=True)
-            data["study"] = study_serializer.validated_data
-        else:
-            # Serializer needs one form of study identifier
-            raise serializers.ValidationError("Expected 'study' or 'study_id'.")
+        # Validate parent object
+        self.study = get_matching_instance(Study, self.initial_data, "study_id")
+        user_can_edit_object(self.study, self.context["request"].user, raise_exception=True)
 
-        # add form checks - this should be identical to forms.Experiment.clean - DRY?
-        purity_available = data.get("purity_available", False)
-        purity_qualifier = data.get("purity_qualifier", "")
-        purity = data.get("purity")
+        # add additional checks from forms.ExperimentForm
+        form = forms.ExperimentForm(data=data, parent=self.study)
+        if form.is_valid() is False:
+            raise serializers.ValidationError(form.errors)
 
-        if purity_available and purity_qualifier == "":
-            raise serializers.ValidationError(
-                {"purity_qualifier": forms.ExperimentForm.PURITY_QUALIFIER_REQ}
-            )
-
-        if purity_available and purity is None:
-            raise serializers.ValidationError({"purity": forms.ExperimentForm.PURITY_REQ})
-
-        if not purity_available and purity_qualifier != "":
-            raise serializers.ValidationError(
-                {"purity_qualifier": forms.ExperimentForm.PURITY_QUALIFIER_NOT_REQ}
-            )
-
-        if not purity_available and purity is not None:
-            raise serializers.ValidationError({"purity": forms.ExperimentForm.PURITY_NOT_REQ})
-
-        return super().validate(data)
+        return data
 
     def create(self, validated_data):
-        study_id = self.initial_data.get("study_id")
-        study = Study.objects.get(id=study_id)
-        if not study.assessment.user_can_edit_object(self.context["request"].user):
-            raise exceptions.PermissionDenied("Invalid permission to edit assessment.")
-        validated_data["study"] = study
-        return models.Experiment.objects.create(**validated_data)
+        return models.Experiment.objects.create(**validated_data, study=self.study)
 
     class Meta:
         model = models.Experiment
@@ -89,25 +56,18 @@ class DosesSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         if hasattr(self, "initial_data"):
-            try:
-                dose_regime_id = self.initial_data.get("dose_regime_id", -1)
-                models.DosingRegime.objects.get(id=dose_regime_id)
-                data["dose_regime_id"] = dose_regime_id
-            except ValueError:
-                raise serializers.ValidationError("Dosing regime ID must be a number.")
-            except ObjectDoesNotExist:
-                raise serializers.ValidationError(f"Dosing regime ID does not exist.")
+            if "dose_regime_id" in self.initial_data:
+                # make sure instance exists
+                dosing_regime = get_matching_instance(
+                    models.DosingRegime, self.initial_data, "dosing_regime_id"
+                )
+                data["dosing_regime_id"] = dosing_regime.id
 
-            try:
-                dose_units_id = self.initial_data.get("dose_units_id", -1)
-                DoseUnits.objects.get(id=dose_units_id)
-                data["dose_units_id"] = dose_units_id
-            except ValueError:
-                raise serializers.ValidationError("Dose units ID must be a number.")
-            except ObjectDoesNotExist:
-                raise serializers.ValidationError(f"Dose units ID does not exist.")
+            if "dose_units_id" in self.initial_data:
+                dose_units = get_matching_instance(DoseUnits, self.initial_data, "dose_units_id")
+                data["dose_units_id"] = dose_units.id
 
-        return super().validate(data)
+        return data
 
 
 class AnimalGroupRelationSerializer(serializers.ModelSerializer):
@@ -120,7 +80,7 @@ class AnimalGroupRelationSerializer(serializers.ModelSerializer):
         if hasattr(self, "initial_data"):
             if "id" not in self.initial_data:
                 raise serializers.ValidationError("ID required.")
-        return super().validate(data)
+        return data
 
     class Meta:
         model = models.AnimalGroup
@@ -138,20 +98,23 @@ class DosingRegimeSerializer(serializers.ModelSerializer):
         ret["negative_control"] = instance.get_negative_control_display()
         return ret
 
-    def create(self, validated_data):
-
-        doses = list()
-        validated_data.pop("doses")
-        dosing_regime = models.DosingRegime.objects.create(**validated_data)
-        doses_data = self.initial_data.get("doses")
-        for dose in doses_data:
-            dose["dose_regime_id"] = dosing_regime.id
+    def validate(self, data):
+        # validate dose-groups too
+        dose_serializers = []
+        for dose in self.initial_data.get("doses", []):
             dose_serializer = DosesSerializer(data=dose)
             dose_serializer.is_valid(raise_exception=True)
-            doses.append(dose_serializer)
-        # All doses are valid
-        for dose in doses:
-            dose.save()
+            dose_serializers.append(dose_serializer)
+        self.dose_serializers = dose_serializers
+
+        return data
+
+    @transaction.atomic
+    def create(self, validated_data):
+        validated_data.pop("doses", None)
+        dosing_regime = models.DosingRegime.objects.create(**validated_data)
+        for dose_serializer in self.dose_serializers:
+            dose_serializer.save(dose_regime_id=dosing_regime.id)
         return dosing_regime
 
     class Meta:
@@ -177,44 +140,21 @@ class AnimalGroupSerializer(serializers.ModelSerializer):
         return ret
 
     def validate(self, data):
-        # Validate experiment
-        if "experiment_id" in self.initial_data:
-            # Get experiment instance
-            experiment_id = self.initial_data.get("experiment_id")
-            try:
-                experiment = models.Experiment.objects.get(id=experiment_id)
-                data["experiment"] = ExperimentSerializer(experiment).data
-            except ValueError:
-                raise serializers.ValidationError("Experiment ID must be a number.")
-            except ObjectDoesNotExist:
-                raise serializers.ValidationError(f"Experiment ID does not exist.")
-        elif "experiment" in self.initial_data:
-            experiment_serializer = ExperimentSerializer(data=self.initial_data.get("experiment"))
-            experiment_serializer.is_valid(raise_exception=True)
-            data["experiment"] = experiment_serializer.validated_data
-        else:
-            # Serializer needs one form of experiment identifier
-            raise serializers.ValidationError("Expected 'experiment' or 'experiment_id'.")
+        # Validate parent object
+        self.experiment = get_matching_instance(
+            models.Experiment, self.initial_data, "experiment_id"
+        )
+        user_can_edit_object(self.experiment, self.context["request"].user, raise_exception=True)
 
-        # ensure dosing_regime or dosing_regime_id exists in data
-        dosing_regime_id = self.initial_data.get("dosing_regime_id")
-        dosing_regime = self.initial_data.get("dosing_regime")
-        if dosing_regime_id is None and dosing_regime is None:
-            raise serializers.ValidationError({"dosing_regime": "Must be created or specified."})
-
-        if "dosing_regime_id" in self.initial_data:
-            # Get dosing regime instance
-            dosing_regime_id = self.initial_data.get("dosing_regime_id")
-            try:
-                dosing_regime = models.DosingRegime.objects.get(id=dosing_regime_id)
-                data["dosing_regime"] = DosingRegimeSerializer(dosing_regime).data
-            except ValueError:
-                raise serializers.ValidationError("Dosing regime ID must be a number.")
-            except ObjectDoesNotExist:
-                raise serializers.ValidationError(f"Dosing regime ID does not exist.")
-
-            if dosing_regime.dosed_animals.experiment_id != experiment.id:
-                raise serializers.ValidationError("Dosed animals must be from the same experiment.")
+        # check dosing_regime or dosing_regime_id
+        dosing_regime = get_matching_instance(
+            models.DosingRegime, self.initial_data, "dosing_regime_id"
+        )
+        if (
+            dosing_regime.dosed_animals
+            and dosing_regime.dosed_animals.experiment_id != self.experiment.id
+        ):
+            raise serializers.ValidationError("Dosed animals must be from the same experiment.")
 
         if "sibling_id" in self.initial_data:
             # Get animal group instance
@@ -234,34 +174,30 @@ class AnimalGroupSerializer(serializers.ModelSerializer):
             data["siblings"] = sibling_serializer.validated_data
 
         # add form checks - this should be identical to forms.AnimalGroup.clean - DRY?
-        species = data.get("species")
-        strain = data.get("strain")
+        species = data.get("species", None)
+        strain = data.get("strain", None)
         if strain and species and species != strain.species:
             raise serializers.ValidationError({"strain": forms.AnimalGroupForm.STRAIN_NOT_SPECIES})
 
-        return super().validate(data)
+        return data
 
+    @transaction.atomic
     def create(self, validated_data):
         experiment_id = self.initial_data.get("experiment_id")
         experiment = models.Experiment.objects.get(id=experiment_id)
-        if not experiment.study.assessment.user_can_edit_object(self.context["request"].user):
-            raise exceptions.PermissionDenied("Invalid permission to edit assessment.")
         validated_data["experiment"] = experiment
         validated_data["siblings"] = (
             models.AnimalGroup.objects.get(id=validated_data["siblings"]["id"])
             if "siblings" in validated_data
             else None
         )
+
         if "dosing_regime_id" in self.initial_data:
             dosing_regime_id = self.initial_data.get("dosing_regime_id")
             validated_data["dosing_regime"] = models.DosingRegime.objects.get(id=dosing_regime_id)
             instance = models.AnimalGroup.objects.create(**validated_data)
-        elif validated_data["dosing_regime"] is not None:
-            dosing_regime_serializer = DosingRegimeSerializer(
-                data=self.initial_data.get("dosing_regime")
-            )
-            dosing_regime_serializer.is_valid(raise_exception=True)
-            dosing_regime = dosing_regime_serializer.save()
+        elif hasattr(self, "dosing_regime_serializer"):
+            dosing_regime = self.dosing_regime_serializer.save()
             validated_data["dosing_regime"] = dosing_regime
             instance = models.AnimalGroup.objects.create(**validated_data)
             dosing_regime.dosed_animals = instance
@@ -287,19 +223,6 @@ class EndpointGroupSerializer(serializers.ModelSerializer):
         ret["hasVariance"] = instance.hasVariance
         ret["isReported"] = instance.isReported
         return ret
-
-    def validate(self, data):
-        if hasattr(self, "initial_data"):
-            try:
-                endpoint_id = self.initial_data.get("endpoint_id", -1)
-                models.Endpoint.objects.get(id=endpoint_id)
-                data["endpoint_id"] = endpoint_id
-            except ValueError:
-                raise serializers.ValidationError("Endpoint ID must be a number.")
-            except ObjectDoesNotExist:
-                raise serializers.ValidationError(f"Endpoint ID does not exist.")
-
-        return super().validate(data)
 
     class Meta:
         model = models.EndpointGroup
@@ -349,53 +272,30 @@ class EndpointSerializer(serializers.ModelSerializer):
         return ret
 
     def validate(self, data):
-        # Validate animal group
-        if "animal_group_id" in self.initial_data:
-            # Get animal group instance
-            animal_group_id = self.initial_data.get("animal_group_id")
-            try:
-                animal_group = models.AnimalGroup.objects.get(id=animal_group_id)
-                data["animal_group"] = AnimalGroupSerializer(animal_group).data
-            except ValueError:
-                raise serializers.ValidationError("Animal group ID must be a number.")
-            except ObjectDoesNotExist:
-                raise serializers.ValidationError(f"Animal group ID does not exist.")
-        elif "animal_group" in self.initial_data:
-            animal_group_serializer = AnimalGroupSerializer(
-                data=self.initial_data.get("animal_group")
-            )
-            animal_group_serializer.is_valid(raise_exception=True)
-            data["animal_group"] = animal_group_serializer.validated_data
-        else:
-            # Serializer needs one form of animal group identifier
-            raise serializers.ValidationError("Expected 'animal_group' or 'animal_group_id'.")
+        # Validate parent object
+        self.animal_group = get_matching_instance(
+            models.AnimalGroup, self.initial_data, "animal_group_id"
+        )
+        user_can_edit_object(self.animal_group, self.context["request"].user, raise_exception=True)
+        data["animal_group_id"] = self.animal_group.id
+        data["assessment_id"] = self.animal_group.get_assessment().id
 
-        data["assessment_id"] = data["animal_group"]["experiment"]["study"]["assessment"]
-
-        return super().validate(data)
-
-    def create(self, validated_data):
-        animal_group_id = self.initial_data.get("animal_group_id")
-        animal_group = models.AnimalGroup.objects.get(id=animal_group_id)
-        if not animal_group.experiment.study.assessment.user_can_edit_object(
-            self.context["request"].user
-        ):
-            raise exceptions.PermissionDenied("Invalid permission to edit assessment.")
-        validated_data["animal_group"] = animal_group
-
-        groups = list()
-        if "groups" in validated_data:
-            validated_data.pop("groups")
-        endpoint = models.Endpoint.objects.create(**validated_data)
-        groups_data = self.initial_data.get("groups", list())
-        for group in groups_data:
-            group["endpoint_id"] = endpoint.id
+        # validate groups
+        group_serializers = []
+        for group in self.initial_data.get("groups", []):
             group_serializer = EndpointGroupSerializer(data=group)
             group_serializer.is_valid(raise_exception=True)
-            groups.append(group_serializer)
-        # All groups are valid
-        for group in groups:
-            group.save()
+            group_serializers.append(group_serializer)
+        self.group_serializers = group_serializers
+
+        return data
+
+    @transaction.atomic
+    def create(self, validated_data):
+        validated_data.pop("groups", None)
+        endpoint = models.Endpoint.objects.create(**validated_data)
+        for group_serializer in self.group_serializers:
+            group_serializer.save(endpoint_id=endpoint.id)
         return endpoint
 
     class Meta:

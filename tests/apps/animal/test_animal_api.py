@@ -156,7 +156,7 @@ class TestExperimentCreateApi:
         }
         response = client.post(url, data)
         assert response.status_code == 400
-        assert str(response.data["non_field_errors"][0]) == "Expected 'study' or 'study_id'."
+        assert response.json() == {"study_id": ["study_id is required."]}
 
         # purity check
         data = {
@@ -167,7 +167,10 @@ class TestExperimentCreateApi:
         }
         response = client.post(url, data)
         assert response.status_code == 400
-        assert response.json() == {"purity_qualifier": ["Qualifier must be specified"]}
+        assert response.json() == {
+            "purity_qualifier": ["Qualifier must be specified"],
+            "purity": ["A purity value must be specified"],
+        }
 
         data = {
             "name": "Experiment name",
@@ -266,9 +269,7 @@ class TestAnimalGroupCreateApi:
         data = {"name": "Animal group name", "species": 1, "strain": 1, "sex": "M"}
         response = client.post(url, data)
         assert response.status_code == 400
-        assert (
-            str(response.data["non_field_errors"][0]) == "Expected 'experiment' or 'experiment_id'."
-        )
+        assert response.json() == {"experiment_id": ["experiment_id is required."]}
 
         # payload needs dosing_regime_id
         data = {
@@ -443,10 +444,7 @@ class TestEndpointCreateApi:
         data = {"name": "Endpoint name"}
         response = client.post(url, data)
         assert response.status_code == 400
-        assert (
-            str(response.data["non_field_errors"][0])
-            == "Expected 'animal_group' or 'animal_group_id'."
-        )
+        assert response.json() == {"animal_group_id": ["animal_group_id is required."]}
 
     def test_valid_requests(self, db_keys):
         url = reverse("animal:api:endpoint-list")
