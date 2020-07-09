@@ -76,8 +76,8 @@ function mapStateToProps(state) {
 
 AggregateGraph.propTypes = {
     dispatch: PropTypes.func,
-    riskofbiases: PropTypes.object,
-    itemsLoaded: PropTypes.object,
+    riskofbiases: PropTypes.array,
+    itemsLoaded: PropTypes.bool,
 };
 
 export default connect(mapStateToProps)(AggregateGraph);

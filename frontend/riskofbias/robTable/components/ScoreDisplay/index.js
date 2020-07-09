@@ -106,7 +106,7 @@ ScoreDisplay.propTypes = {
         score_shade: PropTypes.string.isRequired,
         score: PropTypes.number.isRequired,
         bias_direction: PropTypes.number.isRequired,
-        final: PropTypes.object,
+        final: PropTypes.bool,
     }).isRequired,
     showAuthors: PropTypes.bool.isRequired,
     hasOverrides: PropTypes.bool.isRequired,

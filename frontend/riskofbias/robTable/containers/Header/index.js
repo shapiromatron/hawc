@@ -110,9 +110,9 @@ function mapStateToProps(state) {
 Header.propTypes = {
     config: PropTypes.shape({
         isForm: PropTypes.object,
-        display: PropTypes.object,
-        assessment_id: PropTypes.object,
-        hawc_flavor: PropTypes.object,
+        display: PropTypes.string,
+        assessment_id: PropTypes.string,
+        hawc_flavor: PropTypes.string,
     }),
 };
 

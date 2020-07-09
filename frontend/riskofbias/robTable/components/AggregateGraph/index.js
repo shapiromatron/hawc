@@ -33,8 +33,8 @@ export function renderAggregateGraph(data, element) {
 }
 
 AggregateGraph.propTypes = {
-    domains: PropTypes.object,
-    handleClick: PropTypes.object,
+    domains: PropTypes.array,
+    handleClick: PropTypes.func,
 };
 
 export default AggregateGraph;

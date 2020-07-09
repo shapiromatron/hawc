@@ -54,7 +54,7 @@ MetricCell.propTypes = {
                     assessment: PropTypes.shape({
                         id: PropTypes.number.isRequired,
                     }),
-                    name: PropTypes.object,
+                    name: PropTypes.string,
                 }),
             }).isRequired,
         })
