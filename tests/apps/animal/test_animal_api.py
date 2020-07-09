@@ -137,6 +137,12 @@ class TestExperimentCreateApi:
         client = APIClient()
         assert client.login(username="team@team.com", password="pw") is True
 
+        # empty payload doesn't crash
+        data = {}
+        response = client.post(url, data)
+        assert response.status_code == 400
+        assert {"name", "type"}.issubset((response.data.keys()))
+
         # payload needs to include name and type
         data = {"study_id": db_keys.study_working}
         response = client.post(url, data)
@@ -151,6 +157,52 @@ class TestExperimentCreateApi:
         response = client.post(url, data)
         assert response.status_code == 400
         assert str(response.data["non_field_errors"][0]) == "Expected 'study' or 'study_id'."
+
+        # purity check
+        data = {
+            "name": "Experiment name",
+            "type": "NR",
+            "study_id": db_keys.study_working,
+            "purity_available": True,
+        }
+        response = client.post(url, data)
+        assert response.status_code == 400
+        assert response.json() == {"purity_qualifier": ["Qualifier must be specified"]}
+
+        data = {
+            "name": "Experiment name",
+            "type": "NR",
+            "study_id": db_keys.study_working,
+            "purity_available": True,
+            "purity_qualifier": ">",
+        }
+        response = client.post(url, data)
+        assert response.status_code == 400
+        assert response.json() == {"purity": ["A purity value must be specified"]}
+
+        data = {
+            "name": "Experiment name",
+            "type": "NR",
+            "study_id": db_keys.study_working,
+            "purity_available": False,
+            "purity_qualifier": ">",
+        }
+        response = client.post(url, data)
+        assert response.status_code == 400
+        assert response.json() == {
+            "purity_qualifier": ["Qualifier must be blank if purity is not available"]
+        }
+
+        data = {
+            "name": "Experiment name",
+            "type": "NR",
+            "study_id": db_keys.study_working,
+            "purity_available": False,
+            "purity": 0.84,
+        }
+        response = client.post(url, data)
+        assert response.status_code == 400
+        assert response.json() == {"purity": ["Purity must be blank if purity is not available"]}
 
     def test_valid_requests(self, db_keys):
         url = reverse("animal:api:experiment-list")
@@ -179,6 +231,7 @@ class TestAnimalGroupCreateApi:
             "strain": 1,
             "sex": "M",
             "experiment_id": 1,
+            "dosing_regime_id": 1,
         }
 
         # reviewers shouldn't be able to create
@@ -197,6 +250,12 @@ class TestAnimalGroupCreateApi:
         client = APIClient()
         assert client.login(username="team@team.com", password="pw") is True
 
+        # empty payload doesn't crash
+        data = {}
+        response = client.post(url, data)
+        assert response.status_code == 400
+        assert {"name", "species", "strain", "sex"}.issubset((response.data.keys()))
+
         # payload needs to include name, species, strain, and sex
         data = {"experiment_id": 1}
         response = client.post(url, data)
@@ -211,6 +270,31 @@ class TestAnimalGroupCreateApi:
             str(response.data["non_field_errors"][0]) == "Expected 'experiment' or 'experiment_id'."
         )
 
+        # payload needs dosing_regime_id
+        data = {
+            "experiment_id": 1,
+            "name": "Animal group name",
+            "species": 1,
+            "strain": 1,
+            "sex": "M",
+        }
+        response = client.post(url, data)
+        assert response.status_code == 400
+        assert response.json() == {"dosing_regime": ["Must be created or specified."]}
+
+        # strain not from species
+        data = {
+            "experiment_id": 1,
+            "dosing_regime_id": 1,
+            "name": "Animal group name",
+            "species": 2,
+            "strain": 1,
+            "sex": "M",
+        }
+        response = client.post(url, data)
+        assert response.status_code == 400
+        assert response.json() == {"strain": ["Selected strain is not of the selected species."]}
+
     def test_valid_requests(self, db_keys):
         url = reverse("animal:api:animal_group-list")
         data = {
@@ -219,6 +303,7 @@ class TestAnimalGroupCreateApi:
             "strain": 1,
             "sex": "M",
             "experiment_id": 1,
+            "dosing_regime_id": 1,
         }
 
         # valid request
@@ -341,6 +426,12 @@ class TestEndpointCreateApi:
         url = reverse("animal:api:endpoint-list")
         client = APIClient()
         assert client.login(username="team@team.com", password="pw") is True
+
+        # empty payload doesn't crash
+        data = {}
+        response = client.post(url, data)
+        assert response.status_code == 400
+        assert {"name"}.issubset((response.data.keys()))
 
         # payload needs to include name
         data = {"animal_group_id": 1}

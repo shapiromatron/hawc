@@ -10,7 +10,7 @@ from ..common.api import DynamicFieldsMixin
 from ..common.helper import SerializerHelper
 from ..study.models import Study
 from ..study.serializers import StudySerializer
-from . import models
+from . import forms, models
 
 
 class ExperimentSerializer(serializers.ModelSerializer):
@@ -42,6 +42,28 @@ class ExperimentSerializer(serializers.ModelSerializer):
         else:
             # Serializer needs one form of study identifier
             raise serializers.ValidationError("Expected 'study' or 'study_id'.")
+
+        # add form checks - this should be identical to forms.Experiment.clean - DRY?
+        purity_available = data.get("purity_available", False)
+        purity_qualifier = data.get("purity_qualifier", "")
+        purity = data.get("purity")
+
+        if purity_available and purity_qualifier == "":
+            raise serializers.ValidationError(
+                {"purity_qualifier": forms.ExperimentForm.PURITY_QUALIFIER_REQ}
+            )
+
+        if purity_available and purity is None:
+            raise serializers.ValidationError({"purity": forms.ExperimentForm.PURITY_REQ})
+
+        if not purity_available and purity_qualifier != "":
+            raise serializers.ValidationError(
+                {"purity_qualifier": forms.ExperimentForm.PURITY_QUALIFIER_NOT_REQ}
+            )
+
+        if not purity_available and purity is not None:
+            raise serializers.ValidationError({"purity": forms.ExperimentForm.PURITY_NOT_REQ})
+
         return super().validate(data)
 
     def create(self, validated_data):
@@ -102,11 +124,7 @@ class AnimalGroupRelationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.AnimalGroup
-        fields = (
-            "id",
-            "name",
-        )
-        extra_kwargs = {"id": {"required": True}}
+        fields = ("id", "name")
 
 
 class DosingRegimeSerializer(serializers.ModelSerializer):
@@ -178,6 +196,12 @@ class AnimalGroupSerializer(serializers.ModelSerializer):
             # Serializer needs one form of experiment identifier
             raise serializers.ValidationError("Expected 'experiment' or 'experiment_id'.")
 
+        # ensure dosing_regime or dosing_regime_id exists in data
+        dosing_regime_id = self.initial_data.get("dosing_regime_id")
+        dosing_regime = self.initial_data.get("dosing_regime")
+        if dosing_regime_id is None and dosing_regime is None:
+            raise serializers.ValidationError({"dosing_regime": "Must be created or specified."})
+
         if "dosing_regime_id" in self.initial_data:
             # Get dosing regime instance
             dosing_regime_id = self.initial_data.get("dosing_regime_id")
@@ -188,6 +212,9 @@ class AnimalGroupSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError("Dosing regime ID must be a number.")
             except ObjectDoesNotExist:
                 raise serializers.ValidationError(f"Dosing regime ID does not exist.")
+
+            if dosing_regime.dosed_animals.experiment_id != experiment.id:
+                raise serializers.ValidationError("Dosed animals must be from the same experiment.")
 
         if "sibling_id" in self.initial_data:
             # Get animal group instance
@@ -206,6 +233,12 @@ class AnimalGroupSerializer(serializers.ModelSerializer):
             sibling_serializer.is_valid(raise_exception=True)
             data["siblings"] = sibling_serializer.validated_data
 
+        # add form checks - this should be identical to forms.AnimalGroup.clean - DRY?
+        species = data.get("species")
+        strain = data.get("strain")
+        if strain and species and species != strain.species:
+            raise serializers.ValidationError({"strain": forms.AnimalGroupForm.STRAIN_NOT_SPECIES})
+
         return super().validate(data)
 
     def create(self, validated_data):
@@ -222,13 +255,19 @@ class AnimalGroupSerializer(serializers.ModelSerializer):
         if "dosing_regime_id" in self.initial_data:
             dosing_regime_id = self.initial_data.get("dosing_regime_id")
             validated_data["dosing_regime"] = models.DosingRegime.objects.get(id=dosing_regime_id)
+            instance = models.AnimalGroup.objects.create(**validated_data)
         elif validated_data["dosing_regime"] is not None:
             dosing_regime_serializer = DosingRegimeSerializer(
                 data=self.initial_data.get("dosing_regime")
             )
             dosing_regime_serializer.is_valid(raise_exception=True)
-            validated_data["dosing_regime"] = dosing_regime_serializer.save()
-        return models.AnimalGroup.objects.create(**validated_data)
+            dosing_regime = dosing_regime_serializer.save()
+            validated_data["dosing_regime"] = dosing_regime
+            instance = models.AnimalGroup.objects.create(**validated_data)
+            dosing_regime.dosed_animals = instance
+            dosing_regime.save()
+
+        return instance
 
     class Meta:
         model = models.AnimalGroup

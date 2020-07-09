@@ -211,14 +211,15 @@ class AnimalGroupForm(ModelForm):
 
         return helper
 
+    STRAIN_NOT_SPECIES = "Selected strain is not of the selected species."
+
     def clean(self):
         cleaned_data = super().clean()
 
         species = cleaned_data.get("species")
         strain = cleaned_data.get("strain")
         if strain and species and species != strain.species:
-            err = "Selected strain is not of the selected species."
-            self.add_error("strain", err)
+            self.add_error("strain", self.STRAIN_NOT_SPECIES)
 
         return cleaned_data
 
