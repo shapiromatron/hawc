@@ -1,6 +1,5 @@
 import json
 
-from django.core.exceptions import ObjectDoesNotExist
 from django.db import transaction
 from rest_framework import serializers
 
@@ -9,7 +8,7 @@ from ..assessment.serializers import EffectTagsSerializer
 from ..bmd.serializers import ModelSerializer
 from ..common.api import DynamicFieldsMixin, user_can_edit_object
 from ..common.helper import SerializerHelper
-from ..common.serializers import get_matching_instance
+from ..common.serializers import get_matching_instance, get_matching_instances
 from ..study.models import Study
 from ..study.serializers import StudySerializer
 from . import forms, models
@@ -141,37 +140,38 @@ class AnimalGroupSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         # Validate parent object
-        self.experiment = get_matching_instance(
-            models.Experiment, self.initial_data, "experiment_id"
-        )
-        user_can_edit_object(self.experiment, self.context["request"].user, raise_exception=True)
+        experiment = get_matching_instance(models.Experiment, self.initial_data, "experiment_id")
+        user_can_edit_object(experiment, self.context["request"].user, raise_exception=True)
+        data["experiment"] = experiment
 
-        # check dosing_regime or dosing_regime_id
+        # check dosing_regime
         dosing_regime = get_matching_instance(
             models.DosingRegime, self.initial_data, "dosing_regime_id"
         )
         if (
             dosing_regime.dosed_animals
-            and dosing_regime.dosed_animals.experiment_id != self.experiment.id
+            and dosing_regime.dosed_animals.experiment_id != experiment.id
         ):
             raise serializers.ValidationError("Dosed animals must be from the same experiment.")
+        data["dosing_regime"] = dosing_regime
 
-        if "sibling_id" in self.initial_data:
-            # Get animal group instance
-            sibling_id = self.initial_data.get("sibling_id")
-            try:
-                sibling = models.AnimalGroup.objects.get(id=sibling_id)
-                data["siblings"] = AnimalGroupRelationSerializer(sibling).data
-            except ValueError:
-                raise serializers.ValidationError("Sibling ID must be a number.")
-            except ObjectDoesNotExist:
-                raise serializers.ValidationError(f"Sibling ID does not exist.")
-        elif "siblings" in self.initial_data:
-            sibling_serializer = AnimalGroupRelationSerializer(
-                data=self.initial_data.get("siblings")
-            )
-            sibling_serializer.is_valid(raise_exception=True)
-            data["siblings"] = sibling_serializer.validated_data
+        # set siblings (optional)
+        if "siblings_id" in self.initial_data:
+            siblings = get_matching_instance(models.AnimalGroup, self.initial_data, "siblings_id")
+            if siblings.experiment_id != experiment.id:
+                raise serializers.ValidationError(
+                    {"siblings_id": "Sibling must be in same experiment"}
+                )
+            data["siblings"] = siblings
+
+        # set parents (optional)
+        if "parent_ids" in self.initial_data:
+            parents = get_matching_instances(models.AnimalGroup, self.initial_data, "parent_ids")
+            if any([parent.experiment_id != experiment.id for parent in parents]):
+                raise serializers.ValidationError(
+                    {"parent_ids": "Parent must be in same experiment"}
+                )
+            data["parents"] = parents
 
         # add form checks - this should be identical to forms.AnimalGroup.clean - DRY?
         species = data.get("species", None)
@@ -183,26 +183,10 @@ class AnimalGroupSerializer(serializers.ModelSerializer):
 
     @transaction.atomic
     def create(self, validated_data):
-        experiment_id = self.initial_data.get("experiment_id")
-        experiment = models.Experiment.objects.get(id=experiment_id)
-        validated_data["experiment"] = experiment
-        validated_data["siblings"] = (
-            models.AnimalGroup.objects.get(id=validated_data["siblings"]["id"])
-            if "siblings" in validated_data
-            else None
-        )
-
-        if "dosing_regime_id" in self.initial_data:
-            dosing_regime_id = self.initial_data.get("dosing_regime_id")
-            validated_data["dosing_regime"] = models.DosingRegime.objects.get(id=dosing_regime_id)
-            instance = models.AnimalGroup.objects.create(**validated_data)
-        elif hasattr(self, "dosing_regime_serializer"):
-            dosing_regime = self.dosing_regime_serializer.save()
-            validated_data["dosing_regime"] = dosing_regime
-            instance = models.AnimalGroup.objects.create(**validated_data)
-            dosing_regime.dosed_animals = instance
-            dosing_regime.save()
-
+        parents = validated_data.pop("parents", None)
+        instance = models.AnimalGroup.objects.create(**validated_data)
+        if parents:
+            instance.parents.set(parents)
         return instance
 
     class Meta:

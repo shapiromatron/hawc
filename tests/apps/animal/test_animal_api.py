@@ -281,7 +281,7 @@ class TestAnimalGroupCreateApi:
         }
         response = client.post(url, data)
         assert response.status_code == 400
-        assert response.json() == {"dosing_regime": ["Must be created or specified."]}
+        assert response.json() == {"dosing_regime_id": ["dosing_regime_id is required."]}
 
         # strain not from species
         data = {
@@ -312,18 +312,19 @@ class TestAnimalGroupCreateApi:
         assert client.login(username="team@team.com", password="pw") is True
         response = client.post(url, data)
         assert response.status_code == 201
-        assert len(models.AnimalGroup.objects.filter(name="Animal group name")) == 1
+        animal_group = models.AnimalGroup.objects.get(id=response.json()["id"])
 
-        first_animal_group = models.AnimalGroup.objects.filter(name="Animal group name")[0]
-        data["sibling_id"] = first_animal_group.id
-
+        # test relations
+        data.update(dict(siblings_id=animal_group.id, parent_ids=[animal_group.id],))
         response = client.post(url, data, format="json")
         assert response.status_code == 201
-        assert len(models.AnimalGroup.objects.filter(name="Animal group name")) == 2
+        assert models.AnimalGroup.objects.filter(name=data["name"]).count() == 2
 
-        assert models.AnimalGroup.objects.filter(
-            name="Animal group name", siblings_id=first_animal_group.id
-        ).exists()
+        animal_group_2 = models.AnimalGroup.objects.get(id=response.json()["id"])
+        assert animal_group_2.siblings == animal_group
+        parents = animal_group_2.parents.all()
+        assert parents.count() == 1
+        assert parents[0] == animal_group
 
     def test_create_dosing_regime(self, db_keys):
         url = reverse("animal:api:animal_group-list")
