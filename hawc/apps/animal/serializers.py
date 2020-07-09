@@ -1,3 +1,4 @@
+import itertools
 import json
 
 from django.db import transaction
@@ -75,12 +76,6 @@ class AnimalGroupRelationSerializer(serializers.ModelSerializer):
         ret["url"] = instance.get_absolute_url()
         return ret
 
-    def validate(self, data):
-        if hasattr(self, "initial_data"):
-            if "id" not in self.initial_data:
-                raise serializers.ValidationError("ID required.")
-        return data
-
     class Meta:
         model = models.AnimalGroup
         fields = ("id", "name")
@@ -100,11 +95,31 @@ class DosingRegimeSerializer(serializers.ModelSerializer):
     def validate(self, data):
         # validate dose-groups too
         dose_serializers = []
-        for dose in self.initial_data.get("doses", []):
+        doses = self.initial_data.get("doses", [])
+        for dose in doses:
             dose_serializer = DosesSerializer(data=dose)
             dose_serializer.is_valid(raise_exception=True)
             dose_serializers.append(dose_serializer)
         self.dose_serializers = dose_serializers
+
+        # validate that we have the same number of `dose_group_id`
+        dose_groups = set([d["dose_group_id"] for d in doses])
+        units = set([d["dose_units_id"] for d in doses])
+
+        expected_dose_groups = list(range(max(dose_groups) + 1))
+        if dose_groups != set(expected_dose_groups):
+            raise serializers.ValidationError(f"Expected `dose_group_id` in {expected_dose_groups}")
+
+        expected_doses = len(dose_groups) * len(units)
+        if len(doses) != expected_doses:
+            raise serializers.ValidationError(f"Expected {expected_doses} dose-groups.")
+
+        expected_set = set(itertools.product(dose_groups, units))
+        actual_set = set((d["dose_group_id"], d["dose_units_id"]) for d in doses)
+        if expected_set != actual_set:
+            raise serializers.ValidationError("Missing or duplicate dose-groups")
+
+        data["num_dose_groups"] = len(dose_groups)
 
         return data
 
@@ -263,6 +278,8 @@ class EndpointSerializer(serializers.ModelSerializer):
         user_can_edit_object(self.animal_group, self.context["request"].user, raise_exception=True)
         data["animal_group_id"] = self.animal_group.id
         data["assessment_id"] = self.animal_group.get_assessment().id
+
+        # add the other validation logic here from the forms
 
         # validate groups
         group_serializers = []
