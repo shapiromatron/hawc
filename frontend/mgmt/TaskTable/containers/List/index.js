@@ -56,6 +56,7 @@ class ListApp extends Component {
     updateForm(e) {
         e.preventDefault();
         const updatedData = _.chain(this.list.components)
+            .filter(component => component != null)
             .map(component => {
                 return component.getChangedData();
             })

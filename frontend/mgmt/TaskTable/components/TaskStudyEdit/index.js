@@ -13,6 +13,7 @@ class TaskStudyEdit extends Component {
 
     getChangedData() {
         return _.chain(this.components)
+            .filter(component => component != null)
             .filter(component => {
                 return component.formDidChange();
             })
