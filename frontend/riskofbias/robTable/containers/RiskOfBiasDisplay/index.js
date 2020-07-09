@@ -50,7 +50,7 @@ function mapStateToProps(state) {
 }
 
 RiskOfBiasDisplay.propTypes = {
-    dispatch: PropTypes.object,
+    dispatch: PropTypes.func,
     active: PropTypes.object,
     riskofbiases: PropTypes.object,
     itemsLoaded: PropTypes.object,

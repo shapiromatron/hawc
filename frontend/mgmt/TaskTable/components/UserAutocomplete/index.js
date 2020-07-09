@@ -42,13 +42,13 @@ UserAutocomplete.propTypes = {
             assessment: PropTypes.object.isRequired,
         }).isRequired,
         owner: PropTypes.shape({
-            full_name: PropTypes.object,
-            id: PropTypes.object,
+            full_name: PropTypes.string,
+            id: PropTypes.number,
         }),
-        id: PropTypes.object,
+        id: PropTypes.number,
     }).isRequired,
     url: PropTypes.string.isRequired,
-    onChange: PropTypes.object,
+    onChange: PropTypes.func,
 };
 
 export default UserAutocomplete;

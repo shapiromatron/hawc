@@ -109,17 +109,17 @@ function mapStateToProps(state) {
 }
 
 ListApp.propTypes = {
-    dispatch: PropTypes.object,
+    dispatch: PropTypes.func,
     tasks: PropTypes.shape({
-        list: PropTypes.object,
-        isLoaded: PropTypes.object,
+        list: PropTypes.array,
+        isLoaded: PropTypes.bool,
     }),
     studies: PropTypes.shape({
-        visibleList: PropTypes.object,
+        visibleList: PropTypes.array,
     }),
     config: PropTypes.shape({
-        cancelUrl: PropTypes.object,
-        type: PropTypes.object,
+        cancelUrl: PropTypes.string,
+        type: PropTypes.string,
         autocomplete: PropTypes.object,
     }),
     error: PropTypes.object,

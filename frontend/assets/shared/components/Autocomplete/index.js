@@ -129,8 +129,8 @@ Autocomplete.propTypes = {
     url: PropTypes.string.isRequired,
     onChange: PropTypes.func.isRequired,
     loaded: PropTypes.shape({
-        display: PropTypes.object,
-        id: PropTypes.object,
+        display: PropTypes.string,
+        id: PropTypes.number,
     }),
 };
 

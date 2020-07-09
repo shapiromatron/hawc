@@ -26,7 +26,7 @@ function mapStateToProps(state) {
 }
 
 Items.propTypes = {
-    dispatch: PropTypes.object,
+    dispatch: PropTypes.func,
     match: PropTypes.shape({
         params: PropTypes.object,
     }),

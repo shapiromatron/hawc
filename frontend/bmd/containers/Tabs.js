@@ -277,7 +277,7 @@ function mapStateToProps(state) {
 }
 
 Tabs.propTypes = {
-    dispatch: PropTypes.object,
+    dispatch: PropTypes.func,
     config: PropTypes.shape({
         endpoint_id: PropTypes.object,
         session_url: PropTypes.object,

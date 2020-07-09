@@ -44,7 +44,7 @@ function mapStateToProps(state) {
 
 FieldSelection.propTypes = {
     types: PropTypes.object,
-    dispatch: PropTypes.object,
+    dispatch: PropTypes.func,
     match: PropTypes.shape({
         params: PropTypes.shape({
             type: PropTypes.object,

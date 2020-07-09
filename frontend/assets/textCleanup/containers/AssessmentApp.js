@@ -33,7 +33,7 @@ function mapStateToProps(state) {
 }
 
 App.propTypes = {
-    dispatch: PropTypes.object,
+    dispatch: PropTypes.func,
     assessment: PropTypes.object,
 };
 

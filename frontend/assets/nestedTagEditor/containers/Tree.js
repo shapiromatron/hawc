@@ -153,7 +153,7 @@ function mapStateToProps(state) {
 }
 
 Tree.propTypes = {
-    dispatch: PropTypes.object,
+    dispatch: PropTypes.func,
     parentOptions: PropTypes.object,
     tags: PropTypes.object,
     tagsLoaded: PropTypes.object,

@@ -66,7 +66,7 @@ function mapStateToProps(state) {
 }
 
 Modals.propTypes = {
-    dispatch: PropTypes.object,
+    dispatch: PropTypes.func,
     allBmrOptions: PropTypes.object,
     config: PropTypes.shape({
         editMode: PropTypes.object,

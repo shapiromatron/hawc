@@ -81,7 +81,7 @@ function mapDispatchToProps(dispatch) {
 }
 
 BulkForm.propTypes = {
-    dispatch: PropTypes.object,
+    dispatch: PropTypes.func,
     params: PropTypes.shape({
         field: PropTypes.object,
         type: PropTypes.object,

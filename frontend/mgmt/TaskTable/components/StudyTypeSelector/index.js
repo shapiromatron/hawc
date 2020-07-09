@@ -43,7 +43,7 @@ class StudyTypeSelector extends Component {
 
 StudyTypeSelector.propTypes = {
     handleChange: PropTypes.func.isRequired,
-    className: PropTypes.object,
+    className: PropTypes.string,
 };
 
 export default StudyTypeSelector;
