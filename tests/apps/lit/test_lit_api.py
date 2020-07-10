@@ -5,6 +5,8 @@ import pytest
 from django.urls import reverse
 from rest_framework.test import APIClient
 
+from hawc.apps.lit import models
+
 DATA_ROOT = Path(__file__).parents[2] / "data/api"
 
 
@@ -247,3 +249,98 @@ class TestSearchViewset:
                 "Import failed; the following HERO IDs could not be imported: 41589"
             ]
         }
+
+
+@pytest.mark.django_db
+class TestReferenceDestroyApi:
+    def test_permissions(self, db_keys):
+
+        url = reverse("lit:api:reference-detail", args=(1,))
+
+        # reviewers shouldn't be able to destroy
+        client = APIClient()
+        assert client.login(username="rev@rev.com", password="pw") is True
+        response = client.delete(url)
+        assert response.status_code == 403
+
+        # public shouldn't be able to destroy
+        client = APIClient()
+        response = client.delete(url)
+        assert response.status_code == 403
+
+        # make sure the object still exists
+        assert models.Reference.objects.filter(id=1).exists()
+
+    def test_bad_requests(self, db_keys):
+        # test bad id
+        url = reverse("lit:api:reference-detail", args=(-1,))
+
+        client = APIClient()
+        assert client.login(username="team@team.com", password="pw") is True
+        response = client.delete(url)
+        assert response.status_code == 404
+
+    def test_valid_requests(self, db_keys):
+        # test valid id
+        url = reverse("lit:api:reference-detail", args=(1,))
+
+        client = APIClient()
+        assert client.login(username="team@team.com", password="pw") is True
+        response = client.delete(url)
+        # the reference is successfully deleted
+        assert response.status_code == 204
+        response = client.delete(url)
+        # the object does not exist, since it was previously deleted
+        assert response.status_code == 404
+        assert not models.Reference.objects.filter(id=1).exists()
+
+
+@pytest.mark.django_db
+class TestReferenceUpdateApi:
+    def test_permissions(self, db_keys):
+
+        url = reverse("lit:api:reference-detail", args=(1,))
+        data = {"title": "TestReferenceUpdateApi test"}
+
+        pre_ref = models.Reference.objects.get(id=1)
+
+        # reviewers shouldn't be able to update
+        client = APIClient()
+        assert client.login(username="rev@rev.com", password="pw") is True
+        response = client.patch(url, data)
+        assert response.status_code == 403
+
+        # public shouldn't be able to update
+        client = APIClient()
+        response = client.patch(url, data)
+        assert response.status_code == 403
+
+        post_ref = models.Reference.objects.get(id=1)
+
+        # make sure the object hasn't changed
+        assert post_ref == pre_ref
+
+    def test_bad_requests(self, db_keys):
+        # test bad id
+        url = reverse("lit:api:reference-detail", args=(-1,))
+        data = {"title": "TestReferenceUpdateApi test"}
+
+        client = APIClient()
+        assert client.login(username="team@team.com", password="pw") is True
+        response = client.patch(url, data)
+        assert response.status_code == 404
+
+    def test_valid_requests(self, db_keys):
+        # test valid id
+        url = reverse("lit:api:reference-detail", args=(1,))
+        data = {"title": "TestReferenceUpdateApi test"}
+
+        pre_ref = models.Reference.objects.get(id=1)
+        assert pre_ref.title != data["title"]
+        client = APIClient()
+        assert client.login(username="team@team.com", password="pw") is True
+        response = client.patch(url, data)
+        assert response.status_code == 200
+
+        post_ref = models.Reference.objects.get(id=1)
+        assert post_ref.title == data["title"]
