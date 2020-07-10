@@ -36,9 +36,7 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         export = FlatExport(df=df, filename=f"reference-tags-{self.assessment.id}")
         return Response(export)
 
-    @action(
-        detail=True, methods=("get",), renderer_classes=PandasRenderers, url_path="reference-ids"
-    )
+    @action(detail=True, methods=("get",), renderer_classes=PandasRenderers, url_path="reference-ids")
     def reference_ids(self, request, pk):
         """
         Get literature reference ids for all assessment references
@@ -50,10 +48,7 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         return Response(export)
 
     @action(
-        detail=True,
-        methods=("get", "post"),
-        url_path="reference-tags",
-        renderer_classes=PandasRenderers,
+        detail=True, methods=("get", "post"), url_path="reference-tags", renderer_classes=PandasRenderers,
     )
     def reference_tags(self, request, pk):
         """
@@ -62,9 +57,7 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         instance = self.get_object()
 
         if self.request.method == "POST":
-            serializer = serializers.BulkReferenceTagSerializer(
-                data=request.data, context={"assessment": instance}
-            )
+            serializer = serializers.BulkReferenceTagSerializer(data=request.data, context={"assessment": instance})
             serializer.is_valid(raise_exception=True)
             serializer.bulk_create_tags()
 
@@ -79,9 +72,7 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         instance = self.get_object()
         # get all the years for a given assessment
         years = list(
-            models.Reference.objects.filter(assessment_id=instance.id, year__gt=0).values_list(
-                "year", flat=True
-            )
+            models.Reference.objects.filter(assessment_id=instance.id, year__gt=0).values_list("year", flat=True)
         )
         payload = {}
         if len(years) > 0:
@@ -102,10 +93,7 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
             fig.update_traces(marker=dict(color="#003d7b"))
 
             fig.update_layout(
-                bargap=0.1,
-                plot_bgcolor="white",
-                autosize=True,
-                margin=dict(l=0, r=0, t=30, b=0),  # noqa: E741
+                bargap=0.1, plot_bgcolor="white", autosize=True, margin=dict(l=0, r=0, t=30, b=0),  # noqa: E741
             )
             payload = fig.to_dict()
 
@@ -131,10 +119,7 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(
-        detail=True,
-        methods=("get",),
-        url_path="references-download",
-        renderer_classes=PandasRenderers,
+        detail=True, methods=("get",), url_path="references-download", renderer_classes=PandasRenderers,
     )
     def references_download(self, request, pk):
         """
@@ -143,9 +128,7 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         assessment = self.get_object()
         tags = models.ReferenceFilterTag.get_all_tags(assessment.id, json_encode=False)
         exporter = exports.ReferenceFlatComplete(
-            models.Reference.objects.get_qs(assessment)
-            .prefetch_related("identifiers")
-            .order_by("id"),
+            models.Reference.objects.get_qs(assessment).prefetch_related("identifiers").order_by("id"),
             filename=f"references-{assessment}",
             assessment=assessment,
             tags=tags,
@@ -232,3 +215,12 @@ class ReferenceCleanupViewset(CleanupFieldsBaseViewSet):
     serializer_class = serializers.ReferenceCleanupFieldsSerializer
     model = models.Reference
     assessment_filter_args = "assessment"
+
+
+class ReferenceViewset(
+    mixins.RetrieveModelMixin, mixins.DestroyModelMixin, mixins.UpdateModelMixin, viewsets.GenericViewSet
+):
+    serializer_class = serializers.ReferenceSerializer
+    # model = models.Reference
+    queryset = models.Reference.objects.all()
+    pass
