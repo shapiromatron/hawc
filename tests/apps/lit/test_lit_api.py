@@ -331,16 +331,44 @@ class TestReferenceUpdateApi:
         assert response.status_code == 404
 
     def test_valid_requests(self, db_keys):
-        # test valid id
         url = reverse("lit:api:reference-detail", args=(1,))
-        data = {"title": "TestReferenceUpdateApi test"}
-
-        pre_ref = models.Reference.objects.get(id=1)
-        assert pre_ref.title != data["title"]
         client = APIClient()
         assert client.login(username="team@team.com", password="pw") is True
+
+        reference = models.Reference.objects.get(id=1)
+
+        # test updating reference with a new title
+        data = {"title": "TestReferenceUpdateApi title test"}
         response = client.patch(url, data)
         assert response.status_code == 200
 
-        post_ref = models.Reference.objects.get(id=1)
-        assert post_ref.title == data["title"]
+        assert reference.title != data.get("title")
+        updated_reference = models.Reference.objects.get(id=1)
+        assert updated_reference.title == data.get("title")
+
+        # test updating reference with new tags
+        tags = [2, 3]
+        data = {"tags": tags}
+        response = client.patch(url, data)
+        assert response.status_code == 200
+
+        updated_reference = models.Reference.objects.get(id=1)
+        assert updated_reference.tags.count() == len(tags)
+        for id in tags:
+            assert updated_reference.tags.filter(id=id).exists()
+
+        # only valid tags will be set to the reference
+        valid_tags = [2, 3, 4]
+        all_tags = valid_tags + [-1]
+
+        # test updating reference with multiple fields
+        tags = [2, 3]
+        data = {"title": "TestReferenceUpdateApi test 2", "tags": all_tags}
+        response = client.patch(url, data)
+        assert response.status_code == 200
+
+        updated_reference = models.Reference.objects.get(id=1)
+        assert updated_reference.title == data.get("title")
+        assert updated_reference.tags.count() == len(valid_tags)
+        for id in valid_tags:
+            assert updated_reference.tags.filter(id=id).exists()
