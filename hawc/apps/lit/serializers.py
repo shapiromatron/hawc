@@ -124,7 +124,9 @@ class BulkReferenceTagSerializer(serializers.Serializer):
         # ensure columns are expected
         expected_columns = ["reference_id", "tag_id"]
         if df.columns.tolist() != expected_columns:
-            raise serializers.ValidationError(f"Invalid column headers; expecting \"{','.join(expected_columns)}\"")
+            raise serializers.ValidationError(
+                f"Invalid column headers; expecting \"{','.join(expected_columns)}\""
+            )
 
         # ensure we have some data
         if df.shape[0] == 0:
@@ -139,19 +141,25 @@ class BulkReferenceTagSerializer(serializers.Serializer):
             .distinct()
         )
         if len(assessments) != 1 or assessments[0] != expected_assessment_id:
-            raise serializers.ValidationError(f"All reference ids are not from assessment {expected_assessment_id}")
+            raise serializers.ValidationError(
+                f"All reference ids are not from assessment {expected_assessment_id}"
+            )
 
         # ensure that all tags are from this assessment
         expected_tag_ids = models.ReferenceFilterTag.get_descendants_pks(expected_assessment_id)
         additional_tags = set(df.tag_id.unique()) - set(expected_tag_ids)
         if len(additional_tags) > 0:
-            raise serializers.ValidationError(f"All tag ids are not from assessment {expected_assessment_id}")
+            raise serializers.ValidationError(
+                f"All tag ids are not from assessment {expected_assessment_id}"
+            )
 
         # check to make sure we have no duplicates
         df_nrows = df.shape[0]
         df = df.drop_duplicates()
         if df.shape[0] != df_nrows:
-            raise serializers.ValidationError("CSV contained duplicates; please remove before importing")
+            raise serializers.ValidationError(
+                "CSV contained duplicates; please remove before importing"
+            )
 
         # success! save dataframe
         self.assessment = self.context["assessment"]
@@ -167,9 +175,9 @@ class BulkReferenceTagSerializer(serializers.Serializer):
         existing = set()
         if operation == "append":
             existing = set(
-                models.ReferenceTags.objects.filter(content_object__assessment_id=assessment_id).values_list(
-                    "tag_id", "content_object_id"
-                )
+                models.ReferenceTags.objects.filter(
+                    content_object__assessment_id=assessment_id
+                ).values_list("tag_id", "content_object_id")
             )
 
         if operation == "replace":
