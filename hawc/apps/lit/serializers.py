@@ -203,9 +203,10 @@ class ReferenceSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
 
-        instance.title = validated_data.get("title", instance.title)
         if "tags" in validated_data:
-            instance.tags.set(validated_data.get("tags"))
+            instance.tags.set(validated_data.pop("tags"))
+        for attr, value in list(validated_data.items()):
+            setattr(instance, attr, value)
 
         instance.save()
         return instance
