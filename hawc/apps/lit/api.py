@@ -241,6 +241,5 @@ class ReferenceViewset(
     viewsets.GenericViewSet,
 ):
     serializer_class = serializers.ReferenceSerializer
-    # model = models.Reference
+    permission_classes = (AssessmentLevelPermissions,)
     queryset = models.Reference.objects.all()
-    pass
