@@ -1,4 +1,5 @@
 from copy import copy
+from typing import Dict, List, Optional, Tuple
 
 from ..assessment.models import DoseUnits
 from ..common.helper import FlatFileExporter
@@ -162,16 +163,18 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
         ]
 
     @classmethod
-    def _get_dose_units(cls, doses):
+    def _get_dose_units(cls, doses: List[Dict]) -> str:
         return doses[0]["dose_units"]["name"]
 
     @classmethod
-    def _get_doses_str(cls, doses):
+    def _get_doses_str(cls, doses: List[Dict]) -> str:
+        if len(doses) == 0:
+            return ""
         values = ", ".join([str(float(d["dose"])) for d in doses])
         return f"{values} {cls._get_dose_units(doses)}"
 
     @classmethod
-    def _get_dose(cls, doses, idx):
+    def _get_dose(cls, doses: List[Dict], idx: int) -> Optional[float]:
         for dose in doses:
             if dose["dose_group_id"] == idx:
                 return float(dose["dose"])
@@ -240,10 +243,10 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
             "expected adversity direction",
             "maximum endpoint change",
             "low_dose",
+            "high_dose",
             noel_names.noel,
             noel_names.loel,
             "FEL",
-            "high_dose",
             "trend test value",
             "trend test result",
             "key",
@@ -329,10 +332,10 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
                 row.extend(
                     [
                         self._get_dose(doses, 1),  # first non-zero dose
+                        self._get_dose(doses, len(ser["groups"]) - 1),
                         self._get_dose(doses, ser["NOEL"]),
                         self._get_dose(doses, ser["LOEL"]),
                         self._get_dose(doses, ser["FEL"]),
-                        self._get_dose(doses, len(ser["groups"]) - 1),
                     ]
                 )
             else:
@@ -424,10 +427,10 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
             "response units",
             "expected adversity direction",
             "low_dose",
+            "high_dose",
             noel_names.noel,
             noel_names.loel,
             "FEL",
-            "high_dose",
             "BMD",
             "BMDL",
             "trend test value",
@@ -454,6 +457,38 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
             return [bmd["output"]["BMD"], bmd["output"]["BMDL"]]
         return [None, None]
 
+    @staticmethod
+    def _dose_has_n(dose_group_id: int, groups: List[Dict]) -> bool:
+        for group in groups:
+            if group["dose_group_id"] == dose_group_id:
+                return group["n"] is not None
+        return False
+
+    @staticmethod
+    def _dose_low_high(dose_list: List[Optional[float]]) -> Tuple[Optional[float], Optional[float]]:
+        """
+        Finds the lowest and highest non-zero dose from a given list of doses,
+        ignoring None values. If there are no valid doses, returns None for both
+        lowest and highest dose.
+
+        Args:
+            dose_list (List[Optional[float]]): List of doses
+
+        Returns:
+            Tuple[Optional[float], Optional[float]]: Lowest dose and highest dose,
+            in that order.
+        """
+        try:
+            # map dose list to whether there is recorded data (valid)
+            dose_validity_list = list(map(lambda d: d is not None, dose_list))
+            # first valid dose
+            low_index = dose_validity_list[1:].index(True) + 1
+            # last valid dose
+            high_index = len(dose_list) - 1 - dose_validity_list[1:][::-1].index(True)
+            return (dose_list[low_index], dose_list[high_index])
+        except ValueError:
+            return (None, None)
+
     def _get_data_rows(self):
 
         preferred_units = self.kwargs.get("preferred_units", None)
@@ -462,6 +497,11 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
         for obj in self.queryset:
             ser = obj.get_json(json_encode=False)
             doses = self._get_doses_list(ser, preferred_units)
+
+            # filter dose groups by those with recorded data
+            filtered_doses = list(
+                filter(lambda d: self._dose_has_n(d["dose_group_id"], ser["groups"]), doses)
+            )
 
             # build endpoint-group independent data
             row = [
@@ -498,38 +538,46 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
                 self._get_observation_time_and_time_units(ser),
                 ser["observation_time_text"],
                 ser["data_type_label"],
-                self._get_doses_str(doses),
+                self._get_doses_str(filtered_doses),
                 self._get_dose_units(doses),
                 ser["response_units"],
                 ser["expected_adversity_direction"],
             ]
 
+            # doses sorted by dose_group_id
+            # doses with unrecorded data are None
+            dose_list = [
+                self._get_dose(doses, i) if self._dose_has_n(i, ser["groups"]) else None
+                for i in range(len(doses))
+            ]
+
             # dose-group specific information
-            if len(ser["groups"]) > 1:
-                row.extend(
-                    [
-                        self._get_dose(doses, 1),  # first non-zero dose
-                        self._get_dose(doses, ser["NOEL"]),
-                        self._get_dose(doses, ser["LOEL"]),
-                        self._get_dose(doses, ser["FEL"]),
-                        self._get_dose(doses, len(ser["groups"]) - 1),
-                    ]
-                )
-            else:
-                row.extend([None] * 5)
+            row.extend(self._dose_low_high(dose_list))
+            try:
+                row.append(dose_list[ser["NOEL"]])
+            except IndexError:
+                row.append(None)
+            try:
+                row.append(dose_list[ser["LOEL"]])
+            except IndexError:
+                row.append(None)
+            try:
+                row.append(dose_list[ser["FEL"]])
+            except IndexError:
+                row.append(None)
+
+            dose_list.extend([None] * (self.num_doses - len(dose_list)))
 
             # bmd/bmdl information
             row.extend(self._get_bmd_values(ser["bmd"], preferred_units))
 
             row.extend([ser["trend_value"], ser["trend_result"]])
 
-            dose_list = [self._get_dose(doses, i) for i in range(len(doses))]
-            sigs = get_significance_and_direction(ser["data_type"], ser["groups"])
+            row.extend(dose_list)
 
-            dose_list.extend([None] * (self.num_doses - len(dose_list)))
+            sigs = get_significance_and_direction(ser["data_type"], ser["groups"])
             sigs.extend([None] * (self.num_doses - len(sigs)))
 
-            row.extend(dose_list)
             row.extend(sigs)
 
             study_id = ser["animal_group"]["experiment"]["study"]["id"]
