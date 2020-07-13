@@ -304,9 +304,27 @@ class EndpointSerializer(serializers.ModelSerializer):
             err = {k: [v] for k, v in errors.items()}
             raise serializers.ValidationError(err)
 
-        # validate groups
+        # validate all groups
+        groups = self.initial_data.get("groups", [])
+        if groups:
+            num_dose_groups = self.animal_group.dosing_regime.num_dose_groups
+            valid_ids = set(range(num_dose_groups))
+            if len(groups) != num_dose_groups:
+                raise serializers.ValidationError(
+                    f"If entering groups, all {num_dose_groups} must be entered"
+                )
+            if valid_ids != set([g.get("dose_group_id", -1) for g in groups]):
+                raise serializers.ValidationError(
+                    f"For groups, `dose_group_id` must include all values in {list(valid_ids)}"
+                )
+            for fld in ("NOEL", "LOEL", "FEL"):
+                val = data.get(fld, -999)
+                if val != -999 and val not in valid_ids:
+                    raise serializers.ValidationError(f"{fld} must be -999 or in {list(valid_ids)}")
+
+        # validate individual groups
         group_serializers = []
-        for group in self.initial_data.get("groups", []):
+        for group in groups:
             group_serializer = EndpointGroupSerializer(
                 data=group, context=self.fields["groups"].context
             )

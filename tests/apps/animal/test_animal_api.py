@@ -1,4 +1,5 @@
 import json
+from copy import deepcopy
 from pathlib import Path
 
 import pytest
@@ -488,7 +489,11 @@ class TestEndpointCreateApi:
             "data_type": "C",
             "variance_type": 1,
             "response_units": "μg/dL",
-            "groups": [{"dose_group_id": 0, "n": 1}, {"dose_group_id": 1, "n": 2}],
+            "groups": [
+                {"dose_group_id": 0, "n": 1},
+                {"dose_group_id": 1, "n": 2},
+                {"dose_group_id": 2, "n": 2},
+            ],
         }
 
         # valid request
@@ -504,7 +509,7 @@ class TestEndpointCreateApi:
         assert endpoint.animal_group_id == data["animal_group_id"]
 
         groups = endpoint.groups.all()
-        assert groups.count() == 2
+        assert groups.count() == 3
 
         group_1 = groups[0]
         expected_data = {"endpoint_id": endpoint.id, "dose_group_id": 0, "n": 1}
@@ -513,6 +518,57 @@ class TestEndpointCreateApi:
         group_2 = groups[1]
         expected_data = {"endpoint_id": endpoint.id, "dose_group_id": 1, "n": 2}
         assert set(expected_data.items()).issubset(set(group_2.__dict__.items()))
+
+    def test_endpoint_groups_check(self, db_keys):
+        url = reverse("animal:api:endpoint-list")
+        client = APIClient()
+        valid_data = {
+            "name": "Endpoint name",
+            "animal_group_id": 1,
+            "data_type": "C",
+            "variance_type": 1,
+            "response_units": "μg/dL",
+            "LOEL": -999,
+            "groups": [
+                {"dose_group_id": 0, "n": 1},
+                {"dose_group_id": 1, "n": 2},
+                {"dose_group_id": 2, "n": 2},
+            ],
+        }
+        assert client.login(username="team@team.com", password="pw") is True
+
+        # valid request
+        response = client.post(url, valid_data, format="json")
+        assert response.status_code == 201
+
+        # 3 groups required
+        data = deepcopy(valid_data)
+        data["groups"] = [{"dose_group_id": 0, "n": 1}]
+        response = client.post(url, data, format="json")
+        assert response.status_code == 400
+        assert response.json() == {
+            "non_field_errors": ["If entering groups, all 3 must be entered"]
+        }
+
+        # wrong dose_group_ids
+        data = deepcopy(valid_data)
+        data["groups"] = [
+            {"dose_group_id": 1, "n": 1},
+            {"dose_group_id": 2, "n": 2},
+            {"dose_group_id": 3, "n": 2},
+        ]
+        response = client.post(url, data, format="json")
+        assert response.status_code == 400
+        assert response.json() == {
+            "non_field_errors": ["For groups, `dose_group_id` must include all values in [0, 1, 2]"]
+        }
+
+        # wrong value for LOEL
+        data = deepcopy(valid_data)
+        data["LOEL"] = 3
+        response = client.post(url, data, format="json")
+        assert response.status_code == 400
+        assert response.json() == {"non_field_errors": ["LOEL must be -999 or in [0, 1, 2]"]}
 
     def test_form_clean_endpoint_endpoint_called(self, db_keys):
         # ensure forms.EndpointGroupForm.clean_endpoint is called (tested elsewhere)
@@ -526,10 +582,14 @@ class TestEndpointCreateApi:
             "data_type": "D",
             "variance_type": 0,
             "response_units": "incidence",
-            "groups": [{"dose_group_id": 0, "n": 1, "incidence": 2}],
+            "groups": [
+                {"dose_group_id": 0, "n": 1, "incidence": 1},
+                {"dose_group_id": 1, "n": 1, "incidence": 1},
+                {"dose_group_id": 2, "n": 1, "incidence": 2},
+            ],
         }
         response = client.post(url, data, format="json")
         assert response.status_code == 400
         assert response.json() == {
-            "groups": [{"incidence": ["Incidence must be less-than or equal-to N"]}]
+            "groups": [{}, {}, {"incidence": ["Incidence must be less-than or equal-to N"]}]
         }
