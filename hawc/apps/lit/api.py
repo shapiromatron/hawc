@@ -1,3 +1,5 @@
+import json
+
 import pandas as pd
 import plotly.express as px
 from django.conf import settings
@@ -165,6 +167,21 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
             cache.set(key, df, settings.CACHE_1_HR)
         export = FlatExport(df=df, filename=f"df-{instance.id}")
         return Response(export)
+
+    @action(
+        detail=True, methods=("patch",), url_path="replace-hero",
+    )
+    def replace_hero(self, request, pk):
+        body = json.loads(request.body)
+        replace = body.get("replace", dict())
+        for ref, hero in replace.items():
+            # set hero ref
+            pass
+            # update content
+            pass
+            # update fields with content
+            pass
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class SearchViewset(mixins.CreateModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
