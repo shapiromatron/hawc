@@ -1,5 +1,6 @@
 import json
 from collections import Counter
+from typing import Dict
 
 from crispy_forms import bootstrap as cfb
 from crispy_forms import layout as cfl
@@ -493,63 +494,74 @@ class EndpointForm(ModelForm):
     LIT_EFF_NOT_REQ = "Litter effects must be NA if non-reproductive/developmental study"
     LIT_EFF_NOTES_REQ = 'Notes are required if litter effects are "Other"'
     LIT_EFF_NOTES_NOT_REQ = "Litter effect notes should be blank if effects are not-applicable"
+    OBS_TIME_UNITS_REQ = "If reporting an endpoint-observation time, time-units must be specified."
+    OBS_TIME_VALUE_REQ = "An observation-time must be reported if time-units are specified"
+    CONF_INT_REQ = "Confidence-interval is required for" "percent-difference data"
+    VAR_TYPE_REQ = "If entering continuous data, the variance type must be SD (standard-deviation) or SE (standard error)"
+    RESP_UNITS_REQ = "If data is extracted, response-units are required"
+
+    @classmethod
+    def clean_endpoint(cls, instance: models.Endpoint, data: Dict) -> Dict:
+        """Full dataset clean; used for both form and serializer.
+
+        Args:
+            instance (models.Endpoint): an Endpoint instance (can be unsaved)
+            data (Dict): form/serializer data
+
+        Returns:
+            Dict: A dictionary of errors; may be empty
+        """
+        errors: Dict[str, str] = {}
+
+        obs_time = data.get("observation_time")
+        observation_time_units = data.get("observation_time_units")
+
+        if obs_time is not None and observation_time_units == 0:
+            errors["observation_time_units"] = cls.OBS_TIME_UNITS_REQ
+
+        if obs_time is None and observation_time_units > 0:
+            errors["observation_time"] = cls.OBS_TIME_VALUE_REQ
+
+        litter_effects = data.get("litter_effects")
+        litter_effect_notes = data.get("litter_effect_notes")
+
+        if instance.litter_effect_required():
+            if litter_effects == "NA":
+                errors["litter_effects"] = cls.LIT_EFF_REQ
+
+        elif not instance.litter_effect_optional() and litter_effects != "NA":
+            errors["litter_effects"] = cls.LIT_EFF_NOT_REQ
+
+        if litter_effects == "O" and litter_effect_notes == "":
+            errors["litter_effect_notes"] = cls.LIT_EFF_NOTES_REQ
+
+        if litter_effects == "NA" and litter_effect_notes != "":
+            errors["litter_effect_notes"] = cls.LIT_EFF_NOTES_NOT_REQ
+
+        confidence_interval = data.get("confidence_interval")
+        variance_type = data.get("variance_type")
+        data_type = data.get("data_type")
+        if data_type == "P" and confidence_interval is None:
+            errors["confidence_interval"] = cls.CONF_INT_REQ
+
+        if data_type == "C" and variance_type == 0:
+            errors["variance_type"] = cls.VAR_TYPE_REQ
+
+        response_units = data.get("response_units")
+        data_extracted = data.get("data_extracted")
+        if data_extracted and response_units == "":
+            errors["response_units"] = cls.RESP_UNITS_REQ
+
+        return errors
 
     def clean(self):
         cleaned_data = super().clean()
-        obs_time = cleaned_data.get("observation_time")
-        observation_time_units = cleaned_data.get("observation_time_units")
-        litter_effects = cleaned_data.get("litter_effects")
-        litter_effect_notes = cleaned_data.get("litter_effect_notes")
 
-        if obs_time is not None and observation_time_units == 0:
-            err = "If reporting an endpoint-observation time, time-units must be specified."
-            self.add_error("observation_time_units", err)
-
-        if obs_time is None and observation_time_units > 0:
-            err = "An observation-time must be reported if time-units are specified"
-            self.add_error("observation_time", err)
-
-        if self.instance.litter_effect_required():
-            if litter_effects == "NA":
-                self.add_error("litter_effects", self.LIT_EFF_REQ)
-        elif not self.instance.litter_effect_optional() and litter_effects != "NA":
-            self.add_error("litter_effects", self.LIT_EFF_NOT_REQ)
-
-        if litter_effects == "O" and litter_effect_notes == "":
-            self.add_error("litter_effect_notes", self.LIT_EFF_NOTES_REQ)
-
-        if litter_effects == "NA" and litter_effect_notes != "":
-            self.add_error("litter_effect_notes", self.LIT_EFF_NOTES_NOT_REQ)
+        errors = self.clean_endpoint(self.instance, cleaned_data)
+        for key, value in errors.items():
+            self.add_error(key, value)
 
         return cleaned_data
-
-    def clean_confidence_interval(self):
-        confidence_interval = self.cleaned_data["confidence_interval"]
-        data_type = self.cleaned_data.get("data_type")
-        if data_type == "P" and confidence_interval is None:
-            raise forms.ValidationError(
-                "Confidence-interval is required for" "percent-difference data"
-            )
-        return confidence_interval
-
-    def clean_variance_type(self):
-        data_type = self.cleaned_data.get("data_type")
-        variance_type = self.cleaned_data.get("variance_type")
-        if data_type == "C" and variance_type == 0:
-            raise forms.ValidationError(
-                "If entering continuous data, the variance type must be SD"
-                "(standard-deviation) or SE (standard error)"
-            )
-        return variance_type
-
-    def clean_response_units(self):
-        response_units = self.cleaned_data.get("response_units")
-        data_extracted = self.cleaned_data.get("data_extracted")
-        if data_extracted and response_units == "":
-            raise forms.ValidationError(
-                "If data is extracted (see checkbox), response-units are required"
-            )
-        return response_units
 
 
 class EndpointGroupForm(forms.ModelForm):
@@ -565,40 +577,67 @@ class EndpointGroupForm(forms.ModelForm):
         for fld in self.fields:
             self.fields[fld].widget.attrs["class"] = "span12"
 
-    def clean(self):
-        super().clean()
-        data = self.cleaned_data
-        data_type = self.endpoint_form.cleaned_data["data_type"]
-        var_type = self.endpoint_form.cleaned_data.get("variance_type", 0)
+    VARIANCE_REQ = (
+        'Variance must be numeric, or the endpoint-field "variance-type" should be "not reported"'
+    )
+    LOWER_CI_REQ = "A lower CI must be provided if an upper CI is provided"
+    LOWER_CI_GT_UPPER = "Lower CI must be less-than or equal to upper CI"
+    UPPER_CI_REQ = "An upper CI must be provided if an lower CI is provided"
+    INC_REQ = "An Incidence must be provided if an N is provided"
+    N_REQ = "An N must be provided if an Incidence is provided"
+    POS_N_REQ = "Incidence must be less-than or equal-to N"
+
+    @classmethod
+    def clean_endpoint_group(cls, data_type: str, variance_type: int, data: Dict) -> Dict:
+        """Endpoint group clean; used for both form and serializer.
+
+        Args:
+            data_type (str): Endpoint.data_type
+            variance_type (int): Endpoint.variance_type
+            data (Dict): form/serializer data
+
+        Returns:
+            Dict: A dictionary of errors; may be empty
+        """
+        errors: Dict[str, str] = {}
 
         if data_type == "C":
             var = data.get("variance")
-            if var is not None and var_type in (0, 3):
-                msg = 'Variance must be numeric, or the endpoint-field "variance-type" should be "not reported"'
-                self.add_error("variance", msg)
+            if var is not None and variance_type in (0, 3):
+                errors["variance"] = cls.VARIANCE_REQ
         elif data_type == "P":
-            if data.get("lower_ci") is None and data.get("upper_ci") is not None:
-                msg = "A lower CI must be provided if an upper CI is provided"
-                self.add_error("lower_ci", msg)
-            if data.get("lower_ci") is not None and data.get("upper_ci") is None:
-                msg = "An upper CI must be provided if an lower CI is provided"
-                self.add_error("upper_ci", msg)
+            lower_ci = data.get("lower_ci")
+            upper_ci = data.get("upper_ci")
+            if lower_ci is None and upper_ci is not None:
+                errors["lower_ci"] = cls.LOWER_CI_REQ
+            if lower_ci is not None and upper_ci is None:
+                errors["upper_ci"] = cls.UPPER_CI_REQ
+            if lower_ci is not None and upper_ci is not None and lower_ci > upper_ci:
+                errors["lower_ci"] = cls.LOWER_CI_GT_UPPER
         elif data_type in ["D", "DC"]:
             if data.get("incidence") is None and data.get("n") is not None:
-                msg = "An Incidence must be provided if an N is provided"
-                self.add_error("incidence", msg)
+                errors["incidence"] = cls.INC_REQ
             if data.get("incidence") is not None and data.get("n") is None:
-                msg = "An N must be provided if an Incidence is provided"
-                self.add_error("n", msg)
+                errors["n"] = cls.N_REQ
             if (
                 data.get("incidence") is not None
                 and data.get("n") is not None
                 and data["incidence"] > data["n"]
             ):
-                msg = "Incidence must be less-than or equal-to N"
-                self.add_error("incidence", msg)
+                errors["incidence"] = cls.POS_N_REQ
 
-        return data
+        return errors
+
+    def clean(self):
+        cleaned_data = super().clean()
+        data_type = self.endpoint_form.cleaned_data["data_type"]
+        variance_type = self.endpoint_form.cleaned_data.get("variance_type", 0)
+
+        errors = self.clean_endpoint_group(data_type, variance_type, cleaned_data)
+        for key, value in errors.items():
+            self.add_error(key, value)
+
+        return cleaned_data
 
 
 class BaseEndpointGroupFormSet(BaseModelFormSet):
