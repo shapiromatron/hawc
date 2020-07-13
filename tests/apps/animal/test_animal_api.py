@@ -5,7 +5,7 @@ import pytest
 from django.urls import reverse
 from rest_framework.test import APIClient
 
-from hawc.apps.animal import models
+from hawc.apps.animal import forms, models
 
 DATA_ROOT = Path(__file__).parents[2] / "data/api"
 
@@ -447,27 +447,47 @@ class TestEndpointCreateApi:
         assert response.status_code == 400
         assert response.json() == {"animal_group_id": ["animal_group_id is required."]}
 
-    def test_valid_requests(self, db_keys):
+    def test_form_clean_endpoint_called(self, db_keys):
+        # ensure forms.EndpointForm.clean_endpoint is called (tested elsewhere)
         url = reverse("animal:api:endpoint-list")
-        data = {"name": "Endpoint name", "animal_group_id": 1}
-
-        # valid request
         client = APIClient()
         assert client.login(username="team@team.com", password="pw") is True
+
+        data = {
+            "name": "Endpoint name",
+            "animal_group_id": 1,
+            "data_type": "C",
+            "variance_type": 1,
+            "response_units": "μg/dL",
+            "observation_time": 1,
+            "observation_time_units": 0,
+        }
+        response = client.post(url, data, format="json")
+        assert response.status_code == 400
+        assert response.json() == {
+            "observation_time_units": [forms.EndpointForm.OBS_TIME_UNITS_REQ]
+        }
+
+    def test_valid_requests(self, db_keys):
+        client = APIClient()
+        assert client.login(username="team@team.com", password="pw") is True
+
+        url = reverse("animal:api:endpoint-list")
+        data = {"name": "Endpoint name", "animal_group_id": 1, "data_type": "C", "variance_type": 1}
+
+        assert models.Endpoint.objects.filter(name=data["name"]).count() == 0
         response = client.post(url, data)
         assert response.status_code == 201
-
-        assert len(models.Endpoint.objects.filter(name="Endpoint name")) == 1
-
-        response = client.post(url, data)
-        assert response.status_code == 201
-        assert len(models.Endpoint.objects.filter(name="Endpoint name")) == 2
+        assert models.Endpoint.objects.filter(name=data["name"]).count() == 1
 
     def test_endpoint_groups_create(self, db_keys):
         url = reverse("animal:api:endpoint-list")
         data = {
             "name": "Endpoint name",
             "animal_group_id": 1,
+            "data_type": "C",
+            "variance_type": 1,
+            "response_units": "μg/dL",
             "groups": [{"dose_group_id": 0, "n": 1}, {"dose_group_id": 1, "n": 2}],
         }
 
@@ -477,18 +497,14 @@ class TestEndpointCreateApi:
         response = client.post(url, data, format="json")
         assert response.status_code == 201
 
-        endpoints = models.Endpoint.objects.filter(name="Endpoint name")
-        assert len(endpoints) == 1
+        endpoints = models.Endpoint.objects.filter(name=data["name"])
+        assert endpoints.count() == 1
 
         endpoint = endpoints[0]
-        expected_data = {
-            "name": "Endpoint name",
-            "animal_group_id": 1,
-        }
-        assert set(expected_data.items()).issubset(set(endpoint.__dict__.items()))
+        assert endpoint.animal_group_id == data["animal_group_id"]
 
         groups = endpoint.groups.all()
-        assert len(groups) == 2
+        assert groups.count() == 2
 
         group_1 = groups[0]
         expected_data = {"endpoint_id": endpoint.id, "dose_group_id": 0, "n": 1}
@@ -497,3 +513,23 @@ class TestEndpointCreateApi:
         group_2 = groups[1]
         expected_data = {"endpoint_id": endpoint.id, "dose_group_id": 1, "n": 2}
         assert set(expected_data.items()).issubset(set(group_2.__dict__.items()))
+
+    def test_form_clean_endpoint_endpoint_called(self, db_keys):
+        # ensure forms.EndpointGroupForm.clean_endpoint is called (tested elsewhere)
+        url = reverse("animal:api:endpoint-list")
+        client = APIClient()
+        assert client.login(username="team@team.com", password="pw") is True
+
+        data = {
+            "name": "Endpoint name",
+            "animal_group_id": 1,
+            "data_type": "D",
+            "variance_type": 0,
+            "response_units": "incidence",
+            "groups": [{"dose_group_id": 0, "n": 1, "incidence": 2}],
+        }
+        response = client.post(url, data, format="json")
+        assert response.status_code == 400
+        assert response.json() == {
+            "groups": [{"incidence": ["Incidence must be less-than or equal-to N"]}]
+        }

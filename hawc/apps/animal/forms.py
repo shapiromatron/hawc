@@ -513,8 +513,8 @@ class EndpointForm(ModelForm):
         """
         errors: Dict[str, str] = {}
 
-        obs_time = data.get("observation_time")
-        observation_time_units = data.get("observation_time_units")
+        obs_time = data.get("observation_time", None)
+        observation_time_units = data.get("observation_time_units", 0)
 
         if obs_time is not None and observation_time_units == 0:
             errors["observation_time_units"] = cls.OBS_TIME_UNITS_REQ
@@ -522,8 +522,8 @@ class EndpointForm(ModelForm):
         if obs_time is None and observation_time_units > 0:
             errors["observation_time"] = cls.OBS_TIME_VALUE_REQ
 
-        litter_effects = data.get("litter_effects")
-        litter_effect_notes = data.get("litter_effect_notes")
+        litter_effects = data.get("litter_effects", "NA")
+        litter_effect_notes = data.get("litter_effect_notes", "")
 
         if instance.litter_effect_required():
             if litter_effects == "NA":
@@ -538,17 +538,17 @@ class EndpointForm(ModelForm):
         if litter_effects == "NA" and litter_effect_notes != "":
             errors["litter_effect_notes"] = cls.LIT_EFF_NOTES_NOT_REQ
 
-        confidence_interval = data.get("confidence_interval")
-        variance_type = data.get("variance_type")
-        data_type = data.get("data_type")
+        confidence_interval = data.get("confidence_interval", None)
+        variance_type = data.get("variance_type", 0)
+        data_type = data.get("data_type", "C")
         if data_type == "P" and confidence_interval is None:
             errors["confidence_interval"] = cls.CONF_INT_REQ
 
         if data_type == "C" and variance_type == 0:
             errors["variance_type"] = cls.VAR_TYPE_REQ
 
-        response_units = data.get("response_units")
-        data_extracted = data.get("data_extracted")
+        response_units = data.get("response_units", "")
+        data_extracted = data.get("data_extracted", True)
         if data_extracted and response_units == "":
             errors["response_units"] = cls.RESP_UNITS_REQ
 

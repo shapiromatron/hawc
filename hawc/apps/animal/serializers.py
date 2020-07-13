@@ -223,6 +223,19 @@ class EndpointGroupSerializer(serializers.ModelSerializer):
         ret["isReported"] = instance.isReported
         return ret
 
+    def validate(self, data):
+
+        errors = forms.EndpointGroupForm.clean_endpoint_group(
+            self.context["endpoint_data"].get("data_type", "C"),
+            self.context["endpoint_data"].get("variance_type", 0),
+            data,
+        )
+        if errors:
+            err = {k: [v] for k, v in errors.items()}
+            raise serializers.ValidationError(err)
+
+        return data
+
     class Meta:
         model = models.EndpointGroup
         fields = "__all__"
@@ -233,6 +246,11 @@ class EndpointSerializer(serializers.ModelSerializer):
     effects = EffectTagsSerializer(read_only=True)
     animal_group = AnimalGroupSerializer(read_only=True, required=False)
     groups = EndpointGroupSerializer(many=True, required=False)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if "data" in kwargs:
+            self.fields["groups"].context.update(endpoint_data=kwargs["data"])
 
     def to_representation(self, instance):
         ret = super().to_representation(instance)
@@ -279,12 +297,19 @@ class EndpointSerializer(serializers.ModelSerializer):
         data["animal_group_id"] = self.animal_group.id
         data["assessment_id"] = self.animal_group.get_assessment().id
 
-        # add the other validation logic here from the forms
+        # set animal_group on instance for cleaning rules
+        instance = models.Endpoint(animal_group=self.animal_group)
+        errors = forms.EndpointForm.clean_endpoint(instance, data)
+        if errors:
+            err = {k: [v] for k, v in errors.items()}
+            raise serializers.ValidationError(err)
 
         # validate groups
         group_serializers = []
         for group in self.initial_data.get("groups", []):
-            group_serializer = EndpointGroupSerializer(data=group)
+            group_serializer = EndpointGroupSerializer(
+                data=group, context=self.fields["groups"].context
+            )
             group_serializer.is_valid(raise_exception=True)
             group_serializers.append(group_serializer)
         self.group_serializers = group_serializers
