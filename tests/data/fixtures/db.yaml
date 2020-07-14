@@ -512,6 +512,12 @@
     name: rat
     created: 2020-02-27 20:37:36.002070+00:00
     last_updated: 2020-02-27 20:38:09.171871+00:00
+- model: assessment.species
+  pk: 2
+  fields:
+    name: mouse
+    created: 2020-02-27 20:37:36.002070+00:00
+    last_updated: 2020-02-27 20:38:09.171871+00:00
 - model: assessment.strain
   pk: 1
   fields:
