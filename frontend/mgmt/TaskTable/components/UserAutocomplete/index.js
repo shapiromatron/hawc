@@ -41,8 +41,14 @@ UserAutocomplete.propTypes = {
         study: PropTypes.shape({
             assessment: PropTypes.object.isRequired,
         }).isRequired,
+        owner: PropTypes.shape({
+            full_name: PropTypes.string,
+            id: PropTypes.number,
+        }),
+        id: PropTypes.number,
     }).isRequired,
     url: PropTypes.string.isRequired,
+    onChange: PropTypes.func,
 };
 
 export default UserAutocomplete;

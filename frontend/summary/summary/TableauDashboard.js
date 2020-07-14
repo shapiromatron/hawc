@@ -26,8 +26,6 @@ class TableauDashboard extends Component {
             height = Math.max(contentSize.height, MIN_HEIGHT),
             width = Math.max(contentSize.width, MIN_WIDTH);
 
-        console.log(height, width);
-
         let fullPath = queryArgs && queryArgs.length > 0 ? `${path}?${queryArgs.join("&")}` : path;
 
         return (

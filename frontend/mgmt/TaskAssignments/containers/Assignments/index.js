@@ -1,4 +1,5 @@
 import React, {Component} from "react";
+import PropTypes from "prop-types";
 import {connect} from "react-redux";
 import _ from "lodash";
 
@@ -20,7 +21,7 @@ class Assignments extends Component {
         };
     }
 
-    componentWillMount() {
+    componentDidMount() {
         this.props.dispatch(hydrateTasks());
         this.props.dispatch(fetchTasks());
     }
@@ -88,5 +89,18 @@ function mapStateToProps(state) {
         tasks,
     };
 }
+
+Assignments.propTypes = {
+    dispatch: PropTypes.func,
+    tasks: PropTypes.shape({
+        list: PropTypes.array,
+        isLoaded: PropTypes.bool,
+        robTasks: PropTypes.array,
+    }),
+    config: PropTypes.shape({
+        user: PropTypes.string,
+        assessment_id: PropTypes.string,
+    }),
+};
 
 export default connect(mapStateToProps)(Assignments);

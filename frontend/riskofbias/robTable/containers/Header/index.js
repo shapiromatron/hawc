@@ -1,4 +1,5 @@
 import React, {Component} from "react";
+import PropTypes from "prop-types";
 import {connect} from "react-redux";
 
 class Header extends Component {
@@ -105,5 +106,14 @@ function mapStateToProps(state) {
         config: state.config,
     };
 }
+
+Header.propTypes = {
+    config: PropTypes.shape({
+        isForm: PropTypes.object,
+        display: PropTypes.string,
+        assessment_id: PropTypes.string,
+        hawc_flavor: PropTypes.string,
+    }),
+};
 
 export default connect(mapStateToProps)(Header);

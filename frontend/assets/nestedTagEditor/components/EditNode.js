@@ -2,11 +2,12 @@ import React from "react";
 import PropTypes from "prop-types";
 
 class EditNode extends React.Component {
-    componentWillMount() {
-        this.setState({
+    constructor(props) {
+        super(props);
+        this.state = {
             name: this.props.node.data.name,
             parent: this.props.parent,
-        });
+        };
     }
 
     onChange(e) {
