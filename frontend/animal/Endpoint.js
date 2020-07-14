@@ -95,7 +95,7 @@ class Endpoint extends Observee {
                 return this._switch_dose(i);
             }
         }
-        console.log("Error: dose units not found");
+        console.error("Error: dose units not found");
     }
 
     _switch_dose(idx) {
@@ -113,7 +113,7 @@ class Endpoint extends Observee {
 
             this.notifyObservers({status: "dose_changed"});
         } catch (err) {
-            console.log("error, dose index does not exist");
+            console.error("error, dose index does not exist");
         }
     }
 
@@ -328,7 +328,7 @@ class Endpoint extends Observee {
                         footnotes = self.add_endpoint_group_footnotes(footnote_object, i);
                     td.html(`${v.incidence}/${v.n} (${percentChange}%)${footnotes}`);
                 } else {
-                    console.log("unknown data-type");
+                    console.error("unknown data-type");
                 }
             }
             tr.append(td);

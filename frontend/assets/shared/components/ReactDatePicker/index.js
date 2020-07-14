@@ -53,6 +53,7 @@ ReactDatePicker.propTypes = {
     id: PropTypes.string.isRequired,
     onChange: PropTypes.func.isRequired,
     labelClassName: PropTypes.string,
+    label: PropTypes.string,
 };
 
 export default ReactDatePicker;

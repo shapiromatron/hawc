@@ -1,5 +1,6 @@
 import React from "react";
 import {connect} from "react-redux";
+import PropTypes from "prop-types";
 
 import ModelOptionModal from "bmd/components/ModelOptionModal";
 import BMROptionModal from "bmd/components/BMROptionModal";
@@ -64,4 +65,14 @@ function mapStateToProps(state) {
     };
 }
 
+Modals.propTypes = {
+    dispatch: PropTypes.func,
+    allBmrOptions: PropTypes.object,
+    config: PropTypes.shape({
+        editMode: PropTypes.bool,
+    }),
+    selectedModelOption: PropTypes.object,
+    selectedBmr: PropTypes.object,
+    selectedOutputs: PropTypes.array,
+};
 export default connect(mapStateToProps)(Modals);

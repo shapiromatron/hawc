@@ -10,11 +10,20 @@ class BaseModal extends React.Component {
      * Requires this button to be in the component, triggers the boostrap close
      * event:
      *
-     *    <button ref="closer" className="close" type="button" data-dismiss="modal">
-     *        ×
-     *    </button>
+     *      <button
+     *          ref={this.closer}
+     *          className="close"
+     *          type="button"
+     *          data-dismiss="modal">
+     *          ×
+     *      </button>
      *
      */
+
+    constructor(props) {
+        super(props);
+        this.closer = React.createRef();
+    }
 
     componentDidMount() {
         document.addEventListener("keydown", this.handleEscPress, false);
@@ -26,7 +35,7 @@ class BaseModal extends React.Component {
 
     handleEscPress = e => {
         if (e.keyCode === 27) {
-            $(this.refs.closer).click();
+            $(this.closer.current).click();
         }
     };
 }
