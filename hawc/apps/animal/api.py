@@ -1,7 +1,8 @@
 from django.conf import settings
 from django.core.cache import cache
+from django.db import transaction
 from django.db.models import Q
-from rest_framework import viewsets
+from rest_framework import mixins, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import NotAcceptable, PermissionDenied
 from rest_framework.response import Response
@@ -155,19 +156,48 @@ class AnimalAssessmentViewset(
         return Response(export)
 
 
-class Experiment(AssessmentViewset):
+class Experiment(mixins.CreateModelMixin, AssessmentViewset):
     assessment_filter_args = "study__assessment"
     model = models.Experiment
     serializer_class = serializers.ExperimentSerializer
 
 
-class AnimalGroup(AssessmentViewset):
+class AnimalGroup(mixins.CreateModelMixin, AssessmentViewset):
     assessment_filter_args = "experiment__study__assessment"
     model = models.AnimalGroup
     serializer_class = serializers.AnimalGroupSerializer
 
+    @transaction.atomic
+    def create(self, request, *args, **kwargs):
+        kwargs = {"context": self.get_serializer_context()}
 
-class Endpoint(AssessmentViewset):
+        # build dosing regime first if needed
+        dosed_animals = False
+        if "dosing_regime" in request.data:
+            dosed_animals = True
+            dr_serializer = serializers.DosingRegimeSerializer(
+                data=request.data.pop("dosing_regime"), **kwargs
+            )
+            dr_serializer.is_valid(raise_exception=True)
+            dosing_regime = dr_serializer.save()
+            request.data["dosing_regime_id"] = dosing_regime.id
+
+        # build animal-group
+        serializer = serializers.AnimalGroupSerializer(data=request.data, **kwargs)
+        serializer.is_valid(raise_exception=True)
+        animal_group = serializer.save()
+        if dosed_animals:
+            # save reverse relation
+            dosing_regime.dosed_animals = animal_group
+            dosing_regime.save()
+
+        # refresh serializer instance and return
+        instance = self.model.objects.get(id=animal_group.id)
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class Endpoint(mixins.CreateModelMixin, AssessmentViewset):
     assessment_filter_args = "assessment"
     model = models.Endpoint
     serializer_class = serializers.EndpointSerializer
