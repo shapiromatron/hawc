@@ -3,7 +3,7 @@ import pytest
 from django.core.cache import cache
 from django.test import LiveServerTestCase, TestCase
 
-from hawc_client import BaseClient, HawcClient
+from hawc_client import BaseClient, HawcClient, HawcClientException
 
 
 @pytest.mark.usefixtures("set_db_keys")
@@ -17,9 +17,8 @@ class TestClient(LiveServerTestCase, TestCase):
 
     """
 
-    @classmethod
-    def setUpClass(cls):
-        super().setUpClass()
+    @pytest.fixture(scope="function", autouse=True)
+    def clear_cache(cls):
         # Reset user authentication throttling
         cache.clear()
 
@@ -155,6 +154,23 @@ class TestClient(LiveServerTestCase, TestCase):
         client = HawcClient(self.live_server_url)
         response = client.lit.references(self.db_keys.assessment_client)
         assert isinstance(response, pd.DataFrame)
+
+    def test_lit_update_reference(self):
+        client = HawcClient(self.live_server_url)
+        client.authenticate("pm@pm.com", "pw")
+        updated_title = "client test"
+        response = client.lit.update_reference(self.db_keys.reference_linked, title=updated_title)
+        assert isinstance(response, dict)
+        assert response["title"] == updated_title
+
+    def test_lit_delete_reference(self):
+        client = HawcClient(self.live_server_url)
+        client.authenticate("pm@pm.com", "pw")
+        try:
+            client.lit.references(self.db_keys.reference_linked)
+            assert True
+        except HawcClientException:
+            assert False
 
     ##########################
     # RiskOfBiasClient tests #

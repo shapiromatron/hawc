@@ -201,6 +201,7 @@ class BulkReferenceTagSerializer(serializers.Serializer):
 class ReferenceSerializer(serializers.ModelSerializer):
     tags = serializers.ListField(write_only=True)
 
+    @transaction.atomic()
     def update(self, instance, validated_data):
 
         # updates the reference tags
