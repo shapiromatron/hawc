@@ -3,13 +3,17 @@ import PropTypes from "prop-types";
 import d3 from "d3";
 
 class xAxis extends Component {
-    componentDidMount() {
-        let {xScale, ticks} = this.props;
+    constructor(props) {
+        super(props);
+        this.xAxisContainer = React.createRef();
         this.xAxis = d3.svg
             .axis()
-            .scale(xScale)
+            .scale(props.xScale)
             .orient("bottom")
-            .ticks(ticks);
+            .ticks(props.ticks);
+    }
+
+    componentDidMount() {
         this.renderAxis();
     }
 
@@ -38,7 +42,7 @@ class xAxis extends Component {
             labelElement = this.getLabelElement(axisLabel);
         return (
             <g
-                ref={c => (this.xAxisContainer = c)}
+                ref={this.xAxisContainer}
                 className="x axis"
                 transform={`translate(${transform[0]}, ${transform[1]})`}>
                 {labelElement}
@@ -48,7 +52,7 @@ class xAxis extends Component {
 
     renderAxis() {
         this.props.xScale();
-        this.props.renderScale ? d3.select(this.xAxisContainer).call(this.xAxis) : null;
+        this.props.renderScale ? d3.select(this.xAxisContainer.current).call(this.xAxis) : null;
     }
 }
 

@@ -8,26 +8,20 @@ import TaskForm from "mgmt/TaskTable/components/TaskForm";
 class TaskStudyEdit extends Component {
     constructor(props) {
         super(props);
+        this.components = [];
         this.getChangedData = this.getChangedData.bind(this);
     }
 
     getChangedData() {
         return _.chain(this.components)
-            .filter(component => component != null)
-            .filter(component => {
-                return component.formDidChange();
-            })
-            .map(component => {
-                return component.state;
-            })
+            .filter(component => component != null && component.formDidChange())
+            .map(component => component.state)
             .value();
     }
 
     render() {
         const {tasks, study} = this.props.item;
-
         this.components = [];
-
         return (
             <div>
                 <hr className="hr-tight" />

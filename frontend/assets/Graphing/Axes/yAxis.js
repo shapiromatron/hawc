@@ -3,13 +3,17 @@ import PropTypes from "prop-types";
 import d3 from "d3";
 
 class yAxis extends Component {
-    componentDidMount() {
-        let {yScale} = this.props;
+    constructor(props) {
+        super(props);
+        this.yAxisContainer = React.createRef();
         this.yAxis = d3.svg
             .axis()
-            .scale(yScale)
+            .scale(props.yScale)
             .orient("left")
             .ticks(5);
+    }
+
+    componentDidMount() {
         this.renderAxis();
     }
 
@@ -39,7 +43,7 @@ class yAxis extends Component {
             labelElement = this.getLabelElement(axisLabel);
         return (
             <g
-                ref={c => (this.yAxisContainer = c)}
+                ref={this.yAxisContainer}
                 className="y axis"
                 transform={`translate(${transform[0]}, ${transform[1]})`}>
                 {labelElement}
@@ -51,7 +55,7 @@ class yAxis extends Component {
         let {min, max, height, padding, yScale, renderScale} = this.props;
         yScale.domain([max, min]).range([padding.top, height - padding.bottom]);
 
-        renderScale ? d3.select(this.yAxisContainer).call(this.yAxis) : null;
+        renderScale ? d3.select(this.yAxisContainer.current).call(this.yAxis) : null;
     }
 }
 

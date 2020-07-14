@@ -69,10 +69,10 @@ Modals.propTypes = {
     dispatch: PropTypes.func,
     allBmrOptions: PropTypes.object,
     config: PropTypes.shape({
-        editMode: PropTypes.object,
+        editMode: PropTypes.bool,
     }),
     selectedModelOption: PropTypes.object,
     selectedBmr: PropTypes.object,
-    selectedOutputs: PropTypes.object,
+    selectedOutputs: PropTypes.array,
 };
 export default connect(mapStateToProps)(Modals);

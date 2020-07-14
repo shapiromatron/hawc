@@ -5,6 +5,7 @@ import d3 from "d3";
 class yAxisLabeled extends Component {
     componentDidMount() {
         let {yScale, ticks} = this.props;
+        this.yAxisContainer = React.createRef();
         this.yAxis = d3.svg
             .axis()
             .scale(yScale)
@@ -39,7 +40,7 @@ class yAxisLabeled extends Component {
             labelElement = this.getLabelElement(axisLabel);
         return (
             <g
-                ref={c => (this.yAxisContainer = c)}
+                ref={this.yAxisContainer}
                 className="y axis"
                 transform={`translate(${transform[0]}, ${transform[1]})`}>
                 {labelElement}
@@ -49,7 +50,7 @@ class yAxisLabeled extends Component {
 
     renderAxis() {
         this.props.yScale();
-        this.props.renderScale ? d3.select(this.yAxisContainer).call(this.yAxis) : null;
+        this.props.renderScale ? d3.select(this.yAxisContainer.current).call(this.yAxis) : null;
     }
 }
 

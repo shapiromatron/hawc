@@ -35,7 +35,7 @@ class OutputModal extends BaseModal {
         return (
             <div className="modal hide fade" tabIndex="-1" id={types.OUTPUT_MODAL_ID} role="dialog">
                 <div className="modal-header">
-                    <button refs="closer" className="close" type="button" data-dismiss="modal">
+                    <button ref={this.closer} className="close" type="button" data-dismiss="modal">
                         ×
                     </button>
                     <h3>{models[0].name} model output</h3>

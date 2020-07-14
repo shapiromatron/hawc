@@ -5,8 +5,13 @@ import PropTypes from "prop-types";
 import {param_cw} from "bmd/constants";
 
 class ModelOptionTable extends React.Component {
-    handleCreateModel() {
-        let modelName = $(this.modelName).val();
+    constructor(props) {
+        super(props);
+        this.modelSelector = React.createRef();
+    }
+
+    handleCreateModel(event) {
+        let modelName = $(this.modelSelector.current).val();
         this.props.handleCreateModel(modelName);
     }
 
@@ -31,9 +36,7 @@ class ModelOptionTable extends React.Component {
             <div className="row-fluid">
                 <label className="control-label">Add new model</label>
                 <div className="controls">
-                    <select
-                        style={{marginBottom: 0, marginRight: "1em"}}
-                        ref={c => (this.modelName = c)}>
+                    <select style={{marginBottom: 0, marginRight: "1em"}} ref={this.modelSelector}>
                         {allOptions.map(this.renderOption)}
                     </select>
                     <button
