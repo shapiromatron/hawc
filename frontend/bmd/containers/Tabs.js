@@ -2,6 +2,7 @@ import React from "react";
 import {connect} from "react-redux";
 import _ from "lodash";
 import $ from "$";
+import PropTypes from "prop-types";
 
 import Loading from "shared/components/Loading";
 
@@ -34,9 +35,10 @@ import {
 } from "bmd/actions";
 
 class Tabs extends React.Component {
-    componentWillMount() {
-        this.props.dispatch(fetchEndpoint(this.props.config.endpoint_id));
-        this.props.dispatch(fetchSessionSettings(this.props.config.session_url));
+    constructor(props) {
+        super(props);
+        this.props.dispatch(fetchEndpoint(props.config.endpoint_id));
+        this.props.dispatch(fetchSessionSettings(props.config.session_url));
     }
 
     componentDidUpdate() {
@@ -45,7 +47,7 @@ class Tabs extends React.Component {
         }
     }
 
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
         if (nextProps.logicApplied === false && nextProps.hasSession && nextProps.hasEndpoint) {
             this.props.dispatch(applyLogic());
         }
@@ -275,4 +277,29 @@ function mapStateToProps(state) {
     };
 }
 
+Tabs.propTypes = {
+    dispatch: PropTypes.func,
+    config: PropTypes.shape({
+        endpoint_id: PropTypes.number,
+        session_url: PropTypes.string,
+        editMode: PropTypes.bool,
+        bmds_version: PropTypes.string,
+    }),
+    logicApplied: PropTypes.bool,
+    hasSession: PropTypes.bool,
+    hasEndpoint: PropTypes.bool,
+    endpoint: PropTypes.object,
+    dataType: PropTypes.string,
+    validationErrors: PropTypes.array,
+    isExecuting: PropTypes.bool,
+    doseUnits: PropTypes.number,
+    modelSettings: PropTypes.array,
+    allModelOptions: PropTypes.array,
+    bmrs: PropTypes.array,
+    models: PropTypes.array,
+    selectedModelId: PropTypes.number,
+    hoverModel: PropTypes.object,
+    hasExecuted: PropTypes.bool,
+    selectedModelNotes: PropTypes.string,
+};
 export default connect(mapStateToProps)(Tabs);

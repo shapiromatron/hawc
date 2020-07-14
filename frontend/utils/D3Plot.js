@@ -240,7 +240,7 @@ class D3Plot {
                     .rangeRoundBands(settings.rangeRound);
                 break;
             default:
-                console.log("Error- settings.scale_type is not defined: " + settings.scale_type);
+                throw `scale type not defined: ${settings.scale_type}`;
         }
         return scale;
     }

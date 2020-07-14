@@ -79,7 +79,7 @@ var func = output.substr(-4) === '.pdf' ? getPdf : getRasterization,
         if (status === 'success') {
             checkReadyState();
         } else {
-            console.log('Unable to load the address!');
+            console.error('Unable to load the address!');
             phantom.exit(1);
         }
     };

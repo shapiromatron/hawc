@@ -1,4 +1,5 @@
 import React, {Component} from "react";
+import PropTypes from "prop-types";
 import {connect} from "react-redux";
 import _ from "lodash";
 
@@ -7,7 +8,7 @@ import ItemList from "textCleanup/components/Items/ItemList";
 import Loading from "shared/components/Loading";
 
 class Items extends Component {
-    componentWillMount() {
+    componentDidMount() {
         this.props.dispatch(fetchObjects({routerParams: this.props.match.params}));
     }
 
@@ -23,4 +24,13 @@ function mapStateToProps(state) {
         items: state.items.list,
     };
 }
+
+Items.propTypes = {
+    dispatch: PropTypes.func,
+    match: PropTypes.shape({
+        params: PropTypes.object,
+    }),
+    items: PropTypes.object,
+};
+
 export default connect(mapStateToProps)(Items);

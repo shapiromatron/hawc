@@ -1,4 +1,5 @@
 import React, {Component} from "react";
+import PropTypes from "prop-types";
 import {connect} from "react-redux";
 import _ from "lodash";
 
@@ -7,7 +8,7 @@ import Assessment from "textCleanup/components/Assessment";
 import Loading from "shared/components/Loading";
 
 class App extends Component {
-    componentWillMount() {
+    componentDidMount() {
         this.props.dispatch(fetchAssessment());
     }
 
@@ -30,4 +31,10 @@ function mapStateToProps(state) {
         assessment: state.assessment.active,
     };
 }
+
+App.propTypes = {
+    dispatch: PropTypes.func,
+    assessment: PropTypes.object,
+};
+
 export default connect(mapStateToProps)(App);

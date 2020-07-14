@@ -56,7 +56,7 @@ class BaseTable {
         } else if (val instanceof $ && val.first().prop("tagName") === "TR") {
             tr = val;
         } else {
-            console.log("unknown input type");
+            console.error("unknown input type");
         }
         if (isHeader) {
             this.thead.append(tr);
@@ -133,11 +133,7 @@ class BaseTable {
                 }
 
                 if (warnAboutMissingMapping) {
-                    console.log(
-                        "warning - sort key for header '" +
-                            currHeaderText +
-                            "' not found in mapping"
-                    );
+                    console.warn(`${currHeaderText} sort key not found`);
                 }
             }
         });

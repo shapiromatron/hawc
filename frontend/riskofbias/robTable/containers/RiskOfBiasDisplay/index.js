@@ -1,4 +1,5 @@
 import React, {Component} from "react";
+import PropTypes from "prop-types";
 import {connect} from "react-redux";
 
 import {fetchFullStudyIfNeeded, selectActive} from "riskofbias/robTable/actions";
@@ -12,7 +13,7 @@ class RiskOfBiasDisplay extends Component {
         this.handleShowAllClick = this.handleShowAllClick.bind(this);
     }
 
-    componentWillMount() {
+    componentDidMount() {
         this.props.dispatch(fetchFullStudyIfNeeded());
     }
 
@@ -47,5 +48,13 @@ function mapStateToProps(state) {
         config: state.config,
     };
 }
+
+RiskOfBiasDisplay.propTypes = {
+    dispatch: PropTypes.func,
+    active: PropTypes.array,
+    riskofbiases: PropTypes.array,
+    itemsLoaded: PropTypes.bool,
+    config: PropTypes.object,
+};
 
 export default connect(mapStateToProps)(RiskOfBiasDisplay);

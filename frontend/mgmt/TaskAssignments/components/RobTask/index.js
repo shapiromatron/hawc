@@ -33,6 +33,7 @@ class RobTask extends Component {
 
 RobTask.propTypes = {
     task: PropTypes.object.isRequired,
+    showAssessment: PropTypes.object,
 };
 
 export default RobTask;
