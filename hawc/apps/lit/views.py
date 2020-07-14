@@ -445,7 +445,7 @@ class RefDelete(BaseDelete):
     model = models.Reference
 
     def get_success_url(self):
-        return reverse_lazy("lit:overview", kwargs={"pk": self.assessment.pk})
+        return reverse_lazy("lit:overview", args=(self.assessment.pk,))
 
 
 class RefSearch(AssessmentPermissionsMixin, FormView):

@@ -203,8 +203,10 @@ class ReferenceSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
 
+        # updates the reference tags
         if "tags" in validated_data:
             instance.tags.set(validated_data.pop("tags"))
+        # updates the rest of the fields
         for attr, value in list(validated_data.items()):
             setattr(instance, attr, value)
 

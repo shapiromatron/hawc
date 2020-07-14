@@ -296,7 +296,7 @@ class LiteratureClient(BaseClient):
                 title (str): title of the reference
                 abstract (str): reference abstract
                 tags (List[int]): tag IDs to apply to reference;
-                    completely replaces current tags
+                    replaces the existing tags
 
         Example Usage:
             updated_reference_json = client.lit.update_reference(
@@ -314,8 +314,10 @@ class LiteratureClient(BaseClient):
 
     def delete_reference(self, reference_id: int) -> None:
         """
-        Deletes the given reference. This also removes the reference from
-        searches/imports that it was a part of.
+        Deletes the selected reference. This also removes the reference from any
+        searches/imports which may have included the reference. If data was
+        extracted with this reference and it is associated with bioassay or epi
+        extractions they will also be removed.
 
         Args:
             reference_id (int): ID of reference to delete
