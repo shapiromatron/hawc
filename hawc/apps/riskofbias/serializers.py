@@ -107,7 +107,10 @@ class RiskOfBiasScoreOverrideCreateSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         override = models.RiskOfBiasScore.objects.create(
-            riskofbias=validated_data["riskofbias"], metric=validated_data["metric"], is_default=False, label="",
+            riskofbias=validated_data["riskofbias"],
+            metric=validated_data["metric"],
+            is_default=False,
+            label="",
         )
         return override
 
@@ -118,7 +121,9 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         ret = super().to_representation(instance)
-        ret["rob_response_values"] = instance.study.assessment.rob_settings.get_rob_response_values()
+        ret[
+            "rob_response_values"
+        ] = instance.study.assessment.rob_settings.get_rob_response_values()
         return ret
 
     class Meta:
@@ -177,21 +182,29 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
             # and the study_type of the study, we need to make sure all necessary scores
             # have been submitted with a default=True
             scores = self.initial_data["scores"]
-            required_metrics = models.RiskOfBiasMetric.objects.get_required_metrics(assessment, study)
+            required_metrics = models.RiskOfBiasMetric.objects.get_required_metrics(
+                assessment, study
+            )
             problematic_scores = []
             for metric in required_metrics:
                 domain = metric.domain
                 # there could be multiple scores for a given metric if there are overrides, so we need to fetch them all
                 scores_for_metric = [
-                    score for score in scores if "metric_id" in score and score["metric_id"] == metric.id
+                    score
+                    for score in scores
+                    if "metric_id" in score and score["metric_id"] == metric.id
                 ]
 
                 metric_descriptor = f"'{domain.name}:{metric.name}'"
 
                 if len(scores_for_metric) == 0:
-                    problematic_scores.append(f"No score for metric {metric.id}/{metric_descriptor} was submitted")
+                    problematic_scores.append(
+                        f"No score for metric {metric.id}/{metric_descriptor} was submitted"
+                    )
                 else:
-                    num_defaults = len([score for score in scores_for_metric if score["is_default"] is True])
+                    num_defaults = len(
+                        [score for score in scores_for_metric if score["is_default"] is True]
+                    )
                     if num_defaults == 0:
                         problematic_scores.append(
                             f"No default score for metric {metric.id}/{metric_descriptor} was submitted."
@@ -216,12 +229,14 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
         else:
             score_ids = [score["id"] for score in self.initial_data["scores"]]
 
-            if models.RiskOfBiasScore.objects.filter(id__in=score_ids, riskofbias=self.instance).count() != len(
-                score_ids
-            ):
+            if models.RiskOfBiasScore.objects.filter(
+                id__in=score_ids, riskofbias=self.instance
+            ).count() != len(score_ids):
                 raise serializers.ValidationError("Cannot update; scores to not match instances")
 
-            for initial_score_data, update_score in zip(self.initial_data["scores"], data["scores"]):
+            for initial_score_data, update_score in zip(
+                self.initial_data["scores"], data["scores"]
+            ):
                 update_score["id"] = initial_score_data["id"]
 
             override_options = self.instance.get_override_options()
@@ -254,11 +269,15 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
                         raise serializers.ValidationError(f"Invalid content type name: {ct_name}")
 
                     if object_id not in override_options[ct_name]:
-                        raise serializers.ValidationError(f"Invalid content object: {ct_name}: {object_id}")
+                        raise serializers.ValidationError(
+                            f"Invalid content object: {ct_name}: {object_id}"
+                        )
 
                     if ct_name not in content_types:
                         app_label, model = ct_name.split(".")
-                        content_types[ct_name] = ContentType.objects.get(app_label=app_label, model=model).id
+                        content_types[ct_name] = ContentType.objects.get(
+                            app_label=app_label, model=model
+                        ).id
 
                     overridden_objects.append(
                         models.RiskOfBiasScoreOverrideObject(
@@ -313,7 +332,9 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
         ids = [score["id"] for score in update_scores]
         scores = {
             score.id: score
-            for score in models.RiskOfBiasScore.objects.filter(id__in=ids).prefetch_related("overridden_objects")
+            for score in models.RiskOfBiasScore.objects.filter(id__in=ids).prefetch_related(
+                "overridden_objects"
+            )
         }
         for update_score in update_scores:
             score = scores[update_score["id"]]
@@ -325,7 +346,9 @@ class RiskOfBiasSerializer(serializers.ModelSerializer):
         new_overrides = []
         for update_score in update_scores:
             new_overrides.extend(update_score["overridden_objects"])
-        models.RiskOfBiasScoreOverrideObject.objects.filter(score__riskofbias_id=instance.id).delete()
+        models.RiskOfBiasScoreOverrideObject.objects.filter(
+            score__riskofbias_id=instance.id
+        ).delete()
         models.RiskOfBiasScoreOverrideObject.objects.bulk_create(new_overrides)
 
         return super().update(instance, validated_data)
