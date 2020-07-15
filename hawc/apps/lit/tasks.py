@@ -7,11 +7,28 @@ from django.apps import apps
 from django.db.models import F
 from django.db.models.aggregates import Count, Max
 from django.utils import timezone
-from litter_getter import pubmed
+from litter_getter import hero, pubmed
 
 from . import constants
 
 logger = get_task_logger(__name__)
+
+
+@shared_task
+def update_hero_content(ids: List[int]):
+    """Fetch the latest data from HERO and update identifier object."""
+    Identifiers = apps.get_model("lit", "identifiers")
+    fetcher = hero.HEROFetch(ids)
+    contents = fetcher.get_content()
+    for d in contents:
+        content = json.dumps(d)
+        Identifiers.objects.filter(
+            unique_id=str(d["REFERENCE_ID"]), database=constants.HERO
+        ).update(content=content)
+    ids_str = [str(id) for id in ids]
+    Identifiers.objects.filter(unique_id__in=ids_str, database=constants.HERO, content="").update(
+        content='{"status": "failed"}'
+    )
 
 
 @shared_task

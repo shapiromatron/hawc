@@ -4,7 +4,9 @@ import pandas as pd
 import plotly.express as px
 from django.conf import settings
 from django.core.cache import cache
+from django.db import transaction
 from django.utils import timezone
+from litter_getter.hero import HEROFetch
 from rest_framework import exceptions, mixins, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -15,7 +17,7 @@ from ..common.api import CleanupFieldsBaseViewSet, LegacyAssessmentAdapterMixin
 from ..common.helper import FlatExport, re_digits
 from ..common.renderers import PandasRenderers
 from ..common.serializers import UnusedSerializer
-from . import exports, models, serializers
+from . import constants, exports, models, serializers
 
 
 class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.GenericViewSet):
@@ -168,20 +170,49 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         export = FlatExport(df=df, filename=f"df-{instance.id}")
         return Response(export)
 
+    @transaction.atomic()
     @action(
-        detail=True, methods=("patch",), url_path="replace-hero",
+        detail=True, methods=("get",), url_path="replace-hero",
     )
     def replace_hero(self, request, pk):
         body = json.loads(request.body)
-        replace = body.get("replace", dict())
-        for ref, hero in replace.items():
+        replace = body.get("replace", list())
+        replace_unzipped = list(zip(*replace))
+        hero_ids = replace_unzipped[1]
+        fetcher = HEROFetch(hero_ids)
+        contents = fetcher.get_content()
+
+        for index, (ref, hero) in enumerate(replace):
             # set hero ref
-            pass
+            reference = models.Reference.objects.get(id=ref)
+            hero_identifier = reference.identifiers.get(database=constants.HERO)
+            setattr(hero_identifier, "unique_id", str(hero))
+
             # update content
-            pass
+            content = json.dumps(contents.get("success")[index])
+            setattr(hero_identifier, "content", content)
+            hero_identifier.save()
+
             # update fields with content
-            pass
+            reference.update_from_hero_content()
+
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @transaction.atomic()
+    @action(
+        detail=True, methods=("get",), url_path="update-reference-metadata-from-hero",
+    )
+    def update_reference_metadata_from_hero(self, request, pk):
+
+        # get all hero identifiers from assessment
+        assessment = self.get_object()
+        references = assessment.references.all()
+        reference_ids = set(references.values_list("id", flat=True))
+        identifiers = models.Identifiers.filter(
+            references__in=reference_ids, database=constants.HERO
+        )
+        # update content of hero identifiers
+        models.Identifiers.update_hero_content(identifiers)
 
 
 class SearchViewset(mixins.CreateModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
