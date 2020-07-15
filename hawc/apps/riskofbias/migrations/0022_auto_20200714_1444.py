@@ -7,13 +7,19 @@ import hawc.apps.riskofbias.models
 
 class Migration(migrations.Migration):
     def update_overall_confidence(apps, schema_editor):
-        score_map = {24: 34, 25: 35, 26: 36, 27: 37}
         RiskOfBiasScore = apps.get_model("riskofbias", "RiskOfBiasScore")
-        for score in RiskOfBiasScore.objects.filter(
-            metric__domain__is_overall_confidence=True, score__in=score_map.keys()
-        ):
-            score.score = score_map[score.score]
-            score.save()
+        RiskOfBiasScore.objects.filter(metric__domain__is_overall_confidence=True, score=24).update(
+            score=34
+        )
+        RiskOfBiasScore.objects.filter(metric__domain__is_overall_confidence=True, score=25).update(
+            score=35
+        )
+        RiskOfBiasScore.objects.filter(metric__domain__is_overall_confidence=True, score=26).update(
+            score=36
+        )
+        RiskOfBiasScore.objects.filter(metric__domain__is_overall_confidence=True, score=27).update(
+            score=37
+        )
 
     dependencies = [
         ("riskofbias", "0021_riskofbiasscore_bias_direction"),
