@@ -201,6 +201,14 @@ class BulkReferenceTagSerializer(serializers.Serializer):
 class ReferenceSerializer(serializers.ModelSerializer):
     tags = serializers.ListField(write_only=True)
 
+    def validate_tags(self, value):
+        valid_tags = models.ReferenceFilterTag.get_assessment_qs(
+            self.instance.assessment_id
+        ).filter(id__in=value)
+        if valid_tags.count() != len(value):
+            raise serializers.ValidationError(f"All tag ids are not from this assessment")
+        return value
+
     @transaction.atomic()
     def update(self, instance, validated_data):
 

@@ -155,6 +155,12 @@ class TestClient(LiveServerTestCase, TestCase):
         response = client.lit.references(self.db_keys.assessment_client)
         assert isinstance(response, pd.DataFrame)
 
+    def test_lit_reference(self):
+        client = HawcClient(self.live_server_url)
+        client.authenticate("pm@pm.com", "pw")
+        response = client.lit.reference(self.db_keys.reference_linked)
+        assert isinstance(response, dict)
+
     def test_lit_update_reference(self):
         client = HawcClient(self.live_server_url)
         client.authenticate("pm@pm.com", "pw")
@@ -166,11 +172,18 @@ class TestClient(LiveServerTestCase, TestCase):
     def test_lit_delete_reference(self):
         client = HawcClient(self.live_server_url)
         client.authenticate("pm@pm.com", "pw")
+        # reference exists
+        response = client.lit.reference(self.db_keys.reference_linked)
+        assert isinstance(response, dict)
+        # delete reference
+        response = client.lit.delete_reference(self.db_keys.reference_linked)
+        assert response is None
+        # reference retrieval returns 404
         try:
-            client.lit.references(self.db_keys.reference_linked)
-            assert True
-        except HawcClientException:
+            client.lit.reference(self.db_keys.reference_linked)
             assert False
+        except HawcClientException:
+            assert True
 
     ##########################
     # RiskOfBiasClient tests #

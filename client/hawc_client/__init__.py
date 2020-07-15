@@ -285,6 +285,20 @@ class LiteratureClient(BaseClient):
         response_json = self.session.get(url).json()
         return pd.DataFrame(response_json)
 
+    def reference(self, reference_id: int) -> Dict:
+        """
+        Retrieves the selected reference.
+
+        Args:
+            reference_id (int): ID of the reference to retrieve
+
+        Returns:
+            Dict: JSON representation of the reference
+        """
+        url = f"{self.session.root_url}/lit/api/reference/{reference_id}/"
+        response_json = self.session.get(url).json()
+        return response_json
+
     def update_reference(self, reference_id: int, **kwargs) -> Dict:
         """
         Updates reference with given values. Fields not passed as parameters
