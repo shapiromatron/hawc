@@ -23,4 +23,3 @@ def test_hello_helium(chrome_driver):
     h.write("not my password", into="Password*")
     h.click("Login")
     assert h.Text(msg).exists() is True
-
