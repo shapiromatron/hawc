@@ -376,6 +376,37 @@ Then, create the example docker container and start a celery worker instance:
 
 Asynchronous tasks will no be executed by celery workers instead of the main thread.
 
+Integration tests
+~~~~~~~~~~~~~~~~~
+
+Integration tests use selenium and Chrome/Chromium for testing. By default, integration tests are skipped.
+To run, you'll need to set an environment variable:
+
+.. code-block:: bash
+
+    export HAWC_INTEGRATION_TESTS=1
+    py.test tests/integration/
+
+When writing these tests, it's often easiest to write the tests in an interactive scripting environment like ipython or jupyter. This allows you to interact with the DOM and the requests much easier than manually re-running tests as they're written. An example session:
+
+.. code-block:: python
+
+    import helium as h
+    from selenium.webdriver import ChromeOptions
+
+    options = ChromeOptions()
+    options.add_argument("--window-size=1920,1080")
+    driver = h.start_chrome(options=options, headless=False)
+    h.set_driver(driver)
+
+    h.go_to("https://hawcproject.org")
+    h.click("Login")
+    assert "/user/login/" in driver.current_url
+
+    # ... keep coding here, use introspection in python as well as chrome debugger tools for testing...
+
+Then, transfer the interactive potions into unit-tests...
+
 Distributing HAWC clients
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 

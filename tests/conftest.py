@@ -2,8 +2,10 @@ import logging
 from pathlib import Path
 from typing import NamedTuple
 
+import helium
 import pytest
 from django.core.management import call_command
+from selenium.webdriver import ChromeOptions
 
 
 class UserCredential(NamedTuple):
@@ -85,3 +87,14 @@ def rewrite_data_files():
     A test exists in CI to ensure that this flag is set to False on commit.
     """
     return False
+
+
+@pytest.fixture(scope="session")
+def chrome_driver():
+    options = ChromeOptions()
+    options.add_argument("--window-size=1920,1080")
+    driver = helium.start_chrome(options=options, headless=True)
+    try:
+        yield driver
+    finally:
+        helium.kill_browser()
