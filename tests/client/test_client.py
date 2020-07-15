@@ -169,7 +169,7 @@ class TestClient(LiveServerTestCase, TestCase):
         assert response["title"] == updated_title
 
         # delete request
-        # reference exists
+        # make sure reference exists
         response = client.lit.reference(self.db_keys.reference_linked)
         assert isinstance(response, dict)
         # delete reference
