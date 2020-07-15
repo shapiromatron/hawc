@@ -156,22 +156,19 @@ class TestClient(LiveServerTestCase, TestCase):
         assert isinstance(response, pd.DataFrame)
 
     def test_lit_reference(self):
+        # get request
         client = HawcClient(self.live_server_url)
         client.authenticate("pm@pm.com", "pw")
         response = client.lit.reference(self.db_keys.reference_linked)
         assert isinstance(response, dict)
 
-    def test_lit_update_reference(self):
-        client = HawcClient(self.live_server_url)
-        client.authenticate("pm@pm.com", "pw")
+        # update request
         updated_title = "client test"
         response = client.lit.update_reference(self.db_keys.reference_linked, title=updated_title)
         assert isinstance(response, dict)
         assert response["title"] == updated_title
 
-    def test_lit_delete_reference(self):
-        client = HawcClient(self.live_server_url)
-        client.authenticate("pm@pm.com", "pw")
+        # delete request
         # reference exists
         response = client.lit.reference(self.db_keys.reference_linked)
         assert isinstance(response, dict)
