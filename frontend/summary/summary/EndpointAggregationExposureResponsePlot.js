@@ -12,7 +12,7 @@ class EndpointAggregationExposureResponsePlot extends D3Visualization {
 
     setDefaults() {
         var left = 25,
-            formatNumber = d3.format(",f");
+            formatNumber = d3.format(",");
 
         _.extend(this, {
             default_x_scale: "log",
@@ -195,7 +195,7 @@ class EndpointAggregationExposureResponsePlot extends D3Visualization {
         if (this.x_axis_settings.scale_type == "linear") {
             this.x_axis_settings.scale_type = "log";
             this.x_axis_settings.number_ticks = 1;
-            var formatNumber = d3.format(",f");
+            var formatNumber = d3.format(",");
             this.x_axis_settings.label_format = formatNumber;
         } else {
             this.x_axis_settings.scale_type = "linear";

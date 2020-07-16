@@ -43,7 +43,7 @@ class CrossviewPlot extends D3Visualization {
                 gridline_class: "primary_gridlines x_gridlines",
                 number_ticks: 10,
                 axis_labels: true,
-                label_format: d3.format(",f"),
+                label_format: d3.format(","),
             },
             y_axis_settings: {
                 scale_type: "linear",
@@ -53,7 +53,7 @@ class CrossviewPlot extends D3Visualization {
                 gridline_class: "primary_gridlines y_gridlines",
                 number_ticks: 10,
                 axis_labels: true,
-                label_format: d3.format("%"),
+                label_format: d3.format(".0%"),
             },
             settings: {
                 tag_height: 17,

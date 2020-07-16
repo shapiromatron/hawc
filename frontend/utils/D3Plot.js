@@ -375,12 +375,8 @@ class D3Plot {
             .enter()
             .append("line")
             .attr("class", this.x_axis_settings.gridline_class)
-            .attr("x1", function(v) {
-                return v;
-            })
-            .attr("x2", function(v) {
-                return v;
-            })
+            .attr("x1", v => v)
+            .attr("x2", v => v)
             .attr("y1", 0)
             .attr("y2", 0);
 

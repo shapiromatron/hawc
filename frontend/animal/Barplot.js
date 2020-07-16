@@ -82,7 +82,7 @@ class Barplot extends D3Plot {
             if (this.y_axis_settings.scale_type == "linear") {
                 this.y_axis_settings.scale_type = "log";
                 this.y_axis_settings.number_ticks = 1;
-                var formatNumber = d3.format(",f");
+                var formatNumber = d3.format(",");
                 this.y_axis_settings.label_format = formatNumber;
             } else {
                 this.y_axis_settings.scale_type = "linear";

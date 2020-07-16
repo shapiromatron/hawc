@@ -137,7 +137,7 @@ class DRPlot extends D3Plot {
             if (this.y_axis_settings.scale_type == "linear") {
                 this.y_axis_settings.scale_type = "log";
                 this.y_axis_settings.number_ticks = 1;
-                var formatNumber = d3.format(",f");
+                var formatNumber = d3.format(",");
                 this.y_axis_settings.label_format = formatNumber;
             } else {
                 this.y_axis_settings.scale_type = "linear";
@@ -163,7 +163,7 @@ class DRPlot extends D3Plot {
         if (this.x_axis_settings.scale_type == "linear") {
             this.x_axis_settings.scale_type = "log";
             this.x_axis_settings.number_ticks = 1;
-            this.x_axis_settings.label_format = d3.format(",f");
+            this.x_axis_settings.label_format = d3.format(",");
         } else {
             this.x_axis_settings.scale_type = "linear";
             this.x_axis_settings.number_ticks = 5;
