@@ -3,7 +3,7 @@ import pytest
 from django.core.cache import cache
 from django.test import LiveServerTestCase, TestCase
 
-from hawc_client import BaseClient, HawcClient
+from hawc_client import BaseClient, HawcClient, HawcClientException
 
 
 @pytest.mark.usefixtures("set_db_keys")
@@ -17,9 +17,8 @@ class TestClient(LiveServerTestCase, TestCase):
 
     """
 
-    @classmethod
-    def setUpClass(cls):
-        super().setUpClass()
+    @pytest.fixture(scope="function", autouse=True)
+    def clear_cache(cls):
         # Reset user authentication throttling
         cache.clear()
 
@@ -155,6 +154,29 @@ class TestClient(LiveServerTestCase, TestCase):
         client = HawcClient(self.live_server_url)
         response = client.lit.references(self.db_keys.assessment_client)
         assert isinstance(response, pd.DataFrame)
+
+    def test_lit_reference(self):
+        # get request
+        client = HawcClient(self.live_server_url)
+        client.authenticate("pm@pm.com", "pw")
+
+        ref = client.lit.reference(self.db_keys.reference_linked)
+        assert isinstance(ref, dict) and ref["id"] == 1
+
+        # update request
+        updated_title = "client test"
+        ref = client.lit.update_reference(self.db_keys.reference_linked, title=updated_title)
+        assert isinstance(ref, dict) and ref["title"] == updated_title
+
+        # delete request
+        response = client.lit.delete_reference(self.db_keys.reference_linked)
+        assert response is None
+
+        # reference retrieval returns 404
+        with pytest.raises(HawcClientException) as err:
+            client.lit.reference(self.db_keys.reference_linked)
+
+        assert err.value.args[0] == 404
 
     ##########################
     # RiskOfBiasClient tests #

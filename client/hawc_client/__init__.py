@@ -69,6 +69,21 @@ class HawcSession:
         self._handle_hawc_response(response)
         return response
 
+    def delete(self, url: str, params: Dict = None) -> Response:
+        """
+        Sends a DELETE request using the session instance
+
+        Args:
+            url (str): URL for request.
+            params (Dict, optional): Additional parameters to include. Defaults to None.
+
+        Returns:
+            Response: The response.
+        """
+        response = self._session.delete(url=url, params=params)
+        self._handle_hawc_response(response)
+        return response
+
     def post(self, url: str, data: Dict) -> Response:
         """
         Sends a POST request using the session instance
@@ -81,6 +96,21 @@ class HawcSession:
             Response: The response.
         """
         response = self._session.post(url=url, json=data)
+        self._handle_hawc_response(response)
+        return response
+
+    def patch(self, url: str, data: Dict) -> Response:
+        """
+        Sends a PATCH request using the session instance
+
+        Args:
+            url (str): URL for request.
+            data (Dict): Payload for the request.
+
+        Returns:
+            Response: The response.
+        """
+        response = self._session.patch(url=url, json=data)
         self._handle_hawc_response(response)
         return response
 
@@ -254,6 +284,64 @@ class LiteratureClient(BaseClient):
         url = f"{self.session.root_url}/lit/api/assessment/{assessment_id}/references-download/"
         response_json = self.session.get(url).json()
         return pd.DataFrame(response_json)
+
+    def reference(self, reference_id: int) -> Dict:
+        """
+        Retrieves the selected reference.
+
+        Args:
+            reference_id (int): ID of the reference to retrieve
+
+        Returns:
+            Dict: JSON representation of the reference
+        """
+        url = f"{self.session.root_url}/lit/api/reference/{reference_id}/"
+        response_json = self.session.get(url).json()
+        return response_json
+
+    def update_reference(self, reference_id: int, **kwargs) -> Dict:
+        """
+        Updates reference with given values. Fields not passed as parameters
+        are unchanged.
+
+        Args:
+            reference_id (int): ID of reference to update
+            **kwargs (optional): Named parameters of fields to update in reference. Example parameters:
+                title (str): title of the reference
+                abstract (str): reference abstract
+                tags (List[int]): tag IDs to apply to reference;
+                    replaces the existing tags
+
+        Example Usage:
+            updated_reference_json = client.lit.update_reference(
+                reference_id = 1,
+                title = "reference",
+                tags = [1,2,3]
+            )
+
+        Returns:
+            Dict: JSON representation of the updated reference.
+        """
+        url = f"{self.session.root_url}/lit/api/reference/{reference_id}/"
+        response_json = self.session.patch(url, kwargs).json()
+        return response_json
+
+    def delete_reference(self, reference_id: int) -> None:
+        """
+        Deletes the selected reference. This also removes the reference from any
+        searches/imports which may have included the reference. If data was
+        extracted with this reference and it is associated with bioassay or epi
+        extractions they will also be removed.
+
+        Args:
+            reference_id (int): ID of reference to delete
+
+        Returns:
+            None: If the operation is successful there is no return value.
+            If the operation is unsuccessful, an error will be raised.
+        """
+        url = f"{self.session.root_url}/lit/api/reference/{reference_id}/"
+        self.session.delete(url)
 
 
 class RiskOfBiasClient(BaseClient):
