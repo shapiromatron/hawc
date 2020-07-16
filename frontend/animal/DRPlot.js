@@ -137,7 +137,7 @@ class DRPlot extends D3Plot {
             if (this.y_axis_settings.scale_type == "linear") {
                 this.y_axis_settings.scale_type = "log";
                 this.y_axis_settings.number_ticks = 1;
-                var formatNumber = d3.format(",.f");
+                var formatNumber = d3.format(",f");
                 this.y_axis_settings.label_format = formatNumber;
             } else {
                 this.y_axis_settings.scale_type = "linear";
@@ -163,7 +163,7 @@ class DRPlot extends D3Plot {
         if (this.x_axis_settings.scale_type == "linear") {
             this.x_axis_settings.scale_type = "log";
             this.x_axis_settings.number_ticks = 1;
-            this.x_axis_settings.label_format = d3.format(",.f");
+            this.x_axis_settings.label_format = d3.format(",f");
         } else {
             this.x_axis_settings.scale_type = "linear";
             this.x_axis_settings.number_ticks = 5;
@@ -264,7 +264,7 @@ class DRPlot extends D3Plot {
             .transition()
             .duration(1000)
             .call(this.xAxis)
-            .each("end", function() {
+            .on("end", function() {
                 //force lowest dose on axis to 0
                 var vals = [];
                 d3.selectAll(".x_axis text").each(function() {
@@ -526,7 +526,7 @@ class DRPlot extends D3Plot {
                 .enter()
                 .append("svg:text")
                 .attr("x", d => x(d.x))
-                .attr("y", y => y(d.y))
+                .attr("y", d => y(d.y))
                 .attr("text-anchor", "middle")
                 .style("font-size", "18px")
                 .style("font-weight", "bold")
@@ -553,7 +553,7 @@ class DRPlot extends D3Plot {
         var legend_settings = {};
         legend_settings.items = [
             {
-                text: "Doses in Study",
+                text: "Doses",
                 classes: "dose_points",
                 color: undefined,
             },
@@ -630,29 +630,21 @@ class DRPlot extends D3Plot {
     }
 
     render_bmd_lines() {
+        window.d3 = d3;
         this.remove_bmd_lines();
-
         var doseUnits = parseInt(this.endpoint.dose_units_id),
-            lines = this.bmd.filter(function(d) {
-                return d.dose_units_id === doseUnits;
-            }),
+            lines = this.bmd.filter(d => d.dose_units_id === doseUnits),
             x = this.x_scale,
             xs = this.x_scale.ticks(100),
             y = this.y_scale,
-            liner = d3.svg
+            liner = d3
                 .line()
-                .x(function(d) {
-                    return x(d.x);
-                })
-                .y(function(d) {
-                    return y(d.y);
-                })
-                .interpolate("linear");
+                .curve(d3.curveLinear)
+                .x(d => x(d.x))
+                .y(d => y(d.y));
 
         var bmds = _.chain(lines)
-            .filter(function(d) {
-                return d.bmd_line !== undefined;
-            })
+            .filter(d => d.bmd_line !== undefined)
             .map(function(d) {
                 return [
                     {
@@ -675,9 +667,7 @@ class DRPlot extends D3Plot {
             .value();
 
         var bmdls = _.chain(lines)
-            .filter(function(d) {
-                return d.bmdl_line !== undefined;
-            })
+            .filter(d => d.bmdl_line !== undefined)
             .map(function(d) {
                 return [
                     {
@@ -707,12 +697,8 @@ class DRPlot extends D3Plot {
             .enter()
             .append("path")
             .attr("class", "bmd_line")
-            .attr("d", function(d) {
-                return liner(d.getData(xs));
-            })
-            .attr("stroke", function(d) {
-                return d.stroke;
-            });
+            .attr("d", d => liner(d.getData(xs)))
+            .attr("stroke", d => d.stroke);
 
         // add bmd lines
         g.selectAll("line.bmd")
@@ -720,21 +706,11 @@ class DRPlot extends D3Plot {
             .enter()
             .append("line")
             .attr("class", "bmd_line")
-            .attr("x1", function(d) {
-                return d.x1;
-            })
-            .attr("x2", function(d) {
-                return d.x2;
-            })
-            .attr("y1", function(d) {
-                return d.y1;
-            })
-            .attr("y2", function(d) {
-                return d.y2;
-            })
-            .attr("stroke", function(d) {
-                return d.stroke;
-            });
+            .attr("x1", d => d.x1)
+            .attr("x2", d => d.x2)
+            .attr("y1", d => d.y1)
+            .attr("y2", d => d.y2)
+            .attr("stroke", d => d.stroke);
 
         // add bmdl lines
         g.selectAll("line.bmd")
@@ -742,21 +718,11 @@ class DRPlot extends D3Plot {
             .enter()
             .append("line")
             .attr("class", "bmd_line")
-            .attr("x1", function(d) {
-                return d.x1;
-            })
-            .attr("x2", function(d) {
-                return d.x2;
-            })
-            .attr("y1", function(d) {
-                return d.y1;
-            })
-            .attr("y2", function(d) {
-                return d.y2;
-            })
-            .attr("stroke", function(d) {
-                return d.stroke;
-            });
+            .attr("x1", d => d.x1)
+            .attr("x2", d => d.x2)
+            .attr("y1", d => d.y1)
+            .attr("y2", d => d.y2)
+            .attr("stroke", d => d.stroke);
 
         this.add_legend();
     }

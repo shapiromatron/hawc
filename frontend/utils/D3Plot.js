@@ -37,21 +37,22 @@ class D3Plot {
     build_legend(settings) {
         var plot = this,
             buffer = settings.box_padding, //shortcut reference
-            drag = d3
-                .drag()
-                .origin(Object)
-                .on("drag", function(d, i) {
-                    var regexp = /\((-?[0-9]+)[, ](-?[0-9]+)\)/,
-                        p = d3.select(this),
-                        m = regexp.exec(p.attr("transform"));
+            drag = d3.drag().on("drag", function(d, i) {
+                var regexp = /\((-?[0-9]+)[, ](-?[0-9]+)\)/,
+                    p = d3.select(this),
+                    m = regexp.exec(p.attr("transform"));
 
-                    if (m !== null && m.length === 3) {
-                        var x = parseFloat(m[1]) + d3.event.dx,
-                            y = parseFloat(m[2]) + d3.event.dy;
-                        p.attr("transform", `translate(${x},${y})`);
-                        plot.set_legend_location(y, x);
-                    }
-                });
+                if (m !== null && m.length === 3) {
+                    var x = parseFloat(m[1]) + d3.event.dx,
+                        y = parseFloat(m[2]) + d3.event.dy;
+                    p.attr("transform", `translate(${x},${y})`);
+                    plot.set_legend_location(y, x);
+                }
+            });
+
+        if (this.legend) {
+            this.legend.node().remove();
+        }
 
         this.legend = this.vis
             .append("g")
@@ -99,6 +100,7 @@ class D3Plot {
         if (this.legend) {
             var buffer = parseInt(this.legend.attr("data-buffer")),
                 dim = this.legend.node().getBoundingClientRect();
+
             this.legend
                 .select(".legend")
                 .attr("width", dim.width + buffer)

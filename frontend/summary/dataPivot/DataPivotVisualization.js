@@ -199,7 +199,7 @@ class DataPivotVisualization extends D3Plot {
         this.textPadding = 5; // text padding on all sides of text
 
         var scale_type = this.dp_settings.plot_settings.logscale ? "log" : "linear",
-            formatNumber = d3.format(",.f");
+            formatNumber = d3.format(",f");
 
         this.text_spacing_offset = 10;
         this.x_axis_settings = {

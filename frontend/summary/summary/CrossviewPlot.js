@@ -43,7 +43,7 @@ class CrossviewPlot extends D3Visualization {
                 gridline_class: "primary_gridlines x_gridlines",
                 number_ticks: 10,
                 axis_labels: true,
-                label_format: d3.format(",.f"),
+                label_format: d3.format(",f"),
             },
             y_axis_settings: {
                 scale_type: "linear",
@@ -106,25 +106,21 @@ class CrossviewPlot extends D3Visualization {
                   })
                 : function() {},
             dragY = this.options.dev
-                ? d3
-                      .drag()
-                      .origin(Object)
-                      .on("drag", function(d, i) {
-                          let regexp = /\((-?[0-9]+)[, ](-?[0-9]+)\)/,
-                              p = d3.select(this),
-                              m = regexp.exec(p.attr("transform"));
-                          if (m !== null && m.length === 3) {
-                              let x = parseInt(m[1]) + parseInt(d3.event.dx),
-                                  y = parseInt(m[2]) + parseInt(d3.event.dy);
-                              p.attr(
-                                  "transform",
-                                  `translate(${x},${y}) rotate(270,${yAxisXDefault + x},${midY +
-                                      y})`
-                              );
-                              settings.ylabel_x = x;
-                              settings.ylabel_y = y;
-                          }
-                      })
+                ? d3.drag().on("drag", function(d, i) {
+                      let regexp = /\((-?[0-9]+)[, ](-?[0-9]+)\)/,
+                          p = d3.select(this),
+                          m = regexp.exec(p.attr("transform"));
+                      if (m !== null && m.length === 3) {
+                          let x = parseInt(m[1]) + parseInt(d3.event.dx),
+                              y = parseInt(m[2]) + parseInt(d3.event.dy);
+                          p.attr(
+                              "transform",
+                              `translate(${x},${y}) rotate(270,${yAxisXDefault + x},${midY + y})`
+                          );
+                          settings.ylabel_x = x;
+                          settings.ylabel_y = y;
+                      }
+                  })
                 : function() {};
 
         this.vis
@@ -584,20 +580,17 @@ class CrossviewPlot extends D3Visualization {
 
         // add labels
         if (this.options.dev) {
-            drag = d3
-                .drag()
-                .origin(Object)
-                .on("drag", function(d, i) {
-                    var regexp = /\((-?[0-9]+)[, ](-?[0-9]+)\)/,
-                        p = d3.select(this),
-                        m = regexp.exec(p.attr("transform"));
-                    if (m !== null && m.length === 3) {
-                        var x = parseFloat(m[1]) + d3.event.dx,
-                            y = parseFloat(m[2]) + d3.event.dy;
-                        p.attr("transform", `translate(${x},${y})`);
-                        self.setLabelLocation(i, x, y);
-                    }
-                });
+            drag = d3.drag().on("drag", function(d, i) {
+                var regexp = /\((-?[0-9]+)[, ](-?[0-9]+)\)/,
+                    p = d3.select(this),
+                    m = regexp.exec(p.attr("transform"));
+                if (m !== null && m.length === 3) {
+                    var x = parseFloat(m[1]) + d3.event.dx,
+                        y = parseFloat(m[2]) + d3.event.dy;
+                    p.attr("transform", `translate(${x},${y})`);
+                    self.setLabelLocation(i, x, y);
+                }
+            });
         } else {
             drag = function() {};
         }
@@ -740,9 +733,9 @@ class CrossviewPlot extends D3Visualization {
 
         // response-lines
         var response_centerlines = this.vis.append("g"),
-            line = d3.svg
+            line = d3
                 .line()
-                .interpolate("basis")
+                .curve(d3.interpolateBasis)
                 .x(d => x(d.dose))
                 .y(d => y(d.resp)),
             plotData = this.dataset.map(d => d.plotting);

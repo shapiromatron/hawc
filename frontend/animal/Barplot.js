@@ -82,7 +82,7 @@ class Barplot extends D3Plot {
             if (this.y_axis_settings.scale_type == "linear") {
                 this.y_axis_settings.scale_type = "log";
                 this.y_axis_settings.number_ticks = 1;
-                var formatNumber = d3.format(",.f");
+                var formatNumber = d3.format(",f");
                 this.y_axis_settings.label_format = formatNumber;
             } else {
                 this.y_axis_settings.scale_type = "linear";
@@ -268,23 +268,13 @@ class Barplot extends D3Plot {
             .data(this.values)
             .enter()
             .append("rect")
-            .attr("x", function(d, i) {
-                return x(d.dose) + x.bandwidth() * bar_spacing;
-            })
-            .attr("y", function(d, i) {
-                return y(d.value);
-            })
+            .attr("x", d => x(d.dose) + x.bandwidth() * bar_spacing)
+            .attr("y", d => y(d.value))
             .attr("width", x.bandwidth() * (1 - 2 * bar_spacing))
-            .attr("height", function(d) {
-                return min - y(d.value);
-            })
-            .attr("class", function(d) {
-                return d.classes;
-            });
+            .attr("height", d => min - y(d.value))
+            .attr("class", d => d.classes);
 
-        this.bars.append("svg:title").text(function(d) {
-            return d.txt;
-        });
+        this.bars.append("svg:title").text(d => d.txt);
 
         var sigs_group = this.vis.append("g");
         this.sigs = sigs_group
@@ -363,19 +353,13 @@ class Barplot extends D3Plot {
         this.bars
             .transition()
             .duration(1000)
-            .attr("y", function(d, i) {
-                return y(d.value);
-            })
-            .attr("height", function(d) {
-                return min - y(d.value);
-            });
+            .attr("y", d => y(d.value))
+            .attr("height", d => min - y(d.value));
 
         this.sigs
             .transition()
             .duration(1000)
-            .attr("y", function(d) {
-                return y(d.y);
-            });
+            .attr("y", d => y(d.y));
     }
 
     add_error_bars() {
@@ -438,7 +422,7 @@ class Barplot extends D3Plot {
         var legend_settings = {};
         legend_settings.items = [
             {
-                text: "Doses in Study",
+                text: "Doses",
                 classes: "dose_points",
                 color: undefined,
             },
