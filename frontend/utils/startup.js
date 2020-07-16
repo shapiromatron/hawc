@@ -11,7 +11,7 @@ Object.defineProperty(Object.prototype, "rename_property", {
             this[new_name] = this[old_name];
             delete this[old_name];
         } catch (f) {
-            console.log("prop not found");
+            console.warn("prop not found");
         }
     },
 });
@@ -193,9 +193,7 @@ _.extend(Math, {
                 2.0766977669,
             ];
             if (df > 350) {
-                console.log(
-                    "Warning, extrapolating beyond range for which regression was designed."
-                );
+                console.warn("Extrapolating beyond inv_tdist_05 regression range (N>350).");
             }
         }
         return (

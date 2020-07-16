@@ -322,8 +322,8 @@ class RiskOfBiasClient(BaseClient):
                     * "content_type_name" (str): the name of the data type relevant to this override.
                     * "object_id" (int): the id of the particular instance of that data type relevant to this override.
 
+        Example use:
 
-        Example Usage:
             try:
                 rob = client.riskofbias.create(
                     study_id=123,
@@ -407,6 +407,45 @@ class AnimalClient(BaseClient):
     """
     Client class for animal experiment requests.
     """
+
+    def create_experiment(self, data: Dict) -> Dict:
+        """
+        Create a new experiment.
+
+        Args:
+            data (Dict): required metadata for creation
+
+        Returns:
+            Dict: The resulting object, if create was successful
+        """
+        url = f"{self.session.root_url}/ani/api/experiment/"
+        return self.session.post(url, data).json()
+
+    def create_animal_group(self, data: Dict) -> Dict:
+        """
+        Create a new animal-group and dosing regime.
+
+        Args:
+            data (Dict): required metadata for creation
+
+        Returns:
+            Dict: The resulting object, if create was successful
+        """
+        url = f"{self.session.root_url}/ani/api/animal-group/"
+        return self.session.post(url, data).json()
+
+    def create_endpoint(self, data: Dict) -> Dict:
+        """
+        Create a new endpoint.
+
+        Args:
+            data (Dict): required metadata for creation
+
+        Returns:
+            Dict: The resulting object, if create was successful
+        """
+        url = f"{self.session.root_url}/ani/api/endpoint/"
+        return self.session.post(url, data).json()
 
     def data(self, assessment_id: int) -> pd.DataFrame:
         """
@@ -595,7 +634,7 @@ class HawcClient(BaseClient):
     HAWC Client.
 
     Usage:
-        client = HawcClient("http://hawc_url.example")
+        client = HawcClient("https://hawcproject.org")
         # If authentication is needed...
         client.authenticate("username","password")
         # To make requests...

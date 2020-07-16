@@ -78,6 +78,7 @@ TaskToggle.propTypes = {
     className: PropTypes.string.isRequired,
     task: PropTypes.object.isRequired,
     TaskLabel: PropTypes.func.isRequired,
+    dispatch: PropTypes.func,
 };
 
 function mapStateToProps(state) {

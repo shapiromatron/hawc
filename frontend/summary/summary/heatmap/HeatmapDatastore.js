@@ -29,7 +29,7 @@ class HeatmapDatastore {
         this.getDetailUrl = this.getDetailUrl.bind(this);
         this.modal = new HAWCModal();
         this.settings = settings;
-        this.dataset = this.setDataset(dataset);
+        this.dataset = dataset;
         this.dpe = new DataPivotExtension();
         this.intersection = this.setIntersection();
         this.filterWidgetState = this.setFilterWidgetState();
@@ -39,29 +39,13 @@ class HeatmapDatastore {
         this.setColorScale();
     }
 
-    setDataset(dataset) {
-        if (this.settings.show_null) {
-            return dataset;
-        } else {
-            let x_fields = toJS(this.settings.x_fields),
-                y_fields = toJS(this.settings.y_fields);
-            return dataset.filter(row => {
-                for (const field of [...x_fields, ...y_fields]) {
-                    if (!row[field.column]) {
-                        return false;
-                    }
-                }
-                return true;
-            });
-        }
-    }
-
     setIntersection() {
         /*
         here, we have "red" in the color column with element index 1, 2, and 3
         intersection["color"]["red"] = Set([1,2,3])
         */
         let intersection = {},
+            allRows = [...this.usableRows],
             addColumnsToMap = row => {
                 const columnName = row.column,
                     delimiter = row.delimiter;
@@ -69,17 +53,21 @@ class HeatmapDatastore {
                 if (intersection[columnName] === undefined) {
                     intersection[columnName] = {};
                 }
-                this.dataset.forEach((d, idx) => {
+                allRows.forEach(index => {
                     // get column value or empty string to handle null or undefined edge cases,
                     // such as when an epi outcome is created but with no associated exposure.
-                    const text = d[columnName] || "",
+                    const d = this.dataset[index],
+                        text = d[columnName] || "",
                         values = delimiter ? text.split(delimiter) : [text];
 
                     for (let value of values) {
+                        if (!this.settings.show_null && !value) {
+                            continue;
+                        }
                         if (intersection[columnName][value] === undefined) {
                             intersection[columnName][value] = [];
                         }
-                        intersection[columnName][value].push(idx);
+                        intersection[columnName][value].push(index);
                     }
                 });
             };
@@ -221,6 +209,32 @@ class HeatmapDatastore {
     }
 
     @computed
+    get usableRows() {
+        /*
+        Return a Set of row indices which should be presented in heatmap.
+        If `settings.show_null`, use all row indices. If false, filter rows which are non-null for
+        all x and y axes on the heatmap.
+        */
+        let {x_fields, y_fields} = toJS(this.settings),
+            fields = [...x_fields, ...y_fields],
+            rows = _.range(0, this.dataset.length);
+        if (this.settings.show_null) {
+            return new Set(rows);
+        } else {
+            let validRows = rows.filter(index => {
+                const d = this.dataset[index],
+                    nonNull = _.map(fields, field => {
+                        const text = d[field.column] || "",
+                            values = field.delimiter ? text.split(field.delimiter) : [text];
+                        return _.some(values, d => d.length > 0);
+                    });
+                return _.every(nonNull);
+            });
+            return new Set(validRows);
+        }
+    }
+
+    @computed
     get matrixDataset() {
         // build the dataset required to generate the matrix
         const hash = this.getFilterHash;
@@ -307,10 +321,7 @@ class HeatmapDatastore {
                     y_filters: [],
                     x_step: x_steps,
                     y_step: y_steps,
-                    rows: h.setDifference(
-                        new Set(_.range(this.dataset.length)),
-                        this.rowsRemovedByFilters
-                    ),
+                    rows: h.setDifference(this.usableRows, this.rowsRemovedByFilters),
                 }
             );
         }
@@ -320,21 +331,17 @@ class HeatmapDatastore {
 
     @computed
     get getTableData() {
-        let rows;
+        let rows, data;
         if (this.tableDataFilters.size > 0) {
-            let all_rows = [...this.tableDataFilters].map(
+            let filtered_rows = [...this.tableDataFilters].map(
                 d => _.find(this.matrixDataset, {x_step: d.x_step, y_step: d.y_step}).rows
             );
-            rows = _.union(...all_rows);
+            rows = _.union(...filtered_rows);
         } else {
-            rows = [
-                ...h.setDifference(
-                    new Set(_.range(this.dataset.length)),
-                    this.rowsRemovedByFilters
-                ),
-            ];
+            rows = [...h.setDifference(this.usableRows, this.rowsRemovedByFilters)];
         }
-        return rows.map(index => this.dataset[index]);
+        data = rows.map(index => this.dataset[index]);
+        return {rows, data};
     }
 
     @action.bound setTableDataFilters(d) {

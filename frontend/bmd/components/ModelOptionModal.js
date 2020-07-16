@@ -22,7 +22,7 @@ class ModelOptionModal extends BaseModal {
         return defaults;
     }
 
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
         if (nextProps.model) {
             var props = Object.assign(
                 this._getDefaults(nextProps.model),
@@ -186,7 +186,7 @@ class ModelOptionModal extends BaseModal {
         return (
             <div className="modal hide fade" id={types.OPTION_MODAL_ID}>
                 <div className="modal-header">
-                    <button ref="closer" className="close" type="button" data-dismiss="modal">
+                    <button ref={this.closer} className="close" type="button" data-dismiss="modal">
                         ×
                     </button>
                     <h3>{title}</h3>

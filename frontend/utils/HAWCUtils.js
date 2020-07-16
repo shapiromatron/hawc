@@ -267,7 +267,7 @@ class HAWCUtils {
                     return o;
                 }
             } catch (e) {
-                console.debug("un-parsable JSON-like string", el);
+                console.warn("un-parsable JSON-like string", el);
             }
         }
         return null;

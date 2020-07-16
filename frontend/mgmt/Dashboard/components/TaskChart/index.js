@@ -11,25 +11,26 @@ import "./TaskChart.css";
 import {STATUS} from "mgmt/TaskTable/constants";
 
 class TaskChart extends PureComponent {
-    componentWillMount() {
-        this.setAxisData();
+    constructor(props) {
+        super(props);
+        this.state = this.getAxisData();
     }
 
-    componentWillUpdate(nextProps, nextState) {
-        this.setAxisData();
+    componentDidUpdate(nextProps, nextState) {
+        this.setState(this.getAxisData());
     }
 
-    setAxisData() {
+    getAxisData() {
         const setData = this.formatData(),
             xData = this.getXAxisData(setData),
             yData = this.getYAxisData(setData),
             xScale = this.makeXScale(xData),
             yScale = this.makeYScale(yData);
-        this.setState({
+        return {
             setData,
             xData: {...xData, xScale},
             yData: {...yData, yScale},
-        });
+        };
     }
 
     getYAxisData(setData) {
@@ -146,6 +147,7 @@ TaskChart.propTypes = {
         }).isRequired,
         xTransform: PropTypes.array.isRequired,
         yTransform: PropTypes.array.isRequired,
+        label: PropTypes.string,
     }).isRequired,
 };
 

@@ -11,7 +11,7 @@ import {getTags} from "nestedTagEditor/actions";
 import Tree from "nestedTagEditor/containers/Tree";
 
 class Root extends React.Component {
-    componentWillMount() {
+    componentDidMount() {
         let {dispatch} = this.props.store;
         Promise.all([dispatch(loadConfig())]).then(() => dispatch(getTags()));
     }

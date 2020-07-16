@@ -26,6 +26,7 @@ TaskLabel.propTypes = {
         status: PropTypes.number.isRequired,
         status_display: PropTypes.string.isRequired,
         type: PropTypes.number.isRequired,
+        due_date: PropTypes.object,
     }).isRequired,
 };
 

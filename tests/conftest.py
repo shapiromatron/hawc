@@ -31,6 +31,9 @@ class Keys:
         self.reference_linked = 1
         self.reference_unlinked = 3
 
+        self.animal_group_working = 1
+        self.endpoint_working = 1
+
         self.visual_heatmap = 1
         self.visual_barchart = 2
 

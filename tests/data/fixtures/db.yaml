@@ -325,7 +325,7 @@
 - model: myuser.hawcuser
   fields:
     password: md5$OtMBo5HXuH5d$79fbf1f0ae6d765b17b29256920cc8ef
-    last_login: 2020-05-08 19:29:36.731679+00:00
+    last_login: 2020-07-06 19:41:10.180223+00:00
     is_superuser: true
     email: sudo@sudo.com
     first_name: a
@@ -340,7 +340,7 @@
 - model: myuser.hawcuser
   fields:
     password: md5$fFanL0QpS7Sg$cf3808b6102279eb6982d78edfdc6111
-    last_login: 2020-05-08 19:33:02.435858+00:00
+    last_login: 2020-07-06 19:37:38.352592+00:00
     is_superuser: false
     email: pm@pm.com
     first_name: Project
@@ -512,6 +512,12 @@
     name: rat
     created: 2020-02-27 20:37:36.002070+00:00
     last_updated: 2020-02-27 20:38:09.171871+00:00
+- model: assessment.species
+  pk: 2
+  fields:
+    name: mouse
+    created: 2020-02-27 20:37:36.002070+00:00
+    last_updated: 2020-02-27 20:38:09.171871+00:00
 - model: assessment.strain
   pk: 1
   fields:
@@ -572,14 +578,22 @@
     last_updated: 2020-05-11 04:03:34.408793+00:00
     effects:
     - 1
+- model: assessment.baseendpoint
+  pk: 6
+  fields:
+    assessment: 2
+    name: Incomplete dose response values
+    created: 2020-07-06 19:45:07.271513+00:00
+    last_updated: 2020-07-06 19:46:42.948733+00:00
+    effects: []
 - model: assessment.dataset
   pk: 1
   fields:
     assessment: 1
     name: iris flowers
-    description: "<p>R. A. Fisher (1936). \"The use of multiple measurements in taxonomic\
-      \ problems\". Annals of Eugenics. 7 (2): 179\u2013188. <a href=\"https://doi.org/10.1111/j.1469-1809.1936.tb02137.x\"\
-      \ rel=\"noopener noreferrer\" target=\"_blank\">doi:10.1111/j.1469-1809.1936.tb02137</a></p>"
+    description: "<p>R. A. Fisher (1936). \"The use of multiple measurements in taxonomic
+      problems\". Annals of Eugenics. 7 (2): 179\u2013188. <a href=\"https://doi.org/10.1111/j.1469-1809.1936.tb02137.x\"
+      rel=\"noopener noreferrer\" target=\"_blank\">doi:10.1111/j.1469-1809.1936.tb02137</a></p>"
     created: 2020-06-02 20:01:31.798361+00:00
     last_updated: 2020-06-02 20:04:30.023508+00:00
 - model: assessment.dataset
@@ -587,9 +601,9 @@
   fields:
     assessment: 2
     name: iris flowers final
-    description: "<p>R. A. Fisher (1936). \"The use of multiple measurements in taxonomic\
-      \ problems\". Annals of Eugenics. 7 (2): 179\u2013188. <a href=\"https://doi.org/10.1111/j.1469-1809.1936.tb02137.x\"\
-      \ rel=\"noopener noreferrer\" target=\"_blank\">doi:10.1111/j.1469-1809.1936.tb02137</a></p>"
+    description: "<p>R. A. Fisher (1936). \"The use of multiple measurements in taxonomic
+      problems\". Annals of Eugenics. 7 (2): 179\u2013188. <a href=\"https://doi.org/10.1111/j.1469-1809.1936.tb02137.x\"
+      rel=\"noopener noreferrer\" target=\"_blank\">doi:10.1111/j.1469-1809.1936.tb02137</a></p>"
     created: 2020-06-02 20:02:31.798361+00:00
     last_updated: 2020-06-02 20:02:31.798361+00:00
 - model: assessment.datasetrevision
@@ -1769,6 +1783,42 @@
     additional_fields: '{}'
     effects:
     - 1
+- model: animal.endpoint
+  pk: 6
+  fields:
+    baseendpoint_ptr: 6
+    animal_group: 3
+    system: ''
+    organ: ''
+    effect: ''
+    effect_subtype: ''
+    litter_effects: NR
+    litter_effect_notes: ''
+    observation_time: null
+    observation_time_units: 0
+    observation_time_text: ''
+    data_location: ''
+    expected_adversity_direction: 4
+    response_units: '%'
+    data_type: C
+    variance_type: 1
+    confidence_interval: null
+    NOEL: 1
+    LOEL: 2
+    FEL: 3
+    data_reported: true
+    data_extracted: true
+    values_estimated: false
+    monotonicity: 8
+    statistical_test: ''
+    trend_value: null
+    trend_result: 3
+    diagnostic: ''
+    power_notes: ''
+    results_notes: ''
+    endpoint_notes: ''
+    additional_fields: '{}'
+    effects: []
 - model: animal.endpointgroup
   pk: 1
   fields:
@@ -1873,6 +1923,71 @@
     upper_ci: null
     significant: true
     significance_level: 0.05
+- model: animal.endpointgroup
+  pk: 9
+  fields:
+    endpoint: 6
+    dose_group_id: 0
+    n: null
+    incidence: null
+    response: null
+    variance: null
+    lower_ci: null
+    upper_ci: null
+    significant: false
+    significance_level: null
+- model: animal.endpointgroup
+  pk: 10
+  fields:
+    endpoint: 6
+    dose_group_id: 1
+    n: null
+    incidence: null
+    response: null
+    variance: null
+    lower_ci: null
+    upper_ci: null
+    significant: false
+    significance_level: null
+- model: animal.endpointgroup
+  pk: 11
+  fields:
+    endpoint: 6
+    dose_group_id: 2
+    n: 5
+    incidence: null
+    response: null
+    variance: null
+    lower_ci: null
+    upper_ci: null
+    significant: false
+    significance_level: null
+- model: animal.endpointgroup
+  pk: 12
+  fields:
+    endpoint: 6
+    dose_group_id: 3
+    n: 10
+    incidence: null
+    response: null
+    variance: null
+    lower_ci: null
+    upper_ci: null
+    significant: false
+    significance_level: null
+- model: animal.endpointgroup
+  pk: 13
+  fields:
+    endpoint: 6
+    dose_group_id: 4
+    n: null
+    incidence: null
+    response: null
+    variance: null
+    lower_ci: null
+    upper_ci: null
+    significant: false
+    significance_level: null
 - model: riskofbias.riskofbiasdomain
   pk: 1
   fields:
