@@ -327,11 +327,14 @@ class TestHEROApis:
         url = reverse(
             "lit:api:assessment-update-reference-metadata-from-hero", args=(assessment_id,)
         )
-        
+
+        # reviewers shouldn't be able to destroy
+        client = APIClient()
+        assert client.login(username="rev@rev.com", password="pw") is True
         response = client.patch(url)
         assert response.status_code == 403
-        
-                # public shouldn't be able to update
+
+        # public shouldn't be able to update
         client = APIClient()
         response = client.patch(url)
         assert response.status_code == 403
@@ -359,7 +362,6 @@ class TestHEROApis:
         assert client.login(username="pm@pm.com", password="pw") is True
         response = client.patch(url)
         assert response.status_code == 404
-
 
 
 @pytest.mark.django_db
