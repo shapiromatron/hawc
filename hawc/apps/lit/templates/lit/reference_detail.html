@@ -12,7 +12,7 @@
 
 {% block content %}
 
-  {% if obj_perms.edit %}
+  {% if obj_perms.edit and crud == "Read" %}
     <div class="btn-group pull-right">
       <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions
         <span class="caret"></span>
@@ -20,6 +20,7 @@
       <ul class="dropdown-menu">
         <li><a href="{% url 'lit:reference_tags_edit' object.pk %}">Edit tags</a></li>
         <li><a href="{% url 'lit:ref_edit' object.pk %}">Edit reference</a></li>
+        <li><a href="{% url 'lit:ref_delete' object.pk %}">Delete reference</a></li>
       </ul>
     </div>
   {% endif %}
