@@ -327,14 +327,11 @@ class TestHEROApis:
         url = reverse(
             "lit:api:assessment-update-reference-metadata-from-hero", args=(assessment_id,)
         )
-
-        # reviewers shouldn't be able to update
-        client = APIClient()
-        assert client.login(username="rev@rev.com", password="pw") is True
+        
         response = client.patch(url)
         assert response.status_code == 403
-
-        # public shouldn't be able to update
+        
+                # public shouldn't be able to update
         client = APIClient()
         response = client.patch(url)
         assert response.status_code == 403
@@ -363,29 +360,131 @@ class TestHEROApis:
         response = client.patch(url)
         assert response.status_code == 404
 
-    """
 
-    def test_bad_replace_requests(self, db_keys):
+
+@pytest.mark.django_db
+class TestReferenceDestroyApi:
+    def test_permissions(self, db_keys):
+
+        url = reverse("lit:api:reference-detail", args=(db_keys.reference_linked,))
+
+        # reviewers shouldn't be able to destroy
+        client = APIClient()
+        assert client.login(username="rev@rev.com", password="pw") is True
+        response = client.delete(url)
+        assert response.status_code == 403
+
+        # public shouldn't be able to destroy
+        client = APIClient()
+        response = client.delete(url)
+        assert response.status_code == 403
+
+        # make sure the object still exists
+        assert models.Reference.objects.filter(id=db_keys.reference_linked).exists()
+
+    def test_bad_requests(self, db_keys):
         # test bad id
-        url = reverse("lit:api:assessment-replace-hero", args=(-1,))
+        url = reverse("lit:api:reference-detail", args=(-1,))
 
         client = APIClient()
         assert client.login(username="team@team.com", password="pw") is True
-        response = client.patch(url)
+        response = client.delete(url)
         assert response.status_code == 404
 
-    def test_valid_replace_requests(self, db_keys):
+    def test_valid_requests(self, db_keys):
         # test valid id
-        url = reverse("lit:api:assessment-replace-hero", args=(db_keys.reference_linked,))
+        url = reverse("lit:api:reference-detail", args=(db_keys.reference_linked,))
 
         client = APIClient()
         assert client.login(username="team@team.com", password="pw") is True
-        response = client.patch(url)
+        response = client.delete(url)
         # the reference is successfully deleted
         assert response.status_code == 204
-        response = client.patch(url)
+        response = client.delete(url)
         # the object does not exist, since it was previously deleted
         assert response.status_code == 404
         assert not models.Reference.objects.filter(id=db_keys.reference_linked).exists()
 
-    """
+
+@pytest.mark.django_db
+class TestReferenceUpdateApi:
+    def test_permissions(self, db_keys):
+
+        url = reverse("lit:api:reference-detail", args=(db_keys.reference_linked,))
+        data = {"title": "TestReferenceUpdateApi test"}
+
+        pre_ref = models.Reference.objects.get(id=db_keys.reference_linked)
+
+        # reviewers shouldn't be able to update
+        client = APIClient()
+        assert client.login(username="rev@rev.com", password="pw") is True
+
+        response = client.patch(url, data)
+        assert response.status_code == 403
+
+        # public shouldn't be able to update
+        client = APIClient()
+        response = client.patch(url, data)
+        assert response.status_code == 403
+
+        post_ref = models.Reference.objects.get(id=db_keys.reference_linked)
+
+        # make sure the object hasn't changed
+        assert post_ref == pre_ref
+
+    def test_bad_requests(self, db_keys):
+        # test bad id
+        url = reverse("lit:api:reference-detail", args=(-1,))
+        data = {"title": "TestReferenceUpdateApi test"}
+
+        client = APIClient()
+        assert client.login(username="team@team.com", password="pw") is True
+        response = client.patch(url, data)
+        assert response.status_code == 404
+
+        # test bad tag
+        url = reverse("lit:api:reference-detail", args=(db_keys.reference_linked,))
+        tags = [2, 3, -1]
+        data = {"tags": tags}
+        response = client.patch(url, data)
+        assert response.status_code == 400
+        assert response.json() == {"tags": ["All tag ids are not from this assessment"]}
+
+    def test_valid_requests(self, db_keys):
+        url = reverse("lit:api:reference-detail", args=(db_keys.reference_linked,))
+        client = APIClient()
+        assert client.login(username="team@team.com", password="pw") is True
+
+        reference = models.Reference.objects.get(id=db_keys.reference_linked)
+
+        # test updating reference with a new title
+        data = {"title": "TestReferenceUpdateApi title test"}
+        response = client.patch(url, data)
+        assert response.status_code == 200
+
+        assert reference.title != data.get("title")
+        updated_reference = models.Reference.objects.get(id=db_keys.reference_linked)
+        assert updated_reference.title == data.get("title")
+
+        # test updating reference with new tags
+        tags = [2, 3]
+        data = {"tags": tags}
+        response = client.patch(url, data)
+        assert response.status_code == 200
+
+        updated_reference = models.Reference.objects.get(id=db_keys.reference_linked)
+        assert updated_reference.tags.count() == len(tags)
+        for id in tags:
+            assert updated_reference.tags.filter(id=id).exists()
+
+        # test updating reference with multiple fields
+        tags = [2, 3, 4]
+        data = {"title": "TestReferenceUpdateApi title test 2", "tags": tags}
+        response = client.patch(url, data)
+        assert response.status_code == 200
+
+        updated_reference = models.Reference.objects.get(id=db_keys.reference_linked)
+        assert updated_reference.title == data.get("title")
+        assert updated_reference.tags.count() == len(tags)
+        for id in tags:
+            assert updated_reference.tags.filter(id=id).exists()

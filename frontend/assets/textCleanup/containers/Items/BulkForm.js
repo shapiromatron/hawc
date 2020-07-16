@@ -1,4 +1,5 @@
 import React, {Component} from "react";
+import PropTypes from "prop-types";
 import {connect} from "react-redux";
 import _ from "lodash";
 
@@ -13,7 +14,7 @@ class BulkForm extends Component {
         this.handleDetailSubmit = this.handleDetailSubmit.bind(this);
     }
 
-    componentWillMount() {
+    componentDidMount() {
         this.props.dispatch(
             initializeBulkEditForm(this.getIDs(this.props), this.props.params.field)
         );
@@ -78,4 +79,20 @@ function mapDispatchToProps(dispatch) {
         dispatch,
     };
 }
+
+BulkForm.propTypes = {
+    dispatch: PropTypes.func,
+    params: PropTypes.shape({
+        field: PropTypes.object,
+        type: PropTypes.object,
+    }),
+    model: PropTypes.shape({
+        editObject: PropTypes.object,
+        editObjectErrors: PropTypes.object,
+        itemsLoaded: PropTypes.object,
+    }),
+    items: PropTypes.object,
+    config: PropTypes.object,
+};
+
 export default connect(mapStateToProps, mapDispatchToProps)(BulkForm);

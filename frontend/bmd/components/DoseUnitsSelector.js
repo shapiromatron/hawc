@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 
 class DoseUnitsSelector extends React.Component {
-    componentWillMount() {
+    componentDidMount() {
         this.syncEndpoint(this.props.doseUnits);
     }
 

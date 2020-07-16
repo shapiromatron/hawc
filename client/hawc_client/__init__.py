@@ -69,6 +69,21 @@ class HawcSession:
         self._handle_hawc_response(response)
         return response
 
+    def delete(self, url: str, params: Dict = None) -> Response:
+        """
+        Sends a DELETE request using the session instance
+
+        Args:
+            url (str): URL for request.
+            params (Dict, optional): Additional parameters to include. Defaults to None.
+
+        Returns:
+            Response: The response.
+        """
+        response = self._session.delete(url=url, params=params)
+        self._handle_hawc_response(response)
+        return response
+
     def post(self, url: str, data: Dict) -> Response:
         """
         Sends a POST request using the session instance
@@ -81,6 +96,21 @@ class HawcSession:
             Response: The response.
         """
         response = self._session.post(url=url, json=data)
+        self._handle_hawc_response(response)
+        return response
+
+    def patch(self, url: str, data: Dict) -> Response:
+        """
+        Sends a PATCH request using the session instance
+
+        Args:
+            url (str): URL for request.
+            data (Dict): Payload for the request.
+
+        Returns:
+            Response: The response.
+        """
+        response = self._session.patch(url=url, json=data)
         self._handle_hawc_response(response)
         return response
 
@@ -255,6 +285,64 @@ class LiteratureClient(BaseClient):
         response_json = self.session.get(url).json()
         return pd.DataFrame(response_json)
 
+    def reference(self, reference_id: int) -> Dict:
+        """
+        Retrieves the selected reference.
+
+        Args:
+            reference_id (int): ID of the reference to retrieve
+
+        Returns:
+            Dict: JSON representation of the reference
+        """
+        url = f"{self.session.root_url}/lit/api/reference/{reference_id}/"
+        response_json = self.session.get(url).json()
+        return response_json
+
+    def update_reference(self, reference_id: int, **kwargs) -> Dict:
+        """
+        Updates reference with given values. Fields not passed as parameters
+        are unchanged.
+
+        Args:
+            reference_id (int): ID of reference to update
+            **kwargs (optional): Named parameters of fields to update in reference. Example parameters:
+                title (str): title of the reference
+                abstract (str): reference abstract
+                tags (List[int]): tag IDs to apply to reference;
+                    replaces the existing tags
+
+        Example Usage:
+            updated_reference_json = client.lit.update_reference(
+                reference_id = 1,
+                title = "reference",
+                tags = [1,2,3]
+            )
+
+        Returns:
+            Dict: JSON representation of the updated reference.
+        """
+        url = f"{self.session.root_url}/lit/api/reference/{reference_id}/"
+        response_json = self.session.patch(url, kwargs).json()
+        return response_json
+
+    def delete_reference(self, reference_id: int) -> None:
+        """
+        Deletes the selected reference. This also removes the reference from any
+        searches/imports which may have included the reference. If data was
+        extracted with this reference and it is associated with bioassay or epi
+        extractions they will also be removed.
+
+        Args:
+            reference_id (int): ID of reference to delete
+
+        Returns:
+            None: If the operation is successful there is no return value.
+            If the operation is unsuccessful, an error will be raised.
+        """
+        url = f"{self.session.root_url}/lit/api/reference/{reference_id}/"
+        self.session.delete(url)
+
 
 class RiskOfBiasClient(BaseClient):
     """
@@ -322,8 +410,8 @@ class RiskOfBiasClient(BaseClient):
                     * "content_type_name" (str): the name of the data type relevant to this override.
                     * "object_id" (int): the id of the particular instance of that data type relevant to this override.
 
+        Example use:
 
-        Example Usage:
             try:
                 rob = client.riskofbias.create(
                     study_id=123,
@@ -407,6 +495,45 @@ class AnimalClient(BaseClient):
     """
     Client class for animal experiment requests.
     """
+
+    def create_experiment(self, data: Dict) -> Dict:
+        """
+        Create a new experiment.
+
+        Args:
+            data (Dict): required metadata for creation
+
+        Returns:
+            Dict: The resulting object, if create was successful
+        """
+        url = f"{self.session.root_url}/ani/api/experiment/"
+        return self.session.post(url, data).json()
+
+    def create_animal_group(self, data: Dict) -> Dict:
+        """
+        Create a new animal-group and dosing regime.
+
+        Args:
+            data (Dict): required metadata for creation
+
+        Returns:
+            Dict: The resulting object, if create was successful
+        """
+        url = f"{self.session.root_url}/ani/api/animal-group/"
+        return self.session.post(url, data).json()
+
+    def create_endpoint(self, data: Dict) -> Dict:
+        """
+        Create a new endpoint.
+
+        Args:
+            data (Dict): required metadata for creation
+
+        Returns:
+            Dict: The resulting object, if create was successful
+        """
+        url = f"{self.session.root_url}/ani/api/endpoint/"
+        return self.session.post(url, data).json()
 
     def data(self, assessment_id: int) -> pd.DataFrame:
         """
@@ -595,7 +722,7 @@ class HawcClient(BaseClient):
     HAWC Client.
 
     Usage:
-        client = HawcClient("http://hawc_url.example")
+        client = HawcClient("https://hawcproject.org")
         # If authentication is needed...
         client.authenticate("username","password")
         # To make requests...

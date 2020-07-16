@@ -440,6 +440,14 @@ class RefEdit(BaseUpdate):
     form_class = forms.ReferenceForm
 
 
+class RefDelete(BaseDelete):
+    success_message = "Reference deleted."
+    model = models.Reference
+
+    def get_success_url(self):
+        return reverse_lazy("lit:overview", args=(self.assessment.pk,))
+
+
 class RefSearch(AssessmentPermissionsMixin, FormView):
     template_name = "lit/reference_search.html"
     form_class = forms.ReferenceSearchForm

@@ -1,6 +1,7 @@
 import d3 from "d3";
 import _ from "lodash";
 import React, {Component} from "react";
+import PropTypes from "prop-types";
 import {connect} from "react-redux";
 
 import {fetchFullStudyIfNeeded, selectActive} from "riskofbias/robTable/actions";
@@ -13,7 +14,7 @@ class AggregateGraph extends Component {
         this.selectActiveWithName = this.selectActiveWithName.bind(this);
     }
 
-    componentWillMount() {
+    componentDidMount() {
         this.props.dispatch(fetchFullStudyIfNeeded());
     }
 
@@ -72,5 +73,11 @@ function mapStateToProps(state) {
         riskofbiases: state.study.riskofbiases,
     };
 }
+
+AggregateGraph.propTypes = {
+    dispatch: PropTypes.func,
+    riskofbiases: PropTypes.array,
+    itemsLoaded: PropTypes.bool,
+};
 
 export default connect(mapStateToProps)(AggregateGraph);

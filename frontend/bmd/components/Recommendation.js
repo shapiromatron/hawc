@@ -8,6 +8,11 @@ import RecommendationNotes from "./RecommendationNotes";
 import RecommendationTable from "./RecommendationTable";
 
 class Recommendation extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = this.updateState(props);
+    }
+
     updateState(props) {
         let d;
         if (props.selectedModelId === null) {
@@ -24,15 +29,11 @@ class Recommendation extends React.Component {
                 notes: props.selectedModelNotes,
             };
         }
-        this.setState(d);
+        return d;
     }
 
-    componentWillMount() {
-        this.updateState(this.props);
-    }
-
-    componentWillReceiveProps(nextProps) {
-        this.updateState(nextProps);
+    UNSAFE_componentWillReceiveProps(nextProps) {
+        this.setState(this.updateState(nextProps));
     }
 
     handleFieldChange(e) {

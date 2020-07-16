@@ -80,6 +80,7 @@ TaskForm.propTypes = {
         study: PropTypes.shape({
             assessment: PropTypes.object.isRequired,
         }).isRequired,
+        owner: PropTypes.object,
     }).isRequired,
     className: PropTypes.string,
     autocompleteUrl: PropTypes.string.isRequired,

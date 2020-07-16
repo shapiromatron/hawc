@@ -1,4 +1,5 @@
 import React, {Component} from "react";
+import PropTypes from "prop-types";
 import {connect} from "react-redux";
 import _ from "lodash";
 
@@ -25,7 +26,7 @@ class ListApp extends Component {
         this.updateForm = this.updateForm.bind(this);
     }
 
-    componentWillMount() {
+    componentDidMount() {
         this.props.dispatch(fetchTasks());
         this.props.dispatch(fetchStudies());
     }
@@ -54,9 +55,10 @@ class ListApp extends Component {
 
     updateForm(e) {
         e.preventDefault();
-        const updatedData = _.chain(this.refs.list.refs)
-            .map(ref => {
-                return ref.getChangedData();
+        const updatedData = _.chain(this.list.components)
+            .filter(component => component != null)
+            .map(component => {
+                return component.getChangedData();
             })
             .filter(data => {
                 return !_.isEmpty(data);
@@ -87,7 +89,7 @@ class ListApp extends Component {
                         component={displayForm ? TaskStudyEdit : TaskStudy}
                         items={taskList}
                         autocompleteUrl={this.props.config.autocomplete.url}
-                        ref="list"
+                        ref={c => (this.list = c)}
                     />
                 )}
                 {displayForm ? <SubmitButton submitForm={this.updateForm} /> : null}
@@ -106,5 +108,22 @@ function mapStateToProps(state) {
         studies,
     };
 }
+
+ListApp.propTypes = {
+    dispatch: PropTypes.func,
+    tasks: PropTypes.shape({
+        list: PropTypes.array,
+        isLoaded: PropTypes.bool,
+    }),
+    studies: PropTypes.shape({
+        visibleList: PropTypes.array,
+    }),
+    config: PropTypes.shape({
+        cancelUrl: PropTypes.string,
+        type: PropTypes.string,
+        autocomplete: PropTypes.object,
+    }),
+    error: PropTypes.object,
+};
 
 export default connect(mapStateToProps)(ListApp);

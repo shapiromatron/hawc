@@ -7,17 +7,19 @@ class List extends Component {
             ComponentToRender = component;
         let content = <div />;
 
+        this.components = [];
+
         if (items) {
             content = this.props.items.map((item, index) => (
                 <ComponentToRender
-                    ref={`item-${index}`}
+                    ref={c => this.components.push(c)}
                     key={`item-${index}`}
                     item={item}
                     {...rest}
                 />
             ));
         } else {
-            content = <ComponentToRender ref="item" {...rest} />;
+            content = <ComponentToRender ref={c => this.components.push(c)} {...rest} />;
         }
 
         return <div className="list">{content}</div>;

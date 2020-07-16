@@ -1,4 +1,5 @@
 import React, {Component} from "react";
+import PropTypes from "prop-types";
 import {connect} from "react-redux";
 import _ from "lodash";
 
@@ -10,13 +11,10 @@ import urls from "textCleanup/constants/urls";
 import h from "textCleanup/utils/helpers";
 
 class FieldSelection extends Component {
-    componentWillMount() {
+    componentDidMount() {
         if (!this.props.types) {
             this.props.dispatch(fetchAssessment());
         }
-    }
-
-    componentDidMount() {
         this.props.dispatch(fetchModel(this.props.match.params));
     }
 
@@ -43,5 +41,19 @@ function mapStateToProps(state) {
         objects: state.items.model,
     };
 }
+
+FieldSelection.propTypes = {
+    types: PropTypes.object,
+    dispatch: PropTypes.func,
+    match: PropTypes.shape({
+        params: PropTypes.shape({
+            type: PropTypes.object,
+        }),
+    }),
+    location: PropTypes.shape({
+        pathname: PropTypes.object,
+    }),
+    objects: PropTypes.object,
+};
 
 export default connect(mapStateToProps)(FieldSelection);
