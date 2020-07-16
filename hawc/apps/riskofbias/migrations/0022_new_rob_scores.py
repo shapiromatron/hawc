@@ -5,21 +5,39 @@ from django.db import migrations, models
 import hawc.apps.riskofbias.models
 
 
+def update_overall_confidence(apps, schema_editor):
+    RiskOfBiasScore = apps.get_model("riskofbias", "RiskOfBiasScore")
+    RiskOfBiasScore.objects.filter(metric__domain__is_overall_confidence=True, score=24).update(
+        score=34
+    )
+    RiskOfBiasScore.objects.filter(metric__domain__is_overall_confidence=True, score=25).update(
+        score=35
+    )
+    RiskOfBiasScore.objects.filter(metric__domain__is_overall_confidence=True, score=26).update(
+        score=36
+    )
+    RiskOfBiasScore.objects.filter(metric__domain__is_overall_confidence=True, score=27).update(
+        score=37
+    )
+
+
+def rollback_changes(apps, schema_editor):
+    RiskOfBiasScore = apps.get_model("riskofbias", "RiskOfBiasScore")
+    RiskOfBiasScore.objects.filter(metric__domain__is_overall_confidence=True, score=34).update(
+        score=24
+    )
+    RiskOfBiasScore.objects.filter(metric__domain__is_overall_confidence=True, score=35).update(
+        score=25
+    )
+    RiskOfBiasScore.objects.filter(metric__domain__is_overall_confidence=True, score=36).update(
+        score=26
+    )
+    RiskOfBiasScore.objects.filter(metric__domain__is_overall_confidence=True, score=37).update(
+        score=27
+    )
+
+
 class Migration(migrations.Migration):
-    def update_overall_confidence(apps, schema_editor):
-        RiskOfBiasScore = apps.get_model("riskofbias", "RiskOfBiasScore")
-        RiskOfBiasScore.objects.filter(metric__domain__is_overall_confidence=True, score=24).update(
-            score=34
-        )
-        RiskOfBiasScore.objects.filter(metric__domain__is_overall_confidence=True, score=25).update(
-            score=35
-        )
-        RiskOfBiasScore.objects.filter(metric__domain__is_overall_confidence=True, score=26).update(
-            score=36
-        )
-        RiskOfBiasScore.objects.filter(metric__domain__is_overall_confidence=True, score=27).update(
-            score=37
-        )
 
     dependencies = [
         ("riskofbias", "0021_riskofbiasscore_bias_direction"),
@@ -51,5 +69,5 @@ class Migration(migrations.Migration):
                 default=hawc.apps.riskofbias.models.build_default_rob_score,
             ),
         ),
-        migrations.RunPython(update_overall_confidence),
+        migrations.RunPython(update_overall_confidence, reverse_code=rollback_changes),
     ]
