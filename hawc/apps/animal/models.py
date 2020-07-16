@@ -18,19 +18,7 @@ from ..common.dsstox import get_casrn_url
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper, cleanHTML, tryParseInt
 from ..common.models import get_crumbs
 from ..study.models import Study
-from ..vocab.models import VocabularyNamespace
 from . import managers
-
-
-class BioassayAssessmentSettings(models.Model):
-    assessment = models.ForeignKey(
-        Assessment, related_name="bioassay_settings", on_delete=models.CASCADE
-    )
-    vocabulary = models.PositiveSmallIntegerField(
-        choices=VocabularyNamespace.choices(), null=True, blank=True
-    )
-    created = models.DateTimeField(auto_now_add=True)
-    last_updated = models.DateTimeField(auto_now=True)
 
 
 class Experiment(models.Model):
