@@ -159,28 +159,24 @@ class TestClient(LiveServerTestCase, TestCase):
         # get request
         client = HawcClient(self.live_server_url)
         client.authenticate("pm@pm.com", "pw")
-        response = client.lit.reference(self.db_keys.reference_linked)
-        assert isinstance(response, dict)
+
+        ref = client.lit.reference(self.db_keys.reference_linked)
+        assert isinstance(ref, dict) and ref["id"] == 1
 
         # update request
         updated_title = "client test"
-        response = client.lit.update_reference(self.db_keys.reference_linked, title=updated_title)
-        assert isinstance(response, dict)
-        assert response["title"] == updated_title
+        ref = client.lit.update_reference(self.db_keys.reference_linked, title=updated_title)
+        assert isinstance(ref, dict) and ref["title"] == updated_title
 
         # delete request
-        # make sure reference exists
-        response = client.lit.reference(self.db_keys.reference_linked)
-        assert isinstance(response, dict)
-        # delete reference
         response = client.lit.delete_reference(self.db_keys.reference_linked)
         assert response is None
+
         # reference retrieval returns 404
-        try:
+        with pytest.raises(HawcClientException) as err:
             client.lit.reference(self.db_keys.reference_linked)
-            assert False
-        except HawcClientException:
-            assert True
+
+        assert err.value.args[0] == 404
 
     ##########################
     # RiskOfBiasClient tests #
