@@ -1,0 +1,91 @@
+from django.db import models
+
+from ..common.models import IntChoiceEnum
+
+
+class VocabularyNamespace(IntChoiceEnum):
+    """
+    A namespace for a vocabulary. HAWC will not enforce a single vocabulary, this can be controlled
+    at the assessment level.
+    """
+
+    EHV = 1  # environmental health vocabulary
+
+
+class VocabularyTermType(IntChoiceEnum):
+    """
+    Vocabulary will be associated with certain fields in HAWC. This enum allows us to map the vocab.
+    """
+
+    system = 1
+    organ = 2
+    effect = 3
+    effect_subtype = 4
+    endpoint_name = 5
+
+
+class Term(models.Model):
+    namespace = models.PositiveSmallIntegerField(
+        choices=VocabularyNamespace.choices(), default=VocabularyNamespace.EHV
+    )
+    type = models.PositiveIntegerField(choices=VocabularyTermType.choices())
+    name = models.CharField(max_length=256)
+    notes = models.TextField(blank=True)
+    parents = models.ManyToManyField(
+        "self", symmetrical=False, through="TermRelation", through_fields=("term", "parent_term"),
+    )
+    deprecated_on = models.DateTimeField(blank=True, null=True)
+    created_on = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self) -> str:
+        return f"{self.get_namespace_display()}::{self.get_type_display()}::{self.name}"
+
+
+class TermRelation(models.Model):
+    term = models.ForeignKey(Term, on_delete=models.PROTECT)
+    parent_term = models.ForeignKey(Term, on_delete=models.PROTECT, related_name="children")
+    deprecated_on = models.DateTimeField(blank=True, null=True)
+    created_on = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self) -> str:
+        return f"{self.parent_term} -> {self.term}"
+
+
+class Ontology(IntChoiceEnum):
+    """
+    Ontology for for UID
+    """
+
+    umls = 1
+
+
+class Entity(models.Model):
+    # mapping of controlled vocabulary to ontology
+    ontology = models.PositiveSmallIntegerField(choices=Ontology.choices())
+    uid = models.CharField(max_length=128, verbose_name="UID")
+    terms = models.ManyToManyField(
+        Term, through="EntityTermRelation", through_fields=("entity", "term"),
+    )
+    deprecated_on = models.DateTimeField(blank=True, null=True)
+    created_on = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name_plural = "entities"
+        unique_together = (("ontology", "uid"),)
+
+    def __str__(self) -> str:
+        return self.uid
+
+
+class EntityTermRelation(models.Model):
+    entity = models.ForeignKey(Entity, on_delete=models.PROTECT)
+    term = models.ForeignKey(Term, on_delete=models.PROTECT)
+    deprecated_on = models.DateTimeField(blank=True, null=True)
+    created_on = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self) -> str:
+        return f"{self.term} -> {self.entity}"

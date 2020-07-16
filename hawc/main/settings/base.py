@@ -99,6 +99,7 @@ INSTALLED_APPS = (
     "hawc.apps.common",
     "hawc.apps.myuser",
     "hawc.apps.assessment",
+    "hawc.apps.vocab",
     "hawc.apps.lit",
     "hawc.apps.riskofbias",
     "hawc.apps.study",
