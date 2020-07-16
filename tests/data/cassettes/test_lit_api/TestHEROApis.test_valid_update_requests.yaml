@@ -1,0 +1,72 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://hero.epa.gov/hero/ws/index.cfm/api/1.0/search/criteria/2/recordsperpage/100.json
+  response:
+    body:
+      string: "{\"results\":[{\"REFERENCE_ID\":2,\"usage_path_key\":[\"13982|10333|13983|10825|13984|10541|13964|10250|10251|10252\",\"10060|10059|13980|7593|7596\"],\"ABSTRACT\":\"HEEP
+        \ COPYRIGHT: BIOL ABS.  ABSTRACT SHEEP CANADIAN CHRYSOTILE FIBERS\",\"url\":\"https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/2\",\"hasPDF\":false,\"YEAR\":1981,\"allAuthors\":[\"Begin,
+        R; Rola-Pleszczynski, M; Sirois, P; Lemaire, I; Nadeau, D; Bureau, MA; Masse,
+        S\"],\"HEROID\":2,\"id\":2,\"project_key\":[42,2539,2540,2541,2533,2488],\"referencetype\":[\"journal
+        article\"],\"type\":\"reference\",\"sortYear\":1981,\"tag_path_text\":[\"IRIS|Asbestos\",\"OPPT
+        REs|OPPT_Asbestos_C. Engineering|Total \u2013 title/abstract screening|Off
+        topic\",\"OPPT REs|OPPT_Asbestos_D. Exposure|Total \u2013 title/abstract screening|Off
+        topic\",\"OPPT REs|OPPT_Asbestos_E. Fate|Total \u2013 title/abstract screening|Off
+        topic\",\"OPPT REs|OPPT_Asbestos_F. Human Health|Total \u2013 title/abstract
+        screening|On topic|Peer review|Primary source\",\"OPPT REs|OPPT_Asbestos_F.
+        Human Health|On topic - additional tags for titles/abstracts|Animal hazard
+        ID|Asbestosis\",\"Other|Applicability of Libby Amphibole Asbestos Tox Values|Sources
+        (Feb 2016)|Toxline\"],\"category_key\":[2,32,18],\"PROJECTS\":[{\"PROJECT\":\"OPPT_Asbestos_F.
+        Human Health\",\"PROJECT_ID\":2533,\"USAGES\":[{\"USAGE_ID\":10060,\"USAGE\":\"On
+        topic - additional tags for titles/abstracts\",\"USAGES\":[{\"USAGE_ID\":10059,\"USAGE\":\"Animal
+        hazard ID\",\"USAGES\":[{\"USAGE_ID\":13980,\"USAGE\":\"Asbestosis\",\"USAGES\":[]}]}]},{\"USAGE_ID\":13964,\"USAGE\":\"Total
+        \u2013 title/abstract screening\",\"USAGES\":[{\"USAGE_ID\":10250,\"USAGE\":\"On
+        topic\",\"USAGES\":[{\"USAGE_ID\":10251,\"USAGE\":\"Peer review\",\"USAGES\":[{\"USAGE_ID\":10252,\"USAGE\":\"Primary
+        source\",\"USAGES\":[]}]}]}]}]},{\"PROJECT\":\"Applicability of Libby Amphibole
+        Asbestos Tox Values\",\"PROJECT_ID\":2488,\"USAGES\":[{\"USAGE_ID\":7593,\"USAGE\":\"Sources
+        (Feb 2016)\",\"USAGES\":[{\"USAGE_ID\":7596,\"USAGE\":\"Toxline\",\"USAGES\":[]}]}]},{\"PROJECT\":\"OPPT_Asbestos_E.
+        Fate\",\"PROJECT_ID\":2541,\"USAGES\":[{\"USAGE_ID\":13984,\"USAGE\":\"Total
+        \u2013 title/abstract screening\",\"USAGES\":[{\"USAGE_ID\":10541,\"USAGE\":\"Off
+        topic\",\"USAGES\":[]}]}]},{\"PROJECT\":\"OPPT_Asbestos_D. Exposure\",\"PROJECT_ID\":2540,\"USAGES\":[{\"USAGE_ID\":13983,\"USAGE\":\"Total
+        \u2013 title/abstract screening\",\"USAGES\":[{\"USAGE_ID\":10825,\"USAGE\":\"Off
+        topic\",\"USAGES\":[]}]}]},{\"PROJECT\":\"Asbestos\",\"PROJECT_ID\":42,\"USAGES\":[]},{\"PROJECT\":\"OPPT_Asbestos_C.
+        Engineering\",\"PROJECT_ID\":2539,\"USAGES\":[{\"USAGE_ID\":13982,\"USAGE\":\"Total
+        \u2013 title/abstract screening\",\"USAGES\":[{\"USAGE_ID\":10333,\"USAGE\":\"Off
+        topic\",\"USAGES\":[]}]}]}],\"tag_path_key\":[\"2|42\",\"32|2539|13982|10333\",\"32|2540|13983|10825\",\"32|2541|13984|10541\",\"32|2533|13964|10250|10251|10252\",\"32|2533|10060|10059|13980\",\"18|2488|7593|7596\"],\"firstAuthor\":\"Begin\",\"AUTHORS\":\"Begin,
+        R; Rola-Pleszczynski, M; Sirois, P; Lemaire, I; Nadeau, D; Bureau, MA; Masse,
+        S\",\"noPDFAvailable\":false,\"tag_path_type\":[\"category|project\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage\"],\"isPeerReviewed\":true,\"code\":\"pd\",\"isDeleted\":false,\"isPublic\":true,\"hasPublicDoc\":false,\"SOURCE\":\"Environmental
+        Research 26:392-401.\",\"wosid\":\"WOS:A1981MU30300014\",\"TITLE\":\"Early
+        lung events following low-dose asbestos exposure\",\"modified\":\"2020-03-11T20:37:07Z\",\"PMID\":7318792,\"journalTitle\":\"Environmental
+        Research\",\"_version_\":1660901424770318336}],\"isValid\":true,\"message\":\"Success\",\"error\":\"\"} "
+    headers:
+      Connection:
+      - Keep-Alive
+      Content-Type:
+      - application/json;charset=utf-8
+      Date:
+      - Thu, 16 Jul 2020 17:32:41 GMT
+      Keep-Alive:
+      - timeout=5, max=100
+      Server:
+      - Apache/2.4.43 (Win64) OpenSSL/1.1.1g mod_jk/1.2.46
+      Set-Cookie:
+      - CFID=39493198; Expires=Fri, 17-Jul-2020 17:32:41 GMT; Path=/; HttpOnly
+      - CFTOKEN=76386287; Expires=Fri, 17-Jul-2020 17:32:41 GMT; Path=/; HttpOnly
+      - JSESSIONID=2622A8C15C6293976C235CE5CBAE2BB1.cfusion; Path=/; Secure; HttpOnly
+      - LASTACCESSTIME=2020%2F07%2F16%2013%3A32%3A41; Path=/
+      Transfer-Encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+version: 1

@@ -621,10 +621,6 @@ class Identifiers(models.Model):
     def update_pubmed_content(idents):
         tasks.update_pubmed_content.delay([d.unique_id for d in idents])
 
-    @staticmethod
-    def update_hero_content(idents):
-        tasks.update_hero_content.delay([d.unique_id for d in idents])
-
 
 class ReferenceFilterTag(NonUniqueTagBase, AssessmentRootMixin, MP_Node):
     cache_template_taglist = "reference-taglist-assessment-{0}"
@@ -820,7 +816,9 @@ class Reference(models.Model):
         return None
 
     def update_from_hero_content(self):
+
         hero_identifier = self.identifiers.get(database=constants.HERO)
+
         content = json.loads(hero_identifier.content, encoding="utf-8")
 
         # retrieve all of the fields from HERO

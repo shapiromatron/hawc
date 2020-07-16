@@ -6,7 +6,6 @@ from django.conf import settings
 from django.core.cache import cache
 from django.db import transaction
 from django.utils import timezone
-from litter_getter.hero import HEROFetch
 from rest_framework import exceptions, mixins, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -17,7 +16,7 @@ from ..common.api import CleanupFieldsBaseViewSet, LegacyAssessmentAdapterMixin
 from ..common.helper import FlatExport, re_digits
 from ..common.renderers import PandasRenderers
 from ..common.serializers import UnusedSerializer
-from . import constants, exports, models, serializers
+from . import constants, exports, models, serializers, tasks
 
 
 class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.GenericViewSet):
@@ -172,47 +171,61 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
 
     @transaction.atomic()
     @action(
-        detail=True, methods=("get",), url_path="replace-hero",
+        detail=True, methods=("patch",), url_path="replace-hero",
     )
     def replace_hero(self, request, pk):
+        assessment = self.get_object()
         body = json.loads(request.body)
         replace = body.get("replace", list())
         replace_unzipped = list(zip(*replace))
+        ref_ids = replace_unzipped[0]
         hero_ids = replace_unzipped[1]
-        fetcher = HEROFetch(hero_ids)
-        contents = fetcher.get_content()
 
+        # make sure all references are HERO and in assessment
+        matching_references = assessment.references.filter(
+            id__in=ref_ids, identifiers__database=constants.HERO
+        )
+        if matching_references.count() != len(ref_ids):
+            raise exceptions.ValidationError("All references must be from selected assessment.")
+
+        # set hero ref
         for index, (ref, hero) in enumerate(replace):
-            # set hero ref
             reference = models.Reference.objects.get(id=ref)
             hero_identifier = reference.identifiers.get(database=constants.HERO)
             setattr(hero_identifier, "unique_id", str(hero))
-
-            # update content
-            content = json.dumps(contents.get("success")[index])
-            setattr(hero_identifier, "content", content)
             hero_identifier.save()
 
-            # update fields with content
+        # update content
+        tasks.update_hero_content.apply(args=[hero_ids])
+
+        # update fields with content
+        for ref in ref_ids:
+            reference = models.Reference.objects.get(id=ref)
             reference.update_from_hero_content()
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @transaction.atomic()
     @action(
-        detail=True, methods=("get",), url_path="update-reference-metadata-from-hero",
+        detail=True, methods=("patch",), url_path="update-reference-metadata-from-hero",
     )
     def update_reference_metadata_from_hero(self, request, pk):
 
-        # get all hero identifiers from assessment
+        # get all hero references from assessment
         assessment = self.get_object()
-        references = assessment.references.all()
+        references = assessment.references.filter(identifiers__database=constants.HERO)
         reference_ids = set(references.values_list("id", flat=True))
-        identifiers = models.Identifiers.filter(
+        identifiers = models.Identifiers.objects.filter(
             references__in=reference_ids, database=constants.HERO
         )
+        hero_ids = identifiers.values_list("unique_id", flat=True)
         # update content of hero identifiers
-        models.Identifiers.update_hero_content(identifiers)
+        tasks.update_hero_content.apply(args=[hero_ids])
+        # update fields from content
+        for reference in references:
+            reference.update_from_hero_content()
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class SearchViewset(mixins.CreateModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
