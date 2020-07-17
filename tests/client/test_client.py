@@ -176,7 +176,7 @@ class TestClient(LiveServerTestCase, TestCase):
         with pytest.raises(HawcClientException) as err:
             client.lit.reference(self.db_keys.reference_linked)
 
-        assert err.value.args[0] == 404
+        assert err.value.status_code == 404
 
     ##########################
     # RiskOfBiasClient tests #
