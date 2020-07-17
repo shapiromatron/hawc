@@ -8,7 +8,7 @@ from requests import Response, Session
 from tqdm import tqdm
 
 __all__ = ["HawcClient"]
-__version__ = "2020.5"
+__version__ = "2020.7"
 
 
 class HawcException(Exception):
