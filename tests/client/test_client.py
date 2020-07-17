@@ -3,6 +3,7 @@ import pytest
 from django.core.cache import cache
 from django.test import LiveServerTestCase, TestCase
 
+from hawc.apps.lit.models import Reference
 from hawc.apps.animal.models import Experiment
 from hawc.apps.assessment.models import Strain
 from hawc_client import BaseClient, HawcClient, HawcClientException
@@ -296,21 +297,26 @@ class TestClient(LiveServerTestCase, TestCase):
         client = HawcClient(self.live_server_url)
         client.authenticate("pm@pm.com", "pw")
 
-        ref = client.lit.reference(self.db_keys.reference_linked)
-        assert isinstance(ref, dict) and ref["id"] == 1
+        # imported from `test_lit_import_hero` above; test test must run for this one to run :/
+        reference_id = Reference.objects.get(identifiers__unique_id="2199697").id
+
+        ref = client.lit.reference(reference_id)
+        assert ref["id"] == reference_id
 
         # update request
         updated_title = "client test"
-        ref = client.lit.update_reference(self.db_keys.reference_linked, title=updated_title)
-        assert isinstance(ref, dict) and ref["title"] == updated_title
+        ref = client.lit.update_reference(reference_id, title=updated_title)
+        assert ref["title"] == updated_title
 
         # delete request
-        response = client.lit.delete_reference(self.db_keys.reference_linked)
+        ref = client.lit.reference(reference_id)
+        assert ref["id"] == reference_id
+        response = client.lit.delete_reference(reference_id)
         assert response is None
 
         # reference retrieval returns 404
         with pytest.raises(HawcClientException) as err:
-            client.lit.reference(self.db_keys.reference_linked)
+            client.lit.reference(reference_id)
 
         assert err.value.status_code == 404
 
@@ -327,6 +333,36 @@ class TestClient(LiveServerTestCase, TestCase):
         client = HawcClient(self.live_server_url)
         response = client.riskofbias.full_data(self.db_keys.assessment_client)
         assert isinstance(response, pd.DataFrame)
+
+    def test_riskofbias_create(self):
+        """
+        Test all the create methods.  This only checks the happy-path and confirms that the client
+        methods work as intended.
+        """
+        client = HawcClient(self.live_server_url)
+        client.authenticate("pm@pm.com", "pw")
+
+        scores = [
+            {
+                "metric_id": metric_id,
+                "is_default": True,
+                "label": "",
+                "score": 16,
+                "bias_direction": 1,
+                "notes": "<p>more custom notes</p>",
+            }
+            for metric_id in self.db_keys.riskofbias_assessment_working_metric_ids
+        ]
+
+        rob = client.riskofbias.create(
+            study_id=self.db_keys.study_working,
+            author_id=self.db_keys.pm_user_id,
+            active=False,
+            final=True,
+            scores=scores,
+        )
+
+        assert isinstance(rob, dict) and rob["id"] > 0
 
     #######################
     # SummaryClient tests #
