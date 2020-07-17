@@ -3,9 +3,9 @@ import pytest
 from django.core.cache import cache
 from django.test import LiveServerTestCase, TestCase
 
-from hawc.apps.lit.models import Reference
 from hawc.apps.animal.models import Experiment
 from hawc.apps.assessment.models import Strain
+from hawc.apps.lit.models import Reference
 from hawc_client import BaseClient, HawcClient, HawcClientException
 
 
