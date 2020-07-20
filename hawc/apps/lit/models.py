@@ -588,19 +588,8 @@ class Identifiers(models.Model):
                 block_id=block_id,
             )
         elif self.database == constants.HERO:
-            # in some cases; my return None, we want "" instead of null
-            title = content.get("title")
-            journal = content.get("source") or content.get("journaltitle")
-            abstract = content.get("abstract", "")
-            ref = Reference(
-                assessment=assessment,
-                title=title or "",
-                authors_short=content.get("authors_short", ""),
-                authors=", ".join(content.get("authors", [])),
-                year=content.get("year", None),
-                journal=journal or "",
-                abstract=abstract or "",
-            )
+            ref = Reference(assessment=assessment)
+            ref.update_from_hero_content(self)
         else:
             raise ValueError("Unknown database for reference creation.")
 
@@ -815,9 +804,7 @@ class Reference(models.Model):
                 return int(ident.unique_id)
         return None
 
-    def update_from_hero_content(self):
-
-        hero_identifier = self.identifiers.get(database=constants.HERO)
+    def update_from_hero_content(self, hero_identifier: Identifiers):
 
         content = json.loads(hero_identifier.content, encoding="utf-8")
 
@@ -836,8 +823,6 @@ class Reference(models.Model):
         setattr(self, "authors_short", authors_short)
         setattr(self, "authors", authors)
         setattr(self, "year", year)
-
-        self.save()
 
     def get_assessment(self):
         return self.assessment

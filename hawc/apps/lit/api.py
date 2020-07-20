@@ -16,7 +16,7 @@ from ..common.api import CleanupFieldsBaseViewSet, LegacyAssessmentAdapterMixin
 from ..common.helper import FlatExport, re_digits
 from ..common.renderers import PandasRenderers
 from ..common.serializers import UnusedSerializer
-from . import constants, exports, models, serializers, tasks
+from . import exports, models, serializers
 
 
 class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.GenericViewSet):
@@ -175,33 +175,14 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
     )
     def replace_hero(self, request, pk):
         assessment = self.get_object()
+        references = models.Reference.objects.get_hero_references_by_assessment(assessment.id)
+
         body = json.loads(request.body)
         replace = body.get("replace", list())
-        replace_unzipped = list(zip(*replace))
-        ref_ids = replace_unzipped[0]
-        hero_ids = replace_unzipped[1]
-
-        # make sure all references are HERO and in assessment
-        matching_references = assessment.references.filter(
-            id__in=ref_ids, identifiers__database=constants.HERO
+        serializer = serializers.ReferenceReplaceSerializer(
+            references, many=True, allow_empty=False, context={"replace": replace}
         )
-        if matching_references.count() != len(ref_ids):
-            raise exceptions.ValidationError("All references must be from selected assessment.")
-
-        # set hero ref
-        for index, (ref, hero) in enumerate(replace):
-            reference = models.Reference.objects.get(id=ref)
-            hero_identifier = reference.identifiers.get(database=constants.HERO)
-            setattr(hero_identifier, "unique_id", str(hero))
-            hero_identifier.save()
-
-        # update content
-        tasks.update_hero_content.apply(args=[hero_ids])
-
-        # update fields with content
-        for ref in ref_ids:
-            reference = models.Reference.objects.get(id=ref)
-            reference.update_from_hero_content()
+        serializer.execute()
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -213,17 +194,10 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
 
         # get all hero references from assessment
         assessment = self.get_object()
-        references = assessment.references.filter(identifiers__database=constants.HERO)
-        reference_ids = set(references.values_list("id", flat=True))
-        identifiers = models.Identifiers.objects.filter(
-            references__in=reference_ids, database=constants.HERO
-        )
-        hero_ids = identifiers.values_list("unique_id", flat=True)
-        # update content of hero identifiers
-        tasks.update_hero_content.apply(args=[hero_ids])
-        # update fields from content
-        for reference in references:
-            reference.update_from_hero_content()
+        references = models.Reference.objects.get_hero_references_by_assessment(assessment.id)
+
+        serializer = serializers.ReferenceUpdateSerializer(references, many=True, allow_empty=False)
+        serializer.execute()
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 

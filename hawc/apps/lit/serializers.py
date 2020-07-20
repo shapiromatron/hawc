@@ -10,7 +10,7 @@ from rest_framework.exceptions import ParseError
 
 from ..assessment.serializers import AssessmentRootedSerializer
 from ..common.api import DynamicFieldsMixin
-from . import constants, forms, models
+from . import constants, forms, models, tasks
 
 
 class SearchSerializer(serializers.ModelSerializer):
@@ -224,4 +224,66 @@ class ReferenceSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Reference
+        fields = "__all__"
+
+
+class ReferenceReplaceListSerializer(serializers.ListSerializer):
+    def validate_context(self):
+
+        # 'replace' should be in our context
+        if "replace" not in self.context:
+            raise serializers.ValidationError(
+                f"Must pass context 'replace':[[reference_id,hero_id],...]"
+            )
+
+        replace = self.context.get("replace")
+        ref_ids, hero_ids = list(zip(*replace))
+
+        self.ref_ids = ref_ids
+        self.hero_ids = hero_ids
+
+        # make sure all references are HERO and in assessment
+        matching_references = self.instance.filter(id__in=self.ref_ids)
+        if matching_references.count() != len(self.ref_ids):
+            raise serializers.ValidationError("All references must be from selected assessment.")
+
+    def execute(self):
+        self.validate_context()
+
+        replace = self.context.get("replace")
+        # run chained tasks
+        # set hero ref
+        tasks.replace_hero_ids.apply(args=[replace])
+        # update content
+        tasks.update_hero_content.apply(args=[self.hero_ids])
+        # update fields with content
+        tasks.update_hero_fields.apply(args=[self.ref_ids])
+
+
+class ReferenceReplaceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Reference
+        list_serializer_class = ReferenceReplaceListSerializer
+        fields = "__all__"
+
+
+class ReferenceUpdateListSerializer(serializers.ListSerializer):
+    def execute(self):
+        # run chained tasks
+        ref_ids = set(self.instance.values_list("id", flat=True))
+        identifiers = models.Identifiers.objects.filter(
+            references__in=ref_ids, database=constants.HERO
+        )
+        hero_ids = identifiers.values_list("unique_id", flat=True)
+
+        # update content of hero identifiers
+        tasks.update_hero_content.apply(args=[hero_ids])
+        # update fields from content
+        tasks.update_hero_fields.apply(args=[ref_ids])
+
+
+class ReferenceUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Reference
+        list_serializer_class = ReferenceUpdateListSerializer
         fields = "__all__"

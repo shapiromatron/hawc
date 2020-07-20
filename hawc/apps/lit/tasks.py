@@ -35,6 +35,39 @@ def update_hero_content(ids: List[int]):
 
 
 @shared_task
+def update_hero_fields(ref_ids: List[int]):
+    """
+    Updates the reference fields with content from HERO
+
+    Args:
+        ref_ids (List[int]): References to update
+    """
+
+    Reference = apps.get_model("lit", "reference")
+    references = Reference.objects.filter(id__in=ref_ids)
+    for reference in references:
+        hero_identifier = reference.identifiers.get(database=constants.HERO)
+        reference.update_from_hero_content(hero_identifier)
+        reference.save()
+
+
+@shared_task
+def replace_hero_ids(replace: List[List[int]]):
+    """
+    Set the identifier on each reference with the given HERO ID
+
+    Args:
+        replace (List[List[int]]): List of reference ID / HERO ID pairings
+    """
+    Reference = apps.get_model("lit", "reference")
+    for ref_id, hero_id in replace:
+        reference = Reference.objects.get(id=ref_id)
+        hero_identifier = reference.identifiers.get(database=constants.HERO)
+        setattr(hero_identifier, "unique_id", str(hero_id))
+        hero_identifier.save()
+
+
+@shared_task
 def update_pubmed_content(ids: List[int]):
     """Fetch the latest data from Pubmed and update identifier object."""
     Identifiers = apps.get_model("lit", "identifiers")
