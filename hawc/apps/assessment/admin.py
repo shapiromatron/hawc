@@ -87,7 +87,7 @@ class DatasetAdmin(admin.ModelAdmin):
         "last_updated",
     )
     list_display_links = ("id",)
-    list_filter = ("assessment",)
+    list_filter = (("assessment", admin.RelatedOnlyFieldListFilter),)
     inlines = [
         DatasetRevisionInline,
     ]
