@@ -3,16 +3,14 @@ import PropTypes from "prop-types";
 import d3 from "d3";
 
 class yAxisLabeled extends Component {
-    componentWillMount() {
+    componentDidMount() {
         let {yScale, ticks} = this.props;
+        this.yAxisContainer = React.createRef();
         this.yAxis = d3.svg
             .axis()
             .scale(yScale)
             .orient("left")
             .tickFormat(ticks);
-    }
-
-    componentDidMount() {
         this.renderAxis();
     }
 
@@ -42,7 +40,7 @@ class yAxisLabeled extends Component {
             labelElement = this.getLabelElement(axisLabel);
         return (
             <g
-                ref="yAxis"
+                ref={this.yAxisContainer}
                 className="y axis"
                 transform={`translate(${transform[0]}, ${transform[1]})`}>
                 {labelElement}
@@ -52,7 +50,7 @@ class yAxisLabeled extends Component {
 
     renderAxis() {
         this.props.yScale();
-        this.props.renderScale ? d3.select(this.refs.yAxis).call(this.yAxis) : null;
+        this.props.renderScale ? d3.select(this.yAxisContainer.current).call(this.yAxis) : null;
     }
 }
 
@@ -70,6 +68,7 @@ yAxisLabeled.propTypes = {
     label: PropTypes.string.isRequired,
     renderScale: PropTypes.bool,
     yScale: PropTypes.func.isRequired,
+    ticks: PropTypes.func,
 };
 
 export default yAxisLabeled;

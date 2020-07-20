@@ -40,7 +40,7 @@ class DataPivotExtension {
         if (match) {
             _.extend(obj, match);
         } else {
-            console.log(`Unrecognized DPE key: ${key}`);
+            console.error(`Unrecognized DPE key: ${key}`);
         }
     }
 

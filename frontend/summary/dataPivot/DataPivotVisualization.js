@@ -168,7 +168,7 @@ class DataPivotVisualization extends D3Plot {
                     });
                 }
             } else {
-                console.log(`Unrecognized filter: ${filters[i].quantifier}`);
+                console.error(`Unrecognized filter: ${filters[i].quantifier}`);
             }
         }
 
@@ -465,7 +465,7 @@ class DataPivotVisualization extends D3Plot {
                         break;
 
                     default:
-                        console.log(`Unrecognized condition_type: ${cf.condition_type}`);
+                        console.error(`Unrecognized condition_type: ${cf.condition_type}`);
                 }
             });
         } else {
@@ -487,7 +487,7 @@ class DataPivotVisualization extends D3Plot {
 
                             break;
                         default:
-                            console.log(`Unrecognized condition_type: ${cf.condition_type}`);
+                            console.error(`Unrecognized condition_type: ${cf.condition_type}`);
                     }
                 });
             });
@@ -546,7 +546,7 @@ class DataPivotVisualization extends D3Plot {
 
                             break;
                         default:
-                            console.log(`Unrecognized condition_type: ${cf.condition_type}`);
+                            console.error(`Unrecognized condition_type: ${cf.condition_type}`);
                     }
                 });
             });
@@ -1173,9 +1173,7 @@ class DataPivotVisualization extends D3Plot {
 
         this.text_rows
             .selectAll("text")
-            .data(function(d) {
-                return d;
-            })
+            .data(d => d)
             .enter()
             .append("text")
             .attr("x", 0)
@@ -1186,47 +1184,39 @@ class DataPivotVisualization extends D3Plot {
                 var dObj = HAWCUtils.parseJsonOrNull(d.text);
                 return dObj !== null && dObj.display !== undefined ? dObj.display : d.text;
             })
-            .style("cursor", function(d) {
-                return d.cursor;
-            })
-            .on("click", function(d) {
-                return d.onclick();
-            })
+            .style("cursor", d => d.cursor)
+            .on("click", d => d.onclick())
             .each(function(d) {
                 apply_text_styles(this, d.style);
             });
 
         // apply wrap text method
         this.headers.forEach(function(v, i) {
-            var sel = self.g_text_columns.selectAll("text").filter(function(v) {
-                return v.col === i;
-            });
+            let textColumn = self.g_text_columns.selectAll("text").filter(v => v.col === i);
 
-            if (v.max_width) _.each(sel[0], _.partial(HAWCUtils.wrapText, _, v.max_width));
+            // wrap text if we have to
+            if (v.max_width) {
+                _.each(textColumn[0], _.partial(HAWCUtils.wrapText, _, v.max_width));
+            }
 
             // get maximum column dimension and layout columns
-            v.widths = d3.max(
-                sel[0].map(function(v) {
-                    return v.getBBox().width;
-                })
-            );
-            sel.each(function() {
+            const maxWidth = d3.max(textColumn[0].map(v => v.getBBox().width));
+            textColumn.each(function() {
                 var val = d3.select(this),
                     anchor = val.style("text-anchor");
                 if (anchor === "end") {
-                    val.attr("x", left + v.max_width);
-                    val.selectAll("tspan").attr("x", left + v.widths);
+                    val.attr("x", left + maxWidth);
+                    val.selectAll("tspan").attr("x", left + maxWidth);
                 } else if (anchor === "middle") {
-                    var width = v.max_width || v.widths; // use max_width in case of overflow
-                    val.attr("x", left + width / 2);
-                    val.selectAll("tspan").attr("x", left + width / 2);
+                    val.attr("x", left + maxWidth / 2);
+                    val.selectAll("tspan").attr("x", left + maxWidth / 2);
                 } else {
                     // default: left-aligned
                     val.attr("x", left);
                     val.selectAll("tspan").attr("x", left);
                 }
             });
-            left += v.widths + 2 * textPadding;
+            left += maxWidth + 2 * textPadding;
         });
 
         // get maximum row dimension and layout rows

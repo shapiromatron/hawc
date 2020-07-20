@@ -5,6 +5,7 @@ from . import api, views
 
 router = DefaultRouter()
 router.register(r"assessment", api.LiteratureAssessmentViewset, basename="assessment")
+router.register(r"reference", api.ReferenceViewset, basename="reference")
 router.register(r"search", api.SearchViewset, basename="search")
 router.register(r"tags", api.ReferenceFilterTagViewset, basename="tags")
 router.register(r"reference-cleanup", api.ReferenceCleanupViewset, basename="reference-cleanup")
@@ -25,6 +26,7 @@ urlpatterns = [
     # Reference-level details
     url(r"^reference/(?P<pk>\d+)/$", views.RefDetail.as_view(), name="ref_detail"),
     url(r"^reference/(?P<pk>\d+)/edit/$", views.RefEdit.as_view(), name="ref_edit"),
+    url(r"^reference/(?P<pk>\d+)/delete/$", views.RefDelete.as_view(), name="ref_delete"),
     url(
         r"^reference/(?P<pk>\d+)/tag/$", views.TagByReference.as_view(), name="reference_tags_edit",
     ),

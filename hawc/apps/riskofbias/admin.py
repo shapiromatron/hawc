@@ -12,14 +12,25 @@ class RiskOfBiasDomainAdmin(admin.ModelAdmin):
         "is_overall_confidence",
         "created",
     )
-    list_filter = ("is_overall_confidence", "assessment")
+    list_filter = ("is_overall_confidence", ("assessment", admin.RelatedOnlyFieldListFilter))
     search_fields = ("name",)
 
 
 @admin.register(models.RiskOfBiasMetric)
 class RiskOfBiasMetricAdmin(admin.ModelAdmin):
-    list_display = ("id", "domain", "name", "created")
+    list_display = (
+        "id",
+        "domain",
+        "name",
+        "required_animal",
+        "required_epi",
+        "required_invitro",
+        "created",
+    )
     list_filter = (
+        "required_animal",
+        "required_epi",
+        "required_invitro",
         "domain__name",
         "domain__assessment_id",
     )

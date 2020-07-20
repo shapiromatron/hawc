@@ -1,6 +1,7 @@
 import EndpointCriticalDose from "./EndpointCriticalDose";
 import React from "react";
 import ReactDOM from "react-dom";
+import PropTypes from "prop-types";
 
 const WrongUnitsRender = function(props) {
         return (
@@ -73,5 +74,18 @@ class BMDResult extends EndpointCriticalDose {
         );
     }
 }
+
+Renderer.propTypes = {
+    bmd: PropTypes.shape({
+        output: PropTypes.object,
+        url: PropTypes.object,
+    }),
+    bmd_notes: PropTypes.object,
+    units: PropTypes.object,
+};
+NoneSelected.propTypes = {
+    bmd_notes: PropTypes.object,
+    url: PropTypes.object,
+};
 
 export default BMDResult;

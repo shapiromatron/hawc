@@ -2,8 +2,11 @@ import json
 
 import pytest
 from django.urls import reverse
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.test import APIClient
 
+from hawc.apps.common.api import user_can_edit_object
+from hawc.apps.myuser.models import HAWCUser
 from hawc.apps.study.models import Study
 
 
@@ -134,3 +137,16 @@ class TestCleanupFieldsBaseViewSet:
         )
         assert resp.status_code == 204
         assert Study.objects.get(id=study_id).short_citation == new_short_citation
+
+
+@pytest.mark.django_db
+def test_user_can_edit_object(db_keys):
+    user = HAWCUser.objects.get(email="team@team.com")
+
+    working = Study.objects.get(id=db_keys.study_working)
+    assert user_can_edit_object(working, user) is True
+
+    final = Study.objects.get(id=db_keys.study_final_bioassay)
+    assert user_can_edit_object(final, user) is False
+    with pytest.raises(PermissionDenied):
+        user_can_edit_object(final, user, raise_exception=True)

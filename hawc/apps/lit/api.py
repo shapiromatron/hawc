@@ -232,3 +232,14 @@ class ReferenceCleanupViewset(CleanupFieldsBaseViewSet):
     serializer_class = serializers.ReferenceCleanupFieldsSerializer
     model = models.Reference
     assessment_filter_args = "assessment"
+
+
+class ReferenceViewset(
+    mixins.RetrieveModelMixin,
+    mixins.DestroyModelMixin,
+    mixins.UpdateModelMixin,
+    viewsets.GenericViewSet,
+):
+    serializer_class = serializers.ReferenceSerializer
+    permission_classes = (AssessmentLevelPermissions,)
+    queryset = models.Reference.objects.all()

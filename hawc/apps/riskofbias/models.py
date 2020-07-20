@@ -459,6 +459,10 @@ class RiskOfBiasScore(models.Model):
         (25, "Deficient"),
         (26, "Adequate"),
         (27, "Good"),
+        (34, "Uninformative"),
+        (35, "Low confidence"),
+        (36, "Medium confidence"),
+        (37, "High confidence"),
     )
 
     RISK_OF_BIAS_SCORE_CHOICES_MAP = {k: v for k, v in RISK_OF_BIAS_SCORE_CHOICES}
@@ -478,6 +482,10 @@ class RiskOfBiasScore(models.Model):
         25: "-",
         26: "+",
         27: "++",
+        34: "--",
+        35: "-",
+        36: "+",
+        37: "++",
     }
 
     SCORE_SHADES = {
@@ -493,6 +501,10 @@ class RiskOfBiasScore(models.Model):
         25: "#FFCC00",
         26: "#6FFF00",
         27: "#00CC00",
+        34: "#CC3333",
+        35: "#FFCC00",
+        36: "#6FFF00",
+        37: "#00CC00",
     }
 
     BIAS_DIRECTION_UNKNOWN = 0
@@ -690,7 +702,7 @@ class RiskOfBiasAssessment(models.Model):
         if self.responses == RESPONSES_OHAT:
             return [17, 16, 15, 12, 14, 10]
         elif self.responses == RESPONSES_EPA:
-            return [27, 26, 25, 22, 24, 20]
+            return [27, 26, 25, 24, 37, 36, 35, 34, 22, 20]
         else:
             raise ValueError(f"Unknown responses: {self.responses}")
 

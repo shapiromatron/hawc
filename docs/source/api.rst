@@ -19,23 +19,32 @@ Using a notebook or python shell:
 
 .. code-block:: python
 
+    from getpass import getpass
     from hawc_client import HawcClient
 
-    client = HawcClient(root_url="https://hawcproject.org")
-    client.authenticate(username="username",password="password")
+    client = HawcClient("https://hawcproject.org")
+    client.authenticate(email="me@me.com", password=getpass())
 
     # get all references for an assessment
     client.lit.references(assessment_id=123)
 
-    # import new references to an assessment
-    client.lit.import_hero(
-        assessment_id=123,
-        title="example title",
-        description="example description",
-        ids=[5000,5010]
-    )
 
-There are many more commands available in the HAWC client that aren't documented here. It is recommended to use an interactive terminal session using a notebook or ipython to browse the available methods and their docstrings for more details.
+There are many more commands available in the HAWC client that aren't documented here. It is recommended to use an interactive terminal session using a jupyter notebook to browse the available methods and their docstrings for more details.
+
+Tutorials
+~~~~~~~~~
+
+Client tutorials for common operations are below:
+
+- Literature: `Adding/modifying/deleting references`_
+- Literature: `Tagging references`_
+- Risk of bias/study evaluation: `Adding evaluations`_
+- Bioassay: `Creating bioassay data`_
+
+.. _`Adding/modifying/deleting references`: https://github.com/shapiromatron/hawc/blob/master/scripts/client/lit-crud-references.ipynb
+.. _`Tagging references`:                   https://github.com/shapiromatron/hawc/blob/master/scripts/client/lit-tagging-references.ipynb
+.. _`Adding evaluations`:                   https://github.com/shapiromatron/hawc/blob/master/scripts/client/rob-evaluations.ipynb
+.. _`Creating bioassay data`:               https://github.com/shapiromatron/hawc/blob/master/scripts/client/bioassay-crud.ipynb
 
 R HAWC client
 -------------
