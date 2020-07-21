@@ -1,54 +1,68 @@
-#' HawcClient
-#'
-#' This function serves as an R-client to send and receive
-#' data from HAWC (Health assessment workspace collaborative)
-#'
-#' @import httr
-#' @import plyr
-#' @import glue
-#' @export
+#" HawcClient
+#"
+#" This function serves as an R-client to send and receive
+#" data from HAWC (Health assessment workspace collaborative)
+#"
+#" @import getPass
+#" @import httr
+#" @import plyr
+#" @import glue
+#" @export
 HawcClient = function(baseUrl){
 
-  # local environment variables
+  # constants
+  NOT_IMPLEMENTED_ERROR_ = "Not yet implemented; use the Python client until this is available (or contact admins)"
+  HAWC_SERVER_ERROR_ = "HAWC server error (contact admins if you think you've found a bug)"
+
+  # local environment variable scope
   thisEnv = environment()
 
-  # persistent "state"
+  # persistent state
   root_url = baseUrl
   token = ""
 
-  auth_header = function() {
-    header = add_headers(Authorization=paste('Token', get("token", thisEnv), sep=' '),
-                         'Content-Type'="application/json")
-    return(header)
+  # private methods
+  headers_ = function() {
+    headers <- c("Content-Type"="application/json")
+    token_ <- get("token", thisEnv)
+    if (token_ != "") {
+      headers <- c(
+        headers,
+        setNames(glue::glue("Token {token_}"), "Authorization")
+      )
+    }
+    return(httr::add_headers(.headers=headers))
+  }
+  handle_response_ = function(response){
+    status <- response$status_code
+    if (status >= 400 & status < 500) {
+      content_txt <- httr::content(response, as="text")
+      stop(glue::glue("<{status}>: {content_txt}")) }
+    else if (status == 500) {
+      stop(glue::glue("<{status}>: {HAWC_SERVER_ERROR_}")) }
+    else {
+      return(httr::content(response))
+    }
   }
   get_ = function(url) {
-    response = GET(url, auth_header())
-    if (response$status_code >= 400 & response$status_code < 500) {
-      warning(content(response))
-      stop("An exception occured in the HAWC client module") }
-
-    else if (response$status_code == 500) {
-      warning(content(response))
-      stop("An exception occured on the HAWC server") }
-
-    else {
-      response.list = content(response)
-      return(response.list) }
+    response <- httr::GET(url, headers_())
+    return(handle_response_(response))
   }
   post_ = function(url, ...) {
-    response = POST(url, auth_header(), ...)
-    if (response$status_code >= 400 & response$status_code < 500) {
-      stop("An exception occured in the HAWC client module") }
-    else if (response$status_code == 500) {
-      stop("An exception occured on the HAWC server") }
-    else {
-      response.list = content(response)
-      return(response.list)
-    }
+    response <- httr::POST(url, headers_(), ...)
+    return(handle_response_(response))
+  }
+  patch_ = function(url, ...) {
+    response <- httr::PATCH(url, headers_(), ...)
+    return(handle_response_(response))
+  }
+  delete_ = function(url, ...) {
+    response <- httr::DELETE(url, headers_(), ...)
+    return(handle_response_(response))
   }
   as_data_frame = function(response.list) {
     response.list = lapply(response.list, lapply, function(x)ifelse(is.null(x), NA, x))
-    response.df = rbind.fill(lapply(response.list, as.data.frame))
+    response.df = plyr::rbind.fill(lapply(response.list, as.data.frame))
     return(response.df)
   }
   iter_pages = function(url) {
@@ -73,146 +87,188 @@ HawcClient = function(baseUrl){
     return (results_list)
   }
 
-  # the methods which will be exposed by the client
-  me = list(
+  # public methods exposed by client
+  public = list(
+    version__ = "2020.7",
     authenticate = function(username, password){
-      response = POST(glue(root_url, "/user/api/token-auth/"),
-                      body = list(username = username, password = password), encode = "json")
-      token = (content(response))[[1]]
+      response = post_(
+        glue::glue(root_url, "/user/api/token-auth/"),
+        body = list(username = username, password = password),
+        encode = "json"
+      )
+      token = response[[1]]
       assign("token", token, thisEnv)
     },
 
-    #literature functions
-    lit_import_hero = function(assessment_id, title, description, ids) {
-      url = glue("{root_url}/lit/api/search/")
-      pc_json = list(assessment = assessment_id,
-                     search_type = "i",
-                     source = 2,
-                     title = title,
-                     description = description,
-                     search_string = paste(unlist(ids), collapse=','))
+    # assessment
+    assessment_public = function(){
+      url = glue::glue("{root_url}/assessment/api/assessment/public/")
+      response = get_(url)
+      return(response)
+    },
+    assessment_bioassay_ml_dataset = function(){
+      url = glue::glue("{root_url}/assessment/api/assessment/bioassay_ml_dataset/")
+      response = get_(url)
+      return(as_data_frame(response))
+    },
 
-      response = post_(url, auth_header(), body = pc_json, encode = "json")
+    # literature
+    lit_import_hero = function(assessment_id, title, description, ids) {
+      url = glue::glue("{root_url}/lit/api/search/")
+      pc_json = list(
+        assessment = assessment_id,
+        search_type = "i",
+        source = 2,
+        title = title,
+        description = description,
+        search_string = paste(unlist(ids), collapse=",")
+      )
+      response = post_(url, body = pc_json, encode = "json")
       return(response)
     },
     lit_tags = function(assessment_id) {
-      url = glue("{root_url}/lit/api/assessment/{assessment_id}/tags/")
+      url = glue::glue("{root_url}/lit/api/assessment/{assessment_id}/tags/")
       response = get_(url)
       return(as_data_frame(response))
     },
     lit_reference_tags = function(assessment_id) {
-      url = glue("{root_url}/lit/api/assessment/{assessment_id}/reference-tags/")
+      url = glue::glue("{root_url}/lit/api/assessment/{assessment_id}/reference-tags/")
       response = get_(url)
       return(as_data_frame(response))
     },
     lit_import_reference_tags = function(assessment_id, csv, operation = "append") {
-      csv.string = readr::format_csv(csv, col_names = TRUE)
-      url = glue("{root_url}/lit/api/assessment/{assessment_id}/reference-tags/")
-      response = post_(url,
-                       body = list(csv = csv.string,
-                                   operation = operation),
-                       encode = "json")
+      url = glue::glue("{root_url}/lit/api/assessment/{assessment_id}/reference-tags/")
+      response = post_(
+        url,
+        body = list(csv = csv, operation = operation),
+        encode = "json"
+      )
       return(as_data_frame(response))
     },
     lit_reference_ids = function(assessment_id) {
-      url = glue("{root_url}/lit/api/assessment/{assessment_id}/reference-ids/")
+      url = glue::glue("{root_url}/lit/api/assessment/{assessment_id}/reference-ids/")
       response = get_(url)
       return(as_data_frame(response))
     },
     lit_references = function(assessment_id) {
-      url = glue("{root_url}/lit/api/assessment/{assessment_id}/references-download/")
+      url = glue::glue("{root_url}/lit/api/assessment/{assessment_id}/references-download/")
       response = get_(url)
       return(as_data_frame(response))
     },
+    lit_reference = function(reference_id){
+      url = glue::glue("{root_url}/lit/api/reference/{reference_id}/")
+      response = get_(url)
+      return(response)
+    },
+    lit_update_reference = function(reference_id, data){
+      url = glue::glue("{root_url}/lit/api/reference/{reference_id}/")
+      response = patch_(url, body = data, encode = "json")
+      return(response)
+    },
+    lit_delete_reference = function(reference_id){
+      url = glue::glue("{root_url}/lit/api/reference/{reference_id}/")
+      response = delete_(url)
+      return(response)
+    },
 
-    #risk of bias data functions
+    # risk of bias
     rob_data = function(assessment_id) {
-      url = glue("{root_url}/rob/api/assessment/{assessment_id}/export/")
+      url = glue::glue("{root_url}/rob/api/assessment/{assessment_id}/export/")
       response = get_(url)
       return(as_data_frame(response))
     },
     rob_full_data = function(assessment_id) {
-      url = glue("{root_url}/rob/api/assessment/{assessment_id}/full-export/")
+      url = glue::glue("{root_url}/rob/api/assessment/{assessment_id}/full-export/")
       response = get_(url)
       return(as_data_frame(response))
     },
-
-    ## TODO - needs to be tested w/ real data
-    rob_create = function(study_id, author_id, active, final, scores) {
-      # Parameters:
-      #           study_id: id of study.
-      #           author_id: id of author of the Risk of Bias data.
-      #           active: create the new Risk of Bias as active or not.
-      #           final: create the new Risk of Bias data as final or not.
-      #           scores: List of scores. Each element of the List is a Dict containing the following string keys / expected values:
-      #                 * "metric_id" (int): the id of the metric for this score
-      #                 * "is_default" (bool): create this score as default or not
-      #                 * "label" (str, optional): label for this score
-      #                 * "notes" (str): notes for this core
-      #                 * "score" (int): numeric score value.
-
-      pc_json = list(
-        study_id = study_id,
-        author_id = author_id,
-        active =  active,
-        final = final,
-        scores = scores)
-      url = glue("{root_url}/rob/api/review/")
-      response = post_(url, auth_header, body = pc_json, encode = "json",  verbose())
-      content(response)
+    rob_create = function(data) {
+      stop(NOT_IMPLEMENTED_ERROR_)
     },
 
-    #animal data functions
+    # study
+    study_create = function(reference_id, short_citation, full_citation, data) {
+      if (is.null(data)){
+        data = list();
+      }
+      data[['reference_id']] = reference_id
+      data[['short_citation']] = short_citation
+      data[['full_citation']] = full_citation
+      url = glue::glue("{root_url}/study/api/study/")
+      response = post_(url, body = data, encode = "json")
+      return(response)
+    },
+
+    # animal bioassay
     ani_data = function(assessment_id) {
-      url = glue("{root_url}/ani/api/assessment/{assessment_id}/full-export/")
+      url = glue::glue("{root_url}/ani/api/assessment/{assessment_id}/full-export/")
       response = get_(url)
       return(as_data_frame(response))
     },
     ani_data_summary = function(assessment_id) {
-      url = glue("{root_url}/ani/api/assessment/{assessment_id}/endpoint-export/")
+      url = glue::glue("{root_url}/ani/api/assessment/{assessment_id}/endpoint-export/")
       response = get_(url)
       return(as_data_frame(response))
     },
     ani_endpoints = function(assessment_id) {
       assessment_id = assessment_id
-      url = glue("{root_url}/ani/api/endpoint/?assessment_id={assessment_id}")
+      url = glue::glue("{root_url}/ani/api/endpoint/?assessment_id={assessment_id}")
       generator = iter_pages(url)
       return(generator) #** doesnt match python version yet
-     },
+    },
+    ani_create_experiment = function(data) {
+      url = glue::glue("{root_url}/ani/api/experiment/")
+      response = post_(url, body = data, encode = "json")
+      return(response)
+    },
+    ani_create_animal_group = function(data) {
+      url = glue::glue("{root_url}/ani/api/animal-group/")
+      response = post_(url, body = data, encode = "json")
+      return(response)
+    },
+    ani_create_endpoint = function(data) {
+      url = glue::glue("{root_url}/ani/api/endpoint/")
+      response = post_(url, body = data, encode = "json")
+      return(response)
+    },
 
-    #epidemiology data functions
+    # epidemiology
     epi_data = function(assessment_id) {
-      url = glue("{root_url}/epi/api/assessment/{assessment_id}/export/")
+      url = glue::glue("{root_url}/epi/api/assessment/{assessment_id}/export/")
       response = get_(url)
       return(as_data_frame(response))
     },
     epi_endpoints = function(assessment_id) {
       assessment_id = assessment_id
-      url = glue("{root_url}/epi/api/outcome/?assessment_id={assessment_id}")
+      url = glue::glue("{root_url}/epi/api/outcome/?assessment_id={assessment_id}")
       generator = iter_pages(url)
       return(generator) #** doesnt match python version yet
     },
+
+    # epidemiology meta-analyses
     epimeta_data = function(assessment_id) {
-      url = glue("{root_url}/epi-meta/api/assessment/{assessment_id}/export/")
+      url = glue::glue("{root_url}/epi-meta/api/assessment/{assessment_id}/export/")
       response = get_(url)
       return(as_data_frame(response))
     },
 
-    #other functions
+    # invitro
     invitro_data = function(assessment_id) {
-      url = glue("{root_url}/in-vitro/api/assessment/{assessment_id}/full-export/")
+      url = glue::glue("{root_url}/in-vitro/api/assessment/{assessment_id}/full-export/")
       response = get_(url)
       return(as_data_frame(response))
     },
+
+    # summary
     visual_list = function(assessment_id) {
-      url = glue("{root_url}/summary/api/visual/?assessment_id={assessment_id}")
+      url = glue::glue("{root_url}/summary/api/visual/?assessment_id={assessment_id}")
       response = get_(url)
       return(as_data_frame(response))
     }
   )
 
-  # magic to package things up and return what we want
-  assign('this', me, envir=thisEnv)
-  class(me) = append(class(me), "HawcClient")
-  return(me)
+  # package things up and return public API with scoped helper methods
+  assign("this", public, envir=thisEnv)
+  class(public) = append(class(public), "HawcClient")
+  return(public)
 }
