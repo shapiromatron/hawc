@@ -789,6 +789,13 @@
     database: 2
     content: demo-content
     url: ''
+- model: lit.identifiers
+  pk: 7
+  fields:
+    unique_id: '3'
+    database: 2
+    content: demo-content
+    url: ''
 - model: lit.referencefiltertag
   pk: 1
   fields:
@@ -1081,7 +1088,8 @@
     last_updated: 2020-02-27 20:14:41.479008+00:00
     block_id: null
     searches: []
-    identifiers: []
+    identifiers:
+    - 7
 - model: lit.reference
   pk: 4
   fields:
