@@ -9,6 +9,7 @@ from django.utils import timezone
 from rest_framework import exceptions, mixins, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.throttling import UserRateThrottle
 
 from ..assessment.api import AssessmentLevelPermissions, AssessmentRootedTagTreeViewset
 from ..assessment.models import Assessment
@@ -17,6 +18,10 @@ from ..common.helper import FlatExport, re_digits
 from ..common.renderers import PandasRenderers
 from ..common.serializers import UnusedSerializer
 from . import exports, models, serializers
+
+
+class BurstUser(UserRateThrottle):
+    rate = "1/hour"
 
 
 class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.GenericViewSet):
@@ -171,7 +176,7 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
 
     @transaction.atomic()
     @action(
-        detail=True, methods=("patch",), url_path="replace-hero",
+        detail=True, throttle_classes=(BurstUser,), methods=("post",), url_path="replace-hero",
     )
     def replace_hero(self, request, pk):
         assessment = self.get_object()
@@ -188,7 +193,10 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
 
     @transaction.atomic()
     @action(
-        detail=True, methods=("patch",), url_path="update-reference-metadata-from-hero",
+        detail=True,
+        throttle_classes=(BurstUser,),
+        methods=("post",),
+        url_path="update-reference-metadata-from-hero",
     )
     def update_reference_metadata_from_hero(self, request, pk):
 

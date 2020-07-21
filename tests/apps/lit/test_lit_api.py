@@ -2,6 +2,7 @@ import json
 from pathlib import Path
 
 import pytest
+from django.core.cache import cache
 from django.urls import reverse
 from rest_framework.test import APIClient
 
@@ -254,6 +255,11 @@ class TestSearchViewset:
 @pytest.mark.vcr
 @pytest.mark.django_db
 class TestHEROApis:
+    @pytest.fixture(scope="function", autouse=True)
+    def clear_cache(cls):
+        # Reset burst throttling
+        cache.clear()
+
     def test_replace_permissions(self, db_keys):
 
         assessment_id = models.Reference.objects.get(id=db_keys.reference_linked).assessment_id
@@ -264,12 +270,12 @@ class TestHEROApis:
         # reviewers shouldn't be able to update
         client = APIClient()
         assert client.login(username="rev@rev.com", password="pw") is True
-        response = client.patch(url, data, format="json")
+        response = client.post(url, data, format="json")
         assert response.status_code == 403
 
         # public shouldn't be able to update
         client = APIClient()
-        response = client.patch(url, data, format="json")
+        response = client.post(url, data, format="json")
         assert response.status_code == 403
 
     def test_valid_replace_requests(self, db_keys):
@@ -280,7 +286,7 @@ class TestHEROApis:
 
         client = APIClient()
         assert client.login(username="pm@pm.com", password="pw") is True
-        response = client.patch(url, data, format="json")
+        response = client.post(url, data, format="json")
         assert response.status_code == 204
 
         updated_reference = models.Reference.objects.get(id=db_keys.reference_linked)
@@ -291,25 +297,6 @@ class TestHEROApis:
         assert updated_reference.identifiers.get(database=constants.HERO).unique_id == str(1)
 
     def test_bad_replace_requests(self, db_keys):
-        assessment_id = models.Reference.objects.get(id=db_keys.reference_linked).assessment_id
-
-        # test nonexistant reference
-        url = reverse("lit:api:assessment-replace-hero", args=(assessment_id,))
-        data = {"replace": [[-1, 1]]}
-
-        client = APIClient()
-        assert client.login(username="pm@pm.com", password="pw") is True
-        response = client.patch(url, data, format="json")
-        assert response.status_code == 400
-
-        # test reference not linked with assessment
-        url = reverse("lit:api:assessment-replace-hero", args=(assessment_id,))
-        data = {"replace": [[db_keys.reference_unlinked, 1]]}
-
-        client = APIClient()
-        assert client.login(username="pm@pm.com", password="pw") is True
-        response = client.patch(url, data, format="json")
-        assert response.status_code == 400
 
         # test nonexistant assessment
         url = reverse("lit:api:assessment-replace-hero", args=(100,))
@@ -317,7 +304,7 @@ class TestHEROApis:
 
         client = APIClient()
         assert client.login(username="pm@pm.com", password="pw") is True
-        response = client.patch(url, data, format="json")
+        response = client.post(url, data, format="json")
         assert response.status_code == 404
 
     def test_update_permissions(self, db_keys):
@@ -331,12 +318,12 @@ class TestHEROApis:
         # reviewers shouldn't be able to destroy
         client = APIClient()
         assert client.login(username="rev@rev.com", password="pw") is True
-        response = client.patch(url)
+        response = client.post(url)
         assert response.status_code == 403
 
         # public shouldn't be able to update
         client = APIClient()
-        response = client.patch(url)
+        response = client.post(url)
         assert response.status_code == 403
 
     def test_valid_update_requests(self, db_keys):
@@ -348,19 +335,19 @@ class TestHEROApis:
 
         client = APIClient()
         assert client.login(username="pm@pm.com", password="pw") is True
-        response = client.patch(url)
+        response = client.post(url)
         assert response.status_code == 204
 
         updated_reference = models.Reference.objects.get(id=db_keys.reference_linked)
         assert updated_reference.title == "Early lung events following low-dose asbestos exposure"
 
     def test_bad_update_requests(self, db_keys):
-
+        # test nonexistant assessment
         url = reverse("lit:api:assessment-replace-hero", args=(100,))
 
         client = APIClient()
         assert client.login(username="pm@pm.com", password="pw") is True
-        response = client.patch(url)
+        response = client.post(url)
         assert response.status_code == 404
 
 
@@ -421,12 +408,12 @@ class TestReferenceUpdateApi:
         client = APIClient()
         assert client.login(username="rev@rev.com", password="pw") is True
 
-        response = client.patch(url, data)
+        response = client.post(url, data)
         assert response.status_code == 403
 
         # public shouldn't be able to update
         client = APIClient()
-        response = client.patch(url, data)
+        response = client.post(url, data)
         assert response.status_code == 403
 
         post_ref = models.Reference.objects.get(id=db_keys.reference_linked)
@@ -441,14 +428,14 @@ class TestReferenceUpdateApi:
 
         client = APIClient()
         assert client.login(username="team@team.com", password="pw") is True
-        response = client.patch(url, data)
+        response = client.post(url, data)
         assert response.status_code == 404
 
         # test bad tag
         url = reverse("lit:api:reference-detail", args=(db_keys.reference_linked,))
         tags = [2, 3, -1]
         data = {"tags": tags}
-        response = client.patch(url, data)
+        response = client.post(url, data)
         assert response.status_code == 400
         assert response.json() == {"tags": ["All tag ids are not from this assessment"]}
 
@@ -461,7 +448,7 @@ class TestReferenceUpdateApi:
 
         # test updating reference with a new title
         data = {"title": "TestReferenceUpdateApi title test"}
-        response = client.patch(url, data)
+        response = client.post(url, data)
         assert response.status_code == 200
 
         assert reference.title != data.get("title")
@@ -471,7 +458,7 @@ class TestReferenceUpdateApi:
         # test updating reference with new tags
         tags = [2, 3]
         data = {"tags": tags}
-        response = client.patch(url, data)
+        response = client.post(url, data)
         assert response.status_code == 200
 
         updated_reference = models.Reference.objects.get(id=db_keys.reference_linked)
@@ -482,7 +469,7 @@ class TestReferenceUpdateApi:
         # test updating reference with multiple fields
         tags = [2, 3, 4]
         data = {"title": "TestReferenceUpdateApi title test 2", "tags": tags}
-        response = client.patch(url, data)
+        response = client.post(url, data)
         assert response.status_code == 200
 
         updated_reference = models.Reference.objects.get(id=db_keys.reference_linked)
