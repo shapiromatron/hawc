@@ -1,8 +1,13 @@
 import pytest
+from rest_framework.serializers import ValidationError
 
 from hawc.apps.assessment.models import Assessment
 from hawc.apps.lit.models import Reference, ReferenceTags
-from hawc.apps.lit.serializers import BulkReferenceTagSerializer
+from hawc.apps.lit.serializers import (
+    BulkReferenceTagSerializer,
+    ReferenceReplaceSerializer,
+    ReferenceUpdateSerializer,
+)
 
 
 @pytest.mark.django_db
@@ -85,3 +90,100 @@ def test_BulkReferenceTagSerializer(db_keys):
         )
         == csv
     )
+
+
+@pytest.mark.vcr
+@pytest.mark.django_db
+class TestReferenceUpdateSerializer:
+    def test_valid(self, db_keys):
+        ref_ids = [db_keys.reference_linked, db_keys.reference_unlinked]
+        refs = Reference.objects.filter(id__in=ref_ids)
+
+        serializer = ReferenceUpdateSerializer(refs, many=True, allow_empty=False)
+        ret = serializer.execute()
+        assert ret.successful()
+
+        assert refs[0].title == "Early lung events following low-dose asbestos exposure"
+        assert (
+            refs[1].title
+            == "Asbestos-induced lung injury in the sheep model: the initial alveolitis"
+        )
+
+
+@pytest.mark.vcr
+@pytest.mark.django_db
+class TestReferenceReplaceSerializer:
+    def test_valid(self, db_keys):
+        """
+        For a valid case we'll test a HERO ID swap
+        """
+        ref_ids = [db_keys.reference_linked, db_keys.reference_unlinked]
+        refs = Reference.objects.filter(id__in=ref_ids)
+        replace = [
+            [refs[0].id, int(refs[1].identifiers.get(database=2).unique_id)],
+            [refs[1].id, int(refs[0].identifiers.get(database=2).unique_id)],
+        ]
+        serializer = ReferenceReplaceSerializer(
+            refs, many=True, allow_empty=False, context={"replace": replace}
+        )
+
+        ret = serializer.execute()
+        assert ret.successful()
+
+        assert (
+            refs[0].title
+            == "Asbestos-induced lung injury in the sheep model: the initial alveolitis"
+        )
+        assert refs[1].title == "Early lung events following low-dose asbestos exposure"
+
+    def test_duplicate(self, db_keys):
+        """
+        Test a replace that will result in two references with
+        the same HERO ID
+        """
+        ref_ids = [db_keys.reference_linked, db_keys.reference_unlinked]
+        refs = Reference.objects.filter(id__in=ref_ids)
+        replace = [[refs[0].id, refs[1].identifiers.get(database=2).unique_id]]
+        serializer = ReferenceReplaceSerializer(
+            refs, many=True, allow_empty=False, context={"replace": replace}
+        )
+
+        with pytest.raises(ValidationError) as err:
+            serializer.execute()
+
+        assert err.value.args[0] == "Duplicate HERO references."
+
+    def test_bad_hero(self, db_keys):
+        """
+        Test a replace where one of the HERO IDs are invalid.
+        """
+        ref_ids = [db_keys.reference_linked, db_keys.reference_unlinked]
+        refs = Reference.objects.filter(id__in=ref_ids)
+        replace = [[refs[0].id, -1]]
+        serializer = ReferenceReplaceSerializer(
+            refs, many=True, allow_empty=False, context={"replace": replace}
+        )
+
+        with pytest.raises(ValidationError) as err:
+            serializer.execute()
+
+        assert (
+            err.value.args[0] == "Import failed; the following HERO IDs could not be imported: -1"
+        )
+
+    def test_bad_ref(self, db_keys):
+        """
+        Test a replace where one of the ref IDs are are not in the queryset.
+        """
+        ref_ids = [db_keys.reference_linked, db_keys.reference_unlinked]
+        refs = Reference.objects.filter(id__in=ref_ids)
+        invalid_ref = Reference.objects.all().difference(refs).first()
+        replace = [[invalid_ref.id, 1]]
+        serializer = ReferenceReplaceSerializer(
+            refs, many=True, allow_empty=False, context={"replace": replace}
+        )
+
+        with pytest.raises(ValidationError) as err:
+            serializer.execute()
+
+        assert err.value.args[0] == "All references must be from selected assessment."

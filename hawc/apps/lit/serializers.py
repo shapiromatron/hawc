@@ -2,6 +2,7 @@ import logging
 from io import StringIO
 from typing import List
 
+import django.core.exceptions
 import pandas as pd
 from celery import chain
 from django.db import transaction
@@ -242,7 +243,7 @@ class ReferenceReplaceListSerializer(serializers.ListSerializer):
         replace = self.context.get("replace")
         self.ref_ids, self.hero_ids = list(zip(*replace))
 
-        # make sure all references are HERO and in assessment
+        # make sure all references are in the queryset
         matching_references = self.instance.filter(id__in=self.ref_ids)
         if matching_references.count() != len(self.ref_ids):
             raise serializers.ValidationError("All references must be from selected assessment.")
@@ -260,9 +261,12 @@ class ReferenceReplaceListSerializer(serializers.ListSerializer):
             raise serializers.ValidationError("Duplicate HERO references.")
 
         # make sure all HERO IDs are valid
-        _, _, self.fetched_content = models.Identifiers.objects.validate_valid_hero_ids(
-            self.hero_ids
-        )
+        try:
+            _, _, self.fetched_content = models.Identifiers.objects.validate_valid_hero_ids(
+                self.hero_ids
+            )
+        except django.core.exceptions.ValidationError as err:
+            raise serializers.ValidationError(err.args[0])
 
     def execute(self):
         self.validate_context()
