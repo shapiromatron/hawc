@@ -408,12 +408,12 @@ class TestReferenceUpdateApi:
         client = APIClient()
         assert client.login(username="rev@rev.com", password="pw") is True
 
-        response = client.post(url, data)
+        response = client.patch(url, data)
         assert response.status_code == 403
 
         # public shouldn't be able to update
         client = APIClient()
-        response = client.post(url, data)
+        response = client.patch(url, data)
         assert response.status_code == 403
 
         post_ref = models.Reference.objects.get(id=db_keys.reference_linked)
@@ -428,14 +428,14 @@ class TestReferenceUpdateApi:
 
         client = APIClient()
         assert client.login(username="team@team.com", password="pw") is True
-        response = client.post(url, data)
+        response = client.patch(url, data)
         assert response.status_code == 404
 
         # test bad tag
         url = reverse("lit:api:reference-detail", args=(db_keys.reference_linked,))
         tags = [2, 3, -1]
         data = {"tags": tags}
-        response = client.post(url, data)
+        response = client.patch(url, data)
         assert response.status_code == 400
         assert response.json() == {"tags": ["All tag ids are not from this assessment"]}
 
@@ -448,7 +448,7 @@ class TestReferenceUpdateApi:
 
         # test updating reference with a new title
         data = {"title": "TestReferenceUpdateApi title test"}
-        response = client.post(url, data)
+        response = client.patch(url, data)
         assert response.status_code == 200
 
         assert reference.title != data.get("title")
@@ -458,7 +458,7 @@ class TestReferenceUpdateApi:
         # test updating reference with new tags
         tags = [2, 3]
         data = {"tags": tags}
-        response = client.post(url, data)
+        response = client.patch(url, data)
         assert response.status_code == 200
 
         updated_reference = models.Reference.objects.get(id=db_keys.reference_linked)
@@ -469,7 +469,7 @@ class TestReferenceUpdateApi:
         # test updating reference with multiple fields
         tags = [2, 3, 4]
         data = {"title": "TestReferenceUpdateApi title test 2", "tags": tags}
-        response = client.post(url, data)
+        response = client.patch(url, data)
         assert response.status_code == 200
 
         updated_reference = models.Reference.objects.get(id=db_keys.reference_linked)
