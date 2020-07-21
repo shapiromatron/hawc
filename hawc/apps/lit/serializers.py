@@ -3,6 +3,7 @@ from io import StringIO
 from typing import List
 
 import pandas as pd
+from celery import chain
 from django.db import transaction
 from django.template.defaultfilters import slugify
 from rest_framework import exceptions, serializers
@@ -236,28 +237,49 @@ class ReferenceReplaceListSerializer(serializers.ListSerializer):
                 f"Must pass context 'replace':[[reference_id,hero_id],...]"
             )
 
+        # unzip 'replace' and save it to our serializer
+        # the values are needed below and in our 'execute' method
         replace = self.context.get("replace")
-        ref_ids, hero_ids = list(zip(*replace))
-
-        self.ref_ids = ref_ids
-        self.hero_ids = hero_ids
+        self.ref_ids, self.hero_ids = list(zip(*replace))
 
         # make sure all references are HERO and in assessment
         matching_references = self.instance.filter(id__in=self.ref_ids)
         if matching_references.count() != len(self.ref_ids):
             raise serializers.ValidationError("All references must be from selected assessment.")
 
+        # make sure updated references will have unique HERO IDs
+        references_diff = self.instance.difference(matching_references).values_list("id", flat=True)
+        identifiers_diff = models.Identifiers.objects.filter(
+            references__in=references_diff, database=constants.HERO
+        )
+        hero_diff = identifiers_diff.values_list("unique_id", flat=True)
+        hero_all = list(hero_diff) + list(self.hero_ids)
+
+        # are there duplice HERO references?
+        if len(hero_all) > len(set(hero_all)):
+            raise serializers.ValidationError("Duplicate HERO references.")
+
+        # make sure all HERO IDs are valid
+        _, _, self.fetched_content = models.Identifiers.objects.validate_valid_hero_ids(
+            self.hero_ids
+        )
+
     def execute(self):
         self.validate_context()
 
         replace = self.context.get("replace")
-        # run chained tasks
+
+        # import missing identifers
+        models.Identifiers.objects.bulk_create_hero_ids(self.fetched_content)
         # set hero ref
-        tasks.replace_hero_ids.apply(args=[replace])
+        t1 = tasks.replace_hero_ids.si(replace)
         # update content
-        tasks.update_hero_content.apply(args=[self.hero_ids])
+        t2 = tasks.update_hero_content.si(self.hero_ids)
         # update fields with content
-        tasks.update_hero_fields.apply(args=[self.ref_ids])
+        t3 = tasks.update_hero_fields.si(self.ref_ids)
+
+        # run chained tasks
+        return chain(t1, t2, t3)()
 
 
 class ReferenceReplaceSerializer(serializers.ModelSerializer):
@@ -269,7 +291,7 @@ class ReferenceReplaceSerializer(serializers.ModelSerializer):
 
 class ReferenceUpdateListSerializer(serializers.ListSerializer):
     def execute(self):
-        # run chained tasks
+
         ref_ids = set(self.instance.values_list("id", flat=True))
         identifiers = models.Identifiers.objects.filter(
             references__in=ref_ids, database=constants.HERO
@@ -277,9 +299,12 @@ class ReferenceUpdateListSerializer(serializers.ListSerializer):
         hero_ids = identifiers.values_list("unique_id", flat=True)
 
         # update content of hero identifiers
-        tasks.update_hero_content.apply(args=[hero_ids])
+        t1 = tasks.update_hero_content.si(hero_ids)
         # update fields from content
-        tasks.update_hero_fields.apply(args=[ref_ids])
+        t2 = tasks.update_hero_fields.si(ref_ids)
+
+        # run chained tasks
+        return chain(t1, t2)()
 
 
 class ReferenceUpdateSerializer(serializers.ModelSerializer):

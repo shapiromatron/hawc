@@ -54,17 +54,21 @@ def update_hero_fields(ref_ids: List[int]):
 @shared_task
 def replace_hero_ids(replace: List[List[int]]):
     """
-    Set the identifier on each reference with the given HERO ID
+    Replace the identifier on each reference with the given HERO ID
 
     Args:
         replace (List[List[int]]): List of reference ID / HERO ID pairings
     """
     Reference = apps.get_model("lit", "reference")
+    Identifiers = apps.get_model("lit", "identifiers")
     for ref_id, hero_id in replace:
         reference = Reference.objects.get(id=ref_id)
-        hero_identifier = reference.identifiers.get(database=constants.HERO)
-        setattr(hero_identifier, "unique_id", str(hero_id))
-        hero_identifier.save()
+        # remove old identifier
+        old_identifier = reference.identifiers.get(database=constants.HERO)
+        reference.identifiers.remove(old_identifier)
+        # add new identifier
+        new_identifier = Identifiers.objects.get(database=constants.HERO, unique_id=str(hero_id))
+        reference.identifiers.add(new_identifier)
 
 
 @shared_task
