@@ -57,7 +57,7 @@ class HawcSession:
         if response.status_code >= 400 and response.status_code < 500:
             raise HawcClientException(response.status_code, content)
         elif response.status_code >= 500 and response.status_code < 600:
-            raise HawcServerException(response.status_code, content)
+            raise HawcServerException(response.status_code, "no additional information provided")
 
     def get(self, url: str, params: Optional[Dict] = None) -> Response:
         """
@@ -350,15 +350,14 @@ class LiteratureClient(BaseClient):
 
     def replace_hero(self, assessment_id: int, replace: List[List[int]]) -> None:
         """
-        Replaces the HERO associated with each given reference with
-        the paired HERO ID. Reference fields are then updated using
-        the new HERO metadata.
+        Replace HERO ID associated with each reference with a new HERO ID. Reference
+        fields are updated using the new HERO ID's reference metadata.  This request is
+        throttled; can only be executed once per hour.
 
         Args:
-            assessment_id (int): Assessment ID. References can only
-            be updated on a per assessment basis.
-            replace (List[List[int]]): List of reference ID /
-            HERO ID pairings, ex [[ref_id, hero_id],...]
+            assessment_id (int): Assessment ID for all references in the list.
+            replace (List[List[int]]): List of reference ID / new HERO ID pairings, both values
+                should be integers, ex., [[reference_id, hero_id], ... ]
 
         Returns:
             None: If the operation is successful there is no return value.
@@ -370,8 +369,8 @@ class LiteratureClient(BaseClient):
 
     def update_references_from_hero(self, assessment_id: int) -> None:
         """
-        Updates the fields of all HERO references in an assessment with
-        metadata from HERO.
+        Updates the fields of all HERO references in an assessment with the most recent metadata
+        from HERO. This request is throttled; can only be executed once per hour.
 
         Args:
             assessment_id (int): Assessment ID

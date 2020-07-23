@@ -1,5 +1,3 @@
-import json
-
 import pandas as pd
 import plotly.express as px
 from django.conf import settings
@@ -9,19 +7,14 @@ from django.utils import timezone
 from rest_framework import exceptions, mixins, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.throttling import UserRateThrottle
 
 from ..assessment.api import AssessmentLevelPermissions, AssessmentRootedTagTreeViewset
 from ..assessment.models import Assessment
-from ..common.api import CleanupFieldsBaseViewSet, LegacyAssessmentAdapterMixin
+from ..common.api import CleanupFieldsBaseViewSet, LegacyAssessmentAdapterMixin, OncePerHourThrottle
 from ..common.helper import FlatExport, re_digits
 from ..common.renderers import PandasRenderers
 from ..common.serializers import UnusedSerializer
 from . import exports, models, serializers
-
-
-class BurstUser(UserRateThrottle):
-    rate = "1/hour"
 
 
 class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.GenericViewSet):
@@ -176,25 +169,24 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
 
     @transaction.atomic()
     @action(
-        detail=True, throttle_classes=(BurstUser,), methods=("post",), url_path="replace-hero",
+        detail=True,
+        throttle_classes=(OncePerHourThrottle,),
+        methods=("post",),
+        url_path="replace-hero",
     )
     def replace_hero(self, request, pk):
         assessment = self.get_object()
-        references = models.Reference.objects.get_hero_references_by_assessment(assessment.id)
-
-        body = json.loads(request.body)
-        replace = body.get("replace", list())
-        serializer = serializers.ReferenceReplaceSerializer(
-            references, many=True, allow_empty=False, context={"replace": replace}
+        serializer = serializers.ReferenceReplaceHeroIdSerializer(
+            data=request.data, context={"assessment": assessment}
         )
+        serializer.is_valid(raise_exception=True)
         serializer.execute()
-
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @transaction.atomic()
     @action(
         detail=True,
-        throttle_classes=(BurstUser,),
+        throttle_classes=(OncePerHourThrottle,),
         methods=("post",),
         url_path="update-reference-metadata-from-hero",
     )
@@ -202,7 +194,7 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
 
         # get all hero references from assessment
         assessment = self.get_object()
-        references = models.Reference.objects.get_hero_references_by_assessment(assessment.id)
+        references = models.Reference.objects.hero_references(assessment.id)
 
         serializer = serializers.ReferenceUpdateSerializer(references, many=True, allow_empty=False)
         serializer.execute()

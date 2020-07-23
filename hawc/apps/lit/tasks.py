@@ -1,10 +1,10 @@
 import json
-from typing import List
+from typing import Dict, List
 
 from celery import shared_task
 from celery.utils.log import get_task_logger
 from django.apps import apps
-from django.db.models import F
+from django.db.models import F, Model
 from django.db.models.aggregates import Count, Max
 from django.utils import timezone
 from litter_getter import hero, pubmed
@@ -37,18 +37,16 @@ def update_hero_content(ids: List[int]):
 @shared_task
 def update_hero_fields(ref_ids: List[int]):
     """
-    Updates the reference fields with content from HERO
+    Updates the reference fields with most recent content from HERO
 
     Args:
-        ref_ids (List[int]): References to update
+        ref_ids (List[int]): List of references IDs to update
     """
 
     Reference = apps.get_model("lit", "reference")
-    references = Reference.objects.filter(id__in=ref_ids)
-    for reference in references:
-        hero_identifier = reference.identifiers.get(database=constants.HERO)
-        reference.update_from_hero_content(hero_identifier)
-        reference.save()
+    for reference in Reference.objects.filter(id__in=ref_ids).prefetch_related("identifiers"):
+        content = reference.identifiers.get(database=constants.HERO).get_content_json()
+        reference.update_from_hero_content(content, save=True)
 
 
 @shared_task
@@ -61,14 +59,32 @@ def replace_hero_ids(replace: List[List[int]]):
     """
     Reference = apps.get_model("lit", "reference")
     Identifiers = apps.get_model("lit", "identifiers")
+
+    # build map of HERO ID -> Identifier.id
+    ref_ids, new_hero_ids = zip(*replace)
+    identifier_map: Dict[int, int] = {
+        int(ident.unique_id): ident.id
+        for ident in Identifiers.objects.filter(database=constants.HERO, unique_id__in=new_hero_ids)
+    }
+    if len(identifier_map) != len(new_hero_ids):
+        raise ValueError("Identifiers map length != HERO ID length length")
+
+    # build map of reference.id -> reference object
+    reference_map: Dict[int, Model] = {
+        ref.id: ref
+        for ref in Reference.objects.filter(id__in=ref_ids).prefetch_related("identifiers")
+    }
+    if len(reference_map) != len(ref_ids):
+        raise ValueError("Reference map length != reference ID list length")
+
+    # update identifier references to substitute old HERO id for new HERO id
     for ref_id, hero_id in replace:
-        reference = Reference.objects.get(id=ref_id)
-        # remove old identifier
-        old_identifier = reference.identifiers.get(database=constants.HERO)
-        reference.identifiers.remove(old_identifier)
-        # add new identifier
-        new_identifier = Identifiers.objects.get(database=constants.HERO, unique_id=str(hero_id))
-        reference.identifiers.add(new_identifier)
+        reference = reference_map[ref_id]
+        identifier_ids = [
+            ident.id for ident in reference.identifiers.all() if ident.database != constants.HERO
+        ]
+        identifier_ids.append(identifier_map[hero_id])
+        reference.identifiers.set(identifier_ids)
 
 
 @shared_task

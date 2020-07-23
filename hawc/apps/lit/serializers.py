@@ -229,50 +229,49 @@ class ReferenceSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class ReferenceReplaceListSerializer(serializers.ListSerializer):
-    def validate_context(self):
+class ReferenceReplaceHeroIdSerializer(serializers.Serializer):
+    replace = serializers.ListField(
+        min_length=1,
+        max_length=1000,
+        child=serializers.ListField(min_length=2, max_length=2, child=serializers.IntegerField()),
+    )
 
-        # 'replace' should be in our context
-        if "replace" not in self.context:
-            raise serializers.ValidationError(
-                f"Must pass context 'replace':[[reference_id,hero_id],...]"
-            )
+    def validate_replace(self, replace):
+        # unpack
+        self.ref_ids, self.hero_ids = zip(*replace)
 
-        # unzip 'replace' and save it to our serializer
-        # the values are needed below and in our 'execute' method
-        replace = self.context.get("replace")
-        self.ref_ids, self.hero_ids = list(zip(*replace))
+        # AJS resume here
+        # grab assessment from context?
+        # ...
 
-        # make sure all references are in the queryset
-        matching_references = self.instance.filter(id__in=self.ref_ids)
-        if matching_references.count() != len(self.ref_ids):
-            raise serializers.ValidationError("All references must be from selected assessment.")
+        # # make sure all references are in the queryset
+        # matching_references = self.instance.filter(id__in=self.ref_ids)
+        # if matching_references.count() != len(self.ref_ids):
+        #     raise serializers.ValidationError("All references must be from selected assessment.")
 
-        # make sure updated references will have unique HERO IDs
-        references_diff = self.instance.difference(matching_references).values_list("id", flat=True)
-        identifiers_diff = models.Identifiers.objects.filter(
-            references__in=references_diff, database=constants.HERO
-        )
-        hero_diff = identifiers_diff.values_list("unique_id", flat=True)
-        hero_all = list(hero_diff) + list(self.hero_ids)
+        # # make sure updated references will have unique HERO IDs
+        # references_diff = self.instance.difference(matching_references).values_list("id", flat=True)
+        # identifiers_diff = models.Identifiers.objects.filter(
+        #     references__in=references_diff, database=constants.HERO
+        # )
+        # hero_diff = identifiers_diff.values_list("unique_id", flat=True)
+        # hero_all = list(hero_diff) + list(self.hero_ids)
 
-        # are there duplice HERO references?
-        if len(hero_all) > len(set(hero_all)):
-            raise serializers.ValidationError("Duplicate HERO references.")
+        # # are there duplice HERO references?
+        # if len(hero_all) > len(set(hero_all)):
+        #     raise serializers.ValidationError("Duplicate HERO references.")
 
-        # make sure all HERO IDs are valid
-        try:
-            _, _, self.fetched_content = models.Identifiers.objects.validate_valid_hero_ids(
-                self.hero_ids
-            )
-        except django.core.exceptions.ValidationError as err:
-            raise serializers.ValidationError(err.args[0])
+        # # make sure all HERO IDs are valid
+        # try:
+        #     _, _, self.fetched_content = models.Identifiers.objects.validate_valid_hero_ids(
+        #         self.hero_ids
+        #     )
+        # except django.core.exceptions.ValidationError as err:
+        #     raise serializers.ValidationError(err.args[0])
+
+        return replace
 
     def execute(self):
-        self.validate_context()
-
-        replace = self.context.get("replace")
-
         # import missing identifers
         models.Identifiers.objects.bulk_create_hero_ids(self.fetched_content)
         # set hero ref
@@ -284,13 +283,6 @@ class ReferenceReplaceListSerializer(serializers.ListSerializer):
 
         # run chained tasks
         return chain(t1, t2, t3)()
-
-
-class ReferenceReplaceSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.Reference
-        list_serializer_class = ReferenceReplaceListSerializer
-        fields = "__all__"
 
 
 class ReferenceUpdateListSerializer(serializers.ListSerializer):

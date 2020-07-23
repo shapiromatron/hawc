@@ -570,7 +570,7 @@ class Identifiers(models.Model):
     def create_reference(self, assessment, block_id=None):
         # create, but don't save reference object
         try:
-            content = json.loads(self.content, encoding="utf-8")
+            content = self.get_content_json()
         except ValueError:
             if self.database == constants.PUBMED:
                 self.update_pubmed_content([self])
@@ -589,7 +589,7 @@ class Identifiers(models.Model):
             )
         elif self.database == constants.HERO:
             ref = Reference(assessment=assessment)
-            ref.update_from_hero_content(self)
+            ref.update_from_hero_content(content)
         else:
             raise ValueError("Unknown database for reference creation.")
 
@@ -604,7 +604,7 @@ class Identifiers(models.Model):
         }
 
     def get_content_json(self) -> Optional[Dict]:
-        return json.loads(self.content) if self.content else None
+        return json.loads(self.content, encoding="utf-8") if self.content else None
 
     @staticmethod
     def update_pubmed_content(idents):
@@ -804,10 +804,10 @@ class Reference(models.Model):
                 return int(ident.unique_id)
         return None
 
-    def update_from_hero_content(self, hero_identifier: Identifiers):
-
-        content = json.loads(hero_identifier.content, encoding="utf-8")
-
+    def update_from_hero_content(self, content: Dict, save: bool = False):
+        """
+        Update reference in place given HERO content; optionally save reference
+        """
         # retrieve all of the fields from HERO
         title = content.get("title", "")
         journal = content.get("source", content.get("journaltitle", ""))
@@ -823,6 +823,9 @@ class Reference(models.Model):
         setattr(self, "authors_short", authors_short)
         setattr(self, "authors", authors)
         setattr(self, "year", year)
+
+        if save:
+            self.save()
 
     def get_assessment(self):
         return self.assessment

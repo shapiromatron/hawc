@@ -5,7 +5,7 @@ from hawc.apps.assessment.models import Assessment
 from hawc.apps.lit.models import Reference, ReferenceTags
 from hawc.apps.lit.serializers import (
     BulkReferenceTagSerializer,
-    ReferenceReplaceSerializer,
+    ReferenceReplaceHeroIdSerializer,
     ReferenceUpdateSerializer,
 )
 
@@ -98,8 +98,9 @@ class TestReferenceUpdateSerializer:
     def test_valid(self, db_keys):
         ref_ids = [db_keys.reference_linked, db_keys.reference_unlinked]
         refs = Reference.objects.filter(id__in=ref_ids)
+        serializer = ReferenceUpdateSerializer(data={"replace": refs})
+        assert serializer.is_valid() is False
 
-        serializer = ReferenceUpdateSerializer(refs, many=True, allow_empty=False)
         ret = serializer.execute()
         assert ret.successful()
 
@@ -112,7 +113,8 @@ class TestReferenceUpdateSerializer:
 
 @pytest.mark.vcr
 @pytest.mark.django_db
-class TestReferenceReplaceSerializer:
+class TestReferenceReplaceHeroIdSerializer:
+    # TODO - rewrite
     def test_valid(self, db_keys):
         """
         For a valid case we'll test a HERO ID swap
@@ -123,7 +125,7 @@ class TestReferenceReplaceSerializer:
             [refs[0].id, int(refs[1].identifiers.get(database=2).unique_id)],
             [refs[1].id, int(refs[0].identifiers.get(database=2).unique_id)],
         ]
-        serializer = ReferenceReplaceSerializer(
+        serializer = ReferenceReplaceHeroIdSerializer(
             refs, many=True, allow_empty=False, context={"replace": replace}
         )
 
@@ -144,7 +146,7 @@ class TestReferenceReplaceSerializer:
         ref_ids = [db_keys.reference_linked, db_keys.reference_unlinked]
         refs = Reference.objects.filter(id__in=ref_ids)
         replace = [[refs[0].id, refs[1].identifiers.get(database=2).unique_id]]
-        serializer = ReferenceReplaceSerializer(
+        serializer = ReferenceReplaceHeroIdSerializer(
             refs, many=True, allow_empty=False, context={"replace": replace}
         )
 
@@ -160,7 +162,7 @@ class TestReferenceReplaceSerializer:
         ref_ids = [db_keys.reference_linked, db_keys.reference_unlinked]
         refs = Reference.objects.filter(id__in=ref_ids)
         replace = [[refs[0].id, -1]]
-        serializer = ReferenceReplaceSerializer(
+        serializer = ReferenceReplaceHeroIdSerializer(
             refs, many=True, allow_empty=False, context={"replace": replace}
         )
 
@@ -179,7 +181,7 @@ class TestReferenceReplaceSerializer:
         refs = Reference.objects.filter(id__in=ref_ids)
         invalid_ref = Reference.objects.all().difference(refs).first()
         replace = [[invalid_ref.id, 1]]
-        serializer = ReferenceReplaceSerializer(
+        serializer = ReferenceReplaceHeroIdSerializer(
             refs, many=True, allow_empty=False, context={"replace": replace}
         )
 

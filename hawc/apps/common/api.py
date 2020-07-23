@@ -4,9 +4,14 @@ from rest_framework import exceptions, filters, mixins, permissions, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework_extensions.mixins import ListUpdateModelMixin
+from rest_framework.throttling import UserRateThrottle
 
 from ..assessment.api import DisabledPagination, get_assessment_from_query
 from .helper import try_parse_list_ints
+
+
+class OncePerHourThrottle(UserRateThrottle):
+    rate = "1/hour"
 
 
 class CleanupBulkIdFilter(filters.BaseFilterBackend):
