@@ -288,9 +288,23 @@ class HAWCUtils {
             case "star":
                 return d3.symbolStar
             case "triangle":
+            case "triangle-up":
                 return d3.symbolTriangle
+            case "triangle-down":
+                return {
+                    draw: function (context, size) {
+                        var sqrt3 = Math.sqrt(3),
+                            y = -Math.sqrt(size / (sqrt3 * 3));
+                        context.moveTo(0, -y);
+                        context.lineTo(-sqrt3 * y, y * 2);
+                        context.lineTo(sqrt3 * y, y * 2);
+                        context.closePath();
+                    }
+                }
             case "wye":
                 return d3.symbolWye
+            default:
+                console.error(`Unrecognized filter: ${str}`)
         }
     }
 }
