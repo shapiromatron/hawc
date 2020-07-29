@@ -20,7 +20,7 @@ class HAWCUtils {
         var win = window.open(href, "_blank", "height=500,width=980,resizable=yes,scrollbars=yes");
         win.focus();
 
-        win.onbeforeunload = function(e) {
+        win.onbeforeunload = function (e) {
             let event = new CustomEvent(window.app.utils.HAWCUtils.HAWC_NEW_WINDOW_POPUP_CLOSING, {
                 detail: {},
             });
@@ -34,7 +34,7 @@ class HAWCUtils {
     static build_breadcrumbs(arr) {
         // builds a string of breadcrumb hyperlinks for navigation
         var links = [];
-        arr.forEach(function(v) {
+        arr.forEach(function (v) {
             links.push(`<a target="_blank" href="${v.url}">${v.name}</a>`);
         });
         return links.join("<span> / </span>");
@@ -44,7 +44,7 @@ class HAWCUtils {
         var selector_val = config.form.find("#id_selector_1"),
             submitter = config.form.find("#submit_form");
 
-        submitter.on("click", function() {
+        submitter.on("click", function () {
             var val = parseInt(selector_val.val(), 10);
             if (val) {
                 submitter.attr("href", `${config.base_url}?initial=${val}`);
@@ -67,7 +67,7 @@ class HAWCUtils {
 
     static pageActionsButton(items) {
         var $menu = $('<ul class="dropdown-menu">');
-        items.forEach(function(d) {
+        items.forEach(function (d) {
             if (d instanceof Object) {
                 $menu.append(`<li><a href="${d.url}" class="${d.cls || ""}">${d.text}</a></li>`);
             } else if (typeof d === "string") {
@@ -97,14 +97,14 @@ class HAWCUtils {
     }
 
     static renderChemicalProperties(url, $div, show_header) {
-        const handleResponse = function(data) {
-                if (data.status === "requesting") {
-                    setTimeout(tryToFetch, 1000);
-                }
-                if (data.status === "success") {
-                    renderChemicalDetails($div.get(0), data.content, show_header);
-                }
-            },
+        const handleResponse = function (data) {
+            if (data.status === "requesting") {
+                setTimeout(tryToFetch, 1000);
+            }
+            if (data.status === "success") {
+                renderChemicalDetails($div.get(0), data.content, show_header);
+            }
+        },
             tryToFetch = () => {
                 fetch(url)
                     .then(resp => resp.json())
@@ -118,13 +118,13 @@ class HAWCUtils {
         // a new drag location, requires binding to d3.drag,
         // and requires a _.partial injection of th settings module.
         const re_floats = /(-?[0-9]*\.?[0-9]+)/gm,
-            getFloats = function(txt) {
+            getFloats = function (txt) {
                 // expects an attribute like 'translate(277', '1.1920928955078125e-7)'
                 if (_.isNull(txt) || txt.indexOf("translate") !== 0) return;
                 return [...txt.matchAll(re_floats)].map(d => parseFloat(d[0]));
             };
 
-        return d3.drag().on("drag", function() {
+        return d3.drag().on("drag", function () {
             var x,
                 y,
                 p = d3.select(this),
@@ -158,7 +158,7 @@ class HAWCUtils {
     static updateDragLocationXY(setDragCB) {
         // a new drag location, requires binding to d3.drag,
         // and requires a _.partial injection of th settings module.
-        return d3.drag().on("drag", function() {
+        return d3.drag().on("drag", function () {
             var p = d3.select(this),
                 x = parseInt(parseInt(p.attr("x"), 10) + d3.event.dx, 10),
                 y = parseInt(parseInt(p.attr("y"), 10) + d3.event.dy, 10);
@@ -236,7 +236,7 @@ class HAWCUtils {
     static isHTML(str) {
         var a = document.createElement("div");
         a.innerHTML = str;
-        for (var c = a.childNodes, i = c.length; i--; ) {
+        for (var c = a.childNodes, i = c.length; i--;) {
             if (c[i].nodeType == 1) return true;
         }
         return false;
@@ -276,7 +276,7 @@ class HAWCUtils {
     }
 
     static symbolStringToType(str) {
-        switch(str) {
+        switch (str) {
             case "circle":
                 return d3.symbolCircle
             case "cross":
