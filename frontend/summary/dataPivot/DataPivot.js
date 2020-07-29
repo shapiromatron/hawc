@@ -1,13 +1,13 @@
 import $ from "$";
 import * as d3 from "d3";
 
-import { saveAs } from "filesaver.js";
+import {saveAs} from "filesaver.js";
 
 import HAWCModal from "utils/HAWCModal";
 
 import DataPivotDefaultSettings from "./DataPivotDefaultSettings";
 import DataPivotExtension from "./DataPivotExtension";
-import { NULL_CASE } from "./shared";
+import {NULL_CASE} from "./shared";
 import StyleManager from "./StyleManager";
 
 import build_description_tab from "./DPFDescriptionTab";
@@ -32,26 +32,26 @@ class DataPivot {
     }
 
     static get_object(pk, callback) {
-        $.get(`/summary/api/data_pivot/${pk}/`, function (d) {
+        $.get(`/summary/api/data_pivot/${pk}/`, function(d) {
             d3.tsv(d.data_url, (row, idx) => DataPivot.massage_row(row, idx))
-                .then(data => {
+                .then(data=>{
                     var dp = new DataPivot(data, d.settings, {}, d.title, d.url);
                     if (callback) {
                         callback(dp);
                     } else {
                         return dp;
                     }
-                }, error => {
-                    if (error.status === 500) {
-                        alert("An error occurred; if the error continues please contact us.");
-                        throw "Server error";
-                    }
+                },error=>{
+                        if (error.status === 500) {
+                            alert("An error occurred; if the error continues please contact us.");
+                            throw "Server error";
+                        }
                 });
         });
     }
 
     static displayAsModal(id) {
-        DataPivot.get_object(id, function (d) {
+        DataPivot.get_object(id, function(d) {
             d.displayAsModal();
         });
     }
@@ -90,11 +90,11 @@ class DataPivot {
 
     static move_row(arr, obj, moveUp) {
         // class-level function; used to delete a settings input row
-        var swap = function (arr, a, b) {
-            if (a < 0 || b < 0) return;
-            if (a >= arr.length || b >= arr.length) return;
-            arr[a] = arr.splice(b, 1, arr[a])[0];
-        },
+        var swap = function(arr, a, b) {
+                if (a < 0 || b < 0) return;
+                if (a >= arr.length || b >= arr.length) return;
+                arr[a] = arr.splice(b, 1, arr[a])[0];
+            },
             idx = arr.indexOf(obj.values);
 
         if (moveUp) {
@@ -117,17 +117,17 @@ class DataPivot {
         var td = $("<td>"),
             up = $(
                 '<button class="btn btn-mini" title="move up"><i class="icon-arrow-up"></button>'
-            ).on("click", function () {
+            ).on("click", function() {
                 DataPivot.move_row(arr, self, true);
             }),
             down = $(
                 '<button class="btn btn-mini" title="move down"><i class="icon-arrow-down"></button>'
-            ).on("click", function () {
+            ).on("click", function() {
                 DataPivot.move_row(arr, self, false);
             }),
             del = $(
                 '<button class="btn btn-mini" title="remove"><i class="icon-remove"></button>'
-            ).on("click", function () {
+            ).on("click", function() {
                 DataPivot.delete_row(arr, self);
             });
 
@@ -155,7 +155,7 @@ class DataPivot {
         // given an numeric-range input, return a div containing input and text
         // field which updates based on current value.
         var text = $("<span>").text(input.val());
-        input.on("change", function () {
+        input.on("change", function() {
             text.text(input.val());
         });
         return $("<div>").append(input, text);
@@ -177,7 +177,7 @@ class DataPivot {
                 });
             });
 
-        $(options.submissionDiv).submit(function () {
+        $(options.submissionDiv).submit(function() {
             $(options.settingsField).val(dp.get_settings_json());
             return true;
         });
@@ -193,7 +193,7 @@ class DataPivot {
         this.$display_div = $(dom_bindings.display_div);
 
         // rebuild visualization whenever selected
-        $('a[data-toggle="tab"]').on("shown", function (e) {
+        $('a[data-toggle="tab"]').on("shown", function(e) {
             if (self.$display_div[0] === $($(e.target).attr("href"))[0]) {
                 self.build_data_pivot_vis(self.$display_div, editable);
             }
@@ -227,15 +227,15 @@ class DataPivot {
 
         // print header
         var tr = $("<tr>");
-        data_headers.forEach(function (v) {
+        data_headers.forEach(function(v) {
             tr.append(`<th>${v}</th>`);
         });
         thead.append(tr);
 
         // print body
-        this.data.forEach(function (d) {
+        this.data.forEach(function(d) {
             var tr = $("<tr>");
-            data_headers.forEach(function (field) {
+            data_headers.forEach(function(field) {
                 tr.append(`<td>${d[field]}</td>`);
             });
             tbody.append(tr);
@@ -279,7 +279,7 @@ class DataPivot {
                 ),
             ];
 
-        this.$settings_div.html(content).on("shown", function (e) {
+        this.$settings_div.html(content).on("shown", function(e) {
             if ($(e.target).attr("href") === "#data_pivot_settings_general") {
                 self._dp_settings_general.update_merge_until();
             }
@@ -324,7 +324,7 @@ class DataPivot {
                 $('<div class="row-fluid">').append($plot)
             );
 
-        modal.getModal().on("shown", function () {
+        modal.getModal().on("shown", function() {
             self.build_data_pivot_vis($plot);
         });
 

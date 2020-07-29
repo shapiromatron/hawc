@@ -8,8 +8,8 @@ import HAWCUtils from "utils/HAWCUtils";
 import DataPivot from "./DataPivot";
 import DataPivotExtension from "./DataPivotExtension";
 import DataPivotLegend from "./DataPivotLegend";
-import { StyleLine, StyleSymbol, StyleText, StyleRectangle } from "./Styles";
-import { NULL_CASE } from "./shared";
+import {StyleLine, StyleSymbol, StyleText, StyleRectangle} from "./Styles";
+import {NULL_CASE} from "./shared";
 
 class DataPivotVisualization extends D3Plot {
     constructor(dp_data, dp_settings, plot_div, editable) {
@@ -26,24 +26,24 @@ class DataPivotVisualization extends D3Plot {
     }
 
     static sorter(arr, sorts) {
-        var chunkify = function (t) {
-            var tz = [],
-                x = 0,
-                y = -1,
-                n = 0,
-                i,
-                j;
-            while ((i = (j = t.charAt(x++)).charCodeAt(0))) {
-                var m = i == 46 || i == 45 || (i >= 48 && i <= 57);
-                if (m !== n) {
-                    tz[++y] = "";
-                    n = m;
+        var chunkify = function(t) {
+                var tz = [],
+                    x = 0,
+                    y = -1,
+                    n = 0,
+                    i,
+                    j;
+                while ((i = (j = t.charAt(x++)).charCodeAt(0))) {
+                    var m = i == 46 || i == 45 || (i >= 48 && i <= 57);
+                    if (m !== n) {
+                        tz[++y] = "";
+                        n = m;
+                    }
+                    tz[y] += j;
                 }
-                tz[y] += j;
-            }
-            return tz;
-        },
-            alphanum = function (a, b) {
+                return tz;
+            },
+            alphanum = function(a, b) {
                 var field_name, ascending;
 
                 for (var i = 0; i < sorts.length; i++) {
@@ -163,7 +163,7 @@ class DataPivotVisualization extends D3Plot {
                     new_arr = new_arr.filter(func);
                 } else {
                     var vals = arr.filter(func);
-                    vals.forEach(function (v) {
+                    vals.forEach(function(v) {
                         included.set(v._dp_pk, v);
                     });
                 }
@@ -183,7 +183,7 @@ class DataPivotVisualization extends D3Plot {
         // high-range fields are both true, OR by having a barchart field
         if ($.isNumeric(row[barchart.field_name])) return true;
         if (
-            _.some(points, function (d) {
+            _.some(points, function(d) {
                 return $.isNumeric(row[d.field_name]);
             })
         )
@@ -284,7 +284,7 @@ class DataPivotVisualization extends D3Plot {
                 spacer_lines: [],
             },
             rows,
-            get_associated_style = function (style_type, style_name) {
+            get_associated_style = function(style_type, style_name) {
                 var defaults = {
                     symbols: StyleSymbol.default_settings,
                     lines: StyleLine.default_settings,
@@ -293,14 +293,14 @@ class DataPivotVisualization extends D3Plot {
                 };
 
                 return (
-                    self.dp_settings.styles[style_type].filter(function (v) {
+                    self.dp_settings.styles[style_type].filter(function(v) {
                         return v.name === style_name;
                     })[0] || defaults[style_type]()
                 );
             };
 
         // unpack data-bars (expects only one bar)
-        this.dp_settings.dataline_settings.forEach(function (datum) {
+        this.dp_settings.dataline_settings.forEach(function(datum) {
             settings.bars.low_field_name = datum.low_field_name;
             settings.bars.high_field_name = datum.high_field_name;
             settings.bars.header_name = datum.header_name;
@@ -308,7 +308,7 @@ class DataPivotVisualization extends D3Plot {
         });
 
         // unpack datapoints and data bar settings
-        this.dp_settings.datapoint_settings.forEach(function (datum) {
+        this.dp_settings.datapoint_settings.forEach(function(datum) {
             if (datum.field_name !== NULL_CASE) {
                 var copy = {};
 
@@ -331,7 +331,7 @@ class DataPivotVisualization extends D3Plot {
         }
 
         // unpack description settings
-        this.dp_settings.description_settings.forEach(function (datum) {
+        this.dp_settings.description_settings.forEach(function(datum) {
             if (datum.field_name !== NULL_CASE) {
                 var copy = {};
                 // get dpe settings (if any)
@@ -348,7 +348,7 @@ class DataPivotVisualization extends D3Plot {
         settings.filters = this.dp_settings.filters.filter(get_selected_fields);
 
         // unpack reference lines
-        this.dp_settings.reference_lines.forEach(function (datum) {
+        this.dp_settings.reference_lines.forEach(function(datum) {
             if ($.isNumeric(datum.value)) {
                 settings.reference_lines.push({
                     style: get_associated_style("lines", datum.line_style),
@@ -359,7 +359,7 @@ class DataPivotVisualization extends D3Plot {
         });
 
         // unpack reference rectangles
-        this.dp_settings.reference_rectangles.forEach(function (datum) {
+        this.dp_settings.reference_rectangles.forEach(function(datum) {
             if ($.isNumeric(datum.x1) && $.isNumeric(datum.x2)) {
                 settings.reference_rectangles.push({
                     style: get_associated_style("rectangles", datum.rectangle_style),
@@ -370,7 +370,7 @@ class DataPivotVisualization extends D3Plot {
         });
 
         // unpack labels
-        this.dp_settings.labels.forEach(function (d) {
+        this.dp_settings.labels.forEach(function(d) {
             d._style = get_associated_style("texts", d.style);
             settings.labels.push(d);
         });
@@ -387,7 +387,7 @@ class DataPivotVisualization extends D3Plot {
                     settings.barchart
                 )
             )
-            .map(function (d) {
+            .map(function(d) {
                 // unpack any column-level styles
                 let styles = {
                     bars: defaultLineSetting,
@@ -416,7 +416,7 @@ class DataPivotVisualization extends D3Plot {
                     )
                     .value();
 
-                return _.extend(d, { _styles: styles });
+                return _.extend(d, {_styles: styles});
             })
             .value();
 
@@ -433,7 +433,7 @@ class DataPivotVisualization extends D3Plot {
         );
 
         // row-overrides: remove (in separate loop, after offsets)
-        this.dp_settings.row_overrides.forEach(function (v) {
+        this.dp_settings.row_overrides.forEach(function(v) {
             if (v.include === false) {
                 for (var i = 0; i < rows.length; i++) {
                     if (rows[i]._dp_pk === v.pk) {
@@ -446,14 +446,14 @@ class DataPivotVisualization extends D3Plot {
 
         // condition-formatting overrides
         if (this.dp_settings.plot_settings.as_barchart) {
-            settings.barchart.conditional_formatting.forEach(function (cf) {
+            settings.barchart.conditional_formatting.forEach(function(cf) {
                 switch (cf.condition_type) {
                     case "discrete-style":
                         var hash = d3.map();
-                        cf.discrete_styles.forEach(function (d) {
+                        cf.discrete_styles.forEach(function(d) {
                             hash.set(d.key, d.style);
                         });
-                        rows.forEach(function (d) {
+                        rows.forEach(function(d) {
                             if (hash.get(d[cf.field_name]) === NULL_CASE) {
                                 return;
                             }
@@ -476,7 +476,7 @@ class DataPivotVisualization extends D3Plot {
                     switch (cf.condition_type) {
                         case "discrete-style":
                             cf.discrete_styles.forEach(d => hash.set(d.key, d.style));
-                            rows.forEach(function (d) {
+                            rows.forEach(function(d) {
                                 if (hash.get(d[cf.field_name]) !== NULL_CASE) {
                                     d._styles[styles] = get_associated_style(
                                         "lines",
@@ -491,8 +491,8 @@ class DataPivotVisualization extends D3Plot {
                     }
                 });
             });
-            this.dp_settings.datapoint_settings.forEach(function (datapoint, i) {
-                datapoint.conditional_formatting.forEach(function (cf) {
+            this.dp_settings.datapoint_settings.forEach(function(datapoint, i) {
+                datapoint.conditional_formatting.forEach(function(cf) {
                     var arr = rows.map(d => d[cf.field_name]),
                         vals = DataPivot.getRowDetails(arr),
                         styles = "points_" + i;
@@ -506,7 +506,7 @@ class DataPivotVisualization extends D3Plot {
                                     .domain(vals.range)
                                     .range([cf.min_size, cf.max_size]);
 
-                                rows.forEach(function (d) {
+                                rows.forEach(function(d) {
                                     if ($.isNumeric(d[cf.field_name])) {
                                         d._styles[styles] = $.extend({}, d._styles[styles]); //copy object
                                         d._styles[styles].size = pscale(d[cf.field_name]);
@@ -523,7 +523,7 @@ class DataPivotVisualization extends D3Plot {
                                     .interpolate(d3.interpolateRgb)
                                     .range([cf.min_color, cf.max_color]);
 
-                                rows.forEach(function (d) {
+                                rows.forEach(function(d) {
                                     if ($.isNumeric(d[cf.field_name])) {
                                         d._styles[styles] = $.extend({}, d._styles[styles]); //copy object
                                         d._styles[styles].fill = cscale(d[cf.field_name]);
@@ -535,7 +535,7 @@ class DataPivotVisualization extends D3Plot {
                         case "discrete-style":
                             var hash = d3.map();
                             cf.discrete_styles.forEach(d => hash.set(d.key, d.style));
-                            rows.forEach(function (d) {
+                            rows.forEach(function(d) {
                                 if (hash.get(d[cf.field_name]) !== NULL_CASE) {
                                     d._styles[styles] = get_associated_style(
                                         "symbols",
@@ -553,13 +553,13 @@ class DataPivotVisualization extends D3Plot {
         }
 
         // row-overrides: apply styles
-        this.dp_settings.row_overrides.forEach(function (v) {
+        this.dp_settings.row_overrides.forEach(function(v) {
             if (
                 v.text_style !== NULL_CASE ||
                 v.line_style !== NULL_CASE ||
                 v.symbol_style !== NULL_CASE
             ) {
-                rows.forEach(function (v2) {
+                rows.forEach(function(v2) {
                     if (v2._dp_pk === v.pk) {
                         for (var key in v2._styles) {
                             if (v.text_style !== NULL_CASE && key.substr(0, 4) === "text") {
@@ -583,7 +583,7 @@ class DataPivotVisualization extends D3Plot {
         rows.forEach((v, i) => (v._dp_index = i));
 
         // unpack extra spacers
-        this.dp_settings.spacers.forEach(function (v) {
+        this.dp_settings.spacers.forEach(function(v) {
             settings.spacers["row_" + v.index] = v;
             if (v.show_line && v.index > 0 && v.index <= rows.length) {
                 settings.spacer_lines.push({
@@ -601,14 +601,14 @@ class DataPivotVisualization extends D3Plot {
         this.title_str = this.dp_settings.plot_settings.title || "";
         this.x_label_text = this.dp_settings.plot_settings.axis_label || "";
         this.settings = settings;
-        this.headers = this.settings.descriptions.map(function (v, i) {
+        this.headers = this.settings.descriptions.map(function(v, i) {
             return {
                 row: 0,
                 col: i,
                 text: v.header_name,
                 style: get_associated_style("texts", v.header_style),
                 cursor: "auto",
-                onclick() { },
+                onclick() {},
                 max_width: v.max_width,
             };
         });
@@ -619,7 +619,7 @@ class DataPivotVisualization extends D3Plot {
         var merge_aggressive = this.dp_settings.plot_settings.merge_aggressive,
             merge_until = this.dp_settings.plot_settings.merge_until || this.datarows.length - 1,
             shouldMerge = this.dp_settings.plot_settings.merge_descriptions,
-            field_names = this.dp_settings.description_settings.map(function (v) {
+            field_names = this.dp_settings.description_settings.map(function(v) {
                 return v.field_name;
             }),
             i,
@@ -889,7 +889,7 @@ class DataPivotVisualization extends D3Plot {
             barPadding = 5,
             datarows = this.datarows,
             barchart = this.settings.barchart,
-            applyStyles = function (d, type) {
+            applyStyles = function(d, type) {
                 let obj = d3.select(this);
                 for (var property in d._styles[type]) {
                     obj.style(property, d._styles[type][property]);
@@ -1023,20 +1023,20 @@ class DataPivotVisualization extends D3Plot {
                     d3.symbol()
                         .size(d => d._styles["points_" + i].size)
                         .type(d => HAWCUtils.symbolStringToType(d._styles["points_" + i].type)
-                        )
+                    )
                 )
                 .attr(
                     "transform",
                     d => `translate(${x(d[datum.field_name])},${this.row_heights[d._dp_index].mid})`
                 )
-                .each(function (d) {
+                .each(function(d) {
                     var obj = d3.select(this);
                     for (var property in d._styles["points_" + i]) {
                         obj.style(property, d._styles["points_" + i][property]);
                     }
                 })
                 .style("cursor", d => (datum._dpe_key ? "pointer" : "auto"))
-                .on("click", function (d) {
+                .on("click", function(d) {
                     if (datum._dpe_key) {
                         self.dpe.render_plottip(datum, d);
                     }
@@ -1050,24 +1050,24 @@ class DataPivotVisualization extends D3Plot {
             g_labels = this.vis.append("g"),
             cursor = this.getCursorType(),
             label_drag = !this.editable
-                ? function () { }
-                : HAWCUtils.updateDragLocationXY(function (x, y) {
-                    var p = d3.select(this);
-                    p.data()[0].x = x;
-                    p.data()[0].y = y;
-                }),
+                ? function() {}
+                : HAWCUtils.updateDragLocationXY(function(x, y) {
+                      var p = d3.select(this);
+                      p.data()[0].x = x;
+                      p.data()[0].y = y;
+                  }),
             title_drag = !this.editable
-                ? function () { }
-                : HAWCUtils.updateDragLocationXY(function (x, y) {
-                    self.dp_settings.plot_settings.title_left = x;
-                    self.dp_settings.plot_settings.title_top = y;
-                }),
+                ? function() {}
+                : HAWCUtils.updateDragLocationXY(function(x, y) {
+                      self.dp_settings.plot_settings.title_left = x;
+                      self.dp_settings.plot_settings.title_top = y;
+                  }),
             xlabel_drag = !this.editable
-                ? function () { }
-                : HAWCUtils.updateDragLocationXY(function (x, y) {
-                    self.dp_settings.plot_settings.xlabel_left = x;
-                    self.dp_settings.plot_settings.xlabel_top = y;
-                });
+                ? function() {}
+                : HAWCUtils.updateDragLocationXY(function(x, y) {
+                      self.dp_settings.plot_settings.xlabel_left = x;
+                      self.dp_settings.plot_settings.xlabel_top = y;
+                  });
 
         g_labels
             .selectAll("text")
@@ -1079,7 +1079,7 @@ class DataPivotVisualization extends D3Plot {
             .text(d => d.text)
             .attr("cursor", cursor)
             .attr("class", "with_whitespace")
-            .each(function (d) {
+            .each(function(d) {
                 apply_text_styles(this, d._style);
             })
             .call(label_drag);
@@ -1109,7 +1109,7 @@ class DataPivotVisualization extends D3Plot {
          * for each cell by column.
          */
         var self = this,
-            apply_text_styles = function (obj, styles) {
+            apply_text_styles = function(obj, styles) {
                 obj = d3.select(obj);
                 for (var property in styles) {
                     obj.style(property, styles[property]);
@@ -1132,9 +1132,9 @@ class DataPivotVisualization extends D3Plot {
         // build n x m array-matrix of text-component-data (including header, where):
         // n = number of rows, m = number of columns
         matrix = [this.headers];
-        this.datarows.forEach(function (v, i) {
+        this.datarows.forEach(function(v, i) {
             row = [];
-            self.settings.descriptions.forEach(function (desc, j) {
+            self.settings.descriptions.forEach(function(desc, j) {
                 var txt = v[desc.field_name];
                 if ($.isNumeric(txt)) {
                     if (txt % 1 === 0) txt = parseInt(txt, 10);
@@ -1179,19 +1179,19 @@ class DataPivotVisualization extends D3Plot {
             .attr("x", 0)
             .attr("y", 0)
             .attr("class", "with_whitespace")
-            .text(function (d) {
+            .text(function(d) {
                 // return "display" version of object, or object
                 var dObj = HAWCUtils.parseJsonOrNull(d.text);
                 return dObj !== null && dObj.display !== undefined ? dObj.display : d.text;
             })
             .style("cursor", d => d.cursor)
             .on("click", d => d.onclick())
-            .each(function (d) {
+            .each(function(d) {
                 apply_text_styles(this, d.style);
             });
 
         // apply wrap text method
-        this.headers.forEach(function (v, i) {
+        this.headers.forEach(function(v, i) {
             let textColumn = self.g_text_columns.selectAll("text").filter(v => v.col === i);
 
             // wrap text if we have to
@@ -1201,7 +1201,7 @@ class DataPivotVisualization extends D3Plot {
 
             // get maximum column dimension and layout columns
             const maxWidth = d3.max(textColumn.nodes().map(v => v.getBBox().width));
-            textColumn.each(function () {
+            textColumn.each(function() {
                 var val = d3.select(this),
                     anchor = val.style("text-anchor");
                 if (anchor === "end") {
@@ -1226,7 +1226,7 @@ class DataPivotVisualization extends D3Plot {
             text_rows = this.text_rows.nodes(),
             j;
 
-        text_rows.forEach(function (v, i) {
+        text_rows.forEach(function(v, i) {
             v = d3.select(v).selectAll("text").nodes()
             for (j = 0; j < v.length; j++) {
                 var val = d3.select(v[j]);
@@ -1235,9 +1235,9 @@ class DataPivotVisualization extends D3Plot {
             }
 
             // get maximum-height of rendered text, and row-height
-            var cellHeights = v.map(function (v) {
-                return v.getBBox().height;
-            }),
+            var cellHeights = v.map(function(v) {
+                    return v.getBBox().height;
+                }),
                 actual_height = d3.max(cellHeights),
                 row_height = d3.max([min_row_height, actual_height]);
 
@@ -1252,10 +1252,10 @@ class DataPivotVisualization extends D3Plot {
                     if (j === i + 1) {
                         let next_row = d3.select(text_rows[j]).selectAll("text").nodes()
                         next_row
-                            .map(function (v) {
+                            .map(function(v) {
                                 return v.getBBox().height;
                             })
-                            .forEach(function (d, i) {
+                            .forEach(function(d, i) {
                                 if (d > 0) min_height = Math.max(min_height, cellHeights[i]);
                             });
                     }
@@ -1299,7 +1299,7 @@ class DataPivotVisualization extends D3Plot {
 
         // remove blank text elements; can mess-up size calculations
         $(
-            _.filter(this.g_text_columns.selectAll("text")[0], function (d) {
+            _.filter(this.g_text_columns.selectAll("text")[0], function(d) {
                 return d.textContent.length === 0;
             })
         ).remove();

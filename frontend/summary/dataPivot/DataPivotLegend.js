@@ -3,8 +3,8 @@ import * as d3 from "d3";
 
 import HAWCUtils from "utils/HAWCUtils";
 
-import { StyleSymbol, StyleLine, StyleRectangle } from "./Styles";
-import { NULL_CASE } from "./shared";
+import {StyleSymbol, StyleLine, StyleRectangle} from "./Styles";
+import {NULL_CASE} from "./shared";
 
 class DataPivotLegend {
     constructor(vis, settings, dp_settings, options) {
@@ -12,7 +12,7 @@ class DataPivotLegend {
         this.settings = settings;
         this.dp_settings = dp_settings;
         this.selects = [];
-        this.options = options || { offset: false };
+        this.options = options || {offset: false};
         if (this.settings.show) this._draw_legend();
     }
 
@@ -22,7 +22,7 @@ class DataPivotLegend {
             left: 5,
             top: 5,
             columns: 1,
-            style: { border_color: "#666666", border_width: "2px" },
+            style: {border_color: "#666666", border_width: "2px"},
             fields: [],
         };
     }
@@ -43,7 +43,7 @@ class DataPivotLegend {
     }
 
     _build_options() {
-        return this.settings.fields.map(function (v) {
+        return this.settings.fields.map(function(v) {
             return $(`<option value="${v.label}">${v.label}</option>`).data("d", v);
         });
     }
@@ -57,18 +57,18 @@ class DataPivotLegend {
         var self = this,
             cursor = this.options.editable ? "pointer" : "auto",
             buffer = 5,
-            apply_styles = function (d) {
+            apply_styles = function(d) {
                 var obj = d3.select(this);
                 for (var property in d.style) {
                     obj.style(property, d.style[property]);
                 }
             },
             drag = !this.options.editable
-                ? function () { }
-                : HAWCUtils.updateDragLocationTransform(function (x, y) {
-                    self.settings.left = parseInt(x, 10);
-                    self.settings.top = parseInt(y, 10);
-                });
+                ? function() {}
+                : HAWCUtils.updateDragLocationTransform(function(x, y) {
+                      self.settings.left = parseInt(x, 10);
+                      self.settings.top = parseInt(y, 10);
+                  });
 
         this.legend = this.vis.append("g");
 
@@ -98,7 +98,7 @@ class DataPivotLegend {
         this.legend_columns = [];
 
         // add bars
-        this.settings.fields.forEach(function (datum, i) {
+        this.settings.fields.forEach(function(datum, i) {
             if (i % rows === 0) {
                 colg = self.legend.append("g");
                 self.legend_columns.push(colg);
@@ -158,16 +158,16 @@ class DataPivotLegend {
                     ])
                     .enter()
                     .append("svg:line")
-                    .attr("x1", function (v) {
+                    .attr("x1", function(v) {
                         return v.x1;
                     })
-                    .attr("x2", function (v) {
+                    .attr("x2", function(v) {
                         return v.x2;
                     })
-                    .attr("y1", function (v) {
+                    .attr("y1", function(v) {
                         return v.y1;
                     })
-                    .attr("y2", function (v) {
+                    .attr("y2", function(v) {
                         return v.y2;
                     })
                     .each(apply_styles);
@@ -206,10 +206,10 @@ class DataPivotLegend {
                 .attr("x", 2 * buffer + text_x_offset)
                 .attr("class", "legend_text")
                 .attr("dy", "3.5px")
-                .attr("y", function (d) {
+                .attr("y", function(d) {
                     return (row_index + 0.5) * vertical_spacing;
                 })
-                .text(function (d) {
+                .text(function(d) {
                     return d.label;
                 });
 
@@ -222,7 +222,7 @@ class DataPivotLegend {
             this.legend_columns[i].attr("transform", `translate(${offset},0)`);
         }
 
-        var resize_legend = function () {
+        var resize_legend = function() {
             var dim = self.legend.node().getBoundingClientRect();
             self.legend
                 .select("rect")
@@ -235,19 +235,19 @@ class DataPivotLegend {
 
     add_or_update_field(obj, legend_item) {
         if (isFinite(obj.symbol_index)) {
-            legend_item = this.settings.fields.filter(function (v) {
+            legend_item = this.settings.fields.filter(function(v) {
                 return v.symbol_index === obj.symbol_index;
             })[0];
         }
 
         if (isFinite(obj.line_index)) {
-            legend_item = this.settings.fields.filter(function (v) {
+            legend_item = this.settings.fields.filter(function(v) {
                 return v.line_index === obj.line_index;
             })[0];
         }
 
         if (obj.keyField !== undefined) {
-            legend_item = this.settings.fields.filter(function (v) {
+            legend_item = this.settings.fields.filter(function(v) {
                 return v.keyField === obj.keyField;
             })[0];
         }
@@ -267,7 +267,7 @@ class DataPivotLegend {
 
     _get_symbol_style(field) {
         return (
-            this.dp_settings.styles.symbols.filter(function (v) {
+            this.dp_settings.styles.symbols.filter(function(v) {
                 return v.name === field.symbol_style;
             })[0] || StyleSymbol.default_settings()
         );
@@ -275,7 +275,7 @@ class DataPivotLegend {
 
     _get_line_style(field) {
         return (
-            this.dp_settings.styles.lines.filter(function (v) {
+            this.dp_settings.styles.lines.filter(function(v) {
                 return v.name === field.line_style;
             })[0] || StyleLine.default_settings()
         );
@@ -283,7 +283,7 @@ class DataPivotLegend {
 
     _get_rect_style(field) {
         return (
-            this.dp_settings.styles.rectangles.filter(function (v) {
+            this.dp_settings.styles.rectangles.filter(function(v) {
                 return v.name === field.rect_style;
             })[0] || StyleRectangle.default_settings()
         );
