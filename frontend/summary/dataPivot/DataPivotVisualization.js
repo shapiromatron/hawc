@@ -1020,10 +1020,10 @@ class DataPivotVisualization extends D3Plot {
                 .append("path")
                 .attr(
                     "d",
-                    d3.svg
-                        .symbol()
+                    d3.symbol()
                         .size(d => d._styles["points_" + i].size)
-                        .type(d => d._styles["points_" + i].type)
+                        .type(d => HAWCUtils.symbolStringToType(d._styles["points_" + i].type)
+                    )
                 )
                 .attr(
                     "transform",
@@ -1200,7 +1200,7 @@ class DataPivotVisualization extends D3Plot {
             }
 
             // get maximum column dimension and layout columns
-            const maxWidth = d3.max(textColumn[0].map(v => v.getBBox().width));
+            const maxWidth = d3.max(textColumn.nodes().map(v => v.getBBox().width));
             textColumn.each(function() {
                 var val = d3.select(this),
                     anchor = val.style("text-anchor");
@@ -1223,10 +1223,11 @@ class DataPivotVisualization extends D3Plot {
         var merged_row_height,
             extra_space,
             prior_extra = 0,
-            text_rows = this.text_rows.selectAll("text"),
+            text_rows = this.text_rows.nodes(),
             j;
 
         text_rows.forEach(function(v, i) {
+            v = d3.select(v).selectAll("text").nodes()
             for (j = 0; j < v.length; j++) {
                 var val = d3.select(v[j]);
                 val.attr("y", textPadding + top);
@@ -1249,7 +1250,8 @@ class DataPivotVisualization extends D3Plot {
                 for (j = i + 1; j < self.datarows.length; j++) {
                     // the row height should be the maximum-height of a non-merged cell
                     if (j === i + 1) {
-                        text_rows[j]
+                        let next_row = d3.select(text_rows[j]).selectAll("text").nodes()
+                        next_row
                             .map(function(v) {
                                 return v.getBBox().height;
                             })
@@ -1312,7 +1314,7 @@ class DataPivotVisualization extends D3Plot {
     layout_plot() {
         // Top-location to equal to the first-data row
         // Left-location to equal size of text plus left-padding
-        var headerDims = this.g_text_columns.selectAll("g")[0][1].getBBox(),
+        var headerDims = this.g_text_columns.selectAll("g").nodes()[1].getBBox(),
             top = headerDims.y - this.textPadding,
             textDims = this.g_text_columns.node().getBBox(),
             left = textDims.width + textDims.x + this.padding.left;

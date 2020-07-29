@@ -274,6 +274,25 @@ class HAWCUtils {
             typeof args[number] !== "undefined" ? args[number] : match
         );
     }
+
+    static symbolStringToType(str) {
+        switch(str) {
+            case "circle":
+                return d3.symbolCircle
+            case "cross":
+                return d3.symbolCross
+            case "diamond":
+                return d3.symbolDiamond
+            case "square":
+                return d3.symbolSquare
+            case "star":
+                return d3.symbolStar
+            case "triangle":
+                return d3.symbolTriangle
+            case "wye":
+                return d3.symbolWye
+        }
+    }
 }
 
 export default HAWCUtils;

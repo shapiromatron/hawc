@@ -189,10 +189,9 @@ class DataPivotLegend {
                     .append("path")
                     .attr(
                         "d",
-                        d3.svg
-                            .symbol()
+                        d3.symbol()
                             .size(style.size)
-                            .type(style.type)
+                            .type(HAWCUtils.symbolStringToType(style.type))
                     )
                     .attr("transform", d => `translate(${d.x},${d.y})`)
                     .each(apply_styles);
