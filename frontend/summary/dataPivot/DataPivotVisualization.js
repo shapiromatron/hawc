@@ -1020,10 +1020,10 @@ class DataPivotVisualization extends D3Plot {
                 .append("path")
                 .attr(
                     "d",
-                    d3.symbol()
+                    d3
+                        .symbol()
                         .size(d => d._styles["points_" + i].size)
-                        .type(d => HAWCUtils.symbolStringToType(d._styles["points_" + i].type)
-                    )
+                        .type(d => HAWCUtils.symbolStringToType(d._styles["points_" + i].type))
                 )
                 .attr(
                     "transform",
@@ -1227,7 +1227,10 @@ class DataPivotVisualization extends D3Plot {
             j;
 
         text_rows.forEach(function(v, i) {
-            v = d3.select(v).selectAll("text").nodes()
+            v = d3
+                .select(v)
+                .selectAll("text")
+                .nodes();
             for (j = 0; j < v.length; j++) {
                 var val = d3.select(v[j]);
                 val.attr("y", textPadding + top);
@@ -1250,7 +1253,10 @@ class DataPivotVisualization extends D3Plot {
                 for (j = i + 1; j < self.datarows.length; j++) {
                     // the row height should be the maximum-height of a non-merged cell
                     if (j === i + 1) {
-                        let next_row = d3.select(text_rows[j]).selectAll("text").nodes()
+                        let next_row = d3
+                            .select(text_rows[j])
+                            .selectAll("text")
+                            .nodes();
                         next_row
                             .map(function(v) {
                                 return v.getBBox().height;
@@ -1314,7 +1320,10 @@ class DataPivotVisualization extends D3Plot {
     layout_plot() {
         // Top-location to equal to the first-data row
         // Left-location to equal size of text plus left-padding
-        var headerDims = this.g_text_columns.selectAll("g").nodes()[1].getBBox(),
+        var headerDims = this.g_text_columns
+                .selectAll("g")
+                .nodes()[1]
+                .getBBox(),
             top = headerDims.y - this.textPadding,
             textDims = this.g_text_columns.node().getBBox(),
             left = textDims.width + textDims.x + this.padding.left;

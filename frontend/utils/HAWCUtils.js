@@ -276,35 +276,35 @@ class HAWCUtils {
     }
 
     static symbolStringToType(str) {
-        switch(str) {
+        switch (str) {
             case "circle":
-                return d3.symbolCircle
+                return d3.symbolCircle;
             case "cross":
-                return d3.symbolCross
+                return d3.symbolCross;
             case "diamond":
-                return d3.symbolDiamond
+                return d3.symbolDiamond;
             case "square":
-                return d3.symbolSquare
+                return d3.symbolSquare;
             case "star":
-                return d3.symbolStar
+                return d3.symbolStar;
             case "triangle":
             case "triangle-up":
-                return d3.symbolTriangle
+                return d3.symbolTriangle;
             case "triangle-down":
                 return {
-                    draw: function (context, size) {
+                    draw: function(context, size) {
                         var sqrt3 = Math.sqrt(3),
                             y = -Math.sqrt(size / (sqrt3 * 3));
                         context.moveTo(0, -y);
                         context.lineTo(-sqrt3 * y, y * 2);
                         context.lineTo(sqrt3 * y, y * 2);
                         context.closePath();
-                    }
-                }
+                    },
+                };
             case "wye":
-                return d3.symbolWye
+                return d3.symbolWye;
             default:
-                console.error(`Unrecognized filter: ${str}`)
+                console.error(`Unrecognized filter: ${str}`);
         }
     }
 }

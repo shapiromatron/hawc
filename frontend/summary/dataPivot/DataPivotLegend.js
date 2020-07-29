@@ -189,7 +189,8 @@ class DataPivotLegend {
                     .append("path")
                     .attr(
                         "d",
-                        d3.symbol()
+                        d3
+                            .symbol()
                             .size(style.size)
                             .type(HAWCUtils.symbolStringToType(style.type))
                     )

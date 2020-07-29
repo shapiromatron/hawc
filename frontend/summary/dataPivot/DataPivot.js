@@ -33,20 +33,22 @@ class DataPivot {
 
     static get_object(pk, callback) {
         $.get(`/summary/api/data_pivot/${pk}/`, function(d) {
-            d3.tsv(d.data_url, (row, idx) => DataPivot.massage_row(row, idx))
-                .then(data=>{
+            d3.tsv(d.data_url, (row, idx) => DataPivot.massage_row(row, idx)).then(
+                data => {
                     var dp = new DataPivot(data, d.settings, {}, d.title, d.url);
                     if (callback) {
                         callback(dp);
                     } else {
                         return dp;
                     }
-                },error=>{
-                        if (error.status === 500) {
-                            alert("An error occurred; if the error continues please contact us.");
-                            throw "Server error";
-                        }
-                });
+                },
+                error => {
+                    if (error.status === 500) {
+                        alert("An error occurred; if the error continues please contact us.");
+                        throw "Server error";
+                    }
+                }
+            );
         });
     }
 
