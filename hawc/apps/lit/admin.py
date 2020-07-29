@@ -61,6 +61,6 @@ class ReferenceAdmin(admin.ModelAdmin):
         "full_text_url",
         "created",
     )
-    list_filter = ("year", "assessment")
+    list_filter = ("year", ("assessment", admin.RelatedOnlyFieldListFilter))
     raw_id_fields = ("searches", "identifiers")
     search_fields = ("title", "authors", "year")

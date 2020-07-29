@@ -196,3 +196,32 @@ class BulkReferenceTagSerializer(serializers.Serializer):
             models.ReferenceTags.objects.bulk_create(new_tags)
 
             models.Reference.delete_cache(assessment_id)
+
+
+class ReferenceSerializer(serializers.ModelSerializer):
+    tags = serializers.ListField(write_only=True)
+
+    def validate_tags(self, value):
+        valid_tags = models.ReferenceFilterTag.get_assessment_qs(
+            self.instance.assessment_id
+        ).filter(id__in=value)
+        if valid_tags.count() != len(value):
+            raise serializers.ValidationError(f"All tag ids are not from this assessment")
+        return value
+
+    @transaction.atomic()
+    def update(self, instance, validated_data):
+
+        # updates the reference tags
+        if "tags" in validated_data:
+            instance.tags.set(validated_data.pop("tags"))
+        # updates the rest of the fields
+        for attr, value in list(validated_data.items()):
+            setattr(instance, attr, value)
+
+        instance.save()
+        return instance
+
+    class Meta:
+        model = models.Reference
+        fields = "__all__"

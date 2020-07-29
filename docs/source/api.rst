@@ -28,22 +28,22 @@ Using a notebook or python shell:
     # get all references for an assessment
     client.lit.references(assessment_id=123)
 
-    # import new references to an assessment
-    client.lit.import_hero(
-        assessment_id=123,
-        title="example title",
-        description="example description",
-        ids=[5000,5010]
-    )
-
 There are many more commands available in the HAWC client that aren't documented here. It is recommended to use an interactive terminal session using a jupyter notebook to browse the available methods and their docstrings for more details.
 
-Jupyter notebook tutorials are available for a deeper dive into using the client:
+Tutorials
+~~~~~~~~~
 
-- `Creating bioassay data`_
-- ...
+Client tutorials for common operations are below:
 
-.. _`Creating bioassay data`: https://github.com/shapiromatron/hawc/blob/master/scripts/client-create-bioassay-data.ipynb
+- Literature: `Adding/modifying/deleting references`_
+- Literature: `Tagging references`_
+- Risk of bias/study evaluation: `Adding evaluations`_
+- Bioassay: `Creating bioassay data`_
+
+.. _`Adding/modifying/deleting references`: https://github.com/shapiromatron/hawc/blob/master/scripts/client/lit-crud-references.ipynb
+.. _`Tagging references`:                   https://github.com/shapiromatron/hawc/blob/master/scripts/client/lit-tagging-references.ipynb
+.. _`Adding evaluations`:                   https://github.com/shapiromatron/hawc/blob/master/scripts/client/rob-evaluations.ipynb
+.. _`Creating bioassay data`:               https://github.com/shapiromatron/hawc/blob/master/scripts/client/bioassay-crud.ipynb
 
 R HAWC client
 -------------
@@ -56,17 +56,14 @@ An R client is also available. To install and use:
     library(rhawc)
 
     client = HawcClient("https://hawcproject.org")
-    client$authenticate("me@me.com", "keep-it-hidden")
+    client$authenticate("me@me.com", getPass::getPass())
 
-    hero_ids = list(500:520)
-    client$lit_import_hero(
-        assessment_id=123,
-        title="example title",
-        description="example description",
-        ids=hero_ids
-    )
+    # get all references for an assessment
+    client$lit_references(assessment_id=123)
 
-Please note that the Python client is considered the reference implementation for a HAWC client and will include the latest features; the R client may be a little behind.
+Please note that the Python client is considered the reference implementation for a HAWC client and will include the latest features; the R client may be a little behind. A high-level notebook we use for testing is available to see how the R client works: `R tutorial`_. For more detailed trainings, see the Python notebook tutorials above.
+
+.. _`R tutorial`: https://github.com/shapiromatron/hawc/blob/master/scripts/client/r-client.ipynb
 
 API access
 ----------
