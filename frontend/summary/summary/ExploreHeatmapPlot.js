@@ -736,51 +736,55 @@ class ExploreHeatmapPlot {
                 const backgroundColor = d.type == "cell" ? cellColor(d) : totalColor(d);
                 return h.getTextContrastColor(backgroundColor);
             },
-            t = this.cells.transition().duration(500);
+            t = this.cells.transition().duration(100);
 
         this.cells
             .selectAll(".exp_heatmap_cell")
             .data(data, d => d.index)
-            .join(enter => {
-                let g = enter
-                    .append("g")
-                    .attr("class", "exp_heatmap_cell")
-                    .on("click", d => {
-                        if (d.rows.length > 0) {
-                            self.store.setTableDataFilters(d);
-                        } else {
-                            self.store.setTableDataFilters(new Set());
-                        }
-                    });
+            .join(
+                enter => {
+                    let g = enter
+                        .append("g")
+                        .attr("class", "exp_heatmap_cell")
+                        .on("click", d => {
+                            if (d.rows.length > 0) {
+                                self.store.setTableDataFilters(d);
+                            } else {
+                                self.store.setTableDataFilters(new Set());
+                            }
+                        });
 
-                g.append("rect")
-                    .attr("class", "exp_heatmap_cell_block")
-                    .attr("x", d => this.x_scale(d.x_step))
-                    .attr("y", d => this.y_scale(d.y_step))
-                    .attr("width", this.x_scale.bandwidth())
-                    .attr("height", this.y_scale.bandwidth());
+                    g.append("rect")
+                        .attr("class", "exp_heatmap_cell_block")
+                        .attr("x", d => this.x_scale(d.x_step))
+                        .attr("y", d => this.y_scale(d.y_step))
+                        .attr("width", this.x_scale.bandwidth())
+                        .attr("height", this.y_scale.bandwidth())
+                        .style("fill", d => (d.type == "cell" ? cellColor(d) : totalColor(d)));
 
-                g.append("text")
-                    .attr("class", "exp_heatmap_cell_text")
-                    .attr("x", d => this.x_scale(d.x_step) + this.x_scale.bandwidth() / 2)
-                    .attr("y", d => this.y_scale(d.y_step) + this.y_scale.bandwidth() / 2)
-                    .style("font-weight", d => (d.type == "total" ? "bold" : null));
-            });
+                    g.append("text")
+                        .attr("class", "exp_heatmap_cell_text")
+                        .attr("x", d => this.x_scale(d.x_step) + this.x_scale.bandwidth() / 2)
+                        .attr("y", d => this.y_scale(d.y_step) + this.y_scale.bandwidth() / 2)
+                        .style("font-weight", d => (d.type == "total" ? "bold" : null))
+                        .style("fill", textColor)
+                        .style("display", d => (d.rows.length == 0 ? "none" : null))
+                        .text(d => d.rows.length);
+                },
+                update => {
+                    update
+                        .select(".exp_heatmap_cell_block")
+                        .transition(t)
+                        .style("fill", d => (d.type == "cell" ? cellColor(d) : totalColor(d)));
 
-        // enter/update
-        this.cells
-            .selectAll(".exp_heatmap_cell_block")
-            .transition(t)
-            .delay((d, i) => i * 5)
-            .style("fill", d => (d.type == "cell" ? cellColor(d) : totalColor(d)));
-
-        this.cells
-            .selectAll(".exp_heatmap_cell_text")
-            .transition(t)
-            .delay((d, i) => i * 5)
-            .style("fill", textColor)
-            .style("display", d => (d.rows.length == 0 ? "none" : null))
-            .text(d => d.rows.length);
+                    update
+                        .select(".exp_heatmap_cell_text")
+                        .transition(t)
+                        .style("fill", textColor)
+                        .style("display", d => (d.rows.length == 0 ? "none" : null))
+                        .text(d => d.rows.length);
+                }
+            );
     };
 
     build_plot() {
