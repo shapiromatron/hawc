@@ -1,4 +1,4 @@
-.PHONY: build dev docs servedocs lint format lint-py format-py lint-js format-js test test-refresh coverage flynt
+.PHONY: build dev docs loc servedocs lint format lint-py format-py lint-js format-js test test-refresh coverage
 .DEFAULT_GOAL := help
 define BROWSER_PYSCRIPT
 import os, webbrowser, sys
@@ -44,6 +44,14 @@ docs: ## Generate Sphinx HTML documentation, including API docs
 	$(MAKE) -C docs html
 	$(BROWSER) docs/_build/html/index.html
 
+loc: ## Generate lines of code report
+	@cloc \
+		--exclude-dir=debug,migrations,node_modules,public,private,vendor,venv \
+		--exclude-ext=json,yaml,svg,toml,ini \
+		--vcs=git \
+		--counted loc-files.txt \
+		.
+
 servedocs: docs ## Compile the docs watching for changes
 	watchmedo shell-command -p '*.rst' -c '$(MAKE) -C docs html' -R -D .
 
@@ -74,6 +82,3 @@ coverage:  ## Run coverage and create html report
 	coverage run -m pytest
 	coverage html -d coverage_html
 	@echo "Report ready: ./coverage_html/index.html"
-
-flynt:  ## Run flynt (optional) using preferred config
-	@flynt --verbose --line_length=120 hawc/
