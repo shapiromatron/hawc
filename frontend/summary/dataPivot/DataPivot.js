@@ -166,18 +166,16 @@ class DataPivot {
     static displayEditView(data_url, settings, options) {
         var dp;
 
-        d3.tsv(data_url)
-            .row((d, i) => DataPivot.massage_row(d, i))
-            .get((error, data) => {
-                $("#loading_div").fadeOut();
-                dp = new DataPivot(data, settings, {
-                    update: true,
-                    container: options.container,
-                    data_div: options.dataDiv,
-                    settings_div: options.settingsDiv,
-                    display_div: options.displayDiv,
-                });
+        d3.tsv(data_url, (d, i) => DataPivot.massage_row(d, i)).then(data => {
+            $("#loading_div").fadeOut();
+            dp = new DataPivot(data, settings, {
+                update: true,
+                container: options.container,
+                data_div: options.dataDiv,
+                settings_div: options.settingsDiv,
+                display_div: options.displayDiv,
             });
+        });
 
         $(options.submissionDiv).submit(function() {
             $(options.settingsField).val(dp.get_settings_json());
