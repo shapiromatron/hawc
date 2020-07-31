@@ -326,8 +326,10 @@ class TestClient(LiveServerTestCase, TestCase):
         client.authenticate("pm@pm.com", "pw")
 
         assessment_id = self.db_keys.assessment_working
+
         references = Reference.objects.filter(assessment_id=assessment_id)
-        # Unset some reference fields
+
+        assert references.filter(title="").count() > 0
 
         response = client.lit.update_references_from_hero(assessment_id)
         assert response is None

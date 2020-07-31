@@ -20,7 +20,7 @@ def update_hero_content(ids: List[int]):
 
     Identifiers = apps.get_model("lit", "identifiers")
 
-    fetcher = hero.HEROFetch(ids)
+    fetcher = hero.HEROFetch(sorted(ids))
     contents = fetcher.get_content()
     for d in contents.get("success"):
 
