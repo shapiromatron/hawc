@@ -1,5 +1,4 @@
 import pytest
-from rest_framework.serializers import ValidationError
 
 from hawc.apps.assessment.models import Assessment
 from hawc.apps.lit import constants
@@ -92,9 +91,9 @@ def test_BulkReferenceTagSerializer(db_keys):
 @pytest.mark.vcr
 @pytest.mark.django_db
 class TestReferenceReplaceHeroIdSerializer:
-    def test_valid(self, db_keys):
+    def test_valid_new_ids(self, db_keys):
         """
-        For a valid case we'll test a HERO ID swap
+        Test case where we add new hero references
         """
         ref_ids = [db_keys.reference_linked, db_keys.reference_unlinked]
         refs = Reference.objects.filter(id__in=ref_ids)
@@ -117,10 +116,38 @@ class TestReferenceReplaceHeroIdSerializer:
             "Accumulation of environmental risks to human health: Geographical differences in the Netherlands",
         ]
 
+    def test_valid_swap(self, db_keys):
+        """
+        Swap IDs on existing references.
+        """
+        ref_ids = [db_keys.reference_linked, db_keys.reference_unlinked]
+        refs = Reference.objects.filter(id__in=ref_ids)
+        old_titles = [ref.title for ref in refs]
+        assessment = refs[0].assessment
+        data = {
+            "replace": [
+                [refs[0].id, int(refs[1].identifiers.get(database=constants.HERO).unique_id)],
+                [refs[1].id, int(refs[0].identifiers.get(database=constants.HERO).unique_id)],
+            ]
+        }
+
+        serializer = ReferenceReplaceHeroIdSerializer(data=data, context={"assessment": assessment})
+        assert serializer.is_valid()
+        ret = serializer.execute()
+        assert ret.successful()
+
+        # check new titles
+        refs = refs.all()
+        new_titles = [ref.title for ref in refs]
+        assert old_titles != new_titles
+        assert new_titles == [
+            "Asbestos-induced lung injury in the sheep model: the initial alveolitis",
+            "Early lung events following low-dose asbestos exposure",
+        ]
+
     def test_duplicate(self, db_keys):
         """
-        Test a replace that will result in two references with
-        the same HERO ID
+        Replace would result in two references with the same HERO ID
         """
         ref_ids = [db_keys.reference_linked, db_keys.reference_unlinked]
         refs = Reference.objects.filter(id__in=ref_ids)

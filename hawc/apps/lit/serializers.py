@@ -1,4 +1,6 @@
+import itertools
 import logging
+from collections import Counter
 from io import StringIO
 from typing import List
 
@@ -259,15 +261,22 @@ class ReferenceReplaceHeroIdSerializer(serializers.Serializer):
                 f"Reference IDs not all from assessment {assessment.id}."
             )
 
-        # make sure that HERO IDs are unique for all references in an assessment
-        existing_hero_ids = set(
-            int(el)
-            for el in models.Identifiers.objects.filter(
-                references__assessment=assessment.id, database=constants.HERO
-            ).values_list("unique_id", flat=True)
+        # make sure HERO IDs are unique for all references in an assessment
+
+        # get hero ids for unmodified references
+        references_diff = (
+            models.Reference.objects.hero_references(assessment.id)
+            .difference(references)
+            .values_list("id", flat=True)
         )
-        duplicates = existing_hero_ids.intersection(set(self.hero_ids))
-        # are there duplice HERO references?
+        existing_hero_ids = [
+            int(id_)
+            for id_ in models.Identifiers.objects.filter(
+                references__in=references_diff, database=constants.HERO
+            ).values_list("unique_id", flat=True)
+        ]
+        hero_counts = Counter(itertools.chain(existing_hero_ids, self.hero_ids))
+        duplicates = [key for key, count in hero_counts.items() if count > 1]
         if len(duplicates) > 0:
             raise serializers.ValidationError(
                 f"Duplicate HERO IDs in assessment: {list(duplicates)}"
