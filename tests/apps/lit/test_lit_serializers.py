@@ -3,11 +3,7 @@ from rest_framework.serializers import ValidationError
 
 from hawc.apps.assessment.models import Assessment
 from hawc.apps.lit.models import Reference, ReferenceTags
-from hawc.apps.lit.serializers import (
-    BulkReferenceTagSerializer,
-    ReferenceReplaceHeroIdSerializer,
-    ReferenceUpdateSerializer,
-)
+from hawc.apps.lit.serializers import BulkReferenceTagSerializer, ReferenceReplaceHeroIdSerializer
 
 
 @pytest.mark.django_db
@@ -90,25 +86,6 @@ def test_BulkReferenceTagSerializer(db_keys):
         )
         == csv
     )
-
-
-@pytest.mark.vcr
-@pytest.mark.django_db
-class TestReferenceUpdateSerializer:
-    def test_valid(self, db_keys):
-        ref_ids = [db_keys.reference_linked, db_keys.reference_unlinked]
-        refs = Reference.objects.filter(id__in=ref_ids)
-        serializer = ReferenceUpdateSerializer(data={"replace": refs})
-        assert serializer.is_valid() is False
-
-        ret = serializer.execute()
-        assert ret.successful()
-
-        assert refs[0].title == "Early lung events following low-dose asbestos exposure"
-        assert (
-            refs[1].title
-            == "Asbestos-induced lung injury in the sheep model: the initial alveolitis"
-        )
 
 
 @pytest.mark.vcr

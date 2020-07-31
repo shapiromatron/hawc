@@ -10,6 +10,7 @@ from urllib import parse
 
 import pandas as pd
 from celery import chain
+from celery.result import ResultBase
 from django.apps import apps
 from django.conf import settings
 from django.core.cache import cache
@@ -762,13 +763,13 @@ class Reference(models.Model):
             )
 
     @classmethod
-    def update_hero_metadata(cls, assessment_id: int):
+    def update_hero_metadata(cls, assessment_id: int) -> ResultBase:
         """Update reference metadata for all references in an assessment.
 
         Async worker task; updates data from HERO and then applies new data to references.
         """
         reference_ids = cls.objects.hero_references(assessment_id).values_list("id", flat=True)
-        identifiers = models.Identifiers.objects.filter(
+        identifiers = Identifiers.objects.filter(
             references__in=reference_ids, database=constants.HERO
         )
         hero_ids = identifiers.values_list("unique_id", flat=True)
@@ -780,7 +781,7 @@ class Reference(models.Model):
         t2 = tasks.update_hero_fields.si(reference_ids)
 
         # run chained tasks
-        chain(t1, t2)()
+        return chain(t1, t2)()
 
     @property
     def ref_full_citation(self):
