@@ -298,7 +298,7 @@ class TestHEROApis:
 
     def test_bad_replace_requests(self, db_keys):
 
-        # test nonexistant assessment
+        # test nonexistent assessment
         url = reverse("lit:api:assessment-replace-hero", args=(100,))
         data = {"replace": [[db_keys.reference_linked, 1]]}
 
@@ -342,7 +342,7 @@ class TestHEROApis:
         assert updated_reference.title == "Early lung events following low-dose asbestos exposure"
 
     def test_bad_update_requests(self, db_keys):
-        # test nonexistant assessment
+        # test nonexistent assessment
         url = reverse("lit:api:assessment-replace-hero", args=(100,))
 
         client = APIClient()
