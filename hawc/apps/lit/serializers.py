@@ -5,6 +5,7 @@ from typing import List
 import django.core.exceptions
 import pandas as pd
 from celery import chain
+from celery.result import ResultBase
 from django.db import transaction
 from django.template.defaultfilters import slugify
 from rest_framework import exceptions, serializers
@@ -236,7 +237,7 @@ class ReferenceReplaceHeroIdSerializer(serializers.Serializer):
         child=serializers.ListField(min_length=2, max_length=2, child=serializers.IntegerField()),
     )
 
-    def validate_replace(self, replace):
+    def validate_replace(self, replace: List) -> List:
 
         self.ref_ids, self.hero_ids = zip(*replace)
         assessment = self.context["assessment"]
@@ -247,13 +248,13 @@ class ReferenceReplaceHeroIdSerializer(serializers.Serializer):
             raise serializers.ValidationError("All references not found; check ID list")
 
         # make sure references are part of the assessment
-        ref_assessment_ids = set([ref.assessment_id for ref in references])
+        ref_assessment_ids = set(ref.assessment_id for ref in references)
         if len(ref_assessment_ids) != 1:
             raise serializers.ValidationError(
                 f"Reference IDs from multiple assessments: {ref_assessment_ids}"
             )
 
-        if ref_assessment_ids[0] != assessment.id:
+        if list(ref_assessment_ids)[0] != assessment.id:
             raise serializers.ValidationError(
                 f"Reference IDs not all from assessment {assessment.id}."
             )
@@ -268,7 +269,9 @@ class ReferenceReplaceHeroIdSerializer(serializers.Serializer):
         duplicates = existing_hero_ids.intersection(set(self.hero_ids))
         # are there duplice HERO references?
         if len(duplicates) > 0:
-            raise serializers.ValidationError(f"Duplicate HERO IDs in assessment: {duplicates}")
+            raise serializers.ValidationError(
+                f"Duplicate HERO IDs in assessment: {list(duplicates)}"
+            )
 
         # make sure all HERO IDs are valid; and save response from HERO if needed
         try:
@@ -280,7 +283,7 @@ class ReferenceReplaceHeroIdSerializer(serializers.Serializer):
 
         return replace
 
-    def execute(self):
+    def execute(self) -> ResultBase:
 
         # import missing identifers
         models.Identifiers.objects.bulk_create_hero_ids(self.fetched_content)
