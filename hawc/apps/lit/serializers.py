@@ -237,74 +237,62 @@ class ReferenceReplaceHeroIdSerializer(serializers.Serializer):
     )
 
     def validate_replace(self, replace):
-        # unpack
+
         self.ref_ids, self.hero_ids = zip(*replace)
+        assessment = self.context["assessment"]
+        references = models.Reference.objects.filter(id__in=self.ref_ids)
 
-        # AJS resume here
-        # grab assessment from context?
-        # ...
+        # make sure references exist
+        if references.count() != len(self.ref_ids):
+            raise serializers.ValidationError("All references not found; check ID list")
 
-        # # make sure all references are in the queryset
-        # matching_references = self.instance.filter(id__in=self.ref_ids)
-        # if matching_references.count() != len(self.ref_ids):
-        #     raise serializers.ValidationError("All references must be from selected assessment.")
+        # make sure references are part of the assessment
+        ref_assessment_ids = set([ref.assessment_id for ref in references])
+        if len(ref_assessment_ids) != 1:
+            raise serializers.ValidationError(
+                f"Reference IDs from multiple assessments: {ref_assessment_ids}"
+            )
 
-        # # make sure updated references will have unique HERO IDs
-        # references_diff = self.instance.difference(matching_references).values_list("id", flat=True)
-        # identifiers_diff = models.Identifiers.objects.filter(
-        #     references__in=references_diff, database=constants.HERO
-        # )
-        # hero_diff = identifiers_diff.values_list("unique_id", flat=True)
-        # hero_all = list(hero_diff) + list(self.hero_ids)
+        if ref_assessment_ids[0] != assessment.id:
+            raise serializers.ValidationError(
+                f"Reference IDs not all from assessment {assessment.id}."
+            )
 
-        # # are there duplice HERO references?
-        # if len(hero_all) > len(set(hero_all)):
-        #     raise serializers.ValidationError("Duplicate HERO references.")
+        # make sure that HERO IDs are unique for all references in an assessment
+        existing_hero_ids = set(
+            int(el)
+            for el in models.Identifiers.objects.filter(
+                references__assessment=assessment.id, database=constants.HERO
+            ).values_list("unique_id", flat=True)
+        )
+        duplicates = existing_hero_ids.intersection(set(self.hero_ids))
+        # are there duplice HERO references?
+        if len(duplicates) > 0:
+            raise serializers.ValidationError(f"Duplicate HERO IDs in assessment: {duplicates}")
 
-        # # make sure all HERO IDs are valid
-        # try:
-        #     _, _, self.fetched_content = models.Identifiers.objects.validate_valid_hero_ids(
-        #         self.hero_ids
-        #     )
-        # except django.core.exceptions.ValidationError as err:
-        #     raise serializers.ValidationError(err.args[0])
+        # make sure all HERO IDs are valid; and save response from HERO if needed
+        try:
+            _, _, self.fetched_content = models.Identifiers.objects.validate_valid_hero_ids(
+                self.hero_ids
+            )
+        except django.core.exceptions.ValidationError as err:
+            raise serializers.ValidationError(err.args[0])
 
         return replace
 
     def execute(self):
+
         # import missing identifers
         models.Identifiers.objects.bulk_create_hero_ids(self.fetched_content)
+
         # set hero ref
-        t1 = tasks.replace_hero_ids.si(replace)
+        t1 = tasks.replace_hero_ids.si(self.validated_data["replace"])
+
         # update content
         t2 = tasks.update_hero_content.si(self.hero_ids)
+
         # update fields with content
         t3 = tasks.update_hero_fields.si(self.ref_ids)
 
         # run chained tasks
         return chain(t1, t2, t3)()
-
-
-class ReferenceUpdateListSerializer(serializers.ListSerializer):
-    def execute(self):
-
-        ref_ids = set(self.instance.values_list("id", flat=True))
-        identifiers = models.Identifiers.objects.filter(
-            references__in=ref_ids, database=constants.HERO
-        )
-        hero_ids = identifiers.values_list("unique_id", flat=True)
-
-        # update content of hero identifiers
-        t1 = tasks.update_hero_content.si(hero_ids)
-        # update fields from content
-        t2 = tasks.update_hero_fields.si(ref_ids)
-
-        # run chained tasks
-        return chain(t1, t2)()
-
-
-class ReferenceUpdateSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.Reference
-        list_serializer_class = ReferenceUpdateListSerializer
-        fields = "__all__"

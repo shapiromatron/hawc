@@ -10,7 +10,11 @@ from rest_framework.response import Response
 
 from ..assessment.api import AssessmentLevelPermissions, AssessmentRootedTagTreeViewset
 from ..assessment.models import Assessment
-from ..common.api import CleanupFieldsBaseViewSet, LegacyAssessmentAdapterMixin, OncePerHourThrottle
+from ..common.api import (
+    CleanupFieldsBaseViewSet,
+    LegacyAssessmentAdapterMixin,
+    OncePerMinuteThrottle,
+)
 from ..common.helper import FlatExport, re_digits
 from ..common.renderers import PandasRenderers
 from ..common.serializers import UnusedSerializer
@@ -170,11 +174,16 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
     @transaction.atomic()
     @action(
         detail=True,
-        throttle_classes=(OncePerHourThrottle,),
+        throttle_classes=(OncePerMinuteThrottle,),
         methods=("post",),
         url_path="replace-hero",
     )
     def replace_hero(self, request, pk):
+        """Replace old HERO ID with new HERO ID for selected references
+
+        Expects an input of `{replace: [[1,2],[3,4]]}`, where the first element is the reference ID
+        and the select element in each list is the new HERO ID.
+        """
         assessment = self.get_object()
         serializer = serializers.ReferenceReplaceHeroIdSerializer(
             data=request.data, context={"assessment": assessment}
@@ -186,19 +195,17 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
     @transaction.atomic()
     @action(
         detail=True,
-        throttle_classes=(OncePerHourThrottle,),
+        throttle_classes=(OncePerMinuteThrottle,),
         methods=("post",),
         url_path="update-reference-metadata-from-hero",
     )
     def update_reference_metadata_from_hero(self, request, pk):
-
-        # get all hero references from assessment
+        """
+        Query HERO for all references in an assessment that are mapped to HERO, fetch the latest
+        metadata from HERO, and then update the reference metadata in HAWC with the data from HERO.
+        """
         assessment = self.get_object()
-        references = models.Reference.objects.hero_references(assessment.id)
-
-        serializer = serializers.ReferenceUpdateSerializer(references, many=True, allow_empty=False)
-        serializer.execute()
-
+        models.Reference.update_hero_metadata(assessment.id)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
