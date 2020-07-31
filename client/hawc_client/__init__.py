@@ -352,7 +352,10 @@ class LiteratureClient(BaseClient):
         """
         Replace HERO ID associated with each reference with a new HERO ID. Reference
         fields are updated using the new HERO ID's reference metadata.  This request is
-        throttled; can only be executed once per hour.
+        throttled; can only be executed once per minute.
+
+        This method schedules a task to be executed when workers are available; task completion
+        therefore is not guaranteed even with a successful response.
 
         Args:
             assessment_id (int): Assessment ID for all references in the list.
@@ -370,7 +373,10 @@ class LiteratureClient(BaseClient):
     def update_references_from_hero(self, assessment_id: int) -> None:
         """
         Updates the fields of all HERO references in an assessment with the most recent metadata
-        from HERO. This request is throttled; can only be executed once per hour.
+        from HERO. This request is throttled; can only be executed once per minute.
+
+        This method schedules a task to be executed when workers are available; task completion
+        therefore is not guaranteed even with a successful response.
 
         Args:
             assessment_id (int): Assessment ID

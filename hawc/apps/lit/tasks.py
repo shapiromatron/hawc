@@ -4,6 +4,7 @@ from typing import Dict, List
 from celery import shared_task
 from celery.utils.log import get_task_logger
 from django.apps import apps
+from django.db import transaction
 from django.db.models import F, Model
 from django.db.models.aggregates import Count, Max
 from django.utils import timezone
@@ -22,16 +23,16 @@ def update_hero_content(ids: List[int]):
 
     fetcher = hero.HEROFetch(sorted(ids))
     contents = fetcher.get_content()
-    for d in contents.get("success"):
-
-        content = json.dumps(d)
-        Identifiers.objects.filter(unique_id=str(d["HEROID"]), database=constants.HERO).update(
-            content=content
-        )
-    ids_str = [str(id) for id in ids]
-    Identifiers.objects.filter(unique_id__in=ids_str, database=constants.HERO, content="").update(
-        content='{"status": "failed"}'
-    )
+    with transaction.atomic():
+        for d in contents.get("success"):
+            content = json.dumps(d)
+            Identifiers.objects.filter(unique_id=str(d["HEROID"]), database=constants.HERO).update(
+                content=content
+            )
+        ids_str = [str(id) for id in ids]
+        Identifiers.objects.filter(
+            unique_id__in=ids_str, database=constants.HERO, content=""
+        ).update(content='{"status": "failed"}')
 
 
 @shared_task
@@ -44,9 +45,11 @@ def update_hero_fields(ref_ids: List[int]):
     """
 
     Reference = apps.get_model("lit", "reference")
-    for reference in Reference.objects.filter(id__in=ref_ids).prefetch_related("identifiers"):
-        content = reference.identifiers.get(database=constants.HERO).get_content_json()
-        reference.update_from_hero_content(content, save=True)
+    with transaction.atomic():
+        references = Reference.objects.filter(id__in=ref_ids).prefetch_related("identifiers")
+        for reference in references:
+            content = reference.identifiers.get(database=constants.HERO).get_content_json()
+            reference.update_from_hero_content(content, save=True)
 
 
 @shared_task
@@ -78,13 +81,16 @@ def replace_hero_ids(replace: List[List[int]]):
         raise ValueError("Reference map length != reference ID list length")
 
     # update identifier references to substitute old HERO id for new HERO id
-    for ref_id, hero_id in replace:
-        reference = reference_map[ref_id]
-        identifier_ids = [
-            ident.id for ident in reference.identifiers.all() if ident.database != constants.HERO
-        ]
-        identifier_ids.append(identifier_map[hero_id])
-        reference.identifiers.set(identifier_ids)
+    with transaction.atomic():
+        for ref_id, hero_id in replace:
+            reference = reference_map[ref_id]
+            identifier_ids = [
+                ident.id
+                for ident in reference.identifiers.all()
+                if ident.database != constants.HERO
+            ]
+            identifier_ids.append(identifier_map[hero_id])
+            reference.identifiers.set(identifier_ids)
 
 
 @shared_task

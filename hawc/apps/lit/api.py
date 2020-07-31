@@ -181,8 +181,8 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
     def replace_hero(self, request, pk):
         """Replace old HERO ID with new HERO ID for selected references
 
-        Expects an input of `{replace: [[1,2],[3,4]]}`, where the first element is the reference ID
-        and the select element in each list is the new HERO ID.
+        Expects an input of `{replace: [[1,10],[2,20],[3,30]]}`, a list of lists with two items in each
+        inner list. Each inner list contains the reference ID and the new HERO ID, respectively.
         """
         assessment = self.get_object()
         serializer = serializers.ReferenceReplaceHeroIdSerializer(
