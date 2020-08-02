@@ -320,6 +320,45 @@ class TestClient(LiveServerTestCase, TestCase):
 
         assert err.value.status_code == 404
 
+    @pytest.mark.vcr
+    def test_update_references_from_hero(self):
+        client = HawcClient(self.live_server_url)
+        client.authenticate("pm@pm.com", "pw")
+
+        assessment_id = self.db_keys.assessment_working
+
+        references = Reference.objects.filter(assessment_id=assessment_id)
+
+        assert references.filter(title="").count() > 0
+
+        response = client.lit.update_references_from_hero(assessment_id)
+        assert response is None
+
+        # Reference fields should now be set with HERO metadata
+        assert references.filter(title="").count() == 0
+
+    @pytest.mark.vcr
+    def test_replace_hero(self):
+        client = HawcClient(self.live_server_url)
+        client.authenticate("pm@pm.com", "pw")
+
+        reference = Reference.objects.get(id=self.db_keys.reference_linked)
+        assessment_id = reference.assessment_id
+        replace = [[reference.id, 1037739]]
+
+        response = client.lit.replace_hero(assessment_id, replace)
+        assert response is None
+
+        # Make sure reference fields have been updated
+        updated_reference = Reference.objects.get(id=self.db_keys.reference_linked)
+        assert (
+            updated_reference.title
+            == "Observation of Methanol Behavior in Fuel Cells In Situ by NMR Spectroscopy"
+        )
+        # Make sure HERO identifier has been replaced
+        updated_hero = updated_reference.identifiers.get(database=2)
+        assert updated_hero.unique_id == "1037739"
+
     ##########################
     # RiskOfBiasClient tests #
     ##########################

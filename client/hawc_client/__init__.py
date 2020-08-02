@@ -57,9 +57,9 @@ class HawcSession:
         if response.status_code >= 400 and response.status_code < 500:
             raise HawcClientException(response.status_code, content)
         elif response.status_code >= 500 and response.status_code < 600:
-            raise HawcServerException(response.status_code, content)
+            raise HawcServerException(response.status_code, "no additional information provided")
 
-    def get(self, url: str, params: Dict = None) -> Response:
+    def get(self, url: str, params: Optional[Dict] = None) -> Response:
         """
         Sends a GET request using the session instance
 
@@ -74,7 +74,7 @@ class HawcSession:
         self._handle_hawc_response(response)
         return response
 
-    def delete(self, url: str, params: Dict = None) -> Response:
+    def delete(self, url: str, params: Optional[Dict] = None) -> Response:
         """
         Sends a DELETE request using the session instance
 
@@ -89,13 +89,13 @@ class HawcSession:
         self._handle_hawc_response(response)
         return response
 
-    def post(self, url: str, data: Dict) -> Response:
+    def post(self, url: str, data: Optional[Dict] = None) -> Response:
         """
         Sends a POST request using the session instance
 
         Args:
             url (str): URL for request.
-            data (Dict): Payload for the request.
+            data (Dict, optional): Payload for the request.
 
         Returns:
             Response: The response.
@@ -104,13 +104,13 @@ class HawcSession:
         self._handle_hawc_response(response)
         return response
 
-    def patch(self, url: str, data: Dict) -> Response:
+    def patch(self, url: str, data: Optional[Dict] = None) -> Response:
         """
         Sends a PATCH request using the session instance
 
         Args:
             url (str): URL for request.
-            data (Dict): Payload for the request.
+            data (Dict, optional): Payload for the request.
 
         Returns:
             Response: The response.
@@ -347,6 +347,46 @@ class LiteratureClient(BaseClient):
         """
         url = f"{self.session.root_url}/lit/api/reference/{reference_id}/"
         self.session.delete(url)
+
+    def replace_hero(self, assessment_id: int, replace: List[List[int]]) -> None:
+        """
+        Replace HERO ID associated with each reference with a new HERO ID. Reference
+        fields are updated using the new HERO ID's reference metadata.  This request is
+        throttled; can only be executed once per minute.
+
+        This method schedules a task to be executed when workers are available; task completion
+        therefore is not guaranteed even with a successful response.
+
+        Args:
+            assessment_id (int): Assessment ID for all references in the list.
+            replace (List[List[int]]): List of reference ID / new HERO ID pairings, both values
+                should be integers, ex., [[reference_id, hero_id], ... ]
+
+        Returns:
+            None: If the operation is successful there is no return value.
+            If the operation is unsuccessful, an error will be raised.
+        """
+        body = {"replace": replace}
+        url = f"{self.session.root_url}/lit/api/assessment/{assessment_id}/replace-hero/"
+        self.session.post(url, body)
+
+    def update_references_from_hero(self, assessment_id: int) -> None:
+        """
+        Updates the fields of all HERO references in an assessment with the most recent metadata
+        from HERO. This request is throttled; can only be executed once per minute.
+
+        This method schedules a task to be executed when workers are available; task completion
+        therefore is not guaranteed even with a successful response.
+
+        Args:
+            assessment_id (int): Assessment ID
+
+        Returns:
+            None: If the operation is successful there is no return value.
+            If the operation is unsuccessful, an error will be raised.
+        """
+        url = f"{self.session.root_url}/lit/api/assessment/{assessment_id}/update-reference-metadata-from-hero/"
+        self.session.post(url)
 
 
 class RiskOfBiasClient(BaseClient):
