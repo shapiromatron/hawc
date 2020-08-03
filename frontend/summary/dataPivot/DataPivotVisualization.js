@@ -25,6 +25,13 @@ class DataPivotVisualization extends D3Plot {
         return this;
     }
 
+    static getSortValue(value) {
+        var obj = HAWCUtils.parseJsonOrNull(value);
+
+        // if object is JSON and has sortValue, use it, else use string version
+        return obj && obj.sortValue !== undefined ? obj.sortValue : value;
+    }
+
     static sorter(arr, sorts) {
         var chunkify = function(t) {
                 var tz = [],
@@ -55,21 +62,10 @@ class DataPivotVisualization extends D3Plot {
                     }
                 }
 
-                var aObj = HAWCUtils.parseJsonOrNull(a[field_name]),
-                    bObj = HAWCUtils.parseJsonOrNull(b[field_name]),
-                    aSort,
-                    bSort,
+                var aSort = DataPivotVisualization.getSortValue(a[field_name]),
+                    bSort = DataPivotVisualization.getSortValue(b[field_name]),
                     aa,
                     bb;
-
-                // if object is JSON and has sortValue, use it, else use string version
-                if (aObj && bObj && aObj.sortValue !== undefined && bObj.sortValue !== undefined) {
-                    aSort = aObj.sortValue;
-                    bSort = bObj.sortValue;
-                } else {
-                    aSort = a[field_name];
-                    bSort = b[field_name];
-                }
 
                 aa = chunkify(aSort.toString());
                 bb = chunkify(bSort.toString());
@@ -905,7 +901,11 @@ class DataPivotVisualization extends D3Plot {
             .append("svg:rect")
             .attr("x", d => x(Math.min(barXStart, d[barchart.field_name])))
             .attr("y", d => this.row_heights[d._dp_index].min + barPadding)
-            .attr("width", d => Math.abs(x(barXStart) - x(d[barchart.field_name])))
+            .attr("width", d =>
+                Math.abs(
+                    x(barXStart) - x(DataPivotVisualization.getSortValue(d[barchart.field_name]))
+                )
+            )
             .attr("height", barHeight)
             .style("cursor", d => (barchart._dpe_key ? "pointer" : "auto"))
             .on("click", d => {
