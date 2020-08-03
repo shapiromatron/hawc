@@ -1,17 +1,96 @@
 import json
-from typing import List
+from typing import Dict, List
 
 from celery import shared_task
 from celery.utils.log import get_task_logger
 from django.apps import apps
-from django.db.models import F
+from django.db import transaction
+from django.db.models import F, Model
 from django.db.models.aggregates import Count, Max
 from django.utils import timezone
-from litter_getter import pubmed
+from litter_getter import hero, pubmed
 
 from . import constants
 
 logger = get_task_logger(__name__)
+
+
+@shared_task
+def update_hero_content(ids: List[int]):
+    """Fetch the latest data from HERO and update identifier object."""
+
+    Identifiers = apps.get_model("lit", "identifiers")
+
+    fetcher = hero.HEROFetch(sorted(ids))
+    contents = fetcher.get_content()
+    with transaction.atomic():
+        for d in contents.get("success"):
+            content = json.dumps(d)
+            Identifiers.objects.filter(unique_id=str(d["HEROID"]), database=constants.HERO).update(
+                content=content
+            )
+        ids_str = [str(id) for id in ids]
+        Identifiers.objects.filter(
+            unique_id__in=ids_str, database=constants.HERO, content=""
+        ).update(content='{"status": "failed"}')
+
+
+@shared_task
+def update_hero_fields(ref_ids: List[int]):
+    """
+    Updates the reference fields with most recent content from HERO
+
+    Args:
+        ref_ids (List[int]): List of references IDs to update
+    """
+
+    Reference = apps.get_model("lit", "reference")
+    with transaction.atomic():
+        references = Reference.objects.filter(id__in=ref_ids).prefetch_related("identifiers")
+        for reference in references:
+            content = reference.identifiers.get(database=constants.HERO).get_content_json()
+            reference.update_from_hero_content(content, save=True)
+
+
+@shared_task
+def replace_hero_ids(replace: List[List[int]]):
+    """
+    Replace the identifier on each reference with the given HERO ID
+
+    Args:
+        replace (List[List[int]]): List of reference ID / HERO ID pairings
+    """
+    Reference = apps.get_model("lit", "reference")
+    Identifiers = apps.get_model("lit", "identifiers")
+
+    # build map of HERO ID -> Identifier.id
+    ref_ids, new_hero_ids = zip(*replace)
+    identifier_map: Dict[int, int] = {
+        int(ident.unique_id): ident.id
+        for ident in Identifiers.objects.filter(database=constants.HERO, unique_id__in=new_hero_ids)
+    }
+    if len(identifier_map) != len(new_hero_ids):
+        raise ValueError("Identifiers map length != HERO ID length length")
+
+    # build map of reference.id -> reference object
+    reference_map: Dict[int, Model] = {
+        ref.id: ref
+        for ref in Reference.objects.filter(id__in=ref_ids).prefetch_related("identifiers")
+    }
+    if len(reference_map) != len(ref_ids):
+        raise ValueError("Reference map length != reference ID list length")
+
+    # update identifier references to substitute old HERO id for new HERO id
+    with transaction.atomic():
+        for ref_id, hero_id in replace:
+            reference = reference_map[ref_id]
+            identifier_ids = [
+                ident.id
+                for ident in reference.identifiers.all()
+                if ident.database != constants.HERO
+            ]
+            identifier_ids.append(identifier_map[hero_id])
+            reference.identifiers.set(identifier_ids)
 
 
 @shared_task

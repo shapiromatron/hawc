@@ -1,8 +1,13 @@
+import itertools
 import logging
+from collections import Counter
 from io import StringIO
 from typing import List
 
+import django.core.exceptions
 import pandas as pd
+from celery import chain
+from celery.result import ResultBase
 from django.db import transaction
 from django.template.defaultfilters import slugify
 from rest_framework import exceptions, serializers
@@ -10,7 +15,7 @@ from rest_framework.exceptions import ParseError
 
 from ..assessment.serializers import AssessmentRootedSerializer
 from ..common.api import DynamicFieldsMixin
-from . import constants, forms, models
+from . import constants, forms, models, tasks
 
 
 class SearchSerializer(serializers.ModelSerializer):
@@ -225,3 +230,81 @@ class ReferenceSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Reference
         fields = "__all__"
+
+
+class ReferenceReplaceHeroIdSerializer(serializers.Serializer):
+    replace = serializers.ListField(
+        min_length=1,
+        max_length=1000,
+        child=serializers.ListField(min_length=2, max_length=2, child=serializers.IntegerField()),
+    )
+
+    def validate_replace(self, replace: List) -> List:
+
+        self.ref_ids, self.hero_ids = zip(*replace)
+        assessment = self.context["assessment"]
+        references = models.Reference.objects.filter(id__in=self.ref_ids)
+
+        # make sure references exist
+        if references.count() != len(self.ref_ids):
+            raise serializers.ValidationError("All references not found; check ID list")
+
+        # make sure references are part of the assessment
+        ref_assessment_ids = set(ref.assessment_id for ref in references)
+        if len(ref_assessment_ids) != 1:
+            raise serializers.ValidationError(
+                f"Reference IDs from multiple assessments: {ref_assessment_ids}"
+            )
+
+        if list(ref_assessment_ids)[0] != assessment.id:
+            raise serializers.ValidationError(
+                f"Reference IDs not all from assessment {assessment.id}."
+            )
+
+        # make sure HERO IDs are unique for all references in an assessment
+
+        # get hero ids for unmodified references
+        references_diff = (
+            models.Reference.objects.hero_references(assessment.id)
+            .difference(references)
+            .values_list("id", flat=True)
+        )
+        existing_hero_ids = [
+            int(id_)
+            for id_ in models.Identifiers.objects.filter(
+                references__in=references_diff, database=constants.HERO
+            ).values_list("unique_id", flat=True)
+        ]
+        hero_counts = Counter(itertools.chain(existing_hero_ids, self.hero_ids))
+        duplicates = [key for key, count in hero_counts.items() if count > 1]
+        if len(duplicates) > 0:
+            raise serializers.ValidationError(
+                f"Duplicate HERO IDs in assessment: {list(duplicates)}"
+            )
+
+        # make sure all HERO IDs are valid; and save response from HERO if needed
+        try:
+            _, _, self.fetched_content = models.Identifiers.objects.validate_valid_hero_ids(
+                self.hero_ids
+            )
+        except django.core.exceptions.ValidationError as err:
+            raise serializers.ValidationError(err.args[0])
+
+        return replace
+
+    def execute(self) -> ResultBase:
+
+        # import missing identifers
+        models.Identifiers.objects.bulk_create_hero_ids(self.fetched_content)
+
+        # set hero ref
+        t1 = tasks.replace_hero_ids.si(self.validated_data["replace"])
+
+        # update content
+        t2 = tasks.update_hero_content.si(self.hero_ids)
+
+        # update fields with content
+        t3 = tasks.update_hero_fields.si(self.ref_ids)
+
+        # run chained tasks
+        return chain(t1, t2, t3)()
