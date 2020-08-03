@@ -1,8 +1,9 @@
 import pytest
 
 from hawc.apps.assessment.models import Assessment
+from hawc.apps.lit import constants
 from hawc.apps.lit.models import Reference, ReferenceTags
-from hawc.apps.lit.serializers import BulkReferenceTagSerializer
+from hawc.apps.lit.serializers import BulkReferenceTagSerializer, ReferenceReplaceHeroIdSerializer
 
 
 @pytest.mark.django_db
@@ -85,3 +86,100 @@ def test_BulkReferenceTagSerializer(db_keys):
         )
         == csv
     )
+
+
+@pytest.mark.vcr
+@pytest.mark.django_db
+class TestReferenceReplaceHeroIdSerializer:
+    def test_valid_new_ids(self, db_keys):
+        """
+        Test case where we add new hero references
+        """
+        ref_ids = [db_keys.reference_linked, db_keys.reference_unlinked]
+        refs = Reference.objects.filter(id__in=ref_ids)
+        old_titles = [ref.title for ref in refs]
+        assessment = refs[0].assessment
+        data = {"replace": [[refs[0].id, 1010101], [refs[1].id, 1010102]]}
+
+        serializer = ReferenceReplaceHeroIdSerializer(data=data, context={"assessment": assessment})
+        assert serializer.is_valid()
+        ret = serializer.execute()
+        assert ret.successful()
+
+        # ensure references changed
+        refs = refs.all()
+        new_titles = [ref.title for ref in refs]
+        assert old_titles != new_titles
+
+        assert new_titles == [
+            "Immunoassay of haemoglobin-acrylonitrile adduct in rat as a biomarker of exposure",
+            "Accumulation of environmental risks to human health: Geographical differences in the Netherlands",
+        ]
+
+    def test_valid_swap(self, db_keys):
+        """
+        Swap IDs on existing references.
+        """
+        ref_ids = [db_keys.reference_linked, db_keys.reference_unlinked]
+        refs = Reference.objects.filter(id__in=ref_ids)
+        old_titles = [ref.title for ref in refs]
+        assessment = refs[0].assessment
+        data = {
+            "replace": [
+                [refs[0].id, int(refs[1].identifiers.get(database=constants.HERO).unique_id)],
+                [refs[1].id, int(refs[0].identifiers.get(database=constants.HERO).unique_id)],
+            ]
+        }
+
+        serializer = ReferenceReplaceHeroIdSerializer(data=data, context={"assessment": assessment})
+        assert serializer.is_valid()
+        ret = serializer.execute()
+        assert ret.successful()
+
+        # check new titles
+        refs = refs.all()
+        new_titles = [ref.title for ref in refs]
+        assert old_titles != new_titles
+        assert new_titles == [
+            "Asbestos-induced lung injury in the sheep model: the initial alveolitis",
+            "Early lung events following low-dose asbestos exposure",
+        ]
+
+    def test_duplicate(self, db_keys):
+        """
+        Replace would result in two references with the same HERO ID
+        """
+        ref_ids = [db_keys.reference_linked, db_keys.reference_unlinked]
+        refs = Reference.objects.filter(id__in=ref_ids)
+        assessment = refs[0].assessment
+        data = {
+            "replace": [[refs[0].id, refs[1].identifiers.get(database=constants.HERO).unique_id]]
+        }
+        serializer = ReferenceReplaceHeroIdSerializer(data=data, context={"assessment": assessment})
+        assert serializer.is_valid() is False
+        assert serializer.errors["replace"][0] == "Duplicate HERO IDs in assessment: [3]"
+
+    def test_bad_hero(self, db_keys):
+        """
+        Invalid HERO ID
+        """
+        ref = Reference.objects.get(id=db_keys.reference_linked)
+        assessment = ref.assessment
+        data = {"replace": [[ref.id, -1]]}
+        serializer = ReferenceReplaceHeroIdSerializer(data=data, context={"assessment": assessment})
+        assert serializer.is_valid() is False
+        assert (
+            serializer.errors["replace"][0]
+            == "Import failed; the following HERO IDs could not be imported: -1"
+        )
+
+    def test_bad_reference_id(self, db_keys):
+        """
+        Reference ID is not in assessment context
+        """
+        assessment = Assessment.objects.get(id=db_keys.assessment_working)
+        invalid_ref = Reference.objects.filter(assessment=db_keys.assessment_final).first()
+        data = {"replace": [[invalid_ref.id, 1]]}
+        serializer = ReferenceReplaceHeroIdSerializer(data=data, context={"assessment": assessment})
+        assert serializer.is_valid() is False
+        assert serializer.errors["replace"][0] == "Reference IDs not all from assessment 1."
