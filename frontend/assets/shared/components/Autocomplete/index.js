@@ -17,7 +17,7 @@ class Autocomplete extends Component {
             suggestionsContainer: "autocomplete__suggestions-container",
             suggestionsList: "autocomplete__suggestions-list",
             suggestion: "autocomplete__suggestion",
-            suggestionFocused: "autocomplete__suggestion--focused",
+            suggestionHighlighted: "autocomplete__suggestion--highlighted",
             sectionContainer: "autocomplete__section-container",
             sectionTitle: "autocomplete__section-title",
         };
