@@ -25,7 +25,7 @@ class DataPivotVisualization extends D3Plot {
         return this;
     }
 
-    static getSortValue(value) {
+    static parseSortValue(value) {
         var obj = HAWCUtils.parseJsonOrNull(value);
 
         // if object is JSON and has sortValue, use it, else use string version
@@ -62,8 +62,8 @@ class DataPivotVisualization extends D3Plot {
                     }
                 }
 
-                var aSort = DataPivotVisualization.getSortValue(a[field_name]),
-                    bSort = DataPivotVisualization.getSortValue(b[field_name]),
+                var aSort = DataPivotVisualization.parseSortValue(a[field_name]),
+                    bSort = DataPivotVisualization.parseSortValue(b[field_name]),
                     aa,
                     bb;
 
@@ -903,7 +903,7 @@ class DataPivotVisualization extends D3Plot {
             .attr("y", d => this.row_heights[d._dp_index].min + barPadding)
             .attr("width", d =>
                 Math.abs(
-                    x(barXStart) - x(DataPivotVisualization.getSortValue(d[barchart.field_name]))
+                    x(barXStart) - x(DataPivotVisualization.parseSortValue(d[barchart.field_name]))
                 )
             )
             .attr("height", barHeight)
