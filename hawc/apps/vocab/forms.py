@@ -1,7 +1,7 @@
 from django import forms
 from selectable import forms as sforms
 
-from . import lookups, models
+from . import lookups
 
 
 class WidgetForm(forms.Form):

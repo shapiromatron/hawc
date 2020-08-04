@@ -51,8 +51,10 @@ class TermRelation(models.Model):
     deprecated_on = models.DateTimeField(blank=True, null=True)
     created_on = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
+
     class Meta:
         ordering = ("id",)
+
     def __str__(self) -> str:
         return f"{self.parent_term} -> {self.term}"
 
