@@ -1,0 +1,26 @@
+{% extends 'portal.html' %}
+
+{% load add_class %}
+{% load selectable_tags %}
+{% load crispy_forms_tags %}
+
+{% block extrastyle %}
+    {% include_ui_theme %}
+{% endblock %}
+
+{% block content %}
+{% crispy form %}
+{% endblock %}
+
+{% block extrajs %}
+{{ form.media }}
+<script type="text/javascript">
+    $(document).ready(function () {
+        console.log('hi')
+        $('#id_organ_0').djselectable('option', 'prepareQuery', (q) => q.parent = $('#id_system_1').val());
+        $('#id_effect_0').djselectable('option', 'prepareQuery', (q) => q.parent = $('#id_effect_1').val());
+        $('#id_effect_subtype_0').djselectable('option', 'prepareQuery', (q) => q.parent = $('#id_effect_subtype_1').val());
+        $('#id_name_0').djselectable('option', 'prepareQuery', (q) => q.parent = $('#id_name_1').val());
+    });
+</script>
+{% endblock %}

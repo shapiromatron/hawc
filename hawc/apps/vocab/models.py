@@ -38,6 +38,9 @@ class Term(models.Model):
     created_on = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        ordering = ("id",)
+
     def __str__(self) -> str:
         return f"{self.get_namespace_display()}::{self.get_type_display()}::{self.name}"
 
@@ -48,7 +51,8 @@ class TermRelation(models.Model):
     deprecated_on = models.DateTimeField(blank=True, null=True)
     created_on = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
-
+    class Meta:
+        ordering = ("id",)
     def __str__(self) -> str:
         return f"{self.parent_term} -> {self.term}"
 
@@ -75,6 +79,7 @@ class Entity(models.Model):
     class Meta:
         verbose_name_plural = "entities"
         unique_together = (("ontology", "uid"),)
+        ordering = ("id",)
 
     def __str__(self) -> str:
         return self.uid
@@ -86,6 +91,9 @@ class EntityTermRelation(models.Model):
     deprecated_on = models.DateTimeField(blank=True, null=True)
     created_on = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ("id",)
 
     def __str__(self) -> str:
         return f"{self.term} -> {self.entity}"
