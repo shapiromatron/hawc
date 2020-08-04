@@ -1,24 +1,25 @@
 {% extends 'portal.html' %}
 
-{% load add_class %}
-{% load selectable_tags %}
-{% load crispy_forms_tags %}
-
-{% block extrastyle %}
-    {% include_ui_theme %}
-{% endblock %}
-
 {% block content %}
-<h1>js approach</h1>
 <div id="main"></div>
----
-<h1>form approach</h1>
-{% crispy form %}
 {% endblock %}
 
 {% block extrajs %}
-{{ form.media }}
-<script id="config" type="text/json" charset="utf-8">{}</script>
+<script id="config" type="text/json" charset="utf-8">{
+    "vocabulary": "EHV",
+    "object": {
+        "system": "Cardiovascular",
+        "organ": "bloop",
+        "effect": "",
+        "effect_subtype": "",
+        "name": "",
+        "system_term_id": 8666,
+        "organ_term_id": null,
+        "effect_term_id": null,
+        "effect_subtype_term_id": null,
+        "name_term_id": null
+    }
+}</script>
 <script type="text/javascript">
     $(document).ready(function () {
         window.app.animalStartup(function (app) {
@@ -26,12 +27,6 @@
                 config = JSON.parse(document.getElementById('config').textContent);
             app.EndpointForm(startup => startup.func(root, config));
         });
-
-        // form view
-        $('#id_organ_0').djselectable('option', 'prepareQuery', (q) => q.parent = $('#id_system_1').val());
-        $('#id_effect_0').djselectable('option', 'prepareQuery', (q) => q.parent = $('#id_effect_1').val());
-        $('#id_effect_subtype_0').djselectable('option', 'prepareQuery', (q) => q.parent = $('#id_effect_subtype_1').val());
-        $('#id_name_0').djselectable('option', 'prepareQuery', (q) => q.parent = $('#id_name_1').val());
     });
 </script>
 {% endblock %}
