@@ -2,10 +2,11 @@ import json
 from pathlib import Path
 
 import pytest
+from django.core.cache import cache
 from django.urls import reverse
 from rest_framework.test import APIClient
 
-from hawc.apps.lit import models
+from hawc.apps.lit import constants, models
 
 DATA_ROOT = Path(__file__).parents[2] / "data/api"
 
@@ -251,6 +252,105 @@ class TestSearchViewset:
         }
 
 
+@pytest.mark.vcr
+@pytest.mark.django_db
+class TestHEROApis:
+    @pytest.fixture(scope="function", autouse=True)
+    def clear_cache(cls):
+        # Reset burst throttling
+        cache.clear()
+
+    def test_replace_permissions(self, db_keys):
+
+        assessment_id = models.Reference.objects.get(id=db_keys.reference_linked).assessment_id
+
+        url = reverse("lit:api:assessment-replace-hero", args=(assessment_id,))
+        data = {"replace": [[db_keys.reference_linked, 1]]}
+
+        # reviewers shouldn't be able to update
+        client = APIClient()
+        assert client.login(username="rev@rev.com", password="pw") is True
+        response = client.post(url, data, format="json")
+        assert response.status_code == 403
+
+        # public shouldn't be able to update
+        client = APIClient()
+        response = client.post(url, data, format="json")
+        assert response.status_code == 403
+
+    def test_valid_replace_requests(self, db_keys):
+        assessment_id = models.Reference.objects.get(id=db_keys.reference_linked).assessment_id
+
+        url = reverse("lit:api:assessment-replace-hero", args=(assessment_id,))
+        data = {"replace": [[db_keys.reference_linked, 1]]}
+
+        client = APIClient()
+        assert client.login(username="pm@pm.com", password="pw") is True
+        response = client.post(url, data, format="json")
+        assert response.status_code == 204
+
+        updated_reference = models.Reference.objects.get(id=db_keys.reference_linked)
+        assert (
+            updated_reference.title
+            == "Asbestos-related diseases of the lungs and pleura: Current clinical issues"
+        )
+        assert updated_reference.identifiers.get(database=constants.HERO).unique_id == str(1)
+
+    def test_bad_replace_requests(self, db_keys):
+
+        # test nonexistent assessment
+        url = reverse("lit:api:assessment-replace-hero", args=(100,))
+        data = {"replace": [[db_keys.reference_linked, 1]]}
+
+        client = APIClient()
+        assert client.login(username="pm@pm.com", password="pw") is True
+        response = client.post(url, data, format="json")
+        assert response.status_code == 404
+
+    def test_update_permissions(self, db_keys):
+
+        assessment_id = models.Reference.objects.get(id=db_keys.reference_linked).assessment_id
+
+        url = reverse(
+            "lit:api:assessment-update-reference-metadata-from-hero", args=(assessment_id,)
+        )
+
+        # reviewers shouldn't be able to destroy
+        client = APIClient()
+        assert client.login(username="rev@rev.com", password="pw") is True
+        response = client.post(url)
+        assert response.status_code == 403
+
+        # public shouldn't be able to update
+        client = APIClient()
+        response = client.post(url)
+        assert response.status_code == 403
+
+    def test_valid_update_requests(self, db_keys):
+        assessment_id = models.Reference.objects.get(id=db_keys.reference_linked).assessment_id
+
+        url = reverse(
+            "lit:api:assessment-update-reference-metadata-from-hero", args=(assessment_id,)
+        )
+
+        client = APIClient()
+        assert client.login(username="pm@pm.com", password="pw") is True
+        response = client.post(url)
+        assert response.status_code == 204
+
+        updated_reference = models.Reference.objects.get(id=db_keys.reference_linked)
+        assert updated_reference.title == "Early lung events following low-dose asbestos exposure"
+
+    def test_bad_update_requests(self, db_keys):
+        # test nonexistent assessment
+        url = reverse("lit:api:assessment-replace-hero", args=(100,))
+
+        client = APIClient()
+        assert client.login(username="pm@pm.com", password="pw") is True
+        response = client.post(url)
+        assert response.status_code == 404
+
+
 @pytest.mark.django_db
 class TestReferenceDestroyApi:
     def test_permissions(self, db_keys):
@@ -307,6 +407,7 @@ class TestReferenceUpdateApi:
         # reviewers shouldn't be able to update
         client = APIClient()
         assert client.login(username="rev@rev.com", password="pw") is True
+
         response = client.patch(url, data)
         assert response.status_code == 403
 

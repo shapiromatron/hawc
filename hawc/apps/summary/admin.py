@@ -13,12 +13,12 @@ class VisualAdmin(admin.ModelAdmin):
         "published",
         "created",
     )
-    list_filter = ("visual_type", "published")
+    list_filter = ("visual_type", "published", ("assessment", admin.RelatedOnlyFieldListFilter))
     search_fields = ("assessment__name", "title")
 
 
 @admin.register(models.DataPivotUpload, models.DataPivotQuery)
 class DataPivotAdmin(admin.ModelAdmin):
     list_display = ("__str__", "assessment_id", "assessment", "published", "created")
-    list_filter = ("published",)
+    list_filter = ("published", ("assessment", admin.RelatedOnlyFieldListFilter))
     search_fields = ("assessment__name", "title")

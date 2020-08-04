@@ -1,26 +1,31 @@
 import json
 import math
 from io import StringIO
-from typing import Dict, Generator, List, Optional
+from typing import Any, Dict, Generator, List, Optional
 
 import pandas as pd
 from requests import Response, Session
 from tqdm import tqdm
 
 __all__ = ["HawcClient"]
-__version__ = "2020.5"
+__version__ = "2020.7"
 
 
-class HawcClientException(Exception):
+class HawcException(Exception):
+    def __init__(self, status_code: int, message: Any):
+        self.status_code = status_code
+        self.message = message
+
+    def __str__(self):
+        return f"<{self.status_code}> {self.message}"
+
+
+class HawcClientException(HawcException):
     """An exception occurred in the HAWC client module."""
 
-    pass
 
-
-class HawcServerException(Exception):
+class HawcServerException(HawcException):
     """An exception occurred on the HAWC server."""
-
-    pass
 
 
 class HawcSession:
@@ -52,9 +57,9 @@ class HawcSession:
         if response.status_code >= 400 and response.status_code < 500:
             raise HawcClientException(response.status_code, content)
         elif response.status_code >= 500 and response.status_code < 600:
-            raise HawcServerException(response.status_code, content)
+            raise HawcServerException(response.status_code, "no additional information provided")
 
-    def get(self, url: str, params: Dict = None) -> Response:
+    def get(self, url: str, params: Optional[Dict] = None) -> Response:
         """
         Sends a GET request using the session instance
 
@@ -69,7 +74,7 @@ class HawcSession:
         self._handle_hawc_response(response)
         return response
 
-    def delete(self, url: str, params: Dict = None) -> Response:
+    def delete(self, url: str, params: Optional[Dict] = None) -> Response:
         """
         Sends a DELETE request using the session instance
 
@@ -84,13 +89,13 @@ class HawcSession:
         self._handle_hawc_response(response)
         return response
 
-    def post(self, url: str, data: Dict) -> Response:
+    def post(self, url: str, data: Optional[Dict] = None) -> Response:
         """
         Sends a POST request using the session instance
 
         Args:
             url (str): URL for request.
-            data (Dict): Payload for the request.
+            data (Dict, optional): Payload for the request.
 
         Returns:
             Response: The response.
@@ -99,13 +104,13 @@ class HawcSession:
         self._handle_hawc_response(response)
         return response
 
-    def patch(self, url: str, data: Dict) -> Response:
+    def patch(self, url: str, data: Optional[Dict] = None) -> Response:
         """
         Sends a PATCH request using the session instance
 
         Args:
             url (str): URL for request.
-            data (Dict): Payload for the request.
+            data (Dict, optional): Payload for the request.
 
         Returns:
             Response: The response.
@@ -343,6 +348,46 @@ class LiteratureClient(BaseClient):
         url = f"{self.session.root_url}/lit/api/reference/{reference_id}/"
         self.session.delete(url)
 
+    def replace_hero(self, assessment_id: int, replace: List[List[int]]) -> None:
+        """
+        Replace HERO ID associated with each reference with a new HERO ID. Reference
+        fields are updated using the new HERO ID's reference metadata.  This request is
+        throttled; can only be executed once per minute.
+
+        This method schedules a task to be executed when workers are available; task completion
+        therefore is not guaranteed even with a successful response.
+
+        Args:
+            assessment_id (int): Assessment ID for all references in the list.
+            replace (List[List[int]]): List of reference ID / new HERO ID pairings, both values
+                should be integers, ex., [[reference_id, hero_id], ... ]
+
+        Returns:
+            None: If the operation is successful there is no return value.
+            If the operation is unsuccessful, an error will be raised.
+        """
+        body = {"replace": replace}
+        url = f"{self.session.root_url}/lit/api/assessment/{assessment_id}/replace-hero/"
+        self.session.post(url, body)
+
+    def update_references_from_hero(self, assessment_id: int) -> None:
+        """
+        Updates the fields of all HERO references in an assessment with the most recent metadata
+        from HERO. This request is throttled; can only be executed once per minute.
+
+        This method schedules a task to be executed when workers are available; task completion
+        therefore is not guaranteed even with a successful response.
+
+        Args:
+            assessment_id (int): Assessment ID
+
+        Returns:
+            None: If the operation is successful there is no return value.
+            If the operation is unsuccessful, an error will be raised.
+        """
+        url = f"{self.session.root_url}/lit/api/assessment/{assessment_id}/update-reference-metadata-from-hero/"
+        self.session.post(url)
+
 
 class RiskOfBiasClient(BaseClient):
     """
@@ -395,7 +440,7 @@ class RiskOfBiasClient(BaseClient):
                                  string keys / expected values:
                 * "metric_id" (int): the id of the metric for this score
                 * "is_default" (bool): create this score as default or not
-                * "label" (str, optional): label for this score
+                * "label" (str): label for this score
                 * "notes" (str): notes for this core
                 * "score" (int): numeric score value. Actual legal values for this are dependent on the value
                                  of the HAWC_FLAVOR setting for this instance of HAWC and correspond to readable
@@ -409,41 +454,6 @@ class RiskOfBiasClient(BaseClient):
                                                      following string keys / expected values:
                     * "content_type_name" (str): the name of the data type relevant to this override.
                     * "object_id" (int): the id of the particular instance of that data type relevant to this override.
-
-        Example use:
-
-            try:
-                rob = client.riskofbias.create(
-                    study_id=123,
-                    author_id=123,
-                    active=True,
-                    final=True,
-                    scores=[
-                        {
-                            "metric_id": 123,
-                            "is_default": True,
-                            "score": 26,
-                            "bias_direction": 1,
-                            "notes": "<p>more custom notes</p>"
-                        },
-                        {
-                            "metric_id": 123,
-                            "is_default": False,
-                            "label": "override-example",
-                            "score": 25,
-                            "bias_direction": 0,
-                            "notes": "<p>custom notes</p>",
-                            "overridden_objects": [
-                                {
-                                    "content_type_name": "animal.animalgroup",
-                                    "object_id": 123
-                                }
-                            ]
-                        }
-                    ]
-                )
-            except HawcClientException as hce:
-                pass
         """
         payload = {
             "study_id": study_id,
@@ -453,7 +463,7 @@ class RiskOfBiasClient(BaseClient):
             "scores": scores,
         }
         url = f"{self.session.root_url}/rob/api/review/"
-        return self.session.post(url, payload)
+        return self.session.post(url, payload).json()
 
 
 class EpiClient(BaseClient):
