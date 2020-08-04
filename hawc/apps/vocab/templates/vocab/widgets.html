@@ -9,13 +9,25 @@
 {% endblock %}
 
 {% block content %}
+<h1>js approach</h1>
+<div id="main"></div>
+---
+<h1>form approach</h1>
 {% crispy form %}
 {% endblock %}
 
 {% block extrajs %}
 {{ form.media }}
+<script id="config" type="text/json" charset="utf-8">{}</script>
 <script type="text/javascript">
     $(document).ready(function () {
+        window.app.animalStartup(function (app) {
+            var root = document.getElementById('main'),
+                config = JSON.parse(document.getElementById('config').textContent);
+            app.EndpointForm(startup => startup.func(root, config));
+        });
+
+        // form view
         $('#id_organ_0').djselectable('option', 'prepareQuery', (q) => q.parent = $('#id_system_1').val());
         $('#id_effect_0').djselectable('option', 'prepareQuery', (q) => q.parent = $('#id_effect_1').val());
         $('#id_effect_subtype_0').djselectable('option', 'prepareQuery', (q) => q.parent = $('#id_effect_subtype_1').val());
