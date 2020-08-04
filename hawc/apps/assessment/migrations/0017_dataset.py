@@ -4,6 +4,7 @@ import django.contrib.postgres.fields.jsonb
 import django.core.files.storage
 import django.db.models.deletion
 from django.db import migrations, models
+from hawc.apps.common.models import get_private_data_storage
 
 
 class Migration(migrations.Migration):
@@ -16,12 +17,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="Dataset",
             fields=[
-                (
-                    "id",
-                    models.AutoField(
-                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
-                    ),
-                ),
+                ("id", models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID"),),
                 ("name", models.CharField(max_length=256)),
                 ("description", models.TextField(blank=True)),
                 ("created", models.DateTimeField(auto_now_add=True)),
@@ -41,12 +37,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="DatasetRevision",
             fields=[
-                (
-                    "id",
-                    models.AutoField(
-                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
-                    ),
-                ),
+                ("id", models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID"),),
                 (
                     "version",
                     models.PositiveSmallIntegerField(
@@ -57,16 +48,11 @@ class Migration(migrations.Migration):
                     "data",
                     models.FileField(
                         help_text="Upload a dataset (.csv, .tsv, .xlsx).\n            Dataset versions cannot be deleted, but if users are not team members, only the most\n            recent dataset version will be visible. Visualizations using a dataset will use the\n            latest version available.",
-                        storage=django.core.files.storage.FileSystemStorage(
-                            location="/Users/shapiromatron/dev/hawc/private"
-                        ),
+                        storage=get_private_data_storage(),
                         upload_to="assessment/dataset-revision",
                     ),
                 ),
-                (
-                    "metadata",
-                    django.contrib.postgres.fields.jsonb.JSONField(default=dict, editable=False),
-                ),
+                ("metadata", django.contrib.postgres.fields.jsonb.JSONField(default=dict, editable=False),),
                 (
                     "excel_worksheet_name",
                     models.CharField(
@@ -87,9 +73,7 @@ class Migration(migrations.Migration):
                 (
                     "dataset",
                     models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE,
-                        related_name="revisions",
-                        to="assessment.Dataset",
+                        on_delete=django.db.models.deletion.CASCADE, related_name="revisions", to="assessment.Dataset",
                     ),
                 ),
             ],
