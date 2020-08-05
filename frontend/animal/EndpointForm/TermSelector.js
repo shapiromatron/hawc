@@ -15,22 +15,41 @@ class TermSelector extends Component {
     }
     render() {
         const {label, termIdField, termTextField, parentIdField, store} = this.props,
-            {object} = store.config;
+            {object} = store.config,
+            useControlledVocabulary = store.useControlledVocabulary[termTextField];
+
         return (
             <div>
                 <label className="control-label" htmlFor={this.randomId}>
                     {label}
                 </label>
-                {store.useVocabulary ? (
-                    <p>controlled (new way; suggest vocab)</p>
+                {useControlledVocabulary ? (
+                    <div>
+                        <AutocompleteSelectableText
+                            url={urlLookup[termIdField]}
+                            onChange={text => store.setObjectField(termTextField, text)}
+                            value={object[termTextField]}
+                            placeholder={"CONTROLLED"}
+                        />
+                    </div>
                 ) : (
                     <AutocompleteSelectableText
                         url={urlLookup[termIdField]}
                         onChange={text => store.setObjectField(termTextField, text)}
                         value={object[termTextField]}
-                        placeholder={"eg., system"}
+                        placeholder={"FREE TEXT"}
                     />
                 )}
+                {store.canUseControlledVocabulary ? (
+                    <label className="checkbox">
+                        <input
+                            type="checkbox"
+                            checked={useControlledVocabulary}
+                            onChange={() => store.toggleUseControlledVocabulary(termTextField)}
+                        />
+                        &nbsp;Use controlled vocabulary
+                    </label>
+                ) : null}
                 <ul>
                     <li>termId: {object[termIdField]}</li>
                     <li>text: {object[termTextField]}</li>
@@ -53,9 +72,11 @@ export default TermSelector;
 /*
 https://github.com/moroshko/react-autosuggest
 
-1. build current form w/ no vocab autosuggest
-2. build new form toggle to use other or existing
-3. build new form toggle w/ vocab
-4. build debug prop type to show/hide metadata for field
-5. hook this app into current EndpointForm
+[x] build current form w/ no vocab autosuggest
+[ ] build new form toggle to use other or existing
+[ ] build new form toggle w/ vocab
+[ ] build debug prop type to show/hide metadata for field
+[ ] hook this app into current EndpointForm
+[ ] make sure to strip() text for system, organ, effect, effect_subtype, name, etc server side.
+    (and add db migration to remove)
 */
