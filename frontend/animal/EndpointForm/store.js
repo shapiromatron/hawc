@@ -1,10 +1,15 @@
-import {action, computed, observable, toJS} from "mobx";
+import {action, computed, observable} from "mobx";
 
 class EndpointFormStore {
     @observable config = null;
 
     constructor(config) {
         this.config = config;
+    }
+
+    @action.bound
+    setObjectField(termTextField, value) {
+        this.config.object[termTextField] = value;
     }
 
     @computed get useVocabulary() {
