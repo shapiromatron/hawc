@@ -1,5 +1,5 @@
 import json
-from typing import List, NamedTuple
+from typing import List, NamedTuple, Optional, Dict
 
 import pandas as pd
 from django.apps import apps
@@ -10,11 +10,13 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.postgres.fields import JSONField
 from django.core.cache import cache
 from django.core.validators import MinValueValidator
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
 from pydantic import BaseModel as PydanticModel
 from reversion import revisions as reversion
+import requests
 
 from ..common.dsstox import get_casrn_url
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper
@@ -71,13 +73,10 @@ class Assessment(models.Model):
             raise ValueError("Unknown HAWC flavor")
 
     name = models.CharField(
-        max_length=80,
-        verbose_name="Assessment Name",
-        help_text="Describe the objective of the health-assessment.",
+        max_length=80, verbose_name="Assessment Name", help_text="Describe the objective of the health-assessment.",
     )
     year = models.PositiveSmallIntegerField(
-        verbose_name="Assessment Year",
-        help_text="Year with which the assessment should be associated.",
+        verbose_name="Assessment Year", help_text="Year with which the assessment should be associated.",
     )
     version = models.CharField(
         max_length=80,
@@ -88,8 +87,7 @@ class Assessment(models.Model):
         max_length=40,
         blank=True,
         verbose_name="Chemical identifier (CAS)",
-        help_text="Add a single CAS-number if one is available to describe the "
-        "assessment, otherwise leave-blank.",
+        help_text="Add a single CAS-number if one is available to describe the " "assessment, otherwise leave-blank.",
     )
     assessment_objective = models.TextField(
         blank=True,
@@ -119,16 +117,12 @@ class Assessment(models.Model):
         "but cannot add or change content. You can add multiple reviewers.",
     )
     editable = models.BooleanField(
-        default=True,
-        help_text="Project-managers and team-members are allowed to edit assessment components.",
+        default=True, help_text="Project-managers and team-members are allowed to edit assessment components.",
     )
-    public = models.BooleanField(
-        default=False, help_text="The assessment can be viewed by the general public."
-    )
+    public = models.BooleanField(default=False, help_text="The assessment can be viewed by the general public.")
     hide_from_public_page = models.BooleanField(
         default=False,
-        help_text="If public, anyone with a link can view, "
-        "but do not show a link on the public-assessment page.",
+        help_text="If public, anyone with a link can view, " "but do not show a link on the public-assessment page.",
     )
     is_public_training_data = models.BooleanField(
         default=False,
@@ -176,9 +170,7 @@ class Assessment(models.Model):
     conflicts_of_interest = models.TextField(
         blank=True, help_text="Describe any conflicts of interest by the assessment-team.",
     )
-    funding_source = models.TextField(
-        blank=True, help_text="Describe the funding-source(s) for this assessment."
-    )
+    funding_source = models.TextField(blank=True, help_text="Describe the funding-source(s) for this assessment.")
     noel_name = models.PositiveSmallIntegerField(
         default=get_noel_name_default,
         choices=NOEL_NAME_CHOICES,
@@ -249,9 +241,7 @@ class Assessment(models.Model):
         elif user.is_anonymous:
             return False
         else:
-            return self.editable and (
-                user in self.project_manager.all() or user in self.team_members.all()
-            )
+            return self.editable and (user in self.project_manager.all() or user in self.team_members.all())
 
     def user_can_edit_assessment(self, user):
         """
@@ -299,15 +289,10 @@ class Assessment(models.Model):
         if self.noel_name == NOEL_NAME_CHOICES_NEL:
             return NoelNames("NEL", "LEL", "No effect level", "Lowest effect level",)
         elif self.noel_name == NOEL_NAME_CHOICES_NOEL:
-            return NoelNames(
-                "NOEL", "LOEL", "No observed effect level", "Lowest observed effect level",
-            )
+            return NoelNames("NOEL", "LOEL", "No observed effect level", "Lowest observed effect level",)
         elif self.noel_name == NOEL_NAME_CHOICES_NOAEL:
             return NoelNames(
-                "NOAEL",
-                "LOAEL",
-                "No observed adverse effect level",
-                "Lowest observed adverse effect level",
+                "NOAEL", "LOAEL", "No observed adverse effect level", "Lowest observed adverse effect level",
             )
         else:
             raise ValueError(f"Unknown noel_name: {self.noel_name}")
@@ -325,10 +310,7 @@ class Assessment(models.Model):
             (apps.get_model("animal", "Endpoint"), dict(assessment_id=self.id)),
             (apps.get_model("epi", "Outcome"), dict(assessment_id=self.id)),
             (apps.get_model("epimeta", "MetaProtocol"), dict(study__assessment_id=self.id),),
-            (
-                apps.get_model("epimeta", "MetaResult"),
-                dict(protocol__study__assessment_id=self.id),
-            ),
+            (apps.get_model("epimeta", "MetaResult"), dict(protocol__study__assessment_id=self.id),),
             (apps.get_model("invitro", "IVEndpoint"), dict(assessment_id=self.id)),
             (apps.get_model("mgmt", "Task"), dict(study__assessment_id=self.id)),
             (apps.get_model("riskofbias", "RiskOfBias"), dict(study__assessment_id=self.id),),
@@ -436,9 +418,7 @@ class DoseUnits(models.Model):
 class Species(models.Model):
     objects = managers.SpeciesManager()
 
-    name = models.CharField(
-        max_length=30, help_text="Enter species in singular (ex: Mouse, not Mice)", unique=True,
-    )
+    name = models.CharField(max_length=30, help_text="Enter species in singular (ex: Mouse, not Mice)", unique=True,)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
@@ -574,10 +554,7 @@ class TimeSpentEditing(models.Model):
     @classmethod
     def add_time_spent(cls, cache_name, object_id, assessment_id, content_type_id):
         time_spent, created = cls.objects.get_or_create(
-            content_type_id=content_type_id,
-            object_id=object_id,
-            assessment_id=assessment_id,
-            defaults={"seconds": 0},
+            content_type_id=content_type_id, object_id=object_id, assessment_id=assessment_id, defaults={"seconds": 0},
         )
 
         now = timezone.now()
@@ -594,9 +571,7 @@ class Dataset(models.Model):
     An external Dataset
     """
 
-    assessment = models.ForeignKey(
-        Assessment, editable=False, related_name="datasets", on_delete=models.CASCADE
-    )
+    assessment = models.ForeignKey(Assessment, editable=False, related_name="datasets", on_delete=models.CASCADE)
     name = models.CharField(max_length=256)
     description = models.TextField(blank=True)
     created = models.DateTimeField(auto_now_add=True)
@@ -737,6 +712,54 @@ class DatasetRevision(models.Model):
         return df
 
 
+class DSSTox(models.Model):
+
+    dtxsid = models.CharField(max_length=80, primary_key=True)
+    content = models.TextField()
+
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    def get_content_json(self) -> Optional[Dict]:
+        return json.loads(self.content, encoding="utf-8") if self.content else None
+
+    def get_image_url(self) -> str:
+        return f"https://actorws.epa.gov/actorws/chemical/image?dtxsid={self.dtxsid}&fmt=jpeg"
+
+    def get_dashboard_url(self) -> str:
+        return f"https://comptox.epa.gov/dashboard/dsstoxdb/results?search={self.dtxsid}"
+
+    @classmethod
+    def get_api_url(cls, identifier: str) -> str:
+        return f"https://actorws.epa.gov/actorws/chemIdentifier/v01/resolve.json?identifier={identifier}"
+
+    @classmethod
+    def create_from_dtxsid(cls, dtxsid: str):
+        url = DSSTox.get_api_url(dtxsid)
+        response = requests.get(url)
+        response_dict = response.json()["DataRow"]
+        if response_dict["dtxsid"] != dtxsid:
+            raise ValidationError(
+                f"DTXSID '{dtxsid}' does not match DTXSID on DSSTox lookup: {response_dict['dtxsid']}"
+            )
+        else:
+            return cls(dtxsid=dtxsid, content=response.text)
+
+
+class ChemicalIdentifier(models.Model):
+    identifier = models.CharField(max_length=80, blank=True, null=True, default=None)
+
+    dsstox = models.ForeignKey(
+        DSSTox, db_column="dtxsid", blank=True, null=True, default=None, on_delete=models.CASCADE
+    )
+
+    assessment = models.ForeignKey(Assessment, editable=False, null=True, default=None, on_delete=models.CASCADE)
+    # TODO add other foreign keys, ie experiment, etc
+
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+
 reversion.register(Assessment)
 reversion.register(EffectTag)
 reversion.register(Species)
@@ -744,3 +767,5 @@ reversion.register(Strain)
 reversion.register(BaseEndpoint)
 reversion.register(Dataset)
 reversion.register(DatasetRevision)
+reversion.register(DSSTox)
+reversion.register(ChemicalIdentifier)
