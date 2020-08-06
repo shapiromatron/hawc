@@ -13,9 +13,9 @@ import {
 } from "../Autocomplete/constants";
 import "../Autocomplete/Autocomplete.css";
 
-class AutocompleteSelectableText extends Component {
+class AutocompleteTerm extends Component {
     /*
-    Autocomplete widget; works with `hawc.apps.common.lookups.DistinctStringLookup`
+    Autocomplete widget; works with `hawc.apps.vocab.api.EhvTermViewset`
     */
 
     constructor(props) {
@@ -38,8 +38,7 @@ class AutocompleteSelectableText extends Component {
         fetch(queryUrl, h.fetchGet)
             .then(response => response.json())
             .then(json => {
-                const values = json.data.map(d => d.value);
-                this.setState({suggestions: values});
+                this.setState({suggestions: json});
             });
     }
 
@@ -56,18 +55,18 @@ class AutocompleteSelectableText extends Component {
                 suggestions={suggestions}
                 onSuggestionsFetchRequested={throttledFetchRequest}
                 onSuggestionsClearRequested={() => this.setState({suggestions: []})}
-                getSuggestionValue={suggestion => suggestion}
+                getSuggestionValue={suggestion => parseInt(suggestion.id)}
                 renderSuggestion={suggestion => {
                     return (
                         <span
                             dangerouslySetInnerHTML={{
-                                __html: boldPatternText(suggestion, this.props.value),
+                                __html: boldPatternText(suggestion.name, this.props.value),
                             }}
                         />
                     );
                 }}
                 inputProps={{
-                    value,
+                    value: value ? value.toString() : "",
                     suggestions,
                     placeholder: placeholder || "",
                     onChange: (event, {newValue}) => onChange(newValue),
@@ -78,12 +77,12 @@ class AutocompleteSelectableText extends Component {
     }
 }
 
-AutocompleteSelectableText.propTypes = {
+AutocompleteTerm.propTypes = {
     url: PropTypes.string.isRequired,
     onChange: PropTypes.func.isRequired,
-    value: PropTypes.string.isRequired,
+    value: PropTypes.numberx,
     placeholder: PropTypes.string,
     minSearchLength: PropTypes.number,
 };
 
-export default AutocompleteSelectableText;
+export default AutocompleteTerm;

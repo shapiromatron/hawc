@@ -2,9 +2,10 @@ import React, {Component} from "react";
 import PropTypes from "prop-types";
 import {inject, observer} from "mobx-react";
 
-import {urlLookup} from "./constants";
+import {termUrlLookup, textUrlLookup} from "./constants";
 import h from "shared/utils/helpers";
 import AutocompleteSelectableText from "shared/components/AutocompleteSelectableText";
+import AutocompleteTerm from "shared/components/AutocompleteTerm";
 
 @inject("store")
 @observer
@@ -25,16 +26,16 @@ class TermSelector extends Component {
                 </label>
                 {useControlledVocabulary ? (
                     <div>
-                        <AutocompleteSelectableText
-                            url={urlLookup[termIdField]}
-                            onChange={text => store.setObjectField(termTextField, text)}
-                            value={object[termTextField]}
+                        <AutocompleteTerm
+                            url={termUrlLookup[termIdField]}
+                            onChange={id => store.setObjectField(termIdField, id)}
+                            value={object[termIdField]}
                             placeholder={"CONTROLLED"}
                         />
                     </div>
                 ) : (
                     <AutocompleteSelectableText
-                        url={urlLookup[termIdField]}
+                        url={textUrlLookup[termIdField]}
                         onChange={text => store.setObjectField(termTextField, text)}
                         value={object[termTextField]}
                         placeholder={"FREE TEXT"}
