@@ -84,6 +84,13 @@ class Experiment(models.Model):
                 in the comment field below.
                 """,
     )
+    dtxsid = models.ForeignKey(
+        "assessment.DSSTox",
+        blank=True,
+        null=True,
+        on_delete=models.CASCADE,
+        related_name="experiments",
+    )
     chemical_source = models.CharField(
         max_length=128, verbose_name="Source of chemical", blank=True
     )

@@ -21,6 +21,13 @@ class IVChemical(models.Model):
     study = models.ForeignKey("study.Study", on_delete=models.CASCADE, related_name="ivchemicals")
     name = models.CharField(max_length=128)
     cas = models.CharField(max_length=40, blank=True, verbose_name="Chemical identifier (CAS)")
+    dtxsid = models.ForeignKey(
+        "assessment.DSSTox",
+        blank=True,
+        null=True,
+        on_delete=models.CASCADE,
+        related_name="ivchemicals",
+    )
     cas_inferred = models.BooleanField(
         default=False,
         verbose_name="CAS inferred?",

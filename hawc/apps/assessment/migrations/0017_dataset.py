@@ -4,6 +4,7 @@ import django.contrib.postgres.fields.jsonb
 import django.core.files.storage
 import django.db.models.deletion
 from django.db import migrations, models
+
 from hawc.apps.common.models import get_private_data_storage
 
 
@@ -17,7 +18,12 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="Dataset",
             fields=[
-                ("id", models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID"),),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+                    ),
+                ),
                 ("name", models.CharField(max_length=256)),
                 ("description", models.TextField(blank=True)),
                 ("created", models.DateTimeField(auto_now_add=True)),
@@ -37,7 +43,12 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="DatasetRevision",
             fields=[
-                ("id", models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID"),),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+                    ),
+                ),
                 (
                     "version",
                     models.PositiveSmallIntegerField(
@@ -52,7 +63,10 @@ class Migration(migrations.Migration):
                         upload_to="assessment/dataset-revision",
                     ),
                 ),
-                ("metadata", django.contrib.postgres.fields.jsonb.JSONField(default=dict, editable=False),),
+                (
+                    "metadata",
+                    django.contrib.postgres.fields.jsonb.JSONField(default=dict, editable=False),
+                ),
                 (
                     "excel_worksheet_name",
                     models.CharField(
@@ -73,7 +87,9 @@ class Migration(migrations.Migration):
                 (
                     "dataset",
                     models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE, related_name="revisions", to="assessment.Dataset",
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="revisions",
+                        to="assessment.Dataset",
                     ),
                 ),
             ],
