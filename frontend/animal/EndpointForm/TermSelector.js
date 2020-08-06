@@ -15,8 +15,15 @@ class TermSelector extends Component {
         this.randomId = h.randomString();
     }
     render() {
-        const {label, termIdField, termTextField, parentIdField, store} = this.props,
-            {object} = store.config,
+        const {
+                label,
+                termIdField,
+                termTextField,
+                parentIdField,
+                store,
+                parentRequired,
+            } = this.props,
+            {object, debug} = store.config,
             useControlledVocabulary = store.useControlledVocabulary[termTextField];
 
         return (
@@ -29,8 +36,12 @@ class TermSelector extends Component {
                         <AutocompleteTerm
                             url={termUrlLookup[termIdField]}
                             onChange={id => store.setObjectField(termIdField, id)}
-                            value={object[termIdField]}
                             placeholder={"CONTROLLED"}
+                            currentId={object[termIdField]}
+                            currentText={object[termIdField] ? object[termTextField] : ""}
+                            parentId={object[parentIdField]}
+                            parentRequired={parentRequired}
+                            minSearchLength={-1}
                         />
                     </div>
                 ) : (
@@ -51,11 +62,13 @@ class TermSelector extends Component {
                         &nbsp;Use controlled vocabulary
                     </label>
                 ) : null}
-                <ul>
-                    <li>termId: {object[termIdField]}</li>
-                    <li>text: {object[termTextField]}</li>
-                    <li>parent: {object[parentIdField]}</li>
-                </ul>
+                {debug ? (
+                    <ul>
+                        <li>termId: {object[termIdField]}</li>
+                        <li>text: {object[termTextField]}</li>
+                        <li>parent: {object[parentIdField]}</li>
+                    </ul>
+                ) : null}
             </div>
         );
     }
@@ -65,19 +78,8 @@ TermSelector.propTypes = {
     termIdField: PropTypes.string.isRequired,
     termTextField: PropTypes.string.isRequired,
     parentIdField: PropTypes.string,
+    parentRequired: PropTypes.bool,
     store: PropTypes.object,
 };
 
 export default TermSelector;
-
-/*
-https://github.com/moroshko/react-autosuggest
-
-[x] build current form w/ no vocab autosuggest
-[ ] build new form toggle to use other or existing
-[ ] build new form toggle w/ vocab
-[ ] build debug prop type to show/hide metadata for field
-[ ] hook this app into current EndpointForm
-[ ] make sure to strip() text for system, organ, effect, effect_subtype, name, etc server side.
-    (and add db migration to remove)
-*/

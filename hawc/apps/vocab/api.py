@@ -23,12 +23,13 @@ class EhvTermViewset(viewsets.GenericViewSet):
     def filter_qs(self, request: Request, type: models.VocabularyTermType) -> QuerySet:
         term: Optional[str] = request.query_params.get("term")
         parent: Optional[int] = tryParseInt(request.query_params.get("parent"))
+        limit: Optional[int] = tryParseInt(request.query_params.get("limit"), 100, 1, 10000)
         qs = self.get_queryset().filter(type=type)
         if term:
             qs = qs.filter(name__icontains=term)
         if parent:
             qs = qs.filter(parents=parent)
-        return qs
+        return qs[:limit]
 
     @action(detail=False)
     def system(self, request: Request) -> Response:

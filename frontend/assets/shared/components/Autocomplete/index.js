@@ -9,13 +9,17 @@ import {DEFAULT_MIN_SEARCH_LENGTH, DEBOUNCE_MS, theme} from "../Autocomplete/con
 import "./Autocomplete.css";
 
 class Autocomplete extends Component {
+    /*
+    An autocomplete field for use with django-selectable where the label is text but the value is an int,
+    using pagination
+    */
     constructor(props) {
         super(props);
         let {loaded} = props;
         this.state = {
-            value: loaded.display ? loaded.display : "",
             suggestions: [],
-            selected: loaded.id ? loaded.id : null,
+            currentText: loaded.display ? loaded.display : "",
+            currentId: loaded.id ? loaded.id : null,
         };
     }
 
@@ -33,7 +37,7 @@ class Autocomplete extends Component {
     }
 
     render() {
-        const {suggestions, value} = this.state,
+        const {suggestions, currentText} = this.state,
             {placeholder, id, onChange} = this.props,
             throttledFetchRequest = _.debounce(
                 this.onSuggestionsFetchRequested.bind(this),
@@ -46,16 +50,16 @@ class Autocomplete extends Component {
                 onSuggestionsFetchRequested={throttledFetchRequest}
                 onSuggestionsClearRequested={() => this.setState({suggestions: []})}
                 onSuggestionSelected={(event, {suggestion}) => {
-                    this.setState({selected: suggestion.id});
+                    this.setState({currentId: suggestion.id});
                     onChange(suggestion);
                 }}
                 getSuggestionValue={suggestion => suggestion.value}
                 renderSuggestion={suggestion => <span>{suggestion.value}</span>}
                 inputProps={{
                     placeholder,
-                    value,
+                    value: currentText,
                     onChange: (event, {newValue}) => {
-                        this.setState({value: newValue, selected: null});
+                        this.setState({currentText: newValue, selected: null});
                     },
                 }}
                 theme={theme}

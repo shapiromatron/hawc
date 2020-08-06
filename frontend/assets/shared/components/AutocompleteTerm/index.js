@@ -23,18 +23,26 @@ class AutocompleteTerm extends Component {
         this.state = {
             id: h.randomString(),
             suggestions: [],
+            currentText: props.currentText ? props.currentText : "",
+            currentId: props.currentId ? props.currentId : null,
         };
     }
 
     onSuggestionsFetchRequested({value}) {
-        const {url, minSearchLength} = this.props,
+        const {url, minSearchLength, parentId} = this.props,
             _minSearchLength = minSearchLength || DEFAULT_MIN_SEARCH_LENGTH;
 
         if (value.length < _minSearchLength) {
             return;
         }
+        let queryUrl = url;
+        if (value) {
+            queryUrl = `${queryUrl}&term=${value}`;
+        }
+        if (parentId) {
+            queryUrl = `${queryUrl}&parent=${parentId}`;
+        }
 
-        const queryUrl = `${url}&term=${value}`;
         fetch(queryUrl, h.fetchGet)
             .then(response => response.json())
             .then(json => {
@@ -43,33 +51,40 @@ class AutocompleteTerm extends Component {
     }
 
     render() {
-        const {suggestions} = this.state,
-            {placeholder, value, onChange} = this.props,
+        const {suggestions, currentText} = this.state,
+            {placeholder, onChange, parentId, parentRequired} = this.props,
             throttledFetchRequest = _.debounce(
                 this.onSuggestionsFetchRequested.bind(this),
                 DEBOUNCE_MS
             );
+
+        if (parentRequired && !parentId) {
+            return <p>Parent field required.</p>;
+        }
+
         return (
             <AutoSuggest
                 id={this.state.id}
                 suggestions={suggestions}
                 onSuggestionsFetchRequested={throttledFetchRequest}
                 onSuggestionsClearRequested={() => this.setState({suggestions: []})}
-                getSuggestionValue={suggestion => parseInt(suggestion.id)}
+                onSuggestionSelected={(_, {suggestion}) => onChange(suggestion.id)}
+                getSuggestionValue={suggestion => suggestion.name}
+                shouldRenderSuggestions={shouldRenderSuggestions => true}
                 renderSuggestion={suggestion => {
                     return (
                         <span
                             dangerouslySetInnerHTML={{
-                                __html: boldPatternText(suggestion.name, this.props.value),
+                                __html: boldPatternText(suggestion.name, this.props.currentText),
                             }}
                         />
                     );
                 }}
                 inputProps={{
-                    value: value ? value.toString() : "",
+                    value: currentText,
                     suggestions,
                     placeholder: placeholder || "",
-                    onChange: (event, {newValue}) => onChange(newValue),
+                    onChange: (event, {newValue}) => this.setState({currentText: newValue}),
                 }}
                 theme={theme}
             />
@@ -80,9 +95,12 @@ class AutocompleteTerm extends Component {
 AutocompleteTerm.propTypes = {
     url: PropTypes.string.isRequired,
     onChange: PropTypes.func.isRequired,
-    value: PropTypes.numberx,
+    currentId: PropTypes.number,
+    currentText: PropTypes.string,
     placeholder: PropTypes.string,
     minSearchLength: PropTypes.number,
+    parentId: PropTypes.number,
+    parentRequired: PropTypes.bool.isRequired,
 };
 
 export default AutocompleteTerm;

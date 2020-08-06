@@ -1,5 +1,5 @@
 const DEFAULT_MIN_SEARCH_LENGTH = 3,
-    DEBOUNCE_MS = 500,
+    DEBOUNCE_MS = 1000,
     theme = {
         container: "autocomplete__container",
         containerOpen: "autocomplete__container--open",
