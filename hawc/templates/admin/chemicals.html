@@ -1,0 +1,22 @@
+{% extends "admin/base_site.html" %}
+
+{% load i18n static %}
+{% load render_bundle from webpack_loader %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+    &rsaquo;
+    Chemicals
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid" id="main"></div>
+{% render_bundle "main" %}
+<script type="text/javascript">
+    window.app.adminStartup(function (app) {
+        app.chemicalsStartup(document.getElementById("main"));
+    });
+</script>
+{% endblock content %}

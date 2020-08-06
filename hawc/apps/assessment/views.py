@@ -68,15 +68,10 @@ class About(TemplateView):
 
             tags = apps.get_model("lit", "ReferenceTags").objects.count()
 
-            references_tagged = (
-                apps.get_model("lit", "ReferenceTags").objects.distinct("content_object_id").count()
-            )
+            references_tagged = apps.get_model("lit", "ReferenceTags").objects.distinct("content_object_id").count()
 
             assessments_with_studies = (
-                apps.get_model("study", "Study")
-                .objects.values_list("assessment_id", flat=True)
-                .distinct()
-                .count()
+                apps.get_model("study", "Study").objects.values_list("assessment_id", flat=True).distinct().count()
             )
 
             studies = apps.get_model("study", "Study").objects.count()
@@ -84,25 +79,18 @@ class About(TemplateView):
             rob_scores = apps.get_model("riskofbias", "RiskOfBiasScore").objects.count()
 
             studies_with_rob = (
-                apps.get_model("study", "Study")
-                .objects.annotate(robc=Count("riskofbiases"))
-                .filter(robc__gt=0)
-                .count()
+                apps.get_model("study", "Study").objects.annotate(robc=Count("riskofbiases")).filter(robc__gt=0).count()
             )
 
             endpoints = apps.get_model("animal", "Endpoint").objects.count()
 
-            endpoints_with_data = (
-                apps.get_model("animal", "EndpointGroup").objects.distinct("endpoint_id").count()
-            )
+            endpoints_with_data = apps.get_model("animal", "EndpointGroup").objects.distinct("endpoint_id").count()
 
             outcomes = apps.get_model("epi", "Outcome").objects.count()
 
             results = apps.get_model("epi", "Result").objects.count()
 
-            results_with_data = (
-                apps.get_model("epi", "GroupResult").objects.distinct("result_id").count()
-            )
+            results_with_data = apps.get_model("epi", "GroupResult").objects.distinct("result_id").count()
 
             iv_endpoints = apps.get_model("invitro", "IVEndpoint").objects.count()
 
@@ -189,8 +177,7 @@ class Contact(LoginRequiredMixin, MessageMixin, FormView):
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs.update(
-            back_href=self.request.META.get("HTTP_REFERER", reverse("portal")),
-            user=self.request.user,
+            back_href=self.request.META.get("HTTP_REFERER", reverse("portal")), user=self.request.user,
         )
         return kwargs
 
@@ -421,20 +408,12 @@ class BaseEndpointList(BaseList):
 
         mrs = apps.get_model("epimeta", "metaresult").objects.get_qs(self.assessment.id).count()
 
-        iveps = self.model.ivendpoint.related.related_model.objects.get_qs(
-            self.assessment.id
-        ).count()
+        iveps = self.model.ivendpoint.related.related_model.objects.get_qs(self.assessment.id).count()
 
         alleps = eps + os + mrs + iveps
 
         context.update(
-            {
-                "ivendpoints": iveps,
-                "endpoints": eps,
-                "outcomes": os,
-                "meta_results": mrs,
-                "total_endpoints": alleps,
-            }
+            {"ivendpoints": iveps, "endpoints": eps, "outcomes": os, "meta_results": mrs, "total_endpoints": alleps,}
         )
 
         return context
@@ -541,6 +520,14 @@ class AdminDashboard(TemplateView):
 
 class AdminAssessmentSize(TemplateView):
     template_name = "admin/assessment-size.html"
+
+    @method_decorator(staff_member_required)
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+
+
+class AdminChemicals(TemplateView):
+    template_name = "admin/chemicals.html"
 
     @method_decorator(staff_member_required)
     def dispatch(self, *args, **kwargs):
