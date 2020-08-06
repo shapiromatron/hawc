@@ -25,7 +25,7 @@ class IVChemical(models.Model):
         "assessment.DSSTox",
         blank=True,
         null=True,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         related_name="ivchemicals",
     )
     cas_inferred = models.BooleanField(

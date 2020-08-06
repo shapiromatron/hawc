@@ -88,7 +88,7 @@ class Experiment(models.Model):
         "assessment.DSSTox",
         blank=True,
         null=True,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         related_name="experiments",
     )
     chemical_source = models.CharField(
