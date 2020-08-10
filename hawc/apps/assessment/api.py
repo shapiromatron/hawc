@@ -231,7 +231,9 @@ class Assessment(AssessmentViewset):
             .values(*column_map.keys())
         )
 
-        df = pd.DataFrame.from_records(queryset).rename(columns={k: v for k, v in column_map.items() if v is not None})
+        df = pd.DataFrame.from_records(queryset).rename(
+            columns={k: v for k, v in column_map.items() if v is not None}
+        )
 
         # Creates a UUID for each assessment_id, providing anonymity
         df["assessment_uuid"] = df["assessment_uuid"].apply(create_uuid)
@@ -242,7 +244,9 @@ class Assessment(AssessmentViewset):
 
         # Assigns db_id to pubmed_id in all instances where db == PUBMED
         df["pubmed_id"] = None
-        df["pubmed_id"].loc[df["db"] == constants.PUBMED] = df["db_id"][df["db"] == constants.PUBMED]
+        df["pubmed_id"].loc[df["db"] == constants.PUBMED] = df["db_id"][
+            df["db"] == constants.PUBMED
+        ]
         df = df.drop(columns=["db", "db_id"]).drop_duplicates()
         today = timezone.now().strftime("%Y-%m-%d")
         export = FlatExport(df=df, filename=f"hawc-bioassay-dataset-{today}")
@@ -332,7 +336,12 @@ class Assessment(AssessmentViewset):
 
         count = apps.get_model("epi", "Exposure").objects.get_qs(instance.id).count()
         instance.items.append(
-            {"count": count, "title": "epi exposures", "type": "exposures", "url": f"{app_url}exposures/",}
+            {
+                "count": count,
+                "title": "epi exposures",
+                "type": "exposures",
+                "url": f"{app_url}exposures/",
+            }
         )
 
         # in vitro
@@ -357,12 +366,19 @@ class Assessment(AssessmentViewset):
 
         # study
         count = apps.get_model("study", "Study").objects.get_qs(instance.id).count()
-        instance.items.append({"count": count, "title": "studies", "type": "study", "url": f"{app_url}study/"})
+        instance.items.append(
+            {"count": count, "title": "studies", "type": "study", "url": f"{app_url}study/"}
+        )
 
         # lit
         count = apps.get_model("lit", "Reference").objects.get_qs(instance.id).count()
         instance.items.append(
-            {"count": count, "title": "references", "type": "reference", "url": f"{app_url}reference/",}
+            {
+                "count": count,
+                "title": "references",
+                "type": "reference",
+                "url": f"{app_url}reference/",
+            }
         )
 
         serializer = serializers.AssessmentEndpointSerializer(instance)
@@ -410,15 +426,6 @@ class AdminDashboardViewset(viewsets.ViewSet):
     def assessment_size(self, request):
         df = models.Assessment.size_df()
         export = FlatExport(df=df, filename="assessment-size")
-        return Response(export)
-
-    @method_decorator(cache_page(60 * 60))
-    @action(detail=False, renderer_classes=PandasRenderers)
-    def chemicals(self, request):
-        serializer = serializers.ChemicalsSerializer(data=request.GET)
-        serializer.is_valid(raise_exception=True)
-        df = serializer.to_df()
-        export = FlatExport(df=df, filename="chemicals")
         return Response(export)
 
 
