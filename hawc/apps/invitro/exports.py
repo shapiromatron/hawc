@@ -47,6 +47,7 @@ class DataPivotEndpoint(FlatFileExporter):
                 "chemical id",
                 "chemical name",
                 "chemical CAS",
+                "chemical DTXSID",
                 "chemical purity",
                 "IVExperiment id",
                 "IVCellType id",
@@ -135,9 +136,7 @@ class DataPivotEndpoint(FlatFileExporter):
             ]
 
             study_id = ser["experiment"]["study"]["id"]
-            study_robs = [
-                self.rob_data[(study_id, metric_id)] for metric_id in self.rob_headers.keys()
-            ]
+            study_robs = [self.rob_data[(study_id, metric_id)] for metric_id in self.rob_headers.keys()]
             row.extend(study_robs)
 
             row.extend(
@@ -145,6 +144,7 @@ class DataPivotEndpoint(FlatFileExporter):
                     ser["chemical"]["id"],
                     ser["chemical"]["name"],
                     ser["chemical"]["cas"],
+                    ser["chemical"]["dtxsid"],
                     ser["chemical"]["purity"],
                     ser["experiment"]["id"],
                     ser["experiment"]["cell_type"]["id"],
@@ -225,6 +225,7 @@ class DataPivotEndpointGroup(FlatFileExporter):
                 "chemical id",
                 "chemical name",
                 "chemical CAS",
+                "chemical DTXSID",
                 "chemical purity",
                 "IVExperiment id",
                 "IVCellType id",
@@ -284,9 +285,7 @@ class DataPivotEndpointGroup(FlatFileExporter):
             ]
 
             study_id = ser["experiment"]["study"]["id"]
-            study_robs = [
-                self.rob_data[(study_id, metric_id)] for metric_id in self.rob_headers.keys()
-            ]
+            study_robs = [self.rob_data[(study_id, metric_id)] for metric_id in self.rob_headers.keys()]
             row.extend(study_robs)
 
             row.extend(
@@ -294,6 +293,7 @@ class DataPivotEndpointGroup(FlatFileExporter):
                     ser["chemical"]["id"],
                     ser["chemical"]["name"],
                     ser["chemical"]["cas"],
+                    ser["chemical"]["dtxsid"],
                     ser["chemical"]["purity"],
                     ser["experiment"]["id"],
                     ser["experiment"]["cell_type"]["id"],
