@@ -38,10 +38,7 @@ urlpatterns = [
     # Portal
     url(r"^$", views.Home.as_view(), name="home"),
     url(r"^portal/$", views.AssessmentList.as_view(), name="portal"),
-    url(
-        r"^robots\.txt$",
-        TemplateView.as_view(template_name="robots.txt", content_type="text/plain"),
-    ),
+    url(r"^robots\.txt$", TemplateView.as_view(template_name="robots.txt", content_type="text/plain"),),
     url(r"^about/$", views.About.as_view(), name="about"),
     url(r"^contact/$", views.Contact.as_view(), name="contact"),
     # Apps
@@ -64,20 +61,11 @@ urlpatterns = [
     # Changelog
     url(r"^update-session/", views.UpdateSession.as_view(), name="update_session"),
     # Admin
-    url(
-        rf"^admin/{settings.ADMIN_URL_PREFIX}/dashboard/$",
-        views.AdminDashboard.as_view(),
-        name="admin_dashboard",
-    ),
+    url(rf"^admin/{settings.ADMIN_URL_PREFIX}/dashboard/$", views.AdminDashboard.as_view(), name="admin_dashboard",),
     url(
         rf"^admin/{settings.ADMIN_URL_PREFIX}/assessment-size/$",
         views.AdminAssessmentSize.as_view(),
         name="admin_assessment_size",
-    ),
-    url(
-        rf"^admin/{settings.ADMIN_URL_PREFIX}/chemicals/$",
-        views.AdminChemicals.as_view(),
-        name="admin_chemicals",
     ),
     url(rf"^admin/{settings.ADMIN_URL_PREFIX}/", admin.site.urls),
     url(r"^selectable/", include("selectable.urls")),
@@ -99,11 +87,7 @@ if settings.DEBUG:
 
     urlpatterns += [
         url(r"^__debug__/", include(debug_toolbar.urls)),
-        url(
-            r"^media/(?P<path>.*)$",
-            django.views.static.serve,
-            {"document_root": settings.MEDIA_ROOT},
-        ),
+        url(r"^media/(?P<path>.*)$", django.views.static.serve, {"document_root": settings.MEDIA_ROOT},),
     ]
 
 admin.autodiscover()
