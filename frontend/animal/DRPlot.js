@@ -630,7 +630,6 @@ class DRPlot extends D3Plot {
     }
 
     render_bmd_lines() {
-        window.d3 = d3;
         this.remove_bmd_lines();
         var doseUnits = parseInt(this.endpoint.dose_units_id),
             lines = this.bmd.filter(d => d.dose_units_id === doseUnits),
