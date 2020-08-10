@@ -5,7 +5,7 @@ from django import forms
 from django.contrib.contenttypes.models import ContentType
 from django.core.mail import mail_admins
 from django.db import transaction
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 from selectable.forms import AutoCompleteSelectMultipleWidget, AutoCompleteWidget
 
 from ..common.forms import BaseFormHelper
@@ -46,6 +46,8 @@ class AssessmentForm(forms.ModelForm):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
                 widget.attrs["class"] = "span12"
+            if fld == "dtxsids":
+                widget.attrs["class"] = "span10"
             if type(widget) == forms.Textarea:
                 widget.attrs["rows"] = 3
                 widget.attrs["class"] += " html5text"
@@ -70,9 +72,11 @@ class AssessmentForm(forms.ModelForm):
 
         helper = BaseFormHelper(self, **inputs)
         helper.form_class = None
-        helper.add_fluid_row("name", 2, "span6")
-        helper.add_fluid_row("version", 2, "span6")
+        helper.add_fluid_row("name", 3, "span4")
+        helper.add_fluid_row("cas", 2, "span6")
         helper.add_fluid_row("project_manager", 3, "span4")
+        url = reverse("assessment:dtxsid_create", kwargs={"pk": self.instance.id})
+        helper.addBtnLayout(helper.layout[3], 1, url, "Add new DTXSID", "span6")
         helper.attrs["novalidate"] = ""
         return helper
 
@@ -188,6 +192,22 @@ class DoseUnitsForm(forms.ModelForm):
         )
         for fld in list(self.fields.keys()):
             self.fields[fld].widget.attrs["class"] = "span12"
+
+
+class DSSToxForm(forms.ModelForm):
+    class Meta:
+        model = models.DSSTox
+        fields = ("dtxsid",)
+
+    def __init__(self, *args, **kwargs):
+        kwargs.pop("parent", None)
+        super().__init__(*args, **kwargs)
+
+    def clean(self):
+        cleaned_data = super().clean()
+        dsstox = models.DSSTox.create_from_dtxsid(cleaned_data.get("dtxsid"))
+        cleaned_data["content"] = dsstox.content
+        return cleaned_data
 
 
 class EffectTagForm(forms.ModelForm):

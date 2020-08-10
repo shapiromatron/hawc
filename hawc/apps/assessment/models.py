@@ -50,6 +50,12 @@ class DSSTox(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        ordering = ("dtxsid",)
+
+    def __str__(self):
+        return self.dtxsid
+
     def get_content_json(self) -> Optional[Dict]:
         return json.loads(self.content, encoding="utf-8") if self.content else None
 
@@ -72,6 +78,14 @@ class DSSTox(models.Model):
             raise ValidationError(f"Chemical identifier '{identifier}' not found on DSSTox lookup.")
         else:
             return cls(dtxsid=response_dict["dtxsid"], content=response.text)
+
+    @classmethod
+    def create_from_dtxsid(cls, dtxsid: str):
+        dsstox = cls.create_from_identifier(dtxsid)
+        if dsstox.dtxsid != dtxsid:
+            raise ValidationError(f"DTXSID '{dtxsid}' not found on DSSTox lookup.")
+        else:
+            return dsstox
 
 
 class Assessment(models.Model):

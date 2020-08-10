@@ -66,6 +66,12 @@ urlpatterns = [
         views.DoseUnitsCreate.as_view(),
         name="dose_units_create",
     ),
+    # dtxsid
+    url(
+        r"^assessment/(?P<pk>\d+)/dtxsid/create/$",
+        views.DSSToxCreate.as_view(),
+        name="dtxsid_create",
+    ),
     # endpoint objects
     url(r"^(?P<pk>\d+)/endpoints/$", views.BaseEndpointList.as_view(), name="endpoint_list",),
     url(

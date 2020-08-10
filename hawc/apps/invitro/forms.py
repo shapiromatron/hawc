@@ -46,6 +46,8 @@ class IVChemicalForm(forms.ModelForm):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
                 widget.attrs["class"] = "span12"
+            if fld == "dtxsid":
+                widget.attrs["class"] = "span10"
             if type(widget) == forms.Textarea:
                 widget.attrs["rows"] = 3
 
@@ -64,9 +66,11 @@ class IVChemicalForm(forms.ModelForm):
 
         helper = BaseFormHelper(self, **inputs)
         helper.form_class = None
-        helper.add_fluid_row("name", 3, "span4")
+        helper.add_fluid_row("cas", 2, "span6")
         helper.add_fluid_row("source", 3, "span4")
         helper.add_fluid_row("purity_confirmed_notes", 2, "span6")
+        url = reverse("assessment:dtxsid_create", kwargs={"pk": self.instance.study.assessment.pk})
+        helper.addBtnLayout(helper.layout[3], 1, url, "Add new DTXSID", "span6")
 
         return helper
 
