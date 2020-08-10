@@ -1,41 +1,54 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import {observable, action} from "mobx";
-import {Provider, observer, inject} from "mobx-react";
-import h from "shared/utils/helpers";
+import {observer} from "mobx-react";
 import Loading from "shared/components/Loading";
 import DataTable from "shared/components/DataTable";
+import SelectInput from "shared/components/SelectInput";
+import TextInput from "shared/components/TextInput";
 import PropTypes from "prop-types";
+import store from "./store";
+import {modelChoices} from "./constants";
 
-class Store {
-    @observable dataset = null;
-    @action.bound fetchDataset() {
-        const url = "/assessment/api/dashboard/assessment-size/";
-        return fetch(url, h.fetchGet)
-            .then(response => response.json())
-            .then(json => (this.dataset = json))
-            .catch(ex => console.error("Dataset fetch failed", ex));
-    }
-}
-
-@inject("store")
 @observer
 class Root extends React.Component {
     componentDidMount() {
         this.props.store.fetchDataset();
     }
+    renderInputs(store) {
+        return (
+            <div>
+                <SelectInput
+                    name="choice"
+                    id="id_choice"
+                    handleSelect={() => store.changeChoice(event.target.value)}
+                    choices={modelChoices}
+                    value={store.choice}
+                    multiple={false}
+                    label="Select model"
+                />
+                <TextInput
+                    name="search"
+                    onChange={() => store.changeSearch(event.target.value)}
+                    value={store.search}
+                    label="Search"
+                />
+            </div>
+        );
+    }
     render() {
-        const {dataset} = this.props.store,
-            renderers = {
-                name: row => {
-                    return <a href={`/assessment/${row.id}/`}>{row.name}</a>;
-                },
-            };
-
-        if (dataset === null) {
-            return <Loading />;
-        }
-        return <DataTable dataset={dataset} renderers={renderers} />;
+        return (
+            <div>
+                {this.renderInputs(this.props.store)}
+                {this.props.store.dataset === null ? (
+                    <Loading />
+                ) : (
+                    <DataTable
+                        dataset={this.props.store.matchingDataset}
+                        renderers={this.props.store.matchingRenderer}
+                    />
+                )}
+            </div>
+        );
     }
 }
 Root.propTypes = {
@@ -43,12 +56,5 @@ Root.propTypes = {
 };
 
 export default function(el) {
-    const store = new Store();
-
-    ReactDOM.render(
-        <Provider store={store}>
-            <Root />
-        </Provider>,
-        el
-    );
+    ReactDOM.render(<Root store={store} />, el);
 }

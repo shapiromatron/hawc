@@ -74,9 +74,7 @@ class AssessmentRootedSerializer(serializers.ModelSerializer):
             parent = self.Meta.model.get_assessment_root(assessment_id)
         elif parent_id > 0:
             checkParent = self.Meta.model.objects.filter(id=parent_id).first()
-            if checkParent and checkParent.get_root().name == self.Meta.model.get_assessment_root_name(
-                assessment_id
-            ):
+            if checkParent and checkParent.get_root().name == self.Meta.model.get_assessment_root_name(assessment_id):
                 parent = checkParent
 
         return parent
@@ -175,6 +173,25 @@ class GrowthPlotSerializer(serializers.Serializer):
             raise Exception("Unreachable code.")
 
         return fig
+
+
+class ChemicalsSerializer(serializers.Serializer):
+    model = serializers.ChoiceField(choices=["assessment", "experiment", "ivchemical"])
+
+    def to_df(self) -> pd.DataFrame:
+
+        model = self.validated_data["model"]
+        if model == "assessment":
+            Assessment = apps.get_model("assessment", "Assessment")
+            return pd.DataFrame(Assessment.objects.exclude(cas="", dtxsids=None).values("id", "name", "cas", "dtxsids"))
+        elif model == "experiment":
+            Experiment = apps.get_model("animal", "Experiment")
+            return pd.DataFrame(Experiment.objects.exclude(cas="", dtxsid=None).values("id", "name", "cas", "dtxsid"))
+        elif model == "ivchemical":
+            IVChemical = apps.get_model("invitro", "IVChemical")
+            return pd.DataFrame(IVChemical.objects.exclude(cas="", dtxsid=None).values("id", "name", "cas", "dtxsid"))
+        else:
+            raise Exception("Unreachable code.")
 
 
 class DatasetRevisionSerializer(serializers.ModelSerializer):
