@@ -901,11 +901,7 @@ class DataPivotVisualization extends D3Plot {
             .append("svg:rect")
             .attr("x", d => x(Math.min(barXStart, d[barchart.field_name])))
             .attr("y", d => this.row_heights[d._dp_index].min + barPadding)
-            .attr("width", d =>
-                Math.abs(
-                    x(barXStart) - x(DataPivotVisualization.parseSortValue(d[barchart.field_name]))
-                )
-            )
+            .attr("width", d => Math.abs(x(barXStart) - x(d[barchart.field_name])))
             .attr("height", barHeight)
             .style("cursor", d => (barchart._dpe_key ? "pointer" : "auto"))
             .on("click", d => {
@@ -1196,7 +1192,9 @@ class DataPivotVisualization extends D3Plot {
 
             // wrap text if we have to
             if (v.max_width) {
-                _.each(textColumn[0], _.partial(HAWCUtils.wrapText, _, v.max_width));
+                textColumn.each(function() {
+                    HAWCUtils.wrapText(this, v.max_width);
+                });
             }
 
             // get maximum column dimension and layout columns
@@ -1305,9 +1303,10 @@ class DataPivotVisualization extends D3Plot {
 
         // remove blank text elements; can mess-up size calculations
         $(
-            _.filter(this.g_text_columns.selectAll("text")[0], function(d) {
-                return d.textContent.length === 0;
-            })
+            this.g_text_columns
+                .selectAll("text")
+                .nodes()
+                .filter(el => el.textContent.length === 0)
         ).remove();
 
         // calculate plot-height, text-width, and save heights array
@@ -1320,11 +1319,11 @@ class DataPivotVisualization extends D3Plot {
     layout_plot() {
         // Top-location to equal to the first-data row
         // Left-location to equal size of text plus left-padding
-        var headerDims = this.g_text_columns
+        var firstDataRow = this.g_text_columns
                 .selectAll("g")
                 .nodes()[1]
                 .getBBox(),
-            top = headerDims.y - this.textPadding,
+            top = firstDataRow.y - this.textPadding,
             textDims = this.g_text_columns.node().getBBox(),
             left = textDims.width + textDims.x + this.padding.left;
 

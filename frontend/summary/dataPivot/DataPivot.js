@@ -43,19 +43,16 @@ class DataPivot {
                     }
                 },
                 error => {
-                    if (error.status === 500) {
-                        alert("An error occurred; if the error continues please contact us.");
-                        throw "Server error";
-                    }
+                    console.error(error);
+                    alert(`An error occurred; if the error continues please contact us.`);
+                    throw "Server error";
                 }
             );
         });
     }
 
     static displayAsModal(id) {
-        DataPivot.get_object(id, function(d) {
-            d.displayAsModal();
-        });
+        DataPivot.get_object(id, d => d.displayAsModal());
     }
 
     static displayInline(id, setTitle, setBody) {
@@ -67,6 +64,31 @@ class DataPivot {
             setBody(content);
             obj.build_data_pivot_vis(content);
         });
+    }
+
+    static displayEditView(data_url, settings, options) {
+        d3.tsv(data_url, (d, i) => DataPivot.massage_row(d, i)).then(
+            data => {
+                $("#loading_div").fadeOut();
+                const dp = new DataPivot(data, settings, {
+                    update: true,
+                    container: options.container,
+                    data_div: options.dataDiv,
+                    settings_div: options.settingsDiv,
+                    display_div: options.displayDiv,
+                });
+
+                $(options.submissionDiv).submit(function() {
+                    $(options.settingsField).val(dp.get_settings_json());
+                    return true;
+                });
+            },
+            error => {
+                console.error(arguments);
+                alert(`An error occurred; if the error continues please contact us.`);
+                throw "Server error";
+            }
+        );
     }
 
     static default_plot_settings() {
@@ -161,26 +183,6 @@ class DataPivot {
             text.text(input.val());
         });
         return $("<div>").append(input, text);
-    }
-
-    static displayEditView(data_url, settings, options) {
-        var dp;
-
-        d3.tsv(data_url, (d, i) => DataPivot.massage_row(d, i)).then(data => {
-            $("#loading_div").fadeOut();
-            dp = new DataPivot(data, settings, {
-                update: true,
-                container: options.container,
-                data_div: options.dataDiv,
-                settings_div: options.settingsDiv,
-                display_div: options.displayDiv,
-            });
-        });
-
-        $(options.submissionDiv).submit(function() {
-            $(options.settingsField).val(dp.get_settings_json());
-            return true;
-        });
     }
 
     build_edit_settings(dom_bindings) {
