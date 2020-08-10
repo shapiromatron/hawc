@@ -136,7 +136,9 @@ class DataPivotEndpoint(FlatFileExporter):
             ]
 
             study_id = ser["experiment"]["study"]["id"]
-            study_robs = [self.rob_data[(study_id, metric_id)] for metric_id in self.rob_headers.keys()]
+            study_robs = [
+                self.rob_data[(study_id, metric_id)] for metric_id in self.rob_headers.keys()
+            ]
             row.extend(study_robs)
 
             row.extend(
@@ -285,7 +287,9 @@ class DataPivotEndpointGroup(FlatFileExporter):
             ]
 
             study_id = ser["experiment"]["study"]["id"]
-            study_robs = [self.rob_data[(study_id, metric_id)] for metric_id in self.rob_headers.keys()]
+            study_robs = [
+                self.rob_data[(study_id, metric_id)] for metric_id in self.rob_headers.keys()
+            ]
             row.extend(study_robs)
 
             row.extend(

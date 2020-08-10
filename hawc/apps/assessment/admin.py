@@ -200,4 +200,3 @@ class DSSXToxAdmin(admin.ModelAdmin):
 
     get_ivchemicals.short_description = "IVChemicals"
     get_ivchemicals.allow_tags = True
-

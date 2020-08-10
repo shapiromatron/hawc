@@ -85,11 +85,19 @@ class Experiment(models.Model):
                 """,
     )
     dtxsid = models.ForeignKey(
-        "assessment.DSSTox", blank=True, null=True, on_delete=models.SET_NULL, related_name="experiments",
+        "assessment.DSSTox",
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+        related_name="experiments",
     )
-    chemical_source = models.CharField(max_length=128, verbose_name="Source of chemical", blank=True)
+    chemical_source = models.CharField(
+        max_length=128, verbose_name="Source of chemical", blank=True
+    )
     purity_available = models.BooleanField(default=True, verbose_name="Chemical purity available?")
-    purity_qualifier = models.CharField(max_length=1, choices=PURITY_QUALIFIER_CHOICES, blank=True, default="")
+    purity_qualifier = models.CharField(
+        max_length=1, choices=PURITY_QUALIFIER_CHOICES, blank=True, default=""
+    )
     purity = models.FloatField(
         blank=True,
         null=True,
@@ -190,7 +198,9 @@ class Experiment(models.Model):
 
     @classmethod
     def delete_caches(cls, ids):
-        Endpoint.delete_caches(Endpoint.objects.filter(animal_group__experiment__in=ids).values_list("id", flat=True))
+        Endpoint.delete_caches(
+            Endpoint.objects.filter(animal_group__experiment__in=ids).values_list("id", flat=True)
+        )
 
     def copy_across_assessments(self, cw):
         children = list(self.animal_groups.all().order_by("id"))
@@ -256,7 +266,9 @@ class AnimalGroup(models.Model):
         "diet",
     )
 
-    experiment = models.ForeignKey(Experiment, on_delete=models.CASCADE, related_name="animal_groups")
+    experiment = models.ForeignKey(
+        Experiment, on_delete=models.CASCADE, related_name="animal_groups"
+    )
     name = models.CharField(
         max_length=80,
         help_text="""
@@ -270,10 +282,13 @@ class AnimalGroup(models.Model):
     strain = models.ForeignKey(
         "assessment.Strain",
         on_delete=models.CASCADE,
-        help_text="When adding a new strain, put the stock in parenthesis, e.g., " + '"Sprague-Dawley (Harlan)."',
+        help_text="When adding a new strain, put the stock in parenthesis, e.g., "
+        + '"Sprague-Dawley (Harlan)."',
     )
     sex = models.CharField(max_length=1, choices=SEX_CHOICES)
-    animal_source = models.CharField(max_length=128, help_text="Source from where animals were acquired", blank=True)
+    animal_source = models.CharField(
+        max_length=128, help_text="Source from where animals were acquired", blank=True
+    )
     lifestage_exposed = models.CharField(
         max_length=32,
         blank=True,
@@ -400,7 +415,9 @@ class AnimalGroup(models.Model):
 
     @classmethod
     def delete_caches(cls, ids):
-        Endpoint.delete_caches(Endpoint.objects.filter(animal_group__in=ids).values_list("id", flat=True))
+        Endpoint.delete_caches(
+            Endpoint.objects.filter(animal_group__in=ids).values_list("id", flat=True)
+        )
 
     def copy_across_assessments(self, cw, skip_siblings: bool = False):
         children = list(self.endpoints.all().order_by("id"))
@@ -530,7 +547,10 @@ class DosingRegime(models.Model):
         choices=POSITIVE_CONTROL_CHOICES, default=False, help_text="Was a positive control used?",
     )
     negative_control = models.CharField(
-        max_length=2, default="VT", choices=NEGATIVE_CONTROL_CHOICES, help_text="Description of negative-controls used",
+        max_length=2,
+        default="VT",
+        choices=NEGATIVE_CONTROL_CHOICES,
+        help_text="Description of negative-controls used",
     )
     description = models.TextField(
         blank=True,
@@ -566,7 +586,9 @@ class DosingRegime(models.Model):
     @property
     def dose_groups(self):
         if not hasattr(self, "_dose_groups"):
-            self._dose_groups = DoseGroup.objects.select_related("dose_units").filter(dose_regime=self.pk)
+            self._dose_groups = DoseGroup.objects.select_related("dose_units").filter(
+                dose_regime=self.pk
+            )
         return self._dose_groups
 
     def isAnimalsDosed(self, animal_group):
@@ -607,7 +629,9 @@ class DosingRegime(models.Model):
         dgs = self.dose_groups.order_by("dose_units_id", "dose_group_id")
         for dg in dgs.distinct("dose_units"):
             dose_values = dgs.filter(dose_units=dg.dose_units).values_list("dose", flat=True)
-            doses.append({"id": dg.dose_units.id, "name": dg.dose_units.name, "values": list(dose_values)})
+            doses.append(
+                {"id": dg.dose_units.id, "name": dg.dose_units.name, "values": list(dose_values)}
+            )
         if json_encode:
             return json.dumps(doses, cls=HAWCDjangoJSONEncoder)
         else:
@@ -759,13 +783,22 @@ class Endpoint(BaseEndpoint):
         ("O", "Other"),
     )
 
-    animal_group = models.ForeignKey(AnimalGroup, on_delete=models.CASCADE, related_name="endpoints")
+    animal_group = models.ForeignKey(
+        AnimalGroup, on_delete=models.CASCADE, related_name="endpoints"
+    )
     system = models.CharField(max_length=128, blank=True, help_text="Relevant biological system")
     organ = models.CharField(
-        max_length=128, blank=True, verbose_name="Organ (and tissue)", help_text="Relevant organ or tissue",
+        max_length=128,
+        blank=True,
+        verbose_name="Organ (and tissue)",
+        help_text="Relevant organ or tissue",
     )
-    effect = models.CharField(max_length=128, blank=True, help_text="Effect, using common-vocabulary")
-    effect_subtype = models.CharField(max_length=128, blank=True, help_text="Effect subtype, using common-vocabulary")
+    effect = models.CharField(
+        max_length=128, blank=True, help_text="Effect, using common-vocabulary"
+    )
+    effect_subtype = models.CharField(
+        max_length=128, blank=True, help_text="Effect subtype, using common-vocabulary"
+    )
     litter_effects = models.CharField(
         max_length=2,
         choices=LITTER_EFFECT_CHOICES,
@@ -776,7 +809,9 @@ class Endpoint(BaseEndpoint):
         + "is explicitly mentioned in the study that litter was not controlled for.",
     )
     litter_effect_notes = models.CharField(
-        max_length=128, help_text="Any additional notes describing how litter effects were controlled", blank=True,
+        max_length=128,
+        help_text="Any additional notes describing how litter effects were controlled",
+        blank=True,
     )
     observation_time = models.FloatField(
         blank=True,
@@ -784,7 +819,9 @@ class Endpoint(BaseEndpoint):
         help_text="Numeric value of the time an observation was reported; "
         "optional, should be recorded if the same effect was measured multiple times.",
     )
-    observation_time_units = models.PositiveSmallIntegerField(default=0, choices=OBSERVATION_TIME_UNITS)
+    observation_time_units = models.PositiveSmallIntegerField(
+        default=0, choices=OBSERVATION_TIME_UNITS
+    )
     observation_time_text = models.CharField(
         max_length=64, blank=True, help_text='Text for reported observation time (ex: "60-90 PND")',
     )
@@ -807,22 +844,34 @@ class Endpoint(BaseEndpoint):
         verbose_name="Response units",
         help_text="Units the response was measured in (i.e., \u03BCg/dL, % control, etc.)",
     )
-    data_type = models.CharField(max_length=2, choices=DATA_TYPE_CHOICES, default="C", verbose_name="Dataset type",)
+    data_type = models.CharField(
+        max_length=2, choices=DATA_TYPE_CHOICES, default="C", verbose_name="Dataset type",
+    )
     variance_type = models.PositiveSmallIntegerField(default=1, choices=VARIANCE_TYPE_CHOICES)
     confidence_interval = models.FloatField(
-        blank=True, null=True, verbose_name="Confidence interval (CI)", help_text="A 95% CI is written as 0.95.",
+        blank=True,
+        null=True,
+        verbose_name="Confidence interval (CI)",
+        help_text="A 95% CI is written as 0.95.",
     )
-    NOEL = models.SmallIntegerField(verbose_name="NOEL", default=-999, help_text="No observed effect level")
-    LOEL = models.SmallIntegerField(verbose_name="LOEL", default=-999, help_text="Lowest observed effect level")
+    NOEL = models.SmallIntegerField(
+        verbose_name="NOEL", default=-999, help_text="No observed effect level"
+    )
+    LOEL = models.SmallIntegerField(
+        verbose_name="LOEL", default=-999, help_text="Lowest observed effect level"
+    )
     FEL = models.SmallIntegerField(verbose_name="FEL", default=-999, help_text="Frank effect level")
     data_reported = models.BooleanField(
-        default=True, help_text="Dose-response data for endpoint are available in the literature source",
+        default=True,
+        help_text="Dose-response data for endpoint are available in the literature source",
     )
     data_extracted = models.BooleanField(
-        default=True, help_text="Dose-response data for endpoint are extracted from literature into HAWC",
+        default=True,
+        help_text="Dose-response data for endpoint are extracted from literature into HAWC",
     )
     values_estimated = models.BooleanField(
-        default=False, help_text="Response values were estimated using a digital ruler or other methods",
+        default=False,
+        help_text="Response values were estimated using a digital ruler or other methods",
     )
     monotonicity = models.PositiveSmallIntegerField(default=8, choices=MONOTONICITY_CHOICES)
     statistical_test = models.CharField(
@@ -831,7 +880,9 @@ class Endpoint(BaseEndpoint):
         help_text="Short description of statistical analysis techniques used, e.g., "
         "Fisher Exact Test, ANOVA, Chi Square, Peto's test, none conducted",
     )
-    trend_value = models.FloatField(null=True, blank=True, help_text="Numerical result for trend-test, if available")
+    trend_value = models.FloatField(
+        null=True, blank=True, help_text="Numerical result for trend-test, if available"
+    )
     trend_result = models.PositiveSmallIntegerField(default=3, choices=TREND_RESULT_CHOICES)
     diagnostic = models.TextField(
         verbose_name="Endpoint Name in Study",
@@ -841,7 +892,9 @@ class Endpoint(BaseEndpoint):
         "study in cases where the endpoint/adverse outcome name is "
         "adjusted for consistency across studies or assessments.",
     )
-    power_notes = models.TextField(blank=True, help_text="Power of study-design to detect change from control")
+    power_notes = models.TextField(
+        blank=True, help_text="Power of study-design to detect change from control"
+    )
     results_notes = models.TextField(
         blank=True,
         help_text="""
@@ -923,7 +976,9 @@ class Endpoint(BaseEndpoint):
             .order_by("id")
         )
         df = pd.DataFrame(data=list(qs), columns=columns.values())
-        df["route of exposure"] = df["route of exposure"].map(DosingRegime.ROUTE_EXPOSURE_CHOICES_DICT)
+        df["route of exposure"] = df["route of exposure"].map(
+            DosingRegime.ROUTE_EXPOSURE_CHOICES_DICT
+        )
         df["sex"] = df["sex"].map(AnimalGroup.SEX_DICT)
         df["generation"] = df["generation"].map(AnimalGroup.GENERATION_DICT)
         df["experiment type"] = df["experiment type"].map(Experiment.EXPERIMENT_TYPE_DICT)
@@ -976,15 +1031,24 @@ class Endpoint(BaseEndpoint):
         )
 
         # rollup dose-units to study
-        values = dict(dose_regime__dosed_animals__experiment__study_id="study id", dose_units__name="dose units",)
+        values = dict(
+            dose_regime__dosed_animals__experiment__study_id="study id",
+            dose_units__name="dose units",
+        )
         qs = (
-            DoseGroup.objects.filter(dose_regime__dosed_animals__experiment__study__assessment_id=assessment)
+            DoseGroup.objects.filter(
+                dose_regime__dosed_animals__experiment__study__assessment_id=assessment
+            )
             .select_related("dose_regime__dosed_animals__experiment__study",)
             .values_list(*values.keys())
             .distinct("dose_regime__dosed_animals__experiment__study_id", "dose_units__id")
             .order_by()
         )
-        df3 = pd.DataFrame(data=qs, columns=values.values()).groupby("study id").agg({"dose units": unique_items})
+        df3 = (
+            pd.DataFrame(data=qs, columns=values.values())
+            .groupby("study id")
+            .agg({"dose units": unique_items})
+        )
 
         # merge all the data frames together
         df = (
@@ -1030,7 +1094,9 @@ class Endpoint(BaseEndpoint):
     @staticmethod
     def max_dose_count(queryset):
         max_val = 0
-        qs = queryset.annotate(max_egs=models.Count("groups", distinct=True)).values_list("max_egs", flat=True)
+        qs = queryset.annotate(max_egs=models.Count("groups", distinct=True)).values_list(
+            "max_egs", flat=True
+        )
         if len(qs) > 0:
             max_val = max(qs)
         return max_val
@@ -1189,11 +1255,17 @@ class Endpoint(BaseEndpoint):
         # convert value dictionaries to lists
         studies = sorted(list(studies.values()), key=lambda obj: (obj["short_citation"].lower()))
         for study in studies:
-            study["exps"] = sorted(list(study["exps"].values()), key=lambda obj: (obj["name"].lower()))
+            study["exps"] = sorted(
+                list(study["exps"].values()), key=lambda obj: (obj["name"].lower())
+            )
             for exp in study["exps"]:
-                exp["ags"] = sorted(list(exp["ags"].values()), key=lambda obj: (obj["name"].lower()))
+                exp["ags"] = sorted(
+                    list(exp["ags"].values()), key=lambda obj: (obj["name"].lower())
+                )
                 for ag in exp["ags"]:
-                    ag["eps"] = sorted(list(ag["eps"].values()), key=lambda obj: (obj["name"].lower()))
+                    ag["eps"] = sorted(
+                        list(ag["eps"].values()), key=lambda obj: (obj["name"].lower())
+                    )
 
         return {
             "assessment": AssessmentSerializer().to_representation(assessment),
@@ -1208,7 +1280,11 @@ class Endpoint(BaseEndpoint):
         ordering data-pivot results.
         """
         val = 0
-        changes = [g["percentControlMean"] for g in ep["groups"] if tryParseInt(g["percentControlMean"], default=False)]
+        changes = [
+            g["percentControlMean"]
+            for g in ep["groups"]
+            if tryParseInt(g["percentControlMean"], default=False)
+        ]
         if len(changes) > 0:
             min_ = min(changes)
             max_ = max(changes)
@@ -1229,7 +1305,9 @@ class Endpoint(BaseEndpoint):
             return None
 
     def copy_across_assessments(self, cw):
-        children = chain(list(self.groups.all().order_by("id")), list(self.bmd_sessions.all().order_by("id")),)
+        children = chain(
+            list(self.groups.all().order_by("id")), list(self.bmd_sessions.all().order_by("id")),
+        )
         effects = list(self.effects.all().order_by("id"))
 
         old_id = self.id
@@ -1327,7 +1405,10 @@ class ConfidenceIntervalsMixin:
                     if sd_1 and sd_2 and n_1 and n_2:
                         sd = math.sqrt(
                             pow(mu_1, -2)
-                            * ((pow(sd_2, 2) / n_2) + (pow(mu_2, 2) * pow(sd_1, 2)) / (n_1 * pow(mu_1, 2)))
+                            * (
+                                (pow(sd_2, 2) / n_2)
+                                + (pow(mu_2, 2) * pow(sd_1, 2)) / (n_1 * pow(mu_1, 2))
+                            )
                         )
                         ci = (1.96 * sd) * 100
                         rng = sorted([mean - ci, mean + ci])
@@ -1388,12 +1469,18 @@ class ConfidenceIntervalsMixin:
                 q = 1.0 - p
 
                 lower_ci = round(
-                    ((2 * n * p + 2 * z - 1) - z * math.sqrt(2 * z - (2 + 1 / n) + 4 * p * (n * q + 1)))
+                    (
+                        (2 * n * p + 2 * z - 1)
+                        - z * math.sqrt(2 * z - (2 + 1 / n) + 4 * p * (n * q + 1))
+                    )
                     / (2 * (n + 2 * z)),
                     3,
                 )
                 upper_ci = round(
-                    ((2 * n * p + 2 * z + 1) + z * math.sqrt(2 * z + (2 + 1 / n) + 4 * p * (n * q - 1)))
+                    (
+                        (2 * n * p + 2 * z + 1)
+                        + z * math.sqrt(2 * z + (2 + 1 / n) + 4 * p * (n * q - 1))
+                    )
                     / (2 * (n + 2 * z)),
                     3,
                 )
@@ -1409,7 +1496,10 @@ class ConfidenceIntervalsMixin:
         # generate a pretty-printing format for dichotomous data
         for eg in egs:
             additions = dict(
-                dichotomous_summary="-", percent_affected=None, percent_lower_ci=None, percent_upper_ci=None,
+                dichotomous_summary="-",
+                percent_affected=None,
+                percent_lower_ci=None,
+                percent_upper_ci=None,
             )
             n = eg["n"]
             inc = eg["incidence"]
@@ -1430,16 +1520,26 @@ class EndpointGroup(ConfidenceIntervalsMixin, models.Model):
     endpoint = models.ForeignKey(Endpoint, on_delete=models.CASCADE, related_name="groups")
     dose_group_id = models.IntegerField()
     n = models.PositiveSmallIntegerField(blank=True, null=True, validators=[MinValueValidator(0)])
-    incidence = models.PositiveSmallIntegerField(blank=True, null=True, validators=[MinValueValidator(0)])
+    incidence = models.PositiveSmallIntegerField(
+        blank=True, null=True, validators=[MinValueValidator(0)]
+    )
     response = models.FloatField(blank=True, null=True)
     variance = models.FloatField(blank=True, null=True, validators=[MinValueValidator(0)])
     lower_ci = models.FloatField(
-        blank=True, null=True, verbose_name="Lower CI", help_text="Numerical value for lower-confidence interval",
+        blank=True,
+        null=True,
+        verbose_name="Lower CI",
+        help_text="Numerical value for lower-confidence interval",
     )
     upper_ci = models.FloatField(
-        blank=True, null=True, verbose_name="Upper CI", help_text="Numerical value for upper-confidence interval",
+        blank=True,
+        null=True,
+        verbose_name="Upper CI",
+        help_text="Numerical value for upper-confidence interval",
     )
-    significant = models.BooleanField(default=False, verbose_name="Statistically significant from control")
+    significant = models.BooleanField(
+        default=False, verbose_name="Statistically significant from control"
+    )
     significance_level = models.FloatField(
         null=True,
         blank=True,
