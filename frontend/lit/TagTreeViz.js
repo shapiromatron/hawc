@@ -68,26 +68,10 @@ class TagTreeViz extends D3Plot {
     draw_visualization() {
         var i = 0,
             vis = this.vis,
-            diagonal = function link(d) {
-                return (
-                    "M" +
-                    d.source.y +
-                    "," +
-                    d.source.x +
-                    "C" +
-                    (d.source.y + d.target.y) / 2 +
-                    "," +
-                    d.source.x +
-                    " " +
-                    (d.source.y + d.target.y) / 2 +
-                    "," +
-                    d.target.x +
-                    " " +
-                    d.target.y +
-                    "," +
-                    d.target.x
-                );
-            },
+            diagonal = d3
+                .linkHorizontal()
+                .x(d => d.y)
+                .y(d => d.x),
             self = this,
             buildVizDatasetNode = function(nestedTag) {
                 return {
