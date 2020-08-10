@@ -360,7 +360,12 @@ class StyleViewer extends D3Plot {
                                 )
                             )
                     )
-                    .styles(style_settings.symbol_style.settings);
+                    .call(selection =>
+                        this._set_styles_from_object(
+                            selection,
+                            style_settings.symbol_style.settings
+                        )
+                    );
             } else {
                 if (this.symbol) {
                     this.symbol.remove();

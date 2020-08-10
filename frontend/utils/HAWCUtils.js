@@ -292,7 +292,7 @@ class HAWCUtils {
                 return d3.symbolTriangle;
             case "triangle-down":
                 return {
-                    draw: function(context, size) {
+                    draw(context, size) {
                         var sqrt3 = Math.sqrt(3),
                             y = -Math.sqrt(size / (sqrt3 * 3));
                         context.moveTo(0, -y);
