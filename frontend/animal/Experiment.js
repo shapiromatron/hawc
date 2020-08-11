@@ -57,20 +57,13 @@ class Experiment {
             .add_tbody_tr("Multiple generations", getGenerations())
             .add_tbody_tr("Chemical", this.data.chemical)
             .add_tbody_tr("CAS", this.data.cas)
+            .add_tbody_tr("DTXSID", this.data.dtxsid)
             .add_tbody_tr("Chemical source", this.data.chemical_source)
             .add_tbody_tr(getPurityText(), getPurity())
             .add_tbody_tr("Vehicle", this.data.vehicle)
             .add_tbody_tr("Animal diet", this.data.diet)
             .add_tbody_tr("Guideline compliance", this.data.guideline_compliance)
             .add_tbody_tr("Description and animal husbandry", this.data.description);
-
-        if (this.data.cas_url) {
-            casTd = tbl
-                .get_tbl()
-                .find('th:contains("CAS")')
-                .next();
-            HAWCUtils.renderChemicalProperties(this.data.cas_url, casTd, false);
-        }
 
         return tbl.get_tbl();
     }

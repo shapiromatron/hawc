@@ -81,6 +81,19 @@
         </tr>
       {% endif %}
 
+      {% for dtxsid in object.dtxsids.all %}
+        {% if forloop.first %}
+          <tr>
+            <th rowspan={{object.dtxsids.all.count}}>DTXSID</th>
+            <td>{{dtxsid}}</td>
+          </tr>
+        {% else %}
+          <tr>
+            <td>{{dtxsid}}</td>
+          </tr>
+        {% endif %}
+      {% endfor %}
+
       <tr>
         <th>Year</th>
         <td>{{object.year}}</td>
