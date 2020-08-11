@@ -735,10 +735,10 @@ class ExploreHeatmapPlot {
             textColor = d => {
                 const backgroundColor = d.type == "cell" ? cellColor(d) : totalColor(d);
                 return h.getTextContrastColor(backgroundColor);
-            },
-            t = this.cells.transition().duration(100);
+            };
 
-        this.cells
+        this.vis
+            .select(".exp_heatmap_cells")
             .selectAll(".exp_heatmap_cell")
             .data(data, d => d.index)
             .join(
@@ -755,36 +755,44 @@ class ExploreHeatmapPlot {
                         });
 
                     g.append("rect")
-                        .attr("class", "exp_heatmap_cell_block")
                         .attr("x", d => this.x_scale(d.x_step))
                         .attr("y", d => this.y_scale(d.y_step))
                         .attr("width", this.x_scale.bandwidth())
                         .attr("height", this.y_scale.bandwidth())
-                        .style("fill", d => (d.type == "cell" ? cellColor(d) : totalColor(d)));
+                        .attr("fill", "white");
 
                     g.append("text")
                         .attr("class", "exp_heatmap_cell_text")
                         .attr("x", d => this.x_scale(d.x_step) + this.x_scale.bandwidth() / 2)
                         .attr("y", d => this.y_scale(d.y_step) + this.y_scale.bandwidth() / 2)
-                        .style("font-weight", d => (d.type == "total" ? "bold" : null))
-                        .style("fill", textColor)
-                        .style("display", d => (d.rows.length == 0 ? "none" : null))
-                        .text(d => d.rows.length);
-                },
-                update => {
-                    update
-                        .select(".exp_heatmap_cell_block")
-                        .transition(t)
-                        .style("fill", d => (d.type == "cell" ? cellColor(d) : totalColor(d)));
+                        .style("font-weight", d => (d.type == "total" ? "bold" : null));
 
-                    update
-                        .select(".exp_heatmap_cell_text")
-                        .transition(t)
-                        .style("fill", textColor)
-                        .style("display", d => (d.rows.length == 0 ? "none" : null))
-                        .text(d => d.rows.length);
+                    return g;
+                },
+                update => update,
+                exit => exit.call(exit => exit.transition().remove())
+            )
+            .call(g => {
+                // operate the d3 selection merge of enter + update
+
+                // add transition to prevent too many DOM transforms at once
+                let t = g.transition();
+                if (data.length < 100) {
+                    t.delay((_, i) => i * 5);
+                } else {
+                    t.delay((_, i) => i * 1);
                 }
-            );
+
+                g.select("rect")
+                    .transition(t)
+                    .style("fill", d => (d.type == "cell" ? cellColor(d) : totalColor(d)));
+
+                g.select("text")
+                    .transition(t)
+                    .style("fill", textColor)
+                    .style("display", d => (d.rows.length == 0 ? "none" : null))
+                    .text(d => d.rows.length);
+            });
     };
 
     build_plot() {
@@ -810,7 +818,7 @@ class ExploreHeatmapPlot {
             .range([0, this.h]);
 
         // Draw cells
-        this.cells = this.vis.append("g");
+        this.vis.append("g").attr("class", "exp_heatmap_cells");
 
         // draw the cells
         autorun(() => this.update_plot(this.store.matrixDataset));
