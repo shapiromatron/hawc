@@ -1,5 +1,5 @@
 import $ from "$";
-import d3 from "d3";
+import * as d3 from "d3";
 
 import HAWCUtils from "utils/HAWCUtils";
 
@@ -189,10 +189,10 @@ class DataPivotLegend {
                     .append("path")
                     .attr(
                         "d",
-                        d3.svg
+                        d3
                             .symbol()
                             .size(style.size)
-                            .type(style.type)
+                            .type(HAWCUtils.symbolStringToType(style.type))
                     )
                     .attr("transform", d => `translate(${d.x},${d.y})`)
                     .each(apply_styles);

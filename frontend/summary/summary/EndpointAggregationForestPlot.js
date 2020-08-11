@@ -1,6 +1,6 @@
 import $ from "$";
 import _ from "lodash";
-import d3 from "d3";
+import * as d3 from "d3";
 
 import D3Visualization from "./D3Visualization";
 
@@ -358,7 +358,7 @@ class EndpointAggregationForestPlot extends D3Visualization {
             },
             item_height = 20,
             box_w = 110,
-            items = [addItem("Doses in Study", "dose_points")],
+            items = [addItem("Doses", "dose_points")],
             noel_names = this.data.endpoints[0].data.noel_names;
 
         if (this.plot_div.find(".NOEL").length > 0)

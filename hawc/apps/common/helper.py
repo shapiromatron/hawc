@@ -24,7 +24,7 @@ def HAWCtoDateString(datetime):
     return datetime.strftime("%B %d %Y, %I:%M %p")
 
 
-def cleanHTML(txt):
+def cleanHTML(txt: str):
     return strip_entities(
         strip_tags(
             txt.replace("\n", " ").replace("\r", "").replace("<br>", "\n").replace("&nbsp;", " ")

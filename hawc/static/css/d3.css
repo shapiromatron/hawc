@@ -89,6 +89,11 @@ unrecognized HTML expressions.
     fill: #646464;
 }
 
+.critical-dose-group-line{
+    stroke-width: 2px;
+    stroke: #cacaca;
+}
+
 
 /* dose-response data points */
 .dose_bars {
