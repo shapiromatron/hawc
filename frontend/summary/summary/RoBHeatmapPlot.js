@@ -1,6 +1,6 @@
 import $ from "$";
 import _ from "lodash";
-import d3 from "d3";
+import * as d3 from "d3";
 
 import HAWCModal from "utils/HAWCModal";
 
@@ -329,14 +329,14 @@ class RoBHeatmapPlot extends D3Visualization {
         $(".x_axis text")
             .each(this.xIsStudy ? getStudySQs : getMetricSQs)
             .attr("class", "heatmap_selectable")
-            .on("mouseover", v => self.draw_hovers(this, {draw: true, type: "column"}))
+            .on("mouseover", v => self.draw_hovers(v.target, {draw: true, type: "column"}))
             .on("mouseout", hideHovers)
             .on("click", showSQs);
 
         $(".y_axis text")
             .each(!this.xIsStudy ? getStudySQs : getMetricSQs)
             .attr("class", "heatmap_selectable")
-            .on("mouseover", v => self.draw_hovers(this, {draw: true, type: "row"}))
+            .on("mouseover", v => self.draw_hovers(v.target, {draw: true, type: "row"}))
             .on("mouseout", hideHovers)
             .on("click", showSQs);
 
@@ -371,8 +371,13 @@ class RoBHeatmapPlot extends D3Visualization {
     }
 
     draw_hovers(v, options) {
-        if (this.hover_study_bar) this.hover_study_bar.remove();
-        if (!options.draw) return;
+        if (this.hover_study_bar) {
+            this.hover_study_bar.remove();
+        }
+
+        if (!options.draw) {
+            return;
+        }
 
         var draw_type;
         switch (options.type) {
@@ -401,7 +406,6 @@ class RoBHeatmapPlot extends D3Visualization {
                 };
                 break;
         }
-
         this.hover_study_bar = this.hover_group
             .selectAll("svg.rect")
             .data([draw_type])
