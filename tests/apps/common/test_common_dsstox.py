@@ -3,6 +3,7 @@ import pytest
 from hawc.apps.common.dsstox import fetch_dsstox
 
 
+@pytest.mark.django_db
 @pytest.mark.vcr
 def test_dsstox():
     # test bad DTXSID

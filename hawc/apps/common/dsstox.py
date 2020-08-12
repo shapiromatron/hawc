@@ -1,4 +1,5 @@
 import base64
+import json
 import logging
 from typing import Dict, Optional
 
@@ -26,8 +27,13 @@ def fetch_dsstox(dtxsid: str) -> Dict:
     try:
         # get details
         dsstox = DSSTox.objects.get(pk=dtxsid)
+        # loaded as text in test database; parse dict from json if necessary
+        parsed_content = (
+            json.loads(dsstox.content) if type(dsstox.content) is str else dsstox.content
+        )
+
         content = {
-            k: dsstox.content[k]
+            k: parsed_content[k]
             for k in ("preferredName", "casrn", "dtxsid", "smiles", "molWeight")
         }
         content["url_dashboard"] = dsstox.get_dashboard_url()

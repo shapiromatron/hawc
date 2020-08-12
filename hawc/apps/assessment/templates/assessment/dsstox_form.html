@@ -17,7 +17,7 @@
 
         {{ form.non_field_errors|add_class:"alert alert-error" }}
 
-        {% for field in form %}
+        {% for field in form.visible_fields %}
           <div class="control-group form-row">
             {{field.label_tag|add_class:"control-label"}}
             <div class="controls">
@@ -26,6 +26,9 @@
             </div>
             {{field.errors|add_class:"alert alert-error"}}
           </div>
+        {% endfor %}
+        {% for field in form.hidden_fields %}
+          {{field}}
         {% endfor %}
       </fieldset>
     </div>

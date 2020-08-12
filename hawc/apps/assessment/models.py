@@ -1,5 +1,5 @@
 import json
-from typing import Dict, List, NamedTuple, Optional
+from typing import List, NamedTuple
 
 import pandas as pd
 import requests
@@ -58,9 +58,6 @@ class DSSTox(models.Model):
     def __str__(self):
         return self.dtxsid
 
-    def get_content_json(self) -> Optional[Dict]:
-        return json.loads(self.content, encoding="utf-8") if self.content else None
-
     def get_image_url(self) -> str:
         return f"https://actorws.epa.gov/actorws/chemical/image?dtxsid={self.dtxsid}&fmt=jpeg"
 
@@ -76,10 +73,11 @@ class DSSTox(models.Model):
         url = DSSTox.get_api_url(identifier)
         response = requests.get(url)
         response_dict = response.json()["DataRow"]
+
         if not response_dict["dtxsid"]:
             raise ValidationError(f"Chemical identifier '{identifier}' not found on DSSTox lookup.")
         else:
-            return cls(dtxsid=response_dict["dtxsid"], content=response.text)
+            return cls(dtxsid=response_dict["dtxsid"], content=response_dict)
 
     @classmethod
     def create_from_dtxsid(cls, dtxsid: str):

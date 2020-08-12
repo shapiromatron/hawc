@@ -89,7 +89,7 @@ class ExperimentForm(ModelForm):
         helper.add_fluid_row("name", 3, "span4")
         helper.add_fluid_row("chemical", 3, "span4")
         helper.add_fluid_row("purity_available", 4, ["span2", "span2", "span2", "span6"])
-        url = reverse("assessment:dtxsid_create", kwargs={"pk": self.instance.study.assessment.pk})
+        url = reverse("assessment:dtxsid_create")
         helper.addBtnLayout(helper.layout[3], 2, url, "Add new DTXSID", "span4")
         return helper
 

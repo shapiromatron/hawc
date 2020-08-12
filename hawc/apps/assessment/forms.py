@@ -75,7 +75,7 @@ class AssessmentForm(forms.ModelForm):
         helper.add_fluid_row("name", 3, "span4")
         helper.add_fluid_row("cas", 2, "span6")
         helper.add_fluid_row("project_manager", 3, "span4")
-        url = reverse("assessment:dtxsid_create", kwargs={"pk": self.instance.id})
+        url = reverse("assessment:dtxsid_create")
         helper.addBtnLayout(helper.layout[3], 1, url, "Add new DTXSID", "span6")
         helper.attrs["novalidate"] = ""
         return helper
@@ -197,11 +197,13 @@ class DoseUnitsForm(forms.ModelForm):
 class DSSToxForm(forms.ModelForm):
     class Meta:
         model = models.DSSTox
-        fields = ("dtxsid",)
+        fields = ("dtxsid", "content")
+        widgets = {"content": forms.HiddenInput()}
 
     def __init__(self, *args, **kwargs):
         kwargs.pop("parent", None)
         super().__init__(*args, **kwargs)
+        self.fields["content"].required = False
 
     def clean(self):
         cleaned_data = super().clean()

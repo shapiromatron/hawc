@@ -412,10 +412,8 @@ class DoseUnitsCreate(CloseIfSuccessMixin, BaseCreate):
     form_class = forms.DoseUnitsForm
 
 
-class DSSToxCreate(CloseIfSuccessMixin, BaseCreate):
+class DSSToxCreate(CloseIfSuccessMixin, LoginRequiredMixin, MessageMixin, CreateView):
     success_message = "DTXSID created."
-    parent_model = models.Assessment
-    parent_template_name = "assessment"
     model = models.DSSTox
     form_class = forms.DSSToxForm
 

@@ -69,7 +69,7 @@ class IVChemicalForm(forms.ModelForm):
         helper.add_fluid_row("cas", 2, "span6")
         helper.add_fluid_row("source", 3, "span4")
         helper.add_fluid_row("purity_confirmed_notes", 2, "span6")
-        url = reverse("assessment:dtxsid_create", kwargs={"pk": self.instance.study.assessment.pk})
+        url = reverse("assessment:dtxsid_create")
         helper.addBtnLayout(helper.layout[3], 1, url, "Add new DTXSID", "span6")
 
         return helper

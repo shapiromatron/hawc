@@ -5,13 +5,14 @@ from django.urls import reverse
 from rest_framework.test import APIClient
 
 
+@pytest.mark.django_db
 @pytest.mark.vcr
 class TestDSSToxView:
     def test_happy_path(self):
-        dtxsid = "DTXSID7020970"
+        dtxsid = "DTXSID6026296"
         url = reverse("assessment:dsstox_detail", args=(dtxsid,))
 
-        assert url == "/assessment/dsstox/DTXSID7020970/"
+        assert url == "/assessment/dsstox/DTXSID6026296/"
 
         # first time, acknowledge request
         client = APIClient()
@@ -39,7 +40,7 @@ class TestDSSToxView:
         dtxsid = "DTXSID0"
         url = reverse("assessment:dsstox_detail", args=(dtxsid,))
 
-        assert url == "/assessment/dsstox/DTXSID123abc/"
+        assert url == "/assessment/dsstox/DTXSID0/"
 
         # first time, acknowledge request
         client = APIClient()

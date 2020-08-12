@@ -26,6 +26,7 @@ def test_create_assessment():
                     "project_manager": ("1"),
                     "team_members": ("1", "2"),
                     "reviewers": ("1"),
+                    "dtxsids": ("DTXSID7020970",),
                 },
             )
             assert response.status_code in [200, 302]
