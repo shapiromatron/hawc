@@ -28,12 +28,10 @@ class Term(models.Model):
     namespace = models.PositiveSmallIntegerField(
         choices=VocabularyNamespace.choices(), default=VocabularyNamespace.EHV
     )
+    parent = models.ForeignKey("Term", on_delete=models.CASCADE, blank=True, null=True)
     type = models.PositiveIntegerField(choices=VocabularyTermType.choices())
     name = models.CharField(max_length=256)
     notes = models.TextField(blank=True)
-    parents = models.ManyToManyField(
-        "self", symmetrical=False, through="TermRelation", through_fields=("term", "parent_term"),
-    )
     deprecated_on = models.DateTimeField(blank=True, null=True)
     created_on = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
@@ -43,20 +41,6 @@ class Term(models.Model):
 
     def __str__(self) -> str:
         return f"{self.get_namespace_display()}::{self.get_type_display()}::{self.name}"
-
-
-class TermRelation(models.Model):
-    term = models.ForeignKey(Term, on_delete=models.PROTECT)
-    parent_term = models.ForeignKey(Term, on_delete=models.PROTECT, related_name="children")
-    deprecated_on = models.DateTimeField(blank=True, null=True)
-    created_on = models.DateTimeField(auto_now_add=True)
-    last_updated = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        ordering = ("id",)
-
-    def __str__(self) -> str:
-        return f"{self.parent_term} -> {self.term}"
 
 
 class Ontology(IntChoiceEnum):

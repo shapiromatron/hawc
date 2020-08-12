@@ -3,12 +3,6 @@ from django.contrib import admin
 from . import models
 
 
-class TermRelationAdmin(admin.TabularInline):
-    fk_name = "term"
-    model = models.TermRelation
-    extra = 1
-
-
 @admin.register(models.Term)
 class TermAdmin(admin.ModelAdmin):
     list_display = (
@@ -16,6 +10,7 @@ class TermAdmin(admin.ModelAdmin):
         "namespace",
         "type",
         "name",
+        "parent",
         "deprecated_on",
         "created_on",
         "last_updated",
@@ -24,8 +19,8 @@ class TermAdmin(admin.ModelAdmin):
         "namespace",
         "type",
     )
+    list_select_related = ("parent",)
     search_fields = ("name",)
-    inlines = (TermRelationAdmin,)
 
 
 class EntityTermRelationAdmin(admin.TabularInline):
