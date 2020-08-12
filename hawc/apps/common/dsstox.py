@@ -2,7 +2,6 @@ import base64
 import logging
 from typing import Dict, Optional
 
-
 import requests
 from django.urls import NoReverseMatch, reverse
 

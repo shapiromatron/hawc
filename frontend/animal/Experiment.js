@@ -48,8 +48,7 @@ class Experiment {
                     self.data.purity_qualifier === "=" ? "" : self.data.purity_qualifier;
                 return self.data.purity ? `${qualifier}${self.data.purity}%` : "No";
             },
-            tbl,
-            casTd;
+            tbl;
 
         tbl = new DescriptiveTable()
             .add_tbody_tr("Name", this.data.name)
