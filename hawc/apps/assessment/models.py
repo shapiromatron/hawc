@@ -45,13 +45,15 @@ class NoelNames(NamedTuple):
 class DSSTox(models.Model):
 
     dtxsid = models.CharField(max_length=80, primary_key=True)
-    content = models.TextField()
+    content = JSONField(default=dict)
 
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
     class Meta:
         ordering = ("dtxsid",)
+        verbose_name = "DTXSID"
+        verbose_name_plural = "DTXSIDs"
 
     def __str__(self):
         return self.dtxsid
