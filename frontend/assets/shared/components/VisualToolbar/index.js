@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import PropTypes from "prop-types";
-import d3 from "d3";
+import * as d3 from "d3";
 import {action, observable} from "mobx";
 import {observer} from "mobx-react";
 
@@ -21,7 +21,7 @@ const getSvgObject = function(svgElement) {
         // Removed CSS style-grabbing components as this behavior was unreliable.
         const get_selected_svg = function(svg) {
                 svg.attr("version", "1.1");
-                svg.attr("xmlns", d3.ns.prefix.svg);
+                svg.attr("xmlns", d3.namespaces.svg);
                 var source = new XMLSerializer().serializeToString(svg.node()),
                     rect = svg.node().getBoundingClientRect();
                 return {

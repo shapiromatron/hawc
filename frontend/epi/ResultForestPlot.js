@@ -1,5 +1,5 @@
 import _ from "lodash";
-import d3 from "d3";
+import * as d3 from "d3";
 
 import D3Plot from "utils/D3Plot";
 
@@ -181,7 +181,7 @@ class ResultForestPlot extends D3Plot {
     draw_visualizations() {
         var x = this.x_scale,
             y = this.y_scale,
-            mid = y.rangeBand() / 2;
+            mid = y.bandwidth() / 2;
 
         // vertical reference line at 1 relative risk
         this.vis

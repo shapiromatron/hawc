@@ -1,7 +1,7 @@
 import _ from "lodash";
 import React, {PureComponent} from "react";
 import PropTypes from "prop-types";
-import d3 from "d3";
+import * as d3 from "d3";
 
 import BarChart from "Graphing/BarChart";
 import XAxis from "Graphing/Axes/xAxis";
@@ -59,16 +59,16 @@ class TaskChart extends PureComponent {
 
     makeYScale(data) {
         let {height, padding, values} = data;
-        return d3.scale
-            .ordinal()
+        return d3
+            .scaleOrdinal()
             .domain(values)
             .rangeRoundBands([padding.top, height - padding.bottom], 0.4);
     }
 
     makeXScale(data) {
         let {width, padding, max} = data;
-        return d3.scale
-            .linear()
+        return d3
+            .scaleLinear()
             .domain([0, max])
             .range([padding.left, width - padding.right - padding.left]);
     }
