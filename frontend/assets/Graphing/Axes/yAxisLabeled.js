@@ -3,14 +3,16 @@ import PropTypes from "prop-types";
 import * as d3 from "d3";
 
 class yAxisLabeled extends Component {
-    componentDidMount() {
-        let {yScale, ticks} = this.props;
+    constructor(props) {
+        super(props);
         this.yAxisContainer = React.createRef();
-        this.yAxis = d3.svg
-            .axis()
-            .scale(yScale)
-            .orient("left")
-            .tickFormat(ticks);
+        this.yAxis = d3
+            .axisLeft()
+            .scale(props.yScale)
+            .tickFormat(props.ticks);
+    }
+
+    componentDidMount() {
         this.renderAxis();
     }
 
