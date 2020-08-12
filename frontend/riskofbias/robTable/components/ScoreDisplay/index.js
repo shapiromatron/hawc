@@ -20,7 +20,7 @@ class ScoreDisplay extends Component {
             hasOverride = score.overridden_objects.length > 0;
 
         if (score.is_default) {
-            labelText = labelText.length > 0 ? `${labelText} (default)` : "Default";
+            labelText = labelText.length > 0 ? labelText : "Overall";
         }
 
         return (
