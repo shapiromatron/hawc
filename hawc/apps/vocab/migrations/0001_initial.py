@@ -28,7 +28,7 @@ class Migration(migrations.Migration):
                 ("created_on", models.DateTimeField(auto_now_add=True)),
                 ("last_updated", models.DateTimeField(auto_now=True)),
             ],
-            options={"verbose_name_plural": "entities", "ordering": ("id",),},
+            options={"verbose_name_plural": "entities", "ordering": ("id",)},
         ),
         migrations.CreateModel(
             name="Term",
@@ -72,7 +72,7 @@ class Migration(migrations.Migration):
                     ),
                 ),
             ],
-            options={"ordering": ("id",),},
+            options={"ordering": ("id",)},
         ),
         migrations.CreateModel(
             name="EntityTermRelation",
@@ -97,7 +97,7 @@ class Migration(migrations.Migration):
                     models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to="vocab.Term"),
                 ),
             ],
-            options={"ordering": ("id",),},
+            options={"ordering": ("id",)},
         ),
         migrations.AddField(
             model_name="entity",

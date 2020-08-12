@@ -1,5 +1,6 @@
 import pytest
-from hawc.apps.vocab.models import Term, Entity
+
+from hawc.apps.vocab.models import Entity, Term
 
 
 @pytest.mark.django_db
