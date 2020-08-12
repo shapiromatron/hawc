@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 
 from ..common.models import IntChoiceEnum
 
@@ -42,6 +43,9 @@ class Term(models.Model):
     def __str__(self) -> str:
         return f"{self.get_namespace_display()}::{self.get_type_display()}::{self.name}"
 
+    def get_admin_edit_url(self) -> str:
+        return reverse("admin:vocab_term_change", args=(self.id,))
+
 
 class Ontology(IntChoiceEnum):
     """
@@ -56,7 +60,10 @@ class Entity(models.Model):
     ontology = models.PositiveSmallIntegerField(choices=Ontology.choices())
     uid = models.CharField(max_length=128, verbose_name="UID")
     terms = models.ManyToManyField(
-        Term, through="EntityTermRelation", through_fields=("entity", "term"),
+        Term,
+        through="EntityTermRelation",
+        through_fields=("entity", "term"),
+        related_name="entities",
     )
     deprecated_on = models.DateTimeField(blank=True, null=True)
     created_on = models.DateTimeField(auto_now_add=True)
@@ -69,6 +76,12 @@ class Entity(models.Model):
 
     def __str__(self) -> str:
         return self.uid
+
+    def get_external_url(self) -> str:
+        if self.ontology == Ontology.umls:
+            return f"https://ncim.nci.nih.gov/ncimbrowser/pages/concept_details.jsf?dictionary=NCI%20Metathesaurus&code={self.uid}"
+        else:
+            raise ValueError("Unknown ontology type")
 
 
 class EntityTermRelation(models.Model):
