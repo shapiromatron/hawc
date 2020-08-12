@@ -1,8 +1,5 @@
-from django.views.generic import FormView
-
-from . import forms
+from django.views.generic import TemplateView
 
 
-class Widget(FormView):
+class Widget(TemplateView):
     template_name = "vocab/widgets.html"
-    form_class = forms.WidgetForm
