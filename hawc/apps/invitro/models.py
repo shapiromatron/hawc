@@ -8,7 +8,7 @@ from reversion import revisions as reversion
 
 from ..animal.models import ConfidenceIntervalsMixin
 from ..assessment.models import Assessment, BaseEndpoint
-from ..common.dsstox import get_casrn_url
+from ..common.dsstox import get_dsstox_url
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper
 from ..common.models import AssessmentRootedTagTree, get_crumbs
 from ..study.models import Study
@@ -73,8 +73,8 @@ class IVChemical(models.Model):
     def get_assessment(self):
         return self.study.assessment
 
-    def get_casrn_url(self):
-        return get_casrn_url(self.cas)
+    def get_dsstox_url(self):
+        return get_dsstox_url(self.dtxsid)
 
     @classmethod
     def delete_caches(cls, ids):

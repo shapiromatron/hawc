@@ -14,7 +14,7 @@ from scipy import stats
 
 from ..assessment.models import Assessment, BaseEndpoint
 from ..assessment.serializers import AssessmentSerializer
-from ..common.dsstox import get_casrn_url
+from ..common.dsstox import get_dsstox_url
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper, cleanHTML, tryParseInt
 from ..common.models import get_crumbs
 from ..study.models import Study
@@ -153,8 +153,8 @@ class Experiment(models.Model):
     def get_crumbs(self):
         return get_crumbs(self, self.study)
 
-    def get_casrn_url(self):
-        return get_casrn_url(self.cas)
+    def get_dsstox_url(self):
+        return get_dsstox_url(self.dtxsid)
 
     @staticmethod
     def flat_complete_header_row():

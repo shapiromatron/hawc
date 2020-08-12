@@ -11,6 +11,9 @@
 
 {% block content %}
     <div id="ivChemical"></div>
+    {% if object.dtxsid %}
+        <div id="dsstox"></div>
+    {% endif %}
 {% endblock %}
 
 {% block extrajs %}
@@ -19,5 +22,17 @@ window.app.invitroStartup(function(invitro){
     window.canEdit = {{obj_perms.edit|lower}};
     invitro.IVChemical.displayAsPage({{object.id}}, $("#ivChemical"));
 });
+{% if object.dtxsid %}
+    $(document).on('ready', function(){
+
+    {% with url=object.get_dsstox_url %}
+        {% if url %}
+        var url = "{{url}}",
+            div = $('div#dsstox');
+        window.app.utils.HAWCUtils.renderChemicalProperties(url, div, true);
+        {% endif %}
+    {% endwith %}
+    });
+{% endif %}
 </script>
 {% endblock %}

@@ -429,19 +429,19 @@ class AdminDashboardViewset(viewsets.ViewSet):
         return Response(export)
 
 
-class CasrnView(APIView):
+class DSSToxView(APIView):
     permission_classes = (permissions.AllowAny,)
 
-    def get(self, request, casrn: str, format=None):
+    def get(self, request, dtxsid: str, format=None):
         """
-        Given a CAS number, get results.
+        Given a DTXSID number, get results.
         """
-        cache_name = dsstox.get_cache_name(casrn)
+        cache_name = dsstox.get_cache_name(dtxsid)
 
         data = cache.get(cache_name)
         if data is None:
             data = {"status": "requesting"}
             cache.set(cache_name, data, 60)  # add task; don't resubmit for 60 seconds
-            tasks.get_dsstox_details.delay(casrn)
+            tasks.get_dsstox_details.delay(dtxsid)
 
         return Response(data)

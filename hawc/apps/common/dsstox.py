@@ -2,45 +2,37 @@ import base64
 import logging
 from typing import Dict, Optional
 
+
 import requests
 from django.urls import NoReverseMatch, reverse
 
 logger = logging.getLogger(__name__)
 
 
-def get_cache_name(cas_number: str) -> str:
-    return f"casrn-{cas_number.replace(' ', '-')}"
+def get_cache_name(dtxsid: str) -> str:
+    return f"dtxsid-{dtxsid.replace(' ', '-')}"
 
 
-def get_casrn_url(casrn: str) -> Optional[str]:
+def get_dsstox_url(dtxsid: str) -> Optional[str]:
     try:
-        return reverse("assessment:casrn_detail", args=(casrn,))
+        return reverse("assessment:dsstox_detail", args=(dtxsid,))
     except NoReverseMatch:
         return None
 
 
-def fetch_dsstox(casrn: str) -> Dict:
+def fetch_dsstox(dtxsid: str) -> Dict:
+    from hawc.apps.assessment.models import DSSTox
+
     d = {"status": "failed", "content": {}}
     try:
         # get details
-        url = r"https://actorws.epa.gov/actorws/chemIdentifier/v01/resolve.json"
-        params = {"identifier": casrn}
-        response_dict = requests.get(url, params).json()["DataRow"]
-
-        dtxsid = response_dict["dtxsid"]
-        content = dict(
-            casrn=casrn,
-            common_name=response_dict["preferredName"],
-            smiles=response_dict["smiles"],
-            mw=response_dict["molWeight"],
-            dtxsid=dtxsid,
-            url_dashboard=f"https://comptox.epa.gov/dashboard/dsstoxdb/results?search={dtxsid}",
-        )
+        dsstox = DSSTox.objects.get(pk=dtxsid)
+        content = dsstox.get_content_json()["DataRow"]
+        content["url_dashboard"] = dsstox.get_dashboard_url()
 
         # get image
-        url = r"https://actorws.epa.gov/actorws/chemical/image"
-        params = {"casrn": casrn, "fmt": "jpeg"}
-        response = requests.get(url, params)
+        url = dsstox.get_image_url()
+        response = requests.get(url)
         content["image"] = base64.b64encode(response.content).decode("utf-8")
 
         # call it a success if we made it here

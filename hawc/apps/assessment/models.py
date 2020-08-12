@@ -18,7 +18,7 @@ from django.utils import timezone
 from pydantic import BaseModel as PydanticModel
 from reversion import revisions as reversion
 
-from ..common.dsstox import get_casrn_url
+from ..common.dsstox import get_dsstox_url
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper
 from ..common.models import get_crumbs, get_private_data_storage
 from ..myuser.models import HAWCUser
@@ -251,8 +251,8 @@ class Assessment(models.Model):
     def get_absolute_url(self):
         return reverse("assessment:detail", args=(self.id,))
 
-    def get_casrn_url(self):
-        return get_casrn_url(self.cas)
+    def get_dsstox_url(self):
+        return get_dsstox_url(self.dtxsids.first())
 
     def get_clear_cache_url(self):
         return reverse("assessment:clear_cache", args=(self.id,))

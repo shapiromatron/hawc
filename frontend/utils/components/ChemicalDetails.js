@@ -10,7 +10,7 @@ class ChemicalDetail extends Component {
                 {showHeader ? <h3>Chemical Properties Information</h3> : null}
                 <ul>
                     <li>
-                        <b>Common name:</b>&nbsp;{content.common_name}
+                        <b>Common name:</b>&nbsp;{content.preferredName}
                     </li>
                     <li>
                         <b>CASRN:</b>&nbsp;{content.casrn}
@@ -23,7 +23,7 @@ class ChemicalDetail extends Component {
                         <b>SMILES:</b>&nbsp;{content.smiles}
                     </li>
                     <li>
-                        <b>Molecular Weight:</b>&nbsp;{content.mw}
+                        <b>Molecular Weight:</b>&nbsp;{content.molWeight}
                     </li>
                     <li>
                         <img src={`data:image/jpeg;base64,${content.image}`} />

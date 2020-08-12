@@ -193,10 +193,10 @@
 {% endblock content %}
 
 {% block extrajs %}
-{% if crud == "Read" and object.cas %}
+{% if crud == "Read" and object.dtxsids.first %}
 <script type="text/javascript">
     $(document).on('ready', function(){
-      {% with url=object.get_casrn_url %}
+      {% with url=object.get_dsstox_url %}
         {% if url %}
           var url = "{{url}}",
             div = $('<div>').insertAfter($('#assessment_table'));

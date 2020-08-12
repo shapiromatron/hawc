@@ -38,9 +38,9 @@ def convert_to_pptx(svg, url, width, height):
 
 
 @shared_task
-def get_dsstox_details(casrn: str):
-    cache_name = get_cache_name(casrn)
-    result = fetch_dsstox(casrn)
+def get_dsstox_details(dtxsid: str):
+    cache_name = get_cache_name(dtxsid)
+    result = fetch_dsstox(dtxsid)
     cache.set(cache_name, result, timeout=60 * 60 * 24)
 
 
