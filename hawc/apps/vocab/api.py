@@ -28,7 +28,7 @@ class EhvTermViewset(viewsets.GenericViewSet):
         if term:
             qs = qs.filter(name__icontains=term)
         if parent:
-            qs = qs.filter(parents=parent)
+            qs = qs.filter(parent=parent)
         return qs[:limit]
 
     @action(detail=False)
