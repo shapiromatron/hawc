@@ -2,6 +2,7 @@
 
 import django.contrib.postgres.fields.jsonb
 from django.db import migrations, models
+import requests
 
 
 def casrn_to_dtxsid(apps, schema_editor):
@@ -17,7 +18,7 @@ def casrn_to_dtxsid(apps, schema_editor):
         if not response_dict["dtxsid"]:
             return None
         else:
-            return DSSTox(dtxsid=response_dict["dtxsid"], content=response.text)
+            return DSSTox(dtxsid=response_dict["dtxsid"], content=response_dict)
 
     # we're only looking at assessments with non-empty chemical identifiers
     assessments = Assessment.objects.exclude(cas="")

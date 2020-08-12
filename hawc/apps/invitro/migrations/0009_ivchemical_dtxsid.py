@@ -18,7 +18,7 @@ def casrn_to_dtxsid(apps, schema_editor):
         if not response_dict["dtxsid"]:
             return None
         else:
-            return DSSTox(dtxsid=response_dict["dtxsid"], content=response.text)
+            return DSSTox(dtxsid=response_dict["dtxsid"], content=response_dict)
 
     # we're only looking at ivchemicals with non-empty chemical identifiers
     ivchemicals = IVChemical.objects.exclude(cas="")
@@ -50,7 +50,7 @@ def casrn_to_dtxsid(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("assessment", "0018_auto_20200806_0929"),
+        ("assessment", "0018_dsstox"),
         ("invitro", "0008_auto_20190416_2003"),
     ]
 

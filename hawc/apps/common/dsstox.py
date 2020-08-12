@@ -26,7 +26,10 @@ def fetch_dsstox(dtxsid: str) -> Dict:
     try:
         # get details
         dsstox = DSSTox.objects.get(pk=dtxsid)
-        content = dsstox.get_content_json()["DataRow"]
+        content = {
+            k: dsstox.content[k]
+            for k in ("preferredName", "casrn", "dtxsid", "smiles", "molWeight")
+        }
         content["url_dashboard"] = dsstox.get_dashboard_url()
 
         # get image
