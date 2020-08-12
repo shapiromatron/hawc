@@ -68,7 +68,7 @@ class AutocompleteTerm extends Component {
                 suggestions={suggestions}
                 onSuggestionsFetchRequested={throttledFetchRequest}
                 onSuggestionsClearRequested={() => this.setState({suggestions: []})}
-                onSuggestionSelected={(_, {suggestion}) => onChange(suggestion.id)}
+                onSuggestionSelected={(_, {suggestion}) => onChange(suggestion.id, suggestion.name)}
                 getSuggestionValue={suggestion => suggestion.name}
                 shouldRenderSuggestions={shouldRenderSuggestions => true}
                 renderSuggestion={suggestion => {
@@ -84,7 +84,13 @@ class AutocompleteTerm extends Component {
                     value: currentText,
                     suggestions,
                     placeholder: placeholder || "",
-                    onChange: (event, {newValue}) => this.setState({currentText: newValue}),
+                    onChange: (event, {newValue}) => {
+                        if (newValue === "") {
+                            // reset value if empty
+                            onChange(null, newValue);
+                        }
+                        this.setState({currentText: newValue});
+                    },
                 }}
                 theme={theme}
             />

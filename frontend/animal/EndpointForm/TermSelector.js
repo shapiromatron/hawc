@@ -35,7 +35,10 @@ class TermSelector extends Component {
                     <div>
                         <AutocompleteTerm
                             url={termUrlLookup[termIdField]}
-                            onChange={id => store.setObjectField(termIdField, id)}
+                            onChange={(id, text) => {
+                                store.setObjectField(termIdField, id);
+                                store.setObjectField(termTextField, text);
+                            }}
                             placeholder={"CONTROLLED"}
                             currentId={object[termIdField]}
                             currentText={object[termIdField] ? object[termTextField] : ""}
@@ -47,7 +50,10 @@ class TermSelector extends Component {
                 ) : (
                     <AutocompleteSelectableText
                         url={textUrlLookup[termIdField]}
-                        onChange={text => store.setObjectField(termTextField, text)}
+                        onChange={text => {
+                            store.setObjectField(termIdField, null);
+                            store.setObjectField(termTextField, text);
+                        }}
                         value={object[termTextField]}
                         placeholder={"FREE TEXT"}
                     />
