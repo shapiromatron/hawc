@@ -87,4 +87,4 @@ def rewrite_data_files():
 
     A test exists in CI to ensure that this flag is set to False on commit.
     """
-    return True
+    return False
