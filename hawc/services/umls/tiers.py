@@ -1,8 +1,12 @@
+import logging
 import os
 
 import pandas as pd
 
 from . import utils
+
+
+logger = logging.getLogger(__name__)
 
 
 class TuiFilters:
@@ -65,22 +69,29 @@ def run_tier(series: pd.Series, max_results: int = None, confidence: float = Non
 
 def run_tiered_analysis(df: pd.DataFrame, series_name: str, umls_apikey: str) -> pd.DataFrame:
     series = df[series_name]
+
+    logger.info(f"Running tier 1 on {series_name}")
     df["endpoint-name_Tier1"], df["endpoint-name_Tier1-Count"] = run_tier(
         series, 999, 0.98, TuiFilters.tuis_1
     )
+    logger.info(f"Running tier 2 on {series_name}")
     df["endpoint-name_Tier2"], df["endpoint-name_Tier2-Count"] = run_tier(
         series, 999, 0.85, TuiFilters.tuis_2
     )
+    logger.info(f"Running tier 3 on {series_name}")
     df["endpoint-name_Tier3"], df["endpoint-name_Tier3-Count"] = run_tier(
         series, 999, 0.5, TuiFilters.tuis_3
     )
+    logger.info(f"Running tier 4 on {series_name}")
     df["endpoint-name_Tier4"], df["endpoint-name_Tier4-Count"] = run_tier(series, 999, 0.5, None)
 
+    logger.info(f"Running tier 5 on {series_name}")
     df["endpoint-name_Tier5_REST"] = series.apply(utils.UMLS_RestLookup, apikey=umls_apikey)
     df["endpoint-name_Tier5_REST_CLEANED"] = df["endpoint-name_Tier5_REST"].apply(
         utils.REST_JSON_to_Read
     )
 
+    logger.info(f"Running tier 6 on {series_name}")
     linker, nlp = utils.loadUMLSLinker(999, 0.85)
     df["endpoint-name_Tier6_EntityBreaking"], df["endpoint-name_Tier6-Count"] = zip(
         *series.apply(
@@ -92,7 +103,7 @@ def run_tiered_analysis(df: pd.DataFrame, series_name: str, umls_apikey: str) ->
 
 
 def main() -> pd.DataFrame:
-    umls_apikey = os.environ['UMLS_API_KEY']
+    umls_apikey = os.environ["UMLS_API_KEY"]
     df = pd.read_excel("HAWC_Ontologies_14November2019.xlsx", sheet_name="Endpoints", usecols="A:C")
 
     # organ
