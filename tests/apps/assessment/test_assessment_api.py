@@ -6,12 +6,12 @@ from rest_framework.test import APIClient
 
 
 @pytest.mark.vcr
-class TestCasrnView:
+class TestDSSToxView:
     def test_happy_path(self):
-        casrn = "7732-18-5"
-        url = reverse("assessment:casrn_detail", args=(casrn,))
+        dtxsid = "DTXSID7020970"
+        url = reverse("assessment:dsstox_detail", args=(dtxsid,))
 
-        assert url == "/assessment/casrn/7732-18-5/"
+        assert url == "/assessment/dsstox/DTXSID7020970/"
 
         # first time, acknowledge request
         client = APIClient()
@@ -33,13 +33,13 @@ class TestCasrnView:
         if waited_for >= 10:
             raise RuntimeError("Failed to return successful request")
 
-        assert data["content"]["common_name"] == "Water"
+        assert data["content"]["preferredName"] == "Water"
 
-    def test_bad_casrn(self):
-        casrn = "1-1-1"
-        url = reverse("assessment:casrn_detail", args=(casrn,))
+    def test_bad_dtxsid(self):
+        dtxsid = "DTXSID0"
+        url = reverse("assessment:dsstox_detail", args=(dtxsid,))
 
-        assert url == "/assessment/casrn/1-1-1/"
+        assert url == "/assessment/dsstox/DTXSID123abc/"
 
         # first time, acknowledge request
         client = APIClient()
