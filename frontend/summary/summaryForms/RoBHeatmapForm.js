@@ -134,7 +134,7 @@ _.extend(RoBHeatmapForm, {
             prependSpacer: false,
             label: "Included scores",
             name: "excluded_score_ids",
-            colWidths: [10, 90],
+            colWidths: [10, 30, 30, 30],
             addBlankRowIfNone: false,
             tab: "excluded_scores",
         },
