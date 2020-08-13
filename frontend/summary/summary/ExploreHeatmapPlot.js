@@ -1,5 +1,5 @@
 import _ from "lodash";
-import d3 from "d3";
+import * as d3 from "d3";
 import {autorun} from "mobx";
 import React from "react";
 import ReactDOM from "react-dom";
@@ -717,41 +717,8 @@ class ExploreHeatmapPlot {
 
     update_plot = data => {
         const self = this,
-            {tableDataFilters, maxValue, colorScale} = this.store;
-
-        this.cells_data = this.cells.selectAll("g").data(data);
-
-        // add cell group and interactivity
-        this.cells_enter = this.cells_data
-            .enter()
-            .append("g")
-            .attr("class", "exp_heatmap_cell")
-            .on("click", d => {
-                if (d.rows.length > 0) {
-                    self.store.setTableDataFilters(d);
-                } else {
-                    self.store.setTableDataFilters(new Set());
-                }
-            });
-        this.bind_tooltip(this.cells_enter, "cell");
-
-        // add cell fill
-        this.cells_enter
-            .append("rect")
-            .attr("class", "exp_heatmap_cell_block")
-            .attr("x", d => this.x_scale(d.x_step))
-            .attr("y", d => this.y_scale(d.y_step))
-            .attr("width", this.x_scale.rangeBand())
-            .attr("height", this.y_scale.rangeBand());
-
-        /// add cell text
-        this.cells_enter
-            .append("text")
-            .attr("class", "exp_heatmap_cell_text")
-            .attr("x", d => this.x_scale(d.x_step) + this.x_scale.rangeBand() / 2)
-            .attr("y", d => this.y_scale(d.y_step) + this.y_scale.rangeBand() / 2);
-
-        let cellColor = d => {
+            {tableDataFilters, maxValue, colorScale} = this.store,
+            cellColor = d => {
                 const filterIndices = [...tableDataFilters].map(e => e.index),
                     value =
                         tableDataFilters.size == 0
@@ -770,21 +737,62 @@ class ExploreHeatmapPlot {
                 return h.getTextContrastColor(backgroundColor);
             };
 
-        // enter/update
-        this.cells_data
-            .select(".exp_heatmap_cell_block")
-            .transition()
-            .style("fill", d => (d.type == "cell" ? cellColor(d) : totalColor(d)));
+        this.vis
+            .select(".exp_heatmap_cells")
+            .selectAll(".exp_heatmap_cell")
+            .data(data, d => d.index)
+            .join(
+                enter => {
+                    let g = enter
+                        .append("g")
+                        .attr("class", "exp_heatmap_cell")
+                        .on("click", d => {
+                            if (d.rows.length > 0) {
+                                self.store.setTableDataFilters(d);
+                            } else {
+                                self.store.setTableDataFilters(new Set());
+                            }
+                        });
 
-        this.cells_data
-            .select(".exp_heatmap_cell_text")
-            .transition()
-            .style("fill", textColor)
-            .style("display", d => (d.rows.length == 0 ? "none" : null))
-            .style("font-weight", d => (d.type == "total" ? "bold" : null))
-            .text(d => d.rows.length);
+                    g.append("rect")
+                        .attr("x", d => this.x_scale(d.x_step))
+                        .attr("y", d => this.y_scale(d.y_step))
+                        .attr("width", this.x_scale.bandwidth())
+                        .attr("height", this.y_scale.bandwidth())
+                        .attr("fill", "white");
 
-        this.cells_data.exit().remove();
+                    g.append("text")
+                        .attr("class", "exp_heatmap_cell_text")
+                        .attr("x", d => this.x_scale(d.x_step) + this.x_scale.bandwidth() / 2)
+                        .attr("y", d => this.y_scale(d.y_step) + this.y_scale.bandwidth() / 2)
+                        .style("font-weight", d => (d.type == "total" ? "bold" : null));
+
+                    return g;
+                },
+                update => update,
+                exit => exit.call(exit => exit.transition().remove())
+            )
+            .call(g => {
+                // operate the d3 selection merge of enter + update
+
+                // add transition to prevent too many DOM transforms at once
+                let t = g.transition();
+                if (data.length < 100) {
+                    t.delay((_, i) => i * 5);
+                } else {
+                    t.delay((_, i) => i * 1);
+                }
+
+                g.select("rect")
+                    .transition(t)
+                    .style("fill", d => (d.type == "cell" ? cellColor(d) : totalColor(d)));
+
+                g.select("text")
+                    .transition(t)
+                    .style("fill", textColor)
+                    .style("display", d => (d.rows.length == 0 ? "none" : null))
+                    .text(d => d.rows.length);
+            });
     };
 
     build_plot() {
@@ -792,25 +800,25 @@ class ExploreHeatmapPlot {
 
         // Clear plot div and and append new svg object
         this.plot_div.empty();
-        this.vis = d3
+        this.svg = d3
             .select(this.plot_div[0])
             .append("svg")
             .attr("class", "d3")
-            .append("g");
-        this.svg = this.vis[0][0].parentNode;
+            .node();
+        this.vis = d3.select(this.svg).append("g");
 
         // Scales for x axis and y axis
-        this.x_scale = d3.scale
-            .ordinal()
+        this.x_scale = d3
+            .scaleBand()
             .domain(_.range(0, this.x_steps))
-            .rangeBands([0, this.w]);
-        this.y_scale = d3.scale
-            .ordinal()
+            .range([0, this.w]);
+        this.y_scale = d3
+            .scaleBand()
             .domain(_.range(0, this.y_steps))
-            .rangeBands([0, this.h]);
+            .range([0, this.h]);
 
         // Draw cells
-        this.cells = this.vis.append("g");
+        this.vis.append("g").attr("class", "exp_heatmap_cells");
 
         // draw the cells
         autorun(() => this.update_plot(this.store.matrixDataset));

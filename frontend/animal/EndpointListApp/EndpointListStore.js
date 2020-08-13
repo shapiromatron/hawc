@@ -34,7 +34,7 @@ class EndpointListStore {
         if (this.filteredData === null) {
             return null;
         }
-        return _.chain(this.filteredData)
+        return _.chain(toJS(this.rawDataset))
             .map(d => {
                 return this.settings.criticalValues.map(type => {
                     return {data: d, dose: d[type], type};

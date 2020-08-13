@@ -1,5 +1,5 @@
 import _ from "lodash";
-import d3 from "d3";
+import * as d3 from "d3";
 import {observable, computed, action, toJS} from "mobx";
 
 import h from "shared/utils/helpers";
@@ -177,8 +177,8 @@ class HeatmapDatastore {
 
     setColorScale() {
         this.maxValue = d3.max(this.matrixDataset, d => (d.type == "cell" ? d.rows.length : 0));
-        this.colorScale = d3.scale
-            .linear()
+        this.colorScale = d3
+            .scaleLinear()
             .domain([0, this.maxValue])
             .range(this.settings.color_range);
     }
