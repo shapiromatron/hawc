@@ -458,10 +458,10 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
         return [None, None]
 
     @staticmethod
-    def _dose_has_n(dose_group_id: int, groups: List[Dict]) -> bool:
+    def _dose_has_response(dose_group_id: int, groups: List[Dict]) -> bool:
         for group in groups:
             if group["dose_group_id"] == dose_group_id:
-                return group["n"] is not None
+                return group["response"] is not None
         return False
 
     @staticmethod
@@ -500,7 +500,7 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
 
             # filter dose groups by those with recorded data
             filtered_doses = list(
-                filter(lambda d: self._dose_has_n(d["dose_group_id"], ser["groups"]), doses)
+                filter(lambda d: self._dose_has_response(d["dose_group_id"], ser["groups"]), doses)
             )
 
             # build endpoint-group independent data
@@ -547,7 +547,7 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
             # doses sorted by dose_group_id
             # doses with unrecorded data are None
             dose_list = [
-                self._get_dose(doses, i) if self._dose_has_n(i, ser["groups"]) else None
+                self._get_dose(doses, i) if self._dose_has_response(i, ser["groups"]) else None
                 for i in range(len(doses))
             ]
 
