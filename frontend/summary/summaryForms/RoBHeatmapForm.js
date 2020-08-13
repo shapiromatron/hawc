@@ -5,6 +5,7 @@ import RoBHeatmap from "summary/summary/RoBHeatmap";
 
 import BaseVisualForm from "./BaseVisualForm";
 import RoBMetricTable from "./RoBMetricTable";
+import RoBScoreExcludeTable from "./RoBScoreExcludeTable";
 import {TextField, IntegerField, CheckboxField, SelectField} from "./Fields";
 
 class RoBHeatmapForm extends BaseVisualForm {
@@ -36,6 +37,7 @@ _.extend(RoBHeatmapForm, {
     tabs: [
         {name: "overall", label: "General settings"},
         {name: "metrics", label: "Included metrics"},
+        {name: "excluded_scores", label: "Included scores"},
         {name: "legend", label: "Legend settings"},
     ],
     schema: [
@@ -126,6 +128,15 @@ _.extend(RoBHeatmapForm, {
             colWidths: [10, 90],
             addBlankRowIfNone: false,
             tab: "metrics",
+        },
+        {
+            type: RoBScoreExcludeTable,
+            prependSpacer: false,
+            label: "Included scores",
+            name: "excluded_score_ids",
+            colWidths: [10, 90],
+            addBlankRowIfNone: false,
+            tab: "excluded_scores",
         },
         {
             type: CheckboxField,
