@@ -90,3 +90,15 @@ class TestEndpointFlatDataPivot:
         invalid_doses = [0.0, None, None, None]
         (low, high) = func(invalid_doses)
         assert low is None and high is None
+
+    def test_dose_is_reported(self):
+        func = EndpointFlatDataPivot._dose_is_reported
+
+        # check that dose is reported even when value is falsy but not None
+        assert func(1, [dict(dose_group_id=1, n=0)]) is True
+        assert func(1, [dict(dose_group_id=1, response=0)]) is True
+        assert func(1, [dict(dose_group_id=1, incidence=0)]) is True
+
+        assert func(1, []) is False
+        assert func(1, [dict(dose_group_id=1)]) is False
+        assert func(1, [dict(dose_group_id=1, n=None, response=None, incidence=None)]) is False
