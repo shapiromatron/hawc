@@ -51,6 +51,16 @@ def test_df_move_column():
     assert df.columns.tolist() == ["a", "b", "c"]
 
 
+def test_tryParseInt():
+    assert helper.tryParseInt(None) is None
+    assert helper.tryParseInt("") is None
+    assert helper.tryParseInt("", default=0) == 0
+    assert helper.tryParseInt("10") == 10
+    assert helper.tryParseInt(123.5) == 123
+    assert helper.tryParseInt(-1, min_value=0) == 0
+    assert helper.tryParseInt(1e6, max_value=1) == 1
+
+
 def test_try_parse_list_ints():
     # expected None case
     assert helper.try_parse_list_ints(None) == []
