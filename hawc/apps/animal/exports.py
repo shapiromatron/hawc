@@ -461,7 +461,8 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
     def _dose_has_response(dose_group_id: int, groups: List[Dict]) -> bool:
         for group in groups:
             if group["dose_group_id"] == dose_group_id:
-                return group["response"] is not None
+                # check whether dose has reported response or incidence
+                return group["response"] is not None or group["incidence"] is not None
         return False
 
     @staticmethod
