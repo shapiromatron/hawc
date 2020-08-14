@@ -1,6 +1,7 @@
 import json
 import logging
 import math
+from enum import IntEnum
 from typing import Dict, List, Tuple
 
 import django
@@ -42,6 +43,12 @@ class BaseManager(models.Manager):
 
     def assessment_qs(self, assessment_id):
         return self.get_queryset().filter(Q(**{self.assessment_relation: assessment_id}))
+
+
+class IntChoiceEnum(IntEnum):
+    @classmethod
+    def choices(cls):
+        return [(key.value, key.name) for key in cls]
 
 
 @property
