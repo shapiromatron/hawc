@@ -34,6 +34,7 @@
       let tagtree = new lit.TagTree(data.tags[0], data.assessment_id, data.search_id)
       tagtree.rename_top_level_node(data.assessment_name);
       tagtree.add_references(data.references);
+      tagtree.prune_no_references();
       treeviz = new lit.TagTreeViz(tagtree, $('#tagtree'), data.title, data.url);
     });
   </script>

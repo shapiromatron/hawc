@@ -64,6 +64,24 @@ class TagTree extends Observee {
         tag.parent.children.splice(index, 1);
     }
 
+    prune_no_references() {
+        let _prune = node => {
+            if (node.get_references_deep().length == 0) {
+                return true;
+            } else {
+                const valid_children = [];
+                for (const child of node.children) {
+                    if (!_prune(child)) {
+                        valid_children.push(child);
+                    }
+                }
+                node.children = valid_children;
+                return false;
+            }
+        };
+        _prune(this.rootNode);
+    }
+
     reset_root_node(pk) {
         // Change the root node for this tagtree; useful for displaying a subset of the tree
         let tag = this.dict[pk];
