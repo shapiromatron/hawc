@@ -3190,7 +3190,7 @@
     visual_type: 2
     dose_units: null
     prefilters: '{}'
-    settings: '{"title":"","xAxisLabel":"","yAxisLabel":"","padding_top":20,"cell_size":40,"padding_right":400,"padding_bottom":35,"padding_left":20,"x_field":"study","study_label_field":"short_citation","included_metrics":[1,2],"show_legend":true,"show_na_legend":true,"show_nr_legend":true,"legend_x":239,"legend_y":17}'
+    settings: '{"title":"","xAxisLabel":"","yAxisLabel":"","padding_top":20,"cell_size":40,"padding_right":400,"padding_bottom":35,"padding_left":20,"x_field":"study","study_label_field":"short_citation","included_metrics":[1,2],"excluded_score_ids":[],"show_legend":true,"show_na_legend":true,"show_nr_legend":true,"legend_x":239,"legend_y":17}'
     caption: ''
     published: false
     sort_order: short_citation
@@ -3226,7 +3226,7 @@
     visual_type: 2
     dose_units: null
     prefilters: '{}'
-    settings: '{"title":"","xAxisLabel":"","yAxisLabel":"","padding_top":20,"cell_size":40,"padding_right":300,"padding_bottom":35,"padding_left":20,"x_field":"study","study_label_field":"short_citation","included_metrics":[14,15],"show_legend":true,"show_na_legend":true,"show_nr_legend":true,"legend_x":231,"legend_y":30}'
+    settings: '{"title":"","xAxisLabel":"","yAxisLabel":"","padding_top":20,"cell_size":40,"padding_right":300,"padding_bottom":35,"padding_left":20,"x_field":"study","study_label_field":"short_citation","included_metrics":[14,15],"excluded_score_ids":[],"show_legend":true,"show_na_legend":true,"show_nr_legend":true,"legend_x":231,"legend_y":30}'
     caption: <p>caption</p>
     published: true
     sort_order: short_citation
