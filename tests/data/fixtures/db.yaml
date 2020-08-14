@@ -4074,3 +4074,48 @@
     preferred_units: '[]'
     prefilters: '{}'
     published_only: true
+- model: mgmt.task
+  pk: 1
+  fields:
+    owner:
+    - team@team.com
+    study: 1
+    type: 10
+    status: 30
+    open: false
+    due_date: 2025-08-01 04:00:00+00:00
+    started: null
+    completed: 2020-08-14 18:59:43.848775+00:00
+- model: mgmt.task
+  pk: 2
+  fields:
+    owner: null
+    study: 1
+    type: 20
+    status: 10
+    open: false
+    due_date: null
+    started: null
+    completed: null
+- model: mgmt.task
+  pk: 3
+  fields:
+    owner: null
+    study: 1
+    type: 30
+    status: 10
+    open: false
+    due_date: null
+    started: null
+    completed: null
+- model: mgmt.task
+  pk: 4
+  fields:
+    owner: null
+    study: 1
+    type: 40
+    status: 10
+    open: false
+    due_date: null
+    started: null
+    completed: null

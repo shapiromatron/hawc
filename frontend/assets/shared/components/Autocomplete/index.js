@@ -59,6 +59,9 @@ class Autocomplete extends Component {
                     placeholder,
                     value: currentText,
                     onChange: (event, {newValue}) => {
+                        if (newValue === "") {
+                            onChange(null);
+                        }
                         this.setState({currentText: newValue, selected: null});
                     },
                 }}
