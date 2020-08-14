@@ -467,7 +467,7 @@ class ReferenceExcelUploadForm(forms.Form):
             )
 
         try:
-            df = pd.read_excel(fn.file)
+            df = pd.read_excel(fn.file, engine="openpyxl")
             df = df[["HAWC ID", "Full text URL"]]
             df["Full text URL"].fillna("", inplace=True)
             assert df["HAWC ID"].dtype == np.int64

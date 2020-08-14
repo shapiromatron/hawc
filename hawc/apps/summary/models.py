@@ -636,7 +636,7 @@ class DataPivotUpload(DataPivot):
 
     def get_dataset(self) -> FlatExport:
         worksheet_name = self.worksheet_name if len(self.worksheet_name) > 0 else 0
-        df = pd.read_excel(self.excel_file.file, sheet_name=worksheet_name)
+        df = pd.read_excel(self.excel_file.file, sheet_name=worksheet_name, engine="openpyxl")
         filename = os.path.splitext(os.path.basename(self.excel_file.file.name))[0]
         return FlatExport(df=df, filename=filename)
 

@@ -917,6 +917,9 @@ class Endpoint(BaseEndpoint):
 
     COPY_NAME = "endpoints"
 
+    class Meta:
+        ordering = ("id",)
+
     def get_update_url(self):
         return reverse("animal:endpoint_update", args=[self.pk])
 

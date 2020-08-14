@@ -30,7 +30,7 @@ pydantic==1.5.1
 # computational
 numpy==1.18.2
 pandas==1.0.3
-  xlrd==1.2.0  # for pd.read_excel()
+  openpyxl==3.0.4
 plotly==4.5.4
 pyarrow==0.17.0
 scipy==1.4.1
@@ -38,7 +38,6 @@ nltk==3.5
 scikit-learn==0.22.2.post1
 
 # exports
-XlsxWriter==1.2.8
 python-docx==0.8.10
 python-pptx==0.6.18
 

@@ -252,8 +252,6 @@
           "created": "2020-05-08T12:40:29.993336-05:00",
           "last_updated": "2020-05-08T12:40:30.178820-05:00"
         },
-        "species": "rat",
-        "strain": "sprague dawley",
         "parents": [],
         "siblings": null,
         "children": [],
@@ -267,6 +265,8 @@
         "diet": "diet",
         "created": "2020-05-08T12:40:30.086088-05:00",
         "last_updated": "2020-05-08T12:40:30.333334-05:00",
+        "species": "rat",
+        "strain": "sprague dawley",
         "url": "/ani/animal-group/3/",
         "sex_symbol": "\u2642\u2640"
       },
@@ -590,8 +590,6 @@
           "created": "2020-05-08T12:40:29.993336-05:00",
           "last_updated": "2020-05-08T12:40:30.178820-05:00"
         },
-        "species": "rat",
-        "strain": "sprague dawley",
         "parents": [],
         "siblings": null,
         "children": [],
@@ -605,6 +603,8 @@
         "diet": "diet",
         "created": "2020-05-08T12:40:30.086088-05:00",
         "last_updated": "2020-05-08T12:40:30.333334-05:00",
+        "species": "rat",
+        "strain": "sprague dawley",
         "url": "/ani/animal-group/3/",
         "sex_symbol": "\u2642\u2640"
       },

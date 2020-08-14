@@ -20,7 +20,7 @@ def _read_tsv(fn: str, encoding: str) -> Optional[pd.DataFrame]:
 
 def _read_excel(fn: str) -> Optional[pd.DataFrame]:
     try:
-        return pd.read_excel(fn)
+        return pd.read_excel(fn, engine="openpyxl")
     except Exception:
         return None
 

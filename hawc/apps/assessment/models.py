@@ -714,6 +714,7 @@ class DatasetRevision(models.Model):
         kwargs = {}
         if suffix == ".xlsx":
             func = pd.read_excel
+            kwargs["engine"] = "openpyxl"
             if worksheet_name:
                 kwargs["sheet_name"] = worksheet_name
         elif suffix in [".csv", ".tsv"]:
