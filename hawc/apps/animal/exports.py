@@ -458,10 +458,13 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
         return [None, None]
 
     @staticmethod
-    def _dose_has_n(dose_group_id: int, groups: List[Dict]) -> bool:
+    def _dose_is_reported(dose_group_id: int, groups: List[Dict]) -> bool:
+        """
+        Check if any numerical data( n, response, or incidence) was entered for a dose-group
+        """
         for group in groups:
             if group["dose_group_id"] == dose_group_id:
-                return group["n"] is not None
+                return any(group.get(key) is not None for key in ["n", "response", "incidence"])
         return False
 
     @staticmethod
@@ -500,8 +503,12 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
 
             # filter dose groups by those with recorded data
             filtered_doses = list(
-                filter(lambda d: self._dose_has_n(d["dose_group_id"], ser["groups"]), doses)
+                filter(lambda d: self._dose_is_reported(d["dose_group_id"], ser["groups"]), doses)
             )
+            # special case - if no data was reported for any dose-group show all doses;
+            # it may be the case that data wasn't extracted
+            if len(filtered_doses) == 0:
+                filtered_doses = doses
 
             # build endpoint-group independent data
             row = [
@@ -547,7 +554,7 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
             # doses sorted by dose_group_id
             # doses with unrecorded data are None
             dose_list = [
-                self._get_dose(doses, i) if self._dose_has_n(i, ser["groups"]) else None
+                self._get_dose(doses, i) if self._dose_is_reported(i, ser["groups"]) else None
                 for i in range(len(doses))
             ]
 
