@@ -1,8 +1,10 @@
 import $ from "$";
 import _ from "lodash";
-import Clipboard from "clipboard";
+import React from "react";
+import ReactDOM from "react-dom";
 
 import Observee from "utils/Observee";
+import ReferenceComponent from "./components/Reference";
 
 class Reference extends Observee {
     constructor(data, tagtree) {
@@ -33,152 +35,9 @@ class Reference extends Observee {
                 return `/lit/reference/${id}/`;
         }
     }
-    print_self(options) {
-        options = options || {};
-        if (options.showTags === undefined) {
-            options.showTags = true;
-        }
-        if (options.showActions === undefined) {
-            options.showActions = false;
-        }
-        if (options.showHr === undefined) {
-            options.showHr = false;
-        }
 
-        let content = [],
-            getTitle = () => {
-                if (this.data.title) {
-                    return `<p class="ref_title">${this.data.title}</p>`;
-                }
-            },
-            getJournal = () => {
-                let journal = this.data.journal ? `${this.data.journal}<br/>` : "";
-                return `<p class="ref_small">${journal}</p>`;
-            },
-            getAbstract = () => {
-                if (this.data.abstract) return `<p class="abstracts">${this.data.abstract}</p>`;
-            },
-            getAuthors = () => {
-                let authors =
-                        this.data.authors || this.data.authors_short || Reference.no_authors_text,
-                    year = this.data.year || "",
-                    p = $(`<p class="ref_small">${authors} ${year}</p>`);
-
-                // return content or undefined
-                if (options.showActions && window.canEdit) {
-                    var ul = $('<ul class="dropdown-menu">')
-                        .append(
-                            `<li><a href="${this.data.editTagUrl}" target="_blank">Edit tags</a></li>`
-                        )
-                        .append(
-                            `<li><a href="${this.data.editReferenceUrl}" target="_blank">Edit reference</a></li>`
-                        );
-
-                    $('<div class="btn-group pull-right">')
-                        .append(
-                            '<a class="btn btn-small dropdown-toggle" data-toggle="dropdown">Actions <span class="caret"></span></a>'
-                        )
-                        .append(ul)
-                        .appendTo(p);
-                }
-
-                return p;
-            },
-            getSearches = () => {
-                if (this.data.searches) {
-                    let links = this.data.searches
-                            .map(d => `<a href="${d.url}">${d.title}</a>`)
-                            .join("<span>,&nbsp;</span>"),
-                        text = `<p><strong>HAWC searches/imports:</strong> ${links}</p>`;
-
-                    return $("<div>").append(text);
-                }
-            },
-            getIdentifiers = () => {
-                var links = $("<div>"),
-                    addHawcId = () => {
-                        let grp = $('<div class="btn-group">'),
-                            link = `<a class="btn btn-mini btn-warning" target="_blank" href="${this.data.url}">HAWC</a>`,
-                            copyID = $(
-                                `<button type="button" class="btn btn-mini btn-warning" title="Copy to clipboard"><i class="fa fa-clipboard"></i></button>`
-                            );
-
-                        // copy ID to clipboard
-                        new Clipboard(copyID.get(0), {text: () => this.data.pk});
-
-                        links.append(grp.append(link, copyID), "<span>&nbsp;</span>");
-                    };
-
-                if (this.data.full_text_url) {
-                    let grp = $('<div class="btn-group">'),
-                        link = `<a class="btn btn-mini btn-primary" target="_blank" href="${this.data.full_text_url}">Full text link</a>`,
-                        copyID = $(
-                            `<button type="button" class="btn btn-mini btn-primary" title="Copy to clipboard"><i class="fa fa-clipboard"></i></button>`
-                        );
-
-                    // copy ID to clipboard
-                    new Clipboard(copyID.get(0), {text: () => this.data.full_text_url});
-
-                    links.append(grp.append(link, copyID), "<span>&nbsp;</span>");
-                }
-
-                _.chain(this.data.identifiers)
-                    .filter(v => v.url.length > 0)
-                    .sortBy(v => v.database_id)
-                    .each(function(v) {
-                        let grp = $('<div class="btn-group">'),
-                            link = `<a class="btn btn-mini btn-success" target="_blank" href="${v.url}" title="View ${v.id}">${v.database}</a>`,
-                            copyID = $(
-                                `<button type="button" class="btn btn-mini btn-success" title="Copy to clipboard"><i class="fa fa-clipboard"></i></button>`
-                            );
-
-                        // copy ID to clipboard
-                        new Clipboard(copyID.get(0), {text: () => v.id});
-
-                        links.append(grp.append(link, copyID), "<span>&nbsp;</span>");
-                    })
-                    .value();
-
-                links.append(addHawcId());
-
-                _.chain(this.data.identifiers)
-                    .reject(v => v.url.length > 0 || v.database === "External link")
-                    .sortBy(v => v.database_id)
-                    .each(function(v) {
-                        let grp = $('<div class="btn-group">'),
-                            link = `<button type="button" class="btn btn-mini">${v.database}</a>`,
-                            copyID = $(
-                                `<button type="button" class="btn btn-mini" title="Copy to clipboard"><i class="fa fa-clipboard"></i></button>`
-                            );
-
-                        // copy ID to clipboard
-                        new Clipboard(copyID.get(0), {text: () => v.id});
-
-                        links.append(grp.append(link, copyID), "<span>&nbsp;</span>");
-                    })
-                    .value();
-
-                return links;
-            };
-
-        content.push(getAuthors());
-        content.push(getTitle());
-        content.push(getJournal());
-        content.push(getAbstract());
-        if (options.showTags) {
-            const tags = this.data.tags
-                .map(d => `<span class="label label-info">${d.get_full_name()}</span>&nbsp;`)
-                .join("");
-            content.push(`<p>${tags}</p>`);
-        }
-
-        content.push(getSearches());
-        content.push(getIdentifiers());
-        if (options.showHr) {
-            content.push("<hr/>");
-        }
-
-        return $("<div>").html(content);
+    print_self(el, options) {
+        ReactDOM.render(<ReferenceComponent reference={this} {...options} />, el);
     }
 
     print_edit_taglist() {
@@ -190,7 +49,7 @@ class Reference extends Observee {
     }
 
     print_name() {
-        let authors = this.data.authors_short || this.data.authors || Reference.no_authors_text,
+        let authors = this.data.authors_short || this.data.authors || Reference.NO_AUTHORS_TEXT,
             year = this.data.year || "";
         this.$list = $(`<p class="reference">${authors} ${year}</p>`).data("d", this);
         return this.$list;
@@ -248,7 +107,7 @@ class Reference extends Observee {
 }
 
 _.extend(Reference, {
-    no_authors_text: "[No authors listed]",
+    NO_AUTHORS_TEXT: "[No authors listed]",
 });
 
 export default Reference;

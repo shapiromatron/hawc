@@ -1,8 +1,10 @@
 import $ from "$";
+import React from "react";
+import ReactDOM from "react-dom";
 
 import HAWCUtils from "utils/HAWCUtils";
-
 import Reference from "./Reference";
+import ReferenceTable from "./components/ReferenceTable";
 
 class ReferencesViewer {
     constructor($div, options) {
@@ -98,12 +100,7 @@ class ReferencesViewer {
     }
 
     _build_reference_table() {
-        let content =
-            this.refs.length === 0
-                ? "<p>No references found.</p>"
-                : this.refs.map(d => d.print_self({showActions: true, showHr: true}));
-
-        this.$table_div.html(content);
+        ReactDOM.render(<ReferenceTable references={this.refs} />, this.$table_div.get(0));
     }
 }
 
