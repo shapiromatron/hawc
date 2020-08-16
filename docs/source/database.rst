@@ -51,6 +51,15 @@ Epidemiology schema
 
    *In vitro* data schema. The image is very large; please save/or open in another tab.
 
+*Vocabulary* schema
+----------------------
+.. figure:: _static/hawc-vocab-schema.png
+   :width: 1000
+   :align: center
+   :alt: HAWC controlled vocabulary + ontology mapping data schema
+
+   Controlled vocabulary + ontology mapping data schema. The image is very large; please save/or open in another tab.
+
 Schema figure generation
 ------------------------
 
@@ -81,3 +90,8 @@ To generate these database schema diagrams:
         invitro \
         -g --pydot \
         -o ./docs/source/_static/hawc-invitro-schema.png
+
+    manage.py graph_models \
+        vocab \
+        -g --pydot \
+        -o ./docs/source/_static/hawc-vocab-schema.png

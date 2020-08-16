@@ -30,7 +30,7 @@ class CheckboxScoreDisplay extends Component {
                     {score.label.length > 0 ? (
                         <p>
                             <b>{score.label}: </b>
-                            {score.is_default ? " (default)" : " (override)"}
+                            {score.is_default ? " (overall)" : " (override)"}
                         </p>
                     ) : null}
                     <ScoreBar

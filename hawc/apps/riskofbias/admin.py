@@ -56,10 +56,31 @@ class RiskOfBiasAdmin(admin.ModelAdmin):
         "study",
         "final",
         "author",
+        "num_scores",
+        "num_override_scores",
         "active",
         "created",
         "last_updated",
     )
+    list_select_related = (
+        "study",
+        "author",
+    )
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs.num_scores().num_override_scores()
+
+    def num_scores(self, obj):
+        return obj.num_scores
+
+    num_scores.short_description = "# scores"
+
+    def num_override_scores(self, obj):
+        return obj.num_override_scores
+
+    num_scores.num_override_scores = "# overrides"
+
     list_filter = ("final", "active", "author")
     search_fields = ("study__short_citation", "author__last_name")
     raw_id_fields = ("study",)

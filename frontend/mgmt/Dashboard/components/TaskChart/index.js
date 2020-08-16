@@ -60,9 +60,10 @@ class TaskChart extends PureComponent {
     makeYScale(data) {
         let {height, padding, values} = data;
         return d3
-            .scaleOrdinal()
+            .scaleBand()
             .domain(values)
-            .rangeRoundBands([padding.top, height - padding.bottom], 0.4);
+            .padding(0.4)
+            .rangeRound([padding.top, height - padding.bottom]);
     }
 
     makeXScale(data) {
@@ -116,7 +117,10 @@ class TaskChart extends PureComponent {
             };
         return (
             <div>
-                <svg width={this.props.chartData.width} height={this.props.chartData.height}>
+                <svg
+                    className="task-chart"
+                    width={this.props.chartData.width}
+                    height={this.props.chartData.height}>
                     {this.renderTitle()}
                     <XAxis {...xData} ticks={5} renderScale />
                     <BarChart
