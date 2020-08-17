@@ -85,7 +85,7 @@ class EditReferenceContainer {
         if (this.loaded_ref) {
             this.loaded_ref.addObserver(this);
             this.loaded_ref.select_name();
-            this.$div_details.html(["<br/>", this.loaded_ref.print_self({showActions: false})]);
+            this.$div_details.html(["<br/>", this.loaded_ref.print_self({showTags: false})]);
             this.$editRef.attr("href", this.loaded_ref.data.editReferenceUrl);
             this.clear_errors();
             this._build_tagslist();
@@ -208,7 +208,7 @@ class EditReferenceContainer {
     }
 
     _build_tagslist() {
-        this.$div_selected_tags.html(this.loaded_ref.print_taglist());
+        this.$div_selected_tags.html(this.loaded_ref.print_edit_taglist());
     }
 
     load_tags() {

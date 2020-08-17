@@ -29,12 +29,13 @@ class TaskForm extends Component {
     }
 
     getOwnerUpdate(owner) {
-        this.setState({
-            owner: {
-                id: owner.id,
-                full_name: owner.value,
-            },
-        });
+        const ownerObject = owner
+            ? {
+                  id: owner.id,
+                  full_name: owner.value,
+              }
+            : null;
+        this.setState({owner: ownerObject});
     }
 
     getStatusUpdate(status) {

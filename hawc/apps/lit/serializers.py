@@ -41,6 +41,14 @@ class SearchSerializer(serializers.ModelSerializer):
             # TODO - move authentication check outside validation?
             raise exceptions.PermissionDenied("Invalid permissions to edit assessment")
 
+        # set slug value based on title; assert it's unique
+        # (assessment+title is checked w/ built-in serializer)
+        data["slug"] = slugify(data["title"])
+        if models.Search.objects.filter(assessment=data["assessment"], slug=data["slug"]).exists():
+            raise serializers.ValidationError(
+                {"slug": "slug (generated from title) must be unique for assessment"}
+            )
+
         if data["search_type"] != "i":
             raise serializers.ValidationError("API currently only supports imports")
 
@@ -62,7 +70,6 @@ class SearchSerializer(serializers.ModelSerializer):
 
     @transaction.atomic
     def create(self, validated_data):
-        validated_data["slug"] = slugify(validated_data["title"])
         # create search object
         search = models.Search.objects.create(**validated_data)
         # create missing identifiers from import

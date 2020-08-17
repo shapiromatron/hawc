@@ -92,16 +92,20 @@ class RoBBarchartPlot extends D3Visualization {
             stack_order = this.score_ids,
             metrics,
             stack,
-            dataset;
+            dataset,
+            excluded_score_ids = new Set(this.data.settings.excluded_score_ids);
 
         dataset = _.chain(this.data.aggregation.metrics_dataset)
             .filter(d => _.includes(included_metrics, d.rob_scores[0].data.metric.id))
             .map(d => {
-                // Filter to ONLY show default scores, not overrides:
-                //   this may need to be a user-configurable option at some point
-                let scores = d.rob_scores.filter(score => score.data.is_default === true),
+                let scores = d.rob_scores.filter(rob => !excluded_score_ids.has(rob.data.id)),
                     weights = {},
-                    total_weight = 1 / scores.length;
+                    total_weight = 1 / scores.length,
+                    metric_name =
+                        scores[0].data.metric.use_short_name === true &&
+                        scores[0].data.metric.short_name !== ""
+                            ? scores[0].data.metric.short_name
+                            : scores[0].data.metric.name;
 
                 this.score_ids.forEach(id => (weights[id] = 0));
 
@@ -120,7 +124,7 @@ class RoBBarchartPlot extends D3Visualization {
                     throw "Unknown `-` value";
                 }
 
-                return _.extend(weights, {label: scores[0].data.metric.name});
+                return _.extend(weights, {label: metric_name});
             })
             .value();
 

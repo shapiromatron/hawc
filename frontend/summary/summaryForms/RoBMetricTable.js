@@ -6,7 +6,7 @@ import {TableField} from "./TableFields";
 class RoBMetricTable extends TableField {
     renderHeader() {
         return $("<tr>")
-            .append("<th>Include in visual</th>", "<th>Metric</th>")
+            .append("<th>Display</th>", "<th>Metric</th>")
             .appendTo(this.$thead);
     }
 

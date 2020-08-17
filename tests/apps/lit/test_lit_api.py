@@ -175,6 +175,20 @@ class TestSearchViewset:
         assert resp.status_code == 403
         assert resp.data == {"detail": "Invalid permissions to edit assessment"}
 
+        # title already exists for this assessment
+        new_payload = {**payload, **{"title": "Manual import"}}
+        resp = c.post(url, new_payload, format="json")
+        assert resp.status_code == 400
+        assert resp.data == {
+            "non_field_errors": ["The fields assessment, title must make a unique set."]
+        }
+
+        # slug already exists for this assessment
+        new_payload = {**payload, **{"title": "MANUAL IMPORT"}}
+        resp = c.post(url, new_payload, format="json")
+        assert resp.status_code == 400
+        assert resp.data == {"slug": ["slug (generated from title) must be unique for assessment"]}
+
         # check type
         new_payload = {**payload, **{"search_type": "s"}}
         resp = c.post(url, new_payload, format="json")

@@ -34,6 +34,7 @@ def test_api_visual_heatmap(db_keys):
         "x_field": "study",
         "study_label_field": "short_citation",
         "included_metrics": [1, 2],
+        "excluded_score_ids": [],
         "show_legend": True,
         "show_na_legend": True,
         "show_nr_legend": True,

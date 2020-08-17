@@ -3190,7 +3190,7 @@
     visual_type: 2
     dose_units: null
     prefilters: '{}'
-    settings: '{"title":"","xAxisLabel":"","yAxisLabel":"","padding_top":20,"cell_size":40,"padding_right":400,"padding_bottom":35,"padding_left":20,"x_field":"study","study_label_field":"short_citation","included_metrics":[1,2],"show_legend":true,"show_na_legend":true,"show_nr_legend":true,"legend_x":239,"legend_y":17}'
+    settings: '{"title":"","xAxisLabel":"","yAxisLabel":"","padding_top":20,"cell_size":40,"padding_right":400,"padding_bottom":35,"padding_left":20,"x_field":"study","study_label_field":"short_citation","included_metrics":[1,2],"excluded_score_ids":[],"show_legend":true,"show_na_legend":true,"show_nr_legend":true,"legend_x":239,"legend_y":17}'
     caption: ''
     published: false
     sort_order: short_citation
@@ -3226,7 +3226,7 @@
     visual_type: 2
     dose_units: null
     prefilters: '{}'
-    settings: '{"title":"","xAxisLabel":"","yAxisLabel":"","padding_top":20,"cell_size":40,"padding_right":300,"padding_bottom":35,"padding_left":20,"x_field":"study","study_label_field":"short_citation","included_metrics":[14,15],"show_legend":true,"show_na_legend":true,"show_nr_legend":true,"legend_x":231,"legend_y":30}'
+    settings: '{"title":"","xAxisLabel":"","yAxisLabel":"","padding_top":20,"cell_size":40,"padding_right":300,"padding_bottom":35,"padding_left":20,"x_field":"study","study_label_field":"short_citation","included_metrics":[14,15],"excluded_score_ids":[],"show_legend":true,"show_na_legend":true,"show_nr_legend":true,"legend_x":231,"legend_y":30}'
     caption: <p>caption</p>
     published: true
     sort_order: short_citation
@@ -4074,3 +4074,48 @@
     preferred_units: '[]'
     prefilters: '{}'
     published_only: true
+- model: mgmt.task
+  pk: 1
+  fields:
+    owner:
+    - team@team.com
+    study: 1
+    type: 10
+    status: 30
+    open: false
+    due_date: 2025-08-01 04:00:00+00:00
+    started: null
+    completed: 2020-08-14 18:59:43.848775+00:00
+- model: mgmt.task
+  pk: 2
+  fields:
+    owner: null
+    study: 1
+    type: 20
+    status: 10
+    open: false
+    due_date: null
+    started: null
+    completed: null
+- model: mgmt.task
+  pk: 3
+  fields:
+    owner: null
+    study: 1
+    type: 30
+    status: 10
+    open: false
+    due_date: null
+    started: null
+    completed: null
+- model: mgmt.task
+  pk: 4
+  fields:
+    owner: null
+    study: 1
+    type: 40
+    status: 10
+    open: false
+    due_date: null
+    started: null
+    completed: null
