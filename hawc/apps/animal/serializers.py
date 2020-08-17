@@ -48,7 +48,7 @@ class ExperimentSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         dtxsid = validated_data.pop("dtxsid", None)
         if dtxsid is not None:
-            validated_data["dtxsid"] = DSSTox.objects.create(**dtxsid)
+            validated_data["dtxsid"], _ = DSSTox.objects.get_or_create(**dtxsid)
         return models.Experiment.objects.create(**validated_data, study=self.study)
 
     class Meta:

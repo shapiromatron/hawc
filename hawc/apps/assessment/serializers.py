@@ -64,6 +64,9 @@ class DSSToxSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.DSSTox
         fields = "__all__"
+        extra_kwargs = {
+            "dtxsid": {"validators": []},
+        }
 
 
 class EndpointItemSerializer(serializers.Serializer):
