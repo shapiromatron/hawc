@@ -49,6 +49,23 @@ class DoseUnitsSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class DSSToxSerializer(serializers.ModelSerializer):
+    def validate(self, data):
+        instance = models.DSSTox.objects.filter(pk=data.get("dtxsid")).first()
+        if instance is None:
+            # throws error if DTXSID is invalid
+            instance = models.DSSTox.create_from_dtxsid(data.get("dtxsid"))
+        data["content"] = instance.content
+        return data
+
+    def create(self, validated_data):
+        return models.DSSTox.objects.create(**validated_data)
+
+    class Meta:
+        model = models.DSSTox
+        fields = "__all__"
+
+
 class EndpointItemSerializer(serializers.Serializer):
     count = serializers.IntegerField()
     type = serializers.CharField()

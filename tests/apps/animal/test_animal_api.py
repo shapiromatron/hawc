@@ -224,6 +224,24 @@ class TestExperimentCreateApi:
         assert response.status_code == 201
         assert len(models.Experiment.objects.filter(name="Experiment name")) == 2
 
+    @pytest.mark.vcr
+    def test_requests_with_dtxsid(self, db_keys):
+        url = reverse("animal:api:experiment-list")
+        data = {
+            "name": "Experiment name",
+            "type": "NR",
+            "study_id": db_keys.study_working,
+            "dtxsid": "DTXSID0020078",
+        }
+
+        # valid request
+        client = APIClient()
+        assert client.login(username="team@team.com", password="pw") is True
+        response = client.post(url, data)
+
+        assert response.status_code == 201
+        assert models.Experiment.objects.filter(dtxsid_id="DTXSID0020078").exists()
+
 
 @pytest.mark.django_db
 class TestAnimalGroupCreateApi:

@@ -4,8 +4,8 @@ import json
 from django.db import transaction
 from rest_framework import serializers
 
-from ..assessment.models import DoseUnits
-from ..assessment.serializers import EffectTagsSerializer
+from ..assessment.models import DoseUnits, DSSTox
+from ..assessment.serializers import DSSToxSerializer, EffectTagsSerializer
 from ..bmd.serializers import ModelSerializer
 from ..common.api import DynamicFieldsMixin, user_can_edit_object
 from ..common.helper import SerializerHelper
@@ -17,6 +17,7 @@ from . import forms, models
 
 class ExperimentSerializer(serializers.ModelSerializer):
     study = StudySerializer(required=False, read_only=True)
+    dtxsid = DSSToxSerializer(required=False, read_only=True)
 
     def to_representation(self, instance):
         ret = super().to_representation(instance)
@@ -36,10 +37,20 @@ class ExperimentSerializer(serializers.ModelSerializer):
         if form.is_valid() is False:
             raise serializers.ValidationError(form.errors)
 
+        # check optional DTXSID
+        if "dtxsid" in self.initial_data:
+            serializer = DSSToxSerializer(data={"dtxsid": self.initial_data.get("dtxsid")})
+            serializer.is_valid(raise_exception=True)
+            data["dtxsid"] = serializer.validated_data
+
         return data
 
     def create(self, validated_data):
-        return models.Experiment.objects.create(**validated_data, study=self.study)
+        dtxsid_data = validated_data.pop("dtxsid", None)
+        dtxsid = None
+        if dtxsid_data is not None:
+            dtxsid = DSSTox.objects.create(**dtxsid_data)
+        return models.Experiment.objects.create(**validated_data, study=self.study, dtxsid=dtxsid)
 
     class Meta:
         model = models.Experiment
