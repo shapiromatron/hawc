@@ -8,6 +8,7 @@ import ReferenceTable from "./components/ReferenceTable";
 
 class ReferencesViewer {
     constructor($div, options) {
+        console.log("YO DUDE");
         this.options = options;
         this.$div = $div;
         this.$table_div = $('<div id="references_detail_block">');
