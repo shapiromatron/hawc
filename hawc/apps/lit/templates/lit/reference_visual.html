@@ -28,7 +28,7 @@
       references: {{ ref_objs | safe }},
       title: {% if object_type == 'reference' %}"{{assessment}}: Literature Tagtree"{% else %}'"{{object}}" Literature Tagtree'{% endif %},
       url: "{% url 'lit:api:assessment-references-download' assessment.pk %}",
-      settings: {hide_empty: true}
+      settings: {hide_empty_tag_nodes: false}
     };
     window.canEdit = {{ obj_perms.edit | lower }};
     window.app.litStartup(function(lit){
@@ -36,12 +36,12 @@
         let tagtree = new lit.TagTree(data.tags[0], data.assessment_id, data.search_id);
         tagtree.rename_top_level_node(data.assessment_name);
         tagtree.add_references(data.references);
-        if (data.settings.hide_empty) tagtree.prune_no_references();
+        if (data.settings.hide_empty_tag_nodes) tagtree.prune_no_references();
         treeviz = new lit.TagTreeViz(tagtree, $('#tagtree'), data.title, data.url);
       };
       let viz = new lit.LiteratureTagtree(data);
       viz.buildCheckbox($('#tagtree'), () => {
-        data.settings.hide_empty = !data.settings.hide_empty;
+        data.settings.hide_empty_tag_nodes = !data.settings.hide_empty_tag_nodes;
         render();
       })
       render();
