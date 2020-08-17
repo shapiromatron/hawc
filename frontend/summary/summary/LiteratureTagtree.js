@@ -37,7 +37,6 @@ class LiteratureTagtree extends BaseVisual {
     }
 
     buildCheckbox($plotDiv, onChange) {
-        this.data.settings.hide_empty_tag_nodes = Boolean(this.data.settings.hide_empty_tag_nodes);
         let checkbox = $("<div></div>").insertBefore($plotDiv);
         ReactDOM.render(
             <Checkbox
