@@ -680,6 +680,16 @@ class TagtreeForm(VisualForm):
         help_text="Select tags which should be hidden from the tagtree. If a parent-tag is selected, all child-tags will also be hidden.<br><br><i>This field is optional; if no tags are selected, then all tags will be displayed.</i>",
         required=False,
     )
+    hide_empty = forms.BooleanField(
+        label="Hide empty nodes",
+        help_text="Omits no-reference tags from the visual (root node will show regardless).",
+        required=False,
+    )
+    show_checkbox = forms.BooleanField(
+        label="Show toggle on visual",
+        help_text="Shows a checkbox above the visual that allows you to toggle the visibility of no-reference tags. Checkbox value defaults to the setting of 'Hide empty nodes'.",
+        required=False,
+    )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -706,6 +716,10 @@ class TagtreeForm(VisualForm):
             self.fields["required_tags"].initial = data["required_tags"]
         if "pruned_tags" in data:
             self.fields["pruned_tags"].initial = data["pruned_tags"]
+        if "hide_empty" in data:
+            self.fields["hide_empty"].initial = data["hide_empty"]
+        if "show_checkbox" in data:
+            self.fields["show_checkbox"].initial = data["show_checkbox"]
 
     def save(self, commit=True):
         self.instance.settings = json.dumps(
@@ -713,6 +727,8 @@ class TagtreeForm(VisualForm):
                 root_node=self.cleaned_data["root_node"],
                 required_tags=self.cleaned_data["required_tags"],
                 pruned_tags=self.cleaned_data["pruned_tags"],
+                hide_empty=self.cleaned_data["hide_empty"],
+                show_checkbox=self.cleaned_data["show_checkbox"],
             )
         )
         return super().save(commit)

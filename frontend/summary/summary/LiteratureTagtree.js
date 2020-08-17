@@ -98,10 +98,12 @@ class LiteratureTagtree extends BaseVisual {
 
     buildViz($plotDiv, data) {
         this.buildPlot($plotDiv, data);
-        this.buildCheckbox($plotDiv, () => {
-            this.data.settings.hide_empty = !this.data.settings.hide_empty;
-            this.buildPlot($plotDiv, data);
-        });
+        if (this.data.settings.show_checkbox) {
+            this.buildCheckbox($plotDiv, () => {
+                this.data.settings.hide_empty = !this.data.settings.hide_empty;
+                this.buildPlot($plotDiv, data);
+            });
+        }
     }
 
     getPlotData($plotDiv) {
