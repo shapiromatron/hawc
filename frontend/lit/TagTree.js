@@ -65,6 +65,9 @@ class TagTree extends Observee {
     }
 
     prune_no_references() {
+        // Severs leaves and subtrees where nodes have no references,
+        // starting with the children of root node;
+        // Effectively removes no-reference nodes from tree starting at root
         let _prune = node => {
             if (node.get_references_deep().length == 0) {
                 return true;
