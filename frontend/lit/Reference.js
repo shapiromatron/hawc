@@ -35,6 +35,16 @@ class Reference extends Observee {
     }
     print_self(options) {
         options = options || {};
+        if (options.showTags === undefined) {
+            options.showTags = true;
+        }
+        if (options.showActions === undefined) {
+            options.showActions = false;
+        }
+        if (options.showHr === undefined) {
+            options.showHr = false;
+        }
+
         let content = [],
             getTitle = () => {
                 if (this.data.title) {
@@ -151,19 +161,19 @@ class Reference extends Observee {
                 return links;
             };
 
-        if (options.showDetailsHeader) {
-            content.push("<h4>Reference details:</h4>");
-        }
         content.push(getAuthors());
         content.push(getTitle());
         content.push(getJournal());
-        if (options.showTaglist) {
-            content = content.concat(this.print_taglist());
-        }
         content.push(getAbstract());
+        if (options.showTags) {
+            const tags = this.data.tags
+                .map(d => `<span class="label label-info">${d.get_full_name()}</span>&nbsp;`)
+                .join("");
+            content.push(`<p>${tags}</p>`);
+        }
+
         content.push(getSearches());
         content.push(getIdentifiers());
-
         if (options.showHr) {
             content.push("<hr/>");
         }
@@ -171,11 +181,11 @@ class Reference extends Observee {
         return $("<div>").html(content);
     }
 
-    print_taglist() {
-        var title = window.canEdit ? "click to remove" : "",
-            cls = window.canEdit ? "refTag refTagEditing" : "refTag";
+    print_edit_taglist() {
         return this.data.tags.map(d =>
-            $(`<span title="${title}" class="${cls}">${d.get_full_name()}</span>`).data("d", d)
+            $(
+                `<span title="click to remove" class="refTag refTagEditing">${d.get_full_name()}</span>`
+            ).data("d", d)
         );
     }
 
