@@ -192,3 +192,15 @@ class DatasetSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Dataset
         fields = "__all__"
+
+
+class LogSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Log
+        fields = "__all__"
+
+
+class BlogSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Blog
+        fields = "__all__"

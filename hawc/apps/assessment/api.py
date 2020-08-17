@@ -384,6 +384,15 @@ class Assessment(AssessmentViewset):
         serializer = serializers.AssessmentEndpointSerializer(instance)
         return Response(serializer.data)
 
+    @action(
+        detail=True, methods=("get",),
+    )
+    def logs(self, request, pk: int = None):
+        instance = self.get_object()
+        queryset = instance.logs.all()
+        serializer = serializers.LogSerializer(queryset, many=True)
+        return Response(serializer.data)
+
 
 class DatasetViewset(AssessmentViewset):
     model = models.Dataset
@@ -445,3 +454,11 @@ class CasrnView(APIView):
             tasks.get_dsstox_details.delay(casrn)
 
         return Response(data)
+
+
+class BlogViewset(viewsets.ReadOnlyModelViewSet):
+    model = models.Blog
+    serializer_class = serializers.BlogSerializer
+
+    def get_queryset(self):
+        return self.model.objects.filter(published=True)

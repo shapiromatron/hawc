@@ -1,5 +1,6 @@
 import json
 from typing import List, NamedTuple
+from myst_parser.main import to_html
 
 import pandas as pd
 from django.apps import apps
@@ -15,6 +16,8 @@ from django.urls import reverse
 from django.utils import timezone
 from pydantic import BaseModel as PydanticModel
 from reversion import revisions as reversion
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
 
 from ..common.dsstox import get_casrn_url
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper
@@ -737,6 +740,29 @@ class DatasetRevision(models.Model):
         return df
 
 
+class Log(models.Model):
+    assessment = models.ForeignKey(
+        Assessment, blank=True, null=True, related_name="logs", on_delete=models.CASCADE
+    )
+    message = models.TextField()
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+
+class Blog(models.Model):
+    subject = models.CharField(max_length=128)
+    content = models.TextField()
+    rendered_content = models.TextField(editable=False)
+    published = models.BooleanField(default=False)
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+
+@receiver(pre_save, sender=Blog)
+def render_content(sender, instance, *args, **kwargs):
+    instance.rendered_content = to_html(instance.content)
+
+
 reversion.register(Assessment)
 reversion.register(EffectTag)
 reversion.register(Species)
@@ -744,3 +770,5 @@ reversion.register(Strain)
 reversion.register(BaseEndpoint)
 reversion.register(Dataset)
 reversion.register(DatasetRevision)
+reversion.register(Log)
+reversion.register(Blog)
