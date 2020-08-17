@@ -37,14 +37,14 @@ class LiteratureTagtree extends BaseVisual {
     }
 
     buildCheckbox($plotDiv, onChange) {
-        this.data.settings.hide_empty = Boolean(this.data.settings.hide_empty);
+        this.data.settings.hide_empty_tag_nodes = Boolean(this.data.settings.hide_empty_tag_nodes);
         let checkbox = $("<div></div>").insertBefore($plotDiv);
         ReactDOM.render(
             <Checkbox
                 id="cb-hide-empty"
                 label="Hide nodes without references"
                 onChange={onChange}
-                checked={this.data.settings.hide_empty}
+                checked={this.data.settings.hide_empty_tag_nodes}
             />,
             checkbox[0]
         );
@@ -91,19 +91,17 @@ class LiteratureTagtree extends BaseVisual {
         tagtree.reset_root_node(this.data.settings.root_node);
 
         // prune nodes with no refs from root node
-        if (this.data.settings.hide_empty) tagtree.prune_no_references();
+        if (this.data.settings.hide_empty_tag_nodes) tagtree.prune_no_references();
 
         new TagTreeViz(tagtree, $plotDiv, title, url);
     }
 
     buildViz($plotDiv, data) {
         this.buildPlot($plotDiv, data);
-        if (this.data.settings.show_checkbox) {
-            this.buildCheckbox($plotDiv, () => {
-                this.data.settings.hide_empty = !this.data.settings.hide_empty;
-                this.buildPlot($plotDiv, data);
-            });
-        }
+        this.buildCheckbox($plotDiv, () => {
+            this.data.settings.hide_empty_tag_nodes = !this.data.settings.hide_empty_tag_nodes;
+            this.buildPlot($plotDiv, data);
+        });
     }
 
     getPlotData($plotDiv) {
