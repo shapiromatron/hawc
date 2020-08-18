@@ -9,7 +9,8 @@ router = DefaultRouter()
 router.register(r"assessment", api.Assessment, basename="assessment")
 router.register(r"dashboard", api.AdminDashboardViewset, basename="admin_dashboard")
 router.register(r"dataset", api.DatasetViewset, basename="dataset")
-router.register(r"blog", api.BlogViewset, basename="blog")
+router.register(r"global/blogs", api.BlogViewset, basename="blogs")
+router.register(r"global/logs", api.LogViewset, basename="logs")
 
 app_name = "assessment"
 urlpatterns = [

@@ -8,6 +8,7 @@ from django.core import exceptions
 from django.core.cache import cache
 from django.db.models import Count
 from django.http import Http404
+from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.decorators import method_decorator
@@ -16,6 +17,7 @@ from rest_framework import filters, permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import APIException, PermissionDenied
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.permissions import IsAdminUser
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -469,3 +471,26 @@ class BlogViewset(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         return self.model.objects.filter(published=True)
+
+
+class LogViewset(viewsets.ReadOnlyModelViewSet):
+    model = models.Log
+    serializer_class = serializers.LogSerializer
+
+    def get_queryset(self):
+        if self.action == "list":
+            return self.model.objects.filter(assessment=None)
+        else:
+            return self.model.objects.all()
+
+    def get_permissions(self):
+        if self.action == "list":
+            permission_classes = (IsAdminUser,)
+        elif self.action == "retrieve":
+            log = get_object_or_404(self.model, pk=self.kwargs.get("pk"))
+            self.assessment = log.assessment
+            if self.assessment is None:
+                permission_classes = (IsAdminUser,)
+            else:
+                permission_classes = (AssessmentLevelPermissions,)
+        return [permission() for permission in permission_classes]
