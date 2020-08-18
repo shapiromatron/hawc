@@ -552,4 +552,4 @@ class BlogList(ListView):
     model = models.Blog
 
     def get_queryset(self):
-        return self.model.objects.all()
+        return self.model.objects.filter(published=True)

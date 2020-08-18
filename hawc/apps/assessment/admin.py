@@ -1,5 +1,7 @@
 from django.contrib import admin
 from django.utils.html import format_html
+from datetime import timedelta
+from django.utils import timezone
 
 from . import models
 
@@ -157,8 +159,10 @@ class LogAdmin(admin.ModelAdmin):
 
     def delete_gt_year(self, request, queryset):
         # delete where "last_updated" > 1 year old
-        queryset.delete()
-        # send a message with number deleted?
+        year_old = timezone.now() - timedelta(days=365)
+        deleted, _ = queryset.filter(last_updated__lte=year_old).delete()
+        # send a message with number deleted
+        self.message_user(request, f"{deleted} of {queryset.count()} selected logs deleted.")
 
     delete_gt_year.short_description = "Delete 1 year or older"
 
