@@ -1,3 +1,4 @@
+from hawc.apps.assessment.api import BlogViewset
 from django.conf.urls import include, url
 from django.contrib import admin
 from rest_framework.routers import DefaultRouter
@@ -79,6 +80,8 @@ urlpatterns = [
         views.EffectTagCreate.as_view(),
         name="effect_tag_create",
     ),
+    # logs / blogs
+    url(r"^blog/$", views.BlogList.as_view(), name="blog"),
     # helper functions
     url(
         r"^casrn/(?P<casrn>\d{1,7}-\d{1,3}-\d{1,2})/$", api.CasrnView.as_view(), name="casrn_detail"

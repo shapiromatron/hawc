@@ -545,3 +545,11 @@ class AdminAssessmentSize(TemplateView):
     @method_decorator(staff_member_required)
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
+
+
+# log / blog
+class BlogList(ListView):
+    model = models.Blog
+
+    def get_queryset(self):
+        return self.model.objects.all()
