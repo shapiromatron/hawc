@@ -387,20 +387,13 @@ class Assessment(AssessmentViewset):
         return Response(serializer.data)
 
     @action(
-        detail=True, methods=("get", "post"),
+        detail=True, methods=("get",),
     )
     def logs(self, request, pk: int = None):
         instance = self.get_object()
-        if request.method == "GET":
-            queryset = instance.logs.all()
-            serializer = serializers.LogSerializer(queryset, many=True)
-            return Response(serializer.data)
-        elif request.method == "POST":
-            request.data["assessment"] = instance.id
-            serializer = serializers.LogSerializer(data=request.data)
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        queryset = instance.logs.all()
+        serializer = serializers.LogSerializer(queryset, many=True)
+        return Response(serializer.data)
 
 
 class DatasetViewset(AssessmentViewset):
