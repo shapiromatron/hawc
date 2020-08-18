@@ -28,6 +28,7 @@ from ..common.views import (
     ProjectManagerOrHigherMixin,
     TeamMemberOrHigherMixin,
     TimeSpentOnPageMixin,
+    beta_tester_required,
 )
 from . import forms, models, tasks
 
@@ -553,3 +554,7 @@ class BlogList(ListView):
 
     def get_queryset(self):
         return self.model.objects.filter(published=True)
+
+    @method_decorator(beta_tester_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
