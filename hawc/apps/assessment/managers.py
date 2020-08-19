@@ -2,10 +2,24 @@ import json
 
 from django.apps import apps
 from django.contrib.contenttypes.models import ContentType
-from django.db.models import Q
+from django.db.models import Q, QuerySet
 
 from ..common.helper import HAWCDjangoJSONEncoder
 from ..common.models import BaseManager
+
+
+class DSSToxQuerySet(QuerySet):
+    def filter_identifiers(self, term: str) -> QuerySet:
+        return self.filter(
+            Q(dtxsid__icontains=term)
+            | Q(content__casrn__icontains=term)
+            | Q(content__preferredName__icontains=term)
+        )
+
+
+class DSSToxManager(BaseManager):
+    def get_queryset(self):
+        return DSSToxQuerySet(self.model, using=self._db)
 
 
 class AssessmentManager(BaseManager):

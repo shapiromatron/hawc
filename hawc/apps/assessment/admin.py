@@ -159,8 +159,8 @@ class DSSXToxAdmin(admin.ModelAdmin):
     )
     search_fields = ("dtxsid", "content__casrn", "content__preferredName")
 
-    def queryset(self, request):
-        qs = super().queryset(request)
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
         return qs.prefetch_related("assessments", "experiments", "ivchemicals")
 
     def get_ul(self, iterable, func):

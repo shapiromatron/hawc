@@ -6,7 +6,7 @@ import pandas as pd
 from django.apps import apps
 from django.core import exceptions
 from django.core.cache import cache
-from django.db.models import Count
+from django.db.models import Count, QuerySet
 from django.http import Http404
 from django.urls import reverse
 from django.utils import timezone
@@ -16,7 +16,9 @@ from rest_framework import filters, permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import APIException, PermissionDenied
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.renderers import JSONRenderer
+from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -24,7 +26,7 @@ from ..common import dsstox
 from ..common.helper import FlatExport, create_uuid, re_digits, tryParseInt
 from ..common.renderers import PandasRenderers
 from ..lit import constants
-from . import models, serializers, tasks
+from . import models, managers, serializers, tasks
 
 
 class RequiresAssessmentID(APIException):
@@ -429,6 +431,29 @@ class AdminDashboardViewset(viewsets.ViewSet):
         return Response(export)
 
 
+class DSSToxViewset(viewsets.GenericViewSet):
+    serializer_class = serializers.DSSToxSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self) -> QuerySet:
+        return models.DSSTox.objects.all()
+
+    @action(detail=False)
+    def query(self, request: Request) -> Response:
+        qs = self.filter_qs(request)
+        serializer = self.get_serializer(qs, many=True)
+        return Response(serializer.data)
+
+    def filter_qs(self, request: Request) -> QuerySet:
+        term: Optional[str] = request.query_params.get("term")
+        limit: Optional[int] = tryParseInt(request.query_params.get("limit"), 50, 1, 10000)
+        qs = self.get_queryset()
+        if term:
+            qs = qs.filter_identifiers(term)
+        return qs[:limit]
+
+
+# todo - rewrite and use viewset
 class DSSToxView(APIView):
     permission_classes = (permissions.AllowAny,)
 

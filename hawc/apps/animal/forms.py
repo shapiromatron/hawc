@@ -11,7 +11,7 @@ from django.forms.models import BaseModelFormSet, modelformset_factory
 from django.urls import reverse
 from selectable import forms as selectable
 
-from ..assessment.lookups import EffectTagLookup, SpeciesLookup, StrainLookup
+from ..assessment.lookups import DssToxIdLookup, EffectTagLookup, SpeciesLookup, StrainLookup
 from ..assessment.models import DoseUnits
 from ..common.forms import BaseFormHelper, CopyAsNewSelectorForm
 from ..common.models import get_flavored_text
@@ -29,6 +29,10 @@ class ExperimentForm(ModelForm):
         super().__init__(*args, **kwargs)
         if parent:
             self.instance.study = parent
+
+        self.fields["dtxsid"].widget = selectable.AutoCompleteSelectWidget(
+            lookup_class=DssToxIdLookup
+        )
 
         self.fields["chemical"].widget = selectable.AutoCompleteWidget(
             lookup_class=lookups.ExpChemicalLookup, allow_new=True

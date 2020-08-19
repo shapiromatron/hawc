@@ -12,7 +12,7 @@ from django.urls import reverse
 from reversion import revisions as reversion
 from scipy import stats
 
-from ..assessment.models import Assessment, BaseEndpoint
+from ..assessment.models import Assessment, DSSTox, BaseEndpoint
 from ..assessment.serializers import AssessmentSerializer
 from ..common.dsstox import get_dsstox_url
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper, cleanHTML, tryParseInt
@@ -85,10 +85,11 @@ class Experiment(models.Model):
                 """,
     )
     dtxsid = models.ForeignKey(
-        "assessment.DSSTox",
+        DSSTox,
         blank=True,
         null=True,
         on_delete=models.SET_NULL,
+        verbose_name="DTXSID",
         related_name="experiments",
     )
     chemical_source = models.CharField(

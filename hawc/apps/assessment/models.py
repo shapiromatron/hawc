@@ -43,6 +43,7 @@ class NoelNames(NamedTuple):
 
 
 class DSSTox(models.Model):
+    objects = managers.DSSToxManager()
 
     dtxsid = models.CharField(max_length=80, primary_key=True)
     content = JSONField(default=dict)
@@ -57,6 +58,10 @@ class DSSTox(models.Model):
 
     def __str__(self):
         return self.dtxsid
+
+    @property
+    def verbose_str(self) -> str:
+        return f"{self.dtxsid}: {self.content['preferredName']} ({self.content['casrn']})"
 
     def get_image_url(self) -> str:
         return f"https://actorws.epa.gov/actorws/chemical/image?dtxsid={self.dtxsid}&fmt=jpeg"
@@ -786,6 +791,7 @@ class DatasetRevision(models.Model):
         return df
 
 
+reversion.register(DSSTox)
 reversion.register(Assessment)
 reversion.register(EffectTag)
 reversion.register(Species)
@@ -793,4 +799,3 @@ reversion.register(Strain)
 reversion.register(BaseEndpoint)
 reversion.register(Dataset)
 reversion.register(DatasetRevision)
-reversion.register(DSSTox)

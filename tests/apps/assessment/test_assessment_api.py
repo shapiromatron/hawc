@@ -139,3 +139,26 @@ class TestDatasetViewset:
         )
         resp = client.get(url)
         assert resp.status_code == 404
+
+
+@pytest.mark.django_db
+class TestDssToxViewset:
+    def test_permissions(self):
+        url = reverse("assessment:api:dsstox-query")
+        anon_client = APIClient()
+        auth_client = APIClient()
+        assert auth_client.login(username="team@team.com", password="pw") is True
+        assert anon_client.get(url).status_code == 403
+        assert auth_client.get(url).status_code == 200
+
+    def test_expected_response(self):
+        client = APIClient()
+        assert client.login(username="team@team.com", password="pw") is True
+
+        test_cases = [
+            # test urls resolve
+            (reverse("assessment:api:dsstox-query"), [{"id": 1, "name": "Cardiovascular"}]),
+        ]
+
+        for url, resp in test_cases:
+            assert client.get(url).json() == resp
