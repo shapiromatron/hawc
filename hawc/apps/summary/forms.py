@@ -681,8 +681,8 @@ class TagtreeForm(VisualForm):
         required=False,
     )
     hide_empty_tag_nodes = forms.BooleanField(
-        label="Hide empty nodes",
-        help_text="Omits no-reference tags from the visual (root node will show regardless).",
+        label="Hide tags with no references",
+        help_text="Prune tree; show only tags which contain at least on reference.",
         required=False,
     )
 

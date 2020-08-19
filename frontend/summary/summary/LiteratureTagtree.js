@@ -3,50 +3,10 @@ import BaseVisual from "./BaseVisual";
 import TagTree from "lit/TagTree";
 import TagTreeViz from "lit/TagTreeViz";
 import HAWCModal from "utils/HAWCModal";
-import ReactDOM from "react-dom";
-import React, {Component} from "react";
-import PropTypes from "prop-types";
-
-class Checkbox extends Component {
-    render() {
-        return (
-            <div>
-                <label htmlFor={this.props.id} className="checkbox">
-                    {this.props.label}
-                    <input
-                        id={this.props.id}
-                        type="checkbox"
-                        defaultChecked={this.props.checked}
-                        onChange={this.props.onChange}
-                    />
-                </label>
-            </div>
-        );
-    }
-}
-Checkbox.propTypes = {
-    id: PropTypes.string.isRequired,
-    label: PropTypes.string.isRequired,
-    onChange: PropTypes.func.isRequired,
-    checked: PropTypes.bool.isRequired,
-};
 
 class LiteratureTagtree extends BaseVisual {
     constructor(data) {
         super(data);
-    }
-
-    buildCheckbox($plotDiv, onChange) {
-        let checkbox = $("<div></div>").insertBefore($plotDiv);
-        ReactDOM.render(
-            <Checkbox
-                id="cb-hide-empty"
-                label="Hide nodes without references"
-                onChange={onChange}
-                checked={this.data.settings.hide_empty_tag_nodes}
-            />,
-            checkbox[0]
-        );
     }
 
     buildPlot($plotDiv, data) {
@@ -60,10 +20,10 @@ class LiteratureTagtree extends BaseVisual {
         }
 
         /*
-            Filter references displayed based on the presence of a reference containing a
-            specific tag; for example, filter to only show references which have had tags
-            123 and 456 applied.
-            */
+        Filter references displayed based on the presence of a reference containing a
+        specific tag; for example, filter to only show references which have had tags
+        123 and 456 applied.
+        */
         let reference_tag_mapping = data[1];
         if (this.data.settings.required_tags.length > 0) {
             let required_tags = new Set(this.data.settings.required_tags),
@@ -89,18 +49,13 @@ class LiteratureTagtree extends BaseVisual {
         // change root node
         tagtree.reset_root_node(this.data.settings.root_node);
 
-        // prune nodes with no refs from root node
-        if (this.data.settings.hide_empty_tag_nodes) tagtree.prune_no_references();
-
-        new TagTreeViz(tagtree, $plotDiv, title, url);
+        new TagTreeViz(tagtree, $plotDiv, title, url, {
+            hide_empty_tag_nodes: this.data.settings.hide_empty_tag_nodes,
+        });
     }
 
     buildViz($plotDiv, data) {
         this.buildPlot($plotDiv, data);
-        this.buildCheckbox($plotDiv, () => {
-            this.data.settings.hide_empty_tag_nodes = !this.data.settings.hide_empty_tag_nodes;
-            this.buildPlot($plotDiv, data);
-        });
     }
 
     getPlotData($plotDiv) {

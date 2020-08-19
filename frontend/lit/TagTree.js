@@ -64,23 +64,34 @@ class TagTree extends Observee {
         tag.parent.children.splice(index, 1);
     }
 
-    prune_no_references() {
+    prune_no_references(hideEmpty) {
         // Severs leaves and subtrees where nodes have no references,
         // starting with the children of root node;
         // Effectively removes no-reference nodes from tree starting at root
-        let _prune = node => {
-            if (node.get_references_deep().length == 0) {
-                return true;
-            } else {
-                const valid_children = [];
-                for (const child of node.children) {
-                    if (!_prune(child)) {
-                        valid_children.push(child);
-                    }
-                }
-                node.children = valid_children;
-                return false;
+        const _prune = node => {
+            /*
+            Recursively show/hide references if no nodes are available.
+            Returns true if the node should be pruned, false to keep
+            */
+
+            // make a copy of original tree, if exists
+            if (node._children === undefined) {
+                node._children = node.children;
             }
+
+            // recurse children before returning this one
+            const valid_children = [];
+            for (const child of node._children) {
+                if (!_prune(child)) {
+                    valid_children.push(child);
+                }
+            }
+            node.children = valid_children;
+
+            if (hideEmpty) {
+                return node.get_references_deep().length == 0;
+            }
+            return false;
         };
         _prune(this.rootNode);
     }

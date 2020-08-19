@@ -4,40 +4,82 @@ import * as d3 from "d3";
 import D3Plot from "utils/D3Plot";
 import HAWCModal from "utils/HAWCModal";
 import HAWCUtils from "utils/HAWCUtils";
+import ReactDOM from "react-dom";
+import React, {Component} from "react";
+import CheckboxInput from "shared/components/CheckboxInput";
+import {observer} from "mobx-react";
+import {observable} from "mobx";
+import PropTypes from "prop-types";
 
 import ReferencesViewer from "./ReferencesViewer";
 
+@observer
+class VizOptions extends Component {
+    componentDidUpdate() {
+        this.props.viz.build_plot();
+    }
+    render() {
+        const {options} = this.props.store;
+        return (
+            <CheckboxInput
+                label={"Hide tags with no references"}
+                onChange={e => {
+                    options.hide_empty_tag_nodes = e.target.checked;
+                }}
+                checked={options.hide_empty_tag_nodes}
+            />
+        );
+    }
+}
+VizOptions.propTypes = {
+    store: PropTypes.object.isRequired,
+    viz: PropTypes.object.isRequired,
+};
+
+class VizState {
+    @observable options = null;
+
+    constructor(options) {
+        this.options = options;
+    }
+}
+
 class TagTreeViz extends D3Plot {
-    constructor(tagtree, plot_div, title, downloadURL, options) {
+    constructor(tagtree, el, title, downloadURL, options) {
         // Displays multiple-dose-response details on the same view and allows for
         // custom visualization of these plots
         super();
-        this.options = options || {};
+        this.stateStore = new VizState(options);
         this.set_defaults();
-        this.plot_div = $(plot_div);
+        this.el = el;
+        this.plot_div = $("<div>").appendTo(el);
+        this.options_div = $("<div>").appendTo(el);
         this.tagtree = tagtree;
         this.title_str = title;
         this.downloadURL = downloadURL;
         this.modal = new HAWCModal();
-        if (this.options.build_plot_startup) {
-            this.build_plot();
-        }
+        this.build_plot();
+        this.build_options();
     }
 
     build_plot() {
         this.plot_div.html("");
         this.get_plot_sizes();
         this.build_plot_skeleton(false);
+        this.prepare_data();
         this.draw_visualization();
         this.add_menu();
         this.trigger_resize();
     }
 
     get_plot_sizes() {
-        var menu_spacing = this.options.show_menu_bar ? 40 : 0;
         this.plot_div.css({
-            height: this.h + this.padding.top + this.padding.bottom + menu_spacing + "px",
+            height: this.h + this.padding.top + this.padding.bottom + "px",
         });
+    }
+
+    build_options() {
+        ReactDOM.render(<VizOptions viz={this} store={this.stateStore} />, this.options_div.get(0));
     }
 
     set_defaults() {
@@ -47,9 +89,6 @@ class TagTreeViz extends D3Plot {
         this.path_length = 180;
         this.minimum_radius = 8;
         this.maximum_radius = 30;
-        if (!this.options.build_plot_startup) {
-            this.options.build_plot_startup = true;
-        }
     }
 
     check_svg_fit(value) {
@@ -63,6 +102,11 @@ class TagTreeViz extends D3Plot {
             increment = Math.ceil(-(this.w - value - this.path_length) / this.path_length);
         width = this.w + this.padding.left + this.padding.right + this.path_length * increment;
         this.svg.setAttribute("viewBox", `${x} ${y} ${width} ${height}`);
+    }
+
+    prepare_data() {
+        // toggle reference pruning
+        this.tagtree.prune_no_references(this.stateStore.options.hide_empty_tag_nodes);
     }
 
     draw_visualization() {
