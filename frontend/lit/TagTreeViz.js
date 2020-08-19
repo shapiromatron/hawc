@@ -8,7 +8,7 @@ import ReactDOM from "react-dom";
 import React, {Component} from "react";
 import CheckboxInput from "shared/components/CheckboxInput";
 import {observer} from "mobx-react";
-import {observable} from "mobx";
+import {action, observable} from "mobx";
 import PropTypes from "prop-types";
 
 import ReferencesViewer from "./ReferencesViewer";
@@ -19,14 +19,12 @@ class VizOptions extends Component {
         this.props.viz.build_plot();
     }
     render() {
-        const {options} = this.props.store;
+        const {store} = this.props;
         return (
             <CheckboxInput
                 label={"Hide tags with no references"}
-                onChange={e => {
-                    options.hide_empty_tag_nodes = e.target.checked;
-                }}
-                checked={options.hide_empty_tag_nodes}
+                onChange={e => store.changeOption("hide_empty_tag_nodes", e.target.checked)}
+                checked={store.options.hide_empty_tag_nodes}
             />
         );
     }
@@ -41,6 +39,10 @@ class VizState {
 
     constructor(options) {
         this.options = options;
+    }
+
+    @action.bound changeOption(key, value) {
+        this.options[key] = value;
     }
 }
 

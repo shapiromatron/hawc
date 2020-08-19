@@ -27,8 +27,7 @@
       assessment_name: "{{assessment}}",
       references: {{ ref_objs | safe }},
       title: {% if object_type == 'reference' %}"{{assessment}}: Literature Tagtree"{% else %}'"{{object}}" Literature Tagtree'{% endif %},
-      url: "{% url 'lit:api:assessment-references-download' assessment.pk %}",
-      settings: {hide_empty_tag_nodes: false}
+      url: "{% url 'lit:api:assessment-references-download' assessment.pk %}"
     };
     window.canEdit = {{ obj_perms.edit | lower }};
     window.app.litStartup(function(lit){
