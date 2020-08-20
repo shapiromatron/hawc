@@ -92,6 +92,14 @@
     model: datasetrevision
 - model: contenttypes.contenttype
   fields:
+    app_label: assessment
+    model: log
+- model: contenttypes.contenttype
+  fields:
+    app_label: assessment
+    model: blog
+- model: contenttypes.contenttype
+  fields:
     app_label: vocab
     model: term
 - model: contenttypes.contenttype
@@ -408,7 +416,7 @@
 - model: myuser.hawcuser
   fields:
     password: md5$OtMBo5HXuH5d$79fbf1f0ae6d765b17b29256920cc8ef
-    last_login: 2020-07-06 19:41:10.180223+00:00
+    last_login: 2020-08-20 02:59:22.775132+00:00
     is_superuser: true
     email: sudo@sudo.com
     first_name: a
@@ -752,6 +760,42 @@
     notes: <p>Original final version.</p>
     created: 2020-06-02 20:02:31.798361+00:00
     last_updated: 2020-06-02 20:02:31.798361+00:00
+- model: assessment.log
+  pk: 1
+  fields:
+    assessment: 1
+    message: Assessment log
+    created: 2020-08-20 03:03:15.442430+00:00
+    last_updated: 2020-08-20 03:03:15.442430+00:00
+- model: assessment.log
+  pk: 2
+  fields:
+    assessment: null
+    message: Global log
+    created: 2020-08-20 03:03:22.348931+00:00
+    last_updated: 2020-08-20 03:03:22.348931+00:00
+- model: assessment.blog
+  pk: 1
+  fields:
+    subject: Unpublished Blog
+    content: Content
+    rendered_content: '<p>Content</p>
+
+      '
+    published: false
+    created: 2020-08-20 03:01:09.747019+00:00
+    last_updated: 2020-08-20 03:01:09.747019+00:00
+- model: assessment.blog
+  pk: 2
+  fields:
+    subject: Published Blog
+    content: Content
+    rendered_content: '<p>Content</p>
+
+      '
+    published: true
+    created: 2020-08-20 03:01:26.973291+00:00
+    last_updated: 2020-08-20 03:01:26.973291+00:00
 - model: lit.literatureassessment
   pk: 1
   fields:
@@ -1369,7 +1413,8 @@
     summary: ''
     editable: true
     searches: []
-    identifiers: []
+    identifiers:
+    - 6
 - model: study.study
   pk: 4
   fields:

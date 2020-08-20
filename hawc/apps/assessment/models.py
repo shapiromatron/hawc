@@ -748,6 +748,9 @@ class Log(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        ordering = ("-created",)
+
 
 class Blog(models.Model):
     subject = models.CharField(max_length=128)
@@ -756,6 +759,9 @@ class Blog(models.Model):
     published = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ("-created",)
 
 
 @receiver(pre_save, sender=Blog)

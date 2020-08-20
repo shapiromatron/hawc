@@ -461,6 +461,7 @@ class CasrnView(APIView):
 class BlogViewset(viewsets.ReadOnlyModelViewSet):
     model = models.Blog
     serializer_class = serializers.BlogSerializer
+    pagination_class = None
 
     def get_queryset(self):
         return self.model.objects.filter(published=True)
@@ -469,6 +470,7 @@ class BlogViewset(viewsets.ReadOnlyModelViewSet):
 class LogViewset(viewsets.ReadOnlyModelViewSet):
     model = models.Log
     serializer_class = serializers.LogSerializer
+    pagination_class = None
 
     def get_queryset(self):
         if self.action == "list":
