@@ -1,23 +1,16 @@
+# USE THIS?
 import base64
 import json
 import logging
-from typing import Dict, Optional
+from typing import Dict
 
 import requests
-from django.urls import NoReverseMatch, reverse
 
 logger = logging.getLogger(__name__)
 
 
 def get_cache_name(dtxsid: str) -> str:
     return f"dtxsid-{dtxsid.replace(' ', '-')}"
-
-
-def get_dsstox_url(dtxsid: str) -> Optional[str]:
-    try:
-        return reverse("assessment:dsstox_detail", args=(dtxsid,))
-    except NoReverseMatch:
-        return None
 
 
 def fetch_dsstox(dtxsid: str) -> Dict:

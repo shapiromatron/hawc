@@ -14,7 +14,6 @@ from scipy import stats
 
 from ..assessment.models import Assessment, BaseEndpoint, DSSTox
 from ..assessment.serializers import AssessmentSerializer
-from ..common.dsstox import get_dsstox_url
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper, cleanHTML, tryParseInt
 from ..common.models import get_crumbs
 from ..study.models import Study
@@ -93,7 +92,7 @@ class Experiment(models.Model):
         related_name="experiments",
         help_text="""
         <a href="https://www.epa.gov/chemical-research/distributed-structure-searchable-toxicity-dsstox-database">DSSTox</a>
-        chemical identifier (recommended). When using an identifier, chemical name and CASRN are
+        substance identifier (recommended). When using an identifier, chemical name and CASRN are
         standardized using the DTXSID.
         """,
     )
@@ -158,9 +157,6 @@ class Experiment(models.Model):
 
     def get_crumbs(self):
         return get_crumbs(self, self.study)
-
-    def get_dsstox_url(self):
-        return get_dsstox_url(self.dtxsid)
 
     @staticmethod
     def flat_complete_header_row():

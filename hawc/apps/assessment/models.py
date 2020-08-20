@@ -18,7 +18,6 @@ from django.utils import timezone
 from pydantic import BaseModel as PydanticModel
 from reversion import revisions as reversion
 
-from ..common.dsstox import get_dsstox_url
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper
 from ..common.models import get_crumbs, get_private_data_storage
 from ..myuser.models import HAWCUser
@@ -43,7 +42,9 @@ class NoelNames(NamedTuple):
 
 
 class DSSTox(models.Model):
-    dtxsid = models.CharField(max_length=80, primary_key=True)
+    dtxsid = models.CharField(
+        max_length=80, primary_key=True, verbose_name="DSSTox substance identifier (DTXSID)",
+    )
     content = JSONField(default=dict)
 
     created = models.DateTimeField(auto_now_add=True)
@@ -51,15 +52,22 @@ class DSSTox(models.Model):
 
     class Meta:
         ordering = ("dtxsid",)
-        verbose_name = "DTXSID"
-        verbose_name_plural = "DTXSIDs"
+        verbose_name = "DSSTox substance"
+        verbose_name_plural = "DSSTox substances"
 
     def __str__(self):
         return self.dtxsid
 
     @property
     def verbose_str(self) -> str:
-        return f"{self.dtxsid}: {self.content['preferredName']} ({self.content['casrn']})"
+        return f"{self.dtxsid}: {self.content['preferredName']} (CASRN {self.content['casrn']})"
+
+    @property
+    def verbose_link(self) -> str:
+        return f"<a href={self.get_dashboard_url()}>{self.dtxsid}</a>: {self.content['preferredName']} (CASRN {self.content['casrn']})"
+
+    def get_detail_url(self) -> str:
+        return reverse("assessment:dsstox_detail", args=(self.dtxsid,))
 
     def get_image_url(self) -> str:
         return f"https://actorws.epa.gov/actorws/chemical/image?dtxsid={self.dtxsid}&fmt=jpeg"
@@ -142,7 +150,16 @@ class Assessment(models.Model):
         help_text="Add a single CAS-number if one is available to describe the "
         "assessment, otherwise leave-blank.",
     )
-    dtxsids = models.ManyToManyField(DSSTox, blank=True, related_name="assessments")
+    dtxsids = models.ManyToManyField(
+        DSSTox,
+        blank=True,
+        related_name="assessments",
+        verbose_name="DSSTox substance identifiers (DTXSID)",
+        help_text="""
+        Related <a href="https://www.epa.gov/chemical-research/distributed-structure-searchable-toxicity-dsstox-database">DSSTox</a>
+        substance identifiers for this assessment.
+        """,
+    )
     assessment_objective = models.TextField(
         blank=True,
         help_text="Describe the assessment objective(s), research questions, "
@@ -255,7 +272,8 @@ class Assessment(models.Model):
         return reverse("assessment:detail", args=(self.id,))
 
     def get_dsstox_url(self):
-        return get_dsstox_url(self.dtxsids.first())
+        dtxsid = self.dtxsids.first()
+        return dtxsid.get_detail_url() if dtxsid else None
 
     def get_clear_cache_url(self):
         return reverse("assessment:clear_cache", args=(self.id,))

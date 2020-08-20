@@ -76,7 +76,7 @@
 
       {% if object.cas %}
         <tr>
-          <th>CAS number</th>
+          <th>CASRN</th>
           <td>{{object.cas}}</td>
         </tr>
       {% endif %}
@@ -84,12 +84,12 @@
       {% for dtxsid in object.dtxsids.all %}
         {% if forloop.first %}
           <tr>
-            <th rowspan={{object.dtxsids.all.count}}>DTXSID</th>
-            <td>{{dtxsid}}</td>
+            <th rowspan={{object.dtxsids.all.count}}>DSSTox substance identifiers (DTXSID)</th>
+            <td>{{dtxsid.verbose_link|safe}}</td>
           </tr>
         {% else %}
           <tr>
-            <td>{{dtxsid}}</td>
+            <td>{{dtxsid.verbose_link|safe}}</td>
           </tr>
         {% endif %}
       {% endfor %}

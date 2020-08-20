@@ -160,8 +160,7 @@
           "last_updated": "2020-05-08T12:38:22.190975-05:00",
           "dtxsid": null,
           "url": "/ani/experiment/3/",
-          "is_generational": true,
-          "dsstox_url": null
+          "is_generational": true
         },
         "dosing_regime": {
           "id": 3,
@@ -499,8 +498,7 @@
           "last_updated": "2020-05-08T12:38:22.190975-05:00",
           "dtxsid": null,
           "url": "/ani/experiment/3/",
-          "is_generational": true,
-          "dsstox_url": null
+          "is_generational": true
         },
         "dosing_regime": {
           "id": 3,

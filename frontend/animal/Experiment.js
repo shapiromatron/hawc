@@ -48,7 +48,6 @@ class Experiment {
                     self.data.purity_qualifier === "=" ? "" : self.data.purity_qualifier;
                 return self.data.purity ? `${qualifier}${self.data.purity}%` : "No";
             },
-            getDtxsid = () => (this.data.dtxsid ? this.data.dtxsid.dtxsid : null),
             tbl;
 
         tbl = new DescriptiveTable()
@@ -57,7 +56,7 @@ class Experiment {
             .add_tbody_tr("Multiple generations", getGenerations())
             .add_tbody_tr("Chemical", this.data.chemical)
             .add_tbody_tr("CAS", this.data.cas)
-            .add_tbody_tr("DTXSID", getDtxsid())
+            .add_tbody_tr("DTXSID", this.data.dtxsid ? this.data.dtxsid.dtxsid : null)
             .add_tbody_tr("Chemical source", this.data.chemical_source)
             .add_tbody_tr(getPurityText(), getPurity())
             .add_tbody_tr("Vehicle", this.data.vehicle)

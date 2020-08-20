@@ -155,13 +155,14 @@ class DSSXToxAdmin(admin.ModelAdmin):
         "get_names",
         "get_assessments",
         "get_experiments",
+        "get_exposures",
         "get_ivchemicals",
     )
     search_fields = ("dtxsid", "content__casrn", "content__preferredName")
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
-        return qs.prefetch_related("assessments", "experiments", "ivchemicals")
+        return qs.prefetch_related("assessments", "experiments", "exposures", "ivchemicals")
 
     def get_ul(self, iterable, func):
         ul = ["<ul>"]
@@ -196,6 +197,12 @@ class DSSXToxAdmin(admin.ModelAdmin):
 
     get_experiments.short_description = "Experiments"
     get_experiments.allow_tags = True
+
+    def get_exposures(self, obj):
+        return self.get_ul(obj.exposures.all(), self.linked_name)
+
+    get_exposures.short_description = "Epi exposures"
+    get_exposures.allow_tags = True
 
     def get_ivchemicals(self, obj):
         return self.get_ul(obj.ivchemicals.all(), self.linked_name)

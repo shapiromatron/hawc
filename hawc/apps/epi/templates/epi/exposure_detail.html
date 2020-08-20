@@ -24,6 +24,7 @@
         {% endif %}
     </h1>
     <div id="objContainer"></div>
+    <div id="dsstox"></div>
 {% endblock %}
 
 
@@ -32,5 +33,14 @@
     window.app.epiStartup(function(epi){
       epi.Exposure.displayFullPager($("#objContainer"), {{object.id}});
     });
+
+    {% if crud == "Read" and object.dtxsid %}
+      $(document).on('ready', function () {
+        var url = "{{object.dtxsid.get_detail_url}}",
+            div = $('div#dsstox');
+        window.app.utils.HAWCUtils.renderChemicalProperties(url, div, true);
+      });
+    {% endif %}
+
   </script>
 {% endblock %}

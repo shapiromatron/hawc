@@ -28,6 +28,10 @@ class AssessmentForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        self.fields["dtxsids"].widget = AutoCompleteSelectMultipleWidget(
+            lookup_class=lookups.DssToxIdLookup
+        )
+
         self.fields["project_manager"].widget = AutoCompleteSelectMultipleWidget(
             lookup_class=HAWCUserLookup
         )
@@ -75,8 +79,9 @@ class AssessmentForm(forms.ModelForm):
         helper.add_fluid_row("name", 3, "span4")
         helper.add_fluid_row("cas", 2, "span6")
         helper.add_fluid_row("project_manager", 3, "span4")
-        url = reverse("assessment:dtxsid_create")
-        helper.addBtnLayout(helper.layout[3], 1, url, "Add new DTXSID", "span6")
+        helper.addBtnLayout(
+            helper.layout[3], 1, reverse("assessment:dtxsid_create"), "Add new DTXSID", "span6"
+        )
         helper.attrs["novalidate"] = ""
         return helper
 

@@ -67,7 +67,7 @@ class Migration(migrations.Migration):
                 verbose_name="DSSTox substance identifier (DTXSID)",
                 help_text="""
         <a href="https://www.epa.gov/chemical-research/distributed-structure-searchable-toxicity-dsstox-database">DSSTox</a>
-        chemical identifier (recommended). When using an identifier, chemical name and CASRN are
+        substance identifier (recommended). When using an identifier, chemical name and CASRN are
         standardized using the DTXSID.
         """,
             ),

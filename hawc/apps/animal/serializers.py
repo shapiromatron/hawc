@@ -24,7 +24,6 @@ class ExperimentSerializer(serializers.ModelSerializer):
         ret["url"] = instance.get_absolute_url()
         ret["type"] = instance.get_type_display()
         ret["is_generational"] = instance.is_generational()
-        ret["dsstox_url"] = instance.get_dsstox_url()
         return ret
 
     def validate(self, data):

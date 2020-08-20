@@ -98,6 +98,7 @@ class Exposure {
         return new DescriptiveTable()
             .add_tbody_tr("Name", link)
             .add_tbody_tr("What was measured", this.data.measured)
+            .add_tbody_tr("DTXSID", this.data.dtxsid ? this.data.dtxsid.dtxsid : null)
             .add_tbody_tr("Measurement metric", this.data.metric)
             .add_tbody_tr("Measurement metric units", this.data.metric_units.name)
             .add_tbody_tr("Measurement description", this.data.metric_description)

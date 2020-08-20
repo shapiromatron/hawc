@@ -49,15 +49,10 @@
       });
     });
     {% if crud == "Read" and object.dtxsid %}
-      $(document).on('ready', function(){
-
-        {% with url=object.get_dsstox_url %}
-          {% if url %}
-            var url = "{{url}}",
-              div = $('div#dsstox');
-            window.app.utils.HAWCUtils.renderChemicalProperties(url, div, true);
-          {% endif %}
-        {% endwith %}
+      $(document).on('ready', function () {
+        var url = "{{object.dtxsid.get_detail_url}}",
+            div = $('div#dsstox');
+        window.app.utils.HAWCUtils.renderChemicalProperties(url, div, true);
       });
     {% endif %}
   </script>

@@ -8,7 +8,6 @@ from reversion import revisions as reversion
 
 from ..animal.models import ConfidenceIntervalsMixin
 from ..assessment.models import Assessment, BaseEndpoint
-from ..common.dsstox import get_dsstox_url
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper
 from ..common.models import AssessmentRootedTagTree, get_crumbs
 from ..study.models import Study
@@ -27,6 +26,11 @@ class IVChemical(models.Model):
         null=True,
         on_delete=models.SET_NULL,
         related_name="ivchemicals",
+        verbose_name="DSSTox substance identifier (DTXSID)",
+        help_text="""
+        <a href="https://www.epa.gov/chemical-research/distributed-structure-searchable-toxicity-dsstox-database">DSSTox</a>
+        substance identifier (recommended). When using an identifier, name is standardized using the DTXSID.
+        """,
     )
     cas_inferred = models.BooleanField(
         default=False,
@@ -72,9 +76,6 @@ class IVChemical(models.Model):
 
     def get_assessment(self):
         return self.study.assessment
-
-    def get_dsstox_url(self):
-        return get_dsstox_url(self.dtxsid)
 
     @classmethod
     def delete_caches(cls, ids):
