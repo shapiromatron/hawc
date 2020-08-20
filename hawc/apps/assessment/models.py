@@ -43,8 +43,6 @@ class NoelNames(NamedTuple):
 
 
 class DSSTox(models.Model):
-    objects = managers.DSSToxManager()
-
     dtxsid = models.CharField(max_length=80, primary_key=True)
     content = JSONField(default=dict)
 

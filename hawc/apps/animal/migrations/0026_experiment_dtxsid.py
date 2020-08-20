@@ -64,6 +64,12 @@ class Migration(migrations.Migration):
                 on_delete=django.db.models.deletion.SET_NULL,
                 related_name="experiments",
                 to="assessment.DSSTox",
+                verbose_name="DSSTox substance identifier (DTXSID)",
+                help_text="""
+        <a href="https://www.epa.gov/chemical-research/distributed-structure-searchable-toxicity-dsstox-database">DSSTox</a>
+        chemical identifier (recommended). When using an identifier, chemical name and CASRN are
+        standardized using the DTXSID.
+        """,
             ),
         ),
         migrations.RunPython(casrn_to_dtxsid, migrations.RunPython.noop),

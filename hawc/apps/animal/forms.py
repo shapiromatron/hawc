@@ -95,6 +95,7 @@ class ExperimentForm(ModelForm):
         helper.add_fluid_row("purity_available", 4, ["span2", "span2", "span2", "span6"])
         url = reverse("assessment:dtxsid_create")
         helper.addBtnLayout(helper.layout[3], 2, url, "Add new DTXSID", "span4")
+        helper.form_id = "experiment-form"
         return helper
 
     PURITY_QUALIFIER_REQ = "Qualifier must be specified"

@@ -12,7 +12,7 @@ from django.urls import reverse
 from reversion import revisions as reversion
 from scipy import stats
 
-from ..assessment.models import Assessment, DSSTox, BaseEndpoint
+from ..assessment.models import Assessment, BaseEndpoint, DSSTox
 from ..assessment.serializers import AssessmentSerializer
 from ..common.dsstox import get_dsstox_url
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper, cleanHTML, tryParseInt
@@ -89,8 +89,13 @@ class Experiment(models.Model):
         blank=True,
         null=True,
         on_delete=models.SET_NULL,
-        verbose_name="DTXSID",
+        verbose_name="DSSTox substance identifier (DTXSID)",
         related_name="experiments",
+        help_text="""
+        <a href="https://www.epa.gov/chemical-research/distributed-structure-searchable-toxicity-dsstox-database">DSSTox</a>
+        chemical identifier (recommended). When using an identifier, chemical name and CASRN are
+        standardized using the DTXSID.
+        """,
     )
     chemical_source = models.CharField(
         max_length=128, verbose_name="Source of chemical", blank=True

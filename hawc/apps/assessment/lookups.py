@@ -15,6 +15,11 @@ class DssToxIdLookup(ModelLookup):
     def get_item_label(self, obj):
         return obj.verbose_str
 
+    def format_item(self, item):
+        result = super().format_item(item)
+        result.update(casrn=item.content["casrn"], chemical_name=item.content["preferredName"])
+        return result
+
 
 class AssessmentLookup(ModelLookup):
     model = models.Assessment

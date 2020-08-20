@@ -8,7 +8,6 @@ router = DefaultRouter()
 router.register(r"assessment", api.Assessment, basename="assessment")
 router.register(r"dashboard", api.AdminDashboardViewset, basename="admin_dashboard")
 router.register(r"dataset", api.DatasetViewset, basename="dataset")
-router.register(r"dsstox", api.DSSToxViewset, basename="dsstox")
 
 app_name = "assessment"
 urlpatterns = [
