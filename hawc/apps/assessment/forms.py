@@ -8,6 +8,8 @@ from django.db import transaction
 from django.urls import reverse, reverse_lazy
 from selectable.forms import AutoCompleteSelectMultipleWidget, AutoCompleteWidget
 
+from hawc.services.epa.dsstox import DssSubstance
+
 from ..common.forms import BaseFormHelper
 from ..myuser.lookups import HAWCUserLookup
 from . import lookups, models
@@ -202,19 +204,21 @@ class DoseUnitsForm(forms.ModelForm):
 class DSSToxForm(forms.ModelForm):
     class Meta:
         model = models.DSSTox
-        fields = ("dtxsid", "content")
-        widgets = {"content": forms.HiddenInput()}
-
-    def __init__(self, *args, **kwargs):
-        kwargs.pop("parent", None)
-        super().__init__(*args, **kwargs)
-        self.fields["content"].required = False
+        fields = ("dtxsid",)
 
     def clean(self):
-        cleaned_data = super().clean()
-        dsstox = models.DSSTox.create_from_dtxsid(cleaned_data.get("dtxsid"))
-        cleaned_data["content"] = dsstox.content
-        return cleaned_data
+        data = super().clean()
+
+        try:
+            self.substance = DssSubstance.create(data.get("dtxsid", ""))
+        except ValueError as err:
+            self.add_error("dtxsid", str(err))
+
+        return data
+
+    def save(self, commit=True):
+        self.instance.content = self.substance.content
+        return super().save(commit=commit)
 
 
 class EffectTagForm(forms.ModelForm):

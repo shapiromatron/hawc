@@ -1,68 +1,6 @@
-import time
-
 import pytest
 from django.urls import reverse
 from rest_framework.test import APIClient
-
-
-@pytest.mark.django_db
-@pytest.mark.vcr
-class TestDSSToxView:
-    def test_happy_path(self):
-        dtxsid = "DTXSID6026296"
-        url = reverse("assessment:dsstox_detail", args=(dtxsid,))
-
-        assert url == "/assessment/dsstox/DTXSID6026296/"
-
-        # first time, acknowledge request
-        client = APIClient()
-        resp = client.get(url)
-        data = resp.json()
-        assert data == {"status": "requesting"}
-
-        # wait until success
-        waited_for = 0
-        while waited_for < 10:
-            resp = client.get(url)
-            data = resp.json()
-            if data["status"] == "success":
-                break
-
-            time.sleep(1)
-            waited_for += 1
-
-        if waited_for >= 10:
-            raise RuntimeError("Failed to return successful request")
-
-        assert data["content"]["preferredName"] == "Water"
-
-    def test_bad_dtxsid(self):
-        dtxsid = "DTXSID0"
-        url = reverse("assessment:dsstox_detail", args=(dtxsid,))
-
-        assert url == "/assessment/dsstox/DTXSID0/"
-
-        # first time, acknowledge request
-        client = APIClient()
-        resp = client.get(url)
-        data = resp.json()
-        assert data == {"status": "requesting"}
-
-        # wait until failure
-        waited_for = 0
-        while waited_for < 10:
-            resp = client.get(url)
-            data = resp.json()
-            if data["status"] == "failed":
-                break
-
-            time.sleep(1)
-            waited_for += 1
-
-        if waited_for >= 10:
-            raise RuntimeError("Failed to return incorrect request")
-
-        assert data == {"status": "failed", "content": {}}
 
 
 @pytest.mark.django_db
@@ -143,22 +81,10 @@ class TestDatasetViewset:
 
 @pytest.mark.django_db
 class TestDssToxViewset:
-    def test_permissions(self):
-        url = reverse("assessment:api:dsstox-query")
-        anon_client = APIClient()
-        auth_client = APIClient()
-        assert auth_client.login(username="team@team.com", password="pw") is True
-        assert anon_client.get(url).status_code == 403
-        assert auth_client.get(url).status_code == 200
-
     def test_expected_response(self):
+        dtxsid = "DTXSID6026296"
         client = APIClient()
-        assert client.login(username="team@team.com", password="pw") is True
-
-        test_cases = [
-            # test urls resolve
-            (reverse("assessment:api:dsstox-query"), [{"id": 1, "name": "Cardiovascular"}]),
-        ]
-
-        for url, resp in test_cases:
-            assert client.get(url).json() == resp
+        url = reverse("assessment:api:dsstox-detail", args=(dtxsid,))
+        resp = client.get(url)
+        assert resp.status_code == 200
+        assert resp.json()["dtxsid"] == dtxsid

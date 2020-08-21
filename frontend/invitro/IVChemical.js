@@ -1,12 +1,15 @@
 import $ from "$";
 
 import DescriptiveTable from "utils/DescriptiveTable";
+import DssTox from "assessment/DssTox";
 import HAWCModal from "utils/HAWCModal";
 import HAWCUtils from "utils/HAWCUtils";
 
 class IVChemical {
     constructor(data) {
         this.data = data;
+        this.dsstox = data.dtxsid !== null ? new DssTox(data.dtxsid) : null;
+        delete data.dtxsid;
     }
 
     static get_detail_url(id) {
@@ -42,7 +45,7 @@ class IVChemical {
         return new DescriptiveTable()
             .add_tbody_tr("Chemical name", this.data.name)
             .add_tbody_tr("CAS", this.data.cas)
-            .add_tbody_tr("DTXSID", this.data.dtxsid ? this.data.dtxsid.dtxsid : null)
+            .add_tbody_tr("DTXSID", this.dsstox ? this.dsstox.verbose_link() : null)
             .add_tbody_tr("CAS inferred?", HAWCUtils.booleanCheckbox(this.data.cas_inferred))
             .add_tbody_tr("CAS notes", this.data.cas_notes)
             .add_tbody_tr("Source", this.data.source)
@@ -64,6 +67,13 @@ class IVChemical {
             );
 
         $details.append(this.build_details_table());
+
+        if (this.dsstox) {
+            let el = $('<div class="row-fluid">');
+            this.dsstox.renderChemicalDetails(el[0], true);
+            $details.append(el);
+        }
+
         modal
             .addTitleLinkHeader(this.data.name, this.data.url)
             .addBody($content)
@@ -73,6 +83,11 @@ class IVChemical {
 
     displayAsPage($div) {
         $div.append(this.build_title()).append(this.build_details_table());
+        if (this.dsstox) {
+            let el = $("<div>");
+            this.dsstox.renderChemicalDetails(el[0], true);
+            $div.append(el);
+        }
     }
 }
 

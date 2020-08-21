@@ -9,8 +9,18 @@ from rest_framework.exceptions import ParseError
 from . import models
 
 
+class DSSToxSerializer(serializers.ModelSerializer):
+    dashboard_url = serializers.URLField(source="get_dashboard_url")
+    svg_url = serializers.URLField(source="get_svg_url")
+
+    class Meta:
+        model = models.DSSTox
+        fields = "__all__"
+
+
 class AssessmentSerializer(serializers.ModelSerializer):
     rob_name = serializers.CharField(source="get_rob_name_display")
+    dtxsids = DSSToxSerializer(many=True)
 
     def to_representation(self, instance):
         ret = super().to_representation(instance)
@@ -47,26 +57,6 @@ class DoseUnitsSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.DoseUnits
         fields = "__all__"
-
-
-class DSSToxSerializer(serializers.ModelSerializer):
-    def validate(self, data):
-        instance = models.DSSTox.objects.filter(pk=data.get("dtxsid")).first()
-        if instance is None:
-            # throws error if DTXSID is invalid
-            instance = models.DSSTox.create_from_dtxsid(data.get("dtxsid"))
-        data["content"] = instance.content
-        return data
-
-    def create(self, validated_data):
-        return models.DSSTox.objects.create(**validated_data)
-
-    class Meta:
-        model = models.DSSTox
-        fields = "__all__"
-        extra_kwargs = {
-            "dtxsid": {"validators": []},
-        }
 
 
 class EndpointItemSerializer(serializers.Serializer):

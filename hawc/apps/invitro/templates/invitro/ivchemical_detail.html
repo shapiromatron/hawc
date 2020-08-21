@@ -11,7 +11,6 @@
 
 {% block content %}
     <div id="ivChemical"></div>
-    <div id="dsstox"></div>
 {% endblock %}
 
 {% block extrajs %}
@@ -20,14 +19,5 @@ window.app.invitroStartup(function(invitro){
     window.canEdit = {{obj_perms.edit|lower}};
     invitro.IVChemical.displayAsPage({{object.id}}, $("#ivChemical"));
 });
-
-{% if crud == "Read" and object.dtxsid %}
-$(document).on('ready', function () {
-    var url = "{{object.dtxsid.get_detail_url}}",
-        div = $('div#dsstox');
-    window.app.utils.HAWCUtils.renderChemicalProperties(url, div, true);
-});
-{% endif %}
-
 </script>
 {% endblock %}

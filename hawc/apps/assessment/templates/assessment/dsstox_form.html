@@ -2,7 +2,7 @@
 
 {% load add_class %}
 
-{% block title %}{{assessment}} | Create DTXSID {% endblock title %}
+{% block title %}Import new DSSTox substance{% endblock title %}
 
 {% block main_content %}
 
@@ -12,8 +12,13 @@
 
     <div class='row-fluid'>
       <fieldset>
-        <legend>Create new DTXSID</legend>
-        <span class="help-block">Create a new DTXSID. These DTXSIDs are imported from USEPA Chemicals Dashboard, so trying to create a duplicate or unrecognized DTXSID will not be successful.</span><br>
+        <legend>Import new DSSTox substance</legend>
+        <p class="help-block">
+          Import a new DSSTox substance by providing the DSSTox substance identifier (DTXSID).
+          You can only import a new substance if it doesn't already exist in HAWC and it returns
+          a valid object from the DSSTox database.
+        </p>
+        <br/>
 
         {{ form.non_field_errors|add_class:"alert alert-error" }}
 
@@ -37,7 +42,6 @@
         <button id='submit_form' type="submit" class="btn btn-primary">Create</button>
       </div>
     </div>
-     <p><b>Note:</b> If coming from an input-form, you may need to refresh the page to view your newly added DTXSID!</p>
   </form>
 
 {% endblock main_content %}

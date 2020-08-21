@@ -28,10 +28,7 @@
         </div>
       {% endif %}
     </h1>
-
-    {% if crud == "Read" and object.dtxsid %}
-      <div id="dsstox"></div>
-    {% endif %}
+    <div id="objContainer"></div>
 
   {% if crud == "Read" %}
     <h2>Available animal groups</h2>
@@ -44,17 +41,8 @@
 {% block extrajs %}
   <script type="text/javascript">
     window.app.animalStartup(function(animal){
-      animal.Experiment.get_object({{object.id}}, function(d){
-        $('h1').after(d.build_details_table());
-      });
+      animal.Experiment.displayFullPager($("#objContainer"), {{ object.id }});
     });
-    {% if crud == "Read" and object.dtxsid %}
-      $(document).on('ready', function () {
-        var url = "{{object.dtxsid.get_detail_url}}",
-            div = $('div#dsstox');
-        window.app.utils.HAWCUtils.renderChemicalProperties(url, div, true);
-      });
-    {% endif %}
   </script>
 
 {% endblock extrajs %}

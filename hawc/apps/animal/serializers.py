@@ -37,6 +37,7 @@ class ExperimentSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(form.errors)
 
         # check optional DTXSID
+        # TODO - AJS TO look into this? add to epi? invitro?
         if "dtxsid" in self.initial_data:
             serializer = DSSToxSerializer(data={"dtxsid": self.initial_data.get("dtxsid")})
             serializer.is_valid(raise_exception=True)

@@ -29,7 +29,7 @@ from ..common.views import (
     TeamMemberOrHigherMixin,
     TimeSpentOnPageMixin,
 )
-from . import forms, models, tasks
+from . import forms, models, serializers, tasks
 
 
 def percentage(numerator, denominator):
@@ -234,11 +234,11 @@ class AssessmentPublicList(ListView):
     model = models.Assessment
 
     def get_queryset(self):
-        assessments = self.model.objects.get_public_assessments()
-        if "dtxsid" in self.request.GET:
-            return assessments.filter(dtxsids=self.request.GET.get("dtxsid"))
-        else:
-            return assessments
+        qs = self.model.objects.get_public_assessments()
+        dtxsid = self.request.GET.get("dtxsid")
+        if dtxsid:
+            qs = qs.filter(dtxsids=dtxsid)
+        return qs
 
 
 class AssessmentCreate(TimeSpentOnPageMixin, LoginRequiredMixin, MessageMixin, CreateView):
@@ -255,10 +255,20 @@ class AssessmentCreate(TimeSpentOnPageMixin, LoginRequiredMixin, MessageMixin, C
 class AssessmentRead(BaseDetail):
     model = models.Assessment
 
+    def get_queryset(self):
+        qs = super().get_queryset()
+        qs = qs.prefetch_related(
+            "project_manager", "team_members", "reviewers", "datasets", "dtxsids"
+        )
+        return qs
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["attachments"] = models.Attachment.objects.get_attachments(
             self.object, not context["obj_perms"]["edit"]
+        )
+        context["dtxsids"] = json.dumps(
+            serializers.AssessmentSerializer().to_representation(self.object)["dtxsids"]
         )
         return context
 

@@ -26,21 +26,15 @@
 
       // handle all logic related to dtxid + cas
       var handleChemicalPropertiesInformation = function () {
-        var changeChemicalState = function () {
-          let disable = $('#id_dtxsid_0').val().length > 0;
-          $('#id_cas').attr('disabled', disable);
-        }
-
         // if `dtxsid` is selected, change casrn/chemical_name
         $('input[name=dtxsid_0]').bind('djselectableselect', function (event, item) {
           if (item.item.casrn) {
             $('#id_cas').val(item.item.casrn);
           }
-          changeChemicalState();
+          if (item.item.chemical_name) {
+            $('#id_name').val(item.item.chemical_name);
+          }
         });
-
-        // determine whether these fields are editable or not
-        $('#id_dtxsid_0').on('keyup', changeChemicalState).trigger('keyup');
 
         // re-enable all form fields prior to submission
         $('#ivchemical-form').on("submit", function () {

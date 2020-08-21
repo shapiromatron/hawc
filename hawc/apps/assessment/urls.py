@@ -8,6 +8,7 @@ router = DefaultRouter()
 router.register(r"assessment", api.Assessment, basename="assessment")
 router.register(r"dashboard", api.AdminDashboardViewset, basename="admin_dashboard")
 router.register(r"dataset", api.DatasetViewset, basename="dataset")
+router.register(r"dsstox", api.DssToxViewset, basename="dsstox")
 
 app_name = "assessment"
 urlpatterns = [
@@ -81,7 +82,6 @@ urlpatterns = [
         name="effect_tag_create",
     ),
     # helper functions
-    url(r"^dsstox/(?P<dtxsid>DTXSID\d+)/$", api.DSSToxView.as_view(), name="dsstox_detail"),
     url(r"^download-plot/$", views.DownloadPlot.as_view(), name="download_plot"),
     url(r"^close-window/$", views.CloseWindow.as_view(), name="close_window"),
     # assessment level study

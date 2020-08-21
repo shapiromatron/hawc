@@ -81,18 +81,12 @@
         </tr>
       {% endif %}
 
-      {% for dtxsid in object.dtxsids.all %}
-        {% if forloop.first %}
+      {% if object.dtxsids.count > 0 %}
           <tr>
-            <th rowspan={{object.dtxsids.all.count}}>DSSTox substance identifiers (DTXSID)</th>
-            <td>{{dtxsid.verbose_link|safe}}</td>
+            <th>DSSTox substance identifiers (DTXSID)</th>
+            <td id="dtxsid-app"></td>
           </tr>
-        {% else %}
-          <tr>
-            <td>{{dtxsid.verbose_link|safe}}</td>
-          </tr>
-        {% endif %}
-      {% endfor %}
+      {% endif %}
 
       <tr>
         <th>Year</th>
@@ -195,15 +189,12 @@
 {% block extrajs %}
 {% if crud == "Read" and object.dtxsids.first %}
 <script type="text/javascript">
-    $(document).on('ready', function(){
-      {% with url=object.get_dsstox_url %}
-        {% if url %}
-          var url = "{{url}}",
-            div = $('<div>').insertAfter($('#assessment_table'));
-          window.app.utils.HAWCUtils.renderChemicalProperties(url, div, true);
-        {% endif %}
-      {% endwith %}
-    });
+  $(document).on('ready', function () {
+    const dtxsids = {{dtxsids|safe}},
+      el = document.getElementById('dtxsid-app');
+    new window.app.assessmentStartup.renderDssToxTabs(el, dtxsids);
+  });
 </script>
 {% endif %}
+
 {% endblock extrajs %}

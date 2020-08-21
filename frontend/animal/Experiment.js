@@ -1,12 +1,15 @@
 import $ from "$";
 
 import DescriptiveTable from "utils/DescriptiveTable";
+import DssTox from "assessment/DssTox";
 import HAWCModal from "utils/HAWCModal";
 import HAWCUtils from "utils/HAWCUtils";
 
 class Experiment {
     constructor(data) {
         this.data = data;
+        this.dsstox = data.dtxsid !== null ? new DssTox(data.dtxsid) : null;
+        delete data.dtxsid;
     }
 
     static get_detail_url(id) {
@@ -19,6 +22,10 @@ class Experiment {
 
     static displayAsModal(id) {
         Experiment.get_object(id, d => d.displayAsModal());
+    }
+
+    static displayFullPager($el, id) {
+        Experiment.get_object(id, d => d.displayFullPager($el));
     }
 
     build_breadcrumbs() {
@@ -56,7 +63,7 @@ class Experiment {
             .add_tbody_tr("Multiple generations", getGenerations())
             .add_tbody_tr("Chemical", this.data.chemical)
             .add_tbody_tr("CAS", this.data.cas)
-            .add_tbody_tr("DTXSID", this.data.dtxsid ? this.data.dtxsid.dtxsid : null)
+            .add_tbody_tr("DTXSID", this.dsstox ? this.dsstox.verbose_link() : null)
             .add_tbody_tr("Chemical source", this.data.chemical_source)
             .add_tbody_tr(getPurityText(), getPurity())
             .add_tbody_tr("Vehicle", this.data.vehicle)
@@ -67,6 +74,20 @@ class Experiment {
         return tbl.get_tbl();
     }
 
+    displayFullPager($el) {
+        const content = [this.build_details_table()];
+
+        if (this.dsstox) {
+            let el = $("<div>");
+            this.dsstox.renderChemicalDetails(el[0], true);
+            content.push(el);
+        }
+
+        $el.hide()
+            .append(content)
+            .fadeIn();
+    }
+
     displayAsModal() {
         var modal = new HAWCModal(),
             title = $("<h4>").html(this.build_breadcrumbs()),
@@ -75,17 +96,19 @@ class Experiment {
                 $('<div class="row-fluid">').append($details)
             );
 
-        this.render($details);
+        $details.append(this.build_details_table());
+
+        if (this.dsstox) {
+            let el = $('<div class="row-fluid">');
+            this.dsstox.renderChemicalDetails(el[0], true);
+            $details.append(el);
+        }
 
         modal
             .addHeader(title)
             .addBody($content)
             .addFooter("")
             .show({maxWidth: 1000});
-    }
-
-    render($div) {
-        $div.append(this.build_details_table());
     }
 }
 

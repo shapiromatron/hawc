@@ -2,7 +2,6 @@ import json
 from typing import List, NamedTuple
 
 import pandas as pd
-import requests
 from django.apps import apps
 from django.conf import settings
 from django.contrib.contenttypes import fields
@@ -10,7 +9,6 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.postgres.fields import JSONField
 from django.core.cache import cache
-from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.urls import reverse
@@ -66,37 +64,11 @@ class DSSTox(models.Model):
     def verbose_link(self) -> str:
         return f"<a href={self.get_dashboard_url()}>{self.dtxsid}</a>: {self.content['preferredName']} (CASRN {self.content['casrn']})"
 
-    def get_detail_url(self) -> str:
-        return reverse("assessment:dsstox_detail", args=(self.dtxsid,))
-
-    def get_image_url(self) -> str:
-        return f"https://actorws.epa.gov/actorws/chemical/image?dtxsid={self.dtxsid}&fmt=jpeg"
-
     def get_dashboard_url(self) -> str:
         return f"https://comptox.epa.gov/dashboard/dsstoxdb/results?search={self.dtxsid}"
 
-    @classmethod
-    def get_api_url(cls, identifier: str) -> str:
-        return f"https://actorws.epa.gov/actorws/chemIdentifier/v01/resolve.json?identifier={identifier}"
-
-    @classmethod
-    def create_from_identifier(cls, identifier: str):
-        url = DSSTox.get_api_url(identifier)
-        response = requests.get(url)
-        response_dict = response.json()["DataRow"]
-
-        if not response_dict["dtxsid"]:
-            raise ValidationError(f"Chemical identifier '{identifier}' not found on DSSTox lookup.")
-        else:
-            return cls(dtxsid=response_dict["dtxsid"], content=response_dict)
-
-    @classmethod
-    def create_from_dtxsid(cls, dtxsid: str):
-        dsstox = cls.create_from_identifier(dtxsid)
-        if dsstox.dtxsid != dtxsid:
-            raise ValidationError(f"DTXSID '{dtxsid}' not found on DSSTox lookup.")
-        else:
-            return dsstox
+    def get_svg_url(self) -> str:
+        return f"https://actorws.epa.gov/actorws/chemical/image?dtxsid={self.dtxsid}&fmt=svg"
 
 
 class Assessment(models.Model):
@@ -270,10 +242,6 @@ class Assessment(models.Model):
 
     def get_absolute_url(self):
         return reverse("assessment:detail", args=(self.id,))
-
-    def get_dsstox_url(self):
-        dtxsid = self.dtxsids.first()
-        return dtxsid.get_detail_url() if dtxsid else None
 
     def get_clear_cache_url(self):
         return reverse("assessment:clear_cache", args=(self.id,))

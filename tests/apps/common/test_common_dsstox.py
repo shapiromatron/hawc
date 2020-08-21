@@ -1,6 +1,6 @@
 import pytest
 
-from hawc.apps.common.dsstox import fetch_dsstox
+from hawc.services.epa.dsstox import fetch_dsstox
 
 
 @pytest.mark.django_db
