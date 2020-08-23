@@ -210,7 +210,7 @@ class DSSToxForm(forms.ModelForm):
         data = super().clean()
 
         try:
-            self.substance = DssSubstance.create(data.get("dtxsid", ""))
+            self.substance = DssSubstance.create_from_dtxsid(data.get("dtxsid", ""))
         except ValueError as err:
             self.add_error("dtxsid", str(err))
 
