@@ -445,3 +445,12 @@ class CasrnView(APIView):
             tasks.get_dsstox_details.delay(casrn)
 
         return Response(data)
+
+
+class JobViewset(viewsets.ModelViewSet):
+    model = models.Job
+    serializer_class = serializers.JobSerializer
+    permission_classes = (permissions.AllowAny,)
+
+    def get_queryset(self):
+        return self.model.objects.all()

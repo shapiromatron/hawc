@@ -3,6 +3,8 @@ from django.test.client import Client
 from django.urls import reverse
 from pytest_django.asserts import assertTemplateUsed
 
+from hawc.apps.assessment import models
+
 
 @pytest.mark.django_db
 def test_assessment_creation():
@@ -24,3 +26,12 @@ def test_assessment_creation():
         )
         assertTemplateUsed("assessment/assessment_detail.html")
         assert response.status_code in [200, 302]
+
+
+@pytest.mark.django_db
+class TestJob:
+    def test_success_task(self, db_keys):
+        job = models.Job.objects.create(job=models.Job.TEST)
+        ran_job = models.Job.objects.get(pk=job.task_id)
+
+        assert ran_job.result == "SUCCESS"

@@ -192,3 +192,9 @@ class DatasetSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Dataset
         fields = "__all__"
+
+
+class JobSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Job
+        fields = "__all__"

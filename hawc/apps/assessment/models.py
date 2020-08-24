@@ -1,5 +1,6 @@
 import json
 from typing import List, NamedTuple
+from celery import uuid
 
 import pandas as pd
 from django.apps import apps
@@ -11,6 +12,8 @@ from django.contrib.postgres.fields import JSONField
 from django.core.cache import cache
 from django.core.validators import MinValueValidator
 from django.db import models
+from django.db.models.signals import pre_save, post_save
+from django.dispatch import receiver
 from django.urls import reverse
 from django.utils import timezone
 from pydantic import BaseModel as PydanticModel
@@ -22,6 +25,8 @@ from ..common.models import get_crumbs, get_private_data_storage
 from ..myuser.models import HAWCUser
 from . import managers
 from .tasks import add_time_spent
+
+from . import tasks as assessment_tasks
 
 NOEL_NAME_CHOICES_NOEL = 0
 NOEL_NAME_CHOICES_NOAEL = 1
@@ -737,6 +742,70 @@ class DatasetRevision(models.Model):
         return df
 
 
+class Job(models.Model):
+    PENDING = 1
+    SUCCESS = 2
+    FAILURE = 3
+    RETRY = 4
+    STATUS_CHOICES = ((1, "PENDING"), (2, "SUCCESS"), (3, "FAILURE"), (4, "RETRY"))
+
+    OTHER = 1
+    TEST = 2
+    JOB_CHOICES = ((1, "OTHER"), (2, "TEST"))
+
+    JOB_TO_TASK = {TEST: assessment_tasks.test_task}
+
+    task_id = models.UUIDField(primary_key=True, editable=False)
+    assessment = models.ForeignKey(
+        Assessment, null=True, blank=True, on_delete=models.CASCADE, related_name="jobs"
+    )
+    status = models.PositiveSmallIntegerField(
+        choices=STATUS_CHOICES, default=PENDING, editable=False
+    )
+    job = models.PositiveSmallIntegerField(choices=JOB_CHOICES, default=TEST)
+
+    kwargs = JSONField(default=dict)
+    result = models.TextField(blank=True, editable=False)
+    exception = models.TextField(blank=True, editable=False)
+
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    @classmethod
+    def create_from_task(cls, task):
+        # WIP
+        # creates a job from a given task
+        job = cls(job="OTHER")
+        task_id = uuid()
+        while cls.objects.filter(task_id=task_id).exists():
+            task_id = uuid()
+        task_result = task.apply_async(kwargs={"job": None}, task_id=task_id)
+        job.task_id = task_result.id
+        job.save()
+
+    def get_task(self):
+        return self.JOB_TO_TASK.get(self.job)
+
+
+@receiver(pre_save, sender=Job)
+def create_task_id(sender, instance, **kwargs):
+    if instance.task_id is None:
+        task_id = uuid()
+        while Job.objects.filter(task_id=task_id).exists():
+            task_id = uuid()
+
+        instance.task_id = task_id
+
+
+@receiver(post_save, sender=Job)
+def run_task(sender, instance, created, **kwargs):
+    if created:
+        task = instance.get_task()
+        kwargs = instance.kwargs
+        kwargs["job"] = True
+        task.apply_async(kwargs=kwargs, task_id=instance.task_id)
+
+
 reversion.register(Assessment)
 reversion.register(EffectTag)
 reversion.register(Species)
@@ -744,3 +813,4 @@ reversion.register(Strain)
 reversion.register(BaseEndpoint)
 reversion.register(Dataset)
 reversion.register(DatasetRevision)
+reversion.register(Job)

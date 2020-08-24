@@ -1,4 +1,4 @@
-from celery import shared_task
+from celery import shared_task, Task
 from celery.utils.log import get_task_logger
 from django.apps import apps
 from django.core.cache import cache
@@ -7,6 +7,50 @@ from ..common.dsstox import fetch_dsstox, get_cache_name
 from ..common.svg import SVGConverter
 
 logger = get_task_logger(__name__)
+
+
+class JobTask(Task):
+    def on_failure(self, exc, task_id, args, kwargs, einfo):
+
+        if kwargs.get("job"):
+            from .models import Job
+
+            job = Job.objects.get(task_id=task_id)
+            # set status and exception
+            job.status = Job.FAILURE
+            job.exception = exc
+            job.save()
+
+    def on_retry(self, exc, task_id, args, kwargs, einfo):
+
+        if kwargs.get("job"):
+            from .models import Job
+
+            job = Job.objects.get(task_id=task_id)
+            # set status and exception
+            job.status = Job.RETRY
+            job.exception = exc
+            job.save()
+
+    def on_success(self, retval, task_id, args, kwargs):
+
+        if kwargs.get("job"):
+            from .models import Job
+
+            job = Job.objects.get(task_id=task_id)
+            # set status and result
+            job.status = Job.SUCCESS
+            job.result = retval
+            job.save()
+
+
+@shared_task(bind=True, base=JobTask)
+def test_task(self, retry=False, fail=False, job=False):
+    if retry:
+        self.retry(exc=Exception("RETRY"), kwargs={"retry": False, "fail": fail, "job": job})
+    if fail:
+        raise Exception("FAILURE")
+    return "SUCCESS"
 
 
 @shared_task
