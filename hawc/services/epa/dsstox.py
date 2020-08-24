@@ -37,7 +37,7 @@ class DssSubstance(NamedTuple):
         obj = cls.create_from_identifier(dtxsid)
 
         if obj.dtxsid != dtxsid:
-            raise ValueError(f"DTXSID '{dtxsid}' not found on DSSTox lookup.")
+            raise ValueError(f"{dtxsid} not found in DSSTox lookup")
 
         return obj
 
@@ -60,6 +60,6 @@ class DssSubstance(NamedTuple):
 
         dtxsid = response_dict["dtxsid"]
         if not dtxsid:
-            raise ValueError(f"Chemical identifier '{id_}' not found on DSSTox lookup.")
+            raise ValueError(f"Chemical identifier {id_} not found in DSSTox lookup")
 
         return cls(dtxsid=dtxsid, content=response_dict)
