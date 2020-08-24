@@ -772,15 +772,14 @@ class Job(models.Model):
     last_updated = models.DateTimeField(auto_now=True)
 
     @classmethod
-    def create_from_task(cls, task):
-        # WIP
+    def create_from_task(cls, task, **kwargs):
         # creates a job from a given task
-        job = cls(job="OTHER")
+        job = cls(job=cls.OTHER)
         task_id = uuid()
         while cls.objects.filter(task_id=task_id).exists():
             task_id = uuid()
-        task_result = task.apply_async(kwargs={"job": None}, task_id=task_id)
-        job.task_id = task_result.id
+
+        task.apply_async(kwargs=dict(job=True, **kwargs), task_id=task_id)
         job.save()
 
     def get_task(self):
@@ -799,7 +798,7 @@ def create_task_id(sender, instance, **kwargs):
 
 @receiver(post_save, sender=Job)
 def run_task(sender, instance, created, **kwargs):
-    if created:
+    if created and instance.job != Job.OTHER:
         task = instance.get_task()
         kwargs = instance.kwargs
         kwargs["job"] = True
