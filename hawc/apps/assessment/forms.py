@@ -33,7 +33,6 @@ class AssessmentForm(forms.ModelForm):
         self.fields["dtxsids"].widget = AutoCompleteSelectMultipleWidget(
             lookup_class=lookups.DssToxIdLookup
         )
-
         self.fields["project_manager"].widget = AutoCompleteSelectMultipleWidget(
             lookup_class=HAWCUserLookup
         )
