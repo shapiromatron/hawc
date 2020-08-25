@@ -1,6 +1,5 @@
 import json
 from typing import List, NamedTuple
-from myst_parser.main import to_html
 
 import pandas as pd
 from django.apps import apps
@@ -12,12 +11,13 @@ from django.contrib.postgres.fields import JSONField
 from django.core.cache import cache
 from django.core.validators import MinValueValidator
 from django.db import models
-from django.urls import reverse
-from django.utils import timezone
-from pydantic import BaseModel as PydanticModel
-from reversion import revisions as reversion
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
+from django.urls import reverse
+from django.utils import timezone
+from myst_parser.main import to_html
+from pydantic import BaseModel as PydanticModel
+from reversion import revisions as reversion
 
 from ..common.dsstox import get_casrn_url
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper
