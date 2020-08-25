@@ -1,9 +1,9 @@
 import logging
-from myst_parser.main import to_html
 
 from django.apps import apps
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
+from myst_parser.main import to_html
 
 from ..common.helper import SerializerHelper
 from . import models

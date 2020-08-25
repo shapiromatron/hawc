@@ -8,12 +8,11 @@ from django.core import exceptions
 from django.core.cache import cache
 from django.db.models import Count
 from django.http import Http404
-from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
-from rest_framework import filters, permissions, status, viewsets
+from rest_framework import filters, mixins, permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import APIException, PermissionDenied
 from rest_framework.pagination import PageNumberPagination
@@ -458,25 +457,11 @@ class CasrnView(APIView):
         return Response(data)
 
 
-class LogViewset(viewsets.ReadOnlyModelViewSet):
+class LogViewset(mixins.ListModelMixin, viewsets.GenericViewSet):
     model = models.Log
+    permission_classes = (IsAdminUser,)
     serializer_class = serializers.LogSerializer
     pagination_class = None
 
     def get_queryset(self):
-        if self.action == "list":
-            return self.model.objects.filter(assessment=None)
-        else:
-            return self.model.objects.all()
-
-    def get_permissions(self):
-        if self.action == "list":
-            permission_classes = (IsAdminUser,)
-        elif self.action == "retrieve":
-            log = get_object_or_404(self.model, pk=self.kwargs.get("pk"))
-            self.assessment = log.assessment
-            if self.assessment is None:
-                permission_classes = (IsAdminUser,)
-            else:
-                permission_classes = (AssessmentLevelPermissions,)
-        return [permission() for permission in permission_classes]
+        return self.model.objects.filter(assessment=None)
