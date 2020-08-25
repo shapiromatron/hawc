@@ -1,4 +1,5 @@
 import os
+from datetime import timedelta
 
 from celery import Celery
 from celery.utils.log import get_task_logger
@@ -27,5 +28,9 @@ app.conf.beat_schedule = {
     "lit-update_pubmed_content-1-hour": {
         "task": "hawc.apps.lit.tasks.update_pubmed_content",
         "schedule": 3600,
+    },
+    "assessment-delete_old_jobs-1-week": {
+        "task": "hawc.apps.assessment.tasks.delete_old_jobs",
+        "schedule": timedelta(weeks=1),
     },
 }

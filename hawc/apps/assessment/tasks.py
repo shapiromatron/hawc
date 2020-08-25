@@ -2,12 +2,21 @@ from celery import shared_task
 from celery.utils.log import get_task_logger
 from django.apps import apps
 from django.core.cache import cache
+from django.utils import timezone
+from datetime import timedelta
 
 from ..common.dsstox import fetch_dsstox, get_cache_name
 from ..common.svg import SVGConverter
 from . import models
 
 logger = get_task_logger(__name__)
+
+
+@shared_task
+def delete_old_jobs():
+    # delete jobs where "last_updated" > 1 week old
+    week_old = timezone.now() - timedelta(weeks=1)
+    models.Job.objects.filter(last_updated__lte=week_old).delete()
 
 
 @shared_task(bind=True)
