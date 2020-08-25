@@ -1,7 +1,8 @@
 import logging
+from myst_parser.main import to_html
 
 from django.apps import apps
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 
 from ..common.helper import SerializerHelper
@@ -45,3 +46,8 @@ def invalidate_endpoint_cache(sender, instance, **kwargs):
     SerializerHelper.clear_cache(
         apps.get_model("animal", "Endpoint"), {"assessment_id": instance.id}
     )
+
+
+@receiver(pre_save, sender=models.Blog)
+def render_content(sender, instance, *args, **kwargs):
+    instance.rendered_content = to_html(instance.content)

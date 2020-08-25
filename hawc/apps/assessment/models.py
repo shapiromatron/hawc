@@ -11,11 +11,8 @@ from django.contrib.postgres.fields import JSONField
 from django.core.cache import cache
 from django.core.validators import MinValueValidator
 from django.db import models
-from django.db.models.signals import pre_save
-from django.dispatch import receiver
 from django.urls import reverse
 from django.utils import timezone
-from myst_parser.main import to_html
 from pydantic import BaseModel as PydanticModel
 from reversion import revisions as reversion
 
@@ -762,11 +759,6 @@ class Blog(models.Model):
 
     class Meta:
         ordering = ("-created",)
-
-
-@receiver(pre_save, sender=Blog)
-def render_content(sender, instance, *args, **kwargs):
-    instance.rendered_content = to_html(instance.content)
 
 
 reversion.register(Assessment)
