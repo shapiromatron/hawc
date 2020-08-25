@@ -172,4 +172,6 @@ class LogAdmin(admin.ModelAdmin):
 class BlogAdmin(admin.ModelAdmin):
     list_display = ("subject", "published", "created", "last_updated")
 
-    search_fields = ("subject",)
+    list_filter = ("published",)
+
+    search_fields = ("subject", "content")
