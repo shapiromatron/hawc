@@ -50,4 +50,7 @@ def invalidate_endpoint_cache(sender, instance, **kwargs):
 
 @receiver(pre_save, sender=models.Blog)
 def render_content(sender, instance, *args, **kwargs):
-    instance.rendered_content = to_html(instance.content)
+    try:
+        instance.rendered_content = to_html(instance.content)
+    except Exception:
+        instance.rendered_content = "<h1>Error - myst_parser Parsing error</h1>"

@@ -458,15 +458,6 @@ class CasrnView(APIView):
         return Response(data)
 
 
-class BlogViewset(viewsets.ReadOnlyModelViewSet):
-    model = models.Blog
-    serializer_class = serializers.BlogSerializer
-    pagination_class = None
-
-    def get_queryset(self):
-        return self.model.objects.filter(published=True)
-
-
 class LogViewset(viewsets.ReadOnlyModelViewSet):
     model = models.Log
     serializer_class = serializers.LogSerializer
