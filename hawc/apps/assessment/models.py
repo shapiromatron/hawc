@@ -1,8 +1,8 @@
 import json
 from typing import List, NamedTuple
-from celery import uuid
 
 import pandas as pd
+from celery import uuid
 from django.apps import apps
 from django.conf import settings
 from django.contrib.contenttypes import fields
@@ -12,7 +12,7 @@ from django.contrib.postgres.fields import JSONField
 from django.core.cache import cache
 from django.core.validators import MinValueValidator
 from django.db import models
-from django.db.models.signals import pre_save, post_save
+from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from django.urls import reverse
 from django.utils import timezone
@@ -24,9 +24,7 @@ from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper
 from ..common.models import get_crumbs, get_private_data_storage
 from ..myuser.models import HAWCUser
 from . import managers
-from .tasks import add_time_spent
-
-from . import tasks as assessment_tasks
+from .tasks import add_time_spent, run_job
 
 NOEL_NAME_CHOICES_NOEL = 0
 NOEL_NAME_CHOICES_NOAEL = 1
@@ -746,14 +744,19 @@ class Job(models.Model):
     PENDING = 1
     SUCCESS = 2
     FAILURE = 3
-    RETRY = 4
-    STATUS_CHOICES = ((1, "PENDING"), (2, "SUCCESS"), (3, "FAILURE"), (4, "RETRY"))
+    STATUS_CHOICES = (
+        (1, "PENDING"),
+        (2, "SUCCESS"),
+        (3, "FAILURE"),
+    )
 
-    OTHER = 1
-    TEST = 2
-    JOB_CHOICES = ((1, "OTHER"), (2, "TEST"))
+    TEST = 1
+    JOB_CHOICES = ((1, "TEST"),)
 
-    JOB_TO_TASK = {TEST: assessment_tasks.test_task}
+    def test(self, fail=False):
+        if fail:
+            raise Exception("FAILURE")
+        return "SUCCESS"
 
     task_id = models.UUIDField(primary_key=True, editable=False)
     assessment = models.ForeignKey(
@@ -771,19 +774,22 @@ class Job(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
-    @classmethod
-    def create_from_task(cls, task, **kwargs):
-        # creates a job from a given task
-        job = cls(job=cls.OTHER)
-        task_id = uuid()
-        while cls.objects.filter(task_id=task_id).exists():
-            task_id = uuid()
+    def set_exception(self, exception):
+        self.exception = exception
+        self.status = self.FAILURE
+        self.save()
 
-        task.apply_async(kwargs=dict(job=True, **kwargs), task_id=task_id)
-        job.save()
+    def set_result(self, result):
+        self.result = result
+        self.status = self.SUCCESS
+        self.save()
 
-    def get_task(self):
-        return self.JOB_TO_TASK.get(self.job)
+    def execute(self):
+        run_job.apply_async(task_id=self.task_id)
+
+    def get_func(self):
+        if self.job == self.TEST:
+            return self.test
 
 
 @receiver(pre_save, sender=Job)
@@ -798,11 +804,8 @@ def create_task_id(sender, instance, **kwargs):
 
 @receiver(post_save, sender=Job)
 def run_task(sender, instance, created, **kwargs):
-    if created and instance.job != Job.OTHER:
-        task = instance.get_task()
-        kwargs = instance.kwargs
-        kwargs["job"] = True
-        task.apply_async(kwargs=kwargs, task_id=instance.task_id)
+    if created:
+        instance.execute()
 
 
 reversion.register(Assessment)
