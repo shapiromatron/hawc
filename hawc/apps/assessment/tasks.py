@@ -18,6 +18,7 @@ def run_job(self):
         job.set_result(result)
     except Exception as exc:
         job.set_exception(exc)
+    job.save()
 
 
 @shared_task

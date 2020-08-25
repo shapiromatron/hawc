@@ -774,12 +774,10 @@ class Job(models.Model):
     def set_exception(self, exception):
         self.exception = exception
         self.status = self.FAILURE
-        self.save()
 
     def set_result(self, result):
         self.result = result
         self.status = self.SUCCESS
-        self.save()
 
     def execute(self):
         run_job.apply_async(task_id=self.task_id)

@@ -8,7 +8,7 @@ router = DefaultRouter()
 router.register(r"assessment", api.Assessment, basename="assessment")
 router.register(r"dashboard", api.AdminDashboardViewset, basename="admin_dashboard")
 router.register(r"dataset", api.DatasetViewset, basename="dataset")
-router.register(r"global/jobs", api.JobViewset, basename="jobs")
+router.register(r"jobs", api.JobViewset, basename="jobs")
 
 app_name = "assessment"
 urlpatterns = [
