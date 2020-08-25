@@ -7,7 +7,6 @@ from django.urls import reverse
 from rest_framework.test import APIClient
 
 from hawc.apps.animal import forms, models
-from hawc.apps.assessment.models import DSSTox
 
 DATA_ROOT = Path(__file__).parents[2] / "data/api"
 
@@ -224,56 +223,6 @@ class TestExperimentCreateApi:
         response = client.post(url, data)
         assert response.status_code == 201
         assert len(models.Experiment.objects.filter(name="Experiment name")) == 2
-
-    @pytest.mark.vcr
-    def test_requests_with_dtxsid(self, db_keys):
-        url = reverse("animal:api:experiment-list")
-        client = APIClient()
-        assert client.login(username="team@team.com", password="pw") is True
-
-        # validation fails with invalid DTXSID
-        dtxsid = "DTXSID123abc"
-        data = {
-            "name": "Experiment name",
-            "type": "NR",
-            "study_id": db_keys.study_working,
-            "dtxsid": dtxsid,
-        }
-        response = client.post(url, data)
-        assert response.status_code == 400
-        assert response.json() == {
-            "non_field_errors": ["Chemical identifier 'DTXSID123abc' not found on DSSTox lookup."]
-        }
-
-        # create with existing dtxsid
-        dsstox = DSSTox.objects.all().first()
-        dtxsid = dsstox.dtxsid
-        data = {
-            "name": "Experiment with existing DTXSID",
-            "type": "NR",
-            "study_id": db_keys.study_working,
-            "dtxsid": dtxsid,
-        }
-        response = client.post(url, data)
-        assert response.status_code == 201
-        assert models.Experiment.objects.filter(
-            name="Experiment with existing DTXSID", dtxsid_id=dtxsid
-        ).exists()
-
-        # create with new dtxsid
-        dtxsid = "DTXSID0020078"
-        assert not DSSTox.objects.filter(pk=dtxsid).exists()
-        data = {
-            "name": "Experiment with new DTXSID",
-            "type": "NR",
-            "study_id": db_keys.study_working,
-            "dtxsid": "DTXSID0020078",
-        }
-        response = client.post(url, data)
-        assert response.status_code == 201
-        assert models.Experiment.objects.filter(
-            name="Experiment with new DTXSID", dtxsid_id=dtxsid
-        ).exists()
 
 
 @pytest.mark.django_db

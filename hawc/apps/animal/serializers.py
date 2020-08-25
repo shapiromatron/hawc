@@ -29,26 +29,23 @@ class ExperimentSerializer(serializers.ModelSerializer):
     def validate(self, data):
         # Validate parent object
         self.study = get_matching_instance(Study, self.initial_data, "study_id")
-        user_can_edit_object(self.study, self.context["request"].user, raise_exception=True)
 
         # add additional checks from forms.ExperimentForm
         form = forms.ExperimentForm(data=data, parent=self.study)
         if form.is_valid() is False:
             raise serializers.ValidationError(form.errors)
 
-        # check optional DTXSID
-        # TODO - AJS TO look into this? add to epi? invitro?
-        if "dtxsid" in self.initial_data:
-            serializer = DSSToxSerializer(data={"dtxsid": self.initial_data.get("dtxsid")})
-            serializer.is_valid(raise_exception=True)
-            data["dtxsid"] = serializer.validated_data
+        # validate dtxsid
+        dtxsid = self.initial_data.get("dtxsid")
+        if dtxsid:
+            try:
+                data["dtxsid"] = DSSTox.objects.get(pk=dtxsid)
+            except models.ObjectDoesNotExist:
+                raise serializers.ValidationError(dict(dtxsid=f"DSSTox {dtxsid} does not exist"))
 
         return data
 
     def create(self, validated_data):
-        dtxsid = validated_data.pop("dtxsid", None)
-        if dtxsid is not None:
-            validated_data["dtxsid"], _ = DSSTox.objects.get_or_create(**dtxsid)
         return models.Experiment.objects.create(**validated_data, study=self.study)
 
     class Meta:

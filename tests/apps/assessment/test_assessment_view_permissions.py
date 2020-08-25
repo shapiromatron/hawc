@@ -5,7 +5,6 @@ from pytest_django.asserts import assertTemplateUsed
 
 from hawc.apps.assessment.models import Assessment
 
-
 _successful_post = {
     "name": "testing",
     "year": "2013",
