@@ -195,6 +195,12 @@ class DatasetSerializer(serializers.ModelSerializer):
 
 
 class JobSerializer(serializers.ModelSerializer):
+    def to_representation(self, instance):
+        ret = super().to_representation(instance)
+        ret["status"] = instance.get_status_display()
+        ret["job"] = instance.get_job_display()
+        return ret
+
     class Meta:
         model = models.Job
         fields = "__all__"

@@ -771,6 +771,9 @@ class Job(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        ordering = ("-created",)
+
     def set_exception(self, exception):
         self.exception = exception
         self.status = self.FAILURE
