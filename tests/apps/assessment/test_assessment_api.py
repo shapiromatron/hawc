@@ -156,28 +156,6 @@ class TestLogViewset:
         resp = client.get(url)
         assert resp.status_code == 200
 
-        # assessment level permissions apply to log details with associated assessment
-        url = reverse("assessment:api:logs-detail", args=(db_keys.log_assessment,))
-
-        client = APIClient()
-        resp = client.get(url)
-        assert resp.status_code == 403
-
-        assert client.login(username="team@team.com", password="pw") is True
-        resp = client.get(url)
-        assert resp.status_code == 200
-
-        # only admin can view log details of global log
-        url = reverse("assessment:api:logs-detail", args=(db_keys.log_global,))
-
-        assert client.login(username="pm@pm.com", password="pw") is True
-        resp = client.get(url)
-        assert resp.status_code == 403
-
-        assert client.login(username="sudo@sudo.com", password="pw") is True
-        resp = client.get(url)
-        assert resp.status_code == 200
-
     def test_list(self, db_keys):
         client = APIClient()
         url = reverse("assessment:api:logs-list")
@@ -190,18 +168,6 @@ class TestLogViewset:
         assert len(resp.json()) == 1
         expected = {"message": "Global log", "assessment": None}
         assert expected.items() <= resp.json()[0].items()
-
-    def test_detail(self, db_keys):
-        client = APIClient()
-        url = reverse("assessment:api:logs-detail", args=(db_keys.log_assessment,))
-
-        assert client.login(username="team@team.com", password="pw") is True
-        resp = client.get(url)
-        assert resp.status_code == 200
-
-        # the response should be details of the log
-        expected = {"message": "Assessment log", "assessment": db_keys.assessment_working}
-        assert expected.items() <= resp.json().items()
 
     def test_assessment(self, db_keys):
         """
@@ -217,28 +183,4 @@ class TestLogViewset:
         # the response should be a list of all logs for this assessment
         assert len(resp.json()) == 1
         expected = {"message": "Assessment log", "assessment": db_keys.assessment_working}
-        assert expected.items() <= resp.json()[0].items()
-
-
-@pytest.mark.django_db
-class TestBlogViewset:
-    def test_permissions(self, db_keys):
-        client = APIClient()
-
-        # anyone can view blog posts
-        url = reverse("assessment:api:blogs-list")
-
-        resp = client.get(url)
-        assert resp.status_code == 200
-
-    def test_list(self, db_keys):
-        client = APIClient()
-        url = reverse("assessment:api:blogs-list")
-
-        resp = client.get(url)
-        assert resp.status_code == 200
-
-        # the list should only include published blog posts
-        assert len(resp.json()) == 1
-        expected = {"subject": "Published Blog", "id": db_keys.blog_published}
         assert expected.items() <= resp.json()[0].items()
