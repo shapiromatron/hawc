@@ -2,7 +2,6 @@ import json
 from typing import List, NamedTuple
 
 import pandas as pd
-from celery import uuid
 from django.apps import apps
 from django.conf import settings
 from django.contrib.contenttypes import fields
@@ -12,8 +11,6 @@ from django.contrib.postgres.fields import JSONField
 from django.core.cache import cache
 from django.core.validators import MinValueValidator
 from django.db import models
-from django.db.models.signals import post_save, pre_save
-from django.dispatch import receiver
 from django.urls import reverse
 from django.utils import timezone
 from pydantic import BaseModel as PydanticModel
@@ -790,22 +787,6 @@ class Job(models.Model):
     def get_func(self):
         if self.job == self.TEST:
             return self.test
-
-
-@receiver(pre_save, sender=Job)
-def create_task_id(sender, instance, **kwargs):
-    if instance.task_id is None:
-        task_id = uuid()
-        while Job.objects.filter(task_id=task_id).exists():
-            task_id = uuid()
-
-        instance.task_id = task_id
-
-
-@receiver(post_save, sender=Job)
-def run_task(sender, instance, created, **kwargs):
-    if created:
-        instance.execute()
 
 
 reversion.register(Assessment)
