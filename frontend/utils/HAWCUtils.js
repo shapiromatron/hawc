@@ -3,8 +3,6 @@ import _ from "lodash";
 import * as d3 from "d3";
 import slugify from "slugify";
 
-import renderChemicalDetails from "./components/ChemicalDetails";
-
 class HAWCUtils {
     static HAWC_NEW_WINDOW_POPUP_CLOSING = "hawcNewWindowPopupClosing";
 
@@ -94,24 +92,6 @@ class HAWCUtils {
 
     static abstractMethod() {
         throw "Abstract method; requires implementation";
-    }
-
-    static renderChemicalProperties(url, $div, show_header) {
-        const handleResponse = function(data) {
-                if (data.status === "requesting") {
-                    setTimeout(tryToFetch, 1000);
-                }
-                if (data.status === "success") {
-                    renderChemicalDetails($div.get(0), data.content, show_header);
-                }
-            },
-            tryToFetch = () => {
-                fetch(url)
-                    .then(resp => resp.json())
-                    .then(handleResponse);
-            };
-
-        tryToFetch();
     }
 
     static updateDragLocationTransform(setDragCB) {

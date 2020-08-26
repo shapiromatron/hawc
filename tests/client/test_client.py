@@ -77,13 +77,14 @@ class TestClient(LiveServerTestCase, TestCase):
             has_multiple_generations=False,
             chemical="2,3,7,8-Tetrachlorodibenzo-P-dioxin",
             cas="1746-01-6",
+            dtxsid="DTXSID6026296",
             chemical_source="ABC Inc.",
             purity_available=True,
             purity_qualifier="≥",
             purity=99.9,
             vehicle="DMSO",
             guideline_compliance="not reported",
-            description="Deatils here.",
+            description="Details here.",
         )
         experiment = client.animal.create_experiment(data)
         assert isinstance(experiment, dict) and experiment["name"] == experiment_name
