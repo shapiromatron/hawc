@@ -1,8 +1,7 @@
 import logging
 
-from celery import uuid
 from django.apps import apps
-from django.db.models.signals import post_save, pre_save
+from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 from ..common.helper import SerializerHelper
@@ -46,16 +45,6 @@ def invalidate_endpoint_cache(sender, instance, **kwargs):
     SerializerHelper.clear_cache(
         apps.get_model("animal", "Endpoint"), {"assessment_id": instance.id}
     )
-
-
-@receiver(pre_save, sender=models.Job)
-def create_task_id(sender, instance, **kwargs):
-    if instance.task_id is None:
-        task_id = uuid()
-        while models.Job.objects.filter(task_id=task_id).exists():
-            task_id = uuid()
-
-        instance.task_id = task_id
 
 
 @receiver(post_save, sender=models.Job)
