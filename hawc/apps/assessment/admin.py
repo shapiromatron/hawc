@@ -145,3 +145,14 @@ class TimeSpentEditingAdmin(admin.ModelAdmin):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.list_display_links = []
+
+
+@admin.register(models.Job)
+class JobAdmin(admin.ModelAdmin):
+    list_display = (
+        "task_id",
+        "assessment",
+        "job",
+        "kwargs",
+        "status",
+    )
