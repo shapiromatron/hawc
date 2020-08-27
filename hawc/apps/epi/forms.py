@@ -7,7 +7,7 @@ from django.urls import reverse
 from django.utils.functional import curry
 from selectable import forms as selectable
 
-from ..assessment.lookups import BaseEndpointLookup, DssToxIdLookup, EffectTagLookup
+from ..assessment.lookups import BaseEndpointLookup, EffectTagLookup
 from ..common.forms import BaseFormHelper, CopyAsNewSelectorForm
 from ..common.helper import tryParseInt
 from ..study.lookups import EpiStudyLookup
@@ -293,10 +293,6 @@ class ExposureForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         study_population = kwargs.pop("parent", None)
         super().__init__(*args, **kwargs)
-
-        self.fields["dtxsid"].widget = selectable.AutoCompleteSelectWidget(
-            lookup_class=DssToxIdLookup
-        )
         self.fields["measured"].widget = selectable.AutoCompleteWidget(
             lookup_class=lookups.ExposureMeasuredLookup, allow_new=True
         )
@@ -306,7 +302,6 @@ class ExposureForm(forms.ModelForm):
         self.fields["age_of_exposure"].widget = selectable.AutoCompleteWidget(
             lookup_class=lookups.AgeOfExposureLookup, allow_new=True
         )
-
         if study_population:
             self.instance.study_population = study_population
         self.helper = self.setHelper()
@@ -315,7 +310,7 @@ class ExposureForm(forms.ModelForm):
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
-                if fld in ["dtxsid", "metric_units"]:
+                if fld in ["metric_units"]:
                     widget.attrs["class"] = "span10"
                 else:
                     widget.attrs["class"] = "span12"
@@ -338,7 +333,6 @@ class ExposureForm(forms.ModelForm):
 
         helper = BaseFormHelper(self, **inputs)
         helper.form_class = None
-        helper.add_fluid_row("name", 2, "span6")
         helper.add_fluid_row("inhalation", 6, "span2")
         helper.add_fluid_row("measured", 3, "span4")
         helper.add_fluid_row("metric_description", 3, "span4")
@@ -349,15 +343,12 @@ class ExposureForm(forms.ModelForm):
             cfl.HTML('<div style="margin-bottom:20px">' + self.instance.ROUTE_HELP_TEXT + "</div>")
         )
 
-        helper.addBtnLayout(
-            helper.layout[2], 1, reverse("assessment:dtxsid_create"), "Add new DTXSID", "span6"
-        )
         url = reverse(
             "assessment:dose_units_create",
-            args=(self.instance.study_population.study.assessment_id,),
+            kwargs={"pk": self.instance.study_population.study.assessment_id},
         )
         helper.addBtnLayout(helper.layout[4], 2, url, "Create units", "span4")
-        helper.form_id = "exposure-form"
+
         return helper
 
 

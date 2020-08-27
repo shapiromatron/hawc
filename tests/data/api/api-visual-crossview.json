@@ -158,9 +158,9 @@
           "description": "<p>comments</p>",
           "created": "2020-05-08T12:38:22.190951-05:00",
           "last_updated": "2020-05-08T12:38:22.190975-05:00",
-          "dtxsid": null,
           "url": "/ani/experiment/3/",
-          "is_generational": true
+          "is_generational": true,
+          "cas_url": "/assessment/casrn/1163-19-5/"
         },
         "dosing_regime": {
           "id": 3,
@@ -252,6 +252,8 @@
           "created": "2020-05-08T12:40:29.993336-05:00",
           "last_updated": "2020-05-08T12:40:30.178820-05:00"
         },
+        "species": "rat",
+        "strain": "sprague dawley",
         "parents": [],
         "siblings": null,
         "children": [],
@@ -265,8 +267,6 @@
         "diet": "diet",
         "created": "2020-05-08T12:40:30.086088-05:00",
         "last_updated": "2020-05-08T12:40:30.333334-05:00",
-        "species": "rat",
-        "strain": "sprague dawley",
         "url": "/ani/animal-group/3/",
         "sex_symbol": "\u2642\u2640"
       },
@@ -496,9 +496,9 @@
           "description": "<p>comments</p>",
           "created": "2020-05-08T12:38:22.190951-05:00",
           "last_updated": "2020-05-08T12:38:22.190975-05:00",
-          "dtxsid": null,
           "url": "/ani/experiment/3/",
-          "is_generational": true
+          "is_generational": true,
+          "cas_url": "/assessment/casrn/1163-19-5/"
         },
         "dosing_regime": {
           "id": 3,
@@ -590,6 +590,8 @@
           "created": "2020-05-08T12:40:29.993336-05:00",
           "last_updated": "2020-05-08T12:40:30.178820-05:00"
         },
+        "species": "rat",
+        "strain": "sprague dawley",
         "parents": [],
         "siblings": null,
         "children": [],
@@ -603,8 +605,6 @@
         "diet": "diet",
         "created": "2020-05-08T12:40:30.086088-05:00",
         "last_updated": "2020-05-08T12:40:30.333334-05:00",
-        "species": "rat",
-        "strain": "sprague dawley",
         "url": "/ani/animal-group/3/",
         "sex_symbol": "\u2642\u2640"
       },

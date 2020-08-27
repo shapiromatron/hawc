@@ -5,6 +5,7 @@ from typing import Optional
 import pandas as pd
 from django.apps import apps
 from django.core import exceptions
+from django.core.cache import cache
 from django.db.models import Count
 from django.http import Http404
 from django.urls import reverse
@@ -18,13 +19,13 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAdminUser
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
-from hawc.services.epa import dsstox
-
+from ..common import dsstox
 from ..common.helper import FlatExport, create_uuid, re_digits, tryParseInt
 from ..common.renderers import PandasRenderers
 from ..lit import constants
-from . import models, serializers
+from . import models, serializers, tasks
 
 
 class RequiresAssessmentID(APIException):
@@ -438,14 +439,22 @@ class AdminDashboardViewset(viewsets.ViewSet):
         return Response(export)
 
 
-class DssToxViewset(viewsets.GenericViewSet, mixins.RetrieveModelMixin):
+class CasrnView(APIView):
     permission_classes = (permissions.AllowAny,)
-    lookup_value_regex = dsstox.RE_DTXSID
-    model = models.DSSTox
-    serializer_class = serializers.DSSToxSerializer
 
-    def get_queryset(self):
-        return self.model.objects.all()
+    def get(self, request, casrn: str, format=None):
+        """
+        Given a CAS number, get results.
+        """
+        cache_name = dsstox.get_cache_name(casrn)
+
+        data = cache.get(cache_name)
+        if data is None:
+            data = {"status": "requesting"}
+            cache.set(cache_name, data, 60)  # add task; don't resubmit for 60 seconds
+            tasks.get_dsstox_details.delay(casrn)
+
+        return Response(data)
 
 
 class LogViewset(mixins.ListModelMixin, viewsets.GenericViewSet):

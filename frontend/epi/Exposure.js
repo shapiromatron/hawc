@@ -1,15 +1,12 @@
 import $ from "$";
 
 import DescriptiveTable from "utils/DescriptiveTable";
-import DssTox from "assessment/DssTox";
 import HAWCModal from "utils/HAWCModal";
 import HAWCUtils from "utils/HAWCUtils";
 
 class Exposure {
     constructor(data) {
         this.data = data;
-        this.dsstox = data.dtxsid !== null ? new DssTox(data.dtxsid) : null;
-        delete data.dtxsid;
     }
 
     static get_detail_url(id) {
@@ -101,7 +98,6 @@ class Exposure {
         return new DescriptiveTable()
             .add_tbody_tr("Name", link)
             .add_tbody_tr("What was measured", this.data.measured)
-            .add_tbody_tr("DTXSID", this.dsstox ? this.dsstox.verbose_link() : null)
             .add_tbody_tr("Measurement metric", this.data.metric)
             .add_tbody_tr("Measurement metric units", this.data.metric_units.name)
             .add_tbody_tr("Measurement description", this.data.metric_description)
@@ -118,16 +114,9 @@ class Exposure {
     }
 
     displayFullPager($el) {
-        const content = [this.build_details_table()];
-
-        if (this.dsstox) {
-            let el = $("<div>");
-            this.dsstox.renderChemicalDetails(el[0], true);
-            content.push(el);
-        }
-
+        var tbl = this.build_details_table();
         $el.hide()
-            .append(content)
+            .append(tbl)
             .fadeIn();
     }
 
@@ -140,12 +129,6 @@ class Exposure {
             );
 
         $details.append(this.build_details_table());
-
-        if (this.dsstox) {
-            let el = $('<div class="row-fluid">');
-            this.dsstox.renderChemicalDetails(el[0], true);
-            $details.append(el);
-        }
 
         modal
             .addHeader(title)

@@ -1,7 +1,9 @@
 from celery import shared_task
 from celery.utils.log import get_task_logger
 from django.apps import apps
+from django.core.cache import cache
 
+from ..common.dsstox import fetch_dsstox, get_cache_name
 from ..common.svg import SVGConverter
 
 logger = get_task_logger(__name__)
@@ -33,6 +35,13 @@ def convert_to_pptx(svg, url, width, height):
     logger.info("Converting svg -> html -> png -> pptx")
     conv = SVGConverter(svg, url, width, height)
     return conv.to_pptx()
+
+
+@shared_task
+def get_dsstox_details(casrn: str):
+    cache_name = get_cache_name(casrn)
+    result = fetch_dsstox(casrn)
+    cache.set(cache_name, result, timeout=60 * 60 * 24)
 
 
 @shared_task

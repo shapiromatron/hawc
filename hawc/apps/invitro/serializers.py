@@ -3,11 +3,7 @@ from collections import OrderedDict
 
 from rest_framework import serializers
 
-from ..assessment.serializers import (
-    AssessmentRootedSerializer,
-    DSSToxSerializer,
-    EffectTagsSerializer,
-)
+from ..assessment.serializers import AssessmentRootedSerializer, EffectTagsSerializer
 from ..common.api import DynamicFieldsMixin
 from ..common.helper import SerializerHelper
 from ..study.serializers import StudySerializer
@@ -46,7 +42,7 @@ class _IVChemicalSerializer(serializers.ModelSerializer):
     url = serializers.CharField(source="get_absolute_url", read_only=True)
     url_update = serializers.CharField(source="get_update_url", read_only=True)
     url_delete = serializers.CharField(source="get_delete_url", read_only=True)
-    dtxsid = DSSToxSerializer()
+    casrn_url = serializers.CharField(source="get_casrn_url", read_only=True)
 
     class Meta:
         model = models.IVChemical

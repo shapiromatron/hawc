@@ -8,7 +8,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("assessment", "0018_dsstox"),
+        ("assessment", "0017_dataset"),
     ]
 
     operations = [

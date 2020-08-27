@@ -1,3 +1,5 @@
+import re
+
 import pytest
 from django.test.client import Client
 from django.urls import reverse
@@ -53,48 +55,43 @@ def test_study_crud_success(db_keys):
         # create new
         response = c.get(reverse("study:new_ref", kwargs={"pk": db_keys.assessment_working}))
         assert response.status_code == 200
-
-        with assertTemplateUsed("study/study_detail.html"):
-            response = c.post(
-                reverse("study:new_ref", kwargs={"pk": db_keys.assessment_working}),
-                {
-                    "assessment": db_keys.assessment_working,
-                    "short_citation": "foo et al.",
-                    "full_citation": "cite",
-                    "bioassay": True,
-                    "coi_reported": 0,
-                },
-                follow=True,
-            )
-
-        assert response.status_code == 200
-        pk = response.context["object"].id
+        response = c.post(
+            reverse("study:new_ref", kwargs={"pk": db_keys.assessment_working}),
+            {
+                "assessment": db_keys.assessment_working,
+                "short_citation": "foo et al.",
+                "full_citation": "cite",
+                "bioassay": True,
+                "coi_reported": 0,
+            },
+        )
+        assert response.status_code == 302
+        assertTemplateUsed("study/study_detail.html")
+        pk = int(re.findall(r"/study/(\d+)/$", response["location"])[0])
 
         # edit
-        response = c.get(reverse("study:update", args=(pk,)))
+        response = c.get(reverse("study:update", kwargs={"pk": pk}))
+        assert response.status_code == 200
+        response = c.post(
+            reverse("study:update", kwargs={"pk": pk}),
+            {
+                "assessment": db_keys.assessment_working,
+                "citation": "foo et al.",
+                "full_citation": "cite",
+            },
+        )
+        assert response.status_code in [200, 302]
+        assertTemplateUsed("study/study_detail.html")
+
+        # view versions
+        response = c.get(reverse("study:update", kwargs={"pk": pk}))
         assert response.status_code == 200
 
-        with assertTemplateUsed("study/study_detail.html"):
-            response = c.post(
-                reverse("study:update", args=(pk,)),
-                {
-                    "assessment": db_keys.assessment_working,
-                    "short_citation": "foo et al.",
-                    "full_citation": "cite",
-                    "coi_reported": 0,
-                },
-                follow=True,
-            )
-            assert response.status_code == 200
-
         # delete
-        with assertTemplateUsed("study/study_confirm_delete.html"):
-            response = c.get(reverse("study:delete", args=(pk,)))
-            assert response.status_code == 200
-
-        with assertTemplateUsed("study/study_list.html"):
-            response = c.post(reverse("study:delete", args=(pk,)), follow=True)
-            assert response.status_code == 200
+        response = c.get(reverse("study:delete", kwargs={"pk": pk}))
+        assert response.status_code == 200
+        response = c.post(reverse("study:delete", kwargs={"pk": pk}))
+        assert response.status_code == 302
 
 
 @pytest.mark.django_db

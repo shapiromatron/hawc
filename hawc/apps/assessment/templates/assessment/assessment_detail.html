@@ -76,16 +76,9 @@
 
       {% if object.cas %}
         <tr>
-          <th>CASRN</th>
+          <th>CAS number</th>
           <td>{{object.cas}}</td>
         </tr>
-      {% endif %}
-
-      {% if object.dtxsids.count > 0 %}
-          <tr>
-            <th>DSSTox substance identifiers (DTXSID)</th>
-            <td id="dtxsid-app"></td>
-          </tr>
       {% endif %}
 
       <tr>
@@ -187,14 +180,17 @@
 {% endblock content %}
 
 {% block extrajs %}
-{% if crud == "Read" and object.dtxsids.first %}
+{% if crud == "Read" and object.cas %}
 <script type="text/javascript">
-  $(document).on('ready', function () {
-    const dtxsids = {{dtxsids|safe}},
-      el = document.getElementById('dtxsid-app');
-    new window.app.assessmentStartup.renderDssToxTabs(el, dtxsids);
-  });
+    $(document).on('ready', function(){
+      {% with url=object.get_casrn_url %}
+        {% if url %}
+          var url = "{{url}}",
+            div = $('<div>').insertAfter($('#assessment_table'));
+          window.app.utils.HAWCUtils.renderChemicalProperties(url, div, true);
+        {% endif %}
+      {% endwith %}
+    });
 </script>
 {% endif %}
-
 {% endblock extrajs %}

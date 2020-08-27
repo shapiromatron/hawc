@@ -5,8 +5,6 @@ import django.core.files.storage
 import django.db.models.deletion
 from django.db import migrations, models
 
-from hawc.apps.common.models import get_private_data_storage
-
 
 class Migration(migrations.Migration):
 
@@ -59,7 +57,9 @@ class Migration(migrations.Migration):
                     "data",
                     models.FileField(
                         help_text="Upload a dataset (.csv, .tsv, .xlsx).\n            Dataset versions cannot be deleted, but if users are not team members, only the most\n            recent dataset version will be visible. Visualizations using a dataset will use the\n            latest version available.",
-                        storage=get_private_data_storage(),
+                        storage=django.core.files.storage.FileSystemStorage(
+                            location="/Users/shapiromatron/dev/hawc/private"
+                        ),
                         upload_to="assessment/dataset-revision",
                     ),
                 ),

@@ -21,28 +21,5 @@
 {% endblock %}
 
 {% block extrajs %}
-  {{ form.media }}<script type="text/javascript">
-    $(document).ready(function () {
-
-      // handle all logic related to dtxid + cas
-      var handleChemicalPropertiesInformation = function () {
-        // if `dtxsid` is selected, change casrn/chemical_name
-        $('input[name=dtxsid_0]').bind('djselectableselect', function (event, item) {
-          if (item.item.casrn) {
-            $('#id_cas').val(item.item.casrn);
-          }
-          if (item.item.chemical_name) {
-            $('#id_name').val(item.item.chemical_name);
-          }
-        });
-
-        // re-enable all form fields prior to submission
-        $('#ivchemical-form').on("submit", function () {
-          $('#ivchemical-form input').attr('disabled', false);
-        });
-      }
-      handleChemicalPropertiesInformation();
-
-    });
-  </script>
-  {% endblock extrajs %}
+  {{ form.media }}
+{% endblock extrajs %}

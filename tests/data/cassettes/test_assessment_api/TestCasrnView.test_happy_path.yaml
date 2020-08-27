@@ -11,7 +11,71 @@ interactions:
       User-Agent:
       - python-requests/2.23.0
     method: GET
-    uri: https://actorws.epa.gov/actorws/chemical/image?dtxsid=DTXSID6026296&fmt=jpeg
+    uri: https://actorws.epa.gov/actorws/chemIdentifier/v01/resolve.json?identifier=7732-18-5
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAAJVSXW+bMBT9L37oUwkfU9IOKaoQjJUuDSlJm3Yvk4Uv4M3GzHaSRlX/+wwkURpp
+        XfeCdM+559zrc3lBEdY4ExvkvyAhaZkQqDUtKEjko4uLT57lXlpDdI5yrGR9gjUSCpASyBRzMNwS
+        a6M7R2pbf1WUIN8beZ9HXb3YNm1HGMytbNq3/HUU0c+dGkWLx3kSjZzOpifyPREmkevs8J9hBTyp
+        wyr5BltDP06e0nia3j3Mbm6mM+v+Oo7jIH2aB1Y7mtaEluLD7YpTBsq0pabggsVC8hXDBrj2dtAS
+        aFlp5LuXA8cdmqwEY5TQuuxTqFeMHYFhn+QJOnubZc9qSTkHsqyoBtXg3BAFZgoOzARwK/4OUqgD
+        Z5zMjlhrIMcZ79i8gvyXWnHzgIdgkkTdHUUOSgEJ2nfGaXYbLBZfoh/mWlmfWCFuVbnfaoNlbYYe
+        IVxlZpFtG03rUGnd+LaNcy3kRg2gwYNSrPe1TZTS4tleO57NlWyFV/Sw5/jktr8Vlv/v26reMaUc
+        l3CfTf7tadLiNMfM7iRX/R/4xu5sM3aHzlnVfQuux2pdotfXP3EMw5laAwAA
+    headers:
+      Access-Control-Allow-Headers:
+      - x-requested-with
+      Access-Control-Allow-Methods:
+      - POST, GET, OPTIONS, DELETE
+      Access-Control-Allow-Origin:
+      - '*'
+      Allow:
+      - GET, HEAD, POST, PUT, DELETE, TRACE, OPTIONS
+      Cache-Control:
+      - no-cache, no-store, max-age=0
+      Connection:
+      - Keep-Alive
+      Content-Encoding:
+      - gzip
+      Content-Language:
+      - en-US
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Fri, 15 May 2020 14:15:28 GMT
+      Expires:
+      - Thu, 01 Jan 1970 00:00:00 GMT
+      Keep-Alive:
+      - timeout=5, max=100
+      Pragma:
+      - no-cache
+      Server:
+      - Apache-Coyote/1.1
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      Transfer-Encoding:
+      - chunked
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://actorws.epa.gov/actorws/chemical/image?casrn=7732-18-5&fmt=jpeg
   response:
     body:
       string: !!binary |
@@ -77,7 +141,7 @@ interactions:
       Content-Type:
       - image/jpeg
       Date:
-      - Wed, 12 Aug 2020 21:19:27 GMT
+      - Fri, 15 May 2020 14:15:28 GMT
       Keep-Alive:
       - timeout=5, max=100
       Server:

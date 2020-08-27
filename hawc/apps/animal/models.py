@@ -12,8 +12,9 @@ from django.urls import reverse
 from reversion import revisions as reversion
 from scipy import stats
 
-from ..assessment.models import Assessment, BaseEndpoint, DSSTox
+from ..assessment.models import Assessment, BaseEndpoint
 from ..assessment.serializers import AssessmentSerializer
+from ..common.dsstox import get_casrn_url
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper, cleanHTML, tryParseInt
 from ..common.models import get_crumbs
 from ..study.models import Study
@@ -83,19 +84,6 @@ class Experiment(models.Model):
                 in the comment field below.
                 """,
     )
-    dtxsid = models.ForeignKey(
-        DSSTox,
-        blank=True,
-        null=True,
-        on_delete=models.SET_NULL,
-        verbose_name="DSSTox substance identifier (DTXSID)",
-        related_name="experiments",
-        help_text="""
-        <a href="https://www.epa.gov/chemical-research/distributed-structure-searchable-toxicity-dsstox-database">DSSTox</a>
-        substance identifier (recommended). When using an identifier, chemical name and CASRN are
-        standardized using the DTXSID.
-        """,
-    )
     chemical_source = models.CharField(
         max_length=128, verbose_name="Source of chemical", blank=True
     )
@@ -158,6 +146,9 @@ class Experiment(models.Model):
     def get_crumbs(self):
         return get_crumbs(self, self.study)
 
+    def get_casrn_url(self):
+        return get_casrn_url(self.cas)
+
     @staticmethod
     def flat_complete_header_row():
         return (
@@ -168,7 +159,6 @@ class Experiment(models.Model):
             "experiment-has_multiple_generations",
             "experiment-chemical",
             "experiment-cas",
-            "experiment-dtxsid",
             "experiment-chemical_source",
             "experiment-purity_available",
             "experiment-purity_qualifier",
@@ -188,7 +178,6 @@ class Experiment(models.Model):
             ser["has_multiple_generations"],
             ser["chemical"],
             ser["cas"],
-            ser["dtxsid"],
             ser["chemical_source"],
             ser["purity_available"],
             ser["purity_qualifier"],
@@ -958,7 +947,6 @@ class Endpoint(BaseEndpoint):
             "animal_group__experiment__name": "experiment name",
             "animal_group__experiment__type": "experiment type",
             "animal_group__experiment__cas": "experiment cas",
-            "animal_group__experiment__dtxsid": "experiment dtxsid",
             "animal_group__experiment__chemical": "experiment chemical",
             "animal_group__experiment__study_id": "study id",
             "animal_group__experiment__study__short_citation": "study citation",

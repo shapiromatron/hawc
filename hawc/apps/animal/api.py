@@ -14,11 +14,7 @@ from ..assessment.api import (
     get_assessment_id_param,
 )
 from ..assessment.models import Assessment
-from ..common.api import (
-    CleanupFieldsBaseViewSet,
-    LegacyAssessmentAdapterMixin,
-    user_can_edit_object,
-)
+from ..common.api import CleanupFieldsBaseViewSet, LegacyAssessmentAdapterMixin
 from ..common.helper import FlatExport, re_digits
 from ..common.renderers import PandasRenderers
 from ..common.serializers import HeatmapQuerySerializer, UnusedSerializer
@@ -164,19 +160,6 @@ class Experiment(mixins.CreateModelMixin, AssessmentViewset):
     assessment_filter_args = "study__assessment"
     model = models.Experiment
     serializer_class = serializers.ExperimentSerializer
-
-    def get_queryset(self):
-        return (
-            super()
-            .get_queryset()
-            .select_related("study", "study__assessment", "dtxsid")
-            .prefetch_related("study__searches", "study__identifiers")
-        )
-
-    def perform_create(self, serializer):
-        # permissions check
-        user_can_edit_object(serializer.study, self.request.user, raise_exception=True)
-        return super().perform_create(serializer)
 
 
 class AnimalGroup(mixins.CreateModelMixin, AssessmentViewset):
