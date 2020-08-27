@@ -775,6 +775,30 @@ class DatasetRevision(models.Model):
         return df
 
 
+class Log(models.Model):
+    assessment = models.ForeignKey(
+        Assessment, blank=True, null=True, related_name="logs", on_delete=models.CASCADE
+    )
+    message = models.TextField()
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ("-created",)
+
+
+class Blog(models.Model):
+    subject = models.CharField(max_length=128)
+    content = models.TextField()
+    rendered_content = models.TextField(editable=False)
+    published = models.BooleanField(default=False)
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ("-created",)
+
+
 reversion.register(DSSTox)
 reversion.register(Assessment)
 reversion.register(EffectTag)
@@ -783,3 +807,5 @@ reversion.register(Strain)
 reversion.register(BaseEndpoint)
 reversion.register(Dataset)
 reversion.register(DatasetRevision)
+reversion.register(Log)
+reversion.register(Blog)

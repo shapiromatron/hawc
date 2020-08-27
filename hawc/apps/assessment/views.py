@@ -28,6 +28,7 @@ from ..common.views import (
     ProjectManagerOrHigherMixin,
     TeamMemberOrHigherMixin,
     TimeSpentOnPageMixin,
+    beta_tester_required,
 )
 from . import forms, models, serializers, tasks
 
@@ -565,3 +566,15 @@ class AdminAssessmentSize(TemplateView):
     @method_decorator(staff_member_required)
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
+
+
+# log / blog
+class BlogList(ListView):
+    model = models.Blog
+
+    def get_queryset(self):
+        return self.model.objects.filter(published=True)
+
+    @method_decorator(beta_tester_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)

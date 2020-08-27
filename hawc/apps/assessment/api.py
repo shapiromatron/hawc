@@ -15,6 +15,7 @@ from rest_framework import filters, mixins, permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import APIException, PermissionDenied
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.permissions import IsAdminUser
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 
@@ -383,6 +384,15 @@ class Assessment(AssessmentViewset):
         serializer = serializers.AssessmentEndpointSerializer(instance)
         return Response(serializer.data)
 
+    @action(
+        detail=True, methods=("get",),
+    )
+    def logs(self, request, pk: int = None):
+        instance = self.get_object()
+        queryset = instance.logs.all()
+        serializer = serializers.LogSerializer(queryset, many=True)
+        return Response(serializer.data)
+
 
 class DatasetViewset(AssessmentViewset):
     model = models.Dataset
@@ -436,3 +446,13 @@ class DssToxViewset(viewsets.GenericViewSet, mixins.RetrieveModelMixin):
 
     def get_queryset(self):
         return self.model.objects.all()
+
+
+class LogViewset(mixins.ListModelMixin, viewsets.GenericViewSet):
+    model = models.Log
+    permission_classes = (IsAdminUser,)
+    serializer_class = serializers.LogSerializer
+    pagination_class = None
+
+    def get_queryset(self):
+        return self.model.objects.filter(assessment=None)

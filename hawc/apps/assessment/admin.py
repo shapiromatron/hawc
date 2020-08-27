@@ -1,4 +1,7 @@
+from datetime import timedelta
+
 from django.contrib import admin
+from django.utils import timezone
 from django.utils.html import format_html
 
 from . import models
@@ -145,6 +148,33 @@ class TimeSpentEditingAdmin(admin.ModelAdmin):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.list_display_links = []
+
+
+@admin.register(models.Log)
+class LogAdmin(admin.ModelAdmin):
+    list_display = ("assessment", "message", "created", "last_updated")
+
+    search_fields = ("assessment__name", "message")
+
+    actions = ("delete_gt_year",)
+
+    def delete_gt_year(self, request, queryset):
+        # delete where "last_updated" > 1 year old
+        year_old = timezone.now() - timedelta(days=365)
+        deleted, _ = queryset.filter(last_updated__lte=year_old).delete()
+        # send a message with number deleted
+        self.message_user(request, f"{deleted} of {queryset.count()} selected logs deleted.")
+
+    delete_gt_year.short_description = "Delete 1 year or older"
+
+
+@admin.register(models.Blog)
+class BlogAdmin(admin.ModelAdmin):
+    list_display = ("subject", "published", "created", "last_updated")
+
+    list_filter = ("published",)
+
+    search_fields = ("subject", "content")
 
 
 @admin.register(models.DSSTox)
