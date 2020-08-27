@@ -3,13 +3,13 @@ import PropTypes from "prop-types";
 import {inject, observer} from "mobx-react";
 import {toJS} from "mobx";
 
-import ReferenceTable from "./components/ReferenceTable";
-import TagTree from "./components/TagTree";
+import ReferenceTable from "../components/ReferenceTable";
+import TagTree from "../components/TagTree";
 import Loading from "shared/components/Loading";
 
 @inject("store")
 @observer
-class ReferenceTreeBrowse extends Component {
+class ReferenceTreeMain extends Component {
     constructor(props) {
         super(props);
     }
@@ -78,8 +78,8 @@ class ReferenceTreeBrowse extends Component {
     }
 }
 
-ReferenceTreeBrowse.propTypes = {
+ReferenceTreeMain.propTypes = {
     store: PropTypes.object,
 };
 
-export default ReferenceTreeBrowse;
+export default ReferenceTreeMain;

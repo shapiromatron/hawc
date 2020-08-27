@@ -6,8 +6,10 @@ import {Provider} from "mobx-react";
 import EditReferenceContainer from "./EditReferenceContainer";
 import Reference from "./Reference";
 import ReferenceComponent from "./components/Reference";
-import ReferenceTreeBrowse from "./ReferenceTreeBrowse";
-import ReferenceTreeBrowseStore from "./ReferenceTreeBrowseStore";
+import ReferenceTreeMain from "./ReferenceTreeBrowse/Main";
+import ReferenceTreeMainStore from "./ReferenceTreeBrowse/store";
+import TagReferencesMain from "./TagReferences/Main";
+import TagReferencesMainStore from "./TagReferences/store";
 import ReferencesViewer from "./ReferencesViewer";
 import TagTree from "./TagTree";
 import TagTreeViz from "./TagTreeViz";
@@ -67,8 +69,16 @@ export default {
     },
     startupReferenceList(el, config) {
         ReactDOM.render(
-            <Provider store={new ReferenceTreeBrowseStore(config)}>
-                <ReferenceTreeBrowse />
+            <Provider store={new ReferenceTreeMainStore(config)}>
+                <ReferenceTreeMain />
+            </Provider>,
+            el
+        );
+    },
+    startupTagReferences(el, config) {
+        ReactDOM.render(
+            <Provider store={new TagReferencesMainStore(config)}>
+                <TagReferencesMain />
             </Provider>,
             el
         );

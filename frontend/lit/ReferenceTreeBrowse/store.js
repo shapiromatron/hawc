@@ -1,8 +1,8 @@
 import $ from "$";
 import {action, computed, observable} from "mobx";
 
-import Reference from "./Reference";
-import TagTree from "./TagTree";
+import Reference from "../Reference";
+import TagTree from "../TagTree";
 
 class Store {
     constructor(config) {

@@ -22,19 +22,25 @@
 
 {% block content %}
   <div id="reference_details"></div>
+  <div id="main"></div>
 {% endblock %}
 
 {% block extrajs %}
+  <script id="config" type="text/json" charset="utf-8">
+    {
+    }
+  </script>
   <script type="text/javascript">
     let data = {
           tags: {{ tags | safe }},
-          refs: [],
+          refs: [
+            {% for ref in references %}
+              {{ ref.get_json | safe }}
+              {% if not forloop.last %},{% endif %}
+            {% endfor %}
+          ],
           tag_edit_url: {% if obj_perms.edit_assessment %}"{% url 'lit: tags_update' assessment.pk %}"{% else %}null{% endif %},
         };
-
-    {% for ref in references %}
-      data.refs.push({{ ref.get_json | safe }})
-    {% endfor %}
 
     window.canEdit = true;
 
@@ -45,6 +51,12 @@
           });
 
       new lit.EditReferenceContainer(references, tagtree, {content_div: "#reference_details"});
+    });
+
+    window.app.litStartup(function (lit) {
+      const el = document.getElementById('main'),
+        data = JSON.parse(document.getElementById('config').textContent);
+      lit.startupTagReferences(el, data)
     });
   </script>
 {% endblock extrajs %}
