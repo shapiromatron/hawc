@@ -5,6 +5,7 @@ ENV PYTHONUNBUFFERED 1
 RUN groupadd -g 555 -r django && \
     useradd -u 555 -r -g django django
 
+COPY ./compose/django/wait-for.sh /app/bin/wait-for.sh
 COPY ./compose/django/entrypoint.sh /app/bin/entrypoint.sh
 COPY ./compose/django/gunicorn.sh /app/bin/gunicorn.sh
 COPY ./compose/django/celery.sh /app/bin/celery.sh
