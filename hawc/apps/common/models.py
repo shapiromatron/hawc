@@ -42,7 +42,11 @@ class BaseManager(models.Manager):
         return self.get_queryset()
 
     def assessment_qs(self, assessment_id):
-        return self.get_queryset().filter(Q(**{self.assessment_relation: assessment_id}))
+        return (
+            self.get_queryset()
+            .filter(Q(**{self.assessment_relation: assessment_id}))
+            .order_by("id")
+        )
 
 
 class IntChoiceEnum(IntEnum):

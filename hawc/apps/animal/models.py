@@ -17,6 +17,7 @@ from ..assessment.serializers import AssessmentSerializer
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper, cleanHTML, tryParseInt
 from ..common.models import get_crumbs
 from ..study.models import Study
+from ..vocab.models import Term
 from . import managers
 
 
@@ -789,17 +790,33 @@ class Endpoint(BaseEndpoint):
         AnimalGroup, on_delete=models.CASCADE, related_name="endpoints"
     )
     system = models.CharField(max_length=128, blank=True, help_text="Relevant biological system")
+    system_term = models.ForeignKey(
+        Term, related_name="endpoint_system_terms", on_delete=models.SET_NULL, blank=True, null=True
+    )
     organ = models.CharField(
         max_length=128,
         blank=True,
         verbose_name="Organ (and tissue)",
         help_text="Relevant organ or tissue",
     )
+    organ_term = models.ForeignKey(
+        Term, related_name="endpoint_organ_terms", on_delete=models.SET_NULL, blank=True, null=True
+    )
     effect = models.CharField(
         max_length=128, blank=True, help_text="Effect, using common-vocabulary"
     )
+    effect_term = models.ForeignKey(
+        Term, related_name="endpoint_effect_terms", on_delete=models.SET_NULL, blank=True, null=True
+    )
     effect_subtype = models.CharField(
         max_length=128, blank=True, help_text="Effect subtype, using common-vocabulary"
+    )
+    effect_subtype_term = models.ForeignKey(
+        Term,
+        related_name="endpoint_effect_subtype_terms",
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
     )
     litter_effects = models.CharField(
         max_length=2,

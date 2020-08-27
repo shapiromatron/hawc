@@ -19,6 +19,7 @@ from reversion import revisions as reversion
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper
 from ..common.models import get_crumbs, get_private_data_storage
 from ..myuser.models import HAWCUser
+from ..vocab.models import Term, VocabularyNamespace
 from . import managers
 from .tasks import add_time_spent
 
@@ -231,6 +232,24 @@ class Assessment(models.Model):
         choices=ROB_NAME_CHOICES,
         verbose_name="Risk of bias/Study evaluation name",
         help_text="What term should be used to refer to risk of bias/study evaluation questions?",
+    )
+    vocabulary = models.PositiveSmallIntegerField(
+        choices=VocabularyNamespace.choices(),
+        default=VocabularyNamespace.EHV.value,
+        blank=True,
+        null=True,
+        verbose_name="Controlled vocabulary",
+        help_text="""Attempt to use a controlled vocabulary for entering bioassay data into HAWC.
+        You still have the option to enter terms which are not available in the vocabulary.""",
+    )
+    modify_uncontrolled_vocabulary = models.BooleanField(
+        default=True,
+        verbose_name="Curators can modify terms",
+        help_text="""If using a controlled vocabulary and content is added which requires the
+        definition of new terms, these may be modified and by curators who map new terms to the
+        controlled vocabulary. Opting in means the values may change. It is recommended to select
+        this option until you like to "freeze" your assessment, and then this can be unchecked, if
+        needed.""",
     )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
@@ -550,9 +569,15 @@ class BaseEndpoint(models.Model):
     # in assessment; major use case in HAWC.
 
     name = models.CharField(max_length=128, verbose_name="Endpoint/Adverse outcome")
+    name_term = models.ForeignKey(
+        Term, related_name="endpoint_name_terms", on_delete=models.SET_NULL, blank=True, null=True
+    )
     effects = models.ManyToManyField(EffectTag, blank=True, verbose_name="Tags")
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ("id",)
 
     def __str__(self):
         return self.name
