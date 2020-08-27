@@ -24,21 +24,6 @@ class ReferencesViewer {
         this.$table_div.html("<p>An error has occurred</p>");
     }
 
-    view_untagged_references(tagtree, assessment_id, search_id) {
-        let url = `/lit/assessment/${assessment_id}/references/untagged/json/`;
-        if (search_id) {
-            url += `?search_id=${search_id}`;
-        }
-
-        $.get(url, results => {
-            if (results.status == "success") {
-                this.set_references(results.refs.map(datum => new Reference(datum, tagtree)));
-            } else {
-                this.set_error();
-            }
-        });
-    }
-
     _print_header() {
         var h3 = $("<h3>"),
             $div = this.$div,

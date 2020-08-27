@@ -11,14 +11,25 @@ class Store {
         this.tagtree.add_references(config.references);
     }
 
+    selectedTagNode = null;
+    @observable untaggedReferencesSelected = false;
     @observable selectedTag = null;
     @observable config = null;
     @observable tagtree = null;
     @observable selectedReferences = null;
     @observable selectedReferencesLoading = false;
 
-    @action.bound changeSelectedTag(selectedTag) {
+    @action.bound changeSelectedTagNodeClass(targetNode) {
+        if (this.selectedTagNode) {
+            $(this.selectedTagNode).removeClass("selected");
+        }
+        this.selectedTagNode = targetNode;
+        $(this.selectedTagNode).addClass("selected");
+    }
+    @action.bound handleTagClick(selectedTag) {
+        this.changeSelectedTagNodeClass(event.target);
         this.selectedTag = selectedTag;
+        this.untaggedReferencesSelected = false;
         this.requestSelectedReferences();
     }
     @action.bound requestSelectedReferences() {
@@ -39,13 +50,29 @@ class Store {
             this.selectedReferencesLoading = false;
         });
     }
-    @action.bound viewUntaggedReferences() {
-        console.warning("viewUntaggedReferences");
+    @action.bound handleUntaggedReferenceClick() {
+        this.changeSelectedTagNodeClass(event.target);
+
+        const {assessment_id, search_id} = this.config;
+
+        let url = `/lit/assessment/${assessment_id}/references/untagged/json/`;
+        if (search_id) {
+            url += `?search_id=${search_id}`;
+        }
+
+        this.selectedTag = null;
+        this.untaggedReferencesSelected = true;
+        this.selectedReferences = null;
+        this.selectedReferencesLoading = true;
+        $.get(url, results => {
+            this.selectedReferences = results.refs.map(datum => new Reference(datum, this.tagtree));
+            this.selectedReferencesLoading = false;
+        });
     }
 
     @computed get getActionLinks() {
         let links = [];
-        if (this.selectedTag === null) {
+        if (this.selectedTag === null || this.untaggedReferencesSelected === true) {
             return links;
         } else {
             links = [

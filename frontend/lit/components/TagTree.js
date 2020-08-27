@@ -5,8 +5,9 @@ import PropTypes from "prop-types";
 class TagNode extends Component {
     constructor(props) {
         super(props);
+        this.localStorageKey = `lit-referencetag-${props.tag.data.pk}-expanded`;
         this.state = {
-            expanded: true,
+            expanded: window.localStorage.getItem(this.localStorageKey) === "false" ? false : true,
         };
     }
     render() {
@@ -16,7 +17,11 @@ class TagNode extends Component {
                 {tag.children.length > 0 ? (
                     <span
                         className="nestedTagCollapser"
-                        onClick={() => this.setState({expanded: !this.state.expanded})}>
+                        onClick={() => {
+                            const newValue = !this.state.expanded;
+                            window.localStorage.setItem(this.localStorageKey, newValue);
+                            this.setState({expanded: newValue});
+                        }}>
                         <span className={this.state.expanded ? "icon-minus" : "icon-plus"}></span>
                     </span>
                 ) : null}

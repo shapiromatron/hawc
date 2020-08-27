@@ -25,14 +25,15 @@ class ReferenceTreeBrowse extends Component {
                     <div id="taglist">
                         <TagTree
                             tagtree={toJS(store.tagtree)}
-                            handleTagClick={tag => store.changeSelectedTag(tag)}
+                            handleTagClick={tag => store.handleTagClick(tag)}
                         />
                     </div>
+                    <br />
                     <p
                         className="nestedTag"
                         id="untaggedReferences"
-                        onClick={() => store.changeSelectedTag(null)}>
-                        Untagged References: (null)
+                        onClick={() => store.handleUntaggedReferenceClick(null)}>
+                        Untagged References: ({store.config.untaggedReferenceCount})
                     </p>
                 </div>
                 <div className="span9">
@@ -52,8 +53,10 @@ class ReferenceTreeBrowse extends Component {
                     ) : null}
 
                     <div id="references_detail_div">
-                        {store.selectedTag === null ? (
-                            <h3>Available References</h3>
+                        {store.untaggedReferencesSelected === true ? (
+                            <h3>Untagged references</h3>
+                        ) : store.selectedTag === null ? (
+                            <h3>Available references</h3>
                         ) : (
                             <h3>
                                 References tagged:&nbsp;
@@ -61,7 +64,8 @@ class ReferenceTreeBrowse extends Component {
                             </h3>
                         )}
                         {selectedReferencesLoading ? <Loading /> : null}
-                        {store.selectedTag === null ? (
+                        {store.selectedTag === null &&
+                        store.untaggedReferencesSelected === false ? (
                             <p className="help-block">Click on a tag to view tagged references.</p>
                         ) : null}
                         {selectedReferences ? (

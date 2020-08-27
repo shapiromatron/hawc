@@ -11,24 +11,22 @@
 {% endblock %}
 
 {% block content %}
-
   <h4>Reference details:</h4>
   <div id="reference_detail_div"></div>
 {% endblock %}
 
-{% block extrajs %}
-  <script type="text/javascript">
-    let data = {
-      tags: {{ tags| safe}},
-      reference: {{ object_json | safe }}
-    };
-    window.app.litStartup(function(lit){
-      let tagtree = new lit.TagTree(data.tags[0]),
-          ref = new lit.Reference(data.reference, tagtree);
-      ref.print_self(
-        document.getElementById('reference_detail_div'),
-        { showActions: true }
-      );
-    });
-  </script>
+{% block extrajs %}{
+<script id="config" type="text/json" charset="utf-8">
+  {
+      "tags": {{ tags| safe}},
+      "reference": {{ object_json | safe }}
+  }
+</script>
+<script type="text/javascript">
+  window.app.litStartup(function(lit){
+    const el = document.getElementById("reference_detail_div"),
+      config = JSON.parse(document.getElementById('config').textContent)
+    lit.startupReferenceDetail(el, config.tags, config.reference);
+  });
+</script>
 {% endblock extrajs %}

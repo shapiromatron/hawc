@@ -67,7 +67,7 @@ class Reference extends Component {
     }
 
     render() {
-        const {reference, showActions, showTags, showHr} = this.props,
+        const {reference, showActions, showTags, showHr, actionsBtnClassName} = this.props,
             {data} = reference,
             authors =
                 reference.data.authors || reference.data.authors_short || reference.NO_AUTHORS_TEXT,
@@ -82,9 +82,7 @@ class Reference extends Component {
                         </span>
                         {showActions ? (
                             <div className="btn-group pull-right">
-                                <a
-                                    className="btn btn-primary dropdown-toggle"
-                                    data-toggle="dropdown">
+                                <a className={actionsBtnClassName} data-toggle="dropdown">
                                     Actions&nbsp;<span className="caret"></span>
                                 </a>
                                 <ul className="dropdown-menu">
@@ -137,12 +135,14 @@ class Reference extends Component {
 Reference.propTypes = {
     reference: PropTypes.object,
     showActions: PropTypes.bool,
+    actionsBtnClassName: PropTypes.string,
     showHr: PropTypes.bool,
     showTags: PropTypes.bool,
 };
 
 Reference.defaultProps = {
     showActions: false,
+    actionsBtnClassName: "btn btn-small dropdown-toggle",
     showHr: false,
     showTags: true,
 };

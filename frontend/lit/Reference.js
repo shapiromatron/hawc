@@ -37,6 +37,7 @@ class Reference extends Observee {
     }
 
     print_self(el, options) {
+        // remove after used
         ReactDOM.render(<ReferenceComponent reference={this} {...options} />, el);
     }
 

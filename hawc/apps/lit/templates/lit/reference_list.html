@@ -21,48 +21,21 @@
 {% endblock %}
 
 {% block extrajs %}
+  <script id="config" type="text/json" charset="utf-8">
+    {
+        "assessment_id": {{assessment.id}},
+        "search_id": {{ object.id | default:"null" }},
+        "tags": {{ tags | safe }},
+        "references": {{ ref_objs | safe }},
+        "canEdit": {{ obj_perms.edit | lower }},
+        "untaggedReferenceCount": {{untagged.count}}
+    }
+  </script>
   <script type="text/javascript">
-    let data = {
-      assessment_id: {{assessment.id}},
-      search_id: parseInt("{{ object.id }}") || null,
-      tags: {{ tags | safe }},
-      references: {{ ref_objs | safe }},
-      canEdit: {{ obj_perms.edit | lower }}
-    };
     window.app.litStartup(function(lit){
-
-      lit.startupReferenceList(document.getElementById('main'), data);
-
-      // $('#taglist')
-      //   .html(tagtree.get_nested_list({"show_refs_count": true}))
-      //   .on('hawc-tagClicked', function(e){
-      //     $('.nestedTag').removeClass("selected");
-      //     $(e.target).addClass("selected");
-      //     var tag = $(e.target).data('d'),
-      //         options = {
-      //           tag: tag,
-      //           download_url: "{% url 'lit:api:assessment-references-download' assessment.pk %}"
-      //         },
-      //         refviewer = new lit.ReferencesViewer($('#references_detail_div'), options);
-      //     tag.get_reference_objects_by_tag(refviewer);
-      //   });
-
-      //   $('#untaggedReferences').click(function(e){
-      //     $('.nestedTag').removeClass("selected");
-      //     $(e.target).addClass("selected");
-      //     var options = {
-      //           fixed_title: "Untagged references",
-      //           actionLinks: [
-      //             {
-      //               url: "{% url 'lit:tag_untagged' assessment.id %}",
-      //               text: "Tag untagged references"
-      //             }
-      //           ],
-      //           download_url: "{% url 'lit:api:assessment-references-download' assessment.pk %}"
-      //         },
-      //         refviewer = new lit.ReferencesViewer($('#references_detail_div'), options);
-      //     refviewer.view_untagged_references(tagtree, data.assessment_id, window.search_id);
-      //  });
+      const el = document.getElementById('main'),
+            data = JSON.parse(document.getElementById('config').textContent);
+      lit.startupReferenceList(el, data);
     });
   </script>
 {% endblock extrajs %}
