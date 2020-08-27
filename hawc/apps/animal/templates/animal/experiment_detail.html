@@ -28,6 +28,7 @@
         </div>
       {% endif %}
     </h1>
+    <div id="objContainer"></div>
 
   {% if crud == "Read" %}
     <h2>Available animal groups</h2>
@@ -40,28 +41,8 @@
 {% block extrajs %}
   <script type="text/javascript">
     window.app.animalStartup(function(animal){
-      animal.Experiment.get_object({{object.id}}, function(d){
-        $('h1').after(d.build_details_table());
-      });
+      animal.Experiment.displayFullPager($("#objContainer"), {{ object.id }});
     });
   </script>
-
-  {% if crud == "Read" %}
-    {% if object.cas %}
-      <script type="text/javascript">
-        $(document).on('ready', function(){
-
-          {% with url=object.get_casrn_url %}
-            {% if url %}
-              var url = "{{url}}",
-                div = $('<div>').appendTo($('#chem_details'));
-              window.app.utils.HAWCUtils.renderChemicalProperties(url, div, false);
-            {% endif %}
-          {% endwith %}
-
-        });
-      </script>
-    {% endif %}
-  {% endif %}
 
 {% endblock extrajs %}

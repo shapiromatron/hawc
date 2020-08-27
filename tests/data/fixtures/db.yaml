@@ -53,6 +53,10 @@
 - model: contenttypes.contenttype
   fields:
     app_label: assessment
+    model: dsstox
+- model: contenttypes.contenttype
+  fields:
+    app_label: assessment
     model: assessment
 - model: contenttypes.contenttype
   fields:
@@ -416,7 +420,7 @@
 - model: myuser.hawcuser
   fields:
     password: md5$OtMBo5HXuH5d$79fbf1f0ae6d765b17b29256920cc8ef
-    last_login: 2020-08-20 02:59:22.775132+00:00
+    last_login: 2020-08-12 19:33:09.398007+00:00
     is_superuser: true
     email: sudo@sudo.com
     first_name: a
@@ -494,6 +498,70 @@
     user:
     - pm@pm.com
     HERO_access: false
+- model: assessment.dsstox
+  pk: DTXSID6026296
+  fields:
+    content:
+      casrn: 7732-18-5
+      checksum: NA
+      collidingCasrn: null
+      collidingGsid: null
+      collidingPreferredName: null
+      dtxcid: DTXCID106296
+      dtxsid: DTXSID6026296
+      imageURL: http://actorws.epa.gov/actorws/chemical/image?dtxcid=DTXCID106296&w=150&h=150&fmt=svg
+      indigoInChIKey: XLYOFNOQVPJJNP-UHFFFAOYSA-N
+      infoMsg: null
+      jChemInChIKey: XLYOFNOQVPJJNP-UHFFFAOYSA-N
+      molFormula: H2O
+      molWeight: 18.015
+      msReadyForms: http://actorws.epa.gov/actorws/dsstox/v02/msready?identifier=DTXCID106296
+      origIdentifier: DTXSID6026296
+      preferredName: Water
+      processedAs: LOOKUP
+      qsarForms: http://actorws.epa.gov/actorws/dsstox/v02/qsar?identifier=DTXCID106296
+      reformattedIdentifier: false
+      smiles: O
+      synGsid: 26296
+      synIdentifier: DTXSID6026296
+      synType: DSSTox_Substance_Id
+      trimmedLeadingZeros: false
+      trimmedWhitespace: false
+      warningMsg: null
+    created: 2020-08-12 19:34:12.687630+00:00
+    last_updated: 2020-08-12 19:34:12.687630+00:00
+- model: assessment.dsstox
+  pk: DTXSID7020970
+  fields:
+    content:
+      casrn: 1836-75-5
+      checksum: NA
+      collidingCasrn: null
+      collidingGsid: null
+      collidingPreferredName: null
+      dtxcid: DTXCID30970
+      dtxsid: DTXSID7020970
+      imageURL: http://actorws.epa.gov/actorws/chemical/image?dtxcid=DTXCID30970&w=150&h=150&fmt=svg
+      indigoInChIKey: XITQUSLLOSKDTB-UHFFFAOYSA-N
+      infoMsg: null
+      jChemInChIKey: XITQUSLLOSKDTB-UHFFFAOYSA-N
+      molFormula: C12H7Cl2NO3
+      molWeight: 284.09
+      msReadyForms: http://actorws.epa.gov/actorws/dsstox/v02/msready?identifier=DTXCID30970
+      origIdentifier: DTXSID7020970
+      preferredName: Nitrofen
+      processedAs: LOOKUP
+      qsarForms: http://actorws.epa.gov/actorws/dsstox/v02/qsar?identifier=DTXCID30970
+      reformattedIdentifier: false
+      smiles: '[O-][N+](=O)C1=CC=C(OC2=C(Cl)C=C(Cl)C=C2)C=C1'
+      synGsid: 20970
+      synIdentifier: DTXSID7020970
+      synType: DSSTox_Substance_Id
+      trimmedLeadingZeros: false
+      trimmedWhitespace: false
+      warningMsg: null
+    created: 2020-08-12 19:45:56.718230+00:00
+    last_updated: 2020-08-12 19:45:56.718230+00:00
 - model: assessment.assessment
   pk: 1
   fields:
@@ -518,6 +586,7 @@
     rob_name: 0
     created: 2020-01-25 14:23:16.176620+00:00
     last_updated: 2020-02-27 20:12:29.233982+00:00
+    dtxsids: []
     project_manager:
     - - pm@pm.com
     team_members:
@@ -550,7 +619,9 @@
     noel_name: 0
     rob_name: 0
     created: 2020-01-25 14:23:16.288774+00:00
-    last_updated: 2020-05-08 17:56:45.167410+00:00
+    last_updated: 2020-08-12 19:46:37.393988+00:00
+    dtxsids:
+    - DTXSID6026296
     project_manager:
     - - pm@pm.com
     team_members:
@@ -581,6 +652,7 @@
     rob_name: 0
     created: 2020-04-10 17:45:39.555285+00:00
     last_updated: 2020-04-10 17:45:39.555285+00:00
+    dtxsids: []
     project_manager:
     - - pm@pm.com
     team_members: []
@@ -1565,6 +1637,7 @@
     has_multiple_generations: false
     chemical: flubber
     cas: ''
+    dtxsid: null
     chemical_source: ''
     purity_available: false
     purity_qualifier: ''
@@ -1583,6 +1656,7 @@
     has_multiple_generations: false
     chemical: ''
     cas: ''
+    dtxsid: null
     chemical_source: ''
     purity_available: true
     purity_qualifier: '>'
@@ -1601,6 +1675,7 @@
     has_multiple_generations: true
     chemical: PBDE 209
     cas: 1163-19-5
+    dtxsid: null
     chemical_source: Albemarle Corporation (Baton Rouge, LA), Chemtura Corporation,
       and ICL-IP America
     purity_available: true
@@ -3020,6 +3095,7 @@
     study: 6
     name: Bisphenol AF
     cas: 1478-61-1
+    dtxsid: null
     cas_inferred: true
     cas_notes: CASRN inferred based on name (4,4'-hexafluoropropylidene diphenol or
       BHF) and structure

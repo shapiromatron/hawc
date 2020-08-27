@@ -30,7 +30,7 @@ from ..common.views import (
     TimeSpentOnPageMixin,
     beta_tester_required,
 )
-from . import forms, models, tasks
+from . import forms, models, serializers, tasks
 
 
 def percentage(numerator, denominator):
@@ -235,7 +235,11 @@ class AssessmentPublicList(ListView):
     model = models.Assessment
 
     def get_queryset(self):
-        return self.model.objects.get_public_assessments()
+        qs = self.model.objects.get_public_assessments()
+        dtxsid = self.request.GET.get("dtxsid")
+        if dtxsid:
+            qs = qs.filter(dtxsids=dtxsid)
+        return qs
 
 
 class AssessmentCreate(TimeSpentOnPageMixin, LoginRequiredMixin, MessageMixin, CreateView):
@@ -252,10 +256,20 @@ class AssessmentCreate(TimeSpentOnPageMixin, LoginRequiredMixin, MessageMixin, C
 class AssessmentRead(BaseDetail):
     model = models.Assessment
 
+    def get_queryset(self):
+        qs = super().get_queryset()
+        qs = qs.prefetch_related(
+            "project_manager", "team_members", "reviewers", "datasets", "dtxsids"
+        )
+        return qs
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["attachments"] = models.Attachment.objects.get_attachments(
             self.object, not context["obj_perms"]["edit"]
+        )
+        context["dtxsids"] = json.dumps(
+            serializers.AssessmentSerializer().to_representation(self.object)["dtxsids"]
         )
         return context
 
@@ -407,6 +421,12 @@ class DoseUnitsCreate(CloseIfSuccessMixin, BaseCreate):
     parent_template_name = "assessment"
     model = models.DoseUnits
     form_class = forms.DoseUnitsForm
+
+
+class DSSToxCreate(CloseIfSuccessMixin, LoginRequiredMixin, MessageMixin, CreateView):
+    success_message = "DTXSID created."
+    model = models.DSSTox
+    form_class = forms.DSSToxForm
 
 
 class BaseEndpointList(BaseList):

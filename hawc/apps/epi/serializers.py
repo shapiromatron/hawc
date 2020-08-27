@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from ..assessment.serializers import DoseUnitsSerializer, EffectTagsSerializer
+from ..assessment.serializers import DoseUnitsSerializer, DSSToxSerializer, EffectTagsSerializer
 from ..common.api import DynamicFieldsMixin
 from ..common.helper import SerializerHelper
 from ..study.serializers import StudySerializer
@@ -125,6 +125,7 @@ class StudyPopulationSerializer(serializers.ModelSerializer):
 
 
 class ExposureSerializer(serializers.ModelSerializer):
+    dtxsid = DSSToxSerializer()
     study_population = StudyPopulationSerializer()
     url = serializers.CharField(source="get_absolute_url", read_only=True)
     metric_units = DoseUnitsSerializer()

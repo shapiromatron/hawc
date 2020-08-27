@@ -175,3 +175,67 @@ class BlogAdmin(admin.ModelAdmin):
     list_filter = ("published",)
 
     search_fields = ("subject", "content")
+
+
+@admin.register(models.DSSTox)
+class DSSXToxAdmin(admin.ModelAdmin):
+    list_display = (
+        "dtxsid",
+        "get_casrns",
+        "get_names",
+        "get_assessments",
+        "get_experiments",
+        "get_exposures",
+        "get_ivchemicals",
+    )
+    search_fields = ("dtxsid", "content__casrn", "content__preferredName")
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs.prefetch_related("assessments", "experiments", "exposures", "ivchemicals")
+
+    def get_ul(self, iterable, func):
+        ul = ["<ul>"]
+        for obj in iterable:
+            ul.append(f"<li>{func(obj)}</li>")
+        ul.append("</ul>")
+        return format_html(" ".join(ul))
+
+    def linked_name(self, obj):
+        return f"<a href='{obj.get_absolute_url()}'>{obj.name}</a>"
+
+    def get_casrns(self, obj):
+        return obj.content["casrn"]
+
+    get_casrns.short_description = "CASRN"
+    get_casrns.allow_tags = True
+
+    def get_names(self, obj):
+        return obj.content["preferredName"]
+
+    get_names.short_description = "Name"
+    get_names.allow_tags = True
+
+    def get_assessments(self, obj):
+        return self.get_ul(obj.assessments.all(), self.linked_name)
+
+    get_assessments.short_description = "Assessments"
+    get_assessments.allow_tags = True
+
+    def get_experiments(self, obj):
+        return self.get_ul(obj.experiments.all(), self.linked_name)
+
+    get_experiments.short_description = "Experiments"
+    get_experiments.allow_tags = True
+
+    def get_exposures(self, obj):
+        return self.get_ul(obj.exposures.all(), self.linked_name)
+
+    get_exposures.short_description = "Epi exposures"
+    get_exposures.allow_tags = True
+
+    def get_ivchemicals(self, obj):
+        return self.get_ul(obj.ivchemicals.all(), self.linked_name)
+
+    get_ivchemicals.short_description = "IVChemicals"
+    get_ivchemicals.allow_tags = True
