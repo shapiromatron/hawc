@@ -764,8 +764,8 @@ class Job(models.Model):
     job = models.PositiveSmallIntegerField(choices=JOB_CHOICES, default=TEST)
 
     kwargs = JSONField(default=dict)
-    result = models.TextField(blank=True, editable=False)
-    exception = models.TextField(blank=True, editable=False)
+    result = JSONField(default=dict, editable=False)
+    exception = JSONField(default=dict, editable=False)
 
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
