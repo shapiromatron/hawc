@@ -23,14 +23,14 @@ def debug_task(self):
 app.conf.beat_schedule = {
     "lit-schedule_topic_model_reruns-10-min": {
         "task": "hawc.apps.lit.tasks.schedule_topic_model_reruns",
-        "schedule": 60 * 10,
+        "schedule": timedelta(minutes=10),
     },
-    "lit-update_pubmed_content-1-hour": {
+    "lit-update_pubmed_content-1-day": {
         "task": "hawc.apps.lit.tasks.update_pubmed_content",
-        "schedule": 3600,
+        "schedule": timedelta(days=1),
     },
-    "assessment-delete_old_jobs-1-week": {
+    "assessment-delete_old_jobs-1-day": {
         "task": "hawc.apps.assessment.tasks.delete_old_jobs",
-        "schedule": timedelta(weeks=1),
+        "schedule": timedelta(days=1),
     },
 }
