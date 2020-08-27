@@ -35,11 +35,11 @@ class TestJob:
         ran_job = models.Job.objects.get(pk=job.task_id)
 
         assert ran_job.status == models.Job.SUCCESS
-        assert ran_job.result == "SUCCESS"
+        assert ran_job.result.get("data") == "SUCCESS"
 
     def test_job_failure(self, db_keys):
         job = models.Job.objects.create(job=models.Job.TEST, kwargs={"fail": True})
         ran_job = models.Job.objects.get(pk=job.task_id)
 
         assert ran_job.status == models.Job.FAILURE
-        assert ran_job.exception == "FAILURE"
+        assert ran_job.result.get("error") == "FAILURE"

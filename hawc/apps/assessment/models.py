@@ -819,6 +819,9 @@ class Job(models.Model):
         self.result = {"error": str(exception)}
         self.status = self.FAILURE
 
+    def get_detail_url(self):
+        return reverse("assessment:api:jobs-detail", args=(self.task_id,))
+
 
 reversion.register(Assessment)
 reversion.register(EffectTag)

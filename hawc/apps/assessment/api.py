@@ -12,7 +12,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
-from rest_framework import filters, permissions, status, viewsets
+from rest_framework import filters, permissions, status, viewsets, mixins
 from rest_framework.decorators import action
 from rest_framework.exceptions import APIException, PermissionDenied
 from rest_framework.pagination import PageNumberPagination
@@ -50,6 +50,30 @@ def get_assessment_from_query(request) -> Optional[models.Assessment]:
     """Returns assessment or None."""
     assessment_id = get_assessment_id_param(request)
     return models.Assessment.objects.filter(pk=assessment_id).first()
+
+
+class AssessmentForeignKeyPermissions(permissions.BasePermission):
+    def has_object_permission(self, request, view, obj):
+        if obj.assessment is None:
+            return bool(request.user and request.user.is_staff)
+        elif request.method in permissions.SAFE_METHODS:
+            return obj.assessment.user_can_view_object(request.user)
+        else:
+            return obj.assessment.user_can_edit_object(request.user)
+
+    def has_permission(self, request, view):
+        if view.action == "list":
+            return bool(request.user and request.user.is_staff)
+        elif view.action == "create":
+            serializer = view.serializer_class(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            assessment = serializer.validated_data.get("assessment")
+            if assessment is None:
+                return bool(request.user and request.user.is_staff)
+            else:
+                return assessment.user_can_edit_object(request.user)
+        else:
+            return True
 
 
 class AssessmentLevelPermissions(permissions.BasePermission):
@@ -384,6 +408,22 @@ class Assessment(AssessmentViewset):
         serializer = serializers.AssessmentEndpointSerializer(instance)
         return Response(serializer.data)
 
+    @action(
+        detail=True, methods=("get", "post"),
+    )
+    def jobs(self, request, pk: int = None):
+        instance = self.get_object()
+        if request.method == "GET":
+            queryset = instance.jobs.all()
+            serializer = serializers.JobSerializer(queryset, many=True)
+            return Response(serializer.data)
+        elif request.method == "POST":
+            request.data["assessment"] = instance.id
+            serializer = serializers.JobSerializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
 
 class DatasetViewset(AssessmentViewset):
     model = models.Dataset
@@ -447,10 +487,19 @@ class CasrnView(APIView):
         return Response(data)
 
 
-class JobViewset(viewsets.ModelViewSet):
+class JobViewset(
+    mixins.CreateModelMixin,
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
+    viewsets.GenericViewSet,
+):
     model = models.Job
     serializer_class = serializers.JobSerializer
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = (AssessmentForeignKeyPermissions,)
+    pagination_class = None
 
     def get_queryset(self):
-        return self.model.objects.all()
+        if self.action == "list":
+            return self.model.objects.filter(assessment=None)
+        else:
+            return self.model.objects.all()

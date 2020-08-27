@@ -92,6 +92,10 @@
     model: datasetrevision
 - model: contenttypes.contenttype
   fields:
+    app_label: assessment
+    model: job
+- model: contenttypes.contenttype
+  fields:
     app_label: vocab
     model: term
 - model: contenttypes.contenttype
@@ -408,7 +412,7 @@
 - model: myuser.hawcuser
   fields:
     password: md5$OtMBo5HXuH5d$79fbf1f0ae6d765b17b29256920cc8ef
-    last_login: 2020-07-06 19:41:10.180223+00:00
+    last_login: 2020-08-27 20:33:23.142501+00:00
     is_superuser: true
     email: sudo@sudo.com
     first_name: a
@@ -752,6 +756,29 @@
     notes: <p>Original final version.</p>
     created: 2020-06-02 20:02:31.798361+00:00
     last_updated: 2020-06-02 20:02:31.798361+00:00
+- model: assessment.job
+  pk: 08ca9f23-5368-4ed6-9b18-29625add9aa8
+  fields:
+    assessment: null
+    status: 3
+    job: 1
+    kwargs:
+      fail: true
+    result:
+      error: FAILURE
+    created: 2020-08-27 20:35:38.870997+00:00
+    last_updated: 2020-08-27 20:35:38.913996+00:00
+- model: assessment.job
+  pk: 204faaa7-fdfa-4426-a09f-f0d1af9db33d
+  fields:
+    assessment: 1
+    status: 2
+    job: 1
+    kwargs: {}
+    result:
+      data: SUCCESS
+    created: 2020-08-27 20:35:12.682677+00:00
+    last_updated: 2020-08-27 20:35:12.818223+00:00
 - model: lit.literatureassessment
   pk: 1
   fields:
@@ -1369,7 +1396,8 @@
     summary: ''
     editable: true
     searches: []
-    identifiers: []
+    identifiers:
+    - 6
 - model: study.study
   pk: 4
   fields:

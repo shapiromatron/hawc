@@ -199,6 +199,7 @@ class JobSerializer(serializers.ModelSerializer):
         ret = super().to_representation(instance)
         ret["status"] = instance.get_status_display()
         ret["job"] = instance.get_job_display()
+        ret["detail_url"] = instance.get_detail_url()
         return ret
 
     class Meta:
