@@ -1,5 +1,6 @@
 import json
 from typing import List, NamedTuple
+import uuid
 
 import pandas as pd
 from django.apps import apps
@@ -20,7 +21,7 @@ from ..common.dsstox import get_casrn_url
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper
 from ..common.models import get_crumbs, get_private_data_storage
 from ..myuser.models import HAWCUser
-from . import managers
+from . import managers, jobs
 from .tasks import add_time_spent, run_job
 
 NOEL_NAME_CHOICES_NOEL = 0
@@ -749,13 +750,11 @@ class Job(models.Model):
 
     TEST = 1
     JOB_CHOICES = ((1, "TEST"),)
+    JOB_TO_FUNC = {
+        TEST: jobs.test,
+    }
 
-    def test(self, fail=False):
-        if fail:
-            raise Exception("FAILURE")
-        return "SUCCESS"
-
-    task_id = models.UUIDField(primary_key=True, editable=False)
+    task_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     assessment = models.ForeignKey(
         Assessment, null=True, blank=True, on_delete=models.CASCADE, related_name="jobs"
     )
@@ -786,8 +785,7 @@ class Job(models.Model):
         run_job.apply_async(task_id=self.task_id)
 
     def get_func(self):
-        if self.job == self.TEST:
-            return self.test
+        return self.JOB_TO_FUNC[self.job]
 
 
 reversion.register(Assessment)
