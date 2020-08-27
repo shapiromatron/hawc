@@ -24,9 +24,9 @@ def run_job(self):
     job = models.Job.objects.get(pk=self.request.id)
     try:
         result = job.execute()
-        job.set_result(result)
+        job.set_success(result)
     except Exception as exc:
-        job.set_exception(exc)
+        job.set_failure(exc)
     job.save()
 
 

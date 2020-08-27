@@ -1,7 +1,7 @@
 import logging
 
 from django.apps import apps
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 
 from ..common.helper import SerializerHelper
@@ -46,6 +46,20 @@ def invalidate_endpoint_cache(sender, instance, **kwargs):
     SerializerHelper.clear_cache(
         apps.get_model("animal", "Endpoint"), {"assessment_id": instance.id}
     )
+
+
+@receiver(pre_save, sender=models.Job)
+def null_to_dict(sender, instance, **kwargs):
+    """
+    Turns null "kwarg" entries into an empty dict.
+
+    Problem:
+    https://stackoverflow.com/questions/55147169/django-admin-jsonfield-default-empty-dict-wont-save-in-admin
+    Fix:
+    Allowing blank/null and fixing them here.
+    """
+    if instance.kwargs is None:
+        instance.kwargs = {}
 
 
 @receiver(post_save, sender=models.Job)

@@ -149,10 +149,4 @@ class TimeSpentEditingAdmin(admin.ModelAdmin):
 
 @admin.register(models.Job)
 class JobAdmin(admin.ModelAdmin):
-    list_display = (
-        "task_id",
-        "assessment",
-        "job",
-        "kwargs",
-        "status",
-    )
+    list_display = ("task_id", "assessment", "job", "kwargs", "status", "result")

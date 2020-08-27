@@ -1,5 +1,5 @@
 import json
-from typing import List, NamedTuple, Dict, Callable
+from typing import List, NamedTuple, Callable, Any
 import uuid
 
 import pandas as pd
@@ -756,16 +756,15 @@ class Job(models.Model):
 
     task_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     assessment = models.ForeignKey(
-        Assessment, null=True, blank=True, on_delete=models.CASCADE, related_name="jobs"
+        Assessment, blank=True, null=True, on_delete=models.CASCADE, related_name="jobs"
     )
     status = models.PositiveSmallIntegerField(
         choices=STATUS_CHOICES, default=PENDING, editable=False
     )
     job = models.PositiveSmallIntegerField(choices=JOB_CHOICES, default=TEST)
 
-    kwargs = JSONField(default=dict)
+    kwargs = JSONField(default=dict, blank=True, null=True)
     result = JSONField(default=dict, editable=False)
-    exception = JSONField(default=dict, editable=False)
 
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
@@ -773,20 +772,52 @@ class Job(models.Model):
     class Meta:
         ordering = ("-created",)
 
-    def set_exception(self, exception):
-        self.exception = exception
-        self.status = self.FAILURE
+    def execute(self) -> Any:
+        """
+        Executes the job. Function and kwargs are determined
+        by the instance's "job" and "kwargs" properties, respectively.
 
-    def set_result(self, result):
-        self.result = result
-        self.status = self.SUCCESS
-
-    def execute(self) -> Dict:
+        Returns:
+            Any: Any data returned by the function call.
+            {"data" : <return_value>} MUST be JSON serializable.
+        """
         func = self.get_func()
         return func(**self.kwargs)
 
     def get_func(self) -> Callable:
+        """
+        Get the function associated with this job.
+
+        Returns:
+            Callable: Function object
+        """
         return self.JOB_TO_FUNC[self.job]
+
+    def set_success(self, data):
+        """
+        Sets the status of the job to SUCCESS and sets the
+        data as the job's result, in the format:
+            {"data" : <data>}
+
+        Args:
+            data (Any): Data to be saved as the job's result.
+            {"data" : <data>} MUST be JSON serializable.
+        """
+        self.result = {"data": data}
+        self.status = self.SUCCESS
+
+    def set_failure(self, exception: Exception):
+        """
+        Sets the status of the job to FAILURE and sets the
+        exception as the job's result, in the format:
+            {"error" : <exception>}
+
+        Args:
+            exception (Exception): Exception to be saved as the job's result.
+            MUST have a built in string representation.
+        """
+        self.result = {"error": str(exception)}
+        self.status = self.FAILURE
 
 
 reversion.register(Assessment)
