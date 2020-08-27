@@ -6,7 +6,6 @@ RUN groupadd -g 555 -r django && \
     useradd -u 555 -r -g django django
 
 COPY ./compose/django/wait-for.sh /app/bin/wait-for.sh
-COPY ./compose/django/entrypoint.sh /app/bin/entrypoint.sh
 COPY ./compose/django/gunicorn.sh /app/bin/gunicorn.sh
 COPY ./compose/django/celery.sh /app/bin/celery.sh
 COPY ./compose/django/celerybeat.sh /app/bin/celerybeat.sh
@@ -47,5 +46,3 @@ RUN tar -xf /app/hawc.tar.gz -C /app && \
     chown -R django:django /app
 
 USER django
-
-ENTRYPOINT ["/app/bin/entrypoint.sh"]
