@@ -1,5 +1,5 @@
 import json
-from typing import List, NamedTuple
+from typing import List, NamedTuple, Dict, Callable
 import uuid
 
 import pandas as pd
@@ -22,7 +22,7 @@ from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper
 from ..common.models import get_crumbs, get_private_data_storage
 from ..myuser.models import HAWCUser
 from . import managers, jobs
-from .tasks import add_time_spent, run_job
+from .tasks import add_time_spent
 
 NOEL_NAME_CHOICES_NOEL = 0
 NOEL_NAME_CHOICES_NOAEL = 1
@@ -781,10 +781,11 @@ class Job(models.Model):
         self.result = result
         self.status = self.SUCCESS
 
-    def execute(self):
-        run_job.apply_async(task_id=self.task_id)
+    def execute(self) -> Dict:
+        func = self.get_func()
+        return func(**self.kwargs)
 
-    def get_func(self):
+    def get_func(self) -> Callable:
         return self.JOB_TO_FUNC[self.job]
 
 

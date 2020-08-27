@@ -5,6 +5,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 from ..common.helper import SerializerHelper
+from .tasks import run_job
 from . import models
 
 
@@ -50,4 +51,4 @@ def invalidate_endpoint_cache(sender, instance, **kwargs):
 @receiver(post_save, sender=models.Job)
 def run_task(sender, instance, created, **kwargs):
     if created:
-        instance.execute()
+        run_job.apply_async(task_id=instance.task_id)

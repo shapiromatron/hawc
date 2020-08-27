@@ -23,7 +23,7 @@ def delete_old_jobs():
 def run_job(self):
     job = models.Job.objects.get(pk=self.request.id)
     try:
-        result = job.get_func()(**job.kwargs)
+        result = job.execute()
         job.set_result(result)
     except Exception as exc:
         job.set_exception(exc)
