@@ -1,6 +1,6 @@
 import json
 import uuid
-from typing import Any, Callable, List, NamedTuple
+from typing import Any, List, NamedTuple
 
 import pandas as pd
 from django.apps import apps
