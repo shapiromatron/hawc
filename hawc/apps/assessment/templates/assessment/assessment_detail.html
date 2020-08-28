@@ -176,6 +176,19 @@
         <td>{{object.funding_source|safe}}</td>
       </tr>
       {% endif %}
+
+
+      {% if object.vocabulary %}
+      <tr>
+        <th>Vocabulary</th>
+        <td>{{object.get_vocabulary_display}}</td>
+      </tr>
+      <tr>
+        <th>Curator can update vocabulary used</th>
+        <td>{{object.modify_uncontrolled_vocabulary}}</td>
+      </tr>
+      {% endif %}
+
     </tbody>
   </table>
 

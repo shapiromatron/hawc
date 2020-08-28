@@ -368,6 +368,13 @@ class Assessment(models.Model):
         else:
             return user in self.project_manager.all() or user in self.team_members.all()
 
+    def get_vocabulary_display(self) -> str:
+        # override default method
+        if self.vocabulary:
+            return VocabularyNamespace(self.vocabulary).display_name
+        else:
+            return ""
+
     def get_crumbs(self):
         return get_crumbs(self)
 

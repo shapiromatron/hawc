@@ -12,6 +12,13 @@ class VocabularyNamespace(IntChoiceEnum):
 
     EHV = 1  # environmental health vocabulary
 
+    @property
+    def display_name(self) -> str:
+        if self.value == 1:
+            return "EPA Environmental health vocabulary"
+        else:
+            return ""
+
 
 class VocabularyTermType(IntChoiceEnum):
     """
