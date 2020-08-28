@@ -150,6 +150,20 @@ class TimeSpentEditingAdmin(admin.ModelAdmin):
         self.list_display_links = []
 
 
+@admin.register(models.Job)
+class JobAdmin(admin.ModelAdmin):
+    list_display = (
+        "task_id",
+        "assessment",
+        "job",
+        "kwargs",
+        "status",
+    )
+    search_fields = ("task_id",)
+    list_filter = ("status",)
+    readonly_fields = ("result",)
+
+
 @admin.register(models.Log)
 class LogAdmin(admin.ModelAdmin):
     list_display = ("assessment", "message", "created", "last_updated")
