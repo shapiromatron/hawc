@@ -227,8 +227,29 @@ class TestJobViewset:
         expected = {"task_id": db_keys.job_assessment, "assessment": db_keys.assessment_working}
         assert expected.items() <= resp.json().items()
 
-    def test_create(self):
-        pass
+    def test_create(self, db_keys):
+        client = APIClient()
+        url = reverse("assessment:api:jobs-list")
+
+        # on create, details of the created job is returned
+        assert client.login(username="sudo@sudo.com", password="pw") is True
+        resp = client.post(url)
+        assert resp.status_code == 201
+
+        expected = {
+            "assessment": None,
+            "status": "PENDING",
+            "job": "TEST",
+            "kwargs": {},
+            "result": {},
+        }
+        assert expected.items() <= resp.json().items()
+
+        # detail_url can be used to check on status of created job
+        url = resp.json()["detail_url"]
+        resp = client.get(url)
+        expected = {"status": "SUCCESS", "result": {"data": "SUCCESS"}}
+        assert expected.items() <= resp.json().items()
 
     def test_assessment(self, db_keys):
         """
