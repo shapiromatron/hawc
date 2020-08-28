@@ -18,7 +18,7 @@ from pydantic import BaseModel as PydanticModel
 from reversion import revisions as reversion
 
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper
-from ..common.models import get_crumbs, get_private_data_storage
+from ..common.models import IntChoiceEnum, get_crumbs, get_private_data_storage
 from ..myuser.models import HAWCUser
 from . import jobs, managers
 from .tasks import add_time_spent
@@ -38,6 +38,24 @@ class NoelNames(NamedTuple):
     loel: str
     noel_help_text: str
     loel_help_text: str
+
+
+class JobStatus(IntChoiceEnum):
+    """
+    Status of the running job.
+    """
+
+    PENDING = 1
+    SUCCESS = 2
+    FAILURE = 3
+
+
+class JobType(IntChoiceEnum):
+    """
+    Short descriptor of job functionality.
+    """
+
+    TEST = 1
 
 
 class DSSTox(models.Model):
@@ -777,19 +795,9 @@ class DatasetRevision(models.Model):
 
 
 class Job(models.Model):
-    PENDING = 1
-    SUCCESS = 2
-    FAILURE = 3
-    STATUS_CHOICES = (
-        (1, "PENDING"),
-        (2, "SUCCESS"),
-        (3, "FAILURE"),
-    )
 
-    TEST = 1
-    JOB_CHOICES = ((1, "TEST"),)
     JOB_TO_FUNC = {
-        TEST: jobs.test,
+        JobType.TEST: jobs.test,
     }
 
     task_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -797,9 +805,9 @@ class Job(models.Model):
         Assessment, blank=True, null=True, on_delete=models.CASCADE, related_name="jobs"
     )
     status = models.PositiveSmallIntegerField(
-        choices=STATUS_CHOICES, default=PENDING, editable=False
+        choices=JobStatus.choices(), default=JobStatus.PENDING, editable=False
     )
-    job = models.PositiveSmallIntegerField(choices=JOB_CHOICES, default=TEST)
+    job = models.PositiveSmallIntegerField(choices=JobType.choices(), default=JobType.TEST)
 
     kwargs = JSONField(default=dict, blank=True, null=True)
     result = JSONField(default=dict, editable=False)
@@ -842,7 +850,7 @@ class Job(models.Model):
             {"data" : <data>} MUST be JSON serializable.
         """
         self.result = {"data": data}
-        self.status = self.SUCCESS
+        self.status = JobStatus.SUCCESS
 
     def set_failure(self, exception: Exception):
         """
@@ -855,7 +863,7 @@ class Job(models.Model):
             MUST have a built in string representation.
         """
         self.result = {"error": str(exception)}
-        self.status = self.FAILURE
+        self.status = JobStatus.FAILURE
 
     def get_detail_url(self):
         return reverse("assessment:api:jobs-detail", args=(self.task_id,))
