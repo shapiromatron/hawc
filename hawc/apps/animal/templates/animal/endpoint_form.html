@@ -147,7 +147,8 @@
       "NOEL": {{form.NOEL.value|default_if_none:"-999"}},
       "LOEL": {{form.LOEL.value|default_if_none:"-999"}},
       "FEL": {{form.FEL.value|default_if_none:"-999"}},
-      "doses": {{animal_group.get_doses_json|safe}}
+      "doses": {{animal_group.get_doses_json|safe}},
+      "vocabulary": {{vocabulary|safe}}
     }
   </script>
   <script type="text/javascript">

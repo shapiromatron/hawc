@@ -2,7 +2,7 @@ import collections
 import json
 import math
 from itertools import chain
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 import pandas as pd
 from django.core.exceptions import ObjectDoesNotExist
@@ -1080,6 +1080,29 @@ class Endpoint(BaseEndpoint):
             .reset_index()
         )
         return df
+
+    @classmethod
+    def get_vocabulary_settings(
+        cls, assessment: Assessment, instance: Optional["Endpoint"] = None
+    ) -> str:
+        return json.dumps(
+            {
+                "debug": False,
+                "vocabulary": assessment.vocabulary,
+                "object": {
+                    "system": instance.system if instance else "",
+                    "organ": instance.organ if instance else "",
+                    "effect": instance.effect if instance else "",
+                    "effect_subtype": instance.effect_subtype if instance else "",
+                    "name": instance.name if instance else "",
+                    "system_term_id": instance.system_term_id if instance else None,
+                    "organ_term_id": instance.organ_term_id if instance else None,
+                    "effect_term_id": instance.effect_term_id if instance else None,
+                    "effect_subtype_term_id": instance.effect_subtype_term_id if instance else None,
+                    "name_term_id": instance.name_term_id if instance else None,
+                },
+            }
+        )
 
     def __str__(self):
         return self.name
