@@ -98,6 +98,7 @@
   fields:
     app_label: assessment
     model: job
+- model: contenttypes.contenttype
   fields:
     app_label: assessment
     model: log
@@ -587,6 +588,8 @@
     funding_source: ''
     noel_name: 0
     rob_name: 0
+    vocabulary: 1
+    modify_uncontrolled_vocabulary: true
     created: 2020-01-25 14:23:16.176620+00:00
     last_updated: 2020-02-27 20:12:29.233982+00:00
     dtxsids: []
@@ -621,6 +624,8 @@
     funding_source: <p>This was funded by coffee</p>
     noel_name: 0
     rob_name: 0
+    vocabulary: 1
+    modify_uncontrolled_vocabulary: true
     created: 2020-01-25 14:23:16.288774+00:00
     last_updated: 2020-08-12 19:46:37.393988+00:00
     dtxsids:
@@ -653,6 +658,8 @@
     funding_source: ''
     noel_name: 0
     rob_name: 0
+    vocabulary: 1
+    modify_uncontrolled_vocabulary: true
     created: 2020-04-10 17:45:39.555285+00:00
     last_updated: 2020-04-10 17:45:39.555285+00:00
     dtxsids: []
@@ -706,6 +713,7 @@
   fields:
     assessment: 1
     name: my outcome
+    name_term: null
     created: 2020-02-27 20:53:19.390879+00:00
     last_updated: 2020-02-27 20:53:19.390902+00:00
     effects: []
@@ -714,6 +722,7 @@
   fields:
     assessment: 3
     name: Test Endpoint
+    name_term: null
     created: 2020-04-10 19:37:19.983403+00:00
     last_updated: 2020-04-10 19:37:19.983403+00:00
     effects: []
@@ -722,6 +731,7 @@
   fields:
     assessment: 2
     name: Water T maze (learning error)
+    name_term: null
     created: 2020-05-08 17:47:49.464004+00:00
     last_updated: 2020-05-08 17:47:49.464028+00:00
     effects:
@@ -731,6 +741,7 @@
   fields:
     assessment: 2
     name: partial PTSD
+    name_term: null
     created: 2020-05-11 02:21:56.870317+00:00
     last_updated: 2020-05-11 02:21:56.870345+00:00
     effects:
@@ -740,6 +751,7 @@
   fields:
     assessment: 2
     name: anti-estrogenic activity
+    name_term: null
     created: 2020-05-11 04:03:15.481081+00:00
     last_updated: 2020-05-11 04:03:34.408793+00:00
     effects:
@@ -749,6 +761,7 @@
   fields:
     assessment: 2
     name: Incomplete dose response values
+    name_term: null
     created: 2020-07-06 19:45:07.271513+00:00
     last_updated: 2020-07-06 19:46:42.948733+00:00
     effects: []
@@ -1925,9 +1938,13 @@
     baseendpoint_ptr: 1
     animal_group: 1
     system: ''
+    system_term: null
     organ: ''
+    organ_term: null
     effect: ''
+    effect_term: null
     effect_subtype: ''
+    effect_subtype_term: null
     litter_effects: NA
     litter_effect_notes: ''
     observation_time: null
@@ -1961,9 +1978,13 @@
     baseendpoint_ptr: 2
     animal_group: 2
     system: ''
+    system_term: null
     organ: ''
+    organ_term: null
     effect: ''
+    effect_term: null
     effect_subtype: ''
+    effect_subtype_term: null
     litter_effects: NA
     litter_effect_notes: ''
     observation_time: null
@@ -1997,9 +2018,13 @@
     baseendpoint_ptr: 3
     animal_group: 3
     system: developmental
+    system_term: null
     organ: brain
+    organ_term: null
     effect: learning and memory
+    effect_term: null
     effect_subtype: errors (forward)
+    effect_subtype_term: null
     litter_effects: YS
     litter_effect_notes: notes
     observation_time: null
@@ -2034,9 +2059,13 @@
     baseendpoint_ptr: 6
     animal_group: 3
     system: ''
+    system_term: null
     organ: ''
+    organ_term: null
     effect: ''
+    effect_term: null
     effect_subtype: ''
+    effect_subtype_term: null
     litter_effects: NR
     litter_effect_notes: ''
     observation_time: null
@@ -2985,6 +3014,7 @@
   fields:
     study_population: 1
     name: sarin poisoning
+    dtxsid: null
     inhalation: true
     dermal: false
     oral: false
