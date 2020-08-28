@@ -884,6 +884,9 @@ class Blog(models.Model):
     class Meta:
         ordering = ("-created",)
 
+    def __str__(self) -> str:
+        return self.subject
+
 
 reversion.register(DSSTox)
 reversion.register(Assessment)
