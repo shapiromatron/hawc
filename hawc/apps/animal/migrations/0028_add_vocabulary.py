@@ -8,7 +8,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ("vocab", "0001_initial"),
-        ("animal", "0026_experiment_dtxsid"),
+        ("animal", "0027_endpoint_ordering"),
     ]
 
     operations = [

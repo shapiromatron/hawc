@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ("vocab", "0001_initial"),
-        ("assessment", "0019_log_blog"),
+        ("assessment", "0021_endpoint_ordering"),
     ]
 
     operations = [
