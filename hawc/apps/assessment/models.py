@@ -827,17 +827,8 @@ class Job(models.Model):
             Any: Any data returned by the function call.
             {"data" : <return_value>} MUST be JSON serializable.
         """
-        func = self.get_func()
+        func = self.JOB_TO_FUNC[self.job]
         return func(**self.kwargs)
-
-    def get_func(self) -> Callable:
-        """
-        Get the function associated with this job.
-
-        Returns:
-            Callable: Function object
-        """
-        return self.JOB_TO_FUNC[self.job]
 
     def set_success(self, data):
         """
