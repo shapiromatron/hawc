@@ -573,6 +573,9 @@ class BaseEndpoint(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        ordering = ("id",)
+
     def __str__(self):
         return self.name
 
