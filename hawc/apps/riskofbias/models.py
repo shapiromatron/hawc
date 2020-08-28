@@ -355,7 +355,8 @@ class RiskOfBias(models.Model):
         for metric_id in metric_ids:
             for study_id in study_ids:
                 key = (study_id, metric_id)
-                if key in scores_map:
+                if key in scores_map and not isinstance(scores_map[key], str):
+                    # convert values in our map to a str-based JSON
                     score = scores_map[key]
                     content = json.dumps(
                         {"sortValue": score.score, "display": score.get_score_display()}
