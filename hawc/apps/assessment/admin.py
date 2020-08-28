@@ -150,12 +150,24 @@ class TimeSpentEditingAdmin(admin.ModelAdmin):
         self.list_display_links = []
 
 
+@admin.register(models.Job)
+class JobAdmin(admin.ModelAdmin):
+    list_display = (
+        "task_id",
+        "assessment",
+        "job",
+        "kwargs",
+        "status",
+    )
+    search_fields = ("task_id",)
+    list_filter = ("status",)
+    readonly_fields = ("result",)
+
+
 @admin.register(models.Log)
 class LogAdmin(admin.ModelAdmin):
     list_display = ("assessment", "message", "created", "last_updated")
-
     search_fields = ("assessment__name", "message")
-
     actions = ("delete_gt_year",)
 
     def delete_gt_year(self, request, queryset):
@@ -171,10 +183,9 @@ class LogAdmin(admin.ModelAdmin):
 @admin.register(models.Blog)
 class BlogAdmin(admin.ModelAdmin):
     list_display = ("subject", "published", "created", "last_updated")
-
     list_filter = ("published",)
-
     search_fields = ("subject", "content")
+    readonly_fields = ("rendered_content",)
 
 
 @admin.register(models.DSSTox)
