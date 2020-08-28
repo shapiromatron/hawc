@@ -9,7 +9,7 @@ from django.forms.widgets import Select
 from django.urls import reverse
 from selectable import forms as selectable
 
-from ..assessment.lookups import EffectTagLookup
+from ..assessment.lookups import DssToxIdLookup, EffectTagLookup
 from ..assessment.models import DoseUnits
 from ..common.forms import BaseFormHelper
 from ..study.lookups import InvitroStudyLookup
@@ -39,6 +39,10 @@ class IVChemicalForm(forms.ModelForm):
             {"related": self.instance.study.assessment.id}
         )
 
+        self.fields["dtxsid"].widget = selectable.AutoCompleteSelectWidget(
+            lookup_class=DssToxIdLookup
+        )
+
         self.helper = self.setHelper()
 
     def setHelper(self):
@@ -46,6 +50,8 @@ class IVChemicalForm(forms.ModelForm):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
                 widget.attrs["class"] = "span12"
+            if fld == "dtxsid":
+                widget.attrs["class"] = "span10"
             if type(widget) == forms.Textarea:
                 widget.attrs["rows"] = 3
 
@@ -64,9 +70,14 @@ class IVChemicalForm(forms.ModelForm):
 
         helper = BaseFormHelper(self, **inputs)
         helper.form_class = None
-        helper.add_fluid_row("name", 3, "span4")
+        helper.add_fluid_row("cas", 2, "span6")
+        helper.add_fluid_row("cas_inferred", 2, "span6")
         helper.add_fluid_row("source", 3, "span4")
         helper.add_fluid_row("purity_confirmed_notes", 2, "span6")
+        helper.addBtnLayout(
+            helper.layout[3], 1, reverse("assessment:dtxsid_create"), "Add new DTXSID", "span6"
+        )
+        helper.form_id = "ivchemical-form"
 
         return helper
 

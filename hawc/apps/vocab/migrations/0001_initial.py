@@ -102,7 +102,9 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="entity",
             name="terms",
-            field=models.ManyToManyField(through="vocab.EntityTermRelation", to="vocab.Term"),
+            field=models.ManyToManyField(
+                related_name="entities", through="vocab.EntityTermRelation", to="vocab.Term"
+            ),
         ),
         migrations.AlterUniqueTogether(name="entity", unique_together={("ontology", "uid")},),
     ]

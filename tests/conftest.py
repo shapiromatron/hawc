@@ -45,6 +45,12 @@ class Keys:
         self.job_assessment = "204faaa7-fdfa-4426-a09f-f0d1af9db33d"
         self.job_global = "08ca9f23-5368-4ed6-9b18-29625add9aa8"
 
+        self.log_assessment = 1
+        self.log_global = 2
+
+        self.blog_published = 2
+        self.blog_unpublished = 1
+
 
 _keys = Keys()
 

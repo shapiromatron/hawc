@@ -3,10 +3,11 @@ import logging
 from django.apps import apps
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
+from myst_parser.main import to_html
 
 from ..common.helper import SerializerHelper
-from .tasks import run_job
 from . import models
+from .tasks import run_job
 
 
 @receiver(post_save, sender=models.Assessment)
@@ -66,3 +67,11 @@ def null_to_dict(sender, instance, **kwargs):
 def run_task(sender, instance, created, **kwargs):
     if created:
         run_job.apply_async(task_id=instance.task_id)
+
+
+@receiver(pre_save, sender=models.Blog)
+def render_content(sender, instance, *args, **kwargs):
+    try:
+        instance.rendered_content = to_html(instance.content)
+    except Exception:
+        instance.rendered_content = "<h1>Error - myst_parser Parsing error</h1>"
