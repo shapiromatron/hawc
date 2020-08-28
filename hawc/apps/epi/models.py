@@ -430,6 +430,9 @@ class Outcome(BaseEndpoint):
 
     COPY_NAME = "outcomes"
 
+    class Meta:
+        ordering = ("id",)
+
     def get_json(self, json_encode=True):
         return SerializerHelper.get_serialized(self, json=json_encode)
 
