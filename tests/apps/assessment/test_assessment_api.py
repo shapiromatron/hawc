@@ -218,6 +218,7 @@ class TestJobViewset:
         assert expected.items() <= get_resp.json()[0].items()
 
 
+@pytest.mark.django_db
 class TestLogViewset:
     def test_permissions(self, db_keys):
         client = APIClient()
