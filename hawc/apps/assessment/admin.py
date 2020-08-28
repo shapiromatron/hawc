@@ -152,7 +152,16 @@ class TimeSpentEditingAdmin(admin.ModelAdmin):
 
 @admin.register(models.Job)
 class JobAdmin(admin.ModelAdmin):
-    list_display = ("task_id", "assessment", "job", "kwargs", "status", "result")
+    list_display = (
+        "task_id",
+        "assessment",
+        "job",
+        "kwargs",
+        "status",
+    )
+    search_fields = ("task_id",)
+    list_filter = ("status",)
+    readonly_fields = ("result",)
 
 
 @admin.register(models.Log)
