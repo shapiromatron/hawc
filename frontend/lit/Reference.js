@@ -36,6 +36,10 @@ class Reference extends Observee {
         }
     }
 
+    get_edit_url() {
+        return `/lit/reference/${this.data.pk}/edit/`;
+    }
+
     print_self(el, options) {
         // remove after used
         ReactDOM.render(<ReferenceComponent reference={this} {...options} />, el);
@@ -49,10 +53,14 @@ class Reference extends Observee {
         );
     }
 
-    print_name() {
+    print_name_str() {
         let authors = this.data.authors_short || this.data.authors || Reference.NO_AUTHORS_TEXT,
             year = this.data.year || "";
-        this.$list = $(`<p class="reference">${authors} ${year}</p>`).data("d", this);
+        return `${authors} ${year}`;
+    }
+
+    print_name() {
+        this.$list = $(`<p class="reference">${this.print_name_str()}</p>`).data("d", this);
         return this.$list;
     }
 

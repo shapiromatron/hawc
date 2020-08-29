@@ -22,12 +22,11 @@ class ReferenceTreeMain extends Component {
             <div className="row-fluid">
                 <div className="span3">
                     <h3>Taglist</h3>
-                    <div id="taglist">
-                        <TagTree
-                            tagtree={toJS(store.tagtree)}
-                            handleTagClick={tag => store.handleTagClick(tag)}
-                        />
-                    </div>
+                    <TagTree
+                        tagtree={toJS(store.tagtree)}
+                        handleTagClick={tag => store.handleTagClick(tag)}
+                        showReferenceCount={true}
+                    />
                     <br />
                     <p
                         className="nestedTag"

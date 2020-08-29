@@ -11,7 +11,7 @@ class TagNode extends Component {
         };
     }
     render() {
-        const {tag, showReferences, handleOnClick} = this.props;
+        const {tag, showReferenceCount, handleOnClick} = this.props;
         return (
             <div>
                 {tag.children.length > 0 ? (
@@ -28,11 +28,16 @@ class TagNode extends Component {
                 <p className="nestedTag" onClick={() => handleOnClick(tag)}>
                     {_.repeat("   ", tag.depth - 1)}
                     {tag.data.name}
-                    {showReferences ? ` (${tag.get_references_deep().length})` : null}
+                    {showReferenceCount ? ` (${tag.get_references_deep().length})` : null}
                 </p>
                 {this.state.expanded
                     ? tag.children.map((tag, i) => (
-                          <TagNode key={i} tag={tag} handleOnClick={handleOnClick} />
+                          <TagNode
+                              key={i}
+                              tag={tag}
+                              handleOnClick={handleOnClick}
+                              showReferenceCount={showReferenceCount}
+                          />
                       ))
                     : null}
             </div>
@@ -42,20 +47,21 @@ class TagNode extends Component {
 TagNode.propTypes = {
     tag: PropTypes.object.isRequired,
     handleOnClick: PropTypes.func.isRequired,
-    showReferences: PropTypes.bool,
-};
-
-TagNode.defaultProps = {
-    showReferences: true,
+    showReferenceCount: PropTypes.bool.isRequired,
 };
 
 class TagTree extends Component {
     render() {
-        const {tagtree, handleTagClick} = this.props;
+        const {tagtree, handleTagClick, showReferenceCount} = this.props;
         return (
             <div>
                 {tagtree.rootNode.children.map((tag, i) => (
-                    <TagNode key={i} tag={tag} handleOnClick={handleTagClick} />
+                    <TagNode
+                        key={i}
+                        tag={tag}
+                        handleOnClick={handleTagClick}
+                        showReferenceCount={showReferenceCount}
+                    />
                 ))}
             </div>
         );
@@ -64,6 +70,10 @@ class TagTree extends Component {
 TagTree.propTypes = {
     tagtree: PropTypes.object.isRequired,
     handleTagClick: PropTypes.func.isRequired,
+    showReferenceCount: PropTypes.bool,
+};
+TagTree.defaultProps = {
+    showReferenceCount: false,
 };
 
 export default TagTree;

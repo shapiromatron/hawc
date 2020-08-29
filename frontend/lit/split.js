@@ -3,7 +3,6 @@ import React from "react";
 import ReactDOM from "react-dom";
 import {Provider} from "mobx-react";
 
-import EditReferenceContainer from "./EditReferenceContainer";
 import Reference from "./Reference";
 import ReferenceComponent from "./components/Reference";
 import ReferenceTreeMain from "./ReferenceTreeBrowse/Main";
@@ -15,7 +14,6 @@ import TagTree from "./TagTree";
 import TagTreeViz from "./TagTreeViz";
 
 export default {
-    EditReferenceContainer,
     Reference,
     ReferencesViewer,
     TagTree,
