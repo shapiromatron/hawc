@@ -144,6 +144,7 @@
             ],
             "url": "/study/7/"
           },
+          "dtxsid": null,
           "name": "developmental",
           "type": "Developmental",
           "has_multiple_generations": true,
@@ -158,7 +159,6 @@
           "description": "<p>comments</p>",
           "created": "2020-05-08T12:38:22.190951-05:00",
           "last_updated": "2020-05-08T12:38:22.190975-05:00",
-          "dtxsid": null,
           "url": "/ani/experiment/3/",
           "is_generational": true
         },
@@ -482,6 +482,7 @@
             ],
             "url": "/study/7/"
           },
+          "dtxsid": null,
           "name": "developmental",
           "type": "Developmental",
           "has_multiple_generations": true,
@@ -496,7 +497,6 @@
           "description": "<p>comments</p>",
           "created": "2020-05-08T12:38:22.190951-05:00",
           "last_updated": "2020-05-08T12:38:22.190975-05:00",
-          "dtxsid": null,
           "url": "/ani/experiment/3/",
           "is_generational": true
         },

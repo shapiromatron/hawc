@@ -15,6 +15,7 @@ from rest_framework import filters, mixins, permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import APIException, PermissionDenied
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.permissions import IsAdminUser
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 
@@ -49,6 +50,38 @@ def get_assessment_from_query(request) -> Optional[models.Assessment]:
     """Returns assessment or None."""
     assessment_id = get_assessment_id_param(request)
     return models.Assessment.objects.filter(pk=assessment_id).first()
+
+
+class JobPermissions(permissions.BasePermission):
+    """
+    Requires admin permissions where jobs have no associated assessment
+    or when part of a list, and assessment level permissions when jobs
+    have an associated assessment.
+    """
+
+    def has_object_permission(self, request, view, obj):
+        if obj.assessment is None:
+            return bool(request.user and request.user.is_staff)
+        elif request.method in permissions.SAFE_METHODS:
+            return obj.assessment.user_can_view_object(request.user)
+        else:
+            return obj.assessment.user_can_edit_object(request.user)
+
+    def has_permission(self, request, view):
+        if view.action == "list":
+            return bool(request.user and request.user.is_staff)
+        elif view.action == "create":
+            serializer = view.serializer_class(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            assessment = serializer.validated_data.get("assessment")
+            if assessment is None:
+                return bool(request.user and request.user.is_staff)
+            else:
+                return assessment.user_can_edit_object(request.user)
+        else:
+            # other actions are object specific,
+            # and will be caught by object permissions
+            return True
 
 
 class AssessmentLevelPermissions(permissions.BasePermission):
@@ -383,6 +416,31 @@ class Assessment(AssessmentViewset):
         serializer = serializers.AssessmentEndpointSerializer(instance)
         return Response(serializer.data)
 
+    @action(
+        detail=True, methods=("get", "post"),
+    )
+    def jobs(self, request, pk: int = None):
+        instance = self.get_object()
+        if request.method == "GET":
+            queryset = instance.jobs.all()
+            serializer = serializers.JobSerializer(queryset, many=True)
+            return Response(serializer.data)
+        elif request.method == "POST":
+            request.data["assessment"] = instance.id
+            serializer = serializers.JobSerializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    @action(
+        detail=True, methods=("get",),
+    )
+    def logs(self, request, pk: int = None):
+        instance = self.get_object()
+        queryset = instance.logs.all()
+        serializer = serializers.LogSerializer(queryset, many=True)
+        return Response(serializer.data)
+
 
 class DatasetViewset(AssessmentViewset):
     model = models.Dataset
@@ -436,3 +494,31 @@ class DssToxViewset(viewsets.GenericViewSet, mixins.RetrieveModelMixin):
 
     def get_queryset(self):
         return self.model.objects.all()
+
+
+class JobViewset(
+    mixins.CreateModelMixin,
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
+    viewsets.GenericViewSet,
+):
+    model = models.Job
+    serializer_class = serializers.JobSerializer
+    permission_classes = (JobPermissions,)
+    pagination_class = None
+
+    def get_queryset(self):
+        if self.action == "list":
+            return self.model.objects.filter(assessment=None)
+        else:
+            return self.model.objects.all()
+
+
+class LogViewset(mixins.ListModelMixin, viewsets.GenericViewSet):
+    model = models.Log
+    permission_classes = (IsAdminUser,)
+    serializer_class = serializers.LogSerializer
+    pagination_class = None
+
+    def get_queryset(self):
+        return self.model.objects.filter(assessment=None)

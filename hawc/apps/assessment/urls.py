@@ -8,7 +8,10 @@ router = DefaultRouter()
 router.register(r"assessment", api.Assessment, basename="assessment")
 router.register(r"dashboard", api.AdminDashboardViewset, basename="admin_dashboard")
 router.register(r"dataset", api.DatasetViewset, basename="dataset")
+router.register(r"jobs", api.JobViewset, basename="jobs")
+router.register(r"logs", api.LogViewset, basename="logs")
 router.register(r"dsstox", api.DssToxViewset, basename="dsstox")
+
 
 app_name = "assessment"
 urlpatterns = [
@@ -81,6 +84,8 @@ urlpatterns = [
         views.EffectTagCreate.as_view(),
         name="effect_tag_create",
     ),
+    # logs / blogs
+    url(r"^blog/$", views.BlogList.as_view(), name="blog"),
     # helper functions
     url(r"^download-plot/$", views.DownloadPlot.as_view(), name="download_plot"),
     url(r"^close-window/$", views.CloseWindow.as_view(), name="close_window"),
