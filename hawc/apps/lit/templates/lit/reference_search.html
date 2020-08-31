@@ -27,17 +27,22 @@
     </div>
 </div>
 
+<div id="main"></div>
 {% endblock %}
 
 {% block extrajs %}
+<script id="config" type="text/json" charset="utf-8">
+{
+    "canEdit": {{obj_perms.edit|lower}},
+    "tags": {{tags|safe}},
+    "csrf": "{{csrf_token}}"
+}
+</script>
 <script type="text/javascript">
-    let data = {
-        canEdit: {{ obj_perms.edit | lower }},
-        tags: {{ tags | safe }}
-    };
-    window.canEdit = data.canEdit;
-    window.app.litStartup(function(lit){
-        lit.startupSearchReference(data.tags)
-    });
+window.app.litStartup(function (lit) {
+    const el = document.getElementById('main'),
+        data = JSON.parse(document.getElementById('config').textContent);
+    lit.startupSearchReference(el, data)
+});
 </script>
 {% endblock extrajs %}
