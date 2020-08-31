@@ -101,7 +101,7 @@ jobs:
     steps:
     - name: install chromium
       run: |
-        apt-get install chromium-browser
+        npm install chromedriver
     - uses: actions/checkout@v1
     - name: install hawc
       run: |
