@@ -109,4 +109,3 @@ def integration_base_url():
         base_url = "http://localhost:8000"
 
     return base_url
-
