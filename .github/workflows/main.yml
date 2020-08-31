@@ -85,6 +85,10 @@ jobs:
 
     container:
       image: nikolaik/python-nodejs:python3.6-nodejs12
+      env:
+          POSTGRES_USER: hawc
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: hawc-test
 
     services:
       postgres:
