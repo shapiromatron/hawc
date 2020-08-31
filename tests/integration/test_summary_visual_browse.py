@@ -2,6 +2,7 @@ import os
 
 import helium as h
 import pytest
+import utils.localhost_utils as localhost_utils
 
 SKIP_INTEGRATION = os.environ.get("HAWC_INTEGRATION_TESTS") is None
 
@@ -15,13 +16,15 @@ def test_hello_helium(chrome_driver):
 
     # go to website
     h.go_to(base_url + "/summary" + assessment_url + "visuals/")
-    # need to figure out how to touch base selenium objects to confirm placement
+    localhost_utils.remove_debug_menu(chrome_driver)
+    
     assert h.Text("Available visualizations").exists() is True
     h.wait_until(h.Text("Title").exists)
     assert len(chrome_driver.find_elements_by_css_selector("tr")) > 10
 
     h.click("data pivot - animal bioassay - endpoint")
     assert "animal-bioassay-data-pivot-endpoint" in chrome_driver.current_url
+    localhost_utils.remove_debug_menu(chrome_driver)
 
     # different than requested
     assert h.Link("Actions").exists() is True
@@ -34,18 +37,8 @@ def test_hello_helium(chrome_driver):
     # ensure that the image has at least 7 circles there has to be a better way to do this
     assert len(chrome_driver.find_elements_by_css_selector("#dp_display svg g g path")) > 7
 
-
-    # Need to close menu on local
-    # h.click("Hide")
-    # this is too hard to do using helium because of the font-awesome download icon
-    # there is technically a better way to do this leveraging expected_conditions, 
-    # but because of the selector I'm using to select this download button, it gets messy
-    # chrome_driver.implicitly_wait(1) - this didn't even end up working seems like sizing is weird in headless
-    # so this generates an error on localhost because of sizing seemingly, because of the 
-    # admin help menu, so I'm going to create a hacky javascript way to do this
-
-    downloadElem = chrome_driver.find_elements_by_css_selector("a[title=\"Download figure\"]")[0]
-    chrome_driver.execute_script("arguments[0].click();", downloadElem)
+    #click on download link using selenium driver logic because Font Awesome icon is hard for selenium
+    chrome_driver.find_elements_by_css_selector("a[title=\"Download figure\"]")[0].click()
 
     # make sure download "button" is visible
     assert h.Text("Download as a SVG").exists() is True

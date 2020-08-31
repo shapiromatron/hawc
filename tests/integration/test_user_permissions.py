@@ -2,6 +2,7 @@ import os
 
 import helium as h
 import pytest
+import utils.localhost_utils as localhost_utils
 
 SKIP_INTEGRATION = os.environ.get("HAWC_INTEGRATION_TESTS") is None
 
@@ -16,20 +17,21 @@ def test_user_permissions(chrome_driver):
 
     # go to website
     h.go_to(base_url + assessment_url)
+    localhost_utils.remove_debug_menu(chrome_driver)
+
     h1content = "public final (2001)"
     h1Elem = h.Text(h1content)
     assert h1Elem.exists() is True
 
     h.go_to(base_url +  assessment_url + "edit/")
+    localhost_utils.remove_debug_menu(chrome_driver)
+
     # From brief googling selenium does not support status code checking, 
     # and I have to scrape the html
     assert h.Text("403. Forbidden").exists() is True
     
     
-    # this gave me a fit assumingly because of the menu on localhost, 
-    # helium did not throw an error just failure
-    # h.click("Login")
-    chrome_driver.execute_script("arguments[0].click();", h.Link("Login").web_element)
+    h.click("Login")
     assert "/user/login/" in chrome_driver.current_url
 
     # login to actually hit edit page
