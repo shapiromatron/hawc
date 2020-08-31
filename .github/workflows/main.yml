@@ -103,7 +103,8 @@ jobs:
       run: echo $PATH
     - name: install firefox
       run: |
-        apt-get install libgtk2.0-0
+        apt update
+        apt install libgtk2.0-0
         wget https://ftp.mozilla.org/pub/firefox/releases/45.0.2/linux-x86_64/en-GB/firefox-45.0.2.tar.bz2
         tar xvf firefox-45.0.2.tar.bz2
         mv firefox/ /usr/lib/firefox
