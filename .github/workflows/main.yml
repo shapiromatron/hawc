@@ -101,6 +101,7 @@ jobs:
     steps:
     - name: install chrome
       run: |
+        apt update
         wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
         apt install -f ./google-chrome-stable_current_amd64.deb
     - uses: actions/checkout@v1
