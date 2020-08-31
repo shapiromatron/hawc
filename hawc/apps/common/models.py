@@ -38,11 +38,15 @@ class BaseManager(models.Manager):
         If assessment_id is not passed, then functions identically to .all()
         """
         if assessment_id:
-            return self.assessment_qs(assessment_id)
-        return self.get_queryset()
+            return self.assessment_qs(assessment_id).order_by("id")
+        return self.get_queryset().order_by("id")
 
     def assessment_qs(self, assessment_id):
-        return self.get_queryset().filter(Q(**{self.assessment_relation: assessment_id}))
+        return (
+            self.get_queryset()
+            .filter(Q(**{self.assessment_relation: assessment_id}))
+            .order_by("id")
+        )
 
 
 class IntChoiceEnum(IntEnum):
