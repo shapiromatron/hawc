@@ -5,11 +5,10 @@ import pytest
 
 SKIP_INTEGRATION = os.environ.get("HAWC_INTEGRATION_TESTS") is None
 
-base_url = "http://localhost:8000"
-
 
 @pytest.mark.skipif(SKIP_INTEGRATION, reason="integration test")
-def test_user_permissions(chrome_driver):
+def test_user_permissions(chrome_driver, integration_base_url):
+    base_url = integration_base_url
     # set test to use our session-level driver
     h.set_driver(chrome_driver)
 

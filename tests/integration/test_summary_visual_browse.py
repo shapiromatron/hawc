@@ -6,11 +6,11 @@ import utils.localhost_utils as localhost_utils
 
 SKIP_INTEGRATION = os.environ.get("HAWC_INTEGRATION_TESTS") is None
 
-base_url = "http://localhost:8000"
 assessment_url = "/assessment/2/"
 
 @pytest.mark.skipif(SKIP_INTEGRATION, reason="integration test")
-def test_hello_helium(chrome_driver):
+def test_hello_helium(chrome_driver, integration_base_url):
+    base_url = integration_base_url
     # set test to use our session-level driver
     h.set_driver(chrome_driver)
 
@@ -50,6 +50,9 @@ def test_hello_helium(chrome_driver):
     h.click("heatmap")
 
     assert "/summary/visual/3/" in chrome_driver.current_url
+
+    # make sure the heatmap loads before doing the following tests
+    h.wait_until(h.Text("heatmap").exists)
 
     assert h.Link("Actions").exists() is False
 
