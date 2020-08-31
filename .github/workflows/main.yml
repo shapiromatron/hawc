@@ -99,11 +99,14 @@ jobs:
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
     steps:
-    - name: install chrome
+    - name: print path
+      run: echo $PATH
+    - name: install firefox
       run: |
-        apt update
-        wget http://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_66.0.3359.181-1_amd64.deb
-        apt install -y ./google-chrome-stable_current_amd64.deb
+        wget https://ftp.mozilla.org/pub/firefox/releases/45.0.2/linux-x86_64/en-GB/firefox-45.0.2.tar.bz2
+        tar xvf firefox-45.0.2.tar.bz2
+        mv firefox/ /usr/lib/firefox
+        ln -s /usr/lib/firefox /usr/bin/firefox
     - uses: actions/checkout@v1
     - name: install hawc
       run: |

@@ -5,7 +5,7 @@ from typing import NamedTuple
 import helium
 import pytest
 from django.core.management import call_command
-from selenium.webdriver import ChromeOptions
+from selenium.webdriver import FirefoxOptions
 
 
 class UserCredential(NamedTuple):
@@ -103,9 +103,9 @@ def rewrite_data_files():
 
 @pytest.fixture(scope="session")
 def chrome_driver():
-    options = ChromeOptions()
+    options = FirefoxOptions()
     options.add_argument("--window-size=1920,1080")
-    driver = helium.start_chrome(options=options, headless=True)
+    driver = helium.start_firefox(options=options, headless=True)
     try:
         yield driver
     finally:
