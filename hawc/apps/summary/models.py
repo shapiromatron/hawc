@@ -749,7 +749,7 @@ class DataPivotQuery(DataPivot):
         elif self.evidence_type == IN_VITRO:
             qs = IVEndpoint.objects.filter(**filters)
 
-        return qs
+        return qs.order_by("id")
 
     def _get_dataset_exporter(self, qs):
         if self.evidence_type == BIOASSAY:

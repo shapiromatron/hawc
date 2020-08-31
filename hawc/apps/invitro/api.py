@@ -28,8 +28,8 @@ class IVAssessmentViewset(
     def get_queryset(self):
         perms = self.get_obj_perms()
         if not perms["edit"]:
-            return self.model.objects.published(self.assessment)
-        return self.model.objects.get_qs(self.assessment)
+            return self.model.objects.published(self.assessment).order_by("id")
+        return self.model.objects.get_qs(self.assessment).order_by("id")
 
     @action(detail=True, methods=("get",), url_path="full-export", renderer_classes=PandasRenderers)
     def full_export(self, request, pk):
