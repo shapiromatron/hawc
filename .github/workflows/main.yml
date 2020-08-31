@@ -103,6 +103,7 @@ jobs:
     - name: install chromium
       run: |
         npm install chromedriver
+        bin/chromedriver
     - name: install hawc
       run: |
         pip install -r requirements/dev.txt
