@@ -1,7 +1,4 @@
-import os
-
-import helium as h
-import pytest
+import selenium.common.WebDriverException as WebDriverException
 
 
 def remove_debug_menu(chrome_driver):
@@ -9,6 +6,6 @@ def remove_debug_menu(chrome_driver):
     if "localhost" in chrome_driver.current_url:
         try:
             chrome_driver.execute_script('document.getElementById("djDebug").remove();')
-        except:
-            # eat any errors as this shouldn't flunk the test
+        except WebDriverException:
+            # this can happen if the djDebug menu is missing just quitely eat don't fail tests
             pass
