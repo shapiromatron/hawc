@@ -104,6 +104,11 @@ class EndpointStatisticalTestLookup(DistinctStringLookup):
     distinct_field = "statistical_test"
 
 
+class EndpointNameLookup(DistinctStringLookup):
+    model = models.Endpoint
+    distinct_field = "name"
+
+
 class EndpointByStudyLookup(RelatedLookup):
     # Return names of endpoints available for a particular study
     model = models.Endpoint
@@ -204,6 +209,7 @@ registry.register(EndpointEffectLookup)
 registry.register(EndpointEffectSubtypeLookup)
 registry.register(EndpointStatisticalTestLookup)
 
+registry.register(EndpointNameLookup)
 registry.register(EndpointByStudyLookup)
 registry.register(EndpointByAssessmentLookup)
 registry.register(EndpointByAssessmentTextLookup)

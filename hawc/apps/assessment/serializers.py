@@ -9,8 +9,18 @@ from rest_framework.exceptions import ParseError
 from . import models
 
 
+class DSSToxSerializer(serializers.ModelSerializer):
+    dashboard_url = serializers.URLField(source="get_dashboard_url")
+    svg_url = serializers.URLField(source="get_svg_url")
+
+    class Meta:
+        model = models.DSSTox
+        fields = "__all__"
+
+
 class AssessmentSerializer(serializers.ModelSerializer):
     rob_name = serializers.CharField(source="get_rob_name_display")
+    dtxsids = DSSToxSerializer(many=True)
 
     def to_representation(self, instance):
         ret = super().to_representation(instance)
@@ -191,4 +201,16 @@ class DatasetSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Dataset
+        fields = "__all__"
+
+
+class LogSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Log
+        fields = "__all__"
+
+
+class BlogSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Blog
         fields = "__all__"

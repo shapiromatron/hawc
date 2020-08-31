@@ -57,6 +57,7 @@ urlpatterns = [
     url(r"^summary/", include("hawc.apps.summary.urls")),
     url(r"^rob/", include("hawc.apps.riskofbias.urls")),
     url(r"^mgmt/", include("hawc.apps.mgmt.urls")),
+    url(r"^vocab/", include("hawc.apps.vocab.urls")),
     # Error-pages
     url(r"^403/$", views.Error403.as_view(), name="403"),
     url(r"^404/$", views.Error404.as_view(), name="404"),

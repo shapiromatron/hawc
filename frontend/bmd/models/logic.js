@@ -1,5 +1,5 @@
 import _ from "lodash";
-import d3 from "d3";
+import * as d3 from "d3";
 import {deepCopy} from "shared/utils";
 
 import * as types from "bmd/constants";

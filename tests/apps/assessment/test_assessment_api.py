@@ -1,67 +1,6 @@
-import time
-
 import pytest
 from django.urls import reverse
 from rest_framework.test import APIClient
-
-
-@pytest.mark.vcr
-class TestCasrnView:
-    def test_happy_path(self):
-        casrn = "7732-18-5"
-        url = reverse("assessment:casrn_detail", args=(casrn,))
-
-        assert url == "/assessment/casrn/7732-18-5/"
-
-        # first time, acknowledge request
-        client = APIClient()
-        resp = client.get(url)
-        data = resp.json()
-        assert data == {"status": "requesting"}
-
-        # wait until success
-        waited_for = 0
-        while waited_for < 10:
-            resp = client.get(url)
-            data = resp.json()
-            if data["status"] == "success":
-                break
-
-            time.sleep(1)
-            waited_for += 1
-
-        if waited_for >= 10:
-            raise RuntimeError("Failed to return successful request")
-
-        assert data["content"]["common_name"] == "Water"
-
-    def test_bad_casrn(self):
-        casrn = "1-1-1"
-        url = reverse("assessment:casrn_detail", args=(casrn,))
-
-        assert url == "/assessment/casrn/1-1-1/"
-
-        # first time, acknowledge request
-        client = APIClient()
-        resp = client.get(url)
-        data = resp.json()
-        assert data == {"status": "requesting"}
-
-        # wait until failure
-        waited_for = 0
-        while waited_for < 10:
-            resp = client.get(url)
-            data = resp.json()
-            if data["status"] == "failed":
-                break
-
-            time.sleep(1)
-            waited_for += 1
-
-        if waited_for >= 10:
-            raise RuntimeError("Failed to return incorrect request")
-
-        assert data == {"status": "failed", "content": {}}
 
 
 @pytest.mark.django_db
@@ -138,3 +77,60 @@ class TestDatasetViewset:
         )
         resp = client.get(url)
         assert resp.status_code == 404
+
+
+@pytest.mark.django_db
+class TestLogViewset:
+    def test_permissions(self, db_keys):
+        client = APIClient()
+
+        # only admin can view list of global logs
+        url = reverse("assessment:api:logs-list")
+
+        assert client.login(username="pm@pm.com", password="pw") is True
+        resp = client.get(url)
+        assert resp.status_code == 403
+
+        assert client.login(username="sudo@sudo.com", password="pw") is True
+        resp = client.get(url)
+        assert resp.status_code == 200
+
+    def test_list(self, db_keys):
+        client = APIClient()
+        url = reverse("assessment:api:logs-list")
+
+        assert client.login(username="sudo@sudo.com", password="pw") is True
+        resp = client.get(url)
+        assert resp.status_code == 200
+
+        # the list should only show global logs for admins
+        assert len(resp.json()) == 1
+        expected = {"message": "Global log", "assessment": None}
+        assert expected.items() <= resp.json()[0].items()
+
+    def test_assessment(self, db_keys):
+        """
+        Technically this endpoint is under AssessmentViewset, but
+        due to its log functionality is included here
+        """
+        url = reverse("assessment:api:assessment-logs", args=(db_keys.assessment_working,))
+        client = APIClient()
+        assert client.login(username="pm@pm.com", password="pw") is True
+        resp = client.get(url)
+        assert resp.status_code == 200
+
+        # the response should be a list of all logs for this assessment
+        assert len(resp.json()) == 1
+        expected = {"message": "Assessment log", "assessment": db_keys.assessment_working}
+        assert expected.items() <= resp.json()[0].items()
+
+
+@pytest.mark.django_db
+class TestDssToxViewset:
+    def test_expected_response(self):
+        dtxsid = "DTXSID6026296"
+        client = APIClient()
+        url = reverse("assessment:api:dsstox-detail", args=(dtxsid,))
+        resp = client.get(url)
+        assert resp.status_code == 200
+        assert resp.json()["dtxsid"] == dtxsid

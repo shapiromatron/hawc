@@ -564,6 +564,9 @@ class ReferenceManager(BaseManager):
 
         return df1.merge(df2, how="left", left_index=True, right_index=True).reset_index()
 
+    def hero_references(self, assessment_id: int) -> QuerySet:
+        return self.assessment_qs(assessment_id).filter(identifiers__database=constants.HERO)
+
 
 class ReferenceTagsManager(BaseManager):
     assessment_relation = "content_object__assessment"

@@ -7,7 +7,7 @@ export "HAWC_PW=foobar"
 
 cd ~/dev/hawc/hawc
 python ../scripts/scrape_data_pivots.py get-pivot-objects
-python ../scripts/scrape_data_pivots.py webscrape http://127.0.0.1:8400
+python ../scripts/scrape_data_pivots.py webscrape https://hawcproject.org
 ```
 """
 import os

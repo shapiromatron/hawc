@@ -1,4 +1,7 @@
+from datetime import timedelta
+
 from django.contrib import admin
+from django.utils import timezone
 from django.utils.html import format_html
 
 from . import models
@@ -87,7 +90,7 @@ class DatasetAdmin(admin.ModelAdmin):
         "last_updated",
     )
     list_display_links = ("id",)
-    list_filter = ("assessment",)
+    list_filter = (("assessment", admin.RelatedOnlyFieldListFilter),)
     inlines = [
         DatasetRevisionInline,
     ]
@@ -145,3 +148,94 @@ class TimeSpentEditingAdmin(admin.ModelAdmin):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.list_display_links = []
+
+
+@admin.register(models.Log)
+class LogAdmin(admin.ModelAdmin):
+    list_display = ("assessment", "message", "created", "last_updated")
+
+    search_fields = ("assessment__name", "message")
+
+    actions = ("delete_gt_year",)
+
+    def delete_gt_year(self, request, queryset):
+        # delete where "last_updated" > 1 year old
+        year_old = timezone.now() - timedelta(days=365)
+        deleted, _ = queryset.filter(last_updated__lte=year_old).delete()
+        # send a message with number deleted
+        self.message_user(request, f"{deleted} of {queryset.count()} selected logs deleted.")
+
+    delete_gt_year.short_description = "Delete 1 year or older"
+
+
+@admin.register(models.Blog)
+class BlogAdmin(admin.ModelAdmin):
+    list_display = ("subject", "published", "created", "last_updated")
+
+    list_filter = ("published",)
+
+    search_fields = ("subject", "content")
+
+
+@admin.register(models.DSSTox)
+class DSSXToxAdmin(admin.ModelAdmin):
+    list_display = (
+        "dtxsid",
+        "get_casrns",
+        "get_names",
+        "get_assessments",
+        "get_experiments",
+        "get_exposures",
+        "get_ivchemicals",
+    )
+    search_fields = ("dtxsid", "content__casrn", "content__preferredName")
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs.prefetch_related("assessments", "experiments", "exposures", "ivchemicals")
+
+    def get_ul(self, iterable, func):
+        ul = ["<ul>"]
+        for obj in iterable:
+            ul.append(f"<li>{func(obj)}</li>")
+        ul.append("</ul>")
+        return format_html(" ".join(ul))
+
+    def linked_name(self, obj):
+        return f"<a href='{obj.get_absolute_url()}'>{obj.name}</a>"
+
+    def get_casrns(self, obj):
+        return obj.content["casrn"]
+
+    get_casrns.short_description = "CASRN"
+    get_casrns.allow_tags = True
+
+    def get_names(self, obj):
+        return obj.content["preferredName"]
+
+    get_names.short_description = "Name"
+    get_names.allow_tags = True
+
+    def get_assessments(self, obj):
+        return self.get_ul(obj.assessments.all(), self.linked_name)
+
+    get_assessments.short_description = "Assessments"
+    get_assessments.allow_tags = True
+
+    def get_experiments(self, obj):
+        return self.get_ul(obj.experiments.all(), self.linked_name)
+
+    get_experiments.short_description = "Experiments"
+    get_experiments.allow_tags = True
+
+    def get_exposures(self, obj):
+        return self.get_ul(obj.exposures.all(), self.linked_name)
+
+    get_exposures.short_description = "Epi exposures"
+    get_exposures.allow_tags = True
+
+    def get_ivchemicals(self, obj):
+        return self.get_ul(obj.ivchemicals.all(), self.linked_name)
+
+    get_ivchemicals.short_description = "IVChemicals"
+    get_ivchemicals.allow_tags = True

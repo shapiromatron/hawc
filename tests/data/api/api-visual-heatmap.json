@@ -19,6 +19,7 @@
       14,
       15
     ],
+    "excluded_score_ids": [],
     "show_legend": true,
     "show_na_legend": true,
     "show_nr_legend": true,

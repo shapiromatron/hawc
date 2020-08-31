@@ -426,3 +426,15 @@ The Python HAWC client can be packaged for easy distribution.
     # or can be uploaded to pypi
     make upload-testpypi
     make upload-pypi
+
+Lines of code
+~~~~~~~~~~~~~
+
+To generate a report on the lines of code, install cloc_ and then run the make command:
+
+.. code-block:: bash
+
+    make loc
+
+.. _cloc: https://github.com/AlDanial/cloc
+

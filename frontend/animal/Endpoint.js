@@ -1,6 +1,6 @@
 import $ from "$";
 import _ from "lodash";
-import d3 from "d3";
+import * as d3 from "d3";
 
 import BaseTable from "utils/BaseTable";
 import DescriptiveTable from "utils/DescriptiveTable";
@@ -68,7 +68,9 @@ class Endpoint extends Observee {
     }
 
     unpack_doses() {
-        if (!this.data.animal_group) return; // added for edit_endpoint prototype extension
+        if (!this.data.animal_group) {
+            return; // added for edit_endpoint prototype extension
+        }
         this.doses = d3
             .nest()
             .key(d => d.dose_units.id)

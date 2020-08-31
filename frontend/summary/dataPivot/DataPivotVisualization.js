@@ -1,6 +1,6 @@
 import $ from "$";
 import _ from "lodash";
-import d3 from "d3";
+import * as d3 from "d3";
 
 import D3Plot from "utils/D3Plot";
 import HAWCUtils from "utils/HAWCUtils";
@@ -23,6 +23,13 @@ class DataPivotVisualization extends D3Plot {
         this.build_plot();
         this.dpe = new DataPivotExtension();
         return this;
+    }
+
+    static parseSortValue(value) {
+        var obj = HAWCUtils.parseJsonOrNull(value);
+
+        // if object is JSON and has sortValue, use it, else use string version
+        return obj && obj.sortValue !== undefined ? obj.sortValue : value;
     }
 
     static sorter(arr, sorts) {
@@ -55,21 +62,10 @@ class DataPivotVisualization extends D3Plot {
                     }
                 }
 
-                var aObj = HAWCUtils.parseJsonOrNull(a[field_name]),
-                    bObj = HAWCUtils.parseJsonOrNull(b[field_name]),
-                    aSort,
-                    bSort,
+                var aSort = DataPivotVisualization.parseSortValue(a[field_name]),
+                    bSort = DataPivotVisualization.parseSortValue(b[field_name]),
                     aa,
                     bb;
-
-                // if object is JSON and has sortValue, use it, else use string version
-                if (aObj && bObj && aObj.sortValue !== undefined && bObj.sortValue !== undefined) {
-                    aSort = aObj.sortValue;
-                    bSort = bObj.sortValue;
-                } else {
-                    aSort = a[field_name];
-                    bSort = b[field_name];
-                }
 
                 aa = chunkify(aSort.toString());
                 bb = chunkify(bSort.toString());
@@ -199,7 +195,7 @@ class DataPivotVisualization extends D3Plot {
         this.textPadding = 5; // text padding on all sides of text
 
         var scale_type = this.dp_settings.plot_settings.logscale ? "log" : "linear",
-            formatNumber = d3.format(",.f");
+            formatNumber = d3.format(",");
 
         this.text_spacing_offset = 10;
         this.x_axis_settings = {
@@ -500,8 +496,8 @@ class DataPivotVisualization extends D3Plot {
                     switch (cf.condition_type) {
                         case "point-size":
                             if (vals.range) {
-                                var pscale = d3.scale
-                                    .pow()
+                                var pscale = d3
+                                    .scalePow()
                                     .exponent(0.5)
                                     .domain(vals.range)
                                     .range([cf.min_size, cf.max_size]);
@@ -517,8 +513,8 @@ class DataPivotVisualization extends D3Plot {
 
                         case "point-color":
                             if (vals.range) {
-                                var cscale = d3.scale
-                                    .linear()
+                                var cscale = d3
+                                    .scaleLinear()
                                     .domain(vals.range)
                                     .interpolate(d3.interpolateRgb)
                                     .range([cf.min_color, cf.max_color]);
@@ -1020,10 +1016,10 @@ class DataPivotVisualization extends D3Plot {
                 .append("path")
                 .attr(
                     "d",
-                    d3.svg
+                    d3
                         .symbol()
                         .size(d => d._styles["points_" + i].size)
-                        .type(d => d._styles["points_" + i].type)
+                        .type(d => HAWCUtils.symbolStringToType(d._styles["points_" + i].type))
                 )
                 .attr(
                     "transform",
@@ -1196,11 +1192,13 @@ class DataPivotVisualization extends D3Plot {
 
             // wrap text if we have to
             if (v.max_width) {
-                _.each(textColumn[0], _.partial(HAWCUtils.wrapText, _, v.max_width));
+                textColumn.each(function() {
+                    HAWCUtils.wrapText(this, v.max_width);
+                });
             }
 
             // get maximum column dimension and layout columns
-            const maxWidth = d3.max(textColumn[0].map(v => v.getBBox().width));
+            const maxWidth = d3.max(textColumn.nodes().map(v => v.getBBox().width));
             textColumn.each(function() {
                 var val = d3.select(this),
                     anchor = val.style("text-anchor");
@@ -1223,10 +1221,14 @@ class DataPivotVisualization extends D3Plot {
         var merged_row_height,
             extra_space,
             prior_extra = 0,
-            text_rows = this.text_rows.selectAll("text"),
+            text_rows = this.text_rows.nodes(),
             j;
 
         text_rows.forEach(function(v, i) {
+            v = d3
+                .select(v)
+                .selectAll("text")
+                .nodes();
             for (j = 0; j < v.length; j++) {
                 var val = d3.select(v[j]);
                 val.attr("y", textPadding + top);
@@ -1249,7 +1251,11 @@ class DataPivotVisualization extends D3Plot {
                 for (j = i + 1; j < self.datarows.length; j++) {
                     // the row height should be the maximum-height of a non-merged cell
                     if (j === i + 1) {
-                        text_rows[j]
+                        let next_row = d3
+                            .select(text_rows[j])
+                            .selectAll("text")
+                            .nodes();
+                        next_row
                             .map(function(v) {
                                 return v.getBBox().height;
                             })
@@ -1297,9 +1303,10 @@ class DataPivotVisualization extends D3Plot {
 
         // remove blank text elements; can mess-up size calculations
         $(
-            _.filter(this.g_text_columns.selectAll("text")[0], function(d) {
-                return d.textContent.length === 0;
-            })
+            this.g_text_columns
+                .selectAll("text")
+                .nodes()
+                .filter(el => el.textContent.length === 0)
         ).remove();
 
         // calculate plot-height, text-width, and save heights array
@@ -1312,8 +1319,11 @@ class DataPivotVisualization extends D3Plot {
     layout_plot() {
         // Top-location to equal to the first-data row
         // Left-location to equal size of text plus left-padding
-        var headerDims = this.g_text_columns.selectAll("g")[0][1].getBBox(),
-            top = headerDims.y - this.textPadding,
+        var firstDataRow = this.g_text_columns
+                .selectAll("g")
+                .nodes()[1]
+                .getBBox(),
+            top = firstDataRow.y - this.textPadding,
             textDims = this.g_text_columns.node().getBBox(),
             left = textDims.width + textDims.x + this.padding.left;
 

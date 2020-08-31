@@ -36,10 +36,19 @@ class Keys:
         self.animal_group_working = 1
         self.endpoint_working = 1
 
+        self.riskofbias_assessment_working_metric_ids = [1, 2]
+
         self.visual_heatmap = 1
         self.visual_barchart = 2
 
         self.pm_user = UserCredential("pm@pm.com", "pw")
+        self.pm_user_id = 2
+
+        self.log_assessment = 1
+        self.log_global = 2
+
+        self.blog_published = 2
+        self.blog_unpublished = 1
 
 
 _keys = Keys()

@@ -1,9 +1,7 @@
 import $ from "$";
 import _ from "lodash";
-import d3 from "d3";
+import * as d3 from "d3";
 import slugify from "slugify";
-
-import renderChemicalDetails from "./components/ChemicalDetails";
 
 class HAWCUtils {
     static HAWC_NEW_WINDOW_POPUP_CLOSING = "hawcNewWindowPopupClosing";
@@ -96,26 +94,8 @@ class HAWCUtils {
         throw "Abstract method; requires implementation";
     }
 
-    static renderChemicalProperties(url, $div, show_header) {
-        const handleResponse = function(data) {
-                if (data.status === "requesting") {
-                    setTimeout(tryToFetch, 1000);
-                }
-                if (data.status === "success") {
-                    renderChemicalDetails($div.get(0), data.content, show_header);
-                }
-            },
-            tryToFetch = () => {
-                fetch(url)
-                    .then(resp => resp.json())
-                    .then(handleResponse);
-            };
-
-        tryToFetch();
-    }
-
     static updateDragLocationTransform(setDragCB) {
-        // a new drag location, requires binding to d3.behavior.drag,
+        // a new drag location, requires binding to d3.drag,
         // and requires a _.partial injection of th settings module.
         const re_floats = /(-?[0-9]*\.?[0-9]+)/gm,
             getFloats = function(txt) {
@@ -124,57 +104,51 @@ class HAWCUtils {
                 return [...txt.matchAll(re_floats)].map(d => parseFloat(d[0]));
             };
 
-        return d3.behavior
-            .drag()
-            .origin(Object)
-            .on("drag", function() {
-                var x,
-                    y,
-                    p = d3.select(this),
-                    text = p.attr("transform"),
-                    coords = getFloats(text);
+        return d3.drag().on("drag", function() {
+            var x,
+                y,
+                p = d3.select(this),
+                text = p.attr("transform"),
+                coords = getFloats(text);
 
-                if (coords && coords.length >= 2) {
-                    if (coords.length === 2) {
-                        // no rotation
-                        x = parseInt(coords[0] + d3.event.dx);
-                        y = parseInt(coords[1] + d3.event.dy);
-                        p.attr("transform", `translate(${x},${y})`);
-                        if (setDragCB) {
-                            setDragCB.bind(this)(x, y);
-                        }
-                    } else if (coords.length === 3) {
-                        // has rotation
-                        x = parseInt(coords[0] + d3.event.dx);
-                        y = parseInt(coords[1] + d3.event.dy);
-                        p.attr("transform", `translate(${x},${y}) rotate(${coords[2]})`);
-                        if (setDragCB) {
-                            setDragCB.bind(this)(x, y);
-                        }
-                    } else {
-                        console.error(`Unknown parsing of string ${text}`);
+            if (coords && coords.length >= 2) {
+                if (coords.length === 2) {
+                    // no rotation
+                    x = parseInt(coords[0] + d3.event.dx);
+                    y = parseInt(coords[1] + d3.event.dy);
+                    p.attr("transform", `translate(${x},${y})`);
+                    if (setDragCB) {
+                        setDragCB.bind(this)(x, y);
                     }
+                } else if (coords.length === 3) {
+                    // has rotation
+                    x = parseInt(coords[0] + d3.event.dx);
+                    y = parseInt(coords[1] + d3.event.dy);
+                    p.attr("transform", `translate(${x},${y}) rotate(${coords[2]})`);
+                    if (setDragCB) {
+                        setDragCB.bind(this)(x, y);
+                    }
+                } else {
+                    console.error(`Unknown parsing of string ${text}`);
                 }
-            });
+            }
+        });
     }
 
     static updateDragLocationXY(setDragCB) {
-        // a new drag location, requires binding to d3.behavior.drag,
+        // a new drag location, requires binding to d3.drag,
         // and requires a _.partial injection of th settings module.
-        return d3.behavior
-            .drag()
-            .origin(Object)
-            .on("drag", function() {
-                var p = d3.select(this),
-                    x = parseInt(parseInt(p.attr("x"), 10) + d3.event.dx, 10),
-                    y = parseInt(parseInt(p.attr("y"), 10) + d3.event.dy, 10);
+        return d3.drag().on("drag", function() {
+            var p = d3.select(this),
+                x = parseInt(parseInt(p.attr("x"), 10) + d3.event.dx, 10),
+                y = parseInt(parseInt(p.attr("y"), 10) + d3.event.dy, 10);
 
-                p.attr("x", x);
-                p.attr("y", y);
-                if (setDragCB) {
-                    setDragCB.bind(this)(x, y);
-                }
-            });
+            p.attr("x", x);
+            p.attr("y", y);
+            if (setDragCB) {
+                setDragCB.bind(this)(x, y);
+            }
+        });
     }
 
     static wrapText(text, max_width) {
@@ -279,6 +253,39 @@ class HAWCUtils {
         return str.replace(/{(\d+)}/g, (match, number) =>
             typeof args[number] !== "undefined" ? args[number] : match
         );
+    }
+
+    static symbolStringToType(str) {
+        switch (str) {
+            case "circle":
+                return d3.symbolCircle;
+            case "cross":
+                return d3.symbolCross;
+            case "diamond":
+                return d3.symbolDiamond;
+            case "square":
+                return d3.symbolSquare;
+            case "star":
+                return d3.symbolStar;
+            case "triangle":
+            case "triangle-up":
+                return d3.symbolTriangle;
+            case "triangle-down":
+                return {
+                    draw(context, size) {
+                        var sqrt3 = Math.sqrt(3),
+                            y = -Math.sqrt(size / (sqrt3 * 3));
+                        context.moveTo(0, -y);
+                        context.lineTo(-sqrt3 * y, y * 2);
+                        context.lineTo(sqrt3 * y, y * 2);
+                        context.closePath();
+                    },
+                };
+            case "wye":
+                return d3.symbolWye;
+            default:
+                console.error(`Unrecognized filter: ${str}`);
+        }
     }
 }
 

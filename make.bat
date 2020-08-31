@@ -12,6 +12,7 @@ if /I %1 == format-js goto :format-js
 if /I %1 == test goto :test
 if /I %1 == test-refresh goto :test-refresh
 if /I %1 == coverage goto :coverage
+if /I %1 == loc goto :loc
 goto :help
 
 :build
@@ -33,6 +34,7 @@ echo.  lint-py      check for pytho formatting issues via black and flake8
 echo.  format-py    modify python code using black and show flake8 issues
 echo.  lint-js      check for javascript formatting issues
 echo.  format-js    modify javascript code if possible using linters and formatters
+echo.  loc          generate lines of code report
 goto :eof
 
 :lint
@@ -74,4 +76,8 @@ goto :eof
 coverage run -m pytest
 coverage html -d coverage_html
 echo "Report ready; open ./coverage_html/index.html to view"
+goto :eof
+
+:loc
+cloc --exclude-dir=debug,migrations,node_modules,public,private,vendor,venv --exclude-ext=json,yaml,svg,toml,ini --vcs=git --counted loc-files.txt .
 goto :eof

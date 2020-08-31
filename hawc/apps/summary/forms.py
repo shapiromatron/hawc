@@ -680,6 +680,11 @@ class TagtreeForm(VisualForm):
         help_text="Select tags which should be hidden from the tagtree. If a parent-tag is selected, all child-tags will also be hidden.<br><br><i>This field is optional; if no tags are selected, then all tags will be displayed.</i>",
         required=False,
     )
+    hide_empty_tag_nodes = forms.BooleanField(
+        label="Hide tags with no references",
+        help_text="Prune tree; show only tags which contain at least on reference.",
+        required=False,
+    )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -706,6 +711,8 @@ class TagtreeForm(VisualForm):
             self.fields["required_tags"].initial = data["required_tags"]
         if "pruned_tags" in data:
             self.fields["pruned_tags"].initial = data["pruned_tags"]
+        if "hide_empty_tag_nodes" in data:
+            self.fields["hide_empty_tag_nodes"].initial = data["hide_empty_tag_nodes"]
 
     def save(self, commit=True):
         self.instance.settings = json.dumps(
@@ -713,6 +720,7 @@ class TagtreeForm(VisualForm):
                 root_node=self.cleaned_data["root_node"],
                 required_tags=self.cleaned_data["required_tags"],
                 pruned_tags=self.cleaned_data["pruned_tags"],
+                hide_empty_tag_nodes=self.cleaned_data["hide_empty_tag_nodes"],
             )
         )
         return super().save(commit)

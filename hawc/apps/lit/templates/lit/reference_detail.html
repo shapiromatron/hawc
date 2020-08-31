@@ -12,7 +12,7 @@
 
 {% block content %}
 
-  {% if obj_perms.edit %}
+  {% if obj_perms.edit and crud == "Read" %}
     <div class="btn-group pull-right">
       <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions
         <span class="caret"></span>
@@ -20,10 +20,12 @@
       <ul class="dropdown-menu">
         <li><a href="{% url 'lit:reference_tags_edit' object.pk %}">Edit tags</a></li>
         <li><a href="{% url 'lit:ref_edit' object.pk %}">Edit reference</a></li>
+        <li><a href="{% url 'lit:ref_delete' object.pk %}">Delete reference</a></li>
       </ul>
     </div>
   {% endif %}
 
+  <h4>Reference details:</h4>
   <div id="reference_detail_div"></div>
 {% endblock %}
 
@@ -36,6 +38,6 @@
     window.app.litStartup(function(lit){
       let tagtree = new lit.TagTree(data.tags[0]),
           ref = new lit.Reference(data.reference, tagtree);
-      $('#reference_detail_div').html(ref.print_self({showActions: true, showDetailsHeader: true, showTaglist: true})); });
+      $('#reference_detail_div').html(ref.print_self({showActions: true})); });
   </script>
 {% endblock extrajs %}

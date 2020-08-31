@@ -1,6 +1,6 @@
 import _ from "lodash";
 import $ from "$";
-import d3 from "d3";
+import * as d3 from "d3";
 
 import D3Plot from "utils/D3Plot";
 
@@ -162,9 +162,7 @@ class Donut extends D3Plot {
                 .attr("cx", 0)
                 .attr("cy", 0)
                 .attr("r", this.radius_inner)
-                .style({
-                    fill: this.data.overall_question_data.score_svg_style.fill,
-                })
+                .style("fill", this.data.overall_question_data.score_svg_style.fill)
                 .attr("transform", donut_center)
                 .on("mouseover", function() {
                     if (self.viewlock) return;
@@ -196,17 +194,17 @@ class Donut extends D3Plot {
         }
 
         // setup pie layout generator
-        this.pie_layout = d3.layout
+        this.pie_layout = d3
             .pie()
             .sort(null)
             .value(d => d.weight);
 
         // setup arc helper functions
-        var domain_arc = d3.svg
+        var domain_arc = d3
                 .arc()
                 .innerRadius(this.radius_inner)
                 .outerRadius(this.radius_outer),
-            details_arc = d3.svg
+            details_arc = d3
                 .arc()
                 .innerRadius(this.radius_middle)
                 .outerRadius(this.radius_outer);
@@ -225,7 +223,7 @@ class Donut extends D3Plot {
         this.domain_label_group = this.vis.append("g").attr("transform", donut_center);
 
         // rotate the labels
-        var labelArc = d3.svg
+        var labelArc = d3
             .arc()
             .innerRadius(this.radius_inner + this.rotated_label_start_padding)
             .outerRadius(this.radius_inner + this.rotated_label_start_padding);
@@ -271,9 +269,7 @@ class Donut extends D3Plot {
             .data(this.pie_layout(this.data.question_donut_data))
             .enter()
             .append("path")
-            .style({
-                fill: d => d.data.score_svg_style.fill,
-            })
+            .style("fill", d => d.data.score_svg_style.fill)
             .attr("class", "donuts metric_arc")
             .attr("d", details_arc)
             .on("mouseover", function(v1) {
@@ -372,7 +368,7 @@ class Donut extends D3Plot {
         var new_radius = this.radius_middle;
         if (this.domain_outer_radius === this.radius_middle) new_radius = this.radius_outer;
 
-        this.domain_arc = d3.svg
+        this.domain_arc = d3
             .arc()
             .innerRadius(this.radius_inner)
             .outerRadius(new_radius);
