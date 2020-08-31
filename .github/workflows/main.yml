@@ -88,5 +88,9 @@ jobs:
         HAWC_INTEGRATION_TESTS: 1
     steps:
     - uses: actions/checkout@v1
-    - run: |
-        pytest tests/integration/
+    - name: install
+      run: |
+        pip install -r requirements/dev.txt
+    - name: run tests
+      run: |
+        py.test tests/integration/
