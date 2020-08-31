@@ -106,7 +106,7 @@ jobs:
         wget https://ftp.mozilla.org/pub/firefox/releases/45.0.2/linux-x86_64/en-GB/firefox-45.0.2.tar.bz2
         tar xvf firefox-45.0.2.tar.bz2
         mv firefox/ /usr/lib/firefox
-        ln -s /usr/lib/firefox /usr/bin/firefox
+        ln -s /usr/lib/firefox/firefox /usr/bin/firefox
     - uses: actions/checkout@v1
     - name: install hawc
       run: |
