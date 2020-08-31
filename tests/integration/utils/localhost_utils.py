@@ -1,4 +1,4 @@
-import selenium.common.WebDriverException as WebDriverException
+from selenium.common.exceptions import WebDriverException
 
 
 def remove_debug_menu(chrome_driver):
