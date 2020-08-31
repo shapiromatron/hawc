@@ -83,14 +83,13 @@ jobs:
     name: selenium
     runs-on: ubuntu-18.04
     container:
-      image: nikolaik/python-nodejs:latest
+      image: nikolaik/python-nodejs:python3.6-nodejs12
       env:
         HAWC_INTEGRATION_TESTS: 1
     steps:
     - uses: actions/checkout@v1
     - name: install
       run: |
-        pip install -U pip
         pip install -r requirements/dev.txt
     - name: run tests
       run: |
