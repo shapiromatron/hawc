@@ -110,7 +110,7 @@ jobs:
         DJANGO_DB_NAME: hawc-test
         DJANGO_DB_USER: hawc
         DJANGO_DB_PW: password
-        DJANGO_DB_HOST: localhost
+        DJANGO_DB_HOST: postgres
         DJANGO_DB_PORT: ${{ job.services.postgres.ports[5432] }} # get randomly assigned published port
         PUBMED_API_KEY: ${{ secrets.PUBMED_API_KEY }}
       run: |
