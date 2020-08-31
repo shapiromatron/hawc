@@ -100,11 +100,13 @@ def chrome_driver():
     finally:
         helium.kill_browser()
 
+
 @pytest.fixture(scope="session")
 def integration_base_url():
     base_url = os.environ.get("HAWC_INTEGRATION_BASE_URL")
-    
+
     if base_url is None:
         base_url = "http://localhost:8000"
 
     return base_url
+

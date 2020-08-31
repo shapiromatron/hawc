@@ -24,14 +24,13 @@ def test_user_permissions(chrome_driver, integration_base_url):
     h1Elem = h.Text(assessmentName)
     assert h1Elem.exists() is True
 
-    h.go_to(base_url +  assessment_url + "edit/")
+    h.go_to(base_url + assessment_url + "edit/")
     localhost_utils.remove_debug_menu(chrome_driver)
 
-    # From brief googling selenium does not support status code checking, 
+    # From brief googling selenium does not support status code checking,
     # and I have to scrape the html
     assert h.Text("403. Forbidden").exists() is True
-    
-    
+
     h.go_to(base_url + "/user/login/")
     assert "/user/login/" in chrome_driver.current_url
 
@@ -50,7 +49,8 @@ def test_user_permissions(chrome_driver, integration_base_url):
 
     h.click(assessmentName)
     localhost_utils.remove_debug_menu(chrome_driver)
-    
+
+    # navigating bootstrap dropdown menu
     h.click("Actions")
     h.click("Update assessment")
 
