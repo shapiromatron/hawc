@@ -85,6 +85,8 @@ jobs:
 
     container:
       image: nikolaik/python-nodejs:python3.6-nodejs12
+      env:
+        SELENIUM_SERVER: firefox
 
     services:
       postgres:
@@ -101,6 +103,7 @@ jobs:
         image: selenium/standalone-firefox:latest
 
     steps:
+    - run: echo $SELENIUM_SERVER
     - uses: actions/checkout@v1
     - name: install hawc
       run: |
