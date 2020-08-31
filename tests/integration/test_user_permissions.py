@@ -38,9 +38,9 @@ def test_user_permissions(chrome_driver):
     msg = "Please enter a correct email and password."
     assert h.Text(msg).exists() is False
     # TODO: Need an account that actually works in unit testing environment
-    # h.write("java_review@epa.gov", into="Email*")
-    # h.write("p@ssword123!", into="Password*")
-    # h.click("Login")
+    h.write("pm@pm.com", into="Email*")
+    h.write("pw", into="Password*")
+    h.click("Login")
     # assert "/portal/" in chrome_driver.current_url
     # # untested since can't login
 
