@@ -106,7 +106,7 @@ jobs:
         apt update
         apt install -y libgtk-3-0
         apt install -y libx11-xcb1
-        apt install -y libc6
+        apt install -y libdbus-glib-1-2
         wget https://ftp.mozilla.org/pub/firefox/releases/80.0/linux-x86_64/en-US/firefox-80.0.tar.bz2
         tar xvf firefox-80.0.tar.bz2
         mv firefox/ /usr/lib/firefox
