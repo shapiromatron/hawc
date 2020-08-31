@@ -85,8 +85,6 @@ jobs:
 
     container:
       image: nikolaik/python-nodejs:python3.6-nodejs12
-      env:
-        SELENIUM_SERVER: firefox
 
     services:
       postgres:
@@ -101,6 +99,9 @@ jobs:
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
       firefox:
         image: selenium/standalone-firefox:latest
+
+    env:
+      SELENIUM_SERVER: firefox
 
     steps:
     - run: echo $SELENIUM_SERVER
