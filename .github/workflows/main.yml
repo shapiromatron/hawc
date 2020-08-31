@@ -89,6 +89,4 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - run: |
-        ls
-        python --version
-        echo $HAWC_INTEGRATION_TESTS
+        pytest tests/integration/
