@@ -2,10 +2,11 @@ import logging
 from pathlib import Path
 from typing import NamedTuple
 
-import helium
+
 import pytest
 from django.core.management import call_command
-from selenium.webdriver import FirefoxOptions
+from selenium import webdriver
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
 
 class UserCredential(NamedTuple):
@@ -103,10 +104,14 @@ def rewrite_data_files():
 
 @pytest.fixture(scope="session")
 def chrome_driver():
-    options = FirefoxOptions()
+    options = webdriver.FirefoxOptions()
     options.add_argument("--window-size=1920,1080")
-    driver = helium.start_firefox(options=options, headless=True)
+    driver = webdriver.Remote(
+        command_executor="http://127.0.0.1:4444/wd/hub",
+        desired_capabilities=DesiredCapabilities.FIREFOX,
+        options=options,
+    )
     try:
         yield driver
     finally:
-        helium.kill_browser()
+        driver.quit()
