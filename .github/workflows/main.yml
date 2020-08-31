@@ -114,7 +114,8 @@ jobs:
         ln -s /usr/lib/firefox/firefox /usr/bin/firefox
     - name: firefox info
       run: |
-        whereis firefox
+        useradd r
+        su -l r
         firefox
     - uses: actions/checkout@v1
     - name: install hawc
