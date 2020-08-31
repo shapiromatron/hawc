@@ -85,14 +85,15 @@ jobs:
 
     container:
       image: nikolaik/python-nodejs:python3.6-nodejs12
-      env:
-          POSTGRES_USER: hawc
-          POSTGRES_PASSWORD: password
-          POSTGRES_DB: hawc-test
+
 
     services:
       postgres:
         image: postgres:9.6
+        env:
+          POSTGRES_USER: hawc
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: hawc-test
         ports:
         # will assign a random free host port
         - 5432/tcp
