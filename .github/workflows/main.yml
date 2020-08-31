@@ -102,7 +102,7 @@ jobs:
     - name: install chrome
       run: |
         apt update
-        wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+        wget http://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_66.0.3359.181-1_amd64.deb
         apt install -y ./google-chrome-stable_current_amd64.deb
     - uses: actions/checkout@v1
     - name: install hawc
