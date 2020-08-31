@@ -97,6 +97,8 @@ jobs:
         # will assign a random free host port
         - 5432:5432
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+      chrome:
+        image: selenium/standalone-chrome:latest
 
     steps:
     - uses: actions/checkout@v1
