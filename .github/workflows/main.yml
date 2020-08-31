@@ -106,7 +106,7 @@ jobs:
         apt update
         apt install -y libgtk2.0-0
         wget https://ftp.mozilla.org/pub/firefox/releases/80.0/linux-x86_64/en-US/firefox-80.0.tar.bz2
-        tar xvf firefox-45.0.2.tar.bz2
+        tar xvf firefox-80.0.tar.bz2
         mv firefox/ /usr/lib/firefox
         ln -s /usr/lib/firefox/firefox /usr/bin/firefox
     - name: firefox info
