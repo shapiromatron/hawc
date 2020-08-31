@@ -99,8 +99,11 @@ jobs:
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
     steps:
+    - name: install chromium
+      run: |
+        apt-get install chromium-browser
     - uses: actions/checkout@v1
-    - name: install
+    - name: install hawc
       run: |
         pip install -r requirements/dev.txt
     - name: test
