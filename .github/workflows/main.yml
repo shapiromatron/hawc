@@ -114,7 +114,7 @@ jobs:
     - name: firefox info
       run: |
         whereis firefox
-        firefox
+      # firefox
     - uses: actions/checkout@v1
     - name: install hawc
       run: |
