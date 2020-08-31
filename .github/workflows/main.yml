@@ -82,10 +82,24 @@ jobs:
   selenium:
     name: selenium
     runs-on: ubuntu-18.04
+
     container:
       image: nikolaik/python-nodejs:python3.6-nodejs12
       env:
         HAWC_INTEGRATION_TESTS: 1
+
+    services:
+      postgres:
+        image: postgres:9.6
+        env:
+          POSTGRES_USER: hawc
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: hawc-test
+        ports:
+        # will assign a random free host port
+        - 5432/tcp
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+
     steps:
     - uses: actions/checkout@v1
     - name: install
