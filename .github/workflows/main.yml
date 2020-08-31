@@ -114,7 +114,7 @@ jobs:
     - name: firefox info
       run: |
         useradd r
-        su -l r
+        su r
         firefox
     - uses: actions/checkout@v1
     - name: install hawc
