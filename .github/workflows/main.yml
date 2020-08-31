@@ -104,6 +104,8 @@ jobs:
     - name: install
       run: |
         pip install -r requirements/dev.txt
-    - name: run tests
+    - name: test
+      env:
+        HAWC_INTEGRATION_TESTS: 1
       run: |
         py.test tests/integration/
