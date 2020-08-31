@@ -78,3 +78,17 @@ jobs:
     - name: lint
       run: |
         make lint-js
+
+  selenium:
+    name: selenium
+    runs-on: ubuntu-18.04
+    container:
+      image: nikolaik/python-nodejs:latest
+      env:
+        HAWC_INTEGRATION_TESTS: 1
+    steps:
+    - uses: actions/checkout@v1
+      run: |
+        ls
+        python --version
+        echo $HAWC_INTEGRATION_TESTS
