@@ -11,6 +11,9 @@ SKIP_INTEGRATION = os.environ.get("HAWC_INTEGRATION_TESTS") is None
 class SeleniumTest(LiveServerTestCase, TestCase):
     @pytest.mark.skipif(SKIP_INTEGRATION, reason="integration test")
     def test_hello_helium(self):
+        print(self.live_server_url)
+        print(self.host)
+        print(self.port)
         # set test to use our session-level driver
         h.set_driver(self.driver)
 
@@ -29,6 +32,9 @@ class SeleniumTest(LiveServerTestCase, TestCase):
 
     @pytest.mark.skipif(SKIP_INTEGRATION, reason="integration test")
     def test_local(self):
+        print(self.live_server_url)
+        print(self.host)
+        print(self.port)
         # set test to use our session-level driver
         h.set_driver(self.driver)
 
