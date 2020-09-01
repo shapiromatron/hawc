@@ -99,6 +99,7 @@ jobs:
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
       firefox:
         image: selenium/standalone-firefox:latest
+        options: --network-alias selenium-server
 
     env:
       SELENIUM_SERVER: firefox
