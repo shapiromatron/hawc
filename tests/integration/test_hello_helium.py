@@ -2,13 +2,13 @@ import os
 
 import helium as h
 import pytest
-from django.test import LiveServerTestCase, TestCase
+from django.test import LiveServerTestCase
 
 SKIP_INTEGRATION = os.environ.get("HAWC_INTEGRATION_TESTS") is None
 
 
 @pytest.mark.usefixtures("set_driver")
-class SeleniumTest(LiveServerTestCase, TestCase):
+class SeleniumTest(LiveServerTestCase):
     @pytest.mark.skipif(SKIP_INTEGRATION, reason="integration test")
     def test_hello_helium(self):
         print(self.live_server_url)
