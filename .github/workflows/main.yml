@@ -118,7 +118,7 @@ jobs:
     - name: test
       env:
         HAWC_INTEGRATION_TESTS: 1
-        DJANGO_LIVE_TEST_SERVER_ADDRESS: web-server:8000
+        #DJANGO_LIVE_TEST_SERVER_ADDRESS: web-server:8000
         DJANGO_DB_NAME: hawc-test
         DJANGO_DB_USER: hawc
         DJANGO_DB_PW: password
@@ -127,4 +127,4 @@ jobs:
         PUBMED_API_KEY: ${{ secrets.PUBMED_API_KEY }}
       run: |
         echo $DJANGO_LIVE_TEST_SERVER_ADDRESS
-        py.test --liveserver web-server:8000 tests/integration/
+        py.test tests/integration/
