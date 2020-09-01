@@ -9,7 +9,7 @@ SKIP_INTEGRATION = os.environ.get("HAWC_INTEGRATION_TESTS") is None
 
 class SeleniumTest(LiveServerTestCase):
     @pytest.mark.skipif(SKIP_INTEGRATION, reason="integration test")
-    def test_hello_helium(chrome_driver):
+    def test_hello_helium(self, chrome_driver):
         # set test to use our session-level driver
         h.set_driver(chrome_driver)
 
@@ -27,7 +27,7 @@ class SeleniumTest(LiveServerTestCase):
         assert h.Text(msg).exists() is True
 
     @pytest.mark.skipif(SKIP_INTEGRATION, reason="integration test")
-    def test_local(chrome_driver):
+    def test_local(self, chrome_driver):
         # set test to use our session-level driver
         h.set_driver(chrome_driver)
 
