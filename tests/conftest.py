@@ -126,4 +126,5 @@ def set_driver(request):
         desired_capabilities=DesiredCapabilities.FIREFOX,
         options=options,
     )
+    driver.implicitly_wait(10)
     request.cls.driver = driver
