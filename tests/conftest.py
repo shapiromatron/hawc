@@ -119,4 +119,11 @@ def chrome_driver():
 
 @pytest.fixture
 def set_driver(request):
-    request.cls.driver = chrome_driver()
+    options = webdriver.FirefoxOptions()
+    options.add_argument("--window-size=1920,1080")
+    driver = webdriver.Remote(
+        command_executor="http://selenium-server:4444/wd/hub",
+        desired_capabilities=DesiredCapabilities.FIREFOX,
+        options=options,
+    )
+    request.cls.driver = driver
