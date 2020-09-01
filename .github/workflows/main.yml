@@ -85,6 +85,7 @@ jobs:
 
     container:
       image: nikolaik/python-nodejs:python3.6-nodejs12
+      options: --network-alias web-server
 
     services:
       postgres:

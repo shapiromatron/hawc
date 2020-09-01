@@ -2,13 +2,13 @@ import os
 
 import helium as h
 import pytest
-from django.test import LiveServerTestCase
+from django.test import LiveServerTestCase, TestCase
 
 SKIP_INTEGRATION = os.environ.get("HAWC_INTEGRATION_TESTS") is None
 
 
 @pytest.mark.usefixtures("set_driver")
-class SeleniumTest(LiveServerTestCase):
+class SeleniumTest(LiveServerTestCase, TestCase):
     @pytest.mark.skipif(SKIP_INTEGRATION, reason="integration test")
     def test_hello_helium(self):
         # set test to use our session-level driver
@@ -33,7 +33,7 @@ class SeleniumTest(LiveServerTestCase):
         h.set_driver(self.driver)
 
         # go to website
-        h.go_to("http://web-server")
+        h.go_to(self.live_server_url)
         h.click("Login")
         assert "/user/login/" in self.driver.current_url
 
