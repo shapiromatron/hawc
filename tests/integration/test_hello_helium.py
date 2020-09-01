@@ -7,16 +7,17 @@ from django.test import LiveServerTestCase
 SKIP_INTEGRATION = os.environ.get("HAWC_INTEGRATION_TESTS") is None
 
 
+@pytest.mark.usefixtures("set_driver")
 class SeleniumTest(LiveServerTestCase):
     @pytest.mark.skipif(SKIP_INTEGRATION, reason="integration test")
-    def test_hello_helium(self, chrome_driver):
+    def test_hello_helium(self):
         # set test to use our session-level driver
-        h.set_driver(chrome_driver)
+        h.set_driver(self.driver)
 
         # go to website
         h.go_to("https://hawcproject.org")
         h.click("Login")
-        assert "/user/login/" in chrome_driver.current_url
+        assert "/user/login/" in self.driver.current_url
 
         # invalid password check
         msg = "Please enter a correct email and password."
@@ -27,14 +28,14 @@ class SeleniumTest(LiveServerTestCase):
         assert h.Text(msg).exists() is True
 
     @pytest.mark.skipif(SKIP_INTEGRATION, reason="integration test")
-    def test_local(self, chrome_driver):
+    def test_local(self):
         # set test to use our session-level driver
-        h.set_driver(chrome_driver)
+        h.set_driver(self.driver)
 
         # go to website
         h.go_to("http://web-server")
         h.click("Login")
-        assert "/user/login/" in chrome_driver.current_url
+        assert "/user/login/" in self.driver.current_url
 
         # invalid password check
         msg = "Please enter a correct email and password."

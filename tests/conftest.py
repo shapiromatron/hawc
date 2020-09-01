@@ -115,3 +115,8 @@ def chrome_driver():
         yield driver
     finally:
         driver.quit()
+
+
+@pytest.fixture
+def set_driver(request):
+    request.cls.driver = chrome_driver()
