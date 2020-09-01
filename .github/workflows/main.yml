@@ -113,7 +113,7 @@ jobs:
         pip install -r requirements/dev.txt
     - run: |
         yarn --cwd ./frontend install
-        npm start --prefix ./frontend
+        npm start --prefix ./frontend &
     - name: test
       env:
         HAWC_INTEGRATION_TESTS: 1
