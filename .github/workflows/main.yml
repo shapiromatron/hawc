@@ -112,6 +112,7 @@ jobs:
       run: |
         pip install -r requirements/dev.txt
     - run: |
+        mv ci-webpack-stats.json webpack-stats.json
         yarn --cwd ./frontend install
         npm start --prefix ./frontend &
     - name: test
