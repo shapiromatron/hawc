@@ -126,5 +126,6 @@ jobs:
         DJANGO_DB_PORT: ${{ job.services.postgres.ports[5432] }} # get randomly assigned published port
         PUBMED_API_KEY: ${{ secrets.PUBMED_API_KEY }}
       run: |
+        sleep 30
         echo $DJANGO_LIVE_TEST_SERVER_ADDRESS
         py.test --liveserver web-server:8000 tests/integration/
