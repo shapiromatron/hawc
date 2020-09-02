@@ -85,7 +85,7 @@ jobs:
 
     container:
       image: nikolaik/python-nodejs:python3.6-nodejs12
-      options: --network-alias web-server
+      options: --network-alias container
 
     services:
       postgres:
@@ -98,15 +98,10 @@ jobs:
         # will assign a random free host port
         - 5432:5432
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
-      firefox:
+      selenium-server:
         image: selenium/standalone-firefox:latest
-        options: --network-alias selenium-server
-
-    env:
-      SELENIUM_SERVER: firefox
 
     steps:
-    - run: echo $SELENIUM_SERVER
     - uses: actions/checkout@v1
     - name: install hawc
       run: |
@@ -118,7 +113,6 @@ jobs:
     - name: test
       env:
         HAWC_INTEGRATION_TESTS: 1
-        DJANGO_LIVE_TEST_SERVER_ADDRESS: web-server:8000
         DJANGO_DB_NAME: hawc-test
         DJANGO_DB_USER: hawc
         DJANGO_DB_PW: password
@@ -127,5 +121,4 @@ jobs:
         PUBMED_API_KEY: ${{ secrets.PUBMED_API_KEY }}
       run: |
         sleep 30
-        echo $DJANGO_LIVE_TEST_SERVER_ADDRESS
-        py.test --liveserver web-server:8000 tests/integration/
+        py.test --liveserver container:8000 tests/integration/
