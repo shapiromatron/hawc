@@ -110,6 +110,8 @@ def chrome_driver():
     options = webdriver.ChromeOptions()
     options.add_argument("--window-size=1920,1080")
     if CI:
+        options.add_experimental_option("excludeSwitches", ["enable-logging"])
+        options.add_argument("--headless")
         driver = webdriver.Remote(
             command_executor="http://selenium-server:4444/wd/hub",
             desired_capabilities=DesiredCapabilities.CHROME,
