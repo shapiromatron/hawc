@@ -85,6 +85,13 @@ jobs:
 
     container:
       image: nikolaik/python-nodejs:python3.6-nodejs12
+      env:
+        DJANGO_DB_NAME: hawc-test
+        DJANGO_DB_USER: hawc
+        DJANGO_DB_PW: password
+        DJANGO_DB_HOST: postgres
+        DJANGO_DB_PORT: ${{ job.services.postgres.ports[5432] }} # get randomly assigned published port
+        PUBMED_API_KEY: ${{ secrets.PUBMED_API_KEY }}
       options: --network-alias container
 
     services:
@@ -114,11 +121,5 @@ jobs:
     - name: run selenium tests
       env:
         HAWC_INTEGRATION_TESTS: 1
-        DJANGO_DB_NAME: hawc-test
-        DJANGO_DB_USER: hawc
-        DJANGO_DB_PW: password
-        DJANGO_DB_HOST: postgres
-        DJANGO_DB_PORT: ${{ job.services.postgres.ports[5432] }} # get randomly assigned published port
-        PUBMED_API_KEY: ${{ secrets.PUBMED_API_KEY }}
       run: |
         py.test --liveserver container:8000 tests/integration/

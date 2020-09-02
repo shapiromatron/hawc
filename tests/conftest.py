@@ -112,12 +112,14 @@ def chrome_driver():
     if CI:
         options.add_experimental_option("excludeSwitches", ["enable-logging"])
         options.add_argument("--headless")
+        # use a remote driver for CI's selenium server
         driver = webdriver.Remote(
             command_executor="http://selenium-server:4444/wd/hub",
             desired_capabilities=DesiredCapabilities.CHROME,
             options=options,
         )
     else:
+        # use helium's chromedriver
         driver = helium.start_chrome(options=options, headless=True)
     try:
         yield driver
