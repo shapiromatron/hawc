@@ -127,4 +127,4 @@ jobs:
         PUBMED_API_KEY: ${{ secrets.PUBMED_API_KEY }}
       run: |
         echo $DJANGO_LIVE_TEST_SERVER_ADDRESS
-        py.test tests/integration/
+        py.test --liveserver web-server:8000 tests/integration/
