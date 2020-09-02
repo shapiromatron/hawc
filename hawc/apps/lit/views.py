@@ -448,25 +448,13 @@ class RefDelete(BaseDelete):
         return reverse_lazy("lit:overview", args=(self.assessment.pk,))
 
 
-class RefSearch(AssessmentPermissionsMixin, FormView):
+class RefSearch(AssessmentPermissionsMixin, TemplateView):
     template_name = "lit/reference_search.html"
-    form_class = forms.ReferenceSearchForm
 
     def dispatch(self, *args, **kwargs):
         self.assessment = get_object_or_404(Assessment, pk=kwargs["pk"])
         self.permission_check_user_can_view()
         return super().dispatch(*args, **kwargs)
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs["assessment_pk"] = self.assessment.pk
-        return kwargs
-
-    def form_valid(self, form):
-        refs = form.search()
-        return HttpResponse(
-            json.dumps({"status": "success", "refs": refs}), content_type="application/json",
-        )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

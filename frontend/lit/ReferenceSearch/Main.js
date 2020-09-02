@@ -1,15 +1,18 @@
 import React, {Component} from "react";
 import PropTypes from "prop-types";
+import {toJS} from "mobx";
 import {inject, observer} from "mobx-react";
 
 import Loading from "shared/components/Loading";
+import ReferenceTable from "../components/ReferenceTable";
+import SearchForm from "./SearchForm";
 
 @inject("store")
 @observer
 class ReferenceSearchMain extends Component {
     render() {
-        const {store} = this.props;
-
+        const {store} = this.props,
+            {isSearching, references, hasReferences, numReferences} = store;
         return (
             <div className="row-fluid">
                 <div className="accordion" id="searchFormAccordion">
@@ -20,43 +23,35 @@ class ReferenceSearchMain extends Component {
                                 data-toggle="collapse"
                                 data-parent="#searchFormAccordion"
                                 href="#searchCollapser">
-                                Search settings
+                                Find references
                             </a>
                         </div>
                         <div id="searchCollapser" className="accordion-body collapse in">
                             <div className="accordion-inner container-fluid">
-                                <div className="control-group">
-                                    <label htmlFor="id_db_id" className="control-label">
-                                        Database unique identifier
-                                    </label>
-                                    <div className="controls">
-                                        <input
-                                            type="number"
-                                            id="id_db_id"
-                                            onChange={e => {
-                                                store.changeSearchTerm(
-                                                    "db_id",
-                                                    parseInt(e.target.value)
-                                                );
-                                            }}
-                                        />
-                                        <p className="help-block">
-                                            Identifiers may include Pubmed ID, DOI, etc.
-                                        </p>
-                                    </div>
-                                </div>
-                                <div className="well">
-                                    <button className="btn btn-primary" onClick={store.search}>
-                                        <i className="fa fa-search"></i>&nbsp;Search
-                                    </button>
-                                </div>
+                                <SearchForm />
                             </div>
                         </div>
                     </div>
                 </div>
                 <div>
-                    <Loading />
-                    <p>results div</p>
+                    {isSearching ? <Loading /> : null}
+                    {hasReferences && numReferences === 0 ? (
+                        <p>Search found no references; please change query parameters.</p>
+                    ) : null}
+                    {numReferences > 0 ? (
+                        numReferences === store.MAX_REFERENCES ? (
+                            <p>
+                                <b>Showing the first {numReferences} references.</b>
+                            </p>
+                        ) : (
+                            <p>
+                                <b>{numReferences} references found.</b>
+                            </p>
+                        )
+                    ) : null}
+                    {hasReferences && numReferences > 0 ? (
+                        <ReferenceTable references={toJS(references)} />
+                    ) : null}
                 </div>
             </div>
         );
