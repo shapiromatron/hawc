@@ -1,11 +1,15 @@
 import logging
+import os
 from pathlib import Path
 from typing import NamedTuple
 
+import helium
 import pytest
 from django.core.management import call_command
 from selenium import webdriver
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+
+CI = os.environ.get("CI") == "true"
 
 
 class UserCredential(NamedTuple):
@@ -103,27 +107,17 @@ def rewrite_data_files():
 
 @pytest.fixture(scope="session")
 def chrome_driver():
-    options = webdriver.FirefoxOptions()
+    options = webdriver.ChromeOptions()
     options.add_argument("--window-size=1920,1080")
-    driver = webdriver.Remote(
-        command_executor="http://selenium-server:4444/wd/hub",
-        desired_capabilities=DesiredCapabilities.FIREFOX,
-        options=options,
-    )
+    if CI:
+        driver = webdriver.Remote(
+            command_executor="http://selenium-server:4444/wd/hub",
+            desired_capabilities=DesiredCapabilities.CHROME,
+            options=options,
+        )
+    else:
+        driver = helium.start_chrome(options=options, headless=True)
     try:
         yield driver
     finally:
         driver.quit()
-
-
-@pytest.fixture
-def set_driver(request):
-    options = webdriver.FirefoxOptions()
-    options.add_argument("--window-size=1920,1080")
-    driver = webdriver.Remote(
-        command_executor="http://selenium-server:4444/wd/hub",
-        desired_capabilities=DesiredCapabilities.FIREFOX,
-        options=options,
-    )
-    driver.implicitly_wait(10)
-    request.cls.driver = driver

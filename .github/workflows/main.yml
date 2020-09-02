@@ -95,22 +95,23 @@ jobs:
           POSTGRES_PASSWORD: password
           POSTGRES_DB: hawc-test
         ports:
-        # will assign a random free host port
         - 5432:5432
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
       selenium-server:
-        image: selenium/standalone-firefox:latest
+        image: selenium/standalone-chrome:latest
 
     steps:
     - uses: actions/checkout@v1
     - name: install hawc
       run: |
         pip install -r requirements/dev.txt
-    - run: |
+    - name: setup web server
+      run: |
         mv ci-webpack-stats.json webpack-stats.json
         yarn --cwd ./frontend install
         npm start --prefix ./frontend &
-    - name: test
+        sleep 30
+    - name: run selenium tests
       env:
         HAWC_INTEGRATION_TESTS: 1
         DJANGO_DB_NAME: hawc-test
@@ -120,5 +121,4 @@ jobs:
         DJANGO_DB_PORT: ${{ job.services.postgres.ports[5432] }} # get randomly assigned published port
         PUBMED_API_KEY: ${{ secrets.PUBMED_API_KEY }}
       run: |
-        sleep 30
         py.test --liveserver container:8000 tests/integration/
