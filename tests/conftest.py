@@ -2,7 +2,6 @@ import logging
 from pathlib import Path
 from typing import NamedTuple
 
-
 import pytest
 from django.core.management import call_command
 from selenium import webdriver
