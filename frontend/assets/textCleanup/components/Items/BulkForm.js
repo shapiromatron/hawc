@@ -136,7 +136,7 @@ BulkForm.propTypes = {
     handleDetailSubmit: PropTypes.func.isRequired,
     params: PropTypes.object.isRequired,
     items: PropTypes.array.isRequired,
-    modalClass: PropTypes.object,
+    modalClass: PropTypes.string,
 };
 
 export default BulkForm;

@@ -11,7 +11,8 @@ import FieldSelection from "textCleanup/containers/FieldSelection";
 import Items from "textCleanup/containers/Items/App";
 
 class Root extends Component {
-    componentDidMount() {
+    constructor(props) {
+        super(props);
         this.props.store.dispatch(loadConfig());
     }
 

@@ -43,17 +43,17 @@ function mapStateToProps(state) {
 }
 
 FieldSelection.propTypes = {
-    types: PropTypes.object,
+    types: PropTypes.array,
     dispatch: PropTypes.func,
     match: PropTypes.shape({
         params: PropTypes.shape({
-            type: PropTypes.object,
+            type: PropTypes.string,
         }),
     }),
     location: PropTypes.shape({
-        pathname: PropTypes.object,
+        pathname: PropTypes.string,
     }),
-    objects: PropTypes.object,
+    objects: PropTypes.array,
 };
 
 export default connect(mapStateToProps)(FieldSelection);
