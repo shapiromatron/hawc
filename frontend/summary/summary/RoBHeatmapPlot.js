@@ -1,6 +1,6 @@
 import $ from "$";
 import _ from "lodash";
-import d3 from "d3";
+import * as d3 from "d3";
 
 import HAWCModal from "utils/HAWCModal";
 
@@ -85,6 +85,7 @@ class RoBHeatmapPlot extends D3Visualization {
     processData() {
         var cells_data = [],
             gradients_data = [],
+            excluded_score_ids = new Set(this.data.settings.excluded_score_ids),
             included_metrics = this.data.settings.included_metrics,
             studies,
             metrics,
@@ -98,26 +99,34 @@ class RoBHeatmapPlot extends D3Visualization {
                 .filter(rob => _.includes(included_metrics, rob.data.metric.id))
                 .groupBy(rob => rob.data.study_id)
                 .values()
-                .each(function(robArray) {
-                    const displayData = getMultiScoreDisplaySettings(robArray.map(rob => rob.data)),
+                .each(robArray => {
+                    const displayedScores = robArray.filter(
+                        rob => !excluded_score_ids.has(rob.data.id)
+                    );
+                    if (displayedScores.length === 0) {
+                        return;
+                    }
+                    const displayData = getMultiScoreDisplaySettings(
+                            displayedScores.map(rob => rob.data)
+                        ),
                         metric_name =
-                            robArray[0].data.metric.use_short_name === true &&
-                            robArray[0].data.metric.short_name !== ""
-                                ? robArray[0].data.metric.short_name
-                                : robArray[0].data.metric.name;
+                            displayedScores[0].data.metric.use_short_name === true &&
+                            displayedScores[0].data.metric.short_name !== ""
+                                ? displayedScores[0].data.metric.short_name
+                                : displayedScores[0].data.metric.name;
                     if (displayData.svgStyle.gradient) {
                         gradients_data.push(displayData.svgStyle.gradient);
                     }
                     cells_data.push({
                         robArray,
                         directions: displayData.directions,
-                        metric: robArray[0].data.metric,
+                        metric: displayedScores[0].data.metric,
                         metric_label: metric_name,
                         score_color: displayData.svgStyle.fill,
                         score_text: displayData.symbolShortText,
-                        score_text_color: robArray[0].data.score_text_color,
-                        study: robArray[0].study,
-                        study_label: robArray[0].study.data[study_label_field],
+                        score_text_color: displayedScores[0].data.score_text_color,
+                        study: displayedScores[0].study,
+                        study_label: displayedScores[0].study.data[study_label_field],
                         symbols: displayData.symbols,
                     });
                 })
@@ -329,14 +338,14 @@ class RoBHeatmapPlot extends D3Visualization {
         $(".x_axis text")
             .each(this.xIsStudy ? getStudySQs : getMetricSQs)
             .attr("class", "heatmap_selectable")
-            .on("mouseover", v => self.draw_hovers(this, {draw: true, type: "column"}))
+            .on("mouseover", v => self.draw_hovers(v.target, {draw: true, type: "column"}))
             .on("mouseout", hideHovers)
             .on("click", showSQs);
 
         $(".y_axis text")
             .each(!this.xIsStudy ? getStudySQs : getMetricSQs)
             .attr("class", "heatmap_selectable")
-            .on("mouseover", v => self.draw_hovers(this, {draw: true, type: "row"}))
+            .on("mouseover", v => self.draw_hovers(v.target, {draw: true, type: "row"}))
             .on("mouseout", hideHovers)
             .on("click", showSQs);
 
@@ -371,8 +380,13 @@ class RoBHeatmapPlot extends D3Visualization {
     }
 
     draw_hovers(v, options) {
-        if (this.hover_study_bar) this.hover_study_bar.remove();
-        if (!options.draw) return;
+        if (this.hover_study_bar) {
+            this.hover_study_bar.remove();
+        }
+
+        if (!options.draw) {
+            return;
+        }
 
         var draw_type;
         switch (options.type) {
@@ -401,7 +415,6 @@ class RoBHeatmapPlot extends D3Visualization {
                 };
                 break;
         }
-
         this.hover_study_bar = this.hover_group
             .selectAll("svg.rect")
             .data([draw_type])

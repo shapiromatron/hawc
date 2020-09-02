@@ -9,6 +9,7 @@
     "chemical id": 1,
     "chemical name": "Bisphenol AF",
     "chemical CAS": "1478-61-1",
+    "chemical DTXSID": null,
     "chemical purity": ">98%",
     "IVExperiment id": 1,
     "IVCellType id": 1,

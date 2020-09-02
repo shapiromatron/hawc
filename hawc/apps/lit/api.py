@@ -2,6 +2,7 @@ import pandas as pd
 import plotly.express as px
 from django.conf import settings
 from django.core.cache import cache
+from django.db import transaction
 from django.utils import timezone
 from rest_framework import exceptions, mixins, status, viewsets
 from rest_framework.decorators import action
@@ -9,7 +10,11 @@ from rest_framework.response import Response
 
 from ..assessment.api import AssessmentLevelPermissions, AssessmentRootedTagTreeViewset
 from ..assessment.models import Assessment
-from ..common.api import CleanupFieldsBaseViewSet, LegacyAssessmentAdapterMixin
+from ..common.api import (
+    CleanupFieldsBaseViewSet,
+    LegacyAssessmentAdapterMixin,
+    OncePerMinuteThrottle,
+)
 from ..common.helper import FlatExport, re_digits
 from ..common.renderers import PandasRenderers
 from ..common.serializers import UnusedSerializer
@@ -166,6 +171,43 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         export = FlatExport(df=df, filename=f"df-{instance.id}")
         return Response(export)
 
+    @transaction.atomic()
+    @action(
+        detail=True,
+        throttle_classes=(OncePerMinuteThrottle,),
+        methods=("post",),
+        url_path="replace-hero",
+    )
+    def replace_hero(self, request, pk):
+        """Replace old HERO ID with new HERO ID for selected references
+
+        Expects an input of `{replace: [[1,10],[2,20],[3,30]]}`, a list of lists with two items in each
+        inner list. Each inner list contains the reference ID and the new HERO ID, respectively.
+        """
+        assessment = self.get_object()
+        serializer = serializers.ReferenceReplaceHeroIdSerializer(
+            data=request.data, context={"assessment": assessment}
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.execute()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @transaction.atomic()
+    @action(
+        detail=True,
+        throttle_classes=(OncePerMinuteThrottle,),
+        methods=("post",),
+        url_path="update-reference-metadata-from-hero",
+    )
+    def update_reference_metadata_from_hero(self, request, pk):
+        """
+        Query HERO for all references in an assessment that are mapped to HERO, fetch the latest
+        metadata from HERO, and then update the reference metadata in HAWC with the data from HERO.
+        """
+        assessment = self.get_object()
+        models.Reference.update_hero_metadata(assessment.id)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 class SearchViewset(mixins.CreateModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     model = models.Search
@@ -232,3 +274,14 @@ class ReferenceCleanupViewset(CleanupFieldsBaseViewSet):
     serializer_class = serializers.ReferenceCleanupFieldsSerializer
     model = models.Reference
     assessment_filter_args = "assessment"
+
+
+class ReferenceViewset(
+    mixins.RetrieveModelMixin,
+    mixins.DestroyModelMixin,
+    mixins.UpdateModelMixin,
+    viewsets.GenericViewSet,
+):
+    serializer_class = serializers.ReferenceSerializer
+    permission_classes = (AssessmentLevelPermissions,)
+    queryset = models.Reference.objects.all()

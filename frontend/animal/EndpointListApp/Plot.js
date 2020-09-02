@@ -1,7 +1,8 @@
+import _ from "lodash";
 import $ from "$";
 import PropTypes from "prop-types";
 import React from "react";
-import d3 from "d3";
+import * as d3 from "d3";
 import {inject, observer} from "mobx-react";
 import {autorun, toJS} from "mobx";
 
@@ -11,16 +12,22 @@ import Endpoint from "animal/Endpoint";
 
 import Tooltip from "./Tooltip";
 
-const dodgeLogarithmic = (data, x, radius, approximateXValues) => {
+const dodgeLogarithmic = (data, x, radius, options) => {
+        // https://observablehq.com/@d3/beeswarm-ii
         // https://observablehq.com/@d3/beeswarm-iii
+        // modified to mutate data instead of creating a copy data
         const radius2 = radius ** 2,
-            xJitter = d3.random.normal(0, radius * 1.5), // equally space
-            circles = data
-                .map(d => ({x: x(d.dose) + (approximateXValues ? xJitter() : 0), data: d}))
-                .sort((a, b) => a.x - b.x),
+            xJitter = d3.randomNormal(0, radius * 1.5), // equally space
             epsilon = 1e-3;
+
         let head = null,
             tail = null;
+
+        data.forEach(d => {
+            d.x = x(d.dose) + (options.approximateXValues ? xJitter() : 0);
+        });
+
+        data.sort((a, b) => a.x - b.x);
 
         // Returns true if circle ⟨x,y⟩ intersects with any circle in the queue.
         function intersects(x, y) {
@@ -35,7 +42,7 @@ const dodgeLogarithmic = (data, x, radius, approximateXValues) => {
         }
 
         // Place each circle sequentially.
-        for (const b of circles) {
+        for (const b of data) {
             // Remove circles from the queue that can’t intersect the new circle b.
             while (head && head.x < b.x - radius2) head = head.next;
 
@@ -44,8 +51,12 @@ const dodgeLogarithmic = (data, x, radius, approximateXValues) => {
                 let a = head;
                 b.y = Infinity;
                 do {
-                    let y = a.y + Math.sqrt(radius2 - (a.x - b.x) ** 2);
-                    if (y < b.y && !intersects(b.x, y)) b.y = y;
+                    let y1 = a.y + Math.sqrt(radius2 - (a.x - b.x) ** 2);
+                    let y2 = a.y - Math.sqrt(radius2 - (a.x - b.x) ** 2);
+                    if (Math.abs(y1) < Math.abs(b.y) && !intersects(b.x, y1)) b.y = y1;
+                    if (options.twoSided) {
+                        if (Math.abs(y2) < Math.abs(b.y) && !intersects(b.x, y2)) b.y = y2;
+                    }
                     a = a.next;
                 } while (a);
             }
@@ -55,10 +66,8 @@ const dodgeLogarithmic = (data, x, radius, approximateXValues) => {
             if (head === null) head = tail = b;
             else tail = tail.next = b;
         }
-
-        return circles;
     },
-    renderPlot = function(el, values, settings) {
+    renderPlot = function(el, store) {
         // always start fresh
         $(el).empty();
 
@@ -77,87 +86,188 @@ const dodgeLogarithmic = (data, x, radius, approximateXValues) => {
                 ) -
                 margin.top -
                 margin.bottom,
-            itemRadius = 5;
+            itemRadius = 5,
+            fullDataset = toJS(store.plotData);
 
-        let xExtent = d3.extent(values, d => d.dose),
+        // init full dataset
+        fullDataset.forEach((d, i) => {
+            d.idx = i;
+            d.x = null;
+            d.y = null;
+            d.next = null;
+        });
+
+        let xExtent = d3.extent(fullDataset, d => d.dose),
             xFloor = 10 ** Math.floor(Math.log10(xExtent[0])),
             xCeil = 10 ** Math.ceil(Math.log10(xExtent[1])),
-            x = d3.scale
-                .log()
+            x = d3
+                .scaleLog()
                 .domain([xFloor, xCeil])
-                .range([0, width]);
+                .range([0, width]),
+            yBaseMaxRange = height - itemRadius - 2,
+            y = d3.scaleLinear().range([yBaseMaxRange, 0]);
 
-        let scaledData = dodgeLogarithmic(values, x, itemRadius, settings.approximateXValues);
-
-        let yBaseMaxRange = height - itemRadius - 2,
-            y = d3.scale
-                .linear()
-                .domain(d3.extent(scaledData.map(d => d.y)))
-                .range([yBaseMaxRange, 0]);
-
-        // hard code values for consistency
-        // using d3.category10
-        let colorScale = d3.scale
-            .ordinal()
-            .domain(["noel", "loel", "fel", "bmd", "bmdl"])
-            .range(["#ff7f0e", "#1f77b4", "#d62728", "#2ca02c", "#9467bd"]);
-
-        let numTicks = Math.ceil(Math.log10(xExtent[1])) - Math.floor(Math.log10(xExtent[0])),
-            xAxis = d3.svg
-                .axis()
-                .scale(x)
-                .orient("bottom")
-                .ticks(numTicks, ",.f")
-                .tickSize(6, 0);
-
-        let $tooltip = $("<div>").appendTo(el);
+        // hard code values for consistency, taken from `d3.schemeCategory10`
+        let colorScale = d3
+                .scaleOrdinal()
+                .domain(["noel", "loel", "fel", "bmd", "bmdl"])
+                .range(["#ff7f0e", "#1f77b4", "#d62728", "#2ca02c", "#9467bd"]),
+            numTicks = Math.ceil(Math.log10(xExtent[1])) - Math.floor(Math.log10(xExtent[0])),
+            xAxis = d3.axisBottom(x).ticks(numTicks + 1, ","),
+            $tooltip = $("<div>").appendTo(el);
 
         let svg = d3
-            .select(el)
-            .append("svg")
-            .attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom)
-            .append("g")
-            .attr("transform", `translate(${margin.left},${margin.top})`);
+                .select(el)
+                .append("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+                .append("g")
+                .attr("transform", `translate(${margin.left},${margin.top})`),
+            itemsGroup = svg.append("g").attr("class", "items");
 
+        // draw x-axis
         svg.append("g")
             .attr("class", "x axis")
             .attr("transform", `translate(0,${height})`)
             .call(xAxis);
 
-        let itemsGroup = svg.append("g").attr("class", "items");
+        const refresh = function(settings) {
+                const filterDataset = function() {
+                        const filtered = fullDataset
+                                .filter(d => _.includes(settings.doses, d.data["dose units id"]))
+                                .filter(d => _.includes(settings.systems, d.data.system))
+                                .filter(d => _.includes(settings.criticalValues, d.type)),
+                            grouped = d3
+                                .nest()
+                                .key(d => d.data.system)
+                                .map(filtered);
 
-        let items = itemsGroup
-            .selectAll(".critical-dose")
-            .data(scaledData)
-            .enter()
-            .append("circle")
-            .attr("class", "critical-dose")
-            .attr("cx", d => d.x)
-            .attr("cy", height)
-            .attr("r", 0)
-            .attr("fill", d => colorScale(d.data.type))
-            .on("click", d => Endpoint.displayAsModal(d.data.data["endpoint id"]));
+                        return _.values(grouped);
+                    },
+                    t = svg.transition();
 
-        bindTooltip($tooltip, items, d => <Tooltip d={d.data} />, {
-            mouseEnterExtra: () => d3.select(event.target).moveToFront(),
-        });
+                let range,
+                    filteredData = filterDataset(),
+                    maxYRange = 0;
 
-        const refresh = function(values) {
-                let data = dodgeLogarithmic(values, x, itemRadius, settings.approximateXValues),
-                    maxY = d3.max(data, d => d.y);
+                // get max range for each group to determine spacing
+                _.each(filteredData, d => {
+                    dodgeLogarithmic(d, x, itemRadius, {
+                        approximateXValues: settings.approximateXValues,
+                        twoSided: true,
+                    });
+                    range = d3.extent(d, d => d.y);
+                    if (range[1] - range[0] > maxYRange) {
+                        maxYRange = Math.ceil(range[1] - range[0]);
+                    }
+                });
+
+                let systems = _.chain(filteredData)
+                        .map(d => {
+                            return {name: d[0].data.system, median: d3.mean(d, el => el.dose)};
+                        })
+                        .sortBy(d => d.median)
+                        .value(),
+                    yGroupScale = d3
+                        .scalePoint()
+                        .domain(systems.map(d => d.name))
+                        .range([0, systems.length * maxYRange * 1.2])
+                        .padding(0.3);
+
+                _.each(filteredData, data => {
+                    let addition = yGroupScale(data[0].data.system);
+                    _.each(data, d => (d.y = d.y + addition));
+                });
 
                 // Reset y domain using new data
-                y.domain([0, Math.max(yBaseMaxRange / Math.sqrt(itemRadius), maxY)]);
+                let maxY = systems.length * maxYRange * 1.2;
+                y.domain([0, maxY]);
+                yGroupScale.range([yBaseMaxRange, 0]);
+
+                filteredData = _.flatten(filteredData);
+
+                itemsGroup
+                    .selectAll(".critical-dose-group-g")
+                    .data(systems, d => d.name)
+                    .join(
+                        enter => {
+                            let g = enter
+                                .append("g")
+                                .attr("class", "critical-dose-group-g")
+                                .attr("transform", d => `translate(0,${yGroupScale(d.name)})`);
+                            g.append("line")
+                                .attr("x1", x.range()[0])
+                                .attr("x2", x.range()[1])
+                                .attr("y1", 0)
+                                .attr("y2", 0)
+                                .attr("class", "critical-dose-group-line");
+                            g.append("line")
+                                .attr("x1", d => x(d.median))
+                                .attr("x2", d => x(d.median))
+                                .attr("y1", -10)
+                                .attr("y2", 10)
+                                .attr("class", "critical-dose-group-line")
+                                .append("title")
+                                .text(d => d.median);
+                            g.append("text")
+                                .attr("class", "critical-dose-legend-text")
+                                .attr("x", x.range()[0])
+                                .attr("y", 0)
+                                .text(d => d.name || "<null>");
+                        },
+                        update =>
+                            update
+                                .transition(t)
+                                .attr("transform", d => `translate(0,${yGroupScale(d.name)})`),
+                        exit =>
+                            exit
+                                .transition(t)
+                                .style("opacity", 0)
+                                .on("end", function() {
+                                    d3.select(this).remove();
+                                })
+                    );
 
                 // Remove object with data
-                let items = svg.selectAll(".critical-dose").data(data);
-                items.exit().remove();
+                let items = itemsGroup
+                    .selectAll(".critical-dose")
+                    .data(filteredData, d => d.idx)
+                    .join(
+                        enter =>
+                            enter
+                                .append("circle")
+                                .attr("class", "critical-dose")
+                                .attr("cx", d => d.x)
+                                .attr("cy", height)
+                                .attr("r", 0)
+                                .attr("fill", d => colorScale(d.type))
+                                .on("click", d => Endpoint.displayAsModal(d.data["endpoint id"])),
+                        update =>
+                            update
+                                .transition(t)
+                                .delay((d, i) => i * 2)
+                                .attr("cx", d => d.x)
+                                .attr("fill", d => colorScale(d.type)),
+                        exit =>
+                            exit
+                                .transition(t)
+                                .delay((d, i) => i * 2)
+                                .attr("r", 0)
+                                .style("opacity", 0)
+                                .on("end", function() {
+                                    d3.select(this).remove();
+                                })
+                    );
+
                 items
-                    .transition()
-                    .delay((d, i) => i)
+                    .transition(t)
+                    .delay((d, i) => i * 2)
                     .attr("cy", d => y(d.y))
                     .attr("r", itemRadius);
+
+                bindTooltip($tooltip, items, d => <Tooltip d={d} />, {
+                    mouseEnterExtra: () => d3.select(event.target).moveToFront(),
+                });
             },
             colorLegend = function() {
                 let legend = svg
@@ -174,7 +284,7 @@ const dodgeLogarithmic = (data, x, radius, approximateXValues) => {
                     .text("Critical value");
 
                 legend
-                    .selectAll(".item")
+                    .selectAll(".none")
                     .data(colorScale.domain())
                     .enter()
                     .append("g")
@@ -194,7 +304,7 @@ const dodgeLogarithmic = (data, x, radius, approximateXValues) => {
                     });
             };
         colorLegend();
-        refresh(values);
+        autorun(() => refresh(toJS(store.settings)));
     };
 
 @inject("store")
@@ -203,7 +313,7 @@ class Plot extends React.Component {
     componentDidMount() {
         const el = document.getElementById(this.divId),
             {store} = this.props;
-        autorun(() => renderPlot(el, toJS(store.plotData), toJS(store.settings)));
+        renderPlot(el, store);
     }
     render() {
         this.divId = h.randomString();

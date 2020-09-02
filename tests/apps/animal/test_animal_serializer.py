@@ -1,6 +1,56 @@
+from typing import Any, Dict
+
 import pytest
 
-from hawc.apps.animal.serializers import DosingRegimeSerializer
+from hawc.apps.animal.serializers import DosingRegimeSerializer, ExperimentSerializer
+from hawc.apps.assessment.models import DSSTox
+
+
+@pytest.mark.django_db
+class TestExperimentSerializer:
+    def _get_valid_dataset(self, db_keys):
+        data: Dict[str, Any] = dict(
+            study_id=db_keys.study_working,
+            name="30 day oral",
+            type="St",
+            has_multiple_generations=False,
+            chemical="2,3,7,8-Tetrachlorodibenzo-P-dioxin",
+            cas="1746-01-6",
+            chemical_source="ABC Inc.",
+            purity_available=True,
+            purity_qualifier="≥",
+            purity=99.9,
+            vehicle="DMSO",
+            guideline_compliance="not reported",
+            description="Details here.",
+        )
+        return data
+
+    def test_success(self, db_keys):
+        data = self._get_valid_dataset(db_keys)
+        serializer = ExperimentSerializer(data=data)
+        assert serializer.is_valid()
+
+    def test_dtxsid_validator(self, db_keys):
+        data = self._get_valid_dataset(db_keys)
+
+        # should be valid with no dtxsid
+        data.pop("dtxsid", None)
+        serializer = ExperimentSerializer(data=data)
+        assert serializer.is_valid()
+        assert "dtxsid" not in serializer.validated_data
+
+        # should be valid with a valid, existing dtxsid
+        data["dtxsid"] = DSSTox.objects.first().dtxsid
+        serializer = ExperimentSerializer(data=data)
+        assert serializer.is_valid()
+        assert "dtxsid" in serializer.validated_data
+
+        # should be invalid with an invalid dtxsid
+        data["dtxsid"] = "invalid"
+        serializer = ExperimentSerializer(data=data)
+        assert serializer.is_valid() is False
+        assert "dtxsid" not in serializer.validated_data
 
 
 @pytest.mark.django_db

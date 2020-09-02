@@ -129,7 +129,7 @@ class RiskOfBias(viewsets.ModelViewSet):
             if "overridden_objects" not in score:
                 score["overridden_objects"] = []
 
-        return super().create(request, args, kwargs)
+        return super().create(request, *args, **kwargs)
 
     @action(detail=True, methods=["get"])
     def override_options(self, request, pk=None):

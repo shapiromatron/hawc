@@ -53,6 +53,10 @@
 - model: contenttypes.contenttype
   fields:
     app_label: assessment
+    model: dsstox
+- model: contenttypes.contenttype
+  fields:
+    app_label: assessment
     model: assessment
 - model: contenttypes.contenttype
   fields:
@@ -90,6 +94,29 @@
   fields:
     app_label: assessment
     model: datasetrevision
+- model: contenttypes.contenttype
+  fields:
+    app_label: assessment
+    model: job
+  fields:
+    app_label: assessment
+    model: log
+- model: contenttypes.contenttype
+  fields:
+    app_label: assessment
+    model: blog
+- model: contenttypes.contenttype
+  fields:
+    app_label: vocab
+    model: term
+- model: contenttypes.contenttype
+  fields:
+    app_label: vocab
+    model: entity
+- model: contenttypes.contenttype
+  fields:
+    app_label: vocab
+    model: entitytermrelation
 - model: contenttypes.contenttype
   fields:
     app_label: lit
@@ -322,10 +349,81 @@
   fields:
     app_label: mgmt
     model: task
+- model: vocab.term
+  pk: 1
+  fields:
+    namespace: 1
+    parent: null
+    type: 1
+    name: Cardiovascular
+    notes: ''
+    deprecated_on: null
+    created_on: 2020-08-12 14:09:53.787958+00:00
+    last_updated: 2020-08-12 14:09:53.787980+00:00
+- model: vocab.term
+  pk: 2
+  fields:
+    namespace: 1
+    parent: 1
+    type: 2
+    name: Serum
+    notes: ''
+    deprecated_on: null
+    created_on: 2020-08-12 14:10:05.628749+00:00
+    last_updated: 2020-08-12 14:10:05.628772+00:00
+- model: vocab.term
+  pk: 3
+  fields:
+    namespace: 1
+    parent: 2
+    type: 3
+    name: Fatty Acids
+    notes: ''
+    deprecated_on: null
+    created_on: 2020-08-12 14:10:12.500906+00:00
+    last_updated: 2020-08-12 14:10:15.578993+00:00
+- model: vocab.term
+  pk: 4
+  fields:
+    namespace: 1
+    parent: 3
+    type: 4
+    name: Clinical Chemistry
+    notes: ''
+    deprecated_on: null
+    created_on: 2020-08-12 14:10:24.732205+00:00
+    last_updated: 2020-08-12 14:10:24.732228+00:00
+- model: vocab.term
+  pk: 5
+  fields:
+    namespace: 1
+    parent: 4
+    type: 5
+    name: Fatty Acid Balance
+    notes: ''
+    deprecated_on: null
+    created_on: 2020-08-12 14:10:38.555965+00:00
+    last_updated: 2020-08-12 14:10:38.555990+00:00
+- model: vocab.entity
+  pk: 1
+  fields:
+    ontology: 1
+    uid: C0015684
+    deprecated_on: null
+    created_on: 2020-08-12 14:11:50.009124+00:00
+    last_updated: 2020-08-12 14:11:50.009148+00:00
+- model: vocab.entitytermrelation
+  pk: 1
+  fields:
+    entity: 1
+    term: 5
+    deprecated_on: null
+    created_on: 2020-08-12 14:11:50.023861+00:00
+    last_updated: 2020-08-12 14:11:50.023879+00:00
 - model: myuser.hawcuser
   fields:
     password: md5$OtMBo5HXuH5d$79fbf1f0ae6d765b17b29256920cc8ef
-    last_login: 2020-07-06 19:41:10.180223+00:00
+    last_login: 2020-08-12 19:33:09.398007+00:00
     is_superuser: true
     email: sudo@sudo.com
     first_name: a
@@ -403,6 +501,70 @@
     user:
     - pm@pm.com
     HERO_access: false
+- model: assessment.dsstox
+  pk: DTXSID6026296
+  fields:
+    content:
+      casrn: 7732-18-5
+      checksum: NA
+      collidingCasrn: null
+      collidingGsid: null
+      collidingPreferredName: null
+      dtxcid: DTXCID106296
+      dtxsid: DTXSID6026296
+      imageURL: http://actorws.epa.gov/actorws/chemical/image?dtxcid=DTXCID106296&w=150&h=150&fmt=svg
+      indigoInChIKey: XLYOFNOQVPJJNP-UHFFFAOYSA-N
+      infoMsg: null
+      jChemInChIKey: XLYOFNOQVPJJNP-UHFFFAOYSA-N
+      molFormula: H2O
+      molWeight: 18.015
+      msReadyForms: http://actorws.epa.gov/actorws/dsstox/v02/msready?identifier=DTXCID106296
+      origIdentifier: DTXSID6026296
+      preferredName: Water
+      processedAs: LOOKUP
+      qsarForms: http://actorws.epa.gov/actorws/dsstox/v02/qsar?identifier=DTXCID106296
+      reformattedIdentifier: false
+      smiles: O
+      synGsid: 26296
+      synIdentifier: DTXSID6026296
+      synType: DSSTox_Substance_Id
+      trimmedLeadingZeros: false
+      trimmedWhitespace: false
+      warningMsg: null
+    created: 2020-08-12 19:34:12.687630+00:00
+    last_updated: 2020-08-12 19:34:12.687630+00:00
+- model: assessment.dsstox
+  pk: DTXSID7020970
+  fields:
+    content:
+      casrn: 1836-75-5
+      checksum: NA
+      collidingCasrn: null
+      collidingGsid: null
+      collidingPreferredName: null
+      dtxcid: DTXCID30970
+      dtxsid: DTXSID7020970
+      imageURL: http://actorws.epa.gov/actorws/chemical/image?dtxcid=DTXCID30970&w=150&h=150&fmt=svg
+      indigoInChIKey: XITQUSLLOSKDTB-UHFFFAOYSA-N
+      infoMsg: null
+      jChemInChIKey: XITQUSLLOSKDTB-UHFFFAOYSA-N
+      molFormula: C12H7Cl2NO3
+      molWeight: 284.09
+      msReadyForms: http://actorws.epa.gov/actorws/dsstox/v02/msready?identifier=DTXCID30970
+      origIdentifier: DTXSID7020970
+      preferredName: Nitrofen
+      processedAs: LOOKUP
+      qsarForms: http://actorws.epa.gov/actorws/dsstox/v02/qsar?identifier=DTXCID30970
+      reformattedIdentifier: false
+      smiles: '[O-][N+](=O)C1=CC=C(OC2=C(Cl)C=C(Cl)C=C2)C=C1'
+      synGsid: 20970
+      synIdentifier: DTXSID7020970
+      synType: DSSTox_Substance_Id
+      trimmedLeadingZeros: false
+      trimmedWhitespace: false
+      warningMsg: null
+    created: 2020-08-12 19:45:56.718230+00:00
+    last_updated: 2020-08-12 19:45:56.718230+00:00
 - model: assessment.assessment
   pk: 1
   fields:
@@ -427,6 +589,7 @@
     rob_name: 0
     created: 2020-01-25 14:23:16.176620+00:00
     last_updated: 2020-02-27 20:12:29.233982+00:00
+    dtxsids: []
     project_manager:
     - - pm@pm.com
     team_members:
@@ -459,7 +622,9 @@
     noel_name: 0
     rob_name: 0
     created: 2020-01-25 14:23:16.288774+00:00
-    last_updated: 2020-05-08 17:56:45.167410+00:00
+    last_updated: 2020-08-12 19:46:37.393988+00:00
+    dtxsids:
+    - DTXSID6026296
     project_manager:
     - - pm@pm.com
     team_members:
@@ -490,6 +655,7 @@
     rob_name: 0
     created: 2020-04-10 17:45:39.555285+00:00
     last_updated: 2020-04-10 17:45:39.555285+00:00
+    dtxsids: []
     project_manager:
     - - pm@pm.com
     team_members: []
@@ -669,6 +835,65 @@
     notes: <p>Original final version.</p>
     created: 2020-06-02 20:02:31.798361+00:00
     last_updated: 2020-06-02 20:02:31.798361+00:00
+- model: assessment.job
+  pk: 08ca9f23-5368-4ed6-9b18-29625add9aa8
+  fields:
+    assessment: null
+    status: 3
+    job: 1
+    kwargs:
+      fail: true
+    result:
+      error: FAILURE
+    created: 2020-08-27 20:35:38.870997+00:00
+    last_updated: 2020-08-27 20:35:38.913996+00:00
+- model: assessment.job
+  pk: 204faaa7-fdfa-4426-a09f-f0d1af9db33d
+  fields:
+    assessment: 1
+    status: 2
+    job: 1
+    kwargs: {}
+    result:
+      data: SUCCESS
+    created: 2020-08-27 20:35:12.682677+00:00
+    last_updated: 2020-08-27 20:35:12.818223+00:00
+- model: assessment.log
+  pk: 1
+  fields:
+    assessment: 1
+    message: Assessment log
+    created: 2020-08-20 03:03:15.442430+00:00
+    last_updated: 2020-08-20 03:03:15.442430+00:00
+- model: assessment.log
+  pk: 2
+  fields:
+    assessment: null
+    message: Global log
+    created: 2020-08-20 03:03:22.348931+00:00
+    last_updated: 2020-08-20 03:03:22.348931+00:00
+- model: assessment.blog
+  pk: 1
+  fields:
+    subject: Unpublished Blog
+    content: Content
+    rendered_content: '<p>Content</p>
+
+      '
+    published: false
+    created: 2020-08-20 03:01:09.747019+00:00
+    last_updated: 2020-08-20 03:01:09.747019+00:00
+- model: assessment.blog
+  pk: 2
+  fields:
+    subject: Published Blog
+    content: Content
+    rendered_content: '<p>Content</p>
+
+      '
+    published: true
+    created: 2020-08-20 03:01:26.973291+00:00
+    last_updated: 2020-08-20 03:01:26.973291+00:00
 - model: lit.literatureassessment
   pk: 1
   fields:
@@ -780,6 +1005,20 @@
   fields:
     unique_id: '21284075'
     database: 1
+    content: demo-content
+    url: ''
+- model: lit.identifiers
+  pk: 6
+  fields:
+    unique_id: '2'
+    database: 2
+    content: demo-content
+    url: ''
+- model: lit.identifiers
+  pk: 7
+  fields:
+    unique_id: '3'
+    database: 2
     content: demo-content
     url: ''
 - model: lit.referencefiltertag
@@ -1057,7 +1296,8 @@
     last_updated: 2020-02-27 20:14:41.479008+00:00
     block_id: null
     searches: []
-    identifiers: []
+    identifiers:
+    - 6
 - model: lit.reference
   pk: 3
   fields:
@@ -1073,7 +1313,8 @@
     last_updated: 2020-02-27 20:14:41.479008+00:00
     block_id: null
     searches: []
-    identifiers: []
+    identifiers:
+    - 7
 - model: lit.reference
   pk: 4
   fields:
@@ -1270,7 +1511,8 @@
     summary: ''
     editable: true
     searches: []
-    identifiers: []
+    identifiers:
+    - 6
 - model: study.study
   pk: 4
   fields:
@@ -1421,6 +1663,7 @@
     has_multiple_generations: false
     chemical: flubber
     cas: ''
+    dtxsid: null
     chemical_source: ''
     purity_available: false
     purity_qualifier: ''
@@ -1439,6 +1682,7 @@
     has_multiple_generations: false
     chemical: ''
     cas: ''
+    dtxsid: null
     chemical_source: ''
     purity_available: true
     purity_qualifier: '>'
@@ -1457,6 +1701,7 @@
     has_multiple_generations: true
     chemical: PBDE 209
     cas: 1163-19-5
+    dtxsid: null
     chemical_source: Albemarle Corporation (Baton Rouge, LA), Chemtura Corporation,
       and ICL-IP America
     purity_available: true
@@ -2876,6 +3121,7 @@
     study: 6
     name: Bisphenol AF
     cas: 1478-61-1
+    dtxsid: null
     cas_inferred: true
     cas_notes: CASRN inferred based on name (4,4'-hexafluoropropylidene diphenol or
       BHF) and structure
@@ -3091,7 +3337,7 @@
     visual_type: 2
     dose_units: null
     prefilters: '{}'
-    settings: '{"title":"","xAxisLabel":"","yAxisLabel":"","padding_top":20,"cell_size":40,"padding_right":400,"padding_bottom":35,"padding_left":20,"x_field":"study","study_label_field":"short_citation","included_metrics":[1,2],"show_legend":true,"show_na_legend":true,"show_nr_legend":true,"legend_x":239,"legend_y":17}'
+    settings: '{"title":"","xAxisLabel":"","yAxisLabel":"","padding_top":20,"cell_size":40,"padding_right":400,"padding_bottom":35,"padding_left":20,"x_field":"study","study_label_field":"short_citation","included_metrics":[1,2],"excluded_score_ids":[],"show_legend":true,"show_na_legend":true,"show_nr_legend":true,"legend_x":239,"legend_y":17}'
     caption: ''
     published: false
     sort_order: short_citation
@@ -3127,7 +3373,7 @@
     visual_type: 2
     dose_units: null
     prefilters: '{}'
-    settings: '{"title":"","xAxisLabel":"","yAxisLabel":"","padding_top":20,"cell_size":40,"padding_right":300,"padding_bottom":35,"padding_left":20,"x_field":"study","study_label_field":"short_citation","included_metrics":[14,15],"show_legend":true,"show_na_legend":true,"show_nr_legend":true,"legend_x":231,"legend_y":30}'
+    settings: '{"title":"","xAxisLabel":"","yAxisLabel":"","padding_top":20,"cell_size":40,"padding_right":300,"padding_bottom":35,"padding_left":20,"x_field":"study","study_label_field":"short_citation","included_metrics":[14,15],"excluded_score_ids":[],"show_legend":true,"show_na_legend":true,"show_nr_legend":true,"legend_x":231,"legend_y":30}'
     caption: <p>caption</p>
     published: true
     sort_order: short_citation
@@ -3975,3 +4221,48 @@
     preferred_units: '[]'
     prefilters: '{}'
     published_only: true
+- model: mgmt.task
+  pk: 1
+  fields:
+    owner:
+    - team@team.com
+    study: 1
+    type: 10
+    status: 30
+    open: false
+    due_date: 2025-08-01 04:00:00+00:00
+    started: null
+    completed: 2020-08-14 18:59:43.848775+00:00
+- model: mgmt.task
+  pk: 2
+  fields:
+    owner: null
+    study: 1
+    type: 20
+    status: 10
+    open: false
+    due_date: null
+    started: null
+    completed: null
+- model: mgmt.task
+  pk: 3
+  fields:
+    owner: null
+    study: 1
+    type: 30
+    status: 10
+    open: false
+    due_date: null
+    started: null
+    completed: null
+- model: mgmt.task
+  pk: 4
+  fields:
+    owner: null
+    study: 1
+    type: 40
+    status: 10
+    open: false
+    due_date: null
+    started: null
+    completed: null

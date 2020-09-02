@@ -1,4 +1,4 @@
-import d3 from "d3";
+import * as d3 from "d3";
 import ReactDOM from "react-dom";
 import React, {Component} from "react";
 import PropTypes from "prop-types";
@@ -35,6 +35,13 @@ const bindTooltip = function($el, d3Selection, buildChildComponent, options) {
 
     $el.css("position", "absolute");
 
+    // unbind existing
+    d3Selection
+        .on("mouseenter", null)
+        .on("mousemove", null)
+        .on("mouseleave", null);
+
+    // bind new
     d3Selection
         .on("mouseenter", function() {
             $el.css("display", "block");
@@ -47,17 +54,17 @@ const bindTooltip = function($el, d3Selection, buildChildComponent, options) {
             }
         })
         .on("mousemove", () => {
-            const box = $el[0].getBoundingClientRect();
+            const box = $el[0].getBoundingClientRect(),
+                {pageX, pageY} = d3.event;
             $el.css({
                 left: `${
-                    d3.event.pageX + xOffset + box.width < window.pageXOffset + window.innerWidth
-                        ? d3.event.pageX + xOffset
-                        : d3.event.pageX - xOffset - box.width
+                    pageX + xOffset + box.width < window.pageXOffset + window.innerWidth
+                        ? pageX + xOffset
+                        : pageX - xOffset - box.width
                 }px`,
                 top: `${
-                    d3.event.pageY + yOffset + box.height * 0.5 <
-                    window.pageYOffset + window.innerHeight
-                        ? d3.event.pageY + yOffset - box.height * 0.5
+                    pageY + yOffset + box.height * 0.5 < window.pageYOffset + window.innerHeight
+                        ? pageY + yOffset - box.height * 0.5
                         : window.pageYOffset + window.innerHeight - yOffset - box.height
                 }px`,
             });

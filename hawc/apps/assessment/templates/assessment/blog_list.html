@@ -1,0 +1,29 @@
+{% extends 'portal.html' %}
+
+{% block title %}
+  Blog | HAWC
+{% endblock title %}
+
+{% block content %}
+
+  {% for object in object_list %}
+  <div class="container-fluid" style="border-style: solid;">
+    <div>
+      <h1>{{object.subject}}</h1>
+    </div>
+    <hr>
+    <div>
+      <span class="label">Created: {{object.created}}</span>
+      <span class="label">Last Updated: {{object.last_updated}}</span>
+    </div>
+    <hr>
+    <div>
+      {{object.rendered_content|safe}}
+    </div>
+  </div>
+  {% if not forloop.last %}
+  <hr>
+  {% endif %}
+  {% endfor %}
+
+{% endblock content %}

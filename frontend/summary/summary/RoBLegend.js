@@ -1,5 +1,5 @@
 import _ from "lodash";
-import d3 from "d3";
+import * as d3 from "d3";
 
 import HAWCUtils from "utils/HAWCUtils";
 
@@ -23,7 +23,11 @@ class RoBLegend {
     }
 
     get_data() {
-        let scores = this.rob_response_values.slice(), // shallow copy
+        let scores = _.intersectionBy(
+                this.rob_response_values,
+                _.keys(SCORE_TEXT_DESCRIPTION_LEGEND),
+                parseInt
+            ), // only display valid legend scores
             fields,
             collapseNR = this.options.collapseNR;
 

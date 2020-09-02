@@ -54,6 +54,25 @@
         $("#id_has_multiple_generations").val((updatedType == "Rp" || updatedType == "Dv") ? "True" : "False");
       });
 
+      // handle all logic related to dtxid + cas + chemical fields
+      var handleChemicalPropertiesInformation = function(){
+        // if `dtxsid` is selected, change casrn/chemical_name
+        $('input[name=dtxsid_0]').bind('djselectableselect', function (event, item) {
+          if (item.item.casrn) {
+            $('#id_cas').val(item.item.casrn);
+          }
+          if (item.item.chemical_name) {
+            $('#id_chemical').val(item.item.chemical_name);
+          }
+        });
+
+        // re-enable all form fields prior to submission
+        $('#experiment-form').on("submit", function () {
+          $('#experiment-form input').attr('disabled', false);
+        });
+      }
+      handleChemicalPropertiesInformation();
+
     });
   </script>
 {% endblock extrajs %}

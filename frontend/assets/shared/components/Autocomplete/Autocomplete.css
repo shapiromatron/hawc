@@ -59,7 +59,7 @@
     line-height: 1.5;
 }
 
-.autocomplete__suggestion--focused {
+.autocomplete__suggestion--highlighted {
     background: #dadada
         url(http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/themes/base/images/ui-bg_glass_75_dadada_1x400.png)
         50% 50% repeat-x;

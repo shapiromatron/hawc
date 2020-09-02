@@ -9,6 +9,8 @@ from typing import Dict, Optional
 from urllib import parse
 
 import pandas as pd
+from celery import chain
+from celery.result import ResultBase
 from django.apps import apps
 from django.conf import settings
 from django.core.cache import cache
@@ -570,7 +572,7 @@ class Identifiers(models.Model):
     def create_reference(self, assessment, block_id=None):
         # create, but don't save reference object
         try:
-            content = json.loads(self.content, encoding="utf-8")
+            content = self.get_content_json()
         except ValueError:
             if self.database == constants.PUBMED:
                 self.update_pubmed_content([self])
@@ -588,19 +590,8 @@ class Identifiers(models.Model):
                 block_id=block_id,
             )
         elif self.database == constants.HERO:
-            # in some cases; my return None, we want "" instead of null
-            title = content.get("title")
-            journal = content.get("source") or content.get("journaltitle")
-            abstract = content.get("abstract", "")
-            ref = Reference(
-                assessment=assessment,
-                title=title or "",
-                authors_short=content.get("authors_short", ""),
-                authors=", ".join(content.get("authors", [])),
-                year=content.get("year", None),
-                journal=journal or "",
-                abstract=abstract or "",
-            )
+            ref = Reference(assessment=assessment)
+            ref.update_from_hero_content(content)
         else:
             raise ValueError("Unknown database for reference creation.")
 
@@ -615,7 +606,7 @@ class Identifiers(models.Model):
         }
 
     def get_content_json(self) -> Optional[Dict]:
-        return json.loads(self.content) if self.content else None
+        return json.loads(self.content, encoding="utf-8") if self.content else None
 
     @staticmethod
     def update_pubmed_content(idents):
@@ -771,6 +762,29 @@ class Reference(models.Model):
                 assessment_id, delete_reference_cache=False
             )
 
+    @classmethod
+    def update_hero_metadata(cls, assessment_id: int) -> ResultBase:
+        """Update reference metadata for all references in an assessment.
+
+        Async worker task; updates data from HERO and then applies new data to references.
+        """
+        reference_ids = cls.objects.hero_references(assessment_id).values_list("id", flat=True)
+        reference_ids = list(reference_ids)  # queryset to list for JSON serializability
+        identifiers = Identifiers.objects.filter(
+            references__in=reference_ids, database=constants.HERO
+        )
+        hero_ids = identifiers.values_list("unique_id", flat=True)
+        hero_ids = list(hero_ids)  # queryset to list for JSON serializability
+
+        # update content of hero identifiers
+        t1 = tasks.update_hero_content.si(hero_ids)
+
+        # update fields from content
+        t2 = tasks.update_hero_fields.si(reference_ids)
+
+        # run chained tasks
+        return chain(t1, t2)()
+
     @property
     def ref_full_citation(self):
         # must be prefixed w/ ref b/c study.Study has the same property
@@ -814,6 +828,29 @@ class Reference(models.Model):
             if ident.database == constants.HERO:
                 return int(ident.unique_id)
         return None
+
+    def update_from_hero_content(self, content: Dict, save: bool = False):
+        """
+        Update reference in place given HERO content; optionally save reference
+        """
+        # retrieve all of the fields from HERO
+        title = content.get("title", "")
+        journal = content.get("source", content.get("journaltitle", ""))
+        abstract = content.get("abstract", "")
+        authors_short = content.get("authors_short", "")
+        authors = ", ".join(content.get("authors", []))
+        year = content.get("year")
+
+        # set all of the fields on this reference
+        setattr(self, "title", title)
+        setattr(self, "journal", journal)
+        setattr(self, "abstract", abstract)
+        setattr(self, "authors_short", authors_short)
+        setattr(self, "authors", authors)
+        setattr(self, "year", year)
+
+        if save:
+            self.save()
 
     def get_assessment(self):
         return self.assessment

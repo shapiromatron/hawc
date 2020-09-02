@@ -11,7 +11,7 @@ from django.urls import reverse
 from reversion import revisions as reversion
 from scipy.stats import t
 
-from ..assessment.models import Assessment, BaseEndpoint, EffectTag
+from ..assessment.models import Assessment, BaseEndpoint, DSSTox, EffectTag
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper, df_move_column
 from ..common.models import get_crumbs
 from ..study.models import Study
@@ -430,6 +430,9 @@ class Outcome(BaseEndpoint):
 
     COPY_NAME = "outcomes"
 
+    class Meta:
+        ordering = ("id",)
+
     def get_json(self, json_encode=True):
         return SerializerHelper.get_serialized(self, json=json_encode)
 
@@ -790,6 +793,18 @@ class Exposure(models.Model):
     )
     name = models.CharField(
         max_length=128, help_text="Name of chemical exposure; use abbreviation. Ex. PFNA; DEHP",
+    )
+    dtxsid = models.ForeignKey(
+        DSSTox,
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+        verbose_name="DSSTox substance identifier (DTXSID)",
+        related_name="exposures",
+        help_text="""
+        <a href="https://www.epa.gov/chemical-research/distributed-structure-searchable-toxicity-dsstox-database">DSSTox</a>
+        substance identifier (recommended).
+        """,
     )
 
     # for help_text for these fields, see ROUTE_HELP_TEXT

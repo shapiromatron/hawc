@@ -5,7 +5,8 @@ import re
 import uuid
 from collections import OrderedDict
 from dataclasses import dataclass
-from typing import Dict, List, Optional
+from math import inf
+from typing import Any, Dict, List, Optional
 
 import pandas as pd
 from django.conf import settings
@@ -24,7 +25,7 @@ def HAWCtoDateString(datetime):
     return datetime.strftime("%B %d %Y, %I:%M %p")
 
 
-def cleanHTML(txt):
+def cleanHTML(txt: str):
     return strip_entities(
         strip_tags(
             txt.replace("\n", " ").replace("\r", "").replace("<br>", "\n").replace("&nbsp;", " ")
@@ -56,9 +57,22 @@ def listToUl(list_):
     return f"<ul>{''.join(['<li>{0}</li>'.format(d) for d in list_])}</ul>"
 
 
-def tryParseInt(val, default=None):
+def tryParseInt(
+    value: Any, default: int = None, min_value: int = -inf, max_value: int = inf
+) -> Optional[int]:
+    """Cast value to integer if possible, or return None
+
+    Args:
+        value (Any): the value to cast
+        default (int, optional): default value if cannot be cast; defaults to None
+        min_value (int, optional): minimum acceptable value; defaults to -inf
+        max_value (int, optional): maximum acceptable value; defaults to inf
+
+    Returns:
+        Optional[int]: An integer or None
+    """
     try:
-        return int(val)
+        return min(max_value, max(min_value, int(value)))
     except (ValueError, TypeError):
         return default
 
