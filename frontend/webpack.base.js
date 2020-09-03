@@ -5,7 +5,7 @@ module.exports = {
     context: __dirname,
 
     entry: {
-        main: ["./main/index"],
+        main: ["./index"],
     },
 
     externals: {
@@ -68,24 +68,7 @@ module.exports = {
             summary: path.join(__dirname, "summary"),
             utils: path.join(__dirname, "utils"),
         },
-        modules: [
-            path.join(__dirname, "admin"),
-            path.join(__dirname, "animal"),
-            path.join(__dirname, "assessment"),
-            path.join(__dirname, "assets"),
-            path.join(__dirname, "bmd"),
-            path.join(__dirname, "epi"),
-            path.join(__dirname, "epimeta"),
-            path.join(__dirname, "invitro"),
-            path.join(__dirname, "lit"),
-            path.join(__dirname, "main"),
-            path.join(__dirname, "mgmt"),
-            path.join(__dirname, "riskofbias"),
-            path.join(__dirname, "study"),
-            path.join(__dirname, "summary"),
-            path.join(__dirname, "utils"),
-            "node_modules",
-        ],
+        modules: [path.join(__dirname, "assets"), path.join(__dirname, "utils"), "node_modules"],
         extensions: [".js", ".css"],
     },
 };
