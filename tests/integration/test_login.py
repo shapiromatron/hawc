@@ -1,5 +1,5 @@
-from urllib.parse import urlparse
 import os
+from urllib.parse import urlparse
 
 import helium as h
 import pytest

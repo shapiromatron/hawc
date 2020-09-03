@@ -1,17 +1,16 @@
 import json
 import logging
 import os
+import time
 from pathlib import Path
 from typing import NamedTuple
 
 import helium
 import pytest
-from django.core.management import call_command
 from django.conf import settings
+from django.core.management import call_command
 from selenium import webdriver
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
-import time
-
 
 CI = os.environ.get("CI") == "true"
 
