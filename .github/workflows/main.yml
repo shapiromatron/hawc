@@ -117,7 +117,6 @@ jobs:
         mv ci-webpack-stats.json webpack-stats.json
         yarn --cwd ./frontend install
         npm start --prefix ./frontend &
-        sleep 30
     - name: run selenium tests
       env:
         HAWC_INTEGRATION_TESTS: 1
