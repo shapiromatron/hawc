@@ -2,6 +2,8 @@ import _ from "lodash";
 import React, {Component} from "react";
 import PropTypes from "prop-types";
 
+import h from "shared/utils/helpers";
+
 class TagNode extends Component {
     constructor(props) {
         super(props);
@@ -69,11 +71,12 @@ class TagTree extends Component {
 }
 TagTree.propTypes = {
     tagtree: PropTypes.object.isRequired,
-    handleTagClick: PropTypes.func.isRequired,
+    handleTagClick: PropTypes.func,
     showReferenceCount: PropTypes.bool,
 };
 TagTree.defaultProps = {
     showReferenceCount: false,
+    handleTagClick: h.noop,
 };
 
 export default TagTree;

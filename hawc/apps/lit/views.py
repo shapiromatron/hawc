@@ -3,7 +3,7 @@ import json
 from django.forms.models import model_to_dict
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from django.views.generic import DetailView, TemplateView
 from django.views.generic.edit import FormView
@@ -41,7 +41,17 @@ class LitOverview(BaseList):
                 self.assessment
             ).count()
         context["can_topic_model"] = self.assessment.literature_settings.can_topic_model()
-        context["tags"] = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
+        context["config"] = json.dumps(
+            {
+                "tags": models.ReferenceFilterTag.get_all_tags(
+                    self.assessment.id, json_encode=False
+                ),
+                "assessment_id": self.assessment.id,
+                "referenceYearHistogramUrl": reverse(
+                    "lit:api:assessment-reference-year-histogram", args=(self.assessment.id,)
+                ),
+            }
+        )
         return context
 
 

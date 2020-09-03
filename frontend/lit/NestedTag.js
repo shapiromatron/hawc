@@ -29,73 +29,6 @@ class NestedTag extends Observee {
         return this;
     }
 
-    get_nested_list_item(parent, padding, options) {
-        var div = $(`<div data-id="${this.data.pk}">`),
-            collapse = $('<span class="nestedTagCollapser"></span>').appendTo(div),
-            txtspan = $('<p class="nestedTag"></p>'),
-            text = `${padding}${this.data.name}`;
-
-        if (options && options.show_refs_count) {
-            text += ` (${this.get_references_deep().length})`;
-        }
-
-        txtspan
-            .text(text)
-            .appendTo(div)
-            .data("d", this)
-            .on("click", () => txtspan.trigger("hawc-tagClicked"));
-
-        parent.append(div);
-
-        if (this.children.length > 0) {
-            let key = `lit-referencetag-${this.data.pk}-expanded`,
-                currentValue = window.localStorage.getItem(key) === "false" ? false : true,
-                getToggleClass = value => (value === true ? "icon-minus" : "icon-plus"),
-                getExpansionClass = value => (value === true ? "in" : "out"),
-                getToggleTitle = value => (value === true ? "Collapse tags" : "Expand tags"),
-                span = $(`<span class="${getToggleClass(currentValue)}"></span>`),
-                nested = $(`<div class="${getExpansionClass(currentValue)} collapse">`),
-                toggle = $("<a href='#'>")
-                    .append(span)
-                    .attr("title", getToggleTitle(true))
-                    .attr("data-toggle", "collapse")
-                    .on("click", e => {
-                        e.preventDefault();
-                        currentValue = !currentValue;
-                        toggleCurrentValue(currentValue);
-                    }),
-                toggleCurrentValue = value => {
-                    window.localStorage.setItem(key, value.toString());
-                    span.attr("class", getToggleClass(value));
-                    toggle.attr("title", getToggleTitle(value));
-                    nested.collapse("toggle");
-                };
-
-            toggle.appendTo(collapse);
-            nested.appendTo(div);
-
-            this.children.forEach(function(v) {
-                v.get_nested_list_item(nested, padding + "   ", options);
-            });
-            if (options && options.sortable) {
-                nested.sortable({
-                    containment: parent,
-                    start(event, ui) {
-                        var start_pos = ui.item.index();
-                        ui.item.data("start_pos", start_pos);
-                    },
-                    stop(event, ui) {
-                        var start_pos = ui.item.data("start_pos"),
-                            offset = ui.item.index() - start_pos;
-                        if (offset !== 0) $(this).trigger("hawc-tagMoved", [ui.item, offset]);
-                    },
-                });
-            }
-        }
-
-        return parent;
-    }
-
     get_reference_objects_by_tag(reference_viewer, options) {
         options = options || {filteredSubset: false};
         let url = `/lit/assessment/${this.assessment_id}/references/${this.data.pk}/json/`;
@@ -123,15 +56,6 @@ class NestedTag extends Observee {
             [...child.get_references_deep()].forEach(set.add, set);
         });
         return [...set.values()];
-    }
-
-    get_option_item(lst) {
-        let depth = Array(this.depth + 1).join("&nbsp;&nbsp;");
-        lst.push(
-            $(`<option value="${this.data.pk}">${depth}${this.data.name}</option>`).data("d", this)
-        );
-        this.children.forEach(v => v.get_option_item(lst));
-        return lst;
     }
 
     _append_to_dict(dict) {

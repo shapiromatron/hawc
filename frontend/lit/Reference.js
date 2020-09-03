@@ -3,19 +3,13 @@ import _ from "lodash";
 import React from "react";
 import ReactDOM from "react-dom";
 
-import Observee from "utils/Observee";
 import ReferenceComponent from "./components/Reference";
 
-class Reference extends Observee {
+class Reference {
     constructor(data, tagtree) {
-        super();
-        var self = this,
-            tag_ids = data.tags;
         this.data = data;
         this.data.tags = [];
-        tag_ids.forEach(function(v) {
-            self.add_tag(tagtree.dict[v]);
-        });
+        data.tags.forEach(v => this.add_tag(tagtree.dict[v]));
     }
 
     static sortCompare(a, b) {
@@ -81,7 +75,6 @@ class Reference extends Observee {
         });
         if (tag_already_exists) return;
         this.data.tags.push(tag);
-        tag.addObserver(this);
         this.notifyObservers();
     }
 
