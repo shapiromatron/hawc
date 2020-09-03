@@ -5,22 +5,7 @@ module.exports = {
     context: __dirname,
 
     entry: {
-        main: [
-            "./admin/index",
-            "./animal/index",
-            "./assessment/index",
-            "./assets/index",
-            "./bmd/index",
-            "./epi/index",
-            "./epimeta/index",
-            "./invitro/index",
-            "./lit/index",
-            "./mgmt/index",
-            "./riskofbias/index",
-            "./study/index",
-            "./summary/index",
-            "./utils/index",
-        ],
+        main: ["./main/index"],
     },
 
     externals: {
@@ -76,6 +61,7 @@ module.exports = {
             epimeta: path.join(__dirname, "epimeta"),
             invitro: path.join(__dirname, "invitro"),
             lit: path.join(__dirname, "lit"),
+            main: path.join(__dirname, "main"),
             mgmt: path.join(__dirname, "mgmt"),
             riskofbias: path.join(__dirname, "riskofbias"),
             study: path.join(__dirname, "study"),
@@ -92,6 +78,7 @@ module.exports = {
             path.join(__dirname, "epimeta"),
             path.join(__dirname, "invitro"),
             path.join(__dirname, "lit"),
+            path.join(__dirname, "main"),
             path.join(__dirname, "mgmt"),
             path.join(__dirname, "riskofbias"),
             path.join(__dirname, "study"),
