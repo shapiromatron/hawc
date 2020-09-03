@@ -1,12 +1,18 @@
+import json
 import logging
 import os
+import time
 from pathlib import Path
 from typing import NamedTuple
 
 import helium
 import pytest
+from django.conf import settings
 from django.core.management import call_command
-from selenium.webdriver import ChromeOptions
+from selenium import webdriver
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+
+CI = os.environ.get("CI") == "true"
 
 
 class UserCredential(NamedTuple):
@@ -102,22 +108,42 @@ def rewrite_data_files():
     return False
 
 
+def _wait_until_webpack_ready(max_wait_sec: int = 60):
+    """Sleep until webpack is ready...
+
+    Raises:
+        EnvironmentError: If webpack fails to complete in designated time
+    """
+    stats = Path(settings.WEBPACK_LOADER["DEFAULT"]["STATS_FILE"])
+    waited_for = 0
+    while waited_for < max_wait_sec:
+        if stats.exists() and json.loads(stats.read_text()).get("status") == "done":
+            return
+        time.sleep(1)
+        waited_for += 1
+    raise EnvironmentError("Timeout; webpack dev server not ready")
+
+
 @pytest.fixture(scope="session")
 def chrome_driver():
-    options = ChromeOptions()
+    options = webdriver.ChromeOptions()
     options.add_argument("--window-size=1920,1080")
-    driver = helium.start_chrome(options=options, headless=True)
+    if CI:
+        options.add_experimental_option("excludeSwitches", ["enable-logging"])
+        options.add_argument("--headless")
+        # use a remote driver for CI's selenium server
+        driver = webdriver.Remote(
+            command_executor="http://selenium-server:4444/wd/hub",
+            desired_capabilities=DesiredCapabilities.CHROME,
+            options=options,
+        )
+    else:
+        # use helium's chromedriver
+        driver = helium.start_chrome(options=options, headless=True)
+
+    _wait_until_webpack_ready()
+
     try:
         yield driver
     finally:
-        helium.kill_browser()
-
-
-@pytest.fixture(scope="session")
-def integration_base_url():
-    base_url = os.environ.get("HAWC_INTEGRATION_BASE_URL")
-
-    if base_url is None:
-        base_url = "http://localhost:8000"
-
-    return base_url
+        driver.quit()

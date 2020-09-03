@@ -3,22 +3,18 @@ import os
 import helium as h
 import pytest
 
-import tests.integration.utils.localhost_utils as localhost_utils
-
 SKIP_INTEGRATION = os.environ.get("HAWC_INTEGRATION_TESTS") is None
 
 assessment_url = "/assessment/2/"
 
 
 @pytest.mark.skipif(SKIP_INTEGRATION, reason="integration test")
-def test_hello_helium(chrome_driver, integration_base_url):
-    base_url = integration_base_url
+def test_hello_helium(chrome_driver, live_server):
     # set test to use our session-level driver
     h.set_driver(chrome_driver)
 
     # go to website
-    h.go_to(base_url + "/summary" + assessment_url + "visuals/")
-    localhost_utils.remove_debug_menu(chrome_driver)
+    h.go_to(live_server.url + "/summary" + assessment_url + "visuals/")
 
     assert h.Text("Available visualizations").exists() is True
     h.wait_until(h.Text("Title").exists)
@@ -26,7 +22,6 @@ def test_hello_helium(chrome_driver, integration_base_url):
 
     h.click("data pivot - animal bioassay - endpoint")
     assert "animal-bioassay-data-pivot-endpoint" in chrome_driver.current_url
-    localhost_utils.remove_debug_menu(chrome_driver)
 
     # different than requested
     assert h.Link("Actions").exists() is True
@@ -45,7 +40,7 @@ def test_hello_helium(chrome_driver, integration_base_url):
     # make sure download "button" is visible
     assert h.Text("Download as a SVG").exists() is True
 
-    h.go_to(base_url + "/summary" + assessment_url + "visuals/")
+    h.go_to(live_server.url + "/summary" + assessment_url + "visuals/")
 
     # click the heatmap example
     h.click("heatmap")

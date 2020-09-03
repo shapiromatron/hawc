@@ -78,3 +78,47 @@ jobs:
     - name: lint
       run: |
         make lint-js
+
+  selenium:
+    name: selenium
+    runs-on: ubuntu-18.04
+
+    container:
+      image: nikolaik/python-nodejs:python3.6-nodejs12
+      env:
+        DJANGO_DB_NAME: hawc-test
+        DJANGO_DB_USER: hawc
+        DJANGO_DB_PW: password
+        DJANGO_DB_HOST: postgres
+        DJANGO_DB_PORT: ${{ job.services.postgres.ports[5432] }} # get randomly assigned published port
+        PUBMED_API_KEY: ${{ secrets.PUBMED_API_KEY }}
+      options: --network-alias container
+
+    services:
+      postgres:
+        image: postgres:9.6
+        env:
+          POSTGRES_USER: hawc
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: hawc-test
+        ports:
+        - 5432:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+      selenium-server:
+        image: selenium/standalone-chrome:latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: install hawc
+      run: |
+        pip install -r requirements/dev.txt
+    - name: setup web server
+      run: |
+        mv ci-webpack-stats.json webpack-stats.json
+        yarn --cwd ./frontend install
+        npm start --prefix ./frontend &
+    - name: run selenium tests
+      env:
+        HAWC_INTEGRATION_TESTS: 1
+      run: |
+        py.test --liveserver container:8000 tests/integration/

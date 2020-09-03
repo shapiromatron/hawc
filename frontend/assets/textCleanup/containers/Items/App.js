@@ -30,7 +30,7 @@ Items.propTypes = {
     match: PropTypes.shape({
         params: PropTypes.object,
     }),
-    items: PropTypes.object,
+    items: PropTypes.array,
 };
 
 export default connect(mapStateToProps)(Items);
