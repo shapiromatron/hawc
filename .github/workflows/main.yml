@@ -79,8 +79,8 @@ jobs:
       run: |
         make lint-js
 
-  selenium:
-    name: selenium
+  integration:
+    name: integration
     runs-on: ubuntu-18.04
 
     container:
@@ -112,9 +112,8 @@ jobs:
     - name: install hawc
       run: |
         pip install -r requirements/dev.txt
-    - name: setup web server
+    - name: start webpack-dev-server
       run: |
-        mv ci-webpack-stats.json webpack-stats.json
         yarn --cwd ./frontend install
         npm start --prefix ./frontend &
     - name: run selenium tests
