@@ -112,12 +112,12 @@ jobs:
     - name: install hawc
       run: |
         pip install -r requirements/dev.txt
-    - name: start webpack-dev-server
+    - name: build frontend
       run: |
         yarn --cwd ./frontend install
-        npm start --prefix ./frontend &
+        npm run build --prefix ./frontend
     - name: run selenium tests
       env:
         HAWC_INTEGRATION_TESTS: 1
       run: |
-        py.test --liveserver container:8000 tests/integration/
+        py.test tests/integration/
