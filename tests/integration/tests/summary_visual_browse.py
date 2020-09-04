@@ -1,20 +1,14 @@
-import os
-
 import helium as h
-import pytest
-
-SKIP_INTEGRATION = os.environ.get("HAWC_INTEGRATION_TESTS") is None
 
 assessment_url = "/assessment/2/"
 
 
-@pytest.mark.skipif(SKIP_INTEGRATION, reason="integration test")
-def test_hello_helium(chrome_driver, live_server):
+def summary_visual_browse(chrome_driver, live_server_url):
     # set test to use our session-level driver
     h.set_driver(chrome_driver)
 
     # go to website
-    h.go_to(live_server.url + "/summary" + assessment_url + "visuals/")
+    h.go_to(live_server_url + "/summary" + assessment_url + "visuals/")
 
     assert h.Text("Available visualizations").exists() is True
     h.wait_until(h.Text("Title").exists)
@@ -40,7 +34,7 @@ def test_hello_helium(chrome_driver, live_server):
     # make sure download "button" is visible
     assert h.Text("Download as a SVG").exists() is True
 
-    h.go_to(live_server.url + "/summary" + assessment_url + "visuals/")
+    h.go_to(live_server_url + "/summary" + assessment_url + "visuals/")
 
     # click the heatmap example
     h.click("heatmap")

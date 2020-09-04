@@ -13,6 +13,7 @@ from selenium import webdriver
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
 CI = os.environ.get("CI") == "true"
+SHOW_BROWSER = bool(os.environ.get("SHOW_BROWSER", None))
 
 
 class UserCredential(NamedTuple):
@@ -139,7 +140,7 @@ def chrome_driver():
         )
     else:
         # use helium's chromedriver
-        driver = helium.start_chrome(options=options, headless=True)
+        driver = helium.start_chrome(options=options, headless=not SHOW_BROWSER)
 
     _wait_until_webpack_ready()
 
@@ -147,3 +148,8 @@ def chrome_driver():
         yield driver
     finally:
         driver.quit()
+
+
+@pytest.fixture
+def set_chrome_driver(request, chrome_driver):
+    request.cls.chrome_driver = chrome_driver

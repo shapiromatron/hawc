@@ -1,20 +1,15 @@
-import os
 from urllib.parse import urlparse
 
 import helium as h
-import pytest
-
-SKIP_INTEGRATION = os.environ.get("HAWC_INTEGRATION_TESTS") is None
 
 
-@pytest.mark.skipif(SKIP_INTEGRATION, reason="integration test")
-def test_login(chrome_driver, live_server):
+def login(chrome_driver, root_url):
 
     # set test to use our session-level driver
     h.set_driver(chrome_driver)
 
     # go to website
-    h.go_to(live_server.url)
+    h.go_to(root_url)
     h.click("Login")
     assert "/user/login/" in chrome_driver.current_url
 
@@ -28,8 +23,12 @@ def test_login(chrome_driver, live_server):
     assert urlparse(chrome_driver.current_url).path == "/user/login/"
 
     # valid password check
-    h.go_to(live_server.url + "/user/login/")
+    h.go_to(root_url + "/user/login/")
     h.write("pm@pm.com", into="Email*")
     h.write("pw", into="Password*")
     h.click("Login")
     assert urlparse(chrome_driver.current_url).path == "/portal/"
+
+    # logout; cleanup test
+    h.click("Your HAWC")
+    h.click("Logout")
