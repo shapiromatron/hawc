@@ -92,7 +92,7 @@ jobs:
         DJANGO_DB_HOST: postgres
         DJANGO_DB_PORT: ${{ job.services.postgres.ports[5432] }} # get randomly assigned published port
         PUBMED_API_KEY: ${{ secrets.PUBMED_API_KEY }}
-      options: --network-alias container
+      options: --network-alias django
 
     services:
       postgres:
@@ -106,18 +106,20 @@ jobs:
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
       selenium-server:
         image: selenium/standalone-chrome:latest
+        ports:
+        - 4444:4444
 
     steps:
     - uses: actions/checkout@v1
     - name: install hawc
       run: |
         pip install -r requirements/dev.txt
-    - name: build frontend
+    - name: start webpack-dev-server
       run: |
         yarn --cwd ./frontend install
-        npm run build --prefix ./frontend
+        npm start --prefix ./frontend &
     - name: run selenium tests
       env:
         HAWC_INTEGRATION_TESTS: 1
       run: |
-        py.test tests/integration/
+        py.test --liveserver django:8000 tests/integration/

@@ -1,10 +1,13 @@
+import json
 import logging
 import os
+import time
 from pathlib import Path
 from typing import NamedTuple
 
 import helium
 import pytest
+from django.conf import settings
 from django.core.management import call_command
 from selenium import webdriver
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
@@ -106,6 +109,22 @@ def rewrite_data_files():
     return False
 
 
+def _wait_until_webpack_ready(max_wait_sec: int = 60):
+    """Sleep until webpack is ready...
+
+    Raises:
+        EnvironmentError: If webpack fails to complete in designated time
+    """
+    stats = Path(settings.WEBPACK_LOADER["DEFAULT"]["STATS_FILE"])
+    waited_for = 0
+    while waited_for < max_wait_sec:
+        if stats.exists() and json.loads(stats.read_text()).get("status") == "done":
+            return
+        time.sleep(1)
+        waited_for += 1
+    raise EnvironmentError("Timeout; webpack dev server not ready")
+
+
 @pytest.fixture(scope="session")
 def chrome_driver():
     options = webdriver.ChromeOptions()
@@ -122,6 +141,8 @@ def chrome_driver():
     else:
         # use helium's chromedriver
         driver = helium.start_chrome(options=options, headless=not SHOW_BROWSER)
+
+    _wait_until_webpack_ready()
 
     try:
         yield driver
