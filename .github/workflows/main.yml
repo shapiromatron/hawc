@@ -93,6 +93,7 @@ jobs:
         ports:
         - 5432/tcp
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+
       selenium_server:
         image: selenium/standalone-chrome:latest
         ports:

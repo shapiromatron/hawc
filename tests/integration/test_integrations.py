@@ -7,10 +7,6 @@ from django.test import TestCase
 from . import tests
 
 SKIP_INTEGRATION = os.environ.get("HAWC_INTEGRATION_TESTS") is None
-LIVESERVER_HOST = os.environ.get("LIVESERVER_HOST", None)
-LIVESERVER_PORT = os.environ.get("LIVESERVER_PORT", None)
-if LIVESERVER_PORT:
-    LIVESERVER_PORT = int(LIVESERVER_PORT)
 
 
 @pytest.mark.skipif(SKIP_INTEGRATION, reason="integration test")
@@ -24,8 +20,8 @@ class TestIntegration(StaticLiveServerTestCase, TestCase):
     Further reading: https://code.djangoproject.com/ticket/23640#comment:3
     """
 
-    host = LIVESERVER_HOST
-    port = LIVESERVER_PORT
+    host = os.environ.get("LIVESERVER_HOST", "localhost")
+    port = int(os.environ.get("LIVESERVER_PORT", 0))
 
     def test_login(self):
         tests.login(self.chrome_driver, self.live_server_url)
