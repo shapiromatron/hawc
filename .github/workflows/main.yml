@@ -121,5 +121,7 @@ jobs:
     - name: run selenium tests
       env:
         HAWC_INTEGRATION_TESTS: 1
+        LIVESERVER_HOST: "container"
+        LIVESERVER_PORT: 8000
       run: |
-        py.test --liveserver django:8000 tests/integration/
+        py.test tests/integration/

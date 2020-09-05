@@ -20,6 +20,9 @@ class TestIntegration(StaticLiveServerTestCase, TestCase):
     Further reading: https://code.djangoproject.com/ticket/23640#comment:3
     """
 
+    host = os.environ.get("LIVESERVER_HOST", None)
+    port = os.environ.get("LIVESERVER_PORT", None)
+
     def test_login(self):
         tests.login(self.chrome_driver, self.live_server_url)
 
