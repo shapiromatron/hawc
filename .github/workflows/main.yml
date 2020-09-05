@@ -83,6 +83,21 @@ jobs:
     name: integration
     runs-on: ubuntu-18.04
 
+    services:
+      postgres:
+        image: postgres:9.6
+        env:
+          POSTGRES_USER: hawc
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: hawc-test
+        ports:
+        - 5432/tcp
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+      selenium_server:
+        image: selenium/standalone-chrome:latest
+        ports:
+        - 4444/tcp
+
     container:
       image: nikolaik/python-nodejs:python3.6-nodejs12
       env:
@@ -93,21 +108,6 @@ jobs:
         DJANGO_DB_PORT: ${{ job.services.postgres.ports[5432] }} # get randomly assigned published port
         PUBMED_API_KEY: ${{ secrets.PUBMED_API_KEY }}
       options: --network-alias django
-
-    services:
-      postgres:
-        image: postgres:9.6
-        env:
-          POSTGRES_USER: hawc
-          POSTGRES_PASSWORD: password
-          POSTGRES_DB: hawc-test
-        ports:
-        - 5432:5432
-        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
-      selenium-server:
-        image: selenium/standalone-chrome:latest
-        ports:
-        - 4444:4444
 
     steps:
     - uses: actions/checkout@v1
@@ -121,7 +121,8 @@ jobs:
     - name: run selenium tests
       env:
         HAWC_INTEGRATION_TESTS: 1
-        LIVESERVER_HOST: "container"
+        LIVESERVER_HOST: django
         LIVESERVER_PORT: 8000
+        SELENIUM_PORT: ${{ job.services.selenium_server.ports[4444] }} # get randomly assigned published port
       run: |
         py.test tests/integration/

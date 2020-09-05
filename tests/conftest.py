@@ -133,8 +133,9 @@ def chrome_driver():
         options.add_experimental_option("excludeSwitches", ["enable-logging"])
         options.add_argument("--headless")
         # use a remote driver for CI's selenium server
+        port = os.environ["SELENIUM_PORT"]
         driver = webdriver.Remote(
-            command_executor="http://selenium-server:4444/wd/hub",
+            command_executor=f"http://selenium_server:{port}/wd/hub",
             desired_capabilities=DesiredCapabilities.CHROME,
             options=options,
         )
