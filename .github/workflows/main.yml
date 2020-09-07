@@ -95,13 +95,13 @@ jobs:
           POSTGRES_PASSWORD: password
           POSTGRES_DB: hawc-test
         ports:
-        - 5432/tcp
+        - 5432:5432
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
-      selenium_server:
+      selenium-server:
         image: selenium/standalone-chrome:latest
         ports:
-        - 4444/tcp
+        - 4444:4444
 
     steps:
     - uses: actions/checkout@v1
@@ -117,14 +117,14 @@ jobs:
       env:
         DJANGO_DB_HOST: postgres
         DJANGO_DB_NAME: hawc-test
-        DJANGO_DB_PORT: ${{ job.services.postgres.ports[5432] }} # get randomly assigned published port
+        DJANGO_DB_PORT: 5432
         DJANGO_DB_PW: password
         DJANGO_DB_USER: hawc
         HAWC_INTEGRATION_TESTS: 1
         LIVESERVER_HOST: container
         LIVESERVER_PORT: 8000
         PUBMED_API_KEY: ${{ secrets.PUBMED_API_KEY }}
-        SELENIUM_HOST: selenium_server
-        SELENIUM_PORT: ${{ job.services.selenium_server.ports[4444] }} # get randomly assigned published port
+        SELENIUM_HOST: selenium-server
+        SELENIUM_PORT: 4444
       run: |
         py.test tests/integration/
