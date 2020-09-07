@@ -142,6 +142,8 @@ jobs:
         DJANGO_DB_HOST: postgres
         DJANGO_DB_PORT: ${{ job.services.postgres.ports[5432] }} # get randomly assigned published port
         PUBMED_API_KEY: ${{ secrets.PUBMED_API_KEY }}
+        SELENIUM_HOST: selenium_server
+        SELENIUM_PORT: ${{ job.services.selenium_server.ports[4444] }} # get randomly assigned published port
       options: --network-alias container
 
     services:
@@ -152,10 +154,13 @@ jobs:
           POSTGRES_PASSWORD: password
           POSTGRES_DB: hawc-test
         ports:
-        - 5432:5432
+        - 5432/tcp
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
-      selenium-server:
+
+      selenium_server:
         image: selenium/standalone-chrome:latest
+        ports:
+        - 4444/tcp
 
     steps:
     - uses: actions/checkout@v1
@@ -172,7 +177,5 @@ jobs:
         LIVESERVER_HOST: container
         LIVESERVER_PORT: 8000
         HAWC_INTEGRATION_TESTS: 1
-        SELENIUM_HOST: selenium-server
-        SELENIUM_PORT: 4444
       run: |
         py.test tests/integration/
