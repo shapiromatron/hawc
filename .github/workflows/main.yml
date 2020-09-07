@@ -83,67 +83,8 @@ jobs:
     name: integration
     runs-on: ubuntu-18.04
 
-    services:
-      postgres:
-        image: postgres:9.6
-        env:
-          POSTGRES_USER: hawc
-          POSTGRES_PASSWORD: password
-          POSTGRES_DB: hawc-test
-        ports:
-        - 5432/tcp
-        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
-
-      selenium_server:
-        image: selenium/standalone-chrome:latest
-        ports:
-        - 4444/tcp
-
     container:
       image: nikolaik/python-nodejs:python3.6-nodejs12
-      env:
-        DJANGO_DB_NAME: hawc-test
-        DJANGO_DB_USER: hawc
-        DJANGO_DB_PW: password
-        DJANGO_DB_HOST: postgres
-        DJANGO_DB_PORT: ${{ job.services.postgres.ports[5432] }} # get randomly assigned published port
-        PUBMED_API_KEY: ${{ secrets.PUBMED_API_KEY }}
-      options: --network-alias django
-
-    steps:
-    - uses: actions/checkout@v1
-    - name: install hawc
-      run: |
-        pip install -r requirements/dev.txt
-    - name: start webpack-dev-server
-      run: |
-        yarn --cwd ./frontend install
-        npm start --prefix ./frontend &
-    - name: run selenium tests
-      env:
-        HAWC_INTEGRATION_TESTS: 1
-        LIVESERVER_HOST: django
-        LIVESERVER_PORT: 8000
-        SELENIUM_HOST: selenium_server
-        SELENIUM_PORT: ${{ job.services.selenium_server.ports[4444] }} # get randomly assigned published port
-      run: |
-        py.test tests/integration/
-
-  selenium-v1:
-    name: selenium-v1
-    runs-on: ubuntu-18.04
-
-    container:
-      image: nikolaik/python-nodejs:python3.6-nodejs12
-      env:
-        DJANGO_DB_NAME: hawc-test
-        DJANGO_DB_USER: hawc
-        DJANGO_DB_PW: password
-        DJANGO_DB_HOST: postgres
-        DJANGO_DB_PORT: ${{ job.services.postgres.ports[5432] }} # get randomly assigned published port
-        PUBMED_API_KEY: ${{ secrets.PUBMED_API_KEY }}
-        SELENIUM_HOST: selenium_server
-        SELENIUM_PORT: ${{ job.services.selenium_server.ports[4444] }} # get randomly assigned published port
       options: --network-alias container
 
     services:
@@ -174,8 +115,16 @@ jobs:
         npm start --prefix ./frontend &
     - name: run selenium tests
       env:
+        DJANGO_DB_HOST: postgres
+        DJANGO_DB_NAME: hawc-test
+        DJANGO_DB_PORT: ${{ job.services.postgres.ports[5432] }} # get randomly assigned published port
+        DJANGO_DB_PW: password
+        DJANGO_DB_USER: hawc
+        HAWC_INTEGRATION_TESTS: 1
         LIVESERVER_HOST: container
         LIVESERVER_PORT: 8000
-        HAWC_INTEGRATION_TESTS: 1
+        PUBMED_API_KEY: ${{ secrets.PUBMED_API_KEY }}
+        SELENIUM_HOST: selenium_server
+        SELENIUM_PORT: ${{ job.services.selenium_server.ports[4444] }} # get randomly assigned published port
       run: |
         py.test tests/integration/
