@@ -149,6 +149,7 @@ def chrome_driver():
     try:
         yield driver
     finally:
+        print(driver.get_log( 'browser' ))
         driver.quit()
 
 
