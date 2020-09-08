@@ -1,9 +1,9 @@
 import helium as h
 
 
-def rob_browse(chrome_driver, live_server_url):
+def rob_browse(driver, live_server_url):
     # set test to use our session-level driver
-    h.set_driver(chrome_driver)
+    h.set_driver(driver)
 
     # go to website
     h.go_to(live_server_url + "/study/7/")
@@ -22,7 +22,7 @@ def rob_browse(chrome_driver, live_server_url):
     assert h.Link("Actions").exists() is False
 
     # make sure we have an SVG on the page
-    assert len(chrome_driver.find_elements_by_css_selector("svg")) > 0
+    assert len(driver.find_elements_by_css_selector("svg")) > 0
 
     h.go_to(live_server_url + "/rob/study/7/")
 
@@ -32,7 +32,7 @@ def rob_browse(chrome_driver, live_server_url):
     h.wait_until(h.Text("domain 1").exists)
 
     # make sure we have an aggregate-flex class
-    assert len(chrome_driver.find_elements_by_css_selector(".aggregate-flex")) > 0
+    assert len(driver.find_elements_by_css_selector(".aggregate-flex")) > 0
 
     # make sure we have x amount of cells
-    assert len(chrome_driver.find_elements_by_css_selector(".aggregate-flex .domain-cell")) == 2
+    assert len(driver.find_elements_by_css_selector(".aggregate-flex .domain-cell")) == 2

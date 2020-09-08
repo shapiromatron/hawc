@@ -176,5 +176,9 @@ def firefox_driver():
         driver.quit()
 
 @pytest.fixture
-def set_chrome_driver(request, firefox_driver):
-    request.cls.chrome_driver = firefox_driver
+def set_chrome_driver(request, chrome_driver):
+    request.cls.driver = chrome_driver
+
+@pytest.fixture
+def set_firefox_driver(request, firefox_driver):
+    request.cls.driver = firefox_driver
