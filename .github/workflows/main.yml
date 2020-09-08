@@ -112,7 +112,7 @@ jobs:
       run: |
         mv ci-webpack-stats.json webpack-stats.json
         yarn --cwd ./frontend install
-        npm start-ci --prefix ./frontend &
+        npm run-script start-ci --prefix ./frontend &
     - name: run selenium tests
       env:
         DJANGO_DB_HOST: postgres
