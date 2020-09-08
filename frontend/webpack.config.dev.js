@@ -3,6 +3,6 @@ var config = require("./webpack.base.js"),
 
 config.devtool = "cheap-module-eval-source-map";
 
-config.output.publicPath = "http://localhost:" + port + "/dist/";
+config.output.publicPath = "http://container:" + port + "/dist/";
 
 module.exports = config;
