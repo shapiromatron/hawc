@@ -36,6 +36,8 @@ def summary_visual_browse(chrome_driver, live_server_url):
 
     h.go_to(live_server_url + "/summary" + assessment_url + "visuals/")
 
+    h.wait_until(h.Text("Title").exists, 60)
+
     # click the heatmap example
     h.click("heatmap")
 

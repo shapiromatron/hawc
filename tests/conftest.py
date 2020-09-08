@@ -168,7 +168,6 @@ def firefox_driver():
         # use helium's geckodriver
         driver = helium.start_firefox(options=options, headless=not SHOW_BROWSER)
 
-    driver.implicitly_wait(10)
     _wait_until_webpack_ready()
 
     try:
