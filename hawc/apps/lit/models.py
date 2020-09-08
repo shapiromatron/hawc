@@ -770,10 +770,12 @@ class Reference(models.Model):
         Async worker task; updates data from HERO and then applies new data to references.
         """
         reference_ids = cls.objects.hero_references(assessment_id).values_list("id", flat=True)
+        reference_ids = list(reference_ids)  # queryset to list for JSON serializability
         identifiers = Identifiers.objects.filter(
             references__in=reference_ids, database=constants.HERO
         )
         hero_ids = identifiers.values_list("unique_id", flat=True)
+        hero_ids = list(hero_ids)  # queryset to list for JSON serializability
 
         # update content of hero identifiers
         t1 = tasks.update_hero_content.si(hero_ids)
