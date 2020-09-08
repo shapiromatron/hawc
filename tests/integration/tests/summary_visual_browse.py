@@ -11,7 +11,7 @@ def summary_visual_browse(chrome_driver, live_server_url):
     h.go_to(live_server_url + "/summary" + assessment_url + "visuals/")
 
     assert h.Text("Available visualizations").exists() is True
-    h.wait_until(h.Text("Title").exists)
+    h.wait_until(h.Text("Title").exists, 60)
     assert len(chrome_driver.find_elements_by_css_selector("tr")) > 10
 
     h.click("data pivot - animal bioassay - endpoint")
