@@ -127,4 +127,4 @@ jobs:
         SELENIUM_HOST: selenium-server
         SELENIUM_PORT: 4444
       run: |
-        py.test tests/integration/
+        py.test -s tests/integration/
