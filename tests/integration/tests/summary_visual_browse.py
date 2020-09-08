@@ -20,7 +20,7 @@ def summary_visual_browse(chrome_driver, live_server_url):
     # different than requested
     assert h.Link("Actions").exists() is True
 
-    h.wait_until(h.Text("study name").exists)
+    h.wait_until(h.Text("study name").exists, 60)
 
     # ensure that the image exists
     assert len(chrome_driver.find_elements_by_css_selector("#dp_display svg")) > 0
