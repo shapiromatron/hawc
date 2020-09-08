@@ -10,7 +10,7 @@ from django.core.validators import URLValidator
 from django.db import models
 from django.db.models import QuerySet
 from django.db.models.functions import Cast
-from litter_getter import hero, pubmed
+from ...services.epa import hero, pubmed
 from taggit.managers import TaggableManager, _TaggableManager
 from taggit.utils import require_instance_manager
 

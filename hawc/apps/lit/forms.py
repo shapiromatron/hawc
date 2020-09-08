@@ -9,7 +9,7 @@ from django import forms
 from django.db import transaction
 from django.db.models import Q
 from django.urls import reverse_lazy
-from litter_getter import ris
+from ...services.epa import ris
 
 from ..assessment.models import Assessment
 from ..common.forms import BaseFormHelper, addPopupLink

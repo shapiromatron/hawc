@@ -20,7 +20,7 @@ from django.db import models, transaction
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.html import strip_tags
-from litter_getter import pubmed, ris
+from ...services.epa import pubmed, ris
 from taggit.models import ItemBase
 from treebeard.mp_tree import MP_Node
 

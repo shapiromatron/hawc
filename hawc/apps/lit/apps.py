@@ -8,7 +8,7 @@ class LitConfig(AppConfig):
 
     def ready(self):
         from . import signals  # noqa
-        from litter_getter import pubmed
+        from ...services.epa import pubmed
 
         if settings.PUBMED_API_KEY:
             pubmed.connect(settings.PUBMED_API_KEY)

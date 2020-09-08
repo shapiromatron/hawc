@@ -6,7 +6,7 @@ import json
 import xml.etree.ElementTree as ET
 
 from django.db import migrations, models
-from litter_getter import hero, pubmed, ris
+from hawc.services.epa import hero, pubmed, ris
 
 from hawc.apps.lit.constants import HERO, PUBMED, RIS
 

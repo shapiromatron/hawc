@@ -26,5 +26,4 @@ omit = [
   "./tests/*",
   "./venv/*",
   "*/bmds/*",
-  "*/litter_getter/*",
 ]
