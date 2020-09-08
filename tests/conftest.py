@@ -168,12 +168,12 @@ def firefox_driver():
         # use helium's geckodriver
         driver = helium.start_firefox(options=options, headless=not SHOW_BROWSER)
 
+    driver.implicitly_wait(10)
     _wait_until_webpack_ready()
 
     try:
         yield driver
     finally:
-        print(driver.get_log( 'browser' ))
         driver.quit()
 
 @pytest.fixture
