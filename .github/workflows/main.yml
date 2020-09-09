@@ -99,6 +99,15 @@ jobs:
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
       selenium-server:
+        # ERR_INSUFFICIENT_RESOURCES is raised if Chrome is used,
+        # so we use Firefox instead. Chrome can only handle so many
+        # async requests, and since the developmental webpack does not
+        # take into consideration these restrictions and  it isn't being
+        # served locally, there are errors.
+        # Similar issue with relevant answer:
+        # https://community.atlassian.com/t5/Jira-questions/Im-getting-Failed-to-load-resource-net-ERR-INSUFFICIENT/qaq-p/1153027
+        # Developmental webpack:
+        # https://webpack.js.org/configuration/mode/#mode-development
         image: selenium/standalone-firefox:latest
         ports:
         - 4444:4444

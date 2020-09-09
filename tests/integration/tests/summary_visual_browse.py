@@ -11,7 +11,7 @@ def summary_visual_browse(driver, live_server_url):
     h.go_to(live_server_url + "/summary" + assessment_url + "visuals/")
 
     assert h.Text("Available visualizations").exists() is True
-    h.wait_until(h.Text("Title").exists, 60)
+    h.wait_until(h.Text("Title").exists)
     assert len(driver.find_elements_by_css_selector("tr")) > 10
 
     h.click("data pivot - animal bioassay - endpoint")
@@ -20,7 +20,7 @@ def summary_visual_browse(driver, live_server_url):
     # different than requested
     assert h.Link("Actions").exists() is True
 
-    h.wait_until(h.Text("study name").exists, 60)
+    h.wait_until(h.Text("study name").exists)
 
     # ensure that the image exists
     assert len(driver.find_elements_by_css_selector("#dp_display svg")) > 0
@@ -35,15 +35,9 @@ def summary_visual_browse(driver, live_server_url):
     assert h.Text("Download as a SVG").exists() is True
 
     h.go_to(live_server_url + "/summary" + assessment_url + "visuals/")
-
-    h.wait_until(h.Text("Title").exists, 60)
-    assert len(driver.find_elements_by_css_selector("tr")) > 10
+    h.wait_until(h.Text("Title").exists)
 
     # click the heatmap example
-    h.wait_until(h.Link("heatmap").exists, 60)
-    print(h.Link("heatmap").href)
-    # h.click(h.Link("heatmap"))
-    # h.go_to(live_server_url + "/summary/visual/3/")
     driver.find_element_by_link_text("heatmap").click()
 
     assert "/summary/visual/3/" in driver.current_url

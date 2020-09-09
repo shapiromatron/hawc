@@ -1,6 +1,7 @@
 const express = require("express"),
     middleware = require("webpack-dev-middleware"),
     webpack = require("webpack"),
+    // Github CI uses network alias "container" instead of "localhost"
     config = process.env.CI ? require("./webpack.config.ci") : require("./webpack.config.dev"),
     host = process.env.CI ? "container" : "localhost",
     port = 8050,
