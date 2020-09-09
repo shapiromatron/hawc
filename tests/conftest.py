@@ -148,12 +148,15 @@ def chrome_driver():
     try:
         yield driver
     finally:
-        print(driver.get_log( 'browser' ))
+        print(driver.get_log("browser"))
         driver.quit()
+
 
 @pytest.fixture(scope="session")
 def firefox_driver():
     options = webdriver.FirefoxOptions()
+    profile = webdriver.FirefoxProfile()
+    profile.set_preference("devtools.console.stdout.content", True)
     if CI:
         options.headless = True
         # use a remote driver for CI's selenium server
@@ -163,6 +166,7 @@ def firefox_driver():
             command_executor=f"http://{host}:{port}/wd/hub",
             desired_capabilities=DesiredCapabilities.FIREFOX,
             options=options,
+            browser_profile=profile,
         )
     else:
         # use helium's geckodriver
@@ -175,9 +179,11 @@ def firefox_driver():
     finally:
         driver.quit()
 
+
 @pytest.fixture
 def set_chrome_driver(request, chrome_driver):
     request.cls.driver = chrome_driver
+
 
 @pytest.fixture
 def set_firefox_driver(request, firefox_driver):
