@@ -42,7 +42,8 @@ def summary_visual_browse(driver, live_server_url):
     # click the heatmap example
     h.wait_until(h.Link("heatmap").exists, 60)
     print(h.Link("heatmap").href)
-    h.click(h.Link("heatmap"))
+    # h.click(h.Link("heatmap"))
+    h.go_to(live_server_url + "/summary/visual/3/")
 
     assert "/summary/visual/3/" in driver.current_url
 
