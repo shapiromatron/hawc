@@ -37,6 +37,7 @@ def summary_visual_browse(driver, live_server_url):
     h.go_to(live_server_url + "/summary" + assessment_url + "visuals/")
 
     h.wait_until(h.Text("Title").exists, 60)
+    assert len(driver.find_elements_by_css_selector("tr")) > 10
 
     # click the heatmap example
     h.wait_until(h.Link("heatmap").exists, 60)
