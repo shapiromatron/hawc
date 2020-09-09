@@ -406,7 +406,19 @@ class EndpointForm(ModelForm):
             "endpoint_notes",
             "litter_effects",
             "litter_effect_notes",
+            "name_term",
+            "system_term",
+            "organ_term",
+            "effect_term",
+            "effect_subtype_term",
         )
+        widgets = {
+            "name_term": forms.HiddenInput,
+            "system_term": forms.HiddenInput,
+            "organ_term": forms.HiddenInput,
+            "effect_term": forms.HiddenInput,
+            "effect_subtype_term": forms.HiddenInput,
+        }
 
     def __init__(self, *args, **kwargs):
         animal_group = kwargs.pop("parent", None)
@@ -484,6 +496,11 @@ class EndpointForm(ModelForm):
                 else:
                     widget.attrs["class"] = "span12"
 
+        helper.layout.insert(
+            helper.find_layout_idx_for_field_name("name"),
+            cfl.Div(css_class="row-fluid", id="vocab"),
+        )
+        helper.add_fluid_row("name", 1, "span12")
         helper.add_fluid_row("system", 4, "span3")
         helper.add_fluid_row("effects", 2, "span6")
         helper.add_fluid_row("observation_time", 3, "span4")
@@ -493,10 +510,11 @@ class EndpointForm(ModelForm):
         helper.add_fluid_row("NOEL", 4, "span3")
         helper.add_fluid_row("statistical_test", 3, ["span6", "span3", "span3"])
         helper.add_fluid_row("litter_effects", 2, "span6")
+        helper.add_fluid_row("name_term", 5, "span2")
 
         url = reverse("assessment:effect_tag_create", kwargs={"pk": self.instance.assessment.pk})
-        helper.addBtnLayout(helper.layout[4], 0, url, "Add new effect tag", "span6")
-
+        helper.addBtnLayout(helper.layout[5], 0, url, "Add new effect tag", "span6")
+        helper.attrs["class"] = "hidden"
         return helper
 
     LIT_EFF_REQ = "Litter effects required if a reproductive/developmental study"

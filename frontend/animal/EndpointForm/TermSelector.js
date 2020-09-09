@@ -16,7 +16,9 @@ class TermSelector extends Component {
     }
     render() {
         const {
+                name,
                 label,
+                helpText,
                 termIdField,
                 termTextField,
                 parentIdField,
@@ -32,21 +34,19 @@ class TermSelector extends Component {
                     {label}
                 </label>
                 {useControlledVocabulary ? (
-                    <div>
-                        <AutocompleteTerm
-                            url={termUrlLookup[termIdField]}
-                            onChange={(id, text) => {
-                                store.setObjectField(termIdField, id);
-                                store.setObjectField(termTextField, text);
-                            }}
-                            placeholder={"CONTROLLED"}
-                            currentId={object[termIdField]}
-                            currentText={object[termIdField] ? object[termTextField] : ""}
-                            parentId={object[parentIdField]}
-                            parentRequired={parentRequired}
-                            minSearchLength={-1}
-                        />
-                    </div>
+                    <AutocompleteTerm
+                        url={termUrlLookup[termIdField]}
+                        onChange={(id, text) => {
+                            store.setObjectField(termIdField, id);
+                            store.setObjectField(termTextField, text);
+                        }}
+                        placeholder={"(controlled vocab.)"}
+                        currentId={object[termIdField]}
+                        currentText={object[termIdField] ? object[termTextField] : ""}
+                        parentId={object[parentIdField]}
+                        parentRequired={parentRequired}
+                        minSearchLength={-1}
+                    />
                 ) : (
                     <AutocompleteSelectableText
                         url={textUrlLookup[termIdField]}
@@ -55,7 +55,7 @@ class TermSelector extends Component {
                             store.setObjectField(termTextField, text);
                         }}
                         value={object[termTextField]}
-                        placeholder={"FREE TEXT"}
+                        placeholder={"(semi-controlled vocab.)"}
                     />
                 )}
                 {store.canUseControlledVocabulary ? (
@@ -63,11 +63,20 @@ class TermSelector extends Component {
                         <input
                             type="checkbox"
                             checked={useControlledVocabulary}
-                            onChange={() => store.toggleUseControlledVocabulary(termTextField)}
+                            onChange={() => {
+                                const newUseVocab = !useControlledVocabulary;
+                                store.toggleUseControlledVocabulary(termTextField);
+                                if (newUseVocab === false) {
+                                    store.setObjectField(termIdField, null);
+                                }
+                            }}
                         />
                         &nbsp;Use controlled vocabulary
                     </label>
                 ) : null}
+                <input type="hidden" name={name + "_term"} value={object[termIdField]} />
+                <input type="hidden" name={name} value={object[termTextField]} />
+                <p className="help-block">{helpText}</p>
                 {debug ? (
                     <ul>
                         <li>termId: {object[termIdField]}</li>
@@ -80,7 +89,9 @@ class TermSelector extends Component {
     }
 }
 TermSelector.propTypes = {
+    name: PropTypes.string.isRequired,
     label: PropTypes.string.isRequired,
+    helpText: PropTypes.string.isRequired,
     termIdField: PropTypes.string.isRequired,
     termTextField: PropTypes.string.isRequired,
     parentIdField: PropTypes.string,

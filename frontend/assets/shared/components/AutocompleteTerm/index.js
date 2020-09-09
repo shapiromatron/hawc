@@ -81,6 +81,7 @@ class AutocompleteTerm extends Component {
                     );
                 }}
                 inputProps={{
+                    className: "span12",
                     value: currentText,
                     suggestions,
                     placeholder: placeholder || "",
