@@ -128,6 +128,8 @@ def _wait_until_webpack_ready(max_wait_sec: int = 60):
 @pytest.fixture(scope="session")
 def chrome_driver():
     options = webdriver.ChromeOptions()
+    # prevent navbar from collapsing
+    options.add_argument("--window-size=1920,1080")
     if CI:
         options.add_experimental_option("excludeSwitches", ["enable-logging"])
         options.add_argument("--headless")
@@ -167,6 +169,9 @@ def firefox_driver():
     else:
         # use helium's geckodriver
         driver = helium.start_firefox(options=options, headless=not SHOW_BROWSER)
+
+    # prevent navbar from collapsing
+    driver.set_window_size(1920, 1080)
 
     _wait_until_webpack_ready()
 
