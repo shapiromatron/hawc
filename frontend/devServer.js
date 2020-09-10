@@ -1,8 +1,15 @@
-const express = require("express"),
+const getConfig = function(host, port) {
+        var config = require("./webpack.base.js");
+        config.devtool = "cheap-module-eval-source-map";
+        config.output.publicPath = `http://${host}:${port}/dist/`;
+        return config;
+    },
+    express = require("express"),
     middleware = require("webpack-dev-middleware"),
     webpack = require("webpack"),
-    config = require("./webpack.config.dev"),
+    host = process.env.CI ? process.env.LIVESERVER_HOST : "localhost",
     port = 8050,
+    config = getConfig(host, port),
     app = express(),
     compiler = webpack(config);
 
@@ -25,5 +32,5 @@ app.listen(port, "0.0.0.0", function(err) {
         return;
     }
     // eslint-disable-next-line no-console
-    console.info("Listening at http://localhost:" + port);
+    console.info(`Listening at http://${host}:${port}`);
 });
