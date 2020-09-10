@@ -404,7 +404,8 @@ To run, you'll need to set an environment variable:
 
     export HAWC_INTEGRATION_TESTS=1
     export SHOW_BROWSER=1
-    py.test tests/integration/ --pdb
+    export BROWSER="firefox"   # or "chrome"; chrome seems less stable
+    py.test -s tests/integration/ --pdb
 
 When writing these tests, it's often easiest to write the tests in an interactive scripting environment like ipython or jupyter. This allows you to interact with the DOM and the requests much easier than manually re-running tests as they're written. An example session:
 

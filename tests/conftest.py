@@ -125,28 +125,56 @@ def _wait_until_webpack_ready(max_wait_sec: int = 60):
     raise EnvironmentError("Timeout; webpack dev server not ready")
 
 
-@pytest.fixture(scope="session")
-def chrome_driver():
-    options = webdriver.ChromeOptions()
-    # prevent navbar from collapsing
-    options.add_argument("--window-size=1920,1080")
+def _get_driver(browser: str, CI: bool):
+    """
+    Returns the web-driver depending on the specified environment
+
+    Args:
+        browser (str): "firefox" or "chrome"
+        CI (bool): if we're in the CI environment
+
+    Raises:
+        ValueError: if configuration is invalid
+    """
+    command_executor = None
     if CI:
-        options.add_experimental_option("excludeSwitches", ["enable-logging"])
-        options.add_argument("--headless")
-        # use a remote driver for CI's selenium server
         host = os.environ["SELENIUM_HOST"]
         port = os.environ["SELENIUM_PORT"]
-        driver = webdriver.Remote(
-            command_executor=f"http://{host}:{port}/wd/hub",
-            desired_capabilities=DesiredCapabilities.CHROME,
-            options=options,
-        )
+        command_executor = f"http://{host}:{port}/wd/hub"
+
+    if browser == "chrome":
+        options = webdriver.ChromeOptions()
+        # prevent navbar from collapsing
+        options.add_argument("--window-size=1920,1080")
+        if CI:
+            options.add_experimental_option("excludeSwitches", ["enable-logging"])
+            options.add_argument("--headless")
+            return webdriver.Remote(
+                command_executor=command_executor,
+                desired_capabilities=DesiredCapabilities.CHROME,
+                options=options,
+            )
+        else:
+            return helium.start_chrome(options=options, headless=not SHOW_BROWSER)
+    elif browser == "firefox":
+        options = webdriver.FirefoxOptions()
+        if CI:
+            options.headless = True
+            return webdriver.Remote(
+                command_executor=command_executor,
+                desired_capabilities=DesiredCapabilities.FIREFOX,
+                options=options,
+            )
+        else:
+            return helium.start_firefox(options=options, headless=not SHOW_BROWSER)
     else:
-        # use helium's chromedriver
-        driver = helium.start_chrome(options=options, headless=not SHOW_BROWSER)
+        raise ValueError(f"Unknown config: {browser}/{CI}")
 
+
+@pytest.fixture(scope="session")
+def chrome_driver():
+    driver = _get_driver("chrome", CI)
     _wait_until_webpack_ready()
-
     try:
         yield driver
     finally:
@@ -155,26 +183,10 @@ def chrome_driver():
 
 @pytest.fixture(scope="session")
 def firefox_driver():
-    options = webdriver.FirefoxOptions()
-    if CI:
-        options.headless = True
-        # use a remote driver for CI's selenium server
-        host = os.environ["SELENIUM_HOST"]
-        port = os.environ["SELENIUM_PORT"]
-        driver = webdriver.Remote(
-            command_executor=f"http://{host}:{port}/wd/hub",
-            desired_capabilities=DesiredCapabilities.FIREFOX,
-            options=options,
-        )
-    else:
-        # use helium's geckodriver
-        driver = helium.start_firefox(options=options, headless=not SHOW_BROWSER)
-
+    driver = _get_driver("firefox", CI)
     # prevent navbar from collapsing
     driver.set_window_size(1920, 1080)
-
     _wait_until_webpack_ready()
-
     try:
         yield driver
     finally:
