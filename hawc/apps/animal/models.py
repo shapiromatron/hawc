@@ -1113,6 +1113,15 @@ class Endpoint(BaseEndpoint):
     def get_crumbs(self):
         return get_crumbs(self, self.animal_group)
 
+    def save(self, *args, **kwargs):
+        # ensure our controlled vocabulary terms don't have leading/trailing whitespace
+        self.system = self.system.strip()
+        self.organ = self.organ.strip()
+        self.effect = self.effect.strip()
+        self.effect_subtype = self.effect_subtype.strip()
+        self.name = self.name.strip()
+        super().save(*args, **kwargs)
+
     @property
     def dose_response_available(self):
         return self.data_reported and self.data_extracted

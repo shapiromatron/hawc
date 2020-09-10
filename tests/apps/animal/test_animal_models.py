@@ -3,6 +3,17 @@ import pytest
 from hawc.apps.animal import models
 
 
+@pytest.mark.django_db
+class TestEndpoint:
+    def test_save(self, db_keys):
+        # make sure our strip() methods work
+        instance = models.Endpoint.objects.get(id=db_keys.endpoint_working)
+        assert instance.system == ""
+        instance.system = "   "
+        instance.save()
+        assert instance.system == ""
+
+
 def _check_percent_control(inputs, outputs, data_type):
     data = [{"n": el[1], "response": el[2], "stdev": el[3]} for el in inputs]
     models.EndpointGroup.percentControl(data_type, data)
