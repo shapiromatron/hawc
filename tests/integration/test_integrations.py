@@ -7,7 +7,7 @@ from django.test import TestCase
 from . import tests
 
 SKIP_INTEGRATION = os.environ.get("HAWC_INTEGRATION_TESTS") is None
-BROWSER = os.environ.get("BROWSER", "chrome")  # default to chrome
+BROWSER = os.environ.get("BROWSER", "firefox")  # default to firefox; seems more stable
 
 
 @pytest.mark.skipif(SKIP_INTEGRATION, reason="integration test")

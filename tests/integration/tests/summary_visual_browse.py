@@ -4,6 +4,13 @@ assessment_url = "/assessment/2/"
 
 
 def summary_visual_browse(driver, live_server_url):
+    """
+    Assert we can render the compelted HAWC visualizations. This includes:
+    - the visuals list page
+    - a data pivot summary page
+    - a risk of bias heatmap can be rendered
+    - TODO - add other visualization type checks
+    """
     # set test to use our session-level driver
     h.set_driver(driver)
 

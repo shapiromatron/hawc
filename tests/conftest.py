@@ -142,7 +142,18 @@ def _get_driver(browser: str, CI: bool):
         port = os.environ["SELENIUM_PORT"]
         command_executor = f"http://{host}:{port}/wd/hub"
 
-    if browser == "chrome":
+    if browser == "firefox":
+        options = webdriver.FirefoxOptions()
+        if CI:
+            options.headless = True
+            return webdriver.Remote(
+                command_executor=command_executor,
+                desired_capabilities=DesiredCapabilities.FIREFOX,
+                options=options,
+            )
+        else:
+            return helium.start_firefox(options=options, headless=not SHOW_BROWSER)
+    elif browser == "chrome":
         options = webdriver.ChromeOptions()
         # prevent navbar from collapsing
         options.add_argument("--window-size=1920,1080")
@@ -156,19 +167,8 @@ def _get_driver(browser: str, CI: bool):
             )
         else:
             return helium.start_chrome(options=options, headless=not SHOW_BROWSER)
-    elif browser == "firefox":
-        options = webdriver.FirefoxOptions()
-        if CI:
-            options.headless = True
-            return webdriver.Remote(
-                command_executor=command_executor,
-                desired_capabilities=DesiredCapabilities.FIREFOX,
-                options=options,
-            )
-        else:
-            return helium.start_firefox(options=options, headless=not SHOW_BROWSER)
     else:
-        raise ValueError(f"Unknown config: {browser}/{CI}")
+        raise ValueError(f"Unknown config: {browser} / {CI}")
 
 
 @pytest.fixture(scope="session")

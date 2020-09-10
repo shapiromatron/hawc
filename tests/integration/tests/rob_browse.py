@@ -2,6 +2,11 @@ import helium as h
 
 
 def rob_browse(driver, live_server_url):
+    """
+    Assert that we can view study-level risk of bias pages, and rich content. This includes:
+    - the study summary + risk of bias donut plot
+    - the study + risk of bias detail page and visualization
+    """
     # set test to use our session-level driver
     h.set_driver(driver)
 

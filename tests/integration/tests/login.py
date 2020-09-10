@@ -4,7 +4,9 @@ import helium as h
 
 
 def login(driver, root_url):
-
+    """
+    Assert that we're able to login/logout successfully and an errors are displayed as expected.
+    """
     # set test to use our session-level driver
     h.set_driver(driver)
 

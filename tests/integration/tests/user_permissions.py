@@ -4,6 +4,11 @@ assessment_url = "/assessment/3/"
 
 
 def user_permissions(driver, live_server_url):
+    """
+    Basic permissions checks, ensure that some basic assessment-level checks are valid
+    - unauthenticated users can view detail pages but not update pages
+    - authenticated users with project permissions can view update pages
+    """
     h.set_driver(driver)
 
     detail_url = live_server_url + assessment_url
