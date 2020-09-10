@@ -1,3 +1,5 @@
+import h from "shared/utils/helpers";
+
 const DEFAULT_MIN_SEARCH_LENGTH = 3,
     DEBOUNCE_MS = 1000,
     theme = {
@@ -12,7 +14,8 @@ const DEFAULT_MIN_SEARCH_LENGTH = 3,
         sectionTitle: "autocomplete__section-title",
     },
     boldPatternText = function(text, pattern) {
-        return text.replace(new RegExp(pattern, "gi"), match => `<b>${match}</b>`);
+        const regex = new RegExp(h.escapeRegexString(pattern), "gi");
+        return text.replace(regex, match => `<b>${match}</b>`);
     };
 
 export {DEFAULT_MIN_SEARCH_LENGTH, DEBOUNCE_MS, boldPatternText, theme};

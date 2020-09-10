@@ -74,8 +74,8 @@ class TermSelector extends Component {
                         &nbsp;Use controlled vocabulary
                     </label>
                 ) : null}
-                <input type="hidden" name={name + "_term"} value={object[termIdField]} />
-                <input type="hidden" name={name} value={object[termTextField]} />
+                <input type="hidden" name={name + "_term"} value={object[termIdField] || ""} />
+                <input type="hidden" name={name} value={object[termTextField] || ""} />
                 <p className="help-block">{helpText}</p>
                 {debug ? (
                     <ul>
