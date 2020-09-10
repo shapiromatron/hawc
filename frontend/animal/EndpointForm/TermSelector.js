@@ -58,6 +58,11 @@ class TermSelector extends Component {
                         placeholder={"(semi-controlled vocab.)"}
                     />
                 )}
+                {object[termIdField] ? (
+                    <p>
+                        <b>Selected term:</b>&nbsp;{object[termTextField]} ({object[termIdField]})
+                    </p>
+                ) : null}
                 {store.canUseControlledVocabulary ? (
                     <label className="checkbox">
                         <input

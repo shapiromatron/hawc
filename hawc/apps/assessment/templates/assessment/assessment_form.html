@@ -43,6 +43,12 @@
       $('#id_vocabulary').on('change', toggleCuration)
       toggleCuration();
 
+      // TODO -remove once this goes live
+      const showVocab = !{{user.is_superuser|lower}};
+      if (showVocab){
+        $("#fluid_id_vocabulary_2").hide();
+      }
+
       $('.html5text').quillify();
 
     });
