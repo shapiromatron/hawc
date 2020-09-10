@@ -155,7 +155,7 @@
   </script>
   <script type="text/javascript">
     $(document).ready(function () {
-      let settings = JSON.parse(document.getElementById('settings').text);
+      const settings = JSON.parse(document.getElementById('settings').text);
 
       // reorganize forms
       $('#endpointGroups').insertBefore($('div.form-actions'));
@@ -171,27 +171,28 @@
       });
 
       window.app.animalStartup(function(animal){
+          const startupEditEndpoint = () => {
+              var endpoint = new animal.EditEndpoint(
+                settings,
+                { "NOEL": settings.NOEL, "LOEL": settings.LOEL, "FEL": settings.FEL },
+                settings.doses,
+                $('#eg'),
+                $('#endpoint_plot')
+              );
+
+              // whenever input changes, update data form
+              $('body')
+                .on('keyup', '#input', endpoint.update_endpoint_from_form.bind(endpoint))
+                .on('change', 'select', endpoint.update_endpoint_from_form.bind(endpoint));
+            };
 
           animal.EndpointForm(startup => {
             startup.func(document.getElementById('vocab'), settings.vocabulary);
             $('#fluid_id_name_1').remove();
             $('#fluid_id_system_4').remove();
             $('#fluid_id_name_term_5').remove();
-            $('#endpoint').removeClass('hidden').hide().fadeIn();
+            $('#endpoint').removeClass('hidden').hide().fadeIn({complete:  startupEditEndpoint});
           });
-
-          var endpoint = new animal.EditEndpoint(
-            settings,
-            {"NOEL": settings.NOEL, "LOEL": settings.LOEL, "FEL": settings.FEL},
-            settings.doses,
-            $('#eg'),
-            $('#endpoint_plot')
-          );
-
-          // whenever input changes, update data form
-          $('body')
-            .on('keyup', 'input', endpoint.update_endpoint_from_form.bind(endpoint))
-            .on('change', 'select', endpoint.update_endpoint_from_form.bind(endpoint));
 
           // toggle the name of the variance column header as the value changes
           $('#id_variance_type')
