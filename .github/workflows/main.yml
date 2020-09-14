@@ -138,4 +138,4 @@ jobs:
         npm run --prefix ./frontend start  &
     - name: run selenium tests
       run: |
-        py.test -s tests/integration/
+        py.test -s tests/frontend/integration/

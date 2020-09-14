@@ -9,11 +9,11 @@ from hawc.apps.assessment.forms import DatasetForm
 from hawc.apps.assessment.models import Assessment, Dataset, DatasetRevision
 
 IRIS_DATA_CSV = (
-    Path(__file__).parents[2] / "data/private-data/assessment/dataset-revision/iris.csv"
+    Path(__file__).parents[3] / "data/private-data/assessment/dataset-revision/iris.csv"
 ).read_bytes()
 
 IRIS_DATA_XLSX = (
-    Path(__file__).parents[2] / "data/private-data/assessment/dataset-revision/iris.xlsx"
+    Path(__file__).parents[3] / "data/private-data/assessment/dataset-revision/iris.xlsx"
 ).read_bytes()
 
 

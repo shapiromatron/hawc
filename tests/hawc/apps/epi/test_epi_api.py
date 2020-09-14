@@ -5,7 +5,7 @@ import pytest
 from django.urls import reverse
 from rest_framework.test import APIClient
 
-DATA_ROOT = Path(__file__).parents[2] / "data/api"
+DATA_ROOT = Path(__file__).parents[3] / "data/api"
 
 
 @pytest.mark.django_db
