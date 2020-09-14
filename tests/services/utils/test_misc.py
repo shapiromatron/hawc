@@ -1,4 +1,4 @@
-from hawc.services.epa.utils import get_author_short_text, normalize_author
+from hawc.services.utils.misc import get_author_short_text, normalize_author
 
 
 class TestNormalizeAuthors:

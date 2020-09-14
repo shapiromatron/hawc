@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from hawc.services.epa.ris import RisImporter
+from hawc.services.utils.ris import RisImporter
 
 DATA_ROOT = Path(__file__).parent / "data"
 

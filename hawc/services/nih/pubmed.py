@@ -6,7 +6,7 @@ from typing import Dict, List, Optional
 
 import requests
 
-from . import utils
+from ..utils.misc import get_author_short_text, normalize_author
 
 
 class PubMedSettings:
@@ -242,9 +242,7 @@ class PubMedParser:
         for auth in auths:
             try:
                 names.append(
-                    utils.normalize_author(
-                        f"{auth.find('LastName').text} {auth.find('Initials').text}"
-                    )
+                    normalize_author(f"{auth.find('LastName').text} {auth.find('Initials').text}")
                 )
             except Exception:
                 pass
@@ -254,7 +252,7 @@ class PubMedParser:
             except Exception:
                 pass
 
-        return {"authors": names, "authors_short": utils.get_author_short_text(names)}
+        return {"authors": names, "authors_short": get_author_short_text(names)}
 
     @classmethod
     def _journal_info(cls, tree: ET.Element) -> str:

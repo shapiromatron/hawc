@@ -7,7 +7,7 @@ import xlsxwriter
 from RISparser import readris
 from RISparser.config import TAG_KEY_MAPPING
 
-from . import utils
+from .misc import get_author_short_text, normalize_authors, try_int
 
 
 class RisImporter:
@@ -142,7 +142,7 @@ class ReferenceParser:
                 accession_number=self._get_accession_number(),
                 accession_db=self.content.get("name_of_database", None),
                 reference_type=self.content.get("type_of_reference", None),
-                id=utils.try_int(self.content["id"]),
+                id=try_int(self.content["id"]),
                 json=self.content,
             )
         return self._formatted
@@ -190,12 +190,12 @@ class ReferenceParser:
         for fld in self.AUTHOR_LIST_FIELDS:
             if fld in self.content:
                 authors.extend([author for author in self.content[fld]])
-        self._authors = utils.normalize_authors(authors)
+        self._authors = normalize_authors(authors)
 
     def _get_authors_short(self):
         if not hasattr(self, "_authors"):
             self._clean_authors()
-        return utils.get_author_short_text(self._authors)
+        return get_author_short_text(self._authors)
 
     def _get_journal_citation(self):
         # volume is sometimes blank; only add parens if non-blank

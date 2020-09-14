@@ -1,19 +1,19 @@
 import os
 from unittest import TestCase
 
-from hawc.services.epa import pubmed
+import pytest
+
+from hawc.services.nih import pubmed
+
+PUBMED_API_KEY = os.environ.get("PUBMED_API_KEY")
 
 
-def _pubmed_connect():
-    pubmed_api_key = os.environ.get("PUBMED_API_KEY")
-    if pubmed_api_key is None:
-        raise EnvironmentError("Test environment requires $PUBMED_API_KEY to be set.")
-    pubmed.settings.connect(pubmed_api_key)
-
-
+@pytest.mark.skipif(
+    PUBMED_API_KEY is None, reason="Test environment requires $PUBMED_API_KEY to be set."
+)
 class PubMedSearchTests(TestCase):
     def setUp(self):
-        _pubmed_connect()
+        pubmed.settings.connect(PUBMED_API_KEY)
         self.term = "science[journal] AND breast cancer AND 2008[pdat]"
         self.results_list = [19008416, 18927361, 18787170, 18487186, 18239126, 18239125]
 
@@ -53,9 +53,12 @@ class PubMedSearchTests(TestCase):
         self.assertListEqual(self.search.ids, self.results_list)
 
 
+@pytest.mark.skipif(
+    PUBMED_API_KEY is None, reason="Test environment requires $PUBMED_API_KEY to be set."
+)
 class PubMedFetchTests(TestCase):
     def setUp(self):
-        _pubmed_connect()
+        pubmed.settings.connect(PUBMED_API_KEY)
         self.ids = [19008416, 18927361, 18787170, 18487186, 18239126, 18239125]
 
     def test_standard_query(self):

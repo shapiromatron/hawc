@@ -20,11 +20,12 @@ from django.db import models, transaction
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.html import strip_tags
-from ...services.epa import pubmed, ris
 from taggit.models import ItemBase
 from treebeard.mp_tree import MP_Node
 
 from ...refml import topics
+from ...services.nih import pubmed
+from ...services.utils import ris
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper
 from ..common.models import (
     AssessmentRootMixin,

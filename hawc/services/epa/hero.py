@@ -4,7 +4,7 @@ from typing import Any, Dict, List, Optional
 
 import requests
 
-from . import utils
+from ..utils.misc import get_author_short_text, normalize_authors
 
 
 def _parse_pseudo_json(d: Dict, field: str) -> Any:
@@ -24,8 +24,8 @@ def _force_int(val, default=None) -> Optional[int]:
 
 
 def parse_article(content: Dict) -> Dict:
-    authors = utils.normalize_authors(content.get("AUTHORS", "").split("; "))
-    authors_short = utils.get_author_short_text(authors)
+    authors = normalize_authors(content.get("AUTHORS", "").split("; "))
+    authors_short = get_author_short_text(authors)
     return dict(
         json=content,
         HEROID=_force_int(_parse_pseudo_json(content, "REFERENCE_ID")),
