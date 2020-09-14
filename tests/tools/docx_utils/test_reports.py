@@ -1,5 +1,3 @@
-import os
-
 from hawc.tools.docx_utils import DOCXReport
 
 
@@ -9,7 +7,5 @@ class ReporterTest(DOCXReport):
 
 
 def test_reporter():
-    root_path = os.path.expanduser("~/Desktop/report.docx")
     report = ReporterTest(None, {"name": "Moto"})
-    docx = report.build_report()
-    report.save_report(docx, root_path)
+    report.build_report()
