@@ -659,6 +659,12 @@ class Dataset(models.Model):
     )
     name = models.CharField(max_length=256)
     description = models.TextField(blank=True)
+    published = models.BooleanField(
+        default=False,
+        help_text="If True, this dataset may be visible to reviewers and/or the public "
+        "(if assessment-permissions allow this level of visibility). Team-members and "
+        "project-management can view both published and unpublished datasets.",
+    )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
