@@ -1,4 +1,3 @@
-import $ from "$";
 import _ from "lodash";
 import React from "react";
 import ReactDOM from "react-dom";
@@ -8,8 +7,7 @@ import ReferenceComponent from "./components/Reference";
 class Reference {
     constructor(data, tagtree) {
         this.data = data;
-        this.data.tags = [];
-        data.tags.forEach(v => this.add_tag(tagtree.dict[v]));
+        this.tags = data.tags.map(tagId => tagtree.dict[tagId]);
     }
 
     static sortCompare(a, b) {
@@ -39,72 +37,10 @@ class Reference {
         ReactDOM.render(<ReferenceComponent reference={this} {...options} />, el);
     }
 
-    print_edit_taglist() {
-        return this.data.tags.map(d =>
-            $(
-                `<span title="click to remove" class="refTag refTagEditing">${d.get_full_name()}</span>`
-            ).data("d", d)
-        );
-    }
-
     print_name_str() {
         let authors = this.data.authors_short || this.data.authors || Reference.NO_AUTHORS_TEXT,
             year = this.data.year || "";
         return `${authors} ${year}`;
-    }
-
-    print_name() {
-        this.$list = $(`<p class="reference">${this.print_name_str()}</p>`).data("d", this);
-        return this.$list;
-    }
-
-    select_name() {
-        this.$list.addClass("selected");
-    }
-
-    deselect_name() {
-        this.$list.removeClass("selected");
-    }
-
-    add_tag(tag) {
-        var tag_already_exists = false;
-        this.data.tags.forEach(function(v) {
-            if (tag === v) {
-                tag_already_exists = true;
-            }
-        });
-        if (tag_already_exists) return;
-        this.data.tags.push(tag);
-        this.notifyObservers();
-    }
-
-    remove_tag(tag) {
-        this.data.tags.splice_object(tag);
-        tag.removeObserver(this);
-        this.notifyObservers();
-    }
-
-    remove_tags() {
-        this.data.tags = [];
-        this.notifyObservers();
-    }
-
-    save(success, failure) {
-        var data = {
-            pk: this.data.pk,
-            tags: this.data.tags.map(function(v) {
-                return v.data.pk;
-            }),
-        };
-        $.post(".", data, function(v) {
-            return v.status === "success" ? success() : failure();
-        }).fail(failure);
-    }
-
-    update(status) {
-        if (status.event == "tag removed") {
-            this.remove_tag(status.object);
-        }
     }
 }
 

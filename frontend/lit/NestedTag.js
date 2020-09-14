@@ -1,7 +1,12 @@
 import $ from "$";
+import ReactDOM from "react-dom";
+import React from "react";
 
 import Observee from "utils/Observee";
 
+import Loading from "shared/components/Loading";
+import GenericError from "shared/components/GenericError";
+import ReferenceTable from "lit/components/ReferenceTable";
 import Reference from "./Reference";
 
 class NestedTag extends Observee {
@@ -27,27 +32,6 @@ class NestedTag extends Observee {
         }
         this.children = children;
         return this;
-    }
-
-    get_reference_objects_by_tag(reference_viewer, options) {
-        options = options || {filteredSubset: false};
-        let url = `/lit/assessment/${this.assessment_id}/references/${this.data.pk}/json/`;
-        if (this.search_id) {
-            url += `?search_id=${this.search_id}`;
-        }
-
-        $.get(url, results => {
-            if (results.status == "success") {
-                let refs = results.refs.map(datum => new Reference(datum, this.tree));
-                if (options.filteredSubset) {
-                    let expected_references = new Set(this.get_references_deep());
-                    refs = refs.filter(ref => expected_references.has(ref.data.pk));
-                }
-                reference_viewer.set_references(refs);
-            } else {
-                reference_viewer.set_error();
-            }
-        });
     }
 
     get_references_deep() {
@@ -156,6 +140,27 @@ class NestedTag extends Observee {
 
     remove_child(tag) {
         this.children.splice_object(tag);
+    }
+
+    renderReferenceList(el) {
+        let url = `/lit/assessment/${this.assessment_id}/references/${this.data.pk}/json/`;
+        if (this.search_id) {
+            url += `?search_id=${this.search_id}`;
+        }
+        ReactDOM.render(<Loading />, el);
+
+        $.get(url, results => {
+            if (results.status == "success") {
+                let expected_references = new Set(this.get_references_deep()),
+                    refs = results.refs
+                        .map(datum => new Reference(datum, this.tree))
+                        .filter(ref => expected_references.has(ref.data.pk));
+
+                ReactDOM.render(<ReferenceTable references={refs} showActions={false} />, el);
+            } else {
+                ReactDOM.render(<GenericError />, el);
+            }
+        });
     }
 }
 

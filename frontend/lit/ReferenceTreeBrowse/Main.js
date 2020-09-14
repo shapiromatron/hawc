@@ -10,13 +10,11 @@ import Loading from "shared/components/Loading";
 @inject("store")
 @observer
 class ReferenceTreeMain extends Component {
-    constructor(props) {
-        super(props);
-    }
     render() {
         const {store} = this.props,
             actions = store.getActionLinks,
-            {selectedReferences, selectedReferencesLoading} = store;
+            {selectedReferences, selectedReferencesLoading} = store,
+            {canEdit} = store.config;
 
         return (
             <div className="row-fluid">
@@ -68,7 +66,7 @@ class ReferenceTreeMain extends Component {
                             <p className="help-block">Click on a tag to view tagged references.</p>
                         ) : null}
                         {selectedReferences ? (
-                            <ReferenceTable references={selectedReferences} />
+                            <ReferenceTable references={selectedReferences} showActions={canEdit} />
                         ) : null}
                     </div>
                 </div>

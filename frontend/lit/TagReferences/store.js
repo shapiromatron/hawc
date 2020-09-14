@@ -28,7 +28,7 @@ class Store {
 
     @action.bound changeSelectedReference(reference) {
         this.selectedReference = reference;
-        this.selectedReferenceTags = reference.data.tags.slice(0); // shallow copy
+        this.selectedReferenceTags = reference.tags.slice(0); // shallow copy
     }
     @action.bound addTag(tag) {
         if (
@@ -60,7 +60,7 @@ class Store {
                 this.errorOnSave = false;
                 $el.fadeIn().fadeOut({
                     complete: () => {
-                        this.selectedReference.data.tags = toJS(this.selectedReferenceTags);
+                        this.selectedReference.tags = toJS(this.selectedReferenceTags);
                         this.references.splice(index, 1, toJS(this.selectedReference));
                         this.selectedReference = null;
                         this.selectedReferenceTags = null;
@@ -85,10 +85,10 @@ class Store {
     }
 
     @computed get referencesTagged() {
-        return this.references.filter(ref => ref.data.tags.length > 0);
+        return this.references.filter(ref => ref.tags.length > 0);
     }
     @computed get referencesUntagged() {
-        return this.references.filter(ref => ref.data.tags.length === 0);
+        return this.references.filter(ref => ref.tags.length === 0);
     }
 }
 

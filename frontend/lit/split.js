@@ -10,18 +10,19 @@ import ReferenceTreeMain from "./ReferenceTreeBrowse/Main";
 import ReferenceTreeMainStore from "./ReferenceTreeBrowse/store";
 import TagReferencesMain from "./TagReferences/Main";
 import TagReferencesMainStore from "./TagReferences/store";
-import ReferencesViewer from "./ReferencesViewer";
 import TagTree from "./TagTree";
 import TagTreeViz from "./TagTreeViz";
 
 export default {
-    ReferencesViewer,
     TagTree,
     TagTreeViz,
-    startupReferenceDetail(el, tags, reference) {
+    startupReferenceDetail(el, tags, reference, canEdit) {
         let tagtree = new TagTree(tags[0]),
             ref = new Reference(reference, tagtree),
-            options = {showActions: true, actionsBtnClassName: "btn btn-primary dropdown-toggle"};
+            options = {
+                showActions: canEdit,
+                actionsBtnClassName: "btn btn-primary dropdown-toggle",
+            };
 
         ReactDOM.render(<ReferenceComponent reference={ref} {...options} />, el);
     },

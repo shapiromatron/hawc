@@ -68,10 +68,9 @@ class Reference extends Component {
 
     render() {
         const {reference, showActions, showTags, showHr, actionsBtnClassName} = this.props,
-            {data} = reference,
-            authors =
-                reference.data.authors || reference.data.authors_short || reference.NO_AUTHORS_TEXT,
-            year = reference.data.year || "";
+            {data, tags} = reference,
+            authors = data.authors || data.authors_short || reference.NO_AUTHORS_TEXT,
+            year = data.year || "";
 
         return (
             <div id="reference_detail_div">
@@ -105,11 +104,11 @@ class Reference extends Component {
                 {data.abstract ? (
                     <div className="abstracts" dangerouslySetInnerHTML={{__html: data.abstract}} />
                 ) : null}
-                {showTags && data.tags.length > 0 ? (
+                {showTags && tags.length > 0 ? (
                     <p>
-                        {data.tags.map((d, i) => [
+                        {tags.map((tag, i) => [
                             <span key={i} className="label label-info">
-                                {d.get_full_name()}
+                                {tag.get_full_name()}
                             </span>,
                             <span key={i + 1000}>&nbsp;</span>,
                         ])}

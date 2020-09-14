@@ -6,7 +6,7 @@ import Reference from "./Reference";
 class ReferenceTable extends Component {
     render() {
         const {references} = this.props,
-            args = {showActions: true, showHr: true};
+            args = {showActions: this.props.showActions, showHr: true};
 
         if (references.length === 0) {
             return <p>No references found.</p>;
@@ -23,6 +23,7 @@ class ReferenceTable extends Component {
 }
 ReferenceTable.propTypes = {
     references: PropTypes.array.isRequired,
+    showActions: PropTypes.bool.isRequired,
 };
 
 export default ReferenceTable;

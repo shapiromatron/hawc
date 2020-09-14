@@ -41,8 +41,7 @@ class Store {
 
         let url = `/lit/assessment/${this.config.assessment_id}/references/${this.selectedTag.data.pk}/json/`;
         if (this.config.search_id) {
-            // CHECK THIS PART
-            url += `?search_id=${this.search_id}`;
+            url += `?search_id=${this.config.search_id}`;
         }
         this.selectedReferencesLoading = true;
         $.get(url, results => {
