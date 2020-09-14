@@ -13,6 +13,7 @@ from selenium import webdriver
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
 CI = os.environ.get("CI") == "true"
+SHOW_BROWSER = bool(os.environ.get("SHOW_BROWSER", None))
 
 
 class UserCredential(NamedTuple):
@@ -124,26 +125,79 @@ def _wait_until_webpack_ready(max_wait_sec: int = 60):
     raise EnvironmentError("Timeout; webpack dev server not ready")
 
 
+def _get_driver(browser: str, CI: bool):
+    """
+    Returns the web-driver depending on the specified environment
+
+    Args:
+        browser (str): "firefox" or "chrome"
+        CI (bool): if we're in the CI environment
+
+    Raises:
+        ValueError: if configuration is invalid
+    """
+    command_executor = None
+    if CI:
+        host = os.environ["SELENIUM_HOST"]
+        port = os.environ["SELENIUM_PORT"]
+        command_executor = f"http://{host}:{port}/wd/hub"
+
+    if browser == "firefox":
+        options = webdriver.FirefoxOptions()
+        if CI:
+            options.headless = True
+            return webdriver.Remote(
+                command_executor=command_executor,
+                desired_capabilities=DesiredCapabilities.FIREFOX,
+                options=options,
+            )
+        else:
+            return helium.start_firefox(options=options, headless=not SHOW_BROWSER)
+    elif browser == "chrome":
+        options = webdriver.ChromeOptions()
+        # prevent navbar from collapsing
+        options.add_argument("--window-size=1920,1080")
+        if CI:
+            options.add_experimental_option("excludeSwitches", ["enable-logging"])
+            options.add_argument("--headless")
+            return webdriver.Remote(
+                command_executor=command_executor,
+                desired_capabilities=DesiredCapabilities.CHROME,
+                options=options,
+            )
+        else:
+            return helium.start_chrome(options=options, headless=not SHOW_BROWSER)
+    else:
+        raise ValueError(f"Unknown config: {browser} / {CI}")
+
+
 @pytest.fixture(scope="session")
 def chrome_driver():
-    options = webdriver.ChromeOptions()
-    options.add_argument("--window-size=1920,1080")
-    if CI:
-        options.add_experimental_option("excludeSwitches", ["enable-logging"])
-        options.add_argument("--headless")
-        # use a remote driver for CI's selenium server
-        driver = webdriver.Remote(
-            command_executor="http://selenium-server:4444/wd/hub",
-            desired_capabilities=DesiredCapabilities.CHROME,
-            options=options,
-        )
-    else:
-        # use helium's chromedriver
-        driver = helium.start_chrome(options=options, headless=True)
-
+    driver = _get_driver("chrome", CI)
     _wait_until_webpack_ready()
-
     try:
         yield driver
     finally:
         driver.quit()
+
+
+@pytest.fixture(scope="session")
+def firefox_driver():
+    driver = _get_driver("firefox", CI)
+    # prevent navbar from collapsing
+    driver.set_window_size(1920, 1080)
+    _wait_until_webpack_ready()
+    try:
+        yield driver
+    finally:
+        driver.quit()
+
+
+@pytest.fixture
+def set_chrome_driver(request, chrome_driver):
+    request.cls.driver = chrome_driver
+
+
+@pytest.fixture
+def set_firefox_driver(request, firefox_driver):
+    request.cls.driver = firefox_driver
