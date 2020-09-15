@@ -4,7 +4,7 @@ from typing import Any, Dict, List, Optional
 
 import requests
 
-from ..utils.misc import get_author_short_text, normalize_authors
+from ..utils.authors import get_author_short_text, normalize_authors
 
 
 def _parse_pseudo_json(d: Dict, field: str) -> Any:

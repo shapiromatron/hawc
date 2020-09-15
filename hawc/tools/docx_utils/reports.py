@@ -7,7 +7,7 @@ from docx.enum.section import WD_ORIENT
 from docx.shared import Inches
 
 
-class DOCXReport(object):
+class DOCXReport:
     def __init__(self, root_path, context):
         self.root_path = root_path
         self.context = context

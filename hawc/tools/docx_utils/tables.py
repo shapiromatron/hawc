@@ -3,7 +3,7 @@ from docx.oxml.shared import OxmlElement, qn
 from docx.shared import Inches
 
 
-class TableMaker(object):
+class TableMaker:
     """
     Helper-object to build tables
     """
@@ -135,7 +135,7 @@ class TableMaker(object):
         return {"text": txt, "style": style, "bold": b, "italic": i}
 
 
-class CellMaker(object):
+class CellMaker:
     """
     Helper-object to build table-cells
     """

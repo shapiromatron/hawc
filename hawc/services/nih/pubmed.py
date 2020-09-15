@@ -6,7 +6,7 @@ from typing import Dict, List, Optional
 
 import requests
 
-from ..utils.misc import get_author_short_text, normalize_author
+from ..utils.authors import get_author_short_text, normalize_author
 
 
 class PubMedSettings:

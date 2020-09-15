@@ -7,7 +7,7 @@ import xlsxwriter
 from RISparser import readris
 from RISparser.config import TAG_KEY_MAPPING
 
-from .misc import get_author_short_text, normalize_authors, try_int
+from .authors import get_author_short_text, normalize_authors
 
 
 class RisImporter:
@@ -142,10 +142,16 @@ class ReferenceParser:
                 accession_number=self._get_accession_number(),
                 accession_db=self.content.get("name_of_database", None),
                 reference_type=self.content.get("type_of_reference", None),
-                id=try_int(self.content["id"]),
+                id=self._try_int(self.content["id"]),
                 json=self.content,
             )
         return self._formatted
+
+    def _try_int(val):
+        try:
+            return int(val)
+        except Exception:
+            return val
 
     def _get_field(self, fields, default):
         for fld in fields:
