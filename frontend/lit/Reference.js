@@ -1,8 +1,4 @@
 import _ from "lodash";
-import React from "react";
-import ReactDOM from "react-dom";
-
-import ReferenceComponent from "./components/Reference";
 
 class Reference {
     constructor(data, tagtree) {
