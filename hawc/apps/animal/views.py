@@ -332,7 +332,7 @@ class EndpointCreate(BaseCreateWithFormset):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["vocabulary"] = self.model.get_vocabulary_settings(
-            self.assessment, self.initial_instance
+            self.assessment, context["form"].instance
         )
         return context
 

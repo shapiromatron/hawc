@@ -428,7 +428,6 @@ class BaseCreate(TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin,
         kwargs["parent"] = self.parent
 
         # check if we have an object-template to be used
-        self.initial_instance = None
         pk = tryParseInt(self.request.GET.get("initial"), -1)
 
         if pk > 0:
@@ -436,7 +435,6 @@ class BaseCreate(TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin,
             if initial and initial.get_assessment() in Assessment.objects.get_viewable_assessments(
                 self.request.user, public=True
             ):
-                self.initial_instance = initial
                 kwargs["initial"] = model_to_dict(initial)
 
         return kwargs
