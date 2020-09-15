@@ -50,7 +50,7 @@ jobs:
         DJANGO_DB_PORT: ${{ job.services.postgres.ports[5432] }} # get randomly assigned published port
         PUBMED_API_KEY: ${{ secrets.PUBMED_API_KEY }}
       run: |
-        make test
+        py.test --vcr-record=none
 
   frontend:
     name: frontend
