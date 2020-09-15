@@ -10,34 +10,27 @@
 {% block breadcrumbs %}
     <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{ assessment }}</a><span class="divider">/</span></li>
     <li><a href="{% url 'lit:overview' assessment.pk %}">Literature Review</a><span class="divider">/</span></li>
-    <li class="active">Find a reference<span class="divider">/</span></li>
+    <li class="active">Reference search<span class="divider">/</span></li>
 {% endblock %}
 
 {% block content %}
-
-<div id="searchFormHolder">
-    {% crispy form %}
-</div>
-
-<div id="resultsHolder" class="row-fluid" style="display:none">
-    <div id="search_context"></div>
-    <div id="references_detail_div"></div>
-    <div class="well well-small">
-        <button id='search_again' class="btn btn-primary">Search again</button>
-    </div>
-</div>
-
+<div id="main"></div>
 {% endblock %}
 
 {% block extrajs %}
+<script id="config" type="text/json" charset="utf-8">
+{
+    "assessment_id": {{assessment.id}},
+    "canEdit": {{obj_perms.edit|lower}},
+    "tags": {{tags|safe}},
+    "csrf": "{{csrf_token}}"
+}
+</script>
 <script type="text/javascript">
-    let data = {
-        canEdit: {{ obj_perms.edit | lower }},
-        tags: {{ tags | safe }}
-    };
-    window.canEdit = data.canEdit;
-    window.app.litStartup(function(lit){
-        lit.startupSearchReference(data.tags)
-    });
+window.app.litStartup(function (lit) {
+    const el = document.getElementById('main'),
+        data = JSON.parse(document.getElementById('config').textContent);
+    lit.startupSearchReference(el, data)
+});
 </script>
 {% endblock extrajs %}

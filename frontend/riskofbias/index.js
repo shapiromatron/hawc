@@ -1,9 +1,1 @@
-const riskofbiasStartup = function(cb) {
-    import("./split.js").then(riskofbias => {
-        cb(riskofbias.default);
-    });
-};
-
-window.app.riskofbiasStartup = riskofbiasStartup;
-
-export default riskofbiasStartup;
+export default cb => import("./split.js").then(app => cb(app.default));
