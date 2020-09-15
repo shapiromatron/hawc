@@ -3,6 +3,7 @@ import pytest
 from hawc.services.epa.hero import HEROFetch
 
 
+@pytest.mark.vcr
 def test_hero_success_query():
     # ensure that we get the correct query returned
     hero_getter = HEROFetch(id_list=[1201])
@@ -32,21 +33,22 @@ def test_hero_success_query():
     }
 
 
-@pytest.fixture(scope="module")
-def big_query():
+@pytest.mark.vcr
+def test_hero_bigger_query():
+    # Check that we can get hundreds of results at once; and ensure failures are captured.
     hero_getter = HEROFetch(id_list=list(range(50000, 50100)))
     hero_getter.get_content()
-    return hero_getter
+
+    assert len(hero_getter.content) == 98
+    assert len(hero_getter.failures) == 2
+    assert hero_getter.failures == [50017, 50058]
 
 
-def test_hero_bigger_query(big_query):
-    # Check that we can get hundreds of results at once; and ensure failures are captured.
-    assert len(big_query.content) == 98
-    assert len(big_query.failures) == 2
-    assert big_query.failures == [50017, 50058]
-
-
-def test_pmid_parsing(big_query):
+@pytest.mark.vcr
+def test_pmid_parsing():
     # assert PMID is parsed correctly
-    assert big_query.content[0]["PMID"] == 12654040
-    assert big_query.content[2]["PMID"] is None
+    hero_getter = HEROFetch(id_list=list(range(50000, 50100)))
+    hero_getter.get_content()
+
+    assert hero_getter.content[0]["PMID"] == 12654040
+    assert hero_getter.content[2]["PMID"] is None

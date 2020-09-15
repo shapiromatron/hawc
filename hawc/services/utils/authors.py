@@ -1,5 +1,5 @@
 import re
-from typing import Any, List
+from typing import List
 
 # First-group is rest of reference; second-group are initials
 # with optional second initial (middle-name) with optional periods
@@ -41,10 +41,3 @@ def get_author_short_text(authors: List[str]) -> str:
         return "{0}, {1}, and {2}".format(*authors)
     else:  # >3 authors
         return f"{authors[0]} et al."
-
-
-def try_int(val) -> Any:
-    try:
-        return int(val)
-    except Exception:
-        return val

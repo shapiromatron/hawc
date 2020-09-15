@@ -147,7 +147,7 @@ class ReferenceParser:
             )
         return self._formatted
 
-    def _try_int(val):
+    def _try_int(self, val):
         try:
             return int(val)
         except Exception:
