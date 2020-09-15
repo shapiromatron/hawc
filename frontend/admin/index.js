@@ -1,8 +1,1 @@
-const adminStartup = function(cb) {
-    import("./split.js").then(app => {
-        cb(app.default);
-    });
-};
-
-window.app = {};
-window.app.adminStartup = adminStartup;
+export default cb => import("./split.js").then(app => cb(app.default));

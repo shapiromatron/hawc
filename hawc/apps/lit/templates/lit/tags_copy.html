@@ -69,8 +69,8 @@
     window.app.litStartup(function(lit){
       $('#id_assessment').on('change', function () {
         $.get(data.rootUrl, { 'pk': $('#id_assessment').val() }, function (d) {
-          tagtree = new lit.TagTree(JSON.parse(d)[0]);
-          $('#tags').html(tagtree.get_nested_list({ "show_refs_count": false }))
+          const tagtree = new lit.TagTree(JSON.parse(d)[0]);
+          tagtree.render(document.getElementById('tags'));
         });
       }).trigger('change');
     });

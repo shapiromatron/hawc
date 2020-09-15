@@ -1,40 +1,17 @@
-import $ from "$";
+import React from "react";
+import ReactDOM from "react-dom";
 
-import Observee from "utils/Observee";
 import NestedTag from "./NestedTag";
+import TagTreeComponent from "./components/TagTree";
 
-class TagTree extends Observee {
+class TagTree {
     constructor(rootNode, assessment_id, search_id) {
-        super();
         this.assessment_id = assessment_id;
         this.search_id = search_id;
         this.rootNode = new NestedTag(rootNode, 0, this, null, assessment_id, search_id);
-        this.dict = this._build_dictionary();
-        this.observers = [];
-    }
-
-    get_nested_list(options) {
-        // builds a nested list
-        let div = $("<div>");
-        this.rootNode.children.forEach(child => child.get_nested_list_item(div, "", options));
-        return div;
-    }
-
-    get_options() {
-        let list = [];
-        this.rootNode.get_option_item(list);
-        return list;
-    }
-
-    _build_dictionary() {
-        let dict = {};
-        this.rootNode._append_to_dict(dict);
-        return dict;
-    }
-
-    tree_changed() {
-        this.dict = this._build_dictionary();
-        this.notifyObservers("TagTree");
+        // build dictionary
+        this.dict = {};
+        this.rootNode._append_to_dict(this.dict);
     }
 
     add_references(references) {
@@ -50,10 +27,6 @@ class TagTree extends Observee {
 
     rename_top_level_node(name) {
         this.rootNode.data.name = name;
-    }
-
-    get_tag(pk) {
-        return this.dict[pk] || null;
     }
 
     prune_tree(pk) {
@@ -102,6 +75,10 @@ class TagTree extends Observee {
         if (tag.data.pk !== this.rootNode.data.pk) {
             this.rootNode = tag;
         }
+    }
+
+    render(el, options) {
+        ReactDOM.render(<TagTreeComponent tagtree={this} {...options} />, el);
     }
 }
 
