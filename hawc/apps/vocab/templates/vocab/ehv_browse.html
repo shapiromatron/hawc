@@ -1,0 +1,36 @@
+{% extends 'portal.html' %}
+
+{% block title %}Environmental Health Vocabulary | HAWC {% endblock title %}
+
+
+{% block content %}
+<h1>Environmental Health Vocabulary (EHV)</h1>
+<div>
+    <p>
+        Experimental data extracted into HAWC is designed to enable filtering, sorting, and
+        visualizations of the findings. To enable the ability to browse and filter at different
+        levels, a curated controlled vocabulary of terms can be used to extract content from
+        literature. However, numerous external ontologies and thesauri exist in the biological
+        domain that can map health-effects and knowledge. Therefore, these controlled vocabularies
+        can also be mapped to external entities.
+    </p>
+    <p>
+        Have some thoughts regarding the EHV? Please <a href="#"> submit feedback!</a>
+    </p>
+</div>
+<div id="ehv">
+
+</div>
+{% endblock %}
+
+{% block extrajs %}
+<script type="text/json" id="settings">{{config|safe}}</script>
+<script type="text/javascript">
+    const root = document.getElementById('ehv'),
+        config = JSON.parse(document.getElementById('settings').text);
+
+    window.app.animalStartup(function (cb) {
+        cb.ehvBrowserStartup(root, config);
+    });
+</script>
+{% endblock %}
