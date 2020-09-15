@@ -2,16 +2,13 @@ import $ from "$";
 import ReactDOM from "react-dom";
 import React from "react";
 
-import Observee from "utils/Observee";
-
 import Loading from "shared/components/Loading";
 import GenericError from "shared/components/GenericError";
 import ReferenceTable from "lit/components/ReferenceTable";
 import Reference from "./Reference";
 
-class NestedTag extends Observee {
+class NestedTag {
     constructor(item, depth, tree, parent, assessment_id, search_id) {
-        super();
         this.observers = [];
         this.references = new Set();
         this.parent = parent;
@@ -55,91 +52,6 @@ class NestedTag extends Observee {
         } else {
             return this.data.name;
         }
-    }
-
-    add_child(name) {
-        var data = {
-            status: "add",
-            parent_pk: this.data.pk,
-            name,
-        };
-
-        $.post(".", data, v => {
-            if (v.status === "success") {
-                this.children.push(
-                    new NestedTag(
-                        v.node[0],
-                        this.depth + 1,
-                        this.tree,
-                        this,
-                        this.assessment_id,
-                        this.search_id
-                    )
-                );
-                this.tree.tree_changed();
-            }
-        });
-    }
-
-    remove_self() {
-        this.children.forEach(function(v) {
-            v.remove_self();
-        });
-        var self = this,
-            data = {
-                status: "remove",
-                pk: this.data.pk,
-            };
-
-        $.post(".", data, function(v) {
-            if (v.status === "success") {
-                self.notifyObservers({event: "tag removed", object: self});
-                if (self.parent) {
-                    self.parent.remove_child(self);
-                } else {
-                    self.tree.remove_child(self);
-                }
-                self.tree.tree_changed();
-            }
-        });
-    }
-
-    move_self(offset) {
-        var self = this,
-            lst = this.parent.children,
-            index = lst.indexOf(this),
-            data = {
-                status: "move",
-                pk: this.data.pk,
-                offset,
-            };
-
-        // update locally
-        lst.splice(index + offset, 0, lst.splice(index, 1)[0]);
-
-        $.post(".", data, function(v) {
-            if (v.status === "success") self.tree.tree_changed();
-        });
-    }
-
-    rename_self(name) {
-        var self = this,
-            data = {
-                status: "rename",
-                pk: this.data.pk,
-                name,
-            };
-
-        $.post(".", data, function(v) {
-            if (v.status === "success") {
-                self.data.name = name;
-                self.tree.tree_changed();
-            }
-        });
-    }
-
-    remove_child(tag) {
-        this.children.splice_object(tag);
     }
 
     renderReferenceList(el) {

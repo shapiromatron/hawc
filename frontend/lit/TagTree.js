@@ -1,29 +1,17 @@
 import React from "react";
 import ReactDOM from "react-dom";
 
-import Observee from "utils/Observee";
 import NestedTag from "./NestedTag";
 import TagTreeComponent from "./components/TagTree";
 
-class TagTree extends Observee {
+class TagTree {
     constructor(rootNode, assessment_id, search_id) {
-        super();
         this.assessment_id = assessment_id;
         this.search_id = search_id;
         this.rootNode = new NestedTag(rootNode, 0, this, null, assessment_id, search_id);
-        this.dict = this._build_dictionary();
-        this.observers = [];
-    }
-
-    _build_dictionary() {
-        let dict = {};
-        this.rootNode._append_to_dict(dict);
-        return dict;
-    }
-
-    tree_changed() {
-        this.dict = this._build_dictionary();
-        this.notifyObservers("TagTree");
+        // build dictionary
+        this.dict = {};
+        this.rootNode._append_to_dict(this.dict);
     }
 
     add_references(references) {

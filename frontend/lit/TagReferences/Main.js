@@ -56,7 +56,7 @@ class TagReferencesMain extends Component {
                                                     : "reference"
                                             }
                                             onClick={() => store.changeSelectedReference(ref)}>
-                                            {ref.print_name_str()}
+                                            {ref.shortCitation()}
                                         </p>
                                     ))}
                                 </div>
@@ -83,7 +83,7 @@ class TagReferencesMain extends Component {
                                                     : "reference"
                                             }
                                             onClick={() => store.changeSelectedReference(ref)}>
-                                            {ref.print_name_str()}
+                                            {ref.shortCitation()}
                                         </p>
                                     ))}
                                 </div>
