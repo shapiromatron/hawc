@@ -736,6 +736,7 @@ class Reference(models.Model):
         d["url"] = self.get_absolute_url()
         d["editTagUrl"] = reverse("lit:reference_tags_edit", kwargs={"pk": self.pk})
         d["editReferenceUrl"] = reverse("lit:ref_edit", kwargs={"pk": self.pk})
+        d["deleteReferenceUrl"] = reverse("lit:ref_delete", kwargs={"pk": self.pk})
 
         d["identifiers"] = [ident.get_json(json_encode=False) for ident in self.identifiers.all()]
         d["searches"] = [ref.get_json() for ref in self.searches.all()]

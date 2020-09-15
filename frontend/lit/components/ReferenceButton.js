@@ -1,0 +1,25 @@
+import React, {Component} from "react";
+import PropTypes from "prop-types";
+import ClipboardButton from "shared/components/ClipboardButton";
+
+class ReferenceButton extends Component {
+    render() {
+        const {className, url, displayText, textToCopy} = this.props;
+        return (
+            <div className="btn-group">
+                <a className={className} href={url} target="_blank" rel="noopener noreferrer">
+                    {displayText}
+                </a>
+                <ClipboardButton textToCopy={textToCopy} className={className} />
+            </div>
+        );
+    }
+}
+ReferenceButton.propTypes = {
+    className: PropTypes.string.isRequired,
+    url: PropTypes.string.isRequired,
+    displayText: PropTypes.string.isRequired,
+    textToCopy: PropTypes.string.isRequired,
+};
+
+export default ReferenceButton;

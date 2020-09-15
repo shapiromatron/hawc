@@ -1,9 +1,1 @@
-const invitroStartup = function(cb) {
-    import("./split.js").then(invitro => {
-        cb(invitro.default);
-    });
-};
-
-window.app.invitroStartup = invitroStartup;
-
-export default invitroStartup;
+export default cb => import("./split.js").then(app => cb(app.default));

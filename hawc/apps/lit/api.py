@@ -208,6 +208,22 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         models.Reference.update_hero_metadata(assessment.id)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    @action(detail=True, methods=("post",), url_path="reference-search")
+    def reference_search(self, request, pk):
+        assessment = self.get_object()
+        if not assessment.user_can_view_object(request.user):
+            raise exceptions.PermissionDenied()
+
+        serializer = serializers.ReferenceQuerySerializer(
+            data=request.data, context={"assessment": assessment}
+        )
+
+        resp = []
+        if serializer.is_valid(raise_exception=True):
+            resp = serializer.search()
+
+        return Response(dict(references=resp))
+
 
 class SearchViewset(mixins.CreateModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     model = models.Search

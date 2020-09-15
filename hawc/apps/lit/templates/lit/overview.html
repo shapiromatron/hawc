@@ -104,22 +104,18 @@
 {% endblock %}
 
 {% block extrajs %}
-  <script type="text/javascript">
-    let data = {
-      tags: {{ tags| safe}},
-      assessment_id: {{ assessment.id }},
-      referenceYearHistogramUrl: "{% url 'lit:api:assessment-reference-year-histogram' assessment.id %}"
-    };
+<script id="config" type="text/json" charset="utf-8">{{ config| safe}}</script>
+<script type="text/javascript">
+  const config = JSON.parse(document.getElementById('config').textContent);
 
-    window.app.litStartup(function(lit){
-      let tagtree = new lit.TagTree(data.tags[0], data.assessment_id, null);
-      $('#tags').html(tagtree.get_nested_list({ show_refs_count: false }))
-    });
+  window.app.litStartup(function(lit){
+    let tagtree = new lit.TagTree(config.tags[0], config.assessment_id, null);
+    tagtree.render(document.getElementById('tags'))
+  });
 
-    const histo = document.getElementById("referenceYearHistogram");
-    if (histo){
-      window.app.renderPlotlyFromApi(histo, data.referenceYearHistogramUrl);
-    }
-
-  </script>
+  const histo = document.getElementById("referenceYearHistogram");
+  if (histo){
+    window.app.renderPlotlyFromApi(histo, config.referenceYearHistogramUrl);
+  }
+</script>
 {% endblock extrajs %}
