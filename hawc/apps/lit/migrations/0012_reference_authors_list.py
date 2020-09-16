@@ -6,9 +6,11 @@ import json
 import xml.etree.ElementTree as ET
 
 from django.db import migrations, models
-from litter_getter import hero, pubmed, ris
 
 from hawc.apps.lit.constants import HERO, PUBMED, RIS
+from hawc.services.epa import hero
+from hawc.services.nih import pubmed
+from hawc.services.utils import ris
 
 
 def delete_external(apps, schema_editor):

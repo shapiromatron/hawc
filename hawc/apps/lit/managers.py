@@ -10,12 +10,13 @@ from django.core.validators import URLValidator
 from django.db import models
 from django.db.models import QuerySet
 from django.db.models.functions import Cast
-from litter_getter import hero, pubmed
 from taggit.managers import TaggableManager, _TaggableManager
 from taggit.utils import require_instance_manager
 
 from hawc.refml import tags as refmltags
 
+from ...services.epa import hero
+from ...services.nih import pubmed
 from ..common.helper import HAWCDjangoJSONEncoder
 from ..common.models import BaseManager
 from . import constants
