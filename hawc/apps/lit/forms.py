@@ -7,8 +7,8 @@ import pandas as pd
 from django import forms
 from django.db import transaction
 from django.urls import reverse_lazy
-from litter_getter import ris
 
+from ...services.utils import ris
 from ..assessment.models import Assessment
 from ..common.forms import BaseFormHelper, addPopupLink
 from . import constants, models
