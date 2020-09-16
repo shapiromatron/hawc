@@ -359,7 +359,7 @@ class AttachmentDelete(BaseDelete):
 class DatasetPublishedMixin:
     def get_object(self, **kwargs):
         obj = super().get_object(**kwargs)
-        if self.assessment.user_can_edit_object(self.request.user) or obj.published:
+        if obj.assessment.user_can_edit_object(self.request.user) or obj.published:
             return obj
         else:
             raise PermissionDenied
