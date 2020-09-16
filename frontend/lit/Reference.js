@@ -1,25 +1,9 @@
-import $ from "$";
 import _ from "lodash";
-import Clipboard from "clipboard";
 
-import Observee from "utils/Observee";
-
-class Reference extends Observee {
+class Reference {
     constructor(data, tagtree) {
-        super();
-        var self = this,
-            tag_ids = data.tags;
         this.data = data;
-        this.data.tags = [];
-        tag_ids.forEach(function(v) {
-            self.add_tag(tagtree.dict[v]);
-        });
-    }
-
-    static sortCompare(a, b) {
-        if (a.data.authors > b.data.authors) return 1;
-        if (a.data.authors < b.data.authors) return -1;
-        return 0;
+        this.tags = data.tags.map(tagId => tagtree.dict[tagId]);
     }
 
     static get_detail_url(id, subtype) {
@@ -33,222 +17,20 @@ class Reference extends Observee {
                 return `/lit/reference/${id}/`;
         }
     }
-    print_self(options) {
-        options = options || {};
-        if (options.showTags === undefined) {
-            options.showTags = true;
-        }
-        if (options.showActions === undefined) {
-            options.showActions = false;
-        }
-        if (options.showHr === undefined) {
-            options.showHr = false;
-        }
 
-        let content = [],
-            getTitle = () => {
-                if (this.data.title) {
-                    return `<p class="ref_title">${this.data.title}</p>`;
-                }
-            },
-            getJournal = () => {
-                let journal = this.data.journal ? `${this.data.journal}<br/>` : "";
-                return `<p class="ref_small">${journal}</p>`;
-            },
-            getAbstract = () => {
-                if (this.data.abstract) return `<p class="abstracts">${this.data.abstract}</p>`;
-            },
-            getAuthors = () => {
-                let authors =
-                        this.data.authors || this.data.authors_short || Reference.no_authors_text,
-                    year = this.data.year || "",
-                    p = $(`<p class="ref_small">${authors} ${year}</p>`);
-
-                // return content or undefined
-                if (options.showActions && window.canEdit) {
-                    var ul = $('<ul class="dropdown-menu">')
-                        .append(
-                            `<li><a href="${this.data.editTagUrl}" target="_blank">Edit tags</a></li>`
-                        )
-                        .append(
-                            `<li><a href="${this.data.editReferenceUrl}" target="_blank">Edit reference</a></li>`
-                        );
-
-                    $('<div class="btn-group pull-right">')
-                        .append(
-                            '<a class="btn btn-small dropdown-toggle" data-toggle="dropdown">Actions <span class="caret"></span></a>'
-                        )
-                        .append(ul)
-                        .appendTo(p);
-                }
-
-                return p;
-            },
-            getSearches = () => {
-                if (this.data.searches) {
-                    let links = this.data.searches
-                            .map(d => `<a href="${d.url}">${d.title}</a>`)
-                            .join("<span>,&nbsp;</span>"),
-                        text = `<p><strong>HAWC searches/imports:</strong> ${links}</p>`;
-
-                    return $("<div>").append(text);
-                }
-            },
-            getIdentifiers = () => {
-                var links = $("<div>"),
-                    addHawcId = () => {
-                        let grp = $('<div class="btn-group">'),
-                            link = `<a class="btn btn-mini btn-warning" target="_blank" href="${this.data.url}">HAWC</a>`,
-                            copyID = $(
-                                `<button type="button" class="btn btn-mini btn-warning" title="Copy to clipboard"><i class="fa fa-clipboard"></i></button>`
-                            );
-
-                        // copy ID to clipboard
-                        new Clipboard(copyID.get(0), {text: () => this.data.pk});
-
-                        links.append(grp.append(link, copyID), "<span>&nbsp;</span>");
-                    };
-
-                if (this.data.full_text_url) {
-                    let grp = $('<div class="btn-group">'),
-                        link = `<a class="btn btn-mini btn-primary" target="_blank" href="${this.data.full_text_url}">Full text link</a>`,
-                        copyID = $(
-                            `<button type="button" class="btn btn-mini btn-primary" title="Copy to clipboard"><i class="fa fa-clipboard"></i></button>`
-                        );
-
-                    // copy ID to clipboard
-                    new Clipboard(copyID.get(0), {text: () => this.data.full_text_url});
-
-                    links.append(grp.append(link, copyID), "<span>&nbsp;</span>");
-                }
-
-                _.chain(this.data.identifiers)
-                    .filter(v => v.url.length > 0)
-                    .sortBy(v => v.database_id)
-                    .each(function(v) {
-                        let grp = $('<div class="btn-group">'),
-                            link = `<a class="btn btn-mini btn-success" target="_blank" href="${v.url}" title="View ${v.id}">${v.database}</a>`,
-                            copyID = $(
-                                `<button type="button" class="btn btn-mini btn-success" title="Copy to clipboard"><i class="fa fa-clipboard"></i></button>`
-                            );
-
-                        // copy ID to clipboard
-                        new Clipboard(copyID.get(0), {text: () => v.id});
-
-                        links.append(grp.append(link, copyID), "<span>&nbsp;</span>");
-                    })
-                    .value();
-
-                links.append(addHawcId());
-
-                _.chain(this.data.identifiers)
-                    .reject(v => v.url.length > 0 || v.database === "External link")
-                    .sortBy(v => v.database_id)
-                    .each(function(v) {
-                        let grp = $('<div class="btn-group">'),
-                            link = `<button type="button" class="btn btn-mini">${v.database}</a>`,
-                            copyID = $(
-                                `<button type="button" class="btn btn-mini" title="Copy to clipboard"><i class="fa fa-clipboard"></i></button>`
-                            );
-
-                        // copy ID to clipboard
-                        new Clipboard(copyID.get(0), {text: () => v.id});
-
-                        links.append(grp.append(link, copyID), "<span>&nbsp;</span>");
-                    })
-                    .value();
-
-                return links;
-            };
-
-        content.push(getAuthors());
-        content.push(getTitle());
-        content.push(getJournal());
-        content.push(getAbstract());
-        if (options.showTags) {
-            const tags = this.data.tags
-                .map(d => `<span class="label label-info">${d.get_full_name()}</span>&nbsp;`)
-                .join("");
-            content.push(`<p>${tags}</p>`);
-        }
-
-        content.push(getSearches());
-        content.push(getIdentifiers());
-        if (options.showHr) {
-            content.push("<hr/>");
-        }
-
-        return $("<div>").html(content);
+    get_edit_url() {
+        return `/lit/reference/${this.data.pk}/edit/`;
     }
 
-    print_edit_taglist() {
-        return this.data.tags.map(d =>
-            $(
-                `<span title="click to remove" class="refTag refTagEditing">${d.get_full_name()}</span>`
-            ).data("d", d)
-        );
-    }
-
-    print_name() {
-        let authors = this.data.authors_short || this.data.authors || Reference.no_authors_text,
+    shortCitation() {
+        let authors = this.data.authors_short || this.data.authors || Reference.NO_AUTHORS_TEXT,
             year = this.data.year || "";
-        this.$list = $(`<p class="reference">${authors} ${year}</p>`).data("d", this);
-        return this.$list;
-    }
-
-    select_name() {
-        this.$list.addClass("selected");
-    }
-
-    deselect_name() {
-        this.$list.removeClass("selected");
-    }
-
-    add_tag(tag) {
-        var tag_already_exists = false;
-        this.data.tags.forEach(function(v) {
-            if (tag === v) {
-                tag_already_exists = true;
-            }
-        });
-        if (tag_already_exists) return;
-        this.data.tags.push(tag);
-        tag.addObserver(this);
-        this.notifyObservers();
-    }
-
-    remove_tag(tag) {
-        this.data.tags.splice_object(tag);
-        tag.removeObserver(this);
-        this.notifyObservers();
-    }
-
-    remove_tags() {
-        this.data.tags = [];
-        this.notifyObservers();
-    }
-
-    save(success, failure) {
-        var data = {
-            pk: this.data.pk,
-            tags: this.data.tags.map(function(v) {
-                return v.data.pk;
-            }),
-        };
-        $.post(".", data, function(v) {
-            return v.status === "success" ? success() : failure();
-        }).fail(failure);
-    }
-
-    update(status) {
-        if (status.event == "tag removed") {
-            this.remove_tag(status.object);
-        }
+        return `${authors} ${year}`;
     }
 }
 
 _.extend(Reference, {
-    no_authors_text: "[No authors listed]",
+    NO_AUTHORS_TEXT: "[No authors listed]",
 });
 
 export default Reference;

@@ -11,8 +11,6 @@ import {observer} from "mobx-react";
 import {action, observable} from "mobx";
 import PropTypes from "prop-types";
 
-import ReferencesViewer from "./ReferencesViewer";
-
 @observer
 class VizOptions extends Component {
     componentDidUpdate() {
@@ -151,16 +149,15 @@ class TagTreeViz extends D3Plot {
             },
             fetch_references = function(tag) {
                 var title = `<h4>${tag.data.name}</h4>`,
-                    div = $('<div id="references_div"></div'),
-                    options = {tag, download_url: self.downloadURL},
-                    refviewer = new ReferencesViewer(div, options);
+                    div = $('<div id="references_div"></div');
 
                 self.modal
                     .addHeader(title)
                     .addBody(div)
                     .addFooter("")
                     .show({maxWidth: 1200});
-                tag.get_reference_objects_by_tag(refviewer, {filteredSubset: true});
+
+                tag.renderReferenceList(div.get(0));
             },
             update = function(source) {
                 var duration = d3.event && d3.event.altKey ? 5000 : 500,
@@ -211,7 +208,7 @@ class TagTreeViz extends D3Plot {
                     .text(d => d.data.name)
                     .style("fill-opacity", 1e-6)
                     .each(function() {
-                        HAWCUtils.wrapText(this, 150);
+                        HAWCUtils.wrapText(this, 170);
                     });
 
                 nodeEnter

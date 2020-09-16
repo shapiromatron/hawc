@@ -4,10 +4,8 @@ from typing import List
 
 import numpy as np
 import pandas as pd
-from crispy_forms import layout as cfl
 from django import forms
 from django.db import transaction
-from django.db.models import Q
 from django.urls import reverse_lazy
 from litter_getter import ris
 
@@ -361,55 +359,6 @@ class ReferenceFilterTagForm(forms.ModelForm):
     class Meta:
         model = models.ReferenceFilterTag
         fields = "__all__"
-
-
-class ReferenceSearchForm(forms.Form):
-    id = forms.IntegerField(label="HAWC ID", required=False)
-    title = forms.CharField(required=False)
-    authors = forms.CharField(required=False)
-    journal = forms.CharField(label="Journal/year", required=False)
-    db_id = forms.IntegerField(
-        label="Database unique identifier",
-        help_text="Identifiers may include Pubmed ID, DOI, etc.",
-        required=False,
-    )
-    abstract = forms.CharField(label="Abstract", required=False)
-
-    def __init__(self, *args, **kwargs):
-        assessment_pk = kwargs.pop("assessment_pk", None)
-        super().__init__(*args, **kwargs)
-        if assessment_pk:
-            self.assessment = Assessment.objects.get(pk=assessment_pk)
-        self.helper = self.setHelper()
-
-    def setHelper(self):
-        inputs = dict(form_actions=[cfl.Submit("search", "Search")],)
-        helper = BaseFormHelper(self, **inputs)
-        return helper
-
-    def search(self):
-        """
-        Returns a queryset of reference-search results.
-        """
-        query = Q(assessment=self.assessment)
-        if self.cleaned_data["id"]:
-            query &= Q(id=self.cleaned_data["id"])
-        if self.cleaned_data["title"]:
-            query &= Q(title__icontains=self.cleaned_data["title"])
-        if self.cleaned_data["authors"]:
-            query &= Q(authors_short__icontains=self.cleaned_data["authors"]) | Q(
-                authors__icontains=self.cleaned_data["authors"]
-            )
-        if self.cleaned_data["journal"]:
-            query &= Q(journal__icontains=self.cleaned_data["journal"])
-        if self.cleaned_data["db_id"]:
-            query &= Q(identifiers__unique_id=self.cleaned_data["db_id"])
-        if self.cleaned_data["abstract"]:
-            query &= Q(abstract__icontains=self.cleaned_data["abstract"])
-
-        refs = [r.get_json(json_encode=False) for r in models.Reference.objects.filter(query)]
-
-        return refs
 
 
 class TagReferenceForm(forms.ModelForm):

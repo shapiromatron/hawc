@@ -17,7 +17,7 @@ var addDepth = function(node, depth) {
     getOptions = function(nodes) {
         let opts = [],
             addOption = function(node) {
-                let indentedName = _.times(node.data.depth, d => " _ ").join("") + node.data.name;
+                let indentedName = _.times(node.data.depth, d => "━ ").join("") + node.data.name;
                 opts.push([node.id, indentedName]);
                 if (node.children) {
                     node.children.forEach(addOption);
