@@ -1,7 +1,10 @@
+import pandas as pd
 from django.db import models
 from django.urls import reverse
+from reversion import revisions as reversion
 
 from ..common.models import IntChoiceEnum
+from ..myuser.models import HAWCUser
 
 
 class VocabularyNamespace(IntChoiceEnum):
@@ -146,8 +149,11 @@ class Entity(models.Model):
 
 
 class EntityTermRelation(models.Model):
-    entity = models.ForeignKey(Entity, on_delete=models.PROTECT)
-    term = models.ForeignKey(Term, on_delete=models.PROTECT)
+    entity = models.ForeignKey(Entity, on_delete=models.CASCADE)
+    term = models.ForeignKey(Term, on_delete=models.CASCADE)
+    notes = models.TextField(blank=True)
+    approved_by = models.ForeignKey(HAWCUser, blank=True, null=True, on_delete=models.CASCADE)
+    approved_on = models.DateTimeField(blank=True, null=True)
     deprecated_on = models.DateTimeField(blank=True, null=True)
     created_on = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
@@ -157,3 +163,25 @@ class EntityTermRelation(models.Model):
 
     def __str__(self) -> str:
         return f"{self.term} -> {self.entity}"
+
+
+class Comment(models.Model):
+    commenter = models.ForeignKey(HAWCUser, on_delete=models.CASCADE)
+    last_url_visited = models.CharField(max_length=128)
+    comment = models.TextField()
+    reviewed = models.BooleanField(default=False)
+    reviewer_notes = models.TextField(blank=True)
+    created_on = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ("id",)
+
+    def __str__(self) -> str:
+        return f"{self.commenter} on {self.created_on}"
+
+
+reversion.register(Term)
+reversion.register(Entity)
+reversion.register(EntityTermRelation)
+reversion.register(Comment)
