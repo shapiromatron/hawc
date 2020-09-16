@@ -11,6 +11,7 @@ app_name = "vocab"
 urlpatterns = [
     url(r"^api/", include((router.urls, "api"))),
     url(r"^ehv/$", views.EhvBrowse.as_view(), name="ehv-browse"),
+    url(r"^comment/$", views.CreateComment.as_view(), name="comment"),
 ]
 
 admin.autodiscover()

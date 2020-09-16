@@ -1,4 +1,3 @@
-import _ from "lodash";
 import React, {Component} from "react";
 import PropTypes from "prop-types";
 import {inject, observer} from "mobx-react";
@@ -24,11 +23,21 @@ class Table extends Component {
                 <tbody>
                     {filteredDataset.map(d => (
                         <tr key={d._key}>
-                            <td>{d.system}</td>
-                            <td>{d.organ}</td>
-                            <td>{d.effect}</td>
-                            <td>{d.effect_subtype}</td>
-                            <td>{d.endpoint_name}</td>
+                            <td>
+                                {d.system}&nbsp;({d.system_id})
+                            </td>
+                            <td>
+                                {d.organ}&nbsp;({d.organ_id})
+                            </td>
+                            <td>
+                                {d.effect}&nbsp;({d.effect_id})
+                            </td>
+                            <td>
+                                {d.effect_subtype}&nbsp;({d.effect_subtype_id})
+                            </td>
+                            <td>
+                                {d.endpoint_name}&nbsp;({d.endpoint_name_id})
+                            </td>
                         </tr>
                     ))}
                 </tbody>

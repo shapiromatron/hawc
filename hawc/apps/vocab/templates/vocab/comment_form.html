@@ -1,0 +1,16 @@
+{% extends 'portal.html' %}
+
+{% load selectable_tags %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+Submit a comment
+{% endblock title %}
+
+{% block extrastyle %}
+{% include_ui_theme %}
+{% endblock %}
+
+{% block content %}
+{% crispy form %}
+{% endblock %}
