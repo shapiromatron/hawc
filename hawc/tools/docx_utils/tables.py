@@ -1,3 +1,5 @@
+from typing import Dict, List
+
 import docx
 from docx.oxml.shared import OxmlElement, qn
 from docx.shared import Inches
@@ -8,17 +10,22 @@ class TableMaker:
     Helper-object to build tables
     """
 
-    def __init__(self, colWidths, styles=None, numHeaders=1, tblStyle=None, firstRowCaption=True):
+    def __init__(
+        self,
+        colWidths: List[float],
+        styles: Dict = None,
+        numHeaders: int = 1,
+        tblStyle: str = None,
+        firstRowCaption: bool = True,
+    ):
         """
-            Required:
-                - colWidths: list of floats
-
-            Optional:
-                - styles: dict of default styles for different fields
-                     - keys include: ["title", "header", "body", "subheading"]
-                - tblStyle: str (default None)
-                - firstRowCaption: bool (default True)
-                - numHeaders: int (default 1)
+        Args:
+            colWidths (List[float]): Width of columns
+            styles (Dict, optional): Default styles for different fields.
+                Keys include: ["title", "header", "body", "subheading"]. Defaults to None.
+            numHeaders (int, optional): Number of headers. Defaults to 1.
+            tblStyle (str, optional): Table style. Defaults to None.
+            firstRowCaption (bool, optional): Whether first row is caption. Defaults to True.
         """
         self.colWidths = colWidths
         self.styles = styles or {}
@@ -140,24 +147,23 @@ class CellMaker:
     Helper-object to build table-cells
     """
 
-    def __init__(self, **kw):
+    def __init__(self, row: int, col: int, width: float, **kw):
         """
-            Required:
-                - row: int
-                - col: int
-                - width: float
-
-            May have the following fields:
-                - rowspan: int
-                - colspan: int
-                - style: str
-                - shade: str
-                - text: str
-                - runs: list of dictionaries
-                - vertical: bool
-                - height: float
-
+        Args:
+            row (int)
+            col (int)
+            width (float)
+            **kw: Optional keyword arguments, as follows:
+                rowspan (int, optional)
+                colspan (int, optional)
+                style (str, optional)
+                shade (str, optional)
+                text (str, optional)
+                runs (List[Dict], optional)
+                vertical (bool, optional)
+                height (float, optional)
         """
+        self.__dict__.update(row=row, col=col, width=width)
         self.__dict__.update(kw)
 
     def render(self, tbl):
