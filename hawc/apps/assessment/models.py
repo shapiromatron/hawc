@@ -654,6 +654,8 @@ class Dataset(models.Model):
     An external Dataset
     """
 
+    objects = managers.DatasetManager()
+
     assessment = models.ForeignKey(
         Assessment, editable=False, related_name="datasets", on_delete=models.CASCADE
     )
