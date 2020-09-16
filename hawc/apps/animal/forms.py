@@ -475,7 +475,9 @@ class EndpointForm(ModelForm):
         else:
             inputs = {
                 "legend_text": "Create new endpoint",
-                "help_text": get_flavored_text("ani__endpoint_form__create"),
+                "help_text": """Create a new endpoint. An endpoint may should describe one
+            measure-of-effect which was measured in the study. It may
+            or may not contain quantitative data.""",
                 "cancel_url": self.instance.animal_group.get_absolute_url(),
             }
 

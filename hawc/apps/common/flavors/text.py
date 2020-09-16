@@ -9,7 +9,7 @@ class FlavoredText(NamedTuple):
 text_mapping = dict(
     ani__endpoint_form__effects=FlavoredText(
         prime="Any additional descriptive-tags used to categorize the outcome",
-        epa='For now, use the endpoint specific overall study evaluation rating of "high", "medium", "low", or "uninformative"',
+        epa="Any additional descriptive-tags used to categorize the outcome",
     ),
     ani__endpoint_form__name=FlavoredText(
         prime="""
@@ -33,21 +33,6 @@ text_mapping = dict(
             minutes = min, hours = h, days = d, weeks = wk,
             months = mon, years = y.
             """,
-    ),
-    ani__endpoint_form__create=FlavoredText(
-        prime="""
-            Create a new endpoint. An endpoint may should describe one
-            measure-of-effect which was measured in the study. It may
-            or may not contain quantitative data.
-        """,
-        epa="""
-            Create a new endpoint. An endpoint should describe
-            one measure-of-effect which was measured in the study.
-            It may or may not contain quantitative data. For
-            endpoint terminology, use the reference document
-            "<a href="https://hawcprd.epa.gov/assessment/100000039/">Recommended
-            Terminology for Outcomes/Endpoints</a>."
-        """,
     ),
     riskofbias__riskofbiasassessment_help_text_default=FlavoredText(
         prime=(

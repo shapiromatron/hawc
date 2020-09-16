@@ -19,7 +19,7 @@ const termUrlLookup = {
         effect_subtype: "Effect subtype",
         endpoint_name: "Endpoint/Adverse outcome*",
     },
-    helpText = {
+    helpText["EPA"] = {
         system: "Relevant biological system",
         organ: "Relevant organ or tissue",
         effect: `Please reference terminology reference file and use Title Style. Commonly used
