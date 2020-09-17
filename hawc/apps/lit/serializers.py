@@ -9,6 +9,7 @@ import pandas as pd
 from celery import chain
 from celery.result import ResultBase
 from django.db import transaction
+from django.db.models import Q
 from django.template.defaultfilters import slugify
 from rest_framework import exceptions, serializers
 from rest_framework.exceptions import ParseError
@@ -41,6 +42,14 @@ class SearchSerializer(serializers.ModelSerializer):
             # TODO - move authentication check outside validation?
             raise exceptions.PermissionDenied("Invalid permissions to edit assessment")
 
+        # set slug value based on title; assert it's unique
+        # (assessment+title is checked w/ built-in serializer)
+        data["slug"] = slugify(data["title"])
+        if models.Search.objects.filter(assessment=data["assessment"], slug=data["slug"]).exists():
+            raise serializers.ValidationError(
+                {"slug": "slug (generated from title) must be unique for assessment"}
+            )
+
         if data["search_type"] != "i":
             raise serializers.ValidationError("API currently only supports imports")
 
@@ -62,7 +71,6 @@ class SearchSerializer(serializers.ModelSerializer):
 
     @transaction.atomic
     def create(self, validated_data):
-        validated_data["slug"] = slugify(validated_data["title"])
         # create search object
         search = models.Search.objects.create(**validated_data)
         # create missing identifiers from import
@@ -84,6 +92,38 @@ class IdentifiersSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Identifiers
         fields = "__all__"
+
+
+class ReferenceQuerySerializer(serializers.Serializer):
+    id = serializers.IntegerField(required=False, allow_null=True)
+    db_id = serializers.IntegerField(required=False, allow_null=True)
+    year = serializers.IntegerField(required=False, allow_null=True)
+    title = serializers.CharField(required=False, allow_blank=True)
+    authors = serializers.CharField(required=False, allow_blank=True)
+    journal = serializers.CharField(required=False, allow_blank=True)
+    abstract = serializers.CharField(required=False, allow_blank=True)
+
+    def search(self):
+        query = Q(assessment=self.context["assessment"])
+        if self.data["id"]:
+            query &= Q(id=self.data["id"])
+        if self.data["db_id"]:
+            query &= Q(identifiers__unique_id=self.data["db_id"])
+        if self.data["year"]:
+            query &= Q(year=self.data["year"])
+        if self.data["title"]:
+            query &= Q(title__icontains=self.data["title"])
+        if self.data["authors"]:
+            query &= Q(authors_short__icontains=self.data["authors"]) | Q(
+                authors__icontains=self.data["authors"]
+            )
+        if self.data["journal"]:
+            query &= Q(journal__icontains=self.data["journal"])
+        if self.data["abstract"]:
+            query &= Q(abstract__icontains=self.data["abstract"])
+
+        qs = models.Reference.objects.filter(query)[:100]
+        return [ref.get_json(json_encode=False) for ref in qs]
 
 
 class ReferenceTagsSerializer(serializers.ModelSerializer):

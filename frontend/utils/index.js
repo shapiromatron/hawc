@@ -2,12 +2,8 @@ import BaseTable from "./BaseTable";
 import DynamicFormset from "./DynamicFormset";
 import HAWCUtils from "./HAWCUtils";
 
-const utils = {
+export default {
     BaseTable,
     DynamicFormset,
     HAWCUtils,
 };
-
-window.app.utils = utils;
-
-export default utils;

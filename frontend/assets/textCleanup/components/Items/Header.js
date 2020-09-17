@@ -12,7 +12,7 @@ class Header extends Component {
 
 Header.propTypes = {
     params: PropTypes.shape({
-        field: PropTypes.object,
+        field: PropTypes.string,
     }),
 };
 

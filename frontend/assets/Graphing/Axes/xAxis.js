@@ -1,15 +1,14 @@
 import React, {Component} from "react";
 import PropTypes from "prop-types";
-import d3 from "d3";
+import * as d3 from "d3";
 
 class xAxis extends Component {
     constructor(props) {
         super(props);
         this.xAxisContainer = React.createRef();
-        this.xAxis = d3.svg
-            .axis()
+        this.xAxis = d3
+            .axisBottom()
             .scale(props.xScale)
-            .orient("bottom")
             .ticks(props.ticks);
     }
 
@@ -27,7 +26,7 @@ class xAxis extends Component {
             <text
                 className="xAxis label"
                 textAnchor="beginning"
-                x={padding.left + 10}
+                x={padding.left + 25}
                 y={axisLabel.offset}>
                 {axisLabel.label}
             </text>

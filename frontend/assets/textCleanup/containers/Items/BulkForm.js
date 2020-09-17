@@ -83,15 +83,15 @@ function mapDispatchToProps(dispatch) {
 BulkForm.propTypes = {
     dispatch: PropTypes.func,
     params: PropTypes.shape({
-        field: PropTypes.object,
-        type: PropTypes.object,
+        field: PropTypes.string,
+        type: PropTypes.string,
     }),
     model: PropTypes.shape({
         editObject: PropTypes.object,
         editObjectErrors: PropTypes.object,
-        itemsLoaded: PropTypes.object,
+        itemsLoaded: PropTypes.bool,
     }),
-    items: PropTypes.object,
+    items: PropTypes.array,
     config: PropTypes.object,
 };
 

@@ -1,5 +1,5 @@
 import $ from "$";
-import d3 from "d3";
+import * as d3 from "d3";
 
 import {saveAs} from "filesaver.js";
 
@@ -33,27 +33,26 @@ class DataPivot {
 
     static get_object(pk, callback) {
         $.get(`/summary/api/data_pivot/${pk}/`, function(d) {
-            d3.tsv(d.data_url)
-                .row((row, idx) => DataPivot.massage_row(row, idx))
-                .get(function(error, data) {
-                    if (error && error.status === 500) {
-                        alert("An error occurred; if the error continues please contact us.");
-                        throw "Server error";
-                    }
+            d3.tsv(d.data_url, (row, idx) => DataPivot.massage_row(row, idx)).then(
+                data => {
                     var dp = new DataPivot(data, d.settings, {}, d.title, d.url);
                     if (callback) {
                         callback(dp);
                     } else {
                         return dp;
                     }
-                });
+                },
+                error => {
+                    console.error(error);
+                    alert(`An error occurred; if the error continues please contact us.`);
+                    throw "Server error";
+                }
+            );
         });
     }
 
     static displayAsModal(id) {
-        DataPivot.get_object(id, function(d) {
-            d.displayAsModal();
-        });
+        DataPivot.get_object(id, d => d.displayAsModal());
     }
 
     static displayInline(id, setTitle, setBody) {
@@ -65,6 +64,31 @@ class DataPivot {
             setBody(content);
             obj.build_data_pivot_vis(content);
         });
+    }
+
+    static displayEditView(data_url, settings, options) {
+        d3.tsv(data_url, (d, i) => DataPivot.massage_row(d, i)).then(
+            data => {
+                $("#loading_div").fadeOut();
+                const dp = new DataPivot(data, settings, {
+                    update: true,
+                    container: options.container,
+                    data_div: options.dataDiv,
+                    settings_div: options.settingsDiv,
+                    display_div: options.displayDiv,
+                });
+
+                $(options.submissionDiv).submit(function() {
+                    $(options.settingsField).val(dp.get_settings_json());
+                    return true;
+                });
+            },
+            error => {
+                console.error(arguments);
+                alert(`An error occurred; if the error continues please contact us.`);
+                throw "Server error";
+            }
+        );
     }
 
     static default_plot_settings() {
@@ -159,28 +183,6 @@ class DataPivot {
             text.text(input.val());
         });
         return $("<div>").append(input, text);
-    }
-
-    static displayEditView(data_url, settings, options) {
-        var dp;
-
-        d3.tsv(data_url)
-            .row((d, i) => DataPivot.massage_row(d, i))
-            .get((error, data) => {
-                $("#loading_div").fadeOut();
-                dp = new DataPivot(data, settings, {
-                    update: true,
-                    container: options.container,
-                    data_div: options.dataDiv,
-                    settings_div: options.settingsDiv,
-                    display_div: options.displayDiv,
-                });
-            });
-
-        $(options.submissionDiv).submit(function() {
-            $(options.settingsField).val(dp.get_settings_json());
-            return true;
-        });
     }
 
     build_edit_settings(dom_bindings) {

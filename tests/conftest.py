@@ -1,9 +1,19 @@
+import json
 import logging
+import os
+import time
 from pathlib import Path
 from typing import NamedTuple
 
+import helium
 import pytest
+from django.conf import settings
 from django.core.management import call_command
+from selenium import webdriver
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+
+CI = os.environ.get("CI") == "true"
+SHOW_BROWSER = bool(os.environ.get("SHOW_BROWSER", None))
 
 
 class UserCredential(NamedTuple):
@@ -42,6 +52,15 @@ class Keys:
         self.pm_user = UserCredential("pm@pm.com", "pw")
         self.pm_user_id = 2
 
+        self.job_assessment = "204faaa7-fdfa-4426-a09f-f0d1af9db33d"
+        self.job_global = "08ca9f23-5368-4ed6-9b18-29625add9aa8"
+
+        self.log_assessment = 1
+        self.log_global = 2
+
+        self.blog_published = 2
+        self.blog_unpublished = 1
+
 
 _keys = Keys()
 
@@ -67,6 +86,7 @@ def set_db_keys(request):
 def vcr_config():
     return {
         "filter_headers": [("authorization", "<omitted>")],
+        "filter_post_data_parameters": [("api_key", "<omitted>")],
         "ignore_localhost": True,
     }
 
@@ -88,3 +108,97 @@ def rewrite_data_files():
     A test exists in CI to ensure that this flag is set to False on commit.
     """
     return False
+
+
+def _wait_until_webpack_ready(max_wait_sec: int = 60):
+    """Sleep until webpack is ready...
+
+    Raises:
+        EnvironmentError: If webpack fails to complete in designated time
+    """
+    stats = Path(settings.WEBPACK_LOADER["DEFAULT"]["STATS_FILE"])
+    waited_for = 0
+    while waited_for < max_wait_sec:
+        if stats.exists() and json.loads(stats.read_text()).get("status") == "done":
+            return
+        time.sleep(1)
+        waited_for += 1
+    raise EnvironmentError("Timeout; webpack dev server not ready")
+
+
+def _get_driver(browser: str, CI: bool):
+    """
+    Returns the web-driver depending on the specified environment
+
+    Args:
+        browser (str): "firefox" or "chrome"
+        CI (bool): if we're in the CI environment
+
+    Raises:
+        ValueError: if configuration is invalid
+    """
+    command_executor = None
+    if CI:
+        host = os.environ["SELENIUM_HOST"]
+        port = os.environ["SELENIUM_PORT"]
+        command_executor = f"http://{host}:{port}/wd/hub"
+
+    if browser == "firefox":
+        options = webdriver.FirefoxOptions()
+        if CI:
+            options.headless = True
+            return webdriver.Remote(
+                command_executor=command_executor,
+                desired_capabilities=DesiredCapabilities.FIREFOX,
+                options=options,
+            )
+        else:
+            return helium.start_firefox(options=options, headless=not SHOW_BROWSER)
+    elif browser == "chrome":
+        options = webdriver.ChromeOptions()
+        # prevent navbar from collapsing
+        options.add_argument("--window-size=1920,1080")
+        if CI:
+            options.add_experimental_option("excludeSwitches", ["enable-logging"])
+            options.add_argument("--headless")
+            return webdriver.Remote(
+                command_executor=command_executor,
+                desired_capabilities=DesiredCapabilities.CHROME,
+                options=options,
+            )
+        else:
+            return helium.start_chrome(options=options, headless=not SHOW_BROWSER)
+    else:
+        raise ValueError(f"Unknown config: {browser} / {CI}")
+
+
+@pytest.fixture(scope="session")
+def chrome_driver():
+    driver = _get_driver("chrome", CI)
+    _wait_until_webpack_ready()
+    try:
+        yield driver
+    finally:
+        driver.quit()
+
+
+@pytest.fixture(scope="session")
+def firefox_driver():
+    driver = _get_driver("firefox", CI)
+    # prevent navbar from collapsing
+    driver.set_window_size(1920, 1080)
+    _wait_until_webpack_ready()
+    try:
+        yield driver
+    finally:
+        driver.quit()
+
+
+@pytest.fixture
+def set_chrome_driver(request, chrome_driver):
+    request.cls.driver = chrome_driver
+
+
+@pytest.fixture
+def set_firefox_driver(request, firefox_driver):
+    request.cls.driver = firefox_driver

@@ -1,43 +1,85 @@
 import $ from "$";
-import d3 from "d3";
+import * as d3 from "d3";
 
 import D3Plot from "utils/D3Plot";
 import HAWCModal from "utils/HAWCModal";
 import HAWCUtils from "utils/HAWCUtils";
+import ReactDOM from "react-dom";
+import React, {Component} from "react";
+import CheckboxInput from "shared/components/CheckboxInput";
+import {observer} from "mobx-react";
+import {action, observable} from "mobx";
+import PropTypes from "prop-types";
 
-import ReferencesViewer from "./ReferencesViewer";
+@observer
+class VizOptions extends Component {
+    componentDidUpdate() {
+        this.props.viz.build_plot();
+    }
+    render() {
+        const {store} = this.props;
+        return (
+            <CheckboxInput
+                label={"Hide tags with no references"}
+                onChange={e => store.changeOption("hide_empty_tag_nodes", e.target.checked)}
+                checked={store.options.hide_empty_tag_nodes}
+            />
+        );
+    }
+}
+VizOptions.propTypes = {
+    store: PropTypes.object.isRequired,
+    viz: PropTypes.object.isRequired,
+};
+
+class VizState {
+    @observable options = null;
+
+    constructor(options) {
+        this.options = options;
+    }
+
+    @action.bound changeOption(key, value) {
+        this.options[key] = value;
+    }
+}
 
 class TagTreeViz extends D3Plot {
-    constructor(tagtree, plot_div, title, downloadURL, options) {
+    constructor(tagtree, el, title, downloadURL, options) {
         // Displays multiple-dose-response details on the same view and allows for
         // custom visualization of these plots
         super();
-        this.options = options || {};
+        this.stateStore = new VizState(options);
         this.set_defaults();
-        this.plot_div = $(plot_div);
+        this.el = el;
+        this.plot_div = $("<div>").appendTo(el);
+        this.options_div = $("<div>").appendTo(el);
         this.tagtree = tagtree;
         this.title_str = title;
         this.downloadURL = downloadURL;
         this.modal = new HAWCModal();
-        if (this.options.build_plot_startup) {
-            this.build_plot();
-        }
+        this.build_plot();
+        this.build_options();
     }
 
     build_plot() {
         this.plot_div.html("");
         this.get_plot_sizes();
         this.build_plot_skeleton(false);
+        this.prepare_data();
         this.draw_visualization();
         this.add_menu();
         this.trigger_resize();
     }
 
     get_plot_sizes() {
-        var menu_spacing = this.options.show_menu_bar ? 40 : 0;
         this.plot_div.css({
-            height: this.h + this.padding.top + this.padding.bottom + menu_spacing + "px",
+            height: this.h + this.padding.top + this.padding.bottom + "px",
         });
+    }
+
+    build_options() {
+        ReactDOM.render(<VizOptions viz={this} store={this.stateStore} />, this.options_div.get(0));
     }
 
     set_defaults() {
@@ -47,9 +89,6 @@ class TagTreeViz extends D3Plot {
         this.path_length = 180;
         this.minimum_radius = 8;
         this.maximum_radius = 30;
-        if (!this.options.build_plot_startup) {
-            this.options.build_plot_startup = true;
-        }
     }
 
     check_svg_fit(value) {
@@ -65,11 +104,18 @@ class TagTreeViz extends D3Plot {
         this.svg.setAttribute("viewBox", `${x} ${y} ${width} ${height}`);
     }
 
+    prepare_data() {
+        // toggle reference pruning
+        this.tagtree.prune_no_references(this.stateStore.options.hide_empty_tag_nodes);
+    }
+
     draw_visualization() {
         var i = 0,
             vis = this.vis,
-            tree = d3.layout.tree().size([this.h, this.w]),
-            diagonal = d3.svg.diagonal().projection(d => [d.y, d.x]),
+            diagonal = d3
+                .linkHorizontal()
+                .x(d => d.y)
+                .y(d => d.x),
             self = this,
             buildVizDatasetNode = function(nestedTag) {
                 return {
@@ -84,6 +130,8 @@ class TagTreeViz extends D3Plot {
                 };
             },
             rootNode = buildVizDatasetNode(this.tagtree.rootNode),
+            tree = d3.tree().size([this.h, this.w]),
+            treeNode = tree(d3.hierarchy(rootNode)),
             toggle = function toggle(d) {
                 if (d.children && d.children.length > 0) {
                     d._children = d.children;
@@ -101,28 +149,31 @@ class TagTreeViz extends D3Plot {
             },
             fetch_references = function(tag) {
                 var title = `<h4>${tag.data.name}</h4>`,
-                    div = $('<div id="references_div"></div'),
-                    options = {tag, download_url: self.downloadURL},
-                    refviewer = new ReferencesViewer(div, options);
+                    div = $('<div id="references_div"></div');
 
                 self.modal
                     .addHeader(title)
                     .addBody(div)
                     .addFooter("")
                     .show({maxWidth: 1200});
-                tag.get_reference_objects_by_tag(refviewer, {filteredSubset: true});
+
+                tag.renderReferenceList(div.get(0));
             },
             update = function(source) {
-                var duration = d3.event && d3.event.altKey ? 5000 : 500;
+                var duration = d3.event && d3.event.altKey ? 5000 : 500,
+                    t = d3.transition().duration(duration);
 
                 // Compute the new tree layout.
-                var nodes = tree.nodes(rootNode).reverse();
+                treeNode = tree(treeNode);
+                var nodes = treeNode.descendants().reverse();
 
                 // Normalize for fixed-depth.
                 nodes.forEach(d => (d.y = d.depth * self.path_length));
 
                 // Update nodes
-                var node = vis.selectAll("g.tagnode").data(nodes, d => d.id || (d.id = ++i));
+                var node = vis
+                    .selectAll("g.tagnode")
+                    .data(nodes, d => d.data.id || (d.data.id = ++i));
 
                 // Enter any new nodes at the parent's previous position.
                 var nodeEnter = node
@@ -135,7 +186,7 @@ class TagTreeViz extends D3Plot {
                             if (d.depth == 0) {
                                 alert("Cannot view details on root-node.");
                             } else {
-                                fetch_references(d.nestedTag);
+                                fetch_references(d.data.nestedTag);
                             }
                         } else {
                             toggle(d);
@@ -146,18 +197,18 @@ class TagTreeViz extends D3Plot {
                 nodeEnter
                     .append("svg:circle")
                     .attr("r", 1e-6)
-                    .style("fill", d => (d.hasChildren ? "lightsteelblue" : "white"));
+                    .style("fill", d => (d.data.hasChildren ? "lightsteelblue" : "white"));
 
                 nodeEnter
                     .append("svg:text")
                     .attr("x", 0)
-                    .attr("y", d => radius_scale(d.numReferencesDeep) + 12)
+                    .attr("y", d => radius_scale(d.data.numReferencesDeep) + 12)
                     .attr("class", "node_name")
                     .attr("text-anchor", "middle")
-                    .text(d => d.name)
+                    .text(d => d.data.name)
                     .style("fill-opacity", 1e-6)
                     .each(function() {
-                        HAWCUtils.wrapText(this, 150);
+                        HAWCUtils.wrapText(this, 170);
                     });
 
                 nodeEnter
@@ -166,21 +217,23 @@ class TagTreeViz extends D3Plot {
                     .attr("dy", "3.5px")
                     .attr("class", "node_value")
                     .attr("text-anchor", "middle")
-                    .text(d => d.numReferencesDeep)
+                    .text(d => d.data.numReferencesDeep)
                     .style("fill-opacity", 1e-6);
 
                 // Transition nodes to their new position.
-                var nodeUpdate = node
-                    .transition()
-                    .duration(duration)
-                    .attr("transform", d => `translate(${d.y},${d.x})`);
+                var nodeUpdate = nodeEnter.merge(node);
+                nodeUpdate.transition(t).attr("transform", d => `translate(${d.y},${d.x})`);
 
                 nodeUpdate
-                    .select("circle")
-                    .attr("r", d => radius_scale(d.numReferencesDeep))
-                    .style("fill", d => (d.hasChildren ? "lightsteelblue" : "white"));
+                    .selectAll("circle")
+                    .transition(t)
+                    .attr("r", d => radius_scale(d.data.numReferencesDeep))
+                    .style("fill", d => (d.data.hasChildren ? "lightsteelblue" : "white"));
 
-                nodeUpdate.selectAll("text").style("fill-opacity", 1);
+                nodeUpdate
+                    .selectAll("text")
+                    .transition(t)
+                    .style("fill-opacity", 1);
 
                 // Transition exiting nodes to the parent's new position.
                 var nodeExit = node
@@ -195,7 +248,9 @@ class TagTreeViz extends D3Plot {
                 nodeExit.select("text").style("fill-opacity", 1e-6);
 
                 // Update links
-                var link = vis.selectAll("path.tagslink").data(tree.links(nodes), d => d.target.id);
+                var link = vis
+                    .selectAll("path.tagslink")
+                    .data(treeNode.links(), d => d.target.data.id);
 
                 // Enter any new links at the parent's previous position.
                 link.enter()
@@ -234,17 +289,17 @@ class TagTreeViz extends D3Plot {
             };
 
         this.add_title();
-        rootNode.x0 = this.h / 2;
-        rootNode.y0 = 0;
+        treeNode.x0 = this.h / 2;
+        treeNode.y0 = 0;
 
-        var radius_scale = d3.scale
-            .pow()
+        var radius_scale = d3
+            .scalePow()
             .exponent(0.5)
-            .domain([0, rootNode.numReferencesDeep])
+            .domain([0, treeNode.data.numReferencesDeep])
             .range([this.minimum_radius, this.maximum_radius]);
 
-        rootNode.children.forEach(toggleAll);
-        update(rootNode);
+        treeNode.children.forEach(toggleAll);
+        update(treeNode);
     }
 }
 

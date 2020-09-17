@@ -1,5 +1,5 @@
 import _ from "lodash";
-import d3 from "d3";
+import * as d3 from "d3";
 
 import D3Plot from "utils/D3Plot";
 import HAWCUtils from "utils/HAWCUtils";

@@ -1,0 +1,561 @@
+TY  - JOUR
+AB  - When chlorine is introduced into public drinking water for disinfection, it can react with organic compounds in surface waters to form toxic by-products such as 3-chloro-4-(dichloromethyl)-5-hydroxy-2[5H]-furanone (MX). We investigated the effect of exposure to MX on cytochrome P450 2E1 (CYP2E1)-like activity and total glutathione (GSH) in the liver of the small fish model, medaka (Oryzias latipes). The multi-site carcinogen methylazoxymethanol acetate (MAMAc) was the positive control compound. Both medaka liver microsome preparations and S-9 fractions catalyzed the hydroxylation of p-nitrophenol (PNP), suggesting CYP2E1-like activity in the medaka. Male medaka exposed for 96 h to the CYP2E1 inducers ethanol and acetone under fasted conditions showed significant increases in PNP-hydroxylation activity. Furthermore, total reduced hepatic GSH was reduced in fish fasted for 96 h, indicating that normal feeding is a factor in maintaining xenobiotic defenses. Exposure to MX and MAMAc induced significant increases in hepatic CYP2E1-like activity, however MX exposure did not alter hepatic GSH levels. These data strengthen the role of the medaka as a suitable species for examining cytochrome P450 and GSH detoxification processes and the role these systems play in chemical carcinogenesis. © 2003 Elsevier Science Inc. All rights reserved.
+AD  - (Geter D.R., geter.david@epa.gov; Brouwer M.H.; Hawkins W.E.) Department of Coastal Sciences, Gulf Coast Research Laboratory, University of Southern Mississippi, Ocean Springs, MS 39564, United States. (Fournie J.W.) Natl. Hlth./Environ. Effects Res. L., Office of Research and Development, US Environmental Protection Agency, Gulf Breeze, FL 32561, United States. (Geter D.R., geter.david@epa.gov; DeAngelo A.B.) Natl. Hlth./Environ. Effects Res. L., Office of Research and Development, US Environmental Protection Agency, Research Triangle Park, NC 27711, United States.
+PM  - 12643982 (http://www.ncbi.nlm.nih.gov/pubmed/12643982)
+AN  - 2003114678
+AU  - Geter, D. R.
+AU  - Fournie, J. W.
+AU  - Brouwer, M. H.
+AU  - DeAngelo, A. B.
+AU  - Hawkins, W. E.
+DA  - 1
+DB  - Embase
+DO  - 10.1016/S1532-0456(03)00003-6
+DP  - Copyright 2009 Elsevier B.V., All rights reserved.
+KW  - (MAJOR FOCUS)
+3 chloro 4 dichloromethyl 5 hydroxy 2(5h) furanone (drug toxicity)
+4 nitrophenol (endogenous compound)
+carcinogen (drug toxicity)
+cytochrome P450 2E1 (endogenous compound)
+glutathione (endogenous compound)
+acetone
+alcohol
+drinking water
+methylazoxymethanol acetate
+S 9 (endogenous compound)
+unclassified drug
+xenobiotic metabolism
+animal experiment
+animal tissue
+article
+catalyst
+controlled study
+Cyprinodontiformes
+data analysis
+diet restriction
+enzyme activity
+feeding
+female
+hydroxylation
+liver level
+liver microsome
+male
+nonhuman
+Oryzias
+priority journal
+protein blood level
+4 nitrophenol (100-02-7)
+S 9 (10023-72-0)
+acetone (67-64-1)
+alcohol (64-17-5)
+glutathione (70-18-8)
+methylazoxymethanol acetate (592-62-1)
+Clinical and Experimental Biochemistry (29)
+Toxicology (52)
+LA  - English
+M1  - 3
+N1  - Elsevier Inc., 360 Park Avenue South, New York, United States.
+PY  - 2003
+SN  - 1532-0456
+SP  - 353-364
+ST  - p-Nitrophenol and glutathione response in medaka (Oryzias latipes) exposed to MX, a drinking water carcinogen
+T2  - Comparative Biochemistry and Physiology - C Toxicology and Pharmacology
+TI  - p-Nitrophenol and glutathione response in medaka (Oryzias latipes) exposed to MX, a drinking water carcinogen
+UR  - http://dx.doi.org/10.1016/S1532-0456(03)00003-6
+VL  - 134
+ID  - 288
+ER  - 
+
+
+TY  - JOUR
+AB  - Disinfection byproducts of chlorination such as trihalomethanes and haloacetic acids (HAAs) are some of the most prevalent contaminants that appear in municipal water supplies. Thus, large populations of humans are continually exposed to low concentrations of these potential toxicants. Previous studies have shown that some of these contaminants are weakly genotoxic in the Comet Assay and induce different types of tumors in animal carcinogenicity studies. In the studies reported here, we tested how the addition of HAAs, specifically dichloroacetic acid (DCA) [500 mg/l], bromochloroacetic acid (BCA)[500 mg/l], or dibromoacetic acid (DBA) [500 mg/l], to the drinking water of male F344 rats affected precursor lesions in the colon. In the first study colons were analyzed for aberrant crypt foci (ACF) after 52 weeks of exposure. Only BCA caused a statistically significant increase in ACF. In a follow-up study male and female F344 rats were exposed to 0, 250, 500, and 1000 mg/l BCA in drinking water for 26 and 52 weeks. ACF were significantly increased in the high dose group in males at 52 weeks and at all dose levels at both 26 and 52 weeks in the females. These findings support prior carcinogenicity studies showing that, of the three HAAs tested, only BCA induced tumors (adenomas) in the colon. The results also indicate that ACF as early as 26 weeks may serve as predictive biomarkers of later tumorigenesis. This abstract does not necessarily reflect US EPA policy.
+AD  - (Kligerman A.D.; Geter D.R.; George M.H.; Moore T.M.; Wood C.E.; DeAngelo A.B.) US Environmental Protection Agency, Research Triangle Park, United States. (Geter D.R.) Bayer Crop Science LP, Research Triangle Park, United States.
+AU  - Kligerman, A. D.
+AU  - Geter, D. R.
+AU  - George, M. H.
+AU  - Moore, T. M.
+AU  - Wood, C. E.
+AU  - DeAngelo, A. B.
+DA  - September
+DB  - Embase
+DO  - 10.1002/em.21895
+DP  - Copyright 2014 Elsevier B.V., All rights reserved.
+KW  - (MAJOR FOCUS)
+acid
+biological marker
+dichloroacetic acid
+drinking water
+trihalomethane
+aberrant crypt focus
+environmental mutagenesis
+genomics
+rat
+society
+adenoma
+carcinogenesis
+carcinogenicity
+chlorination
+comet assay
+disinfection
+drug megadose
+exposure
+female
+follow up
+human
+male
+neoplasm
+policy
+population
+precursor
+water supply
+LA  - English
+N1  - 45th Annual Meeting of the Environmental Mutagenesis and Genomics Society, EMGS 2014
+Orlando, FL, United States
+2014-09-13 to 2014-09-17
+Wiley-Liss Inc.
+PY  - 2014
+SN  - 0893-6692
+SP  - S61
+ST  - Induction of aberrant crypt foci (ACF) in rats by haloacetic acids
+T2  - Environmental and Molecular Mutagenesis
+TI  - Induction of aberrant crypt foci (ACF) in rats by haloacetic acids
+UR  - http://dx.doi.org/10.1002/em.21895
+VL  - 55 SUPPL. 1
+ID  - 266
+ER  - 
+
+
+TY  - JOUR
+AB  - Bromate, a common disinfectant byproduct of drinking water ozonation, has been linked to human and animal renal toxicity, including renal cell carcinomas in multiple animal species. Here, we evaluate changes in protein and gene expression through two-dimensional difference gel electrophoresis (2D-DIGE) and Affymetrix arrays to identify potential modes of action involved in potassium bromate carcinogenicity. Male rats were exposed to potassium bromate in drinking water at concentrations of 0, 1, 20 and 400 ppm for two weeks. Differential expression of glycolytic proteins including enolase 1 (Eno1), triosephosphate isomerase 1 (Tpi1) and glyceraldehyde-3-phosphate dehydrogenase (Gapdh) suggests that bromate toxicity is associated with changes in energy consumption and utilization in renal cells involving up-regulation of glycolytic processes that may be the result of altered mitochondrial function. Several alterations in glycolysis and mitochondrial gene transcripts were also observed to be consistent with this mode of action. These studies provide insight into early events in renal cell physiology altered by bromate exposure.
+AD  - United States Environmental Protection Agency, National Health and Environmental Effects Research Laboratory, Environmental Carcinogenesis Division, B143-06, 109 T.W. Alexander Drive, Research Triangle Park, NC 27711, United States.
+PM  - 19425233
+AN  - 19425233
+AU  - Ahlborn, G. J.
+AU  - Delker, D. A.
+AU  - Roop, B. C.
+AU  - Geter, D. R.
+AU  - Allen, J. W.
+AU  - DeAngelo, A. B.
+AU  - Winnik, W. M.
+C1  - Non-U.S. Gov't
+DA  - Jun
+DB  - NLM
+DO  - 10.1016/j.fct.2009.02.003
+ET  - 2009/05/09
+J2  - Food and chemical toxicology : an international journal published for the British Industrial Biological Research Association
+KW  - Animals
+Bromates/*toxicity
+Cell Line
+Disinfection
+Electrophoresis, Gel, Two-Dimensional
+Energy Metabolism/drug effects
+Gene Expression/*drug effects
+Glycolysis/drug effects
+Kidney/cytology/*drug effects/*metabolism
+Male
+Membrane Potentials/drug effects
+Mitochondria/drug effects/metabolism
+Mitochondrial Membranes/drug effects
+Oligonucleotide Array Sequence Analysis
+Proteins/*metabolism
+Rats
+Rats, Inbred F344
+Tandem Mass Spectrometry
+Trypsin/chemistry
+Water Supply
+LA  - eng
+M1  - 6
+N1  - 1873-6351
+Ahlborn, Gene J
+Delker, Don A
+Roop, Barbara C
+Geter, David R
+Allen, James W
+DeAngelo, Anthony B
+Winnik, Witold M
+England
+Food Chem Toxicol. 2009 Jun;47(6):1154-60. doi: 10.1016/j.fct.2009.02.003.
+PY  - 2009
+SN  - 0278-6915
+SP  - 1154-60
+ST  - Early alterations in protein and gene expression in rat kidney following bromate exposure
+T2  - Food Chem Toxicol
+TI  - Early alterations in protein and gene expression in rat kidney following bromate exposure
+VL  - 47
+ID  - 37
+ER  - 
+
+
+TY  - JOUR
+AB  - Aberrant crypt foci (ACF), identified as putative precursor lesions in the development of colon cancer, were induced by brominated trihalomethanes (THMs) administered in the drinking water of rats. To investigate whether ACF induced by THMs could be promoted by a diet high in saturated animal fat, male F344/N rats were exposed to 0.5, 0.7, 0.9 or 1.1 g/l of trichloromethane (TCM), bromodichloromethane (BDCM), dibromochloromethane (DBCM) and tribromomethane (TBM), respectively, in drinking water. All animals were fed a Purina 5001 diet with half receiving the normal 4.5% fat feed and half receiving feed supplemented with 19% animal fat. After 26 weeks of treatment, colons were excised and examined for ACF. No difference in ACF was noted between animals fed a normal or high fat diet and exposed to TCM, BDCM or DBCM. However, animals exposed to TBM and fed a high fat diet showed a significant and near two-fold increase in ACF when compared to TBM exposed animals fed a normal diet.
+AD  - National Health and Environmental Effects Research Laboratory, Office of Research and Development, US Environmental Protection Agency, (B143-06), Research Triangle Park, NC 27711, USA. geter.david@epa.gov
+PM  - 15104116
+AN  - 15104116
+AU  - Geter, D. R.
+AU  - George, M. H.
+AU  - Moore, T. M.
+AU  - Kilburn, S. R.
+AU  - Huggins-Clark, G.
+AU  - DeAngelo, A. B.
+C1  - U.S. Gov't, Non-P.H.S.
+DA  - Mar 7
+DB  - NLM
+ET  - 2004/04/24
+J2  - Toxicology letters
+KW  - Administration, Oral
+Animals
+Carcinogens/administration & dosage/*toxicity
+Colon/*drug effects/pathology
+Colonic Neoplasms/*chemically induced/pathology
+Dietary Fats/*administration & dosage
+Disease Models, Animal
+Dose-Response Relationship, Drug
+Drinking
+Intestinal Mucosa/drug effects/pathology
+Male
+Precancerous Conditions/*chemically induced/pathology
+Rats
+Rats, Inbred F344
+Trihalomethanes/administration & dosage/*toxicity
+Water Supply
+LA  - eng
+M1  - 3
+N1  - Geter, David R
+George, Michael H
+Moore, Tanya M
+Kilburn, Steve R
+Huggins-Clark, Gloria
+DeAngelo, Anthony B
+Netherlands
+Toxicol Lett. 2004 Mar 7;147(3):245-52.
+PY  - 2004
+SN  - 0378-4274 (Print)
+0378-4274
+SP  - 245-52
+ST  - The effects of a high animal fat diet on the induction of aberrant crypt foci in the colons of male F344/N rats exposed to trihalomethanes in the drinking water
+T2  - Toxicol Lett
+TI  - The effects of a high animal fat diet on the induction of aberrant crypt foci in the colons of male F344/N rats exposed to trihalomethanes in the drinking water
+VL  - 147
+ID  - 42
+ER  - 
+
+
+TY  - JOUR
+AB  - An exploratory study of methicillin-resistant Staphylococcus aureus (MRSA) and SCCmec elements in bacteria along the Mexican border of south Texas was performed. Between September and December of 2008, 375 swabs of anterior nares were self-collected by students attending the University of Texas-Pan American (UTPA) and cultured for MRSA. Fifty seven bacterial isolates were kept for further analysis that included suspected MRSA and other SCCmec-containing bacteria. Isolates were examined for the presence of nuc, mecA, lukS-PV, and spa genes using PCR. SCCmec and spa typing were also performed. Seven S. aureus isolates were found of which six were classified as MRSA. SCCmec typing showed five of the six MRSA strains to be type IV, while one MRSA strain, and most of the non-S. aureus strains, were untypeable, producing results that were indicative of mixed SCCmec types. Five of the six MRSA strains contained known spa types (two of which corresponded to USA300 and one to USA600), while one strain had a novel spa type. Only one isolate, a USA300 MRSA, was positive for lukS-PV. Easy access by the Texas border community to antibiotics in Mexico without a prescription, and the strong partition in SCCmec types between MRSA and non-S. aureus bacteria suggest that this border region of Texas may be uniquely suited for the study of emerging SCCmec types, their horizontal transfer, and perhaps other aspects of antibiotic resistance in bacteria. © Springer Science+Business Media, LLC 2009.
+PM  - 19937034
+AU  - Ammons, D. R.
+AU  - Puttagunta, R.
+AU  - Granados, J. C.
+AU  - De La Garza, G.
+AU  - Eyambe, G. S.
+AU  - Rampersad, J.
+C1  - BG-0017, Welch Foundation
+#52005209, Howard Hughes Medical Institute
+#5G11HD038438-08, National Institutes of Health
+DB  - Scopus
+DO  - 10.1007/s00284-009-9544-2
+J2  - Current Microbiology
+KW  - bacterial DNA
+staphylococcus protein A
+adolescent
+adult
+article
+bacterial gene
+bacterium identification
+child
+classification
+communicable disease
+DNA fingerprinting
+genetics
+genotype
+heterozygote
+human
+isolation and purification
+methicillin resistant Staphylococcus aureus
+microbiology
+molecular epidemiology
+nose
+polymerase chain reaction
+Staphylococcus infection
+United States
+Bacterial Typing Techniques
+Carrier State
+Community-Acquired Infections
+DNA, Bacterial
+Genes, Bacterial
+Humans
+Methicillin-Resistant Staphylococcus aureus
+Staphylococcal Infections
+Staphylococcal Protein A
+Texas
+Young Adult
+LA  - English
+M1  - 5
+PY  - 2010
+SN  - 03438651 (ISSN)
+SP  - 321-326
+ST  - An exploratory study of methicillin-resistant Staphylococcus aureus and SCCmec elements obtained from a community setting along the Texas border with Mexico
+T2  - Curr. Microbiol.
+TI  - An exploratory study of methicillin-resistant Staphylococcus aureus and SCCmec elements obtained from a community setting along the Texas border with Mexico
+UR  - http://www.scopus.com/inward/record.url?eid=2-s2.0-77953084872&partnerID=40&md5=713db175ca4c2d5d5c67135685725717
+VL  - 60
+ID  - 160
+JP  - CRISPR
+DC  - Direct Current
+ER  - 
+
+
+TY  - CHAP
+AU  - Boverhof, D. R.
+AU  - Geter, D. R.
+AU  - Gollapudi, B. B.
+AU  - Hollnagel, H.
+DB  - Scopus
+DO  - 10.1002/9781118001042.ch3
+KW  - Toxicogenomics application, practical considerations to risk assessment-current drivers and a path forward
+Toxicogenomics drivers, and risk assessment-North American drivers, and chemical safety evaluation
+Toxicogenomics, defining relationship-chemical agent amount and toxic response
+LA  - English
+PY  - 2011
+SN  - 9780470449820 (ISBN)
+SP  - 41-64
+ST  - Practical Considerations for the Application of Toxicogenomics to Risk Assessment: Early Experience, Current Drivers, and a Path Forward
+T2  - Applications of Toxicogenomics in Safety Evaluation and Risk Assessment
+TI  - Practical Considerations for the Application of Toxicogenomics to Risk Assessment: Early Experience, Current Drivers, and a Path Forward
+UR  - http://www.scopus.com/inward/record.url?eid=2-s2.0-84886181110&partnerID=40&md5=4e417729dba29cb9878b8492a26fe35b
+ID  - 11
+ER  - 
+
+
+TY  - JOUR
+AB  - Mutagenicity assays with Salmonella have shown that 3-chloro-4-(dichloromethyl)-5-hydroxy2[5H]-furanone (MX), a drinking-water disinfection by-product, is a potent mutagen, accounting for about one-third of the mutagenic potency/potential of chlorinated drinking water. The ability of MX to induce mutations was investigated in the liver of medaka (Oryzias latipes), a small fish model, utilizing the cll transgenic medaka strain that allows detection of in vivo mutations. Methylazoxymethanol acetate (MAMAc), a carcinogen in medaka, served as a positive control. Fish were exposed to MX at 0, 1, 10, or 30 mg/L for 96h, whereas the MAMAc exposures were for 2 h at 0, 0.1, 1, or 10 mg/L. Both exposures were conducted under static water conditions and with fasted medaka. Following exposure, fish were returned to regular culture conditions to allow mutation expression for 15 or 40 d for MX or for 15 or 32 d for MAMAc. Mutations were not induced in medaka exposed to MX for 96 h. However, a concentration- and time-dependent increase in mutations was observed from the livers of fish exposed to I and 10 mg/L MAMAc. In conclusion, mutation induction was not observed in the livers of cll medaka exposed to MX for 96 h; however, studies are planned to examine mutation induction in the gills and skin to explore the possibility that MX-induced DNA damage occurs primarily in the tissues of initial contact.
+AD  - Univ So Mississippi, Dept Coastal Sci, Gulf Coast Res Lab, Ocean Springs, MS USA. Univ Georgia, Aquat Biotechnol & Environm Lab, Athens, GA 30602 USA. US EPA, Natl Hlth & Environm Effects Res Lab, Off Res & Dev, Gulf Ecol Div, Gulf Breeze, FL USA. US EPA, Natl Hlth & Environm Effects Res Lab, Off Res & Dev, Res Triangle Pk, NC 27711 USA.
+Geter, DR (reprint author), 109 TW Alexander Dr,B143-07, Res Triangle Pk, NC 27711 USA.
+dgeter@nc.rr.com
+PM  - 14718174
+AN  - WOS:000220430200001
+AU  - Geter, D. R.
+AU  - Winn, R. N.
+AU  - Fournie, J. W.
+AU  - Norris, M. B.
+AU  - DeAngelo, A. B.
+AU  - Hawkins, W. E.
+DA  - Mar
+DB  - WOS
+DO  - 10.1080/15287390490273587
+J2  - J. Toxicol. Env. Health Part A
+KW  - GUPPY POECILIA-RETICULATA
+RAT GLANDULAR STOMACH
+3-CHLORO-4-(DICHLOROMETHYL)-5-HYDROXY-2(5H)-FURANONE MX
+MUTAGEN
+3-CHLORO-4-(DICHLOROMETHYL)-5-HYDROXY-2(5H)-FURANONE
+METHYLAZOXYMETHANOL ACETATE
+ALKYLATING-AGENTS
+ESCHERICHIA-COLI
+MUCOCHLORIC ACID
+IN-VITRO
+DNA
+Environmental Sciences
+Public, Environmental & Occupational Health
+Toxicology
+LA  - English
+M1  - 5
+M3  - Article
+N1  - Geter, DR Winn, RN Fournie, JW Norris, MB DeAngelo, AB Hawkins, WE
+56
+7
+0
+TAYLOR & FRANCIS INC
+PHILADELPHIA
+J TOXICOL ENV HEAL A
+806JM
+PY  - 2004
+SN  - 1528-7394
+SP  - 373-383
+ST  - Mx 3-chloro-4-(dichloromethyl)-5-hydroxy-2 5H -furanone , a drinking-water carcinogen, does not induce mutations in the liver of cll transgenic medaka (Oryzias latipes)
+T2  - Journal of Toxicology and Environmental Health-Part a-Current Issues
+TI  - Mx 3-chloro-4-(dichloromethyl)-5-hydroxy-2 5H -furanone , a drinking-water carcinogen, does not induce mutations in the liver of cll transgenic medaka (Oryzias latipes)
+VL  - 67
+ID  - 292
+ER  - 
+
+
+TY  - JOUR
+AD  - Dow Chem Co USA, Midland, MI 48674 USA.
+AN  - WOS:000248865500177
+AU  - Schisler, M. R.
+AU  - Wood, A. J.
+AU  - Geter, D. R.
+AU  - Gollapudi, B. B.
+AU  - Seidel, S. D.
+DA  - Aug
+DB  - WOS
+J2  - Environ. Mol. Mutagen.
+KW  - Environmental Sciences
+Genetics & Heredity
+Toxicology
+LA  - English
+M1  - 7
+M3  - Meeting Abstract
+N1  - Schisler, M. R. Wood, A. J. Geter, D. R. Gollapudi, B. B. Seidel, S. D.
+38th Annual Meeting of the Environmental-Mutagen-Society
+OCT 20-24, 2007
+Atlanta, GA
+Environm Mutagen Soc
+0
+1
+WILEY-LISS
+HOBOKEN
+ENVIRON MOL MUTAGEN
+201XI
+PY  - 2007
+SN  - 0893-6692
+SP  - 598-598
+ST  - Mutagenicity and loss of heterozygosity (LOH) of microsatellites markers in chromosome 11b of mouse lymphoma cells treated with taxol
+T2  - Environmental and Molecular Mutagenesis
+TI  - Mutagenicity and loss of heterozygosity (LOH) of microsatellites markers in chromosome 11b of mouse lymphoma cells treated with taxol
+VL  - 48
+ID  - 291
+ER  - 
+
+
+TY  - JOUR
+AB  - N-acetylcysteine (NAC) a derivative of amino acid L-cysteine is currently used mainly as an antioxidant. Sulfhydryl group (-SH) within its molecule makes possible to directly scavenge reactive oxygen species (ROS). Indirect antioxidant action of NAC rely on augmentation of the level of reduced glutathione (GSH) - a major body's antioxidant. Since oxidative stress takes a part in pathogenesis of a broad spectrum of diseases, NAC could became a valuable supplement to conventional treatment. N-acetylcysteine has been used as an antidote for aminophen intoxication. N-acetylcysteine seems to be promising in some pulmonary diseases and gynecological disorders. Supplementation of this antioxidant caused also positive results in some eye disorders: diabetic retinopathy, age macular degeneration, cataract and dry eye syndrome. It was also found to have some preventative capabilities in cancer, influenza and in contrast-induced nephropathy.
+AN  - http://www.scopus.com/inward/record.url?eid=2-s2.0-84860307791&partnerID=40&md5=7deec8599dd806379f479b5be52e4840
+AU  - Radomska-Leśniewska, D. M.
+AU  - Skopiński, P.
+DB  - Scopus
+J2  - Central-European Journal of Immunology
+KW  - Cancer
+Contrast-induced nephropathy
+Endometriosis
+Eye disorders
+N-acetylcysteine
+Oxidative stress
+Polycystic ovary syndrome
+Pulmonary disease
+acetylcysteine
+alpha tocopherol
+anthracycline
+azathioprine
+benzyloxycarbonylleucylleucylleucinal
+berberine
+beta 2 adrenergic receptor stimulating agent
+carnitine
+cholinergic receptor blocking agent
+contrast medium
+corticosteroid
+curcumin
+doxorubicin
+ellagic acid
+epigallocatechin gallate
+glutathione
+glutathione peroxidase
+malonaldehyde
+melatonin
+placebo
+prednisone
+reactive oxygen metabolite
+resveratrol
+retinol
+selenium derivative
+sodium selenite
+theophylline
+ubidecarenone
+unindexed drug
+vasculotropin
+acute kidney failure
+acute lymphoblastic leukemia
+add on therapy
+adenomatous polyp
+adjuvant therapy
+airway obstruction
+antiangiogenic activity
+antiinflammatory activity
+antioxidant activity
+breast metastasis
+cancer adjuvant therapy
+cancer chemotherapy
+cancer patient
+cancer prevention
+cancer radiotherapy
+cancer relapse
+cancer risk
+cardiotoxicity
+cataract
+chronic obstructive lung disease
+clinical trial (topic)
+colon cancer
+colon polyp
+contrast induced nephropathy
+controlled clinical trial (topic)
+cystic fibrosis
+diabetes mellitus
+diabetic retinopathy
+disease association
+DNA damage
+dose response
+drug intoxication
+drug megadose
+dry eye
+eye burning
+fibrosing alveolitis
+genotoxicity
+ginseng
+human
+Human immunodeficiency virus infection
+hyperglycemia
+immune deficiency
+influenza
+insulin sensitivity
+low drug dose
+lymphoma
+meibomian gland
+melanoma
+meta analysis
+nonhuman
+ocular pruritus
+ovary polycystic disease
+pathogenesis
+pathophysiology
+phase 1 clinical trial (topic)
+prostate carcinoma
+randomized controlled trial (topic)
+retina macula age related degeneration
+review
+risk factor
+sebaceous gland disease
+second cancer
+Sjoegren syndrome
+subretinal neovascularization
+supplementation
+toxic hepatitis
+vitamin supplementation
+LA  - English
+M1  - 1
+PY  - 2012
+SN  - 14263912 (ISSN)
+SP  - 57-66
+ST  - N-acetylcysteine as an anti-oxidant and anti-inflammatory drug and its some clinical applications
+T2  - Cent.-Eur. J. Immunol.
+TI  - N-acetylcysteine as an anti-oxidant and anti-inflammatory drug and its some clinical applications
+VL  - 37
+ID  - 906
+ER  - 
+
+
+TY  - CONF
+AB  - The proceedings contain 169 papers. The special focus in this conference is on Human Health and Medical Engineering. The topics include: Study on formulation of hemorrhoids and the mechanism of acupuncture by means of acupuncture combined with trimming hands and feet; expression and clinical significance of E-cadherin and MMP-2 in human colorectal carcinoma; finite element modeling of internal carotid siphon segment based on CT data; based on the genetic algorithm to optimize the BP neural network of knee osteoarthritis diagnosed; improved medical image registration based on mutual information and gradient information; risk factors, microbiological data, and cost of stroke-associated pneumonia; development of portable surface Plasmon resonance biochemical sensing system based on fixed optical structure for field use; muscle ultrasound as a diagnostic tool in neuromuscular diseases; a review of the methods to assess cerebral autoregulation; transcranial sonography for the diagnosis of Parkinson's disease; the study of cerebral autoregulation in patients with severe carotid artery stenosis or occlusions; isomap algorithm for visualization of microarray data; a rat model of methamphetamine reinstatement behavior induced by methamphetamine-priming; permanent bilateral subclavian steal syndrome; relationship between blood pressure and prognosis in patients in the acute stage of intracerebral hemorrhage; experimental research of explosive blast brain injury within closed environment; the anti-inflammatory effect of external use and the impact on scalded mice model of arisaema; effect of total alkali in Leonuri Herba in rabbit ear acne model; the study of near infrared spectral characteristics of knee osteoarthritis; stellate ganglion block for the treatment of breast cancer-related lymphedema in breast cancer survivors; the effect of substrate stiffness on wound repair cells; the design and implementation of clinical pathway based on MVC framework; the study on mechanics characteristics of lumbar disk under the condition of bending; cascade pulse coupled neural network for multimodal medical image fusion; the suspected encephalitis of globoid cell leukodystrophy; nursing care of skin defect repaired by the bridge cross flaps transplant in perioperative period; detection of P16 and APC gene methylation in peripheral blood with liver cancer patients; fixation of ozone and used as therapeutic agent in medicine; structure and function of ubiquitin-conjugating enzymes; D-arabitol dehydrogenase and xylitol dehydrogenase for microbial production of xylitol; development of an RP-HPLC method for evaluation of the content of cefotiam hydrochloride for injection; DNA binding and cytotoxic activity of two isomers of nitrosylruthenium complex; genomewide expression profile analysis in different TNM stages of lung adenocarcinoma; a method of clinical EEG signals analysis based on the symbolic entropy; a model of recognition for human pulse wave types by the BP neural network; the protective effect of reduced glutathione on cadmium-induced DNA double-strand breaks; optimize the prescription compatibility of the dachengqi decoction based on partial least squares regression; research on the quality of formula granule of liquidambaris fructus; study on sludge reduction of a new uncoupler in A/O process; prediction of chaotic EEG signal using multiple wavelet neural network; the effects of different host plants on the components and DNA of the herbal plants of Cuscuta; topical anti-inflammatory effects of aloe Vera juice; DNA damage and effects on antioxidative enzymes in mouse marrow induced by Berberine; liquichip detection technique of chloramphenieol residue in aquatic products; identification study using Fourier transform infrared spectroscopy for several herbs of the genus selaginella; research the prescription compatibility of the dachengqi decoction using partial least squares and multi-objective optimization; mathematical modeling and computer simulation of cellulose production; research and development of self-organized protocol n w reless body area network; the synergistic effect of glucocorticoid on the mesenteric microcirculation in hemorrhagic shock rat; computer simulation of synergistic effects in enzymatic hydrolysis of cellulose; modeling and computer simulation of early pulse aeration effects on ethanol fermentation; toxicity comparison of Para-halogenated diphenyl ethers from views of polarizability and frontier molecular orbital; 16 PAHs identification combined with Raman and infrared spectra signature through density functional theory; the observation of pollen viability and pollen tube germination in limonium bicolor; influence of temperature fluctuation on rice tillering and corresponding characteristics of DUS test; the application of PBL model in teaching of molecular biology; a biomechanical study of the dynamic behavior of the organ of Corti; the process optimization of natto by using mixed beans; adsorption of biological active alkaloid from traditional Chinese medicine on benzothiazolium ionic liquid-supported silica; the expression of PI3K, AKT, and PTEN in medulloblastoma; periodic changes of the pulsatility index of the cerebral artery by transcranial Doppler sonography as a clue for leptomeningeal carcinoma; reintroduction of Epstein-Barr virus in nasopharyngeal carcinoma cell lines visulized by GFP; neurosyphilis presenting as brainstem encephalitis and myelitis; antitumor activity of different fractions of cynanchum komarocii in vitro; markerless deletion of a rhodanese in acidithiobacillus caldus MTH-04; hepatoid adenocarcinoma of the esophagus with dysphagia as initial symptom; effects of polymerized whey protein on physicochemical and textural properties of Chinese style Greek yoghurt; quantitative sandwich ELISA for the determination of walnut protein in foods; MicroRNAs expression signature in human lung cancer cell; study on immunogenicity and protective efficacy of a new vaccine expressing Ag85B and MPT83 fusion protein from mycobacterium tuberculosis; changes of nissl bodies and expression of NeuN in hippocampus of rats with vascular dementia; antitumor and immunoregulation effects of black garlic extract on H22 xenografts; screening of an algicidal bacteria A-4 and the exploration of its algicidal effect; degradation of orange II over sulforhodamine B (SRB) sensitized TiO2 under visible irradiation; optimization of curcin expression conditions; UVC-induced damage in mouse spleen lymphocytes and anti-radiation effect of exogenous nucleotides; the c-met signaling pathway; neuroprotective effects of honghua on oxygen-glucose deprivation in PC12 cells; neuroprotective effects of Smad7-siRNA on oxygen-glucose deprivation (OGD) in PC12 cells; function mechanism influenced by emotion and mood in the construction of an effective learning system; groundwater quality and pollution evaluation in Xinjiang plain area; the influence of metallic foreign bodies in body after firearm wound; research on rehabilitation training control based on virtual force feedback; preference strategies of prevention and control of noninfectious chronic disease against the background of the new health care reform in China; study on zoning methods in chemical accident emergency rescue; analysis of the emergency response on kaixian gas well blowout accident; study on characteristics of chemical terrorist attack on subway station and its handling; activated sludge degradation of oil; the influence of temperature on the storage quality of postharvest white celery; a survey of brain fitness products consumption practices among high school students; preliminary study on removal of nitrate nitrogen in aqueous samples by microbial nano-silica ball; an empirical analysis of relationship between environmental protection and economic development in China; model experimental study on heat flow distribution of single room fire in underground engineering; the effects of environmental electromagnetic radiation on college students' peripheral blood cells; wastewater irrigation and associated risks to public health; problems and countermeasures of medical wast man gement and disposal in China; investigation of toxicological effects caused by gamma radiation delivered by different dose rates; main organic pollutants migration and transformation laws in sewage sludge landfill and composting process; the research on cyclists knee and hip forces at different saddle heights; the study on physical and mental health of the empty nest elderly; an investigation on psychological health education mode for senior nursing majors in universities; a correlation research on procrastination and self-efficacy in nursing students; health education intervention for diabetic elderly patients in community; the study of current situation in nursing care at elderly welfare institution in Jilin province; development of stevioside cake with high dietary fiber and low sugar; a survey and analysis on the mental state of the expectant mothers at hospital; analysis and simulation of the corporate pharmaceutical patent infringement litigation warning indicator system and effect of motor relearning program on recovery of event-related potential of cerebral infarction.
+C3  - WIT Transactions on Biomedicine and Health
+DB  - Scopus
+LA  - English
+N1  - Export Date: 11 November 2015
+PY  - 2014
+SN  - 17433525 (ISSN); 9781845648923 (ISBN); 9781845648923 (ISBN)
+ST  - 2013 International Conference on Human Health and Medical Engineering, HHME 2013
+TI  - 2013 International Conference on Human Health and Medical Engineering, HHME 2013
+UR  - http://www.scopus.com/inward/record.url?eid=2-s2.0-84905167602&partnerID=40&md5=1e0a0405ac7ee730232d462e9cde2da9
+VL  - 18
+ID  - 823
+ER  - 
+

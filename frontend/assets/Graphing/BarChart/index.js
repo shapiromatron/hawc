@@ -11,7 +11,7 @@ class BarChart extends Component {
                 {data.map((bar, i) => {
                     let y = yScale(bar.key),
                         x = xScale(bar.values.count),
-                        height = yScale.rangeBand(),
+                        height = yScale.bandwidth(),
                         width = x - chartData.padding.left,
                         labelText = width > 25 ? "bar-chart-label-left" : "bar-chart-label-right",
                         labelOffset = width > 25 ? -5 : 2;

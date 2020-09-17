@@ -1,5 +1,6 @@
 import json
-from typing import List, NamedTuple
+import uuid
+from typing import Any, List, NamedTuple
 
 import pandas as pd
 from django.apps import apps
@@ -16,11 +17,10 @@ from django.utils import timezone
 from pydantic import BaseModel as PydanticModel
 from reversion import revisions as reversion
 
-from ..common.dsstox import get_casrn_url
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper
-from ..common.models import get_crumbs, get_private_data_storage
+from ..common.models import IntChoiceEnum, get_crumbs, get_private_data_storage
 from ..myuser.models import HAWCUser
-from . import managers
+from . import jobs, managers
 from .tasks import add_time_spent
 
 NOEL_NAME_CHOICES_NOEL = 0
@@ -38,6 +38,56 @@ class NoelNames(NamedTuple):
     loel: str
     noel_help_text: str
     loel_help_text: str
+
+
+class JobStatus(IntChoiceEnum):
+    """
+    Status of the running job.
+    """
+
+    PENDING = 1
+    SUCCESS = 2
+    FAILURE = 3
+
+
+class JobType(IntChoiceEnum):
+    """
+    Short descriptor of job functionality.
+    """
+
+    TEST = 1
+
+
+class DSSTox(models.Model):
+    dtxsid = models.CharField(
+        max_length=80, primary_key=True, verbose_name="DSSTox substance identifier (DTXSID)",
+    )
+    content = JSONField(default=dict)
+
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ("dtxsid",)
+        verbose_name = "DSSTox substance"
+        verbose_name_plural = "DSSTox substances"
+
+    def __str__(self):
+        return self.dtxsid
+
+    @property
+    def verbose_str(self) -> str:
+        return f"{self.dtxsid}: {self.content['preferredName']} (CASRN {self.content['casrn']})"
+
+    @property
+    def verbose_link(self) -> str:
+        return f"<a href={self.get_dashboard_url()}>{self.dtxsid}</a>: {self.content['preferredName']} (CASRN {self.content['casrn']})"
+
+    def get_dashboard_url(self) -> str:
+        return f"https://comptox.epa.gov/dashboard/dsstoxdb/results?search={self.dtxsid}"
+
+    def get_svg_url(self) -> str:
+        return f"https://actorws.epa.gov/actorws/chemical/image?dtxsid={self.dtxsid}&fmt=svg"
 
 
 class Assessment(models.Model):
@@ -90,6 +140,16 @@ class Assessment(models.Model):
         verbose_name="Chemical identifier (CAS)",
         help_text="Add a single CAS-number if one is available to describe the "
         "assessment, otherwise leave-blank.",
+    )
+    dtxsids = models.ManyToManyField(
+        DSSTox,
+        blank=True,
+        related_name="assessments",
+        verbose_name="DSSTox substance identifiers (DTXSID)",
+        help_text="""
+        Related <a href="https://www.epa.gov/chemical-research/distributed-structure-searchable-toxicity-dsstox-database">DSSTox</a>
+        substance identifiers for this assessment.
+        """,
     )
     assessment_objective = models.TextField(
         blank=True,
@@ -201,9 +261,6 @@ class Assessment(models.Model):
 
     def get_absolute_url(self):
         return reverse("assessment:detail", args=(self.id,))
-
-    def get_casrn_url(self):
-        return get_casrn_url(self.cas)
 
     def get_clear_cache_url(self):
         return reverse("assessment:clear_cache", args=(self.id,))
@@ -516,6 +573,9 @@ class BaseEndpoint(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        ordering = ("id",)
+
     def __str__(self):
         return self.name
 
@@ -737,6 +797,101 @@ class DatasetRevision(models.Model):
         return df
 
 
+class Job(models.Model):
+
+    JOB_TO_FUNC = {
+        JobType.TEST: jobs.test,
+    }
+
+    task_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    assessment = models.ForeignKey(
+        Assessment, blank=True, null=True, on_delete=models.CASCADE, related_name="jobs"
+    )
+    status = models.PositiveSmallIntegerField(
+        choices=JobStatus.choices(), default=JobStatus.PENDING, editable=False
+    )
+    job = models.PositiveSmallIntegerField(choices=JobType.choices(), default=JobType.TEST)
+
+    kwargs = JSONField(default=dict, blank=True, null=True)
+    result = JSONField(default=dict, editable=False)
+
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ("-created",)
+
+    def execute(self) -> Any:
+        """
+        Executes the job. Function and kwargs are determined
+        by the instance's "job" and "kwargs" properties, respectively.
+
+        Returns:
+            Any: Any data returned by the function call.
+            {"data" : <return_value>} MUST be JSON serializable.
+        """
+        func = self.JOB_TO_FUNC[self.job]
+        return func(**self.kwargs)
+
+    def set_success(self, data):
+        """
+        Sets the status of the job to SUCCESS and sets the
+        data as the job's result, in the format:
+            {"data" : <data>}
+
+        Args:
+            data (Any): Data to be saved as the job's result.
+            {"data" : <data>} MUST be JSON serializable.
+        """
+        self.result = {"data": data}
+        self.status = JobStatus.SUCCESS
+
+    def set_failure(self, exception: Exception):
+        """
+        Sets the status of the job to FAILURE and sets the
+        exception as the job's result, in the format:
+            {"error" : <exception>}
+
+        Args:
+            exception (Exception): Exception to be saved as the job's result.
+            MUST have a built in string representation.
+        """
+        self.result = {"error": str(exception)}
+        self.status = JobStatus.FAILURE
+
+    def get_detail_url(self):
+        return reverse("assessment:api:jobs-detail", args=(self.task_id,))
+
+
+class Log(models.Model):
+    assessment = models.ForeignKey(
+        Assessment, blank=True, null=True, related_name="logs", on_delete=models.CASCADE
+    )
+    message = models.TextField()
+
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ("-created",)
+
+
+class Blog(models.Model):
+    subject = models.CharField(max_length=128)
+    content = models.TextField()
+    rendered_content = models.TextField(editable=False)
+    published = models.BooleanField(default=False)
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ("-created",)
+
+    def __str__(self) -> str:
+        return self.subject
+
+
+reversion.register(DSSTox)
 reversion.register(Assessment)
 reversion.register(EffectTag)
 reversion.register(Species)
@@ -744,3 +899,6 @@ reversion.register(Strain)
 reversion.register(BaseEndpoint)
 reversion.register(Dataset)
 reversion.register(DatasetRevision)
+reversion.register(Job)
+reversion.register(Log)
+reversion.register(Blog)

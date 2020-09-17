@@ -25,9 +25,12 @@ class TaskSerializer(serializers.ModelSerializer):
         )
 
     def update(self, instance, validated_data):
-        if self.initial_data["owner"]:
-            owner_id = self.initial_data["owner"]["id"]
-            instance.owner = HAWCUser.objects.get(pk=owner_id)
+        if "owner" in self.initial_data:
+            if self.initial_data["owner"] is None:
+                instance.owner_id = None
+            else:
+                owner_id = self.initial_data["owner"]["id"]
+                instance.owner = HAWCUser.objects.get(pk=owner_id)
             instance.save()
         return super().update(instance, validated_data)
 

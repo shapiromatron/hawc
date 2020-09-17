@@ -1,12 +1,32 @@
+from datetime import timedelta
+
 from celery import shared_task
 from celery.utils.log import get_task_logger
 from django.apps import apps
-from django.core.cache import cache
+from django.utils import timezone
 
-from ..common.dsstox import fetch_dsstox, get_cache_name
 from ..common.svg import SVGConverter
+from . import models
 
 logger = get_task_logger(__name__)
+
+
+@shared_task
+def delete_old_jobs():
+    # delete jobs where "last_updated" > 1 week old
+    week_old = timezone.now() - timedelta(weeks=1)
+    models.Job.objects.filter(last_updated__lte=week_old).delete()
+
+
+@shared_task(bind=True)
+def run_job(self):
+    job = models.Job.objects.get(pk=self.request.id)
+    try:
+        result = job.execute()
+        job.set_success(result)
+    except Exception as exc:
+        job.set_failure(exc)
+    job.save()
 
 
 @shared_task
@@ -35,13 +55,6 @@ def convert_to_pptx(svg, url, width, height):
     logger.info("Converting svg -> html -> png -> pptx")
     conv = SVGConverter(svg, url, width, height)
     return conv.to_pptx()
-
-
-@shared_task
-def get_dsstox_details(casrn: str):
-    cache_name = get_cache_name(casrn)
-    result = fetch_dsstox(casrn)
-    cache.set(cache_name, result, timeout=60 * 60 * 24)
 
 
 @shared_task

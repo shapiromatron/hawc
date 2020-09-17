@@ -1,15 +1,14 @@
 import React, {Component} from "react";
 import PropTypes from "prop-types";
-import d3 from "d3";
+import * as d3 from "d3";
 
 class yAxis extends Component {
     constructor(props) {
         super(props);
         this.yAxisContainer = React.createRef();
-        this.yAxis = d3.svg
-            .axis()
+        this.yAxis = d3
+            .axisLeft()
             .scale(props.yScale)
-            .orient("left")
             .ticks(5);
     }
 

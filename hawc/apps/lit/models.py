@@ -20,11 +20,12 @@ from django.db import models, transaction
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.html import strip_tags
-from litter_getter import pubmed, ris
 from taggit.models import ItemBase
 from treebeard.mp_tree import MP_Node
 
 from ...refml import topics
+from ...services.nih import pubmed
+from ...services.utils import ris
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper
 from ..common.models import (
     AssessmentRootMixin,
@@ -735,6 +736,7 @@ class Reference(models.Model):
         d["url"] = self.get_absolute_url()
         d["editTagUrl"] = reverse("lit:reference_tags_edit", kwargs={"pk": self.pk})
         d["editReferenceUrl"] = reverse("lit:ref_edit", kwargs={"pk": self.pk})
+        d["deleteReferenceUrl"] = reverse("lit:ref_delete", kwargs={"pk": self.pk})
 
         d["identifiers"] = [ident.get_json(json_encode=False) for ident in self.identifiers.all()]
         d["searches"] = [ref.get_json() for ref in self.searches.all()]
@@ -769,10 +771,12 @@ class Reference(models.Model):
         Async worker task; updates data from HERO and then applies new data to references.
         """
         reference_ids = cls.objects.hero_references(assessment_id).values_list("id", flat=True)
+        reference_ids = list(reference_ids)  # queryset to list for JSON serializability
         identifiers = Identifiers.objects.filter(
             references__in=reference_ids, database=constants.HERO
         )
         hero_ids = identifiers.values_list("unique_id", flat=True)
+        hero_ids = list(hero_ids)  # queryset to list for JSON serializability
 
         # update content of hero identifiers
         t1 = tasks.update_hero_content.si(hero_ids)

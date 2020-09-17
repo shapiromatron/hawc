@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Case, Count, IntegerField, Sum, Value, When
 
 from ..common.models import BaseManager
 
@@ -24,17 +25,33 @@ class RiskOfBiasMetricManager(BaseManager):
         return self.get_qs(assessment_id).values("id", "name")
 
 
+class RiskOfBiasQuerySet(models.QuerySet):
+    def num_scores(self):
+        return self.annotate(num_scores=Count("scores"))
+
+    def num_override_scores(self):
+        return self.annotate(
+            num_override_scores=Sum(
+                Case(
+                    When(scores__is_default=False, then=Value(1)),
+                    default=Value(0),
+                    output_field=IntegerField(),
+                ),
+            )
+        )
+
+
 class RiskOfBiasManager(BaseManager):
     assessment_relation = "study__assessment"
+
+    def get_queryset(self):
+        return RiskOfBiasQuerySet(self.model, using=self._db)
 
     def all_active(self, assessment=None):
         return self.get_qs(assessment).filter(active=True)
 
     def active(self, assessment=None):
         return self.get_qs(assessment).filter(active=True, final=False)
-
-    def final(self, assessment=None):
-        return self.get_qs(assessment).filter(final=True)
 
 
 class RiskOfBiasScoreManager(BaseManager):
