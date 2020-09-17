@@ -315,6 +315,14 @@ class Visual(models.Model):
                     + "?unpublished=true",
                 ),
                 HeatmapDataset(
+                    type="Bioassay",
+                    name="Test",
+                    url=reverse(
+                        "animal:api:assessment-endpoint-doses-heatmap", args=(assessment.id,)
+                    )
+                    + "?unpublished=true",
+                ),
+                HeatmapDataset(
                     type="Epi",
                     name="Epidemiology study design",
                     url=reverse("epi:api:assessment-study-heatmap", args=(assessment.id,)),
