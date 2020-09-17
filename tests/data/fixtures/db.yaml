@@ -774,6 +774,17 @@
     published: true
     created: 2020-06-02 20:02:31.798361+00:00
     last_updated: 2020-06-02 20:02:31.798361+00:00
+- model: assessment.dataset
+  pk: 3
+  fields:
+    assessment: 1
+    name: iris flowers unpublished
+    description: "<p>R. A. Fisher (1936). \"The use of multiple measurements in taxonomic
+      problems\". Annals of Eugenics. 7 (2): 179\u2013188. <a href=\"https://doi.org/10.1111/j.1469-1809.1936.tb02137.x\"
+      rel=\"noopener noreferrer\" target=\"_blank\">doi:10.1111/j.1469-1809.1936.tb02137</a></p>"
+    published: false
+    created: 2020-06-02 20:02:31.798361+00:00
+    last_updated: 2020-06-02 20:02:31.798361+00:00
 - model: assessment.datasetrevision
   pk: 1
   fields:
@@ -837,6 +848,27 @@
     notes: <p>Original final version.</p>
     created: 2020-06-02 20:02:31.798361+00:00
     last_updated: 2020-06-02 20:02:31.798361+00:00
+- model: assessment.datasetrevision
+  pk: 4
+  fields:
+    dataset: 3
+    version: 1
+    data: assessment/dataset-revision/iris.csv
+    metadata:
+      column_names:
+      - sepal_length
+      - sepal_width
+      - petal_length
+      - petal_width
+      - species
+      extension: .csv
+      filename: iris.csv
+      num_columns: 5
+      num_rows: 150
+    excel_worksheet_name: ''
+    notes: <p>Original version.</p>
+    created: 2020-06-02 20:01:31.858209+00:00
+    last_updated: 2020-06-02 20:01:31.858235+00:00
 - model: assessment.job
   pk: 08ca9f23-5368-4ed6-9b18-29625add9aa8
   fields:
