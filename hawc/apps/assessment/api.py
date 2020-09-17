@@ -448,10 +448,10 @@ class DatasetViewset(AssessmentViewset):
     assessment_filter_args = "assessment_id"
 
     def check_object_permissions(self, request, obj):
-        if obj.assessment.user_can_edit_object(request.user) or obj.published:
+        if obj.user_can_view(request.user):
             return super().check_object_permissions(request, obj)
         else:
-            raise PermissionDenied
+            raise PermissionDenied()
 
     def get_queryset(self):
         if self.action == "list":

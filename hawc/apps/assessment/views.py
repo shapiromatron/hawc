@@ -356,16 +356,7 @@ class AttachmentDelete(BaseDelete):
 
 
 # Dataset views
-class DatasetPublishedMixin:
-    def get_object(self, **kwargs):
-        obj = super().get_object(**kwargs)
-        if obj.assessment.user_can_edit_object(self.request.user) or obj.published:
-            return obj
-        else:
-            raise PermissionDenied
-
-
-class DatasetCreate(DatasetPublishedMixin, BaseCreate):
+class DatasetCreate(BaseCreate):
     success_message = "Dataset created."
     parent_model = models.Assessment
     parent_template_name = "parent"
@@ -373,17 +364,24 @@ class DatasetCreate(DatasetPublishedMixin, BaseCreate):
     form_class = forms.DatasetForm
 
 
-class DatasetRead(DatasetPublishedMixin, BaseDetail):
+class DatasetRead(BaseDetail):
     model = models.Dataset
 
+    def get_object(self, **kwargs):
+        obj = super().get_object(**kwargs)
+        if obj.user_can_view(self.request.user):
+            return obj
+        else:
+            raise PermissionDenied()
 
-class DatasetUpdate(DatasetPublishedMixin, BaseUpdate):
+
+class DatasetUpdate(BaseUpdate):
     success_message = "Dataset updated."
     model = models.Dataset
     form_class = forms.DatasetForm
 
 
-class DatasetDelete(DatasetPublishedMixin, BaseDelete):
+class DatasetDelete(BaseDelete):
     success_message = "Dataset deleted."
     model = models.Dataset
 
