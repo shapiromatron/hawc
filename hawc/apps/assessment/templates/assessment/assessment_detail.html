@@ -181,7 +181,7 @@
 
   {% if crud == "Read" %}
     {% include "assessment/_attachment_list.html" with object_list=attachments canEdit=obj_perms.edit_assessment %}
-    {% include "assessment/_dataset_list.html" with object_list=object.datasets.all canEdit=obj_perms.edit %}
+    {% include "assessment/_dataset_list.html" with object_list=datasets %}
   {% endif %}
 
 {% endblock content %}

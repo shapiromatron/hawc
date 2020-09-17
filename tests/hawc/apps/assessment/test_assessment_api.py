@@ -8,7 +8,7 @@ class TestDatasetViewset:
     def test_permissions(self, db_keys):
         client = APIClient()
 
-        # team-member can view anything, including versions
+        # team-member can view anything, including versions and unpublished
         assert client.login(username="team@team.com", password="pw") is True
         for url, code in [
             (reverse("assessment:api:dataset-detail", args=(db_keys.dataset_final,)), 200),
@@ -17,11 +17,14 @@ class TestDatasetViewset:
             (reverse("assessment:api:dataset-detail", args=(db_keys.dataset_working,)), 200),
             (reverse("assessment:api:dataset-data", args=(db_keys.dataset_working,)), 200),
             (reverse("assessment:api:dataset-version", args=(db_keys.dataset_working, 1)), 200),
+            (reverse("assessment:api:dataset-detail", args=(db_keys.dataset_unpublished,)), 200),
+            (reverse("assessment:api:dataset-data", args=(db_keys.dataset_unpublished,)), 200),
+            (reverse("assessment:api:dataset-version", args=(db_keys.dataset_unpublished, 1)), 200),
         ]:
             resp = client.get(url)
             assert resp.status_code == code
 
-        # reviewers can only view final versions
+        # reviewers can only view published final versions
         assert client.login(username="rev@rev.com", password="pw") is True
         for url, code in [
             (reverse("assessment:api:dataset-detail", args=(db_keys.dataset_final,)), 200),
@@ -30,11 +33,14 @@ class TestDatasetViewset:
             (reverse("assessment:api:dataset-detail", args=(db_keys.dataset_working,)), 200),
             (reverse("assessment:api:dataset-data", args=(db_keys.dataset_working,)), 200),
             (reverse("assessment:api:dataset-version", args=(db_keys.dataset_working, 1)), 403),
+            (reverse("assessment:api:dataset-detail", args=(db_keys.dataset_unpublished,)), 403),
+            (reverse("assessment:api:dataset-data", args=(db_keys.dataset_unpublished,)), 403),
+            (reverse("assessment:api:dataset-version", args=(db_keys.dataset_unpublished, 1)), 403),
         ]:
             resp = client.get(url)
             assert resp.status_code == code
 
-        # unauthenticated can view public final but not private or versions
+        # unauthenticated can view public final but not private, versions, or unpublished
         client = APIClient()
         for url, code in [
             (reverse("assessment:api:dataset-detail", args=(db_keys.dataset_final,)), 200),
@@ -43,6 +49,9 @@ class TestDatasetViewset:
             (reverse("assessment:api:dataset-detail", args=(db_keys.dataset_working,)), 403),
             (reverse("assessment:api:dataset-data", args=(db_keys.dataset_working,)), 403),
             (reverse("assessment:api:dataset-version", args=(db_keys.dataset_working, 1)), 403),
+            (reverse("assessment:api:dataset-detail", args=(db_keys.dataset_unpublished,)), 403),
+            (reverse("assessment:api:dataset-data", args=(db_keys.dataset_unpublished,)), 403),
+            (reverse("assessment:api:dataset-version", args=(db_keys.dataset_unpublished, 1)), 403),
         ]:
             resp = client.get(url)
             assert resp.status_code == code

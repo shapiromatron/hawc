@@ -654,11 +654,19 @@ class Dataset(models.Model):
     An external Dataset
     """
 
+    objects = managers.DatasetManager()
+
     assessment = models.ForeignKey(
         Assessment, editable=False, related_name="datasets", on_delete=models.CASCADE
     )
     name = models.CharField(max_length=256)
     description = models.TextField(blank=True)
+    published = models.BooleanField(
+        default=False,
+        help_text="If True, this dataset may be visible to reviewers and/or the public "
+        "(if assessment-permissions allow this level of visibility). Team-members and "
+        "project-management can view both published and unpublished datasets.",
+    )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
@@ -670,6 +678,13 @@ class Dataset(models.Model):
 
     def __str__(self) -> str:
         return self.name
+
+    def user_can_view(self, user) -> bool:
+        return (
+            self.published
+            and self.assessment.user_can_view_object(user)
+            or self.assessment.user_can_edit_object(user)
+        )
 
     def get_absolute_url(self) -> str:
         return reverse("assessment:dataset_detail", args=(self.id,))

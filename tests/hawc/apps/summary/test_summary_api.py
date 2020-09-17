@@ -253,5 +253,10 @@ class TestSummaryAssessmentViewset:
                         "name": "Dataset: iris flowers",
                         "url": "/assessment/api/dataset/1/data/",
                     },
+                    {
+                        "type": "Dataset",
+                        "name": "Dataset: iris flowers unpublished",
+                        "url": "/assessment/api/dataset/3/data/",
+                    },
                 ]
             }
