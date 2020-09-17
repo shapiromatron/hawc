@@ -369,10 +369,9 @@ class DatasetRead(BaseDetail):
 
     def get_object(self, **kwargs):
         obj = super().get_object(**kwargs)
-        if obj.user_can_view(self.request.user):
-            return obj
-        else:
+        if not obj.user_can_view(self.request.user):
             raise PermissionDenied()
+        return obj
 
 
 class DatasetUpdate(BaseUpdate):
