@@ -36,10 +36,10 @@ def bulk_load(apps, schema_editor):
         # get headers
         headers = _get_headers(cursor)
 
-        # truncate table (and SET_NULL for related items)
-        cursor.execute("TRUNCATE TABLE vocab_term CASCADE")
+        # ensure we're starting with a fresh table
         cursor.execute("SELECT COUNT(id) FROM vocab_term")
-        assert cursor.fetchone()[0] == 0
+        if cursor.fetchone()[0] != 0:
+            raise ValueError("Content not deleted.")
 
         # reset id sequence
         cursor.execute("ALTER SEQUENCE vocab_term_id_seq RESTART WITH 1")
@@ -48,8 +48,8 @@ def bulk_load(apps, schema_editor):
         f = CSV_NAME.open()
         cursor.copy_from(f, "vocab_term", columns=headers)
         cursor.execute("SELECT COUNT(id) FROM vocab_term")
-        row = cursor.fetchone()
-        assert row[0] > 0
+        if cursor.fetchone()[0] == 0:
+            raise ValueError("No content loaded.")
 
         # reset id sequence
         cursor.execute("SELECT MAX(id) FROM vocab_term")
