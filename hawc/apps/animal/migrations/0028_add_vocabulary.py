@@ -56,4 +56,15 @@ class Migration(migrations.Migration):
                 to="vocab.Term",
             ),
         ),
+        migrations.AddField(
+            model_name="endpoint",
+            name="name_term",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="endpoint_name_terms",
+                to="vocab.Term",
+            ),
+        ),
     ]

@@ -789,6 +789,9 @@ class Endpoint(BaseEndpoint):
     animal_group = models.ForeignKey(
         AnimalGroup, on_delete=models.CASCADE, related_name="endpoints"
     )
+    name_term = models.ForeignKey(
+        Term, related_name="endpoint_name_terms", on_delete=models.SET_NULL, blank=True, null=True
+    )
     system = models.CharField(max_length=128, blank=True, help_text="Relevant biological system")
     system_term = models.ForeignKey(
         Term, related_name="endpoint_system_terms", on_delete=models.SET_NULL, blank=True, null=True

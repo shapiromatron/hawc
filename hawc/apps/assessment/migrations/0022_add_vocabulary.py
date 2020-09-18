@@ -41,17 +41,6 @@ class Migration(migrations.Migration):
                 verbose_name="Controlled vocabulary",
             ),
         ),
-        migrations.AddField(
-            model_name="baseendpoint",
-            name="name_term",
-            field=models.ForeignKey(
-                blank=True,
-                null=True,
-                on_delete=django.db.models.deletion.SET_NULL,
-                related_name="endpoint_name_terms",
-                to="vocab.Term",
-            ),
-        ),
         migrations.AlterModelOptions(name="baseendpoint", options={"ordering": ("id",)},),
         migrations.RunPython(update_legacy_values, migrations.RunPython.noop),
     ]
