@@ -1,5 +1,6 @@
 import json
 
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from django.utils.decorators import method_decorator
@@ -10,8 +11,10 @@ from django.views.generic.edit import CreateView
 from ..common.views import MessageMixin
 from . import forms, models
 
+CACHE_DURATION = 0 if settings.DEBUG else 60 * 10
 
-@method_decorator(cache_page(60 * 10), name="dispatch")
+
+@method_decorator(cache_page(CACHE_DURATION), name="dispatch")
 @method_decorator(login_required, name="dispatch")
 class EhvBrowse(TemplateView):
     template_name = "vocab/ehv_browse.html"

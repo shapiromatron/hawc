@@ -1,10 +1,8 @@
 import * as d3 from "d3";
-import {action, toJS, observable} from "mobx";
+import {action, computed, toJS, observable} from "mobx";
 
 class EhvBrowseStore {
     @observable query = "";
-    @observable filteredDataset = null;
-    @observable isFiltering = true;
 
     constructor(config) {
         this.config = config;
@@ -15,31 +13,17 @@ class EhvBrowseStore {
                 d[field] = +d[field] || d[field];
             }
             d._key = i;
+            d._searchString = `${d.system} ${d.organ} ${d.effect} ${d.effect_subtype} ${d.endpoint_name}`.toLocaleLowerCase();
             return d;
         });
-        this.filteredDataset = this.dataset;
     }
 
-    @action.bound filterDataset() {
-        const text = toJS(this.query);
+    @computed get filteredDataset() {
+        const text = toJS(this.query).toLocaleLowerCase();
         if (text === "") {
-            this.filteredDataset = this.dataset;
-            this.isFiltering = false;
-            return;
+            return this.dataset;
         }
-        this.isFiltering = true;
-        // use a setTimeout to make async
-        setTimeout(() => {
-            this.filteredDataset = this.dataset.filter(
-                d =>
-                    d.system.toLocaleLowerCase().includes(text) ||
-                    d.endpoint_name.toLocaleLowerCase().includes(text) ||
-                    d.organ.toLocaleLowerCase().includes(text) ||
-                    d.effect.toLocaleLowerCase().includes(text) ||
-                    d.effect_subtype.toLocaleLowerCase().includes(text)
-            );
-            this.isFiltering = false;
-        }, 1);
+        return this.dataset.filter(d => d._searchString.includes(text));
     }
 
     @action.bound updateQuery(value) {

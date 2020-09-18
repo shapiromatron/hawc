@@ -5,6 +5,7 @@ from typing import Dict
 from crispy_forms import bootstrap as cfb
 from crispy_forms import layout as cfl
 from django import forms
+from django.conf import settings
 from django.db.models import Q
 from django.forms import ModelForm
 from django.forms.models import BaseModelFormSet, modelformset_factory
@@ -14,8 +15,8 @@ from selectable import forms as selectable
 from ..assessment.lookups import DssToxIdLookup, EffectTagLookup, SpeciesLookup, StrainLookup
 from ..assessment.models import DoseUnits
 from ..common.forms import BaseFormHelper, CopyAsNewSelectorForm
-from ..common.models import get_flavored_text
 from ..study.lookups import AnimalStudyLookup
+from ..vocab.models import VocabularyNamespace
 from . import lookups, models
 
 
@@ -368,7 +369,7 @@ class EndpointForm(ModelForm):
     effects = selectable.AutoCompleteSelectMultipleField(
         lookup_class=EffectTagLookup,
         required=False,
-        help_text=get_flavored_text("ani__endpoint_form__effects"),
+        help_text="Any additional descriptive-tags used to categorize the outcome",
         label="Additional tags",
     )
 
@@ -459,25 +460,32 @@ class EndpointForm(ModelForm):
             self.instance.animal_group = animal_group
             self.instance.assessment = assessment
 
-        self.fields["name"].help_text = get_flavored_text("ani__endpoint_form__name")
-
         self.helper = self.setHelper()
 
         self.noel_names = json.dumps(self.instance.get_noel_names()._asdict())
 
     def setHelper(self):
+
+        vocab = ""
+        if (
+            self.instance.assessment.vocabulary == VocabularyNamespace.EHV
+            or settings.HAWC_FLAVOR == "EPA"
+        ):
+            vocab = f"""&nbsp;Browse the <a href="{reverse('vocab:ehv-browse')}">Environmental
+                Health Vocabulary (EHV)</a> to search/view preferred terms."""
+
         if self.instance.id:
             inputs = {
                 "legend_text": f"Update {self.instance}",
-                "help_text": "Update an existing endpoint.",
+                "help_text": f"Update an existing endpoint.{vocab}",
                 "cancel_url": self.instance.get_absolute_url(),
             }
         else:
             inputs = {
                 "legend_text": "Create new endpoint",
-                "help_text": """Create a new endpoint. An endpoint may should describe one
-            measure-of-effect which was measured in the study. It may
-            or may not contain quantitative data.""",
+                "help_text": f"""Create a new endpoint. An endpoint may should describe one
+                    measure-of-effect which was measured in the study. It may
+                    or may not contain quantitative data.{vocab}""",
                 "cancel_url": self.instance.animal_group.get_absolute_url(),
             }
 

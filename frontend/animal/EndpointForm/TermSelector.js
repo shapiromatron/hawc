@@ -60,7 +60,9 @@ class TermSelector extends Component {
                 )}
                 {object[termIdField] ? (
                     <p>
-                        <b>Selected term:</b>&nbsp;{object[termTextField]} ({object[termIdField]})
+                        <b>Selected term:</b>
+                        &nbsp;<span className="label label-mini">{object[termIdField]}</span>
+                        &nbsp;{object[termTextField]}
                     </p>
                 ) : null}
                 {store.canUseControlledVocabulary ? (

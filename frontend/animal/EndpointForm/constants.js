@@ -14,33 +14,37 @@ const termUrlLookup = {
     },
     label = {
         system: "System",
-        organ: "Organ (and tissue)",
+        organ: "Organ/Tissue/Region",
         effect: "Effect",
         effect_subtype: "Effect subtype",
         endpoint_name: "Endpoint/Adverse outcome*",
     },
-    helpText["EPA"] = {
-        system: "Relevant biological system",
-        organ: "Relevant organ or tissue",
-        effect: `Please reference terminology reference file and use Title Style. Commonly used
-            effects include "Histopathology", "Malformation," "Growth", "Clinical Chemistry",
-            "Mortality," "Organ Weight."`,
-        effect_subtype: `Please reference terminology reference file and use Title Style. Commonly
-            used effects include "Neoplastic", "Non-Neoplastic," "Feed Consumption",
-            "Fetal Survival", "Body Weight," "Body Weight Gain," "Body Length". For
-            Malformation effects, effect subtypes can be "Skeletal Malformation", "External
-            Malformation" "Soft Tissue." For organ weight effects, subtypes can be "Absolute",
-            "Relative" (absolute can be inferred when it's not explicitly stated).`,
+    helpText = {
+        system: `The affected biological system. Please use a controlled vocabulary term if
+            possible and if enabled for your assessment. Multi-system and Whole Body are options
+            for wide-spread effects. If the Endpoint is measured in Blood, Urine or biological
+            media other than the affected system, it should be captured in the Effect Subtype field. `,
+        organ: `Please use a controlled vocabulary term if possible and if enabled for your
+            assessment. Tissue should be used for same tissues affected in multiple organs/regions
+            (e.g., epithelial, mesothelium). Region (e.g., head, abdomen, limb) are common for
+            developmental endpoints. Multi-organ and Whole Body are options for wide-spread effects.`,
+        effect: `Please use a controlled vocabulary term if possible and if enabled for your assessment
+            (eg., Malformation, Neoplastic [Non-Neoplastic] Lesions, Organ Weight, Abnormal Appearance).`,
+        effect_subtype: `The method used for the measuring the Effect (e.g., Histopathology,
+            Clinical Observation, Clinical Chemistry, Hematology). For Developmental Malformation
+            effects, values may be Skeletal Structural Abnormality, Skeletal Ossification
+            Abnormality, External Abnormality, or Visceral Abnormality. For Organ Weights,
+            may be Absolute or Relative (absolute can be inferred when it's not explicitly
+            stated). When a determination cannot be made, use [Null] or leave empty.`,
         endpoint_name: `
-            Short-text used to describe the endpoint/adverse outcome. As a first pass during
-            extraction, use the endpoint name as presented in the study. Do not add units — units
-            are summarized in a separate extraction field. Once extraction is complete for an
-            assessment, endpoint/adverse outcomes names may be adjusted to use terms that best
-            work across studies or assessments using the data clean-up tool (the original name as
-            presented in the study will be retained in the "Endpoint Name in Study" field). If the
-            endpoint is a repeated measure, then indicate the time in parentheses, e.g., running
-            wheel activity (6 wk), using the abbreviated format: seconds = sec, minutes = min,
-            hours = h, days = d, weeks = wk, months = mon, years = y.`,
+            Short-text used to describe the data in this form. Please use a controlled vocabulary
+            term if possible and if enabled for your assessment. A separate field,
+            "Endpoint Name in Study", captures the name of endpoint as reported. If no preferred
+            term matches the data extracted, type in the desired description. Do not add units — units
+            are summarized in a separate extraction field.  If the endpoint is a repeated measure,
+            indicate the time in parentheses, e.g., running wheel activity (6 wk), using the
+            abbreviated format: seconds = sec, minutes = min, hours = h, days = d, weeks = wk,
+            months = mon, years = y.`,
     };
 
 // TODO - change label/help-text to be epa/prime specific

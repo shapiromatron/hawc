@@ -1,24 +1,4 @@
 EPA = dict(
-    animal=dict(
-        Endpoint=dict(
-            effect=(
-                "Please reference terminology reference"
-                "file and use Title Style. Commonly used "
-                'effects include "Histopathology", "Malformation," '
-                '"Growth", "Clinical Chemistry", "Mortality," '
-                '"Organ Weight."'
-            ),
-            effect_subtype=(
-                "Please reference terminology reference file and use Title "
-                'Style. Commonly used effects include "Neoplastic", "Non-Neoplastic," '
-                '"Feed Consumption", "Fetal Survival", "Body Weight," "Body Weight '
-                'Gain," "Body Length". For Malformation effects, effect subtypes can '
-                'be "Skeletal Malformation", "External Malformation" "Soft Tissue." '
-                'For organ weight effects, subtypes can be "Absolute," "Relative" '
-                "(absolute can be inferred when it's not explicitly stated)."
-            ),
-        ),
-    ),
     assessment=dict(
         Assessment=dict(
             enable_project_management=(
