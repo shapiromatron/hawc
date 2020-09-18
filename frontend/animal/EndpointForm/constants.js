@@ -47,6 +47,4 @@ const termUrlLookup = {
             months = mon, years = y.`,
     };
 
-// TODO - change label/help-text to be epa/prime specific
-
 export {termUrlLookup, textUrlLookup, label, helpText};

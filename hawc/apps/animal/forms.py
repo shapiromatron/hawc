@@ -466,13 +466,16 @@ class EndpointForm(ModelForm):
 
     def setHelper(self):
 
-        vocab = ""
-        if (
-            self.instance.assessment.vocabulary == VocabularyNamespace.EHV
-            or settings.HAWC_FLAVOR == "EPA"
-        ):
-            vocab = f"""&nbsp;Browse the <a href="{reverse('vocab:ehv-browse')}">Environmental
-                Health Vocabulary (EHV)</a> to search/view preferred terms."""
+        vocab_enabled = self.instance.assessment.vocabulary == VocabularyNamespace.EHV
+        if vocab_enabled:
+            vocab = f"""&nbsp;The <a href="{reverse('vocab:ehv-browse')}">Environmental
+                Health Vocabulary (EHV)</a> is enabled for this assessment. Browse to view
+                controlled terms, and whenever possible please use these terms."""
+        else:
+            vocab = f"""&nbsp;A controlled vocabulary is not enabled for this assessment.
+                However, you can still browse the <a href="{reverse('vocab:ehv-browse')}">Environmental
+                Health Vocabulary (EHV)</a> to see if this vocabulary would be a good fit for your
+                assessment. If it is, consider updating the assessment to use this vocabulary."""
 
         if self.instance.id:
             inputs = {
