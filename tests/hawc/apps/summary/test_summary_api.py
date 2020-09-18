@@ -229,6 +229,16 @@ class TestSummaryAssessmentViewset:
                         "url": "/ani/api/assessment/1/endpoint-heatmap/?unpublished=true",
                     },
                     {
+                        "type": "Bioassay",
+                        "name": "Bioassay endpoint with doses",
+                        "url": "/ani/api/assessment/1/endpoint-doses-heatmap/",
+                    },
+                    {
+                        "type": "Bioassay",
+                        "name": "Bioassay endpoint with doses (including unpublished HAWC data)",
+                        "url": "/ani/api/assessment/1/endpoint-doses-heatmap/?unpublished=true",
+                    },
+                    {
                         "type": "Epi",
                         "name": "Epidemiology study design",
                         "url": "/epi/api/assessment/1/study-heatmap/",
