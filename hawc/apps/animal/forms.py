@@ -5,7 +5,6 @@ from typing import Dict
 from crispy_forms import bootstrap as cfb
 from crispy_forms import layout as cfl
 from django import forms
-from django.conf import settings
 from django.db.models import Q
 from django.forms import ModelForm
 from django.forms.models import BaseModelFormSet, modelformset_factory

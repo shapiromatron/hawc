@@ -20,7 +20,7 @@ from reversion import revisions as reversion
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper
 from ..common.models import IntChoiceEnum, get_crumbs, get_private_data_storage
 from ..myuser.models import HAWCUser
-from ..vocab.models import Term, VocabularyNamespace
+from ..vocab.models import VocabularyNamespace
 from . import jobs, managers
 from .tasks import add_time_spent
 
