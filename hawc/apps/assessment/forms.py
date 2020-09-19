@@ -416,4 +416,4 @@ class DatasetForm(forms.ModelForm):
 
     class Meta:
         model = models.Dataset
-        fields = ("name", "description")
+        fields = ("name", "description", "published")

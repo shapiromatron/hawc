@@ -154,7 +154,11 @@ class HAWCUtils {
     static wrapText(text, max_width) {
         if (!$.isNumeric(max_width) || max_width <= 0) return;
         var $text = d3.select(text),
-            words = text.textContent.split(/\s+/).reverse(),
+            // trim whitespace to prevent falsey empty strings after split
+            words = text.textContent
+                .trim()
+                .split(/\s+/)
+                .reverse(),
             word,
             line = [],
             lineNumber = 0,

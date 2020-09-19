@@ -271,6 +271,11 @@ class AssessmentRead(BaseDetail):
         context["dtxsids"] = json.dumps(
             serializers.AssessmentSerializer().to_representation(self.object)["dtxsids"]
         )
+        context["datasets"] = (
+            context["object"].datasets.all()
+            if context["obj_perms"]["edit"]
+            else context["object"].datasets.filter(published=True)
+        )
         return context
 
 
@@ -361,6 +366,12 @@ class DatasetCreate(BaseCreate):
 
 class DatasetRead(BaseDetail):
     model = models.Dataset
+
+    def get_object(self, **kwargs):
+        obj = super().get_object(**kwargs)
+        if not obj.user_can_view(self.request.user):
+            raise PermissionDenied()
+        return obj
 
 
 class DatasetUpdate(BaseUpdate):
