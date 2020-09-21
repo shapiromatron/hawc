@@ -20,122 +20,124 @@
 
   {% crispy form %}
 
-  {# Endpoint Group formset #}
-  <div id='endpointGroups'>
-    <div class="row-fluid">
-      <legend>Dose-response data</legend>
-      <p class="help-text">
-        <span class="d_only">
-          For dichotomous data, all fields are required. For p-values,
-          0.05 or &lt;0.05 should be coded as 0.05; 0.01 or &lt;0.01
-          should be coded as 0.01; 0.001 or &lt;0.001 should be coded
-          as 0.001.
-        </span>
-        <span class="c_only">
-          For continuous data, if variance is not-reported, ensure the
-          "variance type" input-field above is "NR", and then variance can be
-          left blank; otherwise it is required. If any data are not reported,
-          leave those fields blank. For p-values, 0.05 or &lt;0.05 should be coded
-          as 0.05; 0.01 or &lt;0.01 should be coded as 0.01; 0.001 or &lt;0.001
-          should be coded as 0.001.
-        </span>
-        <span class="p_only">
-          For percent-difference data, lower CI (%) and upper CI (%) are optional.
-          If any data are not reported, leave those fields blank.
-        </span>
-      </p>
-    </div>
-    <div class="row-fluid">
+  {# extra stuff that JS will move to correct location #}
+  <div id="extra" class="hidden">
+    {# Endpoint Group formset #}
+    <div id='endpointGroups'>
+      <div class="row-fluid">
+        <legend>Dose-response data</legend>
+        <p class="help-text">
+          <span class="d_only">
+            For dichotomous data, all fields are required. For p-values,
+            0.05 or &lt;0.05 should be coded as 0.05; 0.01 or &lt;0.01
+            should be coded as 0.01; 0.001 or &lt;0.001 should be coded
+            as 0.001.
+          </span>
+          <span class="c_only">
+            For continuous data, if variance is not-reported, ensure the
+            "variance type" input-field above is "NR", and then variance can be
+            left blank; otherwise it is required. If any data are not reported,
+            leave those fields blank. For p-values, 0.05 or &lt;0.05 should be coded
+            as 0.05; 0.01 or &lt;0.01 should be coded as 0.01; 0.001 or &lt;0.001
+            should be coded as 0.001.
+          </span>
+          <span class="p_only">
+            For percent-difference data, lower CI (%) and upper CI (%) are optional.
+            If any data are not reported, leave those fields blank.
+          </span>
+        </p>
+      </div>
+      <div class="row-fluid">
 
-      <div class="span7">
-        {{ formset.management_form }}
-        {{ formset.non_form_errors|add_class:"alert alert-error" }}
+        <div class="span7">
+          {{ formset.management_form }}
+          {{ formset.non_form_errors|add_class:"alert alert-error" }}
 
-        <table id="eg" class="table table-condensed table-striped">
-          <thead>
-            <tr>
-              <th id="doses_title">Dose</th>
-              <th>N</th>
-              <th class="d_only">Incidence</th>
-              <th class="pc_only">Response</th>
-              <th id="varianceHeader" class="c_only">Variance (SD or SE)</th>
-              <th class="p_only">Low CI (%)</th>
-              <th class="p_only">High CI (%)</th>
-              <th>Significance<br>Level<br>(if significant)</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for form in formset %}
-
+          <table id="eg" class="table table-condensed table-striped">
+            <thead>
               <tr>
-                {% if forloop.first %}
-                  {{ form.non_field_errors|add_class:"alert alert-error" }}
-                {% endif %}
-
-                {% for hidden in form.hidden_fields %}
-                  {{ hidden }}
-                {% endfor %}
-
-                <td class="doses" id="dose_{{i}}"></td>
-                <td>{{form.n}}{{form.n.errors|add_class:"alert alert-error"}}</td>
-                <td class="d_only">{{form.incidence}}{{form.incidence.errors|add_class:"alert alert-error"}}</td>
-                <td class="pc_only">{{form.response}}{{form.response.errors|add_class:"alert alert-error"}}</td>
-                <td class="c_only">{{form.variance}}{{form.variance.errors|add_class:"alert alert-error"}}</td>
-                <th class="p_only">{{form.lower_ci}}{{form.lower_ci.errors|add_class:"alert alert-error"}}</th>
-                <th class="p_only">{{form.upper_ci}}{{form.upper_ci.errors|add_class:"alert alert-error"}}</th>
-                <td>{{form.significance_level}}</td>
+                <th id="doses_title">Dose</th>
+                <th>N</th>
+                <th class="d_only">Incidence</th>
+                <th class="pc_only">Response</th>
+                <th id="varianceHeader" class="c_only">Variance (SD or SE)</th>
+                <th class="p_only">Low CI (%)</th>
+                <th class="p_only">High CI (%)</th>
+                <th>Significance<br>Level<br>(if significant)</th>
               </tr>
-            {% endfor %}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {% for form in formset %}
+
+                <tr>
+                  {% if forloop.first %}
+                    {{ form.non_field_errors|add_class:"alert alert-error" }}
+                  {% endif %}
+
+                  {% for hidden in form.hidden_fields %}
+                    {{ hidden }}
+                  {% endfor %}
+
+                  <td class="doses" id="dose_{{i}}"></td>
+                  <td>{{form.n}}{{form.n.errors|add_class:"alert alert-error"}}</td>
+                  <td class="d_only">{{form.incidence}}{{form.incidence.errors|add_class:"alert alert-error"}}</td>
+                  <td class="pc_only">{{form.response}}{{form.response.errors|add_class:"alert alert-error"}}</td>
+                  <td class="c_only">{{form.variance}}{{form.variance.errors|add_class:"alert alert-error"}}</td>
+                  <th class="p_only">{{form.lower_ci}}{{form.lower_ci.errors|add_class:"alert alert-error"}}</th>
+                  <th class="p_only">{{form.upper_ci}}{{form.upper_ci.errors|add_class:"alert alert-error"}}</th>
+                  <td>{{form.significance_level}}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+        <div class="span4">
+          <div id='endpoint_plot' class='d3_container'></div>
+        </div>
       </div>
+    </div>
 
-      <div class="span4">
-        <div id='endpoint_plot' class='d3_container'></div>
+    {# Significance calculation modal #}
+    <button
+        id="ssBtn"
+        class="btn btn-mini"
+        style="margin-left: 10px"
+        type="button"
+        data-toggle="modal"
+        data-target="#ssModal">Calculate</button>
+    <div id="ssModal" class="modal hide fade">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3>Power calculation</h3>
+      </div>
+      <div class="modal-body">
+        <form id="ssForm">
+          <p class="help-block">Calculate the sample-size required to detect an effect with 80% power.</p>
+          <label class="control-label">Control mean</label>
+          <input type="number" name="mean" step="any">
+          <label class="control-label">Control standard-deviation</label>
+          <input type="number" name="sd" step="any">
+          <label class="control-label">Number of animals</label>
+          <input type="number" name="n">
+          <label class="control-label">Difference to detect (%)</label>
+          <input type="number" name="percentToDetect" value="10">
+          <label class="control-label">Result:</label>
+          <p id="ssResult" class="alert alert-info">-</p>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <a href="#" class="btn" class="close" data-dismiss="modal" aria-hidden="true">Close</a>
+        <a id="ssSavePower"
+          href="#"
+          class="btn btn-primary"
+          title='Copy results into "power-notes" field'
+          class="close"
+          data-dismiss="modal"
+          aria-hidden="true">Save output</a>
       </div>
     </div>
-  </div>
-
-  {# Significance calculation modal #}
-  <button
-      id="ssBtn"
-      class="btn btn-mini"
-      style="margin-left: 10px"
-      type="button"
-      data-toggle="modal"
-      data-target="#ssModal">Calculate</button>
-  <div id="ssModal" class="modal hide fade">
-    <div class="modal-header">
-      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-      <h3>Power calculation</h3>
-    </div>
-    <div class="modal-body">
-      <form id="ssForm">
-        <p class="help-block">Calculate the sample-size required to detect an effect with 80% power.</p>
-        <label class="control-label">Control mean</label>
-        <input type="number" name="mean" step="any">
-        <label class="control-label">Control standard-deviation</label>
-        <input type="number" name="sd" step="any">
-        <label class="control-label">Number of animals</label>
-        <input type="number" name="n">
-        <label class="control-label">Difference to detect (%)</label>
-        <input type="number" name="percentToDetect" value="10">
-        <label class="control-label">Result:</label>
-        <p id="ssResult" class="alert alert-info">-</p>
-      </form>
-    </div>
-    <div class="modal-footer">
-      <a href="#" class="btn" class="close" data-dismiss="modal" aria-hidden="true">Close</a>
-      <a id="ssSavePower"
-         href="#"
-         class="btn btn-primary"
-         title='Copy results into "power-notes" field'
-         class="close"
-         data-dismiss="modal"
-         aria-hidden="true">Save output</a>
-    </div>
-  </div>
-
+</div>
 {% endblock %}
 
 {% block extrajs %}
@@ -147,12 +149,13 @@
       "NOEL": {{form.NOEL.value|default_if_none:"-999"}},
       "LOEL": {{form.LOEL.value|default_if_none:"-999"}},
       "FEL": {{form.FEL.value|default_if_none:"-999"}},
-      "doses": {{animal_group.get_doses_json|safe}}
+      "doses": {{animal_group.get_doses_json|safe}},
+      "vocabulary": {{vocabulary|safe}}
     }
   </script>
   <script type="text/javascript">
     $(document).ready(function () {
-      let settings = JSON.parse(document.getElementById('settings').text);
+      const settings = JSON.parse(document.getElementById('settings').text);
 
       // reorganize forms
       $('#endpointGroups').insertBefore($('div.form-actions'));
@@ -168,18 +171,28 @@
       });
 
       window.app.animalStartup(function(animal){
-          var endpoint = new animal.EditEndpoint(
-            settings,
-            {"NOEL": settings.NOEL, "LOEL": settings.LOEL, "FEL": settings.FEL},
-            settings.doses,
-            $('#eg'),
-            $('#endpoint_plot')
-          );
+          const startupEditEndpoint = () => {
+              var endpoint = new animal.EditEndpoint(
+                settings,
+                { "NOEL": settings.NOEL, "LOEL": settings.LOEL, "FEL": settings.FEL },
+                settings.doses,
+                $('#eg'),
+                $('#endpoint_plot')
+              );
 
-          // whenever input changes, update data form
-          $('body')
-            .on('keyup', 'input', endpoint.update_endpoint_from_form.bind(endpoint))
-            .on('change', 'select', endpoint.update_endpoint_from_form.bind(endpoint));
+              // whenever input changes, update data form
+              $('body')
+                .on('keyup', '#input', endpoint.update_endpoint_from_form.bind(endpoint))
+                .on('change', 'select', endpoint.update_endpoint_from_form.bind(endpoint));
+            };
+
+          animal.EndpointForm(startup => {
+            startup.func(document.getElementById('vocab'), settings.vocabulary);
+            $('#fluid_id_name_1').remove();
+            $('#fluid_id_system_4').remove();
+            $('#fluid_id_name_term_5').remove();
+            $('#endpoint').removeClass('hidden').hide().fadeIn({complete:  startupEditEndpoint});
+          });
 
           // toggle the name of the variance column header as the value changes
           $('#id_variance_type')

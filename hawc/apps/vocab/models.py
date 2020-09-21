@@ -1,7 +1,10 @@
+import pandas as pd
 from django.db import models
 from django.urls import reverse
+from reversion import revisions as reversion
 
 from ..common.models import IntChoiceEnum
+from ..myuser.models import HAWCUser
 
 
 class VocabularyNamespace(IntChoiceEnum):
@@ -11,6 +14,13 @@ class VocabularyNamespace(IntChoiceEnum):
     """
 
     EHV = 1  # environmental health vocabulary
+
+    @property
+    def display_name(self) -> str:
+        if self.value == 1:
+            return "EPA Environmental health vocabulary"
+        else:
+            return ""
 
 
 class VocabularyTermType(IntChoiceEnum):
@@ -45,6 +55,60 @@ class Term(models.Model):
 
     def get_admin_edit_url(self) -> str:
         return reverse("admin:vocab_term_change", args=(self.id,))
+
+    @classmethod
+    def ehv_dataframe(cls) -> pd.DataFrame:
+        cols = ("id", "type", "parent_id", "name")
+        all_df = pd.DataFrame(
+            data=list(
+                Term.objects.filter(namespace=1, deprecated_on__isnull=True).values_list(*cols)
+            ),
+            columns=cols,
+        )
+        all_df.loc[:, "type"] = all_df["type"].map(VocabularyTermType.as_dict())
+
+        system_df = (
+            all_df.query('type=="system"')
+            .drop(columns=["type", "parent_id"])
+            .rename(columns=dict(id="system_id", name="system"))
+        )
+        organ_df = (
+            all_df.query('type=="organ"')
+            .drop(columns=["type"])
+            .rename(columns=dict(id="organ_id", name="organ"))
+        )
+        effect_df = (
+            all_df.query('type=="effect"')
+            .drop(columns=["type"])
+            .rename(columns=dict(id="effect_id", name="effect"))
+        )
+        effect_subtype_df = (
+            all_df.query('type=="effect_subtype"')
+            .drop(columns=["type"])
+            .rename(columns=dict(id="effect_subtype_id", name="effect_subtype"))
+        )
+        endpoint_name_df = (
+            all_df.query('type=="endpoint_name"')
+            .drop(columns=["type"])
+            .rename(columns=dict(id="endpoint_name_id", name="endpoint_name"))
+        )
+
+        df = (
+            system_df.merge(organ_df, left_on="system_id", right_on="parent_id")
+            .drop(columns=["parent_id"])
+            .merge(effect_df, left_on="organ_id", right_on="parent_id")
+            .drop(columns=["parent_id"])
+            .merge(effect_subtype_df, left_on="effect_id", right_on="parent_id")
+            .drop(columns=["parent_id"])
+            .merge(endpoint_name_df, left_on="effect_subtype_id", right_on="parent_id")
+            .drop(columns=["parent_id"])
+            .sort_values(
+                by=["system_id", "organ_id", "effect_id", "effect_subtype_id", "endpoint_name_id"]
+            )
+            .reset_index(drop=True)
+        )
+
+        return df
 
 
 class Ontology(IntChoiceEnum):
@@ -85,8 +149,11 @@ class Entity(models.Model):
 
 
 class EntityTermRelation(models.Model):
-    entity = models.ForeignKey(Entity, on_delete=models.PROTECT)
-    term = models.ForeignKey(Term, on_delete=models.PROTECT)
+    entity = models.ForeignKey(Entity, on_delete=models.CASCADE)
+    term = models.ForeignKey(Term, on_delete=models.CASCADE)
+    notes = models.TextField(blank=True)
+    approved_by = models.ForeignKey(HAWCUser, blank=True, null=True, on_delete=models.CASCADE)
+    approved_on = models.DateTimeField(blank=True, null=True)
     deprecated_on = models.DateTimeField(blank=True, null=True)
     created_on = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
@@ -96,3 +163,25 @@ class EntityTermRelation(models.Model):
 
     def __str__(self) -> str:
         return f"{self.term} -> {self.entity}"
+
+
+class Comment(models.Model):
+    commenter = models.ForeignKey(HAWCUser, on_delete=models.CASCADE)
+    last_url_visited = models.CharField(max_length=128)
+    comment = models.TextField()
+    reviewed = models.BooleanField(default=False)
+    reviewer_notes = models.TextField(blank=True)
+    created_on = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ("id",)
+
+    def __str__(self) -> str:
+        return f"{self.commenter} on {self.created_on}"
+
+
+reversion.register(Term)
+reversion.register(Entity)
+reversion.register(EntityTermRelation)
+reversion.register(Comment)

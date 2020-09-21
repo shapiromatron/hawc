@@ -75,12 +75,13 @@ class AutocompleteTerm extends Component {
                     return (
                         <span
                             dangerouslySetInnerHTML={{
-                                __html: boldPatternText(suggestion.name, this.props.currentText),
+                                __html: boldPatternText(suggestion.name, currentText),
                             }}
                         />
                     );
                 }}
                 inputProps={{
+                    className: "span12",
                     value: currentText,
                     suggestions,
                     placeholder: placeholder || "",

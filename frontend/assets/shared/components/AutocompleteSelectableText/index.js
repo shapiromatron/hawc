@@ -69,6 +69,7 @@ class AutocompleteSelectableText extends Component {
                 inputProps={{
                     value,
                     suggestions,
+                    className: "span12",
                     placeholder: placeholder || "",
                     onChange: (event, {newValue}) => onChange(newValue),
                 }}

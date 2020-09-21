@@ -2,7 +2,7 @@ import collections
 import json
 import math
 from itertools import chain
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 import pandas as pd
 from django.core.exceptions import ObjectDoesNotExist
@@ -17,6 +17,7 @@ from ..assessment.serializers import AssessmentSerializer
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper, cleanHTML, tryParseInt
 from ..common.models import get_crumbs
 from ..study.models import Study
+from ..vocab.models import Term
 from . import managers
 
 
@@ -788,18 +789,37 @@ class Endpoint(BaseEndpoint):
     animal_group = models.ForeignKey(
         AnimalGroup, on_delete=models.CASCADE, related_name="endpoints"
     )
+    name_term = models.ForeignKey(
+        Term, related_name="endpoint_name_terms", on_delete=models.SET_NULL, blank=True, null=True
+    )
     system = models.CharField(max_length=128, blank=True, help_text="Relevant biological system")
+    system_term = models.ForeignKey(
+        Term, related_name="endpoint_system_terms", on_delete=models.SET_NULL, blank=True, null=True
+    )
     organ = models.CharField(
         max_length=128,
         blank=True,
         verbose_name="Organ (and tissue)",
         help_text="Relevant organ or tissue",
     )
+    organ_term = models.ForeignKey(
+        Term, related_name="endpoint_organ_terms", on_delete=models.SET_NULL, blank=True, null=True
+    )
     effect = models.CharField(
         max_length=128, blank=True, help_text="Effect, using common-vocabulary"
     )
+    effect_term = models.ForeignKey(
+        Term, related_name="endpoint_effect_terms", on_delete=models.SET_NULL, blank=True, null=True
+    )
     effect_subtype = models.CharField(
         max_length=128, blank=True, help_text="Effect subtype, using common-vocabulary"
+    )
+    effect_subtype_term = models.ForeignKey(
+        Term,
+        related_name="endpoint_effect_subtype_terms",
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
     )
     litter_effects = models.CharField(
         max_length=2,
@@ -1064,6 +1084,29 @@ class Endpoint(BaseEndpoint):
         )
         return df
 
+    @classmethod
+    def get_vocabulary_settings(
+        cls, assessment: Assessment, instance: Optional["Endpoint"] = None
+    ) -> str:
+        return json.dumps(
+            {
+                "debug": False,
+                "vocabulary": assessment.vocabulary,
+                "object": {
+                    "system": instance.system if instance else "",
+                    "organ": instance.organ if instance else "",
+                    "effect": instance.effect if instance else "",
+                    "effect_subtype": instance.effect_subtype if instance else "",
+                    "name": instance.name if instance else "",
+                    "system_term_id": instance.system_term_id if instance else None,
+                    "organ_term_id": instance.organ_term_id if instance else None,
+                    "effect_term_id": instance.effect_term_id if instance else None,
+                    "effect_subtype_term_id": instance.effect_subtype_term_id if instance else None,
+                    "name_term_id": instance.name_term_id if instance else None,
+                },
+            }
+        )
+
     def __str__(self):
         return self.name
 
@@ -1072,6 +1115,15 @@ class Endpoint(BaseEndpoint):
 
     def get_crumbs(self):
         return get_crumbs(self, self.animal_group)
+
+    def save(self, *args, **kwargs):
+        # ensure our controlled vocabulary terms don't have leading/trailing whitespace
+        self.system = self.system.strip()
+        self.organ = self.organ.strip()
+        self.effect = self.effect.strip()
+        self.effect_subtype = self.effect_subtype.strip()
+        self.name = self.name.strip()
+        super().save(*args, **kwargs)
 
     @property
     def dose_response_available(self):

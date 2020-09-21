@@ -10,7 +10,8 @@ router.register(r"ehv", api.EhvTermViewset, basename="ehv")
 app_name = "vocab"
 urlpatterns = [
     url(r"^api/", include((router.urls, "api"))),
-    url(r"^widget/$", views.Widget.as_view(), name="widget"),
+    url(r"^ehv/$", views.EhvBrowse.as_view(), name="ehv-browse"),
+    url(r"^comment/$", views.CreateComment.as_view(), name="comment"),
 ]
 
 admin.autodiscover()

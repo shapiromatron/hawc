@@ -4,11 +4,17 @@ import React from "react";
 import _ from "lodash";
 import moment from "moment";
 
-const stopwords = new Set("the is at which of on".split(" "));
+const stopwords = new Set("the is at which of on".split(" ")),
+    regexEscapeChars = /[-|\\{}()[\]^$+*?.]/g;
+
 const helpers = {
     noop() {},
     fetchGet: {
         credentials: "same-origin",
+    },
+    escapeRegexString(unescapedString) {
+        // https://www.npmjs.com/package/escape-regex-string
+        return unescapedString.replace(regexEscapeChars, "\\$&");
     },
     fetchPost(csrf, obj, verb = "POST") {
         obj["csrfmiddlewaretoken"] = csrf;
