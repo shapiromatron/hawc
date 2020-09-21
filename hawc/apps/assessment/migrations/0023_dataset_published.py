@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("assessment", "0021_endpoint_ordering"),
+        ("assessment", "0022_add_vocabulary"),
     ]
 
     operations = [
