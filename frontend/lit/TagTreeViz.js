@@ -14,6 +14,8 @@ import PropTypes from "prop-types";
 @observer
 class VizOptions extends Component {
     componentDidUpdate() {
+        // D3Plot will only remake navbar if it hasn't been defined
+        delete this.props.viz.menu_div;
         this.props.viz.build_plot();
     }
     render() {
