@@ -1,9 +1,14 @@
 from datetime import timedelta
+from io import BytesIO
 
-from django.contrib import admin
+import pandas as pd
+from django.contrib import admin, messages
+from django.http import HttpResponse
 from django.utils import timezone
 from django.utils.html import format_html
 
+from ..animal.models import Endpoint
+from ..vocab.models import Term, VocabularyTermType
 from . import models
 
 
@@ -33,7 +38,7 @@ class AssessmentAdmin(admin.ModelAdmin):
         "reviewers__last_name",
     )
 
-    actions = (bust_cache,)
+    actions = (bust_cache, "migrate_terms")
 
     def queryset(self, request):
         qs = super().queryset(request)
@@ -64,6 +69,92 @@ class AssessmentAdmin(admin.ModelAdmin):
 
     get_reviewers.short_description = "Reviewers"
     get_reviewers.allow_tags = True
+
+    def migrate_terms(self, request, queryset):
+        if queryset.count() != 1:
+            self.message_user(
+                request, f"Select only one item to perform the action on.", level=messages.WARNING
+            )
+            return
+
+        assessment = queryset.first()
+        if assessment.vocabulary is None:
+            self.message_user(
+                request, f"Assessment has no controlled vocabulary.", level=messages.ERROR
+            )
+            return
+        common_to_vocab = {
+            "system": "system_term",
+            "organ": "organ_term",
+            "effect": "effect_term",
+            "effect_subtype": "effect_subtype_term",
+            "name": "name_term",
+        }
+        type_to_common = {
+            "system": "system",
+            "organ": "organ",
+            "effect": "effect",
+            "effect_subtype": "effect_subtype",
+            "endpoint_name": "name",
+        }
+        type_enum = VocabularyTermType.as_dict()
+        types = list(type_enum.keys())
+        types.sort()
+        endpoints = Endpoint.objects.filter(
+            animal_group__experiment__study__reference_ptr__assessment=assessment
+        )
+        values_list = list()
+
+        updated_endpoints = list()
+
+        for endpoint in endpoints.iterator():
+            values_dict = dict()
+            values_dict["endpoint id"] = endpoint.pk
+
+            parent = None
+
+            for type in types:
+                attr = type_to_common[type_enum[type]]
+                value = getattr(endpoint, attr)
+                try:
+                    term = Term.objects.get(
+                        namespace=assessment.vocabulary,
+                        parent=parent,
+                        type=type,
+                        name__iexact=value,
+                    )
+                except Term.DoesNotExist:
+                    values_dict[type_enum[type]] = "<No matches>"
+                    break
+                except Term.MultipleObjectsReturned:
+                    values_dict[type_enum[type]] = "<Multiple matches>"
+                    break
+                setattr(endpoint, common_to_vocab[attr], term)
+                parent = term
+                values_dict[type_enum[type]] = term.name
+            if parent is not None:
+                updated_endpoints.append(endpoint)
+            values_list.append(values_dict)
+        self.message_user(request, len(updated_endpoints))
+        Endpoint.objects.bulk_update(updated_endpoints, list(common_to_vocab.values()))
+
+        f = BytesIO()
+        with pd.ExcelWriter(f) as writer:
+            pd.DataFrame(
+                values_list, columns=("endpoint id", *[type_enum[type] for type in types])
+            ).to_excel(writer, index=False)
+
+        response = HttpResponse(
+            f.getvalue(),
+            content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        )
+        response["Content-Disposition"] = "attachment; filename=term-migration.xlsx"
+
+        self.message_user(request, "Migration successful.")
+
+        return response
+
+    migrate_terms.short_description = "Migrate terms"
 
 
 @admin.register(models.Attachment)
