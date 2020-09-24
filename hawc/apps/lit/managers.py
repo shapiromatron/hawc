@@ -510,7 +510,6 @@ class ReferenceManager(BaseManager):
             title="title",
             year="year",
             journal="journal",
-            abstract="abstract",
         )
         pubmed_qs = models.Subquery(
             Identifiers.objects.filter(
