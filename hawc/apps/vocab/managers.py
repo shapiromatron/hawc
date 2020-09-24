@@ -1,4 +1,4 @@
-from django.db.models import Q, Manager, Count
+from django.db.models import Count, Manager, Q
 
 
 class AssessmentTermQuery:
@@ -33,4 +33,3 @@ class TermManager(Manager):
     def assessment_all(self, assessment_id):
         query = AssessmentTermQuery(assessment_id).all
         return self.get_queryset().filter(query)
-

@@ -5,7 +5,6 @@ from reversion import revisions as reversion
 
 from ..common.models import IntChoiceEnum
 from ..myuser.models import HAWCUser
-
 from . import managers
 
 

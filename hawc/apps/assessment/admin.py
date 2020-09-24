@@ -1,15 +1,15 @@
 from datetime import timedelta
+from io import BytesIO
 
+import pandas as pd
 from django.contrib import admin, messages
+from django.http import HttpResponse
 from django.utils import timezone
 from django.utils.html import format_html
-import pandas as pd
-from io import BytesIO
-from django.http import HttpResponse
 
-from . import models
 from ..animal.models import Endpoint
 from ..vocab.models import Term, VocabularyTermType
+from . import models
 
 
 def bust_cache(modeladmin, request, queryset):
