@@ -6,6 +6,8 @@ from reversion import revisions as reversion
 from ..common.models import IntChoiceEnum
 from ..myuser.models import HAWCUser
 
+from . import managers
+
 
 class VocabularyNamespace(IntChoiceEnum):
     """
@@ -36,6 +38,8 @@ class VocabularyTermType(IntChoiceEnum):
 
 
 class Term(models.Model):
+    objects = managers.TermManager()
+
     namespace = models.PositiveSmallIntegerField(
         choices=VocabularyNamespace.choices(), default=VocabularyNamespace.EHV
     )

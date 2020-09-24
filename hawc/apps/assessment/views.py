@@ -30,6 +30,7 @@ from ..common.views import (
     TimeSpentOnPageMixin,
     beta_tester_required,
 )
+from ..vocab.models import Term
 from . import forms, models, serializers, tasks
 
 
@@ -386,6 +387,31 @@ class DatasetDelete(BaseDelete):
 
     def get_success_url(self):
         return self.object.assessment.get_absolute_url()
+
+
+# Vocab views
+
+
+class VocabList(BaseList, TeamMemberOrHigherMixin):
+    parent_model = models.Assessment
+    model = Term
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["systems"] = self.model.objects.assessment_systems(self.assessment.id)
+        context["deprecated"] = self.model.objects.assessment_all(self.assessment.id).exclude(
+            deprecated_on=None
+        )
+        context["endpoints"] = (
+            apps.get_model("animal", "Endpoint")
+            .objects.select_related(
+                "name_term", "system_term", "organ_term", "effect_term", "effect_subtype_term"
+            )
+            .filter(
+                animal_group__experiment__study__reference_ptr__assessment_id=self.assessment.id
+            )
+        )
+        return context
 
 
 # Endpoint objects

@@ -1,15 +1,15 @@
 from datetime import timedelta
-from io import BytesIO
 
-import pandas as pd
 from django.contrib import admin, messages
-from django.http import HttpResponse
 from django.utils import timezone
 from django.utils.html import format_html
+import pandas as pd
+from io import BytesIO
+from django.http import HttpResponse
 
+from . import models
 from ..animal.models import Endpoint
 from ..vocab.models import Term, VocabularyTermType
-from . import models
 
 
 def bust_cache(modeladmin, request, queryset):
@@ -135,8 +135,9 @@ class AssessmentAdmin(admin.ModelAdmin):
             if parent is not None:
                 updated_endpoints.append(endpoint)
             values_list.append(values_dict)
-        self.message_user(request, len(updated_endpoints))
         Endpoint.objects.bulk_update(updated_endpoints, list(common_to_vocab.values()))
+
+        self.message_user(request, len(updated_endpoints))
 
         f = BytesIO()
         with pd.ExcelWriter(f) as writer:
@@ -149,8 +150,6 @@ class AssessmentAdmin(admin.ModelAdmin):
             content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         )
         response["Content-Disposition"] = "attachment; filename=term-migration.xlsx"
-
-        self.message_user(request, "Migration successful.")
 
         return response
 
