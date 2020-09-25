@@ -1,0 +1,43 @@
+{% extends 'portal.html' %}
+
+{% block title %}
+  {{assessment}} | Vocab
+{% endblock title %}
+
+{% block breadcrumbs %}
+  <li><a href="{{assessment.get_absolute_url}}">{{assessment}}</a><span class="divider">/</span></li>
+  <li class="active">Vocab<span class="divider">/</span></li>
+{% endblock %}
+
+{% block content %}
+  <div class="container-fluid">
+    <div class="row-fluid">
+
+      <div class="span4">
+      {% for system in systems %}
+        <div>
+          {{system.name}} | {{system.count}}
+        </div>
+      {% endfor %}
+      </div>
+
+      <div class="span4">
+      {% for endpoint in endpoints %}
+        <div>
+          <a href={{endpoint.get_absolute_url}}>{{endpoint.name}}</a> | {{endpoint.name_term.name}}
+        </div>
+      {% endfor %}
+      </div>
+
+      <div class="span4">
+      {% for term in deprecated %}
+        <div>
+          {{term.name}}
+        </div>
+      {% endfor %}
+      </div>
+
+    </div>
+  </div>
+
+{% endblock content %}
