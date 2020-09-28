@@ -30,7 +30,6 @@ from ..common.views import (
     TimeSpentOnPageMixin,
     beta_tester_required,
 )
-from ..vocab.models import Term
 from . import forms, models, serializers, tasks
 
 
@@ -390,26 +389,20 @@ class DatasetDelete(BaseDelete):
 
 
 # Vocab views
-class VocabList(BaseList, TeamMemberOrHigherMixin):
-    parent_model = models.Assessment
-    model = Term
+class VocabList(TeamMemberOrHigherMixin, TemplateView):
     template_name = "assessment/vocab.html"
 
+    def get_assessment(self, *args, **kwargs):
+        return get_object_or_404(models.Assessment, pk=kwargs["pk"])
+
     def get_context_data(self, **kwargs):
+        Term = apps.get_model("vocab", "Term")
         context = super().get_context_data(**kwargs)
-        context["systems"] = self.model.objects.assessment_systems(self.assessment.id)
-        context["deprecated"] = self.model.objects.assessment_all(self.assessment.id).exclude(
-            deprecated_on=None
-        )
-        context["endpoints"] = (
-            apps.get_model("animal", "Endpoint")
-            .objects.select_related(
-                "name_term", "system_term", "organ_term", "effect_term", "effect_subtype_term"
-            )
-            .filter(
-                animal_group__experiment__study__reference_ptr__assessment_id=self.assessment.id
-            )
-        )
+        context["systems"] = Term.objects.assessment_systems(self.assessment.id)
+        context["organs"] = Term.objects.assessment_organs(self.assessment.id)
+        context["effects"] = Term.objects.assessment_effects(self.assessment.id)
+        context["effect_subtypes"] = Term.objects.assessment_effect_subtypes(self.assessment.id)
+        context["endpoint_names"] = Term.objects.assessment_endpoint_names(self.assessment.id)
         return context
 
 

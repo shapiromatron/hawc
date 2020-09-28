@@ -10,34 +10,30 @@
 {% endblock %}
 
 {% block content %}
-  <div class="container-fluid">
-    <div class="row-fluid">
+<ul class="nav nav-tabs">
+  <li><a href="#systems" data-toggle="tab">Systems</a></li>
+  <li><a href="#organs" data-toggle="tab">Organs</a></li>
+  <li><a href="#effects" data-toggle="tab">Effects</a></li>
+  <li><a href="#effect-subtypes" data-toggle="tab">Effect subtypes</a></li>
+  <li><a href="#names" data-toggle="tab">Names</a></li>
+</ul>
 
-      <div class="span4">
-      {% for system in systems %}
-        <div>
-          {{system.name}} | {{system.count}}
-        </div>
-      {% endfor %}
-      </div>
-
-      <div class="span4">
-      {% for endpoint in endpoints %}
-        <div>
-          <a href={{endpoint.get_absolute_url}}>{{endpoint.name}}</a> | {{endpoint.name_term.name}}
-        </div>
-      {% endfor %}
-      </div>
-
-      <div class="span4">
-      {% for term in deprecated %}
-        <div>
-          {{term.name}}
-        </div>
-      {% endfor %}
-      </div>
-
-    </div>
+<div class="tab-content">
+  <div class="tab-pane active" id="systems">
+    {% include "assessment/_term_list.html" with terms=systems type="system" %}
   </div>
+  <div class="tab-pane" id="organs">
+    {% include "assessment/_term_list.html" with terms=organs type="organ" %}
+  </div>
+  <div class="tab-pane" id="effects">
+    {% include "assessment/_term_list.html" with terms=effects type="effect" %}
+  </div>
+  <div class="tab-pane" id="effect-subtypes">
+    {% include "assessment/_term_list.html" with terms=effect_subtypes type="effect-subtype" %}
+  </div>
+  <div class="tab-pane" id="names">
+    {% include "assessment/_term_list.html" with terms=endpoint_names type="name" %}
+  </div>
+</div>
 
 {% endblock content %}

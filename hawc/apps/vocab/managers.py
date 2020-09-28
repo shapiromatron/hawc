@@ -1,33 +1,101 @@
-from django.db.models import Count, Manager, Q
-
-
-class AssessmentTermQuery:
-    def __init__(self, assessment_id):
-        self.system = Q(
-            endpoint_system_terms__animal_group__experiment__study__reference_ptr__assessment_id=assessment_id
-        )
-        self.organ = Q(
-            endpoint_organ_terms__animal_group__experiment__study__reference_ptr__assessment_id=assessment_id
-        )
-        self.effect = Q(
-            endpoint_effect_terms__animal_group__experiment__study__reference_ptr__assessment_id=assessment_id
-        )
-        self.effect_subtype = Q(
-            endpoint_effect_subtype_terms__animal_group__experiment__study__reference_ptr__assessment_id=assessment_id
-        )
-        self.endpoint_name = Q(
-            endpoint_name_terms__animal_group__experiment__study__reference_ptr__assessment_id=assessment_id
-        )
-        self.all = self.system | self.organ | self.effect | self.effect_subtype | self.endpoint_name
+from django.apps import apps
+from django.db.models import Manager, Prefetch
 
 
 class TermManager(Manager):
     def assessment_systems(self, assessment_id):
-        query = AssessmentTermQuery(assessment_id).system
+        Endpoint = apps.get_model("animal", "Endpoint")
         return (
             self.get_queryset()
-            .filter(query)
-            .annotate(count=Count("endpoint_system_terms", filter=query))
+            .filter(
+                endpoint_system_terms__animal_group__experiment__study__reference_ptr__assessment_id=assessment_id
+            )
+            .distinct()
+            .prefetch_related(
+                Prefetch(
+                    "endpoint_system_terms",
+                    queryset=Endpoint.objects.filter(
+                        animal_group__experiment__study__reference_ptr__assessment_id=assessment_id
+                    ),
+                    to_attr="endpoints",
+                )
+            )
+        )
+
+    def assessment_organs(self, assessment_id):
+        Endpoint = apps.get_model("animal", "Endpoint")
+        return (
+            self.get_queryset()
+            .filter(
+                endpoint_organ_terms__animal_group__experiment__study__reference_ptr__assessment_id=assessment_id
+            )
+            .distinct()
+            .prefetch_related(
+                Prefetch(
+                    "endpoint_organ_terms",
+                    queryset=Endpoint.objects.filter(
+                        animal_group__experiment__study__reference_ptr__assessment_id=assessment_id
+                    ),
+                    to_attr="endpoints",
+                )
+            )
+        )
+
+    def assessment_effects(self, assessment_id):
+        Endpoint = apps.get_model("animal", "Endpoint")
+        return (
+            self.get_queryset()
+            .filter(
+                endpoint_effect_terms__animal_group__experiment__study__reference_ptr__assessment_id=assessment_id
+            )
+            .distinct()
+            .prefetch_related(
+                Prefetch(
+                    "endpoint_effect_terms",
+                    queryset=Endpoint.objects.filter(
+                        animal_group__experiment__study__reference_ptr__assessment_id=assessment_id
+                    ),
+                    to_attr="endpoints",
+                )
+            )
+        )
+
+    def assessment_effect_subtypes(self, assessment_id):
+        Endpoint = apps.get_model("animal", "Endpoint")
+        return (
+            self.get_queryset()
+            .filter(
+                endpoint_effect_subtype_terms__animal_group__experiment__study__reference_ptr__assessment_id=assessment_id
+            )
+            .distinct()
+            .prefetch_related(
+                Prefetch(
+                    "endpoint_effect_subtype_terms",
+                    queryset=Endpoint.objects.filter(
+                        animal_group__experiment__study__reference_ptr__assessment_id=assessment_id
+                    ),
+                    to_attr="endpoints",
+                )
+            )
+        )
+
+    def assessment_endpoint_names(self, assessment_id):
+        Endpoint = apps.get_model("animal", "Endpoint")
+        return (
+            self.get_queryset()
+            .filter(
+                endpoint_name_terms__animal_group__experiment__study__reference_ptr__assessment_id=assessment_id
+            )
+            .distinct()
+            .prefetch_related(
+                Prefetch(
+                    "endpoint_name_terms",
+                    queryset=Endpoint.objects.filter(
+                        animal_group__experiment__study__reference_ptr__assessment_id=assessment_id
+                    ),
+                    to_attr="endpoints",
+                )
+            )
         )
 
     def assessment_all(self, assessment_id):
