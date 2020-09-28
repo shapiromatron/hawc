@@ -4,7 +4,7 @@
   <div class="accordion-group">
     <div class="accordion-heading">
       <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion-{{type}}" href="#collapse-{{type}}-{{forloop.counter}}">
-        {{term}} ({{term.endpoints|length}} endpoints)
+        {{term}} ({{term.endpoints|length}} endpoints){% if term.deprecated %} [deprecated]{% endif %}
       </a>
     </div>
     <div id="collapse-{{type}}-{{forloop.counter}}" class="accordion-body collapse">

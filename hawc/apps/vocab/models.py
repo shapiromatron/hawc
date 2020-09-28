@@ -56,6 +56,10 @@ class Term(models.Model):
     def __str__(self) -> str:
         return f"{self.get_namespace_display()}::{self.get_type_display()}::{self.name}"
 
+    @property
+    def deprecated(self) -> bool:
+        return self.deprecated_on is not None
+
     def get_admin_edit_url(self) -> str:
         return reverse("admin:vocab_term_change", args=(self.id,))
 

@@ -398,11 +398,21 @@ class VocabList(TeamMemberOrHigherMixin, TemplateView):
     def get_context_data(self, **kwargs):
         Term = apps.get_model("vocab", "Term")
         context = super().get_context_data(**kwargs)
-        context["systems"] = Term.objects.assessment_systems(self.assessment.id)
-        context["organs"] = Term.objects.assessment_organs(self.assessment.id)
-        context["effects"] = Term.objects.assessment_effects(self.assessment.id)
-        context["effect_subtypes"] = Term.objects.assessment_effect_subtypes(self.assessment.id)
-        context["endpoint_names"] = Term.objects.assessment_endpoint_names(self.assessment.id)
+        context["systems"] = Term.objects.assessment_systems(self.assessment.id).order_by(
+            "-deprecated_on", "id"
+        )
+        context["organs"] = Term.objects.assessment_organs(self.assessment.id).order_by(
+            "-deprecated_on", "id"
+        )
+        context["effects"] = Term.objects.assessment_effects(self.assessment.id).order_by(
+            "-deprecated_on", "id"
+        )
+        context["effect_subtypes"] = Term.objects.assessment_effect_subtypes(
+            self.assessment.id
+        ).order_by("-deprecated_on", "id")
+        context["endpoint_names"] = Term.objects.assessment_endpoint_names(
+            self.assessment.id
+        ).order_by("-deprecated_on", "id")
         return context
 
 
