@@ -97,7 +97,3 @@ class TermManager(Manager):
                 )
             )
         )
-
-    def assessment_all(self, assessment_id):
-        query = AssessmentTermQuery(assessment_id).all
-        return self.get_queryset().filter(query)
