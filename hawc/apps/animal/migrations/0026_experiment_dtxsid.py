@@ -42,6 +42,8 @@ def casrn_to_dtxsid(apps, schema_editor):
 
             # add experiment entry
             experiment.dtxsid_id = dsstox.dtxsid
+            updated_experiments.append(experiment)
+
             print(
                 json.dumps(
                     dict(experiment=experiment.id, casrn=experiment.cas, dtxsid=dsstox.dtxsid)
@@ -52,7 +54,7 @@ def casrn_to_dtxsid(apps, schema_editor):
 
     # bulk create/update items
     DSSTox.objects.bulk_create(new_dsstox_entries)
-    Experiment.objects.bulk_update(updated_experiments, ["dtxsid"])
+    Experiment.objects.bulk_update(updated_experiments, ["dtxsid_id"])
 
 
 class Migration(migrations.Migration):

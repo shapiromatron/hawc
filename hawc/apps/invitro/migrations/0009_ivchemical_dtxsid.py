@@ -43,6 +43,8 @@ def casrn_to_dtxsid(apps, schema_editor):
 
             # add ivchemical entry
             ivchemical.dtxsid_id = dsstox.dtxsid
+            updated_ivchemicals.append(ivchemical)
+
             print(
                 json.dumps(
                     dict(ivchemical=ivchemical.id, casrn=ivchemical.cas, dtxsid=dsstox.dtxsid)
@@ -52,7 +54,7 @@ def casrn_to_dtxsid(apps, schema_editor):
             print(json.dumps(dict(ivchemical=ivchemical.id, casrn=ivchemical.cas, dtxsid=None)))
 
     DSSTox.objects.bulk_create(new_dsstox_entries)
-    IVChemical.objects.bulk_update(updated_ivchemicals, ["dtxsid"])
+    IVChemical.objects.bulk_update(updated_ivchemicals, ["dtxsid_id"])
 
 
 class Migration(migrations.Migration):
