@@ -54,7 +54,7 @@ class EntityTermList(ListView):
 
 class ProposedEntityTermList(ListView):
     model = models.EntityTermRelation
-    template_name = "vocab/proposed_entitytermrelation_list.html.html"
+    template_name = "vocab/proposed_entitytermrelation_list.html"
 
     def get_queryset(self):
         return self.model.objects.filter(approved_on=None)

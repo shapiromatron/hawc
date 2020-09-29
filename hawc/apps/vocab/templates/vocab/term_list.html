@@ -1,38 +1,17 @@
 {% extends 'portal.html' %}
 
 {% block title %}
-  Vocab | HAWC
+  Terms | HAWC
 {% endblock title %}
 
 {% block content %}
-  <div class="container-fluid">
-    <div class="row-fluid">
 
-      <div class="span4">
-      {% for system in systems %}
-        <div>
-          {{system.name}} | {{system.count}}
-        </div>
-      {% endfor %}
-      </div>
+  <h1>Terms</h1>
 
-      <div class="span4">
-      {% for endpoint in endpoints %}
-        <div>
-          <a href={{endpoint.get_absolute_url}}>{{endpoint.name}}</a> | {{endpoint.name_term.name}}
-        </div>
-      {% endfor %}
-      </div>
-
-      <div class="span4">
-      {% for term in deprecated %}
-        <div>
-          {{term.name}}
-        </div>
-      {% endfor %}
-      </div>
-
-    </div>
+  {% for obj in object_list %}
+  <div>
+    {{obj}}
   </div>
+  {% endfor %}
 
 {% endblock content %}
