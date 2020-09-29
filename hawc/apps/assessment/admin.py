@@ -71,25 +71,23 @@ class AssessmentAdmin(admin.ModelAdmin):
     get_reviewers.allow_tags = True
 
     def migrate_terms(self, request, queryset):
+        # Action can only be run on one assessment at a time
         if queryset.count() != 1:
             self.message_user(
                 request, f"Select only one item to perform the action on.", level=messages.WARNING
             )
             return
-
+        # Action can only be run on an assessment if controlled vocabulary is used
         assessment = queryset.first()
         if assessment.vocabulary is None:
             self.message_user(
                 request, f"Assessment has no controlled vocabulary.", level=messages.ERROR
             )
             return
-        common_to_vocab = {
-            "system": "system_term",
-            "organ": "organ_term",
-            "effect": "effect_term",
-            "effect_subtype": "effect_subtype_term",
-            "name": "name_term",
-        }
+
+        # Type integer to type name
+        type_enum = VocabularyTermType.as_dict()
+        # Type name to common attr name
         type_to_common = {
             "system": "system",
             "organ": "organ",
@@ -97,22 +95,39 @@ class AssessmentAdmin(admin.ModelAdmin):
             "effect_subtype": "effect_subtype",
             "endpoint_name": "name",
         }
-        type_enum = VocabularyTermType.as_dict()
+        # Common attr name to term attr name
+        common_to_vocab = {
+            "system": "system_term",
+            "organ": "organ_term",
+            "effect": "effect_term",
+            "effect_subtype": "effect_subtype_term",
+            "name": "name_term",
+        }
+
+        # Type integers, ordered.
         types = list(type_enum.keys())
         types.sort()
+
+        # Assessment endpoints
         endpoints = Endpoint.objects.filter(
             animal_group__experiment__study__reference_ptr__assessment=assessment
         )
-        values_list = list()
-
+        # Endpoints to update
         updated_endpoints = list()
 
+        # List of endpoint terms dicts; will be used to generate excel report
+        values_list = list()
+
         for endpoint in endpoints.iterator():
+            # Endpoint terms dict
             values_dict = dict()
             values_dict["endpoint id"] = endpoint.pk
 
+            # The last term, set as parent of the next term
             parent = None
 
+            # Check system->organ->effect->effect_subtype->endpoint_name
+            # Ends early if there is no match
             for type in types:
                 attr = type_to_common[type_enum[type]]
                 value = getattr(endpoint, attr)
@@ -132,13 +147,13 @@ class AssessmentAdmin(admin.ModelAdmin):
                 setattr(endpoint, common_to_vocab[attr], term)
                 parent = term
                 values_dict[type_enum[type]] = term.name
+            # If parent variable has changed, then at least one type iteration was successful
             if parent is not None:
                 updated_endpoints.append(endpoint)
             values_list.append(values_dict)
         Endpoint.objects.bulk_update(updated_endpoints, list(common_to_vocab.values()))
 
-        self.message_user(request, len(updated_endpoints))
-
+        # Writes an excel report of applied terms on the endpoints
         f = BytesIO()
         with pd.ExcelWriter(f) as writer:
             pd.DataFrame(
