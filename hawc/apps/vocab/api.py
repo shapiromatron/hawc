@@ -67,6 +67,6 @@ class EhvTermViewset(viewsets.GenericViewSet):
         entity_serializer = serializers.EntitySerializer(data=request.data)
         entity_serializer.is_valid(raise_exception=True)
         entity, _ = models.Entity.objects.get_or_create(**entity_serializer.validated_data)
-        entity.terms.add(term)
+        entity.terms.add(term, through_defaults={"notes": request.data.get("notes")})
         serializer = self.get_serializer(entity.terms.all(), many=True)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
