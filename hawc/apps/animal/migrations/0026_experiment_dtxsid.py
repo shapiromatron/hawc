@@ -1,4 +1,3 @@
-import json
 from typing import Optional, Set
 
 import django.db.models.deletion
@@ -19,40 +18,26 @@ def casrn_to_dtxsid(apps, schema_editor):
         except ValueError:
             return None
 
-    # lists to keep track of changed data for bulk creates/updates
-    existing_dtxsids: Set = set(DSSTox.objects.values_list("dtxsid", flat=True))
-    updated_experiments = []
+    # list to keep track of dsstox entries for bulk create
     new_dsstox_entries = []
-    api_cache = {}
 
-    for experiment in Experiment.objects.exclude(cas=""):
+    # existing dtxsids and Experiment casrns
+    existing_dtxsids: Set = set(DSSTox.objects.values_list("dtxsid", flat=True))
+    experiment_casrns: Set = set(Experiment.objects.values_list("cas", flat=True))
 
-        # try to find a DTXSID instance; hit API cache first; may return None
-        if experiment.cas not in api_cache:
-            dsstox = _create_dsstox(experiment.cas)
-            api_cache[experiment.cas] = dsstox
-        else:
-            dsstox = api_cache[experiment.cas]
-
-        if dsstox:
-            # add new dsstox entry
+    # for each casrn...
+    for casrn in experiment_casrns:
+        # create the corresponding DSSTox object
+        dsstox = _create_dsstox(casrn)
+        # if an error wasn't thrown during creation...
+        if dsstox is not None:
+            # and the DSSTox object doesn't exist...
             if dsstox.dtxsid not in existing_dtxsids:
+                # create the DSSTox object
                 new_dsstox_entries.append(dsstox)
                 existing_dtxsids.add(dsstox.dtxsid)
 
-            # add experiment entry
-            experiment.dtxsid_id = dsstox.dtxsid
-            print(
-                json.dumps(
-                    dict(experiment=experiment.id, casrn=experiment.cas, dtxsid=dsstox.dtxsid)
-                )
-            )
-        else:
-            print(json.dumps(dict(experiment=experiment.id, casrn=experiment.cas, dtxsid=None)))
-
-    # bulk create/update items
     DSSTox.objects.bulk_create(new_dsstox_entries)
-    Experiment.objects.bulk_update(updated_experiments, ["dtxsid"])
 
 
 class Migration(migrations.Migration):
