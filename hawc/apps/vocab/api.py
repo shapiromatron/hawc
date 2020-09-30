@@ -1,7 +1,7 @@
 from typing import Optional
 
 from django.db.models import QuerySet
-from rest_framework import viewsets
+from rest_framework import exceptions, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
@@ -60,3 +60,15 @@ class EhvTermViewset(viewsets.GenericViewSet):
         qs = self.filter_qs(request, models.VocabularyTermType.endpoint_name)
         serializer = self.get_serializer(qs, many=True)
         return Response(serializer.data)
+
+    @action(detail=True, url_path="endpoint-name-lookup")
+    def endpoint_name_lookup(self, request: Request, pk: int) -> Response:
+        try:
+            term = models.Term.objects.get(
+                id=pk,
+                type=models.VocabularyTermType.endpoint_name,
+                namespace=models.VocabularyNamespace.EHV,
+            )
+        except models.Term.DoesNotExist:
+            raise exceptions.NotFound()
+        return Response(term.ehv_endpoint_name())
