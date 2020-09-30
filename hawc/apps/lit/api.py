@@ -208,7 +208,7 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         models.Reference.update_hero_metadata(assessment.id)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @action(detail=True, methods=("post",), url_path="reference-search")
+    @action(detail=True, methods=("post",), url_path="reference-search", permission_classes=[])
     def reference_search(self, request, pk):
         assessment = self.get_object()
         if not assessment.user_can_view_object(request.user):
