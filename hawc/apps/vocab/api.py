@@ -68,6 +68,7 @@ class EhvTermViewset(viewsets.GenericViewSet):
                 id=pk,
                 type=models.VocabularyTermType.endpoint_name,
                 namespace=models.VocabularyNamespace.EHV,
+                deprecated_on__isnull=True,
             )
         except models.Term.DoesNotExist:
             raise exceptions.NotFound()
