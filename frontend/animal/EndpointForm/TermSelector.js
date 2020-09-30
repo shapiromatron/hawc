@@ -12,10 +12,14 @@ import AutocompleteTerm from "shared/components/AutocompleteTerm";
 class TermSelector extends Component {
     constructor(props) {
         super(props);
+        this.state = {
+            idLookupValue: props.store.config.object[props.termIdField],
+        };
         this.randomId = h.randomString();
     }
     render() {
         const {
+                idLookupAction,
                 name,
                 label,
                 helpText,
@@ -30,6 +34,30 @@ class TermSelector extends Component {
 
         return (
             <div>
+                {useControlledVocabulary && idLookupAction ? (
+                    <div className="pull-right">
+                        <div className="input-append">
+                            <input
+                                type="number"
+                                placeholder="Enter term ID"
+                                style={{maxWidth: 100}}
+                                value={this.state.idLookupValue}
+                                onChange={event =>
+                                    this.setState({
+                                        idLookupValue: parseInt(event.target.value),
+                                    })
+                                }></input>
+                            <button
+                                className="btn"
+                                type="button"
+                                onClick={() => {
+                                    idLookupAction(this.state.idLookupValue);
+                                }}>
+                                Load ID
+                            </button>
+                        </div>
+                    </div>
+                ) : null}
                 <label className="control-label" htmlFor={this.randomId}>
                     {label}
                 </label>
@@ -104,6 +132,7 @@ TermSelector.propTypes = {
     parentIdField: PropTypes.string,
     parentRequired: PropTypes.bool,
     store: PropTypes.object,
+    idLookupAction: PropTypes.func,
 };
 
 export default TermSelector;

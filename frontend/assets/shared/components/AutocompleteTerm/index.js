@@ -28,6 +28,13 @@ class AutocompleteTerm extends Component {
         };
     }
 
+    UNSAFE_componentWillReceiveProps(nextProps) {
+        this.setState({
+            currentText: nextProps.currentText,
+            currentId: nextProps.currentId,
+        });
+    }
+
     onSuggestionsFetchRequested({value}) {
         const {url, minSearchLength, parentId} = this.props,
             _minSearchLength = minSearchLength || DEFAULT_MIN_SEARCH_LENGTH;
