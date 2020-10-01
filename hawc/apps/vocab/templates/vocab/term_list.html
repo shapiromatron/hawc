@@ -1,0 +1,17 @@
+{% extends 'portal.html' %}
+
+{% block title %}
+  Terms | HAWC
+{% endblock title %}
+
+{% block content %}
+
+  <h1>Terms</h1>
+
+  {% for obj in object_list %}
+  <div>
+    {{obj}}
+  </div>
+  {% endfor %}
+
+{% endblock content %}

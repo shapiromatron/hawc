@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
-from django.views.generic import TemplateView
+from django.views.generic import ListView, TemplateView
 from django.views.generic.edit import CreateView
 
 from ..common.views import MessageMixin
@@ -42,3 +42,23 @@ class CreateComment(MessageMixin, CreateView):
     def form_valid(self, form):
         form.instance.commenter = self.request.user
         return super().form_valid(form)
+
+
+class CommentList(ListView):
+    model = models.Comment
+
+
+class EntityTermList(ListView):
+    model = models.EntityTermRelation
+
+
+class ProposedEntityTermList(ListView):
+    model = models.EntityTermRelation
+    template_name = "vocab/proposed_entitytermrelation_list.html"
+
+    def get_queryset(self):
+        return self.model.objects.filter(approved_on=None)
+
+
+class TermList(ListView):
+    model = models.Term
