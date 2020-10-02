@@ -3,7 +3,12 @@ import "./utils/startup";
 import adminStartup from "./admin";
 import animalStartup from "./animal";
 import assessmentStartup from "./assessment";
-import {nestedTagEditorStartup, smartTagsStartup, textCleanupStartup} from "./assets";
+import {
+    nestedTagEditorStartup,
+    smartTagsStartup,
+    textCleanupStartup1,
+    textCleanupStartup2,
+} from "./assets";
 import bmdStartup from "./bmd";
 import epiStartup from "./epi";
 import epimetaStartup from "./epimeta";
@@ -40,6 +45,7 @@ window.app = {
     studyStartup,
     summaryFormsStartup,
     summaryStartup,
-    textCleanupStartup,
+    textCleanupStartup1,
+    textCleanupStartup2,
     utils,
 };
