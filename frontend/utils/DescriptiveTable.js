@@ -23,6 +23,9 @@ class DescriptiveTable {
             if (opts.annotate) {
                 td.append("<br>", $('<span class="muted">').text(opts.annotate));
             }
+            if (opts.pre) {
+                td.css("white-space", "pre-wrap");
+            }
             this._tbody.append(
                 $("<tr>")
                     .append($("<th>").html(description))
