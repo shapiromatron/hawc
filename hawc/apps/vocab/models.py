@@ -1,7 +1,8 @@
-from typing import Dict
+from typing import Dict, List
 
 import pandas as pd
 from django.db import models
+from django.utils.decorators import classproperty
 from django.urls import reverse
 from reversion import revisions as reversion
 
@@ -18,12 +19,17 @@ class VocabularyNamespace(IntChoiceEnum):
 
     EHV = 1  # environmental health vocabulary
 
+    @classproperty
+    def display_dict(cls) -> Dict:
+        return {1: "EPA Environmental health vocabulary"}
+
+    @classmethod
+    def display_choices(cls) -> List:
+        return [(key, value) for key, value in cls.display_dict.items()]
+
     @property
     def display_name(self) -> str:
-        if self.value == 1:
-            return "EPA Environmental health vocabulary"
-        else:
-            return ""
+        return self.display_dict[self.value]
 
 
 class VocabularyTermType(IntChoiceEnum):
