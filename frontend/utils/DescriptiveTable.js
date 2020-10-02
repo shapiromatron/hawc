@@ -32,6 +32,27 @@ class DescriptiveTable {
         return this;
     }
 
+    add_tbody_tr_pre(description, value, opts) {
+        opts = opts || {};
+        if (value) {
+            if (parseFloat(value, 10) === value) value = value.toHawcString();
+            if (opts.calculated) {
+                value = `[${value}]`; // [] = estimated
+            }
+            var td = $("<td>").html(value);
+            td.css("white-space", "pre-wrap");
+            if (opts.annotate) {
+                td.append("<br>", $('<span class="muted">').text(opts.annotate));
+            }
+            this._tbody.append(
+                $("<tr>")
+                    .append($("<th>").html(description))
+                    .append(td)
+            );
+        }
+        return this;
+    }
+
     add_tbody_tr_list(description, list_items) {
         if (list_items.length > 0) {
             var ul = $("<ul>").append(
