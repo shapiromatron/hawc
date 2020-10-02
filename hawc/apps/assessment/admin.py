@@ -1,14 +1,12 @@
 from datetime import timedelta
 from io import BytesIO
 
-import pandas as pd
 from django.contrib import admin, messages
 from django.http import HttpResponse
 from django.utils import timezone
 from django.utils.html import format_html
 
 from ..animal.models import Endpoint
-from ..vocab.models import Term, VocabularyTermType
 from . import models
 
 
@@ -74,9 +72,10 @@ class AssessmentAdmin(admin.ModelAdmin):
         # Action can only be run on one assessment at a time
         if queryset.count() != 1:
             self.message_user(
-                request, f"Select only one item to perform the action on.", level=messages.WARNING
+                request, f"Select only one item to perform the action on.", level=messages.ERROR
             )
             return
+
         # Action can only be run on an assessment if controlled vocabulary is used
         assessment = queryset.first()
         if assessment.vocabulary is None:
@@ -85,90 +84,22 @@ class AssessmentAdmin(admin.ModelAdmin):
             )
             return
 
-        # Type integer to type name
-        type_enum = VocabularyTermType.as_dict()
-        # Type name to common attr name
-        type_to_common = {
-            "system": "system",
-            "organ": "organ",
-            "effect": "effect",
-            "effect_subtype": "effect_subtype",
-            "endpoint_name": "name",
-        }
-        # Common attr name to term attr name
-        common_to_vocab = {
-            "system": "system_term",
-            "organ": "organ_term",
-            "effect": "effect_term",
-            "effect_subtype": "effect_subtype_term",
-            "name": "name_term",
-        }
-
-        # Type integers, ordered.
-        types = list(type_enum.keys())
-        types.sort()
-
-        # Assessment endpoints
-        endpoints = Endpoint.objects.filter(
-            animal_group__experiment__study__reference_ptr__assessment=assessment
-        )
-        # Endpoints to update
-        updated_endpoints = list()
-
-        # List of endpoint terms dicts; will be used to generate excel report
-        values_list = list()
-
-        for endpoint in endpoints.iterator():
-            # Endpoint terms dict
-            values_dict = dict()
-            values_dict["endpoint id"] = endpoint.pk
-
-            # The last term, set as parent of the next term
-            parent = None
-
-            # Check system->organ->effect->effect_subtype->endpoint_name
-            # Ends early if there is no match
-            for type in types:
-                attr = type_to_common[type_enum[type]]
-                value = getattr(endpoint, attr)
-                try:
-                    term = Term.objects.get(
-                        namespace=assessment.vocabulary,
-                        parent=parent,
-                        type=type,
-                        name__iexact=value,
-                    )
-                except Term.DoesNotExist:
-                    values_dict[type_enum[type]] = "<No matches>"
-                    break
-                except Term.MultipleObjectsReturned:
-                    values_dict[type_enum[type]] = "<Multiple matches>"
-                    break
-                setattr(endpoint, common_to_vocab[attr], term)
-                parent = term
-                values_dict[type_enum[type]] = term.name
-            # If parent variable has changed, then at least one type iteration was successful
-            if parent is not None:
-                updated_endpoints.append(endpoint)
-            values_list.append(values_dict)
-        Endpoint.objects.bulk_update(updated_endpoints, list(common_to_vocab.values()))
+        df = Endpoint.objects.migrate_terms(assessment)
 
         # Writes an excel report of applied terms on the endpoints
         f = BytesIO()
-        with pd.ExcelWriter(f) as writer:
-            pd.DataFrame(
-                values_list, columns=("endpoint id", *[type_enum[type] for type in types])
-            ).to_excel(writer, index=False)
+        df.to_excel(f, index=False)
 
         response = HttpResponse(
             f.getvalue(),
             content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         )
-        response["Content-Disposition"] = "attachment; filename=term-migration.xlsx"
+        fn = f"attachment; filename=assessment-{assessment.id}-term-migration.xlsx"
+        response["Content-Disposition"] = fn
 
         return response
 
-    migrate_terms.short_description = "Migrate terms"
+    migrate_terms.short_description = "Migrate endpoint terms"
 
 
 @admin.register(models.Attachment)
