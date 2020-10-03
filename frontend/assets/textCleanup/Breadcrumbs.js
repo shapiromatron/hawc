@@ -30,14 +30,19 @@ class Breadcrumbs extends Component {
                     </li>
                 ) : (
                     <li className="active">
-                        Select model
+                        Model selection
                         <span className="divider">/</span>
                     </li>
                 )}
 
                 {hasField ? (
                     <li className="active">
-                        {h.titleCase(store.selectedField)}
+                        Cleanup {h.titleCase(store.selectedField)}
+                        <span className="divider">/</span>
+                    </li>
+                ) : hasModel ? (
+                    <li className="active">
+                        Field selection
                         <span className="divider">/</span>
                     </li>
                 ) : null}
