@@ -350,7 +350,7 @@ class Assessment(AssessmentViewset):
                 "type": "dosing-regime",
                 "url": f"{app_url}dosing-regime/",
                 "url_cleanup_list": reverse("animal:api:dosingregime-cleanup-list"),
-                "modal_key": "Dosing Regime",
+                "modal_key": "AnimalGroup",
             }
         )
 
@@ -374,7 +374,7 @@ class Assessment(AssessmentViewset):
                 "type": "study-populations",
                 "url": f"{app_url}study-populations/",
                 "url_cleanup_list": reverse("epi:api:studypopulation-cleanup-list"),
-                "modal_key": "Study Populations",
+                "modal_key": "StudyPopulation",
             }
         )
 
@@ -386,7 +386,7 @@ class Assessment(AssessmentViewset):
                 "type": "exposures",
                 "url": f"{app_url}exposures/",
                 "url_cleanup_list": reverse("epi:api:exposure-cleanup-list"),
-                "modal_key": "Exposures",
+                "modal_key": "Exposure",
             }
         )
 
@@ -436,7 +436,7 @@ class Assessment(AssessmentViewset):
                 "type": "reference",
                 "url": f"{app_url}reference/",
                 "url_cleanup_list": reverse("lit:api:reference-cleanup-list"),
-                "modal_key": "Reference",
+                "modal_key": "Study",
             }
         )
 

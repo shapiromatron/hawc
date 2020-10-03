@@ -1,6 +1,8 @@
 import Endpoint from "animal/Endpoint";
 import Experiment from "animal/Experiment";
 import AnimalGroup from "animal/AnimalGroup";
+import StudyPopulation from "epi/StudyPopulation";
+import Exposure from "epi/Exposure";
 import Outcome from "epi/Outcome";
 import MetaResult from "epimeta/MetaResult";
 import IVEndpoint from "invitro/IVEndpoint";
@@ -11,6 +13,8 @@ const modalClasses = {
         Endpoint,
         Experiment,
         AnimalGroup,
+        StudyPopulation,
+        Exposure,
         Outcome,
         MetaResult,
         IVEndpoint,

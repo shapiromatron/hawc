@@ -15,7 +15,6 @@ class TextCleanupStore {
 
     constructor(config) {
         this.config = config;
-        window.store = this;
     }
 
     @action.bound loadAssessmentMetadata() {
@@ -66,6 +65,33 @@ class TextCleanupStore {
             })
             .catch(ex => console.error("Loading objects failed", ex));
     }
+    @action.bound submitPatch(ids, payload, groupStore) {
+        const url = `${this.selectedModel.url_cleanup_list}?assessment_id=${
+                this.config.assessment_id
+            }&ids=${ids.join(",")}`,
+            opts = h.fetchBulk(this.config.csrf, payload, "PATCH");
+
+        fetch(url, opts)
+            .then(response => {
+                if (response.ok) {
+                    groupStore.reset();
+                    this.updateObjects(ids, payload);
+                }
+            })
+            .catch(ex => console.error("Patch failed", ex));
+    }
+    @action.bound updateObjects(ids, payload) {
+        const setIds = new Set(ids);
+        this.objects
+            .filter(obj => setIds.has(obj.id))
+            .forEach(obj => {
+                _.each(payload, (value, key) => {
+                    if (obj[key] !== undefined) {
+                        obj[key] = value;
+                    }
+                });
+            });
+    }
 
     @computed get groupedObjects() {
         // group objects by the field to be edited.
@@ -97,7 +123,12 @@ class GroupStore {
     }
 
     @action.bound submitChanges() {
-        console.warn("changes submitted!");
+        const ids = this.expanded ? [...this.selectedObjects] : this.objects.map(d => d.id),
+            payload = {};
+        payload[this.fieldName] = this.editValue;
+        if (ids.length > 0) {
+            this.rootStore.submitPatch(ids, payload, this);
+        }
     }
     @action.bound toggleExpanded() {
         this.expanded = !this.expanded;
@@ -115,6 +146,10 @@ class GroupStore {
         } else {
             this.selectedObjects.add(id);
         }
+    }
+    @action.bound reset() {
+        this.expanded = false;
+        this.selectedObjects = new Set();
     }
 
     @computed get allItemsSelected() {
