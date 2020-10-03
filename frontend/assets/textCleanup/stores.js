@@ -33,9 +33,7 @@ class TextCleanupStore {
         this.modelCleanupFields = null;
         this.selectedField = null;
 
-        const url = `${this.config[model.type].url}fields/?assessment_id=${
-            this.config.assessment_id
-        }`;
+        const url = `${model.url_cleanup_list}fields/?assessment_id=${this.config.assessment_id}`;
         fetch(url, h.fetchGet)
             .then(response => response.json())
             .then(json => {
@@ -58,7 +56,7 @@ class TextCleanupStore {
     @action.bound fetchObjects() {
         this.isLoadingObjects = true;
         this.objects = null;
-        const baseUrl = this.config[this.selectedModel.type].url,
+        const baseUrl = this.selectedModel.url_cleanup_list,
             url = `${baseUrl}?assessment_id=${this.config.assessment_id}`;
         fetch(url, h.fetchGet)
             .then(response => response.json())
@@ -79,4 +77,34 @@ class TextCleanupStore {
             .value();
     }
 }
-export default TextCleanupStore;
+
+class GroupStore {
+    @observable objects = [];
+    @observable expanded = false;
+    @observable expandedSelected = [];
+    @observable currentValue = "";
+    @observable editValue = "";
+
+    constructor(rootStore, objects, model, fieldName) {
+        // non-observable
+        this.rootStore = rootStore;
+        this.model = model;
+        this.fieldName = fieldName;
+        // observable
+        this.objects = objects;
+        this.currentValue = this.objects[0][fieldName];
+        this.editValue = this.currentValue;
+    }
+
+    @action.bound submitChanges() {
+        console.log("changes submitted!");
+    }
+    @action.bound toggleExpanded() {
+        this.expanded = !this.expanded;
+    }
+    @action.bound updateValue(newValue) {
+        this.editValue = newValue;
+    }
+}
+
+export {GroupStore, TextCleanupStore};

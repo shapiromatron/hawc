@@ -8,6 +8,8 @@ import h from "shared/utils/helpers";
 import Breadcrumbs from "./Breadcrumbs";
 import GroupedObjectList from "./GroupedObjectList";
 
+import "./App.css";
+
 @inject("store")
 @observer
 class App extends Component {

@@ -2,6 +2,8 @@ import React, {Component} from "react";
 import PropTypes from "prop-types";
 import {inject, observer} from "mobx-react";
 
+import {GroupStore} from "./stores";
+import GroupedObject from "./GroupedObject";
 import h from "shared/utils/helpers";
 
 @inject("store")
@@ -19,12 +21,14 @@ class GroupedObjectList extends Component {
                     <span className="bulk-header span2">Submit</span>
                 </div>
                 {store.groupedObjects.map(items => {
-                    const key = items[0][store.selectedField] || "<empty>";
-                    return (
-                        <p key={key}>
-                            {key}: {items.length}
-                        </p>
-                    );
+                    const key = items[0][store.selectedField] || "<empty>",
+                        groupStore = new GroupStore(
+                            store,
+                            items,
+                            store.selectedModel,
+                            store.selectedField
+                        );
+                    return <GroupedObject key={key} store={groupStore} />;
                 })}
             </div>
         );

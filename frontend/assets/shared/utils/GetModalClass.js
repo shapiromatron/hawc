@@ -8,20 +8,17 @@ import IVChemical from "invitro/IVChemical";
 import Study from "study/Study";
 
 const modalClasses = {
-    Endpoint,
-    Experiment,
-    AnimalGroup,
-    Outcome,
-    MetaResult,
-    IVEndpoint,
-    IVChemical,
-    Study,
-};
-
-class GetModalClass {
-    getClass(key) {
+        Endpoint,
+        Experiment,
+        AnimalGroup,
+        Outcome,
+        MetaResult,
+        IVEndpoint,
+        IVChemical,
+        Study,
+    },
+    getModalClass = function(key) {
         return modalClasses[key];
-    }
-}
+    };
 
-export default GetModalClass;
+export default getModalClass;
