@@ -1,15 +1,21 @@
-import _ from "lodash";
 import React, {Component} from "react";
 import PropTypes from "prop-types";
 import {inject, observer} from "mobx-react";
 
 import Loading from "shared/components/Loading";
+import Breadcrumbs from "./Breadcrumbs";
 
-import h from "textCleanup/utils/helpers";
+import h from "shared/utils/helpers";
 
 @inject("store")
 @observer
 class App extends Component {
+    constructor(props) {
+        super(props);
+        this.renderCleanupField = this.renderCleanupField.bind(this);
+        this.renderSelectField = this.renderSelectField.bind(this);
+        this.renderAssessmentMetadata = this.renderAssessmentMetadata.bind(this);
+    }
     componentDidMount() {
         this.props.store.loadAssessmentMetadata();
     }
@@ -20,15 +26,54 @@ class App extends Component {
             return <Loading />;
         }
 
-        if (store.cleanupField) {
-            return; // load field
+        let func;
+        if (store.selectedField) {
+            func = this.renderCleanupField;
+        } else if (store.selectedModel) {
+            func = this.renderSelectField;
+        } else {
+            func = this.renderAssessmentMetadata;
         }
-
-        if (store.cleanupModel) {
-            return; // load model
-        }
-
-        // else load assessment root
+        return (
+            <div>
+                <Breadcrumbs />
+                {func()}
+            </div>
+        );
+    }
+    renderCleanupField() {
+        const {store} = this.props;
+        return (
+            <div>
+                <h2>
+                    Cleanup {h.titleCase(store.selectedModel.title)} →{" "}
+                    {h.titleCase(store.selectedField)}
+                </h2>
+                <Loading />
+            </div>
+        );
+    }
+    renderSelectField() {
+        const {store} = this.props;
+        return (
+            <div>
+                <h2>Cleanup {h.titleCase(store.selectedModel.title)}</h2>
+                {store.modelCleanupFields ? (
+                    <ul>
+                        {store.modelCleanupFields.map(field => (
+                            <li key={field}>
+                                <a href="#" onClick={() => store.selectField(field)}>
+                                    {field}
+                                </a>
+                            </li>
+                        ))}
+                    </ul>
+                ) : null}
+            </div>
+        );
+    }
+    renderAssessmentMetadata() {
+        const {store} = this.props;
         return (
             <div>
                 <h2>Cleanup {store.assessmentMetadata.name}</h2>
@@ -43,7 +88,7 @@ class App extends Component {
                         .map(d => {
                             return (
                                 <li key={d.type}>
-                                    <a href="#" onClick={() => store.loadCleanupModel(d)}>
+                                    <a href="#" onClick={() => store.selectModel(d)}>
                                         {d.count}&nbsp;{d.title}
                                     </a>
                                 </li>
