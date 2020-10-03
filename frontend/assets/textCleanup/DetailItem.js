@@ -1,21 +1,26 @@
 import React, {Component} from "react";
 import PropTypes from "prop-types";
-import _ from "lodash";
+import {observer} from "mobx-react";
 
+import getModalClass from "shared/utils/getModalClass";
+
+@observer
 class DetailItem extends Component {
     render() {
-        let {fields, item} = this.props,
-            checked = _.includes(this.props.checkedRows, item.id);
+        let {store, item} = this.props;
         return (
             <div className="detail-stripe">
-                {_.map(fields, field => {
+                {store.fieldNames.map(field => {
                     return (
                         <span
                             key={field}
                             id={item.id}
                             className="detail-item"
-                            onClick={this.props.showModal}>
-                            {item[field] || "N/A"}
+                            onClick={() => {
+                                const modalClass = getModalClass(store.model.modal_key);
+                                modalClass.showModal(item.id);
+                            }}>
+                            {item[field] || "<empty>"}
                         </span>
                     );
                 })}
@@ -23,9 +28,8 @@ class DetailItem extends Component {
                     <input
                         type="checkbox"
                         title="Include/exclude selected object in change"
-                        checked={checked}
-                        id={item.id}
-                        onChange={this.props.onDetailChange}
+                        checked={store.selectedObjects.has(item.id)}
+                        onChange={() => store.toggleSelectItem(item.id)}
                     />
                 </span>
             </div>
@@ -34,11 +38,8 @@ class DetailItem extends Component {
 }
 
 DetailItem.propTypes = {
-    onDetailChange: PropTypes.func.isRequired,
-    showModal: PropTypes.func.isRequired,
-    checkedRows: PropTypes.array,
     item: PropTypes.object.isRequired,
-    fields: PropTypes.array.isRequired,
+    store: PropTypes.object.isRequired,
 };
 
 export default DetailItem;

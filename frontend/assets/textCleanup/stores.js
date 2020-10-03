@@ -81,7 +81,7 @@ class TextCleanupStore {
 class GroupStore {
     @observable objects = [];
     @observable expanded = false;
-    @observable expandedSelected = [];
+    @observable selectedObjects = new Set();
     @observable currentValue = "";
     @observable editValue = "";
 
@@ -97,13 +97,34 @@ class GroupStore {
     }
 
     @action.bound submitChanges() {
-        console.log("changes submitted!");
+        console.warn("changes submitted!");
     }
     @action.bound toggleExpanded() {
         this.expanded = !this.expanded;
     }
     @action.bound updateValue(newValue) {
         this.editValue = newValue;
+    }
+    @action.bound toggleSelectAll() {
+        const ids = this.allItemsSelected ? [] : this.objects.map(d => d.id);
+        this.selectedObjects = new Set(ids);
+    }
+    @action.bound toggleSelectItem(id) {
+        if (this.selectedObjects.has(id)) {
+            this.selectedObjects.delete(id);
+        } else {
+            this.selectedObjects.add(id);
+        }
+    }
+
+    @computed get allItemsSelected() {
+        return this.selectedObjects.size === this.objects.length;
+    }
+    @computed get fieldNames() {
+        return _.chain(this.objects[0])
+            .omit(["id", "ids", "field", "showDetails"])
+            .keys()
+            .value();
     }
 }
 

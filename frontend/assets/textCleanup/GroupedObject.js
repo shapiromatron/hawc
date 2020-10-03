@@ -2,16 +2,10 @@ import React, {Component} from "react";
 import PropTypes from "prop-types";
 import {observer} from "mobx-react";
 
-import DetailList from "./components/Items/DetailList";
-import getModalClass from "shared/utils/getModalClass";
+import DetailList from "./DetailList";
 
 @observer
 class GroupedObject extends Component {
-    constructor(props) {
-        super(props);
-        console.log(props.store.model);
-        this.modalClass = getModalClass(props.store.model.modal_key);
-    }
     render() {
         let {store} = this.props;
         return (
@@ -45,17 +39,7 @@ class GroupedObject extends Component {
                         {store.expanded ? "Submit selected items" : "Submit bulk edit"}
                     </button>
                 </span>
-                {store.expanded ? (
-                    <p>DETAIL LIST</p>
-                ) : // <DetailList
-                //     checkedRows={this.state.detailIDs}
-                //     items={store.objects}
-                //     onDetailChange={this.onDetailChange}
-                //     showModal={id => {
-                //         this.modalClass.displayAsModal(id);
-                //     }}
-                // />
-                null}
+                {store.expanded ? <DetailList store={store} /> : null}
             </div>
         );
     }
