@@ -3,8 +3,10 @@ import PropTypes from "prop-types";
 import {inject, observer} from "mobx-react";
 
 import Loading from "shared/components/Loading";
-import Breadcrumbs from "./Breadcrumbs";
 import h from "shared/utils/helpers";
+
+import Breadcrumbs from "./Breadcrumbs";
+import GroupedObjectList from "./GroupedObjectList";
 
 @inject("store")
 @observer
@@ -49,7 +51,7 @@ class App extends Component {
                     {h.titleCase(store.selectedField)}
                 </h2>
                 {store.isLoadingObjects ? <Loading /> : null}
-                {store.objects ? <p>{store.objects.length}</p> : null}
+                {store.objects ? <GroupedObjectList /> : null}
             </div>
         );
     }

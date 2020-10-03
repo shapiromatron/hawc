@@ -1,4 +1,6 @@
-import {action, observable} from "mobx";
+import _ from "lodash";
+import {action, computed, toJS, observable} from "mobx";
+
 import h from "shared/utils/helpers";
 
 class TextCleanupStore {
@@ -65,6 +67,16 @@ class TextCleanupStore {
                 this.objects = json;
             })
             .catch(ex => console.error("Loading objects failed", ex));
+    }
+
+    @computed get groupedObjects() {
+        // group objects by the field to be edited.
+        const field = this.selectedField,
+            objects = toJS(this.objects);
+        return _.chain(objects)
+            .groupBy(item => item[field])
+            .sortBy(item => item[0][field])
+            .value();
     }
 }
 export default TextCleanupStore;
