@@ -4,7 +4,6 @@ import {inject, observer} from "mobx-react";
 
 import Loading from "shared/components/Loading";
 import Breadcrumbs from "./Breadcrumbs";
-
 import h from "shared/utils/helpers";
 
 @inject("store")
@@ -49,7 +48,8 @@ class App extends Component {
                     Cleanup {h.titleCase(store.selectedModel.title)} →{" "}
                     {h.titleCase(store.selectedField)}
                 </h2>
-                <Loading />
+                {store.isLoadingObjects ? <Loading /> : null}
+                {store.objects ? <p>{store.objects.length}</p> : null}
             </div>
         );
     }

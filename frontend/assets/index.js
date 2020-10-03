@@ -1,5 +1,5 @@
 import nestedTagEditorStartup from "nestedTagEditor";
 import smartTagsStartup from "smartTags/split";
-import {textCleanupStartup1, textCleanupStartup2} from "textCleanup";
+import textCleanupStartup from "textCleanup";
 
-export {nestedTagEditorStartup, smartTagsStartup, textCleanupStartup1, textCleanupStartup2};
+export {nestedTagEditorStartup, smartTagsStartup, textCleanupStartup};

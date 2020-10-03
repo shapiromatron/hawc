@@ -8,8 +8,12 @@ class TextCleanupStore {
     @observable modelCleanupFields = null;
     @observable selectedField = null;
 
+    @observable isLoadingObjects = false;
+    @observable objects = null;
+
     constructor(config) {
         this.config = config;
+        window.store = this;
     }
 
     @action.bound loadAssessmentMetadata() {
@@ -34,6 +38,7 @@ class TextCleanupStore {
             .then(response => response.json())
             .then(json => {
                 this.modelCleanupFields = json.text_cleanup_fields;
+                this.fetchObjects();
             })
             .catch(ex => console.error("Assessment parsing failed", ex));
     }
@@ -47,6 +52,19 @@ class TextCleanupStore {
     }
     @action.bound clearField() {
         this.selectedField = null;
+    }
+    @action.bound fetchObjects() {
+        this.isLoadingObjects = true;
+        this.objects = null;
+        const baseUrl = this.config[this.selectedModel.type].url,
+            url = `${baseUrl}?assessment_id=${this.config.assessment_id}`;
+        fetch(url, h.fetchGet)
+            .then(response => response.json())
+            .then(json => {
+                this.isLoadingObjects = false;
+                this.objects = json;
+            })
+            .catch(ex => console.error("Loading objects failed", ex));
     }
 }
 export default TextCleanupStore;
