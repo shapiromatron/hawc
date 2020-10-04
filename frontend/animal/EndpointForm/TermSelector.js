@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import {inject, observer} from "mobx-react";
 
 import {termUrlLookup, textUrlLookup} from "./constants";
-import {VOCAB_TEXT, NO_VOCAB} from "../../vocab/constants";
+import {VOCAB_HELP_TEXT, NO_VOCAB_HELP_TEXT} from "../../vocab/constants";
 import h from "shared/utils/helpers";
 import AutocompleteSelectableText from "shared/components/AutocompleteSelectableText";
 import AutocompleteTerm from "shared/components/AutocompleteTerm";
@@ -71,7 +71,7 @@ class TermSelector extends Component {
                             store.setObjectField(termIdField, id);
                             store.setObjectField(termTextField, text);
                         }}
-                        placeholder={VOCAB_TEXT[vocabulary]}
+                        placeholder={VOCAB_HELP_TEXT[vocabulary]}
                         currentId={currentId}
                         currentText={currentText}
                         parentId={object[parentIdField]}
@@ -86,7 +86,7 @@ class TermSelector extends Component {
                             store.setObjectField(termTextField, text);
                         }}
                         value={currentText}
-                        placeholder={NO_VOCAB}
+                        placeholder={NO_VOCAB_HELP_TEXT}
                     />
                 )}
                 {object[termIdField] ? (
