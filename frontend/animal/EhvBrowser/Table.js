@@ -7,6 +7,24 @@ const MAX_ROWS = 150;
 @inject("store")
 @observer
 class Table extends Component {
+    highlight(text) {
+        // Highlights portion of the given text that matches the query.
+        const {query} = this.props.store,
+            index =
+                query.length === 0
+                    ? -1
+                    : text.toLocaleLowerCase().indexOf(query.toLocaleLowerCase());
+        if (index === -1) {
+            return text;
+        }
+        return (
+            <span>
+                {text.slice(0, index)}
+                <mark>{text.slice(index, index + query.length)}</mark>
+                {text.slice(index + query.length, text.length)}
+            </span>
+        );
+    }
     render() {
         const {filteredDataset} = this.props.store;
         return (
@@ -39,27 +57,27 @@ class Table extends Component {
                                 <tr key={d._key}>
                                     <td>
                                         <span className="label label-mini">{d.system_id}</span>
-                                        &nbsp;{d.system}
+                                        &nbsp;{this.highlight(d.system)}
                                     </td>
                                     <td>
                                         <span className="label label-mini">{d.organ_id}</span>
-                                        &nbsp;{d.organ}
+                                        &nbsp;{this.highlight(d.organ)}
                                     </td>
                                     <td>
                                         <span className="label label-mini">{d.effect_id}</span>
-                                        &nbsp;{d.effect}
+                                        &nbsp;{this.highlight(d.effect)}
                                     </td>
                                     <td>
                                         <span className="label label-mini">
                                             {d.effect_subtype_id}
                                         </span>
-                                        &nbsp;{d.effect_subtype}
+                                        &nbsp;{this.highlight(d.effect_subtype)}
                                     </td>
                                     <td>
                                         <span className="label label-mini">
                                             {d.endpoint_name_id}
                                         </span>
-                                        &nbsp;{d.endpoint_name}
+                                        &nbsp;{this.highlight(d.endpoint_name)}
                                     </td>
                                 </tr>
                             ))}
