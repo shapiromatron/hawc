@@ -115,6 +115,13 @@ class AssessmentLevelPermissions(permissions.BasePermission):
         return True
 
 
+class AssessmentReadPermissions(AssessmentLevelPermissions):
+    def has_object_permission(self, request, view, obj):
+        if not hasattr(view, "assessment"):
+            view.assessment = obj.get_assessment()
+        return view.assessment.user_can_view_object(request.user)
+
+
 class InAssessmentFilter(filters.BaseFilterBackend):
     """
     Filter objects which are in a particular assessment.
