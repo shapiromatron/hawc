@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import {inject, observer} from "mobx-react";
 
 import {termUrlLookup, textUrlLookup} from "./constants";
+import {VOCAB_TEXT, NO_VOCAB} from "../../vocab/constants";
 import h from "shared/utils/helpers";
 import AutocompleteSelectableText from "shared/components/AutocompleteSelectableText";
 import AutocompleteTerm from "shared/components/AutocompleteTerm";
@@ -29,7 +30,7 @@ class TermSelector extends Component {
                 store,
                 parentRequired,
             } = this.props,
-            {object, debug} = store.config,
+            {object, debug, vocabulary} = store.config,
             useControlledVocabulary = store.useControlledVocabulary[termTextField],
             currentId = object[termIdField],
             currentText = object[termTextField];
@@ -70,7 +71,7 @@ class TermSelector extends Component {
                             store.setObjectField(termIdField, id);
                             store.setObjectField(termTextField, text);
                         }}
-                        placeholder={"(controlled vocab.)"}
+                        placeholder={VOCAB_TEXT[vocabulary]}
                         currentId={currentId}
                         currentText={currentText}
                         parentId={object[parentIdField]}
@@ -85,7 +86,7 @@ class TermSelector extends Component {
                             store.setObjectField(termTextField, text);
                         }}
                         value={currentText}
-                        placeholder={"(semi-controlled vocab.)"}
+                        placeholder={NO_VOCAB}
                     />
                 )}
                 {object[termIdField] ? (
