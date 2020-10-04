@@ -1,10 +1,10 @@
 from datetime import timedelta
 
+from django.apps import apps
 from django.contrib import admin, messages
 from django.utils import timezone
 from django.utils.html import format_html
 
-from ..lit.models import ReferenceFilterTag, ReferenceTags
 from . import models
 
 
@@ -48,15 +48,15 @@ class AssessmentAdmin(admin.ModelAdmin):
             )
             return
         assessment = queryset.first()
-        root = ReferenceFilterTag.get_assessment_root(assessment.id)
-        # queryset of tag tree associated with assessment
-        filter_tags = ReferenceFilterTag.get_tree(root)
-        # queryset of tags associated with assessment
-        tags = ReferenceTags.objects.filter(content_object__assessment_id=assessment.id)
         # delete tags that are not in the assessment tag tree
-        deleted, _ = tags.exclude(tag__in=filter_tags).delete()
-        # send a message with number deleted
-        self.message_user(request, f"Deleted {deleted} of {deleted+tags.count()} reference tags.")
+        ReferenceTags = apps.get_model("lit", "ReferenceTags")
+        deleted, log_id = ReferenceTags.objects.delete_orphan_tags(assessment.id)
+        # send a message with number deleted & log id
+        tags = ReferenceTags.objects.get_assessment_qs(assessment.id)
+        self.message_user(
+            request,
+            f"Deleted {deleted} of {deleted+tags.count()} reference tags. Details can be found at Log {log_id}.",
+        )
 
     def get_staff_ul(self, mgr):
         ul = ["<ul>"]
