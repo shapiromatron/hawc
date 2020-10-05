@@ -507,8 +507,6 @@ class UpdateSession(View):
             return HttpResponseNotAllowed(["POST"])
         if request.POST.get("hideSidebar"):
             request.session["hideSidebar"] = self.isTruthy(request, "hideSidebar")
-        if request.POST.get("hideBrowserWarning"):
-            request.session["hideBrowserWarning"] = self.isTruthy(request, "hideBrowserWarning")
         return HttpResponse(True)
 
 
