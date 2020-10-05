@@ -420,14 +420,12 @@ class Study(Reference):
 
     def user_can_edit_study(self, assessment, user):
         # TODO - remove, or user super()? this is almost already implemented with standard methods?
-        if user.is_superuser:
+        if user.is_superuser or user in assessment.project_manager.all():
             return True
         elif user.is_anonymous:
             return False
         else:
-            return self.editable and (
-                user in assessment.project_manager.all() or user in assessment.team_members.all()
-            )
+            return self.editable and user in assessment.team_members.all()
 
     @classmethod
     def delete_cache(cls, assessment_id: int, delete_reference_cache: bool = True):
@@ -468,6 +466,9 @@ class Attachment(models.Model):
 
     def get_assessment(self):
         return self.study.assessment
+
+    def get_study(self):
+        return self.study
 
 
 reversion.register(Study)
