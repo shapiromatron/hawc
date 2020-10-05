@@ -1,7 +1,6 @@
 {% extends 'portal.html' %}
 
-
-{% block title %}{{assessment}} | Endpoints | HAWC {% endblock title %}
+{% block title %}{{assessment}} | Clean extracted data | HAWC {% endblock title %}
 
 {% block breadcrumbs %}
   <li><a href="{% url 'assessment:detail' pk=assessment.id %}">{{ assessment }}</a><span class="divider">/</span></li>
@@ -17,57 +16,14 @@
     {
         "assessment_id": "{{ assessment.id }}",
         "assessment": "{% url 'assessment:api:assessment-endpoints' assessment.id %}",
-        "epi": {
-          "url": "{% url 'epi:api:outcome-cleanup-list' %}",
-          "title": "Outcome"
-        },
-        "study-populations": {
-          "url": "{% url 'epi:api:studypopulation-cleanup-list' %}",
-          "title": "Study Populations"
-        },
-        "exposures": {
-          "url": "{% url 'epi:api:exposure-cleanup-list' %}",
-          "title": "Exposures"
-        },
-        "ani": {
-          "url": "{% url 'animal:api:endpoint-cleanup-list' %}",
-          "title": "Endpoint"
-        },
-        "experiment": {
-          "url": "{% url 'animal:api:experiment-cleanup-list' %}",
-          "title": "Experiment"
-        },
-        "animal-groups": {
-          "url": "{% url 'animal:api:animal_group-cleanup-list' %}",
-          "title": "AnimalGroup"
-        },
-        "dosing-regime": {
-          "url": "{% url 'animal:api:dosingregime-cleanup-list' %}",
-          "title": "Dosing Regime"
-        },
-        "in-vitro": {
-          "url": "{% url 'invitro:api:ivendpoint-cleanup-list' %}",
-          "title": "IVEndpoint"
-        },
-        "in-vitro-chemical": {
-          "url": "{% url 'invitro:api:ivchemical-cleanup-list' %}",
-          "title": "IVChemical"
-        },
-        "study": {
-          "url": "{% url 'study:api:study-cleanup-list' %}",
-          "title": "Study"
-        },
-        "reference": {
-          "url": "{% url 'lit:api:reference-cleanup-list' %}",
-          "title": "Reference"
-        },
-        "csrf": "{{ csrf_token }}",
-        "host": "//{{request.get_host}}"
+        "csrf": "{{ csrf_token }}"
     }
 </script>
 <script type="text/javascript">
 $(document).ready(function(){
-  window.app.textCleanupStartup(document.getElementById('root'));
+  const el = document.getElementById('root'),
+    config = JSON.parse(document.getElementById('config').text);
+  window.app.textCleanupStartup(el, config);
 });
 </script>
 {% endblock extrajs %}
