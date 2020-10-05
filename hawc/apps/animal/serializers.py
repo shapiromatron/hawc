@@ -297,6 +297,16 @@ class EndpointSerializer(serializers.ModelSerializer):
         return ret
 
     def _validate_term(self, value, non_term_attr: str, type_attr: str):
+        # Term namespace must match assessment
+        if not hasattr(self, "assessment"):
+            animal_group = get_matching_instance(
+                models.AnimalGroup, self.initial_data, "animal_group_id"
+            )
+            self.assessment = animal_group.get_assessment()
+        if self.assessment.vocabulary != value.namespace:
+            raise serializers.ValidationError(
+                f"Assessment vocabulary ({self.assessment.vocabulary}) does not match term namespace ({value.namespace})."
+            )
         # Term type must match
         type = getattr(VocabularyTermType, type_attr)
         if value.type != type:
