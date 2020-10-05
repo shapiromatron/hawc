@@ -12,6 +12,7 @@ from ..common.helper import SerializerHelper
 from ..common.serializers import get_matching_instance, get_matching_instances
 from ..study.models import Study
 from ..study.serializers import StudySerializer
+from ..vocab.models import VocabularyTermType
 from . import forms, models
 
 
@@ -294,6 +295,37 @@ class EndpointSerializer(serializers.ModelSerializer):
                 ret["bmd_url"] = instance.bmd_sessions.latest().get_absolute_url()
 
         return ret
+
+    def _validate_term(self, value, non_term_attr: str, type_attr: str):
+        # Term type must match
+        type = getattr(VocabularyTermType, type_attr)
+        if value.type != type:
+            raise serializers.ValidationError(
+                f"Got term type '{value.type}', expected type '{type}'."
+            )
+        # Term overrides its non-term counterpart,
+        # so non-term cannot be set at the same time
+        non_term = self.initial_data.get(non_term_attr)
+        if non_term is not None:
+            raise serializers.ValidationError(
+                f"'{non_term}' and '{non_term}_term' are mutually exclusive"
+            )
+        return value
+
+    def validate_system_term(self, value):
+        return self._validate_term(value, "system", "system")
+
+    def validate_organ_term(self, value):
+        return self._validate_term(value, "organ", "organ")
+
+    def validate_effect_term(self, value):
+        return self._validate_term(value, "effect", "effect")
+
+    def validate_effect_subtype_term(self, value):
+        return self._validate_term(value, "effect_subtype", "effect_subtype")
+
+    def validate_name_term(self, value):
+        return self._validate_term(value, "name", "endpoint_name")
 
     def validate(self, data):
         # Validate parent object
