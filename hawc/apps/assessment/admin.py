@@ -1,6 +1,7 @@
 from datetime import timedelta
 
-from django.contrib import admin
+from django.apps import apps
+from django.contrib import admin, messages
 from django.utils import timezone
 from django.utils.html import format_html
 
@@ -33,11 +34,29 @@ class AssessmentAdmin(admin.ModelAdmin):
         "reviewers__last_name",
     )
 
-    actions = (bust_cache,)
+    actions = (bust_cache, "delete_orphan_tags")
 
     def queryset(self, request):
         qs = super().queryset(request)
         return qs.prefetch_related("project_manager", "team_members", "reviewers")
+
+    def delete_orphan_tags(self, request, queryset):
+        # Action can only be run on one assessment at a time
+        if queryset.count() != 1:
+            self.message_user(
+                request, f"Select only one item to perform the action on.", level=messages.WARNING
+            )
+            return
+        assessment = queryset.first()
+        # delete tags that are not in the assessment tag tree
+        ReferenceTags = apps.get_model("lit", "ReferenceTags")
+        deleted, log_id = ReferenceTags.objects.delete_orphan_tags(assessment.id)
+        # send a message with number deleted & log id
+        tags = ReferenceTags.objects.get_assessment_qs(assessment.id)
+        self.message_user(
+            request,
+            f"Deleted {deleted} of {deleted+tags.count()} reference tags. Details can be found at Log {log_id}.",
+        )
 
     def get_staff_ul(self, mgr):
         ul = ["<ul>"]
@@ -55,6 +74,8 @@ class AssessmentAdmin(admin.ModelAdmin):
 
     def get_reviewers(self, obj):
         return self.get_staff_ul(obj.reviewers)
+
+    delete_orphan_tags.short_description = "Delete orphaned tags"
 
     get_managers.short_description = "Managers"
     get_managers.allow_tags = True
