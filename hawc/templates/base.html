@@ -14,6 +14,7 @@
     <link id="favicon" href="{% static 'img/favicon-64.png' %}" rel="shortcut icon" sizes="64x64" />
     <link id="favicon" href="{% static 'img/favicon-32.png' %}" rel="shortcut icon" sizes="32x32" />
     {% block extrahead %}{% endblock %}
+    {% block external_css %}
     {% if debug %}
       <link rel="stylesheet" type="text/css" href="{% static 'debug/font-awesome/css/font-awesome.css' %}" />
       <link rel="stylesheet" type="text/css" href="{% static 'debug/twitter-bootstrap/2.2.2/css/bootstrap.css' %}" />
@@ -25,6 +26,7 @@
       <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.2.2/css/bootstrap-responsive.min.css" />
       <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.3/css/base/minified/jquery-ui.min.css" />
     {% endif %}
+    {% endblock external_css %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/hawc.css' %}" />
     <link rel="stylesheet" type="text/css" href="{% static 'css/d3.css' %}" />
     <link rel="stylesheet" type="text/css" href="{% static 'css/flex.css' %}" />
@@ -125,12 +127,12 @@
         </script>
       {% endblock google_analytics %}
     {% endif %}
-    <script type="text/javascript" src="{% static 'js/compatibility.js' %}"></script>
-    <script type="text/javascript" id="browserCheck">
-      if (supportedBrowserCheck) {
-        supportedBrowserCheck();
-      }
+    {% block browser_check %}
+    <script type="text/javascript" src="{% static 'js/browserCheck.js' %}"></script>
+    <script type="text/javascript">
+      supportedBrowserCheck();
     </script>
+    {% endblock browser_check %}
     {% render_bundle 'main' %}
     {% block extrajs %}{% endblock %}
     {% block portaljs %}{% endblock %}

@@ -15,9 +15,11 @@ body {
 {{css|safe}}
 {% endblock %}
 
-{% block navbar_outer %}
-{% endblock %}
-
 {% block content_outer %}
 {{svg|safe}}
-{% endblock %}
+{% endblock extrastyle %}
+
+{% comment "Don't load content in the following blocks" %}{% endcomment %}
+{% block external_css %}{% endblock external_css %}
+{% block navbar_outer %}{% endblock navbar_outer %}
+{% block browser_check %}{% endblock browser_check %}
