@@ -2,8 +2,8 @@ from typing import Dict, List
 
 import pandas as pd
 from django.db import models
-from django.utils.decorators import classproperty
 from django.urls import reverse
+from django.utils.decorators import classproperty
 from reversion import revisions as reversion
 
 from ..common.models import IntChoiceEnum
