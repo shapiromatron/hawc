@@ -13,11 +13,11 @@ body {
 }
 </style>
 {{css|safe}}
-{% endblock %}
+{% endblock extrastyle %}
 
 {% block content_outer %}
 {{svg|safe}}
-{% endblock extrastyle %}
+{% endblock content_outer %}
 
 {% comment "Don't load content in the following blocks" %}{% endcomment %}
 {% block external_css %}{% endblock external_css %}
