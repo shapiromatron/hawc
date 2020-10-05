@@ -1,11 +1,16 @@
-import {splitStartupRedux} from "utils/WebpackSplit";
+import React from "react";
+import ReactDOM from "react-dom";
+import {Provider} from "mobx-react";
 
-const startup = function(element) {
-    import("textCleanup/containers/Root").then(Component => {
-        import("textCleanup/store/configureStore").then(store => {
-            splitStartupRedux(element, Component.default, store.default);
-        });
-    });
-};
+import {TextCleanupStore} from "./stores";
+import App from "./App";
 
-export default startup;
+export default function(el, config) {
+    const store = new TextCleanupStore(config);
+    ReactDOM.render(
+        <Provider store={store}>
+            <App />
+        </Provider>,
+        el
+    );
+}

@@ -132,7 +132,7 @@ const helpers = {
     titleCase(string) {
         // convert lower case "reference id " -> "Reference ID"
         // special case acronyms include:
-        // ID, HAWC, HERO, NOEL (and NEL/NOAEL, FEL, LEL variants) and BMD (BMDL/U)
+        // ID, HAWC, HERO, URL, NOEL (and NEL/NOAEL, FEL, LEL variants), and BMD (BMDL/U)
         return string
             .toLowerCase()
             .replace(/[_-]/g, " ")
@@ -141,7 +141,9 @@ const helpers = {
                     ? match
                     : match.charAt(0).toUpperCase() + match.substr(1).toLowerCase();
             })
-            .replace(/\b(?:id|hawc|hero|[nfl]o?a?el|bmd[lu]?)\b/gi, match => match.toUpperCase());
+            .replace(/\b(?:id|hawc|hero|url|[nfl]o?a?el|bmd[lu]?)\b/gi, match =>
+                match.toUpperCase()
+            );
     },
     hideRobScore(assessment_id) {
         // TODO - remove 100500031 hack

@@ -709,7 +709,6 @@ class Endpoint(BaseEndpoint):
         "response_units",
         "statistical_test",
         "diagnostic",
-        "data_location",
         "trend_value",
         "results_notes",
         "endpoint_notes",
