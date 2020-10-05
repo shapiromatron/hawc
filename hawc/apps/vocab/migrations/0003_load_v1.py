@@ -71,7 +71,7 @@ def bulk_delete(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("vocab", "0001_initial"),
+        ("vocab", "0002_review"),
     ]
 
     operations = [
