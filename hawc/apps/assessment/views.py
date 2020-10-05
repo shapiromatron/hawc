@@ -577,6 +577,16 @@ class AdminAssessmentSize(TemplateView):
         return super().dispatch(*args, **kwargs)
 
 
+class Healthcheck(View):
+    """
+    Healthcheck view check; ensure django server can serve requests.
+    """
+
+    def get(self, request, *args, **kwargs):
+        # TODO - add cache check and celery worker check
+        return HttpResponse(json.dumps({"status": "ok"}), content_type="application/json")
+
+
 # log / blog
 class BlogList(ListView):
     model = models.Blog
