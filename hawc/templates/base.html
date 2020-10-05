@@ -127,7 +127,9 @@
     {% endif %}
     <script type="text/javascript" src="{% static 'js/compatibility.js' %}"></script>
     <script type="text/javascript" id="browserCheck">
-      supportedBrowserCheck();
+      if (supportedBrowserCheck) {
+        supportedBrowserCheck();
+      }
     </script>
     {% render_bundle 'main' %}
     {% block extrajs %}{% endblock %}
