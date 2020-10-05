@@ -1,9 +1,9 @@
 from datetime import timedelta
 from io import BytesIO
 
-from django.http import HttpResponse
 from django.apps import apps
 from django.contrib import admin, messages
+from django.http import HttpResponse
 from django.utils import timezone
 from django.utils.html import format_html
 
