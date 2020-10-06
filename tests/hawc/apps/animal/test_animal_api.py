@@ -481,6 +481,74 @@ class TestEndpointCreateApi:
         assert response.status_code == 201
         assert models.Endpoint.objects.filter(name=data["name"]).count() == 1
 
+    def test_endpoint_terms(self, db_keys):
+        url = reverse("animal:api:endpoint-list")
+        client = APIClient()
+        assert client.login(username="team@team.com", password="pw") is True
+
+        # valid request with one term
+        data = {
+            "name": "Endpoint name",
+            "animal_group_id": 1,
+            "data_type": "C",
+            "variance_type": 1,
+            "response_units": "μg/dL",
+            "system_term": 1,
+        }
+        response = client.post(url, data)
+        assert response.status_code == 201
+
+        # both term and non-term counterpart should be set
+        endpoints = models.Endpoint.objects.filter(system_term_id=1, system="Cardiovascular")
+        assert endpoints.count() == 1
+
+        # valid request with two terms
+        data = {
+            "name": "Endpoint name",
+            "animal_group_id": 1,
+            "data_type": "C",
+            "variance_type": 1,
+            "response_units": "μg/dL",
+            "system_term": 1,
+            "organ_term": 2,
+        }
+        response = client.post(url, data)
+        assert response.status_code == 201
+
+        endpoints = models.Endpoint.objects.filter(
+            system_term_id=1, system="Cardiovascular", organ_term_id=2, organ="Serum"
+        )
+        assert endpoints.count() == 1
+
+        # cannot set both term and non-term counterpart
+        data = {
+            "name": "Endpoint name",
+            "animal_group_id": 1,
+            "data_type": "C",
+            "variance_type": 1,
+            "response_units": "μg/dL",
+            "system": "Cardio",
+            "system_term": 1,
+        }
+        response = client.post(url, data)
+        assert response.status_code == 400
+        assert response.json() == {
+            "system_term": ["'system' and 'system_term' are mutually exclusive."]
+        }
+
+        # term types must match field
+        data = {
+            "name": "Endpoint name",
+            "animal_group_id": 1,
+            "data_type": "C",
+            "variance_type": 1,
+            "response_units": "μg/dL",
+            "system_term": 2,
+        }
+        response = client.post(url, data)
+        assert response.status_code == 400
+        assert response.json() == {"system_term": ["Got term type '2', expected type '1'."]}
+
     def test_endpoint_groups_create(self, db_keys):
         url = reverse("animal:api:endpoint-list")
         data = {

@@ -318,7 +318,7 @@ class EndpointSerializer(serializers.ModelSerializer):
         non_term = self.initial_data.get(non_term_attr)
         if non_term is not None:
             raise serializers.ValidationError(
-                f"'{non_term}' and '{non_term}_term' are mutually exclusive"
+                f"'{non_term_attr}' and '{non_term_attr}_term' are mutually exclusive."
             )
         return value
 
