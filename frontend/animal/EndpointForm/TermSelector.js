@@ -102,12 +102,6 @@ class TermSelector extends Component {
                                 &times;
                             </button>
                         </span>
-                        &nbsp;
-                        {/* <span
-                            className="label label-mini label-important"
-                            title="The text presented is different than the selected term">
-                            Modified
-                        </span> */}
                     </p>
                 ) : null}
                 {store.canUseControlledVocabulary ? (
