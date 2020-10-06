@@ -93,7 +93,10 @@ class CleanupFieldsBaseViewSet(
         Return field names available for cleanup.
         """
         cleanup_fields = self.model.TEXT_CLEANUP_FIELDS
-        return Response({"text_cleanup_fields": cleanup_fields})
+        TERM_FIELD_MAPPING = getattr(self.model, "TERM_FIELD_MAPPING", {})
+        return Response(
+            {"text_cleanup_fields": cleanup_fields, "term_field_mapping": TERM_FIELD_MAPPING}
+        )
 
     def post_save_bulk(self, queryset, update_bulk_dict):
         ids = list(queryset.values_list("id", flat=True))
