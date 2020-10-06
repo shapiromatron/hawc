@@ -1,6 +1,3 @@
-const VOCAB_HELP_TEXT = {
-        1: "EHV",
-    },
-    NO_VOCAB_HELP_TEXT = "Semi-controlled vocab";
+const NO_VOCAB_HELP_TEXT = "Free-text (autocomplete)";
 
-export {VOCAB_HELP_TEXT, NO_VOCAB_HELP_TEXT};
+export {NO_VOCAB_HELP_TEXT};
