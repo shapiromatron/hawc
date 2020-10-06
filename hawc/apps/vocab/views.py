@@ -42,14 +42,17 @@ class CreateComment(MessageMixin, CreateView):
         return super().form_valid(form)
 
 
+@method_decorator(login_required, name="dispatch")
 class CommentList(ListView):
     model = models.Comment
 
 
+@method_decorator(login_required, name="dispatch")
 class EntityTermList(ListView):
     model = models.EntityTermRelation
 
 
+@method_decorator(login_required, name="dispatch")
 class ProposedEntityTermList(ListView):
     model = models.EntityTermRelation
     template_name = "vocab/proposed_entitytermrelation_list.html"
@@ -58,5 +61,6 @@ class ProposedEntityTermList(ListView):
         return self.model.objects.filter(approved_on=None)
 
 
+@method_decorator(login_required, name="dispatch")
 class TermList(ListView):
     model = models.Term
