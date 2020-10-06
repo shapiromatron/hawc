@@ -1,7 +1,9 @@
-const getConfig = function(host, port) {
+const CaseSensitivePathsPlugin = require("case-sensitive-paths-webpack-plugin"),
+    getConfig = function(host, port) {
         var config = require("./webpack.base.js");
         config.devtool = "cheap-module-eval-source-map";
         config.output.publicPath = `http://${host}:${port}/dist/`;
+        config.plugins.push(new CaseSensitivePathsPlugin());
         return config;
     },
     express = require("express"),

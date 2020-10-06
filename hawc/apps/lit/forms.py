@@ -181,7 +181,11 @@ class ImportForm(SearchForm):
 
 class RisImportForm(SearchForm):
 
+    RIS_EXTENSION = 'File must have an ".ris" or ".txt" file-extension'
+    DOI_TOO_LONG = "DOI field too long on one or more references (length > 256)"
+    ID_MISSING = "ID field not found for all references"
     UNPARSABLE_RIS = "File cannot be successfully loaded. Are you sure this is a valid RIS file?  If you are, please contact us and we'll try to fix the issue."
+    NO_REFERENCES = "RIS formatted incorrectly; contains 0 references"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -233,28 +237,39 @@ class RisImportForm(SearchForm):
             raise forms.ValidationError("Input file must be <10 MB")
 
         if fileObj.name[-4:] not in (".txt", ".ris",):
-            raise forms.ValidationError('File must have an ".ris" or ".txt" file-extension')
+            raise forms.ValidationError(self.RIS_EXTENSION)
 
-        try:
-            # convert BytesIO file to StringIO file
-            with StringIO() as f:
-                f.write(fileObj.read().decode("utf-8-sig"))
-                f.seek(0)
-                fileObj.seek(0)
-                readable = ris.RisImporter.file_readable(f)
-
-        except KeyError as err:
-            raise forms.ValidationError(
-                """
-                Invalid key found: {}. Have you followed the instructions below
-                for RIS file preparation in Endnote? If you have, please contact
-                us and we'll try to fix the issue.""".format(
-                    err.message
-                )
-            )
+        # convert BytesIO file to StringIO file
+        with StringIO() as f:
+            f.write(fileObj.read().decode("utf-8-sig"))
+            f.seek(0)
+            fileObj.seek(0)
+            readable = ris.RisImporter.file_readable(f)
 
         if not readable:
             raise forms.ValidationError(self.UNPARSABLE_RIS)
+
+        # now check references
+        with StringIO() as f:
+            f.write(fileObj.read().decode("utf-8-sig"))
+            f.seek(0)
+            fileObj.seek(0)
+            try:
+                references = [ref for ref in ris.RisImporter(f).references]
+            except KeyError as err:
+                if "id" in err.args:
+                    raise forms.ValidationError(self.ID_MISSING)
+                else:
+                    raise err
+
+        # ensure at least one reference exists
+        if len(references) == 0:
+            raise forms.ValidationError(self.NO_REFERENCES)
+
+        # ensure the maximum DOI length < 256
+        doi_lengths = [len(ref.get("doi", "")) for ref in references if ref.get("doi") is not None]
+        if doi_lengths and max(doi_lengths) > 256:
+            raise forms.ValidationError(self.DOI_TOO_LONG)
 
         return fileObj
 
