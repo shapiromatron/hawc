@@ -1,6 +1,7 @@
 import React, {Component} from "react";
 import PropTypes from "prop-types";
 import {inject, observer} from "mobx-react";
+import h from "shared/utils/helpers";
 
 const MAX_ROWS = 150;
 
@@ -8,7 +9,16 @@ const MAX_ROWS = 150;
 @observer
 class Table extends Component {
     render() {
-        const {filteredDataset} = this.props.store;
+        const {filteredDataset, query} = this.props.store,
+            regex = new RegExp(h.escapeRegexString(query), "gi"),
+            highlightedSpan = text => (
+                <span
+                    dangerouslySetInnerHTML={{
+                        __html: text.replace(regex, match => `<mark>${match}</mark>`),
+                    }}
+                />
+            );
+
         return (
             <>
                 <p>
@@ -39,27 +49,32 @@ class Table extends Component {
                                 <tr key={d._key}>
                                     <td>
                                         <span className="label label-mini">{d.system_id}</span>
-                                        &nbsp;{d.system}
+                                        &nbsp;
+                                        {highlightedSpan(d.system)}
                                     </td>
                                     <td>
                                         <span className="label label-mini">{d.organ_id}</span>
-                                        &nbsp;{d.organ}
+                                        &nbsp;
+                                        {highlightedSpan(d.organ)}
                                     </td>
                                     <td>
                                         <span className="label label-mini">{d.effect_id}</span>
-                                        &nbsp;{d.effect}
+                                        &nbsp;
+                                        {highlightedSpan(d.effect)}
                                     </td>
                                     <td>
                                         <span className="label label-mini">
                                             {d.effect_subtype_id}
                                         </span>
-                                        &nbsp;{d.effect_subtype}
+                                        &nbsp;
+                                        {highlightedSpan(d.effect_subtype)}
                                     </td>
                                     <td>
                                         <span className="label label-mini">
                                             {d.endpoint_name_id}
                                         </span>
-                                        &nbsp;{d.endpoint_name}
+                                        &nbsp;
+                                        {highlightedSpan(d.endpoint_name)}
                                     </td>
                                 </tr>
                             ))}

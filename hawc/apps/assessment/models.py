@@ -253,7 +253,7 @@ class Assessment(models.Model):
         help_text="What term should be used to refer to risk of bias/study evaluation questions?",
     )
     vocabulary = models.PositiveSmallIntegerField(
-        choices=VocabularyNamespace.choices(),
+        choices=VocabularyNamespace.display_choices(),
         default=VocabularyNamespace.EHV.value,
         blank=True,
         null=True,

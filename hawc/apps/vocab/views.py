@@ -5,16 +5,14 @@ from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
-from django.views.generic import TemplateView
+from django.views.generic import ListView, TemplateView
 from django.views.generic.edit import CreateView
 
 from ..common.views import MessageMixin
 from . import forms, models
 
-CACHE_DURATION = 0 if settings.DEBUG else 60 * 10
 
-
-@method_decorator(cache_page(CACHE_DURATION), name="dispatch")
+@method_decorator(cache_page(settings.CACHE_10_MIN), name="dispatch")
 @method_decorator(login_required, name="dispatch")
 class EhvBrowse(TemplateView):
     template_name = "vocab/ehv_browse.html"
@@ -42,3 +40,27 @@ class CreateComment(MessageMixin, CreateView):
     def form_valid(self, form):
         form.instance.commenter = self.request.user
         return super().form_valid(form)
+
+
+@method_decorator(login_required, name="dispatch")
+class CommentList(ListView):
+    model = models.Comment
+
+
+@method_decorator(login_required, name="dispatch")
+class EntityTermList(ListView):
+    model = models.EntityTermRelation
+
+
+@method_decorator(login_required, name="dispatch")
+class ProposedEntityTermList(ListView):
+    model = models.EntityTermRelation
+    template_name = "vocab/proposed_entitytermrelation_list.html"
+
+    def get_queryset(self):
+        return self.model.objects.filter(approved_on=None)
+
+
+@method_decorator(login_required, name="dispatch")
+class TermList(ListView):
+    model = models.Term

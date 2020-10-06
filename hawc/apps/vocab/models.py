@@ -1,10 +1,14 @@
+from typing import Dict, List
+
 import pandas as pd
 from django.db import models
 from django.urls import reverse
+from django.utils.decorators import classproperty
 from reversion import revisions as reversion
 
 from ..common.models import IntChoiceEnum
 from ..myuser.models import HAWCUser
+from . import managers
 
 
 class VocabularyNamespace(IntChoiceEnum):
@@ -15,12 +19,17 @@ class VocabularyNamespace(IntChoiceEnum):
 
     EHV = 1  # environmental health vocabulary
 
+    @classproperty
+    def display_dict(cls) -> Dict:
+        return {1: "EPA Environmental health vocabulary"}
+
+    @classmethod
+    def display_choices(cls) -> List:
+        return [(key, value) for key, value in cls.display_dict.items()]
+
     @property
     def display_name(self) -> str:
-        if self.value == 1:
-            return "EPA Environmental health vocabulary"
-        else:
-            return ""
+        return self.display_dict[self.value]
 
 
 class VocabularyTermType(IntChoiceEnum):
@@ -36,6 +45,8 @@ class VocabularyTermType(IntChoiceEnum):
 
 
 class Term(models.Model):
+    objects = managers.TermManager()
+
     namespace = models.PositiveSmallIntegerField(
         choices=VocabularyNamespace.choices(), default=VocabularyNamespace.EHV
     )
@@ -52,6 +63,10 @@ class Term(models.Model):
 
     def __str__(self) -> str:
         return f"{self.get_namespace_display()}::{self.get_type_display()}::{self.name}"
+
+    @property
+    def deprecated(self) -> bool:
+        return self.deprecated_on is not None
 
     def get_admin_edit_url(self) -> str:
         return reverse("admin:vocab_term_change", args=(self.id,))
@@ -109,6 +124,20 @@ class Term(models.Model):
         )
 
         return df
+
+    def ehv_endpoint_name(self) -> Dict:
+        return {
+            "system": self.parent.parent.parent.parent.name,
+            "organ": self.parent.parent.parent.name,
+            "effect": self.parent.parent.name,
+            "effect_subtype": self.parent.name,
+            "name": self.name,
+            "system_term_id": self.parent.parent.parent.parent.id,
+            "organ_term_id": self.parent.parent.parent.id,
+            "effect_term_id": self.parent.parent.id,
+            "effect_subtype_term_id": self.parent.id,
+            "name_term_id": self.id,
+        }
 
 
 class Ontology(IntChoiceEnum):

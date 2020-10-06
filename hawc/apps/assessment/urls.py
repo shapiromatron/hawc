@@ -86,6 +86,8 @@ urlpatterns = [
     ),
     # logs / blogs
     url(r"^blog/$", views.BlogList.as_view(), name="blog"),
+    # vocab
+    url(r"^(?P<pk>\d+)/vocab/$", views.VocabList.as_view(), name="vocab"),
     # helper functions
     url(r"^download-plot/$", views.DownloadPlot.as_view(), name="download_plot"),
     url(r"^close-window/$", views.CloseWindow.as_view(), name="close_window"),

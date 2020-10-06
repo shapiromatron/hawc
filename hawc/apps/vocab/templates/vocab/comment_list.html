@@ -1,0 +1,26 @@
+{% extends 'portal.html' %}
+
+{% block title %}
+  Comments | HAWC
+{% endblock title %}
+
+{% block content %}
+
+  <h1>Comments
+    <div class="btn-group pull-right">
+      <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions
+        <span class="caret"></span>
+      </a>
+      <ul class="dropdown-menu">
+          <li><a href="{% url 'vocab:create_comment' %}">Create new comment</a></li>
+      </ul>
+    </div>
+  </h1>
+
+  {% for obj in object_list %}
+  <div>
+    {{obj.comment}}
+  </div>
+  {% endfor %}
+
+{% endblock content %}

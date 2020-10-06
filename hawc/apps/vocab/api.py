@@ -1,7 +1,7 @@
 from typing import Optional
 
 from django.db.models import QuerySet
-from rest_framework import viewsets
+from rest_framework import exceptions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
@@ -60,3 +60,26 @@ class EhvTermViewset(viewsets.GenericViewSet):
         qs = self.filter_qs(request, models.VocabularyTermType.endpoint_name)
         serializer = self.get_serializer(qs, many=True)
         return Response(serializer.data)
+
+    @action(detail=True, url_path="endpoint-name-lookup")
+    def endpoint_name_lookup(self, request: Request, pk: int) -> Response:
+        try:
+            term = models.Term.objects.get(
+                id=pk,
+                type=models.VocabularyTermType.endpoint_name,
+                namespace=models.VocabularyNamespace.EHV,
+                deprecated_on__isnull=True,
+            )
+        except models.Term.DoesNotExist:
+            raise exceptions.NotFound()
+        return Response(term.ehv_endpoint_name())
+
+    @action(detail=True, methods=("post",), url_path="related-entity")
+    def related_entity(self, request: Request, pk: int = None) -> Response:
+        term = self.get_object()
+        entity_serializer = serializers.EntitySerializer(data=request.data)
+        entity_serializer.is_valid(raise_exception=True)
+        entity, _ = models.Entity.objects.get_or_create(**entity_serializer.validated_data)
+        entity.terms.add(term, through_defaults={"notes": request.data.get("notes", "")})
+        serializer = self.get_serializer(entity.terms.all(), many=True)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
