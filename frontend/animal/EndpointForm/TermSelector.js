@@ -30,7 +30,7 @@ class TermSelector extends Component {
                 store,
                 parentRequired,
             } = this.props,
-            {object, debug, vocabulary, vocabulary_display} = store.config,
+            {object, debug, vocabulary_display} = store.config,
             useControlledVocabulary = store.useControlledVocabulary[termTextField],
             currentId = object[termIdField],
             currentText = object[termTextField];
