@@ -535,8 +535,6 @@ class UpdateSession(View):
             return HttpResponseNotAllowed(["POST"])
         if request.POST.get("hideSidebar"):
             request.session["hideSidebar"] = self.isTruthy(request, "hideSidebar")
-        if request.POST.get("hideBrowserWarning"):
-            request.session["hideBrowserWarning"] = self.isTruthy(request, "hideBrowserWarning")
         return HttpResponse(True)
 
 
@@ -605,6 +603,16 @@ class AdminAssessmentSize(TemplateView):
     @method_decorator(staff_member_required)
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
+
+
+class Healthcheck(View):
+    """
+    Healthcheck view check; ensure django server can serve requests.
+    """
+
+    def get(self, request, *args, **kwargs):
+        # TODO - add cache check and celery worker check
+        return HttpResponse(json.dumps({"status": "ok"}), content_type="application/json")
 
 
 # log / blog

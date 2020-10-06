@@ -320,7 +320,7 @@ class Endpoint extends Observee {
                     txt = "";
                     if (i > 0 && _.isNumber(v.response) && dr_control.response > 0) {
                         txt = self._continuous_percent_difference_from_control(v, dr_control);
-                        txt = txt === "NR" ? "" : `" (${txt}%)"`;
+                        txt = txt === "NR" ? "" : ` (${txt}%)`;
                     }
                     td.html(`${response}${txt}${footnotes}`);
                 } else if (data_type === "P") {
