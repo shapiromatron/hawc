@@ -94,7 +94,10 @@ class About(TemplateView):
             endpoints = apps.get_model("animal", "Endpoint").objects.count()
 
             endpoints_with_data = (
-                apps.get_model("animal", "EndpointGroup").objects.distinct("endpoint_id").count()
+                apps.get_model("animal", "EndpointGroup")
+                .objects.order_by("endpoint_id")
+                .distinct("endpoint_id")
+                .count()
             )
 
             outcomes = apps.get_model("epi", "Outcome").objects.count()
@@ -108,7 +111,10 @@ class About(TemplateView):
             iv_endpoints = apps.get_model("invitro", "IVEndpoint").objects.count()
 
             iv_endpoints_with_data = (
-                apps.get_model("invitro", "IVEndpointGroup").objects.distinct("endpoint_id").count()
+                apps.get_model("invitro", "IVEndpointGroup")
+                .objects.order_by("endpoint_id")
+                .distinct("endpoint_id")
+                .count()
             )
 
             visuals = (
@@ -118,12 +124,14 @@ class About(TemplateView):
 
             assessments_with_visuals = len(
                 set(
-                    models.Assessment.objects.annotate(vc=Count("visuals"))
+                    models.Assessment.objects.order_by("-created")
+                    .annotate(vc=Count("visuals"))
                     .filter(vc__gt=0)
                     .values_list("id", flat=True)
                 ).union(
                     set(
-                        models.Assessment.objects.annotate(dp=Count("datapivot"))
+                        models.Assessment.objects.order_by("-created")
+                        .annotate(dp=Count("datapivot"))
                         .filter(dp__gt=0)
                         .values_list("id", flat=True)
                     )
