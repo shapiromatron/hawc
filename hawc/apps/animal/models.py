@@ -1091,6 +1091,7 @@ class Endpoint(BaseEndpoint):
             {
                 "debug": False,
                 "vocabulary": assessment.vocabulary,
+                "vocabulary_display": assessment.get_vocabulary_display(),
                 "object": {
                     "system": instance.system if instance else "",
                     "organ": instance.organ if instance else "",

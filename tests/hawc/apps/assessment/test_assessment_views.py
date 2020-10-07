@@ -1,5 +1,6 @@
 import pytest
 from django.test.client import Client
+from django.urls import reverse
 
 from hawc.apps.assessment.models import Assessment
 
@@ -34,3 +35,14 @@ class TestAssessmentClearCache:
         # this is success behavior in test environment w/o redis - TODO improve?
         with pytest.raises(NotImplementedError):
             c.get(url)
+
+
+@pytest.mark.django_db
+class TestAboutPage:
+    def test_counts(self):
+        client = Client()
+        url = reverse("about")
+        response = client.get(url)
+        assert "counts" in response.context
+        assert response.context["counts"]["assessments"] == 3
+        assert response.context["counts"]["users"] == 5
