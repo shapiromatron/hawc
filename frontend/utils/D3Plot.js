@@ -245,7 +245,7 @@ class D3Plot {
         var axis = axisFunc(scale);
         switch (settings.scale_type) {
             case "log":
-                axis.ticks(1, settings.label_format);
+                axis.ticks(settings.number_ticks, settings.label_format);
                 break;
             case "linear":
                 axis.ticks(settings.number_ticks);
