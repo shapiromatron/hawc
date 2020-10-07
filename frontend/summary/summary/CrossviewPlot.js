@@ -305,15 +305,11 @@ class CrossviewPlot extends D3Visualization {
                 var vals = _.chain(f.values);
                 if (f.allValues) {
                     vals = _.chain(dataset)
-                        .map(function(d) {
-                            return d.filters[f.name];
-                        })
+                        .map(d => d.filters[f.name])
                         .flattenDeep()
                         .sort()
                         .uniq()
-                        .filter(function(d) {
-                            return d != "";
-                        });
+                        .filter(d => d !== "");
                 }
                 return vals
                     .map(function(d) {
@@ -363,23 +359,15 @@ class CrossviewPlot extends D3Visualization {
 
         if (!dose_range) {
             dose_range = [
-                d3.min(this.dataset, function(v) {
-                    return v.dose_extent[0];
-                }),
-                d3.max(this.dataset, function(v) {
-                    return v.dose_extent[1];
-                }),
+                d3.min(this.dataset, v => v.dose_extent[0]),
+                d3.max(this.dataset, v => v.dose_extent[1]),
             ];
         }
 
         if (!resp_range) {
             resp_range = [
-                d3.min(this.dataset, function(d) {
-                    return d.resp_extent[0];
-                }),
-                d3.max(this.dataset, function(d) {
-                    return d.resp_extent[1];
-                }),
+                d3.min(this.dataset, d => d.resp_extent[0]),
+                d3.max(this.dataset, d => d.resp_extent[1]),
             ];
         }
 
@@ -415,10 +403,8 @@ class CrossviewPlot extends D3Visualization {
             y = this.y_scale,
             hrng,
             vrng,
-            filter_rng = function(d) {
-                return $.isNumeric(d.lower) && $.isNumeric(d.upper);
-            },
-            make_hrng = function(d) {
+            filter_rng = d => $.isNumeric(d.lower) && $.isNumeric(d.upper),
+            make_hrng = d => {
                 return {
                     x: x.range()[0],
                     width: Math.abs(x.range()[1] - x.range()[0]),
@@ -430,7 +416,7 @@ class CrossviewPlot extends D3Visualization {
                     }),
                 };
             },
-            make_vrng = function(d) {
+            make_vrng = d => {
                 return {
                     x: x(d.lower),
                     width: Math.abs(x(d.upper) - x(d.lower)),
@@ -441,6 +427,10 @@ class CrossviewPlot extends D3Visualization {
                         name: d.style,
                     }),
                 };
+            },
+            apply_styles = function(d) {
+                var obj = d3.select(this);
+                _.each(d.styles, (value, key) => obj.style(key, value));
             };
 
         hrng = _.chain(this.plot_settings.refranges_response)
@@ -453,37 +443,26 @@ class CrossviewPlot extends D3Visualization {
             .map(make_vrng)
             .value();
 
-        hrng.push.apply(hrng, vrng);
-        if (hrng.length === 0) return;
+        const ranges = [...hrng, ...vrng];
+        if (ranges.length === 0) return;
 
-        this.g_reference_ranges = this.vis.append("g");
-        this.g_reference_ranges
+        let g_reference_ranges = this.vis.append("g");
+
+        g_reference_ranges
             .selectAll("rect")
-            .data(hrng)
+            .data(ranges)
             .enter()
             .append("svg:rect")
-            .attr("x", function(d) {
-                return d.x;
-            })
-            .attr("y", function(d) {
-                return d.y;
-            })
-            .attr("width", function(d) {
-                return d.width;
-            })
-            .attr("height", function(d) {
-                return d.height;
-            })
-            .each(function(d) {
-                d3.select(this).attr(d.styles);
-            });
+            .attr("x", d => d.x)
+            .attr("y", d => d.y)
+            .attr("width", d => d.width)
+            .attr("height", d => d.height)
+            .each(apply_styles);
 
-        this.g_reference_ranges
+        g_reference_ranges
             .selectAll("rect")
             .append("svg:title")
-            .text(function(d) {
-                return d.title;
-            });
+            .text(d => d.title);
     }
 
     _draw_ref_lines() {
