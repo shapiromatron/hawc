@@ -188,13 +188,17 @@ class DataPivotVisualization extends D3Plot {
     }
 
     set_defaults() {
+        this.get_dataset();
         this.padding = $.extend({}, this.dp_settings.plot_settings.padding); //copy object
         this.padding.left_original = this.padding.left;
         this.w = this.dp_settings.plot_settings.plot_width;
         this.h = this.w; // temporary; depends on rendered text-size
         this.textPadding = 5; // text padding on all sides of text
 
-        var scale_type = this.dp_settings.plot_settings.logscale ? "log" : "linear",
+        let scale_type = this.dp_settings.plot_settings.logscale ? "log" : "linear",
+            [min, max] = this.getDomain(),
+            log_ticks = Math.min(Math.ceil(Math.log10(max)) - Math.floor(Math.log10(min)), 8),
+            linear_ticks = 10,
             formatNumber = d3.format(",");
 
         this.text_spacing_offset = 10;
@@ -203,7 +207,7 @@ class DataPivotVisualization extends D3Plot {
             text_orient: "bottom",
             axis_class: "axis x_axis",
             gridline_class: "primary_gridlines x_gridlines",
-            number_ticks: 10,
+            number_ticks: scale_type === "log" ? log_ticks : linear_ticks,
             axis_labels: true,
             x_translate: 0,
             label_format: formatNumber,
@@ -223,7 +227,6 @@ class DataPivotVisualization extends D3Plot {
 
     build_plot() {
         this.plot_div.html("");
-        this.get_dataset();
         if (this.dp_data.length === 0) {
             return HAWCUtils.addAlert(
                 "<strong>Error: </strong>no data are available to be plotted",
