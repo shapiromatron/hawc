@@ -203,7 +203,7 @@ class DataPivotVisualization extends D3Plot {
             text_orient: "bottom",
             axis_class: "axis x_axis",
             gridline_class: "primary_gridlines x_gridlines",
-            number_ticks: scale_type === "log" ? 2 : 10,
+            number_ticks: 10,
             axis_labels: true,
             x_translate: 0,
             label_format: formatNumber,
