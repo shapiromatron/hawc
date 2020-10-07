@@ -82,7 +82,7 @@ class Barplot extends D3Plot {
         if (this.endpoint.data.data_type == "C") {
             if (this.y_axis_settings.scale_type == "linear") {
                 this.y_axis_settings.scale_type = "log";
-                this.y_axis_settings.number_ticks = 1;
+                this.y_axis_settings.number_ticks = h.numLogTicks(this.y_axis_settings.domain);
                 this.y_axis_settings.label_format = h.numericAxisFormat;
             } else {
                 this.y_axis_settings.scale_type = "linear";

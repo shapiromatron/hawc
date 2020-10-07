@@ -211,7 +211,17 @@ class EndpointAggregationExposureResponsePlot extends D3Visualization {
         // rebuild plot with updated x-scale.
         var x = this.x_scale;
 
-        this.rebuild_x_axis();
+        //rebuild x-axis
+        this.xAxis
+            .scale(this.x_scale)
+            .ticks(this.x_axis_settings.number_ticks, this.x_axis_settings.label_format);
+
+        this.vis
+            .selectAll(".x_axis")
+            .transition()
+            .duration(1000)
+            .call(this.xAxis);
+
         this.rebuild_x_gridlines({animate: true});
 
         //rebuild dosing lines
