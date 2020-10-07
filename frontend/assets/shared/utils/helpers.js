@@ -207,6 +207,7 @@ const helpers = {
         const _cartesian = (a, b, ...c) => (b ? _cartesian(f(a, b), ...c) : a);
         return _cartesian(...arrs);
     },
+    numericAxisFormat: d3.format(",~g"),
     COLORS: {
         WHITE: "#ffffff",
         BLUE: "#003d7b",

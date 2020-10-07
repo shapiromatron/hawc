@@ -2,6 +2,7 @@ import $ from "$";
 import _ from "lodash";
 import * as d3 from "d3";
 
+import h from "shared/utils/helpers";
 import D3Plot from "utils/D3Plot";
 
 class DRPlot extends D3Plot {
@@ -137,8 +138,7 @@ class DRPlot extends D3Plot {
             if (this.y_axis_settings.scale_type == "linear") {
                 this.y_axis_settings.scale_type = "log";
                 this.y_axis_settings.number_ticks = 1;
-                var formatNumber = d3.format(",");
-                this.y_axis_settings.label_format = formatNumber;
+                this.y_axis_settings.label_format = h.numericAxisFormat;
             } else {
                 this.y_axis_settings.scale_type = "linear";
                 this.y_axis_settings.number_ticks = 10;
@@ -163,7 +163,7 @@ class DRPlot extends D3Plot {
         if (this.x_axis_settings.scale_type == "linear") {
             this.x_axis_settings.scale_type = "log";
             this.x_axis_settings.number_ticks = 1;
-            this.x_axis_settings.label_format = d3.format(",");
+            this.x_axis_settings.label_format = h.numericAxisFormat;
         } else {
             this.x_axis_settings.scale_type = "linear";
             this.x_axis_settings.number_ticks = 5;

@@ -2,6 +2,7 @@ import $ from "$";
 import _ from "lodash";
 import * as d3 from "d3";
 
+import h from "shared/utils/helpers";
 import D3Plot from "utils/D3Plot";
 
 class Barplot extends D3Plot {
@@ -82,8 +83,7 @@ class Barplot extends D3Plot {
             if (this.y_axis_settings.scale_type == "linear") {
                 this.y_axis_settings.scale_type = "log";
                 this.y_axis_settings.number_ticks = 1;
-                var formatNumber = d3.format(",");
-                this.y_axis_settings.label_format = formatNumber;
+                this.y_axis_settings.label_format = h.numericAxisFormat;
             } else {
                 this.y_axis_settings.scale_type = "linear";
                 this.y_axis_settings.number_ticks = 10;

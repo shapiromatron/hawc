@@ -2,6 +2,7 @@ import $ from "$";
 import _ from "lodash";
 import * as d3 from "d3";
 
+import h from "shared/utils/helpers";
 import HAWCUtils from "utils/HAWCUtils";
 
 import D3Visualization from "./D3Visualization";
@@ -43,7 +44,7 @@ class CrossviewPlot extends D3Visualization {
                 gridline_class: "primary_gridlines x_gridlines",
                 number_ticks: 10,
                 axis_labels: true,
-                label_format: d3.format(","),
+                label_format: h.numericAxisFormat,
             },
             y_axis_settings: {
                 scale_type: "linear",
