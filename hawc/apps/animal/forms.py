@@ -538,6 +538,7 @@ class EndpointForm(ModelForm):
     CONF_INT_REQ = "Confidence-interval is required for" "percent-difference data"
     VAR_TYPE_REQ = "If entering continuous data, the variance type must be SD (standard-deviation) or SE (standard error)"
     RESP_UNITS_REQ = "If data is extracted, response-units are required"
+    NAME_REQ = "Name is required"
 
     @classmethod
     def clean_endpoint(cls, instance: models.Endpoint, data: Dict) -> Dict:
@@ -604,7 +605,7 @@ class EndpointForm(ModelForm):
         # must be displayed instead as a non_field_error
         name_error = self.errors.get("name", None)
         if name_error is not None:
-            self.add_error(None, name_error)
+            self.add_error(None, self.NAME_REQ)
 
         return cleaned_data
 
