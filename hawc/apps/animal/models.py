@@ -1118,19 +1118,11 @@ class Endpoint(BaseEndpoint):
 
     def save(self, *args, **kwargs):
         # ensure our controlled vocabulary terms don't have leading/trailing whitespace
-        self.system = (
-            self.system.strip() if self.system_term is None else self.system_term.name.strip()
-        )
-        self.organ = self.organ.strip() if self.organ_term is None else self.organ_term.name.strip()
-        self.effect = (
-            self.effect.strip() if self.effect_term is None else self.effect_term.name.strip()
-        )
-        self.effect_subtype = (
-            self.effect_subtype.strip()
-            if self.effect_subtype_term is None
-            else self.effect_subtype_term.name.strip()
-        )
-        self.name = self.name.strip() if self.name_term is None else self.name_term.name.strip()
+        self.system = self.system.strip()
+        self.organ = self.organ.strip()
+        self.effect = self.effect.strip()
+        self.effect_subtype = self.effect_subtype.strip()
+        self.name = self.name.strip()
         super().save(*args, **kwargs)
 
     @property

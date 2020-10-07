@@ -297,6 +297,7 @@ class EndpointSerializer(serializers.ModelSerializer):
         return ret
 
     def _validate_term(self, value, non_term_attr: str, type_attr: str):
+
         # Term namespace must match assessment
         if not hasattr(self, "assessment"):
             animal_group = get_matching_instance(
@@ -320,6 +321,10 @@ class EndpointSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 f"'{non_term_attr}' and '{non_term_attr}_term' are mutually exclusive."
             )
+        # Save the non-term equivalent
+        if not hasattr(self, "non_terms"):
+            self.non_terms = {}
+        self.non_terms[non_term_attr] = value.name
         return value
 
     def validate_system_term(self, value):
@@ -380,6 +385,9 @@ class EndpointSerializer(serializers.ModelSerializer):
             group_serializer.is_valid(raise_exception=True)
             group_serializers.append(group_serializer)
         self.group_serializers = group_serializers
+
+        # Non-term equivalents should be set
+        data.update(getattr(self, "non_terms", {}))
 
         return data
 
