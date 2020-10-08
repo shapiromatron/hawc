@@ -212,7 +212,7 @@ const helpers = {
         // domain should be output of d3.extent, eg., [1, 100]
         return Math.max(
             2,
-            Math.min(Math.ceil(Math.log10(domain[1])) - Math.floor(Math.log10(domain[0])) + 1, 10)
+            Math.min(Math.ceil(Math.log10(domain[1])) - Math.floor(Math.log10(domain[0])), 10)
         );
     },
     numericAxisFormat: d3.format(",~g"),

@@ -538,7 +538,7 @@ class EndpointForm(ModelForm):
     CONF_INT_REQ = "Confidence-interval is required for" "percent-difference data"
     VAR_TYPE_REQ = "If entering continuous data, the variance type must be SD (standard-deviation) or SE (standard error)"
     RESP_UNITS_REQ = "If data is extracted, response-units are required"
-    NAME_REQ = "Name is required"
+    NAME_REQ = "Endpoint/Adverse outcome is required"
 
     @classmethod
     def clean_endpoint(cls, instance: models.Endpoint, data: Dict) -> Dict:
