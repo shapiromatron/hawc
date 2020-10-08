@@ -1,6 +1,8 @@
 import $ from "$";
 import * as d3 from "d3";
 
+import h from "shared/utils/helpers";
+
 // Generic parent for all d3.js visualizations
 class D3Plot {
     add_title(x, y) {
@@ -242,10 +244,11 @@ class D3Plot {
     }
 
     _print_axis(axisFunc, scale, settings) {
-        var axis = axisFunc(scale);
+        const axis = axisFunc(scale);
+
         switch (settings.scale_type) {
             case "log":
-                axis.ticks(1, settings.label_format);
+                axis.ticks(h.numLogTicks(settings.domain), settings.label_format);
                 break;
             case "linear":
                 axis.ticks(settings.number_ticks);
@@ -297,19 +300,6 @@ class D3Plot {
         return gridlines;
     }
 
-    rebuild_y_axis() {
-        //rebuild y-axis
-        this.yAxis
-            .scale(this.y_scale)
-            .ticks(this.y_axis_settings.number_ticks, this.y_axis_settings.label_format);
-
-        this.vis
-            .selectAll(".y_axis")
-            .transition()
-            .duration(1000)
-            .call(this.yAxis);
-    }
-
     rebuild_y_gridlines(options) {
         // rebuild y-gridlines
 
@@ -346,19 +336,6 @@ class D3Plot {
             .duration(duration / 2)
             .attr("x2", 0)
             .remove();
-    }
-
-    rebuild_x_axis() {
-        //rebuild x-axis
-        this.xAxis
-            .scale(this.x_scale)
-            .ticks(this.x_axis_settings.number_ticks, this.x_axis_settings.label_format);
-
-        this.vis
-            .selectAll(".x_axis")
-            .transition()
-            .duration(1000)
-            .call(this.xAxis);
     }
 
     rebuild_x_gridlines(options) {
