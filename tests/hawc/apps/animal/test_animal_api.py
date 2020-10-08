@@ -481,7 +481,7 @@ class TestEndpointCreateApi:
         assert response.status_code == 201
         assert models.Endpoint.objects.filter(name=data["name"]).count() == 1
 
-    def test_endpoint_terms(self, db_keys):
+    def test_valid_requests_with_terms(self, db_keys):
         url = reverse("animal:api:endpoint-list")
         client = APIClient()
         assert client.login(username="team@team.com", password="pw") is True
@@ -519,6 +519,36 @@ class TestEndpointCreateApi:
             system_term_id=1, system="Cardiovascular", organ_term_id=2, organ="Serum"
         )
         assert endpoints.count() == 1
+
+        # valid request with name term
+        data = {
+            "animal_group_id": 1,
+            "data_type": "C",
+            "variance_type": 1,
+            "response_units": "μg/dL",
+            "name_term": 5,
+        }
+        response = client.post(url, data)
+        assert response.status_code == 201
+
+        endpoints = models.Endpoint.objects.filter(name_term_id=5, name="Fatty Acid Balance")
+        assert endpoints.count() == 1
+
+    def test_bad_requests_with_terms(self, db_keys):
+        url = reverse("animal:api:endpoint-list")
+        client = APIClient()
+        assert client.login(username="team@team.com", password="pw") is True
+
+        # name or name term must be given
+        data = {
+            "animal_group_id": 1,
+            "data_type": "C",
+            "variance_type": 1,
+            "response_units": "μg/dL",
+        }
+        response = client.post(url, data)
+        assert response.status_code == 400
+        assert response.json() == {"name": ["'name' or 'name_term' is required."]}
 
         # cannot set both term and non-term counterpart
         data = {

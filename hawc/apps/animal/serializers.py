@@ -254,6 +254,7 @@ class EndpointSerializer(serializers.ModelSerializer):
     effects = EffectTagsSerializer(read_only=True)
     animal_group = AnimalGroupSerializer(read_only=True, required=False)
     groups = EndpointGroupSerializer(many=True, required=False)
+    name = serializers.CharField(required=False)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -349,6 +350,10 @@ class EndpointSerializer(serializers.ModelSerializer):
         return self._validate_term(value, "name", "endpoint_name")
 
     def validate(self, data):
+        # name or name_term must be given
+        if data.get("name") is None and data.get("name_term") is None:
+            raise serializers.ValidationError({"name": ["'name' or 'name_term' is required."]})
+
         # Validate parent object
         self.animal_group = get_matching_instance(
             models.AnimalGroup, self.initial_data, "animal_group_id"
