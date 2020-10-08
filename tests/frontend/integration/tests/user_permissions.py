@@ -31,7 +31,10 @@ def user_permissions(driver, live_server_url):
     assert h.Text(msg).exists() is False
     h.write("pm@pm.com", into="Email*")
     h.write("pw", into="Password*")
-    h.click("Login")
+
+    # changed to target the specific login button in the form seems
+    # there was some randomness in whether it clicked the right button/lnk
+    h.click(h.S("@login"))
     assert "/portal/" in driver.current_url
 
     # now, try to go to edit url

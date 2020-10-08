@@ -12,7 +12,10 @@ def login(driver, root_url):
 
     # go to website
     h.go_to(root_url)
-    h.click("Login")
+    assert h.Link("Login").exists() is True
+    # changed to target the specific login button in the form seems
+    # there was some randomness in whether it clicked the right button/lnk
+    h.click(h.S("@login"))
     assert "/user/login/" in driver.current_url
 
     # invalid password check
