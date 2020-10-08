@@ -296,6 +296,12 @@ class EndpointSerializer(serializers.ModelSerializer):
 
         return ret
 
+    def to_internal_value(self, data):
+        ret = super().to_internal_value(data)
+        # Non-term equivalents should be set
+        ret.update(getattr(self, "non_terms", {}))
+        return ret
+
     def _validate_term(self, value, non_term_attr: str, type_attr: str):
 
         # Term namespace must match assessment
@@ -385,9 +391,6 @@ class EndpointSerializer(serializers.ModelSerializer):
             group_serializer.is_valid(raise_exception=True)
             group_serializers.append(group_serializer)
         self.group_serializers = group_serializers
-
-        # Non-term equivalents should be set
-        data.update(getattr(self, "non_terms", {}))
 
         return data
 
