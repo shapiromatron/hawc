@@ -297,57 +297,39 @@ class EndpointSerializer(serializers.ModelSerializer):
 
         return ret
 
-    def to_internal_value(self, data):
-        ret = super().to_internal_value(data)
-        # Non-term equivalents should be set
-        ret.update(getattr(self, "non_terms", {}))
-        return ret
+    def _validate_term_and_text(self, data, term_field: str, text_field: str, term_type_str: str):
+        """
+        Validate logic for both term field and the text field
+        """
 
-    def _validate_term(self, value, non_term_attr: str, type_attr: str):
+        term = data.get(term_field)
+        text = data.get(text_field)
+        if term is None:
+            return
 
         # Term namespace must match assessment
-        if not hasattr(self, "assessment"):
-            animal_group = get_matching_instance(
-                models.AnimalGroup, self.initial_data, "animal_group_id"
-            )
-            self.assessment = animal_group.get_assessment()
-        if self.assessment.vocabulary != value.namespace:
+        if self.assessment.vocabulary != term.namespace:
             raise serializers.ValidationError(
-                f"Assessment vocabulary ({self.assessment.vocabulary}) does not match term namespace ({value.namespace})."
+                {
+                    term: f"Assessment vocabulary ({self.assessment.vocabulary}) does not match term namespace ({term.namespace})."
+                }
             )
-        # Term type must match
-        type = getattr(VocabularyTermType, type_attr)
-        if value.type != type:
+
+        # Term type must field type
+        term_type = getattr(VocabularyTermType, term_type_str)
+        if term.type != term_type:
             raise serializers.ValidationError(
-                f"Got term type '{value.type}', expected type '{type}'."
+                {term_field: f"Got term type '{term.type}', expected type '{term_type}'."}
             )
-        # Term overrides its non-term counterpart,
-        # so non-term cannot be set at the same time
-        non_term = self.initial_data.get(non_term_attr)
-        if non_term is not None:
+
+        # Term overrides its non-term counterpart, so non-term cannot be set at the same time
+        if term and text:
             raise serializers.ValidationError(
-                f"'{non_term_attr}' and '{non_term_attr}_term' are mutually exclusive."
+                {term_field: f"'{text_field}' and '{text_field}_term' are mutually exclusive."}
             )
+
         # Save the non-term equivalent
-        if not hasattr(self, "non_terms"):
-            self.non_terms = {}
-        self.non_terms[non_term_attr] = value.name
-        return value
-
-    def validate_system_term(self, value):
-        return self._validate_term(value, "system", "system")
-
-    def validate_organ_term(self, value):
-        return self._validate_term(value, "organ", "organ")
-
-    def validate_effect_term(self, value):
-        return self._validate_term(value, "effect", "effect")
-
-    def validate_effect_subtype_term(self, value):
-        return self._validate_term(value, "effect_subtype", "effect_subtype")
-
-    def validate_name_term(self, value):
-        return self._validate_term(value, "name", "endpoint_name")
+        data[text_field] = term.name
 
     def validate(self, data):
         # name or name_term must be given
@@ -359,8 +341,18 @@ class EndpointSerializer(serializers.ModelSerializer):
             models.AnimalGroup, self.initial_data, "animal_group_id"
         )
         user_can_edit_object(self.animal_group, self.context["request"].user, raise_exception=True)
+        self.assessment = self.animal_group.get_assessment()
         data["animal_group_id"] = self.animal_group.id
-        data["assessment_id"] = self.animal_group.get_assessment().id
+        data["assessment_id"] = self.assessment.id
+
+        # validate terms and text
+        self._validate_term_and_text(data, "system_term", "system", "system")
+        self._validate_term_and_text(data, "organ_term", "organ", "organ")
+        self._validate_term_and_text(data, "effect_term", "effect", "effect")
+        self._validate_term_and_text(
+            data, "effect_subtype_term", "effect_subtype", "effect_subtype"
+        )
+        self._validate_term_and_text(data, "name_term", "name", "endpoint_name")
 
         # set animal_group on instance for cleaning rules
         instance = models.Endpoint(animal_group=self.animal_group)
