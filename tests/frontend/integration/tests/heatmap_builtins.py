@@ -8,10 +8,6 @@ def heatmap_builtins(driver, root_url):
     h.write("pm@pm.com", into="Email*")
     h.write("pw", into="Password*")
     h.click(h.S("@login"))
-
-    h.wait_until(h.Text("Project Manager").exists)
-    assert urlparse(driver.current_url).path == "/portal/"
-
     h.go_to(root_url + "/assessment/2/endpoints/")
 
     # ensure that the first two columns say "Bioassay" and "Epidemiology" and the table is 3x4
@@ -24,7 +20,7 @@ def heatmap_builtins(driver, root_url):
     h.go_to(root_url + "/ani/assessment/2/heatmap-study-design/")
 
     # having timing issues here
-    h.wait_until(condition_fn=h.Text("Developmental").exists, timeout_secs=60)
+    h.wait_until(condition_fn=h.Text("Grand Total").exists, timeout_secs=60)
 
     assert len(driver.find_elements_by_css_selector("svg")) > 0
     assert len(driver.find_elements_by_css_selector(".exp_heatmap_cell")) == 4

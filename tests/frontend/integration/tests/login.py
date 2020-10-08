@@ -13,9 +13,7 @@ def login(driver, root_url):
     # go to website
     h.go_to(root_url)
     assert h.Link("Login").exists() is True
-    # changed to target the specific login button in the form seems
-    # there was some randomness in whether it clicked the right button/lnk
-    h.click(h.S("@login"))
+    h.click("Login")
     assert "/user/login/" in driver.current_url
 
     # invalid password check
@@ -23,7 +21,10 @@ def login(driver, root_url):
     assert h.Text(msg).exists() is False
     h.write("webmaster@hawcproject.org", into="Email*")
     h.write("not my password", into="Password*")
-    h.click("Login")
+
+    # changed to target the specific login button in the form seems
+    # there was some randomness in whether it clicked the right button/lnk
+    h.click(h.S("@login"))
     assert h.Text(msg).exists() is True
     assert urlparse(driver.current_url).path == "/user/login/"
 
@@ -31,7 +32,9 @@ def login(driver, root_url):
     h.go_to(root_url + "/user/login/")
     h.write("pm@pm.com", into="Email*")
     h.write("pw", into="Password*")
-    h.click("Login")
+    # changed to target the specific login button in the form seems
+    # there was some randomness in whether it clicked the right button/lnk
+    h.click(h.S("@login"))
     assert urlparse(driver.current_url).path == "/portal/"
 
     # logout; cleanup test

@@ -21,7 +21,7 @@ def bioassay(driver, root_url):
 
     h.go_to(root_url + "/ani/experiment/1/")
 
-    h.wait_until(h.Text("2 year bioassay").exists)
+    h.wait_until(h.Text("Multiple generations").exists)
 
     assert len(driver.find_elements_by_css_selector("#objContainer table")) > 0
 
