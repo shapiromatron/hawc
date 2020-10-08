@@ -384,7 +384,7 @@ class EndpointCleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSeria
     class Meta:
         model = models.Endpoint
         cleanup_fields = ("study_short_citation",) + model.TEXT_CLEANUP_FIELDS
-        fields = cleanup_fields + ("id",)
+        fields = cleanup_fields + ("id",) + tuple(model.TERM_FIELD_MAPPING.values())
 
     def get_study_short_citation(self, obj):
         return obj.animal_group.experiment.study.short_citation

@@ -8,6 +8,7 @@ class TextCleanupStore {
     @observable assessmentMetadata = null;
     @observable selectedModel = null;
     @observable modelCleanupFields = null;
+    @observable termFieldMapping = null;
     @observable selectedField = null;
 
     @observable isLoadingObjects = false;
@@ -37,6 +38,7 @@ class TextCleanupStore {
             .then(response => response.json())
             .then(json => {
                 this.modelCleanupFields = json.text_cleanup_fields;
+                this.termFieldMapping = json.term_field_mapping;
                 this.fetchObjects();
             })
             .catch(ex => console.error("Assessment parsing failed", ex));
@@ -96,11 +98,24 @@ class TextCleanupStore {
     @computed get groupedObjects() {
         // group objects by the field to be edited.
         const field = this.selectedField,
-            objects = toJS(this.objects);
+            objects = toJS(this.objects),
+            fieldTermId = toJS(this.termFieldMapping)[field];
         return _.chain(objects)
+            .filter(item => {
+                // if the field we want to group on has a term mapping, then only
+                // return items which don't have a map ID
+                if (fieldTermId !== undefined) {
+                    return item[fieldTermId] === null;
+                }
+                return true;
+            })
             .groupBy(item => item[field])
             .sortBy(item => item[0][field])
             .value();
+    }
+
+    @computed get hasTermMapping() {
+        return toJS(this.termFieldMapping)[this.selectedField] !== undefined;
     }
 }
 

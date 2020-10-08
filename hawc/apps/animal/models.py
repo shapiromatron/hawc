@@ -714,6 +714,13 @@ class Endpoint(BaseEndpoint):
         "endpoint_notes",
         "litter_effect_notes",
     )
+    TERM_FIELD_MAPPING = {
+        "name": "name_term_id",
+        "system": "system_term_id",
+        "organ": "organ_term_id",
+        "effect": "effect_term_id",
+        "effect_subtype": "effect_subtype_term_id",
+    }
 
     DATA_TYPE_CONTINUOUS = "C"
     DATA_TYPE_DICHOTOMOUS = "D"

@@ -13,6 +13,15 @@ class GroupedObjectList extends Component {
         let {store} = this.props;
         return (
             <div className="container-fluid">
+                {store.hasTermMapping ? (
+                    <div className="row">
+                        <p className="alert alert-info">
+                            <i className="fa fa-exclamation-triangle"></i> Controlled vocabulary may
+                            exist for this assessment. This list is filtered to only display terms
+                            which are not being used with controlled vocabulary.
+                        </p>
+                    </div>
+                ) : null}
                 <div className="row">
                     <span className="bulk-header span4">{h.caseToWords(store.selectedField)}</span>
                     <span className="bulk-header span5">
