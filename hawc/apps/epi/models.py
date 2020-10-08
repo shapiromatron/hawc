@@ -1555,6 +1555,8 @@ class Result(models.Model):
         df = df1.merge(df2, how="left", left_on="exposure id", right_index=True)
         df = df_move_column(df, "exposure route", "exposure name")
         df["exposure route"].fillna("", inplace=True)
+        df["exposure measure"].fillna("", inplace=True)
+        df["exposure metric"].fillna("", inplace=True)
 
         return df
 
