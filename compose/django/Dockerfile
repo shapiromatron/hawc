@@ -1,4 +1,4 @@
-FROM python:3.6.10
+FROM python:3.6.12
 
 ENV PYTHONUNBUFFERED 1
 
@@ -23,7 +23,7 @@ RUN wget -O /phantomjs-2.1.1-linux-x86_64.tar.bz2 "https://bitbucket.org/ariya/p
     rm -rf /phantomjs* && \
     \
     apt-get update && \
-    apt-get install -y fonts-liberation && \
+    apt-get install -y netcat fonts-liberation && \
     rm -rf /var/lib/apt/lists/* && \
     fc-cache -fv && \
     su django -c "fc-cache -fvs" && \
