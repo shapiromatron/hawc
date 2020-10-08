@@ -291,7 +291,7 @@ class HAWCAuthenticationForm(AuthenticationForm):
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "span12"
+                widget.attrs["class"] = "form-control"
 
         inputs = {"legend_text": "HAWC login"}
 
@@ -303,7 +303,7 @@ class HAWCAuthenticationForm(AuthenticationForm):
                 cfl.Submit("login", "Login"),
                 cfl.HTML(
                     f"""
-                <a role="button" class="btn btn-default" href="{reverse("home")}">Cancel</a>
+                <button class="btn btn-secondary" href="{reverse("home")}">Cancel</button>
                 <br>
                 <br>
                 <a href="{reverse("user:reset_password")}">Forgot your password?</a>
