@@ -2,6 +2,7 @@ import $ from "$";
 import _ from "lodash";
 import * as d3 from "d3";
 
+import h from "shared/utils/helpers";
 import D3Visualization from "./D3Visualization";
 
 class EndpointAggregationExposureResponsePlot extends D3Visualization {
@@ -11,8 +12,7 @@ class EndpointAggregationExposureResponsePlot extends D3Visualization {
     }
 
     setDefaults() {
-        var left = 25,
-            formatNumber = d3.format(",");
+        var left = 25;
 
         _.extend(this, {
             default_x_scale: "log",
@@ -32,7 +32,7 @@ class EndpointAggregationExposureResponsePlot extends D3Visualization {
                 gridline_class: "primary_gridlines x_gridlines",
                 number_ticks: 10,
                 axis_labels: true,
-                label_format: formatNumber,
+                label_format: h.numericAxisFormat,
             },
             y_axis_settings: {
                 scale_type: "ordinal",
@@ -195,8 +195,7 @@ class EndpointAggregationExposureResponsePlot extends D3Visualization {
         if (this.x_axis_settings.scale_type == "linear") {
             this.x_axis_settings.scale_type = "log";
             this.x_axis_settings.number_ticks = 1;
-            var formatNumber = d3.format(",");
-            this.x_axis_settings.label_format = formatNumber;
+            this.x_axis_settings.label_format = h.numericAxisFormat;
         } else {
             this.x_axis_settings.scale_type = "linear";
             this.x_axis_settings.number_ticks = 10;
@@ -212,7 +211,17 @@ class EndpointAggregationExposureResponsePlot extends D3Visualization {
         // rebuild plot with updated x-scale.
         var x = this.x_scale;
 
-        this.rebuild_x_axis();
+        //rebuild x-axis
+        this.xAxis
+            .scale(this.x_scale)
+            .ticks(this.x_axis_settings.number_ticks, this.x_axis_settings.label_format);
+
+        this.vis
+            .selectAll(".x_axis")
+            .transition()
+            .duration(1000)
+            .call(this.xAxis);
+
         this.rebuild_x_gridlines({animate: true});
 
         //rebuild dosing lines

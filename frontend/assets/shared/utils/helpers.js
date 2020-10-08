@@ -207,6 +207,15 @@ const helpers = {
         const _cartesian = (a, b, ...c) => (b ? _cartesian(f(a, b), ...c) : a);
         return _cartesian(...arrs);
     },
+    numLogTicks(domain) {
+        // number of ticks to be used for a given dataset.
+        // domain should be output of d3.extent, eg., [1, 100]
+        return Math.max(
+            2,
+            Math.min(Math.ceil(Math.log10(domain[1])) - Math.floor(Math.log10(domain[0])), 10)
+        );
+    },
+    numericAxisFormat: d3.format(",~g"),
     COLORS: {
         WHITE: "#ffffff",
         BLUE: "#003d7b",
