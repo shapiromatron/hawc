@@ -49,7 +49,6 @@ class TestIntegration(StaticLiveServerTestCase, TestCase):
     def test_rob(self):
         tests.rob(self.driver, self.live_server_url)
 
-    # need some css to make sure I'm counting the correct table
     def test_epi(self):
         tests.epi(self.driver, self.live_server_url)
 
@@ -60,7 +59,6 @@ class TestIntegration(StaticLiveServerTestCase, TestCase):
     def test_mgmt(self):
         tests.mgmt(self.driver, self.live_server_url)
 
-    # Having Timing Issues
     def test_heatmap_builtins(self):
         tests.heatmap_builtins(self.driver, self.live_server_url)
 

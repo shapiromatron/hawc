@@ -31,8 +31,8 @@ def epi(driver, root_url):
     # ensure exposure table exists
     assert len(driver.find_elements_by_css_selector("table")) > 0
 
-    # ensure 3 groups described in exposure set TODO need better classes
-    # TODO
+    # ensure 3 groups described in exposure set
+    assert len(h.find_all(h.S("#groups-table > tbody > tr"))) == 3
 
     h.go_to(root_url + "/epi/outcome/4/")
 

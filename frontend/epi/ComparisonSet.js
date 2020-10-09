@@ -107,7 +107,7 @@ class ComparisonSet {
     }
 
     build_groups_table() {
-        var tbl = new BaseTable(),
+        var tbl = new BaseTable({id: "groups-table"}),
             colgroups = [25, 75];
 
         tbl.setColGroup(colgroups);
