@@ -1,25 +1,12 @@
-from urllib.parse import urlparse
-
 import helium as h
+
+from . import shared
 
 
 def epi(driver, root_url):
-    h.go_to(root_url + "/user/login/")
-    h.write("pm@pm.com", into="Email*")
-    h.write("pw", into="Password*")
-    h.click(h.S("@login"))
-
-    print(driver.current_url)
-    assert (
-        h.Text(
-            "Please enter a correct email and password. Note that both fields may be case-sensitive."
-        ).exists()
-        is False
-    )
-    assert urlparse(driver.current_url).path == "/portal/"
+    shared.login(root_url)
 
     h.go_to(root_url + "/epi/study-population/1/")
-
     h.wait_until(h.Text("Case series").exists)
 
     # Ensure "Study design" and "Case series" exist
@@ -71,6 +58,4 @@ def epi(driver, root_url):
     # ensure second has 3 groups in tbody portion
     assert len(driver.find_elements_by_css_selector("tr")) > 10
 
-    # logout; cleanup test
-    h.click("Your HAWC")
-    h.click("Logout")
+    shared.logout()

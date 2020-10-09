@@ -1,22 +1,10 @@
-from urllib.parse import urlparse
-
 import helium as h
+
+from . import shared
 
 
 def visuals(driver, root_url):
-    h.go_to(root_url + "/user/login/")
-    h.write("pm@pm.com", into="Email*")
-    h.write("pw", into="Password*")
-    h.click(h.S("@login"))
-
-    print(driver.current_url)
-    assert (
-        h.Text(
-            "Please enter a correct email and password. Note that both fields may be case-sensitive."
-        ).exists()
-        is False
-    )
-    assert urlparse(driver.current_url).path == "/portal/"
+    shared.login(root_url)
 
     h.go_to(root_url + "/summary/visual/5/")
 
@@ -75,6 +63,4 @@ def visuals(driver, root_url):
     assert len(driver.find_elements_by_css_selector("svg")) > 0
     assert len(driver.find_elements_by_css_selector("svg .tagnode")) == 4
 
-    # logout; cleanup test
-    h.click("Your HAWC")
-    h.click("Logout")
+    shared.logout()

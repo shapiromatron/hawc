@@ -1,23 +1,11 @@
-from urllib.parse import urlparse
-
 import helium as h
+
+from . import shared
 
 
 def rob(driver, root_url):
 
-    h.go_to(root_url + "/user/login/")
-    h.write("pm@pm.com", into="Email*")
-    h.write("pw", into="Password*")
-    h.click(h.S("@login"))
-
-    print(driver.current_url)
-    assert (
-        h.Text(
-            "Please enter a correct email and password. Note that both fields may be case-sensitive."
-        ).exists()
-        is False
-    )
-    assert urlparse(driver.current_url).path == "/portal/"
+    shared.login(root_url)
 
     h.go_to(root_url + "/rob/assessment/1/")
 
@@ -44,6 +32,4 @@ def rob(driver, root_url):
     # ensure that there are 3 .score-form
     assert len(driver.find_elements_by_css_selector(".score-form")) == 3
 
-    # logout; cleanup test
-    h.click("Your HAWC")
-    h.click("Logout")
+    shared.logout()

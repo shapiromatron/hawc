@@ -1,26 +1,14 @@
-from urllib.parse import urlparse
-
 import helium as h
+
+from . import shared
 
 
 def bioassay(driver, root_url):
 
-    h.go_to(root_url + "/user/login/")
-    h.write("pm@pm.com", into="Email*")
-    h.write("pw", into="Password*")
-    h.click(h.S("@login"))
+    shared.login(root_url)
 
-    print(driver.current_url)
-    assert (
-        h.Text(
-            "Please enter a correct email and password. Note that both fields may be case-sensitive."
-        ).exists()
-        is False
-    )
-    assert urlparse(driver.current_url).path == "/portal/"
-
+    # /experiment/
     h.go_to(root_url + "/ani/experiment/1/")
-
     h.wait_until(h.Text("Multiple generations").exists)
 
     assert len(driver.find_elements_by_css_selector("#objContainer table")) > 0
@@ -38,6 +26,7 @@ def bioassay(driver, root_url):
     # confirm "tester" exists under Available animal groups
     assert h.Text(to_left_of="rat").value == "tester"
 
-    # logout; cleanup test
-    h.click("Your HAWC")
-    h.click("Logout")
+    # TODO: /animal-group/
+    # TODO: /endpoint/
+
+    shared.logout()

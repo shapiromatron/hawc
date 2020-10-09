@@ -2,6 +2,8 @@ from urllib.parse import urlparse
 
 import helium as h
 
+from . import shared
+
 
 def login(driver, root_url):
     """
@@ -28,15 +30,10 @@ def login(driver, root_url):
     assert h.Text(msg).exists() is True
     assert urlparse(driver.current_url).path == "/user/login/"
 
-    # valid password check
-    h.go_to(root_url + "/user/login/")
-    h.write("pm@pm.com", into="Email*")
-    h.write("pw", into="Password*")
-    # changed to target the specific login button in the form seems
-    # there was some randomness in whether it clicked the right button/lnk
-    h.click(h.S("@login"))
+    # confirm correct login
+    shared.login(root_url)
     assert urlparse(driver.current_url).path == "/portal/"
 
-    # logout; cleanup test
-    h.click("Your HAWC")
-    h.click("Logout")
+    # confirm logout
+    shared.logout()
+    assert urlparse(driver.current_url).path == "/"
