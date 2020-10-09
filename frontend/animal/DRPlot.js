@@ -2,6 +2,7 @@ import $ from "$";
 import _ from "lodash";
 import * as d3 from "d3";
 
+import h from "shared/utils/helpers";
 import D3Plot from "utils/D3Plot";
 
 class DRPlot extends D3Plot {
@@ -136,9 +137,8 @@ class DRPlot extends D3Plot {
         if (this.endpoint.data.data_type == "C") {
             if (this.y_axis_settings.scale_type == "linear") {
                 this.y_axis_settings.scale_type = "log";
-                this.y_axis_settings.number_ticks = 1;
-                var formatNumber = d3.format(",");
-                this.y_axis_settings.label_format = formatNumber;
+                this.y_axis_settings.number_ticks = h.numLogTicks(this.y_axis_settings.domain);
+                this.y_axis_settings.label_format = h.numericAxisFormat;
             } else {
                 this.y_axis_settings.scale_type = "linear";
                 this.y_axis_settings.number_ticks = 10;
@@ -162,8 +162,8 @@ class DRPlot extends D3Plot {
         if (window.event && window.event.stopPropagation) event.stopPropagation();
         if (this.x_axis_settings.scale_type == "linear") {
             this.x_axis_settings.scale_type = "log";
-            this.x_axis_settings.number_ticks = 1;
-            this.x_axis_settings.label_format = d3.format(",");
+            this.x_axis_settings.number_ticks = h.numLogTicks(this.x_axis_settings.domain);
+            this.x_axis_settings.label_format = h.numericAxisFormat;
         } else {
             this.x_axis_settings.scale_type = "linear";
             this.x_axis_settings.number_ticks = 5;
@@ -252,12 +252,15 @@ class DRPlot extends D3Plot {
         // Assuming the plot has already been constructed once,
         // rebuild plot with updated x-scale.
 
-        var x = this.x_scale;
+        var x = this.x_scale,
+            settings = this.x_axis_settings,
+            numTicks =
+                settings.scale_type === "log"
+                    ? h.numLogTicks(settings.domain)
+                    : settings.number_ticks;
 
         //rebuild x-axis
-        this.xAxis
-            .scale(x)
-            .ticks(this.x_axis_settings.number_ticks, this.x_axis_settings.label_format);
+        this.xAxis.scale(x).ticks(numTicks, this.x_axis_settings.label_format);
 
         this.vis
             .selectAll(".x_axis")
@@ -278,7 +281,6 @@ class DRPlot extends D3Plot {
             });
 
         this.rebuild_x_gridlines({animate: true});
-
         this.add_dr_error_bars(true);
         this.add_dose_response(true);
         this.render_bmd_lines();

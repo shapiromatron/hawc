@@ -43,6 +43,7 @@ class TermAdmin(admin.ModelAdmin):
 class EntityTermRelationAdmin(admin.TabularInline):
     model = models.EntityTermRelation
     extra = 1
+    raw_id_fields = ("term",)
 
 
 @admin.register(models.Entity)

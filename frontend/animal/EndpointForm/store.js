@@ -1,6 +1,10 @@
 import _ from "lodash";
 import {action, computed, observable} from "mobx";
 
+import h from "shared/utils/helpers";
+
+const fields = ["system", "organ", "effect", "effect_subtype", "name"];
+
 class EndpointFormStore {
     @observable config = null;
     @observable useControlledVocabulary = null;
@@ -12,8 +16,7 @@ class EndpointFormStore {
 
     setUseControlledVocabulary() {
         let toggle = {};
-        const fields = ["system", "organ", "effect", "effect_subtype", "name"],
-            useVocab = this.canUseControlledVocabulary,
+        const useVocab = this.canUseControlledVocabulary,
             {object} = this.config;
         _.forEach(fields, function(field) {
             // default case
@@ -28,6 +31,37 @@ class EndpointFormStore {
 
     @computed get canUseControlledVocabulary() {
         return this.config.vocabulary !== null;
+    }
+
+    @action.bound
+    endpointNameLookup(val) {
+        const url = `/vocab/api/ehv/${val}/endpoint-name-lookup/`;
+
+        if (!val) {
+            return;
+        }
+
+        fetch(url, h.fetchGet)
+            .then(resp => {
+                if (resp.ok) {
+                    return resp.json();
+                } else {
+                    throw new Error("Invalid response", resp);
+                }
+            })
+            .then(json => {
+                // set controlled vocabulary usage
+                fields.map(field => {
+                    this.useControlledVocabulary[field] = true;
+                });
+                // set values
+                _.each(json, (value, key) => {
+                    this.config.object[key] = value;
+                });
+            })
+            .catch(err => {
+                console.error(err);
+            });
     }
 
     @action.bound

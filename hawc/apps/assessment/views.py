@@ -94,7 +94,10 @@ class About(TemplateView):
             endpoints = apps.get_model("animal", "Endpoint").objects.count()
 
             endpoints_with_data = (
-                apps.get_model("animal", "EndpointGroup").objects.distinct("endpoint_id").count()
+                apps.get_model("animal", "EndpointGroup")
+                .objects.order_by("endpoint_id")
+                .distinct("endpoint_id")
+                .count()
             )
 
             outcomes = apps.get_model("epi", "Outcome").objects.count()
@@ -108,7 +111,10 @@ class About(TemplateView):
             iv_endpoints = apps.get_model("invitro", "IVEndpoint").objects.count()
 
             iv_endpoints_with_data = (
-                apps.get_model("invitro", "IVEndpointGroup").objects.distinct("endpoint_id").count()
+                apps.get_model("invitro", "IVEndpointGroup")
+                .objects.order_by("endpoint_id")
+                .distinct("endpoint_id")
+                .count()
             )
 
             visuals = (
@@ -118,12 +124,14 @@ class About(TemplateView):
 
             assessments_with_visuals = len(
                 set(
-                    models.Assessment.objects.annotate(vc=Count("visuals"))
+                    models.Assessment.objects.order_by("-created")
+                    .annotate(vc=Count("visuals"))
                     .filter(vc__gt=0)
                     .values_list("id", flat=True)
                 ).union(
                     set(
-                        models.Assessment.objects.annotate(dp=Count("datapivot"))
+                        models.Assessment.objects.order_by("-created")
+                        .annotate(dp=Count("datapivot"))
                         .filter(dp__gt=0)
                         .values_list("id", flat=True)
                     )
@@ -388,6 +396,34 @@ class DatasetDelete(BaseDelete):
         return self.object.assessment.get_absolute_url()
 
 
+# Vocab views
+class VocabList(TeamMemberOrHigherMixin, TemplateView):
+    template_name = "assessment/vocab.html"
+
+    def get_assessment(self, *args, **kwargs):
+        return get_object_or_404(models.Assessment, pk=kwargs["pk"])
+
+    def get_context_data(self, **kwargs):
+        Term = apps.get_model("vocab", "Term")
+        context = super().get_context_data(**kwargs)
+        context["systems"] = Term.objects.assessment_systems(self.assessment.id).order_by(
+            "-deprecated_on", "id"
+        )
+        context["organs"] = Term.objects.assessment_organs(self.assessment.id).order_by(
+            "-deprecated_on", "id"
+        )
+        context["effects"] = Term.objects.assessment_effects(self.assessment.id).order_by(
+            "-deprecated_on", "id"
+        )
+        context["effect_subtypes"] = Term.objects.assessment_effect_subtypes(
+            self.assessment.id
+        ).order_by("-deprecated_on", "id")
+        context["endpoint_names"] = Term.objects.assessment_endpoint_names(
+            self.assessment.id
+        ).order_by("-deprecated_on", "id")
+        return context
+
+
 # Endpoint objects
 class EffectTagCreate(CloseIfSuccessMixin, BaseCreate):
     success_message = "Effect tag created."
@@ -507,8 +543,6 @@ class UpdateSession(View):
             return HttpResponseNotAllowed(["POST"])
         if request.POST.get("hideSidebar"):
             request.session["hideSidebar"] = self.isTruthy(request, "hideSidebar")
-        if request.POST.get("hideBrowserWarning"):
-            request.session["hideBrowserWarning"] = self.isTruthy(request, "hideBrowserWarning")
         return HttpResponse(True)
 
 
@@ -577,6 +611,16 @@ class AdminAssessmentSize(TemplateView):
     @method_decorator(staff_member_required)
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
+
+
+class Healthcheck(View):
+    """
+    Healthcheck view check; ensure django server can serve requests.
+    """
+
+    def get(self, request, *args, **kwargs):
+        # TODO - add cache check and celery worker check
+        return HttpResponse(json.dumps({"status": "ok"}), content_type="application/json")
 
 
 # log / blog

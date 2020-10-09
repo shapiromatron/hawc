@@ -59,19 +59,6 @@ class DoseUnitsSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class EndpointItemSerializer(serializers.Serializer):
-    count = serializers.IntegerField()
-    type = serializers.CharField()
-    title = serializers.CharField()
-    url = serializers.CharField()
-
-
-class AssessmentEndpointSerializer(serializers.Serializer):
-    name = serializers.CharField()
-    id = serializers.IntegerField()
-    items = serializers.ListField(child=EndpointItemSerializer())
-
-
 class AssessmentRootedSerializer(serializers.ModelSerializer):
 
     NO_PARENT = -1
