@@ -1,0 +1,17 @@
+{% extends 'portal.html' %}
+
+{% block title %}
+  Entity term relations | HAWC
+{% endblock title %}
+
+{% block content %}
+
+  <h1>Entity term relations</h1>
+
+  {% for obj in object_list %}
+  <div>
+    {{obj.entity}} | {{obj.term}}
+  </div>
+  {% endfor %}
+
+{% endblock content %}

@@ -2,7 +2,7 @@ import collections
 import json
 import math
 from itertools import chain
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 import pandas as pd
 from django.core.exceptions import ObjectDoesNotExist
@@ -12,12 +12,12 @@ from django.urls import reverse
 from reversion import revisions as reversion
 from scipy import stats
 
-from ..assessment.models import Assessment, BaseEndpoint
+from ..assessment.models import Assessment, BaseEndpoint, DSSTox
 from ..assessment.serializers import AssessmentSerializer
-from ..common.dsstox import get_casrn_url
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper, cleanHTML, tryParseInt
 from ..common.models import get_crumbs
 from ..study.models import Study
+from ..vocab.models import Term
 from . import managers
 
 
@@ -84,6 +84,19 @@ class Experiment(models.Model):
                 in the comment field below.
                 """,
     )
+    dtxsid = models.ForeignKey(
+        DSSTox,
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+        verbose_name="DSSTox substance identifier (DTXSID)",
+        related_name="experiments",
+        help_text="""
+        <a href="https://www.epa.gov/chemical-research/distributed-structure-searchable-toxicity-dsstox-database">DSSTox</a>
+        substance identifier (recommended). When using an identifier, chemical name and CASRN are
+        standardized using the DTXSID.
+        """,
+    )
     chemical_source = models.CharField(
         max_length=128, verbose_name="Source of chemical", blank=True
     )
@@ -146,9 +159,6 @@ class Experiment(models.Model):
     def get_crumbs(self):
         return get_crumbs(self, self.study)
 
-    def get_casrn_url(self):
-        return get_casrn_url(self.cas)
-
     @staticmethod
     def flat_complete_header_row():
         return (
@@ -159,6 +169,7 @@ class Experiment(models.Model):
             "experiment-has_multiple_generations",
             "experiment-chemical",
             "experiment-cas",
+            "experiment-dtxsid",
             "experiment-chemical_source",
             "experiment-purity_available",
             "experiment-purity_qualifier",
@@ -178,6 +189,7 @@ class Experiment(models.Model):
             ser["has_multiple_generations"],
             ser["chemical"],
             ser["cas"],
+            ser["dtxsid"],
             ser["chemical_source"],
             ser["purity_available"],
             ser["purity_qualifier"],
@@ -697,12 +709,18 @@ class Endpoint(BaseEndpoint):
         "response_units",
         "statistical_test",
         "diagnostic",
-        "data_location",
         "trend_value",
         "results_notes",
         "endpoint_notes",
         "litter_effect_notes",
     )
+    TERM_FIELD_MAPPING = {
+        "name": "name_term_id",
+        "system": "system_term_id",
+        "organ": "organ_term_id",
+        "effect": "effect_term_id",
+        "effect_subtype": "effect_subtype_term_id",
+    }
 
     DATA_TYPE_CONTINUOUS = "C"
     DATA_TYPE_DICHOTOMOUS = "D"
@@ -777,18 +795,37 @@ class Endpoint(BaseEndpoint):
     animal_group = models.ForeignKey(
         AnimalGroup, on_delete=models.CASCADE, related_name="endpoints"
     )
+    name_term = models.ForeignKey(
+        Term, related_name="endpoint_name_terms", on_delete=models.SET_NULL, blank=True, null=True
+    )
     system = models.CharField(max_length=128, blank=True, help_text="Relevant biological system")
+    system_term = models.ForeignKey(
+        Term, related_name="endpoint_system_terms", on_delete=models.SET_NULL, blank=True, null=True
+    )
     organ = models.CharField(
         max_length=128,
         blank=True,
         verbose_name="Organ (and tissue)",
         help_text="Relevant organ or tissue",
     )
+    organ_term = models.ForeignKey(
+        Term, related_name="endpoint_organ_terms", on_delete=models.SET_NULL, blank=True, null=True
+    )
     effect = models.CharField(
         max_length=128, blank=True, help_text="Effect, using common-vocabulary"
     )
+    effect_term = models.ForeignKey(
+        Term, related_name="endpoint_effect_terms", on_delete=models.SET_NULL, blank=True, null=True
+    )
     effect_subtype = models.CharField(
         max_length=128, blank=True, help_text="Effect subtype, using common-vocabulary"
+    )
+    effect_subtype_term = models.ForeignKey(
+        Term,
+        related_name="endpoint_effect_subtype_terms",
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
     )
     litter_effects = models.CharField(
         max_length=2,
@@ -950,6 +987,7 @@ class Endpoint(BaseEndpoint):
             "animal_group__experiment__name": "experiment name",
             "animal_group__experiment__type": "experiment type",
             "animal_group__experiment__cas": "experiment cas",
+            "animal_group__experiment__dtxsid": "experiment dtxsid",
             "animal_group__experiment__chemical": "experiment chemical",
             "animal_group__experiment__study_id": "study id",
             "animal_group__experiment__study__short_citation": "study citation",
@@ -1052,6 +1090,30 @@ class Endpoint(BaseEndpoint):
         )
         return df
 
+    @classmethod
+    def get_vocabulary_settings(
+        cls, assessment: Assessment, instance: Optional["Endpoint"] = None
+    ) -> str:
+        return json.dumps(
+            {
+                "debug": False,
+                "vocabulary": assessment.vocabulary,
+                "vocabulary_display": assessment.get_vocabulary_display(),
+                "object": {
+                    "system": instance.system if instance else "",
+                    "organ": instance.organ if instance else "",
+                    "effect": instance.effect if instance else "",
+                    "effect_subtype": instance.effect_subtype if instance else "",
+                    "name": instance.name if instance else "",
+                    "system_term_id": instance.system_term_id if instance else None,
+                    "organ_term_id": instance.organ_term_id if instance else None,
+                    "effect_term_id": instance.effect_term_id if instance else None,
+                    "effect_subtype_term_id": instance.effect_subtype_term_id if instance else None,
+                    "name_term_id": instance.name_term_id if instance else None,
+                },
+            }
+        )
+
     def __str__(self):
         return self.name
 
@@ -1060,6 +1122,15 @@ class Endpoint(BaseEndpoint):
 
     def get_crumbs(self):
         return get_crumbs(self, self.animal_group)
+
+    def save(self, *args, **kwargs):
+        # ensure our controlled vocabulary terms don't have leading/trailing whitespace
+        self.system = self.system.strip()
+        self.organ = self.organ.strip()
+        self.effect = self.effect.strip()
+        self.effect_subtype = self.effect_subtype.strip()
+        self.name = self.name.strip()
+        super().save(*args, **kwargs)
 
     @property
     def dose_response_available(self):

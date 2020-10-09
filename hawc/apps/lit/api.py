@@ -8,7 +8,11 @@ from rest_framework import exceptions, mixins, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from ..assessment.api import AssessmentLevelPermissions, AssessmentRootedTagTreeViewset
+from ..assessment.api import (
+    AssessmentLevelPermissions,
+    AssessmentReadPermissions,
+    AssessmentRootedTagTreeViewset,
+)
 from ..assessment.models import Assessment
 from ..common.api import (
     CleanupFieldsBaseViewSet,
@@ -207,6 +211,27 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         assessment = self.get_object()
         models.Reference.update_hero_metadata(assessment.id)
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @action(
+        detail=True,
+        methods=("post",),
+        url_path="reference-search",
+        permission_classes=(AssessmentReadPermissions,),
+    )
+    def reference_search(self, request, pk):
+        assessment = self.get_object()
+        if not assessment.user_can_view_object(request.user):
+            raise exceptions.PermissionDenied()
+
+        serializer = serializers.ReferenceQuerySerializer(
+            data=request.data, context={"assessment": assessment}
+        )
+
+        resp = []
+        if serializer.is_valid(raise_exception=True):
+            resp = serializer.search()
+
+        return Response(dict(references=resp))
 
 
 class SearchViewset(mixins.CreateModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):

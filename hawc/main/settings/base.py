@@ -99,6 +99,7 @@ INSTALLED_APPS = (
     "hawc.apps.common",
     "hawc.apps.myuser",
     "hawc.apps.assessment",
+    "hawc.apps.vocab",
     "hawc.apps.lit",
     "hawc.apps.riskofbias",
     "hawc.apps.study",
@@ -149,7 +150,7 @@ CACHES = {
     }
 }
 CACHE_1_HR = 60 * 60
-
+CACHE_10_MIN = 60 * 10
 
 # Email settings
 EMAIL_SUBJECT_PREFIX = os.environ.get("EMAIL_SUBJECT_PREFIX", "[HAWC] ")
@@ -283,7 +284,7 @@ REST_FRAMEWORK = {
 REST_FRAMEWORK_EXTENSIONS = {"DEFAULT_BULK_OPERATION_HEADER_NAME": "X-CUSTOM-BULK-OPERATION"}
 
 # Django selectable settings
-SELECTABLE_MAX_LIMIT = 10
+SELECTABLE_MAX_LIMIT = 100
 
 # Django crispy-forms settings
 CRISPY_TEMPLATE_PACK = "bootstrap"

@@ -3,8 +3,6 @@ import _ from "lodash";
 import * as d3 from "d3";
 import slugify from "slugify";
 
-import renderChemicalDetails from "./components/ChemicalDetails";
-
 class HAWCUtils {
     static HAWC_NEW_WINDOW_POPUP_CLOSING = "hawcNewWindowPopupClosing";
 
@@ -96,24 +94,6 @@ class HAWCUtils {
         throw "Abstract method; requires implementation";
     }
 
-    static renderChemicalProperties(url, $div, show_header) {
-        const handleResponse = function(data) {
-                if (data.status === "requesting") {
-                    setTimeout(tryToFetch, 1000);
-                }
-                if (data.status === "success") {
-                    renderChemicalDetails($div.get(0), data.content, show_header);
-                }
-            },
-            tryToFetch = () => {
-                fetch(url)
-                    .then(resp => resp.json())
-                    .then(handleResponse);
-            };
-
-        tryToFetch();
-    }
-
     static updateDragLocationTransform(setDragCB) {
         // a new drag location, requires binding to d3.drag,
         // and requires a _.partial injection of th settings module.
@@ -174,7 +154,11 @@ class HAWCUtils {
     static wrapText(text, max_width) {
         if (!$.isNumeric(max_width) || max_width <= 0) return;
         var $text = d3.select(text),
-            words = text.textContent.split(/\s+/).reverse(),
+            // trim whitespace to prevent falsey empty strings after split
+            words = text.textContent
+                .trim()
+                .split(/\s+/)
+                .reverse(),
             word,
             line = [],
             lineNumber = 0,
@@ -201,30 +185,6 @@ class HAWCUtils {
                     .attr("dy", ++lineNumber * lineHeight + "px")
                     .text(word);
             }
-        }
-    }
-
-    static isSupportedBrowser() {
-        // not ideal; but <IE12 isn't supported which is primary-goal:
-        // http://webaim.org/blog/user-agent-string-history/
-        var ua = navigator.userAgent.toLowerCase(),
-            isChrome = ua.indexOf("chrome") > -1,
-            isFirefox = ua.indexOf("firefox") > -1,
-            isSafari = ua.indexOf("safari") > -1;
-        return isChrome || isFirefox || isSafari;
-    }
-
-    static browserCheck() {
-        if (!HAWCUtils.isSupportedBrowser()) {
-            $("#content").prepend(
-                $('<div class="alert">')
-                    .append(
-                        '<button id="hideBrowserWarning" type="button" class="close" data-dismiss="alert">&times;</button>'
-                    )
-                    .append(
-                        '<b>Warning:</b> Your current browser has not been tested extensively with this website, which may result in some some errors with functionality. The following browsers are fully supported:<ul><li><a href="https://www.google.com/chrome/" target="_blank">Google Chrome</a> (preferred)</li><li><a href="https://www.mozilla.org/firefox/" target="_blank">Mozilla Firefox</a></li><li><a href="https://www.apple.com/safari/" target="_blank">Apple Safari</a></li></ul>Please use a different browser for an optimal experience.'
-                    )
-            );
         }
     }
 

@@ -315,6 +315,21 @@ class Visual(models.Model):
                     + "?unpublished=true",
                 ),
                 HeatmapDataset(
+                    type="Bioassay",
+                    name="Bioassay endpoint with doses",
+                    url=reverse(
+                        "animal:api:assessment-endpoint-doses-heatmap", args=(assessment.id,)
+                    ),
+                ),
+                HeatmapDataset(
+                    type="Bioassay",
+                    name="Bioassay endpoint with doses (including unpublished HAWC data)",
+                    url=reverse(
+                        "animal:api:assessment-endpoint-doses-heatmap", args=(assessment.id,)
+                    )
+                    + "?unpublished=true",
+                ),
+                HeatmapDataset(
                     type="Epi",
                     name="Epidemiology study design",
                     url=reverse("epi:api:assessment-study-heatmap", args=(assessment.id,)),
@@ -749,7 +764,7 @@ class DataPivotQuery(DataPivot):
         elif self.evidence_type == IN_VITRO:
             qs = IVEndpoint.objects.filter(**filters)
 
-        return qs
+        return qs.order_by("id")
 
     def _get_dataset_exporter(self, qs):
         if self.evidence_type == BIOASSAY:

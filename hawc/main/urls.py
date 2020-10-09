@@ -57,6 +57,7 @@ urlpatterns = [
     url(r"^summary/", include("hawc.apps.summary.urls")),
     url(r"^rob/", include("hawc.apps.riskofbias.urls")),
     url(r"^mgmt/", include("hawc.apps.mgmt.urls")),
+    url(r"^vocab/", include("hawc.apps.vocab.urls")),
     # Error-pages
     url(r"^403/$", views.Error403.as_view(), name="403"),
     url(r"^404/$", views.Error404.as_view(), name="404"),
@@ -73,6 +74,11 @@ urlpatterns = [
         rf"^admin/{settings.ADMIN_URL_PREFIX}/assessment-size/$",
         views.AdminAssessmentSize.as_view(),
         name="admin_assessment_size",
+    ),
+    url(
+        rf"^admin/{settings.ADMIN_URL_PREFIX}/healthcheck/$",
+        views.Healthcheck.as_view(),
+        name="healthcheck",
     ),
     url(rf"^admin/{settings.ADMIN_URL_PREFIX}/", admin.site.urls),
     url(r"^selectable/", include("selectable.urls")),

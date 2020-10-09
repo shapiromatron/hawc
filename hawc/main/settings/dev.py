@@ -33,6 +33,8 @@ CACHES = {
         "TIMEOUT": 60 * 10,  # 10 minutes (in seconds)
     }
 }
+CACHE_1_HR = 0  # disable cache in dev mode
+CACHE_10_MIN = 0  # disable cache in dev mode
 
 LOGGING["loggers"][""]["handlers"] = ["console"]
 LOGGING["loggers"][""]["level"] = "INFO"

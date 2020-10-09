@@ -321,6 +321,8 @@ Building a test database
 
 A test database is loaded to run unit tests. The database may need to be periodically updated as new feature are added. To load, make edits, and export the test database:
 
+Linux/Mac
+~~~~~~~~~
 .. code-block:: bash
 
     # specify that we're using the unit-test settings
@@ -333,6 +335,22 @@ A test database is loaded to run unit tests. The database may need to be periodi
     # now make edits to the database using the GUI or via command line
 
     # export database
+    manage.py dump_test_db
+
+Windows
+~~~~~~~~~
+.. code-block:: bat
+
+    :: specify that we're using the unit-test settings
+    set DJANGO_SETTINGS_MODULE=hawc.main.settings.unittest
+
+    :: load existing test
+    createdb -T template0 -E UTF8 hawc-fixture-test
+    manage.py load_test_db
+
+    :: now make edits to the database using the GUI or via command line
+
+    :: export database
     manage.py dump_test_db
 
 If tests aren't working after the database has changed (ie., migrated); try dropping the test-database. Try the command ``dropdb test_hawc-fixture-test``.
@@ -376,6 +394,39 @@ Then, create the example docker container and start a celery worker instance:
 
 Asynchronous tasks will no be executed by celery workers instead of the main thread.
 
+Integration tests
+~~~~~~~~~~~~~~~~~
+
+Integration tests use selenium and Firefox or Chrome for for testing. By default, integration tests are skipped. Firefox appears to be more stable based on initial investigation for these tests To run, you'll need to set a few environment variables.
+
+.. code-block:: bash
+
+    export HAWC_INTEGRATION_TESTS=1
+    export SHOW_BROWSER=1            # or 0 for headless
+    export BROWSER="firefox"         # or "chrome"
+    py.test -s tests/integration/ --pdb
+
+When writing these tests, it's often easiest to write the tests in an interactive scripting environment like ipython or jupyter. This allows you to interact with the DOM and the requests much easier than manually re-running tests as they're written. An example session:
+
+.. code-block:: python
+
+    import helium as h
+    from selenium.webdriver import FirefoxOptions
+
+    driver = h.start_firefox(headless=False)
+    driver.set_window_size(1920, 1080)
+
+    h.go_to("https://hawcproject.org")
+    h.click("Login")
+    assert "/user/login/" in driver.current_url
+
+    # ... keep coding here, use introspection in python as well as debugger tools for testing...
+
+    # cleanup
+    driver.close()
+
+Then, transfer the interactive potions into unit-tests...
+
 Distributing HAWC clients
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -395,3 +446,15 @@ The Python HAWC client can be packaged for easy distribution.
     # or can be uploaded to pypi
     make upload-testpypi
     make upload-pypi
+
+Lines of code
+~~~~~~~~~~~~~
+
+To generate a report on the lines of code, install cloc_ and then run the make command:
+
+.. code-block:: bash
+
+    make loc
+
+.. _cloc: https://github.com/AlDanial/cloc
+

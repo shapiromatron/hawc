@@ -28,8 +28,9 @@ from ..common.views import (
     ProjectManagerOrHigherMixin,
     TeamMemberOrHigherMixin,
     TimeSpentOnPageMixin,
+    beta_tester_required,
 )
-from . import forms, models, tasks
+from . import forms, models, serializers, tasks
 
 
 def percentage(numerator, denominator):
@@ -93,7 +94,10 @@ class About(TemplateView):
             endpoints = apps.get_model("animal", "Endpoint").objects.count()
 
             endpoints_with_data = (
-                apps.get_model("animal", "EndpointGroup").objects.distinct("endpoint_id").count()
+                apps.get_model("animal", "EndpointGroup")
+                .objects.order_by("endpoint_id")
+                .distinct("endpoint_id")
+                .count()
             )
 
             outcomes = apps.get_model("epi", "Outcome").objects.count()
@@ -107,7 +111,10 @@ class About(TemplateView):
             iv_endpoints = apps.get_model("invitro", "IVEndpoint").objects.count()
 
             iv_endpoints_with_data = (
-                apps.get_model("invitro", "IVEndpointGroup").objects.distinct("endpoint_id").count()
+                apps.get_model("invitro", "IVEndpointGroup")
+                .objects.order_by("endpoint_id")
+                .distinct("endpoint_id")
+                .count()
             )
 
             visuals = (
@@ -117,12 +124,14 @@ class About(TemplateView):
 
             assessments_with_visuals = len(
                 set(
-                    models.Assessment.objects.annotate(vc=Count("visuals"))
+                    models.Assessment.objects.order_by("-created")
+                    .annotate(vc=Count("visuals"))
                     .filter(vc__gt=0)
                     .values_list("id", flat=True)
                 ).union(
                     set(
-                        models.Assessment.objects.annotate(dp=Count("datapivot"))
+                        models.Assessment.objects.order_by("-created")
+                        .annotate(dp=Count("datapivot"))
                         .filter(dp__gt=0)
                         .values_list("id", flat=True)
                     )
@@ -234,7 +243,11 @@ class AssessmentPublicList(ListView):
     model = models.Assessment
 
     def get_queryset(self):
-        return self.model.objects.get_public_assessments()
+        qs = self.model.objects.get_public_assessments()
+        dtxsid = self.request.GET.get("dtxsid")
+        if dtxsid:
+            qs = qs.filter(dtxsids=dtxsid)
+        return qs
 
 
 class AssessmentCreate(TimeSpentOnPageMixin, LoginRequiredMixin, MessageMixin, CreateView):
@@ -251,10 +264,25 @@ class AssessmentCreate(TimeSpentOnPageMixin, LoginRequiredMixin, MessageMixin, C
 class AssessmentRead(BaseDetail):
     model = models.Assessment
 
+    def get_queryset(self):
+        qs = super().get_queryset()
+        qs = qs.prefetch_related(
+            "project_manager", "team_members", "reviewers", "datasets", "dtxsids"
+        )
+        return qs
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["attachments"] = models.Attachment.objects.get_attachments(
             self.object, not context["obj_perms"]["edit"]
+        )
+        context["dtxsids"] = json.dumps(
+            serializers.AssessmentSerializer().to_representation(self.object)["dtxsids"]
+        )
+        context["datasets"] = (
+            context["object"].datasets.all()
+            if context["obj_perms"]["edit"]
+            else context["object"].datasets.filter(published=True)
         )
         return context
 
@@ -347,6 +375,12 @@ class DatasetCreate(BaseCreate):
 class DatasetRead(BaseDetail):
     model = models.Dataset
 
+    def get_object(self, **kwargs):
+        obj = super().get_object(**kwargs)
+        if not obj.user_can_view(self.request.user):
+            raise PermissionDenied()
+        return obj
+
 
 class DatasetUpdate(BaseUpdate):
     success_message = "Dataset updated."
@@ -360,6 +394,34 @@ class DatasetDelete(BaseDelete):
 
     def get_success_url(self):
         return self.object.assessment.get_absolute_url()
+
+
+# Vocab views
+class VocabList(TeamMemberOrHigherMixin, TemplateView):
+    template_name = "assessment/vocab.html"
+
+    def get_assessment(self, *args, **kwargs):
+        return get_object_or_404(models.Assessment, pk=kwargs["pk"])
+
+    def get_context_data(self, **kwargs):
+        Term = apps.get_model("vocab", "Term")
+        context = super().get_context_data(**kwargs)
+        context["systems"] = Term.objects.assessment_systems(self.assessment.id).order_by(
+            "-deprecated_on", "id"
+        )
+        context["organs"] = Term.objects.assessment_organs(self.assessment.id).order_by(
+            "-deprecated_on", "id"
+        )
+        context["effects"] = Term.objects.assessment_effects(self.assessment.id).order_by(
+            "-deprecated_on", "id"
+        )
+        context["effect_subtypes"] = Term.objects.assessment_effect_subtypes(
+            self.assessment.id
+        ).order_by("-deprecated_on", "id")
+        context["endpoint_names"] = Term.objects.assessment_endpoint_names(
+            self.assessment.id
+        ).order_by("-deprecated_on", "id")
+        return context
 
 
 # Endpoint objects
@@ -406,6 +468,12 @@ class DoseUnitsCreate(CloseIfSuccessMixin, BaseCreate):
     parent_template_name = "assessment"
     model = models.DoseUnits
     form_class = forms.DoseUnitsForm
+
+
+class DSSToxCreate(CloseIfSuccessMixin, LoginRequiredMixin, MessageMixin, CreateView):
+    success_message = "DTXSID created."
+    model = models.DSSTox
+    form_class = forms.DSSToxForm
 
 
 class BaseEndpointList(BaseList):
@@ -475,8 +543,6 @@ class UpdateSession(View):
             return HttpResponseNotAllowed(["POST"])
         if request.POST.get("hideSidebar"):
             request.session["hideSidebar"] = self.isTruthy(request, "hideSidebar")
-        if request.POST.get("hideBrowserWarning"):
-            request.session["hideBrowserWarning"] = self.isTruthy(request, "hideBrowserWarning")
         return HttpResponse(True)
 
 
@@ -545,3 +611,25 @@ class AdminAssessmentSize(TemplateView):
     @method_decorator(staff_member_required)
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
+
+
+class Healthcheck(View):
+    """
+    Healthcheck view check; ensure django server can serve requests.
+    """
+
+    def get(self, request, *args, **kwargs):
+        # TODO - add cache check and celery worker check
+        return HttpResponse(json.dumps({"status": "ok"}), content_type="application/json")
+
+
+# log / blog
+class BlogList(ListView):
+    model = models.Blog
+
+    def get_queryset(self):
+        return self.model.objects.filter(published=True)
+
+    @method_decorator(beta_tester_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)

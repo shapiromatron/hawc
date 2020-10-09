@@ -1,9 +1,7 @@
 import DoseUnitsWidget from "./DoseUnitsWidget";
+import renderDssToxTabs from "./DssToxTabs";
 
-const assessmentStartup = {
+export default {
     DoseUnitsWidget,
+    renderDssToxTabs,
 };
-
-window.app.assessmentStartup = assessmentStartup;
-
-export default assessmentStartup;

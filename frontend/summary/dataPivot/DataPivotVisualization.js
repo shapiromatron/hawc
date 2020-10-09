@@ -2,6 +2,7 @@ import $ from "$";
 import _ from "lodash";
 import * as d3 from "d3";
 
+import h from "shared/utils/helpers";
 import D3Plot from "utils/D3Plot";
 import HAWCUtils from "utils/HAWCUtils";
 
@@ -194,8 +195,7 @@ class DataPivotVisualization extends D3Plot {
         this.h = this.w; // temporary; depends on rendered text-size
         this.textPadding = 5; // text padding on all sides of text
 
-        var scale_type = this.dp_settings.plot_settings.logscale ? "log" : "linear",
-            formatNumber = d3.format(",");
+        var scale_type = this.dp_settings.plot_settings.logscale ? "log" : "linear";
 
         this.text_spacing_offset = 10;
         this.x_axis_settings = {
@@ -206,7 +206,7 @@ class DataPivotVisualization extends D3Plot {
             number_ticks: 10,
             axis_labels: true,
             x_translate: 0,
-            label_format: formatNumber,
+            label_format: h.numericAxisFormat,
         };
 
         this.y_axis_settings = {

@@ -5,26 +5,26 @@ from typing import Optional
 import pandas as pd
 from django.apps import apps
 from django.core import exceptions
-from django.core.cache import cache
 from django.db.models import Count
 from django.http import Http404
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
-from rest_framework import filters, permissions, status, viewsets
+from rest_framework import filters, mixins, permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import APIException, PermissionDenied
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.permissions import IsAdminUser
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
-from rest_framework.views import APIView
 
-from ..common import dsstox
+from hawc.services.epa import dsstox
+
 from ..common.helper import FlatExport, create_uuid, re_digits, tryParseInt
 from ..common.renderers import PandasRenderers
 from ..lit import constants
-from . import models, serializers, tasks
+from . import models, serializers
 
 
 class RequiresAssessmentID(APIException):
@@ -50,6 +50,38 @@ def get_assessment_from_query(request) -> Optional[models.Assessment]:
     """Returns assessment or None."""
     assessment_id = get_assessment_id_param(request)
     return models.Assessment.objects.filter(pk=assessment_id).first()
+
+
+class JobPermissions(permissions.BasePermission):
+    """
+    Requires admin permissions where jobs have no associated assessment
+    or when part of a list, and assessment level permissions when jobs
+    have an associated assessment.
+    """
+
+    def has_object_permission(self, request, view, obj):
+        if obj.assessment is None:
+            return bool(request.user and request.user.is_staff)
+        elif request.method in permissions.SAFE_METHODS:
+            return obj.assessment.user_can_view_object(request.user)
+        else:
+            return obj.assessment.user_can_edit_object(request.user)
+
+    def has_permission(self, request, view):
+        if view.action == "list":
+            return bool(request.user and request.user.is_staff)
+        elif view.action == "create":
+            serializer = view.serializer_class(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            assessment = serializer.validated_data.get("assessment")
+            if assessment is None:
+                return bool(request.user and request.user.is_staff)
+            else:
+                return assessment.user_can_edit_object(request.user)
+        else:
+            # other actions are object specific,
+            # and will be caught by object permissions
+            return True
 
 
 class AssessmentLevelPermissions(permissions.BasePermission):
@@ -81,6 +113,13 @@ class AssessmentLevelPermissions(permissions.BasePermission):
             return view.assessment.user_can_view_object(request.user)
 
         return True
+
+
+class AssessmentReadPermissions(AssessmentLevelPermissions):
+    def has_object_permission(self, request, view, obj):
+        if not hasattr(view, "assessment"):
+            view.assessment = obj.get_assessment()
+        return view.assessment.user_can_view_object(request.user)
 
 
 class InAssessmentFilter(filters.BaseFilterBackend):
@@ -271,117 +310,168 @@ class Assessment(AssessmentViewset):
             .annotate(ivendpoint_count=Count("baseendpoint__ivendpoint"))
         ).first()
 
+        items = []
         app_url = reverse("assessment:clean_extracted_data", kwargs={"pk": instance.id})
-        instance.items = []
 
         # animal
-        instance.items.append(
+        items.append(
             {
                 "count": instance.endpoint_count,
                 "title": "animal bioassay endpoints",
                 "type": "ani",
                 "url": f"{app_url}ani/",
+                "url_cleanup_list": reverse("animal:api:endpoint-cleanup-list"),
+                "modal_key": "Endpoint",
             }
         )
 
         count = apps.get_model("animal", "Experiment").objects.get_qs(instance.id).count()
-        instance.items.append(
+        items.append(
             {
                 "count": count,
                 "title": "animal bioassay experiments",
                 "type": "experiment",
                 "url": f"{app_url}experiment/",
+                "url_cleanup_list": reverse("animal:api:experiment-cleanup-list"),
+                "modal_key": "Experiment",
             }
         )
 
         count = apps.get_model("animal", "AnimalGroup").objects.get_qs(instance.id).count()
-        instance.items.append(
+        items.append(
             {
                 "count": count,
                 "title": "animal bioassay animal groups",
                 "type": "animal-groups",
                 "url": f"{app_url}animal-groups/",
+                "url_cleanup_list": reverse("animal:api:animal_group-cleanup-list"),
+                "modal_key": "AnimalGroup",
             }
         )
 
         count = apps.get_model("animal", "DosingRegime").objects.get_qs(instance.id).count()
-        instance.items.append(
+        items.append(
             {
                 "count": count,
                 "title": "animal bioassay dosing regimes",
                 "type": "dosing-regime",
                 "url": f"{app_url}dosing-regime/",
+                "url_cleanup_list": reverse("animal:api:dosingregime-cleanup-list"),
+                "modal_key": "AnimalGroup",
             }
         )
 
         # epi
-        instance.items.append(
+        items.append(
             {
                 "count": instance.outcome_count,
                 "title": "epidemiological outcomes assessed",
                 "type": "epi",
                 "url": f"{app_url}epi/",
+                "url_cleanup_list": reverse("epi:api:outcome-cleanup-list"),
+                "modal_key": "Outcome",
             }
         )
 
         count = apps.get_model("epi", "StudyPopulation").objects.get_qs(instance.id).count()
-        instance.items.append(
+        items.append(
             {
                 "count": count,
                 "title": "epi study populations",
                 "type": "study-populations",
                 "url": f"{app_url}study-populations/",
+                "url_cleanup_list": reverse("epi:api:studypopulation-cleanup-list"),
+                "modal_key": "StudyPopulation",
             }
         )
 
         count = apps.get_model("epi", "Exposure").objects.get_qs(instance.id).count()
-        instance.items.append(
+        items.append(
             {
                 "count": count,
                 "title": "epi exposures",
                 "type": "exposures",
                 "url": f"{app_url}exposures/",
+                "url_cleanup_list": reverse("epi:api:exposure-cleanup-list"),
+                "modal_key": "Exposure",
             }
         )
 
         # in vitro
-        instance.items.append(
+        items.append(
             {
                 "count": instance.ivendpoint_count,
                 "title": "in vitro endpoints",
                 "type": "in-vitro",
                 "url": f"{app_url}in-vitro/",
+                "url_cleanup_list": reverse("invitro:api:ivendpoint-cleanup-list"),
+                "modal_key": "IVEndpoint",
             }
         )
 
         count = apps.get_model("invitro", "ivchemical").objects.get_qs(instance.id).count()
-        instance.items.append(
+        items.append(
             {
                 "count": count,
                 "title": "in vitro chemicals",
                 "type": "in-vitro-chemical",
                 "url": f"{app_url}in-vitro-chemical/",
+                "url_cleanup_list": reverse("invitro:api:ivchemical-cleanup-list"),
+                "modal_key": "IVChemical",
             }
         )
 
         # study
         count = apps.get_model("study", "Study").objects.get_qs(instance.id).count()
-        instance.items.append(
-            {"count": count, "title": "studies", "type": "study", "url": f"{app_url}study/"}
+        items.append(
+            {
+                "count": count,
+                "title": "studies",
+                "type": "study",
+                "url": f"{app_url}study/",
+                "url_cleanup_list": reverse("study:api:study-cleanup-list"),
+                "modal_key": "Study",
+            }
         )
 
         # lit
         count = apps.get_model("lit", "Reference").objects.get_qs(instance.id).count()
-        instance.items.append(
+        items.append(
             {
                 "count": count,
                 "title": "references",
                 "type": "reference",
                 "url": f"{app_url}reference/",
+                "url_cleanup_list": reverse("lit:api:reference-cleanup-list"),
+                "modal_key": "Study",
             }
         )
 
-        serializer = serializers.AssessmentEndpointSerializer(instance)
+        return Response({"name": instance.name, "id": instance.id, "items": items})
+
+    @action(
+        detail=True, methods=("get", "post"),
+    )
+    def jobs(self, request, pk: int = None):
+        instance = self.get_object()
+        if request.method == "GET":
+            queryset = instance.jobs.all()
+            serializer = serializers.JobSerializer(queryset, many=True)
+            return Response(serializer.data)
+        elif request.method == "POST":
+            request.data["assessment"] = instance.id
+            serializer = serializers.JobSerializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    @action(
+        detail=True, methods=("get",),
+    )
+    def logs(self, request, pk: int = None):
+        instance = self.get_object()
+        queryset = instance.logs.all()
+        serializer = serializers.LogSerializer(queryset, many=True)
         return Response(serializer.data)
 
 
@@ -389,6 +479,18 @@ class DatasetViewset(AssessmentViewset):
     model = models.Dataset
     serializer_class = serializers.DatasetSerializer
     assessment_filter_args = "assessment_id"
+
+    def check_object_permissions(self, request, obj):
+        if not obj.user_can_view(request.user):
+            raise PermissionDenied()
+        return super().check_object_permissions(request, obj)
+
+    def get_queryset(self):
+        if self.action == "list":
+            if not self.assessment.user_can_edit_object(self.request.user):
+                return self.model.objects.get_qs(self.assessment).filter(published=True)
+            return self.model.objects.get_qs(self.assessment)
+        return self.model.objects.all()
 
     @action(detail=True, renderer_classes=PandasRenderers)
     def data(self, request, pk: int = None):
@@ -429,19 +531,39 @@ class AdminDashboardViewset(viewsets.ViewSet):
         return Response(export)
 
 
-class CasrnView(APIView):
+class DssToxViewset(viewsets.GenericViewSet, mixins.RetrieveModelMixin):
     permission_classes = (permissions.AllowAny,)
+    lookup_value_regex = dsstox.RE_DTXSID
+    model = models.DSSTox
+    serializer_class = serializers.DSSToxSerializer
 
-    def get(self, request, casrn: str, format=None):
-        """
-        Given a CAS number, get results.
-        """
-        cache_name = dsstox.get_cache_name(casrn)
+    def get_queryset(self):
+        return self.model.objects.all()
 
-        data = cache.get(cache_name)
-        if data is None:
-            data = {"status": "requesting"}
-            cache.set(cache_name, data, 60)  # add task; don't resubmit for 60 seconds
-            tasks.get_dsstox_details.delay(casrn)
 
-        return Response(data)
+class JobViewset(
+    mixins.CreateModelMixin,
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
+    viewsets.GenericViewSet,
+):
+    model = models.Job
+    serializer_class = serializers.JobSerializer
+    permission_classes = (JobPermissions,)
+    pagination_class = None
+
+    def get_queryset(self):
+        if self.action == "list":
+            return self.model.objects.filter(assessment=None)
+        else:
+            return self.model.objects.all()
+
+
+class LogViewset(mixins.ListModelMixin, viewsets.GenericViewSet):
+    model = models.Log
+    permission_classes = (IsAdminUser,)
+    serializer_class = serializers.LogSerializer
+    pagination_class = None
+
+    def get_queryset(self):
+        return self.model.objects.filter(assessment=None)

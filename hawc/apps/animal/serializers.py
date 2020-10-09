@@ -4,8 +4,8 @@ import json
 from django.db import transaction
 from rest_framework import serializers
 
-from ..assessment.models import DoseUnits
-from ..assessment.serializers import EffectTagsSerializer
+from ..assessment.models import DoseUnits, DSSTox
+from ..assessment.serializers import DSSToxSerializer, EffectTagsSerializer
 from ..bmd.serializers import ModelSerializer
 from ..common.api import DynamicFieldsMixin, user_can_edit_object
 from ..common.helper import SerializerHelper
@@ -17,24 +17,31 @@ from . import forms, models
 
 class ExperimentSerializer(serializers.ModelSerializer):
     study = StudySerializer(required=False, read_only=True)
+    dtxsid = DSSToxSerializer(required=False, read_only=True)
 
     def to_representation(self, instance):
         ret = super().to_representation(instance)
         ret["url"] = instance.get_absolute_url()
         ret["type"] = instance.get_type_display()
         ret["is_generational"] = instance.is_generational()
-        ret["cas_url"] = instance.get_casrn_url()
         return ret
 
     def validate(self, data):
         # Validate parent object
         self.study = get_matching_instance(Study, self.initial_data, "study_id")
-        user_can_edit_object(self.study, self.context["request"].user, raise_exception=True)
 
         # add additional checks from forms.ExperimentForm
         form = forms.ExperimentForm(data=data, parent=self.study)
         if form.is_valid() is False:
             raise serializers.ValidationError(form.errors)
+
+        # validate dtxsid
+        dtxsid = self.initial_data.get("dtxsid")
+        if dtxsid:
+            try:
+                data["dtxsid"] = DSSTox.objects.get(pk=dtxsid)
+            except models.ObjectDoesNotExist:
+                raise serializers.ValidationError(dict(dtxsid=f"DSSTox {dtxsid} does not exist"))
 
         return data
 
@@ -377,7 +384,7 @@ class EndpointCleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSeria
     class Meta:
         model = models.Endpoint
         cleanup_fields = ("study_short_citation",) + model.TEXT_CLEANUP_FIELDS
-        fields = cleanup_fields + ("id",)
+        fields = cleanup_fields + ("id",) + tuple(model.TERM_FIELD_MAPPING.values())
 
     def get_study_short_citation(self, obj):
         return obj.animal_group.experiment.study.short_citation

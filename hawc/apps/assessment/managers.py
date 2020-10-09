@@ -113,3 +113,7 @@ class BaseEndpointManager(BaseManager):
 
 class TimeSpentEditingManager(BaseManager):
     assessment_relation = "assessment"
+
+
+class DatasetManager(BaseManager):
+    assessment_relation = "assessment"

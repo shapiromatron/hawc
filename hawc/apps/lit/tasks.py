@@ -8,8 +8,9 @@ from django.db import transaction
 from django.db.models import F, Model
 from django.db.models.aggregates import Count, Max
 from django.utils import timezone
-from litter_getter import hero, pubmed
 
+from ...services.epa import hero
+from ...services.nih import pubmed
 from . import constants
 
 logger = get_task_logger(__name__)

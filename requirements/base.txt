@@ -1,5 +1,5 @@
 # web application
-Django==2.2.14
+Django==2.2.16
 django-crispy-forms==1.9.1
 django-filter==2.2.0
 django-redis==4.11.0
@@ -26,6 +26,7 @@ psycopg2-binary==2.8.4
 redis==3.4.1
 requests==2.23.0
 pydantic==1.5.1
+myst-parser==0.12.10
 
 # computational
 numpy==1.18.2
@@ -38,11 +39,10 @@ nltk==3.5
 scikit-learn==0.22.2.post1
 
 # exports
+XlsxWriter==1.2.8
+RISparser==0.4.3
 python-docx==0.8.10
 python-pptx==0.6.18
 
 # bmds
 git+https://github.com/shapiromatron/bmds.git@36c102cfc0340ad98efcb57686dfcd72a8a02895#egg=bmds
-
-# literature
-litter-getter==0.3.0

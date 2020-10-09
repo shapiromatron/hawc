@@ -6,6 +6,7 @@ from django.apps import apps
 
 from ..assessment.models import Assessment
 from ..common.models import BaseManager, get_distinct_charfield, get_distinct_charfield_opts
+from ..vocab.models import Term, VocabularyTermType
 
 
 class ExperimentManager(BaseManager):
@@ -209,6 +210,92 @@ class EndpointManager(BaseManager):
                 "bmdl",
             ]
         ]
+
+    def migrate_terms(self, assessment: Assessment) -> pd.DataFrame:
+        """
+        Update all endpoints in assessment to try to match fields to controlled vocabulary. Use
+        a case-insensitive match.
+        """
+        # Type integer to type name
+        term_types = VocabularyTermType.as_dict()
+
+        # Type name to common attr name
+        term_type_to_text_field = {
+            "system": "system",
+            "organ": "organ",
+            "effect": "effect",
+            "effect_subtype": "effect_subtype",
+            "endpoint_name": "name",
+        }
+        # Common attr name to term attr name
+        text_to_term_field = {
+            "system": "system_term_id",
+            "organ": "organ_term_id",
+            "effect": "effect_term_id",
+            "effect_subtype": "effect_subtype_term_id",
+            "name": "name_term_id",
+        }
+
+        # Type integers, ordered.
+        types = sorted(list(term_types.keys()))
+
+        # Assessment endpoints
+        updated_endpoints = []
+
+        # List of endpoint terms dicts; will be used to generate excel report
+        endpoint_export_columns = {
+            "id": "endpoint id",
+            "system": "system",
+            "organ": "organ",
+            "effect": "effect",
+            "effect_subtype": "effect_subtype",
+            "name": "endpoint name",
+            "system_term_id": "system_term_id",
+            "organ_term_id": "organ_term_id",
+            "effect_term_id": "effect_term_id",
+            "effect_subtype_term_id": "effect_subtype_term_id",
+            "name_term_id": "name_term_id",
+        }
+        endpoint_export_data = []
+
+        # build parent_id dictionary; we set system where parent_id is None to -1
+        terms_dict = {
+            (term[0], term[1] or -1, term[2].lower()): term[3]
+            for term in Term.objects.filter(namespace=assessment.vocabulary).values_list(
+                "type", "parent_id", "name", "id"
+            )
+        }
+
+        for endpoint in self.assessment_qs(assessment.id).iterator():
+
+            # Check system -> organ -> effect -> effect_subtype -> endpoint_name
+            parent_id = -1  # last term parent id; -1 is special-case for system
+            for term_type_id in types:
+                text_field = term_type_to_text_field[term_types[term_type_id]]
+                key = (term_type_id, parent_id, getattr(endpoint, text_field).lower())
+                match_id = terms_dict.get(key)
+                if match_id:
+                    setattr(endpoint, text_to_term_field[text_field], match_id)
+                parent_id = match_id
+
+            # If changed, add to the update list
+            if parent_id != -1:
+                updated_endpoints.append(endpoint)
+
+            # always update report
+            endpoint_export_data.append(
+                [getattr(endpoint, col) for col in endpoint_export_columns.keys()]
+            )
+
+        # update endpoints
+        self.bulk_update(updated_endpoints, list(text_to_term_field.values()))
+
+        # create data frame report
+        df = pd.DataFrame(
+            data=endpoint_export_data, columns=list(endpoint_export_columns.values()),
+        )
+
+        return df
 
 
 class EndpointGroupManager(BaseManager):

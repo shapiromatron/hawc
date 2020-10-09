@@ -57,8 +57,10 @@ class HeatmapDatastore {
                     // get column value or empty string to handle null or undefined edge cases,
                     // such as when an epi outcome is created but with no associated exposure.
                     const d = this.dataset[index],
-                        text = d[columnName] || "",
-                        values = delimiter ? text.split(delimiter) : [text];
+                        text = d[columnName] || "";
+
+                    let raw_values = delimiter ? text.split(delimiter) : [text];
+                    const values = raw_values.map(e => e.trim());
 
                     for (let value of values) {
                         if (!this.settings.show_null && !value) {

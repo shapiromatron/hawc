@@ -4,13 +4,11 @@ from typing import List
 
 import numpy as np
 import pandas as pd
-from crispy_forms import layout as cfl
 from django import forms
 from django.db import transaction
-from django.db.models import Q
 from django.urls import reverse_lazy
-from litter_getter import ris
 
+from ...services.utils import ris
 from ..assessment.models import Assessment
 from ..common.forms import BaseFormHelper, addPopupLink
 from . import constants, models
@@ -183,7 +181,11 @@ class ImportForm(SearchForm):
 
 class RisImportForm(SearchForm):
 
+    RIS_EXTENSION = 'File must have an ".ris" or ".txt" file-extension'
+    DOI_TOO_LONG = "DOI field too long on one or more references (length > 256)"
+    ID_MISSING = "ID field not found for all references"
     UNPARSABLE_RIS = "File cannot be successfully loaded. Are you sure this is a valid RIS file?  If you are, please contact us and we'll try to fix the issue."
+    NO_REFERENCES = "RIS formatted incorrectly; contains 0 references"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -235,28 +237,39 @@ class RisImportForm(SearchForm):
             raise forms.ValidationError("Input file must be <10 MB")
 
         if fileObj.name[-4:] not in (".txt", ".ris",):
-            raise forms.ValidationError('File must have an ".ris" or ".txt" file-extension')
+            raise forms.ValidationError(self.RIS_EXTENSION)
 
-        try:
-            # convert BytesIO file to StringIO file
-            with StringIO() as f:
-                f.write(fileObj.read().decode("utf-8-sig"))
-                f.seek(0)
-                fileObj.seek(0)
-                readable = ris.RisImporter.file_readable(f)
-
-        except KeyError as err:
-            raise forms.ValidationError(
-                """
-                Invalid key found: {}. Have you followed the instructions below
-                for RIS file preparation in Endnote? If you have, please contact
-                us and we'll try to fix the issue.""".format(
-                    err.message
-                )
-            )
+        # convert BytesIO file to StringIO file
+        with StringIO() as f:
+            f.write(fileObj.read().decode("utf-8-sig"))
+            f.seek(0)
+            fileObj.seek(0)
+            readable = ris.RisImporter.file_readable(f)
 
         if not readable:
             raise forms.ValidationError(self.UNPARSABLE_RIS)
+
+        # now check references
+        with StringIO() as f:
+            f.write(fileObj.read().decode("utf-8-sig"))
+            f.seek(0)
+            fileObj.seek(0)
+            try:
+                references = [ref for ref in ris.RisImporter(f).references]
+            except KeyError as err:
+                if "id" in err.args:
+                    raise forms.ValidationError(self.ID_MISSING)
+                else:
+                    raise err
+
+        # ensure at least one reference exists
+        if len(references) == 0:
+            raise forms.ValidationError(self.NO_REFERENCES)
+
+        # ensure the maximum DOI length < 256
+        doi_lengths = [len(ref.get("doi", "")) for ref in references if ref.get("doi") is not None]
+        if doi_lengths and max(doi_lengths) > 256:
+            raise forms.ValidationError(self.DOI_TOO_LONG)
 
         return fileObj
 
@@ -361,55 +374,6 @@ class ReferenceFilterTagForm(forms.ModelForm):
     class Meta:
         model = models.ReferenceFilterTag
         fields = "__all__"
-
-
-class ReferenceSearchForm(forms.Form):
-    id = forms.IntegerField(label="HAWC ID", required=False)
-    title = forms.CharField(required=False)
-    authors = forms.CharField(required=False)
-    journal = forms.CharField(label="Journal/year", required=False)
-    db_id = forms.IntegerField(
-        label="Database unique identifier",
-        help_text="Identifiers may include Pubmed ID, DOI, etc.",
-        required=False,
-    )
-    abstract = forms.CharField(label="Abstract", required=False)
-
-    def __init__(self, *args, **kwargs):
-        assessment_pk = kwargs.pop("assessment_pk", None)
-        super().__init__(*args, **kwargs)
-        if assessment_pk:
-            self.assessment = Assessment.objects.get(pk=assessment_pk)
-        self.helper = self.setHelper()
-
-    def setHelper(self):
-        inputs = dict(form_actions=[cfl.Submit("search", "Search")],)
-        helper = BaseFormHelper(self, **inputs)
-        return helper
-
-    def search(self):
-        """
-        Returns a queryset of reference-search results.
-        """
-        query = Q(assessment=self.assessment)
-        if self.cleaned_data["id"]:
-            query &= Q(id=self.cleaned_data["id"])
-        if self.cleaned_data["title"]:
-            query &= Q(title__icontains=self.cleaned_data["title"])
-        if self.cleaned_data["authors"]:
-            query &= Q(authors_short__icontains=self.cleaned_data["authors"]) | Q(
-                authors__icontains=self.cleaned_data["authors"]
-            )
-        if self.cleaned_data["journal"]:
-            query &= Q(journal__icontains=self.cleaned_data["journal"])
-        if self.cleaned_data["db_id"]:
-            query &= Q(identifiers__unique_id=self.cleaned_data["db_id"])
-        if self.cleaned_data["abstract"]:
-            query &= Q(abstract__icontains=self.cleaned_data["abstract"])
-
-        refs = [r.get_json(json_encode=False) for r in models.Reference.objects.filter(query)]
-
-        return refs
 
 
 class TagReferenceForm(forms.ModelForm):
