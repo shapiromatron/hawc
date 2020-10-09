@@ -75,6 +75,11 @@ urlpatterns = [
         views.AdminAssessmentSize.as_view(),
         name="admin_assessment_size",
     ),
+    url(
+        rf"^admin/{settings.ADMIN_URL_PREFIX}/healthcheck/$",
+        views.Healthcheck.as_view(),
+        name="healthcheck",
+    ),
     url(rf"^admin/{settings.ADMIN_URL_PREFIX}/", admin.site.urls),
     url(r"^selectable/", include("selectable.urls")),
     url(

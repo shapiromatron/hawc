@@ -14,6 +14,7 @@
     <link id="favicon" href="{% static 'img/favicon-64.png' %}" rel="shortcut icon" sizes="64x64" />
     <link id="favicon" href="{% static 'img/favicon-32.png' %}" rel="shortcut icon" sizes="32x32" />
     {% block extrahead %}{% endblock %}
+    {% block external_css %}
     {% if debug %}
       <link rel="stylesheet" type="text/css" href="{% static 'debug/font-awesome/css/font-awesome.css' %}" />
       <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
@@ -21,6 +22,7 @@
       <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css" />
       <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
     {% endif %}
+    {% endblock external_css %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/hawc.css' %}" />
      <link rel="stylesheet" type="text/css" href="{% static 'css/d3.css' %}" />
     <link rel="stylesheet" type="text/css" href="{% static 'css/flex.css' %}" />
@@ -101,7 +103,6 @@
     <!-- END Container -->
 
     <!-- JS at bottom for quicker pageloads -->
-    <script type="text/javascript" src="{% static 'admin/js/urlify.js' %}" ></script>
     {% if debug %}
       <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
       <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
@@ -121,6 +122,12 @@
         </script>
       {% endblock google_analytics %}
     {% endif %}
+    {% block browser_check %}
+    <script type="text/javascript" src="{% static 'js/browserCheck.js' %}"></script>
+    <script type="text/javascript">
+      supportedBrowserCheck();
+    </script>
+    {% endblock browser_check %}
     {% render_bundle 'main' %}
     {% block extrajs %}{% endblock %}
     {% block portaljs %}{% endblock %}

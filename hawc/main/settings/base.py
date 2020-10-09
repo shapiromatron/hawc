@@ -150,7 +150,7 @@ CACHES = {
     }
 }
 CACHE_1_HR = 60 * 60
-
+CACHE_10_MIN = 60 * 10
 
 # Email settings
 EMAIL_SUBJECT_PREFIX = os.environ.get("EMAIL_SUBJECT_PREFIX", "[HAWC] ")

@@ -1,10 +1,13 @@
 from datetime import timedelta
+from io import BytesIO
 
 from django.apps import apps
 from django.contrib import admin, messages
+from django.http import HttpResponse
 from django.utils import timezone
 from django.utils.html import format_html
 
+from ..animal.models import Endpoint
 from . import models
 
 
@@ -34,7 +37,7 @@ class AssessmentAdmin(admin.ModelAdmin):
         "reviewers__last_name",
     )
 
-    actions = (bust_cache, "delete_orphan_tags")
+    actions = (bust_cache, "migrate_terms", "delete_orphan_tags")
 
     def queryset(self, request):
         qs = super().queryset(request)
@@ -85,6 +88,39 @@ class AssessmentAdmin(admin.ModelAdmin):
 
     get_reviewers.short_description = "Reviewers"
     get_reviewers.allow_tags = True
+
+    def migrate_terms(self, request, queryset):
+        # Action can only be run on one assessment at a time
+        if queryset.count() != 1:
+            self.message_user(
+                request, f"Select only one item to perform the action on.", level=messages.ERROR
+            )
+            return
+
+        # Action can only be run on an assessment if controlled vocabulary is used
+        assessment = queryset.first()
+        if assessment.vocabulary is None:
+            self.message_user(
+                request, f"Assessment has no controlled vocabulary.", level=messages.ERROR
+            )
+            return
+
+        df = Endpoint.objects.migrate_terms(assessment)
+
+        # Writes an excel report of applied terms on the endpoints
+        f = BytesIO()
+        df.to_excel(f, index=False)
+
+        response = HttpResponse(
+            f.getvalue(),
+            content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        )
+        fn = f"attachment; filename=assessment-{assessment.id}-term-migration.xlsx"
+        response["Content-Disposition"] = fn
+
+        return response
+
+    migrate_terms.short_description = "Migrate endpoint terms"
 
 
 @admin.register(models.Attachment)

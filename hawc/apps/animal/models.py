@@ -709,12 +709,18 @@ class Endpoint(BaseEndpoint):
         "response_units",
         "statistical_test",
         "diagnostic",
-        "data_location",
         "trend_value",
         "results_notes",
         "endpoint_notes",
         "litter_effect_notes",
     )
+    TERM_FIELD_MAPPING = {
+        "name": "name_term_id",
+        "system": "system_term_id",
+        "organ": "organ_term_id",
+        "effect": "effect_term_id",
+        "effect_subtype": "effect_subtype_term_id",
+    }
 
     DATA_TYPE_CONTINUOUS = "C"
     DATA_TYPE_DICHOTOMOUS = "D"
@@ -1092,6 +1098,7 @@ class Endpoint(BaseEndpoint):
             {
                 "debug": False,
                 "vocabulary": assessment.vocabulary,
+                "vocabulary_display": assessment.get_vocabulary_display(),
                 "object": {
                     "system": instance.system if instance else "",
                     "organ": instance.organ if instance else "",

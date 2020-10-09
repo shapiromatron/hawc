@@ -1,4 +1,5 @@
 import React, {Component} from "react";
+import PropTypes from "prop-types";
 import {inject, observer} from "mobx-react";
 
 import {label, helpText} from "./constants";
@@ -8,6 +9,7 @@ import TermSelector from "./TermSelector";
 @observer
 class App extends Component {
     render() {
+        const {store} = this.props;
         return (
             <>
                 <div className="row-fluid">
@@ -19,6 +21,7 @@ class App extends Component {
                         termTextField={"name"}
                         parentIdField={"effect_subtype_term_id"}
                         parentRequired={true}
+                        idLookupAction={store.endpointNameLookup}
                     />
                 </div>
                 <div className="row-fluid">
@@ -70,4 +73,8 @@ class App extends Component {
         );
     }
 }
+App.propTypes = {
+    store: PropTypes.object,
+};
+
 export default App;
