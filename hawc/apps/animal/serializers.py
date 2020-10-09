@@ -12,6 +12,7 @@ from ..common.helper import SerializerHelper
 from ..common.serializers import get_matching_instance, get_matching_instances
 from ..study.models import Study
 from ..study.serializers import StudySerializer
+from ..vocab.models import VocabularyTermType
 from . import forms, models
 
 
@@ -253,6 +254,7 @@ class EndpointSerializer(serializers.ModelSerializer):
     effects = EffectTagsSerializer(read_only=True)
     animal_group = AnimalGroupSerializer(read_only=True, required=False)
     groups = EndpointGroupSerializer(many=True, required=False)
+    name = serializers.CharField(required=False)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -295,14 +297,62 @@ class EndpointSerializer(serializers.ModelSerializer):
 
         return ret
 
+    def _validate_term_and_text(self, data, term_field: str, text_field: str, term_type_str: str):
+        """
+        Validate logic for both term field and the text field
+        """
+
+        term = data.get(term_field)
+        text = data.get(text_field)
+        if term is None:
+            return
+
+        # Term namespace must match assessment
+        if self.assessment.vocabulary != term.namespace:
+            raise serializers.ValidationError(
+                {
+                    term: f"Assessment vocabulary ({self.assessment.vocabulary}) does not match term namespace ({term.namespace})."
+                }
+            )
+
+        # Term type must field type
+        term_type = getattr(VocabularyTermType, term_type_str)
+        if term.type != term_type:
+            raise serializers.ValidationError(
+                {term_field: f"Got term type '{term.type}', expected type '{term_type}'."}
+            )
+
+        # Term overrides its non-term counterpart, so non-term cannot be set at the same time
+        if term and text:
+            raise serializers.ValidationError(
+                {term_field: f"'{text_field}' and '{text_field}_term' are mutually exclusive."}
+            )
+
+        # Save the non-term equivalent
+        data[text_field] = term.name
+
     def validate(self, data):
+        # name or name_term must be given
+        if data.get("name") is None and data.get("name_term") is None:
+            raise serializers.ValidationError({"name": ["'name' or 'name_term' is required."]})
+
         # Validate parent object
         self.animal_group = get_matching_instance(
             models.AnimalGroup, self.initial_data, "animal_group_id"
         )
         user_can_edit_object(self.animal_group, self.context["request"].user, raise_exception=True)
+        self.assessment = self.animal_group.get_assessment()
         data["animal_group_id"] = self.animal_group.id
-        data["assessment_id"] = self.animal_group.get_assessment().id
+        data["assessment_id"] = self.assessment.id
+
+        # validate terms and text
+        self._validate_term_and_text(data, "system_term", "system", "system")
+        self._validate_term_and_text(data, "organ_term", "organ", "organ")
+        self._validate_term_and_text(data, "effect_term", "effect", "effect")
+        self._validate_term_and_text(
+            data, "effect_subtype_term", "effect_subtype", "effect_subtype"
+        )
+        self._validate_term_and_text(data, "name_term", "name", "endpoint_name")
 
         # set animal_group on instance for cleaning rules
         instance = models.Endpoint(animal_group=self.animal_group)
