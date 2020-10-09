@@ -154,6 +154,7 @@ def _get_driver(browser: str, CI: bool):
                 options=options,
             )
             helium.set_driver(driver)
+            return driver
         else:
             return helium.start_firefox(options=options, headless=not SHOW_BROWSER)
     elif browser == "chrome":
@@ -169,6 +170,7 @@ def _get_driver(browser: str, CI: bool):
                 options=options,
             )
             helium.set_driver(driver)
+            return driver
         else:
             return helium.start_chrome(options=options, headless=not SHOW_BROWSER)
     else:
