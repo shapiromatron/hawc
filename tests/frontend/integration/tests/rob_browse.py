@@ -7,9 +7,6 @@ def rob_browse(driver, live_server_url):
     - the study summary + risk of bias donut plot
     - the study + risk of bias detail page and visualization
     """
-    # set test to use our session-level driver
-    h.set_driver(driver)
-
     # go to website
     h.go_to(live_server_url + "/study/7/")
 

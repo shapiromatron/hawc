@@ -11,8 +11,6 @@ def user_permissions(driver, root_url):
     - unauthenticated users can view detail pages but not update pages
     - authenticated users with project permissions can view update pages
     """
-    h.set_driver(driver)
-
     detail_url = root_url + assessment_url
     edit_url = root_url + assessment_url + "edit/"
 

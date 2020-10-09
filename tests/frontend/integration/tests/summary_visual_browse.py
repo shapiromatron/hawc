@@ -11,9 +11,6 @@ def summary_visual_browse(driver, live_server_url):
     - a risk of bias heatmap can be rendered
     - TODO - add other visualization type checks
     """
-    # set test to use our session-level driver
-    h.set_driver(driver)
-
     # go to website
     h.go_to(live_server_url + "/summary" + assessment_url + "visuals/")
 

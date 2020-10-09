@@ -4,7 +4,6 @@ from . import shared
 
 
 def bioassay(driver, root_url):
-
     shared.login(root_url)
 
     # /experiment/
