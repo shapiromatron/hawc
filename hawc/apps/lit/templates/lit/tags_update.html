@@ -37,9 +37,11 @@
 }
 </script>
 <script type="text/javascript">
-$(document).ready(function(){
-    window.app.nestedTagEditorStartup();
-});
+  $(document).ready(function () {
+    const el = document.getElementById('root'),
+      config = JSON.parse(document.getElementById('config').text);
+    window.app.nestedTagEditorStartup(el, config);
+  });
 </script>
 {% endblock extrajs %}
 

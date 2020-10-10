@@ -1,15 +1,16 @@
 import React from "react";
-import {render} from "react-dom";
+import ReactDOM from "react-dom";
+import {Provider} from "mobx-react";
 
-const startup = function() {
-    import("nestedTagEditor/containers/Root").then(Component => {
-        import("shared/store/configureStore").then(configureStore => {
-            import("nestedTagEditor/reducers").then(reducer => {
-                const store = configureStore.default(reducer.default);
-                render(<Component.default store={store} />, document.getElementById("root"));
-            });
-        });
-    });
-};
+import TagEditorStore from "./store";
+import Main from "./components/Main";
 
-export default startup;
+export default function(el, config) {
+    const store = new TagEditorStore(config);
+    ReactDOM.render(
+        <Provider store={store}>
+            <Main />
+        </Provider>,
+        el
+    );
+}
