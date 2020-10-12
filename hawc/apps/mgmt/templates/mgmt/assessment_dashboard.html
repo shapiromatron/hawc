@@ -34,9 +34,9 @@
 </script>
 <script type="text/javascript">
 window.app.mgmtStartup(function(mgmt){
-  const el = document.getElementById('root'),
+  const el = document.getElementById('taskDashboard'),
     config = JSON.parse(document.getElementById('config').text);
-  mgmt.Dashboard(document.getElementById('taskDashboard'), config);
+  mgmt.Dashboard(el, config);
 });
 </script>
 {% endblock extrajs %}

@@ -1,8 +1,7 @@
 import _ from "lodash";
+import {inject, observer} from "mobx-react";
 import React, {Component} from "react";
 import PropTypes from "prop-types";
-
-import {inject, observer} from "mobx-react";
 
 import GenericError from "shared/components/GenericError";
 import Loading from "shared/components/Loading";
