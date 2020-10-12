@@ -1,22 +1,19 @@
 import _ from "lodash";
 import React, {Component} from "react";
-import {connect} from "react-redux";
 import PropTypes from "prop-types";
 
-import {loadConfig} from "shared/actions/Config";
-import {fetchTasks} from "mgmt/Dashboard/actions";
+import {inject, observer} from "mobx-react";
+
+import GenericError from "shared/components/GenericError";
 import Loading from "shared/components/Loading";
-import TaskChart from "mgmt/Dashboard/components/TaskChart";
-import {STATUS} from "mgmt/Dashboard/constants";
+import TaskChart from "../components/TaskChart";
+import {STATUS} from "../constants";
 
+@inject("store")
+@observer
 class Root extends Component {
-    constructor(props) {
-        super(props);
-        props.dispatch(loadConfig());
-    }
-
     componentDidMount() {
-        this.props.dispatch(fetchTasks());
+        this.props.store.fetchTasks();
     }
 
     getChartData() {
@@ -28,10 +25,6 @@ class Root extends Component {
             colors = {};
         Object.keys(STATUS).map(key => (colors[key] = STATUS[key].color));
         return {height, width, padding, yTransform, xTransform, colors};
-    }
-
-    renderNoTasks() {
-        return <p>To tasks have yet assigned.</p>;
     }
 
     renderTasksByType(chartData, list) {
@@ -74,39 +67,36 @@ class Root extends Component {
     }
 
     render() {
-        if (!this.props.tasks.isLoaded) {
+        const {store} = this.props;
+
+        if (store.error) {
+            return <GenericError />;
+        }
+
+        if (store.isFetching) {
             return <Loading />;
         }
 
-        if (this.props.tasks.list.length === 0) {
-            return this.renderNoTasks();
+        if (store.tasks === null || store.tasks.length === 0) {
+            return <p>To tasks have yet assigned.</p>;
         }
 
-        let list = this.props.tasks.list,
-            chartData = this.getChartData();
+        let chartData = this.getChartData();
         return (
             <div>
                 <h3>All task summary</h3>
-                <TaskChart chartData={chartData} tasks={list} />
+                <TaskChart chartData={chartData} tasks={store.tasks} />
                 <h3>Tasks by type</h3>
-                {this.renderTasksByType(chartData, list)}
+                {this.renderTasksByType(chartData, store.tasks)}
                 <h3>Tasks by user</h3>
-                {this.renderTasksByUser(chartData, list)}
+                {this.renderTasksByUser(chartData, store.tasks)}
             </div>
         );
     }
 }
 
-function mapStateToProps(state) {
-    return state;
-}
-
 Root.propTypes = {
-    dispatch: PropTypes.func,
-    tasks: PropTypes.shape({
-        isLoaded: PropTypes.bool,
-        list: PropTypes.array,
-    }),
+    store: PropTypes.object,
 };
 
-export default connect(mapStateToProps)(Root);
+export default Root;

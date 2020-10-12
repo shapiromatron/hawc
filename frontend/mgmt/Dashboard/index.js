@@ -1,11 +1,16 @@
-import {splitStartupRedux} from "utils/WebpackSplit";
+import React from "react";
+import ReactDOM from "react-dom";
+import {Provider} from "mobx-react";
 
-const startup = function(element) {
-    import("mgmt/Dashboard/containers/Root").then(Component => {
-        import("mgmt/Dashboard/store/configureStore").then(store => {
-            splitStartupRedux(element, Component.default, store.default);
-        });
-    });
-};
+import MgmtDashboardStore from "./store";
+import Root from "./containers/Root";
 
-export default startup;
+export default function(el, config) {
+    const store = new MgmtDashboardStore(config);
+    ReactDOM.render(
+        <Provider store={store}>
+            <Root />
+        </Provider>,
+        el
+    );
+}
