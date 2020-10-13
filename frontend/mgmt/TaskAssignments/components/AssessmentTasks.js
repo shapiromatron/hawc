@@ -1,8 +1,8 @@
 import React, {Component} from "react";
 import PropTypes from "prop-types";
 
-import Header from "mgmt/TaskAssignments/components/Header";
-import Task from "mgmt/TaskAssignments/components/Task";
+import Header from "./Header";
+import Task from "./Task";
 
 class AssessmentTasks extends Component {
     render() {

@@ -8,24 +8,14 @@ class StatusSelection extends Component {
     constructor(props) {
         super(props);
         this.state = {status: props.task.status};
-        this.getSelection = this.getSelection.bind(this);
-    }
-
-    getStatusChoices() {
-        return Object.keys(STATUS).map(status => {
-            return {value: status, display: STATUS[status].type};
-        });
-    }
-
-    getSelection({target}) {
-        let value = parseInt(target.value);
-        this.setState({status: value});
-        this.props.onChange(value);
     }
 
     render() {
-        const choices = this.getStatusChoices(),
+        const choices = Object.keys(STATUS).map(status => {
+                return {value: status, display: STATUS[status].type};
+            }),
             idName = `${this.props.task.id}-status_selection`;
+
         return (
             <div>
                 <label className="control-label" htmlFor={idName}>
@@ -34,7 +24,11 @@ class StatusSelection extends Component {
                 <select
                     defaultValue={this.props.task.status}
                     id={idName}
-                    onChange={this.getSelection}
+                    onChange={target => {
+                        let value = parseInt(target.value);
+                        this.setState({status: value});
+                        this.props.onChange(value);
+                    }}
                     name="status_selection"
                     style={{width: "auto"}}>
                     {choices.map(({value, display}, i) => {

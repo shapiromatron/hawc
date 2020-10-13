@@ -24,24 +24,6 @@ function patchTask(task) {
     };
 }
 
-export function fetchTasks() {
-    return (dispatch, getState) => {
-        dispatch(resetError());
-        let state = getState();
-        if (state.tasks.isFetching) return;
-        dispatch(makeTaskRequest());
-        let {host, tasks} = state.config;
-        const url = h.getUrlWithAssessment(
-            h.getListUrl(host, tasks.url),
-            state.config.assessment_id
-        );
-        return fetch(url, h.fetchGet)
-            .then(response => response.json())
-            .then(json => dispatch(receiveTasks(json)))
-            .catch(error => dispatch(setError(error)));
-    };
-}
-
 export function submitTaskEdit(task) {
     return (dispatch, getState) => {
         let state = getState();
@@ -102,19 +84,5 @@ export function filterAndSortStudies(opts) {
     return (dispatch, getState) => {
         dispatch(sortStudies(opts.sortOpts));
         dispatch(filterStudyOnType(opts.filterOpts));
-    };
-}
-
-export function fetchStudies() {
-    return (dispatch, getState) => {
-        let state = getState();
-        if (state.studies.isFetching) return;
-        dispatch(makeStudyRequest());
-        let {host, studies} = state.config;
-        const url = h.getListUrl(host, studies.url);
-        return fetch(url, h.fetchGet)
-            .then(response => response.json())
-            .then(json => dispatch(receiveStudies(json)))
-            .catch(error => dispatch(setError(error)));
     };
 }

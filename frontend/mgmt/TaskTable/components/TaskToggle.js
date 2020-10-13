@@ -1,9 +1,7 @@
 import React, {Component} from "react";
 import PropTypes from "prop-types";
-import {connect} from "react-redux";
 
-import {submitTaskEdit} from "mgmt/TaskTable/actions";
-import TaskForm from "mgmt/TaskTable/components/TaskForm";
+import TaskForm from "./TaskForm";
 import "./TaskToggle.css";
 
 class TaskToggle extends Component {
@@ -79,13 +77,7 @@ TaskToggle.propTypes = {
     task: PropTypes.object.isRequired,
     TaskLabel: PropTypes.func.isRequired,
     dispatch: PropTypes.func,
+    autocompleteUrl: PropTypes.string.isRequired,
 };
 
-function mapStateToProps(state) {
-    const {autocomplete} = state.config;
-    return {
-        autocompleteUrl: autocomplete.url,
-    };
-}
-
-export default connect(mapStateToProps)(TaskToggle);
+export default TaskToggle;

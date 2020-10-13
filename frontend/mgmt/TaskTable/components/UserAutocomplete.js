@@ -4,33 +4,21 @@ import PropTypes from "prop-types";
 import Autocomplete from "shared/components/Autocomplete";
 
 class UserAutocomplete extends Component {
-    constructor(props) {
-        super(props);
-        this.getPopulatedOwner = this.getPopulatedOwner.bind(this);
-        this.url = `${this.props.url}?related=${props.task.study.assessment.id}`;
-    }
-
-    getPopulatedOwner() {
-        return {
-            display: this.props.task.owner ? this.props.task.owner.full_name : null,
-            id: this.props.task.owner ? this.props.task.owner.id : null,
-        };
-    }
-
     render() {
-        let idName = `${this.props.task.id}-owner`,
-            loaded = this.getPopulatedOwner();
+        const {onChange, task, url} = this.props;
+        let idName = `${task.id}-owner`,
+            loaded = {
+                display: task.owner ? task.owner.full_name : null,
+                id: task.owner ? task.owner.id : null,
+            },
+            submitUrl = `${url}?related=${task.study.assessment.id}`;
+
         return (
             <div>
                 <label className="control-label" htmlFor={idName}>
                     Owner
                 </label>
-                <Autocomplete
-                    onChange={this.props.onChange}
-                    id={idName}
-                    url={this.url}
-                    loaded={loaded}
-                />
+                <Autocomplete onChange={onChange} id={idName} url={submitUrl} loaded={loaded} />
             </div>
         );
     }

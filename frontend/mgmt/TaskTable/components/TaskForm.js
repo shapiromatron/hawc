@@ -2,8 +2,8 @@ import React, {Component} from "react";
 import PropTypes from "prop-types";
 import _ from "lodash";
 
-import UserAutocomplete from "mgmt/TaskTable/components/UserAutocomplete";
-import StatusSelection from "mgmt/TaskTable/components/StatusSelection";
+import UserAutocomplete from "./UserAutocomplete";
+import StatusSelection from "./StatusSelection";
 import ReactDatePicker from "shared/components/ReactDatePicker";
 
 class TaskForm extends Component {

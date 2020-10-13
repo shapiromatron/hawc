@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 
 import StudyLabel from "mgmt/TaskTable/components/StudyLabel";
 import TaskLabel from "mgmt/TaskTable/components/TaskLabel";
-import TaskToggle from "mgmt/TaskTable/containers/TaskToggle";
+import TaskToggle from "mgmt/TaskTable/components/TaskToggle";
 
 class TaskStudy extends Component {
     render() {

@@ -34,7 +34,6 @@
     {
         "assessment_id": "{{ assessment.id }}",
         "csrf": "{{ csrf_token }}",
-        "host": "//{{ request.get_host }}",
         "type": "display",
         "tasks": {
             "url": "{% url 'mgmt:api:task-list' %}"
@@ -49,7 +48,9 @@
 </script>
 <script type="text/javascript">
 window.app.mgmtStartup(function(mgmt){
-    mgmt.TaskTable(document.getElementById('taskTable'))
+  const el = document.getElementById('taskTable'),
+    config = JSON.parse(document.getElementById('config').text);
+  mgmt.TaskTable(el, config);
 });
 </script>
 {% endblock extrajs %}

@@ -1,8 +1,8 @@
 import React, {Component} from "react";
 import PropTypes from "prop-types";
 
-import Header from "mgmt/TaskAssignments/components/Header";
-import RobTask from "mgmt/TaskAssignments/components/RobTask";
+import Header from "./Header";
+import RobTask from "./RobTask";
 
 class RobTasks extends Component {
     render() {

@@ -18,7 +18,7 @@ class Header extends Component {
                 {this.props.headings.map((heading, i) => {
                     return (
                         <h5
-                            key={`heading-${i}`}
+                            key={i}
                             className="popovers flex-1"
                             data-title={heading}
                             data-content={descriptions[i]}>

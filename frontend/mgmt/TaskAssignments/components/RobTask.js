@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 import PropTypes from "prop-types";
 
-import AssessmentLabel from "mgmt/TaskAssignments/components/AssessmentLabel";
+import AssessmentLabel from "./AssessmentLabel";
 
 class RobTask extends Component {
     render() {
