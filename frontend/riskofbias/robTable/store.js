@@ -1,7 +1,7 @@
 import * as d3 from "d3";
 import _ from "lodash";
 import fetch from "isomorphic-fetch";
-import {action, observable} from "mobx";
+import {action, computed, observable, toJS} from "mobx";
 
 import h from "shared/utils/helpers";
 
@@ -9,11 +9,11 @@ class RobTableStore {
     @observable error = null;
     @observable isFetching = false;
     @observable itemsLoaded = false;
-    @observable riskofbiases = null;
+    @observable riskofbiases = [];
+    @observable active = [];
     @observable final = null;
     @observable name = "";
     @observable rob_response_values = [];
-    @observable active = [];
     @observable current_score_state = {};
 
     constructor(config) {
@@ -33,6 +33,7 @@ class RobTableStore {
         }
 
         this.isFetching = true;
+        this.itemsLoaded = false;
         this.resetError();
         fetch(
             h.getObjectUrl(this.config.host, this.config.study.url, this.config.study.id),
@@ -62,26 +63,48 @@ class RobTableStore {
                     finalRobs = _.find(dirtyRoBs, {final: true});
 
                 this.riskofbiases = robs;
+                this.active = robs;
                 this.final = _.has(finalRobs, "scores") ? finalRobs.scores : [];
+                this.isFetching = false;
+                this.itemsLoaded = true;
             })
             .catch(error => {
                 this.setError(error);
+                this.isFetching = false;
+                this.itemsLoaded = false;
             });
     }
 
-    @action.bound selectActive(domain, metric) {
-        if (_.isEmpty(domain) | (domain === "none")) {
-            this.active = [];
-        } else if (domain === "all") {
-            this.active = this.riskofbiases;
-        } else if (metric !== undefined) {
-            let domains = _.find(this.riskofbiases, {key: domain});
-            let values = _.find(domains.values, {key: metric});
-            this.active = [Object.assign({}, domains, {values: [values]})];
-        } else {
-            let domains = _.find(this.riskofbiases, {key: domain});
-            this.active = domains;
-        }
+    @action.bound selectDomain(domain) {
+        this.active = [_.find(this.riskofbiases, {key: domain})];
+    }
+    @action.bound selectMetric(domain, metric) {
+        let domains = _.find(this.riskofbiases, {key: domain}),
+            values = _.find(domains.values, {key: metric});
+        this.active = [Object.assign({}, domains, {values: [values]})];
+    }
+    @action.bound toggleShowAll() {
+        this.active = this.allRobShown ? [] : this.riskofbiases;
+    }
+
+    @computed get formatRobForAggregateDisplay() {
+        const domains = _.flattenDeep(
+            _.map(this.riskofbiases, domain => {
+                return _.map(domain.values, metric => {
+                    return _.filter(metric.values, score => score.final);
+                });
+            })
+        );
+
+        return d3
+            .nest()
+            .key(d => d.metric.domain.name)
+            .key(d => d.metric.name)
+            .entries(domains);
+    }
+
+    @computed get allRobShown() {
+        return this.active && this.riskofbiases && this.active.length === this.riskofbiases.length;
     }
 }
 

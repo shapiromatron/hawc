@@ -22,12 +22,7 @@ class MetricCell extends Component {
                 className="score-cell"
                 name={firstScore.metric.name}
                 style={displaySettings.reactStyle}
-                onClick={() => {
-                    handleClick({
-                        domain: firstScore.metric.domain.name,
-                        metric: firstScore.metric.name,
-                    });
-                }}>
+                onClick={() => handleClick(firstScore.metric.domain.name, firstScore.metric.name)}>
                 <span
                     className="score-cell-scores-span tooltips text-center"
                     data-toggle="tooltip"

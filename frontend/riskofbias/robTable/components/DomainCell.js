@@ -13,17 +13,13 @@ class DomainCell extends Component {
 
     render() {
         // scoresByMetric is an array of score arrays, grouped by metric
-        let {domain, handleClick} = this.props,
+        let {domain, handleSelectDomain, handleSelectMetric} = this.props,
             scoresByMetric = _.map(this.props.domain.values, "values"),
             domainName = scoresByMetric[0][0].metric.domain.name;
 
         return (
             <div className="domain-cell" style={{flex: scoresByMetric.length}}>
-                <div
-                    className="header-box"
-                    onClick={() => {
-                        handleClick({domain: domain.key});
-                    }}>
+                <div className="header-box" onClick={() => handleSelectDomain(domain.key)}>
                     <span className="domain-header">{domainName}</span>
                 </div>
                 <div className="score-row">
@@ -32,7 +28,7 @@ class DomainCell extends Component {
                             <MetricCell
                                 key={scores[0].metric.id}
                                 scores={scores}
-                                handleClick={handleClick}
+                                handleClick={handleSelectMetric}
                             />
                         );
                     })}
@@ -62,7 +58,8 @@ DomainCell.propTypes = {
             })
         ).isRequired,
     }).isRequired,
-    handleClick: PropTypes.func.isRequired,
+    handleSelectDomain: PropTypes.func.isRequired,
+    handleSelectMetric: PropTypes.func.isRequired,
 };
 
 export default DomainCell;

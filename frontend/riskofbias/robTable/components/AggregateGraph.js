@@ -16,7 +16,8 @@ const AggregateGraph = props => {
                         <DomainCell
                             key={domain.key}
                             domain={domain}
-                            handleClick={props.handleClick}
+                            handleSelectDomain={props.handleSelectDomain}
+                            handleSelectMetric={props.handleSelectMetric}
                         />
                     );
                 })}
@@ -35,7 +36,8 @@ export function renderAggregateGraph(data, element) {
 
 AggregateGraph.propTypes = {
     domains: PropTypes.array,
-    handleClick: PropTypes.func,
+    handleSelectDomain: PropTypes.func.isRequired,
+    handleSelectMetric: PropTypes.func.isRequired,
 };
 
 export default AggregateGraph;
