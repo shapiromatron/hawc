@@ -1,7 +1,7 @@
 import * as d3 from "d3";
 import _ from "lodash";
 import fetch from "isomorphic-fetch";
-import {action, computed, observable, toJS} from "mobx";
+import {action, computed, observable} from "mobx";
 
 import h from "shared/utils/helpers";
 
