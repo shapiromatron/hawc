@@ -8,13 +8,14 @@ import EmptyListNotification from "shared/components/EmptyListNotification";
 import ScrollToErrorBox from "shared/components/ScrollToErrorBox";
 
 import {TASK_TYPES, TASK_TYPE_DESCRIPTIONS} from "../constants";
-import Header from "../components/Header";
-import List from "../components/List";
-import StudyFilter from "../components/StudyFilter";
-import TaskStudy from "../components/TaskStudy";
-import TaskStudyEdit from "../components/TaskStudyEdit";
+import Header from "./Header";
+import List from "./List";
+import StudyFilter from "./StudyFilter";
+import TaskStudy from "./TaskStudy";
+import TaskStudyEdit from "./TaskStudyEdit";
 
 import "./Root.css";
+
 @inject("store")
 @observer
 class Root extends Component {

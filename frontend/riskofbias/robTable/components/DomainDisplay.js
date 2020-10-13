@@ -2,7 +2,7 @@ import React, {Component} from "react";
 import PropTypes from "prop-types";
 import _ from "lodash";
 
-import MetricDisplay from "riskofbias/robTable/components/MetricDisplay";
+import MetricDisplay from "./MetricDisplay";
 
 class DomainDisplay extends Component {
     render() {

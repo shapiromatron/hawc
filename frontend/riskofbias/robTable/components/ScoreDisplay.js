@@ -2,8 +2,8 @@ import React, {Component} from "react";
 import PropTypes from "prop-types";
 
 import h from "shared/utils/helpers";
-import ScoreBar from "riskofbias/robTable/components/ScoreBar";
-import {OVERRIDE_SCORE_LABEL_MAPPING} from "riskofbias/constants";
+import ScoreBar from "./ScoreBar";
+import {OVERRIDE_SCORE_LABEL_MAPPING} from "../../constants";
 import "./ScoreDisplay.css";
 
 class ScoreDisplay extends Component {

@@ -1,8 +1,9 @@
 import React, {Component} from "react";
 import PropTypes from "prop-types";
 
-import {getMultiScoreDisplaySettings} from "riskofbias/constants";
 import h from "shared/utils/helpers";
+
+import {getMultiScoreDisplaySettings} from "../../constants";
 import "./MetricCell.css";
 
 class MetricCell extends Component {

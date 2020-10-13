@@ -2,7 +2,7 @@ import _ from "lodash";
 import React, {Component} from "react";
 import PropTypes from "prop-types";
 
-import ScoreDisplay from "../ScoreDisplay";
+import ScoreDisplay from "./ScoreDisplay";
 
 class MetricScores extends Component {
     render() {

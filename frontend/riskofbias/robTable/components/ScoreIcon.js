@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 import PropTypes from "prop-types";
 
-import {SCORE_SHADES, SCORE_TEXT} from "../../../constants";
+import {SCORE_SHADES, SCORE_TEXT} from "../../constants";
 
 import "./ScoreIcon.css";
 

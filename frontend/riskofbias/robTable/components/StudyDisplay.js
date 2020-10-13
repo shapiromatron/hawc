@@ -3,9 +3,9 @@ import React, {Component} from "react";
 import PropTypes from "prop-types";
 import ReactDOM from "react-dom";
 
-import AggregateGraph from "riskofbias/robTable/components/AggregateGraph";
-import RiskOfBiasDisplay from "riskofbias/robTable/components/RiskOfBiasDisplay";
-import ShowAll from "riskofbias/robTable/components/ShowAll";
+import AggregateGraph from "./AggregateGraph";
+import RiskOfBiasDisplay from "./RiskOfBiasDisplay";
+import ShowAll from "./ShowAll";
 
 class StudyDisplay extends Component {
     constructor(props) {

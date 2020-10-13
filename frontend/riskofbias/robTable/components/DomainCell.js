@@ -2,7 +2,8 @@ import _ from "lodash";
 import React, {Component} from "react";
 import PropTypes from "prop-types";
 
-import MetricCell from "riskofbias/robTable/components/MetricCell";
+import MetricCell from "./MetricCell";
+
 import "./DomainCell.css";
 
 class DomainCell extends Component {

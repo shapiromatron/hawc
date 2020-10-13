@@ -3,7 +3,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import ReactDOM from "react-dom";
 
-import MetricScores from "riskofbias/robTable/components/MetricScores";
+import MetricScores from "./MetricScores";
 
 const CrossStudyDisplay = props => {
     let {scores} = props,

@@ -7,7 +7,7 @@ import {
     BIAS_DIRECTION_SIMPLE,
     BIAS_DIRECTION_VERBOSE,
     BIAS_DIRECTION_UNKNOWN,
-} from "riskofbias/constants";
+} from "../../constants";
 
 import "./ScoreBar.css";
 

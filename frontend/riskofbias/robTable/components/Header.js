@@ -1,7 +1,9 @@
 import React, {Component} from "react";
 import PropTypes from "prop-types";
-import {connect} from "react-redux";
+import {observer, inject} from "mobx-react";
 
+@inject("store")
+@observer
 class Header extends Component {
     renderHelpText(hawc_flavor, assessment_id) {
         if (hawc_flavor !== "EPA") {
@@ -85,7 +87,8 @@ class Header extends Component {
 
     render() {
         let headerText,
-            {isForm, display, assessment_id, hawc_flavor} = this.props.config;
+            {isForm, display, assessment_id, hawc_flavor} = this.props.store.config;
+
         if (isForm) {
             headerText = display == "final" ? "Final review" : "Review";
         } else if (display == "all") {
@@ -100,20 +103,8 @@ class Header extends Component {
         );
     }
 }
-
-function mapStateToProps(state) {
-    return {
-        config: state.config,
-    };
-}
-
 Header.propTypes = {
-    config: PropTypes.shape({
-        isForm: PropTypes.object,
-        display: PropTypes.string,
-        assessment_id: PropTypes.string,
-        hawc_flavor: PropTypes.string,
-    }),
+    store: PropTypes.object,
 };
 
-export default connect(mapStateToProps)(Header);
+export default Header;

@@ -3,7 +3,8 @@ import React from "react";
 import ReactDOM from "react-dom";
 import PropTypes from "prop-types";
 
-import DomainCell from "riskofbias/robTable/components/DomainCell";
+import DomainCell from "./DomainCell";
+
 import "./AggregateGraph.css";
 
 const AggregateGraph = props => {

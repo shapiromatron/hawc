@@ -1,7 +1,7 @@
 import $ from "$";
 import fetch from "isomorphic-fetch";
 
-import h from "riskofbias/robTable/utils/helpers";
+import h from "shared/utils/helpers";
 
 import * as types from "bmd/constants";
 

@@ -1,11 +1,16 @@
-import {splitStartupRedux} from "utils/WebpackSplit";
+import React from "react";
+import ReactDOM from "react-dom";
+import {Provider} from "mobx-react";
 
-const startup = function(element) {
-    import("riskofbias/robTable/containers/Root").then(Component => {
-        import("riskofbias/robTable/store/configureStore").then(store => {
-            splitStartupRedux(element, Component.default, store.default);
-        });
-    });
-};
+import RobTableStore from "./store";
+import Root from "./components/Root";
 
-export default startup;
+export default function(el, config) {
+    const store = new RobTableStore(config);
+    ReactDOM.render(
+        <Provider store={store}>
+            <Root />
+        </Provider>,
+        el
+    );
+}
