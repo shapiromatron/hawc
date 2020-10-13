@@ -249,6 +249,25 @@ class EndpointGroupSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class SimpleEndpointSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Endpoint
+        fields = (
+            "id",
+            "assessment_id",
+            "name",
+            "name_term_id",
+            "system",
+            "system_term_id",
+            "organ",
+            "organ_term_id",
+            "effect",
+            "effect_term_id",
+            "effect_subtype",
+            "effect_subtype_term_id",
+        )
+
+
 class EndpointSerializer(serializers.ModelSerializer):
     assessment = serializers.PrimaryKeyRelatedField(read_only=True)
     effects = EffectTagsSerializer(read_only=True)

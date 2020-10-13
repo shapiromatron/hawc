@@ -1,8 +1,9 @@
-from typing import Any, Dict
+from typing import Any, Dict, List
 
 import numpy as np
 import pandas as pd
 from django.apps import apps
+from django.core.exceptions import ValidationError
 
 from ..assessment.models import Assessment
 from ..common.models import BaseManager, get_distinct_charfield, get_distinct_charfield_opts
@@ -296,6 +297,89 @@ class EndpointManager(BaseManager):
         )
 
         return df
+
+    def update_terms(self, objs: List[Dict]) -> List:
+        # must be 1 or more objs
+        if len(objs) == 0:
+            raise ValidationError("List of endpoints must be > 1")
+        # each obj must have id
+        for obj in objs:
+            if "id" not in obj.keys():
+                raise ValidationError({"id": "Each endpoint must have an id"})
+        # ids must be unique
+        endpoint_ids = [obj["id"] for obj in objs]
+        if len(endpoint_ids) != len(set(endpoint_ids)):
+            raise ValidationError("ids must be unique")
+        # endpoints must be in the same assessment
+        endpoints = self.get_queryset().filter(pk__in=endpoint_ids)
+        assessment = endpoints.first().assessment
+        if endpoints.exclude(assessment_id=assessment.id).exists():
+            raise ValidationError("endpoints must be in the same assessment")
+        # assessment must have vocab
+        if assessment.vocabulary is None:
+            raise ValidationError("vocab must be set for assessment")
+        # restructure dict for easier seperation of id and terms
+        endpoint_id_to_terms = {obj.pop("id"): obj for obj in objs}
+        # obj fields must be terms
+        term_fields = {
+            "system_term_id",
+            "organ_term_id",
+            "effect_term_id",
+            "effect_subtype_term_id",
+            "name_term_id",
+        }
+        for term_field_to_id in endpoint_id_to_terms.values():
+            if not set(term_field_to_id.keys()).issubset(term_fields):
+                raise ValidationError("only id and term fields")
+        # all terms must be in assessment vocabulary
+        term_fields_and_ids = {
+            term_field_and_id
+            for term_field_to_id in endpoint_id_to_terms.values()
+            for term_field_and_id in term_field_to_id.items()
+        }
+        term_ids = [id for (_, id) in term_fields_and_ids]
+        terms = Term.objects.filter(pk__in=term_ids)
+        for term in terms:
+            if term.namespace != assessment.vocabulary:
+                raise ValidationError("namespace not assessment vocabulary")
+        # all terms must match assigned type
+        term_types = VocabularyTermType.as_dict()
+        term_type_to_field = {
+            "system": "system_term_id",
+            "organ": "organ_term_id",
+            "effect": "effect_term_id",
+            "effect_subtype": "effect_subtype_term_id",
+            "endpoint_name": "name_term_id",
+        }
+        term_field_to_text_field = {
+            "system_term_id": "system",
+            "organ_term_id": "organ",
+            "effect_term_id": "effect",
+            "effect_subtype_term_id": "effect_subtype",
+            "name_term_id": "name",
+        }
+        actual_term_fields_and_ids = {
+            (term_type_to_field[term_types[term.type]], term.pk) for term in terms
+        }
+        for term_field_and_id in term_fields_and_ids:
+            if term_field_and_id not in actual_term_fields_and_ids:
+                field, id = term_field_and_id
+                raise ValidationError(f"Term id {id} is not the right type for {field}")
+        # update endpoints
+        term_id_to_name = {term.pk: term.name for term in terms}
+        updated_endpoints = []
+        updated_fields = list(term_field_to_text_field.keys()) + list(
+            term_field_to_text_field.values()
+        )
+        for endpoint in endpoints:
+            endpoint_terms = endpoint_id_to_terms[endpoint.pk]
+            for field, id in endpoint_terms.items():
+                setattr(endpoint, field, id)
+                setattr(endpoint, term_field_to_text_field[field], term_id_to_name[id])
+            updated_endpoints.append(endpoint)
+        self.bulk_update(updated_endpoints, updated_fields)
+
+        return updated_endpoints
 
 
 class EndpointGroupManager(BaseManager):
