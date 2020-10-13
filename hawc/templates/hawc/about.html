@@ -4,8 +4,8 @@
 {% load humanize %}
 
 {% block main_content %}
-  <div class="row">
-    <div class="span12">
+  <div class="row m-1">
+    <div class="col col-sm-8">
       <h1>About HAWC</h1>
       <p>
         HAWC is a modular, content management system designed to store, display, and synthesize
@@ -48,14 +48,18 @@
       </p>
       <p>
         If you find HAWC useful in your work, a citation is always appreciated. To cite, either use the paper above, or the recommended citation below:
-        <pre><i>HAWC: Health Assessment Workplace Collaborative</i> [Computer software]. (2013).<br>URL: https://hawcproject.org. [Month, year of date use].</pre>
+        <div class="card">
+          <div class="card-header">
+            <pre ><i>HAWC: Health Assessment Workplace Collaborative</i> [Computer software]. (2013).<br>URL: https://hawcproject.org. [Month, year of date use].</pre>
+          </div>
+        </div> 
       </p>
       <p>Documentation for HAWC is available at <a href="https://hawc.readthedocs.io">https://hawc.readthedocs.io</a>. Please note that this also includes detailed notes on the statistical methods used in this application.</p>
     </div>
   </div>
 
-  <div class="row">
-    <div class="span12">
+  <div class="row m-1">
+    <div class="col col-sm-8">
       <h2>Data in HAWC</h2>
       <p>
         The HAWC database is changing daily as users add more data to assessments.
@@ -86,8 +90,8 @@
     </div>
   </div>
 
-  <div class="row">
-    <div class="span12">
+  <div class="row m-1">
+    <div class="col col-sm-8">
       <h2>How to use HAWC</h2>
       <h3>Full length tutorial</h3>
       <div class="videoTab">
@@ -98,16 +102,16 @@
       <div>
           <div class="row-fluid">
               <ul class="nav nav-tabs" id="tabs">
-                  <li class='active'><a href="#started" data-toggle="tab">Getting Started</a></li>
-                  <li><a href="#importing" data-toggle="tab">Importing literature</a></li>
-                  <li><a href="#mgmt" data-toggle="tab">Management dashboard</a></li>
-                  <li><a href="#epiExtraction" data-toggle="tab">Epidemiology data extraction</a></li>
-                  <li><a href="#aniExtraction" data-toggle="tab">Animal bioassay data extraction</a></li>
-                  <li><a href="#epiMetaExtraction" data-toggle="tab">Epidemiology meta analysis</a></li>
-                  <li><a href="#invitroExtraction" data-toggle="tab">In vitro data extraction</a></li>
-                  <li><a href="#dataCleanup" data-toggle="tab">Data cleanup</a></li>
-                  <li><a href="#rob" data-toggle="tab">{{rob_name}} assessment</a></li>
-                  <li><a href="#viz" data-toggle="tab">Creating visualizations</a></li>
+                  <li class="nav-item"><a href="#started" class="nav-link active" data-toggle="tab">Getting Started</a></li>
+                  <li class="nav-item"><a href="#importing" class="nav-link" data-toggle="tab">Importing literature</a></li>
+                  <li class="nav-item"><a href="#mgmt" class="nav-link" data-toggle="tab">Management dashboard</a></li>
+                  <li class="nav-item"><a href="#epiExtraction" class="nav-link" data-toggle="tab">Epidemiology data extraction</a></li>
+                  <li class="nav-item"><a href="#aniExtraction" class="nav-link" data-toggle="tab">Animal bioassay data extraction</a></li>
+                  <li class="nav-item"><a href="#epiMetaExtraction" class="nav-link" data-toggle="tab">Epidemiology meta analysis</a></li>
+                  <li class="nav-item"><a href="#invitroExtraction" class="nav-link" data-toggle="tab">In vitro data extraction</a></li>
+                  <li class="nav-item"><a href="#dataCleanup" class="nav-link" data-toggle="tab">Data cleanup</a></li>
+                  <li class="nav-item"><a href="#rob" class="nav-link" data-toggle="tab">{{rob_name}} assessment</a></li>
+                  <li class="nav-item"><a href="#viz" class="nav-link" data-toggle="tab">Creating visualizations</a></li>
               </ul>
           </div>
 
@@ -191,10 +195,10 @@
     </div>
   </div>
 
-  <div class="row">
-    <div class="span12">
+  <div class="row m-1">
+    <div class="col col-sm-8">
       <h2>Posters and presentations</h2>
-      <table class="table table-compressed table-striped">
+      <table class="table table-striped table-bordered">
         <colgroup>
           <col style="width:40%">
           <col style="width:35%">
@@ -286,7 +290,7 @@
         </tbody>
       </table>
     </div>
-    <div class="span12">
+    <div class="col col-sm-8">
         <h2>Acknowledgments</h2>
         <p>
           This project is supported, in part, by funding
@@ -301,8 +305,8 @@
         </ul>
     </div>
   </div>
-  <div class="row">
-    <div class="span12">
+  <div class="row m-1">
+    <div class="col col-sm-82">
       <ul class="sponsors">
         <li><a href="http://ntp.niehs.nih.gov">
           <img src="{% static 'img/ntplogo.jpg' %}"></a></li>
@@ -321,8 +325,8 @@
     </div>
   </div>
   <div class="clearfix"></div>
-  <div class="row">
-    <div class="span12">
+  <div class="row m-1">
+    <div class="col col-sm-8">
       <p><i>
         The contents of HAWC are solely the responsibility of the users and
         developers, and do not necessarily represent the official views of

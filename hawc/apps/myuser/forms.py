@@ -291,7 +291,7 @@ class HAWCAuthenticationForm(AuthenticationForm):
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "span12"
+                widget.attrs["class"] = "form-control"
 
         inputs = {"legend_text": "HAWC login"}
 
@@ -362,7 +362,7 @@ class HAWCPasswordResetForm(PasswordResetForm):
             cfb.FormActions(
                 cfl.Submit("submit", "Send email confirmation"),
                 cfl.HTML(
-                    f'<a role="button" class="btn btn-default" href="{reverse("user:login")}">Cancel</a>'
+                    f'<a role="button" class="btn btn-secondary" href="{reverse("user:login")}">Cancel</a>'
                 ),
             )
         )

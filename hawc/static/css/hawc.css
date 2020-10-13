@@ -1,10 +1,4 @@
-/* General settings */
-@media (min-width: 980px) {
-    /* only add padding when we're in bootstrap2 default/large displays */
-    body {
-        padding-top: 65px;
-    }
-}
+
 iframe {
     resize: both;
 }

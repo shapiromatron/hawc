@@ -24,12 +24,15 @@
     {% include "messages.html" %}
   {% endblock messages %}
 
-  <div class="row-fluid">
-    <div id='sidebar'
+  <div class="wrapper">
+    <nav id="sidebar">
+
+    </nav>
+    <!-- <div id='sidebar'
          class="well span3 no-print"
          style="max-width: 300px; {% if request.session.hideSidebar %}display:none;{% endif %}">
       {% include "assessment/sidebar.html" %}
-    </div>
+    </div> -->
 
     <div id="sidebar_mini"
          style="margin-left: 0%; max-width: 10px; {% if not request.session.hideSidebar %}display:none;{% endif %}">
