@@ -1,6 +1,6 @@
 import _ from "lodash";
 import * as d3 from "d3";
-import {deepCopy} from "shared/utils";
+import h from "shared/utils/helpers";
 
 import * as types from "bmd/constants";
 
@@ -290,7 +290,7 @@ let SUFFICIENTLY_CLOSE_BMDL = 3,
 let apply_logic = function(logics, models, endpoint, doseUnits) {
     let doses = endpoint._get_doses_by_dose_id(doseUnits),
         groups = _.chain(endpoint.data.groups)
-            .map(d => deepCopy(d))
+            .map(d => h.deepCopy(d))
             .each((d, i) => (d.dose = doses[i]))
             .value();
 

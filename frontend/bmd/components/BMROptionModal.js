@@ -2,7 +2,7 @@ import _ from "lodash";
 import React from "react";
 import PropTypes from "prop-types";
 
-import {deepCopy} from "shared/utils";
+import h from "shared/utils/helpers";
 
 import * as types from "bmd/constants";
 
@@ -12,7 +12,7 @@ import EditableModalFooter from "bmd/components/EditableModalFooter";
 class BMROptionModal extends BaseModal {
     UNSAFE_componentWillReceiveProps(nextProps) {
         if (nextProps.bmr) {
-            this.setState(deepCopy(nextProps.bmr));
+            this.setState(h.deepCopy(nextProps.bmr));
         }
     }
 
@@ -24,7 +24,7 @@ class BMROptionModal extends BaseModal {
     }
 
     handleTypeChange(e) {
-        let d = deepCopy(this.props.allOptions[e.target.value]);
+        let d = h.deepCopy(this.props.allOptions[e.target.value]);
         this.setState(d);
     }
 

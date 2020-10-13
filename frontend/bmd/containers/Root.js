@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import {Provider} from "react-redux";
 
-import {loadConfig} from "shared/actions/Config";
+// import {loadConfig} from "shared/actions/Config";
 
 import Tabs from "bmd/containers/Tabs";
 import Modals from "bmd/containers/Modals";
@@ -10,7 +10,7 @@ import Modals from "bmd/containers/Modals";
 class Root extends React.Component {
     constructor(props) {
         super(props);
-        props.store.dispatch(loadConfig());
+        // props.store.dispatch(loadConfig());
     }
 
     render() {

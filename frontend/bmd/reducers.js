@@ -1,9 +1,9 @@
 import _ from "lodash";
-import {deepCopy} from "shared/utils";
+import h from "shared/utils/helpers";
 
 import {combineReducers} from "redux";
 
-import config from "shared/reducers/Config";
+// import config from "shared/reducers/Config";
 import * as types from "bmd/constants";
 
 import {apply_logic} from "bmd/models/logic";
@@ -64,7 +64,7 @@ function bmd(state = defaultState, action) {
 
             tmp = _.chain(action.settings.models)
                 .filter(d => d.bmr_id === 0)
-                .map(d => deepCopy(d))
+                .map(d => h.deepCopy(d))
                 .value();
 
             tmp3 = action.settings.selected_model || {};
@@ -96,7 +96,7 @@ function bmd(state = defaultState, action) {
             });
 
         case types.CREATE_MODEL:
-            tmp = Object.assign(deepCopy(state.allModelOptions[action.modelIndex]), {
+            tmp = Object.assign(h.deepCopy(state.allModelOptions[action.modelIndex]), {
                 overrides: {},
             });
             return Object.assign({}, state, {
@@ -110,7 +110,7 @@ function bmd(state = defaultState, action) {
             });
 
         case types.UPDATE_MODEL:
-            tmp = deepCopy(state.modelSettings);
+            tmp = h.deepCopy(state.modelSettings);
             tmp[state.selectedModelOptionIndex].overrides = action.values;
             return Object.assign({}, state, {
                 modelSettings: tmp,
@@ -130,7 +130,7 @@ function bmd(state = defaultState, action) {
 
         case types.TOGGLE_VARIANCE:
             tmp = _.map(state.modelSettings, d => {
-                tmp2 = deepCopy(d);
+                tmp2 = h.deepCopy(d);
                 tmp2.overrides.constant_variance = tmp2.overrides.constant_variance === 0 ? 1 : 0;
                 return tmp2;
             });
@@ -139,7 +139,7 @@ function bmd(state = defaultState, action) {
             });
 
         case types.ADD_ALL_MODELS:
-            tmp = _.map(state.allModelOptions, d => Object.assign(deepCopy(d), {overrides: {}}));
+            tmp = _.map(state.allModelOptions, d => Object.assign(h.deepCopy(d), {overrides: {}}));
             return Object.assign({}, state, {
                 modelSettings: [...state.modelSettings, ...tmp],
             });
@@ -161,7 +161,7 @@ function bmd(state = defaultState, action) {
             });
 
         case types.UPDATE_BMR:
-            tmp = deepCopy(state.bmrs);
+            tmp = h.deepCopy(state.bmrs);
             tmp[state.selectedBmrIndex] = action.values;
             return Object.assign({}, state, {
                 bmrs: tmp,
@@ -217,7 +217,7 @@ function bmd(state = defaultState, action) {
 }
 
 const rootReducer = combineReducers({
-    config,
+    // config,
     bmd,
 });
 
