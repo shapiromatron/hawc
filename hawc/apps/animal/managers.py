@@ -302,22 +302,35 @@ class EndpointManager(BaseManager):
         # must be 1 or more objs
         if len(objs) == 0:
             raise ValidationError("List of endpoints must be > 1")
-        # each obj must have id
+        # each obj must have id and at least one other field
         for obj in objs:
             if "id" not in obj.keys():
-                raise ValidationError({"id": "Each endpoint must have an id"})
+                raise ValidationError("Each endpoint must have an 'id'")
+            if len(obj.keys()) < 2:
+                raise ValidationError(f"No term fields given for endpoint {obj['id']}")
+
         # ids must be unique
         endpoint_ids = [obj["id"] for obj in objs]
         if len(endpoint_ids) != len(set(endpoint_ids)):
-            raise ValidationError("ids must be unique")
-        # endpoints must be in the same assessment
+            raise ValidationError("Endpoint ids must be unique")
+        # ids must be valid
         endpoints = self.get_queryset().filter(pk__in=endpoint_ids)
+        valid_endpoint_ids = endpoints.values_list("id", flat=True)
+        invalid_endpoint_ids = set(endpoint_ids) - set(valid_endpoint_ids)
+        if len(invalid_endpoint_ids) > 0:
+            invalid_endpoint_ids_str = ", ".join(str(_) for _ in invalid_endpoint_ids)
+            raise ValidationError(f"Invalid id(s) {invalid_endpoint_ids_str}")
+        # endpoints must be in the same assessment
         assessment = endpoints.first().assessment
-        if endpoints.exclude(assessment_id=assessment.id).exists():
-            raise ValidationError("endpoints must be in the same assessment")
+        invalid_endpoints = endpoints.exclude(assessment_id=assessment.id)
+        if invalid_endpoints.exists():
+            invalid_endpoints_str = ", ".join(str(_.pk) for _ in invalid_endpoints)
+            raise ValidationError(
+                f"Endpoints must be from the same assessment; endpoint(s) {invalid_endpoints_str} not from assessment {assessment.id}"
+            )
         # assessment must have vocab
         if assessment.vocabulary is None:
-            raise ValidationError("vocab must be set for assessment")
+            raise ValidationError("Vocabulary not set in assessment {assessment.id}")
         # restructure dict for easier seperation of id and terms
         endpoint_id_to_terms = {obj.pop("id"): obj for obj in objs}
         # obj fields must be terms
@@ -330,7 +343,8 @@ class EndpointManager(BaseManager):
         }
         for term_field_to_id in endpoint_id_to_terms.values():
             if not set(term_field_to_id.keys()).issubset(term_fields):
-                raise ValidationError("only id and term fields")
+                invalid_fields_str = ", ".join(set(term_field_to_id.keys()) - term_fields)
+                raise ValidationError(f"Invalid field name(s) '{invalid_fields_str}'")
         # all terms must be in assessment vocabulary
         term_fields_and_ids = {
             term_field_and_id
@@ -341,7 +355,9 @@ class EndpointManager(BaseManager):
         terms = Term.objects.filter(pk__in=term_ids)
         for term in terms:
             if term.namespace != assessment.vocabulary:
-                raise ValidationError("namespace not assessment vocabulary")
+                raise ValidationError(
+                    f"Assessment vocabulary {assessment.vocabulary} does not match term {term.id} namespace {term.namespace}"
+                )
         # all terms must match assigned type
         term_types = VocabularyTermType.as_dict()
         term_type_to_field = {
@@ -364,7 +380,7 @@ class EndpointManager(BaseManager):
         for term_field_and_id in term_fields_and_ids:
             if term_field_and_id not in actual_term_fields_and_ids:
                 field, id = term_field_and_id
-                raise ValidationError(f"Term id {id} is not the right type for {field}")
+                raise ValidationError(f"Term {id} is not the right type for '{field}''")
         # update endpoints
         term_id_to_name = {term.pk: term.name for term in terms}
         updated_endpoints = []
