@@ -1,13 +1,83 @@
+from django.conf import settings
 from django.db import models
 from django.shortcuts import get_object_or_404
-from rest_framework import exceptions, filters, mixins, permissions, viewsets
+from django.utils.encoding import force_str
+from rest_framework import exceptions, filters, mixins, permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.throttling import UserRateThrottle
-from rest_framework_extensions.mixins import ListUpdateModelMixin
 
 from ..assessment.api import DisabledPagination, get_assessment_from_query
 from .helper import try_parse_list_ints
+
+
+class ListUpdateModelMixin:
+    """
+    Taken from https://github.com/chibisov/drf-extensions
+    and isolated for Django 3.1 compatibility
+    """
+
+    def __init__(self, *args, **kwargs):
+        _settings = getattr(settings, "REST_FRAMEWORK_EXTENSIONS", {})
+        self.bulk_header = _settings.get("DEFAULT_BULK_OPERATION_HEADER_NAME", "X-BULK-OPERATION")
+        super().__init__(*args, **kwargs)
+
+    def is_object_operation(self):
+        return bool(self.get_object_lookup_value())
+
+    def get_object_lookup_value(self):
+        return self.kwargs.get(getattr(self, "lookup_url_kwarg", None) or self.lookup_field, None)
+
+    def is_valid_bulk_operation(self):
+        if self.bulk_header:
+            header_name = "http_{0}".format(self.bulk_header.strip().replace("-", "_")).upper()
+            return (
+                bool(self.request.META.get(header_name, None)),
+                {
+                    "detail": "Header '{0}' should be provided for bulk operation.".format(
+                        self.bulk_header
+                    )
+                },
+            )
+        else:
+            return True, {}
+
+    def patch(self, request, *args, **kwargs):
+        if self.is_object_operation():
+            return super().partial_update(request, *args, **kwargs)
+        else:
+            return self.partial_update_bulk(request, *args, **kwargs)
+
+    def partial_update_bulk(self, request, *args, **kwargs):
+        is_valid, errors = self.is_valid_bulk_operation()
+        if is_valid:
+            queryset = self.filter_queryset(self.get_queryset())
+            update_bulk_dict = self.get_update_bulk_dict(
+                serializer=self.get_serializer_class()(), data=request.data
+            )
+            self.pre_save_bulk(queryset, update_bulk_dict)
+            try:
+                queryset.update(**update_bulk_dict)
+            except ValueError as e:
+                errors = {"detail": force_str(e)}
+                return Response(errors, status=status.HTTP_400_BAD_REQUEST)
+            self.post_save_bulk(queryset, update_bulk_dict)
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        else:
+            return Response(errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def get_update_bulk_dict(self, serializer, data):
+        update_bulk_dict = {}
+        for field_name, field in serializer.fields.items():
+            if field_name in data and not field.read_only:
+                update_bulk_dict[field.source or field_name] = data[field_name]
+        return update_bulk_dict
+
+    def pre_save_bulk(self, queryset, update_bulk_dict):
+        pass
+
+    def post_save_bulk(self, queryset, update_bulk_dict):
+        pass
 
 
 class OncePerMinuteThrottle(UserRateThrottle):
