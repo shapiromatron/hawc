@@ -88,7 +88,7 @@
 
     <!-- Main Container -->
     {% block content_outer %}
-    <div id="container" class="container-fluid ">
+    <div id="container" class="container-fluid">
 
       {% block messages_base %}
         {% include "messages.html" %}
@@ -127,6 +127,7 @@
     <script type="text/javascript">
       supportedBrowserCheck();
     </script>
+
     {% endblock browser_check %}
     {% render_bundle 'main' %}
     {% block extrajs %}{% endblock %}

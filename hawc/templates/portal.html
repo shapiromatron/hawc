@@ -24,56 +24,56 @@
     {% include "messages.html" %}
   {% endblock messages %}
 
-  <div class="wrapper">
-    <nav id="sidebar">
-
-    </nav>
-    <!-- <div id='sidebar'
-         class="well span3 no-print"
-         style="max-width: 300px; {% if request.session.hideSidebar %}display:none;{% endif %}">
-      {% include "assessment/sidebar.html" %}
-    </div> -->
-
-    <div id="sidebar_mini"
-         style="margin-left: 0%; max-width: 10px; {% if not request.session.hideSidebar %}display:none;{% endif %}">
-      <a href="#" class="toggle_sidebar no-print" title="Expand sidebar"><i class="icon-chevron-right"></i></i></a>
-    </div>
-
-    <div id="content"
-         class="{% if request.session.hideSidebar %}span11{%else%}span9{% endif %}">
-      <div class="{% block content_type %}{% endblock %}">
-        {% block content %}{% endblock %}
-        <br class="clear" />
-      </div>
-    </div>
+  <div class="row" id="body-row">
+    <div id="sidebar-container" class="sidebar-expanded d-none d-md-block">
+      <ul class="list-group">
+          <li class="list-group-item sidebar-separator-title text-muted d-flex align-items-center menu-collapsed">
+              <small>MAIN MENU</small>
+          </li>
+          {% include "assessment/sidebar.html" %}
+          <a href="#top" data-toggle="sidebar-colapse" class="bg-dark list-group-item list-group-item-action d-flex align-items-center">
+              <div class="d-flex w-100 justify-content-start align-items-center">
+                  <span id="collapse-icon" class="fa fa-2x mr-3"></span>
+              </div>
+          </a>
+      </ul>
   </div>
+    <div class="ml-2">
+        {% block content %}{% endblock %}
+    </div>
+</div>
 
 {% endblock %}
 
 {% block portaljs %}
-  <script type="text/javascript">
-    $(document).ready(function(){
-      var hideSidebar = {{request.session.hideSidebar|default:"false"|lower}},
-          trigger_resize = function(){
-            $(window).trigger("resize");
-          };
+        <script>
+          // Hide submenus
+$('#body-row .collapse').collapse('hide'); 
 
-      $('.toggle_sidebar').click(function(e){
-        e.preventDefault();
-        hideSidebar = !hideSidebar;
-        if(hideSidebar){
-          $("#sidebar").fadeOut(function(){
-            $("#content").addClass("span11").removeClass("span9");
-            $('#sidebar_mini').fadeIn(trigger_resize);
-          });
-        } else {
-          $('#sidebar_mini').fadeOut(function(){
-            $("#content").addClass("span9").removeClass("span11");
-            $('#sidebar').fadeIn(trigger_resize);
-          });
-        }
-        $.post("{% url 'update_session' %}", {"hideSidebar": hideSidebar});
-      });
-    });
-  </script>
+// Collapse/Expand icon
+$('#collapse-icon').addClass('fa-angle-double-left'); 
+
+// Collapse click
+$('[data-toggle=sidebar-colapse]').click(function() {
+    SidebarCollapse();
+});
+
+function SidebarCollapse () {
+    $('.menu-collapsed').toggleClass('d-none');
+    $('.sidebar-submenu').toggleClass('d-none');
+    $('.submenu-icon').toggleClass('d-none');
+    $('#sidebar-container').toggleClass('sidebar-expanded sidebar-collapsed');
+    
+    // Treating d-flex/d-none on separators with title
+    var SeparatorTitle = $('.sidebar-separator-title');
+    if ( SeparatorTitle.hasClass('d-flex') ) {
+        SeparatorTitle.removeClass('d-flex');
+    } else {
+        SeparatorTitle.addClass('d-flex');
+    }
+    
+    // Collapse/Expand icon
+    $('#collapse-icon').toggleClass('fa-angle-double-left fa-angle-double-right');
+}
+        </script>
 {% endblock portaljs %}

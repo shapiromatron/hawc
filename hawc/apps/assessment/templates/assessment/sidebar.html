@@ -1,39 +1,106 @@
-<a class="toggle_sidebar pull-right" title="Compress sidebar" href="#">x</a>
-<ul class="nav nav-list">
-  {% if assessment %}
-    <li class="nav-header">Selected assessment</li>
-    <li class="active"><a href="{% url 'assessment:detail' assessment.pk %}"> {{ assessment }}</a></li>
+{% if assessment %}
+    <a class="bg-dark list-group-item list-group-item-action flex-column align-items-start">
+      <div class="d-flex w-100 justify-content-start align-items-center">
+          <span class="fa fa-mouse-pointer fa-fw mr-3"></span>
+          <span class="menu-collapsed">Selected assessment</span>
+      </div>
+  </a>
+    <a  href="{% url 'assessment:detail' assessment.pk %}" class="bg-dark list-group-item list-group-item-action flex-column align-items-start">
+      <div class="d-flex w-100 justify-content-start align-items-center">
+          <span class="fa fa-mouse-pointer fa-fw mr-3"></span>
+          <span class="menu-collapsed">{{ assessment }}</span>
+      </div>
+  </a>
 
-    <li class="nav-header">Available modules</li>
+  
+    <a class="bg-dark list-group-item list-group-item-action flex-column align-items-start">
+      <div class="d-flex w-100 justify-content-start align-items-center">
+          <span class="fa fa-mouse-pointer fa-fw mr-3"></span>
+          <span class="menu-collapsed">Available modules</span>
+      </div>
+  </a>
 
     {% if assessment.enable_literature_review %}
-        <li><a href="{% url 'lit:overview' assessment.pk %}">Literature review</a></li>
+        <a  href="{% url 'lit:overview' assessment.pk %}" class="bg-dark list-group-item list-group-item-action flex-column align-items-start">
+          <div class="d-flex w-100 justify-content-start align-items-center">
+              <span class="fa fa-book fa-fw mr-3"></span>
+              <span class="menu-collapsed">Literature review</span>
+          </div>
+      </a>
     {% endif %}
 
     {% if assessment.enable_project_management and request.user.is_authenticated %}
-        <li><a href="{% url 'mgmt:assessment_dashboard' assessment.pk %}">Management dashboard</a></li>
+        <a  href="{% url 'mgmt:assessment_dashboard' assessment.pk %}" class="bg-dark list-group-item list-group-item-action flex-column align-items-start">
+          <div class="d-flex w-100 justify-content-start align-items-center">
+              <span class="fa fa-mouse-pointer fa-fw mr-3"></span>
+              <span class="menu-collapsed">Management dashboard</span>
+          </div>
+      </a>
     {% endif %}
 
     {% if assessment.enable_data_extraction %}
-        <li><a href="{% url 'study:list' assessment.pk %}">Study list</a></li>
+  
+        <a  href="{% url 'study:list' assessment.pk %}" class="bg-dark list-group-item list-group-item-action flex-column align-items-start">
+          <div class="d-flex w-100 justify-content-start align-items-center">
+              <span class="fa fa-mouse-pointer fa-fw mr-3"></span>
+              <span class="menu-collapsed">Study list</span>
+          </div>
+      </a>
 
         {% if assessment.enable_risk_of_bias %}
-            <li><a href="{% url 'riskofbias:arob_detail' assessment.pk %}">{{assessment.get_rob_name_display}}</a></li>
+ 
+            <a  href="{% url 'riskofbias:arob_detail' assessment.pk %}" class="bg-dark list-group-item list-group-item-action flex-column align-items-start">
+              <div class="d-flex w-100 justify-content-start align-items-center">
+                  <span class="fa fa-mouse-pointer fa-fw mr-3"></span>
+                  <span class="menu-collapsed">%}">{{assessment.get_rob_name_display}}</span>
+              </div>
+          </a>
         {% endif %}
 
-        <li><a href="{% url 'assessment:endpoint_list' assessment.pk %}">Endpoint list</a></li>
+        <a  href="{% url 'assessment:endpoint_list' assessment.pk %}" class="bg-dark list-group-item list-group-item-action flex-column align-items-start">
+          <div class="d-flex w-100 justify-content-start align-items-center">
+              <span class="fa fa-mouse-pointer fa-fw mr-3"></span>
+              <span class="menu-collapsed">Endpoint list</span>
+          </div>
+      </a>
     {% endif %}
 
-    <li><a href="{% url 'summary:visualization_list' assessment.pk %}">Visualizations</a></li>
+    <a  href="{% url 'summary:visualization_list' assessment.pk %}" class="bg-dark list-group-item list-group-item-action flex-column align-items-start">
+      <div class="d-flex w-100 justify-content-start align-items-center">
+          <span class="fa fa-mouse-pointer fa-fw mr-3"></span>
+          <span class="menu-collapsed">Visualizations</span>
+      </div>
+  </a>
+    
 
     {% if assessment.enable_summary_text %}
-        <li><a href="{% url 'summary:list' assessment.pk %}">Executive summary</a></li>
+        <a  href="{% url 'summary:list' assessment.pk %}" class="bg-dark list-group-item list-group-item-action flex-column align-items-start">
+          <div class="d-flex w-100 justify-content-start align-items-center">
+              <span class="fa fa-mouse-pointer fa-fw mr-3"></span>
+              <span class="menu-collapsed">Executive summary</span>
+          </div>
+      </a>
     {% endif %}
-
-    <li class="nav-header">Downloads</li>
-    <li><a href="{% url 'assessment:downloads' assessment.pk %}">Download datasets</a></li>
-
+    <a href="#downloads" data-toggle="collapse" aria-expanded="false" class="bg-dark list-group-item list-group-item-action flex-column align-items-start">
+      <div class="d-flex w-100 justify-content-start align-items-center">
+          <span class="fa fa-dashboard fa-fw mr-3"></span>
+          <span class="menu-collapsed">Downloads</span>
+          <span class="submenu-icon ml-auto"></span>
+      </div>
+  </a>
+  <div id='downloads' class="collapse sidebar-submenu">
+    <a href="{% url 'assessment:downloads' assessment.pk %}" class="list-group-item list-group-item-action bg-dark text-white" data-toggle="tooltip" data-placement="right" title="download datasets">
+        <span class="menu-collapsed">Download Datasets</span>
+    </a>
+</div>
   {% else %}
-    <li class="active">{% block assessment %}<a href="{% url 'portal' %}">Select an assessment</a>{% endblock %}</li>
+    {% block assessment %}
+    <a href="{% url 'portal' %}" class="bg-dark list-group-item list-group-item-action flex-column align-items-start" data-toggle="tooltip" data-placement="right" title="select an assessment">
+      <div class="d-flex w-100 justify-content-start align-items-center">
+          <span class="fa fa-mouse-pointer fa-fw mr-3" ></span>
+          <span class="menu-collapsed" >Select an assessment</span>
+      </div>
+  </a>
+    {% endblock %}
   {% endif %}
 </ul>
