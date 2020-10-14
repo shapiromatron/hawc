@@ -20,6 +20,7 @@ from reversion import revisions as reversion
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper
 from ..common.models import IntChoiceEnum, get_crumbs, get_private_data_storage
 from ..myuser.models import HAWCUser
+from ..vocab.models import VocabularyNamespace
 from . import jobs, managers
 from .tasks import add_time_spent
 
@@ -251,6 +252,24 @@ class Assessment(models.Model):
         verbose_name="Risk of bias/Study evaluation name",
         help_text="What term should be used to refer to risk of bias/study evaluation questions?",
     )
+    vocabulary = models.PositiveSmallIntegerField(
+        choices=VocabularyNamespace.display_choices(),
+        default=VocabularyNamespace.EHV.value,
+        blank=True,
+        null=True,
+        verbose_name="Controlled vocabulary",
+        help_text="""Attempt to use a controlled vocabulary for entering bioassay data into HAWC.
+        You still have the option to enter terms which are not available in the vocabulary.""",
+    )
+    modify_uncontrolled_vocabulary = models.BooleanField(
+        default=True,
+        verbose_name="Curators can modify terms",
+        help_text="""If using a controlled vocabulary and content is added which requires the
+        definition of new terms, these may be modified and by curators who map new terms to the
+        controlled vocabulary. Opting in means the values may change. It is recommended to select
+        this option until you like to "freeze" your assessment, and then this can be unchecked, if
+        needed.""",
+    )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
@@ -348,6 +367,13 @@ class Assessment(models.Model):
             return False
         else:
             return user in self.project_manager.all() or user in self.team_members.all()
+
+    def get_vocabulary_display(self) -> str:
+        # override default method
+        if self.vocabulary:
+            return VocabularyNamespace(self.vocabulary).display_name
+        else:
+            return ""
 
     def get_crumbs(self):
         return get_crumbs(self)
@@ -654,11 +680,19 @@ class Dataset(models.Model):
     An external Dataset
     """
 
+    objects = managers.DatasetManager()
+
     assessment = models.ForeignKey(
         Assessment, editable=False, related_name="datasets", on_delete=models.CASCADE
     )
     name = models.CharField(max_length=256)
     description = models.TextField(blank=True)
+    published = models.BooleanField(
+        default=False,
+        help_text="If True, this dataset may be visible to reviewers and/or the public "
+        "(if assessment-permissions allow this level of visibility). Team-members and "
+        "project-management can view both published and unpublished datasets.",
+    )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
@@ -670,6 +704,13 @@ class Dataset(models.Model):
 
     def __str__(self) -> str:
         return self.name
+
+    def user_can_view(self, user) -> bool:
+        return (
+            self.published
+            and self.assessment.user_can_view_object(user)
+            or self.assessment.user_can_edit_object(user)
+        )
 
     def get_absolute_url(self) -> str:
         return reverse("assessment:dataset_detail", args=(self.id,))

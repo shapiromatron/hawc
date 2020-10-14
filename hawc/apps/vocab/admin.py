@@ -43,6 +43,7 @@ class TermAdmin(admin.ModelAdmin):
 class EntityTermRelationAdmin(admin.TabularInline):
     model = models.EntityTermRelation
     extra = 1
+    raw_id_fields = ("term",)
 
 
 @admin.register(models.Entity)
@@ -75,3 +76,20 @@ class EntityAdmin(admin.ModelAdmin):
 
     get_terms.short_description = "Related terms"
     get_terms.allow_tags = True
+
+
+@admin.register(models.Comment)
+class CommentAdmin(admin.ModelAdmin):
+    list_display = (
+        "commenter",
+        "comment",
+        "reviewed",
+        "reviewer_notes",
+        "created_on",
+        "last_updated",
+    )
+    list_filter = (
+        "reviewed",
+        ("commenter", admin.RelatedOnlyFieldListFilter),
+    )
+    search_fields = ("comment",)

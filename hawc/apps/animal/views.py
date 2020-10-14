@@ -329,6 +329,13 @@ class EndpointCreate(BaseCreateWithFormset):
             egform.instance.endpoint = self.object
             egform.instance.dose_group_id = i
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["vocabulary"] = self.model.get_vocabulary_settings(
+            self.assessment, context["form"].instance
+        )
+        return context
+
 
 class EndpointUpdate(BaseUpdateWithFormset):
     success_message = "Endpoint updated."
@@ -356,6 +363,7 @@ class EndpointUpdate(BaseUpdateWithFormset):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["animal_group"] = self.object.animal_group
+        context["vocabulary"] = self.model.get_vocabulary_settings(self.assessment, self.object)
         return context
 
 

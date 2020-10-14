@@ -72,7 +72,9 @@ class BaseFormHelper(cf.FormHelper):
             wrapperClasses = [wrapperClasses] * numFields
         for i, v in enumerate(wrapperClasses):
             self[first + i].wrap(cfl.Field, wrapper_class=v)
-        self[first : first + numFields].wrap_together(cfl.Div, css_class="row-fluid")
+        self[first : first + numFields].wrap_together(
+            cfl.Div, css_class="row-fluid", id=f"fluid_id_{firstField}_{numFields}"
+        )
 
     def add_td(self, firstField, numFields):
         first = self.layout.index(firstField)

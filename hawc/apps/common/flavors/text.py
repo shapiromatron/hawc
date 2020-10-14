@@ -7,48 +7,6 @@ class FlavoredText(NamedTuple):
 
 
 text_mapping = dict(
-    ani__endpoint_form__effects=FlavoredText(
-        prime="Any additional descriptive-tags used to categorize the outcome",
-        epa='For now, use the endpoint specific overall study evaluation rating of "high", "medium", "low", or "uninformative"',
-    ),
-    ani__endpoint_form__name=FlavoredText(
-        prime="""
-            Short-text used to describe the endpoint.
-            Should include observation-time,
-            if multiple endpoints have the same observation time.""",
-        epa="""
-            Short-text used to describe the endpoint/adverse
-            outcome. As a first pass during extraction, use
-            the endpoint name as presented in the study. Do
-            not add units &mdash; units are summarized in a separate
-            extraction field. Once extraction is complete for
-            an assessment, endpoint/adverse outcomes names may
-            be adjusted to use terms that best work across
-            studies or assessments using the data clean-up tool
-            (the original name as presented in the study will
-            be retained in the "Endpoint Name in Study" field). If the
-            endpoint is a repeated measure, then indicate the
-            time in parentheses, e.g., running wheel activity
-            (6 wk), using the abbreviated format: seconds = sec,
-            minutes = min, hours = h, days = d, weeks = wk,
-            months = mon, years = y.
-            """,
-    ),
-    ani__endpoint_form__create=FlavoredText(
-        prime="""
-            Create a new endpoint. An endpoint may should describe one
-            measure-of-effect which was measured in the study. It may
-            or may not contain quantitative data.
-        """,
-        epa="""
-            Create a new endpoint. An endpoint should describe
-            one measure-of-effect which was measured in the study.
-            It may or may not contain quantitative data. For
-            endpoint terminology, use the reference document
-            "<a href="https://hawcprd.epa.gov/assessment/100000039/">Recommended
-            Terminology for Outcomes/Endpoints</a>."
-        """,
-    ),
     riskofbias__riskofbiasassessment_help_text_default=FlavoredText(
         prime=(
             "<p>When a study is entered into the HAWC database for use in an assessment, "

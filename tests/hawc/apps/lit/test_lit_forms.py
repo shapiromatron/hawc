@@ -1,4 +1,4 @@
-import os
+from pathlib import Path
 
 import pytest
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -144,9 +144,9 @@ class TestImportForm:
 @pytest.mark.vcr
 @pytest.mark.django_db
 class TestRisImportForm:
-    def test_success(self, db_keys):
-        upload_file = open(os.path.join(os.path.dirname(__file__), "data/single_ris.txt"), "rb")
-        form = RisImportForm(
+    def _create_form(self, db_keys, upload: SimpleUploadedFile) -> RisImportForm:
+        # creates a valid input form; use to test RIS file uploads
+        return RisImportForm(
             {
                 "search_type": "i",
                 "source": constants.RIS,
@@ -154,9 +154,19 @@ class TestRisImportForm:
                 "slug": "demo-title",
                 "description": "",
             },
-            {"import_file": SimpleUploadedFile(upload_file.name, upload_file.read())},
+            {"import_file": upload},
             parent=Assessment.objects.get(id=db_keys.assessment_working),
         )
+
+    def test_success(self, db_keys):
+        upload_file = Path(__file__).parent / "data/single_ris.txt"
+
+        # check ".txt" file extension
+        form = self._create_form(db_keys, SimpleUploadedFile("fn.txt", upload_file.read_bytes()))
+        assert form.is_valid()
+
+        # check ".ris" file extension
+        form = self._create_form(db_keys, SimpleUploadedFile("fn.ris", upload_file.read_bytes()))
         assert form.is_valid()
 
         # confirm that after save a reference is
@@ -166,31 +176,28 @@ class TestRisImportForm:
         assert qs.count() == 1
 
     def test_not_ris_file(self, db_keys):
-        form = RisImportForm(
-            {
-                "search_type": "i",
-                "source": constants.RIS,
-                "title": "demo title",
-                "slug": "demo-title",
-                "description": "",
-            },
-            {"import_file": SimpleUploadedFile("test.pdf", b"Nope")},
-            parent=Assessment.objects.get(id=db_keys.assessment_working),
-        )
+        form = self._create_form(db_keys, SimpleUploadedFile("test.pdf", b"Nope"))
         assert form.is_valid() is False
-        assert form.errors == {"import_file": ['File must have an ".ris" or ".txt" file-extension']}
+        assert form.errors == {"import_file": [RisImportForm.RIS_EXTENSION]}
 
     def test_unparsable_ris(self, db_keys):
-        form = RisImportForm(
-            {
-                "search_type": "i",
-                "source": constants.RIS,
-                "title": "demo title",
-                "slug": "demo-title",
-                "description": "",
-            },
-            {"import_file": SimpleUploadedFile("test.ris", b"Not valid ris")},
-            parent=Assessment.objects.get(id=db_keys.assessment_working),
-        )
+        form = self._create_form(db_keys, SimpleUploadedFile("test.ris", b"Not valid ris"))
         assert form.is_valid() is False
         assert form.errors == {"import_file": [RisImportForm.UNPARSABLE_RIS]}
+
+    def test_long_doi(self, db_keys):
+        fn = Path(__file__).parent / "data/ris-big-doi.txt"
+        form = self._create_form(db_keys, SimpleUploadedFile("test.ris", fn.read_bytes()))
+        assert form.is_valid() is False
+        assert form.errors == {"import_file": [RisImportForm.DOI_TOO_LONG]}
+
+    def test_missing_doi(self, db_keys):
+        fn = Path(__file__).parent / "data/no-id.txt"
+        form = self._create_form(db_keys, SimpleUploadedFile("test.ris", fn.read_bytes()))
+        assert form.is_valid() is False
+        assert form.errors == {"import_file": [RisImportForm.ID_MISSING]}
+
+    def test_no_references(self, db_keys):
+        form = self._create_form(db_keys, SimpleUploadedFile("test.ris", b"\n"))
+        assert form.is_valid() is False
+        assert form.errors == {"import_file": [RisImportForm.NO_REFERENCES]}

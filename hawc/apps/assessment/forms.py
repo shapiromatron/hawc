@@ -80,6 +80,10 @@ class AssessmentForm(forms.ModelForm):
         helper.add_fluid_row("name", 3, "span4")
         helper.add_fluid_row("cas", 2, "span6")
         helper.add_fluid_row("project_manager", 3, "span4")
+        helper.add_fluid_row("editable", 4, "span3")
+        helper.add_fluid_row("conflicts_of_interest", 2, "span6")
+        helper.add_fluid_row("noel_name", 2, "span6")
+        helper.add_fluid_row("vocabulary", 2, "span6")
         helper.addBtnLayout(
             helper.layout[3], 1, reverse("assessment:dtxsid_create"), "Add new DTXSID", "span6"
         )
@@ -412,4 +416,4 @@ class DatasetForm(forms.ModelForm):
 
     class Meta:
         model = models.Dataset
-        fields = ("name", "description")
+        fields = ("name", "description", "published")

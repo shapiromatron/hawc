@@ -8,6 +8,7 @@ import EndpointListApp from "./EndpointListApp";
 import EndpointListTable from "./EndpointListTable";
 import Experiment from "./Experiment";
 import SampleSizeWidget from "./SampleSizeWidget";
+import ehvBrowserStartup from "./EhvBrowser";
 
 export default {
     AnimalGroup,
@@ -20,4 +21,5 @@ export default {
     EndpointListTable,
     Experiment,
     SampleSizeWidget,
+    ehvBrowserStartup,
 };

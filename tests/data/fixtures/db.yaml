@@ -98,6 +98,7 @@
   fields:
     app_label: assessment
     model: job
+- model: contenttypes.contenttype
   fields:
     app_label: assessment
     model: log
@@ -349,77 +350,6 @@
   fields:
     app_label: mgmt
     model: task
-- model: vocab.term
-  pk: 1
-  fields:
-    namespace: 1
-    parent: null
-    type: 1
-    name: Cardiovascular
-    notes: ''
-    deprecated_on: null
-    created_on: 2020-08-12 14:09:53.787958+00:00
-    last_updated: 2020-08-12 14:09:53.787980+00:00
-- model: vocab.term
-  pk: 2
-  fields:
-    namespace: 1
-    parent: 1
-    type: 2
-    name: Serum
-    notes: ''
-    deprecated_on: null
-    created_on: 2020-08-12 14:10:05.628749+00:00
-    last_updated: 2020-08-12 14:10:05.628772+00:00
-- model: vocab.term
-  pk: 3
-  fields:
-    namespace: 1
-    parent: 2
-    type: 3
-    name: Fatty Acids
-    notes: ''
-    deprecated_on: null
-    created_on: 2020-08-12 14:10:12.500906+00:00
-    last_updated: 2020-08-12 14:10:15.578993+00:00
-- model: vocab.term
-  pk: 4
-  fields:
-    namespace: 1
-    parent: 3
-    type: 4
-    name: Clinical Chemistry
-    notes: ''
-    deprecated_on: null
-    created_on: 2020-08-12 14:10:24.732205+00:00
-    last_updated: 2020-08-12 14:10:24.732228+00:00
-- model: vocab.term
-  pk: 5
-  fields:
-    namespace: 1
-    parent: 4
-    type: 5
-    name: Fatty Acid Balance
-    notes: ''
-    deprecated_on: null
-    created_on: 2020-08-12 14:10:38.555965+00:00
-    last_updated: 2020-08-12 14:10:38.555990+00:00
-- model: vocab.entity
-  pk: 1
-  fields:
-    ontology: 1
-    uid: C0015684
-    deprecated_on: null
-    created_on: 2020-08-12 14:11:50.009124+00:00
-    last_updated: 2020-08-12 14:11:50.009148+00:00
-- model: vocab.entitytermrelation
-  pk: 1
-  fields:
-    entity: 1
-    term: 5
-    deprecated_on: null
-    created_on: 2020-08-12 14:11:50.023861+00:00
-    last_updated: 2020-08-12 14:11:50.023879+00:00
 - model: myuser.hawcuser
   fields:
     password: md5$OtMBo5HXuH5d$79fbf1f0ae6d765b17b29256920cc8ef
@@ -501,6 +431,91 @@
     user:
     - pm@pm.com
     HERO_access: false
+- model: vocab.term
+  pk: 1
+  fields:
+    namespace: 1
+    parent: null
+    type: 1
+    name: Cardiovascular
+    notes: ''
+    deprecated_on: null
+    created_on: 2020-08-12 14:09:53.787958+00:00
+    last_updated: 2020-08-12 14:09:53.787980+00:00
+- model: vocab.term
+  pk: 2
+  fields:
+    namespace: 1
+    parent: 1
+    type: 2
+    name: Serum
+    notes: ''
+    deprecated_on: null
+    created_on: 2020-08-12 14:10:05.628749+00:00
+    last_updated: 2020-08-12 14:10:05.628772+00:00
+- model: vocab.term
+  pk: 3
+  fields:
+    namespace: 1
+    parent: 2
+    type: 3
+    name: Fatty Acids
+    notes: ''
+    deprecated_on: null
+    created_on: 2020-08-12 14:10:12.500906+00:00
+    last_updated: 2020-08-12 14:10:15.578993+00:00
+- model: vocab.term
+  pk: 4
+  fields:
+    namespace: 1
+    parent: 3
+    type: 4
+    name: Clinical Chemistry
+    notes: ''
+    deprecated_on: null
+    created_on: 2020-08-12 14:10:24.732205+00:00
+    last_updated: 2020-08-12 14:10:24.732228+00:00
+- model: vocab.term
+  pk: 5
+  fields:
+    namespace: 1
+    parent: 4
+    type: 5
+    name: Fatty Acid Balance
+    notes: ''
+    deprecated_on: null
+    created_on: 2020-08-12 14:10:38.555965+00:00
+    last_updated: 2020-08-12 14:10:38.555990+00:00
+- model: vocab.entity
+  pk: 1
+  fields:
+    ontology: 1
+    uid: C0015684
+    deprecated_on: null
+    created_on: 2020-08-12 14:11:50.009124+00:00
+    last_updated: 2020-08-12 14:11:50.009148+00:00
+- model: vocab.entitytermrelation
+  pk: 1
+  fields:
+    entity: 1
+    term: 5
+    notes: ""
+    approved_by: null
+    approved_on: null
+    deprecated_on: null
+    created_on: 2020-08-12 14:11:50.023861+00:00
+    last_updated: 2020-08-12 14:11:50.023879+00:00
+- model: vocab.comment
+  pk: 1
+  fields:
+    commenter:
+    - pm@pm.com
+    last_url_visited: /portal/
+    comment: I like this idea.
+    reviewed: false
+    reviewer_notes: ""
+    created_on: 2020-08-12 14:11:50.023861+00:00
+    last_updated: 2020-08-12 14:11:50.023861+00:00
 - model: assessment.dsstox
   pk: DTXSID6026296
   fields:
@@ -587,6 +602,8 @@
     funding_source: ''
     noel_name: 0
     rob_name: 0
+    vocabulary: 1
+    modify_uncontrolled_vocabulary: true
     created: 2020-01-25 14:23:16.176620+00:00
     last_updated: 2020-02-27 20:12:29.233982+00:00
     dtxsids: []
@@ -621,6 +638,8 @@
     funding_source: <p>This was funded by coffee</p>
     noel_name: 0
     rob_name: 0
+    vocabulary: 1
+    modify_uncontrolled_vocabulary: true
     created: 2020-01-25 14:23:16.288774+00:00
     last_updated: 2020-08-12 19:46:37.393988+00:00
     dtxsids:
@@ -653,6 +672,8 @@
     funding_source: ''
     noel_name: 0
     rob_name: 0
+    vocabulary: 1
+    modify_uncontrolled_vocabulary: true
     created: 2020-04-10 17:45:39.555285+00:00
     last_updated: 2020-04-10 17:45:39.555285+00:00
     dtxsids: []
@@ -760,6 +781,7 @@
     description: "<p>R. A. Fisher (1936). \"The use of multiple measurements in taxonomic
       problems\". Annals of Eugenics. 7 (2): 179\u2013188. <a href=\"https://doi.org/10.1111/j.1469-1809.1936.tb02137.x\"
       rel=\"noopener noreferrer\" target=\"_blank\">doi:10.1111/j.1469-1809.1936.tb02137</a></p>"
+    published: true
     created: 2020-06-02 20:01:31.798361+00:00
     last_updated: 2020-06-02 20:04:30.023508+00:00
 - model: assessment.dataset
@@ -770,6 +792,18 @@
     description: "<p>R. A. Fisher (1936). \"The use of multiple measurements in taxonomic
       problems\". Annals of Eugenics. 7 (2): 179\u2013188. <a href=\"https://doi.org/10.1111/j.1469-1809.1936.tb02137.x\"
       rel=\"noopener noreferrer\" target=\"_blank\">doi:10.1111/j.1469-1809.1936.tb02137</a></p>"
+    published: true
+    created: 2020-06-02 20:02:31.798361+00:00
+    last_updated: 2020-06-02 20:02:31.798361+00:00
+- model: assessment.dataset
+  pk: 3
+  fields:
+    assessment: 1
+    name: iris flowers unpublished
+    description: "<p>R. A. Fisher (1936). \"The use of multiple measurements in taxonomic
+      problems\". Annals of Eugenics. 7 (2): 179\u2013188. <a href=\"https://doi.org/10.1111/j.1469-1809.1936.tb02137.x\"
+      rel=\"noopener noreferrer\" target=\"_blank\">doi:10.1111/j.1469-1809.1936.tb02137</a></p>"
+    published: false
     created: 2020-06-02 20:02:31.798361+00:00
     last_updated: 2020-06-02 20:02:31.798361+00:00
 - model: assessment.datasetrevision
@@ -835,6 +869,27 @@
     notes: <p>Original final version.</p>
     created: 2020-06-02 20:02:31.798361+00:00
     last_updated: 2020-06-02 20:02:31.798361+00:00
+- model: assessment.datasetrevision
+  pk: 4
+  fields:
+    dataset: 3
+    version: 1
+    data: assessment/dataset-revision/iris.csv
+    metadata:
+      column_names:
+      - sepal_length
+      - sepal_width
+      - petal_length
+      - petal_width
+      - species
+      extension: .csv
+      filename: iris.csv
+      num_columns: 5
+      num_rows: 150
+    excel_worksheet_name: ''
+    notes: <p>Original version.</p>
+    created: 2020-06-02 20:01:31.858209+00:00
+    last_updated: 2020-06-02 20:01:31.858235+00:00
 - model: assessment.job
   pk: 08ca9f23-5368-4ed6-9b18-29625add9aa8
   fields:
@@ -1924,10 +1979,15 @@
   fields:
     baseendpoint_ptr: 1
     animal_group: 1
+    name_term: null
     system: ''
+    system_term: null
     organ: ''
+    organ_term: null
     effect: ''
+    effect_term: null
     effect_subtype: ''
+    effect_subtype_term: null
     litter_effects: NA
     litter_effect_notes: ''
     observation_time: null
@@ -1960,10 +2020,15 @@
   fields:
     baseendpoint_ptr: 2
     animal_group: 2
+    name_term: null
     system: ''
+    system_term: null
     organ: ''
+    organ_term: null
     effect: ''
+    effect_term: null
     effect_subtype: ''
+    effect_subtype_term: null
     litter_effects: NA
     litter_effect_notes: ''
     observation_time: null
@@ -1996,10 +2061,15 @@
   fields:
     baseendpoint_ptr: 3
     animal_group: 3
+    name_term: null
     system: developmental
+    system_term: null
     organ: brain
+    organ_term: null
     effect: learning and memory
+    effect_term: null
     effect_subtype: errors (forward)
+    effect_subtype_term: null
     litter_effects: YS
     litter_effect_notes: notes
     observation_time: null
@@ -2033,10 +2103,15 @@
   fields:
     baseendpoint_ptr: 6
     animal_group: 3
+    name_term: null
     system: ''
+    system_term: null
     organ: ''
+    organ_term: null
     effect: ''
+    effect_term: null
     effect_subtype: ''
+    effect_subtype_term: null
     litter_effects: NR
     litter_effect_notes: ''
     observation_time: null
@@ -2985,6 +3060,7 @@
   fields:
     study_population: 1
     name: sarin poisoning
+    dtxsid: null
     inhalation: true
     dermal: false
     oral: false

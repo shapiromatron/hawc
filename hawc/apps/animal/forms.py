@@ -14,8 +14,8 @@ from selectable import forms as selectable
 from ..assessment.lookups import DssToxIdLookup, EffectTagLookup, SpeciesLookup, StrainLookup
 from ..assessment.models import DoseUnits
 from ..common.forms import BaseFormHelper, CopyAsNewSelectorForm
-from ..common.models import get_flavored_text
 from ..study.lookups import AnimalStudyLookup
+from ..vocab.models import VocabularyNamespace
 from . import lookups, models
 
 
@@ -368,7 +368,7 @@ class EndpointForm(ModelForm):
     effects = selectable.AutoCompleteSelectMultipleField(
         lookup_class=EffectTagLookup,
         required=False,
-        help_text=get_flavored_text("ani__endpoint_form__effects"),
+        help_text="Any additional descriptive-tags used to categorize the outcome",
         label="Additional tags",
     )
 
@@ -406,7 +406,19 @@ class EndpointForm(ModelForm):
             "endpoint_notes",
             "litter_effects",
             "litter_effect_notes",
+            "name_term",
+            "system_term",
+            "organ_term",
+            "effect_term",
+            "effect_subtype_term",
         )
+        widgets = {
+            "name_term": forms.HiddenInput,
+            "system_term": forms.HiddenInput,
+            "organ_term": forms.HiddenInput,
+            "effect_term": forms.HiddenInput,
+            "effect_subtype_term": forms.HiddenInput,
+        }
 
     def __init__(self, *args, **kwargs):
         animal_group = kwargs.pop("parent", None)
@@ -447,23 +459,35 @@ class EndpointForm(ModelForm):
             self.instance.animal_group = animal_group
             self.instance.assessment = assessment
 
-        self.fields["name"].help_text = get_flavored_text("ani__endpoint_form__name")
-
         self.helper = self.setHelper()
 
         self.noel_names = json.dumps(self.instance.get_noel_names()._asdict())
 
     def setHelper(self):
+
+        vocab_enabled = self.instance.assessment.vocabulary == VocabularyNamespace.EHV
+        if vocab_enabled:
+            vocab = f"""&nbsp;The <a href="{reverse('vocab:ehv-browse')}">Environmental
+                Health Vocabulary (EHV)</a> is enabled for this assessment. Browse to view
+                controlled terms, and whenever possible please use these terms."""
+        else:
+            vocab = f"""&nbsp;A controlled vocabulary is not enabled for this assessment.
+                However, you can still browse the <a href="{reverse('vocab:ehv-browse')}">Environmental
+                Health Vocabulary (EHV)</a> to see if this vocabulary would be a good fit for your
+                assessment. If it is, consider updating the assessment to use this vocabulary."""
+
         if self.instance.id:
             inputs = {
                 "legend_text": f"Update {self.instance}",
-                "help_text": "Update an existing endpoint.",
+                "help_text": f"Update an existing endpoint.{vocab}",
                 "cancel_url": self.instance.get_absolute_url(),
             }
         else:
             inputs = {
                 "legend_text": "Create new endpoint",
-                "help_text": get_flavored_text("ani__endpoint_form__create"),
+                "help_text": f"""Create a new endpoint. An endpoint may should describe one
+                    measure-of-effect which was measured in the study. It may
+                    or may not contain quantitative data.{vocab}""",
                 "cancel_url": self.instance.animal_group.get_absolute_url(),
             }
 
@@ -484,6 +508,11 @@ class EndpointForm(ModelForm):
                 else:
                     widget.attrs["class"] = "span12"
 
+        helper.layout.insert(
+            helper.find_layout_idx_for_field_name("name"),
+            cfl.Div(css_class="row-fluid", id="vocab"),
+        )
+        helper.add_fluid_row("name", 1, "span12")
         helper.add_fluid_row("system", 4, "span3")
         helper.add_fluid_row("effects", 2, "span6")
         helper.add_fluid_row("observation_time", 3, "span4")
@@ -493,10 +522,11 @@ class EndpointForm(ModelForm):
         helper.add_fluid_row("NOEL", 4, "span3")
         helper.add_fluid_row("statistical_test", 3, ["span6", "span3", "span3"])
         helper.add_fluid_row("litter_effects", 2, "span6")
+        helper.add_fluid_row("name_term", 5, "span2")
 
         url = reverse("assessment:effect_tag_create", kwargs={"pk": self.instance.assessment.pk})
-        helper.addBtnLayout(helper.layout[4], 0, url, "Add new effect tag", "span6")
-
+        helper.addBtnLayout(helper.layout[5], 0, url, "Add new effect tag", "span6")
+        helper.attrs["class"] = "hidden"
         return helper
 
     LIT_EFF_REQ = "Litter effects required if a reproductive/developmental study"
@@ -508,6 +538,7 @@ class EndpointForm(ModelForm):
     CONF_INT_REQ = "Confidence-interval is required for" "percent-difference data"
     VAR_TYPE_REQ = "If entering continuous data, the variance type must be SD (standard-deviation) or SE (standard error)"
     RESP_UNITS_REQ = "If data is extracted, response-units are required"
+    NAME_REQ = "Endpoint/Adverse outcome is required"
 
     @classmethod
     def clean_endpoint(cls, instance: models.Endpoint, data: Dict) -> Dict:
@@ -569,6 +600,12 @@ class EndpointForm(ModelForm):
         errors = self.clean_endpoint(self.instance, cleaned_data)
         for key, value in errors.items():
             self.add_error(key, value)
+
+        # the name input is hidden and overridden, so any "name" field error
+        # must be displayed instead as a non_field_error
+        name_error = self.errors.get("name", None)
+        if name_error is not None:
+            self.add_error(None, self.NAME_REQ)
 
         return cleaned_data
 

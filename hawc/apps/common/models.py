@@ -54,6 +54,10 @@ class IntChoiceEnum(IntEnum):
     def choices(cls):
         return [(key.value, key.name) for key in cls]
 
+    @classmethod
+    def as_dict(cls) -> Dict:
+        return {key.value: key.name for key in cls}
+
 
 @property
 def NotImplementedAttribute(self):

@@ -1,9 +1,15 @@
 from typing import Any, Dict
 
 import pytest
+from django.test import RequestFactory
 
-from hawc.apps.animal.serializers import DosingRegimeSerializer, ExperimentSerializer
+from hawc.apps.animal.serializers import (
+    DosingRegimeSerializer,
+    EndpointSerializer,
+    ExperimentSerializer,
+)
 from hawc.apps.assessment.models import DSSTox
+from hawc.apps.myuser.models import HAWCUser
 
 
 @pytest.mark.django_db
@@ -118,3 +124,96 @@ class TestDosingRegimeSerializer:
         for data in datasets:
             serializer = DosingRegimeSerializer(data=data)
             assert serializer.is_valid() is False
+
+
+@pytest.mark.django_db
+class TestEndpointSerializer:
+    def test_valid_requests_with_terms(self, db_keys):
+        rf = RequestFactory()
+        request = rf.post("/")
+        request.user = HAWCUser.objects.get(email="team@team.com")
+
+        # valid request with one term
+        data = {
+            "name": "Endpoint name",
+            "animal_group_id": 1,
+            "data_type": "C",
+            "variance_type": 1,
+            "response_units": "μg/dL",
+            "system_term": 1,
+        }
+        serializer = EndpointSerializer(data=data, context={"request": request})
+        assert serializer.is_valid()
+        assert serializer.validated_data["system"] == "Cardiovascular"
+
+        # valid request with two terms
+        data = {
+            "name": "Endpoint name",
+            "animal_group_id": 1,
+            "data_type": "C",
+            "variance_type": 1,
+            "response_units": "μg/dL",
+            "system_term": 1,
+            "organ_term": 2,
+        }
+        serializer = EndpointSerializer(data=data, context={"request": request})
+        assert serializer.is_valid()
+        assert serializer.validated_data["system"] == "Cardiovascular"
+        assert serializer.validated_data["organ"] == "Serum"
+
+        # valid request with name term
+        data = {
+            "animal_group_id": 1,
+            "data_type": "C",
+            "variance_type": 1,
+            "response_units": "μg/dL",
+            "name_term": 5,
+        }
+        serializer = EndpointSerializer(data=data, context={"request": request})
+        assert serializer.is_valid()
+        assert serializer.validated_data["name"] == "Fatty Acid Balance"
+
+    def test_bad_requests_with_terms(self, db_keys):
+        rf = RequestFactory()
+        request = rf.post("/")
+        request.user = HAWCUser.objects.get(email="team@team.com")
+
+        # term_field or text_field is required
+        data = {
+            "animal_group_id": 1,
+            "data_type": "C",
+            "variance_type": 1,
+            "response_units": "μg/dL",
+        }
+        serializer = EndpointSerializer(data=data, context={"request": request})
+        assert serializer.is_valid() is False
+        assert serializer.errors == {"name": ["'name' or 'name_term' is required."]}
+
+        # term_field and text_field are mutually exclusive
+        data = {
+            "name": "Endpoint name",
+            "animal_group_id": 1,
+            "data_type": "C",
+            "variance_type": 1,
+            "response_units": "μg/dL",
+            "system": "Cardio",
+            "system_term": 1,
+        }
+        serializer = EndpointSerializer(data=data, context={"request": request})
+        assert serializer.is_valid() is False
+        assert serializer.errors == {
+            "system_term": ["'system' and 'system_term' are mutually exclusive."]
+        }
+
+        # term types must match field
+        data = {
+            "name": "Endpoint name",
+            "animal_group_id": 1,
+            "data_type": "C",
+            "variance_type": 1,
+            "response_units": "μg/dL",
+            "system_term": 2,
+        }
+        serializer = EndpointSerializer(data=data, context={"request": request})
+        assert serializer.is_valid() is False
+        assert serializer.errors == {"system_term": ["Got term type '2', expected type '1'."]}

@@ -341,16 +341,16 @@ Windows
 ~~~~~~~~~
 .. code-block:: bat
 
-    # specify that we're using the unit-test settings
+    :: specify that we're using the unit-test settings
     set DJANGO_SETTINGS_MODULE=hawc.main.settings.unittest
 
-    # load existing test
+    :: load existing test
     createdb -T template0 -E UTF8 hawc-fixture-test
     manage.py load_test_db
 
-    # now make edits to the database using the GUI or via command line
+    :: now make edits to the database using the GUI or via command line
 
-    # export database
+    :: export database
     manage.py dump_test_db
 
 If tests aren't working after the database has changed (ie., migrated); try dropping the test-database. Try the command ``dropdb test_hawc-fixture-test``.

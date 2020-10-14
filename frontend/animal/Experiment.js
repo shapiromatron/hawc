@@ -74,18 +74,10 @@ class Experiment {
         return tbl.get_tbl();
     }
 
-    displayFullPager($el) {
-        const content = [this.build_details_table()];
-
-        if (this.dsstox) {
-            let el = $("<div>");
-            this.dsstox.renderChemicalDetails(el[0], true);
-            content.push(el);
-        }
-
-        $el.hide()
-            .append(content)
-            .fadeIn();
+    displayFullPager($div) {
+        $div.hide();
+        this.render($div);
+        $div.fadeIn();
     }
 
     displayAsModal() {
@@ -109,6 +101,15 @@ class Experiment {
             .addBody($content)
             .addFooter("")
             .show({maxWidth: 1000});
+    }
+
+    render($div) {
+        let dsstox = $("<div>");
+        if (this.dsstox) {
+            this.dsstox.renderChemicalDetails(dsstox[0], true);
+            $div.append(dsstox);
+        }
+        $div.append(this.build_details_table(), dsstox);
     }
 }
 
