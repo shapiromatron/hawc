@@ -1,5 +1,5 @@
 import fetch from "isomorphic-fetch";
-import {action, observable} from "mobx";
+import {action, computed, observable} from "mobx";
 
 import h from "shared/utils/helpers";
 
@@ -26,7 +26,7 @@ class MgmtTaskTableStore {
         }
         this.isFetchingTasks = true;
         this.resetError();
-        const url = `${this.config.tasks_url}?assessment_id=${this.config.assessment_id}`;
+        const url = `${this.config.tasks.url}?assessment_id=${this.config.assessment_id}`;
         fetch(url, h.fetchGet)
             .then(response => response.json())
             .then(json => {
@@ -54,6 +54,23 @@ class MgmtTaskTableStore {
                 this.setError(error);
                 this.isFetchingStudies = false;
             });
+    }
+    @action.bound submitTasks(updatedData) {
+        console.log("submit");
+    }
+
+    @computed get taskListByStudy() {
+        return this.studies.map(study => {
+            return {
+                tasks: this.tasks
+                    .filter(task => task.study.id === study.id)
+                    .sort((a, b) => a.type - b.type),
+                study,
+            };
+        });
+    }
+    @computed get isReady() {
+        return this.tasks !== null && this.studies !== null;
     }
 }
 

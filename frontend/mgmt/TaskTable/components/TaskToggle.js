@@ -10,65 +10,41 @@ class TaskToggle extends Component {
         this.state = {
             showForm: false,
         };
-        this.handleFormDisplay = this.handleFormDisplay.bind(this);
-        this.handleLabelDisplay = this.handleLabelDisplay.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
-    handleFormDisplay() {
-        this.setState({
-            showForm: true,
-        });
-    }
-
-    handleLabelDisplay() {
-        this.setState({
-            showForm: false,
-        });
-    }
-
-    handleSubmit() {
-        this.props.dispatch(submitTaskEdit(this.form.state));
-        this.setState({
-            showForm: false,
-        });
-    }
-
-    renderTaskForm() {
-        return (
-            <div className={`${this.props.className} relative-parent`}>
+    render() {
+        const {task, submitTaskEdit, className} = this.props;
+        return this.state.showForm ? (
+            <div className={`${className} relative-parent`}>
                 <i
-                    onClick={this.handleLabelDisplay}
+                    onClick={() => this.setState({showForm: false})}
                     style={{cursor: "pointer"}}
                     title="Cancel edits"
                     className="fa fa-times edit-icon"
                     aria-hidden="true"
                 />
                 <TaskForm ref={c => (this.form = c)} {...this.props} />
-                <button className="btn btn-primary" onClick={this.handleSubmit}>
+                <button
+                    className="btn btn-primary"
+                    onClick={() => {
+                        submitTaskEdit(this.form.state);
+                        this.setState({showForm: false});
+                    }}>
                     Submit
                 </button>
             </div>
-        );
-    }
-
-    renderTaskLabel() {
-        return (
-            <div className={`${this.props.className} relative-parent`}>
+        ) : (
+            <div className={`${className} relative-parent`}>
                 <i
-                    onClick={this.handleFormDisplay}
+                    onClick={() => this.setState({showForm: true})}
                     style={{cursor: "pointer"}}
                     title="Edit this task"
                     className="fa fa-pencil-square-o edit-icon"
                     aria-hidden="true"
                 />
-                <this.props.TaskLabel task={this.props.task} />
+                <this.props.TaskLabel task={task} />
             </div>
         );
-    }
-
-    render() {
-        return this.state.showForm ? this.renderTaskForm() : this.renderTaskLabel();
     }
 }
 
@@ -76,7 +52,7 @@ TaskToggle.propTypes = {
     className: PropTypes.string.isRequired,
     task: PropTypes.object.isRequired,
     TaskLabel: PropTypes.func.isRequired,
-    dispatch: PropTypes.func,
+    submitTaskEdit: PropTypes.func.isRequired,
     autocompleteUrl: PropTypes.string.isRequired,
 };
 
