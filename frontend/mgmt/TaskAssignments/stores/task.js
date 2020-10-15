@@ -3,15 +3,14 @@ import {action, observable} from "mobx";
 
 import h from "shared/utils/helpers";
 
-class MgmtTaskAssignmentStore {
+class TaskAssignmentStore {
     @observable isFetching = false;
     @observable isLoaded = false;
     @observable tasks = [];
-    @observable robTasks = [];
 
-    constructor(config) {
+    constructor(rootStore, config) {
+        this.rootStore = rootStore;
         this.config = config;
-        this.robTasks = config.rob_tasks;
     }
 
     @action.bound fetchTasks() {
@@ -22,15 +21,17 @@ class MgmtTaskAssignmentStore {
         this.isFetching = true;
         this.isLoaded = false;
 
+        console.log(this.config);
         const url = `${this.config.tasks.url}?assessment_id=${this.config.assessment_id}`;
         return fetch(url, h.fetchGet)
             .then(response => response.json())
             .then(json => {
                 this.isFetching = false;
                 this.isLoaded = true;
+                console.log(json);
                 this.tasks = json;
             });
     }
 }
 
-export default MgmtTaskAssignmentStore;
+export default TaskAssignmentStore;

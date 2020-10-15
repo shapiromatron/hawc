@@ -2,14 +2,16 @@ import React from "react";
 import ReactDOM from "react-dom";
 import {Provider} from "mobx-react";
 
-import MgmtTaskAssignmentStore from "./store";
-import Root from "./containers/Root";
+import RootStore from "./stores";
+import RobRoot from "./containers/RobRoot";
+// import TaskRoot from "./containers/TaskRoot";
 
 export default function(el, config) {
-    const store = new MgmtTaskAssignmentStore(config);
+    const store = new RootStore(config);
     ReactDOM.render(
-        <Provider store={store}>
-            <Root />
+        <Provider store={store} robStore={store.rob} taskStore={store.task}>
+            {/* <TaskRoot /> */}
+            <RobRoot />
         </Provider>,
         el
     );

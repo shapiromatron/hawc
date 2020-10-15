@@ -1,33 +1,67 @@
 import React, {Component} from "react";
 import PropTypes from "prop-types";
 
-import Header from "./Header";
-import RobTask from "./RobTask";
+class TaskRow extends Component {
+    render() {
+        const {assessment} = this.props.task.scores[0].metric.domain,
+            {study_name, study_id, url_edit} = this.props.task.scores[0],
+            robText = this.props.task.final ? "Edit final review" : "Edit review";
+
+        return (
+            <tr>
+                {this.props.showAssessment ? (
+                    <td>
+                        <a href={assessment.url}>{assessment.name}</a>
+                    </td>
+                ) : null}
+                <td>
+                    <a href={`/study/${study_id}/`}>{study_name}</a>
+                </td>
+                <td>
+                    <a className="btn" href={url_edit}>
+                        <i className="fa fa-edit" /> {robText}
+                    </a>
+                </td>
+            </tr>
+        );
+    }
+}
+TaskRow.propTypes = {
+    task: PropTypes.object.isRequired,
+    showAssessment: PropTypes.bool.isRequired,
+};
 
 class RobTasks extends Component {
     render() {
-        let showTasks = this.props.tasks.length !== 0,
-            headings = [
-                {name: "Study", flex: 1},
-                {name: "", flex: 2},
-            ];
-
-        if (this.props.showAssessment) {
-            headings.unshift({name: "Assessment", flex: 1});
-        }
-
-        return showTasks ? (
+        const {tasks, showAssessment} = this.props,
+            hasTasks = this.props.tasks.length > 0;
+        return (
             <div>
                 <h4>Pending risk of bias/study evaluation reviews</h4>
-                <Header headings={headings} />
-                {this.props.tasks.map(task => (
-                    <RobTask key={task.id} task={task} showAssessment={this.props.showAssessment} />
-                ))}
+                {hasTasks ? (
+                    <table className="table table-condensed table-striped">
+                        <thead>
+                            <tr>
+                                {showAssessment ? <th>Assessment</th> : null}
+                                <th>Study</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {tasks.map((task, i) => (
+                                <TaskRow showAssessment={showAssessment} task={task} key={i} />
+                            ))}
+                        </tbody>
+                    </table>
+                ) : (
+                    <p>
+                        <i>You have no pending tasks.</i>
+                    </p>
+                )}
             </div>
-        ) : null;
+        );
     }
 }
-
 RobTasks.propTypes = {
     tasks: PropTypes.array,
     showAssessment: PropTypes.bool,
