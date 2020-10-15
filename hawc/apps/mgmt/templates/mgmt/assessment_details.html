@@ -32,18 +32,13 @@
 {% block extrajs %}
 <script id="config" type="text/json" charset="utf-8">
     {
-        "assessment_id": "{{ assessment.id }}",
+        "assessment_id": {{ assessment.id }},
         "csrf": "{{ csrf_token }}",
-        "type": "display",
-        "tasks": {
-            "url": "{% url 'mgmt:api:task-list' %}"
-        },
-        "studies": {
-            "url": "{% url 'study:api:study-list' %}?assessment_id={{assessment.pk}}"
-        },
-        "autocomplete": {
-            "url": "{% url 'selectable-lookup' 'myuser-assessmentteammemberorhigherlookup' %}"
-        }
+        "displayAsForm": false,
+        "cancelUrl": "{% url 'mgmt:assessment_tasks' assessment.pk %}",
+        "tasksListUrl": "{% url 'mgmt:api:task-list' %}?assessment_id={{assessment.pk}}",
+        "studyListUrl": "{% url 'study:api:study-list' %}?assessment_id={{assessment.pk}}",
+        "userAutocompleteUrl": "{% url 'selectable-lookup' 'myuser-assessmentteammemberorhigherlookup' %}"
     }
 </script>
 <script type="text/javascript">

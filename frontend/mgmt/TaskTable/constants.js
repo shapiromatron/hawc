@@ -1,8 +1,8 @@
-const STATUS = {
-        10: {color: "#CFCFCF" /* grey */, type: "not started"},
-        20: {color: "#FFCC00" /* yellow */, type: "started"},
-        30: {color: "#00CC00" /* green */, type: "completed"},
-        40: {color: "#CC3333" /* red */, type: "abandoned"},
+export const STATUS = {
+        10: {color: "#CFCFCF", type: "not started"},
+        20: {color: "#FFCC00", type: "started"},
+        30: {color: "#00CC00", type: "completed"},
+        40: {color: "#CC3333", type: "abandoned"},
     },
     TASK_TYPES = {
         10: "Data preparation",
@@ -16,11 +16,9 @@ const STATUS = {
         30: "Data extracted has been QA/QC.",
         40: "Risk of bias/study evaluation has been completed for this reference (if enabled for this assessment).",
     },
-    STUDY_TYPES = {
-        bioassay: "Animal bioassay",
-        epi: "Epidemiology",
-        epi_meta: "Epidemiology meta-analysis",
-        in_vitro: "In vitro",
-    };
-
-export {STATUS, TASK_TYPES, TASK_TYPE_DESCRIPTIONS, STUDY_TYPES};
+    STUDY_TYPE_CHOICES = [
+        {id: "bioassay", label: "Animal bioassay"},
+        {id: "epi", label: "Epidemiology"},
+        {id: "epi_meta", label: "Epidemiology meta-analysis"},
+        {id: "in_vitro", label: "In vitro"},
+    ];

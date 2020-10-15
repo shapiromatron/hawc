@@ -1,5 +1,6 @@
+import _ from "lodash";
 import fetch from "isomorphic-fetch";
-import {action, computed, observable} from "mobx";
+import {action, computed, toJS, observable} from "mobx";
 
 import h from "shared/utils/helpers";
 
@@ -9,6 +10,11 @@ class MgmtTaskTableStore {
     @observable tasks = null;
     @observable isFetchingStudies = false;
     @observable studies = null;
+    @observable filters = {
+        studyTypeFilters: [],
+        sortBy: "short_citation",
+        orderBy: "asc",
+    };
 
     constructor(config) {
         this.config = config;
@@ -20,14 +26,16 @@ class MgmtTaskTableStore {
     @action.bound resetError() {
         this.error = null;
     }
+    @action.bound updateFilters(name, value) {
+        this.filters[name] = value;
+    }
     @action.bound fetchTasks() {
         if (this.isFetchingTasks) {
             return;
         }
         this.isFetchingTasks = true;
         this.resetError();
-        const url = `${this.config.tasks.url}?assessment_id=${this.config.assessment_id}`;
-        fetch(url, h.fetchGet)
+        fetch(this.config.tasksListUrl, h.fetchGet)
             .then(response => response.json())
             .then(json => {
                 this.tasks = json;
@@ -44,7 +52,7 @@ class MgmtTaskTableStore {
         }
         this.isFetchingStudies = true;
         this.resetError();
-        return fetch(this.config.studies.url, h.fetchGet)
+        return fetch(this.config.studyListUrl, h.fetchGet)
             .then(response => response.json())
             .then(json => {
                 this.studies = json;
@@ -58,16 +66,29 @@ class MgmtTaskTableStore {
     @action.bound submitTasks(updatedData) {
         console.log("submit");
     }
+    @action.bound handleCancel() {
+        window.location.href = this.config.cancelUrl;
+    }
 
     @computed get taskListByStudy() {
-        return this.studies.map(study => {
-            return {
-                tasks: this.tasks
-                    .filter(task => task.study.id === study.id)
-                    .sort((a, b) => a.type - b.type),
-                study,
-            };
-        });
+        const {sortBy, orderBy, studyTypeFilters} = this.filters;
+        return _.chain(toJS(this.studies))
+            .orderBy([sortBy], [orderBy])
+            .filter(study => {
+                if (studyTypeFilters.length === 0) {
+                    return true;
+                }
+                return _.some(_.pick(study, studyTypeFilters));
+            })
+            .map(study => {
+                return {
+                    tasks: this.tasks
+                        .filter(task => task.study.id === study.id)
+                        .sort((a, b) => a.type - b.type),
+                    study,
+                };
+            })
+            .value();
     }
     @computed get isReady() {
         return this.tasks !== null && this.studies !== null;

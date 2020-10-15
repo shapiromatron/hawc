@@ -2,17 +2,16 @@ import {inject, observer} from "mobx-react";
 import React, {Component} from "react";
 import PropTypes from "prop-types";
 import _ from "lodash";
+import moment from "moment";
 
 import Loading from "shared/components/Loading";
-import EmptyListNotification from "shared/components/EmptyListNotification";
+
 import ScrollToErrorBox from "shared/components/ScrollToErrorBox";
+import PopoverTextSpan from "shared/components/PopoverTextSpan";
 
 import {TASK_TYPES, TASK_TYPE_DESCRIPTIONS} from "../constants";
-import Header from "../components/Header";
 import List from "../components/List";
-import StudyFilter from "../components/StudyFilter";
-import TaskStudy from "../components/TaskStudy";
-import TaskStudyEdit from "../components/TaskStudyEdit";
+import StudyFilter from "./StudyFilter";
 
 import "./Root.css";
 
@@ -31,28 +30,76 @@ class Root extends Component {
         }
 
         const {store} = this.props,
+            {displayAsForm} = store.config,
             taskList = store.taskListByStudy,
-            emptyTaskList = taskList.length === 0,
-            headings = _.values(TASK_TYPES),
-            descriptions = _.values(TASK_TYPE_DESCRIPTIONS),
-            displayForm = store.config.type === "edit";
+            noTasks = taskList.length === 0,
+            headers = _.zip(_.values(TASK_TYPES), _.values(TASK_TYPE_DESCRIPTIONS));
 
         return (
             <div>
                 <ScrollToErrorBox error={store.error} />
                 <StudyFilter selectFilter={opts => store.filterAndSortStudies(opts)} />
-                <Header headings={headings} descriptions={descriptions} />
-                {emptyTaskList ? (
-                    <EmptyListNotification listItem={"studies"} />
+                {noTasks ? (
+                    <h4>No studies match the given query.</h4>
                 ) : (
+                    <table className="table table-condensed">
+                        <colgroup>
+                            <col width="20%" />
+                            <col width="20%" />
+                            <col width="20%" />
+                            <col width="20%" />
+                            <col width="20%" />
+                        </colgroup>
+                        <thead>
+                            <tr>
+                                <th>
+                                    <PopoverTextSpan
+                                        text={"Study"}
+                                        title={"Study"}
+                                        description={"Selected study object"}
+                                    />
+                                </th>
+                                {headers.map((obj, i) => {
+                                    return (
+                                        <th key={i}>
+                                            <PopoverTextSpan
+                                                text={obj[0]}
+                                                title={obj[0]}
+                                                description={obj[1]}
+                                            />
+                                        </th>
+                                    );
+                                })}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {taskList.map(task => {
+                                const {study} = task;
+                                return (
+                                    <tr key={study.id}>
+                                        <td>
+                                            <a href={study.url}>{study.short_citation}</a>
+                                            <br />
+                                            <b>Date created: </b>
+                                            <span>{moment(study.created).format("L")}</span>
+                                        </td>
+                                    </tr>
+                                );
+                            })}
+                        </tbody>
+                    </table>
+                )}
+
+                {/*
                     <List
                         component={displayForm ? TaskStudyEdit : TaskStudy}
                         items={taskList}
                         autocompleteUrl={store.config.autocomplete.url}
                         ref={c => (this.list = c)}
                     />
-                )}
-                {displayForm ? (
+                */}
+
+                {displayAsForm && !noTasks ? (
                     <>
                         <button
                             onClick={event => {
@@ -68,12 +115,7 @@ class Root extends Component {
                             className="btn btn-primary">
                             Submit changes
                         </button>
-                        <button
-                            onClick={() => {
-                                const {cancelUrl} = this.props.store.config;
-                                window.location.href = cancelUrl;
-                            }}
-                            className="btn space">
+                        <button onClick={store.handleCancel} className="btn space">
                             Cancel
                         </button>
                     </>
