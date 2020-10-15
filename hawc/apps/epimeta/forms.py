@@ -1,4 +1,4 @@
-from functools import partialmethod
+from functools import partial
 
 from crispy_forms import bootstrap as cfb
 from crispy_forms import layout as cfl
@@ -335,7 +335,7 @@ class BaseSingleResultFormset(forms.BaseModelFormSet):
     def __init__(self, **kwargs):
         assessment = kwargs.pop("assessment")
         super().__init__(**kwargs)
-        self.form = partialmethod(self.form, assessment=assessment)
+        self.form = partial(self.form, assessment=assessment)
 
 
 SingleResultFormset = modelformset_factory(

@@ -1,4 +1,4 @@
-from functools import partialmethod
+from functools import partial
 
 from crispy_forms import bootstrap as cfb
 from crispy_forms import layout as cfl
@@ -1001,7 +1001,7 @@ class BaseGroupResultFormset(BaseModelFormSet):
         outcome = kwargs.pop("outcome", None)
         self.result = kwargs.pop("result", None)
         super().__init__(**kwargs)
-        self.form = partialmethod(
+        self.form = partial(
             self.form, study_population=study_population, outcome=outcome, result=self.result,
         )
 
