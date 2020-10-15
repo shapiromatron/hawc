@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 import PropTypes from "prop-types";
 
-import Task from "./Task";
+import TaskRow from "../containers/TaskRow";
 
 class AssessmentTasks extends Component {
     render() {
@@ -12,7 +12,7 @@ class AssessmentTasks extends Component {
                 {showAssessment ? (
                     <h4>
                         {assessment.name}&nbsp;
-                        <a className="btn btn-small btn-link" href={assessment.url}>
+                        <a className="btn btn-small btn-primary" href={assessment.url}>
                             View
                         </a>
                     </h4>
@@ -30,7 +30,7 @@ class AssessmentTasks extends Component {
                     </thead>
                     <tbody>
                         {tasks.map(task => (
-                            <Task key={task.id} task={task} />
+                            <TaskRow key={task.id} task={task} />
                         ))}
                     </tbody>
                 </table>

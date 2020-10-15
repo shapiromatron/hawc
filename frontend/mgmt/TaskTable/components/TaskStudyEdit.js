@@ -14,7 +14,7 @@ class TaskStudyEdit extends Component {
 
     getChangedData() {
         return _.chain(this.components)
-            .filter(component => component != null && component.formDidChange())
+            .filter(component => component != null && component.hasDataChanged())
             .map(component => component.state)
             .value();
     }

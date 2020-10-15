@@ -1,43 +1,45 @@
+import _ from "lodash";
 import React, {Component} from "react";
 import PropTypes from "prop-types";
 
-import {STATUS} from "mgmt/TaskTable/constants";
-import StatusIcon from "mgmt/TaskTable/components/StatusIcon";
+import h from "shared/utils/helpers";
+
+import {STATUS} from "../constants";
+import StatusIcon from "./StatusIcon";
 
 class StatusSelection extends Component {
     constructor(props) {
         super(props);
-        this.state = {status: props.task.status};
+        this.state = {status: props.defaultValue};
     }
 
     render() {
-        const choices = Object.keys(STATUS).map(status => {
-                return {value: status, display: STATUS[status].type};
+        const choices = _.map(STATUS, (value, key) => {
+                return {value: key, display: value.type};
             }),
-            idName = `${this.props.task.id}-status_selection`;
+            {defaultValue, onChange} = this.props,
+            id = h.randomString();
 
         return (
             <div>
-                <label className="control-label" htmlFor={idName}>
+                <label className="control-label" htmlFor={id}>
                     Status
                 </label>
                 <select
-                    defaultValue={this.props.task.status}
-                    id={idName}
-                    onChange={target => {
-                        let value = parseInt(target.value);
+                    defaultValue={defaultValue}
+                    id={id}
+                    onChange={event => {
+                        let value = parseInt(event.target.value);
                         this.setState({status: value});
-                        this.props.onChange(value);
+                        onChange(value);
                     }}
                     name="status_selection"
                     style={{width: "auto"}}>
-                    {choices.map(({value, display}, i) => {
-                        return (
-                            <option key={i} value={value}>
-                                {display}
-                            </option>
-                        );
-                    })}
+                    {choices.map(({value, display}, i) => (
+                        <option key={i} value={value}>
+                            {display}
+                        </option>
+                    ))}
                 </select>
                 <StatusIcon
                     status={this.state.status}
@@ -53,10 +55,7 @@ class StatusSelection extends Component {
 }
 
 StatusSelection.propTypes = {
-    task: PropTypes.shape({
-        id: PropTypes.number.isRequired,
-        status: PropTypes.number,
-    }).isRequired,
+    defaultValue: PropTypes.number.isRequired,
     onChange: PropTypes.func.isRequired,
 };
 

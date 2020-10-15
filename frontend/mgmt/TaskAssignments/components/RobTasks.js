@@ -1,35 +1,7 @@
 import React, {Component} from "react";
 import PropTypes from "prop-types";
 
-class TaskRow extends Component {
-    render() {
-        const {assessment} = this.props.task.scores[0].metric.domain,
-            {study_name, study_id, url_edit} = this.props.task.scores[0],
-            robText = this.props.task.final ? "Edit final review" : "Edit review";
-
-        return (
-            <tr>
-                {this.props.showAssessment ? (
-                    <td>
-                        <a href={assessment.url}>{assessment.name}</a>
-                    </td>
-                ) : null}
-                <td>
-                    <a href={`/study/${study_id}/`}>{study_name}</a>
-                </td>
-                <td>
-                    <a className="btn" href={url_edit}>
-                        <i className="fa fa-edit" /> {robText}
-                    </a>
-                </td>
-            </tr>
-        );
-    }
-}
-TaskRow.propTypes = {
-    task: PropTypes.object.isRequired,
-    showAssessment: PropTypes.bool.isRequired,
-};
+import RobTaskRow from "./RobTaskRow";
 
 class RobTasks extends Component {
     render() {
@@ -54,7 +26,7 @@ class RobTasks extends Component {
                         </thead>
                         <tbody>
                             {tasks.map((task, i) => (
-                                <TaskRow showAssessment={showAssessment} task={task} key={i} />
+                                <RobTaskRow showAssessment={showAssessment} task={task} key={i} />
                             ))}
                         </tbody>
                     </table>

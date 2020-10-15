@@ -16,38 +16,11 @@ class TaskForm extends Component {
             status,
             due_date,
         };
-
-        this.formDidChange = this.formDidChange.bind(this);
-        this.getOwnerUpdate = this.getOwnerUpdate.bind(this);
-        this.getStatusUpdate = this.getStatusUpdate.bind(this);
-        this.getDueDateUpdate = this.getDueDateUpdate.bind(this);
     }
 
-    formDidChange() {
+    hasDataChanged() {
         const {owner, status, due_date, id} = this.props.task;
         return !_.isEqual(this.state, {owner, status, due_date, id});
-    }
-
-    getOwnerUpdate(owner) {
-        const ownerObject = owner
-            ? {
-                  id: owner.id,
-                  full_name: owner.value,
-              }
-            : null;
-        this.setState({owner: ownerObject});
-    }
-
-    getStatusUpdate(status) {
-        this.setState({
-            status,
-        });
-    }
-
-    getDueDateUpdate(due_date) {
-        this.setState({
-            due_date,
-        });
     }
 
     render() {
@@ -55,13 +28,24 @@ class TaskForm extends Component {
         return (
             <div className={className}>
                 <UserAutocomplete
-                    onChange={this.getOwnerUpdate}
+                    onChange={owner => {
+                        const ownerObject = owner
+                            ? {
+                                  id: owner.id,
+                                  full_name: owner.value,
+                              }
+                            : null;
+                        this.setState({owner: ownerObject});
+                    }}
                     task={task}
                     url={autocompleteUrl}
                 />
-                <StatusSelection onChange={this.getStatusUpdate} task={task} />
+                <StatusSelection
+                    onChange={status => this.setState({status})}
+                    defaultValue={task.status}
+                />
                 <ReactDatePicker
-                    onChange={this.getDueDateUpdate}
+                    onChange={date => this.setState({due_date: date})}
                     labelClassName="control-label"
                     label="Due date (optional)"
                     id={`${task.id}-due_date`}

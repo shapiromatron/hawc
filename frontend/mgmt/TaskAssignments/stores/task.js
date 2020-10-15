@@ -35,6 +35,20 @@ class TaskAssignmentStore {
                 this.tasks = json;
             });
     }
+    @action.bound patchTask(newTask) {
+        const url = `${this.config.tasks.submit_url}${newTask.id}/`,
+            opts = h.fetchPost(this.config.csrf, newTask, "PATCH");
+        fetch(url, opts).then(response => {
+            if (response.ok) {
+                response.json().then(json => {
+                    const index = _.findIndex(this.tasks, {id: json.id});
+                    this.tasks[index] = json;
+                });
+            } else {
+                response.json().then(json => console.error(json));
+            }
+        });
+    }
 
     @computed get tasksByAssessment() {
         return _.chain(this.tasks)
