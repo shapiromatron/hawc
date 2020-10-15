@@ -40,6 +40,11 @@ class RobTasks extends Component {
                 <h4>Pending risk of bias/study evaluation reviews</h4>
                 {hasTasks ? (
                     <table className="table table-condensed table-striped">
+                        <colgroup>
+                            {showAssessment ? <col width="33%" /> : null}
+                            <col width="33%" />
+                            <col width="66%" />
+                        </colgroup>
                         <thead>
                             <tr>
                                 {showAssessment ? <th>Assessment</th> : null}
@@ -55,7 +60,7 @@ class RobTasks extends Component {
                     </table>
                 ) : (
                     <p>
-                        <i>You have no pending tasks.</i>
+                        <i>You have no outstanding reviews.</i>
                     </p>
                 )}
             </div>
