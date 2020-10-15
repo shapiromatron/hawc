@@ -6,13 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('animal', '0029_strip_terms'),
+        ("animal", "0029_strip_terms"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='dosingregime',
-            name='positive_control',
-            field=models.BooleanField(choices=[(True, 'Yes'), (False, 'No'), (None, 'Unknown')], default=False, help_text='Was a positive control used?', null=True),
+            model_name="dosingregime",
+            name="positive_control",
+            field=models.BooleanField(
+                choices=[(True, "Yes"), (False, "No"), (None, "Unknown")],
+                default=False,
+                help_text="Was a positive control used?",
+                null=True,
+            ),
         ),
     ]

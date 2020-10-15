@@ -6,28 +6,24 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('assessment', '0023_dataset_published'),
+        ("assessment", "0023_dataset_published"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='datasetrevision',
-            name='metadata',
+            model_name="datasetrevision",
+            name="metadata",
             field=models.JSONField(default=dict, editable=False),
         ),
         migrations.AlterField(
-            model_name='dsstox',
-            name='content',
-            field=models.JSONField(default=dict),
+            model_name="dsstox", name="content", field=models.JSONField(default=dict),
         ),
         migrations.AlterField(
-            model_name='job',
-            name='kwargs',
+            model_name="job",
+            name="kwargs",
             field=models.JSONField(blank=True, default=dict, null=True),
         ),
         migrations.AlterField(
-            model_name='job',
-            name='result',
-            field=models.JSONField(default=dict, editable=False),
+            model_name="job", name="result", field=models.JSONField(default=dict, editable=False),
         ),
     ]
