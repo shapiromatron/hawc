@@ -23,6 +23,12 @@ class TaskForm extends Component {
         return !_.isEqual(this.state, {owner, status, due_date, id});
     }
 
+    componentDidUpdate() {
+        if (this.props.onFormChange) {
+            this.props.onFormChange(this.state);
+        }
+    }
+
     render() {
         const {task, className, autocompleteUrl} = this.props;
         return (
@@ -69,6 +75,7 @@ TaskForm.propTypes = {
     }).isRequired,
     className: PropTypes.string,
     autocompleteUrl: PropTypes.string.isRequired,
+    onFormChange: PropTypes.func,
 };
 
 export default TaskForm;

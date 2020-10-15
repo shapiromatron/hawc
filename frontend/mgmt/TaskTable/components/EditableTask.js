@@ -63,7 +63,7 @@ class EditableTask extends Component {
                     />
                 </button>
                 <StatusLabel task={task} />
-                {showOwner ? (
+                {showOwner && task.owner ? (
                     <div>
                         <b>Owner: </b>
                         <span>{task.owner.full_name}</span>
@@ -80,8 +80,8 @@ class EditableTask extends Component {
 }
 
 EditableTask.propTypes = {
-    userAutocompleteUrl: PropTypes.string.isRequired,
     task: PropTypes.object.isRequired,
+    userAutocompleteUrl: PropTypes.string.isRequired,
     showOwner: PropTypes.bool,
     handleSubmit: PropTypes.func.isRequired,
 };

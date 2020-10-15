@@ -15,6 +15,7 @@ class MgmtTaskTableStore {
         sortBy: "short_citation",
         orderBy: "asc",
     };
+    @observable stagedPatches = {};
 
     constructor(config) {
         this.config = config;
@@ -63,8 +64,42 @@ class MgmtTaskTableStore {
                 this.isFetchingStudies = false;
             });
     }
-    @action.bound submitTasks(updatedData) {
-        console.log("submit");
+    @action.bound patchTask(task) {
+        const url = `${this.config.taskUpdateBaseUrl}${task.id}/`,
+            opts = h.fetchPost(this.config.csrf, task, "PATCH");
+        fetch(url, opts).then(response => {
+            if (response.ok) {
+                response.json().then(json => {
+                    const index = _.findIndex(this.tasks, {id: json.id});
+                    this.tasks[index] = json;
+                });
+            } else {
+                response.json().then(json => this.setError(json));
+            }
+        });
+    }
+    @action.bound addStagedPatch(patch) {
+        this.stagedPatches[patch.id] = patch;
+    }
+    @action.bound submitPatches() {
+        const patches = toJS(this.stagedPatches),
+            payload = _.values(patches),
+            ids = _.keys(patches).join(","),
+            opts = h.fetchBulk(this.config.csrf, payload, "PATCH"),
+            url = `${this.config.taskUpdateBaseUrl}?assessment_id=${this.config.assessmentId}&ids=${ids}`;
+
+        if (payload.length === 0) {
+            this.handleCancel();
+            return;
+        }
+
+        fetch(url, opts).then(response => {
+            if (response.ok) {
+                // this.handleCancel();
+            } else {
+                response.json().then(json => this.setError(json));
+            }
+        });
     }
     @action.bound handleCancel() {
         window.location.href = this.config.cancelUrl;

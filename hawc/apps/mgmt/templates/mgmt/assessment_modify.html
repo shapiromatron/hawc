@@ -29,6 +29,7 @@
         "displayAsForm": true,
         "cancelUrl": "{% url 'mgmt:assessment_tasks' assessment.pk %}",
         "tasksListUrl": "{% url 'mgmt:api:task-list' %}?assessment_id={{assessment.pk}}",
+        "taskUpdateBaseUrl": "{% url 'mgmt:api:task-list' %}",
         "studyListUrl": "{% url 'study:api:study-list' %}?assessment_id={{assessment.pk}}",
         "userAutocompleteUrl": "{% url 'selectable-lookup' 'myuser-assessmentteammemberorhigherlookup' %}"
     }

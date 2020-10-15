@@ -17,10 +17,10 @@ class Task(AssessmentEditViewset):
         permissions.IsAuthenticated,
     )
     pagination_class = DisabledPagination
-    list_actions = ["list", "dashboard"]
+    list_actions = ["list", "dashboard", "bulk_update"]
 
-    def filter_queryset(self, queryset):
-        return super().filter_queryset(queryset).select_related("owner", "study")
+    def get_queryset(self):
+        return super().get_queryset().select_related("owner", "study", "study__assessment")
 
     @action(detail=False)
     def assignments(self, request):
@@ -48,3 +48,8 @@ class Task(AssessmentEditViewset):
         qs = self.filter_queryset(self.get_queryset())
         metrics = self.model.dashboard_metrics(qs)
         return Response(metrics)
+
+    @action(detail=False)
+    def bulk_update(self, request):
+        qs = self.filter_queryset(self.get_queryset())
+        return Response(["here!"])
