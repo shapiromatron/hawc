@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-import h from "mgmt/utils/helpers";
+import h from "shared/utils/helpers";
 import StatusIcon from "mgmt/TaskTable/components/StatusIcon";
 
 const StatusLabel = props => {

@@ -8,7 +8,7 @@ from ..assessment.models import Assessment
 from . import models, serializers
 
 
-class Task(AssessmentEditViewset):
+class TaskViewSet(AssessmentEditViewset):
     assessment_filter_args = "study__assessment"
     model = models.Task
     serializer_class = serializers.TaskSerializer
