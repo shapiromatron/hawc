@@ -1,4 +1,4 @@
-let header_cw = {
+const header_cw = {
         Extra: "%",
         Added: "% AR",
         "Abs. Dev.": "AD",

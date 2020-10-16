@@ -1,33 +1,25 @@
 import React from "react";
 import PropTypes from "prop-types";
-import {Provider} from "react-redux";
-
-// import {loadConfig} from "shared/actions/Config";
+import {inject, observer} from "mobx-react";
 
 import Tabs from "bmd/containers/Tabs";
 import Modals from "bmd/containers/Modals";
 
+@inject("store")
+@observer
 class Root extends React.Component {
-    constructor(props) {
-        super(props);
-        // props.store.dispatch(loadConfig());
-    }
-
     render() {
-        let store = this.props.store;
         return (
-            <Provider store={store}>
-                <div>
-                    <Tabs />
-                    <Modals />
-                </div>
-            </Provider>
+            <>
+                <Tabs />
+                <Modals />
+            </>
         );
     }
 }
 
 Root.propTypes = {
-    store: PropTypes.object.isRequired,
+    store: PropTypes.object,
 };
 
 export default Root;

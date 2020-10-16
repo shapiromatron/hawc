@@ -11,7 +11,7 @@ Failure bins:
  - 2: failure
 */
 
-let SUFFICIENTLY_CLOSE_BMDL = 3,
+const SUFFICIENTLY_CLOSE_BMDL = 3,
     returnFailure = function(bin, notes) {
         return {
             bin,

@@ -29,22 +29,23 @@
 
 {% block extrajs %}
 <script id="config" type="text/json" charset="utf-8">
-    {
-        "editMode": true,
-        "assessment_id": {{ assessment.id }},
-        "bmds_version": "{{object.get_version_display}}",
-        "endpoint_id": {{ object.endpoint_id }},
-        "session_url": "{{ object.get_api_url }}",
-        "execute_url": "{{ object.get_execute_url }}",
-        "execute_status_url": "{{ object.get_execute_status_url }}",
-        "selected_model_url": "{{ object.get_selected_model_url }}",
-        "csrf": "{{ csrf_token }}",
-        "host": "//{{request.get_host}}"
-    }
+{
+  "editMode": true,
+  "assessment_id": {{ assessment.id }},
+  "bmds_version": "{{object.get_version_display}}",
+  "endpoint_id": {{ object.endpoint_id }},
+  "session_url": "{{ object.get_api_url }}",
+  "execute_url": "{{ object.get_execute_url }}",
+  "execute_status_url": "{{ object.get_execute_status_url }}",
+  "selected_model_url": "{{ object.get_selected_model_url }}",
+  "csrf": "{{ csrf_token }}"
+}
 </script>
 <script type="text/javascript">
-    $(document).ready(function(){
-        window.app.bmdStartup();
-    });
+$(document).ready(function(){
+  const el = document.getElementById('bmd'),
+    config = JSON.parse(document.getElementById('config').text);
+  window.app.bmdStartup(el, config);
+});
 </script>
 {% endblock %}
