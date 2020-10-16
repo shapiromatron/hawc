@@ -1,19 +1,21 @@
 import _ from "lodash";
 import fetch from "isomorphic-fetch";
-import {action, computed, toJS, observable} from "mobx";
+import {action, autorun, computed, toJS, observable} from "mobx";
 
 import h from "shared/utils/helpers";
+import Endpoint from "animal/Endpoint";
+import {apply_logic} from "./models/logic";
 
 class Bmd2Store {
     constructor(config) {
         this.config = config;
     }
 
-    @observable hasSession = false;
-    @observable hasEndpoint = false;
     @observable hasExecuted = false;
+    @observable isReady = false;
     @observable endpoint = null;
     @observable dataType = null;
+    @observable session = null;
     @observable doseUnits = null;
     @observable models = [];
     @observable modelSettings = [];
@@ -31,17 +33,10 @@ class Bmd2Store {
     @observable selectedModelId = null;
     @observable selectedModelNotes = "";
     @observable logic = [];
-    @observable logicApplied = false;
 
     // actions
     @action.bound showModal(name) {
         return $("#" + name).modal("show");
-    }
-    @action.bound receiveEndpoint(endpoint) {
-        return {
-            type: types.RECEIVE_ENDPOINT,
-            endpoint,
-        };
     }
     @action.bound receiveSession(settings) {
         return {
@@ -50,28 +45,65 @@ class Bmd2Store {
         };
     }
     @action.bound fetchEndpoint(id) {
-        return (dispatch, getState) => {
-            const url = Endpoint.get_api_url(id);
-            return fetch(url, h.fetchGet)
-                .then(response => response.json())
-                .then(json => dispatch(receiveEndpoint(new Endpoint(json))))
-                .catch(ex => console.error("Endpoint parsing failed", ex));
-        };
+        const url = `/ani/api/endpoint/${this.config.endpoint_id}/`;
+        fetch(url, h.fetchGet)
+            .then(response => response.json())
+            .then(json => {
+                const endpoint = new Endpoint(json);
+                this.endpoint = endpoint;
+                this.dataType = endpoint.data.data_type;
+            })
+            .catch(ex => console.error("Endpoint parsing failed", ex));
     }
-    @action.bound fetchSessionSettings(session_url) {
-        return (dispatch, getState) => {
-            return fetch(session_url, h.fetchGet)
-                .then(response => response.json())
-                .then(json => dispatch(receiveSession(json)))
-                .catch(ex => console.error("Endpoint parsing failed", ex));
-        };
+    @action.bound fetchSessionSettings() {
+        const url = this.config.session_url;
+        fetch(url, h.fetchGet)
+            .then(response => response.json())
+            .then(settings => {
+                // add key-prop to each values dict for parameter
+                _.each(settings.allModelOptions, d => _.each(d.defaults, (v, k) => (v.key = k)));
+
+                // create model-settings
+                // 1) only get the first bmr instance of the model
+                // 2) add defaults based on the model name
+                const modelSettingsMap = _.keyBy(settings.allModelOptions, "name");
+                settings.models.forEach(d => (d.defaults = modelSettingsMap[d.name].defaults));
+
+                const modelSettings = _.chain(settings.models)
+                    .filter(d => d.bmr_id === 0)
+                    .map(d => h.deepCopy(d))
+                    .value();
+
+                const selectedModel = settings.selected_model || {model: null, notes: ""};
+
+                // set store features
+                this.session = settings;
+                this.models = settings.models;
+                this.modelSettings = modelSettings;
+                this.bmrs = settings.bmrs;
+                this.doseUnits = settings.dose_units;
+                this.allModelOptions = settings.allModelOptions;
+                this.allBmrOptions = _.keyBy(settings.allBmrOptions, "type");
+                this.selectedModelId = selectedModel.model;
+                this.selectedModelNotes = selectedModel.notes;
+                this.logic = settings.logic;
+                this.hasExecuted = settings.is_finished;
+            })
+            .catch(ex => console.error("Endpoint parsing failed", ex));
     }
+    @action.bound applyLogic() {
+        apply_logic(this.logic, this.models, this.endpoint, this.doseUnits);
+        this.isReady = true;
+    }
+    autoApplyLogic = autorun(() => {
+        if (this.hasSession && this.hasEndpoint) {
+            this.applyLogic();
+        }
+    });
     @action.bound changeUnits(doseUnits) {
-        return {
-            type: types.CHANGE_UNITS,
-            doseUnits,
-        };
+        this.doseUnits = doseUnits;
     }
+
     @action.bound selectModel(modelIndex) {
         return {
             type: types.SELECT_MODEL,
@@ -179,6 +211,7 @@ class Bmd2Store {
         return errs;
     }
     @action.bound tryExecute() {
+        console.log("fdaljk");
         return (dispatch, getState) => {
             return new Promise((res, rej) => {
                 res();
@@ -293,10 +326,12 @@ class Bmd2Store {
             });
         };
     }
-    @action.bound applyLogic() {
-        return {
-            type: types.APPLY_LOGIC,
-        };
+
+    @computed get hasEndpoint() {
+        return this.endpoint !== null;
+    }
+    @computed get hasSession() {
+        return this.session !== null;
     }
 }
 

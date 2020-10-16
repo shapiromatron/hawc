@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import {Provider} from "mobx-react";
 
-import Bmd2Store from "./newStore";
+import Bmd2Store from "./store";
 import Root from "./containers/Root";
 
 export default function(el, config) {

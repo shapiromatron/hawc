@@ -2,16 +2,28 @@ import React from "react";
 import PropTypes from "prop-types";
 import {inject, observer} from "mobx-react";
 
-import Tabs from "bmd/containers/Tabs";
-import Modals from "bmd/containers/Modals";
+import Loading from "shared/components/Loading";
+
+import TabContainer from "./TabContainer";
+import Modals from "./Modals";
 
 @inject("store")
 @observer
 class Root extends React.Component {
+    componentDidMount() {
+        const {store} = this.props;
+        store.fetchEndpoint();
+        store.fetchSessionSettings();
+    }
     render() {
+        const {store} = this.props;
+        if (store.isReady === false) {
+            return <Loading />;
+        }
+
         return (
             <>
-                <Tabs />
+                <TabContainer />
                 <Modals />
             </>
         );

@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 
 import h from "shared/utils/helpers";
 
-import * as types from "bmd/constants";
+import {BMR_MODAL_ID} from "bmd/constants";
 
 import BaseModal from "./BaseModal";
 import EditableModalFooter from "bmd/components/EditableModalFooter";
@@ -131,7 +131,7 @@ class BMROptionModal extends BaseModal {
             tableFunc = editMode ? this.renderEditingForm : this.renderReadOnlyTable;
 
         return (
-            <div className="modal hide fade" role="dialog" id={types.BMR_MODAL_ID}>
+            <div className="modal hide fade" role="dialog" id={BMR_MODAL_ID}>
                 <div className="modal-header">
                     <button ref={this.closer} className="close" type="button" data-dismiss="modal">
                         ×
