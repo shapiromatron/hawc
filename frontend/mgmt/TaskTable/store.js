@@ -82,20 +82,18 @@ class MgmtTaskTableStore {
         this.stagedPatches[patch.id] = patch;
     }
     @action.bound submitPatches() {
-        const patches = toJS(this.stagedPatches),
+        const url = this.config.taskBulkPatchUrl,
+            patches = toJS(this.stagedPatches),
             payload = _.values(patches),
-            ids = _.keys(patches).join(","),
-            opts = h.fetchBulk(this.config.csrf, payload, "PATCH"),
-            url = `${this.config.taskUpdateBaseUrl}?assessment_id=${this.config.assessmentId}&ids=${ids}`;
+            opts = h.fetchPost(this.config.csrf, payload, "PATCH");
 
         if (payload.length === 0) {
             this.handleCancel();
             return;
         }
-
         fetch(url, opts).then(response => {
             if (response.ok) {
-                // this.handleCancel();
+                this.handleCancel();
             } else {
                 response.json().then(json => this.setError(json));
             }

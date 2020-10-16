@@ -85,11 +85,6 @@ class JobPermissions(permissions.BasePermission):
 
 
 class AssessmentLevelPermissions(permissions.BasePermission):
-
-    list_actions = [
-        "list",
-    ]
-
     def has_object_permission(self, request, view, obj):
         if not hasattr(view, "assessment"):
             view.assessment = obj.get_assessment()
@@ -101,7 +96,8 @@ class AssessmentLevelPermissions(permissions.BasePermission):
             return view.assessment.user_can_edit_object(request.user)
 
     def has_permission(self, request, view):
-        if view.action in self.list_actions:
+        list_actions = getattr(view, "list_actions", ["list"])
+        if view.action in list_actions:
             logging.info("Permission checked")
 
             if not hasattr(view, "assessment"):
