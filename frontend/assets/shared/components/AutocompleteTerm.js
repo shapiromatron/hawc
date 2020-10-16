@@ -10,8 +10,8 @@ import {
     DEBOUNCE_MS,
     theme,
     boldPatternText,
-} from "../Autocomplete/constants";
-import "../Autocomplete/Autocomplete.css";
+} from "./Autocomplete/constants";
+import "./Autocomplete/Autocomplete.css";
 
 class AutocompleteTerm extends Component {
     /*
