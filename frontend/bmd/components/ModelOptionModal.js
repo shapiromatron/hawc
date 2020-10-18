@@ -2,12 +2,12 @@ import _ from "lodash";
 import React from "react";
 import PropTypes from "prop-types";
 
-import * as types from "bmd/constants";
+import * as types from "../constants";
+import EditableModalFooter from "../components/EditableModalFooter";
+import ModelOptionField from "../components/ModelOptionField";
+import ParameterField from "../components/ParameterField";
 
 import BaseModal from "./BaseModal";
-import EditableModalFooter from "bmd/components/EditableModalFooter";
-import ModelOptionField from "bmd/components/ModelOptionField";
-import ParameterField from "bmd/components/ParameterField";
 
 class ModelOptionModal extends BaseModal {
     _getDefaults(model) {

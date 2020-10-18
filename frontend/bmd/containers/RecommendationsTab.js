@@ -2,18 +2,18 @@ import React from "react";
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 
-import Recommendation from "bmd/components/Recommendation";
+import Recommendation from "../components/Recommendation";
 
 @inject("store")
 @observer
 class RecommendationTab extends React.Component {
     render() {
         let {store} = this.props,
-            {editMode} = store.config;
+            {config} = store;
 
         return (
             <Recommendation
-                editMode={editMode}
+                editMode={config.editMode}
                 models={store.models}
                 bmrs={store.bmrs}
                 selectedModelId={store.selectedModelId}

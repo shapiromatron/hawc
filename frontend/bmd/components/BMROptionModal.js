@@ -4,10 +4,10 @@ import PropTypes from "prop-types";
 
 import h from "shared/utils/helpers";
 
-import {BMR_MODAL_ID} from "bmd/constants";
+import {BMR_MODAL_ID} from "../constants";
 
 import BaseModal from "./BaseModal";
-import EditableModalFooter from "bmd/components/EditableModalFooter";
+import EditableModalFooter from "./EditableModalFooter";
 
 class BMROptionModal extends BaseModal {
     UNSAFE_componentWillReceiveProps(nextProps) {

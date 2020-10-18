@@ -8,20 +8,6 @@ var tmp, tmp2, tmp3;
 
 function bmd(state = defaultState, action) {
     switch (action.type) {
-        case types.CREATE_MODEL:
-            tmp = Object.assign(h.deepCopy(state.allModelOptions[action.modelIndex]), {
-                overrides: {},
-            });
-            return Object.assign({}, state, {
-                modelSettings: [...state.modelSettings, tmp],
-            });
-
-        case types.SELECT_MODEL:
-            return Object.assign({}, state, {
-                selectedModelOptionIndex: action.modelIndex,
-                selectedModelOption: state.modelSettings[action.modelIndex],
-            });
-
         case types.UPDATE_MODEL:
             tmp = h.deepCopy(state.modelSettings);
             tmp[state.selectedModelOptionIndex].overrides = action.values;
@@ -39,27 +25,6 @@ function bmd(state = defaultState, action) {
                 modelSettings: tmp,
                 selectedModelOptionIndex: null,
                 selectedModelOption: null,
-            });
-
-        case types.TOGGLE_VARIANCE:
-            tmp = _.map(state.modelSettings, d => {
-                tmp2 = h.deepCopy(d);
-                tmp2.overrides.constant_variance = tmp2.overrides.constant_variance === 0 ? 1 : 0;
-                return tmp2;
-            });
-            return Object.assign({}, state, {
-                modelSettings: tmp,
-            });
-
-        case types.ADD_ALL_MODELS:
-            tmp = _.map(state.allModelOptions, d => Object.assign(h.deepCopy(d), {overrides: {}}));
-            return Object.assign({}, state, {
-                modelSettings: [...state.modelSettings, ...tmp],
-            });
-
-        case types.REMOVE_ALL_MODELS:
-            return Object.assign({}, state, {
-                modelSettings: [],
             });
 
         case types.CREATE_BMR:

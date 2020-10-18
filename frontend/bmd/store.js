@@ -1,6 +1,6 @@
 import _ from "lodash";
 import fetch from "isomorphic-fetch";
-import {action, autorun, computed, toJS, observable} from "mobx";
+import {action, autorun, computed, observable} from "mobx";
 
 import h from "shared/utils/helpers";
 import Endpoint from "animal/Endpoint";
@@ -35,9 +35,8 @@ class Bmd2Store {
     @observable logic = [];
 
     // actions
-    @action.bound showModal(name) {
-        return $("#" + name).modal("show");
-    }
+
+    // fetch-settings
     @action.bound receiveSession(settings) {
         return {
             type: types.RECEIVE_SESSION,
@@ -50,8 +49,9 @@ class Bmd2Store {
             .then(response => response.json())
             .then(json => {
                 const endpoint = new Endpoint(json);
-                this.endpoint = endpoint;
                 this.dataType = endpoint.data.data_type;
+                // do endpoint last; this triggers other side effects
+                this.endpoint = endpoint;
             })
             .catch(ex => console.error("Endpoint parsing failed", ex));
     }
@@ -77,7 +77,6 @@ class Bmd2Store {
                 const selectedModel = settings.selected_model || {model: null, notes: ""};
 
                 // set store features
-                this.session = settings;
                 this.models = settings.models;
                 this.modelSettings = modelSettings;
                 this.bmrs = settings.bmrs;
@@ -88,6 +87,8 @@ class Bmd2Store {
                 this.selectedModelNotes = selectedModel.notes;
                 this.logic = settings.logic;
                 this.hasExecuted = settings.is_finished;
+                // do session last; this triggers other side effects
+                this.session = settings;
             })
             .catch(ex => console.error("Endpoint parsing failed", ex));
     }
@@ -100,16 +101,75 @@ class Bmd2Store {
             this.applyLogic();
         }
     });
+
+    // ui settings
+    @action.bound showModal(name) {
+        return $("#" + name).modal("show");
+    }
+
+    // settings tab - dataset
     @action.bound changeUnits(doseUnits) {
         this.doseUnits = doseUnits;
     }
 
+    // settings tab - models
+    @action.bound createModel(modelIndex) {
+        const template = this.allModelOptions[modelIndex],
+            newModel = Object.assign(h.deepCopy(template), {
+                overrides: {},
+            });
+        this.modelSettings.push(newModel);
+    }
     @action.bound selectModel(modelIndex) {
+        this.selectedModelOptionIndex = modelIndex;
+        this.selectedModelOption = this.modelSettings[modelIndex];
+    }
+    @action.bound addAllModels() {
+        const newModels = _.map(this.allModelOptions, d =>
+            Object.assign(h.deepCopy(d), {overrides: {}})
+        );
+        _.each(newModels, model => this.modelSettings.push(model));
+    }
+    @action.bound removeAllModels(settings) {
+        this.modelSettings = [];
+    }
+    @action.bound toggleVariance() {
+        this.modelSettings.forEach(model => {
+            model.overrides.constant_variance = model.overrides.constant_variance === 0 ? 1 : 0;
+        });
+        // AJS TODO; content updates but doesn't persist on the UI
+    }
+
+    // TODO resume...
+    @action.bound updateModel(values) {
         return {
-            type: types.SELECT_MODEL,
-            modelIndex,
+            type: types.UPDATE_MODEL,
+            values,
         };
     }
+    @action.bound deleteModel() {
+        return {
+            type: types.DELETE_MODEL,
+        };
+    }
+
+    @action.bound createBmr() {
+        return {
+            type: types.CREATE_BMR,
+        };
+    }
+    @action.bound updateBmr(values) {
+        return {
+            type: types.UPDATE_BMR,
+            values,
+        };
+    }
+    @action.bound deleteBmr() {
+        return {
+            type: types.DELETE_BMR,
+        };
+    }
+
     @action.bound selectOutput(models) {
         return {
             type: types.SELECT_OUTPUT,
@@ -211,7 +271,6 @@ class Bmd2Store {
         return errs;
     }
     @action.bound tryExecute() {
-        console.log("fdaljk");
         return (dispatch, getState) => {
             return new Promise((res, rej) => {
                 res();
@@ -251,54 +310,6 @@ class Bmd2Store {
                 .then(() => dispatch(fetchSessionSettings(url)))
                 .then(() => dispatch(execute_stop()))
                 .then(() => $("#tabs a:eq(1)").tab("show"));
-        };
-    }
-    @action.bound toggleVariance() {
-        return {
-            type: types.TOGGLE_VARIANCE,
-        };
-    }
-    @action.bound addAllModels(settings) {
-        return {
-            type: types.ADD_ALL_MODELS,
-        };
-    }
-    @action.bound removeAllModels(settings) {
-        return {
-            type: types.REMOVE_ALL_MODELS,
-        };
-    }
-    @action.bound createModel(modelIndex) {
-        return {
-            type: types.CREATE_MODEL,
-            modelIndex: parseInt(modelIndex),
-        };
-    }
-    @action.bound updateModel(values) {
-        return {
-            type: types.UPDATE_MODEL,
-            values,
-        };
-    }
-    @action.bound deleteModel() {
-        return {
-            type: types.DELETE_MODEL,
-        };
-    }
-    @action.bound createBmr() {
-        return {
-            type: types.CREATE_BMR,
-        };
-    }
-    @action.bound updateBmr(values) {
-        return {
-            type: types.UPDATE_BMR,
-            values,
-        };
-    }
-    @action.bound deleteBmr() {
-        return {
-            type: types.DELETE_BMR,
         };
     }
     @action.bound setSelectedModel(model_id, notes) {

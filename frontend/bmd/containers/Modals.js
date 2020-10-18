@@ -2,18 +2,17 @@ import React from "react";
 import PropTypes from "prop-types";
 import {inject, observer} from "mobx-react";
 
-import ModelOptionModal from "bmd/components/ModelOptionModal";
-import BMROptionModal from "bmd/components/BMROptionModal";
-import OutputModal from "bmd/components/OutputModal";
+import ModelOptionModal from "../components/ModelOptionModal";
+import BMROptionModal from "../components/BMROptionModal";
+import OutputModal from "../components/OutputModal";
 
 @inject("store")
 @observer
 class Modals extends React.Component {
     render() {
         const {store} = this.props,
-            {allBmrOptions, selectedModelOption, selectedBmr, selectedOutputs} = store,
-            isReady = allBmrOptions !== null,
-            {editMode} = store.config;
+            isReady = store.allBmrOptions !== null,
+            {config} = store;
 
         if (!isReady) {
             return null;
@@ -22,19 +21,19 @@ class Modals extends React.Component {
         return (
             <div>
                 <ModelOptionModal
-                    model={selectedModelOption}
-                    editMode={editMode}
+                    model={store.selectedModelOption}
+                    editMode={config.editMode}
                     handleSave={values => store.updateModel(values)}
                     handleDelete={store.deleteModel}
                 />
                 <BMROptionModal
-                    bmr={selectedBmr}
-                    allOptions={allBmrOptions}
-                    editMode={editMode}
+                    bmr={store.selectedBmr}
+                    allOptions={store.allBmrOptions}
+                    editMode={config.editMode}
                     handleSave={values => store.updateBmr(values)}
                     handleDelete={store.deleteBmr}
                 />
-                <OutputModal models={selectedOutputs} />
+                <OutputModal models={store.selectedOutputs} />
             </div>
         );
     }

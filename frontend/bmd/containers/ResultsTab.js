@@ -3,9 +3,9 @@ import {inject, observer} from "mobx-react";
 import _ from "lodash";
 import PropTypes from "prop-types";
 
-import RecommendationNotes from "bmd/components/RecommendationNotes";
-import OutputTable from "bmd/components/OutputTable";
-import OutputFigure from "bmd/components/OutputFigure";
+import RecommendationNotes from "../components/RecommendationNotes";
+import OutputTable from "../components/OutputTable";
+import OutputFigure from "../components/OutputFigure";
 
 @inject("store")
 @observer

@@ -2,7 +2,7 @@ import $ from "$";
 import React from "react";
 import PropTypes from "prop-types";
 
-import * as types from "bmd/constants";
+import * as types from "../constants";
 import BaseModal from "./BaseModal";
 
 class OutputModal extends BaseModal {
