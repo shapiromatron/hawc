@@ -5,12 +5,14 @@ import {action, autorun, computed, observable} from "mobx";
 import h from "shared/utils/helpers";
 import Endpoint from "animal/Endpoint";
 import {apply_logic} from "./models/logic";
+import {BMR_MODAL_ID, OPTION_MODAL_ID, OUTPUT_MODAL_ID} from "./constants";
 
 class Bmd2Store {
     constructor(config) {
         this.config = config;
     }
 
+    @observable errors = [];
     @observable hasExecuted = false;
     @observable isReady = false;
     @observable endpoint = null;
@@ -37,12 +39,6 @@ class Bmd2Store {
     // actions
 
     // fetch-settings
-    @action.bound receiveSession(settings) {
-        return {
-            type: types.RECEIVE_SESSION,
-            settings,
-        };
-    }
     @action.bound fetchEndpoint(id) {
         const url = `/ani/api/endpoint/${this.config.endpoint_id}/`;
         fetch(url, h.fetchGet)
@@ -55,7 +51,7 @@ class Bmd2Store {
             })
             .catch(ex => console.error("Endpoint parsing failed", ex));
     }
-    @action.bound fetchSessionSettings() {
+    @action.bound fetchSessionSettings(callback) {
         const url = this.config.session_url;
         fetch(url, h.fetchGet)
             .then(response => response.json())
@@ -89,6 +85,10 @@ class Bmd2Store {
                 this.hasExecuted = settings.is_finished;
                 // do session last; this triggers other side effects
                 this.session = settings;
+
+                if (callback) {
+                    callback();
+                }
             })
             .catch(ex => console.error("Endpoint parsing failed", ex));
     }
@@ -104,7 +104,21 @@ class Bmd2Store {
 
     // ui settings
     @action.bound showModal(name) {
-        return $("#" + name).modal("show");
+        return $(`#${name}`).modal("show");
+    }
+    @action.bound showOptionModal(modelIndex) {
+        this.selectedModelOptionIndex = modelIndex;
+        this.selectedModelOption = this.modelSettings[modelIndex];
+        this.showModal(OPTION_MODAL_ID);
+    }
+    @action.bound showBmrModal(index) {
+        this.selectedBmrIndex = index;
+        this.selectedBmr = this.bmrs[index];
+        this.showModal(BMR_MODAL_ID);
+    }
+    @action.bound showOutputModal(models) {
+        this.selectedOutputs = models;
+        this.showModal(OUTPUT_MODAL_ID);
     }
 
     // settings tab - dataset
@@ -119,10 +133,6 @@ class Bmd2Store {
                 overrides: {},
             });
         this.modelSettings.push(newModel);
-    }
-    @action.bound selectModel(modelIndex) {
-        this.selectedModelOptionIndex = modelIndex;
-        this.selectedModelOption = this.modelSettings[modelIndex];
     }
     @action.bound addAllModels() {
         const newModels = _.map(this.allModelOptions, d =>
@@ -139,203 +149,100 @@ class Bmd2Store {
         });
         // AJS TODO; content updates but doesn't persist on the UI
     }
-
-    // TODO resume...
     @action.bound updateModel(values) {
-        return {
-            type: types.UPDATE_MODEL,
-            values,
-        };
+        this.modelSettings[this.selectedModelOptionIndex].overrides = values;
+        this.selectedModelOptionIndex = null;
+        this.selectedModelOption = null;
     }
     @action.bound deleteModel() {
-        return {
-            type: types.DELETE_MODEL,
-        };
+        this.modelSettings.splice(this.selectedModelOptionIndex, 1);
+        this.selectedModelOption = null;
+        this.selectedModelOptionIndex = null;
     }
 
+    // settings tab - bmr
     @action.bound createBmr() {
-        return {
-            type: types.CREATE_BMR,
-        };
+        this.bmrs.push(_.values(this.allBmrOptions)[0]);
     }
     @action.bound updateBmr(values) {
-        return {
-            type: types.UPDATE_BMR,
-            values,
-        };
+        this.bmrs[this.selectedBmrIndex] = values;
     }
     @action.bound deleteBmr() {
-        return {
-            type: types.DELETE_BMR,
-        };
+        this.bmrs.splice(this.selectedBmrIndex, 1);
+        this.selectedBmrIndex = null;
+        this.selectBmr = null;
     }
 
-    @action.bound selectOutput(models) {
-        return {
-            type: types.SELECT_OUTPUT,
-            models,
-        };
-    }
-    @action.bound setHoverModel(model) {
-        return {
-            type: types.HOVER_MODEL,
-            model,
-        };
-    }
-    @action.bound showOptionModal(modelIndex) {
-        return (dispatch, getState) => {
-            // create a new noop Promise to chain events
-            return new Promise((res, rej) => {
-                res();
-            })
-                .then(() => dispatch(selectModel(modelIndex)))
-                .then(() => showModal(types.OPTION_MODAL_ID));
-        };
-    }
-    @action.bound selectBmr(bmrIndex) {
-        return {
-            type: types.SELECT_BMR,
-            bmrIndex,
-        };
-    }
-    @action.bound showBmrModal(bmrIndex) {
-        return (dispatch, getState) => {
-            // create a new noop Promise to chain events
-            return new Promise((res, rej) => {
-                res();
-            })
-                .then(() => dispatch(selectBmr(bmrIndex)))
-                .then(() => showModal(types.BMR_MODAL_ID));
-        };
-    }
-    @action.bound showOutputModal(models) {
-        return (dispatch, getState) => {
-            // create a new noop Promise to chain events
-            return new Promise((res, rej) => {
-                res();
-            })
-                .then(() => dispatch(selectOutput(models)))
-                .then(() => showModal(types.OUTPUT_MODAL_ID));
-        };
-    }
-    @action.bound setErrors(validationErrors) {
-        return {
-            type: types.VALIDATE,
-            validationErrors,
-        };
-    }
-    @action.bound execute_start() {
-        return {
-            type: types.EXECUTE_START,
-        };
-    }
-    @action.bound execute_stop() {
-        return {
-            type: types.EXECUTE_STOP,
-        };
+    // validation/execution
+    @action.bound validate() {
+        let errors = [];
+        if (this.bmrs.length === 0) {
+            errors.push("At least one BMR setting is required.");
+        }
+        if (this.modelSettings.length === 0) {
+            errors.push("At least one model is required.");
+        }
+        this.isExecuting = false;
+        this.validationErrors = errors;
     }
     @action.bound execute() {
-        return (dispatch, getState) => {
-            let state = getState(),
-                url = state.config.execute_url,
-                data = {
-                    dose_units: state.bmd.doseUnits,
-                    bmrs: state.bmd.bmrs,
-                    modelSettings: state.bmd.modelSettings,
-                };
+        const {execute_url, csrf} = this.config.execute_url,
+            data = {
+                dose_units: this.doseUnits,
+                bmrs: this.bmrs,
+                modelSettings: this.modelSettings,
+            };
 
-            return new Promise((res, rej) => {
-                res();
+        this.isExecuting = true;
+        this.errors = [];
+        fetch(execute_url, h.fetchPost(csrf, data, "POST"))
+            .then(response => {
+                if (!response.ok) {
+                    this.errors = ["An error occurred."];
+                }
+                return response.json();
             })
-                .then(() => dispatch(execute_start()))
-                .then(() => {
-                    fetch(url, h.fetchPost(state.config.csrf, data, "POST"))
-                        .then(response => {
-                            if (!response.ok) {
-                                dispatch(setErrors(["An error occurred."]));
-                            }
-                            return response.json();
-                        })
-                        .then(() => setTimeout(() => dispatch(getExecuteStatus()), 3000));
-                });
-        };
-    }
-    @action.bound validate(state) {
-        let errs = [];
-        if (state.bmd.bmrs.length === 0) {
-            errs.push("At least one BMR setting is required.");
-        }
-        if (state.bmd.modelSettings.length === 0) {
-            errs.push("At least one model is required.");
-        }
-        return errs;
+            .then(() => setTimeout(() => this.getExecuteStatus()), 3000);
     }
     @action.bound tryExecute() {
-        return (dispatch, getState) => {
-            return new Promise((res, rej) => {
-                res();
-            })
-                .then(() => {
-                    let validationErrors = validate(getState());
-                    dispatch(setErrors(validationErrors));
-                })
-                .then(() => {
-                    let state = getState();
-                    if (state.bmd.validationErrors.length === 0) {
-                        dispatch(execute());
-                    }
-                });
-        };
+        this.validate();
+        this.execute();
     }
     @action.bound getExecuteStatus() {
-        return (dispatch, getState) => {
-            let url = getState().config.execute_status_url;
-            fetch(url, h.fetchGet)
-                .then(res => res.json())
-                .then(res => {
-                    if (res.finished) {
-                        dispatch(getExecutionResults());
-                    } else {
-                        setTimeout(() => dispatch(getExecuteStatus()), 3000);
-                    }
-                });
-        };
+        const url = this.config.execute_status_url;
+        fetch(url, h.fetchGet)
+            .then(res => res.json())
+            .then(res => {
+                if (res.finished) {
+                    this.getExecutionResults();
+                } else {
+                    setTimeout(() => this.getExecuteStatus(), 3000);
+                }
+            });
     }
     @action.bound getExecutionResults() {
-        return (dispatch, getState) => {
-            let url = getState().config.session_url;
-            return new Promise((res, rej) => {
-                res();
-            })
-                .then(() => dispatch(fetchSessionSettings(url)))
-                .then(() => dispatch(execute_stop()))
-                .then(() => $("#tabs a:eq(1)").tab("show"));
+        const cb = () => {
+            this.isExecuting = false;
+            $("#tabs a:eq(1)").tab("show");
         };
+        this.fetchSessionSettings(cb);
     }
-    @action.bound setSelectedModel(model_id, notes) {
-        return {
-            type: types.SET_SELECTED_MODEL,
-            model_id,
-            notes,
-        };
+
+    // outputs
+    @action.bound setHoverModel(model) {
+        this.hoverModel = model;
     }
     @action.bound saveSelectedModel(model_id, notes) {
-        return (dispatch, getState) => {
-            let state = getState(),
-                url = state.config.selected_model_url,
-                data = {
-                    model: model_id,
-                    notes,
-                };
+        const url = this.config.selected_model_url,
+            data = {
+                model: model_id,
+                notes,
+            };
 
-            return new Promise((res, rej) => {
-                res();
-            }).then(() => {
-                fetch(url, h.fetchPost(state.config.csrf, data, "POST")).then(() =>
-                    dispatch(setSelectedModel(model_id, notes))
-                );
-            });
-        };
+        fetch(url, h.fetchPost(this.config.csrf, data, "POST")).then(() => {
+            this.selectedModelId = model_id;
+            this.selectedModelNotes = notes;
+        });
     }
 
     @computed get hasEndpoint() {
