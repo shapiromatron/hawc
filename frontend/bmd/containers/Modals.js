@@ -11,12 +11,7 @@ import OutputModal from "../components/OutputModal";
 class Modals extends React.Component {
     render() {
         const {store} = this.props,
-            isReady = store.allBmrOptions !== null,
             {config} = store;
-
-        if (!isReady) {
-            return null;
-        }
 
         return (
             <div>

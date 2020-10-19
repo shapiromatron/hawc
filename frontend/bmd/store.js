@@ -104,7 +104,22 @@ class Bmd2Store {
 
     // ui settings
     @action.bound showModal(name) {
-        return $(`#${name}`).modal("show");
+        // wait until the modal element is rendered in the DOM before triggering show modal
+        let waitedFor = 0;
+        const waitInterval = 20,
+            maxWait = 1000,
+            selector = `#${name}`,
+            tryShow = () => {
+                waitedFor += waitInterval;
+                if ($(selector).length > 0 && !$(selector).hasClass("in")) {
+                    $(selector).modal("show");
+                } else {
+                    if (waitedFor < maxWait) {
+                        setTimeout(tryShow, waitInterval);
+                    }
+                }
+            };
+        setTimeout(tryShow, waitInterval);
     }
     @action.bound showOptionModal(modelIndex) {
         this.selectedModelOptionIndex = modelIndex;
