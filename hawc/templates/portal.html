@@ -1,79 +1,83 @@
-{% extends 'base.html' %}
-
-{% block title %}
-  Portal | HAWC
-{% endblock %}
-
-{% block messages_base %}{% endblock messages_base %}
-
-{% block main_content %}
-
-  <div class="row-fluid">
-    <ul class="breadcrumb">
-      {% if user.is_authenticated %}
-        <li class="active"><a href="{% url 'portal' %}">Home</a><span class="divider">/</span></li>
-      {% else %}
-        <li class="active"><a href="{% url 'assessment:public_list' %}">Public Assessments</a><span class="divider">/</span></li>
-      {% endif %}
-      {% block breadcrumbs %}
-      {% endblock %}
-    </ul>
-  </div>
-
-  {% block messages %}
-    {% include "messages.html" %}
-  {% endblock messages %}
-
+{% extends 'base.html' %} 
+{% block title %} Portal | HAWC {% endblock %} 
+{%block messages_base %}
+{% endblock messages_base %} 
+{% block main_content %} 
+{%block messages %} 
+{% include "messages.html" %} 
+{% endblock messages %}
+<div class="contaienr-fluid">
   <div class="row" id="body-row">
-    <div id="sidebar-container" class="sidebar-expanded d-none d-md-block">
-      <ul class="list-group">
+    <div>
+      <div id="sidebar-container" class="sidebar-expanded d-none d-md-block">
+        <ul class="list-group">
           <li class="list-group-item sidebar-separator-title text-muted d-flex align-items-center menu-collapsed">
-              <small>MAIN MENU</small>
+            <small>MAIN MENU</small>
           </li>
           {% include "assessment/sidebar.html" %}
-          <a href="#top" data-toggle="sidebar-colapse" class="bg-dark list-group-item list-group-item-action d-flex align-items-center">
-              <div class="d-flex w-100 justify-content-start align-items-center">
-                  <span id="collapse-icon" class="fa fa-2x mr-3"></span>
-              </div>
+          <a
+            href="#top"
+            data-toggle="sidebar-colapse"
+            class="bg-dark list-group-item list-group-item-action d-flex align-items-center"
+          >
+            <div class="d-flex w-100 justify-content-start align-items-center">
+              <span id="collapse-icon" class="fa fa-2x mr-3"></span>
+            </div>
           </a>
-      </ul>
-  </div>
-    <div class="ml-2">
-        {% block content %}{% endblock %}
+        </ul>
+      </div>
     </div>
+    <div class="col">
+      <div>
+        <ul class="breadcrumb">
+          {% if user.is_authenticated %}
+          <li class="active">
+            <a href="{% url 'portal' %}">Home</a><span class="divider">/</span>
+          </li>
+          {% else %}
+          <li class="active">
+            <a href="{% url 'assessment:public_list' %}">Public Assessments</a
+            ><span class="divider">/</span>
+          </li>
+          {% endif %} {% block breadcrumbs %} {% endblock %}
+        </ul>
+      </div>
+      <div >{% block content %}{% endblock %}</div>
+    </div>
+  </div>
 </div>
 
-{% endblock %}
+{% endblock %} {% block portaljs %}
+<script>
+  // Hide submenus
+  $("#body-row .collapse").collapse("hide");
 
-{% block portaljs %}
-        <script>
-          // Hide submenus
-$('#body-row .collapse').collapse('hide'); 
+  // Collapse/Expand icon
+  $("#collapse-icon").addClass("fa-angle-double-left");
 
-// Collapse/Expand icon
-$('#collapse-icon').addClass('fa-angle-double-left'); 
-
-// Collapse click
-$('[data-toggle=sidebar-colapse]').click(function() {
+  // Collapse click
+  $("[data-toggle=sidebar-colapse]").click(function () {
     SidebarCollapse();
-});
+  });
 
-function SidebarCollapse () {
-    $('.menu-collapsed').toggleClass('d-none');
-    $('.sidebar-submenu').toggleClass('d-none');
-    $('.submenu-icon').toggleClass('d-none');
-    $('#sidebar-container').toggleClass('sidebar-expanded sidebar-collapsed');
-    
+  function SidebarCollapse() {
+    $(".menu-collapsed").toggleClass("d-none");
+    $(".sidebar-submenu").toggleClass("d-none");
+    $(".submenu-icon").toggleClass("d-none");
+    $("#sidebar-container").toggleClass("sidebar-expanded sidebar-collapsed");
+
     // Treating d-flex/d-none on separators with title
-    var SeparatorTitle = $('.sidebar-separator-title');
-    if ( SeparatorTitle.hasClass('d-flex') ) {
-        SeparatorTitle.removeClass('d-flex');
+    var SeparatorTitle = $(".sidebar-separator-title");
+    if (SeparatorTitle.hasClass("d-flex")) {
+      SeparatorTitle.removeClass("d-flex");
     } else {
-        SeparatorTitle.addClass('d-flex');
+      SeparatorTitle.addClass("d-flex");
     }
-    
+
     // Collapse/Expand icon
-    $('#collapse-icon').toggleClass('fa-angle-double-left fa-angle-double-right');
-}
-        </script>
+    $("#collapse-icon").toggleClass(
+      "fa-angle-double-left fa-angle-double-right"
+    );
+  }
+</script>
 {% endblock portaljs %}
