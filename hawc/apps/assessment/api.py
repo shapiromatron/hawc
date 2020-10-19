@@ -279,11 +279,11 @@ class Assessment(AssessmentViewset):
 
         # Assigns db_id to hero_id in all instances where db == HERO
         df["hero_id"] = None
-        df["hero_id"].loc[df["db"] == constants.HERO] = df["db_id"][df["db"] == constants.HERO]
+        df.loc[df["db"] == constants.HERO, ["hero_id"]] = df["db_id"][df["db"] == constants.HERO]
 
         # Assigns db_id to pubmed_id in all instances where db == PUBMED
         df["pubmed_id"] = None
-        df["pubmed_id"].loc[df["db"] == constants.PUBMED] = df["db_id"][
+        df.loc[df["db"] == constants.PUBMED, ["pubmed_id"]] = df["db_id"][
             df["db"] == constants.PUBMED
         ]
         df = df.drop(columns=["db", "db_id"]).drop_duplicates()
