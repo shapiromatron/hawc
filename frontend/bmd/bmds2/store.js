@@ -4,7 +4,7 @@ import {action, autorun, computed, observable} from "mobx";
 
 import h from "shared/utils/helpers";
 import Endpoint from "animal/Endpoint";
-import {apply_logic} from "./models/logic";
+import {applyRecommendationLogic} from "bmd/common/recommendationLogic";
 import {BMR_MODAL_ID, OPTION_MODAL_ID, OUTPUT_MODAL_ID} from "./constants";
 
 class Bmd2Store {
@@ -70,8 +70,6 @@ class Bmd2Store {
                     .map(d => h.deepCopy(d))
                     .value();
 
-                const selectedModel = settings.selected_model || {model: null, notes: ""};
-
                 // set store features
                 this.models = settings.models;
                 this.modelSettings = modelSettings;
@@ -79,10 +77,16 @@ class Bmd2Store {
                 this.doseUnits = settings.dose_units;
                 this.allModelOptions = settings.allModelOptions;
                 this.allBmrOptions = _.keyBy(settings.allBmrOptions, "type");
-                this.selectedModelId = selectedModel.model;
-                this.selectedModelNotes = selectedModel.notes;
                 this.logic = settings.logic;
                 this.hasExecuted = settings.is_finished;
+
+                if (settings.selected_model) {
+                    this.selectedModelId = settings.selected_model.model;
+                    this.selectedModelNotes = settings.selected_model.notes;
+                } else {
+                    this._resetSelectedModel();
+                }
+
                 // do session last; this triggers other side effects
                 this.session = settings;
 
@@ -92,13 +96,17 @@ class Bmd2Store {
             })
             .catch(ex => console.error("Endpoint parsing failed", ex));
     }
-    @action.bound applyLogic() {
-        apply_logic(this.logic, this.models, this.endpoint, this.doseUnits);
+    @action.bound _resetSelectedModel() {
+        this.selectedModelId = null;
+        this.selectedModelNotes = "";
+    }
+    @action.bound applyRecommendationLogic() {
+        applyRecommendationLogic(this.logic, this.models, this.endpoint, this.doseUnits);
         this.isReady = true;
     }
-    autoApplyLogic = autorun(() => {
+    autoApplyRecommendationLogic = autorun(() => {
         if (this.hasSession && this.hasEndpoint) {
-            this.applyLogic();
+            this.applyRecommendationLogic();
         }
     });
 
@@ -222,6 +230,7 @@ class Bmd2Store {
     @action.bound tryExecute() {
         this._validate();
         if (this.validationErrors.length === 0) {
+            this._resetSelectedModel();
             this._execute();
         }
     }
@@ -240,6 +249,7 @@ class Bmd2Store {
     @action.bound _getExecutionResults() {
         const cb = () => {
             this.isExecuting = false;
+            this.applyRecommendationLogic();
             $(".bmdResultsTab").click();
         };
         this.fetchSessionSettings(cb);

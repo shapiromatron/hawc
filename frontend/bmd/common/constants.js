@@ -53,4 +53,7 @@ export const formulas = {
                 val = bmr.value;
         }
         return `${val}${str}`;
-    };
+    },
+    CONTINUOUS = "C",
+    DICHOTOMOUS = "D",
+    DICHOTOMOUS_CANCER = "DC";

@@ -2,7 +2,7 @@ import _ from "lodash";
 import * as d3 from "d3";
 import h from "shared/utils/helpers";
 
-import * as types from "../constants";
+import {CONTINUOUS, DICHOTOMOUS, DICHOTOMOUS_CANCER} from "./constants";
 
 /*
 Failure bins:
@@ -287,7 +287,7 @@ const SUFFICIENTLY_CLOSE_BMDL = 3,
         },
     };
 
-let apply_logic = function(logics, models, endpoint, doseUnits) {
+const applyRecommendationLogic = function(logics, models, endpoint, doseUnits) {
     let doses = endpoint._get_doses_by_dose_id(doseUnits),
         groups = _.chain(endpoint.data.groups)
             .map(d => h.deepCopy(d))
@@ -299,11 +299,11 @@ let apply_logic = function(logics, models, endpoint, doseUnits) {
         .filter(d => {
             // filter by data-type
             switch (endpoint.data.data_type) {
-                case types.CONTINUOUS:
+                case CONTINUOUS:
                     return d.continuous_on;
-                case types.DICHOTOMOUS:
+                case DICHOTOMOUS:
                     return d.dichotomous_on;
-                case types.DICHOTOMOUS_CANCER:
+                case DICHOTOMOUS_CANCER:
                     return d.cancer_dichotomous_on;
                 default:
                     throw "Unknown data type";
@@ -380,4 +380,4 @@ let apply_logic = function(logics, models, endpoint, doseUnits) {
     });
 };
 
-export {apply_logic};
+export {applyRecommendationLogic};
