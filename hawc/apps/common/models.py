@@ -32,20 +32,30 @@ def get_private_data_storage() -> FileSystemStorage:
 class BaseManager(models.Manager):
     assessment_relation = None
 
+    def _get_order_by(self) -> Tuple[str, ...]:
+        """
+        We always want a QuerySet to have some sort of defined order when returning. Therefore,
+        first try to use the ordering specified by the model. If no ordering exists, order by id.
+        """
+        ordering = getattr(self.model._meta, "ordering", None)
+        return ordering if ordering else ("id",)
+
     def get_qs(self, assessment_id=None):
         """
         Allows for queryset to be filtered on assessment if assessment_id is passed as argument.
         If assessment_id is not passed, then functions identically to .all()
         """
+        ordering = self._get_order_by()
         if assessment_id:
-            return self.assessment_qs(assessment_id).order_by("id")
-        return self.get_queryset().order_by("id")
+            return self.assessment_qs(assessment_id).order_by(*ordering)
+        return self.get_queryset().order_by(*ordering)
 
     def assessment_qs(self, assessment_id):
+        ordering = self._get_order_by()
         return (
             self.get_queryset()
             .filter(Q(**{self.assessment_relation: assessment_id}))
-            .order_by("id")
+            .order_by(*ordering)
         )
 
 
