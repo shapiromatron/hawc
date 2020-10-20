@@ -2,7 +2,6 @@ import json
 from collections import OrderedDict
 from urllib.parse import urlparse, urlunparse
 
-import pandas as pd
 from crispy_forms import layout as cfl
 from django import forms
 from django.urls import reverse
@@ -14,6 +13,7 @@ from ..animal.lookups import EndpointByAssessmentLookup, EndpointByAssessmentLoo
 from ..animal.models import Endpoint
 from ..assessment.models import EffectTag
 from ..common.forms import BaseFormHelper
+from ..common.helper import read_excel
 from ..epi.models import Outcome
 from ..invitro.models import IVChemical, IVEndpointCategory
 from ..lit.models import ReferenceFilterTag
@@ -918,7 +918,7 @@ class DataPivotUploadForm(DataPivotForm):
                 self.add_error("worksheet_name", f"Worksheet name {worksheet_name} not found.")
                 return
 
-            df = pd.read_excel(excel_file, sheet_name=worksheet_name, engine="openpyxl")
+            df = read_excel(excel_file, sheet_name=worksheet_name)
 
             # check data
             if df.shape[0] < 2:
