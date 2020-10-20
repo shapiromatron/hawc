@@ -54,9 +54,10 @@ class TagEditorStore {
     }
 
     @action.bound createTag(newNode) {
-        const {csrf, url} = this.config,
+        const {base_url, assessment_id, csrf} = this.config,
+            url = `${base_url}?assessment_id=${assessment_id}`,
             obj = {
-                assessment_id: this.config.assessment_id,
+                assessment_id,
                 name: newNode.name,
                 parent: newNode.parent,
             };
