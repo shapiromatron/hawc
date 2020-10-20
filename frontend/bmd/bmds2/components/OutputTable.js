@@ -2,7 +2,7 @@ import _ from "lodash";
 import React from "react";
 import PropTypes from "prop-types";
 
-import {asLabel} from "bmd/models/bmr";
+import {asLabel} from "../models/bmr";
 
 let getColWidths = function(numBmrs) {
         switch (numBmrs) {

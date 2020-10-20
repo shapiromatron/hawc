@@ -8,7 +8,7 @@ import HAWCModal from "utils/HAWCModal";
 import HAWCUtils from "utils/HAWCUtils";
 import Observee from "utils/Observee";
 
-import {BMDLine} from "bmd/models/model.js";
+import {BMDLine} from "bmd/bmds2/models/model.js";
 import Study from "study/Study";
 
 import AnimalGroup from "./AnimalGroup";

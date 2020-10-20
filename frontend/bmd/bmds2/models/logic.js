@@ -2,7 +2,7 @@ import _ from "lodash";
 import * as d3 from "d3";
 import h from "shared/utils/helpers";
 
-import * as types from "bmd/constants";
+import * as types from "../constants";
 
 /*
 Failure bins:

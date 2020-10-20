@@ -162,7 +162,6 @@ class Bmd2Store {
         this.modelSettings.forEach(model => {
             model.overrides.constant_variance = model.overrides.constant_variance === 0 ? 1 : 0;
         });
-        // AJS TODO; content updates but doesn't persist on the UI
     }
     @action.bound updateModel(values) {
         this.modelSettings[this.selectedModelOptionIndex].overrides = values;

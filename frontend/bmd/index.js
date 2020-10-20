@@ -1,16 +1,4 @@
-import React from "react";
-import ReactDOM from "react-dom";
-import {Provider} from "mobx-react";
+import bmds2Startup from "./bmds2";
+import bmds3Startup from "./bmds3";
 
-import Bmd2Store from "./store";
-import Root from "./containers/Root";
-
-export default function(el, config) {
-    const store = new Bmd2Store(config);
-    ReactDOM.render(
-        <Provider store={store}>
-            <Root />
-        </Provider>,
-        el
-    );
-}
+export {bmds2Startup, bmds3Startup};

@@ -1,8 +1,7 @@
-import _ from "lodash";
 import React from "react";
 import PropTypes from "prop-types";
 
-import {param_cw} from "../constants";
+import ModelOptionOverrideList from "../containers/ModelOptionOverrideList";
 
 class ModelOptionTable extends React.Component {
     constructor(props) {
@@ -87,55 +86,6 @@ class ModelOptionTable extends React.Component {
         );
     }
 
-    renderOverrideList(d) {
-        var getText = function(k, v) {
-            let def = d.defaults[k],
-                tmp;
-            switch (def.t) {
-                case "i":
-                case "d":
-                case "dd":
-                case "rp":
-                    return (
-                        <span>
-                            <b>{def.n}:</b> {v}
-                        </span>
-                    );
-                case "b":
-                    tmp = v === 1 ? "fa fa-check-square-o" : "fa fa-square-o";
-                    return (
-                        <span>
-                            <b>{def.n}:</b> <i className={tmp} />
-                        </span>
-                    );
-                case "p":
-                    v = v.split("|");
-                    return (
-                        <span>
-                            <b>{def.n}:</b> {param_cw[v[0]]} to {v[1]}
-                        </span>
-                    );
-                default:
-                    alert(`Invalid type: ${d.t}`);
-                    return null;
-            }
-        };
-
-        if (_.isEmpty(d.overrides)) {
-            return <span>-</span>;
-        } else {
-            return (
-                <ul>
-                    {_.chain(d.overrides)
-                        .toPairs()
-                        .filter(d2 => d.defaults[d2[0]].n !== undefined)
-                        .map(d2 => <li key={d2[0]}>{getText(d2[0], d2[1])}</li>)
-                        .value()}
-                </ul>
-            );
-        }
-    }
-
     render() {
         const {editMode, models} = this.props;
         return (
@@ -154,7 +104,9 @@ class ModelOptionTable extends React.Component {
                             return (
                                 <tr key={i}>
                                     <td>{d.name}</td>
-                                    <td>{this.renderOverrideList(d)}</td>
+                                    <td>
+                                        <ModelOptionOverrideList index={i} />
+                                    </td>
                                     <td>
                                         <button
                                             type="button"
