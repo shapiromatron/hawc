@@ -1,4 +1,3 @@
-import fetch from "isomorphic-fetch";
 import {action, observable} from "mobx";
 
 import h from "shared/utils/helpers";

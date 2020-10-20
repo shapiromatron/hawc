@@ -1,4 +1,3 @@
-import fetch from "isomorphic-fetch";
 import _ from "lodash";
 import {action, observable} from "mobx";
 

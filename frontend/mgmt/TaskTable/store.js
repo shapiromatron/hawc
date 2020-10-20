@@ -1,5 +1,4 @@
 import _ from "lodash";
-import fetch from "isomorphic-fetch";
 import {action, computed, toJS, observable} from "mobx";
 
 import h from "shared/utils/helpers";
