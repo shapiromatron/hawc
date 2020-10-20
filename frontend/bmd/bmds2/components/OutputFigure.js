@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-import {BMDLine} from "../models/model";
+import BmdLine from "bmd/common/BmdLine";
 
 class OutputFigure extends React.Component {
     constructor(props) {
@@ -29,7 +29,7 @@ class OutputFigure extends React.Component {
                 return;
             }
 
-            this.hover_line = new BMDLine(model, this.plt, "red");
+            this.hover_line = new BmdLine(model, this.plt, "red");
             this.hover_line.render();
         }
     }
@@ -47,7 +47,7 @@ class OutputFigure extends React.Component {
         }
 
         if (model !== null) {
-            this.selected_line = new BMDLine(model, this.plt, "blue");
+            this.selected_line = new BmdLine(model, this.plt, "blue");
             this.selected_line.render();
         }
     }

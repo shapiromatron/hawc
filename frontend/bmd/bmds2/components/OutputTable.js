@@ -2,7 +2,7 @@ import _ from "lodash";
 import React from "react";
 import PropTypes from "prop-types";
 
-import {asLabel} from "../models/bmr";
+import {bmdLabelText} from "bmd/common/constants";
 
 let getColWidths = function(numBmrs) {
         switch (numBmrs) {
@@ -110,7 +110,7 @@ class OutputTable extends React.Component {
         let widths = getColWidths(this.props.bmrs.length),
             ths = _.chain(this.props.bmrs)
                 .map((d, i) => {
-                    let lbl = asLabel(d);
+                    let lbl = bmdLabelText(d);
                     return [
                         <th key={i + "bmd"} style={{width: widths.nums}}>
                             BMD

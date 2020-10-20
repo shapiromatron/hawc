@@ -2,7 +2,7 @@ import _ from "lodash";
 import React from "react";
 import PropTypes from "prop-types";
 
-import {asLabel} from "../models/bmr";
+import {bmdLabelText} from "bmd/common/constants";
 
 import RecommendationNotes from "./RecommendationNotes";
 import RecommendationTable from "./RecommendationTable";
@@ -83,7 +83,7 @@ class Recommendation extends React.Component {
                                 {this.props.bmrs.map((d, i) => {
                                     return (
                                         <option key={i} value={i}>
-                                            {asLabel(d)}
+                                            {bmdLabelText(d)}
                                         </option>
                                     );
                                 })}
