@@ -6,7 +6,6 @@ import "react-tabs/style/react-tabs.css";
 import "react-select/dist/react-select.css";
 
 import h from "shared/utils/helpers";
-import {splitStartup} from "utils/WebpackSplit";
 import HAWCUtils from "utils/HAWCUtils";
 
 class BaseVisualForm extends Component {
@@ -163,9 +162,3 @@ class BaseVisualForm extends Component {
 BaseVisualForm.propTypes = {};
 
 export default BaseVisualForm;
-
-const formRender = element => {
-    splitStartup(element, BaseVisualForm);
-};
-
-export {formRender};
