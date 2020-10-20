@@ -50,7 +50,7 @@ class SetupTab extends React.Component {
                     editMode={config.editMode}
                     validationErrors={store.validationErrors}
                     isExecuting={store.isExecuting}
-                    handleExecute={() => store.tryExecute()}
+                    handleExecute={store.tryExecute}
                 />
             </>
         );

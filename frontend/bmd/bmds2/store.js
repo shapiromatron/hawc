@@ -188,7 +188,7 @@ class Bmd2Store {
     }
 
     // validation/execution
-    @action.bound validate() {
+    @action.bound _validate() {
         let errors = [];
         if (this.bmrs.length === 0) {
             errors.push("At least one BMR setting is required.");
@@ -199,45 +199,48 @@ class Bmd2Store {
         this.isExecuting = false;
         this.validationErrors = errors;
     }
-    @action.bound execute() {
-        const {execute_url, csrf} = this.config.execute_url,
+    @action.bound _execute() {
+        const {execute_url, csrf} = this.config,
             data = {
                 dose_units: this.doseUnits,
                 bmrs: this.bmrs,
                 modelSettings: this.modelSettings,
-            };
+            },
+            payload = h.fetchPost(csrf, data, "POST");
 
         this.isExecuting = true;
         this.errors = [];
-        fetch(execute_url, h.fetchPost(csrf, data, "POST"))
+        fetch(execute_url, payload)
             .then(response => {
                 if (!response.ok) {
                     this.errors = ["An error occurred."];
                 }
                 return response.json();
             })
-            .then(() => setTimeout(() => this.getExecuteStatus()), 3000);
+            .then(() => setTimeout(() => this._getExecuteStatus()), 3000);
     }
     @action.bound tryExecute() {
-        this.validate();
-        this.execute();
+        this._validate();
+        if (this.validationErrors.length === 0) {
+            this._execute();
+        }
     }
-    @action.bound getExecuteStatus() {
+    @action.bound _getExecuteStatus() {
         const url = this.config.execute_status_url;
         fetch(url, h.fetchGet)
             .then(res => res.json())
             .then(res => {
                 if (res.finished) {
-                    this.getExecutionResults();
+                    this._getExecutionResults();
                 } else {
-                    setTimeout(() => this.getExecuteStatus(), 3000);
+                    setTimeout(() => this._getExecuteStatus(), 3000);
                 }
             });
     }
-    @action.bound getExecutionResults() {
+    @action.bound _getExecutionResults() {
         const cb = () => {
             this.isExecuting = false;
-            $("#tabs a:eq(1)").tab("show");
+            $("#resultsTab").click();
         };
         this.fetchSessionSettings(cb);
     }
