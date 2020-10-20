@@ -19,7 +19,7 @@ class TabContainer extends React.Component {
             <Tabs>
                 <TabList>
                     <Tab>BMD setup</Tab>
-                    <Tab id="resultsTab" disabled={!hasExecuted}>
+                    <Tab className="react-tabs__tab bmdResultsTab" disabled={!hasExecuted}>
                         Results
                     </Tab>
                     <Tab disabled={!hasExecuted}>Model recommendation and selection</Tab>

@@ -240,7 +240,7 @@ class Bmd2Store {
     @action.bound _getExecutionResults() {
         const cb = () => {
             this.isExecuting = false;
-            $("#resultsTab").click();
+            $(".bmdResultsTab").click();
         };
         this.fetchSessionSettings(cb);
     }
