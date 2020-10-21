@@ -1,5 +1,6 @@
 import time
 from io import StringIO
+from pathlib import Path
 
 import pandas as pd
 
@@ -74,3 +75,12 @@ def test_try_parse_list_ints():
     # edge cases
     assert helper.try_parse_list_ints("a") == []
     assert helper.try_parse_list_ints("1,a") == []
+
+
+def test_read_excel():
+    # excel file should be read in as a dataframe without error
+    iris_xlsx_fn = str(
+        Path(__file__).parents[3] / "data/private-data/assessment/dataset-revision/iris.xlsx"
+    )
+    df = helper.read_excel(iris_xlsx_fn)
+    assert not df.empty

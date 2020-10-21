@@ -105,7 +105,10 @@ class About(TemplateView):
             results = apps.get_model("epi", "Result").objects.count()
 
             results_with_data = (
-                apps.get_model("epi", "GroupResult").objects.distinct("result_id").count()
+                apps.get_model("epi", "GroupResult")
+                .objects.order_by("result_id")
+                .distinct("result_id")
+                .count()
             )
 
             iv_endpoints = apps.get_model("invitro", "IVEndpoint").objects.count()
