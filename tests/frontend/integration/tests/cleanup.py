@@ -18,6 +18,11 @@ def cleanup(driver, root_url):
     assert h.Text(match_text).exists() is False
     h.click("Submit bulk edit")
     h.wait_until(h.Text(match_text).exists)
+    h.write("N/A", into=h.S("@system"))
+    match_text = "N/A (1)"
+    assert h.Text(match_text).exists() is False
+    h.click("Submit bulk edit")
+    h.wait_until(h.Text(match_text).exists)
 
     # clean risk of bias
     h.go_to(root_url + "/assessment/1/clean-study-metrics/")
@@ -28,7 +33,15 @@ def cleanup(driver, root_url):
     assert len(h.find_all(h.S(".checkbox-score-display-row"))) == 1
     h.click(h.S("@checkbox-score-select", below="Foo et al."))
     h.select(h.ComboBox(below="Score"), "Not reported")
-    h.click("Bulk modify 1 item.")
-    h.wait_until(h.Text("Not reported", to_right_of="Foo et al.").exists)
+    h.click(h.S('form.bulkEditForm button[type="submit"]'))
+    h.wait_until(lambda: len(h.find_all(h.S(".bulkEditForm"))) == 0)
+    assert "Not reported" in driver.find_elements_by_css_selector(".score-bar i")[0].text
+    h.click(h.S("@checkbox-score-select", below="Foo et al."))
+    h.select(h.ComboBox(below="Score"), "Probably low risk of bias")
+    h.click(h.S('form.bulkEditForm button[type="submit"]'))
+    h.wait_until(lambda: len(h.find_all(h.S(".bulkEditForm"))) == 0)
+    assert (
+        "Probably low risk of bias" in driver.find_elements_by_css_selector(".score-bar i")[0].text
+    )
 
     shared.logout()
