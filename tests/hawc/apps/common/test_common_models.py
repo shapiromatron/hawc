@@ -1,6 +1,7 @@
 import pytest
 
-# use a concrete implementation to test AssessmentRootMixin
+# use concrete implementations to test
+from hawc.apps.animal.models import DoseGroup, Experiment
 from hawc.apps.lit.models import ReferenceFilterTag
 
 _nested_names = [
@@ -30,3 +31,12 @@ def test_AssessmentRootMixin_annotate_nested_names(db_keys):
 def test_AssessmentRootMixin_as_dataframe(db_keys):
     df = ReferenceFilterTag.as_dataframe(db_keys.assessment_working)
     assert df.nested_name.values.tolist() == _nested_names
+
+
+@pytest.mark.django_db
+class TestBaseManager:
+    def test_get_order_by(self):
+        assert Experiment._meta.ordering == []
+        assert Experiment.objects._get_order_by() == ("id",)
+        assert DoseGroup._meta.ordering == ("dose_units", "dose_group_id")
+        assert DoseGroup.objects._get_order_by() == ("dose_units", "dose_group_id")
