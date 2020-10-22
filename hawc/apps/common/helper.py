@@ -18,6 +18,13 @@ from django.utils.encoding import force_text
 from rest_framework.renderers import JSONRenderer
 
 
+def read_excel(*args, **kwargs):
+    """
+    We use openpyxl as the engine since the default xlrd is no longer maintained.
+    """
+    return pd.read_excel(*args, **kwargs, engine="openpyxl")
+
+
 def HAWCtoDateString(datetime):
     """
     Helper function to ensure dates are consistent.
