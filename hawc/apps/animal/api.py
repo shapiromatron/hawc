@@ -1,13 +1,12 @@
 from django.conf import settings
 from django.core.cache import cache
-from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.db.models import Q
 from rest_framework import mixins, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import NotAcceptable, PermissionDenied
 from rest_framework.response import Response
-from rest_framework.serializers import ValidationError as DRFValidationError
+from rest_framework.serializers import ValidationError
 
 from ..assessment.api import (
     AssessmentLevelPermissions,
@@ -263,17 +262,14 @@ class Endpoint(mixins.CreateModelMixin, AssessmentViewset):
     def update_terms(self, request):
         # data must have one or more endpoints
         if len(request.data) == 0:
-            raise DRFValidationError("List of endpoints must be > 1")
+            raise ValidationError("List of endpoints must be > 1")
         # check assessment level permissions
         endpoint = self.model.objects.get(pk=request.data[0].get("id"))
         self.check_object_permissions(request, endpoint)
         # update endpoint terms (all other validation done in manager)
-        try:
-            updated_endpoints = self.model.objects.update_terms(request.data)
-            serializer = serializers.EndpointSerializer(updated_endpoints, many=True)
-            return Response(serializer.data)
-        except ValidationError as err:
-            raise DRFValidationError(err.message)
+        updated_endpoints = self.model.objects.update_terms(request.data)
+        serializer = serializers.EndpointSerializer(updated_endpoints, many=True)
+        return Response(serializer.data)
 
 
 class ExperimentCleanupFieldsView(CleanupFieldsBaseViewSet):

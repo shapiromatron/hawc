@@ -3,7 +3,7 @@ from typing import Any, Dict, List
 import numpy as np
 import pandas as pd
 from django.apps import apps
-from django.core.exceptions import ValidationError
+from rest_framework.serializers import ValidationError
 
 from ..assessment.models import Assessment
 from ..common.models import BaseManager, get_distinct_charfield, get_distinct_charfield_opts
