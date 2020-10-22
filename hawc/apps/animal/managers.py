@@ -298,7 +298,7 @@ class EndpointManager(BaseManager):
 
         return df
 
-    def update_terms(self, objs: List[Dict]) -> List:
+    def update_terms(self, objs: List[Dict], assessment: Assessment) -> List:
         # must be 1 or more objs
         if len(objs) == 0:
             raise ValidationError("List of endpoints must be > 1")
@@ -321,7 +321,6 @@ class EndpointManager(BaseManager):
             invalid_endpoint_ids_str = ", ".join(str(_) for _ in invalid_endpoint_ids)
             raise ValidationError(f"Invalid id(s) {invalid_endpoint_ids_str}")
         # endpoints must be in the same assessment
-        assessment = endpoints.first().assessment
         invalid_endpoints = endpoints.exclude(assessment_id=assessment.id)
         if invalid_endpoints.exists():
             invalid_endpoints_str = ", ".join(str(_.pk) for _ in invalid_endpoints)

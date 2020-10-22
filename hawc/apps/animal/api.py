@@ -12,6 +12,7 @@ from ..assessment.api import (
     AssessmentLevelPermissions,
     AssessmentViewset,
     DoseUnitsViewset,
+    get_assessment_from_query,
     get_assessment_id_param,
 )
 from ..assessment.models import Assessment
@@ -264,10 +265,11 @@ class Endpoint(mixins.CreateModelMixin, AssessmentViewset):
         if len(request.data) == 0:
             raise ValidationError("List of endpoints must be > 1")
         # check assessment level permissions
-        endpoint = self.model.objects.get(pk=request.data[0].get("id"))
-        self.check_object_permissions(request, endpoint)
+        assessment = get_assessment_from_query(request)
+        if not assessment.user_can_edit_object(request.user):
+            self.permission_denied(request)
         # update endpoint terms (all other validation done in manager)
-        updated_endpoints = self.model.objects.update_terms(request.data)
+        updated_endpoints = self.model.objects.update_terms(request.data, assessment)
         serializer = serializers.EndpointSerializer(updated_endpoints, many=True)
         return Response(serializer.data)
 
