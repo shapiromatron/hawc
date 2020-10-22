@@ -270,7 +270,7 @@ class Endpoint(mixins.CreateModelMixin, AssessmentViewset):
         # update endpoint terms (all other validation done in manager)
         try:
             updated_endpoints = self.model.objects.update_terms(request.data)
-            serializer = serializers.SimpleEndpointSerializer(updated_endpoints, many=True)
+            serializer = serializers.EndpointSerializer(updated_endpoints, many=True)
             return Response(serializer.data)
         except ValidationError as err:
             raise DRFValidationError(err.message)
