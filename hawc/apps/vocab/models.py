@@ -43,6 +43,26 @@ class VocabularyTermType(IntChoiceEnum):
     effect_subtype = 4
     endpoint_name = 5
 
+    @classmethod
+    def value_to_text_field(cls) -> Dict:
+        return {
+            cls.system.value: "system",
+            cls.organ.value: "organ",
+            cls.effect.value: "effect",
+            cls.effect_subtype.value: "effect_subtype",
+            cls.endpoint_name.value: "name",
+        }
+
+    @classmethod
+    def value_to_term_field(cls) -> Dict:
+        return {
+            cls.system.value: "system_term_id",
+            cls.organ.value: "organ_term_id",
+            cls.effect.value: "effect_term_id",
+            cls.effect_subtype.value: "effect_subtype_term_id",
+            cls.endpoint_name.value: "name_term_id",
+        }
+
 
 class Term(models.Model):
     objects = managers.TermManager()
