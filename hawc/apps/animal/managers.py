@@ -3,6 +3,7 @@ from typing import Any, Dict, List
 import numpy as np
 import pandas as pd
 from django.apps import apps
+from django.db import transaction
 from rest_framework.serializers import ValidationError
 
 from ..assessment.models import Assessment
@@ -330,6 +331,7 @@ class EndpointManager(BaseManager):
             excluded_terms_str = ", ".join(str(_.pk) for _ in excluded_terms)
             raise ValidationError(f"Term id(s) {excluded_terms_str} are not type endpoint_name")
 
+    @transaction.atomic
     def update_terms(self, objs: List[Dict], assessment: Assessment) -> List:
         # validate the endpoints and terms
         self._validate_update_terms(objs, assessment)
