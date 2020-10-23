@@ -359,28 +359,8 @@ class EndpointManager(BaseManager):
         # map endpoints to their name terms
         endpoint_id_to_term_id = {obj["id"]: obj["name_term_id"] for obj in objs}
 
-        # map all applicable terms to their parents
-        def _add_to_dict(term, mapping):
-            if term.id in mapping:
-                return
-            if term.parent_id is None:
-                return
-            mapping[term.id] = term.parent_id
-            _add_to_dict(term.parent, mapping)
-
-        term_id_to_parent_id = {}
-        name_term_ids = {obj["name_term_id"] for obj in objs}
-        name_terms = Term.objects.filter(pk__in=name_term_ids)
-        for term in name_terms:
-            _add_to_dict(term, term_id_to_parent_id)
-
-        # get a queryset of all terms we're using,
-        # name terms and their trees of parents
-        all_term_ids = set(term_id_to_parent_id.keys()) | set(term_id_to_parent_id.values())
-        all_terms = Term.objects.filter(pk__in=all_term_ids)
-        term_id_to_type_and_name = {term.id: (term.type, term.name) for term in all_terms}
-
         # set endpoint terms
+        terms_df = Term.ehv_dataframe()
         endpoint_ids = [obj["id"] for obj in objs]
         endpoints = self.get_queryset().filter(pk__in=endpoint_ids)
         type_to_text_field = VocabularyTermType.value_to_text_field()
@@ -389,13 +369,9 @@ class EndpointManager(BaseManager):
         updated_fields = list(type_to_text_field.values()) + list(type_to_term_field.values())
         for endpoint in endpoints:
             term_id = endpoint_id_to_term_id[endpoint.id]
-            while term_id is not None:
-                term_type, term_name = term_id_to_type_and_name[term_id]
-                term_field = type_to_term_field[term_type]
-                text_field = type_to_text_field[term_type]
-                setattr(endpoint, term_field, term_id)
-                setattr(endpoint, text_field, term_name)
-                term_id = term_id_to_parent_id.get(term_id)
+            terms_row = terms_df.loc[terms_df["name_term_id"] == term_id].iloc[0]
+            for field in updated_fields:
+                setattr(endpoint, field, terms_row[field])
             updated_endpoints.append(endpoint)
 
         self.bulk_update(updated_endpoints, updated_fields)

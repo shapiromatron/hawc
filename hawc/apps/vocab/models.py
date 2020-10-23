@@ -105,40 +105,46 @@ class Term(models.Model):
         system_df = (
             all_df.query('type=="system"')
             .drop(columns=["type", "parent_id"])
-            .rename(columns=dict(id="system_id", name="system"))
+            .rename(columns=dict(id="system_term_id", name="system"))
         )
         organ_df = (
             all_df.query('type=="organ"')
             .drop(columns=["type"])
-            .rename(columns=dict(id="organ_id", name="organ"))
+            .rename(columns=dict(id="organ_term_id", name="organ"))
         )
         effect_df = (
             all_df.query('type=="effect"')
             .drop(columns=["type"])
-            .rename(columns=dict(id="effect_id", name="effect"))
+            .rename(columns=dict(id="effect_term_id", name="effect"))
         )
         effect_subtype_df = (
             all_df.query('type=="effect_subtype"')
             .drop(columns=["type"])
-            .rename(columns=dict(id="effect_subtype_id", name="effect_subtype"))
+            .rename(columns=dict(id="effect_subtype_term_id", name="effect_subtype"))
         )
         endpoint_name_df = (
             all_df.query('type=="endpoint_name"')
             .drop(columns=["type"])
-            .rename(columns=dict(id="endpoint_name_id", name="endpoint_name"))
+            .rename(columns=dict(id="name_term_id", name="name"))
         )
 
         df = (
-            system_df.merge(organ_df, left_on="system_id", right_on="parent_id")
+            system_df.merge(organ_df, left_on="system_term_id", right_on="parent_id")
             .drop(columns=["parent_id"])
-            .merge(effect_df, left_on="organ_id", right_on="parent_id")
+            .merge(effect_df, left_on="organ_term_id", right_on="parent_id")
             .drop(columns=["parent_id"])
-            .merge(effect_subtype_df, left_on="effect_id", right_on="parent_id")
+            .merge(effect_subtype_df, left_on="effect_term_id", right_on="parent_id")
             .drop(columns=["parent_id"])
-            .merge(endpoint_name_df, left_on="effect_subtype_id", right_on="parent_id")
+            .merge(endpoint_name_df, left_on="effect_subtype_term_id", right_on="parent_id")
             .drop(columns=["parent_id"])
             .sort_values(
-                by=["system_id", "organ_id", "effect_id", "effect_subtype_id", "endpoint_name_id"]
+                by=[
+                    "system_term_id",
+                    "organ_term_id",
+                    "effect_term_id",
+                    "effect_subtype_term_id",
+                    "name_term_id",
+                ]
             )
             .reset_index(drop=True)
         )
