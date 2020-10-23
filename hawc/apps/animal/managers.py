@@ -296,7 +296,7 @@ class EndpointManager(BaseManager):
             keys = set(obj.keys())
             if keys != {"id", "name_term_id"}:
                 raise ValidationError(
-                    f"Invalid endpoint keys {', '.join(keys)}; expected 'id', 'name_term_id'"
+                    f"Expected endpoint keys are id and name_term_id; received key(s) {' ,'.join(keys)}"
                 )
         # ids must be unique
         endpoint_ids = [obj["id"] for obj in objs]
@@ -314,25 +314,25 @@ class EndpointManager(BaseManager):
         if excluded_endpoints.exists():
             excluded_endpoints_str = ", ".join(str(_.pk) for _ in excluded_endpoints)
             raise ValidationError(
-                f"Endpoints must be from the same assessment; endpoint(s) {excluded_endpoints_str} not from assessment {assessment.id}"
+                f"Endpoints must be from the same assessment; endpoint id(s) {excluded_endpoints_str} not from assessment id {assessment.id}"
             )
         # term ids must be valid
         term_ids = {obj["name_term_id"] for obj in objs}
-        terms = Term.filter(pk__in=term_ids)
+        terms = Term.objects.filter(pk__in=term_ids)
         valid_term_ids = terms.values_list("id", flat=True)
         invalid_term_ids = term_ids - set(valid_term_ids)
         if len(invalid_term_ids) > 0:
             invalid_term_ids_str = ", ".join(str(_) for _ in invalid_term_ids)
             raise ValidationError(f"Invalid term id(s) {invalid_term_ids_str}")
         # terms must be the correct type
-        excluded_terms = terms.exclude(type=VocabularyTermType.name.value)
+        excluded_terms = terms.exclude(type=VocabularyTermType.endpoint_name.value)
         if excluded_terms.exists():
             excluded_terms_str = ", ".join(str(_.pk) for _ in excluded_terms)
-            raise ValidationError(f"Term(s) {excluded_terms_str} are not type 'name'")
+            raise ValidationError(f"Term id(s) {excluded_terms_str} are not type endpoint_name")
 
     def update_terms(self, objs: List[Dict], assessment: Assessment) -> List:
         # validate the endpoints and terms
-        self._validate_update_name_terms(objs, assessment)
+        self._validate_update_terms(objs, assessment)
 
         # mapping of endpoint id to name_term_id
         endpoint_id_to_term_id = {obj["id"]: obj["name_term_id"] for obj in objs}
@@ -351,7 +351,7 @@ class EndpointManager(BaseManager):
         for term in name_terms:
             _add_to_dict(term)
 
-        all_term_ids = set(term_id_to_parent_id.keys()) + set(term_id_to_parent_id.values())
+        all_term_ids = set(term_id_to_parent_id.keys()) | set(term_id_to_parent_id.values())
         all_terms = Term.filter(pk__in=all_term_ids)
         term_id_to_type_and_name = {term.id: (term.type, term.name) for term in all_terms}
 
@@ -370,6 +370,7 @@ class EndpointManager(BaseManager):
                 text_field = type_to_text_field[term_type]
                 setattr(endpoint, term_field, term_id)
                 setattr(endpoint, text_field, term_name)
+                term_id = term_id_to_parent_id.get("term_id")
             updated_endpoints.append(endpoint)
 
         self.bulk_update(updated_endpoints, updated_fields)
