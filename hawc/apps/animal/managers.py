@@ -325,6 +325,13 @@ class EndpointManager(BaseManager):
         if len(invalid_term_ids) > 0:
             invalid_term_ids_str = ", ".join(str(_) for _ in invalid_term_ids)
             raise ValidationError(f"Invalid term id(s) {invalid_term_ids_str}")
+        # terms must be in the correct vocabulary
+        excluded_terms = terms.exclude(namespace=assessment.vocabulary)
+        if excluded_terms.exists():
+            excluded_terms_str = ", ".join(str(_.pk) for _ in excluded_terms)
+            raise ValidationError(
+                f"Term id(s) {excluded_terms_str} are not in the assessment vocabulary"
+            )
         # terms must be the correct type
         excluded_terms = terms.exclude(type=VocabularyTermType.endpoint_name.value)
         if excluded_terms.exists():
@@ -333,28 +340,42 @@ class EndpointManager(BaseManager):
 
     @transaction.atomic
     def update_terms(self, objs: List[Dict], assessment: Assessment) -> List:
+        """
+        Updates all of the terms and respective text fields
+        for a list of endpoints based on the given name term.
+        All endpoints must be from the same assessment.
+
+        Args:
+            objs (List[Dict]): List of endpoint dicts, where each dict has
+                for keys 'id' and 'name_term_id'
+            assessment (Assessment): Assessment for endpoints
+
+        Returns:
+            List: Updated endpoints
+        """
         # validate the endpoints and terms
         self._validate_update_terms(objs, assessment)
 
-        # mapping of endpoint id to name_term_id
+        # map endpoints to their name terms
         endpoint_id_to_term_id = {obj["id"]: obj["name_term_id"] for obj in objs}
 
-        # mapping of term id to parent
-        name_term_ids = {obj["name_term_id"] for obj in objs}
-        name_terms = Term.objects.filter(pk__in=name_term_ids)
-        term_id_to_parent_id = {}
-
-        def _add_to_dict(term):
-            if term.id in term_id_to_parent_id:
+        # map all applicable terms to their parents
+        def _add_to_dict(term, mapping):
+            if term.id in mapping:
                 return
             if term.parent_id is None:
                 return
-            term_id_to_parent_id[term.id] = term.parent_id
-            _add_to_dict(term.parent)
+            mapping[term.id] = term.parent_id
+            _add_to_dict(term.parent, mapping)
 
+        term_id_to_parent_id = {}
+        name_term_ids = {obj["name_term_id"] for obj in objs}
+        name_terms = Term.objects.filter(pk__in=name_term_ids)
         for term in name_terms:
-            _add_to_dict(term)
+            _add_to_dict(term, term_id_to_parent_id)
 
+        # get a queryset of all terms we're using,
+        # name terms and their trees of parents
         all_term_ids = set(term_id_to_parent_id.keys()) | set(term_id_to_parent_id.values())
         all_terms = Term.objects.filter(pk__in=all_term_ids)
         term_id_to_type_and_name = {term.id: (term.type, term.name) for term in all_terms}
