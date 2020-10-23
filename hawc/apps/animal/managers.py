@@ -339,11 +339,13 @@ class EndpointManager(BaseManager):
 
         # mapping of term id to parent
         name_term_ids = {obj["name_term_id"] for obj in objs}
-        name_terms = Term.filter(pk__in=name_term_ids)
+        name_terms = Term.objects.filter(pk__in=name_term_ids)
         term_id_to_parent_id = {}
 
         def _add_to_dict(term):
             if term.id in term_id_to_parent_id:
+                return
+            if term.parent_id is None:
                 return
             term_id_to_parent_id[term.id] = term.parent_id
             _add_to_dict(term.parent)
@@ -352,7 +354,7 @@ class EndpointManager(BaseManager):
             _add_to_dict(term)
 
         all_term_ids = set(term_id_to_parent_id.keys()) | set(term_id_to_parent_id.values())
-        all_terms = Term.filter(pk__in=all_term_ids)
+        all_terms = Term.objects.filter(pk__in=all_term_ids)
         term_id_to_type_and_name = {term.id: (term.type, term.name) for term in all_terms}
 
         # set endpoint terms
@@ -370,7 +372,7 @@ class EndpointManager(BaseManager):
                 text_field = type_to_text_field[term_type]
                 setattr(endpoint, term_field, term_id)
                 setattr(endpoint, text_field, term_name)
-                term_id = term_id_to_parent_id.get("term_id")
+                term_id = term_id_to_parent_id.get(term_id)
             updated_endpoints.append(endpoint)
 
         self.bulk_update(updated_endpoints, updated_fields)
