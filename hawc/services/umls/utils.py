@@ -4,16 +4,15 @@
 @author: scott
 """
 
-from typing import Optional, Set
 import spacy
-
 from scispacy.linking import EntityLinker
 
 
 _cache = {}
 
 
-def loadUMLSLinker(max_UMLS_Returns, confidence, model="en_core_sci_sm"):
+def loadUMLSLinker(max_UMLS_Returns=999, confidence=0.5,
+                   model="en_core_sci_sm"):
     """Load model."""
     nlp = spacy.load(model)
     linker = EntityLinker(resolve_abbreviations=False, name="umls",
@@ -23,30 +22,91 @@ def loadUMLSLinker(max_UMLS_Returns, confidence, model="en_core_sci_sm"):
     return (linker, nlp)
 
 
-def flipOnComma(text: str) -> str:
+def loadDocs(series, nlp):
+    """Run nlp on text."""
+    series_list = series.drop_duplicates().apply(transformComma, entity=True)
+    text_list = set([j.strip() for i in series_list for j in i if len(j) > 2])
+    docs_dict = {text: nlp(text) for text in text_list}
+    return docs_dict
+
+
+def transformComma(text: str, entity: bool) -> list:
     """Remove commas and reverse string."""
-    text_split = text.split(",")
-    text_flipped = text_split[::-1]
-    text_joined = " ".join(map(str, text_flipped)).strip()
-    return text_joined
+    if text.endswith('.'):
+        return [text]
+    text_split = [str(i).strip() for i in text.split(",")]
+    text_flipped = [str(i).strip() for i in text_split[::-1]]
+    comma_removed = " ".join(text_split)
+    comma_reversed = " ".join(text_flipped)
+    comb = [comma_reversed, comma_removed]
+    comb.append(text)
+    if entity:
+        comb += text_split[:1]
+    return comb
 
 
-def umls_to_string(umlsList: list, single_result=True) -> str:
+def umls_filter(x, string=True) -> str:
     """Convert umls list of dicts to string."""
+    text = x.iloc[0]
+    umlsList = x.iloc[1]
+
+    for i in range(2, len(x.index)):
+        umlsList_temp = x.iloc[i]
+        for i in umlsList_temp:
+            if i['cui'] not in [j['cui'] for j in umlsList]:
+                umlsList.append(i)
+
+    base = '' if string else []
     if len(umlsList) == 0:
-        return ''
-    if not single_result:
-        return \
-            ' // '.join([i['name'] + ' (' + i['cui'] + ')' for i in umlsList])
+        return base
 
-    umls_limited = [i for i in umlsList if i['score'] == umlsList[0]['score']]
+    text_split = [str(i).strip().lower() for i in text.split(",")
+                  if len(i.strip()) > 2]
+    text_transformed = [i.lower() for i in transformComma(text, False)]
+    tiers = [[] for i in range(len(text_split) + 2)]
 
-    return \
-        ' // '.join([i['name'] + ' (' + i['cui'] + ')' for i in umls_limited])
+    for val in umlsList:
+        syns = [i.lower() for i in val['synonyms']] + [val['name'].lower()]
+        added = False
+
+        for i in text_transformed:
+            if i in syns:
+                tiers[0].append(val)
+                added = True
+                break
+        if added:
+            continue
+
+        for n, i in enumerate(text_split):
+            if i in syns:
+                tiers[n+1].append(val)
+                added = True
+                break
+        if added:
+            continue
+
+        tiers[-1].append(val)
+
+    results_list = []
+    for n, i in enumerate(tiers):
+        if n == len(tiers)-1 and len(results_list) > 0:
+            break
+        if len(i) == 0:
+            continue
+        results_list += sorted(i, key=lambda x: x['score'], reverse=True)
+        if n == 0:
+            break
+
+    if string:
+        return ' // '.join(
+            [i['name'] + ' (' + i['cui'] + '; ' + ', '.join(i['tuis']) + ')'
+             for i in results_list])
+    else:
+        return results_list
 
 
-def breakIntoSpansAndUMLS(text, nlp, linker,
-                          tuiFilter: Optional[Set[str]] = None,
+def breakIntoSpansAndUMLS(text, docs_dict, linker,
+                          tuiFilter=None,
                           confidence=0.5,
                           RequireNonObsoleteDef=False,
                           entity_break=False,
@@ -58,17 +118,25 @@ def breakIntoSpansAndUMLS(text, nlp, linker,
             _cache[cache_key] = {}
         elif text in _cache[cache_key]:
             return _cache[cache_key][text]
-    doc = nlp(text.strip())
+    confidence = 0 if confidence is None else confidence
+    cui_limit = 999 if cui_limit is None else cui_limit
+    docs = [docs_dict[text_transformed.strip()]
+            for text_transformed in transformComma(text, entity_break)
+            if len(text_transformed) > 2]
     if entity_break:
-        entities = doc.ents
+        entities = [i for doc in docs for i in list(doc.ents)]
     else:
-        entities = [doc[:]]
-    umlsList = []
+        entities = [doc[:] for doc in docs]
+    save_cui = {}
     for entity in entities:
         last_score = 1
         count = 0
         for umls_ent in entity._.umls_ents:
             umls_score = round(umls_ent[1], 4)
+            if umls_ent[0] in save_cui:
+                if save_cui[umls_ent[0]]['score'] < umls_score:
+                    save_cui[umls_ent[0]]['score'] = umls_score
+                continue
             if umls_score < confidence:
                 break
             if count >= cui_limit and umls_score < last_score:
@@ -87,16 +155,16 @@ def breakIntoSpansAndUMLS(text, nlp, linker,
                              'tuis': umls_Code[3],
                              'description': umls_Code[4],
                              }
-                umlsList.append(umls_dict)
                 count += 1
                 last_score = umls_score
+                save_cui[umls_ent[0]] = umls_dict
+    umlsList = [val for key, val in save_cui.items()]
 
-    if entity_break:
-        umls_sorted = sorted(umlsList, key=lambda x: x['score'], reverse=True)
-        umls_limited = [i for i in umls_sorted if i['score'] >=
-                        umls_sorted[min(cui_limit,
-                                        len(umls_sorted))-1]['score']]
-        umlsList = umls_limited
+    umls_sorted = sorted(umlsList, key=lambda x: x['score'], reverse=True)
+    umls_limited = [i for i in umls_sorted if i['score'] >=
+                    umls_sorted[min(cui_limit,
+                                    len(umls_sorted))-1]['score']]
+    umlsList = umls_limited
 
     _cache[cache_key][text] = umlsList
 
