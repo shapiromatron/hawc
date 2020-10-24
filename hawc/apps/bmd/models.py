@@ -5,7 +5,6 @@ import os
 
 import bmds
 from django.conf import settings
-from django.contrib.postgres.fields import JSONField
 from django.db import models
 from django.urls import reverse_lazy
 from django.utils.timezone import now
@@ -139,7 +138,7 @@ class Session(models.Model):
         "assessment.DoseUnits", on_delete=models.CASCADE, related_name="bmd_sessions"
     )
     version = models.CharField(max_length=10, choices=BMDS_CHOICES)
-    bmrs = JSONField(default=list)
+    bmrs = models.JSONField(default=list)
     date_executed = models.DateTimeField(null=True)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
@@ -312,12 +311,12 @@ class Model(models.Model):
     model_id = models.PositiveSmallIntegerField()
     bmr_id = models.PositiveSmallIntegerField()
     name = models.CharField(max_length=25)
-    overrides = JSONField(default=dict)
+    overrides = models.JSONField(default=dict)
     date_executed = models.DateTimeField(null=True)
     execution_error = models.BooleanField(default=False)
     dfile = models.TextField(blank=True)
     outfile = models.TextField(blank=True)
-    output = JSONField(default=dict)
+    output = models.JSONField(default=dict)
     plot = models.ImageField(upload_to=IMAGE_UPLOAD_TO, blank=True)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)

@@ -1,10 +1,11 @@
+from functools import partial
+
 from crispy_forms import bootstrap as cfb
 from crispy_forms import layout as cfl
 from django import forms
 from django.db.models import Q
 from django.forms.models import BaseModelFormSet, modelformset_factory
 from django.urls import reverse
-from django.utils.functional import curry
 from selectable import forms as selectable
 
 from ..assessment.lookups import BaseEndpointLookup, DssToxIdLookup, EffectTagLookup
@@ -1000,7 +1001,7 @@ class BaseGroupResultFormset(BaseModelFormSet):
         outcome = kwargs.pop("outcome", None)
         self.result = kwargs.pop("result", None)
         super().__init__(**kwargs)
-        self.form = curry(
+        self.form = partial(
             self.form, study_population=study_population, outcome=outcome, result=self.result,
         )
 

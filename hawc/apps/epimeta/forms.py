@@ -1,10 +1,11 @@
+from functools import partial
+
 from crispy_forms import bootstrap as cfb
 from crispy_forms import layout as cfl
 from django import forms
 from django.db.models import Q
 from django.forms.models import modelformset_factory
 from django.urls import reverse
-from django.utils.functional import curry
 from selectable import forms as selectable
 
 from ..common.forms import BaseFormHelper
@@ -334,7 +335,7 @@ class BaseSingleResultFormset(forms.BaseModelFormSet):
     def __init__(self, **kwargs):
         assessment = kwargs.pop("assessment")
         super().__init__(**kwargs)
-        self.form = curry(self.form, assessment=assessment)
+        self.form = partial(self.form, assessment=assessment)
 
 
 SingleResultFormset = modelformset_factory(

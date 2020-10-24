@@ -8,7 +8,6 @@ from django.conf import settings
 from django.contrib.contenttypes import fields
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.postgres.fields import JSONField
 from django.core.cache import cache
 from django.core.validators import MinValueValidator
 from django.db import models
@@ -63,7 +62,7 @@ class DSSTox(models.Model):
     dtxsid = models.CharField(
         max_length=80, primary_key=True, verbose_name="DSSTox substance identifier (DTXSID)",
     )
-    content = JSONField(default=dict)
+    content = models.JSONField(default=dict)
 
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
@@ -764,7 +763,7 @@ class DatasetRevision(models.Model):
             recent dataset version will be visible. Visualizations using a dataset will use the
             latest version available.""",
     )
-    metadata = JSONField(default=dict, editable=False)
+    metadata = models.JSONField(default=dict, editable=False)
     excel_worksheet_name = models.CharField(
         help_text="Worksheet name to use in Excel file. If blank, the first worksheet is used.",
         max_length=64,
@@ -853,8 +852,8 @@ class Job(models.Model):
     )
     job = models.PositiveSmallIntegerField(choices=JobType.choices(), default=JobType.TEST)
 
-    kwargs = JSONField(default=dict, blank=True, null=True)
-    result = JSONField(default=dict, editable=False)
+    kwargs = models.JSONField(default=dict, blank=True, null=True)
+    result = models.JSONField(default=dict, editable=False)
 
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
