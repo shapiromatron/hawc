@@ -11,7 +11,7 @@ class TextInput extends Component {
                 </label>
                 <div className="controls">
                     <textarea
-                        className="span12 textarea"
+                        className="col-md-12 textarea"
                         id={`id_${this.props.name}`}
                         name={this.props.name}
                         type="text"

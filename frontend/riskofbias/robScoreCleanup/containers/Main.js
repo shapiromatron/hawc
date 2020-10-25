@@ -32,7 +32,7 @@ class Root extends Component {
             <div>
                 <ScrollToErrorBox error={error} />
                 <div className="container-fluid cleanStudyMetricForm">
-                    <div className="span6">
+                    <div className="col-md-6">
                         <MetricSelect />
                         <div>
                             <button
@@ -51,11 +51,11 @@ class Root extends Component {
                             </button>
                         </div>
                     </div>
-                    <div className="span6 container-fluid">
-                        <div className="span6">
+                    <div className="col-md-6 container-fluid">
+                        <div className="col-md-6">
                             <ScoreSelect />
                         </div>
-                        <div className="span6">
+                        <div className="col-md-6">
                             <StudyTypeSelect />
                         </div>
                         <p className="help-block">

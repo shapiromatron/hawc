@@ -27,7 +27,7 @@ class FloatInput extends Component {
                 {this.renderLabel()}
                 <div className="controls">
                     <input
-                        className="span12"
+                        className="col-md-12"
                         id={`id_${this.props.name}`}
                         name={this.props.name}
                         type="text"

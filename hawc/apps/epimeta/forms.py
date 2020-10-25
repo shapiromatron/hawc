@@ -62,9 +62,9 @@ class MetaProtocolForm(forms.ModelForm):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
                 if fld in self.CRITERION_FIELDS:
-                    widget.attrs["class"] = "span10"
+                    widget.attrs["class"] = "col-md-10"
                 else:
-                    widget.attrs["class"] = "span12"
+                    widget.attrs["class"] = "col-md-12"
             if type(widget) == forms.Textarea:
                 widget.attrs["rows"] = 3
 
@@ -83,14 +83,14 @@ class MetaProtocolForm(forms.ModelForm):
 
         helper = BaseFormHelper(self, **inputs)
 
-        helper.add_fluid_row("name", 2, "span6")
-        helper.add_fluid_row("lit_search_strategy", 2, "span6")
-        helper.add_fluid_row("lit_search_start_date", 3, "span4")
-        helper.add_fluid_row("inclusion_criteria", 2, "span6")
+        helper.add_fluid_row("name", 2, "col-md-6")
+        helper.add_fluid_row("lit_search_strategy", 2, "col-md-6")
+        helper.add_fluid_row("lit_search_start_date", 3, "col-md-4")
+        helper.add_fluid_row("inclusion_criteria", 2, "col-md-6")
 
         url = reverse("epi:studycriteria_create", kwargs={"pk": self.instance.study.assessment.pk})
-        helper.addBtnLayout(helper.layout[5], 0, url, "Create criteria", "span6")
-        helper.addBtnLayout(helper.layout[5], 1, url, "Create criteria", "span6")
+        helper.addBtnLayout(helper.layout[5], 0, url, "Create criteria", "col-md-6")
+        helper.addBtnLayout(helper.layout[5], 1, url, "Create criteria", "col-md-6")
 
         return helper
 
@@ -143,9 +143,9 @@ class MetaResultForm(forms.ModelForm):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
                 if fld == "adjustment_factors":
-                    widget.attrs["class"] = "span10"
+                    widget.attrs["class"] = "col-md-10"
                 else:
-                    widget.attrs["class"] = "span12"
+                    widget.attrs["class"] = "col-md-12"
             if type(widget) == forms.Textarea:
                 widget.attrs["rows"] = 3
 
@@ -164,19 +164,19 @@ class MetaResultForm(forms.ModelForm):
 
         helper = BaseFormHelper(self, **inputs)
 
-        helper.add_fluid_row("label", 2, "span6")
-        helper.add_fluid_row("health_outcome", 2, "span6")
-        helper.add_fluid_row("exposure_name", 2, "span6")
-        helper.add_fluid_row("number_studies", 3, "span4")
-        helper.add_fluid_row("n", 3, "span4")
-        helper.add_fluid_row("lower_ci", 3, "span4")
-        helper.add_fluid_row("adjustment_factors", 2, "span6")
+        helper.add_fluid_row("label", 2, "col-md-6")
+        helper.add_fluid_row("health_outcome", 2, "col-md-6")
+        helper.add_fluid_row("exposure_name", 2, "col-md-6")
+        helper.add_fluid_row("number_studies", 3, "col-md-4")
+        helper.add_fluid_row("n", 3, "col-md-4")
+        helper.add_fluid_row("lower_ci", 3, "col-md-4")
+        helper.add_fluid_row("adjustment_factors", 2, "col-md-6")
 
         url = reverse(
             "epi:adjustmentfactor_create",
             kwargs={"pk": self.instance.protocol.study.assessment.pk},
         )
-        helper.addBtnLayout(helper.layout[8], 0, url, "Create criteria", "span6")
+        helper.addBtnLayout(helper.layout[8], 0, url, "Create criteria", "col-md-6")
 
         return helper
 
@@ -247,13 +247,13 @@ class MetaResultFilterForm(forms.Form):
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) not in [forms.CheckboxInput, forms.CheckboxSelectMultiple]:
-                widget.attrs["class"] = "span12"
+                widget.attrs["class"] = "col-md-12"
 
         helper = BaseFormHelper(self)
 
         helper.form_method = "GET"
 
-        helper.add_fluid_row("studies", 4, "span3")
+        helper.add_fluid_row("studies", 4, "col-md-3")
 
         helper.layout.append(cfb.FormActions(cfl.Submit("submit", "Apply filters"),))
 
@@ -317,7 +317,7 @@ class SingleResultForm(forms.ModelForm):
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "span12"
+                widget.attrs["class"] = "col-md-12"
 
             if type(widget) == forms.Textarea:
                 widget.attrs["rows"] = 3
@@ -357,5 +357,5 @@ class MetaResultSelectorForm(forms.Form):
         study_id = kwargs.pop("study_id")
         super().__init__(*args, **kwargs)
         for fld in list(self.fields.keys()):
-            self.fields[fld].widget.attrs["class"] = "span11"
+            self.fields[fld].widget.attrs["class"] = "col-md-11"
         self.fields["selector"].widget.update_query_parameters({"related": study_id})

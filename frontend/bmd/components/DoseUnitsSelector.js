@@ -22,7 +22,7 @@ class DoseUnitsSelector extends React.Component {
             return null;
         }
         return (
-            <div className="span3">
+            <div className="col-md-3">
                 <label className="control-label">Dose units used in modeling:</label>
                 <div className="controls">
                     <select
@@ -45,7 +45,7 @@ class DoseUnitsSelector extends React.Component {
     render() {
         return (
             <div className="row-fluid">
-                <div className="span3">
+                <div className="col-md-3">
                     <p>{this.props.version}</p>
                 </div>
                 {this.renderDoseForm()}

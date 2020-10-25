@@ -28,7 +28,7 @@ class StyleManager {
     }
 
     add_select(style_type, selected_style, include_null) {
-        var select = $('<select class="span12">').html(this._build_options(style_type));
+        var select = $('<select class="col-md-12">').html(this._build_options(style_type));
         if (include_null) {
             select.prepend(`<option value="${NULL_CASE}">${NULL_CASE}</option>`);
         }
@@ -69,8 +69,8 @@ class StyleManager {
             container = $('<div class="row-fluid">'),
             title = $(`<h3>${toTitleCase(style_type)}</h3>`),
             style_div = $('<div class="row-fluid">'),
-            form_div = $('<div class="span6">'),
-            vis_div = $('<div class="span6">'),
+            form_div = $('<div class="col-md-6">'),
+            vis_div = $('<div class="col-md-6">'),
             d3_div = $("<div>"),
             modal = $(
                 '<div class="modal hide fade">' +

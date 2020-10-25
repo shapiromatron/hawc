@@ -115,7 +115,7 @@ class CopyAsNewSelectorForm(forms.Form):
             widget=selectable.AutoComboboxSelectWidget,
         )
         fld.widget.update_query_parameters({"related": parent_id})
-        fld.widget.attrs["class"] = "span11"
+        fld.widget.attrs["class"] = "col-md-11"
         self.fields["selector"] = fld
 
 

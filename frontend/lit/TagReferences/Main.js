@@ -32,7 +32,7 @@ class TagReferencesMain extends Component {
             allTagged = store.referencesUntagged.length == 0;
         return (
             <div className="row-fluid">
-                <div className="span3">
+                <div className="col-md-3">
                     <h4>References</h4>
                     <div className="accordion" id="references_lists">
                         <div className="accordion-group">
@@ -91,7 +91,7 @@ class TagReferencesMain extends Component {
                         </div>
                     </div>
                 </div>
-                <div className="span6">
+                <div className="col-md-6">
                     {store.selectedReference ? (
                         <div>
                             <h4>Tags for current reference</h4>
@@ -153,7 +153,7 @@ class TagReferencesMain extends Component {
                         </div>
                     ) : null}
                 </div>
-                <div className="span3">
+                <div className="col-md-3">
                     <h4>Available tags</h4>
                     <TagTree
                         tagtree={toJS(store.tagtree)}

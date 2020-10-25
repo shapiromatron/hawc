@@ -117,23 +117,23 @@ class TableField extends InputField {
 
     addTdText(name, val) {
         val = val || "";
-        return $(`<td><input name="${name}" value="${val}" class="span12" type="text"></td>`);
+        return $(`<td><input name="${name}" value="${val}" class="col-md-12" type="text"></td>`);
     }
 
     addTdInt(name, val) {
         val = val || "";
-        return `<td><input name="${name}" value="${val}" class="span12" type="number"></td>`;
+        return `<td><input name="${name}" value="${val}" class="col-md-12" type="number"></td>`;
     }
 
     addTdFloat(name, val) {
         val = val || "";
-        return `<td><input name="${name}" value="${val}" class="span12" type="number" step="any"></td>`;
+        return `<td><input name="${name}" value="${val}" class="col-md-12" type="number" step="any"></td>`;
     }
 
     addTdColor(name, val) {
         val = val || "#000000";
         return $("<td>").append(
-            $(`<input type="color" name="${name}" value="${val}" class="span12" required>`)
+            $(`<input type="color" name="${name}" value="${val}" class="col-md-12" required>`)
         );
     }
 
@@ -143,21 +143,21 @@ class TableField extends InputField {
     }
 
     addTdSelect(name, values) {
-        var sel = $(`<select name="${name}" class="span12">`).append(
+        var sel = $(`<select name="${name}" class="col-md-12">`).append(
             _.map(values, d => `<option value="${d}">${d}</option>`)
         );
         return $("<td>").append(sel);
     }
 
     addTdSelectLabels(name, options) {
-        var sel = $(`<select name="${name}" class="span12">`).append(
+        var sel = $(`<select name="${name}" class="col-md-12">`).append(
             _.map(options, d => `<option value="${d.value}">${d.label}</option>`)
         );
         return $("<td>").append(sel);
     }
 
     addTdSelectMultiple(name, values) {
-        var sel = $(`<select name="${name}" class="span12" multiple>`).append(
+        var sel = $(`<select name="${name}" class="col-md-12" multiple>`).append(
             _.map(values, d => `<option value="${d}">${d}</option>`)
         );
         return $("<td>").append(sel);

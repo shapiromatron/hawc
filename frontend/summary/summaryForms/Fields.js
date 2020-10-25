@@ -34,7 +34,7 @@ class TextField extends InputField {
     }
 
     _setInput() {
-        this.$inp = $(`<input type="text" name="${this.schema.name}" class="span12" required>`);
+        this.$inp = $(`<input type="text" name="${this.schema.name}" class="col-md-12" required>`);
     }
 
     render() {
@@ -58,7 +58,9 @@ class IntegerField extends TextField {
     }
 
     _setInput() {
-        this.$inp = $(`<input type="number" name="${this.schema.name}" class="span12" required>`);
+        this.$inp = $(
+            `<input type="number" name="${this.schema.name}" class="col-md-12" required>`
+        );
     }
 }
 
@@ -69,14 +71,14 @@ class FloatField extends TextField {
 
     _setInput() {
         this.$inp = $(
-            `<input type="number" step="any" name="${this.schema.name}" class="span12" required>`
+            `<input type="number" step="any" name="${this.schema.name}" class="col-md-12" required>`
         );
     }
 }
 
 class ColorField extends TextField {
     _setInput() {
-        this.$inp = $(`<input type="color" name="${this.schema.name}" class="span12" required>`);
+        this.$inp = $(`<input type="color" name="${this.schema.name}" class="col-md-12" required>`);
     }
 }
 
@@ -124,7 +126,7 @@ class SelectField extends TextField {
         var makeOpt = function(d) {
             return `<option value="${d[0]}">${d[1]}</option>`;
         };
-        this.$inp = $(`<select name="${this.schema.name}" class="span12">`).html(
+        this.$inp = $(`<select name="${this.schema.name}" class="col-md-12">`).html(
             this.schema.opts.map(makeOpt).join("")
         );
     }

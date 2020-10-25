@@ -32,8 +32,8 @@ let build_settings_general_tab = function(self) {
         },
         build_legend_settings = function() {
             var div = $('<div class="row-fluid">'),
-                content = $('<div class="span6">'),
-                plot_div = $('<div class="span6">'),
+                content = $('<div class="col-md-6">'),
+                plot_div = $('<div class="col-md-6">'),
                 vis = d3
                     .select(plot_div[0])
                     .append("svg")
@@ -122,15 +122,15 @@ let build_settings_general_tab = function(self) {
                         name = $(`<input name="legend_name" value="${tmp_label}">`),
                         line = self.style_manager
                             .add_select("lines", tmp_line, true)
-                            .removeClass("span12")
+                            .removeClass("col-md-12")
                             .attr("name", "legend_line"),
                         symbol = self.style_manager
                             .add_select("symbols", tmp_symbol, true)
-                            .removeClass("span12")
+                            .removeClass("col-md-12")
                             .attr("name", "legend_symbol"),
                         rectangle = self.style_manager
                             .add_select("rectangles", tmp_rect, true)
-                            .removeClass("span12")
+                            .removeClass("col-md-12")
                             .attr("name", "legend_rect");
 
                     modal

@@ -46,7 +46,7 @@ class BMROptionTable extends React.Component {
     render() {
         let header = this.props.editMode ? "View/edit" : "View";
         return (
-            <div className="span6">
+            <div className="col-md-6">
                 <h4>Benchmark modeling responses</h4>
                 <table className="table table-condensed table-striped">
                     <thead>

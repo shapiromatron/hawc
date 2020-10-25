@@ -23,7 +23,7 @@ class App extends Component {
                 <div className="input-append">
                     <input
                         id="searchQuery"
-                        className="span6"
+                        className="col-md-6"
                         type="text"
                         value={this.state.query}
                         onChange={e => {

@@ -61,7 +61,7 @@ class EditNode extends React.Component {
         return (
             <div className="editNodeForm container-fluid">
                 <div className="row-fluid">
-                    <div className="control-group span6">
+                    <div className="control-group col-md-6">
                         <label htmlFor="tag_name" className="control-label">
                             Name
                         </label>
@@ -70,20 +70,20 @@ class EditNode extends React.Component {
                                 name="name"
                                 type="text"
                                 maxLength="128"
-                                className="span12"
+                                className="col-md-12"
                                 onChange={this.onChange.bind(this)}
                                 value={this.state.name}
                             />
                         </div>
                     </div>
-                    <div className="control-group span6">
+                    <div className="control-group col-md-6">
                         <label htmlFor="parent" className="control-label">
                             Parent
                         </label>
                         <div className="controls controls-row">
                             <select
                                 name="parent"
-                                className="span12"
+                                className="col-md-12"
                                 onChange={this.onChange.bind(this)}
                                 value={this.state.parent}>
                                 {this.props.parentOptions.map(d => (

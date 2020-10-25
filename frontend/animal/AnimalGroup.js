@@ -149,7 +149,7 @@ class AnimalGroup {
     displayAsModal() {
         var modal = new HAWCModal(),
             title = $("<h4>").html(this.build_breadcrumbs()),
-            $details = $('<div class="span12">'),
+            $details = $('<div class="col-md-12">'),
             $content = $('<div class="container-fluid">').append(
                 $('<div class="row-fluid">').append($details)
             );

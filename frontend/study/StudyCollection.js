@@ -48,7 +48,7 @@ class StudyCollection {
         }
 
         if (flds.length > 1) {
-            $('<select class="span12" size="6" multiple>')
+            $('<select class="col-md-12" size="6" multiple>')
                 .append(_.map(flds, d => `<option value="${d}">${Study.typeNames[d]}</option>`))
                 .appendTo($el);
         }

@@ -10,7 +10,7 @@ class OverrideObjectTypeSelector extends Component {
         let {choices, value, onChange} = this.props;
         return (
             <SelectInput
-                className="span6"
+                className="col-md-6"
                 label="Override type"
                 choices={choices}
                 multiple={false}
@@ -32,7 +32,7 @@ class OverrideObjectsSelector extends Component {
         let {choices, value, onChange} = this.props;
         return (
             <SelectInput
-                className="span6"
+                className="col-md-6"
                 label="Override type"
                 choices={choices}
                 multiple={true}

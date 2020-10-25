@@ -218,7 +218,7 @@ class Study {
             };
         this.build_details_table($details);
         if (this.has_riskofbias()) {
-            var $rob = $('<div class="span12">');
+            var $rob = $('<div class="col-md-12">');
             $div.prepend($('<div class="row-fluid">').append($rob));
             if ($shower) {
                 $shower.on("shown", function() {

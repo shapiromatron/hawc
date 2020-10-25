@@ -69,7 +69,7 @@ class SearchForm(forms.ModelForm):
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "span12"
+                widget.attrs["class"] = "col-md-12"
 
         self.helper = self.setHelper()
 
@@ -316,7 +316,7 @@ class SearchSelectorForm(forms.Form):
         super().__init__(*args, **kwargs)
 
         for fld in list(self.fields.keys()):
-            self.fields[fld].widget.attrs["class"] = "span11"
+            self.fields[fld].widget.attrs["class"] = "col-md-11"
 
         assessment_pks = Assessment.objects.get_viewable_assessments(user).values_list(
             "pk", flat=True
@@ -354,7 +354,7 @@ class ReferenceForm(forms.ModelForm):
                 widget.attrs["rows"] = 3
 
             if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "span12"
+                widget.attrs["class"] = "col-md-12"
 
         inputs = {
             "legend_text": "Update reference details",
@@ -364,8 +364,8 @@ class ReferenceForm(forms.ModelForm):
 
         helper = BaseFormHelper(self, **inputs)
         # TODO: use new names
-        helper.add_fluid_row("authors_short", 3, "span4")
-        helper.add_fluid_row("authors", 2, "span6")
+        helper.add_fluid_row("authors_short", 3, "col-md-4")
+        helper.add_fluid_row("authors", 2, "col-md-6")
 
         return helper
 
@@ -390,7 +390,7 @@ class TagsCopyForm(forms.Form):
         user = kwargs.pop("user", None)
         self.assessment = kwargs.pop("assessment", None)
         super().__init__(*args, **kwargs)
-        self.fields["assessment"].widget.attrs["class"] = "span12"
+        self.fields["assessment"].widget.attrs["class"] = "col-md-12"
         self.fields["assessment"].queryset = Assessment.objects.get_viewable_assessments(
             user, exclusion_id=self.assessment.id
         )

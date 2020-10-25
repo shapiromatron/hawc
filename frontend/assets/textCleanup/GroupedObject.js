@@ -10,7 +10,7 @@ class GroupedObject extends Component {
         let {store} = this.props;
         return (
             <div className="stripe row">
-                <span className="bulk-element field span4">
+                <span className="bulk-element field col-md-4">
                     <button
                         type="button"
                         title="Show/hide all items"
@@ -22,7 +22,7 @@ class GroupedObject extends Component {
                     </button>
                     &nbsp;{store.currentValue || "<empty>"} ({store.objects.length})
                 </span>
-                <span className="form-group bulk-element span5">
+                <span className="form-group bulk-element col-md-5">
                     <input
                         name={store.fieldName}
                         className="form-control"

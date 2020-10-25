@@ -321,7 +321,7 @@ class DataPivot {
         var self = this,
             modal = new HAWCModal(),
             title = `<h4>${this.title}</h4>`,
-            $plot = $('<div class="span12">'),
+            $plot = $('<div class="col-md-12">'),
             $content = $('<div class="container-fluid">').append(
                 $('<div class="row-fluid">').append($plot)
             );

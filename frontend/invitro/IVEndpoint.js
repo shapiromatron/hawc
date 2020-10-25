@@ -197,8 +197,8 @@ class IVEndpoint {
 
     displayAsModal() {
         var modal = new HAWCModal(),
-            $details = $('<div class="span12">'),
-            $eg_tbl = $('<div class="span12">'),
+            $details = $('<div class="col-md-12">'),
+            $eg_tbl = $('<div class="col-md-12">'),
             $content = $('<div class="container-fluid">')
                 .append($('<div class="row-fluid">').append($details))
                 .append($('<div class="row-fluid">').append($eg_tbl));

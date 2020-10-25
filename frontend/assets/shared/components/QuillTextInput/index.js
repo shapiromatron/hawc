@@ -12,7 +12,7 @@ class QuillTextInput extends Component {
                 </label>
                 <div className="controls">
                     <ReactQuill
-                        className="span12 textarea"
+                        className="col-md-12 textarea"
                         id={`id_${this.props.name}`}
                         type="text"
                         required={this.props.required}

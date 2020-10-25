@@ -101,7 +101,7 @@ class IVExperiment {
 
     displayAsModal() {
         var modal = new HAWCModal(),
-            $details = $('<div class="span12">'),
+            $details = $('<div class="col-md-12">'),
             $content = $('<div class="container-fluid">').append(
                 $('<div class="row-fluid">').append($details)
             );

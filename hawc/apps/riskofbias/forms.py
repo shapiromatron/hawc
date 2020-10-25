@@ -56,8 +56,8 @@ class RoBDomainForm(forms.ModelForm):
             inputs["help_text"] = f"Create a new {rob_name} domain."
 
         helper = BaseFormHelper(self, **inputs)
-        helper["name"].wrap(cfl.Field, css_class="span6")
-        helper["description"].wrap(cfl.Field, css_class="html5text span12")
+        helper["name"].wrap(cfl.Field, css_class="col-md-6")
+        helper["description"].wrap(cfl.Field, css_class="html5text col-md-12")
         return helper
 
     def clean(self):
@@ -99,8 +99,8 @@ class RoBMetricForm(forms.ModelForm):
             inputs["help_text"] = f"Create a new {rob_name} metric."
 
         helper = BaseFormHelper(self, **inputs)
-        helper["name"].wrap(cfl.Field, css_class="span12")
-        helper["description"].wrap(cfl.Field, css_class="html5text span12")
+        helper["name"].wrap(cfl.Field, css_class="col-md-12")
+        helper["description"].wrap(cfl.Field, css_class="html5text col-md-12")
         return helper
 
 
@@ -275,7 +275,7 @@ class RiskOfBiasCopyForm(forms.Form):
         user = kwargs.pop("user", None)
         self.assessment = kwargs.pop("assessment", None)
         super().__init__(*args, **kwargs)
-        self.fields["assessment"].widget.attrs["class"] = "span12"
+        self.fields["assessment"].widget.attrs["class"] = "col-md-12"
         self.fields["assessment"].queryset = Assessment.objects.get_viewable_assessments(
             user, exclusion_id=self.assessment.id
         )

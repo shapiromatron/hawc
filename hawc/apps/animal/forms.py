@@ -63,9 +63,9 @@ class ExperimentForm(ModelForm):
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "span12"
+                widget.attrs["class"] = "col-md-12"
             if fld == "dtxsid":
-                widget.attrs["class"] = "span10"
+                widget.attrs["class"] = "col-md-10"
 
         self.fields["description"].widget.attrs["rows"] = 4
 
@@ -90,11 +90,13 @@ class ExperimentForm(ModelForm):
 
         helper = BaseFormHelper(self, **inputs)
 
-        helper.add_fluid_row("name", 3, "span4")
-        helper.add_fluid_row("chemical", 3, "span4")
-        helper.add_fluid_row("purity_available", 4, ["span2", "span2", "span2", "span6"])
+        helper.add_fluid_row("name", 3, "col-md-4")
+        helper.add_fluid_row("chemical", 3, "col-md-4")
+        helper.add_fluid_row(
+            "purity_available", 4, ["col-md-2", "col-md-2", "col-md-2", "col-md-6"]
+        )
         url = reverse("assessment:dtxsid_create")
-        helper.addBtnLayout(helper.layout[3], 2, url, "Add new DTXSID", "span4")
+        helper.addBtnLayout(helper.layout[3], 2, url, "Add new DTXSID", "col-md-4")
         helper.form_id = "experiment-form"
         return helper
 
@@ -178,9 +180,9 @@ class AnimalGroupForm(ModelForm):
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if fld in ["species", "strain"]:
-                widget.attrs["class"] = "span10"
+                widget.attrs["class"] = "col-md-10"
             else:
-                widget.attrs["class"] = "span12"
+                widget.attrs["class"] = "col-md-12"
 
         if self.instance.id:
             inputs = {
@@ -203,21 +205,21 @@ class AnimalGroupForm(ModelForm):
         helper = BaseFormHelper(self, **inputs)
 
         helper.form_id = "animal_group"
-        helper.add_fluid_row("species", 3, "span4")
-        helper.add_fluid_row("lifestage_exposed", 2, "span6")
+        helper.add_fluid_row("species", 3, "col-md-4")
+        helper.add_fluid_row("lifestage_exposed", 2, "col-md-6")
 
         assessment_id = self.instance.experiment.study.assessment.pk
 
         url = reverse("assessment:species_create", kwargs={"pk": assessment_id})
-        helper.addBtnLayout(helper.layout[3], 0, url, "Add new species", "span4")
+        helper.addBtnLayout(helper.layout[3], 0, url, "Add new species", "col-md-4")
 
         url = reverse("assessment:strain_create", kwargs={"pk": assessment_id})
-        helper.addBtnLayout(helper.layout[3], 1, url, "Add new strain", "span4")
+        helper.addBtnLayout(helper.layout[3], 1, url, "Add new strain", "col-md-4")
 
         if "generation" in self.fields:
-            helper.add_fluid_row("siblings", 3, "span4")
+            helper.add_fluid_row("siblings", 3, "col-md-4")
 
-        helper.add_fluid_row("comments", 2, "span6")
+        helper.add_fluid_row("comments", 2, "col-md-6")
 
         return helper
 
@@ -269,7 +271,7 @@ class DosingRegimeForm(ModelForm):
 
         self.fields["description"].widget.attrs["rows"] = 4
         for fld in list(self.fields.keys()):
-            self.fields[fld].widget.attrs["class"] = "span12"
+            self.fields[fld].widget.attrs["class"] = "col-md-12"
 
         if self.instance.id:
             inputs = {
@@ -292,8 +294,8 @@ class DosingRegimeForm(ModelForm):
         helper = BaseFormHelper(self, **inputs)
 
         helper.form_id = "dosing_regime"
-        helper.add_fluid_row("duration_exposure", 3, "span4")
-        helper.add_fluid_row("num_dose_groups", 3, "span4")
+        helper.add_fluid_row("duration_exposure", 3, "col-md-4")
+        helper.add_fluid_row("num_dose_groups", 3, "col-md-4")
         return helper
 
 
@@ -504,28 +506,28 @@ class EndpointForm(ModelForm):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
                 if fld in ["effects"]:
-                    widget.attrs["class"] = "span10"
+                    widget.attrs["class"] = "col-md-10"
                 else:
-                    widget.attrs["class"] = "span12"
+                    widget.attrs["class"] = "col-md-12"
 
         helper.layout.insert(
             helper.find_layout_idx_for_field_name("name"),
             cfl.Div(css_class="row-fluid", id="vocab"),
         )
-        helper.add_fluid_row("name", 1, "span12")
-        helper.add_fluid_row("system", 4, "span3")
-        helper.add_fluid_row("effects", 2, "span6")
-        helper.add_fluid_row("observation_time", 3, "span4")
-        helper.add_fluid_row("data_reported", 3, "span4")
-        helper.add_fluid_row("data_type", 3, "span4")
-        helper.add_fluid_row("response_units", 3, "span4")
-        helper.add_fluid_row("NOEL", 4, "span3")
-        helper.add_fluid_row("statistical_test", 3, ["span6", "span3", "span3"])
-        helper.add_fluid_row("litter_effects", 2, "span6")
-        helper.add_fluid_row("name_term", 5, "span2")
+        helper.add_fluid_row("name", 1, "col-md-12")
+        helper.add_fluid_row("system", 4, "col-md-3")
+        helper.add_fluid_row("effects", 2, "col-md-6")
+        helper.add_fluid_row("observation_time", 3, "col-md-4")
+        helper.add_fluid_row("data_reported", 3, "col-md-4")
+        helper.add_fluid_row("data_type", 3, "col-md-4")
+        helper.add_fluid_row("response_units", 3, "col-md-4")
+        helper.add_fluid_row("NOEL", 4, "col-md-3")
+        helper.add_fluid_row("statistical_test", 3, ["col-md-6", "col-md-3", "col-md-3"])
+        helper.add_fluid_row("litter_effects", 2, "col-md-6")
+        helper.add_fluid_row("name_term", 5, "col-md-2")
 
         url = reverse("assessment:effect_tag_create", kwargs={"pk": self.instance.assessment.pk})
-        helper.addBtnLayout(helper.layout[5], 0, url, "Add new effect tag", "span6")
+        helper.addBtnLayout(helper.layout[5], 0, url, "Add new effect tag", "col-md-6")
         helper.attrs["class"] = "hidden"
         return helper
 
@@ -621,7 +623,7 @@ class EndpointGroupForm(forms.ModelForm):
         if endpoint:
             self.instance.endpoint = endpoint
         for fld in self.fields:
-            self.fields[fld].widget.attrs["class"] = "span12"
+            self.fields[fld].widget.attrs["class"] = "col-md-12"
 
     VARIANCE_REQ = (
         'Variance must be numeric, or the endpoint-field "variance-type" should be "not reported"'
@@ -861,16 +863,16 @@ class EndpointFilterForm(forms.Form):
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) not in [forms.CheckboxInput, forms.CheckboxSelectMultiple]:
-                widget.attrs["class"] = "span12"
+                widget.attrs["class"] = "col-md-12"
 
         helper = BaseFormHelper(self)
 
         helper.form_method = "GET"
 
-        helper.add_fluid_row("studies", 4, "span3")
-        helper.add_fluid_row("species", 4, "span3")
-        helper.add_fluid_row("name", 4, "span3")
-        helper.add_fluid_row("tags", 4, "span3")
+        helper.add_fluid_row("studies", 4, "col-md-3")
+        helper.add_fluid_row("species", 4, "col-md-3")
+        helper.add_fluid_row("name", 4, "col-md-3")
+        helper.add_fluid_row("tags", 4, "col-md-3")
 
         helper.layout.append(cfb.FormActions(cfl.Submit("submit", "Apply filters"),))
 

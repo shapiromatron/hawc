@@ -21,7 +21,7 @@ class TextInput extends Component {
                 {this.renderLabel()}
                 <div className="controls">
                     <input
-                        className="span12 textinput"
+                        className="col-md-12 textinput"
                         id={`id_${this.props.name}`}
                         name={this.props.name}
                         type={type}

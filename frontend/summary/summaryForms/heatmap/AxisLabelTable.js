@@ -56,7 +56,7 @@ class AxisLabelTable extends Component {
                 <td>
                     <SelectInput
                         name={`${key}-column-${index}`}
-                        className="span12"
+                        className="col-md-12"
                         choices={getColumnsOptionsWithNull}
                         multiple={false}
                         handleSelect={value => changeArraySettings(key, index, "column", value)}

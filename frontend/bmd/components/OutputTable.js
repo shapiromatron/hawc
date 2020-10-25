@@ -150,7 +150,7 @@ class OutputTable extends React.Component {
         let binnedModels = binModels(this.props.models);
 
         return (
-            <div className="span8">
+            <div className="col-md-8">
                 <table className="table table-condensed">
                     <thead>{this.renderHeader.bind(this)()}</thead>
                     <tfoot>

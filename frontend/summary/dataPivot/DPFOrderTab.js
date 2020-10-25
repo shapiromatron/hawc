@@ -210,7 +210,7 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
                     "checked",
                     obj.include
                 ),
-                index = $('<input name="ov_index" class="span12" type="number" step="any">').val(
+                index = $('<input name="ov_index" class="col-md-12" type="number" step="any">').val(
                     obj.index
                 ),
                 text_style = dp.style_manager.add_select("texts", obj.text_style, true),
