@@ -46,7 +46,7 @@ class AssessmentForm(forms.ModelForm):
         self.helper = self.setHelper()
 
     def setHelper(self):
-        # by default take-up the whole row-fluid
+        # by default take-up the whole row
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
@@ -143,7 +143,7 @@ class AttachmentForm(forms.ModelForm):
         self.helper = self.setHelper()
 
     def setHelper(self):
-        # by default take-up the whole row-fluid
+        # by default take-up the whole row
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
@@ -269,7 +269,7 @@ class ContactForm(forms.Form):
         mail_admins(subject, body, fail_silently=False)
 
     def setHelper(self):
-        # by default take-up the whole row-fluid
+        # by default take-up the whole row
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
@@ -321,7 +321,7 @@ class DatasetForm(forms.ModelForm):
         self.helper = self.setHelper()
 
     def setHelper(self):
-        # by default take-up the whole row-fluid
+        # by default take-up the whole row
         for fld in self.fields.keys():
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:

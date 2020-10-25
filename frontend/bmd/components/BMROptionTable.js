@@ -10,7 +10,7 @@ class BMROptionTable extends React.Component {
         if (!this.props.editMode) return;
 
         return (
-            <div className="row-fluid">
+            <div className="row">
                 <div className="controls">
                     <button
                         onClick={this.props.handleCreateBmr}

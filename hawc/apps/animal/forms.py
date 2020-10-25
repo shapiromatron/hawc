@@ -59,7 +59,7 @@ class ExperimentForm(ModelForm):
 
     def setHelper(self):
 
-        # by default take-up the whole row-fluid
+        # by default take-up the whole row
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
@@ -501,7 +501,7 @@ class EndpointForm(ModelForm):
         for fld in ("results_notes", "endpoint_notes", "power_notes"):
             self.fields[fld].widget.attrs["rows"] = 3
 
-        # by default take-up the whole row-fluid
+        # by default take-up the whole row
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
@@ -511,8 +511,7 @@ class EndpointForm(ModelForm):
                     widget.attrs["class"] = "col-md-12"
 
         helper.layout.insert(
-            helper.find_layout_idx_for_field_name("name"),
-            cfl.Div(css_class="row-fluid", id="vocab"),
+            helper.find_layout_idx_for_field_name("name"), cfl.Div(css_class="row", id="vocab"),
         )
         helper.add_fluid_row("name", 1, "col-md-12")
         helper.add_fluid_row("system", 4, "col-md-3")
@@ -859,7 +858,7 @@ class EndpointFilterForm(forms.Form):
 
     def setHelper(self):
 
-        # by default take-up the whole row-fluid
+        # by default take-up the whole row
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) not in [forms.CheckboxInput, forms.CheckboxSelectMultiple]:

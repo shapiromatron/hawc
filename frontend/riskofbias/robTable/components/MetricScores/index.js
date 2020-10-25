@@ -30,7 +30,7 @@ class MetricScores extends Component {
         }
 
         return (
-            <div className="row-fluid">
+            <div className="row">
                 {scoresByRobReview.map((scores, idx) => {
                     return (
                         <div key={idx} className={spanClass}>

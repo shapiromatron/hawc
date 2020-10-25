@@ -10,7 +10,7 @@ class CheckboxScoreDisplay extends Component {
     render() {
         const {checked, score, handleCheck} = this.props;
         return (
-            <div className="row-fluid">
+            <div className="row">
                 <div className="score-display-checkbox col-md-3">
                     <p
                         onClick={() => {

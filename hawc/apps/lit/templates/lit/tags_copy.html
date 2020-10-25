@@ -14,7 +14,7 @@
 {% endblock %}
 
 {% block content %}
-  <div class="row-fluid">
+  <div class="row">
     <form class="col-md-8 col-md-offset-2 form-horizontal" action="." method="post">
 
       {% csrf_token %}
@@ -50,7 +50,7 @@
       <b>Tags for selected assessment:</b>
       <div id="tags"></div>
 
-      <div class="row-fluid">
+      <div class="row">
         <div class="form-actions">
           <button type="submit" class="btn btn-primary">Copy tags from existing assessment</button>
           <a class="btn" href="{% url 'lit:tags_update' assessment.pk %}">Cancel</a>

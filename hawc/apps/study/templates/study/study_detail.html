@@ -74,7 +74,7 @@
   {% if crud == "Read" %}
 
     {% if assessment.enable_risk_of_bias and object.riskofbiases.count > 0 %}
-      <div class="row-fluid">
+      <div class="row">
           <h3>{{assessment.get_rob_name_display}} visualization
             <a class="btn btn-primary pull-right" href="{% url 'riskofbias:rob_detail' object.pk %}">View details</a>
           </h3>

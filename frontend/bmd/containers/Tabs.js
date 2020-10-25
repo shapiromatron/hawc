@@ -130,7 +130,7 @@ class Tabs extends React.Component {
                     doseUnits={doseUnits}
                     handleUnitsChange={this.handleUnitsChange.bind(this)}
                 />
-                <div className="row-fluid">
+                <div className="row">
                     <ModelOptionTable
                         editMode={editMode}
                         dataType={dataType}
@@ -169,7 +169,7 @@ class Tabs extends React.Component {
 
         return [
             <h3 key={0}>BMDS output summary</h3>,
-            <div key={1} className="row-fluid">
+            <div key={1} className="row">
                 <OutputTable
                     models={models}
                     bmrs={bmrs}
@@ -218,7 +218,7 @@ class Tabs extends React.Component {
 
         return (
             <div>
-                <div className="row-fluid">
+                <div className="row">
                     <ul className="nav nav-tabs" id="tabs">
                         <li>
                             <a href="#setup" onClick={this.handleTabClick}>

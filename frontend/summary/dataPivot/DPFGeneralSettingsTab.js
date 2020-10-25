@@ -31,7 +31,7 @@ let build_settings_general_tab = function(self) {
             );
         },
         build_legend_settings = function() {
-            var div = $('<div class="row-fluid">'),
+            var div = $('<div class="row">'),
                 content = $('<div class="col-md-6">'),
                 plot_div = $('<div class="col-md-6">'),
                 vis = d3

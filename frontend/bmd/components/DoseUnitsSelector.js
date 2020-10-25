@@ -44,7 +44,7 @@ class DoseUnitsSelector extends React.Component {
 
     render() {
         return (
-            <div className="row-fluid">
+            <div className="row">
                 <div className="col-md-3">
                     <p>{this.props.version}</p>
                 </div>

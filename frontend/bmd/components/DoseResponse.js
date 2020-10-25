@@ -23,7 +23,7 @@ class DoseResponse extends React.Component {
         return (
             <div>
                 <h3>Dose-response</h3>
-                <div className="row-fluid">
+                <div className="row">
                     <div className="col-md-8">
                         <table className="table table-condensed table-striped" ref={this.epTable} />
                     </div>

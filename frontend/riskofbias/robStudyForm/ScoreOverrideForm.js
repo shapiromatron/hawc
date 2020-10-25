@@ -76,7 +76,7 @@ class ScoreOverrideForm extends Component {
         }
 
         return (
-            <div className="row-fluid form-inline">
+            <div className="row form-inline">
                 <OverrideObjectTypeSelector
                     choices={overrideDataTypeChoices}
                     value={overrideDataTypeValue}

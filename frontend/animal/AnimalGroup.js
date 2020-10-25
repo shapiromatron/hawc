@@ -151,7 +151,7 @@ class AnimalGroup {
             title = $("<h4>").html(this.build_breadcrumbs()),
             $details = $('<div class="col-md-12">'),
             $content = $('<div class="container-fluid">').append(
-                $('<div class="row-fluid">').append($details)
+                $('<div class="row">').append($details)
             );
 
         this.render($details);

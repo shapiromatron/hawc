@@ -78,7 +78,7 @@ class HAWCSetPasswordForm(SetPasswordForm):
 
     def setHelper(self):
 
-        # by default take-up the whole row-fluid
+        # by default take-up the whole row
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
@@ -118,7 +118,7 @@ class HAWCPasswordChangeForm(PasswordChangeForm):
 
     def setHelper(self):
 
-        # by default take-up the whole row-fluid
+        # by default take-up the whole row
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
@@ -161,7 +161,7 @@ class RegisterForm(PasswordForm):
 
     def setHelper(self):
 
-        # by default take-up the whole row-fluid
+        # by default take-up the whole row
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
@@ -227,7 +227,7 @@ class UserProfileForm(ModelForm):
 
     def setHelper(self):
 
-        # by default take-up the whole row-fluid
+        # by default take-up the whole row
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
@@ -287,7 +287,7 @@ class HAWCAuthenticationForm(AuthenticationForm):
 
     def setHelper(self):
 
-        # by default take-up the whole row-fluid
+        # by default take-up the whole row
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
@@ -341,7 +341,7 @@ class HAWCPasswordResetForm(PasswordResetForm):
 
     def setHelper(self):
 
-        # by default take-up the whole row-fluid
+        # by default take-up the whole row
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:

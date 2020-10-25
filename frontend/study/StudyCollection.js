@@ -31,7 +31,7 @@ class StudyCollection {
     }
 
     build_filters() {
-        var $el = $('<div class="row-fluid">'),
+        var $el = $('<div class="row">'),
             flds = [];
 
         if (this.object_list.filter(d => d.data.bioassay).length > 0) {

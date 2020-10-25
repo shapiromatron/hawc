@@ -85,13 +85,13 @@ class Experiment {
             title = $("<h4>").html(this.build_breadcrumbs()),
             $details = $('<div class="col-md-12">'),
             $content = $('<div class="container-fluid">').append(
-                $('<div class="row-fluid">').append($details)
+                $('<div class="row">').append($details)
             );
 
         $details.append(this.build_details_table());
 
         if (this.dsstox) {
-            let el = $('<div class="row-fluid">');
+            let el = $('<div class="row">');
             this.dsstox.renderChemicalDetails(el[0], true);
             $details.append(el);
         }

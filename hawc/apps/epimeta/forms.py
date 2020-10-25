@@ -243,7 +243,7 @@ class MetaResultFilterForm(forms.Form):
 
     def setHelper(self):
 
-        # by default take-up the whole row-fluid
+        # by default take-up the whole row
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) not in [forms.CheckboxInput, forms.CheckboxSelectMultiple]:

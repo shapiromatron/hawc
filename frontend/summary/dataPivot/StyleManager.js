@@ -66,9 +66,9 @@ class StyleManager {
                     return word.charAt(0).toUpperCase() + word.substr(1).toLowerCase();
                 });
             },
-            container = $('<div class="row-fluid">'),
+            container = $('<div class="row">'),
             title = $(`<h3>${toTitleCase(style_type)}</h3>`),
-            style_div = $('<div class="row-fluid">'),
+            style_div = $('<div class="row">'),
             form_div = $('<div class="col-md-6">'),
             vis_div = $('<div class="col-md-6">'),
             d3_div = $("<div>"),

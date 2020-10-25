@@ -26,7 +26,7 @@
     $(document).ready(function(){
 
       // show-hide N fields for cohort level fields only
-      var nDiv = $("#id_eligible_n").closest('.row-fluid');
+      var nDiv = $("#id_eligible_n").closest('.row');
       $('#id_design').on('change', function(e){
         if (_.contains(['CC'], e.target.value)){
           nDiv.hide();

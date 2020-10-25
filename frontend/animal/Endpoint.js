@@ -57,7 +57,7 @@ class Endpoint extends Observee {
                 tbl = obj.build_endpoint_table(
                     $('<table class="table table-condensed table-striped">')
                 ),
-                content = $('<div class="row-fluid">')
+                content = $('<div class="row">')
                     .append($('<div class="col-md-8">').append(tbl))
                     .append($('<div class="col-md-4">').append(plot_div));
 
@@ -579,13 +579,13 @@ class Endpoint extends Observee {
             $end = $content;
         }
 
-        $end.append($('<div class="row-fluid">').append($details))
+        $end.append($('<div class="row">').append($details))
             .append(
-                $('<div class="row-fluid">')
+                $('<div class="row">')
                     .append($('<div class="col-md-7">').append($tbl))
                     .append($('<div class="col-md-5">').append($plot))
             )
-            .append($('<div class="row-fluid">').append($notes));
+            .append($('<div class="row">').append($notes));
 
         this.build_details_table($details);
         this.build_endpoint_table($tbl);

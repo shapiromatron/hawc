@@ -6,7 +6,7 @@
 
 {% block main_content %}
 
-  <div class="row-fluid">
+  <div class="row">
     <ul class="breadcrumb">
       <li class="active"><a href="{% url 'portal' %}">Home</a><span class="divider">/</span></li>
       <li class="active"><a href="{% url 'user:settings' %}">User Profile</a><span class="divider">/</span></li>
@@ -29,7 +29,7 @@
             <a class="dropdown-item" href="{% url 'user:change_password' %}">Change Password</a>
           </div>
         </li>
-      
+
       </ul>
     </div>
   </nav>

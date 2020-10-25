@@ -221,7 +221,7 @@ class _DataPivot_settings_conditional {
         add_input_row(div, "Condition type", conditionType);
         div.append("<hr>");
         formattingTypes.forEach(function(v) {
-            $(`<div class="conditionalDivs row-fluid ${v}">`)
+            $(`<div class="conditionalDivs row ${v}">`)
                 .appendTo(div)
                 .hide();
         });

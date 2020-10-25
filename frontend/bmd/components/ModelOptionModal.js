@@ -35,7 +35,7 @@ class ModelOptionModal extends BaseModal {
     renderReadOnly() {
         return (
             <div className="modal-body">
-                <div className="row-fluid">
+                <div className="row">
                     <div className="col-md-6">
                         <h4>Model settings</h4>
                         <table className="table table-condensed table-striped" />
@@ -45,7 +45,7 @@ class ModelOptionModal extends BaseModal {
                         <table className="table table-condensed table-striped" />
                     </div>
                 </div>
-                <div className="row-fluid">
+                <div className="row">
                     <h4>Parameter assignment</h4>
                     <table className="table table-condensed table-striped" />
                 </div>
@@ -97,7 +97,7 @@ class ModelOptionModal extends BaseModal {
         return (
             <div className="modal-body">
                 <form className="form-horizontal">
-                    <div className="row-fluid">
+                    <div className="row">
                         <fieldset className="col-md-6">
                             <legend>Model assignments</legend>
                             <div>
@@ -131,7 +131,7 @@ class ModelOptionModal extends BaseModal {
                             </div>
                         </fieldset>
                     </div>
-                    <div className="row-fluid">
+                    <div className="row">
                         <fieldset>
                             <legend>Parameter assignments</legend>
                             <div>

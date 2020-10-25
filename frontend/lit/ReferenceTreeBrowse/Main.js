@@ -17,7 +17,7 @@ class ReferenceTreeMain extends Component {
             {canEdit} = store.config;
 
         return (
-            <div className="row-fluid">
+            <div className="row">
                 <div className="col-md-3">
                     <h3>Taglist</h3>
                     <TagTree

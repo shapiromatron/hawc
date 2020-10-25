@@ -323,7 +323,7 @@ class DataPivot {
             title = `<h4>${this.title}</h4>`,
             $plot = $('<div class="col-md-12">'),
             $content = $('<div class="container-fluid">').append(
-                $('<div class="row-fluid">').append($plot)
+                $('<div class="row">').append($plot)
             );
 
         modal.getModal().on("shown", function() {

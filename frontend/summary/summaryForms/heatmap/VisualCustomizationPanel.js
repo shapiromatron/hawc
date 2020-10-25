@@ -62,7 +62,7 @@ class VisualCustomizationPanel extends Component {
         return (
             <div>
                 <h4>Plot labels</h4>
-                <div className="row-fluid">
+                <div className="row">
                     <div className="col-md-4">
                         <TextInput
                             name="title.text"
@@ -115,7 +115,7 @@ class VisualCustomizationPanel extends Component {
         return (
             <div>
                 <h4>Plot</h4>
-                <div className="row-fluid">
+                <div className="row">
                     <div className="col-md-3">
                         <FloatInput
                             name="cell_width"
@@ -146,7 +146,7 @@ class VisualCustomizationPanel extends Component {
                         />
                     </div>
                 </div>
-                <div className="row-fluid">
+                <div className="row">
                     <div className="col-md-3">
                         <FloatInput
                             name="padding.top"
@@ -188,7 +188,7 @@ class VisualCustomizationPanel extends Component {
                         />
                     </div>
                 </div>
-                <div className="row-fluid">
+                <div className="row">
                     <div className="col-md-3">
                         <TextInput
                             label="Color range (start)"
@@ -208,7 +208,7 @@ class VisualCustomizationPanel extends Component {
                         />
                     </div>
                 </div>
-                <div className="row-fluid">
+                <div className="row">
                     <div className="col-md-3">
                         <CheckboxInput
                             label="Compress X fields"
@@ -244,7 +244,7 @@ class VisualCustomizationPanel extends Component {
                         />
                     </div>
                 </div>
-                <div className="row-fluid">
+                <div className="row">
                     <div className="col-md-3">
                         <CheckboxInput
                             label="Show null field values"
@@ -255,7 +255,7 @@ class VisualCustomizationPanel extends Component {
                     </div>
                 </div>
                 <h4>Axes</h4>
-                <div className="row-fluid">
+                <div className="row">
                     <div className="col-md-3">
                         <FloatInput
                             name="x_tick_rotate"
@@ -286,7 +286,7 @@ class VisualCustomizationPanel extends Component {
                         />
                     </div>
                 </div>
-                <div className="row-fluid">
+                <div className="row">
                     <SelectInput
                         handleSelect={value => changeSettings("x_axis_bottom", value == "bottom")}
                         choices={[
@@ -298,7 +298,7 @@ class VisualCustomizationPanel extends Component {
                         label="X-axis position"
                     />
                 </div>
-                <div className="row-fluid">
+                <div className="row">
                     <div className="col-md-3">
                         <CheckboxInput
                             id="show_axis_border"
@@ -311,7 +311,7 @@ class VisualCustomizationPanel extends Component {
                 </div>
 
                 <h4>Title</h4>
-                <div className="row-fluid">
+                <div className="row">
                     <div className="col-md-4">
                         <FloatInput
                             name="title.x"
@@ -344,7 +344,7 @@ class VisualCustomizationPanel extends Component {
                     </div>
                 </div>
                 <h4>X-axis label</h4>
-                <div className="row-fluid">
+                <div className="row">
                     <div className="col-md-4">
                         <FloatInput
                             name="x_label.x"
@@ -377,7 +377,7 @@ class VisualCustomizationPanel extends Component {
                     </div>
                 </div>
                 <h4>Y-axis label</h4>
-                <div className="row-fluid">
+                <div className="row">
                     <div className="col-md-4">
                         <FloatInput
                             name="y_label.x"
@@ -410,7 +410,7 @@ class VisualCustomizationPanel extends Component {
                     </div>
                 </div>
                 <h4>Interactivity</h4>
-                <div className="row-fluid">
+                <div className="row">
                     <div className="col-md-3">
                         <CheckboxInput
                             id="hawc_interactivity"

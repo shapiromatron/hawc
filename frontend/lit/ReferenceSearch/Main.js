@@ -14,7 +14,7 @@ class ReferenceSearchMain extends Component {
         const {store} = this.props,
             {isSearching, references, hasReferences, numReferences} = store;
         return (
-            <div className="row-fluid">
+            <div className="row">
                 <div className="accordion" id="searchFormAccordion">
                     <div className="accordion-group">
                         <div className="accordion-heading">

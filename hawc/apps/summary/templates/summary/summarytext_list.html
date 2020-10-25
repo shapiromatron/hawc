@@ -9,7 +9,7 @@
 {% endblock %}
 
 {% block main_content %}
-  <div class="row-fluid">
+  <div class="row">
     <ul class="breadcrumb">
       {% if user.is_authenticated %}
         <li class="active"><a href="{% url 'portal' %}">Home</a><span class="divider">/</span></li>
@@ -24,7 +24,7 @@
     </ul>
   </div>
 
-  <div class="row-fluid">
+  <div class="row">
     <div id="sidebar" class="col-md-3">
       <ul id="st_headers_ul" class="nav nav-list well affix-sidenav" data-spy="affix" data-offset-top="65">
       </ul>

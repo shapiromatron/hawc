@@ -12,7 +12,7 @@ class Widgets extends React.Component {
         const {store} = this.props,
             {settings} = this.props.store;
         return (
-            <div className="row-fluid">
+            <div className="row">
                 <div className="col-md-4">
                     <SelectInput
                         className="col-md-12"

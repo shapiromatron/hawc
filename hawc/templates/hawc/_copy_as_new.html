@@ -4,7 +4,7 @@
 
   {% csrf_token %}
 
-  <div class='row-fluid'>
+  <div class='row'>
     <fieldset>
       <legend>Copy {{name}}</legend>
       <span class="help-block">{{notes}}</span><br>
@@ -23,7 +23,7 @@
     </fieldset>
   </div>
 
-  <div class="row-fluid">
+  <div class="row">
     <div class="form-actions">
       <a id='submit_form' href="#" class="btn btn-primary">Copy selected as new</a>
       <a href='{{object.get_absolute_url}}' class="btn">Cancel</a>

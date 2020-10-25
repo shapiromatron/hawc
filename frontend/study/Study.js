@@ -207,7 +207,7 @@ class Study {
 
     render($div, $shower) {
         var self = this,
-            $details = $('<div class="row-fluid">').appendTo($div),
+            $details = $('<div class="row">').appendTo($div),
             displayRoB = () => {
                 var render_obj = {
                     riskofbias: self.riskofbias,
@@ -219,7 +219,7 @@ class Study {
         this.build_details_table($details);
         if (this.has_riskofbias()) {
             var $rob = $('<div class="col-md-12">');
-            $div.prepend($('<div class="row-fluid">').append($rob));
+            $div.prepend($('<div class="row">').append($rob));
             if ($shower) {
                 $shower.on("shown", function() {
                     displayRoB();

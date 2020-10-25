@@ -65,7 +65,7 @@ class SearchForm(forms.ModelForm):
         if "search_string" in self.fields:
             self.fields["search_string"].widget.attrs["rows"] = 5
             self.fields["search_string"].required = True
-        # by default take-up the whole row-fluid
+        # by default take-up the whole row
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:

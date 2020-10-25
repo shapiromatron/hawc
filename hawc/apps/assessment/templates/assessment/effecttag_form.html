@@ -15,7 +15,7 @@
 
     {% csrf_token %}
 
-    <div class='row-fluid'>
+    <div class='row'>
       <fieldset>
         <legend>Create new effect tag</legend>
         <span class="help-block">Create a new effect tag. Effect tags are used for describing animal bioassay, epidemiological, or <i>in vitro</i> endpoints. Please take care not to duplicate existing effect tags.</span><br>
@@ -34,7 +34,7 @@
         {% endfor %}
       </fieldset>
     </div>
-    <div class="row-fluid">
+    <div class="row">
       <div class="form-actions">
         <button id='submit_form' type="submit" class="btn btn-primary">{{ crud }}</button>
       </div>

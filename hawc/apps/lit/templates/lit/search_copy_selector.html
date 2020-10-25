@@ -23,7 +23,7 @@
 
     {% csrf_token %}
 
-    <div class='row-fluid'>
+    <div class='row'>
       <fieldset>
         <legend>Copy search or import</legend>
         <span class="help-block">Select an existing search or import from this
@@ -46,7 +46,7 @@
     </div>
 
     {# Submission area #}
-    <div class="row-fluid">
+    <div class="row">
       <div class="form-actions">
         <a id='submit_form' href="#" class="btn btn-primary">Copy selected as new</a>
         <a href='{% url 'lit:overview' assessment.pk %}' class="btn">Cancel</a>

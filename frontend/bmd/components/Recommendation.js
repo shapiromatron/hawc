@@ -67,7 +67,7 @@ class Recommendation extends React.Component {
         });
 
         return (
-            <div className="row-fluid" key={0}>
+            <div className="row" key={0}>
                 <legend>Select BMD model</legend>
                 <form className="form">
                     <div className="col-md-4">

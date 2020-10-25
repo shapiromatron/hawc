@@ -33,7 +33,7 @@ class ModelOptionTable extends React.Component {
         let {allOptions} = this.props;
 
         return (
-            <div className="row-fluid">
+            <div className="row">
                 <label className="control-label">Add new model</label>
                 <div className="controls">
                     <select style={{marginBottom: 0, marginRight: "1em"}} ref={this.modelSelector}>

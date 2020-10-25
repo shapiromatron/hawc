@@ -31,7 +31,7 @@ class TagReferencesMain extends Component {
             selectedReferenceTags = store.selectedReferenceTags ? store.selectedReferenceTags : [],
             allTagged = store.referencesUntagged.length == 0;
         return (
-            <div className="row-fluid">
+            <div className="row">
                 <div className="col-md-3">
                     <h4>References</h4>
                     <div className="accordion" id="references_lists">

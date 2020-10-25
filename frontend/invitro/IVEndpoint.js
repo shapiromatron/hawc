@@ -200,8 +200,8 @@ class IVEndpoint {
             $details = $('<div class="col-md-12">'),
             $eg_tbl = $('<div class="col-md-12">'),
             $content = $('<div class="container-fluid">')
-                .append($('<div class="row-fluid">').append($details))
-                .append($('<div class="row-fluid">').append($eg_tbl));
+                .append($('<div class="row">').append($details))
+                .append($('<div class="row">').append($eg_tbl));
 
         $details.append(this.build_details_table());
 

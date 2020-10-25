@@ -12,7 +12,7 @@ class App extends Component {
         const {store} = this.props;
         return (
             <>
-                <div className="row-fluid">
+                <div className="row">
                     <TermSelector
                         name={"name"}
                         label={label.endpoint_name}
@@ -24,7 +24,7 @@ class App extends Component {
                         idLookupAction={store.endpointNameLookup}
                     />
                 </div>
-                <div className="row-fluid">
+                <div className="row">
                     <div className="col-md-3">
                         <TermSelector
                             name={"system"}

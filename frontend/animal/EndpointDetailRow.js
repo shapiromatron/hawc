@@ -21,7 +21,7 @@ class EndpointDetailRow {
         this.div.append(`<h4>${endpoint.build_breadcrumbs()}</h4>`);
         this.div.data("pk", endpoint.data.pk);
         this.div.append(
-            `<div class="row-fluid">
+            `<div class="row">
                 <div class="col-md-7">
                     <table id="${table_id}" class="table table-condensed table-striped"></table>
                 </div>

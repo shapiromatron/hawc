@@ -21,7 +21,7 @@ class CustomizeTab extends Component {
                     {create_visual_url ? <a href={create_visual_url}>create</a> : "create"}&nbsp;a
                     fully customized heatmap visual using data internal or external to HAWC.
                 </p>
-                <div className="row-fluid">
+                <div className="row">
                     <div className="col-md-6">
                         <SelectInput
                             className="col-md-12"
@@ -43,7 +43,7 @@ class CustomizeTab extends Component {
                         />
                     </div>
                 </div>
-                <div className="row-fluid">
+                <div className="row">
                     <div className="col-md-6">
                         <SelectInput
                             className="col-md-12"
@@ -66,7 +66,7 @@ class CustomizeTab extends Component {
                             label="Table fields"
                         />
                     </div>
-                    <div className="row-fluid">
+                    <div className="row">
                         <div className="col-md-6">
                             <CheckboxInput
                                 label="Show null field values"
