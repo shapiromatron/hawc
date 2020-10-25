@@ -531,7 +531,7 @@ class SummaryTextForm(forms.ModelForm):
             ]
         }
         helper = BaseFormHelper(self, **inputs)
-        helper.form_class = None
+
         return helper
 
 
@@ -585,7 +585,7 @@ class VisualForm(forms.ModelForm):
             }
 
         helper = BaseFormHelper(self, **inputs)
-        helper.form_class = None
+
         helper.form_id = "visualForm"
         return helper
 
@@ -883,7 +883,7 @@ class DataPivotForm(forms.ModelForm):
             }
 
         helper = BaseFormHelper(self, **inputs)
-        helper.form_class = None
+
         helper.form_id = "dataPivotForm"
         return helper
 
@@ -1027,7 +1027,7 @@ class DataPivotSelectorForm(forms.Form):
         }
 
         helper = BaseFormHelper(self, **inputs)
-        helper.form_class = None
+
         return helper
 
 

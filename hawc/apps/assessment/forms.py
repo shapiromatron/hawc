@@ -76,7 +76,7 @@ class AssessmentForm(forms.ModelForm):
             }
 
         helper = BaseFormHelper(self, **inputs)
-        helper.form_class = None
+
         helper.add_fluid_row("name", 3, "span4")
         helper.add_fluid_row("cas", 2, "span6")
         helper.add_fluid_row("project_manager", 3, "span4")
@@ -124,7 +124,7 @@ class AssessmentModulesForm(forms.ModelForm):
             "cancel_url": self.instance.get_absolute_url(),
         }
         helper = BaseFormHelper(self, **inputs)
-        helper.form_class = None
+
         return helper
 
 
@@ -159,7 +159,7 @@ class AttachmentForm(forms.ModelForm):
         inputs["cancel_url"] = self.instance.get_absolute_url()
 
         helper = BaseFormHelper(self, **inputs)
-        helper.form_class = None
+
         return helper
 
 
@@ -353,7 +353,7 @@ class DatasetForm(forms.ModelForm):
         helper = BaseFormHelper(self, **inputs)
         helper.add_fluid_row("revision_version", 3, ("span2", "span5", "span5 hidden"))
         helper.add_fluid_row("revision_notes", 1, ("span12 hidden",))
-        helper.form_class = None
+
         return helper
 
     def clean(self):

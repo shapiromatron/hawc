@@ -50,7 +50,7 @@ class BaseStudyForm(forms.ModelForm):
                 widget.attrs["class"] = "checkbox"
 
         helper = BaseFormHelper(self, **inputs)
-        helper.form_class = None
+
         if "authors" in self.fields:
             helper.add_fluid_row("authors", 2, "span6")
         helper.add_fluid_row("short_citation", 2, "span6")
@@ -177,5 +177,5 @@ class StudiesCopy(forms.Form):
         }
 
         helper = BaseFormHelper(self, **inputs)
-        helper.form_class = None
+
         return helper

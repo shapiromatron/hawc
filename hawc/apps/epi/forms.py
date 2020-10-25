@@ -73,7 +73,7 @@ class CriteriaForm(forms.ModelForm):
         }
 
         helper = BaseFormHelper(self, **inputs)
-        helper.form_class = None
+
         return helper
 
 
@@ -189,7 +189,7 @@ class StudyPopulationForm(forms.ModelForm):
             }
 
         helper = BaseFormHelper(self, **inputs)
-        helper.form_class = None
+
         helper.add_fluid_row("name", 2, "span6")
         helper.add_fluid_row("age_profile", 2, "span6")
         helper.add_fluid_row("countries", 3, "span4")
@@ -277,7 +277,7 @@ class AdjustmentFactorForm(forms.ModelForm):
         }
 
         helper = BaseFormHelper(self, **inputs)
-        helper.form_class = None
+
         return helper
 
 
@@ -337,7 +337,7 @@ class ExposureForm(forms.ModelForm):
             }
 
         helper = BaseFormHelper(self, **inputs)
-        helper.form_class = None
+
         helper.add_fluid_row("name", 2, "span6")
         helper.add_fluid_row("inhalation", 6, "span2")
         helper.add_fluid_row("measured", 3, "span4")
@@ -435,7 +435,7 @@ class OutcomeForm(forms.ModelForm):
             }
 
         helper = BaseFormHelper(self, **inputs)
-        helper.form_class = None
+
         helper.add_fluid_row("name", 2, "span6")
         helper.add_fluid_row("system", 3, "span4")
         helper.add_fluid_row("diagnostic", 2, "span6")
@@ -569,7 +569,6 @@ class OutcomeFilterForm(forms.Form):
         helper = BaseFormHelper(self)
 
         helper.form_method = "GET"
-        helper.form_class = None
 
         helper.add_fluid_row("studies", 4, "span3")
         helper.add_fluid_row("age_profile", 4, "span3")
@@ -683,7 +682,7 @@ class ComparisonSet(forms.ModelForm):
             }
 
         helper = BaseFormHelper(self, **inputs)
-        helper.form_class = None
+
         return helper
 
 
@@ -726,7 +725,7 @@ class SingleGroupForm(GroupForm):
         }
 
         helper = BaseFormHelper(self, **inputs)
-        helper.form_class = None
+
         helper.add_fluid_row("name", 3, "span4")
         helper.add_fluid_row("sex", 2, "span6")
         helper.add_fluid_row("eligible_n", 3, "span4")
@@ -919,7 +918,6 @@ class ResultForm(forms.ModelForm):
             }
 
         helper = BaseFormHelper(self, **inputs)
-        helper.form_class = None
 
         helper.add_fluid_row("name", 2, "span6")
         helper.add_fluid_row("metric", 3, "span4")

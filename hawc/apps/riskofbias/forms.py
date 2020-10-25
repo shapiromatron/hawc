@@ -154,7 +154,7 @@ class NumberOfReviewersForm(forms.ModelForm):
         inputs = {"cancel_url": self.instance.rob_settings.get_absolute_url()}
 
         helper = BaseFormHelper(self, **inputs)
-        helper.form_class = None
+
         return helper
 
     def save(self, commit=True):
@@ -268,7 +268,7 @@ class RiskOfBiasCopyForm(forms.Form):
         }
         helper = BaseFormHelper(self, **inputs)
         helper.layout.insert(3, cfl.Div(css_id="extra_content_insertion"))
-        helper.form_class = None
+
         return helper
 
     def __init__(self, *args, **kwargs):

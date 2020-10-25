@@ -39,5 +39,5 @@ class CommentForm(forms.ModelForm):
         }
 
         helper = BaseFormHelper(self, **inputs)
-        helper.form_class = None
+
         return helper

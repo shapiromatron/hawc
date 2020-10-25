@@ -366,7 +366,7 @@ class ReferenceForm(forms.ModelForm):
         # TODO: use new names
         helper.add_fluid_row("authors_short", 3, "span4")
         helper.add_fluid_row("authors", 2, "span6")
-        helper.form_class = None
+
         return helper
 
 

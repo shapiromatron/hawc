@@ -82,7 +82,7 @@ class MetaProtocolForm(forms.ModelForm):
             }
 
         helper = BaseFormHelper(self, **inputs)
-        helper.form_class = None
+
         helper.add_fluid_row("name", 2, "span6")
         helper.add_fluid_row("lit_search_strategy", 2, "span6")
         helper.add_fluid_row("lit_search_start_date", 3, "span4")
@@ -163,7 +163,7 @@ class MetaResultForm(forms.ModelForm):
             }
 
         helper = BaseFormHelper(self, **inputs)
-        helper.form_class = None
+
         helper.add_fluid_row("label", 2, "span6")
         helper.add_fluid_row("health_outcome", 2, "span6")
         helper.add_fluid_row("exposure_name", 2, "span6")
@@ -252,7 +252,6 @@ class MetaResultFilterForm(forms.Form):
         helper = BaseFormHelper(self)
 
         helper.form_method = "GET"
-        helper.form_class = None
 
         helper.add_fluid_row("studies", 4, "span3")
 
@@ -326,7 +325,7 @@ class SingleResultForm(forms.ModelForm):
         self.fields["study"].widget.attrs["class"] += " studySearch"
 
         helper = BaseFormHelper(self)
-        helper.form_class = None
+
         return helper
 
 

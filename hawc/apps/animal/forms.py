@@ -89,7 +89,7 @@ class ExperimentForm(ModelForm):
             }
 
         helper = BaseFormHelper(self, **inputs)
-        helper.form_class = None
+
         helper.add_fluid_row("name", 3, "span4")
         helper.add_fluid_row("chemical", 3, "span4")
         helper.add_fluid_row("purity_available", 4, ["span2", "span2", "span2", "span6"])
@@ -201,7 +201,7 @@ class AnimalGroupForm(ModelForm):
             }
 
         helper = BaseFormHelper(self, **inputs)
-        helper.form_class = None
+
         helper.form_id = "animal_group"
         helper.add_fluid_row("species", 3, "span4")
         helper.add_fluid_row("lifestage_exposed", 2, "span6")
@@ -290,7 +290,7 @@ class DosingRegimeForm(ModelForm):
             }
 
         helper = BaseFormHelper(self, **inputs)
-        helper.form_class = None
+
         helper.form_id = "dosing_regime"
         helper.add_fluid_row("duration_exposure", 3, "span4")
         helper.add_fluid_row("num_dose_groups", 3, "span4")
@@ -492,7 +492,7 @@ class EndpointForm(ModelForm):
             }
 
         helper = BaseFormHelper(self, **inputs)
-        helper.form_class = None
+
         helper.form_id = "endpoint"
 
         self.fields["diagnostic"].widget.attrs["rows"] = 2
@@ -866,7 +866,6 @@ class EndpointFilterForm(forms.Form):
         helper = BaseFormHelper(self)
 
         helper.form_method = "GET"
-        helper.form_class = None
 
         helper.add_fluid_row("studies", 4, "span3")
         helper.add_fluid_row("species", 4, "span3")

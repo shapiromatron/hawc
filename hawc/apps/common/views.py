@@ -329,7 +329,7 @@ class CanCreateMixin:
 
 
 class CopyAsNewSelectorMixin:
-    form_class = None  # required
+
     copy_model = None  # required
     template_name_suffix = "_copy_selector"
 
@@ -606,7 +606,6 @@ class BaseUpdateWithFormset(BaseUpdate):
 
 class BaseEndpointFilterList(BaseList):
     parent_model = Assessment
-    form_class = None  # required
 
     def get_paginate_by(self, qs):
         val = 25

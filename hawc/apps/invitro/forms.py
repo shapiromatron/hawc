@@ -69,7 +69,7 @@ class IVChemicalForm(forms.ModelForm):
             }
 
         helper = BaseFormHelper(self, **inputs)
-        helper.form_class = None
+
         helper.add_fluid_row("cas", 2, "span6")
         helper.add_fluid_row("cas_inferred", 2, "span6")
         helper.add_fluid_row("source", 3, "span4")
@@ -146,7 +146,7 @@ class IVCellTypeForm(forms.ModelForm):
             }
 
         helper = BaseFormHelper(self, **inputs)
-        helper.form_class = None
+
         helper.add_fluid_row("species", 3, "span4")
         helper.add_fluid_row("cell_type", 2, "span6")
         helper.add_fluid_row("tissue", 2, "span6")
@@ -225,7 +225,7 @@ class IVExperimentForm(forms.ModelForm):
             }
 
         helper = BaseFormHelper(self, **inputs)
-        helper.form_class = None
+
         helper.add_fluid_row("name", 2, "span6")
         helper.add_fluid_row("transfection", 2, "span6")
         helper.add_fluid_row("dosing_notes", 2, "span6")
@@ -353,7 +353,7 @@ class IVEndpointForm(forms.ModelForm):
             }
 
         helper = BaseFormHelper(self, **inputs)
-        helper.form_class = None
+
         helper.add_fluid_row("name", 2, "span6")
         helper.add_fluid_row("chemical", 2, "span6")
         helper.add_fluid_row("assay_type", 2, "span6")
@@ -469,7 +469,6 @@ class IVEndpointFilterForm(forms.Form):
         helper = BaseFormHelper(self)
 
         helper.form_method = "GET"
-        helper.form_class = None
 
         helper.add_fluid_row("studies", 4, "span3")
         helper.add_fluid_row("cell_type", 4, "span3")
