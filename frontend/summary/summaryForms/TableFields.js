@@ -51,7 +51,7 @@ class TableField extends InputField {
     }
 
     render() {
-        var $div = $('<div class="control-group form-row">');
+        var $div = $('<div class="form-group form-row">');
 
         if (this.schema.prependSpacer) new SpacerNullField(this.schema, this.$parent).render();
         if (this.schema.label) new HeaderNullField(this.schema, this.$parent).render();

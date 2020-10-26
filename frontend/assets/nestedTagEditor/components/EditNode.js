@@ -61,7 +61,7 @@ class EditNode extends React.Component {
         return (
             <div className="editNodeForm container-fluid">
                 <div className="row">
-                    <div className="control-group col-md-6">
+                    <div className="form-group col-md-6">
                         <label htmlFor="tag_name" className="control-label">
                             Name
                         </label>
@@ -76,7 +76,7 @@ class EditNode extends React.Component {
                             />
                         </div>
                     </div>
-                    <div className="control-group col-md-6">
+                    <div className="form-group col-md-6">
                         <label htmlFor="parent" className="control-label">
                             Parent
                         </label>

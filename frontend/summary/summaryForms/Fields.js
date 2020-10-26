@@ -44,7 +44,7 @@ class TextField extends InputField {
         if (this.schema.helpText)
             $ctrl.append(`<span class="help-inline">${this.schema.helpText}</span>`);
 
-        var $div = $('<div class="control-group form-row">')
+        var $div = $('<div class="form-group form-row">')
             .append(`<label class="control-label">${this.schema.label}:</label>`)
             .append($ctrl);
 

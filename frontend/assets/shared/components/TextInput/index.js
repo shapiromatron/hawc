@@ -17,7 +17,7 @@ class TextInput extends Component {
     render() {
         const type = this.props.type || "text";
         return (
-            <div className="control-group">
+            <div className="form-group">
                 {this.renderLabel()}
                 <div className="controls">
                     <input

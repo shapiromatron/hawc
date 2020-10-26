@@ -20,7 +20,7 @@ class App extends Component {
     render() {
         return (
             <>
-                <div className="input-append">
+                <div className="input-group">
                     <input
                         id="searchQuery"
                         className="col-md-6"

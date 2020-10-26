@@ -19,7 +19,7 @@
       <span class="help-block">{{ object.description }}</span><br>
 
       {{ form.non_field_errors|add_class:"alert alert-error" }}
-      <div class="control-group form-row">
+      <div class="form-group form-row">
         {{form.failure_bin.label_tag|add_class:"control-label"}}
         <div class="controls">
           {{form.failure_bin}}
@@ -28,7 +28,7 @@
         {{form.failure_bin.errors|add_class:"alert alert-error"}}
       </div>
 
-      <div class="control-group form-row">
+      <div class="form-group form-row">
         {{form.threshold.label_tag|add_class:"control-label"}}
         <div class="controls">
           {{form.threshold}}

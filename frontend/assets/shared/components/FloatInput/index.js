@@ -23,7 +23,7 @@ class FloatInput extends Component {
 
     render() {
         return (
-            <div className="control-group">
+            <div className="form-group">
                 {this.renderLabel()}
                 <div className="controls">
                     <input

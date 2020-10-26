@@ -63,7 +63,7 @@ class EndpointAggregationForm extends BaseVisualForm {
                     value={this.state.dose_units}
                     handleSelect={this.handleDoseUnitSelect}
                 />
-                <div className="control-group">
+                <div className="form-group">
                     <label className="control-label">
                         Endpoints
                         <span className="asteriskField">*</span>
@@ -98,7 +98,7 @@ class EndpointAggregationForm extends BaseVisualForm {
                         this.handleQuillInputChange("caption", value);
                     }}
                 />
-                <div id="div_id_published" className="control-group">
+                <div id="div_id_published" className="form-group">
                     <div className="controls">
                         <label htmlFor="id_published" className="checkbox">
                             Publish visual for public viewing

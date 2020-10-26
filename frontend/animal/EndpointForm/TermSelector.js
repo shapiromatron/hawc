@@ -39,7 +39,7 @@ class TermSelector extends Component {
             <div>
                 {useControlledVocabulary && idLookupAction ? (
                     <div className="pull-right">
-                        <div className="input-append">
+                        <div className="input-group">
                             <input
                                 type="number"
                                 placeholder="Enter term ID"

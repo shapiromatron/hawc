@@ -54,7 +54,7 @@ let build_settings_general_tab = function(self) {
                         .append($("<td>").append(input));
                 },
                 add_horizontal_field = function(label_text, html_obj) {
-                    return $('<div class="control-group">')
+                    return $('<div class="form-group">')
                         .append(`<label class="control-label">${label_text}</label>`)
                         .append($('<div class="controls">').append(html_obj));
                 },

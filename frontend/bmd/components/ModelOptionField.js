@@ -68,7 +68,7 @@ class ModelOptionField extends React.Component {
     render() {
         let {index, settings} = this.props;
         return (
-            <div className="control-group" key={index}>
+            <div className="form-group" key={index}>
                 <label className="control-label">{settings.n}</label>
                 <div className="controls">{this.renderInput()}</div>
             </div>
