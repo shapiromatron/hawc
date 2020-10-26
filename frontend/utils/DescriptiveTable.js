@@ -21,7 +21,7 @@ class DescriptiveTable {
             }
             var td = $("<td>").html(value);
             if (opts.annotate) {
-                td.append("<br>", $('<span class="muted">').text(opts.annotate));
+                td.append("<br>", $('<span class="text-muted">').text(opts.annotate));
             }
             if (opts.pre) {
                 td.css("white-space", "pre-wrap");

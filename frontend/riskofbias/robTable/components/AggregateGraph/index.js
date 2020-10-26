@@ -20,7 +20,7 @@ const AggregateGraph = props => {
                     );
                 })}
             </div>
-            <div className="footer muted">Click on any cell above to view details.</div>
+            <div className="footer text-muted">Click on any cell above to view details.</div>
         </div>
     );
 };
