@@ -1343,6 +1343,9 @@ class Result(models.Model):
 
     COPY_NAME = "results"
 
+    class Meta:
+        ordering = ("id",)
+
     @property
     def factors_applied(self):
         return self.adjustment_factors.filter(resfactors__included_in_final_model=True)

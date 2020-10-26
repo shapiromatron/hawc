@@ -30,7 +30,7 @@ myst-parser==0.12.10
 # computational
 numpy==1.18.2
 pandas==1.0.3
-  xlrd==1.2.0  # for pd.read_excel()
+  openpyxl==3.0.4
 plotly==4.5.4
 pyarrow==0.17.0
 scipy==1.4.1

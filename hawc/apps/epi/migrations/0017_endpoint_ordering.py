@@ -11,4 +11,5 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.AlterModelOptions(name="outcome", options={"ordering": ("id",)},),
+        migrations.AlterModelOptions(name="result", options={"ordering": ("id",)},),
     ]

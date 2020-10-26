@@ -16,7 +16,7 @@ from django.utils import timezone
 from pydantic import BaseModel as PydanticModel
 from reversion import revisions as reversion
 
-from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper
+from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper, read_excel
 from ..common.models import IntChoiceEnum, get_crumbs, get_private_data_storage
 from ..myuser.models import HAWCUser
 from ..vocab.models import VocabularyNamespace
@@ -823,7 +823,7 @@ class DatasetRevision(models.Model):
         """
         kwargs = {}
         if suffix == ".xlsx":
-            func = pd.read_excel
+            func = read_excel
             if worksheet_name:
                 kwargs["sheet_name"] = worksheet_name
         elif suffix in [".csv", ".tsv"]:
