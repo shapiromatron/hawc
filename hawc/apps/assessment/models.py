@@ -451,6 +451,16 @@ class Assessment(models.Model):
             df1 = df1.merge(df2, left_index=True, right_index=True)
         return df1.reset_index().sort_values("id")
 
+    def pms_and_team_users(self) -> models.QuerySet:
+        # return users that are either project managers or team members
+        return (
+            HAWCUser.objects.filter(
+                models.Q(assessment_pms=self.id) | models.Q(assessment_teams=self.id)
+            )
+            .order_by("id")
+            .distinct("id")
+        )
+
 
 class Attachment(models.Model):
     objects = managers.AttachmentManager()

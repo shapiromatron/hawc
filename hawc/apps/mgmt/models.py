@@ -61,10 +61,6 @@ class Task(models.Model):
     def __str__(self):
         return f"{self.study}: {self.get_type_display()}"
 
-    @classmethod
-    def dashboard_metrics(cls, qs):
-        return dict(studies=qs.order_by("study_id").distinct("study_id").count(), tasks=qs.count(),)
-
     def get_assessment(self):
         return self.study.get_assessment()
 

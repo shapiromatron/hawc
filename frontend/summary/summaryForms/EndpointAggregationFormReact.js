@@ -1,5 +1,6 @@
 import $ from "$";
 import React from "react";
+import {render} from "react-dom";
 import {Async} from "react-select";
 
 import "react-tabs/style/react-tabs.css";
@@ -8,7 +9,6 @@ import "react-select/dist/react-select.css";
 import BaseVisualForm from "./BaseVisualFormReact";
 import EndpointAggregation from "summary/summary/EndpointAggregation";
 
-import {splitStartup} from "utils/WebpackSplit";
 import QuillTextInput from "shared/components/QuillTextInput";
 import SelectInput from "shared/components/SelectInput";
 import TextInput from "shared/components/TextInput";
@@ -134,15 +134,11 @@ EndpointAggregationForm.propTypes = {};
 
 export default EndpointAggregationForm;
 
-const formRender = element => {
-    splitStartup(element, EndpointAggregationForm);
-};
-
 // Shim class is for rendering using current VisualForm.create().
 // Once all visual forms are refactored, the shim can be removed and formRender used.
 class EndpointAggregationShim {
     constructor(element) {
-        formRender(element[0]);
+        render(<EndpointAggregationForm data={{}} />, element[0]);
     }
 }
-export {formRender, EndpointAggregationShim};
+export {EndpointAggregationShim};

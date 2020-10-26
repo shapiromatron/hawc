@@ -28,18 +28,15 @@
 
 {% block extrajs %}
 <script id='config' type="text/json" charset="utf-8">
-    {
-        "assessment_id": "{{ assessment.id }}",
-        "csrf": "{{ csrf_token }}",
-        "host": "//{{ request.get_host }}",
-        "tasks": {
-            "url": "{% url 'mgmt:api:task-list' %}"
-        }
-    }
+{
+  "assessment_id": "{{ assessment.id }}"
+}
 </script>
 <script type="text/javascript">
 window.app.mgmtStartup(function(mgmt){
-    mgmt.Dashboard(document.getElementById('taskDashboard'));
+  const el = document.getElementById('taskDashboard'),
+    config = JSON.parse(document.getElementById('config').text);
+  mgmt.Dashboard(el, config);
 });
 </script>
 {% endblock extrajs %}

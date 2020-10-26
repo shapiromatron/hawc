@@ -4,7 +4,7 @@ import adminStartup from "./admin";
 import animalStartup from "./animal";
 import assessmentStartup from "./assessment";
 import {nestedTagEditorStartup, smartTagsStartup, textCleanupStartup} from "./assets";
-import bmdStartup from "./bmd";
+import {bmds2Startup, bmds3Startup} from "./bmd";
 import epiStartup from "./epi";
 import epimetaStartup from "./epimeta";
 import invitroStartup from "./invitro";
@@ -25,7 +25,8 @@ window.app = {
     adminStartup,
     animalStartup,
     assessmentStartup,
-    bmdStartup,
+    bmds2Startup,
+    bmds3Startup,
     dataPivotStartup,
     epiStartup,
     epimetaStartup,

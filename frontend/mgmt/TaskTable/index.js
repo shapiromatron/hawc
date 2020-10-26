@@ -1,11 +1,16 @@
-import {splitStartupRedux} from "utils/WebpackSplit";
+import React from "react";
+import ReactDOM from "react-dom";
+import {Provider} from "mobx-react";
 
-const startup = function(element) {
-    import("mgmt/TaskTable/containers/Root").then(Component => {
-        import("mgmt/TaskTable/store/configureStore").then(store => {
-            splitStartupRedux(element, Component.default, store.default);
-        });
-    });
-};
+import MgmtTaskTableStore from "./store";
+import Root from "./containers/Root";
 
-export default startup;
+export default function(el, config) {
+    const store = new MgmtTaskTableStore(config);
+    ReactDOM.render(
+        <Provider store={store}>
+            <Root />
+        </Provider>,
+        el
+    );
+}

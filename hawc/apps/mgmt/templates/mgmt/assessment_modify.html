@@ -24,25 +24,22 @@
 {% block extrajs %}
 <script id="config" type="text/json" charset="utf-8">
     {
-        "assessment_id": "{{ assessment.id }}",
+        "assessmentId": {{ assessment.id }},
         "csrf": "{{ csrf_token }}",
-        "host": "//{{ request.get_host }}",
-        "type": "edit",
+        "displayAsForm": true,
         "cancelUrl": "{% url 'mgmt:assessment_tasks' assessment.pk %}",
-        "tasks": {
-            "url": "{% url 'mgmt:api:task-list' %}"
-        },
-        "studies": {
-            "url": "{% url 'study:api:study-list' %}?assessment_id={{assessment.pk}}"
-        },
-        "autocomplete": {
-            "url": "{% url 'selectable-lookup' 'myuser-assessmentteammemberorhigherlookup' %}"
-        }
+        "tasksListUrl": "{% url 'mgmt:api:task-list' %}?assessment_id={{assessment.pk}}",
+        "taskUpdateBaseUrl": "{% url 'mgmt:api:task-list' %}",
+        "taskBulkPatchUrl": "{% url 'mgmt:api:task-bulk-patch' %}?assessment_id={{assessment.pk}}",
+        "studyListUrl": "{% url 'study:api:study-list' %}?assessment_id={{assessment.pk}}",
+        "userAutocompleteUrl": "{% url 'selectable-lookup' 'myuser-assessmentteammemberorhigherlookup' %}"
     }
 </script>
 <script type="text/javascript">
 window.app.mgmtStartup(function(mgmt){
-    mgmt.TaskTable(document.getElementById('taskTable'))
+  const el = document.getElementById('taskTable'),
+    config = JSON.parse(document.getElementById('config').text);
+  mgmt.TaskTable(el, config);
 });
 </script>
 {% endblock extrajs %}
