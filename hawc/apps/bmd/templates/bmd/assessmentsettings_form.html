@@ -17,7 +17,7 @@
       <legend>Update  {{ object }} </legend>
       <span class="help-block">Update BMD assessment settings.</span><br>
 
-      {{ form.non_field_errors|add_class:"alert alert-error" }}
+      {{ form.non_field_errors|add_class:"alert alert-danger" }}
 
       {% for field in form %}
         <div class="form-group form-row">
@@ -26,7 +26,7 @@
             {{field|add_class:"col-md-12"}}
             <span class='help-inline'>{{field.help_text}}</span>
           </div>
-          {{field.errors|add_class:"alert alert-error"}}
+          {{field.errors|add_class:"alert alert-danger"}}
         </div>
       {% endfor %}
 

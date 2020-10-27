@@ -25,7 +25,7 @@
 
             <form action="." method="get">
               <fieldset>
-                    {{ form.non_field_errors|add_class:"alert alert-error" }}
+                    {{ form.non_field_errors|add_class:"alert alert-danger" }}
 
                     {% for field in form %}
 
@@ -39,7 +39,7 @@
                                 {{field}}<br>
                                 <span class='help-inline'>{{field.help_text}}</span>
                             </div>
-                            {{field.errors|add_class:"alert alert-error"}}
+                            {{field.errors|add_class:"alert alert-danger"}}
                         </div>
 
                         {% if forloop.counter0|add:1|divisibleby:4 %}

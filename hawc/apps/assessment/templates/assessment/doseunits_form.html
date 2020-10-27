@@ -16,7 +16,7 @@
         <legend>Create new dose/exposure units</legend>
         <p class="help-block">Create a new set of dose/exposure units (for example μg/g). Note that the creation of new dose/exposure-units are all assessments in HAWC, not just the assessment you're currently working on. Therefore, our staff may periodically review to ensure that the dose-units are indeed new and not pre-existing.</p><br>
 
-        {{ form.non_field_errors|add_class:"alert alert-error" }}
+        {{ form.non_field_errors|add_class:"alert alert-danger" }}
 
         {% for field in form %}
           <div class="form-group form-row">
@@ -25,7 +25,7 @@
               {{field}}
               <span class='help-block'>{{field.help_text}}</span>
             </div>
-            {{field.errors|add_class:"alert alert-error"}}
+            {{field.errors|add_class:"alert alert-danger"}}
           </div>
         {% endfor %}
       </fieldset>

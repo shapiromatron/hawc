@@ -21,7 +21,7 @@
        <span class="help-block">Search for a different studies.</span>
        <br>
 
-      {{ form.non_field_errors|add_class:"alert alert-error" }}
+      {{ form.non_field_errors|add_class:"alert alert-danger" }}
 
       {% for field in form %}
         <div class="form-group form-row">
@@ -29,7 +29,7 @@
             {{field}}
             <span class='help-inline'>{{field.help_text}}</span>
           </div>
-          {{field.errors|add_class:"alert alert-error"}}
+          {{field.errors|add_class:"alert alert-danger"}}
         </div>
       {% endfor %}
 

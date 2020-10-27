@@ -51,7 +51,7 @@
 
         <div class="col-md-7">
           {{ formset.management_form }}
-          {{ formset.non_form_errors|add_class:"alert alert-error" }}
+          {{ formset.non_form_errors|add_class:"alert alert-danger" }}
 
           <table id="eg" class="table table-condensed table-striped">
             <thead>
@@ -71,7 +71,7 @@
 
                 <tr>
                   {% if forloop.first %}
-                    {{ form.non_field_errors|add_class:"alert alert-error" }}
+                    {{ form.non_field_errors|add_class:"alert alert-danger" }}
                   {% endif %}
 
                   {% for hidden in form.hidden_fields %}
@@ -79,12 +79,12 @@
                   {% endfor %}
 
                   <td class="doses" id="dose_{{i}}"></td>
-                  <td>{{form.n}}{{form.n.errors|add_class:"alert alert-error"}}</td>
-                  <td class="d_only">{{form.incidence}}{{form.incidence.errors|add_class:"alert alert-error"}}</td>
-                  <td class="pc_only">{{form.response}}{{form.response.errors|add_class:"alert alert-error"}}</td>
-                  <td class="c_only">{{form.variance}}{{form.variance.errors|add_class:"alert alert-error"}}</td>
-                  <th class="p_only">{{form.lower_ci}}{{form.lower_ci.errors|add_class:"alert alert-error"}}</th>
-                  <th class="p_only">{{form.upper_ci}}{{form.upper_ci.errors|add_class:"alert alert-error"}}</th>
+                  <td>{{form.n}}{{form.n.errors|add_class:"alert alert-danger"}}</td>
+                  <td class="d_only">{{form.incidence}}{{form.incidence.errors|add_class:"alert alert-danger"}}</td>
+                  <td class="pc_only">{{form.response}}{{form.response.errors|add_class:"alert alert-danger"}}</td>
+                  <td class="c_only">{{form.variance}}{{form.variance.errors|add_class:"alert alert-danger"}}</td>
+                  <th class="p_only">{{form.lower_ci}}{{form.lower_ci.errors|add_class:"alert alert-danger"}}</th>
+                  <th class="p_only">{{form.upper_ci}}{{form.upper_ci.errors|add_class:"alert alert-danger"}}</th>
                   <td>{{form.significance_level}}</td>
                 </tr>
               {% endfor %}

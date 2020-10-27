@@ -1,7 +1,7 @@
 {% load add_class %}
 
-{{ formset.non_form_errors|add_class:"alert alert-error" }}
-{{ formset.non_field_errors|add_class:"alert alert-error" }}
+{{ formset.non_form_errors|add_class:"alert alert-danger" }}
+{{ formset.non_field_errors|add_class:"alert alert-danger" }}
 <table class="table table-condensed table-striped formset">
 
   <thead>
@@ -31,11 +31,11 @@
                 {{ hidden }}
               {% endfor %}
 
-              {{ form.non_field_errors|add_class:"alert alert-error" }}
+              {{ form.non_field_errors|add_class:"alert alert-danger" }}
             {% endif %}
 
             {# add field and errors #}
-            {{ field.errors|add_class:"alert alert-error" }}
+            {{ field.errors|add_class:"alert alert-danger" }}
             {{ field }}
 
             {# add delete button only if it's a new form in formset #}

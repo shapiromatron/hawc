@@ -25,7 +25,7 @@
         <p class="help-block">Send an email to managers of this assessment.</p><br>
       {% endblock form_legend %}
 
-      {{ form.non_field_errors|add_class:"alert alert-error" }}
+      {{ form.non_field_errors|add_class:"alert alert-danger" }}
 
       {% for field in form %}
         <div class="form-group form-row">
@@ -35,7 +35,7 @@
             <span class='help-inline'>{{field.help_text}}</span>
           </div>
         </div>
-        {{field.errors|add_class:"alert alert-error"}}
+        {{field.errors|add_class:"alert alert-danger"}}
       {% endfor %}
 
       <div class="form-actions">

@@ -20,7 +20,7 @@
         <legend>Create new effect tag</legend>
         <span class="help-block">Create a new effect tag. Effect tags are used for describing animal bioassay, epidemiological, or <i>in vitro</i> endpoints. Please take care not to duplicate existing effect tags.</span><br>
 
-        {{ form.non_field_errors|add_class:"alert alert-error" }}
+        {{ form.non_field_errors|add_class:"alert alert-danger" }}
 
         {% for field in form %}
           <div class="form-group form-row">
@@ -29,7 +29,7 @@
               {{field}}
               <span class='help-inline'>{{field.help_text}}</span>
             </div>
-            {{field.errors|add_class:"alert alert-error"}}
+            {{field.errors|add_class:"alert alert-danger"}}
           </div>
         {% endfor %}
       </fieldset>

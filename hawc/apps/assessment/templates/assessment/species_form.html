@@ -15,7 +15,7 @@
         <legend>Create new species</legend>
         <span class="help-block">Create a new species. Note that the creation of a new species is applied as an option for all assessments in HAWC, not just the assessment you're currently working on. Therefore, our staff may periodically review to ensure that the species is indeed new and not pre-existing.</span><br>
 
-        {{ form.non_field_errors|add_class:"alert alert-error" }}
+        {{ form.non_field_errors|add_class:"alert alert-danger" }}
 
         {% for field in form %}
           <div class="form-group form-row">
@@ -24,7 +24,7 @@
               {{field}}
               <span class='help-block'>{{field.help_text}}</span>
             </div>
-            {{field.errors|add_class:"alert alert-error"}}
+            {{field.errors|add_class:"alert alert-danger"}}
           </div>
         {% endfor %}
       </fieldset>
