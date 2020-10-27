@@ -44,8 +44,8 @@ def visuals(driver, root_url):
 
     h.wait_until(h.Text("embedded-tableau").exists)
 
-    # ensure iframe exists inside .tableauPlaceholder -- this is causing problems
-    # assert len(driver.find_elements_by_tag_name("iframe")) > 0
+    # ensure iframe exists inside .tableauPlaceholder
+    assert len(driver.find_elements_by_tag_name("iframe")) > 0
 
     h.go_to(root_url + "/summary/visual/3/")
 
