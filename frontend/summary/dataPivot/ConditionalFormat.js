@@ -18,7 +18,7 @@ class _DataPivot_settings_conditionalFormat {
         this._status_text = $('<span style="padding-right: 10px">').appendTo(this.status);
 
         this.modal = new HAWCModal();
-        this._showModal = $('<button class="btn btn-small" type="button">')
+        this._showModal = $('<button class="btn btn-sm" type="button">')
             .on("click", this._show_modal.bind(this))
             .appendTo(this.status);
 

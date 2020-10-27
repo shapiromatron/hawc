@@ -5,7 +5,7 @@ class ShowAll extends Component {
     render() {
         const {handleClick, allShown} = this.props;
         return (
-            <button className="btn btn-small" onClick={handleClick}>
+            <button className="btn btn-sm" onClick={handleClick}>
                 <i className={allShown ? "fa fa-minus fa-fw" : "fa fa-plus fa-fw"} />
                 {allShown ? "Hide all details" : "Show all details"}
             </button>

@@ -12,7 +12,7 @@ class AssessmentTasks extends Component {
                 {showAssessment ? (
                     <h4>
                         {assessment.name}&nbsp;
-                        <a className="btn btn-small btn-primary" href={assessment.url}>
+                        <a className="btn btn-sm btn-primary" href={assessment.url}>
                             View
                         </a>
                     </h4>

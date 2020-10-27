@@ -42,7 +42,7 @@ class ModelOptionTable extends React.Component {
                     <button
                         onClick={this.handleCreateModel.bind(this)}
                         type="button"
-                        className="btn btn-small">
+                        className="btn btn-sm">
                         <i className="icon-plus" />
                     </button>
 

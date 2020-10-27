@@ -29,7 +29,7 @@ class FilterWidgetTable extends Component {
                         <th>
                             Actions&nbsp;
                             <button
-                                className="btn btn-small btn-primary"
+                                className="btn btn-sm btn-primary"
                                 title="New row"
                                 onClick={() => createNewFilterWidget()}>
                                 <i className="fa fa-plus"></i>
@@ -87,19 +87,19 @@ class FilterWidgetTable extends Component {
                 </td>
                 <td>
                     <button
-                        className="btn btn-small btn-default"
+                        className="btn btn-sm btn-default"
                         title="Move row up"
                         onClick={() => moveArrayElementUp(key, index)}>
                         <i className="fa fa-long-arrow-up"></i>
                     </button>
                     <button
-                        className="btn btn-small btn-default"
+                        className="btn btn-sm btn-default"
                         title="Move row down"
                         onClick={() => moveArrayElementDown(key, index)}>
                         <i className="fa fa-long-arrow-down"></i>
                     </button>
                     <button
-                        className="btn btn-small btn-danger"
+                        className="btn btn-sm btn-danger"
                         title="Delete row"
                         onClick={() => deleteArrayElement(key, index)}>
                         <i className="fa fa-trash"></i>

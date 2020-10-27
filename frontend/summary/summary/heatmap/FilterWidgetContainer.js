@@ -56,13 +56,13 @@ class FilterWidget extends Component {
                         {h.titleCase(widget.column)}
                         <div className="btn-group pull-right">
                             <button
-                                className="btn btn-small"
+                                className="btn btn-sm"
                                 onClick={() => selectAllFilterWidget(widget.column)}
                                 title="Select all items">
                                 <i className="fa fa-check-circle"></i>
                             </button>
                             <button
-                                className="btn btn-small"
+                                className="btn btn-sm"
                                 onClick={() => selectNoneFilterWidget(widget.column)}
                                 title="De-select all items">
                                 <i className="fa fa-times-circle"></i>

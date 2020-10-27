@@ -176,7 +176,7 @@ class RegisterForm(PasswordForm):
         helper.layout.extend(
             [
                 cfl.HTML(
-                    '<a class="btn btn-small" href="#license_modal" data-toggle="modal">View License</a>'
+                    '<a class="btn btn-sm" href="#license_modal" data-toggle="modal">View License</a>'
                 ),
                 cfb.FormActions(
                     cfl.Submit("login", "Create account"),

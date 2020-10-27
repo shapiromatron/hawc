@@ -36,7 +36,7 @@ class ModelOptionTable extends React.Component {
                             this.props.handleCreateModel(modelName);
                         }}
                         type="button"
-                        className="btn btn-small">
+                        className="btn btn-sm">
                         <i className="icon-plus" />
                     </button>
 

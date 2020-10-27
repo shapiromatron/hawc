@@ -141,7 +141,7 @@ Reference.propTypes = {
 
 Reference.defaultProps = {
     showActions: false,
-    actionsBtnClassName: "btn btn-small dropdown-toggle",
+    actionsBtnClassName: "btn btn-sm dropdown-toggle",
     showHr: false,
     showTags: true,
 };
