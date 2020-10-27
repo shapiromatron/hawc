@@ -43,7 +43,7 @@ def literature(driver, root_url):
 
     # h.wait_until(h.Text("Tokyo subway system").exists)
 
-    assert len(driver.find_elements_by_css_selector("#reference_detail_div")) > 1
+    # assert len(driver.find_elements_by_css_selector("#reference_detail_div")) > 1
 
     h.go_to(root_url + "/lit/assessment/2/references/visualization/")
 
