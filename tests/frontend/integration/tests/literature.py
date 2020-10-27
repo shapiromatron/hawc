@@ -39,9 +39,9 @@ def literature(driver, root_url):
     #         print("clicked")
     #         break
 
-    h.wait_until(h.Text("References tagged:").exists, 30)
+    # h.wait_until(h.Text("References tagged:").exists, 30)
 
-    h.wait_until(h.Text("Tokyo subway system").exists)
+    # h.wait_until(h.Text("Tokyo subway system").exists)
 
     assert len(driver.find_elements_by_css_selector("#reference_detail_div")) > 1
 
