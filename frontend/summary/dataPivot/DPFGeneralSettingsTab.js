@@ -22,14 +22,6 @@ let build_settings_general_tab = function(self) {
             tbl.html([colgroup, tbody]);
             return div.html(tbl);
         },
-        build_download_button = function() {
-            return $('<button class="btn btn-primary">Download settings</button>').on(
-                "click",
-                function() {
-                    self.download_settings();
-                }
-            );
-        },
         build_legend_settings = function() {
             var div = $('<div class="row">'),
                 content = $('<div class="col-md-6">'),
@@ -259,13 +251,7 @@ let build_settings_general_tab = function(self) {
         self.legend._draw_legend();
     });
 
-    return tab.html([
-        build_general_settings(),
-        "<hr>",
-        legend_div,
-        "<hr>",
-        build_download_button(),
-    ]);
+    return tab.html([build_general_settings(), "<hr>", legend_div]);
 };
 
 export default build_settings_general_tab;

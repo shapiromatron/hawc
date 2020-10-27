@@ -27,14 +27,17 @@
         },
         "csrf": "{{ csrf_token }}",
         "host": "//{{request.get_host}}",
-        "display": "all"
+        "display": "all",
+        "isForm": false
     }
 </script>
 <script type="text/javascript">
-    $(document).ready(function(){
-        window.app.riskofbiasStartup(function(riskofbias){
-            riskofbias.TableStartup(document.getElementById('robTable'));
-        })
-    });
+$(document).ready(function (){
+  window.app.riskofbiasStartup(function (riskofbias) {
+    const el = document.getElementById('robTable'),
+      config = JSON.parse(document.getElementById('config').text);
+    riskofbias.TableStartup(el, config);
+  });
+});
 </script>
 {% endblock extrajs %}

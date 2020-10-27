@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework.test import APIRequestFactory
 
 from hawc.apps.common import renderers
-from hawc.apps.common.helper import FlatExport
+from hawc.apps.common.helper import FlatExport, read_excel
 
 
 @pytest.fixture
@@ -63,7 +63,7 @@ def test_xlsx_renderer(basic_export):
     response = renderers.PandasXlsxRenderer().render(
         data=basic_export, renderer_context={"response": resp_obj}
     )
-    df2 = pd.read_excel(BytesIO(response))
+    df2 = read_excel(BytesIO(response))
     assert df2.to_dict(orient="records") == [{"a": 1, "b": 2}, {"a": 3, "b": 4}]
     assert resp_obj["Content-Disposition"] == "attachment; filename=fn.xlsx"
 
@@ -72,30 +72,36 @@ def test_xlsx_renderer(basic_export):
         data=[[1, "2000-01-01 01:00:00"], [2, "2005-12-31 02:10:00"]], columns=["count", "when"],
     )
     df.loc[:, "when"] = df.when.astype("datetime64")
-    basic_export
+
+    def check_is_close(df1: pd.DataFrame, df2: pd.DataFrame) -> bool:
+        return all(
+            [
+                df1["count"].equals(df2["count"]),
+                bool(((df2["when"] - df1["when"]).dt.total_seconds().abs() < 0.1).all()),
+            ]
+        )
 
     # naive datetime
     response = renderers.PandasXlsxRenderer().render(
         data=FlatExport(df=df, filename="fn"), renderer_context={"response": Response()}
     )
-    df2 = pd.read_excel(BytesIO(response))
-    assert df2.equals(df)
+    df2 = read_excel(BytesIO(response))
+    assert check_is_close(df, df2) is True
 
     # with timezone
     df.loc[:, "when"] = df.when.dt.tz_localize(tz="US/Eastern")
     response = renderers.PandasXlsxRenderer().render(
         data=FlatExport(df=df, filename="fn"), renderer_context={"response": Response()}
     )
-    df2 = pd.read_excel(BytesIO(response))
+    df2 = read_excel(BytesIO(response))
 
-    # expected; we lost the timezone
-    with pytest.raises(TypeError) as err:
-        assert df2.equals(df) is False
-    assert "data type not understood" in str(err)
+    # this should be incorrect initially without a timezone
+    with pytest.raises(TypeError):
+        check_is_close(df, df2)
 
     # with appropriate cast, success!
     df2.loc[:, "when"] = df2.when.astype("datetime64").dt.tz_localize(tz="US/Eastern")
-    assert df2.equals(df) is True
+    assert check_is_close(df, df2) is True
 
 
 def test_xlsx_response_error(basic_export):

@@ -85,10 +85,7 @@ class JobPermissions(permissions.BasePermission):
 
 
 class AssessmentLevelPermissions(permissions.BasePermission):
-
-    list_actions = [
-        "list",
-    ]
+    default_list_actions = ["list"]
 
     def has_object_permission(self, request, view, obj):
         if not hasattr(view, "assessment"):
@@ -101,7 +98,8 @@ class AssessmentLevelPermissions(permissions.BasePermission):
             return view.assessment.user_can_edit_object(request.user)
 
     def has_permission(self, request, view):
-        if view.action in self.list_actions:
+        list_actions = getattr(view, "list_actions", self.default_list_actions)
+        if view.action in list_actions:
             logging.info("Permission checked")
 
             if not hasattr(view, "assessment"):
@@ -127,8 +125,10 @@ class InAssessmentFilter(filters.BaseFilterBackend):
     Filter objects which are in a particular assessment.
     """
 
+    default_list_actions = ["list"]
+
     def filter_queryset(self, request, queryset, view):
-        list_actions = getattr(view, "list_actions", ["list"])
+        list_actions = getattr(view, "list_actions", self.default_list_actions)
         if view.action not in list_actions:
             return queryset
 
@@ -279,11 +279,11 @@ class Assessment(AssessmentViewset):
 
         # Assigns db_id to hero_id in all instances where db == HERO
         df["hero_id"] = None
-        df["hero_id"].loc[df["db"] == constants.HERO] = df["db_id"][df["db"] == constants.HERO]
+        df.loc[df["db"] == constants.HERO, ["hero_id"]] = df["db_id"][df["db"] == constants.HERO]
 
         # Assigns db_id to pubmed_id in all instances where db == PUBMED
         df["pubmed_id"] = None
-        df["pubmed_id"].loc[df["db"] == constants.PUBMED] = df["db_id"][
+        df.loc[df["db"] == constants.PUBMED, ["pubmed_id"]] = df["db_id"][
             df["db"] == constants.PUBMED
         ]
         df = df.drop(columns=["db", "db_id"]).drop_duplicates()

@@ -10,8 +10,8 @@ from . import models
 class TaskSerializer(serializers.ModelSerializer):
     owner = HAWCUserSerializer(read_only=True)
     study = StudyAssessmentSerializer(read_only=True)
-    type_display = serializers.CharField(source="get_type_display")
-    status_display = serializers.CharField(source="get_status_display")
+    type_display = serializers.CharField(source="get_type_display", read_only=True)
+    status_display = serializers.CharField(source="get_status_display", read_only=True)
 
     class Meta:
         model = models.Task

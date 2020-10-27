@@ -8,7 +8,6 @@ from django.conf import settings
 from django.contrib.contenttypes import fields
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.postgres.fields import JSONField
 from django.core.cache import cache
 from django.core.validators import MinValueValidator
 from django.db import models
@@ -17,7 +16,7 @@ from django.utils import timezone
 from pydantic import BaseModel as PydanticModel
 from reversion import revisions as reversion
 
-from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper
+from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper, read_excel
 from ..common.models import IntChoiceEnum, get_crumbs, get_private_data_storage
 from ..myuser.models import HAWCUser
 from ..vocab.models import VocabularyNamespace
@@ -63,7 +62,7 @@ class DSSTox(models.Model):
     dtxsid = models.CharField(
         max_length=80, primary_key=True, verbose_name="DSSTox substance identifier (DTXSID)",
     )
-    content = JSONField(default=dict)
+    content = models.JSONField(default=dict)
 
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
@@ -452,6 +451,16 @@ class Assessment(models.Model):
             df1 = df1.merge(df2, left_index=True, right_index=True)
         return df1.reset_index().sort_values("id")
 
+    def pms_and_team_users(self) -> models.QuerySet:
+        # return users that are either project managers or team members
+        return (
+            HAWCUser.objects.filter(
+                models.Q(assessment_pms=self.id) | models.Q(assessment_teams=self.id)
+            )
+            .order_by("id")
+            .distinct("id")
+        )
+
 
 class Attachment(models.Model):
     objects = managers.AttachmentManager()
@@ -764,7 +773,7 @@ class DatasetRevision(models.Model):
             recent dataset version will be visible. Visualizations using a dataset will use the
             latest version available.""",
     )
-    metadata = JSONField(default=dict, editable=False)
+    metadata = models.JSONField(default=dict, editable=False)
     excel_worksheet_name = models.CharField(
         help_text="Worksheet name to use in Excel file. If blank, the first worksheet is used.",
         max_length=64,
@@ -814,7 +823,7 @@ class DatasetRevision(models.Model):
         """
         kwargs = {}
         if suffix == ".xlsx":
-            func = pd.read_excel
+            func = read_excel
             if worksheet_name:
                 kwargs["sheet_name"] = worksheet_name
         elif suffix in [".csv", ".tsv"]:
@@ -853,8 +862,8 @@ class Job(models.Model):
     )
     job = models.PositiveSmallIntegerField(choices=JobType.choices(), default=JobType.TEST)
 
-    kwargs = JSONField(default=dict, blank=True, null=True)
-    result = JSONField(default=dict, editable=False)
+    kwargs = models.JSONField(default=dict, blank=True, null=True)
+    result = models.JSONField(default=dict, editable=False)
 
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)

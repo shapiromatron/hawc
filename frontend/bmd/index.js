@@ -1,10 +1,4 @@
-import {splitStartupRedux} from "utils/WebpackSplit";
+import bmds2Startup from "./bmds2";
+import bmds3Startup from "./bmds3";
 
-export default function() {
-    let element = document.getElementById("bmd");
-    import("bmd/containers/Root").then(Component => {
-        import("bmd/store/configureStore").then(store => {
-            splitStartupRedux(element, Component.default, store.default);
-        });
-    });
-}
+export {bmds2Startup, bmds3Startup};

@@ -694,11 +694,12 @@ class Group(models.Model):
     participant_n = models.PositiveIntegerField(
         blank=True, null=True, verbose_name="Participant N", help_text="Ex. 1400"
     )
-    isControl = models.NullBooleanField(
+    isControl = models.BooleanField(
         verbose_name="Control?",
         default=None,
         choices=IS_CONTROL_CHOICES,
         help_text="Should this group be interpreted as a null/control group, if applicable",
+        null=True,
     )
     comments = models.TextField(
         blank=True, help_text="Provide additional group or extraction details if necessary",
@@ -1341,6 +1342,9 @@ class Result(models.Model):
     resulttags = models.ManyToManyField(EffectTag, blank=True, verbose_name="Tags")
 
     COPY_NAME = "results"
+
+    class Meta:
+        ordering = ("id",)
 
     @property
     def factors_applied(self):

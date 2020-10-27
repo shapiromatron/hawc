@@ -546,8 +546,11 @@ class DosingRegime(models.Model):
         verbose_name="Number of Dose Groups",
         help_text="Number of dose groups, plus control",
     )
-    positive_control = models.NullBooleanField(
-        choices=POSITIVE_CONTROL_CHOICES, default=False, help_text="Was a positive control used?",
+    positive_control = models.BooleanField(
+        choices=POSITIVE_CONTROL_CHOICES,
+        default=False,
+        help_text="Was a positive control used?",
+        null=True,
     )
     negative_control = models.CharField(
         max_length=2,

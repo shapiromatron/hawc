@@ -2,17 +2,18 @@ import json
 from collections import OrderedDict
 from urllib.parse import urlparse, urlunparse
 
-import pandas as pd
 from crispy_forms import layout as cfl
 from django import forms
 from django.urls import reverse
+from openpyxl import load_workbook
+from openpyxl.utils.exceptions import InvalidFileException
 from selectable import forms as selectable
-from xlrd import XLRDError, open_workbook
 
 from ..animal.lookups import EndpointByAssessmentLookup, EndpointByAssessmentLookupHtml
 from ..animal.models import Endpoint
 from ..assessment.models import EffectTag
 from ..common.forms import BaseFormHelper
+from ..common.helper import read_excel
 from ..epi.models import Outcome
 from ..invitro.models import IVChemical, IVEndpointCategory
 from ..lit.models import ReferenceFilterTag
@@ -900,14 +901,12 @@ class DataPivotUploadForm(DataPivotForm):
         cleaned_data = super().clean()
         excel_file = cleaned_data.get("excel_file")
         worksheet_name = cleaned_data.get("worksheet_name", "")
-        if worksheet_name == "":
-            worksheet_name = 0
 
         if excel_file:
             # see if it loads
             try:
-                worksheet_names = open_workbook(file_contents=excel_file.read()).sheet_names()
-            except XLRDError:
+                wb = load_workbook(excel_file, read_only=True)
+            except InvalidFileException:
                 self.add_error(
                     "excel_file",
                     "Unable to read Excel file. Please upload an Excel file in XLSX format.",
@@ -915,12 +914,11 @@ class DataPivotUploadForm(DataPivotForm):
                 return
 
             # check worksheet name
-            if worksheet_name:
-                if worksheet_name not in worksheet_names:
-                    self.add_error("worksheet_name", f"Worksheet name {worksheet_name} not found.")
-                    return
+            if worksheet_name and worksheet_name not in wb.sheetnames:
+                self.add_error("worksheet_name", f"Worksheet name {worksheet_name} not found.")
+                return
 
-            df = pd.read_excel(excel_file, sheet_name=worksheet_name)
+            df = read_excel(excel_file, sheet_name=worksheet_name)
 
             # check data
             if df.shape[0] < 2:

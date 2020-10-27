@@ -1,8 +1,6 @@
 import $ from "$";
 import * as d3 from "d3";
 
-import {saveAs} from "filesaver.js";
-
 import HAWCModal from "utils/HAWCModal";
 
 import DataPivotDefaultSettings from "./DataPivotDefaultSettings";
@@ -301,20 +299,8 @@ class DataPivot {
         );
     }
 
-    download_settings() {
-        var settings_json = this.get_settings_json(true),
-            blob = new Blob([settings_json], {
-                type: "text/plain; charset=utf-8",
-            });
-        saveAs(blob, "data_pivot_settings.json");
-    }
-
-    get_settings_json(pretty) {
-        if (pretty) {
-            return JSON.stringify(this.settings, null, 4);
-        } else {
-            return JSON.stringify(this.settings);
-        }
+    get_settings_json() {
+        return JSON.stringify(this.settings);
     }
 
     displayAsModal() {

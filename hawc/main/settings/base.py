@@ -93,7 +93,6 @@ INSTALLED_APPS = (
     "treebeard",
     "selectable",
     "crispy_forms",
-    "rest_framework_extensions",
     "webpack_loader",
     # Custom apps
     "hawc.apps.common",
