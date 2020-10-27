@@ -34,7 +34,7 @@ class PlotFromUrl extends Component {
         const {data, error} = this.state;
         if (error) {
             return (
-                <p className="text-error">
+                <p className="text-danger">
                     An error occurred on the server. Please try again later. If the error continues
                     to occur, please let us know!
                 </p>
