@@ -13,7 +13,7 @@ class Reference extends Component {
             nodes.push(
                 <ReferenceButton
                     key={h.randomString()}
-                    className={"btn btn-mini btn-primary"}
+                    className={"btn btn-xs btn-primary"}
                     url={data.full_text_url}
                     displayText={"Full text link"}
                     textToCopy={data.full_text_url}
@@ -28,7 +28,7 @@ class Reference extends Component {
                 nodes.push(
                     <ReferenceButton
                         key={h.randomString()}
-                        className={"btn btn-mini btn-success"}
+                        className={"btn btn-xs btn-success"}
                         url={v.url}
                         displayText={v.database}
                         textToCopy={v.id}
@@ -40,7 +40,7 @@ class Reference extends Component {
         nodes.push(
             <ReferenceButton
                 key={h.randomString()}
-                className={"btn btn-mini btn-warning"}
+                className={"btn btn-xs btn-warning"}
                 url={data.url}
                 displayText={"HAWC"}
                 textToCopy={data.pk.toString()}
@@ -54,7 +54,7 @@ class Reference extends Component {
                 nodes.push(
                     <ReferenceButton
                         key={h.randomString()}
-                        className={"btn btn-mini"}
+                        className={"btn btn-xs"}
                         url={v.url}
                         displayText={v.database}
                         textToCopy={v.id}

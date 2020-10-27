@@ -504,7 +504,7 @@ class D3Plot {
         // add close button to menu
         var close_button = {
             id: "close",
-            cls: "btn btn-mini pull-right",
+            cls: "btn btn-xs pull-right",
             title: "Hide menu",
             text: "x",
             on_click() {
@@ -518,7 +518,7 @@ class D3Plot {
         // add zoom button to menu
         var zoom_button = {
             id: "close",
-            cls: "btn btn-mini pull-right",
+            cls: "btn btn-xs pull-right",
             title: "Zoom image to full-size",
             text: "",
             icon: "icon-zoom-in",
@@ -533,7 +533,7 @@ class D3Plot {
         var plot = this,
             group = $('<div class="pull-right btn-group"></div>'),
             dropdown = $(
-                '<a title="Download figure" class="btn btn-mini dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-download-alt"></i></a>'
+                '<a title="Download figure" class="btn btn-xs dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-download-alt"></i></a>'
             ),
             dropdown_li = $('<ul class="dropdown-menu"></ul>'),
             svg = $("<li>")

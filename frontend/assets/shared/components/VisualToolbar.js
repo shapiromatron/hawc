@@ -119,7 +119,7 @@ class VisualToolbar extends Component {
         const {svg} = this.props;
         return (
             <div className="btn-group dropup" title="Download image">
-                <button className="btn btn-mini dropdown-toggle" data-toggle="dropdown">
+                <button className="btn btn-xs dropdown-toggle" data-toggle="dropdown">
                     <i className="fa fa-download"></i>
                 </button>
                 <ul className="dropdown-menu pull-right">
@@ -165,7 +165,7 @@ class VisualToolbar extends Component {
                 }
             };
         return (
-            <button className="btn btn-mini" title="Zoom in/out" onClick={handleClick}>
+            <button className="btn btn-xs" title="Zoom in/out" onClick={handleClick}>
                 <i className={isFullSize() ? "fa fa-search-minus" : "fa fa-search-plus"}></i>
             </button>
         );

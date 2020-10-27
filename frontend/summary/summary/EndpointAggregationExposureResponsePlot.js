@@ -380,7 +380,7 @@ class EndpointAggregationExposureResponsePlot extends D3Visualization {
         this.add_menu_button(this.parent.addPlotToggleButton());
         this.add_menu_button({
             id: "toggle_x_axis",
-            cls: "btn btn-mini",
+            cls: "btn btn-xs",
             title: "Change x-axis scale (shortcut: click the x-axis label)",
             text: "",
             icon: "icon-resize-horizontal",

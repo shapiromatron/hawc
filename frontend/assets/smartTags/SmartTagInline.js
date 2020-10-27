@@ -58,7 +58,7 @@ class InlineRendering {
                     $body.fadeIn("slow");
                 }
             },
-            toggleBtn = $('<a title="click to toggle visibility" class="btn btn-mini pull-right">')
+            toggleBtn = $('<a title="click to toggle visibility" class="btn btn-xs pull-right">')
                 .append('<i class="icon-minus"></i>')
                 .off("click")
                 .click(expandHideTogger.bind(this));

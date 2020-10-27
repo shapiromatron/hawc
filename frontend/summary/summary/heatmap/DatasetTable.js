@@ -43,7 +43,7 @@ class InteractiveCell extends Component {
                 {extension.hasModal ? (
                     <button
                         style={{opacity: isHovering ? 1 : 0}}
-                        className="btn btn-mini pull-right"
+                        className="btn btn-xs pull-right"
                         onClick={() => store.showModalOnRow(extension, row)}
                         title="View additional information">
                         <i className="icon-eye-open"></i>

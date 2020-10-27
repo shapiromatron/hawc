@@ -55,7 +55,7 @@ class Donut extends D3Plot {
         this.add_menu();
         this.add_menu_button({
             id: "lock_view",
-            cls: "btn btn-mini",
+            cls: "btn btn-xs",
             title: "Lock current view (shortcut: press ctrl to toggle)",
             text: "",
             icon: "icon-lock",
