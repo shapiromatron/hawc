@@ -74,7 +74,7 @@ class Node extends React.Component {
                         {/* Always show button so tab-layout is preserved */}
                         <button
                             type="button"
-                            className="btn btn-xs btn-link"
+                            className="btn btn-sm btn-link"
                             title="Show/hide child nodes"
                             style={hasChildren ? null : {pointerEvents: "none"}}
                             onClick={handleNodeClick}>

@@ -14,7 +14,7 @@ class GroupedObject extends Component {
                     <button
                         type="button"
                         title="Show/hide all items"
-                        className="btn btn-inverse btn-xs"
+                        className="btn btn-inverse btn-sm"
                         onClick={() => store.toggleExpanded()}>
                         <i
                             className={store.expanded ? "fa fa-minus-square" : "fa fa-plus-square"}

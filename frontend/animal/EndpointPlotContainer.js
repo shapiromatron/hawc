@@ -43,7 +43,7 @@ class EndpointPlotContainer {
         var ep = this,
             options = {
                 id: "plot_toggle",
-                cls: "btn btn-xs",
+                cls: "btn btn-sm",
                 title: "View alternate visualizations",
                 text: "",
                 icon: "icon-circle-arrow-right",

@@ -96,7 +96,7 @@ class TermSelector extends Component {
                             {currentId}&nbsp;|&nbsp;{currentText}&nbsp;
                             <button
                                 type="button"
-                                className="btn btn-xs"
+                                className="btn btn-sm"
                                 title="Unselect term"
                                 onClick={() => store.setObjectField(termIdField, null)}>
                                 &times;

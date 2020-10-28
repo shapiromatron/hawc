@@ -27,8 +27,8 @@
             <td>{{object.description|safe}}</td>
             {% if canEdit %}
             <td>
-                <a class="btn btn-xs btn-info" href="{{object.get_edit_url}}">Edit</a>
-                <a class="btn btn-xs btn-danger" href="{{object.get_delete_url}}">Delete</a>
+                <a class="btn btn-sm btn-info" href="{{object.get_edit_url}}">Edit</a>
+                <a class="btn btn-sm btn-danger" href="{{object.get_delete_url}}">Delete</a>
             </td>
             {% endif %}
         </tr>

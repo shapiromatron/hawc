@@ -138,7 +138,7 @@ class FilterWidget extends Component {
         if (modalRows.length == 0) {
             return (
                 <button
-                    className="btn btn-xs pull-right disabled"
+                    className="btn btn-sm pull-right disabled"
                     title="No additional information">
                     <i className="icon-eye-close"></i>
                 </button>
@@ -149,7 +149,7 @@ class FilterWidget extends Component {
         else if (modalRows.length == 1) {
             return (
                 <button
-                    className="btn btn-xs pull-right"
+                    className="btn btn-sm pull-right"
                     onClick={() => showModalOnRow(extension, modalRows[0])}
                     title="View additional information">
                     <i className="icon-eye-open"></i>
@@ -160,7 +160,7 @@ class FilterWidget extends Component {
         // If there are too many results disable button
         else {
             return (
-                <button className="btn btn-xs pull-right disabled" title="Too many results">
+                <button className="btn btn-sm pull-right disabled" title="Too many results">
                     <i className="icon-eye-open"></i>
                 </button>
             );
