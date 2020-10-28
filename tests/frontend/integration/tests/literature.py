@@ -26,24 +26,13 @@ def literature(driver, root_url):
     assert len(driver.find_elements_by_css_selector("#references_detail_div")) > 0
 
     # lets assume we need to wait for the js events to be attached to the elements
-    # time.sleep(5)
+    time.sleep(5)
 
-    # h.click("Human Study (2)")
+    h.click("Human Study (2)")
 
-    # print(h.Text("Human Study (2)").value)
+    h.wait_until(h.Text("References tagged:").exists, 15)
 
-    # TODO: I've tried every method of clicking on Human Study(2) that I can find it's like the click event isn't bound
-    # for elem in driver.find_elements_by_css_selector(".nestedTag"):
-    #     if "Human Study" in elem.text:
-    #         driver.execute_script("arguments[0].click();", elem)
-    #         print("clicked")
-    #         break
-
-    # h.wait_until(h.Text("References tagged:").exists, 30)
-
-    # h.wait_until(h.Text("Tokyo subway system").exists)
-
-    # assert len(driver.find_elements_by_css_selector("#reference_detail_div")) > 1
+    assert len(driver.find_elements_by_css_selector("#reference_detail_div")) > 1
 
     h.go_to(root_url + "/lit/assessment/2/references/visualization/")
 
