@@ -1,7 +1,7 @@
 import django.views.static
 from django.conf import settings
-from django.conf.urls import include, url
 from django.contrib import admin
+from django.urls import include, re_path
 from django.views.generic import TemplateView
 from rest_framework import permissions
 from rest_framework.schemas import get_schema_view
@@ -21,68 +21,68 @@ from hawc import __version__
 from hawc.apps.assessment import views
 
 open_api_patterns = [
-    url(r"^ani/api/", include(hawc.apps.animal.urls.router.urls)),
-    url(r"^assessment/api/", include(hawc.apps.assessment.urls.router.urls)),
-    url(r"^bmd/api/", include(hawc.apps.bmd.urls.router.urls)),
-    url(r"^epi/api/", include(hawc.apps.epi.urls.router.urls)),
-    url(r"^epi-meta/api/", include(hawc.apps.epimeta.urls.router.urls)),
-    url(r"^in-vitro/api/", include(hawc.apps.invitro.urls.router.urls)),
-    url(r"^lit/api/", include(hawc.apps.lit.urls.router.urls)),
-    url(r"^mgmt/api/", include(hawc.apps.mgmt.urls.router.urls)),
-    url(r"^rob/api/", include(hawc.apps.riskofbias.urls.router.urls)),
-    url(r"^study/api/", include(hawc.apps.study.urls.router.urls)),
-    url(r"^summary/api/", include(hawc.apps.summary.urls.router.urls)),
+    re_path(r"^ani/api/", include(hawc.apps.animal.urls.router.urls)),
+    re_path(r"^assessment/api/", include(hawc.apps.assessment.urls.router.urls)),
+    re_path(r"^bmd/api/", include(hawc.apps.bmd.urls.router.urls)),
+    re_path(r"^epi/api/", include(hawc.apps.epi.urls.router.urls)),
+    re_path(r"^epi-meta/api/", include(hawc.apps.epimeta.urls.router.urls)),
+    re_path(r"^in-vitro/api/", include(hawc.apps.invitro.urls.router.urls)),
+    re_path(r"^lit/api/", include(hawc.apps.lit.urls.router.urls)),
+    re_path(r"^mgmt/api/", include(hawc.apps.mgmt.urls.router.urls)),
+    re_path(r"^rob/api/", include(hawc.apps.riskofbias.urls.router.urls)),
+    re_path(r"^study/api/", include(hawc.apps.study.urls.router.urls)),
+    re_path(r"^summary/api/", include(hawc.apps.summary.urls.router.urls)),
 ]
 
 urlpatterns = [
     # Portal
-    url(r"^$", views.Home.as_view(), name="home"),
-    url(r"^portal/$", views.AssessmentList.as_view(), name="portal"),
-    url(
+    re_path(r"^$", views.Home.as_view(), name="home"),
+    re_path(r"^portal/$", views.AssessmentList.as_view(), name="portal"),
+    re_path(
         r"^robots\.txt$",
         TemplateView.as_view(template_name="robots.txt", content_type="text/plain"),
     ),
-    url(r"^about/$", views.About.as_view(), name="about"),
-    url(r"^contact/$", views.Contact.as_view(), name="contact"),
+    re_path(r"^about/$", views.About.as_view(), name="about"),
+    re_path(r"^contact/$", views.Contact.as_view(), name="contact"),
     # Apps
-    url(r"^user/", include("hawc.apps.myuser.urls")),
-    url(r"^assessment/", include("hawc.apps.assessment.urls")),
-    url(r"^study/", include("hawc.apps.study.urls")),
-    url(r"^ani/", include("hawc.apps.animal.urls")),
-    url(r"^epi/", include("hawc.apps.epi.urls")),
-    url(r"^epi-meta/", include("hawc.apps.epimeta.urls")),
-    url(r"^in-vitro/", include("hawc.apps.invitro.urls")),
-    url(r"^bmd/", include("hawc.apps.bmd.urls")),
-    url(r"^lit/", include("hawc.apps.lit.urls")),
-    url(r"^summary/", include("hawc.apps.summary.urls")),
-    url(r"^rob/", include("hawc.apps.riskofbias.urls")),
-    url(r"^mgmt/", include("hawc.apps.mgmt.urls")),
-    url(r"^vocab/", include("hawc.apps.vocab.urls")),
+    re_path(r"^user/", include("hawc.apps.myuser.urls")),
+    re_path(r"^assessment/", include("hawc.apps.assessment.urls")),
+    re_path(r"^study/", include("hawc.apps.study.urls")),
+    re_path(r"^ani/", include("hawc.apps.animal.urls")),
+    re_path(r"^epi/", include("hawc.apps.epi.urls")),
+    re_path(r"^epi-meta/", include("hawc.apps.epimeta.urls")),
+    re_path(r"^in-vitro/", include("hawc.apps.invitro.urls")),
+    re_path(r"^bmd/", include("hawc.apps.bmd.urls")),
+    re_path(r"^lit/", include("hawc.apps.lit.urls")),
+    re_path(r"^summary/", include("hawc.apps.summary.urls")),
+    re_path(r"^rob/", include("hawc.apps.riskofbias.urls")),
+    re_path(r"^mgmt/", include("hawc.apps.mgmt.urls")),
+    re_path(r"^vocab/", include("hawc.apps.vocab.urls")),
     # Error-pages
-    url(r"^403/$", views.Error403.as_view(), name="403"),
-    url(r"^404/$", views.Error404.as_view(), name="404"),
-    url(r"^500/$", views.Error500.as_view(), name="500"),
+    re_path(r"^403/$", views.Error403.as_view(), name="403"),
+    re_path(r"^404/$", views.Error404.as_view(), name="404"),
+    re_path(r"^500/$", views.Error500.as_view(), name="500"),
     # Changelog
-    url(r"^update-session/", views.UpdateSession.as_view(), name="update_session"),
+    re_path(r"^update-session/", views.UpdateSession.as_view(), name="update_session"),
     # Admin
-    url(
+    re_path(
         rf"^admin/{settings.ADMIN_URL_PREFIX}/dashboard/$",
         views.AdminDashboard.as_view(),
         name="admin_dashboard",
     ),
-    url(
+    re_path(
         rf"^admin/{settings.ADMIN_URL_PREFIX}/assessment-size/$",
         views.AdminAssessmentSize.as_view(),
         name="admin_assessment_size",
     ),
-    url(
+    re_path(
         rf"^admin/{settings.ADMIN_URL_PREFIX}/healthcheck/$",
         views.Healthcheck.as_view(),
         name="healthcheck",
     ),
-    url(rf"^admin/{settings.ADMIN_URL_PREFIX}/", admin.site.urls),
-    url(r"^selectable/", include("selectable.urls")),
-    url(
+    re_path(rf"^admin/{settings.ADMIN_URL_PREFIX}/", admin.site.urls),
+    re_path(r"^selectable/", include("selectable.urls")),
+    re_path(
         r"^openapi/$",
         get_schema_view(
             title="HAWC",
@@ -99,8 +99,8 @@ if settings.DEBUG:
     import debug_toolbar
 
     urlpatterns += [
-        url(r"^__debug__/", include(debug_toolbar.urls)),
-        url(
+        re_path(r"^__debug__/", include(debug_toolbar.urls)),
+        re_path(
             r"^media/(?P<path>.*)$",
             django.views.static.serve,
             {"document_root": settings.MEDIA_ROOT},

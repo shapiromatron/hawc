@@ -1,4 +1,4 @@
-from django.conf.urls import include, url
+from django.urls import include, re_path
 from rest_framework.routers import DefaultRouter
 
 from . import api, views
@@ -16,61 +16,71 @@ router.register(r"ivchemical-cleanup", api.IVChemicalCleanup, basename="ivchemic
 app_name = "invitro"
 urlpatterns = [
     # experiment
-    url(
+    re_path(
         r"^study/(?P<pk>\d+)/create-experiment/$",
         views.ExperimentCreate.as_view(),
         name="experiment_create",
     ),
-    url(r"^experiment/(?P<pk>\d+)/$", views.ExperimentDetail.as_view(), name="experiment_detail",),
-    url(
+    re_path(
+        r"^experiment/(?P<pk>\d+)/$", views.ExperimentDetail.as_view(), name="experiment_detail",
+    ),
+    re_path(
         r"^experiment/(?P<pk>\d+)/update/$",
         views.ExperimentUpdate.as_view(),
         name="experiment_update",
     ),
-    url(
+    re_path(
         r"^experiment/(?P<pk>\d+)/delete/$",
         views.ExperimentDelete.as_view(),
         name="experiment_delete",
     ),
     # chemical
-    url(
+    re_path(
         r"^study/(?P<pk>\d+)/create-chemical/$",
         views.ChemicalCreate.as_view(),
         name="chemical_create",
     ),
-    url(r"^chemical/(?P<pk>\d+)/$", views.ChemicalDetail.as_view(), name="chemical_detail",),
-    url(r"^chemical/(?P<pk>\d+)/update/$", views.ChemicalUpdate.as_view(), name="chemical_update",),
-    url(r"^chemical/(?P<pk>\d+)/delete/$", views.ChemicalDelete.as_view(), name="chemical_delete",),
+    re_path(r"^chemical/(?P<pk>\d+)/$", views.ChemicalDetail.as_view(), name="chemical_detail",),
+    re_path(
+        r"^chemical/(?P<pk>\d+)/update/$", views.ChemicalUpdate.as_view(), name="chemical_update",
+    ),
+    re_path(
+        r"^chemical/(?P<pk>\d+)/delete/$", views.ChemicalDelete.as_view(), name="chemical_delete",
+    ),
     # cell types
-    url(
+    re_path(
         r"^study/(?P<pk>\d+)/create-cell-type/$",
         views.CellTypeCreate.as_view(),
         name="celltype_create",
     ),
-    url(r"^cell-type/(?P<pk>\d+)/$", views.CellTypeDetail.as_view(), name="celltype_detail",),
-    url(
+    re_path(r"^cell-type/(?P<pk>\d+)/$", views.CellTypeDetail.as_view(), name="celltype_detail",),
+    re_path(
         r"^cell-type/(?P<pk>\d+)/update/$", views.CellTypeUpdate.as_view(), name="celltype_update",
     ),
-    url(
+    re_path(
         r"^cell-type/(?P<pk>\d+)/delete/$", views.CellTypeDelete.as_view(), name="celltype_delete",
     ),
     # endpoint categories
-    url(
+    re_path(
         r"^assessment/(?P<pk>\d+)/endpoint-categories/update/$",
         views.EndpointCategoryUpdate.as_view(),
         name="endpointcategory_update",
     ),
     # endpoint
-    url(
+    re_path(
         r"^assessment/(?P<pk>\d+)/endpoints/$", views.EndpointList.as_view(), name="endpoint_list",
     ),
-    url(
+    re_path(
         r"^experiment/(?P<pk>\d+)/create-endpoint/$",
         views.EndpointCreate.as_view(),
         name="endpoint_create",
     ),
-    url(r"^endpoint/(?P<pk>\d+)/$", views.EndpointDetail.as_view(), name="endpoint_detail",),
-    url(r"^endpoint/(?P<pk>\d+)/update/$", views.EndpointUpdate.as_view(), name="endpoint_update",),
-    url(r"^endpoint/(?P<pk>\d+)/delete/$", views.EndpointDelete.as_view(), name="endpoint_delete",),
-    url(r"^api/", include((router.urls, "api"))),
+    re_path(r"^endpoint/(?P<pk>\d+)/$", views.EndpointDetail.as_view(), name="endpoint_detail",),
+    re_path(
+        r"^endpoint/(?P<pk>\d+)/update/$", views.EndpointUpdate.as_view(), name="endpoint_update",
+    ),
+    re_path(
+        r"^endpoint/(?P<pk>\d+)/delete/$", views.EndpointDelete.as_view(), name="endpoint_delete",
+    ),
+    re_path(r"^api/", include((router.urls, "api"))),
 ]

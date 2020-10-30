@@ -1,4 +1,4 @@
-from django.conf.urls import include, url
+from django.urls import include, re_path
 from rest_framework.routers import DefaultRouter
 
 from . import api, views
@@ -23,100 +23,106 @@ router.register(r"dose-units", api.DoseUnits, basename="dose_units")
 
 app_name = "animal"
 urlpatterns = [
-    url(r"^api/", include((router.urls, "api"))),
+    re_path(r"^api/", include((router.urls, "api"))),
     # Heatmap views
-    url(
+    re_path(
         r"^assessment/(?P<pk>\d+)/heatmap-study-design/$",
         views.HeatmapStudyDesign.as_view(),
         name="heatmap_study_design",
     ),
-    url(
+    re_path(
         r"^assessment/(?P<pk>\d+)/heatmap-endpoints/$",
         views.HeatmapEndpoint.as_view(),
         name="heatmap_endpoints",
     ),
-    url(
+    re_path(
         r"^assessment/(?P<pk>\d+)/heatmap-endpoints-doses/$",
         views.HeatmapEndpointDose.as_view(),
         name="heatmap_endpoints_doses",
     ),
     # Experiment
-    url(
+    re_path(
         r"^study/(?P<pk>\d+)/experiment/new/$",
         views.ExperimentCreate.as_view(),
         name="experiment_new",
     ),
-    url(
+    re_path(
         r"^study/(?P<pk>\d+)/experiment/copy-as-new-selector/$",
         views.ExperimentCopyAsNewSelector.as_view(),
         name="experiment_copy_selector",
     ),
-    url(r"^experiment/(?P<pk>\d+)/$", views.ExperimentRead.as_view(), name="experiment_detail",),
-    url(
+    re_path(
+        r"^experiment/(?P<pk>\d+)/$", views.ExperimentRead.as_view(), name="experiment_detail",
+    ),
+    re_path(
         r"^experiment/(?P<pk>\d+)/edit/$",
         views.ExperimentUpdate.as_view(),
         name="experiment_update",
     ),
-    url(
+    re_path(
         r"^experiment/(?P<pk>\d+)/delete/$",
         views.ExperimentDelete.as_view(),
         name="experiment_delete",
     ),
     # AnimalGroup
-    url(
+    re_path(
         r"^experiment/(?P<pk>\d+)/animal-group/new/$",
         views.AnimalGroupCreate.as_view(),
         name="animal_group_new",
     ),
-    url(
+    re_path(
         r"^experiment/(?P<pk>\d+)/animal-group/copy-as-new-selector/$",
         views.AnimalGroupCopyAsNewSelector.as_view(),
         name="animal_group_copy_selector",
     ),
-    url(
+    re_path(
         r"^animal-group/(?P<pk>\d+)/$", views.AnimalGroupRead.as_view(), name="animal_group_detail",
     ),
-    url(
+    re_path(
         r"^animal-group/(?P<pk>\d+)/edit/$",
         views.AnimalGroupUpdate.as_view(),
         name="animal_group_update",
     ),
-    url(
+    re_path(
         r"^animal-group/(?P<pk>\d+)/delete/$",
         views.AnimalGroupDelete.as_view(),
         name="animal_group_delete",
     ),
-    url(
+    re_path(
         r"^animal-group/(?P<pk>\d+)/endpoint/copy-as-new-selector/$",
         views.EndpointCopyAsNewSelector.as_view(),
         name="endpoint_copy_selector",
     ),
     # Dosing Regime
-    url(
+    re_path(
         r"^dosing-regime/(?P<pk>\d+)/edit/$",
         views.DosingRegimeUpdate.as_view(),
         name="dosing_regime_update",
     ),
     # Endpoint
-    url(
+    re_path(
         r"^assessment/(?P<pk>\d+)/endpoints/$", views.EndpointList.as_view(), name="endpoint_list",
     ),
-    url(
+    re_path(
         r"^assessment/(?P<pk>\d+)/endpoints-v2/$",
         views.EndpointListV2.as_view(),
         name="endpoint_list_v2",
     ),
-    url(
+    re_path(
         r"^assessment/(?P<pk>\d+)/endpoints/tags/(?P<tag_slug>[-\w]+)/$",
         views.EndpointTags.as_view(),
         name="assessment_endpoint_taglist",
     ),
-    url(
+    re_path(
         r"^animal-group/(?P<pk>\d+)/endpoint/new/$",
         views.EndpointCreate.as_view(),
         name="endpoint_new",
     ),
-    url(r"^endpoint/(?P<pk>\d+)/$", views.EndpointRead.as_view(), name="endpoint_detail"),
-    url(r"^endpoint/(?P<pk>\d+)/edit/$", views.EndpointUpdate.as_view(), name="endpoint_update",),
-    url(r"^endpoint/(?P<pk>\d+)/delete/$", views.EndpointDelete.as_view(), name="endpoint_delete",),
+    re_path(r"^endpoint/(?P<pk>\d+)/$", views.EndpointRead.as_view(), name="endpoint_detail"),
+    re_path(
+        r"^endpoint/(?P<pk>\d+)/edit/$", views.EndpointUpdate.as_view(), name="endpoint_update",
+    ),
+    re_path(
+        r"^endpoint/(?P<pk>\d+)/delete/$", views.EndpointDelete.as_view(), name="endpoint_delete",
+    ),
 ]
