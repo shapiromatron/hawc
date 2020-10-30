@@ -65,9 +65,19 @@
 
 /* end sidebar */
 
-
-
-/* old styles */
+/* static, collapsed navbar on smaller screens */
+#siteNavbar {
+    position: static;
+}
+/* fixed, expanded navbar on larger screens */
+@media (min-width: 980px) {
+    body {
+        padding-top: 65px;
+    }
+    #siteNavbar {
+        position: fixed;
+    }
+}
 iframe {
     resize: both;
 }
