@@ -85,10 +85,11 @@ def run_tier(series: pd.Series, linker, docs_dict, nlp,
 
 
 def run_tiered_analysis(
-        series: pd.Series, linker, nlp, docs, max_results=1, force_limit=True,
+        series: pd.Series, linker, nlp, docs, max_results=10, string=False,
+        strict_matching=True,
         ) -> pd.DataFrame:
     """Run a tiered analysis on endpoint-name."""
-    cui_limit = 10  # don't change this
+    cui_limit = 10 if max_results < 10 else max_results
 
     print(f"Running tier 1 on {series.name}")
     t1 = run_tier(
@@ -155,12 +156,15 @@ def run_tiered_analysis(
     df_new = comb_tiers
 
     notfound = len(t7.loc[t7.map(len) == 0])
+    print(f'Done, {notfound} names not mapped')
 
+    print('Filtering and calculating scores...')
     df_new[series.name + '_UMLS'] = pd.concat(
         [series, df_new[series.name + '_UMLS'], t8], axis=1) \
-        .apply(utils.umls_filter, axis=1, result_type='reduce', string=True)
+        .apply(utils.umls_filter, axis=1, result_type='reduce', string=string,
+               max_results=max_results, strict=strict_matching)
 
-    print(f'Done, {notfound} names not mapped')
+    print('Done')
     return df_new
 
 
@@ -187,7 +191,8 @@ def main() -> pd.DataFrame:
                  1, 0.5, TuiFilters.tuis)
     df['endpoint-organ_UMLS'] = pd.concat(
         [df["endpoint-organ"], df["endpoint-organ_UMLS"]], axis=1) \
-        .apply(utils.umls_filter, axis=1, result_type='reduce', string=True)
+        .apply(utils.umls_filter, axis=1, result_type='reduce', string=True,
+               max_results=5)
 
     # system
     print('Mapping endpoint-system')
@@ -196,7 +201,8 @@ def main() -> pd.DataFrame:
                  1, 0.5, TuiFilters.tuis)
     df['endpoint-system_UMLS'] = pd.concat(
         [df["endpoint-system"], df["endpoint-system_UMLS"]], axis=1) \
-        .apply(utils.umls_filter, axis=1, result_type='reduce', string=True)
+        .apply(utils.umls_filter, axis=1, result_type='reduce', string=True,
+               max_results=5)
 
     # name
     df_tier = run_tiered_analysis(df["endpoint-name"], linker, nlp, docs)
@@ -211,4 +217,4 @@ def main() -> pd.DataFrame:
 
 if __name__ == "__main__":
     df = main()
-    df.to_csv('umls_results.csv', index=False)
+    # df.to_csv('umls_results.csv', index=False)

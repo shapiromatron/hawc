@@ -6,6 +6,8 @@
 
 import spacy
 from scispacy.linking import EntityLinker
+from rapidfuzz import fuzz
+import numpy as np
 
 
 _cache = {}
@@ -45,20 +47,18 @@ def transformComma(text: str, entity: bool) -> list:
     return comb
 
 
-def umls_filter(x, string=True) -> str:
+def umls_filter(x, string=False, max_results=5, strict=True) -> str:
     """Convert umls list of dicts to string."""
     text = x.iloc[0]
     umlsList = x.iloc[1]
 
     for i in range(2, len(x.index)):
-        umlsList_temp = x.iloc[i]
-        for i in umlsList_temp:
-            if i['cui'] not in [j['cui'] for j in umlsList]:
-                umlsList.append(i)
+        for k in x.iloc[i]:
+            if k['cui'] not in [j['cui'] for j in umlsList]:
+                umlsList.append(k)
 
-    base = '' if string else []
     if len(umlsList) == 0:
-        return base
+        return '' if string else []
 
     text_split = [str(i).strip().lower() for i in text.split(",")
                   if len(i.strip()) > 2]
@@ -67,11 +67,14 @@ def umls_filter(x, string=True) -> str:
 
     for val in umlsList:
         syns = [i.lower() for i in val['synonyms']] + [val['name'].lower()]
+        score_d = {j:
+                   np.median([fuzz.token_sort_ratio(j, i) for i in syns])/100
+                   for j in set(text_transformed + text_split)}
         added = False
 
         for i in text_transformed:
             if i in syns:
-                tiers[0].append(val)
+                tiers[0].append((val, score_d[i]))
                 added = True
                 break
         if added:
@@ -79,27 +82,37 @@ def umls_filter(x, string=True) -> str:
 
         for n, i in enumerate(text_split):
             if i in syns:
-                tiers[n+1].append(val)
+                tiers[n+1].append((val, score_d[i]/(n+1)/len(text_split)))
                 added = True
                 break
         if added:
             continue
 
-        tiers[-1].append(val)
+        comb_score = np.median(
+            [score_d[i]/(n+1)/len(text_split)
+             for n, i in enumerate(text_split)])
+
+        tiers[-1].append((val, comb_score))
 
     results_list = []
     for n, i in enumerate(tiers):
-        if n == len(tiers)-1 and len(results_list) > 0:
+        if strict and n == len(tiers)-1 and len(results_list) > 0:
             break
         if len(i) == 0:
             continue
-        results_list += sorted(i, key=lambda x: x['score'], reverse=True)
+        results_list += sorted(i, key=lambda x: x[1], reverse=True)
         if n == 0:
             break
+    results_list2 = sorted(results_list, key=lambda x: x[1], reverse=True)
+    if results_list != results_list2:
+        pass
+
+    results_list = results_list[:max_results]
 
     if string:
         return ' // '.join(
-            [i['name'] + ' (' + i['cui'] + '; ' + ', '.join(i['tuis']) + ')'
+            [i[0]['name'] + ' (' + i[0]['cui'] + '; ' +
+             ', '.join(i[0]['tuis']) + '; ' + str(i[1]) + ')'
              for i in results_list])
     else:
         return results_list
