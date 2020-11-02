@@ -48,33 +48,31 @@ class Table extends Component {
                             {filteredDataset.slice(0, MAX_ROWS).map(d => (
                                 <tr key={d._key}>
                                     <td>
-                                        <span className="label label-mini">{d.system_id}</span>
+                                        <span className="label label-mini">{d.system_term_id}</span>
                                         &nbsp;
                                         {highlightedSpan(d.system)}
                                     </td>
                                     <td>
-                                        <span className="label label-mini">{d.organ_id}</span>
+                                        <span className="label label-mini">{d.organ_term_id}</span>
                                         &nbsp;
                                         {highlightedSpan(d.organ)}
                                     </td>
                                     <td>
-                                        <span className="label label-mini">{d.effect_id}</span>
+                                        <span className="label label-mini">{d.effect_term_id}</span>
                                         &nbsp;
                                         {highlightedSpan(d.effect)}
                                     </td>
                                     <td>
                                         <span className="label label-mini">
-                                            {d.effect_subtype_id}
+                                            {d.effect_subtype_term_id}
                                         </span>
                                         &nbsp;
                                         {highlightedSpan(d.effect_subtype)}
                                     </td>
                                     <td>
-                                        <span className="label label-mini">
-                                            {d.endpoint_name_id}
-                                        </span>
+                                        <span className="label label-mini">{d.name_term_id}</span>
                                         &nbsp;
-                                        {highlightedSpan(d.endpoint_name)}
+                                        {highlightedSpan(d.name)}
                                     </td>
                                 </tr>
                             ))}
