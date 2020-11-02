@@ -679,8 +679,10 @@
     dtxsids: []
     project_manager:
     - - pm@pm.com
-    team_members: []
-    reviewers: []
+    team_members:
+    - - team@team.com
+    reviewers:
+    - - rev@rev.com
 - model: assessment.doseunits
   pk: 1
   fields:
@@ -770,6 +772,14 @@
   fields:
     assessment: 2
     name: Incomplete dose response values
+    created: 2020-07-06 19:45:07.271513+00:00
+    last_updated: 2020-07-06 19:46:42.948733+00:00
+    effects: []
+- model: assessment.baseendpoint
+  pk: 7
+  fields:
+    assessment: 3
+    name: Test Endpoint
     created: 2020-07-06 19:45:07.271513+00:00
     last_updated: 2020-07-06 19:46:42.948733+00:00
     effects: []
@@ -2128,6 +2138,47 @@
     FEL: 3
     data_reported: true
     data_extracted: true
+    values_estimated: false
+    monotonicity: 8
+    statistical_test: ''
+    trend_value: null
+    trend_result: 3
+    diagnostic: ''
+    power_notes: ''
+    results_notes: ''
+    endpoint_notes: ''
+    additional_fields: '{}'
+    effects: []
+- model: animal.endpoint
+  pk: 7
+  fields:
+    baseendpoint_ptr: 7
+    animal_group: 2
+    name_term: null
+    system: ''
+    system_term: null
+    organ: ''
+    organ_term: null
+    effect: ''
+    effect_term: null
+    effect_subtype: ''
+    effect_subtype_term: null
+    litter_effects: NA
+    litter_effect_notes: ''
+    observation_time: null
+    observation_time_units: 0
+    observation_time_text: ''
+    data_location: ''
+    expected_adversity_direction: 4
+    response_units: ''
+    data_type: C
+    variance_type: 1
+    confidence_interval: null
+    NOEL: -999
+    LOEL: -999
+    FEL: -999
+    data_reported: true
+    data_extracted: false
     values_estimated: false
     monotonicity: 8
     statistical_test: ''
