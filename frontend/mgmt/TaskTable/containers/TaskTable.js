@@ -56,7 +56,7 @@ class TaskTable extends Component {
                     {taskList.map(obj => {
                         const {study, tasks} = obj;
                         return (
-                            <tr key={study.id}>
+                            <tr key={study.id} className="taskStudyRow">
                                 <td>
                                     <a href={study.url}>{study.short_citation}</a>
                                     <br />

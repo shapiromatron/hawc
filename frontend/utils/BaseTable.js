@@ -6,8 +6,12 @@ import TableFootnotes from "./TableFootnotes";
 
 // General object for creating any table
 class BaseTable {
-    constructor() {
+    constructor(options) {
+        options = options || {};
         this.tbl = $('<table class="table table-condensed table-striped">');
+        if (options.id) {
+            this.tbl.attr("id", options.id);
+        }
         this.thead = $("<thead>");
         this.colgroup = $("<colgroup>");
         this.tbody = $("<tbody>");

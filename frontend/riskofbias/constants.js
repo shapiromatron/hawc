@@ -98,7 +98,7 @@ const NA_KEYS = [10, 20],
         27: "Good (metric) or High confidence (overall)",
     },
     FOOTNOTES = {
-        MULTIPLE_SCORES: ["✱", "Multiple scores exist"],
+        MULTIPLE_SCORES: ["✱", "Multiple judgments exist"],
         BIAS_AWAY_NULL: ["▲", "Bias away from null"],
         BIAS_TOWARDS_NULL: ["▼", "Bias towards null"],
     },
