@@ -1,4 +1,4 @@
-from django.urls import include, re_path
+from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
 from . import api, views
@@ -14,44 +14,36 @@ router.register(r"score-cleanup", api.ScoreCleanupViewset, basename="score-clean
 
 app_name = "riskofbias"
 urlpatterns = [
-    re_path(r"^api/", include((router.urls, "api"))),
+    path("api/", include((router.urls, "api"))),
     # modify assessment rob settings
-    re_path(r"^assessment/(?P<pk>\d+)/$", views.ARoBDetail.as_view(), name="arob_detail"),
-    re_path(r"^assessment/(?P<pk>\d+)/copy/$", views.ARoBCopy.as_view(), name="arob_copy"),
-    re_path(r"^assessment/(?P<pk>\d+)/edit/$", views.ARoBEdit.as_view(), name="arob_update"),
-    re_path(
-        r"^assessment/(?P<pk>\d+)/text-edit/$",
-        views.ARoBTextEdit.as_view(),
-        name="arob_text_update",
-    ),
+    path("assessment/<int:pk>/", views.ARoBDetail.as_view(), name="arob_detail"),
+    path("assessment/<int:pk>/copy/", views.ARoBCopy.as_view(), name="arob_copy"),
+    path("assessment/<int:pk>/edit/", views.ARoBEdit.as_view(), name="arob_update"),
+    path("assessment/<int:pk>/text-edit/", views.ARoBTextEdit.as_view(), name="arob_text_update",),
     # modify domains
-    re_path(
-        r"^assessment/(?P<pk>\d+)/domain/create/$",
-        views.RoBDomainCreate.as_view(),
-        name="robd_create",
+    path(
+        "assessment/<int:pk>/domain/create/", views.RoBDomainCreate.as_view(), name="robd_create",
     ),
-    re_path(r"^domain/(?P<pk>\d+)/edit/$", views.RoBDomainUpdate.as_view(), name="robd_update",),
-    re_path(r"^domain/(?P<pk>\d+)/delete/$", views.RoBDomainDelete.as_view(), name="robd_delete",),
+    path("domain/<int:pk>/edit/", views.RoBDomainUpdate.as_view(), name="robd_update",),
+    path("domain/<int:pk>/delete/", views.RoBDomainDelete.as_view(), name="robd_delete",),
     # modify metrics
-    re_path(
-        r"^domain/(?P<pk>\d+)/metric/create/$", views.RoBMetricCreate.as_view(), name="robm_create",
-    ),
-    re_path(r"^metric/(?P<pk>\d+)/edit/$", views.RoBMetricUpdate.as_view(), name="robm_update",),
-    re_path(r"^metric/(?P<pk>\d+)/delete/$", views.RoBMetricDelete.as_view(), name="robm_delete",),
+    path("domain/<int:pk>/metric/create/", views.RoBMetricCreate.as_view(), name="robm_create",),
+    path("metric/<int:pk>/edit/", views.RoBMetricUpdate.as_view(), name="robm_update",),
+    path("metric/<int:pk>/delete/", views.RoBMetricDelete.as_view(), name="robm_delete",),
     # rob reviewers
-    re_path(
-        r"^assessment/(?P<pk>\d+)/study-assignments/$",
+    path(
+        "assessment/<int:pk>/study-assignments/",
         views.ARoBReviewersList.as_view(),
         name="arob_reviewers",
     ),
-    re_path(
-        r"^assessment/(?P<pk>\d+)/study-assignments/edit/$",
+    path(
+        "assessment/<int:pk>/study-assignments/edit/",
         views.ARoBReviewersUpdate.as_view(),
         name="arob_reviewers_update",
     ),
     # rob at study-level
-    re_path(r"^study/(?P<pk>\d+)/$", views.RoBDetail.as_view(), name="rob_detail"),
-    re_path(r"^study/(?P<pk>\d+)/all/$", views.RoBsDetailAll.as_view(), name="rob_detail_all",),
+    path("study/<int:pk>/", views.RoBDetail.as_view(), name="rob_detail"),
+    path("study/<int:pk>/all/", views.RoBsDetailAll.as_view(), name="rob_detail_all",),
     # rob editing views
-    re_path(r"^(?P<pk>\d+)/edit/$", views.RoBEdit.as_view(), name="rob_update"),
+    path("<int:pk>/edit/", views.RoBEdit.as_view(), name="rob_update"),
 ]

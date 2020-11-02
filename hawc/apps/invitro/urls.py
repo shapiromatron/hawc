@@ -1,4 +1,4 @@
-from django.urls import include, re_path
+from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
 from . import api, views
@@ -16,71 +16,47 @@ router.register(r"ivchemical-cleanup", api.IVChemicalCleanup, basename="ivchemic
 app_name = "invitro"
 urlpatterns = [
     # experiment
-    re_path(
-        r"^study/(?P<pk>\d+)/create-experiment/$",
+    path(
+        "study/<int:pk>/create-experiment/",
         views.ExperimentCreate.as_view(),
         name="experiment_create",
     ),
-    re_path(
-        r"^experiment/(?P<pk>\d+)/$", views.ExperimentDetail.as_view(), name="experiment_detail",
+    path("experiment/<int:pk>/", views.ExperimentDetail.as_view(), name="experiment_detail",),
+    path(
+        "experiment/<int:pk>/update/", views.ExperimentUpdate.as_view(), name="experiment_update",
     ),
-    re_path(
-        r"^experiment/(?P<pk>\d+)/update/$",
-        views.ExperimentUpdate.as_view(),
-        name="experiment_update",
-    ),
-    re_path(
-        r"^experiment/(?P<pk>\d+)/delete/$",
-        views.ExperimentDelete.as_view(),
-        name="experiment_delete",
+    path(
+        "experiment/<int:pk>/delete/", views.ExperimentDelete.as_view(), name="experiment_delete",
     ),
     # chemical
-    re_path(
-        r"^study/(?P<pk>\d+)/create-chemical/$",
-        views.ChemicalCreate.as_view(),
-        name="chemical_create",
+    path(
+        "study/<int:pk>/create-chemical/", views.ChemicalCreate.as_view(), name="chemical_create",
     ),
-    re_path(r"^chemical/(?P<pk>\d+)/$", views.ChemicalDetail.as_view(), name="chemical_detail",),
-    re_path(
-        r"^chemical/(?P<pk>\d+)/update/$", views.ChemicalUpdate.as_view(), name="chemical_update",
-    ),
-    re_path(
-        r"^chemical/(?P<pk>\d+)/delete/$", views.ChemicalDelete.as_view(), name="chemical_delete",
-    ),
+    path("chemical/<int:pk>/", views.ChemicalDetail.as_view(), name="chemical_detail",),
+    path("chemical/<int:pk>/update/", views.ChemicalUpdate.as_view(), name="chemical_update",),
+    path("chemical/<int:pk>/delete/", views.ChemicalDelete.as_view(), name="chemical_delete",),
     # cell types
-    re_path(
-        r"^study/(?P<pk>\d+)/create-cell-type/$",
-        views.CellTypeCreate.as_view(),
-        name="celltype_create",
+    path(
+        "study/<int:pk>/create-cell-type/", views.CellTypeCreate.as_view(), name="celltype_create",
     ),
-    re_path(r"^cell-type/(?P<pk>\d+)/$", views.CellTypeDetail.as_view(), name="celltype_detail",),
-    re_path(
-        r"^cell-type/(?P<pk>\d+)/update/$", views.CellTypeUpdate.as_view(), name="celltype_update",
-    ),
-    re_path(
-        r"^cell-type/(?P<pk>\d+)/delete/$", views.CellTypeDelete.as_view(), name="celltype_delete",
-    ),
+    path("cell-type/<int:pk>/", views.CellTypeDetail.as_view(), name="celltype_detail",),
+    path("cell-type/<int:pk>/update/", views.CellTypeUpdate.as_view(), name="celltype_update",),
+    path("cell-type/<int:pk>/delete/", views.CellTypeDelete.as_view(), name="celltype_delete",),
     # endpoint categories
-    re_path(
-        r"^assessment/(?P<pk>\d+)/endpoint-categories/update/$",
+    path(
+        "assessment/<int:pk>/endpoint-categories/update/",
         views.EndpointCategoryUpdate.as_view(),
         name="endpointcategory_update",
     ),
     # endpoint
-    re_path(
-        r"^assessment/(?P<pk>\d+)/endpoints/$", views.EndpointList.as_view(), name="endpoint_list",
-    ),
-    re_path(
-        r"^experiment/(?P<pk>\d+)/create-endpoint/$",
+    path("assessment/<int:pk>/endpoints/", views.EndpointList.as_view(), name="endpoint_list",),
+    path(
+        "experiment/<int:pk>/create-endpoint/",
         views.EndpointCreate.as_view(),
         name="endpoint_create",
     ),
-    re_path(r"^endpoint/(?P<pk>\d+)/$", views.EndpointDetail.as_view(), name="endpoint_detail",),
-    re_path(
-        r"^endpoint/(?P<pk>\d+)/update/$", views.EndpointUpdate.as_view(), name="endpoint_update",
-    ),
-    re_path(
-        r"^endpoint/(?P<pk>\d+)/delete/$", views.EndpointDelete.as_view(), name="endpoint_delete",
-    ),
-    re_path(r"^api/", include((router.urls, "api"))),
+    path("endpoint/<int:pk>/", views.EndpointDetail.as_view(), name="endpoint_detail",),
+    path("endpoint/<int:pk>/update/", views.EndpointUpdate.as_view(), name="endpoint_update",),
+    path("endpoint/<int:pk>/delete/", views.EndpointDelete.as_view(), name="endpoint_delete",),
+    path("api/", include((router.urls, "api"))),
 ]

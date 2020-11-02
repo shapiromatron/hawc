@@ -1,4 +1,4 @@
-from django.urls import include, re_path
+from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
 from . import api, views
@@ -8,22 +8,16 @@ router.register(r"task", api.TaskViewSet, basename="task")
 
 app_name = "mgmt"
 urlpatterns = [
-    re_path(r"^api/", include((router.urls, "api"))),
+    path("api/", include((router.urls, "api"))),
     # user task-list
-    re_path(r"^my-assignments/$", views.UserAssignments.as_view(), name="user_assignments"),
-    re_path(
-        r"^my-assignments/(?P<pk>\d+)/$",
+    path("my-assignments/", views.UserAssignments.as_view(), name="user_assignments"),
+    path(
+        "my-assignments/<int:pk>/",
         views.UserAssessmentAssignments.as_view(),
         name="user_assessment_assignments",
     ),
     # assessment-level views
-    re_path(
-        r"^assessment/(?P<pk>\d+)/$", views.TaskDashboard.as_view(), name="assessment_dashboard",
-    ),
-    re_path(
-        r"^assessment/(?P<pk>\d+)/details/$", views.TaskDetail.as_view(), name="assessment_tasks",
-    ),
-    re_path(
-        r"^assessment/(?P<pk>\d+)/edit/$", views.TaskModify.as_view(), name="assessment_modify",
-    ),
+    path("assessment/<int:pk>/", views.TaskDashboard.as_view(), name="assessment_dashboard",),
+    path("assessment/<int:pk>/details/", views.TaskDetail.as_view(), name="assessment_tasks",),
+    path("assessment/<int:pk>/edit/", views.TaskModify.as_view(), name="assessment_modify",),
 ]
