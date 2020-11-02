@@ -504,7 +504,7 @@ class RoBHeatmapPlot extends D3Visualization {
                 case "cell":
                     renderRiskOfBiasDisplay(
                         RiskOfBiasScore.format_for_react(d.robs, {
-                            display: "all",
+                            display: "final",
                             isForm: false,
                             showStudyHeader: true,
                             studyUrl: d.robs[0].study.data.url,
@@ -516,7 +516,7 @@ class RoBHeatmapPlot extends D3Visualization {
                 case "study":
                     renderRiskOfBiasDisplay(
                         RiskOfBiasScore.format_for_react(_.flatten(d.robs), {
-                            display: "all",
+                            display: "final",
                             isForm: false,
                             showStudyHeader: true,
                             studyUrl: d.robs[0][0].study.data.url,

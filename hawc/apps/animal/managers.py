@@ -1,8 +1,10 @@
-from typing import Any, Dict
+from typing import Any, Dict, List
 
 import numpy as np
 import pandas as pd
 from django.apps import apps
+from django.db import transaction
+from rest_framework.serializers import ValidationError
 
 from ..assessment.models import Assessment
 from ..common.models import BaseManager, get_distinct_charfield, get_distinct_charfield_opts
@@ -216,28 +218,14 @@ class EndpointManager(BaseManager):
         Update all endpoints in assessment to try to match fields to controlled vocabulary. Use
         a case-insensitive match.
         """
-        # Type integer to type name
-        term_types = VocabularyTermType.as_dict()
 
-        # Type name to common attr name
-        term_type_to_text_field = {
-            "system": "system",
-            "organ": "organ",
-            "effect": "effect",
-            "effect_subtype": "effect_subtype",
-            "endpoint_name": "name",
-        }
-        # Common attr name to term attr name
-        text_to_term_field = {
-            "system": "system_term_id",
-            "organ": "organ_term_id",
-            "effect": "effect_term_id",
-            "effect_subtype": "effect_subtype_term_id",
-            "name": "name_term_id",
-        }
+        # Term type to text field
+        type_to_text_field = VocabularyTermType.value_to_text_field()
+        # Term type to term field
+        type_to_term_field = VocabularyTermType.value_to_term_field()
 
-        # Type integers, ordered.
-        types = sorted(list(term_types.keys()))
+        # Ordered types
+        types = sorted(list(type_to_term_field.keys()))
 
         # Assessment endpoints
         updated_endpoints = []
@@ -271,11 +259,11 @@ class EndpointManager(BaseManager):
             # Check system -> organ -> effect -> effect_subtype -> endpoint_name
             parent_id = -1  # last term parent id; -1 is special-case for system
             for term_type_id in types:
-                text_field = term_type_to_text_field[term_types[term_type_id]]
+                text_field = type_to_text_field[term_type_id]
                 key = (term_type_id, parent_id, getattr(endpoint, text_field).lower())
                 match_id = terms_dict.get(key)
                 if match_id:
-                    setattr(endpoint, text_to_term_field[text_field], match_id)
+                    setattr(endpoint, type_to_term_field[term_type_id], match_id)
                 parent_id = match_id
 
             # If changed, add to the update list
@@ -288,7 +276,7 @@ class EndpointManager(BaseManager):
             )
 
         # update endpoints
-        self.bulk_update(updated_endpoints, list(text_to_term_field.values()))
+        self.bulk_update(updated_endpoints, list(type_to_term_field.values()))
 
         # create data frame report
         df = pd.DataFrame(
@@ -296,6 +284,99 @@ class EndpointManager(BaseManager):
         )
 
         return df
+
+    def _validate_update_terms(self, objs: List[Dict], assessment: Assessment):
+        # assessment must have vocab
+        if assessment.vocabulary is None:
+            raise ValidationError("Vocabulary not set in assessment {assessment.id}")
+        # must be 1 or more objs
+        if len(objs) == 0:
+            raise ValidationError("List of endpoints must be > 1")
+        # each obj must be a dict of endpoint id and name_term_id
+        for obj in objs:
+            keys = set(obj.keys())
+            if keys != {"id", "name_term_id"}:
+                raise ValidationError(
+                    f"Expected endpoint keys are id and name_term_id; received key(s) {' ,'.join(keys)}"
+                )
+        # ids must be unique
+        endpoint_ids = [obj["id"] for obj in objs]
+        if len(endpoint_ids) != len(set(endpoint_ids)):
+            raise ValidationError("Endpoint ids must be unique")
+        # ids must be valid
+        endpoints = self.get_queryset().filter(pk__in=endpoint_ids)
+        valid_endpoint_ids = endpoints.values_list("id", flat=True)
+        invalid_endpoint_ids = set(endpoint_ids) - set(valid_endpoint_ids)
+        if len(invalid_endpoint_ids) > 0:
+            invalid_endpoint_ids_str = ", ".join(str(_) for _ in invalid_endpoint_ids)
+            raise ValidationError(f"Invalid endpoint id(s) {invalid_endpoint_ids_str}")
+        # endpoints must be in the same assessment
+        excluded_endpoints = endpoints.exclude(assessment_id=assessment.id)
+        if excluded_endpoints.exists():
+            excluded_endpoints_str = ", ".join(str(_.pk) for _ in excluded_endpoints)
+            raise ValidationError(
+                f"Endpoints must be from the same assessment; endpoint id(s) {excluded_endpoints_str} not from assessment id {assessment.id}"
+            )
+        # term ids must be valid
+        term_ids = {obj["name_term_id"] for obj in objs}
+        terms = Term.objects.filter(pk__in=term_ids)
+        valid_term_ids = terms.values_list("id", flat=True)
+        invalid_term_ids = term_ids - set(valid_term_ids)
+        if len(invalid_term_ids) > 0:
+            invalid_term_ids_str = ", ".join(str(_) for _ in invalid_term_ids)
+            raise ValidationError(f"Invalid term id(s) {invalid_term_ids_str}")
+        # terms must be in the correct vocabulary
+        excluded_terms = terms.exclude(namespace=assessment.vocabulary)
+        if excluded_terms.exists():
+            excluded_terms_str = ", ".join(str(_.pk) for _ in excluded_terms)
+            raise ValidationError(
+                f"Term id(s) {excluded_terms_str} are not in the assessment vocabulary"
+            )
+        # terms must be the correct type
+        excluded_terms = terms.exclude(type=VocabularyTermType.endpoint_name.value)
+        if excluded_terms.exists():
+            excluded_terms_str = ", ".join(str(_.pk) for _ in excluded_terms)
+            raise ValidationError(f"Term id(s) {excluded_terms_str} are not type endpoint_name")
+
+    @transaction.atomic
+    def update_terms(self, objs: List[Dict], assessment: Assessment) -> List:
+        """
+        Updates all of the terms and respective text fields
+        for a list of endpoints based on the given name term.
+        All endpoints must be from the same assessment.
+
+        Args:
+            objs (List[Dict]): List of endpoint dicts, where each dict has
+                for keys 'id' and 'name_term_id'
+            assessment (Assessment): Assessment for endpoints
+
+        Returns:
+            List: Updated endpoints
+        """
+        # validate the endpoints and terms
+        self._validate_update_terms(objs, assessment)
+
+        # map endpoints to their name terms
+        endpoint_id_to_term_id = {obj["id"]: obj["name_term_id"] for obj in objs}
+
+        # set endpoint terms
+        terms_df = Term.ehv_dataframe()
+        endpoint_ids = [obj["id"] for obj in objs]
+        endpoints = self.get_queryset().filter(pk__in=endpoint_ids)
+        type_to_text_field = VocabularyTermType.value_to_text_field()
+        type_to_term_field = VocabularyTermType.value_to_term_field()
+        updated_endpoints = []
+        updated_fields = list(type_to_text_field.values()) + list(type_to_term_field.values())
+        for endpoint in endpoints:
+            term_id = endpoint_id_to_term_id[endpoint.id]
+            terms_row = terms_df.loc[terms_df["name_term_id"] == term_id].iloc[0]
+            for field in updated_fields:
+                setattr(endpoint, field, terms_row[field])
+            updated_endpoints.append(endpoint)
+
+        self.bulk_update(updated_endpoints, updated_fields)
+
+        return updated_endpoints
 
 
 class EndpointGroupManager(BaseManager):
