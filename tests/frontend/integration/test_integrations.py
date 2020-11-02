@@ -24,19 +24,14 @@ class TestIntegration(StaticLiveServerTestCase, TestCase):
     host = os.environ.get("LIVESERVER_HOST", "localhost")
     port = int(os.environ.get("LIVESERVER_PORT", 0))
 
+    # basic functionality
     def test_login(self):
         tests.login(self.driver, self.live_server_url)
-
-    def test_rob_browse(self):
-        tests.rob_browse(self.driver, self.live_server_url)
-
-    def test_summary_visual_browse(self):
-        tests.summary_visual_browse(self.driver, self.live_server_url)
 
     def test_user_permissions(self):
         tests.user_permissions(self.driver, self.live_server_url)
 
-    # tests for /lit/assessment/2/references/ unworking
+    # domain-specific apps
     def test_literature(self):
         tests.literature(self.driver, self.live_server_url)
 
@@ -52,14 +47,12 @@ class TestIntegration(StaticLiveServerTestCase, TestCase):
     def test_epi(self):
         tests.epi(self.driver, self.live_server_url)
 
-    def test_cleanup(self):
-        tests.cleanup(self.driver, self.live_server_url)
-
     def test_mgmt(self):
         tests.mgmt(self.driver, self.live_server_url)
 
-    def test_heatmap_builtins(self):
-        tests.heatmap_builtins(self.driver, self.live_server_url)
+    # dynamic apps
+    def test_cleanup(self):
+        tests.cleanup(self.driver, self.live_server_url)
 
     def test_visuals(self):
         tests.visuals(self.driver, self.live_server_url)

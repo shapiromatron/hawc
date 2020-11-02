@@ -7,31 +7,26 @@ def study(driver, root_url):
 
     shared.login(root_url)
 
+    # /study/assessment/:id/
     h.go_to(root_url + "/study/assessment/2/")
-
     h.wait_until(h.Text("Short citation").exists)
-
-    # confirm 4 rows exist in table tbody
     assert len(driver.find_elements_by_css_selector("tbody tr")) == 4
 
+    # /study/:id/
     h.go_to(root_url + "/study/7/")
-
     h.wait_until(h.Text("Animal bioassay").exists)
-
-    # confirm #study_details exists
+    h.wait_until(h.Link("PubMed").exists)
+    assert h.Text("Biesemeier JA et al. 2011").exists() is True
+    assert h.Link("PubMed").exists() is True
+    assert h.Link("Actions").exists() is False
     assert len(driver.find_elements_by_css_selector("#study_details")) > 0
-
-    # confirm table exists
     assert len(driver.find_elements_by_css_selector("table")) > 0
-
-    hasDataTypeEntry = False
-
-    # in a column says Data type(s)
+    assert len(driver.find_elements_by_css_selector("svg")) > 0
+    has_data_entry = False
     for elem in driver.find_elements_by_css_selector("th"):
         if "Data type(s)" in elem.text:
-            hasDataTypeEntry = True
+            has_data_entry = True
             break
-
-    assert hasDataTypeEntry
+    assert has_data_entry is True
 
     shared.logout()

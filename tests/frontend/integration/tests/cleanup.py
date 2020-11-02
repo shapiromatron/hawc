@@ -6,7 +6,7 @@ from . import shared
 def cleanup(driver, root_url):
     shared.login(root_url)
 
-    # clean extracted data
+    # /assessment/:id/clean-extracted-data/
     h.go_to(root_url + "/assessment/1/clean-extracted-data/")
     h.wait_until(h.Text("Cleanup working").exists)
     h.click("1 animal bioassay endpoints")
@@ -24,7 +24,7 @@ def cleanup(driver, root_url):
     h.click("Submit bulk edit")
     h.wait_until(h.Text(match_text).exists)
 
-    # clean risk of bias
+    # /assessment/:id/clean-study-metrics/
     h.go_to(root_url + "/assessment/1/clean-study-metrics/")
     h.wait_until(h.Text("Select the metric to edit").exists)
     assert len(h.find_all(h.S(".checkbox-score-display-row"))) == 0

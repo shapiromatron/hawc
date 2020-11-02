@@ -9,7 +9,6 @@ def login(driver, root_url):
     """
     Assert that we're able to login/logout successfully and an errors are displayed as expected.
     """
-    # go to website
     h.go_to(root_url)
     assert h.Link("Login").exists() is True
     h.click("Login")
