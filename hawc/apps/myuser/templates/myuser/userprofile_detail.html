@@ -1,45 +1,46 @@
-{% extends 'myuser/settings.html' %}
+{% extends "portal.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}User profile | HAWC{% endblock %}
 
 {% block content %}
-  <div class="row m-auto">
-    <h1>
-      User Profile
-    </h1>
-    <div class=" ml-auto">
-      <a href="{% url 'user:profile_update' %}" class="btn btn-primary" type="button" id="dropdownMenuButton">
-        Update Profile
-      </a>
-    </div>
+<div class="row m-auto">
+  <h1>
+    User Profile
+  </h1>
+  <div class="ml-auto">
+    <a href="{% url 'user:profile_update' %}" class="btn btn-primary" type="button" id="dropdownMenuButton">
+      Update Profile
+    </a>
   </div>
+</div>
 
-  <h2>Account settings</h2>
-  <div class="row jusity-content-center">
-    <div class="col col-md-4">
-    <table class="table table-sm table-striped table-hover table-bordered">
-      <tbody>
-        <tr><th>Username (email)</th><td colspan="2"><a href="mailto:{{user.email}}">{{user.email}}</a></td></tr>
-        <tr><th>Full Name</th><td colspan="2">{{user.get_full_name}}</td></tr>
-        <tr><th>Password</th><td>********</td><td><a href="{% url 'user:change_password' %}">Click to change</a></td></tr>
-      </tbody>
-    </table>
-  </div>
-  </div>
+<h2>Account settings</h2>
+<table class="table table-sm table-striped table-hover table-bordered">
+  <tbody>
+    <tr>
+      <th>Username (email)</th>
+      <td colspan="2"><a href="mailto:{{user.email}}">{{user.email}}</a></td>
+    </tr>
+    <tr>
+      <th>Full Name</th>
+      <td colspan="2">{{user.get_full_name}}</td>
+    </tr>
+    <tr>
+      <th>Password</th>
+      <td>********</td>
+      <td><a href="{% url 'user:change_password' %}">Click to change</a></td>
+    </tr>
+  </tbody>
+</table>
 
-
-  <h2>HAWC settings</h2>
-  <div class="row">
-    <div class="col col-md-4">
-      <table class="table table-bordered table-striped">
-        <tbody>
-          <tr>
-            <th>Authenticated HERO Access</th>
-            <td>{{object.HERO_access}}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-  </div>
-
-{% endblock %}
-
+<h2>HAWC settings</h2>
+<table class="table table-bordered table-striped">
+  <tbody>
+    <tr>
+      <th>Authenticated HERO Access</th>
+      <td>{{object.HERO_access}}</td>
+    </tr>
+  </tbody>
+</table>
+{% endblock content %}

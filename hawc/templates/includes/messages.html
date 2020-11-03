@@ -1,7 +1,7 @@
 {% if messages %}
   <div class="row mx-0 px-4">
   {% for message in messages %}
-    <div {% if message.tags %} class="{{ message.tags }} {% endif %}">
+    <div class="col {% if message.tags %}{{ message.tags }}{% endif %}">
       <button type="button" class="close" data-dismiss="alert">&times;</button>
       {{ message|safe }}
     </div>

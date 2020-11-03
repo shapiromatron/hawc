@@ -1,17 +1,9 @@
-{% extends 'base.html' %}
+{% extends "crumbless.html" %}
 {% load crispy_forms_tags %}
 
+{% block title %}Create account | HAWC{% endblock %}
 
-{% block title %}
-Create account | HAWC
-{% endblock %}
-
-
-{% block main_content %}
-<div class='row'>
-    <div class="col-md-8 col-md-offset-2">
-        {% crispy form %}
-    </div>
-</div>
+{% block inner_content %}
+{% crispy form %}
 {% include "hawc_license.html" %}
-{% endblock main_content %}
+{% endblock inner_content %}
