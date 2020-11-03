@@ -3,7 +3,9 @@
 {% load percentage %}
 {% load humanize %}
 
-{% block main_content %}
+{% block breadcrumbs_outer %}{% endblock breadcrumbs_outer %}
+
+{% block content %}
   <div class="row m-1">
     <div class="col col-sm-8">
       <h1>About HAWC</h1>
@@ -336,4 +338,4 @@
       </i></p>
     </div>
   </div>
-{% endblock %}
+{% endblock content %}

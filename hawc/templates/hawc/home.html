@@ -1,15 +1,15 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block main_content %}
+{% block breadcrumbs_outer %}{% endblock breadcrumbs_outer %}
+
+{% block content %}
   <div class="row">
-    <div class="col-md-5 offset-sm-1">
-      <img style="max-height:300px" src="{% static 'img/HAWC-400.png' %}">
+    <div class="col-xl-6 offset-xl-3 col-md-8 offset-md-2">
+      <div class="text-center">
+        <img style="max-height:300px" src="{% static 'img/HAWC-400.png' %}">
+      </div>
       <p class="lead">A content management system for human health assessments.</p>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-md-5 offset-sm-1">
       <p>
         Regulatory agencies around the world conduct assessments to determine
         the potential for chemicals to pose a risk to human health. These
@@ -22,10 +22,6 @@
         expert decisions used to evaluate the potential human health hazard
         and risk of chemical exposures.
       </p>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-md-5 offset-sm-1">
       <p>
         HAWC is a modular, content management system designed to store, display,
         and synthesize multiple data sources for the purpose of producing

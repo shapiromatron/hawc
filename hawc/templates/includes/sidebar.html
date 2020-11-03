@@ -1,0 +1,16 @@
+{% if assessment %}
+<div id="sidebar-container" class="sidebar-expanded pl-1">
+    <ul class="list-group">
+        <li class="list-group-item sidebar-separator-title text-muted d-flex align-items-center menu-collapsed">
+            <small>MAIN MENU</small>
+        </li>
+        {% include "assessment/sidebar.html" %}
+        <a href="#top" data-toggle="sidebar-colapse"
+            class="bg-dark list-group-item list-group-item-action d-flex align-items-center">
+            <div class="d-flex w-100 justify-content-start align-items-center">
+                <span id="collapse-icon" class="fa fa-2x mr-3"></span>
+            </div>
+        </a>
+    </ul>
+</div>
+{% endif %}

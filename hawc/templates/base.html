@@ -32,37 +32,38 @@
     {% block extrastyle %}{% endblock %}
   </head>
   <body {% block bodyattrs %}{% endblock %}>
-    {% if user.is_superuser or SERVER_ROLE != 'production' %}{% include 'includes/environment_banner.html' %}{% endif %}
+
+    {% if user.is_superuser or SERVER_ROLE != 'production' %}
+    {% include 'includes/environment_banner.html' %}
+    {% endif %}
 
     {% include 'includes/navigation.html' %}
 
     {% block content_outer %}
-      {% if assessment %}
-        <div class="row no-gutters">
-          <div id="sidebar-container" class="sidebar-expanded pl-1">
-            <ul class="list-group">
-              <li class="list-group-item sidebar-separator-title text-muted d-flex align-items-center menu-collapsed">
-                <small>MAIN MENU</small>
+      <div class="row no-gutters" style="min-height: 100vh;">
+
+        {% include "includes/sidebar.html" %}
+
+        <div class="col pl-1 container-fluid no-gutter">
+
+          {% block breadcrumbs_outer %}
+            <ul class="breadcrumb">
+              <li class="active">
+                {% if user.is_authenticated %}
+                <a href="{% url 'portal' %}">Home</a><span class="divider">/</span>
+                {% else %}
+                <a href="{% url 'assessment:public_list' %}">Public Assessments</a><span class="divider">/</span>
+                {% endif %}
               </li>
-              {% include "assessment/sidebar.html" %}
-              <a href="#top" data-toggle="sidebar-colapse"
-                class="bg-dark list-group-item list-group-item-action d-flex align-items-center">
-                <div class="d-flex w-100 justify-content-start align-items-center">
-                  <span id="collapse-icon" class="fa fa-2x mr-3"></span>
-                </div>
-              </a>
+              {% block breadcrumbs %}{% endblock breadcrumbs %}
             </ul>
-          </div>
-          <div class="col pl-1 container-fluid no-gutter">
-            {% block messages_base %}{% include "messages.html" %}{% endblock messages_base %}
-            {% block main_content %}{% endblock %}
-          </div>
+          {% endblock breadcrumbs_outer %}
+
+          {% include "includes/messages.html" %}
+
+          {% block content %}{% endblock content %}
         </div>
-      {% else %}
-        <div class="row no-gutters" style="min-height: 100vh;">
-          <p>CONTINUE HERE</p>
-        </div>
-      {% endif %}
+      </div>
     {% endblock content_outer %}
 
     <div class="row mx-0 px-4" id="footer">
@@ -98,6 +99,5 @@
     {% endblock browser_check %}
     {% render_bundle 'main' %}
     {% block extrajs %}{% endblock %}
-    {% block portaljs %}{% endblock %}
   </body>
 </html>
