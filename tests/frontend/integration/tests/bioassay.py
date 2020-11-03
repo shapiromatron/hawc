@@ -16,7 +16,7 @@ def bioassay(driver, root_url):
             in_table = True
             break
     assert in_table is True
-    assert h.Text(to_left_of="rat").value == "tester"
+    assert len(h.find_all(h.S("#ag-table tbody tr"))) == 1
 
     # /animal-group/:id/
     h.go_to(root_url + "/ani/animal-group/1/")

@@ -26,7 +26,7 @@ class ReferenceSearchMain extends Component {
                                 Find references
                             </a>
                         </div>
-                        <div id="searchCollapser" className="accordion-body collapse in">
+                        <div id="searchCollapser" className="accordion-body collapse show">
                             <div className="accordion-inner container-fluid">
                                 <SearchForm />
                             </div>

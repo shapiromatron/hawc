@@ -45,7 +45,7 @@ class TagReferencesMain extends Component {
                                     Tagged
                                 </a>
                             </div>
-                            <div id="references_tagged" className="accordion-body collapse in">
+                            <div id="references_tagged" className="accordion-body collapse show">
                                 <div className="accordion-inner ref-container">
                                     {store.referencesTagged.map(ref => (
                                         <p
@@ -72,7 +72,7 @@ class TagReferencesMain extends Component {
                                     Untagged
                                 </a>
                             </div>
-                            <div id="references_untagged" className="accordion-body collapse in">
+                            <div id="references_untagged" className="accordion-body collapse show">
                                 <div className="accordion-inner ref-container">
                                     {store.referencesUntagged.map(ref => (
                                         <p
