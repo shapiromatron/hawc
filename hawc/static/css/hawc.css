@@ -4,19 +4,6 @@
     padding-left: 0;
 }
 
-/*
-no-gutters utility class
-https://getbootstrap.com/docs/4.0/layout/grid/#no-gutters
-*/
-.no-gutters {
-    margin-right: 0;
-    margin-left: 0;
-}
-.no-gutters > .col {
-    padding-right: 0;
-    padding-left: 0;
-}
-
 /* environment banner */
 .env-banner {
     color: white;
@@ -42,6 +29,11 @@ https://getbootstrap.com/docs/4.0/layout/grid/#no-gutters
     width: 60px;
 }
 
+#footer {
+    /* TODO - TEMP */
+    height: 100px;
+    background-color: red;
+}
 
 /* main  */
 #main-container {

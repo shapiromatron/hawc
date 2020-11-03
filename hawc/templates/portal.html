@@ -2,44 +2,19 @@
 
 {% block title %} Portal | HAWC {% endblock %}
 
-{%block messages_base %}{% endblock messages_base %}
-
 {% block main_content %}
-
-{% block messages %}{% include "messages.html" %}{% endblock messages %}
-
-<div class="row no-gutters" id="body-row">
-  <div id="sidebar-container" class="sidebar-expanded">
-    <ul class="list-group">
-      <li class="list-group-item sidebar-separator-title text-muted d-flex align-items-center menu-collapsed">
-        <small>MAIN MENU</small>
-      </li>
-      {% include "assessment/sidebar.html" %}
-      <a href="#top" data-toggle="sidebar-colapse"
-        class="bg-dark list-group-item list-group-item-action d-flex align-items-center">
-        <div class="d-flex w-100 justify-content-start align-items-center">
-          <span id="collapse-icon" class="fa fa-2x mr-3"></span>
-        </div>
-      </a>
-    </ul>
-  </div>
-  <div id="main-container" class="col">
-    <div>
-      <ul class="breadcrumb">
-        {% if user.is_authenticated %}
-        <li class="active">
-          <a href="{% url 'portal' %}">Home</a><span class="divider">/</span>
-        </li>
-        {% else %}
-        <li class="active">
-          <a href="{% url 'assessment:public_list' %}">Public Assessments</a><span class="divider">/</span>
-        </li>
-        {% endif %} {% block breadcrumbs %} {% endblock %}
-      </ul>
-    </div>
-    <div>{% block content %}{% endblock %}</div>
-  </div>
-</div>
+<ul class="breadcrumb">
+  {% if user.is_authenticated %}
+  <li class="active">
+    <a href="{% url 'portal' %}">Home</a><span class="divider">/</span>
+  </li>
+  {% else %}
+  <li class="active">
+    <a href="{% url 'assessment:public_list' %}">Public Assessments</a><span class="divider">/</span>
+  </li>
+  {% endif %} {% block breadcrumbs %} {% endblock %}
+</ul>
+{% block content %}{% endblock %}
 {% endblock %}
 
 {% block portaljs %}
