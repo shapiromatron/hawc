@@ -173,11 +173,12 @@ class RegisterForm(PasswordForm):
         helper.form_class = "loginForm"
 
         login_url = reverse("user:login")
+
+        txt = '&nbsp;<a href="#" data-toggle="modal" data-target="#license_modal">View license</a>'
+        self.fields["license_v2_accepted"].help_text += txt
+
         helper.layout.extend(
             [
-                cfl.HTML(
-                    '<a class="btn btn-sm" href="#license_modal" data-toggle="modal">View License</a>'
-                ),
                 cfb.FormActions(
                     cfl.Submit("login", "Create account"),
                     cfl.HTML(
