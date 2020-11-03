@@ -1,18 +1,1 @@
-<style type="text/css">
-    #siteNavbar:before {
-        background-color: {{ SERVER_BANNER_COLOR }};
-        color: white;
-        content: "{{ SERVER_ROLE }}";
-        display: block;
-        font-weight: bold;
-        line-height: 20px;
-        text-align: center;
-        text-transform: uppercase;
-    }
-    @media (min-width: 980px) {
-        /* follow same rule as hawc.css but add more padding */
-        body {
-            padding-top: 85px;
-        }
-    }
-</style>
+<div class="fixed-top env-banner" style="background-color: {{ SERVER_BANNER_COLOR }}">{{ SERVER_ROLE }}</div>

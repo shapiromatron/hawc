@@ -12,7 +12,7 @@
       </div>
   </a>
 
-  
+
     <a class="bg-dark list-group-item list-group-item-action flex-column align-items-start">
       <div class="d-flex w-100 justify-content-start align-items-center">
           <span class="fa fa-mouse-pointer fa-fw mr-3"></span>
@@ -39,7 +39,7 @@
     {% endif %}
 
     {% if assessment.enable_data_extraction %}
-  
+
         <a  href="{% url 'study:list' assessment.pk %}" class="bg-dark list-group-item list-group-item-action flex-column align-items-start">
           <div class="d-flex w-100 justify-content-start align-items-center">
               <span class="fa fa-mouse-pointer fa-fw mr-3"></span>
@@ -48,11 +48,10 @@
       </a>
 
         {% if assessment.enable_risk_of_bias %}
- 
-            <a  href="{% url 'riskofbias:arob_detail' assessment.pk %}" class="bg-dark list-group-item list-group-item-action flex-column align-items-start">
+             <a href="{% url 'riskofbias:arob_detail' assessment.pk %}" class="bg-dark list-group-item list-group-item-action flex-column align-items-start">
               <div class="d-flex w-100 justify-content-start align-items-center">
                   <span class="fa fa-mouse-pointer fa-fw mr-3"></span>
-                  <span class="menu-collapsed">%}">{{assessment.get_rob_name_display}}</span>
+                  <span class="menu-collapsed">{{assessment.get_rob_name_display}}</span>
               </div>
           </a>
         {% endif %}
@@ -71,7 +70,7 @@
           <span class="menu-collapsed">Visualizations</span>
       </div>
   </a>
-    
+
 
     {% if assessment.enable_summary_text %}
         <a  href="{% url 'summary:list' assessment.pk %}" class="bg-dark list-group-item list-group-item-action flex-column align-items-start">
