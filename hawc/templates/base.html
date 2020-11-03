@@ -66,9 +66,7 @@
       </div>
     {% endblock content_outer %}
 
-    <div class="row mx-0 px-4" id="footer">
-      {% block footer %}{% endblock %}
-    </div>
+    {% include "includes/footer.html" %}
 
     {% if debug %}
     <script type="text/javascript" src="{% static 'debug/jquery/3.5.1/jquery.js' %}"></script>
