@@ -22,7 +22,7 @@ class TaskTable extends Component {
             headers = _.zip(_.values(TASK_TYPES), _.values(TASK_TYPE_DESCRIPTIONS));
 
         return (
-            <table className="table table-condensed">
+            <table className="table table-sm">
                 <colgroup>
                     <col width="20%" />
                     <col width="20%" />

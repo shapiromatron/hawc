@@ -54,9 +54,7 @@ class Endpoint extends Observee {
         Endpoint.get_object(id, obj => {
             let title = $("<h4>").html(obj.build_breadcrumbs()),
                 plot_div = $('<div style="height:350px; width:350px">'),
-                tbl = obj.build_endpoint_table(
-                    $('<table class="table table-condensed table-striped">')
-                ),
+                tbl = obj.build_endpoint_table($('<table class="table table-sm table-striped">')),
                 content = $('<div class="row">')
                     .append($('<div class="col-md-8">').append(tbl))
                     .append($('<div class="col-md-4">').append(plot_div));
@@ -538,7 +536,7 @@ class Endpoint extends Observee {
             title = `<h4>${this.build_breadcrumbs()}</h4>`,
             $details = $('<div class="col-md-12">'),
             $plot = $('<div style="height:300px; width:300px">'),
-            $tbl = $('<table class="table table-condensed table-striped">'),
+            $tbl = $('<table class="table table-sm table-striped">'),
             $content = $('<div class="container-fluid">'),
             $notes = $('<div class="col-md-12">'),
             $study,

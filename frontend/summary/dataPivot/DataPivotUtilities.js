@@ -847,7 +847,7 @@ class _DataPivot_settings_barchart {
     getTemplate() {
         return `<div>
             <h3>Barchart settings</h3>
-            <table class="table table-condensed table-bordered">
+            <table class="table table-sm table-bordered">
                 <thead>
                     <tr>
                         <th style="width: 25%">Data used</th>

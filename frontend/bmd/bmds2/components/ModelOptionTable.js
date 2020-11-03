@@ -91,7 +91,7 @@ class ModelOptionTable extends React.Component {
         return (
             <div className="span6">
                 <h4>Model options</h4>
-                <table className="table table-condensed table-striped">
+                <table className="table table-sm table-striped">
                     <thead>
                         <tr>
                             <th style={{width: "25%"}}>Model name</th>

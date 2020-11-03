@@ -15,7 +15,7 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
                 buildHeaderTr(["Field name", "Filter type", "Value", "Ordering"])
             ),
             tbody = $("<tbody>").on("change autocompletechange", "input,select", handleTableChange),
-            tbl = $('<table class="table table-condensed table-bordered">').html([thead, tbody]),
+            tbl = $('<table class="table table-sm table-bordered">').html([thead, tbody]),
             settings = dp.settings.filters,
             addDataRow = function(i) {
                 let obj;
@@ -82,7 +82,7 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
             tbody = $("<tbody>")
                 .on("change", "input,select", handleTableChange)
                 .on("click", "button", handleTableChange),
-            tbl = $('<table class="table table-condensed table-bordered">').html([thead, tbody]),
+            tbl = $('<table class="table table-sm table-bordered">').html([thead, tbody]),
             settings = dp.settings.sorts,
             addDataRow = function(i) {
                 let obj;
@@ -117,7 +117,7 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
             thead = $("<thead>").html(
                 buildHeaderTr(["Row index", "Show line?", "Line style", "Extra space?", "Delete"])
             ),
-            tbl = $('<table class="table table-condensed table-bordered">').html([thead, tbody]),
+            tbl = $('<table class="table table-sm table-bordered">').html([thead, tbody]),
             settings = dp.settings.spacers,
             addDataRow = function(i) {
                 let obj;
@@ -254,9 +254,10 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
             resetOverridesBtn = $(
                 '<button class="btn btn-danger pull-right"><i class="fa fa-trash"></i> Reset</button>'
             ).on("click", resetOverrideRows),
-            tbl = $(
-                '<table class="table table-condensed table-bordered table-hover tbl_override">'
-            ).html([thead, tbody]);
+            tbl = $('<table class="table table-sm table-bordered table-hover tbl_override">').html([
+                thead,
+                tbody,
+            ]);
 
         buildManualOverrideRows(dp, tbody);
 

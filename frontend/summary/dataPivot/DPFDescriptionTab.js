@@ -15,7 +15,7 @@ let buildDescriptionTable = function(tab, dp) {
                 ])
             ),
             tbody = $("<tbody>"),
-            tbl = $('<table class="table table-condensed table-bordered">').html([thead, tbody]),
+            tbl = $('<table class="table table-sm table-bordered">').html([thead, tbody]),
             settings = dp.settings.description_settings,
             addDataRow = function(i) {
                 let obj;

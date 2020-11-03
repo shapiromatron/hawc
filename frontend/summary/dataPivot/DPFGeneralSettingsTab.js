@@ -10,7 +10,7 @@ let build_settings_general_tab = function(self) {
     var tab = $('<div class="tab-pane" id="data_pivot_settings_general">'),
         build_general_settings = function() {
             var div = $("<div>"),
-                tbl = $('<table class="table table-condensed table-bordered">'),
+                tbl = $('<table class="table table-sm table-bordered">'),
                 tbody = $("<tbody>"),
                 colgroup = $('<colgroup><col style="width: 30%;"><col style="width: 70%;">');
 
@@ -37,7 +37,7 @@ let build_settings_general_tab = function(self) {
 
             self.legend = new DataPivotLegend(vis, self.settings.legend, self.settings);
 
-            var tbl = $('<table class="table table-condensed table-bordered">'),
+            var tbl = $('<table class="table table-sm table-bordered">'),
                 tbody = $("<tbody>"),
                 colgroup = $('<colgroup><col style="width: 30%;"><col style="width: 70%;">'),
                 build_tr = function(label, input) {

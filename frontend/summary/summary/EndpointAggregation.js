@@ -156,7 +156,7 @@ class EndpointAggregation extends BaseVisual {
                 animalGroup = e.data.animal_group,
                 ep_tbl = $("<div>")
                     .append(`<a href="${e.data.url}">${e.data.name}</a>`)
-                    .append(e.build_endpoint_table($('<table class="table table-condensed">')));
+                    .append(e.build_endpoint_table($('<table class="table table-sm">')));
 
             tbl.addRow([
                 `<a href="${study.url}">${study.short_citation}</a> `,

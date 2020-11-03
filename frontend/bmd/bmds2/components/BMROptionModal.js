@@ -37,7 +37,7 @@ class BMROptionModal extends BaseModal {
     renderReadOnlyTable() {
         let {bmr} = this.props;
         return (
-            <table className="table table-condensed table-striped">
+            <table className="table table-sm table-striped">
                 <tbody>
                     <tr>
                         <th style={{width: "30%"}}>BMR type</th>

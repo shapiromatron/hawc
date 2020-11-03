@@ -14,7 +14,7 @@ class FilterWidgetTable extends Component {
             {createNewFilterWidget} = this.props.store.subclass;
 
         return (
-            <table className="table table-condensed table-striped">
+            <table className="table table-sm table-striped">
                 <colgroup>
                     <col width="40%" />
                     <col width="25%" />

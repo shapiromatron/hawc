@@ -17,7 +17,7 @@ class AssessmentTasks extends Component {
                         </a>
                     </h4>
                 ) : null}
-                <table className="table table-condensed table-striped">
+                <table className="table table-sm table-striped">
                     <colgroup>
                         <col width="30%" />
                         <col width="70%" />

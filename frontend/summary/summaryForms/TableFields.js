@@ -57,7 +57,7 @@ class TableField extends InputField {
         if (this.schema.label) new HeaderNullField(this.schema, this.$parent).render();
         if (this.schema.helpText) new HelpTextNullField(this.schema, this.$parent).render();
 
-        this.table = $('<table class="table table-condensed table-bordered">').appendTo($div);
+        this.table = $('<table class="table table-sm table-bordered">').appendTo($div);
         this.setColgroup();
         this.$thead = $("<thead>").appendTo(this.table);
         this.$tbody = $("<tbody>").appendTo(this.table);

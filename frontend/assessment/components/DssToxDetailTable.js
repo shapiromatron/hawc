@@ -13,7 +13,7 @@ class DssToxDetailTable extends Component {
                     </div>
                 ) : null}
                 <div className="row">
-                    <table className="table table-condensed">
+                    <table className="table table-sm">
                         <tbody>
                             <tr>
                                 <td rowSpan={5} style={{borderTop: "0px"}}>

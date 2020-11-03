@@ -38,16 +38,16 @@ class ModelOptionModal extends BaseModal {
                 <div className="row">
                     <div className="col-md-6">
                         <h4>Model settings</h4>
-                        <table className="table table-condensed table-striped" />
+                        <table className="table table-sm table-striped" />
                     </div>
                     <div className="col-md-6">
                         <h4>Optimization</h4>
-                        <table className="table table-condensed table-striped" />
+                        <table className="table table-sm table-striped" />
                     </div>
                 </div>
                 <div className="row">
                     <h4>Parameter assignment</h4>
-                    <table className="table table-condensed table-striped" />
+                    <table className="table table-sm table-striped" />
                 </div>
             </div>
         );

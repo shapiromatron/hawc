@@ -23,7 +23,7 @@ class EndpointDetailRow {
         this.div.append(
             `<div class="row">
                 <div class="col-md-7">
-                    <table id="${table_id}" class="table table-condensed table-striped"></table>
+                    <table id="${table_id}" class="table table-sm table-striped"></table>
                 </div>
                 <div class="col-md-5">
                     <div id="${plot_div_id}" style="max-width:400px;" class="d3_container"></div>

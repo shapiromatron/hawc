@@ -27,7 +27,7 @@ class Table extends Component {
                     {filteredDataset.length > MAX_ROWS ? `Showing the first ${MAX_ROWS} rows.` : ""}
                 </p>
                 {filteredDataset.length > 0 ? (
-                    <table className="table table-condensed table-striped">
+                    <table className="table table-sm table-striped">
                         <colgroup>
                             <col width="20%" />
                             <col width="20%" />

@@ -48,7 +48,7 @@ class BMROptionTable extends React.Component {
         return (
             <div className="col-md-6">
                 <h4>Benchmark modeling responses</h4>
-                <table className="table table-condensed table-striped">
+                <table className="table table-sm table-striped">
                     <thead>
                         <tr>
                             <th style={{width: "30%"}}>Type</th>

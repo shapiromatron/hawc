@@ -151,7 +151,7 @@ class OutputTable extends React.Component {
 
         return (
             <div className="col-md-8">
-                <table className="table table-condensed">
+                <table className="table table-sm">
                     <thead>{this.renderHeader.bind(this)()}</thead>
                     <tfoot>
                         <tr>
