@@ -1,4 +1,4 @@
-.PHONY: build dev docs loc servedocs lint format lint-py format-py lint-js format-js test test-refresh coverage
+.PHONY: build dev docs loc servedocs lint format lint-py format-py lint-js format-js test test-integration test-refresh coverage
 .DEFAULT_GOAL := help
 define BROWSER_PYSCRIPT
 import os, webbrowser, sys
@@ -73,6 +73,9 @@ format-js:  ## Modify javascript code if possible using linters/formatters
 
 test:  ## Run python tests
 	@py.test
+
+test-integration:  ## Run integration tests (requires `npm run start`)
+	@HAWC_INTEGRATION_TESTS=1 SHOW_BROWSER=1 BROWSER="firefox" py.test -s tests/frontend/integration/
 
 test-refresh: ## Removes mock requests and runs python tests
 	rm -rf tests/data/cassettes

@@ -11,6 +11,7 @@ from ..assessment.api import (
     AssessmentLevelPermissions,
     AssessmentViewset,
     DoseUnitsViewset,
+    get_assessment_from_query,
     get_assessment_id_param,
 )
 from ..assessment.models import Assessment
@@ -251,6 +252,17 @@ class Endpoint(mixins.CreateModelMixin, AssessmentViewset):
             raise NotAcceptable("Must contain < 100 endpoints")
 
         serializer = self.get_serializer(qs, many=True)
+        return Response(serializer.data)
+
+    @action(detail=False, methods=("post",))
+    def update_terms(self, request):
+        # check assessment level permissions
+        assessment = get_assessment_from_query(request)
+        if not assessment.user_can_edit_object(request.user):
+            self.permission_denied(request)
+        # update endpoint terms (all other validation done in manager)
+        updated_endpoints = self.model.objects.update_terms(request.data, assessment)
+        serializer = serializers.EndpointSerializer(updated_endpoints, many=True)
         return Response(serializer.data)
 
 

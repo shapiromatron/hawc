@@ -148,11 +148,13 @@ def _get_driver(browser: str, CI: bool):
         options = webdriver.FirefoxOptions()
         if CI:
             options.headless = True
-            return webdriver.Remote(
+            driver = webdriver.Remote(
                 command_executor=command_executor,
                 desired_capabilities=DesiredCapabilities.FIREFOX,
                 options=options,
             )
+            helium.set_driver(driver)
+            return driver
         else:
             return helium.start_firefox(options=options, headless=not SHOW_BROWSER)
     elif browser == "chrome":
@@ -162,11 +164,13 @@ def _get_driver(browser: str, CI: bool):
         if CI:
             options.add_experimental_option("excludeSwitches", ["enable-logging"])
             options.add_argument("--headless")
-            return webdriver.Remote(
+            driver = webdriver.Remote(
                 command_executor=command_executor,
                 desired_capabilities=DesiredCapabilities.CHROME,
                 options=options,
             )
+            helium.set_driver(driver)
+            return driver
         else:
             return helium.start_chrome(options=options, headless=not SHOW_BROWSER)
     else:

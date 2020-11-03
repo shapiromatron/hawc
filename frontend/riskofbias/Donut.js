@@ -93,7 +93,7 @@ class Donut extends D3Plot {
 
                 if (scores.length > 1) {
                     notes =
-                        "<p><i>Multiple scores exist for this metric; showing notes from default score</i></p>" +
+                        "<p><i>Multiple judgments exist for this metric; showing notes from the default judgment</i></p>" +
                         notes;
                 }
                 return {

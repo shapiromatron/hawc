@@ -483,6 +483,7 @@ class D3Plot {
         // show cog to toggle options menu
         this.cog = this.vis
             .append("foreignObject")
+            .attr("id", "embeddedCog")
             .attr("x", this.w + this.padding.right - 20)
             .attr("y", -this.padding.top + 5)
             .attr("width", 30)
@@ -584,7 +585,7 @@ class D3Plot {
 
     _toggle_menu_bar() {
         $(this.menu_div).toggleClass("hidden");
-        $(this.cog_button).toggleClass("hidden");
+        $("foreignObject#embeddedCog a").toggleClass("hidden");
     }
 
     _download_image(options) {

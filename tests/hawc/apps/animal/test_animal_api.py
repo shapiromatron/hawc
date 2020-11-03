@@ -593,3 +593,28 @@ class TestEndpointCreateApi:
         assert response.json() == {
             "groups": [{}, {}, {"incidence": ["Incidence must be less-than or equal-to N"]}]
         }
+
+
+@pytest.mark.django_db
+class TestEndpointApi:
+    def test_update_terms_permissions(self, db_keys):
+        assessment_id = 3
+        url = reverse("animal:api:endpoint-update-terms") + f"?assessment_id={assessment_id}"
+        data = [{"id": 2, "name_term_id": 5}]
+
+        # public shouldn't be able to update terms
+        client = APIClient()
+        response = client.post(url, data, format="json")
+        assert response.status_code == 403
+
+        # reviewers shouldn't be able to update terms
+        client = APIClient()
+        assert client.login(username="rev@rev.com", password="pw") is True
+        response = client.post(url, data, format="json")
+        assert response.status_code == 403
+
+        # team members should be able to update terms
+        client = APIClient()
+        assert client.login(username="team@team.com", password="pw") is True
+        response = client.post(url, data, format="json")
+        assert response.status_code == 200

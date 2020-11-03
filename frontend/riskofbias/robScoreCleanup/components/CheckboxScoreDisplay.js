@@ -10,7 +10,7 @@ class CheckboxScoreDisplay extends Component {
     render() {
         const {checked, score, handleCheck} = this.props;
         return (
-            <div className="row">
+            <div className="row checkbox-score-display-row">
                 <div className="score-display-checkbox col-md-3">
                     <p
                         onClick={() => {
@@ -20,6 +20,7 @@ class CheckboxScoreDisplay extends Component {
                     </p>
                     <input
                         type="checkbox"
+                        name="checkbox-score-select"
                         title="Include/exclude selected item in change"
                         checked={checked}
                         id={score.id}
