@@ -1,12 +1,26 @@
-/* for sidebar  */
-#body-row {
-    margin-left:0;
-    margin-right:0;
+/* main content; no padding */
+#main-content-container {
+    padding-right: 0;
+    padding-left: 0;
 }
+
+/*
+no-gutters utility class
+https://getbootstrap.com/docs/4.0/layout/grid/#no-gutters
+*/
+.no-gutters {
+    margin-right: 0;
+    margin-left: 0;
+}
+.no-gutters > .col {
+    padding-right: 0;
+    padding-left: 0;
+}
+
+/* sidebar  */
 #sidebar-container {
-    min-height: 100vh;
+    height: 100vh;
     background-color: #333;
-    padding: 0;
 }
 
 /* Sidebar sizes when expanded and expanded */
@@ -15,6 +29,12 @@
 }
 .sidebar-collapsed {
     width: 60px;
+}
+
+
+/* main  */
+#main-container {
+    padding-left: 1em;
 }
 
 /* Menu item*/

@@ -38,71 +38,19 @@
 
   <body {% block bodyattrs %}{% endblock %}>
 
-    <!-- Navigation bar -->
-    {% block navbar_outer %}
-    <div class="fixed-top" id="siteNavbar">
-      <nav class="navbar-nav navbar-expand-lg navbar-light bg-light mb-4 py-0">
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-
-        {% block topnavbar %}
-          <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <a class="navbar-brand" href="{% if user.is_authenticated %}{% url 'portal' %}{% else %}{% url 'home' %}{% endif %}">
-              <img class="pull-left" src="{% static 'img/HAWC-40.png' %}">
-            </a>
-            <ul class="navbar-nav ml-auto">
-              <li class="nav-item">
-                <a class="nav-link" href="{% url 'contact' %}">Contact</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="{% url 'about' %}">About</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="{% url 'assessment:public_list' %}">Public Assessments</a>
-              </li>
-
-              {% if user.is_authenticated %}
-              <li class="nav-item dropdown">
-                <a href="#" class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Your HAWC</a>
-                <div class="dropdown-menu dropdown-menu-right"  aria-labelledby="navbarDropdownMenuLink">
-                  <a class ="dropdown-item" href="{% url 'portal' %}">Portal</a>
-                  <a class ="dropdown-item" href="{% url 'user:settings' %}">Profile</a>
-                  <a class ="dropdown-item" href="{% url 'mgmt:user_assignments' %}">My assigned tasks</a>
-                  {% if user.is_staff %}
-                  <div class="dropdown-divider"></div>
-                    <a  class ="dropdown-item" href="{%url 'admin:index' %}">Admin</a>
-                  {% endif %}
-                  <div class="dropdown-divider"></div>
-                  <a  class ="dropdown-item" href="{% url 'user:logout' %}">Logout</a>
-                </ul>
-              </li>
-              {% else %}
-                <li class="nav-item">
-                  <a class="nav-link" href="{% url 'user:login' %}?next={{request.path}}">Login</a>
-                </li>
-              {% endif %}
-            </ul>
-          </div>
-        {% endblock %}
-      </nav>
-    </div>
-    {% endblock navbar_outer %}
+    {% include 'includes/navigation.html' %}
 
     <!-- Main Container -->
     {% block content_outer %}
-    <div id="container" class="container-fluid">
-
+    <div id="main-content-container" class="container-fluid">
       {% block messages_base %}
         {% include "messages.html" %}
       {% endblock messages_base %}
-
       {% block main_content %}{% endblock %}
-
-      <div id="footer">{% block footer %}{% endblock %}</div>
-      <div id='hidden' style="display:none">{% block hidden_content %}{% endblock %}</div>
     </div>
     {% endblock content_outer %}
+    <div id="footer">{% block footer %}{% endblock %}</div>
+    <div id="hidden" style="display:none">{% block hidden_content %}{% endblock %}</div>
     <!-- END Container -->
 
     <!-- JS at bottom for quicker pageloads -->
