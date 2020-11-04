@@ -74,7 +74,7 @@ class HAWCUtils {
                 console.error("unknown input type");
             }
         });
-        return $('<div class="btn-group pull-right">')
+        return $('<div class="btn-group float-right">')
             .append(
                 '<a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions <span class="caret"></span></a>'
             )

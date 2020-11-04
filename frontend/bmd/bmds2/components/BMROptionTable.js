@@ -15,7 +15,7 @@ class BMROptionTable extends React.Component {
                     <button
                         onClick={this.props.handleCreateBmr}
                         type="button"
-                        className="btn btn-sm pull-right">
+                        className="btn btn-sm float-right">
                         <i className="icon-plus" /> Create new BMR
                     </button>
                 </div>

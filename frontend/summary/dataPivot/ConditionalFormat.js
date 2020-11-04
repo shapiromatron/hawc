@@ -74,7 +74,7 @@ class _DataPivot_settings_conditionalFormat {
             save = $('<button type="button" class="btn btn-success">')
                 .text("Save and close")
                 .on("click", this.close_modal.bind(this, true)),
-            close = $('<button type="button" class="btn pull-right">')
+            close = $('<button type="button" class="btn float-right">')
                 .text("Close")
                 .on("click", this.close_modal.bind(this, false)),
             footer = $("<div>").append(add, save, close);

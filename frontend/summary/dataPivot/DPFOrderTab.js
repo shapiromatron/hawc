@@ -29,7 +29,7 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
                 addDataRow(settings.length);
                 handleTableChange();
             },
-            newRowBtn = $('<button class="btn btn-primary pull-right">New row</button>').on(
+            newRowBtn = $('<button class="btn btn-primary float-right">New row</button>').on(
                 "click",
                 newDataRow
             ),
@@ -95,7 +95,7 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
             newDataRow = function() {
                 addDataRow(settings.length);
             },
-            newRowBtn = $('<button class="btn btn-primary pull-right">New row</button>').on(
+            newRowBtn = $('<button class="btn btn-primary float-right">New row</button>').on(
                 "click",
                 newDataRow
             ),
@@ -130,7 +130,7 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
             newDataRow = function() {
                 addDataRow(settings.length);
             },
-            newRowBtn = $('<button class="btn btn-primary pull-right">New row</button>').on(
+            newRowBtn = $('<button class="btn btn-primary float-right">New row</button>').on(
                 "click",
                 newDataRow
             ),
@@ -252,7 +252,7 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
                 '<button class="btn btn-info" style="margin-left: 2em"><i class="fa fa-refresh"></i> Refresh</button>'
             ).on("click", () => buildManualOverrideRows(dp, tbody)),
             resetOverridesBtn = $(
-                '<button class="btn btn-danger pull-right"><i class="fa fa-trash"></i> Reset</button>'
+                '<button class="btn btn-danger float-right"><i class="fa fa-trash"></i> Reset</button>'
             ).on("click", resetOverrideRows),
             tbl = $('<table class="table table-sm table-bordered table-hover tbl_override">').html([
                 thead,

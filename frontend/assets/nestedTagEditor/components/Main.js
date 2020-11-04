@@ -54,7 +54,7 @@ class TagEditorMain extends Component {
                     {store.config.title}
                     <button
                         onClick={() => this.setState({showCreate: true})}
-                        className="pull-right btn btn-primary">
+                        className="float-right btn btn-primary">
                         <i className="fa fa-fw fa-plus" />
                         {store.config.btnLabel}
                     </button>

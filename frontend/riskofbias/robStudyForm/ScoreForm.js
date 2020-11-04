@@ -94,7 +94,7 @@ class ScoreForm extends Component {
                     <div className="col-md-9">
                         {showOverrideCreate ? (
                             <button
-                                className="btn btn-primary pull-right"
+                                className="btn btn-primary float-right"
                                 type="button"
                                 onClick={() => {
                                     store.createScoreOverride({
@@ -108,7 +108,7 @@ class ScoreForm extends Component {
 
                         {showDelete ? (
                             <button
-                                className="btn btn-danger pull-right"
+                                className="btn btn-danger float-right"
                                 type="button"
                                 onClick={() => store.deleteScoreOverride(scoreId)}>
                                 <i className="fa fa-trash"></i>&nbsp;Delete override

@@ -122,7 +122,7 @@ class VisualToolbar extends Component {
                 <button className="btn btn-sm dropdown-toggle" data-toggle="dropdown">
                     <i className="fa fa-download"></i>
                 </button>
-                <ul className="dropdown-menu pull-right">
+                <ul className="dropdown-menu float-right">
                     <li>
                         <a href="#" onClick={() => downloadImage(svg, "svg")}>
                             <i className="fa fa-picture-o"></i>&nbsp;Download SVG
@@ -172,7 +172,7 @@ class VisualToolbar extends Component {
     }
     render() {
         return (
-            <div className="pull-right">
+            <div className="float-right">
                 {this.renderZoom()}
                 {this.renderDownload()}
             </div>

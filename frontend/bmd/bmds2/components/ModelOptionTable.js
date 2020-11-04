@@ -40,7 +40,7 @@ class ModelOptionTable extends React.Component {
                         <i className="icon-plus" />
                     </button>
 
-                    <div className="btn-group pull-right">
+                    <div className="btn-group float-right">
                         <a className="btn dropdown-toggle" data-toggle="dropdown">
                             Actions &nbsp;
                             <span className="caret" />

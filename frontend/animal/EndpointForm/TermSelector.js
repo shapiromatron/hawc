@@ -38,7 +38,7 @@ class TermSelector extends Component {
         return (
             <div>
                 {useControlledVocabulary && idLookupAction ? (
-                    <div className="pull-right">
+                    <div className="float-right">
                         <div className="input-group">
                             <input
                                 type="number"

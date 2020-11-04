@@ -505,7 +505,7 @@ class D3Plot {
         // add close button to menu
         var close_button = {
             id: "close",
-            cls: "btn btn-secondary btn-sm pull-right",
+            cls: "btn btn-secondary btn-sm float-right",
             title: "Hide menu",
             text: "x",
             on_click() {
@@ -519,7 +519,7 @@ class D3Plot {
         // add zoom button to menu
         var zoom_button = {
             id: "close",
-            cls: "btn btn-secondary btn-sm pull-right",
+            cls: "btn btn-secondary btn-sm float-right",
             title: "Zoom image to full-size",
             text: "",
             icon: "fa fa-search-plus",
@@ -532,7 +532,7 @@ class D3Plot {
 
     _add_download_buttons() {
         var plot = this,
-            group = $('<div class="pull-right btn-group"></div>'),
+            group = $('<div class="float-right btn-group"></div>'),
             dropdown = $(
                 '<a title="Download figure" class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" href="#"><i class="fa fa-download"></i></a>'
             ),

@@ -8,7 +8,7 @@ class EditableModalFooter extends React.Component {
                 <button
                     type="button"
                     onClick={this.props.handleDelete}
-                    className="btn btn-danger pull-left"
+                    className="btn btn-danger float-left"
                     data-dismiss="modal">
                     Delete
                 </button>

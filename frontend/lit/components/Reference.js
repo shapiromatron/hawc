@@ -80,7 +80,7 @@ class Reference extends Component {
                             {authors}&nbsp;{year}
                         </span>
                         {showActions ? (
-                            <div className="btn-group pull-right">
+                            <div className="btn-group float-right">
                                 <a className={actionsBtnClassName} data-toggle="dropdown">
                                     Actions&nbsp;<span className="caret"></span>
                                 </a>

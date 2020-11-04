@@ -66,7 +66,7 @@ let buildChartSelector = function(tab, dp) {
                 let num_rows = settings.length;
                 addDataRow(num_rows);
             },
-            newRowBtn = $('<button class="btn btn-primary pull-right">New row</button>').on(
+            newRowBtn = $('<button class="btn btn-primary float-right">New row</button>').on(
                 "click",
                 newDataRow
             ),

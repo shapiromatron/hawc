@@ -28,7 +28,7 @@ let buildDescriptionTable = function(tab, dp) {
             newDataRow = function() {
                 addDataRow(settings.length);
             },
-            newRowBtn = $('<button class="btn btn-primary pull-right">New row</button>').on(
+            newRowBtn = $('<button class="btn btn-primary float-right">New row</button>').on(
                 "click",
                 newDataRow
             ),

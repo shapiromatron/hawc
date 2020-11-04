@@ -342,7 +342,7 @@ class Endpoint extends Observee {
                 class="endpoint-selector"
                 href="#">${this.data.name} (${this.data.response_units})</a>
             <a
-                class="pull-right"
+                class="float-right"
                 title="View endpoint details (new window)"
                 href="${this.data.url}">
                 <i class="icon-share-alt"></i>
