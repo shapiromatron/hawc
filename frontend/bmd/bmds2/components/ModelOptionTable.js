@@ -89,7 +89,7 @@ class ModelOptionTable extends React.Component {
     render() {
         const {editMode, models} = this.props;
         return (
-            <div className="span6">
+            <div className="col-6">
                 <h4>Model options</h4>
                 <table className="table table-sm table-striped">
                     <thead>
