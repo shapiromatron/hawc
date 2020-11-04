@@ -5,8 +5,8 @@
 {% endblock %}
 
 {% block breadcrumbs %}
-  <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{ assessment }}</a><span class="divider">/</span></li>
-  <li class="active">Studies<span class="divider">/</span></li>
+  <li class="breadcrumb-item"><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{ assessment }}</a></li>
+  <li class="breadcrumb-item active">Studies</li>
 {% endblock %}
 
 {% block content %}

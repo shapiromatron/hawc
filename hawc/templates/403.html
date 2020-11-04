@@ -3,7 +3,7 @@
 
 {% block title %}403 | HAWC{% endblock %}
 
-{% block inner_content %}
+{% block content %}
 <div class="jumbotron">
     {% if user.is_authenticated %}
     <img class='pull-right' src="{% static '/img/hal.png' %}" style="max-height:250px; margin-left: 20px;">
@@ -24,4 +24,4 @@
     </strong>
     {% endif %}
 </div>
-{% endblock inner_content %}
+{% endblock content %}

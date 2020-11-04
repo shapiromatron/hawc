@@ -16,7 +16,7 @@ body {
 {% endblock extrastyle %}
 
 <!-- TODO - check svg/png rasterization -->
-{% block content_outer %}{{svg|safe}}{% endblock content_outer %}
+{% block content_row_outer %}{{svg|safe}}{% endblock content_row_outer %}
 
 {% comment "Don't load content in the following blocks" %}{% endcomment %}
 {% block external_css %}{% endblock external_css %}

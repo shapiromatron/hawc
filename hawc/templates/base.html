@@ -39,32 +39,36 @@
 
     {% include 'includes/navigation.html' %}
 
-    {% block content_outer %}
+    {% block content_row_outer %}
       <div class="row no-gutters" style="min-height: 100vh;">
 
         {% include "includes/sidebar.html" %}
 
-        <div class="col pl-1 container-fluid no-gutter">
+        <div class="col px-2 container-fluid no-gutter">
 
           {% block breadcrumbs_outer %}
-            <ul class="breadcrumb">
-              <li class="active">
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item">
                 {% if user.is_authenticated %}
-                <a href="{% url 'portal' %}">Home</a><span class="divider">/</span>
+                <a href="{% url 'portal' %}">Home</a>
                 {% else %}
-                <a href="{% url 'assessment:public_list' %}">Public Assessments</a><span class="divider">/</span>
+                <a href="{% url 'assessment:public_list' %}">Public Assessments</a>
                 {% endif %}
               </li>
               {% block breadcrumbs %}{% endblock breadcrumbs %}
-            </ul>
+            </ol>
+          </nav>
           {% endblock breadcrumbs_outer %}
 
           {% include "includes/messages.html" %}
 
-          {% block content %}{% endblock content %}
+          {% block content_outer %}
+            {% block content %}{% endblock content %}
+          {% endblock content_outer %}
         </div>
       </div>
-    {% endblock content_outer %}
+    {% endblock content_row_outer %}
 
     {% include "includes/footer.html" %}
 
