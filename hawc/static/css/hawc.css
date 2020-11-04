@@ -28,7 +28,6 @@
 /* sidebar  */
 .sidebar {
     width: 230px;
-    height: 100vh;
     background-color: #333;
 }
 .sidebar-collapsed {
