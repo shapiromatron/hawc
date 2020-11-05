@@ -1,4 +1,4 @@
-from django.conf.urls import include, url
+from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
 from . import api, views
@@ -12,37 +12,27 @@ router.register(r"result", api.MetaResult, basename="result")
 app_name = "meta"
 urlpatterns = [
     # API
-    url(r"^api/", include((router.urls, "api"))),
+    path("api/", include((router.urls, "api"))),
     # protocol views
-    url(
-        r"^study/(?P<pk>\d+)/protocol/create/$",
+    path(
+        "study/<int:pk>/protocol/create/",
         views.MetaProtocolCreate.as_view(),
         name="protocol_create",
     ),
-    url(r"^protocol/(?P<pk>\d+)/$", views.MetaProtocolDetail.as_view(), name="protocol_detail",),
-    url(
-        r"^protocol/(?P<pk>\d+)/update/$",
-        views.MetaProtocolUpdate.as_view(),
-        name="protocol_update",
-    ),
-    url(
-        r"^protocol/(?P<pk>\d+)/delete/$",
-        views.MetaProtocolDelete.as_view(),
-        name="protocol_delete",
-    ),
+    path("protocol/<int:pk>/", views.MetaProtocolDetail.as_view(), name="protocol_detail",),
+    path("protocol/<int:pk>/update/", views.MetaProtocolUpdate.as_view(), name="protocol_update",),
+    path("protocol/<int:pk>/delete/", views.MetaProtocolDelete.as_view(), name="protocol_delete",),
     # result views
-    url(r"^assessment/(?P<pk>\d+)/results/$", views.MetaResultList.as_view(), name="result_list",),
-    url(
-        r"^protocol/(?P<pk>\d+)/result/create/$",
-        views.MetaResultCreate.as_view(),
-        name="result_create",
+    path("assessment/<int:pk>/results/", views.MetaResultList.as_view(), name="result_list",),
+    path(
+        "protocol/<int:pk>/result/create/", views.MetaResultCreate.as_view(), name="result_create",
     ),
-    url(
-        r"^protocol/(?P<pk>\d+)/result/copy-as-new-selector/$",
+    path(
+        "protocol/<int:pk>/result/copy-as-new-selector/",
         views.MetaResultCopyAsNew.as_view(),
         name="result_copy_selector",
     ),
-    url(r"^result/(?P<pk>\d+)/$", views.MetaResultDetail.as_view(), name="result_detail"),
-    url(r"^result/(?P<pk>\d+)/update/$", views.MetaResultUpdate.as_view(), name="result_update",),
-    url(r"^result/(?P<pk>\d+)/delete/$", views.MetaResultDelete.as_view(), name="result_delete",),
+    path("result/<int:pk>/", views.MetaResultDetail.as_view(), name="result_detail"),
+    path("result/<int:pk>/update/", views.MetaResultUpdate.as_view(), name="result_update",),
+    path("result/<int:pk>/delete/", views.MetaResultDelete.as_view(), name="result_delete",),
 ]
