@@ -14,7 +14,7 @@ from django.core.cache import cache
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import QuerySet
 from django.utils import html
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 from rest_framework.renderers import JSONRenderer
 
 
@@ -22,7 +22,8 @@ def read_excel(*args, **kwargs):
     """
     We use openpyxl as the engine since the default xlrd is no longer maintained.
     """
-    return pd.read_excel(*args, **kwargs, engine="openpyxl")
+    kwargs.update(engine="openpyxl")
+    return pd.read_excel(*args, **kwargs)
 
 
 def HAWCtoDateString(datetime):
@@ -43,7 +44,7 @@ def cleanHTML(txt: str):
 def strip_entities(value):
     """Return the given HTML with all entities (&something;) stripped."""
     # Note: Originally in Django but removed in v1.10
-    return re.sub(r"&(?:\w+|#\d+);", "", force_text(value))
+    return re.sub(r"&(?:\w+|#\d+);", "", force_str(value))
 
 
 def strip_tags(value):

@@ -1,4 +1,4 @@
-from django.conf.urls import include, url
+from django.urls import include, path, re_path
 from rest_framework.routers import DefaultRouter
 
 from . import api, views
@@ -13,115 +13,101 @@ router.register(r"reference-cleanup", api.ReferenceCleanupViewset, basename="ref
 app_name = "lit"
 urlpatterns = [
     # overview
-    url(r"^assessment/(?P<pk>\d+)/$", views.LitOverview.as_view(), name="overview"),
+    path("assessment/<int:pk>/", views.LitOverview.as_view(), name="overview"),
     # CRUD tags
-    url(r"^assessment/tags/json/$", views.TagsJSON.as_view(), name="tags_list"),
-    url(r"^assessment/(?P<pk>\d+)/tags/update/$", views.TagsUpdate.as_view(), name="tags_update",),
-    url(r"^assessment/(?P<pk>\d+)/tags/update/copy/$", views.TagsCopy.as_view(), name="tags_copy",),
-    url(
-        r"^assessment/(?P<pk>\d+)/update/$",
+    path("assessment/tags/json/", views.TagsJSON.as_view(), name="tags_list"),
+    path("assessment/<int:pk>/tags/update/", views.TagsUpdate.as_view(), name="tags_update",),
+    path("assessment/<int:pk>/tags/update/copy/", views.TagsCopy.as_view(), name="tags_copy",),
+    path(
+        "assessment/<int:pk>/update/",
         views.LiteratureAssessmentUpdate.as_view(),
         name="literature_assessment_update",
     ),
     # Reference-level details
-    url(r"^reference/(?P<pk>\d+)/$", views.RefDetail.as_view(), name="ref_detail"),
-    url(r"^reference/(?P<pk>\d+)/edit/$", views.RefEdit.as_view(), name="ref_edit"),
-    url(r"^reference/(?P<pk>\d+)/delete/$", views.RefDelete.as_view(), name="ref_delete"),
-    url(
-        r"^reference/(?P<pk>\d+)/tag/$", views.TagByReference.as_view(), name="reference_tags_edit",
-    ),
-    url(r"^tag/(?P<pk>\d+)/tag/$", views.TagByTag.as_view(), name="references_tags_edit"),
-    url(
-        r"^assessment/(?P<pk>\d+)/tag/untagged/$",
-        views.TagByUntagged.as_view(),
-        name="tag_untagged",
-    ),
-    url(r"^assessment/(?P<pk>\d+)/references/$", views.RefList.as_view(), name="ref_list",),
-    url(
-        r"^assessment/(?P<pk>\d+)/references/extraction-ready/$",
+    path("reference/<int:pk>/", views.RefDetail.as_view(), name="ref_detail"),
+    path("reference/<int:pk>/edit/", views.RefEdit.as_view(), name="ref_edit"),
+    path("reference/<int:pk>/delete/", views.RefDelete.as_view(), name="ref_delete"),
+    path("reference/<int:pk>/tag/", views.TagByReference.as_view(), name="reference_tags_edit",),
+    path("tag/<int:pk>/tag/", views.TagByTag.as_view(), name="references_tags_edit"),
+    path("assessment/<int:pk>/tag/untagged/", views.TagByUntagged.as_view(), name="tag_untagged",),
+    path("assessment/<int:pk>/references/", views.RefList.as_view(), name="ref_list",),
+    path(
+        "assessment/<int:pk>/references/extraction-ready/",
         views.RefListExtract.as_view(),
         name="ref_list_extract",
     ),
-    url(
-        r"^assessment/(?P<pk>\d+)/references/visualization/$",
+    path(
+        "assessment/<int:pk>/references/visualization/",
         views.RefVisualization.as_view(),
         name="ref_visual",
     ),
-    url(
-        r"^assessment/(?P<pk>\d+)/references/topic-model/$",
+    path(
+        "assessment/<int:pk>/references/topic-model/",
         views.RefTopicModel.as_view(),
         name="topic_model",
     ),
-    url(
-        r"^assessment/(?P<pk>\d+)/references/search/$",
-        views.RefSearch.as_view(),
-        name="ref_search",
-    ),
-    url(
+    path("assessment/<int:pk>/references/search/", views.RefSearch.as_view(), name="ref_search",),
+    re_path(
         r"^assessment/(?P<pk>\d+)/references/(?P<tag_id>(\d+|untagged))/json/$",
         views.RefsByTagJSON.as_view(),
         name="refs_json",
     ),
-    url(
-        r"^assessment/(?P<pk>\d+)/references/upload/$",
-        views.RefUploadExcel.as_view(),
-        name="ref_upload",
+    path(
+        "assessment/<int:pk>/references/upload/", views.RefUploadExcel.as_view(), name="ref_upload",
     ),
     # CRUD searches
-    url(r"^assessment/(?P<pk>\d+)/searches/$", views.SearchList.as_view(), name="search_list",),
-    url(r"^assessment/(?P<pk>\d+)/search/new/$", views.SearchNew.as_view(), name="search_new",),
-    url(
-        r"^assessment/(?P<pk>\d+)/search/copy/$",
+    path("assessment/<int:pk>/searches/", views.SearchList.as_view(), name="search_list",),
+    path("assessment/<int:pk>/search/new/", views.SearchNew.as_view(), name="search_new",),
+    path(
+        "assessment/<int:pk>/search/copy/",
         views.SearchCopyAsNewSelector.as_view(),
         name="copy_search",
     ),
-    url(
-        r"^assessment/(?P<pk>\d+)/search/(?P<slug>[\w-]+)/$",
+    path(
+        "assessment/<int:pk>/search/<slug:slug>/",
         views.SearchDetail.as_view(),
         name="search_detail",
     ),
-    url(
-        r"^assessment/(?P<pk>\d+)/search/(?P<slug>[\w-]+)/update/$",
+    path(
+        "assessment/<int:pk>/search/<slug:slug>/update/",
         views.SearchUpdate.as_view(),
         name="search_update",
     ),
-    url(
-        r"^assessment/(?P<pk>\d+)/search/(?P<slug>[\w-]+)/delete/$",
+    path(
+        "assessment/<int:pk>/search/<slug:slug>/delete/",
         views.SearchDelete.as_view(),
         name="search_delete",
     ),
-    url(
-        r"^assessment/(?P<pk>\d+)/search/(?P<slug>[\w-]+)/query/$",
+    path(
+        "assessment/<int:pk>/search/<slug:slug>/query/",
         views.SearchQuery.as_view(),
         name="search_query",
     ),
     # CRUD import
-    url(r"^assessment/(?P<pk>\d+)/import/new/$", views.ImportNew.as_view(), name="import_new",),
-    url(
-        r"^assessment/(?P<pk>\d+)/ris-import/new/$",
-        views.ImportRISNew.as_view(),
-        name="import_ris_new",
+    path("assessment/<int:pk>/import/new/", views.ImportNew.as_view(), name="import_new",),
+    path(
+        "assessment/<int:pk>/ris-import/new/", views.ImportRISNew.as_view(), name="import_ris_new",
     ),
     # Edit tags
-    url(
-        r"^assessment/(?P<pk>\d+)/search/(?P<slug>[\w-]+)/tag/$",
+    path(
+        "assessment/<int:pk>/search/<slug:slug>/tag/",
         views.TagBySearch.as_view(),
         name="search_tags_edit",
     ),
-    url(
-        r"^assessment/(?P<pk>\d+)/search/(?P<slug>[\w-]+)/tags/$",
+    path(
+        "assessment/<int:pk>/search/<slug:slug>/tags/",
         views.SearchRefList.as_view(),
         name="search_tags",
     ),
-    url(
-        r"^assessment/(?P<pk>\d+)/search/(?P<slug>[\w-]+)/tags-visuals/$",
+    path(
+        "assessment/<int:pk>/search/<slug:slug>/tags-visuals/",
         views.SearchTagsVisualization.as_view(),
         name="search_tags_visual",
     ),
-    url(
-        r"^ris-export-instructions/$",
+    path(
+        "ris-export-instructions/",
         views.RISExportInstructions.as_view(),
         name="ris_export_instructions",
     ),
-    url(r"^api/", include((router.urls, "api"))),
+    path("api/", include((router.urls, "api"))),
 ]
