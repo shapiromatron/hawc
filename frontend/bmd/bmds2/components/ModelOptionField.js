@@ -11,7 +11,7 @@ class ModelOptionField extends React.Component {
             case "i":
                 return (
                     <input
-                        className="span12"
+                        className="col-md-12"
                         name={d.key}
                         type="number"
                         onChange={handleChange}
@@ -21,7 +21,7 @@ class ModelOptionField extends React.Component {
             case "d":
                 return (
                     <input
-                        className="span12"
+                        className="col-md-12"
                         name={d.key}
                         type="number"
                         onChange={handleChange}
@@ -32,7 +32,7 @@ class ModelOptionField extends React.Component {
             case "b":
                 return (
                     <input
-                        className="span12"
+                        className="col-md-12"
                         name={d.key}
                         type="checkbox"
                         onChange={handleChange}
@@ -42,7 +42,7 @@ class ModelOptionField extends React.Component {
             case "dd":
                 return (
                     <input
-                        className="span12"
+                        className="col-md-12"
                         name={d.key}
                         onChange={handleChange}
                         value={v}
@@ -52,7 +52,7 @@ class ModelOptionField extends React.Component {
             case "rp":
                 return (
                     <input
-                        className="span12"
+                        className="col-md-12"
                         name={d.key}
                         onChange={handleChange}
                         value={v}
@@ -68,7 +68,7 @@ class ModelOptionField extends React.Component {
     render() {
         let {index, settings} = this.props;
         return (
-            <div className="control-group" key={index}>
+            <div className="form-group" key={index}>
                 <label className="control-label">{settings.n}</label>
                 <div className="controls">{this.renderInput()}</div>
             </div>

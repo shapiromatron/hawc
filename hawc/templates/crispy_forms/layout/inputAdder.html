@@ -1,6 +1,6 @@
 {% load crispy_forms_field %}
 
-<{% if tag %}{{ tag }}{% else %}div{% endif %} id="div_{{ field.auto_id }}" class="control-group{% if wrapper_class %} {{ wrapper_class }}{% endif %}{% if form_show_errors%}{% if field.errors %} error{% endif %}{% endif %}{% if field.css_classes %} {{ field.css_classes }}{% endif %}">
+<{% if tag %}{{ tag }}{% else %}div{% endif %} id="div_{{ field.auto_id }}" class="form-group{% if wrapper_class %} {{ wrapper_class }}{% endif %}{% if form_show_errors%}{% if field.errors %} error{% endif %}{% endif %}{% if field.css_classes %} {{ field.css_classes }}{% endif %}">
     {% if field.label and not field|is_checkbox and form_show_labels %}
         <label for="{{ field.id_for_label }}" class="control-label {% if field.field.required %}requiredField{% endif %}">
             {{ field.label|safe }}{% if field.field.required %}<span class="asteriskField">*</span>{% endif %}
@@ -9,11 +9,11 @@
 
     {% if not field|is_checkboxselectmultiple and not field|is_radioselect %}
         <div class="controls">
-            <a class="btn btn-primary adders pull-right"
+            <a class="btn btn-primary adders float-right"
                  title="{{adderTitle}}"
                  href="{{adderURL}}"
                  onclick="return window.app.utils.HAWCUtils.newWindowPopupLink(this);">
-                 <i class="icon-plus icon-white"></i></a>
+                 <i class="fa fa-plus"></i></a>
             {% crispy_field field %}
             {% include 'bootstrap/layout/help_text_and_errors.html' %}
         </div>

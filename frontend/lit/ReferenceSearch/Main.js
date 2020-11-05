@@ -14,7 +14,7 @@ class ReferenceSearchMain extends Component {
         const {store} = this.props,
             {isSearching, references, hasReferences, numReferences} = store;
         return (
-            <div className="row-fluid">
+            <div className="row">
                 <div className="accordion" id="searchFormAccordion">
                     <div className="accordion-group">
                         <div className="accordion-heading">
@@ -26,7 +26,7 @@ class ReferenceSearchMain extends Component {
                                 Find references
                             </a>
                         </div>
-                        <div id="searchCollapser" className="accordion-body collapse in">
+                        <div id="searchCollapser" className="accordion-body collapse show">
                             <div className="accordion-inner container-fluid">
                                 <SearchForm />
                             </div>

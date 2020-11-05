@@ -1,10 +1,40 @@
-/* General settings */
-@media (min-width: 980px) {
-    /* only add padding when we're in bootstrap2 default/large displays */
-    body {
-        padding-top: 65px;
-    }
+/* environment banner */
+.env-banner {
+    color: white;
+    display: inline;
+    font-weight: bold;
+    text-align: center;
+    text-transform: uppercase;
+    opacity: 80%;
+    margin: 0 40%;
 }
+
+#footer {
+    height: 200px;
+    background-color: #333;
+}
+
+/* main  */
+#main-container {
+    padding-left: 1em;
+}
+
+/* sidebar  */
+.sidebar {
+    width: 230px;
+    background-color: #333;
+}
+.sidebar-collapsed {
+    width: 50px;
+}
+.sidebar .nav {
+    font-weight: bold;
+}
+.sidebar-collapsed .nav {
+    opacity: 0;
+}
+/* end sidebar */
+
 iframe {
     resize: both;
 }
@@ -62,12 +92,14 @@ input[type='number'] {
 }
 
 /* Override bootstrap modal width */
-.modal {
-    width: 950px;
-    margin-left: -475px;
+
+.modal-dialog {
+    min-width: 950px;
 }
+
 .modal-body {
     max-height: 600px;
+    overflow-y: auto;
 }
 .modal.fade.in {
     top: 2%;

@@ -74,7 +74,7 @@ class HAWCUtils {
                 console.error("unknown input type");
             }
         });
-        return $('<div class="btn-group pull-right">')
+        return $('<div class="btn-group float-right">')
             .append(
                 '<a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions <span class="caret"></span></a>'
             )
@@ -84,7 +84,7 @@ class HAWCUtils {
     static addAlert(content, $div) {
         $div = $div || $("#content");
         $div.prepend(
-            $('<div class="alert">')
+            $('<div class="alert alert-danger">')
                 .append('<button type="button" class="close" data-dismiss="alert">&times;</button>')
                 .append(content)
         );

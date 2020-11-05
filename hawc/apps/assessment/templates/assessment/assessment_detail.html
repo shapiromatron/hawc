@@ -11,49 +11,49 @@
 {% block content %}
   <h1>{{object}}
     {% if crud == "Read" %}
-      <div class="btn-group pull-right">
+      <div class="btn-group float-right">
         <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions
           <span class="caret"></span>
         </a>
-        <ul class="dropdown-menu">
+        <div class="dropdown-menu dropdown-menu-right">
 
           <!-- assessment editing -->
           {% if obj_perms.edit %}
-            <li class="disabled"><a tabindex="-1" href="#">Assessment Editing</a></li>
+            <h6 class="dropdown-header">Assessment Editing</h6>
             {% if obj_perms.edit_assessment %}
-            <li><a href="{% url 'assessment:update' object.pk %}">Update assessment</a></li>
-            <li><a href="{% url 'assessment:modules_update' object.pk %}">Update enabled modules</a></li>
-            <li><a href="{% url 'assessment:delete' object.pk %}">Delete assessment</a></li>
+            <a class="dropdown-item" href="{% url 'assessment:update' object.pk %}">Update assessment</a>
+            <a class="dropdown-item" href="{% url 'assessment:modules_update' object.pk %}">Update enabled modules</a>
+            <a class="dropdown-item" href="{% url 'assessment:delete' object.pk %}">Delete assessment</a>
             {% endif %}
-            <li><a href="{{ object.get_clear_cache_url }}">Clear assessment cache</a></li>
-            <li><a href="{% url 'assessment:attachment_create' object.pk %}">Add an attachment</a></li>
-            <li><a href="{% url 'assessment:dataset_create' object.pk %}">Add a dataset</a></li>
-            <li class="divider"></li>
+            <a class="dropdown-item" href="{{ object.get_clear_cache_url }}">Clear assessment cache</a>
+            <a class="dropdown-item" href="{% url 'assessment:attachment_create' object.pk %}">Add an attachment</a>
+            <a class="dropdown-item" href="{% url 'assessment:dataset_create' object.pk %}">Add a dataset</a>
+            <div class="dropdown-divider"></div>
           {% endif %}
 
           <!-- application settings -->
-          <li class="disabled"><a tabindex="-1" href="#">Application settings</a></li>
+          <h6 class="dropdown-header">Application settings</h6>
           {% if assessment.enable_risk_of_bias %}
-          <li><a href="{% url 'riskofbias:arob_detail' pk=object.pk %}">{{object.get_rob_name_display}} settings</a></li>
+          <a class="dropdown-item" href="{% url 'riskofbias:arob_detail' pk=object.pk %}">{{object.get_rob_name_display}} settings</a>
           {% endif %}
 
           {% if assessment.enable_bmd %}
-          <li><a href="{% url 'bmd:assess_settings_detail' pk=object.pk %}">Benchmark dose settings</a></li>
+          <a class="dropdown-item" href="{% url 'bmd:assess_settings_detail' pk=object.pk %}">Benchmark dose settings</a>
           {% endif %}
 
           {% if assessment.enable_data_extraction and obj_perms.edit_assessment %}
-          <li><a href="{% url 'invitro:endpointcategory_update' object.pk %}">Update IV endpoint categories</a></li>
+          <a class="dropdown-item" href="{% url 'invitro:endpointcategory_update' object.pk %}">Update IV endpoint categories</a>
           {% endif%}
 
           <!-- data cleanup -->
           {% if assessment.enable_data_extraction and obj_perms.edit_assessment or assessment.enable_risk_of_bias and obj_perms.edit_assessment %}
-          <li class="divider"></li>
-          <li class="disabled"><a tabindex="-1" href="#">Data cleanup views</a></li>
+          <div class="dropdown-divider"></div>
+          <h6 class="dropdown-header">Data cleanup views</h6>
               {% if assessment.enable_data_extraction %}
-              <li><a href="{% url 'assessment:clean_extracted_data' object.pk %}">Clean extracted data</a></li>
+              <a class="dropdown-item" href="{% url 'assessment:clean_extracted_data' object.pk %}">Clean extracted data</a>
               {% endif%}
               {% if assessment.enable_risk_of_bias and obj_perms.edit_assessment %}
-              <li><a href="{% url 'assessment:clean_study_metrics' pk=object.pk %}">Clean {{object.get_rob_name_display|lower}} responses</a></li>
+              <a class="dropdown-item" href="{% url 'assessment:clean_study_metrics' pk=object.pk %}">Clean {{object.get_rob_name_display|lower}} responses</a>
               {% endif %}
           {% endif %}
 
@@ -62,7 +62,7 @@
     {% endif %}
   </h1>
 
-  <table id="assessment_table" class="table table-condensed table-striped">
+  <table id="assessment_table" class="table table-sm table-striped">
     <colgroup>
       <col style="width: 30%;">
       <col style="width: 70%;">

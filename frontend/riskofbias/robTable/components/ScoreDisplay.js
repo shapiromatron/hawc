@@ -29,7 +29,7 @@ class ScoreDisplay extends Component {
                     {showAuthorDisplay || hasOverrides ? (
                         <p>
                             {showAuthorDisplay ? (
-                                <b className="pull-right">
+                                <b className="float-right">
                                     {score.author.full_name}
                                     &nbsp;
                                     {finalStar}

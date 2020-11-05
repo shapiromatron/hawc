@@ -114,8 +114,8 @@ class StudyPopulation {
         var modal = new HAWCModal(),
             title = `<h4>${this.build_breadcrumbs()}</h4>`,
             $content = $('<div class="container-fluid">')
-                .append($('<div class="row-fluid">').append(this.build_details_table()))
-                .append($('<div class="row-fluid">').append(this.build_links_div()));
+                .append($('<div class="row">').append(this.build_details_table()))
+                .append($('<div class="row">').append(this.build_links_div()));
 
         modal
             .addHeader(title)

@@ -128,7 +128,7 @@ class RecommendationTable extends React.Component {
 
     render() {
         return (
-            <table className="table table-hover table-condensed">
+            <table className="table table-hover table-sm">
                 <thead>
                     <tr>
                         <th style={{width: "15%"}}>Model</th>

@@ -1,8 +1,10 @@
-{% extends 'base.html' %}
+{% extends "crumbless.html" %}
 
-{% block main_content %}
-  <div class="hero-unit">
+{% block title %}500 | HAWC{% endblock %}
+
+{% block content %}
+  <div class="jumbotron">
     <h1>Error 500.</h1>
     <p>Ohh goodness, something went wrong on HAWC server-side. An administrator has already been emailed what went wrong, but please <a href="{% url 'contact' %}">contact us</a> if urgent.</p>
   </div>
-{% endblock %}
+{% endblock content %}

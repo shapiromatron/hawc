@@ -152,7 +152,7 @@ class D3Plot {
                 self.isFullSize = false;
                 if (self.resize_button) {
                     self.resize_button.attr("title", "zoom figure to full-size");
-                    self.resize_button.find("i").attr("class", "icon-zoom-in");
+                    self.resize_button.find("i").attr("class", "fa fa-search-plus");
                 }
             } else {
                 // set back to full-size
@@ -161,7 +161,7 @@ class D3Plot {
                 self.isFullSize = true;
                 if (self.resize_button) {
                     self.resize_button.attr("title", "zoom figure to fit screen");
-                    self.resize_button.find("i").attr("class", "icon-zoom-out");
+                    self.resize_button.find("i").attr("class", "fa fa-search-minus");
                 }
             }
         };
@@ -496,7 +496,7 @@ class D3Plot {
             .on("click", function(v, i) {
                 plot._toggle_menu_bar();
             });
-        this.cog_button.append("xhtml:i").attr("class", "icon-cog");
+        this.cog_button.append("xhtml:i").attr("class", "fa fa-cog");
 
         // add menu below div
         this.menu_div = $('<div class="options_menu"></div>');
@@ -505,7 +505,7 @@ class D3Plot {
         // add close button to menu
         var close_button = {
             id: "close",
-            cls: "btn btn-mini pull-right",
+            cls: "btn btn-secondary btn-sm float-right",
             title: "Hide menu",
             text: "x",
             on_click() {
@@ -519,10 +519,10 @@ class D3Plot {
         // add zoom button to menu
         var zoom_button = {
             id: "close",
-            cls: "btn btn-mini pull-right",
+            cls: "btn btn-secondary btn-sm float-right",
             title: "Zoom image to full-size",
             text: "",
-            icon: "icon-zoom-in",
+            icon: "fa fa-search-plus",
             on_click() {
                 plot.trigger_resize(true);
             },
@@ -532,37 +532,38 @@ class D3Plot {
 
     _add_download_buttons() {
         var plot = this,
-            group = $('<div class="pull-right btn-group"></div>'),
+            group = $('<div class="float-right btn-group"></div>'),
             dropdown = $(
-                '<a title="Download figure" class="btn btn-mini dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-download-alt"></i></a>'
+                '<a title="Download figure" class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" href="#"><i class="fa fa-download"></i></a>'
             ),
-            dropdown_li = $('<ul class="dropdown-menu"></ul>'),
-            svg = $("<li>")
-                .append('<a href="#">Download as a SVG</a>')
-                .on("click", function(e) {
-                    e.preventDefault();
-                    plot._download_image({format: "svg"});
-                }),
-            pptx = $("<li>")
-                .append('<a href="#">Download as a PPTX</a>')
-                .on("click", function(e) {
+            dropdown_div = $('<ul class="dropdown-menu"></ul>'),
+            svg = $('<a class="dropdown-item" href="#">Download as a SVG</a>').on("click", function(
+                e
+            ) {
+                e.preventDefault();
+                plot._download_image({format: "svg"});
+            }),
+            pptx = $('<a class="dropdown-item" href="#">Download as a PPTX</a>').on(
+                "click",
+                function(e) {
                     e.preventDefault();
                     plot._download_image({format: "pptx"});
-                }),
-            png = $("<li>")
-                .append('<a href="#">Download as a PNG</a>')
-                .on("click", function(e) {
-                    e.preventDefault();
-                    plot._download_image({format: "png"});
-                }),
-            pdf = $("<li>")
-                .append('<a href="#">Download as a PDF</a>')
-                .on("click", function(e) {
-                    e.preventDefault();
-                    plot._download_image({format: "pdf"});
-                });
-        dropdown_li.append(svg, pptx, png, pdf);
-        group.append(dropdown, dropdown_li);
+                }
+            ),
+            png = $('<a class="dropdown-item" href="#">Download as a PNG</a>').on("click", function(
+                e
+            ) {
+                e.preventDefault();
+                plot._download_image({format: "png"});
+            }),
+            pdf = $('<a class="dropdown-item" href="#">Download as a PDF</a>').on("click", function(
+                e
+            ) {
+                e.preventDefault();
+                plot._download_image({format: "pdf"});
+            });
+        dropdown_div.append(svg, pptx, png, pdf);
+        group.append(dropdown, dropdown_div);
         this.menu_div.append(group);
     }
 

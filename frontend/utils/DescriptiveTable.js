@@ -3,7 +3,7 @@ import $ from "$";
 // Method for creating a table for descriptive information
 class DescriptiveTable {
     constructor() {
-        this._tbl = $('<table class="table table-condensed table-striped">');
+        this._tbl = $('<table class="table table-sm table-striped">');
         this._colgroup = $("<colgroup>").append(
             '<col style="width: 30%;"><col style="width: 70%;">'
         );
@@ -21,7 +21,7 @@ class DescriptiveTable {
             }
             var td = $("<td>").html(value);
             if (opts.annotate) {
-                td.append("<br>", $('<span class="muted">').text(opts.annotate));
+                td.append("<br>", $('<span class="text-muted">').text(opts.annotate));
             }
             if (opts.pre) {
                 td.css("white-space", "pre-wrap");

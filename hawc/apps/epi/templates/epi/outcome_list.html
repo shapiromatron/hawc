@@ -25,21 +25,21 @@
 
             <form action="." method="get">
               <fieldset>
-                    {{ form.non_field_errors|add_class:"alert alert-error" }}
+                    {{ form.non_field_errors|add_class:"alert alert-danger" }}
 
                     {% for field in form %}
 
                         {% if forloop.counter0|divisibleby:4 %}
-                            <div class="row-fluid">
+                            <div class="row">
                         {% endif %}
 
-                        <div class="span3">
+                        <div class="col-md-3">
                             {{field.label_tag|add_class:"control-label"}}
                             <div class="controls">
                                 {{field}}<br>
                                 <span class='help-inline'>{{field.help_text}}</span>
                             </div>
-                            {{field.errors|add_class:"alert alert-error"}}
+                            {{field.errors|add_class:"alert alert-danger"}}
 
                             {% if field.name == "order_by" and field.value is not None %}
                                 <input type="hidden" id="initial_order_by" value="{{ field.value }}" />

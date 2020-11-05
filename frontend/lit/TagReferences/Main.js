@@ -31,8 +31,8 @@ class TagReferencesMain extends Component {
             selectedReferenceTags = store.selectedReferenceTags ? store.selectedReferenceTags : [],
             allTagged = store.referencesUntagged.length == 0;
         return (
-            <div className="row-fluid">
-                <div className="span3">
+            <div className="row">
+                <div className="col-md-3">
                     <h4>References</h4>
                     <div className="accordion" id="references_lists">
                         <div className="accordion-group">
@@ -45,7 +45,7 @@ class TagReferencesMain extends Component {
                                     Tagged
                                 </a>
                             </div>
-                            <div id="references_tagged" className="accordion-body collapse in">
+                            <div id="references_tagged" className="accordion-body collapse show">
                                 <div className="accordion-inner ref-container">
                                     {store.referencesTagged.map(ref => (
                                         <p
@@ -72,7 +72,7 @@ class TagReferencesMain extends Component {
                                     Untagged
                                 </a>
                             </div>
-                            <div id="references_untagged" className="accordion-body collapse in">
+                            <div id="references_untagged" className="accordion-body collapse show">
                                 <div className="accordion-inner ref-container">
                                     {store.referencesUntagged.map(ref => (
                                         <p
@@ -91,7 +91,7 @@ class TagReferencesMain extends Component {
                         </div>
                     </div>
                 </div>
-                <div className="span6">
+                <div className="col-md-6">
                     {store.selectedReference ? (
                         <div>
                             <h4>Tags for current reference</h4>
@@ -129,7 +129,7 @@ class TagReferencesMain extends Component {
                                     Saved!
                                 </span>
                                 <a
-                                    className="btn pull-right"
+                                    className="btn float-right"
                                     rel="noopener noreferrer"
                                     target="_blank"
                                     href={store.selectedReference.get_edit_url()}
@@ -153,7 +153,7 @@ class TagReferencesMain extends Component {
                         </div>
                     ) : null}
                 </div>
-                <div className="span3">
+                <div className="col-md-3">
                     <h4>Available tags</h4>
                     <TagTree
                         tagtree={toJS(store.tagtree)}

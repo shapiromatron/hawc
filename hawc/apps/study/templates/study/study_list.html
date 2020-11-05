@@ -5,15 +5,15 @@
 {% endblock %}
 
 {% block breadcrumbs %}
-  <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{ assessment }}</a><span class="divider">/</span></li>
-  <li class="active">Studies<span class="divider">/</span></li>
+  <li class="breadcrumb-item"><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{ assessment }}</a></li>
+  <li class="breadcrumb-item active">Studies</li>
 {% endblock %}
 
 {% block content %}
 
   <h2>Available studies
     {% if obj_perms.edit and crud == "Read" %}
-      <div class="btn-group pull-right">
+      <div class="btn-group float-right">
         <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions
           <span class="caret"></span>
         </a>

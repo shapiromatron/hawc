@@ -13,7 +13,7 @@ class _DataPivot_settings_refline {
 
         // create fields
         this.content = {};
-        this.content.value_field = $('<input class="span12" type="text">');
+        this.content.value_field = $('<input class="col-md-12" type="text">');
 
         this.content.line_style = this.data_pivot.style_manager.add_select(
             "lines",
@@ -62,8 +62,8 @@ class _DataPivot_settings_refrect {
 
         // create fields
         this.content = {};
-        this.content.x1_field = $('<input class="span12" type="text">');
-        this.content.x2_field = $('<input class="span12" type="text">');
+        this.content.x1_field = $('<input class="col-md-12" type="text">');
+        this.content.x2_field = $('<input class="col-md-12" type="text">');
         this.content.rectangle_style = this.data_pivot.style_manager.add_select(
             "rectangles",
             values.rectangle_style
@@ -115,7 +115,7 @@ class _DataPivot_settings_label {
 
         // create fields
         this.content = {};
-        this.content.text = $('<input class="span12" type="text">').val(values.text);
+        this.content.text = $('<input class="col-md-12" type="text">').val(values.text);
         this.content.style = this.data_pivot.style_manager.add_select("texts", values.style);
 
         var movement_td = DataPivot.build_movement_td(self.data_pivot.settings.labels, this, {
@@ -160,7 +160,7 @@ class _DataPivot_settings_sorts {
 
         // create fields
         this.content = {};
-        this.content.field_name = $('<select class="span12"></select>').html(
+        this.content.field_name = $('<select class="col-md-12"></select>').html(
             this.data_pivot._get_header_options(true)
         );
         this.content.ascending = $(
@@ -221,13 +221,13 @@ class _DataPivot_settings_filters {
 
         // create fields
         this.content = {};
-        this.content.field_name = $('<select class="span12"></select>').html(
+        this.content.field_name = $('<select class="col-md-12"></select>').html(
             this.data_pivot._get_header_options(true)
         );
-        this.content.quantifier = $('<select class="span12"></select>').html(
+        this.content.quantifier = $('<select class="col-md-12"></select>').html(
             get_quantifier_options()
         );
-        this.content.value = $('<input class="span12" type="text">').autocomplete({
+        this.content.value = $('<input class="col-md-12" type="text">').autocomplete({
             source: values.value,
         });
 
@@ -296,7 +296,7 @@ class _DataPivot_settings_spacers {
 
         // create fields
         this.content = {
-            index: $('<input class="span12" type="number">'),
+            index: $('<input class="col-md-12" type="number">'),
             show_line: $('<input type="checkbox">'),
             line_style: data_pivot.style_manager.add_select("lines", values.line_style),
             extra_space: $('<input type="checkbox">'),
@@ -346,14 +346,14 @@ class _DataPivot_settings_description {
 
         // create fields
         this.content = {
-            field_name: $('<select class="span12"></select>').html(
+            field_name: $('<select class="col-md-12"></select>').html(
                 this.data_pivot._get_header_options(true)
             ),
-            header_name: $('<input class="span12" type="text">'),
+            header_name: $('<input class="col-md-12" type="text">'),
             header_style: this.data_pivot.style_manager.add_select("texts", values.header_style),
             text_style: this.data_pivot.style_manager.add_select("texts", values.text_style),
-            max_width: $('<input class="span12" type="number">'),
-            dpe: $('<select class="span12"></select>').html(this.data_pivot.dpe_options),
+            max_width: $('<input class="col-md-12" type="number">'),
+            dpe: $('<select class="col-md-12"></select>').html(this.data_pivot.dpe_options),
         };
 
         // set default values
@@ -436,13 +436,13 @@ class _DataPivot_settings_pointdata {
 
         // create fields
         this.content = {
-            field_name: $('<select class="span12">').html(
+            field_name: $('<select class="col-md-12">').html(
                 this.data_pivot._get_header_options(true)
             ),
-            header_name: $('<input class="span12" type="text">'),
+            header_name: $('<input class="col-md-12" type="text">'),
             marker_style: this.data_pivot.style_manager.add_select(style_type, values.marker_style),
             conditional_formatting: this.conditional_formatter.data,
-            dpe: $('<select class="span12"></select>').html(this.data_pivot.dpe_options),
+            dpe: $('<select class="col-md-12"></select>').html(this.data_pivot.dpe_options),
         };
 
         // set default values
@@ -532,13 +532,13 @@ class _DataPivot_settings_linedata {
 
         // create fields
         this.content = {
-            low_field_name: $('<select class="span12"></select>').html(
+            low_field_name: $('<select class="col-md-12"></select>').html(
                 this.data_pivot._get_header_options(true)
             ),
-            high_field_name: $('<select class="span12"></select>').html(
+            high_field_name: $('<select class="col-md-12"></select>').html(
                 this.data_pivot._get_header_options(true)
             ),
-            header_name: $('<input  class="span12" type="text">'),
+            header_name: $('<input  class="col-md-12" type="text">'),
             marker_style: this.data_pivot.style_manager.add_select(style_type, values.marker_style),
             conditional_formatting: this.conditional_formatter.data,
         };
@@ -765,32 +765,32 @@ class _DataPivot_settings_barchart {
             }),
             styleSelectFactory = dp.style_manager.add_select.bind(dp.style_manager),
             content = {
-                field_name: $('<select id="bc_field_name" name="field_name" class="span12">')
+                field_name: $('<select id="bc_field_name" name="field_name" class="col-md-12">')
                     .html(dp._get_header_options(true))
                     .val(values.field_name),
                 error_low_field_name: $(
-                    '<select id="bc_error_low_field_name" name="error_low_field_name" class="span12">'
+                    '<select id="bc_error_low_field_name" name="error_low_field_name" class="col-md-12">'
                 )
                     .html(dp._get_header_options(true))
                     .val(values.error_low_field_name),
                 error_high_field_name: $(
-                    '<select id="bc_error_high_field_name" name="error_high_field_name" class="span12">'
+                    '<select id="bc_error_high_field_name" name="error_high_field_name" class="col-md-12">'
                 )
                     .html(dp._get_header_options(true))
                     .val(values.error_high_field_name),
 
                 header_name: $(
-                    '<input id="bc_header_name" name="header_name" type="text" class="span12"/>'
+                    '<input id="bc_header_name" name="header_name" type="text" class="col-md-12"/>'
                 ).val(values.header_name),
                 error_header_name: $(
-                    '<input id="bc_error_header_name" name="error_header_name" type="text" class="span12"/>'
+                    '<input id="bc_error_header_name" name="error_header_name" type="text" class="col-md-12"/>'
                 ).val(values.error_header_name),
 
                 bar_style: styleSelectFactory("rectangles", values.bar_style),
                 error_marker_style: styleSelectFactory("lines", values.error_marker_style),
 
                 conditional_formatting: cf,
-                dpe: $('<select id="bc_dpe" name="dpe" class="span12">')
+                dpe: $('<select id="bc_dpe" name="dpe" class="col-md-12">')
                     .html(dp.dpe_options)
                     .val(values.dpe),
                 error_show_tails: $(
@@ -847,7 +847,7 @@ class _DataPivot_settings_barchart {
     getTemplate() {
         return `<div>
             <h3>Barchart settings</h3>
-            <table class="table table-condensed table-bordered">
+            <table class="table table-sm table-bordered">
                 <thead>
                     <tr>
                         <th style="width: 25%">Data used</th>

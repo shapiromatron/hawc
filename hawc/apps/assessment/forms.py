@@ -46,13 +46,13 @@ class AssessmentForm(forms.ModelForm):
         self.helper = self.setHelper()
 
     def setHelper(self):
-        # by default take-up the whole row-fluid
+        # by default take-up the whole row
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "span12"
+                widget.attrs["class"] = "col-md-12"
             if fld == "dtxsids":
-                widget.attrs["class"] = "span10"
+                widget.attrs["class"] = "col-md-10"
             if type(widget) == forms.Textarea:
                 widget.attrs["rows"] = 3
                 widget.attrs["class"] += " html5text"
@@ -76,16 +76,16 @@ class AssessmentForm(forms.ModelForm):
             }
 
         helper = BaseFormHelper(self, **inputs)
-        helper.form_class = None
-        helper.add_fluid_row("name", 3, "span4")
-        helper.add_fluid_row("cas", 2, "span6")
-        helper.add_fluid_row("project_manager", 3, "span4")
-        helper.add_fluid_row("editable", 4, "span3")
-        helper.add_fluid_row("conflicts_of_interest", 2, "span6")
-        helper.add_fluid_row("noel_name", 2, "span6")
-        helper.add_fluid_row("vocabulary", 2, "span6")
+
+        helper.add_fluid_row("name", 3, "col-md-4")
+        helper.add_fluid_row("cas", 2, "col-md-6")
+        helper.add_fluid_row("project_manager", 3, "col-md-4")
+        helper.add_fluid_row("editable", 4, "col-md-3")
+        helper.add_fluid_row("conflicts_of_interest", 2, "col-md-6")
+        helper.add_fluid_row("noel_name", 2, "col-md-6")
+        helper.add_fluid_row("vocabulary", 2, "col-md-6")
         helper.addBtnLayout(
-            helper.layout[3], 1, reverse("assessment:dtxsid_create"), "Add new DTXSID", "span6"
+            helper.layout[3], 1, reverse("assessment:dtxsid_create"), "Add new DTXSID", "col-md-6"
         )
         helper.attrs["novalidate"] = ""
         return helper
@@ -124,7 +124,7 @@ class AssessmentModulesForm(forms.ModelForm):
             "cancel_url": self.instance.get_absolute_url(),
         }
         helper = BaseFormHelper(self, **inputs)
-        helper.form_class = None
+
         return helper
 
 
@@ -143,11 +143,11 @@ class AttachmentForm(forms.ModelForm):
         self.helper = self.setHelper()
 
     def setHelper(self):
-        # by default take-up the whole row-fluid
+        # by default take-up the whole row
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "span12"
+                widget.attrs["class"] = "col-md-12"
             if type(widget) == forms.Textarea:
                 widget.attrs["rows"] = 3
                 widget.attrs["class"] += " html5text"
@@ -159,7 +159,7 @@ class AttachmentForm(forms.ModelForm):
         inputs["cancel_url"] = self.instance.get_absolute_url()
 
         helper = BaseFormHelper(self, **inputs)
-        helper.form_class = None
+
         return helper
 
 
@@ -201,7 +201,7 @@ class DoseUnitsForm(forms.ModelForm):
             lookup_class=lookups.DoseUnitsLookup, allow_new=True
         )
         for fld in list(self.fields.keys()):
-            self.fields[fld].widget.attrs["class"] = "span12"
+            self.fields[fld].widget.attrs["class"] = "col-md-12"
 
 
 class DSSToxForm(forms.ModelForm):
@@ -236,7 +236,7 @@ class EffectTagForm(forms.ModelForm):
             lookup_class=lookups.EffectTagLookup, allow_new=True
         )
         for fld in list(self.fields.keys()):
-            self.fields[fld].widget.attrs["class"] = "span12"
+            self.fields[fld].widget.attrs["class"] = "col-md-12"
 
 
 class ContactForm(forms.Form):
@@ -269,11 +269,11 @@ class ContactForm(forms.Form):
         mail_admins(subject, body, fail_silently=False)
 
     def setHelper(self):
-        # by default take-up the whole row-fluid
+        # by default take-up the whole row
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "span12"
+                widget.attrs["class"] = "col-md-12"
 
         inputs = {
             "legend_text": "Contact HAWC developers",
@@ -321,11 +321,11 @@ class DatasetForm(forms.ModelForm):
         self.helper = self.setHelper()
 
     def setHelper(self):
-        # by default take-up the whole row-fluid
+        # by default take-up the whole row
         for fld in self.fields.keys():
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "span12"
+                widget.attrs["class"] = "col-md-12"
             if type(widget) == forms.Textarea:
                 widget.attrs["rows"] = 3
                 widget.attrs["class"] += " html5text"
@@ -351,9 +351,9 @@ class DatasetForm(forms.ModelForm):
         dataset; the public can only download and see the latest version."""
 
         helper = BaseFormHelper(self, **inputs)
-        helper.add_fluid_row("revision_version", 3, ("span2", "span5", "span5 hidden"))
-        helper.add_fluid_row("revision_notes", 1, ("span12 hidden",))
-        helper.form_class = None
+        helper.add_fluid_row("revision_version", 3, ("col-md-2", "col-md-5", "col-md-5 hidden"))
+        helper.add_fluid_row("revision_notes", 1, ("col-md-12 hidden",))
+
         return helper
 
     def clean(self):

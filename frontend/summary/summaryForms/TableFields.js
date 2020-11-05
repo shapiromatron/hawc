@@ -51,13 +51,13 @@ class TableField extends InputField {
     }
 
     render() {
-        var $div = $('<div class="control-group form-row">');
+        var $div = $('<div class="form-group form-row">');
 
         if (this.schema.prependSpacer) new SpacerNullField(this.schema, this.$parent).render();
         if (this.schema.label) new HeaderNullField(this.schema, this.$parent).render();
         if (this.schema.helpText) new HelpTextNullField(this.schema, this.$parent).render();
 
-        this.table = $('<table class="table table-condensed table-bordered">').appendTo($div);
+        this.table = $('<table class="table table-sm table-bordered">').appendTo($div);
         this.setColgroup();
         this.$thead = $("<thead>").appendTo(this.table);
         this.$tbody = $("<tbody>").appendTo(this.table);
@@ -68,7 +68,7 @@ class TableField extends InputField {
     thOrdering(options) {
         var th = $("<th>").html("Ordering&nbsp;"),
             add = $(
-                '<button class="btn btn-mini btn-primary" title="Add row"><i class="icon-plus icon-white"></button>'
+                '<button class="btn btn-sm btn-primary" title="Add row"><i class="icon-plus icon-white"></button>'
             ).on("click", this.addRow.bind(this));
 
         if (options.showNew) th.append(add);
@@ -92,14 +92,14 @@ class TableField extends InputField {
             td = $("<td>");
 
         td.append(
-            $('<button class="btn btn-mini" title="Move up"><i class="icon-arrow-up"></button>').on(
+            $('<button class="btn btn-sm" title="Move up"><i class="icon-arrow-up"></button>').on(
                 "click",
                 moveUp
             ),
             $(
-                '<button class="btn btn-mini" title="Move down"><i class="icon-arrow-down"></button>'
+                '<button class="btn btn-sm" title="Move down"><i class="icon-arrow-down"></button>'
             ).on("click", moveDown),
-            $('<button class="btn btn-mini" title="Remove"><i class="icon-remove"></button>').on(
+            $('<button class="btn btn-sm" title="Remove"><i class="icon-remove"></button>').on(
                 "click",
                 del
             )
@@ -117,23 +117,23 @@ class TableField extends InputField {
 
     addTdText(name, val) {
         val = val || "";
-        return $(`<td><input name="${name}" value="${val}" class="span12" type="text"></td>`);
+        return $(`<td><input name="${name}" value="${val}" class="col-md-12" type="text"></td>`);
     }
 
     addTdInt(name, val) {
         val = val || "";
-        return `<td><input name="${name}" value="${val}" class="span12" type="number"></td>`;
+        return `<td><input name="${name}" value="${val}" class="col-md-12" type="number"></td>`;
     }
 
     addTdFloat(name, val) {
         val = val || "";
-        return `<td><input name="${name}" value="${val}" class="span12" type="number" step="any"></td>`;
+        return `<td><input name="${name}" value="${val}" class="col-md-12" type="number" step="any"></td>`;
     }
 
     addTdColor(name, val) {
         val = val || "#000000";
         return $("<td>").append(
-            $(`<input type="color" name="${name}" value="${val}" class="span12" required>`)
+            $(`<input type="color" name="${name}" value="${val}" class="col-md-12" required>`)
         );
     }
 
@@ -143,21 +143,21 @@ class TableField extends InputField {
     }
 
     addTdSelect(name, values) {
-        var sel = $(`<select name="${name}" class="span12">`).append(
+        var sel = $(`<select name="${name}" class="col-md-12">`).append(
             _.map(values, d => `<option value="${d}">${d}</option>`)
         );
         return $("<td>").append(sel);
     }
 
     addTdSelectLabels(name, options) {
-        var sel = $(`<select name="${name}" class="span12">`).append(
+        var sel = $(`<select name="${name}" class="col-md-12">`).append(
             _.map(options, d => `<option value="${d.value}">${d.label}</option>`)
         );
         return $("<td>").append(sel);
     }
 
     addTdSelectMultiple(name, values) {
-        var sel = $(`<select name="${name}" class="span12" multiple>`).append(
+        var sel = $(`<select name="${name}" class="col-md-12" multiple>`).append(
             _.map(values, d => `<option value="${d}">${d}</option>`)
         );
         return $("<td>").append(sel);

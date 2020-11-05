@@ -22,7 +22,7 @@ class RadioInput extends Component {
     render() {
         const {name, value, onChange, choices, helpText} = this.props;
         return (
-            <div className="control-group">
+            <div className="form-group">
                 {this.renderLabel()}
                 <div className="controls">
                     {choices.map(choice => {

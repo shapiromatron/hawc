@@ -35,19 +35,19 @@ class ModelOptionModal extends BaseModal {
     renderReadOnly() {
         return (
             <div className="modal-body">
-                <div className="row-fluid">
-                    <div className="span6">
+                <div className="row">
+                    <div className="col-md-6">
                         <h4>Model settings</h4>
-                        <table className="table table-condensed table-striped" />
+                        <table className="table table-sm table-striped" />
                     </div>
-                    <div className="span6">
+                    <div className="col-md-6">
                         <h4>Optimization</h4>
-                        <table className="table table-condensed table-striped" />
+                        <table className="table table-sm table-striped" />
                     </div>
                 </div>
-                <div className="row-fluid">
+                <div className="row">
                     <h4>Parameter assignment</h4>
-                    <table className="table table-condensed table-striped" />
+                    <table className="table table-sm table-striped" />
                 </div>
             </div>
         );
@@ -97,8 +97,8 @@ class ModelOptionModal extends BaseModal {
         return (
             <div className="modal-body">
                 <form className="form-horizontal">
-                    <div className="row-fluid">
-                        <fieldset className="span6">
+                    <div className="row">
+                        <fieldset className="col-md-6">
                             <legend>Model assignments</legend>
                             <div>
                                 {models.map((d, i) => {
@@ -114,7 +114,7 @@ class ModelOptionModal extends BaseModal {
                                 })}
                             </div>
                         </fieldset>
-                        <fieldset className="span6">
+                        <fieldset className="col-md-6">
                             <legend>Optimizer assignments</legend>
                             <div>
                                 {optimizers.map((d, i) => {
@@ -131,7 +131,7 @@ class ModelOptionModal extends BaseModal {
                             </div>
                         </fieldset>
                     </div>
-                    <div className="row-fluid">
+                    <div className="row">
                         <fieldset>
                             <legend>Parameter assignments</legend>
                             <div>

@@ -5,14 +5,14 @@ import ReactQuill from "react-quill";
 class QuillTextInput extends Component {
     render() {
         return (
-            <div className="control-group">
+            <div className="form-group">
                 <label htmlFor={`id_${this.props.name}`} className="control-label">
                     {this.props.label}
                     {this.props.required ? <span className="asteriskField">*</span> : null}
                 </label>
                 <div className="controls">
                     <ReactQuill
-                        className="span12 textarea"
+                        className="col-md-12 textarea"
                         id={`id_${this.props.name}`}
                         type="text"
                         required={this.props.required}

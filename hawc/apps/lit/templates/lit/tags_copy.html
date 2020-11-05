@@ -14,8 +14,8 @@
 {% endblock %}
 
 {% block content %}
-  <div class="row-fluid">
-    <form class="span8 offset2 form-horizontal" action="." method="post">
+  <div class="row">
+    <form class="col-md-8 col-md-offset-2 form-horizontal" action="." method="post">
 
       {% csrf_token %}
 
@@ -23,16 +23,16 @@
         <legend>Copy tags from existing assessments</legend>
         <p class="help-block">Copy literature reference tags from an existing HAWC assessment which you have access to.</p><br>
 
-        {{ form.non_field_errors|add_class:"alert alert-error" }}
+        {{ form.non_field_errors|add_class:"alert alert-danger" }}
 
         {% for field in form %}
-          <div class="control-group form-row">
+          <div class="form-group form-row">
             {{field.label_tag|add_class:"control-label"}}
               <div class="controls">
                 {{field}}
                 <span class='help-inline'>{{field.help_text}}</span>
             </div>
-            {{field.errors|add_class:"alert alert-error"}}
+            {{field.errors|add_class:"alert alert-danger"}}
           </div>
         {% endfor %}
       </fieldset>
@@ -50,7 +50,7 @@
       <b>Tags for selected assessment:</b>
       <div id="tags"></div>
 
-      <div class="row-fluid">
+      <div class="row">
         <div class="form-actions">
           <button type="submit" class="btn btn-primary">Copy tags from existing assessment</button>
           <a class="btn" href="{% url 'lit:tags_update' assessment.pk %}">Cancel</a>

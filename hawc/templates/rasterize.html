@@ -1,25 +1,19 @@
-{% extends 'base.html' %}
+{% load static %}
 
-{% block extrastyle %}
-<style type="text/css">
-body {
+<!DOCTYPE html>
+<head>
+    {% include 'includes/css.html' %}
+    <style type="text/css">
+        body {
+            font-family: "Liberation Sans", Arial, Helvetica, sans-serif !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            background-color: transparent !important;
+        }
+    </style>
+    {{css|safe}}
+</head>
 
-    /* should be same as .d3 in d3.css */
-    font-family: "Liberation Sans", Arial, Helvetica, sans-serif !important;
+<body>{{svg|safe}}</body>
 
-    /* remove extra padding */
-    padding: 0 !important;
-
-}
-</style>
-{{css|safe}}
-{% endblock extrastyle %}
-
-{% block content_outer %}
-{{svg|safe}}
-{% endblock content_outer %}
-
-{% comment "Don't load content in the following blocks" %}{% endcomment %}
-{% block external_css %}{% endblock external_css %}
-{% block navbar_outer %}{% endblock navbar_outer %}
-{% block browser_check %}{% endblock browser_check %}
+</html>

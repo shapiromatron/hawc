@@ -52,7 +52,7 @@ class Barplot extends D3Plot {
         var plot = this;
         var options = {
             id: "toggle_y_axis",
-            cls: "btn btn-mini",
+            cls: "btn btn-sm",
             title: "Change y-axis scale (shortcut: click the y-axis label)",
             text: "",
             icon: "icon-resize-vertical",
@@ -65,7 +65,7 @@ class Barplot extends D3Plot {
         if (this.endpoint.doses.length > 1) {
             options = {
                 id: "toggle_dose_units",
-                cls: "btn btn-mini",
+                cls: "btn btn-sm",
                 title: "Change dose-units representation",
                 text: "",
                 icon: "icon-certificate",

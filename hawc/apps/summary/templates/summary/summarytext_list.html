@@ -4,12 +4,10 @@
   {{assessment}} | Summary text | HAWC
 {% endblock %}
 
-{% block bodyattrs %}
-  class="fill" data-spy="scroll" data-target="#sidebar" data-offset="40"
-{% endblock %}
+{% block bodyattrs %}data-spy="scroll" data-target="#sidebar" data-offset="40"{% endblock %}
 
 {% block main_content %}
-  <div class="row-fluid">
+  <div class="row">
     <ul class="breadcrumb">
       {% if user.is_authenticated %}
         <li class="active"><a href="{% url 'portal' %}">Home</a><span class="divider">/</span></li>
@@ -24,16 +22,16 @@
     </ul>
   </div>
 
-  <div class="row-fluid">
-    <div id="sidebar" class="span3">
+  <div class="row">
+    <div id="sidebar" class="col-md-3">
       <ul id="st_headers_ul" class="nav nav-list well affix-sidenav" data-spy="affix" data-offset-top="65">
       </ul>
     </div>
 
-    <div class="span9">
+    <div class="col-md-9">
 
       <h1>{{assessment}} Summary
-        <div class="btn-group pull-right">
+        <div class="btn-group float-right">
           <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions
             <span class="caret"></span>
           </a>

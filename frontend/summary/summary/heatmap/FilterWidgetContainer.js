@@ -54,15 +54,15 @@ class FilterWidget extends Component {
                     }}>
                     <h4>
                         {h.titleCase(widget.column)}
-                        <div className="btn-group pull-right">
+                        <div className="btn-group float-right">
                             <button
-                                className="btn btn-small"
+                                className="btn btn-sm"
                                 onClick={() => selectAllFilterWidget(widget.column)}
                                 title="Select all items">
                                 <i className="fa fa-check-circle"></i>
                             </button>
                             <button
-                                className="btn btn-small"
+                                className="btn btn-sm"
                                 onClick={() => selectNoneFilterWidget(widget.column)}
                                 title="De-select all items">
                                 <i className="fa fa-times-circle"></i>
@@ -138,7 +138,7 @@ class FilterWidget extends Component {
         if (modalRows.length == 0) {
             return (
                 <button
-                    className="btn btn-mini pull-right disabled"
+                    className="btn btn-sm float-right disabled"
                     title="No additional information">
                     <i className="icon-eye-close"></i>
                 </button>
@@ -149,7 +149,7 @@ class FilterWidget extends Component {
         else if (modalRows.length == 1) {
             return (
                 <button
-                    className="btn btn-mini pull-right"
+                    className="btn btn-sm float-right"
                     onClick={() => showModalOnRow(extension, modalRows[0])}
                     title="View additional information">
                     <i className="icon-eye-open"></i>
@@ -160,7 +160,7 @@ class FilterWidget extends Component {
         // If there are too many results disable button
         else {
             return (
-                <button className="btn btn-mini pull-right disabled" title="Too many results">
+                <button className="btn btn-sm float-right disabled" title="Too many results">
                     <i className="icon-eye-open"></i>
                 </button>
             );

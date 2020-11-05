@@ -10,26 +10,26 @@
 
     {% csrf_token %}
 
-    <div class='row-fluid'>
+    <div class='row'>
       <fieldset>
         <legend>Create new strain</legend>
         <span class="help-block">Create a new strain. Note that the creation of a new strain is applied as an option for all assessments in HAWC, not just the assessment you're currently working on. Therefore, our staff may periodically review to ensure that the strain is indeed new and not pre-existing.</span><br>
 
-        {{ form.non_field_errors|add_class:"alert alert-error" }}
+        {{ form.non_field_errors|add_class:"alert alert-danger" }}
 
         {% for field in form %}
-          <div class="control-group form-row">
+          <div class="form-group form-row">
             {{field.label_tag|add_class:"control-label"}}
             <div class="controls">
               {{field}}
               <span class='help-block'>{{field.help_text}}</span>
             </div>
-            {{field.errors|add_class:"alert alert-error"}}
+            {{field.errors|add_class:"alert alert-danger"}}
           </div>
         {% endfor %}
       </fieldset>
     </div>
-    <div class="row-fluid">
+    <div class="row">
       <div class="form-actions">
         <button id='submit_form' type="submit" class="btn btn-primary">{{ crud }}</button>
       </div>

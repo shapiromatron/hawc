@@ -519,7 +519,7 @@ class SummaryTextForm(forms.ModelForm):
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "span12"
+                widget.attrs["class"] = "col-md-12"
 
         cancel_url = reverse("summary:list", kwargs={"pk": self.instance.assessment.id})
         inputs = {
@@ -532,7 +532,7 @@ class SummaryTextForm(forms.ModelForm):
             ]
         }
         helper = BaseFormHelper(self, **inputs)
-        helper.form_class = None
+
         return helper
 
 
@@ -564,7 +564,7 @@ class VisualForm(forms.ModelForm):
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "span12"
+                widget.attrs["class"] = "col-md-12"
 
         if self.instance.id:
             inputs = {
@@ -586,7 +586,7 @@ class VisualForm(forms.ModelForm):
             }
 
         helper = BaseFormHelper(self, **inputs)
-        helper.form_class = None
+
         helper.form_id = "visualForm"
         return helper
 
@@ -690,7 +690,7 @@ class TagtreeForm(VisualForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = self.setHelper()
-        self.helper.add_fluid_row("root_node", 3, "span4")
+        self.helper.add_fluid_row("root_node", 3, "col-md-4")
 
         choices = [
             (tag.id, tag.get_nested_name())
@@ -864,7 +864,7 @@ class DataPivotForm(forms.ModelForm):
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "span12"
+                widget.attrs["class"] = "col-md-12"
 
         if self.instance.id:
             inputs = {
@@ -884,7 +884,7 @@ class DataPivotForm(forms.ModelForm):
             }
 
         helper = BaseFormHelper(self, **inputs)
-        helper.form_class = None
+
         helper.form_id = "dataPivotForm"
         return helper
 
@@ -1009,7 +1009,7 @@ class DataPivotSelectorForm(forms.Form):
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "span12"
+                widget.attrs["class"] = "col-md-12"
 
         inputs = {
             "legend_text": "Copy data pivot",
@@ -1025,7 +1025,7 @@ class DataPivotSelectorForm(forms.Form):
         }
 
         helper = BaseFormHelper(self, **inputs)
-        helper.form_class = None
+
         return helper
 
 
@@ -1059,7 +1059,7 @@ class SmartTagForm(forms.Form):
         super().__init__(*args, **kwargs)
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
-            widget.attrs["class"] = "span12"
+            widget.attrs["class"] = "col-md-12"
             if hasattr(widget, "update_query_parameters"):
                 widget.update_query_parameters({"related": assessment_id})
                 widget.attrs["class"] += " smartTagSearch"

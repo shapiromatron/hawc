@@ -45,18 +45,18 @@ class BaseStudyForm(forms.ModelForm):
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "span12"
+                widget.attrs["class"] = "col-md-12"
             else:
                 widget.attrs["class"] = "checkbox"
 
         helper = BaseFormHelper(self, **inputs)
-        helper.form_class = None
+
         if "authors" in self.fields:
-            helper.add_fluid_row("authors", 2, "span6")
-        helper.add_fluid_row("short_citation", 2, "span6")
-        helper.add_fluid_row("bioassay", 4, "span3")
-        helper.add_fluid_row("coi_reported", 2, "span6")
-        helper.add_fluid_row("contact_author", 2, "span6")
+            helper.add_fluid_row("authors", 2, "col-md-6")
+        helper.add_fluid_row("short_citation", 2, "col-md-6")
+        helper.add_fluid_row("bioassay", 4, "col-md-3")
+        helper.add_fluid_row("coi_reported", 2, "col-md-6")
+        helper.add_fluid_row("contact_author", 2, "col-md-6")
         return helper
 
 
@@ -168,7 +168,7 @@ class StudiesCopy(forms.Form):
     def setHelper(self, assessment):
         self.fields["studies"].widget.attrs["size"] = 15
         for fld in list(self.fields.keys()):
-            self.fields[fld].widget.attrs["class"] = "span12"
+            self.fields[fld].widget.attrs["class"] = "col-md-12"
 
         inputs = {
             "legend_text": "Copy studies across assessments",
@@ -177,5 +177,5 @@ class StudiesCopy(forms.Form):
         }
 
         helper = BaseFormHelper(self, **inputs)
-        helper.form_class = None
+
         return helper

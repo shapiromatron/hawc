@@ -13,14 +13,14 @@
 
 {% block content %}
   <h1>Create a new visualization</h1>
-  <div class="control-group">
+  <div class="form-group">
     <p id="hint_id_guideline_compliance" class="help-block">
         Multiple visualization types are available.
         Please select the type of visualization you would like to create.
       </p>
     <div class="controls">
       <div>
-        <select class="span10 textinput textInput" id="vis_selector" maxlength="128" name="guideline_compliance" type="text">
+        <select class="col-md-10 textinput textInput" id="vis_selector" maxlength="128" name="guideline_compliance" type="text">
           <option
             data-showcase="#dataPivot"
             value="{% url 'summary:dp_new-prompt' assessment.id %}">
@@ -51,13 +51,13 @@
           <option data-showcase="#visual6" value="{% url 'summary:visualization_create' assessment.id 6 %}">
               Exploratory heatmap</option>
         </select>
-        <a id="create_btn" class="pull-right btn btn-primary span2" href="#">Select</a>
+        <a id="create_btn" class="float-right btn btn-primary col-md-2" href="#">Select</a>
       </div>
 
     </div>
   </div>
 
-  <div id="showcase" class="row-fluid" style="display: none;">
+  <div id="showcase" class="row" style="display: none;">
   </div>
 
   <div style="display: none;">
@@ -65,10 +65,10 @@
     <div id="visual0">
       <h2>Bioassay endpoint aggregation</h2>
       <div class="row">
-        <img class="span10 offset1" src="{% static '/img/summary/aggregation1.png' %}">
+        <img class="col-md-10 col-md-offset-1" src="{% static '/img/summary/aggregation1.png' %}">
       </div>
       <div class="row">
-        <img class="span10 offset1" src="{% static '/img/summary/aggregation2.png' %}">
+        <img class="col-md-10 col-md-offset-1" src="{% static '/img/summary/aggregation2.png' %}">
       </div>
       <p class="help-block">
         Select a subset of animal bioassay endpoints and present these using
@@ -81,7 +81,7 @@
     <div id="visual1">
       <h2>Bioassay endpoint crossview</h2>
       <div class="row">
-        <img class="span10 offset1" src="{% static '/img/summary/crossview.png' %}">
+        <img class="col-md-10 col-md-offset-1" src="{% static '/img/summary/crossview.png' %}">
       </div>
       <p class="help-block">
         All animal bioassay dose-response datasets available in a HAWC assessment
@@ -97,8 +97,8 @@
     <div id="dataPivot">
       <h2>Data Pivot</h2>
       <div class="row">
-        <img class="span10 offset1" src="{% static '/img/summary/data_pivot.png' %}">
-        <img class="span10 offset1" src="{% static '/img/summary/data_pivot-barchart.png' %}">
+        <img class="col-md-10 col-md-offset-1" src="{% static '/img/summary/data_pivot.png' %}">
+        <img class="col-md-10 col-md-offset-1" src="{% static '/img/summary/data_pivot-barchart.png' %}">
       </div>
       <p class="help-block">
         Data from any data-stream in HAWC (bioassay, epidemiology, in-vitro) or
@@ -113,7 +113,7 @@
       <h2>{{assessment.get_rob_name_display}} heatmap</h2>
       <div class="row">
         <img
-          class="span10 offset1"
+          class="col-md-10 col-md-offset-1"
           style="border-right: 1px solid black; border-bottom: 1px solid black;"
           src="{% static '/img/summary/rob-heatmap.svg' %}">
       </div>
@@ -129,7 +129,7 @@
       <h2>{{assessment.get_rob_name_display}} barchart</h2>
       <div class="row">
         <img
-          class="span10 offset1"
+          class="col-md-10 col-md-offset-1"
           style="border-right: 1px solid black; border-bottom: 1px solid black;"
           src="{% static '/img/summary/rob-barchart.svg' %}">
       </div>
@@ -142,7 +142,7 @@
     <div id="visual4">
       <h2>Literature tagtree</h2>
       <div class="row">
-        <img class="span10 offset1" src="{% static '/img/summary/ehp.1509912.g001.jpg' %}">
+        <img class="col-md-10 col-md-offset-1" src="{% static '/img/summary/ehp.1509912.g001.jpg' %}">
       </div>
       <p class="help-block">
         A customizable dendrogram aka "tagtree" to display literature tags applied to references in a HAWC assessment.
@@ -152,7 +152,7 @@
     <div id="visual5">
       <h2>Embedded external website</h2>
       <div class="row">
-        <img class="span10 offset1" src="{% static '/img/summary/external-tableau.png' %}">
+        <img class="col-md-10 col-md-offset-1" src="{% static '/img/summary/external-tableau.png' %}">
       </div>
       <p class="help-block">
         Embed an external website. The following websites can be linked to:
@@ -168,7 +168,7 @@
     <div id="visual6">
       <h2>Exploratory heatmap</h2>
       <div class="row">
-        <img class="span10 offset1" src="{% static '/img/summary/exploratory-heatmap.png' %}">
+        <img class="col-md-10 col-md-offset-1" src="{% static '/img/summary/exploratory-heatmap.png' %}">
       </div>
       <p class="help-block">
         A heatmap with customizable axes, filters, and interactivity to explore a dataset visually. The data presented in the heatmap can be content extracted for this assessment (bioassay or epidemiology), or you can upload a <a href="{% url 'assessment:dataset_create' assessment.id %}">tabular dataset</a> for analysis.

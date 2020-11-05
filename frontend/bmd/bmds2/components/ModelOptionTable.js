@@ -18,7 +18,7 @@ class ModelOptionTable extends React.Component {
             showVariance = this.props.dataType === "C";
 
         return (
-            <div className="row-fluid">
+            <div className="row">
                 <label className="control-label">Add new model</label>
                 <div className="controls">
                     <select style={{marginBottom: 0, marginRight: "1em"}} ref={this.modelSelector}>
@@ -36,11 +36,11 @@ class ModelOptionTable extends React.Component {
                             this.props.handleCreateModel(modelName);
                         }}
                         type="button"
-                        className="btn btn-small">
+                        className="btn btn-sm">
                         <i className="icon-plus" />
                     </button>
 
-                    <div className="btn-group pull-right">
+                    <div className="btn-group float-right">
                         <a className="btn dropdown-toggle" data-toggle="dropdown">
                             Actions &nbsp;
                             <span className="caret" />
@@ -89,9 +89,9 @@ class ModelOptionTable extends React.Component {
     render() {
         const {editMode, models} = this.props;
         return (
-            <div className="span6">
+            <div className="col-6">
                 <h4>Model options</h4>
-                <table className="table table-condensed table-striped">
+                <table className="table table-sm table-striped">
                     <thead>
                         <tr>
                             <th style={{width: "25%"}}>Model name</th>

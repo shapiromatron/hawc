@@ -23,7 +23,7 @@ class DatasetPreview extends Component {
             <div>
                 <h4>
                     Dataset overview
-                    <div className="btn-group pull-right">
+                    <div className="btn-group float-right">
                         <a className="btn btn-primary dropdown-toggle" data-toggle="dropdown">
                             Actions&nbsp;
                             <span className="caret"></span>

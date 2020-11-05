@@ -12,12 +12,12 @@ class AssessmentTasks extends Component {
                 {showAssessment ? (
                     <h4>
                         {assessment.name}&nbsp;
-                        <a className="btn btn-small btn-primary" href={assessment.url}>
+                        <a className="btn btn-sm btn-primary" href={assessment.url}>
                             View
                         </a>
                     </h4>
                 ) : null}
-                <table className="table table-condensed table-striped">
+                <table className="table table-sm table-striped">
                     <colgroup>
                         <col width="30%" />
                         <col width="70%" />

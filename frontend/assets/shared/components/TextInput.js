@@ -17,11 +17,11 @@ class TextInput extends Component {
     render() {
         const type = this.props.type || "text";
         return (
-            <div className="control-group">
+            <div className="form-group">
                 {this.renderLabel()}
                 <div className="controls">
                     <input
-                        className="span12 textinput"
+                        className="col-md-12 textinput"
                         id={`id_${this.props.name}`}
                         name={this.props.name}
                         type={type}

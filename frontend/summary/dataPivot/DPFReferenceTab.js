@@ -11,7 +11,7 @@ let buildReferenceLines = function(tab, dp) {
                 buildHeaderTr(["Reference line value", "Line style", "Delete"])
             ),
             tbody = $("<tbody>"),
-            tbl = $('<table class="table table-condensed table-bordered">').html([thead, tbody]),
+            tbl = $('<table class="table table-sm table-bordered">').html([thead, tbody]),
             settings = dp.settings.reference_lines,
             addDataRow = function(i) {
                 let obj;
@@ -24,7 +24,7 @@ let buildReferenceLines = function(tab, dp) {
             newDataRow = function() {
                 addDataRow(settings.length);
             },
-            newRowBtn = $('<button class="btn btn-primary pull-right">New row</button>').on(
+            newRowBtn = $('<button class="btn btn-primary float-right">New row</button>').on(
                 "click",
                 newDataRow
             ),
@@ -43,11 +43,7 @@ let buildReferenceLines = function(tab, dp) {
                 '<colgroup><col style="width: 25%;"><col style="width: 25%;"><col style="width: 25%;"><col style="width: 25%;"></colgroup>'
             ),
             tbody = $("<tbody>"),
-            tbl = $('<table class="table table-condensed table-bordered">').html([
-                colgroup,
-                thead,
-                tbody,
-            ]),
+            tbl = $('<table class="table table-sm table-bordered">').html([colgroup, thead, tbody]),
             settings = dp.settings.reference_rectangles,
             addDataRow = function(i) {
                 let obj;
@@ -60,7 +56,7 @@ let buildReferenceLines = function(tab, dp) {
             newDataRow = function() {
                 addDataRow(settings.length);
             },
-            newRowBtn = $('<button class="btn btn-primary pull-right">New row</button>').on(
+            newRowBtn = $('<button class="btn btn-primary float-right">New row</button>').on(
                 "click",
                 newDataRow
             ),
@@ -75,7 +71,7 @@ let buildReferenceLines = function(tab, dp) {
     buildReferenceLabels = function(tab, dp) {
         var thead = $("<thead>").html(buildHeaderTr(["Text", "Style", "Delete"])),
             tbody = $("<tbody>"),
-            tbl = $('<table class="table table-condensed table-bordered">').html([thead, tbody]),
+            tbl = $('<table class="table table-sm table-bordered">').html([thead, tbody]),
             settings = dp.settings.labels,
             addDataRow = function(i) {
                 let obj;
@@ -88,7 +84,7 @@ let buildReferenceLines = function(tab, dp) {
             newDataRow = function() {
                 addDataRow(settings.length);
             },
-            newRowBtn = $('<button class="btn btn-primary pull-right">New row</button>').on(
+            newRowBtn = $('<button class="btn btn-primary float-right">New row</button>').on(
                 "click",
                 newDataRow
             ),

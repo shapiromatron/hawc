@@ -8,12 +8,12 @@ class DssToxDetailTable extends Component {
         return (
             <div className="container-fluid">
                 {showHeader ? (
-                    <div className="row-fluid">
+                    <div className="row">
                         <h3>Substance information</h3>
                     </div>
                 ) : null}
-                <div className="row-fluid">
-                    <table className="table table-condensed">
+                <div className="row">
+                    <table className="table table-sm">
                         <tbody>
                             <tr>
                                 <td rowSpan={5} style={{borderTop: "0px"}}>

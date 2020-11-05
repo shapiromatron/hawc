@@ -4,26 +4,26 @@
 
   {% csrf_token %}
 
-  <div class='row-fluid'>
+  <div class='row'>
     <fieldset>
       <legend>Copy {{name}}</legend>
       <span class="help-block">{{notes}}</span><br>
 
       {% for field in form %}
-        <div class="control-group form-row">
+        <div class="form-group form-row">
           {{field.label_tag|add_class:"control-label"}}
           <div class="controls">
               {{field}}<br>
               <p class='help-inline'>{{field.help_text}}</p>
           </div>
 
-          {{field.errors|add_class:"alert alert-error"}}
+          {{field.errors|add_class:"alert alert-danger"}}
         </div>
       {% endfor %}
     </fieldset>
   </div>
 
-  <div class="row-fluid">
+  <div class="row">
     <div class="form-actions">
       <a id='submit_form' href="#" class="btn btn-primary">Copy selected as new</a>
       <a href='{{object.get_absolute_url}}' class="btn">Cancel</a>

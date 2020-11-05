@@ -24,7 +24,7 @@
   <div id="extra" class="hidden">
     {# Endpoint Group formset #}
     <div id='endpointGroups'>
-      <div class="row-fluid">
+      <div class="row">
         <legend>Dose-response data</legend>
         <p class="help-text">
           <span class="d_only">
@@ -47,13 +47,13 @@
           </span>
         </p>
       </div>
-      <div class="row-fluid">
+      <div class="row">
 
-        <div class="span7">
+        <div class="col-md-7">
           {{ formset.management_form }}
-          {{ formset.non_form_errors|add_class:"alert alert-error" }}
+          {{ formset.non_form_errors|add_class:"alert alert-danger" }}
 
-          <table id="eg" class="table table-condensed table-striped">
+          <table id="eg" class="table table-sm table-striped">
             <thead>
               <tr>
                 <th id="doses_title">Dose</th>
@@ -71,7 +71,7 @@
 
                 <tr>
                   {% if forloop.first %}
-                    {{ form.non_field_errors|add_class:"alert alert-error" }}
+                    {{ form.non_field_errors|add_class:"alert alert-danger" }}
                   {% endif %}
 
                   {% for hidden in form.hidden_fields %}
@@ -79,12 +79,12 @@
                   {% endfor %}
 
                   <td class="doses" id="dose_{{i}}"></td>
-                  <td>{{form.n}}{{form.n.errors|add_class:"alert alert-error"}}</td>
-                  <td class="d_only">{{form.incidence}}{{form.incidence.errors|add_class:"alert alert-error"}}</td>
-                  <td class="pc_only">{{form.response}}{{form.response.errors|add_class:"alert alert-error"}}</td>
-                  <td class="c_only">{{form.variance}}{{form.variance.errors|add_class:"alert alert-error"}}</td>
-                  <th class="p_only">{{form.lower_ci}}{{form.lower_ci.errors|add_class:"alert alert-error"}}</th>
-                  <th class="p_only">{{form.upper_ci}}{{form.upper_ci.errors|add_class:"alert alert-error"}}</th>
+                  <td>{{form.n}}{{form.n.errors|add_class:"alert alert-danger"}}</td>
+                  <td class="d_only">{{form.incidence}}{{form.incidence.errors|add_class:"alert alert-danger"}}</td>
+                  <td class="pc_only">{{form.response}}{{form.response.errors|add_class:"alert alert-danger"}}</td>
+                  <td class="c_only">{{form.variance}}{{form.variance.errors|add_class:"alert alert-danger"}}</td>
+                  <th class="p_only">{{form.lower_ci}}{{form.lower_ci.errors|add_class:"alert alert-danger"}}</th>
+                  <th class="p_only">{{form.upper_ci}}{{form.upper_ci.errors|add_class:"alert alert-danger"}}</th>
                   <td>{{form.significance_level}}</td>
                 </tr>
               {% endfor %}
@@ -92,7 +92,7 @@
           </table>
         </div>
 
-        <div class="span4">
+        <div class="col-md-4">
           <div id='endpoint_plot' class='d3_container'></div>
         </div>
       </div>
@@ -101,7 +101,7 @@
     {# Significance calculation modal #}
     <button
         id="ssBtn"
-        class="btn btn-mini"
+        class="btn btn-sm"
         style="margin-left: 10px"
         type="button"
         data-toggle="modal"

@@ -10,7 +10,7 @@ let build_settings_general_tab = function(self) {
     var tab = $('<div class="tab-pane" id="data_pivot_settings_general">'),
         build_general_settings = function() {
             var div = $("<div>"),
-                tbl = $('<table class="table table-condensed table-bordered">'),
+                tbl = $('<table class="table table-sm table-bordered">'),
                 tbody = $("<tbody>"),
                 colgroup = $('<colgroup><col style="width: 30%;"><col style="width: 70%;">');
 
@@ -23,9 +23,9 @@ let build_settings_general_tab = function(self) {
             return div.html(tbl);
         },
         build_legend_settings = function() {
-            var div = $('<div class="row-fluid">'),
-                content = $('<div class="span6">'),
-                plot_div = $('<div class="span6">'),
+            var div = $('<div class="row">'),
+                content = $('<div class="col-md-6">'),
+                plot_div = $('<div class="col-md-6">'),
                 vis = d3
                     .select(plot_div[0])
                     .append("svg")
@@ -37,7 +37,7 @@ let build_settings_general_tab = function(self) {
 
             self.legend = new DataPivotLegend(vis, self.settings.legend, self.settings);
 
-            var tbl = $('<table class="table table-condensed table-bordered">'),
+            var tbl = $('<table class="table table-sm table-bordered">'),
                 tbody = $("<tbody>"),
                 colgroup = $('<colgroup><col style="width: 30%;"><col style="width: 70%;">'),
                 build_tr = function(label, input) {
@@ -46,7 +46,7 @@ let build_settings_general_tab = function(self) {
                         .append($("<td>").append(input));
                 },
                 add_horizontal_field = function(label_text, html_obj) {
-                    return $('<div class="control-group">')
+                    return $('<div class="form-group">')
                         .append(`<label class="control-label">${label_text}</label>`)
                         .append($('<div class="controls">').append(html_obj));
                 },
@@ -114,15 +114,15 @@ let build_settings_general_tab = function(self) {
                         name = $(`<input name="legend_name" value="${tmp_label}">`),
                         line = self.style_manager
                             .add_select("lines", tmp_line, true)
-                            .removeClass("span12")
+                            .removeClass("col-md-12")
                             .attr("name", "legend_line"),
                         symbol = self.style_manager
                             .add_select("symbols", tmp_symbol, true)
-                            .removeClass("span12")
+                            .removeClass("col-md-12")
                             .attr("name", "legend_symbol"),
                         rectangle = self.style_manager
                             .add_select("rectangles", tmp_rect, true)
-                            .removeClass("span12")
+                            .removeClass("col-md-12")
                             .attr("name", "legend_rect");
 
                     modal

@@ -16,11 +16,9 @@ class InlineRendering {
     render() {
         this.renderParent = $('<div class="inlineSmartTagParent">').insertBefore(this.$div);
 
-        let $title = $('<div class="row-fluid inlineSmartTagTitle">'),
-            $body = $('<div class="row-fluid inlineSmartTagBody">'),
-            $caption = $('<div class="row-fluid inlineSmartTagCaption">').append(
-                this.$div.detach()
-            ),
+        let $title = $('<div class="row inlineSmartTagTitle">'),
+            $body = $('<div class="row inlineSmartTagBody">'),
+            $caption = $('<div class="row inlineSmartTagCaption">').append(this.$div.detach()),
             $container = $('<div class="inlineSmartTagContainer container-fluid">').append([
                 $title,
                 $body,
@@ -60,7 +58,7 @@ class InlineRendering {
                     $body.fadeIn("slow");
                 }
             },
-            toggleBtn = $('<a title="click to toggle visibility" class="btn btn-mini pull-right">')
+            toggleBtn = $('<a title="click to toggle visibility" class="btn btn-sm float-right">')
                 .append('<i class="icon-minus"></i>')
                 .off("click")
                 .click(expandHideTogger.bind(this));

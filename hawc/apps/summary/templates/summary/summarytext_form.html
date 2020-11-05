@@ -15,8 +15,8 @@
 {% endblock %}
 
 {% block content %}
-  <div class='row-fluid'>
-    <div class="span3">
+  <div class='row'>
+    <div class="col-md-3">
       <b>Document tree:</b><br>
       <div id="doctree"></div>
       <b>Document editing:</b><br>
@@ -25,7 +25,7 @@
       </div>
     </div>
 
-    <div class="span9">
+    <div class="col-md-9">
       <div id="summarytext_edit" style="display:none;">
         {% crispy form %}
       </div>

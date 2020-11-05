@@ -23,7 +23,7 @@ class CommentForm(forms.ModelForm):
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "span12"
+                widget.attrs["class"] = "col-md-12"
 
         inputs = {
             "legend_text": "Submit a comment",
@@ -39,5 +39,5 @@ class CommentForm(forms.ModelForm):
         }
 
         helper = BaseFormHelper(self, **inputs)
-        helper.form_class = None
+
         return helper

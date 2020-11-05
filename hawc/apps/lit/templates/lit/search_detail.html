@@ -17,7 +17,7 @@
 
   <h1>{{object}}
     {% if crud == "Read" %}
-      <div class="btn-group pull-right">
+      <div class="btn-group float-right">
         <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions <span class="caret"></span></a>
         <ul class="dropdown-menu">
           {% if obj_perms.edit %}
@@ -33,7 +33,7 @@
     {% endif %}
   </h1>
 
-  <table class="table table-condensed table-striped">
+  <table class="table table-sm table-striped">
     <colgroup>
       <col style="width: 30%;">
       <col style="width: 70%;">
@@ -58,9 +58,9 @@
     </tbody>
   </table>
 
-  <div class="row-fluid">
+  <div class="row">
     <h3>Literature Tagging Statistics</h3>
-    <table class="table table-condensed table-hover">
+    <table class="table table-sm table-hover">
       <tbody>
           <tr>
               <th>Total References</th>

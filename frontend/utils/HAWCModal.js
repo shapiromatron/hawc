@@ -7,11 +7,16 @@ class HAWCModal {
         var $modalDiv = $("#hawcModal");
         if ($modalDiv.length === 0) {
             $modalDiv = $(
-                '<div id="hawcModal" class="modal hide fade" tabindex="-1" role="dialog" data-backdrop="static"></div>'
+                '<div id="hawcModal" class="modal fade" tabindex="-1" role="dialog" data-backdrop="static"></div>'
             )
-                .append('<div class="modal-header"></div>')
-                .append('<div class="modal-body"></div>')
-                .append('<div class="modal-footer"></div>')
+                .append(
+                    $('<div class="modal-dialog" role="document">').append(
+                        $('<div class="modal-content">')
+                            .append('<div class="modal-header"></div>')
+                            .append('<div class="modal-body"></div>')
+                            .append('<div class="modal-footer"></div>')
+                    )
+                )
                 .appendTo($("body"));
             $(window).on("resize", this._resizeModal.bind(this));
         }
@@ -39,7 +44,7 @@ class HAWCModal {
             $el = this.$modalDiv.find(".modal-header");
         $el.html(html);
         if (!noClose)
-            $el.prepend(
+            $el.append(
                 '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>'
             );
         return this;
@@ -71,7 +76,7 @@ class HAWCModal {
     _resizeModal() {
         var h = parseInt($(window).height(), 10),
             w = parseInt($(window).width(), 10),
-            modalCSS = {
+            modalContentCSS = {
                 width: "",
                 height: "",
                 top: "",
@@ -87,7 +92,7 @@ class HAWCModal {
             var mWidth = Math.min(w - 50, this.maxWidth),
                 mWidthPadding = parseInt((w - mWidth) * 0.5, 10),
                 mHeight = Math.min(h - 50, this.maxHeight);
-            _.extend(modalCSS, {
+            _.extend(modalContentCSS, {
                 width: `${mWidth}px`,
                 top: "25px",
                 left: `${mWidthPadding}px`,
@@ -98,7 +103,7 @@ class HAWCModal {
                 "max-height": `${mHeight - 150}px`,
             });
         }
-        this.$modalDiv.css(modalCSS);
+        this.$modalDiv.find("modal-content").css(modalContentCSS);
         this.getBody().css(modalBodyCSS);
     }
 

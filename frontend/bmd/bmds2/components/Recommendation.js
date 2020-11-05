@@ -67,16 +67,16 @@ class Recommendation extends React.Component {
         });
 
         return (
-            <div className="row-fluid" key={0}>
+            <div className="row" key={0}>
                 <legend>Select BMD model</legend>
                 <form className="form">
-                    <div className="span4">
+                    <div className="col-md-4">
                         <label htmlFor="bmr" className="control-label">
                             Selected BMR
                         </label>
                         <div className="controls">
                             <select
-                                className="span12"
+                                className="col-md-12"
                                 value={this.state.bmr}
                                 name="bmr"
                                 onChange={this.handleFieldChange.bind(this)}>
@@ -96,7 +96,7 @@ class Recommendation extends React.Component {
 
                         <div className="controls">
                             <select
-                                className="span12"
+                                className="col-md-12"
                                 value={selectedModel}
                                 name="model"
                                 onChange={this.handleFieldChange.bind(this)}>
@@ -110,13 +110,13 @@ class Recommendation extends React.Component {
                             </select>
                         </div>
                     </div>
-                    <div className="span8">
+                    <div className="col-md-8">
                         <label htmlFor="notes" className="control-label">
                             Notes
                         </label>
                         <div className="controls">
                             <textarea
-                                className="span12"
+                                className="col-md-12"
                                 value={this.state.notes}
                                 onChange={this.handleFieldChange.bind(this)}
                                 name="notes"

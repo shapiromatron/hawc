@@ -14,13 +14,13 @@ class MetricScores extends Component {
             numReviews = scoresByRobReview.length,
             getSpanClass = function(numReviews) {
                 if (numReviews <= 1) {
-                    return "span12";
+                    return "col-md-12";
                 } else if (numReviews === 2) {
-                    return "span6";
+                    return "col-md-6";
                 } else if (numReviews === 3) {
-                    return "span4";
+                    return "col-md-4";
                 } else if (numReviews >= 4) {
-                    return "span3";
+                    return "col-md-3";
                 }
             },
             spanClass = getSpanClass(numReviews);
@@ -30,7 +30,7 @@ class MetricScores extends Component {
         }
 
         return (
-            <div className="row-fluid">
+            <div className="row">
                 {scoresByRobReview.map((scores, idx) => {
                     return (
                         <div key={idx} className={spanClass}>

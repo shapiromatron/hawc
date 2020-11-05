@@ -22,7 +22,7 @@ class MetricForm extends React.Component {
                     e.preventDefault();
                     store.bulkUpdateSelectedStudies();
                 }}>
-                <div className="span5">
+                <div className="col-md-5">
                     <ScoreInput
                         scoreId={-1}
                         choices={store.scoreOptions.map(d => d.id)}
@@ -39,7 +39,7 @@ class MetricForm extends React.Component {
                         selected items.
                     </p>
                 </div>
-                <div className="span7">
+                <div className="col-md-7">
                     <ScoreNotesInput
                         scoreId={-1}
                         value={store.formNotes}

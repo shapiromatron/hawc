@@ -10,8 +10,8 @@ class CheckboxScoreDisplay extends Component {
     render() {
         const {checked, score, handleCheck} = this.props;
         return (
-            <div className="checkbox-score-display-row row-fluid">
-                <div className="score-display-checkbox span3">
+            <div className="row checkbox-score-display-row">
+                <div className="score-display-checkbox col-md-3">
                     <p
                         onClick={() => {
                             Study.displayAsModal(score.study_id);
@@ -27,7 +27,7 @@ class CheckboxScoreDisplay extends Component {
                         onChange={handleCheck}
                     />
                 </div>
-                <div className="span3">
+                <div className="col-md-3">
                     {score.label.length > 0 ? (
                         <p>
                             <b>{score.label}: </b>
@@ -42,7 +42,7 @@ class CheckboxScoreDisplay extends Component {
                         direction={score.bias_direction}
                     />
                 </div>
-                <div className="span6">
+                <div className="col-md-6">
                     <p dangerouslySetInnerHTML={{__html: score.notes}} />
                 </div>
             </div>

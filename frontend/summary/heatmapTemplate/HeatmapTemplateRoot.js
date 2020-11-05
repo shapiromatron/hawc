@@ -19,7 +19,7 @@ class HeatmapTemplateRoot extends React.Component {
                     <Tab>Visual</Tab>
                     <Tab>Data</Tab>
                     <Tab>Customize</Tab>
-                    <div className="pull-right">
+                    <div className="float-right">
                         <b>Dashboard selection:&nbsp;</b>
                         <SelectInput
                             name="dashboard"

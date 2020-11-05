@@ -26,7 +26,7 @@ class SetupTab extends React.Component {
                     doseUnits={store.doseUnits}
                     handleUnitsChange={doseUnits => store.changeUnits(doseUnits)}
                 />
-                <div className="row-fluid">
+                <div className="row">
                     <ModelOptionTable
                         editMode={config.editMode}
                         dataType={store.dataType}

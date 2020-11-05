@@ -13,7 +13,7 @@
 {% block content %}
 
     {% if obj_perms.edit_assessment %}
-    <div class="btn-group pull-right">
+    <div class="btn-group float-right">
         <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions
             <span class="caret"></span>
         </a>
@@ -31,7 +31,7 @@
         <b>Independent reviews: </b>{{assessment.rob_settings.number_of_reviewers}}
     </p>
 
-    <table class="table table-condensed table-striped">
+    <table class="table table-sm table-striped">
         {% for study in object_list %}
         {% if forloop.first %}
         <thead>

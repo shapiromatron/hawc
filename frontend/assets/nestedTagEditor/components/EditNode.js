@@ -15,8 +15,8 @@ class EditNodeForm extends React.Component {
 
         return (
             <div className="editNodeForm container-fluid">
-                <div className="row-fluid">
-                    <div className="control-group span6">
+                <div className="row">
+                    <div className="form-group col-md-6">
                         <label htmlFor="tag_name" className="control-label">
                             Name
                         </label>
@@ -25,20 +25,20 @@ class EditNodeForm extends React.Component {
                                 name="name"
                                 type="text"
                                 maxLength="128"
-                                className="span12"
+                                className="col-md-12"
                                 onChange={event => this.setState({name: event.target.value})}
                                 value={this.state.name}
                             />
                         </div>
                     </div>
-                    <div className="control-group span6">
+                    <div className="form-group col-md-6">
                         <label htmlFor="parent" className="control-label">
                             Parent
                         </label>
                         <div className="controls controls-row">
                             <select
                                 name="parent"
-                                className="span12"
+                                className="col-md-12"
                                 onChange={event => this.setState({parent: event.target.value})}
                                 value={this.state.parent}>
                                 {this.props.parentOptions.map(d => (
@@ -50,7 +50,7 @@ class EditNodeForm extends React.Component {
                         </div>
                     </div>
                 </div>
-                <div className="row-fluid">
+                <div className="row">
                     <div className="well">
                         {isNew ? (
                             <button
@@ -71,12 +71,12 @@ class EditNodeForm extends React.Component {
                                 Save
                             </button>
                         )}
-                        <button onClick={this.props.handleCancel} className="btn btn-default">
+                        <button onClick={this.props.handleCancel} className="btn btn-secondary">
                             Cancel
                         </button>
                         {isNew ? null : (
                             <button
-                                className="btn btn-danger pull-right"
+                                className="btn btn-danger float-right"
                                 onClick={this.props.handleDelete}>
                                 Delete
                             </button>

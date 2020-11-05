@@ -138,17 +138,17 @@ class DataPivot {
         //build a td including buttons for movement
         var td = $("<td>"),
             up = $(
-                '<button class="btn btn-mini" title="move up"><i class="icon-arrow-up"></button>'
+                '<button class="btn btn-sm" title="move up"><i class="icon-arrow-up"></button>'
             ).on("click", function() {
                 DataPivot.move_row(arr, self, true);
             }),
             down = $(
-                '<button class="btn btn-mini" title="move down"><i class="icon-arrow-down"></button>'
+                '<button class="btn btn-sm" title="move down"><i class="icon-arrow-down"></button>'
             ).on("click", function() {
                 DataPivot.move_row(arr, self, false);
             }),
             del = $(
-                '<button class="btn btn-mini" title="remove"><i class="icon-remove"></button>'
+                '<button class="btn btn-sm" title="remove"><i class="icon-remove"></button>'
             ).on("click", function() {
                 DataPivot.delete_row(arr, self);
             });
@@ -307,9 +307,9 @@ class DataPivot {
         var self = this,
             modal = new HAWCModal(),
             title = `<h4>${this.title}</h4>`,
-            $plot = $('<div class="span12">'),
+            $plot = $('<div class="col-md-12">'),
             $content = $('<div class="container-fluid">').append(
-                $('<div class="row-fluid">').append($plot)
+                $('<div class="row">').append($plot)
             );
 
         modal.getModal().on("shown", function() {

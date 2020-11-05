@@ -37,7 +37,7 @@ class CriteriaForm(forms.ModelForm):
         )
         self.instance.assessment = assessment
         for fld in list(self.fields.keys()):
-            self.fields[fld].widget.attrs["class"] = "span12"
+            self.fields[fld].widget.attrs["class"] = "col-md-12"
         self.fields["description"].widget.update_query_parameters(
             {"related": self.instance.assessment.id}
         )
@@ -62,7 +62,7 @@ class CriteriaForm(forms.ModelForm):
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "span12"
+                widget.attrs["class"] = "col-md-12"
 
         inputs = {
             "legend_text": self.CREATE_LEGEND,
@@ -74,7 +74,7 @@ class CriteriaForm(forms.ModelForm):
         }
 
         helper = BaseFormHelper(self, **inputs)
-        helper.form_class = None
+
         return helper
 
 
@@ -170,9 +170,9 @@ class StudyPopulationForm(forms.ModelForm):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
                 if fld in self.CRITERION_FIELDS:
-                    widget.attrs["class"] = "span10"
+                    widget.attrs["class"] = "col-md-10"
                 else:
-                    widget.attrs["class"] = "span12"
+                    widget.attrs["class"] = "col-md-12"
             if type(widget) == forms.Textarea:
                 widget.attrs["rows"] = 3
 
@@ -190,19 +190,19 @@ class StudyPopulationForm(forms.ModelForm):
             }
 
         helper = BaseFormHelper(self, **inputs)
-        helper.form_class = None
-        helper.add_fluid_row("name", 2, "span6")
-        helper.add_fluid_row("age_profile", 2, "span6")
-        helper.add_fluid_row("countries", 3, "span4")
-        helper.add_fluid_row("eligible_n", 3, "span4")
-        helper.add_fluid_row("inclusion_criteria", 3, "span4")
+
+        helper.add_fluid_row("name", 2, "col-md-6")
+        helper.add_fluid_row("age_profile", 2, "col-md-6")
+        helper.add_fluid_row("countries", 3, "col-md-4")
+        helper.add_fluid_row("eligible_n", 3, "col-md-4")
+        helper.add_fluid_row("inclusion_criteria", 3, "col-md-4")
 
         url = reverse("epi:studycriteria_create", kwargs={"pk": self.instance.study.assessment.pk})
 
         btn_target_idx = helper.find_layout_idx_for_field_name("comments") - 1
-        helper.addBtnLayout(helper.layout[btn_target_idx], 0, url, "Create criteria", "span4")
-        helper.addBtnLayout(helper.layout[btn_target_idx], 1, url, "Create criteria", "span4")
-        helper.addBtnLayout(helper.layout[btn_target_idx], 2, url, "Create criteria", "span4")
+        helper.addBtnLayout(helper.layout[btn_target_idx], 0, url, "Create criteria", "col-md-4")
+        helper.addBtnLayout(helper.layout[btn_target_idx], 1, url, "Create criteria", "col-md-4")
+        helper.addBtnLayout(helper.layout[btn_target_idx], 2, url, "Create criteria", "col-md-4")
 
         return helper
 
@@ -241,7 +241,7 @@ class AdjustmentFactorForm(forms.ModelForm):
         )
         self.instance.assessment = assessment
         for fld in list(self.fields.keys()):
-            self.fields[fld].widget.attrs["class"] = "span12"
+            self.fields[fld].widget.attrs["class"] = "col-md-12"
         self.fields["description"].widget.update_query_parameters(
             {"related": self.instance.assessment.id}
         )
@@ -266,7 +266,7 @@ class AdjustmentFactorForm(forms.ModelForm):
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "span12"
+                widget.attrs["class"] = "col-md-12"
 
         inputs = {
             "legend_text": self.CREATE_LEGEND,
@@ -278,7 +278,7 @@ class AdjustmentFactorForm(forms.ModelForm):
         }
 
         helper = BaseFormHelper(self, **inputs)
-        helper.form_class = None
+
         return helper
 
 
@@ -317,9 +317,9 @@ class ExposureForm(forms.ModelForm):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
                 if fld in ["dtxsid", "metric_units"]:
-                    widget.attrs["class"] = "span10"
+                    widget.attrs["class"] = "col-md-10"
                 else:
-                    widget.attrs["class"] = "span12"
+                    widget.attrs["class"] = "col-md-12"
 
             if type(widget) == forms.Textarea:
                 widget.attrs["rows"] = 3
@@ -338,12 +338,12 @@ class ExposureForm(forms.ModelForm):
             }
 
         helper = BaseFormHelper(self, **inputs)
-        helper.form_class = None
-        helper.add_fluid_row("name", 2, "span6")
-        helper.add_fluid_row("inhalation", 6, "span2")
-        helper.add_fluid_row("measured", 3, "span4")
-        helper.add_fluid_row("metric_description", 3, "span4")
-        helper.add_fluid_row("age_of_exposure", 3, "span6")
+
+        helper.add_fluid_row("name", 2, "col-md-6")
+        helper.add_fluid_row("inhalation", 6, "col-md-2")
+        helper.add_fluid_row("measured", 3, "col-md-4")
+        helper.add_fluid_row("metric_description", 3, "col-md-4")
+        helper.add_fluid_row("age_of_exposure", 3, "col-md-6")
 
         inhalation_idx = helper.find_layout_idx_for_field_name("inhalation")
         helper.layout[inhalation_idx].append(
@@ -351,13 +351,13 @@ class ExposureForm(forms.ModelForm):
         )
 
         helper.addBtnLayout(
-            helper.layout[2], 1, reverse("assessment:dtxsid_create"), "Add new DTXSID", "span6"
+            helper.layout[2], 1, reverse("assessment:dtxsid_create"), "Add new DTXSID", "col-md-6"
         )
         url = reverse(
             "assessment:dose_units_create",
             args=(self.instance.study_population.study.assessment_id,),
         )
-        helper.addBtnLayout(helper.layout[4], 2, url, "Create units", "span4")
+        helper.addBtnLayout(helper.layout[4], 2, url, "Create units", "col-md-4")
         helper.form_id = "exposure-form"
         return helper
 
@@ -416,9 +416,9 @@ class OutcomeForm(forms.ModelForm):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
                 if fld in ["effects"]:
-                    widget.attrs["class"] = "span10"
+                    widget.attrs["class"] = "col-md-10"
                 else:
-                    widget.attrs["class"] = "span12"
+                    widget.attrs["class"] = "col-md-12"
             if type(widget) == forms.Textarea:
                 widget.attrs["rows"] = 3
 
@@ -436,14 +436,14 @@ class OutcomeForm(forms.ModelForm):
             }
 
         helper = BaseFormHelper(self, **inputs)
-        helper.form_class = None
-        helper.add_fluid_row("name", 2, "span6")
-        helper.add_fluid_row("system", 3, "span4")
-        helper.add_fluid_row("diagnostic", 2, "span6")
-        helper.add_fluid_row("outcome_n", 2, "span6")
+
+        helper.add_fluid_row("name", 2, "col-md-6")
+        helper.add_fluid_row("system", 3, "col-md-4")
+        helper.add_fluid_row("diagnostic", 2, "col-md-6")
+        helper.add_fluid_row("outcome_n", 2, "col-md-6")
 
         url = reverse("assessment:effect_tag_create", kwargs={"pk": self.instance.assessment.pk})
-        helper.addBtnLayout(helper.layout[2], 1, url, "Add new effect tag", "span6")
+        helper.addBtnLayout(helper.layout[2], 1, url, "Add new effect tag", "col-md-6")
 
         return helper
 
@@ -561,20 +561,19 @@ class OutcomeFilterForm(forms.Form):
 
     def setHelper(self):
 
-        # by default take-up the whole row-fluid
+        # by default take-up the whole row
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) not in [forms.CheckboxInput, forms.CheckboxSelectMultiple]:
-                widget.attrs["class"] = "span12"
+                widget.attrs["class"] = "col-md-12"
 
         helper = BaseFormHelper(self)
 
         helper.form_method = "GET"
-        helper.form_class = None
 
-        helper.add_fluid_row("studies", 4, "span3")
-        helper.add_fluid_row("age_profile", 4, "span3")
-        helper.add_fluid_row("system", 4, "span3")
+        helper.add_fluid_row("studies", 4, "col-md-3")
+        helper.add_fluid_row("age_profile", 4, "col-md-3")
+        helper.add_fluid_row("system", 4, "col-md-3")
 
         helper.layout.append(cfb.FormActions(cfl.Submit("submit", "Apply filters"),))
 
@@ -662,7 +661,7 @@ class ComparisonSet(forms.ModelForm):
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "span12"
+                widget.attrs["class"] = "col-md-12"
             if type(widget) == forms.Textarea:
                 widget.attrs["rows"] = 3
 
@@ -684,7 +683,7 @@ class ComparisonSet(forms.ModelForm):
             }
 
         helper = BaseFormHelper(self, **inputs)
-        helper.form_class = None
+
         return helper
 
 
@@ -716,7 +715,7 @@ class SingleGroupForm(GroupForm):
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "span12"
+                widget.attrs["class"] = "col-md-12"
             if type(widget) == forms.Textarea:
                 widget.attrs["rows"] = 3
 
@@ -727,10 +726,10 @@ class SingleGroupForm(GroupForm):
         }
 
         helper = BaseFormHelper(self, **inputs)
-        helper.form_class = None
-        helper.add_fluid_row("name", 3, "span4")
-        helper.add_fluid_row("sex", 2, "span6")
-        helper.add_fluid_row("eligible_n", 3, "span4")
+
+        helper.add_fluid_row("name", 3, "col-md-4")
+        helper.add_fluid_row("sex", 2, "col-md-6")
+        helper.add_fluid_row("eligible_n", 3, "col-md-4")
         return helper
 
 
@@ -900,9 +899,9 @@ class ResultForm(forms.ModelForm):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
                 if fld in self.ADJUSTMENT_FIELDS or fld == "resulttags":
-                    widget.attrs["class"] = "span10"
+                    widget.attrs["class"] = "col-md-10"
                 else:
-                    widget.attrs["class"] = "span12"
+                    widget.attrs["class"] = "col-md-12"
             if type(widget) == forms.Textarea:
                 widget.attrs["rows"] = 3
 
@@ -920,21 +919,20 @@ class ResultForm(forms.ModelForm):
             }
 
         helper = BaseFormHelper(self, **inputs)
-        helper.form_class = None
 
-        helper.add_fluid_row("name", 2, "span6")
-        helper.add_fluid_row("metric", 3, "span4")
-        helper.add_fluid_row("data_location", 2, "span6")
-        helper.add_fluid_row("dose_response", 3, "span4")
-        helper.add_fluid_row("statistical_power", 4, "span3")
-        helper.add_fluid_row("factors_applied", 2, "span6")
-        helper.add_fluid_row("estimate_type", 3, "span4")
-        helper.add_fluid_row("resulttags", 1, "span6")
+        helper.add_fluid_row("name", 2, "col-md-6")
+        helper.add_fluid_row("metric", 3, "col-md-4")
+        helper.add_fluid_row("data_location", 2, "col-md-6")
+        helper.add_fluid_row("dose_response", 3, "col-md-4")
+        helper.add_fluid_row("statistical_power", 4, "col-md-3")
+        helper.add_fluid_row("factors_applied", 2, "col-md-6")
+        helper.add_fluid_row("estimate_type", 3, "col-md-4")
+        helper.add_fluid_row("resulttags", 1, "col-md-6")
 
         url = reverse(
             "assessment:effect_tag_create", kwargs={"pk": self.instance.outcome.assessment_id},
         )
-        helper.addBtnLayout(helper.layout[8], 0, url, "Add new result tag", "span6")
+        helper.addBtnLayout(helper.layout[8], 0, url, "Add new result tag", "col-md-6")
 
         url = reverse(
             "epi:adjustmentfactor_create", kwargs={"pk": self.instance.outcome.assessment_id},
@@ -942,10 +940,10 @@ class ResultForm(forms.ModelForm):
 
         btn_target_idx = helper.find_layout_idx_for_field_name("comments") - 1
         helper.addBtnLayout(
-            helper.layout[btn_target_idx], 0, url, "Add new adjustment factor", "span6"
+            helper.layout[btn_target_idx], 0, url, "Add new adjustment factor", "col-md-6"
         )
         helper.addBtnLayout(
-            helper.layout[btn_target_idx], 1, url, "Add new adjustment factor", "span6"
+            helper.layout[btn_target_idx], 1, url, "Add new adjustment factor", "col-md-6"
         )
 
         return helper

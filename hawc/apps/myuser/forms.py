@@ -78,11 +78,11 @@ class HAWCSetPasswordForm(SetPasswordForm):
 
     def setHelper(self):
 
-        # by default take-up the whole row-fluid
+        # by default take-up the whole row
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "span12"
+                widget.attrs["class"] = "col-md-12"
 
         inputs = {
             "legend_text": "Password reset",
@@ -118,11 +118,11 @@ class HAWCPasswordChangeForm(PasswordChangeForm):
 
     def setHelper(self):
 
-        # by default take-up the whole row-fluid
+        # by default take-up the whole row
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "span12"
+                widget.attrs["class"] = "col-md-12"
 
         inputs = {
             "legend_text": "Change your password",
@@ -161,11 +161,11 @@ class RegisterForm(PasswordForm):
 
     def setHelper(self):
 
-        # by default take-up the whole row-fluid
+        # by default take-up the whole row
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "span12"
+                widget.attrs["class"] = "col-md-12"
 
         inputs = {"legend_text": "Create an account"}
 
@@ -173,11 +173,12 @@ class RegisterForm(PasswordForm):
         helper.form_class = "loginForm"
 
         login_url = reverse("user:login")
+
+        txt = '&nbsp;<a href="#" data-toggle="modal" data-target="#license_modal">View license</a>'
+        self.fields["license_v2_accepted"].help_text += txt
+
         helper.layout.extend(
             [
-                cfl.HTML(
-                    '<a class="btn btn-small" href="#license_modal" data-toggle="modal">View License</a>'
-                ),
                 cfb.FormActions(
                     cfl.Submit("login", "Create account"),
                     cfl.HTML(
@@ -227,11 +228,11 @@ class UserProfileForm(ModelForm):
 
     def setHelper(self):
 
-        # by default take-up the whole row-fluid
+        # by default take-up the whole row
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "span12"
+                widget.attrs["class"] = "col-md-12"
 
         inputs = {
             "legend_text": "Update your profile",
@@ -287,11 +288,11 @@ class HAWCAuthenticationForm(AuthenticationForm):
 
     def setHelper(self):
 
-        # by default take-up the whole row-fluid
+        # by default take-up the whole row
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "span12"
+                widget.attrs["class"] = "form-control"
 
         inputs = {"legend_text": "HAWC login"}
 
@@ -341,11 +342,11 @@ class HAWCPasswordResetForm(PasswordResetForm):
 
     def setHelper(self):
 
-        # by default take-up the whole row-fluid
+        # by default take-up the whole row
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "span12"
+                widget.attrs["class"] = "col-md-12"
 
         inputs = {
             "legend_text": "Password reset",
@@ -362,7 +363,7 @@ class HAWCPasswordResetForm(PasswordResetForm):
             cfb.FormActions(
                 cfl.Submit("submit", "Send email confirmation"),
                 cfl.HTML(
-                    f'<a role="button" class="btn btn-default" href="{reverse("user:login")}">Cancel</a>'
+                    f'<a role="button" class="btn btn-secondary" href="{reverse("user:login")}">Cancel</a>'
                 ),
             )
         )

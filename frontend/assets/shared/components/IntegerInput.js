@@ -23,11 +23,11 @@ class IntegerInput extends Component {
 
     render() {
         return (
-            <div className="control-group">
+            <div className="form-group">
                 {this.renderLabel()}
                 <div className="controls">
                     <input
-                        className="span12"
+                        className="col-md-12"
                         id={`id_${this.props.name}`}
                         name={this.props.name}
                         type="number"

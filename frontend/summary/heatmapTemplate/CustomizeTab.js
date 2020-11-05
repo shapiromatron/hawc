@@ -21,10 +21,10 @@ class CustomizeTab extends Component {
                     {create_visual_url ? <a href={create_visual_url}>create</a> : "create"}&nbsp;a
                     fully customized heatmap visual using data internal or external to HAWC.
                 </p>
-                <div className="row-fluid">
-                    <div className="span6">
+                <div className="row">
+                    <div className="col-md-6">
                         <SelectInput
-                            className="span12"
+                            className="col-md-12"
                             choices={store.axisOptions}
                             handleSelect={value => store.changeAxis("selectedXAxis", value)}
                             value={store.selectedXAxis.id}
@@ -32,9 +32,9 @@ class CustomizeTab extends Component {
                             multiple={false}
                         />
                     </div>
-                    <div className="span6">
+                    <div className="col-md-6">
                         <SelectInput
-                            className="span12"
+                            className="col-md-12"
                             choices={store.axisOptions}
                             handleSelect={value => store.changeAxis("selectedYAxis", value)}
                             value={store.selectedYAxis.id}
@@ -43,10 +43,10 @@ class CustomizeTab extends Component {
                         />
                     </div>
                 </div>
-                <div className="row-fluid">
-                    <div className="span6">
+                <div className="row">
+                    <div className="col-md-6">
                         <SelectInput
-                            className="span12"
+                            className="col-md-12"
                             choices={store.filterOptions}
                             value={store.selectedFilters.map(d => d.id)}
                             handleSelect={values => store.changeSelectedFilters(values)}
@@ -55,9 +55,9 @@ class CustomizeTab extends Component {
                             label="Data filters"
                         />
                     </div>
-                    <div className="span6">
+                    <div className="col-md-6">
                         <SelectInput
-                            className="span12"
+                            className="col-md-12"
                             choices={store.tableOptions}
                             value={store.selectedTableFields.map(d => d.id)}
                             handleSelect={values => store.changeSelectedTableFields(values)}
@@ -66,8 +66,8 @@ class CustomizeTab extends Component {
                             label="Table fields"
                         />
                     </div>
-                    <div className="row-fluid">
-                        <div className="span6">
+                    <div className="row">
+                        <div className="col-md-6">
                             <CheckboxInput
                                 label="Show null field values"
                                 name="show_null"
@@ -76,7 +76,7 @@ class CustomizeTab extends Component {
                                 helpText={"Display data with <null> values in selected axes."}
                             />
                         </div>
-                        <div className="span6">
+                        <div className="col-md-6">
                             <TextInput
                                 label="Color"
                                 name="upperColor"

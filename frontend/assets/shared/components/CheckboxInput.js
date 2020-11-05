@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 class CheckboxInput extends Component {
     render() {
         return (
-            <div className="control-group">
+            <div className="form-group">
                 <div className="controls">
                     <label htmlFor={this.props.id} className="checkbox">
                         {this.props.label}

@@ -19,7 +19,7 @@ class MetricSelect extends Component {
                 <SelectInput
                     id="metric-select"
                     name="metric-select"
-                    className="span12"
+                    className="col-md-12"
                     choices={choices}
                     multiple={false}
                     handleSelect={e => {

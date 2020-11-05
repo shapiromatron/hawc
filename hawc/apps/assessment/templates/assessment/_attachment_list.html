@@ -1,6 +1,6 @@
 {% if object_list.count > 0 %}
 <h2>Attachments</h2>
-<table class="table table-condensed table-striped">
+<table class="table table-sm table-striped">
     <colgroup>
         {% if canEdit %}
            <col style="width: 25%;">
@@ -27,8 +27,8 @@
             <td>{{object.description|safe}}</td>
             {% if canEdit %}
             <td>
-                <a class="btn btn-mini btn-info" href="{{object.get_edit_url}}">Edit</a>
-                <a class="btn btn-mini btn-danger" href="{{object.get_delete_url}}">Delete</a>
+                <a class="btn btn-sm btn-info" href="{{object.get_edit_url}}">Edit</a>
+                <a class="btn btn-sm btn-danger" href="{{object.get_delete_url}}">Delete</a>
             </td>
             {% endif %}
         </tr>

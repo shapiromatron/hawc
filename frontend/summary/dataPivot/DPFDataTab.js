@@ -52,7 +52,7 @@ let buildChartSelector = function(tab, dp) {
                 ])
             ),
             tbody = $("<tbody>"),
-            tbl = $('<table class="table table-condensed table-bordered">').html([thead, tbody]),
+            tbl = $('<table class="table table-sm table-bordered">').html([thead, tbody]),
             settings = dp.settings.datapoint_settings,
             addDataRow = function(i) {
                 let obj;
@@ -66,7 +66,7 @@ let buildChartSelector = function(tab, dp) {
                 let num_rows = settings.length;
                 addDataRow(num_rows);
             },
-            newRowBtn = $('<button class="btn btn-primary pull-right">New row</button>').on(
+            newRowBtn = $('<button class="btn btn-primary float-right">New row</button>').on(
                 "click",
                 newDataRow
             ),
@@ -96,7 +96,7 @@ let buildChartSelector = function(tab, dp) {
         }
 
         obj = new _DataPivot_settings_linedata(dp, 0);
-        tbl = $('<table class="table table-condensed table-bordered">').html([thead, tbody]);
+        tbl = $('<table class="table table-sm table-bordered">').html([thead, tbody]);
         tbody.append(obj.tr);
 
         tab.append("<h3>Data point error-bar options</h3>", tbl);

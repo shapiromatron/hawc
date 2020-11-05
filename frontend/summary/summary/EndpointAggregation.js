@@ -36,7 +36,7 @@ class EndpointAggregation extends BaseVisual {
         this.$tblDiv = $("<div>");
         this.$plotDiv = $("<div>");
 
-        $('<button type="button" class="btn btn-mini" title="Toggle table-view representation">')
+        $('<button type="button" class="btn btn-sm" title="Toggle table-view representation">')
             .append('<i class="icon-chevron-right"></i>')
             .click(function() {
                 self.buildTbl();
@@ -156,7 +156,7 @@ class EndpointAggregation extends BaseVisual {
                 animalGroup = e.data.animal_group,
                 ep_tbl = $("<div>")
                     .append(`<a href="${e.data.url}">${e.data.name}</a>`)
-                    .append(e.build_endpoint_table($('<table class="table table-condensed">')));
+                    .append(e.build_endpoint_table($('<table class="table table-sm">')));
 
             tbl.addRow([
                 `<a href="${study.url}">${study.short_citation}</a> `,
@@ -192,7 +192,7 @@ class EndpointAggregation extends BaseVisual {
     addPlotToggleButton() {
         return {
             id: "plot_toggle",
-            cls: "btn btn-mini",
+            cls: "btn btn-sm",
             title: "View alternate visualizations",
             text: "",
             icon: "icon-circle-arrow-right",

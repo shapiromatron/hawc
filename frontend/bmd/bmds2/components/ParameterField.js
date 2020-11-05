@@ -21,11 +21,11 @@ class ParameterField extends React.Component {
             showInput = vals[0] === "d" ? "none" : "";
 
         return (
-            <div className="control-group" key={index}>
+            <div className="form-group" key={index}>
                 <label className="control-label">{settings.n}</label>
                 <div className="controls">
                     <select
-                        className="span4"
+                        className="col-md-4"
                         style={{marginRight: "1em"}}
                         value={vals[0]}
                         ref={this.selector}
@@ -36,7 +36,7 @@ class ParameterField extends React.Component {
                     </select>
                     <input
                         style={{display: showInput}}
-                        className="span4"
+                        className="col-md-4"
                         type="number"
                         step="1e-8"
                         value={vals[1]}

@@ -15,7 +15,7 @@ let buildDescriptionTable = function(tab, dp) {
                 ])
             ),
             tbody = $("<tbody>"),
-            tbl = $('<table class="table table-condensed table-bordered">').html([thead, tbody]),
+            tbl = $('<table class="table table-sm table-bordered">').html([thead, tbody]),
             settings = dp.settings.description_settings,
             addDataRow = function(i) {
                 let obj;
@@ -28,7 +28,7 @@ let buildDescriptionTable = function(tab, dp) {
             newDataRow = function() {
                 addDataRow(settings.length);
             },
-            newRowBtn = $('<button class="btn btn-primary pull-right">New row</button>').on(
+            newRowBtn = $('<button class="btn btn-primary float-right">New row</button>').on(
                 "click",
                 newDataRow
             ),

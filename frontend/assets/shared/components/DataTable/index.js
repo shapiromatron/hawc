@@ -26,7 +26,7 @@ class DataTable extends React.Component {
             renderers = this.props.renderers || {};
 
         return (
-            <table id={tableId} className="table table-striped table-condensed">
+            <table id={tableId} className="table table-striped table-sm">
                 <thead>
                     <tr>
                         {columns.map((col, i) => {

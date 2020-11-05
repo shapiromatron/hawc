@@ -10,7 +10,7 @@ class OverrideObjectTypeSelector extends Component {
         let {choices, value, onChange} = this.props;
         return (
             <SelectInput
-                className="span6"
+                className="col-md-6"
                 label="Override type"
                 choices={choices}
                 multiple={false}
@@ -32,7 +32,7 @@ class OverrideObjectsSelector extends Component {
         let {choices, value, onChange} = this.props;
         return (
             <SelectInput
-                className="span6"
+                className="col-md-6"
                 label="Override type"
                 choices={choices}
                 multiple={true}
@@ -76,7 +76,7 @@ class ScoreOverrideForm extends Component {
         }
 
         return (
-            <div className="row-fluid form-inline">
+            <div className="row form-inline">
                 <OverrideObjectTypeSelector
                     choices={overrideDataTypeChoices}
                     value={overrideDataTypeValue}

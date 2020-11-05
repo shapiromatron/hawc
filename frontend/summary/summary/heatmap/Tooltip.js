@@ -41,7 +41,7 @@ class CellTooltip extends Component {
     render() {
         return (
             <table
-                className="table table-condensed table-bordered"
+                className="table table-sm table-bordered"
                 style={{minWidth: 300, marginBottom: 0}}>
                 <tbody>{this.getRows()}</tbody>
             </table>
@@ -57,7 +57,7 @@ class AxisTooltip extends Component {
         const {filters} = this.props.data;
         return (
             <table
-                className="table table-condensed table-bordered"
+                className="table table-sm table-bordered"
                 style={{minWidth: 300, marginBottom: 0}}>
                 <tbody>
                     {filters.map((e, i) => {

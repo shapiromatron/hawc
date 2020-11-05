@@ -48,7 +48,7 @@ class StyleSymbol {
         var form = $('<form class="form-horizontal"></form>'),
             set = this.settings,
             add_horizontal_field = function(label_text, html_obj) {
-                return $('<div class="control-group"></div>')
+                return $('<div class="form-group"></div>')
                     .append(`<label class="control-label">${label_text}</label>`)
                     .append($('<div class="controls"></div>').append(html_obj));
             },
@@ -212,7 +212,7 @@ class StyleText {
         var form = $('<form class="form-horizontal"></form>'),
             set = this.settings,
             add_horizontal_field = function(label_text, html_obj) {
-                return $('<div class="control-group"></div>')
+                return $('<div class="form-group"></div>')
                     .append(`<label class="control-label">${label_text}</label>`)
                     .append($('<div class="controls"></div>').append(html_obj));
             },
@@ -353,7 +353,7 @@ class StyleLine {
         var form = $('<form class="form-horizontal"></form>'),
             set = this.settings,
             add_horizontal_field = function(label_text, html_obj) {
-                return $('<div class="control-group"></div>')
+                return $('<div class="form-group"></div>')
                     .append(`<label class="control-label">${label_text}</label>`)
                     .append($('<div class="controls"></div>').append(html_obj));
             },
@@ -464,7 +464,7 @@ class StyleRectangle {
         var form = $('<form class="form-horizontal"></form>'),
             set = this.settings,
             add_horizontal_field = function(label_text, html_obj) {
-                return $('<div class="control-group"></div>')
+                return $('<div class="form-group"></div>')
                     .append(`<label class="control-label">${label_text}</label>`)
                     .append($('<div class="controls"></div>').append(html_obj));
             },

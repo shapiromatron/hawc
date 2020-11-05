@@ -11,7 +11,7 @@
 {% block content %}
   <h2>References for {{assessment}}
       {% if obj_perms.edit %}
-      <div class="btn-group pull-right">
+      <div class="btn-group float-right">
         <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions
           <span class="caret"></span>
         </a>
@@ -37,10 +37,10 @@
     {% endif %}
   </h2>
 
-  <div class="row-fluid">
-    <div class="span6">
+  <div class="row">
+    <div class="col-md-6">
       <h3>Literature summary</h3>
-      <table class="table table-condensed table-hover">
+      <table class="table table-sm table-hover">
         <tbody>
           <tr>
             <th>Total references</th>
@@ -78,7 +78,7 @@
         <a class="btn btn-primary" href="{% url 'lit:ref_search' assessment.pk %}">Find a reference</a>
       </div>
     </div>
-    <div class="span6">
+    <div class="col-md-6">
       <h3>Literature tags
         {% if obj_perms.edit_assessment %}
         {% endif %}

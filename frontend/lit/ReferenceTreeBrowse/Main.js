@@ -17,8 +17,8 @@ class ReferenceTreeMain extends Component {
             {canEdit} = store.config;
 
         return (
-            <div className="row-fluid">
-                <div className="span3">
+            <div className="row">
+                <div className="col-md-3">
                     <h3>Taglist</h3>
                     <TagTree
                         tagtree={toJS(store.tagtree)}
@@ -33,9 +33,9 @@ class ReferenceTreeMain extends Component {
                         Untagged References: ({store.config.untaggedReferenceCount})
                     </p>
                 </div>
-                <div className="span9">
+                <div className="col-md-9">
                     {actions.length > 0 ? (
-                        <div className="btn-group pull-right">
+                        <div className="btn-group float-right">
                             <a className="btn btn-primary dropdown-toggle" data-toggle="dropdown">
                                 Actions <span className="caret"></span>
                             </a>

@@ -12,7 +12,7 @@
 {% block content %}
 <h1>{{object}}
     {% if crud == "Read" and obj_perms.edit %}
-    <div class="btn-group pull-right">
+    <div class="btn-group float-right">
         <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions
             <span class="caret"></span>
         </a>
@@ -25,7 +25,7 @@
     {% endif %}
 </h1>
 
-<table class="table table-condensed table-striped">
+<table class="table table-sm table-striped">
     <colgroup>
         <col style="width: 20%;">
         <col style="width: 80%;">
@@ -75,7 +75,7 @@
 
 {% if crud == "Read" and obj_perms.edit and object.revisions.count > 0 %}
 <h2>Dataset revisions</h2>
-<table class="table table-condensed table-striped">
+<table class="table table-sm table-striped">
     <colgroup>
         <col style="width: 10%;">
         <col style="width: 50%;">

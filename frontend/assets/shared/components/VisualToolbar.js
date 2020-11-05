@@ -119,10 +119,10 @@ class VisualToolbar extends Component {
         const {svg} = this.props;
         return (
             <div className="btn-group dropup" title="Download image">
-                <button className="btn btn-mini dropdown-toggle" data-toggle="dropdown">
+                <button className="btn btn-sm dropdown-toggle" data-toggle="dropdown">
                     <i className="fa fa-download"></i>
                 </button>
-                <ul className="dropdown-menu pull-right">
+                <ul className="dropdown-menu float-right">
                     <li>
                         <a href="#" onClick={() => downloadImage(svg, "svg")}>
                             <i className="fa fa-picture-o"></i>&nbsp;Download SVG
@@ -165,14 +165,14 @@ class VisualToolbar extends Component {
                 }
             };
         return (
-            <button className="btn btn-mini" title="Zoom in/out" onClick={handleClick}>
+            <button className="btn btn-sm" title="Zoom in/out" onClick={handleClick}>
                 <i className={isFullSize() ? "fa fa-search-minus" : "fa fa-search-plus"}></i>
             </button>
         );
     }
     render() {
         return (
-            <div className="pull-right">
+            <div className="float-right">
                 {this.renderZoom()}
                 {this.renderDownload()}
             </div>

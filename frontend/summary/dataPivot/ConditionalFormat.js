@@ -18,7 +18,7 @@ class _DataPivot_settings_conditionalFormat {
         this._status_text = $('<span style="padding-right: 10px">').appendTo(this.status);
 
         this.modal = new HAWCModal();
-        this._showModal = $('<button class="btn btn-small" type="button">')
+        this._showModal = $('<button class="btn btn-sm" type="button">')
             .on("click", this._show_modal.bind(this))
             .appendTo(this.status);
 
@@ -74,7 +74,7 @@ class _DataPivot_settings_conditionalFormat {
             save = $('<button type="button" class="btn btn-success">')
                 .text("Save and close")
                 .on("click", this.close_modal.bind(this, true)),
-            close = $('<button type="button" class="btn pull-right">')
+            close = $('<button type="button" class="btn float-right">')
                 .text("Close")
                 .on("click", this.close_modal.bind(this, false)),
             footer = $("<div>").append(add, save, close);
@@ -221,7 +221,7 @@ class _DataPivot_settings_conditional {
         add_input_row(div, "Condition type", conditionType);
         div.append("<hr>");
         formattingTypes.forEach(function(v) {
-            $(`<div class="conditionalDivs row-fluid ${v}">`)
+            $(`<div class="conditionalDivs row ${v}">`)
                 .appendTo(div)
                 .hide();
         });

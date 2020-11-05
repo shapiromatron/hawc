@@ -10,12 +10,12 @@ class BMROptionTable extends React.Component {
         if (!this.props.editMode) return;
 
         return (
-            <div className="row-fluid">
+            <div className="row">
                 <div className="controls">
                     <button
                         onClick={this.props.handleCreateBmr}
                         type="button"
-                        className="btn btn-small pull-right">
+                        className="btn btn-sm float-right">
                         <i className="icon-plus" /> Create new BMR
                     </button>
                 </div>
@@ -46,9 +46,9 @@ class BMROptionTable extends React.Component {
     render() {
         let header = this.props.editMode ? "View/edit" : "View";
         return (
-            <div className="span6">
+            <div className="col-md-6">
                 <h4>Benchmark modeling responses</h4>
-                <table className="table table-condensed table-striped">
+                <table className="table table-sm table-striped">
                     <thead>
                         <tr>
                             <th style={{width: "30%"}}>Type</th>

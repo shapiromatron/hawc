@@ -49,9 +49,9 @@ class IVChemicalForm(forms.ModelForm):
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "span12"
+                widget.attrs["class"] = "col-md-12"
             if fld == "dtxsid":
-                widget.attrs["class"] = "span10"
+                widget.attrs["class"] = "col-md-10"
             if type(widget) == forms.Textarea:
                 widget.attrs["rows"] = 3
 
@@ -69,13 +69,13 @@ class IVChemicalForm(forms.ModelForm):
             }
 
         helper = BaseFormHelper(self, **inputs)
-        helper.form_class = None
-        helper.add_fluid_row("cas", 2, "span6")
-        helper.add_fluid_row("cas_inferred", 2, "span6")
-        helper.add_fluid_row("source", 3, "span4")
-        helper.add_fluid_row("purity_confirmed_notes", 2, "span6")
+
+        helper.add_fluid_row("cas", 2, "col-md-6")
+        helper.add_fluid_row("cas_inferred", 2, "col-md-6")
+        helper.add_fluid_row("source", 3, "col-md-4")
+        helper.add_fluid_row("purity_confirmed_notes", 2, "col-md-6")
         helper.addBtnLayout(
-            helper.layout[3], 1, reverse("assessment:dtxsid_create"), "Add new DTXSID", "span6"
+            helper.layout[3], 1, reverse("assessment:dtxsid_create"), "Add new DTXSID", "col-md-6"
         )
         helper.form_id = "ivchemical-form"
 
@@ -128,7 +128,7 @@ class IVCellTypeForm(forms.ModelForm):
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "span12"
+                widget.attrs["class"] = "col-md-12"
             if type(widget) == forms.Textarea:
                 widget.attrs["rows"] = 3
 
@@ -146,10 +146,10 @@ class IVCellTypeForm(forms.ModelForm):
             }
 
         helper = BaseFormHelper(self, **inputs)
-        helper.form_class = None
-        helper.add_fluid_row("species", 3, "span4")
-        helper.add_fluid_row("cell_type", 2, "span6")
-        helper.add_fluid_row("tissue", 2, "span6")
+
+        helper.add_fluid_row("species", 3, "col-md-4")
+        helper.add_fluid_row("cell_type", 2, "col-md-6")
+        helper.add_fluid_row("tissue", 2, "col-md-6")
 
         return helper
 
@@ -207,7 +207,7 @@ class IVExperimentForm(forms.ModelForm):
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "span12"
+                widget.attrs["class"] = "col-md-12"
             if type(widget) == forms.Textarea:
                 widget.attrs["rows"] = 3
 
@@ -225,14 +225,14 @@ class IVExperimentForm(forms.ModelForm):
             }
 
         helper = BaseFormHelper(self, **inputs)
-        helper.form_class = None
-        helper.add_fluid_row("name", 2, "span6")
-        helper.add_fluid_row("transfection", 2, "span6")
-        helper.add_fluid_row("dosing_notes", 2, "span6")
-        helper.add_fluid_row("has_positive_control", 2, "span6")
-        helper.add_fluid_row("has_negative_control", 2, "span6")
-        helper.add_fluid_row("has_vehicle_control", 2, "span6")
-        helper.add_fluid_row("control_notes", 2, "span6")
+
+        helper.add_fluid_row("name", 2, "col-md-6")
+        helper.add_fluid_row("transfection", 2, "col-md-6")
+        helper.add_fluid_row("dosing_notes", 2, "col-md-6")
+        helper.add_fluid_row("has_positive_control", 2, "col-md-6")
+        helper.add_fluid_row("has_negative_control", 2, "col-md-6")
+        helper.add_fluid_row("has_vehicle_control", 2, "col-md-6")
+        helper.add_fluid_row("control_notes", 2, "col-md-6")
 
         return helper
 
@@ -332,9 +332,9 @@ class IVEndpointForm(forms.ModelForm):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
                 if fld in ["effects"]:
-                    widget.attrs["class"] = "span10"
+                    widget.attrs["class"] = "col-md-10"
                 else:
-                    widget.attrs["class"] = "span12"
+                    widget.attrs["class"] = "col-md-12"
 
             if type(widget) == forms.Textarea:
                 widget.attrs["rows"] = 3
@@ -353,19 +353,19 @@ class IVEndpointForm(forms.ModelForm):
             }
 
         helper = BaseFormHelper(self, **inputs)
-        helper.form_class = None
-        helper.add_fluid_row("name", 2, "span6")
-        helper.add_fluid_row("chemical", 2, "span6")
-        helper.add_fluid_row("assay_type", 2, "span6")
-        helper.add_fluid_row("effect", 2, "span6")
-        helper.add_fluid_row("data_type", 4, "span3")
-        helper.add_fluid_row("observation_time", 4, "span3")
-        helper.add_fluid_row("monotonicity", 3, "span4")
-        helper.add_fluid_row("trend_test", 2, "span6")
-        helper.add_fluid_row("endpoint_notes", 2, "span6")
+
+        helper.add_fluid_row("name", 2, "col-md-6")
+        helper.add_fluid_row("chemical", 2, "col-md-6")
+        helper.add_fluid_row("assay_type", 2, "col-md-6")
+        helper.add_fluid_row("effect", 2, "col-md-6")
+        helper.add_fluid_row("data_type", 4, "col-md-3")
+        helper.add_fluid_row("observation_time", 4, "col-md-3")
+        helper.add_fluid_row("monotonicity", 3, "col-md-4")
+        helper.add_fluid_row("trend_test", 2, "col-md-6")
+        helper.add_fluid_row("endpoint_notes", 2, "col-md-6")
 
         url = reverse("assessment:effect_tag_create", kwargs={"pk": self.instance.assessment_id})
-        helper.addBtnLayout(helper.layout[2], 1, url, "Add new effect tag", "span6")
+        helper.addBtnLayout(helper.layout[2], 1, url, "Add new effect tag", "col-md-6")
 
         return helper
 
@@ -460,20 +460,19 @@ class IVEndpointFilterForm(forms.Form):
 
     def setHelper(self):
 
-        # by default take-up the whole row-fluid
+        # by default take-up the whole row
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) not in [forms.CheckboxInput, forms.CheckboxSelectMultiple]:
-                widget.attrs["class"] = "span12"
+                widget.attrs["class"] = "col-md-12"
 
         helper = BaseFormHelper(self)
 
         helper.form_method = "GET"
-        helper.form_class = None
 
-        helper.add_fluid_row("studies", 4, "span3")
-        helper.add_fluid_row("cell_type", 4, "span3")
-        helper.add_fluid_row("dose_units", 4, "span3")
+        helper.add_fluid_row("studies", 4, "col-md-3")
+        helper.add_fluid_row("cell_type", 4, "col-md-3")
+        helper.add_fluid_row("dose_units", 4, "col-md-3")
 
         helper.layout.append(cfb.FormActions(cfl.Submit("submit", "Apply filters"),))
 

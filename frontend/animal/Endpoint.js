@@ -54,12 +54,10 @@ class Endpoint extends Observee {
         Endpoint.get_object(id, obj => {
             let title = $("<h4>").html(obj.build_breadcrumbs()),
                 plot_div = $('<div style="height:350px; width:350px">'),
-                tbl = obj.build_endpoint_table(
-                    $('<table class="table table-condensed table-striped">')
-                ),
-                content = $('<div class="row-fluid">')
-                    .append($('<div class="span8">').append(tbl))
-                    .append($('<div class="span4">').append(plot_div));
+                tbl = obj.build_endpoint_table($('<table class="table table-sm table-striped">')),
+                content = $('<div class="row">')
+                    .append($('<div class="col-md-8">').append(tbl))
+                    .append($('<div class="col-md-4">').append(plot_div));
 
             setTitle(title);
             setBody(content);
@@ -344,7 +342,7 @@ class Endpoint extends Observee {
                 class="endpoint-selector"
                 href="#">${this.data.name} (${this.data.response_units})</a>
             <a
-                class="pull-right"
+                class="float-right"
                 title="View endpoint details (new window)"
                 href="${this.data.url}">
                 <i class="icon-share-alt"></i>
@@ -536,11 +534,11 @@ class Endpoint extends Observee {
             self = this,
             modal = new HAWCModal(),
             title = `<h4>${this.build_breadcrumbs()}</h4>`,
-            $details = $('<div class="span12">'),
+            $details = $('<div class="col-md-12">'),
             $plot = $('<div style="height:300px; width:300px">'),
-            $tbl = $('<table class="table table-condensed table-striped">'),
+            $tbl = $('<table class="table table-sm table-striped">'),
             $content = $('<div class="container-fluid">'),
-            $notes = $('<div class="span12">'),
+            $notes = $('<div class="col-md-12">'),
             $study,
             $exp,
             $ag,
@@ -579,13 +577,13 @@ class Endpoint extends Observee {
             $end = $content;
         }
 
-        $end.append($('<div class="row-fluid">').append($details))
+        $end.append($('<div class="row">').append($details))
             .append(
-                $('<div class="row-fluid">')
-                    .append($('<div class="span7">').append($tbl))
-                    .append($('<div class="span5">').append($plot))
+                $('<div class="row">')
+                    .append($('<div class="col-md-7">').append($tbl))
+                    .append($('<div class="col-md-5">').append($plot))
             )
-            .append($('<div class="row-fluid">').append($notes));
+            .append($('<div class="row">').append($notes));
 
         this.build_details_table($details);
         this.build_endpoint_table($tbl);

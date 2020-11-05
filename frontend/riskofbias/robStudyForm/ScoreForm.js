@@ -22,7 +22,7 @@ class ScoreInput extends Component {
         return (
             <>
                 <SelectInput
-                    className="span12"
+                    className="col-md-12"
                     id={`${scoreId}-score`}
                     label="Score"
                     choices={scoreChoices}
@@ -77,8 +77,8 @@ class ScoreForm extends Component {
 
         return (
             <div className="score-form container-fluid ">
-                <div className="row-fluid form-inline">
-                    <div className="span3">
+                <div className="row form-inline">
+                    <div className="col-md-3">
                         {editableMetricHasOverride ? (
                             <TextInput
                                 id={`${score.id}-label`}
@@ -91,10 +91,10 @@ class ScoreForm extends Component {
                             />
                         ) : null}
                     </div>
-                    <div className="span9">
+                    <div className="col-md-9">
                         {showOverrideCreate ? (
                             <button
-                                className="btn btn-primary pull-right"
+                                className="btn btn-primary float-right"
                                 type="button"
                                 onClick={() => {
                                     store.createScoreOverride({
@@ -108,7 +108,7 @@ class ScoreForm extends Component {
 
                         {showDelete ? (
                             <button
-                                className="btn btn-danger pull-right"
+                                className="btn btn-danger float-right"
                                 type="button"
                                 onClick={() => store.deleteScoreOverride(scoreId)}>
                                 <i className="fa fa-trash"></i>&nbsp;Delete override
@@ -130,8 +130,8 @@ class ScoreForm extends Component {
                         ) : null}
                     </div>
                 </div>
-                <div className="row-fluid">
-                    <div className="span3">
+                <div className="row">
+                    <div className="col-md-3">
                         {showScoreInput ? (
                             <div>
                                 <ScoreInput
@@ -143,7 +143,7 @@ class ScoreForm extends Component {
                                     }}
                                 />
                                 <SelectInput
-                                    className="span12"
+                                    className="col-md-12"
                                     id={`${score.id}-direction`}
                                     label="Bias direction"
                                     choices={direction_choices}
@@ -160,7 +160,7 @@ class ScoreForm extends Component {
                             </div>
                         ) : null}
                     </div>
-                    <div className="span9">
+                    <div className="col-md-9">
                         <ScoreNotesInput
                             scoreId={score.id}
                             value={score.notes}

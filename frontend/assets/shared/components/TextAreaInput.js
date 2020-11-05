@@ -4,14 +4,14 @@ import PropTypes from "prop-types";
 class TextInput extends Component {
     render() {
         return (
-            <div className="control-group">
+            <div className="form-group">
                 <label htmlFor={`id_${this.props.name}`} className="control-label">
                     {this.props.label}
                     {this.props.required ? <span className="asteriskField">*</span> : null}
                 </label>
                 <div className="controls">
                     <textarea
-                        className="span12 textarea"
+                        className="col-md-12 textarea"
                         id={`id_${this.props.name}`}
                         name={this.props.name}
                         type="text"

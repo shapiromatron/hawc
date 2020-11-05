@@ -38,8 +38,8 @@ class TermSelector extends Component {
         return (
             <div>
                 {useControlledVocabulary && idLookupAction ? (
-                    <div className="pull-right">
-                        <div className="input-append">
+                    <div className="float-right">
+                        <div className="input-group">
                             <input
                                 type="number"
                                 placeholder="Enter term ID"
@@ -96,7 +96,7 @@ class TermSelector extends Component {
                             {currentId}&nbsp;|&nbsp;{currentText}&nbsp;
                             <button
                                 type="button"
-                                className="btn btn-mini"
+                                className="btn btn-sm"
                                 title="Unselect term"
                                 onClick={() => store.setObjectField(termIdField, null)}>
                                 &times;

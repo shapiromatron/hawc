@@ -14,7 +14,7 @@ class AggregateGraph extends Component {
             noFinalReviews = _.isEmpty(domains);
         return noFinalReviews ? (
             <div className="container">
-                <span className="alert alert-warning span12">
+                <span className="alert alert-warning col-12">
                     A final reviewer assignment is required.
                 </span>
             </div>
