@@ -1,9 +1,3 @@
-/* main content; no padding */
-#main-content-container {
-    padding-right: 0;
-    padding-left: 0;
-}
-
 /* environment banner */
 .env-banner {
     color: white;

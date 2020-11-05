@@ -35,7 +35,7 @@ class ScoreList extends Component {
                     Responses which meet your filtered criteria above:
                     <div className="float-right">
                         <button
-                            className="btn btn-default"
+                            className="btn btn-secondary"
                             onClick={() => {
                                 this.props.store.clearSelectedStudyScores();
                             }}>

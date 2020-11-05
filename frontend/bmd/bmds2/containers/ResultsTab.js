@@ -17,7 +17,7 @@ class ResultsTab extends React.Component {
         return (
             <>
                 <h3>BMDS output summary</h3>
-                <div className="row-fluid">
+                <div className="row">
                     <OutputTable
                         models={store.models}
                         bmrs={store.bmrs}

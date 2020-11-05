@@ -171,7 +171,7 @@ class BaseVisualForm {
                     submitter.trigger("click");
                 })
             )
-            .append(`<a class="btn btn-default" href="${cancel_url}">Cancel</a>`)
+            .append(`<a class="btn btn-secondary" href="${cancel_url}">Cancel</a>`)
             .appendTo($parent);
     }
 

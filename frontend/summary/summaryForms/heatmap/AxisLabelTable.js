@@ -88,13 +88,13 @@ class AxisLabelTable extends Component {
                 </td>
                 <td>
                     <button
-                        className="btn btn-sm btn-default"
+                        className="btn btn-sm btn-secondary"
                         title="Move row up"
                         onClick={() => moveArrayElementUp(key, index)}>
                         <i className="fa fa-long-arrow-up"></i>
                     </button>
                     <button
-                        className="btn btn-sm btn-default"
+                        className="btn btn-sm btn-secondary"
                         title="Move row down"
                         onClick={() => moveArrayElementDown(key, index)}>
                         <i className="fa fa-long-arrow-down"></i>

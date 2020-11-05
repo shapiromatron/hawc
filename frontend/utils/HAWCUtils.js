@@ -84,7 +84,7 @@ class HAWCUtils {
     static addAlert(content, $div) {
         $div = $div || $("#content");
         $div.prepend(
-            $('<div class="alert">')
+            $('<div class="alert alert-danger">')
                 .append('<button type="button" class="close" data-dismiss="alert">&times;</button>')
                 .append(content)
         );

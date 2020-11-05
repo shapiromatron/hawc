@@ -71,7 +71,7 @@ class EditNodeForm extends React.Component {
                                 Save
                             </button>
                         )}
-                        <button onClick={this.props.handleCancel} className="btn btn-light">
+                        <button onClick={this.props.handleCancel} className="btn btn-secondary">
                             Cancel
                         </button>
                         {isNew ? null : (

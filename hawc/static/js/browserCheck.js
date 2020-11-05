@@ -21,7 +21,7 @@ var supportedBrowserCheck = function() {
 
     if (!isSupportedBrowser()) {
         $("#main-content-container").prepend(
-            '<div class="alert">\
+            '<div class="alert alert-danger">\
                 <p><b>Warning:</b> Your current browser has not been tested extensively with this website, which may result in some some errors with functionality. The following browsers are fully supported:</p>\
                 <ul>\
                     <li><a href="https://www.google.com/chrome/" target="_blank">Google Chrome</a> (preferred)</li>\

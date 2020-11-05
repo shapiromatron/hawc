@@ -148,7 +148,10 @@ class BaseVisualForm extends Component {
                             className="btn btn-primary"
                             id="submit-id-save"
                         />
-                        <a role="button" className="btn btn-default" href={this.config.cancel_url}>
+                        <a
+                            role="button"
+                            className="btn btn-secondary"
+                            href={this.config.cancel_url}>
                             Cancel
                         </a>
                     </div>
