@@ -99,56 +99,43 @@ class RiskOfBiasManager(BaseManager):
             final_only,
         )
 
-        Study = apps.get_model("study", "Study")
         RiskOfBiasScore = apps.get_model("riskofbias", "RiskOfBiasScore")
 
-        src_to_dst_metric_id = {src: dst for src, dst in src_dst_metric_ids}
-
-        src_study_ids = [src_study_id for src_study_id, _ in src_dst_study_ids]
-        dst_study_ids = [dst_study_id for _, dst_study_id in src_dst_study_ids]
-
-        src_study_id_to_instance = Study.objects.in_bulk(src_study_ids)
-        dst_study_id_to_instance = Study.objects.in_bulk(dst_study_ids)
-
-        src_riskofbias_ids = []
-        src_score_ids = []
+        # src riskofbiases
+        src_to_dst_study_id = {src: dst for src, dst in src_dst_study_ids}
+        src_study_ids = [src for src, _ in src_dst_study_ids]
+        src_riskofbiases = self.get_queryset().filter(study_id__in=src_study_ids)
+        src_riskofbias_ids = src_riskofbiases.values_list("pk", flat=True)
+        # create new riskofbiases
         new_riskofbiases = []
-        new_scores = []
-
-        for src_study_id, dst_study_id in src_dst_study_ids:
-            src_study = src_study_id_to_instance[src_study_id]
-            dst_study = dst_study_id_to_instance[dst_study_id]
-
-            riskofbiases = src_study.riskofbiases.all()
+        for riskofbias in src_riskofbiases:
+            riskofbias.pk = None
+            riskofbias.study_id = src_to_dst_study_id[riskofbias.study_id]
+            riskofbias.author = dst_author
             if final_only:
-                riskofbiases = riskofbiases.filter(final=True)
-
-            for riskofbias in riskofbiases:
-                for score in riskofbias.scores.all():
-                    import pdb
-
-                    pdb.set_trace()
-                    if src_to_dst_metric_id.get(score.metric) is None:
-                        continue
-                    src_score_ids.append(score.pk)
-                    score.pk = None
-                    score.metric = src_to_dst_metric_id[score.metric]
-                    new_scores.append(score)
-
-                src_riskofbias_ids.append(riskofbias.pk)
-                riskofbias.pk = None
-                riskofbias.study = dst_study
-                riskofbias.author = dst_author
-                if final_only:
-                    riskofbias.final = False
-                    riskofbias.active = True
-                new_riskofbiases.append(riskofbias)
-
+                riskofbias.final = False
+                riskofbias.active = True
+            new_riskofbiases.append(riskofbias)
         dst_riskofbiases = self.bulk_create(new_riskofbiases)
         dst_riskofbias_ids = [obj.pk for obj in dst_riskofbiases]
+
+        # src scores
+        src_to_dst_metric_id = {src: dst for src, dst in src_dst_metric_ids}
+        src_metric_ids = [src for src, _ in src_dst_metric_ids]
+        src_scores = RiskOfBiasScore.objects.filter(
+            riskofbias_id__in=src_riskofbias_ids, metric_id__in=src_metric_ids
+        )
+        src_score_ids = src_scores.values_list("pk", flat=True)
+        # create new scores
+        new_scores = []
+        for score in src_scores:
+            score.pk = None
+            score.metric_id = src_to_dst_metric_id[score.metric_id]
+            new_scores.append(score)
         dst_scores = RiskOfBiasScore.objects.bulk_create(new_scores)
         dst_score_ids = [obj.pk for obj in dst_scores]
 
+        # create mapping of src to dst model instances
         src_to_dst = dict()
         src_to_dst["study"] = {src: dst for src, dst in src_dst_study_ids}
         src_to_dst["metric"] = {src: dst for src, dst in src_dst_metric_ids}
@@ -156,7 +143,7 @@ class RiskOfBiasManager(BaseManager):
             src: dst for src, dst in zip(src_riskofbias_ids, dst_riskofbias_ids)
         }
         src_to_dst["score"] = {src: dst for src, dst in zip(src_score_ids, dst_score_ids)}
-
+        # log the src to dst mapping
         Log = apps.get_model("assessment", "Log")
         log = Log.objects.create(assessment_id=dst_assessment_id, message=json.dumps(src_to_dst),)
         return log.id
