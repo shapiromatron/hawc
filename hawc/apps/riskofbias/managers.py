@@ -1,7 +1,8 @@
-from typing import Tuple, List
 import json
+from typing import List, Tuple
 
 from django.apps import apps
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Case, Count, IntegerField, Sum, Value, When
 
@@ -66,20 +67,68 @@ class RiskOfBiasManager(BaseManager):
         src_dst_metric_ids: List[Tuple[int, int]],
         final_only: bool,
     ):
+
         # all src studies from src assessment
+        src_study_ids = [src for src, _ in src_dst_study_ids]
+        Study = apps.get_model("study", "Study")
+        src_studies = Study.objects.filter(pk__in=src_study_ids, assessment_id=src_assessment_id)
+        invalid_src_study_ids = set(src_study_ids) - set(src_studies.values_list("pk", flat=True))
+        if len(invalid_src_study_ids) > 0:
+            raise ValidationError(
+                f"Invalid source study(ies) {', '.join([str(id) for id in invalid_src_study_ids])}; not found in assessment {src_assessment_id}"
+            )
 
         # all dst studies from dst assessment
-
-        # all src metrics from src assessment
-
-        # all dst metrics from dst assessment
+        dst_study_ids = [dst for _, dst in src_dst_study_ids]
+        dst_studies = Study.objects.filter(pk__in=dst_study_ids, assessment_id=dst_assessment_id)
+        invalid_dst_study_ids = set(dst_study_ids) - set(dst_studies.values_list("pk", flat=True))
+        if len(invalid_dst_study_ids) > 0:
+            raise ValidationError(
+                f"Invalid destination study(ies) {', '.join([str(id) for id in invalid_dst_study_ids])}; not found in assessment {dst_assessment_id}"
+            )
 
         # all dst studies have no riskofbias
+        dst_riskofbiases = self.filter(study__in=dst_study_ids)
+        if dst_riskofbiases.exists():
+            raise ValidationError(f"Risk of bias data already exists in destination study(ies)")
+
+        # all src metrics from src studies should be given
+        src_metric_ids = [src for src, _ in src_dst_metric_ids]
+        RiskOfBiasMetric = apps.get_model("riskofbias", "RiskOfBiasMetric")
+        src_metrics = RiskOfBiasMetric.objects.filter(
+            pk__in=src_metric_ids, domain__assessment_id=src_assessment_id
+        )
+        invalid_src_metric_ids = set(src_metric_ids) - set(src_metrics.values_list("pk", flat=True))
+
+        if len(invalid_src_metric_ids) > 0:
+            raise ValidationError(
+                f"Invalid source metric(s) {', '.join([str(id) for id in invalid_src_metric_ids])}"
+            )
+        missing_src_metrics = RiskOfBiasMetric.objects.filter(
+            domain__assessment_id=src_assessment_id
+        ).exclude(pk__in=src_metric_ids)
+        if missing_src_metrics.exists():
+            raise ValidationError(
+                f"Need mapping for source metric(s) {', '.join([str(metric.pk) for metric in missing_src_metrics])}"
+            )
+
+        # all dst metrics from dst assessment
+        dst_metric_ids = [dst for _, dst in src_dst_metric_ids]
+        dst_metrics = RiskOfBiasMetric.objects.filter(
+            pk__in=dst_metric_ids, domain__assessment_id=dst_assessment_id
+        )
+        invalid_dst_metric_ids = set(dst_metric_ids) - set(dst_metrics.values_list("pk", flat=True))
+
+        if len(invalid_dst_metric_ids) > 0:
+            raise ValidationError(
+                f"Invalid destination metric(s) {', '.join([str(id) for id in invalid_dst_metric_ids])}"
+            )
 
         # all users who authored src riskofbiases are team member
         # or higher on dst assessment
-
-        return
+        # HAWCUser = apps.get_model("myuser", "HAWCUser")
+        # src_users = HAWCUser.objects.get(riskofbiases__study__in=src_study_ids)
+        # TODO
 
     def bulk_copy(
         self,
@@ -90,6 +139,8 @@ class RiskOfBiasManager(BaseManager):
         src_dst_metric_ids: List[Tuple[int, int]],
         final_only: bool,
     ):
+
+        # validate the arguments
         self.validate_bulk_copy(
             src_assessment_id,
             dst_assessment_id,
@@ -101,8 +152,13 @@ class RiskOfBiasManager(BaseManager):
 
         RiskOfBiasScore = apps.get_model("riskofbias", "RiskOfBiasScore")
 
-        # src riskofbiases
-        src_to_dst_study_id = {src: dst for src, dst in src_dst_study_ids}
+        # create src to dst mapping
+        src_to_dst = dict()
+        # set mapping from arguments
+        src_to_dst["study"] = {src: dst for src, dst in src_dst_study_ids}
+        src_to_dst["metric"] = {src: dst for src, dst in src_dst_metric_ids}
+
+        # get src riskofbiases
         src_study_ids = [src for src, _ in src_dst_study_ids]
         src_riskofbiases = self.get_queryset().filter(study_id__in=src_study_ids)
         src_riskofbias_ids = src_riskofbiases.values_list("pk", flat=True)
@@ -110,7 +166,7 @@ class RiskOfBiasManager(BaseManager):
         new_riskofbiases = []
         for riskofbias in src_riskofbiases:
             riskofbias.pk = None
-            riskofbias.study_id = src_to_dst_study_id[riskofbias.study_id]
+            riskofbias.study_id = src_to_dst["study"][riskofbias.study_id]
             riskofbias.author = dst_author
             if final_only:
                 riskofbias.final = False
@@ -118,9 +174,12 @@ class RiskOfBiasManager(BaseManager):
             new_riskofbiases.append(riskofbias)
         dst_riskofbiases = self.bulk_create(new_riskofbiases)
         dst_riskofbias_ids = [obj.pk for obj in dst_riskofbiases]
+        # add to mapping
+        src_to_dst["riskofbias"] = {
+            src: dst for src, dst in zip(src_riskofbias_ids, dst_riskofbias_ids)
+        }
 
-        # src scores
-        src_to_dst_metric_id = {src: dst for src, dst in src_dst_metric_ids}
+        # get src scores
         src_metric_ids = [src for src, _ in src_dst_metric_ids]
         src_scores = RiskOfBiasScore.objects.filter(
             riskofbias_id__in=src_riskofbias_ids, metric_id__in=src_metric_ids
@@ -130,23 +189,18 @@ class RiskOfBiasManager(BaseManager):
         new_scores = []
         for score in src_scores:
             score.pk = None
-            score.metric_id = src_to_dst_metric_id[score.metric_id]
+            score.riskofbias_id = src_to_dst["riskofbias"][score.riskofbias_id]
+            score.metric_id = src_to_dst["metric"][score.metric_id]
             new_scores.append(score)
         dst_scores = RiskOfBiasScore.objects.bulk_create(new_scores)
         dst_score_ids = [obj.pk for obj in dst_scores]
-
-        # create mapping of src to dst model instances
-        src_to_dst = dict()
-        src_to_dst["study"] = {src: dst for src, dst in src_dst_study_ids}
-        src_to_dst["metric"] = {src: dst for src, dst in src_dst_metric_ids}
-        src_to_dst["riskofbias"] = {
-            src: dst for src, dst in zip(src_riskofbias_ids, dst_riskofbias_ids)
-        }
+        # add to mapping
         src_to_dst["score"] = {src: dst for src, dst in zip(src_score_ids, dst_score_ids)}
+
         # log the src to dst mapping
         Log = apps.get_model("assessment", "Log")
         log = Log.objects.create(assessment_id=dst_assessment_id, message=json.dumps(src_to_dst),)
-        return log.id
+        return log.id, src_to_dst
 
 
 class RiskOfBiasScoreManager(BaseManager):
