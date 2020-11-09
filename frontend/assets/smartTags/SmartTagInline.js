@@ -43,23 +43,23 @@ class InlineRendering {
         let $title = this.renderParent.find(".inlineSmartTagTitle"),
             $body = this.renderParent.find(".inlineSmartTagBody"),
             expandHideTogger = function() {
-                let isMax = $title.find(".icon-minus").length === 1;
+                let isMax = $title.find(".fa-minus").length === 1;
                 if (isMax) {
                     $title
-                        .find(".icon-minus")
-                        .removeClass("icon-minus")
-                        .addClass("icon-plus");
+                        .find(".fa-minus")
+                        .removeClass("fa-minus")
+                        .addClass("fa-plus");
                     $body.fadeOut("slow");
                 } else {
                     $title
-                        .find(".icon-plus")
-                        .removeClass("icon-plus")
-                        .addClass("icon-minus");
+                        .find(".fa-plus")
+                        .removeClass("fa-plus")
+                        .addClass("fa-minus");
                     $body.fadeIn("slow");
                 }
             },
             toggleBtn = $('<a title="click to toggle visibility" class="btn btn-sm float-right">')
-                .append('<i class="icon-minus"></i>')
+                .append('<i class="fa fa-minus"></i>')
                 .off("click")
                 .click(expandHideTogger.bind(this));
 

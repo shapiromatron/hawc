@@ -37,7 +37,7 @@ class EndpointAggregation extends BaseVisual {
         this.$plotDiv = $("<div>");
 
         $('<button type="button" class="btn btn-sm" title="Toggle table-view representation">')
-            .append('<i class="icon-chevron-right"></i>')
+            .append('<i class="fa fa-chevron-right"></i>')
             .click(function() {
                 self.buildTbl();
             });
@@ -195,7 +195,7 @@ class EndpointAggregation extends BaseVisual {
             cls: "btn btn-sm",
             title: "View alternate visualizations",
             text: "",
-            icon: "icon-circle-arrow-right",
+            icon: "fa fa-arrow-circle-right",
             on_click: this.buildPlot.bind(this),
         };
     }

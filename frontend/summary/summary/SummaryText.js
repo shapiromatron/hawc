@@ -75,7 +75,7 @@ class SummaryText {
                 <a href="#${this.data.slug}">${this.get_tab_depth()}${this.section_label} ${
                 this.data.title
             }
-                    <i class="icon-chevron-right"></i>
+                    <i class="fa fa-chevron-right"></i>
                 </a>
             </li>`
         );
