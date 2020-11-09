@@ -196,11 +196,7 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
         else:
             self.rob_headers, self.rob_data = RiskOfBias.get_dp_export(
                 self.queryset.first().assessment_id,
-                list(
-                    self.queryset.values_list(
-                        "animal_group__experiment__study_id", flat=True
-                    ).distinct()
-                ),
+                set(self.queryset.values_list("animal_group__experiment__study_id", flat=True)),
                 "animal",
             )
 
@@ -381,11 +377,7 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
         else:
             self.rob_headers, self.rob_data = RiskOfBias.get_dp_export(
                 self.queryset.first().assessment_id,
-                list(
-                    self.queryset.values_list(
-                        "animal_group__experiment__study_id", flat=True
-                    ).distinct()
-                ),
+                set(self.queryset.values_list("animal_group__experiment__study_id", flat=True)),
                 "animal",
             )
 
