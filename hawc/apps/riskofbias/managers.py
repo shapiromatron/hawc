@@ -68,8 +68,25 @@ class RiskOfBiasManager(BaseManager):
         final_only: bool,
     ):
 
-        # all src studies from src assessment
+        # src and dst assessments are different
+        if src_assessment_id == dst_assessment_id:
+            raise ValidationError("Source and destination assessments must be different")
+
+        # studies and metrics are unique
         src_study_ids = [src for src, _ in src_dst_study_ids]
+        if len(src_study_ids) > len(set(src_study_ids)):
+            raise ValidationError("Source study ids must be unique")
+        dst_study_ids = [dst for _, dst in src_dst_study_ids]
+        if len(dst_study_ids) > len(set(dst_study_ids)):
+            raise ValidationError("Destination study ids must be unique")
+        src_metric_ids = [src for src, _ in src_dst_metric_ids]
+        if len(src_metric_ids) > len(set(src_metric_ids)):
+            raise ValidationError("Source metric ids must be unique")
+        dst_metric_ids = [dst for _, dst in src_dst_metric_ids]
+        if len(dst_metric_ids) > len(set(dst_metric_ids)):
+            raise ValidationError("Destination metric ids must be unique")
+
+        # all src studies from src assessment
         Study = apps.get_model("study", "Study")
         src_studies = Study.objects.filter(pk__in=src_study_ids, assessment_id=src_assessment_id)
         invalid_src_study_ids = set(src_study_ids) - set(src_studies.values_list("pk", flat=True))
@@ -79,7 +96,6 @@ class RiskOfBiasManager(BaseManager):
             )
 
         # all dst studies from dst assessment
-        dst_study_ids = [dst for _, dst in src_dst_study_ids]
         dst_studies = Study.objects.filter(pk__in=dst_study_ids, assessment_id=dst_assessment_id)
         invalid_dst_study_ids = set(dst_study_ids) - set(dst_studies.values_list("pk", flat=True))
         if len(invalid_dst_study_ids) > 0:
@@ -93,7 +109,6 @@ class RiskOfBiasManager(BaseManager):
             raise ValidationError(f"Risk of bias data already exists in destination study(ies)")
 
         # all src metrics from src studies should be given
-        src_metric_ids = [src for src, _ in src_dst_metric_ids]
         RiskOfBiasMetric = apps.get_model("riskofbias", "RiskOfBiasMetric")
         src_metrics = RiskOfBiasMetric.objects.filter(
             pk__in=src_metric_ids, domain__assessment_id=src_assessment_id
@@ -113,7 +128,6 @@ class RiskOfBiasManager(BaseManager):
             )
 
         # all dst metrics from dst assessment
-        dst_metric_ids = [dst for _, dst in src_dst_metric_ids]
         dst_metrics = RiskOfBiasMetric.objects.filter(
             pk__in=dst_metric_ids, domain__assessment_id=dst_assessment_id
         )
