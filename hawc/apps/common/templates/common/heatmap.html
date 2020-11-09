@@ -3,10 +3,9 @@
 {% block title %}{{assessment}} | {{heatmap_view_title}} | HAWC {% endblock title %}
 
 {% block breadcrumbs %}
-
-<li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{ assessment }}</a><span class="divider">/</span></li>
-<li><a href="{% url 'assessment:endpoint_list' assessment.pk %}">Endpoints</a><span class="divider">/</span></li>
-<li class="active">{{heatmap_view_title}}<span class="divider">/</span></li>
+<li class="breadcrumb-item"><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{ assessment }}</a></li>
+<li class="breadcrumb-item"><a href="{% url 'assessment:endpoint_list' assessment.pk %}">Endpoints</a></li>
+<li class="breadcrumb-item active">{{heatmap_view_title}}</li>
 {% endblock %}
 
 {% block content %}

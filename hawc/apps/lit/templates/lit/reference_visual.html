@@ -5,12 +5,12 @@
 {% endblock %}
 
 {% block breadcrumbs %}
-  <li><a href="{{assessment.get_absolute_url}}">{{ assessment }}</a><span class="divider">/</span></li>
-  <li><a href="{% url 'lit:overview' assessment.pk %}">Literature Review</a><span class="divider">/</span></li>
+  <li class="breadcrumb-item"><a href="{{assessment.get_absolute_url}}">{{ assessment }}</a></li>
+  <li class="breadcrumb-item"><a href="{% url 'lit:overview' assessment.pk %}">Literature Review</a></li>
   {% if object_type != 'reference' %}
-    <li><a href="{{object.get_absolute_url}}">{{object}}</a><span class="divider">/</span></li>
+    <li class="breadcrumb-item"><a href="{{object.get_absolute_url}}">{{object}}</a></li>
   {% endif %}
-  <li class="active">Visualization<span class="divider">/</span></li>
+  <li class="breadcrumb-item active">Visualization</li>
 {% endblock %}
 
 {% block content %}

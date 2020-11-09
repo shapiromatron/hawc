@@ -3,8 +3,8 @@
 {% block title %}{{assessment}} | Endpoints | HAWC {% endblock title %}
 
 {% block breadcrumbs %}
-  <li><a href="{% url 'assessment:detail' pk=assessment.id %}">{{ assessment }}</a><span class="divider">/</span></li>
-  <li class="active">Endpoints<span class="divider">/</span></li>
+  <li class="breadcrumb-item"><a href="{% url 'assessment:detail' pk=assessment.id %}">{{ assessment }}</a></li>
+  <li class="breadcrumb-item active">Endpoints</li>
 {% endblock %}
 
 {% block content %}

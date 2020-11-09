@@ -5,8 +5,8 @@
 {% endblock title %}
 
 {% block breadcrumbs %}
-    <li><a href="{{object.get_absolute_url}}">{{object.content_object}}</a><span class="divider">/</span></li>
-    <li class="active">delete {{object}}<span class="divider">/</span></li>
+    <li class="breadcrumb-item"><a href="{{object.get_absolute_url}}">{{object.content_object}}</a></li>
+    <li class="breadcrumb-item active">Delete {{object}}</li>
 {% endblock breadcrumbs %}
 
 {% block content %}

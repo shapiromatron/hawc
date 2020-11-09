@@ -5,9 +5,9 @@
 {% endblock %}
 
 {% block breadcrumbs %}
-  <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{ assessment }}</a><span class="divider">/</span></li>
+  <li class="breadcrumb-item"><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{ assessment }}</a></li>
   {% block breadcrumbs_self %}
-    <li class="active">Data Pivot<span class="divider">/</span></li>
+    <li class="breadcrumb-item active">Data Pivot</li>
   {% endblock breadcrumbs_self %}
 {% endblock %}
 
