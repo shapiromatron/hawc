@@ -13,13 +13,11 @@
 
   <h1>{{object}}
     {% if obj_perms.edit_assessment %}
-      <div class="btn-group float-right">
-        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions
-          <span class="caret"></span>
-        </a>
-        <ul class="dropdown-menu">
-          <li><a href="{% url 'bmd:assess_settings_update' assessment.pk %}">Update settings</a></li>
-        </ul>
+      <div class="dropdown btn-group float-right">
+        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
+        <div class="dropdown-menu dropdown-menu-right">
+          <a class="dropdown-item" href="{% url 'bmd:assess_settings_update' assessment.pk %}">Update settings</a>
+        </div>
       </div>
     {% endif %}
   </h1>

@@ -12,28 +12,24 @@
 
     <h1>{{object}}
       {% if obj_perms.edit %}
-        <div class="btn-group float-right">
-          <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions
-            <span class="caret"></span>
-          </a>
-          <ul class="dropdown-menu">
-
-              <li class="disabled"><a tabindex="-1" href="#">Animal Group Editing</a></li>
-              <li><a href="{% url 'animal:animal_group_update' object.pk %}">Update</a></li>
-              <li><a href="{% url 'animal:animal_group_delete' object.pk %}">Delete</a></li>
+        <div class="dropdown btn-group float-right">
+          <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
+          <div class="dropdown-menu dropdown-menu-right">
+              <h6 class="dropdown-header">Animal Group Editing</h6>
+              <a class="dropdown-item" href="{% url 'animal:animal_group_update' object.pk %}">Update</a>
+              <a class="dropdown-item" href="{% url 'animal:animal_group_delete' object.pk %}">Delete</a>
 
               {% if object.dosing_regime and object == object.dosing_regime.dosed_animals %}
-                <li class="divider"></li>
-                <li class="disabled"><a tabindex="-1" href="#">Dose Regime Editing</a></li>
-                <li><a href="{% url 'animal:dosing_regime_update' object.dosing_regime.pk %}">Update</a></li>
+                <div class="dropdown-divider"></div>
+                <h6 class="dropdown-header">Dose Regime Editing</h6>
+                <a class="dropdown-item" href="{% url 'animal:dosing_regime_update' object.dosing_regime.pk %}">Update</a>
               {% endif %}
 
-              <li class="divider"></li>
-              <li class="disabled"><a tabindex="-1" href="#">Endpoint Editing</a></li>
-              <li><a href="{% url 'animal:endpoint_new' object.pk %}">Create new</a></li>
-              <li><a href="{% url 'animal:endpoint_copy_selector' object.pk %}">Copy from existing</a></li>
-
-          </ul>
+              <div class="dropdown-divider"></div>
+              <h6 class="dropdown-header">Endpoint Editing</h6>
+              <a class="dropdown-item" href="{% url 'animal:endpoint_new' object.pk %}">Create new</a>
+              <a class="dropdown-item" href="{% url 'animal:endpoint_copy_selector' object.pk %}">Copy from existing</a>
+          </div>
         </div>
       {% endif %}
     </h1>

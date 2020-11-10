@@ -13,13 +13,11 @@
 {% block content %}
 
     {% if obj_perms.edit_assessment %}
-    <div class="btn-group float-right">
-        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions
-            <span class="caret"></span>
-        </a>
-        <ul class="dropdown-menu">
-            <li><a href="{% url 'riskofbias:arob_reviewers_update' assessment.pk %}">Update</a></li>
-        </ul>
+    <div class="dropdown btn-group float-right">
+        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
+        <div class="dropdown-menu dropdown-menu-right">
+            <a class="dropdown-item" href="{% url 'riskofbias:arob_reviewers_update' assessment.pk %}">Update</a>
+        </div>
     </div>
     {% endif %}
 

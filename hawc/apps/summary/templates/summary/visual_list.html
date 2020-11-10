@@ -11,13 +11,11 @@
 {% block content %}
   <h1>Available visualizations
     {% if obj_perms.edit %}
-        <div class="btn-group float-right">
-          <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions
-            <span class="caret"></span>
-          </a>
-          <ul class="dropdown-menu">
-              <li><a href="{% url 'summary:visualization_create_selector' assessment.pk %}">Create new visualization</a></li>
-          </ul>
+        <div class="dropdown btn-group float-right">
+          <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
+          <div class="dropdown-menu dropdown-menu-right">
+              <a class="dropdown-item" href="{% url 'summary:visualization_create_selector' assessment.pk %}">Create new visualization</a>
+          </div>
         </div>
       {% endif %}
   </h1>

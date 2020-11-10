@@ -31,16 +31,14 @@
     <div class="col-md-9">
 
       <h1>{{assessment}} Summary
-        <div class="btn-group float-right">
-          <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions
-            <span class="caret"></span>
-          </a>
-          <ul class="dropdown-menu">
-            <li><a href="#" id="smart_tag_toggle">Toggle Smart-Tags</a></li>
+        <div class="dropdown btn-group float-right">
+          <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
+          <div class="dropdown-menu dropdown-menu-right">
+            <a class="dropdown-item" href="#" id="smart_tag_toggle">Toggle Smart-Tags</a>
             {% if obj_perms.edit %}
-              <li><a href="{% url 'summary:create' assessment.pk %}">Update text</a></li>
+              <a class="dropdown-item" href="{% url 'summary:create' assessment.pk %}">Update text</a>
             {% endif %}
-          </ul>
+          </div>
         </div>
       </h1>
 
