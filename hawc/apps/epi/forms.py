@@ -193,11 +193,11 @@ class StudyPopulationForm(forms.ModelForm):
 
         helper = BaseFormHelper(self, **inputs)
 
-        helper.add_fluid_row("name", 2, "col-md-6")
-        helper.add_fluid_row("age_profile", 2, "col-md-6")
-        helper.add_fluid_row("countries", 3, "col-md-4")
-        helper.add_fluid_row("eligible_n", 3, "col-md-4")
-        helper.add_fluid_row("inclusion_criteria", 3, "col-md-4")
+        helper.add_row("name", 2, "col-md-6")
+        helper.add_row("age_profile", 2, "col-md-6")
+        helper.add_row("countries", 3, "col-md-4")
+        helper.add_row("eligible_n", 3, "col-md-4")
+        helper.add_row("inclusion_criteria", 3, "col-md-4")
 
         url = reverse("epi:studycriteria_create", kwargs={"pk": self.instance.study.assessment.pk})
 
@@ -343,11 +343,11 @@ class ExposureForm(forms.ModelForm):
 
         helper = BaseFormHelper(self, **inputs)
 
-        helper.add_fluid_row("name", 2, "col-md-6")
-        helper.add_fluid_row("inhalation", 6, "col-md-2")
-        helper.add_fluid_row("measured", 3, "col-md-4")
-        helper.add_fluid_row("metric_description", 3, "col-md-4")
-        helper.add_fluid_row("age_of_exposure", 3, "col-md-6")
+        helper.add_row("name", 2, "col-md-6")
+        helper.add_row("inhalation", 6, "col-md-2")
+        helper.add_row("measured", 3, "col-md-4")
+        helper.add_row("metric_description", 3, "col-md-4")
+        helper.add_row("age_of_exposure", 3, "col-md-6")
 
         inhalation_idx = helper.find_layout_idx_for_field_name("inhalation")
         helper.layout[inhalation_idx].append(
@@ -441,10 +441,10 @@ class OutcomeForm(forms.ModelForm):
 
         helper = BaseFormHelper(self, **inputs)
 
-        helper.add_fluid_row("name", 2, "col-md-6")
-        helper.add_fluid_row("system", 3, "col-md-4")
-        helper.add_fluid_row("diagnostic", 2, "col-md-6")
-        helper.add_fluid_row("outcome_n", 2, "col-md-6")
+        helper.add_row("name", 2, "col-md-6")
+        helper.add_row("system", 3, "col-md-4")
+        helper.add_row("diagnostic", 2, "col-md-6")
+        helper.add_row("outcome_n", 2, "col-md-6")
 
         url = reverse("assessment:effect_tag_create", kwargs={"pk": self.instance.assessment.pk})
         helper.addBtnLayout(helper.layout[2], 1, url, "Add new effect tag", "col-md-6")
@@ -575,9 +575,9 @@ class OutcomeFilterForm(forms.Form):
 
         helper.form_method = "GET"
 
-        helper.add_fluid_row("studies", 4, "col-md-3")
-        helper.add_fluid_row("age_profile", 4, "col-md-3")
-        helper.add_fluid_row("system", 4, "col-md-3")
+        helper.add_row("studies", 4, "col-md-3")
+        helper.add_row("age_profile", 4, "col-md-3")
+        helper.add_row("system", 4, "col-md-3")
 
         helper.layout.append(cfb.FormActions(cfl.Submit("submit", "Apply filters"),))
 
@@ -731,9 +731,9 @@ class SingleGroupForm(GroupForm):
 
         helper = BaseFormHelper(self, **inputs)
 
-        helper.add_fluid_row("name", 3, "col-md-4")
-        helper.add_fluid_row("sex", 2, "col-md-6")
-        helper.add_fluid_row("eligible_n", 3, "col-md-4")
+        helper.add_row("name", 3, "col-md-4")
+        helper.add_row("sex", 2, "col-md-6")
+        helper.add_row("eligible_n", 3, "col-md-4")
         return helper
 
 
@@ -924,14 +924,14 @@ class ResultForm(forms.ModelForm):
 
         helper = BaseFormHelper(self, **inputs)
 
-        helper.add_fluid_row("name", 2, "col-md-6")
-        helper.add_fluid_row("metric", 3, "col-md-4")
-        helper.add_fluid_row("data_location", 2, "col-md-6")
-        helper.add_fluid_row("dose_response", 3, "col-md-4")
-        helper.add_fluid_row("statistical_power", 4, "col-md-3")
-        helper.add_fluid_row("factors_applied", 2, "col-md-6")
-        helper.add_fluid_row("estimate_type", 3, "col-md-4")
-        helper.add_fluid_row("resulttags", 1, "col-md-6")
+        helper.add_row("name", 2, "col-md-6")
+        helper.add_row("metric", 3, "col-md-4")
+        helper.add_row("data_location", 2, "col-md-6")
+        helper.add_row("dose_response", 3, "col-md-4")
+        helper.add_row("statistical_power", 4, "col-md-3")
+        helper.add_row("factors_applied", 2, "col-md-6")
+        helper.add_row("estimate_type", 3, "col-md-4")
+        helper.add_row("resulttags", 1, "col-md-6")
 
         url = reverse(
             "assessment:effect_tag_create", kwargs={"pk": self.instance.outcome.assessment_id},

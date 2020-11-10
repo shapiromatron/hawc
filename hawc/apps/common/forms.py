@@ -65,7 +65,7 @@ class BaseFormHelper(cf.FormHelper):
             fields = lst[idx].fields
         lst[idx] = AdderLayout(*fields, adderURL=url, adderTitle=title, wrapper_class=wrapper_class)
 
-    def add_fluid_row(self, firstField, numFields, wrapperClasses):
+    def add_row(self, firstField, numFields, wrapperClasses):
         first = self.layout.index(firstField)
         if type(wrapperClasses) in [str, str]:
             wrapperClasses = [wrapperClasses] * numFields

@@ -77,13 +77,13 @@ class AssessmentForm(forms.ModelForm):
 
         helper = BaseFormHelper(self, **inputs)
 
-        helper.add_fluid_row("name", 3, "col-md-4")
-        helper.add_fluid_row("cas", 2, "col-md-6")
-        helper.add_fluid_row("project_manager", 3, "col-md-4")
-        helper.add_fluid_row("editable", 4, "col-md-3")
-        helper.add_fluid_row("conflicts_of_interest", 2, "col-md-6")
-        helper.add_fluid_row("noel_name", 2, "col-md-6")
-        helper.add_fluid_row("vocabulary", 2, "col-md-6")
+        helper.add_row("name", 3, "col-md-4")
+        helper.add_row("cas", 2, "col-md-6")
+        helper.add_row("project_manager", 3, "col-md-4")
+        helper.add_row("editable", 4, "col-md-3")
+        helper.add_row("conflicts_of_interest", 2, "col-md-6")
+        helper.add_row("noel_name", 2, "col-md-6")
+        helper.add_row("vocabulary", 2, "col-md-6")
         helper.addBtnLayout(
             helper.layout[3], 1, reverse("assessment:dtxsid_create"), "Add new DTXSID", "col-md-6"
         )
@@ -351,8 +351,8 @@ class DatasetForm(forms.ModelForm):
         dataset; the public can only download and see the latest version."""
 
         helper = BaseFormHelper(self, **inputs)
-        helper.add_fluid_row("revision_version", 3, ("col-md-2", "col-md-5", "col-md-5 hidden"))
-        helper.add_fluid_row("revision_notes", 1, ("col-md-12 hidden",))
+        helper.add_row("revision_version", 3, ("col-md-2", "col-md-5", "col-md-5 hidden"))
+        helper.add_row("revision_notes", 1, ("col-md-12 hidden",))
 
         return helper
 

@@ -90,11 +90,9 @@ class ExperimentForm(ModelForm):
 
         helper = BaseFormHelper(self, **inputs)
 
-        helper.add_fluid_row("name", 3, "col-md-4")
-        helper.add_fluid_row("chemical", 3, "col-md-4")
-        helper.add_fluid_row(
-            "purity_available", 4, ["col-md-2", "col-md-2", "col-md-2", "col-md-6"]
-        )
+        helper.add_row("name", 3, "col-md-4")
+        helper.add_row("chemical", 3, "col-md-4")
+        helper.add_row("purity_available", 4, ["col-md-2", "col-md-2", "col-md-2", "col-md-6"])
         url = reverse("assessment:dtxsid_create")
         helper.addBtnLayout(helper.layout[3], 2, url, "Add new DTXSID", "col-md-4")
         helper.form_id = "experiment-form"
@@ -205,8 +203,8 @@ class AnimalGroupForm(ModelForm):
         helper = BaseFormHelper(self, **inputs)
 
         helper.form_id = "animal_group"
-        helper.add_fluid_row("species", 3, "col-md-4")
-        helper.add_fluid_row("lifestage_exposed", 2, "col-md-6")
+        helper.add_row("species", 3, "col-md-4")
+        helper.add_row("lifestage_exposed", 2, "col-md-6")
 
         assessment_id = self.instance.experiment.study.assessment.pk
 
@@ -217,9 +215,9 @@ class AnimalGroupForm(ModelForm):
         helper.addBtnLayout(helper.layout[3], 1, url, "Add new strain", "col-md-4")
 
         if "generation" in self.fields:
-            helper.add_fluid_row("siblings", 3, "col-md-4")
+            helper.add_row("siblings", 3, "col-md-4")
 
-        helper.add_fluid_row("comments", 2, "col-md-6")
+        helper.add_row("comments", 2, "col-md-6")
 
         return helper
 
@@ -294,8 +292,8 @@ class DosingRegimeForm(ModelForm):
         helper = BaseFormHelper(self, **inputs)
 
         helper.form_id = "dosing_regime"
-        helper.add_fluid_row("duration_exposure", 3, "col-md-4")
-        helper.add_fluid_row("num_dose_groups", 3, "col-md-4")
+        helper.add_row("duration_exposure", 3, "col-md-4")
+        helper.add_row("num_dose_groups", 3, "col-md-4")
         return helper
 
 
@@ -513,17 +511,17 @@ class EndpointForm(ModelForm):
         helper.layout.insert(
             helper.find_layout_idx_for_field_name("name"), cfl.Div(css_class="row", id="vocab"),
         )
-        helper.add_fluid_row("name", 1, "col-md-12")
-        helper.add_fluid_row("system", 4, "col-md-3")
-        helper.add_fluid_row("effects", 2, "col-md-6")
-        helper.add_fluid_row("observation_time", 3, "col-md-4")
-        helper.add_fluid_row("data_reported", 3, "col-md-4")
-        helper.add_fluid_row("data_type", 3, "col-md-4")
-        helper.add_fluid_row("response_units", 3, "col-md-4")
-        helper.add_fluid_row("NOEL", 4, "col-md-3")
-        helper.add_fluid_row("statistical_test", 3, ["col-md-6", "col-md-3", "col-md-3"])
-        helper.add_fluid_row("litter_effects", 2, "col-md-6")
-        helper.add_fluid_row("name_term", 5, "col-md-2")
+        helper.add_row("name", 1, "col-md-12")
+        helper.add_row("system", 4, "col-md-3")
+        helper.add_row("effects", 2, "col-md-6")
+        helper.add_row("observation_time", 3, "col-md-4")
+        helper.add_row("data_reported", 3, "col-md-4")
+        helper.add_row("data_type", 3, "col-md-4")
+        helper.add_row("response_units", 3, "col-md-4")
+        helper.add_row("NOEL", 4, "col-md-3")
+        helper.add_row("statistical_test", 3, ["col-md-6", "col-md-3", "col-md-3"])
+        helper.add_row("litter_effects", 2, "col-md-6")
+        helper.add_row("name_term", 5, "col-md-2")
 
         url = reverse("assessment:effect_tag_create", kwargs={"pk": self.instance.assessment.pk})
         helper.addBtnLayout(helper.layout[5], 0, url, "Add new effect tag", "col-md-6")
@@ -868,10 +866,10 @@ class EndpointFilterForm(forms.Form):
 
         helper.form_method = "GET"
 
-        helper.add_fluid_row("studies", 4, "col-md-3")
-        helper.add_fluid_row("species", 4, "col-md-3")
-        helper.add_fluid_row("name", 4, "col-md-3")
-        helper.add_fluid_row("tags", 4, "col-md-3")
+        helper.add_row("studies", 4, "col-md-3")
+        helper.add_row("species", 4, "col-md-3")
+        helper.add_row("name", 4, "col-md-3")
+        helper.add_row("tags", 4, "col-md-3")
 
         helper.layout.append(cfb.FormActions(cfl.Submit("submit", "Apply filters"),))
 

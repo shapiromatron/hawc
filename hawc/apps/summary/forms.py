@@ -690,7 +690,7 @@ class TagtreeForm(VisualForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = self.setHelper()
-        self.helper.add_fluid_row("root_node", 3, "col-md-4")
+        self.helper.add_row("root_node", 3, "col-md-4")
 
         choices = [
             (tag.id, tag.get_nested_name())

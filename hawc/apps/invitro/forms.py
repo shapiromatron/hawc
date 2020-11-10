@@ -70,10 +70,10 @@ class IVChemicalForm(forms.ModelForm):
 
         helper = BaseFormHelper(self, **inputs)
 
-        helper.add_fluid_row("cas", 2, "col-md-6")
-        helper.add_fluid_row("cas_inferred", 2, "col-md-6")
-        helper.add_fluid_row("source", 3, "col-md-4")
-        helper.add_fluid_row("purity_confirmed_notes", 2, "col-md-6")
+        helper.add_row("cas", 2, "col-md-6")
+        helper.add_row("cas_inferred", 2, "col-md-6")
+        helper.add_row("source", 3, "col-md-4")
+        helper.add_row("purity_confirmed_notes", 2, "col-md-6")
         helper.addBtnLayout(
             helper.layout[3], 1, reverse("assessment:dtxsid_create"), "Add new DTXSID", "col-md-6"
         )
@@ -147,9 +147,9 @@ class IVCellTypeForm(forms.ModelForm):
 
         helper = BaseFormHelper(self, **inputs)
 
-        helper.add_fluid_row("species", 3, "col-md-4")
-        helper.add_fluid_row("cell_type", 2, "col-md-6")
-        helper.add_fluid_row("tissue", 2, "col-md-6")
+        helper.add_row("species", 3, "col-md-4")
+        helper.add_row("cell_type", 2, "col-md-6")
+        helper.add_row("tissue", 2, "col-md-6")
 
         return helper
 
@@ -226,13 +226,13 @@ class IVExperimentForm(forms.ModelForm):
 
         helper = BaseFormHelper(self, **inputs)
 
-        helper.add_fluid_row("name", 2, "col-md-6")
-        helper.add_fluid_row("transfection", 2, "col-md-6")
-        helper.add_fluid_row("dosing_notes", 2, "col-md-6")
-        helper.add_fluid_row("has_positive_control", 2, "col-md-6")
-        helper.add_fluid_row("has_negative_control", 2, "col-md-6")
-        helper.add_fluid_row("has_vehicle_control", 2, "col-md-6")
-        helper.add_fluid_row("control_notes", 2, "col-md-6")
+        helper.add_row("name", 2, "col-md-6")
+        helper.add_row("transfection", 2, "col-md-6")
+        helper.add_row("dosing_notes", 2, "col-md-6")
+        helper.add_row("has_positive_control", 2, "col-md-6")
+        helper.add_row("has_negative_control", 2, "col-md-6")
+        helper.add_row("has_vehicle_control", 2, "col-md-6")
+        helper.add_row("control_notes", 2, "col-md-6")
 
         return helper
 
@@ -354,15 +354,15 @@ class IVEndpointForm(forms.ModelForm):
 
         helper = BaseFormHelper(self, **inputs)
 
-        helper.add_fluid_row("name", 2, "col-md-6")
-        helper.add_fluid_row("chemical", 2, "col-md-6")
-        helper.add_fluid_row("assay_type", 2, "col-md-6")
-        helper.add_fluid_row("effect", 2, "col-md-6")
-        helper.add_fluid_row("data_type", 4, "col-md-3")
-        helper.add_fluid_row("observation_time", 4, "col-md-3")
-        helper.add_fluid_row("monotonicity", 3, "col-md-4")
-        helper.add_fluid_row("trend_test", 2, "col-md-6")
-        helper.add_fluid_row("endpoint_notes", 2, "col-md-6")
+        helper.add_row("name", 2, "col-md-6")
+        helper.add_row("chemical", 2, "col-md-6")
+        helper.add_row("assay_type", 2, "col-md-6")
+        helper.add_row("effect", 2, "col-md-6")
+        helper.add_row("data_type", 4, "col-md-3")
+        helper.add_row("observation_time", 4, "col-md-3")
+        helper.add_row("monotonicity", 3, "col-md-4")
+        helper.add_row("trend_test", 2, "col-md-6")
+        helper.add_row("endpoint_notes", 2, "col-md-6")
 
         url = reverse("assessment:effect_tag_create", kwargs={"pk": self.instance.assessment_id})
         helper.addBtnLayout(helper.layout[2], 1, url, "Add new effect tag", "col-md-6")
@@ -470,9 +470,9 @@ class IVEndpointFilterForm(forms.Form):
 
         helper.form_method = "GET"
 
-        helper.add_fluid_row("studies", 4, "col-md-3")
-        helper.add_fluid_row("cell_type", 4, "col-md-3")
-        helper.add_fluid_row("dose_units", 4, "col-md-3")
+        helper.add_row("studies", 4, "col-md-3")
+        helper.add_row("cell_type", 4, "col-md-3")
+        helper.add_row("dose_units", 4, "col-md-3")
 
         helper.layout.append(cfb.FormActions(cfl.Submit("submit", "Apply filters"),))
 
