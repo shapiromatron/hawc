@@ -45,10 +45,9 @@ class OutcomeDataPivot(FlatFileExporter):
         if self.queryset.first() is None:
             self.rob_headers, self.rob_data = {}, {}
         else:
+            study_ids = set(self.queryset.values_list("study_population__study_id", flat=True))
             self.rob_headers, self.rob_data = RiskOfBias.get_dp_export(
-                self.queryset.first().assessment_id,
-                set(self.queryset.values_list("study_population__study_id", flat=True)),
-                "epi",
+                self.queryset.first().assessment_id, study_ids, "epi",
             )
 
         headers = [
