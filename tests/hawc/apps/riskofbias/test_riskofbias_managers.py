@@ -1,7 +1,7 @@
 import re
 
 import pytest
-from django.core.exceptions import ValidationError
+from rest_framework.serializers import ValidationError
 
 from hawc.apps.myuser.models import HAWCUser
 from hawc.apps.riskofbias.models import RiskOfBias, RiskOfBiasScore

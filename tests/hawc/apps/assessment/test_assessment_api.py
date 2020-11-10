@@ -288,8 +288,6 @@ class TestDssToxViewset:
 class TestAssessment:
     def test_rob_bulk_copy(self, db_keys):
         client = APIClient()
-
-        # only admin can perform this action
         url = reverse("assessment:api:assessment-rob-bulk-copy")
         data = {
             "src_assessment_id": 1,
@@ -300,10 +298,17 @@ class TestAssessment:
             "author_mode": 1,
         }
 
+        # only admin can perform this action
         assert client.login(username="pm@pm.com", password="pw") is True
         resp = client.post(url, data, format="json")
         assert resp.status_code == 403
 
+        # valid request
         assert client.login(username="sudo@sudo.com", password="pw") is True
         resp = client.post(url, data, format="json")
         assert resp.status_code == 200
+
+        # invalid request
+        data["src_assessment_id"] = -1
+        resp = client.post(url, data, format="json")
+        assert resp.status_code == 400

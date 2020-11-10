@@ -3,9 +3,9 @@ from enum import IntEnum
 from typing import List, Tuple
 
 from django.apps import apps
-from django.core.exceptions import ValidationError
 from django.db import models, transaction
 from django.db.models import Case, Count, IntegerField, Sum, Value, When
+from rest_framework.serializers import ValidationError
 
 from ..common.models import BaseManager
 
@@ -98,9 +98,18 @@ class RiskOfBiasManager(BaseManager):
         except ValueError:
             raise ValidationError(f"Invalid author mode {author_mode}")
 
-        # src and dst assessments are different
+        # src and dst assessments exist and are different
         if src_assessment_id == dst_assessment_id:
             raise ValidationError("Source and destination assessments must be different")
+        Assessment = apps.get_model("assessment", "Assessment")
+        try:
+            Assessment.objects.get(pk=src_assessment_id)
+        except Assessment.DoesNotExist:
+            raise ValidationError("Invalid source assessment id")
+        try:
+            Assessment.objects.get(pk=dst_assessment_id)
+        except Assessment.DoesNotExist:
+            raise ValidationError("Invalid destination assessment id")
 
         # studies and metrics are unique
         src_study_ids = [src for src, _ in src_dst_study_ids]
