@@ -1,4 +1,5 @@
 import json
+from enum import IntEnum
 from typing import List, Tuple
 
 from django.apps import apps
@@ -47,6 +48,7 @@ class RiskOfBiasQuerySet(models.QuerySet):
 
 
 class RiskOfBiasManager(BaseManager):
+
     assessment_relation = "study__assessment"
 
     def get_queryset(self):
@@ -58,6 +60,18 @@ class RiskOfBiasManager(BaseManager):
     def active(self, assessment=None):
         return self.get_qs(assessment).filter(active=True, final=False)
 
+    class RoBCopyMode(IntEnum):
+        """Copy mode for bulk_copy"""
+
+        ORIGINAL = 1
+        FINAL_AS_INITIAL = 2
+
+    class RoBCopyAuthor(IntEnum):
+        """Author mode for bulk_copy"""
+
+        ORIGINAL = 1
+        OTHER = 2
+
     def validate_bulk_copy(
         self,
         src_assessment_id: int,
@@ -65,8 +79,24 @@ class RiskOfBiasManager(BaseManager):
         dst_author,
         src_dst_study_ids: List[Tuple[int, int]],
         src_dst_metric_ids: List[Tuple[int, int]],
-        final_only: bool,
+        copy_mode: int,
+        author_mode: int,
+        **kwargs,
     ):
+
+        # extra kwargs are invalid
+        if len(kwargs) > 0:
+            raise ValidationError(f"Invalid argument(s) {', '.join(kwargs.keys())}")
+
+        # copy and author modes must be valid
+        try:
+            copy_mode = self.RoBCopyMode(copy_mode)
+        except ValueError:
+            raise ValidationError(f"Invalid copy mode {copy_mode}")
+        try:
+            author_mode = self.RoBCopyAuthor(author_mode)
+        except ValueError:
+            raise ValidationError(f"Invalid author mode {author_mode}")
 
         # src and dst assessments are different
         if src_assessment_id == dst_assessment_id:
@@ -140,9 +170,20 @@ class RiskOfBiasManager(BaseManager):
 
         # all users who authored src riskofbiases are team member
         # or higher on dst assessment
-        # HAWCUser = apps.get_model("myuser", "HAWCUser")
-        # src_users = HAWCUser.objects.get(riskofbiases__study__in=src_study_ids)
-        # TODO
+        if author_mode is self.RoBCopyAuthor.ORIGINAL:
+            HAWCUser = apps.get_model("myuser", "HAWCUser")
+            src_users = HAWCUser.objects.filter(riskofbiases__study__in=src_study_ids)
+            src_user_ids = src_users.values_list("pk", flat=True)
+            _filters = models.Q(assessment_teams__pk=dst_assessment_id) | models.Q(
+                assessment_pms__pk=dst_assessment_id
+            )
+            dst_users = HAWCUser.objects.filter(_filters, pk__in=src_user_ids)
+            dst_user_ids = dst_users.values_list("pk", flat=True)
+            invalid_user_ids = set(src_user_ids) - set(dst_user_ids)
+            if len(invalid_user_ids) > 0:
+                raise ValidationError(
+                    f"User id(s) {', '.join([str(id) for id in invalid_user_ids])} cannot be copied"
+                )
 
     def bulk_copy(
         self,
@@ -151,8 +192,30 @@ class RiskOfBiasManager(BaseManager):
         dst_author,
         src_dst_study_ids: List[Tuple[int, int]],
         src_dst_metric_ids: List[Tuple[int, int]],
-        final_only: bool,
+        copy_mode: int,
+        author_mode: int,
+        **kwargs,
     ):
+        """
+        Bulk copy risk of bias data from source studies to destination studies.
+
+        Args:
+            src_assessment_id (int): Source assessment id
+            dst_assessment_id (int): Destination assessment id
+            dst_author (HAWCUser): Function calling user; will be
+                used as risk of bias author if author_mode OTHER is used
+            src_dst_study_ids (List[Tuple[int, int]]): Source study to destination study; format is [(src_study_id,dst_study_id),...]
+            src_dst_metric_ids (List[Tuple[int, int]]): Source metric to destination metric; format is [(src_metric_id,dst_metric_id),...]
+            copy_mode (int): Mode to use for RoB copy.
+                1 for ORIGINAL, where riskofbias is copied 1 to 1
+                2 for FINAL_AS_INITIAL, where final riskofbiases are set as active and non-final
+            author_mode (int): Mode to use for RoB authors.
+                1 for ORIGINAL, where original authors are used
+                2 for OTHER, where dst_author is set as author for risk of bias data
+
+        Returns:
+            Tuple[int, Dict]: Log id and risk of bias mappings from source to destination. This log captures the returned mapping.
+        """
 
         # validate the arguments
         self.validate_bulk_copy(
@@ -161,10 +224,14 @@ class RiskOfBiasManager(BaseManager):
             dst_author,
             src_dst_study_ids,
             src_dst_metric_ids,
-            final_only,
+            copy_mode,
+            author_mode,
+            **kwargs,
         )
 
         RiskOfBiasScore = apps.get_model("riskofbias", "RiskOfBiasScore")
+        copy_mode = self.RoBCopyMode(copy_mode)
+        author_mode = self.RoBCopyAuthor(author_mode)
 
         # create src to dst mapping
         src_to_dst = dict()
@@ -181,8 +248,9 @@ class RiskOfBiasManager(BaseManager):
         for riskofbias in src_riskofbiases:
             riskofbias.pk = None
             riskofbias.study_id = src_to_dst["study"][riskofbias.study_id]
-            riskofbias.author = dst_author
-            if final_only:
+            if author_mode is self.RoBCopyAuthor.OTHER:
+                riskofbias.author = dst_author
+            if copy_mode is self.RoBCopyMode.FINAL_AS_INITIAL:
                 riskofbias.final = False
                 riskofbias.active = True
             new_riskofbiases.append(riskofbias)
