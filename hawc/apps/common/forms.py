@@ -41,7 +41,7 @@ class BaseFormHelper(cf.FormHelper):
                 [
                     cfl.Submit("save", "Save"),
                     cfl.HTML(
-                        f'<a role="button" class="btn btn-default" href="{self.kwargs["cancel_url"]}">Cancel</a>'
+                        f'<a role="button" class="btn btn-light" href="{self.kwargs["cancel_url"]}">Cancel</a>'
                     ),
                 ],
             )

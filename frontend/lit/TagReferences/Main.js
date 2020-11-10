@@ -95,7 +95,7 @@ class TagReferencesMain extends Component {
                     {store.selectedReference ? (
                         <div>
                             <h4>Tags for current reference</h4>
-                            <div className="well well-small">
+                            <div className="well" style={{minHeight: "50px"}}>
                                 {selectedReferenceTags.map((tag, i) => (
                                     <span
                                         key={i}

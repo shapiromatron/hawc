@@ -96,9 +96,7 @@ class HAWCSetPasswordForm(SetPasswordForm):
         helper.layout.append(
             cfb.FormActions(
                 cfl.Submit("submit", "Change password"),
-                cfl.HTML(
-                    f'<a role="button" class="btn btn-default" href="{cancel_url}">Cancel</a>'
-                ),
+                cfl.HTML(f'<a role="button" class="btn btn-light" href="{cancel_url}">Cancel</a>'),
             )
         )
 
@@ -182,7 +180,7 @@ class RegisterForm(PasswordForm):
                 cfb.FormActions(
                     cfl.Submit("login", "Create account"),
                     cfl.HTML(
-                        f'<a role="button" class="btn btn-default" href="{login_url}">Cancel</a>'
+                        f'<a role="button" class="btn btn-light" href="{login_url}">Cancel</a>'
                     ),
                 ),
             ]
@@ -304,7 +302,7 @@ class HAWCAuthenticationForm(AuthenticationForm):
                 cfl.Submit("login", "Login"),
                 cfl.HTML(
                     f"""
-                <a role="button" class="btn btn-default" href="{reverse("home")}">Cancel</a>
+                <a role="button" class="btn btn-light" href="{reverse("home")}">Cancel</a>
                 <br>
                 <br>
                 <a href="{reverse("user:reset_password")}">Forgot your password?</a>
