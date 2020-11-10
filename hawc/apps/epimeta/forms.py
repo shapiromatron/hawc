@@ -250,13 +250,11 @@ class MetaResultFilterForm(forms.Form):
             if type(widget) not in [forms.CheckboxInput, forms.CheckboxSelectMultiple]:
                 widget.attrs["class"] = "col-md-12"
 
-        helper = BaseFormHelper(self)
+        helper = BaseFormHelper(self, form_actions=[cfl.Submit("submit", "Apply filters")])
 
         helper.form_method = "GET"
 
         helper.add_row("studies", 4, "col-md-3")
-
-        helper.layout.append(cfb.FormActions(cfl.Submit("submit", "Apply filters"),))
 
         return helper
 

@@ -862,7 +862,7 @@ class EndpointFilterForm(forms.Form):
             if type(widget) not in [forms.CheckboxInput, forms.CheckboxSelectMultiple]:
                 widget.attrs["class"] = "col-md-12"
 
-        helper = BaseFormHelper(self)
+        helper = BaseFormHelper(self, form_actions=[cfl.Submit("submit", "Apply filters")])
 
         helper.form_method = "GET"
 
@@ -870,8 +870,6 @@ class EndpointFilterForm(forms.Form):
         helper.add_row("species", 4, "col-md-3")
         helper.add_row("name", 4, "col-md-3")
         helper.add_row("tags", 4, "col-md-3")
-
-        helper.layout.append(cfb.FormActions(cfl.Submit("submit", "Apply filters"),))
 
         return helper
 
