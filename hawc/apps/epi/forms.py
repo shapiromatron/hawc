@@ -69,7 +69,9 @@ class CriteriaForm(forms.ModelForm):
             "help_text": self.CREATE_HELP_TEXT,
             "form_actions": [
                 cfl.Submit("save", "Save"),
-                cfl.HTML("""<a class="btn" href='#' onclick='window.close()'>Cancel</a>"""),
+                cfl.HTML(
+                    """<a class="btn btn-light" href='#' onclick='window.close()'>Cancel</a>"""
+                ),
             ],
         }
 
@@ -273,7 +275,9 @@ class AdjustmentFactorForm(forms.ModelForm):
             "help_text": self.CREATE_HELP_TEXT,
             "form_actions": [
                 cfl.Submit("save", "Save"),
-                cfl.HTML("""<a class="btn" href='#' onclick='window.close()'>Cancel</a>"""),
+                cfl.HTML(
+                    """<a class="btn btn-light" href='#' onclick='window.close()'>Cancel</a>"""
+                ),
             ],
         }
 

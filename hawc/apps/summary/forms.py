@@ -528,7 +528,7 @@ class SummaryTextForm(forms.ModelForm):
                 cfl.HTML(
                     '<a class="btn btn-danger" id="deleteSTBtn" href="#deleteST" data-toggle="modal">Delete</a>'
                 ),
-                cfl.HTML(f'<a class="btn" href="{cancel_url}" >Cancel</a>'),
+                cfl.HTML(f'<a class="btn btn-light" href="{cancel_url}" >Cancel</a>'),
             ]
         }
         helper = BaseFormHelper(self, **inputs)
@@ -1020,7 +1020,7 @@ class DataPivotSelectorForm(forms.Form):
                 the currently-selected data pivot.""",
             "form_actions": [
                 cfl.Submit("save", "Copy selected as new"),
-                cfl.HTML(f'<a href="{cancel_url}" class="btn">Cancel</a>'),
+                cfl.HTML(f'<a href="{cancel_url}" class="btn btn-light">Cancel</a>'),
             ],
         }
 

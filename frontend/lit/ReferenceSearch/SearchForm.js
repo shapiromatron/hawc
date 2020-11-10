@@ -118,7 +118,7 @@ class SearchForm extends Component {
                         <i className="fa fa-search"></i>&nbsp;Search
                     </button>
                     <span>&nbsp;</span>
-                    <button className="btn" type="button" onClick={() => resetForm()}>
+                    <button className="btn btn-light" type="button" onClick={() => resetForm()}>
                         Reset
                     </button>
                 </div>

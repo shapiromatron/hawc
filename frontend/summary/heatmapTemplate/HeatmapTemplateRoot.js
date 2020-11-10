@@ -32,7 +32,7 @@ class HeatmapTemplateRoot extends React.Component {
                         />
                         <button
                             style={{marginBottom: 10}}
-                            className="btn"
+                            className="btn btn-light"
                             onClick={() => flipAxes()}
                             title="flip axes">
                             <i className="fa fa-undo"></i>

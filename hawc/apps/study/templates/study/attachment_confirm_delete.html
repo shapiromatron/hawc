@@ -22,7 +22,7 @@
     <form action="." method="post">
       <div class="form-actions">
         <button type="submit" class="btn btn-primary">Delete attachment</button>
-        <a href="{{object.study.get_absolute_url}}" class="btn">Cancel</a>
+        <a href="{{object.study.get_absolute_url}}" class="btn btn-light">Cancel</a>
       </div>
       {% csrf_token %}
       </fieldset>

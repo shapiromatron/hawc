@@ -57,7 +57,7 @@
 
       <div class="form-actions">
         <button type="submit" class="btn btn-primary">{{ crud }} BMD settings</button>
-        <a class="btn" href="{% url 'bmd:assess_settings_detail' object.assessment.pk %}">Cancel</a>
+        <a class="btn btn-light" href="{% url 'bmd:assess_settings_detail' object.assessment.pk %}">Cancel</a>
       </div>
       {% csrf_token %}
     </fieldset>

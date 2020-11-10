@@ -16,7 +16,7 @@
     <form id="deleteForm" action="." method="post">
       <div class="form-actions">
         <button type="submit" class="btn btn-danger">Delete {{name}}</button>
-        <a href="{{object.get_absolute_url}}" class="btn">Cancel</a>
+        <a href="{{object.get_absolute_url}}" class="btn btn-light">Cancel</a>
       </div>
       {% csrf_token %}
       </fieldset>

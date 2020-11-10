@@ -25,7 +25,7 @@
     <form action="." method="post">
       <div class="form-actions">
         <button type="submit" class="btn btn-primary">{{ crud }} metric</button>
-        <a href="{% url 'riskofbias:arob_update' assessment.pk %}" class="btn">Cancel</a>
+        <a href="{% url 'riskofbias:arob_update' assessment.pk %}" class="btn btn-light">Cancel</a>
       </div>
       {% csrf_token %}
       </fieldset>

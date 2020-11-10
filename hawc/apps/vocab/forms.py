@@ -34,7 +34,9 @@ class CommentForm(forms.ModelForm):
             """,
             "form_actions": [
                 cfl.Submit("save", "Submit"),
-                cfl.HTML("""<a class="btn" href='#' onclick='window.close()'>Cancel</a>"""),
+                cfl.HTML(
+                    """<a class="btn btn-light" href='#' onclick='window.close()'>Cancel</a>"""
+                ),
             ],
         }
 

@@ -82,7 +82,7 @@ class StyleManager {
                     '<div class="style_fields"></div>' +
                     "</div>" +
                     '<div class="modal-footer">' +
-                    '<a href="#" class="btn" data-dismiss="modal" aria-hidden="true">Close</a>' +
+                    '<a href="#" class="btn btn-light" data-dismiss="modal" aria-hidden="true">Close</a>' +
                     "</div>" +
                     "</div>"
             ),
