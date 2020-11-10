@@ -4,7 +4,7 @@ from typing import List, Tuple
 
 from django.apps import apps
 from django.core.exceptions import ValidationError
-from django.db import models
+from django.db import models, transaction
 from django.db.models import Case, Count, IntegerField, Sum, Value, When
 
 from ..common.models import BaseManager
@@ -185,6 +185,7 @@ class RiskOfBiasManager(BaseManager):
                     f"User id(s) {', '.join([str(id) for id in invalid_user_ids])} cannot be copied"
                 )
 
+    @transaction.atomic
     def bulk_copy(
         self,
         src_assessment_id: int,
