@@ -1,6 +1,5 @@
 from functools import partial
 
-from crispy_forms import bootstrap as cfb
 from crispy_forms import layout as cfl
 from django import forms
 from django.db.models import Q
