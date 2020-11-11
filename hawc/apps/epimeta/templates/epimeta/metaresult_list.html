@@ -4,9 +4,9 @@
 {% block title %}{{assessment}} | Meta-analysis/pooled outcomes | HAWC {% endblock title %}
 
 {% block breadcrumbs %}
-  <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{ assessment }}</a><span class="divider">/</span></li>
-  <li><a href="{% url 'assessment:endpoint_list' assessment.pk %}">Endpoints</a><span class="divider">/</span></li>
-  <li class="active">Meta-analysis/pooled outcomes<span class="divider">/</span></li>
+  <li class="breadcrumb-item"><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{ assessment }}</a></li>
+  <li class="breadcrumb-item"><a href="{% url 'assessment:endpoint_list' assessment.pk %}">Endpoints</a></li>
+  <li class="breadcrumb-item active">Meta-analysis/pooled outcomes</li>
 {% endblock %}
 
 {% block content %}

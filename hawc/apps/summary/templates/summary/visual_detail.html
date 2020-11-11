@@ -4,10 +4,10 @@
 {% block title %}{{assessment}} | Visualizations | {{object}} {% endblock title %}
 
 {% block breadcrumbs %}
-  <li><a href="{{assessment.get_absolute_url}}">{{assessment}}</a><span class="divider">/</span></li>
-  <li><a href="{% url 'summary:visualization_list' assessment.pk %}">Visualizations</a><span class="divider">/</span></li>
+  <li class="breadcrumb-item"><a href="{{assessment.get_absolute_url}}">{{assessment}}</a></li>
+  <li class="breadcrumb-item"><a href="{% url 'summary:visualization_list' assessment.pk %}">Visualizations</a></li>
   {% block breadcrumbs_self %}
-    <li class="active">{{object}}<span class="divider">/</span></li>
+    <li class="breadcrumb-item active">{{object}}</li>
   {% endblock breadcrumbs_self %}
 {% endblock %}
 

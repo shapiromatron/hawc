@@ -6,14 +6,14 @@
 {% endblock title %}
 
 {% block breadcrumbs %}
-  <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{ assessment }}</a><span class="divider">/</span></li>
-  <li><a href="{% url 'summary:visualization_list' assessment.pk %}">Visualizations</a><span class="divider">/</span></li>
+  <li class="breadcrumb-item"><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{ assessment }}</a></li>
+  <li class="breadcrumb-item"><a href="{% url 'summary:visualization_list' assessment.pk %}">Visualizations</a></li>
   {% if crud == "Read" %}
-    <li class="active">{{object}}<span class="divider">/</span></li>
+    <li class="breadcrumb-item active">{{object}}</li>
   {% else %}
     <!-- Update or delete -->
-    <li><a href="{{object.get_absolute_url}}">{{object}}</a><span class="divider">/</span></li>
-    <li class="active">{{crud}}<span class="divider">/</span></li>
+    <li class="breadcrumb-item"><a href="{{object.get_absolute_url}}">{{object}}</a></li>
+    <li class="breadcrumb-item active">{{crud}}</li>
   {% endif %}
 {% endblock %}
 
