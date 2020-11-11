@@ -51,7 +51,7 @@ class TermSelector extends Component {
                                     })
                                 }></input>
                             <button
-                                className="btn"
+                                className="btn btn-light"
                                 type="button"
                                 onClick={() => {
                                     idLookupAction(this.state.idLookupValue);

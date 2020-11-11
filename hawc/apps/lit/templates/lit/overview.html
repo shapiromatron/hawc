@@ -68,7 +68,7 @@
         </tbody>
       </table>
 
-      <div class="well well-small">
+      <div class="well">
         <a class="btn btn-primary" href="{% url 'lit:ref_list' assessment.pk %}">View by tag</a>
         <a class="btn btn-primary" href="{% url 'lit:ref_visual' assessment.pk %}">Visualization</a>
         {% if user.is_beta_tester %}

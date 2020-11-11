@@ -1,4 +1,3 @@
-from crispy_forms import bootstrap as cfb
 from crispy_forms import layout as cfl
 from django import forms
 from django.contrib.auth import get_backends
@@ -89,18 +88,16 @@ class HAWCSetPasswordForm(SetPasswordForm):
             "help_text": "Enter a new password for your account.",
         }
 
-        helper = BaseFormHelper(self, **inputs)
-        helper.form_class = "loginForm"
-
         cancel_url = reverse("user:login")
-        helper.layout.append(
-            cfb.FormActions(
+        helper = BaseFormHelper(
+            self,
+            **inputs,
+            form_actions=[
                 cfl.Submit("submit", "Change password"),
-                cfl.HTML(
-                    f'<a role="button" class="btn btn-default" href="{cancel_url}">Cancel</a>'
-                ),
-            )
+                cfl.HTML(f'<a role="button" class="btn btn-light" href="{cancel_url}">Cancel</a>'),
+            ],
         )
+        helper.form_class = "loginForm"
 
         return helper
 
@@ -169,24 +166,19 @@ class RegisterForm(PasswordForm):
 
         inputs = {"legend_text": "Create an account"}
 
-        helper = BaseFormHelper(self, **inputs)
-        helper.form_class = "loginForm"
-
         login_url = reverse("user:login")
+        helper = BaseFormHelper(
+            self,
+            **inputs,
+            form_actions=[
+                cfl.Submit("login", "Create account"),
+                cfl.HTML(f'<a role="button" class="btn btn-light" href="{login_url}">Cancel</a>'),
+            ],
+        )
+        helper.form_class = "loginForm"
 
         txt = '&nbsp;<a href="#" data-toggle="modal" data-target="#license_modal">View license</a>'
         self.fields["license_v2_accepted"].help_text += txt
-
-        helper.layout.extend(
-            [
-                cfb.FormActions(
-                    cfl.Submit("login", "Create account"),
-                    cfl.HTML(
-                        f'<a role="button" class="btn btn-default" href="{login_url}">Cancel</a>'
-                    ),
-                ),
-            ]
-        )
 
         return helper
 
@@ -296,15 +288,14 @@ class HAWCAuthenticationForm(AuthenticationForm):
 
         inputs = {"legend_text": "HAWC login"}
 
-        helper = BaseFormHelper(self, **inputs)
-        helper.form_class = "loginForm"
-
-        helper.layout.append(
-            cfb.FormActions(
+        helper = BaseFormHelper(
+            self,
+            **inputs,
+            form_actions=[
                 cfl.Submit("login", "Login"),
                 cfl.HTML(
                     f"""
-                <a role="button" class="btn btn-default" href="{reverse("home")}">Cancel</a>
+                <a role="button" class="btn btn-light" href="{reverse("home")}">Cancel</a>
                 <br>
                 <br>
                 <a href="{reverse("user:reset_password")}">Forgot your password?</a>
@@ -313,8 +304,9 @@ class HAWCAuthenticationForm(AuthenticationForm):
                 <br>
                 """
                 ),
-            )
+            ],
         )
+        helper.form_class = "loginForm"
 
         return helper
 
@@ -356,17 +348,17 @@ class HAWCPasswordResetForm(PasswordResetForm):
             """,
         }
 
-        helper = BaseFormHelper(self, **inputs)
-        helper.form_class = "loginForm"
-
-        helper.layout.append(
-            cfb.FormActions(
+        helper = BaseFormHelper(
+            self,
+            **inputs,
+            form_actions=[
                 cfl.Submit("submit", "Send email confirmation"),
                 cfl.HTML(
                     f'<a role="button" class="btn btn-secondary" href="{reverse("user:login")}">Cancel</a>'
                 ),
-            )
+            ],
         )
+        helper.form_class = "loginForm"
 
         return helper
 

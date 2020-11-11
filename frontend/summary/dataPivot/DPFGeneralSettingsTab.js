@@ -97,7 +97,7 @@ let build_settings_general_tab = function(self) {
                                 <div class="legend_fields"></div>
                               </form>
                               <div class="modal-footer">
-                                <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+                                <button class="btn btn-light" data-dismiss="modal" aria-hidden="true">Close</button>
                               </div>
                             </div>`),
                 button_well = $('<div class="well">'),

@@ -364,8 +364,8 @@ class ReferenceForm(forms.ModelForm):
 
         helper = BaseFormHelper(self, **inputs)
         # TODO: use new names
-        helper.add_fluid_row("authors_short", 3, "col-md-4")
-        helper.add_fluid_row("authors", 2, "col-md-6")
+        helper.add_row("authors_short", 3, "col-md-4")
+        helper.add_row("authors", 2, "col-md-6")
 
         return helper
 
