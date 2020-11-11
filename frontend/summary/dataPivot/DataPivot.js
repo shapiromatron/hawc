@@ -138,17 +138,17 @@ class DataPivot {
         //build a td including buttons for movement
         var td = $("<td>"),
             up = $(
-                '<button class="btn btn-sm" title="move up"><i class="icon-arrow-up"></button>'
+                '<button class="btn btn-info btn-sm" title="move up"><i class="fa fa-arrow-up"></button>'
             ).on("click", function() {
                 DataPivot.move_row(arr, self, true);
             }),
             down = $(
-                '<button class="btn btn-sm" title="move down"><i class="icon-arrow-down"></button>'
+                '<button class="btn btn-info btn-sm mx-1" title="move down"><i class="fa fa-arrow-down"></button>'
             ).on("click", function() {
                 DataPivot.move_row(arr, self, false);
             }),
             del = $(
-                '<button class="btn btn-sm" title="remove"><i class="icon-remove"></button>'
+                '<button class="btn btn-danger btn-sm" title="remove"><i class="fa fa-trash"></button>'
             ).on("click", function() {
                 DataPivot.delete_row(arr, self);
             });

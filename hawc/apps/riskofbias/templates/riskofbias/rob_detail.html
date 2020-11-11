@@ -12,13 +12,12 @@
 
   <h2>{{object}}: {{assessment.get_rob_name_display}} review
   {% if obj_perms.edit %}
-      <div class="btn-group float-right">
-        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions
-          <span class="caret"></span>
-        </a>
-        <ul class="dropdown-menu">
-          <li class="disabled"><a tabindex="-1" href="#">{{assessment.get_rob_name_display}}</a></li>
-          <li><a href="{% url 'riskofbias:rob_detail_all' object.pk %}">View all reviews</a></li>
+      <div class="dropdown btn-group float-right">
+        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
+        <div class="dropdown-menu dropdown-menu-right">
+          <h6 class="dropdown-header">{{assessment.get_rob_name_display}}</h6>
+          <a class="dropdown-item" href="{% url 'riskofbias:rob_detail_all' object.pk %}">View all reviews</a>
+        </div>
       </div>
   {% endif %}
   </h2>

@@ -24,7 +24,7 @@ class TagNode extends Component {
                             window.localStorage.setItem(this.localStorageKey, newValue);
                             this.setState({expanded: newValue});
                         }}>
-                        <span className={this.state.expanded ? "icon-minus" : "icon-plus"}></span>
+                        <span className={this.state.expanded ? "fa fa-minus" : "fa fa-plus"}></span>
                     </span>
                 ) : null}
                 <p className="nestedTag" onClick={() => handleOnClick(tag)}>

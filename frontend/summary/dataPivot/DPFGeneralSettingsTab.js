@@ -153,14 +153,14 @@ let build_settings_general_tab = function(self) {
                     rectangle.on("change", update_viewer);
                 },
                 legend_item = self.legend.add_select(),
-                legend_item_up = $('<button><i class="icon-arrow-up"></i></button>').on(
+                legend_item_up = $('<button><i class="fa fa-arrow-up"></i></button>').on(
                     "click",
                     function() {
                         self.legend.move_field(legend_item.find("option:selected").data("d"), -1);
                         self.legend._draw_legend();
                     }
                 ),
-                legend_item_down = $('<button><i class="icon-arrow-down"></i></button>').on(
+                legend_item_down = $('<button><i class="fa fa-arrow-down"></i></button>').on(
                     "click",
                     function() {
                         self.legend.move_field(legend_item.find("option:selected").data("d"), 1);

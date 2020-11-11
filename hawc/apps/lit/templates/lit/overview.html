@@ -4,35 +4,36 @@
 {% endblock %}
 
 {% block breadcrumbs %}
-  <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{ assessment }}</a><span class="divider">/</span></li>
-  <li class="active">Literature Review<span class="divider">/</span></li>
+  <li class="breadcrumb-item"><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{ assessment }}</a></li>
+  <li class="breadcrumb-item active">Literature Review</li>
 {% endblock %}
 
 {% block content %}
   <h2>References for {{assessment}}
       {% if obj_perms.edit %}
-      <div class="btn-group float-right">
-        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions
-          <span class="caret"></span>
-        </a>
-        <ul class="dropdown-menu">
-          <li class="disabled"><a tabindex="-1" href="#">Search/import editing</a></li>
-          <li><a href="{% url 'lit:search_new' assessment.pk %}">New search</a></li>
-          <li><a href="{% url 'lit:import_new' assessment.pk %}">New import</a></li>
-          <li><a href="{% url 'lit:import_ris_new' assessment.pk %}">New import from file</a></li>
-          <li><a href="{% url 'lit:copy_search' assessment.pk %}">Copy search from existing</a></li>
-          <li class="disabled"><a tabindex="-1" href="#">Reference editing</a></li>
-          <li><a href="{% url 'study:new_ref' assessment.pk %}">Add new reference (manually)</a></li>
-          <li><a href="{% url 'lit:search_tags_edit' assessment.pk manual_import.slug %}">Tag manually-added references</a></li>
-          <li><a href="{% url 'lit:tag_untagged' assessment.pk %}">Tag untagged references</a></li>
+      <div class="dropdown btn-group float-right">
+        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
+        <div class="dropdown-menu dropdown-menu-right">
+          <h6 class="dropdown-header">Search/import editing</h6>
+          <a class="dropdown-item" href="{% url 'lit:search_new' assessment.pk %}">New search</a>
+          <a class="dropdown-item" href="{% url 'lit:import_new' assessment.pk %}">New import</a>
+          <a class="dropdown-item" href="{% url 'lit:import_ris_new' assessment.pk %}">New import from file</a>
+          <a class="dropdown-item" href="{% url 'lit:copy_search' assessment.pk %}">Copy search from existing</a>
+          <div class="dropdown-divider"></div>
+          <h6 class="dropdown-header">Reference editing</h6>
+          <a class="dropdown-item" href="{% url 'study:new_ref' assessment.pk %}">Add new reference (manually)</a>
+          <a class="dropdown-item" href="{% url 'lit:search_tags_edit' assessment.pk manual_import.slug %}">Tag manually-added references</a>
+          <a class="dropdown-item" href="{% url 'lit:tag_untagged' assessment.pk %}">Tag untagged references</a>
           {% if obj_perms.edit_assessment %}
-            <li class="disabled"><a tabindex="-1" href="#">Assessment-level editing</a></li>
-            <li><a href="{% url 'lit:tags_update' assessment.pk %}">Update literature tags</a></li>
-            <li><a href="{% url 'lit:ref_upload' assessment.pk %}">Upload full-text URLs</a></li>
+            <div class="dropdown-divider"></div>
+            <h6 class="dropdown-header">Assessment-level editing</h6>
+            <a class="dropdown-item" href="{% url 'lit:tags_update' assessment.pk %}">Update literature tags</a>
+            <a class="dropdown-item" href="{% url 'lit:ref_upload' assessment.pk %}">Upload full-text URLs</a>
           {% endif %}
-          <li class="disabled"><a tabindex="-1" href="#">Exports</a></li>
-          <li><a href="{% url 'lit:api:assessment-references-download' assessment.pk %}?format=xlsx">Download all references</a></li>
-        </ul>
+          <div class="dropdown-divider"></div>
+          <h6 class="dropdown-header">Exports</h6>
+          <a class="dropdown-item" href="{% url 'lit:api:assessment-references-download' assessment.pk %}?format=xlsx">Download all references</a>
+        </div>
       </div>
     {% endif %}
   </h2>

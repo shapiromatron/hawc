@@ -8,18 +8,18 @@
 
 {% block main_content %}
   <div class="row">
-    <ul class="breadcrumb">
+    <ol class="breadcrumb">
       {% if user.is_authenticated %}
-        <li class="active"><a href="{% url 'portal' %}">Home</a><span class="divider">/</span></li>
+        <li class="breadcrumb-item"><a href="{% url 'portal' %}">Home</a></li>
       {% else %}
-        <li class="active"><a href="{% url 'assessment:public_list' %}">Public Assessments</a><span class="divider">/</span></li>
+        <li class="breadcrumb-item"><a href="{% url 'assessment:public_list' %}">Public Assessments</a></li>
       {% endif %}
 
       {% block breadcrumbs %}
-        <li><a href="{{assessment.get_absolute_url}}">{{assessment}}</a><span class="divider">/</span></li>
-        <li class="active">Summary<span class="divider">/</span></li>
+        <li class="breadcrumb-item"><a href="{{assessment.get_absolute_url}}">{{assessment}}</a></li>
+        <li class="breadcrumb-item active">Summary</li>
       {% endblock breadcrumbs %}
-    </ul>
+    </ol>
   </div>
 
   <div class="row">
@@ -31,16 +31,14 @@
     <div class="col-md-9">
 
       <h1>{{assessment}} Summary
-        <div class="btn-group float-right">
-          <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions
-            <span class="caret"></span>
-          </a>
-          <ul class="dropdown-menu">
-            <li><a href="#" id="smart_tag_toggle">Toggle Smart-Tags</a></li>
+        <div class="dropdown btn-group float-right">
+          <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
+          <div class="dropdown-menu dropdown-menu-right">
+            <a class="dropdown-item" href="#" id="smart_tag_toggle">Toggle Smart-Tags</a>
             {% if obj_perms.edit %}
-              <li><a href="{% url 'summary:create' assessment.pk %}">Update text</a></li>
+              <a class="dropdown-item" href="{% url 'summary:create' assessment.pk %}">Update text</a>
             {% endif %}
-          </ul>
+          </div>
         </div>
       </h1>
 

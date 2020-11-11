@@ -64,20 +64,18 @@ class HAWCUtils {
     }
 
     static pageActionsButton(items) {
-        var $menu = $('<ul class="dropdown-menu">');
+        var $menu = $('<div class="dropdown-menu dropdown-menu-right">');
         items.forEach(function(d) {
             if (d instanceof Object) {
-                $menu.append(`<li><a href="${d.url}" class="${d.cls || ""}">${d.text}</a></li>`);
+                $menu.append(`<a href="${d.url}" class="dropdown-item">${d.text}</a>`);
             } else if (typeof d === "string") {
-                $menu.append(`<li class="disabled"><a tabindex="-1" href="#">${d}</a></li>`);
+                $menu.append(`<h6 class="dropdown-header">${d}</h6>`);
             } else {
                 console.error("unknown input type");
             }
         });
-        return $('<div class="btn-group float-right">')
-            .append(
-                '<a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions <span class="caret"></span></a>'
-            )
+        return $('<div class="dropdown btn-group float-right">')
+            .append('<a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>')
             .append($menu);
     }
 

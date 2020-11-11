@@ -68,7 +68,7 @@ class TableField extends InputField {
     thOrdering(options) {
         var th = $("<th>").html("Ordering&nbsp;"),
             add = $(
-                '<button class="btn btn-sm btn-primary" title="Add row"><i class="icon-plus icon-white"></button>'
+                '<button class="btn btn-sm btn-primary" title="Add row"><i class="fa fa-plus"></button>'
             ).on("click", this.addRow.bind(this));
 
         if (options.showNew) th.append(add);
@@ -92,17 +92,15 @@ class TableField extends InputField {
             td = $("<td>");
 
         td.append(
-            $('<button class="btn btn-sm" title="Move up"><i class="icon-arrow-up"></button>').on(
-                "click",
-                moveUp
-            ),
             $(
-                '<button class="btn btn-sm" title="Move down"><i class="icon-arrow-down"></button>'
+                '<button class="btn btn-sm btn-info" title="Move up"><i class="fa fa-arrow-up"></button>'
+            ).on("click", moveUp),
+            $(
+                '<button class="btn btn-sm btn-info mx-1" title="Move down"><i class="fa fa-arrow-down"></button>'
             ).on("click", moveDown),
-            $('<button class="btn btn-sm" title="Remove"><i class="icon-remove"></button>').on(
-                "click",
-                del
-            )
+            $(
+                '<button class="btn btn-sm btn-danger" title="Remove"><i class="fa fa-trash"></button>'
+            ).on("click", del)
         );
         return td;
     }

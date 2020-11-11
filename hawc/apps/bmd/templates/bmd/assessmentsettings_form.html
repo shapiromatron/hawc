@@ -7,8 +7,8 @@
 {% endblock title %}
 
 {% block breadcrumbs %}
-  <li><a href="{% url 'bmd:assess_settings_detail' assessment.pk %}">BMD Settings</a><span class="divider">/</span></li>
-  <li class="active"> {{crud}} <span class="divider">/</span></li>
+  <li class="breadcrumb-item"><a href="{% url 'bmd:assess_settings_detail' assessment.pk %}">BMD Settings</a></li>
+  <li class="breadcrumb-item active"> {{crud}} </li>
 {% endblock %}
 
 {% block content %}

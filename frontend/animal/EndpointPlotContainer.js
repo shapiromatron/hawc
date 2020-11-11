@@ -46,7 +46,7 @@ class EndpointPlotContainer {
                 cls: "btn btn-sm",
                 title: "View alternate visualizations",
                 text: "",
-                icon: "icon-circle-arrow-right",
+                icon: "fa fa-arrow-circle-right",
                 on_click() {
                     ep.toggle_views();
                 },
