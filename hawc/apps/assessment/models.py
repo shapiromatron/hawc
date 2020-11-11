@@ -916,6 +916,9 @@ class Log(models.Model):
     class Meta:
         ordering = ("-created",)
 
+    def get_api_url(self):
+        return reverse("assessment:api:logs", args=(self.id,))
+
 
 class Blog(models.Model):
     subject = models.CharField(max_length=128)

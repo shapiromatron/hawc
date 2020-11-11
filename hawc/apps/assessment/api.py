@@ -474,12 +474,6 @@ class Assessment(AssessmentViewset):
         serializer = serializers.LogSerializer(queryset, many=True)
         return Response(serializer.data)
 
-    @action(detail=False, methods=("post",), permission_classes=(IsAdminUser,))
-    def rob_bulk_copy(self, request):
-        RiskOfBias = apps.get_model("riskofbias", "RiskOfBias")
-        log_id, mapping = RiskOfBias.objects.bulk_copy(**request.data, dst_author=request.user)
-        return Response({"log_id": log_id, "mapping": mapping})
-
 
 class DatasetViewset(AssessmentViewset):
     model = models.Dataset

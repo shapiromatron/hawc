@@ -1,7 +1,14 @@
-from django.db import models
+import json
+from collections import defaultdict
+from typing import Any, ClassVar, Dict, List, Type
+
+import pydantic
+from django.db import models, transaction
 from django.shortcuts import get_object_or_404
-from rest_framework import exceptions, filters, mixins, permissions, viewsets
+from rest_framework import exceptions, filters, mixins, permissions, status, viewsets
 from rest_framework.decorators import action
+from rest_framework.exceptions import ValidationError
+from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.throttling import UserRateThrottle
 from rest_framework_extensions.mixins import ListUpdateModelMixin
@@ -155,3 +162,89 @@ def user_can_edit_object(
     if raise_exception and not can_edit:
         raise exceptions.PermissionDenied("Invalid permission to edit assessment.")
     return can_edit
+
+
+DataModel = Type[pydantic.BaseModel]
+
+
+class ApiActionRequest:
+    """
+    An API action that's not tied to a database model schema. Therefore, mapping to a drf
+    serializer is not ideal, and if bound to a pydantic data model, we can use type annotation
+    for much easier type inference and development.
+    """
+
+    input_model: ClassVar[DataModel]  # should be defined
+
+    def __init__(self, request: Request):
+        self.request = request
+        self.errors: Dict[str, List] = defaultdict(list)
+        self.inputs = None
+
+    def handle_request(self, atomic: bool = False) -> Response:
+        """Handle the API request and return a response
+
+        Args:
+            atomic (bool, optional): Should `execute` be wrapped in a transaction. Defaults to False.
+
+        Raises:
+            ValidationError: If request data is invalid
+
+        Returns:
+            Response: A drf Response object
+        """
+        # parse primitive data types
+        try:
+            self.inputs = self.input_model.parse_obj(self.request.data)
+        except pydantic.ValidationError as err:
+            return Response(data=json.loads(err.json()), status=status.HTTP_400_BAD_REQUEST)
+
+        # validate business logic
+        self.validate_business_logic()
+        if self.errors:
+            raise ValidationError(self.errors)
+
+        # check permissions
+        self.validate_permissions()
+
+        # perform action
+        if atomic:
+            with transaction.atomic():
+                response = self.evaluate()
+        else:
+            response = self.evaluate()
+
+        # return response
+        return Response(response)
+
+    def validate_business_logic(self):
+        """Validate input data beyond the primitive data types.
+
+        This method also frequently sets additional class attributes.
+
+        An example check:
+
+        if self.inputs.swallow == "brazil":
+            self.errors["swallow"].append("Only african or european are allowed")
+        """
+        pass
+
+    def validate_permissions(self):
+        """Any additional permission checks after business logic has been validated.
+
+        An example check may be:
+
+        if self.inputs.password != "password":
+            raise PermissionError("Wrong password")
+
+        Raises:
+            drf.PermissionDenied: Raises permission denied error post-validation
+        """
+        pass
+
+    def evaluate(self) -> Dict[str, Any]:
+        """
+        Perform the desired action of the request action. Returns a response type compatible
+        with the desired action
+        """
+        return {}
