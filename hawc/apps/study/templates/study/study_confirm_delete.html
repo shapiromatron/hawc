@@ -10,5 +10,5 @@
 
 {% block content %}
   {{ block.super }}
-  {% include "hawc/_delete_block.html" with name="study" notes="This will remove all data associated with this study as well, including detailed data extraction, BMD-modeling runs, etc." %}
+  {% include "hawc/_delete_block.html" with name="study" notes="This will remove all data associated with this study as well, including detailed data extraction, BMD-modeling runs, etc." confirm=True %}
 {% endblock content %}

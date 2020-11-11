@@ -365,6 +365,9 @@ class AttachmentDelete(BaseDelete):
     def get_success_url(self):
         return self.object.get_absolute_url()
 
+    def get_cancel_url(self) -> str:
+        return self.object.content_object.get_absolute_url()
+
 
 # Dataset views
 class DatasetCreate(BaseCreate):

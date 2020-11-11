@@ -13,23 +13,7 @@
 {% endblock %}
 
 {% block content %}
-
   <h1>{{object}}</h1>
   <p class='help-block'>{{object.description|safe}}</p>
-
-  {% if crud == "Delete" %}
-    <div class="alert alert-block">
-      <h4>Warning!</h4>
-      Are you sure you want to delete this {{assessment.get_rob_name_display|lower}} metric?
-    </div>
-    <form action="." method="post">
-      <div class="form-actions">
-        <button type="submit" class="btn btn-primary">{{ crud }} metric</button>
-        <a href="{% url 'riskofbias:arob_update' assessment.pk %}" class="btn">Cancel</a>
-      </div>
-      {% csrf_token %}
-      </fieldset>
-    </form>
-  {% endif %}
-
+  {% include "hawc/_delete_block.html" with name="metric" notes="This will remove any study evaluations with this metric." %}
 {% endblock %}

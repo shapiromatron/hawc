@@ -1,7 +1,5 @@
 {% extends 'portal.html' %}
 
-{% load add_class %}
-
 {% block title %}
   {% include "hawc/siteTitle.html" with crumbs=object.get_crumbs crud=crud %}
 {% endblock title %}
@@ -11,21 +9,8 @@
 {% endblock %}
 
 {% block content %}
-
-    <div class="alert alert-block">
-      <h4>Warning!</h4>
-      Are you sure you want to delete this attachment?
-    </div>
-
-    <a href="{{object.get_absolute_url}}">{{object}}</a>
-
-    <form action="." method="post">
-      <div class="form-actions">
-        <button type="submit" class="btn btn-primary">Delete attachment</button>
-        <a href="{{object.study.get_absolute_url}}" class="btn">Cancel</a>
-      </div>
-      {% csrf_token %}
-      </fieldset>
-    </form>
-
-{% endblock %}
+  <h1>Delete attachment?</h1>
+  <p><b>Selected attachment:</b> <a href="{{object.attachment.url}}">{{object}}</a></p>
+  <p>{{object.description|safe}}</p>
+  {% include "hawc/_delete_block.html" with name="attachment" notes="This will remove the attachment." %}
+{% endblock content %}

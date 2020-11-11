@@ -211,6 +211,9 @@ class RoBDomainDelete(BaseDelete):
     def get_success_url(self):
         return reverse_lazy("riskofbias:arob_update", kwargs={"pk": self.assessment.pk})
 
+    def get_cancel_url(self) -> str:
+        return reverse_lazy("riskofbias:arob_update", kwargs={"pk": self.assessment.pk})
+
 
 # Risk of bias metric views
 class RoBMetricCreate(BaseCreate):
@@ -238,6 +241,9 @@ class RoBMetricDelete(BaseDelete):
     model = models.RiskOfBiasMetric
 
     def get_success_url(self):
+        return reverse_lazy("riskofbias:arob_update", kwargs={"pk": self.assessment.pk})
+
+    def get_cancel_url(self) -> str:
         return reverse_lazy("riskofbias:arob_update", kwargs={"pk": self.assessment.pk})
 
 
