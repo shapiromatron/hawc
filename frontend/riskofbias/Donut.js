@@ -58,7 +58,7 @@ class Donut extends D3Plot {
             cls: "btn btn-sm",
             title: "Lock current view (shortcut: press ctrl to toggle)",
             text: "",
-            icon: "icon-lock",
+            icon: "fa fa-lock",
             on_click: () => this.toggle_lock_view(),
         });
     }

@@ -185,7 +185,7 @@ class Study {
 
         attachments.forEach(function(v) {
             ul.append(
-                `<li><a target="_blank" href="${v.url}">${v.filename}</a> <a class="float-right" title="Delete" href="${v.url_delete}"><i class="icon-trash"></i></a></li>`
+                `<li><a target="_blank" href="${v.url}">${v.filename}</a> <a class="float-right" title="Delete" href="${v.url_delete}"><i class="fa fa-trash"></i></a></li>`
             );
         });
         tbody.append(tr.append(td.append(ul)));

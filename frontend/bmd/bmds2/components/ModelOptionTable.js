@@ -37,7 +37,7 @@ class ModelOptionTable extends React.Component {
                         }}
                         type="button"
                         className="btn btn-sm">
-                        <i className="icon-plus" />
+                        <i className="fa fa-plus" />
                     </button>
 
                     <div className="dropdown btn-group float-right">

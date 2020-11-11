@@ -388,18 +388,17 @@ div.smart-tag.active {
 .affix-sidenav.affix {
     top: 30px;
 }
-.affix-sidenav .icon-chevron-right {
+.affix-sidenav .fa-chevron-right {
     float: right;
     margin-top: 2px;
     margin-right: -6px;
     opacity: 0.25;
 }
-.affix-sidenav a:hover .icon-chevron-right {
+.affix-sidenav a:hover .fa-chevron-right {
     opacity: 0.5;
 }
-.affix-sidenav .active .icon-chevron-right,
-.affix-sidenav .active a:hover .icon-chevron-right {
-    background-image: url(../img/glyphicons-halflings-white.png);
+.affix-sidenav .active .fa-chevron-right,
+.affix-sidenav .active a:hover .fa-chevron-right {
     opacity: 1;
 }
 @media (max-width: 1024px) {

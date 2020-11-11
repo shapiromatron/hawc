@@ -47,7 +47,7 @@ class EndpointTable {
             txt;
 
         if (this.endpoint.doses.length > 1) {
-            $('<a title="View alternate dose" href="#"><i class="icon-chevron-right"></i></a>')
+            $('<a title="View alternate dose" href="#"><i class="fa fa-chevron-right"></i></a>')
                 .on("click", function(e) {
                     e.preventDefault();
                     self.endpoint.toggle_dose_units();

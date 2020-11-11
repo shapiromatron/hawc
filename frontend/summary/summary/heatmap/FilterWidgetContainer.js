@@ -140,7 +140,7 @@ class FilterWidget extends Component {
                 <button
                     className="btn btn-sm float-right disabled"
                     title="No additional information">
-                    <i className="icon-eye-close"></i>
+                    <i className="fa fa-eye-slash"></i>
                 </button>
             );
         }
@@ -152,7 +152,7 @@ class FilterWidget extends Component {
                     className="btn btn-sm float-right"
                     onClick={() => showModalOnRow(extension, modalRows[0])}
                     title="View additional information">
-                    <i className="icon-eye-open"></i>
+                    <i className="fa fa-eye"></i>
                 </button>
             );
         }
@@ -161,7 +161,7 @@ class FilterWidget extends Component {
         else {
             return (
                 <button className="btn btn-sm float-right disabled" title="Too many results">
-                    <i className="icon-eye-open"></i>
+                    <i className="fa fa-eye"></i>
                 </button>
             );
         }

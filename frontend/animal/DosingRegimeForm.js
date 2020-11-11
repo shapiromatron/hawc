@@ -157,7 +157,7 @@ class DosingRegimeForm {
             th.append(select);
             if (j > 0) {
                 th.append(
-                    '<a href="#" class="remove_dose"> <i class="icon-remove-circle"></i></a>'
+                    '<a href="#" class="remove_dose"> <i class="fa fa-times-circle-o"></i></a>'
                 );
             }
             tr.append(th);
