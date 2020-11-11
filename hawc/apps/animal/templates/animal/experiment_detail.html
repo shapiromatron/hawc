@@ -13,18 +13,16 @@
     <h1>{{object}}
       {% if obj_perms.edit %}
         <div class="btn-group float-right">
-          <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions
-            <span class="caret"></span>
-          </a>
-          <ul class="dropdown-menu">
-              <li class="disabled"><a tabindex="-1" href="#">Experiment Editing</a></li>
+          <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
+          <div class="dropdown-menu dropdown-menu-right">
+              <h6 class="dropdown-header">Experiment Editing</h6>
               <li><a href="{% url 'animal:experiment_update' object.pk %}">Update</a></li>
               <li><a href="{% url 'animal:experiment_delete' object.pk %}">Delete</a></li>
-              <li class="divider"></li>
-              <li class="disabled"><a tabindex="-1" href="#">Animal Group Editing</a></li>
+              <div class="dropdown-divider"></div>
+              <h6 class="dropdown-header">Animal Group Editing</h6>
               <li><a href="{% url 'animal:animal_group_new' object.pk %}">Create new</a></li>
               <li><a href="{% url 'animal:animal_group_copy_selector' object.pk %}">Copy from existing</a></li>
-          </ul>
+          </div>
         </div>
       {% endif %}
     </h1>

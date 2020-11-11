@@ -68,9 +68,9 @@ code {
     -o-transition: all 0.5s ease-in-out;
     transition: all 0.5s ease-in-out;
 }
+
 /* Override bootstrap defaults */
-.dropdown-menu .disabled > a,
-.dropdown-menu .disabled > a:hover {
+.dropdown-header {
     color: #006dcc;
     font-weight: bold;
 }

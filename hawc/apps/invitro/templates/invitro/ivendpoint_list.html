@@ -6,9 +6,9 @@
 {% block title %}{{assessment}} | In vitro endpoints | HAWC {% endblock title %}
 
 {% block breadcrumbs %}
-  <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{ assessment }}</a><span class="divider">/</span></li>
-  <li><a href="{% url 'assessment:endpoint_list' assessment.pk %}">Endpoints</a><span class="divider">/</span></li>
-  <li class="active"><i>In vitro</i> endpoints<span class="divider">/</span></li>
+  <li class="breadcrumb-item"><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{ assessment }}</a></li>
+  <li class="breadcrumb-item"><a href="{% url 'assessment:endpoint_list' assessment.pk %}">Endpoints</a></li>
+  <li class="breadcrumb-item active"><i>In vitro</i> endpoints</li>
 {% endblock %}
 
 {% block content %}

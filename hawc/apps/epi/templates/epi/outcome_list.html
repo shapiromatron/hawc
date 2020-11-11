@@ -4,9 +4,9 @@
 {% block title %}{{assessment}} | Outcomes | HAWC {% endblock title %}
 
 {% block breadcrumbs %}
-  <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{ assessment }}</a><span class="divider">/</span></li>
-  <li><a href="{% url 'assessment:endpoint_list' assessment.pk %}">Endpoints</a><span class="divider">/</span></li>
-  <li class="active">Epidemiological outcomes<span class="divider">/</span></li>
+  <li class="breadcrumb-item"><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{ assessment }}</a></li>
+  <li class="breadcrumb-item"><a href="{% url 'assessment:endpoint_list' assessment.pk %}">Endpoints</a></li>
+  <li class="breadcrumb-item active">Epidemiological outcomes</li>
 {% endblock %}
 
 {% block content %}

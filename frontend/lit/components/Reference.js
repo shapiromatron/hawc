@@ -80,21 +80,21 @@ class Reference extends Component {
                             {authors}&nbsp;{year}
                         </span>
                         {showActions ? (
-                            <div className="btn-group float-right">
+                            <div className="dropdown btn-group float-right">
                                 <a className={actionsBtnClassName} data-toggle="dropdown">
-                                    Actions&nbsp;<span className="caret"></span>
+                                    Actions
                                 </a>
-                                <ul className="dropdown-menu">
-                                    <li>
-                                        <a href={data.editTagUrl}>Edit tags</a>
-                                    </li>
-                                    <li>
-                                        <a href={data.editReferenceUrl}>Edit reference</a>
-                                    </li>
-                                    <li>
-                                        <a href={data.deleteReferenceUrl}>Delete reference</a>
-                                    </li>
-                                </ul>
+                                <div className="dropdown-menu dropdown-menu-right">
+                                    <a className="dropdown-item" href={data.editTagUrl}>
+                                        Edit tags
+                                    </a>
+                                    <a className="dropdown-item" href={data.editReferenceUrl}>
+                                        Edit reference
+                                    </a>
+                                    <a className="dropdown-item" href={data.deleteReferenceUrl}>
+                                        Delete reference
+                                    </a>
+                                </div>
                             </div>
                         ) : null}
                     </div>
