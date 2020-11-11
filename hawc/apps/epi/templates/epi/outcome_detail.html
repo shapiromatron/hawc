@@ -12,23 +12,24 @@
 {% block content %}
     <h1>{{object.name}}
         {% if obj_perms.edit and crud == "Read" %}
-          <div class="btn-group float-right">
-            <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions
-              <span class="caret"></span>
-            </a>
-            <ul class="dropdown-menu">
-                <li class="disabled"><a tabindex="-1" href="#">Outcome editing</a></li>
-                <li><a href="{% url 'epi:outcome_update' object.pk %}">Update</a></li>
-                <li><a href="{% url 'epi:outcome_delete' pk=object.pk %}">Delete</a></li>
-                <li class="disabled"><a tabindex="-1" href="#">Results</a></li>
-                <li><a href="{% url 'epi:result_create' object.pk %}">Create</a></li>
-                <li><a href="{% url 'epi:result_copy_selector' object.pk %}">Copy as new</a></li>
+          <div class="dropdown btn-group float-right">
+            <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
+            <div class="dropdown-menu dropdown-menu-right">
+                <h6 class="dropdown-header">Outcome editing</h6>
+                <a class="dropdown-item" href="{% url 'epi:outcome_update' object.pk %}">Update</a>
+                <a class="dropdown-item" href="{% url 'epi:outcome_delete' pk=object.pk %}">Delete</a>
+
+                <div class="dropdown-divider"></div>
+                <h6 class="dropdown-header">Results</h6>
+                <a class="dropdown-item" href="{% url 'epi:result_create' object.pk %}">Create</a>
+                <a class="dropdown-item" href="{% url 'epi:result_copy_selector' object.pk %}">Copy as new</a>
                 {% if object.can_create_sets %}
-                  <li class="disabled"><a tabindex="-1" href="#">Comparison sets</a></li>
-                  <li><a href="{% url 'epi:cs_outcome_create' object.pk %}">Create</a></li>
-                  <li><a href="{% url 'epi:cs_outcome_copy_selector' object.pk %}">Copy from existing</a></li>
+                  <div class="dropdown-divider"></div>
+                  <h6 class="dropdown-header">Comparison sets</h6>
+                  <a class="dropdown-item" href="{% url 'epi:cs_outcome_create' object.pk %}">Create</a>
+                  <a class="dropdown-item" href="{% url 'epi:cs_outcome_copy_selector' object.pk %}">Copy from existing</a>
                 {% endif %}
-            </ul>
+            </div>
           </div>
         {% endif %}
     </h1>

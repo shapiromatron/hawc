@@ -35,17 +35,17 @@ class ReferenceTreeMain extends Component {
                 </div>
                 <div className="col-md-9">
                     {actions.length > 0 ? (
-                        <div className="btn-group float-right">
+                        <div className="dropdown btn-group float-right">
                             <a className="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-                                Actions <span className="caret"></span>
+                                Actions
                             </a>
-                            <ul className="dropdown-menu">
+                            <div className="dropdown-menu dropdown-menu-right">
                                 {actions.map((action, index) => (
-                                    <li key={index}>
-                                        <a href={action[0]}>{action[1]}</a>
-                                    </li>
+                                    <a key={index} className="dropdown-item" href={action[0]}>
+                                        {action[1]}
+                                    </a>
                                 ))}
-                            </ul>
+                            </div>
                         </div>
                     ) : null}
 

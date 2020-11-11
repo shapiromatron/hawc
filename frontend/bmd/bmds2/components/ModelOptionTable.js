@@ -40,32 +40,30 @@ class ModelOptionTable extends React.Component {
                         <i className="icon-plus" />
                     </button>
 
-                    <div className="btn-group float-right">
+                    <div className="dropdown btn-group float-right">
                         <a className="btn dropdown-toggle" data-toggle="dropdown">
                             Actions &nbsp;
                             <span className="caret" />
                         </a>
-                        <ul className="dropdown-menu">
-                            <li>
-                                <a
-                                    href="#"
-                                    onClick={event => {
-                                        event.preventDefault();
-                                        this.props.handleAddAll();
-                                    }}>
-                                    Add all models
-                                </a>
-                            </li>
-                            <li>
-                                <a
-                                    href="#"
-                                    onClick={event => {
-                                        event.preventDefault();
-                                        this.props.handleRemoveAll();
-                                    }}>
-                                    Remove all models
-                                </a>
-                            </li>
+                        <div className="dropdown-menu dropdown-menu-right">
+                            <a
+                                className="dropdown-item"
+                                href="#"
+                                onClick={event => {
+                                    event.preventDefault();
+                                    this.props.handleAddAll();
+                                }}>
+                                Add all models
+                            </a>
+                            <a
+                                className="dropdown-item"
+                                href="#"
+                                onClick={event => {
+                                    event.preventDefault();
+                                    this.props.handleRemoveAll();
+                                }}>
+                                Remove all models
+                            </a>
                             {showVariance ? (
                                 <li>
                                     <a
@@ -79,7 +77,7 @@ class ModelOptionTable extends React.Component {
                                     </a>
                                 </li>
                             ) : null}
-                        </ul>
+                        </div>
                     </div>
                 </div>
             </div>
