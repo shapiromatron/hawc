@@ -7,9 +7,9 @@
 {% endblock %}
 
 {% block breadcrumbs %}
-  <li><a href="{{assessment.get_absolute_url}}">{{assessment}}</a><span class="divider">/</span></li>
-  <li><a href="{% url 'riskofbias:arob_update' assessment.pk %}">{{assessment.get_rob_name_display}} requirements</a><span class="divider">/</span></li>
-  <li class="active">Delete {{object}} Domain<span class="divider">/</span></li>
+  <li class="breadcrumb-item"><a href="{{assessment.get_absolute_url}}">{{assessment}}</a></li>
+  <li class="breadcrumb-item"><a href="{% url 'riskofbias:arob_update' assessment.pk %}">{{assessment.get_rob_name_display}} requirements</a></li>
+  <li class="breadcrumb-item active">Delete {{object}} Domain</li>
 {% endblock %}
 
 {% block content %}

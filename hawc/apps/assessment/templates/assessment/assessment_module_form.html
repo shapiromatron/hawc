@@ -7,8 +7,8 @@
 {% endblock title %}
 
 {% block breadcrumbs %}
-    <li><a href="{{object.get_absolute_url}}">{{object}}</a><span class="divider">/</span></li>
-    <li class="active"> Update enabled modules <span class="divider">/</span></li>
+    <li class="breadcrumb-item"><a href="{{object.get_absolute_url}}">{{object}}</a></li>
+    <li class="breadcrumb-item active"> Update enabled modules </li>
 {% endblock breadcrumbs %}
 
 {% block extrastyle %}

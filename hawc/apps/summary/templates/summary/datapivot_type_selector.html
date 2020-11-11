@@ -5,9 +5,9 @@
 {% endblock %}
 
 {% block breadcrumbs %}
-  <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{ assessment }}</a><span class="divider">/</span></li>
-  <li><a href="{% url 'summary:visualization_list' assessment.id %}">Visualizations</a><span class="divider">/</span></li>
-  <li class='active'> Create new <span class="divider">/</span></li>
+  <li class="breadcrumb-item"><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{ assessment }}</a></li>
+  <li class="breadcrumb-item"><a href="{% url 'summary:visualization_list' assessment.id %}">Visualizations</a></li>
+  <li class="breadcrumb-item active"> Create new </li>
 {% endblock %}
 
 {% block content %}
