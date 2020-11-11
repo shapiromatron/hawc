@@ -6,9 +6,9 @@
 {% endblock %}
 
 {% block breadcrumbs %}
-  <li><a href="{{assessment.get_absolute_url}}">{{ assessment }}</a><span class="divider">/</span></li>
-  <li><a href="{% url 'mgmt:assessment_dashboard' assessment.pk %}">Management dashboard</a><span class="divider">/</span></li>
-  <li class="active">My assigned tasks<span class="divider">/</span></li>
+  <li class="breadcrumb-item"><a href="{{assessment.get_absolute_url}}">{{ assessment }}</a></li>
+  <li class="breadcrumb-item"><a href="{% url 'mgmt:assessment_dashboard' assessment.pk %}">Management dashboard</a></li>
+  <li class="breadcrumb-item active">My assigned tasks</li>
 {% endblock %}
 
 {% block content %}

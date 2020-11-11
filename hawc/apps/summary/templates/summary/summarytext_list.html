@@ -8,18 +8,18 @@
 
 {% block main_content %}
   <div class="row">
-    <ul class="breadcrumb">
+    <ol class="breadcrumb">
       {% if user.is_authenticated %}
-        <li class="active"><a href="{% url 'portal' %}">Home</a><span class="divider">/</span></li>
+        <li class="breadcrumb-item"><a href="{% url 'portal' %}">Home</a></li>
       {% else %}
-        <li class="active"><a href="{% url 'assessment:public_list' %}">Public Assessments</a><span class="divider">/</span></li>
+        <li class="breadcrumb-item"><a href="{% url 'assessment:public_list' %}">Public Assessments</a></li>
       {% endif %}
 
       {% block breadcrumbs %}
-        <li><a href="{{assessment.get_absolute_url}}">{{assessment}}</a><span class="divider">/</span></li>
-        <li class="active">Summary<span class="divider">/</span></li>
+        <li class="breadcrumb-item"><a href="{{assessment.get_absolute_url}}">{{assessment}}</a></li>
+        <li class="breadcrumb-item active">Summary</li>
       {% endblock breadcrumbs %}
-    </ul>
+    </ol>
   </div>
 
   <div class="row">

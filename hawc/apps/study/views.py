@@ -171,7 +171,10 @@ class AttachmentDelete(BaseDelete):
 
     def get_success_url(self):
         self.parent = self.object.study
-        return reverse_lazy("study:detail", kwargs={"pk": self.parent.pk})
+        return self.object.study.get_absolute_url()
+
+    def get_cancel_url(self) -> str:
+        return self.object.study.get_absolute_url()
 
 
 class AttachmentRead(BaseDetail):

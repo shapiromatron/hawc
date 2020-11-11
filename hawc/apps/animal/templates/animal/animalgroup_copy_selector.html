@@ -13,8 +13,8 @@
 {% endblock %}
 
 {% block breadcrumbs_self %}
-    <li><a href="{{object.get_absolute_url}}">{{object}}</a><span class="divider">/</span></li>
-    <li class="active">Copy animal group<span class="divider">/</span></li>
+<li class="breadcrumb-item"><a href="{{object.get_absolute_url}}">{{object}}</a></li>
+<li class="breadcrumb-item active">Copy animal group</li>
 {% endblock breadcrumbs_self %}
 
 {% block content %}

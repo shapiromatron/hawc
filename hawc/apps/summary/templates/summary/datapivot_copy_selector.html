@@ -7,8 +7,8 @@
 {% endblock title %}
 
 {% block breadcrumbs_self %}
-    <li><a href="{% url 'summary:visualization_list' assessment.id %}">Visualizations</a><span class="divider">/</span></li>
-    <li class="active">Copy existing data-pivot<span class="divider">/</span></li>
+<li class="breadcrumb-item"><a href="{% url 'summary:visualization_list' assessment.id %}">Visualizations</a></li>
+<li class="breadcrumb-item active">Copy existing data-pivot</li>
 {% endblock breadcrumbs_self %}
 
 {% block content %}

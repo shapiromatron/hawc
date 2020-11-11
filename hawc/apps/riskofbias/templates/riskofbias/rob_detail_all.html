@@ -6,8 +6,8 @@
 {% endblock %}
 
 {% block breadcrumbs_self %}
-  <li><a href="{% url 'riskofbias:rob_detail' object.pk %}">{{assessment.get_rob_name_display}}</a><span class="divider">/</span></li>
-  <li class="active"> All reviews <span class="divider">/</span></li>
+  <li class="breadcrumb-item"><a href="{% url 'riskofbias:rob_detail' object.pk %}">{{assessment.get_rob_name_display}}</a></li>
+  <li class="breadcrumb-item active"> All reviews </li>
 {% endblock %}
 
 {% block content %}
