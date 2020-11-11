@@ -46,3 +46,21 @@ class TestAboutPage:
         assert "counts" in response.context
         assert response.context["counts"]["assessments"] == 3
         assert response.context["counts"]["users"] == 5
+
+
+def test_unsupported_browser():
+    """
+    Ensure our unsupported browser warning will appear with some user agents
+    """
+    WARNING = "Your current browser has not been tested extensively"
+
+    uas = [
+        ("ie11", False),
+        ("firefox", True),
+    ]
+
+    for ua, valid in uas:
+        c = Client(HTTP_USER_AGENT=ua)
+        response = c.get("/")
+        assert response.context["UA_SUPPORTED"] is valid
+        assert (WARNING in response.content.decode("utf8")) is (not valid)
