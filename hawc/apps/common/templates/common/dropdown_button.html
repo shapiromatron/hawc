@@ -1,0 +1,16 @@
+{% if elements %}
+    <div class="dropdown btn-group float-right">
+        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
+        <div class="dropdown-menu dropdown-menu-right">
+            {% for element in elements %}
+                {% if element.type == "header" %}
+                    <h6 class="dropdown-header">{{element.inner}}</h6>
+                {% elif element.type == "item" %}
+                    <a class="dropdown-item" href="{{element.href}}">{{element.inner}}</a>
+                {% elif element.type == "divider" %}
+                    <div class="dropdown-divider"></div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+{% endif %}
