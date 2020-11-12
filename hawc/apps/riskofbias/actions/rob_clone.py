@@ -129,19 +129,18 @@ class BulkRobCopyAction(ApiActionRequest):
                 self.errors["user_ids"].append(msg)
 
         # if overwriting, a valid author id must be provided
-        if (
-            self.inputs.author_mode is BulkCopyAuthor.OVERWRITE
-            and self.inputs.dst_author_id is None
-        ):
-            self.errors["dst_author_id"].append("Author required when overwriting")
-            dst_author = HAWCUser.objects.filter(id=self.inputs.dst_author_id).first()
-
-            if dst_author is None:
-                self.errors["dst_author_id"].append("Author not found.")
-
-            if not dst_assessment.user_is_team_member_or_higher(dst_author):
-                msg = "Author is not part of destination assessment team."
-                self.errors["dst_author_id"].append(msg)
+        if self.inputs.author_mode is BulkCopyAuthor.OVERWRITE:
+            if self.inputs.dst_author_id is None:
+                self.errors["dst_author_id"].append(
+                    "dst_author_id required when author_mode overwrite."
+                )
+            else:
+                dst_author = HAWCUser.objects.filter(id=self.inputs.dst_author_id).first()
+                if dst_author is None:
+                    self.errors["dst_author_id"].append("Author not found.")
+                elif not dst_assessment.user_is_team_member_or_higher(dst_author):
+                    msg = "Author is not part of destination assessment team."
+                    self.errors["dst_author_id"].append(msg)
 
     def evaluate(self) -> Dict[str, Any]:
         # create src to dst mapping

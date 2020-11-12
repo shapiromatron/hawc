@@ -6,7 +6,7 @@ import pandas as pd
 import pydantic
 from django.db import models, transaction
 from django.shortcuts import get_object_or_404
-from rest_framework import exceptions, filters, mixins, permissions, status, viewsets
+from rest_framework import exceptions, filters, mixins, permissions, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
 from rest_framework.request import Request
