@@ -61,8 +61,8 @@
     "percent affected": null,
     "percent lower ci": null,
     "percent upper ci": null,
-    "RoB (domain 1: metric 1)": "{\"sortValue\": -1, \"display\": \"N/A\"}",
-    "Overall study confidence": "{\"sortValue\": -1, \"display\": \"N/A\"}"
+    "RoB (domain 1: metric 1)": "{\"sortValue\": 14, \"display\": \"Definitely high risk of bias\"}",
+    "Overall study confidence": "{\"sortValue\": 16, \"display\": \"Probably low risk of bias\"}"
   },
   {
     "study id": 7,
@@ -126,8 +126,8 @@
     "percent affected": null,
     "percent lower ci": null,
     "percent upper ci": null,
-    "RoB (domain 1: metric 1)": "{\"sortValue\": -1, \"display\": \"N/A\"}",
-    "Overall study confidence": "{\"sortValue\": -1, \"display\": \"N/A\"}"
+    "RoB (domain 1: metric 1)": "{\"sortValue\": 14, \"display\": \"Definitely high risk of bias\"}",
+    "Overall study confidence": "{\"sortValue\": 16, \"display\": \"Probably low risk of bias\"}"
   },
   {
     "study id": 7,
@@ -191,8 +191,8 @@
     "percent affected": null,
     "percent lower ci": null,
     "percent upper ci": null,
-    "RoB (domain 1: metric 1)": "{\"sortValue\": -1, \"display\": \"N/A\"}",
-    "Overall study confidence": "{\"sortValue\": -1, \"display\": \"N/A\"}"
+    "RoB (domain 1: metric 1)": "{\"sortValue\": 14, \"display\": \"Definitely high risk of bias\"}",
+    "Overall study confidence": "{\"sortValue\": 16, \"display\": \"Probably low risk of bias\"}"
   },
   {
     "study id": 7,
@@ -256,8 +256,8 @@
     "percent affected": null,
     "percent lower ci": null,
     "percent upper ci": null,
-    "RoB (domain 1: metric 1)": "{\"sortValue\": -1, \"display\": \"N/A\"}",
-    "Overall study confidence": "{\"sortValue\": -1, \"display\": \"N/A\"}"
+    "RoB (domain 1: metric 1)": "{\"sortValue\": 14, \"display\": \"Definitely high risk of bias\"}",
+    "Overall study confidence": "{\"sortValue\": 16, \"display\": \"Probably low risk of bias\"}"
   },
   {
     "study id": 7,
@@ -321,8 +321,8 @@
     "percent affected": null,
     "percent lower ci": null,
     "percent upper ci": null,
-    "RoB (domain 1: metric 1)": "{\"sortValue\": -1, \"display\": \"N/A\"}",
-    "Overall study confidence": "{\"sortValue\": -1, \"display\": \"N/A\"}"
+    "RoB (domain 1: metric 1)": "{\"sortValue\": 14, \"display\": \"Definitely high risk of bias\"}",
+    "Overall study confidence": "{\"sortValue\": 16, \"display\": \"Probably low risk of bias\"}"
   },
   {
     "study id": 7,
@@ -386,8 +386,8 @@
     "percent affected": null,
     "percent lower ci": null,
     "percent upper ci": null,
-    "RoB (domain 1: metric 1)": "{\"sortValue\": -1, \"display\": \"N/A\"}",
-    "Overall study confidence": "{\"sortValue\": -1, \"display\": \"N/A\"}"
+    "RoB (domain 1: metric 1)": "{\"sortValue\": 14, \"display\": \"Definitely high risk of bias\"}",
+    "Overall study confidence": "{\"sortValue\": 16, \"display\": \"Probably low risk of bias\"}"
   },
   {
     "study id": 7,
@@ -451,8 +451,8 @@
     "percent affected": null,
     "percent lower ci": null,
     "percent upper ci": null,
-    "RoB (domain 1: metric 1)": "{\"sortValue\": -1, \"display\": \"N/A\"}",
-    "Overall study confidence": "{\"sortValue\": -1, \"display\": \"N/A\"}"
+    "RoB (domain 1: metric 1)": "{\"sortValue\": 14, \"display\": \"Definitely high risk of bias\"}",
+    "Overall study confidence": "{\"sortValue\": 16, \"display\": \"Probably low risk of bias\"}"
   },
   {
     "study id": 7,
@@ -516,8 +516,8 @@
     "percent affected": null,
     "percent lower ci": null,
     "percent upper ci": null,
-    "RoB (domain 1: metric 1)": "{\"sortValue\": -1, \"display\": \"N/A\"}",
-    "Overall study confidence": "{\"sortValue\": -1, \"display\": \"N/A\"}"
+    "RoB (domain 1: metric 1)": "{\"sortValue\": 14, \"display\": \"Definitely high risk of bias\"}",
+    "Overall study confidence": "{\"sortValue\": 16, \"display\": \"Probably low risk of bias\"}"
   },
   {
     "study id": 7,
@@ -581,8 +581,8 @@
     "percent affected": null,
     "percent lower ci": null,
     "percent upper ci": null,
-    "RoB (domain 1: metric 1)": "{\"sortValue\": -1, \"display\": \"N/A\"}",
-    "Overall study confidence": "{\"sortValue\": -1, \"display\": \"N/A\"}"
+    "RoB (domain 1: metric 1)": "{\"sortValue\": 14, \"display\": \"Definitely high risk of bias\"}",
+    "Overall study confidence": "{\"sortValue\": 16, \"display\": \"Probably low risk of bias\"}"
   },
   {
     "study id": 7,
@@ -646,7 +646,7 @@
     "percent affected": null,
     "percent lower ci": null,
     "percent upper ci": null,
-    "RoB (domain 1: metric 1)": "{\"sortValue\": -1, \"display\": \"N/A\"}",
-    "Overall study confidence": "{\"sortValue\": -1, \"display\": \"N/A\"}"
+    "RoB (domain 1: metric 1)": "{\"sortValue\": 14, \"display\": \"Definitely high risk of bias\"}",
+    "Overall study confidence": "{\"sortValue\": 16, \"display\": \"Probably low risk of bias\"}"
   }
 ]
