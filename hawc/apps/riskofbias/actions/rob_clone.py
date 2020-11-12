@@ -6,7 +6,7 @@ import pydantic
 from django.db import models
 
 from hawc.apps.assessment.models import Assessment, Log
-from hawc.apps.common.api import ApiActionRequest
+from hawc.apps.common.actions import BaseApiAction
 from hawc.apps.myuser.models import HAWCUser
 from hawc.apps.riskofbias.models import RiskOfBias, RiskOfBiasMetric, RiskOfBiasScore
 from hawc.apps.study.models import Study
@@ -32,7 +32,13 @@ class BulkRobCopyData(pydantic.BaseModel):
     author_mode: BulkCopyAuthor
 
 
-class BulkRobCopyAction(ApiActionRequest):
+class BulkRobCopyAction(BaseApiAction):
+    """
+    Copy final scores from a subset of studies from one assessment as the scores in a
+    different assessment. Useful when an assessment is cloned or repurposed and existing
+    evaluations are should be used in a new evaluation.
+    """
+
     input_model = BulkRobCopyData
 
     def __init__(self, *args, **kwargs):
