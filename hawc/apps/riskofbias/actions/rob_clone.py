@@ -173,7 +173,7 @@ class BulkRobCopy(ApiActionRequest):
             if self.inputs.copy_mode is RoBCopyMode.FINAL_AS_INITIAL:
                 riskofbias.final = False
             new_riskofbiases.append(riskofbias)
-        dst_riskofbiases = RiskOfBiasScore.objects.bulk_create(new_riskofbiases)
+        dst_riskofbiases = RiskOfBias.objects.bulk_create(new_riskofbiases)
         src_to_dst["riskofbias"] = {
             src: dst.pk for src, dst in zip(src_riskofbias_ids, dst_riskofbiases)
         }

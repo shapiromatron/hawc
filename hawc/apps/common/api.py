@@ -1,6 +1,6 @@
 import json
 from collections import defaultdict
-from typing import Any, ClassVar, Dict, List, Type
+from typing import Any, ClassVar, Dict, List, Tuple, Type
 
 import pydantic
 from django.db import models, transaction
@@ -189,23 +189,18 @@ class ApiActionRequest:
 
         Raises:
             ValidationError: If request data is invalid
+            PermissionDenied: If permission is denied
 
         Returns:
             Response: A drf Response object
         """
-        # parse primitive data types
-        try:
-            self.inputs = self.input_model.parse_obj(self.request.data)
-        except pydantic.ValidationError as err:
-            return Response(data=json.loads(err.json()), status=status.HTTP_400_BAD_REQUEST)
 
-        # validate business logic
-        self.validate_business_logic()
-        if self.errors:
-            raise ValidationError(self.errors)
+        self.validate(raise_exception=True)
 
         # check permissions
-        self.validate_permissions()
+        has_permission, reason = self.has_permission()
+        if not has_permission:
+            raise exceptions.PermissionDenied(reason)
 
         # perform action
         if atomic:
@@ -216,6 +211,24 @@ class ApiActionRequest:
 
         # return response
         return Response(response)
+
+    def validate(self, raise_exception: bool = False):
+        # parse primitive data types
+        try:
+            self.inputs = self.input_model.parse_obj(self.request.data)
+        except pydantic.ValidationError as err:
+            self.errors = json.loads(err.json())
+
+        # validate business logic
+        if len(self.errors) == 0:
+            self.validate_business_logic()
+
+        if raise_exception and self.errors:
+            raise ValidationError(self.errors)
+
+    @property
+    def is_valid(self):
+        return self.inputs is not None and len(self.errors) == 0
 
     def validate_business_logic(self):
         """Validate input data beyond the primitive data types.
@@ -229,18 +242,13 @@ class ApiActionRequest:
         """
         pass
 
-    def validate_permissions(self):
+    def has_permission(self) -> Tuple[bool, str]:
         """Any additional permission checks after business logic has been validated.
 
-        An example check may be:
-
-        if self.inputs.password != "password":
-            raise PermissionError("Wrong password")
-
-        Raises:
-            drf.PermissionDenied: Raises permission denied error post-validation
+        Returns:
+            Tuple[bool, str]: has_permission, reason (if permission denied)
         """
-        pass
+        return True, ""
 
     def evaluate(self) -> Dict[str, Any]:
         """

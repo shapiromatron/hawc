@@ -98,6 +98,34 @@ class TestRiskOfBiasAssessmentViewset:
         assert response.status_code == 405
         assert json.loads(response.content) == {"detail": 'Method "POST" not allowed.'}
 
+    def test_rob_bulk_copy(self, db_keys):
+        client = APIClient()
+        url = reverse("riskofbias:api:assessment-bulk-rob-copy")
+        data = {
+            "src_assessment_id": 1,
+            "dst_assessment_id": 2,
+            "src_dst_study_ids": [(1, 5)],
+            "src_dst_metric_ids": [(1, 14), (2, 15)],
+            "copy_mode": 1,
+            "author_mode": 1,
+        }
+
+        # only admin can perform this action
+        assert client.login(username="pm@pm.com", password="pw") is True
+        resp = client.post(url, data, format="json")
+        assert resp.status_code == 403
+
+        # valid request
+        assert client.login(username="sudo@sudo.com", password="pw") is True
+        resp = client.post(url, data, format="json")
+        assert resp.status_code == 200
+        assert list(resp.data.keys()) == ["log_id", "log_url", "mapping"]
+
+        # invalid request
+        data["src_assessment_id"] = -1
+        resp = client.post(url, data, format="json")
+        assert resp.status_code == 400
+
 
 @pytest.mark.django_db
 def test_riskofbias_detail(db_keys):

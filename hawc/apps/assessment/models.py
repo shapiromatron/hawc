@@ -917,7 +917,7 @@ class Log(models.Model):
         ordering = ("-created",)
 
     def get_api_url(self):
-        return reverse("assessment:api:logs", args=(self.id,))
+        return reverse("assessment:api:logs-detail", args=(self.id,))
 
 
 class Blog(models.Model):
