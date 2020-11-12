@@ -12,16 +12,12 @@ from hawc.apps.riskofbias.models import RiskOfBias, RiskOfBiasMetric, RiskOfBias
 from hawc.apps.study.models import Study
 
 
-class RoBCopyMode(IntEnum):
-    """Copy mode for bulk_copy"""
-
-    ORIGINAL = 1  # src final riskofbias -> dest final risk of bias
-    FINAL_AS_INITIAL = 2  # src final riskofbias -> dest initial risk of bias
+class BulkCopyMode(IntEnum):
+    ALL_ACTIVE = 1  # src active riskofbias -> dest active risk of bias
+    FINAL_TO_INITIAL = 2  # src final riskofbias -> dest initial risk of bias
 
 
-class RoBCopyAuthor(IntEnum):
-    """Author mode for bulk_copy"""
-
+class BulkCopyAuthor(IntEnum):
     PRESERVE_ORIGINAL = 1  # original authors are preserved
     OVERWRITE = 2  # author for risk of bias data
 
@@ -32,11 +28,11 @@ class BulkRobCopyData(pydantic.BaseModel):
     dst_author_id: Optional[int]
     src_dst_study_ids: List[Tuple[int, int]]
     src_dst_metric_ids: List[Tuple[int, int]]
-    copy_mode: RoBCopyMode
-    author_mode: RoBCopyAuthor
+    copy_mode: BulkCopyMode
+    author_mode: BulkCopyAuthor
 
 
-class BulkRobCopy(ApiActionRequest):
+class BulkRobCopyAction(ApiActionRequest):
     input_model = BulkRobCopyData
 
     def __init__(self, *args, **kwargs):
@@ -114,7 +110,7 @@ class BulkRobCopy(ApiActionRequest):
             self.errors["src_dst_metric_ids"].append(msg)
 
         # all users who authored src riskofbiases are team member or higher on dst assessment
-        if self.inputs.author_mode is RoBCopyAuthor.PRESERVE_ORIGINAL:
+        if self.inputs.author_mode is BulkCopyAuthor.PRESERVE_ORIGINAL:
             src_user_ids = (
                 RiskOfBias.objects.filter(study__in=src_study_ids, active=True, final=True)
                 .order_by("author_id")
@@ -133,7 +129,10 @@ class BulkRobCopy(ApiActionRequest):
                 self.errors["user_ids"].append(msg)
 
         # if overwriting, a valid author id must be provided
-        if self.inputs.author_mode is RoBCopyAuthor.OVERWRITE and self.inputs.dst_author_id is None:
+        if (
+            self.inputs.author_mode is BulkCopyAuthor.OVERWRITE
+            and self.inputs.dst_author_id is None
+        ):
             self.errors["dst_author_id"].append("Author required when overwriting")
             dst_author = HAWCUser.objects.filter(id=self.inputs.dst_author_id).first()
 
@@ -154,13 +153,11 @@ class BulkRobCopy(ApiActionRequest):
 
         src_study_ids, dst_study_ids = map(list, zip(*self.inputs.src_dst_study_ids))
 
-        # make existing dst RiskOfBias inactive
-        RiskOfBias.objects.filter(study_id__in=dst_study_ids).update(active=False)
-
         # get src RiskOfBias
-        src_riskofbiases = RiskOfBias.objects.filter(
-            study_id__in=src_study_ids, active=True, final=True
-        )
+        filters = dict(study_id__in=src_study_ids, active=True)
+        if self.inputs.copy_mode is BulkCopyMode.FINAL_TO_INITIAL:
+            filters.update(final=True)
+        src_riskofbiases = RiskOfBias.objects.filter(**filters)
         src_riskofbias_ids = src_riskofbiases.values_list("pk", flat=True)
 
         # create new RiskOfBias and add to mapping
@@ -168,12 +165,19 @@ class BulkRobCopy(ApiActionRequest):
         for riskofbias in src_riskofbiases:
             riskofbias.pk = None
             riskofbias.study_id = src_to_dst["study"][riskofbias.study_id]
-            if self.inputs.author_mode is RoBCopyAuthor.OVERWRITE:
+            if self.inputs.author_mode is BulkCopyAuthor.OVERWRITE:
                 riskofbias.author_id = self.inputs.dst_author_id
-            if self.inputs.copy_mode is RoBCopyMode.FINAL_AS_INITIAL:
+            if self.inputs.copy_mode is BulkCopyMode.FINAL_TO_INITIAL:
                 riskofbias.final = False
             new_riskofbiases.append(riskofbias)
+
+        if self.inputs.copy_mode is BulkCopyMode.ALL_ACTIVE:
+            # make existing dst RiskOfBias inactive, since we're replacing with copies
+            RiskOfBias.objects.filter(active=True, study_id__in=dst_study_ids).update(active=False)
+
+        # copy new
         dst_riskofbiases = RiskOfBias.objects.bulk_create(new_riskofbiases)
+
         src_to_dst["riskofbias"] = {
             src: dst.pk for src, dst in zip(src_riskofbias_ids, dst_riskofbiases)
         }

@@ -1,7 +1,8 @@
 import json
 from collections import defaultdict
-from typing import Any, ClassVar, Dict, List, Tuple, Type
+from typing import Any, ClassVar, Dict, List, Tuple, Type, Union
 
+import pandas as pd
 import pydantic
 from django.db import models, transaction
 from django.shortcuts import get_object_or_404
@@ -176,12 +177,25 @@ class ApiActionRequest:
 
     input_model: ClassVar[DataModel]  # should be defined
 
-    def __init__(self, request: Request):
-        self.request = request
+    def __init__(self, data: Dict):
+        self.data = data
         self.errors: Dict[str, List] = defaultdict(list)
         self.inputs = None
 
-    def handle_request(self, atomic: bool = False) -> Response:
+    @classmethod
+    def format_request_data(cls, request: Request) -> Dict:
+        """Convert a request into a dictionary of data for the action request
+
+        Args:
+            request (Request): The incoming request
+
+        Returns:
+            Dict: A valid dictionary ready for the action
+        """
+        return request.data
+
+    @classmethod
+    def handle_request(cls, request: Request, atomic: bool = False) -> Response:
         """Handle the API request and return a response
 
         Args:
@@ -194,20 +208,21 @@ class ApiActionRequest:
         Returns:
             Response: A drf Response object
         """
+        instance = cls(data=cls.format_request_data(request))
 
-        self.validate(raise_exception=True)
+        instance.validate(raise_exception=True)
 
         # check permissions
-        has_permission, reason = self.has_permission()
+        has_permission, reason = instance.has_permission()
         if not has_permission:
             raise exceptions.PermissionDenied(reason)
 
         # perform action
         if atomic:
             with transaction.atomic():
-                response = self.evaluate()
+                response = instance.evaluate()
         else:
-            response = self.evaluate()
+            response = instance.evaluate()
 
         # return response
         return Response(response)
@@ -215,7 +230,7 @@ class ApiActionRequest:
     def validate(self, raise_exception: bool = False):
         # parse primitive data types
         try:
-            self.inputs = self.input_model.parse_obj(self.request.data)
+            self.inputs = self.input_model.parse_obj(self.data)
         except pydantic.ValidationError as err:
             self.errors = json.loads(err.json())
 
@@ -250,7 +265,7 @@ class ApiActionRequest:
         """
         return True, ""
 
-    def evaluate(self) -> Dict[str, Any]:
+    def evaluate(self) -> Union[Dict[str, Any], pd.DataFrame]:
         """
         Perform the desired action of the request action. Returns a response type compatible
         with the desired action

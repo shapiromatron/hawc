@@ -25,7 +25,7 @@ from ..mgmt.models import Task
 from ..riskofbias import exports
 from ..study.models import Study
 from . import models, serializers
-from .actions.rob_clone import BulkRobCopy
+from .actions.rob_clone import BulkRobCopyAction
 
 
 class RiskOfBiasAssessmentViewset(
@@ -70,8 +70,7 @@ class RiskOfBiasAssessmentViewset(
         """
         Bulk copy risk of bias responses from one assessment to another.
         """
-        action = BulkRobCopy(request)
-        return action.handle_request(atomic=True)
+        return BulkRobCopyAction.handle_request(request, atomic=True)
 
 
 class RiskOfBiasDomain(viewsets.ReadOnlyModelViewSet):
