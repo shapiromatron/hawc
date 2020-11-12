@@ -43,27 +43,26 @@ class ModelOptionTable extends React.Component {
                         onClick={this.handleCreateModel.bind(this)}
                         type="button"
                         className="btn btn-sm">
-                        <i className="icon-plus" />
+                        <i className="fa fa-plus" />
                     </button>
 
-                    <div className="btn-group float-right">
+                    <div className="dropdown btn-group float-right">
                         <a className="btn dropdown-toggle" data-toggle="dropdown">
                             Actions &nbsp;
                             <span className="caret" />
                         </a>
-                        <ul className="dropdown-menu">
-                            <li>
-                                <a href="#" onClick={this.props.handleAddAll}>
-                                    Add all models
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#" onClick={this.props.handleRemoveAll}>
-                                    Remove all models
-                                </a>
-                            </li>
+                        <div className="dropdown-menu dropdown-menu-right">
+                            <a className="dropdown-item" href="#" onClick={this.props.handleAddAll}>
+                                Add all models
+                            </a>
+                            <a
+                                className="dropdown-item"
+                                href="#"
+                                onClick={this.props.handleRemoveAll}>
+                                Remove all models
+                            </a>
                             {this.renderToggleVarianceBtn()}
-                        </ul>
+                        </div>
                     </div>
                 </div>
             </div>

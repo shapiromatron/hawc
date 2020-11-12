@@ -46,7 +46,7 @@ class InteractiveCell extends Component {
                         className="btn btn-sm float-right"
                         onClick={() => store.showModalOnRow(extension, row)}
                         title="View additional information">
-                        <i className="icon-eye-open"></i>
+                        <i className="fa fa-eye"></i>
                     </button>
                 ) : null}
             </td>

@@ -18,7 +18,7 @@ class RobTaskRow extends Component {
                     <a href={`/study/${study_id}/`}>{study_name}</a>
                 </td>
                 <td>
-                    <a className="btn" href={url_edit}>
+                    <a className="btn btn-light" href={url_edit}>
                         <i className="fa fa-edit" /> {robText}
                     </a>
                 </td>

@@ -58,7 +58,8 @@ class HAWCModal {
         var noClose = (options && options.noClose) || false,
             $el = this.$modalDiv.find(".modal-footer");
         $el.html(html);
-        if (!noClose) $el.append('<button class="btn" data-dismiss="modal">Close</button>');
+        if (!noClose)
+            $el.append('<button class="btn btn-light" data-dismiss="modal">Close</button>');
         return this;
     }
 

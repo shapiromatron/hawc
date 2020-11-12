@@ -7,8 +7,8 @@
 {% endblock title %}
 
 {% block breadcrumbs %}
-  <li><a href="{% url 'bmd:assess_settings_detail' assessment.pk %}">BMD Settings</a><span class="divider">/</span></li>
-  <li class="active"> {{crud}} <span class="divider">/</span></li>
+  <li class="breadcrumb-item"><a href="{% url 'bmd:assess_settings_detail' assessment.pk %}">BMD Settings</a></li>
+  <li class="breadcrumb-item active"> {{crud}} </li>
 {% endblock %}
 
 {% block content %}
@@ -33,9 +33,9 @@
       <div class="form-actions">
         <button type="submit" class="btn btn-primary">{{ crud }} BMD settings</button>
         {% if crud == "Update" %}
-          <a href="{% url 'bmd:assess_settings_detail' assessment.pk %}" class="btn">Cancel</a>
+          <a href="{% url 'bmd:assess_settings_detail' assessment.pk %}" class="btn btn-light">Cancel</a>
         {% else %}
-          <a href="{% url 'assessment:detail' assessment.pk %}" class="btn">Cancel</a>
+          <a href="{% url 'assessment:detail' assessment.pk %}" class="btn btn-light">Cancel</a>
         {% endif %}
       </div>
       {% csrf_token %}

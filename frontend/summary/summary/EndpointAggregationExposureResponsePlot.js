@@ -383,7 +383,7 @@ class EndpointAggregationExposureResponsePlot extends D3Visualization {
             cls: "btn btn-sm",
             title: "Change x-axis scale (shortcut: click the x-axis label)",
             text: "",
-            icon: "icon-resize-horizontal",
+            icon: "fa fa-arrows-h",
             on_click: this.toggle_x_axis.bind(this),
         });
     }

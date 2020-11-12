@@ -7,10 +7,10 @@
 {% endblock %}
 
 {% block breadcrumbs %}
-  <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{ assessment }}</a><span class="divider">/</span></li>
-  <li><a href="{% url 'lit:overview' assessment.pk %}">Literature Review</a><span class="divider">/</span></li>
-  <li><a href="{% url 'lit:tags_update' assessment.pk %}">Update Tags</a><span class="divider">/</span></li>
-  <li class="active">Copy Tags<span class="divider">/</span></li>
+  <li class="breadcrumb-item"><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{ assessment }}</a></li>
+  <li class="breadcrumb-item"><a href="{% url 'lit:overview' assessment.pk %}">Literature Review</a></li>
+  <li class="breadcrumb-item"><a href="{% url 'lit:tags_update' assessment.pk %}">Update Tags</a></li>
+  <li class="breadcrumb-item active">Copy Tags</li>
 {% endblock %}
 
 {% block content %}
@@ -37,7 +37,7 @@
         {% endfor %}
       </fieldset>
 
-      <div class="alert alert-block">
+      <div class="alert alert-warning">
         <a class="close" href="#" data-dismiss="alert">×</a>
         <h4>Warning!</h4>
         <p>Copying tags from another assessment will remove ALL existing tags, and will
@@ -53,7 +53,7 @@
       <div class="row">
         <div class="form-actions">
           <button type="submit" class="btn btn-primary">Copy tags from existing assessment</button>
-          <a class="btn" href="{% url 'lit:tags_update' assessment.pk %}">Cancel</a>
+          <a class="btn btn-light" href="{% url 'lit:tags_update' assessment.pk %}">Cancel</a>
         </div>
       </div>
 

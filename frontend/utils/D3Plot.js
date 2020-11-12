@@ -532,11 +532,11 @@ class D3Plot {
 
     _add_download_buttons() {
         var plot = this,
-            group = $('<div class="float-right btn-group"></div>'),
+            group = $('<div class="dropdown float-right btn-group"></div>'),
             dropdown = $(
-                '<a title="Download figure" class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" href="#"><i class="fa fa-download"></i></a>'
+                '<a title="Download figure" class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" href="#"><i class="fa fa-fw fa-download"></i></a>'
             ),
-            dropdown_div = $('<ul class="dropdown-menu"></ul>'),
+            dropdown_div = $('<div class="dropdown-menu dropdown-menu-right">'),
             svg = $('<a class="dropdown-item" href="#">Download as a SVG</a>').on("click", function(
                 e
             ) {

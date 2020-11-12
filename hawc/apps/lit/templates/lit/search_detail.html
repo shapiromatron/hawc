@@ -5,11 +5,11 @@
 {% endblock %}
 
 {% block breadcrumbs %}
-  <li><a href="{{assessment.get_absolute_url}}">{{assessment}}</a><span class="divider">/</span></li>
-  <li><a href="{% url 'lit:overview' assessment.pk %}">Literature Review</a><span class="divider">/</span></li>
-  <li><a href="{% url 'lit:search_list' object.assessment.pk %}">Searches & Imports</a><span class="divider">/</span></li>
+  <li class="breadcrumb-item"><a href="{{assessment.get_absolute_url}}">{{assessment}}</a></li>
+  <li class="breadcrumb-item"><a href="{% url 'lit:overview' assessment.pk %}">Literature Review</a></li>
+  <li class="breadcrumb-item"><a href="{% url 'lit:search_list' object.assessment.pk %}">Searches & Imports</a></li>
   {% block breadcrumbs_self %}
-    <li class="active">{{object.title}}<span class="divider">/</span></li>
+    <li class="breadcrumb-item active">{{object.title}}</li>
   {% endblock breadcrumbs_self %}
 {% endblock %}
 
@@ -17,18 +17,17 @@
 
   <h1>{{object}}
     {% if crud == "Read" %}
-      <div class="btn-group float-right">
-        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions <span class="caret"></span></a>
-        <ul class="dropdown-menu">
+      <div class="dropdown btn-group float-right">
+        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
+        <div class="dropdown-menu dropdown-menu-right">
           {% if obj_perms.edit %}
             {% if not object.is_manual_import %}
-              <li><a href="{% url 'lit:search_update' object.assessment.pk object.slug %}">Update {{object.get_search_type_display|lower}}</a></li>
-              <li><a href="{% url 'lit:search_delete' object.assessment.pk object.slug %}">Delete {{object.get_search_type_display|lower}}</a></li>
+              <a class="dropdown-item" href="{% url 'lit:search_update' object.assessment.pk object.slug %}">Update {{object.get_search_type_display|lower}}</a>
+              <a class="dropdown-item" href="{% url 'lit:search_delete' object.assessment.pk object.slug %}">Delete {{object.get_search_type_display|lower}}</a>
             {% endif %}
           {% endif %}
-
-          <li><a href="{% url 'lit:api:search-references' object.id %}?format=xlsx">Download to Excel</a></li>
-        </ul>
+          <a class="dropdown-item" href="{% url 'lit:api:search-references' object.id %}?format=xlsx">Download to Excel</a>
+        </div>
       </div>
     {% endif %}
   </h1>

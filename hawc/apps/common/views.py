@@ -382,11 +382,15 @@ class BaseDelete(AssessmentPermissionsMixin, MessageMixin, DeleteView):
         self.send_message()
         return HttpResponseRedirect(success_url)
 
+    def get_cancel_url(self) -> str:
+        return self.object.get_absolute_url()
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["assessment"] = self.assessment
         context["crud"] = self.crud
         context["obj_perms"] = super().get_obj_perms()
+        context["cancel_url"] = self.get_cancel_url()
         return context
 
 

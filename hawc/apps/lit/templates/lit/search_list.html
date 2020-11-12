@@ -5,25 +5,23 @@
 {% endblock %}
 
 {% block breadcrumbs %}
-  <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{ assessment }}</a><span class="divider">/</span></li>
-  <li><a href="{% url 'lit:overview' assessment.pk %}">Literature Review</a><span class="divider">/</span></li>
-  <li class="active">Searches & Imports<span class="divider">/</span></li>
+  <li class="breadcrumb-item"><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{ assessment }}</a></li>
+  <li class="breadcrumb-item"><a href="{% url 'lit:overview' assessment.pk %}">Literature Review</a></li>
+  <li class="breadcrumb-item active">Searches & Imports</li>
 {% endblock %}
 
 {% block content %}
 
   <h1>Literature Searches & Imports
     {% if obj_perms.edit %}
-      <div class="btn-group float-right">
-        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions
-          <span class="caret"></span>
-        </a>
-        <ul class="dropdown-menu">
-          <li><a href="{% url 'lit:search_new' assessment.pk %}">New search</a></li>
-          <li><a href="{% url 'lit:import_new' assessment.pk %}">New import</a></li>
-          <li><a href="{% url 'lit:import_ris_new' assessment.pk %}">New import from file</a></li>
-          <li><a href="{% url 'lit:copy_search' assessment.pk %}">Copy from existing</a></li>
-        </ul>
+      <div class="dropdown btn-group float-right">
+        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
+        <div class="dropdown-menu dropdown-menu-right">
+          <a class="dropdown-item" href="{% url 'lit:search_new' assessment.pk %}">New search</a>
+          <a class="dropdown-item" href="{% url 'lit:import_new' assessment.pk %}">New import</a>
+          <a class="dropdown-item" href="{% url 'lit:import_ris_new' assessment.pk %}">New import from file</a>
+          <a class="dropdown-item" href="{% url 'lit:copy_search' assessment.pk %}">Copy from existing</a>
+        </div>
       </div>
     {% endif %}
   </h1>

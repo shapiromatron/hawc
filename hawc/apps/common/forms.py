@@ -35,25 +35,27 @@ class BaseFormHelper(cf.FormHelper):
                 1, cfl.HTML(f'<p class="help-block">{self.kwargs["help_text"]}</p><br>'),
             )
 
-        if "cancel_url" in self.kwargs:
-            self.addCustomFormActions(
+        cancel_url = self.kwargs.get("cancel_url")
+        if cancel_url:
+            self.add_form_actions(
                 layout,
                 [
                     cfl.Submit("save", "Save"),
                     cfl.HTML(
-                        f'<a role="button" class="btn btn-default" href="{self.kwargs["cancel_url"]}">Cancel</a>'
+                        f'<a role="button" class="btn btn-light" href="{cancel_url}">Cancel</a>'
                     ),
                 ],
             )
 
-        if self.kwargs.get("form_actions"):
-            self.addCustomFormActions(layout, self.kwargs.get("form_actions"))
+        form_actions = self.kwargs.get("form_actions")
+        if form_actions:
+            self.add_form_actions(layout, form_actions)
 
         return layout
 
     @classmethod
-    def addCustomFormActions(cls, layout, items):
-        layout.append(cfb.FormActions(*items))
+    def add_form_actions(cls, layout, items):
+        layout.append(cfb.FormActions(*items, css_class="form-actions"))
 
     def addBtnLayout(self, lst, idx, url, title, wrapper_class):
         """
@@ -65,14 +67,14 @@ class BaseFormHelper(cf.FormHelper):
             fields = lst[idx].fields
         lst[idx] = AdderLayout(*fields, adderURL=url, adderTitle=title, wrapper_class=wrapper_class)
 
-    def add_fluid_row(self, firstField, numFields, wrapperClasses):
+    def add_row(self, firstField, numFields, wrapperClasses):
         first = self.layout.index(firstField)
         if type(wrapperClasses) in [str, str]:
             wrapperClasses = [wrapperClasses] * numFields
         for i, v in enumerate(wrapperClasses):
             self[first + i].wrap(cfl.Field, wrapper_class=v)
         self[first : first + numFields].wrap_together(
-            cfl.Div, css_class="form-row", id=f"fluid_id_{firstField}_{numFields}"
+            cfl.Div, css_class="form-row", id=f"row_id_{firstField}_{numFields}"
         )
 
     def add_td(self, firstField, numFields):

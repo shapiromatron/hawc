@@ -40,7 +40,7 @@ class EditableTask extends Component {
                     <span>&nbsp;</span>
                     <button
                         type="button"
-                        className="btn"
+                        className="btn btn-light"
                         onClick={() => this.setState({isEditing: false})}>
                         <i className="fa fa-times"></i>&nbsp;Cancel
                     </button>
@@ -50,7 +50,7 @@ class EditableTask extends Component {
             <div style={{position: "relative"}}>
                 <button
                     type="button"
-                    className="btn"
+                    className="btn btn-light"
                     onClick={() => this.setState({isEditing: true})}
                     style={{
                         position: "absolute",

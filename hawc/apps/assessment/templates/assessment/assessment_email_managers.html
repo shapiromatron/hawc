@@ -12,8 +12,8 @@
 {% endblock %}
 
 {% block breadcrumbs %}
-  <li><a href="{{object.get_absolute_url}}">{{object}}</a><span class="divider">/</span></li>
-  <li class="active"> Email managers <span class="divider">/</span></li>
+  <li class="breadcrumb-item"><a href="{{object.get_absolute_url}}">{{object}}</a></li>
+  <li class="breadcrumb-item active"> Email managers </li>
 {% endblock %}
 
 {% block content %}
@@ -40,7 +40,7 @@
 
       <div class="form-actions">
         <button type="submit" class="btn btn-primary">Send email</button>
-        <a href="{{object.get_absolute_url}}" class="btn">Cancel</a>
+        <a href="{{object.get_absolute_url}}" class="btn btn-light">Cancel</a>
       </div>
 
       {% csrf_token %}

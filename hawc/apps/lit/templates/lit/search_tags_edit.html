@@ -5,19 +5,19 @@
 {% endblock %}
 
 {% block breadcrumbs %}
-  <li><a href="{{assessment.get_absolute_url}}">{{ assessment }}</a><span class="divider">/</span></li>
-  <li><a href="{% url 'lit:overview' assessment.pk %}">Literature review</a><span class="divider">/</span></li>
+  <li class="breadcrumb-item"><a href="{{assessment.get_absolute_url}}">{{ assessment }}</a></li>
+  <li class="breadcrumb-item"><a href="{% url 'lit:overview' assessment.pk %}">Literature review</a></li>
   {% if model == "Search" %}
-    <li><a href="{% url 'lit:search_list' assessment.pk %}">Searches &amp; imports</a><span class="divider">/</span></li>
-    <li><a href="{{object.get_absolute_url}}">{{object}}</a><span class="divider">/</span></li>
+    <li class="breadcrumb-item"><a href="{% url 'lit:search_list' assessment.pk %}">Searches &amp; imports</a></li>
+    <li class="breadcrumb-item"><a href="{{object.get_absolute_url}}">{{object}}</a></li>
   {% elif model == "Reference" %}
-    <li><a href="{{object.get_absolute_url}}">{{object}}</a><span class="divider">/</span></li>
+    <li class="breadcrumb-item"><a href="{{object.get_absolute_url}}">{{object}}</a></li>
   {% elif model == "Assessment" %}
-    <li class="active">Untagged<span class="divider">/</span></li>
+    <li class="breadcrumb-item">Untagged</li>
   {% elif model == "ReferenceFilterTag" %}
-    <li class="active">{{object}}<span class="divider">/</span></li>
+    <li class="breadcrumb-item">{{object}}</li>
   {% endif %}
-  <li class="active">Edit tags<span class="divider">/</span></li>
+  <li class="breadcrumb-item active">Edit tags</li>
 {% endblock %}
 
 {% block content %}

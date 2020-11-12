@@ -7,15 +7,13 @@
 {% endblock %}
 
 {% block breadcrumbs %}
-  <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{ assessment }}</a><span class="divider">/</span></li>
-  <li><a href="{% url 'lit:overview' assessment.pk %}">Literature Review</a><span class="divider">/</span></li>
-  <li><a href="{% url 'lit:search_list' assessment.pk %}">{{type|title}}</a><span class="divider">/</span></li>
-
+  <li class="breadcrumb-item"><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{ assessment }}</a></li>
+  <li class="breadcrumb-item"><a href="{% url 'lit:overview' assessment.pk %}">Literature Review</a></li>
+  <li class="breadcrumb-item"><a href="{% url 'lit:search_list' assessment.pk %}">{{type|title}}</a></li>
   {% if crud == "Update" %}
-    <li><a href="{{object.get_absolute_url}}">{{object}}</a><span class="divider">/</span></li>
+    <li class="breadcrumb-item"><a href="{{object.get_absolute_url}}">{{object}}</a></li>
   {% endif %}
-
-  <li class="active">{{crud}}<span class="divider">/</span></li>
+  <li class="breadcrumb-item active">{{crud}}</li>
 {% endblock %}
 
 {% block content %}

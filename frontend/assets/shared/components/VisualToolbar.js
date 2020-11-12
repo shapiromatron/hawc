@@ -122,22 +122,23 @@ class VisualToolbar extends Component {
                 <button className="btn btn-sm dropdown-toggle" data-toggle="dropdown">
                     <i className="fa fa-download"></i>
                 </button>
-                <ul className="dropdown-menu float-right">
-                    <li>
-                        <a href="#" onClick={() => downloadImage(svg, "svg")}>
-                            <i className="fa fa-picture-o"></i>&nbsp;Download SVG
-                        </a>
-                        <a href="#" onClick={() => downloadImage(svg, "pptx")}>
-                            <i className="fa fa-file-powerpoint-o"></i>&nbsp;Download PPTX
-                        </a>
-                        <a href="#" onClick={() => downloadImage(svg, "pdf")}>
-                            <i className="fa fa-file-pdf-o"></i>&nbsp;Download PDF
-                        </a>
-                        <a href="#" onClick={() => downloadImage(svg, "png")}>
-                            <i className="fa fa-picture-o"></i>&nbsp;Download PNG
-                        </a>
-                    </li>
-                </ul>
+                <div className="dropdown-menu float-right dropdown-menu-right">
+                    <a className="dropdown-item" href="#" onClick={() => downloadImage(svg, "svg")}>
+                        <i className="fa fa-fw fa-picture-o"></i>&nbsp;Download SVG
+                    </a>
+                    <a
+                        className="dropdown-item"
+                        href="#"
+                        onClick={() => downloadImage(svg, "pptx")}>
+                        <i className="fa fa-fw fa-file-powerpoint-o"></i>&nbsp;Download PPTX
+                    </a>
+                    <a className="dropdown-item" href="#" onClick={() => downloadImage(svg, "pdf")}>
+                        <i className="fa fa-fw fa-file-pdf-o"></i>&nbsp;Download PDF
+                    </a>
+                    <a className="dropdown-item" href="#" onClick={() => downloadImage(svg, "png")}>
+                        <i className="fa fa-fw fa-picture-o"></i>&nbsp;Download PNG
+                    </a>
+                </div>
             </div>
         );
     }

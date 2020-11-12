@@ -52,11 +52,11 @@ class BaseStudyForm(forms.ModelForm):
         helper = BaseFormHelper(self, **inputs)
 
         if "authors" in self.fields:
-            helper.add_fluid_row("authors", 2, "col-md-6")
-        helper.add_fluid_row("short_citation", 2, "col-md-6")
-        helper.add_fluid_row("bioassay", 4, "col-md-3")
-        helper.add_fluid_row("coi_reported", 2, "col-md-6")
-        helper.add_fluid_row("contact_author", 2, "col-md-6")
+            helper.add_row("authors", 2, "col-md-6")
+        helper.add_row("short_citation", 2, "col-md-6")
+        helper.add_row("bioassay", 4, "col-md-3")
+        helper.add_row("coi_reported", 2, "col-md-6")
+        helper.add_row("contact_author", 2, "col-md-6")
         return helper
 
 

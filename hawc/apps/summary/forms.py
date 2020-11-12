@@ -528,7 +528,7 @@ class SummaryTextForm(forms.ModelForm):
                 cfl.HTML(
                     '<a class="btn btn-danger" id="deleteSTBtn" href="#deleteST" data-toggle="modal">Delete</a>'
                 ),
-                cfl.HTML(f'<a class="btn" href="{cancel_url}" >Cancel</a>'),
+                cfl.HTML(f'<a class="btn btn-light" href="{cancel_url}" >Cancel</a>'),
             ]
         }
         helper = BaseFormHelper(self, **inputs)
@@ -690,7 +690,7 @@ class TagtreeForm(VisualForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = self.setHelper()
-        self.helper.add_fluid_row("root_node", 3, "col-md-4")
+        self.helper.add_row("root_node", 3, "col-md-4")
 
         choices = [
             (tag.id, tag.get_nested_name())
@@ -1020,7 +1020,7 @@ class DataPivotSelectorForm(forms.Form):
                 the currently-selected data pivot.""",
             "form_actions": [
                 cfl.Submit("save", "Copy selected as new"),
-                cfl.HTML(f'<a href="{cancel_url}" class="btn">Cancel</a>'),
+                cfl.HTML(f'<a href="{cancel_url}" class="btn btn-light">Cancel</a>'),
             ],
         }
 

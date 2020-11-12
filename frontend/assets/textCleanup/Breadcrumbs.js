@@ -13,40 +13,31 @@ class Breadcrumbs extends Component {
             hasField = store.selectedField !== null;
 
         return (
-            <ul className="breadcrumb">
-                <li className="active">
+            <ol className="breadcrumb">
+                <li className="breadcrumb-item">
                     <a href="#" onClick={store.clearModel}>
                         Cleanup
                     </a>
-                    <span className="divider">/</span>
                 </li>
 
                 {hasModel ? (
-                    <li>
+                    <li className="breadcrumb-item">
                         <a href="#" onClick={store.clearField}>
                             {h.titleCase(store.selectedModel.title)}
                         </a>
-                        <span className="divider">/</span>
                     </li>
                 ) : (
-                    <li className="active">
-                        Model selection
-                        <span className="divider">/</span>
-                    </li>
+                    <li className="breadcrumb-item active">Model selection</li>
                 )}
 
                 {hasField ? (
-                    <li className="active">
+                    <li className="breadcrumb-item active">
                         Cleanup {h.titleCase(store.selectedField)}
-                        <span className="divider">/</span>
                     </li>
                 ) : hasModel ? (
-                    <li className="active">
-                        Field selection
-                        <span className="divider">/</span>
-                    </li>
+                    <li className="breadcrumb-item active">Field selection</li>
                 ) : null}
-            </ul>
+            </ol>
         );
     }
 }

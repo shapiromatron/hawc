@@ -68,9 +68,9 @@ code {
     -o-transition: all 0.5s ease-in-out;
     transition: all 0.5s ease-in-out;
 }
+
 /* Override bootstrap defaults */
-.dropdown-menu .disabled > a,
-.dropdown-menu .disabled > a:hover {
+.dropdown-header {
     color: #006dcc;
     font-weight: bold;
 }
@@ -81,10 +81,12 @@ input[type='number']::-webkit-outer-spin-button {
     -webkit-appearance: none;
     margin: 0;
 }
+
 /* Disable html5 number spinners in Firefox */
 input[type='number'] {
     -moz-appearance: textfield;
 }
+
 /* handle conflict w/ bootstrap and jquery ui */
 .ui-autocomplete-input[disabled] {
     background: none !important;
@@ -92,7 +94,6 @@ input[type='number'] {
 }
 
 /* Override bootstrap modal width */
-
 .modal-dialog {
     min-width: 950px;
 }
@@ -103,6 +104,23 @@ input[type='number'] {
 }
 .modal.fade.in {
     top: 2%;
+}
+
+/* adapted; carried over from bootstrap2 */
+.well,
+.form-actions {
+    border: 1px solid #e3e3e3;
+    background-color: #f5f5f5;
+    padding: 0.5rem !important;
+    margin: 0.5rem 0 !important;
+}
+
+/* increase contrast more from bootstrap4 defaults */
+.btn-light {
+    background-color: #e6e6e6
+}
+.btn-light:hover {
+    background-color: #cccccc
 }
 
 /* Tooltips */
@@ -388,18 +406,17 @@ div.smart-tag.active {
 .affix-sidenav.affix {
     top: 30px;
 }
-.affix-sidenav .icon-chevron-right {
+.affix-sidenav .fa-chevron-right {
     float: right;
     margin-top: 2px;
     margin-right: -6px;
     opacity: 0.25;
 }
-.affix-sidenav a:hover .icon-chevron-right {
+.affix-sidenav a:hover .fa-chevron-right {
     opacity: 0.5;
 }
-.affix-sidenav .active .icon-chevron-right,
-.affix-sidenav .active a:hover .icon-chevron-right {
-    background-image: url(../img/glyphicons-halflings-white.png);
+.affix-sidenav .active .fa-chevron-right,
+.affix-sidenav .active a:hover .fa-chevron-right {
     opacity: 1;
 }
 @media (max-width: 1024px) {

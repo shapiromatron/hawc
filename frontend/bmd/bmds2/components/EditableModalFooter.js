@@ -19,7 +19,7 @@ class EditableModalFooter extends React.Component {
                     data-dismiss="modal">
                     Save and close
                 </button>
-                <button type="button" className="btn" data-dismiss="modal">
+                <button type="button" className="btn btn-light" data-dismiss="modal">
                     Cancel
                 </button>
             </div>

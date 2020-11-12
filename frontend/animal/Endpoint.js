@@ -345,7 +345,7 @@ class Endpoint extends Observee {
                 class="float-right"
                 title="View endpoint details (new window)"
                 href="${this.data.url}">
-                <i class="icon-share-alt"></i>
+                <i class="fa fa-share-square-o"></i>
             </a>
         `;
     }
