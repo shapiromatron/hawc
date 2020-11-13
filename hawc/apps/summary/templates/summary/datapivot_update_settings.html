@@ -21,11 +21,11 @@
     <p>Fetching the latest data from {{assessment}}... <img src="{% static 'img/loading.gif' %}"></p>
   </div>
 
-  <div class='row' id='data_pivot' style='display:none;'>
+  <div id='data_pivot' style='display:none;'>
     <ul class="nav nav-tabs">
-        <li class="active"><a href="#dp_data" data-toggle="tab">Data</a></li>
-        <li><a href="#dp_settings" data-toggle="tab">Settings</a></li>
-        <li><a id="display_tab_icon" href="#dp_display" data-toggle="tab">Visualization</a></li>
+        <li class="nav-item"><a class="nav-link active" href="#dp_data" data-toggle="tab">Data</a></li>
+        <li class="nav-item"><a class="nav-link" href="#dp_settings" data-toggle="tab">Settings</a></li>
+        <li class="nav-item"><a class="nav-link" id="display_tab_icon" href="#dp_display" data-toggle="tab">Visualization</a></li>
     </ul>
     <div class="tab-content">
         <div class="tab-pane active" id="dp_data"></div>
