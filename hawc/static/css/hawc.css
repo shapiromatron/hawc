@@ -69,11 +69,16 @@ code {
     transition: all 0.5s ease-in-out;
 }
 
-/* Override bootstrap defaults */
+/* BOOTSTRAP 4 OVERRIDES */
 .dropdown-header {
     color: #006dcc;
     font-weight: bold;
 }
+mark,.mark {
+    padding: 0;
+    background-color: yellow;
+}
+/* END BOOTSTRAP 4 OVERRIDES */
 
 /* Disable html5 number spinners in Chrome */
 input[type='number']::-webkit-inner-spin-button,

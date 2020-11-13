@@ -10,14 +10,18 @@ const MAX_ROWS = 150;
 class Table extends Component {
     render() {
         const {filteredDataset, query} = this.props.store,
-            regex = new RegExp(h.escapeRegexString(query), "gi"),
-            highlightedSpan = text => (
-                <span
-                    dangerouslySetInnerHTML={{
-                        __html: text.replace(regex, match => `<mark>${match}</mark>`),
-                    }}
-                />
-            );
+            regex = query.length > 0 ? new RegExp(h.escapeRegexString(query), "gi") : null,
+            highlightedSpan = text => {
+                return regex ? (
+                    <span
+                        dangerouslySetInnerHTML={{
+                            __html: text.replace(regex, match => `<mark>${match}</mark>`),
+                        }}
+                    />
+                ) : (
+                    text
+                );
+            };
 
         return (
             <>
@@ -48,29 +52,33 @@ class Table extends Component {
                             {filteredDataset.slice(0, MAX_ROWS).map(d => (
                                 <tr key={d._key}>
                                     <td>
-                                        <span className="label label-mini">{d.system_term_id}</span>
+                                        <span className="badge badge-light">
+                                            {d.system_term_id}
+                                        </span>
                                         &nbsp;
                                         {highlightedSpan(d.system)}
                                     </td>
                                     <td>
-                                        <span className="label label-mini">{d.organ_term_id}</span>
+                                        <span className="badge badge-light">{d.organ_term_id}</span>
                                         &nbsp;
                                         {highlightedSpan(d.organ)}
                                     </td>
                                     <td>
-                                        <span className="label label-mini">{d.effect_term_id}</span>
+                                        <span className="badge badge-light">
+                                            {d.effect_term_id}
+                                        </span>
                                         &nbsp;
                                         {highlightedSpan(d.effect)}
                                     </td>
                                     <td>
-                                        <span className="label label-mini">
+                                        <span className="badge badge-light">
                                             {d.effect_subtype_term_id}
                                         </span>
                                         &nbsp;
                                         {highlightedSpan(d.effect_subtype)}
                                     </td>
                                     <td>
-                                        <span className="label label-mini">{d.name_term_id}</span>
+                                        <span className="badge badge-light">{d.name_term_id}</span>
                                         &nbsp;
                                         {highlightedSpan(d.name)}
                                     </td>
