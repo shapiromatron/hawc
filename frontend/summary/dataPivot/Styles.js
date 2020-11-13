@@ -438,6 +438,7 @@ class StyleRectangle {
             stroke: "#000000",
             "fill-opacity": 0.8,
             "stroke-width": 1.0,
+            pattern: "solid",
         };
     }
 
@@ -453,7 +454,7 @@ class StyleRectangle {
 
     get_modified_settings() {
         var settings = {},
-            fields = ["name", "fill", "fill-opacity", "stroke", "stroke-width"];
+            fields = ["name", "fill", "fill-opacity", "stroke", "stroke-width", "pattern"];
         for (var i = 0; i < fields.length; i++) {
             settings[fields[i]] = this.$modal.find(`input[name="${fields[i]}"]`).val();
         }
@@ -526,6 +527,23 @@ class StyleRectangle {
                 )
             )
         );
+
+        // pattern
+        var type = $('<select name="pattern"></select>').html([
+            '<option value="solid">solid</option>',
+            '<option value="stripes">stripes</option>',
+            '<option value="reverse stripes">reverse stripes</option>',
+            '<option value="thin stripes">thin stripes</option>',
+            '<option value="thin reverse stripes">thin reverse stripes</option>',
+            '<option value="diamonds">diamonds</option>',
+            '<option value="circles">circles</option>',
+            '<option value="woven">woven</option>',
+            '<option value="waves">waves</option>',
+            '<option value="hexagons">hexagons</option>',
+        ]);
+
+        type.find(`option[value="${set.pattern}"]`).prop("selected", true);
+        form.append(add_horizontal_field("Pattern", type));
 
         this.controls = form;
     }

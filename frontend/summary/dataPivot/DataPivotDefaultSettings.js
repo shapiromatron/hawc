@@ -725,6 +725,7 @@ export default {
                 "fill-opacity": 0.8,
                 stroke: "#FFFFFF",
                 "stroke-width": 1,
+                pattern: "solid",
             },
             {
                 name: "red",
@@ -732,6 +733,7 @@ export default {
                 "fill-opacity": 0.8,
                 stroke: "#6f0000",
                 "stroke-width": 1,
+                pattern: "solid",
             },
             {
                 name: "green",
@@ -739,6 +741,7 @@ export default {
                 "fill-opacity": 0.8,
                 stroke: "#006a1e",
                 "stroke-width": 1,
+                pattern: "solid",
             },
             {
                 name: "blue",
@@ -746,6 +749,7 @@ export default {
                 "fill-opacity": 0.8,
                 stroke: "#006dbe",
                 "stroke-width": 1,
+                pattern: "solid",
             },
             {
                 name: "orange",
@@ -753,6 +757,7 @@ export default {
                 "fill-opacity": 0.8,
                 stroke: "#dc8f00",
                 "stroke-width": 1,
+                pattern: "solid",
             },
             {
                 name: "purple",
@@ -760,6 +765,7 @@ export default {
                 "fill-opacity": 0.8,
                 stroke: "#5e5e5e",
                 "stroke-width": 1,
+                pattern: "solid",
             },
             {
                 name: "fuschia",
@@ -767,6 +773,7 @@ export default {
                 "fill-opacity": 0.8,
                 stroke: "#ab006c",
                 "stroke-width": 1,
+                pattern: "solid",
             },
         ],
     },

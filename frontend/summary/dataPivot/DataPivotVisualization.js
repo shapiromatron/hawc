@@ -1,7 +1,6 @@
 import $ from "$";
 import _ from "lodash";
 import * as d3 from "d3";
-
 import h from "shared/utils/helpers";
 import D3Plot from "utils/D3Plot";
 import HAWCUtils from "utils/HAWCUtils";
@@ -10,7 +9,7 @@ import DataPivot from "./DataPivot";
 import DataPivotExtension from "./DataPivotExtension";
 import DataPivotLegend from "./DataPivotLegend";
 import {StyleLine, StyleSymbol, StyleText, StyleRectangle} from "./Styles";
-import {NULL_CASE} from "./shared";
+import {NULL_CASE, createPattern} from "./shared";
 
 class DataPivotVisualization extends D3Plot {
     constructor(dp_data, dp_settings, plot_div, editable) {
@@ -885,10 +884,19 @@ class DataPivotVisualization extends D3Plot {
             barPadding = 5,
             datarows = this.datarows,
             barchart = this.settings.barchart,
+            self = this,
             applyStyles = function(d, type) {
-                let obj = d3.select(this);
-                for (var property in d._styles[type]) {
+                const obj = d3.select(this),
+                    styles = d._styles[type];
+                for (var property in styles) {
                     obj.style(property, d._styles[type][property]);
+                }
+                if (type === "barchartBar") {
+                    const pattern = createPattern(styles);
+                    if (pattern) {
+                        d3.select(self.svg).call(pattern);
+                        obj.style("fill", pattern.url());
+                    }
                 }
             },
             barHeight = d3.min(this.row_heights, d => d.max - d.min) - barPadding * 2,
