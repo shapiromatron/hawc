@@ -73,7 +73,7 @@
         <a class="btn btn-primary" href="{% url 'lit:ref_visual' assessment.pk %}">Visualization</a>
         {% if user.is_beta_tester %}
           {% if can_topic_model %}
-          <a class="betatester btn btn-primary" href="{% url 'lit:topic_model' assessment.pk %}">Topic model</a>
+          <a class="betatester btn btn-dark" href="{% url 'lit:topic_model' assessment.pk %}">Topic model</a>
           {% endif %}
         {% endif %}
         <a class="btn btn-primary" href="{% url 'lit:ref_search' assessment.pk %}">Find a reference</a>

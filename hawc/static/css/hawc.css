@@ -548,6 +548,6 @@ table.bordered td {
 Beta tester
 */
 .betatester {
-    background-color: darksalmon;
-    background: darksalmon;
+    background-color: #ec744c;
+    border-color: #ec744c;
 }
