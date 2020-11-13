@@ -54,7 +54,7 @@ class Reference extends Component {
                 nodes.push(
                     <ReferenceButton
                         key={h.randomString()}
-                        className={"btn btn-sm"}
+                        className={"btn btn-sm btn-secondary"}
                         url={v.url}
                         displayText={v.database}
                         textToCopy={v.id}

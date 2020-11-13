@@ -6,7 +6,7 @@ class ReferenceButton extends Component {
     render() {
         const {className, url, displayText, textToCopy} = this.props;
         return (
-            <div className="btn-group">
+            <div className="btn-group mx-1">
                 <a className={className} href={url} target="_blank" rel="noopener noreferrer">
                     {displayText}
                 </a>
