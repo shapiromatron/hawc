@@ -1,4 +1,7 @@
+{% load cache %}
+
 {% if assessment %}
+{% cache 300 sidebar request.user.id assessment.id %}
 <div
     id="sidebar-container"
     class="sidebar pl-1 {{request.session.hideSidebar|yesno:'sidebar-collapsed, '}}"
@@ -67,4 +70,5 @@
 
     </nav>
 </div>
+{% endcache %}
 {% endif %}
