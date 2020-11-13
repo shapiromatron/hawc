@@ -29,41 +29,42 @@
 
         {% include "includes/sidebar.html" %}
 
-        <div id="main-content-container" class="col p-2 container-fluid no-gutter">
+        <div class="col overflow-auto">
+          <div id="main-content-container" class=" container-fluid">
+            {% block breadcrumbs_outer %}
+            <nav aria-label="breadcrumb">
+              <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                  {% if user.is_authenticated %}
+                  <a href="{% url 'portal' %}">Home</a>
+                  {% else %}
+                  <a href="{% url 'assessment:public_list' %}">Public Assessments</a>
+                  {% endif %}
+                </li>
+                {% block breadcrumbs %}{% endblock breadcrumbs %}
+              </ol>
+            </nav>
+            {% endblock breadcrumbs_outer %}
 
-          {% block breadcrumbs_outer %}
-          <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-              <li class="breadcrumb-item">
-                {% if user.is_authenticated %}
-                <a href="{% url 'portal' %}">Home</a>
-                {% else %}
-                <a href="{% url 'assessment:public_list' %}">Public Assessments</a>
-                {% endif %}
-              </li>
-              {% block breadcrumbs %}{% endblock breadcrumbs %}
-            </ol>
-          </nav>
-          {% endblock breadcrumbs_outer %}
+            {% include "includes/messages.html" %}
 
-          {% include "includes/messages.html" %}
+            {% if UA_SUPPORTED is False %}
+            <div class="alert alert-danger">
+              <p><b>Warning:</b> Your current browser has not been tested extensively with this website, which may result in some some errors with functionality. The following browsers are fully supported:</p>
+              <ul>
+                <li><a href="https://www.google.com/chrome/" target="_blank">Google Chrome</a></li>
+                <li><a href="https://www.mozilla.org/firefox/" target="_blank">Mozilla Firefox</a></li>
+                <li><a href="https://www.microsoft.com/en-us/edge" target="_blank">Microsoft Edge</a></li>
+                <li><a href="https://www.apple.com/safari/" target="_blank">Apple Safari</a></li>
+              </ul>
+              <p>Please use a different browser.</p>
+            </div>
+            {% endif %}
 
-          {% if UA_SUPPORTED is False %}
-          <div class="alert alert-danger">
-            <p><b>Warning:</b> Your current browser has not been tested extensively with this website, which may result in some some errors with functionality. The following browsers are fully supported:</p>
-            <ul>
-              <li><a href="https://www.google.com/chrome/" target="_blank">Google Chrome</a></li>
-              <li><a href="https://www.mozilla.org/firefox/" target="_blank">Mozilla Firefox</a></li>
-              <li><a href="https://www.microsoft.com/en-us/edge" target="_blank">Microsoft Edge</a></li>
-              <li><a href="https://www.apple.com/safari/" target="_blank">Apple Safari</a></li>
-            </ul>
-            <p>Please use a different browser.</p>
+            {% block content_outer %}
+              {% block content %}{% endblock content %}
+            {% endblock content_outer %}
           </div>
-          {% endif %}
-
-          {% block content_outer %}
-            {% block content %}{% endblock content %}
-          {% endblock content_outer %}
         </div>
       </div>
     {% endblock content_row_outer %}

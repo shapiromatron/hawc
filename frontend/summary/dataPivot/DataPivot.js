@@ -1,7 +1,10 @@
 import $ from "$";
 import * as d3 from "d3";
 
+import React from "react";
+import ReactDOM from "react-dom";
 import HAWCModal from "utils/HAWCModal";
+import DataTable from "shared/components/DataTable";
 
 import DataPivotDefaultSettings from "./DataPivotDefaultSettings";
 import DataPivotExtension from "./DataPivotExtension";
@@ -212,10 +215,6 @@ class DataPivot {
     }
 
     build_data_table() {
-        var tbl = $('<table class="data_pivot_table">'),
-            thead = $("<thead>"),
-            tbody = $("<tbody>");
-
         // get headers
         var data_headers = [];
         for (var prop in this.data[0]) {
@@ -225,25 +224,8 @@ class DataPivot {
             }
         }
 
-        // print header
-        var tr = $("<tr>");
-        data_headers.forEach(function(v) {
-            tr.append(`<th>${v}</th>`);
-        });
-        thead.append(tr);
-
-        // print body
-        this.data.forEach(function(d) {
-            var tr = $("<tr>");
-            data_headers.forEach(function(field) {
-                tr.append(`<td>${d[field]}</td>`);
-            });
-            tbody.append(tr);
-        });
-
-        // insert table
-        tbl.append([thead, tbody]);
-        this.$data_div.html(tbl);
+        // build data table
+        ReactDOM.render(<DataTable dataset={this.data} />, this.$data_div[0]);
 
         // now save things back to object
         this.data_headers = data_headers;

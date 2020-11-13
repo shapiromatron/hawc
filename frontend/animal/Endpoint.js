@@ -371,15 +371,15 @@ class Endpoint extends Observee {
                 if (tags.length === 0) {
                     return false;
                 }
-                var ul = $('<ul class="nav nav-pills nav-stacked">');
-                tags.forEach(function(v) {
-                    ul.append(
-                        `<li><a href="${Endpoint.getTagURL(assessment_id, v.slug)}">${
-                            v.name
-                        }</a></li>`
-                    );
-                });
-                return ul;
+                var div = $("<div>");
+                div.append(
+                    tags.map(v => {
+                        const url = Endpoint.getTagURL(assessment_id, v.slug);
+                        return `<a class="btn btn-light" href="${url}">${v.name}</a>`;
+                    })
+                );
+
+                return div;
             },
             isMultigenerational = function(experimentType) {
                 return ["Rp", "1r", "2r", "Dv", "Ot"].includes(experimentType);
@@ -549,12 +549,12 @@ class Endpoint extends Observee {
             divs;
 
         if (complete) {
-            tabs = $('<ul class="nav nav-tabs">').append(
-                '<li><a href="#modalStudy" data-toggle="tab">Study</a></li>',
-                '<li><a href="#modalExp" data-toggle="tab">Experiment</a></li>',
-                '<li><a href="#modalAG" data-toggle="tab">Animal Group</a></li>',
-                '<li class="active"><a href="#modalEnd" data-toggle="tab">Endpoint</a></li>'
-            );
+            tabs = $('<ul class="nav nav-tabs">').append(`
+                <li class="nav-item"><a class="nav-link"  href="#modalStudy" data-toggle="tab">Study</a></li>
+                <li class="nav-item"><a class="nav-link"  href="#modalExp" data-toggle="tab">Experiment</a></li>
+                <li class="nav-item"><a class="nav-link"  href="#modalAG" data-toggle="tab">Animal Group</a></li>
+                <li class="nav-item"><a class="nav-link active" href="#modalEnd" data-toggle="tab">Endpoint</a></li>
+            `);
             $study = $('<div class="tab-pane" id="modalStudy">');
             Study.render(
                 this.data.animal_group.experiment.study.id,

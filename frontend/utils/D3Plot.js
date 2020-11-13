@@ -496,16 +496,19 @@ class D3Plot {
             .on("click", function(v, i) {
                 plot._toggle_menu_bar();
             });
-        this.cog_button.append("xhtml:i").attr("class", "fa fa-cog");
+        this.cog_button
+            .append("xhtml:i")
+            .attr("class", "fa fa-cog")
+            .attr("style", "color: black");
 
         // add menu below div
         this.menu_div = $('<div class="options_menu"></div>');
-        this.plot_div.append(this.menu_div);
+        this.plot_div.append(this.menu_div).css({marginBottom: 45 + "px"});
 
         // add close button to menu
         var close_button = {
             id: "close",
-            cls: "btn btn-dark btn-sm float-right ml-1",
+            cls: "btn btn-sm float-right ml-1",
             title: "Hide menu",
             icon: "fa fa-times",
             on_click() {
@@ -519,7 +522,7 @@ class D3Plot {
         // add zoom button to menu
         var zoom_button = {
             id: "close",
-            cls: "btn btn-dark btn-sm float-right ml-1",
+            cls: "btn btn-sm float-right ml-1",
             title: "Zoom image to full-size",
             text: "",
             icon: "fa fa-search-plus",
@@ -534,7 +537,7 @@ class D3Plot {
         var plot = this,
             group = $('<div class="dropdown float-right btn-group"></div>'),
             dropdown = $(
-                '<a title="Download figure" class="btn btn-dark btn-sm dropdown-toggle ml-1" data-toggle="dropdown" href="#"><i class="fa fa-fw fa-download"></i></a>'
+                '<a title="Download figure" class="btn btn-sm dropdown-toggle ml-1" data-toggle="dropdown" href="#"><i class="fa fa-fw fa-download"></i></a>'
             ),
             dropdown_div = $('<div class="dropdown-menu dropdown-menu-right">'),
             svg = $(
