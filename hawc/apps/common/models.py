@@ -2,7 +2,7 @@ import json
 import logging
 import math
 from enum import IntEnum
-from typing import Dict, List, Tuple
+from typing import Dict, List, Set, Tuple
 
 import django
 import pandas as pd
@@ -57,6 +57,40 @@ class BaseManager(models.Manager):
             .filter(Q(**{self.assessment_relation: assessment_id}))
             .order_by(*ordering)
         )
+
+    def valid_ids(self, ids: List[int], *args, **kwargs) -> Set[int]:
+        """
+        Determines valid model instance ids from a list of ids
+
+        Args:
+            ids (List[int]): model instance ids
+            args: query objects to pass to validity check
+            kwargs: keyword args to pass to validity check
+
+        Returns:
+            Set[int]: [description]
+        """
+        return set(
+            self.filter(pk__in=ids, *args, **kwargs)
+            .order_by("pk")
+            .distinct("pk")
+            .values_list("pk", flat=True)
+        )
+
+    def invalid_ids(self, ids: List[int], *args, **kwargs) -> Set[int]:
+        """
+        Determines invalid model instance ids from a list of ids
+
+        Args:
+            ids (List[int]): model instance ids
+            args: query objects to pass to validity check
+            kwargs: keyword args to pass to validity check
+
+        Returns:
+            Set[int]: invalid ids
+        """
+        valid_ids = self.valid_ids(ids, *args, **kwargs)
+        return set(ids) - valid_ids
 
 
 class IntChoiceEnum(IntEnum):

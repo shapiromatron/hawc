@@ -75,24 +75,21 @@ class BulkRobCopyAction(BaseApiAction):
             self.errors["src_dst_metric_ids"].append("Destination metric ids must be unique")
 
         # all src studies from src assessment
-        src_studies = Study.objects.filter(pk__in=src_study_ids, assessment=src_assessment)
-        invalid_src_study_ids = set(src_study_ids) - set(src_studies.values_list("pk", flat=True))
+        invalid_src_study_ids = Study.objects.invalid_ids(src_study_ids, assessment=src_assessment)
         if len(invalid_src_study_ids) > 0:
             msg = f"Invalid source study(ies) {', '.join([str(id) for id in invalid_src_study_ids])}; not found in assessment {self.inputs.src_assessment_id}"
             self.errors["src_dst_study_ids"].append(msg)
 
         # all dst studies from dst assessment
-        dst_studies = Study.objects.filter(pk__in=dst_study_ids, assessment=dst_assessment)
-        invalid_dst_study_ids = set(dst_study_ids) - set(dst_studies.values_list("pk", flat=True))
+        invalid_dst_study_ids = Study.objects.invalid_ids(dst_study_ids, assessment=dst_assessment)
         if len(invalid_dst_study_ids) > 0:
             msg = f"Invalid destination study(ies) {', '.join([str(id) for id in invalid_dst_study_ids])}; not found in assessment {self.inputs.dst_assessment_id}"
             self.errors["src_dst_study_ids"].append(msg)
 
         # all src metrics from src studies should be given
-        src_metrics = RiskOfBiasMetric.objects.filter(
-            pk__in=src_metric_ids, domain__assessment_id=self.inputs.src_assessment_id
+        invalid_src_metric_ids = RiskOfBiasMetric.objects.invalid_ids(
+            src_metric_ids, domain__assessment_id=self.inputs.src_assessment_id
         )
-        invalid_src_metric_ids = set(src_metric_ids) - set(src_metrics.values_list("pk", flat=True))
         if len(invalid_src_metric_ids) > 0:
             msg = (
                 f"Invalid source metric(s) {', '.join([str(id) for id in invalid_src_metric_ids])}"
@@ -107,10 +104,9 @@ class BulkRobCopyAction(BaseApiAction):
             self.errors["src_dst_metric_ids"].append(msg)
 
         # all dst metrics from dst assessment
-        dst_metrics = RiskOfBiasMetric.objects.filter(
-            pk__in=dst_metric_ids, domain__assessment_id=self.inputs.dst_assessment_id
+        invalid_dst_metric_ids = RiskOfBiasMetric.objects.invalid_ids(
+            dst_metric_ids, domain__assessment_id=self.inputs.dst_assessment_id
         )
-        invalid_dst_metric_ids = set(dst_metric_ids) - set(dst_metrics.values_list("pk", flat=True))
         if len(invalid_dst_metric_ids) > 0:
             msg = f"Invalid destination metric(s) {', '.join([str(id) for id in invalid_dst_metric_ids])}"
             self.errors["src_dst_metric_ids"].append(msg)
