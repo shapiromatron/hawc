@@ -421,6 +421,9 @@ class TestClient(LiveServerTestCase, TestCase):
         client = HawcClient(self.live_server_url)
         client.authenticate("pm@pm.com", "pw")
         response = client.study.create(
-            self.db_keys.reference_unlinked, "short citation", "full citation"
+            reference_id=self.db_keys.reference_unlinked,
+            short_citation="Lowry et al. 1951",
+            full_citation="Lowry et al. 1951.Protein measurement with the folin phenol reagent. J. Biol. Chem. 193, 265–275 (1951).",
+            data=dict(funding_source="American Cancer Society"),
         )
         assert isinstance(response, dict)
