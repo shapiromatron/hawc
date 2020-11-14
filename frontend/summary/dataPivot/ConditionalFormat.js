@@ -18,7 +18,7 @@ class _DataPivot_settings_conditionalFormat {
         this._status_text = $('<span style="padding-right: 10px">').appendTo(this.status);
 
         this.modal = new HAWCModal();
-        this._showModal = $('<button class="btn btn-sm" type="button">')
+        this._showModal = $('<button class="btn btn-sm btn-info" type="button">')
             .on("click", this._show_modal.bind(this))
             .appendTo(this.status);
 
@@ -68,13 +68,13 @@ class _DataPivot_settings_conditionalFormat {
     }
 
     _getFooter() {
-        let add = $('<button type="button" class="btn btn-primary">')
+        let add = $('<button type="button" class="btn btn-primary float-left">')
                 .text("Add")
                 .on("click", this._add_condition.bind(this, null)),
-            save = $('<button type="button" class="btn btn-success">')
+            save = $('<button type="button" class="btn btn-success mx-2 float-left">')
                 .text("Save and close")
                 .on("click", this.close_modal.bind(this, true)),
-            close = $('<button type="button" class="btn float-right">')
+            close = $('<button type="button" class="btn btn-light">')
                 .text("Close")
                 .on("click", this.close_modal.bind(this, false)),
             footer = $("<div>").append(add, save, close);
@@ -192,10 +192,10 @@ class _DataPivot_settings_conditional {
                 var lbl = $("<label>").html(desc_txt);
                 parent.append(lbl, inp);
             },
-            fieldName = $('<select name="field_name">')
+            fieldName = $('<select class="form-control" name="field_name">')
                 .html(dp._get_header_options(true))
                 .val(values.field_name || defaults.field_name),
-            conditionType = $('<select name="condition_type">')
+            conditionType = $('<select class="form-control" name="condition_type">')
                 .html(
                     formattingTypes.map(function(v) {
                         return `<option value="${v}">${v}</option>`;
@@ -221,22 +221,22 @@ class _DataPivot_settings_conditional {
         add_input_row(div, "Condition type", conditionType);
         div.append("<hr>");
         formattingTypes.forEach(function(v) {
-            $(`<div class="conditionalDivs row ${v}">`)
+            $(`<div class="conditionalDivs ${v}">`)
                 .appendTo(div)
                 .hide();
         });
 
         // build min/max for size and color
-        var min_size = $('<input name="min_size" type="range" min="0" max="500" step="5">').val(
-                values.min_size || defaults.min_size
-            ),
-            max_size = $('<input name="max_size" type="range" min="0" max="500" step="5">').val(
-                values.max_size || defaults.max_size
-            ),
-            min_color = $('<input name="min_color" type="color">').val(
+        var min_size = $(
+                '<input class="form-control" name="min_size" type="range" min="0" max="500" step="5">'
+            ).val(values.min_size || defaults.min_size),
+            max_size = $(
+                '<input class="form-control" name="max_size" type="range" min="0" max="500" step="5">'
+            ).val(values.max_size || defaults.max_size),
+            min_color = $('<input class="form-control" name="min_color" type="color">').val(
                 values.min_color || defaults.min_color
             ),
-            max_color = $('<input name="max_color" type="color">').val(
+            max_color = $('<input class="form-control" name="max_color" type="color">').val(
                 values.max_color || defaults.max_color
             ),
             svg = $('<svg width="150" height="25" class="d3" style="margin-top: 10px"></svg>'),

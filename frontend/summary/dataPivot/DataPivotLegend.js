@@ -28,7 +28,7 @@ class DataPivotLegend {
     }
 
     add_select() {
-        var select = $("<select>").html(this._build_options());
+        var select = $("<select class='form-control'>").html(this._build_options());
         this.selects.push(select);
         return select;
     }

@@ -29,10 +29,9 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
                 addDataRow(settings.length);
                 handleTableChange();
             },
-            newRowBtn = $('<button class="btn btn-primary float-right">New row</button>').on(
-                "click",
-                newDataRow
-            ),
+            newRowBtn = $(
+                '<button class="btn btn-primary float-right"><i class="fa fa-fw fa-plus"></i>&nbsp;Add row</button>'
+            ).on("click", newDataRow),
             num_rows = settings.length === 0 ? 2 : settings.length;
 
         for (let i = 0; i < num_rows; i++) {
@@ -47,12 +46,14 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
     },
     buildFilterBooleanDiv = function(tab, dp, handleTableChange) {
         let div = $("<div>"),
-            and = $('<label class="radio inline">AND</label>').append(
-                '<input name="filter_logic" type="radio" value="and">'
-            ),
-            or = $('<label class="radio inline">OR</label>').append(
-                '<input name="filter_logic" type="radio" value="or">'
-            ),
+            and = $(`<div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="filter_logic" value="and">
+                <label class="form-check-label">AND</label>
+            </div>`),
+            or = $(`<div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="filter_logic" value="or">
+                <label class="form-check-label">OR</label>
+            </div>`),
             value = dp.settings.plot_settings.filter_logic || "and";
 
         // set initial value
@@ -95,10 +96,9 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
             newDataRow = function() {
                 addDataRow(settings.length);
             },
-            newRowBtn = $('<button class="btn btn-primary float-right">New row</button>').on(
-                "click",
-                newDataRow
-            ),
+            newRowBtn = $(
+                '<button class="btn btn-primary float-right"><i class="fa fa-fw fa-plus"></i>&nbsp;Add row</button>'
+            ).on("click", newDataRow),
             numRows = settings.length === 0 ? 2 : settings.length;
 
         for (let i = 0; i < numRows; i++) {
@@ -130,10 +130,9 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
             newDataRow = function() {
                 addDataRow(settings.length);
             },
-            newRowBtn = $('<button class="btn btn-primary float-right">New row</button>').on(
-                "click",
-                newDataRow
-            ),
+            newRowBtn = $(
+                '<button class="btn btn-primary float-right"><i class="fa fa-fw fa-plus"></i>&nbsp;Add row</button>'
+            ).on("click", newDataRow),
             numRows = settings.length === 0 ? 1 : settings.length;
 
         for (let i = 0; i < numRows; i++) {
@@ -210,9 +209,9 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
                     "checked",
                     obj.include
                 ),
-                index = $('<input name="ov_index" class="col-md-12" type="number" step="any">').val(
-                    obj.index
-                ),
+                index = $(
+                    '<input name="ov_index" class="form-control" type="number" step="any">'
+                ).val(obj.index),
                 text_style = dp.style_manager.add_select("texts", obj.text_style, true),
                 line_style = dp.style_manager.add_select("lines", obj.line_style, true),
                 symbol_style = dp.style_manager.add_select("symbols", obj.symbol_style, true);

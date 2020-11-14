@@ -55,32 +55,32 @@ let build_settings_general_tab = function(self) {
                     .on("change", function() {
                         self.settings.legend.show = $(this).prop("checked");
                     }),
-                number_columns = $("<input>")
+                number_columns = $("<input class='form-control'>")
                     .val(self.settings.legend.columns)
                     .on("change", function() {
                         self.settings.legend.columns = parseInt($(this).val(), 10) || 1;
                         self.legend._draw_legend();
                     }),
-                left = $("<input>")
+                left = $("<input class='form-control'>")
                     .val(self.settings.legend.left)
                     .on("change", function() {
                         self.settings.legend.left = parseInt($(this).val(), 10) || 1;
                         self.legend._draw_legend();
                     }),
-                top = $("<input>")
+                top = $("<input class='form-control'>")
                     .val(self.settings.legend.top)
                     .on("change", function() {
                         self.settings.legend.top = parseInt($(this).val(), 10) || 1;
                         self.legend._draw_legend();
                     }),
                 border_width = $(
-                    `<input type="range" min="0" max="10" value="${self.settings.legend.style.border_width}">`
+                    `<input class="form-control" type="range" min="0" max="10" value="${self.settings.legend.style.border_width}">`
                 ).on("change", function() {
                     self.settings.legend.style.border_width = parseFloat($(this).val(), 10) || 0;
                     self.legend._draw_legend();
                 }),
                 border_color = $(
-                    `<input name="fill" type="color" value="${self.settings.legend.style.border_color}">`
+                    `<input class="form-control" name="fill" type="color" value="${self.settings.legend.style.border_color}">`
                 ).on("change", function() {
                     self.settings.legend.style.border_color = $(this).val();
                     self.legend._draw_legend();
@@ -153,20 +153,18 @@ let build_settings_general_tab = function(self) {
                     rectangle.on("change", update_viewer);
                 },
                 legend_item = self.legend.add_select(),
-                legend_item_up = $('<button><i class="fa fa-arrow-up"></i></button>').on(
-                    "click",
-                    function() {
-                        self.legend.move_field(legend_item.find("option:selected").data("d"), -1);
-                        self.legend._draw_legend();
-                    }
-                ),
-                legend_item_down = $('<button><i class="fa fa-arrow-down"></i></button>').on(
-                    "click",
-                    function() {
-                        self.legend.move_field(legend_item.find("option:selected").data("d"), 1);
-                        self.legend._draw_legend();
-                    }
-                ),
+                legend_item_up = $(
+                    '<button class="btn btn-light"><i class="fa fa-arrow-up"></i></button>'
+                ).on("click", function() {
+                    self.legend.move_field(legend_item.find("option:selected").data("d"), -1);
+                    self.legend._draw_legend();
+                }),
+                legend_item_down = $(
+                    '<button class="btn btn-light"><i class="fa fa-arrow-down"></i></button>'
+                ).on("click", function() {
+                    self.legend.move_field(legend_item.find("option:selected").data("d"), 1);
+                    self.legend._draw_legend();
+                }),
                 legend_item_new = $('<button class="btn btn-primary">New</button>').on(
                     "click",
                     function() {

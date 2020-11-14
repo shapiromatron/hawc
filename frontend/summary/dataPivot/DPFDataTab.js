@@ -17,12 +17,10 @@ let buildChartSelector = function(tab, dp) {
 
         tab.prepend(`
            <h3>Visualization type</h3>
-           <label class="checkbox control-label" for="${visSelectorId}">
-                <select id="visType">
-                    <option ${asForPlot}>Forest plot</option>
-                    <option ${asBarchart}>Barchart</option>
-                </select>
-           </label>`);
+           <select class="form-control col-md-4" id="visType">
+                <option ${asForPlot}>Forest plot</option>
+                <option ${asBarchart}>Barchart</option>
+            </select>`);
 
         tab.on("change", "#" + visSelectorId, function() {
             if (this.value === "Forest plot") {
@@ -66,10 +64,9 @@ let buildChartSelector = function(tab, dp) {
                 let num_rows = settings.length;
                 addDataRow(num_rows);
             },
-            newRowBtn = $('<button class="btn btn-primary float-right">New row</button>').on(
-                "click",
-                newDataRow
-            ),
+            newRowBtn = $(
+                '<button class="btn btn-primary float-right"><i class="fa fa-fw fa-plus"></i>&nbsp;Add row</button>'
+            ).on("click", newDataRow),
             numRows = settings.length === 0 ? 3 : settings.length;
 
         for (var i = 0; i < numRows; i++) {

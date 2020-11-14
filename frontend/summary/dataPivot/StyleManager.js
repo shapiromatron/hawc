@@ -28,7 +28,7 @@ class StyleManager {
     }
 
     add_select(style_type, selected_style, include_null) {
-        var select = $('<select class="col-md-12">').html(this._build_options(style_type));
+        var select = $('<select class="form-control">').html(this._build_options(style_type));
         if (include_null) {
             select.prepend(`<option value="${NULL_CASE}">${NULL_CASE}</option>`);
         }
