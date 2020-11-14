@@ -4,16 +4,8 @@
 {% load add_class %}
 {% load selectable_tags %}
 
-{% block title %}
-  {% include "hawc/siteTitle.html" with crumbs=object.get_crumbs crud=crud %}
-{% endblock title %}
-
 {% block extrastyle %}
   {% include_ui_theme %}
-{% endblock %}
-
-{% block breadcrumbs %}
-  {% include "hawc/breadcrumbs.html" with crumbs=object.get_crumbs crud=crud %}
 {% endblock %}
 
 {% block content %}

@@ -31,7 +31,6 @@ from ..common.models import (
     AssessmentRootMixin,
     CustomURLField,
     NonUniqueTagBase,
-    get_crumbs,
     get_private_data_storage,
 )
 from . import constants, managers, tasks
@@ -747,9 +746,6 @@ class Reference(models.Model):
             return json.dumps(d, cls=HAWCDjangoJSONEncoder)
         else:
             return d
-
-    def get_crumbs(self):
-        return get_crumbs(self, parent=self.assessment)
 
     @classmethod
     def delete_caches(cls, ids):

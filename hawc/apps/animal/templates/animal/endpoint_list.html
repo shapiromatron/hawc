@@ -3,14 +3,6 @@
 {% load add_class %}
 {% load url_replace %}
 
-{% block title %}{{assessment}} | Endpoints | HAWC {% endblock title %}
-
-{% block breadcrumbs %}
-  <li class="breadcrumb-item"><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{ assessment }}</a></li>
-  <li class="breadcrumb-item"><a href="{% url 'assessment:endpoint_list' assessment.pk %}">Endpoints</a></li>
-  <li class="breadcrumb-item active">Animal bioassay</li>
-{% endblock %}
-
 {% block content %}
 
     <h1>Assessment endpoints ({{page_obj.paginator.count}} found)</h1>

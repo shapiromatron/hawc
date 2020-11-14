@@ -14,7 +14,7 @@ from reversion import revisions as reversion
 
 from ..assessment.models import Assessment
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper, cleanHTML
-from ..common.models import get_crumbs, get_flavored_text
+from ..common.models import get_flavored_text
 from ..myuser.models import HAWCUser
 from ..study.models import Study
 from . import managers
@@ -184,9 +184,6 @@ class RiskOfBias(models.Model):
 
     def get_edit_url(self):
         return reverse("riskofbias:rob_update", args=[self.pk])
-
-    def get_crumbs(self):
-        return get_crumbs(self, self.study)
 
     def get_json(self, json_encode=True):
         return SerializerHelper.get_serialized(self, json=json_encode)

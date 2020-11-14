@@ -1,13 +1,5 @@
 {% extends 'portal.html' %}
 
-{% block title %}
-  {% include "hawc/siteTitle.html" with crumbs=object.get_crumbs crud=crud %}
-{% endblock title %}
-
-{% block breadcrumbs %}
-  {% include "hawc/breadcrumbs.html" with crumbs=object.get_crumbs crud=crud %}
-{% endblock %}
-
 {% block content %}
   <h1>Delete attachment?</h1>
   <p><b>Selected attachment:</b> <a href="{{object.attachment.url}}">{{object}}</a></p>

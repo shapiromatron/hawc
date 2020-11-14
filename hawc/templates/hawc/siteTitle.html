@@ -1,3 +1,3 @@
-{% for crumb in crumbs %}
-    {% if forloop.last %}{% if crud != "Read" %}{{crud}}{% endif %} {{crumb.0}} | HAWC{% else %}{{crumb.0}} | {% endif %}
+{% for crumb in breadcrumbs %}
+    {% if forloop.last %}{{crumb.name}} | HAWC{% else %}{{crumb.name}} | {% endif %}
 {% endfor %}

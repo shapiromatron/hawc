@@ -1,5 +1,6 @@
 import abc
 import logging
+from typing import List
 
 from django.contrib import messages
 from django.contrib.auth import REDIRECT_FIELD_NAME
@@ -15,6 +16,7 @@ from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
 from ..assessment.models import Assessment, BaseEndpoint, TimeSpentEditing
 from .helper import tryParseInt
+from .models import Breadcrumb
 
 
 def beta_tester_required(function=None, redirect_field_name=REDIRECT_FIELD_NAME, login_url=None):
@@ -345,6 +347,7 @@ class CopyAsNewSelectorMixin:
 
         related_id = self.get_related_id()
         context["form"] = self.form_class(parent_id=related_id)
+        context["breadcrumbs"].append(Breadcrumb(name="Copy as new"))
         return context
 
     def get_template_names(self):
@@ -363,11 +366,15 @@ class CopyAsNewSelectorMixin:
 class BaseDetail(AssessmentPermissionsMixin, DetailView):
     crud = "Read"
 
+    def get_breadcrumbs(self) -> List[Breadcrumb]:
+        return Breadcrumb.get_crumbs(self.object, self.request.user)
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["assessment"] = self.assessment
         context["crud"] = self.crud
         context["obj_perms"] = super().get_obj_perms()
+        context["breadcrumbs"] = self.get_breadcrumbs()
         return context
 
 
@@ -391,7 +398,13 @@ class BaseDelete(AssessmentPermissionsMixin, MessageMixin, DeleteView):
         context["crud"] = self.crud
         context["obj_perms"] = super().get_obj_perms()
         context["cancel_url"] = self.get_cancel_url()
+        context["breadcrumbs"] = self.get_breadcrumbs()
         return context
+
+    def get_breadcrumbs(self) -> List[Breadcrumb]:
+        crumbs = Breadcrumb.get_crumbs(self.object, self.request.user)
+        crumbs.append(Breadcrumb(name="Delete"))
+        return crumbs
 
 
 class BaseUpdate(TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin, UpdateView):
@@ -409,9 +422,15 @@ class BaseUpdate(TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin,
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["assessment"] = self.assessment
+        context["breadcrumbs"] = self.get_breadcrumbs()
         context["crud"] = self.crud
         context["obj_perms"] = super().get_obj_perms()
         return context
+
+    def get_breadcrumbs(self) -> List[Breadcrumb]:
+        crumbs = Breadcrumb.get_crumbs(self.object, self.request.user)
+        crumbs.append(Breadcrumb(name="Update"))
+        return crumbs
 
 
 class BaseCreate(TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin, CreateView):
@@ -479,11 +498,17 @@ class BaseList(AssessmentPermissionsMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["assessment"] = self.assessment
+        context["breadcrumbs"] = self.get_breadcrumbs()
         context["obj_perms"] = super().get_obj_perms()
         context["crud"] = self.crud
         if self.parent_template_name:
             context[self.parent_template_name] = self.parent
         return context
+
+    def get_breadcrumbs(self) -> List[Breadcrumb]:
+        crumbs = Breadcrumb.get_crumbs(self.parent, self.request.user)
+        crumbs.append(Breadcrumb(name=self.model._meta.verbose_name_plural))
+        return crumbs
 
 
 class BaseCreateWithFormset(BaseCreate):

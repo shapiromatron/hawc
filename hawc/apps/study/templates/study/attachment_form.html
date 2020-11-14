@@ -2,14 +2,6 @@
 
 {% load add_class %}
 
-{% block title %}
-  {% include "hawc/siteTitle.html" with crumbs=form.instance.get_crumbs crud=crud %}
-{% endblock title %}
-
-{% block breadcrumbs %}
-  {% include "hawc/breadcrumbs.html" with crumbs=form.instance.get_crumbs crud=crud %}
-{% endblock %}
-
 {% block content %}
     <form enctype="multipart/form-data" class="form-horizontal" action="." method="post">
         <fieldset>

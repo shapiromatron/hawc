@@ -15,7 +15,6 @@ from scipy import stats
 from ..assessment.models import Assessment, BaseEndpoint, DSSTox
 from ..assessment.serializers import AssessmentSerializer
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper, cleanHTML, tryParseInt
-from ..common.models import get_crumbs
 from ..study.models import Study
 from ..vocab.models import Term
 from . import managers
@@ -143,6 +142,7 @@ class Experiment(models.Model):
     last_updated = models.DateTimeField(auto_now=True)
 
     COPY_NAME = "experiments"
+    BREADCRUMB_PARENT = "study"
 
     def __str__(self):
         return self.name
@@ -155,9 +155,6 @@ class Experiment(models.Model):
 
     def get_assessment(self):
         return self.study.get_assessment()
-
-    def get_crumbs(self):
-        return get_crumbs(self, self.study)
 
     @staticmethod
     def flat_complete_header_row():
@@ -341,6 +338,7 @@ class AnimalGroup(models.Model):
     last_updated = models.DateTimeField(auto_now=True)
 
     COPY_NAME = "animal_groups"
+    BREADCRUMB_PARENT = "experiment"
 
     def __str__(self):
         return self.name
@@ -350,9 +348,6 @@ class AnimalGroup(models.Model):
 
     def get_assessment(self):
         return self.experiment.get_assessment()
-
-    def get_crumbs(self):
-        return get_crumbs(self, self.experiment)
 
     @property
     def is_generational(self):
@@ -572,15 +567,13 @@ class DosingRegime(models.Model):
     last_updated = models.DateTimeField(auto_now=True)
 
     COPY_NAME = "dose_regime"
+    BREADCRUMB_PARENT = "dosed_animals"
 
     def __str__(self):
         return f"{self.dosed_animals} {self.get_route_of_exposure_display()}"
 
     def get_absolute_url(self):
         return self.dosed_animals.get_absolute_url()
-
-    def get_crumbs(self):
-        return get_crumbs(self, parent=self.dosed_animals.experiment)
 
     def get_assessment(self):
         return self.dosed_animals.get_assessment()
@@ -956,6 +949,7 @@ class Endpoint(BaseEndpoint):
     additional_fields = models.TextField(default="{}")
 
     COPY_NAME = "endpoints"
+    BREADCRUMB_PARENT = "animal_group"
 
     class Meta:
         ordering = ("id",)
@@ -1122,9 +1116,6 @@ class Endpoint(BaseEndpoint):
 
     def get_absolute_url(self):
         return reverse("animal:endpoint_detail", args=[str(self.pk)])
-
-    def get_crumbs(self):
-        return get_crumbs(self, self.animal_group)
 
     def save(self, *args, **kwargs):
         # ensure our controlled vocabulary terms don't have leading/trailing whitespace

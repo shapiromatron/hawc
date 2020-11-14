@@ -1,3 +1,4 @@
+from hawc.apps.common.models import Breadcrumb
 import json
 import logging
 
@@ -230,6 +231,7 @@ class AssessmentList(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context["breadcrumbs"] = [Breadcrumb.build_root(self.request.user)]
         context["show_v2_license"] = not self.request.user.license_v2_accepted
         return context
 
@@ -241,6 +243,11 @@ class AssessmentFullList(LoginRequiredMixin, ListView):
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"] = [Breadcrumb.build_root(self.request.user)]
+        return context
+
 
 class AssessmentPublicList(ListView):
     model = models.Assessment
@@ -251,6 +258,11 @@ class AssessmentPublicList(ListView):
         if dtxsid:
             qs = qs.filter(dtxsids=dtxsid)
         return qs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"] = [Breadcrumb.build_root(self.request.user)]
+        return context
 
 
 class AssessmentCreate(TimeSpentOnPageMixin, LoginRequiredMixin, MessageMixin, CreateView):

@@ -1,25 +1,11 @@
-{% for crumb in crumbs %}
-    {% if forloop.last %}
-        {% if crud == "Read" %}
-            <li class="breadcrumb-item active">{{crumb.0}}
-                {{ crumb.2|default_if_none:""|safe}}
-            </li>
-        {% elif crud == "Create" %}
-            <li class="breadcrumb-item active">{{crud}} {{crumb.0}}
-                {{ crumb.2|default_if_none:""|safe}}
-            </li>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+    {% for crumb in breadcrumbs %}
+        {% if forloop.last %}
+        <li class="breadcrumb-item active">{{crumb.name}}</li>
         {% else %}
-            <li class="breadcrumb-item">
-                <a href="{{crumb.1}}">{{crumb.0}}</a>
-                {{ crumb.2|default_if_none:""|safe}}
-            </li>
-            <li class="breadcrumb-item active">{{crud}}</li>
+        <li class="breadcrumb-item"><a href="{{crumb.url}}">{{crumb.name}}</a></li>
         {% endif %}
-
-    {% else %}
-        <li class="breadcrumb-item">
-            <a href="{{crumb.1}}">{{crumb.0}}</a>
-            {{ crumb.2|default_if_none:""|safe}}
-        </li>
-    {% endif %}
-{% endfor %}
+    {% endfor %}
+    </ol>
+</nav>

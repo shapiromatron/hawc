@@ -13,7 +13,6 @@ from scipy.stats import t
 
 from ..assessment.models import Assessment, BaseEndpoint, DSSTox, EffectTag
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper, df_move_column
-from ..common.models import get_crumbs
 from ..study.models import Study
 from . import managers
 
@@ -326,9 +325,6 @@ class StudyPopulation(models.Model):
     def __str__(self):
         return self.name
 
-    def get_crumbs(self):
-        return get_crumbs(self, self.study)
-
     def can_create_sets(self):
         return self.design not in self.OUTCOME_GROUP_DESIGNS
 
@@ -450,9 +446,6 @@ class Outcome(BaseEndpoint):
 
     def get_absolute_url(self):
         return reverse("epi:outcome_detail", kwargs={"pk": self.pk})
-
-    def get_crumbs(self):
-        return get_crumbs(self, self.study_population)
 
     def can_create_sets(self):
         return not self.study_population.can_create_sets()
@@ -588,12 +581,6 @@ class ComparisonSet(models.Model):
     def __str__(self):
         return self.name
 
-    def get_crumbs(self):
-        if self.outcome:
-            return get_crumbs(self, self.outcome)
-        else:
-            return get_crumbs(self, self.study_population)
-
     @staticmethod
     def flat_complete_header_row():
         return (
@@ -723,9 +710,6 @@ class Group(models.Model):
 
     def __str__(self):
         return self.name
-
-    def get_crumbs(self):
-        return get_crumbs(self, self.comparison_set)
 
     @staticmethod
     def flat_complete_header_row():
@@ -918,9 +902,6 @@ class Exposure(models.Model):
 
     def get_absolute_url(self):
         return reverse("epi:exp_detail", kwargs={"pk": self.pk})
-
-    def get_crumbs(self):
-        return get_crumbs(self, self.study_population)
 
     @classmethod
     def delete_caches(cls, ids):
@@ -1362,9 +1343,6 @@ class Result(models.Model):
 
     def get_absolute_url(self):
         return reverse("epi:result_detail", kwargs={"pk": self.pk})
-
-    def get_crumbs(self):
-        return get_crumbs(self, self.outcome)
 
     @staticmethod
     def flat_complete_header_row():

@@ -4,16 +4,8 @@
 {% load selectable_tags %}
 {% load crispy_forms_tags %}
 
-{% block title %}
-  {% include "hawc/siteTitle.html" with crumbs=form.instance.get_crumbs crud=crud %}
-{% endblock title %}
-
 {% block extrastyle %}
   {% include_ui_theme %}
-{% endblock %}
-
-{% block breadcrumbs %}
-  {% include "hawc/breadcrumbs.html" with crumbs=form.instance.get_crumbs crud=crud %}
 {% endblock %}
 
 {% block content %}

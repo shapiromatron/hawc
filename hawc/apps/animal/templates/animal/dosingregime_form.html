@@ -3,14 +3,6 @@
 {% load add_class %}
 {% load crispy_forms_tags %}
 
-{% block title %}
-  {% include "hawc/siteTitle.html" with crumbs=object.get_crumbs crud=crud %}
-{% endblock title %}
-
-{% block breadcrumbs %}
-  {% include "hawc/breadcrumbs.html" with crumbs=object.get_crumbs crud=crud %}
-{% endblock %}
-
 {% block content %}
 
   {% crispy form %}

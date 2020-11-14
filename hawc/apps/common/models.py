@@ -2,7 +2,7 @@ import json
 import logging
 import math
 from enum import IntEnum
-from typing import Dict, List, Tuple
+from typing import Dict, List, Optional, Tuple
 
 import django
 import pandas as pd
@@ -15,6 +15,8 @@ from django.db import IntegrityError, connection, models, transaction
 from django.db.models import Q, QuerySet, URLField
 from django.template.defaultfilters import slugify as default_slugify
 from django.utils.translation import ugettext_lazy as _
+from django.urls import reverse
+from pydantic import BaseModel
 from treebeard.mp_tree import MP_Node
 
 from . import forms, validators
@@ -74,21 +76,44 @@ def NotImplementedAttribute(self):
     raise NotImplementedError
 
 
-def get_crumbs(obj, parent=None):
-    if parent is None:
-        crumbs = []
-    else:
-        crumbs = parent.get_crumbs()
-    if obj.id is not None:
-        icon = None
-        icon_fetch_method = getattr(obj, "get_crumbs_icon", None)
-        if callable(icon_fetch_method):
-            icon = icon_fetch_method()
+class Breadcrumb(BaseModel):
+    name: str
+    url: Optional[str] = None
 
-        crumbs.append((obj.__str__(), obj.get_absolute_url(), icon))
-    else:
-        crumbs.append((obj._meta.verbose_name.lower(),))
-    return crumbs
+    @classmethod
+    def build_root(cls, user) -> "Breadcrumb":
+        if user.is_authenticated:
+            return Breadcrumb(name="Home", url=reverse("portal"))
+        else:
+            return Breadcrumb(name="Public Assessments", url=reverse("assessment:public_list"))
+
+    @classmethod
+    def from_object(cls, obj):
+        return cls(name=str(obj), url=obj.get_absolute_url())
+
+    @classmethod
+    def get_crumbs(cls, obj, user) -> List["Breadcrumb"]:
+        """
+        Recursively get a list of breadcrumb objects from current object to assessment root.
+
+        Each parent request may require an additional database query.
+
+        Args:
+            obj ([type]): a django model instance.
+
+        Returns:
+            List[Breadcrumb]: A list of crumbs; with assessment first
+        """
+        crumbs = []
+        while True:
+            crumbs.append(cls.from_object(obj))
+            parent_key = getattr(obj, "BREADCRUMB_PARENT")
+            if parent_key is None:
+                break
+            obj = getattr(obj, parent_key)
+
+        crumbs.append(cls.build_root(user))
+        return crumbs[::-1]
 
 
 class NonUniqueTagBase(models.Model):

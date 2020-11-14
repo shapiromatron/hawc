@@ -30,6 +30,9 @@
         {% include "includes/sidebar.html" %}
 
         <div id="main-content-container" class="col p-2 container-fluid no-gutter">
+          {% block breadcrumbs_outer %}
+          {% block breadcrumbs %}{% endblock breadcrumbs %}
+          {% endblock breadcrumbs_outer %}
 
           {% block breadcrumbs_outer %}
           <nav aria-label="breadcrumb">

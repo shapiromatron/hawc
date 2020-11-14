@@ -9,7 +9,7 @@ from django.db import models
 from django.urls import reverse_lazy
 from django.utils.timezone import now
 
-from ..common.models import get_crumbs, get_model_copy_name
+from ..common.models import get_model_copy_name
 from . import managers
 
 BMDS_CHOICES = (
@@ -152,9 +152,6 @@ class Session(models.Model):
 
     def get_assessment(self):
         return self.endpoint.get_assessment()
-
-    def get_crumbs(self):
-        return get_crumbs(self, self.endpoint)
 
     def get_absolute_url(self):
         return reverse_lazy("bmd:session_detail", args=[self.id])

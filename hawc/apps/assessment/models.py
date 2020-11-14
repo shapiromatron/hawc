@@ -17,7 +17,7 @@ from pydantic import BaseModel as PydanticModel
 from reversion import revisions as reversion
 
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper, read_excel
-from ..common.models import IntChoiceEnum, get_crumbs, get_private_data_storage
+from ..common.models import IntChoiceEnum, get_private_data_storage
 from ..myuser.models import HAWCUser
 from ..vocab.models import VocabularyNamespace
 from . import jobs, managers
@@ -273,6 +273,7 @@ class Assessment(models.Model):
     last_updated = models.DateTimeField(auto_now=True)
 
     COPY_NAME = "assessments"
+    BREADCRUMB_PARENT = None
 
     def get_assessment(self):
         return self
@@ -373,9 +374,6 @@ class Assessment(models.Model):
             return VocabularyNamespace(self.vocabulary).display_name
         else:
             return ""
-
-    def get_crumbs(self):
-        return get_crumbs(self)
 
     def get_noel_names(self):
         if self.noel_name == NOEL_NAME_CHOICES_NEL:
@@ -706,6 +704,7 @@ class Dataset(models.Model):
     last_updated = models.DateTimeField(auto_now=True)
 
     VALID_EXTENSIONS = {".xlsx", ".csv", ".tsv"}
+    BREADCRUMB_PARENT = "assessment"
 
     class Meta:
         ordering = ("created",)
@@ -738,9 +737,6 @@ class Dataset(models.Model):
 
     def get_api_data_url(self) -> str:
         return reverse("assessment:api:dataset-data", args=(self.id,))
-
-    def get_crumbs(self):
-        return get_crumbs(self, parent=self.assessment)
 
     def get_latest_revision(self) -> "DatasetRevision":
         return self.revisions.latest()

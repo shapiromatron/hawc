@@ -7,7 +7,6 @@ from reversion import revisions as reversion
 
 from ..assessment.serializers import AssessmentSerializer
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper
-from ..common.models import get_crumbs
 from ..epi.models import AdjustmentFactor, Criteria, ResultMetric
 from ..study.models import Study
 from . import managers
@@ -65,9 +64,6 @@ class MetaProtocol(models.Model):
 
     def get_assessment(self):
         return self.study.get_assessment()
-
-    def get_crumbs(self):
-        return get_crumbs(self, self.study)
 
     def get_absolute_url(self):
         return reverse("meta:protocol_detail", kwargs={"pk": self.pk})
@@ -174,9 +170,6 @@ class MetaResult(models.Model):
 
     def __str__(self):
         return self.label
-
-    def get_crumbs(self):
-        return get_crumbs(self, self.protocol)
 
     def get_assessment(self):
         return self.protocol.get_assessment()

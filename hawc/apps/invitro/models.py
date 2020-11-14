@@ -9,7 +9,7 @@ from reversion import revisions as reversion
 from ..animal.models import ConfidenceIntervalsMixin
 from ..assessment.models import Assessment, BaseEndpoint
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper
-from ..common.models import AssessmentRootedTagTree, get_crumbs
+from ..common.models import AssessmentRootedTagTree
 from ..study.models import Study
 from . import managers
 
@@ -61,9 +61,6 @@ class IVChemical(models.Model):
 
     def __str__(self):
         return self.name
-
-    def get_crumbs(self):
-        return get_crumbs(self, self.study)
 
     def get_absolute_url(self):
         return reverse("invitro:chemical_detail", args=[str(self.id)])
@@ -130,9 +127,6 @@ class IVCellType(models.Model):
 
     def __str__(self):
         return f"{self.cell_type} {self.species} {self.tissue}"
-
-    def get_crumbs(self):
-        return get_crumbs(self, self.study)
 
     def get_absolute_url(self):
         return reverse("invitro:celltype_detail", args=[str(self.id)])
@@ -237,9 +231,6 @@ class IVExperiment(models.Model):
 
     def get_endpoint_create_url(self):
         return reverse("invitro:endpoint_create", args=[str(self.id)])
-
-    def get_crumbs(self):
-        return get_crumbs(self, self.study)
 
     def copy_across_assessments(self, cw):
         children = list(self.endpoints.all().order_by("id"))
@@ -431,9 +422,6 @@ class IVEndpoint(BaseEndpoint):
 
     def get_delete_url(self):
         return reverse("invitro:endpoint_delete", args=[str(self.id)])
-
-    def get_crumbs(self):
-        return get_crumbs(self, self.experiment)
 
     @classmethod
     def delete_caches(cls, ids):
