@@ -171,7 +171,7 @@ class BaseVisualForm {
                     submitter.trigger("click");
                 })
             )
-            .append(`<a class="btn btn-secondary" href="${cancel_url}">Cancel</a>`)
+            .append(`<a class="btn btn-secondary mx-2" href="${cancel_url}">Cancel</a>`)
             .appendTo($parent);
     }
 
@@ -191,13 +191,11 @@ class BaseVisualForm {
                 `<div id="settings_${d.name}" class="tab-pane ${isActive}">`
             );
             tablinks.push(
-                `<li class="${isActive}">
-                    <a href="#settings_${d.name}" data-toggle="tab">${d.label}</a>
-                </li>`
+                `<a class="nav-link ${isActive}" href="#settings_${d.name}" data-toggle="tab">${d.label}</a>`
             );
         });
 
-        $('<ul class="nav nav-tabs">')
+        $('<nav class="nav nav-tabs">')
             .append(tablinks)
             .appendTo($parent);
 
