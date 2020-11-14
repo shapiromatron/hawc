@@ -262,7 +262,6 @@ class _DataPivot_settings_conditional {
         add_input_row(pc, "Minimum color", min_color);
         add_input_row(pc, "Maximum color", max_color);
         pc.append("<br>", svg);
-        div.find('input[type="color"]').spectrum({showInitial: true, showInput: true});
 
         this.inputs.push(fieldName, conditionType, min_size, max_size, min_color, max_color);
 

@@ -241,7 +241,6 @@ let build_settings_general_tab = function(self) {
             );
             content.append("<h4>Legend Settings<h4>", tbl, button_well);
             div.html([content, plot_div]);
-            div.find('input[type="color"]').spectrum({showInitial: true, showInput: true});
             return div;
         };
 

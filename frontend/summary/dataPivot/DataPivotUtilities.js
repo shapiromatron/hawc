@@ -704,11 +704,6 @@ class _DataPivot_settings_general {
             build_tr("Highlight background text color", this.content.text_background_color),
         ];
 
-        this.content.text_background_color.spectrum({
-            showInitial: true,
-            showInput: true,
-        });
-
         // display merge_until only when merge_descriptions activated
         var show_mergeUntil = function() {
             var show = self.content.merge_descriptions.prop("checked"),

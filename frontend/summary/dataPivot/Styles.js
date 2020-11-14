@@ -28,9 +28,6 @@ class StyleSymbol {
         this.$modal = $modal;
         this._draw_setting_controls();
         this.$modal.find(".style_fields").html(this.controls);
-        this.$modal
-            .find('.style_fields input[type="color"]')
-            .spectrum({showInitial: true, showInput: true});
         $modal.data("d", this);
     }
 
@@ -186,9 +183,6 @@ class StyleText {
         this.$modal = $modal;
         this._draw_setting_controls();
         this.$modal.find(".style_fields").html(this.controls);
-        this.$modal
-            .find('.style_fields input[type="color"]')
-            .spectrum({showInitial: true, showInput: true});
         $modal.data("d", this);
     }
 
@@ -331,9 +325,6 @@ class StyleLine {
         this.$modal = $modal;
         this._draw_setting_controls();
         this.$modal.find(".style_fields").html(this.controls);
-        this.$modal
-            .find('.style_fields input[type="color"]')
-            .spectrum({showInitial: true, showInput: true});
         $modal.data("d", this);
     }
 
@@ -445,9 +436,6 @@ class StyleRectangle {
         this.$modal = $modal;
         this._draw_setting_controls();
         this.$modal.find(".style_fields").html(this.controls);
-        this.$modal
-            .find('.style_fields input[type="color"]')
-            .spectrum({showInitial: true, showInput: true});
         $modal.data("d", this);
     }
 
