@@ -101,6 +101,7 @@ input[type='number'] {
 /* Override bootstrap modal width */
 .modal-dialog {
     min-width: 950px;
+    max-width: 1200px;
 }
 
 .modal-body {

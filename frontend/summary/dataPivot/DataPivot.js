@@ -196,7 +196,7 @@ class DataPivot {
         this.$display_div = $(dom_bindings.display_div);
 
         // rebuild visualization whenever selected
-        $('a[data-toggle="tab"]').on("shown", function(e) {
+        $('a[data-toggle="tab"]').on("shown.bs.tab", function(e) {
             if (self.$display_div[0] === $($(e.target).attr("href"))[0]) {
                 self.build_data_pivot_vis(self.$display_div, editable);
             }
@@ -261,7 +261,7 @@ class DataPivot {
                 ),
             ];
 
-        this.$settings_div.html(content).on("shown", function(e) {
+        this.$settings_div.html(content).on("shown.bs.tab", function(e) {
             if ($(e.target).attr("href") === "#data_pivot_settings_general") {
                 self._dp_settings_general.update_merge_until();
             }
@@ -294,9 +294,7 @@ class DataPivot {
                 $('<div class="row">').append($plot)
             );
 
-        modal.getModal().on("shown", function() {
-            self.build_data_pivot_vis($plot);
-        });
+        modal.getModal().on("shown.bs.modal", () => self.build_data_pivot_vis($plot));
 
         modal
             .addHeader(title)

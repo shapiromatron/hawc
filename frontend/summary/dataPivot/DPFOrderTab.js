@@ -327,7 +327,7 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
             .on("change", "input,select", handleStateOverrideUpdate);
 
         // update whenever tab is clicked
-        dp.$div.on("shown", 'a.dp_ordering_tab[data-toggle="tab"]', function() {
+        dp.$div.on("shown.bs.tab", 'a.dp_ordering_tab[data-toggle="tab"]', function() {
             buildManualOverrideRows(dp, overrideTbody);
         });
 

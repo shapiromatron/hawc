@@ -3,6 +3,7 @@ import $ from "$";
 import StyleViewer from "./StyleViewer";
 import {StyleSymbol, StyleLine, StyleText, StyleRectangle} from "./Styles";
 import {NULL_CASE} from "./shared";
+import HAWCModal from "utils/HAWCModal";
 
 class StyleManager {
     constructor(pivot) {
@@ -10,6 +11,7 @@ class StyleManager {
         this.styles = {symbols: [], lines: [], texts: [], rectangles: []};
         this.selects = {symbols: [], lines: [], texts: [], rectangles: []};
         this.se = {};
+        this.modal = new HAWCModal();
 
         //unpack styles
         var self = this;
@@ -66,27 +68,19 @@ class StyleManager {
                     return word.charAt(0).toUpperCase() + word.substr(1).toLowerCase();
                 });
             },
-            container = $('<div class="row">'),
-            title = $(`<h3>${toTitleCase(style_type)}</h3>`),
+            container = $('<div class="container-fluid">'),
             style_div = $('<div class="row">'),
             form_div = $('<div class="col-md-6">'),
             vis_div = $('<div class="col-md-6">'),
             d3_div = $("<div>"),
-            modal = $(
-                '<div class="modal hide fade">' +
-                    '<div class="modal-header">' +
-                    '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>' +
-                    "<h3></h3>" +
-                    "</div>" +
-                    '<div class="modal-body">' +
-                    '<div class="style_fields"></div>' +
-                    "</div>" +
-                    '<div class="modal-footer">' +
-                    '<a href="#" class="btn btn-light" data-dismiss="modal" aria-hidden="true">Close</a>' +
-                    "</div>" +
-                    "</div>"
+            button_well = $('<div class="well">'),
+            saveSettings = $(
+                '<button type="button" class="btn btn-primary">Save and close</button>'
             ),
-            button_well = $('<div class="well">');
+            title = $(`<h3>${toTitleCase(style_type)}</h3>`),
+            modalHeader = $(`<h3>${toTitleCase(style_type)}</h3>`),
+            modalBody = $('<div class="style_fields">'),
+            modalFooter = saveSettings;
 
         // functionality
         var get_style = function() {
@@ -118,13 +112,11 @@ class StyleManager {
                         break;
                 }
                 var style = new Cls(self, undefined, true);
-                modal.modal("show");
-                style.draw_modal(modal);
+                self.modal.show({}, cb => style.draw_modal(self.modal.$modalDiv));
             },
             edit_style = function() {
                 var style = get_style();
-                modal.modal("show");
-                style.draw_modal(modal);
+                self.modal.show({}, cb => style.draw_modal(self.modal.$modalDiv));
             },
             delete_style = function() {
                 var style = get_style(),
@@ -150,14 +142,16 @@ class StyleManager {
                 load_style();
                 self.update_selects(style_type);
             },
-            save_style = function() {
-                var style = modal.data("d");
+            save_style = function(e) {
+                e.preventDefault();
+                var style = self.modal.$modalDiv.data("d");
                 if (self.save_settings(style, style_type)) {
                     self.update_selects(style_type);
                     style_selector
                         .find(`option[value="${style.settings.name}"]`)
                         .prop("selected", true);
-                    modal.modal("hide");
+                    load_style(); // update selector outside modal
+                    self.modal.$modalDiv.modal("hide");
                 }
             };
 
@@ -173,18 +167,22 @@ class StyleManager {
                 '<button style="margin-right:5<p></p>px" class="btn btn-danger"><i class="fa fa-trash"></i> Delete</button>'
             ).click(delete_style);
 
-        modal
-            .find(".modal-footer")
-            .prepend($('<a href="#" class="btn btn-primary">Save and close</a>').click(save_style));
-        modal.on("hidden", load_style);
+        saveSettings.on("click", save_style);
 
         // put all the pieces together
         form_div.append(style_selector, button_well);
         button_well.append(button_new_style, button_edit_style, button_delete_style);
         style_div.append(form_div, vis_div.append(d3_div));
-        container.append(title, style_div, modal);
+        container.append(title, style_div, this.modal);
 
-        load_style(); // load with initial style
+        // load with initial style
+        load_style();
+
+        // load containers w/ event bindings
+        this.modal
+            .addHeader(modalHeader)
+            .addBody(modalBody)
+            .addFooter(modalFooter);
 
         return container;
     }
@@ -202,7 +200,7 @@ class StyleManager {
                 return unique;
             };
 
-        if (!isNameUnique(style_type, new_styles.name, style_object)) {
+        if (style_object.isNew && !isNameUnique(style_type, new_styles.name, style_object)) {
             alert("Error - style name must be unique!");
             return false;
         }

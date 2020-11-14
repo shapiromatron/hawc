@@ -16,7 +16,9 @@ class DataTable extends React.Component {
     componentDidMount() {
         setTimeout(() => {
             const table = document.getElementById(this.state.tableId);
-            new Tablesort(table);
+            if (table) {
+                new Tablesort(table);
+            }
         }, 1000);
     }
     render() {

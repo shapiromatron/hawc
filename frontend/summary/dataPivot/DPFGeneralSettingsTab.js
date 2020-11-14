@@ -244,9 +244,9 @@ let build_settings_general_tab = function(self) {
 
     // update whenever tab is clicked
     var legend_div = build_legend_settings();
-    self.$div.on("shown", 'a.dp_general_tab[data-toggle="tab"]', function() {
-        self.legend._draw_legend();
-    });
+    self.$div.on("shown.bs.tab", 'a.dp_general_tab[data-toggle="tab"]', () =>
+        self.legend._draw_legend()
+    );
 
     return tab.html([build_general_settings(), "<hr>", legend_div]);
 };

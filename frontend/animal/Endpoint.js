@@ -588,7 +588,7 @@ class Endpoint extends Observee {
         this.build_details_table($details);
         this.build_endpoint_table($tbl);
         this.build_general_notes($notes);
-        modal.getModal().on("shown", function() {
+        modal.getModal().on("shown.bs.modal", function() {
             self.renderPlot($plot, true);
         });
 
