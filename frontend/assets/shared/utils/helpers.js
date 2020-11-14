@@ -152,7 +152,9 @@ const helpers = {
     },
     getHawcContentSize() {
         // for the standard hawc page layout, get the width and height for the main `content` box
-        const contentSize = document.getElementById("main-container").getBoundingClientRect(),
+        const contentSize = document
+                .getElementById("main-content-container")
+                .getBoundingClientRect(),
             windowHeight = window.innerHeight;
         return {
             width: contentSize.width,
