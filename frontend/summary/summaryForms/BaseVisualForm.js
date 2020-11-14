@@ -33,7 +33,7 @@ class BaseVisualForm {
         $settings.on("dataSynced", this.unpackSettings.bind(this));
         $preview.on("dataSynced", this.buildPreviewDiv.bind(this));
 
-        $('a[data-toggle="tab"]').on("show", function(e) {
+        $('a[data-toggle="tab"]').on("show.bs.tab", function(e) {
             var toShow = $(e.target).attr("href"),
                 shown = $(e.relatedTarget).attr("href");
 
@@ -59,7 +59,10 @@ class BaseVisualForm {
                 case "#preview":
                     self.setPreviewLoading();
                     if (self.dataSynced) {
-                        $('a[data-toggle="tab"]').one("shown", self.buildPreviewDiv.bind(self));
+                        $('a[data-toggle="tab"]').one(
+                            "shown.bs.tab",
+                            self.buildPreviewDiv.bind(self)
+                        );
                     } else {
                         self.getData();
                     }

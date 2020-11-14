@@ -48,7 +48,7 @@ class Outcome {
 
     build_results_tabs() {
         var container = $("<div>").append("<h2>Results</h2>"),
-            tabs = $('<ul class="nav nav-tabs">'),
+            tabs = $('<nav class="nav nav-tabs">'),
             content = $('<div class="tab-content">');
 
         if (this.results.length === 0) {
@@ -61,7 +61,7 @@ class Outcome {
             content.append(d.build_content_tab(isActive));
         });
 
-        container.on("shown", 'a[data-toggle="tab"]', function(e) {
+        container.on("shown.bs.tab", 'a[data-toggle="tab"]', function(e) {
             e.stopPropagation();
             $(this.getAttribute("href")).trigger("plotDivShown");
         });
@@ -159,7 +159,7 @@ class Outcome {
     }
 
     triggerFirstTabShown($el) {
-        $el.find(".nav-tabs .active a").trigger("shown");
+        $el.find(".nav-tabs .active").trigger("shown.bs.tab");
     }
 }
 
