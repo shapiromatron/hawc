@@ -58,6 +58,7 @@ class IVChemical(models.Model):
     )
 
     COPY_NAME = "ivchemicals"
+    BREADCRUMB_PARENT = "study"
 
     def __str__(self):
         return self.name
@@ -124,6 +125,7 @@ class IVCellType(models.Model):
     source = models.CharField(max_length=128, verbose_name="Source of cell cultures")
 
     COPY_NAME = "ivcelltypes"
+    BREADCRUMB_PARENT = "study"
 
     def __str__(self):
         return f"{self.cell_type} {self.species} {self.tissue}"
@@ -213,6 +215,7 @@ class IVExperiment(models.Model):
     )
 
     COPY_NAME = "ivexperiments"
+    BREADCRUMB_PARENT = "study"
 
     def __str__(self):
         return self.name
@@ -399,6 +402,7 @@ class IVEndpoint(BaseEndpoint):
     additional_fields = models.TextField(default="{}")
 
     COPY_NAME = "ivendpoints"
+    BREADCRUMB_PARENT = "experiment"
 
     class Meta:
         ordering = ("id",)
