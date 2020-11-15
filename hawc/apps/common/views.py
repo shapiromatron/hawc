@@ -520,7 +520,10 @@ class BaseList(AssessmentPermissionsMixin, ListView):
 
     def get_breadcrumbs(self) -> List[Breadcrumb]:
         crumbs = Breadcrumb.get_crumbs(self.parent, self.request.user)
-        name = self.breadcrumb_active_name or self.model._meta.verbose_name_plural
+        name = (
+            self.breadcrumb_active_name
+            or str(getattr(self.model._meta, "verbose_name_plural", self.model)).title()
+        )
         crumbs.append(Breadcrumb(name=name))
         return crumbs
 
