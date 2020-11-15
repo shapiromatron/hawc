@@ -342,6 +342,7 @@ class AssessmentDownloads(BaseDetail):
 
     model = models.Assessment
     template_name = "assessment/assessment_downloads.html"
+    breadcrumb_active_name = "Downloads"
 
 
 # Attachment views
@@ -497,6 +498,7 @@ class DSSToxCreate(CloseIfSuccessMixin, LoginRequiredMixin, MessageMixin, Create
 class BaseEndpointList(BaseList):
     parent_model = models.Assessment
     model = models.BaseEndpoint
+    breadcrumb_active_name = "Endpoints"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -538,6 +540,7 @@ class CleanExtractedData(TeamMemberOrHigherMixin, BaseEndpointList):
      - add url and model title to templates/assessment/clean_extracted_data.html config object
     """
 
+    breadcrumb_active_name = "Clean extracted data"
     template_name = "assessment/clean_extracted_data.html"
 
     def get_assessment(self, request, *args, **kwargs):
@@ -610,6 +613,7 @@ class DownloadPlot(FormView):
 class CleanStudyRoB(ProjectManagerOrHigherMixin, BaseDetail):
     template_name = "assessment/clean_study_rob_scores.html"
     model = models.Assessment
+    breadcrumb_active_name = "Clean reviews"
 
     def get_assessment(self, request, *args, **kwargs):
         return get_object_or_404(self.model, pk=kwargs["pk"])

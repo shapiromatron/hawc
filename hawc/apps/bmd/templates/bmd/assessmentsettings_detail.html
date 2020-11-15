@@ -1,16 +1,6 @@
-{% extends 'portal.html' %}
-
-{% block title %}
-  {{ assessment }} | BMD Options | HAWC
-{% endblock title %}
-
-{% block breadcrumbs %}
-  <li class="breadcrumb-item"><a href="{{ assessment.get_absolute_url }}">{{ assessment }}</a></li>
-  <li class="breadcrumb-item active">BMD Settings</li>
-{% endblock %}
+{% extends 'assessment-rooted.html' %}
 
 {% block content %}
-
   <h1>{{object}}
     {% if obj_perms.edit_assessment %}
       <div class="dropdown btn-group float-right">

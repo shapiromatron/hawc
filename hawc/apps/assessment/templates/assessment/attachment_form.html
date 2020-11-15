@@ -1,22 +1,10 @@
-{% extends 'portal.html' %}
+{% extends 'assessment-rooted.html' %}
+
 {% load crispy_forms_tags %}
-
-
-{% block title %}
-  {{assessment}} | Create Attachment
-{% endblock title %}
-
-
-{% block breadcrumbs %}
-  <li class="breadcrumb-item"><a href="{{assessment.get_absolute_url}}">{{ assessment }}</a></li>
-  <li class="breadcrumb-item active"> {{ crud }} attachment </li>
-{% endblock %}
-
 
 {% block content %}
   {% crispy form %}
 {% endblock content %}
-
 
 {% block extrajs %}
 <script type="text/javascript">

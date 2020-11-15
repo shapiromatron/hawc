@@ -471,6 +471,8 @@ class Attachment(models.Model):
     publicly_available = models.BooleanField(default=True)
     description = models.TextField(blank=True)
 
+    BREADCRUMB_PARENT = "content_object"
+
     def __str__(self):
         return self.title
 

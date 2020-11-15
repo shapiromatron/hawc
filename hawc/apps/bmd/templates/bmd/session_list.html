@@ -1,9 +1,4 @@
-{% extends 'animal/endpoint_detail.html' %}
-
-{% block breadcrumbs_self %}
-  <li class="breadcrumb-item"><a href="{{object.get_absolute_url}}">{{object}}</a></li>
-  <li class="breadcrumb-item active">BMD sessions</li>
-{% endblock breadcrumbs_self %}
+{% extends 'assessment-rooted.html' %}
 
 {% block content %}
     <h1>BMD sessions
@@ -42,5 +37,3 @@
       </tbody>
     </table>
 {% endblock %}
-
-{% block extrajs %}{% endblock %}
