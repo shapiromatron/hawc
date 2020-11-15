@@ -1,13 +1,13 @@
-from hawc.apps.common.models import Breadcrumb
 import json
 from typing import Dict
 
 from django.http import Http404, HttpResponse, HttpResponseNotAllowed, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
-from django.views.generic import FormView, RedirectView, TemplateView
+from django.views.generic import FormView, RedirectView
 
 from ..assessment.models import Assessment
+from ..common.models import Breadcrumb
 from ..common.helper import HAWCDjangoJSONEncoder
 from ..common.views import (
     BaseCreate,

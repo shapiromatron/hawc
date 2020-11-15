@@ -7,7 +7,7 @@ from django.forms.models import modelformset_factory
 from django.urls import reverse
 from selectable import forms as selectable
 
-from ..common.forms import BaseFormHelper
+from ..common.forms import BaseFormHelper, CopyAsNewSelectorForm
 from ..epi.lookups import AdjustmentFactorLookup, CriteriaLookup
 from ..study.lookups import EpimetaStudyLookup
 from . import lookups, models
@@ -343,17 +343,6 @@ SingleResultFormset = modelformset_factory(
 )
 
 
-class MetaResultSelectorForm(forms.Form):
-
-    selector = selectable.AutoCompleteSelectField(
-        lookup_class=lookups.MetaResultByStudyLookup,
-        label="Meta Result",
-        widget=selectable.AutoComboboxSelectWidget,
-    )
-
-    def __init__(self, *args, **kwargs):
-        study_id = kwargs.pop("study_id")
-        super().__init__(*args, **kwargs)
-        for fld in list(self.fields.keys()):
-            self.fields[fld].widget.attrs["class"] = "col-md-11"
-        self.fields["selector"].widget.update_query_parameters({"related": study_id})
+class MetaResultSelectorForm(CopyAsNewSelectorForm):
+    label = "Meta Result"
+    lookup_class = lookups.MetaResultByProtocolLookup

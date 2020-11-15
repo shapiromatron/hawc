@@ -1,4 +1,3 @@
-from hawc.apps.common.models import Breadcrumb
 import json
 import logging
 
@@ -17,6 +16,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import FormView, ListView, TemplateView, View
 from django.views.generic.edit import CreateView
 
+from ..common.models import Breadcrumb
 from ..common.views import (
     BaseCreate,
     BaseDelete,

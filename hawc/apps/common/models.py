@@ -14,8 +14,8 @@ from django.core.files.storage import FileSystemStorage
 from django.db import IntegrityError, connection, models, transaction
 from django.db.models import Q, QuerySet, URLField
 from django.template.defaultfilters import slugify as default_slugify
-from django.utils.translation import ugettext_lazy as _
 from django.urls import reverse
+from django.utils.translation import ugettext_lazy as _
 from pydantic import BaseModel
 from treebeard.mp_tree import MP_Node
 

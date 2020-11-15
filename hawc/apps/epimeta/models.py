@@ -55,6 +55,7 @@ class MetaProtocol(models.Model):
     notes = models.TextField(blank=True)
 
     COPY_NAME = "meta_protocol"
+    BREADCRUMB_PARENT = "study"
 
     class Meta:
         ordering = ("name",)
@@ -164,6 +165,7 @@ class MetaResult(models.Model):
     notes = models.TextField(blank=True)
 
     COPY_NAME = "meta_result"
+    BREADCRUMB_PARENT = "protocol"
 
     class Meta:
         ordering = ("label",)
@@ -386,6 +388,7 @@ class SingleResult(models.Model):
     notes = models.TextField(blank=True)
 
     COPY_NAME = "meta_single_result"
+    BREADCRUMB_PARENT = "meta_result"
 
     class Meta:
         ordering = ("exposure_name",)
