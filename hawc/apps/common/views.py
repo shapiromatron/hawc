@@ -732,6 +732,14 @@ class HeatmapBase(BaseList):
                 data_url=reverse(self.heatmap_data_url, args=(self.assessment.id,)) + url_args,
                 heatmap_view_title=self.heatmap_view_title,
                 obj_perms=self.assessment.user_permissions(self.request.user),
+                breadcrumbs=[
+                    Breadcrumb.build_root(self.request.user),
+                    Breadcrumb(
+                        name="Endpoints",
+                        url=reverse("assessment:endpoint_list", args=(self.assessment.id,)),
+                    ),
+                    Breadcrumb(name=self.heatmap_view_title),
+                ],
             )
         )
         return context

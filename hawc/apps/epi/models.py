@@ -245,6 +245,7 @@ class StudyPopulation(models.Model):
     last_updated = models.DateTimeField(auto_now=True)
 
     COPY_NAME = "study_populations"
+    BREADCRUMB_PARENT = "study"
 
     @staticmethod
     def flat_complete_header_row():
@@ -425,6 +426,7 @@ class Outcome(BaseEndpoint):
     )
 
     COPY_NAME = "outcomes"
+    BREADCRUMB_PARENT = "study_population"
 
     class Meta:
         ordering = ("id",)
@@ -561,6 +563,15 @@ class ComparisonSet(models.Model):
 
     COPY_NAME = "comparison_sets"
 
+    @property
+    def BREADCRUMB_PARENT(self) -> str:
+        if self.study_population is not None:
+            return "study_population"
+        elif self.outcome is not None:
+            return "outcome"
+        else:
+            raise ValueError("Undetermined parent field")
+
     class Meta:
         ordering = ("name",)
 
@@ -695,6 +706,7 @@ class Group(models.Model):
     last_updated = models.DateTimeField(auto_now=True)
 
     COPY_NAME = "groups"
+    BREADCRUMB_PARENT = "comparison_set"
 
     class Meta:
         ordering = (
@@ -888,6 +900,7 @@ class Exposure(models.Model):
     last_updated = models.DateTimeField(auto_now=True)
 
     COPY_NAME = "exposures"
+    BREADCRUMB_PARENT = "study_population"
 
     class Meta:
         ordering = ("name",)
@@ -1323,6 +1336,7 @@ class Result(models.Model):
     resulttags = models.ManyToManyField(EffectTag, blank=True, verbose_name="Tags")
 
     COPY_NAME = "results"
+    BREADCRUMB_PARENT = "outcome"
 
     class Meta:
         ordering = ("id",)
