@@ -6,8 +6,7 @@ from typing import List, Tuple
 
 from django.urls import reverse_lazy
 
-from hawc.services.utils.git import git_sha, Commit
-
+from hawc.services.utils.git import Commit, git_sha
 
 PROJECT_PATH = Path(__file__).parents[2].absolute()
 PROJECT_ROOT = PROJECT_PATH.parent
