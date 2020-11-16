@@ -9,15 +9,20 @@ from django.contrib.auth.views import (
 )
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.decorators.debug import sensitive_post_parameters
 from django.views.generic import CreateView, DetailView, TemplateView
 from django.views.generic.base import RedirectView
 from django.views.generic.edit import FormView, UpdateView
 
+from ..common.models import Breadcrumb
 from ..common.views import LoginRequiredMixin, MessageMixin
 from . import forms, models
+
+
+def get_profile_breadcrumb() -> Breadcrumb:
+    return Breadcrumb(name="User profile", url=reverse("user:settings"))
 
 
 class HawcUserCreate(CreateView):
@@ -64,6 +69,11 @@ class ProfileDetail(LoginRequiredMixin, DetailView):
         obj, created = models.UserProfile.objects.get_or_create(user=self.request.user)
         return obj
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"] = Breadcrumb.build_crumbs(self.request.user, "User profile")
+        return context
+
 
 class ProfileUpdate(LoginRequiredMixin, MessageMixin, UpdateView):
     model = models.UserProfile
@@ -73,6 +83,13 @@ class ProfileUpdate(LoginRequiredMixin, MessageMixin, UpdateView):
     def get_object(self, **kwargs):
         obj, created = models.UserProfile.objects.get_or_create(user=self.request.user)
         return obj
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"] = Breadcrumb.build_crumbs(
+            self.request.user, "Update user profile", [get_profile_breadcrumb()]
+        )
+        return context
 
 
 class AcceptNewLicense(MessageMixin, FormView):
@@ -116,6 +133,13 @@ class PasswordChange(LoginRequiredMixin, MessageMixin, UpdateView):
     @method_decorator(sensitive_post_parameters())
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"] = Breadcrumb.build_crumbs(
+            self.request.user, "Change password", [get_profile_breadcrumb()],
+        )
+        return context
 
 
 class PasswordResetSent(TemplateView):

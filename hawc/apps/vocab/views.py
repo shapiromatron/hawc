@@ -1,3 +1,4 @@
+from typing import List
 import json
 
 from django.conf import settings
@@ -8,8 +9,17 @@ from django.utils.decorators import method_decorator
 from django.views.generic import ListView, TemplateView
 from django.views.generic.edit import CreateView
 
+from ..common.models import Breadcrumb
 from ..common.views import MessageMixin
 from . import forms, models
+
+
+def build_ehv_breadcrumbs(user, name: str) -> List[Breadcrumb]:
+    return Breadcrumb.build_crumbs(
+        user,
+        name,
+        [Breadcrumb(name="Environmental Health Vocabulary", url=reverse("vocab:ehv-browse"))],
+    )
 
 
 @method_decorator(login_required, name="dispatch")
@@ -28,6 +38,9 @@ class EhvBrowse(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["config"] = self._get_ehv_json()
+        context["breadcrumbs"] = Breadcrumb.build_crumbs(
+            self.request.user, "Environmental Health Vocabulary"
+        )
         return context
 
 
@@ -49,15 +62,30 @@ class CreateComment(MessageMixin, CreateView):
         form.instance.commenter = self.request.user
         return super().form_valid(form)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"] = build_ehv_breadcrumbs(self.request.user, "Comment")
+        return context
+
 
 @method_decorator(login_required, name="dispatch")
 class CommentList(ListView):
     model = models.Comment
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"] = build_ehv_breadcrumbs(self.request.user, "Comments")
+        return context
+
 
 @method_decorator(login_required, name="dispatch")
 class EntityTermList(ListView):
     model = models.EntityTermRelation
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"] = build_ehv_breadcrumbs(self.request.user, "Entity term list")
+        return context
 
 
 @method_decorator(login_required, name="dispatch")
@@ -68,7 +96,17 @@ class ProposedEntityTermList(ListView):
     def get_queryset(self):
         return self.model.objects.filter(approved_on=None)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"] = build_ehv_breadcrumbs(self.request.user, "Proposed relations")
+        return context
+
 
 @method_decorator(login_required, name="dispatch")
 class TermList(ListView):
     model = models.Term
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"] = build_ehv_breadcrumbs(self.request.user, "Terms")
+        return context

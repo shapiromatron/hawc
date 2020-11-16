@@ -1,3 +1,4 @@
+from hawc.apps.assessment.api import Assessment
 import json
 import logging
 
@@ -261,7 +262,12 @@ class AssessmentPublicList(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["breadcrumbs"] = [Breadcrumb.build_root(self.request.user)]
+        if self.request.user.is_authenticated:
+            context["breadcrumbs"] = Breadcrumb.build_crumbs(
+                self.request.user, "Public assessments"
+            )
+        else:
+            context["breadcrumbs"] = [Breadcrumb.build_root(self.request.user)]
         return context
 
 
@@ -416,7 +422,7 @@ class DatasetDelete(BaseDelete):
 
 
 # Vocab views
-class VocabList(TeamMemberOrHigherMixin, TemplateView):
+class VocabList(TeamMemberOrHigherMixin, AssessmentRead):
     template_name = "assessment/vocab.html"
 
     def get_assessment(self, *args, **kwargs):
@@ -440,6 +446,8 @@ class VocabList(TeamMemberOrHigherMixin, TemplateView):
         context["endpoint_names"] = Term.objects.assessment_endpoint_names(
             self.assessment.id
         ).order_by("-deprecated_on", "id")
+        context["breadcrumbs"] = Breadcrumb.get_crumbs(self.assessment, self.request.user)
+        context["breadcrumbs"].append(Breadcrumb(name="Controlled vocabulary"))
         return context
 
 
@@ -655,3 +663,8 @@ class BlogList(ListView):
     @method_decorator(beta_tester_required)
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"] = Breadcrumb.build_crumbs(self.request.user, "Blog")
+        return context

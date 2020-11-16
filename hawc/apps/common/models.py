@@ -115,6 +115,16 @@ class Breadcrumb(BaseModel):
         crumbs.append(cls.build_root(user))
         return crumbs[::-1]
 
+    @classmethod
+    def build_crumbs(
+        cls, user, name: str, extras: Optional[List["Breadcrumb"]] = None
+    ) -> List["Breadcrumb"]:
+        crumbs = [cls.build_root(user)]
+        if extras:
+            crumbs.extend(extras)
+        crumbs.append(Breadcrumb(name=name))
+        return crumbs
+
 
 class NonUniqueTagBase(models.Model):
     name = models.CharField(verbose_name=_("Name"), max_length=100)

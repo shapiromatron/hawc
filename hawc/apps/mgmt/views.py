@@ -67,6 +67,11 @@ class UserAssignments(RobTaskMixin, LoginRequiredMixin, ListView):
     def get_rob_queryset(self, RiskOfBias):
         return RiskOfBias.objects.filter(author=self.request.user, active=True)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"] = Breadcrumb.build_crumbs(self.request.user, "Assigned tasks")
+        return context
+
 
 class UserAssessmentAssignments(RobTaskMixin, LoginRequiredMixin, BaseList):
     parent_model = Assessment
