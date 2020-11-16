@@ -246,7 +246,12 @@ class AssessmentFullList(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["breadcrumbs"] = [Breadcrumb.build_root(self.request.user)]
+        if self.request.user.is_authenticated:
+            context["breadcrumbs"] = Breadcrumb.build_crumbs(
+                self.request.user, "Public assessments"
+            )
+        else:
+            context["breadcrumbs"] = [Breadcrumb.build_root(self.request.user)]
         return context
 
 

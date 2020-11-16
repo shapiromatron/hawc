@@ -1,20 +1,17 @@
-{% extends 'base.html' %}
+{% extends 'crumbless.html' %}
 
 {% load add_class %}
 {% load selectable_tags %}
 
-{% block title %}{{assessment}} | Create Effect Tag {% endblock title %}
+{% block title %}Create Effect Tag | HAWC{% endblock title %}
 
 {% block extrastyle %}
   {% include_ui_theme %}
 {% endblock %}
 
-{% block main_content %}
-
+{% block content %}
 <form class="form-horizontal" action="." method="post">
-
     {% csrf_token %}
-
     <div class='row'>
       <fieldset>
         <legend>Create new effect tag</legend>
@@ -40,8 +37,7 @@
       </div>
     </div>
   </form>
-
-{% endblock main_content %}
+{% endblock content %}
 
 {% block extrajs %}
   {{ form.media }}

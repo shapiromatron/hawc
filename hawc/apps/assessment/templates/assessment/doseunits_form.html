@@ -1,11 +1,9 @@
-{% extends 'base.html' %}
+{% extends 'crumbless.html' %}
 
 {% load selectable_tags %}
 {% load add_class %}
 
-{% block title %}{{assessment}} | Create Dose Units {% endblock title %}
-
-{% block main_content %}
+{% block content %}
 
 <form class="form-horizontal" action="." method="post">
 
@@ -38,7 +36,7 @@
      <p><b>Note:</b> If coming from an input-form, you may need to refresh the page to view your newly added dose-units!</p>
   </form>
 
-{% endblock main_content %}
+{% endblock content %}
 
 
 {% block extrajs %}

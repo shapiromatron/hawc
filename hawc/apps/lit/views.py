@@ -142,6 +142,11 @@ class ImportRISNew(ImportNew):
 class RISExportInstructions(TemplateView):
     template_name = "lit/ris_export_instructions.html"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"] = Breadcrumb.build_crumbs(self.request.user, "RIS instructions")
+        return context
+
 
 class SearchDetail(BaseDetail):
     model = models.Search
