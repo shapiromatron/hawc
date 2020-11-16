@@ -7,8 +7,8 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic import FormView, RedirectView
 
 from ..assessment.models import Assessment
-from ..common.models import Breadcrumb
 from ..common.helper import HAWCDjangoJSONEncoder
+from ..common.models import Breadcrumb
 from ..common.views import (
     BaseCreate,
     BaseDelete,
