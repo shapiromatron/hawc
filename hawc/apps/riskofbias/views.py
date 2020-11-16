@@ -9,6 +9,7 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic.edit import FormView
 
 from ..assessment.models import Assessment
+from ..common.models import Breadcrumb
 from ..common.views import (
     BaseCreate,
     BaseDelete,
@@ -25,6 +26,20 @@ from ..study.models import Study
 from . import forms, models
 
 
+def get_breadcrumb_rob_setting(assessment) -> Breadcrumb:
+    return Breadcrumb(
+        name=f"{assessment.get_rob_name_display()} requirements",
+        url=reverse("riskofbias:arob_detail", args=(assessment.id,)),
+    )
+
+
+def get_breadcrumb_rob_reviews(assessment) -> Breadcrumb:
+    return Breadcrumb(
+        name=f"{assessment.get_rob_name_display()} assignments",
+        url=reverse("riskofbias:arob_reviewers", args=(assessment.id,)),
+    )
+
+
 # Assessment risk of bias requirements
 class ARoBDetail(BaseList):
     parent_model = Assessment
@@ -34,12 +49,22 @@ class ARoBDetail(BaseList):
     def get_queryset(self):
         return self.model.objects.get_qs(self.assessment).prefetch_related("metrics")
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"][2] = get_breadcrumb_rob_setting(self.assessment)
+        return context
+
 
 class ARoBEdit(ProjectManagerOrHigherMixin, ARoBDetail):
     crud = "Update"
 
     def get_assessment(self, request, *args, **kwargs):
         return get_object_or_404(self.parent_model, pk=kwargs["pk"])
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"].append(Breadcrumb(name="Update"))
+        return context
 
 
 class ARoBTextEdit(ProjectManagerOrHigherMixin, BaseUpdate):
@@ -55,6 +80,11 @@ class ARoBTextEdit(ProjectManagerOrHigherMixin, BaseUpdate):
     def get_assessment(self, request, *args, **kwargs):
         return get_object_or_404(self.parent_model, pk=kwargs["pk"])
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"][2] = get_breadcrumb_rob_setting(self.assessment)
+        return context
+
     def get_success_url(self):
         return reverse_lazy("riskofbias:arob_detail", kwargs={"pk": self.assessment.pk})
 
@@ -68,6 +98,14 @@ class ARoBCopy(ProjectManagerOrHigherMixin, MessageMixin, FormView):
 
     def get_assessment(self, request, *args, **kwargs):
         return get_object_or_404(self.parent_model, pk=kwargs["pk"])
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"] = Breadcrumb.get_crumbs(self.assessment, self.request.user)
+        context["breadcrumbs"].extend(
+            [get_breadcrumb_rob_setting(self.assessment), Breadcrumb(name="Copy")]
+        )
+        return context
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -107,6 +145,8 @@ class ARoBReviewersList(TeamMemberOrHigherMixin, BaseList):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["rob_count"] = self.assessment.rob_settings.number_of_reviewers + 1
+        context["breadcrumbs"].insert(2, get_breadcrumb_rob_setting(self.assessment))
+        context["breadcrumbs"][3] = Breadcrumb(name="Reviewer assignment")
         return context
 
 
@@ -126,6 +166,13 @@ class ARoBReviewersUpdate(ProjectManagerOrHigherMixin, BaseUpdateWithFormset):
 
     def get_assessment(self, request, *args, **kwargs):
         return get_object_or_404(self.model, pk=kwargs["pk"])
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"].insert(2, get_breadcrumb_rob_setting(self.assessment))
+        context["breadcrumbs"].insert(3, get_breadcrumb_rob_reviews(self.assessment))
+        context["breadcrumbs"][4] = Breadcrumb(name="Update")
+        return context
 
     def build_initial_formset_factory(self):
         queryset = (
@@ -194,6 +241,11 @@ class RoBDomainCreate(BaseCreate):
     def get_success_url(self):
         return reverse_lazy("riskofbias:arob_update", kwargs={"pk": self.assessment.pk})
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"].insert(2, get_breadcrumb_rob_setting(self.assessment))
+        return context
+
 
 class RoBDomainUpdate(BaseUpdate):
     model = models.RiskOfBiasDomain
@@ -202,6 +254,11 @@ class RoBDomainUpdate(BaseUpdate):
 
     def get_success_url(self):
         return reverse_lazy("riskofbias:arob_update", kwargs={"pk": self.assessment.pk})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"][2] = get_breadcrumb_rob_setting(self.assessment)
+        return context
 
 
 class RoBDomainDelete(BaseDelete):
@@ -213,6 +270,11 @@ class RoBDomainDelete(BaseDelete):
 
     def get_cancel_url(self) -> str:
         return reverse_lazy("riskofbias:arob_update", kwargs={"pk": self.assessment.pk})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"][2] = get_breadcrumb_rob_setting(self.assessment)
+        return context
 
 
 # Risk of bias metric views
@@ -226,6 +288,11 @@ class RoBMetricCreate(BaseCreate):
     def get_success_url(self):
         return reverse_lazy("riskofbias:arob_update", kwargs={"pk": self.assessment.pk})
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"][2] = get_breadcrumb_rob_setting(self.assessment)
+        return context
+
 
 class RoBMetricUpdate(BaseUpdate):
     model = models.RiskOfBiasMetric
@@ -234,6 +301,12 @@ class RoBMetricUpdate(BaseUpdate):
 
     def get_success_url(self):
         return reverse_lazy("riskofbias:arob_update", kwargs={"pk": self.assessment.pk})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"][2] = get_breadcrumb_rob_setting(self.assessment)
+        context["breadcrumbs"].pop(3)
+        return context
 
 
 class RoBMetricDelete(BaseDelete):
@@ -246,6 +319,12 @@ class RoBMetricDelete(BaseDelete):
     def get_cancel_url(self) -> str:
         return reverse_lazy("riskofbias:arob_update", kwargs={"pk": self.assessment.pk})
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"][2] = get_breadcrumb_rob_setting(self.assessment)
+        context["breadcrumbs"].pop(3)
+        return context
+
 
 # RoB views
 class RoBDetail(BaseDetail):
@@ -255,6 +334,11 @@ class RoBDetail(BaseDetail):
 
     model = Study
     template_name = "riskofbias/rob_detail.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"].append(Breadcrumb(name=self.assessment.get_rob_name_display()))
+        return context
 
 
 class RoBsDetailAll(TeamMemberOrHigherMixin, RoBDetail):
@@ -267,6 +351,13 @@ class RoBsDetailAll(TeamMemberOrHigherMixin, RoBDetail):
     def get_assessment(self, request, *args, **kwargs):
         self.object = get_object_or_404(Study, pk=kwargs["pk"])
         return self.object.get_assessment()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"][3] = Breadcrumb(
+            name=f"{self.assessment.get_rob_name_display()} (all reviews)"
+        )
+        return context
 
 
 class RoBEdit(TimeSpentOnPageMixin, BaseDetail):
@@ -315,4 +406,6 @@ class RoBEdit(TimeSpentOnPageMixin, BaseDetail):
                 },
             }
         )
+        context["breadcrumbs"].insert(2, get_breadcrumb_rob_reviews(self.assessment))
+        context["breadcrumbs"][4] = Breadcrumb(name="Update review")
         return context

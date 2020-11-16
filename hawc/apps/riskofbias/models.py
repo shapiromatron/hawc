@@ -37,6 +37,7 @@ class RiskOfBiasDomain(models.Model):
     last_updated = models.DateTimeField(auto_now=True)
 
     COPY_NAME = "riskofbiasdomains"
+    BREADCRUMB_PARENT = "assessment"
 
     class Meta:
         unique_together = ("assessment", "name")
@@ -47,6 +48,9 @@ class RiskOfBiasDomain(models.Model):
 
     def get_assessment(self):
         return self.assessment
+
+    def get_absolute_url(self):
+        return reverse("riskofbias:arob_detail", args=(self.assessment_id,))
 
     @classmethod
     def build_default(cls, assessment):
@@ -121,6 +125,7 @@ class RiskOfBiasMetric(models.Model):
     last_updated = models.DateTimeField(auto_now=True)
 
     COPY_NAME = "riskofbiasmetrics"
+    BREADCRUMB_PARENT = "domain"
 
     class Meta:
         ordering = ("domain", "id")
@@ -130,6 +135,9 @@ class RiskOfBiasMetric(models.Model):
 
     def get_assessment(self):
         return self.domain.get_assessment()
+
+    def get_absolute_url(self):
+        return reverse("riskofbias:arob_detail", args=(self.domain.assessment_id,))
 
     @classmethod
     def build_metrics_for_one_domain(cls, domain, metrics):
@@ -165,6 +173,7 @@ class RiskOfBias(models.Model):
     last_updated = models.DateTimeField(auto_now=True)
 
     COPY_NAME = "riskofbiases"
+    BREADCRUMB_PARENT = "study"
 
     class Meta:
         verbose_name_plural = "Risk of Biases"
@@ -684,6 +693,7 @@ class RiskOfBiasAssessment(models.Model):
     )
 
     COPY_NAME = "riskofbiasassessments"
+    BREADCRUMB_PARENT = "assessment"
 
     def get_absolute_url(self):
         return reverse("riskofbias:arob_reviewers", args=[self.assessment.pk])

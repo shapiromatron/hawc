@@ -1,25 +1,9 @@
-{% extends 'portal.html' %}
+{% extends 'assessment-rooted.html' %}
 
 {% load crispy_forms_tags %}
 
-{% block title %}
-  {{assessment}} | {{assessment.get_rob_name_display}} | Metric | Edit | HAWC
-{% endblock %}
-
-{% block breadcrumbs %}
-  <li class="breadcrumb-item"><a href="{{assessment.get_absolute_url}}">{{assessment}}</a></li>
-  <li class="breadcrumb-item"><a href="{% url 'riskofbias:arob_update' assessment.pk %}">{{assessment.get_rob_name_display}} requirements</a></li>
-  {% if crud == "Update" %}
-    <li class="breadcrumb-item active"> Edit metric</li>
-  {% elif crud == "Create" %}
-    <li class="breadcrumb-item active"> Create metric </li>
-  {% endif %}
-{% endblock %}
-
 {% block content %}
-
   {% crispy form %}
-
 {% endblock %}
 
 {% block extrajs %}
