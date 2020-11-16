@@ -1,10 +1,18 @@
 from django.apps import apps
 from django.shortcuts import get_object_or_404
+from django.urls import reverse
 from django.views.generic import ListView
 
 from ..assessment.models import Assessment
+from ..common.models import Breadcrumb
 from ..common.views import BaseList, LoginRequiredMixin, TeamMemberOrHigherMixin
 from . import models
+
+
+def mgmt_dashboard_breadcrumb(assessment) -> Breadcrumb:
+    return Breadcrumb(
+        name="Management dashboard", url=reverse("mgmt:assessment_dashboard", args=(assessment.id,))
+    )
 
 
 # View mixins for ensuring tasks are started
@@ -77,6 +85,12 @@ class UserAssessmentAssignments(RobTaskMixin, LoginRequiredMixin, BaseList):
             author=self.request.user, active=True, study__assessment=self.assessment
         )
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"].insert(2, mgmt_dashboard_breadcrumb(self.assessment))
+        context["breadcrumbs"][3] = Breadcrumb(name="My assigned tasks")
+        return context
+
 
 # Assessment-level task views
 class TaskDashboard(TeamMemberOrHigherMixin, BaseList):
@@ -90,10 +104,27 @@ class TaskDashboard(TeamMemberOrHigherMixin, BaseList):
     def get_queryset(self):
         return self.model.objects.assessment_qs(self.assessment.id)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"][2] = Breadcrumb(name="Management dashboard")
+        return context
+
 
 class TaskDetail(TaskDashboard):
     template_name = "mgmt/assessment_details.html"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"].insert(2, mgmt_dashboard_breadcrumb(self.assessment))
+        context["breadcrumbs"][3] = Breadcrumb(name="Assignments")
+        return context
+
 
 class TaskModify(TaskDashboard):
     template_name = "mgmt/assessment_modify.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"].insert(2, mgmt_dashboard_breadcrumb(self.assessment))
+        context["breadcrumbs"][3] = Breadcrumb(name="Update assignments")
+        return context

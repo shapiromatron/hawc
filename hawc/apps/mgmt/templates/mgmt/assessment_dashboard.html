@@ -1,13 +1,4 @@
-{% extends 'portal.html' %}
-
-{% block title %}
-  {{assessment}} | Tasks | HAWC
-{% endblock %}
-
-{% block breadcrumbs %}
-  <li class="breadcrumb-item"><a href="{{assessment.get_absolute_url}}">{{ assessment }}</a></li>
-  <li class="breadcrumb-item active">Management dashboard</li>
-{% endblock %}
+{% extends 'assessment-rooted.html' %}
 
 {% block content %}
   <h2>Management dashboard
@@ -22,7 +13,6 @@
   </h2>
   <div id='taskDashboard'></div>
 {% endblock %}
-
 
 {% block extrajs %}
 <script id='config' type="text/json" charset="utf-8">
