@@ -19,4 +19,6 @@ def from_settings(request):
         SERVER_ROLE=server_role,
         SERVER_BANNER_COLOR=getattr(settings, "SERVER_BANNER_COLOR", "black"),
         UA_SUPPORTED=is_supported_agent(agent),
+        commit=settings.COMMIT,
+        flavor=settings.HAWC_FLAVOR,
     )

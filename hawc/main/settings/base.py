@@ -6,6 +6,9 @@ from typing import List, Tuple
 
 from django.urls import reverse_lazy
 
+from hawc.services.utils.git import git_sha, Commit
+
+
 PROJECT_PATH = Path(__file__).parents[2].absolute()
 PROJECT_ROOT = PROJECT_PATH.parent
 PUBLIC_DATA_ROOT = Path(os.environ.get("PUBLIC_DATA_ROOT", PROJECT_ROOT / "public"))
@@ -241,20 +244,17 @@ LOGGING = {
 
 
 # commit information
-GIT_COMMIT_FILE = str(PROJECT_ROOT / ".gitcommit")
+def get_git_commit() -> Commit:
+    try:
+        return git_sha(str(PROJECT_ROOT))
+    except Exception:
+        if GIT_COMMIT_FILE.exists():
+            return Commit(**json.loads(GIT_COMMIT_FILE.read_text()))
+    raise ValueError("Cannot determine git commit version")
 
 
-def get_git_commit():
-    if os.path.exists(GIT_COMMIT_FILE):
-        with open(GIT_COMMIT_FILE, "r") as f:
-            return f.read()
-    return None
-
-
-GIT_COMMIT = get_git_commit()
-COMMIT_URL = "https://github.com/shapiromatron/hawc/"
-if GIT_COMMIT:
-    COMMIT_URL = COMMIT_URL + f"commit/{GIT_COMMIT}/"
+GIT_COMMIT_FILE = PROJECT_ROOT / ".gitcommit"
+COMMIT = get_git_commit()
 
 
 # PubMed settings

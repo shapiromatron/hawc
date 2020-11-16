@@ -1,2 +1,15 @@
+{% load cache %}
+
+{% cache 3600 footer %}
+{% if flavor == "PRIME" %}
 <div class="row mx-0 px-4" id="footer">
+    <div class="offset-lg-4 col-lg-4">
+    <h5 class="text-white py-2">Health assessment workspace collaborative</h5>
+    <ul class="list-unstyled text-white">
+        <li><b>Last updated:&nbsp;</b>{{commit.dt|date:"M d, Y"}}</li>
+        <li><b>Version:&nbsp;</b><a class="text-white" href="https://github.com/shapiromatron/hawc/commit/{{commit.sha}}">{{commit.sha}}</a></li>
+    </ul>
+    </div>
 </div>
+{% endif %}
+{% endcache %}
