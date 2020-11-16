@@ -78,6 +78,11 @@ class LiteratureAssessment(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
+    BREADCRUMB_PARENT = "assessment"
+
+    def __str__(self):
+        return "Literature assessment settings"
+
     @classmethod
     def build_default(cls, assessment: "assessment.Assessment") -> "LiteratureAssessment":
         extraction_tag = (
@@ -93,6 +98,9 @@ class LiteratureAssessment(models.Model):
 
     def get_assessment(self):
         return self.assessment
+
+    def get_absolute_url(self):
+        return reverse("lit:tags_update", args=(self.assessment.id,))
 
     def get_update_url(self) -> str:
         return reverse("lit:literature_assessment_update", args=(self.id,))
@@ -200,6 +208,8 @@ class Search(models.Model):
     import_file = models.FileField(upload_to="lit-search-import", blank=True)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
+
+    BREADCRUMB_PARENT = "assessment"
 
     class Meta:
         verbose_name_plural = "searches"
@@ -710,6 +720,8 @@ class Reference(models.Model):
         null=True,
         help_text="Used internally for determining when reference was " "originally added",
     )
+
+    BREADCRUMB_PARENT = "assessment"
 
     def get_absolute_url(self):
         return reverse("lit:ref_detail", kwargs={"pk": self.pk})
