@@ -1,4 +1,3 @@
-from hawc.apps.assessment.api import Assessment
 import json
 import logging
 
@@ -280,11 +279,17 @@ class AssessmentCreate(TimeSpentOnPageMixin, LoginRequiredMixin, MessageMixin, C
     success_message = "Assessment created."
     model = models.Assessment
     form_class = forms.AssessmentForm
+    template_name = "assessment/assessment_create_form.html"
 
     def get_success_url(self):
         self.assessment = self.object
         response = super().get_success_url()
         return response
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"] = Breadcrumb.build_crumbs(self.request.user, "Create assessment")
+        return context
 
 
 class AssessmentRead(BaseDetail):

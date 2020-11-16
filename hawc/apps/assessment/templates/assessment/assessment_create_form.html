@@ -1,4 +1,4 @@
-{% extends 'assessment-rooted.html' %}
+{% extends 'breadcrumbed.html' %}
 
 {% load selectable_tags %}
 {% load crispy_forms_tags %}
@@ -8,7 +8,9 @@
 {% endblock %}
 
 {% block content %}
+<div class="pl-5 col-md-8">
   {% crispy form %}
+</div>
 {% endblock %}
 
 {% block extrajs %}

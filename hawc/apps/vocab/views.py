@@ -1,5 +1,5 @@
-from typing import List
 import json
+from typing import List
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
