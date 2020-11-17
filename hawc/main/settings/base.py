@@ -1,12 +1,13 @@
 import json
 import os
 import sys
+from datetime import datetime
 from pathlib import Path
 from typing import List, Tuple
 
 from django.urls import reverse_lazy
 
-from hawc.services.utils.git import Commit, git_sha
+from hawc.services.utils.git import Commit
 
 PROJECT_PATH = Path(__file__).parents[2].absolute()
 PROJECT_ROOT = PROJECT_PATH.parent
@@ -245,11 +246,11 @@ LOGGING = {
 # commit information
 def get_git_commit() -> Commit:
     try:
-        return git_sha(str(PROJECT_ROOT))
-    except Exception:
+        return Commit.current(str(PROJECT_ROOT))
+    except FileNotFoundError:
         if GIT_COMMIT_FILE.exists():
-            return Commit(**json.loads(GIT_COMMIT_FILE.read_text()))
-    raise ValueError("Cannot determine git commit version")
+            return Commit.parse_file(GIT_COMMIT_FILE)
+    return Commit(sha="<undefined>", dt=datetime.now())
 
 
 GIT_COMMIT_FILE = PROJECT_ROOT / ".gitcommit"
