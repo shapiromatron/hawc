@@ -99,7 +99,7 @@ class EndpointAggregationForm extends BaseVisualForm {
                     }}
                 />
                 <div id="div_id_published" className="form-group">
-                    <div className="controls">
+                    <div className="form-group">
                         <label htmlFor="id_published" className="checkbox">
                             Publish visual for public viewing
                             <input

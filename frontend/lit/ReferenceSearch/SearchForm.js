@@ -15,9 +15,9 @@ class SearchForm extends Component {
                         <label htmlFor="id_hawc_id" className="control-label">
                             HAWC ID
                         </label>
-                        <div className="controls">
+                        <div className="form-group">
                             <input
-                                className="col-md-12"
+                                className="form-control"
                                 type="number"
                                 id="id_hawc_id"
                                 onChange={e => changeSearchTerm("id", parseInt(e.target.value))}
@@ -28,9 +28,9 @@ class SearchForm extends Component {
                         <label htmlFor="id_db_id" className="control-label">
                             Database unique identifier
                         </label>
-                        <div className="controls">
+                        <div className="form-group">
                             <input
-                                className="col-md-12"
+                                className="form-control"
                                 type="number"
                                 id="id_db_id"
                                 onChange={e => changeSearchTerm("db_id", parseInt(e.target.value))}
@@ -44,9 +44,9 @@ class SearchForm extends Component {
                         <label htmlFor="id_year_id" className="control-label">
                             Year
                         </label>
-                        <div className="controls">
+                        <div className="form-group">
                             <input
-                                className="col-md-12"
+                                className="form-control"
                                 type="number"
                                 id="id_year_id"
                                 onChange={e => changeSearchTerm("year", parseInt(e.target.value))}
@@ -59,9 +59,9 @@ class SearchForm extends Component {
                         <label htmlFor="id_title" className="control-label">
                             Title
                         </label>
-                        <div className="controls">
+                        <div className="form-group">
                             <input
-                                className="col-md-12"
+                                className="form-control"
                                 type="text"
                                 id="id_title"
                                 onChange={e => changeSearchTerm("title", e.target.value)}
@@ -72,9 +72,9 @@ class SearchForm extends Component {
                         <label htmlFor="id_authors" className="control-label">
                             Authors
                         </label>
-                        <div className="controls">
+                        <div className="form-group">
                             <input
-                                className="col-md-12"
+                                className="form-control"
                                 type="text"
                                 id="id_authors"
                                 onChange={e => changeSearchTerm("authors", e.target.value)}
@@ -87,9 +87,9 @@ class SearchForm extends Component {
                         <label htmlFor="id_journal" className="control-label">
                             Journal
                         </label>
-                        <div className="controls">
+                        <div className="form-group">
                             <input
-                                className="col-md-12"
+                                className="form-control"
                                 type="text"
                                 id="id_journal"
                                 onChange={e => changeSearchTerm("journal", e.target.value)}
@@ -100,9 +100,9 @@ class SearchForm extends Component {
                         <label htmlFor="id_abstract" className="control-label">
                             Abstract
                         </label>
-                        <div className="controls">
+                        <div className="form-group">
                             <input
-                                className="col-md-12"
+                                className="form-control"
                                 type="text"
                                 id="id_abstract"
                                 onChange={e => changeSearchTerm("abstract", e.target.value)}

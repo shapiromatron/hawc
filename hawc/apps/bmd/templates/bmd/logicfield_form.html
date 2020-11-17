@@ -11,19 +11,15 @@
       {{ form.non_field_errors|add_class:"alert alert-danger" }}
       <div class="form-group form-row">
         {{form.failure_bin.label_tag|add_class:"control-label"}}
-        <div class="controls">
-          {{form.failure_bin}}
-          <span class='help-inline'>{{form.failure_bin.help_text}}</span>
-        </div>
+        {{form.failure_bin}}
+        <span class='help-inline'>{{form.failure_bin.help_text}}</span>
         {{form.failure_bin.errors|add_class:"alert alert-danger"}}
       </div>
 
       <div class="form-group form-row">
         {{form.threshold.label_tag|add_class:"control-label"}}
-        <div class="controls">
-          {{form.threshold}}
-          <span class='help-inline'>{{form.threshold.help_text}}</span>
-        </div>
+        {{form.threshold}}
+        <span class='help-inline'>{{form.threshold.help_text}}</span>
         {{form.threshold.errors|add_class:"alert alert-danger"}}
       </div>
 

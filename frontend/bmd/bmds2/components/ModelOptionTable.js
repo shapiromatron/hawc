@@ -20,7 +20,7 @@ class ModelOptionTable extends React.Component {
         return (
             <div className="row">
                 <label className="control-label">Add new model</label>
-                <div className="controls">
+                <div className="form-group">
                     <select style={{marginBottom: 0, marginRight: "1em"}} ref={this.modelSelector}>
                         {allOptions.map((d, i) => {
                             return (

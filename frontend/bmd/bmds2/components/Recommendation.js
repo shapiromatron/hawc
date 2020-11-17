@@ -74,7 +74,7 @@ class Recommendation extends React.Component {
                         <label htmlFor="bmr" className="control-label">
                             Selected BMR
                         </label>
-                        <div className="controls">
+                        <div className="form-group">
                             <select
                                 className="col-md-12"
                                 value={this.state.bmr}
@@ -94,7 +94,7 @@ class Recommendation extends React.Component {
                             Selected model
                         </label>
 
-                        <div className="controls">
+                        <div className="form-group">
                             <select
                                 className="col-md-12"
                                 value={selectedModel}
@@ -114,7 +114,7 @@ class Recommendation extends React.Component {
                         <label htmlFor="notes" className="control-label">
                             Notes
                         </label>
-                        <div className="controls">
+                        <div className="form-group">
                             <textarea
                                 className="col-md-12"
                                 value={this.state.notes}

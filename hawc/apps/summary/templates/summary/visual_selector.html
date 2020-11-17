@@ -9,43 +9,38 @@
         Multiple visualization types are available.
         Please select the type of visualization you would like to create.
       </p>
-    <div class="controls">
-      <div>
-        <select class="col-md-10 textinput textInput" id="vis_selector" maxlength="128" name="guideline_compliance" type="text">
-          <option
-            data-showcase="#dataPivot"
-            value="{% url 'summary:dp_new-prompt' assessment.id %}">
-            Data pivot</option>
-          {% comment %}
-          <!-- deprecate; let's see if anyone requests it..  -->
-          <option
-            data-showcase="#visual0"
-            value="{% url 'summary:visualization_create' assessment.id 0 %}">
-            Bioassay endpoint aggregation</option>
-          {% endcomment %}
-          <option
-            data-showcase="#visual1"
-            value="{% url 'summary:visualization_create' assessment.id 1 %}">
-            Bioassay endpoint crossview</option>
-          <option
-            data-showcase="#visual2"
-            value="{% url 'summary:visualization_create' assessment.id 2 %}">
-            {{assessment.get_rob_name_display}} heatmap</option>
-          <option
-            data-showcase="#visual3"
-            value="{% url 'summary:visualization_create' assessment.id 3 %}">
-            {{assessment.get_rob_name_display}} barchart</option>
-          <option data-showcase="#visual4" value="{% url 'summary:visualization_create' assessment.id 4 %}">
-              Literature tagtree</option>
-          <option data-showcase="#visual5" value="{% url 'summary:visualization_create' assessment.id 5 %}">
-              Embedded external website</option>
-          <option data-showcase="#visual6" value="{% url 'summary:visualization_create' assessment.id 6 %}">
-              Exploratory heatmap</option>
-        </select>
-        <a id="create_btn" class="float-right btn btn-primary col-md-2" href="#">Select</a>
-      </div>
-
-    </div>
+      <select class="col-md-10 textinput textInput" id="vis_selector" maxlength="128" name="guideline_compliance" type="text">
+        <option
+          data-showcase="#dataPivot"
+          value="{% url 'summary:dp_new-prompt' assessment.id %}">
+          Data pivot</option>
+        {% comment %}
+        <!-- deprecate; let's see if anyone requests it..  -->
+        <option
+          data-showcase="#visual0"
+          value="{% url 'summary:visualization_create' assessment.id 0 %}">
+          Bioassay endpoint aggregation</option>
+        {% endcomment %}
+        <option
+          data-showcase="#visual1"
+          value="{% url 'summary:visualization_create' assessment.id 1 %}">
+          Bioassay endpoint crossview</option>
+        <option
+          data-showcase="#visual2"
+          value="{% url 'summary:visualization_create' assessment.id 2 %}">
+          {{assessment.get_rob_name_display}} heatmap</option>
+        <option
+          data-showcase="#visual3"
+          value="{% url 'summary:visualization_create' assessment.id 3 %}">
+          {{assessment.get_rob_name_display}} barchart</option>
+        <option data-showcase="#visual4" value="{% url 'summary:visualization_create' assessment.id 4 %}">
+            Literature tagtree</option>
+        <option data-showcase="#visual5" value="{% url 'summary:visualization_create' assessment.id 5 %}">
+            Embedded external website</option>
+        <option data-showcase="#visual6" value="{% url 'summary:visualization_create' assessment.id 6 %}">
+            Exploratory heatmap</option>
+      </select>
+      <a id="create_btn" class="float-right btn btn-primary col-md-2" href="#">Select</a>
   </div>
 
   <div id="showcase" class="row" style="display: none;">

@@ -9,20 +9,16 @@ class TextInput extends Component {
                     {this.props.label}
                     {this.props.required ? <span className="asteriskField">*</span> : null}
                 </label>
-                <div className="controls">
-                    <textarea
-                        className="col-md-12 textarea"
-                        id={`id_${this.props.name}`}
-                        name={this.props.name}
-                        type="text"
-                        required={this.props.required}
-                        value={this.props.value}
-                        onChange={this.props.onChange}
-                    />
-                    {this.props.helpText ? (
-                        <p className="help-block">{this.props.helpText}</p>
-                    ) : null}
-                </div>
+                <textarea
+                    className="col-md-12 textarea"
+                    id={`id_${this.props.name}`}
+                    name={this.props.name}
+                    type="text"
+                    required={this.props.required}
+                    value={this.props.value}
+                    onChange={this.props.onChange}
+                />
+                {this.props.helpText ? <p className="help-block">{this.props.helpText}</p> : null}
             </div>
         );
     }

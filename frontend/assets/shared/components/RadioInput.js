@@ -24,25 +24,23 @@ class RadioInput extends Component {
         return (
             <div className="form-group">
                 {this.renderLabel()}
-                <div className="controls">
-                    {choices.map(choice => {
-                        const id = `${name}-${choice.id}`;
-                        return (
-                            <label key={choice.id} className="radio" htmlFor={id}>
-                                <input
-                                    onChange={event => onChange(name, choice.id)}
-                                    checked={choice.id === value}
-                                    type="radio"
-                                    id={id}
-                                    name={name}
-                                />
-                                {choice.label}
-                            </label>
-                        );
-                    })}
+                {choices.map(choice => {
+                    const id = `${name}-${choice.id}`;
+                    return (
+                        <label key={choice.id} className="radio" htmlFor={id}>
+                            <input
+                                onChange={event => onChange(name, choice.id)}
+                                checked={choice.id === value}
+                                type="radio"
+                                id={id}
+                                name={name}
+                            />
+                            {choice.label}
+                        </label>
+                    );
+                })}
 
-                    {helpText ? <p className="help-block">{helpText}</p> : null}
-                </div>
+                {helpText ? <p className="help-block">{helpText}</p> : null}
             </div>
         );
     }

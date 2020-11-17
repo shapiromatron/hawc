@@ -11,11 +11,8 @@
       {% for field in form %}
         <div class="form-group form-row">
           {{field.label_tag|add_class:"control-label"}}
-          <div class="controls">
-              {{field}}<br>
-              <p class='help-inline'>{{field.help_text}}</p>
-          </div>
-
+          {{field}}<br>
+          <p class='help-inline'>{{field.help_text}}</p>
           {{field.errors|add_class:"alert alert-danger"}}
         </div>
       {% endfor %}

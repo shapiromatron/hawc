@@ -23,7 +23,7 @@ class ParameterField extends React.Component {
         return (
             <div className="form-group" key={index}>
                 <label className="control-label">{settings.n}</label>
-                <div className="controls">
+                <div className="form-group">
                     <select
                         className="col-md-4"
                         style={{marginRight: "1em"}}

@@ -186,7 +186,7 @@ class DosingRegimeForm {
                             type="number"
                             step="any"
                             tabindex="${j + 1}"
-                            class="input-medium"
+                            class="form-control"
                             id="dose_${i}"
                             value="${this.array[i].doses[j]}" />
                     </td>`

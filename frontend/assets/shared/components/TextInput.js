@@ -19,20 +19,16 @@ class TextInput extends Component {
         return (
             <div className="form-group">
                 {this.renderLabel()}
-                <div className="controls">
-                    <input
-                        className="col-md-12 textinput"
-                        id={`id_${this.props.name}`}
-                        name={this.props.name}
-                        type={type}
-                        required={this.props.required}
-                        value={this.props.value}
-                        onChange={this.props.onChange}
-                    />
-                    {this.props.helpText ? (
-                        <p className="help-block">{this.props.helpText}</p>
-                    ) : null}
-                </div>
+                <input
+                    className="col-md-12 textinput"
+                    id={`id_${this.props.name}`}
+                    name={this.props.name}
+                    type={type}
+                    required={this.props.required}
+                    value={this.props.value}
+                    onChange={this.props.onChange}
+                />
+                {this.props.helpText ? <p className="help-block">{this.props.helpText}</p> : null}
             </div>
         );
     }
