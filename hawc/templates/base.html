@@ -1,3 +1,4 @@
+{% load cache %}
 {% load static %}
 {% load render_bundle from webpack_loader %}
 
@@ -21,6 +22,12 @@
     {% if user.is_superuser or SERVER_ROLE != 'production' %}
     {% include 'includes/environment_banner.html' %}
     {% endif %}
+
+    {% cache 3600 header %}
+    {% if flavor == "EPA" %}
+    {% include 'includes/epa/header.html' %}
+    {% endif %}
+    {% endcache %}
 
     {% include 'includes/navigation.html' %}
 
