@@ -9,7 +9,7 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic.edit import FormView
 
 from ..assessment.models import Assessment
-from ..common.models import Breadcrumb
+from ..common.crumbs import Breadcrumb
 from ..common.views import (
     BaseCreate,
     BaseDelete,
@@ -101,7 +101,9 @@ class ARoBCopy(ProjectManagerOrHigherMixin, MessageMixin, FormView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["breadcrumbs"] = Breadcrumb.get_crumbs(self.assessment, self.request.user)
+        context["breadcrumbs"] = Breadcrumb.build_assessment_crumbs(
+            self.request.user, self.assessment
+        )
         context["breadcrumbs"].extend(
             [get_breadcrumb_rob_setting(self.assessment), Breadcrumb(name="Copy")]
         )

@@ -2,7 +2,7 @@ from django.db.models import Q
 from django.views.generic import DetailView
 
 from ..assessment.models import Assessment
-from ..common.models import Breadcrumb
+from ..common.crumbs import Breadcrumb
 from ..common.views import (
     BaseCreate,
     BaseCreateWithFormset,

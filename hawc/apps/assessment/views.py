@@ -16,7 +16,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import FormView, ListView, TemplateView, View
 from django.views.generic.edit import CreateView
 
-from ..common.models import Breadcrumb
+from ..common.crumbs import Breadcrumb
 from ..common.views import (
     BaseCreate,
     BaseDelete,
@@ -456,7 +456,9 @@ class VocabList(TeamMemberOrHigherMixin, AssessmentRead):
         context["endpoint_names"] = Term.objects.assessment_endpoint_names(
             self.assessment.id
         ).order_by("-deprecated_on", "id")
-        context["breadcrumbs"] = Breadcrumb.get_crumbs(self.assessment, self.request.user)
+        context["breadcrumbs"] = Breadcrumb.build_assessment_crumbs(
+            self.request.user, self.assessment,
+        )
         context["breadcrumbs"].append(Breadcrumb(name="Controlled vocabulary"))
         return context
 

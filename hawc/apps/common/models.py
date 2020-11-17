@@ -2,7 +2,7 @@ import json
 import logging
 import math
 from enum import IntEnum
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Tuple
 
 import django
 import pandas as pd
@@ -14,9 +14,7 @@ from django.core.files.storage import FileSystemStorage
 from django.db import IntegrityError, connection, models, transaction
 from django.db.models import Q, QuerySet, URLField
 from django.template.defaultfilters import slugify as default_slugify
-from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
-from pydantic import BaseModel
 from treebeard.mp_tree import MP_Node
 
 from . import forms, validators
@@ -74,56 +72,6 @@ class IntChoiceEnum(IntEnum):
 @property
 def NotImplementedAttribute(self):
     raise NotImplementedError
-
-
-class Breadcrumb(BaseModel):
-    name: str
-    url: Optional[str] = None
-
-    @classmethod
-    def build_root(cls, user) -> "Breadcrumb":
-        if user.is_authenticated:
-            return Breadcrumb(name="Home", url=reverse("portal"))
-        else:
-            return Breadcrumb(name="Public Assessments", url=reverse("assessment:public_list"))
-
-    @classmethod
-    def from_object(cls, obj):
-        return cls(name=str(obj), url=obj.get_absolute_url())
-
-    @classmethod
-    def get_crumbs(cls, obj, user) -> List["Breadcrumb"]:
-        """
-        Recursively get a list of breadcrumb objects from current object to assessment root.
-
-        Each parent request may require an additional database query.
-
-        Args:
-            obj ([type]): a django model instance.
-
-        Returns:
-            List[Breadcrumb]: A list of crumbs; with assessment first
-        """
-        crumbs = []
-        while True:
-            crumbs.append(cls.from_object(obj))
-            parent_key = getattr(obj, "BREADCRUMB_PARENT")
-            if parent_key is None:
-                break
-            obj = getattr(obj, parent_key)
-
-        crumbs.append(cls.build_root(user))
-        return crumbs[::-1]
-
-    @classmethod
-    def build_crumbs(
-        cls, user, name: str, extras: Optional[List["Breadcrumb"]] = None
-    ) -> List["Breadcrumb"]:
-        crumbs = [cls.build_root(user)]
-        if extras:
-            crumbs.extend(extras)
-        crumbs.append(Breadcrumb(name=name))
-        return crumbs
 
 
 class NonUniqueTagBase(models.Model):

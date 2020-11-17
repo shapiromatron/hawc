@@ -10,8 +10,8 @@ from django.views.generic import DetailView, TemplateView
 from django.views.generic.edit import FormView
 
 from ..assessment.models import Assessment
+from ..common.crumbs import Breadcrumb
 from ..common.helper import listToUl, tryParseInt
-from ..common.models import Breadcrumb
 from ..common.views import (
     AssessmentPermissionsMixin,
     BaseCreate,
@@ -31,12 +31,9 @@ def lit_overview_breadcrumb(assessment) -> Breadcrumb:
 
 
 def lit_overview_crumbs(user, assessment: Assessment, name: str) -> List[Breadcrumb]:
-    return [
-        Breadcrumb.build_root(user),
-        Breadcrumb.from_object(assessment),
-        lit_overview_breadcrumb(assessment),
-        Breadcrumb(name=name),
-    ]
+    return Breadcrumb.build_crumbs(
+        user, name, [Breadcrumb.from_object(assessment), lit_overview_breadcrumb(assessment)]
+    )
 
 
 class LitOverview(BaseList):

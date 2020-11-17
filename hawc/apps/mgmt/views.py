@@ -4,7 +4,7 @@ from django.urls import reverse
 from django.views.generic import ListView
 
 from ..assessment.models import Assessment
-from ..common.models import Breadcrumb
+from ..common.crumbs import Breadcrumb
 from ..common.views import BaseList, LoginRequiredMixin, TeamMemberOrHigherMixin
 from . import models
 

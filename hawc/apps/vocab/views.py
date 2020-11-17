@@ -9,7 +9,7 @@ from django.utils.decorators import method_decorator
 from django.views.generic import ListView, TemplateView
 from django.views.generic.edit import CreateView
 
-from ..common.models import Breadcrumb
+from ..common.crumbs import Breadcrumb
 from ..common.views import MessageMixin
 from . import forms, models
 

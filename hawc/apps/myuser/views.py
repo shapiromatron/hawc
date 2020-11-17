@@ -16,7 +16,7 @@ from django.views.generic import CreateView, DetailView, TemplateView
 from django.views.generic.base import RedirectView
 from django.views.generic.edit import FormView, UpdateView
 
-from ..common.models import Breadcrumb
+from ..common.crumbs import Breadcrumb
 from ..common.views import LoginRequiredMixin, MessageMixin
 from . import forms, models
 

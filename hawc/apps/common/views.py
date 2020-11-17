@@ -15,8 +15,8 @@ from django.views.generic import DetailView, ListView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
 from ..assessment.models import Assessment, BaseEndpoint, TimeSpentEditing
+from .crumbs import Breadcrumb
 from .helper import tryParseInt
-from .models import Breadcrumb
 
 
 def beta_tester_required(function=None, redirect_field_name=REDIRECT_FIELD_NAME, login_url=None):
@@ -370,7 +370,7 @@ class BaseDetail(AssessmentPermissionsMixin, DetailView):
     breadcrumb_active_name: Optional[str] = None  # optional
 
     def get_breadcrumbs(self) -> List[Breadcrumb]:
-        return Breadcrumb.get_crumbs(self.object, self.request.user)
+        return Breadcrumb.build_assessment_crumbs(self.request.user, self.object)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -407,7 +407,7 @@ class BaseDelete(AssessmentPermissionsMixin, MessageMixin, DeleteView):
         return context
 
     def get_breadcrumbs(self) -> List[Breadcrumb]:
-        crumbs = Breadcrumb.get_crumbs(self.object, self.request.user)
+        crumbs = Breadcrumb.build_assessment_crumbs(self.request.user, self.object)
         crumbs.append(Breadcrumb(name="Delete"))
         return crumbs
 
@@ -433,7 +433,7 @@ class BaseUpdate(TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin,
         return context
 
     def get_breadcrumbs(self) -> List[Breadcrumb]:
-        crumbs = Breadcrumb.get_crumbs(self.object, self.request.user)
+        crumbs = Breadcrumb.build_assessment_crumbs(self.request.user, self.object)
         crumbs.append(Breadcrumb(name="Update"))
         return crumbs
 
@@ -487,7 +487,7 @@ class BaseCreate(TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin,
         pass
 
     def get_breadcrumbs(self) -> List[Breadcrumb]:
-        crumbs = Breadcrumb.get_crumbs(self.parent, self.request.user)
+        crumbs = Breadcrumb.build_assessment_crumbs(self.request.user, self.parent)
         crumbs.append(Breadcrumb(name=f"Create {self.model._meta.verbose_name}"))
         return crumbs
 
@@ -519,7 +519,7 @@ class BaseList(AssessmentPermissionsMixin, ListView):
         return context
 
     def get_breadcrumbs(self) -> List[Breadcrumb]:
-        crumbs = Breadcrumb.get_crumbs(self.parent, self.request.user)
+        crumbs = Breadcrumb.build_assessment_crumbs(self.request.user, self.parent)
         name = (
             self.breadcrumb_active_name
             or str(getattr(self.model._meta, "verbose_name_plural", self.model)).title()
@@ -734,6 +734,7 @@ class HeatmapBase(BaseList):
                 obj_perms=self.assessment.user_permissions(self.request.user),
                 breadcrumbs=[
                     Breadcrumb.build_root(self.request.user),
+                    Breadcrumb.from_object(self.assessment),
                     Breadcrumb(
                         name="Endpoints",
                         url=reverse("assessment:endpoint_list", args=(self.assessment.id,)),
