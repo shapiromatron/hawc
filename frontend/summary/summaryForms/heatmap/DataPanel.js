@@ -24,7 +24,7 @@ class DataPanel extends Component {
             <div>
                 <DataStatusIndicator />
                 <legend>Data settings</legend>
-                <p className="help-block">
+                <p className="form-text text-muted">
                     Settings which change the data which is used to build the heatmap.
                 </p>
                 {dataError ? (

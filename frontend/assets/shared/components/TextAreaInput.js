@@ -18,7 +18,7 @@ class TextInput extends Component {
                     value={this.props.value}
                     onChange={this.props.onChange}
                 />
-                {this.props.helpText ? <p className="help-block">{this.props.helpText}</p> : null}
+                {this.props.helpText ? <p className="form-text text-muted">{this.props.helpText}</p> : null}
             </div>
         );
     }

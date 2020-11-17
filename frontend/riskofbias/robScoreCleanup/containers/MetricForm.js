@@ -34,7 +34,7 @@ class MetricForm extends React.Component {
                     <button className="btn btn-primary" type="submit">
                         Bulk modify {numItems} {itemString}.
                     </button>
-                    <p className="help-block">
+                    <p className="form-text text-muted">
                         Submitting this request will change the selected score and notes for the
                         selected items.
                     </p>

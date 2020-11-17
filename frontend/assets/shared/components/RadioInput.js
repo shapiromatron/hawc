@@ -40,7 +40,7 @@ class RadioInput extends Component {
                     );
                 })}
 
-                {helpText ? <p className="help-block">{helpText}</p> : null}
+                {helpText ? <p className="form-text text-muted">{helpText}</p> : null}
             </div>
         );
     }

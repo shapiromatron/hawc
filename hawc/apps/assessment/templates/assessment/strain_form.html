@@ -8,7 +8,7 @@
     <div class='row'>
       <fieldset>
         <legend>Create new strain</legend>
-        <span class="help-block">Create a new strain. Note that the creation of a new strain is applied as an option for all assessments in HAWC, not just the assessment you're currently working on. Therefore, our staff may periodically review to ensure that the strain is indeed new and not pre-existing.</span><br>
+        <span class="form-text text-muted">Create a new strain. Note that the creation of a new strain is applied as an option for all assessments in HAWC, not just the assessment you're currently working on. Therefore, our staff may periodically review to ensure that the strain is indeed new and not pre-existing.</span><br>
 
         {{ form.non_field_errors|add_class:"alert alert-danger" }}
 
@@ -16,7 +16,7 @@
           <div class="form-group form-row">
             {{field.label_tag|add_class:"control-label"}}
             {{field}}
-            <span class='help-block'>{{field.help_text}}</span>
+            <span class='form-text text-muted'>{{field.help_text}}</span>
             {{field.errors|add_class:"alert alert-danger"}}
           </div>
         {% endfor %}

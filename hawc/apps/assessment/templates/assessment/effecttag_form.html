@@ -13,7 +13,7 @@
     <div class='row'>
       <fieldset>
         <legend>Create new effect tag</legend>
-        <span class="help-block">Create a new effect tag. Effect tags are used for describing animal bioassay, epidemiological, or <i>in vitro</i> endpoints. Please take care not to duplicate existing effect tags.</span><br>
+        <span class="form-text text-muted">Create a new effect tag. Effect tags are used for describing animal bioassay, epidemiological, or <i>in vitro</i> endpoints. Please take care not to duplicate existing effect tags.</span><br>
 
         {{ form.non_field_errors|add_class:"alert alert-danger" }}
 
@@ -21,7 +21,7 @@
           <div class="form-group form-row">
             {{field.label_tag|add_class:"control-label"}}
             {{field}}
-            <span class='help-inline'>{{field.help_text}}</span>
+            <span class='text-muted'>{{field.help_text}}</span>
             {{field.errors|add_class:"alert alert-danger"}}
           </div>
         {% endfor %}

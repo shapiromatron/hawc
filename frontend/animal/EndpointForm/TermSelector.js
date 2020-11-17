@@ -122,7 +122,7 @@ class TermSelector extends Component {
                 ) : null}
                 <input type="hidden" name={name + "_term"} value={currentId || ""} />
                 <input type="hidden" name={name} value={currentText || ""} />
-                <p className="help-block">{helpText}</p>
+                <p className="form-text text-muted">{helpText}</p>
                 {debug ? (
                     <ul>
                         <li>termId: {currentId}</li>

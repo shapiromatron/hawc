@@ -6,14 +6,14 @@
     <form enctype="multipart/form-data" class="form-horizontal" action="." method="post">
         <fieldset>
             <legend>Add an attachment to a study</legend>
-            <span class="help-block">Upload a file to be associated with his study. Multiple files can be uploaded by creating additional attachments.</span><br>
+            <span class="form-text text-muted">Upload a file to be associated with his study. Multiple files can be uploaded by creating additional attachments.</span><br>
             {{ form.non_field_errors|add_class:"alert alert-danger" }}
 
             {% for field in form %}
                 <div class="form-group form-row">
                     {{field.label_tag|add_class:"control-label"}}
                     {{field|add_class:"col-md-12"}}
-                    <span class='help-inline'>{{field.help_text}}</span>
+                    <span class='text-muted'>{{field.help_text}}</span>
                     {{field.errors|add_class:"alert alert-danger"}}
                 </div>
             {% endfor %}

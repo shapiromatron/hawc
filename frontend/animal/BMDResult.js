@@ -8,7 +8,7 @@ const WrongUnitsRender = function(props) {
             <p>
                 N/A
                 <br />
-                <span className="help-block">(BMD conducted using different units)</span>
+                <span className="form-text text-muted">(BMD conducted using different units)</span>
             </p>
         );
     },

@@ -76,7 +76,7 @@ class SelectInput extends Component {
             <div className="form-group">
                 {this.renderLabel()}
                 {this.renderField()}
-                {helpText ? <p className="help-block">{this.props.helpText}</p> : null}
+                {helpText ? <p className="form-text text-muted">{this.props.helpText}</p> : null}
             </div>
         );
     }

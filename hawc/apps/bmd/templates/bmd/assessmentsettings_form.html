@@ -6,7 +6,7 @@
   <form class="form-horizontal" action="." method="post">
     <fieldset>
       <legend>Update  {{ object }} </legend>
-      <span class="help-block">Update BMD assessment settings.</span><br>
+      <span class="form-text text-muted">Update BMD assessment settings.</span><br>
 
       {{ form.non_field_errors|add_class:"alert alert-danger" }}
 
@@ -14,7 +14,7 @@
         <div class="form-group form-row">
           {{field.label_tag|add_class:"control-label"}}
           {{field|add_class:"col-md-12"}}
-          <span class='help-inline'>{{field.help_text}}</span>
+          <span class='text-muted'>{{field.help_text}}</span>
           {{field.errors|add_class:"alert alert-danger"}}
         </div>
       {% endfor %}

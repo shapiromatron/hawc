@@ -63,7 +63,7 @@ class ReferenceTreeMain extends Component {
                         {selectedReferencesLoading ? <Loading /> : null}
                         {store.selectedTag === null &&
                         store.untaggedReferencesSelected === false ? (
-                            <p className="help-block">Click on a tag to view tagged references.</p>
+                            <p className="form-text text-muted">Click on a tag to view tagged references.</p>
                         ) : null}
                         {selectedReferences ? (
                             <ReferenceTable references={selectedReferences} showActions={canEdit} />

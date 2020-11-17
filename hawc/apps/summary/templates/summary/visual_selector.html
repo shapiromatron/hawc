@@ -5,7 +5,7 @@
 {% block content %}
   <h1>Create a new visualization</h1>
   <div class="form-group">
-    <p id="hint_id_guideline_compliance" class="help-block">
+    <p id="hint_id_guideline_compliance" class="form-text text-muted">
         Multiple visualization types are available.
         Please select the type of visualization you would like to create.
       </p>
@@ -56,7 +56,7 @@
       <div class="row">
         <img class="col-md-10 col-md-offset-1" src="{% static '/img/summary/aggregation2.png' %}">
       </div>
-      <p class="help-block">
+      <p class="form-text text-muted">
         Select a subset of animal bioassay endpoints and present these using
         an exposure-response array or forest-plot design.
         Also creates a dose-response summary table of selected endpoints.
@@ -69,7 +69,7 @@
       <div class="row">
         <img class="col-md-10 col-md-offset-1" src="{% static '/img/summary/crossview.png' %}">
       </div>
-      <p class="help-block">
+      <p class="form-text text-muted">
         All animal bioassay dose-response datasets available in a HAWC assessment
         for a given dose-unit, with response normalized to percent change from
         control using spline interpolation. Interactive, clicking on any line
@@ -86,7 +86,7 @@
         <img class="col-md-10 col-md-offset-1" src="{% static '/img/summary/data_pivot.png' %}">
         <img class="col-md-10 col-md-offset-1" src="{% static '/img/summary/data_pivot-barchart.png' %}">
       </div>
-      <p class="help-block">
+      <p class="form-text text-muted">
         Data from any data-stream in HAWC (bioassay, epidemiology, in-vitro) or
         from a tab-delimited file can be used to generate custom forest-plot
         style visualizations. Displayed text-fields and numbers to plot are
@@ -103,7 +103,7 @@
           style="border-right: 1px solid black; border-bottom: 1px solid black;"
           src="{% static '/img/summary/rob-heatmap.svg' %}">
       </div>
-      <p class="help-block">
+      <p class="form-text text-muted">
         A {{assessment.get_rob_name_display|lower}} heatmap, showing a subset of selected studies and
         {{assessment.get_rob_name_display|lower}} findings for each metric. This plot is interactive; a user
         can select and row, column, or cell, to view all details associated
@@ -119,7 +119,7 @@
           style="border-right: 1px solid black; border-bottom: 1px solid black;"
           src="{% static '/img/summary/rob-barchart.svg' %}">
       </div>
-      <p class="help-block">
+      <p class="form-text text-muted">
         A {{assessment.get_rob_name_display|lower}} stacked barchart, showing the percent of studies with
         each score, for each metric, in a selectable subset of studies.
       </p>
@@ -130,7 +130,7 @@
       <div class="row">
         <img class="col-md-10 col-md-offset-1" src="{% static '/img/summary/ehp.1509912.g001.jpg' %}">
       </div>
-      <p class="help-block">
+      <p class="form-text text-muted">
         A customizable dendrogram aka "tagtree" to display literature tags applied to references in a HAWC assessment.
       </p>
     </div>
@@ -140,13 +140,13 @@
       <div class="row">
         <img class="col-md-10 col-md-offset-1" src="{% static '/img/summary/external-tableau.png' %}">
       </div>
-      <p class="help-block">
+      <p class="form-text text-muted">
         Embed an external website. The following websites can be linked to:
       </p>
       <ul>
         <li><a href="https://public.tableau.com/">Tableau (public)</a></li>
       </ul>
-      <p class="help-block">
+      <p class="form-text text-muted">
         If you'd like to link to another website, please <a href="{% url 'contact' %}">contact us</a>.
       </p>
     </div>
@@ -156,7 +156,7 @@
       <div class="row">
         <img class="col-md-10 col-md-offset-1" src="{% static '/img/summary/exploratory-heatmap.png' %}">
       </div>
-      <p class="help-block">
+      <p class="form-text text-muted">
         A heatmap with customizable axes, filters, and interactivity to explore a dataset visually. The data presented in the heatmap can be content extracted for this assessment (bioassay or epidemiology), or you can upload a <a href="{% url 'assessment:dataset_create' assessment.id %}">tabular dataset</a> for analysis.
       </p>
     </div>

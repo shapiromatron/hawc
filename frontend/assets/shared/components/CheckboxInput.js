@@ -17,7 +17,7 @@ class CheckboxInput extends Component {
                         onChange={this.props.onChange}
                     />
                 </label>
-                {this.props.helpText ? <p className="help-block">{this.props.helpText}</p> : null}
+                {this.props.helpText ? <p className="form-text text-muted">{this.props.helpText}</p> : null}
             </div>
         );
     }

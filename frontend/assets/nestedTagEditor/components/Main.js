@@ -59,7 +59,7 @@ class TagEditorMain extends Component {
                         {store.config.btnLabel}
                     </button>
                 </h1>
-                <p className="help-block">
+                <p className="form-text text-muted">
                     <span
                         dangerouslySetInnerHTML={{
                             __html: store.config.extraHelpHtml,
@@ -90,7 +90,7 @@ class TagEditorMain extends Component {
                         />
                     ) : null}
                     {store.tags.length === 0 ? (
-                        <p className="help-block">
+                        <p className="form-text text-muted">
                             <i>No content is available - create some!</i>
                         </p>
                     ) : (

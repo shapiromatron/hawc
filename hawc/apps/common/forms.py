@@ -32,7 +32,7 @@ class BaseFormHelper(cf.FormHelper):
 
         if "help_text" in self.kwargs:
             layout.insert(
-                1, cfl.HTML(f'<p class="help-block">{self.kwargs["help_text"]}</p><br>'),
+                1, cfl.HTML(f'<p class="form-text text-muted">{self.kwargs["help_text"]}</p><br>'),
             )
 
         cancel_url = self.kwargs.get("cancel_url")

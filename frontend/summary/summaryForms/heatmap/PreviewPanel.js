@@ -33,7 +33,7 @@ class PreviewPanel extends Component {
         return (
             <div>
                 <legend>Preview</legend>
-                <p className="help-block">Preview the settings for this visualization.</p>
+                <p className="form-text text-muted">Preview the settings for this visualization.</p>
                 {content}
             </div>
         );

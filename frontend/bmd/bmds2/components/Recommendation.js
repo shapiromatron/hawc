@@ -123,7 +123,7 @@ class Recommendation extends React.Component {
                                 rows="5"
                                 cols="40"
                             />
-                            <p className="help-block">
+                            <p className="form-text text-muted">
                                 Enter notes on why a model was selected as best fitting; if no model
                                 is selected, add notes on why no model was selected.
                             </p>

@@ -35,7 +35,7 @@ class SearchForm extends Component {
                                 id="id_db_id"
                                 onChange={e => changeSearchTerm("db_id", parseInt(e.target.value))}
                             />
-                            <p className="help-block">
+                            <p className="form-text text-muted">
                                 Identifiers may include Pubmed ID, DOI, etc.
                             </p>
                         </div>

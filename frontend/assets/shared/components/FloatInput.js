@@ -48,7 +48,7 @@ class FloatInput extends Component {
                     }}
                     onChange={e => this.setState({value: e.target.value})}
                 />
-                {this.props.helpText ? <p className="help-block">{this.props.helpText}</p> : null}
+                {this.props.helpText ? <p className="form-text text-muted">{this.props.helpText}</p> : null}
             </div>
         );
     }

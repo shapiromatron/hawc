@@ -52,7 +52,7 @@ class Outcome {
             content = $('<div class="tab-content">');
 
         if (this.results.length === 0) {
-            return container.append('<p class="help-block">No results are available.</p>');
+            return container.append('<p class="form-text text-muted">No results are available.</p>');
         }
 
         _.each(this.results, function(d, i) {
@@ -89,7 +89,7 @@ class Outcome {
             if (groups.length > 0) {
                 $el.append(HAWCUtils.buildUL(groups, d => `<li>${d.build_link()}</li>`));
             } else {
-                $el.append('<p class="help-block">No comparison sets are available.</p>');
+                $el.append('<p class="form-text text-muted">No comparison sets are available.</p>');
             }
         }
         return $el;

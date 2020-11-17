@@ -40,7 +40,7 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
 
         tab.append(
             $("<h3>Row filters</h3>").append(newRowBtn),
-            '<p class="help-block">Use filters to determine which components of your dataset should be displayed on the figure.</p>',
+            '<p class="form-text text-muted">Use filters to determine which components of your dataset should be displayed on the figure.</p>',
             tbl
         );
     },
@@ -71,7 +71,7 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
 
         div.append(
             "<h4>Filter logic</h4>",
-            '<p class="help-block">Should multiple filter criteria be required for ALL rows (AND), or ANY row (OR)?</p>',
+            '<p class="form-text text-muted">Should multiple filter criteria be required for ALL rows (AND), or ANY row (OR)?</p>',
             and,
             or
         );
@@ -107,7 +107,7 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
 
         tab.append(
             $("<h3>Row sorting</h3>").append(newRowBtn),
-            '<p class="help-block">Sorting determines the order which rows will appear; sorts can be overridden using the manual override table below.</p>',
+            '<p class="form-text text-muted">Sorting determines the order which rows will appear; sorts can be overridden using the manual override table below.</p>',
             tbl,
             "<hr/>"
         );
@@ -141,7 +141,7 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
 
         tab.append(
             $("<h3>Additional row spacing</h3>").append(newRowBtn),
-            '<p class="help-block">Add additional-space between rows, and optionally a horizontal line.</p>',
+            '<p class="form-text text-muted">Add additional-space between rows, and optionally a horizontal line.</p>',
             tbl,
             "<hr/>"
         );
@@ -262,7 +262,7 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
 
         tab.append(
             $("<h3>Row-level customization</h3>").append(refreshRowsBtn, resetOverridesBtn),
-            '<p class="help-block">Row-level customization of individual rows after filtering/sorting above. Note that any changes to sorting or filtering will alter these customizations.</p>',
+            '<p class="form-text text-muted">Row-level customization of individual rows after filtering/sorting above. Note that any changes to sorting or filtering will alter these customizations.</p>',
             tbl
         );
     },

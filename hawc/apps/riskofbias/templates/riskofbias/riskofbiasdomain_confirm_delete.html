@@ -4,6 +4,6 @@
 
 {% block content %}
   <h1>{{object}}</h1>
-  <p class='help-block'>{{object.description|safe}}</p>
+  <p class='form-text text-muted'>{{object.description|safe}}</p>
   {% include "hawc/_delete_block.html" with name="domain" notes="This will remove all metrics associated with this domain." %}
 {% endblock %}

@@ -8,7 +8,7 @@
     <div class='row'>
       <fieldset>
         <legend>Import new DSSTox substance</legend>
-        <p class="help-block">
+        <p class="form-text text-muted">
           Import a new DSSTox substance by providing the DSSTox substance identifier (DTXSID).
           You can only import a new substance if it doesn't already exist in HAWC and it returns
           a valid object from the DSSTox database.
@@ -21,7 +21,7 @@
           <div class="form-group form-row">
             {{field.label_tag|add_class:"control-label"}}
             {{field}}
-            <span class='help-block'>{{field.help_text}}</span>
+            <span class='form-text text-muted'>{{field.help_text}}</span>
             {{field.errors|add_class:"alert alert-danger"}}
           </div>
         {% endfor %}

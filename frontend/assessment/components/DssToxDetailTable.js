@@ -48,7 +48,7 @@ class DssToxDetailTable extends Component {
                             <tr>
                                 <td style={{borderTop: "0px"}}>&nbsp;</td>
                                 <td colSpan={2}>
-                                    <p className="help-block">
+                                    <p className="form-text text-muted">
                                         Chemical information provided by&nbsp;
                                         <a href="https://comptox.epa.gov/dashboard/">
                                             USEPA Chemicals Dashboard

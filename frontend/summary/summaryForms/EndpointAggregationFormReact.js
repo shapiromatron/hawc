@@ -111,7 +111,7 @@ class EndpointAggregationForm extends BaseVisualForm {
                                 checked={this.state.published}
                             />
                         </label>
-                        <p id="hint_id_published" className="help-block">
+                        <p id="hint_id_published" className="form-text text-muted">
                             For assessments marked for public viewing, mark visual to be viewable by
                             public
                         </p>
@@ -124,7 +124,7 @@ class EndpointAggregationForm extends BaseVisualForm {
     renderSettingsForm = () => {
         return (
             <div>
-                <p className="help-block">No figure customization settings are available.</p>
+                <p className="form-text text-muted">No figure customization settings are available.</p>
             </div>
         );
     };

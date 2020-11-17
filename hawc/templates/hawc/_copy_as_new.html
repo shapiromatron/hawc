@@ -6,13 +6,13 @@
 
     <fieldset>
       <legend>Copy {{name}}</legend>
-      <span class="help-block">{{notes}}</span><br>
+      <span class="form-text text-muted">{{notes}}</span><br>
 
       {% for field in form %}
         <div class="form-group form-row">
           {{field.label_tag|add_class:"control-label"}}
           {{field}}<br>
-          <p class='help-inline'>{{field.help_text}}</p>
+          <p class='text-muted'>{{field.help_text}}</p>
           {{field.errors|add_class:"alert alert-danger"}}
         </div>
       {% endfor %}
