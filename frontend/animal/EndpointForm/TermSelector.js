@@ -92,7 +92,7 @@ class TermSelector extends Component {
                 {object[termIdField] ? (
                     <p>
                         <b>Selected term:</b>&nbsp;
-                        <span className="label">
+                        <span className="label label-default">
                             {currentId}&nbsp;|&nbsp;{currentText}&nbsp;
                             <button
                                 type="button"
@@ -105,7 +105,7 @@ class TermSelector extends Component {
                     </p>
                 ) : null}
                 {store.canUseControlledVocabulary ? (
-                    <label className="checkbox">
+                    <label className="form-check">
                         <input
                             type="checkbox"
                             checked={useControlledVocabulary}

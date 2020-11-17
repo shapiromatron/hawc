@@ -15,7 +15,7 @@ const pillItems = function(text, delimiter) {
         .toString()
         .split(delimiter)
         .map((item, i) => (
-            <span key={i} className="label" style={{marginRight: 3}}>
+            <span key={i} className="label label-default" style={{marginRight: 3}}>
                 {item}
             </span>
         ));

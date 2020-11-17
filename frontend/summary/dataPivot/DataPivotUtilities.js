@@ -164,10 +164,10 @@ class _DataPivot_settings_sorts {
             this.data_pivot._get_header_options(true)
         );
         this.content.ascending = $(
-            `<label class="radio">
+            `<label class="form-check">
                 <input name="asc${index}" type="radio" value="true">Ascending
             </label>
-            <label class="radio">
+            <label class="form-check">
                 <input name="asc${index}" type="radio" value="false">Descending
             </label>`
         );

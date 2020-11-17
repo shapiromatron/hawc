@@ -95,7 +95,7 @@ class FilterWidget extends Component {
                 {filterWidgetExtension && filterWidgetExtension.hasModal
                     ? this.renderButton(widget, item)
                     : null}
-                <label className="checkbox">
+                <label className="form-check">
                     <div
                         style={{
                             backgroundColor: colorScale(numItems),

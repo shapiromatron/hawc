@@ -5,7 +5,7 @@ class CheckboxInput extends Component {
     render() {
         return (
             <div className="form-group">
-                <label htmlFor={this.props.id} className="checkbox">
+                <label htmlFor={this.props.id} className="form-check">
                     {this.props.label}
                     {this.props.required ? <span className="asteriskField">*</span> : null}
                     <input
@@ -17,7 +17,9 @@ class CheckboxInput extends Component {
                         onChange={this.props.onChange}
                     />
                 </label>
-                {this.props.helpText ? <p className="form-text text-muted">{this.props.helpText}</p> : null}
+                {this.props.helpText ? (
+                    <p className="form-text text-muted">{this.props.helpText}</p>
+                ) : null}
             </div>
         );
     }

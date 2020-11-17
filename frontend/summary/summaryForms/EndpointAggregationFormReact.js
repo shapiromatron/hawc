@@ -100,13 +100,12 @@ class EndpointAggregationForm extends BaseVisualForm {
                 />
                 <div id="div_id_published" className="form-group">
                     <div className="form-group">
-                        <label htmlFor="id_published" className="checkbox">
+                        <label htmlFor="id_published" className="form-check">
                             Publish visual for public viewing
                             <input
                                 onChange={this.handleCheckboxChange}
                                 type="checkbox"
                                 name="published"
-                                className="checkboxinput"
                                 id="id_published"
                                 checked={this.state.published}
                             />
@@ -124,7 +123,9 @@ class EndpointAggregationForm extends BaseVisualForm {
     renderSettingsForm = () => {
         return (
             <div>
-                <p className="form-text text-muted">No figure customization settings are available.</p>
+                <p className="form-text text-muted">
+                    No figure customization settings are available.
+                </p>
             </div>
         );
     };

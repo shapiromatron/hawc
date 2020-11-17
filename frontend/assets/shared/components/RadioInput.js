@@ -27,7 +27,7 @@ class RadioInput extends Component {
                 {choices.map(choice => {
                     const id = `${name}-${choice.id}`;
                     return (
-                        <label key={choice.id} className="radio" htmlFor={id}>
+                        <label key={choice.id} className="form-check" htmlFor={id}>
                             <input
                                 onChange={event => onChange(name, choice.id)}
                                 checked={choice.id === value}
