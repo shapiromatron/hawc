@@ -92,7 +92,7 @@ class TermSelector extends Component {
                 {object[termIdField] ? (
                     <p>
                         <b>Selected term:</b>&nbsp;
-                        <span className="label label-default">
+                        <span className="badge badge-secondary">
                             {currentId}&nbsp;|&nbsp;{currentText}&nbsp;
                             <button
                                 type="button"

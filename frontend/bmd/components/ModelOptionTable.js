@@ -48,8 +48,7 @@ class ModelOptionTable extends React.Component {
 
                     <div className="dropdown btn-group float-right">
                         <a className="btn dropdown-toggle" data-toggle="dropdown">
-                            Actions &nbsp;
-                            <span className="caret" />
+                            Actions
                         </a>
                         <div className="dropdown-menu dropdown-menu-right">
                             <a className="dropdown-item" href="#" onClick={this.props.handleAddAll}>

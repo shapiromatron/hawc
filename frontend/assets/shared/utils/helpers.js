@@ -107,11 +107,6 @@ const helpers = {
             return <i className="fa fa-square-o" title="un-checked" />;
         }
     },
-    getInputDivClass(name, errors, extra = []) {
-        extra.push("form-group");
-        if (errors && errors[name]) extra.push("has-error");
-        return extra.join(" ");
-    },
     deepCopy(object) {
         return JSON.parse(JSON.stringify(object));
     },

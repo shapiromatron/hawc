@@ -66,7 +66,7 @@ class DatasetPreview extends Component {
                 </ul>
                 {clearCacheUrl ? (
                     <p className="form-text text-muted">
-                        <span className="label label-info">Note</span> To improve performance, the
+                        <span className="badge badge-info">Note</span> To improve performance, the
                         data retrieved from this request are cached and reused for future requests.
                         Therefore, changes made to the underlying data are not immediately reflected
                         in visuals (and may take hours to update). To see changes immediately,&nbsp;

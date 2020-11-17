@@ -107,7 +107,7 @@ class Reference extends Component {
                 {showTags && tags.length > 0 ? (
                     <p>
                         {tags.map((tag, i) => [
-                            <span key={i} className="label label-info">
+                            <span key={i} className="badge badge-info">
                                 {tag.get_full_name()}
                             </span>,
                             <span key={i + 1000}>&nbsp;</span>,
