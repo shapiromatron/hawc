@@ -1,24 +1,4 @@
-{% extends 'portal.html' %}
-
-{% block title %}
-  {{assessment}} | Literature Review | {{object}} | Edit Tags | HAWC
-{% endblock %}
-
-{% block breadcrumbs %}
-  <li class="breadcrumb-item"><a href="{{assessment.get_absolute_url}}">{{ assessment }}</a></li>
-  <li class="breadcrumb-item"><a href="{% url 'lit:overview' assessment.pk %}">Literature review</a></li>
-  {% if model == "Search" %}
-    <li class="breadcrumb-item"><a href="{% url 'lit:search_list' assessment.pk %}">Searches &amp; imports</a></li>
-    <li class="breadcrumb-item"><a href="{{object.get_absolute_url}}">{{object}}</a></li>
-  {% elif model == "Reference" %}
-    <li class="breadcrumb-item"><a href="{{object.get_absolute_url}}">{{object}}</a></li>
-  {% elif model == "Assessment" %}
-    <li class="breadcrumb-item">Untagged</li>
-  {% elif model == "ReferenceFilterTag" %}
-    <li class="breadcrumb-item">{{object}}</li>
-  {% endif %}
-  <li class="breadcrumb-item active">Edit tags</li>
-{% endblock %}
+{% extends 'assessment-rooted.html' %}
 
 {% block content %}
   <div id="main"></div>

@@ -1,13 +1,5 @@
 {% extends 'study/study_detail.html' %}
 
-{% block title %}
-  {% include "hawc/siteTitle.html" with crumbs=object.get_crumbs crud=crud %}
-{% endblock title %}
-
-{% block breadcrumbs %}
-  {% include "hawc/breadcrumbs.html" with crumbs=object.get_crumbs crud=crud %}
-{% endblock %}
-
 {% block content %}
   {{ block.super }}
   {% include "hawc/_delete_block.html" with name="study" notes="This will remove all data associated with this study as well, including detailed data extraction, BMD-modeling runs, etc." confirm=True %}

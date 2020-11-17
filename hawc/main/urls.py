@@ -43,6 +43,7 @@ urlpatterns = [
     ),
     path("about/", views.About.as_view(), name="about"),
     path("contact/", views.Contact.as_view(), name="contact"),
+    path("blog/", views.BlogList.as_view(), name="blog"),
     # Apps
     path("user/", include("hawc.apps.myuser.urls")),
     path("assessment/", include("hawc.apps.assessment.urls")),

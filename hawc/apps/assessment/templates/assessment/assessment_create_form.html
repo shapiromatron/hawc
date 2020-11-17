@@ -1,0 +1,19 @@
+{% extends 'breadcrumbed.html' %}
+
+{% load selectable_tags %}
+{% load crispy_forms_tags %}
+
+{% block extrastyle %}
+  {% include_ui_theme %}
+{% endblock %}
+
+{% block content %}
+<div class="pl-5 col-md-8">
+  {% crispy form %}
+</div>
+{% endblock %}
+
+{% block extrajs %}
+  {{ form.media }}
+  {% include 'assessment/_assessment_form_js.html' %}
+{% endblock extrajs %}

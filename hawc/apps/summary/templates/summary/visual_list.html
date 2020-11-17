@@ -1,12 +1,4 @@
-{% extends 'portal.html' %}
-
-
-{% block title %}{{assessment}} | Visualizations {% endblock title %}
-
-{% block breadcrumbs %}
-  <li class="breadcrumb-item"><a href="{{assessment.get_absolute_url}}">{{assessment}}</a></li>
-  <li class="breadcrumb-item active">Visualizations</li>
-{% endblock %}
+{% extends 'assessment-rooted.html' %}
 
 {% block content %}
   <h1>Available visualizations

@@ -72,8 +72,6 @@ urlpatterns = [
         views.EffectTagCreate.as_view(),
         name="effect_tag_create",
     ),
-    # logs / blogs
-    path("blog/", views.BlogList.as_view(), name="blog"),
     # vocab
     path("<int:pk>/vocab/", views.VocabList.as_view(), name="vocab"),
     # helper functions

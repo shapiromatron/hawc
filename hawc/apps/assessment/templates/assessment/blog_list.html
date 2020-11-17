@@ -1,11 +1,6 @@
-{% extends 'portal.html' %}
-
-{% block title %}
-  Blog | HAWC
-{% endblock title %}
+{% extends 'breadcrumbed.html' %}
 
 {% block content %}
-
   {% for object in object_list %}
   <div class="container-fluid" style="border-style: solid;">
     <div>
@@ -25,5 +20,4 @@
   <hr>
   {% endif %}
   {% endfor %}
-
 {% endblock content %}

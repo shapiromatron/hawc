@@ -1,15 +1,10 @@
-{% extends 'base.html' %}
+{% extends 'crumbless.html' %}
 
 {% load add_class %}
 
-{% block title %}{{assessment}} | Create Species {% endblock title %}
-
-{% block main_content %}
-
+{% block content %}
 <form class="form-horizontal" action="." method="post">
-
     {% csrf_token %}
-
     <div class='row'>
       <fieldset>
         <legend>Create new species</legend>
@@ -36,5 +31,4 @@
     </div>
      <p><b>Note:</b> If coming from an input-form, you may need to refresh the page to view your newly added species!</p>
   </form>
-
-{% endblock main_content %}
+{% endblock content %}

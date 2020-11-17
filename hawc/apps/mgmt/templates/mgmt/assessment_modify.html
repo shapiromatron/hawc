@@ -1,25 +1,11 @@
-{% extends 'portal.html' %}
+{% extends 'assessment-rooted.html' %}
 
 {% load selectable_tags %}
 
-{% block title %}
-  {{assessment}} | Tasks | HAWC
-{% endblock %}
-
-{% block breadcrumbs %}
-  <li class="breadcrumb-item"><a href="{{assessment.get_absolute_url}}">{{ assessment }}</a></li>
-  <li class="breadcrumb-item"><a href="{% url 'mgmt:assessment_dashboard' assessment.pk %}">Management dashboard</a></li>
-  <li class="breadcrumb-item"><a href="{% url 'mgmt:assessment_tasks' assessment.pk %}">Task list</a></li>
-  <li class="breadcrumb-item active">Modify</li>
-{% endblock %}
-
 {% block content %}
-
   <h2>Modify task assignments</h2>
   <div id='taskTable'></div>
-
 {% endblock %}
-
 
 {% block extrajs %}
 <script id="config" type="text/json" charset="utf-8">

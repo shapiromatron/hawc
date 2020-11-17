@@ -1,23 +1,10 @@
-{% extends 'portal.html' %}
+{% extends 'assessment-rooted.html' %}
 
 {% load add_class %}
 {% load crispy_forms_tags %}
 
-{% block title %}
-  {{assessment}} | Copy {{assessment.get_rob_name_display|lower}} approach | HAWC
-{% endblock %}
-
-{% block breadcrumbs %}
-  <li class="breadcrumb-item"><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{assessment}}</a></li>
-  <li class="breadcrumb-item"><a href="{% url 'riskofbias:arob_detail' assessment.pk %}">{{assessment.get_rob_name_display}} requirements</a></li>
-  <li class="breadcrumb-item active"> Copy {{assessment.get_rob_name_display|lower}} approach </li>
-{% endblock %}
-
-
 {% block content %}
-
   {% crispy form %}
-
   <div id='extra_content' class='hidden'>
     <div class="alert alert-warning">
       <a class="close" href="#" data-dismiss="alert">×</a>
@@ -27,11 +14,9 @@
     <b>{{assessment.get_rob_name_display}} approach for selected assessment:</b>
     <div id="approach"></div>
   </div>
-
 {% endblock %}
 
 {% block extrajs %}
-
     <script type="text/javascript">
         // disable submit button on form submit.
         $('form').submit(function(){

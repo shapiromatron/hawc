@@ -1,35 +1,14 @@
-{% extends 'base.html' %}
-
-{% block title %}
-  {{assessment}} | Summary text | HAWC
-{% endblock %}
+{% extends 'assessment-rooted.html' %}
 
 {% block bodyattrs %}data-spy="scroll" data-target="#sidebar" data-offset="40"{% endblock %}
 
-{% block main_content %}
-  <div class="row">
-    <ol class="breadcrumb">
-      {% if user.is_authenticated %}
-        <li class="breadcrumb-item"><a href="{% url 'portal' %}">Home</a></li>
-      {% else %}
-        <li class="breadcrumb-item"><a href="{% url 'assessment:public_list' %}">Public Assessments</a></li>
-      {% endif %}
-
-      {% block breadcrumbs %}
-        <li class="breadcrumb-item"><a href="{{assessment.get_absolute_url}}">{{assessment}}</a></li>
-        <li class="breadcrumb-item active">Summary</li>
-      {% endblock breadcrumbs %}
-    </ol>
-  </div>
-
+{% block content %}
   <div class="row">
     <div id="sidebar" class="col-md-3">
       <ul id="st_headers_ul" class="nav nav-list well affix-sidenav" data-spy="affix" data-offset-top="65">
       </ul>
     </div>
-
     <div class="col-md-9">
-
       <h1>{{assessment}} Summary
         <div class="dropdown btn-group float-right">
           <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
@@ -41,9 +20,7 @@
           </div>
         </div>
       </h1>
-
       <div id="st_text_div"></div>
-
     </div>
   </div>
 {% endblock %}

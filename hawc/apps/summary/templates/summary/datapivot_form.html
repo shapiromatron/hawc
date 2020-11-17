@@ -1,21 +1,8 @@
-{% extends 'portal.html' %}
+{% extends 'assessment-rooted.html' %}
 
 {% load crispy_forms_tags %}
 {% load add_class %}
 {% load selectable_tags %}
-
-{% block title %}
-  {{assessment}} | {{crud}} Data Pivot | HAWC
-{% endblock %}
-
-{% block breadcrumbs %}
-  <li class="breadcrumb-item"><a href="{{assessment.get_absolute_url}}">{{assessment}}</a></li>
-  <li class="breadcrumb-item"><a href="{% url 'summary:visualization_list' assessment.id %}">Visualizations</a></li>
-  {% if crud == "Update" %}
-    <li class="breadcrumb-item"><a href="{{object.get_absolute_url}}">{{object}}</a></li>
-  {% endif %}
-  <li class="breadcrumb-item active">{{crud}}</li>
-{% endblock %}
 
 {% block content %}
   {% include "assessment/preferred_dose_units_widget.html" %}

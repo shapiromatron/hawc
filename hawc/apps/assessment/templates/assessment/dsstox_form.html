@@ -1,15 +1,10 @@
-{% extends 'base.html' %}
+{% extends 'crumbless.html' %}
 
 {% load add_class %}
 
-{% block title %}Import new DSSTox substance{% endblock title %}
-
-{% block main_content %}
-
+{% block content %}
 <form class="form-horizontal" action="." method="post">
-
     {% csrf_token %}
-
     <div class='row'>
       <fieldset>
         <legend>Import new DSSTox substance</legend>
@@ -43,5 +38,4 @@
       </div>
     </div>
   </form>
-
-{% endblock main_content %}
+{% endblock content %}

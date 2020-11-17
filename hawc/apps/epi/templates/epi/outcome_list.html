@@ -1,16 +1,8 @@
-{% extends 'portal.html' %}
+{% extends 'assessment-rooted.html' %}
+
 {% load add_class %}
 
-{% block title %}{{assessment}} | Outcomes | HAWC {% endblock title %}
-
-{% block breadcrumbs %}
-  <li class="breadcrumb-item"><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{ assessment }}</a></li>
-  <li class="breadcrumb-item"><a href="{% url 'assessment:endpoint_list' assessment.pk %}">Endpoints</a></li>
-  <li class="breadcrumb-item active">Epidemiological outcomes</li>
-{% endblock %}
-
 {% block content %}
-
     <h1>Outcomes ({{page_obj.paginator.count}} found)</h1>
 
     <div class="accordion" id="filterForm">
@@ -84,7 +76,6 @@
             </ul>
         </div>
     {% endif %}
-
 {% endblock content %}
 
 {% block extrajs %}

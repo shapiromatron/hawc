@@ -1,20 +1,6 @@
-{% extends 'portal.html' %}
-
-{% block title %}
-  {{assessment}} | Literature Review | Searches & Imports | {{object}} | HAWC
-{% endblock %}
-
-{% block breadcrumbs %}
-  <li class="breadcrumb-item"><a href="{{assessment.get_absolute_url}}">{{assessment}}</a></li>
-  <li class="breadcrumb-item"><a href="{% url 'lit:overview' assessment.pk %}">Literature Review</a></li>
-  <li class="breadcrumb-item"><a href="{% url 'lit:search_list' object.assessment.pk %}">Searches & Imports</a></li>
-  {% block breadcrumbs_self %}
-    <li class="breadcrumb-item active">{{object.title}}</li>
-  {% endblock breadcrumbs_self %}
-{% endblock %}
+{% extends 'assessment-rooted.html' %}
 
 {% block content %}
-
   <h1>{{object}}
     {% if crud == "Read" %}
       <div class="dropdown btn-group float-right">
@@ -31,7 +17,6 @@
       </div>
     {% endif %}
   </h1>
-
   <table class="table table-sm table-striped">
     <colgroup>
       <col style="width: 30%;">
@@ -95,7 +80,6 @@
       {% include "lit/_pubmedqueries_list.html" %}
     {% endif %}
   {% endif %}
-
 {% endblock %}
 
 {% block extrajs %}

@@ -74,23 +74,6 @@ def NotImplementedAttribute(self):
     raise NotImplementedError
 
 
-def get_crumbs(obj, parent=None):
-    if parent is None:
-        crumbs = []
-    else:
-        crumbs = parent.get_crumbs()
-    if obj.id is not None:
-        icon = None
-        icon_fetch_method = getattr(obj, "get_crumbs_icon", None)
-        if callable(icon_fetch_method):
-            icon = icon_fetch_method()
-
-        crumbs.append((obj.__str__(), obj.get_absolute_url(), icon))
-    else:
-        crumbs.append((obj._meta.verbose_name.lower(),))
-    return crumbs
-
-
 class NonUniqueTagBase(models.Model):
     name = models.CharField(verbose_name=_("Name"), max_length=100)
     slug = models.SlugField(verbose_name=_("Slug"), max_length=100)
