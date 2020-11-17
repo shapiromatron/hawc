@@ -1,14 +1,5 @@
 {% extends 'assessment-rooted.html' %}
 
-{% block title %}
-    {{object.content_object}} | {{object}} | Delete
-{% endblock title %}
-
-{% block breadcrumbs %}
-    <li class="breadcrumb-item"><a href="{{object.get_absolute_url}}">{{object.content_object}}</a></li>
-    <li class="breadcrumb-item active">Delete {{object}}</li>
-{% endblock breadcrumbs %}
-
 {% block content %}
     <h1>Delete attachment?</h1>
     <p><b>Selected attachment:</b> <a href="{{object.attachment.url}}">{{object}}</a></p>

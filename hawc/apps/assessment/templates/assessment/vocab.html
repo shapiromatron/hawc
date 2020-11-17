@@ -1,14 +1,5 @@
 {% extends 'breadcrumbed.html' %}
 
-{% block title %}
-  {{assessment}} | Vocab
-{% endblock title %}
-
-{% block breadcrumbs %}
-  <li class="breadcrumb-item"><a href="{{assessment.get_absolute_url}}">{{assessment}}</a></li>
-  <li class="breadcrumb-item active">Vocab</li>
-{% endblock %}
-
 {% block content %}
 <ul class="nav nav-tabs">
   <li><a href="#systems" data-toggle="tab">Systems</a></li>
