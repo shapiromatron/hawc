@@ -9,11 +9,6 @@
     margin: 0 40%;
 }
 
-#footer {
-    height: 200px;
-    background-color: #333;
-}
-
 /* main  */
 #main-container {
     padding-left: 1em;
@@ -22,7 +17,7 @@
 /* sidebar  */
 .sidebar {
     width: 230px;
-    background-color: #333;
+    background-color: #323a45;
 }
 .sidebar-collapsed {
     width: 50px;

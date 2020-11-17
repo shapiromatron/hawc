@@ -184,8 +184,6 @@ class About(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["GIT_COMMIT"] = settings.GIT_COMMIT
-        context["COMMIT_URL"] = settings.COMMIT_URL
         context["HAWC_FLAVOR"] = settings.HAWC_FLAVOR
         context["rob_name"] = self.get_rob_name()
         context["counts"] = self.get_object_counts()
