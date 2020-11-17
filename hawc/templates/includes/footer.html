@@ -1,17 +1,10 @@
 {% load cache %}
 
 {% cache 3600 footer %}
-{% if flavor == "PRIME" %}
-<div class="row mx-0 px-4" id="prime-footer">
-    <div class="offset-lg-4 col-lg-4">
-    <h5 class="text-white py-2">Health assessment workspace collaborative</h5>
-    <ul class="list-unstyled text-white">
-        <li><b>Last updated:&nbsp;</b>{{commit.dt|date:"M d Y"}}</li>
-        <li><b>Version:&nbsp;</b><a class="text-white" href="https://github.com/shapiromatron/hawc/commit/{{commit.sha}}">{{commit.sha}}</a></li>
-    </ul>
-    </div>
+<div class="col py-1 text-white text-right" style="background-color: #646D76">
+    <b>HAWC build {{commit.sha}} / {{commit.dt|date:"M d Y"}}</b>
 </div>
-{% elif flavor == "EPA" %}
+{% if flavor == "EPA" %}
 {% include 'includes/epa/footer.html' %}
 {% endif %}
 {% endcache %}
