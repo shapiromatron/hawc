@@ -1,18 +1,9 @@
-{% extends 'portal.html' %}
+{% extends 'assessment-rooted.html' %}
+
 {% load add_class %}
 
-{% block title %}{{assessment}} | Meta-analysis/pooled outcomes | HAWC {% endblock title %}
-
-{% block breadcrumbs %}
-  <li class="breadcrumb-item"><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{ assessment }}</a></li>
-  <li class="breadcrumb-item"><a href="{% url 'assessment:endpoint_list' assessment.pk %}">Endpoints</a></li>
-  <li class="breadcrumb-item active">Meta-analysis/pooled outcomes</li>
-{% endblock %}
-
 {% block content %}
-
     <h1>Meta-analysis/pooled results ({{page_obj.paginator.count}} found)</h1>
-
     <div class="accordion" id="filterForm">
       <div class="accordion-group">
         <div class="accordion-heading">
@@ -58,7 +49,6 @@
       </div>
     </div>
 
-
     <div id="endpointTable"></div>
 
     {% if is_paginated %}
@@ -81,7 +71,6 @@
             </ul>
         </div>
     {% endif %}
-
 {% endblock content %}
 
 {% block extrajs %}

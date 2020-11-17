@@ -1,14 +1,4 @@
-{% extends 'portal.html' %}
-
-{% block title %}
-  {% include "hawc/siteTitle.html" with crumbs=object.get_crumbs crud=crud %}
-{% endblock title %}
-
-{% block breadcrumbs %}
-  <li class="breadcrumb-item"><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{ assessment }}</a></li>
-  <li class="breadcrumb-item"><a href="{% url 'lit:overview' assessment.pk %}">Literature Review</a></li>
-  <li class="breadcrumb-item active">{{object}}</li>
-{% endblock %}
+{% extends 'assessment-rooted.html' %}
 
 {% block content %}
   <h4>Reference details:</h4>

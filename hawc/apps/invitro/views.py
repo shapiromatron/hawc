@@ -2,6 +2,7 @@ from django.db.models import Q
 from django.views.generic import DetailView
 
 from ..assessment.models import Assessment
+from ..common.crumbs import Breadcrumb
 from ..common.views import (
     BaseCreate,
     BaseCreateWithFormset,
@@ -105,6 +106,15 @@ class EndpointCategoryUpdate(ProjectManagerOrHigherMixin, DetailView):
 
     def get_assessment(self, request, *args, **kwargs):
         return self.get_object()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"] = [
+            Breadcrumb.build_root(self.request.user),
+            Breadcrumb.from_object(self.assessment),
+            Breadcrumb(name="Update in-vitro endpoint categories"),
+        ]
+        return context
 
 
 # Endpoint

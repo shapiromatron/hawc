@@ -1,28 +1,15 @@
-{% extends 'lit/search_list.html' %}
-
+{% extends 'assessment-rooted.html' %}
 
 {% load add_class %}
 {% load selectable_tags %}
-
-{% block title %}
-  {{block.super}} | Copy Search
-{% endblock title %}
 
 {% block extrastyle %}
   {% include_ui_theme %}
 {% endblock %}
 
-{% block breadcrumbs %}
-  <li class="breadcrumb-item"><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{ assessment }}</a></li>
-  <li class="breadcrumb-item"><a href="{% url 'lit:overview' assessment.pk %}">Literature Review</a></li>
-  <li class="breadcrumb-item active">Copy literature search or import</li>
-{% endblock breadcrumbs %}
-
 {% block content %}
   <form class="form-horizontal" action="." method="post">
-
     {% csrf_token %}
-
     <div class='row'>
       <fieldset>
         <legend>Copy search or import</legend>

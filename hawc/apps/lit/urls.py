@@ -56,7 +56,6 @@ urlpatterns = [
         "assessment/<int:pk>/references/upload/", views.RefUploadExcel.as_view(), name="ref_upload",
     ),
     # CRUD searches
-    path("assessment/<int:pk>/searches/", views.SearchList.as_view(), name="search_list",),
     path("assessment/<int:pk>/search/new/", views.SearchNew.as_view(), name="search_new",),
     path(
         "assessment/<int:pk>/search/copy/",

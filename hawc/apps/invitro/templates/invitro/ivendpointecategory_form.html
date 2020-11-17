@@ -1,19 +1,8 @@
-{% extends 'portal.html' %}
-
-{% block title %}
-  {{assessment}} | Modify IV endpoint categories
-{% endblock title %}
-
-{% block breadcrumbs %}
-    <li class="breadcrumb-item"><a href="{{assessment.get_absolute_url}}">{{ assessment }}</a></li>
-    <li class="breadcrumb-item active">Modify IV endpoint categories</li>
-{% endblock breadcrumbs %}
-
+{% extends 'assessment-rooted.html' %}
 
 {% block content %}
 <div id='root'></div>
 {% endblock %}
-
 
 {% block extrajs %}
 <script type="text/json" id="config">

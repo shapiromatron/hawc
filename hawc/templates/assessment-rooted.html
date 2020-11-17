@@ -1,9 +1,12 @@
-{% if assessment %}
-<div
-    id="sidebar-container"
-    class="sidebar pl-1 {{request.session.hideSidebar|yesno:'sidebar-collapsed, '}}"
-    data-collapsed="{{request.session.hideSidebar|yesno:"true,false"}}"
-    data-url="{% url 'update_session' %}" >
+{% extends 'base.html' %}
+
+{% block title %}
+    {% include "includes/title.html" %}
+{% endblock title %}
+
+{% block sidebar_outer %}
+<div id="sidebar-container" class="sidebar pl-1 {{request.session.hideSidebar|yesno:'sidebar-collapsed, '}}"
+    data-collapsed="{{request.session.hideSidebar|yesno:"true,false"}}" data-url="{% url 'update_session' %}">
 
     <a class="nav-link text-center text-light" href="#" id="toggle-sidebar" title="expand/collapse the sidebar">
         <i class="fa fa-2x {{request.session.hideSidebar|yesno:'fa-angle-double-right,fa-angle-double-left'}}"></i>
@@ -13,8 +16,7 @@
 
         <li class="nav-item nav-link text-white-50">Selected assessment</li>
         <li class="nav-item bg-primary">
-            <a class="nav-link text-light"
-                href="{% url 'assessment:detail' assessment.pk %}">{{ assessment }}</a>
+            <a class="nav-link text-light" href="{% url 'assessment:detail' assessment.pk %}">{{ assessment }}</a>
         </li>
 
         <li class="nav-item nav-link text-white-50">Available modules</li>
@@ -22,15 +24,14 @@
 
         {% if assessment.enable_literature_review %}
         <li class="nav-item">
-            <a class="nav-link text-light"
-                href="{% url 'lit:overview' assessment.pk %}">Literature review</a>
+            <a class="nav-link text-light" href="{% url 'lit:overview' assessment.pk %}">Literature review</a>
         </li>
         {% endif %}
 
         {% if assessment.enable_project_management and request.user.is_authenticated %}
         <li class="nav-item">
-            <a class="nav-link text-light"
-                href="{% url 'mgmt:assessment_dashboard' assessment.pk %}">Management dashboard</a>
+            <a class="nav-link text-light" href="{% url 'mgmt:assessment_dashboard' assessment.pk %}">Management
+                dashboard</a>
         </li>
         {% endif %}
 
@@ -41,7 +42,8 @@
 
         {% if assessment.enable_risk_of_bias %}
         <li class="nav-item">
-            <a class="nav-link text-light" href="{% url 'riskofbias:arob_detail' assessment.pk %}">{{assessment.get_rob_name_display}}</a>
+            <a class="nav-link text-light"
+                href="{% url 'riskofbias:arob_detail' assessment.pk %}">{{assessment.get_rob_name_display}}</a>
         </li>
         {% endif %}
 
@@ -51,7 +53,8 @@
         {% endif %}
 
         <li class="nav-item">
-            <a class="nav-link text-light" href="{% url 'summary:visualization_list' assessment.pk %}">Visualizations</a>
+            <a class="nav-link text-light"
+                href="{% url 'summary:visualization_list' assessment.pk %}">Visualizations</a>
         </li>
 
         {% if assessment.enable_summary_text %}
@@ -67,4 +70,8 @@
 
     </nav>
 </div>
-{% endif %}
+{% endblock sidebar_outer %}
+
+{% block breadcrumbs_outer %}
+    {% include "includes/breadcrumbs.html" %}
+{% endblock breadcrumbs_outer %}

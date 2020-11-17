@@ -1,13 +1,4 @@
-{% extends 'portal.html' %}
-
-{% block title %}
-  {{assessment}} | Vocab
-{% endblock title %}
-
-{% block breadcrumbs %}
-  <li class="breadcrumb-item"><a href="{{assessment.get_absolute_url}}">{{assessment}}</a></li>
-  <li class="breadcrumb-item active">Vocab</li>
-{% endblock %}
+{% extends 'breadcrumbed.html' %}
 
 {% block content %}
 <ul class="nav nav-tabs">

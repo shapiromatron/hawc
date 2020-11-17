@@ -1,14 +1,4 @@
-{% extends 'portal.html' %}
-
-{% block title %}
-  {{object}} | Downloads | HAWC
-{% endblock %}
-
-{% block breadcrumbs %}
-    <li class="breadcrumb-item"><a href="{% url 'assessment:detail' object.pk %}">{{object}}</a></li>
-    <li class="breadcrumb-item active">Downloads</li>
-{% endblock %}
-
+{% extends 'assessment-rooted.html' %}
 
 {% block content %}
   <h1>{{object}} downloads</h1>

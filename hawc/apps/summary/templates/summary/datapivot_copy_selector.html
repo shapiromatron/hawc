@@ -1,15 +1,6 @@
-{% extends 'summary/datapivot_list.html' %}
+{% extends 'assessment-rooted.html' %}
 
 {% load crispy_forms_tags %}
-
-{% block title %}
-  {{block.super}} | Copy Data Pivot
-{% endblock title %}
-
-{% block breadcrumbs_self %}
-<li class="breadcrumb-item"><a href="{% url 'summary:visualization_list' assessment.id %}">Visualizations</a></li>
-<li class="breadcrumb-item active">Copy existing data-pivot</li>
-{% endblock breadcrumbs_self %}
 
 {% block content %}
   {% crispy form %}

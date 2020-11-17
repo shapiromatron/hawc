@@ -67,6 +67,8 @@ class SummaryText(MP_Node):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
+    BREADCRUMB_PARENT = "assessment"
+
     class Meta:
         verbose_name_plural = "Summary Text Descriptions"
         unique_together = (
@@ -254,6 +256,8 @@ class Visual(models.Model):
     )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
+
+    BREADCRUMB_PARENT = "assessment"
 
     class Meta:
         unique_together = (("assessment", "slug"),)
@@ -546,6 +550,8 @@ class DataPivot(models.Model):
     )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
+
+    BREADCRUMB_PARENT = "assessment"
 
     class Meta:
         unique_together = (("assessment", "slug"),)

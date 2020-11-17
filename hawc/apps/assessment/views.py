@@ -16,6 +16,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import FormView, ListView, TemplateView, View
 from django.views.generic.edit import CreateView
 
+from ..common.crumbs import Breadcrumb
 from ..common.views import (
     BaseCreate,
     BaseDelete,
@@ -228,6 +229,7 @@ class AssessmentList(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context["breadcrumbs"] = [Breadcrumb.build_root(self.request.user)]
         context["show_v2_license"] = not self.request.user.license_v2_accepted
         return context
 
@@ -238,6 +240,16 @@ class AssessmentFullList(LoginRequiredMixin, ListView):
     @method_decorator(staff_member_required)
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if self.request.user.is_authenticated:
+            context["breadcrumbs"] = Breadcrumb.build_crumbs(
+                self.request.user, "Public assessments"
+            )
+        else:
+            context["breadcrumbs"] = [Breadcrumb.build_root(self.request.user)]
+        return context
 
 
 class AssessmentPublicList(ListView):
@@ -250,16 +262,32 @@ class AssessmentPublicList(ListView):
             qs = qs.filter(dtxsids=dtxsid)
         return qs
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if self.request.user.is_authenticated:
+            context["breadcrumbs"] = Breadcrumb.build_crumbs(
+                self.request.user, "Public assessments"
+            )
+        else:
+            context["breadcrumbs"] = [Breadcrumb.build_root(self.request.user)]
+        return context
+
 
 class AssessmentCreate(TimeSpentOnPageMixin, LoginRequiredMixin, MessageMixin, CreateView):
     success_message = "Assessment created."
     model = models.Assessment
     form_class = forms.AssessmentForm
+    template_name = "assessment/assessment_create_form.html"
 
     def get_success_url(self):
         self.assessment = self.object
         response = super().get_success_url()
         return response
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"] = Breadcrumb.build_crumbs(self.request.user, "Create assessment")
+        return context
 
 
 class AssessmentRead(BaseDetail):
@@ -328,6 +356,7 @@ class AssessmentDownloads(BaseDetail):
 
     model = models.Assessment
     template_name = "assessment/assessment_downloads.html"
+    breadcrumb_active_name = "Downloads"
 
 
 # Attachment views
@@ -401,7 +430,7 @@ class DatasetDelete(BaseDelete):
 
 
 # Vocab views
-class VocabList(TeamMemberOrHigherMixin, TemplateView):
+class VocabList(TeamMemberOrHigherMixin, AssessmentRead):
     template_name = "assessment/vocab.html"
 
     def get_assessment(self, *args, **kwargs):
@@ -425,6 +454,10 @@ class VocabList(TeamMemberOrHigherMixin, TemplateView):
         context["endpoint_names"] = Term.objects.assessment_endpoint_names(
             self.assessment.id
         ).order_by("-deprecated_on", "id")
+        context["breadcrumbs"] = Breadcrumb.build_assessment_crumbs(
+            self.request.user, self.assessment,
+        )
+        context["breadcrumbs"].append(Breadcrumb(name="Controlled vocabulary"))
         return context
 
 
@@ -483,6 +516,7 @@ class DSSToxCreate(CloseIfSuccessMixin, LoginRequiredMixin, MessageMixin, Create
 class BaseEndpointList(BaseList):
     parent_model = models.Assessment
     model = models.BaseEndpoint
+    breadcrumb_active_name = "Endpoints"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -524,6 +558,7 @@ class CleanExtractedData(TeamMemberOrHigherMixin, BaseEndpointList):
      - add url and model title to templates/assessment/clean_extracted_data.html config object
     """
 
+    breadcrumb_active_name = "Clean extracted data"
     template_name = "assessment/clean_extracted_data.html"
 
     def get_assessment(self, request, *args, **kwargs):
@@ -596,6 +631,7 @@ class DownloadPlot(FormView):
 class CleanStudyRoB(ProjectManagerOrHigherMixin, BaseDetail):
     template_name = "assessment/clean_study_rob_scores.html"
     model = models.Assessment
+    breadcrumb_active_name = "Clean reviews"
 
     def get_assessment(self, request, *args, **kwargs):
         return get_object_or_404(self.model, pk=kwargs["pk"])
@@ -637,3 +673,8 @@ class BlogList(ListView):
     @method_decorator(beta_tester_required)
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"] = Breadcrumb.build_crumbs(self.request.user, "Blog")
+        return context

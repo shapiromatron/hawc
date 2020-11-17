@@ -1,13 +1,5 @@
 {% extends 'animal/animalgroup_detail.html' %}
 
-{% block title %}
-  {% include "hawc/siteTitle.html" with crumbs=object.get_crumbs crud=crud %}
-{% endblock title %}
-
-{% block breadcrumbs %}
-  {% include "hawc/breadcrumbs.html" with crumbs=object.get_crumbs crud=crud %}
-{% endblock %}
-
 {% block content %}
   {{ block.super }}
   {% include "hawc/_delete_block.html" with name="animal-group" notes="This will remove all data associated with the animal-group, including dose-regimes, endpoints, and BMD modeling runs." %}

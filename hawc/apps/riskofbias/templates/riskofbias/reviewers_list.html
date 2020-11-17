@@ -1,17 +1,6 @@
-{% extends 'portal.html' %}
-
-{% block title %}
-  {{assessment}} | {{assessment.get_rob_name_display}} reviewers | HAWC
-{% endblock %}
-
-{% block breadcrumbs %}
-<li class="breadcrumb-item"><a href="{{assessment.get_absolute_url}}">{{ assessment }}</a></li>
-<li class="breadcrumb-item"><a href="{% url 'riskofbias:arob_detail' assessment.pk %}">{{assessment.get_rob_name_display}}</a></li>
-<li class="breadcrumb-item active">Reviewer assignments</li>
-{% endblock breadcrumbs %}
+{% extends 'assessment-rooted.html' %}
 
 {% block content %}
-
     {% if obj_perms.edit_assessment %}
     <div class="dropdown btn-group float-right">
         <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>

@@ -4,10 +4,10 @@ from ..common.lookups import RelatedDistinctStringLookup, RelatedLookup
 from . import models
 
 
-class MetaResultByStudyLookup(RelatedLookup):
+class MetaResultByProtocolLookup(RelatedLookup):
     model = models.MetaResult
     search_fields = ("label__icontains",)
-    related_filter = "protocol__study"
+    related_filter = "protocol"
 
 
 class MetaResultByAssessmentLookup(RelatedLookup):
@@ -43,7 +43,7 @@ class ExposureLookup(RelatedDistinctStringLookup):
     related_filter = "protocol__study__assessment_id"
 
 
-registry.register(MetaResultByStudyLookup)
+registry.register(MetaResultByProtocolLookup)
 registry.register(MetaResultByAssessmentLookup)
 registry.register(MetaResultHealthOutcomeLookup)
 registry.register(MetaResultExposureNameLookup)

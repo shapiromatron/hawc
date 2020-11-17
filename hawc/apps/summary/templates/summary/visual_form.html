@@ -1,4 +1,4 @@
-{% extends 'portal.html' %}
+{% extends 'assessment-rooted.html' %}
 
 {% load crispy_forms_tags %}
 {% load selectable_tags %}
@@ -7,22 +7,7 @@
   {% include_ui_theme %}
 {% endblock %}
 
-
-{% block title %}{{assessment}} | Visualizations | {{crud}} {% endblock title %}
-
-
-{% block breadcrumbs %}
-  <li class="breadcrumb-item"><a href="{{assessment.get_absolute_url}}">{{assessment}}</a></li>
-  <li class="breadcrumb-item"><a href="{% url 'summary:visualization_list' assessment.pk %}">Visualizations</a></li>
-  {% if crud == "Update" %}
-    <li class="breadcrumb-item"><a href="{{object.get_absolute_url}}">{{object}}</a></li>
-  {% endif %}
-  <li class="breadcrumb-item active">{{crud}}</li>
-{% endblock %}
-
-
 {% block content %}
-
 <div class="tabbable" style="display:none;">
   <ul class="nav nav-tabs">
     <li class="active">
@@ -47,7 +32,6 @@
 
 <div id="main" style="display:none;"></div>
 {% include "summary/_smartTagEditModal.html" with form=smart_tag_form only %}
-
 {% endblock %}
 
 {% block extrajs %}

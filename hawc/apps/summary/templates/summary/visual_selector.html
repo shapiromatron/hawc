@@ -1,15 +1,6 @@
-{% extends 'portal.html' %}
+{% extends 'assessment-rooted.html' %}
+
 {% load static %}
-
-{% block title %}{{assessment}} | New visualization {% endblock title %}
-
-{% block breadcrumbs %}
-  <li class="breadcrumb-item"><a href="{{assessment.get_absolute_url}}">{{assessment}}</a></li>
-  <li class="breadcrumb-item"><a href="{% url 'summary:visualization_list' assessment.id %}">Visualizations</a></li>
-  <li class="breadcrumb-item active">Create new</li>
-{% endblock %}
-
-{% block content_type %}container-fluid{% endblock %}
 
 {% block content %}
   <h1>Create a new visualization</h1>

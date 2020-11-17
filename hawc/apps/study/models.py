@@ -14,7 +14,6 @@ from reversion import revisions as reversion
 from ..assessment.models import Assessment
 from ..assessment.serializers import AssessmentSerializer
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper, cleanHTML
-from ..common.models import get_crumbs
 from ..lit.models import Reference, Search
 from . import managers
 
@@ -122,6 +121,7 @@ class Study(Reference):
     )
 
     COPY_NAME = "studies"
+    BREADCRUMB_PARENT = "assessment"
 
     class Meta:
         verbose_name_plural = "Studies"
@@ -354,15 +354,6 @@ class Study(Reference):
     def delete_caches(cls, ids):
         SerializerHelper.delete_caches(cls, ids)
 
-    def get_crumbs(self):
-        return get_crumbs(self, parent=self.assessment)
-
-    def get_crumbs_icon(self):
-        if self.editable:
-            return None
-        else:
-            return '<i title="Study is locked" class="fa fa-lock" aria-hidden="true"></i>'
-
     def get_final_rob(self) -> models.Model:
         """
         Return the active, final risk of bias if one exists.
@@ -441,6 +432,8 @@ class Attachment(models.Model):
     study = models.ForeignKey(Study, related_name="attachments", on_delete=models.CASCADE)
     attachment = models.FileField(upload_to="study-attachment")
 
+    BREADCRUMB_PARENT = "study"
+
     def __str__(self):
         return self.filename
 
@@ -449,9 +442,6 @@ class Attachment(models.Model):
 
     def get_delete_url(self):
         return reverse("study:attachment_delete", args=[self.pk])
-
-    def get_crumbs(self):
-        return get_crumbs(self, parent=self.study)
 
     @property
     def filename(self):

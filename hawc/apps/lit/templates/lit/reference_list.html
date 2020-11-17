@@ -1,18 +1,4 @@
-{% extends 'portal.html' %}
-
-{% block title %}
-  {{assessment}} | Literature Review | References | HAWC
-{% endblock %}
-
-{% block breadcrumbs %}
-  <li class="breadcrumb-item"><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{ assessment }}</a></li>
-  <li class="breadcrumb-item"><a href="{% url 'lit:overview' assessment.pk %}">Literature Review</a></li>
-  {% if object_type == 'search' %}
-    <li class="breadcrumb-item"><a href="{% url 'lit:search_list' assessment.pk %}">Searches & Imports</a></li>
-    <li class="breadcrumb-item"><a href="{% url 'lit:search_detail' assessment.pk object.slug %}">{{object}}</a></li>
-  {% endif %}
-  <li class="breadcrumb-item active">References</li>
-{% endblock %}
+{% extends 'assessment-rooted.html' %}
 
 {% block content %}
 <div id="main">

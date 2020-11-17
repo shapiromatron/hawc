@@ -112,7 +112,11 @@ class Migration(migrations.Migration):
                     ),
                 ),
             ],
-            options={"ordering": ("-last_updated",), "get_latest_by": "last_updated"},
+            options={
+                "ordering": ("-last_updated",),
+                "get_latest_by": "last_updated",
+                "verbose_name_plural": "BMD sessions",
+            },
         ),
         migrations.RemoveField(model_name="bmd_session", name="dose_units",),
         migrations.RemoveField(model_name="bmd_session", name="endpoint",),

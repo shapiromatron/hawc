@@ -4,9 +4,10 @@ from typing import Dict
 from django.http import Http404, HttpResponse, HttpResponseNotAllowed, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
-from django.views.generic import FormView, RedirectView, TemplateView
+from django.views.generic import FormView, RedirectView
 
 from ..assessment.models import Assessment
+from ..common.crumbs import Breadcrumb
 from ..common.helper import HAWCDjangoJSONEncoder
 from ..common.views import (
     BaseCreate,
@@ -37,6 +38,7 @@ class SummaryTextJSON(BaseDetail):
 class SummaryTextList(BaseList):
     parent_model = Assessment
     model = models.SummaryText
+    breadcrumb_active_name = "Executive summary"
 
     def get_queryset(self):
         rt = self.model.get_assessment_root_node(self.assessment.id)
@@ -123,6 +125,7 @@ class SummaryTextDelete(BaseDelete):
 class VisualizationList(BaseList):
     parent_model = Assessment
     model = models.Visual
+    breadcrumb_active_name = "Visualizations"
 
     def get_queryset(self):
         return self.model.objects.get_qs(self.assessment)
@@ -140,6 +143,7 @@ class VisualizationDetail(BaseDetail):
 class VisualizationCreateSelector(BaseDetail):
     model = Assessment
     template_name = "summary/visual_selector.html"
+    breadcrumb_active_name = "Visualization selector"
 
 
 class VisualizationCreate(BaseCreate):
@@ -246,23 +250,14 @@ class VisualizationDelete(BaseDelete):
 
 
 # DATA-PIVOT
-class DataPivotNewPrompt(TemplateView):
+class DataPivotNewPrompt(BaseDetail):
     """
     Select if you wish to upload a file or use a query.
     """
 
-    model = models.DataPivot
-    crud = "Read"
+    model = Assessment
     template_name = "summary/datapivot_type_selector.html"
-
-    def dispatch(self, *args, **kwargs):
-        self.assessment = get_object_or_404(Assessment, pk=kwargs["pk"])
-        return super().dispatch(*args, **kwargs)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["assessment"] = self.assessment
-        return context
+    breadcrumb_active_name = "Data Pivot selector"
 
 
 class DataPivotNew(BaseCreate):
@@ -336,6 +331,18 @@ class DataPivotCopyAsNewSelector(TeamMemberOrHigherMixin, FormView):
             url += "&reset_row_overrides=1"
 
         return HttpResponseRedirect(url)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"] = [
+            Breadcrumb.build_root(self.request.user),
+            Breadcrumb(
+                name="Visualizations",
+                url=reverse("summary:visualization_list", args=(self.assessment.id,)),
+            ),
+            Breadcrumb(name="Copy existing"),
+        ]
+        return context
 
 
 class GetDataPivotObjectMixin:
