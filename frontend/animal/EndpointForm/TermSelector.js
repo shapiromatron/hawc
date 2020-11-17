@@ -61,7 +61,7 @@ class TermSelector extends Component {
                         </div>
                     </div>
                 ) : null}
-                <label className="control-label" htmlFor={this.randomId}>
+                <label className="col-form-label" htmlFor={this.randomId}>
                     {label}
                 </label>
                 {useControlledVocabulary ? (

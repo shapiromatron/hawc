@@ -12,7 +12,7 @@ class RadioInput extends Component {
             return null;
         }
         return (
-            <label className="control-label">
+            <label className="col-form-label">
                 {label}
                 {required ? <span className="asteriskField">*</span> : null}
             </label>

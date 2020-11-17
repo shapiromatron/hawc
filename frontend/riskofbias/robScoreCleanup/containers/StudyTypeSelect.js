@@ -21,7 +21,7 @@ class StudyTypeSelect extends Component {
 
         return (
             <div>
-                <label className="control-label">Study Type filter (optional):</label>
+                <label className="col-form-label">Study Type filter (optional):</label>
                 <select
                     multiple
                     name="studyType_filter"

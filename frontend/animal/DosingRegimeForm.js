@@ -178,7 +178,7 @@ class DosingRegimeForm {
         var tbody = $("<tbody>");
         for (var i = 0; i < this.rows; i++) {
             var tr = $("<tr></tr>");
-            tr.append(`<td><label class="control-label">Dose Group ${i + 1}</label></td>`);
+            tr.append(`<td><label class="col-form-label">Dose Group ${i + 1}</label></td>`);
             for (var j = 0; j < this.columns; j++) {
                 tr.append(
                     `<td>

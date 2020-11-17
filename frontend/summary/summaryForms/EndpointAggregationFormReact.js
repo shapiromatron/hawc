@@ -64,7 +64,7 @@ class EndpointAggregationForm extends BaseVisualForm {
                     handleSelect={this.handleDoseUnitSelect}
                 />
                 <div className="form-group">
-                    <label className="control-label">
+                    <label className="col-form-label">
                         Endpoints
                         <span className="asteriskField">*</span>
                     </label>

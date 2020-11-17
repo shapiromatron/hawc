@@ -47,7 +47,7 @@ let build_settings_general_tab = function(self) {
                 },
                 add_horizontal_field = function(label_text, html_obj) {
                     return $('<div class="form-group">')
-                        .append(`<label class="control-label">${label_text}</label>`)
+                        .append(`<label class="col-form-label">${label_text}</label>`)
                         .append($('<div class="form-group">').append(html_obj));
                 },
                 show_legend = $('<input type="checkbox">')

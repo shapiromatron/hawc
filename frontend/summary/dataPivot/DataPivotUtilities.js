@@ -868,37 +868,37 @@ class _DataPivot_settings_barchart {
                 <tbody>
                     <tr>
                         <td>
-                            <label class="control-label" for="bc_field_name">Bar:</label>
+                            <label class="col-form-label" for="bc_field_name">Bar:</label>
                             </br>
 
-                            <label class="control-label" for="bc_error_low_field_name">Error line low:</label>
+                            <label class="col-form-label" for="bc_error_low_field_name">Error line low:</label>
                             </br>
 
-                            <label class="control-label" for="bc_error_high_field_name">Error line high:</label>
+                            <label class="col-form-label" for="bc_error_high_field_name">Error line high:</label>
                             </br>
                         </td>
                         <td>
-                            <label class="control-label" for="bc_header_name">Bar:</label>
+                            <label class="col-form-label" for="bc_header_name">Bar:</label>
                             </br>
 
-                            <label class="control-label" for="bc_error_header_name">Error line:</label>
+                            <label class="col-form-label" for="bc_error_header_name">Error line:</label>
                             </br>
                         </td>
                         <td>
-                            <label class="control-label" for="bc_bar_style">Bar:</label>
+                            <label class="col-form-label" for="bc_bar_style">Bar:</label>
                             </br>
 
-                            <label class="control-label" for="bc_error_marker_style">Error line:</label>
+                            <label class="col-form-label" for="bc_error_marker_style">Error line:</label>
                             </br>
                         </td>
                         <td>
-                            <label class="control-label" for="bc_conditional_formatting">Bar conditional formatting:</label>
+                            <label class="col-form-label" for="bc_conditional_formatting">Bar conditional formatting:</label>
                             </br>
 
-                            <label class="control-label" for="bc_dpe">On click:</label>
+                            <label class="col-form-label" for="bc_dpe">On click:</label>
                             <br/>
 
-                            <label class="control-label" for="bc_error_show_tails">Show error-line tails:</label>
+                            <label class="col-form-label" for="bc_error_show_tails">Show error-line tails:</label>
                             </br>
                         </td>
                     </tr>

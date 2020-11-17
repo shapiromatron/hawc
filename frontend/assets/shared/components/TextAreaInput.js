@@ -5,7 +5,7 @@ class TextInput extends Component {
     render() {
         return (
             <div className="form-group">
-                <label htmlFor={`id_${this.props.name}`} className="control-label">
+                <label htmlFor={`id_${this.props.name}`} className="col-form-label">
                     {this.props.label}
                     {this.props.required ? <span className="asteriskField">*</span> : null}
                 </label>

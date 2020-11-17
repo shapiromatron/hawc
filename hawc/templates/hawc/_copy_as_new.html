@@ -10,7 +10,7 @@
 
       {% for field in form %}
         <div class="form-group form-row">
-          {{field.label_tag|add_class:"control-label"}}
+          {{field.label_tag|add_class:"col-form-label"}}
           {{field}}<br>
           <p class='text-muted'>{{field.help_text}}</p>
           {{field.errors|add_class:"alert alert-danger"}}

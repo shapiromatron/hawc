@@ -24,7 +24,7 @@ class DoseUnitsSelector extends React.Component {
         return (
             <div className="col-md-3">
                 <div className="form-group">
-                    <label className="control-label">Dose units used in modeling:</label>
+                    <label className="col-form-label">Dose units used in modeling:</label>
                     <select
                         name="dose_units"
                         value={this.props.doseUnits}

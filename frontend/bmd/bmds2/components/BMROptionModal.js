@@ -64,7 +64,7 @@ class BMROptionModal extends BaseModal {
         return (
             <form className="form-horizontal">
                 <div className="form-group form-row">
-                    <label className="control-label" htmlFor="bmr_type">
+                    <label className="col-form-label" htmlFor="bmr_type">
                         BMR type
                     </label>
                     <select
@@ -83,7 +83,7 @@ class BMROptionModal extends BaseModal {
                 </div>
 
                 <div className="form-group form-row">
-                    <label className="control-label" htmlFor="bmr_value">
+                    <label className="col-form-label" htmlFor="bmr_value">
                         BMR value
                     </label>
                     <input
@@ -97,7 +97,7 @@ class BMROptionModal extends BaseModal {
                 </div>
 
                 <div className="form-group form-row">
-                    <label className="control-label" htmlFor="bmr_confidence_level">
+                    <label className="col-form-label" htmlFor="bmr_confidence_level">
                         BMR confidence level
                     </label>
                     <input

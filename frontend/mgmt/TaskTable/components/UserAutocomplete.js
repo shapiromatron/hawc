@@ -15,7 +15,7 @@ class UserAutocomplete extends Component {
 
         return (
             <div>
-                <label className="control-label" htmlFor={idName}>
+                <label className="col-form-label" htmlFor={idName}>
                     Owner
                 </label>
                 <Autocomplete onChange={onChange} id={idName} url={submitUrl} loaded={loaded} />

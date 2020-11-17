@@ -19,7 +19,7 @@ class ScoreSelect extends Component {
 
         return (
             <div>
-                <label className="control-label">Rating filter (optional):</label>
+                <label className="col-form-label">Rating filter (optional):</label>
                 <select
                     multiple={true}
                     name="score_filter"

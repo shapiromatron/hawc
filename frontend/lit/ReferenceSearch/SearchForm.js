@@ -12,7 +12,7 @@ class SearchForm extends Component {
             <form>
                 <div className="row">
                     <div className="form-group col-md-4">
-                        <label htmlFor="id_hawc_id" className="control-label">
+                        <label htmlFor="id_hawc_id" className="col-form-label">
                             HAWC ID
                         </label>
                         <div className="form-group">
@@ -25,7 +25,7 @@ class SearchForm extends Component {
                         </div>
                     </div>
                     <div className="form-group col-md-4">
-                        <label htmlFor="id_db_id" className="control-label">
+                        <label htmlFor="id_db_id" className="col-form-label">
                             Database unique identifier
                         </label>
                         <div className="form-group">
@@ -41,7 +41,7 @@ class SearchForm extends Component {
                         </div>
                     </div>
                     <div className="form-group col-md-4">
-                        <label htmlFor="id_year_id" className="control-label">
+                        <label htmlFor="id_year_id" className="col-form-label">
                             Year
                         </label>
                         <div className="form-group">
@@ -56,7 +56,7 @@ class SearchForm extends Component {
                 </div>
                 <div className="row">
                     <div className="form-group col-md-6">
-                        <label htmlFor="id_title" className="control-label">
+                        <label htmlFor="id_title" className="col-form-label">
                             Title
                         </label>
                         <div className="form-group">
@@ -69,7 +69,7 @@ class SearchForm extends Component {
                         </div>
                     </div>
                     <div className="form-group col-md-6">
-                        <label htmlFor="id_authors" className="control-label">
+                        <label htmlFor="id_authors" className="col-form-label">
                             Authors
                         </label>
                         <div className="form-group">
@@ -84,7 +84,7 @@ class SearchForm extends Component {
                 </div>
                 <div className="row">
                     <div className="form-group col-md-6">
-                        <label htmlFor="id_journal" className="control-label">
+                        <label htmlFor="id_journal" className="col-form-label">
                             Journal
                         </label>
                         <div className="form-group">
@@ -97,7 +97,7 @@ class SearchForm extends Component {
                         </div>
                     </div>
                     <div className="form-group col-md-6">
-                        <label htmlFor="id_abstract" className="control-label">
+                        <label htmlFor="id_abstract" className="col-form-label">
                             Abstract
                         </label>
                         <div className="form-group">

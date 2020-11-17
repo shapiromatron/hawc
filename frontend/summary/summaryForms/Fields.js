@@ -42,7 +42,7 @@ class TextField extends InputField {
     render() {
         this._setInput();
         var $div = $('<div class="form-group">')
-            .append(`<label class="control-label">${this.schema.label}</label>`)
+            .append(`<label class="col-form-label">${this.schema.label}</label>`)
             .append(this.$inp);
 
         if (this.schema.helpText)

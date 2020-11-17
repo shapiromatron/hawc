@@ -434,7 +434,7 @@ div.smart-tag.active {
 }
 
 /* FORM FORMATTING */
-.control-label {
+.col-form-label {
     font-weight: bold;
 }
 .space {
