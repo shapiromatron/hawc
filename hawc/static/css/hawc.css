@@ -9,9 +9,9 @@
     margin: 0 40%;
 }
 
-#footer {
-    height: 200px;
-    background-color: #333;
+#prime-footer {
+    height: 150px;
+    background-color: #323a45;
 }
 
 /* main  */
@@ -22,7 +22,7 @@
 /* sidebar  */
 .sidebar {
     width: 230px;
-    background-color: #333;
+    background-color: #323a45;
 }
 .sidebar-collapsed {
     width: 50px;
