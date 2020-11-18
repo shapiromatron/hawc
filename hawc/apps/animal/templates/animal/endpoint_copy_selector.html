@@ -80,15 +80,14 @@
     }
 
     $(document).ready(function(){
-
       new window.app.utils.HAWCUtils.InitialForm({
         "form": $('form'),
         "base_url": "{% url 'animal:endpoint_new' object.pk %}"
       });
 
       // relocate the sort div into the form
-      $("#endpoint_search_fields_wrapper").css("display", "").detach().appendTo($("div#content fieldset"));
-      $("#endpoint_sort_criteria_wrapper").css("display", "").detach().appendTo($("div#content fieldset"));
+      $("#endpoint_search_fields_wrapper").css("display", "").detach().appendTo($("#copy-form fieldset"));
+      $("#endpoint_sort_criteria_wrapper").css("display", "").detach().appendTo($("#copy-form fieldset"));
       // modify the selectable widget to include sort values in the query; we'll use it in lookups.py
       $("#id_selector_0").djselectable('option', 'prepareQuery', attachCustomParamsToSearchQuery);
       $(".search_trigger").change(function () { rerunSearch();});

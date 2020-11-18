@@ -101,6 +101,10 @@ class CopyAsNewSelectorForm(forms.Form):
         super(CopyAsNewSelectorForm, self).__init__(*args, **kwargs)
         self.setupSelector(parent_id)
 
+    @property
+    def helper(self):
+        return BaseFormHelper(self)
+
     def setupSelector(self, parent_id):
         fld = selectable.AutoCompleteSelectField(
             lookup_class=self.lookup_class,
