@@ -5,7 +5,7 @@ from typing import List
 import numpy as np
 from django import forms
 from django.db import transaction
-from django.urls import reverse_lazy, reverse
+from django.urls import reverse, reverse_lazy
 
 from ...services.utils import ris
 from ..assessment.models import Assessment

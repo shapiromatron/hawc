@@ -1,4 +1,4 @@
-from typing import Any, Union, List, Tuple
+from typing import Any, List, Tuple, Union
 
 from crispy_forms import bootstrap as cfb
 from crispy_forms import helper as cf
