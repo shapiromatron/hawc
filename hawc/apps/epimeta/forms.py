@@ -89,8 +89,8 @@ class MetaProtocolForm(forms.ModelForm):
         helper.add_row("inclusion_criteria", 2, "col-md-6")
 
         url = reverse("epi:studycriteria_create", kwargs={"pk": self.instance.study.assessment.pk})
-        helper.add_create_btn(helper.layout[5], 0, url, "Create criteria", "col-md-6")
-        helper.add_create_btn(helper.layout[5], 1, url, "Create criteria", "col-md-6")
+        helper.add_create_btn("inclusion_criteria", url, "Create criteria")
+        helper.add_create_btn("exclusion_criteria", url, "Create criteria")
 
         return helper
 
@@ -176,7 +176,7 @@ class MetaResultForm(forms.ModelForm):
             "epi:adjustmentfactor_create",
             kwargs={"pk": self.instance.protocol.study.assessment.pk},
         )
-        helper.add_create_btn(helper.layout[8], 0, url, "Create criteria", "col-md-6")
+        helper.add_create_btn("adjustment_factors", url, "Create criteria")
 
         return helper
 

@@ -1,4 +1,4 @@
-from typing import Union, List
+from typing import Any, Union, List, Tuple
 
 from crispy_forms import bootstrap as cfb
 from crispy_forms import helper as cf
@@ -50,15 +50,22 @@ class BaseFormHelper(cf.FormHelper):
 
         return layout
 
-    def add_create_btn(self, lst, idx: int, url: str, title: str, wrapper_class: str):
+    def get_layout_item(self, field_name: str) -> Tuple[Any, int]:
+        mapping = {field: index for index, field in self.layout.get_field_names()}
+        layout = self.layout
+        for idx in mapping[field_name]:
+            if layout[idx] == field_name:
+                return (layout, idx)
+            layout = layout[idx]
+        raise ValueError("Cannot find item")
+
+    def add_create_btn(self, field_name: str, url: str, title: str):
         """
         Render field plus an "add new" button to the right.
         """
-        if type(lst[idx]) is str:
-            fields = [lst[idx]]
-        else:
-            fields = lst[idx].fields
-        lst[idx] = AdderLayout(*fields, adderURL=url, adderTitle=title, wrapper_class=wrapper_class)
+        layout, index = self.get_layout_item(field_name)
+        field = layout[index]
+        layout[index] = AdderLayout(field, adder_url=url, adder_title=title)
 
     def add_row(self, firstField: str, numFields: int, classes: Union[str, List[str]]):
         if isinstance(classes, str):
@@ -156,20 +163,17 @@ class AdderLayout(cfl.Field):
     template = "crispy_forms/layout/inputAdder.html"
 
     def __init__(self, *args, **kwargs):
-        self.adderURL = kwargs.pop("adderURL", "")
-        self.adderTitle = kwargs.pop("adderTitle", "")
-        super(AdderLayout, self).__init__(*args, **kwargs)
+        self.adder_url = kwargs.pop("adder_url")
+        self.adder_title = kwargs.pop("adder_title")
+        super().__init__(*args, **kwargs)
 
     def render(
         self, form, form_style, context, template_pack=TEMPLATE_PACK, extra_context=None, **kwargs,
     ):
         if extra_context is None:
             extra_context = {}
-        extra_context["adderURL"] = self.adderURL
-        extra_context["adderTitle"] = self.adderTitle
-        return super(AdderLayout, self).render(
-            form, form_style, context, template_pack, extra_context, **kwargs
-        )
+        extra_context.update(adder_url=self.adder_url, adder_title=self.adder_title)
+        return super().render(form, form_style, context, template_pack, extra_context, **kwargs)
 
 
 class CustomURLField(forms.URLField):

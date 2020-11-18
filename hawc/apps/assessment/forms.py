@@ -48,13 +48,11 @@ class AssessmentForm(forms.ModelForm):
         # by default take-up the whole row
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
-            if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "col-md-12"
             if fld == "dtxsids":
                 widget.attrs["class"] = "col-md-10"
             if type(widget) == forms.Textarea:
                 widget.attrs["rows"] = 3
-                widget.attrs["class"] += " html5text"
+                widget.attrs["class"] = widget.attrs.get("class", "") + " html5text"
 
         if self.instance.id:
             inputs = {
@@ -83,9 +81,7 @@ class AssessmentForm(forms.ModelForm):
         helper.add_row("conflicts_of_interest", 2, "col-md-6")
         helper.add_row("noel_name", 2, "col-md-6")
         helper.add_row("vocabulary", 2, "col-md-6")
-        helper.add_create_btn(
-            helper.layout[3], 1, reverse("assessment:dtxsid_create"), "Add new DTXSID", "col-md-6"
-        )
+        helper.add_create_btn("dtxsids", reverse("assessment:dtxsid_create"), "Add new DTXSID")
         helper.attrs["novalidate"] = ""
         return helper
 
@@ -146,7 +142,7 @@ class AttachmentForm(forms.ModelForm):
             widget = self.fields[fld].widget
             if type(widget) == forms.Textarea:
                 widget.attrs["rows"] = 3
-                widget.attrs["class"] += " html5text"
+                widget.attrs["class"] = widget.attrs.get("class", "") + " html5text"
 
         if self.instance.id:
             inputs = {"legend_text": f"Update {self.instance}"}
@@ -309,7 +305,7 @@ class DatasetForm(forms.ModelForm):
             widget = self.fields[fld].widget
             if type(widget) == forms.Textarea:
                 widget.attrs["rows"] = 3
-                widget.attrs["class"] += " html5text"
+                widget.attrs["class"] = widget.attrs.get("class", "") + " html5text"
 
         if self.instance.id:
             inputs = {
