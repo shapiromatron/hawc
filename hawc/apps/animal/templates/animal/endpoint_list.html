@@ -8,18 +8,17 @@
 
     <h1>Assessment endpoints ({{page_obj.paginator.count}} found)</h1>
 
-    <div class="accordion" id="filterForm">
-      <div class="accordion-group">
-        <div class="accordion-heading">
-          <a class="accordion-toggle" data-toggle="collapse" data-parent="#filterForm" href="#EndpointForm" title="Filter endpoints">
-            Filter endpoints
-          </a>
+    <div class="card">
+        <div class="card-header">
+            <button class="btn btn-link" data-toggle="collapse" data-target="#EndpointForm">
+                Filter endpoints
+            </button>
         </div>
-        <div id="EndpointForm" class="accordion-body collapse">
-          <div class="accordion-inner container-fluid">
+        <div id="EndpointForm" class="collapse">
+            <div class="card-body container-fluid">
 
             <form action="." method="get">
-              <fieldset>
+                <fieldset>
                     {{ form.non_field_errors|add_class:"alert alert-danger" }}
 
                     {% for field in form %}
@@ -52,9 +51,8 @@
                 </div>
             </form>
 
-          </div>
+            </div>
         </div>
-      </div>
     </div>
 
     <div id="endpointTbl"></div>

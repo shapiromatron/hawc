@@ -5,24 +5,23 @@
 {% block content %}
     <h1>Outcomes ({{page_obj.paginator.count}} found)</h1>
 
-    <div class="accordion" id="filterForm">
-      <div class="accordion-group">
-        <div class="accordion-heading">
-          <a class="accordion-toggle" data-toggle="collapse" data-parent="#filterForm" href="#EndpointForm" title="Filter outcomes">
-            Filter outcomes
-          </a>
+    <div class="card">
+        <div class="card-header">
+            <button class="btn btn-link" data-toggle="collapse" data-target="#EndpointForm">
+                Filter outcomes
+            </button>
         </div>
-        <div id="EndpointForm" class="accordion-body collapse">
-          <div class="accordion-inner container-fluid">
+        <div id="EndpointForm" class="collapse">
+            <div class="card-body container-fluid">
 
             <form action="." method="get">
-              <fieldset>
+                <fieldset>
                     {{ form.non_field_errors|add_class:"alert alert-danger" }}
 
                     {% for field in form %}
 
-                        {% if forloop.counter0|divisibleby:4 %}
-                            <div class="row">
+                    {% if forloop.counter0|divisibleby:4 %}
+                    <div class="row">
                         {% endif %}
 
                         <div class="col-md-3">
@@ -34,13 +33,13 @@
                             {{field.errors|add_class:"alert alert-danger"}}
 
                             {% if field.name == "order_by" and field.value is not None %}
-                                <input type="hidden" id="initial_order_by" value="{{ field.value }}" />
+                            <input type="hidden" id="initial_order_by" value="{{ field.value }}" />
                             {% endif %}
                         </div>
 
                         {% if forloop.counter0|add:1|divisibleby:4 %}
-                            </div>
-                        {% endif %}
+                    </div>
+                    {% endif %}
 
                     {% endfor %}
                 </fieldset>
@@ -49,9 +48,9 @@
                 </div>
             </form>
 
-          </div>
+
+            </div>
         </div>
-      </div>
     </div>
 
     <div id='endpointTable'></div>
