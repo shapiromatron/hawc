@@ -1,33 +1,7 @@
 {% extends 'assessment-rooted.html' %}
 
-{% load add_class %}
+{% load crispy_forms_tags %}
 
 {% block content %}
-  <form class="form-horizontal" action="." method="post">
-    <fieldset>
-      <legend>Update  {{ object }} </legend>
-      <span class="form-text text-muted">Update BMD assessment settings.</span><br>
-
-      {{ form.non_field_errors|add_class:"alert alert-danger" }}
-
-      {% for field in form %}
-        <div class="form-group form-row">
-          {{field.label_tag|add_class:"col-form-label"}}
-          {{field|add_class:"col-md-12"}}
-          <span class='text-muted'>{{field.help_text}}</span>
-          {{field.errors|add_class:"alert alert-danger"}}
-        </div>
-      {% endfor %}
-
-      <div class="form-actions">
-        <button type="submit" class="btn btn-primary">{{ crud }} BMD settings</button>
-        {% if crud == "Update" %}
-          <a href="{% url 'bmd:assess_settings_detail' assessment.pk %}" class="btn btn-light">Cancel</a>
-        {% else %}
-          <a href="{% url 'assessment:detail' assessment.pk %}" class="btn btn-light">Cancel</a>
-        {% endif %}
-      </div>
-      {% csrf_token %}
-    </fieldset>
-  </form>
+  {% crispy form %}
 {% endblock %}

@@ -11,6 +11,13 @@ from selectable import forms as selectable
 from . import validators
 
 
+def build_form_actions(cancel_url: str, save_text: str = "Save", cancel_text: str = "Cancel"):
+    return [
+        cfl.Submit("save", save_text),
+        cfl.HTML(f'<a role="button" class="btn btn-light" href="{cancel_url}">{cancel_text}</a>'),
+    ]
+
+
 class BaseFormHelper(cf.FormHelper):
 
     error_text_inline = False
@@ -28,10 +35,8 @@ class BaseFormHelper(cf.FormHelper):
     def build_default_layout(self, form):
         layout = cfl.Layout(*list(form.fields.keys()))
 
-        if self.kwargs.get("legend_text"):
-            layout.insert(
-                0, cfl.HTML(f"<legend>{self.kwargs.get('legend_text')}</legend>"),
-            )
+        if "legend_text" in self.kwargs:
+            layout.insert(0, cfl.HTML(f"<legend>{self.kwargs['legend_text']}</legend>"))
 
         if "help_text" in self.kwargs:
             layout.insert(
@@ -39,12 +44,8 @@ class BaseFormHelper(cf.FormHelper):
             )
 
         form_actions = self.kwargs.get("form_actions")
-        cancel_url = self.kwargs.get("cancel_url")
-        if cancel_url:
-            form_actions = [
-                cfl.Submit("save", "Save"),
-                cfl.HTML(f'<a role="button" class="btn btn-light" href="{cancel_url}">Cancel</a>'),
-            ]
+        if "cancel_url" in self.kwargs:
+            form_actions = build_form_actions(self.kwargs["cancel_url"])
         if form_actions:
             layout.append(cfb.FormActions(*form_actions, css_class="form-actions"))
 
@@ -90,6 +91,12 @@ class BaseFormHelper(cf.FormHelper):
                     return idx
             idx += 1
         raise ValueError(f"Field not found: {field_name}")
+
+    def add_refresh_page_note(self):
+        note = cfl.HTML(
+            "<div class='alert alert-info'><b>Note:</b> If coming from an extraction form, you may need to refresh the extraction form to use the item which was recently created.</div>"
+        )
+        self.layout.insert(len(self.layout) - 1, note)
 
 
 class CopyAsNewSelectorForm(forms.Form):

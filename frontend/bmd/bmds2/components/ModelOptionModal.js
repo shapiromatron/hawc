@@ -96,7 +96,7 @@ class ModelOptionModal extends BaseModal {
 
         return (
             <div className="modal-body">
-                <form className="form-horizontal">
+                <form className="container-fluid">
                     <div className="row">
                         <fieldset className="col-md-6">
                             <legend>Model assignments</legend>

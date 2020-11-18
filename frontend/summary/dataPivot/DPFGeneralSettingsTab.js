@@ -91,7 +91,7 @@ let build_settings_general_tab = function(self) {
                                 <h3>Modify Legend Entry</h3>
                               </div>
                             <div class="modal-body">
-                              <form class="form-horizontal">
+                              <form class="container-fluid">
                                 <div class="style_plot" style="margin-left:180px; height: 70px;"></div>
                                 <br>
                                 <div class="legend_fields"></div>

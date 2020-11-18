@@ -550,9 +550,9 @@ class Endpoint extends Observee {
 
         if (complete) {
             tabs = $('<ul class="nav nav-tabs">').append(`
-                <li class="nav-item"><a class="nav-link"  href="#modalStudy" data-toggle="tab">Study</a></li>
-                <li class="nav-item"><a class="nav-link"  href="#modalExp" data-toggle="tab">Experiment</a></li>
-                <li class="nav-item"><a class="nav-link"  href="#modalAG" data-toggle="tab">Animal Group</a></li>
+                <li class="nav-item"><a class="nav-link" href="#modalStudy" data-toggle="tab">Study</a></li>
+                <li class="nav-item"><a class="nav-link" href="#modalExp" data-toggle="tab">Experiment</a></li>
+                <li class="nav-item"><a class="nav-link" href="#modalAG" data-toggle="tab">Animal Group</a></li>
                 <li class="nav-item"><a class="nav-link active" href="#modalEnd" data-toggle="tab">Endpoint</a></li>
             `);
             $study = $('<div class="tab-pane" id="modalStudy">');

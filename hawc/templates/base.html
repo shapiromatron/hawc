@@ -34,7 +34,7 @@
     {% block content_row_outer %}
       <div class="row no-gutters" style="min-height: 100vh;">
         {% block sidebar_outer %}{% endblock sidebar_outer %}
-        <div id="main-content-container" class="col p-2 container-fluid no-gutter">
+        <div id="main-content-container" class="col p-2 container-fluid no-gutter overflow-auto">
           {% block breadcrumbs_outer %}{% endblock breadcrumbs_outer %}
 
           {% include "includes/messages.html" %}

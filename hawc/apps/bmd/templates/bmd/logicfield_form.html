@@ -1,51 +1,8 @@
 {% extends 'assessment-rooted.html' %}
 
+{% load crispy_forms_tags %}
 {% load add_class %}
 
 {% block content %}
-  <form class="form-horizontal" action="." method="post">
-    <fieldset>
-      <legend>Update BMD Logic: {{ object.name }} </legend>
-      <span class="form-text text-muted">{{ object.description }}</span><br>
-
-      {{ form.non_field_errors|add_class:"alert alert-danger" }}
-      <div class="form-group form-row">
-        {{form.failure_bin.label_tag|add_class:"col-form-label"}}
-        {{form.failure_bin}}
-        <span class='text-muted'>{{form.failure_bin.help_text}}</span>
-        {{form.failure_bin.errors|add_class:"alert alert-danger"}}
-      </div>
-
-      <div class="form-group form-row">
-        {{form.threshold.label_tag|add_class:"col-form-label"}}
-        {{form.threshold}}
-        <span class='text-muted'>{{form.threshold.help_text}}</span>
-        {{form.threshold.errors|add_class:"alert alert-danger"}}
-      </div>
-
-      <h3>Enable test for various dataset types</h3>
-      <table class="table table-sm">
-        <thead>
-          <tr>
-            <th>{{form.continuous_on.label_tag}}</th>
-            <th>{{form.dichotomous_on.label_tag}}</th>
-            <th>{{form.cancer_dichotomous_on.label_tag}}</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>{{form.continuous_on}}</td>
-            <td>{{form.dichotomous_on}}</td>
-            <td>{{form.cancer_dichotomous_on}}</td>
-          </tr>
-        </tbody>
-      </table>
-
-      <div class="form-actions">
-        <button type="submit" class="btn btn-primary">{{ crud }} BMD settings</button>
-        <a class="btn btn-light" href="{% url 'bmd:assess_settings_detail' object.assessment.pk %}">Cancel</a>
-      </div>
-      {% csrf_token %}
-    </fieldset>
-  </form>
+  {% crispy form %}
 {% endblock %}

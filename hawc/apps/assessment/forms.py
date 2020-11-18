@@ -1,6 +1,7 @@
 from pathlib import Path
 from textwrap import dedent
 
+from crispy_forms import layout as cfl
 from django import forms
 from django.contrib.contenttypes.models import ContentType
 from django.core.mail import mail_admins
@@ -164,6 +165,17 @@ class SpeciesForm(forms.ModelForm):
         kwargs.pop("parent", None)
         super().__init__(*args, **kwargs)
 
+    @property
+    def helper(self):
+        helper = BaseFormHelper(
+            self,
+            legend_text="Create new species",
+            help_text="""Create a new species. Note that the creation of a new species is applied as an option for all assessments in HAWC, not just the assessment you're currently working on. Therefore, our staff may periodically review to ensure that the species is indeed new and not pre-existing.""",
+            form_actions=[cfl.Submit("save", "Create")],
+        )
+        helper.add_refresh_page_note()
+        return helper
+
     def clean_name(self):
         return self.cleaned_data["name"].title()
 
@@ -176,6 +188,17 @@ class StrainForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         kwargs.pop("parent", None)
         super().__init__(*args, **kwargs)
+
+    @property
+    def helper(self):
+        helper = BaseFormHelper(
+            self,
+            legend_text="Create a new strain",
+            help_text="""Create a new strain. Note that the creation of a new strain is applied as an option for all assessments in HAWC, not just the assessment you're currently working on. Therefore, our staff may periodically review to ensure that the strain is indeed new and not pre-existing.""",
+            form_actions=[cfl.Submit("save", "Create")],
+        )
+        helper.add_refresh_page_note()
+        return helper
 
     def clean_name(self):
         return self.cleaned_data["name"].title()
@@ -193,6 +216,17 @@ class DoseUnitsForm(forms.ModelForm):
             lookup_class=lookups.DoseUnitsLookup, allow_new=True
         )
 
+    @property
+    def helper(self):
+        helper = BaseFormHelper(
+            self,
+            legend_text="Create new dose/exposure units",
+            help_text="""Create a new set of dose/exposure units (for example μg/g). Note that the creation of new dose/exposure-units are all assessments in HAWC, not just the assessment you're currently working on. Therefore, our staff may periodically review to ensure that the dose-units are indeed new and not pre-existing.""",
+            form_actions=[cfl.Submit("save", "Create")],
+        )
+        helper.add_refresh_page_note()
+        return helper
+
 
 class DSSToxForm(forms.ModelForm):
     class Meta:
@@ -206,8 +240,18 @@ class DSSToxForm(forms.ModelForm):
             self.substance = DssSubstance.create_from_dtxsid(data.get("dtxsid", ""))
         except ValueError as err:
             self.add_error("dtxsid", str(err))
-
         return data
+
+    @property
+    def helper(self):
+        helper = BaseFormHelper(
+            self,
+            legend_text="Import new DSSTox substance",
+            help_text="""Import a new DSSTox substance by providing the DSSTox substance identifier (DTXSID). You can only import a new substance if it doesn't already exist in HAWC and it returns a valid object from the <a href="https://comptox.epa.gov/dashboard">Chemistry dashboard</a>.""",
+            form_actions=[cfl.Submit("save", "Create")],
+        )
+        helper.add_refresh_page_note()
+        return helper
 
     def save(self, commit=True):
         self.instance.content = self.substance.content
@@ -225,6 +269,17 @@ class EffectTagForm(forms.ModelForm):
         self.fields["name"].widget = AutoCompleteWidget(
             lookup_class=lookups.EffectTagLookup, allow_new=True
         )
+
+    @property
+    def helper(self):
+        helper = BaseFormHelper(
+            self,
+            legend_text="Create new effect tag",
+            help_text="""Create a new effect tag. Effect tags are used for describing animal bioassay, epidemiological, or in vitro endpoints. Please take care not to duplicate existing effect tags.""",
+            form_actions=[cfl.Submit("save", "Create")],
+        )
+        helper.add_refresh_page_note()
+        return helper
 
 
 class ContactForm(forms.Form):

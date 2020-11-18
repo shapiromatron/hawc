@@ -1,39 +1,7 @@
 {% extends 'crumbless.html' %}
 
-{% load add_class %}
+{% load crispy_forms_tags %}
 
 {% block content %}
-<form class="form-horizontal" action="." method="post">
-    {% csrf_token %}
-    <div class='row'>
-      <fieldset>
-        <legend>Import new DSSTox substance</legend>
-        <p class="form-text text-muted">
-          Import a new DSSTox substance by providing the DSSTox substance identifier (DTXSID).
-          You can only import a new substance if it doesn't already exist in HAWC and it returns
-          a valid object from the DSSTox database.
-        </p>
-        <br/>
-
-        {{ form.non_field_errors|add_class:"alert alert-danger" }}
-
-        {% for field in form.visible_fields %}
-          <div class="form-group form-row">
-            {{field.label_tag|add_class:"col-form-label"}}
-            {{field}}
-            <span class='form-text text-muted'>{{field.help_text}}</span>
-            {{field.errors|add_class:"alert alert-danger"}}
-          </div>
-        {% endfor %}
-        {% for field in form.hidden_fields %}
-          {{field}}
-        {% endfor %}
-      </fieldset>
-    </div>
-    <div class="row">
-      <div class="form-actions">
-        <button id='submit_form' type="submit" class="btn btn-primary">Create</button>
-      </div>
-    </div>
-  </form>
+  {% crispy form %}
 {% endblock content %}
