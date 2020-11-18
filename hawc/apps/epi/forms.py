@@ -201,9 +201,9 @@ class StudyPopulationForm(forms.ModelForm):
         url = reverse("epi:studycriteria_create", kwargs={"pk": self.instance.study.assessment.pk})
 
         btn_target_idx = helper.find_layout_idx_for_field_name("comments") - 1
-        helper.addBtnLayout(helper.layout[btn_target_idx], 0, url, "Create criteria", "col-md-4")
-        helper.addBtnLayout(helper.layout[btn_target_idx], 1, url, "Create criteria", "col-md-4")
-        helper.addBtnLayout(helper.layout[btn_target_idx], 2, url, "Create criteria", "col-md-4")
+        helper.add_create_btn(helper.layout[btn_target_idx], 0, url, "Create criteria", "col-md-4")
+        helper.add_create_btn(helper.layout[btn_target_idx], 1, url, "Create criteria", "col-md-4")
+        helper.add_create_btn(helper.layout[btn_target_idx], 2, url, "Create criteria", "col-md-4")
 
         return helper
 
@@ -353,14 +353,14 @@ class ExposureForm(forms.ModelForm):
             cfl.HTML('<div style="margin-bottom:20px">' + self.instance.ROUTE_HELP_TEXT + "</div>")
         )
 
-        helper.addBtnLayout(
+        helper.add_create_btn(
             helper.layout[2], 1, reverse("assessment:dtxsid_create"), "Add new DTXSID", "col-md-6"
         )
         url = reverse(
             "assessment:dose_units_create",
             args=(self.instance.study_population.study.assessment_id,),
         )
-        helper.addBtnLayout(helper.layout[4], 2, url, "Create units", "col-md-4")
+        helper.add_create_btn(helper.layout[4], 2, url, "Create units", "col-md-4")
         helper.form_id = "exposure-form"
         return helper
 
@@ -446,7 +446,7 @@ class OutcomeForm(forms.ModelForm):
         helper.add_row("outcome_n", 2, "col-md-6")
 
         url = reverse("assessment:effect_tag_create", kwargs={"pk": self.instance.assessment.pk})
-        helper.addBtnLayout(helper.layout[2], 1, url, "Add new effect tag", "col-md-6")
+        helper.add_create_btn(helper.layout[2], 1, url, "Add new effect tag", "col-md-6")
 
         return helper
 
@@ -933,17 +933,17 @@ class ResultForm(forms.ModelForm):
         url = reverse(
             "assessment:effect_tag_create", kwargs={"pk": self.instance.outcome.assessment_id},
         )
-        helper.addBtnLayout(helper.layout[8], 0, url, "Add new result tag", "col-md-6")
+        helper.add_create_btn(helper.layout[8], 0, url, "Add new result tag", "col-md-6")
 
         url = reverse(
             "epi:adjustmentfactor_create", kwargs={"pk": self.instance.outcome.assessment_id},
         )
 
         btn_target_idx = helper.find_layout_idx_for_field_name("comments") - 1
-        helper.addBtnLayout(
+        helper.add_create_btn(
             helper.layout[btn_target_idx], 0, url, "Add new adjustment factor", "col-md-6"
         )
-        helper.addBtnLayout(
+        helper.add_create_btn(
             helper.layout[btn_target_idx], 1, url, "Add new adjustment factor", "col-md-6"
         )
 

@@ -176,7 +176,7 @@ class HeaderNullField extends NullField {
 class HelpTextNullField extends NullField {
     render() {
         this.$parent.append(
-            `<p class="helpTextForTable form-text text-muted">${this.schema.helpText}</p>`
+            `<p class="helpTextForTable form-text text-muted pb-2">${this.schema.helpText}</p>`
         );
     }
 }

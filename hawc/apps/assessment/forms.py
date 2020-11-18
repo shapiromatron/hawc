@@ -43,9 +43,8 @@ class AssessmentForm(forms.ModelForm):
             lookup_class=HAWCUserLookup
         )
 
-        self.helper = self.setHelper()
-
-    def setHelper(self):
+    @property
+    def helper(self):
         # by default take-up the whole row
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
@@ -60,7 +59,7 @@ class AssessmentForm(forms.ModelForm):
         if self.instance.id:
             inputs = {
                 "legend_text": f"Update {self.instance}",
-                "help_text": "Update an existing HAWC assessment.<br><br>* required fields",
+                "help_text": "Update an existing HAWC assessment. Fields with * are required.",
                 "cancel_url": self.instance.get_absolute_url(),
             }
         else:
@@ -71,7 +70,7 @@ class AssessmentForm(forms.ModelForm):
                     tool will be related to an assessment. The settings below are used to
                     describe the basic characteristics of the assessment, along with setting
                     up permissions for role-based authorization and access for viewing and
-                    editing content associated with an assessment.<br><br>* required fields""",
+                    editing content associated with an assessment. Fields with * are required.""",
                 "cancel_url": reverse_lazy("portal"),
             }
 
@@ -84,7 +83,7 @@ class AssessmentForm(forms.ModelForm):
         helper.add_row("conflicts_of_interest", 2, "col-md-6")
         helper.add_row("noel_name", 2, "col-md-6")
         helper.add_row("vocabulary", 2, "col-md-6")
-        helper.addBtnLayout(
+        helper.add_create_btn(
             helper.layout[3], 1, reverse("assessment:dtxsid_create"), "Add new DTXSID", "col-md-6"
         )
         helper.attrs["novalidate"] = ""
@@ -108,12 +107,13 @@ class AssessmentModulesForm(forms.ModelForm):
         self.fields[
             "enable_risk_of_bias"
         ].label = f"Enable {self.instance.get_rob_name_display().lower()}"
-        self.helper = self.setHelper()
 
-    def setHelper(self):
-        inputs = {
-            "legend_text": "Update enabled modules",
-            "help_text": """
+    @property
+    def helper(self):
+        helper = BaseFormHelper(
+            self,
+            legend_text="Update enabled modules",
+            help_text="""
                 HAWC is composed of multiple modules, each designed
                 to capture data and decisions related to specific components of a
                 health assessment. This screen allows a project-manager to change
@@ -121,10 +121,8 @@ class AssessmentModulesForm(forms.ModelForm):
                 enabled or disabled at any time; content already entered into a particular
                 module will not be changed when enabling or disabling modules.
                 """,
-            "cancel_url": self.instance.get_absolute_url(),
-        }
-        helper = BaseFormHelper(self, **inputs)
-
+            cancel_url=self.instance.get_absolute_url(),
+        )
         return helper
 
 
@@ -140,14 +138,12 @@ class AttachmentForm(forms.ModelForm):
             self.instance.content_type = ContentType.objects.get_for_model(obj)
             self.instance.object_id = obj.id
             self.instance.content_object = obj
-        self.helper = self.setHelper()
 
-    def setHelper(self):
+    @property
+    def helper(self):
         # by default take-up the whole row
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
-            if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "col-md-12"
             if type(widget) == forms.Textarea:
                 widget.attrs["rows"] = 3
                 widget.attrs["class"] += " html5text"
@@ -200,8 +196,6 @@ class DoseUnitsForm(forms.ModelForm):
         self.fields["name"].widget = AutoCompleteWidget(
             lookup_class=lookups.DoseUnitsLookup, allow_new=True
         )
-        for fld in list(self.fields.keys()):
-            self.fields[fld].widget.attrs["class"] = "col-md-12"
 
 
 class DSSToxForm(forms.ModelForm):
@@ -235,8 +229,6 @@ class EffectTagForm(forms.ModelForm):
         self.fields["name"].widget = AutoCompleteWidget(
             lookup_class=lookups.EffectTagLookup, allow_new=True
         )
-        for fld in list(self.fields.keys()):
-            self.fields[fld].widget.attrs["class"] = "col-md-12"
 
 
 class ContactForm(forms.Form):
@@ -253,7 +245,6 @@ class ContactForm(forms.Form):
         self.fields["name"].initial = self.user.get_full_name()
         self.fields["email"].initial = self.user.email
         self.fields["previous_page"].initial = self.back_href
-        self.helper = self.setHelper()
 
     def send_email(self):
         subject = f"[HAWC contact us]: {self.cleaned_data['subject']}"
@@ -268,22 +259,14 @@ class ContactForm(forms.Form):
         )
         mail_admins(subject, body, fail_silently=False)
 
-    def setHelper(self):
-        # by default take-up the whole row
-        for fld in list(self.fields.keys()):
-            widget = self.fields[fld].widget
-            if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "col-md-12"
-
-        inputs = {
-            "legend_text": "Contact HAWC developers",
-            "help_text": """
-                Have a question, comment, or need some help?
-                Use this form to to let us know what's going on.
-            """,
-            "cancel_url": self.back_href,
-        }
-        helper = BaseFormHelper(self, **inputs)
+    @property
+    def helper(self):
+        helper = BaseFormHelper(
+            self,
+            legend_text="Contact HAWC developers",
+            help_text="Have a question, comment, or need some help? Use this form to to let us know what's going on.",
+            cancel_url=self.back_href,
+        )
         helper.form_class = "loginForm"
         return helper
 
@@ -318,14 +301,12 @@ class DatasetForm(forms.ModelForm):
         if self.instance.id is None:
             self.fields["revision_data"].required = True
         self.fields["revision_version"].initial = self.instance.get_new_version_value()
-        self.helper = self.setHelper()
 
-    def setHelper(self):
+    @property
+    def helper(self):
         # by default take-up the whole row
         for fld in self.fields.keys():
             widget = self.fields[fld].widget
-            if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "col-md-12"
             if type(widget) == forms.Textarea:
                 widget.attrs["rows"] = 3
                 widget.attrs["class"] += " html5text"

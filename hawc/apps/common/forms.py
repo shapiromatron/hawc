@@ -1,3 +1,5 @@
+from typing import Union, List
+
 from crispy_forms import bootstrap as cfb
 from crispy_forms import helper as cf
 from crispy_forms import layout as cfl
@@ -12,6 +14,7 @@ from . import validators
 class BaseFormHelper(cf.FormHelper):
 
     error_text_inline = False
+    use_custom_control = True
 
     def __init__(self, form=None, **kwargs):
         self.attrs = {}
@@ -32,32 +35,22 @@ class BaseFormHelper(cf.FormHelper):
 
         if "help_text" in self.kwargs:
             layout.insert(
-                1, cfl.HTML(f'<p class="form-text text-muted">{self.kwargs["help_text"]}</p><br>'),
-            )
-
-        cancel_url = self.kwargs.get("cancel_url")
-        if cancel_url:
-            self.add_form_actions(
-                layout,
-                [
-                    cfl.Submit("save", "Save"),
-                    cfl.HTML(
-                        f'<a role="button" class="btn btn-light" href="{cancel_url}">Cancel</a>'
-                    ),
-                ],
+                1, cfl.HTML(f'<p class="form-text text-muted">{self.kwargs["help_text"]}</p>'),
             )
 
         form_actions = self.kwargs.get("form_actions")
+        cancel_url = self.kwargs.get("cancel_url")
+        if cancel_url:
+            form_actions = [
+                cfl.Submit("save", "Save"),
+                cfl.HTML(f'<a role="button" class="btn btn-light" href="{cancel_url}">Cancel</a>'),
+            ]
         if form_actions:
-            self.add_form_actions(layout, form_actions)
+            layout.append(cfb.FormActions(*form_actions, css_class="form-actions"))
 
         return layout
 
-    @classmethod
-    def add_form_actions(cls, layout, items):
-        layout.append(cfb.FormActions(*items, css_class="form-actions"))
-
-    def addBtnLayout(self, lst, idx, url, title, wrapper_class):
+    def add_create_btn(self, lst, idx: int, url: str, title: str, wrapper_class: str):
         """
         Render field plus an "add new" button to the right.
         """
@@ -67,22 +60,15 @@ class BaseFormHelper(cf.FormHelper):
             fields = lst[idx].fields
         lst[idx] = AdderLayout(*fields, adderURL=url, adderTitle=title, wrapper_class=wrapper_class)
 
-    def add_row(self, firstField, numFields, wrapperClasses):
+    def add_row(self, firstField: str, numFields: int, classes: Union[str, List[str]]):
+        if isinstance(classes, str):
+            classes = [classes] * numFields
         first = self.layout.index(firstField)
-        if type(wrapperClasses) in [str, str]:
-            wrapperClasses = [wrapperClasses] * numFields
-        for i, v in enumerate(wrapperClasses):
-            self[first + i].wrap(cfl.Field, wrapper_class=v)
+        for i, class_ in enumerate(classes):
+            self[first + i].wrap(cfl.Column, wrapper_class=class_)
         self[first : first + numFields].wrap_together(
-            cfl.Div, css_class="form-row", id=f"row_id_{firstField}_{numFields}"
+            cfl.Row, id=f"row_id_{firstField}_{numFields}"
         )
-
-    def add_td(self, firstField, numFields):
-        first = self.layout.index(firstField)
-        self[first : first + numFields].wrap_together(TdLayout)
-
-    def add_header(self, firstField, text):
-        self.layout.insert(self.layout.index(firstField), cfl.HTML(f"<h4>{text}</h4>"))
 
     def find_layout_idx_for_field_name(self, field_name):
         idx = 0
@@ -116,7 +102,7 @@ class CopyAsNewSelectorForm(forms.Form):
             widget=selectable.AutoComboboxSelectWidget,
         )
         fld.widget.update_query_parameters({"related": parent_id})
-        fld.widget.attrs["class"] = "col-md-11"
+        fld.widget.attrs["class"] = "col-md-10"
         self.fields["selector"] = fld
 
 
@@ -127,9 +113,9 @@ def form_error_list_to_lis(form):
     for key, values in form.errors.items():
         for value in values:
             if key == "__all__":
-                lis.append("<li>" + value + "</li>")
+                lis.append(f"<li>{value}</li>")
             else:
-                lis.append("<li>" + key + ": " + value + "</li>")
+                lis.append("<li>{key}: {value}</li>")
     return lis
 
 

@@ -73,7 +73,7 @@ class IVChemicalForm(forms.ModelForm):
         helper.add_row("cas_inferred", 2, "col-md-6")
         helper.add_row("source", 3, "col-md-4")
         helper.add_row("purity_confirmed_notes", 2, "col-md-6")
-        helper.addBtnLayout(
+        helper.add_create_btn(
             helper.layout[3], 1, reverse("assessment:dtxsid_create"), "Add new DTXSID", "col-md-6"
         )
         helper.form_id = "ivchemical-form"
@@ -364,7 +364,7 @@ class IVEndpointForm(forms.ModelForm):
         helper.add_row("endpoint_notes", 2, "col-md-6")
 
         url = reverse("assessment:effect_tag_create", kwargs={"pk": self.instance.assessment_id})
-        helper.addBtnLayout(helper.layout[2], 1, url, "Add new effect tag", "col-md-6")
+        helper.add_create_btn(helper.layout[2], 1, url, "Add new effect tag", "col-md-6")
 
         return helper
 

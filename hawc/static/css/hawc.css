@@ -428,20 +428,9 @@ div.smart-tag.active {
     }
 }
 
-/* Visual forms */
-.helpTextForTable {
-    padding-bottom: 0.7em;
-}
-
 /* FORM FORMATTING */
-.col-form-label {
+label {
     font-weight: bold;
-}
-.space {
-    margin: 5px;
-}
-.adders {
-    margin-left: 5px;
 }
 
 /*

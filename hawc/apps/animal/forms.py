@@ -93,7 +93,7 @@ class ExperimentForm(ModelForm):
         helper.add_row("chemical", 3, "col-md-4")
         helper.add_row("purity_available", 4, ["col-md-2", "col-md-2", "col-md-2", "col-md-6"])
         url = reverse("assessment:dtxsid_create")
-        helper.addBtnLayout(helper.layout[3], 2, url, "Add new DTXSID", "col-md-4")
+        helper.add_create_btn(helper.layout[3], 2, url, "Add new DTXSID", "col-md-4")
         helper.form_id = "experiment-form"
         return helper
 
@@ -208,10 +208,10 @@ class AnimalGroupForm(ModelForm):
         assessment_id = self.instance.experiment.study.assessment.pk
 
         url = reverse("assessment:species_create", kwargs={"pk": assessment_id})
-        helper.addBtnLayout(helper.layout[3], 0, url, "Add new species", "col-md-4")
+        helper.add_create_btn(helper.layout[3], 0, url, "Add new species", "col-md-4")
 
         url = reverse("assessment:strain_create", kwargs={"pk": assessment_id})
-        helper.addBtnLayout(helper.layout[3], 1, url, "Add new strain", "col-md-4")
+        helper.add_create_btn(helper.layout[3], 1, url, "Add new strain", "col-md-4")
 
         if "generation" in self.fields:
             helper.add_row("siblings", 3, "col-md-4")
@@ -523,7 +523,7 @@ class EndpointForm(ModelForm):
         helper.add_row("name_term", 5, "col-md-2")
 
         url = reverse("assessment:effect_tag_create", kwargs={"pk": self.instance.assessment.pk})
-        helper.addBtnLayout(helper.layout[5], 0, url, "Add new effect tag", "col-md-6")
+        helper.add_create_btn(helper.layout[5], 0, url, "Add new effect tag", "col-md-6")
         helper.attrs["class"] = "hidden"
         return helper
 
