@@ -560,16 +560,8 @@ class OutcomeFilterForm(forms.Form):
             if field not in ("design", "diagnostic", "order_by", "paginate_by"):
                 self.fields[field].widget.update_query_parameters({"related": assessment.id})
 
-        self.helper = self.setHelper()
-
-    def setHelper(self):
-
-        # by default take-up the whole row
-        for fld in list(self.fields.keys()):
-            widget = self.fields[fld].widget
-            if type(widget) not in [forms.CheckboxInput, forms.CheckboxSelectMultiple]:
-                widget.attrs["class"] = "col-md-12"
-
+    @property
+    def helper(self):
         helper = BaseFormHelper(self, form_actions=[cfl.Submit("submit", "Apply filters")])
 
         helper.form_method = "GET"
@@ -577,6 +569,7 @@ class OutcomeFilterForm(forms.Form):
         helper.add_row("studies", 4, "col-md-3")
         helper.add_row("age_profile", 4, "col-md-3")
         helper.add_row("system", 4, "col-md-3")
+        helper.add_row("order_by", 2, "col-md-3")
 
         return helper
 
