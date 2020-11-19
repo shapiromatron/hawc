@@ -851,24 +851,16 @@ class EndpointFilterForm(forms.Form):
                 self.fields["order_by"].choices[i][1] = noel_names.loel
                 self.fields["order_by"].widget.choices[i][1] = noel_names.loel
 
-        self.helper = self.setHelper()
-
-    def setHelper(self):
-
-        # by default take-up the whole row
-        for fld in list(self.fields.keys()):
-            widget = self.fields[fld].widget
-            if type(widget) not in [forms.CheckboxInput, forms.CheckboxSelectMultiple]:
-                widget.attrs["class"] = "col-md-12"
-
+    @property
+    def helper(self):
         helper = BaseFormHelper(self, form_actions=[cfl.Submit("submit", "Apply filters")])
-
         helper.form_method = "GET"
 
         helper.add_row("studies", 4, "col-md-3")
-        helper.add_row("species", 4, "col-md-3")
-        helper.add_row("name", 4, "col-md-3")
-        helper.add_row("tags", 4, "col-md-3")
+        helper.add_row("lifestage_assessed", 4, "col-md-3")
+        helper.add_row("data_extracted", 4, "col-md-3")
+        helper.add_row("effect", 4, "col-md-3")
+        helper.add_row("order_by", 2, "col-md-3")
 
         return helper
 
