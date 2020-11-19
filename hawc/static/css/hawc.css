@@ -65,6 +65,12 @@ code {
 }
 
 /* BOOTSTRAP 4 OVERRIDES */
+body {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+}
+small.form-text {
+    font-size: 90%;
+}
 .dropdown-header {
     color: #006dcc;
     font-weight: bold;
