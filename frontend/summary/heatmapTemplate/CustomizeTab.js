@@ -14,7 +14,7 @@ class CustomizeTab extends Component {
             {create_visual_url} = store.config;
         return (
             <div>
-                <p className="help-block">
+                <p className="form-text text-muted">
                     Use the dashboard-selection in the top-right corner to select predefined data
                     visualizations for this dataset. You can further customize the visualization by
                     modifying the settings below. If you are part of the project-team, you can&nbsp;

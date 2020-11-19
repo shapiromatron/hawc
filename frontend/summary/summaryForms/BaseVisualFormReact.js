@@ -150,7 +150,7 @@ class BaseVisualForm extends Component {
                         />
                         <a
                             role="button"
-                            className="btn btn-secondary"
+                            className="btn btn-secondary mx-2"
                             href={this.config.cancel_url}>
                             Cancel
                         </a>

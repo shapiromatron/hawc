@@ -82,8 +82,8 @@ class VisualCollection {
             .value();
 
         return $("<div>").append(
-            '<label class="control-label">Filter by visualization type:</label>',
-            $("<select>")
+            '<label class="col-form-label">Filter by visualization type:</label>',
+            $("<select class='form-control'>")
                 .append(types)
                 .change(this.filterRows.bind(this))
         );

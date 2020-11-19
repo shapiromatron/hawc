@@ -107,11 +107,6 @@ const helpers = {
             return <i className="fa fa-square-o" title="un-checked" />;
         }
     },
-    getInputDivClass(name, errors, extra = []) {
-        extra.push("form-group");
-        if (errors && errors[name]) extra.push("has-error");
-        return extra.join(" ");
-    },
     deepCopy(object) {
         return JSON.parse(JSON.stringify(object));
     },
@@ -152,7 +147,9 @@ const helpers = {
     },
     getHawcContentSize() {
         // for the standard hawc page layout, get the width and height for the main `content` box
-        const contentSize = document.getElementById("main-container").getBoundingClientRect(),
+        const contentSize = document
+                .getElementById("main-content-container")
+                .getBoundingClientRect(),
             windowHeight = window.innerHeight;
         return {
             width: contentSize.width,

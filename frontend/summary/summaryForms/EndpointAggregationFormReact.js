@@ -64,7 +64,7 @@ class EndpointAggregationForm extends BaseVisualForm {
                     handleSelect={this.handleDoseUnitSelect}
                 />
                 <div className="form-group">
-                    <label className="control-label">
+                    <label className="col-form-label">
                         Endpoints
                         <span className="asteriskField">*</span>
                     </label>
@@ -99,19 +99,18 @@ class EndpointAggregationForm extends BaseVisualForm {
                     }}
                 />
                 <div id="div_id_published" className="form-group">
-                    <div className="controls">
-                        <label htmlFor="id_published" className="checkbox">
+                    <div className="form-group">
+                        <label htmlFor="id_published" className="form-check">
                             Publish visual for public viewing
                             <input
                                 onChange={this.handleCheckboxChange}
                                 type="checkbox"
                                 name="published"
-                                className="checkboxinput"
                                 id="id_published"
                                 checked={this.state.published}
                             />
                         </label>
-                        <p id="hint_id_published" className="help-block">
+                        <p id="hint_id_published" className="form-text text-muted">
                             For assessments marked for public viewing, mark visual to be viewable by
                             public
                         </p>
@@ -124,7 +123,9 @@ class EndpointAggregationForm extends BaseVisualForm {
     renderSettingsForm = () => {
         return (
             <div>
-                <p className="help-block">No figure customization settings are available.</p>
+                <p className="form-text text-muted">
+                    No figure customization settings are available.
+                </p>
             </div>
         );
     };

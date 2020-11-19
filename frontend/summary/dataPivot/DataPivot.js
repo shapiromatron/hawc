@@ -1,7 +1,10 @@
 import $ from "$";
 import * as d3 from "d3";
 
+import React from "react";
+import ReactDOM from "react-dom";
 import HAWCModal from "utils/HAWCModal";
+import DataTable from "shared/components/DataTable";
 
 import DataPivotDefaultSettings from "./DataPivotDefaultSettings";
 import DataPivotExtension from "./DataPivotExtension";
@@ -193,7 +196,7 @@ class DataPivot {
         this.$display_div = $(dom_bindings.display_div);
 
         // rebuild visualization whenever selected
-        $('a[data-toggle="tab"]').on("shown", function(e) {
+        $('a[data-toggle="tab"]').on("shown.bs.tab", function(e) {
             if (self.$display_div[0] === $($(e.target).attr("href"))[0]) {
                 self.build_data_pivot_vis(self.$display_div, editable);
             }
@@ -212,10 +215,6 @@ class DataPivot {
     }
 
     build_data_table() {
-        var tbl = $('<table class="data_pivot_table">'),
-            thead = $("<thead>"),
-            tbody = $("<tbody>");
-
         // get headers
         var data_headers = [];
         for (var prop in this.data[0]) {
@@ -225,25 +224,8 @@ class DataPivot {
             }
         }
 
-        // print header
-        var tr = $("<tr>");
-        data_headers.forEach(function(v) {
-            tr.append(`<th>${v}</th>`);
-        });
-        thead.append(tr);
-
-        // print body
-        this.data.forEach(function(d) {
-            var tr = $("<tr>");
-            data_headers.forEach(function(field) {
-                tr.append(`<td>${d[field]}</td>`);
-            });
-            tbody.append(tr);
-        });
-
-        // insert table
-        tbl.append([thead, tbody]);
-        this.$data_div.html(tbl);
+        // build data table
+        ReactDOM.render(<DataTable dataset={this.data} />, this.$data_div[0]);
 
         // now save things back to object
         this.data_headers = data_headers;
@@ -262,12 +244,12 @@ class DataPivot {
         var self = this,
             content = [
                 $('<ul class="nav nav-tabs">').append(
-                    '<li class="active"><a href="#data_pivot_settings_description" data-toggle="tab">Descriptive text columns</a></li>',
-                    '<li><a href="#data_pivot_settings_data" data-toggle="tab">Visualization data</a></li>',
-                    '<li><a class="dp_ordering_tab" href="#data_pivot_settings_ordering" data-toggle="tab">Data filtering and ordering</a></li>',
-                    '<li><a href="#data_pivot_settings_ref" data-toggle="tab">References</a></li>',
-                    '<li><a href="#data_pivot_settings_styles" data-toggle="tab">Styles</a></li>',
-                    '<li><a class="dp_general_tab" href="#data_pivot_settings_general" data-toggle="tab">Other settings</a></li>'
+                    '<li class="nav-item"><a class="nav-link active" href="#data_pivot_settings_description" data-toggle="tab">Descriptive text columns</a></li>',
+                    '<li class="nav-item"><a class="nav-link" href="#data_pivot_settings_data" data-toggle="tab">Visualization data</a></li>',
+                    '<li class="nav-item"><a class="nav-link" class="dp_ordering_tab" href="#data_pivot_settings_ordering" data-toggle="tab">Data filtering and ordering</a></li>',
+                    '<li class="nav-item"><a class="nav-link" href="#data_pivot_settings_ref" data-toggle="tab">References</a></li>',
+                    '<li class="nav-item"><a class="nav-link" href="#data_pivot_settings_styles" data-toggle="tab">Styles</a></li>',
+                    '<li class="nav-item"><a class="nav-link" class="dp_general_tab" href="#data_pivot_settings_general" data-toggle="tab">Other settings</a></li>'
                 ),
                 $('<div class="tab-content"></div>').append(
                     build_description_tab(self),
@@ -279,7 +261,7 @@ class DataPivot {
                 ),
             ];
 
-        this.$settings_div.html(content).on("shown", function(e) {
+        this.$settings_div.html(content).on("shown.bs.tab", function(e) {
             if ($(e.target).attr("href") === "#data_pivot_settings_general") {
                 self._dp_settings_general.update_merge_until();
             }
@@ -312,9 +294,7 @@ class DataPivot {
                 $('<div class="row">').append($plot)
             );
 
-        modal.getModal().on("shown", function() {
-            self.build_data_pivot_vis($plot);
-        });
+        modal.getModal().on("shown.bs.modal", () => self.build_data_pivot_vis($plot));
 
         modal
             .addHeader(title)

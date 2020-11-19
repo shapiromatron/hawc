@@ -68,7 +68,7 @@ class TableField extends InputField {
     thOrdering(options) {
         var th = $("<th>").html("Ordering&nbsp;"),
             add = $(
-                '<button class="btn btn-sm btn-primary" title="Add row"><i class="fa fa-plus"></button>'
+                '<button class="btn btn-sm btn-primary float-right" title="Add row"><i class="fa fa-plus"></button>'
             ).on("click", this.addRow.bind(this));
 
         if (options.showNew) th.append(add);
@@ -89,7 +89,7 @@ class TableField extends InputField {
             del = function() {
                 $(this.parentNode.parentNode).remove();
             },
-            td = $("<td>");
+            td = $("<td class='float-right'>");
 
         td.append(
             $(
@@ -115,47 +115,49 @@ class TableField extends InputField {
 
     addTdText(name, val) {
         val = val || "";
-        return $(`<td><input name="${name}" value="${val}" class="col-md-12" type="text"></td>`);
+        return $(`<td><input name="${name}" value="${val}" class="form-control" type="text"></td>`);
     }
 
     addTdInt(name, val) {
         val = val || "";
-        return `<td><input name="${name}" value="${val}" class="col-md-12" type="number"></td>`;
+        return `<td><input name="${name}" value="${val}" class="form-control" type="number"></td>`;
     }
 
     addTdFloat(name, val) {
         val = val || "";
-        return `<td><input name="${name}" value="${val}" class="col-md-12" type="number" step="any"></td>`;
+        return `<td><input name="${name}" value="${val}" class="form-control" type="number" step="any"></td>`;
     }
 
     addTdColor(name, val) {
         val = val || "#000000";
         return $("<td>").append(
-            $(`<input type="color" name="${name}" value="${val}" class="col-md-12" required>`)
+            $(`<input type="color" name="${name}" value="${val}" class="form-control" required>`)
         );
     }
 
     addTdCheckbox(name, checked) {
         let checkProp = checked ? "checked" : "";
-        return $("<td>").append($(`<input type="checkbox" name="${name}" ${checkProp} required>`));
+        return $("<td>").append(`<div class="form-check">
+            <input type="checkbox" name="${name}" ${checkProp} required>
+        </div>`);
     }
 
     addTdSelect(name, values) {
-        var sel = $(`<select name="${name}" class="col-md-12">`).append(
+        var sel = $(`<select name="${name}" class="form-control">`).append(
             _.map(values, d => `<option value="${d}">${d}</option>`)
         );
         return $("<td>").append(sel);
     }
 
     addTdSelectLabels(name, options) {
-        var sel = $(`<select name="${name}" class="col-md-12">`).append(
+        var sel = $(`<select name="${name}" class="form-control">`).append(
             _.map(options, d => `<option value="${d.value}">${d.label}</option>`)
         );
         return $("<td>").append(sel);
     }
 
     addTdSelectMultiple(name, values) {
-        var sel = $(`<select name="${name}" class="col-md-12" multiple>`).append(
+        var sel = $(`<select name="${name}" class="form-control" multiple>`).append(
             _.map(values, d => `<option value="${d}">${d}</option>`)
         );
         return $("<td>").append(sel);

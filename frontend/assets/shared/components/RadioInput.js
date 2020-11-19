@@ -12,7 +12,7 @@ class RadioInput extends Component {
             return null;
         }
         return (
-            <label className="control-label">
+            <label className="col-form-label">
                 {label}
                 {required ? <span className="asteriskField">*</span> : null}
             </label>
@@ -24,25 +24,23 @@ class RadioInput extends Component {
         return (
             <div className="form-group">
                 {this.renderLabel()}
-                <div className="controls">
-                    {choices.map(choice => {
-                        const id = `${name}-${choice.id}`;
-                        return (
-                            <label key={choice.id} className="radio" htmlFor={id}>
-                                <input
-                                    onChange={event => onChange(name, choice.id)}
-                                    checked={choice.id === value}
-                                    type="radio"
-                                    id={id}
-                                    name={name}
-                                />
-                                {choice.label}
-                            </label>
-                        );
-                    })}
+                {choices.map(choice => {
+                    const id = `${name}-${choice.id}`;
+                    return (
+                        <label key={choice.id} className="form-check" htmlFor={id}>
+                            <input
+                                onChange={event => onChange(name, choice.id)}
+                                checked={choice.id === value}
+                                type="radio"
+                                id={id}
+                                name={name}
+                            />
+                            {choice.label}
+                        </label>
+                    );
+                })}
 
-                    {helpText ? <p className="help-block">{helpText}</p> : null}
-                </div>
+                {helpText ? <p className="form-text text-muted">{helpText}</p> : null}
             </div>
         );
     }

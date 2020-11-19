@@ -47,40 +47,40 @@ let build_settings_general_tab = function(self) {
                 },
                 add_horizontal_field = function(label_text, html_obj) {
                     return $('<div class="form-group">')
-                        .append(`<label class="control-label">${label_text}</label>`)
-                        .append($('<div class="controls">').append(html_obj));
+                        .append(`<label class="col-form-label">${label_text}</label>`)
+                        .append($('<div class="form-group">').append(html_obj));
                 },
                 show_legend = $('<input type="checkbox">')
                     .prop("checked", self.settings.legend.show)
                     .on("change", function() {
                         self.settings.legend.show = $(this).prop("checked");
                     }),
-                number_columns = $("<input>")
+                number_columns = $("<input class='form-control'>")
                     .val(self.settings.legend.columns)
                     .on("change", function() {
                         self.settings.legend.columns = parseInt($(this).val(), 10) || 1;
                         self.legend._draw_legend();
                     }),
-                left = $("<input>")
+                left = $("<input class='form-control'>")
                     .val(self.settings.legend.left)
                     .on("change", function() {
                         self.settings.legend.left = parseInt($(this).val(), 10) || 1;
                         self.legend._draw_legend();
                     }),
-                top = $("<input>")
+                top = $("<input class='form-control'>")
                     .val(self.settings.legend.top)
                     .on("change", function() {
                         self.settings.legend.top = parseInt($(this).val(), 10) || 1;
                         self.legend._draw_legend();
                     }),
                 border_width = $(
-                    `<input type="range" min="0" max="10" value="${self.settings.legend.style.border_width}">`
+                    `<input class="form-control" type="range" min="0" max="10" value="${self.settings.legend.style.border_width}">`
                 ).on("change", function() {
                     self.settings.legend.style.border_width = parseFloat($(this).val(), 10) || 0;
                     self.legend._draw_legend();
                 }),
                 border_color = $(
-                    `<input name="fill" type="color" value="${self.settings.legend.style.border_color}">`
+                    `<input class="form-control" name="fill" type="color" value="${self.settings.legend.style.border_color}">`
                 ).on("change", function() {
                     self.settings.legend.style.border_color = $(this).val();
                     self.legend._draw_legend();
@@ -91,7 +91,7 @@ let build_settings_general_tab = function(self) {
                                 <h3>Modify Legend Entry</h3>
                               </div>
                             <div class="modal-body">
-                              <form class="form-horizontal">
+                              <form class="container-fluid">
                                 <div class="style_plot" style="margin-left:180px; height: 70px;"></div>
                                 <br>
                                 <div class="legend_fields"></div>
@@ -153,20 +153,18 @@ let build_settings_general_tab = function(self) {
                     rectangle.on("change", update_viewer);
                 },
                 legend_item = self.legend.add_select(),
-                legend_item_up = $('<button><i class="fa fa-arrow-up"></i></button>').on(
-                    "click",
-                    function() {
-                        self.legend.move_field(legend_item.find("option:selected").data("d"), -1);
-                        self.legend._draw_legend();
-                    }
-                ),
-                legend_item_down = $('<button><i class="fa fa-arrow-down"></i></button>').on(
-                    "click",
-                    function() {
-                        self.legend.move_field(legend_item.find("option:selected").data("d"), 1);
-                        self.legend._draw_legend();
-                    }
-                ),
+                legend_item_up = $(
+                    '<button class="btn btn-light"><i class="fa fa-arrow-up"></i></button>'
+                ).on("click", function() {
+                    self.legend.move_field(legend_item.find("option:selected").data("d"), -1);
+                    self.legend._draw_legend();
+                }),
+                legend_item_down = $(
+                    '<button class="btn btn-light"><i class="fa fa-arrow-down"></i></button>'
+                ).on("click", function() {
+                    self.legend.move_field(legend_item.find("option:selected").data("d"), 1);
+                    self.legend._draw_legend();
+                }),
                 legend_item_new = $('<button class="btn btn-primary">New</button>').on(
                     "click",
                     function() {
@@ -241,15 +239,14 @@ let build_settings_general_tab = function(self) {
             );
             content.append("<h4>Legend Settings<h4>", tbl, button_well);
             div.html([content, plot_div]);
-            div.find('input[type="color"]').spectrum({showInitial: true, showInput: true});
             return div;
         };
 
     // update whenever tab is clicked
     var legend_div = build_legend_settings();
-    self.$div.on("shown", 'a.dp_general_tab[data-toggle="tab"]', function() {
-        self.legend._draw_legend();
-    });
+    self.$div.on("shown.bs.tab", 'a.dp_general_tab[data-toggle="tab"]', () =>
+        self.legend._draw_legend()
+    );
 
     return tab.html([build_general_settings(), "<hr>", legend_div]);
 };

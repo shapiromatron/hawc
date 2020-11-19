@@ -64,11 +64,16 @@ code {
     transition: all 0.5s ease-in-out;
 }
 
-/* Override bootstrap defaults */
+/* BOOTSTRAP 4 OVERRIDES */
 .dropdown-header {
     color: #006dcc;
     font-weight: bold;
 }
+mark,.mark {
+    padding: 0;
+    background-color: yellow;
+}
+/* END BOOTSTRAP 4 OVERRIDES */
 
 /* Disable html5 number spinners in Chrome */
 input[type='number']::-webkit-inner-spin-button,
@@ -91,6 +96,7 @@ input[type='number'] {
 /* Override bootstrap modal width */
 .modal-dialog {
     min-width: 950px;
+    max-width: 1200px;
 }
 
 .modal-body {
@@ -422,20 +428,9 @@ div.smart-tag.active {
     }
 }
 
-/* Visual forms */
-.helpTextForTable {
-    padding-bottom: 0.7em;
-}
-
 /* FORM FORMATTING */
-.control-label {
+label {
     font-weight: bold;
-}
-.space {
-    margin: 5px;
-}
-.adders {
-    margin-left: 5px;
 }
 
 /*
@@ -519,18 +514,16 @@ Risk of Bias
     color: darkgreen;
 }
 
-.help-block .help-text-notes {
-    display: block;
+.form-text .help-text-notes {
     font-style: italic;
 }
 
-.help-block .important-note {
-    display: block;
+.form-text .important-note {
     font-style: italic;
     color: red;
 }
 
-.help-block .optional {
+.form-text .optional {
     color: #999999;
 }
 
@@ -543,6 +536,6 @@ table.bordered td {
 Beta tester
 */
 .betatester {
-    background-color: darksalmon;
-    background: darksalmon;
+    background-color: #ec744c;
+    border-color: #ec744c;
 }

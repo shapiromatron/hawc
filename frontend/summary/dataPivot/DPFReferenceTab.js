@@ -24,10 +24,9 @@ let buildReferenceLines = function(tab, dp) {
             newDataRow = function() {
                 addDataRow(settings.length);
             },
-            newRowBtn = $('<button class="btn btn-primary float-right">New row</button>').on(
-                "click",
-                newDataRow
-            ),
+            newRowBtn = $(
+                '<button class="btn btn-primary float-right"><i class="fa fa-fw fa-plus"></i>&nbsp;Add row</button>'
+            ).on("click", newDataRow),
             numRows = settings.length === 0 ? 1 : settings.length;
 
         for (var i = 0; i < numRows; i++) {
@@ -56,10 +55,9 @@ let buildReferenceLines = function(tab, dp) {
             newDataRow = function() {
                 addDataRow(settings.length);
             },
-            newRowBtn = $('<button class="btn btn-primary float-right">New row</button>').on(
-                "click",
-                newDataRow
-            ),
+            newRowBtn = $(
+                '<button class="btn btn-primary float-right"><i class="fa fa-fw fa-plus"></i>&nbsp;Add row</button>'
+            ).on("click", newDataRow),
             numRows = settings.length === 0 ? 1 : settings.length;
 
         for (var i = 0; i < numRows; i++) {
@@ -84,10 +82,9 @@ let buildReferenceLines = function(tab, dp) {
             newDataRow = function() {
                 addDataRow(settings.length);
             },
-            newRowBtn = $('<button class="btn btn-primary float-right">New row</button>').on(
-                "click",
-                newDataRow
-            ),
+            newRowBtn = $(
+                '<button class="btn btn-primary float-right"><i class="fa fa-fw fa-plus"></i>&nbsp;Add row</button>'
+            ).on("click", newDataRow),
             numRows = settings.length === 0 ? 1 : settings.length;
 
         for (let i = 0; i < numRows; i++) {

@@ -6,23 +6,21 @@ class QuillTextInput extends Component {
     render() {
         return (
             <div className="form-group">
-                <label htmlFor={`id_${this.props.name}`} className="control-label">
+                <label htmlFor={`id_${this.props.name}`} className="col-form-label">
                     {this.props.label}
                     {this.props.required ? <span className="asteriskField">*</span> : null}
                 </label>
-                <div className="controls">
-                    <ReactQuill
-                        className="col-md-12 textarea"
-                        id={`id_${this.props.name}`}
-                        type="text"
-                        required={this.props.required}
-                        value={this.props.value}
-                        onChange={value => this.props.onChange(value)}
-                    />
-                    {this.props.helpText ? (
-                        <p className="help-block">{this.props.helpText}</p>
-                    ) : null}
-                </div>
+                <ReactQuill
+                    className="col-md-12 textarea"
+                    id={`id_${this.props.name}`}
+                    type="text"
+                    required={this.props.required}
+                    value={this.props.value}
+                    onChange={value => this.props.onChange(value)}
+                />
+                {this.props.helpText ? (
+                    <p className="form-text text-muted">{this.props.helpText}</p>
+                ) : null}
             </div>
         );
     }

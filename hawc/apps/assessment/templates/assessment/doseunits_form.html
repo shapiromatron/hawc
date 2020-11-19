@@ -1,39 +1,11 @@
 {% extends 'crumbless.html' %}
 
 {% load selectable_tags %}
-{% load add_class %}
+{% load crispy_forms_tags %}
 
 {% block content %}
-<form class="form-horizontal" action="." method="post">
-    {% csrf_token %}
-    <div class='row'>
-      <fieldset>
-        <legend>Create new dose/exposure units</legend>
-        <p class="help-block">Create a new set of dose/exposure units (for example μg/g). Note that the creation of new dose/exposure-units are all assessments in HAWC, not just the assessment you're currently working on. Therefore, our staff may periodically review to ensure that the dose-units are indeed new and not pre-existing.</p><br>
-
-        {{ form.non_field_errors|add_class:"alert alert-danger" }}
-
-        {% for field in form %}
-          <div class="form-group form-row">
-            {{field.label_tag|add_class:"control-label"}}
-            <div class="controls">
-              {{field}}
-              <span class='help-block'>{{field.help_text}}</span>
-            </div>
-            {{field.errors|add_class:"alert alert-danger"}}
-          </div>
-        {% endfor %}
-      </fieldset>
-    </div>
-    <div class="row">
-      <div class="form-actions">
-        <button id='submit_form' type="submit" class="btn btn-primary">{{ crud }}</button>
-      </div>
-    </div>
-     <p><b>Note:</b> If coming from an input-form, you may need to refresh the page to view your newly added dose-units!</p>
-  </form>
+  {% crispy form %}
 {% endblock content %}
-
 
 {% block extrajs %}
   {{ form.media }}

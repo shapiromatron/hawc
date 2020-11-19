@@ -54,7 +54,7 @@ class Reference extends Component {
                 nodes.push(
                     <ReferenceButton
                         key={h.randomString()}
-                        className={"btn btn-sm"}
+                        className={"btn btn-sm btn-secondary"}
                         url={v.url}
                         displayText={v.database}
                         textToCopy={v.id}
@@ -107,7 +107,7 @@ class Reference extends Component {
                 {showTags && tags.length > 0 ? (
                     <p>
                         {tags.map((tag, i) => [
-                            <span key={i} className="label label-info">
+                            <span key={i} className="badge badge-info">
                                 {tag.get_full_name()}
                             </span>,
                             <span key={i + 1000}>&nbsp;</span>,

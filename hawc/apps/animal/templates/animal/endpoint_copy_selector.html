@@ -13,8 +13,8 @@
   {% include "hawc/_copy_as_new.html" with name="endpoint" notes="Select an existing endpoint as a template to create a new one. Only inputs from the current study are available." %}
 
   <div id="endpoint_search_fields_wrapper" style="display:none" class="form-group form-row">
-    <label class="control-label" for="endpoint_search_fields">Search fields:</label>
-    <div class="controls">
+    <label class="col-form-label" for="endpoint_search_fields">Search fields:</label>
+    <div class="form-group">
       <div><input class="search_trigger" type="checkbox" checked name="endpoint_search_fields"
           value="animal_group__experiment__name"> Experiment</div>
       <div><input class="search_trigger" type="checkbox" checked name="endpoint_search_fields" value="animal_group__name">
@@ -34,8 +34,8 @@
   </div>
 
   <div id="endpoint_sort_criteria_wrapper" style="display:none" class="form-group form-row">
-    <label class="control-label" for="endpoint_sort_criteria">Sort by:</label>
-    <div class="controls">
+    <label class="col-form-label" for="endpoint_sort_criteria">Sort by:</label>
+    <div class="form-group">
       <select class="search_trigger" name="endpoint_sort_criteria">
         <option value="name">Endpoint Name</option>
         <option value="created">Date Created</option>
@@ -80,15 +80,14 @@
     }
 
     $(document).ready(function(){
-
       new window.app.utils.HAWCUtils.InitialForm({
         "form": $('form'),
         "base_url": "{% url 'animal:endpoint_new' object.pk %}"
       });
 
       // relocate the sort div into the form
-      $("#endpoint_search_fields_wrapper").css("display", "").detach().appendTo($("div#content fieldset"));
-      $("#endpoint_sort_criteria_wrapper").css("display", "").detach().appendTo($("div#content fieldset"));
+      $("#endpoint_search_fields_wrapper").css("display", "").detach().appendTo($("#copy-form fieldset"));
+      $("#endpoint_sort_criteria_wrapper").css("display", "").detach().appendTo($("#copy-form fieldset"));
       // modify the selectable widget to include sort values in the query; we'll use it in lookups.py
       $("#id_selector_0").djselectable('option', 'prepareQuery', attachCustomParamsToSearchQuery);
       $(".search_trigger").change(function () { rerunSearch();});

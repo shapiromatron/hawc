@@ -744,13 +744,13 @@ class ExternalSiteForm(VisualForm):
     external_url = forms.URLField(
         label="External URL",
         help_text=f"""
-        <p class="help-block">
+        <p class="form-text text-muted">
             Embed an external website. The following websites can be linked to:
         </p>
-        <ul class="help-block">
+        <ul class="form-text text-muted">
             <li><a href="https://public.tableau.com/">Tableau (public)</a> - press the "share" icon and then select the URL in the "link" text box</li>
         </ul>
-        <p class="help-block">
+        <p class="form-text text-muted">
             If you'd like to link to another website, please contact us.
         </p>
         """,

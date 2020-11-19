@@ -52,7 +52,7 @@ class TaskForm extends Component {
                 />
                 <ReactDatePicker
                     onChange={date => this.setState({due_date: date})}
-                    labelClassName="control-label"
+                    labelClassName="col-form-label"
                     label="Due date (optional)"
                     id={`${task.id}-due_date`}
                     date={task.due_date}

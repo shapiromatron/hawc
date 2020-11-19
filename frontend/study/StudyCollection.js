@@ -31,8 +31,7 @@ class StudyCollection {
     }
 
     build_filters() {
-        var $el = $('<div class="row">'),
-            flds = [];
+        var flds = [];
 
         if (this.object_list.filter(d => d.data.bioassay).length > 0) {
             flds.push("bioassay");
@@ -48,11 +47,10 @@ class StudyCollection {
         }
 
         if (flds.length > 1) {
-            $('<select class="col-md-12" size="6" multiple>')
-                .append(_.map(flds, d => `<option value="${d}">${Study.typeNames[d]}</option>`))
-                .appendTo($el);
+            return $('<select class="form-control" size="4" multiple>').append(
+                _.map(flds, d => `<option value="${d}">${Study.typeNames[d]}</option>`)
+            );
         }
-        return $el;
     }
 
     build_table() {

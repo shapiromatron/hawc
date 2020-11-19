@@ -209,7 +209,7 @@ class ExploreHeatmap extends BaseVisual {
                     const settings = this.getSettings(),
                         dataset = resp.dataset;
 
-                    modal.getModal().on("shown", function() {
+                    modal.getModal().on("shown.bs.modal", function() {
                         startupHeatmapAppRender($plotDiv[0], settings, dataset, options);
                         caption.renderAndEnable();
                     });

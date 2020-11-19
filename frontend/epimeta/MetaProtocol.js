@@ -81,7 +81,9 @@ class MetaProtocol {
         if (this.data.results.length > 0) {
             $el.append(HAWCUtils.buildUL(this.data.results, liFunc));
         } else {
-            $el.append('<p class="help-block">No results are available for this protocol.</p>');
+            $el.append(
+                '<p class="form-text text-muted">No results are available for this protocol.</p>'
+            );
         }
 
         return $el;

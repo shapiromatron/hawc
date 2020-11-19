@@ -73,9 +73,7 @@ class IVChemicalForm(forms.ModelForm):
         helper.add_row("cas_inferred", 2, "col-md-6")
         helper.add_row("source", 3, "col-md-4")
         helper.add_row("purity_confirmed_notes", 2, "col-md-6")
-        helper.addBtnLayout(
-            helper.layout[3], 1, reverse("assessment:dtxsid_create"), "Add new DTXSID", "col-md-6"
-        )
+        helper.add_create_btn("dtxsid", reverse("assessment:dtxsid_create"), "Add new DTXSID")
         helper.form_id = "ivchemical-form"
 
         return helper
@@ -364,7 +362,7 @@ class IVEndpointForm(forms.ModelForm):
         helper.add_row("endpoint_notes", 2, "col-md-6")
 
         url = reverse("assessment:effect_tag_create", kwargs={"pk": self.instance.assessment_id})
-        helper.addBtnLayout(helper.layout[2], 1, url, "Add new effect tag", "col-md-6")
+        helper.add_create_btn("effects", url, "Add new effect tag")
 
         return helper
 
@@ -455,23 +453,14 @@ class IVEndpointFilterForm(forms.Form):
             if field not in ("dose_units", "order_by", "paginate_by"):
                 self.fields[field].widget.update_query_parameters({"related": assessment.id})
 
-        self.helper = self.setHelper()
-
-    def setHelper(self):
-
-        # by default take-up the whole row
-        for fld in list(self.fields.keys()):
-            widget = self.fields[fld].widget
-            if type(widget) not in [forms.CheckboxInput, forms.CheckboxSelectMultiple]:
-                widget.attrs["class"] = "col-md-12"
-
+    @property
+    def helper(self):
         helper = BaseFormHelper(self, form_actions=[cfl.Submit("submit", "Apply filters")])
-
         helper.form_method = "GET"
 
         helper.add_row("studies", 4, "col-md-3")
         helper.add_row("cell_type", 4, "col-md-3")
-        helper.add_row("dose_units", 4, "col-md-3")
+        helper.add_row("dose_units", 3, "col-md-3")
 
         return helper
 

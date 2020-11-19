@@ -71,10 +71,10 @@ class Recommendation extends React.Component {
                 <legend>Select BMD model</legend>
                 <form className="form">
                     <div className="col-md-4">
-                        <label htmlFor="bmr" className="control-label">
+                        <label htmlFor="bmr" className="col-form-label">
                             Selected BMR
                         </label>
-                        <div className="controls">
+                        <div className="form-group">
                             <select
                                 className="col-md-12"
                                 value={this.state.bmr}
@@ -90,11 +90,11 @@ class Recommendation extends React.Component {
                             </select>
                         </div>
 
-                        <label htmlFor="model" className="control-label">
+                        <label htmlFor="model" className="col-form-label">
                             Selected model
                         </label>
 
-                        <div className="controls">
+                        <div className="form-group">
                             <select
                                 className="col-md-12"
                                 value={selectedModel}
@@ -111,10 +111,10 @@ class Recommendation extends React.Component {
                         </div>
                     </div>
                     <div className="col-md-8">
-                        <label htmlFor="notes" className="control-label">
+                        <label htmlFor="notes" className="col-form-label">
                             Notes
                         </label>
-                        <div className="controls">
+                        <div className="form-group">
                             <textarea
                                 className="col-md-12"
                                 value={this.state.notes}
@@ -123,7 +123,7 @@ class Recommendation extends React.Component {
                                 rows="5"
                                 cols="40"
                             />
-                            <p className="help-block">
+                            <p className="form-text text-muted">
                                 Enter notes on why a model was selected as best fitting; if no model
                                 is selected, add notes on why no model was selected.
                             </p>

@@ -30,7 +30,7 @@ class VisualCustomizationPanel extends Component {
         return (
             <div>
                 <legend>Visualization customization</legend>
-                <p className="help-block">
+                <p className="form-text text-muted">
                     Customize the look, feel, and layout of the current visual.
                 </p>
                 {content}

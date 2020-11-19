@@ -34,8 +34,8 @@ class ModelOptionTable extends React.Component {
 
         return (
             <div className="row">
-                <label className="control-label">Add new model</label>
-                <div className="controls">
+                <label className="col-form-label">Add new model</label>
+                <div className="form-group">
                     <select style={{marginBottom: 0, marginRight: "1em"}} ref={this.modelSelector}>
                         {allOptions.map(this.renderOption)}
                     </select>
@@ -48,8 +48,7 @@ class ModelOptionTable extends React.Component {
 
                     <div className="dropdown btn-group float-right">
                         <a className="btn dropdown-toggle" data-toggle="dropdown">
-                            Actions &nbsp;
-                            <span className="caret" />
+                            Actions
                         </a>
                         <div className="dropdown-menu dropdown-menu-right">
                             <a className="dropdown-item" href="#" onClick={this.props.handleAddAll}>

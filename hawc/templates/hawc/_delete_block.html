@@ -10,10 +10,8 @@
   {% endif %}
 
   <form id="deleteConfirmationActionsDiv" action="." method="post" class="{% if confirm %}hidden{% endif %}">
-    <div class="form-actions">
-      <button type="submit" class="btn btn-danger"><i class="fa fa-trash"></i>&nbsp;Delete {{name}}</button>
-      <a href="{{cancel_url}}" class="btn btn-light">Cancel</a>
-    </div>
+    <button type="submit" class="btn btn-danger"><i class="fa fa-trash"></i>&nbsp;Delete {{name}}</button>
+    <a href="{{cancel_url}}" class="btn btn-light ml-2">Cancel</a>
     {% csrf_token %}
     </fieldset>
   </form>

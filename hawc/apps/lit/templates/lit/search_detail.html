@@ -42,32 +42,30 @@
     </tbody>
   </table>
 
-  <div class="row">
-    <h3>Literature Tagging Statistics</h3>
-    <table class="table table-sm table-hover">
-      <tbody>
-          <tr>
-              <th>Total References</th>
-              <td>{{object.references_count}}</td>
-          </tr>
-          <tr>
-              <th>Total Tagged</th>
-              <td>{{object.references_tagged_count}}</td>
-          </tr>
-          <tr>
-              <th>Total Untagged</th>
-              <td>{{object.references_untagged.count}}</td>
-          </tr>
-          <tr>
-              <th>Reference details</th>
-              <td>
-                <a class="btn btn-primary" href="{% url 'lit:search_tags' assessment.pk object.slug %}">View by tag</a>
-                <a class="btn btn-primary" href="{% url 'lit:search_tags_visual' assessment.pk object.slug %}">Visualization</a>
-              </td>
-          </tr>
-      </tbody>
-    </table>
-  </div>
+  <h3>Literature Tagging Statistics</h3>
+  <table class="table table-sm table-hover">
+    <tbody>
+      <tr>
+        <th>Total References</th>
+        <td>{{object.references_count}}</td>
+      </tr>
+      <tr>
+        <th>Total Tagged</th>
+        <td>{{object.references_tagged_count}}</td>
+      </tr>
+      <tr>
+        <th>Total Untagged</th>
+        <td>{{object.references_untagged.count}}</td>
+      </tr>
+      <tr>
+        <th>Reference details</th>
+        <td>
+          <a class="btn btn-primary" href="{% url 'lit:search_tags' assessment.pk object.slug %}">View by tag</a>
+          <a class="btn btn-primary" href="{% url 'lit:search_tags_visual' assessment.pk object.slug %}">Visualization</a>
+        </td>
+      </tr>
+    </tbody>
+  </table>
 
   {% if crud == "Read" %}
     {% if object.get_source_display == "Manually imported" %}

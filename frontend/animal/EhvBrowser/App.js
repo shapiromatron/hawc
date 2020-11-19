@@ -23,7 +23,7 @@ class App extends Component {
                 <div className="input-group">
                     <input
                         id="searchQuery"
-                        className="col-md-6"
+                        className="form-control"
                         type="text"
                         value={this.state.query}
                         onChange={e => {

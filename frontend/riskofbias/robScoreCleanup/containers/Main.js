@@ -58,7 +58,7 @@ class Root extends Component {
                         <div className="col-md-6">
                             <StudyTypeSelect />
                         </div>
-                        <p className="help-block">
+                        <p className="form-text text-muted">
                             To de-select a filter, click on the filter while holding Control on
                             Windows or ⌘ on Mac
                         </p>

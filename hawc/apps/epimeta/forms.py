@@ -89,8 +89,8 @@ class MetaProtocolForm(forms.ModelForm):
         helper.add_row("inclusion_criteria", 2, "col-md-6")
 
         url = reverse("epi:studycriteria_create", kwargs={"pk": self.instance.study.assessment.pk})
-        helper.addBtnLayout(helper.layout[5], 0, url, "Create criteria", "col-md-6")
-        helper.addBtnLayout(helper.layout[5], 1, url, "Create criteria", "col-md-6")
+        helper.add_create_btn("inclusion_criteria", url, "Create criteria")
+        helper.add_create_btn("exclusion_criteria", url, "Create criteria")
 
         return helper
 
@@ -176,7 +176,7 @@ class MetaResultForm(forms.ModelForm):
             "epi:adjustmentfactor_create",
             kwargs={"pk": self.instance.protocol.study.assessment.pk},
         )
-        helper.addBtnLayout(helper.layout[8], 0, url, "Create criteria", "col-md-6")
+        helper.add_create_btn("adjustment_factors", url, "Create criteria")
 
         return helper
 
@@ -239,21 +239,13 @@ class MetaResultFilterForm(forms.Form):
             if field not in ("order_by", "paginate_by"):
                 self.fields[field].widget.update_query_parameters({"related": assessment.id})
 
-        self.helper = self.setHelper()
-
-    def setHelper(self):
-
-        # by default take-up the whole row
-        for fld in list(self.fields.keys()):
-            widget = self.fields[fld].widget
-            if type(widget) not in [forms.CheckboxInput, forms.CheckboxSelectMultiple]:
-                widget.attrs["class"] = "col-md-12"
-
+    @property
+    def helper(self):
         helper = BaseFormHelper(self, form_actions=[cfl.Submit("submit", "Apply filters")])
-
         helper.form_method = "GET"
 
         helper.add_row("studies", 4, "col-md-3")
+        helper.add_row("exposure_name", 3, "col-md-3")
 
         return helper
 

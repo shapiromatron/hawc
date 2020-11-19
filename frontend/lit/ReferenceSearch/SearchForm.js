@@ -12,12 +12,12 @@ class SearchForm extends Component {
             <form>
                 <div className="row">
                     <div className="form-group col-md-4">
-                        <label htmlFor="id_hawc_id" className="control-label">
+                        <label htmlFor="id_hawc_id" className="col-form-label">
                             HAWC ID
                         </label>
-                        <div className="controls">
+                        <div className="form-group">
                             <input
-                                className="col-md-12"
+                                className="form-control"
                                 type="number"
                                 id="id_hawc_id"
                                 onChange={e => changeSearchTerm("id", parseInt(e.target.value))}
@@ -25,28 +25,28 @@ class SearchForm extends Component {
                         </div>
                     </div>
                     <div className="form-group col-md-4">
-                        <label htmlFor="id_db_id" className="control-label">
+                        <label htmlFor="id_db_id" className="col-form-label">
                             Database unique identifier
                         </label>
-                        <div className="controls">
+                        <div className="form-group">
                             <input
-                                className="col-md-12"
+                                className="form-control"
                                 type="number"
                                 id="id_db_id"
                                 onChange={e => changeSearchTerm("db_id", parseInt(e.target.value))}
                             />
-                            <p className="help-block">
+                            <p className="form-text text-muted">
                                 Identifiers may include Pubmed ID, DOI, etc.
                             </p>
                         </div>
                     </div>
                     <div className="form-group col-md-4">
-                        <label htmlFor="id_year_id" className="control-label">
+                        <label htmlFor="id_year_id" className="col-form-label">
                             Year
                         </label>
-                        <div className="controls">
+                        <div className="form-group">
                             <input
-                                className="col-md-12"
+                                className="form-control"
                                 type="number"
                                 id="id_year_id"
                                 onChange={e => changeSearchTerm("year", parseInt(e.target.value))}
@@ -56,12 +56,12 @@ class SearchForm extends Component {
                 </div>
                 <div className="row">
                     <div className="form-group col-md-6">
-                        <label htmlFor="id_title" className="control-label">
+                        <label htmlFor="id_title" className="col-form-label">
                             Title
                         </label>
-                        <div className="controls">
+                        <div className="form-group">
                             <input
-                                className="col-md-12"
+                                className="form-control"
                                 type="text"
                                 id="id_title"
                                 onChange={e => changeSearchTerm("title", e.target.value)}
@@ -69,12 +69,12 @@ class SearchForm extends Component {
                         </div>
                     </div>
                     <div className="form-group col-md-6">
-                        <label htmlFor="id_authors" className="control-label">
+                        <label htmlFor="id_authors" className="col-form-label">
                             Authors
                         </label>
-                        <div className="controls">
+                        <div className="form-group">
                             <input
-                                className="col-md-12"
+                                className="form-control"
                                 type="text"
                                 id="id_authors"
                                 onChange={e => changeSearchTerm("authors", e.target.value)}
@@ -84,12 +84,12 @@ class SearchForm extends Component {
                 </div>
                 <div className="row">
                     <div className="form-group col-md-6">
-                        <label htmlFor="id_journal" className="control-label">
+                        <label htmlFor="id_journal" className="col-form-label">
                             Journal
                         </label>
-                        <div className="controls">
+                        <div className="form-group">
                             <input
-                                className="col-md-12"
+                                className="form-control"
                                 type="text"
                                 id="id_journal"
                                 onChange={e => changeSearchTerm("journal", e.target.value)}
@@ -97,12 +97,12 @@ class SearchForm extends Component {
                         </div>
                     </div>
                     <div className="form-group col-md-6">
-                        <label htmlFor="id_abstract" className="control-label">
+                        <label htmlFor="id_abstract" className="col-form-label">
                             Abstract
                         </label>
-                        <div className="controls">
+                        <div className="form-group">
                             <input
-                                className="col-md-12"
+                                className="form-control"
                                 type="text"
                                 id="id_abstract"
                                 onChange={e => changeSearchTerm("abstract", e.target.value)}

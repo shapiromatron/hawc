@@ -1,53 +1,45 @@
 {% extends 'assessment-rooted.html' %}
 
 {% load add_class %}
+{% load crispy_forms_tags %}
 
 {% block content %}
-  <div class="row">
-    <form class="col-md-8 col-md-offset-2 form-horizontal" action="." method="post">
+  <form class="container-fluid" action="." method="post">
+    {% csrf_token %}
+    <fieldset>
 
-      {% csrf_token %}
+      <legend>Copy tags from existing assessments</legend>
+      <p class="form-text text-muted">Copy literature reference tags from an existing HAWC assessment which you have access to.</p>
+      {{ form.non_field_errors|add_class:"alert alert-danger" }}
+      {% for field in form %}
+        {{ field|as_crispy_field }}
+      {% endfor %}
+    </fieldset>
 
-      <fieldset>
-        <legend>Copy tags from existing assessments</legend>
-        <p class="help-block">Copy literature reference tags from an existing HAWC assessment which you have access to.</p><br>
+    <div class="alert alert-warning">
+      <a class="close" href="#" data-dismiss="alert">×</a>
+      <h4>Warning!</h4>
+      <p>Copying tags from another assessment will remove ALL existing tags, and will
+      also remove any tags from existing literature for this assessment, even if the tag-names
+      are identical between an existing tag and a new tag copied from another assessment.<br><br>
+      It is therefore recommended to only complete this procedure if literature have not yet been
+      tagged for the current assessment.</p>
+    </div>
 
-        {{ form.non_field_errors|add_class:"alert alert-danger" }}
+    <b>Tags for selected assessment:</b>
+    <div id="tags">
+      <p>
+        Loading, please wait...&nbsp;
+        <span className="fa fa-spin fa-spinner" />
+      </p>
+    </div>
 
-        {% for field in form %}
-          <div class="form-group form-row">
-            {{field.label_tag|add_class:"control-label"}}
-              <div class="controls">
-                {{field}}
-                <span class='help-inline'>{{field.help_text}}</span>
-            </div>
-            {{field.errors|add_class:"alert alert-danger"}}
-          </div>
-        {% endfor %}
-      </fieldset>
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">Copy tags from existing assessment</button>
+      <a class="btn btn-light" href="{% url 'lit:tags_update' assessment.pk %}">Cancel</a>
+    </div>
 
-      <div class="alert alert-warning">
-        <a class="close" href="#" data-dismiss="alert">×</a>
-        <h4>Warning!</h4>
-        <p>Copying tags from another assessment will remove ALL existing tags, and will
-        also remove any tags from existing literature for this assessment, even if the tag-names
-        are identical between an existing tag and a new tag copied from another assessment.<br><br>
-        It is therefore recommended to only complete this procedure if literature have not yet been
-        tagged for the current assessment.</p>
-      </div>
-
-      <b>Tags for selected assessment:</b>
-      <div id="tags"></div>
-
-      <div class="row">
-        <div class="form-actions">
-          <button type="submit" class="btn btn-primary">Copy tags from existing assessment</button>
-          <a class="btn btn-light" href="{% url 'lit:tags_update' assessment.pk %}">Cancel</a>
-        </div>
-      </div>
-
-    </form>
-  </div>
+  </form>
 {% endblock %}
 
 {% block extrajs %}

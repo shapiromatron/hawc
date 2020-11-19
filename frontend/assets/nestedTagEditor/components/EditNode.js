@@ -17,10 +17,10 @@ class EditNodeForm extends React.Component {
             <div className="editNodeForm container-fluid">
                 <div className="row">
                     <div className="form-group col-md-6">
-                        <label htmlFor="tag_name" className="control-label">
+                        <label htmlFor="tag_name" className="col-form-label">
                             Name
                         </label>
-                        <div className="controls controls-row">
+                        <div className="form-group form-row">
                             <input
                                 name="name"
                                 type="text"
@@ -32,10 +32,10 @@ class EditNodeForm extends React.Component {
                         </div>
                     </div>
                     <div className="form-group col-md-6">
-                        <label htmlFor="parent" className="control-label">
+                        <label htmlFor="parent" className="col-form-label">
                             Parent
                         </label>
-                        <div className="controls controls-row">
+                        <div className="form-group form-row">
                             <select
                                 name="parent"
                                 className="col-md-12"

@@ -48,11 +48,13 @@ class Outcome {
 
     build_results_tabs() {
         var container = $("<div>").append("<h2>Results</h2>"),
-            tabs = $('<ul class="nav nav-tabs">'),
+            tabs = $('<nav class="nav nav-tabs">'),
             content = $('<div class="tab-content">');
 
         if (this.results.length === 0) {
-            return container.append('<p class="help-block">No results are available.</p>');
+            return container.append(
+                '<p class="form-text text-muted">No results are available.</p>'
+            );
         }
 
         _.each(this.results, function(d, i) {
@@ -61,7 +63,7 @@ class Outcome {
             content.append(d.build_content_tab(isActive));
         });
 
-        container.on("shown", 'a[data-toggle="tab"]', function(e) {
+        container.on("shown.bs.tab", 'a[data-toggle="tab"]', function(e) {
             e.stopPropagation();
             $(this.getAttribute("href")).trigger("plotDivShown");
         });
@@ -89,7 +91,7 @@ class Outcome {
             if (groups.length > 0) {
                 $el.append(HAWCUtils.buildUL(groups, d => `<li>${d.build_link()}</li>`));
             } else {
-                $el.append('<p class="help-block">No comparison sets are available.</p>');
+                $el.append('<p class="form-text text-muted">No comparison sets are available.</p>');
             }
         }
         return $el;
@@ -159,7 +161,7 @@ class Outcome {
     }
 
     triggerFirstTabShown($el) {
-        $el.find(".nav-tabs .active a").trigger("shown");
+        $el.find(".nav-tabs .active").trigger("shown.bs.tab");
     }
 }
 

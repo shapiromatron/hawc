@@ -5,11 +5,11 @@ from typing import List
 import numpy as np
 from django import forms
 from django.db import transaction
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 
 from ...services.utils import ris
 from ..assessment.models import Assessment
-from ..common.forms import BaseFormHelper, addPopupLink
+from ..common.forms import BaseFormHelper, addPopupLink, build_form_actions
 from ..common.helper import read_excel
 from . import constants, models
 
@@ -310,15 +310,14 @@ class SearchSelectorForm(forms.Form):
     searches = SearchModelChoiceField(queryset=models.Search.objects.all(), empty_label=None)
 
     def __init__(self, *args, **kwargs):
-        user = kwargs.pop("user", None)
-        kwargs.pop("assessment", None)
-
+        self.user = kwargs.pop("user")
+        self.assessment = kwargs.pop("assessment")
         super().__init__(*args, **kwargs)
 
         for fld in list(self.fields.keys()):
             self.fields[fld].widget.attrs["class"] = "col-md-11"
 
-        assessment_pks = Assessment.objects.get_viewable_assessments(user).values_list(
+        assessment_pks = Assessment.objects.get_viewable_assessments(self.user).values_list(
             "pk", flat=True
         )
 
@@ -327,6 +326,21 @@ class SearchSelectorForm(forms.Form):
             .queryset.filter(assessment__in=assessment_pks)
             .exclude(title="Manual import")
             .order_by("assessment_id")
+        )
+
+    @property
+    def helper(self):
+        return BaseFormHelper(
+            self,
+            legend_text="Copy search or import",
+            help_text="""Select an existing search or import from this
+        assessment or another assessment and copy it as a template for use in
+        this assessment. You will be taken to a new view to create a new
+        search, but the form will be pre-populated using values from the
+        selected search or import.""",
+            form_actions=build_form_actions(
+                reverse("lit:overview", args=(self.assessment.id,)), "Copy selected as new"
+            ),
         )
 
 
@@ -394,6 +408,10 @@ class TagsCopyForm(forms.Form):
         self.fields["assessment"].queryset = Assessment.objects.get_viewable_assessments(
             user, exclusion_id=self.assessment.id
         )
+
+    @property
+    def helper(self):
+        return BaseFormHelper(self)
 
     def copy_tags(self):
         models.ReferenceFilterTag.copy_tags(self.assessment, self.cleaned_data["assessment"])

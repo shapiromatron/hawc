@@ -10,14 +10,14 @@
 {% block content %}
 <div class="tabbable" style="display:none;">
   <ul class="nav nav-tabs">
-    <li class="active">
-      <a href="#data" data-toggle="tab">Visualization settings</a>
+    <li class="nav-item">
+      <a class="nav-link active" href="#data" data-toggle="tab">Visualization settings</a>
     </li>
-    <li>
-      <a href="#settings" data-toggle="tab">Figure customization</a>
+    <li class="nav-item">
+      <a class="nav-link" href="#settings" data-toggle="tab">Figure customization</a>
     </li>
-    <li>
-      <a href="#preview" data-toggle="tab">Preview</a>
+    <li class="nav-item">
+      <a class="nav-link" href="#preview" data-toggle="tab">Preview</a>
     </li>
   </ul>
 
@@ -25,7 +25,7 @@
     <div id="data"     class="tab-pane active">
       {% crispy form %}
     </div>
-    <div id="settings" class="tab-pane form-horizontal"></div>
+    <div id="settings" class="tab-pane"></div>
     <div id="preview"  class="tab-pane"></div>
   </div>
 </div>

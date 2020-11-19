@@ -61,7 +61,7 @@ class TermSelector extends Component {
                         </div>
                     </div>
                 ) : null}
-                <label className="control-label" htmlFor={this.randomId}>
+                <label className="col-form-label" htmlFor={this.randomId}>
                     {label}
                 </label>
                 {useControlledVocabulary ? (
@@ -92,7 +92,7 @@ class TermSelector extends Component {
                 {object[termIdField] ? (
                     <p>
                         <b>Selected term:</b>&nbsp;
-                        <span className="label">
+                        <span className="badge badge-secondary">
                             {currentId}&nbsp;|&nbsp;{currentText}&nbsp;
                             <button
                                 type="button"
@@ -105,7 +105,7 @@ class TermSelector extends Component {
                     </p>
                 ) : null}
                 {store.canUseControlledVocabulary ? (
-                    <label className="checkbox">
+                    <label className="form-check">
                         <input
                             type="checkbox"
                             checked={useControlledVocabulary}
@@ -122,7 +122,7 @@ class TermSelector extends Component {
                 ) : null}
                 <input type="hidden" name={name + "_term"} value={currentId || ""} />
                 <input type="hidden" name={name} value={currentText || ""} />
-                <p className="help-block">{helpText}</p>
+                <p className="form-text text-muted">{helpText}</p>
                 {debug ? (
                     <ul>
                         <li>termId: {currentId}</li>

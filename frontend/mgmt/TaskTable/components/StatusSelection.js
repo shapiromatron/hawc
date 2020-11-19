@@ -22,7 +22,7 @@ class StatusSelection extends Component {
 
         return (
             <div>
-                <label className="control-label" htmlFor={id}>
+                <label className="col-form-label" htmlFor={id}>
                     Status
                 </label>
                 <select

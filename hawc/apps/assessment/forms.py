@@ -1,6 +1,7 @@
 from pathlib import Path
 from textwrap import dedent
 
+from crispy_forms import layout as cfl
 from django import forms
 from django.contrib.contenttypes.models import ContentType
 from django.core.mail import mail_admins
@@ -43,24 +44,21 @@ class AssessmentForm(forms.ModelForm):
             lookup_class=HAWCUserLookup
         )
 
-        self.helper = self.setHelper()
-
-    def setHelper(self):
+    @property
+    def helper(self):
         # by default take-up the whole row
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
-            if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "col-md-12"
             if fld == "dtxsids":
                 widget.attrs["class"] = "col-md-10"
             if type(widget) == forms.Textarea:
                 widget.attrs["rows"] = 3
-                widget.attrs["class"] += " html5text"
+                widget.attrs["class"] = widget.attrs.get("class", "") + " html5text"
 
         if self.instance.id:
             inputs = {
                 "legend_text": f"Update {self.instance}",
-                "help_text": "Update an existing HAWC assessment.<br><br>* required fields",
+                "help_text": "Update an existing HAWC assessment. Fields with * are required.",
                 "cancel_url": self.instance.get_absolute_url(),
             }
         else:
@@ -71,7 +69,7 @@ class AssessmentForm(forms.ModelForm):
                     tool will be related to an assessment. The settings below are used to
                     describe the basic characteristics of the assessment, along with setting
                     up permissions for role-based authorization and access for viewing and
-                    editing content associated with an assessment.<br><br>* required fields""",
+                    editing content associated with an assessment. Fields with * are required.""",
                 "cancel_url": reverse_lazy("portal"),
             }
 
@@ -84,9 +82,7 @@ class AssessmentForm(forms.ModelForm):
         helper.add_row("conflicts_of_interest", 2, "col-md-6")
         helper.add_row("noel_name", 2, "col-md-6")
         helper.add_row("vocabulary", 2, "col-md-6")
-        helper.addBtnLayout(
-            helper.layout[3], 1, reverse("assessment:dtxsid_create"), "Add new DTXSID", "col-md-6"
-        )
+        helper.add_create_btn("dtxsids", reverse("assessment:dtxsid_create"), "Add new DTXSID")
         helper.attrs["novalidate"] = ""
         return helper
 
@@ -108,12 +104,13 @@ class AssessmentModulesForm(forms.ModelForm):
         self.fields[
             "enable_risk_of_bias"
         ].label = f"Enable {self.instance.get_rob_name_display().lower()}"
-        self.helper = self.setHelper()
 
-    def setHelper(self):
-        inputs = {
-            "legend_text": "Update enabled modules",
-            "help_text": """
+    @property
+    def helper(self):
+        helper = BaseFormHelper(
+            self,
+            legend_text="Update enabled modules",
+            help_text="""
                 HAWC is composed of multiple modules, each designed
                 to capture data and decisions related to specific components of a
                 health assessment. This screen allows a project-manager to change
@@ -121,10 +118,8 @@ class AssessmentModulesForm(forms.ModelForm):
                 enabled or disabled at any time; content already entered into a particular
                 module will not be changed when enabling or disabling modules.
                 """,
-            "cancel_url": self.instance.get_absolute_url(),
-        }
-        helper = BaseFormHelper(self, **inputs)
-
+            cancel_url=self.instance.get_absolute_url(),
+        )
         return helper
 
 
@@ -140,17 +135,15 @@ class AttachmentForm(forms.ModelForm):
             self.instance.content_type = ContentType.objects.get_for_model(obj)
             self.instance.object_id = obj.id
             self.instance.content_object = obj
-        self.helper = self.setHelper()
 
-    def setHelper(self):
+    @property
+    def helper(self):
         # by default take-up the whole row
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
-            if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "col-md-12"
             if type(widget) == forms.Textarea:
                 widget.attrs["rows"] = 3
-                widget.attrs["class"] += " html5text"
+                widget.attrs["class"] = widget.attrs.get("class", "") + " html5text"
 
         if self.instance.id:
             inputs = {"legend_text": f"Update {self.instance}"}
@@ -172,6 +165,17 @@ class SpeciesForm(forms.ModelForm):
         kwargs.pop("parent", None)
         super().__init__(*args, **kwargs)
 
+    @property
+    def helper(self):
+        helper = BaseFormHelper(
+            self,
+            legend_text="Create new species",
+            help_text="""Create a new species. Note that the creation of a new species is applied as an option for all assessments in HAWC, not just the assessment you're currently working on. Therefore, our staff may periodically review to ensure that the species is indeed new and not pre-existing.""",
+            form_actions=[cfl.Submit("save", "Create")],
+        )
+        helper.add_refresh_page_note()
+        return helper
+
     def clean_name(self):
         return self.cleaned_data["name"].title()
 
@@ -184,6 +188,17 @@ class StrainForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         kwargs.pop("parent", None)
         super().__init__(*args, **kwargs)
+
+    @property
+    def helper(self):
+        helper = BaseFormHelper(
+            self,
+            legend_text="Create a new strain",
+            help_text="""Create a new strain. Note that the creation of a new strain is applied as an option for all assessments in HAWC, not just the assessment you're currently working on. Therefore, our staff may periodically review to ensure that the strain is indeed new and not pre-existing.""",
+            form_actions=[cfl.Submit("save", "Create")],
+        )
+        helper.add_refresh_page_note()
+        return helper
 
     def clean_name(self):
         return self.cleaned_data["name"].title()
@@ -200,8 +215,17 @@ class DoseUnitsForm(forms.ModelForm):
         self.fields["name"].widget = AutoCompleteWidget(
             lookup_class=lookups.DoseUnitsLookup, allow_new=True
         )
-        for fld in list(self.fields.keys()):
-            self.fields[fld].widget.attrs["class"] = "col-md-12"
+
+    @property
+    def helper(self):
+        helper = BaseFormHelper(
+            self,
+            legend_text="Create new dose/exposure units",
+            help_text="""Create a new set of dose/exposure units (for example μg/g). Note that the creation of new dose/exposure-units are all assessments in HAWC, not just the assessment you're currently working on. Therefore, our staff may periodically review to ensure that the dose-units are indeed new and not pre-existing.""",
+            form_actions=[cfl.Submit("save", "Create")],
+        )
+        helper.add_refresh_page_note()
+        return helper
 
 
 class DSSToxForm(forms.ModelForm):
@@ -216,8 +240,18 @@ class DSSToxForm(forms.ModelForm):
             self.substance = DssSubstance.create_from_dtxsid(data.get("dtxsid", ""))
         except ValueError as err:
             self.add_error("dtxsid", str(err))
-
         return data
+
+    @property
+    def helper(self):
+        helper = BaseFormHelper(
+            self,
+            legend_text="Import new DSSTox substance",
+            help_text="""Import a new DSSTox substance by providing the DSSTox substance identifier (DTXSID). You can only import a new substance if it doesn't already exist in HAWC and it returns a valid object from the <a href="https://comptox.epa.gov/dashboard">Chemistry dashboard</a>.""",
+            form_actions=[cfl.Submit("save", "Create")],
+        )
+        helper.add_refresh_page_note()
+        return helper
 
     def save(self, commit=True):
         self.instance.content = self.substance.content
@@ -235,8 +269,17 @@ class EffectTagForm(forms.ModelForm):
         self.fields["name"].widget = AutoCompleteWidget(
             lookup_class=lookups.EffectTagLookup, allow_new=True
         )
-        for fld in list(self.fields.keys()):
-            self.fields[fld].widget.attrs["class"] = "col-md-12"
+
+    @property
+    def helper(self):
+        helper = BaseFormHelper(
+            self,
+            legend_text="Create new effect tag",
+            help_text="""Create a new effect tag. Effect tags are used for describing animal bioassay, epidemiological, or in vitro endpoints. Please take care not to duplicate existing effect tags.""",
+            form_actions=[cfl.Submit("save", "Create")],
+        )
+        helper.add_refresh_page_note()
+        return helper
 
 
 class ContactForm(forms.Form):
@@ -253,7 +296,6 @@ class ContactForm(forms.Form):
         self.fields["name"].initial = self.user.get_full_name()
         self.fields["email"].initial = self.user.email
         self.fields["previous_page"].initial = self.back_href
-        self.helper = self.setHelper()
 
     def send_email(self):
         subject = f"[HAWC contact us]: {self.cleaned_data['subject']}"
@@ -268,22 +310,14 @@ class ContactForm(forms.Form):
         )
         mail_admins(subject, body, fail_silently=False)
 
-    def setHelper(self):
-        # by default take-up the whole row
-        for fld in list(self.fields.keys()):
-            widget = self.fields[fld].widget
-            if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "col-md-12"
-
-        inputs = {
-            "legend_text": "Contact HAWC developers",
-            "help_text": """
-                Have a question, comment, or need some help?
-                Use this form to to let us know what's going on.
-            """,
-            "cancel_url": self.back_href,
-        }
-        helper = BaseFormHelper(self, **inputs)
+    @property
+    def helper(self):
+        helper = BaseFormHelper(
+            self,
+            legend_text="Contact HAWC developers",
+            help_text="Have a question, comment, or need some help? Use this form to to let us know what's going on.",
+            cancel_url=self.back_href,
+        )
         helper.form_class = "loginForm"
         return helper
 
@@ -318,17 +352,15 @@ class DatasetForm(forms.ModelForm):
         if self.instance.id is None:
             self.fields["revision_data"].required = True
         self.fields["revision_version"].initial = self.instance.get_new_version_value()
-        self.helper = self.setHelper()
 
-    def setHelper(self):
+    @property
+    def helper(self):
         # by default take-up the whole row
         for fld in self.fields.keys():
             widget = self.fields[fld].widget
-            if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "col-md-12"
             if type(widget) == forms.Textarea:
                 widget.attrs["rows"] = 3
-                widget.attrs["class"] += " html5text"
+                widget.attrs["class"] = widget.attrs.get("class", "") + " html5text"
 
         if self.instance.id:
             inputs = {

@@ -66,7 +66,7 @@ class ExternalWebsite extends BaseVisual {
             caption = new SmartTagContainer(captionDiv),
             $plotDiv = $("<div>"),
             modal = new HAWCModal();
-        modal.getModal().on("shown", () => {
+        modal.getModal().on("shown.bs.modal", () => {
             caption.renderAndEnable();
             this.embedPage($plotDiv[0]);
         });
