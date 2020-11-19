@@ -1,6 +1,9 @@
 import React, {Component} from "react";
 import PropTypes from "prop-types";
 
+import LabelInput from "./LabelInput";
+import HelpText from "./HelpText";
+
 class IntegerInput extends Component {
     constructor(props) {
         super(props);
@@ -9,49 +12,42 @@ class IntegerInput extends Component {
         };
     }
 
-    renderLabel() {
-        if (!this.props.label) {
-            return null;
-        }
+    renderField(fieldClass, fieldId) {
         return (
-            <label htmlFor={`id_${this.props.name}`} className="col-form-label">
-                {this.props.label}
-                {this.props.required ? <span className="asteriskField">*</span> : null}
-            </label>
+            <input
+                className={fieldClass}
+                id={fieldId}
+                name={this.props.name}
+                type="number"
+                required={this.props.required}
+                value={this.state.value}
+                onBlur={e => {
+                    let valueString = e.target.value,
+                        valueInt = parseInt(valueString);
+                    if (
+                        isNaN(valueInt) ||
+                        (this.props.minimum && valueInt < this.props.minimum) ||
+                        (this.props.maximum && valueInt > this.props.maximum)
+                    ) {
+                        this.setState({value: this.props.value.toString()});
+                    } else {
+                        this.props.onChange(e);
+                        this.setState({value: valueInt.toString()});
+                    }
+                }}
+                onChange={e => this.setState({value: e.target.value})}
+            />
         );
     }
 
     render() {
+        let fieldId = this.props.id || this.props.name ? `id_${this.props.name}` : null,
+            fieldClass = "form-check-input";
         return (
             <div className="form-group">
-                {this.renderLabel()}
-
-                <input
-                    className="col-md-12"
-                    id={`id_${this.props.name}`}
-                    name={this.props.name}
-                    type="number"
-                    required={this.props.required}
-                    value={this.state.value}
-                    onBlur={e => {
-                        let valueString = e.target.value,
-                            valueInt = parseInt(valueString);
-                        if (
-                            isNaN(valueInt) ||
-                            (this.props.minimum && valueInt < this.props.minimum) ||
-                            (this.props.maximum && valueInt > this.props.maximum)
-                        ) {
-                            this.setState({value: this.props.value.toString()});
-                        } else {
-                            this.props.onChange(e);
-                            this.setState({value: valueInt.toString()});
-                        }
-                    }}
-                    onChange={e => this.setState({value: e.target.value})}
-                />
-                {this.props.helpText ? (
-                    <p className="form-text text-muted">{this.props.helpText}</p>
-                ) : null}
+                {this.props.label ? <LabelInput for={fieldId} label={this.props.label} /> : null}
+                {this.renderField(fieldClass, fieldId)}
+                {this.props.helpText ? <HelpText text={this.props.helpText} /> : null}
             </div>
         );
     }
@@ -59,13 +55,14 @@ class IntegerInput extends Component {
 
 IntegerInput.propTypes = {
     helpText: PropTypes.string,
+    id: PropTypes.string,
     label: PropTypes.string,
+    maximum: PropTypes.number,
+    minimum: PropTypes.number,
     name: PropTypes.string.isRequired,
     onChange: PropTypes.func.isRequired,
     required: PropTypes.bool,
     value: PropTypes.number.isRequired,
-    minimum: PropTypes.number,
-    maximum: PropTypes.number,
 };
 
 export default IntegerInput;

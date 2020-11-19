@@ -2,25 +2,31 @@ import React, {Component} from "react";
 import PropTypes from "prop-types";
 import ReactQuill from "react-quill";
 
+import LabelInput from "./LabelInput";
+import HelpText from "./HelpText";
+
 class QuillTextInput extends Component {
+    renderField(fieldClass) {
+        return (
+            <ReactQuill
+                className={fieldClass}
+                id={this.props.id}
+                type="text"
+                required={this.props.required}
+                value={this.props.value}
+                onChange={value => this.props.onChange(value)}
+            />
+        );
+    }
+
     render() {
+        let fieldId = this.props.id || this.props.name ? `id_${this.props.name}` : null,
+            fieldClass = "form-check-input";
         return (
             <div className="form-group">
-                <label htmlFor={`id_${this.props.name}`} className="col-form-label">
-                    {this.props.label}
-                    {this.props.required ? <span className="asteriskField">*</span> : null}
-                </label>
-                <ReactQuill
-                    className="col-md-12 textarea"
-                    id={`id_${this.props.name}`}
-                    type="text"
-                    required={this.props.required}
-                    value={this.props.value}
-                    onChange={value => this.props.onChange(value)}
-                />
-                {this.props.helpText ? (
-                    <p className="form-text text-muted">{this.props.helpText}</p>
-                ) : null}
+                {this.props.label ? <LabelInput for={fieldId} label={this.props.label} /> : null}
+                {this.renderField(fieldClass, fieldId)}
+                {this.props.helpText ? <HelpText text={this.props.helpText} /> : null}
             </div>
         );
     }
@@ -29,9 +35,9 @@ class QuillTextInput extends Component {
 QuillTextInput.propTypes = {
     helpText: PropTypes.string,
     label: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired,
     onChange: PropTypes.func.isRequired,
     required: PropTypes.bool,
-    name: PropTypes.string.isRequired,
     value: PropTypes.string.isRequired,
 };
 
