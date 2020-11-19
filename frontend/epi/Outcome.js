@@ -52,7 +52,9 @@ class Outcome {
             content = $('<div class="tab-content">');
 
         if (this.results.length === 0) {
-            return container.append('<p class="form-text text-muted">No results are available.</p>');
+            return container.append(
+                '<p class="form-text text-muted">No results are available.</p>'
+            );
         }
 
         _.each(this.results, function(d, i) {

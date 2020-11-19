@@ -18,7 +18,9 @@ class QuillTextInput extends Component {
                     value={this.props.value}
                     onChange={value => this.props.onChange(value)}
                 />
-                {this.props.helpText ? <p className="form-text text-muted">{this.props.helpText}</p> : null}
+                {this.props.helpText ? (
+                    <p className="form-text text-muted">{this.props.helpText}</p>
+                ) : null}
             </div>
         );
     }

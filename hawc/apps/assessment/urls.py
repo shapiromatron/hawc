@@ -72,8 +72,6 @@ urlpatterns = [
         views.EffectTagCreate.as_view(),
         name="effect_tag_create",
     ),
-    # vocab
-    path("<int:pk>/vocab/", views.VocabList.as_view(), name="vocab"),
     # helper functions
     path("download-plot/", views.DownloadPlot.as_view(), name="download_plot"),
     path("close-window/", views.CloseWindow.as_view(), name="close_window"),

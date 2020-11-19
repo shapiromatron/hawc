@@ -98,7 +98,9 @@ class StudyPopulation {
         if (this.data.exposures.length > 0) {
             $el.append(HAWCUtils.buildUL(this.data.exposures, liFunc));
         } else {
-            $el.append('<p class="form-text text-muted">No exposure measurements are available.</p>');
+            $el.append(
+                '<p class="form-text text-muted">No exposure measurements are available.</p>'
+            );
         }
         return $el;
     }
