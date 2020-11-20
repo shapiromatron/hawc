@@ -11,7 +11,7 @@ class TextInput extends Component {
                 className={fieldClass}
                 id={fieldId}
                 name={this.props.name}
-                type="text"
+                type={this.props.type || "text"}
                 required={this.props.required}
                 value={this.props.value}
                 onChange={this.props.onChange}

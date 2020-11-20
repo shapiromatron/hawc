@@ -14,10 +14,8 @@ class UserAutocomplete extends Component {
             submitUrl = `${url}?related=${task.study.assessment.id}`;
 
         return (
-            <div>
-                <label className="col-form-label" htmlFor={idName}>
-                    Owner
-                </label>
+            <div className="form-group">
+                <label htmlFor={idName}>Owner</label>
                 <Autocomplete onChange={onChange} id={idName} url={submitUrl} loaded={loaded} />
             </div>
         );

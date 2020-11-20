@@ -6,10 +6,9 @@ import LabelInput from "./LabelInput";
 import HelpText from "./HelpText";
 
 class QuillTextInput extends Component {
-    renderField(fieldClass, fieldId) {
+    renderField(fieldId) {
         return (
             <ReactQuill
-                className={fieldClass}
                 id={fieldId}
                 type="text"
                 required={this.props.required}
@@ -20,12 +19,11 @@ class QuillTextInput extends Component {
     }
 
     render() {
-        let fieldId = this.props.id || this.props.name ? `id_${this.props.name}` : null,
-            fieldClass = "form-control";
+        let fieldId = this.props.id || this.props.name ? `id_${this.props.name}` : null;
         return (
             <div className="form-group">
                 {this.props.label ? <LabelInput for={fieldId} label={this.props.label} /> : null}
-                {this.renderField(fieldClass, fieldId)}
+                {this.renderField(fieldId)}
                 {this.props.helpText ? <HelpText text={this.props.helpText} /> : null}
             </div>
         );

@@ -14,40 +14,41 @@ class StudyFilter extends Component {
         const {store} = this.props;
         return (
             <div className="container-fluid filterContainer">
-                <div className="col-4">
-                    <SelectInput
-                        className="col-12"
-                        choices={STUDY_TYPE_CHOICES}
-                        value={store.filters.studyTypeFilters}
-                        handleSelect={values => store.updateFilters("studyTypeFilters", values)}
-                        multiple={true}
-                        selectSize={4}
-                        label="Study type filter (optional):"
-                    />
-                </div>
-                <div className="col-4">
-                    <RadioInput
-                        label="Sort studies by:"
-                        name="sortBy"
-                        onChange={store.updateFilters}
-                        value={store.filters.sortBy}
-                        choices={[
-                            {id: "short_citation", label: "Short citation"},
-                            {id: "created", label: "Creation date"},
-                        ]}
-                    />
-                </div>
-                <div className="col-4">
-                    <RadioInput
-                        label="Order studies by:"
-                        name="orderBy"
-                        onChange={store.updateFilters}
-                        value={store.filters.orderBy}
-                        choices={[
-                            {id: "asc", label: "Ascending"},
-                            {id: "desc", label: "Descending"},
-                        ]}
-                    />
+                <div className="row">
+                    <div className="col-4">
+                        <SelectInput
+                            choices={STUDY_TYPE_CHOICES}
+                            value={store.filters.studyTypeFilters}
+                            handleSelect={values => store.updateFilters("studyTypeFilters", values)}
+                            multiple={true}
+                            selectSize={4}
+                            label="Study type filter (optional):"
+                        />
+                    </div>
+                    <div className="col-4">
+                        <RadioInput
+                            label="Sort studies by:"
+                            name="sortBy"
+                            onChange={store.updateFilters}
+                            value={store.filters.sortBy}
+                            choices={[
+                                {id: "short_citation", label: "Short citation"},
+                                {id: "created", label: "Creation date"},
+                            ]}
+                        />
+                    </div>
+                    <div className="col-4">
+                        <RadioInput
+                            label="Order studies by:"
+                            name="orderBy"
+                            onChange={store.updateFilters}
+                            value={store.filters.orderBy}
+                            choices={[
+                                {id: "asc", label: "Ascending"},
+                                {id: "desc", label: "Descending"},
+                            ]}
+                        />
+                    </div>
                 </div>
             </div>
         );

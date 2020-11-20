@@ -21,34 +21,38 @@ class StatusSelection extends Component {
             id = h.randomString();
 
         return (
-            <div>
-                <label className="col-form-label" htmlFor={id}>
-                    Status
-                </label>
-                <select
-                    defaultValue={defaultValue}
-                    id={id}
-                    onChange={event => {
-                        let value = parseInt(event.target.value);
-                        this.setState({status: value});
-                        onChange(value);
-                    }}
-                    name="status_selection"
-                    style={{width: "auto"}}>
-                    {choices.map(({value, display}, i) => (
-                        <option key={i} value={value}>
-                            {display}
-                        </option>
-                    ))}
-                </select>
-                <StatusIcon
-                    status={this.state.status}
-                    style={{
-                        height: "25px",
-                        verticalAlign: "middle",
-                        padding: "5px",
-                    }}
-                />
+            <div className="form-group">
+                <label htmlFor={id}>Status</label>
+                <div className="input-group">
+                    <select
+                        className="form-control"
+                        defaultValue={defaultValue}
+                        id={id}
+                        onChange={event => {
+                            let value = parseInt(event.target.value);
+                            this.setState({status: value});
+                            onChange(value);
+                        }}
+                        name="status_selection">
+                        {choices.map(({value, display}, i) => (
+                            <option key={i} value={value}>
+                                {display}
+                            </option>
+                        ))}
+                    </select>
+                    <div className="input-group-append">
+                        <span className="input-group-text">
+                            <StatusIcon
+                                status={this.state.status}
+                                style={{
+                                    height: "20px",
+                                    verticalAlign: "middle",
+                                    padding: "5px",
+                                }}
+                            />
+                        </span>
+                    </div>
+                </div>
             </div>
         );
     }
