@@ -21,6 +21,16 @@ from ..riskofbias.models import RiskOfBiasMetric
 from . import forms, models, serializers
 
 
+def get_visual_list_crumb(assessment) -> Breadcrumb:
+    return Breadcrumb(
+        name="Visualizations", url=reverse("summary:visualization_list", args=(assessment.id,))
+    )
+
+
+def get_summary_list_crumb(assessment) -> Breadcrumb:
+    return Breadcrumb(name="Summary", url=reverse("summary:list", args=(assessment.id,)))
+
+
 # SUMMARY-TEXT
 class SummaryTextJSON(BaseDetail):
     model = models.SummaryText
@@ -139,11 +149,25 @@ class VisualizationList(BaseList):
 class VisualizationDetail(BaseDetail):
     model = models.Visual
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"].insert(
+            len(context["breadcrumbs"]) - 1, get_visual_list_crumb(self.assessment)
+        )
+        return context
+
 
 class VisualizationCreateSelector(BaseDetail):
     model = Assessment
     template_name = "summary/visual_selector.html"
     breadcrumb_active_name = "Visualization selector"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"].insert(
+            len(context["breadcrumbs"]) - 1, get_visual_list_crumb(self.assessment)
+        )
+        return context
 
 
 class VisualizationCreate(BaseCreate):
@@ -184,6 +208,9 @@ class VisualizationCreate(BaseCreate):
             list(RiskOfBiasMetric.objects.get_metrics_for_visuals(self.assessment.id))
         )
         context["initial_data"] = json.dumps(self.get_initial_visual(context))
+        context["breadcrumbs"].insert(
+            len(context["breadcrumbs"]) - 1, get_visual_list_crumb(self.assessment)
+        )
         return context
 
     def get_initial_visual(self, context) -> Dict:
@@ -238,6 +265,9 @@ class VisualizationUpdate(BaseUpdate):
         context["initial_data"] = json.dumps(
             serializers.VisualSerializer().to_representation(self.object)
         )
+        context["breadcrumbs"].insert(
+            len(context["breadcrumbs"]) - 2, get_visual_list_crumb(self.assessment)
+        )
         return context
 
 
@@ -247,6 +277,13 @@ class VisualizationDelete(BaseDelete):
 
     def get_success_url(self):
         return reverse_lazy("summary:visualization_list", kwargs={"pk": self.assessment.pk})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"].insert(
+            len(context["breadcrumbs"]) - 2, get_visual_list_crumb(self.assessment)
+        )
+        return context
 
 
 # DATA-PIVOT
@@ -258,6 +295,13 @@ class DataPivotNewPrompt(BaseDetail):
     model = Assessment
     template_name = "summary/datapivot_type_selector.html"
     breadcrumb_active_name = "Data Pivot selector"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"].insert(
+            len(context["breadcrumbs"]) - 1, get_visual_list_crumb(self.assessment)
+        )
+        return context
 
 
 class DataPivotNew(BaseCreate):
@@ -288,6 +332,9 @@ class DataPivotQueryNew(DataPivotNew):
         context = super().get_context_data(**kwargs)
         context["file_loader"] = False
         context["smart_tag_form"] = forms.SmartTagForm(assessment_id=self.assessment.id)
+        context["breadcrumbs"].insert(
+            len(context["breadcrumbs"]) - 1, get_visual_list_crumb(self.assessment)
+        )
         return context
 
 
@@ -299,6 +346,9 @@ class DataPivotFileNew(DataPivotNew):
         context = super().get_context_data(**kwargs)
         context["file_loader"] = True
         context["smart_tag_form"] = forms.SmartTagForm(assessment_id=self.assessment.id)
+        context["breadcrumbs"].insert(
+            len(context["breadcrumbs"]) - 1, get_visual_list_crumb(self.assessment)
+        )
         return context
 
 
@@ -334,14 +384,11 @@ class DataPivotCopyAsNewSelector(TeamMemberOrHigherMixin, FormView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["breadcrumbs"] = [
-            Breadcrumb.build_root(self.request.user),
-            Breadcrumb(
-                name="Visualizations",
-                url=reverse("summary:visualization_list", args=(self.assessment.id,)),
-            ),
-            Breadcrumb(name="Copy existing"),
-        ]
+        context["breadcrumbs"] = Breadcrumb.build_crumbs(
+            self.request.user,
+            "Copy existing",
+            [Breadcrumb.from_object(self.assessment), get_visual_list_crumb(self.assessment)],
+        )
         return context
 
 
@@ -370,12 +417,26 @@ class DataPivotDetail(GetDataPivotObjectMixin, BaseDetail):
     model = models.DataPivot
     template_name = "summary/datapivot_detail.html"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"].insert(
+            len(context["breadcrumbs"]) - 1, get_visual_list_crumb(self.assessment)
+        )
+        return context
+
 
 class DataPivotUpdateSettings(GetDataPivotObjectMixin, BaseUpdate):
     success_message = "Data Pivot updated."
     model = models.DataPivot
     form_class = forms.DataPivotSettingsForm
     template_name = "summary/datapivot_update_settings.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"].insert(
+            len(context["breadcrumbs"]) - 2, get_visual_list_crumb(self.assessment)
+        )
+        return context
 
 
 class DataPivotUpdateQuery(GetDataPivotObjectMixin, BaseUpdate):
@@ -388,6 +449,9 @@ class DataPivotUpdateQuery(GetDataPivotObjectMixin, BaseUpdate):
         context = super().get_context_data(**kwargs)
         context["file_loader"] = False
         context["smart_tag_form"] = forms.SmartTagForm(assessment_id=self.assessment.id)
+        context["breadcrumbs"].insert(
+            len(context["breadcrumbs"]) - 2, get_visual_list_crumb(self.assessment)
+        )
         return context
 
 
@@ -401,6 +465,9 @@ class DataPivotUpdateFile(GetDataPivotObjectMixin, BaseUpdate):
         context = super().get_context_data(**kwargs)
         context["file_loader"] = True
         context["smart_tag_form"] = forms.SmartTagForm(assessment_id=self.assessment.id)
+        context["breadcrumbs"].insert(
+            len(context["breadcrumbs"]) - 2, get_visual_list_crumb(self.assessment)
+        )
         return context
 
 
@@ -411,3 +478,10 @@ class DataPivotDelete(GetDataPivotObjectMixin, BaseDelete):
 
     def get_success_url(self):
         return reverse_lazy("summary:visualization_list", kwargs={"pk": self.assessment.pk})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"].insert(
+            len(context["breadcrumbs"]) - 2, get_visual_list_crumb(self.assessment)
+        )
+        return context
