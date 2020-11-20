@@ -56,7 +56,6 @@ class FilterWidgetTable extends Component {
                 <td>
                     <SelectInput
                         name={`${key}-column-${index}`}
-                        className="col-md-12"
                         choices={getColumnsOptionsWithNull}
                         multiple={false}
                         handleSelect={value => changeArraySettings(key, index, "column", value)}
@@ -76,7 +75,6 @@ class FilterWidgetTable extends Component {
                 <td>
                     <SelectInput
                         name={`${key}-on_click_event-${index}`}
-                        className="col-md-12"
                         choices={getDpeSettings}
                         multiple={false}
                         handleSelect={value =>
