@@ -5,11 +5,11 @@ import LabelInput from "./LabelInput";
 import HelpText from "./HelpText";
 
 class TextInput extends Component {
-    renderField(fieldClass) {
+    renderField(fieldClass, fieldId) {
         return (
             <input
                 className={fieldClass}
-                id={this.props.id}
+                id={fieldId}
                 name={this.props.name}
                 type="text"
                 required={this.props.required}
@@ -21,7 +21,7 @@ class TextInput extends Component {
 
     render() {
         let fieldId = this.props.id || this.props.name ? `id_${this.props.name}` : null,
-            fieldClass = "form-check-input";
+            fieldClass = "form-control";
         return (
             <div className="form-group">
                 {this.props.label ? <LabelInput for={fieldId} label={this.props.label} /> : null}

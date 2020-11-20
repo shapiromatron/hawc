@@ -42,7 +42,7 @@ class IntegerInput extends Component {
 
     render() {
         let fieldId = this.props.id || this.props.name ? `id_${this.props.name}` : null,
-            fieldClass = "form-check-input";
+            fieldClass = "form-control";
         return (
             <div className="form-group">
                 {this.props.label ? <LabelInput for={fieldId} label={this.props.label} /> : null}

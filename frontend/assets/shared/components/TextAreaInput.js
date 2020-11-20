@@ -5,11 +5,11 @@ import LabelInput from "./LabelInput";
 import HelpText from "./HelpText";
 
 class TextInput extends Component {
-    renderField(fieldClass) {
+    renderField(fieldClass, fieldId) {
         return (
             <textarea
                 className={fieldClass}
-                id={this.props.id}
+                id={fieldId}
                 name={this.props.name}
                 type="text"
                 required={this.props.required}

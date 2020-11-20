@@ -6,11 +6,11 @@ import LabelInput from "./LabelInput";
 import HelpText from "./HelpText";
 
 class QuillTextInput extends Component {
-    renderField(fieldClass) {
+    renderField(fieldClass, fieldId) {
         return (
             <ReactQuill
                 className={fieldClass}
-                id={this.props.id}
+                id={fieldId}
                 type="text"
                 required={this.props.required}
                 value={this.props.value}
@@ -21,7 +21,7 @@ class QuillTextInput extends Component {
 
     render() {
         let fieldId = this.props.id || this.props.name ? `id_${this.props.name}` : null,
-            fieldClass = "form-check-input";
+            fieldClass = "form-control";
         return (
             <div className="form-group">
                 {this.props.label ? <LabelInput for={fieldId} label={this.props.label} /> : null}

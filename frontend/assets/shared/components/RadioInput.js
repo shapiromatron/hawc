@@ -9,15 +9,6 @@ class RadioInput extends Component {
         super(props);
     }
 
-    renderLabel(labelClass) {
-        return (
-            <label htmlFor={this.props.id} className={labelClass}>
-                {this.props.label}
-                {this.props.required ? <span className="asteriskField">*</span> : null}
-            </label>
-        );
-    }
-
     renderField() {
         return this.props.choices.map(choice => {
             const id = `${this.props.name}-${choice.id}`;
