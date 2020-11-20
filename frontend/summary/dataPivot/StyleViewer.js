@@ -289,7 +289,9 @@ class StyleViewer extends D3Plot {
                 this.rectangles
                     .transition()
                     .duration(1000)
-                    .style(style_settings.rect_style.settings);
+                    .call(selection =>
+                        this._set_styles_from_object(selection, style_settings.rect_style.settings)
+                    );
             } else {
                 if (this.rectangles) {
                     this.rectangles.remove();
@@ -302,7 +304,9 @@ class StyleViewer extends D3Plot {
                 this.lines
                     .transition()
                     .duration(1000)
-                    .style(style_settings.line_style.settings);
+                    .call(selection =>
+                        this._set_styles_from_object(selection, style_settings.line_style.settings)
+                    );
             } else {
                 if (this.lines) {
                     this.lines.remove();
