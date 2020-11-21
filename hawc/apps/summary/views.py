@@ -32,19 +32,6 @@ def get_summary_list_crumb(assessment) -> Breadcrumb:
 
 
 # SUMMARY-TEXT
-class SummaryTextJSON(BaseDetail):
-    model = models.SummaryText
-
-    def dispatch(self, *args, **kwargs):
-        self.assessment = get_object_or_404(Assessment, pk=kwargs.get("pk"))
-        self.permission_check_user_can_view()
-        return super().dispatch(*args, **kwargs)
-
-    def get(self, request, *args, **kwargs):
-        content = self.model.get_assessment_descendants(self.assessment.id, json_encode=True)
-        return HttpResponse(content, content_type="application/json")
-
-
 class SummaryTextList(BaseList):
     parent_model = Assessment
     model = models.SummaryText
@@ -55,80 +42,23 @@ class SummaryTextList(BaseList):
         return self.model.objects.filter(pk__in=[rt.pk])
 
 
-def validSummaryTextChange(assessment_id):
-    response = {
-        "status": "ok",
-        "content": models.SummaryText.get_assessment_descendants(assessment_id, json_encode=False),
-    }
-    return HttpResponse(
-        json.dumps(response, cls=HAWCDjangoJSONEncoder), content_type="application/json"
-    )
-
-
-class SummaryTextCreate(BaseCreate):
+class SummaryTextModify(BaseCreate):
     # Base view for all Create, Update, Delete GET operations
     parent_model = Assessment
     parent_template_name = "assessment"
     model = models.SummaryText
     form_class = forms.SummaryTextForm
-
-    def post(self, request, *args, **kwargs):
-        if not request.is_ajax() or not request.user.is_authenticated:
-            raise HttpResponseNotAllowed()
-        return super().post(request, *args, **kwargs)
-
-    def form_invalid(self, form):
-        return HttpResponse(json.dumps(form.errors))
-
-    def form_valid(self, form):
-        self.object = self.model.create(form)
-        return validSummaryTextChange(self.assessment.id)
+    http_method_names = ("get",)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["smart_tag_form"] = forms.SmartTagForm(assessment_id=self.assessment.id)
+        context["breadcrumbs"] = Breadcrumb.build_crumbs(
+            self.request.user,
+            "Update text",
+            [Breadcrumb.from_object(self.assessment), get_summary_list_crumb(self.assessment)],
+        )
         return context
-
-
-class SummaryTextUpdate(BaseUpdate):
-    # AJAX POST-only
-    model = models.SummaryText
-    form_class = forms.SummaryTextForm
-    success_message = None
-    http_method_names = [
-        "post",
-    ]
-
-    def post(self, request, *args, **kwargs):
-        if not request.is_ajax():
-            raise HttpResponseNotAllowed()
-        return super().post(request, *args, **kwargs)
-
-    def form_invalid(self, form):
-        return HttpResponse(json.dumps(form.errors))
-
-    def form_valid(self, form):
-        self.object = self.object.update(form)
-        return validSummaryTextChange(self.assessment.id)
-
-
-class SummaryTextDelete(BaseDelete):
-    # AJAX POST-only
-    model = models.SummaryText
-    success_message = None
-    http_method_names = [
-        "post",
-    ]
-
-    def post(self, request, *args, **kwargs):
-        if not request.is_ajax():
-            raise HttpResponseNotAllowed()
-        return super().post(request, *args, **kwargs)
-
-    def delete(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        self.object.delete()
-        return validSummaryTextChange(self.assessment.id)
 
 
 # VISUALIZATIONS

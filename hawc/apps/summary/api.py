@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from ..assessment.api import (
     AssessmentLevelPermissions,
     AssessmentViewset,
+    AssessmentEditViewset,
     DisabledPagination,
     InAssessmentFilter,
 )
@@ -97,3 +98,14 @@ class VisualViewset(AssessmentViewset):
 
     def get_queryset(self):
         return super().get_queryset().select_related("assessment")
+
+
+class SummaryTextViewset(AssessmentEditViewset):
+    assessment_filter_args = "assessment"
+    model = models.SummaryText
+    pagination_class = DisabledPagination
+    filter_backends = (InAssessmentFilter,)
+    serializer_class = serializers.SummaryTextSerializer
+
+    def get_queryset(self):
+        return self.model.objects.all()
