@@ -5,6 +5,7 @@ import h from "shared/utils/helpers";
 
 class SummaryTextStore {
     @observable formData = null;
+    @observable formErrors = {};
     @observable items = [];
     @observable selectedId = null;
     @observable isEditing = false;
@@ -31,6 +32,8 @@ class SummaryTextStore {
             title: "",
             slug: "",
             text: "",
+            parent: "---",
+            sibling: "---",
         };
     }
     @action.bound cancelEditing() {
@@ -44,6 +47,8 @@ class SummaryTextStore {
             title: item.title,
             slug: item.slug,
             text: item.text,
+            parent: item.parent,
+            sibling: item.sibling,
         };
     }
     @action.bound clickConfirmDelete() {
@@ -66,17 +71,23 @@ class SummaryTextStore {
     @action.bound createOrUpdate() {
         const url = `/summary/api/summary-text/`,
             data = {assessment: this.config.assessment_id, ...this.formData};
-
-        fetch(url, h.fetchPost(this.config.csrf, data))
-            .then(response => response.json())
-            .then(json => {
-                this.items = this.items.filter(item => item.id != this.selectedId);
+        h.handleSubmit(
+            url,
+            "POST",
+            this.config.csrf,
+            data,
+            item => {
+                this.formErrors = {};
+                this.items.append(item);
                 this.isEditing = false;
                 this.selectedId = null;
-            })
-            .catch(ex => console.error("Item delete failed", ex));
+            },
+            errors => {
+                this.formErrors = errors;
+                this.formErrors.parent = ["this one is a dud."];
+            }
+        );
     }
-
     @action.bound updateFormData(key, value) {
         this.formData[key] = value;
     }

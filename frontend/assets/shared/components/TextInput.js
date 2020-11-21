@@ -1,6 +1,8 @@
 import React, {Component} from "react";
 import PropTypes from "prop-types";
 
+import {errorsDiv, inputClass} from "./inputs";
+
 class TextInput extends Component {
     renderLabel() {
         if (!this.props.label) {
@@ -15,12 +17,13 @@ class TextInput extends Component {
     }
 
     render() {
-        const type = this.props.type || "text";
+        const type = this.props.type || "text",
+            {errors} = this.props;
         return (
             <div className="form-group">
                 {this.renderLabel()}
                 <input
-                    className="col-md-12 textinput"
+                    className={inputClass("form-control", errors)}
                     id={`id_${this.props.name}`}
                     name={this.props.name}
                     type={type}
@@ -28,6 +31,7 @@ class TextInput extends Component {
                     value={this.props.value}
                     onChange={this.props.onChange}
                 />
+                {errorsDiv(errors)}
                 {this.props.helpText ? (
                     <p className="form-text text-muted">{this.props.helpText}</p>
                 ) : null}
@@ -40,6 +44,7 @@ TextInput.propTypes = {
     helpText: PropTypes.string,
     label: PropTypes.string,
     name: PropTypes.string.isRequired,
+    errors: PropTypes.array,
     onChange: PropTypes.func.isRequired,
     required: PropTypes.bool,
     value: PropTypes.string.isRequired,
