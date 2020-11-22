@@ -1,5 +1,6 @@
 import json
 from django.core.exceptions import ValidationError
+from django.db import transaction
 
 from rest_framework import serializers
 
@@ -71,84 +72,58 @@ class VisualSerializer(CollectionVisualSerializer):
 
 
 class SummaryTextSerializer(serializers.ModelSerializer):
+    parent = serializers.PrimaryKeyRelatedField(
+        queryset=models.SummaryText.objects.all(), write_only=True
+    )
+    sibling = serializers.PrimaryKeyRelatedField(
+        queryset=models.SummaryText.objects.all(), write_only=True, required=False, allow_null=True
+    )
+
     class Meta:
         model = models.SummaryText
         fields = "__all__"
+        read_only_fields = ("depth", "path")
 
-    def clean_parent(self):
-        parent = self.cleaned_data.get("parent")
-        if parent is not None and parent.assessment != self.instance.assessment:
-            raise ValidationError("Parent must be from the same assessment")
-        return parent
+    def validate(self, data):
+        assessment = data["assessment"]
+        parent = data.get("parent")
+        if parent and parent.assessment != assessment:
+            raise ValidationError({"parent": "Parent must be from the same assessment"})
 
-    def clean_sibling(self):
-        sibling = self.cleaned_data.get("sibling")
-        if sibling is not None and sibling.assessment != self.instance.assessment:
-            raise ValidationError("Sibling must be from the same assessment")
-        return sibling
+        sibling = data.get("sibling")
+        if sibling and sibling.assessment != assessment:
+            raise ValidationError({"sibling": "Sibling must be from the same assessment"})
 
-    def clean_title(self):
-        title = self.cleaned_data["title"]
-        pk_exclusion = {"id": self.instance.id or -1}
-        if (
-            models.SummaryText.objects.filter(assessment=self.instance.assessment, title=title)
-            .exclude(**pk_exclusion)
-            .count()
-            > 0
-        ):
-            raise ValidationError("Title must be unique for assessment.")
-        return title
+        return data
 
-    def clean_slug(self):
-        slug = self.cleaned_data["slug"]
-        pk_exclusion = {"id": self.instance.id or -1}
-        if (
-            models.SummaryText.objects.filter(assessment=self.instance.assessment, slug=slug)
-            .exclude(**pk_exclusion)
-            .count()
-            > 0
-        ):
-            raise ValidationError("Slug must be unique for assessment.")
-        return slug
-
-    def create(cls, form):
-        # todo - move to serializer
-        instance = form.save(commit=False)
-        sibling = form.cleaned_data.get("sibling")
+    def create(self, validated_data):
+        parent = validated_data.pop("parent", None)
+        sibling = validated_data.pop("sibling", None)
+        instance = models.SummaryText(**validated_data)
         if sibling:
             return sibling.add_sibling(pos="right", instance=instance)
         else:
-            parent = form.cleaned_data.get(
-                "parent", SummaryText.get_assessment_root_node(instance.assessment.id)
-            )
             sibling = parent.get_first_child()
             if sibling:
                 return sibling.add_sibling(pos="first-sibling", instance=instance)
             else:
                 return parent.add_child(instance=instance)
 
-    def update(self, form):
-        # todo move to serializer
-        data = form.cleaned_data
-
-        parent = data.get("parent")
-        sibling = data.get("sibling")
-        if parent is not None and parent.assessment != self.assessment:
-            raise ValueError("Parent assessment != self assessment")
-
-        if sibling is not None and sibling.assessment != self.assessment:
-            raise ValueError("Sibling assessment != self assessment")
-
+    @transaction.atomic
+    def update(self, instance, validated_data):
+        parent = validated_data.get("parent")
+        sibling = validated_data.get("sibling", None)
         if sibling:
-            if self.get_prev_sibling() != sibling:
-                self.move(sibling, pos="right")
+            if instance.get_prev_sibling() != sibling:
+                instance.move(sibling, pos="right")
         elif parent:
-            self.move(parent, pos="first-child")
+            instance.move(parent, pos="first-child")
 
-        self.title = data["title"]
-        self.slug = data["slug"]
-        self.text = data["text"]
-        self.save()
+        instance.title = validated_data["title"]
+        instance.slug = validated_data["slug"]
+        instance.text = validated_data["text"]
+        instance.save()
+        return instance
 
 
 SerializerHelper.add_serializer(models.Visual, VisualSerializer)

@@ -76,16 +76,20 @@ class Root extends Component {
                     <nav id="st-headers-nav" className="nav flex-column nav-pills">
                         {editMode
                             ? store.visibleItems.map(item => (
-                                  <button
+                                  <a
                                       key={item.id}
+                                      href="#"
                                       className="nav-link"
-                                      onClick={() => store.updateItem(item)}>
-                                      {_.repeat(item.depth - 2, "-")}&nbsp;{item.title}
-                                  </button>
+                                      onClick={e => {
+                                          e.preventDefault();
+                                          store.updateItem(item);
+                                      }}>
+                                      {_.repeat("—", item.depth - 1)}&nbsp;{item.title}
+                                  </a>
                               ))
                             : store.visibleItems.map(item => (
                                   <a key={item.id} className="nav-link" href={`#${item.slug}`}>
-                                      {_.repeat(item.depth - 2, "-")}&nbsp;{item.title}
+                                      {_.repeat("—", item.depth - 1)}&nbsp;{item.title}
                                   </a>
                               ))}
                     </nav>
