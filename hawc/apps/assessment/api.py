@@ -559,7 +559,7 @@ class JobViewset(
             return self.model.objects.all()
 
 
-class LogViewset(mixins.ListModelMixin, viewsets.GenericViewSet):
+class LogViewset(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     model = models.Log
     permission_classes = (IsAdminUser,)
     serializer_class = serializers.LogSerializer

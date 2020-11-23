@@ -1,15 +1,16 @@
 import abc
 import logging
 from typing import List, Optional
+from urllib.parse import urlparse
 
 from django.contrib import messages
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.exceptions import EmptyResultSet, PermissionDenied
 from django.forms.models import model_to_dict
-from django.http import HttpResponseRedirect
+from django.http import HttpRequest, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
-from django.urls import reverse
+from django.urls import Resolver404, resolve, reverse
 from django.utils.decorators import method_decorator
 from django.views.generic import DetailView, ListView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
@@ -32,6 +33,28 @@ def beta_tester_required(function=None, redirect_field_name=REDIRECT_FIELD_NAME,
     if function:
         return actual_decorator(function)
     return actual_decorator
+
+
+def get_referrer(request: HttpRequest, default: str) -> str:
+    """Return the `referer` [sic] attribute if it's a valid HAWC site, otherwise use default.
+
+    `Referer` [sic] header could be malicious or may include injected code. Only return the
+    value if the path can be resolved in HAWC.
+
+    Args:
+        request (HttpRequest): the http request
+
+    Returns:
+        str: A valid URL
+    """
+    url = request.META.get("HTTP_REFERER")
+    if url is None:
+        return default
+    try:
+        _ = resolve(urlparse(url).path)
+        return url
+    except Resolver404:
+        return default
 
 
 class MessageMixin:

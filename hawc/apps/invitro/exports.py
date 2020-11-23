@@ -27,10 +27,9 @@ class DataPivotEndpoint(FlatFileExporter):
         if self.queryset.first() is None:
             self.rob_headers, self.rob_data = {}, {}
         else:
+            study_ids = set(self.queryset.values_list("experiment__study_id", flat=True))
             self.rob_headers, self.rob_data = RiskOfBias.get_dp_export(
-                self.queryset.first().assessment_id,
-                list(self.queryset.values_list("experiment__study_id", flat=True).distinct()),
-                "invitro",
+                self.queryset.first().assessment_id, study_ids, "invitro",
             )
 
         header = [
@@ -207,10 +206,9 @@ class DataPivotEndpointGroup(FlatFileExporter):
         if self.queryset.first() is None:
             self.rob_headers, self.rob_data = {}, {}
         else:
+            study_ids = set(self.queryset.values_list("experiment__study_id", flat=True))
             self.rob_headers, self.rob_data = RiskOfBias.get_dp_export(
-                self.queryset.first().assessment_id,
-                list(self.queryset.values_list("experiment__study_id", flat=True).distinct()),
-                "invitro",
+                self.queryset.first().assessment_id, study_ids, "invitro",
             )
 
         header = [
