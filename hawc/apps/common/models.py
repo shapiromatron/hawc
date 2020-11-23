@@ -58,38 +58,36 @@ class BaseManager(models.Manager):
             .order_by(*ordering)
         )
 
-    def valid_ids(self, ids: List[int], *args, **kwargs) -> Set[int]:
+    def valid_ids(self, ids: List[int], **kwargs) -> Set[int]:
         """
         Determines valid model instance ids from a list of ids
 
         Args:
             ids (List[int]): model instance ids
-            args: query objects to pass to validity check
             kwargs: keyword args to pass to validity check
 
         Returns:
-            Set[int]: [description]
+            Set[int]: A set of all valid ids
         """
         return set(
-            self.filter(pk__in=ids, *args, **kwargs)
+            self.filter(pk__in=ids, **kwargs)
             .order_by("pk")
             .distinct("pk")
             .values_list("pk", flat=True)
         )
 
-    def invalid_ids(self, ids: List[int], *args, **kwargs) -> Set[int]:
+    def invalid_ids(self, ids: List[int], **kwargs) -> Set[int]:
         """
         Determines invalid model instance ids from a list of ids
 
         Args:
             ids (List[int]): model instance ids
-            args: query objects to pass to validity check
             kwargs: keyword args to pass to validity check
 
         Returns:
-            Set[int]: invalid ids
+            Set[int]: A set of all invalid ids
         """
-        valid_ids = self.valid_ids(ids, *args, **kwargs)
+        valid_ids = self.valid_ids(ids, **kwargs)
         return set(ids) - valid_ids
 
 
