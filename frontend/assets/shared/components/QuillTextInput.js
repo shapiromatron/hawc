@@ -32,6 +32,7 @@ class QuillTextInput extends Component {
 
 QuillTextInput.propTypes = {
     helpText: PropTypes.string,
+    id: PropTypes.string,
     label: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
     onChange: PropTypes.func.isRequired,
