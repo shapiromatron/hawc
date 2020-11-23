@@ -6,10 +6,10 @@ from django.db.models import Q
 from django.forms.models import BaseModelFormSet, inlineformset_factory, modelformset_factory
 from django.forms.widgets import Select
 from django.urls import reverse
-from selectable import forms as selectable
 
 from ..assessment.lookups import DssToxIdLookup, EffectTagLookup
 from ..assessment.models import DoseUnits
+from ..common import selectable
 from ..common.forms import BaseFormHelper
 from ..study.lookups import InvitroStudyLookup
 from . import lookups, models

@@ -9,10 +9,10 @@ from django.contrib.auth.forms import (
 )
 from django.forms import ModelForm
 from django.urls import reverse
-from selectable.forms import AutoCompleteSelectMultipleField
 
 from ..assessment import lookups
 from ..common.forms import BaseFormHelper
+from ..common.selectable import AutoCompleteSelectMultipleField
 from . import models
 
 _PASSWORD_HELP = (
