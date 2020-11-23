@@ -25,7 +25,7 @@ class SelectableBootstrapMediaMixin(SelectableMediaMixin):
         css = SelectableMediaMixin.Media.css
         js = (
             *SelectableMediaMixin.Media.js,
-            str(settings.PROJECT_PATH / "static/js/selectable_bootstrap.js"),
+            settings.STATIC_URL + "js/selectable_bootstrap.js",
         )
 
 

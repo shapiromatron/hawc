@@ -1,6 +1,6 @@
 $.ui.djselectable.prototype.options.defaultClasses = {
-  text: "form-control",
-  combobox: "form-control",
+  text: "form-control mb-2",
+  combobox: "form-control mb-2",
 };
 (function () {
   let _create = $.ui.menu.prototype._create;
