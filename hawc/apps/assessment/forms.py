@@ -11,7 +11,8 @@ from selectable.forms import AutoCompleteWidget
 
 from hawc.services.epa.dsstox import DssSubstance
 
-from ..common.forms import AutoCompleteSelectMultipleWidget, BaseFormHelper
+from ..common.forms import BaseFormHelper
+from ..common.selectable import AutoCompleteSelectMultipleWidget
 from ..myuser.lookups import HAWCUserLookup
 from . import lookups, models
 
