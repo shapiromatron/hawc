@@ -1,6 +1,5 @@
 from typing import Any, List, Tuple, Union
 
-import selectable.forms as selectable
 from crispy_forms import bootstrap as cfb
 from crispy_forms import helper as cf
 from crispy_forms import layout as cfl
@@ -8,7 +7,8 @@ from crispy_forms.utils import TEMPLATE_PACK, flatatt
 from django import forms
 from django.conf import settings
 from django.template.loader import render_to_string
-from selectable.forms.widgets import SelectableMediaMixin
+from selectable import forms as selectable
+from selectable.forms.widgets import SelectableMediaMixin, SelectableMultiWidget
 
 from . import validators
 
@@ -29,26 +29,10 @@ class SelectableBootstrapMediaMixin(SelectableMediaMixin):
         )
 
 
-class AutoCompleteWidget(selectable.AutoCompleteWidget, SelectableBootstrapMediaMixin):
-    pass
-
-
-class AutoCompleteSelectWidget(selectable.AutoCompleteSelectWidget, SelectableBootstrapMediaMixin):
-    primary_widget = AutoCompleteWidget
-
-
 class AutoCompleteSelectMultipleWidget(
     selectable.AutoCompleteSelectMultipleWidget, SelectableBootstrapMediaMixin
 ):
-    primary_widget = AutoCompleteWidget
-
-
-class AutoCompleteSelectField(selectable.AutoCompleteSelectField):
-    widget = AutoCompleteSelectWidget
-
-
-class AutoCompleteSelectMultipleField(selectable.AutoCompleteSelectMultipleField):
-    widget = AutoCompleteSelectMultipleWidget
+    pass
 
 
 class BaseFormHelper(cf.FormHelper):
@@ -146,7 +130,7 @@ class CopyAsNewSelectorForm(forms.Form):
         return BaseFormHelper(self)
 
     def setupSelector(self, parent_id):
-        fld = AutoCompleteSelectField(
+        fld = selectable.AutoCompleteSelectField(
             lookup_class=self.lookup_class,
             allow_new=False,
             label=self.label,
