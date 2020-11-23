@@ -6,4 +6,3 @@ SelectableMediaMixin.Media.js = (
     *SelectableMediaMixin.Media.js,
     settings.STATIC_URL + "js/selectable_bootstrap.js",
 )
-

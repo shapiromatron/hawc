@@ -7,12 +7,11 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.mail import mail_admins
 from django.db import transaction
 from django.urls import reverse, reverse_lazy
-from selectable.forms import AutoCompleteWidget
 
 from hawc.services.epa.dsstox import DssSubstance
 
 from ..common.forms import BaseFormHelper
-from ..common.selectable import AutoCompleteSelectMultipleWidget
+from ..common.selectable import AutoCompleteSelectMultipleWidget, AutoCompleteWidget
 from ..myuser.lookups import HAWCUserLookup
 from . import lookups, models
 

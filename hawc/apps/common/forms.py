@@ -5,12 +5,9 @@ from crispy_forms import helper as cf
 from crispy_forms import layout as cfl
 from crispy_forms.utils import TEMPLATE_PACK, flatatt
 from django import forms
-from django.conf import settings
 from django.template.loader import render_to_string
-from selectable import forms as selectable
-from selectable.forms.widgets import SelectableMediaMixin, SelectableMultiWidget
 
-from . import validators
+from . import selectable, validators
 
 
 def build_form_actions(cancel_url: str, save_text: str = "Save", cancel_text: str = "Cancel"):
@@ -18,21 +15,6 @@ def build_form_actions(cancel_url: str, save_text: str = "Save", cancel_text: st
         cfl.Submit("save", save_text),
         cfl.HTML(f'<a role="button" class="btn btn-light" href="{cancel_url}">{cancel_text}</a>'),
     ]
-
-
-class SelectableBootstrapMediaMixin(SelectableMediaMixin):
-    class Media:
-        css = SelectableMediaMixin.Media.css
-        js = (
-            *SelectableMediaMixin.Media.js,
-            settings.STATIC_URL + "js/selectable_bootstrap.js",
-        )
-
-
-class AutoCompleteSelectMultipleWidget(
-    selectable.AutoCompleteSelectMultipleWidget, SelectableBootstrapMediaMixin
-):
-    pass
 
 
 class BaseFormHelper(cf.FormHelper):

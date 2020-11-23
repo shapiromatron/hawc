@@ -5,9 +5,9 @@ from django import forms
 from django.db.models import Q
 from django.forms.models import BaseModelFormSet, modelformset_factory
 from django.urls import reverse
-from selectable import forms as selectable
 
 from ..assessment.lookups import BaseEndpointLookup, DssToxIdLookup, EffectTagLookup
+from ..common import selectable
 from ..common.forms import BaseFormHelper, CopyAsNewSelectorForm
 from ..common.helper import tryParseInt
 from ..study.lookups import EpiStudyLookup
