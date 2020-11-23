@@ -8,7 +8,7 @@ from django.utils.decorators import method_decorator
 from django.views.generic import ListView, TemplateView
 from django.views.generic.edit import CreateView
 
-from ..common.views import MessageMixin
+from ..common.views import MessageMixin, get_referrer
 from . import forms, models
 
 
@@ -42,7 +42,7 @@ class CreateComment(MessageMixin, CreateView):
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs.update(last_url_visited=self.request.META.get("HTTP_REFERER", reverse("portal")))
+        kwargs.update(last_url_visited=get_referrer(self.request, reverse("portal")))
         return kwargs
 
     def form_valid(self, form):

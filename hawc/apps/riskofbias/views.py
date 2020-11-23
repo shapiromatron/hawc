@@ -20,6 +20,7 @@ from ..common.views import (
     ProjectManagerOrHigherMixin,
     TeamMemberOrHigherMixin,
     TimeSpentOnPageMixin,
+    get_referrer,
 )
 from ..study.models import Study
 from . import forms, models
@@ -286,11 +287,7 @@ class RoBEdit(TimeSpentOnPageMixin, BaseDetail):
         context["config"] = json.dumps(
             {
                 "assessment_id": self.assessment.id,
-                "cancelUrl": (
-                    self.request.META["HTTP_REFERER"]
-                    if "HTTP_REFERER" in self.request.META
-                    else self.object.get_absolute_url()
-                ),
+                "cancelUrl": get_referrer(self.request, self.object.get_absolute_url()),
                 "csrf": get_token(self.request),
                 "host": f"//{self.request.get_host()}",
                 "hawc_flavor": settings.HAWC_FLAVOR,
