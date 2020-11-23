@@ -287,7 +287,7 @@ class RoBEdit(TimeSpentOnPageMixin, BaseDetail):
         context["config"] = json.dumps(
             {
                 "assessment_id": self.assessment.id,
-                "cancelUrl": get_referrer(request, self.object.get_absolute_url()),
+                "cancelUrl": get_referrer(self.request, self.object.get_absolute_url()),
                 "csrf": get_token(self.request),
                 "host": f"//{self.request.get_host()}",
                 "hawc_flavor": settings.HAWC_FLAVOR,
