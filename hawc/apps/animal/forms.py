@@ -8,10 +8,10 @@ from django.db.models import Q
 from django.forms import ModelForm
 from django.forms.models import BaseModelFormSet, modelformset_factory
 from django.urls import reverse
-from selectable import forms as selectable
 
 from ..assessment.lookups import DssToxIdLookup, EffectTagLookup, SpeciesLookup, StrainLookup
 from ..assessment.models import DoseUnits
+from ..common import selectable
 from ..common.forms import BaseFormHelper, CopyAsNewSelectorForm
 from ..study.lookups import AnimalStudyLookup
 from ..vocab.models import VocabularyNamespace

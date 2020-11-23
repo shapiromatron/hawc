@@ -17,7 +17,7 @@ def rob(driver, root_url):
     h.go_to(root_url + "/rob/assessment/1/study-assignments/")
     assert len(driver.find_elements_by_css_selector("tr")) > 0
     assert len(driver.find_elements_by_css_selector("td")) > 4
-    assert h.Text(to_left_of="Team Member").value == "Foo et al."
+    assert h.Text("Foo et al.", to_left_of="Team Member").exists()
 
     # /rob/:id/edit/
     h.go_to(root_url + "/rob/3/edit/")

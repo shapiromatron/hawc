@@ -3,9 +3,9 @@ from django import forms
 from django.core.exceptions import ObjectDoesNotExist
 from django.forms.models import BaseModelFormSet, modelformset_factory
 from django.urls import reverse
-from selectable import forms as selectable
 
 from ..assessment.models import Assessment
+from ..common import selectable
 from ..common.forms import BaseFormHelper
 from ..myuser.lookups import AssessmentTeamMemberOrHigherLookup
 from ..study.models import Study

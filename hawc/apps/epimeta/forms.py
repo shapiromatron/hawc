@@ -5,8 +5,8 @@ from django import forms
 from django.db.models import Q
 from django.forms.models import modelformset_factory
 from django.urls import reverse
-from selectable import forms as selectable
 
+from ..common import selectable
 from ..common.forms import BaseFormHelper, CopyAsNewSelectorForm
 from ..epi.lookups import AdjustmentFactorLookup, CriteriaLookup
 from ..study.lookups import EpimetaStudyLookup
