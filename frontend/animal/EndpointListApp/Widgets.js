@@ -15,7 +15,6 @@ class Widgets extends React.Component {
             <div className="row">
                 <div className="col-md-4">
                     <SelectInput
-                        className="col-md-12"
                         choices={store.doseOptions}
                         value={settings.doses}
                         handleSelect={values =>
@@ -31,7 +30,6 @@ class Widgets extends React.Component {
                 </div>
                 <div className="col-md-4">
                     <SelectInput
-                        className="col-md-12"
                         choices={store.systemOptions}
                         value={settings.systems}
                         handleSelect={values => store.changeSettingsSelection("systems", values)}
@@ -42,7 +40,6 @@ class Widgets extends React.Component {
                 </div>
                 <div className="col-md-4">
                     <SelectInput
-                        className="col-md-12"
                         choices={store.criticalValueOptions}
                         value={settings.criticalValues}
                         handleSelect={values =>

@@ -22,7 +22,6 @@ class ScoreInput extends Component {
         return (
             <>
                 <SelectInput
-                    className="col-md-12"
                     id={`${scoreId}-score`}
                     label="Score"
                     choices={scoreChoices}
@@ -143,7 +142,6 @@ class ScoreForm extends Component {
                                     }}
                                 />
                                 <SelectInput
-                                    className="col-md-12"
                                     id={`${score.id}-direction`}
                                     label="Bias direction"
                                     choices={direction_choices}

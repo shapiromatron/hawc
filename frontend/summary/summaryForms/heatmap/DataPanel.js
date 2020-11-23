@@ -50,7 +50,6 @@ class DataPanel extends Component {
                 <SelectInput
                     name="data_url"
                     label="Data URL"
-                    className="col-md-12"
                     choices={datasetOptions}
                     multiple={false}
                     handleSelect={value => changeDatasetUrl(value)}
