@@ -1,7 +1,7 @@
 import json
 import math
 from io import StringIO
-from typing import Any, Dict, Generator, List, Optional
+from typing import Any, Dict, Generator, List, Optional, Tuple
 
 import pandas as pd
 from requests import Response, Session
@@ -463,6 +463,52 @@ class RiskOfBiasClient(BaseClient):
             "scores": scores,
         }
         url = f"{self.session.root_url}/rob/api/review/"
+        return self.session.post(url, payload).json()
+
+    def bulk_rob_copy(
+        self,
+        src_assessment_id: int,
+        dst_assessment_id: int,
+        src_dst_study_ids: List[Tuple[int, int]],
+        src_dst_metric_ids: List[Tuple[int, int]],
+        copy_mode: int,
+        author_mode: int,
+        dst_author_id: Optional[int] = None,
+    ):
+        """
+        Copy final scores from a subset of studies from one assessment as the scores in a
+        different assessment. Useful when an assessment is cloned or repurposed and existing
+        evaluations should be used in a new evaluation.
+
+        Args:
+            src_assessment_id (int): source assessment
+            dst_assessment_id (int): destination assessment
+            src_dst_study_ids (List[Tuple[int, int]]): source study id, destination study id pairings
+            src_dst_metric_ids (List[Tuple[int, int]]): source metric id, destination metric id pairings
+            copy_mode (int): enum for copy mode
+                1 = src active riskofbias -> dest active risk of bias
+                2 = src final riskofbias -> dest initial risk of bias
+            author_mode (int): enum for author mode
+                1: original authors are preserved
+                2: authors are overwritten by given dst_author_id
+            dst_author_id (Optional[int]): author for destination RoBs when author_mode = 2.
+
+        Returns:
+            Dict: Log information and mapping of all source ids to destination ids
+        """
+
+        payload = {
+            "src_assessment_id": src_assessment_id,
+            "dst_assessment_id": dst_assessment_id,
+            "src_dst_study_ids": src_dst_study_ids,
+            "src_dst_metric_ids": src_dst_metric_ids,
+            "copy_mode": copy_mode,
+            "author_mode": author_mode,
+        }
+        if dst_author_id is not None:
+            payload["dst_author_id"] = dst_author_id
+
+        url = f"{self.session.root_url}/rob/api/assessment/bulk_rob_copy/"
         return self.session.post(url, payload).json()
 
 

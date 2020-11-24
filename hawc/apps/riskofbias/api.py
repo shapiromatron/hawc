@@ -3,6 +3,7 @@ from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
+from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
 
@@ -24,6 +25,7 @@ from ..mgmt.models import Task
 from ..riskofbias import exports
 from ..study.models import Study
 from . import models, serializers
+from .actions.rob_clone import BulkRobCopyAction
 
 
 class RiskOfBiasAssessmentViewset(
@@ -62,6 +64,13 @@ class RiskOfBiasAssessmentViewset(
             self.get_queryset(), filename=f"{self.assessment}-{rob_name}-complete"
         )
         return Response(exporter.build_export())
+
+    @action(detail=False, methods=("post",), permission_classes=(IsAdminUser,))
+    def bulk_rob_copy(self, request):
+        """
+        Bulk copy risk of bias responses from one assessment to another.
+        """
+        return BulkRobCopyAction.handle_request(request, atomic=True)
 
 
 class RiskOfBiasDomain(viewsets.ReadOnlyModelViewSet):

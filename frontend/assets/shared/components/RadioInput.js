@@ -1,64 +1,64 @@
 import React, {Component} from "react";
 import PropTypes from "prop-types";
 
+import LabelInput from "./LabelInput";
+import HelpText from "./HelpText";
+
 class RadioInput extends Component {
     constructor(props) {
         super(props);
     }
 
-    renderLabel() {
-        const {label, required} = this.props;
-        if (!label) {
-            return null;
-        }
-        return (
-            <label className="col-form-label">
-                {label}
-                {required ? <span className="asteriskField">*</span> : null}
-            </label>
-        );
+    renderField() {
+        return this.props.choices.map(choice => {
+            const id = `${this.props.name}-${choice.id}`;
+            return (
+                <div key={choice.id} className="form-check">
+                    <input
+                        className="form-check-input"
+                        onChange={event => this.props.onChange(this.props.name, choice.id)}
+                        checked={choice.id === this.props.value}
+                        type="radio"
+                        id={id}
+                        name={this.props.name}
+                    />
+                    <label className="form-check-label" htmlFor={id}>
+                        {choice.label}
+                    </label>
+                </div>
+            );
+        });
+    }
+
+    renderHelpText() {
+        return <p className="form-text text-muted">{this.props.helpText}</p>;
     }
 
     render() {
-        const {name, value, onChange, choices, helpText} = this.props;
         return (
             <div className="form-group">
-                {this.renderLabel()}
-                {choices.map(choice => {
-                    const id = `${name}-${choice.id}`;
-                    return (
-                        <label key={choice.id} className="form-check" htmlFor={id}>
-                            <input
-                                onChange={event => onChange(name, choice.id)}
-                                checked={choice.id === value}
-                                type="radio"
-                                id={id}
-                                name={name}
-                            />
-                            {choice.label}
-                        </label>
-                    );
-                })}
-
-                {helpText ? <p className="form-text text-muted">{helpText}</p> : null}
+                {this.props.label ? <LabelInput label={this.props.label} /> : null}
+                {this.renderField()}
+                {this.props.helpText ? <HelpText text={this.props.helpText} /> : null}
             </div>
         );
     }
 }
 
 RadioInput.propTypes = {
-    helpText: PropTypes.string,
-    label: PropTypes.string,
-    name: PropTypes.string.isRequired,
-    required: PropTypes.bool.isRequired,
-    onChange: PropTypes.func.isRequired,
-    value: PropTypes.any.isRequired,
     choices: PropTypes.arrayOf(
         PropTypes.shape({
             id: PropTypes.any.isRequired,
             label: PropTypes.string.isRequired,
         })
     ).isRequired,
+    helpText: PropTypes.string,
+    id: PropTypes.string,
+    label: PropTypes.string,
+    name: PropTypes.string.isRequired,
+    onChange: PropTypes.func.isRequired,
+    required: PropTypes.bool.isRequired,
+    value: PropTypes.any.isRequired,
 };
 
 RadioInput.defaultProps = {

@@ -30,6 +30,7 @@ from ..common.views import (
     TeamMemberOrHigherMixin,
     TimeSpentOnPageMixin,
     beta_tester_required,
+    get_referrer,
 )
 from . import forms, models, serializers, tasks
 
@@ -200,8 +201,7 @@ class Contact(LoginRequiredMixin, MessageMixin, FormView):
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs.update(
-            back_href=self.request.META.get("HTTP_REFERER", reverse("portal")),
-            user=self.request.user,
+            back_href=get_referrer(self.request, reverse("portal")), user=self.request.user,
         )
         return kwargs
 
@@ -340,7 +340,7 @@ class AssessmentClearCache(MessageMixin, View):
 
     def get(self, request, *args, **kwargs):
         assessment = get_object_or_404(self.model, pk=kwargs["pk"])
-        url = self.request.META.get("HTTP_REFERER", assessment.get_absolute_url())
+        url = get_referrer(self.request, assessment.get_absolute_url())
         if not assessment.user_can_edit_object(request.user):
             raise PermissionDenied()
 
@@ -581,7 +581,7 @@ class DownloadPlot(FormView):
         # grab input values and create converter object
         extension = request.POST.get("output", None)
         svg = request.POST["svg"]
-        url = request.META["HTTP_REFERER"]
+        url = get_referrer(request, "/<unknown>/")
         width = int(float(request.POST["width"]) * 5)
         height = int(float(request.POST["height"]) * 5)
 

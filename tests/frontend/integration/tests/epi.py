@@ -36,7 +36,7 @@ def epi(driver, root_url):
     h.go_to(root_url + "/epi/result/1/")
     h.wait_until(h.Text("Comparison set").exists)
     assert len(driver.find_elements_by_css_selector("#objContainer table")) == 2
-    assert h.Text(to_right_of="Data location").value == "Table 2"
+    assert h.Text("Table 2", to_right_of="Data location").exists()
     assert len(driver.find_elements_by_css_selector("tr")) > 10
 
     shared.logout()

@@ -56,7 +56,6 @@ class EndpointAggregationForm extends BaseVisualForm {
                 <SelectInput
                     name="dose_units"
                     label="Dose Units"
-                    className="col-md-12 select"
                     choices={doseUnitChoices}
                     multiple={false}
                     id="id_dose_units"

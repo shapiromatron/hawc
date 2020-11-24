@@ -1,3 +1,5 @@
+from urllib.parse import urlparse
+
 import pytest
 from django.test.client import Client
 from django.urls import reverse
@@ -64,3 +66,42 @@ def test_unsupported_browser():
         response = c.get("/")
         assert response.context["UA_SUPPORTED"] is valid
         assert (WARNING in response.content.decode("utf8")) is (not valid)
+
+
+@pytest.mark.django_db
+class TestContactUsPage:
+    def test_login_required(self):
+        contact_url = reverse("contact")
+
+        client = Client()
+
+        # login required
+        resp = client.get(contact_url)
+        assert resp.status_code == 302
+        assert urlparse(resp.url).path == reverse("user:login")
+
+        # valid
+        client.login(username="pm@pm.com", password="pw")
+        resp = client.get(contact_url)
+        assert resp.status_code == 200
+
+    def test_referrer(self):
+        portal_url = reverse("portal")
+        about_url = reverse("about")
+        contact_url = reverse("contact")
+
+        client = Client()
+        client.login(username="pm@pm.com", password="pw")
+
+        # no referrer; use default
+        resp = client.get(contact_url)
+        assert resp.context["form"].fields["previous_page"].initial == portal_url
+
+        # valid referrer; use valid
+        resp = client.get(contact_url, HTTP_REFERER=about_url)
+        assert resp.context["form"].fields["previous_page"].initial == about_url
+
+        # invalid referrer; use default
+        about_url = reverse("about")
+        resp = client.get(contact_url, HTTP_REFERER=about_url + '"onmouseover="alert(26)"')
+        assert resp.context["form"].fields["previous_page"].initial == portal_url

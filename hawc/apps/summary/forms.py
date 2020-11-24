@@ -7,11 +7,11 @@ from django import forms
 from django.urls import reverse
 from openpyxl import load_workbook
 from openpyxl.utils.exceptions import InvalidFileException
-from selectable import forms as selectable
 
 from ..animal.lookups import EndpointByAssessmentLookup, EndpointByAssessmentLookupHtml
 from ..animal.models import Endpoint
 from ..assessment.models import EffectTag
+from ..common import selectable
 from ..common.forms import BaseFormHelper
 from ..common.helper import read_excel
 from ..epi.models import Outcome
