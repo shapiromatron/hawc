@@ -1,4 +1,5 @@
 import _ from "lodash";
+import React from "react";
 
 const NA_KEYS = [10, 20],
     NR_KEYS = [12, 22],
@@ -21,6 +22,26 @@ const NA_KEYS = [10, 20],
         35: "-",
         36: "+",
         37: "++",
+    },
+    SCORE_TEXT_JSX = {
+        10: {"N/A"},
+        12: {"NR"},
+        14: <><i className="fa fa-minus"></i> <i className="fa fa-minus"></i></>,
+        15: <i className="fa fa-minus"></i>,
+        16: <i className="fa fa-plus"></i>,
+        17: <><i className="fa fa-plus"></i> <i className="fa fa-plus"></i></>,
+
+        20: {"N/A"},
+        22: {"NR"},
+        24: <><i className="fa fa-minus"></i> <i className="fa fa-minus"></i></>,
+        25: <i className="fa fa-minus"></i>,
+        26: <i className="fa fa-plus"></i>,
+        27: <><i className="fa fa-plus"></i> <i className="fa fa-plus"></i></>,
+
+        34: <><i className="fa fa-minus"></i> <i className="fa fa-minus"></i></>,
+        35: <i className="fa fa-minus"></i>,
+        36: <i className="fa fa-plus"></i>,
+        37: <><i className="fa fa-plus"></i> <i className="fa fa-plus"></i></>,
     },
     SCORE_SHADES = {
         10: "#E8E8E8",
@@ -120,6 +141,11 @@ const NA_KEYS = [10, 20],
         [BIAS_DIRECTION_UP]: "⬆",
         [BIAS_DIRECTION_DOWN]: "⬇",
     },
+    BIAS_DIRECTION_SIMPLE_JSX = {
+        [BIAS_DIRECTION_UNKNOWN]: <></>,
+        [BIAS_DIRECTION_UP]: <i className="fa fa-arrow-up"></i>,
+        [BIAS_DIRECTION_DOWN]: <i className="fa fa-arrow-down"></i>,
+    },
     BIAS_DIRECTION_VERBOSE = {
         [BIAS_DIRECTION_UNKNOWN]: "",
         [BIAS_DIRECTION_UP]: "Bias direction up (Away from null)",
@@ -207,6 +233,7 @@ export {
     NA_KEYS,
     NR_KEYS,
     SCORE_TEXT,
+    SCORE_TEXT_JSX,
     SCORE_SHADES,
     SCORE_TEXT_DESCRIPTION,
     SCORE_TEXT_DESCRIPTION_LEGEND,
@@ -216,6 +243,7 @@ export {
     BIAS_DIRECTION_DOWN,
     BIAS_DIRECTION_CHOICES,
     BIAS_DIRECTION_SIMPLE,
+    BIAS_DIRECTION_SIMPLE_JSX,
     BIAS_DIRECTION_VERBOSE,
     BIAS_DIRECTION_COMPACT,
     SCORE_BAR_WIDTH_PERCENTAGE,
