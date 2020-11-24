@@ -1,5 +1,7 @@
 from django.contrib import admin
 from django.utils.html import format_html
+from treebeard.admin import TreeAdmin
+from treebeard.forms import movenodeform_factory
 
 from . import models
 
@@ -35,3 +37,12 @@ class DataPivotAdmin(admin.ModelAdmin):
         return format_html(f"<a href='{obj.get_absolute_url()}'>{obj.id}</a>")
 
     show_url.short_description = "URL"
+
+
+@admin.register(models.SummaryText)
+class SummaryTextAdmin(TreeAdmin):
+    list_display = (
+        "title",
+        "created",
+    )
+    form = movenodeform_factory(models.SummaryText)

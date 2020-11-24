@@ -1,5 +1,5 @@
 from django.shortcuts import get_object_or_404
-from rest_framework import viewsets
+from rest_framework import exceptions, viewsets
 from rest_framework.decorators import action
 from rest_framework.filters import BaseFilterBackend
 from rest_framework.response import Response
@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from ..assessment.api import (
     AssessmentLevelPermissions,
     AssessmentViewset,
+    AssessmentEditViewset,
     DisabledPagination,
     InAssessmentFilter,
 )
@@ -97,3 +98,20 @@ class VisualViewset(AssessmentViewset):
 
     def get_queryset(self):
         return super().get_queryset().select_related("assessment")
+
+
+class SummaryTextViewset(AssessmentEditViewset):
+    assessment_filter_args = "assessment"
+    model = models.SummaryText
+    pagination_class = DisabledPagination
+    filter_backends = (InAssessmentFilter,)
+    serializer_class = serializers.SummaryTextSerializer
+
+    def get_queryset(self):
+        return self.model.objects.all()
+
+    def create(self, request, *args, **kwargs):
+        self.assessment = get_object_or_404(Assessment, id=request.data.get("assessment", -1))
+        if not self.assessment.user_can_edit_object(request.user):
+            raise exceptions.PermissionDenied()
+        return super().create(request, *args, **kwargs)

@@ -121,43 +121,6 @@ class SummaryText(MP_Node):
         root = cls.get_assessment_root_node(assessment_id)
         return cls.get_tree(parent=root)
 
-    @classmethod
-    def create(cls, form):
-        instance = form.save(commit=False)
-        sibling = form.cleaned_data.get("sibling")
-        if sibling:
-            return sibling.add_sibling(pos="right", instance=instance)
-        else:
-            parent = form.cleaned_data.get(
-                "parent", SummaryText.get_assessment_root_node(instance.assessment.id)
-            )
-            sibling = parent.get_first_child()
-            if sibling:
-                return sibling.add_sibling(pos="first-sibling", instance=instance)
-            else:
-                return parent.add_child(instance=instance)
-
-    def update(self, form):
-        data = form.cleaned_data
-        self.title = data["title"]
-        self.slug = data["slug"]
-        self.text = data["text"]
-        self.save()
-        self.move_st(parent=data.get("parent"), sibling=data.get("sibling"))
-
-    def move_st(self, parent=None, sibling=None):
-        if parent is not None and parent.assessment != self.assessment:
-            raise Exception("Parent assessment != self assessment")
-
-        if sibling is not None and sibling.assessment != self.assessment:
-            raise Exception("Sibling assessment != self assessment")
-
-        if sibling:
-            if self.get_prev_sibling() != sibling:
-                self.move(sibling, pos="right")
-        elif parent:
-            self.move(parent, pos="first-child")
-
     def get_absolute_url(self):
         return f"{reverse('summary:list', kwargs={'assessment': self.assessment.pk})}#{self.slug}"
 

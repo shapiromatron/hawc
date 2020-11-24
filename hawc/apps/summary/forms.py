@@ -450,90 +450,13 @@ class PrefilterMixin:
 
 
 class SummaryTextForm(forms.ModelForm):
-
-    parent = forms.ModelChoiceField(queryset=models.SummaryText.objects.all(), required=False)
-    sibling = forms.ModelChoiceField(
-        label="Insert After", queryset=models.SummaryText.objects.all(), required=False
-    )
-
     class Meta:
         model = models.SummaryText
-        fields = (
-            "title",
-            "slug",
-            "text",
-        )
+        fields = "__all__"
 
     def __init__(self, *args, **kwargs):
-        assessment = kwargs.pop("parent", None)
+        kwargs.pop("parent", None)
         super().__init__(*args, **kwargs)
-        if assessment:
-            self.instance.assessment = assessment
-        qs = models.SummaryText.get_assessment_qs(self.instance.assessment.id)
-        self.fields["parent"].queryset = qs
-        self.fields["sibling"].queryset = qs
-        self.helper = self.setHelper()
-
-    def clean_parent(self):
-        parent = self.cleaned_data.get("parent")
-        if parent is not None and parent.assessment != self.instance.assessment:
-            err = "Parent must be from the same assessment"
-            raise forms.ValidationError(err)
-        return parent
-
-    def clean_sibling(self):
-        sibling = self.cleaned_data.get("sibling")
-        if sibling is not None and sibling.assessment != self.instance.assessment:
-            err = "Sibling must be from the same assessment"
-            raise forms.ValidationError(err)
-        return sibling
-
-    def clean_title(self):
-        title = self.cleaned_data["title"]
-        pk_exclusion = {"id": self.instance.id or -1}
-        if (
-            models.SummaryText.objects.filter(assessment=self.instance.assessment, title=title)
-            .exclude(**pk_exclusion)
-            .count()
-            > 0
-        ):
-            err = "Title must be unique for assessment."
-            raise forms.ValidationError(err)
-        return title
-
-    def clean_slug(self):
-        slug = self.cleaned_data["slug"]
-        pk_exclusion = {"id": self.instance.id or -1}
-        if (
-            models.SummaryText.objects.filter(assessment=self.instance.assessment, slug=slug)
-            .exclude(**pk_exclusion)
-            .count()
-            > 0
-        ):
-            err = "Title must be unique for assessment."
-            raise forms.ValidationError(err)
-        return slug
-
-    def setHelper(self):
-
-        for fld in list(self.fields.keys()):
-            widget = self.fields[fld].widget
-            if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "col-md-12"
-
-        cancel_url = reverse("summary:list", kwargs={"pk": self.instance.assessment.id})
-        inputs = {
-            "form_actions": [
-                cfl.Submit("save", "Save"),
-                cfl.HTML(
-                    '<a class="btn btn-danger" id="deleteSTBtn" href="#deleteST" data-toggle="modal">Delete</a>'
-                ),
-                cfl.HTML(f'<a class="btn btn-light" href="{cancel_url}" >Cancel</a>'),
-            ]
-        }
-        helper = BaseFormHelper(self, **inputs)
-
-        return helper
 
 
 class VisualForm(forms.ModelForm):

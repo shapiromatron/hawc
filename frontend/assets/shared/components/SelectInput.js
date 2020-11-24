@@ -2,7 +2,7 @@ import React, {Component} from "react";
 import PropTypes from "prop-types";
 import _ from "lodash";
 
-import "./SelectInput.css";
+import {errorsDiv, inputClass} from "./inputs";
 
 class SelectInput extends Component {
     /**
@@ -42,15 +42,15 @@ class SelectInput extends Component {
     }
 
     renderField() {
-        let {id, choices, name, multiple, selectSize, style} = this.props,
-            className = this.props.className || "react-select",
+        let {id, choices, name, errors, multiple, selectSize, style} = this.props,
+            className = this.props.className || "form-control",
             value = this.props.value || _.first(choices).id;
 
         return (
             <select
                 id={id || null}
                 style={style}
-                className={className}
+                className={inputClass(className, errors)}
                 value={value}
                 onChange={this.handleSelect}
                 multiple={multiple}
@@ -68,7 +68,7 @@ class SelectInput extends Component {
     }
 
     render() {
-        let {fieldOnly, helpText} = this.props;
+        let {errors, fieldOnly, helpText} = this.props;
         if (fieldOnly) {
             return this.renderField();
         }
@@ -76,6 +76,7 @@ class SelectInput extends Component {
             <div className="form-group">
                 {this.renderLabel()}
                 {this.renderField()}
+                {errorsDiv(errors)}
                 {helpText ? <p className="form-text text-muted">{this.props.helpText}</p> : null}
             </div>
         );
@@ -94,6 +95,7 @@ SelectInput.propTypes = {
     id: PropTypes.string,
     style: PropTypes.object,
     value: PropTypes.any.isRequired,
+    errors: PropTypes.array,
     name: PropTypes.string,
     multiple: PropTypes.bool.isRequired,
     selectSize: PropTypes.number,
