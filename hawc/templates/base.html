@@ -53,10 +53,12 @@
               <p>Please use a different browser.</p>
             </div>
             {% endif %}
-            {% block content_header %}{ endblock content_header %}
+            {% block content_header %}{% endblock content_header %}
             {% block content_outer %}
-              <div class="overflow-auto">
+              <div class="row">
+                <div class="col overflow-auto">
                 {% block content %}{% endblock content %}
+                </div>
               </div>
             {% endblock content_outer %}
           </div>
