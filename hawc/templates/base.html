@@ -34,28 +34,32 @@
     {% block content_row_outer %}
       <div class="row no-gutters" style="min-height: 100vh;">
         {% block sidebar_outer %}{% endblock sidebar_outer %}
-        <div id="main-content-container" class="col p-2 container-fluid no-gutter overflow-auto">
-          {% block breadcrumbs_outer %}{% endblock breadcrumbs_outer %}
+        <div id="main-content" class="col overflow-auto">
+          <div id="main-content-container" class="container-fluid">
+            {% block breadcrumbs_outer %}{% endblock breadcrumbs_outer %}
 
-          {% include "includes/messages.html" %}
+            {% include "includes/messages.html" %}
 
-          {% if UA_SUPPORTED is False %}
-          <div class="alert alert-danger">
-            <p><b>Warning:</b> Your current browser has not been tested extensively with this website, which may result in
-              some some errors with functionality. The following browsers are fully supported:</p>
-            <ul>
-              <li><a href="https://www.google.com/chrome/" target="_blank">Google Chrome</a></li>
-              <li><a href="https://www.mozilla.org/firefox/" target="_blank">Mozilla Firefox</a></li>
-              <li><a href="https://www.microsoft.com/en-us/edge" target="_blank">Microsoft Edge</a></li>
-              <li><a href="https://www.apple.com/safari/" target="_blank">Apple Safari</a></li>
-            </ul>
-            <p>Please use a different browser.</p>
+            {% if UA_SUPPORTED is False %}
+            <div class="alert alert-danger">
+              <p><b>Warning:</b> Your current browser has not been tested extensively with this website, which may result in
+                some some errors with functionality. The following browsers are fully supported:</p>
+              <ul>
+                <li><a href="https://www.google.com/chrome/" target="_blank">Google Chrome</a></li>
+                <li><a href="https://www.mozilla.org/firefox/" target="_blank">Mozilla Firefox</a></li>
+                <li><a href="https://www.microsoft.com/en-us/edge" target="_blank">Microsoft Edge</a></li>
+                <li><a href="https://www.apple.com/safari/" target="_blank">Apple Safari</a></li>
+              </ul>
+              <p>Please use a different browser.</p>
+            </div>
+            {% endif %}
+            {% block content_header %}{ endblock content_header %}
+            {% block content_outer %}
+              <div class="overflow-auto">
+                {% block content %}{% endblock content %}
+              </div>
+            {% endblock content_outer %}
           </div>
-          {% endif %}
-
-          {% block content_outer %}
-            {% block content %}{% endblock content %}
-          {% endblock content_outer %}
         </div>
       </div>
     {% endblock content_row_outer %}
