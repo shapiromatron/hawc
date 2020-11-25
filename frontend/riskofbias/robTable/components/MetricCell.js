@@ -30,7 +30,7 @@ class MetricCell extends Component {
                         color: textColor,
                     }}
                     title={firstScore.metric.name}>
-                    {displaySettings.symbolText} {displaySettings.directionText}
+                    {displaySettings.scoresJSX} {displaySettings.directionJSX}
                 </span>
             </div>
         );

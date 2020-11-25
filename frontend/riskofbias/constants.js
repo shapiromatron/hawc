@@ -24,24 +24,48 @@ const NA_KEYS = [10, 20],
         37: "++",
     },
     SCORE_TEXT_JSX = {
-        10: {"N/A"},
-        12: {"NR"},
-        14: <><i className="fa fa-minus"></i> <i className="fa fa-minus"></i></>,
+        10: <>{"N/A"}</>,
+        12: <>{"NR"}</>,
+        14: (
+            <>
+                <i className="fa fa-minus"></i>&nbsp;<i className="fa fa-minus"></i>
+            </>
+        ),
         15: <i className="fa fa-minus"></i>,
         16: <i className="fa fa-plus"></i>,
-        17: <><i className="fa fa-plus"></i> <i className="fa fa-plus"></i></>,
+        17: (
+            <>
+                <i className="fa fa-plus"></i>&nbsp;<i className="fa fa-plus"></i>
+            </>
+        ),
 
-        20: {"N/A"},
-        22: {"NR"},
-        24: <><i className="fa fa-minus"></i> <i className="fa fa-minus"></i></>,
+        20: <>{"N/A"}</>,
+        22: <>{"NR"}</>,
+        24: (
+            <>
+                <i className="fa fa-minus"></i>&nbsp;<i className="fa fa-minus"></i>
+            </>
+        ),
         25: <i className="fa fa-minus"></i>,
         26: <i className="fa fa-plus"></i>,
-        27: <><i className="fa fa-plus"></i> <i className="fa fa-plus"></i></>,
+        27: (
+            <>
+                <i className="fa fa-plus"></i>&nbsp;<i className="fa fa-plus"></i>
+            </>
+        ),
 
-        34: <><i className="fa fa-minus"></i> <i className="fa fa-minus"></i></>,
+        34: (
+            <>
+                <i className="fa fa-minus"></i>&nbsp;<i className="fa fa-minus"></i>
+            </>
+        ),
         35: <i className="fa fa-minus"></i>,
         36: <i className="fa fa-plus"></i>,
-        37: <><i className="fa fa-plus"></i> <i className="fa fa-plus"></i></>,
+        37: (
+            <>
+                <i className="fa fa-plus"></i>&nbsp;<i className="fa fa-plus"></i>
+            </>
+        ),
     },
     SCORE_SHADES = {
         10: "#E8E8E8",
@@ -127,9 +151,9 @@ const NA_KEYS = [10, 20],
     BIAS_DIRECTION_UP = 1,
     BIAS_DIRECTION_DOWN = 2,
     BIAS_DIRECTION_CHOICES = {
-        [BIAS_DIRECTION_UNKNOWN]: "? (Unknown/not specified)",
-        [BIAS_DIRECTION_UP]: "⬆ (Away from null)",
-        [BIAS_DIRECTION_DOWN]: "⬇ (Towards null)",
+        [BIAS_DIRECTION_UNKNOWN]: "Unknown / not specified",
+        [BIAS_DIRECTION_UP]: "Up (Away from null)",
+        [BIAS_DIRECTION_DOWN]: "Down (Towards null)",
     },
     BIAS_DIRECTION_COMPACT = {
         [BIAS_DIRECTION_UNKNOWN]: "",
@@ -164,20 +188,24 @@ const NA_KEYS = [10, 20],
                 .map(score => score.score_shade)
                 .uniq()
                 .value(),
+            scoresJSX = _.chain(sortedScores)
+                .map(score => SCORE_TEXT_JSX[score.score])
+                .zip(_.fill(Array(scores.length), " / "))
+                .flatten()
+                .slice(0, -1)
+                .value(),
             symbols = _.chain(sortedScores)
                 .map(score => score.score_symbol)
                 .uniq()
                 .value(),
-            symbolText = symbols.join(" / "),
             symbolShortText = symbols.length === 1 ? symbols[0] : `${defaultScore.score_symbol}✱`,
             directions = _.chain(sortedScores)
                 .map(score => score.bias_direction)
                 .uniq()
                 .value(),
-            directionText = _.chain(directions)
-                .map(d => BIAS_DIRECTION_SIMPLE[d])
-                .value()
-                .join(""),
+            directionJSX = _.chain(directions)
+                .map(d => BIAS_DIRECTION_SIMPLE_JSX[d])
+                .value(),
             reactStyle,
             svgStyle,
             cssStyle;
@@ -213,11 +241,11 @@ const NA_KEYS = [10, 20],
         return {
             reactStyle,
             cssStyle,
+            scoresJSX,
             symbols,
-            symbolText,
             symbolShortText,
             directions,
-            directionText,
+            directionJSX,
             svgStyle,
         };
     },

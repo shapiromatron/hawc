@@ -2,11 +2,16 @@ import _ from "lodash";
 import $ from "$";
 import * as d3 from "d3";
 
+import React from "react";
+import ReactDOMServer from "react-dom/server";
+
 import D3Plot from "utils/D3Plot";
 
 import {
     getMultiScoreDisplaySettings,
+    SCORE_TEXT_JSX,
     BIAS_DIRECTION_SIMPLE,
+    BIAS_DIRECTION_SIMPLE_JSX,
     BIAS_DIRECTION_VERBOSE,
 } from "riskofbias/constants";
 
@@ -100,7 +105,9 @@ class Donut extends D3Plot {
                     weight: 1 / numMetrics,
                     score: defaultScore.score,
                     score_text: defaultScore.score_text,
+                    score_jsx: SCORE_TEXT_JSX[defaultScore.score],
                     direction_simple: BIAS_DIRECTION_SIMPLE[defaultScore.bias_direction],
+                    direction_jsx: BIAS_DIRECTION_SIMPLE_JSX[defaultScore.bias_direction],
                     direction_verbose: BIAS_DIRECTION_VERBOSE[defaultScore.bias_direction],
                     score_svg_style: data.svgStyle,
                     score_css_style: data.cssStyle,
@@ -389,7 +396,13 @@ class Donut extends D3Plot {
         this.subset_div.append(`<h4>${metric.parent_name}</h4>`);
         var ol = $('<ol class="score-details"></ol>'),
             div = $("<div>")
-                .text(metric.score_text + " " + metric.direction_simple)
+                .html(
+                    ReactDOMServer.renderToStaticMarkup(
+                        <>
+                            {metric.score_jsx} {metric.direction_jsx}
+                        </>
+                    )
+                )
                 .attr("class", "scorebox")
                 .css(metric.score_css_style),
             metric_txt = $("<b>").text(metric.criterion),
