@@ -4297,6 +4297,78 @@
     text: Root-level text
     created: 2020-04-10 17:45:45.143229+00:00
     last_updated: 2020-04-10 17:45:45.143229+00:00
+- model: summary.summarytext
+  pk: 4
+  fields:
+    path: '00010001'
+    depth: 2
+    numchild: 2
+    assessment: 2
+    title: '1'
+    slug: '1'
+    text: <p>Level 1 text.</p>
+    created: 2020-11-25 20:22:28.807081+00:00
+    last_updated: 2020-11-25 20:23:38.366594+00:00
+- model: summary.summarytext
+  pk: 5
+  fields:
+    path: '00010003'
+    depth: 2
+    numchild: 0
+    assessment: 2
+    title: '2'
+    slug: '2'
+    text: <p>Level 2 text.</p>
+    created: 2020-11-25 20:22:42.083087+00:00
+    last_updated: 2020-11-25 20:23:43.154300+00:00
+- model: summary.summarytext
+  pk: 6
+  fields:
+    path: '000100010001'
+    depth: 3
+    numchild: 0
+    assessment: 2
+    title: 1a
+    slug: 1a
+    text: <p>Level 1A text.</p>
+    created: 2020-11-25 20:24:01.021842+00:00
+    last_updated: 2020-11-25 20:24:01.021887+00:00
+- model: summary.summarytext
+  pk: 7
+  fields:
+    path: '000100010002'
+    depth: 3
+    numchild: 2
+    assessment: 2
+    title: 1b
+    slug: 1b
+    text: <p>Level 1B text.</p>
+    created: 2020-11-25 20:24:16.857811+00:00
+    last_updated: 2020-11-25 20:24:23.483729+00:00
+- model: summary.summarytext
+  pk: 8
+  fields:
+    path: '0001000100020001'
+    depth: 4
+    numchild: 0
+    assessment: 2
+    title: 1-B-alpha
+    slug: 1-B-alpha
+    text: <p>Level 1-B-alpha text.</p>
+    created: 2020-11-25 20:25:04.079740+00:00
+    last_updated: 2020-11-25 20:25:04.079763+00:00
+- model: summary.summarytext
+  pk: 9
+  fields:
+    path: '0001000100020002'
+    depth: 4
+    numchild: 0
+    assessment: 2
+    title: 1-B-beta
+    slug: 1-B-beta
+    text: <p>Level 1-B-beta text.</p>
+    created: 2020-11-25 20:25:37.723914+00:00
+    last_updated: 2020-11-25 20:25:37.723938+00:00
 - model: summary.visual
   pk: 1
   fields:
