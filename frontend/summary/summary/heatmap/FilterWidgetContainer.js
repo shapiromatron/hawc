@@ -37,38 +37,36 @@ class FilterWidget extends Component {
 
         return (
             <div
+                className="pb-2"
                 style={{
                     minHeight: "100px",
                     maxHeight,
-                    padding: "10px 0",
                     overflow: "hidden",
                     display: "flex",
                     flexDirection: "column",
                 }}>
                 <div
+                    className="mb-1 p-1 pl-3"
                     style={{
                         backgroundColor: colorScale(maxValue),
                         color: h.getTextContrastColor(colorScale(maxValue)),
-                        padding: "2px 10px",
                         flex: 0,
                     }}>
-                    <h4>
-                        {h.titleCase(widget.column)}
-                        <div className="btn-group float-right">
-                            <button
-                                className="btn btn-sm"
-                                onClick={() => selectAllFilterWidget(widget.column)}
-                                title="Select all items">
-                                <i className="fa fa-check-circle"></i>
-                            </button>
-                            <button
-                                className="btn btn-sm"
-                                onClick={() => selectNoneFilterWidget(widget.column)}
-                                title="De-select all items">
-                                <i className="fa fa-times-circle"></i>
-                            </button>
-                        </div>
-                    </h4>
+                    <div className="btn-group float-right">
+                        <button
+                            className="btn btn-sm text-white"
+                            onClick={() => selectAllFilterWidget(widget.column)}
+                            title="Select all items">
+                            <i className="fa fa-lg fa-check-circle"></i>
+                        </button>
+                        <button
+                            className="btn btn-sm text-white"
+                            onClick={() => selectNoneFilterWidget(widget.column)}
+                            title="De-select all items">
+                            <i className="fa fa-lg fa-times-circle"></i>
+                        </button>
+                    </div>
+                    <h4 className="m-0">{h.titleCase(widget.column)}</h4>
                 </div>
                 <div
                     style={{
@@ -95,8 +93,14 @@ class FilterWidget extends Component {
                 {filterWidgetExtension && filterWidgetExtension.hasModal
                     ? this.renderButton(widget, item)
                     : null}
-                <label className="form-check">
+                <label className="form-check font-weight-normal" role="button">
+                    <input
+                        checked={itemStore[item]}
+                        type="checkbox"
+                        onChange={e => toggleItemSelection(widget.column, item, e.target.checked)}
+                    />
                     <div
+                        className="mx-1"
                         style={{
                             backgroundColor: colorScale(numItems),
                             color: h.getTextContrastColor(colorScale(numItems)),
@@ -108,14 +112,7 @@ class FilterWidget extends Component {
                         }}>
                         <span>{numItems}</span>
                     </div>
-                    <input
-                        checked={itemStore[item]}
-                        type="checkbox"
-                        onChange={function(e) {
-                            toggleItemSelection(widget.column, item, e.target.checked);
-                        }}
-                    />
-                    <span>&nbsp;{item == "" ? "<null>" : item}</span>
+                    <span>{item == "" ? "<null>" : item}</span>
                 </label>
             </div>
         );
