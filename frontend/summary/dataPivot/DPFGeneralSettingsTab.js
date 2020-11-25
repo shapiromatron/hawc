@@ -19,13 +19,16 @@ let build_settings_general_tab = function(self) {
             return div.html(tbl);
         };
 
-    // update whenever tab is clicked
-    const legend = new LegendSettings(self);
-    self.$div.on("shown.bs.tab", 'a.dp_general_tab[data-toggle="tab"]', () => {
-        legend.update_legend();
-    });
+    const legendSettings = new LegendSettings(self);
 
-    return tab.html([build_general_settings(), "<hr>", legend.render()]);
+    // update whenever tab is clicked
+    self.$div.on("shown.bs.tab", 'a.dp_general_tab[data-toggle="tab"]', () =>
+        legendSettings.update_legend()
+    );
+
+    self.legend = legendSettings.legend;
+
+    return tab.html([build_general_settings(), "<hr>", legendSettings.render()]);
 };
 
 export default build_settings_general_tab;

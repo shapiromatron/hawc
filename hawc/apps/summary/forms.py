@@ -839,6 +839,8 @@ class DataPivotUploadForm(DataPivotForm):
             if worksheet_name and worksheet_name not in wb.sheetnames:
                 self.add_error("worksheet_name", f"Worksheet name {worksheet_name} not found.")
                 return
+            else:
+                worksheet_name = wb.sheetnames[0]
 
             df = read_excel(excel_file, sheet_name=worksheet_name)
 

@@ -1,4 +1,3 @@
-import _ from "lodash";
 import {inject, observer} from "mobx-react";
 import React, {Component} from "react";
 import PropTypes from "prop-types";
@@ -29,6 +28,11 @@ class Root extends Component {
     componentDidMount() {
         const {store} = this.props;
         store.fetchItems();
+    }
+
+    componentDidUpdate() {
+        const {store} = this.props;
+        store.renderSmartTags();
     }
 
     render() {
@@ -62,7 +66,6 @@ class Root extends Component {
                     style={{
                         backgroundColor: "#e9ecef",
                         borderLeft: "3px solid grey",
-                        height: "100vh",
                     }}>
                     {editMode ? (
                         <button
@@ -78,18 +81,23 @@ class Root extends Component {
                             ? store.visibleItems.map(item => (
                                   <a
                                       key={item.id}
+                                      style={{paddingLeft: 15 * (item.depth - 2)}}
                                       href="#"
                                       className="nav-link"
                                       onClick={e => {
                                           e.preventDefault();
                                           store.updateItem(item);
                                       }}>
-                                      {_.repeat("—", item.depth - 1)}&nbsp;{item.title}
+                                      {item.title}
                                   </a>
                               ))
                             : store.visibleItems.map(item => (
-                                  <a key={item.id} className="nav-link" href={`#${item.slug}`}>
-                                      {_.repeat("—", item.depth - 1)}&nbsp;{item.title}
+                                  <a
+                                      key={item.id}
+                                      style={{paddingLeft: 15 * (item.depth - 2)}}
+                                      className="nav-link"
+                                      href={`#${item.slug}`}>
+                                      {item.title}
                                   </a>
                               ))}
                     </nav>

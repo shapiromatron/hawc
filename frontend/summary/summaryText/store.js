@@ -1,6 +1,8 @@
+import $ from "$";
 import _ from "lodash";
 import {action, computed, observable} from "mobx";
 
+import SmartTagContainer from "smartTags/SmartTagContainer";
 import h from "shared/utils/helpers";
 
 const getLabelText = function(item) {
@@ -15,7 +17,8 @@ class SummaryTextStore {
     @observable isEditing = false;
     @observable isConfirmDelete = false;
 
-    constructor(config) {
+    constructor(rootElement, config) {
+        this.smartTagContainer = new SmartTagContainer($(rootElement), {showOnStartup: false});
         this.config = config;
     }
 
@@ -130,6 +133,9 @@ class SummaryTextStore {
     }
     @action.bound updateFormData(key, value) {
         this.formData[key] = value;
+    }
+    @action.bound renderSmartTags() {
+        this.smartTagContainer.renderAndEnable();
     }
 
     @computed get hasItems() {

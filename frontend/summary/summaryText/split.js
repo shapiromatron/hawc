@@ -6,7 +6,7 @@ import Root from "./Root";
 import SummaryTextStore from "./store";
 
 export default function(el, config) {
-    const store = new SummaryTextStore(config);
+    const store = new SummaryTextStore(el, config);
     ReactDOM.render(
         <Provider store={store}>
             <Root />
