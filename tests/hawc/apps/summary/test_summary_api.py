@@ -96,8 +96,8 @@ class TestVisual:
 
         assert data == json.loads(fn.read_text())
 
-    def test_heatmap(self, rewrite_data_files: bool):
-        self._test_visual_detail_api(rewrite_data_files, "heatmap")
+    def test_rob_heatmap(self, rewrite_data_files: bool):
+        self._test_visual_detail_api(rewrite_data_files, "rob-heatmap")
 
     def test_crossview(self, rewrite_data_files: bool):
         self._test_visual_detail_api(rewrite_data_files, "crossview")
@@ -110,6 +110,9 @@ class TestVisual:
 
     def test_embedded_tableau(self, rewrite_data_files: bool):
         self._test_visual_detail_api(rewrite_data_files, "embedded-tableau")
+
+    def test_exploratory_heatmap(self, rewrite_data_files: bool):
+        self._test_visual_detail_api(rewrite_data_files, "exploratory-heatmap")
 
 
 @pytest.mark.django_db
