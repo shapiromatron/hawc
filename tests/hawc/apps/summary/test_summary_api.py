@@ -96,6 +96,9 @@ class TestVisual:
 
         assert data == json.loads(fn.read_text())
 
+    def test_bioassay_aggregation(self, rewrite_data_files: bool):
+        self._test_visual_detail_api(rewrite_data_files, "bioassay-aggregation")
+
     def test_rob_heatmap(self, rewrite_data_files: bool):
         self._test_visual_detail_api(rewrite_data_files, "rob-heatmap")
 

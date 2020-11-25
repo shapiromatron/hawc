@@ -4471,6 +4471,24 @@
     last_updated: 2020-11-25 14:29:33.991892+00:00
     endpoints: []
     studies: []
+- model: summary.visual
+  pk: 10
+  fields:
+    title: bioassay-aggregation
+    slug: bioassay-aggregation
+    assessment: 2
+    visual_type: 0
+    dose_units: 1
+    prefilters: '{}'
+    settings: '{}'
+    caption: ''
+    published: true
+    sort_order: short_citation
+    created: 2020-11-25 18:32:07.260499+00:00
+    last_updated: 2020-11-25 18:35:00.094667+00:00
+    endpoints:
+    - 3
+    studies: []
 - model: summary.datapivot
   pk: 1
   fields:

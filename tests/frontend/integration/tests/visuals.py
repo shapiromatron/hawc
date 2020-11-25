@@ -107,6 +107,11 @@ def _check_visuals_working(driver, root_url):
     assert len(driver.find_elements_by_css_selector("svg.d3")) > 0
     assert len(driver.find_elements_by_css_selector("svg.d3 g rect")) > 5
 
+    h.go_to(root_url + "/summary/visual/10/")
+    h.wait_until(h.Text("bioassay-aggregation").exists)
+    assert len(driver.find_elements_by_css_selector("svg.d3")) > 0
+    assert len(driver.find_elements_by_css_selector("svg.d3 g circle")) > 5
+
 
 def visuals(driver, root_url):
     shared.login(root_url)

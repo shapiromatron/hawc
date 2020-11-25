@@ -81,11 +81,13 @@ class VisualCollection {
             .map(d => `<option value="${d}">${d}</option>`)
             .value();
 
-        return $("<div>").append(
-            '<label class="col-form-label">Filter by visualization type:</label>',
-            $("<select class='form-control'>")
-                .append(types)
-                .change(this.filterRows.bind(this))
+        return $("<div class='form-row pb-2'>").append(
+            '<div class="col-auto"><label class="col-form-label">Filter by visualization type:</label></div>',
+            $('<div class="col-auto">').append(
+                $("<select class='form-control'>")
+                    .append(types)
+                    .change(this.filterRows.bind(this))
+            )
         );
     }
 
