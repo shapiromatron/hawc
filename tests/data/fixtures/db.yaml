@@ -4336,8 +4336,8 @@
 - model: summary.visual
   pk: 3
   fields:
-    title: heatmap
-    slug: heatmap
+    title: rob-heatmap
+    slug: rob-heatmap
     assessment: 2
     visual_type: 2
     dose_units: null
@@ -4428,8 +4428,8 @@
 - model: summary.visual
   pk: 8
   fields:
-    title: demo heatmap
-    slug: demo-heatmap
+    title: exploratory-heatmap
+    slug: exploratory-heatmap
     assessment: 2
     visual_type: 6
     dose_units: null
