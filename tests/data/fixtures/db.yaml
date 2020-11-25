@@ -361,7 +361,7 @@
 - model: myuser.hawcuser
   fields:
     password: md5$OtMBo5HXuH5d$79fbf1f0ae6d765b17b29256920cc8ef
-    last_login: 2020-08-12 19:33:09.398007+00:00
+    last_login: 2020-11-25 20:21:43.412531+00:00
     is_superuser: true
     email: admin@hawcproject.org
     first_name: a
@@ -507,7 +507,7 @@
   fields:
     entity: 1
     term: 5
-    notes: ""
+    notes: ''
     approved_by: null
     approved_on: null
     deprecated_on: null
@@ -521,7 +521,7 @@
     last_url_visited: /portal/
     comment: I like this idea.
     reviewed: false
-    reviewer_notes: ""
+    reviewer_notes: ''
     created_on: 2020-08-12 14:11:50.023861+00:00
     last_updated: 2020-08-12 14:11:50.023861+00:00
 - model: assessment.dsstox
@@ -529,31 +529,31 @@
   fields:
     content:
       casrn: 7732-18-5
-      checksum: NA
-      collidingCasrn: null
-      collidingGsid: null
-      collidingPreferredName: null
       dtxcid: DTXCID106296
       dtxsid: DTXSID6026296
-      imageURL: http://actorws.epa.gov/actorws/chemical/image?dtxcid=DTXCID106296&w=150&h=150&fmt=svg
-      indigoInChIKey: XLYOFNOQVPJJNP-UHFFFAOYSA-N
-      infoMsg: null
-      jChemInChIKey: XLYOFNOQVPJJNP-UHFFFAOYSA-N
-      molFormula: H2O
-      molWeight: 18.015
-      msReadyForms: http://actorws.epa.gov/actorws/dsstox/v02/msready?identifier=DTXCID106296
-      origIdentifier: DTXSID6026296
-      preferredName: Water
-      processedAs: LOOKUP
-      qsarForms: http://actorws.epa.gov/actorws/dsstox/v02/qsar?identifier=DTXCID106296
-      reformattedIdentifier: false
       smiles: O
+      infoMsg: null
       synGsid: 26296
-      synIdentifier: DTXSID6026296
       synType: DSSTox_Substance_Id
-      trimmedLeadingZeros: false
-      trimmedWhitespace: false
+      checksum: NA
+      imageURL: http://actorws.epa.gov/actorws/chemical/image?dtxcid=DTXCID106296&w=150&h=150&fmt=svg
+      molWeight: 18.015
+      qsarForms: http://actorws.epa.gov/actorws/dsstox/v02/qsar?identifier=DTXCID106296
+      molFormula: H2O
       warningMsg: null
+      processedAs: LOOKUP
+      msReadyForms: http://actorws.epa.gov/actorws/dsstox/v02/msready?identifier=DTXCID106296
+      collidingGsid: null
+      jChemInChIKey: XLYOFNOQVPJJNP-UHFFFAOYSA-N
+      preferredName: Water
+      synIdentifier: DTXSID6026296
+      collidingCasrn: null
+      indigoInChIKey: XLYOFNOQVPJJNP-UHFFFAOYSA-N
+      origIdentifier: DTXSID6026296
+      trimmedWhitespace: false
+      trimmedLeadingZeros: false
+      reformattedIdentifier: false
+      collidingPreferredName: null
     created: 2020-08-12 19:34:12.687630+00:00
     last_updated: 2020-08-12 19:34:12.687630+00:00
 - model: assessment.dsstox
@@ -561,31 +561,31 @@
   fields:
     content:
       casrn: 1836-75-5
-      checksum: NA
-      collidingCasrn: null
-      collidingGsid: null
-      collidingPreferredName: null
       dtxcid: DTXCID30970
       dtxsid: DTXSID7020970
-      imageURL: http://actorws.epa.gov/actorws/chemical/image?dtxcid=DTXCID30970&w=150&h=150&fmt=svg
-      indigoInChIKey: XITQUSLLOSKDTB-UHFFFAOYSA-N
-      infoMsg: null
-      jChemInChIKey: XITQUSLLOSKDTB-UHFFFAOYSA-N
-      molFormula: C12H7Cl2NO3
-      molWeight: 284.09
-      msReadyForms: http://actorws.epa.gov/actorws/dsstox/v02/msready?identifier=DTXCID30970
-      origIdentifier: DTXSID7020970
-      preferredName: Nitrofen
-      processedAs: LOOKUP
-      qsarForms: http://actorws.epa.gov/actorws/dsstox/v02/qsar?identifier=DTXCID30970
-      reformattedIdentifier: false
       smiles: '[O-][N+](=O)C1=CC=C(OC2=C(Cl)C=C(Cl)C=C2)C=C1'
+      infoMsg: null
       synGsid: 20970
-      synIdentifier: DTXSID7020970
       synType: DSSTox_Substance_Id
-      trimmedLeadingZeros: false
-      trimmedWhitespace: false
+      checksum: NA
+      imageURL: http://actorws.epa.gov/actorws/chemical/image?dtxcid=DTXCID30970&w=150&h=150&fmt=svg
+      molWeight: 284.09
+      qsarForms: http://actorws.epa.gov/actorws/dsstox/v02/qsar?identifier=DTXCID30970
+      molFormula: C12H7Cl2NO3
       warningMsg: null
+      processedAs: LOOKUP
+      msReadyForms: http://actorws.epa.gov/actorws/dsstox/v02/msready?identifier=DTXCID30970
+      collidingGsid: null
+      jChemInChIKey: XITQUSLLOSKDTB-UHFFFAOYSA-N
+      preferredName: Nitrofen
+      synIdentifier: DTXSID7020970
+      collidingCasrn: null
+      indigoInChIKey: XITQUSLLOSKDTB-UHFFFAOYSA-N
+      origIdentifier: DTXSID7020970
+      trimmedWhitespace: false
+      trimmedLeadingZeros: false
+      reformattedIdentifier: false
+      collidingPreferredName: null
     created: 2020-08-12 19:45:56.718230+00:00
     last_updated: 2020-08-12 19:45:56.718230+00:00
 - model: assessment.assessment
@@ -700,7 +700,7 @@
 - model: assessment.doseunits
   pk: 2
   fields:
-    name: "\xB5M"
+    name: µM
     created: 2020-05-11 04:00:03.013851+00:00
     last_updated: 2020-05-11 04:00:03.013881+00:00
 - model: assessment.species
@@ -796,9 +796,9 @@
   fields:
     assessment: 1
     name: iris flowers
-    description: "<p>R. A. Fisher (1936). \"The use of multiple measurements in taxonomic
-      problems\". Annals of Eugenics. 7 (2): 179\u2013188. <a href=\"https://doi.org/10.1111/j.1469-1809.1936.tb02137.x\"
-      rel=\"noopener noreferrer\" target=\"_blank\">doi:10.1111/j.1469-1809.1936.tb02137</a></p>"
+    description: '<p>R. A. Fisher (1936). "The use of multiple measurements in taxonomic
+      problems". Annals of Eugenics. 7 (2): 179–188. <a href="https://doi.org/10.1111/j.1469-1809.1936.tb02137.x"
+      rel="noopener noreferrer" target="_blank">doi:10.1111/j.1469-1809.1936.tb02137</a></p>'
     published: true
     created: 2020-06-02 20:01:31.798361+00:00
     last_updated: 2020-06-02 20:04:30.023508+00:00
@@ -807,9 +807,9 @@
   fields:
     assessment: 2
     name: iris flowers final
-    description: "<p>R. A. Fisher (1936). \"The use of multiple measurements in taxonomic
-      problems\". Annals of Eugenics. 7 (2): 179\u2013188. <a href=\"https://doi.org/10.1111/j.1469-1809.1936.tb02137.x\"
-      rel=\"noopener noreferrer\" target=\"_blank\">doi:10.1111/j.1469-1809.1936.tb02137</a></p>"
+    description: '<p>R. A. Fisher (1936). "The use of multiple measurements in taxonomic
+      problems". Annals of Eugenics. 7 (2): 179–188. <a href="https://doi.org/10.1111/j.1469-1809.1936.tb02137.x"
+      rel="noopener noreferrer" target="_blank">doi:10.1111/j.1469-1809.1936.tb02137</a></p>'
     published: true
     created: 2020-06-02 20:02:31.798361+00:00
     last_updated: 2020-06-02 20:02:31.798361+00:00
@@ -818,9 +818,9 @@
   fields:
     assessment: 1
     name: iris flowers unpublished
-    description: "<p>R. A. Fisher (1936). \"The use of multiple measurements in taxonomic
-      problems\". Annals of Eugenics. 7 (2): 179\u2013188. <a href=\"https://doi.org/10.1111/j.1469-1809.1936.tb02137.x\"
-      rel=\"noopener noreferrer\" target=\"_blank\">doi:10.1111/j.1469-1809.1936.tb02137</a></p>"
+    description: '<p>R. A. Fisher (1936). "The use of multiple measurements in taxonomic
+      problems". Annals of Eugenics. 7 (2): 179–188. <a href="https://doi.org/10.1111/j.1469-1809.1936.tb02137.x"
+      rel="noopener noreferrer" target="_blank">doi:10.1111/j.1469-1809.1936.tb02137</a></p>'
     published: false
     created: 2020-06-02 20:02:31.798361+00:00
     last_updated: 2020-06-02 20:02:31.798361+00:00
@@ -831,16 +831,16 @@
     version: 1
     data: assessment/dataset-revision/iris.csv
     metadata:
+      filename: iris.csv
+      num_rows: 150
+      extension: .csv
+      num_columns: 5
       column_names:
       - sepal_length
       - sepal_width
       - petal_length
       - petal_width
       - species
-      extension: .csv
-      filename: iris.csv
-      num_columns: 5
-      num_rows: 150
     excel_worksheet_name: ''
     notes: <p>Original version.</p>
     created: 2020-06-02 20:01:31.858209+00:00
@@ -852,16 +852,16 @@
     version: 2
     data: assessment/dataset-revision/iris.xlsx
     metadata:
+      filename: iris.xlsx
+      num_rows: 150
+      extension: .xlsx
+      num_columns: 5
       column_names:
       - sepal_length
       - sepal_width
       - petal_length
       - petal_width
       - species
-      extension: .xlsx
-      filename: iris.xlsx
-      num_columns: 5
-      num_rows: 150
     excel_worksheet_name: ''
     notes: <p>Excel version</p>
     created: 2020-06-02 20:04:30.052588+00:00
@@ -873,16 +873,16 @@
     version: 1
     data: assessment/dataset-revision/iris_final.csv
     metadata:
+      filename: iris.csv
+      num_rows: 150
+      extension: .csv
+      num_columns: 5
       column_names:
       - sepal_length
       - sepal_width
       - petal_length
       - petal_width
       - species
-      extension: .csv
-      filename: iris.csv
-      num_columns: 5
-      num_rows: 150
     excel_worksheet_name: ''
     notes: <p>Original final version.</p>
     created: 2020-06-02 20:02:31.798361+00:00
@@ -894,16 +894,16 @@
     version: 1
     data: assessment/dataset-revision/iris.csv
     metadata:
+      filename: iris.csv
+      num_rows: 150
+      extension: .csv
+      num_columns: 5
       column_names:
       - sepal_length
       - sepal_width
       - petal_length
       - petal_width
       - species
-      extension: .csv
-      filename: iris.csv
-      num_columns: 5
-      num_rows: 150
     excel_worksheet_name: ''
     notes: <p>Original version.</p>
     created: 2020-06-02 20:01:31.858209+00:00
@@ -1583,9 +1583,6 @@
     published: false
     summary: ''
     editable: true
-    searches: []
-    identifiers:
-    - 6
 - model: study.study
   pk: 4
   fields:
@@ -1605,9 +1602,6 @@
     published: true
     summary: ''
     editable: true
-    searches:
-    - 4
-    identifiers: []
 - model: study.study
   pk: 5
   fields:
@@ -1632,10 +1626,6 @@
       rgb(249, 249, 249);">not</strong><span style="background-color: rgb(249, 249,
       249);">&nbsp;extract diarrhea, vulnerability to catch colds)</span></p>'
     editable: true
-    searches:
-    - 5
-    identifiers:
-    - 4
 - model: study.study
   pk: 6
   fields:
@@ -1660,10 +1650,6 @@
       5,</li><li>TMBPA (called BTM), BPC (called BPRO), BPAF (called BHF), BPAP (called
       BDP)</li></ul><p><br></p>
     editable: true
-    searches:
-    - 5
-    identifiers:
-    - 2
 - model: study.study
   pk: 7
   fields:
@@ -1694,10 +1680,6 @@
     summary: <p>Adapted from <a href="https://hawcproject.org/study/173483/" rel="noopener
       noreferrer" target="_blank">https://hawcproject.org/study/173483/</a></p>
     editable: true
-    searches:
-    - 5
-    identifiers:
-    - 5
 - model: study.study
   pk: 8
   fields:
@@ -1723,10 +1705,6 @@
     summary: <p>Adapted from <a href="https://hawcproject.org/study/41226/" rel="noopener
       noreferrer" target="_blank">https://hawcproject.org/study/41226/</a>.</p>
     editable: true
-    searches:
-    - 5
-    identifiers:
-    - 3
 - model: animal.experiment
   pk: 1
   fields:
@@ -2013,7 +1991,7 @@
     observation_time_text: ''
     data_location: ''
     expected_adversity_direction: 4
-    response_units: "\u03BCg/dL"
+    response_units: μg/dL
     data_type: C
     variance_type: 1
     confidence_interval: null
@@ -2032,7 +2010,6 @@
     results_notes: ''
     endpoint_notes: ''
     additional_fields: '{}'
-    effects: []
 - model: animal.endpoint
   pk: 2
   fields:
@@ -2073,7 +2050,6 @@
     results_notes: ''
     endpoint_notes: ''
     additional_fields: '{}'
-    effects: []
 - model: animal.endpoint
   pk: 3
   fields:
@@ -2114,8 +2090,6 @@
     results_notes: <p>results notes</p>
     endpoint_notes: <p>methods</p>
     additional_fields: '{}'
-    effects:
-    - 1
 - model: animal.endpoint
   pk: 6
   fields:
@@ -2156,7 +2130,6 @@
     results_notes: ''
     endpoint_notes: ''
     additional_fields: '{}'
-    effects: []
 - model: animal.endpoint
   pk: 7
   fields:
@@ -2197,7 +2170,6 @@
     results_notes: ''
     endpoint_notes: ''
     additional_fields: '{}'
-    effects: []
 - model: animal.endpointgroup
   pk: 1
   fields:
@@ -3882,8 +3854,6 @@
     outcome_n: null
     age_of_measurement: ''
     summary: ''
-    effects:
-    - 2
 - model: epi.comparisonset
   pk: 1
   fields:
@@ -4168,8 +4138,6 @@
       while the maximum vitellogenin inhibition (at 100 uM) was 99% of E2-mediated
       induction;* Tamoxifen>BPAF
     additional_fields: '{}'
-    effects:
-    - 1
 - model: invitro.ivendpointgroup
   pk: 1
   fields:
@@ -4266,7 +4234,7 @@
   fields:
     path: '0001'
     depth: 1
-    numchild: 0
+    numchild: 2
     assessment: 2
     title: assessment-2
     slug: assessment-2-slug
