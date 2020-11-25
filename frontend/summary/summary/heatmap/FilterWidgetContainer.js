@@ -90,9 +90,6 @@ class FilterWidget extends Component {
             numItems = itemRows.filter(itemRow => rows.includes(itemRow)).length;
         return (
             <div key={index}>
-                {filterWidgetExtension && filterWidgetExtension.hasModal
-                    ? this.renderButton(widget, item)
-                    : null}
                 <label className="form-check font-weight-normal" role="button">
                     <input
                         checked={itemStore[item]}
@@ -113,6 +110,9 @@ class FilterWidget extends Component {
                         <span>{numItems}</span>
                     </div>
                     <span>{item == "" ? "<null>" : item}</span>
+                    {filterWidgetExtension && filterWidgetExtension.hasModal
+                        ? this.renderButton(widget, item)
+                        : null}
                 </label>
             </div>
         );
@@ -135,7 +135,7 @@ class FilterWidget extends Component {
         if (modalRows.length == 0) {
             return (
                 <button
-                    className="btn btn-sm float-right disabled"
+                    className="btn btn-sm float-right py-0 disabled"
                     title="No additional information">
                     <i className="fa fa-eye-slash"></i>
                 </button>
@@ -146,8 +146,11 @@ class FilterWidget extends Component {
         else if (modalRows.length == 1) {
             return (
                 <button
-                    className="btn btn-sm float-right"
-                    onClick={() => showModalOnRow(extension, modalRows[0])}
+                    className="btn btn-sm float-right py-0"
+                    onClick={e => {
+                        e.stopPropagation();
+                        showModalOnRow(extension, modalRows[0]);
+                    }}
                     title="View additional information">
                     <i className="fa fa-eye"></i>
                 </button>
@@ -157,7 +160,7 @@ class FilterWidget extends Component {
         // If there are too many results disable button
         else {
             return (
-                <button className="btn btn-sm float-right disabled" title="Too many results">
+                <button className="btn btn-sm float-right py-0 disabled" title="Too many results">
                     <i className="fa fa-eye"></i>
                 </button>
             );
