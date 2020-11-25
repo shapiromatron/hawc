@@ -14,7 +14,7 @@ DATA_ROOT = Path(__file__).parents[3] / "data/api"
 @pytest.mark.django_db
 def test_api_visual_heatmap(db_keys):
     client = Client()
-    assert client.login(username="team@team.com", password="pw") is True
+    assert client.login(username="team@hawcproject.org", password="pw") is True
 
     url = reverse("summary:api:visual-detail", args=(db_keys.visual_heatmap,))
     response = client.get(url)
@@ -46,7 +46,7 @@ def test_api_visual_heatmap(db_keys):
 @pytest.mark.django_db
 def test_api_visual_barchart(db_keys):
     client = Client()
-    assert client.login(username="team@team.com", password="pw") is True
+    assert client.login(username="team@hawcproject.org", password="pw") is True
 
     # test rob barchart request returns successfully
     url = reverse("summary:api:visual-detail", args=(db_keys.visual_barchart,))
@@ -191,7 +191,7 @@ class TestDataPivot:
 class TestSummaryAssessmentViewset:
     def test_heatmap_datasets(self, db_keys):
         rev_client = APIClient()
-        assert rev_client.login(username="rev@rev.com", password="pw") is True
+        assert rev_client.login(username="reviewer@hawcproject.org", password="pw") is True
         anon_client = APIClient()
 
         urls = [

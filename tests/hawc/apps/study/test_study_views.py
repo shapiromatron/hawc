@@ -6,7 +6,12 @@ from pytest_django.asserts import assertTemplateUsed
 
 @pytest.mark.django_db
 def test_study_read_success(db_keys):
-    clients = ["sudo@sudo.com", "pm@pm.com", "team@team.com", "rev@rev.com"]
+    clients = [
+        "admin@hawcproject.org",
+        "pm@hawcproject.org",
+        "team@hawcproject.org",
+        "reviewer@hawcproject.org",
+    ]
     views = [
         reverse("study:list", kwargs={"pk": db_keys.assessment_working}),
         reverse("study:detail", kwargs={"pk": db_keys.study_working}),
@@ -45,7 +50,7 @@ def test_study_crud_success(db_keys):
     # Check to ensure that sudo, pm and team have CRUD permissions.
     # Create a new study, edit, view prior versions, and delete. Test both
     # GET and POST when appropriate.
-    clients = ["sudo@sudo.com", "pm@pm.com", "team@team.com"]
+    clients = ["admin@hawcproject.org", "pm@hawcproject.org", "team@hawcproject.org"]
     for client in clients:
         c = Client()
         assert c.login(username=client, password="pw") is True
@@ -104,7 +109,7 @@ def test_uf_crud_failure(db_keys):
     # Test both GET and POST when appropriate.
 
     # first test working scenario
-    users = ["rev@rev.com", None]
+    users = ["reviewer@hawcproject.org", None]
     views = [
         reverse("study:new_ref", kwargs={"pk": db_keys.assessment_working}),
         reverse("study:update", kwargs={"pk": db_keys.study_working}),
@@ -123,7 +128,7 @@ def test_uf_crud_failure(db_keys):
             response.status_code in [403, 405]
 
     # next check that all people (except sudo) cannot edit a final study
-    users = ["pm@pm.com", "team@team.com", "rev@rev.com", None]
+    users = ["pm@hawcproject.org", "team@hawcproject.org", "reviewer@hawcproject.org", None]
     views = [
         reverse("study:new_ref", kwargs={"pk": db_keys.assessment_final}),
         reverse("study:update", kwargs={"pk": db_keys.study_final_bioassay}),
