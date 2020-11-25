@@ -111,6 +111,11 @@ class SummaryTextSerializer(serializers.ModelSerializer):
 
     @transaction.atomic
     def update(self, instance, validated_data):
+        instance.title = validated_data["title"]
+        instance.slug = validated_data["slug"]
+        instance.text = validated_data["text"]
+        instance.save()
+
         parent = validated_data.get("parent")
         sibling = validated_data.get("sibling", None)
         if sibling:
@@ -119,10 +124,6 @@ class SummaryTextSerializer(serializers.ModelSerializer):
         elif parent:
             instance.move(parent, pos="first-child")
 
-        instance.title = validated_data["title"]
-        instance.slug = validated_data["slug"]
-        instance.text = validated_data["text"]
-        instance.save()
         return instance
 
 
