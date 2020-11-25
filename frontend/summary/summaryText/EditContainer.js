@@ -1,4 +1,3 @@
-import _ from "lodash";
 import {inject, observer} from "mobx-react";
 import React, {Component} from "react";
 import PropTypes from "prop-types";

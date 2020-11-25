@@ -5,9 +5,9 @@ from rest_framework.filters import BaseFilterBackend
 from rest_framework.response import Response
 
 from ..assessment.api import (
+    AssessmentEditViewset,
     AssessmentLevelPermissions,
     AssessmentViewset,
-    AssessmentEditViewset,
     DisabledPagination,
     InAssessmentFilter,
 )

@@ -1,5 +1,5 @@
 import _ from "lodash";
-import {action, computed, toJS, observable} from "mobx";
+import {action, computed, observable} from "mobx";
 
 import h from "shared/utils/helpers";
 

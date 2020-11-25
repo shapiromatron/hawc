@@ -4,7 +4,6 @@ from urllib.parse import urlparse, urlunparse
 
 from crispy_forms import layout as cfl
 from django import forms
-from django.urls import reverse
 from openpyxl import load_workbook
 from openpyxl.utils.exceptions import InvalidFileException
 

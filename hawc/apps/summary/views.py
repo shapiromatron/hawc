@@ -1,14 +1,13 @@
 import json
 from typing import Dict
 
-from django.http import Http404, HttpResponse, HttpResponseNotAllowed, HttpResponseRedirect
+from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.views.generic import FormView, RedirectView
 
 from ..assessment.models import Assessment
 from ..common.crumbs import Breadcrumb
-from ..common.helper import HAWCDjangoJSONEncoder
 from ..common.views import (
     BaseCreate,
     BaseDelete,
