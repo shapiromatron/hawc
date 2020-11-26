@@ -4,6 +4,7 @@ import ReactDOM from "react-dom";
 import SmartTagContainer from "assets/smartTags/SmartTagContainer";
 import BaseVisual from "./BaseVisual";
 import HAWCModal from "utils/HAWCModal";
+import HAWCUtils from "utils/HAWCUtils";
 import TableauDashboard from "./TableauDashboard";
 
 import {TABLEAU_HOSTNAME} from "./constants";
@@ -37,12 +38,23 @@ class ExternalWebsite extends BaseVisual {
         }
     }
 
+    addActionsMenu() {
+        const actions = [
+            "Additional actions",
+            {url: this.data.settings.external_url, text: "View on native site"},
+        ];
+        if (window.isEditable) {
+            actions.push(
+                "Visualization editing",
+                {url: this.data.url_update, text: "Update"},
+                {url: this.data.url_delete, text: "Delete"}
+            );
+        }
+        return HAWCUtils.pageActionsButton(actions);
+    }
+
     displayAsPage($el, options) {
-        var title = $("<h1>")
-                .text(this.data.title)
-                .append(
-                    `<span style="margin-left: 20px; font-size: 20px" title=${this.data.settings.external_url}>(<a target="_blank" href="${this.data.settings.external_url}">View <i class='fa fa-external-link'></i></a>)</span>`
-                ),
+        var title = $("<h1>").text(this.data.title),
             captionDiv = $("<div>").html(this.data.caption),
             caption = new SmartTagContainer(captionDiv),
             $plotDiv = $("<div>"),
@@ -50,7 +62,7 @@ class ExternalWebsite extends BaseVisual {
 
         options = options || {};
 
-        if (window.isEditable) title.append(this.addActionsMenu());
+        title.append(this.addActionsMenu());
 
         $el.empty().append($plotDiv);
         if (!options.visualOnly) $el.prepend([title, linkOut]).append(captionDiv);

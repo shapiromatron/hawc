@@ -4529,6 +4529,33 @@
     endpoints:
     - 3
     studies: []
+- model: summary.visual
+  pk: 11
+  fields:
+    title: smart-tags
+    slug: smart-tags
+    assessment: 2
+    visual_type: 2
+    dose_units: null
+    prefilters: '{}'
+    settings: '{"title":"","xAxisLabel":"","yAxisLabel":"","padding_top":20,"cell_size":40,"padding_right":190,"padding_bottom":35,"padding_left":20,"x_field":"study","study_label_field":"short_citation","included_metrics":[14,15],"excluded_score_ids":[],"show_legend":true,"show_na_legend":true,"show_nr_legend":true,"legend_x":226,"legend_y":16}'
+    caption: <p>This is a <span class="smart-tag active" data-pk="7" data-type="study">study</span>,
+      an <span class="smart-tag active" data-pk="3" data-type="endpoint">endpoint</span>,
+      a <span class="smart-tag active" data-pk="3" data-type="visual">visual</span>,
+      and a <span class="smart-tag active" data-pk="2" data-type="data_pivot">data
+      pivot</span>.</p><p><br></p><div class="smart-tag active" data-pk="7" data-type="study">This
+      is an inline study.</div><p><br></p><div class="smart-tag active" data-pk="3"
+      data-type="endpoint">This is an inline endpoint.</div><p><br></p><div class="smart-tag
+      active" data-pk="3" data-type="visual">This is an inline visual.</div><p><br></p><div
+      class="smart-tag active" data-pk="2" data-type="data_pivot">This is an inline
+      data pivot.</div>
+    published: true
+    sort_order: short_citation
+    created: 2020-11-26 03:21:03.883675+00:00
+    last_updated: 2020-11-26 03:25:56.660522+00:00
+    endpoints: []
+    studies:
+    - 7
 - model: summary.datapivot
   pk: 1
   fields:

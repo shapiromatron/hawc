@@ -40,16 +40,13 @@ class SmartTagModal {
             .off("click")
             .click(this.tryToSave.bind(this));
 
-        // todo - check?
-        m.on("show.bs.modal", () => m.find("input").val(""));
+        m.on("shown.bs.modal", () => m.find("input").val(""));
 
-        // todo - check?
         m.on("shown.bs.modal", () => {
             this.quill.blur();
             m.find("input:visible").focus();
         });
 
-        // todo - check?
         m.on("hidden.bs.modal", () => this.quill.stc.enableModals());
     }
 

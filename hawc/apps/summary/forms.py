@@ -9,7 +9,7 @@ from openpyxl.utils.exceptions import InvalidFileException
 
 from ..animal.lookups import EndpointByAssessmentLookup, EndpointByAssessmentLookupHtml
 from ..animal.models import Endpoint
-from ..assessment.models import EffectTag
+from ..assessment.models import DoseUnits, EffectTag
 from ..common import selectable
 from ..common.forms import BaseFormHelper
 from ..common.helper import read_excel
@@ -557,6 +557,9 @@ class CrossviewForm(PrefilterMixin, VisualForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields["dose_units"].queryset = DoseUnits.objects.get_animal_units(
+            self.instance.assessment
+        )
         self.helper = self.setHelper()
 
     class Meta:
@@ -983,7 +986,5 @@ class SmartTagForm(forms.Form):
         super().__init__(*args, **kwargs)
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
-            widget.attrs["class"] = "col-md-12"
             if hasattr(widget, "update_query_parameters"):
                 widget.update_query_parameters({"related": assessment_id})
-                widget.attrs["class"] += " smartTagSearch"
