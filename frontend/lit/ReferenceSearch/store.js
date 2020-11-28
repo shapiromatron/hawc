@@ -41,9 +41,9 @@ class Store {
     @action.bound resetForm() {
         this.isSearching = false;
         this.searchForm = {
-            id: null,
-            db_id: null,
-            year: null,
+            id: "",
+            db_id: "",
+            year: "",
             title: "",
             authors: "",
             journal: "",

@@ -345,6 +345,9 @@ div.smart-tag.active {
     position: absolute;
     padding: 2px 0 0 2px;
 }
+.reference {
+    padding-left: 0.5rem;
+}
 .reference:hover {
     cursor: pointer;
 }

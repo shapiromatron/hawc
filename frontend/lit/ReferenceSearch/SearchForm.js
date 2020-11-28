@@ -6,7 +6,7 @@ import {inject, observer} from "mobx-react";
 @observer
 class SearchForm extends Component {
     render() {
-        const {changeSearchTerm, submitSearch, resetForm} = this.props.store;
+        const {changeSearchTerm, searchForm, submitSearch, resetForm} = this.props.store;
 
         return (
             <form>
@@ -20,6 +20,7 @@ class SearchForm extends Component {
                                 className="form-control"
                                 type="number"
                                 id="id_hawc_id"
+                                value={searchForm.id}
                                 onChange={e => changeSearchTerm("id", parseInt(e.target.value))}
                             />
                         </div>
@@ -33,6 +34,7 @@ class SearchForm extends Component {
                                 className="form-control"
                                 type="number"
                                 id="id_db_id"
+                                value={searchForm.db_id}
                                 onChange={e => changeSearchTerm("db_id", parseInt(e.target.value))}
                             />
                             <p className="form-text text-muted">
@@ -49,6 +51,7 @@ class SearchForm extends Component {
                                 className="form-control"
                                 type="number"
                                 id="id_year_id"
+                                value={searchForm.year}
                                 onChange={e => changeSearchTerm("year", parseInt(e.target.value))}
                             />
                         </div>
@@ -64,6 +67,7 @@ class SearchForm extends Component {
                                 className="form-control"
                                 type="text"
                                 id="id_title"
+                                value={searchForm.title}
                                 onChange={e => changeSearchTerm("title", e.target.value)}
                             />
                         </div>
@@ -76,6 +80,7 @@ class SearchForm extends Component {
                             <input
                                 className="form-control"
                                 type="text"
+                                value={searchForm.authors}
                                 id="id_authors"
                                 onChange={e => changeSearchTerm("authors", e.target.value)}
                             />
@@ -92,6 +97,7 @@ class SearchForm extends Component {
                                 className="form-control"
                                 type="text"
                                 id="id_journal"
+                                value={searchForm.journal}
                                 onChange={e => changeSearchTerm("journal", e.target.value)}
                             />
                         </div>
@@ -105,6 +111,7 @@ class SearchForm extends Component {
                                 className="form-control"
                                 type="text"
                                 id="id_abstract"
+                                value={searchForm.abstract}
                                 onChange={e => changeSearchTerm("abstract", e.target.value)}
                             />
                         </div>
@@ -117,8 +124,7 @@ class SearchForm extends Component {
                         onClick={() => submitSearch()}>
                         <i className="fa fa-search"></i>&nbsp;Search
                     </button>
-                    <span>&nbsp;</span>
-                    <button className="btn btn-light" type="button" onClick={() => resetForm()}>
+                    <button className="btn btn-light mx-2" type="button" onClick={resetForm}>
                         Reset
                     </button>
                 </div>
