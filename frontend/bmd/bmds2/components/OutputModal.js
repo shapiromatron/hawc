@@ -33,22 +33,30 @@ class OutputModal extends BaseModal {
         }
 
         return (
-            <div className="modal hide fade" tabIndex="-1" id={types.OUTPUT_MODAL_ID} role="dialog">
-                <div className="modal-header">
-                    <button ref={this.closer} className="close" type="button" data-dismiss="modal">
-                        ×
-                    </button>
-                    <h3>{models[0].name} model output</h3>
-                </div>
+            <div className="modal" id={types.OUTPUT_MODAL_ID}>
+                <div className="modal-dialog">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h3>{models[0].name} model output</h3>
+                            <button
+                                ref={this.closer}
+                                className="close"
+                                type="button"
+                                data-dismiss="modal">
+                                ×
+                            </button>
+                        </div>
 
-                <div className="modal-body" ref={c => (this.modalBody = c)}>
-                    {models.map(this.renderBody)}
-                </div>
+                        <div className="modal-body" ref={c => (this.modalBody = c)}>
+                            {models.map(this.renderBody)}
+                        </div>
 
-                <div className="modal-footer">
-                    <button type="button" className="btn btn-primary" data-dismiss="modal">
-                        Close
-                    </button>
+                        <div className="modal-footer">
+                            <button type="button" className="btn btn-primary" data-dismiss="modal">
+                                Close
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         );

@@ -18,30 +18,37 @@ class ModelOptionTable extends React.Component {
             showVariance = this.props.dataType === "C";
 
         return (
-            <div className="row">
-                <label className="col-form-label">Add new model</label>
-                <div className="form-group">
-                    <select style={{marginBottom: 0, marginRight: "1em"}} ref={this.modelSelector}>
-                        {allOptions.map((d, i) => {
-                            return (
-                                <option key={i} value={i}>
-                                    {d.name}
-                                </option>
-                            );
-                        })}
-                    </select>
-                    <button
-                        onClick={() => {
-                            let modelName = $(this.modelSelector.current).val();
-                            this.props.handleCreateModel(modelName);
-                        }}
-                        type="button"
-                        className="btn btn-sm">
-                        <i className="fa fa-plus" />
-                    </button>
-
+            <div className="form-row">
+                <div className="col-md-3">
+                    <label>Add new model</label>
+                </div>
+                <div className="col-md-6">
+                    <div className="form-group input-group">
+                        <select className="form-control" ref={this.modelSelector}>
+                            {allOptions.map((d, i) => {
+                                return (
+                                    <option key={i} value={i}>
+                                        {d.name}
+                                    </option>
+                                );
+                            })}
+                        </select>
+                        <div className="input-group-append">
+                            <button
+                                onClick={() => {
+                                    let modelName = $(this.modelSelector.current).val();
+                                    this.props.handleCreateModel(modelName);
+                                }}
+                                type="button"
+                                className="btn btn-light btn-sm px-3">
+                                <i className="fa fa-plus" />
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div className="col-md-3">
                     <div className="dropdown btn-group float-right">
-                        <a className="btn dropdown-toggle" data-toggle="dropdown">
+                        <a className="btn btn-light dropdown-toggle" data-toggle="dropdown">
                             Actions
                         </a>
                         <div className="dropdown-menu dropdown-menu-right">
