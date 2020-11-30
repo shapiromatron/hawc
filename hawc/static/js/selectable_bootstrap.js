@@ -9,13 +9,17 @@ $.ui.djselectable.prototype._comboButtonTemplate = function (input) {
     .wrap('<div class="input-group-append" />')
     .wrap('<div class="input-group" />');
   // Return button
-  return $("<button>").addClass("btn btn-primary btn-sm dropdown-toggle mb-2");
+  return $("<button>").addClass(
+    "btn btn-secondary btn-sm dropdown-toggle mb-2"
+  );
 };
 
 $.ui.djselectable.prototype._removeButtonTemplate = function (item) {
-  var icon = $("<i>").addClass("icon-remove-sign");
+  var icon = $('<i class="fa fa-times-circle"></i>');
   // Return button link with the chosen icon
-  return $("<a>").append(icon).addClass("btn btn-small pull-right");
+  return $("<a class='badge badge-secondary'>")
+    .append(icon)
+    .addClass("float-right");
 };
 
 (function () {
