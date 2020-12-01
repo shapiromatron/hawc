@@ -61,10 +61,7 @@ class MetaProtocolForm(forms.ModelForm):
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
-                if fld in self.CRITERION_FIELDS:
-                    widget.attrs["class"] = "col-md-10"
-                else:
-                    widget.attrs["class"] = "col-md-12"
+                widget.attrs["class"] = "col-md-12"
             if type(widget) == forms.Textarea:
                 widget.attrs["rows"] = 3
 
@@ -142,10 +139,7 @@ class MetaResultForm(forms.ModelForm):
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
-                if fld == "adjustment_factors":
-                    widget.attrs["class"] = "col-md-10"
-                else:
-                    widget.attrs["class"] = "col-md-12"
+                widget.attrs["class"] = "col-md-12"
             if type(widget) == forms.Textarea:
                 widget.attrs["rows"] = 3
 

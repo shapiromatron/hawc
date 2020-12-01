@@ -63,8 +63,6 @@ class ExperimentForm(ModelForm):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
                 widget.attrs["class"] = "col-md-12"
-            if fld == "dtxsid":
-                widget.attrs["class"] = "col-md-10"
 
         self.fields["description"].widget.attrs["rows"] = 4
 
@@ -176,10 +174,7 @@ class AnimalGroupForm(ModelForm):
     def setHelper(self):
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
-            if fld in ["species", "strain"]:
-                widget.attrs["class"] = "col-md-10"
-            else:
-                widget.attrs["class"] = "col-md-12"
+            widget.attrs["class"] = "col-md-12"
 
         if self.instance.id:
             inputs = {
@@ -502,10 +497,7 @@ class EndpointForm(ModelForm):
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
-                if fld in ["effects"]:
-                    widget.attrs["class"] = "col-md-10"
-                else:
-                    widget.attrs["class"] = "col-md-12"
+                widget.attrs["class"] = "col-md-12"
 
         helper.layout.insert(
             helper.find_layout_idx_for_field_name("name"), cfl.Div(css_class="row", id="vocab"),

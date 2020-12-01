@@ -49,8 +49,6 @@ class IVChemicalForm(forms.ModelForm):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
                 widget.attrs["class"] = "col-md-12"
-            if fld == "dtxsid":
-                widget.attrs["class"] = "col-md-10"
             if type(widget) == forms.Textarea:
                 widget.attrs["rows"] = 3
 
@@ -328,10 +326,7 @@ class IVEndpointForm(forms.ModelForm):
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
-                if fld in ["effects"]:
-                    widget.attrs["class"] = "col-md-10"
-                else:
-                    widget.attrs["class"] = "col-md-12"
+                widget.attrs["class"] = "col-md-12"
 
             if type(widget) == forms.Textarea:
                 widget.attrs["rows"] = 3
