@@ -16,29 +16,29 @@
   <div id="extra" class="hidden">
     {# Endpoint Group formset #}
     <div id='endpointGroups'>
-      <div class="row">
-        <legend>Dose-response data</legend>
-        <p class="help-text">
-          <span class="d_only">
-            For dichotomous data, all fields are required. For p-values,
-            0.05 or &lt;0.05 should be coded as 0.05; 0.01 or &lt;0.01
-            should be coded as 0.01; 0.001 or &lt;0.001 should be coded
-            as 0.001.
-          </span>
-          <span class="c_only">
-            For continuous data, if variance is not-reported, ensure the
-            "variance type" input-field above is "NR", and then variance can be
-            left blank; otherwise it is required. If any data are not reported,
-            leave those fields blank. For p-values, 0.05 or &lt;0.05 should be coded
-            as 0.05; 0.01 or &lt;0.01 should be coded as 0.01; 0.001 or &lt;0.001
-            should be coded as 0.001.
-          </span>
-          <span class="p_only">
-            For percent-difference data, lower CI (%) and upper CI (%) are optional.
-            If any data are not reported, leave those fields blank.
-          </span>
-        </p>
-      </div>
+
+      <legend>Dose-response data</legend>
+      <p class="help-text">
+        <span class="d_only">
+          For dichotomous data, all fields are required. For p-values,
+          0.05 or &lt;0.05 should be coded as 0.05; 0.01 or &lt;0.01
+          should be coded as 0.01; 0.001 or &lt;0.001 should be coded
+          as 0.001.
+        </span>
+        <span class="c_only">
+          For continuous data, if variance is not-reported, ensure the
+          "variance type" input-field above is "NR", and then variance can be
+          left blank; otherwise it is required. If any data are not reported,
+          leave those fields blank. For p-values, 0.05 or &lt;0.05 should be coded
+          as 0.05; 0.01 or &lt;0.01 should be coded as 0.01; 0.001 or &lt;0.001
+          should be coded as 0.001.
+        </span>
+        <span class="p_only">
+          For percent-difference data, lower CI (%) and upper CI (%) are optional.
+          If any data are not reported, leave those fields blank.
+        </span>
+      </p>
+
       <div class="row">
 
         <div class="col-md-7">
@@ -93,40 +93,44 @@
     {# Significance calculation modal #}
     <button
         id="ssBtn"
-        class="btn btn-sm"
+        class="btn btn-light btn-sm"
         style="margin-left: 10px"
         type="button"
         data-toggle="modal"
         data-target="#ssModal">Calculate</button>
-    <div id="ssModal" class="modal hide fade">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h3>Power calculation</h3>
-      </div>
-      <div class="modal-body">
-        <form id="ssForm">
-          <p class="form-text text-muted">Calculate the sample-size required to detect an effect with 80% power.</p>
-          <label class="col-form-label">Control mean</label>
-          <input type="number" name="mean" step="any">
-          <label class="col-form-label">Control standard-deviation</label>
-          <input type="number" name="sd" step="any">
-          <label class="col-form-label">Number of animals</label>
-          <input type="number" name="n">
-          <label class="col-form-label">Difference to detect (%)</label>
-          <input type="number" name="percentToDetect" value="10">
-          <label class="col-form-label">Result:</label>
-          <p id="ssResult" class="alert alert-info">-</p>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <a href="#" class="btn btn-light" class="close" data-dismiss="modal" aria-hidden="true">Close</a>
-        <a id="ssSavePower"
-          href="#"
-          class="btn btn-primary"
-          title='Copy results into "power-notes" field'
-          class="close"
-          data-dismiss="modal"
-          aria-hidden="true">Save output</a>
+    <div id="ssModal" class="modal fade" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h3>Power calculation</h3>
+          </div>
+          <div class="modal-body">
+            <form id="ssForm">
+              <p class="form-text text-muted">Calculate the sample-size required to detect an effect with 80% power.</p>
+              <label class="col-form-label">Control mean</label>
+              <input type="number" name="mean" step="any">
+              <label class="col-form-label">Control standard-deviation</label>
+              <input type="number" name="sd" step="any">
+              <label class="col-form-label">Number of animals</label>
+              <input type="number" name="n">
+              <label class="col-form-label">Difference to detect (%)</label>
+              <input type="number" name="percentToDetect" value="10">
+              <label class="col-form-label">Result:</label>
+              <p id="ssResult" class="alert alert-info">-</p>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <a href="#" class="btn btn-light" class="close" data-dismiss="modal" aria-hidden="true">Close</a>
+            <a id="ssSavePower"
+              href="#"
+              class="btn btn-primary"
+              title='Copy results into "power-notes" field'
+              class="close"
+              data-dismiss="modal"
+              aria-hidden="true">Save output</a>
+          </div>
+        </div>
       </div>
     </div>
 </div>
