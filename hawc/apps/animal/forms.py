@@ -508,7 +508,7 @@ class EndpointForm(ModelForm):
                     widget.attrs["class"] = "col-md-12"
 
         helper.layout.insert(
-            helper.find_layout_idx_for_field_name("name"), cfl.Div(css_class="row", id="vocab"),
+            helper.find_layout_idx_for_field_name("name"), cfl.Div(id="vocab"),
         )
         helper.add_row("name", 1, "col-md-12")
         helper.add_row("system", 4, "col-md-3")
