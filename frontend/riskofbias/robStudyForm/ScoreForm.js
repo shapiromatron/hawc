@@ -14,7 +14,7 @@ import {SCORE_TEXT_DESCRIPTION, BIAS_DIRECTION_CHOICES} from "riskofbias/constan
 
 class ScoreInput extends Component {
     render() {
-        const {scoreId, choices, value, handleChange, direction_value} = this.props,
+        const {scoreId, choices, value, handleChange} = this.props,
             scoreChoices = choices.map(d => {
                 return {id: parseInt(d), label: SCORE_TEXT_DESCRIPTION[d]};
             });
@@ -29,7 +29,7 @@ class ScoreInput extends Component {
                     value={value}
                     handleSelect={handleChange}
                 />
-                <ScoreIcon score={value} direction={direction_value} />
+                <ScoreIcon score={value} />
             </>
         );
     }
@@ -39,7 +39,6 @@ ScoreInput.propTypes = {
     choices: PropTypes.arrayOf(PropTypes.number),
     value: PropTypes.number.isRequired,
     handleChange: PropTypes.func.isRequired,
-    direction_value: PropTypes.number,
 };
 
 class ScoreNotesInput extends Component {
@@ -68,7 +67,7 @@ class ScoreForm extends Component {
         let {scoreId, store} = this.props,
             score = store.getEditableScore(scoreId),
             editableMetricHasOverride = store.editableMetricHasOverride(score.metric.id),
-            directionChoices = Object.entries(BIAS_DIRECTION_CHOICES).map(kv => {
+            direction_choices = Object.entries(BIAS_DIRECTION_CHOICES).map(kv => {
                 return {id: kv[0], label: kv[1]};
             }),
             showScoreInput = !h.hideRobScore(parseInt(store.config.assessment_id)),
@@ -141,12 +140,11 @@ class ScoreForm extends Component {
                                     handleChange={value => {
                                         store.updateFormState(scoreId, "score", parseInt(value));
                                     }}
-                                    direction_value={score.bias_direction}
                                 />
                                 <SelectInput
                                     id={`${score.id}-direction`}
                                     label="Bias direction"
-                                    choices={directionChoices}
+                                    choices={direction_choices}
                                     multiple={false}
                                     value={score.bias_direction}
                                     handleSelect={value => {

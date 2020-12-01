@@ -4,8 +4,7 @@ import {VelocityComponent} from "velocity-react";
 
 import {
     SCORE_BAR_WIDTH_PERCENTAGE,
-    SCORE_TEXT_JSX,
-    BIAS_DIRECTION_SIMPLE_JSX,
+    BIAS_DIRECTION_SIMPLE,
     BIAS_DIRECTION_VERBOSE,
     BIAS_DIRECTION_UNKNOWN,
 } from "../../constants";
@@ -14,11 +13,11 @@ import "./ScoreBar.css";
 
 class ScoreBar extends Component {
     render_score_bar() {
-        let {shade, score, direction} = this.props;
+        let {shade, symbol, direction} = this.props;
         return (
             <div className="rob_score_bar" style={{backgroundColor: shade, opacity: 0, width: 0}}>
                 <span style={{color: String.contrasting_color(shade)}} className="score-symbol">
-                    {SCORE_TEXT_JSX[score]} {BIAS_DIRECTION_SIMPLE_JSX[direction]}
+                    {symbol} {BIAS_DIRECTION_SIMPLE[direction]}
                 </span>
             </div>
         );

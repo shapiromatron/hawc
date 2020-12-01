@@ -3,8 +3,6 @@ import React, {Component} from "react";
 import PropTypes from "prop-types";
 import {inject, observer} from "mobx-react";
 
-import LabelInput from "shared/components/LabelInput";
-
 @inject("store")
 @observer
 class ScoreSelect extends Component {
@@ -21,12 +19,11 @@ class ScoreSelect extends Component {
 
         return (
             <div>
-                <LabelInput for={"studyType_filter"} label={"Rating filter (optional)"} />
+                <label className="col-form-label">Rating filter (optional):</label>
                 <select
                     multiple={true}
                     name="score_filter"
                     id="score_filter"
-                    className="form-control"
                     onChange={handleChange}
                     style={{height: "120px"}}>
                     value={selected}

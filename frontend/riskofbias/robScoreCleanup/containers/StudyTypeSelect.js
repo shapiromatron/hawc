@@ -3,8 +3,6 @@ import React, {Component} from "react";
 import PropTypes from "prop-types";
 import {inject, observer} from "mobx-react";
 
-import LabelInput from "shared/components/LabelInput";
-
 import h from "shared/utils/helpers";
 
 @inject("store")
@@ -22,13 +20,12 @@ class StudyTypeSelect extends Component {
             };
 
         return (
-            <div className="form-group">
-                <LabelInput for={"studyType_filter"} label={"Study Type filter (optional)"} />
+            <div>
+                <label className="col-form-label">Study Type filter (optional):</label>
                 <select
                     multiple
                     name="studyType_filter"
                     id="studyType_filter"
-                    className="form-control"
                     onChange={handleChange}
                     style={{height: "120px"}}>
                     value={selected}
