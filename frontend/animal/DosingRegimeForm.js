@@ -147,6 +147,8 @@ class DosingRegimeForm {
         var tr = $("<tr>").append("<th>Dose Units</th>");
         for (var j = 0; j < this.columns; j++) {
             var th = $("<th>");
+            var input_group = $('<div class="input-group align-items-center"></div>');
+            var input_append = $('<div class="input-append"></div>');
             var select = $('<select class="form-control dose_types"></select>');
             this.dose_types.forEach(function(v, i) {
                 select.append(`<option value="${v.id}">${v.name}</option>`);
@@ -154,12 +156,14 @@ class DosingRegimeForm {
             if (this.dose_units[j]) {
                 select.find(`option[value=${this.dose_units[j]}]`).prop("selected", true);
             }
-            th.append(select);
+            input_group.append(select);
             if (j > 0) {
-                th.append(
+                input_append.append(
                     '<a href="#" class="remove_dose"> <i class="fa fa-times-circle-o"></i></a>'
                 );
+                input_group.append(input_append);
             }
+            th.append(input_group);
             tr.append(th);
         }
         return $("<thead>").html(tr);

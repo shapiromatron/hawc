@@ -87,7 +87,7 @@ class AutocompleteTerm extends Component {
                     );
                 }}
                 inputProps={{
-                    className: "col-md-12",
+                    className: "form-control",
                     value: currentText,
                     suggestions,
                     placeholder: placeholder || "",

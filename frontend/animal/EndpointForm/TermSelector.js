@@ -36,7 +36,7 @@ class TermSelector extends Component {
             currentText = object[termTextField];
 
         return (
-            <div>
+            <div className="form-group">
                 {useControlledVocabulary && idLookupAction ? (
                     <div className="float-right">
                         <div className="input-group">
@@ -61,9 +61,7 @@ class TermSelector extends Component {
                         </div>
                     </div>
                 ) : null}
-                <label className="col-form-label" htmlFor={this.randomId}>
-                    {label}
-                </label>
+                <label htmlFor={this.randomId}>{label}</label>
                 {useControlledVocabulary ? (
                     <AutocompleteTerm
                         url={termUrlLookup[termIdField]}
