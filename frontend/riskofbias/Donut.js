@@ -53,6 +53,12 @@ class Donut extends D3Plot {
     }
 
     customize_menu() {
+        let old_toggle = this._toggle_menu_bar;
+        this._toggle_menu_bar = () => {
+            old_toggle.call(this);
+            $(window).resize();
+        };
+
         this.add_menu();
         this.add_menu_button({
             id: "lock_view",
@@ -334,14 +340,15 @@ class Donut extends D3Plot {
     }
 
     resize_subset() {
-        $(window).resize(() =>
+        $(window).resize(() => {
+            var menu_height = this.menu_div.hasClass("hidden") ? 0 : this.menu_div.outerHeight();
             this.subset_div.css({
                 height: this.svg.clientHeight - this.padding.top - this.padding.bottom,
                 width: this.svg.clientWidth / 2 - this.padding.left - this.padding.right,
                 left: this.svg.clientWidth / 2 + this.padding.left,
-                top: -this.svg.clientHeight - this.menu_div.outerHeight(),
-            })
-        );
+                top: -this.svg.clientHeight - menu_height,
+            });
+        });
         $(window).resize();
     }
 
