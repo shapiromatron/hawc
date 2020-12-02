@@ -26,7 +26,7 @@ class StyleEditor {
     }
     render() {
         var styleType = this.styleType,
-            container = $('<div class="container-fluid">'),
+            container = $("<div>"),
             style_div = $('<div class="row">'),
             form_div = $('<div class="col-md-6">'),
             vis_div = $('<div class="col-md-6">'),
