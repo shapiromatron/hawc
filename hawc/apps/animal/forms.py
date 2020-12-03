@@ -54,15 +54,14 @@ class ExperimentForm(ModelForm):
             choices=((True, "Yes"), (False, "No"))
         )
 
-        self.helper = self.setHelper()
-
-    def setHelper(self):
+    @property
+    def helper(self):
 
         # by default take-up the whole row
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "col-md-12"
+                widget.attrs["class"] = "form-control"
 
         self.fields["description"].widget.attrs["rows"] = 4
 
@@ -168,13 +167,13 @@ class AnimalGroupForm(ModelForm):
             experiment=self.instance.experiment
         )
 
-        self.helper = self.setHelper()
         self.fields["comments"].widget.attrs["rows"] = 4
 
-    def setHelper(self):
+    @property
+    def helper(self):
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
-            widget.attrs["class"] = "col-md-12"
+            widget.attrs["class"] = "form-control"
 
         if self.instance.id:
             inputs = {
@@ -257,13 +256,13 @@ class DosingRegimeForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.helper = self.setHelper()
 
-    def setHelper(self):
+    @property
+    def helper(self):
 
         self.fields["description"].widget.attrs["rows"] = 4
         for fld in list(self.fields.keys()):
-            self.fields[fld].widget.attrs["class"] = "col-md-12"
+            self.fields[fld].widget.attrs["class"] = "form-control"
 
         if self.instance.id:
             inputs = {
@@ -453,11 +452,10 @@ class EndpointForm(ModelForm):
             self.instance.animal_group = animal_group
             self.instance.assessment = assessment
 
-        self.helper = self.setHelper()
-
         self.noel_names = json.dumps(self.instance.get_noel_names()._asdict())
 
-    def setHelper(self):
+    @property
+    def helper(self):
 
         vocab_enabled = self.instance.assessment.vocabulary == VocabularyNamespace.EHV
         if vocab_enabled:
@@ -497,7 +495,7 @@ class EndpointForm(ModelForm):
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "col-md-12"
+                widget.attrs["class"] = "form-control"
 
         helper.layout.insert(
             helper.find_layout_idx_for_field_name("name"), cfl.Div(id="vocab"),
@@ -611,7 +609,7 @@ class EndpointGroupForm(forms.ModelForm):
         if endpoint:
             self.instance.endpoint = endpoint
         for fld in self.fields:
-            self.fields[fld].widget.attrs["class"] = "col-md-12"
+            self.fields[fld].widget.attrs["class"] = "form-control"
 
     VARIANCE_REQ = (
         'Variance must be numeric, or the endpoint-field "variance-type" should be "not reported"'

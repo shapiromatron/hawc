@@ -365,6 +365,9 @@ class AnimalGroup(models.Model):
             return json.dumps(self.doses, cls=HAWCDjangoJSONEncoder)
         return self.doses
 
+    def get_json(self, json_encode=True):
+        return SerializerHelper.get_serialized(self, json=json_encode)
+
     @property
     def generation_short(self):
         return "Other" if self.generation == "Ot" else self.generation
