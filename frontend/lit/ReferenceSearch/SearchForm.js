@@ -21,7 +21,9 @@ class SearchForm extends Component {
                                 type="number"
                                 id="id_hawc_id"
                                 value={searchForm.id}
-                                onChange={e => changeSearchTerm("id", parseInt(e.target.value))}
+                                onChange={e =>
+                                    changeSearchTerm("id", parseInt(e.target.value) || "")
+                                }
                             />
                         </div>
                     </div>
@@ -35,7 +37,9 @@ class SearchForm extends Component {
                                 type="number"
                                 id="id_db_id"
                                 value={searchForm.db_id}
-                                onChange={e => changeSearchTerm("db_id", parseInt(e.target.value))}
+                                onChange={e =>
+                                    changeSearchTerm("db_id", parseInt(e.target.value) || "")
+                                }
                             />
                             <p className="form-text text-muted">
                                 Identifiers may include Pubmed ID, DOI, etc.
@@ -52,7 +56,9 @@ class SearchForm extends Component {
                                 type="number"
                                 id="id_year_id"
                                 value={searchForm.year}
-                                onChange={e => changeSearchTerm("year", parseInt(e.target.value))}
+                                onChange={e =>
+                                    changeSearchTerm("year", parseInt(e.target.value) || "")
+                                }
                             />
                         </div>
                     </div>

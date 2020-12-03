@@ -1,3 +1,4 @@
+import _ from "lodash";
 import {action, computed, toJS, observable} from "mobx";
 
 import h from "shared/utils/helpers";
@@ -30,6 +31,13 @@ class Store {
 
         this.references = null;
         this.isSearching = true;
+
+        // remove blank items from query
+        _.each(payload, (value, key) => {
+            if (value === "") {
+                delete payload[key];
+            }
+        });
         return fetch(url, h.fetchPost(csrf, payload, "POST"))
             .then(resp => resp.json())
             .then(json => {

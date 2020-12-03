@@ -47,7 +47,7 @@ class ReferenceSearchMain extends Component {
                         )
                     ) : null}
                     {hasReferences && numReferences > 0 ? (
-                        <ReferenceTable references={toJS(references)} />
+                        <ReferenceTable references={toJS(references)} showActions={false} />
                     ) : null}
                 </div>
             </div>
