@@ -185,7 +185,7 @@ class Study {
 
         attachments.forEach(function(v) {
             ul.append(
-                `<li><a target="_blank" href="${v.url}">${v.filename}</a> <a class="float-right" title="Delete" href="${v.url_delete}"><i class="fa fa-trash"></i></a></li>`
+                `<li><a target="_blank" href="${v.url}">${v.filename}</a> <a class="badge badge-secondary float-right" title="Delete" href="${v.url_delete}"><i class="fa fa-trash"></i></a></li>`
             );
         });
         tbody.append(tr.append(td.append(ul)));
@@ -207,7 +207,7 @@ class Study {
 
     render($div, $shower) {
         var self = this,
-            $details = $('<div class="row">').appendTo($div),
+            $details = $("<div>").appendTo($div),
             displayRoB = () => {
                 var render_obj = {
                     riskofbias: self.riskofbias,

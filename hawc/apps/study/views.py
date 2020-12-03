@@ -6,6 +6,7 @@ from django.urls import reverse_lazy
 from django.views.generic import FormView
 
 from ..assessment.models import Assessment
+from ..common.crumbs import Breadcrumb
 from ..common.views import (
     BaseCreate,
     BaseDelete,
@@ -124,6 +125,10 @@ class StudiesCopy(TeamMemberOrHigherMixin, MessageMixin, FormView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context["assessment"] = self.assessment
+        context["breadcrumbs"] = Breadcrumb.build_assessment_crumbs(
+            self.request.user, self.assessment
+        )
         return context
 
     def get_form_kwargs(self):
