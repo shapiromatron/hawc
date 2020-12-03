@@ -23,7 +23,7 @@ class StudyTypeSelect extends Component {
 
         return (
             <div className="form-group">
-                <LabelInput for={"studyType_filter"} label={"Study Type filter (optional)"} />
+                <LabelInput for="studyType_filter" label="Study Type filter (optional)" />
                 <select
                     multiple
                     name="studyType_filter"

@@ -8,6 +8,7 @@ import pandas as pd
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from django.forms import ModelForm
 from django.urls import reverse
 from reversion import revisions as reversion
 from scipy import stats
@@ -1091,25 +1092,23 @@ class Endpoint(BaseEndpoint):
         return df
 
     @classmethod
-    def get_vocabulary_settings(
-        cls, assessment: Assessment, instance: Optional["Endpoint"] = None
-    ) -> str:
+    def get_vocabulary_settings(cls, assessment: Assessment, form: ModelForm) -> str:
         return json.dumps(
             {
                 "debug": False,
                 "vocabulary": assessment.vocabulary,
                 "vocabulary_display": assessment.get_vocabulary_display(),
                 "object": {
-                    "system": instance.system if instance else "",
-                    "organ": instance.organ if instance else "",
-                    "effect": instance.effect if instance else "",
-                    "effect_subtype": instance.effect_subtype if instance else "",
-                    "name": instance.name if instance else "",
-                    "system_term_id": instance.system_term_id if instance else None,
-                    "organ_term_id": instance.organ_term_id if instance else None,
-                    "effect_term_id": instance.effect_term_id if instance else None,
-                    "effect_subtype_term_id": instance.effect_subtype_term_id if instance else None,
-                    "name_term_id": instance.name_term_id if instance else None,
+                    "system": form.initial.get("system", ""),
+                    "organ": form.initial.get("organ", ""),
+                    "effect": form.initial.get("effect", ""),
+                    "effect_subtype": form.initial.get("effect_subtype", ""),
+                    "name": form.initial.get("name", ""),
+                    "system_term_id": form.initial.get("system_term", None),
+                    "organ_term_id": form.initial.get("organ_term", None),
+                    "effect_term_id": form.initial.get("effect_term", None),
+                    "effect_subtype_term_id": form.initial.get("effect_subtype_term", None),
+                    "name_term_id": form.initial.get("name_term", None),
                 },
             }
         )

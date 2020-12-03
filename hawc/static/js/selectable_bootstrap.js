@@ -17,7 +17,7 @@ $.ui.djselectable.prototype._comboButtonTemplate = function (input) {
 $.ui.djselectable.prototype._removeButtonTemplate = function (item) {
   var icon = $('<i class="fa fa-times-circle"></i>');
   // Return button link with the chosen icon
-  return $("<a class='badge badge-secondary'>")
+  return $("<button type='button' class='btn btn-sm btn-secondary px-2 py-0' title='Remove item'>")
     .append(icon)
     .addClass("float-right");
 };

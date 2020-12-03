@@ -42,13 +42,10 @@ class IVChemicalForm(forms.ModelForm):
             lookup_class=DssToxIdLookup
         )
 
-        self.helper = self.setHelper()
-
-    def setHelper(self):
+    @property
+    def helper(self):
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
-            if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "col-md-12"
             if type(widget) == forms.Textarea:
                 widget.attrs["rows"] = 3
 
@@ -117,13 +114,10 @@ class IVCellTypeForm(forms.ModelForm):
                 {"related": self.instance.study.assessment.id}
             )
 
-        self.helper = self.setHelper()
-
-    def setHelper(self):
+    @property
+    def helper(self):
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
-            if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "col-md-12"
             if type(widget) == forms.Textarea:
                 widget.attrs["rows"] = 3
 
@@ -196,13 +190,10 @@ class IVExperimentForm(forms.ModelForm):
                 {"related": self.instance.study.assessment.id}
             )
 
-        self.helper = self.setHelper()
-
-    def setHelper(self):
+    @property
+    def helper(self):
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
-            if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "col-md-12"
             if type(widget) == forms.Textarea:
                 widget.attrs["rows"] = 3
 
@@ -312,8 +303,6 @@ class IVEndpointForm(forms.ModelForm):
                 {"related": self.instance.assessment.id}
             )
 
-        self.helper = self.setHelper()
-
     def clean_additional_fields(self):
         data = self.cleaned_data["additional_fields"]
         try:
@@ -322,12 +311,10 @@ class IVEndpointForm(forms.ModelForm):
             raise forms.ValidationError("Must be valid JSON.")
         return data
 
-    def setHelper(self):
+    @property
+    def helper(self):
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
-            if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "col-md-12"
-
             if type(widget) == forms.Textarea:
                 widget.attrs["rows"] = 3
 

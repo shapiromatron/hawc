@@ -27,8 +27,10 @@
     </h1>
 
   {% if crud == "Read" %}
+  <div id="endpointsDivParent" class="hidden">
     <h2>Available endpoints</h2>
     <div id="endpointsDiv"></div>
+  </div>
   {% endif %}
 
 {% endblock %}
@@ -97,6 +99,7 @@
     clickedHeader.html((reverseSort ? "&darr; " : "&uarr; ") + clickedHeader.html());
   };
   renderTableAsSortable("name");
+  $('#endpointsDivParent').fadeIn();
   });
   </script>
 {% endblock %}

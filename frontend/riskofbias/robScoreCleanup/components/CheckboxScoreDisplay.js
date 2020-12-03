@@ -29,7 +29,7 @@ class CheckboxScoreDisplay extends Component {
                 </div>
                 <div className="col-md-3">
                     {score.label.length > 0 ? (
-                        <p>
+                        <p className="mb-1">
                             <b>{score.label}: </b>
                             {score.is_default ? " (overall)" : " (override)"}
                         </p>

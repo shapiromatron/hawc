@@ -530,10 +530,10 @@ class IVEndpointGroup(ConfidenceIntervalsMixin, models.Model):
     )
     significant_control = models.CharField(max_length=2, default="nr", choices=SIGNIFICANCE_CHOICES)
     cytotoxicity_observed = models.BooleanField(
-        default=None, choices=OBSERVATION_CHOICES, null=True
+        default=None, choices=OBSERVATION_CHOICES, null=True, blank=True,
     )
     precipitation_observed = models.BooleanField(
-        default=None, choices=OBSERVATION_CHOICES, null=True
+        default=None, choices=OBSERVATION_CHOICES, null=True, blank=True,
     )
 
     COPY_NAME = "ivendpoint_groups"

@@ -17,6 +17,7 @@ class Migration(migrations.Migration):
                 choices=[(None, "not reported"), (False, "not observed"), (True, "observed")],
                 default=None,
                 null=True,
+                blank=True,
             ),
         ),
         migrations.AlterField(
@@ -26,6 +27,7 @@ class Migration(migrations.Migration):
                 choices=[(None, "not reported"), (False, "not observed"), (True, "observed")],
                 default=None,
                 null=True,
+                blank=True,
             ),
         ),
     ]
