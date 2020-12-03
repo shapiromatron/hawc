@@ -174,6 +174,13 @@ const helpers = {
             height: windowHeight - contentSize.top,
         };
     },
+    getHawcOffsets() {
+        // get offsets from header and sidebar in hawc for absolute positioning
+        return {
+            x: $("#sidebar-container")[0].offsetWidth,
+            y: d3.sum(_.map($(".hawc-header"), d => d.offsetHeight)),
+        };
+    },
     getTextContrastColor(hex) {
         /* Returns white or black based on best contrast for given background color
            Based on W3C guidelines: https://www.w3.org/TR/UNDERSTANDING-WCAG20/visual-audio-contrast-contrast.html
