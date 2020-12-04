@@ -6,6 +6,7 @@ from urllib.parse import urlparse
 from django.contrib import messages
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.sites.shortcuts import get_current_site
 from django.core.exceptions import EmptyResultSet, PermissionDenied
 from django.forms.models import model_to_dict
 from django.http import HttpRequest, HttpResponseRedirect
@@ -45,16 +46,22 @@ def get_referrer(request: HttpRequest, default: str) -> str:
         request (HttpRequest): the http request
 
     Returns:
-        str: A valid URL
+        str: A valid URL, with query params dropped
     """
     url = request.META.get("HTTP_REFERER")
     if url is None:
         return default
+    parsed_url = urlparse(url)
+
+    if get_current_site(request).domain != parsed_url.hostname:
+        return default
+
     try:
-        _ = resolve(urlparse(url).path)
-        return url
+        _ = resolve(parsed_url.path)
     except Resolver404:
         return default
+
+    return f"{parsed_url.scheme}://{parsed_url.netloc}{parsed_url.path}"
 
 
 class MessageMixin:

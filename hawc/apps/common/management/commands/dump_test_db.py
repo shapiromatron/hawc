@@ -25,6 +25,7 @@ class Command(BaseCommand):
             use_natural_primary_keys=True,
         )
 
+        call_command("dumpdata", "sites", **shared_kwargs)
         call_command("dumpdata", "contenttypes", **shared_kwargs)
         call_command("dumpdata", "myuser", **shared_kwargs)
         call_command("dumpdata", "vocab", **shared_kwargs)
