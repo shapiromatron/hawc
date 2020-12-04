@@ -1,6 +1,7 @@
 from urllib.parse import urlparse
 
 import pytest
+from django.contrib.sites.shortcuts import get_current_site
 from django.test.client import Client
 from django.urls import reverse
 
@@ -98,8 +99,10 @@ class TestContactUsPage:
         assert resp.context["form"].fields["previous_page"].initial == portal_url
 
         # valid referrer; use valid
-        resp = client.get(contact_url, HTTP_REFERER=about_url)
-        assert resp.context["form"].fields["previous_page"].initial == about_url
+        domain = get_current_site(resp.request).domain
+        valid_url = f"https://{domain}{about_url}"
+        resp = client.get(contact_url, HTTP_REFERER=valid_url)
+        assert resp.context["form"].fields["previous_page"].initial == valid_url
 
         # invalid referrer; use default
         about_url = reverse("about")
