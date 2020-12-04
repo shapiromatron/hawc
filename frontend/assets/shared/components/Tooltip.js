@@ -11,6 +11,7 @@ class TooltipContainer extends Component {
             <div
                 style={{
                     backgroundColor: "white",
+                    pointerEvents: "none",
                 }}>
                 {this.props.children}
             </div>
