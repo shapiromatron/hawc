@@ -96,7 +96,7 @@ class TestContactUsPage:
 
         # no referrer; use default
         resp = client.get(contact_url)
-        assert resp.context["form"].fields["previous_page"].initial == portal_url
+        assert urlparse(resp.context["form"].fields["previous_page"].initial).path == portal_url
 
         # valid referrer; use valid
         domain = get_current_site(resp.request).domain
@@ -107,4 +107,4 @@ class TestContactUsPage:
         # invalid referrer; use default
         about_url = reverse("about")
         resp = client.get(contact_url, HTTP_REFERER=about_url + '"onmouseover="alert(26)"')
-        assert resp.context["form"].fields["previous_page"].initial == portal_url
+        assert urlparse(resp.context["form"].fields["previous_page"].initial).path == portal_url

@@ -49,17 +49,24 @@ def get_referrer(request: HttpRequest, default: str) -> str:
         str: A valid URL, with query params dropped
     """
     url = request.META.get("HTTP_REFERER")
+
+    if default.startswith("https"):
+        default_url = default
+    else:
+        default_url = f"https://{get_current_site(request).domain}{default}"
+
     if url is None:
-        return default
+        return default_url
+
     parsed_url = urlparse(url)
 
     if get_current_site(request).domain != parsed_url.hostname:
-        return default
+        return default_url
 
     try:
         _ = resolve(parsed_url.path)
     except Resolver404:
-        return default
+        return default_url
 
     return f"{parsed_url.scheme}://{parsed_url.netloc}{parsed_url.path}"
 
