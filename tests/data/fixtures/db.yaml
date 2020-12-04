@@ -1,3 +1,7 @@
+- model: sites.site
+  fields:
+    domain: 127.0.0.1
+    name: localhost
 - model: contenttypes.contenttype
   fields:
     app_label: auth
