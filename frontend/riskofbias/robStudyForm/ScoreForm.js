@@ -76,7 +76,7 @@ class ScoreForm extends Component {
 
         return (
             <div className="score-form container-fluid ">
-                <div className="row form-inline">
+                <div className="row">
                     <div className="col-md-3">
                         {editableMetricHasOverride ? (
                             <TextInput
@@ -167,8 +167,8 @@ class ScoreForm extends Component {
                             }}
                         />
                     </div>
-                    {score.is_default ? null : <ScoreOverrideForm score={score} />}
                 </div>
+                {score.is_default ? null : <ScoreOverrideForm score={score} />}
                 <hr />
             </div>
         );

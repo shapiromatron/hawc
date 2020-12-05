@@ -55,16 +55,11 @@ class MetaProtocolForm(forms.ModelForm):
         self.fields["exclusion_criteria"].widget.update_query_parameters(
             {"related": self.instance.study.assessment_id}
         )
-        self.helper = self.setHelper()
 
-    def setHelper(self):
+    @property
+    def helper(self):
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
-            if type(widget) != forms.CheckboxInput:
-                if fld in self.CRITERION_FIELDS:
-                    widget.attrs["class"] = "col-md-10"
-                else:
-                    widget.attrs["class"] = "col-md-12"
             if type(widget) == forms.Textarea:
                 widget.attrs["rows"] = 3
 
@@ -136,16 +131,11 @@ class MetaResultForm(forms.ModelForm):
         self.fields["adjustment_factors"].widget.update_query_parameters({"related": assessment.id})
         self.fields["health_outcome"].widget.update_query_parameters({"related": assessment.id})
         self.fields["exposure_name"].widget.update_query_parameters({"related": assessment.id})
-        self.helper = self.setHelper()
 
-    def setHelper(self):
+    @property
+    def helper(self):
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
-            if type(widget) != forms.CheckboxInput:
-                if fld == "adjustment_factors":
-                    widget.attrs["class"] = "col-md-10"
-                else:
-                    widget.attrs["class"] = "col-md-12"
             if type(widget) == forms.Textarea:
                 widget.attrs["rows"] = 3
 
@@ -300,23 +290,6 @@ class SingleResultForm(forms.ModelForm):
         self.fields["study"].queryset = self.fields["study"].queryset.filter(
             assessment=assessment, epi=True
         )
-
-        self.helper = self.setHelper()
-
-    def setHelper(self):
-        for fld in list(self.fields.keys()):
-            widget = self.fields[fld].widget
-            if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "col-md-12"
-
-            if type(widget) == forms.Textarea:
-                widget.attrs["rows"] = 3
-
-        self.fields["study"].widget.attrs["class"] += " studySearch"
-
-        helper = BaseFormHelper(self)
-
-        return helper
 
 
 class BaseSingleResultFormset(forms.BaseModelFormSet):

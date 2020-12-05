@@ -37,9 +37,9 @@ class DescriptiveTable {
 
     add_tbody_tr_list(description, list_items) {
         if (list_items.length > 0) {
-            var ul = $("<ul>").append(
+            var ul = $('<ul class="list-group list-group-flush">').append(
                     list_items.map(function(v) {
-                        return $("<li>").html(v);
+                        return $('<li class="list-group-item p-0 bg-transparent">').html(v);
                     })
                 ),
                 tr = $("<tr>")

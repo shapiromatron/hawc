@@ -31,19 +31,19 @@ class Root extends Component {
         return (
             <div>
                 <ScrollToErrorBox error={error} />
-                <div className="container-fluid cleanStudyMetricForm">
+                <div className="row cleanStudyMetricForm">
                     <div className="col-md-6">
                         <MetricSelect />
                         <div>
                             <button
-                                className="btn btn-primary space"
+                                className="btn btn-primary"
                                 onClick={() => {
                                     this.props.store.fetchScores();
                                 }}>
                                 Load responses
                             </button>
                             <button
-                                className="btn space"
+                                className="btn btn-secondary ml-2"
                                 onClick={() => {
                                     this.props.store.clearFetchedScores();
                                 }}>
@@ -51,12 +51,14 @@ class Root extends Component {
                             </button>
                         </div>
                     </div>
-                    <div className="col-md-6 container-fluid">
-                        <div className="col-md-6">
-                            <ScoreSelect />
-                        </div>
-                        <div className="col-md-6">
-                            <StudyTypeSelect />
+                    <div className="col-md-6">
+                        <div className="row">
+                            <div className="col-md-6">
+                                <ScoreSelect />
+                            </div>
+                            <div className="col-md-6">
+                                <StudyTypeSelect />
+                            </div>
                         </div>
                         <p className="form-text text-muted">
                             To de-select a filter, click on the filter while holding Control on

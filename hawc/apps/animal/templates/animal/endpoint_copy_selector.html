@@ -13,30 +13,48 @@
   {% include "hawc/_copy_as_new.html" with name="endpoint" notes="Select an existing endpoint as a template to create a new one. Only inputs from the current study are available." %}
 
   <div id="endpoint_search_fields_wrapper" style="display:none" class="form-group form-row">
-    <label class="col-form-label" for="endpoint_search_fields">Search fields:</label>
-    <div class="form-group">
-      <div><input class="search_trigger" type="checkbox" checked name="endpoint_search_fields"
-          value="animal_group__experiment__name"> Experiment</div>
-      <div><input class="search_trigger" type="checkbox" checked name="endpoint_search_fields" value="animal_group__name">
-        Animal Group</div>
-      <div><input class="search_trigger" type="checkbox" checked name="endpoint_search_fields" value="name"> Endpoint Name
+    <label class="col-md-2 col-form-label" for="endpoint_search_fields">Search fields:</label>
+    <div class="col-md-10">
+      <div class="form-check">
+        <div>
+          <input class="search_trigger form-check-input" type="checkbox" checked name="endpoint_search_fields"
+            value="animal_group__experiment__name"> Experiment
+        </div>
+        <div>
+          <input class="search_trigger form-check-input" type="checkbox" checked name="endpoint_search_fields" value="animal_group__name">
+          Animal Group
+        </div>
+        <div>
+          <input class="search_trigger form-check-input" type="checkbox" checked name="endpoint_search_fields" value="name"> Endpoint Name
+        </div>
+        <div>
+          <input class="search_trigger form-check-input" type="checkbox" name="endpoint_search_fields" value="created"> Date Created
+        </div>
+        <div>
+          <input class="search_trigger form-check-input" type="checkbox" name="endpoint_search_fields" value="last_updated"> Date Updated
+        </div>
+        <div>
+          <input class="search_trigger form-check-input" type="checkbox" name="endpoint_search_fields" value="data_type"> Data Type
+        </div>
+        <div>
+          <input class="search_trigger form-check-input" type="checkbox" name="endpoint_search_fields" value="response_units"> Response
+          Units
+        </div>
+        <div>
+          <input class="search_trigger form-check-input" type="checkbox" name="endpoint_search_fields" value="observation_time">
+          Observation Time
+        </div>
+        <div>
+          <input class="search_trigger form-check-input" type="checkbox" name="endpoint_search_fields" value="system"> System
+        </div>
       </div>
-      <div><input class="search_trigger" type="checkbox" name="endpoint_search_fields" value="created"> Date Created</div>
-      <div><input class="search_trigger" type="checkbox" name="endpoint_search_fields" value="last_updated"> Date Updated
-      </div>
-      <div><input class="search_trigger" type="checkbox" name="endpoint_search_fields" value="data_type"> Data Type</div>
-      <div><input class="search_trigger" type="checkbox" name="endpoint_search_fields" value="response_units"> Response
-        Units</div>
-      <div><input class="search_trigger" type="checkbox" name="endpoint_search_fields" value="observation_time">
-        Observation Time</div>
-      <div><input class="search_trigger" type="checkbox" name="endpoint_search_fields" value="system"> System</div>
     </div>
   </div>
 
   <div id="endpoint_sort_criteria_wrapper" style="display:none" class="form-group form-row">
-    <label class="col-form-label" for="endpoint_sort_criteria">Sort by:</label>
-    <div class="form-group">
-      <select class="search_trigger" name="endpoint_sort_criteria">
+    <label class="col-md-2 col-form-label" for="endpoint_sort_criteria">Sort by:</label>
+    <div class="col-md-5">
+      <select class="search_trigger form-control" name="endpoint_sort_criteria">
         <option value="name">Endpoint Name</option>
         <option value="created">Date Created</option>
         <option value="last_updated">Date Updated</option>
@@ -47,8 +65,9 @@
         <option value="animal_group__name">Animal Group</option>
         <option value="animal_group__experiment__name">Experiment</option>
       </select>
-
-      <select class="search_trigger" name="endpoint_sort_direction">
+    </div>
+    <div class="col-md-5">
+      <select class="search_trigger form-control" name="endpoint_sort_direction">
         <option value="">Ascending</option>
         <option value="-">Descending</option>
       </select>

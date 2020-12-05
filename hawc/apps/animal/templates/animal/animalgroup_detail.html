@@ -2,7 +2,7 @@
 
 {% block content %}
 
-    <h1>{{object}}
+    <h1 id="animal-group-header">{{object}}
       {% if obj_perms.edit %}
         <div class="dropdown btn-group float-right">
           <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
@@ -27,8 +27,10 @@
     </h1>
 
   {% if crud == "Read" %}
+  <div id="endpointsDivParent" class="hidden">
     <h2>Available endpoints</h2>
     <div id="endpointsDiv"></div>
+  </div>
   {% endif %}
 
 {% endblock %}
@@ -47,7 +49,7 @@
 
   window.app.animalStartup(function(animal){
       animal.AnimalGroup.get_object({{object.id}}, function(d){
-          $('h1')
+          $('h1#animal-group-header')
             .after(
                 d.build_details_table(),
                 $("<h2>Dosing regime</h2>"),
@@ -97,6 +99,7 @@
     clickedHeader.html((reverseSort ? "&darr; " : "&uarr; ") + clickedHeader.html());
   };
   renderTableAsSortable("name");
+  $('#endpointsDivParent').fadeIn();
   });
   </script>
 {% endblock %}

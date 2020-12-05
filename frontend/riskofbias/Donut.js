@@ -46,12 +46,19 @@ class Donut extends D3Plot {
     build_plot() {
         this.plot_div.html("");
         this.build_plot_skeleton(false);
-        this.draw_visualizations();
         this.customize_menu();
+        this.draw_visualizations();
         this.trigger_resize();
+        this.resize_subset();
     }
 
     customize_menu() {
+        let old_toggle = this._toggle_menu_bar;
+        this._toggle_menu_bar = () => {
+            old_toggle.call(this);
+            $(window).resize();
+        };
+
         this.add_menu();
         this.add_menu_button({
             id: "lock_view",
@@ -93,7 +100,7 @@ class Donut extends D3Plot {
 
                 if (scores.length > 1) {
                     notes =
-                        "<p><i>Multiple judgments exist for this metric; showing notes from the default judgment</i></p>" +
+                        "<p class='form-text my-1'><small><i>Multiple judgments exist for this metric; showing notes from the default judgment</small></i></p>" +
                         notes;
                 }
                 return {
@@ -312,14 +319,11 @@ class Donut extends D3Plot {
         this.domain_arcs = domain_arcs;
 
         // build plot div, but make hidden by default
-        this.subset_div = $("<div></div>").css({
+        this.subset_div = $("<div>").css({
             position: "relative",
             display: "none",
-            height: -this.h - this.padding.top - this.padding.bottom,
             padding: "5px",
-            width: this.w / 2 - this.padding.left - this.padding.right,
-            left: this.w / 2 + this.padding.left + this.padding.right + 10,
-            top: -this.h + this.padding.top + 10,
+            overflow: "auto",
         });
         this.plot_div.append(this.subset_div);
 
@@ -333,6 +337,19 @@ class Donut extends D3Plot {
             .text(this.data.title);
 
         setTimeout(() => this.toggle_domain_width(), 2);
+    }
+
+    resize_subset() {
+        $(window).resize(() => {
+            var menu_height = this.menu_div.hasClass("hidden") ? 0 : this.menu_div.outerHeight();
+            this.subset_div.css({
+                height: this.svg.clientHeight - this.padding.top - this.padding.bottom,
+                width: this.svg.clientWidth / 2 - this.padding.left - this.padding.right,
+                left: this.svg.clientWidth / 2 + this.padding.left,
+                top: -this.svg.clientHeight - menu_height,
+            });
+        });
+        $(window).resize();
     }
 
     autosize_domain_labels() {
@@ -386,26 +403,33 @@ class Donut extends D3Plot {
 
     show_subset(metric) {
         this.clear_subset();
-        this.subset_div.append(`<h4>${metric.parent_name}</h4>`);
-        var ol = $('<ol class="score-details"></ol>'),
+        var card = $('<div class="card"></div>'),
+            body = $('<div class="card-body"></div>'),
+            title = $('<span class="card-title"></span>'),
             div = $("<div>")
                 .text(metric.score_text + " " + metric.direction_simple)
                 .attr("class", "scorebox")
                 .css(metric.score_css_style),
             metric_txt = $("<b>").text(metric.criterion),
             direction_txt =
-                metric.direction_verbose == "" ? null : $("<p>").html(metric.direction_verbose),
-            notes_txt = $("<p>")
-                .html(metric.notes)
-                .css({height: 250, overflow: "auto"});
-        ol.append($("<li>").html([div, metric_txt, direction_txt, notes_txt]));
-        this.subset_div.append(ol);
+                metric.direction_verbose == ""
+                    ? null
+                    : $('<p class="card-text my-1">').html(metric.direction_verbose),
+            notes_txt = $('<p class="card-text my-1">').html(metric.notes);
+        body.append(title.html([div, metric_txt]));
+        body.append(direction_txt, notes_txt);
+
+        card.append(`<h4 class="card-header">${metric.parent_name}</h4>`);
+        card.append(body);
+        this.subset_div.append(card);
         this.subset_div.fadeIn("500");
     }
 
     show_domain_header(domain) {
         this.clear_subset();
-        this.subset_div.append(`<h4>${domain}</h4>`);
+        var card = $('<div class="card"></div>');
+        card.append(`<h4 class="card-header">${domain}</h4>`);
+        this.subset_div.append(card);
         this.subset_div.fadeIn("500");
     }
 }
