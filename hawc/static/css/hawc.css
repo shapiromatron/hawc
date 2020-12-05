@@ -490,3 +490,14 @@ Beta tester
     background-color: #ec744c;
     border-color: #ec744c;
 }
+
+/*
+Package style overrides
+*/
+.react-datepicker-wrapper {
+    display: block !important;
+}
+
+.react-datepicker__input-container {
+    display: block !important;
+}
