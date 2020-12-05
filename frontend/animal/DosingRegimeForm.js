@@ -164,7 +164,6 @@ class DosingRegimeForm {
                         </button>
                     </div>`
                 );
-                input_group.append(input_append);
             }
             th.append(input_group);
             tr.append(th);
