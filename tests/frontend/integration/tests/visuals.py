@@ -18,7 +18,7 @@ def _check_exploratory_heatmaps(driver, root_url):
     h.go_to(root_url + "/ani/assessment/2/heatmap-study-design/")
     h.wait_until(condition_fn=h.Text("Grand Total").exists, timeout_secs=60)
     assert len(driver.find_elements_by_css_selector("svg")) > 0
-    assert len(driver.find_elements_by_css_selector(".exp_heatmap_cell")) == 4
+    assert len(driver.find_elements_by_css_selector(".exp_heatmap_cell")) == 6
 
 
 def _check_browsing(driver, root_url):
