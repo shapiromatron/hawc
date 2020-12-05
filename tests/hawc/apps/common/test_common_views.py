@@ -41,4 +41,3 @@ def test_get_referrer():
         get_referrer(request, "https://complete-url.com/path-test/")
         == "https://complete-url.com/path-test/"
     )
-
