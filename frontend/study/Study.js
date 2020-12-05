@@ -221,9 +221,7 @@ class Study {
             var $rob = $('<div class="col-md-12">');
             $div.prepend($('<div class="row">').append($rob));
             if ($shower) {
-                $shower.on("shown.bs.modal", function() {
-                    displayRoB();
-                });
+                $shower.on("shown.bs.modal", displayRoB).on("shown.bs.tab", displayRoB);
             } else {
                 displayRoB();
             }

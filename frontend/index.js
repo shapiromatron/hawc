@@ -15,6 +15,7 @@ import studyStartup from "./study";
 import {
     summaryStartup,
     summaryFormsStartup,
+    summaryTextStartup,
     dataPivotStartup,
     heatmapTemplateStartup,
     renderPlotlyFromApi,
@@ -39,8 +40,9 @@ window.app = {
     riskofbiasStartup,
     smartTagsStartup,
     studyStartup,
-    summaryFormsStartup,
     summaryStartup,
+    summaryFormsStartup,
+    summaryTextStartup,
     textCleanupStartup,
     utils,
 };

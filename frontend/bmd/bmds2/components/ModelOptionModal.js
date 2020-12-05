@@ -46,8 +46,12 @@ class ModelOptionModal extends BaseModal {
                     </div>
                 </div>
                 <div className="row">
-                    <h4>Parameter assignment</h4>
-                    <table className="table table-sm table-striped" />
+                    <div className="col-md-12">
+                        <h4>Parameter assignment</h4>
+                    </div>
+                    <div className="col-md-12">
+                        <table className="table table-sm table-striped" />
+                    </div>
                 </div>
             </div>
         );
@@ -132,22 +136,20 @@ class ModelOptionModal extends BaseModal {
                         </fieldset>
                     </div>
                     <div className="row">
-                        <fieldset>
-                            <legend>Parameter assignments</legend>
-                            <div>
-                                {params.map((d, i) => {
-                                    return (
-                                        <ParameterField
-                                            key={i}
-                                            index={i}
-                                            settings={d}
-                                            handleChange={this.handleParameterChange.bind(this, d)}
-                                            value={this.state[d.key]}
-                                        />
-                                    );
-                                })}
-                            </div>
-                        </fieldset>
+                        <div className="container-fluid col-md-12">
+                            <legend className="row">Parameter assignments</legend>
+                            {params.map((d, i) => {
+                                return (
+                                    <ParameterField
+                                        key={i}
+                                        index={i}
+                                        settings={d}
+                                        handleChange={this.handleParameterChange.bind(this, d)}
+                                        value={this.state[d.key]}
+                                    />
+                                );
+                            })}
+                        </div>
                     </div>
                 </form>
             </div>
@@ -184,21 +186,29 @@ class ModelOptionModal extends BaseModal {
             tableFunc = editMode ? this.renderEditMode : this.renderReadOnly;
 
         return (
-            <div className="modal hide fade" id={types.OPTION_MODAL_ID}>
-                <div className="modal-header">
-                    <button ref={this.closer} className="close" type="button" data-dismiss="modal">
-                        ×
-                    </button>
-                    <h3>{title}</h3>
+            <div className="modal" id={types.OPTION_MODAL_ID}>
+                <div className="modal-dialog">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h3>{title}</h3>
+                            <button
+                                ref={this.closer}
+                                className="close"
+                                type="button"
+                                data-dismiss="modal">
+                                ×
+                            </button>
+                        </div>
+
+                        {tableFunc.bind(this)()}
+
+                        <EditableModalFooter
+                            editMode={editMode}
+                            handleSave={this.handleSave.bind(this)}
+                            handleDelete={this.props.handleDelete}
+                        />
+                    </div>
                 </div>
-
-                {tableFunc.bind(this)()}
-
-                <EditableModalFooter
-                    editMode={editMode}
-                    handleSave={this.handleSave.bind(this)}
-                    handleDelete={this.props.handleDelete}
-                />
             </div>
         );
     }

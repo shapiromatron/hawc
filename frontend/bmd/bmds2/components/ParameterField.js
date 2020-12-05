@@ -21,11 +21,13 @@ class ParameterField extends React.Component {
             showInput = vals[0] === "d" ? "none" : "";
 
         return (
-            <div className="form-group" key={index}>
-                <label className="col-form-label">{settings.n}</label>
-                <div className="form-group">
+            <div className="row mb-2" key={index}>
+                <div className="col-md-4">
+                    <label>{settings.n}</label>
+                </div>
+                <div className="col-md-4">
                     <select
-                        className="col-md-4"
+                        className="form-control"
                         style={{marginRight: "1em"}}
                         value={vals[0]}
                         ref={this.selector}
@@ -34,9 +36,11 @@ class ParameterField extends React.Component {
                         <option value="s">Specified</option>
                         <option value="i">Initialized</option>
                     </select>
+                </div>
+                <div className="col-md-4">
                     <input
                         style={{display: showInput}}
-                        className="col-md-4"
+                        className="form-control"
                         type="number"
                         step="1e-8"
                         value={vals[1]}

@@ -14,7 +14,7 @@ class TestAssessmentClearCache:
         url = Assessment.objects.get(id=db_keys.assessment_working).get_clear_cache_url()
 
         # test failures
-        for client in ["rev@rev.com", None]:
+        for client in ["reviewer@hawcproject.org", None]:
             c = Client()
             if client:
                 assert c.login(username=client, password="pw") is True
@@ -22,7 +22,7 @@ class TestAssessmentClearCache:
             assert response.status_code == 403
 
         # test successes
-        for client in ["pm@pm.com", "team@team.com"]:
+        for client in ["pm@hawcproject.org", "team@hawcproject.org"]:
             c = Client()
             if client:
                 assert c.login(username=client, password="pw") is True
@@ -34,7 +34,7 @@ class TestAssessmentClearCache:
     def test_functionality(self, db_keys):
         url = Assessment.objects.get(id=db_keys.assessment_working).get_clear_cache_url()
         c = Client()
-        assert c.login(username="pm@pm.com", password="pw") is True
+        assert c.login(username="pm@hawcproject.org", password="pw") is True
         # this is success behavior in test environment w/o redis - TODO improve?
         with pytest.raises(NotImplementedError):
             c.get(url)
@@ -82,7 +82,7 @@ class TestContactUsPage:
         assert urlparse(resp.url).path == reverse("user:login")
 
         # valid
-        client.login(username="pm@pm.com", password="pw")
+        client.login(username="pm@hawcproject.org", password="pw")
         resp = client.get(contact_url)
         assert resp.status_code == 200
 
@@ -92,11 +92,11 @@ class TestContactUsPage:
         contact_url = reverse("contact")
 
         client = Client()
-        client.login(username="pm@pm.com", password="pw")
+        client.login(username="pm@hawcproject.org", password="pw")
 
         # no referrer; use default
         resp = client.get(contact_url)
-        assert resp.context["form"].fields["previous_page"].initial == portal_url
+        assert urlparse(resp.context["form"].fields["previous_page"].initial).path == portal_url
 
         # valid referrer; use valid
         domain = get_current_site(resp.request).domain
@@ -107,4 +107,4 @@ class TestContactUsPage:
         # invalid referrer; use default
         about_url = reverse("about")
         resp = client.get(contact_url, HTTP_REFERER=about_url + '"onmouseover="alert(26)"')
-        assert resp.context["form"].fields["previous_page"].initial == portal_url
+        assert urlparse(resp.context["form"].fields["previous_page"].initial).path == portal_url

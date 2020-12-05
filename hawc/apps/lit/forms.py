@@ -65,15 +65,9 @@ class SearchForm(forms.ModelForm):
         if "search_string" in self.fields:
             self.fields["search_string"].widget.attrs["rows"] = 5
             self.fields["search_string"].required = True
-        # by default take-up the whole row
-        for fld in list(self.fields.keys()):
-            widget = self.fields[fld].widget
-            if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "col-md-12"
 
-        self.helper = self.setHelper()
-
-    def setHelper(self):
+    @property
+    def helper(self):
         if self.instance.id:
             inputs = {
                 "legend_text": f"Update {self.instance}",
@@ -110,9 +104,8 @@ class ImportForm(SearchForm):
         else:
             self.fields.pop("search_string")
 
-        self.helper = self.setHelper()
-
-    def setHelper(self):
+    @property
+    def helper(self):
         if self.instance.id:
             inputs = {
                 "legend_text": f"Update {self.instance}",
@@ -202,9 +195,8 @@ class RisImportForm(SearchForm):
         else:
             self.fields.pop("import_file")
 
-        self.helper = self.setHelper()
-
-    def setHelper(self):
+    @property
+    def helper(self):
         if self.instance.id:
             inputs = {
                 "legend_text": f"Update {self.instance}",
@@ -313,10 +305,6 @@ class SearchSelectorForm(forms.Form):
         self.user = kwargs.pop("user")
         self.assessment = kwargs.pop("assessment")
         super().__init__(*args, **kwargs)
-
-        for fld in list(self.fields.keys()):
-            self.fields[fld].widget.attrs["class"] = "col-md-11"
-
         assessment_pks = Assessment.objects.get_viewable_assessments(self.user).values_list(
             "pk", flat=True
         )
@@ -359,16 +347,13 @@ class ReferenceForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.helper = self.setHelper()
 
-    def setHelper(self):
+    @property
+    def helper(self):
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if fld in ["title", "authors_short", "authors", "journal"]:
                 widget.attrs["rows"] = 3
-
-            if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "col-md-12"
 
         inputs = {
             "legend_text": "Update reference details",
@@ -377,7 +362,7 @@ class ReferenceForm(forms.ModelForm):
         }
 
         helper = BaseFormHelper(self, **inputs)
-        # TODO: use new names
+
         helper.add_row("authors_short", 3, "col-md-4")
         helper.add_row("authors", 2, "col-md-6")
 
@@ -430,9 +415,9 @@ class ReferenceExcelUploadForm(forms.Form):
     def __init__(self, *args, **kwargs):
         self.assessment = kwargs.pop("assessment")
         super().__init__(*args, **kwargs)
-        self.helper = self.setHelper()
 
-    def setHelper(self):
+    @property
+    def helper(self):
         inputs = {
             "legend_text": "Upload full-text URLs",
             "help_text": "Using an Excel file, upload full-text URLs for multiple references",

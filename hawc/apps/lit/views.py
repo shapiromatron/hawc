@@ -131,6 +131,11 @@ class ImportNew(SearchNew):
     form_class = forms.ImportForm
     search_type = "Import"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"][-1].name = "Create import"
+        return context
+
 
 class ImportRISNew(ImportNew):
     form_class = forms.RisImportForm
@@ -514,6 +519,8 @@ class RefDelete(BaseDelete):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context["tags"] = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
+        context["object_json"] = self.object.get_json()
         context["breadcrumbs"].insert(2, lit_overview_breadcrumb(self.assessment))
         return context
 
