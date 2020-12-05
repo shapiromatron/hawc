@@ -13,7 +13,9 @@ class DataPivotLegend {
         this.dp_settings = dp_settings;
         this.selects = [];
         this.options = options || {offset: false};
-        if (this.settings.show) this._draw_legend();
+        if (this.settings.show) {
+            this._draw_legend();
+        }
     }
 
     static default_settings() {

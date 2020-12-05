@@ -50,7 +50,7 @@ class Keys:
         self.visual_heatmap = 1
         self.visual_barchart = 2
 
-        self.pm_user = UserCredential("pm@pm.com", "pw")
+        self.pm_user = UserCredential("pm@hawcproject.org", "pw")
         self.pm_user_id = 2
 
         self.job_assessment = "204faaa7-fdfa-4426-a09f-f0d1af9db33d"

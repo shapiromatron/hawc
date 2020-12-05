@@ -42,22 +42,25 @@ class TermSelector extends Component {
                         <div className="input-group">
                             <input
                                 type="number"
+                                className="form-control"
                                 placeholder="Enter term ID"
-                                style={{maxWidth: 100}}
+                                style={{maxWidth: 130}}
                                 value={this.state.idLookupValue}
                                 onChange={event =>
                                     this.setState({
                                         idLookupValue: parseInt(event.target.value),
                                     })
                                 }></input>
-                            <button
-                                className="btn btn-light"
-                                type="button"
-                                onClick={() => {
-                                    idLookupAction(this.state.idLookupValue);
-                                }}>
-                                Load ID
-                            </button>
+                            <div className="input-group-append">
+                                <button
+                                    className="btn btn-light"
+                                    type="button"
+                                    onClick={() => {
+                                        idLookupAction(this.state.idLookupValue);
+                                    }}>
+                                    Load ID
+                                </button>
+                            </div>
                         </div>
                     </div>
                 ) : null}
@@ -90,7 +93,7 @@ class TermSelector extends Component {
                 {object[termIdField] ? (
                     <p>
                         <b>Selected term:</b>&nbsp;
-                        <span className="badge badge-secondary">
+                        <span className="badge badge-secondary px-2 py-0">
                             {currentId}&nbsp;|&nbsp;{currentText}&nbsp;
                             <button
                                 type="button"

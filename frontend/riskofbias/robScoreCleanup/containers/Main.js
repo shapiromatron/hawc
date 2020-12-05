@@ -43,7 +43,7 @@ class Root extends Component {
                                 Load responses
                             </button>
                             <button
-                                className="btn btn-secondary"
+                                className="btn btn-secondary ml-2"
                                 onClick={() => {
                                     this.props.store.clearFetchedScores();
                                 }}>

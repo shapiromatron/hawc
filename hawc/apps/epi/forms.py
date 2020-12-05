@@ -35,12 +35,9 @@ class CriteriaForm(forms.ModelForm):
             lookup_class=lookups.CriteriaLookup, allow_new=True
         )
         self.instance.assessment = assessment
-        for fld in list(self.fields.keys()):
-            self.fields[fld].widget.attrs["class"] = "col-md-12"
         self.fields["description"].widget.update_query_parameters(
             {"related": self.instance.assessment.id}
         )
-        self.helper = self.setHelper()
 
     def clean(self):
         super().clean()
@@ -57,12 +54,8 @@ class CriteriaForm(forms.ModelForm):
 
         return self.cleaned_data
 
-    def setHelper(self):
-        for fld in list(self.fields.keys()):
-            widget = self.fields[fld].widget
-            if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "col-md-12"
-
+    @property
+    def helper(self):
         inputs = {
             "legend_text": self.CREATE_LEGEND,
             "help_text": self.CREATE_HELP_TEXT,
@@ -139,8 +132,6 @@ class StudyPopulationForm(forms.ModelForm):
             # set the help text here for the correct criteria field
             self.fields[fld].help_text = self.instance.CRITERIA_HELP_TEXTS.get(fld, "")
 
-        self.helper = self.setHelper()
-
     def save_criteria(self):
         """
         StudyPopulationCriteria is a through model; requires the criteria type.
@@ -166,11 +157,10 @@ class StudyPopulationForm(forms.ModelForm):
             self.save_criteria()
         return instance
 
-    def setHelper(self):
+    @property
+    def helper(self):
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
-            if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "col-md-12"
             if type(widget) == forms.Textarea:
                 widget.attrs["rows"] = 3
 
@@ -237,12 +227,9 @@ class AdjustmentFactorForm(forms.ModelForm):
             lookup_class=lookups.AdjustmentFactorLookup, allow_new=True
         )
         self.instance.assessment = assessment
-        for fld in list(self.fields.keys()):
-            self.fields[fld].widget.attrs["class"] = "col-md-12"
         self.fields["description"].widget.update_query_parameters(
             {"related": self.instance.assessment.id}
         )
-        self.helper = self.setHelper()
 
     def clean(self):
         super().clean()
@@ -259,12 +246,8 @@ class AdjustmentFactorForm(forms.ModelForm):
 
         return self.cleaned_data
 
-    def setHelper(self):
-        for fld in list(self.fields.keys()):
-            widget = self.fields[fld].widget
-            if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "col-md-12"
-
+    @property
+    def helper(self):
         inputs = {
             "legend_text": self.CREATE_LEGEND,
             "help_text": self.CREATE_HELP_TEXT,
@@ -275,9 +258,7 @@ class AdjustmentFactorForm(forms.ModelForm):
                 ),
             ],
         }
-
         helper = BaseFormHelper(self, **inputs)
-
         return helper
 
 
@@ -309,14 +290,11 @@ class ExposureForm(forms.ModelForm):
 
         if study_population:
             self.instance.study_population = study_population
-        self.helper = self.setHelper()
 
-    def setHelper(self):
+    @property
+    def helper(self):
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
-            if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "col-md-12"
-
             if type(widget) == forms.Textarea:
                 widget.attrs["rows"] = 3
 
@@ -343,7 +321,11 @@ class ExposureForm(forms.ModelForm):
 
         inhalation_idx = helper.find_layout_idx_for_field_name("inhalation")
         helper.layout[inhalation_idx].append(
-            cfl.HTML('<div style="margin-bottom:20px">' + self.instance.ROUTE_HELP_TEXT + "</div>")
+            cfl.HTML(
+                f"""<div class="col-md-12 pb-2">
+                    <small class="form-text text-muted">{self.instance.ROUTE_HELP_TEXT}</small>
+                </div>"""
+            )
         )
 
         helper.add_create_btn("dtxsid", reverse("assessment:dtxsid_create"), "Add new DTXSID")
@@ -403,13 +385,10 @@ class OutcomeForm(forms.ModelForm):
         if study_population:
             self.instance.study_population = study_population
 
-        self.helper = self.setHelper()
-
-    def setHelper(self):
+    @property
+    def helper(self):
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
-            if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "col-md-12"
             if type(widget) == forms.Textarea:
                 widget.attrs["rows"] = 3
 
@@ -637,13 +616,10 @@ class ComparisonSet(forms.ModelForm):
             filters["study_population"] = self.instance.outcome.study_population
         self.fields["exposure"].queryset = self.fields["exposure"].queryset.filter(**filters)
 
-        self.helper = self.setHelper()
-
-    def setHelper(self):
+    @property
+    def helper(self):
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
-            if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "col-md-12"
             if type(widget) == forms.Textarea:
                 widget.attrs["rows"] = 3
 
@@ -689,15 +665,10 @@ class SingleGroupForm(GroupForm):
 
     HELP_TEXT_UPDATE = "Update an existing group and numerical group descriptions."
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.helper = self.setHelper()
-
-    def setHelper(self):
+    @property
+    def helper(self):
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
-            if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "col-md-12"
             if type(widget) == forms.Textarea:
                 widget.attrs["rows"] = 3
 
@@ -836,8 +807,6 @@ class ResultForm(forms.ModelForm):
             if self.instance.id:
                 self.fields[fld].initial = getattr(self.instance, fld)
 
-        self.helper = self.setHelper()
-
     def save_factors(self):
         """
         Adjustment factors is a through model; requires the inclusion type.
@@ -876,11 +845,10 @@ class ResultForm(forms.ModelForm):
             self.save_factors()
         return instance
 
-    def setHelper(self):
+    @property
+    def helper(self):
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
-            if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "col-md-12"
             if type(widget) == forms.Textarea:
                 widget.attrs["rows"] = 3
 
@@ -949,9 +917,9 @@ class GroupResultForm(forms.ModelForm):
         )
         if result:
             self.instance.result = result
-        self.helper = self.setHelper()
 
-    def setHelper(self):
+    @property
+    def helper(self):
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if fld == "group":

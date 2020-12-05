@@ -3,12 +3,15 @@ import ReactDOM from "react-dom";
 import React, {Component} from "react";
 import PropTypes from "prop-types";
 
+import h from "shared/utils/helpers";
+
 class TooltipContainer extends Component {
     render() {
         return (
             <div
                 style={{
                     backgroundColor: "white",
+                    pointerEvents: "none",
                 }}>
                 {this.props.children}
             </div>
@@ -31,7 +34,8 @@ const bindTooltip = function($el, d3Selection, buildChildComponent, options) {
     */
     const xOffset = 10,
         yOffset = 10,
-        opts = options || {};
+        opts = options || {},
+        hawcPageOffsets = h.getHawcOffsets();
 
     $el.css("position", "absolute");
 
@@ -55,16 +59,19 @@ const bindTooltip = function($el, d3Selection, buildChildComponent, options) {
         })
         .on("mousemove", () => {
             const box = $el[0].getBoundingClientRect(),
-                {pageX, pageY} = d3.event;
+                {pageX, pageY} = d3.event,
+                hawcPageX = pageX - hawcPageOffsets.x,
+                hawcPageY = pageY - hawcPageOffsets.y;
+
             $el.css({
                 left: `${
-                    pageX + xOffset + box.width < window.pageXOffset + window.innerWidth
-                        ? pageX + xOffset
-                        : pageX - xOffset - box.width
+                    hawcPageX + xOffset + box.width < window.pageXOffset + window.innerWidth
+                        ? hawcPageX + xOffset
+                        : hawcPageX - xOffset - box.width
                 }px`,
                 top: `${
-                    pageY + yOffset + box.height * 0.5 < window.pageYOffset + window.innerHeight
-                        ? pageY + yOffset - box.height * 0.5
+                    hawcPageY + yOffset + box.height * 0.5 < window.pageYOffset + window.innerHeight
+                        ? hawcPageY + yOffset - box.height * 0.5
                         : window.pageYOffset + window.innerHeight - yOffset - box.height
                 }px`,
             });

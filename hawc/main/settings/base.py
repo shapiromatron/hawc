@@ -298,3 +298,5 @@ WEBPACK_LOADER = {
 }
 
 MODIFY_HELP_TEXT = "makemigrations" not in sys.argv
+
+TEST_DB_FIXTURE = PROJECT_ROOT / "tests/data/fixtures/db.yaml"

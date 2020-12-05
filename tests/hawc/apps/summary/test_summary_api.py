@@ -14,7 +14,7 @@ DATA_ROOT = Path(__file__).parents[3] / "data/api"
 @pytest.mark.django_db
 def test_api_visual_heatmap(db_keys):
     client = Client()
-    assert client.login(username="team@team.com", password="pw") is True
+    assert client.login(username="team@hawcproject.org", password="pw") is True
 
     url = reverse("summary:api:visual-detail", args=(db_keys.visual_heatmap,))
     response = client.get(url)
@@ -46,7 +46,7 @@ def test_api_visual_heatmap(db_keys):
 @pytest.mark.django_db
 def test_api_visual_barchart(db_keys):
     client = Client()
-    assert client.login(username="team@team.com", password="pw") is True
+    assert client.login(username="team@hawcproject.org", password="pw") is True
 
     # test rob barchart request returns successfully
     url = reverse("summary:api:visual-detail", args=(db_keys.visual_barchart,))
@@ -96,8 +96,11 @@ class TestVisual:
 
         assert data == json.loads(fn.read_text())
 
-    def test_heatmap(self, rewrite_data_files: bool):
-        self._test_visual_detail_api(rewrite_data_files, "heatmap")
+    def test_bioassay_aggregation(self, rewrite_data_files: bool):
+        self._test_visual_detail_api(rewrite_data_files, "bioassay-aggregation")
+
+    def test_rob_heatmap(self, rewrite_data_files: bool):
+        self._test_visual_detail_api(rewrite_data_files, "rob-heatmap")
 
     def test_crossview(self, rewrite_data_files: bool):
         self._test_visual_detail_api(rewrite_data_files, "crossview")
@@ -110,6 +113,9 @@ class TestVisual:
 
     def test_embedded_tableau(self, rewrite_data_files: bool):
         self._test_visual_detail_api(rewrite_data_files, "embedded-tableau")
+
+    def test_exploratory_heatmap(self, rewrite_data_files: bool):
+        self._test_visual_detail_api(rewrite_data_files, "exploratory-heatmap")
 
 
 @pytest.mark.django_db
@@ -191,7 +197,7 @@ class TestDataPivot:
 class TestSummaryAssessmentViewset:
     def test_heatmap_datasets(self, db_keys):
         rev_client = APIClient()
-        assert rev_client.login(username="rev@rev.com", password="pw") is True
+        assert rev_client.login(username="reviewer@hawcproject.org", password="pw") is True
         anon_client = APIClient()
 
         urls = [
@@ -270,3 +276,60 @@ class TestSummaryAssessmentViewset:
                     },
                 ]
             }
+
+
+@pytest.mark.django_db
+class TestSummaryViewset:
+    def test_permissions(self, db_keys):
+        assessment_id = db_keys.assessment_working
+        root = models.SummaryText.get_assessment_root_node(assessment_id)
+
+        data = {
+            "assessment": assessment_id,
+            "title": "lvl_1a",
+            "slug": "lvl_1a",
+            "text": "text",
+            "parent": root.id,
+            "sibling": None,
+        }
+        user_anon = APIClient()
+        user_reviewer = APIClient()
+        assert user_reviewer.login(username="reviewer@hawcproject.org", password="pw") is True
+        user_team = APIClient()
+        assert user_team.login(username="team@hawcproject.org", password="pw") is True
+
+        # list
+        url = reverse("summary:api:summary-text-list")
+        response = user_reviewer.get(url)
+        assert response.status_code == 400
+        assert "Please provide an `assessment_id`" in response.json()["detail"]
+        response = user_reviewer.get(url + f"?assessment_id={assessment_id}")
+        assert response.status_code == 200
+        assert response.json()[0]["title"] == "assessment-1"
+
+        # creates
+        url = reverse("summary:api:summary-text-list")
+        for user in [user_anon, user_reviewer]:
+            response = user.post(url, data, format="json")
+            assert response.status_code == 403
+        response = user_team.post(url, data, format="json")
+        assert response.status_code == 201
+        obj_id = response.json()["id"]
+
+        # updates
+        data.update(title="my-title")
+        url = reverse("summary:api:summary-text-detail", args=(obj_id,))
+        for user in [user_anon, user_reviewer]:
+            response = user.patch(url, data, format="json")
+            assert response.status_code == 403
+        response = user_team.patch(url, data, format="json")
+        assert response.status_code == 200
+        assert response.json()["title"] == "my-title"
+
+        # deletes
+        url = reverse("summary:api:summary-text-detail", args=(obj_id,))
+        for user in [user_anon, user_reviewer]:
+            response = user.delete(url)
+            assert response.status_code == 403
+        response = user_team.delete(url)
+        assert response.status_code == 204

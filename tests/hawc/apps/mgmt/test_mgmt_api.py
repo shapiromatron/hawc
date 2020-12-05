@@ -9,9 +9,9 @@ class TestTaskViewset:
         url = reverse("mgmt:api:task-detail", args=(1,))
 
         for username, status_code in [
-            ("pm@pm.com", 200),
-            ("team@team.com", 200),
-            ("rev@rev.com", 200),
+            ("pm@hawcproject.org", 200),
+            ("team@hawcproject.org", 200),
+            ("reviewer@hawcproject.org", 200),
             (None, 403),
         ]:
             client = APIClient()
@@ -21,7 +21,7 @@ class TestTaskViewset:
 
     def test_task_patch(self):
         client = APIClient()
-        assert client.login(username="team@team.com", password="pw") is True
+        assert client.login(username="team@hawcproject.org", password="pw") is True
 
         url = reverse("mgmt:api:task-detail", args=(1,))
 

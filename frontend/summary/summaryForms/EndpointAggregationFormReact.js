@@ -97,23 +97,22 @@ class EndpointAggregationForm extends BaseVisualForm {
                         this.handleQuillInputChange("caption", value);
                     }}
                 />
-                <div id="div_id_published" className="form-group">
-                    <div className="form-group">
-                        <label htmlFor="id_published" className="form-check">
-                            Publish visual for public viewing
-                            <input
-                                onChange={this.handleCheckboxChange}
-                                type="checkbox"
-                                name="published"
-                                id="id_published"
-                                checked={this.state.published}
-                            />
-                        </label>
-                        <p id="hint_id_published" className="form-text text-muted">
-                            For assessments marked for public viewing, mark visual to be viewable by
-                            public
-                        </p>
-                    </div>
+                <div className="form-group form-check">
+                    <input
+                        className="form-check-input"
+                        onChange={e => this.setState({published: e.target.checked})}
+                        type="checkbox"
+                        name="published"
+                        id="isPublished"
+                        checked={this.state.published}
+                    />
+                    <label htmlFor="isPublished" className="form-check-label">
+                        Publish visual for public viewing
+                    </label>
+                    <small className="form-text text-muted">
+                        For assessments marked for public viewing, mark visual to be viewable by
+                        public
+                    </small>
                 </div>
             </div>
         );

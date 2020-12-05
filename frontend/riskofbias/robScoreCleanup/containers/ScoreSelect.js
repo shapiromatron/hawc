@@ -21,7 +21,7 @@ class ScoreSelect extends Component {
 
         return (
             <div>
-                <LabelInput for={"studyType_filter"} label={"Rating filter (optional)"} />
+                <LabelInput for="score_filter" label="Rating filter (optional)" />
                 <select
                     multiple={true}
                     name="score_filter"

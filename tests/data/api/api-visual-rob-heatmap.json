@@ -1,7 +1,7 @@
 {
   "id": 3,
-  "title": "heatmap",
-  "slug": "heatmap",
+  "title": "rob-heatmap",
+  "slug": "rob-heatmap",
   "visual_type": "risk of bias heatmap",
   "prefilters": "{}",
   "settings": {

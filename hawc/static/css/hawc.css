@@ -222,9 +222,8 @@ ul.sponsors {
     color: white;
 }
 .rob_score_bar {
-    height: 20px;
+    height: 25px;
     font-weight: bold;
-    margin-bottom: 5px;
     border: 1px solid gray;
     text-align: end;
     color: white;
@@ -344,6 +343,9 @@ div.smart-tag.active {
 .nestedTagCollapser {
     position: absolute;
     padding: 2px 0 0 2px;
+}
+.reference {
+    padding-left: 0.5rem;
 }
 .reference:hover {
     cursor: pointer;

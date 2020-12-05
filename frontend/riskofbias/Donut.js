@@ -100,7 +100,7 @@ class Donut extends D3Plot {
 
                 if (scores.length > 1) {
                     notes =
-                        "<p><i>Multiple judgments exist for this metric; showing notes from the default judgment</i></p>" +
+                        "<p class='form-text my-1'><small><i>Multiple judgments exist for this metric; showing notes from the default judgment</small></i></p>" +
                         notes;
                 }
                 return {
@@ -414,8 +414,8 @@ class Donut extends D3Plot {
             direction_txt =
                 metric.direction_verbose == ""
                     ? null
-                    : $('<p class="card-text">').html(metric.direction_verbose),
-            notes_txt = $('<p class="card-text">').html(metric.notes);
+                    : $('<p class="card-text my-1">').html(metric.direction_verbose),
+            notes_txt = $('<p class="card-text my-1">').html(metric.notes);
         body.append(title.html([div, metric_txt]));
         body.append(direction_txt, notes_txt);
 

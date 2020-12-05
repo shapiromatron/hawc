@@ -27,7 +27,7 @@ class ScoreDisplay extends Component {
             <div className={displayClass}>
                 <div>
                     {showAuthorDisplay || hasOverrides ? (
-                        <p>
+                        <p className="mb-1">
                             {showAuthorDisplay ? (
                                 <b className="float-right">
                                     {score.author.full_name}

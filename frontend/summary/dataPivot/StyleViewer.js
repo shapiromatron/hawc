@@ -87,8 +87,7 @@ class StyleViewer extends D3Plot {
         this.build_y_axis();
         this.build_x_axis();
 
-        var self = this,
-            x = this.x_scale,
+        var x = this.x_scale,
             y = this.y_scale;
 
         if (this.style.type === "line") {
@@ -104,10 +103,7 @@ class StyleViewer extends D3Plot {
                 .attr("x1", v => x(v.x1))
                 .attr("x2", v => x(v.x2))
                 .attr("y1", v => y(v.y1))
-                .attr("y2", v => y(v.y2))
-                .on("click", function() {
-                    self._update_styles(self.style.settings, true);
-                });
+                .attr("y2", v => y(v.y2));
 
             this._update_styles(this.style.settings, false);
         }
@@ -118,21 +114,10 @@ class StyleViewer extends D3Plot {
                 .data([{x: 0.25, y: 0.25, width: 1.5, height: 1.5}])
                 .enter()
                 .append("svg:rect")
-                .attr("x", function(v) {
-                    return x(v.x);
-                })
-                .attr("y", function(v) {
-                    return x(v.y);
-                })
-                .attr("width", function(v) {
-                    return y(v.width);
-                })
-                .attr("height", function(v) {
-                    return y(v.height);
-                })
-                .on("click", function() {
-                    self._update_styles(self.style.settings, true);
-                });
+                .attr("x", v => x(v.x))
+                .attr("y", v => x(v.y))
+                .attr("width", v => y(v.width))
+                .attr("height", v => y(v.height));
 
             this._update_styles(this.style.settings, false);
         }
@@ -150,9 +135,7 @@ class StyleViewer extends D3Plot {
                 .append("path")
                 .attr("d", d3.symbol())
                 .attr("transform", d => `translate(${x(d.x)},${y(d.y)})`)
-                .on("click", function() {
-                    self._update_styles(self.style.settings, true);
-                });
+                .on("click", () => this._update_styles(this.style.settings, true));
 
             this._update_styles(this.style.settings, false);
         }
@@ -166,18 +149,10 @@ class StyleViewer extends D3Plot {
                 ])
                 .enter()
                 .append("svg:line")
-                .attr("x1", function(v) {
-                    return x(v.x1);
-                })
-                .attr("x2", function(v) {
-                    return x(v.x2);
-                })
-                .attr("y1", function(v) {
-                    return y(v.y1);
-                })
-                .attr("y2", function(v) {
-                    return y(v.y2);
-                })
+                .attr("x1", v => x(v.x1))
+                .attr("x2", v => x(v.x2))
+                .attr("y1", v => y(v.y1))
+                .attr("y2", v => y(v.y2))
                 .attr("stroke-width", 2)
                 .attr("stroke", "#ccc");
 
@@ -210,18 +185,10 @@ class StyleViewer extends D3Plot {
             ])
             .enter()
             .append("svg:line")
-            .attr("x1", function(v) {
-                return x(v.x1);
-            })
-            .attr("x2", function(v) {
-                return x(v.x2);
-            })
-            .attr("y1", function(v) {
-                return y(v.y1);
-            })
-            .attr("y2", function(v) {
-                return y(v.y2);
-            });
+            .attr("x1", v => x(v.x1))
+            .attr("x2", v => x(v.x2))
+            .attr("y1", v => y(v.y1))
+            .attr("y2", v => y(v.y2));
     }
 
     add_legend_rects() {
@@ -322,7 +289,9 @@ class StyleViewer extends D3Plot {
                 this.rectangles
                     .transition()
                     .duration(1000)
-                    .style(style_settings.rect_style.settings);
+                    .call(selection =>
+                        this._set_styles_from_object(selection, style_settings.rect_style.settings)
+                    );
             } else {
                 if (this.rectangles) {
                     this.rectangles.remove();
@@ -335,7 +304,9 @@ class StyleViewer extends D3Plot {
                 this.lines
                     .transition()
                     .duration(1000)
-                    .style(style_settings.line_style.settings);
+                    .call(selection =>
+                        this._set_styles_from_object(selection, style_settings.line_style.settings)
+                    );
             } else {
                 if (this.lines) {
                     this.lines.remove();

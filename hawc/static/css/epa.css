@@ -1,3 +1,7 @@
+.epa-style .navbar-nav .dropdown-menu {
+    z-index: 1050;
+}
+
 .epa-style .navbar-nav li:hover .dropdown-menu {
     display: block;
 }

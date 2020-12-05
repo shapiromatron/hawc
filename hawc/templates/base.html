@@ -17,7 +17,7 @@
     {% block extrahead %}{% endblock %}
     {% include 'includes/css.html' %}
   </head>
-  <body {% block bodyattrs %}{% endblock %}>
+  <body>
 
     {% if user.is_superuser or SERVER_ROLE != 'production' %}
     {% include 'includes/environment_banner.html' %}
