@@ -10,7 +10,6 @@ class OverrideObjectTypeSelector extends Component {
         let {choices, value, onChange} = this.props;
         return (
             <SelectInput
-                className="col-md-6"
                 label="Override type"
                 choices={choices}
                 multiple={false}
@@ -32,7 +31,6 @@ class OverrideObjectsSelector extends Component {
         let {choices, value, onChange} = this.props;
         return (
             <SelectInput
-                className="col-md-6"
                 label="Override type"
                 choices={choices}
                 multiple={true}
@@ -76,28 +74,32 @@ class ScoreOverrideForm extends Component {
         }
 
         return (
-            <div className="row form-inline">
-                <OverrideObjectTypeSelector
-                    choices={overrideDataTypeChoices}
-                    value={overrideDataTypeValue}
-                    onChange={value => {
-                        store.updateFormState(id, "overridden_objects", []);
-                        store.updateFormState(id, "overrideDataTypeValue", value);
-                    }}
-                />
-                <OverrideObjectsSelector
-                    choices={overrideObjectChoices}
-                    value={overrideOptionValues}
-                    onChange={values => {
-                        let selected = _.map(values, value => {
-                            return {
-                                content_type_name: overrideDataTypeValue,
-                                object_id: parseInt(value),
-                            };
-                        });
-                        store.updateFormState(id, "overridden_objects", selected);
-                    }}
-                />
+            <div className="row">
+                <div className="col-md-6">
+                    <OverrideObjectTypeSelector
+                        choices={overrideDataTypeChoices}
+                        value={overrideDataTypeValue}
+                        onChange={value => {
+                            store.updateFormState(id, "overridden_objects", []);
+                            store.updateFormState(id, "overrideDataTypeValue", value);
+                        }}
+                    />
+                </div>
+                <div className="col-md-6">
+                    <OverrideObjectsSelector
+                        choices={overrideObjectChoices}
+                        value={overrideOptionValues}
+                        onChange={values => {
+                            let selected = _.map(values, value => {
+                                return {
+                                    content_type_name: overrideDataTypeValue,
+                                    object_id: parseInt(value),
+                                };
+                            });
+                            store.updateFormState(id, "overridden_objects", selected);
+                        }}
+                    />
+                </div>
             </div>
         );
     }

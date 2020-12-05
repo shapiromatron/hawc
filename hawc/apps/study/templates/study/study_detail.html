@@ -63,13 +63,11 @@
       <h3>{{assessment.get_rob_name_display}} visualization
         <a class="btn btn-primary float-right" href="{% url 'riskofbias:rob_detail' object.pk %}">View details</a>
       </h3>
-      <div class="col-md-12">
-        {% if assessment.hide_rob_scores %}
-        <div>Click button on right to view study evaluation details</div>
-        {% else %}
-        <div id='rob_plot'></div>
-        {% endif %}
-      </div>
+      {% if assessment.hide_rob_scores %}
+      <div>Click button on right to view study evaluation details</div>
+      {% else %}
+      <div id='rob_plot'></div>
+      {% endif %}
     {% endif %}
 
     {% if study.bioassay %}

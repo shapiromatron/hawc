@@ -12,18 +12,16 @@ class App extends Component {
         const {store} = this.props;
         return (
             <>
-                <div className="row">
-                    <TermSelector
-                        name={"name"}
-                        label={label.endpoint_name}
-                        helpText={helpText.endpoint_name}
-                        termIdField={"name_term_id"}
-                        termTextField={"name"}
-                        parentIdField={"effect_subtype_term_id"}
-                        parentRequired={true}
-                        idLookupAction={store.endpointNameLookup}
-                    />
-                </div>
+                <TermSelector
+                    name={"name"}
+                    label={label.endpoint_name}
+                    helpText={helpText.endpoint_name}
+                    termIdField={"name_term_id"}
+                    termTextField={"name"}
+                    parentIdField={"effect_subtype_term_id"}
+                    parentRequired={true}
+                    idLookupAction={store.endpointNameLookup}
+                />
                 <div className="row">
                     <div className="col-md-3">
                         <TermSelector

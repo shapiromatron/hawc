@@ -49,8 +49,6 @@ class AssessmentForm(forms.ModelForm):
         # by default take-up the whole row
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
-            if fld == "dtxsids":
-                widget.attrs["class"] = "col-md-10"
             if type(widget) == forms.Textarea:
                 widget.attrs["rows"] = 3
                 widget.attrs["class"] = widget.attrs.get("class", "") + " html5text"

@@ -15,19 +15,17 @@ class MetricSelect extends Component {
             selected = this.props.store.selectedMetric;
 
         return (
-            <div>
-                <SelectInput
-                    id="metric-select"
-                    name="metric-select"
-                    choices={choices}
-                    multiple={false}
-                    handleSelect={e => {
-                        this.props.store.changeSelectedMetric(parseInt(e));
-                    }}
-                    value={selected}
-                    label="Select the metric to edit"
-                />
-            </div>
+            <SelectInput
+                id="metric-select"
+                name="metric-select"
+                choices={choices}
+                multiple={false}
+                handleSelect={e => {
+                    this.props.store.changeSelectedMetric(parseInt(e));
+                }}
+                value={selected}
+                label="Select the metric to edit"
+            />
         );
     }
 }
