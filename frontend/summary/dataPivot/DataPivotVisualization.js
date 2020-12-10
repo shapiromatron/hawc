@@ -10,7 +10,7 @@ import DataPivotExtension from "./DataPivotExtension";
 import DataPivotLegend from "./DataPivotLegend";
 import {StyleLine, StyleSymbol, StyleText, StyleRectangle} from "./Styles";
 import {NULL_CASE} from "./shared";
-import {createPattern, applyStyles} from "../summary/common";
+import {applyStyles} from "../summary/common";
 
 class DataPivotVisualization extends D3Plot {
     constructor(dp_data, dp_settings, plot_div, editable) {

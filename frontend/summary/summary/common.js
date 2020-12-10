@@ -101,4 +101,4 @@ const applyStyles = (svg, el, styles) => {
     }
 };
 
-export {createPattern, applyStyles};
+export {applyStyles};
