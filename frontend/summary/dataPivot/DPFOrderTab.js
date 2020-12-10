@@ -6,6 +6,7 @@ import {
     _DataPivot_settings_sorts,
     _DataPivot_settings_spacers,
     buildHeaderTr,
+    buildColGroup,
 } from "./DataPivotUtilities";
 import {NULL_CASE} from "./shared";
 import DataPivotVisualization from "./DataPivotVisualization";
@@ -14,8 +15,9 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
         var thead = $("<thead>").html(
                 buildHeaderTr(["Field name", "Filter type", "Value", "Ordering"])
             ),
+            colgroup = buildColGroup(["", "180px", "", "120px"]),
             tbody = $("<tbody>").on("change autocompletechange", "input,select", handleTableChange),
-            tbl = $('<table class="table table-sm table-bordered">').html([thead, tbody]),
+            tbl = $('<table class="table table-sm table-bordered">').html([thead, colgroup, tbody]),
             settings = dp.settings.filters,
             addDataRow = function(i) {
                 let obj;
@@ -29,10 +31,9 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
                 addDataRow(settings.length);
                 handleTableChange();
             },
-            newRowBtn = $('<button class="btn btn-primary float-right">New row</button>').on(
-                "click",
-                newDataRow
-            ),
+            newRowBtn = $(
+                '<button class="btn btn-primary float-right"><i class="fa fa-fw fa-plus"></i>&nbsp;Add row</button>'
+            ).on("click", newDataRow),
             num_rows = settings.length === 0 ? 2 : settings.length;
 
         for (let i = 0; i < num_rows; i++) {
@@ -41,18 +42,20 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
 
         tab.append(
             $("<h3>Row filters</h3>").append(newRowBtn),
-            '<p class="help-block">Use filters to determine which components of your dataset should be displayed on the figure.</p>',
+            '<p class="form-text text-muted">Use filters to determine which components of your dataset should be displayed on the figure.</p>',
             tbl
         );
     },
     buildFilterBooleanDiv = function(tab, dp, handleTableChange) {
         let div = $("<div>"),
-            and = $('<label class="radio inline">AND</label>').append(
-                '<input name="filter_logic" type="radio" value="and">'
-            ),
-            or = $('<label class="radio inline">OR</label>').append(
-                '<input name="filter_logic" type="radio" value="or">'
-            ),
+            and = $(`<div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="filter_logic" value="and">
+                <label class="form-check-label">AND</label>
+            </div>`),
+            or = $(`<div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="filter_logic" value="or">
+                <label class="form-check-label">OR</label>
+            </div>`),
             value = dp.settings.plot_settings.filter_logic || "and";
 
         // set initial value
@@ -70,7 +73,7 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
 
         div.append(
             "<h4>Filter logic</h4>",
-            '<p class="help-block">Should multiple filter criteria be required for ALL rows (AND), or ANY row (OR)?</p>',
+            '<p class="form-text text-muted">Should multiple filter criteria be required for ALL rows (AND), or ANY row (OR)?</p>',
             and,
             or
         );
@@ -79,10 +82,11 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
     },
     buildSortingTable = function(tab, dp, handleTableChange) {
         let thead = $("<thead>").html(buildHeaderTr(["Field name", "Sort order", "Ordering"])),
+            colgroup = buildColGroup(["", "", "120px"]),
             tbody = $("<tbody>")
                 .on("change", "input,select", handleTableChange)
                 .on("click", "button", handleTableChange),
-            tbl = $('<table class="table table-sm table-bordered">').html([thead, tbody]),
+            tbl = $('<table class="table table-sm table-bordered">').html([thead, colgroup, tbody]),
             settings = dp.settings.sorts,
             addDataRow = function(i) {
                 let obj;
@@ -95,10 +99,9 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
             newDataRow = function() {
                 addDataRow(settings.length);
             },
-            newRowBtn = $('<button class="btn btn-primary float-right">New row</button>').on(
-                "click",
-                newDataRow
-            ),
+            newRowBtn = $(
+                '<button class="btn btn-primary float-right"><i class="fa fa-fw fa-plus"></i>&nbsp;Add row</button>'
+            ).on("click", newDataRow),
             numRows = settings.length === 0 ? 2 : settings.length;
 
         for (let i = 0; i < numRows; i++) {
@@ -107,7 +110,7 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
 
         tab.append(
             $("<h3>Row sorting</h3>").append(newRowBtn),
-            '<p class="help-block">Sorting determines the order which rows will appear; sorts can be overridden using the manual override table below.</p>',
+            '<p class="form-text text-muted">Sorting determines the order which rows will appear; sorts can be overridden using the manual override table below.</p>',
             tbl,
             "<hr/>"
         );
@@ -117,7 +120,8 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
             thead = $("<thead>").html(
                 buildHeaderTr(["Row index", "Show line?", "Line style", "Extra space?", "Delete"])
             ),
-            tbl = $('<table class="table table-sm table-bordered">').html([thead, tbody]),
+            colgroup = buildColGroup(["", "", "", "", "120px"]),
+            tbl = $('<table class="table table-sm table-bordered">').html([thead, colgroup, tbody]),
             settings = dp.settings.spacers,
             addDataRow = function(i) {
                 let obj;
@@ -130,10 +134,9 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
             newDataRow = function() {
                 addDataRow(settings.length);
             },
-            newRowBtn = $('<button class="btn btn-primary float-right">New row</button>').on(
-                "click",
-                newDataRow
-            ),
+            newRowBtn = $(
+                '<button class="btn btn-primary float-right"><i class="fa fa-fw fa-plus"></i>&nbsp;Add row</button>'
+            ).on("click", newDataRow),
             numRows = settings.length === 0 ? 1 : settings.length;
 
         for (let i = 0; i < numRows; i++) {
@@ -142,7 +145,7 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
 
         tab.append(
             $("<h3>Additional row spacing</h3>").append(newRowBtn),
-            '<p class="help-block">Add additional-space between rows, and optionally a horizontal line.</p>',
+            '<p class="form-text text-muted">Add additional-space between rows, and optionally a horizontal line.</p>',
             tbl,
             "<hr/>"
         );
@@ -210,9 +213,9 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
                     "checked",
                     obj.include
                 ),
-                index = $('<input name="ov_index" class="col-md-12" type="number" step="any">').val(
-                    obj.index
-                ),
+                index = $(
+                    '<input name="ov_index" class="form-control" type="number" step="any">'
+                ).val(obj.index),
                 text_style = dp.style_manager.add_select("texts", obj.text_style, true),
                 line_style = dp.style_manager.add_select("lines", obj.line_style, true),
                 symbol_style = dp.style_manager.add_select("symbols", obj.symbol_style, true);
@@ -263,7 +266,7 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
 
         tab.append(
             $("<h3>Row-level customization</h3>").append(refreshRowsBtn, resetOverridesBtn),
-            '<p class="help-block">Row-level customization of individual rows after filtering/sorting above. Note that any changes to sorting or filtering will alter these customizations.</p>',
+            '<p class="form-text text-muted">Row-level customization of individual rows after filtering/sorting above. Note that any changes to sorting or filtering will alter these customizations.</p>',
             tbl
         );
     },
@@ -328,7 +331,7 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
             .on("change", "input,select", handleStateOverrideUpdate);
 
         // update whenever tab is clicked
-        dp.$div.on("shown", 'a.dp_ordering_tab[data-toggle="tab"]', function() {
+        dp.$div.on("shown.bs.tab", 'a.dp_ordering_tab[data-toggle="tab"]', function() {
             buildManualOverrideRows(dp, overrideTbody);
         });
 

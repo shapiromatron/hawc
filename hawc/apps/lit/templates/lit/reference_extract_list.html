@@ -1,17 +1,6 @@
-{% extends 'portal.html' %}
-
-{% block title %}
-  {{assessment}} | Literature Review | References | HAWC
-{% endblock %}
-
-{% block breadcrumbs %}
-  <li class="breadcrumb-item"><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{ assessment }}</a></li>
-  <li class="breadcrumb-item"><a href="{% url 'lit:overview' assessment.pk %}">Literature Review</a></li>
-  <li class="breadcrumb-item active">Searches & Imports</li>
-{% endblock %}
+{% extends 'assessment-rooted.html' %}
 
 {% block content %}
-
     <h3>Included references in literature search/import</h3>
     <p>The following references were selected for inclusion and are therefore ready for {{assessment.get_rob_name_display|lower}} and/or data-extraction. Select one from the list below:</p>
     {% if object_list.count > 0 %}
@@ -42,12 +31,11 @@
                 </tr>
             {% endfor %}
         </table>
-        {% else %}
+    {% else %}
         <div class="alert alert-success">
-          <button type="button" class="close" data-dismiss="alert">&times;</button>
-          <b>Nothing to be done!</b><br/>
-          <p>No references have been marked for inclusion which aren't studies already.</p>
-      </div>
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            <b>Nothing to be done!</b><br/>
+            <p>No references have been marked for inclusion which aren't studies already.</p>
+        </div>
     {% endif %}
-
 {% endblock %}

@@ -131,7 +131,7 @@ class TestEndpointSerializer:
     def test_valid_requests_with_terms(self, db_keys):
         rf = RequestFactory()
         request = rf.post("/")
-        request.user = HAWCUser.objects.get(email="team@team.com")
+        request.user = HAWCUser.objects.get(email="team@hawcproject.org")
 
         # valid request with one term
         data = {
@@ -176,7 +176,7 @@ class TestEndpointSerializer:
     def test_bad_requests_with_terms(self, db_keys):
         rf = RequestFactory()
         request = rf.post("/")
-        request.user = HAWCUser.objects.get(email="team@team.com")
+        request.user = HAWCUser.objects.get(email="team@hawcproject.org")
 
         # term_field or text_field is required
         data = {

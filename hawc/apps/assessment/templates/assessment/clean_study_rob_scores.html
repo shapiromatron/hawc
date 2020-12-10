@@ -1,16 +1,8 @@
-{% extends 'portal.html' %}
-
-
-{% block title %}{{assessment}} | Studies | HAWC {% endblock title %}
-
-{% block breadcrumbs %}
-  <li class="breadcrumb-item"><a href="{% url 'assessment:detail' pk=assessment.id %}">{{ assessment }}</a></li>
-  <li class="breadcrumb-item active">Clean {{assessment.get_rob_name_display|lower}} metrics</li>
-{% endblock %}
+{% extends 'assessment-rooted.html' %}
 
 {% block content %}
     <h2>Clean {{assessment}} metrics</h2>
-    <p class='help-block'>Clean and standardize the {{assessment.get_rob_name_display|lower}} metric reviews across studies assessment-wide. Both <b>score</b> and <b>text</b> are editable.</p>
+    <p class='form-text text-muted'>Clean and standardize the {{assessment.get_rob_name_display|lower}} metric reviews across studies assessment-wide. Both <b>score</b> and <b>text</b> are editable.</p>
     <div id="root"></div>
 {% endblock %}
 

@@ -1,90 +1,24 @@
-{% extends 'portal.html' %}
-{% load add_class %}
+{% extends 'assessment-rooted.html' %}
 
-{% block title %}{{assessment}} | Outcomes | HAWC {% endblock title %}
-
-{% block breadcrumbs %}
-  <li class="breadcrumb-item"><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{ assessment }}</a></li>
-  <li class="breadcrumb-item"><a href="{% url 'assessment:endpoint_list' assessment.pk %}">Endpoints</a></li>
-  <li class="breadcrumb-item active">Epidemiological outcomes</li>
-{% endblock %}
+{% load crispy_forms_tags %}
+{% load selectable_tags %}
 
 {% block content %}
-
     <h1>Outcomes ({{page_obj.paginator.count}} found)</h1>
-
-    <div class="accordion" id="filterForm">
-      <div class="accordion-group">
-        <div class="accordion-heading">
-          <a class="accordion-toggle" data-toggle="collapse" data-parent="#filterForm" href="#EndpointForm" title="Filter outcomes">
-            Filter outcomes
-          </a>
+    <div class="card">
+        <div class="card-header">
+            <button class="btn btn-link" data-toggle="collapse" data-target="#EndpointForm">
+                Filter outcomes
+            </button>
         </div>
-        <div id="EndpointForm" class="accordion-body collapse">
-          <div class="accordion-inner container-fluid">
-
-            <form action="." method="get">
-              <fieldset>
-                    {{ form.non_field_errors|add_class:"alert alert-danger" }}
-
-                    {% for field in form %}
-
-                        {% if forloop.counter0|divisibleby:4 %}
-                            <div class="row">
-                        {% endif %}
-
-                        <div class="col-md-3">
-                            {{field.label_tag|add_class:"control-label"}}
-                            <div class="controls">
-                                {{field}}<br>
-                                <span class='help-inline'>{{field.help_text}}</span>
-                            </div>
-                            {{field.errors|add_class:"alert alert-danger"}}
-
-                            {% if field.name == "order_by" and field.value is not None %}
-                                <input type="hidden" id="initial_order_by" value="{{ field.value }}" />
-                            {% endif %}
-                        </div>
-
-                        {% if forloop.counter0|add:1|divisibleby:4 %}
-                            </div>
-                        {% endif %}
-
-                    {% endfor %}
-                </fieldset>
-                <div class="form-actions">
-                    <button type="submit" class="btn btn-primary">Apply filters</button>
-                </div>
-            </form>
-
-          </div>
+        <div id="EndpointForm" class="collapse">
+            <div class="card-body container-fluid">
+                {% crispy form %}
+            </div>
         </div>
-      </div>
     </div>
-
-    <div id='endpointTable'></div>
-
-    {% if is_paginated %}
-        <div class="pagination pagination-centered">
-            <ul>
-
-                {% if page_obj.has_previous %}
-                    <li><a href="?page={{page_obj.previous_page_number}}">&lt;&lt;</a></li>
-                {% else %}
-                    <li class="disabled"><a href="#">&lt;&lt;</a></li>
-                {% endif %}
-
-                <li class="disabled"><a href="#">{{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</a></li>
-
-                {% if page_obj.has_next %}
-                    <li><a href="?page={{page_obj.next_page_number}}">&gt;&gt;</a></li>
-                {% else %}
-                    <li class="disabled"><a href="#">&gt;&gt;</a></li>
-                {% endif %}
-            </ul>
-        </div>
-    {% endif %}
-
+    <div id="endpointTable"></div>
+    {% include "includes/paginator.html" %}
 {% endblock content %}
 
 {% block extrajs %}
@@ -92,6 +26,7 @@
     <script type="text/javascript">
         window.app.epiStartup(function(epi){
             var outcomes = [];
+
             {{list_json|safe}}.map(function(outcome){
                 outcomes.push(new epi.Outcome(outcome));
             })

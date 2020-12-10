@@ -1,18 +1,10 @@
-{% extends 'portal.html' %}
+{% extends 'assessment-rooted.html' %}
 
 {% load selectable_tags %}
 {% load crispy_forms_tags %}
 
-{% block title %}
-  {% include "hawc/siteTitle.html" with crumbs=form.instance.get_crumbs crud=crud %}
-{% endblock title %}
-
 {% block extrastyle %}
   {% include_ui_theme %}
-{% endblock %}
-
-{% block breadcrumbs %}
-  {% include "hawc/breadcrumbs.html" with crumbs=form.instance.get_crumbs crud=crud %}
 {% endblock %}
 
 {% block content %}
@@ -28,7 +20,7 @@
                 id="addFormToFormset">+</button>
     </legend>
     {% if crud == "Create" %}
-      <p class="help-block">
+      <p class="form-text text-muted">
         If exposure is a continuous variable, create one group, “Continuous”, for the comparison set. If categorical, create the appropriate number of groups, “Q1”, “Q2”, etc. For case-controls studies, also indicate "Cases" and "Controls". Ex. Continuous; Control T1
         <span class='help-text-notes'>The total number of individuals in all groups should equal the total number of individuals in the comparison set</span>
         <span class='important-note'>This field is commonly used in HAWC visualizations.</span>

@@ -4,16 +4,8 @@
 {% load add_class %}
 {% load selectable_tags %}
 
-{% block title %}
-  {% include "hawc/siteTitle.html" with crumbs=object.get_crumbs crud=crud %}
-{% endblock title %}
-
 {% block extrastyle %}
   {% include_ui_theme %}
-{% endblock %}
-
-{% block breadcrumbs %}
-  {% include "hawc/breadcrumbs.html" with crumbs=object.get_crumbs crud=crud %}
 {% endblock %}
 
 {% block content %}
@@ -21,30 +13,48 @@
   {% include "hawc/_copy_as_new.html" with name="endpoint" notes="Select an existing endpoint as a template to create a new one. Only inputs from the current study are available." %}
 
   <div id="endpoint_search_fields_wrapper" style="display:none" class="form-group form-row">
-    <label class="control-label" for="endpoint_search_fields">Search fields:</label>
-    <div class="controls">
-      <div><input class="search_trigger" type="checkbox" checked name="endpoint_search_fields"
-          value="animal_group__experiment__name"> Experiment</div>
-      <div><input class="search_trigger" type="checkbox" checked name="endpoint_search_fields" value="animal_group__name">
-        Animal Group</div>
-      <div><input class="search_trigger" type="checkbox" checked name="endpoint_search_fields" value="name"> Endpoint Name
+    <label class="col-md-2 col-form-label" for="endpoint_search_fields">Search fields:</label>
+    <div class="col-md-10">
+      <div class="form-check">
+        <div>
+          <input class="search_trigger form-check-input" type="checkbox" checked name="endpoint_search_fields"
+            value="animal_group__experiment__name"> Experiment
+        </div>
+        <div>
+          <input class="search_trigger form-check-input" type="checkbox" checked name="endpoint_search_fields" value="animal_group__name">
+          Animal Group
+        </div>
+        <div>
+          <input class="search_trigger form-check-input" type="checkbox" checked name="endpoint_search_fields" value="name"> Endpoint Name
+        </div>
+        <div>
+          <input class="search_trigger form-check-input" type="checkbox" name="endpoint_search_fields" value="created"> Date Created
+        </div>
+        <div>
+          <input class="search_trigger form-check-input" type="checkbox" name="endpoint_search_fields" value="last_updated"> Date Updated
+        </div>
+        <div>
+          <input class="search_trigger form-check-input" type="checkbox" name="endpoint_search_fields" value="data_type"> Data Type
+        </div>
+        <div>
+          <input class="search_trigger form-check-input" type="checkbox" name="endpoint_search_fields" value="response_units"> Response
+          Units
+        </div>
+        <div>
+          <input class="search_trigger form-check-input" type="checkbox" name="endpoint_search_fields" value="observation_time">
+          Observation Time
+        </div>
+        <div>
+          <input class="search_trigger form-check-input" type="checkbox" name="endpoint_search_fields" value="system"> System
+        </div>
       </div>
-      <div><input class="search_trigger" type="checkbox" name="endpoint_search_fields" value="created"> Date Created</div>
-      <div><input class="search_trigger" type="checkbox" name="endpoint_search_fields" value="last_updated"> Date Updated
-      </div>
-      <div><input class="search_trigger" type="checkbox" name="endpoint_search_fields" value="data_type"> Data Type</div>
-      <div><input class="search_trigger" type="checkbox" name="endpoint_search_fields" value="response_units"> Response
-        Units</div>
-      <div><input class="search_trigger" type="checkbox" name="endpoint_search_fields" value="observation_time">
-        Observation Time</div>
-      <div><input class="search_trigger" type="checkbox" name="endpoint_search_fields" value="system"> System</div>
     </div>
   </div>
 
   <div id="endpoint_sort_criteria_wrapper" style="display:none" class="form-group form-row">
-    <label class="control-label" for="endpoint_sort_criteria">Sort by:</label>
-    <div class="controls">
-      <select class="search_trigger" name="endpoint_sort_criteria">
+    <label class="col-md-2 col-form-label" for="endpoint_sort_criteria">Sort by:</label>
+    <div class="col-md-5">
+      <select class="search_trigger form-control" name="endpoint_sort_criteria">
         <option value="name">Endpoint Name</option>
         <option value="created">Date Created</option>
         <option value="last_updated">Date Updated</option>
@@ -55,8 +65,9 @@
         <option value="animal_group__name">Animal Group</option>
         <option value="animal_group__experiment__name">Experiment</option>
       </select>
-
-      <select class="search_trigger" name="endpoint_sort_direction">
+    </div>
+    <div class="col-md-5">
+      <select class="search_trigger form-control" name="endpoint_sort_direction">
         <option value="">Ascending</option>
         <option value="-">Descending</option>
       </select>
@@ -88,15 +99,14 @@
     }
 
     $(document).ready(function(){
-
       new window.app.utils.HAWCUtils.InitialForm({
         "form": $('form'),
         "base_url": "{% url 'animal:endpoint_new' object.pk %}"
       });
 
       // relocate the sort div into the form
-      $("#endpoint_search_fields_wrapper").css("display", "").detach().appendTo($("div#content fieldset"));
-      $("#endpoint_sort_criteria_wrapper").css("display", "").detach().appendTo($("div#content fieldset"));
+      $("#endpoint_search_fields_wrapper").css("display", "").detach().appendTo($("#copy-form fieldset"));
+      $("#endpoint_sort_criteria_wrapper").css("display", "").detach().appendTo($("#copy-form fieldset"));
       // modify the selectable widget to include sort values in the query; we'll use it in lookups.py
       $("#id_selector_0").djselectable('option', 'prepareQuery', attachCustomParamsToSearchQuery);
       $(".search_trigger").change(function () { rerunSearch();});

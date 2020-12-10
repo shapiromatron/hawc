@@ -95,7 +95,7 @@ class EndpointGroupFlatComplete(FlatFileExporter):
     """
 
     def _get_header_row(self):
-        self.doses = DoseUnits.objects.get_animal_units(self.kwargs.get("assessment"))
+        self.doses = DoseUnits.objects.get_animal_units_names(self.kwargs.get("assessment"))
 
         header = []
         header.extend(Study.flat_complete_header_row())
@@ -194,14 +194,11 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
         if self.queryset.first() is None:
             self.rob_headers, self.rob_data = {}, {}
         else:
+            study_ids = set(
+                self.queryset.values_list("animal_group__experiment__study_id", flat=True)
+            )
             self.rob_headers, self.rob_data = RiskOfBias.get_dp_export(
-                self.queryset.first().assessment_id,
-                list(
-                    self.queryset.values_list(
-                        "animal_group__experiment__study_id", flat=True
-                    ).distinct()
-                ),
-                "animal",
+                self.queryset.first().assessment_id, study_ids, "animal",
             )
 
         noel_names = self.kwargs["assessment"].get_noel_names()
@@ -379,14 +376,11 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
         if self.queryset.first() is None:
             self.rob_headers, self.rob_data = {}, {}
         else:
+            study_ids = set(
+                self.queryset.values_list("animal_group__experiment__study_id", flat=True)
+            )
             self.rob_headers, self.rob_data = RiskOfBias.get_dp_export(
-                self.queryset.first().assessment_id,
-                list(
-                    self.queryset.values_list(
-                        "animal_group__experiment__study_id", flat=True
-                    ).distinct()
-                ),
-                "animal",
+                self.queryset.first().assessment_id, study_ids, "animal",
             )
 
         noel_names = self.kwargs["assessment"].get_noel_names()

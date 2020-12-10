@@ -35,7 +35,7 @@ class TestCleanupFieldsBaseViewSet:
         assert resp.status_code == 403
 
         # check that even team-members can't edit if project is not editable
-        assert client.login(username="team@team.com", password="pw") is True
+        assert client.login(username="team@hawcproject.org", password="pw") is True
         resp = client.get(url + f"?assessment_id={db_keys.assessment_final}")
         assert resp.status_code == 403
 
@@ -61,7 +61,7 @@ class TestCleanupFieldsBaseViewSet:
         assert resp.status_code == 403
 
         # check that even team-members can't edit if project is not editable
-        assert client.login(username="team@team.com", password="pw") is True
+        assert client.login(username="team@hawcproject.org", password="pw") is True
         resp = client.get(url + f"?assessment_id={db_keys.assessment_final}")
         assert resp.status_code == 403
 
@@ -86,7 +86,7 @@ class TestCleanupFieldsBaseViewSet:
         assert resp.status_code == 403
 
         # check that even team-members can't edit if project is not editable
-        assert client.login(username="team@team.com", password="pw") is True
+        assert client.login(username="team@hawcproject.org", password="pw") is True
         resp = client.patch(url + f"?assessment_id={db_keys.assessment_final}")
         assert resp.status_code == 403
 
@@ -99,7 +99,7 @@ class TestCleanupFieldsBaseViewSet:
         url = reverse("study:api:study-cleanup-list")
         client = APIClient()
 
-        assert client.login(username="team@team.com", password="pw") is True
+        assert client.login(username="team@hawcproject.org", password="pw") is True
 
         new_short_citation = "ABC"
         assert Study.objects.filter(short_citation=new_short_citation).count() == 0
@@ -141,7 +141,7 @@ class TestCleanupFieldsBaseViewSet:
 
 @pytest.mark.django_db
 def test_user_can_edit_object(db_keys):
-    user = HAWCUser.objects.get(email="team@team.com")
+    user = HAWCUser.objects.get(email="team@hawcproject.org")
 
     working = Study.objects.get(id=db_keys.study_working)
     assert user_can_edit_object(working, user) is True

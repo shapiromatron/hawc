@@ -62,58 +62,49 @@ class BMROptionModal extends BaseModal {
             opts = _.values(allOptions);
 
         return (
-            <form className="form-horizontal">
+            <form className="container-fluid">
                 <div className="form-group form-row">
-                    <label className="control-label" htmlFor="bmr_type">
-                        BMR type
-                    </label>
-                    <div className="controls">
-                        <select
-                            id="bmr_type"
-                            name="type"
-                            value={state.type}
-                            onChange={this.handleTypeChange.bind(this)}>
-                            {opts.map((d, i) => {
-                                return (
-                                    <option key={i} value={d.type}>
-                                        {d.type}
-                                    </option>
-                                );
-                            })}
-                        </select>
-                    </div>
+                    <label htmlFor="bmr_type">BMR type</label>
+                    <select
+                        id="bmr_type"
+                        name="type"
+                        className="form-control"
+                        value={state.type}
+                        onChange={this.handleTypeChange.bind(this)}>
+                        {opts.map((d, i) => {
+                            return (
+                                <option key={i} value={d.type}>
+                                    {d.type}
+                                </option>
+                            );
+                        })}
+                    </select>
                 </div>
 
                 <div className="form-group form-row">
-                    <label className="control-label" htmlFor="bmr_value">
-                        BMR value
-                    </label>
-                    <div className="controls">
-                        <input
-                            id="bmr_value"
-                            name="value"
-                            type="number"
-                            step="any"
-                            value={state.value}
-                            onChange={this.handleChange.bind(this)}
-                        />
-                    </div>
+                    <label htmlFor="bmr_value">BMR value</label>
+                    <input
+                        id="bmr_value"
+                        name="value"
+                        type="number"
+                        className="form-control"
+                        step="any"
+                        value={state.value}
+                        onChange={this.handleChange.bind(this)}
+                    />
                 </div>
 
                 <div className="form-group form-row">
-                    <label className="control-label" htmlFor="bmr_confidence_level">
-                        BMR confidence level
-                    </label>
-                    <div className="controls">
-                        <input
-                            id="bmr_confidence_level"
-                            name="confidence_level"
-                            type="number"
-                            step="any"
-                            value={state.confidence_level}
-                            onChange={this.handleChange.bind(this)}
-                        />
-                    </div>
+                    <label htmlFor="bmr_confidence_level">BMR confidence level</label>
+                    <input
+                        id="bmr_confidence_level"
+                        name="confidence_level"
+                        type="number"
+                        className="form-control"
+                        step="any"
+                        value={state.confidence_level}
+                        onChange={this.handleChange.bind(this)}
+                    />
                 </div>
             </form>
         );
@@ -131,21 +122,29 @@ class BMROptionModal extends BaseModal {
             tableFunc = editMode ? this.renderEditingForm : this.renderReadOnlyTable;
 
         return (
-            <div className="modal hide fade" role="dialog" id={BMR_MODAL_ID}>
-                <div className="modal-header">
-                    <button ref={this.closer} className="close" type="button" data-dismiss="modal">
-                        ×
-                    </button>
-                    <h3>{title}</h3>
+            <div className="modal" id={BMR_MODAL_ID}>
+                <div className="modal-dialog">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h3>{title}</h3>
+                            <button
+                                ref={this.closer}
+                                className="close"
+                                type="button"
+                                data-dismiss="modal">
+                                ×
+                            </button>
+                        </div>
+
+                        <div className="modal-body">{tableFunc.bind(this)()}</div>
+
+                        <EditableModalFooter
+                            editMode={editMode}
+                            handleSave={this.handleSave.bind(this)}
+                            handleDelete={this.props.handleDelete}
+                        />
+                    </div>
                 </div>
-
-                <div className="modal-body">{tableFunc.bind(this)()}</div>
-
-                <EditableModalFooter
-                    editMode={editMode}
-                    handleSave={this.handleSave.bind(this)}
-                    handleDelete={this.props.handleDelete}
-                />
             </div>
         );
     }

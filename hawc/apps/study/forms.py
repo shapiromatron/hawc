@@ -3,7 +3,7 @@ from django.forms.fields import TextInput
 from django.urls import reverse
 
 from ..assessment.models import Assessment
-from ..common.forms import BaseFormHelper
+from ..common.forms import BaseFormHelper, build_form_actions
 from ..lit.models import Reference
 from . import models
 
@@ -132,10 +132,21 @@ class AttachmentForm(forms.ModelForm):
         fields = ("attachment",)
 
     def __init__(self, *args, **kwargs):
-        study = kwargs.pop("parent", None)
+        study = kwargs.pop("parent")
         super().__init__(*args, **kwargs)
         if study:
             self.instance.study = study
+
+    @property
+    def helper(self):
+        return BaseFormHelper(
+            self,
+            legend_text="Add an attachment to a study",
+            help_text="Upload a file to be associated with his study. Multiple files can be uploaded by creating additional attachments.",
+            form_actions=build_form_actions(
+                cancel_url=self.instance.study.get_absolute_url(), save_text="Create attachment"
+            ),
+        )
 
 
 class StudiesCopy(forms.Form):

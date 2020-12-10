@@ -34,19 +34,21 @@ class TagReferencesMain extends Component {
             <div className="row">
                 <div className="col-md-3">
                     <h4>References</h4>
-                    <div className="accordion" id="references_lists">
-                        <div className="accordion-group">
-                            <div className="accordion-heading">
-                                <a
-                                    className="accordion-toggle"
+                    <div id="references_lists">
+                        <div className="card">
+                            <div className="card-header p-1">
+                                <button
+                                    className="btn btn-link"
                                     data-toggle="collapse"
-                                    data-parent="#references_lists"
-                                    href="#references_tagged">
+                                    data-target="#references_tagged">
                                     Tagged
-                                </a>
+                                </button>
                             </div>
-                            <div id="references_tagged" className="accordion-body collapse show">
-                                <div className="accordion-inner ref-container">
+                            <div
+                                id="references_tagged"
+                                className="collapse"
+                                data-parent="#references_lists">
+                                <div className="card-body ref-container p-1">
                                     {store.referencesTagged.map(ref => (
                                         <p
                                             key={ref.data.pk}
@@ -62,18 +64,20 @@ class TagReferencesMain extends Component {
                                 </div>
                             </div>
                         </div>
-                        <div className="accordion-group">
-                            <div className="accordion-heading">
-                                <a
-                                    className="accordion-toggle"
+                        <div className="card">
+                            <div className="card-header p-1">
+                                <button
+                                    className="btn btn-link"
                                     data-toggle="collapse"
-                                    data-parent="#references_lists"
-                                    href="#references_untagged">
+                                    data-target="#references_untagged">
                                     Untagged
-                                </a>
+                                </button>
                             </div>
-                            <div id="references_untagged" className="accordion-body collapse show">
-                                <div className="accordion-inner ref-container">
+                            <div
+                                id="references_untagged"
+                                className="collapse show p-1"
+                                data-parent="#references_lists">
+                                <div className="card-body ref-container">
                                     {store.referencesUntagged.map(ref => (
                                         <p
                                             key={ref.data.pk}

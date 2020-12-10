@@ -1,13 +1,4 @@
-{% extends 'portal.html' %}
-
-{% block title %}
-  {{assessment}} | Study List | HAWC
-{% endblock %}
-
-{% block breadcrumbs %}
-  <li class="breadcrumb-item"><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{ assessment }}</a></li>
-  <li class="breadcrumb-item active">Studies</li>
-{% endblock %}
+{% extends 'assessment-rooted.html' %}
 
 {% block content %}
 

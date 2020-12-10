@@ -22,6 +22,7 @@ class ReactDatePicker extends Component {
         */
         let props = {
             id: this.props.id,
+            className: "form-control",
             onChange: this.onChange,
         };
         if (this.state.date) props.selected = this.state.date;
@@ -38,7 +39,7 @@ class ReactDatePicker extends Component {
     render() {
         const compProps = this.getDatePickerProps();
         return (
-            <div>
+            <div className="form-group">
                 <label htmlFor={compProps.id} className={this.props.labelClassName || ""}>
                     {this.props.label}
                 </label>

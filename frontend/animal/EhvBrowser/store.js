@@ -13,7 +13,7 @@ class EhvBrowseStore {
                 d[field] = +d[field] || d[field];
             }
             d._key = i;
-            d._searchString = `${d.system} ${d.organ} ${d.effect} ${d.effect_subtype} ${d.endpoint_name}`.toLocaleLowerCase();
+            d._searchString = `${d.system} ${d.organ} ${d.effect} ${d.effect_subtype} ${d.name}`.toLocaleLowerCase();
             return d;
         });
     }

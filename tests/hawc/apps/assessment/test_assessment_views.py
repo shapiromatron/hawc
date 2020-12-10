@@ -1,4 +1,7 @@
+from urllib.parse import urlparse
+
 import pytest
+from django.contrib.sites.shortcuts import get_current_site
 from django.test.client import Client
 from django.urls import reverse
 
@@ -11,7 +14,7 @@ class TestAssessmentClearCache:
         url = Assessment.objects.get(id=db_keys.assessment_working).get_clear_cache_url()
 
         # test failures
-        for client in ["rev@rev.com", None]:
+        for client in ["reviewer@hawcproject.org", None]:
             c = Client()
             if client:
                 assert c.login(username=client, password="pw") is True
@@ -19,7 +22,7 @@ class TestAssessmentClearCache:
             assert response.status_code == 403
 
         # test successes
-        for client in ["pm@pm.com", "team@team.com"]:
+        for client in ["pm@hawcproject.org", "team@hawcproject.org"]:
             c = Client()
             if client:
                 assert c.login(username=client, password="pw") is True
@@ -31,7 +34,7 @@ class TestAssessmentClearCache:
     def test_functionality(self, db_keys):
         url = Assessment.objects.get(id=db_keys.assessment_working).get_clear_cache_url()
         c = Client()
-        assert c.login(username="pm@pm.com", password="pw") is True
+        assert c.login(username="pm@hawcproject.org", password="pw") is True
         # this is success behavior in test environment w/o redis - TODO improve?
         with pytest.raises(NotImplementedError):
             c.get(url)
@@ -64,3 +67,44 @@ def test_unsupported_browser():
         response = c.get("/")
         assert response.context["UA_SUPPORTED"] is valid
         assert (WARNING in response.content.decode("utf8")) is (not valid)
+
+
+@pytest.mark.django_db
+class TestContactUsPage:
+    def test_login_required(self):
+        contact_url = reverse("contact")
+
+        client = Client()
+
+        # login required
+        resp = client.get(contact_url)
+        assert resp.status_code == 302
+        assert urlparse(resp.url).path == reverse("user:login")
+
+        # valid
+        client.login(username="pm@hawcproject.org", password="pw")
+        resp = client.get(contact_url)
+        assert resp.status_code == 200
+
+    def test_referrer(self):
+        portal_url = reverse("portal")
+        about_url = reverse("about")
+        contact_url = reverse("contact")
+
+        client = Client()
+        client.login(username="pm@hawcproject.org", password="pw")
+
+        # no referrer; use default
+        resp = client.get(contact_url)
+        assert urlparse(resp.context["form"].fields["previous_page"].initial).path == portal_url
+
+        # valid referrer; use valid
+        domain = get_current_site(resp.request).domain
+        valid_url = f"https://{domain}{about_url}"
+        resp = client.get(contact_url, HTTP_REFERER=valid_url)
+        assert resp.context["form"].fields["previous_page"].initial == valid_url
+
+        # invalid referrer; use default
+        about_url = reverse("about")
+        resp = client.get(contact_url, HTTP_REFERER=about_url + '"onmouseover="alert(26)"')
+        assert urlparse(resp.context["form"].fields["previous_page"].initial).path == portal_url

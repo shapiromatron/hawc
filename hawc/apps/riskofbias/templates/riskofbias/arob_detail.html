@@ -1,21 +1,6 @@
-{% extends 'portal.html' %}
-
-{% block title %}
-  {{assessment}} | {{assessment.get_rob_name_display}} requirements | HAWC
-{% endblock %}
-
-{% block breadcrumbs %}
-  <li class="breadcrumb-item"><a href="{{assessment.get_absolute_url}}">{{ assessment }}</a></li>
-  {% if crud == "Read" %}
-    <li class="breadcrumb-item active">{{assessment.get_rob_name_display}} requirements</li>
-  {% else %}
-    <li class="breadcrumb-item"><a href="{% url 'riskofbias:arob_detail' assessment.pk %}">{{assessment.get_rob_name_display}} requirements</a></li>
-    <li class="breadcrumb-item active">Edit</li>
-  {% endif %}
-{% endblock breadcrumbs %}
+{% extends 'assessment-rooted.html' %}
 
 {% block content %}
-
   <h1>{{assessment.get_rob_name_display}} requirements
     {% if obj_perms.edit %}
       <div class="btn-group float-right">
@@ -68,7 +53,7 @@
         </div>
       {% endif %}
     </h2>
-    <p class="help-block">{{object.description|safe}}</p>
+    <p class="form-text text-muted">{{object.description|safe}}</p>
     <table class="table table-compressed">
       <colgroup>
           <col width="5%"></col>
@@ -115,5 +100,4 @@
       {% endfor %}
     </table>
   {% endfor %}
-
 {% endblock %}

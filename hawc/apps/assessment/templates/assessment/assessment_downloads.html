@@ -1,19 +1,9 @@
-{% extends 'portal.html' %}
-
-{% block title %}
-  {{object}} | Downloads | HAWC
-{% endblock %}
-
-{% block breadcrumbs %}
-    <li class="breadcrumb-item"><a href="{% url 'assessment:detail' object.pk %}">{{object}}</a></li>
-    <li class="breadcrumb-item active">Downloads</li>
-{% endblock %}
-
+{% extends 'assessment-rooted.html' %}
 
 {% block content %}
   <h1>{{object}} downloads</h1>
 
-  <p class='help-block'>
+  <p class='form-text text-muted'>
     All data from HAWC are exportable into Excel. Developer exports in JSON
     format are also available (please <a target="_blank" href="{% url 'contact' %}">contact us</a> for more information).
   </p>
@@ -23,7 +13,7 @@
     <li>
         <b>Literature-review</b><br>
         <a class='btn btn-primary' href="{% url 'lit:api:assessment-references-download' assessment.pk %}?format=xlsx">Download</a><br>
-        <p class='help-block'>Microsoft Excel spreadsheet</p>
+        <p class='form-text text-muted'>Microsoft Excel spreadsheet</p>
     </li>
     {% endif %}
 
@@ -34,12 +24,12 @@
            href="{% url 'riskofbias:api:assessment-export' assessment.pk %}?format=xlsx">Download</a><br>
 
         {% if obj_perms.edit %}
-        <p class='help-block'>(no individual reviews)</p>
+        <p class='form-text text-muted'>(no individual reviews)</p>
         <a class='btn btn-primary'
            href="{% url 'riskofbias:api:assessment-full-export' assessment.pk %}?format=xlsx">Download complete</a>
-           <p class='help-block'>(includes individual reviews - team-members and higher only)</p>
+           <p class='form-text text-muted'>(includes individual reviews - team-members and higher only)</p>
         {% endif %}
-        <p class='help-block'>Microsoft Excel spreadsheet</p>
+        <p class='form-text text-muted'>Microsoft Excel spreadsheet</p>
     </li>
     {% endif %}
 
@@ -48,30 +38,30 @@
         <b>Animal bioassay data</b><br>
         <a class='btn btn-primary' href="{% url 'animal:api:assessment-full-export' assessment.pk %}?format=xlsx">Complete export</a> &nbsp;
         <a class='btn btn-primary' href="{% url 'animal:api:assessment-endpoint-export' assessment.pk %}?format=xlsx">Endpoint summary</a><br>
-        <p class='help-block'>Microsoft Excel spreadsheet</p>
+        <p class='form-text text-muted'>Microsoft Excel spreadsheet</p>
     </li>
 
     <li>
         <b>Epidemiology data</b><br>
         <a class='btn btn-primary' href="{% url 'epi:api:assessment-export' assessment.pk %}?format=xlsx">Download</a><br>
-        <p class='help-block'>Microsoft Excel spreadsheet</p>
+        <p class='form-text text-muted'>Microsoft Excel spreadsheet</p>
     </li>
 
     <li>
         <b>Epidemiology meta-analysis data</b><br>
         <a class='btn btn-primary' href="{% url 'meta:api:assessment-export' assessment.pk %}?format=xlsx">Download</a><br>
-        <p class='help-block'>Microsoft Excel spreadsheet</p>
+        <p class='form-text text-muted'>Microsoft Excel spreadsheet</p>
     </li>
 
     <li>
         <b>In-vitro data</b><br>
         <a class='btn btn-primary' href="{% url 'invitro:api:assessment-full-export' assessment.pk %}?format=xlsx">Download</a><br>
-        <p class='help-block'>Microsoft Excel spreadsheet</p>
+        <p class='form-text text-muted'>Microsoft Excel spreadsheet</p>
     </li>
 
     <li>
         <b>Visualizations</b><br>
-        <p class='help-block'>
+        <p class='form-text text-muted'>
             Visualizations can be exported into SVG, PNG, PDF, and PPTX formats;
             you can download each individual visualization when being viewed.
         </p>

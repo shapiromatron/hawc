@@ -2,7 +2,9 @@ import React, {Component} from "react";
 import PropTypes from "prop-types";
 import _ from "lodash";
 
-import "./SelectInput.css";
+import {errorsDiv, inputClass} from "./inputs";
+import LabelInput from "./LabelInput";
+import HelpText from "./HelpText";
 
 class SelectInput extends Component {
     /**
@@ -29,34 +31,20 @@ class SelectInput extends Component {
         this.props.handleSelect(value);
     }
 
-    renderLabel() {
-        if (!this.props.label) {
-            return null;
-        }
-        return (
-            <label htmlFor={`id_${this.props.name}`} className="control-label">
-                {this.props.label}
-                {this.props.required ? <span className="asteriskField">*</span> : null}
-            </label>
-        );
-    }
-
-    renderField() {
-        let {id, choices, name, multiple, selectSize, style} = this.props,
-            className = this.props.className || "react-select",
-            value = this.props.value || _.first(choices).id;
-
+    renderField(fieldClass, fieldId) {
+        const value = this.props.value || _.first(this.props.choices).id,
+            {errors, className} = this.props;
         return (
             <select
-                id={id || null}
-                style={style}
-                className={className}
+                className={inputClass(className, errors)}
+                id={fieldId}
+                style={this.props.style}
                 value={value}
                 onChange={this.handleSelect}
-                multiple={multiple}
-                size={selectSize}
-                name={name}>
-                {_.map(choices, choice => {
+                multiple={this.props.multiple}
+                size={this.props.selectSize}
+                name={this.props.name}>
+                {_.map(this.props.choices, choice => {
                     return (
                         <option key={choice.id} value={choice.id}>
                             {choice.label}
@@ -68,41 +56,46 @@ class SelectInput extends Component {
     }
 
     render() {
-        let {fieldOnly, helpText} = this.props;
-        if (fieldOnly) {
-            return this.renderField();
+        const fieldId = this.props.id || this.props.name ? `id_${this.props.name}` : null,
+            {errors} = this.props;
+        if (this.props.fieldOnly) {
+            return this.renderField("react-select", fieldId);
         }
         return (
-            <div className="controls">
-                <div className="form-group">
-                    {this.renderLabel()}
-                    {this.renderField()}
-                    {helpText ? <p className="help-block">{this.props.helpText}</p> : null}
-                </div>
+            <div className="form-group">
+                {this.props.label ? <LabelInput for={fieldId} label={this.props.label} /> : null}
+                {this.renderField(fieldId)}
+                {errorsDiv(errors)}
+                {this.props.helpText ? <HelpText text={this.props.helpText} /> : null}
             </div>
         );
     }
 }
 
 SelectInput.propTypes = {
-    handleSelect: PropTypes.func.isRequired,
-    className: PropTypes.string,
     choices: PropTypes.arrayOf(
         PropTypes.shape({
             id: PropTypes.any.isRequired,
             label: PropTypes.string.isRequired,
         })
     ).isRequired,
+    className: PropTypes.string,
+    errors: PropTypes.array,
+    fieldOnly: PropTypes.bool,
+    handleSelect: PropTypes.func.isRequired,
+    helpText: PropTypes.string,
     id: PropTypes.string,
+    label: PropTypes.string,
+    multiple: PropTypes.bool.isRequired,
+    name: PropTypes.string,
+    required: PropTypes.bool,
+    selectSize: PropTypes.number,
     style: PropTypes.object,
     value: PropTypes.any.isRequired,
-    name: PropTypes.string,
-    multiple: PropTypes.bool.isRequired,
-    selectSize: PropTypes.number,
-    helpText: PropTypes.string,
-    label: PropTypes.string,
-    required: PropTypes.bool,
-    fieldOnly: PropTypes.bool,
+};
+
+SelectInput.defaultProps = {
+    className: "form-control",
 };
 
 export default SelectInput;

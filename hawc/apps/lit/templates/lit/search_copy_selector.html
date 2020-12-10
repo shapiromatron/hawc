@@ -1,59 +1,15 @@
-{% extends 'lit/search_list.html' %}
-
+{% extends 'assessment-rooted.html' %}
 
 {% load add_class %}
 {% load selectable_tags %}
-
-{% block title %}
-  {{block.super}} | Copy Search
-{% endblock title %}
+{% load crispy_forms_tags %}
 
 {% block extrastyle %}
   {% include_ui_theme %}
 {% endblock %}
 
-{% block breadcrumbs %}
-  <li class="breadcrumb-item"><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{ assessment }}</a></li>
-  <li class="breadcrumb-item"><a href="{% url 'lit:overview' assessment.pk %}">Literature Review</a></li>
-  <li class="breadcrumb-item active">Copy literature search or import</li>
-{% endblock breadcrumbs %}
-
 {% block content %}
-  <form class="form-horizontal" action="." method="post">
-
-    {% csrf_token %}
-
-    <div class='row'>
-      <fieldset>
-        <legend>Copy search or import</legend>
-        <span class="help-block">Select an existing search or import from this
-          assessment or another assessment and copy it as a template for use in
-          this assessment. You will be taken to a new view to create a new
-          search, but the form will be pre-populated using values from the
-          selected search or import.</span><br>
-
-        {% for field in form %}
-          <div class="form-group form-row">
-            {{field.label_tag|add_class:"control-label"}}
-            <div class="controls">
-                {{field}}
-              <span class='help-inline'>{{field.help_text}}</span>
-            </div>
-            {{field.errors|add_class:"alert alert-danger"}}
-          </div>
-        {% endfor %}
-      </fieldset>
-    </div>
-
-    {# Submission area #}
-    <div class="row">
-      <div class="form-actions">
-        <a id='submit_form' href="#" class="btn btn-primary">Copy selected as new</a>
-        <a href='{% url 'lit:overview' assessment.pk %}' class="btn btn-light">Cancel</a>
-      </div>
-    </div>
-
-  </form>
+  {% crispy form %}
 {% endblock content %}
 
 {% block extrajs %}
@@ -65,18 +21,18 @@
             return (txt.search('{Search}')>=0);
         };
 
-        $('#submit_form').on('click', function(){
-            var val = parseInt($('#id_searches').val(), 10),
+        $("#submit-id-save").on('click', function(e){
+            e.preventDefault();
+            var val = parseInt($('#id_searches').val()),
                 txt = $('#id_searches option:selected').text(),
                 search_url = "{% url 'lit:search_new' assessment.pk %}",
                 import_url = "{% url 'lit:import_new' assessment.pk %}";
 
             if (val){
-                var url = (isSearch(txt)) ? search_url : import_url;
-                $(this).attr('href', printf("{0}?initial={1}", url, val));
-                return true;
+                const root = (isSearch(txt)) ? search_url : import_url,
+                  url = printf("{0}?initial={1}", root, val);
+                window.location = url;
             }
-            return false;
         });
     });
   </script>

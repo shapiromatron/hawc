@@ -2,7 +2,7 @@ import json
 import logging
 import math
 from enum import IntEnum
-from typing import Dict, List, Tuple
+from typing import Dict, List, Set, Tuple
 
 import django
 import pandas as pd
@@ -58,6 +58,38 @@ class BaseManager(models.Manager):
             .order_by(*ordering)
         )
 
+    def valid_ids(self, ids: List[int], **kwargs) -> Set[int]:
+        """
+        Determines valid model instance ids from a list of ids
+
+        Args:
+            ids (List[int]): model instance ids
+            kwargs: keyword args to pass to validity check
+
+        Returns:
+            Set[int]: A set of all valid ids
+        """
+        return set(
+            self.filter(pk__in=ids, **kwargs)
+            .order_by("pk")
+            .distinct("pk")
+            .values_list("pk", flat=True)
+        )
+
+    def invalid_ids(self, ids: List[int], **kwargs) -> Set[int]:
+        """
+        Determines invalid model instance ids from a list of ids
+
+        Args:
+            ids (List[int]): model instance ids
+            kwargs: keyword args to pass to validity check
+
+        Returns:
+            Set[int]: A set of all invalid ids
+        """
+        valid_ids = self.valid_ids(ids, **kwargs)
+        return set(ids) - valid_ids
+
 
 class IntChoiceEnum(IntEnum):
     @classmethod
@@ -72,23 +104,6 @@ class IntChoiceEnum(IntEnum):
 @property
 def NotImplementedAttribute(self):
     raise NotImplementedError
-
-
-def get_crumbs(obj, parent=None):
-    if parent is None:
-        crumbs = []
-    else:
-        crumbs = parent.get_crumbs()
-    if obj.id is not None:
-        icon = None
-        icon_fetch_method = getattr(obj, "get_crumbs_icon", None)
-        if callable(icon_fetch_method):
-            icon = icon_fetch_method()
-
-        crumbs.append((obj.__str__(), obj.get_absolute_url(), icon))
-    else:
-        crumbs.append((obj._meta.verbose_name.lower(),))
-    return crumbs
 
 
 class NonUniqueTagBase(models.Model):

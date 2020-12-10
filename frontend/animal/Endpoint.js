@@ -66,9 +66,6 @@ class Endpoint extends Observee {
     }
 
     unpack_doses() {
-        if (!this.data.animal_group) {
-            return; // added for edit_endpoint prototype extension
-        }
         this.doses = d3
             .nest()
             .key(d => d.dose_units.id)
@@ -100,21 +97,19 @@ class Endpoint extends Observee {
 
     _switch_dose(idx) {
         // switch doses to the selected index
-        try {
-            var egs = this.data.groups,
-                doses = this.doses[idx];
-
-            this.dose_units_id = doses.key;
-            this.dose_units = doses.name;
-
-            egs.forEach(function(eg, i) {
-                eg.dose = doses.values[i].dose;
-            });
-
-            this.notifyObservers({status: "dose_changed"});
-        } catch (err) {
+        if (this.doses[idx] === undefined) {
             console.error("error, dose index does not exist");
+            return;
         }
+        var egs = this.data.groups,
+            doses = this.doses[idx];
+
+        this.dose_units_id = doses.key;
+        this.dose_units = doses.name;
+
+        egs.forEach((eg, i) => (eg.dose = doses.values[i].dose));
+
+        this.notifyObservers({status: "dose_changed"});
     }
 
     get_name() {
@@ -371,15 +366,15 @@ class Endpoint extends Observee {
                 if (tags.length === 0) {
                     return false;
                 }
-                var ul = $('<ul class="nav nav-pills nav-stacked">');
-                tags.forEach(function(v) {
-                    ul.append(
-                        `<li><a href="${Endpoint.getTagURL(assessment_id, v.slug)}">${
-                            v.name
-                        }</a></li>`
-                    );
-                });
-                return ul;
+                var div = $("<div>");
+                div.append(
+                    tags.map(v => {
+                        const url = Endpoint.getTagURL(assessment_id, v.slug);
+                        return `<a class="btn btn-light" href="${url}">${v.name}</a>`;
+                    })
+                );
+
+                return div;
             },
             isMultigenerational = function(experimentType) {
                 return ["Rp", "1r", "2r", "Dv", "Ot"].includes(experimentType);
@@ -549,12 +544,12 @@ class Endpoint extends Observee {
             divs;
 
         if (complete) {
-            tabs = $('<ul class="nav nav-tabs">').append(
-                '<li><a href="#modalStudy" data-toggle="tab">Study</a></li>',
-                '<li><a href="#modalExp" data-toggle="tab">Experiment</a></li>',
-                '<li><a href="#modalAG" data-toggle="tab">Animal Group</a></li>',
-                '<li class="active"><a href="#modalEnd" data-toggle="tab">Endpoint</a></li>'
-            );
+            tabs = $('<ul class="nav nav-tabs">').append(`
+                <li class="nav-item"><a class="nav-link" href="#modalStudy" data-toggle="tab">Study</a></li>
+                <li class="nav-item"><a class="nav-link" href="#modalExp" data-toggle="tab">Experiment</a></li>
+                <li class="nav-item"><a class="nav-link" href="#modalAG" data-toggle="tab">Animal Group</a></li>
+                <li class="nav-item"><a class="nav-link active" href="#modalEnd" data-toggle="tab">Endpoint</a></li>
+            `);
             $study = $('<div class="tab-pane" id="modalStudy">');
             Study.render(
                 this.data.animal_group.experiment.study.id,
@@ -588,7 +583,7 @@ class Endpoint extends Observee {
         this.build_details_table($details);
         this.build_endpoint_table($tbl);
         this.build_general_notes($notes);
-        modal.getModal().on("shown", function() {
+        modal.getModal().on("shown.bs.modal", function() {
             self.renderPlot($plot, true);
         });
 

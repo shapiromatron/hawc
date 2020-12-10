@@ -13,8 +13,8 @@ class CustomizeTab extends Component {
         const {store} = this.props,
             {create_visual_url} = store.config;
         return (
-            <div>
-                <p className="help-block">
+            <div className="container-fluid">
+                <p className="form-text text-muted">
                     Use the dashboard-selection in the top-right corner to select predefined data
                     visualizations for this dataset. You can further customize the visualization by
                     modifying the settings below. If you are part of the project-team, you can&nbsp;
@@ -24,7 +24,6 @@ class CustomizeTab extends Component {
                 <div className="row">
                     <div className="col-md-6">
                         <SelectInput
-                            className="col-md-12"
                             choices={store.axisOptions}
                             handleSelect={value => store.changeAxis("selectedXAxis", value)}
                             value={store.selectedXAxis.id}
@@ -34,7 +33,6 @@ class CustomizeTab extends Component {
                     </div>
                     <div className="col-md-6">
                         <SelectInput
-                            className="col-md-12"
                             choices={store.axisOptions}
                             handleSelect={value => store.changeAxis("selectedYAxis", value)}
                             value={store.selectedYAxis.id}
@@ -46,7 +44,6 @@ class CustomizeTab extends Component {
                 <div className="row">
                     <div className="col-md-6">
                         <SelectInput
-                            className="col-md-12"
                             choices={store.filterOptions}
                             value={store.selectedFilters.map(d => d.id)}
                             handleSelect={values => store.changeSelectedFilters(values)}
@@ -57,7 +54,6 @@ class CustomizeTab extends Component {
                     </div>
                     <div className="col-md-6">
                         <SelectInput
-                            className="col-md-12"
                             choices={store.tableOptions}
                             value={store.selectedTableFields.map(d => d.id)}
                             handleSelect={values => store.changeSelectedTableFields(values)}
@@ -66,25 +62,25 @@ class CustomizeTab extends Component {
                             label="Table fields"
                         />
                     </div>
-                    <div className="row">
-                        <div className="col-md-6">
-                            <CheckboxInput
-                                label="Show null field values"
-                                name="show_null"
-                                onChange={e => store.changeShowNull(e.target.checked)}
-                                checked={store.showNull}
-                                helpText={"Display data with <null> values in selected axes."}
-                            />
-                        </div>
-                        <div className="col-md-6">
-                            <TextInput
-                                label="Color"
-                                name="upperColor"
-                                type="color"
-                                value={store.upperColor}
-                                onChange={e => store.changeUpperColor(e.target.value)}
-                            />
-                        </div>
+                </div>
+                <div className="row">
+                    <div className="col-md-6">
+                        <CheckboxInput
+                            label="Show null field values"
+                            name="show_null"
+                            onChange={e => store.changeShowNull(e.target.checked)}
+                            checked={store.showNull}
+                            helpText={"Display data with <null> values in selected axes."}
+                        />
+                    </div>
+                    <div className="col-md-6">
+                        <TextInput
+                            label="Color"
+                            name="upperColor"
+                            type="color"
+                            value={store.upperColor}
+                            onChange={e => store.changeUpperColor(e.target.value)}
+                        />
                     </div>
                 </div>
             </div>

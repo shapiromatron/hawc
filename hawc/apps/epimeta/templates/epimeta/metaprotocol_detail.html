@@ -1,15 +1,6 @@
-{% extends 'portal.html' %}
-
-{% block title %}
-  {% include "hawc/siteTitle.html" with crumbs=object.get_crumbs crud=crud %}
-{% endblock title %}
-
-{% block breadcrumbs %}
-  {% include "hawc/breadcrumbs.html" with crumbs=object.get_crumbs crud=crud %}
-{% endblock %}
+{% extends 'assessment-rooted.html' %}
 
 {% block content %}
-
   <h1>{{object}}
     {% if obj_perms.edit and crud == "Read" %}
       <div class="dropdown btn-group float-right">
@@ -27,9 +18,7 @@
       </div>
     {% endif %}
   </h1>
-
   <div id="objContainer"></div>
-
 {% endblock %}
 
 

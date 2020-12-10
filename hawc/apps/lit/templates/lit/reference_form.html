@@ -1,18 +1,7 @@
-{% extends 'portal.html' %}
+{% extends 'assessment-rooted.html' %}
 
 {% load selectable_tags %}
 {% load crispy_forms_tags %}
-
-{% block title %}
-  {% include "hawc/siteTitle.html" with crumbs=form.instance.get_crumbs crud=crud %}
-{% endblock title %}
-
-{% block breadcrumbs %}
-  <li class="breadcrumb-item"><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{ assessment }}</a></li>
-  <li class="breadcrumb-item"><a href="{% url 'lit:overview' assessment.pk %}">Literature Review</a></li>
-  <li class="breadcrumb-item"><a href="{{object.get_absolute_url}}">{{object}}</a></li>
-  <li class="breadcrumb-item active">Edit</li>
-{% endblock %}
 
 {% block content %}
     {% crispy form %}

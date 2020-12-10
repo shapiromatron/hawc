@@ -5,9 +5,9 @@ from django import forms
 from django.db.models import Q
 from django.forms.models import modelformset_factory
 from django.urls import reverse
-from selectable import forms as selectable
 
-from ..common.forms import BaseFormHelper
+from ..common import selectable
+from ..common.forms import BaseFormHelper, CopyAsNewSelectorForm
 from ..epi.lookups import AdjustmentFactorLookup, CriteriaLookup
 from ..study.lookups import EpimetaStudyLookup
 from . import lookups, models
@@ -55,16 +55,11 @@ class MetaProtocolForm(forms.ModelForm):
         self.fields["exclusion_criteria"].widget.update_query_parameters(
             {"related": self.instance.study.assessment_id}
         )
-        self.helper = self.setHelper()
 
-    def setHelper(self):
+    @property
+    def helper(self):
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
-            if type(widget) != forms.CheckboxInput:
-                if fld in self.CRITERION_FIELDS:
-                    widget.attrs["class"] = "col-md-10"
-                else:
-                    widget.attrs["class"] = "col-md-12"
             if type(widget) == forms.Textarea:
                 widget.attrs["rows"] = 3
 
@@ -89,8 +84,8 @@ class MetaProtocolForm(forms.ModelForm):
         helper.add_row("inclusion_criteria", 2, "col-md-6")
 
         url = reverse("epi:studycriteria_create", kwargs={"pk": self.instance.study.assessment.pk})
-        helper.addBtnLayout(helper.layout[5], 0, url, "Create criteria", "col-md-6")
-        helper.addBtnLayout(helper.layout[5], 1, url, "Create criteria", "col-md-6")
+        helper.add_create_btn("inclusion_criteria", url, "Create criteria")
+        helper.add_create_btn("exclusion_criteria", url, "Create criteria")
 
         return helper
 
@@ -136,16 +131,11 @@ class MetaResultForm(forms.ModelForm):
         self.fields["adjustment_factors"].widget.update_query_parameters({"related": assessment.id})
         self.fields["health_outcome"].widget.update_query_parameters({"related": assessment.id})
         self.fields["exposure_name"].widget.update_query_parameters({"related": assessment.id})
-        self.helper = self.setHelper()
 
-    def setHelper(self):
+    @property
+    def helper(self):
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
-            if type(widget) != forms.CheckboxInput:
-                if fld == "adjustment_factors":
-                    widget.attrs["class"] = "col-md-10"
-                else:
-                    widget.attrs["class"] = "col-md-12"
             if type(widget) == forms.Textarea:
                 widget.attrs["rows"] = 3
 
@@ -176,7 +166,7 @@ class MetaResultForm(forms.ModelForm):
             "epi:adjustmentfactor_create",
             kwargs={"pk": self.instance.protocol.study.assessment.pk},
         )
-        helper.addBtnLayout(helper.layout[8], 0, url, "Create criteria", "col-md-6")
+        helper.add_create_btn("adjustment_factors", url, "Create criteria")
 
         return helper
 
@@ -239,21 +229,13 @@ class MetaResultFilterForm(forms.Form):
             if field not in ("order_by", "paginate_by"):
                 self.fields[field].widget.update_query_parameters({"related": assessment.id})
 
-        self.helper = self.setHelper()
-
-    def setHelper(self):
-
-        # by default take-up the whole row
-        for fld in list(self.fields.keys()):
-            widget = self.fields[fld].widget
-            if type(widget) not in [forms.CheckboxInput, forms.CheckboxSelectMultiple]:
-                widget.attrs["class"] = "col-md-12"
-
+    @property
+    def helper(self):
         helper = BaseFormHelper(self, form_actions=[cfl.Submit("submit", "Apply filters")])
-
         helper.form_method = "GET"
 
         helper.add_row("studies", 4, "col-md-3")
+        helper.add_row("exposure_name", 3, "col-md-3")
 
         return helper
 
@@ -309,23 +291,6 @@ class SingleResultForm(forms.ModelForm):
             assessment=assessment, epi=True
         )
 
-        self.helper = self.setHelper()
-
-    def setHelper(self):
-        for fld in list(self.fields.keys()):
-            widget = self.fields[fld].widget
-            if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "col-md-12"
-
-            if type(widget) == forms.Textarea:
-                widget.attrs["rows"] = 3
-
-        self.fields["study"].widget.attrs["class"] += " studySearch"
-
-        helper = BaseFormHelper(self)
-
-        return helper
-
 
 class BaseSingleResultFormset(forms.BaseModelFormSet):
     def __init__(self, **kwargs):
@@ -343,17 +308,6 @@ SingleResultFormset = modelformset_factory(
 )
 
 
-class MetaResultSelectorForm(forms.Form):
-
-    selector = selectable.AutoCompleteSelectField(
-        lookup_class=lookups.MetaResultByStudyLookup,
-        label="Meta Result",
-        widget=selectable.AutoComboboxSelectWidget,
-    )
-
-    def __init__(self, *args, **kwargs):
-        study_id = kwargs.pop("study_id")
-        super().__init__(*args, **kwargs)
-        for fld in list(self.fields.keys()):
-            self.fields[fld].widget.attrs["class"] = "col-md-11"
-        self.fields["selector"].widget.update_query_parameters({"related": study_id})
+class MetaResultSelectorForm(CopyAsNewSelectorForm):
+    label = "Meta Result"
+    lookup_class = lookups.MetaResultByProtocolLookup

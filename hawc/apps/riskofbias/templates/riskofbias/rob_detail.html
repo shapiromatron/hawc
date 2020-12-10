@@ -1,15 +1,6 @@
-{% extends 'portal.html' %}
-
-{% block title %}
-  {% include "hawc/siteTitle.html" with crumbs=object.get_final_rob.get_crumbs crud=crud %}
-{% endblock title %}
-
-{% block breadcrumbs %}
-  {% include "hawc/breadcrumbs.html" with crumbs=object.get_final_rob.get_crumbs crud=crud %}
-{% endblock %}
+{% extends 'assessment-rooted.html' %}
 
 {% block content %}
-
   <h2>{{object}}: {{assessment.get_rob_name_display}} review
   {% if obj_perms.edit %}
       <div class="dropdown btn-group float-right">
@@ -21,9 +12,7 @@
       </div>
   {% endif %}
   </h2>
-
   <div id="robTable"></div>
-
 {% endblock %}
 
 {% block extrajs %}

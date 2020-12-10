@@ -67,16 +67,14 @@ class Recommendation extends React.Component {
         });
 
         return (
-            <div className="row" key={0}>
+            <>
                 <legend>Select BMD model</legend>
                 <form className="form">
                     <div className="col-md-4">
-                        <label htmlFor="bmr" className="control-label">
-                            Selected BMR
-                        </label>
-                        <div className="controls">
+                        <label htmlFor="bmr">Selected BMR</label>
+                        <div className="form-group">
                             <select
-                                className="col-md-12"
+                                className="form-control"
                                 value={this.state.bmr}
                                 name="bmr"
                                 onChange={this.handleFieldChange.bind(this)}>
@@ -90,13 +88,11 @@ class Recommendation extends React.Component {
                             </select>
                         </div>
 
-                        <label htmlFor="model" className="control-label">
-                            Selected model
-                        </label>
+                        <label htmlFor="model">Selected model</label>
 
-                        <div className="controls">
+                        <div className="form-group">
                             <select
-                                className="col-md-12"
+                                className="form-control"
                                 value={selectedModel}
                                 name="model"
                                 onChange={this.handleFieldChange.bind(this)}>
@@ -111,26 +107,24 @@ class Recommendation extends React.Component {
                         </div>
                     </div>
                     <div className="col-md-8">
-                        <label htmlFor="notes" className="control-label">
-                            Notes
-                        </label>
-                        <div className="controls">
+                        <label htmlFor="notes">Notes</label>
+                        <div className="form-group">
                             <textarea
-                                className="col-md-12"
+                                className="form-control"
                                 value={this.state.notes}
                                 onChange={this.handleFieldChange.bind(this)}
                                 name="notes"
                                 rows="5"
                                 cols="40"
                             />
-                            <p className="help-block">
+                            <p className="form-text text-muted">
                                 Enter notes on why a model was selected as best fitting; if no model
                                 is selected, add notes on why no model was selected.
                             </p>
                         </div>
                     </div>
                 </form>
-            </div>
+            </>
         );
     }
 
@@ -172,7 +166,7 @@ class Recommendation extends React.Component {
         });
 
         return (
-            <div>
+            <div className="container-fluid">
                 <RecommendationTable
                     models={modelSubset}
                     selectedModelId={this.props.selectedModelId}

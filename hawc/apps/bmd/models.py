@@ -6,10 +6,10 @@ import os
 import bmds
 from django.conf import settings
 from django.db import models
-from django.urls import reverse_lazy
+from django.urls import reverse
 from django.utils.timezone import now
 
-from ..common.models import get_crumbs, get_model_copy_name
+from ..common.models import get_model_copy_name
 from . import managers
 
 BMDS_CHOICES = (
@@ -31,14 +31,16 @@ class AssessmentSettings(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
+    BREADCRUMB_PARENT = "assessment"
+
     class Meta:
-        verbose_name_plural = "BMD assessment settings"
+        verbose_name_plural = "BMD settings"
 
     def __str__(self):
-        return self.assessment.__str__() + " BMD settings"
+        return "BMD settings"
 
     def get_absolute_url(self):
-        return reverse_lazy("bmd:assess_settings_detail", args=[self.assessment.pk])
+        return reverse("bmd:assess_settings_detail", args=[self.assessment.pk])
 
     def get_assessment(self):
         return self.assessment
@@ -94,6 +96,8 @@ class LogicField(models.Model):
         default=True, verbose_name="Cancer Dichotomous Datasets"
     )
 
+    BREADCRUMB_PARENT = "assessment"
+
     class Meta:
         ordering = ("id",)
 
@@ -101,7 +105,7 @@ class LogicField(models.Model):
         return self.description
 
     def get_absolute_url(self):
-        return reverse_lazy("bmd:assess_settings_detail", args=[self.assessment_id])
+        return reverse("bmd:assess_settings_detail", args=[self.assessment_id])
 
     def get_assessment(self):
         return self.assessment
@@ -143,7 +147,10 @@ class Session(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
+    BREADCRUMB_PARENT = "endpoint"
+
     class Meta:
+        verbose_name_plural = "BMD sessions"
         get_latest_by = "last_updated"
         ordering = ("-last_updated",)
 
@@ -153,29 +160,26 @@ class Session(models.Model):
     def get_assessment(self):
         return self.endpoint.get_assessment()
 
-    def get_crumbs(self):
-        return get_crumbs(self, self.endpoint)
-
     def get_absolute_url(self):
-        return reverse_lazy("bmd:session_detail", args=[self.id])
+        return reverse("bmd:session_detail", args=[self.id])
 
     def get_update_url(self):
-        return reverse_lazy("bmd:session_update", args=[self.id])
+        return reverse("bmd:session_update", args=[self.id])
 
     def get_delete_url(self):
-        return reverse_lazy("bmd:session_delete", args=[self.id])
+        return reverse("bmd:session_delete", args=[self.id])
 
     def get_api_url(self):
-        return reverse_lazy("bmd:api:session-detail", args=[self.id])
+        return reverse("bmd:api:session-detail", args=[self.id])
 
     def get_execute_url(self):
-        return reverse_lazy("bmd:api:session-execute", args=[self.id])
+        return reverse("bmd:api:session-execute", args=[self.id])
 
     def get_execute_status_url(self):
-        return reverse_lazy("bmd:api:session-execute-status", args=[self.id])
+        return reverse("bmd:api:session-execute-status", args=[self.id])
 
     def get_selected_model_url(self):
-        return reverse_lazy("bmd:api:session-selected-model", args=[self.id])
+        return reverse("bmd:api:session-selected-model", args=[self.id])
 
     @classmethod
     def create_new(cls, endpoint):
@@ -326,7 +330,7 @@ class Model(models.Model):
         ordering = ("model_id", "bmr_id")
 
     def get_absolute_url(self):
-        return reverse_lazy("bmd:session_detail", args=[self.session_id])
+        return reverse("bmd:session_detail", args=[self.session_id])
 
     def get_assessment(self):
         return self.session.get_assessment()

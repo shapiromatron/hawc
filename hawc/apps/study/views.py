@@ -2,10 +2,11 @@ from django.apps import apps
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.views.generic import FormView
 
 from ..assessment.models import Assessment
+from ..common.crumbs import Breadcrumb
 from ..common.views import (
     BaseCreate,
     BaseDelete,
@@ -124,6 +125,15 @@ class StudiesCopy(TeamMemberOrHigherMixin, MessageMixin, FormView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context["assessment"] = self.assessment
+        context["breadcrumbs"] = Breadcrumb.build_crumbs(
+            self.request.user,
+            "Copy study",
+            extras=[
+                Breadcrumb.from_object(self.assessment),
+                Breadcrumb(name="Studies", url=reverse("study:list", args=(self.assessment.id,))),
+            ],
+        )
         return context
 
     def get_form_kwargs(self):

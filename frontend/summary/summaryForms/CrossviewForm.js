@@ -56,7 +56,7 @@ class CrossviewSelectorField extends TableField {
                 headerNameTd.find("input").val(CrossviewPlot._filters[val]);
             };
 
-        allValues = $('<input name="allValues" type="checkbox" checked>')
+        allValues = $('<input class="form-check-input" name="allValues" type="checkbox" checked>')
             .on("change", function() {
                 if ($(this).prop("checked")) {
                     values.hide();
@@ -67,9 +67,9 @@ class CrossviewSelectorField extends TableField {
             })
             .trigger("change");
 
-        $('<label class="checkbox">')
+        $('<div class="form-check">')
             .append(allValues)
-            .append("Use all values")
+            .append('<label class="form-check-label" for="defaultCheck1">Use all values</label>')
             .prependTo(valuesTd);
 
         name.on("change", function(d) {

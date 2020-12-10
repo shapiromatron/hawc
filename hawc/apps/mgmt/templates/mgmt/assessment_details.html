@@ -1,17 +1,6 @@
-{% extends 'portal.html' %}
-
-{% block title %}
-  {{assessment}} | Tasks | HAWC
-{% endblock %}
-
-{% block breadcrumbs %}
-  <li class="breadcrumb-item"><a href="{{assessment.get_absolute_url}}">{{ assessment }}</a></li>
-  <li class="breadcrumb-item"><a href="{% url 'mgmt:assessment_dashboard' assessment.pk %}">Management dashboard</a></li>
-  <li class="breadcrumb-item active">Task list</li>
-{% endblock %}
+{% extends 'assessment-rooted.html' %}
 
 {% block content %}
-
   <h2>Task assignments
     <div class="btn-group float-right">
         <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
@@ -21,11 +10,8 @@
         </div>
     </div>
   </h2>
-
-  <div id='taskTable'></div>
-
+  <div id='taskTable' class='mb-3'></div>
 {% endblock %}
-
 
 {% block extrajs %}
 <script id="config" type="text/json" charset="utf-8">

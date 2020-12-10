@@ -8,6 +8,7 @@ from ..common.views import (
     BaseEndpointFilterList,
     BaseUpdate,
     BaseUpdateWithFormset,
+    CopyAsNewSelectorMixin,
 )
 from ..mgmt.views import EnsureExtractionStartedMixin
 from ..study.models import Study
@@ -69,13 +70,9 @@ class MetaResultCreate(BaseCreateWithFormset):
         return kwargs
 
 
-class MetaResultCopyAsNew(MetaProtocolDetail):
-    template_name = "epimeta/metaresult_copy_selector.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["form"] = forms.MetaResultSelectorForm(study_id=self.object.study_id)
-        return context
+class MetaResultCopyAsNew(CopyAsNewSelectorMixin, MetaProtocolDetail):
+    copy_model = models.MetaResult
+    form_class = forms.MetaResultSelectorForm
 
 
 class MetaResultDetail(BaseDetail):

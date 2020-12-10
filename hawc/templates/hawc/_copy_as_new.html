@@ -1,33 +1,20 @@
-{% load add_class %}
+{% load crispy_forms_tags %}
 
-<form class="form-horizontal" action="." method="post">
+<form id="copy-form" action="." method="post">
 
   {% csrf_token %}
 
-  <div class='row'>
     <fieldset>
       <legend>Copy {{name}}</legend>
-      <span class="help-block">{{notes}}</span><br>
-
+      <p class="form-text text-muted">{{notes}}</p>
       {% for field in form %}
-        <div class="form-group form-row">
-          {{field.label_tag|add_class:"control-label"}}
-          <div class="controls">
-              {{field}}<br>
-              <p class='help-inline'>{{field.help_text}}</p>
-          </div>
-
-          {{field.errors|add_class:"alert alert-danger"}}
-        </div>
+        {{ field|as_crispy_field }}
       {% endfor %}
     </fieldset>
-  </div>
 
-  <div class="row">
     <div class="form-actions">
       <a id='submit_form' href="#" class="btn btn-primary">Copy selected as new</a>
       <a href='{{object.get_absolute_url}}' class="btn btn-light">Cancel</a>
     </div>
-  </div>
 
 </form>

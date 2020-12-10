@@ -70,7 +70,7 @@ class EndpointAggregation extends BaseVisual {
         this.$tblDiv = $("<div>");
         this.$plotDiv = $("<div>");
 
-        modal.getModal().on("shown", function() {
+        modal.getModal().on("shown.bs.modal", function() {
             self.buildPlot();
             caption.renderAndEnable();
         });

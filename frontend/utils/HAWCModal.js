@@ -29,7 +29,9 @@ class HAWCModal {
         this.maxHeight = (options && options.maxHeight) || Infinity;
         this._resizeModal();
         this.getBody().scrollTop(0);
-        if (cb) this.$modalDiv.on("shown", cb);
+        if (cb) {
+            this.$modalDiv.on("shown.bs.modal", cb);
+        }
         this.$modalDiv.modal("show");
         return this;
     }

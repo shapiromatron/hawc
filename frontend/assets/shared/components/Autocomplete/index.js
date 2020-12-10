@@ -56,6 +56,7 @@ class Autocomplete extends Component {
                 renderSuggestion={suggestion => <span>{suggestion.value}</span>}
                 inputProps={{
                     placeholder,
+                    className: "form-control",
                     value: currentText,
                     onChange: (event, {newValue}) => {
                         if (newValue === "") {

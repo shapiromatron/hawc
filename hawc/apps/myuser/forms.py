@@ -9,10 +9,10 @@ from django.contrib.auth.forms import (
 )
 from django.forms import ModelForm
 from django.urls import reverse
-from selectable.forms import AutoCompleteSelectMultipleField
 
 from ..assessment import lookups
 from ..common.forms import BaseFormHelper
+from ..common.selectable import AutoCompleteSelectMultipleField
 from . import models
 
 _PASSWORD_HELP = (
@@ -73,25 +73,14 @@ class HAWCSetPasswordForm(SetPasswordForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["new_password1"].help_text = _PASSWORD_HELP
-        self.helper = self.setHelper()
 
-    def setHelper(self):
-
-        # by default take-up the whole row
-        for fld in list(self.fields.keys()):
-            widget = self.fields[fld].widget
-            if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "col-md-12"
-
-        inputs = {
-            "legend_text": "Password reset",
-            "help_text": "Enter a new password for your account.",
-        }
-
+    @property
+    def helper(self):
         cancel_url = reverse("user:login")
         helper = BaseFormHelper(
             self,
-            **inputs,
+            legend_text="Password reset",
+            help_text="Enter a new password for your account.",
             form_actions=[
                 cfl.Submit("submit", "Change password"),
                 cfl.HTML(f'<a role="button" class="btn btn-light" href="{cancel_url}">Cancel</a>'),
@@ -111,23 +100,15 @@ class HAWCPasswordChangeForm(PasswordChangeForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["new_password1"].help_text = _PASSWORD_HELP
-        self.helper = self.setHelper()
 
-    def setHelper(self):
-
-        # by default take-up the whole row
-        for fld in list(self.fields.keys()):
-            widget = self.fields[fld].widget
-            if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "col-md-12"
-
-        inputs = {
-            "legend_text": "Change your password",
-            "help_text": "Enter a new password for your account.",
-            "cancel_url": reverse("user:settings"),
-        }
-
-        helper = BaseFormHelper(self, **inputs)
+    @property
+    def helper(self):
+        helper = BaseFormHelper(
+            self,
+            legend_text="Change your password",
+            help_text="Enter a new password for your account.",
+            cancel_url=reverse("user:settings"),
+        )
         return helper
 
     def clean_new_password1(self):
@@ -154,32 +135,23 @@ class RegisterForm(PasswordForm):
         super().__init__(*args, **kwargs)
         self.fields["license_v2_accepted"].label = "Accept license"
         self.fields["license_v2_accepted"].help_text = self._accept_license_help_text
-        self.helper = self.setHelper()
+        txt = '&nbsp;<a href="#" data-toggle="modal" data-target="#license_modal">View license</a>'
+        self.fields["license_v2_accepted"].help_text += txt
 
-    def setHelper(self):
-
-        # by default take-up the whole row
-        for fld in list(self.fields.keys()):
-            widget = self.fields[fld].widget
-            if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "col-md-12"
-
-        inputs = {"legend_text": "Create an account"}
-
+    @property
+    def helper(self):
         login_url = reverse("user:login")
         helper = BaseFormHelper(
             self,
-            **inputs,
+            legend_text="Create an account",
             form_actions=[
                 cfl.Submit("login", "Create account"),
                 cfl.HTML(f'<a role="button" class="btn btn-light" href="{login_url}">Cancel</a>'),
             ],
         )
         helper.form_class = "loginForm"
-
-        txt = '&nbsp;<a href="#" data-toggle="modal" data-target="#license_modal">View license</a>'
-        self.fields["license_v2_accepted"].help_text += txt
-
+        helper.add_row("first_name", 2, "col-6")
+        helper.add_row("password1", 2, "col-6")
         return helper
 
     def clean_license_v2_accepted(self):
@@ -216,22 +188,15 @@ class UserProfileForm(ModelForm):
         super().__init__(*args, **kwargs)
         self.fields["first_name"].initial = self.instance.user.first_name
         self.fields["last_name"].initial = self.instance.user.last_name
-        self.helper = self.setHelper()
 
-    def setHelper(self):
-
-        # by default take-up the whole row
-        for fld in list(self.fields.keys()):
-            widget = self.fields[fld].widget
-            if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "col-md-12"
-
-        inputs = {
-            "legend_text": "Update your profile",
-            "help_text": "Change settings associated with your account",
-            "cancel_url": reverse("user:settings"),
-        }
-        helper = BaseFormHelper(self, **inputs)
+    @property
+    def helper(self):
+        helper = BaseFormHelper(
+            self,
+            legend_text="Update your profile",
+            help_text="Change settings associated with your account",
+            cancel_url=reverse("user:settings"),
+        )
         return helper
 
     def save(self, commit=True):
@@ -276,21 +241,12 @@ class HAWCAuthenticationForm(AuthenticationForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.helper = self.setHelper()
 
-    def setHelper(self):
-
-        # by default take-up the whole row
-        for fld in list(self.fields.keys()):
-            widget = self.fields[fld].widget
-            if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "form-control"
-
-        inputs = {"legend_text": "HAWC login"}
-
+    @property
+    def helper(self):
         helper = BaseFormHelper(
             self,
-            **inputs,
+            legend_text="HAWC login",
             form_actions=[
                 cfl.Submit("login", "Login"),
                 cfl.HTML(
@@ -307,7 +263,6 @@ class HAWCAuthenticationForm(AuthenticationForm):
             ],
         )
         helper.form_class = "loginForm"
-
         return helper
 
     def clean(self):
@@ -330,27 +285,13 @@ class HAWCPasswordResetForm(PasswordResetForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["email"].help_text = "Email-addresses are case-sensitive."
-        self.helper = self.setHelper()
 
-    def setHelper(self):
-
-        # by default take-up the whole row
-        for fld in list(self.fields.keys()):
-            widget = self.fields[fld].widget
-            if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "col-md-12"
-
-        inputs = {
-            "legend_text": "Password reset",
-            "help_text": """
-                Enter your email address below, and we'll email instructions
-                for setting a new password.
-            """,
-        }
-
+    @property
+    def helper(self):
         helper = BaseFormHelper(
             self,
-            **inputs,
+            legend_text="Password reset",
+            help_text="Enter your email address below, and we'll email instructions for setting a new password.",
             form_actions=[
                 cfl.Submit("submit", "Send email confirmation"),
                 cfl.HTML(

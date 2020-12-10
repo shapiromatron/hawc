@@ -8,8 +8,8 @@ from hawc.apps.myuser.models import HAWCUser
 @pytest.mark.django_db
 def test_openapi():
     # staff user and non staff user
-    staff = HAWCUser.objects.get(email="sudo@sudo.com")
-    user = HAWCUser.objects.get(email="team@team.com")
+    staff = HAWCUser.objects.get(email="admin@hawcproject.org")
+    user = HAWCUser.objects.get(email="team@hawcproject.org")
     assert staff.is_staff and not user.is_staff
 
     # login using these users

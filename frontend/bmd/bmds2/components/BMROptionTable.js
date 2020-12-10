@@ -11,11 +11,11 @@ class BMROptionTable extends React.Component {
 
         return (
             <div className="row">
-                <div className="controls">
+                <div className="col">
                     <button
                         onClick={this.props.handleCreateBmr}
                         type="button"
-                        className="btn btn-sm float-right">
+                        className="btn btn-light float-right">
                         <i className="fa fa-plus" /> Create new BMR
                     </button>
                 </div>
