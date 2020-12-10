@@ -85,7 +85,7 @@ const createPattern = function(styles) {
 };
 
 const applyStyles = (svg, el, styles) => {
-    var obj = d3.select(el);
+    const obj = el instanceof d3.transition ? el : d3.select(el);
     for (const prop in styles) {
         if (prop === "pattern") {
             const pattern = createPattern(styles);

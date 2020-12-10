@@ -1018,10 +1018,7 @@ class DataPivotVisualization extends D3Plot {
                     d => `translate(${x(d[datum.field_name])},${this.row_heights[d._dp_index].mid})`
                 )
                 .each(function(d) {
-                    var obj = d3.select(this);
-                    for (var property in d._styles["points_" + i]) {
-                        obj.style(property, d._styles["points_" + i][property]);
-                    }
+                    applyStyles(self.svg, this, d._styles["points_" + i]);
                 })
                 .style("cursor", d => (datum._dpe_key ? "pointer" : "auto"))
                 .on("click", function(d) {
