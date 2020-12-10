@@ -3,6 +3,7 @@ import * as d3 from "d3";
 
 import D3Plot from "utils/D3Plot";
 import HAWCUtils from "utils/HAWCUtils";
+import {createPattern} from "../summary/common";
 
 class StyleViewer extends D3Plot {
     constructor($plot_div, style, settings) {
@@ -221,7 +222,15 @@ class StyleViewer extends D3Plot {
 
     _set_styles_from_object(selection, obj) {
         for (const prop in obj) {
-            selection.style(prop, obj[prop]);
+            if (prop === "pattern") {
+                const pattern = createPattern(obj);
+                if (pattern) {
+                    d3.select(this.svg).call(pattern);
+                    selection.style("fill", pattern.url());
+                }
+            } else {
+                selection.style(prop, obj[prop]);
+            }
         }
     }
 

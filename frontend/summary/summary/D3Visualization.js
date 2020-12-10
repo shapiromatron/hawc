@@ -24,16 +24,6 @@ class D3Visualization extends D3Plot {
     processData() {
         return HAWCUtils.abstractMethod();
     }
-
-    apply_text_styles(obj, styles) {
-        obj = d3.select(obj);
-        _.each(styles, function(v, k) {
-            obj.style(k, v);
-        });
-        if (styles.rotate > 0) {
-            obj.attr("transform", `rotate(${styles.rotate} ${obj.attr("x")},${obj.attr("y")})`);
-        }
-    }
 }
 
 D3Visualization.styles = {

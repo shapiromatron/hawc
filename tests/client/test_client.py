@@ -423,7 +423,7 @@ class TestClient(LiveServerTestCase, TestCase):
         response = client.study.create(
             reference_id=self.db_keys.reference_unlinked,
             short_citation="Lowry et al. 1951",
-            full_citation="Lowry et al. 1951.Protein measurement with the folin phenol reagent. J. Biol. Chem. 193, 265–275 (1951).",
+            full_citation="Lowry et al. 1951. Protein measurement with the folin phenol reagent. J. Biol. Chem. 193, 265–275 (1951).",
             data=dict(funding_source="American Cancer Society"),
         )
         assert isinstance(response, dict)

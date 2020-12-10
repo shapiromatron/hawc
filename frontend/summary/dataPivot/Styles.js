@@ -268,7 +268,7 @@ class StyleText {
         );
 
         //text-anchor
-        var text_anchor = $('<select name="text-anchor"></select>').html([
+        var text_anchor = $('<select class="form-control" name="text-anchor"></select>').html([
             '<option value="start">start</option>',
             '<option value="middle">middle</option>',
             '<option value="end">end</option>',
@@ -277,7 +277,7 @@ class StyleText {
         form.append(add_horizontal_field("Type", text_anchor));
 
         //text-anchor
-        var font_weight = $('<select name="font-weight"></select>').html([
+        var font_weight = $('<select class="form-control" name="font-weight"></select>').html([
             '<option value="normal">normal</option>',
             '<option value="bold">bold</option>',
         ]);
@@ -409,7 +409,7 @@ class StyleLine {
         );
 
         //line-style
-        var line_style = $('<select name="stroke-dasharray"></select>').html([
+        var line_style = $('<select class="form-control" name="stroke-dasharray"></select>').html([
             '<option value="none">solid</option>',
             '<option value="10, 10">dashed</option>',
             '<option value="2, 3">dotted</option>',
@@ -451,10 +451,11 @@ class StyleRectangle {
 
     get_modified_settings() {
         var settings = {},
-            fields = ["name", "fill", "fill-opacity", "stroke", "stroke-width", "pattern"];
+            fields = ["name", "fill", "fill-opacity", "stroke", "stroke-width"];
         for (var i = 0; i < fields.length; i++) {
             settings[fields[i]] = this.$modal.find(`input[name="${fields[i]}"]`).val();
         }
+        settings["pattern"] = this.$modal.find('select[name="pattern"] option:selected').val();
         return settings;
     }
 
@@ -530,7 +531,7 @@ class StyleRectangle {
         );
 
         // pattern
-        var type = $('<select name="pattern"></select>').html([
+        var type = $('<select class="form-control" name="pattern">').html([
             '<option value="solid">solid</option>',
             '<option value="stripes">stripes</option>',
             '<option value="reverse stripes">reverse stripes</option>',
