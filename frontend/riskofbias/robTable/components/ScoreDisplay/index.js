@@ -1,3 +1,4 @@
+import {inject, observer} from "mobx-react";
 import React, {Component} from "react";
 import PropTypes from "prop-types";
 
@@ -6,9 +7,73 @@ import ScoreBar from "riskofbias/robTable/components/ScoreBar";
 import {OVERRIDE_SCORE_LABEL_MAPPING} from "riskofbias/constants";
 import "./ScoreDisplay.css";
 
+@inject("store")
+@observer
+class CopyScoresButton extends Component {
+    render() {
+        let {store, score, editableScores} = this.props;
+        console.log(editableScores);
+        if (editableScores === undefined || editableScores.length == 0) {
+            return null;
+        } else if (editableScores.length === 1) {
+            return (
+                <button
+                    className="btn pull-right"
+                    type="button"
+                    onClick={() => {
+                        store.updateFormState(
+                            editableScores[0].id,
+                            "notes",
+                            editableScores[0].notes + score.notes
+                        );
+                    }}>
+                    <i className="fa fa-clone"></i>&nbsp;Copy
+                </button>
+            );
+        } else if (editableScores.length > 1) {
+            return (
+                <div className="btn-group pull-right">
+                    <button className="btn dropdown-toggle" data-toggle="dropdown" type="button">
+                        Copy&nbsp;
+                        <span className="caret"></span>
+                    </button>
+                    <ul className="dropdown-menu pull-right">
+                        {editableScores.map(editableScore => {
+                            return (
+                                <li key={editableScore.id}>
+                                    <a
+                                        href="#"
+                                        onClick={e => {
+                                            e.preventDefault();
+                                            store.updateFormState(
+                                                editableScore.id,
+                                                "notes",
+                                                editableScore.notes + score.notes
+                                            );
+                                        }}>
+                                        Copy into&nbsp;
+                                        {editableScore.label || `Score #${editableScore.id}`}
+                                    </a>
+                                </li>
+                            );
+                        })}
+                    </ul>
+                </div>
+            );
+        } else {
+            throw "Unknown <CopyScoresButton /> state";
+        }
+    }
+}
+CopyScoresButton.propTypes = {
+    store: PropTypes.object,
+    score: PropTypes.object.isRequired,
+    editableScores: PropTypes.arrayOf(PropTypes.object).isRequired,
+};
+
 class ScoreDisplay extends Component {
     render() {
-        let {score, showAuthors, hasOverrides} = this.props,
+        let {score, showAuthors, hasOverrides, editableScores} = this.props,
             showRobScore = !h.hideRobScore(score.metric.domain.assessment.id),
             showAuthorDisplay = showAuthors && score.is_default,
             labelText = score.label,
@@ -49,6 +114,9 @@ class ScoreDisplay extends Component {
                     ) : null}
                 </div>
                 <div>
+                    {editableScores ? (
+                        <CopyScoresButton score={score} editableScores={editableScores} />
+                    ) : null}
                     <p dangerouslySetInnerHTML={{__html: score.notes}} />
                 </div>
                 {hasOverride ? (
@@ -110,6 +178,7 @@ ScoreDisplay.propTypes = {
     }).isRequired,
     showAuthors: PropTypes.bool.isRequired,
     hasOverrides: PropTypes.bool.isRequired,
+    editableScores: PropTypes.arrayOf(PropTypes.object),
 };
 
 export default ScoreDisplay;
