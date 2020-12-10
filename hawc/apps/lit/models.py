@@ -819,14 +819,14 @@ class Reference(models.Model):
 
         return citation
 
-    def get_pubmed_id(ref):
-        for ident in ref.identifiers.all():
+    def get_pubmed_id(self):
+        for ident in self.identifiers.all():
             if ident.database == constants.PUBMED:
                 return int(ident.unique_id)
         return None
 
-    def get_hero_id(ref):
-        for ident in ref.identifiers.all():
+    def get_hero_id(self):
+        for ident in self.identifiers.all():
             if ident.database == constants.HERO:
                 return int(ident.unique_id)
         return None
