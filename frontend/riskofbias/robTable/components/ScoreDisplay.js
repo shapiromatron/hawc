@@ -1,3 +1,4 @@
+import {inject, observer} from "mobx-react";
 import React, {Component} from "react";
 import PropTypes from "prop-types";
 
@@ -6,9 +7,74 @@ import ScoreBar from "./ScoreBar";
 import {OVERRIDE_SCORE_LABEL_MAPPING} from "../../constants";
 import "./ScoreDisplay.css";
 
+@inject("store")
+@observer
+class CopyScoresButton extends Component {
+    render() {
+        let {store, score, editableScores} = this.props;
+        if (editableScores === undefined || editableScores.length == 0) {
+            return null;
+        } else if (editableScores.length === 1) {
+            return (
+                <button
+                    className="btn btn-outline-dark float-right"
+                    type="button"
+                    onClick={() => {
+                        store.updateFormState(
+                            editableScores[0].id,
+                            "notes",
+                            editableScores[0].notes + score.notes
+                        );
+                    }}>
+                    <i className="fa fa-clone"></i>&nbsp;Copy
+                </button>
+            );
+        } else if (editableScores.length > 1) {
+            return (
+                <div className="btn-group float-right">
+                    <button
+                        className="btn btn-outline-dark dropdown-toggle"
+                        data-toggle="dropdown"
+                        type="button">
+                        Copy
+                    </button>
+                    <div className="dropdown-menu dropdown-menu-right">
+                        {editableScores.map(editableScore => {
+                            return (
+                                <button
+                                    key={editableScore.id}
+                                    type="button"
+                                    className="dropdown-item"
+                                    onClick={e => {
+                                        e.preventDefault();
+                                        store.updateFormState(
+                                            editableScore.id,
+                                            "notes",
+                                            editableScore.notes + score.notes
+                                        );
+                                    }}>
+                                    Copy into&nbsp;
+                                    {editableScore.label || `Score #${editableScore.id}`}
+                                </button>
+                            );
+                        })}
+                    </div>
+                </div>
+            );
+        } else {
+            throw "Unknown <CopyScoresButton /> state";
+        }
+    }
+}
+CopyScoresButton.propTypes = {
+    store: PropTypes.object,
+    score: PropTypes.object.isRequired,
+    editableScores: PropTypes.arrayOf(PropTypes.object).isRequired,
+};
+
 class ScoreDisplay extends Component {
     render() {
-        let {score, showAuthors, hasOverrides} = this.props,
+        let {score, showAuthors, hasOverrides, editableScores} = this.props,
             showRobScore = !h.hideRobScore(score.metric.domain.assessment.id),
             showAuthorDisplay = showAuthors && score.is_default,
             labelText = score.label,
@@ -37,6 +103,9 @@ class ScoreDisplay extends Component {
                             ) : null}
                             {hasOverrides ? <b>{labelText}</b> : <b>&nbsp;</b>}
                         </p>
+                    ) : null}
+                    {editableScores ? (
+                        <CopyScoresButton score={score} editableScores={editableScores} />
                     ) : null}
                     {showRobScore ? (
                         <ScoreBar
@@ -110,6 +179,7 @@ ScoreDisplay.propTypes = {
     }).isRequired,
     showAuthors: PropTypes.bool.isRequired,
     hasOverrides: PropTypes.bool.isRequired,
+    editableScores: PropTypes.arrayOf(PropTypes.object),
 };
 
 export default ScoreDisplay;

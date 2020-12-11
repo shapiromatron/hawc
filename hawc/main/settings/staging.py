@@ -4,6 +4,8 @@ import os
 
 from .base import *
 
+EXTRA_BRANDING = os.getenv("HAWC_EXTRA_BRANDING", "True") == "True"
+
 SERVER_ROLE = "staging"
 SERVER_BANNER_COLOR = "#EE8416"
 
