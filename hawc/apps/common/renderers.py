@@ -7,7 +7,7 @@ from rest_framework import status
 from rest_framework.renderers import BaseRenderer
 from rest_framework.response import Response
 
-from .helper import FlatExport
+from .helper import FlatExport, rename_duplicate_columns
 
 
 class PandasBaseRenderer(BaseRenderer):
@@ -82,6 +82,8 @@ class PandasJsonRenderer(PandasBaseRenderer):
     format = "json"
 
     def render_dataframe(self, export: FlatExport, response: Response) -> str:
+        if export.df.columns.has_duplicates:
+            rename_duplicate_columns(export.df)
         return export.df.to_json(orient="records")
 
 

@@ -6,7 +6,7 @@ import ScoreDisplay from "./ScoreDisplay";
 
 class MetricScores extends Component {
     render() {
-        const {scores, metricHasOverrides, showAuthors} = this.props,
+        const {scores, metricHasOverrides, showAuthors, editableScores} = this.props,
             scoresByRobReview = _.chain(scores)
                 .groupBy(score => score.riskofbias_id)
                 .values()
@@ -41,6 +41,7 @@ class MetricScores extends Component {
                                         score={score}
                                         showAuthors={showAuthors}
                                         hasOverrides={metricHasOverrides}
+                                        editableScores={editableScores}
                                     />
                                 );
                             })}
@@ -60,6 +61,7 @@ MetricScores.propTypes = {
     ),
     showAuthors: PropTypes.bool.isRequired,
     metricHasOverrides: PropTypes.bool.isRequired,
+    editableScores: PropTypes.arrayOf(PropTypes.object),
 };
 
 export default MetricScores;

@@ -21,4 +21,5 @@ def from_settings(request):
         UA_SUPPORTED=is_supported_agent(agent),
         commit=settings.COMMIT,
         flavor=settings.HAWC_FLAVOR,
+        extra_branding=settings.EXTRA_BRANDING,
     )
