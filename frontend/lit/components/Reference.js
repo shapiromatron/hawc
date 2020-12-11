@@ -13,7 +13,7 @@ class Reference extends Component {
             nodes.push(
                 <ReferenceButton
                     key={h.randomString()}
-                    className={"btn btn-mini btn-primary"}
+                    className={"btn btn-sm btn-primary"}
                     url={data.full_text_url}
                     displayText={"Full text link"}
                     textToCopy={data.full_text_url}
@@ -28,7 +28,7 @@ class Reference extends Component {
                 nodes.push(
                     <ReferenceButton
                         key={h.randomString()}
-                        className={"btn btn-mini btn-success"}
+                        className={"btn btn-sm btn-success"}
                         url={v.url}
                         displayText={v.database}
                         textToCopy={v.id}
@@ -40,7 +40,7 @@ class Reference extends Component {
         nodes.push(
             <ReferenceButton
                 key={h.randomString()}
-                className={"btn btn-mini btn-warning"}
+                className={"btn btn-sm btn-warning"}
                 url={data.url}
                 displayText={"HAWC"}
                 textToCopy={data.pk.toString()}
@@ -54,7 +54,7 @@ class Reference extends Component {
                 nodes.push(
                     <ReferenceButton
                         key={h.randomString()}
-                        className={"btn btn-mini"}
+                        className={"btn btn-sm btn-secondary"}
                         url={v.url}
                         displayText={v.database}
                         textToCopy={v.id}
@@ -80,21 +80,21 @@ class Reference extends Component {
                             {authors}&nbsp;{year}
                         </span>
                         {showActions ? (
-                            <div className="btn-group pull-right">
+                            <div className="dropdown btn-group float-right">
                                 <a className={actionsBtnClassName} data-toggle="dropdown">
-                                    Actions&nbsp;<span className="caret"></span>
+                                    Actions
                                 </a>
-                                <ul className="dropdown-menu">
-                                    <li>
-                                        <a href={data.editTagUrl}>Edit tags</a>
-                                    </li>
-                                    <li>
-                                        <a href={data.editReferenceUrl}>Edit reference</a>
-                                    </li>
-                                    <li>
-                                        <a href={data.deleteReferenceUrl}>Delete reference</a>
-                                    </li>
-                                </ul>
+                                <div className="dropdown-menu dropdown-menu-right">
+                                    <a className="dropdown-item" href={data.editTagUrl}>
+                                        Edit tags
+                                    </a>
+                                    <a className="dropdown-item" href={data.editReferenceUrl}>
+                                        Edit reference
+                                    </a>
+                                    <a className="dropdown-item" href={data.deleteReferenceUrl}>
+                                        Delete reference
+                                    </a>
+                                </div>
                             </div>
                         ) : null}
                     </div>
@@ -107,7 +107,7 @@ class Reference extends Component {
                 {showTags && tags.length > 0 ? (
                     <p>
                         {tags.map((tag, i) => [
-                            <span key={i} className="label label-info">
+                            <span key={i} className="badge badge-info">
                                 {tag.get_full_name()}
                             </span>,
                             <span key={i + 1000}>&nbsp;</span>,
@@ -141,7 +141,7 @@ Reference.propTypes = {
 
 Reference.defaultProps = {
     showActions: false,
-    actionsBtnClassName: "btn btn-small dropdown-toggle",
+    actionsBtnClassName: "btn btn-sm dropdown-toggle",
     showHr: false,
     showTags: true,
 };

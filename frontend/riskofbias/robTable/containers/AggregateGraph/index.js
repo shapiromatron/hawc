@@ -60,7 +60,7 @@ class AggregateGraph extends Component {
 const NoFinalReviewWarning = () => {
     return (
         <div className="container">
-            <span className="alert alert-warning span12">
+            <span className="alert alert-warning col-md-12">
                 A final reviewer assignment is required.
             </span>
         </div>

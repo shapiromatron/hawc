@@ -51,7 +51,7 @@ class DataStatusIndicator extends Component {
                 </div>
             );
         }
-        return <div className="pull-right">{component}</div>;
+        return <div className="float-right">{component}</div>;
     }
 }
 DataStatusIndicator.propTypes = {

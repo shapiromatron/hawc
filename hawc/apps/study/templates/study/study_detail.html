@@ -1,70 +1,56 @@
-{% extends 'portal.html' %}
-
-
-{% block title %}
-  {% include "hawc/siteTitle.html" with crumbs=object.get_crumbs crud=crud %}
-{% endblock title %}
-
-{% block breadcrumbs %}
-  {% include "hawc/breadcrumbs.html" with crumbs=object.get_crumbs crud=crud %}
-{% endblock %}
-
+{% extends 'assessment-rooted.html' %}
 
 {% block content %}
-
   <h1>{{object}}
     {% if obj_perms.edit %}
-      <div class="btn-group pull-right">
-        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions
-          <span class="caret"></span>
-        </a>
-        <ul class="dropdown-menu">
+      <div class="dropdown btn-group float-right">
+        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
+        <div class="dropdown-menu dropdown-menu-right">
 
-            <li class="disabled"><a tabindex="-1" href="#">Study editing</a></li>
+            <h6 class="dropdown-header">Study editing</h6>
             {% if object.editable %}
-            <li><a href="{% url 'study:update' object.pk %}">Update study details</a></li>
-            <li><a href="{% url 'lit:ref_edit' object.pk %}">Update reference</a></li>
+            <a class="dropdown-item" href="{% url 'study:update' object.pk %}">Update study details</a>
+            <a class="dropdown-item" href="{% url 'lit:ref_edit' object.pk %}">Update reference</a>
             {% endif %}
 
             {% if obj_perms.edit_assessment %}
-            <li><a
+            <a class="dropdown-item"
                 href="{% url 'study:editability_update' object.pk object.editable|yesno:"False,True"%}">{{ object.editable|yesno:"Lock study,Unlock study" }}</a>
-            </li>
             {% endif %}
 
             {% if object.editable %}
-              <li><a href="{% url 'study:delete' object.pk %}">Delete study</a></li>
-              <li><a href="{% url 'study:attachment_create' object.pk %}">Add an attachment</a></li>
+              <a class="dropdown-item" href="{% url 'study:delete' object.pk %}">Delete study</a>
+              <a class="dropdown-item" href="{% url 'study:attachment_create' object.pk %}">Add an attachment</a>
 
               {% if object.bioassay %}
-                <li class="divider"></li>
-                <li class="disabled"><a tabindex="-1" href="#">Animal bioassay editing</a></li>
-                <li><a href="{% url 'animal:experiment_new' object.pk %}">Create new experiment</a></li>
-                <li><a href="{% url 'animal:experiment_copy_selector' object.pk %}">Copy from existing</a></li>
+                <div class="dropdown-divider"></div>
+                <h6 class="dropdown-header">Animal bioassay editing</h6>
+                <a class="dropdown-item" href="{% url 'animal:experiment_new' object.pk %}">Create new experiment</a>
+                <a class="dropdown-item" href="{% url 'animal:experiment_copy_selector' object.pk %}">Copy from existing</a>
               {% endif %}
 
               {% if object.in_vitro %}
-                <li class="divider"></li>
-                <li class="disabled"><a tabindex="-1" href="#">In-vitro analysis editing</a></li>
-                <li><a href="{% url 'invitro:experiment_create' object.pk %}">Create new experiment</a></li>
-                <li><a href="{% url 'invitro:chemical_create' object.pk %}">Create new chemical</a></li>
-                <li><a href="{% url 'invitro:celltype_create' object.pk %}">Create new cell-type</a></li>
+                <div class="dropdown-divider"></div>
+                <h6 class="dropdown-header">In-vitro analysis editing</h6>
+                <a class="dropdown-item" href="{% url 'invitro:experiment_create' object.pk %}">Create new experiment</a>
+                <a class="dropdown-item" href="{% url 'invitro:chemical_create' object.pk %}">Create new chemical</a>
+                <a class="dropdown-item" href="{% url 'invitro:celltype_create' object.pk %}">Create new cell-type</a>
               {% endif %}
 
               {% if object.epi %}
-                <li class="divider"></li>
-                <li class="disabled"><a tabindex="-1" href="#">Epidemiology editing</a></li>
-                <li><a href="{% url 'epi:sp_create' object.pk %}">Create new study population</a></li>
-                <li><a href="{% url 'epi:sp_copy_selector' object.pk %}">Copy from existing</a></li>
+                <div class="dropdown-divider"></div>
+                <h6 class="dropdown-header">Epidemiology editing</h6>
+                <a class="dropdown-item" href="{% url 'epi:sp_create' object.pk %}">Create new study population</a>
+                <a class="dropdown-item" href="{% url 'epi:sp_copy_selector' object.pk %}">Copy from existing</a>
               {% endif %}
 
               {% if object.epi_meta %}
-                <li class="divider"></li>
-                <li class="disabled"><a tabindex="-1" href="#">Epidemiology meta-analysis editing</a></li>
-                <li><a href="{% url 'meta:protocol_create' object.pk %}">Create new protocol</a></li>
+                <div class="dropdown-divider"></div>
+                <h6 class="dropdown-header">Epidemiology meta-analysis editing</h6>
+                <a class="dropdown-item" href="{% url 'meta:protocol_create' object.pk %}">Create new protocol</a>
               {% endif %}
             {% endif %}
-        </ul>
+        </div>
       </div>
     {% endif %}
   </h1>
@@ -74,18 +60,14 @@
   {% if crud == "Read" %}
 
     {% if assessment.enable_risk_of_bias and object.riskofbiases.count > 0 %}
-      <div class="row-fluid">
-          <h3>{{assessment.get_rob_name_display}} visualization
-            <a class="btn btn-primary pull-right" href="{% url 'riskofbias:rob_detail' object.pk %}">View details</a>
-          </h3>
-          <div class="span12">
-            {% if assessment.hide_rob_scores %}
-              <div>Click button on right to view study evaluation details</div>
-            {% else %}
-              <div id='rob_plot' class="d3_container"></div>
-            {% endif %}
-          </div>
-      </div>
+      <h3>{{assessment.get_rob_name_display}} visualization
+        <a class="btn btn-primary float-right" href="{% url 'riskofbias:rob_detail' object.pk %}">View details</a>
+      </h3>
+      {% if assessment.hide_rob_scores %}
+      <div>Click button on right to view study evaluation details</div>
+      {% else %}
+      <div id='rob_plot'></div>
+      {% endif %}
     {% endif %}
 
     {% if study.bioassay %}

@@ -1,10 +1,12 @@
 import abc
 import logging
+from typing import List, Optional
 from urllib.parse import urlparse
 
 from django.contrib import messages
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.sites.shortcuts import get_current_site
 from django.core.exceptions import EmptyResultSet, PermissionDenied
 from django.forms.models import model_to_dict
 from django.http import HttpRequest, HttpResponseRedirect
@@ -15,6 +17,7 @@ from django.views.generic import DetailView, ListView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
 from ..assessment.models import Assessment, BaseEndpoint, TimeSpentEditing
+from .crumbs import Breadcrumb
 from .helper import tryParseInt
 
 
@@ -43,16 +46,29 @@ def get_referrer(request: HttpRequest, default: str) -> str:
         request (HttpRequest): the http request
 
     Returns:
-        str: A valid URL
+        str: A valid URL, with query params dropped
     """
     url = request.META.get("HTTP_REFERER")
+
+    if default.startswith("https"):
+        default_url = default
+    else:
+        default_url = f"https://{get_current_site(request).domain}{default}"
+
     if url is None:
-        return default
+        return default_url
+
+    parsed_url = urlparse(url)
+
+    if get_current_site(request).domain != parsed_url.hostname:
+        return default_url
+
     try:
-        _ = resolve(urlparse(url).path)
-        return url
+        _ = resolve(parsed_url.path)
     except Resolver404:
-        return default
+        return default_url
+
+    return f"{parsed_url.scheme}://{parsed_url.netloc}{parsed_url.path}"
 
 
 class MessageMixin:
@@ -352,7 +368,7 @@ class CanCreateMixin:
 
 
 class CopyAsNewSelectorMixin:
-    form_class = None  # required
+
     copy_model = None  # required
     template_name_suffix = "_copy_selector"
 
@@ -368,6 +384,9 @@ class CopyAsNewSelectorMixin:
 
         related_id = self.get_related_id()
         context["form"] = self.form_class(parent_id=related_id)
+        context["breadcrumbs"].append(
+            Breadcrumb(name=f"Clone {self.copy_model._meta.verbose_name}")
+        )
         return context
 
     def get_template_names(self):
@@ -385,12 +404,19 @@ class CopyAsNewSelectorMixin:
 # Base HAWC views
 class BaseDetail(AssessmentPermissionsMixin, DetailView):
     crud = "Read"
+    breadcrumb_active_name: Optional[str] = None  # optional
+
+    def get_breadcrumbs(self) -> List[Breadcrumb]:
+        return Breadcrumb.build_assessment_crumbs(self.request.user, self.object)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["assessment"] = self.assessment
         context["crud"] = self.crud
         context["obj_perms"] = super().get_obj_perms()
+        context["breadcrumbs"] = self.get_breadcrumbs()
+        if self.breadcrumb_active_name:
+            context["breadcrumbs"].append(Breadcrumb(name=self.breadcrumb_active_name))
         return context
 
 
@@ -405,12 +431,22 @@ class BaseDelete(AssessmentPermissionsMixin, MessageMixin, DeleteView):
         self.send_message()
         return HttpResponseRedirect(success_url)
 
+    def get_cancel_url(self) -> str:
+        return self.object.get_absolute_url()
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["assessment"] = self.assessment
         context["crud"] = self.crud
         context["obj_perms"] = super().get_obj_perms()
+        context["cancel_url"] = self.get_cancel_url()
+        context["breadcrumbs"] = self.get_breadcrumbs()
         return context
+
+    def get_breadcrumbs(self) -> List[Breadcrumb]:
+        crumbs = Breadcrumb.build_assessment_crumbs(self.request.user, self.object)
+        crumbs.append(Breadcrumb(name="Delete"))
+        return crumbs
 
 
 class BaseUpdate(TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin, UpdateView):
@@ -428,9 +464,15 @@ class BaseUpdate(TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin,
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["assessment"] = self.assessment
+        context["breadcrumbs"] = self.get_breadcrumbs()
         context["crud"] = self.crud
         context["obj_perms"] = super().get_obj_perms()
         return context
+
+    def get_breadcrumbs(self) -> List[Breadcrumb]:
+        crumbs = Breadcrumb.build_assessment_crumbs(self.request.user, self.object)
+        crumbs.append(Breadcrumb(name="Update"))
+        return crumbs
 
 
 class BaseCreate(TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin, CreateView):
@@ -467,6 +509,8 @@ class BaseCreate(TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin,
         context["crud"] = self.crud
         context["assessment"] = self.assessment
         context["obj_perms"] = super().get_obj_perms()
+        context["breadcrumbs"] = self.get_breadcrumbs()
+        context["crud"] = self.crud
         context[self.parent_template_name] = self.parent
         return context
 
@@ -479,6 +523,11 @@ class BaseCreate(TimeSpentOnPageMixin, AssessmentPermissionsMixin, MessageMixin,
     def post_object_save(self, form):
         pass
 
+    def get_breadcrumbs(self) -> List[Breadcrumb]:
+        crumbs = Breadcrumb.build_assessment_crumbs(self.request.user, self.parent)
+        crumbs.append(Breadcrumb(name=f"Create {self.model._meta.verbose_name}"))
+        return crumbs
+
 
 class BaseList(AssessmentPermissionsMixin, ListView):
     """
@@ -488,6 +537,7 @@ class BaseList(AssessmentPermissionsMixin, ListView):
     parent_model = None  # required
     parent_template_name = None  # optional
     crud = "Read"
+    breadcrumb_active_name: Optional[str] = None  # optional
 
     def dispatch(self, *args, **kwargs):
         self.parent = get_object_or_404(self.parent_model, pk=kwargs["pk"])
@@ -498,11 +548,21 @@ class BaseList(AssessmentPermissionsMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["assessment"] = self.assessment
+        context["breadcrumbs"] = self.get_breadcrumbs()
         context["obj_perms"] = super().get_obj_perms()
         context["crud"] = self.crud
         if self.parent_template_name:
             context[self.parent_template_name] = self.parent
         return context
+
+    def get_breadcrumbs(self) -> List[Breadcrumb]:
+        crumbs = Breadcrumb.build_assessment_crumbs(self.request.user, self.parent)
+        name = (
+            self.breadcrumb_active_name
+            or str(getattr(self.model._meta, "verbose_name_plural", self.model)).title()
+        )
+        crumbs.append(Breadcrumb(name=name))
+        return crumbs
 
 
 class BaseCreateWithFormset(BaseCreate):
@@ -629,7 +689,6 @@ class BaseUpdateWithFormset(BaseUpdate):
 
 class BaseEndpointFilterList(BaseList):
     parent_model = Assessment
-    form_class = None  # required
 
     def get_paginate_by(self, qs):
         val = 25
@@ -710,6 +769,15 @@ class HeatmapBase(BaseList):
                 data_url=reverse(self.heatmap_data_url, args=(self.assessment.id,)) + url_args,
                 heatmap_view_title=self.heatmap_view_title,
                 obj_perms=self.assessment.user_permissions(self.request.user),
+                breadcrumbs=[
+                    Breadcrumb.build_root(self.request.user),
+                    Breadcrumb.from_object(self.assessment),
+                    Breadcrumb(
+                        name="Endpoints",
+                        url=reverse("assessment:endpoint_list", args=(self.assessment.id,)),
+                    ),
+                    Breadcrumb(name=self.heatmap_view_title),
+                ],
             )
         )
         return context

@@ -3,7 +3,7 @@
 {% with queries=object.get_pubmed_queries %}
 <h3>Results from queries</h3>
 {% if queries %}
-  <table class="table table-condensed table-striped">
+  <table class="table table-sm table-striped">
     <thead>
       <tr>
         <th>Date last executed</th>
@@ -32,7 +32,7 @@
 
     {% if queries %}
       <a href="{% url 'lit:search_tags_edit' assessment.pk object.slug %}" class="btn btn-primary">Tag literature</a>
-      <a id="run_search" href="{% url 'lit:search_query' assessment.pk object.slug %}" class="btn">Rerun search</a>
+      <a id="run_search" href="{% url 'lit:search_query' assessment.pk object.slug %}" class="btn btn-light">Rerun search</a>
     {% else %}
       <a id="run_search" href="{% url 'lit:search_query' assessment.pk object.slug %}" class="btn btn-primary">Run search</a>
     {% endif %}

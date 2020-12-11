@@ -12,10 +12,9 @@ class Widgets extends React.Component {
         const {store} = this.props,
             {settings} = this.props.store;
         return (
-            <div className="row-fluid">
-                <div className="span4">
+            <div className="row">
+                <div className="col-md-4">
                     <SelectInput
-                        className="span12"
                         choices={store.doseOptions}
                         value={settings.doses}
                         handleSelect={values =>
@@ -29,9 +28,8 @@ class Widgets extends React.Component {
                         label="Dose(s)"
                     />
                 </div>
-                <div className="span4">
+                <div className="col-md-4">
                     <SelectInput
-                        className="span12"
                         choices={store.systemOptions}
                         value={settings.systems}
                         handleSelect={values => store.changeSettingsSelection("systems", values)}
@@ -40,9 +38,8 @@ class Widgets extends React.Component {
                         label="System(s)"
                     />
                 </div>
-                <div className="span4">
+                <div className="col-md-4">
                     <SelectInput
-                        className="span12"
                         choices={store.criticalValueOptions}
                         value={settings.criticalValues}
                         handleSelect={values =>

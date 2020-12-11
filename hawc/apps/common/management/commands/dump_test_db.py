@@ -25,6 +25,7 @@ class Command(BaseCommand):
             use_natural_primary_keys=True,
         )
 
+        call_command("dumpdata", "sites", **shared_kwargs)
         call_command("dumpdata", "contenttypes", **shared_kwargs)
         call_command("dumpdata", "myuser", **shared_kwargs)
         call_command("dumpdata", "vocab", **shared_kwargs)
@@ -34,6 +35,7 @@ class Command(BaseCommand):
         call_command("dumpdata", "lit", **shared_kwargs)
         call_command("dumpdata", "study", **shared_kwargs)
         call_command("dumpdata", "animal", **shared_kwargs)
+        call_command("dumpdata", "bmd", **shared_kwargs)
         call_command("dumpdata", "riskofbias", **shared_kwargs)
         call_command("dumpdata", "epi", **shared_kwargs)
         call_command("dumpdata", "invitro", **shared_kwargs)

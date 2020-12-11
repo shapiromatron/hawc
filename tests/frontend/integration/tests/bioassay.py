@@ -16,7 +16,7 @@ def bioassay(driver, root_url):
             in_table = True
             break
     assert in_table is True
-    assert h.Text(to_left_of="rat").value == "tester"
+    assert len(h.find_all(h.S("#ag-table tbody tr"))) == 1
 
     # /animal-group/:id/
     h.go_to(root_url + "/ani/animal-group/1/")
@@ -29,7 +29,7 @@ def bioassay(driver, root_url):
     # /endpoint/:id/
     h.go_to(root_url + "/ani/endpoint/1/")
     h.wait_until(h.Text("my outcome").exists)
-    assert "100 mg/kg/d" in h.Text(to_right_of="LOEL").value
+    assert h.Text("100 mg/kg/d", to_right_of="LOEL").exists()
     assert len(driver.find_elements_by_css_selector("svg")) > 0
     assert len(driver.find_elements_by_css_selector(".d3 .dr_dots .dose_points")) == 3
     assert len(driver.find_elements_by_css_selector("#dr-tbl")) > 0

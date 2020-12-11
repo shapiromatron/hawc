@@ -1,17 +1,10 @@
-{% extends 'portal.html' %}
-
-{% block title %}
-  Proposed entity term relations | HAWC
-{% endblock title %}
+{% extends 'breadcrumbed.html' %}
 
 {% block content %}
-
   <h1>Proposed entity term relations</h1>
-
   {% for obj in object_list %}
   <div>
     {{obj.entity}} | {{obj.term}}
   </div>
   {% endfor %}
-
 {% endblock content %}

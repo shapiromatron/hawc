@@ -1,13 +1,4 @@
-{% extends 'portal.html' %}
-
-{% block title %}{{assessment}} | {{heatmap_view_title}} | HAWC {% endblock title %}
-
-{% block breadcrumbs %}
-
-<li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{ assessment }}</a><span class="divider">/</span></li>
-<li><a href="{% url 'assessment:endpoint_list' assessment.pk %}">Endpoints</a><span class="divider">/</span></li>
-<li class="active">{{heatmap_view_title}}<span class="divider">/</span></li>
-{% endblock %}
+{% extends 'assessment-rooted.html' %}
 
 {% block content %}
 <div id="main"></div>

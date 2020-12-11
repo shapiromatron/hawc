@@ -1,4 +1,4 @@
-{% extends 'portal.html' %}
+{% extends 'assessment-rooted.html' %}
 
 {% load crispy_forms_tags %}
 {% load selectable_tags %}
@@ -7,32 +7,17 @@
   {% include_ui_theme %}
 {% endblock %}
 
-
-{% block title %}{{assessment}} | Visualizations | {{crud}} {% endblock title %}
-
-
-{% block breadcrumbs %}
-  <li><a href="{{assessment.get_absolute_url}}">{{assessment}}</a><span class="divider">/</span></li>
-  <li><a href="{% url 'summary:visualization_list' assessment.pk %}">Visualizations</a><span class="divider">/</span></li>
-  {% if crud == "Update" %}
-    <li><a href="{{object.get_absolute_url}}">{{object}}</a><span class="divider">/</span></li>
-  {% endif %}
-  <li class="active">{{crud}}<span class="divider">/</span></li>
-{% endblock %}
-
-
 {% block content %}
-
 <div class="tabbable" style="display:none;">
   <ul class="nav nav-tabs">
-    <li class="active">
-      <a href="#data" data-toggle="tab">Visualization settings</a>
+    <li class="nav-item">
+      <a class="nav-link active" href="#data" data-toggle="tab">Visualization settings</a>
     </li>
-    <li>
-      <a href="#settings" data-toggle="tab">Figure customization</a>
+    <li class="nav-item">
+      <a class="nav-link" href="#settings" data-toggle="tab">Figure customization</a>
     </li>
-    <li>
-      <a href="#preview" data-toggle="tab">Preview</a>
+    <li class="nav-item">
+      <a class="nav-link" href="#preview" data-toggle="tab">Preview</a>
     </li>
   </ul>
 
@@ -40,14 +25,13 @@
     <div id="data"     class="tab-pane active">
       {% crispy form %}
     </div>
-    <div id="settings" class="tab-pane form-horizontal"></div>
+    <div id="settings" class="tab-pane"></div>
     <div id="preview"  class="tab-pane"></div>
   </div>
 </div>
 
 <div id="main" style="display:none;"></div>
 {% include "summary/_smartTagEditModal.html" with form=smart_tag_form only %}
-
 {% endblock %}
 
 {% block extrajs %}

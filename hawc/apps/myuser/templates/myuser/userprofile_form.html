@@ -1,22 +1,10 @@
-{% extends 'myuser/settings.html' %}
+{% extends "breadcrumbed.html" %}
+
 {% load crispy_forms_tags %}
-
-
-{% block title %}
-  Update user profile | HAWC
-{% endblock %}
-
-
-{% block breadcrumbs %}
-  <li class="active">Update<span class="divider">/</span></li>
-{% endblock %}
-
-
 
 {% block content %}
   {% crispy form %}
 {% endblock content %}
-
 
 {% block extrajs %}
   <script type="text/javascript">

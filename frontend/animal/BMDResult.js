@@ -8,7 +8,7 @@ const WrongUnitsRender = function(props) {
             <p>
                 N/A
                 <br />
-                <span className="help-block">(BMD conducted using different units)</span>
+                <span className="form-text text-muted">(BMD conducted using different units)</span>
             </p>
         );
     },
@@ -43,10 +43,15 @@ const WrongUnitsRender = function(props) {
         return (
             <div>
                 <p>
-                    <i>BMD modeling conducted; no model selected.</i>(
-                    <a href={props.url}>View details</a>)
+                    <i>BMD modeling conducted; no model selected</i> (
+                    <a href={props.url}>View details</a>).
                 </p>
-                <p>{props.bmd_notes}</p>
+                {props.bmd_notes ? (
+                    <p>
+                        <b>Modeling notes: </b>
+                        {props.bmd_notes}
+                    </p>
+                ) : null}
             </div>
         );
     };
@@ -78,14 +83,14 @@ class BMDResult extends EndpointCriticalDose {
 Renderer.propTypes = {
     bmd: PropTypes.shape({
         output: PropTypes.object,
-        url: PropTypes.object,
+        url: PropTypes.string,
     }),
-    bmd_notes: PropTypes.object,
-    units: PropTypes.object,
+    bmd_notes: PropTypes.string,
+    units: PropTypes.string,
 };
 NoneSelected.propTypes = {
-    bmd_notes: PropTypes.object,
-    url: PropTypes.object,
+    bmd_notes: PropTypes.string,
+    url: PropTypes.string,
 };
 
 export default BMDResult;

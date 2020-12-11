@@ -1,41 +1,8 @@
-{% extends 'portal.html' %}
+{% extends 'assessment-rooted.html' %}
 
 {% load add_class %}
-
-{% block title %}
-  {% include "hawc/siteTitle.html" with crumbs=form.instance.get_crumbs crud=crud %}
-{% endblock title %}
-
-{% block breadcrumbs %}
-  {% include "hawc/breadcrumbs.html" with crumbs=form.instance.get_crumbs crud=crud %}
-{% endblock %}
+{% load crispy_forms_tags %}
 
 {% block content %}
-    <form enctype="multipart/form-data" class="form-horizontal" action="." method="post">
-        <fieldset>
-            <legend>Add an attachment to a study</legend>
-            <span class="help-block">Upload a file to be associated with his study. Multiple files can be uploaded by creating additional attachments.</span><br>
-            {{ form.non_field_errors|add_class:"alert alert-error" }}
-
-            {% for field in form %}
-                <div class="control-group form-row">
-                    {{field.label_tag|add_class:"control-label"}}
-                    <div class="controls">
-                        {{field|add_class:"span12"}}
-                        <span class='help-inline'>{{field.help_text}}</span>
-                    </div>
-                    {{field.errors|add_class:"alert alert-error"}}
-                </div>
-            {% endfor %}
-
-            <div class="form-actions">
-                <button type="submit" class="btn btn-primary">Create attachment</button>
-                <a href="{% url 'study:detail' study.pk %}" class="btn">Cancel</a>
-            </div>
-
-            {% csrf_token %}
-
-        </fieldset>
-    </form>
-
+    {% crispy form %}
 {% endblock %}

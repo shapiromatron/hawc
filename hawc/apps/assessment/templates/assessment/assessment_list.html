@@ -1,12 +1,9 @@
-{% extends 'portal.html' %}
-
-{% block title %}
-  Available Assessments | HAWC
-{% endblock title %}
+{% extends 'breadcrumbed.html' %}
 
 {% block content %}
-
+<div>
   <h1>Available Assessments</h1>
   {% include "assessment/_assessment_list_tbl.html" %}
+</div>
 
 {% endblock content %}

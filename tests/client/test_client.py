@@ -66,7 +66,7 @@ class TestClient(LiveServerTestCase, TestCase):
         methods work as intended.
         """
         client = HawcClient(self.live_server_url)
-        client.authenticate("pm@pm.com", "pw")
+        client.authenticate("pm@hawcproject.org", "pw")
 
         # experiment
         experiment_name = "30 day oral"
@@ -248,7 +248,7 @@ class TestClient(LiveServerTestCase, TestCase):
     @pytest.mark.vcr
     def test_lit_import_hero(self):
         client = HawcClient(self.live_server_url)
-        client.authenticate("pm@pm.com", "pw")
+        client.authenticate("pm@hawcproject.org", "pw")
         hero_ids = [
             2199697,
             5353200,
@@ -277,7 +277,7 @@ class TestClient(LiveServerTestCase, TestCase):
     def test_lit_import_reference_tags(self):
         csv = "reference_id,tag_id\n5,14"
         client = HawcClient(self.live_server_url)
-        client.authenticate("pm@pm.com", "pw")
+        client.authenticate("pm@hawcproject.org", "pw")
         response = client.lit.import_reference_tags(
             assessment_id=self.db_keys.assessment_final, csv=csv
         )
@@ -296,7 +296,7 @@ class TestClient(LiveServerTestCase, TestCase):
     def test_lit_reference(self):
         # get request
         client = HawcClient(self.live_server_url)
-        client.authenticate("pm@pm.com", "pw")
+        client.authenticate("pm@hawcproject.org", "pw")
 
         # imported from `test_lit_import_hero` above; test test must run for this one to run :/
         reference_id = Reference.objects.get(identifiers__unique_id="2199697").id
@@ -324,7 +324,7 @@ class TestClient(LiveServerTestCase, TestCase):
     @pytest.mark.vcr
     def test_update_references_from_hero(self):
         client = HawcClient(self.live_server_url)
-        client.authenticate("pm@pm.com", "pw")
+        client.authenticate("pm@hawcproject.org", "pw")
 
         assessment_id = self.db_keys.assessment_working
 
@@ -341,7 +341,7 @@ class TestClient(LiveServerTestCase, TestCase):
     @pytest.mark.vcr
     def test_replace_hero(self):
         client = HawcClient(self.live_server_url)
-        client.authenticate("pm@pm.com", "pw")
+        client.authenticate("pm@hawcproject.org", "pw")
 
         reference = Reference.objects.get(id=self.db_keys.reference_linked)
         assessment_id = reference.assessment_id
@@ -380,7 +380,7 @@ class TestClient(LiveServerTestCase, TestCase):
         methods work as intended.
         """
         client = HawcClient(self.live_server_url)
-        client.authenticate("pm@pm.com", "pw")
+        client.authenticate("pm@hawcproject.org", "pw")
 
         scores = [
             {
@@ -419,7 +419,7 @@ class TestClient(LiveServerTestCase, TestCase):
 
     def test_study_create(self):
         client = HawcClient(self.live_server_url)
-        client.authenticate("pm@pm.com", "pw")
+        client.authenticate("pm@hawcproject.org", "pw")
         response = client.study.create(
             self.db_keys.reference_unlinked, "short citation", "full citation"
         )

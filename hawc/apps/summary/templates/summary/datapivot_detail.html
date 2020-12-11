@@ -1,40 +1,20 @@
-{% extends 'portal.html' %}
+{% extends 'assessment-rooted.html' %}
+
 {% load static %}
 
-{% block title %}
-  {{assessment}} | Visualizations  | {{object}} | HAWC
-{% endblock title %}
-
-{% block breadcrumbs %}
-  <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{ assessment }}</a><span class="divider">/</span></li>
-  <li><a href="{% url 'summary:visualization_list' assessment.pk %}">Visualizations</a><span class="divider">/</span></li>
-  {% if crud == "Read" %}
-    <li class="active">{{object}}<span class="divider">/</span></li>
-  {% else %}
-    <!-- Update or delete -->
-    <li><a href="{{object.get_absolute_url}}">{{object}}</a><span class="divider">/</span></li>
-    <li class="active">{{crud}}<span class="divider">/</span></li>
-  {% endif %}
-{% endblock %}
-
 {% block content %}
-
   <h1>{{object}}
-
-    <div class="btn-group pull-right">
-      <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions
-        <span class="caret"></span>
-      </a>
-      <ul class="dropdown-menu">
-          <li><a href="{{object.get_download_url|safe}}?format=xlsx">Download data file</a></li>
+    <div class="dropdown btn-group float-right">
+      <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
+      <div class="dropdown-menu dropdown-menu-right">
+        <a class="dropdown-item" href="{{object.get_download_url|safe}}?format=xlsx">Download data file</a>
         {% if obj_perms.edit %}
-          <li class="divider"></li>
-          <li><a href="{% url 'summary:dp_update' assessment.pk object.slug %}">Edit display settings</a></li>
-          <li><a href="{% if object.datapivotquery %}{% url 'summary:dp_query-update' assessment.pk object.slug %}
-                       {% else %}{% url 'summary:dp_file-update' assessment.pk object.slug %}{% endif %}">Edit other settings</a></li>
-          <li><a href="{% url 'summary:dp_delete' assessment.pk object.slug %}">Delete Pivot</a></li>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="{% url 'summary:dp_update' assessment.pk object.slug %}">Edit display settings</a>
+          <a class="dropdown-item" href="{% if object.datapivotquery %}{% url 'summary:dp_query-update' assessment.pk object.slug %}{% else %}{% url 'summary:dp_file-update' assessment.pk object.slug %}{% endif %}">Edit other settings</a>
+          <a class="dropdown-item" href="{% url 'summary:dp_delete' assessment.pk object.slug %}">Delete Pivot</a>
         {% endif %}
-      </ul>
+      </div>
     </div>
   </h1>
 

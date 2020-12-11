@@ -44,7 +44,7 @@ class Migration(migrations.Migration):
                     ),
                 ),
             ],
-            options={"verbose_name_plural": "BMD assessment settings"},
+            options={"verbose_name_plural": "BMD settings"},
             bases=(models.Model,),
         ),
         migrations.CreateModel(

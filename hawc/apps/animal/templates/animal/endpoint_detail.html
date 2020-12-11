@@ -1,58 +1,49 @@
-{% extends 'portal.html' %}
-
-
-{% block title %}
-  {% include "hawc/siteTitle.html" with crumbs=object.get_crumbs crud=crud %}
-{% endblock title %}
-
-{% block breadcrumbs %}
-  {% include "hawc/breadcrumbs.html" with crumbs=object.get_crumbs crud=crud %}
-{% endblock %}
+{% extends 'assessment-rooted.html' %}
 
 {% block content %}
 
   <h1>{{object}}
     {% if crud == "Read" %}
-      <div class="btn-group pull-right">
-        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions <span class="caret"></span></a>
-        <ul class="dropdown-menu">
+      <div class="dropdown btn-group float-right">
+        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
+        <div class="dropdown-menu dropdown-menu-right">
             {% if obj_perms.edit %}
-            <li class="disabled"><a tabindex="-1" href="#">Endpoint Editing</a></li>
-            <li><a href="{{ object.get_update_url }}">Update endpoint</a></li>
-            <li><a href="{% url 'animal:endpoint_delete' object.pk %}">Delete endpoint</a></li>
-            <li class="divider"></li>
+            <h6 class="dropdown-header">Endpoint Editing</h6>
+            <a class="dropdown-item" href="{{ object.get_update_url }}">Update endpoint</a>
+            <a class="dropdown-item" href="{% url 'animal:endpoint_delete' object.pk %}">Delete endpoint</a>
+            <div class="dropdown-divider"></div>
             {% endif %}
 
             {% if assessment.enable_bmd and object.bmd_modeling_possible %}
               {% if bmd_session %}
-                <li class="disabled"><a tabindex="-1" href="#">BMD Modeling</a></li>
-                <li><a href="{{bmd_session.get_absolute_url}}">View session</a></li>
-                <li><a href="{% url 'bmd:session_list' object.pk %}">Other options</a></li>
+                <h6 class="dropdown-header">BMD Modeling</h6>
+                <a class="dropdown-item" href="{{bmd_session.get_absolute_url}}">View session</a>
+                <a class="dropdown-item" href="{% url 'bmd:session_list' object.pk %}">Other options</a>
               {% else %}
                 {% if obj_perms.edit %}
-                  <li class="disabled"><a tabindex="-1" href="#">BMD Modeling</a></li>
-                  <li><a href="{% url 'bmd:session_create' object.pk %}">Create</a></li>
+                  <h6 class="dropdown-header">BMD Modeling</h6>
+                  <a class="dropdown-item" href="{% url 'bmd:session_create' object.pk %}">Create</a>
                 {% endif %}
               {% endif %}
             {% endif %}
-        </ul>
+        </div>
       </div>
     {% endif %}
   </h1>
 
   <!-- Endpoint details -->
-  <div class="row-fluid">
-    <div id="dr-details" class="span7">
+  <div class="row">
+    <div id="dr-details" class="col-md-7">
       <h2>Endpoint Details</h2>
       <div id="endpoint-details-table"></div>
 
       <h2>Dataset</h2>
-      <table id="dr-tbl" class="table table-condensed table-striped"></table>
+      <table id="dr-tbl" class="table table-sm table-striped"></table>
     </div>
 
-    <div id='dr-plot-container' class="span5">
+    <div id='dr-plot-container' class="col-md-5">
       <h2>Plot</h2>
-      <div id='bmd_ds_plot' class="d3_container"></div>
+      <div id='bmd_ds_plot'></div>
       <br/>
       <div id="endpoint-general-notes"></div>
     </div>

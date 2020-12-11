@@ -1,7 +1,7 @@
 {% load percentage %}
 
 {% if object_list %}
-  <table class="table table-condensed table-striped">
+  <table class="table table-sm table-striped">
     <colgroup>
       <col style="width: 50%;">
       <col style="width: 16%;">
@@ -23,12 +23,12 @@
         <tr>
           <td>
             <a href="{{object.get_absolute_url}}">{{object.title}}</a><br>
-            <span class='help-block'>{{object.description}}</span>
+            <span class='form-text text-muted'>{{object.description}}</span>
           </td>
           <td>{{object.get_search_type_display}}: {{object.get_source_display}}</td>
           <td>{{object.references.count}}<br/>
           {% with object.fraction_tagged|default:0 as tagged %}
-          <span class='help-block'>{{tagged|percentage}} tagged</span></td>
+          <span class='form-text text-muted'>{{tagged|percentage}} tagged</span></td>
           {% endwith %}
           <td>{{object.created}}</td>
           <td>{{object.date_last_run}}</td>

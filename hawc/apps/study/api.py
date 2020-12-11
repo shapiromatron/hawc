@@ -22,10 +22,7 @@ class Study(
     pagination_class = DisabledPagination
     permission_classes = (AssessmentLevelPermissions,)
     filter_backends = (InAssessmentFilter, DjangoFilterBackend)
-    list_actions = [
-        "list",
-        "rob_scores",
-    ]
+    list_actions = ["list", "rob_scores"]
     lookup_value_regex = re_digits
 
     def get_serializer_class(self):

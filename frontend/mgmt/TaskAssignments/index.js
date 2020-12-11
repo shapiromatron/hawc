@@ -1,11 +1,18 @@
-import {splitStartupRedux} from "utils/WebpackSplit";
+import React from "react";
+import ReactDOM from "react-dom";
+import {Provider} from "mobx-react";
 
-const startup = function(element) {
-    import("mgmt/TaskAssignments/containers/Root").then(Component => {
-        import("mgmt/TaskAssignments/store/configureStore").then(store => {
-            splitStartupRedux(element, Component.default, store.default);
-        });
-    });
-};
+import RootStore from "./stores";
+import RobRoot from "./containers/RobRoot";
+import TaskRoot from "./containers/TaskRoot";
 
-export default startup;
+export default function(el, config) {
+    const store = new RootStore(config);
+    ReactDOM.render(
+        <Provider store={store} robStore={store.rob} taskStore={store.task}>
+            <TaskRoot />
+            <RobRoot />
+        </Provider>,
+        el
+    );
+}

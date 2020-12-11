@@ -1,20 +1,10 @@
-{% extends 'portal.html' %}
+{% extends 'assessment-rooted.html' %}
 
 {% load add_class %}
 {% load crispy_forms_tags %}
 
-{% block title %}
-  {{assessment}} | Literature Review | Find a reference | HAWC
-{% endblock %}
-
-{% block breadcrumbs %}
-    <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{ assessment }}</a><span class="divider">/</span></li>
-    <li><a href="{% url 'lit:overview' assessment.pk %}">Literature Review</a><span class="divider">/</span></li>
-    <li class="active">Reference search<span class="divider">/</span></li>
-{% endblock %}
-
 {% block content %}
-<div id="main"></div>
+    <div id="main"></div>
 {% endblock %}
 
 {% block extrajs %}

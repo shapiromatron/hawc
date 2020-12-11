@@ -9,7 +9,7 @@ class Tooltip extends Component {
             .join("<br/>");
         return (
             <div style={{width: 300}}>
-                <table className="table table-condensed table-striped">
+                <table className="table table-sm table-striped">
                     <colgroup>
                         <col width={"100px"} />
                         <col width={"200px"} />

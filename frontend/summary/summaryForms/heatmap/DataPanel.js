@@ -24,7 +24,7 @@ class DataPanel extends Component {
             <div>
                 <DataStatusIndicator />
                 <legend>Data settings</legend>
-                <p className="help-block">
+                <p className="form-text text-muted">
                     Settings which change the data which is used to build the heatmap.
                 </p>
                 {dataError ? (
@@ -50,7 +50,6 @@ class DataPanel extends Component {
                 <SelectInput
                     name="data_url"
                     label="Data URL"
-                    className="span12"
                     choices={datasetOptions}
                     multiple={false}
                     handleSelect={value => changeDatasetUrl(value)}

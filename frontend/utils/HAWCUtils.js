@@ -64,27 +64,25 @@ class HAWCUtils {
     }
 
     static pageActionsButton(items) {
-        var $menu = $('<ul class="dropdown-menu">');
+        var $menu = $('<div class="dropdown-menu dropdown-menu-right">');
         items.forEach(function(d) {
             if (d instanceof Object) {
-                $menu.append(`<li><a href="${d.url}" class="${d.cls || ""}">${d.text}</a></li>`);
+                $menu.append(`<a href="${d.url}" class="dropdown-item">${d.text}</a>`);
             } else if (typeof d === "string") {
-                $menu.append(`<li class="disabled"><a tabindex="-1" href="#">${d}</a></li>`);
+                $menu.append(`<h6 class="dropdown-header">${d}</h6>`);
             } else {
                 console.error("unknown input type");
             }
         });
-        return $('<div class="btn-group pull-right">')
-            .append(
-                '<a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions <span class="caret"></span></a>'
-            )
+        return $('<div class="dropdown btn-group float-right">')
+            .append('<a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>')
             .append($menu);
     }
 
     static addAlert(content, $div) {
         $div = $div || $("#content");
         $div.prepend(
-            $('<div class="alert">')
+            $('<div class="alert alert-danger">')
                 .append('<button type="button" class="close" data-dismiss="alert">&times;</button>')
                 .append(content)
         );
@@ -152,7 +150,7 @@ class HAWCUtils {
     }
 
     static wrapText(text, max_width) {
-        if (!$.isNumeric(max_width) || max_width <= 0) return;
+        if (!_.isFinite(max_width) || max_width <= 0) return;
         var $text = d3.select(text),
             // trim whitespace to prevent falsey empty strings after split
             words = text.textContent

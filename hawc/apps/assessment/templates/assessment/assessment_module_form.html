@@ -2,15 +2,6 @@
 
 {% load crispy_forms_tags %}
 
-{% block title %}
-    {{block.super}}: enabled modules
-{% endblock title %}
-
-{% block breadcrumbs %}
-    <li><a href="{{object.get_absolute_url}}">{{object}}</a><span class="divider">/</span></li>
-    <li class="active"> Update enabled modules <span class="divider">/</span></li>
-{% endblock breadcrumbs %}
-
 {% block extrastyle %}
 {% endblock %}
 

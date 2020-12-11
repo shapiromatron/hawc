@@ -17,7 +17,7 @@ class OverallPanel extends Component {
         return (
             <div>
                 <legend>Exploratory heatmap settings</legend>
-                <p className="help-block">
+                <p className="form-text text-muted">
                     Overall plot settings (eg., title, caption, visibility.)
                 </p>
                 <TextInput

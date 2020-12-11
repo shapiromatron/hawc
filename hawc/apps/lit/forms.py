@@ -5,11 +5,11 @@ from typing import List
 import numpy as np
 from django import forms
 from django.db import transaction
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 
 from ...services.utils import ris
 from ..assessment.models import Assessment
-from ..common.forms import BaseFormHelper, addPopupLink
+from ..common.forms import BaseFormHelper, addPopupLink, build_form_actions
 from ..common.helper import read_excel
 from . import constants, models
 
@@ -65,15 +65,9 @@ class SearchForm(forms.ModelForm):
         if "search_string" in self.fields:
             self.fields["search_string"].widget.attrs["rows"] = 5
             self.fields["search_string"].required = True
-        # by default take-up the whole row-fluid
-        for fld in list(self.fields.keys()):
-            widget = self.fields[fld].widget
-            if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "span12"
 
-        self.helper = self.setHelper()
-
-    def setHelper(self):
+    @property
+    def helper(self):
         if self.instance.id:
             inputs = {
                 "legend_text": f"Update {self.instance}",
@@ -110,9 +104,8 @@ class ImportForm(SearchForm):
         else:
             self.fields.pop("search_string")
 
-        self.helper = self.setHelper()
-
-    def setHelper(self):
+    @property
+    def helper(self):
         if self.instance.id:
             inputs = {
                 "legend_text": f"Update {self.instance}",
@@ -202,9 +195,8 @@ class RisImportForm(SearchForm):
         else:
             self.fields.pop("import_file")
 
-        self.helper = self.setHelper()
-
-    def setHelper(self):
+    @property
+    def helper(self):
         if self.instance.id:
             inputs = {
                 "legend_text": f"Update {self.instance}",
@@ -310,15 +302,10 @@ class SearchSelectorForm(forms.Form):
     searches = SearchModelChoiceField(queryset=models.Search.objects.all(), empty_label=None)
 
     def __init__(self, *args, **kwargs):
-        user = kwargs.pop("user", None)
-        kwargs.pop("assessment", None)
-
+        self.user = kwargs.pop("user")
+        self.assessment = kwargs.pop("assessment")
         super().__init__(*args, **kwargs)
-
-        for fld in list(self.fields.keys()):
-            self.fields[fld].widget.attrs["class"] = "span11"
-
-        assessment_pks = Assessment.objects.get_viewable_assessments(user).values_list(
+        assessment_pks = Assessment.objects.get_viewable_assessments(self.user).values_list(
             "pk", flat=True
         )
 
@@ -327,6 +314,21 @@ class SearchSelectorForm(forms.Form):
             .queryset.filter(assessment__in=assessment_pks)
             .exclude(title="Manual import")
             .order_by("assessment_id")
+        )
+
+    @property
+    def helper(self):
+        return BaseFormHelper(
+            self,
+            legend_text="Copy search or import",
+            help_text="""Select an existing search or import from this
+        assessment or another assessment and copy it as a template for use in
+        this assessment. You will be taken to a new view to create a new
+        search, but the form will be pre-populated using values from the
+        selected search or import.""",
+            form_actions=build_form_actions(
+                reverse("lit:overview", args=(self.assessment.id,)), "Copy selected as new"
+            ),
         )
 
 
@@ -402,16 +404,13 @@ class ReferenceForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields["pubmed_id"].initial = self.instance.get_pubmed_id()
         self.fields["hero_id"].initial = self.instance.get_hero_id()
-        self.helper = self.setHelper()
 
-    def setHelper(self):
+    @property
+    def helper(self):
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if fld in ["title", "authors_short", "authors", "journal"]:
                 widget.attrs["rows"] = 3
-
-            if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "span12"
 
         inputs = {
             "legend_text": "Update reference details",
@@ -420,11 +419,11 @@ class ReferenceForm(forms.ModelForm):
         }
 
         helper = BaseFormHelper(self, **inputs)
-        # TODO: use new names
-        helper.add_fluid_row("authors_short", 3, "span4")
-        helper.add_fluid_row("authors", 2, "span6")
-        helper.add_fluid_row("pubmed_id", 2, "span6")
-        helper.form_class = None
+
+        helper.add_row("authors_short", 3, "col-md-4")
+        helper.add_row("authors", 2, "col-md-6")
+        helper.add_row("pubmed_id", 2, "col-md-6")
+
         return helper
 
     def clean_pubmed_id(self):
@@ -499,10 +498,14 @@ class TagsCopyForm(forms.Form):
         user = kwargs.pop("user", None)
         self.assessment = kwargs.pop("assessment", None)
         super().__init__(*args, **kwargs)
-        self.fields["assessment"].widget.attrs["class"] = "span12"
+        self.fields["assessment"].widget.attrs["class"] = "col-md-12"
         self.fields["assessment"].queryset = Assessment.objects.get_viewable_assessments(
             user, exclusion_id=self.assessment.id
         )
+
+    @property
+    def helper(self):
+        return BaseFormHelper(self)
 
     def copy_tags(self):
         models.ReferenceFilterTag.copy_tags(self.assessment, self.cleaned_data["assessment"])
@@ -521,9 +524,9 @@ class ReferenceExcelUploadForm(forms.Form):
     def __init__(self, *args, **kwargs):
         self.assessment = kwargs.pop("assessment")
         super().__init__(*args, **kwargs)
-        self.helper = self.setHelper()
 
-    def setHelper(self):
+    @property
+    def helper(self):
         inputs = {
             "legend_text": "Upload full-text URLs",
             "help_text": "Using an Excel file, upload full-text URLs for multiple references",

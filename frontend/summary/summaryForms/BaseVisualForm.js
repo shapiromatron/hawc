@@ -33,7 +33,7 @@ class BaseVisualForm {
         $settings.on("dataSynced", this.unpackSettings.bind(this));
         $preview.on("dataSynced", this.buildPreviewDiv.bind(this));
 
-        $('a[data-toggle="tab"]').on("show", function(e) {
+        $('a[data-toggle="tab"]').on("show.bs.tab", function(e) {
             var toShow = $(e.target).attr("href"),
                 shown = $(e.relatedTarget).attr("href");
 
@@ -59,7 +59,10 @@ class BaseVisualForm {
                 case "#preview":
                     self.setPreviewLoading();
                     if (self.dataSynced) {
-                        $('a[data-toggle="tab"]').one("shown", self.buildPreviewDiv.bind(self));
+                        $('a[data-toggle="tab"]').one(
+                            "shown.bs.tab",
+                            self.buildPreviewDiv.bind(self)
+                        );
                     } else {
                         self.getData();
                     }
@@ -171,7 +174,7 @@ class BaseVisualForm {
                     submitter.trigger("click");
                 })
             )
-            .append(`<a class="btn btn-default" href="${cancel_url}">Cancel</a>`)
+            .append(`<a class="btn btn-secondary mx-2" href="${cancel_url}">Cancel</a>`)
             .appendTo($parent);
     }
 
@@ -191,13 +194,11 @@ class BaseVisualForm {
                 `<div id="settings_${d.name}" class="tab-pane ${isActive}">`
             );
             tablinks.push(
-                `<li class="${isActive}">
-                    <a href="#settings_${d.name}" data-toggle="tab">${d.label}</a>
-                </li>`
+                `<a class="nav-link ${isActive}" href="#settings_${d.name}" data-toggle="tab">${d.label}</a>`
             );
         });
 
-        $('<ul class="nav nav-tabs">')
+        $('<nav class="nav nav-tabs">')
             .append(tablinks)
             .appendTo($parent);
 

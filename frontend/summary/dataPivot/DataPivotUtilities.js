@@ -13,7 +13,7 @@ class _DataPivot_settings_refline {
 
         // create fields
         this.content = {};
-        this.content.value_field = $('<input class="span12" type="text">');
+        this.content.value_field = $('<input class="form-control" type="text">');
 
         this.content.line_style = this.data_pivot.style_manager.add_select(
             "lines",
@@ -62,8 +62,8 @@ class _DataPivot_settings_refrect {
 
         // create fields
         this.content = {};
-        this.content.x1_field = $('<input class="span12" type="text">');
-        this.content.x2_field = $('<input class="span12" type="text">');
+        this.content.x1_field = $('<input class="form-control" type="text">');
+        this.content.x2_field = $('<input class="form-control" type="text">');
         this.content.rectangle_style = this.data_pivot.style_manager.add_select(
             "rectangles",
             values.rectangle_style
@@ -115,7 +115,7 @@ class _DataPivot_settings_label {
 
         // create fields
         this.content = {};
-        this.content.text = $('<input class="span12" type="text">').val(values.text);
+        this.content.text = $('<input class="form-control" type="text">').val(values.text);
         this.content.style = this.data_pivot.style_manager.add_select("texts", values.style);
 
         var movement_td = DataPivot.build_movement_td(self.data_pivot.settings.labels, this, {
@@ -160,15 +160,15 @@ class _DataPivot_settings_sorts {
 
         // create fields
         this.content = {};
-        this.content.field_name = $('<select class="span12"></select>').html(
+        this.content.field_name = $('<select class="form-control"></select>').html(
             this.data_pivot._get_header_options(true)
         );
         this.content.ascending = $(
-            `<label class="radio">
-                <input name="asc${index}" type="radio" value="true">Ascending
+            `<label class="form-check">
+                <input name="asc${index}" type="radio" value="true"> Ascending
             </label>
-            <label class="radio">
-                <input name="asc${index}" type="radio" value="false">Descending
+            <label class="form-check">
+                <input name="asc${index}" type="radio" value="false"> Descending
             </label>`
         );
 
@@ -221,13 +221,13 @@ class _DataPivot_settings_filters {
 
         // create fields
         this.content = {};
-        this.content.field_name = $('<select class="span12"></select>').html(
+        this.content.field_name = $('<select class="form-control"></select>').html(
             this.data_pivot._get_header_options(true)
         );
-        this.content.quantifier = $('<select class="span12"></select>').html(
+        this.content.quantifier = $('<select class="form-control"></select>').html(
             get_quantifier_options()
         );
-        this.content.value = $('<input class="span12" type="text">').autocomplete({
+        this.content.value = $('<input class="form-control" type="text">').autocomplete({
             source: values.value,
         });
 
@@ -296,7 +296,7 @@ class _DataPivot_settings_spacers {
 
         // create fields
         this.content = {
-            index: $('<input class="span12" type="number">'),
+            index: $('<input class="form-control" type="number">'),
             show_line: $('<input type="checkbox">'),
             line_style: data_pivot.style_manager.add_select("lines", values.line_style),
             extra_space: $('<input type="checkbox">'),
@@ -346,14 +346,14 @@ class _DataPivot_settings_description {
 
         // create fields
         this.content = {
-            field_name: $('<select class="span12"></select>').html(
+            field_name: $('<select class="form-control"></select>').html(
                 this.data_pivot._get_header_options(true)
             ),
-            header_name: $('<input class="span12" type="text">'),
+            header_name: $('<input class="form-control" type="text">'),
             header_style: this.data_pivot.style_manager.add_select("texts", values.header_style),
             text_style: this.data_pivot.style_manager.add_select("texts", values.text_style),
-            max_width: $('<input class="span12" type="number">'),
-            dpe: $('<select class="span12"></select>').html(this.data_pivot.dpe_options),
+            max_width: $('<input class="form-control" type="number">'),
+            dpe: $('<select class="form-control"></select>').html(this.data_pivot.dpe_options),
         };
 
         // set default values
@@ -436,13 +436,13 @@ class _DataPivot_settings_pointdata {
 
         // create fields
         this.content = {
-            field_name: $('<select class="span12">').html(
+            field_name: $('<select class="form-control">').html(
                 this.data_pivot._get_header_options(true)
             ),
-            header_name: $('<input class="span12" type="text">'),
+            header_name: $('<input class="form-control" type="text">'),
             marker_style: this.data_pivot.style_manager.add_select(style_type, values.marker_style),
             conditional_formatting: this.conditional_formatter.data,
-            dpe: $('<select class="span12"></select>').html(this.data_pivot.dpe_options),
+            dpe: $('<select class="form-control"></select>').html(this.data_pivot.dpe_options),
         };
 
         // set default values
@@ -532,13 +532,13 @@ class _DataPivot_settings_linedata {
 
         // create fields
         this.content = {
-            low_field_name: $('<select class="span12"></select>').html(
+            low_field_name: $('<select class="form-control"></select>').html(
                 this.data_pivot._get_header_options(true)
             ),
-            high_field_name: $('<select class="span12"></select>').html(
+            high_field_name: $('<select class="form-control"></select>').html(
                 this.data_pivot._get_header_options(true)
             ),
-            header_name: $('<input  class="span12" type="text">'),
+            header_name: $('<input  class="form-control" type="text">'),
             marker_style: this.data_pivot.style_manager.add_select(style_type, values.marker_style),
             conditional_formatting: this.conditional_formatter.data,
         };
@@ -629,46 +629,60 @@ class _DataPivot_settings_general {
 
         // create fields
         this.content = {
-            plot_width: $(`<input class="input-xlarge" type="text" value="${values.plot_width}">`),
+            plot_width: $(`<input class="form-control" type="text" value="${values.plot_width}">`),
             minimum_row_height: $(
-                `<input class="input-xlarge" type="text" value="${values.minimum_row_height}">`
+                `<input class="form-control" type="text" value="${values.minimum_row_height}">`
             ),
-            title: $(`<input class="input-xlarge" type="text" value="${values.title}">`),
-            axis_label: $(`<input class="input-xlarge" type="text" value="${values.axis_label}">`),
-            show_xticks: $('<input type="checkbox">').prop("checked", values.show_xticks),
-            show_yticks: $('<input type="checkbox">').prop("checked", values.show_yticks),
-            font_style: $("<select></select>").append(
+            title: $(`<input class="form-control" type="text" value="${values.title}">`),
+            axis_label: $(`<input class="form-control" type="text" value="${values.axis_label}">`),
+            show_xticks: $('<input class="ml-1" type="checkbox">').prop(
+                "checked",
+                values.show_xticks
+            ),
+            show_yticks: $('<input class="ml-1" type="checkbox">').prop(
+                "checked",
+                values.show_yticks
+            ),
+            font_style: $("<select class='form-control'></select>").append(
                 '<option value="Arial">Arial</option>',
                 '<option value="Times New Roman">Times New Roman</option>'
             ),
-            logscale: $('<input type="checkbox">').prop("checked", values.logscale),
+            logscale: $('<input class="ml-1" type="checkbox">').prop("checked", values.logscale),
             domain: $(
                 `<input
-                    class="input-xlarge"
+                    class="form-control"
                     title="Print the minimum value, a comma, and then the maximum value"
                     type="text"
                     value="${values.domain}">`
             ),
             padding_top: $(
-                `<input class="input-xlarge" type="text" value="${values.padding.top}">`
+                `<input class="form-control" type="text" value="${values.padding.top}">`
             ),
             padding_right: $(
-                `<input class="input-xlarge" type="text" value="${values.padding.right}">`
+                `<input class="form-control" type="text" value="${values.padding.right}">`
             ),
             padding_bottom: $(
-                `<input class="input-xlarge" type="text" value="${values.padding.bottom}">`
+                `<input class="form-control" type="text" value="${values.padding.bottom}">`
             ),
             padding_left: $(
-                `<input class="input-xlarge" type="text" value="${values.padding.left}">`
+                `<input class="form-control" type="text" value="${values.padding.left}">`
             ),
-            merge_descriptions: $('<input type="checkbox">').prop(
+            merge_descriptions: $('<input class="ml-1" type="checkbox">').prop(
                 "checked",
                 values.merge_descriptions
             ),
-            merge_aggressive: $('<input type="checkbox">').prop("checked", values.merge_aggressive),
-            merge_until: $('<select name="merge_until">'),
-            text_background: $('<input type="checkbox">').prop("checked", values.text_background),
-            text_background_color: $('<input type="color">').val(values.text_background_color),
+            merge_aggressive: $('<input class="ml-1" type="checkbox">').prop(
+                "checked",
+                values.merge_aggressive
+            ),
+            merge_until: $('<select class="form-control" name="merge_until">'),
+            text_background: $('<input class="ml-1" type="checkbox">').prop(
+                "checked",
+                values.text_background
+            ),
+            text_background_color: $('<input class="form-control" type="color">').val(
+                values.text_background_color
+            ),
         };
 
         // set default values
@@ -703,11 +717,6 @@ class _DataPivot_settings_general {
             build_tr("Highlight background text", this.content.text_background),
             build_tr("Highlight background text color", this.content.text_background_color),
         ];
-
-        this.content.text_background_color.spectrum({
-            showInitial: true,
-            showInput: true,
-        });
 
         // display merge_until only when merge_descriptions activated
         var show_mergeUntil = function() {
@@ -765,32 +774,32 @@ class _DataPivot_settings_barchart {
             }),
             styleSelectFactory = dp.style_manager.add_select.bind(dp.style_manager),
             content = {
-                field_name: $('<select id="bc_field_name" name="field_name" class="span12">')
+                field_name: $('<select id="bc_field_name" name="field_name" class="form-control">')
                     .html(dp._get_header_options(true))
                     .val(values.field_name),
                 error_low_field_name: $(
-                    '<select id="bc_error_low_field_name" name="error_low_field_name" class="span12">'
+                    '<select id="bc_error_low_field_name" name="error_low_field_name" class="form-control">'
                 )
                     .html(dp._get_header_options(true))
                     .val(values.error_low_field_name),
                 error_high_field_name: $(
-                    '<select id="bc_error_high_field_name" name="error_high_field_name" class="span12">'
+                    '<select id="bc_error_high_field_name" name="error_high_field_name" class="form-control">'
                 )
                     .html(dp._get_header_options(true))
                     .val(values.error_high_field_name),
 
                 header_name: $(
-                    '<input id="bc_header_name" name="header_name" type="text" class="span12"/>'
+                    '<input id="bc_header_name" name="header_name" type="text" class="form-control"/>'
                 ).val(values.header_name),
                 error_header_name: $(
-                    '<input id="bc_error_header_name" name="error_header_name" type="text" class="span12"/>'
+                    '<input id="bc_error_header_name" name="error_header_name" type="text" class="form-control"/>'
                 ).val(values.error_header_name),
 
                 bar_style: styleSelectFactory("rectangles", values.bar_style),
                 error_marker_style: styleSelectFactory("lines", values.error_marker_style),
 
                 conditional_formatting: cf,
-                dpe: $('<select id="bc_dpe" name="dpe" class="span12">')
+                dpe: $('<select id="bc_dpe" name="dpe" class="form-control">')
                     .html(dp.dpe_options)
                     .val(values.dpe),
                 error_show_tails: $(
@@ -847,7 +856,7 @@ class _DataPivot_settings_barchart {
     getTemplate() {
         return `<div>
             <h3>Barchart settings</h3>
-            <table class="table table-condensed table-bordered">
+            <table class="table table-sm table-bordered">
                 <thead>
                     <tr>
                         <th style="width: 25%">Data used</th>
@@ -859,37 +868,37 @@ class _DataPivot_settings_barchart {
                 <tbody>
                     <tr>
                         <td>
-                            <label class="control-label" for="bc_field_name">Bar:</label>
+                            <label class="col-form-label" for="bc_field_name">Bar:</label>
                             </br>
 
-                            <label class="control-label" for="bc_error_low_field_name">Error line low:</label>
+                            <label class="col-form-label" for="bc_error_low_field_name">Error line low:</label>
                             </br>
 
-                            <label class="control-label" for="bc_error_high_field_name">Error line high:</label>
+                            <label class="col-form-label" for="bc_error_high_field_name">Error line high:</label>
                             </br>
                         </td>
                         <td>
-                            <label class="control-label" for="bc_header_name">Bar:</label>
+                            <label class="col-form-label" for="bc_header_name">Bar:</label>
                             </br>
 
-                            <label class="control-label" for="bc_error_header_name">Error line:</label>
+                            <label class="col-form-label" for="bc_error_header_name">Error line:</label>
                             </br>
                         </td>
                         <td>
-                            <label class="control-label" for="bc_bar_style">Bar:</label>
+                            <label class="col-form-label" for="bc_bar_style">Bar:</label>
                             </br>
 
-                            <label class="control-label" for="bc_error_marker_style">Error line:</label>
+                            <label class="col-form-label" for="bc_error_marker_style">Error line:</label>
                             </br>
                         </td>
                         <td>
-                            <label class="control-label" for="bc_conditional_formatting">Bar conditional formatting:</label>
+                            <label class="col-form-label" for="bc_conditional_formatting">Bar conditional formatting:</label>
                             </br>
 
-                            <label class="control-label" for="bc_dpe">On click:</label>
+                            <label class="col-form-label" for="bc_dpe">On click:</label>
                             <br/>
 
-                            <label class="control-label" for="bc_error_show_tails">Show error-line tails:</label>
+                            <label class="col-form-label" for="bc_error_show_tails">Show error-line tails:</label>
                             </br>
                         </td>
                     </tr>
@@ -934,8 +943,11 @@ class _DataPivot_settings_barchart {
 }
 
 let buildHeaderTr = function(lst) {
-    return $("<tr>").html(lst.map(v => `<th>${v}</th>`).join());
-};
+        return $("<tr>").html(lst.map(v => `<th>${v}</th>`).join());
+    },
+    buildColGroup = function(widths) {
+        return $("<colgroup>").html(widths.map(width => `<col width=${width}></col>`).join(""));
+    };
 
 export {_DataPivot_settings_refline};
 export {_DataPivot_settings_refrect};
@@ -948,4 +960,4 @@ export {_DataPivot_settings_pointdata};
 export {_DataPivot_settings_linedata};
 export {_DataPivot_settings_barchart};
 export {_DataPivot_settings_general};
-export {buildHeaderTr};
+export {buildHeaderTr, buildColGroup};

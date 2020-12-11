@@ -16,7 +16,9 @@ class DataTable extends React.Component {
     componentDidMount() {
         setTimeout(() => {
             const table = document.getElementById(this.state.tableId);
-            new Tablesort(table);
+            if (table) {
+                new Tablesort(table);
+            }
         }, 1000);
     }
     render() {
@@ -26,7 +28,7 @@ class DataTable extends React.Component {
             renderers = this.props.renderers || {};
 
         return (
-            <table id={tableId} className="table table-striped table-condensed">
+            <table id={tableId} className="table table-striped table-sm">
                 <thead>
                     <tr>
                         {columns.map((col, i) => {

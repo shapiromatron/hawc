@@ -1,21 +1,8 @@
-{% extends 'portal.html' %}
-
-{% block title %}
-  {{assessment}} | Literature Review | TagList | HAWC
-{% endblock %}
-
-{% block breadcrumbs %}
-  <li><a href="{{assessment.get_absolute_url}}">{{ assessment }}</a><span class="divider">/</span></li>
-  <li><a href="{% url 'lit:overview' assessment.pk %}">Literature Review</a><span class="divider">/</span></li>
-  {% if object_type != 'reference' %}
-    <li><a href="{{object.get_absolute_url}}">{{object}}</a><span class="divider">/</span></li>
-  {% endif %}
-  <li class="active">Visualization<span class="divider">/</span></li>
-{% endblock %}
+{% extends 'assessment-rooted.html' %}
 
 {% block content %}
   <div id="tagtree"></div><br><br>
-  <p class='help-block'>Click a node to expand to view child-nodes. Ctrl-click or ⌘-click to view references associated with an node (except root-node).</p>
+  <p class='form-text text-muted'>Click a node to expand to view child-nodes. Ctrl-click or ⌘-click to view references associated with an node (except root-node).</p>
 {% endblock %}
 
 {% block extrajs %}

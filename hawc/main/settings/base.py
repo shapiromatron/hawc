@@ -1,10 +1,13 @@
 import json
 import os
 import sys
+from datetime import datetime
 from pathlib import Path
 from typing import List, Tuple
 
 from django.urls import reverse_lazy
+
+from hawc.services.utils.git import Commit
 
 PROJECT_PATH = Path(__file__).parents[2].absolute()
 PROJECT_ROOT = PROJECT_PATH.parent
@@ -93,7 +96,6 @@ INSTALLED_APPS = (
     "treebeard",
     "selectable",
     "crispy_forms",
-    "rest_framework_extensions",
     "webpack_loader",
     # Custom apps
     "hawc.apps.common",
@@ -242,20 +244,17 @@ LOGGING = {
 
 
 # commit information
-GIT_COMMIT_FILE = str(PROJECT_ROOT / ".gitcommit")
+def get_git_commit() -> Commit:
+    try:
+        return Commit.current(str(PROJECT_ROOT))
+    except FileNotFoundError:
+        if GIT_COMMIT_FILE.exists():
+            return Commit.parse_file(GIT_COMMIT_FILE)
+    return Commit(sha="<undefined>", dt=datetime.now())
 
 
-def get_git_commit():
-    if os.path.exists(GIT_COMMIT_FILE):
-        with open(GIT_COMMIT_FILE, "r") as f:
-            return f.read()
-    return None
-
-
-GIT_COMMIT = get_git_commit()
-COMMIT_URL = "https://github.com/shapiromatron/hawc/"
-if GIT_COMMIT:
-    COMMIT_URL = COMMIT_URL + f"commit/{GIT_COMMIT}/"
+GIT_COMMIT_FILE = PROJECT_ROOT / ".gitcommit"
+COMMIT = get_git_commit()
 
 
 # PubMed settings
@@ -287,7 +286,7 @@ REST_FRAMEWORK_EXTENSIONS = {"DEFAULT_BULK_OPERATION_HEADER_NAME": "X-CUSTOM-BUL
 SELECTABLE_MAX_LIMIT = 100
 
 # Django crispy-forms settings
-CRISPY_TEMPLATE_PACK = "bootstrap"
+CRISPY_TEMPLATE_PACK = "bootstrap4"
 
 WEBPACK_LOADER = {
     "DEFAULT": {
@@ -299,3 +298,5 @@ WEBPACK_LOADER = {
 }
 
 MODIFY_HELP_TEXT = "makemigrations" not in sys.argv
+
+TEST_DB_FIXTURE = PROJECT_ROOT / "tests/data/fixtures/db.yaml"

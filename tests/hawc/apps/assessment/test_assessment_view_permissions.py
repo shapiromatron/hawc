@@ -30,7 +30,7 @@ class TestCreatePermissions:
         # with authentication
         url = reverse("assessment:new")
         c = Client()
-        assert c.login(username="rev@rev.com", password="pw") is True
+        assert c.login(username="reviewer@hawcproject.org", password="pw") is True
         response = c.get(url)
         assert response.status_code == 200
 
@@ -56,7 +56,12 @@ class TestCreatePermissions:
 class TestDetailPermissions:
     def test_detail(self, db_keys):
         # these users should have permission
-        users = ("sudo@sudo.com", "pm@pm.com", "team@team.com", "rev@rev.com")
+        users = (
+            "admin@hawcproject.org",
+            "pm@hawcproject.org",
+            "team@hawcproject.org",
+            "reviewer@hawcproject.org",
+        )
         views = ("assessment:detail", "assessment:api:assessment-detail")
         for user in users:
             c = Client()
@@ -83,7 +88,7 @@ class TestDetailPermissions:
 @pytest.mark.django_db
 class TestEditPermissions:
     def test_success(self, db_keys):
-        clients = ("sudo@sudo.com", "pm@pm.com")
+        clients = ("admin@hawcproject.org", "pm@hawcproject.org")
         for client in clients:
             c = Client()
             assert c.login(email=client, password="pw") is True
@@ -113,7 +118,7 @@ class TestEditPermissions:
                 assert response.status_code == 200
 
     def test_failure(self, db_keys):
-        clients = (None, "team@team.com", "rev@rev.com")
+        clients = (None, "team@hawcproject.org", "reviewer@hawcproject.org")
         for client in clients:
             c = Client()
             if client:
@@ -136,7 +141,7 @@ class TestEditPermissions:
 @pytest.mark.django_db
 class TestDeletePermissions:
     def test_success(self, db_keys):
-        clients = ("sudo@sudo.com", "pm@pm.com")
+        clients = ("admin@hawcproject.org", "pm@hawcproject.org")
         for client in clients:
             c = Client()
             assert c.login(email=client, password="pw") is True
@@ -148,7 +153,7 @@ class TestDeletePermissions:
                 assert response.status_code == 200
 
     def test_failure(self, db_keys):
-        clients = (None, "team@team.com", "rev@rev.com")
+        clients = (None, "team@hawcproject.org", "reviewer@hawcproject.org")
         for client in clients:
             c = Client()
             if client:
@@ -181,16 +186,16 @@ class TestDeletePermissions:
 
     def test_delete_superuser(self, db_keys):
         c = Client()
-        assert c.login(email="sudo@sudo.com", password="pw") is True
+        assert c.login(email="admin@hawcproject.org", password="pw") is True
         self._test_delete_client_success(c, db_keys)
 
     def test_delete_project_manager(self, db_keys):
         c = Client()
-        assert c.login(email="pm@pm.com", password="pw") is True
+        assert c.login(email="pm@hawcproject.org", password="pw") is True
         self._test_delete_client_success(c, db_keys)
 
     def test_delete_forbidden(self, db_keys):
-        clients = (None, "team@team.com", "rev@rev.com")
+        clients = (None, "team@hawcproject.org", "reviewer@hawcproject.org")
         for client in clients:
             c = Client()
             if client:

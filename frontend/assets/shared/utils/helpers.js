@@ -12,6 +12,7 @@ const helpers = {
     fetchGet: {
         credentials: "same-origin",
     },
+    docUrlRoot: "https://hawc.readthedocs.io/en/latest/",
     escapeRegexString(unescapedString) {
         // https://www.npmjs.com/package/escape-regex-string
         return unescapedString.replace(regexEscapeChars, "\\$&");
@@ -64,6 +65,24 @@ const helpers = {
             body: JSON.stringify({csrfmiddlewaretoken: csrf}),
         };
     },
+    handleSubmit(url, verb, csrf, obj, success, failure, error) {
+        const payload = this.fetchPost(csrf, obj, verb);
+        fetch(url, payload)
+            .then(response => {
+                if (response.ok) {
+                    response.json().then(response => success(response));
+                } else {
+                    response.json().then(response => failure(response));
+                }
+            })
+            .catch(exception => {
+                if (error) {
+                    console.error("Submission failed", exception);
+                } else {
+                    error(exception);
+                }
+            });
+    },
     goBack(e) {
         if (e && e.preventDefault) e.preventDefault();
         window.history.back();
@@ -106,11 +125,6 @@ const helpers = {
             return <i className="fa fa-square-o" title="un-checked" />;
         }
     },
-    getInputDivClass(name, errors, extra = []) {
-        extra.push("form-group");
-        if (errors && errors[name]) extra.push("has-error");
-        return extra.join(" ");
-    },
     deepCopy(object) {
         return JSON.parse(JSON.stringify(object));
     },
@@ -151,11 +165,20 @@ const helpers = {
     },
     getHawcContentSize() {
         // for the standard hawc page layout, get the width and height for the main `content` box
-        const contentSize = document.getElementById("content").getBoundingClientRect(),
+        const contentSize = document
+                .getElementById("main-content-container")
+                .getBoundingClientRect(),
             windowHeight = window.innerHeight;
         return {
             width: contentSize.width,
             height: windowHeight - contentSize.top,
+        };
+    },
+    getHawcOffsets() {
+        // get offsets from header and sidebar in hawc for absolute positioning
+        return {
+            x: $("#sidebar-container")[0].offsetWidth,
+            y: d3.sum(_.map($(".hawc-header"), d => d.offsetHeight)),
         };
     },
     getTextContrastColor(hex) {

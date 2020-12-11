@@ -23,39 +23,34 @@ class DatasetPreview extends Component {
             <div>
                 <h4>
                     Dataset overview
-                    <div className="btn-group pull-right">
+                    <div className="dropdown btn-group float-right">
                         <a className="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-                            Actions&nbsp;
-                            <span className="caret"></span>
+                            Actions
                         </a>
-                        <ul className="dropdown-menu">
-                            <li>
-                                {clearCacheUrl ? (
-                                    <a href={clearCacheUrl}>
-                                        <i className="fa fa-refresh"></i>&nbsp;Clear assessment
-                                        cache
-                                    </a>
-                                ) : null}
-                                <a
-                                    href={
-                                        url.includes("?")
-                                            ? `${url}&format=csv`
-                                            : `${url}?format=csv`
-                                    }>
-                                    <i className="fa fa-file-text-o"></i>&nbsp;Download dataset
-                                    (csv)
+                        <div className="dropdown-menu dropdown-menu-right">
+                            {clearCacheUrl ? (
+                                <a className="dropdown-item" href={clearCacheUrl}>
+                                    <i className="fa fa-fw fa-refresh"></i>&nbsp;Clear assessment
+                                    cache
                                 </a>
-                                <a
-                                    href={
-                                        url.includes("?")
-                                            ? `${url}&format=xlsx`
-                                            : `${url}?format=xlsx`
-                                    }>
-                                    <i className="fa fa-file-excel-o"></i>&nbsp;Download dataset
-                                    (xlsx)
-                                </a>
-                            </li>
-                        </ul>
+                            ) : null}
+                            <a
+                                className="dropdown-item"
+                                href={
+                                    url.includes("?") ? `${url}&format=csv` : `${url}?format=csv`
+                                }>
+                                <i className="fa fa-fw fa-file-text-o"></i>&nbsp;Download dataset
+                                (csv)
+                            </a>
+                            <a
+                                className="dropdown-item"
+                                href={
+                                    url.includes("?") ? `${url}&format=xlsx` : `${url}?format=xlsx`
+                                }>
+                                <i className="fa fa-fw fa-file-excel-o"></i>&nbsp;Download dataset
+                                (xlsx)
+                            </a>
+                        </div>
                     </div>
                 </h4>
                 <ul>
@@ -70,8 +65,8 @@ class DatasetPreview extends Component {
                     </li>
                 </ul>
                 {clearCacheUrl ? (
-                    <p className="help-block">
-                        <span className="label label-info">Note</span> To improve performance, the
+                    <p className="form-text text-muted">
+                        <span className="badge badge-info">Note</span> To improve performance, the
                         data retrieved from this request are cached and reused for future requests.
                         Therefore, changes made to the underlying data are not immediately reflected
                         in visuals (and may take hours to update). To see changes immediately,&nbsp;

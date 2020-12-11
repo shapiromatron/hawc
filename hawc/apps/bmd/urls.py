@@ -1,4 +1,4 @@
-from django.conf.urls import include, url
+from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
 from . import api, views
@@ -8,27 +8,27 @@ router.register(r"session", api.Session, basename="session")
 
 app_name = "bmd"
 urlpatterns = [
-    url(r"^api/", include((router.urls, "api"))),
+    path("api/", include((router.urls, "api"))),
     # BMD assessment-level settings
-    url(
-        r"^assessment/(?P<pk>\d+)/settings/$",
+    path(
+        "assessment/<int:pk>/settings/",
         views.AssessSettingsRead.as_view(),
         name="assess_settings_detail",
     ),
-    url(
-        r"^assessment/(?P<pk>\d+)/settings/edit/$",
+    path(
+        "assessment/<int:pk>/settings/edit/",
         views.AssessSettingsUpdate.as_view(),
         name="assess_settings_update",
     ),
-    url(
-        r"^assessment/(?P<pk>\d+)/logic/edit/$",
+    path(
+        "assessment/<int:pk>/logic/edit/",
         views.AssessLogicUpdate.as_view(),
         name="assess_logic_update",
     ),
     # BMD create/read/update views
-    url(r"^endpoint/(?P<pk>\d+)/create/$", views.SessionCreate.as_view(), name="session_create",),
-    url(r"^endpoint/(?P<pk>\d+)/$", views.SessionList.as_view(), name="session_list"),
-    url(r"^session/(?P<pk>\d+)/$", views.SessionDetail.as_view(), name="session_detail"),
-    url(r"^session/(?P<pk>\d+)/update/$", views.SessionUpdate.as_view(), name="session_update",),
-    url(r"^session/(?P<pk>\d+)/delete/$", views.SessionDelete.as_view(), name="session_delete",),
+    path("endpoint/<int:pk>/create/", views.SessionCreate.as_view(), name="session_create",),
+    path("endpoint/<int:pk>/", views.SessionList.as_view(), name="session_list"),
+    path("session/<int:pk>/", views.SessionDetail.as_view(), name="session_detail"),
+    path("session/<int:pk>/update/", views.SessionUpdate.as_view(), name="session_update",),
+    path("session/<int:pk>/delete/", views.SessionDelete.as_view(), name="session_delete",),
 ]

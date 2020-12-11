@@ -5,6 +5,7 @@ import {
     _DataPivot_settings_pointdata,
     _DataPivot_settings_barchart,
     buildHeaderTr,
+    buildColGroup,
 } from "./DataPivotUtilities";
 
 const visSelectorId = "visType",
@@ -17,12 +18,10 @@ let buildChartSelector = function(tab, dp) {
 
         tab.prepend(`
            <h3>Visualization type</h3>
-           <label class="checkbox control-label" for="${visSelectorId}">
-                <select id="visType">
-                    <option ${asForPlot}>Forest plot</option>
-                    <option ${asBarchart}>Barchart</option>
-                </select>
-           </label>`);
+           <select class="form-control col-md-4" id="visType">
+                <option ${asForPlot}>Forest plot</option>
+                <option ${asBarchart}>Barchart</option>
+            </select>`);
 
         tab.on("change", "#" + visSelectorId, function() {
             if (this.value === "Forest plot") {
@@ -52,7 +51,8 @@ let buildChartSelector = function(tab, dp) {
                 ])
             ),
             tbody = $("<tbody>"),
-            tbl = $('<table class="table table-condensed table-bordered">').html([thead, tbody]),
+            colgroup = buildColGroup(["", "", "", "150px", "", "120px"]),
+            tbl = $('<table class="table table-sm table-bordered">').html([thead, colgroup, tbody]),
             settings = dp.settings.datapoint_settings,
             addDataRow = function(i) {
                 let obj;
@@ -66,10 +66,9 @@ let buildChartSelector = function(tab, dp) {
                 let num_rows = settings.length;
                 addDataRow(num_rows);
             },
-            newRowBtn = $('<button class="btn btn-primary pull-right">New row</button>').on(
-                "click",
-                newDataRow
-            ),
+            newRowBtn = $(
+                '<button class="btn btn-primary float-right"><i class="fa fa-fw fa-plus"></i>&nbsp;Add row</button>'
+            ).on("click", newDataRow),
             numRows = settings.length === 0 ? 3 : settings.length;
 
         for (var i = 0; i < numRows; i++) {
@@ -81,22 +80,25 @@ let buildChartSelector = function(tab, dp) {
     },
     buildLineTable = function(tab, dp) {
         let tbl,
-            thead,
-            tbody,
+            thead = $("<thead>").html(
+                buildHeaderTr([
+                    "Column header",
+                    "Legend name",
+                    "Line style",
+                    "Conditional formatting",
+                ])
+            ),
+            colgroup = buildColGroup(["", "", "", "150px"]),
+            tbody = $("<tbody>"),
             obj,
             settings = dp.settings.dataline_settings;
-
-        thead = $("<thead>").html(
-            buildHeaderTr(["Column header", "Legend name", "Line style", "Conditional formatting"])
-        );
-        tbody = $("<tbody>");
 
         if (settings.length === 0) {
             settings.push(_DataPivot_settings_linedata.defaults());
         }
 
         obj = new _DataPivot_settings_linedata(dp, 0);
-        tbl = $('<table class="table table-condensed table-bordered">').html([thead, tbody]);
+        tbl = $('<table class="table table-sm table-bordered">').html([thead, colgroup, tbody]);
         tbody.append(obj.tr);
 
         tab.append("<h3>Data point error-bar options</h3>", tbl);

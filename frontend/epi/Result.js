@@ -83,10 +83,10 @@ class Result {
     }
 
     build_tab(isActive) {
-        var cls = isActive === true ? 'class="active"' : "";
-        return `<li ${cls}><a href="#${this.get_tab_id()}" data-toggle="tab">${
+        var cls = isActive === true ? "active" : "";
+        return `<a class="nav-link ${cls}" href="#${this.get_tab_id()}" data-toggle="tab">${
             this.data.name
-        }</a></li>`;
+        }</a>`;
     }
 
     build_content_tab(isActive) {
