@@ -12,13 +12,12 @@ import "./ScoreDisplay.css";
 class CopyScoresButton extends Component {
     render() {
         let {store, score, editableScores} = this.props;
-        console.log(editableScores);
         if (editableScores === undefined || editableScores.length == 0) {
             return null;
         } else if (editableScores.length === 1) {
             return (
                 <button
-                    className="btn pull-right"
+                    className="btn btn-outline-dark float-right"
                     type="button"
                     onClick={() => {
                         store.updateFormState(
@@ -32,32 +31,34 @@ class CopyScoresButton extends Component {
             );
         } else if (editableScores.length > 1) {
             return (
-                <div className="btn-group pull-right">
-                    <button className="btn dropdown-toggle" data-toggle="dropdown" type="button">
-                        Copy&nbsp;
-                        <span className="caret"></span>
+                <div className="btn-group float-right">
+                    <button
+                        className="btn btn-outline-dark dropdown-toggle"
+                        data-toggle="dropdown"
+                        type="button">
+                        Copy
                     </button>
-                    <ul className="dropdown-menu pull-right">
+                    <div className="dropdown-menu dropdown-menu-right">
                         {editableScores.map(editableScore => {
                             return (
-                                <li key={editableScore.id}>
-                                    <a
-                                        href="#"
-                                        onClick={e => {
-                                            e.preventDefault();
-                                            store.updateFormState(
-                                                editableScore.id,
-                                                "notes",
-                                                editableScore.notes + score.notes
-                                            );
-                                        }}>
-                                        Copy into&nbsp;
-                                        {editableScore.label || `Score #${editableScore.id}`}
-                                    </a>
-                                </li>
+                                <button
+                                    key={editableScore.id}
+                                    type="button"
+                                    className="dropdown-item"
+                                    onClick={e => {
+                                        e.preventDefault();
+                                        store.updateFormState(
+                                            editableScore.id,
+                                            "notes",
+                                            editableScore.notes + score.notes
+                                        );
+                                    }}>
+                                    Copy into&nbsp;
+                                    {editableScore.label || `Score #${editableScore.id}`}
+                                </button>
                             );
                         })}
-                    </ul>
+                    </div>
                 </div>
             );
         } else {
@@ -103,6 +104,9 @@ class ScoreDisplay extends Component {
                             {hasOverrides ? <b>{labelText}</b> : <b>&nbsp;</b>}
                         </p>
                     ) : null}
+                    {editableScores ? (
+                        <CopyScoresButton score={score} editableScores={editableScores} />
+                    ) : null}
                     {showRobScore ? (
                         <ScoreBar
                             score={score.score}
@@ -114,9 +118,6 @@ class ScoreDisplay extends Component {
                     ) : null}
                 </div>
                 <div>
-                    {editableScores ? (
-                        <CopyScoresButton score={score} editableScores={editableScores} />
-                    ) : null}
                     <p dangerouslySetInnerHTML={{__html: score.notes}} />
                 </div>
                 {hasOverride ? (
