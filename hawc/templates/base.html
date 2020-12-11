@@ -24,7 +24,7 @@
     {% endif %}
 
     {% cache 3600 header %}
-    {% if flavor == "EPA" %}
+    {% if extra_branding and flavor == "EPA" %}
     {% include 'includes/epa/header.html' %}
     {% endif %}
     {% endcache %}
