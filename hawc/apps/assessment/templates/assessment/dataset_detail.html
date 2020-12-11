@@ -1,31 +1,20 @@
-{% extends 'portal.html' %}
-
-
-{% block title %}
-{% include "hawc/siteTitle.html" with crumbs=object.get_crumbs crud=crud %}
-{% endblock title %}
-
-{% block breadcrumbs %}
-{% include "hawc/breadcrumbs.html" with crumbs=object.get_crumbs crud=crud %}
-{% endblock %}
+{% extends 'assessment-rooted.html' %}
 
 {% block content %}
 <h1>{{object}}
     {% if crud == "Read" and obj_perms.edit %}
-    <div class="btn-group pull-right">
-        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions
-            <span class="caret"></span>
-        </a>
-        <ul class="dropdown-menu">
-            <li class="disabled"><a tabindex="-1" href="#">Dataset Editing</a></li>
-            <li><a href="{{ object.get_edit_url }}">Update dataset</a></li>
-            <li><a href="{{ object.get_delete_url }}">Delete dataset</a></li>
-        </ul>
+    <div class="dropdown btn-group float-right">
+        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
+        <div class="dropdown-menu dropdown-menu-right">
+            <h6 class="dropdown-header">Dataset Editing</h6>
+            <a class="dropdown-item" href="{{ object.get_edit_url }}">Update dataset</a>
+            <a class="dropdown-item" href="{{ object.get_delete_url }}">Delete dataset</a>
+        </div>
     </div>
     {% endif %}
 </h1>
 
-<table class="table table-condensed table-striped">
+<table class="table table-sm table-striped">
     <colgroup>
         <col style="width: 20%;">
         <col style="width: 80%;">
@@ -75,7 +64,7 @@
 
 {% if crud == "Read" and obj_perms.edit and object.revisions.count > 0 %}
 <h2>Dataset revisions</h2>
-<table class="table table-condensed table-striped">
+<table class="table table-sm table-striped">
     <colgroup>
         <col style="width: 10%;">
         <col style="width: 50%;">

@@ -1,32 +1,40 @@
 import React, {Component} from "react";
 import PropTypes from "prop-types";
-import {Provider} from "react-redux";
+import {observer, inject} from "mobx-react";
 
-import {loadConfig} from "shared/actions/Config";
 import Header from "./Header";
-import RiskOfBias from "./RiskOfBias";
+import AggregateGraph from "./AggregateGraph";
+import RiskOfBiasDisplay from "./RiskOfBiasDisplay";
+import Loading from "shared/components/Loading";
 
+@inject("store")
+@observer
 class Root extends Component {
-    constructor(props) {
-        super(props);
-        this.props.store.dispatch(loadConfig());
+    componentDidMount() {
+        this.props.store.fetchFullStudyIfNeeded();
     }
 
     render() {
-        let store = this.props.store;
+        const {itemsLoaded} = this.props.store;
         return (
-            <Provider store={store}>
-                <div>
-                    <Header />
-                    <RiskOfBias />
-                </div>
-            </Provider>
+            <div>
+                <Header />
+                {itemsLoaded ? (
+                    <>
+                        <AggregateGraph />
+                        <hr />
+                        <RiskOfBiasDisplay />
+                    </>
+                ) : (
+                    <Loading />
+                )}
+            </div>
         );
     }
 }
 
 Root.propTypes = {
-    store: PropTypes.object.isRequired,
+    store: PropTypes.object,
 };
 
 export default Root;

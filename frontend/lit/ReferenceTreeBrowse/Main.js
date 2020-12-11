@@ -17,8 +17,8 @@ class ReferenceTreeMain extends Component {
             {canEdit} = store.config;
 
         return (
-            <div className="row-fluid">
-                <div className="span3">
+            <div className="row">
+                <div className="col-md-3">
                     <h3>Taglist</h3>
                     <TagTree
                         tagtree={toJS(store.tagtree)}
@@ -33,19 +33,19 @@ class ReferenceTreeMain extends Component {
                         Untagged References: ({store.config.untaggedReferenceCount})
                     </p>
                 </div>
-                <div className="span9">
+                <div className="col-md-9">
                     {actions.length > 0 ? (
-                        <div className="btn-group pull-right">
+                        <div className="dropdown btn-group float-right">
                             <a className="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-                                Actions <span className="caret"></span>
+                                Actions
                             </a>
-                            <ul className="dropdown-menu">
+                            <div className="dropdown-menu dropdown-menu-right">
                                 {actions.map((action, index) => (
-                                    <li key={index}>
-                                        <a href={action[0]}>{action[1]}</a>
-                                    </li>
+                                    <a key={index} className="dropdown-item" href={action[0]}>
+                                        {action[1]}
+                                    </a>
                                 ))}
-                            </ul>
+                            </div>
                         </div>
                     ) : null}
 
@@ -63,7 +63,9 @@ class ReferenceTreeMain extends Component {
                         {selectedReferencesLoading ? <Loading /> : null}
                         {store.selectedTag === null &&
                         store.untaggedReferencesSelected === false ? (
-                            <p className="help-block">Click on a tag to view tagged references.</p>
+                            <p className="form-text text-muted">
+                                Click on a tag to view tagged references.
+                            </p>
                         ) : null}
                         {selectedReferences ? (
                             <ReferenceTable references={selectedReferences} showActions={canEdit} />

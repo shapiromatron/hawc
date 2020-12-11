@@ -219,11 +219,7 @@ class Endpoint(mixins.CreateModelMixin, AssessmentViewset):
     assessment_filter_args = "assessment"
     model = models.Endpoint
     serializer_class = serializers.EndpointSerializer
-    list_actions = [
-        "list",
-        "effects",
-        "rob_filter",
-    ]
+    list_actions = ["list", "effects", "rob_filter"]
 
     def get_queryset(self):
         return self.model.objects.optimized_qs()

@@ -22,7 +22,7 @@ class MetricForm extends React.Component {
                     e.preventDefault();
                     store.bulkUpdateSelectedStudies();
                 }}>
-                <div className="span5">
+                <div className="col-md-5">
                     <ScoreInput
                         scoreId={-1}
                         choices={store.scoreOptions.map(d => d.id)}
@@ -34,12 +34,12 @@ class MetricForm extends React.Component {
                     <button className="btn btn-primary" type="submit">
                         Bulk modify {numItems} {itemString}.
                     </button>
-                    <p className="help-block">
+                    <p className="form-text text-muted">
                         Submitting this request will change the selected score and notes for the
                         selected items.
                     </p>
                 </div>
-                <div className="span7">
+                <div className="col-md-7">
                     <ScoreNotesInput
                         scoreId={-1}
                         value={store.formNotes}

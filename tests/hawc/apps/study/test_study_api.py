@@ -7,7 +7,7 @@ from rest_framework.test import APIClient
 @pytest.mark.django_db
 def test_study_detail_api(db_keys):
     client = Client()
-    assert client.login(username="team@team.com", password="pw") is True
+    assert client.login(username="team@hawcproject.org", password="pw") is True
 
     url = reverse("study:api:study-detail", kwargs={"pk": db_keys.study_working})
     response = client.get(url)
@@ -79,7 +79,7 @@ class TestStudyCreateApi:
 
         # reviewers shouldn't be able to create
         client = APIClient()
-        assert client.login(username="rev@rev.com", password="pw") is True
+        assert client.login(username="reviewer@hawcproject.org", password="pw") is True
         response = client.post(url, data)
         assert response.status_code == 403
 
@@ -93,7 +93,7 @@ class TestStudyCreateApi:
         url = reverse("study:api:study-list")
         data = {"reference_id": db_keys.reference_unlinked}
         client = APIClient()
-        assert client.login(username="team@team.com", password="pw") is True
+        assert client.login(username="team@hawcproject.org", password="pw") is True
         response = client.post(url, data)
         assert response.status_code == 400
         assert {"short_citation", "full_citation"}.issubset((response.data.keys()))
@@ -127,7 +127,7 @@ class TestStudyCreateApi:
             "full_citation": "Full citation.",
         }
         client = APIClient()
-        assert client.login(username="team@team.com", password="pw") is True
+        assert client.login(username="team@hawcproject.org", password="pw") is True
         response = client.post(url, data)
         assert response.status_code == 201
 

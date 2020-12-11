@@ -1,6 +1,6 @@
 import $ from "$";
 
-import {_DataPivot_settings_description, buildHeaderTr} from "./DataPivotUtilities";
+import {_DataPivot_settings_description, buildHeaderTr, buildColGroup} from "./DataPivotUtilities";
 
 let buildDescriptionTable = function(tab, dp) {
         let thead = $("<thead>").html(
@@ -14,8 +14,9 @@ let buildDescriptionTable = function(tab, dp) {
                     "Ordering",
                 ])
             ),
+            colgroup = buildColGroup(["", "", "", "", "120px", "", "120px"]),
             tbody = $("<tbody>"),
-            tbl = $('<table class="table table-condensed table-bordered">').html([thead, tbody]),
+            tbl = $('<table class="table table-sm table-bordered">').html([thead, colgroup, tbody]),
             settings = dp.settings.description_settings,
             addDataRow = function(i) {
                 let obj;
@@ -28,10 +29,9 @@ let buildDescriptionTable = function(tab, dp) {
             newDataRow = function() {
                 addDataRow(settings.length);
             },
-            newRowBtn = $('<button class="btn btn-primary pull-right">New row</button>').on(
-                "click",
-                newDataRow
-            ),
+            newRowBtn = $(
+                '<button class="btn btn-primary float-right"><i class="fa fa-fw fa-plus"></i>&nbsp;Add row</button>'
+            ).on("click", newDataRow),
             numRows = settings.length === 0 ? 5 : settings.length;
 
         for (var i = 0; i < numRows; i++) {

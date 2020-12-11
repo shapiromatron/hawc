@@ -4,14 +4,13 @@ from urllib.parse import urlparse, urlunparse
 
 from crispy_forms import layout as cfl
 from django import forms
-from django.urls import reverse
 from openpyxl import load_workbook
 from openpyxl.utils.exceptions import InvalidFileException
-from selectable import forms as selectable
 
 from ..animal.lookups import EndpointByAssessmentLookup, EndpointByAssessmentLookupHtml
 from ..animal.models import Endpoint
-from ..assessment.models import EffectTag
+from ..assessment.models import DoseUnits, EffectTag
+from ..common import selectable
 from ..common.forms import BaseFormHelper
 from ..common.helper import read_excel
 from ..epi.models import Outcome
@@ -450,90 +449,13 @@ class PrefilterMixin:
 
 
 class SummaryTextForm(forms.ModelForm):
-
-    parent = forms.ModelChoiceField(queryset=models.SummaryText.objects.all(), required=False)
-    sibling = forms.ModelChoiceField(
-        label="Insert After", queryset=models.SummaryText.objects.all(), required=False
-    )
-
     class Meta:
         model = models.SummaryText
-        fields = (
-            "title",
-            "slug",
-            "text",
-        )
+        fields = "__all__"
 
     def __init__(self, *args, **kwargs):
-        assessment = kwargs.pop("parent", None)
+        kwargs.pop("parent", None)
         super().__init__(*args, **kwargs)
-        if assessment:
-            self.instance.assessment = assessment
-        qs = models.SummaryText.get_assessment_qs(self.instance.assessment.id)
-        self.fields["parent"].queryset = qs
-        self.fields["sibling"].queryset = qs
-        self.helper = self.setHelper()
-
-    def clean_parent(self):
-        parent = self.cleaned_data.get("parent")
-        if parent is not None and parent.assessment != self.instance.assessment:
-            err = "Parent must be from the same assessment"
-            raise forms.ValidationError(err)
-        return parent
-
-    def clean_sibling(self):
-        sibling = self.cleaned_data.get("sibling")
-        if sibling is not None and sibling.assessment != self.instance.assessment:
-            err = "Sibling must be from the same assessment"
-            raise forms.ValidationError(err)
-        return sibling
-
-    def clean_title(self):
-        title = self.cleaned_data["title"]
-        pk_exclusion = {"id": self.instance.id or -1}
-        if (
-            models.SummaryText.objects.filter(assessment=self.instance.assessment, title=title)
-            .exclude(**pk_exclusion)
-            .count()
-            > 0
-        ):
-            err = "Title must be unique for assessment."
-            raise forms.ValidationError(err)
-        return title
-
-    def clean_slug(self):
-        slug = self.cleaned_data["slug"]
-        pk_exclusion = {"id": self.instance.id or -1}
-        if (
-            models.SummaryText.objects.filter(assessment=self.instance.assessment, slug=slug)
-            .exclude(**pk_exclusion)
-            .count()
-            > 0
-        ):
-            err = "Title must be unique for assessment."
-            raise forms.ValidationError(err)
-        return slug
-
-    def setHelper(self):
-
-        for fld in list(self.fields.keys()):
-            widget = self.fields[fld].widget
-            if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "span12"
-
-        cancel_url = reverse("summary:list", kwargs={"pk": self.instance.assessment.id})
-        inputs = {
-            "form_actions": [
-                cfl.Submit("save", "Save"),
-                cfl.HTML(
-                    '<a class="btn btn-danger" id="deleteSTBtn" href="#deleteST" data-toggle="modal">Delete</a>'
-                ),
-                cfl.HTML(f'<a class="btn" href="{cancel_url}" >Cancel</a>'),
-            ]
-        }
-        helper = BaseFormHelper(self, **inputs)
-        helper.form_class = None
-        return helper
 
 
 class VisualForm(forms.ModelForm):
@@ -564,7 +486,7 @@ class VisualForm(forms.ModelForm):
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "span12"
+                widget.attrs["class"] = "col-md-12"
 
         if self.instance.id:
             inputs = {
@@ -586,7 +508,7 @@ class VisualForm(forms.ModelForm):
             }
 
         helper = BaseFormHelper(self, **inputs)
-        helper.form_class = None
+
         helper.form_id = "visualForm"
         return helper
 
@@ -635,6 +557,9 @@ class CrossviewForm(PrefilterMixin, VisualForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields["dose_units"].queryset = DoseUnits.objects.get_animal_units(
+            self.instance.assessment
+        )
         self.helper = self.setHelper()
 
     class Meta:
@@ -690,7 +615,7 @@ class TagtreeForm(VisualForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = self.setHelper()
-        self.helper.add_fluid_row("root_node", 3, "span4")
+        self.helper.add_row("root_node", 3, "col-md-4")
 
         choices = [
             (tag.id, tag.get_nested_name())
@@ -744,13 +669,13 @@ class ExternalSiteForm(VisualForm):
     external_url = forms.URLField(
         label="External URL",
         help_text=f"""
-        <p class="help-block">
+        <p class="form-text text-muted">
             Embed an external website. The following websites can be linked to:
         </p>
-        <ul class="help-block">
+        <ul class="form-text text-muted">
             <li><a href="https://public.tableau.com/">Tableau (public)</a> - press the "share" icon and then select the URL in the "link" text box</li>
         </ul>
-        <p class="help-block">
+        <p class="form-text text-muted">
             If you'd like to link to another website, please contact us.
         </p>
         """,
@@ -864,7 +789,7 @@ class DataPivotForm(forms.ModelForm):
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "span12"
+                widget.attrs["class"] = "col-md-12"
 
         if self.instance.id:
             inputs = {
@@ -884,7 +809,7 @@ class DataPivotForm(forms.ModelForm):
             }
 
         helper = BaseFormHelper(self, **inputs)
-        helper.form_class = None
+
         helper.form_id = "dataPivotForm"
         return helper
 
@@ -917,6 +842,8 @@ class DataPivotUploadForm(DataPivotForm):
             if worksheet_name and worksheet_name not in wb.sheetnames:
                 self.add_error("worksheet_name", f"Worksheet name {worksheet_name} not found.")
                 return
+            else:
+                worksheet_name = wb.sheetnames[0]
 
             df = read_excel(excel_file, sheet_name=worksheet_name)
 
@@ -1009,7 +936,7 @@ class DataPivotSelectorForm(forms.Form):
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "span12"
+                widget.attrs["class"] = "col-md-12"
 
         inputs = {
             "legend_text": "Copy data pivot",
@@ -1020,12 +947,12 @@ class DataPivotSelectorForm(forms.Form):
                 the currently-selected data pivot.""",
             "form_actions": [
                 cfl.Submit("save", "Copy selected as new"),
-                cfl.HTML(f'<a href="{cancel_url}" class="btn">Cancel</a>'),
+                cfl.HTML(f'<a href="{cancel_url}" class="btn btn-light">Cancel</a>'),
             ],
         }
 
         helper = BaseFormHelper(self, **inputs)
-        helper.form_class = None
+
         return helper
 
 
@@ -1059,7 +986,5 @@ class SmartTagForm(forms.Form):
         super().__init__(*args, **kwargs)
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
-            widget.attrs["class"] = "span12"
             if hasattr(widget, "update_query_parameters"):
                 widget.update_query_parameters({"related": assessment_id})
-                widget.attrs["class"] += " smartTagSearch"

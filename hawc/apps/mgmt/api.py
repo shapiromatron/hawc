@@ -8,7 +8,7 @@ from ..assessment.models import Assessment
 from . import models, serializers
 
 
-class Task(AssessmentEditViewset):
+class TaskViewSet(AssessmentEditViewset):
     assessment_filter_args = "study__assessment"
     model = models.Task
     serializer_class = serializers.TaskSerializer
@@ -17,10 +17,10 @@ class Task(AssessmentEditViewset):
         permissions.IsAuthenticated,
     )
     pagination_class = DisabledPagination
-    list_actions = ["list", "dashboard"]
+    list_actions = ["list", "bulk_patch"]
 
-    def filter_queryset(self, queryset):
-        return super().filter_queryset(queryset).select_related("owner", "study")
+    def get_queryset(self):
+        return super().get_queryset().select_related("owner", "study", "study__assessment")
 
     @action(detail=False)
     def assignments(self, request):
@@ -43,8 +43,14 @@ class Task(AssessmentEditViewset):
         serializer = serializers.TaskByAssessmentSerializer(qs, many=True)
         return Response(serializer.data)
 
-    @action(detail=False)
-    def dashboard(self, request):
+    @action(detail=False, methods=("patch",))
+    def bulk_patch(self, request):
         qs = self.filter_queryset(self.get_queryset())
-        metrics = self.model.dashboard_metrics(qs)
-        return Response(metrics)
+        # ensure high-level validation passes
+        serializer = self.get_serializer(data=request.data, partial=True, many=True)
+        serializer.is_valid(raise_exception=True)
+        # try to bulk-update; return new queryset
+        qs = self.model.objects.update_many(self.assessment, request.data)
+        # return response with new values
+        serializer = self.serializer_class(qs, many=True)
+        return Response(serializer.data)

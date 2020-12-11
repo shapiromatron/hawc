@@ -1,7 +1,6 @@
 import _ from "lodash";
 import React, {Component} from "react";
 import PropTypes from "prop-types";
-import fetch from "isomorphic-fetch";
 import AutoSuggest from "react-autosuggest";
 
 import h from "shared/utils/helpers";
@@ -57,6 +56,7 @@ class Autocomplete extends Component {
                 renderSuggestion={suggestion => <span>{suggestion.value}</span>}
                 inputProps={{
                     placeholder,
+                    className: "form-control",
                     value: currentText,
                     onChange: (event, {newValue}) => {
                         if (newValue === "") {

@@ -1,18 +1,26 @@
+from typing import Any, List, Tuple, Union
+
 from crispy_forms import bootstrap as cfb
 from crispy_forms import helper as cf
 from crispy_forms import layout as cfl
 from crispy_forms.utils import TEMPLATE_PACK, flatatt
 from django import forms
 from django.template.loader import render_to_string
-from selectable import forms as selectable
 
-from . import validators
+from . import selectable, validators
+
+
+def build_form_actions(cancel_url: str, save_text: str = "Save", cancel_text: str = "Cancel"):
+    return [
+        cfl.Submit("save", save_text),
+        cfl.HTML(f'<a role="button" class="btn btn-light" href="{cancel_url}">{cancel_text}</a>'),
+    ]
 
 
 class BaseFormHelper(cf.FormHelper):
 
-    form_class = "form-horizontal"
     error_text_inline = False
+    use_custom_control = True
 
     def __init__(self, form=None, **kwargs):
         self.attrs = {}
@@ -26,62 +34,48 @@ class BaseFormHelper(cf.FormHelper):
     def build_default_layout(self, form):
         layout = cfl.Layout(*list(form.fields.keys()))
 
-        if self.kwargs.get("legend_text"):
-            layout.insert(
-                0, cfl.HTML(f"<legend>{self.kwargs.get('legend_text')}</legend>"),
-            )
+        if "legend_text" in self.kwargs:
+            layout.insert(0, cfl.HTML(f"<legend>{self.kwargs['legend_text']}</legend>"))
 
         if "help_text" in self.kwargs:
             layout.insert(
-                1, cfl.HTML(f'<p class="help-block">{self.kwargs["help_text"]}</p><br>'),
+                1, cfl.HTML(f'<p class="form-text text-muted">{self.kwargs["help_text"]}</p>'),
             )
 
+        form_actions = self.kwargs.get("form_actions")
         if "cancel_url" in self.kwargs:
-            self.addCustomFormActions(
-                layout,
-                [
-                    cfl.Submit("save", "Save"),
-                    cfl.HTML(
-                        f'<a role="button" class="btn btn-default" href="{self.kwargs["cancel_url"]}">Cancel</a>'
-                    ),
-                ],
-            )
-
-        if self.kwargs.get("form_actions"):
-            self.addCustomFormActions(layout, self.kwargs.get("form_actions"))
+            form_actions = build_form_actions(self.kwargs["cancel_url"])
+        if form_actions:
+            layout.append(cfb.FormActions(*form_actions, css_class="form-actions"))
 
         return layout
 
-    @classmethod
-    def addCustomFormActions(cls, layout, items):
-        layout.append(cfb.FormActions(*items))
+    def get_layout_item(self, field_name: str) -> Tuple[Any, int]:
+        mapping = {field: index for index, field in self.layout.get_field_names()}
+        layout = self.layout
+        for idx in mapping[field_name]:
+            if layout[idx] == field_name:
+                return (layout, idx)
+            layout = layout[idx]
+        raise ValueError("Cannot find item")
 
-    def addBtnLayout(self, lst, idx, url, title, wrapper_class):
+    def add_create_btn(self, field_name: str, url: str, title: str):
         """
         Render field plus an "add new" button to the right.
         """
-        if type(lst[idx]) is str:
-            fields = [lst[idx]]
-        else:
-            fields = lst[idx].fields
-        lst[idx] = AdderLayout(*fields, adderURL=url, adderTitle=title, wrapper_class=wrapper_class)
+        layout, index = self.get_layout_item(field_name)
+        field = layout[index]
+        layout[index] = AdderLayout(field, adder_url=url, adder_title=title)
 
-    def add_fluid_row(self, firstField, numFields, wrapperClasses):
+    def add_row(self, firstField: str, numFields: int, classes: Union[str, List[str]]):
+        if isinstance(classes, str):
+            classes = [classes] * numFields
         first = self.layout.index(firstField)
-        if type(wrapperClasses) in [str, str]:
-            wrapperClasses = [wrapperClasses] * numFields
-        for i, v in enumerate(wrapperClasses):
-            self[first + i].wrap(cfl.Field, wrapper_class=v)
+        for i, class_ in enumerate(classes):
+            self[first + i].wrap(cfl.Column, wrapper_class=class_)
         self[first : first + numFields].wrap_together(
-            cfl.Div, css_class="row-fluid", id=f"fluid_id_{firstField}_{numFields}"
+            cfl.Row, id=f"row_id_{firstField}_{numFields}"
         )
-
-    def add_td(self, firstField, numFields):
-        first = self.layout.index(firstField)
-        self[first : first + numFields].wrap_together(TdLayout)
-
-    def add_header(self, firstField, text):
-        self.layout.insert(self.layout.index(firstField), cfl.HTML(f"<h4>{text}</h4>"))
 
     def find_layout_idx_for_field_name(self, field_name):
         idx = 0
@@ -97,6 +91,12 @@ class BaseFormHelper(cf.FormHelper):
             idx += 1
         raise ValueError(f"Field not found: {field_name}")
 
+    def add_refresh_page_note(self):
+        note = cfl.HTML(
+            "<div class='alert alert-info'><b>Note:</b> If coming from an extraction form, you may need to refresh the extraction form to use the item which was recently created.</div>"
+        )
+        self.layout.insert(len(self.layout) - 1, note)
+
 
 class CopyAsNewSelectorForm(forms.Form):
     label = None
@@ -107,6 +107,10 @@ class CopyAsNewSelectorForm(forms.Form):
         super(CopyAsNewSelectorForm, self).__init__(*args, **kwargs)
         self.setupSelector(parent_id)
 
+    @property
+    def helper(self):
+        return BaseFormHelper(self)
+
     def setupSelector(self, parent_id):
         fld = selectable.AutoCompleteSelectField(
             lookup_class=self.lookup_class,
@@ -115,7 +119,7 @@ class CopyAsNewSelectorForm(forms.Form):
             widget=selectable.AutoComboboxSelectWidget,
         )
         fld.widget.update_query_parameters({"related": parent_id})
-        fld.widget.attrs["class"] = "span11"
+        fld.widget.attrs["class"] = "col-md-10"
         self.fields["selector"] = fld
 
 
@@ -126,9 +130,9 @@ def form_error_list_to_lis(form):
     for key, values in form.errors.items():
         for value in values:
             if key == "__all__":
-                lis.append("<li>" + value + "</li>")
+                lis.append(f"<li>{value}</li>")
             else:
-                lis.append("<li>" + key + ": " + value + "</li>")
+                lis.append("<li>{key}: {value}</li>")
     return lis
 
 
@@ -169,20 +173,17 @@ class AdderLayout(cfl.Field):
     template = "crispy_forms/layout/inputAdder.html"
 
     def __init__(self, *args, **kwargs):
-        self.adderURL = kwargs.pop("adderURL", "")
-        self.adderTitle = kwargs.pop("adderTitle", "")
-        super(AdderLayout, self).__init__(*args, **kwargs)
+        self.adder_url = kwargs.pop("adder_url")
+        self.adder_title = kwargs.pop("adder_title")
+        super().__init__(*args, **kwargs)
 
     def render(
         self, form, form_style, context, template_pack=TEMPLATE_PACK, extra_context=None, **kwargs,
     ):
         if extra_context is None:
             extra_context = {}
-        extra_context["adderURL"] = self.adderURL
-        extra_context["adderTitle"] = self.adderTitle
-        return super(AdderLayout, self).render(
-            form, form_style, context, template_pack, extra_context, **kwargs
-        )
+        extra_context.update(adder_url=self.adder_url, adder_title=self.adder_title)
+        return super().render(form, form_style, context, template_pack, extra_context, **kwargs)
 
 
 class CustomURLField(forms.URLField):

@@ -1,48 +1,31 @@
-{% extends 'portal.html' %}
+{% extends 'assessment-rooted.html' %}
 
 {% load selectable_tags %}
 
-{% block title %}
-  {{assessment}} | Tasks | HAWC
-{% endblock %}
-
-{% block breadcrumbs %}
-  <li><a href="{{assessment.get_absolute_url}}">{{ assessment }}</a><span class="divider">/</span></li>
-  <li><a href="{% url 'mgmt:assessment_dashboard' assessment.pk %}">Management dashboard</a><span class="divider">/</span></li>
-  <li><a href="{% url 'mgmt:assessment_tasks' assessment.pk %}">Task list</a><span class="divider">/</span></li>
-  <li class="active">Modify<span class="divider">/</span></li>
-{% endblock %}
-
 {% block content %}
-
   <h2>Modify task assignments</h2>
-  <div id='taskTable'></div>
-
+  <div id='taskTable' class='mb-3'></div>
 {% endblock %}
-
 
 {% block extrajs %}
 <script id="config" type="text/json" charset="utf-8">
     {
-        "assessment_id": "{{ assessment.id }}",
+        "assessmentId": {{ assessment.id }},
         "csrf": "{{ csrf_token }}",
-        "host": "//{{ request.get_host }}",
-        "type": "edit",
+        "displayAsForm": true,
         "cancelUrl": "{% url 'mgmt:assessment_tasks' assessment.pk %}",
-        "tasks": {
-            "url": "{% url 'mgmt:api:task-list' %}"
-        },
-        "studies": {
-            "url": "{% url 'study:api:study-list' %}?assessment_id={{assessment.pk}}"
-        },
-        "autocomplete": {
-            "url": "{% url 'selectable-lookup' 'myuser-assessmentteammemberorhigherlookup' %}"
-        }
+        "tasksListUrl": "{% url 'mgmt:api:task-list' %}?assessment_id={{assessment.pk}}",
+        "taskUpdateBaseUrl": "{% url 'mgmt:api:task-list' %}",
+        "taskBulkPatchUrl": "{% url 'mgmt:api:task-bulk-patch' %}?assessment_id={{assessment.pk}}",
+        "studyListUrl": "{% url 'study:api:study-list' %}?assessment_id={{assessment.pk}}",
+        "userAutocompleteUrl": "{% url 'selectable-lookup' 'myuser-assessmentteammemberorhigherlookup' %}"
     }
 </script>
 <script type="text/javascript">
 window.app.mgmtStartup(function(mgmt){
-    mgmt.TaskTable(document.getElementById('taskTable'))
+  const el = document.getElementById('taskTable'),
+    config = JSON.parse(document.getElementById('config').text);
+  mgmt.TaskTable(el, config);
 });
 </script>
 {% endblock extrajs %}

@@ -185,7 +185,12 @@ class Study {
 
         attachments.forEach(function(v) {
             ul.append(
-                `<li><a target="_blank" href="${v.url}">${v.filename}</a> <a class="pull-right" title="Delete" href="${v.url_delete}"><i class="icon-trash"></i></a></li>`
+                `<li>
+                    <a target="_blank" href="${v.url}">${v.filename}</a>
+                    <a class="btn btn-sm btn-danger float-right" title="Delete" href="${v.url_delete}">
+                        <i class="fa fa-trash"></i>
+                    </a>
+                </li>`
             );
         });
         tbody.append(tr.append(td.append(ul)));
@@ -207,7 +212,7 @@ class Study {
 
     render($div, $shower) {
         var self = this,
-            $details = $('<div class="row-fluid">').appendTo($div),
+            $details = $("<div>").appendTo($div),
             displayRoB = () => {
                 var render_obj = {
                     riskofbias: self.riskofbias,
@@ -218,12 +223,10 @@ class Study {
             };
         this.build_details_table($details);
         if (this.has_riskofbias()) {
-            var $rob = $('<div class="span12">');
-            $div.prepend($('<div class="row-fluid">').append($rob));
+            var $rob = $('<div class="col-md-12">');
+            $div.prepend($('<div class="row">').append($rob));
             if ($shower) {
-                $shower.on("shown", function() {
-                    displayRoB();
-                });
+                $shower.on("shown.bs.modal", displayRoB).on("shown.bs.tab", displayRoB);
             } else {
                 displayRoB();
             }

@@ -1,36 +1,9 @@
-{% extends 'portal.html' %}
+{% extends 'assessment-rooted.html' %}
 
 {% load add_class %}
 
-{% block title %}
-  {{assessment}} | {{assessment.get_rob_name_display}} | {{object}} Domain | Delete | HAWC
-{% endblock %}
-
-{% block breadcrumbs %}
-  <li><a href="{{assessment.get_absolute_url}}">{{assessment}}</a><span class="divider">/</span></li>
-  <li><a href="{% url 'riskofbias:arob_update' assessment.pk %}">{{assessment.get_rob_name_display}} requirements</a><span class="divider">/</span></li>
-  <li class="active">Delete {{object}} Domain<span class="divider">/</span></li>
-{% endblock %}
-
 {% block content %}
-
   <h1>{{object}}</h1>
-  <p class='help-block'>{{object.description|safe}}</p>
-
-
-  {% if crud == "Delete" %}
-    <div class="alert alert-block">
-      <h4>Warning!</h4>
-      Are you sure you want to delete this {{assessment.get_rob_name_display|lower}} domain? This will remove all {{assessment.get_rob_name_display|lower}} metrics associated with this domain.
-    </div>
-    <form action="." method="post">
-      <div class="form-actions">
-        <button type="submit" class="btn btn-primary">{{ crud }} domain</button>
-        <a href="{% url 'riskofbias:arob_update' assessment.pk %}" class="btn">Cancel</a>
-      </div>
-      {% csrf_token %}
-      </fieldset>
-    </form>
-  {% endif %}
-
+  <p class='form-text text-muted'>{{object.description|safe}}</p>
+  {% include "hawc/_delete_block.html" with name="domain" notes="This will remove all metrics associated with this domain." %}
 {% endblock %}

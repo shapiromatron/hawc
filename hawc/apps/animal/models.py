@@ -2,12 +2,13 @@ import collections
 import json
 import math
 from itertools import chain
-from typing import Any, Dict, Optional
+from typing import Any, Dict
 
 import pandas as pd
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from django.forms import ModelForm
 from django.urls import reverse
 from reversion import revisions as reversion
 from scipy import stats
@@ -15,7 +16,6 @@ from scipy import stats
 from ..assessment.models import Assessment, BaseEndpoint, DSSTox
 from ..assessment.serializers import AssessmentSerializer
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper, cleanHTML, tryParseInt
-from ..common.models import get_crumbs
 from ..study.models import Study
 from ..vocab.models import Term
 from . import managers
@@ -143,6 +143,7 @@ class Experiment(models.Model):
     last_updated = models.DateTimeField(auto_now=True)
 
     COPY_NAME = "experiments"
+    BREADCRUMB_PARENT = "study"
 
     def __str__(self):
         return self.name
@@ -155,9 +156,6 @@ class Experiment(models.Model):
 
     def get_assessment(self):
         return self.study.get_assessment()
-
-    def get_crumbs(self):
-        return get_crumbs(self, self.study)
 
     @staticmethod
     def flat_complete_header_row():
@@ -341,6 +339,7 @@ class AnimalGroup(models.Model):
     last_updated = models.DateTimeField(auto_now=True)
 
     COPY_NAME = "animal_groups"
+    BREADCRUMB_PARENT = "experiment"
 
     def __str__(self):
         return self.name
@@ -350,9 +349,6 @@ class AnimalGroup(models.Model):
 
     def get_assessment(self):
         return self.experiment.get_assessment()
-
-    def get_crumbs(self):
-        return get_crumbs(self, self.experiment)
 
     @property
     def is_generational(self):
@@ -369,6 +365,9 @@ class AnimalGroup(models.Model):
         if json_encode:
             return json.dumps(self.doses, cls=HAWCDjangoJSONEncoder)
         return self.doses
+
+    def get_json(self, json_encode=True):
+        return SerializerHelper.get_serialized(self, json=json_encode)
 
     @property
     def generation_short(self):
@@ -546,8 +545,11 @@ class DosingRegime(models.Model):
         verbose_name="Number of Dose Groups",
         help_text="Number of dose groups, plus control",
     )
-    positive_control = models.NullBooleanField(
-        choices=POSITIVE_CONTROL_CHOICES, default=False, help_text="Was a positive control used?",
+    positive_control = models.BooleanField(
+        choices=POSITIVE_CONTROL_CHOICES,
+        default=False,
+        help_text="Was a positive control used?",
+        null=True,
     )
     negative_control = models.CharField(
         max_length=2,
@@ -569,15 +571,13 @@ class DosingRegime(models.Model):
     last_updated = models.DateTimeField(auto_now=True)
 
     COPY_NAME = "dose_regime"
+    BREADCRUMB_PARENT = "dosed_animals"
 
     def __str__(self):
         return f"{self.dosed_animals} {self.get_route_of_exposure_display()}"
 
     def get_absolute_url(self):
         return self.dosed_animals.get_absolute_url()
-
-    def get_crumbs(self):
-        return get_crumbs(self, parent=self.dosed_animals.experiment)
 
     def get_assessment(self):
         return self.dosed_animals.get_assessment()
@@ -953,6 +953,7 @@ class Endpoint(BaseEndpoint):
     additional_fields = models.TextField(default="{}")
 
     COPY_NAME = "endpoints"
+    BREADCRUMB_PARENT = "animal_group"
 
     class Meta:
         ordering = ("id",)
@@ -1091,25 +1092,23 @@ class Endpoint(BaseEndpoint):
         return df
 
     @classmethod
-    def get_vocabulary_settings(
-        cls, assessment: Assessment, instance: Optional["Endpoint"] = None
-    ) -> str:
+    def get_vocabulary_settings(cls, assessment: Assessment, form: ModelForm) -> str:
         return json.dumps(
             {
                 "debug": False,
                 "vocabulary": assessment.vocabulary,
                 "vocabulary_display": assessment.get_vocabulary_display(),
                 "object": {
-                    "system": instance.system if instance else "",
-                    "organ": instance.organ if instance else "",
-                    "effect": instance.effect if instance else "",
-                    "effect_subtype": instance.effect_subtype if instance else "",
-                    "name": instance.name if instance else "",
-                    "system_term_id": instance.system_term_id if instance else None,
-                    "organ_term_id": instance.organ_term_id if instance else None,
-                    "effect_term_id": instance.effect_term_id if instance else None,
-                    "effect_subtype_term_id": instance.effect_subtype_term_id if instance else None,
-                    "name_term_id": instance.name_term_id if instance else None,
+                    "system": form.initial.get("system", ""),
+                    "organ": form.initial.get("organ", ""),
+                    "effect": form.initial.get("effect", ""),
+                    "effect_subtype": form.initial.get("effect_subtype", ""),
+                    "name": form.initial.get("name", ""),
+                    "system_term_id": form.initial.get("system_term", None),
+                    "organ_term_id": form.initial.get("organ_term", None),
+                    "effect_term_id": form.initial.get("effect_term", None),
+                    "effect_subtype_term_id": form.initial.get("effect_subtype_term", None),
+                    "name_term_id": form.initial.get("name_term", None),
                 },
             }
         )
@@ -1119,9 +1118,6 @@ class Endpoint(BaseEndpoint):
 
     def get_absolute_url(self):
         return reverse("animal:endpoint_detail", args=[str(self.pk)])
-
-    def get_crumbs(self):
-        return get_crumbs(self, self.animal_group)
 
     def save(self, *args, **kwargs):
         # ensure our controlled vocabulary terms don't have leading/trailing whitespace

@@ -6,105 +6,118 @@ import {inject, observer} from "mobx-react";
 @observer
 class SearchForm extends Component {
     render() {
-        const {changeSearchTerm, submitSearch, resetForm} = this.props.store;
+        const {changeSearchTerm, searchForm, submitSearch, resetForm} = this.props.store;
 
         return (
             <form>
-                <div className="row-fluid">
-                    <div className="control-group span4">
-                        <label htmlFor="id_hawc_id" className="control-label">
+                <div className="row">
+                    <div className="form-group col-md-4">
+                        <label htmlFor="id_hawc_id" className="col-form-label">
                             HAWC ID
                         </label>
-                        <div className="controls">
+                        <div className="form-group">
                             <input
-                                className="span12"
+                                className="form-control"
                                 type="number"
                                 id="id_hawc_id"
-                                onChange={e => changeSearchTerm("id", parseInt(e.target.value))}
+                                value={searchForm.id}
+                                onChange={e =>
+                                    changeSearchTerm("id", parseInt(e.target.value) || "")
+                                }
                             />
                         </div>
                     </div>
-                    <div className="control-group span4">
-                        <label htmlFor="id_db_id" className="control-label">
+                    <div className="form-group col-md-4">
+                        <label htmlFor="id_db_id" className="col-form-label">
                             Database unique identifier
                         </label>
-                        <div className="controls">
+                        <div className="form-group">
                             <input
-                                className="span12"
+                                className="form-control"
                                 type="number"
                                 id="id_db_id"
-                                onChange={e => changeSearchTerm("db_id", parseInt(e.target.value))}
+                                value={searchForm.db_id}
+                                onChange={e =>
+                                    changeSearchTerm("db_id", parseInt(e.target.value) || "")
+                                }
                             />
-                            <p className="help-block">
+                            <p className="form-text text-muted">
                                 Identifiers may include Pubmed ID, DOI, etc.
                             </p>
                         </div>
                     </div>
-                    <div className="control-group span4">
-                        <label htmlFor="id_year_id" className="control-label">
+                    <div className="form-group col-md-4">
+                        <label htmlFor="id_year_id" className="col-form-label">
                             Year
                         </label>
-                        <div className="controls">
+                        <div className="form-group">
                             <input
-                                className="span12"
+                                className="form-control"
                                 type="number"
                                 id="id_year_id"
-                                onChange={e => changeSearchTerm("year", parseInt(e.target.value))}
+                                value={searchForm.year}
+                                onChange={e =>
+                                    changeSearchTerm("year", parseInt(e.target.value) || "")
+                                }
                             />
                         </div>
                     </div>
                 </div>
-                <div className="row-fluid">
-                    <div className="control-group span6">
-                        <label htmlFor="id_title" className="control-label">
+                <div className="row">
+                    <div className="form-group col-md-6">
+                        <label htmlFor="id_title" className="col-form-label">
                             Title
                         </label>
-                        <div className="controls">
+                        <div className="form-group">
                             <input
-                                className="span12"
+                                className="form-control"
                                 type="text"
                                 id="id_title"
+                                value={searchForm.title}
                                 onChange={e => changeSearchTerm("title", e.target.value)}
                             />
                         </div>
                     </div>
-                    <div className="control-group span6">
-                        <label htmlFor="id_authors" className="control-label">
+                    <div className="form-group col-md-6">
+                        <label htmlFor="id_authors" className="col-form-label">
                             Authors
                         </label>
-                        <div className="controls">
+                        <div className="form-group">
                             <input
-                                className="span12"
+                                className="form-control"
                                 type="text"
+                                value={searchForm.authors}
                                 id="id_authors"
                                 onChange={e => changeSearchTerm("authors", e.target.value)}
                             />
                         </div>
                     </div>
                 </div>
-                <div className="row-fluid">
-                    <div className="control-group span6">
-                        <label htmlFor="id_journal" className="control-label">
+                <div className="row">
+                    <div className="form-group col-md-6">
+                        <label htmlFor="id_journal" className="col-form-label">
                             Journal
                         </label>
-                        <div className="controls">
+                        <div className="form-group">
                             <input
-                                className="span12"
+                                className="form-control"
                                 type="text"
                                 id="id_journal"
+                                value={searchForm.journal}
                                 onChange={e => changeSearchTerm("journal", e.target.value)}
                             />
                         </div>
                     </div>
-                    <div className="control-group span6">
-                        <label htmlFor="id_abstract" className="control-label">
+                    <div className="form-group col-md-6">
+                        <label htmlFor="id_abstract" className="col-form-label">
                             Abstract
                         </label>
-                        <div className="controls">
+                        <div className="form-group">
                             <input
-                                className="span12"
+                                className="form-control"
                                 type="text"
                                 id="id_abstract"
+                                value={searchForm.abstract}
                                 onChange={e => changeSearchTerm("abstract", e.target.value)}
                             />
                         </div>
@@ -117,8 +130,7 @@ class SearchForm extends Component {
                         onClick={() => submitSearch()}>
                         <i className="fa fa-search"></i>&nbsp;Search
                     </button>
-                    <span>&nbsp;</span>
-                    <button className="btn" type="button" onClick={() => resetForm()}>
+                    <button className="btn btn-light mx-2" type="button" onClick={resetForm}>
                         Reset
                     </button>
                 </div>

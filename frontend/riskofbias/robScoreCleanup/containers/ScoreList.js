@@ -33,9 +33,9 @@ class ScoreList extends Component {
             <div>
                 <h4>
                     Responses which meet your filtered criteria above:
-                    <div className="pull-right">
+                    <div className="float-right">
                         <button
-                            className="btn btn-default"
+                            className="btn btn-secondary"
                             onClick={() => {
                                 this.props.store.clearSelectedStudyScores();
                             }}>

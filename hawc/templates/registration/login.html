@@ -1,20 +1,11 @@
-{% extends 'base.html' %}
+{% extends "crumbless.html" %}
 {% load crispy_forms_tags %}
 
+{% block title %}Login | HAWC{% endblock %}
 
-{% block title %}
-  Login | HAWC
-{% endblock %}
-
-
-{% block main_content %}
-  <div class='row-fluid'>
-    <div class="span8 offset2">
-      {% crispy form %}
-    </div>
-  </div>
-{% endblock main_content %}
-
+{% block content %}
+{% crispy form %}
+{% endblock content %}
 
 {% block extrajs %}
   <script type="text/javascript">

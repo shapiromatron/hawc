@@ -1,16 +1,15 @@
 import json
 
-from crispy_forms import bootstrap as cfb
 from crispy_forms import layout as cfl
 from django import forms
 from django.db.models import Q
 from django.forms.models import BaseModelFormSet, inlineformset_factory, modelformset_factory
 from django.forms.widgets import Select
 from django.urls import reverse
-from selectable import forms as selectable
 
 from ..assessment.lookups import DssToxIdLookup, EffectTagLookup
 from ..assessment.models import DoseUnits
+from ..common import selectable
 from ..common.forms import BaseFormHelper
 from ..study.lookups import InvitroStudyLookup
 from . import lookups, models
@@ -43,15 +42,10 @@ class IVChemicalForm(forms.ModelForm):
             lookup_class=DssToxIdLookup
         )
 
-        self.helper = self.setHelper()
-
-    def setHelper(self):
+    @property
+    def helper(self):
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
-            if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "span12"
-            if fld == "dtxsid":
-                widget.attrs["class"] = "span10"
             if type(widget) == forms.Textarea:
                 widget.attrs["rows"] = 3
 
@@ -69,14 +63,12 @@ class IVChemicalForm(forms.ModelForm):
             }
 
         helper = BaseFormHelper(self, **inputs)
-        helper.form_class = None
-        helper.add_fluid_row("cas", 2, "span6")
-        helper.add_fluid_row("cas_inferred", 2, "span6")
-        helper.add_fluid_row("source", 3, "span4")
-        helper.add_fluid_row("purity_confirmed_notes", 2, "span6")
-        helper.addBtnLayout(
-            helper.layout[3], 1, reverse("assessment:dtxsid_create"), "Add new DTXSID", "span6"
-        )
+
+        helper.add_row("cas", 2, "col-md-6")
+        helper.add_row("cas_inferred", 2, "col-md-6")
+        helper.add_row("source", 3, "col-md-4")
+        helper.add_row("purity_confirmed_notes", 2, "col-md-6")
+        helper.add_create_btn("dtxsid", reverse("assessment:dtxsid_create"), "Add new DTXSID")
         helper.form_id = "ivchemical-form"
 
         return helper
@@ -122,13 +114,10 @@ class IVCellTypeForm(forms.ModelForm):
                 {"related": self.instance.study.assessment.id}
             )
 
-        self.helper = self.setHelper()
-
-    def setHelper(self):
+    @property
+    def helper(self):
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
-            if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "span12"
             if type(widget) == forms.Textarea:
                 widget.attrs["rows"] = 3
 
@@ -146,10 +135,10 @@ class IVCellTypeForm(forms.ModelForm):
             }
 
         helper = BaseFormHelper(self, **inputs)
-        helper.form_class = None
-        helper.add_fluid_row("species", 3, "span4")
-        helper.add_fluid_row("cell_type", 2, "span6")
-        helper.add_fluid_row("tissue", 2, "span6")
+
+        helper.add_row("species", 3, "col-md-4")
+        helper.add_row("cell_type", 2, "col-md-6")
+        helper.add_row("tissue", 2, "col-md-6")
 
         return helper
 
@@ -201,13 +190,10 @@ class IVExperimentForm(forms.ModelForm):
                 {"related": self.instance.study.assessment.id}
             )
 
-        self.helper = self.setHelper()
-
-    def setHelper(self):
+    @property
+    def helper(self):
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
-            if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "span12"
             if type(widget) == forms.Textarea:
                 widget.attrs["rows"] = 3
 
@@ -225,14 +211,14 @@ class IVExperimentForm(forms.ModelForm):
             }
 
         helper = BaseFormHelper(self, **inputs)
-        helper.form_class = None
-        helper.add_fluid_row("name", 2, "span6")
-        helper.add_fluid_row("transfection", 2, "span6")
-        helper.add_fluid_row("dosing_notes", 2, "span6")
-        helper.add_fluid_row("has_positive_control", 2, "span6")
-        helper.add_fluid_row("has_negative_control", 2, "span6")
-        helper.add_fluid_row("has_vehicle_control", 2, "span6")
-        helper.add_fluid_row("control_notes", 2, "span6")
+
+        helper.add_row("name", 2, "col-md-6")
+        helper.add_row("transfection", 2, "col-md-6")
+        helper.add_row("dosing_notes", 2, "col-md-6")
+        helper.add_row("has_positive_control", 2, "col-md-6")
+        helper.add_row("has_negative_control", 2, "col-md-6")
+        helper.add_row("has_vehicle_control", 2, "col-md-6")
+        helper.add_row("control_notes", 2, "col-md-6")
 
         return helper
 
@@ -317,8 +303,6 @@ class IVEndpointForm(forms.ModelForm):
                 {"related": self.instance.assessment.id}
             )
 
-        self.helper = self.setHelper()
-
     def clean_additional_fields(self):
         data = self.cleaned_data["additional_fields"]
         try:
@@ -327,15 +311,10 @@ class IVEndpointForm(forms.ModelForm):
             raise forms.ValidationError("Must be valid JSON.")
         return data
 
-    def setHelper(self):
+    @property
+    def helper(self):
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
-            if type(widget) != forms.CheckboxInput:
-                if fld in ["effects"]:
-                    widget.attrs["class"] = "span10"
-                else:
-                    widget.attrs["class"] = "span12"
-
             if type(widget) == forms.Textarea:
                 widget.attrs["rows"] = 3
 
@@ -353,19 +332,19 @@ class IVEndpointForm(forms.ModelForm):
             }
 
         helper = BaseFormHelper(self, **inputs)
-        helper.form_class = None
-        helper.add_fluid_row("name", 2, "span6")
-        helper.add_fluid_row("chemical", 2, "span6")
-        helper.add_fluid_row("assay_type", 2, "span6")
-        helper.add_fluid_row("effect", 2, "span6")
-        helper.add_fluid_row("data_type", 4, "span3")
-        helper.add_fluid_row("observation_time", 4, "span3")
-        helper.add_fluid_row("monotonicity", 3, "span4")
-        helper.add_fluid_row("trend_test", 2, "span6")
-        helper.add_fluid_row("endpoint_notes", 2, "span6")
+
+        helper.add_row("name", 2, "col-md-6")
+        helper.add_row("chemical", 2, "col-md-6")
+        helper.add_row("assay_type", 2, "col-md-6")
+        helper.add_row("effect", 2, "col-md-6")
+        helper.add_row("data_type", 4, "col-md-3")
+        helper.add_row("observation_time", 4, "col-md-3")
+        helper.add_row("monotonicity", 3, "col-md-4")
+        helper.add_row("trend_test", 2, "col-md-6")
+        helper.add_row("endpoint_notes", 2, "col-md-6")
 
         url = reverse("assessment:effect_tag_create", kwargs={"pk": self.instance.assessment_id})
-        helper.addBtnLayout(helper.layout[2], 1, url, "Add new effect tag", "span6")
+        helper.add_create_btn("effects", url, "Add new effect tag")
 
         return helper
 
@@ -456,26 +435,14 @@ class IVEndpointFilterForm(forms.Form):
             if field not in ("dose_units", "order_by", "paginate_by"):
                 self.fields[field].widget.update_query_parameters({"related": assessment.id})
 
-        self.helper = self.setHelper()
-
-    def setHelper(self):
-
-        # by default take-up the whole row-fluid
-        for fld in list(self.fields.keys()):
-            widget = self.fields[fld].widget
-            if type(widget) not in [forms.CheckboxInput, forms.CheckboxSelectMultiple]:
-                widget.attrs["class"] = "span12"
-
-        helper = BaseFormHelper(self)
-
+    @property
+    def helper(self):
+        helper = BaseFormHelper(self, form_actions=[cfl.Submit("submit", "Apply filters")])
         helper.form_method = "GET"
-        helper.form_class = None
 
-        helper.add_fluid_row("studies", 4, "span3")
-        helper.add_fluid_row("cell_type", 4, "span3")
-        helper.add_fluid_row("dose_units", 4, "span3")
-
-        helper.layout.append(cfb.FormActions(cfl.Submit("submit", "Apply filters"),))
+        helper.add_row("studies", 4, "col-md-3")
+        helper.add_row("cell_type", 4, "col-md-3")
+        helper.add_row("dose_units", 3, "col-md-3")
 
         return helper
 

@@ -14,7 +14,7 @@ class AxisLabelTable extends Component {
             {createNewAxisLabel} = this.props.store.subclass;
 
         return (
-            <table className="table table-condensed table-striped">
+            <table className="table table-sm table-striped">
                 <colgroup>
                     <col width="50%" />
                     <col width="20%" />
@@ -29,7 +29,7 @@ class AxisLabelTable extends Component {
                         <th>
                             Actions&nbsp;
                             <button
-                                className="btn btn-small btn-primary"
+                                className="btn btn-sm btn-primary"
                                 title="New row"
                                 onClick={() => createNewAxisLabel(key)}>
                                 <i className="fa fa-plus"></i>
@@ -56,7 +56,6 @@ class AxisLabelTable extends Component {
                 <td>
                     <SelectInput
                         name={`${key}-column-${index}`}
-                        className="span12"
                         choices={getColumnsOptionsWithNull}
                         multiple={false}
                         handleSelect={value => changeArraySettings(key, index, "column", value)}
@@ -88,19 +87,19 @@ class AxisLabelTable extends Component {
                 </td>
                 <td>
                     <button
-                        className="btn btn-small btn-default"
+                        className="btn btn-sm btn-secondary"
                         title="Move row up"
                         onClick={() => moveArrayElementUp(key, index)}>
                         <i className="fa fa-long-arrow-up"></i>
                     </button>
                     <button
-                        className="btn btn-small btn-default"
+                        className="btn btn-sm btn-secondary"
                         title="Move row down"
                         onClick={() => moveArrayElementDown(key, index)}>
                         <i className="fa fa-long-arrow-down"></i>
                     </button>
                     <button
-                        className="btn btn-small btn-danger"
+                        className="btn btn-sm btn-danger"
                         title="Delete row"
                         onClick={() => deleteArrayElement(key, index)}>
                         <i className="fa fa-trash"></i>

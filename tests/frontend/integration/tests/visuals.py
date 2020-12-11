@@ -18,7 +18,7 @@ def _check_exploratory_heatmaps(driver, root_url):
     h.go_to(root_url + "/ani/assessment/2/heatmap-study-design/")
     h.wait_until(condition_fn=h.Text("Grand Total").exists, timeout_secs=60)
     assert len(driver.find_elements_by_css_selector("svg")) > 0
-    assert len(driver.find_elements_by_css_selector(".exp_heatmap_cell")) == 4
+    assert len(driver.find_elements_by_css_selector(".exp_heatmap_cell")) == 6
 
 
 def _check_browsing(driver, root_url):
@@ -52,13 +52,13 @@ def _check_browsing(driver, root_url):
     h.go_to(root_url + "/summary" + assessment_url + "visuals/")
     h.wait_until(h.Text("Title").exists)
 
-    # click the heatmap example
-    driver.find_element_by_link_text("heatmap").click()
+    # click the rob heatmap example
+    driver.find_element_by_link_text("rob-heatmap").click()
     assert "/summary/visual/3/" in driver.current_url
-    h.wait_until(h.Text("heatmap").exists)
+    h.wait_until(h.Text("rob-heatmap").exists)
     assert h.Link("Actions").exists() is False
-    assert len(driver.find_elements_by_css_selector("svg")) > 0
-    assert len(driver.find_elements_by_css_selector("svg g rect")) > 5
+    assert len(driver.find_elements_by_css_selector("svg.d3")) > 0
+    assert len(driver.find_elements_by_css_selector("svg.d3 g rect")) > 5
 
 
 def _check_visuals_working(driver, root_url):
@@ -93,7 +93,7 @@ def _check_visuals_working(driver, root_url):
     assert len(driver.find_elements_by_tag_name("iframe")) > 0
 
     h.go_to(root_url + "/summary/visual/3/")
-    h.wait_until(h.Text("heatmap").exists)
+    h.wait_until(h.Text("rob-heatmap").exists)
     assert len(driver.find_elements_by_css_selector("svg")) > 0
     assert len(driver.find_elements_by_css_selector("svg .legend")) > 0
 
@@ -101,6 +101,16 @@ def _check_visuals_working(driver, root_url):
     h.wait_until(h.Text("Human Study").exists)
     assert len(driver.find_elements_by_css_selector("svg")) > 0
     assert len(driver.find_elements_by_css_selector("svg .tagnode")) == 4
+
+    h.go_to(root_url + "/summary/visual/8/")
+    h.wait_until(h.Text("exploratory-heatmap").exists)
+    assert len(driver.find_elements_by_css_selector("svg.d3")) > 0
+    assert len(driver.find_elements_by_css_selector("svg.d3 g rect")) > 5
+
+    h.go_to(root_url + "/summary/visual/10/")
+    h.wait_until(h.Text("bioassay-aggregation").exists)
+    assert len(driver.find_elements_by_css_selector("svg.d3")) > 0
+    assert len(driver.find_elements_by_css_selector("svg.d3 g circle")) > 5
 
 
 def visuals(driver, root_url):

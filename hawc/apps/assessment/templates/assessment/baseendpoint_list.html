@@ -1,11 +1,4 @@
-{% extends 'portal.html' %}
-
-{% block title %}{{assessment}} | Endpoints | HAWC {% endblock title %}
-
-{% block breadcrumbs %}
-  <li><a href="{% url 'assessment:detail' pk=assessment.id %}">{{ assessment }}</a><span class="divider">/</span></li>
-  <li class="active">Endpoints<span class="divider">/</span></li>
-{% endblock %}
+{% extends 'assessment-rooted.html' %}
 
 {% block content %}
 
@@ -44,7 +37,7 @@
 
     {% if total_endpoints > 0  %}
     <h2>Dataset overview dashboards</h2>
-    <table class='table table-condensed table-striped'>
+    <table class='table table-sm table-striped'>
         <colgroup>
             <col style="width: 40%" />
             <col style="width: 20%" />

@@ -2,6 +2,7 @@ import * as d3 from "d3";
 import $ from "$";
 import _ from "lodash";
 
+import sidebarStartup from "./sidebarStartup";
 import Quillify from "./Quillify";
 
 // Extend JS built-ins
@@ -287,3 +288,6 @@ d3.selection.prototype.moveToFront = function() {
         this.parentNode.appendChild(this);
     });
 };
+
+// sidebar startup
+sidebarStartup();

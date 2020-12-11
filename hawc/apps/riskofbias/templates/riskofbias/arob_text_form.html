@@ -1,24 +1,10 @@
-{% extends 'portal.html' %}
+{% extends 'assessment-rooted.html' %}
 
 {% load crispy_forms_tags %}
 
-{% block title %}
-  {{assessment}} | {{assessment.get_rob_name_display}} help text | HAWC
-{% endblock %}
-
-{% block breadcrumbs %}
-  <li><a href="{{assessment.get_absolute_url}}">{{ assessment }}</a><span class="divider">/</span></li>
-  <li><a href="{% url 'riskofbias:arob_detail' assessment.pk %}">{{assessment.get_rob_name_display}} requirements</a><span class="divider">/</span></li>
-  <li class="active">Edit help text<span class="divider">/</span></li>
-{% endblock breadcrumbs %}
-
-
 {% block content %}
-
     {% crispy form %}
-
 {% endblock %}
-
 
 {% block extrajs %}
 <script type="text/javascript">

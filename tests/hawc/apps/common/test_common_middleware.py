@@ -6,7 +6,7 @@ from hawc.apps.common.middleware import MicrosoftOfficeLinkMiddleware
 
 class MicrosoftOfficeLinkMiddlewareTests(TestCase):
     def setUp(self):
-        self.middleware = MicrosoftOfficeLinkMiddleware()
+        self.middleware = MicrosoftOfficeLinkMiddleware(lambda request: HttpResponse("passthrough"))
         self.request = HttpRequest()
 
     def test_office(self):
@@ -22,8 +22,9 @@ class MicrosoftOfficeLinkMiddlewareTests(TestCase):
 
         for agent in agents:
             self.request.META["HTTP_USER_AGENT"] = agent
-            resp = self.middleware.process_request(self.request)
-            self.assertIs(type(resp), HttpResponse)
+            resp = self.middleware(self.request)
+            assert isinstance(resp, HttpResponse)
+            assert resp.getvalue().decode() == MicrosoftOfficeLinkMiddleware.RESPONSE_TEXT
 
     def test_not_matching(self):
         """Ensure Microsoft Outlook and other user-agents do exit early in middleware"""
@@ -61,5 +62,6 @@ class MicrosoftOfficeLinkMiddlewareTests(TestCase):
 
         for agent in agents:
             self.request.META["HTTP_USER_AGENT"] = agent
-            resp = self.middleware.process_request(self.request)
-            self.assertIs(resp, None)
+            resp = self.middleware(self.request)
+            assert isinstance(resp, HttpResponse)
+            assert resp.getvalue().decode() == "passthrough"

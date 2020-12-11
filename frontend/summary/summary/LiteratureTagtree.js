@@ -96,7 +96,7 @@ class LiteratureTagtree extends BaseVisual {
             $plotDiv = $("<div>"),
             modal = new HAWCModal();
 
-        modal.getModal().on("shown", () => {
+        modal.getModal().on("shown.bs.modal", () => {
             this.getPlotData($plotDiv);
             caption.renderAndEnable();
         });

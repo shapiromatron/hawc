@@ -1,39 +1,23 @@
-{% extends 'portal.html' %}
-
-{% block title %}
-  {{assessment}} | Literature Review | Searches & Imports | {{object}} | HAWC
-{% endblock %}
-
-{% block breadcrumbs %}
-  <li><a href="{{assessment.get_absolute_url}}">{{assessment}}</a><span class="divider">/</span></li>
-  <li><a href="{% url 'lit:overview' assessment.pk %}">Literature Review</a><span class="divider">/</span></li>
-  <li><a href="{% url 'lit:search_list' object.assessment.pk %}">Searches & Imports</a><span class="divider">/</span></li>
-  {% block breadcrumbs_self %}
-    <li class="active">{{object.title}}<span class="divider">/</span></li>
-  {% endblock breadcrumbs_self %}
-{% endblock %}
+{% extends 'assessment-rooted.html' %}
 
 {% block content %}
-
   <h1>{{object}}
     {% if crud == "Read" %}
-      <div class="btn-group pull-right">
-        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions <span class="caret"></span></a>
-        <ul class="dropdown-menu">
+      <div class="dropdown btn-group float-right">
+        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
+        <div class="dropdown-menu dropdown-menu-right">
           {% if obj_perms.edit %}
             {% if not object.is_manual_import %}
-              <li><a href="{% url 'lit:search_update' object.assessment.pk object.slug %}">Update {{object.get_search_type_display|lower}}</a></li>
-              <li><a href="{% url 'lit:search_delete' object.assessment.pk object.slug %}">Delete {{object.get_search_type_display|lower}}</a></li>
+              <a class="dropdown-item" href="{% url 'lit:search_update' object.assessment.pk object.slug %}">Update {{object.get_search_type_display|lower}}</a>
+              <a class="dropdown-item" href="{% url 'lit:search_delete' object.assessment.pk object.slug %}">Delete {{object.get_search_type_display|lower}}</a>
             {% endif %}
           {% endif %}
-
-          <li><a href="{% url 'lit:api:search-references' object.id %}?format=xlsx">Download to Excel</a></li>
-        </ul>
+          <a class="dropdown-item" href="{% url 'lit:api:search-references' object.id %}?format=xlsx">Download to Excel</a>
+        </div>
       </div>
     {% endif %}
   </h1>
-
-  <table class="table table-condensed table-striped">
+  <table class="table table-sm table-striped">
     <colgroup>
       <col style="width: 30%;">
       <col style="width: 70%;">
@@ -58,32 +42,30 @@
     </tbody>
   </table>
 
-  <div class="row-fluid">
-    <h3>Literature Tagging Statistics</h3>
-    <table class="table table-condensed table-hover">
-      <tbody>
-          <tr>
-              <th>Total References</th>
-              <td>{{object.references_count}}</td>
-          </tr>
-          <tr>
-              <th>Total Tagged</th>
-              <td>{{object.references_tagged_count}}</td>
-          </tr>
-          <tr>
-              <th>Total Untagged</th>
-              <td>{{object.references_untagged.count}}</td>
-          </tr>
-          <tr>
-              <th>Reference details</th>
-              <td>
-                <a class="btn btn-primary" href="{% url 'lit:search_tags' assessment.pk object.slug %}">View by tag</a>
-                <a class="btn btn-primary" href="{% url 'lit:search_tags_visual' assessment.pk object.slug %}">Visualization</a>
-              </td>
-          </tr>
-      </tbody>
-    </table>
-  </div>
+  <h3>Literature Tagging Statistics</h3>
+  <table class="table table-sm table-hover">
+    <tbody>
+      <tr>
+        <th>Total References</th>
+        <td>{{object.references_count}}</td>
+      </tr>
+      <tr>
+        <th>Total Tagged</th>
+        <td>{{object.references_tagged_count}}</td>
+      </tr>
+      <tr>
+        <th>Total Untagged</th>
+        <td>{{object.references_untagged.count}}</td>
+      </tr>
+      <tr>
+        <th>Reference details</th>
+        <td>
+          <a class="btn btn-primary" href="{% url 'lit:search_tags' assessment.pk object.slug %}">View by tag</a>
+          <a class="btn btn-primary" href="{% url 'lit:search_tags_visual' assessment.pk object.slug %}">Visualization</a>
+        </td>
+      </tr>
+    </tbody>
+  </table>
 
   {% if crud == "Read" %}
     {% if object.get_source_display == "Manually imported" %}
@@ -98,7 +80,6 @@
       {% include "lit/_pubmedqueries_list.html" %}
     {% endif %}
   {% endif %}
-
 {% endblock %}
 
 {% block extrajs %}

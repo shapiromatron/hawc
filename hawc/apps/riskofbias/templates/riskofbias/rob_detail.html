@@ -1,30 +1,18 @@
-{% extends 'portal.html' %}
-
-{% block title %}
-  {% include "hawc/siteTitle.html" with crumbs=object.get_final_rob.get_crumbs crud=crud %}
-{% endblock title %}
-
-{% block breadcrumbs %}
-  {% include "hawc/breadcrumbs.html" with crumbs=object.get_final_rob.get_crumbs crud=crud %}
-{% endblock %}
+{% extends 'assessment-rooted.html' %}
 
 {% block content %}
-
   <h2>{{object}}: {{assessment.get_rob_name_display}} review
   {% if obj_perms.edit %}
-      <div class="btn-group pull-right">
-        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions
-          <span class="caret"></span>
-        </a>
-        <ul class="dropdown-menu">
-          <li class="disabled"><a tabindex="-1" href="#">{{assessment.get_rob_name_display}}</a></li>
-          <li><a href="{% url 'riskofbias:rob_detail_all' object.pk %}">View all reviews</a></li>
+      <div class="dropdown btn-group float-right">
+        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
+        <div class="dropdown-menu dropdown-menu-right">
+          <h6 class="dropdown-header">{{assessment.get_rob_name_display}}</h6>
+          <a class="dropdown-item" href="{% url 'riskofbias:rob_detail_all' object.pk %}">View all reviews</a>
+        </div>
       </div>
   {% endif %}
   </h2>
-
   <div id="robTable"></div>
-
 {% endblock %}
 
 {% block extrajs %}
@@ -37,14 +25,17 @@
         },
         "csrf": "{{ csrf_token }}",
         "host": "//{{request.get_host}}",
-        "display": "final"
+        "display": "final",
+        "isForm": false
     }
 </script>
 <script type="text/javascript">
-$(document).ready(function(){
-    window.app.riskofbiasStartup(function(riskofbias){
-        riskofbias.TableStartup(document.getElementById('robTable'));
-    })
+$(document).ready(function (){
+  window.app.riskofbiasStartup(function (riskofbias) {
+    const el = document.getElementById('robTable'),
+      config = JSON.parse(document.getElementById('config').text);
+    riskofbias.TableStartup(el, config);
+  });
 });
 </script>
 {% endblock extrajs %}

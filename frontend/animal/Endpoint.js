@@ -8,7 +8,7 @@ import HAWCModal from "utils/HAWCModal";
 import HAWCUtils from "utils/HAWCUtils";
 import Observee from "utils/Observee";
 
-import {BMDLine} from "bmd/models/model.js";
+import BmdLine from "bmd/common/BmdLine";
 import Study from "study/Study";
 
 import AnimalGroup from "./AnimalGroup";
@@ -54,12 +54,10 @@ class Endpoint extends Observee {
         Endpoint.get_object(id, obj => {
             let title = $("<h4>").html(obj.build_breadcrumbs()),
                 plot_div = $('<div style="height:350px; width:350px">'),
-                tbl = obj.build_endpoint_table(
-                    $('<table class="table table-condensed table-striped">')
-                ),
-                content = $('<div class="row-fluid">')
-                    .append($('<div class="span8">').append(tbl))
-                    .append($('<div class="span4">').append(plot_div));
+                tbl = obj.build_endpoint_table($('<table class="table table-sm table-striped">')),
+                content = $('<div class="row">')
+                    .append($('<div class="col-md-8">').append(tbl))
+                    .append($('<div class="col-md-4">').append(plot_div));
 
             setTitle(title);
             setBody(content);
@@ -68,9 +66,6 @@ class Endpoint extends Observee {
     }
 
     unpack_doses() {
-        if (!this.data.animal_group) {
-            return; // added for edit_endpoint prototype extension
-        }
         this.doses = d3
             .nest()
             .key(d => d.dose_units.id)
@@ -102,21 +97,19 @@ class Endpoint extends Observee {
 
     _switch_dose(idx) {
         // switch doses to the selected index
-        try {
-            var egs = this.data.groups,
-                doses = this.doses[idx];
-
-            this.dose_units_id = doses.key;
-            this.dose_units = doses.name;
-
-            egs.forEach(function(eg, i) {
-                eg.dose = doses.values[i].dose;
-            });
-
-            this.notifyObservers({status: "dose_changed"});
-        } catch (err) {
+        if (this.doses[idx] === undefined) {
             console.error("error, dose index does not exist");
+            return;
         }
+        var egs = this.data.groups,
+            doses = this.doses[idx];
+
+        this.dose_units_id = doses.key;
+        this.dose_units = doses.name;
+
+        egs.forEach((eg, i) => (eg.dose = doses.values[i].dose));
+
+        this.notifyObservers({status: "dose_changed"});
     }
 
     get_name() {
@@ -344,10 +337,10 @@ class Endpoint extends Observee {
                 class="endpoint-selector"
                 href="#">${this.data.name} (${this.data.response_units})</a>
             <a
-                class="pull-right"
+                class="float-right"
                 title="View endpoint details (new window)"
                 href="${this.data.url}">
-                <i class="icon-share-alt"></i>
+                <i class="fa fa-share-square-o"></i>
             </a>
         `;
     }
@@ -373,15 +366,15 @@ class Endpoint extends Observee {
                 if (tags.length === 0) {
                     return false;
                 }
-                var ul = $('<ul class="nav nav-pills nav-stacked">');
-                tags.forEach(function(v) {
-                    ul.append(
-                        `<li><a href="${Endpoint.getTagURL(assessment_id, v.slug)}">${
-                            v.name
-                        }</a></li>`
-                    );
-                });
-                return ul;
+                var div = $("<div>");
+                div.append(
+                    tags.map(v => {
+                        const url = Endpoint.getTagURL(assessment_id, v.slug);
+                        return `<a class="btn btn-light" href="${url}">${v.name}</a>`;
+                    })
+                );
+
+                return div;
             },
             isMultigenerational = function(experimentType) {
                 return ["Rp", "1r", "2r", "Dv", "Ot"].includes(experimentType);
@@ -536,11 +529,11 @@ class Endpoint extends Observee {
             self = this,
             modal = new HAWCModal(),
             title = `<h4>${this.build_breadcrumbs()}</h4>`,
-            $details = $('<div class="span12">'),
+            $details = $('<div class="col-md-12">'),
             $plot = $('<div style="height:300px; width:300px">'),
-            $tbl = $('<table class="table table-condensed table-striped">'),
+            $tbl = $('<table class="table table-sm table-striped">'),
             $content = $('<div class="container-fluid">'),
-            $notes = $('<div class="span12">'),
+            $notes = $('<div class="col-md-12">'),
             $study,
             $exp,
             $ag,
@@ -551,12 +544,12 @@ class Endpoint extends Observee {
             divs;
 
         if (complete) {
-            tabs = $('<ul class="nav nav-tabs">').append(
-                '<li><a href="#modalStudy" data-toggle="tab">Study</a></li>',
-                '<li><a href="#modalExp" data-toggle="tab">Experiment</a></li>',
-                '<li><a href="#modalAG" data-toggle="tab">Animal Group</a></li>',
-                '<li class="active"><a href="#modalEnd" data-toggle="tab">Endpoint</a></li>'
-            );
+            tabs = $('<ul class="nav nav-tabs">').append(`
+                <li class="nav-item"><a class="nav-link" href="#modalStudy" data-toggle="tab">Study</a></li>
+                <li class="nav-item"><a class="nav-link" href="#modalExp" data-toggle="tab">Experiment</a></li>
+                <li class="nav-item"><a class="nav-link" href="#modalAG" data-toggle="tab">Animal Group</a></li>
+                <li class="nav-item"><a class="nav-link active" href="#modalEnd" data-toggle="tab">Endpoint</a></li>
+            `);
             $study = $('<div class="tab-pane" id="modalStudy">');
             Study.render(
                 this.data.animal_group.experiment.study.id,
@@ -579,18 +572,18 @@ class Endpoint extends Observee {
             $end = $content;
         }
 
-        $end.append($('<div class="row-fluid">').append($details))
+        $end.append($('<div class="row">').append($details))
             .append(
-                $('<div class="row-fluid">')
-                    .append($('<div class="span7">').append($tbl))
-                    .append($('<div class="span5">').append($plot))
+                $('<div class="row">')
+                    .append($('<div class="col-md-7">').append($tbl))
+                    .append($('<div class="col-md-5">').append($plot))
             )
-            .append($('<div class="row-fluid">').append($notes));
+            .append($('<div class="row">').append($notes));
 
         this.build_details_table($details);
         this.build_endpoint_table($tbl);
         this.build_general_notes($notes);
-        modal.getModal().on("shown", function() {
+        modal.getModal().on("shown.bs.modal", function() {
             self.renderPlot($plot, true);
         });
 
@@ -629,7 +622,7 @@ class Endpoint extends Observee {
     _render_bmd_lines(epc) {
         let model = this.data.bmd,
             dr = epc.plot,
-            line = new BMDLine(model, dr, "blue");
+            line = new BmdLine(model, dr, "blue");
 
         line.render();
     }

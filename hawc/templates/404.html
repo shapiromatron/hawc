@@ -1,8 +1,10 @@
-{% extends 'base.html' %}
+{% extends "crumbless.html" %}
 
-{% block main_content %}
-  <div class="hero-unit">
-    <h1>Error 404.</h1>
-    <p>The page you were looking for cannot be found.</p>
-  </div>
-{% endblock %}
+{% block title %}404 | HAWC{% endblock %}
+
+{% block content %}
+<div class="jumbotron">
+  <h1>Error 404.</h1>
+  <p>The page you were looking for cannot be found.</p>
+</div>
+{% endblock content %}

@@ -1,37 +1,24 @@
-{% extends 'portal.html' %}
-
-{% block title %}
-  {{assessment}} | Data Pivot | HAWC
-{% endblock %}
-
-{% block breadcrumbs %}
-  <li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{ assessment }}</a><span class="divider">/</span></li>
-  <li><a href="{% url 'summary:visualization_list' assessment.id %}">Visualizations</a><span class="divider">/</span></li>
-  <li class='active'> Create new <span class="divider">/</span></li>
-{% endblock %}
+{% extends 'assessment-rooted.html' %}
 
 {% block content %}
-
-    <h1>Create data pivot</h1>
-
-  Two different types of data-pivots can be created. Please select the type you'd like to use:
-
+  <h1>Create data pivot</h1>
+  <p>Two different types of data-pivots can be created. Please select the type you'd like to use:</p>
   <hr>
 
   <p class="lead">Option #1 (Query-based)</p>
-  <p class='help-block'>Create a data-pivot based on querying information off the HAWC database for this assessment. Your settings will always be applied to this query; but it will contain the latest information from the database, so the visualization may change from time to time.</p>
+  <p class='form-text text-muted'>Create a data-pivot based on querying information off the HAWC database for this assessment. Your settings will always be applied to this query; but it will contain the latest information from the database, so the visualization may change from time to time.</p>
   <a href="{% url 'summary:dp_new-query' assessment.pk %}" class="btn btn-primary">Select Option #1</a>
 
   <hr>
 
   <p class="lead">Option #2 (Input-file)</p>
-  <p class='help-block'>Create a data-pivot based on an uploaded Excel file of data. Your settings will always be applied to the uploaded dataset; therefore the visualization will be constant, but will not use the latest information from the HAWC database.</p>
+  <p class='form-text text-muted'>Create a data-pivot based on an uploaded Excel file of data. Your settings will always be applied to the uploaded dataset; therefore the visualization will be constant, but will not use the latest information from the HAWC database.</p>
   <a href="{% url 'summary:dp_new-file' assessment.pk %}" class="btn btn-primary">Select Option #2</a>
 
   <hr>
 
   <p class="lead">Option #3 (Copy from existing)</p>
-  <p class='help-block'>Create a data-pivot based, using an existing data-pivot as a template.</p>
+  <p class='form-text text-muted'>Create a data-pivot based, using an existing data-pivot as a template.</p>
   <a href="{% url 'summary:dp_copy_selector' assessment.pk %}" class="btn btn-primary">Select Option #3</a>
 
 {% endblock %}

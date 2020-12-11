@@ -8,7 +8,7 @@ import TableFootnotes from "./TableFootnotes";
 class BaseTable {
     constructor(options) {
         options = options || {};
-        this.tbl = $('<table class="table table-condensed table-striped">');
+        this.tbl = $('<table class="table table-sm table-striped">');
         if (options.id) {
             this.tbl.attr("id", options.id);
         }

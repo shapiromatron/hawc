@@ -15,7 +15,7 @@ const pillItems = function(text, delimiter) {
         .toString()
         .split(delimiter)
         .map((item, i) => (
-            <span key={i} className="label" style={{marginRight: 3}}>
+            <span key={i} className="badge badge-secondary" style={{marginRight: 3}}>
                 {item}
             </span>
         ));
@@ -43,10 +43,10 @@ class InteractiveCell extends Component {
                 {extension.hasModal ? (
                     <button
                         style={{opacity: isHovering ? 1 : 0}}
-                        className="btn btn-mini pull-right"
+                        className="btn btn-sm float-right"
                         onClick={() => store.showModalOnRow(extension, row)}
                         title="View additional information">
-                        <i className="icon-eye-open"></i>
+                        <i className="fa fa-eye"></i>
                     </button>
                 ) : null}
             </td>
@@ -73,7 +73,7 @@ class DatasetTable extends Component {
             data = this.props.store.getTableData.data;
 
         return (
-            <div style={{maxHeight: "50vh", overflow: "auto"}}>
+            <div className="mt-2" style={{maxHeight: "50vh", overflow: "auto"}}>
                 <table className="table table-striped table-bordered">
                     <thead>
                         <tr>

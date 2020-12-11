@@ -2,7 +2,7 @@ import _ from "lodash";
 import {observable, computed, action} from "mobx";
 
 import {NR_KEYS} from "riskofbias/constants";
-import h from "riskofbias/robTable/utils/helpers";
+import h from "shared/utils/helpers";
 
 const updateRobScore = function(score, riskofbias, overrideOptions) {
     let overrideDataTypeValue;
