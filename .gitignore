@@ -15,7 +15,6 @@
 .pytest_cache
 bin/dev.local.sh
 celerybeat*
-compose/nginx/conf/nginx.conf
 hawc/main/settings/local.py
 package-lock.json
 webpack-stats.json
