@@ -243,10 +243,16 @@ class DataPivotVisualization extends D3Plot {
         this.add_axes();
         this.draw_visualizations();
         this.add_final_rectangle();
-        this.legend = new DataPivotLegend(this.vis, this.dp_settings.legend, this.dp_settings, {
-            offset: true,
-            editable: this.editable,
-        });
+        this.legend = new DataPivotLegend(
+            this.svg,
+            this.vis,
+            this.dp_settings.legend,
+            this.dp_settings,
+            {
+                offset: true,
+                editable: this.editable,
+            }
+        );
         this.add_menu();
         this.trigger_resize();
     }

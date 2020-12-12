@@ -534,9 +534,9 @@ class StyleRectangle {
         var type = $('<select class="form-control" name="pattern">').html([
             '<option value="solid">solid</option>',
             '<option value="stripes">stripes</option>',
-            '<option value="reverse stripes">reverse stripes</option>',
-            '<option value="thin stripes">thin stripes</option>',
-            '<option value="thin reverse stripes">thin reverse stripes</option>',
+            '<option value="reverse_stripes">reverse stripes</option>',
+            '<option value="thick_strips">thin stripes</option>',
+            '<option value="thick_reverse_strips">thin reverse stripes</option>',
             '<option value="diamonds">diamonds</option>',
             '<option value="circles">circles</option>',
             '<option value="woven">woven</option>',

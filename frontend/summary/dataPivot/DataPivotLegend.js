@@ -8,7 +8,8 @@ import {NULL_CASE} from "./shared";
 import {applyStyles} from "../summary/common";
 
 class DataPivotLegend {
-    constructor(vis, settings, dp_settings, options) {
+    constructor(svg, vis, settings, dp_settings, options) {
+        this.svg = svg;
         this.vis = vis;
         this.settings = settings;
         this.dp_settings = dp_settings;

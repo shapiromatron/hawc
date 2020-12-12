@@ -1,3 +1,4 @@
+import _ from "lodash";
 import * as d3 from "d3";
 import textures from "textures";
 
@@ -14,7 +15,7 @@ const createPattern = function(styles) {
                 .stroke("white")
                 .background(styles.fill);
 
-        case "reverse stripes":
+        case "reverse_stripes":
             return textures
                 .lines()
                 .orientation("6/8")
@@ -22,19 +23,19 @@ const createPattern = function(styles) {
                 .stroke("white")
                 .background(styles.fill);
 
-        case "thin stripes":
+        case "thick_strips":
             return textures
                 .lines()
-                .orientation("2/8")
-                .heavier(2)
+                .orientation("3/8")
+                .thicker()
                 .stroke(styles.fill)
                 .background("white");
 
-        case "thin reverse stripes":
+        case "thick_reverse_strips":
             return textures
                 .lines()
-                .orientation("6/8")
-                .heavier(2)
+                .orientation("5/8")
+                .thicker()
                 .stroke(styles.fill)
                 .background("white");
 
@@ -80,25 +81,26 @@ const createPattern = function(styles) {
                 .background(styles.fill);
 
         default:
-            throw `Unknown pattern: ${styles.pattern}`;
+            console.error(`Unknown SVG pattern: ${styles.pattern}`);
+            return null;
     }
 };
 
 const applyStyles = (svg, el, styles) => {
-    const obj = el instanceof d3.transition ? el : d3.select(el);
-    for (const prop in styles) {
-        if (prop === "pattern") {
+    const obj = el instanceof d3.transition || el instanceof d3.selection ? el : d3.select(el);
+    _.each(styles, (value, attr) => {
+        if (attr === "pattern") {
             const pattern = createPattern(styles);
             if (pattern) {
                 d3.select(svg).call(pattern);
                 obj.style("fill", pattern.url());
             }
-        } else if (prop == "rotate") {
-            obj.attr("transform", `rotate(${styles.rotate} ${obj.attr("x")},${obj.attr("y")})`);
+        } else if (attr == "rotate") {
+            obj.attr("transform", `rotate(${value} ${obj.attr("x")},${obj.attr("y")})`);
         } else {
-            obj.style(prop, styles[prop]);
+            obj.style(attr, value);
         }
-    }
+    });
 };
 
 export {applyStyles};
