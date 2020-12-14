@@ -17,7 +17,7 @@ class CopyScoresButton extends Component {
         } else if (editableScores.length === 1) {
             return (
                 <button
-                    className="btn btn-outline-dark float-right"
+                    className="btn btn-outline-dark"
                     type="button"
                     onClick={() => {
                         store.updateFormState(
@@ -31,7 +31,7 @@ class CopyScoresButton extends Component {
             );
         } else if (editableScores.length > 1) {
             return (
-                <div className="btn-group float-right">
+                <div className="btn-group">
                     <button
                         className="btn btn-outline-dark dropdown-toggle"
                         data-toggle="dropdown"
@@ -104,18 +104,24 @@ class ScoreDisplay extends Component {
                             {hasOverrides ? <b>{labelText}</b> : <b>&nbsp;</b>}
                         </p>
                     ) : null}
-                    {editableScores ? (
-                        <CopyScoresButton score={score} editableScores={editableScores} />
-                    ) : null}
-                    {showRobScore ? (
-                        <ScoreBar
-                            score={score.score}
-                            shade={score.score_shade}
-                            symbol={score.score_symbol}
-                            description={score.score_description}
-                            direction={score.bias_direction}
-                        />
-                    ) : null}
+                    <div className="row">
+                        {showRobScore ? (
+                            <div className="col">
+                                <ScoreBar
+                                    score={score.score}
+                                    shade={score.score_shade}
+                                    symbol={score.score_symbol}
+                                    description={score.score_description}
+                                    direction={score.bias_direction}
+                                />
+                            </div>
+                        ) : null}
+                        {editableScores ? (
+                            <div className="col-auto">
+                                <CopyScoresButton score={score} editableScores={editableScores} />
+                            </div>
+                        ) : null}
+                    </div>
                 </div>
                 <div>
                     <p dangerouslySetInnerHTML={{__html: score.notes}} />
