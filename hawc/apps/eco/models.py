@@ -417,6 +417,7 @@ habitat_aquatic_freshwater_choices = (
     ("Stream/river", "Stream/river"),
     ("Wetland", "Wetland"),
     ("Lake/reservoir", "Lake/reservoir"),
+    ("Artificial", "Artificial"),
 )
 climate_choices = (
     ("Temperate", "Temperate"),
@@ -425,9 +426,10 @@ climate_choices = (
     ("Arctic/subarctic", "Arctic/subarctic"),
     ("Alpine", "Alpine"),
     ("Not specified", "Not specified"),
+    ("Other", "Other"),
 )
-cause_term_choices = (("TBD", "TBD"),)
-cause_measure_choices = (("TBD", "TBD"),)
+cause_term_choices = (("TBD", "TBD"), ("Water quality", "Water quality"))
+cause_measure_choices = (("TBD", "TBD"), ("Nutrients", "Nutrients"))
 cause_bio_org_choices = (
     ("Ecosystem", "Ecosystem"),
     ("Community", "Community"),
@@ -441,8 +443,8 @@ cause_trajectory_choices = (
     ("Change", "Change"),
     ("Other", "Other"),
 )
-effect_term_choices = (("TBD", "TBD"),)
-effect_measure_choices = (("TBD", "TBD"),)
+effect_term_choices = (("TBD", "TBD"), ("Algae", "Algae"))
+effect_measure_choices = (("TBD", "TBD"), ("Abundance", "Abundance"))
 effect_bio_org_choices = (
     ("Ecosystem", "Ecosystem"),
     ("Community", "Community"),
