@@ -1,6 +1,6 @@
 import json
 from collections import defaultdict
-from typing import Any, ClassVar, Dict, List, Tuple, Type, Union
+from typing import Any, ClassVar, Dict, List, Optional, Tuple, Type, Union
 
 import pandas as pd
 import pydantic
@@ -30,19 +30,22 @@ class BaseApiAction:
         self.inputs = None
 
     @classmethod
-    def format_request_data(cls, request: Request) -> Dict:
+    def format_request_data(cls, request: Request, **extras) -> Dict:
         """Convert a request into a dictionary of data for the action request
 
         Args:
             request (Request): The incoming request
+            **extras: Extra arguments
 
         Returns:
             Dict: A valid dictionary ready for the action
         """
-        return request.data
+        return {**request.query_params.dict(), **request.data, **extras}
 
     @classmethod
-    def handle_request(cls, request: Request, atomic: bool = False) -> Response:
+    def handle_request(
+        cls, request: Request, extra_input: Optional[Dict] = None, atomic: bool = False
+    ) -> Response:
         """Handle the API request and response; throws standard django rest framework lifecycle
         errors if the response is invalid.
 
@@ -57,7 +60,10 @@ class BaseApiAction:
         Returns:
             Response: A drf.Response
         """
-        instance = cls(data=cls.format_request_data(request))
+        if extra_input is None:
+            extra_input = {}
+
+        instance = cls(data=cls.format_request_data(request, **extra_input))
 
         instance.validate(raise_exception=True)
 

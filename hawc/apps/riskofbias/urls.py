@@ -46,4 +46,6 @@ urlpatterns = [
     path("study/<int:pk>/all/", views.RoBsDetailAll.as_view(), name="rob_detail_all",),
     # rob editing views
     path("<int:pk>/edit/", views.RoBEdit.as_view(), name="rob_update"),
+    # summary views
+    path("<int:pk>/heatmap/", views.HeatmapRobStudy.as_view(), name="heatmap_study"),
 ]

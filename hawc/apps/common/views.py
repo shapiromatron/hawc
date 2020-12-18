@@ -1,7 +1,7 @@
 import abc
 import logging
 from typing import List, Optional
-from urllib.parse import urlparse
+from urllib.parse import urlencode, urlparse
 
 from django.contrib import messages
 from django.contrib.auth import REDIRECT_FIELD_NAME
@@ -758,15 +758,11 @@ class HeatmapBase(BaseList):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        url_args = (
-            "?unpublished=true"
-            if self.request.GET.get("unpublished", "false").lower() == "true"
-            else ""
-        )
+        query_params = urlencode(self.request.GET.dict())
         context.update(
             dict(
                 data_class=self.heatmap_data_class,
-                data_url=reverse(self.heatmap_data_url, args=(self.assessment.id,)) + url_args,
+                data_url=f"{reverse(self.heatmap_data_url, args=(self.assessment.id,))}?{query_params}",
                 heatmap_view_title=self.heatmap_view_title,
                 obj_perms=self.assessment.user_permissions(self.request.user),
                 breadcrumbs=[

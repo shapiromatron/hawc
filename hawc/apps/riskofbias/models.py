@@ -522,6 +522,7 @@ class RiskOfBiasScore(models.Model):
         (BIAS_DIRECTION_UP, "⬆ (away from null)"),
         (BIAS_DIRECTION_DOWN, "⬇ (towards null)"),
     )
+    BIAS_DIRECTION_CHOICES_MAP = {k: v for k, v in BIAS_DIRECTION_CHOICES}
 
     TEXT_CLEANUP_FIELDS = (
         "score",

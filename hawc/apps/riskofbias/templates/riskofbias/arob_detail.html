@@ -36,6 +36,83 @@
 
   {{assessment.rob_settings.help_text|safe}}
 
+  <h2>Dashboards</h2>
+  <table class='table table-sm table-striped'>
+    <colgroup>
+      <col style="width: 40%" />
+      <col style="width: 20%" />
+      <col style="width: 20%" />
+      <col style="width: 20%" />
+    </colgroup>
+    <thead>
+      <tr>
+        <th>Data type</th>
+        <th>Bioassay</th>
+        <th>Epidemiology</th>
+        <th><i>in vitro</i></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% url 'riskofbias:heatmap_study' assessment.id as heatmap_url %}
+      <tr>
+        <td>{{assessment.get_rob_name_display}}</td>
+        <td>
+          {% if assessment.endpoints.exists %}
+          <a href="{{heatmap_url}}?bioassay=true">View</a>
+        </td>
+        {% else %}
+        N/A
+        {% endif %}
+        </td>
+        <td>
+          {% if assessment.outcomes.exists %}
+          <a href="{{heatmap_url}}?epi=true">View</a>
+        </td>
+        {% else %}
+        N/A
+        {% endif %}
+        </td>
+        <td>
+          {% if assessment.iv_endpoints.exists %}
+          <a href="{{heatmap_url}}?invitro=true">View</a>
+        </td>
+        {% else %}
+        N/A
+        {% endif %}
+        </tr>
+      </tr>
+      {% if obj_perms.edit %}
+      <tr>
+        <td>{{assessment.get_rob_name_display}} (including unpublished HAWC data)
+          &nbsp;
+          <i title="Include published & unpublished HAWC studies (not visible to the public)" class="fa fa-eye-slash"
+            aria-hidden="true"></i>
+        </td>
+        <td>
+          {% if assessment.endpoints.exists %}
+          <a href="{{heatmap_url}}?unpublished=true&bioassay=true">View</a></td>
+          {% else %}
+          N/A
+          {% endif %}
+              </td>
+        <td>
+          {% if assessment.outcomes.exists %}
+          <a href="{{heatmap_url}}?unpublished=true&epi=true">View</a></td>
+          {% else %}
+          N/A
+          {% endif %}
+      </td>
+        <td>
+          {% if assessment.iv_endpoints.exists %}
+          <a href="{{heatmap_url}}?unpublished=true&invitro=true">View</a></td>
+          {% else %}
+          N/A
+          {% endif %}
+      </tr>
+      {% endif %}
+    </tbody>
+  </table>
+
   {% for object in object_list %}
     <h2>{{object}} Domain
       {% if crud == "Update" %}

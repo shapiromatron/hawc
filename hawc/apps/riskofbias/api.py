@@ -19,13 +19,14 @@ from ..assessment.models import Assessment, TimeSpentEditing
 from ..common.api import CleanupFieldsBaseViewSet, LegacyAssessmentAdapterMixin
 from ..common.helper import re_digits, tryParseInt
 from ..common.renderers import PandasRenderers
-from ..common.serializers import UnusedSerializer
+from ..common.serializers import HeatmapQuerySerializer, UnusedSerializer
 from ..common.views import AssessmentPermissionsMixin
 from ..mgmt.models import Task
 from ..riskofbias import exports
 from ..study.models import Study
 from . import models, serializers
 from .actions.rob_clone import BulkRobCopyAction
+from .actions.rob_heatmap import RobHeatmapAction
 
 
 class RiskOfBiasAssessmentViewset(
@@ -71,6 +72,28 @@ class RiskOfBiasAssessmentViewset(
         Bulk copy risk of bias responses from one assessment to another.
         """
         return BulkRobCopyAction.handle_request(request, atomic=True)
+
+    @action(detail=True, url_path="study-heatmap", renderer_classes=PandasRenderers)
+    def study_heatmap(self, request, pk):
+        """
+        Return heatmap data for assessment, at the score level (one row per score).
+
+        By default only shows data from published studies. If the query param `unpublished=true`
+        is present then results from all studies are shown.
+        """
+        # permissions check
+        self.set_legacy_attr(pk)
+        self.permission_check_user_can_view()
+        ser = HeatmapQuerySerializer(data=request.query_params)
+        ser.is_valid(raise_exception=True)
+        unpublished = ser.data["unpublished"]
+        if unpublished and not self.assessment.user_is_part_of_team(self.request.user):
+            raise PermissionDenied("You must be part of the team to view unpublished data")
+
+        # handle action
+        return RobHeatmapAction.handle_request(
+            request, extra_input=dict(assessment_id=self.assessment.id)
+        )
 
 
 class RiskOfBiasDomain(viewsets.ReadOnlyModelViewSet):

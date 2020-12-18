@@ -17,6 +17,7 @@ from ..common.views import (
     BaseList,
     BaseUpdate,
     BaseUpdateWithFormset,
+    HeatmapBase,
     MessageMixin,
     ProjectManagerOrHigherMixin,
     TeamMemberOrHigherMixin,
@@ -39,6 +40,13 @@ def get_breadcrumb_rob_reviews(assessment) -> Breadcrumb:
         name=f"{assessment.get_rob_name_display()} assignments",
         url=reverse("riskofbias:arob_reviewers", args=(assessment.id,)),
     )
+
+
+# Heatmap views
+class HeatmapRobStudy(HeatmapBase):
+    heatmap_data_class = "rob-study"
+    heatmap_data_url = "riskofbias:api:assessment-study-heatmap"
+    heatmap_view_title = "Study evaluation summary"
 
 
 # Assessment risk of bias requirements

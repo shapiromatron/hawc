@@ -26,6 +26,10 @@ def read_excel(*args, **kwargs):
     return pd.read_excel(*args, **kwargs)
 
 
+def empty_dataframe() -> pd.DataFrame:
+    return pd.Series("No entries exist", name="error").to_frame()
+
+
 def rename_duplicate_columns(df: pd.DataFrame) -> pd.DataFrame:
     """Rename column headers inplace to ensure no header names are duplicated.
 

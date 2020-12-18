@@ -331,7 +331,7 @@ class Assessment(models.Model):
 
     def user_can_edit_assessment(self, user):
         """
-        If person is superuser or assessment is editible and user is a project
+        If person is superuser or assessment is editable and user is a project
         manager or team member.
         """
         if user.is_superuser:
@@ -395,6 +395,18 @@ class Assessment(models.Model):
     def hide_rob_scores(self):
         # TODO - remove 100500031 hack
         return self.id == 100500031
+
+    def iv_endpoints(self):
+        # add reverse relation for nested M2M relation
+        return apps.get_model("invitro", "IVEndpoint").objects.filter(assessment=self)
+
+    def endpoints(self):
+        # add reverse relation for nested M2M relation
+        return apps.get_model("animal", "Endpoint").objects.filter(assessment=self)
+
+    def outcomes(self):
+        # add reverse relation for nested M2M relation
+        return apps.get_model("epi", "Outcome").objects.filter(assessment=self)
 
     def bust_cache(self):
         """
