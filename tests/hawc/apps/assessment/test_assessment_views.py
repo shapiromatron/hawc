@@ -6,6 +6,7 @@ from django.test.client import Client
 from django.urls import reverse
 
 from hawc.apps.assessment.models import Assessment
+from hawc.apps.myuser.models import HAWCUser
 
 
 class TestAssessmentClearCache:
@@ -67,6 +68,49 @@ def test_unsupported_browser():
         response = c.get("/")
         assert response.context["UA_SUPPORTED"] is valid
         assert (WARNING in response.content.decode("utf8")) is (not valid)
+
+
+@pytest.mark.django_db
+class TestAssessmentCreate:
+    def test_permissions(self, settings):
+        url = reverse("assessment:new")
+
+        anon = Client()
+        team = Client()
+        admin = Client()
+        assert team.login(username="team@hawcproject.org", password="pw") is True
+        assert admin.login(username="admin@hawcproject.org", password="pw") is True
+
+        settings.ANYONE_CAN_CREATE_ASSESSMENTS = True
+        # login required
+        resp = anon.get(url)
+        assert resp.status_code == 302
+        assert reverse("user:login") in resp.url
+
+        # admin can create
+        assert admin.get(url).status_code == 200
+
+        # team can create
+        assert team.get(url).status_code == 200
+
+        settings.ANYONE_CAN_CREATE_ASSESSMENTS = False
+        # login required
+        resp = anon.get(url)
+        assert resp.status_code == 302
+        assert reverse("user:login") in resp.url
+
+        # admin can create
+        assert admin.get(url).status_code == 200
+
+        # user can create with group
+        resp = team.get(url)
+        user = resp.wsgi_request.user
+        assert resp.status_code == 403
+
+        group = resp.wsgi_request.user.groups.get_or_create(name=HAWCUser.CAN_CREATE_ASSESSMENTS)[1]
+        user.groups.add(group)
+        user.refresh_from_db()
+        assert team.get(url).status_code == 200
 
 
 @pytest.mark.django_db
