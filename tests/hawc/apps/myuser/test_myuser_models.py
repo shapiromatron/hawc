@@ -17,6 +17,9 @@ class TestMyUser:
         assert admin.can_create_assessments() is True
         assert team.can_create_assessments() is False
 
-        group = team.groups.get_or_create(name=HAWCUser.CAN_CREATE_ASSESSMENTS)[1]
+        group, _ = team.groups.get_or_create(name=HAWCUser.CAN_CREATE_ASSESSMENTS)
         team.groups.add(group)
         assert team.can_create_assessments() is True
+
+        # cleanup; required for test suite
+        group.delete()
