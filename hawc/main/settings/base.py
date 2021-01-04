@@ -3,6 +3,7 @@ import os
 import sys
 from datetime import datetime
 from pathlib import Path
+from subprocess import CalledProcessError
 from typing import List, Tuple
 
 from django.urls import reverse_lazy
@@ -247,7 +248,7 @@ LOGGING = {
 def get_git_commit() -> Commit:
     try:
         return Commit.current(str(PROJECT_ROOT))
-    except FileNotFoundError:
+    except (CalledProcessError, FileNotFoundError):
         if GIT_COMMIT_FILE.exists():
             return Commit.parse_file(GIT_COMMIT_FILE)
     return Commit(sha="<undefined>", dt=datetime.now())
