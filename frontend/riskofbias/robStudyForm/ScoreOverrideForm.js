@@ -31,7 +31,7 @@ class OverrideObjectsSelector extends Component {
         let {choices, value, onChange} = this.props;
         return (
             <SelectInput
-                label="Override type"
+                label="Override object"
                 choices={choices}
                 multiple={true}
                 value={value}
@@ -75,7 +75,7 @@ class ScoreOverrideForm extends Component {
 
         return (
             <div className="row">
-                <div className="col-md-6">
+                <div className="col-md-3">
                     <OverrideObjectTypeSelector
                         choices={overrideDataTypeChoices}
                         value={overrideDataTypeValue}
@@ -85,7 +85,7 @@ class ScoreOverrideForm extends Component {
                         }}
                     />
                 </div>
-                <div className="col-md-6">
+                <div className="col-md-9">
                     <OverrideObjectsSelector
                         choices={overrideObjectChoices}
                         value={overrideOptionValues}
