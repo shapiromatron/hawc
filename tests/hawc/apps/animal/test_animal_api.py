@@ -624,16 +624,10 @@ class TestEndpointApi:
 class TestMetadataApi:
     def test_permissions(self):
         url = reverse(f"animal:api:metadata-list")
-        # admin have access to metadata
+        # public should have access to this metadata
         client = APIClient()
-        assert client.login(username="admin@hawcproject.org", password="pw") is True
         resp = client.get(url)
         assert resp.status_code == 200
-        # project manager and lesser permissions do not have access
-        client = APIClient()
-        assert client.login(username="pm@hawcproject.org", password="pw") is True
-        resp = client.get(url)
-        assert resp.status_code == 403
 
     def test_metadata(self, rewrite_data_files: bool):
         fn = "api-animal-metadata.json"
