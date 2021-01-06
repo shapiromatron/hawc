@@ -5,6 +5,7 @@ from django.db.models import Q
 from rest_framework import mixins, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import NotAcceptable, PermissionDenied
+from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 
 from ..assessment.api import (
@@ -25,6 +26,7 @@ from ..common.renderers import PandasRenderers
 from ..common.serializers import HeatmapQuerySerializer, UnusedSerializer
 from ..common.views import AssessmentPermissionsMixin
 from . import exports, models, serializers
+from .actions.model_metadata import AnimalMetadata
 
 
 class AnimalAssessmentViewset(
@@ -292,3 +294,14 @@ class DosingRegimeCleanupFieldsView(CleanupFieldsBaseViewSet):
 
 class DoseUnits(DoseUnitsViewset):
     pass
+
+
+class Metadata(viewsets.ViewSet):
+
+    permission_classes = (IsAdminUser,)
+
+    def list(self, request):
+        import pdb
+
+        pdb.set_trace()
+        return AnimalMetadata.handle_request(request)
