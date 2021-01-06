@@ -633,7 +633,6 @@ class TestMetadataApi:
         fn = "api-animal-metadata.json"
         url = reverse(f"animal:api:metadata-list") + "?format=json"
         client = APIClient()
-        assert client.login(username="admin@hawcproject.org", password="pw") is True
         resp = client.get(url)
         assert resp.status_code == 200
 
