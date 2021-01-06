@@ -618,3 +618,35 @@ class TestEndpointApi:
         assert client.login(username="team@hawcproject.org", password="pw") is True
         response = client.post(url, data, format="json")
         assert response.status_code == 200
+
+
+@pytest.mark.django_db
+class TestMetadataApi:
+    def test_permissions(self):
+        url = reverse(f"animal:api:metadata-list")
+        # admin have access to metadata
+        client = APIClient()
+        assert client.login(username="admin@hawcproject.org", password="pw") is True
+        resp = client.get(url)
+        assert resp.status_code == 200
+        # project manager and lesser permissions do not have access
+        client = APIClient()
+        assert client.login(username="pm@hawcproject.org", password="pw") is True
+        resp = client.get(url)
+        assert resp.status_code == 403
+
+    def test_metadata(self, rewrite_data_files: bool):
+        fn = "api-animal-metadata.json"
+        url = reverse(f"animal:api:metadata-list") + "?format=json"
+        client = APIClient()
+        assert client.login(username="admin@hawcproject.org", password="pw") is True
+        resp = client.get(url)
+        assert resp.status_code == 200
+
+        path = Path(DATA_ROOT / fn)
+        data = resp.json()
+
+        if rewrite_data_files:
+            path.write_text(json.dumps(data, indent=2))
+
+        assert data == json.loads(path.read_text())

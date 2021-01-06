@@ -301,7 +301,4 @@ class Metadata(viewsets.ViewSet):
     permission_classes = (IsAdminUser,)
 
     def list(self, request):
-        import pdb
-
-        pdb.set_trace()
         return AnimalMetadata.handle_request(request)

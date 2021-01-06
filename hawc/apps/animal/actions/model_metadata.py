@@ -1,8 +1,9 @@
-from rest_framework import serializers
-from hawc.apps.animal import models
-from hawc.apps.assessment.models import Species, Strain, DoseUnits
-from hawc.apps.common.actions import BaseApiAction
 from pydantic import BaseModel
+from rest_framework import serializers
+
+from hawc.apps.animal import models
+from hawc.apps.assessment.models import DoseUnits, Species, Strain
+from hawc.apps.common.actions import BaseApiAction
 
 
 def tuple_to_dict(tuple):
@@ -32,6 +33,10 @@ class NoInput(BaseModel):
 
 
 class AnimalMetadata(BaseApiAction):
+    """
+    Generate a dictionary of field choices for all animal models.
+    """
+
     input_model = NoInput
 
     def experiment_metadata(self):
