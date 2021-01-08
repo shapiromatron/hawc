@@ -12,6 +12,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.html import strip_tags
 from pydantic import BaseModel as PydanticModel
+from pydantic import ValidationError as PydanticError
 from reversion import revisions as reversion
 from treebeard.mp_tree import MP_Node
 
@@ -27,6 +28,7 @@ from ..common.helper import (
     tryParseInt,
 )
 from ..common.models import get_model_copy_name
+from ..common.table import GenericTable
 from ..epi.exports import OutcomeDataPivot
 from ..epi.models import Outcome
 from ..epimeta.exports import MetaResultFlatDataPivot
@@ -147,6 +149,54 @@ class SummaryText(MP_Node):
         if nodes[0].get("children", None):
             for node in nodes[0]["children"]:
                 print_node(node, 2)
+
+
+class SummaryTable(models.Model):
+    objects = managers.SummaryTableManager()
+
+    DUMMY = 0
+    EVIDENCE_PROFILE = 1
+    EVIDENCE_INTEGRATION = 2
+
+    TABLE_CHOICES = (
+        (DUMMY, "Dummy table"),
+        (EVIDENCE_PROFILE, "Evidence profile table"),
+        (EVIDENCE_INTEGRATION, "Evidence integration table"),
+    )
+
+    assessment = models.ForeignKey(Assessment, on_delete=models.CASCADE)
+    title = models.CharField(max_length=128)
+    slug = models.SlugField(
+        verbose_name="URL Name",
+        help_text="The URL (web address) used to describe this object "
+        "(no spaces or special-characters).",
+    )
+    content = models.JSONField(default=dict)
+    table_type = models.PositiveSmallIntegerField(choices=TABLE_CHOICES, default=DUMMY)
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    def get_assessment(self):
+        return self.assessment
+
+    def to_docx(self):
+        table = GenericTable.parse_obj(self.content)
+        return table.to_docx()
+
+    def clean(self):
+        # content validation
+        try:
+            if self.table_type == self.DUMMY:
+                GenericTable.parse_obj(self.content)
+        except PydanticError as e:
+            raise ValidationError(e)
+        return
+
+    class Meta:
+        unique_together = (
+            ("assessment", "title"),
+            ("assessment", "slug"),
+        )
 
 
 class HeatmapDataset(PydanticModel):
@@ -923,6 +973,7 @@ class Prefilter:
 
 
 reversion.register(SummaryText)
+reversion.register(SummaryTable)
 reversion.register(DataPivotUpload)
 reversion.register(DataPivotQuery)
 reversion.register(Visual)

@@ -127,4 +127,10 @@ class SummaryTextSerializer(serializers.ModelSerializer):
         return instance
 
 
+class SummaryTableSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.SummaryTable
+        fields = "__all__"
+
+
 SerializerHelper.add_serializer(models.Visual, VisualSerializer)

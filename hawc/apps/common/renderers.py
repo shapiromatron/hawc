@@ -3,11 +3,46 @@ from io import BytesIO
 
 import pandas as pd
 from django.utils.text import slugify
+from docx.document import Document
 from rest_framework import status
 from rest_framework.renderers import BaseRenderer
 from rest_framework.response import Response
 
 from .helper import FlatExport, rename_duplicate_columns
+
+
+class DocxRenderer(BaseRenderer):
+    """
+    Renders a Document object into a docx file.
+    A tuple of docx, filename can also be given.
+    """
+
+    media_type = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    format = ""
+
+    def validate_tuple(self, docx, filename):
+        if not isinstance(docx, Document):
+            raise ValueError(f"Expecting docx as `Document`; got {type(docx)}")
+        if not isinstance(filename, str):
+            raise ValueError(f"Expecting filename as `str`; got {type(filename)}")
+        return docx, filename
+
+    def validate_data(self, data):
+        if isinstance(data, Document):
+            return data, "download"
+        try:
+            return self.validate_tuple(data[0], data[1])
+        except (TypeError, IndexError):
+            raise ValueError("Expecting 'Document' or List['Document','str']")
+
+    def render(self, data, accepted_media_type=None, renderer_context=None):
+        docx, filename = self.validate_data(data)
+
+        file = BytesIO()
+        docx.save(file)
+        response = renderer_context["response"]
+        response["Content-Disposition"] = f"attachment; filename={filename}.docx"
+        return file.getvalue()
 
 
 class PandasBaseRenderer(BaseRenderer):

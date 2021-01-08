@@ -13,7 +13,7 @@ from ..assessment.api import (
 )
 from ..assessment.models import Assessment
 from ..common.helper import re_digits
-from ..common.renderers import PandasRenderers
+from ..common.renderers import DocxRenderer, PandasRenderers
 from ..common.serializers import UnusedSerializer
 from . import models, serializers
 
@@ -115,3 +115,15 @@ class SummaryTextViewset(AssessmentEditViewset):
         if not self.assessment.user_can_edit_object(request.user):
             raise exceptions.PermissionDenied()
         return super().create(request, *args, **kwargs)
+
+
+class SummaryTableViewset(AssessmentViewset):
+    assessment_filter_args = "assessment"
+    model = models.SummaryTable
+    serializer_class = serializers.SummaryTableSerializer
+
+    @action(detail=True, methods=("get",), renderer_classes=(DocxRenderer,))
+    def docx(self, request, pk):
+        obj = self.get_object()
+        docx = obj.to_docx()
+        return Response((docx, obj.slug))
