@@ -114,8 +114,8 @@ class ReferenceQuerySerializer(serializers.Serializer):
         if "title" in self.data:
             query &= Q(title__icontains=self.data["title"])
         if "authors" in self.data:
-            query &= Q(authors_short__icontains=self.data["authors"]) | Q(
-                authors__icontains=self.data["authors"]
+            query &= Q(authors_short__unaccent__icontains=self.data["authors"]) | Q(
+                authors__unaccent__icontains=self.data["authors"]
             )
         if "journal" in self.data:
             query &= Q(journal__icontains=self.data["journal"])
