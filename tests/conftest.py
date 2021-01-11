@@ -9,6 +9,7 @@ import helium
 import pytest
 from django.conf import settings
 from django.core.management import call_command
+from django.db import connections
 from selenium import webdriver
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
@@ -71,6 +72,10 @@ def test_db(django_db_setup, django_db_blocker):
     logging.info("Loading db fixture...")
     with django_db_blocker.unblock():
         call_command("load_test_db")
+
+        with connections["default"].cursor() as cursor:
+            # since we skip migrations, apply lit.0015_unaccent manually
+            cursor.execute("CREATE EXTENSION IF NOT EXISTS unaccent;")
 
 
 @pytest.fixture
