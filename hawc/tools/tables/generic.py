@@ -4,7 +4,7 @@ from typing import List
 from docx import Document
 from pydantic import BaseModel, conint, validator
 
-from .parser import CellHTMLParser
+from .parser import HtmlDocxParser
 
 
 class CellEnum(IntEnum):
@@ -27,9 +27,9 @@ class GenericTableCell(BaseModel):
     def row_order_index(self, rows):
         return (self.column) * rows + self.row
 
-    def to_docx(self, par):
-        parser = CellHTMLParser()
-        return parser.feed(self.html_text, par)
+    def to_docx(self, block):
+        parser = HtmlDocxParser()
+        return parser.feed(self.html_text, block)
 
 
 class GenericTable(BaseModel):
@@ -49,9 +49,11 @@ class GenericTable(BaseModel):
                         table_cells[cell.row + i][cell.column + j] = True
             except IndexError:
                 raise ValueError("Cell outside of table bounds")
-        return cells.sort(key=lambda cell: cell.row_order_index(values["rows"]))
+        cells.sort(key=lambda cell: cell.row_order_index(values["rows"]))
+        return cells
 
     def row_order_enums(self):
+        # TODO move logic to JS for HTML table render(?)
         enums = [CellEnum.EMPTY] * (self.columns * self.rows)
         for cell in self.cells:
             cell_index = cell.row_order_index(self.rows)
@@ -67,6 +69,8 @@ class GenericTable(BaseModel):
         table = docx.add_table(rows=self.rows, cols=self.columns)
         for cell in self.cells:
             table_cell = table.cell(cell.row, cell.column)
+            span_cell = table.cell(cell.row + cell.row_span - 1, cell.column + cell.col_span - 1)
+            table_cell.merge(span_cell)
             cell_par = table_cell.add_paragraph()
             cell.to_docx(cell_par)
         return docx
