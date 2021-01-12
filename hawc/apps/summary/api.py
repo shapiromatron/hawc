@@ -120,10 +120,11 @@ class SummaryTextViewset(AssessmentEditViewset):
 class SummaryTableViewset(AssessmentViewset):
     assessment_filter_args = "assessment"
     model = models.SummaryTable
+    filter_backends = (InAssessmentFilter, UnpublishedFilter)
     serializer_class = serializers.SummaryTableSerializer
 
     @action(detail=True, methods=("get",), renderer_classes=(DocxRenderer,))
     def docx(self, request, pk):
         obj = self.get_object()
-        docx = obj.to_docx()
-        return Response((docx, obj.slug))
+        report = obj.to_report()
+        return Response(report)

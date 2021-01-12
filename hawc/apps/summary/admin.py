@@ -51,4 +51,13 @@ class SummaryTextAdmin(TreeAdmin):
 
 @admin.register(models.SummaryTable)
 class SummaryTableAdmin(VersionAdmin):
-    pass
+    list_display = (
+        "title",
+        "assessment_id",
+        "assessment",
+        "table_type",
+        "published",
+        "created",
+    )
+
+    list_filter = ("table_type", "published", ("assessment", admin.RelatedOnlyFieldListFilter))

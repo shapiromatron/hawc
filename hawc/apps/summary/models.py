@@ -16,6 +16,8 @@ from pydantic import ValidationError as PydanticError
 from reversion import revisions as reversion
 from treebeard.mp_tree import MP_Node
 
+from hawc.tools.tables.generic import GenericTable
+
 from ..animal.exports import EndpointFlatDataPivot, EndpointGroupFlatDataPivot
 from ..animal.models import Endpoint
 from ..assessment.models import Assessment, BaseEndpoint, DoseUnits
@@ -23,12 +25,12 @@ from ..common.helper import (
     FlatExport,
     HAWCDjangoJSONEncoder,
     HAWCtoDateString,
+    ReportExport,
     SerializerHelper,
     read_excel,
     tryParseInt,
 )
 from ..common.models import get_model_copy_name
-from ..common.table import GenericTable
 from ..epi.exports import OutcomeDataPivot
 from ..epi.models import Outcome
 from ..epimeta.exports import MetaResultFlatDataPivot
@@ -154,12 +156,12 @@ class SummaryText(MP_Node):
 class SummaryTable(models.Model):
     objects = managers.SummaryTableManager()
 
-    DUMMY = 0
+    GENERIC = 0
     EVIDENCE_PROFILE = 1
     EVIDENCE_INTEGRATION = 2
 
     TABLE_CHOICES = (
-        (DUMMY, "Dummy table"),
+        (GENERIC, "Generic table"),
         (EVIDENCE_PROFILE, "Evidence profile table"),
         (EVIDENCE_INTEGRATION, "Evidence integration table"),
     )
@@ -172,22 +174,33 @@ class SummaryTable(models.Model):
         "(no spaces or special-characters).",
     )
     content = models.JSONField(default=dict)
-    table_type = models.PositiveSmallIntegerField(choices=TABLE_CHOICES, default=DUMMY)
+    table_type = models.PositiveSmallIntegerField(choices=TABLE_CHOICES, default=GENERIC)
+    published = models.BooleanField(
+        default=False,
+        verbose_name="Publish table for public viewing",
+        help_text="For assessments marked for public viewing, mark table to be viewable by public",
+    )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
     def get_assessment(self):
         return self.assessment
 
-    def to_docx(self):
-        table = GenericTable.parse_obj(self.content)
-        return table.to_docx()
+    def get_content_schema_class(self):
+        if self.table_type == self.GENERIC:
+            return GenericTable
+
+    def get_table(self):
+        return self.get_content_schema_class().parse_obj(self.content)
+
+    def to_report(self):
+        table = self.get_table()
+        return ReportExport(docx=table.to_docx(), filename=self.slug)
 
     def clean(self):
         # content validation
         try:
-            if self.table_type == self.DUMMY:
-                GenericTable.parse_obj(self.content)
+            self.get_table()
         except PydanticError as e:
             raise ValidationError(e)
         return
