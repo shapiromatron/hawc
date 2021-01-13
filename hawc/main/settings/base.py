@@ -299,6 +299,7 @@ WEBPACK_LOADER = {
     }
 }
 
+ANYONE_CAN_CREATE_ASSESSMENTS = True
 EXTRA_BRANDING = True
 
 MODIFY_HELP_TEXT = "makemigrations" not in sys.argv
