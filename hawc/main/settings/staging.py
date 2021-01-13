@@ -34,3 +34,5 @@ else:
     raise ValueError("Unknown email backend")
 
 LOGGING["loggers"]["django"]["handlers"] = ["file"]
+
+ANYONE_CAN_CREATE_ASSESSMENTS = os.getenv("HAWC_ANYONE_CAN_CREATE_ASSESSMENTS", "True") == "True"
