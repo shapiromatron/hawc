@@ -90,10 +90,10 @@ class TestLiteratureAssessmentViewset:
         assert client.login(username="team@hawcproject.org", password="pw") is True
 
         # unaccented query returns accented result
-        data = {"authors": "pogano"}
+        data = {"authors": "fred"}
         response = client.post(url, data)
         assert len(response.json()) == 1
-        assert "Pôgano" in response.json()["references"][0]["authors_short"]
+        assert "Frédéric" in response.json()["references"][0]["authors_short"]
 
     def test_reference_tags(self, db_keys):
         url = reverse("lit:api:assessment-reference-tags", kwargs=dict(pk=db_keys.assessment_final))
