@@ -1371,8 +1371,8 @@
   fields:
     assessment: 1
     title: ''
-    authors_short: ''
-    authors: ''
+    authors_short: 'Frédéric Chopin'
+    authors: 'Frédéric Chopin'
     year: 2010
     journal: ''
     abstract: ''
