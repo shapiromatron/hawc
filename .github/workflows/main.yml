@@ -136,6 +136,23 @@ jobs:
         mv ci-webpack-stats.json webpack-stats.json
         yarn --cwd ./frontend install
         npm run --prefix ./frontend start  &
+    # https://github.community/t/how-to-retry-a-failed-step-in-github-actions-workflow/125880
     - name: run selenium tests
+      id: test
+      continue-on-error: true
       run: |
         py.test -s tests/frontend/integration/
+    - name: run selenium tests (retry)
+      if: steps.test.outcome=='failure'
+      id: retry
+      continue-on-error: true
+      run: |
+        py.test -s tests/frontend/integration/
+    - name: set status
+      if: always()
+      run: |
+        if ${{ steps.test.outcome=='success' || steps.retry.outcome=='success' }}; then
+          echo success!
+        else
+          exit 1
+        fi
