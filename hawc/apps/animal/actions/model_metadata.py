@@ -2,6 +2,7 @@ from pydantic import BaseModel
 
 from hawc.apps.animal import models
 from hawc.apps.assessment.models import DoseUnits, Species, Strain
+from hawc.apps.study.models import Study
 from hawc.apps.common.actions import BaseApiAction
 
 
@@ -20,17 +21,18 @@ class AnimalMetadata(BaseApiAction):
 
     input_model = NoInput
 
+    def study_metadata(self):
+        return dict(coi_reported=tuple_to_dict(models.Study.COI_REPORTED_CHOICES))
+
     def experiment_metadata(self):
         return dict(type=tuple_to_dict(models.Experiment.EXPERIMENT_TYPE_CHOICES))
 
     def animal_group_metadata(self):
-        species = list(Species.objects.all().values("id", "name"))
-        strains = list(Strain.objects.all().values("id", "species_id", "name"))
         return dict(
             sex=models.AnimalGroup.SEX_DICT,
             generation=models.AnimalGroup.GENERATION_DICT,
-            species=species,
-            strains=strains,
+            species=list(Species.objects.all().values("id", "name").order_by("id")),
+            strains=list(Strain.objects.all().values("id", "species_id", "name").order_by("id")),
             lifestage=tuple_to_dict(models.AnimalGroup.LIFESTAGE_CHOICES),
         )
 
@@ -42,8 +44,7 @@ class AnimalMetadata(BaseApiAction):
         )
 
     def dose_group_metadata(self):
-        dose_units = list(DoseUnits.objects.all().values("id", "name"))
-        return dict(dose_units=dose_units)
+        return dict(dose_units=list(DoseUnits.objects.all().values("id", "name").order_by("id")))
 
     def endpoint_metadata(self):
         return dict(
@@ -58,6 +59,7 @@ class AnimalMetadata(BaseApiAction):
 
     def evaluate(self):
         return dict(
+            study=self.study_metadata(),
             experiment=self.experiment_metadata(),
             animal_group=self.animal_group_metadata(),
             dosing_regime=self.dosing_regime_metadata(),
