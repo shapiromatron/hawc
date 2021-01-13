@@ -2,8 +2,8 @@ from pydantic import BaseModel
 
 from hawc.apps.animal import models
 from hawc.apps.assessment.models import DoseUnits, Species, Strain
-from hawc.apps.study.models import Study
 from hawc.apps.common.actions import BaseApiAction
+from hawc.apps.study.models import Study
 
 
 def tuple_to_dict(tuple):
@@ -22,7 +22,7 @@ class AnimalMetadata(BaseApiAction):
     input_model = NoInput
 
     def study_metadata(self):
-        return dict(coi_reported=tuple_to_dict(models.Study.COI_REPORTED_CHOICES))
+        return dict(coi_reported=tuple_to_dict(Study.COI_REPORTED_CHOICES))
 
     def experiment_metadata(self):
         return dict(type=tuple_to_dict(models.Experiment.EXPERIMENT_TYPE_CHOICES))
