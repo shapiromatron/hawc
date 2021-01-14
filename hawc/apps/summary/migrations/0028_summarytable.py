@@ -50,6 +50,6 @@ class Migration(migrations.Migration):
                     ),
                 ),
             ],
-            options={"unique_together": {("assessment", "slug"), ("assessment", "title")},},
+            options={"unique_together": {("assessment", "slug"), ("assessment", "title")}},
         ),
     ]

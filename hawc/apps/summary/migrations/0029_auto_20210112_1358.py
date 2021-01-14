@@ -6,18 +6,29 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('summary', '0028_summarytable'),
+        ("summary", "0028_summarytable"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='summarytable',
-            name='published',
-            field=models.BooleanField(default=False, help_text='For assessments marked for public viewing, mark table to be viewable by public', verbose_name='Publish table for public viewing'),
+            model_name="summarytable",
+            name="published",
+            field=models.BooleanField(
+                default=False,
+                help_text="For assessments marked for public viewing, mark table to be viewable by public",
+                verbose_name="Publish table for public viewing",
+            ),
         ),
         migrations.AlterField(
-            model_name='summarytable',
-            name='table_type',
-            field=models.PositiveSmallIntegerField(choices=[(0, 'Generic table'), (1, 'Evidence profile table'), (2, 'Evidence integration table')], default=0),
+            model_name="summarytable",
+            name="table_type",
+            field=models.PositiveSmallIntegerField(
+                choices=[
+                    (0, "Generic table"),
+                    (1, "Evidence profile table"),
+                    (2, "Evidence integration table"),
+                ],
+                default=0,
+            ),
         ),
     ]

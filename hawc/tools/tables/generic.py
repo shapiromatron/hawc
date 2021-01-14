@@ -4,7 +4,7 @@ from typing import List
 from docx import Document
 from pydantic import BaseModel, conint, validator
 
-from .parser import HtmlDocxParser
+from .parser import QuillParser
 
 
 class CellEnum(IntEnum):
@@ -28,7 +28,7 @@ class GenericTableCell(BaseModel):
         return (self.column) * rows + self.row
 
     def to_docx(self, block):
-        parser = HtmlDocxParser()
+        parser = QuillParser()
         return parser.feed(self.html_text, block)
 
 
@@ -39,6 +39,7 @@ class GenericTable(BaseModel):
 
     @validator("cells")
     def validate_cells(cls, cells, values):
+        # TODO simplify (?)
         table_cells = [[False] * values["columns"] for _ in range(values["rows"])]
         for cell in cells:
             try:
@@ -67,10 +68,13 @@ class GenericTable(BaseModel):
         if docx is None:
             docx = Document()
         table = docx.add_table(rows=self.rows, cols=self.columns)
+        table.style = "Table Grid"
         for cell in self.cells:
             table_cell = table.cell(cell.row, cell.column)
             span_cell = table.cell(cell.row + cell.row_span - 1, cell.column + cell.col_span - 1)
             table_cell.merge(span_cell)
-            cell_par = table_cell.add_paragraph()
-            cell.to_docx(cell_par)
+            # Remove default paragraph
+            paragraph = table_cell.paragraphs[0]._element
+            paragraph.getparent().remove(paragraph)
+            cell.to_docx(table_cell)
         return docx
