@@ -50,6 +50,11 @@ class TestClient(LiveServerTestCase, TestCase):
         response = client.animal.data(self.db_keys.assessment_client)
         assert isinstance(response, pd.DataFrame)
 
+    def test_animal_metadata(self):
+        client = HawcClient(self.live_server_url)
+        response = client.animal.metadata()
+        assert isinstance(response, dict)
+
     def test_animal_data_summary(self):
         client = HawcClient(self.live_server_url)
         response = client.animal.data_summary(self.db_keys.assessment_client)

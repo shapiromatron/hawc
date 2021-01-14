@@ -394,8 +394,8 @@ To test asynchronous functionality in development, modify your ``hawc/main/setti
 
 .. code-block:: python
 
-    CELERY_BROKER_URL = "redis://localhost:6379/1"
-    CELERY_RESULT_BACKEND = "redis://localhost:6379/2"
+    CELERY_BROKER_URL = "redis://:default-password@localhost:6379/1"
+    CELERY_RESULT_BACKEND = "redis://:default-password@localhost:6379/2"
     CELERY_TASK_ALWAYS_EAGER = False
     CELERY_TASK_EAGER_PROPAGATES = False
 
@@ -403,10 +403,19 @@ Then, create the example docker container and start a celery worker instance:
 
 .. code-block:: bash
 
+    # build container
     docker-compose build redis
     docker-compose up -d redis
-    celery worker --app=hawc.main.celery --loglevel=INFO --logfile=celery-worker.log --soft-time-limit=90 --time-limit=120
-    celery beat --app=hawc.main.celery --loglevel=INFO --logfile=celery-beat.log
+
+    # check redis is up and can be pinged successfully
+    redis-cli -h localhost -a default-password ping
+
+    # start workers
+    celery worker --app=hawc.main.celery --loglevel=INFO
+    celery beat --app=hawc.main.celery --loglevel=INFO
+
+    # stop redis when you're done
+    docker-compose down
 
 Asynchronous tasks will no be executed by celery workers instead of the main thread.
 

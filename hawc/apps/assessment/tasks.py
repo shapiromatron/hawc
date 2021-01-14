@@ -18,6 +18,16 @@ def delete_old_jobs():
     models.Job.objects.filter(last_updated__lte=week_old).delete()
 
 
+@shared_task
+def delete_orphan_relations(delete: bool = False):
+    # remove orphan relations in cases where the db cannot do so directly
+    Log = apps.get_model("assessment", "Log")
+    RiskOfBiasScoreOverrideObject = apps.get_model("riskofbias", "RiskOfBiasScoreOverrideObject")
+    message = RiskOfBiasScoreOverrideObject.get_orphan_relations(delete=delete)
+    if message:
+        Log.objects.create(message=message)
+
+
 @shared_task(bind=True)
 def run_job(self):
     job = models.Job.objects.get(pk=self.request.id)

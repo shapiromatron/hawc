@@ -201,7 +201,7 @@ class HAWCUtils {
     }
 
     static urlify(str) {
-        return slugify(str);
+        return slugify(str, {remove: /[^\w\s-_]/g});
     }
 
     static parseJsonOrNull(el) {

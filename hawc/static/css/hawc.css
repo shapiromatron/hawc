@@ -68,6 +68,9 @@ code {
 body {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
+h1,h2,h3,h4,h5,h6 {
+    font-weight: bold;
+}
 small.form-text {
     font-size: 90%;
 }

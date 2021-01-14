@@ -1371,8 +1371,8 @@
   fields:
     assessment: 1
     title: ''
-    authors_short: ''
-    authors: ''
+    authors_short: 'Frédéric Chopin'
+    authors: 'Frédéric Chopin'
     year: 2010
     journal: ''
     abstract: ''
@@ -4178,6 +4178,14 @@
     - animal
     - animalgroup
     object_id: 3
+- model: riskofbias.riskofbiasscoreoverrideobject
+  pk: 3
+  fields:
+    score: 16
+    content_type:
+    - animal
+    - animalgroup
+    object_id: 99999
 - model: riskofbias.riskofbiasassessment
   pk: 1
   fields:
