@@ -89,6 +89,7 @@ INSTALLED_APPS = (
     "django.contrib.staticfiles",
     "django.contrib.admin",
     "django.contrib.humanize",
+    "django.contrib.postgres",
     # External apps
     "rest_framework",
     "rest_framework.authtoken",
@@ -298,6 +299,7 @@ WEBPACK_LOADER = {
     }
 }
 
+ANYONE_CAN_CREATE_ASSESSMENTS = True
 EXTRA_BRANDING = True
 
 MODIFY_HELP_TEXT = "makemigrations" not in sys.argv

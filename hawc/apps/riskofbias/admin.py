@@ -86,6 +86,12 @@ class RiskOfBiasAdmin(admin.ModelAdmin):
     raw_id_fields = ("study",)
 
 
+class RiskOfBiasScoreOverrideObjectInline(admin.TabularInline):
+    model = models.RiskOfBiasScoreOverrideObject
+    fk_name = "score"
+    extra = 0
+
+
 @admin.register(models.RiskOfBiasScore)
 class RiskOfBiasScoreAdmin(admin.ModelAdmin):
     list_display = (
@@ -104,3 +110,11 @@ class RiskOfBiasScoreAdmin(admin.ModelAdmin):
         "riskofbias",
         "metric",
     )
+    inlines = [RiskOfBiasScoreOverrideObjectInline]
+
+
+@admin.register(models.RiskOfBiasScoreOverrideObject)
+class RiskOfBiasScoreOverrideObjectAdmin(admin.ModelAdmin):
+    list_display = ("id", "content_type", "object_id")
+    list_filter = (("content_type", admin.RelatedOnlyFieldListFilter),)
+    raw_id_fields = ("score",)

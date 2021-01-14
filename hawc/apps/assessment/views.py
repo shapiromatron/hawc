@@ -4,6 +4,7 @@ import logging
 from django.apps import apps
 from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
 from django.db.models import Count
@@ -273,11 +274,15 @@ class AssessmentPublicList(ListView):
         return context
 
 
-class AssessmentCreate(TimeSpentOnPageMixin, LoginRequiredMixin, MessageMixin, CreateView):
+class AssessmentCreate(TimeSpentOnPageMixin, UserPassesTestMixin, MessageMixin, CreateView):
     success_message = "Assessment created."
     model = models.Assessment
     form_class = forms.AssessmentForm
     template_name = "assessment/assessment_create_form.html"
+
+    def test_func(self):
+        user = self.request.user
+        return user.is_authenticated and user.can_create_assessments()
 
     def get_success_url(self):
         self.assessment = self.object
