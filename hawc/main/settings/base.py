@@ -3,6 +3,7 @@ import os
 import sys
 from datetime import datetime
 from pathlib import Path
+from subprocess import CalledProcessError
 from typing import List, Tuple
 
 from django.urls import reverse_lazy
@@ -88,6 +89,7 @@ INSTALLED_APPS = (
     "django.contrib.staticfiles",
     "django.contrib.admin",
     "django.contrib.humanize",
+    "django.contrib.postgres",
     # External apps
     "rest_framework",
     "rest_framework.authtoken",
@@ -247,7 +249,7 @@ LOGGING = {
 def get_git_commit() -> Commit:
     try:
         return Commit.current(str(PROJECT_ROOT))
-    except FileNotFoundError:
+    except (CalledProcessError, FileNotFoundError):
         if GIT_COMMIT_FILE.exists():
             return Commit.parse_file(GIT_COMMIT_FILE)
     return Commit(sha="<undefined>", dt=datetime.now())
@@ -297,6 +299,7 @@ WEBPACK_LOADER = {
     }
 }
 
+ANYONE_CAN_CREATE_ASSESSMENTS = True
 EXTRA_BRANDING = True
 
 MODIFY_HELP_TEXT = "makemigrations" not in sys.argv

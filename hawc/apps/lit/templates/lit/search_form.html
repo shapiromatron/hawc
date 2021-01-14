@@ -14,13 +14,9 @@
             $('#id_search_string').quillify();
         {% endif %}
 
-        // autogenerate slugs
-        var slugify = function(txt){
-          return txt.toLowerCase()
-                    .replace(/[^\w ]+/g,'')
-                    .replace(/ +/g,'-');
-        }
-        $('#id_title').on('keyup', function(){$('#id_slug').val(slugify($(this).val()));});
+        $('#id_title').on('keyup', function () {
+          $('#id_slug').val(window.app.utils.HAWCUtils.urlify($(this).val(), 50));
+        });
 
         // add a loading notification
         $('input[type=submit]').click(function(e){

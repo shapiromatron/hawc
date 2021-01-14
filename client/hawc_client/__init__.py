@@ -634,6 +634,16 @@ class AnimalClient(BaseClient):
         generator = self.session.iter_pages(url, payload)
         return [res for results in generator for res in results]
 
+    def metadata(self) -> Dict:
+        """
+        Retrieves field choices for all animal models.
+
+        Returns:
+            Dict: Model metadata
+        """
+        url = f"{self.session.root_url}/ani/api/metadata/"
+        return self.session.get(url).json()
+
 
 class EpiMetaClient(BaseClient):
     """
