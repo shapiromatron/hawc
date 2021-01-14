@@ -12,8 +12,7 @@ from .helper import FlatExport, ReportExport, rename_duplicate_columns
 
 class DocxRenderer(BaseRenderer):
     """
-    Renders a Document object into a docx file.
-    A tuple of docx, filename can also be given.
+    Renders a ReportExport object into a docx file.
     """
 
     media_type = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
