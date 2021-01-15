@@ -65,7 +65,7 @@ class YearHistogram extends Component {
                 data={[data]}
                 layout={layout}
                 useResizeHandler={true}
-                style={{width: "100%", height: 300}}
+                style={{width: "100%", height: 180}}
             />
         );
     }
