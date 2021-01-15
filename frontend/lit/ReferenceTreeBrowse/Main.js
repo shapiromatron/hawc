@@ -5,8 +5,16 @@ import {toJS} from "mobx";
 
 import ReferenceTable from "../components/ReferenceTable";
 import TagTree from "../components/TagTree";
+import YearHistogram from "./YearHistogram";
 import Loading from "shared/components/Loading";
 
+const referenceListItem = ref => {
+    return (
+        <a key={ref.data.pk} className="list-group-item" href={`#referenceId${ref.data.pk}`}>
+            {ref.shortCitation()}
+        </a>
+    );
+};
 @inject("store")
 @observer
 class ReferenceTreeMain extends Component {
@@ -21,23 +29,7 @@ class ReferenceTreeMain extends Component {
 
         return (
             <div className="row">
-                <div className="col-md-3">
-                    <h3>Taglist</h3>
-                    <TagTree
-                        tagtree={toJS(store.tagtree)}
-                        handleTagClick={tag => store.handleTagClick(tag)}
-                        showReferenceCount={true}
-                        selectedTag={store.selectedTag}
-                    />
-                    <br />
-                    <p
-                        className="nestedTag"
-                        id="untaggedReferences"
-                        onClick={() => store.handleUntaggedReferenceClick(null)}>
-                        Untagged References: ({store.config.untaggedReferenceCount})
-                    </p>
-                </div>
-                <div className="col-md-9">
+                <div className="col-md-12 pb-2">
                     {actions.length > 0 ? (
                         <div className="dropdown btn-group float-right">
                             <a className="btn btn-primary dropdown-toggle" data-toggle="dropdown">
@@ -52,19 +44,30 @@ class ReferenceTreeMain extends Component {
                             </div>
                         </div>
                     ) : null}
-
+                    {store.untaggedReferencesSelected === true ? (
+                        <h3>Untagged references</h3>
+                    ) : store.selectedTag === null ? (
+                        <h3>Available references</h3>
+                    ) : (
+                        <h3>
+                            References tagged:
+                            <span className="ml-2 refTag">{store.selectedTag.get_full_name()}</span>
+                        </h3>
+                    )}
+                </div>
+                <div className="col-md-3">
+                    {selectedReferencesLoading ? <Loading /> : null}
+                    {selectedReferences && selectedReferences.length > 0 ? (
+                        <>
+                            <YearHistogram references={selectedReferences} />
+                            <div id="reference-list" className="list-group">
+                                {selectedReferences.map(referenceListItem)}
+                            </div>
+                        </>
+                    ) : null}
+                </div>
+                <div className="col-md-6">
                     <div id="references_detail_div">
-                        {store.untaggedReferencesSelected === true ? (
-                            <h3>Untagged references</h3>
-                        ) : store.selectedTag === null ? (
-                            <h3>Available references</h3>
-                        ) : (
-                            <h3>
-                                References tagged:&nbsp;
-                                <span className="refTag">{store.selectedTag.get_full_name()}</span>
-                            </h3>
-                        )}
-                        {selectedReferencesLoading ? <Loading /> : null}
                         {store.selectedTag === null &&
                         store.untaggedReferencesSelected === false ? (
                             <p className="form-text text-muted">
@@ -75,6 +78,21 @@ class ReferenceTreeMain extends Component {
                             <ReferenceTable references={selectedReferences} showActions={canEdit} />
                         ) : null}
                     </div>
+                </div>
+                <div className="col-md-3">
+                    <TagTree
+                        tagtree={toJS(store.tagtree)}
+                        handleTagClick={tag => store.handleTagClick(tag)}
+                        showReferenceCount={true}
+                        selectedTag={store.selectedTag}
+                    />
+                    <br />
+                    <p
+                        className="nestedTag"
+                        id="untaggedReferences"
+                        onClick={() => store.handleUntaggedReferenceClick(null)}>
+                        Untagged References: ({store.config.untaggedReferenceCount})
+                    </p>
                 </div>
             </div>
         );

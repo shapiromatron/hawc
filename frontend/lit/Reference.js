@@ -18,6 +18,13 @@ class Reference {
         }
     }
 
+    static sorted(references) {
+        return _.chain(references)
+            .sortBy(d => d.data.year)
+            .reverse()
+            .value();
+    }
+
     get_edit_url() {
         return `/lit/reference/${this.data.pk}/edit/`;
     }

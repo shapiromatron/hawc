@@ -31,8 +31,10 @@ class TagNode extends Component {
                         <span className={this.state.expanded ? "fa fa-minus" : "fa fa-plus"}></span>
                     </span>
                 ) : null}
-                <p className={tagClass} onClick={() => handleOnClick(tag)}>
-                    {_.repeat("   ", tag.depth - 1)}
+                <p
+                    className={tagClass}
+                    style={{paddingLeft: 2 + tag.depth * 13}}
+                    onClick={() => handleOnClick(tag)}>
                     {tag.data.name}
                     {showReferenceCount ? ` (${tag.get_references_deep().length})` : null}
                 </p>

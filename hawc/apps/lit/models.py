@@ -733,6 +733,7 @@ class Reference(models.Model):
         d = {}
         fields = (
             "pk",
+            "assessment_id",
             "title",
             "authors_short",
             "authors",

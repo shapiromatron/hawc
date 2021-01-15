@@ -326,16 +326,13 @@ div.smart-tag.active {
     font-weight: bold;
 }
 .nestedTag {
-    padding-left: 14px;
-    white-space: pre;
     border: 2px solid transparent;
     margin: 0;
     cursor: pointer;
 }
 .nestedTag:hover {
-    font-weight: bold;
     border: 2px solid #ababab;
-    background-color: #ffef8e;
+    background-color: #8ee8ff;
 }
 .nestedTag.selected {
     color: #0044cc;

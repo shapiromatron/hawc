@@ -6,6 +6,8 @@ import DescriptiveTable from "utils/DescriptiveTable";
 import HAWCModal from "utils/HAWCModal";
 import HAWCUtils from "utils/HAWCUtils";
 
+import {getReferenceTagListUrl} from "shared/utils/urls";
+
 import RiskOfBiasScore from "riskofbias/RiskOfBiasScore";
 import {renderStudyDisplay} from "riskofbias/robTable/components/StudyDisplay";
 import {SCORE_SHADES, SCORE_TEXT} from "riskofbias/constants";
@@ -130,8 +132,7 @@ class Study {
 
     build_details_table(div) {
         var tbl = new DescriptiveTable(),
-            links = this._get_identifiers_hyperlinks_ul(),
-            referenceListUrl = `/lit/assessment/${this.data.assessment.id}/references/`;
+            links = this._get_identifiers_hyperlinks_ul();
         tbl.add_tbody_tr("Data type(s)", this._get_data_types());
         tbl.add_tbody_tr("Full citation", this.data.full_citation);
         tbl.add_tbody_tr("Abstract", this.data.abstract);
@@ -139,7 +140,7 @@ class Study {
         tbl.add_tbody_tr_badge(
             "Literature review tags",
             this.data.tags.map(d => {
-                return {url: `${referenceListUrl}?tag_id=${d.id}`, text: d.name};
+                return {url: getReferenceTagListUrl(this.data.assessment.id, d.id), text: d.name};
             })
         );
         if (this.data.full_text_url)

@@ -3,6 +3,8 @@ import React, {Component} from "react";
 import PropTypes from "prop-types";
 
 import h from "shared/utils/helpers";
+import {getReferenceTagListUrl} from "shared/utils/urls";
+
 import ReferenceButton from "./ReferenceButton";
 
 class Reference extends Component {
@@ -73,7 +75,7 @@ class Reference extends Component {
             year = data.year || "";
 
         return (
-            <div id="reference_detail_div">
+            <div id={`referenceId${data.pk}`}>
                 {
                     <div className="ref_small">
                         <span>
@@ -106,11 +108,14 @@ class Reference extends Component {
                 ) : null}
                 {showTags && tags.length > 0 ? (
                     <p>
-                        {tags.map((tag, i) => [
-                            <span key={i} className="badge badge-info mr-1">
+                        {tags.map((tag, i) => (
+                            <a
+                                key={i}
+                                href={getReferenceTagListUrl(data.assessment_id, tag.data.pk)}
+                                className="badge badge-info mr-1">
                                 {tag.get_full_name()}
-                            </span>,
-                        ])}
+                            </a>
+                        ))}
                     </p>
                 ) : null}
                 {data.searches.length > 0 ? (
