@@ -50,7 +50,9 @@ class ReferenceTreeMain extends Component {
                         <h3>Available references</h3>
                     ) : (
                         <h3>
-                            References tagged:
+                            {selectedReferences && selectedReferences.length > 0
+                                ? `${selectedReferences.length} references tagged:`
+                                : "References tagged:"}
                             <span className="ml-2 refTag">{store.selectedTag.get_full_name()}</span>
                         </h3>
                     )}
