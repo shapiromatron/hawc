@@ -130,15 +130,16 @@ class Study {
 
     build_details_table(div) {
         var tbl = new DescriptiveTable(),
-            links = this._get_identifiers_hyperlinks_ul();
+            links = this._get_identifiers_hyperlinks_ul(),
+            referenceListUrl = `/lit/assessment/${this.data.assessment.id}/references/`;
         tbl.add_tbody_tr("Data type(s)", this._get_data_types());
         tbl.add_tbody_tr("Full citation", this.data.full_citation);
         tbl.add_tbody_tr("Abstract", this.data.abstract);
         if (links.children().length > 0) tbl.add_tbody_tr("Reference hyperlink", links);
-        tbl.add_tbody_tr_list(
+        tbl.add_tbody_tr_badge(
             "Literature review tags",
-            this.data.tags.map(function(d) {
-                return d.name;
+            this.data.tags.map(d => {
+                return {url: `${referenceListUrl}?tag_id=${d.id}`, text: d.name};
             })
         );
         if (this.data.full_text_url)

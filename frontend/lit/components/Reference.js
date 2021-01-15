@@ -107,10 +107,9 @@ class Reference extends Component {
                 {showTags && tags.length > 0 ? (
                     <p>
                         {tags.map((tag, i) => [
-                            <span key={i} className="badge badge-info">
+                            <span key={i} className="badge badge-info mr-1">
                                 {tag.get_full_name()}
                             </span>,
-                            <span key={i + 1000}>&nbsp;</span>,
                         ])}
                     </p>
                 ) : null}
