@@ -658,7 +658,7 @@ class Metadata(models.Model):
         choices=habitat_terrestrial_choices,
         blank=True,
         help_text="If you selected terrestrial, pick the type of terrestrial habitat",
-    )
+    )  # this field is dependent on selecting terrestrial habitat
 
     habitat_aquatic_freshwater = models.CharField(
         verbose_name="Freshwater habitat",
@@ -666,7 +666,7 @@ class Metadata(models.Model):
         choices=habitat_aquatic_freshwater_choices,
         blank=True,
         help_text="If you selected freshwater, pick the type of freshwater habitat",
-    )
+    )  # this field is dependent on selecting aquatic habitat
 
     habitat_as_reported = models.TextField(
         verbose_name="Habitat as reported",
@@ -704,13 +704,6 @@ class Cause(models.Model):
 
     measure_detail = models.TextField(verbose_name="Cause measure detail", blank=True)
 
-    species = models.CharField(
-        verbose_name="Cause species",
-        max_length=100,
-        blank=True,
-        help_text="Type the species name, if applicable; use the format Common name (Latin binomial)",
-    )
-
     units = models.CharField(
         verbose_name="Cause units",
         max_length=100,
@@ -723,6 +716,13 @@ class Cause(models.Model):
         help_text="Select the level of biological organization associated with the cause, if applicable",
         blank=True,
         choices=cause_bio_org_choices,
+    )
+
+    species = models.CharField(
+        verbose_name="Cause species",
+        max_length=100,
+        blank=True,
+        help_text="Type the species name, if applicable; use the format Common name (Latin binomial)",
     )
 
     trajectory = models.CharField(
@@ -764,13 +764,6 @@ class Effect(models.Model):
         verbose_name="Effect measure detail", max_length=100, blank=True
     )  # autocomplete
 
-    species = models.CharField(
-        verbose_name="Effect species",
-        max_length=100,
-        blank=True,
-        help_text="Type the species name, if applicable; use the format Common name (Latin binomial)",
-    )
-
     units = models.CharField(
         verbose_name="Effect units",
         max_length=100,
@@ -783,6 +776,13 @@ class Effect(models.Model):
         help_text="Select the level of biological organization associated with the cause, if applicable",
         blank=True,
         choices=effect_bio_org_choices,
+    )
+
+    species = models.CharField(
+        verbose_name="Effect species",
+        max_length=100,
+        blank=True,
+        help_text="Type the species name, if applicable; use the format Common name (Latin binomial)",
     )
 
     trajectory = models.CharField(
