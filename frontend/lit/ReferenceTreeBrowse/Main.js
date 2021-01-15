@@ -10,6 +10,9 @@ import Loading from "shared/components/Loading";
 @inject("store")
 @observer
 class ReferenceTreeMain extends Component {
+    componentDidMount() {
+        this.props.store.tryLoadTag();
+    }
     render() {
         const {store} = this.props,
             actions = store.getActionLinks,
@@ -24,6 +27,7 @@ class ReferenceTreeMain extends Component {
                         tagtree={toJS(store.tagtree)}
                         handleTagClick={tag => store.handleTagClick(tag)}
                         showReferenceCount={true}
+                        selectedTag={store.selectedTag}
                     />
                     <br />
                     <p

@@ -1,6 +1,8 @@
 import $ from "$";
 import {action, computed, observable} from "mobx";
 
+import h from "shared/utils/helpers";
+
 import Reference from "../Reference";
 import TagTree from "../TagTree";
 
@@ -19,15 +21,8 @@ class Store {
     @observable selectedReferences = null;
     @observable selectedReferencesLoading = false;
 
-    @action.bound changeSelectedTagNodeClass(targetNode) {
-        if (this.selectedTagNode) {
-            $(this.selectedTagNode).removeClass("selected");
-        }
-        this.selectedTagNode = targetNode;
-        $(this.selectedTagNode).addClass("selected");
-    }
     @action.bound handleTagClick(selectedTag) {
-        this.changeSelectedTagNodeClass(event.target);
+        h.pushUrlParamsState("tag_id", selectedTag.data.pk);
         this.selectedTag = selectedTag;
         this.untaggedReferencesSelected = false;
         this.requestSelectedReferences();
@@ -50,8 +45,6 @@ class Store {
         });
     }
     @action.bound handleUntaggedReferenceClick() {
-        this.changeSelectedTagNodeClass(event.target);
-
         const {assessment_id, search_id} = this.config;
 
         let url = `/lit/assessment/${assessment_id}/references/untagged/json/`;
@@ -59,6 +52,7 @@ class Store {
             url += `?search_id=${search_id}`;
         }
 
+        h.pushUrlParamsState("tag_id", null);
         this.selectedTag = null;
         this.untaggedReferencesSelected = true;
         this.selectedReferences = null;
@@ -67,6 +61,16 @@ class Store {
             this.selectedReferences = results.refs.map(datum => new Reference(datum, this.tagtree));
             this.selectedReferencesLoading = false;
         });
+    }
+    @action.bound tryLoadTag() {
+        // if `tag_id` is set in the URL query string, try to load this tag ID.
+        const params = new URLSearchParams(location.search),
+            tagId = parseInt(params.get("tag_id")),
+            nestedTag = this.tagtree.getById(tagId);
+
+        if (nestedTag) {
+            this.handleTagClick(nestedTag);
+        }
     }
 
     @computed get getActionLinks() {
