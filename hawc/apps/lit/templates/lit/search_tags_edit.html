@@ -9,9 +9,7 @@
 <script id="config" type="text/json" charset="utf-8">
 {
   "tags": {{ tags | safe }},
-  "refs": [{% for ref in references %}
-    {{ ref.get_json | safe }}{% if not forloop.last %},{% endif %}
-  {% endfor %}],
+  "refs": {{ refs_json | safe }},
   "csrf": "{{csrf_token}}"
 }
 </script>

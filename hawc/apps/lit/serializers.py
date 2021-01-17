@@ -123,7 +123,7 @@ class ReferenceQuerySerializer(serializers.Serializer):
             query &= Q(abstract__icontains=self.data["abstract"])
 
         qs = models.Reference.objects.filter(query)[:100]
-        return [ref.get_json(json_encode=False) for ref in qs]
+        return [ref.to_dict() for ref in qs]
 
 
 class ReferenceTagsSerializer(serializers.ModelSerializer):

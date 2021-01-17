@@ -302,7 +302,7 @@ class StudyPopulation(models.Model):
         ordering = ("name",)
 
     def get_absolute_url(self):
-        return reverse("epi:sp_detail", kwargs={"pk": self.pk})
+        return reverse("epi:sp_detail",  args=(self.pk,))
 
     def get_assessment(self):
         return self.study.get_assessment()
@@ -447,7 +447,7 @@ class Outcome(BaseEndpoint):
         SerializerHelper.delete_caches(cls, ids)
 
     def get_absolute_url(self):
-        return reverse("epi:outcome_detail", kwargs={"pk": self.pk})
+        return reverse("epi:outcome_detail",  args=(self.pk,))
 
     def can_create_sets(self):
         return not self.study_population.can_create_sets()
@@ -581,7 +581,7 @@ class ComparisonSet(models.Model):
         super().save(*args, **kwargs)
 
     def get_absolute_url(self):
-        return reverse("epi:cs_detail", kwargs={"pk": self.pk})
+        return reverse("epi:cs_detail",  args=(self.pk,))
 
     def get_assessment(self):
         if self.outcome:
@@ -715,7 +715,7 @@ class Group(models.Model):
         )
 
     def get_absolute_url(self):
-        return reverse("epi:g_detail", kwargs={"pk": self.pk})
+        return reverse("epi:g_detail",  args=(self.pk,))
 
     def get_assessment(self):
         return self.comparison_set.get_assessment()
@@ -914,7 +914,7 @@ class Exposure(models.Model):
         return self.study_population.get_assessment()
 
     def get_absolute_url(self):
-        return reverse("epi:exp_detail", kwargs={"pk": self.pk})
+        return reverse("epi:exp_detail",  args=(self.pk,))
 
     @classmethod
     def delete_caches(cls, ids):
@@ -1356,7 +1356,7 @@ class Result(models.Model):
         return self.outcome.get_assessment()
 
     def get_absolute_url(self):
-        return reverse("epi:result_detail", kwargs={"pk": self.pk})
+        return reverse("epi:result_detail", args=(self.pk,))
 
     @staticmethod
     def flat_complete_header_row():

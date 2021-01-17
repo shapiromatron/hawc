@@ -67,7 +67,7 @@ class MetaProtocol(models.Model):
         return self.study.get_assessment()
 
     def get_absolute_url(self):
-        return reverse("meta:protocol_detail", kwargs={"pk": self.pk})
+        return reverse("meta:protocol_detail", args=(self.pk,))
 
     def get_json(self, json_encode=True):
         return SerializerHelper.get_serialized(self, json=json_encode, from_cache=False)
@@ -177,7 +177,7 @@ class MetaResult(models.Model):
         return self.protocol.get_assessment()
 
     def get_absolute_url(self):
-        return reverse("meta:result_detail", kwargs={"pk": self.pk})
+        return reverse("meta:result_detail", args=(self.pk,))
 
     @property
     def estimate_formatted(self):

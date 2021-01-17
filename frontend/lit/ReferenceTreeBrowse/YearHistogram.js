@@ -1,3 +1,4 @@
+import * as d3 from "d3";
 import _ from "lodash";
 import React, {Component} from "react";
 import PropTypes from "prop-types";
@@ -45,7 +46,7 @@ const dataTemplate = {
 
 class YearHistogram extends Component {
     render() {
-        const {references} = this.props,
+        const {references, onFilter} = this.props,
             years = _.chain(references)
                 .map(d => d.data.year)
                 .compact()
@@ -66,12 +67,30 @@ class YearHistogram extends Component {
                 layout={layout}
                 useResizeHandler={true}
                 style={{width: "100%", height: 180}}
+                onClick={function(e, d) {
+                    let times = [],
+                        range;
+                    if (e.points.length > 0) {
+                        e.points.map(point => {
+                            let start =
+                                    point.fullData.xbins.start +
+                                    point.binNumber * point.fullData.xbins.size,
+                                end = start + point.fullData.xbins.size;
+                            times.push(Math.ceil(start), Math.floor(end));
+                        });
+                        range = d3.extent(times);
+                        onFilter({min: range[0], max: range[1]});
+                    } else {
+                        onFilter(null);
+                    }
+                }}
             />
         );
     }
 }
 YearHistogram.propTypes = {
     references: PropTypes.array,
+    onFilter: PropTypes.func,
 };
 
 export default YearHistogram;
