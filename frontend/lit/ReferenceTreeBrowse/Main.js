@@ -24,7 +24,7 @@ class ReferenceTreeMain extends Component {
     render() {
         const {store} = this.props,
             actions = store.getActionLinks,
-            {selectedReferences, selectedReferencesLoading} = store,
+            {selectedReferences, selectedReferencesLoading, filteredReferences} = store,
             {canEdit} = store.config;
 
         return (
@@ -61,9 +61,16 @@ class ReferenceTreeMain extends Component {
                     {selectedReferencesLoading ? <Loading /> : null}
                     {selectedReferences && selectedReferences.length > 0 ? (
                         <>
-                            <YearHistogram references={selectedReferences} />
-                            <div id="reference-list" className="list-group">
-                                {selectedReferences.map(referenceListItem)}
+                            <YearHistogram
+                                references={selectedReferences}
+                                yearFilter={store.yearFilter}
+                                onFilter={store.updateYearFilter}
+                            />
+                            <div
+                                id="reference-list"
+                                className="list-group"
+                                style={{maxHeight: "50vh"}}>
+                                {filteredReferences.map(referenceListItem)}
                             </div>
                         </>
                     ) : null}
@@ -77,7 +84,7 @@ class ReferenceTreeMain extends Component {
                             </p>
                         ) : null}
                         {selectedReferences ? (
-                            <ReferenceTable references={selectedReferences} showActions={canEdit} />
+                            <ReferenceTable references={filteredReferences} showActions={canEdit} />
                         ) : null}
                     </div>
                 </div>

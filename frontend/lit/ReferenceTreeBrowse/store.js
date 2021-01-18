@@ -19,6 +19,7 @@ class Store {
     @observable config = null;
     @observable tagtree = null;
     @observable selectedReferences = null;
+    @observable yearFilter = null;
     @observable selectedReferencesLoading = false;
 
     @action.bound handleTagClick(selectedTag) {
@@ -28,6 +29,7 @@ class Store {
         this.requestSelectedReferences();
     }
     @action.bound requestSelectedReferences() {
+        this.yearFilter = null;
         this.selectedReferences = null;
         this.selectedReferencesLoading = false;
         if (this.selectedTag === null) {
@@ -43,6 +45,7 @@ class Store {
             const references = Reference.sorted(
                 results.refs.map(datum => new Reference(datum, this.tagtree))
             );
+            this.yearFilter = null;
             this.selectedReferences = references;
             this.selectedReferencesLoading = false;
         });
@@ -75,12 +78,28 @@ class Store {
             this.handleTagClick(nestedTag);
         }
     }
+    @action.bound updateYearFilter(filter) {
+        this.yearFilter = filter;
+    }
+
+    @computed get filteredReferences() {
+        const filter = this.yearFilter;
+        if (!filter) {
+            return this.selectedReferences;
+        }
+        return this.selectedReferences.filter(
+            d => d.data.year >= filter.min && d.data.year <= filter.max
+        );
+    }
 
     @computed get getActionLinks() {
         let links = [];
-        if (this.selectedTag === null || this.untaggedReferencesSelected === true) {
-            return links;
-        } else {
+        if (this.untaggedReferencesSelected === true && this.config.canEdit) {
+            links.push([
+                `/lit/assessment/${this.config.assessment_id}/tag/untagged/`,
+                "Tag untagged references",
+            ]);
+        } else if (this.selectedTag !== null) {
             links = [
                 [
                     `/lit/api/tags/${this.selectedTag.data.pk}/references/?format=xlsx`,
@@ -94,11 +113,11 @@ class Store {
             if (this.config.canEdit) {
                 links.push([
                     `/lit/tag/${this.selectedTag.data.pk}/tag/`,
-                    "Edit references with this tag (but not descendants)",
+                    "Tag references with this tag (but not descendants)",
                 ]);
             }
-            return links;
         }
+        return links;
     }
 }
 
