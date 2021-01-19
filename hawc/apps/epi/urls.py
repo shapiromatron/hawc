@@ -6,6 +6,7 @@ from . import api, views
 router = DefaultRouter()
 router.register(r"assessment", api.EpiAssessmentViewset, basename="assessment")
 router.register(r"study-population", api.StudyPopulation, basename="study-population")
+router.register(r"criteria", api.Criteria, basename="criteria")
 router.register(r"exposure", api.Exposure, basename="exposure")
 router.register(r"outcome", api.Outcome, basename="outcome")
 router.register(r"result", api.Result, basename="result")

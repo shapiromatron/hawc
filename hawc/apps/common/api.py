@@ -1,9 +1,10 @@
 from django.db import models
 from django.shortcuts import get_object_or_404
-from rest_framework import exceptions, filters, mixins, permissions, viewsets
+from rest_framework import exceptions, filters, mixins, permissions, serializers, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.throttling import UserRateThrottle
+from rest_framework.validators import UniqueTogetherValidator
 from rest_framework_extensions.mixins import ListUpdateModelMixin
 
 from ..assessment.api import DisabledPagination, get_assessment_from_query
@@ -135,6 +136,95 @@ class LegacyAssessmentAdapterMixin:
     def set_legacy_attr(self, pk):
         self.parent = get_object_or_404(self.parent_model, pk=pk)
         self.assessment = self.parent.get_assessment()
+
+
+class ReadWriteSerializerMixin:
+    """
+    idea from https://www.revsys.com/tidbits/using-different-read-and-write-serializers-django-rest-framework/
+    """
+
+    read_serializer_class = None
+    write_serializer_class = None
+
+    def get_serializer_class(self):
+        if self.action in ["create", "update", "partial_update", "destroy"]:
+            return self.get_write_serializer_class()
+        return self.get_read_serializer_class()
+
+    def get_read_serializer_class(self):
+        assert self.read_serializer_class is not None, (
+            "'%s' should either include a `read_serializer_class` attribute,"
+            "or override the `get_read_serializer_class()` method." % self.__class__.__name__
+        )
+        return self.read_serializer_class
+
+    def get_write_serializer_class(self):
+        assert self.write_serializer_class is not None, (
+            "'%s' should either include a `write_serializer_class` attribute,"
+            "or override the `get_write_serializer_class()` method." % self.__class__.__name__
+        )
+        return self.write_serializer_class
+
+
+class GetOrCreateMixin:
+    """
+    this should be mixed into a serializer that has:
+    1. a Meta class with a defined model (and a list_serializer_class
+        referring to the GenericGetOrCreateListSerializer, if multiple
+        support)
+    2. a defined method "getOrCreatePermissionCheckHelper" that knows how to
+        handle a single JSON representation of an object and check edit
+        permissions for that object against a user, throwing an exception
+        if permissions are lacking.
+
+   This mixin:
+    1. disables any UniqueTogetherValidators
+    2. overrides create to actually call get_or_create
+    3. for either single item or list item creation, calls the
+       "getOrCreatePermissionCheckHelper" method for individual creation
+       candidate elements.
+
+    Use case - consider a model like epi.models.Criteria; this contains a
+    unique_together meta restriction on the "assessment" and "description"
+    fields. Or in other words, in the database assessment+description are
+    guaranteed to be unique.
+
+    We want to build an API able to support something like a POST
+    { "assessment": 1, "description": "foo" }
+    to the endpoint defined for this. A normal serializer will complain
+    if a criteria with that description already exists, due to the
+    UniqueTogetherValidator firing. If instead we mix this class into
+    the appropriate serializer, we can code things such that the first call
+    will create a criteria with description "foo", and the second
+    call will just fetch the existing one. This makes client construction
+    just a little more straightforward -- rather than having to
+    lookup/check/create-if-needed, clients can just hit one endpoint and
+    get back the object.
+
+    What's more, we want to possibly support doing this mix of create and
+    lookup for multiple criteria in a single API call. This mixin helps
+    reduce duplicated code for both of these behaviors.
+
+    Basic approach taken from https://stackoverflow.com/questions/25026034/django-rest-framework-modelserializer-get-or-create-functionality
+   """
+
+    class GenericGetOrCreateListSerializer(serializers.ListSerializer):
+        def custom_perm_checker(self, user):
+            for item in self.child.initial_data:
+                self.child.getOrCreatePermissionCheckHelper(item, user)
+
+    def custom_perm_checker(self, user):
+        self.getOrCreatePermissionCheckHelper(self.initial_data, user)
+
+    def run_validators(self, value):
+        for validator in self.validators:
+            if isinstance(validator, UniqueTogetherValidator):
+                self.validators.remove(validator)
+        super().run_validators(value)
+
+    def create(self, validated_data, *args, **kwargs):
+        instance, created = self.Meta.model.objects.get_or_create(**validated_data)
+        return instance
 
 
 def user_can_edit_object(

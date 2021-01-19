@@ -1,17 +1,34 @@
 from django.conf import settings
 from django.core.cache import cache
-from rest_framework import viewsets
+from django.core.exceptions import ObjectDoesNotExist
+
+# from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 
-from ..assessment.api import AssessmentLevelPermissions, AssessmentViewset
+# from rest_framework.serializers import ModelSerializer, ValidationError
+from rest_framework.serializers import ValidationError
+
+from ..assessment.api import (
+    AssessmentLevelPermissions,
+    AssessmentEditViewset,
+    AssessmentViewset,
+    InAssessmentFilter,
+)
 from ..assessment.models import Assessment
-from ..common.api import CleanupFieldsBaseViewSet, LegacyAssessmentAdapterMixin
-from ..common.helper import FlatExport, re_digits
+from ..common.api import (
+    CleanupFieldsBaseViewSet,
+    LegacyAssessmentAdapterMixin,
+    ReadWriteSerializerMixin,
+)
+from ..common.helper import FlatExport, re_digits, tryParseInt
 from ..common.renderers import PandasRenderers
 from ..common.serializers import HeatmapQuerySerializer, UnusedSerializer
 from ..common.views import AssessmentPermissionsMixin
+from ..study.models import Study
+from ..study.serializers import StudySerializer
 from . import exports, models, serializers
 
 
@@ -87,10 +104,158 @@ class EpiAssessmentViewset(
         return Response(export)
 
 
-class StudyPopulation(AssessmentViewset):
+# def lookup_existing_entity(data, id_field_name, model_class, serializer_class):
+# probe_id = tryParseInt(data.get(id_field_name), -1)
+# print(f"probe is is {probe_id}")
+#
+# try:
+# entity = model_class.objects.get(id=probe_id)
+# print(f"probe entity is {entity}")
+# except ObjectDoesNotExist:
+# print(f"error here")
+# return None
+# raise ValidationError("Invalid id")
+
+# TODO - this code proabbyl belongs in the serializer - like "get raw representation" or something, rather than us manually de-readabling coi...
+# serialized_entity = serializer_class().to_representation(entity)
+# print(f"serialized entity is {serialized_entity}")
+# return serialized_entity
+
+# THINGS TO REVIEW WITH ANDY
+# 1. general get_or_create approach
+# 2. method of checking permissions - mixin + custom serializer helper method
+# 3. looking at edit, not create, for permissions
+# 4. the copythrough of study_id when creating study pops
+# 5. for e.g. Outcome.diagnostic -- should client/user pass in <5> or "hospital admission"? -- ANSWER FROM ANDY: should be 5.
+
+
+class Criteria(viewsets.ModelViewSet):
+    assessment_filter_args = "assessment"
+    model = models.Criteria
+    permission_classes = (AssessmentLevelPermissions,)
+    filter_backends = (InAssessmentFilter,)  # DjangoFilterBackend)
+    serializer_class = serializers.CriteriaSerializer
+
+    def get_queryset(self, *args, **kwargs):
+        return self.model.objects.all()
+
+    def create(self, request, *args, **kwargs):
+        # note - this could be a list of criteria OR a single criteria, either will work
+        criteria = request.data
+
+        serializer = self.get_serializer(data=criteria, many=isinstance(criteria, list))
+        serializer.is_valid(raise_exception=True)
+        serializer.custom_perm_checker(request.user)
+        self.perform_create(serializer)
+
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_207_MULTI_STATUS, headers=headers)
+
+
+# TODO - check permissions here as well
+class StudyPopulation(viewsets.ModelViewSet):
     assessment_filter_args = "study__assessment"
     model = models.StudyPopulation
     serializer_class = serializers.StudyPopulationSerializer
+
+    def get_queryset(self, *args, **kwargs):
+        return self.model.objects.all()
+
+    def create(self, request, *args, **kwargs):
+        pops = request.data.get("populations")
+        # this one is being written to assume populations is a list; should
+        # we actually assert/check that it is?
+
+        study_id = tryParseInt(request.data.get("study_id"), -1)
+        try:
+            study = Study.objects.get(id=study_id)
+        except ObjectDoesNotExist:
+            raise ValidationError("Invalid study_id")
+        # print(f"study is {study}")
+
+        # TODO - do we need to check the permissions of the study?
+
+        serialized_study = StudySerializer().to_default_representation(study)
+
+        # print(f"serialized study is {serialized_study}")
+
+        # for each population in the input, add the study
+        for pop in pops:
+            pop["study"] = serialized_study
+            # pop["study"] = study.id
+
+        # similarly - do we need to do this with criteria id's, outcome id's, etc.? Seems
+        # like no, see epiUpload.json for an exmaple (it may not work, haven't gotten
+        # that far yet)
+
+        for pop in pops:
+            raw_countries = pop.get("countries", [])
+            real_countries = []
+            for raw_country in raw_countries:
+                print(f"lookup {raw_country}")
+                country_id = tryParseInt(raw_country, -1)
+                try:
+                    country = models.Country.objects.get(id=country_id)
+                    print(f"{country_id} --> {country}")
+                    real_countries.append(
+                        serializers.CountrySerializer().to_representation(country)
+                    )
+                    print(
+                        f"FULL REP IS {serializers.CountrySerializer().to_representation(country)}"
+                    )
+                except ObjectDoesNotExist:
+                    raise ValidationError("Invalid country_id")
+            pop["countries"] = real_countries
+
+        # serializer = self.get_serializer(data=request.data, many=isinstance(request.data, list))
+        serializer = self.get_serializer(data=pops, many=True)
+        print(f"XXX: serializer is [{type(serializer)}]")
+
+        serializer.is_valid(raise_exception=True)
+        print(f"YYY: past our valid check")
+
+        """
+        print("CCC")
+        self.perform_create(serializer)
+        print("DDD")
+        headers = self.get_success_headers(serializer.data)
+        print("EEE")
+        print(headers)
+        # return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        """
+
+        """
+        study_id = tryParseInt(request.data.get("study_id"), -1)
+
+        print(f"create firing with {study_id}")
+
+        try:
+            study = Study.objects.get(id=study_id)
+        except ObjectDoesNotExist:
+            raise ValidationError("Invalid study_id")
+
+        # permission check using the user submitting the request
+        if not study.user_can_edit_study(study.assessment, request.user):
+            raise PermissionDenied(
+                f"Submitter '{request.user}' has invalid permissions to edit Epi data for this study"
+            )
+        """
+
+        """
+        # overridden_objects is not marked as optional in RiskOfBiasScoreSerializerSlim; if it's not present
+        # in the payload, let's just add an empty array.
+        scores = request.data.get("scores")
+        for score in scores:
+            if "overridden_objects" not in score:
+                score["overridden_objects"] = []
+        """
+
+        print(f"about to call create with {args}, {kwargs}...")
+
+        try:
+            return super().create(request, *args, **kwargs)
+        except Exception as e:
+            print(f"exception: {e}")
 
 
 class Exposure(AssessmentViewset):
@@ -99,10 +264,22 @@ class Exposure(AssessmentViewset):
     serializer_class = serializers.ExposureSerializer
 
 
-class Outcome(AssessmentViewset):
+class Outcome(ReadWriteSerializerMixin, AssessmentEditViewset):
     assessment_filter_args = "assessment"
     model = models.Outcome
-    serializer_class = serializers.OutcomeSerializer
+    read_serializer_class = serializers.OutcomeReadSerializer
+    write_serializer_class = serializers.OutcomeWriteSerializer
+
+    def create(self, request, *args, **kwargs):
+        outcomes = request.data
+
+        serializer = self.get_serializer(data=outcomes, many=isinstance(outcomes, list))
+        serializer.is_valid(raise_exception=True)
+        serializer.custom_perm_checker(request.user)
+        self.perform_create(serializer)
+
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_207_MULTI_STATUS, headers=headers)
 
 
 class Result(AssessmentViewset):

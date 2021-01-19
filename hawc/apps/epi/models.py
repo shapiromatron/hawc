@@ -45,6 +45,9 @@ class Criteria(models.Model):
     def __str__(self):
         return self.description
 
+    def get_assessment(self):
+        return self.assessment
+
     def copy_across_assessments(self, cw):
         new_obj, _ = self._meta.model.objects.get_or_create(
             assessment_id=cw[Assessment.COPY_NAME][self.assessment_id],
