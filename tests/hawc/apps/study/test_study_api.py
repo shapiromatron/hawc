@@ -33,7 +33,7 @@ def test_study_detail_api(db_keys):
                 "database": "HERO",
                 "id": 6,
                 "unique_id": "2",
-                "url": "http://hero.epa.gov/index.cfm?action=reference.details&reference_id=2",
+                "url": "http://hero.epa.gov/hero/index.cfm?action=reference.details&reference_id=2",
             }
         ],
         "tags": [],
