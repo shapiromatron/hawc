@@ -91,6 +91,13 @@ class ProfileUpdate(LoginRequiredMixin, MessageMixin, UpdateView):
         )
         return context
 
+    def form_valid(self, form):
+        import pdb
+
+        pdb.set_trace()
+        self.request.session["HERO_access"] = form.instance.HERO_access
+        return super().form_valid(form)
+
 
 class AcceptNewLicense(MessageMixin, FormView):
     model = models.HAWCUser
