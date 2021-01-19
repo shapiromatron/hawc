@@ -567,8 +567,8 @@ class Identifiers(models.Model):
     URL_TEMPLATES = {
         constants.PUBMED: r"https://www.ncbi.nlm.nih.gov/pubmed/{0}",
         constants.HERO: {
-            "public": r"http://hero.epa.gov/index.cfm?action=reference.details&reference_id={0}",
-            "private": r"http://heronet.epa.gov/index.cfm?action=reference.details&reference_id={0}",
+            "public": r"http://hero.epa.gov/hero/index.cfm?action=reference.details&reference_id={0}",
+            "private": r"http://heronet.epa.gov/heronet/index.cfm?action=reference.details&reference_id={0}",
         },
         constants.DOI: r"https://doi.org/{0}",
         constants.WOS: r"http://apps.webofknowledge.com/InboundService.do?product=WOS&UT={0}&action=retrieve&mode=FullRecord",
