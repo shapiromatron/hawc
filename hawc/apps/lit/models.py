@@ -566,15 +566,20 @@ class Identifiers(models.Model):
 
     URL_TEMPLATES = {
         constants.PUBMED: r"https://www.ncbi.nlm.nih.gov/pubmed/{0}",
-        constants.HERO: r"http://hero.epa.gov/index.cfm?action=reference.details&reference_id={0}",
+        constants.HERO: {
+            "public": r"http://hero.epa.gov/index.cfm?action=reference.details&reference_id={0}",
+            "private": r"http://heronet.epa.gov/index.cfm?action=reference.details&reference_id={0}",
+        },
         constants.DOI: r"https://doi.org/{0}",
         constants.WOS: r"http://apps.webofknowledge.com/InboundService.do?product=WOS&UT={0}&action=retrieve&mode=FullRecord",
         constants.SCOPUS: r"http://www.scopus.com/record/display.uri?eid={0}&origin=resultslist",
     }
 
-    def get_url(self):
+    def get_url(self, hero_access=False):
         url = self.url
         template = self.URL_TEMPLATES.get(self.database, None)
+        if self.database == constants.HERO:
+            template = template["private"] if hero_access else template["public"]
         if template:
             url = template.format(parse.quote(self.unique_id))
         return url
@@ -607,12 +612,12 @@ class Identifiers(models.Model):
 
         return ref
 
-    def get_json(self, json_encode=True):
+    def get_json(self, json_encode=True, hero_access=False):
         return {
             "id": self.unique_id,
             "database": self.get_database_display(),
             "database_id": self.database,
-            "url": self.get_url(),
+            "url": self.get_url(hero_access=hero_access),
         }
 
     def get_content_json(self) -> Optional[Dict]:
@@ -729,7 +734,7 @@ class Reference(models.Model):
     def __str__(self):
         return self.ref_short_citation
 
-    def get_json(self, json_encode=True):
+    def get_json(self, json_encode=True, hero_access=False):
         d = {}
         fields = (
             "pk",
@@ -749,7 +754,10 @@ class Reference(models.Model):
         d["editReferenceUrl"] = reverse("lit:ref_edit", kwargs={"pk": self.pk})
         d["deleteReferenceUrl"] = reverse("lit:ref_delete", kwargs={"pk": self.pk})
 
-        d["identifiers"] = [ident.get_json(json_encode=False) for ident in self.identifiers.all()]
+        d["identifiers"] = [
+            ident.get_json(json_encode=False, hero_access=hero_access)
+            for ident in self.identifiers.all()
+        ]
         d["searches"] = [ref.get_json() for ref in self.searches.all()]
 
         d["tags"] = list(self.tags.all().values_list("pk", flat=True))

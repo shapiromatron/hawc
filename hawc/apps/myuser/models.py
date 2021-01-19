@@ -98,17 +98,3 @@ class UserProfile(models.Model):
 
     def get_assessment(self):
         return self.assessment
-
-
-"""
-from django.contrib.auth.signals import user_logged_in
-from django.dispatch import receiver
-
-
-@receiver(user_logged_in)
-def set_session(sender, request, user, **kwargs):
-    import pdb
-
-    pdb.set_trace()
-    return
-"""

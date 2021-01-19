@@ -494,7 +494,9 @@ class RefDetail(BaseDetail):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["tags"] = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
-        context["object_json"] = self.object.get_json()
+        context["object_json"] = self.object.get_json(
+            hero_access=bool(self.request.session.get("HERO_access"))
+        )
         context["breadcrumbs"].insert(2, lit_overview_breadcrumb(self.assessment))
         return context
 
