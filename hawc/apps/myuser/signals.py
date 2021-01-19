@@ -4,4 +4,5 @@ from django.dispatch import receiver
 
 @receiver(user_logged_in)
 def set_session_hero_access(sender, request, user, **kwargs):
-    request.session["HERO_access"] = user.profile.HERO_access
+    if hasattr(user, "profile"):
+        request.session["HERO_access"] = user.profile.HERO_access
