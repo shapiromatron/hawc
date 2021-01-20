@@ -12,7 +12,7 @@ DATA_ROOT = Path(__file__).parents[3] / "data/api"
 class TestAssessmentViewset:
     def test_permissions(self, db_keys):
         rev_client = APIClient()
-        assert rev_client.login(username="rev@rev.com", password="pw") is True
+        assert rev_client.login(username="reviewer@hawcproject.org", password="pw") is True
         anon_client = APIClient()
 
         urls = [

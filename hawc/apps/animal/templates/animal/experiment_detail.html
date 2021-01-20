@@ -1,30 +1,19 @@
-{% extends 'portal.html' %}
-
-{% block title %}
-  {% include "hawc/siteTitle.html" with crumbs=object.get_crumbs crud=crud %}
-{% endblock title %}
-
-{% block breadcrumbs %}
-  {% include "hawc/breadcrumbs.html" with crumbs=object.get_crumbs crud=crud %}
-{% endblock %}
+{% extends 'assessment-rooted.html' %}
 
 {% block content %}
-
     <h1>{{object}}
       {% if obj_perms.edit %}
-        <div class="btn-group pull-right">
-          <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions
-            <span class="caret"></span>
-          </a>
-          <ul class="dropdown-menu">
-              <li class="disabled"><a tabindex="-1" href="#">Experiment Editing</a></li>
-              <li><a href="{% url 'animal:experiment_update' object.pk %}">Update</a></li>
-              <li><a href="{% url 'animal:experiment_delete' object.pk %}">Delete</a></li>
-              <li class="divider"></li>
-              <li class="disabled"><a tabindex="-1" href="#">Animal Group Editing</a></li>
-              <li><a href="{% url 'animal:animal_group_new' object.pk %}">Create new</a></li>
-              <li><a href="{% url 'animal:animal_group_copy_selector' object.pk %}">Copy from existing</a></li>
-          </ul>
+        <div class="btn-group dropdown float-right">
+          <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
+          <div class="dropdown-menu dropdown-menu-right">
+              <h6 class="dropdown-header">Experiment Editing</h6>
+              <a class="dropdown-item" href="{% url 'animal:experiment_update' object.pk %}">Update</a>
+              <a class="dropdown-item" href="{% url 'animal:experiment_delete' object.pk %}">Delete</a>
+              <div class="dropdown-divider"></div>
+              <h6 class="dropdown-header">Animal Group Editing</h6>
+              <a class="dropdown-item" href="{% url 'animal:animal_group_new' object.pk %}">Create new</a>
+              <a class="dropdown-item" href="{% url 'animal:animal_group_copy_selector' object.pk %}">Copy from existing</a>
+          </div>
         </div>
       {% endif %}
     </h1>

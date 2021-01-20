@@ -97,10 +97,10 @@ class DRPlot extends D3Plot {
         var plot = this;
         var options = {
             id: "toggle_y_axis",
-            cls: "btn btn-mini",
+            cls: "btn btn-sm",
             title: "Change y-axis scale (shortcut: click the y-axis label)",
             text: "",
-            icon: "icon-resize-vertical",
+            icon: "fa fa-arrows-v",
             on_click() {
                 plot.toggle_y_axis();
             },
@@ -108,10 +108,10 @@ class DRPlot extends D3Plot {
         this.add_menu_button(options);
         options = {
             id: "toggle_x_axis",
-            cls: "btn btn-mini",
+            cls: "btn btn-sm",
             title: "Change x-axis scale (shortcut: click the x-axis label)",
             text: "",
-            icon: "icon-resize-horizontal",
+            icon: "fa fa-arrows-h",
             on_click() {
                 plot.toggle_x_axis();
             },
@@ -120,10 +120,10 @@ class DRPlot extends D3Plot {
         if (this.endpoint.doses.length > 1) {
             options = {
                 id: "toggle_dose_units",
-                cls: "btn btn-mini",
+                cls: "btn btn-sm",
                 title: "Change dose-units representation",
                 text: "",
-                icon: "icon-certificate",
+                icon: "fa fa-certificate",
                 on_click() {
                     plot.endpoint.toggle_dose_units();
                 },

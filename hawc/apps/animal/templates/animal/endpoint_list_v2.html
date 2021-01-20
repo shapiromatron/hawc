@@ -1,15 +1,8 @@
-{% extends 'portal.html' %}
+{% extends 'assessment-rooted.html' %}
+
 {% load selectable_tags %}
 {% load add_class %}
 {% load url_replace %}
-
-{% block title %}{{assessment}} | Endpoints | HAWC {% endblock title %}
-
-{% block breadcrumbs %}
-<li><a href="{% url 'assessment:detail' pk=assessment.pk %}">{{ assessment }}</a><span class="divider">/</span></li>
-<li><a href="{% url 'assessment:endpoint_list' assessment.pk %}">Endpoints</a><span class="divider">/</span></li>
-<li class="active">Animal bioassay<span class="divider">/</span></li>
-{% endblock %}
 
 {% block content %}
 <h1>Assessment endpoints v2</h1>

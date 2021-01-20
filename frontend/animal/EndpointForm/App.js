@@ -12,20 +12,18 @@ class App extends Component {
         const {store} = this.props;
         return (
             <>
-                <div className="row-fluid">
-                    <TermSelector
-                        name={"name"}
-                        label={label.endpoint_name}
-                        helpText={helpText.endpoint_name}
-                        termIdField={"name_term_id"}
-                        termTextField={"name"}
-                        parentIdField={"effect_subtype_term_id"}
-                        parentRequired={true}
-                        idLookupAction={store.endpointNameLookup}
-                    />
-                </div>
-                <div className="row-fluid">
-                    <div className="span3">
+                <TermSelector
+                    name={"name"}
+                    label={label.endpoint_name}
+                    helpText={helpText.endpoint_name}
+                    termIdField={"name_term_id"}
+                    termTextField={"name"}
+                    parentIdField={"effect_subtype_term_id"}
+                    parentRequired={true}
+                    idLookupAction={store.endpointNameLookup}
+                />
+                <div className="row">
+                    <div className="col-md-3">
                         <TermSelector
                             name={"system"}
                             label={label.system}
@@ -35,7 +33,7 @@ class App extends Component {
                             parentRequired={false}
                         />
                     </div>
-                    <div className="span3">
+                    <div className="col-md-3">
                         <TermSelector
                             name={"organ"}
                             label={label.organ}
@@ -46,7 +44,7 @@ class App extends Component {
                             parentRequired={true}
                         />
                     </div>
-                    <div className="span3">
+                    <div className="col-md-3">
                         <TermSelector
                             name={"effect"}
                             label={label.effect}
@@ -57,7 +55,7 @@ class App extends Component {
                             parentRequired={true}
                         />
                     </div>
-                    <div className="span3">
+                    <div className="col-md-3">
                         <TermSelector
                             name={"effect_subtype"}
                             label={label.effect_subtype}

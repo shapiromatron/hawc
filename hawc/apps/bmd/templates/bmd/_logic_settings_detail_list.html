@@ -1,6 +1,6 @@
 {% block content %}
   <small>HAWC uses this decision-logic to help users determine overall BMD model fit. These rules are used for model estimation and evaluation for each BMD model in an assessment.</small>
-  <table class="table table-condensed table-striped table-hover">
+  <table class="table table-sm table-striped table-hover">
     <thead>
       <th>Name</th>
       <th>Continuous test</th>
@@ -30,7 +30,7 @@
         <td>{{logic.get_failure_bin_display }}</td>
         {% if obj_perms.edit_assessment %}
           <td><a href="{% url 'bmd:assess_logic_update' logic.pk %}"
-            class="btn btn-primary btn-small">Edit</a> </td>
+            class="btn btn-primary btn-sm">Edit</a> </td>
         {% endif %}
         <td>{{logic.last_updated}}</td>
       </tr>

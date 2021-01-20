@@ -2,7 +2,7 @@ import _ from "lodash";
 import * as d3 from "d3";
 
 import BaseTable from "utils/BaseTable";
-import {docUrlRoot} from "shared/utils";
+import h from "shared/utils/helpers";
 
 class ResultGroupTable {
     constructor(res) {
@@ -95,7 +95,7 @@ class ResultGroupTable {
                         .some()
                         .value()
                         ? fn.add_footnote(
-                              `Confidence intervals calculated in HAWC from distributions provided (<a href="${docUrlRoot}reference.html#statistical-methods-used">source</a>).`
+                              `Confidence intervals calculated in HAWC from distributions provided (<a href="${h.docUrlRoot}reference.html#statistical-methods-used">source</a>).`
                           )
                         : "";
 

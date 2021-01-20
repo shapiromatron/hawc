@@ -16,7 +16,7 @@ class TestAssessmentViewset:
     def _test_flat_export(self, rewrite_data_files: bool, fn: str, url: str):
 
         client = APIClient()
-        assert client.login(username="rev@rev.com", password="pw") is True
+        assert client.login(username="reviewer@hawcproject.org", password="pw") is True
         resp = client.get(url)
         assert resp.status_code == 200
 
@@ -30,7 +30,7 @@ class TestAssessmentViewset:
 
     def test_permissions(self, db_keys):
         rev_client = APIClient()
-        assert rev_client.login(username="rev@rev.com", password="pw") is True
+        assert rev_client.login(username="reviewer@hawcproject.org", password="pw") is True
         anon_client = APIClient()
 
         urls = [
@@ -124,7 +124,7 @@ class TestExperimentCreateApi:
 
         # reviewers shouldn't be able to create
         client = APIClient()
-        assert client.login(username="rev@rev.com", password="pw") is True
+        assert client.login(username="reviewer@hawcproject.org", password="pw") is True
         response = client.post(url, data)
         assert response.status_code == 403
 
@@ -136,7 +136,7 @@ class TestExperimentCreateApi:
     def test_bad_requests(self, db_keys):
         url = reverse("animal:api:experiment-list")
         client = APIClient()
-        assert client.login(username="team@team.com", password="pw") is True
+        assert client.login(username="team@hawcproject.org", password="pw") is True
 
         # empty payload doesn't crash
         data = {}
@@ -214,7 +214,7 @@ class TestExperimentCreateApi:
 
         # valid request
         client = APIClient()
-        assert client.login(username="team@team.com", password="pw") is True
+        assert client.login(username="team@hawcproject.org", password="pw") is True
         response = client.post(url, data)
         assert response.status_code == 201
 
@@ -240,7 +240,7 @@ class TestAnimalGroupCreateApi:
 
         # reviewers shouldn't be able to create
         client = APIClient()
-        assert client.login(username="rev@rev.com", password="pw") is True
+        assert client.login(username="reviewer@hawcproject.org", password="pw") is True
         response = client.post(url, data)
         assert response.status_code == 403
 
@@ -252,7 +252,7 @@ class TestAnimalGroupCreateApi:
     def test_bad_requests(self, db_keys):
         url = reverse("animal:api:animal_group-list")
         client = APIClient()
-        assert client.login(username="team@team.com", password="pw") is True
+        assert client.login(username="team@hawcproject.org", password="pw") is True
 
         # empty payload doesn't crash
         data = {}
@@ -310,7 +310,7 @@ class TestAnimalGroupCreateApi:
 
         # valid request
         client = APIClient()
-        assert client.login(username="team@team.com", password="pw") is True
+        assert client.login(username="team@hawcproject.org", password="pw") is True
         response = client.post(url, data)
         assert response.status_code == 201
         animal_group = models.AnimalGroup.objects.get(id=response.json()["id"])
@@ -346,7 +346,7 @@ class TestAnimalGroupCreateApi:
 
         # valid request
         client = APIClient()
-        assert client.login(username="team@team.com", password="pw") is True
+        assert client.login(username="team@hawcproject.org", password="pw") is True
         response = client.post(url, data, format="json")
 
         assert response.status_code == 201
@@ -402,7 +402,7 @@ class TestAnimalGroupCreateApi:
 
         # valid request
         client = APIClient()
-        assert client.login(username="team@team.com", password="pw") is True
+        assert client.login(username="team@hawcproject.org", password="pw") is True
         response = client.post(url, data, format="json")
 
         assert response.status_code == 201
@@ -416,7 +416,7 @@ class TestEndpointCreateApi:
 
         # reviewers shouldn't be able to create
         client = APIClient()
-        assert client.login(username="rev@rev.com", password="pw") is True
+        assert client.login(username="reviewer@hawcproject.org", password="pw") is True
         response = client.post(url, data, format="json")
         assert response.status_code == 403
 
@@ -428,7 +428,7 @@ class TestEndpointCreateApi:
     def test_bad_requests(self, db_keys):
         url = reverse("animal:api:endpoint-list")
         client = APIClient()
-        assert client.login(username="team@team.com", password="pw") is True
+        assert client.login(username="team@hawcproject.org", password="pw") is True
 
         # empty payload doesn't crash
         data = {}
@@ -452,7 +452,7 @@ class TestEndpointCreateApi:
         # ensure forms.EndpointForm.clean_endpoint is called (tested elsewhere)
         url = reverse("animal:api:endpoint-list")
         client = APIClient()
-        assert client.login(username="team@team.com", password="pw") is True
+        assert client.login(username="team@hawcproject.org", password="pw") is True
 
         data = {
             "name": "Endpoint name",
@@ -471,7 +471,7 @@ class TestEndpointCreateApi:
 
     def test_valid_requests(self, db_keys):
         client = APIClient()
-        assert client.login(username="team@team.com", password="pw") is True
+        assert client.login(username="team@hawcproject.org", password="pw") is True
 
         url = reverse("animal:api:endpoint-list")
         data = {"name": "Endpoint name", "animal_group_id": 1, "data_type": "C", "variance_type": 1}
@@ -498,7 +498,7 @@ class TestEndpointCreateApi:
 
         # valid request
         client = APIClient()
-        assert client.login(username="team@team.com", password="pw") is True
+        assert client.login(username="team@hawcproject.org", password="pw") is True
         response = client.post(url, data, format="json")
         assert response.status_code == 201
 
@@ -535,7 +535,7 @@ class TestEndpointCreateApi:
                 {"dose_group_id": 2, "n": 2},
             ],
         }
-        assert client.login(username="team@team.com", password="pw") is True
+        assert client.login(username="team@hawcproject.org", password="pw") is True
 
         # valid request
         response = client.post(url, valid_data, format="json")
@@ -574,7 +574,7 @@ class TestEndpointCreateApi:
         # ensure forms.EndpointGroupForm.clean_endpoint is called (tested elsewhere)
         url = reverse("animal:api:endpoint-list")
         client = APIClient()
-        assert client.login(username="team@team.com", password="pw") is True
+        assert client.login(username="team@hawcproject.org", password="pw") is True
 
         data = {
             "name": "Endpoint name",
@@ -609,12 +609,37 @@ class TestEndpointApi:
 
         # reviewers shouldn't be able to update terms
         client = APIClient()
-        assert client.login(username="rev@rev.com", password="pw") is True
+        assert client.login(username="reviewer@hawcproject.org", password="pw") is True
         response = client.post(url, data, format="json")
         assert response.status_code == 403
 
         # team members should be able to update terms
         client = APIClient()
-        assert client.login(username="team@team.com", password="pw") is True
+        assert client.login(username="team@hawcproject.org", password="pw") is True
         response = client.post(url, data, format="json")
         assert response.status_code == 200
+
+
+@pytest.mark.django_db
+class TestMetadataApi:
+    def test_permissions(self):
+        url = reverse(f"animal:api:metadata-list")
+        # public should have access to this metadata
+        client = APIClient()
+        resp = client.get(url)
+        assert resp.status_code == 200
+
+    def test_metadata(self, rewrite_data_files: bool):
+        fn = "api-animal-metadata.json"
+        url = reverse(f"animal:api:metadata-list") + "?format=json"
+        client = APIClient()
+        resp = client.get(url)
+        assert resp.status_code == 200
+
+        path = Path(DATA_ROOT / fn)
+        data = resp.json()
+
+        if rewrite_data_files:
+            path.write_text(json.dumps(data, indent=2))
+
+        assert data == json.loads(path.read_text())

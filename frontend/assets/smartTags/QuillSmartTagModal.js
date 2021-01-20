@@ -40,18 +40,14 @@ class SmartTagModal {
             .off("click")
             .click(this.tryToSave.bind(this));
 
-        m.on("show", () => {
-            m.find("input").val("");
-        });
+        m.on("shown.bs.modal", () => m.find("input").val(""));
 
-        m.on("shown", () => {
+        m.on("shown.bs.modal", () => {
             this.quill.blur();
             m.find("input:visible").focus();
         });
 
-        m.on("hidden", () => {
-            this.quill.stc.enableModals();
-        });
+        m.on("hidden.bs.modal", () => this.quill.stc.enableModals());
     }
 
     setInitialValues() {}

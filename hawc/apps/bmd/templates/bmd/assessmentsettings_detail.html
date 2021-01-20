@@ -1,32 +1,20 @@
-{% extends 'portal.html' %}
-
-{% block title %}
-  {{ assessment }} | BMD Options | HAWC
-{% endblock title %}
-
-{% block breadcrumbs %}
-  <li><a href="{{ assessment.get_absolute_url }}">{{ assessment }}</a><span class="divider">/</span></li>
-  <li class="active">BMD Settings<span class="divider">/</span></li>
-{% endblock %}
+{% extends 'assessment-rooted.html' %}
 
 {% block content %}
-
   <h1>{{object}}
     {% if obj_perms.edit_assessment %}
-      <div class="btn-group pull-right">
-        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions
-          <span class="caret"></span>
-        </a>
-        <ul class="dropdown-menu">
-          <li><a href="{% url 'bmd:assess_settings_update' assessment.pk %}">Update settings</a></li>
-        </ul>
+      <div class="dropdown btn-group float-right">
+        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
+        <div class="dropdown-menu dropdown-menu-right">
+          <a class="dropdown-item" href="{% url 'bmd:assess_settings_update' assessment.pk %}">Update settings</a>
+        </div>
       </div>
     {% endif %}
   </h1>
 
   <p>BMD assessment-settings can only be modified by project managers.</p>
 
-  <table class="table table-condensed table-striped">
+  <table class="table table-sm table-striped">
     <colgroup>
       <col style="width: 30%;">
       <col style="width: 70%;">

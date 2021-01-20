@@ -1,89 +1,62 @@
-{% extends 'portal.html' %}
+{% extends 'assessment-rooted.html' %}
+
 {% load static %}
 
-{% block title %}{{assessment}} | New visualization {% endblock title %}
-
-{% block breadcrumbs %}
-  <li><a href="{{assessment.get_absolute_url}}">{{assessment}}</a><span class="divider">/</span></li>
-  <li><a href="{% url 'summary:visualization_list' assessment.id %}">Visualizations</a><span class="divider">/</span></li>
-  <li class="active">Create new<span class="divider">/</span></li>
-{% endblock %}
-
-{% block content_type %}container-fluid{% endblock %}
-
 {% block content %}
+<div class="container-fluid">
   <h1>Create a new visualization</h1>
-  <div class="control-group">
-    <p id="hint_id_guideline_compliance" class="help-block">
-        Multiple visualization types are available.
-        Please select the type of visualization you would like to create.
-      </p>
-    <div class="controls">
-      <div>
-        <select class="span10 textinput textInput" id="vis_selector" maxlength="128" name="guideline_compliance" type="text">
-          <option
-            data-showcase="#dataPivot"
-            value="{% url 'summary:dp_new-prompt' assessment.id %}">
-            Data pivot</option>
-          {% comment %}
-          <!-- deprecate; let's see if anyone requests it..  -->
-          <option
-            data-showcase="#visual0"
-            value="{% url 'summary:visualization_create' assessment.id 0 %}">
-            Bioassay endpoint aggregation</option>
-          {% endcomment %}
-          <option
-            data-showcase="#visual1"
-            value="{% url 'summary:visualization_create' assessment.id 1 %}">
-            Bioassay endpoint crossview</option>
-          <option
-            data-showcase="#visual2"
-            value="{% url 'summary:visualization_create' assessment.id 2 %}">
-            {{assessment.get_rob_name_display}} heatmap</option>
-          <option
-            data-showcase="#visual3"
-            value="{% url 'summary:visualization_create' assessment.id 3 %}">
-            {{assessment.get_rob_name_display}} barchart</option>
-          <option data-showcase="#visual4" value="{% url 'summary:visualization_create' assessment.id 4 %}">
-              Literature tagtree</option>
-          <option data-showcase="#visual5" value="{% url 'summary:visualization_create' assessment.id 5 %}">
-              Embedded external website</option>
-          <option data-showcase="#visual6" value="{% url 'summary:visualization_create' assessment.id 6 %}">
-              Exploratory heatmap</option>
-        </select>
-        <a id="create_btn" class="pull-right btn btn-primary span2" href="#">Select</a>
-      </div>
-
+  <p class="form-text text-muted">Multiple visualization types are available. Please select the type of visualization
+    you would like to create.</p>
+  <div class="row">
+    <div class="col-md-9">
+      <select id="vis_selector" class="form-control col-md-12">
+        <option data-showcase="#dataPivot" value="{% url 'summary:dp_new-prompt' assessment.id %}">Data pivot</option>
+        {% comment %}
+        <!-- deprecate; let's see if anyone requests it..  -->
+        <option data-showcase="#visual0" value="{% url 'summary:visualization_create' assessment.id 0 %}">Bioassay
+          endpoint aggregation</option>
+        {% endcomment %}
+        <option data-showcase="#visual1" value="{% url 'summary:visualization_create' assessment.id 1 %}">Bioassay
+          endpoint crossview</option>
+        <option data-showcase="#visual2" value="{% url 'summary:visualization_create' assessment.id 2 %}">
+          {{assessment.get_rob_name_display}} heatmap</option>
+        <option data-showcase="#visual3" value="{% url 'summary:visualization_create' assessment.id 3 %}">
+          {{assessment.get_rob_name_display}} barchart</option>
+        <option data-showcase="#visual4" value="{% url 'summary:visualization_create' assessment.id 4 %}">Literature
+          tagtree</option>
+        <option data-showcase="#visual5" value="{% url 'summary:visualization_create' assessment.id 5 %}">Embedded
+          external website</option>
+        <option data-showcase="#visual6" value="{% url 'summary:visualization_create' assessment.id 6 %}">Exploratory
+          heatmap</option>
+      </select>
+    </div>
+    <div class="col-md-3">
+      <a id="create_btn" class="btn btn-block btn-primary" href="#">Select</a>
     </div>
   </div>
-
-  <div id="showcase" class="row-fluid" style="display: none;">
-  </div>
-
+  <div id="showcase" class="row py-3" style="display: none;"></div>
   <div style="display: none;">
-
-    <div id="visual0">
+    <div id="visual0" class="col-md-12" >
       <h2>Bioassay endpoint aggregation</h2>
       <div class="row">
-        <img class="span10 offset1" src="{% static '/img/summary/aggregation1.png' %}">
+        <img class="col-md-10 col-md-offset-1" src="{% static '/img/summary/aggregation1.png' %}">
       </div>
       <div class="row">
-        <img class="span10 offset1" src="{% static '/img/summary/aggregation2.png' %}">
+        <img class="col-md-10 col-md-offset-1" src="{% static '/img/summary/aggregation2.png' %}">
       </div>
-      <p class="help-block">
+      <p class="form-text text-muted">
         Select a subset of animal bioassay endpoints and present these using
         an exposure-response array or forest-plot design.
         Also creates a dose-response summary table of selected endpoints.
         Interactive, clicking on any point shows dose-response details.
       </p>
     </div>
-
-    <div id="visual1">
+    <div id="visual1" class="col-md-12" >
       <h2>Bioassay endpoint crossview</h2>
       <div class="row">
-        <img class="span10 offset1" src="{% static '/img/summary/crossview.png' %}">
+        <img class="col-md-10 col-md-offset-1" src="{% static '/img/summary/crossview.png' %}">
       </div>
-      <p class="help-block">
+      <p class="form-text text-muted">
         All animal bioassay dose-response datasets available in a HAWC assessment
         for a given dose-unit, with response normalized to percent change from
         control using spline interpolation. Interactive, clicking on any line
@@ -93,14 +66,13 @@
         between non-control dose-groups, and 2+ are required to create a line).
       </p>
     </div>
-
-    <div id="dataPivot">
+    <div id="dataPivot" class="col-md-12" >
       <h2>Data Pivot</h2>
       <div class="row">
-        <img class="span10 offset1" src="{% static '/img/summary/data_pivot.png' %}">
-        <img class="span10 offset1" src="{% static '/img/summary/data_pivot-barchart.png' %}">
+        <img class="col-md-10 col-md-offset-1" src="{% static '/img/summary/data_pivot.png' %}">
+        <img class="col-md-10 col-md-offset-1" src="{% static '/img/summary/data_pivot-barchart.png' %}">
       </div>
-      <p class="help-block">
+      <p class="form-text text-muted">
         Data from any data-stream in HAWC (bioassay, epidemiology, in-vitro) or
         from a tab-delimited file can be used to generate custom forest-plot
         style visualizations. Displayed text-fields and numbers to plot are
@@ -108,92 +80,84 @@
         can also be applied.
       </p>
     </div>
-
-    <div id="visual2">
+    <div id="visual2" class="col-md-12">
       <h2>{{assessment.get_rob_name_display}} heatmap</h2>
       <div class="row">
-        <img
-          class="span10 offset1"
-          style="border-right: 1px solid black; border-bottom: 1px solid black;"
+        <img class="col-md-10 col-md-offset-1" style="border-right: 1px solid black; border-bottom: 1px solid black;"
           src="{% static '/img/summary/rob-heatmap.svg' %}">
       </div>
-      <p class="help-block">
+      <p class="form-text text-muted">
         A {{assessment.get_rob_name_display|lower}} heatmap, showing a subset of selected studies and
         {{assessment.get_rob_name_display|lower}} findings for each metric. This plot is interactive; a user
         can select and row, column, or cell, to view all details associated
         with these cells.
       </p>
     </div>
-
-    <div id="visual3">
+    <div id="visual3" class="col-md-12">
       <h2>{{assessment.get_rob_name_display}} barchart</h2>
       <div class="row">
-        <img
-          class="span10 offset1"
-          style="border-right: 1px solid black; border-bottom: 1px solid black;"
+        <img class="col-md-10 col-md-offset-1" style="border-right: 1px solid black; border-bottom: 1px solid black;"
           src="{% static '/img/summary/rob-barchart.svg' %}">
       </div>
-      <p class="help-block">
+      <p class="form-text text-muted">
         A {{assessment.get_rob_name_display|lower}} stacked barchart, showing the percent of studies with
         each score, for each metric, in a selectable subset of studies.
       </p>
     </div>
-
-    <div id="visual4">
+    <div id="visual4" class="col-md-12">
       <h2>Literature tagtree</h2>
       <div class="row">
-        <img class="span10 offset1" src="{% static '/img/summary/ehp.1509912.g001.jpg' %}">
+        <img class="col-md-10 col-md-offset-1" src="{% static '/img/summary/ehp.1509912.g001.jpg' %}">
       </div>
-      <p class="help-block">
+      <p class="form-text text-muted">
         A customizable dendrogram aka "tagtree" to display literature tags applied to references in a HAWC assessment.
       </p>
     </div>
-
-    <div id="visual5">
+    <div id="visual5" class="col-md-12">
       <h2>Embedded external website</h2>
       <div class="row">
-        <img class="span10 offset1" src="{% static '/img/summary/external-tableau.png' %}">
+        <img class="col-md-10 col-md-offset-1" src="{% static '/img/summary/external-tableau.png' %}">
       </div>
-      <p class="help-block">
+      <p class="form-text text-muted">
         Embed an external website. The following websites can be linked to:
       </p>
       <ul>
         <li><a href="https://public.tableau.com/">Tableau (public)</a></li>
       </ul>
-      <p class="help-block">
+      <p class="form-text text-muted">
         If you'd like to link to another website, please <a href="{% url 'contact' %}">contact us</a>.
       </p>
     </div>
-
-    <div id="visual6">
+    <div id="visual6" class="col-md-12">
       <h2>Exploratory heatmap</h2>
       <div class="row">
-        <img class="span10 offset1" src="{% static '/img/summary/exploratory-heatmap.png' %}">
+        <img class="col-md-10 col-md-offset-1" src="{% static '/img/summary/exploratory-heatmap.png' %}">
       </div>
-      <p class="help-block">
-        A heatmap with customizable axes, filters, and interactivity to explore a dataset visually. The data presented in the heatmap can be content extracted for this assessment (bioassay or epidemiology), or you can upload a <a href="{% url 'assessment:dataset_create' assessment.id %}">tabular dataset</a> for analysis.
+      <p class="form-text text-muted">
+        A heatmap with customizable axes, filters, and interactivity to explore a dataset visually. The data presented
+        in the heatmap can be content extracted for this assessment (bioassay or epidemiology), or you can upload a <a
+          href="{% url 'assessment:dataset_create' assessment.id %}">tabular dataset</a> for analysis.
       </p>
     </div>
-
   </div>
-
+</div>
 {% endblock %}
 
 {% block extrajs %}
 <script type="text/javascript">
-$(document).ready(function(){
+  $(document).ready(function () {
     var a = $('#create_btn'),
-        sel = $('#vis_selector'),
-        showcase = $('#showcase');
+      sel = $('#vis_selector'),
+      showcase = $('#showcase');
 
-    sel.on('change', function(e){
-        a.attr('href', e.target.value);
-        var clone = $(sel.find(':selected').data('showcase')).clone();
-        showcase
-          .fadeOut(function(){showcase.html(clone);})
-          .fadeIn();
+    sel.on('change', function (e) {
+      a.attr('href', e.target.value);
+      var clone = $(sel.find(':selected').data('showcase')).clone();
+      showcase
+        .fadeOut(function () { showcase.html(clone); })
+        .fadeIn();
     })
-    .trigger('change');
-});
+      .trigger('change');
+  });
 </script>
 {% endblock %}

@@ -1,3 +1,4 @@
+{% load cache %}
 {% load static %}
 {% load render_bundle from webpack_loader %}
 
@@ -14,108 +15,71 @@
     <link id="favicon" href="{% static 'img/favicon-64.png' %}" rel="shortcut icon" sizes="64x64" />
     <link id="favicon" href="{% static 'img/favicon-32.png' %}" rel="shortcut icon" sizes="32x32" />
     {% block extrahead %}{% endblock %}
-    {% block external_css %}
-    {% if debug %}
-      <link rel="stylesheet" type="text/css" href="{% static 'debug/font-awesome/css/font-awesome.css' %}" />
-      <link rel="stylesheet" type="text/css" href="{% static 'debug/twitter-bootstrap/2.2.2/css/bootstrap.css' %}" />
-      <link rel="stylesheet" type="text/css" href="{% static 'debug/twitter-bootstrap/2.2.2/css/bootstrap-responsive.css' %}" />
-      <link rel="stylesheet" type="text/css" href="{% static 'debug/jqueryui/1.10.3/css/jquery-ui.css' %}">
-    {% else %}
-      <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css" />
-      <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.2.2/css/bootstrap.min.css" />
-      <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.2.2/css/bootstrap-responsive.min.css" />
-      <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.3/css/base/minified/jquery-ui.min.css" />
-    {% endif %}
-    {% endblock external_css %}
-    <link rel="stylesheet" type="text/css" href="{% static 'css/hawc.css' %}" />
-    <link rel="stylesheet" type="text/css" href="{% static 'css/d3.css' %}" />
-    <link rel="stylesheet" type="text/css" href="{% static 'css/flex.css' %}" />
-    {% block extrastyle %}{% endblock %}
-    {% if user.is_superuser or SERVER_ROLE != 'production' %}
-        {% include 'includes/environment_banner.html' %}
-    {% endif %}
+    {% include 'includes/css.html' %}
   </head>
+  <body>
 
+    {% if user.is_superuser or SERVER_ROLE != 'production' %}
+    {% include 'includes/environment_banner.html' %}
+    {% endif %}
 
-  <body {% block bodyattrs %}class="fill"{% endblock %}>
+    {% cache 3600 header %}
+    {% if extra_branding and flavor == "EPA" %}
+    {% include 'includes/epa/header.html' %}
+    {% endif %}
+    {% endcache %}
 
-    <!-- Navigation bar -->
-    {% block navbar_outer %}
-    <div class="navbar navbar-fixed-top">
-      <div class="navbar-inner">
-        <div class="container-fluid">
+    {% include 'includes/navigation.html' %}
 
-          {% block branding %}
-          <a href="{% if user.is_authenticated %}{% url 'portal' %}{% else %}{% url 'home' %}{% endif %}">
-            <img class="pull-left" src="{% static 'img/HAWC-40.png' %}">
-          </a>
-          {% endblock %}
+    {% block content_row_outer %}
+      <div class="row no-gutters" style="min-height: 100vh;">
+        {% block sidebar_outer %}{% endblock sidebar_outer %}
+        <div id="main-content" class="col overflow-auto">
+          <div id="main-content-container" class="container-fluid">
+            {% block breadcrumbs_outer %}{% endblock breadcrumbs_outer %}
 
-          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </a>
+            {% include "includes/messages.html" %}
 
-          {% block topnavbar %}
-            <div class="nav-collapse collapse">
-              <ul class="nav pull-right">
-                <li><a href="{% url 'contact' %}">Contact</a></li>
-                <li><a href="{% url 'about' %}">About</a></li>
-                <li><a href="{% url 'assessment:public_list' %}">Public Assessments</a></li>
-
-                {% if user.is_authenticated %}
-                <li class="dropdown">
-                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Your HAWC <b class="caret"></b></a>
-                  <ul class="dropdown-menu">
-                    <li><a href="{% url 'portal' %}">Portal</a></li>
-                    <li><a href="{% url 'user:settings' %}">Profile</a></li>
-                    <li><a href="{% url 'mgmt:user_assignments' %}">My assigned tasks</a></li>
-                    {% if user.is_staff %}
-                      <li class="divider"></li>
-                      <li><a href="{%url 'admin:index' %}">Admin</a></li>
-                    {% endif %}
-                    <li class="divider"></li>
-                    <li><a href="{% url 'user:logout' %}">Logout</a></li>
-                  </ul>
-                </li>
-                {% else %}
-                  <li><a href="{% url 'user:login' %}?next={{request.path}}">Login</a></li>
-                {% endif %}
+            {% if UA_SUPPORTED is False %}
+            <div class="alert alert-danger">
+              <p><b>Warning:</b> Your current browser has not been tested extensively with this website, which may result in
+                some some errors with functionality. The following browsers are fully supported:</p>
+              <ul>
+                <li><a href="https://www.google.com/chrome/" target="_blank">Google Chrome</a></li>
+                <li><a href="https://www.mozilla.org/firefox/" target="_blank">Mozilla Firefox</a></li>
+                <li><a href="https://www.microsoft.com/en-us/edge" target="_blank">Microsoft Edge</a></li>
+                <li><a href="https://www.apple.com/safari/" target="_blank">Apple Safari</a></li>
               </ul>
+              <p>Please use a different browser.</p>
             </div>
-          {% endblock %}
-
+            {% endif %}
+            {% block content_header %}{% endblock content_header %}
+            {% block content_outer %}
+              <div class="row">
+                <div class="col overflow-auto">
+                {% block content %}{% endblock content %}
+                </div>
+              </div>
+            {% endblock content_outer %}
+          </div>
         </div>
       </div>
-    </div>
-    {% endblock navbar_outer %}
+    {% endblock content_row_outer %}
 
-    <!-- Main Container -->
-    {% block content_outer %}
-    <div id="container" class="container-fluid ">
+    {% include "includes/footer.html" %}
 
-      {% block messages_base %}
-        {% include "messages.html" %}
-      {% endblock messages_base %}
-
-      {% block main_content %}{% endblock %}
-
-      <div id="footer">{% block footer %}{% endblock %}</div>
-      <div id='hidden' style="display:none">{% block hidden_content %}{% endblock %}</div>
-    </div>
-    {% endblock content_outer %}
-    <!-- END Container -->
-
-    <!-- JS at bottom for quicker pageloads -->
     {% if debug %}
-      <script type="text/javascript" src="{% static 'debug/jquery/1.9.1/jquery.js' %}" ></script>
-      <script type="text/javascript" src="{% static 'debug/twitter-bootstrap/2.2.2/bootstrap.js' %}" ></script>
-      <script type="text/javascript" src="{% static 'debug/jqueryui/1.10.3/jquery-ui.js' %}"></script>
+    <script type="text/javascript" src="{% static 'debug/jquery/3.5.1/jquery.js' %}"></script>
+    <script type="text/javascript" src="{% static 'debug/jquery-migrate/3.3.1/jquery-migrate.js' %}"></script>
+    <script type="text/javascript" src="{% static 'debug/popper.js/1.16.1/umd/popper.js' %}"></script>
+    <script type="text/javascript" src="{% static 'debug/twitter-bootstrap/4.5.2/js/bootstrap.js' %}"></script>
+    <script type="text/javascript" src="{% static 'debug/jqueryui/1.10.3/jquery-ui.js' %}"></script>
     {% else %}
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js" ></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.2.2/bootstrap.min.js" ></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-migrate/3.3.1/jquery-migrate.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.1/umd/popper.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
       {% block google_analytics %}
         <script>
           (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -127,14 +91,7 @@
         </script>
       {% endblock google_analytics %}
     {% endif %}
-    {% block browser_check %}
-    <script type="text/javascript" src="{% static 'js/browserCheck.js' %}"></script>
-    <script type="text/javascript">
-      supportedBrowserCheck();
-    </script>
-    {% endblock browser_check %}
     {% render_bundle 'main' %}
     {% block extrajs %}{% endblock %}
-    {% block portaljs %}{% endblock %}
   </body>
 </html>

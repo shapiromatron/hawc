@@ -1,34 +1,20 @@
-{% extends 'portal.html' %}
+{% extends 'assessment-rooted.html' %}
 
 {% load selectable_tags %}
 {% load crispy_forms_tags %}
-
-
-{% block title %}
-  {{assessment}} | {{assessment.get_rob_name_display}} reviewers | HAWC
-{% endblock %}
-
-{% block breadcrumbs %}
-  <li><a href="{{assessment.get_absolute_url}}">{{ assessment }}</a><span class="divider">/</span></li>
-    <li><a href="{% url 'riskofbias:arob_detail' assessment.pk %}">{{assessment.get_rob_name_display}}</a><span class="divider">/</span></li>
-    <li><a href="{% url 'riskofbias:arob_reviewers' assessment.pk %}">Reviewer assignments</a><span class="divider">/</span></li>
-    <li class="active">Edit<span class="divider">/</span></li>
-{% endblock breadcrumbs %}
 
 {% block extrastyle %}
     {% include_ui_theme %}
 {% endblock %}
 
 {% block content %}
-        <div id='numberForm'>
-            {% crispy form %}
-        </div>
-
-        <div id='reviewersFormset'>
-            {% include "hawc/table_inline_formset.html" with form_show_errors=True %}
-        </div>
+    <div id='numberForm'>
+        {% crispy form %}
+    </div>
+    <div id='reviewersFormset'>
+        {% include "hawc/table_inline_formset.html" with form_show_errors=True %}
+    </div>
 {% endblock %}
-
 
 {% block extrajs %}
     {{formset.form.media}}
@@ -44,7 +30,7 @@
 
         /**
          * Copy reviewer to autocomplete input
-         * @param {$.element} inputNode - div.control-group containing autocomplete widget
+         * @param {$.element} inputNode - div.form-group containing autocomplete widget
          * @param {int} id - user id of reviewer to copy, used for assigning reviewer
          * @param {string} value - display name of reviewer to copy, only used for display
          */

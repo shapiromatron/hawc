@@ -1,4 +1,4 @@
-from django.conf.urls import include, url
+from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
 from . import api, views
@@ -19,104 +19,91 @@ router.register(
     r"dosingregime-cleanup", api.DosingRegimeCleanupFieldsView, basename="dosingregime-cleanup",
 )
 router.register(r"dose-units", api.DoseUnits, basename="dose_units")
+router.register(r"metadata", api.Metadata, basename="metadata")
 
 
 app_name = "animal"
 urlpatterns = [
-    url(r"^api/", include((router.urls, "api"))),
+    path("api/", include((router.urls, "api"))),
     # Heatmap views
-    url(
-        r"^assessment/(?P<pk>\d+)/heatmap-study-design/$",
+    path(
+        "assessment/<int:pk>/heatmap-study-design/",
         views.HeatmapStudyDesign.as_view(),
         name="heatmap_study_design",
     ),
-    url(
-        r"^assessment/(?P<pk>\d+)/heatmap-endpoints/$",
+    path(
+        "assessment/<int:pk>/heatmap-endpoints/",
         views.HeatmapEndpoint.as_view(),
         name="heatmap_endpoints",
     ),
-    url(
-        r"^assessment/(?P<pk>\d+)/heatmap-endpoints-doses/$",
+    path(
+        "assessment/<int:pk>/heatmap-endpoints-doses/",
         views.HeatmapEndpointDose.as_view(),
         name="heatmap_endpoints_doses",
     ),
     # Experiment
-    url(
-        r"^study/(?P<pk>\d+)/experiment/new/$",
-        views.ExperimentCreate.as_view(),
-        name="experiment_new",
+    path(
+        "study/<int:pk>/experiment/new/", views.ExperimentCreate.as_view(), name="experiment_new",
     ),
-    url(
-        r"^study/(?P<pk>\d+)/experiment/copy-as-new-selector/$",
+    path(
+        "study/<int:pk>/experiment/copy-as-new-selector/",
         views.ExperimentCopyAsNewSelector.as_view(),
         name="experiment_copy_selector",
     ),
-    url(r"^experiment/(?P<pk>\d+)/$", views.ExperimentRead.as_view(), name="experiment_detail",),
-    url(
-        r"^experiment/(?P<pk>\d+)/edit/$",
-        views.ExperimentUpdate.as_view(),
-        name="experiment_update",
-    ),
-    url(
-        r"^experiment/(?P<pk>\d+)/delete/$",
-        views.ExperimentDelete.as_view(),
-        name="experiment_delete",
+    path("experiment/<int:pk>/", views.ExperimentRead.as_view(), name="experiment_detail",),
+    path("experiment/<int:pk>/edit/", views.ExperimentUpdate.as_view(), name="experiment_update",),
+    path(
+        "experiment/<int:pk>/delete/", views.ExperimentDelete.as_view(), name="experiment_delete",
     ),
     # AnimalGroup
-    url(
-        r"^experiment/(?P<pk>\d+)/animal-group/new/$",
+    path(
+        "experiment/<int:pk>/animal-group/new/",
         views.AnimalGroupCreate.as_view(),
         name="animal_group_new",
     ),
-    url(
-        r"^experiment/(?P<pk>\d+)/animal-group/copy-as-new-selector/$",
+    path(
+        "experiment/<int:pk>/animal-group/copy-as-new-selector/",
         views.AnimalGroupCopyAsNewSelector.as_view(),
         name="animal_group_copy_selector",
     ),
-    url(
-        r"^animal-group/(?P<pk>\d+)/$", views.AnimalGroupRead.as_view(), name="animal_group_detail",
-    ),
-    url(
-        r"^animal-group/(?P<pk>\d+)/edit/$",
+    path("animal-group/<int:pk>/", views.AnimalGroupRead.as_view(), name="animal_group_detail",),
+    path(
+        "animal-group/<int:pk>/edit/",
         views.AnimalGroupUpdate.as_view(),
         name="animal_group_update",
     ),
-    url(
-        r"^animal-group/(?P<pk>\d+)/delete/$",
+    path(
+        "animal-group/<int:pk>/delete/",
         views.AnimalGroupDelete.as_view(),
         name="animal_group_delete",
     ),
-    url(
-        r"^animal-group/(?P<pk>\d+)/endpoint/copy-as-new-selector/$",
+    path(
+        "animal-group/<int:pk>/endpoint/copy-as-new-selector/",
         views.EndpointCopyAsNewSelector.as_view(),
         name="endpoint_copy_selector",
     ),
     # Dosing Regime
-    url(
-        r"^dosing-regime/(?P<pk>\d+)/edit/$",
+    path(
+        "dosing-regime/<int:pk>/edit/",
         views.DosingRegimeUpdate.as_view(),
         name="dosing_regime_update",
     ),
     # Endpoint
-    url(
-        r"^assessment/(?P<pk>\d+)/endpoints/$", views.EndpointList.as_view(), name="endpoint_list",
-    ),
-    url(
-        r"^assessment/(?P<pk>\d+)/endpoints-v2/$",
+    path("assessment/<int:pk>/endpoints/", views.EndpointList.as_view(), name="endpoint_list",),
+    path(
+        "assessment/<int:pk>/endpoints-v2/",
         views.EndpointListV2.as_view(),
         name="endpoint_list_v2",
     ),
-    url(
-        r"^assessment/(?P<pk>\d+)/endpoints/tags/(?P<tag_slug>[-\w]+)/$",
+    path(
+        "assessment/<int:pk>/endpoints/tags/<slug:tag_slug>/",
         views.EndpointTags.as_view(),
         name="assessment_endpoint_taglist",
     ),
-    url(
-        r"^animal-group/(?P<pk>\d+)/endpoint/new/$",
-        views.EndpointCreate.as_view(),
-        name="endpoint_new",
+    path(
+        "animal-group/<int:pk>/endpoint/new/", views.EndpointCreate.as_view(), name="endpoint_new",
     ),
-    url(r"^endpoint/(?P<pk>\d+)/$", views.EndpointRead.as_view(), name="endpoint_detail"),
-    url(r"^endpoint/(?P<pk>\d+)/edit/$", views.EndpointUpdate.as_view(), name="endpoint_update",),
-    url(r"^endpoint/(?P<pk>\d+)/delete/$", views.EndpointDelete.as_view(), name="endpoint_delete",),
+    path("endpoint/<int:pk>/", views.EndpointRead.as_view(), name="endpoint_detail"),
+    path("endpoint/<int:pk>/edit/", views.EndpointUpdate.as_view(), name="endpoint_update",),
+    path("endpoint/<int:pk>/delete/", views.EndpointDelete.as_view(), name="endpoint_delete",),
 ]

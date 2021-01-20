@@ -13,7 +13,6 @@ from scipy.stats import t
 
 from ..assessment.models import Assessment, BaseEndpoint, DSSTox, EffectTag
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper, df_move_column
-from ..common.models import get_crumbs
 from ..study.models import Study
 from . import managers
 
@@ -249,6 +248,7 @@ class StudyPopulation(models.Model):
     last_updated = models.DateTimeField(auto_now=True)
 
     COPY_NAME = "study_populations"
+    BREADCRUMB_PARENT = "study"
 
     @staticmethod
     def flat_complete_header_row():
@@ -328,9 +328,6 @@ class StudyPopulation(models.Model):
 
     def __str__(self):
         return self.name
-
-    def get_crumbs(self):
-        return get_crumbs(self, self.study)
 
     def can_create_sets(self):
         return self.design not in self.OUTCOME_GROUP_DESIGNS
@@ -432,6 +429,7 @@ class Outcome(BaseEndpoint):
     )
 
     COPY_NAME = "outcomes"
+    BREADCRUMB_PARENT = "study_population"
 
     class Meta:
         ordering = ("id",)
@@ -453,9 +451,6 @@ class Outcome(BaseEndpoint):
 
     def get_absolute_url(self):
         return reverse("epi:outcome_detail", kwargs={"pk": self.pk})
-
-    def get_crumbs(self):
-        return get_crumbs(self, self.study_population)
 
     def can_create_sets(self):
         return not self.study_population.can_create_sets()
@@ -571,6 +566,15 @@ class ComparisonSet(models.Model):
 
     COPY_NAME = "comparison_sets"
 
+    @property
+    def BREADCRUMB_PARENT(self) -> str:
+        if self.study_population is not None:
+            return "study_population"
+        elif self.outcome is not None:
+            return "outcome"
+        else:
+            raise ValueError("Undetermined parent field")
+
     class Meta:
         ordering = ("name",)
 
@@ -590,12 +594,6 @@ class ComparisonSet(models.Model):
 
     def __str__(self):
         return self.name
-
-    def get_crumbs(self):
-        if self.outcome:
-            return get_crumbs(self, self.outcome)
-        else:
-            return get_crumbs(self, self.study_population)
 
     @staticmethod
     def flat_complete_header_row():
@@ -697,11 +695,12 @@ class Group(models.Model):
     participant_n = models.PositiveIntegerField(
         blank=True, null=True, verbose_name="Participant N", help_text="Ex. 1400"
     )
-    isControl = models.NullBooleanField(
+    isControl = models.BooleanField(
         verbose_name="Control?",
         default=None,
         choices=IS_CONTROL_CHOICES,
         help_text="Should this group be interpreted as a null/control group, if applicable",
+        null=True,
     )
     comments = models.TextField(
         blank=True, help_text="Provide additional group or extraction details if necessary",
@@ -710,6 +709,7 @@ class Group(models.Model):
     last_updated = models.DateTimeField(auto_now=True)
 
     COPY_NAME = "groups"
+    BREADCRUMB_PARENT = "comparison_set"
 
     class Meta:
         ordering = (
@@ -725,9 +725,6 @@ class Group(models.Model):
 
     def __str__(self):
         return self.name
-
-    def get_crumbs(self):
-        return get_crumbs(self, self.comparison_set)
 
     @staticmethod
     def flat_complete_header_row():
@@ -906,6 +903,7 @@ class Exposure(models.Model):
     last_updated = models.DateTimeField(auto_now=True)
 
     COPY_NAME = "exposures"
+    BREADCRUMB_PARENT = "study_population"
 
     class Meta:
         ordering = ("name",)
@@ -920,9 +918,6 @@ class Exposure(models.Model):
 
     def get_absolute_url(self):
         return reverse("epi:exp_detail", kwargs={"pk": self.pk})
-
-    def get_crumbs(self):
-        return get_crumbs(self, self.study_population)
 
     @classmethod
     def delete_caches(cls, ids):
@@ -1344,6 +1339,7 @@ class Result(models.Model):
     resulttags = models.ManyToManyField(EffectTag, blank=True, verbose_name="Tags")
 
     COPY_NAME = "results"
+    BREADCRUMB_PARENT = "outcome"
 
     class Meta:
         ordering = ("id",)
@@ -1364,9 +1360,6 @@ class Result(models.Model):
 
     def get_absolute_url(self):
         return reverse("epi:result_detail", kwargs={"pk": self.pk})
-
-    def get_crumbs(self):
-        return get_crumbs(self, self.outcome)
 
     @staticmethod
     def flat_complete_header_row():

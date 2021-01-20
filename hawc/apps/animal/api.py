@@ -25,6 +25,7 @@ from ..common.renderers import PandasRenderers
 from ..common.serializers import HeatmapQuerySerializer, UnusedSerializer
 from ..common.views import AssessmentPermissionsMixin
 from . import exports, models, serializers
+from .actions.model_metadata import AnimalMetadata
 
 
 class AnimalAssessmentViewset(
@@ -219,11 +220,7 @@ class Endpoint(mixins.CreateModelMixin, AssessmentViewset):
     assessment_filter_args = "assessment"
     model = models.Endpoint
     serializer_class = serializers.EndpointSerializer
-    list_actions = [
-        "list",
-        "effects",
-        "rob_filter",
-    ]
+    list_actions = ["list", "effects", "rob_filter"]
 
     def get_queryset(self):
         return self.model.objects.optimized_qs()
@@ -296,3 +293,8 @@ class DosingRegimeCleanupFieldsView(CleanupFieldsBaseViewSet):
 
 class DoseUnits(DoseUnitsViewset):
     pass
+
+
+class Metadata(viewsets.ViewSet):
+    def list(self, request):
+        return AnimalMetadata.handle_request(request)

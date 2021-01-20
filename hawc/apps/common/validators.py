@@ -1,14 +1,15 @@
+from urllib import parse
+
 from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
-from django.utils import http
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 
 
 class CustomURLValidator(URLValidator):
     schemes = ["http", "https", "ftp", "ftps", "smb"]
 
     def __call__(self, value):
-        value = force_text(value)
+        value = force_str(value)
         # Check first if the scheme is valid
         scheme = value.split("://")[0].lower()
         if scheme not in self.schemes:
@@ -17,7 +18,7 @@ class CustomURLValidator(URLValidator):
         if scheme == "smb":
             # assert valid URL, which is already URL quoted as needed
             abspath = value.split(":/")[1]
-            if http.urlquote(http.urlunquote(abspath)) != abspath:
+            if parse.quote(parse.unquote(abspath)) != abspath:
                 raise ValidationError(self.message, code=self.code)
         else:
             super().__call__(value)

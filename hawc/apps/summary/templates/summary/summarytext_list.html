@@ -1,76 +1,36 @@
-{% extends 'base.html' %}
+{% extends 'assessment-rooted.html' %}
 
-{% block title %}
-  {{assessment}} | Summary text | HAWC
-{% endblock %}
-
-{% block bodyattrs %}
-  class="fill" data-spy="scroll" data-target="#sidebar" data-offset="40"
-{% endblock %}
-
-{% block main_content %}
-  <div class="row-fluid">
-    <ul class="breadcrumb">
-      {% if user.is_authenticated %}
-        <li class="active"><a href="{% url 'portal' %}">Home</a><span class="divider">/</span></li>
-      {% else %}
-        <li class="active"><a href="{% url 'assessment:public_list' %}">Public Assessments</a><span class="divider">/</span></li>
-      {% endif %}
-
-      {% block breadcrumbs %}
-        <li><a href="{{assessment.get_absolute_url}}">{{assessment}}</a><span class="divider">/</span></li>
-        <li class="active">Summary<span class="divider">/</span></li>
-      {% endblock breadcrumbs %}
-    </ul>
-  </div>
-
-  <div class="row-fluid">
-    <div id="sidebar" class="span3">
-      <ul id="st_headers_ul" class="nav nav-list well affix-sidenav" data-spy="affix" data-offset-top="65">
-      </ul>
+{% block content %}
+  <div class="row pl-1">
+    <div class="col-md-12">
+        <h1>Summary text
+          <div class="dropdown btn-group float-right">
+            <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
+            <div class="dropdown-menu dropdown-menu-right">
+              {% if obj_perms.edit %}
+              <a class="dropdown-item" href="{% url 'summary:create' assessment.pk %}"><i class="fa fa-fw fa-edit"></i>&nbsp;Update</a>
+              {% endif %}
+            </div>
+          </div>
+        </h1>
     </div>
-
-    <div class="span9">
-
-      <h1>{{assessment}} Summary
-        <div class="btn-group pull-right">
-          <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions
-            <span class="caret"></span>
-          </a>
-          <ul class="dropdown-menu">
-            <li><a href="#" id="smart_tag_toggle">Toggle Smart-Tags</a></li>
-            {% if obj_perms.edit %}
-              <li><a href="{% url 'summary:create' assessment.pk %}">Update text</a></li>
-            {% endif %}
-          </ul>
-        </div>
-      </h1>
-
-      <div id="st_text_div"></div>
-
-    </div>
+    <div id="main" class="container-fluid col-md-12"></div>
   </div>
 {% endblock %}
 
 
 {% block extrajs %}
-  <script type="text/javascript">
-    window.app.summaryStartup(function(summary){
-
-      new summary.SummaryTextTree({
-        "assessment_id": {{assessment.pk}},
-        "mode": "read",
-        "read_headers_ul": $('#st_headers_ul'),
-        "read_text_div": $('#st_text_div'),
-        "user": {%if request.user.is_authenticated %}{{request.user.pk}}{% else %}-1{% endif %}
-      });
-
-      window.app.smartTagsStartup(function(smartTags){
-          $('#smart_tag_toggle').on('click', function(e){
-            smartTags.SmartTagContainer.toggleAllModals('#st_text_div');
-          })
-      })
-
-    });
-  </script>
+<script id="config" type="text/json" charset="utf-8">
+{
+    "assessment_id": {{assessment.pk}},
+    "editMode": false
+}
+</script>
+<script type="text/javascript">
+  window.app.summaryTextStartup(function (startup) {
+    var root = document.getElementById('main'),
+      config = JSON.parse(document.getElementById('config').textContent);
+    startup(root, config);
+  })
+</script>
 {% endblock extrajs %}

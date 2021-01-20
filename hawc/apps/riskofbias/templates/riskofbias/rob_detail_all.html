@@ -1,20 +1,8 @@
-{% extends 'riskofbias/rob_detail.html' %}
-
-
-{% block title %}
-  {{assessment}} | {{object.study}} | All {{assessment.get_rob_name_display|lower}} reviews | HAWC
-{% endblock %}
-
-{% block breadcrumbs_self %}
-  <li><a href="{% url 'riskofbias:rob_detail' object.pk %}">{{assessment.get_rob_name_display}}</a><span class="divider">/</span></li>
-  <li class="active"> All reviews <span class="divider">/</span></li>
-{% endblock %}
+{% extends 'assessment-rooted.html' %}
 
 {% block content %}
-
   <h2>{{object}}: {{assessment.get_rob_name_display}} (all reviews)</h2>
   <div id="robTable"></div>
-
 {% endblock %}
 
 {% block extrajs %}
@@ -27,14 +15,17 @@
         },
         "csrf": "{{ csrf_token }}",
         "host": "//{{request.get_host}}",
-        "display": "all"
+        "display": "all",
+        "isForm": false
     }
 </script>
 <script type="text/javascript">
-    $(document).ready(function(){
-        window.app.riskofbiasStartup(function(riskofbias){
-            riskofbias.TableStartup(document.getElementById('robTable'));
-        })
-    });
+$(document).ready(function (){
+  window.app.riskofbiasStartup(function (riskofbias) {
+    const el = document.getElementById('robTable'),
+      config = JSON.parse(document.getElementById('config').text);
+    riskofbias.TableStartup(el, config);
+  });
+});
 </script>
 {% endblock extrajs %}

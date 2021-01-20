@@ -81,7 +81,7 @@ class App extends Component {
         return (
             <div>
                 <h2>Cleanup {store.assessmentMetadata.name}</h2>
-                <p className="help-block">
+                <p className="form-text text-muted">
                     After data has been initially extracted, this module can be used to update and
                     standardize text which was used during data extraction.
                 </p>

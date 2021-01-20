@@ -82,7 +82,7 @@ class StudyPopulation {
         if (this.data.outcomes.length > 0) {
             $el.append(HAWCUtils.buildUL(this.data.outcomes, liFunc));
         } else {
-            $el.append('<p class="help-block">No outcomes are available.</p>');
+            $el.append('<p class="form-text text-muted">No outcomes are available.</p>');
         }
 
         if (this.data.can_create_sets) {
@@ -90,7 +90,7 @@ class StudyPopulation {
             if (this.data.comparison_sets.length > 0) {
                 $el.append(HAWCUtils.buildUL(this.data.comparison_sets, liFunc));
             } else {
-                $el.append('<p class="help-block">No comparison sets are available.</p>');
+                $el.append('<p class="form-text text-muted">No comparison sets are available.</p>');
             }
         }
 
@@ -98,7 +98,9 @@ class StudyPopulation {
         if (this.data.exposures.length > 0) {
             $el.append(HAWCUtils.buildUL(this.data.exposures, liFunc));
         } else {
-            $el.append('<p class="help-block">No exposure measurements are available.</p>');
+            $el.append(
+                '<p class="form-text text-muted">No exposure measurements are available.</p>'
+            );
         }
         return $el;
     }
@@ -114,8 +116,8 @@ class StudyPopulation {
         var modal = new HAWCModal(),
             title = `<h4>${this.build_breadcrumbs()}</h4>`,
             $content = $('<div class="container-fluid">')
-                .append($('<div class="row-fluid">').append(this.build_details_table()))
-                .append($('<div class="row-fluid">').append(this.build_links_div()));
+                .append($('<div class="row">').append(this.build_details_table()))
+                .append($('<div class="row">').append(this.build_links_div()));
 
         modal
             .addHeader(title)

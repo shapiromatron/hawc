@@ -17,7 +17,7 @@ def test_pubmed_search(db_keys):
     # setup
     assessment_pk = db_keys.assessment_working
     client = Client()
-    assert client.login(username="pm@pm.com", password="pw") is True
+    assert client.login(username="pm@hawcproject.org", password="pw") is True
     data = {
         "source": 1,  # PubMed
         "title": "pm search",
@@ -65,7 +65,7 @@ def test_pubmed_import(db_keys):
     # setup
     assessment_pk = db_keys.assessment_working
     client = Client()
-    assert client.login(username="pm@pm.com", password="pw") is True
+    assert client.login(username="pm@hawcproject.org", password="pw") is True
     data = {
         "source": 1,  # PubMed
         "title": "pm search",
@@ -113,7 +113,7 @@ def test_successful_single_hero_id(db_keys):
     # setup
     assessment_pk = db_keys.assessment_working
     client = Client()
-    assert client.login(username="pm@pm.com", password="pw") is True
+    assert client.login(username="pm@hawcproject.org", password="pw") is True
     data = {
         "source": 2,  # HERO
         "title": "example search",
@@ -156,7 +156,7 @@ def test_failed_hero_id(db_keys):
     # setup
     assessment_pk = db_keys.assessment_working
     client = Client()
-    assert client.login(username="pm@pm.com", password="pw") is True
+    assert client.login(username="pm@hawcproject.org", password="pw") is True
     data = {
         "source": 2,  # HERO
         "title": "example search",
@@ -192,7 +192,7 @@ def test_existing_pubmed_hero_add(db_keys):
     # setup
     assessment_pk = db_keys.assessment_working
     client = Client()
-    assert client.login(username="pm@pm.com", password="pw") is True
+    assert client.login(username="pm@hawcproject.org", password="pw") is True
     data = {
         "source": 2,  # HERO
         "title": "example search",

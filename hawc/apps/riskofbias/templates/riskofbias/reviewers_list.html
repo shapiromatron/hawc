@@ -1,25 +1,12 @@
-{% extends 'portal.html' %}
-
-{% block title %}
-  {{assessment}} | {{assessment.get_rob_name_display}} reviewers | HAWC
-{% endblock %}
-
-{% block breadcrumbs %}
-    <li><a href="{{assessment.get_absolute_url}}">{{ assessment }}</a><span class="divider">/</span></li>
-    <li><a href="{% url 'riskofbias:arob_detail' assessment.pk %}">{{assessment.get_rob_name_display}}</a><span class="divider">/</span></li>
-    <li class="active">Reviewer assignments<span class="divider">/</span></li>
-{% endblock breadcrumbs %}
+{% extends 'assessment-rooted.html' %}
 
 {% block content %}
-
     {% if obj_perms.edit_assessment %}
-    <div class="btn-group pull-right">
-        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions
-            <span class="caret"></span>
-        </a>
-        <ul class="dropdown-menu">
-            <li><a href="{% url 'riskofbias:arob_reviewers_update' assessment.pk %}">Update</a></li>
-        </ul>
+    <div class="dropdown btn-group float-right">
+        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
+        <div class="dropdown-menu dropdown-menu-right">
+            <a class="dropdown-item" href="{% url 'riskofbias:arob_reviewers_update' assessment.pk %}">Update</a>
+        </div>
     </div>
     {% endif %}
 
@@ -31,7 +18,7 @@
         <b>Independent reviews: </b>{{assessment.rob_settings.number_of_reviewers}}
     </p>
 
-    <table class="table table-condensed table-striped">
+    <table class="table table-sm table-striped">
         {% for study in object_list %}
         {% if forloop.first %}
         <thead>

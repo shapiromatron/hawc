@@ -1,4 +1,5 @@
 import json
+from typing import List
 
 from django.forms.models import model_to_dict
 from django.http import Http404, HttpResponse, HttpResponseRedirect
@@ -9,6 +10,7 @@ from django.views.generic import DetailView, TemplateView
 from django.views.generic.edit import FormView
 
 from ..assessment.models import Assessment
+from ..common.crumbs import Breadcrumb
 from ..common.helper import listToUl, tryParseInt
 from ..common.views import (
     AssessmentPermissionsMixin,
@@ -24,10 +26,21 @@ from ..common.views import (
 from . import constants, forms, models
 
 
+def lit_overview_breadcrumb(assessment) -> Breadcrumb:
+    return Breadcrumb(name="Literature review", url=reverse("lit:overview", args=(assessment.id,)))
+
+
+def lit_overview_crumbs(user, assessment: Assessment, name: str) -> List[Breadcrumb]:
+    return Breadcrumb.build_crumbs(
+        user, name, [Breadcrumb.from_object(assessment), lit_overview_breadcrumb(assessment)]
+    )
+
+
 class LitOverview(BaseList):
     parent_model = Assessment
     model = models.Search
     template_name = "lit/overview.html"
+    breadcrumb_active_name = "Literature review"
 
     def get_queryset(self):
         return self.model.objects.filter(assessment=self.assessment).exclude(slug="manual-import")
@@ -55,14 +68,6 @@ class LitOverview(BaseList):
         return context
 
 
-class SearchList(BaseList):
-    parent_model = Assessment
-    model = models.Search
-
-    def get_queryset(self):
-        return self.model.objects.get_qs(self.assessment)
-
-
 class SearchCopyAsNewSelector(AssessmentPermissionsMixin, FormView):
     """
     Select an existing search and copy-as-new
@@ -79,6 +84,9 @@ class SearchCopyAsNewSelector(AssessmentPermissionsMixin, FormView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["assessment"] = self.assessment
+        context["breadcrumbs"] = lit_overview_crumbs(
+            self.request.user, self.assessment, "Copy literature search or import"
+        )
         return context
 
     def get_form_kwargs(self):
@@ -123,6 +131,11 @@ class ImportNew(SearchNew):
     form_class = forms.ImportForm
     search_type = "Import"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"][-1].name = "Create import"
+        return context
+
 
 class ImportRISNew(ImportNew):
     form_class = forms.RisImportForm
@@ -130,6 +143,11 @@ class ImportRISNew(ImportNew):
 
 class RISExportInstructions(TemplateView):
     template_name = "lit/ris_export_instructions.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"] = Breadcrumb.build_crumbs(self.request.user, "RIS instructions")
+        return context
 
 
 class SearchDetail(BaseDetail):
@@ -142,6 +160,11 @@ class SearchDetail(BaseDetail):
             assessment=self.kwargs.get("pk"),
         )
         return super().get_object(object=obj)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"].insert(2, lit_overview_breadcrumb(self.assessment))
+        return context
 
 
 class SearchUpdate(BaseUpdate):
@@ -168,6 +191,7 @@ class SearchUpdate(BaseUpdate):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["type"] = self.object.get_search_type_display()
+        context["breadcrumbs"].insert(2, lit_overview_breadcrumb(self.assessment))
         return context
 
 
@@ -182,7 +206,12 @@ class SearchDelete(BaseDelete):
         return super().get_object(object=obj)
 
     def get_success_url(self):
-        return reverse_lazy("lit:search_list", kwargs={"pk": self.assessment.pk})
+        return reverse_lazy("lit:overview", kwargs={"pk": self.assessment.pk})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"].insert(2, lit_overview_breadcrumb(self.assessment))
+        return context
 
 
 class SearchQuery(BaseUpdate):
@@ -245,6 +274,7 @@ class TagReferences(TeamMemberOrHigherMixin, FormView):
         context = super().get_context_data(**kwargs)
         context["object"] = self.object
         context["model"] = self.model.__name__
+        context["breadcrumbs"] = lit_overview_crumbs(self.request.user, self.assessment, "CHANGE")
         return context
 
 
@@ -268,6 +298,8 @@ class TagBySearch(TagReferences):
         )
         context["references"] = qs
         context["tags"] = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
+        context["breadcrumbs"][3] = Breadcrumb.from_object(self.object)
+        context["breadcrumbs"].append(Breadcrumb(name="Update tags"))
         return context
 
 
@@ -289,6 +321,8 @@ class TagByReference(TagReferences):
         )
         context["references"] = qs
         context["tags"] = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
+        context["breadcrumbs"][3] = Breadcrumb.from_object(self.object)
+        context["breadcrumbs"].append(Breadcrumb(name="Update tags"))
         return context
 
 
@@ -312,6 +346,7 @@ class TagByTag(TagReferences):
         )
         context["references"] = qs
         context["tags"] = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
+        context["breadcrumbs"][3] = Breadcrumb(name=f'Update "{self.object.name}" tags')
         return context
 
 
@@ -333,6 +368,7 @@ class TagByUntagged(TagReferences):
         )
         context["references"] = qs
         context["tags"] = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
+        context["breadcrumbs"][3] = Breadcrumb(name="Tag untagged references")
         return context
 
 
@@ -354,6 +390,8 @@ class SearchRefList(BaseDetail):
         context["object_type"] = "search"
         context["tags"] = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
         context["untagged"] = self.object.references_untagged
+        context["breadcrumbs"].insert(2, lit_overview_breadcrumb(self.assessment))
+        context["breadcrumbs"].append(Breadcrumb(name="References"))
         return context
 
 
@@ -375,6 +413,8 @@ class SearchTagsVisualization(BaseDetail):
         context["ref_objs"] = self.object.get_all_reference_tags()
         context["tags"] = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
         context["objectType"] = self.model.__name__
+        context["breadcrumbs"].insert(2, lit_overview_breadcrumb(self.assessment))
+        context["breadcrumbs"].append(Breadcrumb(name="Visualization"))
         return context
 
 
@@ -388,6 +428,7 @@ class RefList(BaseList):
         context["ref_objs"] = models.Reference.objects.get_full_assessment_json(self.assessment)
         context["tags"] = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
         context["untagged"] = models.Reference.objects.get_untagged_references(self.assessment)
+        context["breadcrumbs"].insert(2, lit_overview_breadcrumb(self.assessment))
         return context
 
 
@@ -420,6 +461,13 @@ class RefUploadExcel(ProjectManagerOrHigherMixin, MessageMixin, FormView):
         self.success_message = msg
         return super().form_valid(form)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"] = lit_overview_crumbs(
+            self.request.user, self.assessment, "Reference upload"
+        )
+        return context
+
     def get_success_url(self):
         return reverse_lazy("lit:overview", args=[self.assessment.pk])
 
@@ -429,9 +477,15 @@ class RefListExtract(BaseList):
     model = models.Reference
     crud = "Update"  # update-level permission required despite list-view
     template_name = "lit/reference_extract_list.html"
+    breadcrumb_active_name = "Prepare for extraction"
 
     def get_queryset(self):
         return self.model.objects.get_references_ready_for_import(self.assessment)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"].insert(2, lit_overview_breadcrumb(self.assessment))
+        return context
 
 
 class RefDetail(BaseDetail):
@@ -441,6 +495,7 @@ class RefDetail(BaseDetail):
         context = super().get_context_data(**kwargs)
         context["tags"] = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
         context["object_json"] = self.object.get_json()
+        context["breadcrumbs"].insert(2, lit_overview_breadcrumb(self.assessment))
         return context
 
 
@@ -448,6 +503,11 @@ class RefEdit(BaseUpdate):
     success_message = "Reference updated."
     model = models.Reference
     form_class = forms.ReferenceForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"].insert(2, lit_overview_breadcrumb(self.assessment))
+        return context
 
 
 class RefDelete(BaseDelete):
@@ -457,20 +517,23 @@ class RefDelete(BaseDelete):
     def get_success_url(self):
         return reverse_lazy("lit:overview", args=(self.assessment.pk,))
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["tags"] = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
+        context["object_json"] = self.object.get_json()
+        context["breadcrumbs"].insert(2, lit_overview_breadcrumb(self.assessment))
+        return context
 
-class RefSearch(AssessmentPermissionsMixin, TemplateView):
+
+class RefSearch(BaseDetail):
+    model = Assessment
     template_name = "lit/reference_search.html"
-
-    def dispatch(self, *args, **kwargs):
-        self.assessment = get_object_or_404(Assessment, pk=kwargs["pk"])
-        self.permission_check_user_can_view()
-        return super().dispatch(*args, **kwargs)
+    breadcrumb_active_name = "Reference search"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["assessment"] = self.assessment
-        context["obj_perms"] = super().get_obj_perms()
         context["tags"] = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
+        context["breadcrumbs"].insert(2, lit_overview_breadcrumb(self.assessment))
         return context
 
 
@@ -512,6 +575,7 @@ class RefsByTagJSON(BaseDetail):
 class RefVisualization(BaseDetail):
     model = Assessment
     template_name = "lit/reference_visual.html"
+    breadcrumb_active_name = "Visualization"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -519,12 +583,14 @@ class RefVisualization(BaseDetail):
         context["ref_objs"] = models.Reference.objects.get_full_assessment_json(self.assessment)
         context["tags"] = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
         context["objectType"] = self.model.__name__
+        context["breadcrumbs"].insert(2, lit_overview_breadcrumb(self.assessment))
         return context
 
 
 class RefTopicModel(BaseDetail):
     model = models.LiteratureAssessment
     template_name = "lit/topic_model.html"
+    breadcrumb_active_name = "Topic model"
 
     def get_object(self, queryset=None):
         # use the assessment_id as the primary key instead of the models.LiteratureAssessment
@@ -535,6 +601,7 @@ class RefTopicModel(BaseDetail):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["num_references"] = self.object.assessment.references.count()
+        context["breadcrumbs"][2] = lit_overview_breadcrumb(self.assessment)
         context["data"] = json.dumps(
             dict(
                 topicModelUrl=self.object.get_topic_model_url(),
@@ -574,6 +641,9 @@ class TagsUpdate(ProjectManagerOrHigherMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["lit_assesment_update_url"] = self.assessment.literature_settings.get_update_url()
+        context["breadcrumbs"] = lit_overview_crumbs(
+            self.request.user, self.assessment, "Update tags"
+        )
         return context
 
 
@@ -584,6 +654,11 @@ class LiteratureAssessmentUpdate(ProjectManagerOrHigherMixin, BaseUpdate):
 
     def get_assessment(self, request, *args, **kwargs):
         return self.get_object().assessment
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"][2] = lit_overview_breadcrumb(self.assessment)
+        return context
 
     def get_success_url(self):
         return reverse_lazy("lit:tags_update", args=(self.assessment.id,))
@@ -607,6 +682,9 @@ class TagsCopy(AssessmentPermissionsMixin, MessageMixin, FormView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["assessment"] = self.assessment
+        context["breadcrumbs"] = lit_overview_crumbs(
+            self.request.user, self.assessment, "Copy tags"
+        )
         return context
 
     def get_form_kwargs(self):

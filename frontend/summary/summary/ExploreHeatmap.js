@@ -60,8 +60,8 @@ class ExploreHeatmapComponent extends Component {
                 </div>
                 {hasFilters ? (
                     <div
+                        className="ml-2"
                         style={{
-                            marginLeft: 10,
                             display: "flex",
                             flex: 3,
                             minWidth: 300,
@@ -209,7 +209,7 @@ class ExploreHeatmap extends BaseVisual {
                     const settings = this.getSettings(),
                         dataset = resp.dataset;
 
-                    modal.getModal().on("shown", function() {
+                    modal.getModal().on("shown.bs.modal", function() {
                         startupHeatmapAppRender($plotDiv[0], settings, dataset, options);
                         caption.renderAndEnable();
                     });

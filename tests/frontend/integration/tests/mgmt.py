@@ -14,6 +14,6 @@ def mgmt(driver, root_url):
     # /mgmt/assessment/:id/edit/
     h.go_to(root_url + "/mgmt/assessment/1/edit/")
     h.wait_until(h.Text("Sort studies by").exists)
-    assert len(driver.find_elements_by_css_selector(".taskStudy")) == 1
+    assert len(driver.find_elements_by_css_selector(".taskStudyRow")) == 1
 
     shared.logout()

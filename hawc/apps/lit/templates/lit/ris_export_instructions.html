@@ -1,11 +1,9 @@
-{% extends 'base.html' %}
+{% extends 'breadcrumbed.html' %}
+
 {% load static %}
 
-{% block title %} EndNote RIS instructions {% endblock title %}
-
-{% block main_content %}
-<div class="row-fluid">
-<div class="span6 offset3">
+{% block content %}
+<div class="col-md-8 col-md-offset-2">
 
 <h1 id="preparing-endnote-exports-for-upload">Preparing EndNote exports for upload</h1>
 
@@ -211,7 +209,5 @@ Also remove duplicates of items already in your HAWC project.</p>
 <li>DOI</li>
 <li>Accession #</li>
 </ul>
-
 </div>
-</div>
-{% endblock main_content %}
+{% endblock content %}

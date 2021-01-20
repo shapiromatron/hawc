@@ -3,7 +3,7 @@ from django.forms.fields import TextInput
 from django.urls import reverse
 
 from ..assessment.models import Assessment
-from ..common.forms import BaseFormHelper
+from ..common.forms import BaseFormHelper, build_form_actions
 from ..lit.models import Reference
 from . import models
 
@@ -45,18 +45,18 @@ class BaseStudyForm(forms.ModelForm):
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "span12"
+                widget.attrs["class"] = "col-md-12"
             else:
                 widget.attrs["class"] = "checkbox"
 
         helper = BaseFormHelper(self, **inputs)
-        helper.form_class = None
+
         if "authors" in self.fields:
-            helper.add_fluid_row("authors", 2, "span6")
-        helper.add_fluid_row("short_citation", 2, "span6")
-        helper.add_fluid_row("bioassay", 4, "span3")
-        helper.add_fluid_row("coi_reported", 2, "span6")
-        helper.add_fluid_row("contact_author", 2, "span6")
+            helper.add_row("authors", 2, "col-md-6")
+        helper.add_row("short_citation", 2, "col-md-6")
+        helper.add_row("bioassay", 4, "col-md-3")
+        helper.add_row("coi_reported", 2, "col-md-6")
+        helper.add_row("contact_author", 2, "col-md-6")
         return helper
 
 
@@ -132,10 +132,21 @@ class AttachmentForm(forms.ModelForm):
         fields = ("attachment",)
 
     def __init__(self, *args, **kwargs):
-        study = kwargs.pop("parent", None)
+        study = kwargs.pop("parent")
         super().__init__(*args, **kwargs)
         if study:
             self.instance.study = study
+
+    @property
+    def helper(self):
+        return BaseFormHelper(
+            self,
+            legend_text="Add an attachment to a study",
+            help_text="Upload a file to be associated with his study. Multiple files can be uploaded by creating additional attachments.",
+            form_actions=build_form_actions(
+                cancel_url=self.instance.study.get_absolute_url(), save_text="Create attachment"
+            ),
+        )
 
 
 class StudiesCopy(forms.Form):
@@ -168,7 +179,7 @@ class StudiesCopy(forms.Form):
     def setHelper(self, assessment):
         self.fields["studies"].widget.attrs["size"] = 15
         for fld in list(self.fields.keys()):
-            self.fields[fld].widget.attrs["class"] = "span12"
+            self.fields[fld].widget.attrs["class"] = "col-md-12"
 
         inputs = {
             "legend_text": "Copy studies across assessments",
@@ -177,5 +188,5 @@ class StudiesCopy(forms.Form):
         }
 
         helper = BaseFormHelper(self, **inputs)
-        helper.form_class = None
+
         return helper

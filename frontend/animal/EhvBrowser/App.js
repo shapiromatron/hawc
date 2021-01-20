@@ -20,10 +20,10 @@ class App extends Component {
     render() {
         return (
             <>
-                <div className="input-append">
+                <div className="input-group">
                     <input
                         id="searchQuery"
-                        className="span6"
+                        className="form-control"
                         type="text"
                         value={this.state.query}
                         onChange={e => {

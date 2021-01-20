@@ -23,11 +23,13 @@ class GroupedObjectList extends Component {
                     </div>
                 ) : null}
                 <div className="row">
-                    <span className="bulk-header span4">{h.caseToWords(store.selectedField)}</span>
-                    <span className="bulk-header span5">
+                    <span className="bulk-header col-md-4">
+                        {h.caseToWords(store.selectedField)}
+                    </span>
+                    <span className="bulk-header col-md-5">
                         {h.caseToWords(store.selectedField)} edit
                     </span>
-                    <span className="bulk-header span2">Submit</span>
+                    <span className="bulk-header col-md-2">Submit</span>
                 </div>
                 {store.groupedObjects.map(items => {
                     const key = items[0][store.selectedField] || "<empty>",

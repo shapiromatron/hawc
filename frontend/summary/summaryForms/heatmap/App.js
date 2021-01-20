@@ -48,7 +48,7 @@ class App extends Component {
                         onClick={handleSubmit}
                     />
                     <span>&nbsp;</span>
-                    <a role="button" className="btn btn-default" href={cancel_url}>
+                    <a role="button" className="btn btn-secondary" href={cancel_url}>
                         Cancel
                     </a>
                 </div>

@@ -1,4 +1,3 @@
-import _ from "lodash";
 import $ from "$";
 
 import HAWCUtils from "utils/HAWCUtils";
@@ -34,19 +33,19 @@ class TextField extends InputField {
     }
 
     _setInput() {
-        this.$inp = $(`<input type="text" name="${this.schema.name}" class="span12" required>`);
+        this.$inp = $(
+            `<input type="text" name="${this.schema.name}" class="form-control" required>`
+        );
     }
 
     render() {
         this._setInput();
-        var $ctrl = $('<div class="controls">').append(this.$inp);
+        var $div = $('<div class="form-group">')
+            .append(`<label class="col-form-label">${this.schema.label}</label>`)
+            .append(this.$inp);
 
         if (this.schema.helpText)
-            $ctrl.append(`<span class="help-inline">${this.schema.helpText}</span>`);
-
-        var $div = $('<div class="control-group form-row">')
-            .append(`<label class="control-label">${this.schema.label}:</label>`)
-            .append($ctrl);
+            $div.append(`<span class="form-text text-muted">${this.schema.helpText}</span>`);
 
         this.$parent.append($div);
     }
@@ -58,7 +57,9 @@ class IntegerField extends TextField {
     }
 
     _setInput() {
-        this.$inp = $(`<input type="number" name="${this.schema.name}" class="span12" required>`);
+        this.$inp = $(
+            `<input type="number" name="${this.schema.name}" class="form-control" required>`
+        );
     }
 }
 
@@ -69,14 +70,16 @@ class FloatField extends TextField {
 
     _setInput() {
         this.$inp = $(
-            `<input type="number" step="any" name="${this.schema.name}" class="span12" required>`
+            `<input type="number" step="any" name="${this.schema.name}" class="form-control" required>`
         );
     }
 }
 
 class ColorField extends TextField {
     _setInput() {
-        this.$inp = $(`<input type="color" name="${this.schema.name}" class="span12" required>`);
+        this.$inp = $(
+            `<input type="color" name="${this.schema.name}" class="form-control" required>`
+        );
     }
 }
 
@@ -90,7 +93,21 @@ class CheckboxField extends TextField {
     }
 
     _setInput() {
-        this.$inp = $(`<input type="checkbox" name="${this.schema.name}">`);
+        this.$inp = $(
+            `<input type="checkbox" class="form-check-input" name="${this.schema.name}">`
+        );
+    }
+
+    render() {
+        this._setInput();
+        var $div = $('<div class="form-group form-check">')
+            .append(this.$inp)
+            .append(`<label class="form-check-label">${this.schema.label}:</label>`);
+
+        if (this.schema.helpText)
+            $div.append(`<span class="form-text text-muted">${this.schema.helpText}</span>`);
+
+        this.$parent.append($div);
     }
 }
 
@@ -106,16 +123,23 @@ class RadioField extends TextField {
     }
 
     _setInput() {
-        var radios = _.map(
-            this.schema.options,
-            _.bind(function(d) {
-                return `<label class="radio inline">
-                    ${d.label}
-                    <input name="${this.schema.name}" type="radio" value="${d.value}">
-                </label>`;
-            }, this)
-        );
+        var radios = this.schema.options.map(d => {
+            return `<div class='form-check'>
+                <input name="${this.schema.name}" type="radio" class="form-check-input" value="${d.value}">
+                <label class="form-check-label">${d.label}</label>
+            </div>`;
+        });
         this.$inp = $("<div>").html(radios.join("\n"));
+    }
+
+    render() {
+        this._setInput();
+        var $div = $('<div class="form-group">').append(this.$inp);
+
+        if (this.schema.helpText)
+            $div.append(`<span class="form-text text-muted">${this.schema.helpText}</span>`);
+
+        this.$parent.append($div);
     }
 }
 
@@ -124,7 +148,7 @@ class SelectField extends TextField {
         var makeOpt = function(d) {
             return `<option value="${d[0]}">${d[1]}</option>`;
         };
-        this.$inp = $(`<select name="${this.schema.name}" class="span12">`).html(
+        this.$inp = $(`<select name="${this.schema.name}" class="form-control">`).html(
             this.schema.opts.map(makeOpt).join("")
         );
     }
@@ -150,7 +174,9 @@ class HeaderNullField extends NullField {
 
 class HelpTextNullField extends NullField {
     render() {
-        this.$parent.append(`<p class="helpTextForTable help-inline">${this.schema.helpText}</p>`);
+        this.$parent.append(
+            `<p class="helpTextForTable form-text text-muted pb-2">${this.schema.helpText}</p>`
+        );
     }
 }
 

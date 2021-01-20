@@ -1,13 +1,4 @@
-{% extends 'portal.html' %}
-
-
-{% block title %}
-    {% include "hawc/siteTitle.html" with crumbs=object.get_crumbs crud=crud %}
-{% endblock title %}
-
-{% block breadcrumbs %}
-    {% include "hawc/breadcrumbs.html" with crumbs=object.get_crumbs crud=crud %}
-{% endblock %}
+{% extends 'assessment-rooted.html' %}
 
 {% block content %}
     <div id="ivEndpoint"></div>

@@ -4,6 +4,8 @@ import os
 
 from .base import *
 
+EXTRA_BRANDING = os.getenv("HAWC_EXTRA_BRANDING", "True") == "True"
+
 SERVER_ROLE = "staging"
 SERVER_BANNER_COLOR = "#EE8416"
 
@@ -32,3 +34,5 @@ else:
     raise ValueError("Unknown email backend")
 
 LOGGING["loggers"]["django"]["handlers"] = ["file"]
+
+ANYONE_CAN_CREATE_ASSESSMENTS = os.getenv("HAWC_ANYONE_CAN_CREATE_ASSESSMENTS", "True") == "True"

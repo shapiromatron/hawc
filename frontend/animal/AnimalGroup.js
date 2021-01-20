@@ -51,9 +51,7 @@ class AnimalGroup {
             getRelations = function(lst) {
                 return _.chain(lst)
                     .map(self._getAniRelationLink)
-                    .map(function(d) {
-                        return $("<li>").append(d);
-                    })
+                    .map(d => $("<span>").append(d))
                     .value();
             },
             tbl;
@@ -149,9 +147,9 @@ class AnimalGroup {
     displayAsModal() {
         var modal = new HAWCModal(),
             title = $("<h4>").html(this.build_breadcrumbs()),
-            $details = $('<div class="span12">'),
+            $details = $('<div class="col-md-12">'),
             $content = $('<div class="container-fluid">').append(
-                $('<div class="row-fluid">').append($details)
+                $('<div class="row">').append($details)
             );
 
         this.render($details);

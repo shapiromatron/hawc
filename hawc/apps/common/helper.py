@@ -3,10 +3,10 @@ import hashlib
 import logging
 import re
 import uuid
-from collections import OrderedDict
+from collections import OrderedDict, defaultdict
 from dataclasses import dataclass
 from math import inf
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Set
 
 import pandas as pd
 from django.conf import settings
@@ -14,7 +14,7 @@ from django.core.cache import cache
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import QuerySet
 from django.utils import html
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 from rest_framework.renderers import JSONRenderer
 
 
@@ -22,7 +22,32 @@ def read_excel(*args, **kwargs):
     """
     We use openpyxl as the engine since the default xlrd is no longer maintained.
     """
-    return pd.read_excel(*args, **kwargs, engine="openpyxl")
+    kwargs.update(engine="openpyxl")
+    return pd.read_excel(*args, **kwargs)
+
+
+def rename_duplicate_columns(df: pd.DataFrame) -> pd.DataFrame:
+    """Rename column headers inplace to ensure no header names are duplicated.
+
+    Args:
+        df (pd.DataFrame): A dataframe with a single index of columns
+
+    Returns:
+        pd.DataFrame: The dataframe with headers renamed; inplace
+    """
+    if not df.columns.has_duplicates:
+        return df
+    duplicates: Set[str] = set(df.columns[df.columns.duplicated()].tolist())
+    indexes: Dict[str, int] = defaultdict(lambda: 0)
+    new_cols: List[str] = []
+    for col in df.columns:
+        if col in duplicates:
+            indexes[col] += 1
+            new_cols.append(f"{col}.{indexes[col]}")
+        else:
+            new_cols.append(col)
+    df.columns = new_cols
+    return df
 
 
 def HAWCtoDateString(datetime):
@@ -43,7 +68,7 @@ def cleanHTML(txt: str):
 def strip_entities(value):
     """Return the given HTML with all entities (&something;) stripped."""
     # Note: Originally in Django but removed in v1.10
-    return re.sub(r"&(?:\w+|#\d+);", "", force_text(value))
+    return re.sub(r"&(?:\w+|#\d+);", "", force_str(value))
 
 
 def strip_tags(value):
