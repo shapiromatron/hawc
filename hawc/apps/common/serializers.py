@@ -7,24 +7,18 @@ from rest_framework import serializers
 from rest_framework.renderers import JSONRenderer
 
 
-def to_json(
-    Serializer: serializers.ModelSerializer, instance: models.Model, escape: bool = False
-) -> str:
+def to_json(Serializer: serializers.ModelSerializer, instance: models.Model) -> str:
     """Return a JSON string from an instance just like a serializer would, outside of the drf view logic.
 
     Args:
         Serializer (serializers.ModelSerializer): a django model serializer class
         instance (models.Model): a django model instance
-        escape (bool): Escape json string so it can be nested
 
     Returns:
         str: a JSON string representation
     """
     serializer = Serializer(instance=instance)
-    text = JSONRenderer().render(serializer.data).decode("utf8")
-    if escape:
-        text = text.replace('"', '\\"')
-    return text
+    return JSONRenderer().render(serializer.data).decode("utf8")
 
 
 def validate_pydantic(
