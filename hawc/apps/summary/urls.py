@@ -19,6 +19,34 @@ urlpatterns = [
     path(
         "assessment/<int:pk>/summaries/modify/", views.SummaryTextModify.as_view(), name="create",
     ),
+    # SUMMARY TABLES
+    path("assessment/<int:pk>/tables/", views.SummaryTableList.as_view(), name="tables_list"),
+    path(
+        "assessment/<int:pk>/tables/create/",
+        views.SummaryTableCreateSelector.as_view(),
+        name="tables_create_selector",
+    ),
+    path(
+        "assessment/<int:pk>/tables/<int:table_type>/create/",
+        views.SummaryTableCreate.as_view(),
+        name="tables_create",
+    ),
+    path(
+        "tables/assessment/<int:pk>/<slug:slug>/",
+        views.SummaryTableDetail.as_view(),
+        name="tables_detail",
+    ),
+    path("tables/<int:pk>/", views.SummaryTableIdDetail.as_view(), name="tables_detail_id"),
+    path(
+        "tables/assessment/<int:pk>/<slug:slug>/update/",
+        views.SummaryTableUpdate.as_view(),
+        name="tables_update",
+    ),
+    path(
+        "tables/assessment/<int:pk>/<slug:slug>/delete/",
+        views.SummaryTableDelete.as_view(),
+        name="tables_delete",
+    ),
     # VISUALIZATIONS
     path(
         "assessment/<int:pk>/visuals/",

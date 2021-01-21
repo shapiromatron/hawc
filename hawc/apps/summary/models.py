@@ -183,8 +183,26 @@ class SummaryTable(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
+    BREADCRUMB_PARENT = "assessment"
+
+    def __str__(self):
+        return self.title
+
     def get_assessment(self):
         return self.assessment
+
+    @classmethod
+    def get_list_url(cls, assessment_id):
+        return reverse("summary:tables_list", args=(assessment_id,))
+
+    def get_absolute_url(self):
+        return reverse("summary:tables_detail", args=(self.assessment_id, self.slug,))
+
+    def get_update_url(self):
+        return reverse("summary:tables_update", args=(self.assessment_id, self.slug,))
+
+    def get_delete_url(self):
+        return reverse("summary:tables_delete", args=(self.assessment_id, self.slug,))
 
     def get_content_schema_class(self):
         if self.table_type == self.GENERIC:

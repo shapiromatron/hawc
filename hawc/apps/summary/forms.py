@@ -458,6 +458,58 @@ class SummaryTextForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
 
 
+class SummaryTableForm(forms.ModelForm):
+    class Meta:
+        model = models.SummaryTable
+        exclude = ("assessment", "table_type")
+
+    def __init__(self, *args, **kwargs):
+        self.assessment = kwargs.pop("parent", None)
+        table_type = kwargs.pop("table_type", None)
+        super().__init__(*args, **kwargs)
+        if not self.instance.id:
+            self.instance.assessment = self.assessment
+            self.instance.table_type = table_type
+
+    @property
+    def helper(self):
+        if self.instance.id:
+            inputs = {
+                "legend_text": f"Update {self.instance}",
+                "help_text": "Update an existing visualization.",
+                "cancel_url": self.instance.get_absolute_url(),
+            }
+        else:
+            inputs = {
+                "legend_text": "Create new summary table",
+                "help_text": "...",
+                "cancel_url": models.SummaryTable.get_list_url(self.assessment.id),
+            }
+        return BaseFormHelper(self, **inputs)
+
+
+class SummaryTableSelectorForm(forms.Form):
+    table_type = forms.IntegerField(widget=forms.Select(choices=models.SummaryTable.TABLE_CHOICES))
+
+    def __init__(self, *args, **kwargs):
+        self.assessment = kwargs.pop("parent")
+        _ = kwargs.pop("instance")
+        super().__init__(*args, **kwargs)
+
+    @property
+    def helper(self):
+        url = models.SummaryTable.get_list_url(self.assessment.id)
+        return BaseFormHelper(
+            self,
+            legend_text="Select table type",
+            help_text="...",
+            form_actions=[
+                cfl.Submit("save", "Create table"),
+                cfl.HTML(f'<a href="{url}" class="btn btn-light">Cancel</a>'),
+            ],
+        )
+
+
 class VisualForm(forms.ModelForm):
     class Meta:
         model = models.Visual

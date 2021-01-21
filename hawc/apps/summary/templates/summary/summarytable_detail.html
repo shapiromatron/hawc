@@ -1,0 +1,22 @@
+{% extends 'assessment-rooted.html' %}
+
+{% block content %}
+  <h1>{{object}}
+    {% if crud == "Read" and obj_perms.edit %}
+    <div class="dropdown btn-group float-right">
+      <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
+      <div class="dropdown-menu dropdown-menu-right">
+        <a class="dropdown-item" href="{{object.get_update_url}}">
+          <i class="fa fa-fw fa-edit"></i>&nbsp;Update
+        </a>
+        <a class="dropdown-item" href="{{object.get_delete_url}}">
+          <i class="fa fa-fw fa-trash"></i>&nbsp;Delete
+        </a>
+      </div>
+    </div>
+    {% endif %}
+  </h1>
+  <pre style="min-height: 50vh;">
+    More content here...
+  </pre>
+{% endblock %}

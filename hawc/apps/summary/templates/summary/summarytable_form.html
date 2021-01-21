@@ -1,0 +1,17 @@
+{% extends 'assessment-rooted.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+    {% crispy form %}
+{% endblock %}
+
+{% block extrajs %}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#id_title').on('keyup', function () {
+            $('#id_slug').val(window.app.utils.HAWCUtils.urlify($(this).val(), 50));
+        });
+    });
+</script>
+{% endblock extrajs %}
