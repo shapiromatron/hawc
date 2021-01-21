@@ -1,22 +1,14 @@
 from django.conf import settings
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
-
-# from django_filters.rest_framework import DjangoFilterBackend
+from django.db import transaction
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
-
-# from rest_framework.serializers import ModelSerializer, ValidationError
 from rest_framework.serializers import ValidationError
 
-from ..assessment.api import (
-    AssessmentLevelPermissions,
-    AssessmentEditViewset,
-    AssessmentViewset,
-    InAssessmentFilter,
-)
+from ..assessment.api import AssessmentEditViewset, AssessmentLevelPermissions, AssessmentViewset
 from ..assessment.models import Assessment
 from ..common.api import (
     CleanupFieldsBaseViewSet,
@@ -129,30 +121,26 @@ class EpiAssessmentViewset(
 # 5. for e.g. Outcome.diagnostic -- should client/user pass in <5> or "hospital admission"? -- ANSWER FROM ANDY: should be 5.
 
 
-class Criteria(viewsets.ModelViewSet):
+class Criteria(AssessmentEditViewset):
     assessment_filter_args = "assessment"
     model = models.Criteria
-    permission_classes = (AssessmentLevelPermissions,)
-    filter_backends = (InAssessmentFilter,)  # DjangoFilterBackend)
     serializer_class = serializers.CriteriaSerializer
 
-    def get_queryset(self, *args, **kwargs):
-        return self.model.objects.all()
-
+    @transaction.atomic
     def create(self, request, *args, **kwargs):
         # note - this could be a list of criteria OR a single criteria, either will work
         criteria = request.data
 
-        serializer = self.get_serializer(data=criteria, many=isinstance(criteria, list))
+        serializer = self.get_serializer(
+            data=criteria, many=isinstance(criteria, list), context={"user": request.user}
+        )
         serializer.is_valid(raise_exception=True)
-        serializer.custom_perm_checker(request.user)
         self.perform_create(serializer)
 
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_207_MULTI_STATUS, headers=headers)
 
 
-# TODO - check permissions here as well
 class StudyPopulation(viewsets.ModelViewSet):
     assessment_filter_args = "study__assessment"
     model = models.StudyPopulation
@@ -270,12 +258,14 @@ class Outcome(ReadWriteSerializerMixin, AssessmentEditViewset):
     read_serializer_class = serializers.OutcomeReadSerializer
     write_serializer_class = serializers.OutcomeWriteSerializer
 
+    @transaction.atomic
     def create(self, request, *args, **kwargs):
         outcomes = request.data
 
-        serializer = self.get_serializer(data=outcomes, many=isinstance(outcomes, list))
+        serializer = self.get_serializer(
+            data=outcomes, many=isinstance(outcomes, list), context={"user": request.user}
+        )
         serializer.is_valid(raise_exception=True)
-        serializer.custom_perm_checker(request.user)
         self.perform_create(serializer)
 
         headers = self.get_success_headers(serializer.data)

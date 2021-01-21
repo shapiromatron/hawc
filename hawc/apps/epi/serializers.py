@@ -5,7 +5,7 @@ from ..assessment.serializers import DoseUnitsSerializer, DSSToxSerializer, Effe
 from ..common.api import DynamicFieldsMixin, GetOrCreateMixin, user_can_edit_object
 from ..common.helper import SerializerHelper
 from ..study.serializers import StudySerializer
-from . import models
+from . import forms, models
 
 
 class EthnicitySerializer(serializers.ModelSerializer):
@@ -113,13 +113,6 @@ class CriteriaSerializer(GetOrCreateMixin, serializers.ModelSerializer):
     class Meta:
         model = models.Criteria
         fields = "__all__"
-        list_serializer_class = GetOrCreateMixin.GenericGetOrCreateListSerializer
-
-    def getOrCreatePermissionCheckHelper(self, single_item_to_check, user):
-        assessment_id = single_item_to_check["assessment"]
-        assessment = Assessment.objects.filter(pk=assessment_id).first()
-        # since this often returns existing elements, should we be using user_can_view_object instead?
-        user_can_edit_object(assessment, user, raise_exception=True)
 
 
 # class StudyPopulationSerializer(serializers.ModelSerializer):
@@ -137,24 +130,6 @@ class StudyPopulationSerializer(GetOrCreateMixin, serializers.ModelSerializer):
     class Meta:
         model = models.StudyPopulation
         fields = "__all__"
-        list_serializer_class = GetOrCreateMixin.GenericGetOrCreateListSerializer
-
-    def getOrCreatePermissionCheckHelper(self, single_item_to_check, user):
-        print(
-            "\n\nNOT YET IMPLEMENTED - getOrCreatePermissionCheckHelper IN STUDYPOPULATIONSERIALIZER\n\n\n"
-        )
-        # assessment_id = single_item_to_check["assessment"]
-        # assessment = Assessment.objects.filter(pk=assessment_id).first()
-        # user_can_edit_object(assessment, user, raise_exception=True)
-
-    # def validate(self, data):
-    # print("VALIDATE FIRING")
-    # return None
-
-    # @transaction.atomic
-    # def create(self, validated_data):
-    # print("CREATE FIRING")
-    # return None
 
 
 class ExposureSerializer(serializers.ModelSerializer):
@@ -233,16 +208,18 @@ class ResultSerializer(serializers.ModelSerializer):
 
 
 class OutcomeWriteSerializer(GetOrCreateMixin, serializers.ModelSerializer):
+    def validate(self, data):
+        data = super().validate(data)
+
+        form = forms.OutcomeForm(data=data)
+        if form.is_valid() is False:
+            raise serializers.ValidationError(form.errors)
+
+        return data
+
     class Meta:
         model = models.Outcome
         fields = "__all__"
-        # exclude = ["study_population"]
-        list_serializer_class = GetOrCreateMixin.GenericGetOrCreateListSerializer
-
-    def getOrCreatePermissionCheckHelper(self, single_item_to_check, user):
-        assessment_id = single_item_to_check["assessment"]
-        assessment = Assessment.objects.filter(pk=assessment_id).first()
-        user_can_edit_object(assessment, user, raise_exception=True)
 
 
 class OutcomeReadSerializer(serializers.ModelSerializer):

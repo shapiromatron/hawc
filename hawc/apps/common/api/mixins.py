@@ -4,6 +4,7 @@ from django.utils.encoding import force_str
 from rest_framework import serializers, status
 from rest_framework.response import Response
 from rest_framework.validators import UniqueTogetherValidator
+from .permissions import user_can_edit_object
 
 
 class ListUpdateModelMixin:
@@ -114,6 +115,9 @@ class LegacyAssessmentAdapterMixin:
 class ReadWriteSerializerMixin:
     """
     idea from https://www.revsys.com/tidbits/using-different-read-and-write-serializers-django-rest-framework/
+
+    mixin that enforces specification of separate read & write serializers, for use
+    in a viewset.
     """
 
     read_serializer_class = None
@@ -141,26 +145,33 @@ class ReadWriteSerializerMixin:
 
 class GetOrCreateMixin:
     """
-    this should be mixed into a serializer that has:
-    1. a Meta class with a defined model (and a list_serializer_class
-        referring to the GenericGetOrCreateListSerializer, if multiple
-        support)
-    2. a defined method "getOrCreatePermissionCheckHelper" that knows how to
-        handle a single JSON representation of an object and check edit
-        permissions for that object against a user, throwing an exception
-        if permissions are lacking.
+    this should be mixed into a serializer
 
    This mixin:
     1. disables any UniqueTogetherValidators
     2. overrides create to actually call get_or_create
-    3. for either single item or list item creation, calls the
-       "getOrCreatePermissionCheckHelper" method for individual creation
-       candidate elements.
+    3. provides default validate behavior that can either be used as is
+       or called in conjunction with custom validation on the serializer mixing
+       it in (or bypassed completely if needed).
 
-    Use case - consider a model like epi.models.Criteria; this contains a
-    unique_together meta restriction on the "assessment" and "description"
-    fields. Or in other words, in the database assessment+description are
-    guaranteed to be unique.
+    The serializer mixing this in should pass in a "context" argument containing
+    the requesting user, e.g.:
+
+    serializer = self.get_serializer( data=x, context={"user": request.user} )
+
+    that user will be used by the default validation behavior, and stored as 
+    self.requesting_user if any custom validation needs to be done based on the
+    caller.
+
+    The end result is a serializer mixing this in can either lookup or create
+    an element (or elements, works fine for multiples), so 
+    that clients can pass the same payload multiple times and get back
+    consistent results (idempotency, more or less).
+
+    To elaborate, as a use case consider a model like epi.models.Criteria;
+    this contains a unique_together meta restriction on the "assessment"
+    and "description" fields. Or in other words, in the database
+    assessment+description are guaranteed to be unique.
 
     We want to build an API able to support something like a POST
     { "assessment": 1, "description": "foo" }
@@ -172,28 +183,39 @@ class GetOrCreateMixin:
     call will just fetch the existing one. This makes client construction
     just a little more straightforward -- rather than having to
     lookup/check/create-if-needed, clients can just hit one endpoint and
-    get back the object.
-
-    What's more, we want to possibly support doing this mix of create and
-    lookup for multiple criteria in a single API call. This mixin helps
-    reduce duplicated code for both of these behaviors.
+    get back the same object id every time.
 
     Basic approach taken from https://stackoverflow.com/questions/25026034/django-rest-framework-modelserializer-get-or-create-functionality
    """
 
-    class GenericGetOrCreateListSerializer(serializers.ListSerializer):
-        def custom_perm_checker(self, user):
-            for item in self.child.initial_data:
-                self.child.getOrCreatePermissionCheckHelper(item, user)
-
-    def custom_perm_checker(self, user):
-        self.getOrCreatePermissionCheckHelper(self.initial_data, user)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        user = kwargs.get("context", {}).get("user")
+        self.requesting_user = user
 
     def run_validators(self, value):
         for validator in self.validators:
             if isinstance(validator, UniqueTogetherValidator):
                 self.validators.remove(validator)
         super().run_validators(value)
+
+    # provides default validation behavior; ensures that the
+    # associated assessment with an object can be edited by the
+    # user in question. If there is no associated assessment this
+    # will fail an assertion and the enclosing serializer must
+    # instead implement its own validation routine and not call this one.
+    def validate(self, data):
+        assert (
+            self.requesting_user is not None
+        ), f"a context dictionary containing the user must be supplied to {type(self).__name__} (check the call to get_serializer)"
+
+        assessment = data.get("assessment")
+        assert (
+            assessment is not None
+        ), f"payload passed to {type(self).__name__} does not contain an 'assessment' object; this serializer should implement its own validate method looking at self.requesting_user and the payload, and NOT call this super().validate method"
+
+        user_can_edit_object(assessment, self.requesting_user, raise_exception=True)
+        return data
 
     def create(self, validated_data, *args, **kwargs):
         instance, created = self.Meta.model.objects.get_or_create(**validated_data)
