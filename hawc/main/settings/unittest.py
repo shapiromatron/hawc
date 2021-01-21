@@ -11,6 +11,7 @@ INSTALLED_APPS = [app for app in INSTALLED_APPS if app != "debug_toolbar"]
 MIDDLEWARE = [middleware for middleware in MIDDLEWARE if "debug_toolbar" not in middleware]
 
 HAWC_FLAVOR = "PRIME"
+ANYONE_CAN_CREATE_ASSESSMENTS = True
 
 DATABASES["default"]["NAME"] = "hawc-fixture-test"
 
