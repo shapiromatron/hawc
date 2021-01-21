@@ -1,6 +1,7 @@
 import json
 from typing import Dict
 
+from django.core.exceptions import PermissionDenied
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
@@ -8,6 +9,7 @@ from django.views.generic import FormView, RedirectView
 
 from ..assessment.models import Assessment
 from ..common.crumbs import Breadcrumb
+from ..common.serializers import to_json
 from ..common.views import (
     BaseCreate,
     BaseDelete,
@@ -99,6 +101,8 @@ class SummaryTableDetail(GetSummaryTableMixin, BaseDetail):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        if context["object"].published is False and context["obj_perms"]["edit"] is False:
+            raise PermissionDenied()
         context["breadcrumbs"].insert(
             len(context["breadcrumbs"]) - 1, get_table_list_crumb(self.assessment)
         )
@@ -141,7 +145,12 @@ class SummaryTableCreate(BaseCreate):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["table_type"] = int(self.kwargs.get("table_type"))
+        context.update(
+            is_create=True,
+            initial=to_json(serializers.SummaryTableSerializer, context["form"].instance),
+            save_url=models.SummaryTable.get_api_list_url(self.assessment.id),
+            cancel_url=models.SummaryTable.get_list_url(self.assessment.id),
+        )
         context["breadcrumbs"].insert(
             len(context["breadcrumbs"]) - 1, get_table_list_crumb(self.assessment)
         )
@@ -155,7 +164,12 @@ class SummaryTableUpdate(GetSummaryTableMixin, BaseUpdate):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["table_type"] = self.object.table_type
+        context.update(
+            is_create=False,
+            initial=to_json(serializers.SummaryTableSerializer, self.object),
+            save_url=self.object.get_api_url(),
+            cancel_url=self.object.get_absolute_url(),
+        )
         context["breadcrumbs"].insert(
             len(context["breadcrumbs"]) - 1, get_table_list_crumb(self.assessment)
         )

@@ -78,3 +78,40 @@ class GenericTable(BaseModel):
             paragraph.getparent().remove(paragraph)
             cell.to_docx(table_cell)
         return docx
+
+    @classmethod
+    def build_default(cls):
+        return cls.parse_raw(
+            """
+        {
+            "rows": 2,
+            "columns": 2,
+            "cells": [
+                {
+                    "header": true,
+                    "row": 0,
+                    "column": 0,
+                    "html_text": "<p>A</p>"
+                },
+                {
+                    "header": true,
+                    "row": 0,
+                    "column": 1,
+                    "html_text": "<p>B</p>"
+                },
+                {
+                    "header": false,
+                    "row": 1,
+                    "column": 0,
+                    "html_text": "<p>C</p>"
+                },
+                {
+                    "header": false,
+                    "row": 1,
+                    "column": 1,
+                    "html_text": "<p>D</p>"
+                }
+            ]
+        }
+        """
+        )

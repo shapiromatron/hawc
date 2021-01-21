@@ -117,7 +117,7 @@ class SummaryTextViewset(AssessmentEditViewset):
         return super().create(request, *args, **kwargs)
 
 
-class SummaryTableViewset(AssessmentViewset):
+class SummaryTableViewset(AssessmentEditViewset):
     assessment_filter_args = "assessment"
     model = models.SummaryTable
     filter_backends = (InAssessmentFilter, UnpublishedFilter)
@@ -128,3 +128,9 @@ class SummaryTableViewset(AssessmentViewset):
         obj = self.get_object()
         report = obj.to_report()
         return Response(report)
+
+    def create(self, request, *args, **kwargs):
+        self.assessment = get_object_or_404(Assessment, id=request.data.get("assessment", -1))
+        if not self.assessment.user_can_edit_object(request.user):
+            raise exceptions.PermissionDenied()
+        return super().create(request, *args, **kwargs)

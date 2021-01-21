@@ -468,24 +468,8 @@ class SummaryTableForm(forms.ModelForm):
         table_type = kwargs.pop("table_type", None)
         super().__init__(*args, **kwargs)
         if not self.instance.id:
-            self.instance.assessment = self.assessment
-            self.instance.table_type = table_type
-
-    @property
-    def helper(self):
-        if self.instance.id:
-            inputs = {
-                "legend_text": f"Update {self.instance}",
-                "help_text": "Update an existing visualization.",
-                "cancel_url": self.instance.get_absolute_url(),
-            }
-        else:
-            inputs = {
-                "legend_text": "Create new summary table",
-                "help_text": "...",
-                "cancel_url": models.SummaryTable.get_list_url(self.assessment.id),
-            }
-        return BaseFormHelper(self, **inputs)
+            self.instance = models.SummaryTable.build_default(self.assessment.id, table_type)
+        self.fields["content"].initial = self.instance.content
 
 
 class SummaryTableSelectorForm(forms.Form):

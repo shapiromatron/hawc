@@ -1,17 +1,23 @@
 {% extends 'assessment-rooted.html' %}
 
-{% load crispy_forms_tags %}
-
 {% block content %}
-    {% crispy form %}
+<div id="main"></div>
 {% endblock %}
 
 {% block extrajs %}
+<script type="text/json" id="config">{
+    "assessment_id": {{assessment.id}},
+    "is_create": {{is_create|lower}},
+    "initial": {{initial|safe}},
+    "save_url": "{{save_url}}",
+    "cancel_url": "{{cancel_url}}",
+    "csrf": "{{csrf_token}}"
+}</script>
 <script type="text/javascript">
-    $(document).ready(function () {
-        $('#id_title').on('keyup', function () {
-            $('#id_slug').val(window.app.utils.HAWCUtils.urlify($(this).val(), 50));
-        });
+    window.app.summaryTableEditStartup(function (startup) {
+        const config = JSON.parse(document.getElementById("config").text),
+            el = document.getElementById('main');
+        startup(el, config);
     });
 </script>
-{% endblock extrajs %}
+{% endblock %}

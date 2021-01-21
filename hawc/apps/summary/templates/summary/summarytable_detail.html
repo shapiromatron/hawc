@@ -6,6 +6,9 @@
     <div class="dropdown btn-group float-right">
       <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
       <div class="dropdown-menu dropdown-menu-right">
+        <a class="dropdown-item" href="{{object.get_api_word_url}}">
+          <i class="fa fa-fw fa-edit"></i>&nbsp;Download word
+        </a>
         <a class="dropdown-item" href="{{object.get_update_url}}">
           <i class="fa fa-fw fa-edit"></i>&nbsp;Update
         </a>
@@ -16,7 +19,20 @@
     </div>
     {% endif %}
   </h1>
-  <pre style="min-height: 50vh;">
-    More content here...
-  </pre>
+  <div id="main"></div>
+{% endblock %}
+
+{% block extrajs %}
+<script type="text/json" id="config">
+{
+  "table_id": {{object.id}}
+}
+</script>
+<script type="text/javascript">
+  window.app.summaryTableViewStartup(function (startup) {
+    const config = JSON.parse(document.getElementById("config").text),
+      el = document.getElementById('main');
+    startup(el, config);
+  });
+</script>
 {% endblock %}
