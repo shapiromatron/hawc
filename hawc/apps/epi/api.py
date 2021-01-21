@@ -96,31 +96,6 @@ class EpiAssessmentViewset(
         return Response(export)
 
 
-# def lookup_existing_entity(data, id_field_name, model_class, serializer_class):
-# probe_id = tryParseInt(data.get(id_field_name), -1)
-# print(f"probe is is {probe_id}")
-#
-# try:
-# entity = model_class.objects.get(id=probe_id)
-# print(f"probe entity is {entity}")
-# except ObjectDoesNotExist:
-# print(f"error here")
-# return None
-# raise ValidationError("Invalid id")
-
-# TODO - this code proabbyl belongs in the serializer - like "get raw representation" or something, rather than us manually de-readabling coi...
-# serialized_entity = serializer_class().to_representation(entity)
-# print(f"serialized entity is {serialized_entity}")
-# return serialized_entity
-
-# THINGS TO REVIEW WITH ANDY
-# 1. general get_or_create approach
-# 2. method of checking permissions - mixin + custom serializer helper method
-# 3. looking at edit, not create, for permissions
-# 4. the copythrough of study_id when creating study pops
-# 5. for e.g. Outcome.diagnostic -- should client/user pass in <5> or "hospital admission"? -- ANSWER FROM ANDY: should be 5.
-
-
 class Criteria(AssessmentEditViewset):
     assessment_filter_args = "assessment"
     model = models.Criteria
@@ -150,6 +125,8 @@ class StudyPopulation(viewsets.ModelViewSet):
         return self.model.objects.all()
 
     def create(self, request, *args, **kwargs):
+        # IGNORE THIS FOR NOW - NOT REALLY WORKING YET, JUST PLAYING WITH SOME IDEAS
+
         pops = request.data.get("populations")
         # this one is being written to assume populations is a list; should
         # we actually assert/check that it is?
