@@ -355,6 +355,7 @@ class RiskOfBias(models.Model):
             riskofbias__study__in=study_ids,
             riskofbias__final=True,
             riskofbias__active=True,
+            is_default=True,
         ).prefetch_related("riskofbias")
         default_value = '{"sortValue": -1, "display": "N/A"}'
         scores_map = {(score.riskofbias.study_id, score.metric_id): score for score in scores}
