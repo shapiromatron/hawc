@@ -3,10 +3,11 @@ import PropTypes from "prop-types";
 import {inject, observer} from "mobx-react";
 import {toJS} from "mobx";
 
+import Loading from "shared/components/Loading";
 import ReferenceTable from "../components/ReferenceTable";
 import TagTree from "../components/TagTree";
+import Wordcloud from "./Wordcloud";
 import YearHistogram from "./YearHistogram";
-import Loading from "shared/components/Loading";
 
 const referenceListItem = ref => {
     return (
@@ -84,7 +85,13 @@ class ReferenceTreeMain extends Component {
                             </p>
                         ) : null}
                         {selectedReferences ? (
-                            <ReferenceTable references={filteredReferences} showActions={canEdit} />
+                            <>
+                                <Wordcloud references={filteredReferences} />
+                                <ReferenceTable
+                                    references={filteredReferences}
+                                    showActions={canEdit}
+                                />
+                            </>
                         ) : null}
                     </div>
                 </div>
