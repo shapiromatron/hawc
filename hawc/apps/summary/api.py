@@ -123,7 +123,7 @@ class SummaryTableViewset(AssessmentViewset):
     filter_backends = (InAssessmentFilter, UnpublishedFilter)
     serializer_class = serializers.SummaryTableSerializer
 
-    @action(detail=True, methods=("get",), renderer_classes=(DocxRenderer,))
+    @action(detail=True, renderer_classes=(DocxRenderer,))
     def docx(self, request, pk):
         obj = self.get_object()
         report = obj.to_report()

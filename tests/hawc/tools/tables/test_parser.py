@@ -4,7 +4,7 @@ from docx import Document
 
 from hawc.tools.tables.parser import QuillParser
 
-from . import document_compare
+from . import documents_equal
 
 DATA_PATH = Path(__file__).parent.absolute() / "data"
 
@@ -16,4 +16,4 @@ class TestQuillParser:
         parser.feed(quill_html, document._body)
         saved_document = Document(DATA_PATH / "parsed_html.docx")
 
-        document_compare(document, saved_document)
+        assert documents_equal(document, saved_document)
