@@ -2,7 +2,7 @@ from enum import IntEnum
 from typing import List
 
 from docx import Document
-from pydantic import BaseModel, conint, validator
+from pydantic import BaseModel, conint, root_validator
 
 from .parser import QuillParser
 
@@ -19,17 +19,17 @@ class GenericTableCell(BaseModel):
     column: conint(ge=0)
     row_span: conint(ge=1) = 1
     col_span: conint(ge=1) = 1
-    html_text: str
+    quill_text: str
 
     def __str__(self):
-        return "CELL STRING"
+        return f"Cell (row={self.row}, column={self.column})"
 
     def row_order_index(self, rows):
-        return (self.column) * rows + self.row
+        return self.column * rows + self.row
 
     def to_docx(self, block):
         parser = QuillParser()
-        return parser.feed(self.html_text, block)
+        return parser.feed(self.quill_text, block)
 
 
 class GenericTable(BaseModel):
@@ -37,21 +37,21 @@ class GenericTable(BaseModel):
     columns: conint(gt=0)
     cells: List[GenericTableCell]
 
-    @validator("cells")
-    def validate_cells(cls, cells, values):
-        # TODO simplify (?)
+    @root_validator(skip_on_failure=True)
+    def validate_cells(cls, values):
+        cells = values["cells"]
         table_cells = [[False] * values["columns"] for _ in range(values["rows"])]
         for cell in cells:
             try:
                 for i in range(cell.row_span):
                     for j in range(cell.col_span):
                         if table_cells[cell.row + i][cell.column + j]:
-                            raise ValueError("Cell overlap")
+                            raise ValueError(f"Cell overlap at {cell}")
                         table_cells[cell.row + i][cell.column + j] = True
             except IndexError:
-                raise ValueError("Cell outside of table bounds")
+                raise ValueError(f"{cell} outside of table bounds")
         cells.sort(key=lambda cell: cell.row_order_index(values["rows"]))
-        return cells
+        return values
 
     def row_order_enums(self):
         # TODO move logic to JS for HTML table render(?)

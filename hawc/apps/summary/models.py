@@ -156,17 +156,12 @@ class SummaryText(MP_Node):
 class SummaryTable(models.Model):
     objects = managers.SummaryTableManager()
 
-    GENERIC = 0
-    EVIDENCE_PROFILE = 1
-    EVIDENCE_INTEGRATION = 2
+    class TableType(models.IntegerChoices):
+        GENERIC = 0
+        EVIDENCE_PROFILE = 1
+        EVIDENCE_INTEGRATION = 2
 
-    TABLE_CHOICES = (
-        (GENERIC, "Generic table"),
-        (EVIDENCE_PROFILE, "Evidence profile table"),
-        (EVIDENCE_INTEGRATION, "Evidence integration table"),
-    )
-
-    TABLE_SCHEMA_MAP = {GENERIC: GenericTable}
+    TABLE_SCHEMA_MAP = {TableType.GENERIC: GenericTable}
 
     assessment = models.ForeignKey(Assessment, on_delete=models.CASCADE)
     title = models.CharField(max_length=128)
@@ -176,7 +171,9 @@ class SummaryTable(models.Model):
         "(no spaces or special-characters).",
     )
     content = models.JSONField(default=dict)
-    table_type = models.PositiveSmallIntegerField(choices=TABLE_CHOICES, default=GENERIC)
+    table_type = models.PositiveSmallIntegerField(
+        choices=TableType.choices, default=TableType.GENERIC
+    )
     published = models.BooleanField(
         default=False,
         verbose_name="Publish table for public viewing",
@@ -217,6 +214,8 @@ class SummaryTable(models.Model):
         return reverse("summary:api:summary-table-docx", args=(self.id,))
 
     def get_content_schema_class(self):
+        if self.table_type not in self.TABLE_SCHEMA_MAP:
+            raise NotImplementedError("Non-generic tables not supported at this time")
         return self.TABLE_SCHEMA_MAP[self.table_type]
 
     def get_table(self):
