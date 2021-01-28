@@ -473,7 +473,9 @@ class SummaryTableForm(forms.ModelForm):
 
 
 class SummaryTableSelectorForm(forms.Form):
-    table_type = forms.IntegerField(widget=forms.Select(choices=models.SummaryTable.TABLE_CHOICES))
+    table_type = forms.IntegerField(
+        widget=forms.Select(choices=models.SummaryTable.TableType.choices)
+    )
 
     def __init__(self, *args, **kwargs):
         self.assessment = kwargs.pop("parent")

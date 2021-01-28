@@ -221,6 +221,10 @@ class SummaryTable(models.Model):
     def get_table(self):
         return self.get_content_schema_class().parse_obj(self.content)
 
+    def get_cells(self):
+        table = self.get_table()
+        return table.get_cells()
+
     @classmethod
     def build_default(cls, assessment_id: int, table_type: int) -> "SummaryTable":
         """Build an incomplete, but default SummaryTable instance"""
