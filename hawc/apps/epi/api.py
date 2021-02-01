@@ -14,6 +14,7 @@ from ..common.api import (
     CleanupFieldsBaseViewSet,
     LegacyAssessmentAdapterMixin,
     ReadWriteSerializerMixin,
+    user_can_edit_object
 )
 from ..common.helper import FlatExport, re_digits, tryParseInt
 from ..common.renderers import PandasRenderers
@@ -101,19 +102,10 @@ class Criteria(AssessmentEditViewset):
     model = models.Criteria
     serializer_class = serializers.CriteriaSerializer
 
-    @transaction.atomic
-    def create(self, request, *args, **kwargs):
-        # note - this could be a list of criteria OR a single criteria, either will work
-        criteria = request.data
-
-        serializer = self.get_serializer(
-            data=criteria, many=isinstance(criteria, list), context={"user": request.user}
-        )
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-
-        headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_207_MULTI_STATUS, headers=headers)
+    def perform_create(self, serializer):
+        # permissions check
+        user_can_edit_object(serializer.validated_data.get("assessment"), self.request.user, raise_exception=True)
+        return super().perform_create(serializer)
 
 
 class StudyPopulation(viewsets.ModelViewSet):
@@ -235,18 +227,10 @@ class Outcome(ReadWriteSerializerMixin, AssessmentEditViewset):
     read_serializer_class = serializers.OutcomeReadSerializer
     write_serializer_class = serializers.OutcomeWriteSerializer
 
-    @transaction.atomic
-    def create(self, request, *args, **kwargs):
-        outcomes = request.data
-
-        serializer = self.get_serializer(
-            data=outcomes, many=isinstance(outcomes, list), context={"user": request.user}
-        )
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-
-        headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_207_MULTI_STATUS, headers=headers)
+    def perform_create(self, serializer):
+        # permissions check
+        user_can_edit_object(serializer.validated_data.get("assessment"), self.request.user, raise_exception=True)
+        return super().perform_create(serializer)
 
 
 class Result(AssessmentViewset):

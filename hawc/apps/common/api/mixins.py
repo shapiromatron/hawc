@@ -150,22 +150,9 @@ class GetOrCreateMixin:
    This mixin:
     1. disables any UniqueTogetherValidators
     2. overrides create to actually call get_or_create
-    3. provides default validate behavior that can either be used as is
-       or called in conjunction with custom validation on the serializer mixing
-       it in (or bypassed completely if needed).
-
-    The serializer mixing this in should pass in a "context" argument containing
-    the requesting user, e.g.:
-
-    serializer = self.get_serializer( data=x, context={"user": request.user} )
-
-    that user will be used by the default validation behavior, and stored as 
-    self.requesting_user if any custom validation needs to be done based on the
-    caller.
 
     The end result is a serializer mixing this in can either lookup or create
-    an element (or elements, works fine for multiples), so 
-    that clients can pass the same payload multiple times and get back
+    an element, so that clients can pass the same payload multiple times and get back
     consistent results (idempotency, more or less).
 
     To elaborate, as a use case consider a model like epi.models.Criteria;
@@ -188,34 +175,11 @@ class GetOrCreateMixin:
     Basic approach taken from https://stackoverflow.com/questions/25026034/django-rest-framework-modelserializer-get-or-create-functionality
    """
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        user = kwargs.get("context", {}).get("user")
-        self.requesting_user = user
-
     def run_validators(self, value):
         for validator in self.validators:
             if isinstance(validator, UniqueTogetherValidator):
                 self.validators.remove(validator)
         super().run_validators(value)
-
-    # provides default validation behavior; ensures that the
-    # associated assessment with an object can be edited by the
-    # user in question. If there is no associated assessment this
-    # will fail an assertion and the enclosing serializer must
-    # instead implement its own validation routine and not call this one.
-    def validate(self, data):
-        assert (
-            self.requesting_user is not None
-        ), f"a context dictionary containing the user must be supplied to {type(self).__name__} (check the call to get_serializer)"
-
-        assessment = data.get("assessment")
-        assert (
-            assessment is not None
-        ), f"payload passed to {type(self).__name__} does not contain an 'assessment' object; this serializer should implement its own validate method looking at self.requesting_user and the payload, and NOT call this super().validate method"
-
-        user_can_edit_object(assessment, self.requesting_user, raise_exception=True)
-        return data
 
     def create(self, validated_data, *args, **kwargs):
         instance, created = self.Meta.model.objects.get_or_create(**validated_data)
