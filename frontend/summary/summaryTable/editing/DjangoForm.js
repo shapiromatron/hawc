@@ -16,6 +16,7 @@ class DjangoForm extends Component {
                 tableObject,
                 isCreate,
                 updateContent,
+                updateTableContent,
                 handleSubmit,
                 cancelUrl,
             } = this.props.store,
@@ -53,7 +54,7 @@ class DjangoForm extends Component {
                     name="content"
                     label="Table content"
                     value={tableObject.content}
-                    onChange={e => updateContent(e.target.name, e.target.value)}
+                    onChange={e => updateTableContent(e.target.value)}
                     helpText="Advanced users only - paste from another table to copy content (or leave as is this is controlled by other fields)."
                     errors={formErrors.content}
                     required

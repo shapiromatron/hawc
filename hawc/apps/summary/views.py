@@ -91,11 +91,6 @@ class SummaryTableList(BaseList):
         return qs.filter(published=True)
 
 
-class SummaryTableIdDetail(RedirectView):
-    def get_redirect_url(*args, **kwargs):
-        return get_object_or_404(models.SummaryTable, id=kwargs.get("pk")).get_absolute_url()
-
-
 class SummaryTableDetail(GetSummaryTableMixin, BaseDetail):
     model = models.SummaryTable
 
@@ -171,7 +166,7 @@ class SummaryTableUpdate(GetSummaryTableMixin, BaseUpdate):
             cancel_url=self.object.get_absolute_url(),
         )
         context["breadcrumbs"].insert(
-            len(context["breadcrumbs"]) - 1, get_table_list_crumb(self.assessment)
+            len(context["breadcrumbs"]) - 2, get_table_list_crumb(self.assessment)
         )
         return context
 

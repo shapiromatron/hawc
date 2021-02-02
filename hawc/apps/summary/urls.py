@@ -32,18 +32,17 @@ urlpatterns = [
         name="tables_create",
     ),
     path(
-        "tables/assessment/<int:pk>/<slug:slug>/",
+        "assessment/<int:pk>/tables/<slug:slug>/",
         views.SummaryTableDetail.as_view(),
         name="tables_detail",
     ),
-    path("tables/<int:pk>/", views.SummaryTableIdDetail.as_view(), name="tables_detail_id"),
     path(
-        "tables/assessment/<int:pk>/<slug:slug>/update/",
+        "assessment/<int:pk>/tables/<slug:slug>/update/",
         views.SummaryTableUpdate.as_view(),
         name="tables_update",
     ),
     path(
-        "tables/assessment/<int:pk>/<slug:slug>/delete/",
+        "assessment/<int:pk>/tables/<slug:slug>/delete/",
         views.SummaryTableDelete.as_view(),
         name="tables_delete",
     ),

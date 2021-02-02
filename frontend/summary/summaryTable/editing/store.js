@@ -2,6 +2,7 @@ import _ from "lodash";
 import {action, computed, observable} from "mobx";
 
 import h from "shared/utils/helpers";
+import GenericTableStore from "../genericTable/store.js";
 
 class SummaryTableEditStore {
     @observable tableObject = null; // string-representation to be submitted
@@ -13,10 +14,24 @@ class SummaryTableEditStore {
 
         this.config = config;
         this.tableObject = tableObject;
+
+        if (this.tableObject.table_type === 0) {
+            this.tableStore = new GenericTableStore(true, JSON.parse(tableObject.content), this);
+        }
     }
 
     @action.bound updateContent(field, value) {
         this.tableObject[field] = value;
+    }
+    @action.bound updateTableContent(value) {
+        // only update table content if json is valid
+        try {
+            const content = JSON.parse(value);
+            this.tableObject.content = value;
+            this.tableStore.updateSettings(content);
+        } catch (err) {
+            console.warn(err);
+        }
     }
     @action.bound handleSubmit() {
         const url = this.config.save_url,
