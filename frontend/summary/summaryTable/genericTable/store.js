@@ -1,6 +1,17 @@
 import _ from "lodash";
 import {action, computed, observable} from "mobx";
 
+const createCell = function(row, column) {
+    return {
+        row,
+        column,
+        header: row === 0,
+        col_span: 1,
+        row_span: 1,
+        quill_text: "<p>...</p>",
+    };
+};
+
 class GenericTableStore {
     @observable editMode = false;
     @observable settings = null;
@@ -17,11 +28,17 @@ class GenericTableStore {
     }
 
     @action.bound addRow() {
-        console.log("adding row");
+        const row = this.totalRows,
+            cols = this.totalColumns,
+            newCells = _.range(cols).map(column => createCell(row, column));
+        this.settings.cells.push(...newCells);
     }
 
     @action.bound addColumn() {
-        console.log("adding column");
+        const rows = this.totalRows,
+            col = this.totalColumns,
+            newCells = _.range(rows).map(row => createCell(row, col));
+        this.settings.cells.push(...newCells);
     }
 
     @computed get bodyRowIndexes() {
