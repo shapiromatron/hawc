@@ -42,7 +42,7 @@ class TableForm extends Component {
 
         return (
             <div>
-                <button className="btn btn-primary" onClick={store.addRow}>
+                <button className="btn btn-primary mr-1" onClick={store.addRow}>
                     <i className="fa fa-plus"></i>Add row
                 </button>
 

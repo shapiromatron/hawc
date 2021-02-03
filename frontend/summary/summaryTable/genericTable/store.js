@@ -1,5 +1,5 @@
 import _ from "lodash";
-import {action, computed, observable} from "mobx";
+import {action, autorun, computed, observable} from "mobx";
 
 const createCell = function(row, column) {
     return {
@@ -20,7 +20,12 @@ class GenericTableStore {
     constructor(editMode, settings, editRootStore) {
         this.editMode = editMode;
         this.settings = settings;
-        this.editRootStore = editRootStore;
+        if (editMode && editRootStore) {
+            this.editRootStore = editRootStore;
+            autorun(() => {
+                this.editRootStore.updateTableContent(JSON.stringify(this.settings), false);
+            });
+        }
     }
 
     @action.bound editCell(row, col) {

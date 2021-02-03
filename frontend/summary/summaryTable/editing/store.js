@@ -23,12 +23,14 @@ class SummaryTableEditStore {
     @action.bound updateContent(field, value) {
         this.tableObject[field] = value;
     }
-    @action.bound updateTableContent(value) {
+    @action.bound updateTableContent(value, notify) {
         // only update table content if json is valid
         try {
             const content = JSON.parse(value);
             this.tableObject.content = value;
-            this.tableStore.updateSettings(content);
+            if (notify) {
+                this.tableStore.updateSettings(content);
+            }
         } catch (err) {
             console.warn(err);
         }
