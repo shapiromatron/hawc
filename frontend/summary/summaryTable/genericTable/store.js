@@ -16,20 +16,27 @@ class GenericTableStore {
     @observable editMode = false;
     @observable settings = null;
     @observable editingCellIndex = null;
+    @observable showCellModal = false;
 
     constructor(editMode, settings, editRootStore) {
         this.editMode = editMode;
         this.settings = settings;
+        this.editRootStore = editRootStore;
         if (editMode && editRootStore) {
-            this.editRootStore = editRootStore;
             autorun(() => {
                 this.editRootStore.updateTableContent(JSON.stringify(this.settings), false);
             });
         }
     }
 
-    @action.bound editCell(row, col) {
-        console.log("editing cell", row, col);
+    @action.bound editSelectedCell(row, column) {
+        this.editingCellIndex = _.findIndex(this.settings.cells, {row, column});
+        this.showCellModal = true;
+    }
+
+    @action.bound hideCellModal() {
+        this.editingCellIndex = null;
+        this.showCellModal = false;
     }
 
     @action.bound addRow() {
@@ -44,6 +51,13 @@ class GenericTableStore {
             col = this.totalColumns,
             newCells = _.range(rows).map(row => createCell(row, col));
         this.settings.cells.push(...newCells);
+    }
+
+    @computed get editCell() {
+        if (!_.isFinite(this.editingCellIndex)) {
+            return null;
+        }
+        return this.settings.cells[this.editingCellIndex];
     }
 
     @computed get bodyRowIndexes() {

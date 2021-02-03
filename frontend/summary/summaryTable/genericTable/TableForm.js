@@ -2,6 +2,8 @@ import {observer} from "mobx-react";
 import React, {Component} from "react";
 import PropTypes from "prop-types";
 
+import CellModal from "./CellModal";
+
 @observer
 class TableCell extends Component {
     render() {
@@ -20,7 +22,7 @@ class TableCell extends Component {
                     className="float-right btn btn-light btn-sm"
                     key={0}
                     onClick={() => {
-                        store.editCell(cell.row, cell.column);
+                        store.editSelectedCell(cell.row, cell.column);
                     }}>
                     <i className="fa fa-edit"></i>&nbsp;Edit
                 </button>,
@@ -41,15 +43,10 @@ class TableForm extends Component {
             {bodyRowIndexes, headerRowIndexes, cellsByRow} = store;
 
         return (
-            <div>
-                <button className="btn btn-primary mr-1" onClick={store.addRow}>
-                    <i className="fa fa-plus"></i>Add row
-                </button>
-
-                <button className="btn btn-primary" onClick={store.addColumn}>
+            <>
+                <button className="btn btn-primary float-right mb-1" onClick={store.addColumn}>
                     <i className="fa fa-plus"></i>Add column
                 </button>
-
                 <table className="table table-striped table-sm">
                     <thead>
                         {headerRowIndexes.map(rowIndex => {
@@ -86,7 +83,11 @@ class TableForm extends Component {
                         })}
                     </tbody>
                 </table>
-            </div>
+                <button className="btn btn-primary" onClick={store.addRow}>
+                    <i className="fa fa-plus"></i>Add row
+                </button>
+                <CellModal store={store} />
+            </>
         );
     }
 }
