@@ -1,13 +1,16 @@
+import _ from "lodash";
 import {observer} from "mobx-react";
 import React, {Component} from "react";
 import PropTypes from "prop-types";
 
-import CellModal from "./CellModal";
+import {QuickEditCell, EditCell} from "./EditCell";
 
 @observer
 class TableCell extends Component {
     render() {
         const {cell, store} = this.props,
+            {quickEditCell} = store,
+            isQuickEditCell = quickEditCell === cell,
             elType = cell.header ? "th" : "td";
 
         // instead of using jsx; create manually
@@ -16,17 +19,33 @@ class TableCell extends Component {
             {
                 rowSpan: cell.row_span,
                 colSpan: cell.col_span,
+                onClick: e => {
+                    if (
+                        !isQuickEditCell &&
+                        !e.target.classList.contains("btn") &&
+                        !e.target.classList.contains("fa-edit")
+                    ) {
+                        store.selectCellEdit(cell, true);
+                    }
+                },
             },
             [
                 <button
                     className="float-right btn btn-light btn-sm"
                     key={0}
                     onClick={() => {
-                        store.editSelectedCell(cell.row, cell.column);
+                        store.selectCellEdit(cell, false);
                     }}>
                     <i className="fa fa-edit"></i>&nbsp;Edit
                 </button>,
-                <div key={1} dangerouslySetInnerHTML={{__html: cell.quill_text}}></div>,
+                isQuickEditCell ? (
+                    <QuickEditCell key={1} store={store} />
+                ) : (
+                    // <div key={1} dangerouslySetInnerHTML={{__html: cell.quill_text}}></div>
+                    <div key={1}>
+                        [{cell.row}, {cell.column}]
+                    </div>
+                ),
             ]
         );
     }
@@ -48,6 +67,11 @@ class TableForm extends Component {
                     <i className="fa fa-plus"></i>Add column
                 </button>
                 <table className="table table-striped table-sm">
+                    <colgroup>
+                        {_.map(store.colWidths, (w, i) => {
+                            return <col key={i} style={{width: `${w}%`}}></col>;
+                        })}
+                    </colgroup>
                     <thead>
                         {headerRowIndexes.map(rowIndex => {
                             return (
@@ -86,7 +110,7 @@ class TableForm extends Component {
                 <button className="btn btn-primary" onClick={store.addRow}>
                     <i className="fa fa-plus"></i>Add row
                 </button>
-                <CellModal store={store} />
+                <EditCell store={store} />
             </>
         );
     }

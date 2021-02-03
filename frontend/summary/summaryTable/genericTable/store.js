@@ -1,22 +1,55 @@
 import _ from "lodash";
-import {action, autorun, computed, observable} from "mobx";
+import {action, autorun, computed, observable, toJS} from "mobx";
+
+import h from "shared/utils/helpers";
+
+/*
+
+we have 4 cases to check
+- find positive range  range(row, row + row_span)
+*/
 
 const createCell = function(row, column) {
-    return {
-        row,
-        column,
-        header: row === 0,
-        col_span: 1,
-        row_span: 1,
-        quill_text: "<p>...</p>",
+        return {
+            row,
+            column,
+            header: row === 0,
+            col_span: 1,
+            row_span: 1,
+            quill_text: "<p>...</p>",
+        };
+    },
+    sortCells = function(cells) {
+        return _.chain(cells)
+            .sortBy(d => d.column)
+            .sortBy(d => d.row)
+            .value();
+    },
+    rangeSearch = function(cells, row, column) {
+        _.find(cells, cell => {
+            return (
+                row >= cell.row &&
+                row < cell.row + cell.row_span &&
+                column >= cell.column &&
+                column < cell.column + cell.col_span
+            );
+        });
     };
-};
 
 class GenericTableStore {
     @observable editMode = false;
     @observable settings = null;
     @observable editingCellIndex = null;
     @observable showCellModal = false;
+    @observable stagedCell = null;
+    @observable quickEditCell = null;
+
+    // TODO - create/delete cells
+    // TODO - delete row
+    // TODO - delete column
+    // TODO - move row up/down
+    // TODO - move column left/right
+    // TODO - add colwidths
 
     constructor(editMode, settings, editRootStore) {
         this.editMode = editMode;
@@ -29,12 +62,83 @@ class GenericTableStore {
         }
     }
 
-    @action.bound editSelectedCell(row, column) {
-        this.editingCellIndex = _.findIndex(this.settings.cells, {row, column});
-        this.showCellModal = true;
+    @action.bound selectCellEdit(cell, quick) {
+        // just the text
+        this.editingCellIndex = _.findIndex(this.settings.cells, {
+            row: cell.row,
+            column: cell.column,
+        });
+        this.stagedCell = _.cloneDeep(toJS(cell));
+        if (quick) {
+            this.showCellModal = false;
+            this.quickEditCell = cell;
+        } else {
+            this.quickEditCell = null;
+            this.showCellModal = true;
+        }
     }
 
-    @action.bound hideCellModal() {
+    @action.bound saveCellChanges() {
+        const oldCell = this.settings.cells[this.editingCellIndex],
+            newCell = this.stagedCell;
+
+        // book-keeping; if we've merged/unmerged cells, create/delete duplicates
+        if (oldCell.row_span != newCell.row_span || oldCell.col_span != newCell.col_span) {
+            const newCellRange = {},
+                oldCellRange = {};
+
+            let r,
+                c,
+                cells = _.cloneDeep(this.settings.cells);
+
+            for (r = newCell.row; r < newCell.row + newCell.row_span; r++) {
+                for (c = newCell.column; c < newCell.column + newCell.col_span; c++) {
+                    newCellRange[`${r}-${c}`] = {row: r, column: c};
+                }
+            }
+
+            for (r = newCell.row; r < newCell.row + oldCell.row_span; r++) {
+                for (c = newCell.column; c < newCell.column + oldCell.col_span; c++) {
+                    oldCellRange[`${r}-${c}`] = {row: r, column: c};
+                }
+            }
+
+            const newCellKeys = new Set(_.keys(newCellRange)),
+                oldCellKeys = new Set(_.keys(oldCellRange)),
+                cellKeysToDelete = h.setDifference(newCellKeys, oldCellKeys),
+                cellKeysToAdd = h.setDifference(oldCellKeys, newCellKeys),
+                cellsToDelete = _.chain(cellKeysToDelete)
+                    .map(d => newCellRange[d])
+                    .map(d => _.find(cells, {row: d.row, column: d.column}))
+                    .value(),
+                cellsToAdd = _.chain(cellKeysToAdd)
+                    .map(d => oldCellRange[d])
+                    .map(d => createCell(d.row, d.column))
+                    .value();
+
+            if (cellsToDelete.length > 0) {
+                cells = cells.filter(cell => {
+                    return _.findIndex(cellsToDelete, {row: cell.row, column: cell.column}) == -1;
+                });
+            }
+            cells.push(...cellsToAdd);
+            this.settings.cells = sortCells(cells);
+        }
+
+        // update current cell; index may have changed so we fetch again
+        const index = _.findIndex(this.settings.cells, {
+            row: this.stagedCell.row,
+            column: this.stagedCell.column,
+        });
+        this.settings.cells[index] = this.stagedCell;
+    }
+
+    @action.bound closeEditModal(saveChanges) {
+        if (saveChanges) {
+            this.saveCellChanges();
+        }
+        this.stagedCell = null;
+        this.quickEditCell = null;
         this.editingCellIndex = null;
         this.showCellModal = false;
     }
@@ -53,6 +157,10 @@ class GenericTableStore {
         this.settings.cells.push(...newCells);
     }
 
+    @action.bound updateStagedValue(name, value) {
+        this.stagedCell[name] = value;
+    }
+
     @computed get editCell() {
         if (!_.isFinite(this.editingCellIndex)) {
             return null;
@@ -60,17 +168,54 @@ class GenericTableStore {
         return this.settings.cells[this.editingCellIndex];
     }
 
+    @computed get showHeaderInput() {
+        // only first 2 rows can be headers
+        return this.editCell.row < 2;
+    }
+
+    @computed get getMaxColSpanRange() {
+        const cols = this.totalColumns,
+            col = this.editCell.column,
+            range = cols + 1 - col,
+            maxRange = Math.max(0, range - 1);
+
+        for (var r = this.editCell.row; r < this.editCell.row + this.editCell.row_span; r++) {
+            if (_.findIndex(this.settings.cells, {row: r, column: this.editCell.column}) == -1) {
+                return -1;
+            }
+        }
+
+        return maxRange;
+    }
+
+    @computed get getMaxRowSpanRange() {
+        const rows = this.totalRows,
+            row = this.editCell.row,
+            range = rows + 1 - row,
+            maxRange = Math.max(0, range - 1);
+
+        // get maximum cell
+
+        for (var c = this.editCell.column; c < this.editCell.column + this.editCell.col_span; c++) {
+            if (_.findIndex(this.settings.cells, {row: this.editCell.row, column: c}) == -1) {
+                return -1;
+            }
+        }
+
+        return maxRange;
+    }
+
     @computed get bodyRowIndexes() {
+        const headers = new Set(this.headerRowIndexes);
         return _.chain(this.settings.cells)
-            .filter(d => d.header === false)
+            .filter(d => d.header === false && !headers.has(d.row))
             .map(d => d.row)
             .uniq()
             .value();
     }
 
     @computed get headerRowIndexes() {
-        // NOTE - rows may in both header and body if header is true AND false; make sure this is
-        // updated for all cells in a row
+        // if any cell is marked as a header, it's a header
         return _.chain(this.settings.cells)
             .filter(d => d.header === true)
             .map(d => d.row)
@@ -95,6 +240,11 @@ class GenericTableStore {
             .map(d => d.column + d.col_span)
             .max()
             .value();
+    }
+
+    @computed get colWidths() {
+        const percentage = Math.round(100 / this.totalColumns);
+        return _.times(percentage, this.totalRows);
     }
 
     // these methods send/return data to and from the parent object
