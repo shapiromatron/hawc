@@ -3,6 +3,31 @@ from html.parser import HTMLParser
 import docx
 
 
+def tag_wrapper(text, tag, *args):
+    if len(args) == 0:
+        return f"<{tag}>{text}</{tag}>"
+    arg_tag = args[-1]
+    text = f"<{arg_tag}>{text}</{arg_tag}>"
+    return tag_wrapper(text, tag, *args[:-1])
+
+
+def strip_tags(text, tag, *args):
+    text = text.replace(f"<{tag}>", "").replace(f"</{tag}>", "")
+    for arg_tag in args:
+        text = text.replace(f"<{arg_tag}>", "").replace(f"</{arg_tag}>", "")
+    return text
+
+
+def ul_wrapper(texts):
+    list_items = map(lambda text: tag_wrapper(text, "li"), texts)
+    return f"<ul>{''.join(list_items)}</ul>"
+
+
+def ol_wrapper(texts):
+    list_items = map(lambda text: tag_wrapper(text, "li"), texts)
+    return f"<ol>{''.join(list_items)}</ol>"
+
+
 class QuillParser(HTMLParser):
 
     # Inline tags
