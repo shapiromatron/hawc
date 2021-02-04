@@ -12,7 +12,7 @@ class BaseCell(BaseModel):
     col_span: conint(ge=1) = 1
 
     def __str__(self):
-        return f"Cell (row={self.row}, column={self.column})"
+        return f"{self.__class__.__name__} (row={self.row}, column={self.column})"
 
     def row_order_index(self, columns):
         return self.row * columns + self.column

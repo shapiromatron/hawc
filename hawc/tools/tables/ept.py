@@ -164,6 +164,7 @@ class MechanisticRow(BaseCellGroup):
 class EvidenceGroup(BaseCellGroup):
     title: str
     cell_rows: List[EvidenceRow] = []
+    merge_judgement: bool = True
 
     def column_headers(self):
         return [
@@ -188,15 +189,30 @@ class EvidenceGroup(BaseCellGroup):
         cells = []
         cells.append(GenericCell.parse_args(True, 0, 0, 1, 5, tag_wrapper(self.title, "h2")))
         cells.extend(self.column_headers())
-        for index, row in enumerate(self.cell_rows):
-            row.add_offset(row=index + 2)
-            cells.extend(row.cells)
+        if len(self.cell_rows) == 0:
+            cells.append(
+                GenericCell.parse_args(
+                    True, 2, 0, 1, 5, tag_wrapper("No data available", "p", "em")
+                )
+            )
+        elif self.merge_judgement:
+            self.cell_rows[0].judgement.row_span = len(self.cell_rows)
+            self.cell_rows[0].add_offset(row=2)
+            cells.extend(self.cell_rows[0].cells)
+            for index, row in enumerate(self.cell_rows[1:]):
+                row.add_offset(row=index + 3)
+                cells.extend(row.cells[:-1])
+        else:
+            for index, row in enumerate(self.cell_rows):
+                row.add_offset(row=index + 2)
+                cells.extend(row.cells)
         self.cells = cells
 
 
 class MechanisticGroup(BaseCellGroup):
     title: str
     cell_rows: List[MechanisticRow] = []
+    merge_judgement: bool = True
 
     def column_headers(self):
         return [
@@ -222,9 +238,23 @@ class MechanisticGroup(BaseCellGroup):
         cells = []
         cells.append(GenericCell.parse_args(True, 0, 0, 1, 5, tag_wrapper(self.title, "h2")))
         cells.extend(self.column_headers())
-        for index, row in enumerate(self.cell_rows):
-            row.add_offset(row=index + 2)
-            cells.extend(row.cells)
+        if len(self.cell_rows) == 0:
+            cells.append(
+                GenericCell.parse_args(
+                    True, 2, 0, 1, 5, tag_wrapper("No data available", "p", "em")
+                )
+            )
+        elif self.merge_judgement:
+            self.cell_rows[0].judgement.row_span = len(self.cell_rows)
+            self.cell_rows[0].add_offset(row=2)
+            cells.extend(self.cell_rows[0].cells)
+            for index, row in enumerate(self.cell_rows[1:]):
+                row.add_offset(row=index + 3)
+                cells.extend(row.cells[:-1])
+        else:
+            for index, row in enumerate(self.cell_rows):
+                row.add_offset(row=index + 2)
+                cells.extend(row.cells)
         self.cells = cells
 
 
@@ -316,22 +346,9 @@ class EvidenceProfileTable(BaseTable):
                             "judgement": {"judgement": "<p>asdf</p>", "description": "<p>asdf</p>"},
                         },
                     ],
+                    "merge_judgement": False,
                 },
-                "mechanistic": {
-                    "title": "mechanistic",
-                    "cell_rows": [
-                        {
-                            "evidence": {"description": "<p>asdf</p>"},
-                            "summary": {"findings": "<p>asdf</p>"},
-                            "judgement": {"description": "<p>asdf</p>"},
-                        },
-                        {
-                            "evidence": {"description": "<p>asdf</p>"},
-                            "summary": {"findings": "<p>asdf</p>"},
-                            "judgement": {"description": "<p>asdf</p>"},
-                        },
-                    ],
-                },
+                "mechanistic": {"title": "mechanistic"},
                 "summary_judgement": {
                     "judgement": "<p>asdf</p>",
                     "description": "<p>asdf</p>",
