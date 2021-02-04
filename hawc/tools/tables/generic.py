@@ -5,30 +5,24 @@ from .parser import QuillParser
 
 
 class GenericCell(BaseCell):
-    quill_text: str
+    quill_text: str = "<p></p>"
 
     def to_docx(self, block):
         parser = QuillParser()
         return parser.feed(self.quill_text, block)
 
-    def to_html(self):
-        return self.quill_text
-
 
 class GenericTable(BaseTable):
     cells: List[GenericCell]
 
-    def _add_cells(self):
-        self._cells.clear()
-        self._cells.extend(self.cells)
+    def _set_cells(self):
+        pass
 
     @classmethod
     def build_default(cls):
         return cls.parse_raw(
             """
         {
-            "rows": 2,
-            "columns": 2,
             "cells": [
                 {
                     "header": true,

@@ -5,7 +5,6 @@ from django.db import transaction
 from rest_framework import serializers
 
 from ..common.helper import SerializerHelper
-from ..common.serializers import validate_pydantic
 from . import models
 
 
@@ -140,11 +139,8 @@ class SummaryTableSerializer(serializers.ModelSerializer):
         return ret
 
     def validate(self, data):
-        # check that the content matches the expected schema
-        table_type = data["table_type"]
-        Schema = models.SummaryTable.TABLE_SCHEMA_MAP[table_type]
-        validate_pydantic(Schema, "content", data["content"])
-
+        # check model level validation
+        models.SummaryTable(**data).clean()
         return data
 
 

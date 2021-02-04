@@ -1,6 +1,7 @@
 import json
 import logging
 import os
+import re
 from operator import methodcaller
 from typing import Dict, List
 
@@ -238,11 +239,21 @@ class SummaryTable(models.Model):
         return ReportExport(docx=table.to_docx(), filename=self.slug)
 
     def clean(self):
-        # content validation
+        # make sure table can be built
         try:
             self.get_table()
         except PydanticError as e:
-            raise ValidationError(e)
+            raise ValidationError({"content": e.json()})
+        # content should not include unapproved html tags
+        content_str = json.dumps(self.content)
+        tag_regex = r"</?(?P<tag>\w+)[^>]*>"
+        html_tags = re.findall(tag_regex, content_str)
+        valid_html_tags = {"p", "a", "strong", "em", "ul", "ol", "li", "h1", "h2"}
+        invalid_html_tags = set(html_tags) - valid_html_tags
+        if len(invalid_html_tags) > 0:
+            raise ValidationError(
+                {"content": f"Invalid html tags in content: {', '.join(invalid_html_tags)}"}
+            )
         return
 
     class Meta:

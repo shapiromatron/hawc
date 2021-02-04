@@ -6,8 +6,8 @@ from pydantic import BaseModel, conint
 
 class BaseCell(BaseModel):
     header: bool = False
-    row: conint(ge=0)
-    column: conint(ge=0)
+    row: conint(ge=0) = 0
+    column: conint(ge=0) = 0
     row_span: conint(ge=1) = 1
     col_span: conint(ge=1) = 1
 
@@ -29,23 +29,46 @@ class BaseCell(BaseModel):
     def to_docx(self, block):
         raise NotImplementedError("Need 'to_docx' method on cell")
 
-    def to_html(self):
-        raise NotImplementedError("Need 'to_html' method on cell")
+    @classmethod
+    def parse_args(cls, *args):
+        return cls(**{key: arg for key, arg in zip(cls.__fields__.keys(), args)})
 
 
-class BaseTable(BaseModel):
-    rows: conint(gt=0)
-    columns: conint(gt=0)
-    _cells: List[BaseCell] = []
+class BaseCellGroup(BaseModel):
+    cells: List[BaseCell] = []
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._add_cells()
-        self._cells.sort(key=lambda cell: cell.row_order_index(self.columns))
-        self._validate_cells()
+        self._set_cells()
 
-    def _validate_cells(self):
-        cells = self._cells
+    def add_offset(self, row=0, column=0):
+        for cell in self.cells:
+            cell.row += row
+            cell.column += column
+
+    @property
+    def rows(self):
+        if len(self.cells) == 0:
+            return 0
+        return max(cell.row + cell.row_span for cell in self.cells)
+
+    @property
+    def columns(self):
+        if len(self.cells) == 0:
+            return 0
+        return max(cell.column + cell.col_span for cell in self.cells)
+
+    def _set_cells(self):
+        raise NotImplementedError("Need '_set_cells' method")
+
+
+class BaseTable(BaseCellGroup):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.validate_cells(self.cells)
+        self.sort_cells()
+
+    def validate_cells(self, cells):
         table_cells = [[False] * self.columns for _ in range(self.rows)]
         for cell in cells:
             try:
@@ -57,18 +80,23 @@ class BaseTable(BaseModel):
             except IndexError:
                 raise ValueError(f"{cell} outside of table bounds")
 
-    def _add_cells(self):
-        raise NotImplementedError("Need '_add_cells' method on table")
+    def sort_cells(self):
+        self.cells.sort(key=lambda cell: cell.row_order_index(self.columns))
+
+    def add_cells(self, cells):
+        self.validate_cells(self.cells + cells)
+        self.cells += cells
+        self.sort_cells()
 
     def get_cells(self):
-        return [cell.to_dict() for cell in self._cells]
+        return [cell.to_dict() for cell in self.cells]
 
     def to_docx(self, docx: Document = None):
         if docx is None:
             docx = Document()
         table = docx.add_table(rows=self.rows, cols=self.columns)
         table.style = "Table Grid"
-        for cell in self._cells:
+        for cell in self.cells:
             table_cell = table.cell(cell.row, cell.column)
             span_cell = table.cell(cell.row + cell.row_span - 1, cell.column + cell.col_span - 1)
             table_cell.merge(span_cell)
@@ -78,9 +106,18 @@ class BaseTable(BaseModel):
             cell.to_docx(table_cell)
         return docx
 
+    def insert_row(self, index):
+        self.rows += 1
+        for cell in self.cells:
+            if cell.row >= index:
+                cell.row += 1
+
+    def insert_column(self, index):
+        self.columns += 1
+        for cell in self.cells:
+            if cell.column >= index:
+                cell.column += 1
+
     @classmethod
     def build_default(cls):
-        raise NotImplementedError("Need 'build_default' method on table")
-
-    class Config:
-        underscore_attrs_are_private = True
+        raise NotImplementedError("Need 'build_default' method")
