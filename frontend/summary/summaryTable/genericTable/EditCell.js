@@ -9,6 +9,8 @@ import QuillTextInput from "shared/components/QuillTextInput";
 import CheckboxInput from "shared/components/CheckboxInput";
 import IntegerInput from "shared/components/IntegerInput";
 
+import {getCellExcelName} from "./common";
+
 @observer
 class QuickEditCell extends Component {
     render() {
@@ -49,7 +51,7 @@ class EditCellModal extends Component {
                 {editCell ? (
                     <>
                         <div className="modal-header">
-                            <h4>Cell {h.excelCoords(editCell.row, editCell.column)}</h4>
+                            <h4>Cell {getCellExcelName(editCell)}</h4>
                             <button
                                 type="button"
                                 className="float-right close"
@@ -149,7 +151,7 @@ class EditCellModal extends Component {
                                 {store.editCell.column == 0 ? (
                                     <button
                                         type="button"
-                                        className="btn btn-danger"
+                                        className="btn btn-danger mr-1"
                                         onClick={() => store.deleteRow(editCell.row)}>
                                         <i className="fa fa-trash mr-1"></i>
                                         Delete row #{editCell.row + 1}
@@ -157,45 +159,55 @@ class EditCellModal extends Component {
                                 ) : null}
                             </div>
 
-                            {/* <div className="mr-auto">
-                                {store.editCell.row == 0 ? (
-                                    <>
-                                        <button
-                                            type="button"
-                                            className="btn btn-warning mr-1"
-                                            onClick={() => store.closeEditModal(false)}>
-                                            <i className="fa fa-arrow-left mr-1"></i>
-                                            Left
-                                        </button>
-                                        <button
-                                            type="button"
-                                            className="btn btn-warning"
-                                            onClick={() => store.closeEditModal(false)}>
-                                            <i className="fa fa-arrow-right mr-1"></i>
-                                            Right
-                                        </button>
-                                    </>
+                            <div className="mr-auto">
+                                {store.editCell.row == 0 && editCell.column != 0 ? (
+                                    <button
+                                        type="button"
+                                        className="btn btn-warning mr-1"
+                                        onClick={() =>
+                                            store.swapColumns(editCell.column, editCell.column - 1)
+                                        }>
+                                        <i className="fa fa-arrow-left mr-1"></i>
+                                        Left
+                                    </button>
                                 ) : null}
 
-                                {store.editCell.column == 0 ? (
-                                    <>
-                                        <button
-                                            type="button"
-                                            className="btn btn-warning mr-1"
-                                            onClick={() => store.closeEditModal(false)}>
-                                            <i className="fa fa-arrow-up mr-1"></i>
-                                            Up
-                                        </button>
-                                        <button
-                                            type="button"
-                                            className="btn btn-warning"
-                                            onClick={() => store.closeEditModal(false)}>
-                                            <i className="fa fa-arrow-down mr-1"></i>
-                                            Down
-                                        </button>
-                                    </>
+                                {store.editCell.row == 0 &&
+                                editCell.column < store.totalColumns - 1 ? (
+                                    <button
+                                        type="button"
+                                        className="btn btn-warning mr-1"
+                                        onClick={() =>
+                                            store.swapColumns(editCell.column, editCell.column + 1)
+                                        }>
+                                        <i className="fa fa-arrow-right mr-1"></i>
+                                        Right
+                                    </button>
                                 ) : null}
-                            </div> */}
+
+                                {editCell.column == 0 && editCell.row != 0 ? (
+                                    <button
+                                        type="button"
+                                        className="btn btn-warning mr-1"
+                                        onClick={() =>
+                                            store.swapRows(editCell.row, editCell.row - 1)
+                                        }>
+                                        <i className="fa fa-arrow-up mr-1"></i>
+                                        Up
+                                    </button>
+                                ) : null}
+                                {editCell.column == 0 && editCell.row < store.totalRows - 1 ? (
+                                    <button
+                                        type="button"
+                                        className="btn btn-warning"
+                                        onClick={() =>
+                                            store.swapRows(editCell.row, editCell.row + 1)
+                                        }>
+                                        <i className="fa fa-arrow-down mr-1"></i>
+                                        Down
+                                    </button>
+                                ) : null}
+                            </div>
 
                             <button
                                 type="button"

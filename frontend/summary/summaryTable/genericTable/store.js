@@ -3,9 +3,6 @@ import {action, autorun, computed, observable, toJS} from "mobx";
 
 import h from "shared/utils/helpers";
 
-// TODO - move row up/down
-// TODO - move column left/right
-
 const createCell = function(row, column) {
         return {
             row,
@@ -50,9 +47,10 @@ class GenericTableStore {
     @observable stagedCell = null;
     @observable quickEditCell = null;
     @observable editCellErrorText = "";
+    @observable showColumnEdit = false;
 
     constructor(editMode, settings, editRootStore) {
-        settings.colWidths = [10, 10]; // todo add to defaults
+        settings.colWidths = [10, 10]; // TODO - persist and use in backend too!
         this.editMode = editMode;
         this.settings = settings;
         this.editRootStore = editRootStore;
@@ -61,6 +59,10 @@ class GenericTableStore {
                 this.editRootStore.updateTableContent(JSON.stringify(this.settings), false);
             });
         }
+    }
+
+    @action.bound toggleShowColumnEdit() {
+        this.showColumnEdit = !this.showColumnEdit;
     }
 
     @action.bound selectCellEdit(cell, quick) {
@@ -224,6 +226,78 @@ class GenericTableStore {
         this.closeEditModal(false);
     }
 
+    @action.bound swapRows(row1, row2) {
+        const candidateMoves = _.chain(this.totalColumns)
+            .range()
+            .map(column => {
+                return [
+                    {row: row1, column},
+                    {row: row2, column},
+                ];
+            })
+            .flatten()
+            .value();
+
+        if (anyMergedCells(candidateMoves, this.cellMatrix)) {
+            this.editCellErrorText = "Cannot move row; there are merged cells in the selected rows";
+            return;
+        }
+
+        if (
+            this.settings.cells.filter(d => d.row == row1 || d.row == row2).filter(d => d.header)
+                .length > 0
+        ) {
+            this.editCellErrorText = "Cannot move row; there are header cells in the selected rows";
+            return;
+        }
+
+        let cells = _.cloneDeep(this.settings.cells).map(cell => {
+            if (cell.row == row1) {
+                cell.row = row2;
+            } else if (cell.row == row2) {
+                cell.row = row1;
+            }
+            return cell;
+        });
+
+        this.editCellErrorText = "";
+        this.settings.cells = sortCells(cells);
+        this.updateDefaultColumnWidths();
+        this.closeEditModal(false);
+    }
+
+    @action.bound swapColumns(column1, column2) {
+        const candidateMoves = _.chain(this.totalRows)
+            .range()
+            .map(row => {
+                return [
+                    {row, column: column1},
+                    {row, column: column2},
+                ];
+            })
+            .flatten()
+            .value();
+        if (anyMergedCells(candidateMoves, this.cellMatrix)) {
+            this.editCellErrorText =
+                "Cannot move column; there are merged cells in the selected columns";
+            return;
+        }
+
+        let cells = _.cloneDeep(this.settings.cells).map(cell => {
+            if (cell.column == column1) {
+                cell.column = column2;
+            } else if (cell.column == column2) {
+                cell.column = column1;
+            }
+            return cell;
+        });
+
+        this.editCellErrorText = "";
+        this.settings.cells = sortCells(cells);
+        this.updateDefaultColumnWidths();
+        this.closeEditModal(false);
+    }
+
     @action.bound updateStagedValue(name, value) {
         this.stagedCell[name] = value;
     }
@@ -329,12 +403,9 @@ class GenericTableStore {
         });
     }
 
-    // these methods send/return data to and from the parent object
+    // inject new settings from parent object
     @action.bound updateSettings(settings) {
         this.settings = settings;
-    }
-    @computed get getSettingsJson() {
-        return JSON.stringify(this.settings);
     }
 }
 

@@ -12,7 +12,7 @@ class ColWidthTable extends Component {
         const {totalColumns, updateColWidth, getNormalizedWeights} = this.props.store,
             {colWidths} = this.props.store.settings;
         return (
-            <>
+            <div className="well">
                 <h5>Column widths</h5>
                 <table className="table table-bordered">
                     <thead>
@@ -51,7 +51,7 @@ class ColWidthTable extends Component {
                         </tr>
                     </tbody>
                 </table>
-            </>
+            </div>
         );
     }
 }

@@ -44,9 +44,7 @@ class IntegerInput extends Component {
                 />
                 {this.props.slider ? (
                     <div className="input-group-append ml-1">
-                        <div className="input-group-text" id="btnGroupAddon">
-                            {this.state.value}
-                        </div>
+                        <div className="input-group-text">{this.state.value}</div>
                     </div>
                 ) : null}
             </div>

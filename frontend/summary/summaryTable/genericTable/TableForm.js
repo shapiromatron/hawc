@@ -5,6 +5,7 @@ import PropTypes from "prop-types";
 
 import h from "shared/utils/helpers";
 
+import {getCellExcelName} from "./common";
 import ColWidthTable from "./ColWidthTable";
 import {QuickEditCell, EditCellModal} from "./EditCell";
 
@@ -48,7 +49,7 @@ class TableCell extends Component {
                     onClick={() => {
                         store.selectCellEdit(cell, false);
                     }}>
-                    <i className="fa fa-edit mr-1"></i>Edit {h.excelCoords(cell.row, cell.column)}
+                    <i className="fa fa-edit mr-1"></i>Edit {getCellExcelName(cell)}
                 </button>,
                 isQuickEditCell ? (
                     <QuickEditCell key={1} store={store} />
@@ -72,14 +73,25 @@ class TableForm extends Component {
 
         return (
             <>
-                <div className="float-right">
-                    <button className="btn btn-primary mr-1" onClick={store.addColumn}>
-                        <i className="fa fa-plus mr-1"></i>Add column
+                <div className="bg-info p-2 clearfix">
+                    <button className="btn btn-light mx-1" onClick={store.toggleShowColumnEdit}>
+                        <i className="fa fa-arrows-h mr-1"></i>Column width
                     </button>
-                    <button className="btn btn-primary " onClick={store.addRow}>
-                        <i className="fa fa-plus mr-1"></i>Add row
-                    </button>
+                    <div className="float-right">
+                        <button className="btn btn-light mx-1" onClick={store.addColumn}>
+                            <i className="fa fa-plus mr-1"></i>Add column
+                        </button>
+                        <button className="btn btn-light mx-1" onClick={store.addRow}>
+                            <i className="fa fa-plus mr-1"></i>Add row
+                        </button>
+                    </div>
                 </div>
+                {store.showColumnEdit ? <ColWidthTable store={store} /> : null}
+                <h4>Editing table</h4>
+                <p className="text-muted">
+                    Click any cell to edit the text, or press the edit button on a cell to modify
+                    the table structure (eg., merging rows and columns).
+                </p>
                 <table className="summaryTable table table-bordered table-sm">
                     <colgroup>
                         {_.map(store.colWidthStyle, (style, i) => {
@@ -121,7 +133,6 @@ class TableForm extends Component {
                         })}
                     </tbody>
                 </table>
-                <ColWidthTable store={store} />
                 <EditCellModal store={store} />
             </>
         );
