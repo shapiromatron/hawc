@@ -3,8 +3,6 @@ import {observer} from "mobx-react";
 import React, {Component} from "react";
 import PropTypes from "prop-types";
 
-import h from "shared/utils/helpers";
-
 import {getCellExcelName} from "./common";
 import ColWidthTable from "./ColWidthTable";
 import {QuickEditCell, EditCellModal} from "./EditCell";
