@@ -248,7 +248,7 @@ class SummaryTable(models.Model):
         content_str = json.dumps(self.content)
         tag_regex = r"</?(?P<tag>\w+)[^>]*>"
         html_tags = re.findall(tag_regex, content_str)
-        valid_html_tags = {"p", "a", "strong", "em", "ul", "ol", "li", "h1", "h2"}
+        valid_html_tags = {"p", "a", "strong", "em", "ul", "ol", "li", "h1", "h2", "br"}
         invalid_html_tags = set(html_tags) - valid_html_tags
         if len(invalid_html_tags) > 0:
             raise ValidationError(

@@ -84,6 +84,15 @@ mark,.mark {
 }
 /* END BOOTSTRAP 4 OVERRIDES */
 
+.float-right-absolute {
+    /*
+    float in the top right, but remove from html layout; the parent container may need
+    to be `position: relative` or something similar
+    */
+    position: absolute;
+    top: 0;
+    right: 0;
+}
 
 /* jQueryUI OVERRIDES */
 .ui-front{

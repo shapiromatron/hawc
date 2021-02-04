@@ -20,6 +20,7 @@ class TableCellEdit extends Component {
             elType = cell.header ? "th" : "td",
             {isHovering} = this.state,
             attrs = {
+                className: "position-relative",
                 rowSpan: cell.row_span,
                 colSpan: cell.col_span,
                 onClick: e => {
@@ -35,8 +36,8 @@ class TableCellEdit extends Component {
             },
             children = [
                 <button
-                    className="float-right btn btn-light btn-sm"
-                    style={{opacity: isHovering && !isQuickEditCell ? 1 : 0}}
+                    className="btn btn-light btn-sm float-right-absolute"
+                    style={{display: isHovering && !isQuickEditCell ? "inline" : "none"}}
                     key={0}
                     onClick={() => {
                         store.selectCellEdit(cell, false);
