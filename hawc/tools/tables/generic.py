@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from .base import BaseCell, BaseTable
 from .parser import QuillParser
@@ -13,6 +13,7 @@ class GenericCell(BaseCell):
 
 
 class GenericTable(BaseTable):
+    column_widths: Optional[List[int]]
     cells: List[GenericCell]
 
     def _set_cells(self):
@@ -23,30 +24,31 @@ class GenericTable(BaseTable):
         return cls.parse_raw(
             """
         {
+            "column_widths": [10, 10],
             "cells": [
                 {
                     "header": true,
                     "row": 0,
                     "column": 0,
-                    "quill_text": "<p>A</p>"
+                    "quill_text": "<p>A1</p>"
                 },
                 {
                     "header": true,
                     "row": 0,
                     "column": 1,
-                    "quill_text": "<p>B</p>"
+                    "quill_text": "<p>B1</p>"
                 },
                 {
                     "header": false,
                     "row": 1,
                     "column": 0,
-                    "quill_text": "<p>C</p>"
+                    "quill_text": "<p>A2</p>"
                 },
                 {
                     "header": false,
                     "row": 1,
                     "column": 1,
-                    "quill_text": "<p>D</p>"
+                    "quill_text": "<p>B2</p>"
                 }
             ]
         }

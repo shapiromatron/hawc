@@ -27,7 +27,7 @@ class Root extends Component {
                     <TableForm store={tableStore} />
                 </TabPanel>
                 <TabPanel>
-                    <Table settings={tableStore.settings} />
+                    <Table store={tableStore} forceReadOnly={true} />
                 </TabPanel>
             </Tabs>
         );

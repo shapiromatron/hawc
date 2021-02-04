@@ -50,7 +50,6 @@ class GenericTableStore {
     @observable showColumnEdit = false;
 
     constructor(editMode, settings, editRootStore) {
-        settings.colWidths = [10, 10]; // TODO - persist and use in backend too!
         this.editMode = editMode;
         this.settings = settings;
         this.editRootStore = editRootStore;
@@ -384,16 +383,18 @@ class GenericTableStore {
     }
 
     @action.bound updateColWidth(index, value) {
-        this.settings.colWidths[index] = value;
+        this.settings.column_widths[index] = value;
     }
 
     @action.bound updateDefaultColumnWidths() {
-        this.settings.colWidths = _.range(this.totalColumns).map(d => 10);
+        this.settings.column_widths = _.range(this.totalColumns).map(d => 10);
     }
 
     @computed get getNormalizedWeights() {
-        const totalWidth = _.sum(this.settings.colWidths),
-            widths = this.settings.colWidths.map(width => Math.round((width / totalWidth) * 100));
+        const totalWidth = _.sum(this.settings.column_widths),
+            widths = this.settings.column_widths.map(width =>
+                Math.round((width / totalWidth) * 100)
+            );
         return widths;
     }
 
