@@ -3,9 +3,6 @@ import {action, autorun, computed, observable, toJS} from "mobx";
 
 import h from "shared/utils/helpers";
 
-// TODO - add colwidths
-// TODO - delete row
-// TODO - delete column
 // TODO - move row up/down
 // TODO - move column left/right
 
@@ -55,6 +52,7 @@ class GenericTableStore {
     @observable editCellErrorText = "";
 
     constructor(editMode, settings, editRootStore) {
+        settings.colWidths = [10, 10]; // todo add to defaults
         this.editMode = editMode;
         this.settings = settings;
         this.editRootStore = editRootStore;
@@ -116,8 +114,8 @@ class GenericTableStore {
                     .map(d => createCell(d.row, d.column));
 
             if (anyMergedCells(cellsToDelete, this.cellMatrix)) {
-                console.error("cannot merge cells; cells are merged");
-                this.editCellErrorText = "Cannot merge cells; intersects with other merged cells.";
+                this.editCellErrorText =
+                    "Cannot merge cells; proposed merge intersects with other merged cells.";
                 return false;
             }
 
@@ -157,15 +155,73 @@ class GenericTableStore {
     @action.bound addRow() {
         const row = this.totalRows,
             cols = this.totalColumns,
-            newCells = _.range(cols).map(column => createCell(row, column));
-        this.settings.cells.push(...newCells);
+            newCells = _.range(cols).map(column => createCell(row, column)),
+            cells = _.cloneDeep(this.settings.cells);
+
+        cells.push(...newCells);
+        this.settings.cells = sortCells(cells);
     }
 
     @action.bound addColumn() {
         const rows = this.totalRows,
             col = this.totalColumns,
-            newCells = _.range(rows).map(row => createCell(row, col));
-        this.settings.cells.push(...newCells);
+            newCells = _.range(rows).map(row => createCell(row, col)),
+            cells = _.cloneDeep(this.settings.cells);
+
+        cells.push(...newCells);
+        this.settings.cells = sortCells(cells);
+        this.updateDefaultColumnWidths();
+    }
+
+    @action.bound deleteRow(row) {
+        const candidateDeletions = _.range(this.totalColumns).map(column => {
+            return {row, column};
+        });
+        if (anyMergedCells(candidateDeletions, this.cellMatrix)) {
+            this.editCellErrorText =
+                "Cannot delete row; row intersects with merged cells in other rows.";
+            return;
+        }
+
+        let cells = _.cloneDeep(this.settings.cells)
+            .filter(cell => {
+                return _.findIndex(candidateDeletions, {row: cell.row, column: cell.column}) == -1;
+            })
+            .map(cell => {
+                if (cell.row > row) {
+                    cell.row -= 1;
+                }
+                return cell;
+            });
+        this.editCellErrorText = "";
+        this.settings.cells = cells;
+        this.closeEditModal(false);
+    }
+
+    @action.bound deleteColumn(column) {
+        const candidateDeletions = _.range(this.totalRows).map(row => {
+            return {row, column};
+        });
+        if (anyMergedCells(candidateDeletions, this.cellMatrix)) {
+            this.editCellErrorText =
+                "Cannot delete column; column intersects with merged cells in other rows.";
+            return;
+        }
+
+        let cells = _.cloneDeep(this.settings.cells)
+            .filter(cell => {
+                return _.findIndex(candidateDeletions, {row: cell.row, column: cell.column}) == -1;
+            })
+            .map(cell => {
+                if (cell.column > column) {
+                    cell.column -= 1;
+                }
+                return cell;
+            });
+        this.editCellErrorText = "";
+        this.settings.cells = cells;
+        this.updateDefaultColumnWidths();
+        this.closeEditModal(false);
     }
 
     @action.bound updateStagedValue(name, value) {
@@ -245,6 +301,7 @@ class GenericTableStore {
             .max()
             .value();
     }
+
     @computed get totalColumns() {
         return _.chain(this.settings.cells)
             .map(d => d.column + d.col_span)
@@ -252,10 +309,23 @@ class GenericTableStore {
             .value();
     }
 
+    @action.bound updateColWidth(index, value) {
+        this.settings.colWidths[index] = value;
+    }
+
+    @action.bound updateDefaultColumnWidths() {
+        this.settings.colWidths = _.range(this.totalColumns).map(d => 10);
+    }
+
+    @computed get getNormalizedWeights() {
+        const totalWidth = _.sum(this.settings.colWidths),
+            widths = this.settings.colWidths.map(width => Math.round((width / totalWidth) * 100));
+        return widths;
+    }
+
     @computed get colWidthStyle() {
-        const percentage = Math.round(100 / this.totalColumns);
-        return _.range(this.totalColumns).map(d => {
-            return {width: `${percentage}%`};
+        return this.getNormalizedWeights.map(width => {
+            return {width: `${width}%`};
         });
     }
 

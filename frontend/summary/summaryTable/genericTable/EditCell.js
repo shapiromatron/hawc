@@ -19,14 +19,18 @@ class QuickEditCell extends Component {
                     value={store.stagedCell.quill_text}
                     onChange={value => store.updateStagedValue("quill_text", value)}
                 />
-                <button className="btn btn-primary px-3" onClick={() => store.closeEditModal(true)}>
-                    <i className="fa fa-check"></i>
-                </button>
-                <button
-                    className="btn btn-light px-3 ml-1"
-                    onClick={() => store.closeEditModal(false)}>
-                    <i className="fa fa-times"></i>
-                </button>
+                <div className="float-right">
+                    <button
+                        className="btn btn-light px-3 mr-2"
+                        onClick={() => store.closeEditModal(false)}>
+                        <i className="fa fa-times"></i>
+                    </button>
+                    <button
+                        className="btn btn-primary px-3"
+                        onClick={() => store.closeEditModal(true)}>
+                        <i className="fa fa-check"></i>
+                    </button>
+                </div>
             </>
         );
     }
@@ -36,7 +40,7 @@ QuickEditCell.propTypes = {
 };
 
 @observer
-class EditCell extends Component {
+class EditCellModal extends Component {
     render() {
         const {store} = this.props,
             {editCell, stagedCell} = store;
@@ -79,7 +83,7 @@ class EditCell extends Component {
                                             minimum={1}
                                             maximum={store.getMaxRowSpanRange}
                                             name="row_span"
-                                            label="Row span"
+                                            label="# of rows to merge"
                                             helpText="Row-span (merges rows). Changing to a value greater than 1 will delete existing cells and remove content from those cells."
                                             onChange={e =>
                                                 store.updateStagedValue(
@@ -99,7 +103,7 @@ class EditCell extends Component {
                                             minimum={1}
                                             maximum={store.getMaxColSpanRange}
                                             name="col_span"
-                                            label="Column span"
+                                            label="# of columns to merge"
                                             helpText="Column-span (merges columns). Changing to a value greater than 1 will delete existing cells and remove content from those cells."
                                             onChange={e =>
                                                 store.updateStagedValue(
@@ -136,9 +140,9 @@ class EditCell extends Component {
                                     <button
                                         type="button"
                                         className="btn btn-danger mr-1"
-                                        onClick={() => store.closeEditModal(false)}>
+                                        onClick={() => store.deleteColumn(editCell.column)}>
                                         <i className="fa fa-trash mr-1"></i>
-                                        Delete column
+                                        Delete column {h.excelColumn(editCell.column)}
                                     </button>
                                 ) : null}
 
@@ -146,14 +150,14 @@ class EditCell extends Component {
                                     <button
                                         type="button"
                                         className="btn btn-danger"
-                                        onClick={() => store.closeEditModal(false)}>
+                                        onClick={() => store.deleteRow(editCell.row)}>
                                         <i className="fa fa-trash mr-1"></i>
-                                        Delete row
+                                        Delete row #{editCell.row + 1}
                                     </button>
                                 ) : null}
                             </div>
 
-                            <div className="mr-auto">
+                            {/* <div className="mr-auto">
                                 {store.editCell.row == 0 ? (
                                     <>
                                         <button
@@ -191,7 +195,7 @@ class EditCell extends Component {
                                         </button>
                                     </>
                                 ) : null}
-                            </div>
+                            </div> */}
 
                             <button
                                 type="button"
@@ -217,8 +221,8 @@ class EditCell extends Component {
     }
 }
 
-EditCell.propTypes = {
+EditCellModal.propTypes = {
     store: PropTypes.object.isRequired,
 };
 
-export {QuickEditCell, EditCell};
+export {QuickEditCell, EditCellModal};

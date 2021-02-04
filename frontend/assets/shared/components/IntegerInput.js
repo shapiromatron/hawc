@@ -40,6 +40,7 @@ class IntegerInput extends Component {
                         }
                     }}
                     onChange={e => this.setState({value: e.target.value})}
+                    onInput={this.props.onInput}
                 />
                 {this.props.slider ? (
                     <div className="input-group-append ml-1">
@@ -77,6 +78,7 @@ IntegerInput.propTypes = {
     minimum: PropTypes.number,
     name: PropTypes.string.isRequired,
     onChange: PropTypes.func.isRequired,
+    onInput: PropTypes.func,
     required: PropTypes.bool,
     value: PropTypes.number.isRequired,
     slider: PropTypes.bool,

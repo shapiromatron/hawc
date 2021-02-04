@@ -5,7 +5,8 @@ import PropTypes from "prop-types";
 
 import h from "shared/utils/helpers";
 
-import {QuickEditCell, EditCell} from "./EditCell";
+import ColWidthTable from "./ColWidthTable";
+import {QuickEditCell, EditCellModal} from "./EditCell";
 
 @observer
 class TableCell extends Component {
@@ -120,7 +121,8 @@ class TableForm extends Component {
                         })}
                     </tbody>
                 </table>
-                <EditCell store={store} />
+                <ColWidthTable store={store} />
+                <EditCellModal store={store} />
             </>
         );
     }
