@@ -2,6 +2,8 @@ import {observer} from "mobx-react";
 import React, {Component} from "react";
 import PropTypes from "prop-types";
 
+import h from "shared/utils/helpers";
+
 import Modal from "shared/components/Modal";
 import QuillTextInput from "shared/components/QuillTextInput";
 import CheckboxInput from "shared/components/CheckboxInput";
@@ -43,10 +45,7 @@ class EditCell extends Component {
                 {editCell ? (
                     <>
                         <div className="modal-header">
-                            <h4>
-                                Cell {String.fromCharCode(65 + editCell.column)}
-                                {editCell.row + 1}
-                            </h4>
+                            <h4>Cell {h.excelCoords(editCell.row, editCell.column)}</h4>
                             <button
                                 type="button"
                                 className="float-right close"
@@ -126,6 +125,10 @@ class EditCell extends Component {
                                     />
                                 </div>
                             </div>
+
+                            {store.editCellErrorText ? (
+                                <div className="alert alert-danger">{store.editCellErrorText}</div>
+                            ) : null}
                         </div>
                         <div className="modal-footer">
                             <div className="mr-auto">

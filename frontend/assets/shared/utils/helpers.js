@@ -238,6 +238,9 @@ const helpers = {
             Math.min(Math.ceil(Math.log10(domain[1])) - Math.floor(Math.log10(domain[0])), 10)
         );
     },
+    excelCoords(row, column) {
+        return `${String.fromCharCode(65 + column)}${row + 1}`;
+    },
     numericAxisFormat: d3.format(",~g"),
     COLORS: {
         WHITE: "#ffffff",

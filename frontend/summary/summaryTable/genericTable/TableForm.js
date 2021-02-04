@@ -3,6 +3,8 @@ import {observer} from "mobx-react";
 import React, {Component} from "react";
 import PropTypes from "prop-types";
 
+import h from "shared/utils/helpers";
+
 import {QuickEditCell, EditCell} from "./EditCell";
 
 @observer
@@ -45,7 +47,7 @@ class TableCell extends Component {
                     onClick={() => {
                         store.selectCellEdit(cell, false);
                     }}>
-                    <i className="fa fa-edit"></i>&nbsp;Edit
+                    <i className="fa fa-edit mr-1"></i>Edit {h.excelCoords(cell.row, cell.column)}
                 </button>,
                 isQuickEditCell ? (
                     <QuickEditCell key={1} store={store} />

@@ -52,6 +52,7 @@ class GenericTableStore {
     @observable showCellModal = false;
     @observable stagedCell = null;
     @observable quickEditCell = null;
+    @observable editCellErrorText = "";
 
     constructor(editMode, settings, editRootStore) {
         this.editMode = editMode;
@@ -81,6 +82,7 @@ class GenericTableStore {
     }
 
     @action.bound saveCellChanges() {
+        // returns true if cell was changed, false if otherwise
         const oldCell = this.settings.cells[this.editingCellIndex],
             newCell = this.stagedCell;
 
@@ -115,7 +117,8 @@ class GenericTableStore {
 
             if (anyMergedCells(cellsToDelete, this.cellMatrix)) {
                 console.error("cannot merge cells; cells are merged");
-                return;
+                this.editCellErrorText = "Cannot merge cells; intersects with other merged cells.";
+                return false;
             }
 
             if (cellsToDelete.length > 0) {
@@ -133,12 +136,18 @@ class GenericTableStore {
             column: this.stagedCell.column,
         });
         this.settings.cells[index] = this.stagedCell;
+        this.editCellErrorText = "";
+        return true;
     }
 
     @action.bound closeEditModal(saveChanges) {
         if (saveChanges) {
-            this.saveCellChanges();
+            const success = this.saveCellChanges();
+            if (!success) {
+                return;
+            }
         }
+        this.editCellErrorText = "";
         this.stagedCell = null;
         this.quickEditCell = null;
         this.editingCellIndex = null;
