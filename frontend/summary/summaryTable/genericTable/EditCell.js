@@ -44,7 +44,8 @@ class EditCell extends Component {
                     <>
                         <div className="modal-header">
                             <h4>
-                                Edit Cell[{editCell.row + 1}, {editCell.column + 1}]
+                                Cell {String.fromCharCode(65 + editCell.column)}
+                                {editCell.row + 1}
                             </h4>
                             <button
                                 type="button"
@@ -127,16 +128,80 @@ class EditCell extends Component {
                             </div>
                         </div>
                         <div className="modal-footer">
+                            <div className="mr-auto">
+                                {store.editCell.row == 0 ? (
+                                    <button
+                                        type="button"
+                                        className="btn btn-danger mr-1"
+                                        onClick={() => store.closeEditModal(false)}>
+                                        <i className="fa fa-trash mr-1"></i>
+                                        Delete column
+                                    </button>
+                                ) : null}
+
+                                {store.editCell.column == 0 ? (
+                                    <button
+                                        type="button"
+                                        className="btn btn-danger"
+                                        onClick={() => store.closeEditModal(false)}>
+                                        <i className="fa fa-trash mr-1"></i>
+                                        Delete row
+                                    </button>
+                                ) : null}
+                            </div>
+
+                            <div className="mr-auto">
+                                {store.editCell.row == 0 ? (
+                                    <>
+                                        <button
+                                            type="button"
+                                            className="btn btn-warning mr-1"
+                                            onClick={() => store.closeEditModal(false)}>
+                                            <i className="fa fa-arrow-left mr-1"></i>
+                                            Left
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className="btn btn-warning"
+                                            onClick={() => store.closeEditModal(false)}>
+                                            <i className="fa fa-arrow-right mr-1"></i>
+                                            Right
+                                        </button>
+                                    </>
+                                ) : null}
+
+                                {store.editCell.column == 0 ? (
+                                    <>
+                                        <button
+                                            type="button"
+                                            className="btn btn-warning mr-1"
+                                            onClick={() => store.closeEditModal(false)}>
+                                            <i className="fa fa-arrow-up mr-1"></i>
+                                            Up
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className="btn btn-warning"
+                                            onClick={() => store.closeEditModal(false)}>
+                                            <i className="fa fa-arrow-down mr-1"></i>
+                                            Down
+                                        </button>
+                                    </>
+                                ) : null}
+                            </div>
+
                             <button
                                 type="button"
                                 className="btn btn-secondary"
                                 onClick={() => store.closeEditModal(false)}>
                                 Close
                             </button>
+
                             <button
                                 type="button"
                                 className="btn btn-primary"
                                 onClick={() => store.closeEditModal(true)}>
+                                <i className="fa fa-save mr-1"></i>
                                 Save changes
                             </button>
                         </div>

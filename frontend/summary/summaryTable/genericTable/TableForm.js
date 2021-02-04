@@ -7,11 +7,18 @@ import {QuickEditCell, EditCell} from "./EditCell";
 
 @observer
 class TableCell extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            isHovering: false,
+        };
+    }
     render() {
         const {cell, store} = this.props,
             {quickEditCell} = store,
             isQuickEditCell = quickEditCell === cell,
-            elType = cell.header ? "th" : "td";
+            elType = cell.header ? "th" : "td",
+            {isHovering} = this.state;
 
         // instead of using jsx; create manually
         return React.createElement(
@@ -21,17 +28,19 @@ class TableCell extends Component {
                 colSpan: cell.col_span,
                 onClick: e => {
                     if (
-                        !isQuickEditCell &&
                         !e.target.classList.contains("btn") &&
                         !e.target.classList.contains("fa-edit")
                     ) {
                         store.selectCellEdit(cell, true);
                     }
                 },
+                onMouseEnter: () => this.setState({isHovering: true}),
+                onMouseLeave: () => this.setState({isHovering: false}),
             },
             [
                 <button
                     className="float-right btn btn-light btn-sm"
+                    style={{opacity: isHovering && !isQuickEditCell ? 1 : 0}}
                     key={0}
                     onClick={() => {
                         store.selectCellEdit(cell, false);
@@ -41,10 +50,7 @@ class TableCell extends Component {
                 isQuickEditCell ? (
                     <QuickEditCell key={1} store={store} />
                 ) : (
-                    // <div key={1} dangerouslySetInnerHTML={{__html: cell.quill_text}}></div>
-                    <div key={1}>
-                        [{cell.row}, {cell.column}]
-                    </div>
+                    <div key={1} dangerouslySetInnerHTML={{__html: cell.quill_text}}></div>
                 ),
             ]
         );
@@ -63,13 +69,18 @@ class TableForm extends Component {
 
         return (
             <>
-                <button className="btn btn-primary float-right mb-1" onClick={store.addColumn}>
-                    <i className="fa fa-plus"></i>Add column
-                </button>
-                <table className="table table-striped table-sm">
+                <div className="float-right">
+                    <button className="btn btn-primary mr-1" onClick={store.addColumn}>
+                        <i className="fa fa-plus mr-1"></i>Add column
+                    </button>
+                    <button className="btn btn-primary " onClick={store.addRow}>
+                        <i className="fa fa-plus mr-1"></i>Add row
+                    </button>
+                </div>
+                <table className="summaryTable table table-bordered table-sm">
                     <colgroup>
-                        {_.map(store.colWidths, (w, i) => {
-                            return <col key={i} style={{width: `${w}%`}}></col>;
+                        {_.map(store.colWidthStyle, (style, i) => {
+                            return <col key={i} style={style} />;
                         })}
                     </colgroup>
                     <thead>
@@ -107,9 +118,6 @@ class TableForm extends Component {
                         })}
                     </tbody>
                 </table>
-                <button className="btn btn-primary" onClick={store.addRow}>
-                    <i className="fa fa-plus"></i>Add row
-                </button>
                 <EditCell store={store} />
             </>
         );

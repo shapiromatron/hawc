@@ -288,6 +288,10 @@ div.smart-tag.active {
     font-weight: bold;
 }
 
+.summaryTable  p {
+    margin-bottom: 0;
+}
+
 /* LITERATURE MODULE */
 .litSavedIcon {
     color: #5b5bef;

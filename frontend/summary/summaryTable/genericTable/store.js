@@ -3,11 +3,11 @@ import {action, autorun, computed, observable, toJS} from "mobx";
 
 import h from "shared/utils/helpers";
 
-/*
-
-we have 4 cases to check
-- find positive range  range(row, row + row_span)
-*/
+// TODO - add colwidths
+// TODO - delete row
+// TODO - delete column
+// TODO - move row up/down
+// TODO - move column left/right
 
 const createCell = function(row, column) {
         return {
@@ -25,8 +25,8 @@ const createCell = function(row, column) {
             .sortBy(d => d.row)
             .value();
     },
-    rangeSearch = function(cells, row, column) {
-        _.find(cells, cell => {
+    cellRangeSearch = function(cells, row, column) {
+        return _.find(cells, cell => {
             return (
                 row >= cell.row &&
                 row < cell.row + cell.row_span &&
@@ -34,6 +34,15 @@ const createCell = function(row, column) {
                 column < cell.column + cell.col_span
             );
         });
+    },
+    anyMergedCells = function(cellsToTest, matrix) {
+        return _.chain(cellsToTest)
+            .map(d => {
+                let match = matrix[d.row][d.column];
+                return match.row_span > 1 || match.col_span > 1;
+            })
+            .some()
+            .value();
     };
 
 class GenericTableStore {
@@ -43,13 +52,6 @@ class GenericTableStore {
     @observable showCellModal = false;
     @observable stagedCell = null;
     @observable quickEditCell = null;
-
-    // TODO - create/delete cells
-    // TODO - delete row
-    // TODO - delete column
-    // TODO - move row up/down
-    // TODO - move column left/right
-    // TODO - add colwidths
 
     constructor(editMode, settings, editRootStore) {
         this.editMode = editMode;
@@ -105,16 +107,16 @@ class GenericTableStore {
 
             const newCellKeys = new Set(_.keys(newCellRange)),
                 oldCellKeys = new Set(_.keys(oldCellRange)),
-                cellKeysToDelete = h.setDifference(newCellKeys, oldCellKeys),
-                cellKeysToAdd = h.setDifference(oldCellKeys, newCellKeys),
-                cellsToDelete = _.chain(cellKeysToDelete)
-                    .map(d => newCellRange[d])
-                    .map(d => _.find(cells, {row: d.row, column: d.column}))
-                    .value(),
-                cellsToAdd = _.chain(cellKeysToAdd)
+                cellsToDelete = h.setDifference(newCellKeys, oldCellKeys).map(d => newCellRange[d]),
+                cellsToAdd = h
+                    .setDifference(oldCellKeys, newCellKeys)
                     .map(d => oldCellRange[d])
-                    .map(d => createCell(d.row, d.column))
-                    .value();
+                    .map(d => createCell(d.row, d.column));
+
+            if (anyMergedCells(cellsToDelete, this.cellMatrix)) {
+                console.error("cannot merge cells; cells are merged");
+                return;
+            }
 
             if (cellsToDelete.length > 0) {
                 cells = cells.filter(cell => {
@@ -161,6 +163,19 @@ class GenericTableStore {
         this.stagedCell[name] = value;
     }
 
+    @computed get cellMatrix() {
+        let r, c, row, matrix;
+        matrix = [];
+        for (r = 0; r < this.totalRows; r++) {
+            row = [];
+            for (c = 0; c < this.totalColumns; c++) {
+                row.push(cellRangeSearch(this.settings.cells, r, c));
+            }
+            matrix.push(row);
+        }
+        return matrix;
+    }
+
     @computed get editCell() {
         if (!_.isFinite(this.editingCellIndex)) {
             return null;
@@ -179,12 +194,6 @@ class GenericTableStore {
             range = cols + 1 - col,
             maxRange = Math.max(0, range - 1);
 
-        for (var r = this.editCell.row; r < this.editCell.row + this.editCell.row_span; r++) {
-            if (_.findIndex(this.settings.cells, {row: r, column: this.editCell.column}) == -1) {
-                return -1;
-            }
-        }
-
         return maxRange;
     }
 
@@ -193,14 +202,6 @@ class GenericTableStore {
             row = this.editCell.row,
             range = rows + 1 - row,
             maxRange = Math.max(0, range - 1);
-
-        // get maximum cell
-
-        for (var c = this.editCell.column; c < this.editCell.column + this.editCell.col_span; c++) {
-            if (_.findIndex(this.settings.cells, {row: this.editCell.row, column: c}) == -1) {
-                return -1;
-            }
-        }
 
         return maxRange;
     }
@@ -242,9 +243,11 @@ class GenericTableStore {
             .value();
     }
 
-    @computed get colWidths() {
+    @computed get colWidthStyle() {
         const percentage = Math.round(100 / this.totalColumns);
-        return _.times(percentage, this.totalRows);
+        return _.range(this.totalColumns).map(d => {
+            return {width: `${percentage}%`};
+        });
     }
 
     // these methods send/return data to and from the parent object
