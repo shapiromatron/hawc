@@ -10,7 +10,7 @@ import IntegerInput from "shared/components/IntegerInput";
 class ColWidthTable extends Component {
     render() {
         const {totalColumns, updateColWidth, getNormalizedWeights} = this.props.store,
-            {colWidths} = this.props.store.settings;
+            {column_widths} = this.props.store.settings;
         return (
             <div className="well">
                 <h5>Column widths</h5>
@@ -37,7 +37,7 @@ class ColWidthTable extends Component {
                                             onInput={e =>
                                                 updateColWidth(col, parseInt(e.target.value))
                                             }
-                                            value={colWidths[col]}
+                                            value={column_widths[col]}
                                             slider={true}
                                         />
                                     </td>
