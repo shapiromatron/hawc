@@ -126,5 +126,5 @@ class SummaryTableViewset(AssessmentViewset):
     @action(detail=True, renderer_classes=(DocxRenderer,))
     def docx(self, request, pk):
         obj = self.get_object()
-        report = obj.to_report()
+        report = obj.to_docx()
         return Response(report)

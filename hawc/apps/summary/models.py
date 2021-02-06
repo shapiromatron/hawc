@@ -180,6 +180,12 @@ class SummaryTable(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        unique_together = (
+            ("assessment", "title"),
+            ("assessment", "slug"),
+        )
+
     def get_assessment(self):
         return self.assessment
 
@@ -192,7 +198,7 @@ class SummaryTable(models.Model):
     def get_table(self):
         return self.get_content_schema_class().parse_obj(self.content)
 
-    def to_report(self):
+    def to_docx(self):
         table = self.get_table()
         return ReportExport(docx=table.to_docx(), filename=self.slug)
 
@@ -203,12 +209,6 @@ class SummaryTable(models.Model):
         except PydanticError as e:
             raise ValidationError(e)
         return
-
-    class Meta:
-        unique_together = (
-            ("assessment", "title"),
-            ("assessment", "slug"),
-        )
 
 
 class HeatmapDataset(PydanticModel):

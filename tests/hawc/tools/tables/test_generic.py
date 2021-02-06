@@ -36,6 +36,7 @@ class TestGenericTable:
             "cells": [],
         }
         GenericTable.parse_obj(obj)
+
         # all cell properties are present and valid
         obj = {
             "rows": 1,
@@ -68,6 +69,7 @@ class TestGenericTable:
                 ],
             }
             GenericTable.parse_obj(obj)
+
         # missing columns
         with pytest.raises(PydanticError):
             obj = {
@@ -83,6 +85,7 @@ class TestGenericTable:
                 ],
             }
             GenericTable.parse_obj(obj)
+
         # cells out of bounds
         with pytest.raises(PydanticError, match="outside of table bounds"):
             obj = {
@@ -99,6 +102,7 @@ class TestGenericTable:
                 ],
             }
             GenericTable.parse_obj(obj)
+
         # cells overlap
         with pytest.raises(PydanticError, match="Cell overlap"):
             obj = {
