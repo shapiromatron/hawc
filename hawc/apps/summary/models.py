@@ -12,8 +12,11 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.html import strip_tags
 from pydantic import BaseModel as PydanticModel
+from pydantic import ValidationError as PydanticError
 from reversion import revisions as reversion
 from treebeard.mp_tree import MP_Node
+
+from hawc.tools.tables.generic import GenericTable
 
 from ..animal.exports import EndpointFlatDataPivot, EndpointGroupFlatDataPivot
 from ..animal.models import Endpoint
@@ -22,6 +25,7 @@ from ..common.helper import (
     FlatExport,
     HAWCDjangoJSONEncoder,
     HAWCtoDateString,
+    ReportExport,
     SerializerHelper,
     read_excel,
     tryParseInt,
@@ -147,6 +151,64 @@ class SummaryText(MP_Node):
         if nodes[0].get("children", None):
             for node in nodes[0]["children"]:
                 print_node(node, 2)
+
+
+class SummaryTable(models.Model):
+    objects = managers.SummaryTableManager()
+
+    class TableType(models.IntegerChoices):
+        GENERIC = 0
+        EVIDENCE_PROFILE = 1
+        EVIDENCE_INTEGRATION = 2
+
+    assessment = models.ForeignKey(Assessment, on_delete=models.CASCADE)
+    title = models.CharField(max_length=128)
+    slug = models.SlugField(
+        verbose_name="URL Name",
+        help_text="The URL (web address) used to describe this object "
+        "(no spaces or special-characters).",
+    )
+    content = models.JSONField(default=dict)
+    table_type = models.PositiveSmallIntegerField(
+        choices=TableType.choices, default=TableType.GENERIC
+    )
+    published = models.BooleanField(
+        default=False,
+        verbose_name="Publish table for public viewing",
+        help_text="For assessments marked for public viewing, mark table to be viewable by public",
+    )
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = (
+            ("assessment", "title"),
+            ("assessment", "slug"),
+        )
+
+    def get_assessment(self):
+        return self.assessment
+
+    def get_content_schema_class(self):
+        if self.table_type == self.TableType.GENERIC:
+            return GenericTable
+        else:
+            raise NotImplementedError("Non-generic tables not supported at this time")
+
+    def get_table(self):
+        return self.get_content_schema_class().parse_obj(self.content)
+
+    def to_docx(self):
+        table = self.get_table()
+        return ReportExport(docx=table.to_docx(), filename=self.slug)
+
+    def clean(self):
+        # content validation
+        try:
+            self.get_table()
+        except PydanticError as e:
+            raise ValidationError(e)
+        return
 
 
 class HeatmapDataset(PydanticModel):
@@ -923,6 +985,7 @@ class Prefilter:
 
 
 reversion.register(SummaryText)
+reversion.register(SummaryTable)
 reversion.register(DataPivotUpload)
 reversion.register(DataPivotQuery)
 reversion.register(Visual)

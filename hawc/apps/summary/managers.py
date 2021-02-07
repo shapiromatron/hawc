@@ -14,6 +14,10 @@ class SummaryTextManager(BaseManager):
         return MP_NodeQuerySet(self.model).order_by("path")
 
 
+class SummaryTableManager(BaseManager):
+    assessment_relation = "assessment"
+
+
 class VisualManager(BaseManager):
     assessment_relation = "assessment"
 

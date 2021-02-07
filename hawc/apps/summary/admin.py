@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.utils.html import format_html
+from reversion.admin import VersionAdmin
 from treebeard.admin import TreeAdmin
 from treebeard.forms import movenodeform_factory
 
@@ -46,3 +47,17 @@ class SummaryTextAdmin(TreeAdmin):
         "created",
     )
     form = movenodeform_factory(models.SummaryText)
+
+
+@admin.register(models.SummaryTable)
+class SummaryTableAdmin(VersionAdmin):
+    list_display = (
+        "title",
+        "assessment_id",
+        "assessment",
+        "table_type",
+        "published",
+        "created",
+    )
+
+    list_filter = ("table_type", "published", ("assessment", admin.RelatedOnlyFieldListFilter))

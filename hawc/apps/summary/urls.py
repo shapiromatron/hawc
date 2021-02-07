@@ -8,6 +8,7 @@ router.register(r"assessment", api.SummaryAssessmentViewset, basename="assessmen
 router.register(r"visual", api.VisualViewset, basename="visual")
 router.register(r"data_pivot", api.DataPivotViewset, basename="data_pivot")
 router.register(r"summary-text", api.SummaryTextViewset, basename="summary-text")
+router.register(r"summary-table", api.SummaryTableViewset, basename="summary-table")
 
 app_name = "summary"
 urlpatterns = [
