@@ -132,5 +132,16 @@ class SummaryTableSerializer(serializers.ModelSerializer):
         model = models.SummaryTable
         fields = "__all__"
 
+    def to_representation(self, instance):
+        ret = super().to_representation(instance)
+        if instance.id:
+            ret["url"] = instance.get_absolute_url()
+        return ret
+
+    def validate(self, data):
+        # check model level validation
+        models.SummaryTable(**data).clean()
+        return data
+
 
 SerializerHelper.add_serializer(models.Visual, VisualSerializer)

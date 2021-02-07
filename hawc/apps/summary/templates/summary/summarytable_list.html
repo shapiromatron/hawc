@@ -1,0 +1,54 @@
+{% extends 'assessment-rooted.html' %}
+
+{% block content %}
+<h1>Available tables
+  {% if obj_perms.edit %}
+  <div class="dropdown btn-group float-right">
+    <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Actions</a>
+    <div class="dropdown-menu dropdown-menu-right">
+      <a class="dropdown-item" href="{% url 'summary:tables_create_selector' assessment.pk %}">
+        <i class="fa fa-fw fa-edit"></i>&nbsp;Create new table
+      </a>
+    </div>
+  </div>
+  {% endif %}
+</h1>
+
+{% if object_list.exists %}
+  <table class="table table-sm table-striped">
+    <thead>
+      <colgroup>
+        <col style="width: 40%;">
+        <col style="width: 15%;">
+        <col style="width: 15%;">
+        <col style="width: 15%;">
+        <col style="width: 15%;">
+      </colgroup>
+      <tr>
+        <th>Title</th>
+        <th>Table type</th>
+        {% if show_published %}<th>Published</th>{% endif %}
+        <th>Created</th>
+        <th>Modified</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for object in object_list %}
+      <tr>
+        <td><a href="{{object.get_absolute_url}}">{{object.title}}</a></td>
+        <td>{{object.get_table_type_display}}</td>
+        {% if show_published %}<td>{{object.published}}</td>{% endif %}
+        <td>{{object.created}}</td>
+        <td>{{object.last_updated}}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  {% if obj_perms.edit %}
+    <p><i>No tables are available - create one!</i></p>
+  {% else %}
+    <p><i>No tables are available.</i></p>
+  {% endif %}
+{% endif %}
+{% endblock %}

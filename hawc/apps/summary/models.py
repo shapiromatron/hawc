@@ -31,6 +31,7 @@ from ..common.helper import (
     tryParseInt,
 )
 from ..common.models import get_model_copy_name
+from ..common.validators import validate_html_tags
 from ..epi.exports import OutcomeDataPivot
 from ..epi.models import Outcome
 from ..epimeta.exports import MetaResultFlatDataPivot
@@ -161,6 +162,8 @@ class SummaryTable(models.Model):
         EVIDENCE_PROFILE = 1
         EVIDENCE_INTEGRATION = 2
 
+    TABLE_SCHEMA_MAP = {TableType.GENERIC: GenericTable}
+
     assessment = models.ForeignKey(Assessment, on_delete=models.CASCADE)
     title = models.CharField(max_length=128)
     slug = models.SlugField(
@@ -180,35 +183,73 @@ class SummaryTable(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
+    BREADCRUMB_PARENT = "assessment"
+
     class Meta:
         unique_together = (
             ("assessment", "title"),
             ("assessment", "slug"),
         )
 
+    def __str__(self):
+        return self.title
+
     def get_assessment(self):
         return self.assessment
 
+    @classmethod
+    def get_list_url(cls, assessment_id: int):
+        return reverse("summary:tables_list", args=(assessment_id,))
+
+    @classmethod
+    def get_api_list_url(cls, assessment_id: int):
+        return reverse("summary:api:summary-table-list") + f"?assessment_id={assessment_id}"
+
+    def get_absolute_url(self):
+        return reverse("summary:tables_detail", args=(self.assessment_id, self.slug,))
+
+    def get_update_url(self):
+        return reverse("summary:tables_update", args=(self.assessment_id, self.slug,))
+
+    def get_delete_url(self):
+        return reverse("summary:tables_delete", args=(self.assessment_id, self.slug,))
+
+    def get_api_url(self):
+        return reverse("summary:api:summary-table-detail", args=(self.id,))
+
+    def get_api_word_url(self):
+        return reverse("summary:api:summary-table-docx", args=(self.id,))
+
     def get_content_schema_class(self):
-        if self.table_type == self.TableType.GENERIC:
-            return GenericTable
-        else:
-            raise NotImplementedError("Non-generic tables not supported at this time")
+        if self.table_type not in self.TABLE_SCHEMA_MAP:
+            raise NotImplementedError(f"Table type not found: {self.table_type}")
+        return self.TABLE_SCHEMA_MAP[self.table_type]
 
     def get_table(self):
         return self.get_content_schema_class().parse_obj(self.content)
 
-    def to_docx(self):
+    @classmethod
+    def build_default(cls, assessment_id: int, table_type: int) -> "SummaryTable":
+        """Build an incomplete, but default SummaryTable instance"""
+        instance = cls(assessment_id=assessment_id, table_type=table_type)
+        schema = instance.get_content_schema_class()
+        instance.content = schema.build_default().dict()
+        return instance
+
+    def to_report(self):
         table = self.get_table()
         return ReportExport(docx=table.to_docx(), filename=self.slug)
 
     def clean(self):
-        # content validation
+        # make sure table can be built
         try:
             self.get_table()
         except PydanticError as e:
-            raise ValidationError(e)
-        return
+            raise ValidationError({"content": e.json()})
+
+        # validate tags used in text
+        content_str = json.dumps(self.content)
+        validate_html_tags(content_str)
 
 
 class HeatmapDataset(PydanticModel):

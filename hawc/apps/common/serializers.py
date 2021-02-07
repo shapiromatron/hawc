@@ -1,7 +1,46 @@
-from typing import Dict, List
+from typing import Any, Dict, List, Type
 
+import pydantic
+from django.core.exceptions import ValidationError
 from django.db import models
 from rest_framework import serializers
+from rest_framework.renderers import JSONRenderer
+
+
+def to_json(Serializer: serializers.ModelSerializer, instance: models.Model) -> str:
+    """Return a JSON string from an instance just like a serializer would, outside of the drf view logic.
+
+    Args:
+        Serializer (serializers.ModelSerializer): a django model serializer class
+        instance (models.Model): a django model instance
+
+    Returns:
+        str: a JSON string representation
+    """
+    serializer = Serializer(instance=instance)
+    return JSONRenderer().render(serializer.data).decode("utf8")
+
+
+def validate_pydantic(
+    pydantic_class: Type[pydantic.BaseModel], field: str, data: Any
+) -> pydantic.BaseModel:
+    """Validation helper to validate a field to a pydnatic model.
+
+    Args:
+        pydantic_class (pydantic.BaseModel): A Pydantic base class
+        field (str): the field to raise the error on
+        data (Any): the data to be validated
+
+    Raises:
+        ValidationError: a Django Validation error
+
+    Returns:
+        pydantic.BaseModel: The pydantic BaseModel
+    """
+    try:
+        return pydantic_class.parse_obj(data)
+    except pydantic.ValidationError as err:
+        raise ValidationError({field: err.json()})
 
 
 class UnusedSerializer(serializers.Serializer):
