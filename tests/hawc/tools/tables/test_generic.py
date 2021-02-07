@@ -34,7 +34,6 @@ class TestGenericTable:
         GenericTable.parse_obj(obj)
 
     def test_bad_parse(self):
-
         # one cell required
         obj = {"cells": []}
         with pytest.raises(ValueError, match="At least one cell is required"):

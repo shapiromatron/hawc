@@ -189,12 +189,10 @@ class EvidenceGroup(BaseCellGroup):
         cells = []
         cells.append(GenericCell.parse_args(True, 0, 0, 1, 5, tag_wrapper(self.title, "h2")))
         cells.extend(self.column_headers())
+
         if len(self.cell_rows) == 0:
-            cells.append(
-                GenericCell.parse_args(
-                    True, 2, 0, 1, 5, tag_wrapper("No data available", "p", "em")
-                )
-            )
+            text = tag_wrapper("No data available", "p", "em")
+            cells.append(GenericCell.parse_args(True, 2, 0, 1, 5, text))
         elif self.merge_judgement:
             self.cell_rows[0].judgement.row_span = len(self.cell_rows)
             self.cell_rows[0].add_offset(row=2)
@@ -215,35 +213,25 @@ class MechanisticGroup(BaseCellGroup):
     merge_judgement: bool = True
 
     def column_headers(self):
+        text1 = tag_wrapper("Biological events or pathways", "p", "strong")
+        text2 = tag_wrapper(
+            "Summary of key findings, interpretation, and limitations", "p", "strong"
+        )
+        text3 = tag_wrapper("Evidence stream judgement", "p", "strong")
         return [
-            GenericCell.parse_args(
-                True, 1, 0, 1, 1, tag_wrapper("Biological events or pathways", "p", "strong")
-            ),
-            GenericCell.parse_args(
-                True,
-                1,
-                1,
-                1,
-                3,
-                tag_wrapper(
-                    "Summary of key findings, interpretation, and limitations", "p", "strong"
-                ),
-            ),
-            GenericCell.parse_args(
-                True, 1, 4, 1, 1, tag_wrapper("Evidence stream judgement", "p", "strong")
-            ),
+            GenericCell.parse_args(True, 1, 0, 1, 1, text1),
+            GenericCell.parse_args(True, 1, 1, 1, 3, text2,),
+            GenericCell.parse_args(True, 1, 4, 1, 1, text3),
         ]
 
     def _set_cells(self):
         cells = []
         cells.append(GenericCell.parse_args(True, 0, 0, 1, 5, tag_wrapper(self.title, "h2")))
         cells.extend(self.column_headers())
+
         if len(self.cell_rows) == 0:
-            cells.append(
-                GenericCell.parse_args(
-                    True, 2, 0, 1, 5, tag_wrapper("No data available", "p", "em")
-                )
-            )
+            text = tag_wrapper("No data available", "p", "em")
+            cells.append(GenericCell.parse_args(True, 2, 0, 1, 5, text))
         elif self.merge_judgement:
             self.cell_rows[0].judgement.row_span = len(self.cell_rows)
             self.cell_rows[0].add_offset(row=2)
@@ -269,16 +257,10 @@ class EvidenceProfileTable(BaseTable):
 
     def _set_cells(self):
         cells = []
-        cells.append(
-            GenericCell.parse_args(
-                True, 0, 0, 1, 5, tag_wrapper("Evidence Stream Summary and Interpretation", "h1")
-            )
-        )
-        cells.append(
-            GenericCell.parse_args(
-                True, 0, 5, 1, 1, tag_wrapper("Evidence Integration Summary Judgement", "h1")
-            )
-        )
+        text = tag_wrapper("Evidence Stream Summary and Interpretation", "h1")
+        cells.append(GenericCell.parse_args(True, 0, 0, 1, 5, text))
+        text = tag_wrapper("Evidence Integration Summary Judgement", "h1")
+        cells.append(GenericCell.parse_args(True, 0, 5, 1, 1, text))
         self.exposed_human.add_offset(row=1)
         cells.extend(self.exposed_human.cells)
         self.animal.add_offset(row=self.exposed_human.rows)

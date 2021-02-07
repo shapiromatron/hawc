@@ -7,7 +7,22 @@ from django.utils.encoding import force_str
 
 tag_regex = re.compile(r"</?(?P<tag>\w+)[^>]*>")
 
-valid_html_tags_re = {"p", "a", "strong", "em", "ul", "ol", "li", "h1", "h2", "br"}
+valid_html_tags_re = {
+    "a",
+    "br",
+    "em",
+    "h1",
+    "h2",
+    "h3",
+    "h4",
+    "h5",
+    "li",
+    "ol",
+    "p",
+    "span",
+    "strong",
+    "ul",
+}
 
 
 def validate_html_tags(text: str) -> str:

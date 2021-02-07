@@ -70,9 +70,10 @@ class BaseTable(BaseCellGroup):
         self.sort_cells()
 
     def validate_cells(self, cells):
-        table_cells = [[False] * self.columns for _ in range(self.rows)]
         if len(cells) < 1:
             raise ValueError("At least one cell is required.")
+
+        table_cells = [[False] * self.columns for _ in range(self.rows)]
         for cell in cells:
             try:
                 for i in range(cell.row_span):
