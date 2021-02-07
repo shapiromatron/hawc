@@ -15,9 +15,6 @@ class GenericCell(BaseCell):
 class GenericTable(BaseTable):
     cells: List[GenericCell]
 
-    def _set_cells(self):
-        pass
-
     @classmethod
     def build_default(cls):
         return cls.parse_raw(
