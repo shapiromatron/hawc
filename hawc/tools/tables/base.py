@@ -1,6 +1,7 @@
 from typing import List
 
-from docx import Document
+from docx import Document as create_document
+from docx.document import Document
 from pydantic import BaseModel, conint
 
 
@@ -59,7 +60,7 @@ class BaseCellGroup(BaseModel):
         return max(cell.column + cell.col_span for cell in self.cells)
 
     def _set_cells(self):
-        raise NotImplementedError("Need '_set_cells' method")
+        pass
 
 
 class BaseTable(BaseCellGroup):
@@ -70,6 +71,8 @@ class BaseTable(BaseCellGroup):
 
     def validate_cells(self, cells):
         table_cells = [[False] * self.columns for _ in range(self.rows)]
+        if len(cells) < 1:
+            raise ValueError("At least one cell is required.")
         for cell in cells:
             try:
                 for i in range(cell.row_span):
@@ -83,17 +86,9 @@ class BaseTable(BaseCellGroup):
     def sort_cells(self):
         self.cells.sort(key=lambda cell: cell.row_order_index(self.columns))
 
-    def add_cells(self, cells):
-        self.validate_cells(self.cells + cells)
-        self.cells += cells
-        self.sort_cells()
-
-    def get_cells(self):
-        return [cell.to_dict() for cell in self.cells]
-
     def to_docx(self, docx: Document = None):
         if docx is None:
-            docx = Document()
+            docx = create_document()
         table = docx.add_table(rows=self.rows, cols=self.columns)
         table.style = "Table Grid"
         for cell in self.cells:
@@ -105,18 +100,6 @@ class BaseTable(BaseCellGroup):
             paragraph.getparent().remove(paragraph)
             cell.to_docx(table_cell)
         return docx
-
-    def insert_row(self, index):
-        self.rows += 1
-        for cell in self.cells:
-            if cell.row >= index:
-                cell.row += 1
-
-    def insert_column(self, index):
-        self.columns += 1
-        for cell in self.cells:
-            if cell.column >= index:
-                cell.column += 1
 
     @classmethod
     def build_default(cls):

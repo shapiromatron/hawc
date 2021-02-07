@@ -1,8 +1,26 @@
+import re
 from urllib import parse
 
 from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
 from django.utils.encoding import force_str
+
+tag_regex = re.compile(r"</?(?P<tag>\w+)[^>]*>")
+
+valid_html_tags_re = {"p", "a", "strong", "em", "ul", "ol", "li", "h1", "h2", "br"}
+
+
+def validate_html_tags(text: str) -> str:
+    """Html contains a subset of acceptable tags.
+
+    Raises:
+        ValidationError if invalid tag found
+    """
+    html_tags = tag_regex.findall(text)
+    invalid_html_tags = set(html_tags) - valid_html_tags_re
+    if len(invalid_html_tags) > 0:
+        raise ValidationError({"content": f"Invalid html tags: {', '.join(invalid_html_tags)}"})
+    return text
 
 
 class CustomURLValidator(URLValidator):

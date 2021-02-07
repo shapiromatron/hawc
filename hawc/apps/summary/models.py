@@ -1,7 +1,6 @@
 import json
 import logging
 import os
-import re
 from operator import methodcaller
 from typing import Dict, List
 
@@ -32,6 +31,7 @@ from ..common.helper import (
     tryParseInt,
 )
 from ..common.models import get_model_copy_name
+from ..common.validators import validate_html_tags
 from ..epi.exports import OutcomeDataPivot
 from ..epi.models import Outcome
 from ..epimeta.exports import MetaResultFlatDataPivot
@@ -185,6 +185,12 @@ class SummaryTable(models.Model):
 
     BREADCRUMB_PARENT = "assessment"
 
+    class Meta:
+        unique_together = (
+            ("assessment", "title"),
+            ("assessment", "slug"),
+        )
+
     def __str__(self):
         return self.title
 
@@ -216,15 +222,11 @@ class SummaryTable(models.Model):
 
     def get_content_schema_class(self):
         if self.table_type not in self.TABLE_SCHEMA_MAP:
-            raise NotImplementedError("Non-generic tables not supported at this time")
+            raise NotImplementedError(f"Table type not found: {self.table_type}")
         return self.TABLE_SCHEMA_MAP[self.table_type]
 
     def get_table(self):
         return self.get_content_schema_class().parse_obj(self.content)
-
-    def get_cells(self):
-        table = self.get_table()
-        return table.get_cells()
 
     @classmethod
     def build_default(cls, assessment_id: int, table_type: int) -> "SummaryTable":
@@ -234,7 +236,7 @@ class SummaryTable(models.Model):
         instance.content = schema.build_default().dict()
         return instance
 
-    def to_report(self):
+    def to_docx(self):
         table = self.get_table()
         return ReportExport(docx=table.to_docx(), filename=self.slug)
 
@@ -244,23 +246,10 @@ class SummaryTable(models.Model):
             self.get_table()
         except PydanticError as e:
             raise ValidationError({"content": e.json()})
-        # content should not include unapproved html tags
-        content_str = json.dumps(self.content)
-        tag_regex = r"</?(?P<tag>\w+)[^>]*>"
-        html_tags = re.findall(tag_regex, content_str)
-        valid_html_tags = {"p", "a", "strong", "em", "ul", "ol", "li", "h1", "h2", "br"}
-        invalid_html_tags = set(html_tags) - valid_html_tags
-        if len(invalid_html_tags) > 0:
-            raise ValidationError(
-                {"content": f"Invalid html tags in content: {', '.join(invalid_html_tags)}"}
-            )
-        return
 
-    class Meta:
-        unique_together = (
-            ("assessment", "title"),
-            ("assessment", "slug"),
-        )
+        # validate tags used in text
+        content_str = json.dumps(self.content)
+        validate_html_tags(content_str)
 
 
 class HeatmapDataset(PydanticModel):
