@@ -1,7 +1,17 @@
 import _ from "lodash";
 import {action, computed, observable} from "mobx";
 
+import {TableType} from "../constants";
 import h from "shared/utils/helpers";
+import GenericTableStore from "../genericTable/store.js";
+
+const getTableStore = function(table, editStore) {
+    if (table.table_type == TableType.GENERIC) {
+        return new GenericTableStore(true, JSON.parse(table.content), editStore);
+    } else {
+        throw "Unknown table type";
+    }
+};
 
 class SummaryTableEditStore {
     @observable tableObject = null; // string-representation to be submitted
@@ -13,10 +23,23 @@ class SummaryTableEditStore {
 
         this.config = config;
         this.tableObject = tableObject;
+        this.tableStore = getTableStore(tableObject, this);
     }
 
     @action.bound updateContent(field, value) {
         this.tableObject[field] = value;
+    }
+    @action.bound updateTableContent(value, notify) {
+        // only update table content if json is valid
+        try {
+            const content = JSON.parse(value);
+            this.tableObject.content = value;
+            if (notify) {
+                this.tableStore.updateSettings(content);
+            }
+        } catch (err) {
+            console.warn(err);
+        }
     }
     @action.bound handleSubmit() {
         const url = this.config.save_url,

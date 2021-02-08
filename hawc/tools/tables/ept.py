@@ -204,7 +204,6 @@ class EvidenceGroup(BaseCellGroup):
             for index, row in enumerate(self.cell_rows):
                 row.add_offset(row=index + 2)
                 cells.extend(row.cells)
-
         self.cells = cells
 
 
@@ -244,7 +243,6 @@ class MechanisticGroup(BaseCellGroup):
             for index, row in enumerate(self.cell_rows):
                 row.add_offset(row=index + 2)
                 cells.extend(row.cells)
-
         self.cells = cells
 
 

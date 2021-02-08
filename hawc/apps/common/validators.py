@@ -27,6 +27,7 @@ valid_html_tags_re = {
 
 def validate_html_tags(text: str) -> str:
     """Html contains a subset of acceptable tags.
+
     Raises:
         ValidationError if invalid tag found
     """

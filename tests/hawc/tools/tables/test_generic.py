@@ -16,7 +16,6 @@ class TestGenericTable:
         table = GenericTable.build_default()
         document = table.to_docx()
         saved_document = Document(DATA_PATH / "generic_report.docx")
-
         assert documents_equal(document, saved_document)
 
     def test_good_parse(self):

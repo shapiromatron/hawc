@@ -236,7 +236,7 @@ class SummaryTable(models.Model):
         instance.content = schema.build_default().dict()
         return instance
 
-    def to_report(self):
+    def to_docx(self):
         table = self.get_table()
         return ReportExport(docx=table.to_docx(), filename=self.slug)
 

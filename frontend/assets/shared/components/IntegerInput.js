@@ -13,30 +13,41 @@ class IntegerInput extends Component {
     }
 
     renderField(fieldClass, fieldId) {
+        const inputType = this.props.slider ? "range" : "number";
         return (
-            <input
-                className={fieldClass}
-                id={fieldId}
-                name={this.props.name}
-                type="number"
-                required={this.props.required}
-                value={this.state.value}
-                onBlur={e => {
-                    let valueString = e.target.value,
-                        valueInt = parseInt(valueString);
-                    if (
-                        isNaN(valueInt) ||
-                        (this.props.minimum && valueInt < this.props.minimum) ||
-                        (this.props.maximum && valueInt > this.props.maximum)
-                    ) {
-                        this.setState({value: this.props.value.toString()});
-                    } else {
-                        this.props.onChange(e);
-                        this.setState({value: valueInt.toString()});
-                    }
-                }}
-                onChange={e => this.setState({value: e.target.value})}
-            />
+            <div className="input-group">
+                <input
+                    className={fieldClass}
+                    min={this.props.minimum}
+                    max={this.props.maximum}
+                    id={fieldId}
+                    name={this.props.name}
+                    type={inputType}
+                    required={this.props.required}
+                    value={this.state.value}
+                    onBlur={e => {
+                        let valueString = e.target.value,
+                            valueInt = parseInt(valueString);
+                        if (
+                            isNaN(valueInt) ||
+                            (this.props.minimum && valueInt < this.props.minimum) ||
+                            (this.props.maximum && valueInt > this.props.maximum)
+                        ) {
+                            this.setState({value: this.props.value.toString()});
+                        } else {
+                            this.props.onChange(e);
+                            this.setState({value: valueInt.toString()});
+                        }
+                    }}
+                    onChange={e => this.setState({value: e.target.value})}
+                    onInput={this.props.onInput}
+                />
+                {this.props.slider ? (
+                    <div className="input-group-append ml-1">
+                        <div className="input-group-text">{this.state.value}</div>
+                    </div>
+                ) : null}
+            </div>
         );
     }
 
@@ -53,6 +64,10 @@ class IntegerInput extends Component {
     }
 }
 
+IntegerInput.defaultProps = {
+    slider: false,
+    required: false,
+};
 IntegerInput.propTypes = {
     helpText: PropTypes.string,
     id: PropTypes.string,
@@ -61,8 +76,10 @@ IntegerInput.propTypes = {
     minimum: PropTypes.number,
     name: PropTypes.string.isRequired,
     onChange: PropTypes.func.isRequired,
+    onInput: PropTypes.func,
     required: PropTypes.bool,
     value: PropTypes.number.isRequired,
+    slider: PropTypes.bool,
 };
 
 export default IntegerInput;

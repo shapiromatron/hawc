@@ -129,12 +129,6 @@ class SummaryTableViewset(AssessmentEditViewset):
         report = obj.to_docx()
         return Response(report)
 
-    @action(detail=True)
-    def cells(self, request, pk):
-        obj = self.get_object()
-        cells = obj.get_cells()
-        return Response(cells)
-
     def create(self, request, *args, **kwargs):
         self.assessment = get_object_or_404(Assessment, id=request.data.get("assessment", -1))
         if not self.assessment.user_can_edit_object(request.user):
