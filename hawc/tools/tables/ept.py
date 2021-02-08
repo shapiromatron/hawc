@@ -163,8 +163,8 @@ class MechanisticRow(BaseCellGroup):
 
 class EvidenceGroup(BaseCellGroup):
     title: str
-    cell_rows: List[EvidenceRow] = []
-    merge_judgement: bool = True
+    cell_rows: List[EvidenceRow]
+    merge_judgement: bool
 
     def column_headers(self):
         return [
@@ -209,8 +209,8 @@ class EvidenceGroup(BaseCellGroup):
 
 class MechanisticGroup(BaseCellGroup):
     title: str
-    cell_rows: List[MechanisticRow] = []
-    merge_judgement: bool = True
+    cell_rows: List[MechanisticRow]
+    merge_judgement: bool
 
     def column_headers(self):
         text1 = tag_wrapper("Biological events or pathways", "p", "strong")
@@ -287,19 +287,9 @@ class EvidenceProfileTable(BaseTable):
                         "uncertain_factors": {"factors": ["<p>asdf</p>", "<p>asdf</p>"]},
                         "summary": {"findings": "<p>asdf</p>"},
                         "judgement": {"judgement": "<p>asdf</p>", "description": "<p>asdf</p>"},
-                    },
-                    {
-                        "evidence": {
-                            "evidence": "<p>asdf</p>",
-                            "confidence": "<p>asdf</p>",
-                            "optional": "<p>asdf</p>",
-                        },
-                        "certain_factors": {"factors": ["<p>asdf</p>", "<p>asdf</p>"]},
-                        "uncertain_factors": {"factors": ["<p>asdf</p>", "<p>asdf</p>"]},
-                        "summary": {"findings": "<p>asdf</p>"},
-                        "judgement": {"judgement": "<p>asdf</p>", "description": "<p>asdf</p>"},
-                    },
+                    }
                 ],
+                "merge_judgement": True,
             },
             "animal": {
                 "title": "animal",
@@ -314,27 +304,26 @@ class EvidenceProfileTable(BaseTable):
                         "uncertain_factors": {"factors": ["<p>asdf</p>", "<p>asdf</p>"]},
                         "summary": {"findings": "<p>asdf</p>"},
                         "judgement": {"judgement": "<p>asdf</p>", "description": "<p>asdf</p>"},
-                    },
-                    {
-                        "evidence": {
-                            "evidence": "<p>asdf</p>",
-                            "confidence": "<p>asdf</p>",
-                            "optional": "<p>asdf</p>",
-                        },
-                        "certain_factors": {"factors": ["<p>asdf</p>", "<p>asdf</p>"]},
-                        "uncertain_factors": {"factors": ["<p>asdf</p>", "<p>asdf</p>"]},
-                        "summary": {"findings": "<p>asdf</p>"},
-                        "judgement": {"judgement": "<p>asdf</p>", "description": "<p>asdf</p>"},
-                    },
+                    }
                 ],
-                "merge_judgement": False,
+                "merge_judgement": True,
             },
-            "mechanistic": {"title": "mechanistic"},
+            "mechanistic": {
+                "title": "mechanistic",
+                "cell_rows": [
+                    {
+                        "evidence": {"description": "<p>asdf</p>"},
+                        "summary": {"findings": "<p>asdf</p>"},
+                        "judgement": {"description": "<p>asdf</p>"},
+                    }
+                ],
+                "merge_judgement": True,
+            },
             "summary_judgement": {
-                "judgement": "<p>asdf</p>",
-                "description": "<p>asdf</p>",
-                "human_relevance": "<p>asdf</p>",
-                "cross_stream_coherence": "<p>asdf</p>",
-                "susceptibility": "<p>asdf</p>",
+                "judgement": "<p>...</p>",
+                "description": "<p>...</p>",
+                "human_relevance": "<p>...</p>",
+                "cross_stream_coherence": "<p>...</p>",
+                "susceptibility": "<p>...</p>",
             },
         }
