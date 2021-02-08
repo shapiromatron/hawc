@@ -3,16 +3,17 @@ import React, {Component} from "react";
 import PropTypes from "prop-types";
 import {Tab, Tabs, TabList, TabPanel} from "react-tabs";
 
-import Table from "../genericTable/Table";
-import TableForm from "../genericTable/TableForm";
-
+import {getEditTableComponent, getViewTableComponent} from "../lookups";
 import DjangoForm from "./DjangoForm";
 
 @inject("store")
 @observer
 class Root extends Component {
     render() {
-        const {tableStore} = this.props.store;
+        const {tableStore, tableObject} = this.props.store,
+            Form = getEditTableComponent(tableObject),
+            Table = getViewTableComponent(tableObject);
+
         return (
             <Tabs>
                 <TabList>
@@ -24,7 +25,7 @@ class Root extends Component {
                     <DjangoForm />
                 </TabPanel>
                 <TabPanel>
-                    <TableForm store={tableStore} />
+                    <Form store={tableStore} />
                 </TabPanel>
                 <TabPanel>
                     <Table store={tableStore} forceReadOnly={true} />

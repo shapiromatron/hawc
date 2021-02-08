@@ -1,8 +1,7 @@
-import _ from "lodash";
 import {observer} from "mobx-react";
 import React, {Component} from "react";
 import PropTypes from "prop-types";
-import {toJS} from "mobx";
+import {Judgement} from "./Judgement";
 
 const NoDataRow = function() {
         return (
@@ -24,9 +23,8 @@ const NoDataRow = function() {
             </tr>
         );
     },
-    EvidenceRow = function(props) {
-        const {row} = props;
-        console.log(toJS(row));
+    EvidenceRow = observer(props => {
+        const {row, index, rowSpan} = props;
         return (
             <tr>
                 <td>
@@ -63,13 +61,19 @@ const NoDataRow = function() {
                 <td>
                     <div dangerouslySetInnerHTML={{__html: row.summary.findings}}></div>
                 </td>
-                <td>
-                    <div dangerouslySetInnerHTML={{__html: row.judgement.judgement}}></div>
-                    <div dangerouslySetInnerHTML={{__html: row.judgement.description}}></div>
-                </td>
+                {index == 0 || rowSpan == 1 ? (
+                    <td rowSpan={rowSpan > 1 ? rowSpan : null}>
+                        <Judgement value={row.judgement.judgement} summary={false} />
+                        <div dangerouslySetInnerHTML={{__html: row.judgement.description}}></div>
+                    </td>
+                ) : null}
             </tr>
         );
-    };
+    });
+
+EvidenceRow.propTypes = {
+    row: PropTypes.object.isRequired,
+};
 
 @observer
 class SummaryCell extends Component {
@@ -79,7 +83,7 @@ class SummaryCell extends Component {
 
         return (
             <td rowSpan={numSummaryRows}>
-                <div dangerouslySetInnerHTML={{__html: summary_judgement.judgement}}></div>
+                <Judgement value={summary_judgement.judgement} summary={true} />
                 <p>
                     <em>Primary basis:</em>
                 </p>
@@ -110,7 +114,8 @@ SummaryCell.propTypes = {
 @observer
 class EpidemiologyEvidenceRows extends Component {
     render() {
-        const {exposed_human} = this.props.store.settings;
+        const {numEpiJudgementRowSpan} = this.props.store,
+            {exposed_human} = this.props.store.settings;
         return (
             <>
                 <tr>
@@ -120,7 +125,12 @@ class EpidemiologyEvidenceRows extends Component {
                 <EvidenceHeaderRow />
                 {exposed_human.cell_rows.length == 0 ? NoDataRow() : null}
                 {exposed_human.cell_rows.map((row, index) => (
-                    <EvidenceRow key={index} row={row} />
+                    <EvidenceRow
+                        key={index}
+                        row={row}
+                        index={index}
+                        rowSpan={numEpiJudgementRowSpan}
+                    />
                 ))}
             </>
         );
@@ -134,7 +144,8 @@ EpidemiologyEvidenceRows.propTypes = {
 @observer
 class AnimalEvidenceRows extends Component {
     render() {
-        const {animal} = this.props.store.settings;
+        const {numAniJudgementRowSpan} = this.props.store,
+            {animal} = this.props.store.settings;
         return (
             <>
                 <tr>
@@ -143,7 +154,12 @@ class AnimalEvidenceRows extends Component {
                 <EvidenceHeaderRow />
                 {animal.cell_rows.length == 0 ? NoDataRow() : null}
                 {animal.cell_rows.map((row, index) => (
-                    <EvidenceRow key={index} row={row} />
+                    <EvidenceRow
+                        key={index}
+                        row={row}
+                        index={index}
+                        rowSpan={numAniJudgementRowSpan}
+                    />
                 ))}
             </>
         );
@@ -157,7 +173,8 @@ AnimalEvidenceRows.propTypes = {
 @observer
 class MechanisticEvidenceRows extends Component {
     render() {
-        const {mechanistic} = this.props.store.settings;
+        const {numMechJudgementRowSpan} = this.props.store,
+            {mechanistic} = this.props.store.settings;
         return (
             <>
                 <tr>
@@ -181,12 +198,14 @@ class MechanisticEvidenceRows extends Component {
                             <td colSpan={3}>
                                 <div dangerouslySetInnerHTML={{__html: row.summary.findings}}></div>
                             </td>
-                            <td>
-                                <div
-                                    dangerouslySetInnerHTML={{
-                                        __html: row.judgement.description,
-                                    }}></div>
-                            </td>
+                            {index == 0 || numMechJudgementRowSpan == 1 ? (
+                                <td rowSpan={index == 0 ? numMechJudgementRowSpan : null}>
+                                    <div
+                                        dangerouslySetInnerHTML={{
+                                            __html: row.judgement.description,
+                                        }}></div>
+                                </td>
+                            ) : null}
                         </tr>
                     );
                 })}

@@ -1,16 +1,23 @@
 import GenericTableStore from "./genericTable/store.js";
 import EvidenceProfileTableStore from "./evidenceProfileTable/store.js";
 import {TableType} from "./constants";
+
+import GenericTableForm from "./genericTable/TableForm";
 import GenericTable from "./genericTable/Table";
+import EvidenceProfileForm from "./evidenceProfileTable/Form";
 import EvidenceProfileTable from "./evidenceProfileTable/Table";
 
 const tableStoreLookup = {
         [TableType.GENERIC]: GenericTableStore,
         [TableType.EVIDENCE_PROFILE]: EvidenceProfileTableStore,
     },
-    tableComponentLookup = {
+    tableViewComponentLookup = {
         [TableType.GENERIC]: GenericTable,
         [TableType.EVIDENCE_PROFILE]: EvidenceProfileTable,
+    },
+    tableEditComponentLookup = {
+        [TableType.GENERIC]: GenericTableForm,
+        [TableType.EVIDENCE_PROFILE]: EvidenceProfileForm,
     },
     getTableStore = function(table, editStore) {
         const Cls = tableStoreLookup[table.table_type];
@@ -24,11 +31,18 @@ const tableStoreLookup = {
         }
     },
     getViewTableComponent = function(table) {
-        const Component = tableComponentLookup[table.table_type];
+        const Component = tableViewComponentLookup[table.table_type];
+        if (!Component) {
+            throw `Unknown table type: ${table.table_type}`;
+        }
+        return Component;
+    },
+    getEditTableComponent = function(table) {
+        const Component = tableEditComponentLookup[table.table_type];
         if (!Component) {
             throw `Unknown table type: ${table.table_type}`;
         }
         return Component;
     };
 
-export {getTableStore, getViewTableComponent};
+export {getTableStore, getViewTableComponent, getEditTableComponent};

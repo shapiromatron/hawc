@@ -1,8 +1,26 @@
+from enum import IntEnum
 from typing import List
 
 from .base import BaseCell, BaseCellGroup, BaseTable
 from .generic import GenericCell
 from .parser import QuillParser, strip_tags, tag_wrapper, ul_wrapper
+
+
+class JudgementChoices(IntEnum):
+    Robust = 30
+    Moderate = 20
+    Slight = 10
+    Indeterminate = 1
+    NoEffect = -10
+
+
+class SummaryJudgementChoices(IntEnum):
+    Confident = 30
+    Likely = 20
+    Suggests = 10
+    Inadequate = 1
+    NoEffect = -10
+
 
 ## Summary judgement
 
@@ -11,7 +29,7 @@ class SummaryJudgementCell(BaseCell):
     row: int = 1
     column: int = 5
 
-    judgement: str
+    judgement: SummaryJudgementChoices
     description: str
     human_relevance: str
     cross_stream_coherence: str
@@ -19,7 +37,7 @@ class SummaryJudgementCell(BaseCell):
 
     def to_docx(self, block):
         text = ""
-        text += self.judgement
+        text += str(self.judgement)  # TODO - fix
         text += tag_wrapper("\nPrimary basis:", "p", "em")
         text += self.description
         text += tag_wrapper("\nHuman relevance:", "p", "em")
@@ -85,11 +103,11 @@ class SummaryCell(BaseCell):
 class JudgementCell(BaseCell):
     column: int = 4
 
-    judgement: str
+    judgement: JudgementChoices
     description: str
 
     def to_docx(self, block):
-        text = self.judgement + self.description
+        text = str(self.judgement) + self.description  # TODO - fix
         parser = QuillParser()
         return parser.feed(text, block)
 
@@ -275,52 +293,58 @@ class EvidenceProfileTable(BaseTable):
     def get_default_props(cls):
         return {
             "exposed_human": {
-                "title": "exposed human",
-                "cell_rows": [
+                "title": "Evidence from studies of exposed humans",  # TODO - change to `subheading`
+                "cell_rows": [  # TODO - changes to `rows`
                     {
                         "evidence": {
-                            "evidence": "<p>asdf</p>",
-                            "confidence": "<p>asdf</p>",
-                            "optional": "<p>asdf</p>",
+                            "evidence": "<p>...</p>",
+                            "confidence": "<p>...</p>",
+                            "optional": "<p>...</p>",
                         },
-                        "certain_factors": {"factors": ["<p>asdf</p>", "<p>asdf</p>"]},
-                        "uncertain_factors": {"factors": ["<p>asdf</p>", "<p>asdf</p>"]},
-                        "summary": {"findings": "<p>asdf</p>"},
-                        "judgement": {"judgement": "<p>asdf</p>", "description": "<p>asdf</p>"},
+                        "certain_factors": {"factors": ["<p>...</p>", "<p>...</p>"]},
+                        "uncertain_factors": {"factors": ["<p>...</p>", "<p>...</p>"]},
+                        "summary": {"findings": "<p>...</p>"},
+                        "judgement": {
+                            "judgement": JudgementChoices.Indeterminate,
+                            "description": "<p>...</p>",
+                        },
                     }
                 ],
                 "merge_judgement": True,
             },
             "animal": {
-                "title": "animal",
+                "title": "Evidence from animal studies",
                 "cell_rows": [
                     {
                         "evidence": {
-                            "evidence": "<p>asdf</p>",
-                            "confidence": "<p>asdf</p>",
-                            "optional": "<p>asdf</p>",
+                            "evidence": "<p>...</p>",
+                            "confidence": "<p>...</p>",
+                            "optional": "<p>...</p>",
                         },
-                        "certain_factors": {"factors": ["<p>asdf</p>", "<p>asdf</p>"]},
-                        "uncertain_factors": {"factors": ["<p>asdf</p>", "<p>asdf</p>"]},
-                        "summary": {"findings": "<p>asdf</p>"},
-                        "judgement": {"judgement": "<p>asdf</p>", "description": "<p>asdf</p>"},
+                        "certain_factors": {"factors": ["<p>...</p>", "<p>...</p>"]},
+                        "uncertain_factors": {"factors": ["<p>...</p>", "<p>...</p>"]},
+                        "summary": {"findings": "<p>...</p>"},
+                        "judgement": {
+                            "judgement": JudgementChoices.Indeterminate,
+                            "description": "<p>...</p>",
+                        },
                     }
                 ],
                 "merge_judgement": True,
             },
             "mechanistic": {
-                "title": "mechanistic",
+                "title": "Mechanistic evidence and supplemental information",
                 "cell_rows": [
                     {
-                        "evidence": {"description": "<p>asdf</p>"},
-                        "summary": {"findings": "<p>asdf</p>"},
-                        "judgement": {"description": "<p>asdf</p>"},
+                        "evidence": {"description": "<p>...</p>"},
+                        "summary": {"findings": "<p>...</p>"},
+                        "judgement": {"description": "<p>...</p>"},
                     }
                 ],
                 "merge_judgement": True,
             },
             "summary_judgement": {
-                "judgement": "<p>...</p>",
+                "judgement": SummaryJudgementChoices.Inadequate,
                 "description": "<p>...</p>",
                 "human_relevance": "<p>...</p>",
                 "cross_stream_coherence": "<p>...</p>",

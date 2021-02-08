@@ -128,9 +128,3 @@ class SummaryTableViewset(AssessmentEditViewset):
         obj = self.get_object()
         report = obj.to_docx()
         return Response(report)
-
-    def create(self, request, *args, **kwargs):
-        self.assessment = get_object_or_404(Assessment, id=request.data.get("assessment", -1))
-        if not self.assessment.user_can_edit_object(request.user):
-            raise exceptions.PermissionDenied()
-        return super().create(request, *args, **kwargs)
