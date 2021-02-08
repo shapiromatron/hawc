@@ -272,71 +272,69 @@ class EvidenceProfileTable(BaseTable):
         self.cells = cells
 
     @classmethod
-    def build_default(cls):
-        return cls.parse_obj(
-            {
-                "exposed_human": {
-                    "title": "exposed human",
-                    "cell_rows": [
-                        {
-                            "evidence": {
-                                "evidence": "<p>asdf</p>",
-                                "confidence": "<p>asdf</p>",
-                                "optional": "<p>asdf</p>",
-                            },
-                            "certain_factors": {"factors": ["<p>asdf</p>", "<p>asdf</p>"]},
-                            "uncertain_factors": {"factors": ["<p>asdf</p>", "<p>asdf</p>"]},
-                            "summary": {"findings": "<p>asdf</p>"},
-                            "judgement": {"judgement": "<p>asdf</p>", "description": "<p>asdf</p>"},
+    def get_default_props(cls):
+        return {
+            "exposed_human": {
+                "title": "exposed human",
+                "cell_rows": [
+                    {
+                        "evidence": {
+                            "evidence": "<p>asdf</p>",
+                            "confidence": "<p>asdf</p>",
+                            "optional": "<p>asdf</p>",
                         },
-                        {
-                            "evidence": {
-                                "evidence": "<p>asdf</p>",
-                                "confidence": "<p>asdf</p>",
-                                "optional": "<p>asdf</p>",
-                            },
-                            "certain_factors": {"factors": ["<p>asdf</p>", "<p>asdf</p>"]},
-                            "uncertain_factors": {"factors": ["<p>asdf</p>", "<p>asdf</p>"]},
-                            "summary": {"findings": "<p>asdf</p>"},
-                            "judgement": {"judgement": "<p>asdf</p>", "description": "<p>asdf</p>"},
+                        "certain_factors": {"factors": ["<p>asdf</p>", "<p>asdf</p>"]},
+                        "uncertain_factors": {"factors": ["<p>asdf</p>", "<p>asdf</p>"]},
+                        "summary": {"findings": "<p>asdf</p>"},
+                        "judgement": {"judgement": "<p>asdf</p>", "description": "<p>asdf</p>"},
+                    },
+                    {
+                        "evidence": {
+                            "evidence": "<p>asdf</p>",
+                            "confidence": "<p>asdf</p>",
+                            "optional": "<p>asdf</p>",
                         },
-                    ],
-                },
-                "animal": {
-                    "title": "animal",
-                    "cell_rows": [
-                        {
-                            "evidence": {
-                                "evidence": "<p>asdf</p>",
-                                "confidence": "<p>asdf</p>",
-                                "optional": "<p>asdf</p>",
-                            },
-                            "certain_factors": {"factors": ["<p>asdf</p>", "<p>asdf</p>"]},
-                            "uncertain_factors": {"factors": ["<p>asdf</p>", "<p>asdf</p>"]},
-                            "summary": {"findings": "<p>asdf</p>"},
-                            "judgement": {"judgement": "<p>asdf</p>", "description": "<p>asdf</p>"},
+                        "certain_factors": {"factors": ["<p>asdf</p>", "<p>asdf</p>"]},
+                        "uncertain_factors": {"factors": ["<p>asdf</p>", "<p>asdf</p>"]},
+                        "summary": {"findings": "<p>asdf</p>"},
+                        "judgement": {"judgement": "<p>asdf</p>", "description": "<p>asdf</p>"},
+                    },
+                ],
+            },
+            "animal": {
+                "title": "animal",
+                "cell_rows": [
+                    {
+                        "evidence": {
+                            "evidence": "<p>asdf</p>",
+                            "confidence": "<p>asdf</p>",
+                            "optional": "<p>asdf</p>",
                         },
-                        {
-                            "evidence": {
-                                "evidence": "<p>asdf</p>",
-                                "confidence": "<p>asdf</p>",
-                                "optional": "<p>asdf</p>",
-                            },
-                            "certain_factors": {"factors": ["<p>asdf</p>", "<p>asdf</p>"]},
-                            "uncertain_factors": {"factors": ["<p>asdf</p>", "<p>asdf</p>"]},
-                            "summary": {"findings": "<p>asdf</p>"},
-                            "judgement": {"judgement": "<p>asdf</p>", "description": "<p>asdf</p>"},
+                        "certain_factors": {"factors": ["<p>asdf</p>", "<p>asdf</p>"]},
+                        "uncertain_factors": {"factors": ["<p>asdf</p>", "<p>asdf</p>"]},
+                        "summary": {"findings": "<p>asdf</p>"},
+                        "judgement": {"judgement": "<p>asdf</p>", "description": "<p>asdf</p>"},
+                    },
+                    {
+                        "evidence": {
+                            "evidence": "<p>asdf</p>",
+                            "confidence": "<p>asdf</p>",
+                            "optional": "<p>asdf</p>",
                         },
-                    ],
-                    "merge_judgement": False,
-                },
-                "mechanistic": {"title": "mechanistic"},
-                "summary_judgement": {
-                    "judgement": "<p>asdf</p>",
-                    "description": "<p>asdf</p>",
-                    "human_relevance": "<p>asdf</p>",
-                    "cross_stream_coherence": "<p>asdf</p>",
-                    "susceptibility": "<p>asdf</p>",
-                },
-            }
-        )
+                        "certain_factors": {"factors": ["<p>asdf</p>", "<p>asdf</p>"]},
+                        "uncertain_factors": {"factors": ["<p>asdf</p>", "<p>asdf</p>"]},
+                        "summary": {"findings": "<p>asdf</p>"},
+                        "judgement": {"judgement": "<p>asdf</p>", "description": "<p>asdf</p>"},
+                    },
+                ],
+                "merge_judgement": False,
+            },
+            "mechanistic": {"title": "mechanistic"},
+            "summary_judgement": {
+                "judgement": "<p>asdf</p>",
+                "description": "<p>asdf</p>",
+                "human_relevance": "<p>asdf</p>",
+                "cross_stream_coherence": "<p>asdf</p>",
+                "susceptibility": "<p>asdf</p>",
+            },
+        }

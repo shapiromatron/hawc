@@ -17,37 +17,13 @@ class GenericTable(BaseTable):
     cells: List[GenericCell]
 
     @classmethod
-    def build_default(cls):
-        return cls.parse_raw(
-            """
-        {
+    def get_default_props(cls):
+        return {
             "column_widths": [10, 10],
             "cells": [
-                {
-                    "header": true,
-                    "row": 0,
-                    "column": 0,
-                    "quill_text": "<p>A1</p>"
-                },
-                {
-                    "header": true,
-                    "row": 0,
-                    "column": 1,
-                    "quill_text": "<p>B1</p>"
-                },
-                {
-                    "header": false,
-                    "row": 1,
-                    "column": 0,
-                    "quill_text": "<p>A2</p>"
-                },
-                {
-                    "header": false,
-                    "row": 1,
-                    "column": 1,
-                    "quill_text": "<p>B2</p>"
-                }
-            ]
+                {"header": True, "row": 0, "column": 0, "quill_text": "<p>A1</p>"},
+                {"header": True, "row": 0, "column": 1, "quill_text": "<p>B1</p>"},
+                {"header": False, "row": 1, "column": 0, "quill_text": "<p>A2</p>"},
+                {"header": False, "row": 1, "column": 1, "quill_text": "<p>B2</p>"},
+            ],
         }
-        """
-        )
