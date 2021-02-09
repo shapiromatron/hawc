@@ -3,23 +3,13 @@ import React, {Component} from "react";
 import PropTypes from "prop-types";
 import {Judgement} from "./Judgement";
 
-const NoDataRow = function() {
+const subTitleStyle = {backgroundColor: "#f5f5f5"},
+    NoDataRow = function() {
         return (
             <tr>
                 <td colSpan={5}>
                     <em>No data available.</em>
                 </td>
-            </tr>
-        );
-    },
-    EvidenceHeaderRow = function() {
-        return (
-            <tr>
-                <th>Studies and confidence</th>
-                <th>Factors that increase certainty</th>
-                <th>Factors that decrease certainty</th>
-                <th>Summary and key findings</th>
-                <th>Evidence stream judgement</th>
             </tr>
         );
     },
@@ -31,6 +21,9 @@ const NoDataRow = function() {
                     <div dangerouslySetInnerHTML={{__html: row.evidence.evidence}}></div>
                     <div dangerouslySetInnerHTML={{__html: row.evidence.confidence}}></div>
                     <div dangerouslySetInnerHTML={{__html: row.evidence.optional}}></div>
+                </td>
+                <td>
+                    <div dangerouslySetInnerHTML={{__html: row.summary.findings}}></div>
                 </td>
                 <td>
                     {row.certain_factors.factors.length > 0 ? (
@@ -57,9 +50,6 @@ const NoDataRow = function() {
                     ) : (
                         <i>No factors available.</i>
                     )}
-                </td>
-                <td>
-                    <div dangerouslySetInnerHTML={{__html: row.summary.findings}}></div>
                 </td>
                 {index == 0 || rowSpan == 1 ? (
                     <td rowSpan={rowSpan > 1 ? rowSpan : null}>
@@ -119,10 +109,11 @@ class EpidemiologyEvidenceRows extends Component {
         return (
             <>
                 <tr>
-                    <th colSpan={5}>{exposed_human.title}</th>
+                    <th colSpan={5} style={subTitleStyle}>
+                        {exposed_human.title}
+                    </th>
                     <SummaryCell store={this.props.store} />
                 </tr>
-                <EvidenceHeaderRow />
                 {exposed_human.cell_rows.length == 0 ? NoDataRow() : null}
                 {exposed_human.cell_rows.map((row, index) => (
                     <EvidenceRow
@@ -148,10 +139,9 @@ class AnimalEvidenceRows extends Component {
             {animal} = this.props.store.settings;
         return (
             <>
-                <tr>
+                <tr style={subTitleStyle}>
                     <th colSpan={5}>{animal.title}</th>
                 </tr>
-                <EvidenceHeaderRow />
                 {animal.cell_rows.length == 0 ? NoDataRow() : null}
                 {animal.cell_rows.map((row, index) => (
                     <EvidenceRow
@@ -177,13 +167,13 @@ class MechanisticEvidenceRows extends Component {
             {mechanistic} = this.props.store.settings;
         return (
             <>
-                <tr>
+                <tr style={subTitleStyle}>
                     <th colSpan={5}>{mechanistic.title}</th>
                 </tr>
                 <tr>
                     <th>Biological events or pathways</th>
-                    <th colSpan={3}>Summary of key findings, interpretation, and limitations</th>
-                    <th>Evidence stream judgement</th>
+                    <th colSpan={3}>Summary of key findings and interpretation</th>
+                    <th>Judgment(s) and rationale</th>
                 </tr>
                 {mechanistic.cell_rows.length == 0 ? NoDataRow() : null}
                 {mechanistic.cell_rows.map((row, index) => {
@@ -234,8 +224,15 @@ class Table extends Component {
                 </colgroup>
                 <thead>
                     <tr>
-                        <th colSpan={5}>Evidence stream summary and interpretation</th>
-                        <th>Evidence integration summary judgement</th>
+                        <th colSpan={5}>Evidence Summary and Interpretation</th>
+                        <th rowSpan={2}>Inferences and Summary Judgment</th>
+                    </tr>
+                    <tr>
+                        <th>Studies, outcomes, and confidence</th>
+                        <th>Summary of key findings</th>
+                        <th>Factors that increase certainty</th>
+                        <th>Factors that decrease certainty</th>
+                        <th>Judgment(s) and rationale</th>
                     </tr>
                 </thead>
                 <tbody>

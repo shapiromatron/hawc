@@ -29,7 +29,7 @@ class EvidenceProfileTableStore {
 
     @computed get numSummaryRows() {
         return (
-            6 +
+            4 +
             Math.max(this.settings.exposed_human.cell_rows.length, 1) +
             Math.max(this.settings.animal.cell_rows.length, 1) +
             Math.max(this.settings.mechanistic.cell_rows.length, 1)

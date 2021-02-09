@@ -3,13 +3,16 @@ import React, {Component} from "react";
 import PropTypes from "prop-types";
 import {Tab, Tabs, TabList, TabPanel} from "react-tabs";
 
+import HelpTextPopup from "shared/components/HelpTextPopup";
 import TextInput from "shared/components/TextInput";
 import QuillTextInput from "shared/components/QuillTextInput";
 import CheckboxInput from "shared/components/CheckboxInput";
 import {ActionsTh, MoveRowTd} from "shared/components/EditableRowData";
 import {JudgementSelector} from "./Judgement";
 
-const EvidenceForm = observer(props => {
+const JUDGEMENT_HELP_TEXT =
+        "If judgements are merged, a single response is presented for all findings. Otherwise, each row will have it's own judgement and rationale.",
+    EvidenceForm = observer(props => {
         const {store, contentType, createMethodName, judgementRowSpan} = props,
             {settings} = props.store;
         return (
@@ -27,6 +30,7 @@ const EvidenceForm = observer(props => {
                     onChange={e =>
                         store.updateValue(`${contentType}.merge_judgement`, e.target.checked)
                     }
+                    helpText={JUDGEMENT_HELP_TEXT}
                     required
                 />
                 <table className="table table-sm table-bordered">
@@ -40,11 +44,41 @@ const EvidenceForm = observer(props => {
                     </colgroup>
                     <thead>
                         <tr>
-                            <th>Evidence</th>
-                            <th>Increase factors</th>
-                            <th>Decrease factors</th>
-                            <th>Key findings</th>
-                            <th>Judgement</th>
+                            <th>
+                                Studies, outcomes, and confidence
+                                <HelpTextPopup
+                                    title="Help-text"
+                                    content="List references (or link to locations) informing the outcome(s). If it makes sense to do so, summarize confidence in same free text space."
+                                />
+                            </th>
+                            <th>
+                                Summary of key findings
+                                <HelpTextPopup
+                                    title="Help-text"
+                                    content="Briefly describe the primary results on the outcome(s), including  any within-stream mechanistic evidence informing biological plausibility (e.g., precursor events linked to adverse outcomes). If sensitivity issues were identified, describe the impact on the reliability of the reported findings."
+                                />
+                            </th>
+                            <th>
+                                Factors that increase certainty
+                                <HelpTextPopup
+                                    title="Help-text"
+                                    content="For entries with a free text option,  summarize the evidence supporting the selected factor(s) in a few words (required). Note any other factors that increased certainty"
+                                />
+                            </th>
+                            <th>
+                                Factors that decrease certainty
+                                <HelpTextPopup
+                                    title="Help-text"
+                                    content="For entries with a free text option,  summarize the evidence supporting the selected factor(s) in a few words (required). Note any other factors that decreased certainty"
+                                />
+                            </th>
+                            <th>
+                                Judgment(s) and rationale
+                                <HelpTextPopup
+                                    title="Help-text"
+                                    content="Hyperlink to framework for drawing strength of evidence judgments. Summarize any important interpretations, and the primary basis for the judgment(s)"
+                                />
+                            </th>
                             <ActionsTh onClickNew={() => store[createMethodName]()} />
                         </tr>
                     </thead>
@@ -103,14 +137,7 @@ const EvidenceForm = observer(props => {
                     />
                 </td>
                 <td>
-                    <p>....certain_factors</p>
-                </td>
-                <td>
-                    <p>....uncertain_factors</p>
-                </td>
-                <td>
                     <QuillTextInput
-                        label="Optional"
                         value={row.summary.findings}
                         onChange={value =>
                             store.updateValue(
@@ -119,6 +146,12 @@ const EvidenceForm = observer(props => {
                             )
                         }
                     />
+                </td>
+                <td>
+                    <p>TODO - certain_factors</p>
+                </td>
+                <td>
+                    <p>TODO - uncertain_factors</p>
                 </td>
                 <td>
                     {index == 0 || judgementRowSpan == 1 ? (
@@ -171,6 +204,7 @@ const EvidenceForm = observer(props => {
                     onChange={e =>
                         store.updateValue("mechanistic.merge_judgement", e.target.checked)
                     }
+                    helpText={JUDGEMENT_HELP_TEXT}
                     required
                 />
                 <table className="table table-sm table-bordered">
@@ -182,9 +216,27 @@ const EvidenceForm = observer(props => {
                     </colgroup>
                     <thead>
                         <tr>
-                            <th>Evidence</th>
-                            <th>Summary</th>
-                            <th>Judgement</th>
+                            <th>
+                                Biological events or pathways
+                                <HelpTextPopup
+                                    title="Help-text"
+                                    content="Briefly describe the evidence or information analyzed, which may be subdivided as described in the “adding rows” instruction. Generally, cite or link evidence synthesis (e.g., for references; for detailed analysis). Does not have to be chemical-specific (e.g., read-across)."
+                                />
+                            </th>
+                            <th>
+                                Summary of key findings and interpretation
+                                <HelpTextPopup
+                                    title="Help-text"
+                                    content="Summary of expert interpretation of the body of evidence or information and supporting rationale. "
+                                />
+                            </th>
+                            <th>
+                                Judgment(s) and rationale
+                                <HelpTextPopup
+                                    title="Help-text"
+                                    content="Summary of findings across the body of evidence (may focus on or emphasize highly informative designs or findings), including key sources of uncertainty or identified limitations of the study designs tested (e.g., regarding the biological event or pathway being examined)."
+                                />
+                            </th>
                             <ActionsTh onClickNew={() => store.createMechanisticRow()} />
                         </tr>
                     </thead>
@@ -210,10 +262,10 @@ const EvidenceForm = observer(props => {
             <tr>
                 <td>
                     <QuillTextInput
-                        value={row.summary.findings}
+                        value={row.evidence.description}
                         onChange={value =>
                             store.updateValue(
-                                `mechanistic.cell_rows[${index}].summary.findings`,
+                                `mechanistic.cell_rows[${index}].evidence.description`,
                                 value
                             )
                         }
@@ -221,10 +273,10 @@ const EvidenceForm = observer(props => {
                 </td>
                 <td>
                     <QuillTextInput
-                        value={row.evidence.description}
+                        value={row.summary.findings}
                         onChange={value =>
                             store.updateValue(
-                                `mechanistic.cell_rows[${index}].evidence.description`,
+                                `mechanistic.cell_rows[${index}].summary.findings`,
                                 value
                             )
                         }
@@ -269,7 +321,7 @@ const EvidenceForm = observer(props => {
                 <div className="col-md-6">
                     <QuillTextInput
                         label="Description"
-                        helpText="..."
+                        helpText="Enter the overall summary of expert interpretation across the assessed set of biological events, potential mechanisms of toxicity, or other analysis approach (e.g., AOP). Include the primary evidence supporting the interpretation(s).  Describe and substantiate the extent to which the evidence influences inferences across evidence streams. Characterize the limitations of the analyses and highlight data gaps. May have overlap with factors summarized for other streams"
                         value={summary_judgement.description}
                         onChange={value =>
                             store.updateValue("summary_judgement.description", value)
