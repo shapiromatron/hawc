@@ -4,6 +4,7 @@
 *.pid
 *.py[cod]
 *~
+*.Rcheck
 
 # files
 .Rhistory

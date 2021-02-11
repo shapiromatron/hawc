@@ -1,0 +1,94 @@
+---
+title: "Developer's Guide"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Developer's Guide}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+The tutorial here is more of a general tutorial for how to write code and deploy code in an R package environment, as well as documentation for how develop in this environment. This is designed to be a living document, which will grow and improve as we have more developers contributing code. If you see something missing or have ideas on how to improve, please suggest a fix!
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(hawc)
+```
+
+## How to develop this R package
+
+While many scientists are familiar with writing and using R code, the developer environment for building an R package is a little less familiar to many. Fortunately, the [Rstudio](https://rstudio.com/) developer environment takes care package development. Using git, clone the repository for this project. Then, in R studio, open the R project.
+
+Using R studio, you can then interact with the package in a similar to just writing code. However, there are a few additional commands that are more package specific, available in the "Build" Rstudio menu.
+
+Specifically, you may need to `Install and restart` the package when first using. Then, you can write code as you normally would, and access the package like any othe package. When modifying the code in the package itself, you may need to reinstall the package.
+
+To test code, create a new file or new function in the `tests/testthat` path. When loading a test file in Rstudio, you'll
+see the option to "Run tests when editing the test file, makes it easy to write tests quickly.
+
+When writing vignettes, you can execute functions using the snippets below.
+
+```r
+sillySum(10, 10)
+```
+
+Make a new branch for making chagnes, and feel free to commit early and often. When you're ready to merge the branch into the main repo, a quick checklist:
+
+- do you have documentation?
+- are there tests tests for reproducibility?
+- did you run "Check Package" option to make sure the package is in good shape?
+- submit a pull-request and tag some people to review!
+
+Nice job!
+
+## How to test the HTTP `plumber` integrations
+
+For integrating this package with other systems, we expose a RESTful webserivces via HTTP using the excellent [plumber](https://cran.r-project.org/web/packages/plumber/index.html) package. This is an addtional layer that's only required for exposing commands via a webservice. To test,
+you can start the server:
+
+```{r eval=FALSE}
+hawc::httpApi$run(port=8000)
+```
+
+Then, using a webrowser, you can use test evaluation of the site by navigating to these URLs:
+
+- http://127.0.0.1:8000/__docs__/
+- http://127.0.0.1:8000/api/v1/healthcheck/
+- http://127.0.0.1:8000/api/v1/plot/
+- http://127.0.0.1:8000/api/v1/plot/?spec=virginica
+
+## How to build and deploy the webservice in a docker container.
+
+This is only required when deploying the webservice and integrating with other systems. For standard devleopment of methods, data-science, or algorithms, you'll not need to do this, but feel free to try to follow along :)
+
+```{bash eval=FALSE}
+cd r/hawc
+
+# regenerate package metadata
+R -e "devtools::document()"
+
+# build package
+R -e "devtools::build(path='../../dist')"
+R -e "devtools::build(path='../../dist', binary=TRUE)"
+
+# build R container which runs the plumber webservice
+docker-compose build r
+
+# to start
+docker-compose up -d r
+
+# to stop
+docker-compose down
+```
+
+By default, the container serves the webservice on port 5010:
+
+- http://127.0.0.1:5010/__docs__/
+- http://127.0.0.1:5010/api/v1/healthcheck/
+- http://127.0.0.1:5010/api/v1/plot/
+- http://127.0.0.1:5010/api/v1/plot/?spec=virginica
