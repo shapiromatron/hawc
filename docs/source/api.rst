@@ -52,8 +52,8 @@ An R client is also available. To install and use:
 
 .. code-block:: R
 
-    devtools::install_github('shapiromatron/hawc', subdir='client/r/rhawc')
-    library(rhawc)
+    devtools::install_github('shapiromatron/hawc', subdir='client/r/hawc_client')
+    library(hawc_client)
 
     client = HawcClient("https://hawcproject.org")
     client$authenticate("me@me.com", getPass::getPass())

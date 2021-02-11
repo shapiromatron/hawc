@@ -1,0 +1,18 @@
+Package: hawc
+Title: HAWC
+Version: 0.1.0
+Authors@R:
+    person(given = "Andy",
+           family = "Shapiro",
+           role = c("aut", "cre"),
+           email = "shapiromatron@gmail.com")
+Description: Utility toolbelt for HAWC.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.1
+Depends:
+    R (>= 4.0.0)
+Imports:
+    plumber (== 1.0.0)

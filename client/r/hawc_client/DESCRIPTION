@@ -1,4 +1,4 @@
-Package: rhawc
+Package: hawc_client
 Type: Package
 Title: HAWC (Health assessment workspace collaborative) client
 Version: 0.1.0

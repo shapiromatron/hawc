@@ -30,6 +30,14 @@ services:
       - ./data/private:/app/private
       - ./data/public:/app/public
 
+  r:
+    build:
+      context: .
+      dockerfile: ./compose/r/Dockerfile
+    env_file: .env
+    ports:
+      - "0.0.0.0:5010:5010"
+
   nginx:
     build: ./compose/nginx
     depends_on:
