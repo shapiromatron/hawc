@@ -1,5 +1,6 @@
 from enum import IntEnum
 from typing import List
+from pydantic import BaseModel, Field
 
 from .base import BaseCell, BaseCellGroup, BaseTable
 from .generic import GenericCell
@@ -56,38 +57,52 @@ class SummaryJudgementCell(BaseCell):
 class EvidenceCell(BaseCell):
     column: int = 0
 
-    evidence: str
-    confidence: str
-    optional: str
+    description: str
 
     def to_docx(self, block):
-        text = self.evidence + self.confidence + self.optional
+        text = self.description
         parser = QuillParser()
         return parser.feed(text, block)
 
 
-class CertainFactorsCell(BaseCell):
+class FactorType(IntEnum):
+    NoFactors = 0
+    Other = 10
+    UpConsistency = 20
+    UpDoseGradient = 30
+    UpCoherence = 40
+    UpEffect = 50
+    UpPlausible = 60
+    UpConfidence = 70
+    DownConsistency = -20
+    DownImprecision = -30
+    DownCoherence = -40
+    DownImplausible = -50
+    DownConfidence = -60
+
+
+class Factor(BaseModel):
+    key: FactorType
+    text: str
+
+
+class FactorsCell(BaseCell):
+    factors: List[Factor]
+    text: str
+
+    def to_docx(self, block):
+        factors = [strip_tags(factor.text, "p") for factor in self.factors]  # TODO add header
+        text = ul_wrapper(factors)
+        parser = QuillParser()
+        return parser.feed(text, block)
+
+
+class CertainFactorsCell(FactorsCell):
     column: int = 1
 
-    factors: List[str]
 
-    def to_docx(self, block):
-        factors = [strip_tags(factor, "p") for factor in self.factors]
-        text = ul_wrapper(factors)
-        parser = QuillParser()
-        return parser.feed(text, block)
-
-
-class UncertainFactorsCell(BaseCell):
+class UncertainFactorsCell(FactorsCell):
     column: int = 2
-
-    factors: List[str]
-
-    def to_docx(self, block):
-        factors = [strip_tags(factor, "p") for factor in self.factors]
-        text = ul_wrapper(factors)
-        parser = QuillParser()
-        return parser.feed(text, block)
 
 
 class SummaryCell(BaseCell):
@@ -181,7 +196,7 @@ class MechanisticRow(BaseCellGroup):
 
 class EvidenceGroup(BaseCellGroup):
     title: str
-    cell_rows: List[EvidenceRow]
+    cell_rows: List[EvidenceRow] = Field([], alias="rows")
     merge_judgement: bool
 
     def column_headers(self):
@@ -227,7 +242,7 @@ class EvidenceGroup(BaseCellGroup):
 
 class MechanisticGroup(BaseCellGroup):
     title: str
-    cell_rows: List[MechanisticRow]
+    cell_rows: List[MechanisticRow] = Field([], alias="rows")
     merge_judgement: bool
 
     def column_headers(self):
@@ -293,16 +308,12 @@ class EvidenceProfileTable(BaseTable):
     def get_default_props(cls):
         return {
             "exposed_human": {
-                "title": "Evidence from studies of exposed humans",  # TODO - change to `subheading`
-                "cell_rows": [  # TODO - changes to `rows`
+                "title": "Evidence from studies of exposed humans",
+                "rows": [
                     {
-                        "evidence": {
-                            "evidence": "<p>...</p>",
-                            "confidence": "<p>...</p>",
-                            "optional": "<p>...</p>",
-                        },
-                        "certain_factors": {"factors": ["<p>...</p>", "<p>...</p>"]},
-                        "uncertain_factors": {"factors": ["<p>...</p>", "<p>...</p>"]},
+                        "evidence": {"description": "<p>...</p>"},
+                        "certain_factors": {"factors": [], "text": "<p>...</p>"},
+                        "uncertain_factors": {"factors": [], "text": "<p>...</p>"},
                         "summary": {"findings": "<p>...</p>"},
                         "judgement": {
                             "judgement": JudgementChoices.Indeterminate,
@@ -314,15 +325,15 @@ class EvidenceProfileTable(BaseTable):
             },
             "animal": {
                 "title": "Evidence from animal studies",
-                "cell_rows": [
+                "rows": [
                     {
                         "evidence": {
                             "evidence": "<p>...</p>",
                             "confidence": "<p>...</p>",
                             "optional": "<p>...</p>",
                         },
-                        "certain_factors": {"factors": ["<p>...</p>", "<p>...</p>"]},
-                        "uncertain_factors": {"factors": ["<p>...</p>", "<p>...</p>"]},
+                        "certain_factors": {"factors": [], "text": "<p>...</p>"},
+                        "uncertain_factors": {"factors": [], "text": "<p>...</p>"},
                         "summary": {"findings": "<p>...</p>"},
                         "judgement": {
                             "judgement": JudgementChoices.Indeterminate,
@@ -334,7 +345,7 @@ class EvidenceProfileTable(BaseTable):
             },
             "mechanistic": {
                 "title": "Mechanistic evidence and supplemental information",
-                "cell_rows": [
+                "rows": [
                     {
                         "evidence": {"description": "<p>...</p>"},
                         "summary": {"findings": "<p>...</p>"},

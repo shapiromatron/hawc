@@ -2,6 +2,7 @@ import {observer} from "mobx-react";
 import React, {Component} from "react";
 import PropTypes from "prop-types";
 import {Judgement} from "./Judgement";
+import {FactorsCell} from "./Factors";
 
 const subTitleStyle = {backgroundColor: "#f5f5f5"},
     NoDataRow = function() {
@@ -18,39 +19,13 @@ const subTitleStyle = {backgroundColor: "#f5f5f5"},
         return (
             <tr>
                 <td>
-                    <div dangerouslySetInnerHTML={{__html: row.evidence.evidence}}></div>
-                    <div dangerouslySetInnerHTML={{__html: row.evidence.confidence}}></div>
-                    <div dangerouslySetInnerHTML={{__html: row.evidence.optional}}></div>
+                    <div dangerouslySetInnerHTML={{__html: row.evidence.description}}></div>
                 </td>
                 <td>
                     <div dangerouslySetInnerHTML={{__html: row.summary.findings}}></div>
                 </td>
-                <td>
-                    {row.certain_factors.factors.length > 0 ? (
-                        <ul>
-                            {row.certain_factors.factors.map((factor, index) => {
-                                return (
-                                    <li key={index} dangerouslySetInnerHTML={{__html: factor}}></li>
-                                );
-                            })}
-                        </ul>
-                    ) : (
-                        <i>No factors available.</i>
-                    )}
-                </td>
-                <td>
-                    {row.uncertain_factors.factors.length > 0 ? (
-                        <ul>
-                            {row.uncertain_factors.factors.map((factor, index) => {
-                                return (
-                                    <li key={index} dangerouslySetInnerHTML={{__html: factor}}></li>
-                                );
-                            })}
-                        </ul>
-                    ) : (
-                        <i>No factors available.</i>
-                    )}
-                </td>
+                <FactorsCell content={row.certain_factors} />
+                <FactorsCell content={row.uncertain_factors} />
                 {index == 0 || rowSpan == 1 ? (
                     <td rowSpan={rowSpan > 1 ? rowSpan : null}>
                         <Judgement value={row.judgement.judgement} summary={false} />
@@ -114,8 +89,8 @@ class EpidemiologyEvidenceRows extends Component {
                     </th>
                     <SummaryCell store={this.props.store} />
                 </tr>
-                {exposed_human.cell_rows.length == 0 ? NoDataRow() : null}
-                {exposed_human.cell_rows.map((row, index) => (
+                {exposed_human.rows.length == 0 ? NoDataRow() : null}
+                {exposed_human.rows.map((row, index) => (
                     <EvidenceRow
                         key={index}
                         row={row}
@@ -142,8 +117,8 @@ class AnimalEvidenceRows extends Component {
                 <tr style={subTitleStyle}>
                     <th colSpan={5}>{animal.title}</th>
                 </tr>
-                {animal.cell_rows.length == 0 ? NoDataRow() : null}
-                {animal.cell_rows.map((row, index) => (
+                {animal.rows.length == 0 ? NoDataRow() : null}
+                {animal.rows.map((row, index) => (
                     <EvidenceRow
                         key={index}
                         row={row}
@@ -175,8 +150,8 @@ class MechanisticEvidenceRows extends Component {
                     <th colSpan={3}>Summary of key findings and interpretation</th>
                     <th>Judgment(s) and rationale</th>
                 </tr>
-                {mechanistic.cell_rows.length == 0 ? NoDataRow() : null}
-                {mechanistic.cell_rows.map((row, index) => {
+                {mechanistic.rows.length == 0 ? NoDataRow() : null}
+                {mechanistic.rows.map((row, index) => {
                     return (
                         <tr key={index}>
                             <td>

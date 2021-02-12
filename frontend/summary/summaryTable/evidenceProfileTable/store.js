@@ -7,6 +7,25 @@ import {
     deleteArrayElement,
 } from "shared/components/EditableRowData";
 
+const getDefaultEvidence = () => {
+        const blank = "<p>....</p>";
+        return {
+            summary: {findings: blank},
+            evidence: {description: blank},
+            judgement: {judgement: 1, description: blank},
+            certain_factors: {factors: [], text: blank},
+            uncertain_factors: {factors: [], text: blank},
+        };
+    },
+    getDefaultMechanisticEvidence = () => {
+        const blank = "<p>....</p>";
+        return {
+            summary: {findings: blank},
+            evidence: {description: blank},
+            judgement: {description: blank},
+        };
+    };
+
 class EvidenceProfileTableStore {
     @observable editMode = false;
     @observable settings = null;
@@ -30,22 +49,22 @@ class EvidenceProfileTableStore {
     @computed get numSummaryRows() {
         return (
             4 +
-            Math.max(this.settings.exposed_human.cell_rows.length, 1) +
-            Math.max(this.settings.animal.cell_rows.length, 1) +
-            Math.max(this.settings.mechanistic.cell_rows.length, 1)
+            Math.max(this.settings.exposed_human.rows.length, 1) +
+            Math.max(this.settings.animal.rows.length, 1) +
+            Math.max(this.settings.mechanistic.rows.length, 1)
         );
     }
     @computed get numEpiJudgementRowSpan() {
         return this.settings.exposed_human.merge_judgement
-            ? this.settings.exposed_human.cell_rows.length
+            ? this.settings.exposed_human.rows.length
             : 1;
     }
     @computed get numAniJudgementRowSpan() {
-        return this.settings.animal.merge_judgement ? this.settings.animal.cell_rows.length : 1;
+        return this.settings.animal.merge_judgement ? this.settings.animal.rows.length : 1;
     }
     @computed get numMechJudgementRowSpan() {
         return this.settings.mechanistic.merge_judgement
-            ? this.settings.mechanistic.cell_rows.length
+            ? this.settings.mechanistic.rows.length
             : 1;
     }
 
@@ -54,80 +73,41 @@ class EvidenceProfileTableStore {
     }
 
     @action.bound createHumanRow() {
-        const content = {
-            summary: {
-                findings: "<p>....</p>",
-            },
-            evidence: {
-                evidence: "<p>....</p>",
-                optional: "<p>...</p>",
-                confidence: "<p>...</p>",
-            },
-            judgement: {
-                judgement: 1,
-                description: "<p>...</p>",
-            },
-            certain_factors: {
-                factors: ["<p>...</p>", "<p>...</p>"],
-            },
-            uncertain_factors: {
-                factors: ["<p>...</p>", "<p>...</p>"],
-            },
-        };
-        this.settings.exposed_human.cell_rows.push(content);
+        this.settings.exposed_human.rows.push(getDefaultEvidence());
     }
     @action.bound createAnimalRow() {
-        const content = {
-            summary: {
-                findings: "<p>....</p>",
-            },
-            evidence: {
-                evidence: "<p>....</p>",
-                optional: "<p>...</p>",
-                confidence: "<p>...</p>",
-            },
-            judgement: {
-                judgement: 1,
-                description: "<p>...</p>",
-            },
-            certain_factors: {
-                factors: ["<p>...</p>", "<p>...</p>"],
-            },
-            uncertain_factors: {
-                factors: ["<p>...</p>", "<p>...</p>"],
-            },
-        };
-        this.settings.animal.cell_rows.push(content);
+        this.settings.animal.rows.push(getDefaultEvidence());
     }
     @action.bound createMechanisticRow() {
-        const content = {
-            summary: {
-                findings: "<p>...</p>",
-            },
-            evidence: {
-                description: "<p>...</p>",
-            },
-            judgement: {
-                description: "<p>...</p>",
-            },
-        };
-        this.settings.mechanistic.cell_rows.push(content);
+        this.settings.mechanistic.rows.push(getDefaultMechanisticEvidence());
+    }
+
+    @action.bound toggleFactor(objectKey, factorKey) {
+        const factors = _.cloneDeep(_.get(this.settings, objectKey).factors),
+            index = _.findIndex(factors, d => d.key == factorKey);
+        console.log(factors, index, factorKey);
+        if (index >= 0) {
+            factors.splice(index, 1);
+        } else {
+            factors.push({key: factorKey, text: "..."});
+        }
+        _.set(this.settings, `${objectKey}.factors`, factors);
     }
 
     @action.bound moveRowUp(content, index) {
-        const arr = _.cloneDeep(this.settings[content].cell_rows);
+        const arr = _.cloneDeep(this.settings[content].rows);
         moveArrayElementUp(arr, index);
-        this.settings[content].cell_rows = arr;
+        this.settings[content].rows = arr;
     }
     @action.bound moveRowDown(content, index) {
-        const arr = _.cloneDeep(this.settings[content].cell_rows);
+        const arr = _.cloneDeep(this.settings[content].rows);
         moveArrayElementDown(arr, index);
-        this.settings[content].cell_rows = arr;
+        this.settings[content].rows = arr;
     }
     @action.bound deleteRow(content, index) {
-        const arr = _.cloneDeep(this.settings[content].cell_rows);
+        const arr = _.cloneDeep(this.settings[content].rows);
         deleteArrayElement(arr, index);
-        this.settings[content].cell_rows = arr;
+        this.settings[content].rows = arr;
     }
     @action.bound updateValue(name, value) {
         _.set(this.settings, name, value);
