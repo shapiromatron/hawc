@@ -278,3 +278,35 @@ class FlatFileExporter:
 
 
 re_digits = r"\d+"
+
+def find_matching_list_element_by_value(items, lookup_value, case_insensitive = True, lookup_index = 1, return_index = 0):
+    """
+    given items like:
+
+    JERSEY_NUMBERS = (
+        (23, "jordan"),
+        (99, "gretzky"),
+        (56, "taylor")
+    )
+
+    call this function like:
+
+    num = find_matching_list_element_by_value(JERSEY_NUMBERS, "TAYLOR")
+    # num == 56
+
+    this function will traverse the list of lists/tuples, find the one that matches the supplied lookup value, and return another value
+    from that list/tuple.
+
+    If it matches multiple/no elements, will return None
+    """
+    if case_insensitive and type(lookup_value) is str:
+        lookup_value = lookup_value.lower()
+        matching_vals = [ x[return_index] for x in items if str(x[lookup_index]).lower() == lookup_value ]
+    else:
+        matching_vals = [ x[return_index] for x in items if x[lookup_index] == lookup_value ]
+
+    if len(matching_vals) != 1:
+        return None
+    else:
+        return matching_vals[0]
+

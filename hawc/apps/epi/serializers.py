@@ -91,6 +91,21 @@ class CentralTendencySerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class CentralTendencyWriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.CentralTendency
+        fields = "__all__"
+
+
+class CentralTendencyPreviewSerializer(serializers.ModelSerializer):
+    """
+    CT serializer that doesn't require "exposure" - can be used blahblah
+    """
+    class Meta:
+        model = models.CentralTendency
+        exclude = ("exposure",)
+
+
 class SimpleExposureSerializer(serializers.ModelSerializer):
     url = serializers.CharField(source="get_absolute_url", read_only=True)
     metric_units = DoseUnitsSerializer()
@@ -132,12 +147,29 @@ class StudyPopulationSerializer(GetOrCreateMixin, serializers.ModelSerializer):
         fields = "__all__"
 
 
-class ExposureSerializer(serializers.ModelSerializer):
+class ExposureReadSerializer(serializers.ModelSerializer):
     dtxsid = DSSToxSerializer()
     study_population = StudyPopulationSerializer()
     url = serializers.CharField(source="get_absolute_url", read_only=True)
     metric_units = DoseUnitsSerializer()
     central_tendencies = CentralTendencySerializer(many=True)
+
+    class Meta:
+        model = models.Exposure
+        fields = "__all__"
+
+
+class ExposureWriteSerializer(serializers.ModelSerializer):
+    central_tendencies = CentralTendencySerializer(many=True, read_only=True)
+
+    def validate(self, data):
+        data = super().validate(data)
+
+        form = forms.ExposureForm(data=data)
+        if form.is_valid() is False:
+            raise serializers.ValidationError(form.errors)
+
+        return data
 
     class Meta:
         model = models.Exposure
@@ -238,7 +270,7 @@ class OutcomeReadSerializer(serializers.ModelSerializer):
 
 class ComparisonSetSerializer(serializers.ModelSerializer):
     url = serializers.CharField(source="get_absolute_url", read_only=True)
-    exposure = ExposureSerializer()
+    exposure = ExposureReadSerializer()
     outcome = OutcomeReadSerializer()
     study_population = StudyPopulationSerializer()
     groups = GroupSerializer(many=True)

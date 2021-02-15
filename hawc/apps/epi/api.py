@@ -1,7 +1,9 @@
 from django.conf import settings
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
+
 from django.db import transaction
+# from rest_framework import status, viewsets
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied
@@ -9,20 +11,23 @@ from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
 
 from ..assessment.api import AssessmentEditViewset, AssessmentLevelPermissions, AssessmentViewset
-from ..assessment.models import Assessment
+from ..assessment.models import Assessment, DoseUnits, DSSTox
+from ..assessment.serializers import DoseUnitsSerializer, DSSToxSerializer
 from ..common.api import (
     CleanupFieldsBaseViewSet,
     LegacyAssessmentAdapterMixin,
     ReadWriteSerializerMixin,
-    user_can_edit_object
+    user_can_edit_object,
 )
-from ..common.helper import FlatExport, re_digits, tryParseInt
+from ..common.helper import FlatExport, re_digits, tryParseInt, find_matching_list_element_by_value
 from ..common.renderers import PandasRenderers
 from ..common.serializers import HeatmapQuerySerializer, UnusedSerializer
 from ..common.views import AssessmentPermissionsMixin
 from ..study.models import Study
 from ..study.serializers import StudySerializer
 from . import exports, models, serializers
+
+from hawc.services.epa.dsstox import DssSubstance
 
 
 class EpiAssessmentViewset(
@@ -104,7 +109,9 @@ class Criteria(AssessmentEditViewset):
 
     def perform_create(self, serializer):
         # permissions check
-        user_can_edit_object(serializer.validated_data.get("assessment"), self.request.user, raise_exception=True)
+        user_can_edit_object(
+            serializer.validated_data.get("assessment"), self.request.user, raise_exception=True
+        )
         return super().perform_create(serializer)
 
 
@@ -215,10 +222,148 @@ class StudyPopulation(viewsets.ModelViewSet):
             print(f"exception: {e}")
 
 
-class Exposure(AssessmentViewset):
+class Exposure(ReadWriteSerializerMixin, AssessmentEditViewset):
     assessment_filter_args = "study_population__study__assessment"
     model = models.Exposure
-    serializer_class = serializers.ExposureSerializer
+    read_serializer_class = serializers.ExposureReadSerializer
+    write_serializer_class = serializers.ExposureWriteSerializer
+
+    def handle_cts(self, request, during_update = False):
+        """
+        a bit of an overly big hammer -- during an update we just wipe out existing CTs. We could instead load existing ones, delete if missing,
+        update if present, etc. but for simplicity's sake this works.
+        """
+        if during_update:
+            models.CentralTendency.objects.filter(exposure=self.get_object()).delete()
+
+        # we validate CTs here...and then post-exposure creation, we'll create them.
+        if "central_tendencies" in request.data:
+            cts = request.data["central_tendencies"]
+
+            # allow clients to specify either keys like 2 or readable values like "median" when accessing the API
+            for ct in cts:
+                if "estimate_type" in ct:
+                    probe_ct_estimate_type = ct["estimate_type"]
+                    if type(probe_ct_estimate_type) is str:
+                        converted_estimate_type = find_matching_list_element_by_value(models.CentralTendency.ESTIMATE_TYPE_CHOICES, probe_ct_estimate_type, False)
+                        if converted_estimate_type is None:
+                            raise ValidationError(f"Invalid estimate_type value '{probe_ct_estimate_type}'")
+                        else:
+                            ct["estimate_type"] = converted_estimate_type
+
+                if "variance_type" in ct:
+                    probe_ct_variance_type = ct["variance_type"]
+                    if type(probe_ct_variance_type) is str:
+                        converted_variance_type = find_matching_list_element_by_value(models.CentralTendency.VARIANCE_TYPE_CHOICES, probe_ct_variance_type)
+                        if converted_variance_type is None:
+                            raise ValidationError(f"Invalid variance_type value '{probe_ct_variance_type}'")
+                        else:
+                            ct["variance_type"] = converted_variance_type
+
+            # raise ValidationError("FORCE ERRO")
+
+            ct_serializer = serializers.CentralTendencyPreviewSerializer(
+                data=cts, many=True
+            )
+            try:
+                ct_serializer.is_valid(raise_exception=True)
+            except ValidationError as ve:
+                raise ValidationError({
+                    "central_tendencies": ve.detail
+                })
+
+    def handle_dtxsid(self, request):
+        # supports creating dsstox objects on the fly
+        if "dtxsid" in request.data:
+            dtxsid_probe = request.data["dtxsid"]
+            try:
+                dtxsid = DSSTox.objects.get(dtxsid=dtxsid_probe)
+            except ObjectDoesNotExist:
+                try:
+                    substance = DssSubstance.create_from_dtxsid(dtxsid_probe)
+
+                    dsstox = DSSTox(dtxsid=substance.dtxsid, content=substance.content)
+                    dsstox.save()
+                except ValueError as err:
+                    raise ValidationError(f"dtxsid '{dtxsid_probe}' does not exist and could not be imported")
+
+    def handle_metric_unit(self, request):
+        # client can supply an id, or the name of the doseunits entry (and then we'll look it up for them - or create it if needed)
+        if "metric_units" in request.data:
+            metric_units_probe = request.data["metric_units"]
+
+            if type(metric_units_probe) is str:
+                try:
+                    metric_units = DoseUnits.objects.get(name=metric_units_probe)
+                    request.data["metric_units"] = metric_units.id
+                except ObjectDoesNotExist:
+                    # option 1 - require a pre-existing dose unit
+                    # raise ValidationError(f"metric_units lookup value '{metric_units_probe}' could not be resolved")
+
+                    # option 2 - allow creation of metric_units as part of the request
+                    du_serializer = DoseUnitsSerializer(
+                        data={"name": metric_units_probe }
+                    )
+                    du_serializer.is_valid(raise_exception=True)
+                    metric_units = du_serializer.save()
+                    request.data["metric_units"] = metric_units.id
+        # else leave it alone
+
+    @transaction.atomic
+    def update(self, request, *args, **kwargs):
+        self.handle_cts(request, True)
+        self.handle_metric_unit(request)
+        self.handle_dtxsid(request)
+
+        return super().update(request, *args, **kwargs)
+
+    @transaction.atomic
+    def create(self, request, *args, **kwargs):
+        self.handle_cts(request, False)
+        self.handle_metric_unit(request)
+        self.handle_dtxsid(request)
+
+        # default behavior except we need to refresh the serializer to get the central tendencies to show up in the return...
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+
+        # refresh serializer instance, as we want to get the central tendencies we created...
+        instance = self.model.objects.get(id=serializer.data["id"])
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def process_ct_creation(self, serializer, exposure_id):
+        if "central_tendencies" in self.request.data:
+            cts = self.request.data["central_tendencies"]
+            for ct in cts:
+                ct["exposure"] = exposure_id
+
+            ct_serializer = serializers.CentralTendencyWriteSerializer(
+                data=cts, many=True
+            )
+            ct_serializer.is_valid(raise_exception=True)
+            ct_serializer.save()
+        
+    def perform_create(self, serializer):
+        user_can_edit_object(
+            serializer.validated_data.get("study_population"),
+            self.request.user,
+            raise_exception=True,
+        )
+        super().perform_create(serializer)
+
+        self.process_ct_creation(serializer, serializer.data["id"])
+
+    def perform_update(self, serializer):
+        user_can_edit_object(
+            serializer.validated_data.get("study_population"),
+            self.request.user,
+            raise_exception=True,
+        )
+        super().perform_update(serializer)
+
+        self.process_ct_creation(serializer, self.get_object().id)
 
 
 class Outcome(ReadWriteSerializerMixin, AssessmentEditViewset):
@@ -229,7 +374,9 @@ class Outcome(ReadWriteSerializerMixin, AssessmentEditViewset):
 
     def perform_create(self, serializer):
         # permissions check
-        user_can_edit_object(serializer.validated_data.get("assessment"), self.request.user, raise_exception=True)
+        user_can_edit_object(
+            serializer.validated_data.get("assessment"), self.request.user, raise_exception=True
+        )
         return super().perform_create(serializer)
 
 
