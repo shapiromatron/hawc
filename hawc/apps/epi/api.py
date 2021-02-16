@@ -386,10 +386,11 @@ class Result(AssessmentViewset):
     serializer_class = serializers.ResultSerializer
 
 
-class ComparisonSet(AssessmentViewset):
+class ComparisonSet(ReadWriteSerializerMixin, AssessmentEditViewset):
     assessment_filter_args = "assessment"  # todo: fix
     model = models.ComparisonSet
-    serializer_class = serializers.ComparisonSetSerializer
+    read_serializer_class = serializers.ComparisonSetReadSerializer
+    write_serializer_class = serializers.ComparisonSetWriteSerializer
 
 
 class Group(AssessmentViewset):

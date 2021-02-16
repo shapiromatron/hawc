@@ -268,13 +268,19 @@ class OutcomeReadSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class ComparisonSetSerializer(serializers.ModelSerializer):
+class ComparisonSetReadSerializer(serializers.ModelSerializer):
     url = serializers.CharField(source="get_absolute_url", read_only=True)
     exposure = ExposureReadSerializer()
     outcome = OutcomeReadSerializer()
     study_population = StudyPopulationSerializer()
     groups = GroupSerializer(many=True)
 
+    class Meta:
+        model = models.ComparisonSet
+        fields = "__all__"
+
+
+class ComparisonSetWriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.ComparisonSet
         fields = "__all__"
