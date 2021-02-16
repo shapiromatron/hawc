@@ -15,7 +15,7 @@ class EvidenceStreamGraphic(BaseCell):
 
     def to_docx(self, block):
         parser = QuillParser()
-        return parser.feed("<p>asdf</p>", block)
+        return parser.feed("<p></p>", block)
 
 
 class EvidenceBasisCell(BaseCell):
