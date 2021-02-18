@@ -1,4 +1,4 @@
-FROM python:3.6.12
+FROM python:3.6.13
 
 ENV PYTHONUNBUFFERED 1
 
@@ -6,27 +6,21 @@ RUN groupadd -g 555 -r django && \
     useradd -u 555 -r -g django django
 
 COPY ./compose/django/wait-for.sh /app/bin/wait-for.sh
-COPY ./compose/django/gunicorn.sh /app/bin/gunicorn.sh
-COPY ./compose/django/celery.sh /app/bin/celery.sh
-COPY ./compose/django/celerybeat.sh /app/bin/celerybeat.sh
-COPY ./compose/django/supervisord.conf /app/bin/supervisord.conf
+COPY ./compose/django/web.sh /app/bin/web.sh
+COPY ./compose/django/workers.sh /app/bin/workers.sh
+COPY ./compose/django/cron.sh /app/bin/cron.sh
 COPY ./compose/django/phantomjs_openssh.conf /app/phantomjs_openssh.conf
 COPY ./compose/django/fonts /usr/share/fonts/truetype/django
+COPY ./vendor/phantomjs-2.1.1-linux-x86_64.tar.bz2 /phantomjs.tar.bz2
 
-# 1) install start-scripts
-# 2) install phantomjs
-# 3) install fonts
-# 4) create logs path
-RUN wget -O /phantomjs-2.1.1-linux-x86_64.tar.bz2 "https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-linux-x86_64.tar.bz2" && \
-    bzip2 -dc /phantomjs-2.1.1-linux-x86_64.tar.bz2 | tar xvf - && \
-    mv /phantomjs-2.1.1-linux-x86_64/bin/phantomjs /usr/local/bin/phantomjs && \
-    rm -rf /phantomjs* && \
-    \
-    apt-get update && \
+RUN apt-get update && \
     apt-get install -y netcat fonts-liberation && \
     rm -rf /var/lib/apt/lists/* && \
     fc-cache -fv && \
     su django -c "fc-cache -fvs" && \
+    \
+    tar -xvf /phantomjs.tar.bz2 phantomjs-2.1.1-linux-x86_64/bin/phantomjs -C /usr/local/bin && \
+    rm /phantomjs.tar.bz2 && \
     \
     mkdir -p /app/logs && \
     mkdir -p /app/public/media && \

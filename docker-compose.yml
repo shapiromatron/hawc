@@ -19,7 +19,7 @@ services:
     build:
       context: .
       dockerfile: ./compose/django/Dockerfile
-    command: /usr/local/bin/supervisord -c /app/bin/supervisord.conf --nodaemon
+    command: /app.bin/sync.sh && /app/bin/django.sh
     depends_on:
       - postgres
       - redis
