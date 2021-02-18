@@ -53,16 +53,18 @@ To test-deploy the containers on your development computer:
     # ... start applications
     docker-compose up -d web workers cron nginx
 
-    # should be running, a few example commands
+    # should be running, a few example commands for testing
     # check static files
     curl -I http://127.0.0.1:8000/static/css/hawc.css
     # check django request
     curl -I http://127.0.0.1:8000/user/login/
     docker-compose exec web manage.py createsuperuser
     docker-compose logs -f
+
+    # shut down containers
     docker-compose down
 
-The same approach can be done in production, except please harden the deployment environment.
+The same approach can be done in production, except please harden the deployment :) .
 
 Configuration
 -------------
