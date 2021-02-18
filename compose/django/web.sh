@@ -8,5 +8,6 @@ set -xe
     --timeout 300 \
     --workers 3 \
     --log-level info \
+    --log-file - \
     --max-requests 750 \
     --max-requests-jitter 250

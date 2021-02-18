@@ -14,6 +14,9 @@ COPY ./compose/django/phantomjs_openssh.conf /app/phantomjs_openssh.conf
 COPY ./compose/django/fonts /usr/share/fonts/truetype/django
 COPY ./vendor/phantomjs-2.1.1-linux-x86_64.tar.bz2 /phantomjs.tar.bz2
 
+# used in some dev/staging environments
+COPY ./tests/data/fixtures/db.yaml /app/test-db-fixture.yaml
+
 RUN apt-get update && \
     apt-get install -y netcat fonts-liberation && \
     rm -rf /var/lib/apt/lists/* && \

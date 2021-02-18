@@ -237,7 +237,7 @@ LOGGING = {
         "": {"handlers": ["null"], "level": "DEBUG"},
         "django": {"handlers": ["null"], "propagate": True, "level": "INFO"},
         "django.request": {
-            "handlers": ["file_500s", "mail_admins"],
+            "handlers": ["console", "file_500s", "mail_admins"],
             "level": "ERROR",
             "propagate": False,
         },
