@@ -247,12 +247,12 @@ LOGGING = {
 
 # commit information
 def get_git_commit() -> Commit:
+    if GIT_COMMIT_FILE.exists():
+        return Commit.parse_file(GIT_COMMIT_FILE)
     try:
         return Commit.current(str(PROJECT_ROOT))
     except (CalledProcessError, FileNotFoundError):
-        if GIT_COMMIT_FILE.exists():
-            return Commit.parse_file(GIT_COMMIT_FILE)
-    return Commit(sha="<undefined>", dt=datetime.now())
+        return Commit(sha="<undefined>", dt=datetime.now())
 
 
 GIT_COMMIT_FILE = PROJECT_ROOT / ".gitcommit"
