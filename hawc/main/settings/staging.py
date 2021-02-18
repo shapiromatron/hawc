@@ -9,8 +9,8 @@ EXTRA_BRANDING = os.getenv("HAWC_EXTRA_BRANDING", "True") == "True"
 SERVER_ROLE = "staging"
 SERVER_BANNER_COLOR = "#EE8416"
 
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = bool(os.environ.get("DJANGO_HTTPS_ONLY") == "True")
+CSRF_COOKIE_SECURE = bool(os.environ.get("DJANGO_HTTPS_ONLY") == "True")
 
 ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "").split("|")
 

@@ -6,6 +6,7 @@ RUN groupadd -g 555 -r django && \
     useradd -u 555 -r -g django django
 
 COPY ./compose/django/wait-for.sh /app/bin/wait-for.sh
+COPY ./compose/django/sync.sh /app/bin/sync.sh
 COPY ./compose/django/web.sh /app/bin/web.sh
 COPY ./compose/django/workers.sh /app/bin/workers.sh
 COPY ./compose/django/cron.sh /app/bin/cron.sh
