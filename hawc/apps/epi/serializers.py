@@ -63,12 +63,24 @@ class GroupNumericalDescriptionsSerializer(serializers.ModelSerializer):
         exclude = ("group",)
 
 
-class GroupSerializer(serializers.ModelSerializer):
+class GroupNumericalDescriptionsWriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.GroupNumericalDescriptions
+        # exclude = ("group",)
+        fields = "__all__"
+
+
+class GroupReadSerializer(serializers.ModelSerializer):
     sex = serializers.CharField(source="get_sex_display", read_only=True)
-    descriptions = GroupNumericalDescriptionsSerializer(many=True)
-    ethnicities = EthnicitySerializer(many=True)
+    descriptions = GroupNumericalDescriptionsSerializer(many=True, read_only=True)
+    ethnicities = EthnicitySerializer(many=True, read_only=True)
     url = serializers.CharField(source="get_absolute_url", read_only=True)
 
+    class Meta:
+        model = models.Group
+        fields = "__all__"
+
+class GroupWriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Group
         fields = "__all__"
@@ -186,7 +198,7 @@ class GroupResultSerializer(serializers.ModelSerializer):
     p_value_text = serializers.CharField(read_only=True)
     lower_bound_interval = serializers.FloatField(read_only=True)
     upper_bound_interval = serializers.FloatField(read_only=True)
-    group = GroupSerializer()
+    group = GroupReadSerializer()
 
     class Meta:
         model = models.GroupResult
@@ -273,7 +285,7 @@ class ComparisonSetReadSerializer(serializers.ModelSerializer):
     exposure = ExposureReadSerializer()
     outcome = OutcomeReadSerializer()
     study_population = StudyPopulationSerializer()
-    groups = GroupSerializer(many=True)
+    groups = GroupReadSerializer(many=True)
 
     class Meta:
         model = models.ComparisonSet

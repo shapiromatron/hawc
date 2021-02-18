@@ -1156,6 +1156,9 @@ class GroupNumericalDescriptions(models.Model):
     def __str__(self):
         return self.description
 
+    def get_assessment(self):
+        return self.group.get_assessment()
+
     def copy_across_assessments(self, cw):
         old_id = self.id
         self.id = None

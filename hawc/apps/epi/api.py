@@ -393,10 +393,125 @@ class ComparisonSet(ReadWriteSerializerMixin, AssessmentEditViewset):
     write_serializer_class = serializers.ComparisonSetWriteSerializer
 
 
-class Group(AssessmentViewset):
+class GroupNumericalDescriptions(ReadWriteSerializerMixin, AssessmentEditViewset):
+    # assessment_filter_args = "group__assessment"
+    model = models.GroupNumericalDescriptions
+    read_serializer_class = serializers.GroupNumericalDescriptionsSerializer
+    write_serializer_class = serializers.GroupNumericalDescriptionsWriteSerializer
+
+    def handle_mapped_choices(self, request):
+        fields_that_support_mapping = [
+            ( "mean_type", models.GroupNumericalDescriptions.MEAN_TYPE_CHOICES ),
+            ( "variance_type", models.GroupNumericalDescriptions.VARIANCE_TYPE_CHOICES ),
+            ( "lower_type", models.GroupNumericalDescriptions.LOWER_LIMIT_CHOICES ),
+            ( "upper_type", models.GroupNumericalDescriptions.UPPER_LIMIT_CHOICES ),
+        ]
+
+        for el in fields_that_support_mapping:
+            key = el[0]
+            mapping_data = el[1]
+
+            if key in request.data:
+                probe_val = request.data[key]
+
+                if type(probe_val) is str:
+                    converted_val = find_matching_list_element_by_value(mapping_data, probe_val)
+                    if converted_val is None:
+                        raise ValidationError(f"Invalid {key} value '{probe_val}'")
+                    else:
+                        request.data[key] = converted_val
+
+    @transaction.atomic
+    def create(self, request, *args, **kwargs):
+        self.handle_mapped_choices(request)
+        default_response = super().create(request, *args, **kwargs)
+
+        instance = self.model.objects.get(id=default_response.data["id"])
+        serializer = self.read_serializer_class(instance)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    @transaction.atomic
+    def update(self, request, *args, **kwargs):
+        self.handle_mapped_choices(request)
+        super().update(request, *args, **kwargs)
+
+        serializer = self.read_serializer_class(self.get_object())
+        return Response(serializer.data)
+
+
+class Group(ReadWriteSerializerMixin, AssessmentEditViewset):
     assessment_filter_args = "assessment"  # todo: fix
     model = models.Group
-    serializer_class = serializers.GroupSerializer
+    read_serializer_class = serializers.GroupReadSerializer
+    write_serializer_class = serializers.GroupWriteSerializer
+
+    def handle_ethnicities(self, request):
+        # we validate ethnicities here and account for id/name in the request - by the end, "ethnicities" will just
+        # contain id's of the desired ethnicities.
+        if "ethnicities" in request.data:
+            raw_ethnicities = request.data["ethnicities"]
+            converted_ethnicities = []
+
+            # allow clients to specify either keys like 1 or case-insensitive readable values like "asian"
+            for probe_e in raw_ethnicities:
+                query = None
+                actual_e = None
+
+                if type(probe_e) is str:
+                    query = { "name__iexact": probe_e }
+                elif type(probe_e) is int:
+                    query = { "id": probe_e }
+
+                if query is not None:
+                    try:
+                        actual_e = models.Ethnicity.objects.get(**query)
+                    except ObjectDoesNotExist:
+                        pass
+
+                if actual_e is None:
+                    raise ValidationError({
+                        "ethnicities": f"value '{probe_e}' did not match an existing ethnicity"
+                    })
+                else:
+                    converted_ethnicities.append( actual_e.id )
+
+            request.data["ethnicities"] = converted_ethnicities
+
+    @transaction.atomic
+    def update(self, request, *args, **kwargs):
+        self.handle_ethnicities(request)
+
+        super().update(request, *args, **kwargs)
+
+        # use the read serializer to return - so that we get for instance ethnicities with name+id
+        serializer = self.read_serializer_class(self.get_object())
+        return Response(serializer.data)
+
+    @transaction.atomic
+    def create(self, request, *args, **kwargs):
+        self.handle_ethnicities(request)
+
+        default_response = super().create(request, *args, **kwargs)
+
+        instance = self.model.objects.get(id=default_response.data["id"])
+        serializer = self.read_serializer_class(instance)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def perform_create(self, serializer):
+        user_can_edit_object(
+            serializer.validated_data.get("comparison_set"),
+            self.request.user,
+            raise_exception=True,
+        )
+        super().perform_create(serializer)
+
+    def perform_update(self, serializer):
+        user_can_edit_object(
+            self.get_object(),
+            self.request.user,
+            raise_exception=True,
+        )
+        super().perform_update(serializer)
 
 
 class OutcomeCleanup(CleanupFieldsBaseViewSet):
