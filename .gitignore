@@ -40,5 +40,5 @@ venv/
 hawc/static/bundles/
 !hawc/static/bundles/.gitkeep
 
-compose/django/fonts/*
-!compose/django/fonts/.gitkeep
+compose/app/fonts/*
+!compose/app/fonts/.gitkeep
