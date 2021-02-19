@@ -112,6 +112,7 @@ class StudyPopulationForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         study = kwargs.pop("parent", None)
         super().__init__(*args, **kwargs)
+        self.fields["countries"].required = True
         self.fields["comments"] = self.fields.pop("comments")  # move to end
         self.fields["region"].widget = selectable.AutoCompleteWidget(
             lookup_class=lookups.RegionLookup, allow_new=True
