@@ -367,11 +367,10 @@ class Exposure(ReadWriteSerializerMixin, AssessmentEditViewset):
         self.process_ct_creation(serializer, self.get_object().id)
 
 
-class Outcome(ReadWriteSerializerMixin, AssessmentEditViewset):
+class Outcome(AssessmentEditViewset):
     assessment_filter_args = "assessment"
     model = models.Outcome
-    read_serializer_class = serializers.OutcomeReadSerializer
-    write_serializer_class = serializers.OutcomeWriteSerializer
+    serializer_class = serializers.OutcomeSerializer
 
     def perform_create(self, serializer):
         # permissions check

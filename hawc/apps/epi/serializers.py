@@ -259,7 +259,15 @@ class ResultWriteSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class OutcomeWriteSerializer(GetOrCreateMixin, serializers.ModelSerializer):
+class OutcomeSerializer(serializers.ModelSerializer):
+    diagnostic = FlexibleChoiceField(choices=models.Outcome.DIAGNOSTIC_CHOICES)
+    study_population = StudyPopulationSerializer(read_only=True)
+    can_create_sets = serializers.BooleanField(read_only=True)
+    effects = EffectTagsSerializer(read_only=True)
+    url = serializers.CharField(source="get_absolute_url", read_only=True)
+    results = ResultReadSerializer(many=True, read_only=True)
+    comparison_sets = ComparisonSetLinkSerializer(many=True, read_only=True)
+
     def validate(self, data):
         data = super().validate(data)
 
@@ -274,24 +282,11 @@ class OutcomeWriteSerializer(GetOrCreateMixin, serializers.ModelSerializer):
         fields = "__all__"
 
 
-class OutcomeReadSerializer(serializers.ModelSerializer):
-    study_population = StudyPopulationSerializer()
-    can_create_sets = serializers.BooleanField(read_only=True)
-    effects = EffectTagsSerializer()
-    diagnostic = serializers.CharField(source="get_diagnostic_display", read_only=True)
-    url = serializers.CharField(source="get_absolute_url", read_only=True)
-    results = ResultReadSerializer(many=True)
-    comparison_sets = ComparisonSetLinkSerializer(many=True)
-
-    class Meta:
-        model = models.Outcome
-        fields = "__all__"
-
 
 class ComparisonSetSerializer(serializers.ModelSerializer):
     url = serializers.CharField(source="get_absolute_url", read_only=True)
     exposure = ExposureReadSerializer(read_only=True)
-    outcome = OutcomeReadSerializer(read_only=True)
+    outcome = OutcomeSerializer(read_only=True)
     study_population = StudyPopulationSerializer()
     groups = GroupSerializer(many=True, read_only=True)
 
@@ -336,4 +331,4 @@ class ExposureCleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSeria
         return obj.study_population.study.short_citation
 
 
-SerializerHelper.add_serializer(models.Outcome, OutcomeReadSerializer)
+SerializerHelper.add_serializer(models.Outcome, OutcomeSerializer)
