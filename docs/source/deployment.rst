@@ -24,7 +24,6 @@ other approaches for sharing with the deployment target:
     # build containers (in the hawc development environment)
     source venv/bin/activate
     make build
-    cp ./compose/example.env ./.env
     docker-compose -f compose/dc-build.yml --project-directory . build
 
 To test-deploy the containers on your development computer:
@@ -34,9 +33,10 @@ To test-deploy the containers on your development computer:
     # go to a new directory
     cd ~/dev/temp
     mkdir -p hawc-deploy
-    cd hawc-test-deploy
+    cd hawc-deploy
 
     # make shared volumes
+    mkdir -p data/postgres/backups
     mkdir -p data/public
     mkdir -p data/private
     mkdir -p data/nginx

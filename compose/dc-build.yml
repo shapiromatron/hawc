@@ -4,17 +4,14 @@ services:
 
   postgres:
     build: ./compose/postgres
-    env_file: .env
 
   redis:
     build: ./compose/redis
-    env_file: .env
 
-  django:
+  app:
     build:
       context: .
-      dockerfile: ./compose/django/Dockerfile
-    env_file: .env
+      dockerfile: ./compose/app/Dockerfile
 
   nginx:
     build: ./compose/nginx
