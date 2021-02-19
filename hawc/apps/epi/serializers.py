@@ -191,16 +191,11 @@ class ExposureWriteSerializer(serializers.ModelSerializer):
 
 
 class GroupResultSerializer(serializers.ModelSerializer):
-    main_finding_support = serializers.CharField(
-        source="get_main_finding_support_display", read_only=True
-    )
-    p_value_qualifier = serializers.CharField(
-        source="get_p_value_qualifier_display", read_only=True
-    )
+    main_finding_support = FlexibleChoiceField(choices=models.GroupResult.MAIN_FINDING_CHOICES)
+    p_value_qualifier = FlexibleChoiceField(choices=models.GroupResult.P_VALUE_QUALIFIER_CHOICES, key_only_on_writes=True)
     p_value_text = serializers.CharField(read_only=True)
     lower_bound_interval = serializers.FloatField(read_only=True)
     upper_bound_interval = serializers.FloatField(read_only=True)
-    group = GroupSerializer()
 
     class Meta:
         model = models.GroupResult
@@ -251,7 +246,7 @@ class ResultSerializer(serializers.ModelSerializer):
     factors_considered = ResultAdjustmentFactorSerializer(many=True, read_only=True)
     url = serializers.CharField(source="get_absolute_url", read_only=True)
     resulttags = EffectTagsSerializer()
-    results = GroupResultSerializer(many=True)
+    results = GroupResultSerializer(many=True, read_only=True)
 
     class Meta:
         model = models.Result

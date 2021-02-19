@@ -380,6 +380,27 @@ class Outcome(AssessmentEditViewset):
         return super().perform_create(serializer)
 
 
+class GroupResult(AssessmentEditViewset):
+    assessment_filter_args = "result__outcome__assessment"
+    model = models.GroupResult
+    serializer_class = serializers.GroupResultSerializer
+
+    """
+    # note - this does not currently validate that a supplied group is part of the assessment.
+        # what are the valid groups for a given groupresult?
+        print("fetch groups in 508")
+        groups = models.Group.objects.filter(comparison_set__study_population__study__assessment__id=508)
+        for g in groups:
+            print(f"\t{g.id} : {g.name}")
+    """
+    """
+    @transaction.atomic
+    def update(self, request, *args, **kwargs):
+
+        return super().update(request, *args, **kwargs)
+    """
+
+
 class Result(AssessmentEditViewset):
     assessment_filter_args = "outcome__assessment"
     model = models.Result
@@ -421,14 +442,6 @@ class Result(AssessmentEditViewset):
 
 
     def handle_adjustment_factors(self, request, during_create):
-        """
-        # what are the valid groups for a given groupresult?
-        print("fetch groups in 508")
-        groups = models.Group.objects.filter(comparison_set__study_population__study__assessment__id=508)
-        for g in groups:
-            print(f"\t{g}")
-        """
-
         # first - what assessment are we working in?
         assessment_id = None
         if during_create:

@@ -1860,6 +1860,9 @@ class GroupResult(models.Model):
         self.save()
         cw[self.COPY_NAME][old_id] = self.id
 
+    def get_assessment(self):
+        return self.result.get_assessment()
+
 
 reversion.register(Country)
 reversion.register(Criteria)

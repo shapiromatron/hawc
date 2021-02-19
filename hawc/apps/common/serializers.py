@@ -84,6 +84,13 @@ class FlexibleChoiceField(serializers.ChoiceField):
     like a ChoiceField, except it will let you specify either the raw choice value OR a case-insensitive
     display value when supplying data. Makes life easier on clients.
     """
+    def __init__(self, *args, **kwargs):
+        self.key_only_on_writes = False
+        if "key_only_on_writes" in kwargs:
+            self.key_only_on_writes = kwargs["key_only_on_writes"]
+            del kwargs["key_only_on_writes"]
+
+        super().__init__(*args, **kwargs)
 
     def to_representation(self, obj):
         if obj == '' and self.allow_blank:
@@ -97,17 +104,19 @@ class FlexibleChoiceField(serializers.ChoiceField):
 
         for key, val in self._choices.items():
             # print(f"\t[{key}] -> [{val}]")
-            if val == data:
-                return key
+            if not self.key_only_on_writes:
+                if val == data:
+                    return key
 
             if key == data:
                 return key
 
-            # case-insensitive string matching
-            if type(val) is str and type(data) is str:
-                if val is not None:
-                    if val.lower() == data.lower():
-                        return key
+            if not self.key_only_on_writes:
+                # case-insensitive string matching
+                if type(val) is str and type(data) is str:
+                    if val is not None:
+                        if val.lower() == data.lower():
+                            return key
 
         self.fail('invalid_choice', input=data)
 

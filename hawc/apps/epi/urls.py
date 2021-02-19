@@ -12,6 +12,7 @@ router.register(r"outcome", api.Outcome, basename="outcome")
 router.register(r"result", api.Result, basename="result")
 router.register(r"comparison-set", api.ComparisonSet, basename="set")
 router.register(r"group", api.Group, basename="group")
+router.register(r"group-result", api.GroupResult, basename="group-result")
 router.register(r"numerical-descriptions", api.GroupNumericalDescriptions, basename="numerical-descriptions")
 router.register(r"outcome-cleanup", api.OutcomeCleanup, basename="outcome-cleanup")
 router.register(
