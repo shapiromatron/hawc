@@ -96,6 +96,7 @@ class FlexibleChoiceField(serializers.ChoiceField):
             return ''
 
         for key, val in self._choices.items():
+            # print(f"\t[{key}] -> [{val}]")
             if val == data:
                 return key
 
@@ -110,15 +111,21 @@ class FlexibleChoiceField(serializers.ChoiceField):
 
         self.fail('invalid_choice', input=data)
 
-class FlexibleDBLinkedChoiceManyField(FlexibleChoiceField):
+class FlexibleDBLinkedChoiceField(FlexibleChoiceField):
     """
-    like a FlexibleChoiceField, except it derives its choices from a database table
-    and supports multiples. Used for instance when linking an epi group to one or more ethnicities.
+    like a FlexibleChoiceField, except it derives its choices from a model/database table
+    and optionally supports multiples. Used for instance when:
+        * linking an epi group to one or more ethnicities.
+        * linking a epi result to a single metric
+        * etc.
     """
 
-    def __init__(self, mapped_db_table, serializer_class, field_for_descriptor):
+    def __init__(self, mapped_model, serializer_class, field_for_descriptor, many):
+        # TODO - do we need a way to refresh this if the list changes after application startup?
         self.serializer = serializer_class()
-        mapped_objects = mapped_db_table.objects.all()
+        self.many = many
+        self.mapped_model = mapped_model
+        mapped_objects = mapped_model.objects.all()
         db_choices = []
         for mapped_object in mapped_objects:
             loop_id = mapped_object.id
@@ -128,16 +135,26 @@ class FlexibleDBLinkedChoiceManyField(FlexibleChoiceField):
         super().__init__(choices=db_choices)
 
     def to_representation(self, obj):
-        rv = []
-        for el in obj.all():
-            rv.append(self.serializer.to_representation(el))
+        # print(f"to_representation for {obj} / {type(obj)}")
 
-        return rv
+        if self.many:
+            rv = []
+            for el in obj.all():
+                rv.append(self.serializer.to_representation(el))
+            return rv
+        else:
+            return self.serializer.to_representation(obj)
 
     def to_internal_value(self, data):
-        fixed = []
-        for x in data:
-            resolved = super().to_internal_value(x)
-            fixed.append(resolved)
+        # print(f"to_internal_value for {data} / {type(data)}")
+        if self.many:
+            fixed = []
+            for x in data:
+                resolved = super().to_internal_value(x)
+                fixed.append(resolved)
+            return fixed
+        else:
+            obj_id = super().to_internal_value(data)
+            obj = self.mapped_model.objects.get(id=obj_id)
+            return obj
 
-        return fixed

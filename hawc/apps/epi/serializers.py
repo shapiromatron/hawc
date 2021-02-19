@@ -6,7 +6,7 @@ from ..assessment.models import Assessment
 from ..assessment.serializers import DoseUnitsSerializer, DSSToxSerializer, EffectTagsSerializer
 from ..common.api import DynamicFieldsMixin, GetOrCreateMixin, user_can_edit_object
 from ..common.helper import SerializerHelper
-from ..common.serializers import FlexibleChoiceField, FlexibleDBLinkedChoiceManyField
+from ..common.serializers import FlexibleChoiceField, FlexibleDBLinkedChoiceField
 from ..study.serializers import StudySerializer
 from . import forms, models
 
@@ -69,7 +69,7 @@ class GroupNumericalDescriptionsSerializer(serializers.ModelSerializer):
 
 class GroupSerializer(serializers.ModelSerializer):
     sex = FlexibleChoiceField(choices=models.Group.SEX_CHOICES)
-    ethnicities = FlexibleDBLinkedChoiceManyField(models.Ethnicity, EthnicitySerializer, "name")
+    ethnicities = FlexibleDBLinkedChoiceField(models.Ethnicity, EthnicitySerializer, "name", True)
     descriptions = GroupNumericalDescriptionsSerializer(many=True, read_only=True)
     url = serializers.CharField(source="get_absolute_url", read_only=True)
 
@@ -207,6 +207,12 @@ class GroupResultSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class SimpleResultAdjustmentFactorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.ResultAdjustmentFactor
+        fields = "__all__"
+
+
 class ResultAdjustmentFactorSerializer(serializers.ModelSerializer):
     id = serializers.ReadOnlyField(source="adjustment_factor.id")
     description = serializers.ReadOnlyField(source="adjustment_factor.description")
@@ -214,6 +220,16 @@ class ResultAdjustmentFactorSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.ResultAdjustmentFactor
         fields = ("id", "description", "included_in_final_model")
+
+    def to_representation(self, obj):
+        return { "id": obj.id, "description": obj.description }
+
+
+class AdjustmentFactorSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = models.AdjustmentFactor
+        fields = "__all__"
 
 
 class SimpleComparisonSetSerializer(serializers.ModelSerializer):
@@ -225,38 +241,22 @@ class SimpleComparisonSetSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class ResultReadSerializer(serializers.ModelSerializer):
-    metric = ResultMetricSerializer()
-    factors = ResultAdjustmentFactorSerializer(source="resfactors", many=True)
-    dose_response = serializers.CharField(source="get_dose_response_display", read_only=True)
-    statistical_power = serializers.CharField(
-        source="get_statistical_power_display", read_only=True
-    )
+class ResultSerializer(serializers.ModelSerializer):
+    dose_response = FlexibleChoiceField(choices=models.Result.DOSE_RESPONSE_CHOICES)
+    metric = FlexibleDBLinkedChoiceField(models.ResultMetric, ResultMetricSerializer, "metric", False)
+    statistical_power = FlexibleChoiceField(choices=models.Result.STATISTICAL_POWER_CHOICES)
+    estimate_type = FlexibleChoiceField(choices=models.Result.ESTIMATE_TYPE_CHOICES)
+    variance_type = FlexibleChoiceField(choices=models.Result.VARIANCE_TYPE_CHOICES)
+    factors_applied = ResultAdjustmentFactorSerializer(many=True, read_only=True)
+    factors_considered = ResultAdjustmentFactorSerializer(many=True, read_only=True)
     url = serializers.CharField(source="get_absolute_url", read_only=True)
-    results = GroupResultSerializer(many=True)
     resulttags = EffectTagsSerializer()
-    variance_type = serializers.CharField(source="get_variance_type_display", read_only=True)
-    estimate_type = serializers.CharField(source="get_estimate_type_display", read_only=True)
-    comparison_set = SimpleComparisonSetSerializer()
-
-    def to_representation(self, instance):
-        ret = super().to_representation(instance)
-        models.GroupResult.getStdevs(ret["variance_type"], ret["results"])
-        models.GroupResult.percentControl(
-            ret["estimate_type"], ret["variance_type"], ret["results"]
-        )
-        models.GroupResult.getConfidenceIntervals(ret["variance_type"], ret["results"])
-        return ret
+    results = GroupResultSerializer(many=True)
 
     class Meta:
         model = models.Result
+        # fields = "__all__"
         exclude = ("adjustment_factors",)
-
-
-class ResultWriteSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.Result
-        fields = "__all__"
 
 
 class OutcomeSerializer(serializers.ModelSerializer):
@@ -265,7 +265,7 @@ class OutcomeSerializer(serializers.ModelSerializer):
     can_create_sets = serializers.BooleanField(read_only=True)
     effects = EffectTagsSerializer(read_only=True)
     url = serializers.CharField(source="get_absolute_url", read_only=True)
-    results = ResultReadSerializer(many=True, read_only=True)
+    results = ResultSerializer(many=True, read_only=True)
     comparison_sets = ComparisonSetLinkSerializer(many=True, read_only=True)
 
     def validate(self, data):

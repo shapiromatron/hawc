@@ -380,57 +380,124 @@ class Outcome(AssessmentEditViewset):
         return super().perform_create(serializer)
 
 
-class Result(ReadWriteSerializerMixin, AssessmentEditViewset):
+class Result(AssessmentEditViewset):
     assessment_filter_args = "outcome__assessment"
     model = models.Result
-    read_serializer_class = serializers.ResultReadSerializer
-    write_serializer_class = serializers.ResultWriteSerializer
+    serializer_class = serializers.ResultSerializer
 
-    def handle_mapped_choices(self, request):
-        if "metric" in request.data:
-            probe_metric = request.data["metric"]
+    factor_categories = (
+        ("factors_applied", True, ),
+        ("factors_considered", False, )
+    )
 
-            if type(probe_metric) is str:
-                try:
-                    metric = models.ResultMetric.objects.get(Q(metric__iexact=probe_metric) | Q(abbreviation__iexact=probe_metric))
-                    request.data["metric"] = metric.id
-                except ObjectDoesNotExist:
-                    raise ValidationError(f"metric lookup value '{probe_metric}' could not be resolved")
+    def process_adjustment_factor_creation(self, serializer, result_id, post_initial_create):
+        inserts = []
+        for fc in self.factor_categories:
+            data_key = fc[0]
+            is_included = fc[1]
 
-        fields_that_support_mapping = [
-            ( "dose_response", models.Result.DOSE_RESPONSE_CHOICES ),
-        ]
+            if data_key in self.request.data:
+                if not post_initial_create:
+                    # wipe out existing factors for this result+included_in_final_model pair that was part of the request...
+                    models.ResultAdjustmentFactor.objects.filter(result=self.get_object(), included_in_final_model=is_included).delete()
 
-        for el in fields_that_support_mapping:
-            key = el[0]
-            mapping_data = el[1]
+                adjustment_factor_ids = self.request.data[data_key]
 
-            if key in request.data:
-                probe_val = request.data[key]
+                for adjustment_factor_id in adjustment_factor_ids:
+                    dynamic_obj = {
+                        "included_in_final_model": is_included,
+                        "adjustment_factor": adjustment_factor_id,
+                        "result": result_id
+                    }
+                    inserts.append(dynamic_obj)
 
-                if type(probe_val) is str:
-                    converted_val = find_matching_list_element_by_value(mapping_data, probe_val)
-                    if converted_val is None:
-                        raise ValidationError(f"Invalid {key} value '{probe_val}'")
+        # ...and save any new ones
+        if len(inserts) > 0:
+            serializer = serializers.SimpleResultAdjustmentFactorSerializer(
+                data=inserts, many=True
+            )
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+
+
+    def handle_adjustment_factors(self, request, during_create):
+        """
+        # what are the valid groups for a given groupresult?
+        print("fetch groups in 508")
+        groups = models.Group.objects.filter(comparison_set__study_population__study__assessment__id=508)
+        for g in groups:
+            print(f"\t{g}")
+        """
+
+        # first - what assessment are we working in?
+        assessment_id = None
+        if during_create:
+            outcome_id = request.data["outcome"]
+
+            try:
+                outcome = models.Outcome.objects.get(id=outcome_id)
+                assessment_id = outcome.get_assessment().id
+            except ObjectDoesNotExist:
+                raise ValidationError("Invalid outcome_id")
+        else:
+            assessment_id = self.get_object().get_assessment().id
+
+        # and now do some conversions/creations
+        for fc in self.factor_categories:
+            data_key = fc[0]
+
+            # client can supply an id, or the name of the factor entry (and then we'll look it up for them - or create it if needed)
+            if data_key in request.data:
+                data_probe = request.data[data_key]
+
+                fixed = []
+                for el in data_probe:
+                    if type(el) is str:
+                        try:
+                            adj_factor = models.AdjustmentFactor.objects.get(description=el, assessment_id=assessment_id)
+                            fixed.append(adj_factor.id)
+                        except ObjectDoesNotExist:
+                            # allow creation of adjustment factors as part of the request
+                            af_serializer = serializers.AdjustmentFactorSerializer(
+                                data={"description": el, "assessment": assessment_id }
+                            )
+                            af_serializer.is_valid(raise_exception=True)
+                            af = af_serializer.save()
+                            fixed.append(af.id)
                     else:
-                        request.data[key] = converted_val
+                        fixed.append(el)
 
-    @transaction.atomic
-    def create(self, request, *args, **kwargs):
-        self.handle_mapped_choices(request)
-        default_response = super().create(request, *args, **kwargs)
-
-        instance = self.model.objects.get(id=default_response.data["id"])
-        serializer = self.read_serializer_class(instance)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+                request.data[data_key] = fixed
 
     @transaction.atomic
     def update(self, request, *args, **kwargs):
-        self.handle_mapped_choices(request)
-        super().update(request, *args, **kwargs)
+        self.handle_adjustment_factors(request, False)
+        return super().update(request, *args, **kwargs)
 
-        serializer = self.read_serializer_class(self.get_object())
-        return Response(serializer.data)
+    @transaction.atomic
+    def create(self, request, *args, **kwargs):
+        self.handle_adjustment_factors(request, True)
+        return super().create(request, *args, **kwargs)
+
+    def perform_create(self, serializer):
+        user_can_edit_object(
+            serializer.validated_data.get("outcome"),
+            self.request.user,
+            raise_exception=True,
+        )
+        super().perform_create(serializer)
+
+        self.process_adjustment_factor_creation(serializer, serializer.data["id"], True)
+
+    def perform_update(self, serializer):
+        user_can_edit_object(
+            self.get_object(),
+            self.request.user,
+            raise_exception=True,
+        )
+        super().perform_update(serializer)
+
+        self.process_adjustment_factor_creation(serializer, self.get_object().id, False)
 
 
 class ComparisonSet(AssessmentEditViewset):
