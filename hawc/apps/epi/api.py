@@ -3,6 +3,7 @@ from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
 
 from django.db import transaction
+from django.db.models import Q
 # from rest_framework import status, viewsets
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
@@ -380,31 +381,25 @@ class Outcome(ReadWriteSerializerMixin, AssessmentEditViewset):
         return super().perform_create(serializer)
 
 
-class Result(AssessmentViewset):
+class Result(ReadWriteSerializerMixin, AssessmentEditViewset):
     assessment_filter_args = "outcome__assessment"
     model = models.Result
-    serializer_class = serializers.ResultSerializer
-
-
-class ComparisonSet(ReadWriteSerializerMixin, AssessmentEditViewset):
-    assessment_filter_args = "assessment"  # todo: fix
-    model = models.ComparisonSet
-    read_serializer_class = serializers.ComparisonSetReadSerializer
-    write_serializer_class = serializers.ComparisonSetWriteSerializer
-
-
-class GroupNumericalDescriptions(ReadWriteSerializerMixin, AssessmentEditViewset):
-    # assessment_filter_args = "group__assessment"
-    model = models.GroupNumericalDescriptions
-    read_serializer_class = serializers.GroupNumericalDescriptionsSerializer
-    write_serializer_class = serializers.GroupNumericalDescriptionsWriteSerializer
+    read_serializer_class = serializers.ResultReadSerializer
+    write_serializer_class = serializers.ResultWriteSerializer
 
     def handle_mapped_choices(self, request):
+        if "metric" in request.data:
+            probe_metric = request.data["metric"]
+
+            if type(probe_metric) is str:
+                try:
+                    metric = models.ResultMetric.objects.get(Q(metric__iexact=probe_metric) | Q(abbreviation__iexact=probe_metric))
+                    request.data["metric"] = metric.id
+                except ObjectDoesNotExist:
+                    raise ValidationError(f"metric lookup value '{probe_metric}' could not be resolved")
+
         fields_that_support_mapping = [
-            ( "mean_type", models.GroupNumericalDescriptions.MEAN_TYPE_CHOICES ),
-            ( "variance_type", models.GroupNumericalDescriptions.VARIANCE_TYPE_CHOICES ),
-            ( "lower_type", models.GroupNumericalDescriptions.LOWER_LIMIT_CHOICES ),
-            ( "upper_type", models.GroupNumericalDescriptions.UPPER_LIMIT_CHOICES ),
+            ( "dose_response", models.Result.DOSE_RESPONSE_CHOICES ),
         ]
 
         for el in fields_that_support_mapping:
@@ -439,63 +434,22 @@ class GroupNumericalDescriptions(ReadWriteSerializerMixin, AssessmentEditViewset
         return Response(serializer.data)
 
 
-class Group(ReadWriteSerializerMixin, AssessmentEditViewset):
+class ComparisonSet(AssessmentEditViewset):
+    assessment_filter_args = "assessment"  # todo: fix
+    model = models.ComparisonSet
+    serializer_class = serializers.ComparisonSetSerializer
+
+
+class GroupNumericalDescriptions(AssessmentEditViewset):
+    # assessment_filter_args = "group__assessment"
+    model = models.GroupNumericalDescriptions
+    serializer_class = serializers.GroupNumericalDescriptionsSerializer
+
+
+class Group(AssessmentEditViewset):
     assessment_filter_args = "assessment"  # todo: fix
     model = models.Group
-    read_serializer_class = serializers.GroupReadSerializer
-    write_serializer_class = serializers.GroupWriteSerializer
-
-    def handle_ethnicities(self, request):
-        # we validate ethnicities here and account for id/name in the request - by the end, "ethnicities" will just
-        # contain id's of the desired ethnicities.
-        if "ethnicities" in request.data:
-            raw_ethnicities = request.data["ethnicities"]
-            converted_ethnicities = []
-
-            # allow clients to specify either keys like 1 or case-insensitive readable values like "asian"
-            for probe_e in raw_ethnicities:
-                query = None
-                actual_e = None
-
-                if type(probe_e) is str:
-                    query = { "name__iexact": probe_e }
-                elif type(probe_e) is int:
-                    query = { "id": probe_e }
-
-                if query is not None:
-                    try:
-                        actual_e = models.Ethnicity.objects.get(**query)
-                    except ObjectDoesNotExist:
-                        pass
-
-                if actual_e is None:
-                    raise ValidationError({
-                        "ethnicities": f"value '{probe_e}' did not match an existing ethnicity"
-                    })
-                else:
-                    converted_ethnicities.append( actual_e.id )
-
-            request.data["ethnicities"] = converted_ethnicities
-
-    @transaction.atomic
-    def update(self, request, *args, **kwargs):
-        self.handle_ethnicities(request)
-
-        super().update(request, *args, **kwargs)
-
-        # use the read serializer to return - so that we get for instance ethnicities with name+id
-        serializer = self.read_serializer_class(self.get_object())
-        return Response(serializer.data)
-
-    @transaction.atomic
-    def create(self, request, *args, **kwargs):
-        self.handle_ethnicities(request)
-
-        default_response = super().create(request, *args, **kwargs)
-
-        instance = self.model.objects.get(id=default_response.data["id"])
-        serializer = self.read_serializer_class(instance)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    serializer_class = serializers.GroupSerializer
 
     def perform_create(self, serializer):
         user_can_edit_object(

@@ -1,9 +1,12 @@
 from rest_framework import serializers
 
+from django.core.exceptions import ObjectDoesNotExist
+
 from ..assessment.models import Assessment
 from ..assessment.serializers import DoseUnitsSerializer, DSSToxSerializer, EffectTagsSerializer
 from ..common.api import DynamicFieldsMixin, GetOrCreateMixin, user_can_edit_object
 from ..common.helper import SerializerHelper
+from ..common.serializers import FlexibleChoiceField, FlexibleDBLinkedChoiceManyField
 from ..study.serializers import StudySerializer
 from . import forms, models
 
@@ -53,34 +56,23 @@ class OutcomeLinkSerializer(serializers.ModelSerializer):
 
 
 class GroupNumericalDescriptionsSerializer(serializers.ModelSerializer):
-    mean_type = serializers.CharField(source="get_mean_type_display", read_only=True)
-    variance_type = serializers.CharField(source="get_variance_type_display", read_only=True)
-    lower_type = serializers.CharField(source="get_lower_type_display", read_only=True)
-    upper_type = serializers.CharField(source="get_upper_type_display", read_only=True)
+    mean_type = FlexibleChoiceField(choices=models.GroupNumericalDescriptions.MEAN_TYPE_CHOICES)
+    variance_type = FlexibleChoiceField(choices=models.GroupNumericalDescriptions.VARIANCE_TYPE_CHOICES)
+    lower_type = FlexibleChoiceField(choices=models.GroupNumericalDescriptions.LOWER_LIMIT_CHOICES)
+    upper_type = FlexibleChoiceField(choices=models.GroupNumericalDescriptions.UPPER_LIMIT_CHOICES)
 
-    class Meta:
-        model = models.GroupNumericalDescriptions
-        exclude = ("group",)
-
-
-class GroupNumericalDescriptionsWriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.GroupNumericalDescriptions
         # exclude = ("group",)
         fields = "__all__"
 
 
-class GroupReadSerializer(serializers.ModelSerializer):
-    sex = serializers.CharField(source="get_sex_display", read_only=True)
+class GroupSerializer(serializers.ModelSerializer):
+    sex = FlexibleChoiceField(choices=models.Group.SEX_CHOICES)
+    ethnicities = FlexibleDBLinkedChoiceManyField(models.Ethnicity, EthnicitySerializer, "name")
     descriptions = GroupNumericalDescriptionsSerializer(many=True, read_only=True)
-    ethnicities = EthnicitySerializer(many=True, read_only=True)
     url = serializers.CharField(source="get_absolute_url", read_only=True)
 
-    class Meta:
-        model = models.Group
-        fields = "__all__"
-
-class GroupWriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Group
         fields = "__all__"
@@ -142,8 +134,8 @@ class CriteriaSerializer(GetOrCreateMixin, serializers.ModelSerializer):
         fields = "__all__"
 
 
-# class StudyPopulationSerializer(serializers.ModelSerializer):
-class StudyPopulationSerializer(GetOrCreateMixin, serializers.ModelSerializer):
+# class StudyPopulationSerializer(GetOrCreateMixin, serializers.ModelSerializer):
+class StudyPopulationSerializer(serializers.ModelSerializer):
     study = StudySerializer()
     criteria = StudyPopulationCriteriaSerializer(source="spcriteria", many=True)
     outcomes = OutcomeLinkSerializer(many=True)
@@ -157,6 +149,16 @@ class StudyPopulationSerializer(GetOrCreateMixin, serializers.ModelSerializer):
     class Meta:
         model = models.StudyPopulation
         fields = "__all__"
+
+    def to_internal_value(self, data):
+        if type(data) is int:
+            try:
+                study_pop = self.Meta.model.objects.get(id=data)
+                return study_pop
+            except ObjectDoesNotExist:
+                raise serializers.ValidationError("Invalid id")
+
+        return data
 
 
 class ExposureReadSerializer(serializers.ModelSerializer):
@@ -198,7 +200,7 @@ class GroupResultSerializer(serializers.ModelSerializer):
     p_value_text = serializers.CharField(read_only=True)
     lower_bound_interval = serializers.FloatField(read_only=True)
     upper_bound_interval = serializers.FloatField(read_only=True)
-    group = GroupReadSerializer()
+    group = GroupSerializer()
 
     class Meta:
         model = models.GroupResult
@@ -223,7 +225,7 @@ class SimpleComparisonSetSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class ResultSerializer(serializers.ModelSerializer):
+class ResultReadSerializer(serializers.ModelSerializer):
     metric = ResultMetricSerializer()
     factors = ResultAdjustmentFactorSerializer(source="resfactors", many=True)
     dose_response = serializers.CharField(source="get_dose_response_display", read_only=True)
@@ -251,6 +253,12 @@ class ResultSerializer(serializers.ModelSerializer):
         exclude = ("adjustment_factors",)
 
 
+class ResultWriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Result
+        fields = "__all__"
+
+
 class OutcomeWriteSerializer(GetOrCreateMixin, serializers.ModelSerializer):
     def validate(self, data):
         data = super().validate(data)
@@ -272,7 +280,7 @@ class OutcomeReadSerializer(serializers.ModelSerializer):
     effects = EffectTagsSerializer()
     diagnostic = serializers.CharField(source="get_diagnostic_display", read_only=True)
     url = serializers.CharField(source="get_absolute_url", read_only=True)
-    results = ResultSerializer(many=True)
+    results = ResultReadSerializer(many=True)
     comparison_sets = ComparisonSetLinkSerializer(many=True)
 
     class Meta:
@@ -280,19 +288,13 @@ class OutcomeReadSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class ComparisonSetReadSerializer(serializers.ModelSerializer):
+class ComparisonSetSerializer(serializers.ModelSerializer):
     url = serializers.CharField(source="get_absolute_url", read_only=True)
-    exposure = ExposureReadSerializer()
-    outcome = OutcomeReadSerializer()
+    exposure = ExposureReadSerializer(read_only=True)
+    outcome = OutcomeReadSerializer(read_only=True)
     study_population = StudyPopulationSerializer()
-    groups = GroupReadSerializer(many=True)
+    groups = GroupSerializer(many=True, read_only=True)
 
-    class Meta:
-        model = models.ComparisonSet
-        fields = "__all__"
-
-
-class ComparisonSetWriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.ComparisonSet
         fields = "__all__"
