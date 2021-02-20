@@ -12,6 +12,7 @@ from django.http import HttpResponseNotAllowed, HttpResponseRedirect
 from django.shortcuts import HttpResponse, get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
+from django.template import Engine
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import FormView, ListView, TemplateView, View
@@ -52,6 +53,11 @@ class Home(TemplateView):
         if request.user.is_authenticated:
             return HttpResponseRedirect(reverse_lazy("portal"))
         return super().get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["content"] = models.Content.rendered(models.ContentType.HOMEPAGE, context)
+        return context
 
 
 class About(TemplateView):
@@ -187,9 +193,12 @@ class About(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["HAWC_FLAVOR"] = settings.HAWC_FLAVOR
-        context["rob_name"] = self.get_rob_name()
-        context["counts"] = self.get_object_counts()
+        context.update(
+            HAWC_FLAVOR=settings.HAWC_FLAVOR,
+            rob_name=self.get_rob_name(),
+            counts=self.get_object_counts(),
+        )
+        context["content"] = models.Content.rendered(models.ContentType.ABOUT, context)
         return context
 
 

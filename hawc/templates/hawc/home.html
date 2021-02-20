@@ -1,30 +1,5 @@
 {% extends "crumbless.html" %}
-{% load static %}
 
 {% block content %}
-<div class="">
-  <img class="img-fluid" style="max-height:250px" alt="HAWC logo" src="{% static 'img/HAWC-400.png' %}">
-</div>
-<p class="lead"><b>A content management system for human health assessments.</b></p>
-<p>
-  Regulatory agencies around the world conduct assessments to determine
-  the potential for chemicals to pose a risk to human health. These
-  assessments typically consist of a critical review of available studies,
-  identification of adverse health effects from chemicals, and
-  characterization of exposure-response relationships and uncertainties
-  in the data. HAWC aims to facilitate team collaboration by
-  scientists who develop these assessments and enhance transparency of
-  the process by providing online access to the data and
-  expert decisions used to evaluate the potential human health hazard
-  and risk of chemical exposures.
-</p>
-<p>
-  HAWC is a modular, content management system designed to store, display,
-  and synthesize multiple data sources for the purpose of producing
-  human health assessments of chemicals. This online application
-  documents the overall workflow of developing an assessment, from
-  literature search and systematic review, to data extraction (human
-  epidemiology, animal bioassay, and in vitro assay), dose-response
-  analysis, and finally evidence synthesis and visualization.
-</p>
+{{ content|safe }}
 {% endblock content %}

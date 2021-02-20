@@ -1,6 +1,6 @@
 import json
 import uuid
-from typing import Any, List, NamedTuple
+from typing import Any, Dict, List, NamedTuple
 
 import pandas as pd
 from django.apps import apps
@@ -9,8 +9,10 @@ from django.contrib.contenttypes import fields
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
+from django.template.defaultfilters import truncatewords
 from django.core.validators import MinValueValidator
 from django.db import models
+from django.template import engines
 from django.urls import reverse
 from django.utils import timezone
 from pydantic import BaseModel as PydanticModel
@@ -942,6 +944,51 @@ class Blog(models.Model):
         return self.subject
 
 
+class ContentType(models.IntegerChoices):
+    HOMEPAGE = 1
+    ABOUT = 2
+
+
+class Content(models.Model):
+    content_type = models.PositiveIntegerField(choices=ContentType.choices, unique=True)
+    template = models.TextField()
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self) -> str:
+        return self.get_content_type_display()
+
+    @property
+    def template_truncated(self):
+        return truncatewords(self.template, 100)
+
+    @classmethod
+    def get_cache_key(cls, content_type: ContentType) -> str:
+        return f"assessment.Content.{content_type}"
+
+    @classmethod
+    def rendered(cls, content_type: ContentType, context: Dict) -> str:
+        key = cls.get_cache_key(content_type)
+        html = cache.get(key)
+        if html is None:
+            obj = cls.objects.get(content_type=content_type)
+            template = engines["django"].from_string(obj.template)
+            html = template.render(context)
+            cache.set(key, html, 3600)
+        return html
+
+    def clear_cache(self):
+        key = self.get_cache_key(self.content_type)
+        cache.delete(key)
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        self.clear_cache()
+
+    class Meta:
+        ordering = ("-created",)
+
+
 reversion.register(DSSTox)
 reversion.register(Assessment)
 reversion.register(EffectTag)
@@ -953,3 +1000,4 @@ reversion.register(DatasetRevision)
 reversion.register(Job)
 reversion.register(Log)
 reversion.register(Blog)
+reversion.register(Content)
