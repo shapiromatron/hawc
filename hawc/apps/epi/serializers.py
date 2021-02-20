@@ -6,7 +6,7 @@ from ..assessment.models import Assessment
 from ..assessment.serializers import DoseUnitsSerializer, DSSToxSerializer, EffectTagsSerializer
 from ..common.api import DynamicFieldsMixin, GetOrCreateMixin, user_can_edit_object
 from ..common.helper import SerializerHelper
-from ..common.serializers import FlexibleChoiceField, FlexibleDBLinkedChoiceField
+from ..common.serializers import FlexibleChoiceField, FlexibleDBLinkedChoiceField, ReadableChoiceField
 from ..study.serializers import StudySerializer
 from . import forms, models
 
@@ -192,7 +192,7 @@ class ExposureWriteSerializer(serializers.ModelSerializer):
 
 class GroupResultSerializer(serializers.ModelSerializer):
     main_finding_support = FlexibleChoiceField(choices=models.GroupResult.MAIN_FINDING_CHOICES)
-    p_value_qualifier = FlexibleChoiceField(choices=models.GroupResult.P_VALUE_QUALIFIER_CHOICES, key_only_on_writes=True)
+    p_value_qualifier = ReadableChoiceField(choices=models.GroupResult.P_VALUE_QUALIFIER_CHOICES)
     p_value_text = serializers.CharField(read_only=True)
     lower_bound_interval = serializers.FloatField(read_only=True)
     upper_bound_interval = serializers.FloatField(read_only=True)

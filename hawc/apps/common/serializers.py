@@ -79,19 +79,33 @@ def get_matching_instances(Model: models.Model, data: Dict, field_name: str) -> 
     return instances
 
 
+class ReadableChoiceField(serializers.ChoiceField):
+    """
+    simple field for Choices - accepts only the underlying value during writes, but returns the "readable" display during reads.
+    Seems like there is probably a Django built-in way to achieve this but I couldn't figure out how...
+    """
+    def to_representation(self, obj):
+        if obj == '' and self.allow_blank:
+            return obj
+        return self._choices[obj]
+
+    def to_internal_value(self, data):
+        # To support inserts with the value
+        if data == '' and self.allow_blank:
+            return ''
+
+        for key, val in self._choices.items():
+            if key == data:
+                return key
+
+        self.fail('invalid_choice', input=data)
+
+
 class FlexibleChoiceField(serializers.ChoiceField):
     """
     like a ChoiceField, except it will let you specify either the raw choice value OR a case-insensitive
-    display value when supplying data. Makes life easier on clients.
+    display value when supplying data. Makes client code simpler/more readable.
     """
-    def __init__(self, *args, **kwargs):
-        self.key_only_on_writes = False
-        if "key_only_on_writes" in kwargs:
-            self.key_only_on_writes = kwargs["key_only_on_writes"]
-            del kwargs["key_only_on_writes"]
-
-        super().__init__(*args, **kwargs)
-
     def to_representation(self, obj):
         if obj == '' and self.allow_blank:
             return obj
@@ -104,19 +118,17 @@ class FlexibleChoiceField(serializers.ChoiceField):
 
         for key, val in self._choices.items():
             # print(f"\t[{key}] -> [{val}]")
-            if not self.key_only_on_writes:
-                if val == data:
-                    return key
+            if val == data:
+                return key
 
             if key == data:
                 return key
 
-            if not self.key_only_on_writes:
-                # case-insensitive string matching
-                if type(val) is str and type(data) is str:
-                    if val is not None:
-                        if val.lower() == data.lower():
-                            return key
+            # case-insensitive string matching
+            if type(val) is str and type(data) is str:
+                if val is not None:
+                    if val.lower() == data.lower():
+                        return key
 
         self.fail('invalid_choice', input=data)
 
