@@ -12,7 +12,6 @@ from django.http import HttpResponseNotAllowed, HttpResponseRedirect
 from django.shortcuts import HttpResponse, get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
-from django.template import Engine
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import FormView, ListView, TemplateView, View
@@ -638,16 +637,6 @@ class AdminAssessmentSize(TemplateView):
     @method_decorator(staff_member_required)
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
-
-
-class Healthcheck(View):
-    """
-    Healthcheck view check; ensure django server can serve requests.
-    """
-
-    def get(self, request, *args, **kwargs):
-        # TODO - add cache check and celery worker check
-        return HttpResponse(json.dumps({"status": "ok"}), content_type="application/json")
 
 
 # log / blog
