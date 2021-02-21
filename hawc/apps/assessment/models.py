@@ -9,10 +9,10 @@ from django.contrib.contenttypes import fields
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
-from django.template.defaultfilters import truncatewords
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.template import engines
+from django.template.defaultfilters import truncatewords
 from django.urls import reverse
 from django.utils import timezone
 from pydantic import BaseModel as PydanticModel

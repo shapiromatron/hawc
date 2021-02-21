@@ -1,6 +1,6 @@
-from django.db import migrations, models
 from django.conf import settings
 from django.core.management import call_command
+from django.db import migrations, models
 
 
 def load_fixture(apps, schema_editor):
@@ -31,8 +31,7 @@ class Migration(migrations.Migration):
                 (
                     "content_type",
                     models.PositiveIntegerField(
-                        choices=[(1, "Homepage"), (2, "About Head"), (3, "About Acknowledgements")],
-                        unique=True,
+                        choices=[(1, "Homepage"), (2, "About")], unique=True,
                     ),
                 ),
                 ("template", models.TextField()),
