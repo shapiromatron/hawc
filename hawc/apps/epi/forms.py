@@ -112,6 +112,7 @@ class StudyPopulationForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         study = kwargs.pop("parent", None)
         super().__init__(*args, **kwargs)
+        self.fields["countries"].required = True
         self.fields["comments"] = self.fields.pop("comments")  # move to end
         self.fields["region"].widget = selectable.AutoCompleteWidget(
             lookup_class=lookups.RegionLookup, allow_new=True
@@ -569,7 +570,7 @@ class OutcomeFilterForm(forms.Form):
         if source:
             query &= Q(study_population__source__icontains=source)
         if country:
-            query &= Q(study_population__country__name__icontains=country)
+            query &= Q(study_population__countries__name__icontains=country)
         if design:
             query &= Q(study_population__design__in=design)
         if system:

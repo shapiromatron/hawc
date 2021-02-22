@@ -1,0 +1,109 @@
+version: '3'
+
+services:
+
+    postgres:
+        restart: always
+        image: hawc_postgres
+        env_file: .env
+        volumes:
+            - ./data/postgres/data:/var/lib/postgresql/data
+            - ./data/postgres/backups:/app/data/backups
+
+    redis:
+        restart: always
+        image: hawc_redis
+        env_file: .env
+
+    sync:
+        restart: always
+        image: hawc_app
+        command:
+        - /bin/bash
+        - -exc
+        - |
+          set +xe
+          /app/bin/wait-for.sh redis:6379 -t 30 -q
+          /app/bin/wait-for.sh postgres:5432 -t 30 -q
+          /app/bin/sync.sh
+        depends_on:
+            - postgres
+            - redis
+        env_file: .env
+        volumes:
+        - ./data/private:/app/private
+        - ./data/public:/app/public
+
+    web:
+        restart: always
+        image: hawc_app
+        command:
+        - /bin/bash
+        - -exc
+        - |
+          set +xe
+          /app/bin/wait-for.sh redis:6379 -t 30 -q
+          /app/bin/wait-for.sh postgres:5432 -t 30 -q
+          /app/bin/web.sh
+        depends_on:
+            - postgres
+            - redis
+        env_file: .env
+        volumes:
+            - ./data/private:/app/private
+            - ./data/public:/app/public
+
+    workers:
+        restart: always
+        image: hawc_app
+        command:
+        - /bin/bash
+        - -exc
+        - |
+          set +xe
+          /app/bin/wait-for.sh redis:6379 -t 30 -q
+          /app/bin/wait-for.sh postgres:5432 -t 30 -q
+          /app/bin/workers.sh
+        depends_on:
+            - postgres
+            - redis
+        env_file: .env
+        volumes:
+            - ./data/private:/app/private
+            - ./data/public:/app/public
+
+    cron:
+        restart: always
+        image: hawc_app
+        command:
+        - /bin/bash
+        - -exc
+        - |
+          set +xe
+          /app/bin/wait-for.sh redis:6379 -t 30 -q
+          /app/bin/wait-for.sh postgres:5432 -t 30 -q
+          /app/bin/cron.sh
+        depends_on:
+            - postgres
+            - redis
+        env_file: .env
+        volumes:
+            - ./data/private:/app/private
+            - ./data/public:/app/public
+
+    nginx:
+        image: hawc_nginx
+        command:
+        - /bin/sh
+        - -c
+        - |
+          set +xe
+          /wait-for.sh web:5000 -t 300 -q
+          nginx -g "daemon off;"
+        depends_on:
+            - web
+        ports:
+            - "0.0.0.0:8000:8000"
+        volumes:
+            - ./data/public:/app/public
+            - ./data/nginx/nginx.conf:/etc/nginx/nginx.conf

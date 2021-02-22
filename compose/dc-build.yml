@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+
+  postgres:
+    build: ./compose/postgres
+
+  redis:
+    build: ./compose/redis
+
+  app:
+    build:
+      context: .
+      dockerfile: ./compose/app/Dockerfile
+
+  nginx:
+    build: ./compose/nginx
