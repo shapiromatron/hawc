@@ -68,17 +68,16 @@ const increaseFactors = [
         );
     }),
     FactorsCell = observer(props => {
-        const {content} = props;
+        const {content} = props,
+            _factors = increaseFactors.concat(decreaseFactors);
         return (
             <td>
                 {content.factors.length > 0 ? (
                     <ul>
                         {content.factors.map((factor, index) => {
-                            return (
-                                <li
-                                    key={index}
-                                    dangerouslySetInnerHTML={{__html: factor.text}}></li>
-                            );
+                            let label = _factors.find(_factor => _factor.key == factor.key).label,
+                                html = `<em>${label}</em> - ` + factor.text;
+                            return <li key={index} dangerouslySetInnerHTML={{__html: html}}></li>;
                         })}
                     </ul>
                 ) : null}
