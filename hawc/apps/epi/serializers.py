@@ -4,7 +4,7 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from ..assessment.models import Assessment
 from ..assessment.serializers import DoseUnitsSerializer, DSSToxSerializer, EffectTagsSerializer
-from ..common.api import DynamicFieldsMixin, GetOrCreateMixin, user_can_edit_object
+from ..common.api import DynamicFieldsMixin, GetOrCreateMixin, IdLookupMixin, user_can_edit_object
 from ..common.helper import SerializerHelper
 from ..common.serializers import FlexibleChoiceField, FlexibleDBLinkedChoiceField, ReadableChoiceField
 from ..study.serializers import StudySerializer
@@ -45,6 +45,16 @@ class StudyPopulationCountrySerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Country
         fields = ("code", "name")
+
+    def to_internal_value(self, data):
+        if type(data) is str:
+            try:
+                country = self.Meta.model.objects.get(code__iexact=data)
+                return country
+            except ObjectDoesNotExist:
+                raise serializers.ValidationError(f"Invalid country code '{data}'")
+
+        return super().to_internal_value(data)
 
 
 class OutcomeLinkSerializer(serializers.ModelSerializer):
@@ -134,31 +144,34 @@ class CriteriaSerializer(GetOrCreateMixin, serializers.ModelSerializer):
         fields = "__all__"
 
 
-# class StudyPopulationSerializer(GetOrCreateMixin, serializers.ModelSerializer):
-class StudyPopulationSerializer(serializers.ModelSerializer):
+class SimpleStudyPopulationCriteriaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.StudyPopulationCriteria
+        fields = "__all__"
+
+
+class StudyPopulationSerializer(IdLookupMixin, serializers.ModelSerializer):
     study = StudySerializer()
     criteria = StudyPopulationCriteriaSerializer(source="spcriteria", many=True)
-    outcomes = OutcomeLinkSerializer(many=True)
-    exposures = ExposureLinkSerializer(many=True)
-    can_create_sets = serializers.BooleanField(read_only=True)
-    comparison_sets = ComparisonSetLinkSerializer(many=True)
     countries = StudyPopulationCountrySerializer(many=True)
+    design = FlexibleChoiceField(choices=models.StudyPopulation.DESIGN_CHOICES)
+    outcomes = OutcomeLinkSerializer(many=True, read_only=True)
+    exposures = ExposureLinkSerializer(many=True, read_only=True)
+    can_create_sets = serializers.BooleanField(read_only=True)
+    comparison_sets = ComparisonSetLinkSerializer(many=True, read_only=True)
     url = serializers.CharField(source="get_absolute_url", read_only=True)
-    design = serializers.CharField(source="get_design_display", read_only=True)
 
     class Meta:
         model = models.StudyPopulation
         fields = "__all__"
 
-    def to_internal_value(self, data):
-        if type(data) is int:
-            try:
-                study_pop = self.Meta.model.objects.get(id=data)
-                return study_pop
-            except ObjectDoesNotExist:
-                raise serializers.ValidationError("Invalid id")
+    def update(self, instance, validated_data):
+        if "countries" in validated_data:
+            instance.countries.clear()
+            instance.countries.add(*validated_data["countries"])
+            del validated_data["countries"] # delete the key so we can call the default update method for all the other fields
 
-        return data
+        return super().update(instance, validated_data)
 
 
 class ExposureReadSerializer(serializers.ModelSerializer):

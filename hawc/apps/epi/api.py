@@ -121,10 +121,118 @@ class StudyPopulation(viewsets.ModelViewSet):
     model = models.StudyPopulation
     serializer_class = serializers.StudyPopulationSerializer
 
+    criteria_categories = (
+        ("inclusion_criteria", "I", ),
+        ("exclusion_criteria", "E", ),
+        ("confounding_criteria", "C", )
+    )
+
+    def process_criteria_creation(self, serializer, study_population_id, post_initial_create):
+        inserts = []
+        for cc in self.criteria_categories:
+            data_key = cc[0]
+            type_code = cc[1]
+
+            if data_key in self.request.data:
+                if not post_initial_create:
+                    # wipe out existing criteria for this pop+type pair that was part of the request...
+                    models.StudyPopulationCriteria.objects.filter(study_population=self.get_object(), criteria_type=type_code).delete()
+
+                criteria_ids = self.request.data[data_key]
+
+                for criteria_id in criteria_ids:
+                    dynamic_obj = {
+                        "criteria_type": type_code,
+                        "criteria": criteria_id,
+                        "study_population": study_population_id
+                    }
+                    inserts.append(dynamic_obj)
+
+        # ...and save any new ones
+        if len(inserts) > 0:
+            serializer = serializers.SimpleStudyPopulationCriteriaSerializer(
+                data=inserts, many=True
+            )
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+
     def get_queryset(self, *args, **kwargs):
         return self.model.objects.all()
 
+    def handle_criteria(self, request, during_create):
+        # first - what assessment are we working in?
+        assessment_id = None
+        if during_create:
+            study_id = request.data["study"]
+
+            try:
+                study = Study.objects.get(id=study_id)
+                assessment_id = study.get_assessment().id
+            except ObjectDoesNotExist:
+                raise ValidationError("Invalid study_id")
+        else:
+            assessment_id = self.get_object().get_assessment().id
+
+
+        # and now do some conversions/creations
+        for cc in self.criteria_categories:
+            data_key = cc[0]
+
+            # client can supply an id, or the name of the criteria entry (and then we'll look it up for them - or create it if needed)
+            if data_key in request.data:
+                data_probe = request.data[data_key]
+
+                fixed = []
+                for el in data_probe:
+                    if type(el) is str:
+                        try:
+                            criteria = models.Criteria.objects.get(description=el, assessment_id=assessment_id)
+                            fixed.append(criteria.id)
+                        except ObjectDoesNotExist:
+                            # allow creation of criteria as part of the request
+                            criteria_serializer = serializers.CriteriaSerializer(
+                                data={"description": el, "assessment": assessment_id }
+                            )
+                            criteria_serializer.is_valid(raise_exception=True)
+                            criteria = criteria_serializer.save()
+                            fixed.append(criteria.id)
+                    else:
+                        fixed.append(el)
+
+                request.data[data_key] = fixed
+
+        
+    def perform_create(self, serializer):
+        user_can_edit_object(
+            serializer.validated_data.get("study"),
+            self.request.user,
+            raise_exception=True,
+        )
+        super().perform_create(serializer)
+
+        self.process_criteria_creation(serializer, serializer.data["id"], True)
+
+    def perform_update(self, serializer):
+        user_can_edit_object(
+            self.get_object(),
+            self.request.user,
+            raise_exception=True,
+        )
+        super().perform_update(serializer)
+
+        self.process_criteria_creation(serializer, self.get_object().id, False)
+
+    @transaction.atomic
+    def update(self, request, *args, **kwargs):
+        self.handle_criteria(request, False)
+        return super().update(request, *args, **kwargs)
+
+    @transaction.atomic
     def create(self, request, *args, **kwargs):
+        self.handle_criteria(request, True)
+        return super().create(request, *args, **kwargs)
+
+    def _create(self, request, *args, **kwargs):
         # IGNORE THIS FOR NOW - NOT REALLY WORKING YET, JUST PLAYING WITH SOME IDEAS
 
         pops = request.data.get("populations")
@@ -358,7 +466,7 @@ class Exposure(ReadWriteSerializerMixin, AssessmentEditViewset):
 
     def perform_update(self, serializer):
         user_can_edit_object(
-            serializer.validated_data.get("study_population"),
+            self.get_object(),
             self.request.user,
             raise_exception=True,
         )
