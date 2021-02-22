@@ -16,8 +16,8 @@ from pydantic import ValidationError as PydanticError
 from reversion import revisions as reversion
 from treebeard.mp_tree import MP_Node
 
-from hawc.tools.tables.generic import GenericTable
 from hawc.tools.tables.ept import EvidenceProfileTable
+from hawc.tools.tables.generic import GenericTable
 
 from ..animal.exports import EndpointFlatDataPivot, EndpointGroupFlatDataPivot
 from ..animal.models import Endpoint
