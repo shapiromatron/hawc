@@ -4,7 +4,7 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from ..assessment.models import Assessment
 from ..assessment.serializers import DoseUnitsSerializer, DSSToxSerializer, EffectTagsSerializer
-from ..common.api import DynamicFieldsMixin, GetOrCreateMixin, IdLookupMixin, user_can_edit_object
+from ..common.api import DynamicFieldsMixin, FormIntegrationMixin, GetOrCreateMixin, IdLookupMixin, user_can_edit_object
 from ..common.helper import SerializerHelper
 from ..common.serializers import FlexibleChoiceField, FlexibleDBLinkedChoiceField, ReadableChoiceField
 from ..study.serializers import StudySerializer
@@ -65,7 +65,9 @@ class OutcomeLinkSerializer(serializers.ModelSerializer):
         fields = ("id", "name", "url")
 
 
-class GroupNumericalDescriptionsSerializer(serializers.ModelSerializer):
+class GroupNumericalDescriptionsSerializer(FormIntegrationMixin, serializers.ModelSerializer):
+    form_integration_class = forms.GroupNumericalDescriptionsForm
+
     mean_type = FlexibleChoiceField(choices=models.GroupNumericalDescriptions.MEAN_TYPE_CHOICES)
     variance_type = FlexibleChoiceField(choices=models.GroupNumericalDescriptions.VARIANCE_TYPE_CHOICES)
     lower_type = FlexibleChoiceField(choices=models.GroupNumericalDescriptions.LOWER_LIMIT_CHOICES)
@@ -77,7 +79,9 @@ class GroupNumericalDescriptionsSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class GroupSerializer(serializers.ModelSerializer):
+class GroupSerializer(FormIntegrationMixin, serializers.ModelSerializer):
+    form_integration_class = forms.GroupForm
+
     sex = FlexibleChoiceField(choices=models.Group.SEX_CHOICES)
     ethnicities = FlexibleDBLinkedChoiceField(models.Ethnicity, EthnicitySerializer, "name", True)
     descriptions = GroupNumericalDescriptionsSerializer(many=True, read_only=True)
@@ -138,7 +142,14 @@ class ComparisonSetLinkSerializer(serializers.ModelSerializer):
         fields = ("id", "name", "url")
 
 
-class CriteriaSerializer(GetOrCreateMixin, serializers.ModelSerializer):
+class CriteriaSerializer(GetOrCreateMixin, FormIntegrationMixin, serializers.ModelSerializer):
+    form_integration_class = forms.CriteriaForm
+
+    def get_form_integration_kwargs(self, data):
+        return {
+            "parent": data["assessment"]
+        }
+
     class Meta:
         model = models.Criteria
         fields = "__all__"
@@ -150,7 +161,9 @@ class SimpleStudyPopulationCriteriaSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class StudyPopulationSerializer(IdLookupMixin, serializers.ModelSerializer):
+class StudyPopulationSerializer(IdLookupMixin, FormIntegrationMixin, serializers.ModelSerializer):
+    form_integration_class = forms.StudyPopulationForm
+
     study = StudySerializer()
     criteria = StudyPopulationCriteriaSerializer(source="spcriteria", many=True)
     countries = StudyPopulationCountrySerializer(many=True)
@@ -160,6 +173,11 @@ class StudyPopulationSerializer(IdLookupMixin, serializers.ModelSerializer):
     can_create_sets = serializers.BooleanField(read_only=True)
     comparison_sets = ComparisonSetLinkSerializer(many=True, read_only=True)
     url = serializers.CharField(source="get_absolute_url", read_only=True)
+
+    def get_form_integration_kwargs(self, data):
+        return {
+            "parent": data["study"]
+        }
 
     class Meta:
         model = models.StudyPopulation
@@ -186,24 +204,18 @@ class ExposureReadSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class ExposureWriteSerializer(serializers.ModelSerializer):
+class ExposureWriteSerializer(FormIntegrationMixin, serializers.ModelSerializer):
     central_tendencies = CentralTendencySerializer(many=True, read_only=True)
-
-    def validate(self, data):
-        data = super().validate(data)
-
-        form = forms.ExposureForm(data=data)
-        if form.is_valid() is False:
-            raise serializers.ValidationError(form.errors)
-
-        return data
+    form_integration_class = forms.ExposureForm
 
     class Meta:
         model = models.Exposure
         fields = "__all__"
 
 
-class GroupResultSerializer(serializers.ModelSerializer):
+class GroupResultSerializer(FormIntegrationMixin, serializers.ModelSerializer):
+    form_integration_class = forms.GroupResultForm
+
     main_finding_support = FlexibleChoiceField(choices=models.GroupResult.MAIN_FINDING_CHOICES)
     p_value_qualifier = ReadableChoiceField(choices=models.GroupResult.P_VALUE_QUALIFIER_CHOICES)
     p_value_text = serializers.CharField(read_only=True)
@@ -249,7 +261,9 @@ class SimpleComparisonSetSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class ResultSerializer(serializers.ModelSerializer):
+class ResultSerializer(FormIntegrationMixin, serializers.ModelSerializer):
+    form_integration_class = forms.ResultForm
+
     dose_response = FlexibleChoiceField(choices=models.Result.DOSE_RESPONSE_CHOICES)
     metric = FlexibleDBLinkedChoiceField(models.ResultMetric, ResultMetricSerializer, "metric", False)
     statistical_power = FlexibleChoiceField(choices=models.Result.STATISTICAL_POWER_CHOICES)
@@ -261,13 +275,20 @@ class ResultSerializer(serializers.ModelSerializer):
     resulttags = EffectTagsSerializer()
     results = GroupResultSerializer(many=True, read_only=True)
 
+    def get_form_integration_kwargs(self, data):
+        return {
+            "parent": data["outcome"]
+        }
+
     class Meta:
         model = models.Result
         # fields = "__all__"
         exclude = ("adjustment_factors",)
 
 
-class OutcomeSerializer(serializers.ModelSerializer):
+class OutcomeSerializer(FormIntegrationMixin, serializers.ModelSerializer):
+    form_integration_class = forms.OutcomeForm
+
     diagnostic = FlexibleChoiceField(choices=models.Outcome.DIAGNOSTIC_CHOICES)
     study_population = StudyPopulationSerializer(read_only=True)
     can_create_sets = serializers.BooleanField(read_only=True)
@@ -292,6 +313,8 @@ class OutcomeSerializer(serializers.ModelSerializer):
 
 
 class ComparisonSetSerializer(serializers.ModelSerializer):
+    # had some trouble getting this for work with FormIntegrationMixin; 
+    # related to the StudyPopulation/Outcome split which I don't fully understand...
     url = serializers.CharField(source="get_absolute_url", read_only=True)
     exposure = ExposureReadSerializer(read_only=True)
     outcome = OutcomeSerializer(read_only=True)

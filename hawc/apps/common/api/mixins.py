@@ -253,3 +253,29 @@ class PermCheckerMixin:
             raise_exception=True,
         )
         super().perform_destroy(instance)
+
+
+class FormIntegrationMixin:
+    """
+    mixin to be used with serializers. The serializer must define a "form_integration_class"
+    and this mixin will then instantiate it with the data being passed to validate and 
+    see if the form returns is_valid() == True. If not, it raises a ValidationError.
+
+    The serializer can optionally define a method "get_form_integration_kwargs" to pass
+    additional custom kwargs to the form constructor.
+    """
+    def validate(self, data):
+        # if we need it, self.instance is None on create and set to something on update...
+        data = super().validate(data)
+
+        custom_kwargs = {}
+        custom_kwargs_op = getattr(self, "get_form_integration_kwargs", None)
+        if callable(custom_kwargs_op):
+            custom_kwargs = custom_kwargs_op(data)
+
+        form = self.form_integration_class(data=data, **custom_kwargs)
+
+        if form.is_valid() is False:
+            raise serializers.ValidationError(form.errors)
+
+        return data
