@@ -8,7 +8,7 @@ import {
 } from "shared/components/EditableRowData";
 
 const getDefaultEvidence = () => {
-        const blank = "<p>....</p>";
+        const blank = "<p></p>";
         return {
             summary: {findings: blank},
             evidence: {description: blank},
@@ -18,7 +18,7 @@ const getDefaultEvidence = () => {
         };
     },
     getDefaultMechanisticEvidence = () => {
-        const blank = "<p>....</p>";
+        const blank = "<p></p>";
         return {
             summary: {findings: blank},
             evidence: {description: blank},
@@ -88,7 +88,7 @@ class EvidenceProfileTableStore {
         if (index >= 0) {
             factors.splice(index, 1);
         } else {
-            factors.push({key: factorKey, text: "..."});
+            factors.push({key: factorKey, text: ""});
         }
         factors = _.sortBy(factors, d => d.key);
         _.set(this.settings, `${objectKey}.factors`, factors);

@@ -107,39 +107,48 @@ class SummaryCell(BaseCell):
 
 class FactorLabel(Enum):
     NoFactors = "No factors noted"
-    Other = "Other"
     UpConsistency = "Consistency"
     UpDoseGradient = "Dose - response gradient"
     UpCoherence = "Coherence of effects"
     UpEffect = "Large or concerning magnitude of effect"
     UpPlausible = "Mechanistic evidence providing plausibility"
     UpConfidence = "Medium or high confidence studies"
+    UpOther = ""
     DownConsistency = "Unexplained inconsistency"
     DownImprecision = "Imprecision"
     DownCoherence = "Lack of expected coherence"
     DownImplausible = "Evidence demonstrating implausibility"
     DownConfidence = "Low confidence studies"
+    DownOther = ""
 
 
 class FactorType(IntEnum):
     NoFactors = 0
-    Other = 10
     UpConsistency = 20
     UpDoseGradient = 30
     UpCoherence = 40
     UpEffect = 50
     UpPlausible = 60
     UpConfidence = 70
+    UpOther = 100
     DownConsistency = -20
     DownImprecision = -30
     DownCoherence = -40
     DownImplausible = -50
     DownConfidence = -60
+    DownOther = -100
 
 
 class Factor(BaseModel):
     key: FactorType
     text: str
+
+    def to_docx(self):
+        label = FactorLabel[self.key.name].value
+        if label:
+            return tag_wrapper(label, "em") + " - " + self.text
+        else:
+            return self.text
 
 
 class FactorsCell(BaseCell):
@@ -147,12 +156,7 @@ class FactorsCell(BaseCell):
     text: str
 
     def to_docx(self, block):
-        wrap_text = (
-            lambda factor: tag_wrapper(FactorLabel[factor.key.name].value, "em")
-            + " - "
-            + factor.text
-        )
-        factors = [wrap_text(factor) for factor in self.factors]
+        factors = [factor.to_docx() for factor in self.factors]
         text = ""
         if len(factors):
             text = ul_wrapper(factors)
@@ -380,9 +384,9 @@ class EvidenceProfileTable(BaseTable):
             },
             "summary_judgement": {
                 "judgement": SummaryJudgementChoices.Inadequate,
-                "description": "<p>...</p>",
-                "human_relevance": "<p>...</p>",
-                "cross_stream_coherence": "<p>...</p>",
-                "susceptibility": "<p>...</p>",
+                "description": "<p></p>",
+                "human_relevance": "<p></p>",
+                "cross_stream_coherence": "<p></p>",
+                "susceptibility": "<p></p>",
             },
         }
