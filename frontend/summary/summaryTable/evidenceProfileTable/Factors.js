@@ -81,7 +81,9 @@ const increaseFactors = [
                         })}
                     </ul>
                 ) : null}
-                <div dangerouslySetInnerHTML={{__html: content.text}}></div>
+                {h.hasInnerText(content.text) ? (
+                    <div dangerouslySetInnerHTML={{__html: content.text}}></div>
+                ) : null}
             </td>
         );
     });
