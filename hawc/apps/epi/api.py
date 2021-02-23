@@ -225,16 +225,19 @@ class Exposure(ReadWriteSerializerMixin, PermCheckerMixin, AssessmentEditViewset
     write_serializer_class = serializers.ExposureWriteSerializer
 
     def handle_cts(self, request, during_update = False):
-        """
-        a bit of an overly big hammer -- during an update we just wipe out existing CTs. We could instead load existing ones, delete if missing,
-        update if present, etc. but for simplicity's sake this works.
-        """
-        if during_update:
-            models.CentralTendency.objects.filter(exposure=self.get_object()).delete()
-
         # we validate CTs here...and then post-exposure creation, we'll create them.
         if "central_tendencies" in request.data:
+            """
+            a bit of an overly big hammer -- during an update we just wipe out existing CTs. We could instead load existing ones, delete if missing,
+            update if present, etc. but for simplicity's sake this works.
+            """
+            if during_update:
+                models.CentralTendency.objects.filter(exposure=self.get_object()).delete()
+
             cts = request.data["central_tendencies"]
+
+            if len(cts) == 0:
+                raise ValidationError(f"At least one central tendency is required")
 
             # allow clients to specify either keys like 2 or readable values like "median" when accessing the API
             for ct in cts:
@@ -267,6 +270,9 @@ class Exposure(ReadWriteSerializerMixin, PermCheckerMixin, AssessmentEditViewset
                 raise ValidationError({
                     "central_tendencies": ve.detail
                 })
+        else:
+            if not during_update:
+                raise ValidationError(f"At least one central tendency is required")
 
     def handle_dtxsid(self, request):
         # supports creating dsstox objects on the fly
