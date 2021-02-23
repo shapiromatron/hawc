@@ -38,6 +38,7 @@ else:
 
 LOGGING["loggers"]["django"]["handlers"] = ["file"]
 
+EXTERNAL_CONTACT_US = os.getenv("HAWC_EXTERNAL_CONTACT_US", "")
 ANYONE_CAN_CREATE_ASSESSMENTS = os.getenv("HAWC_ANYONE_CAN_CREATE_ASSESSMENTS", "True") == "True"
 
 HAWC_LOAD_TEST_DB = bool(os.environ.get("HAWC_LOAD_TEST_DB") == "True")

@@ -160,7 +160,7 @@ CACHE_10_MIN = 60 * 10
 EMAIL_SUBJECT_PREFIX = os.environ.get("EMAIL_SUBJECT_PREFIX", "[HAWC] ")
 DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", "webmaster@hawcproject.org")
 SERVER_EMAIL = os.environ.get("SERVER_EMAIL", "webmaster@hawcproject.org")
-
+EXTERNAL_CONTACT_US = ""
 
 # Session and authentication
 AUTH_USER_MODEL = "myuser.HAWCUser"
