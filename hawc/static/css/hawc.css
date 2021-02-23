@@ -84,6 +84,15 @@ mark,.mark {
 }
 /* END BOOTSTRAP 4 OVERRIDES */
 
+.float-right-absolute {
+    /*
+    float in the top right, but remove from html layout; the parent container may need
+    to be `position: relative` or something similar
+    */
+    position: absolute;
+    top: 0;
+    right: 0;
+}
 
 /* jQueryUI OVERRIDES */
 .ui-front{
@@ -286,6 +295,10 @@ div.smart-tag.active {
     color: navy;
     border: 2px solid gray;
     font-weight: bold;
+}
+
+.summaryTable  p {
+    margin-bottom: 0;
 }
 
 /* LITERATURE MODULE */
@@ -503,4 +516,17 @@ Package style overrides
 
 .react-datepicker__input-container {
     display: block !important;
+}
+
+
+/* base header/footer */
+.base-footer-div {
+  background-color: #646D76;
+  padding-top: 2em;
+  padding-bottom: 3em;
+}
+.last-updated {
+    font-size: 0.85em;
+    font-weight: 500;
+    padding: 0.8333em 0 0;
 }

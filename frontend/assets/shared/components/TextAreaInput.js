@@ -1,14 +1,15 @@
 import React, {Component} from "react";
 import PropTypes from "prop-types";
 
+import {inputClass, errorsDiv} from "./inputs";
 import LabelInput from "./LabelInput";
 import HelpText from "./HelpText";
 
 class TextInput extends Component {
-    renderField(fieldClass, fieldId) {
+    renderField(fieldClass, fieldId, errors) {
         return (
             <textarea
-                className={fieldClass}
+                className={inputClass(fieldClass, errors)}
                 id={fieldId}
                 name={this.props.name}
                 type="text"
@@ -21,11 +22,13 @@ class TextInput extends Component {
 
     render() {
         let fieldId = this.props.id || this.props.name ? `id_${this.props.name}` : null,
-            fieldClass = "form-control";
+            fieldClass = "form-control",
+            {errors} = this.props;
         return (
             <div className="form-group">
                 {this.props.label ? <LabelInput for={fieldId} label={this.props.label} /> : null}
-                {this.renderField(fieldClass, fieldId)}
+                {this.renderField(fieldClass, fieldId, errors)}
+                {errorsDiv(errors)}
                 {this.props.helpText ? <HelpText text={this.props.helpText} /> : null}
             </div>
         );
@@ -40,6 +43,7 @@ TextInput.propTypes = {
     onChange: PropTypes.func.isRequired,
     required: PropTypes.bool,
     value: PropTypes.string.isRequired,
+    errors: PropTypes.array,
 };
 
 export default TextInput;

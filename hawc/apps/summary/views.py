@@ -1,6 +1,7 @@
 import json
 from typing import Dict
 
+from django.core.exceptions import PermissionDenied
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
@@ -8,6 +9,7 @@ from django.views.generic import FormView, RedirectView
 
 from ..assessment.models import Assessment
 from ..common.crumbs import Breadcrumb
+from ..common.serializers import to_json
 from ..common.views import (
     BaseCreate,
     BaseDelete,
@@ -28,6 +30,12 @@ def get_visual_list_crumb(assessment) -> Breadcrumb:
 
 def get_summary_list_crumb(assessment) -> Breadcrumb:
     return Breadcrumb(name="Summary", url=reverse("summary:list", args=(assessment.id,)))
+
+
+def get_table_list_crumb(assessment) -> Breadcrumb:
+    return Breadcrumb(
+        name="Summary tables", url=reverse("summary:tables_list", args=(assessment.id,))
+    )
 
 
 # SUMMARY-TEXT
@@ -56,6 +64,124 @@ class SummaryTextModify(BaseCreate):
             self.request.user,
             "Update text",
             [Breadcrumb.from_object(self.assessment), get_summary_list_crumb(self.assessment)],
+        )
+        return context
+
+
+# SUMMARY TABLE
+class GetSummaryTableMixin:
+    def get_object(self, queryset=None):
+        if queryset is None:
+            queryset = self.get_queryset()
+        slug = self.kwargs.get("slug")
+        assessment = self.kwargs.get("pk")
+        obj = get_object_or_404(models.SummaryTable, assessment=assessment, slug=slug)
+        return super().get_object(object=obj)
+
+
+class SummaryTableList(BaseList):
+    parent_model = Assessment
+    model = models.SummaryTable
+    breadcrumb_active_name = "Summary tables"
+
+    def get_queryset(self):
+        qs = self.model.objects.get_qs(self.assessment)
+        if self.assessment.user_is_part_of_team(self.request.user):
+            return qs
+        return qs.filter(published=True)
+
+
+class SummaryTableDetail(GetSummaryTableMixin, BaseDetail):
+    model = models.SummaryTable
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if context["object"].published is False and context["obj_perms"]["edit"] is False:
+            raise PermissionDenied()
+        context["breadcrumbs"].insert(
+            len(context["breadcrumbs"]) - 1, get_table_list_crumb(self.assessment)
+        )
+        return context
+
+
+class SummaryTableCreateSelector(BaseCreate):
+    success_message = None
+    parent_model = Assessment
+    parent_template_name = "assessment"
+    model = models.SummaryTable
+    form_class = forms.SummaryTableSelectorForm
+    template_name = "summary/summarytable_selector.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"].insert(
+            len(context["breadcrumbs"]) - 1, get_table_list_crumb(self.assessment)
+        )
+        return context
+
+    def form_valid(self, form):
+        url = reverse(
+            "summary:tables_create", args=(form.assessment.id, form.cleaned_data["table_type"],)
+        )
+        return HttpResponseRedirect(url)
+
+
+class SummaryTableCreate(BaseCreate):
+    success_message = "Summary table created."
+    parent_model = Assessment
+    parent_template_name = "assessment"
+    model = models.SummaryTable
+    form_class = forms.SummaryTableForm
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["table_type"] = int(self.kwargs.get("table_type"))
+        return kwargs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update(
+            is_create=True,
+            initial=to_json(serializers.SummaryTableSerializer, context["form"].instance),
+            save_url=models.SummaryTable.get_api_list_url(self.assessment.id),
+            cancel_url=models.SummaryTable.get_list_url(self.assessment.id),
+        )
+        context["breadcrumbs"].insert(
+            len(context["breadcrumbs"]) - 1, get_table_list_crumb(self.assessment)
+        )
+        return context
+
+
+class SummaryTableUpdate(GetSummaryTableMixin, BaseUpdate):
+    success_message = "Summary table updated."
+    model = models.SummaryTable
+    form_class = forms.SummaryTableForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update(
+            is_create=False,
+            initial=to_json(serializers.SummaryTableSerializer, self.object),
+            save_url=self.object.get_api_url(),
+            cancel_url=self.object.get_absolute_url(),
+        )
+        context["breadcrumbs"].insert(
+            len(context["breadcrumbs"]) - 2, get_table_list_crumb(self.assessment)
+        )
+        return context
+
+
+class SummaryTableDelete(GetSummaryTableMixin, BaseDelete):
+    success_message = "Summary table deleted."
+    model = models.SummaryTable
+
+    def get_success_url(self):
+        return self.model.get_list_url(self.assessment.id)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"].insert(
+            len(context["breadcrumbs"]) - 2, get_table_list_crumb(self.assessment)
         )
         return context
 
