@@ -201,3 +201,55 @@ class IdLookupMixin:
 
         return super().to_internal_value(data)
 
+
+class PermCheckerMixin:
+    """
+    class to be mixed into api viewsets. Provides default "user_can_edit_object" checks during
+    requests to create/update/destroy via API. Classes mixing this in should define a variable perm_checker_key
+    which can be either a string or a list of strings that should be used as the source for the checks, via
+    looking them up in the validated_data of the serializer.
+    """
+
+    def generate_things_to_check(self, serializer, append_self_obj):
+        things_to_check = []
+
+        # perm_checker_key can either be a string or an array of strings
+        checker_keys = self.perm_checker_key
+        if type(self.perm_checker_key) is str:
+            checker_keys = [ self.perm_checker_key ]
+
+        for checker_key in checker_keys:
+            if checker_key in serializer.validated_data:
+                things_to_check.append(serializer.validated_data.get(checker_key))
+
+        if append_self_obj:
+            things_to_check.append(self.get_object())
+
+        return things_to_check
+
+    def perform_create(self, serializer):
+        for thing_to_check in self.generate_things_to_check(serializer, False):
+            user_can_edit_object(
+                thing_to_check,
+                self.request.user,
+                raise_exception=True,
+            )
+        super().perform_create(serializer)
+
+    def perform_update(self, serializer):
+        for thing_to_check in self.generate_things_to_check(serializer, True):
+            user_can_edit_object(
+                thing_to_check,
+                self.request.user,
+                raise_exception=True,
+            )
+
+        super().perform_update(serializer)
+
+    def perform_destroy(self, instance):
+        user_can_edit_object(
+            instance,
+            self.request.user,
+            raise_exception=True,
+        )
+        super().perform_destroy(instance)

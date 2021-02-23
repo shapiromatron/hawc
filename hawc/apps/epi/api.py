@@ -17,6 +17,7 @@ from ..assessment.serializers import DoseUnitsSerializer, DSSToxSerializer
 from ..common.api import (
     CleanupFieldsBaseViewSet,
     LegacyAssessmentAdapterMixin,
+    PermCheckerMixin,
     ReadWriteSerializerMixin,
     user_can_edit_object,
 )
@@ -103,20 +104,15 @@ class EpiAssessmentViewset(
         return Response(export)
 
 
-class Criteria(AssessmentEditViewset):
+class Criteria(PermCheckerMixin, AssessmentEditViewset):
+    perm_checker_key = "assessment"
     assessment_filter_args = "assessment"
     model = models.Criteria
     serializer_class = serializers.CriteriaSerializer
 
-    def perform_create(self, serializer):
-        # permissions check
-        user_can_edit_object(
-            serializer.validated_data.get("assessment"), self.request.user, raise_exception=True
-        )
-        return super().perform_create(serializer)
 
-
-class StudyPopulation(viewsets.ModelViewSet):
+class StudyPopulation(PermCheckerMixin, viewsets.ModelViewSet):
+    perm_checker_key = "study"
     assessment_filter_args = "study__assessment"
     model = models.StudyPopulation
     serializer_class = serializers.StudyPopulationSerializer
@@ -203,23 +199,11 @@ class StudyPopulation(viewsets.ModelViewSet):
 
         
     def perform_create(self, serializer):
-        user_can_edit_object(
-            serializer.validated_data.get("study"),
-            self.request.user,
-            raise_exception=True,
-        )
         super().perform_create(serializer)
-
         self.process_criteria_creation(serializer, serializer.data["id"], True)
 
     def perform_update(self, serializer):
-        user_can_edit_object(
-            self.get_object(),
-            self.request.user,
-            raise_exception=True,
-        )
         super().perform_update(serializer)
-
         self.process_criteria_creation(serializer, self.get_object().id, False)
 
     @transaction.atomic
@@ -232,106 +216,9 @@ class StudyPopulation(viewsets.ModelViewSet):
         self.handle_criteria(request, True)
         return super().create(request, *args, **kwargs)
 
-    def _create(self, request, *args, **kwargs):
-        # IGNORE THIS FOR NOW - NOT REALLY WORKING YET, JUST PLAYING WITH SOME IDEAS
 
-        pops = request.data.get("populations")
-        # this one is being written to assume populations is a list; should
-        # we actually assert/check that it is?
-
-        study_id = tryParseInt(request.data.get("study_id"), -1)
-        try:
-            study = Study.objects.get(id=study_id)
-        except ObjectDoesNotExist:
-            raise ValidationError("Invalid study_id")
-        # print(f"study is {study}")
-
-        # TODO - do we need to check the permissions of the study?
-
-        serialized_study = StudySerializer().to_default_representation(study)
-
-        # print(f"serialized study is {serialized_study}")
-
-        # for each population in the input, add the study
-        for pop in pops:
-            pop["study"] = serialized_study
-            # pop["study"] = study.id
-
-        # similarly - do we need to do this with criteria id's, outcome id's, etc.? Seems
-        # like no, see epiUpload.json for an exmaple (it may not work, haven't gotten
-        # that far yet)
-
-        for pop in pops:
-            raw_countries = pop.get("countries", [])
-            real_countries = []
-            for raw_country in raw_countries:
-                print(f"lookup {raw_country}")
-                country_id = tryParseInt(raw_country, -1)
-                try:
-                    country = models.Country.objects.get(id=country_id)
-                    print(f"{country_id} --> {country}")
-                    real_countries.append(
-                        serializers.CountrySerializer().to_representation(country)
-                    )
-                    print(
-                        f"FULL REP IS {serializers.CountrySerializer().to_representation(country)}"
-                    )
-                except ObjectDoesNotExist:
-                    raise ValidationError("Invalid country_id")
-            pop["countries"] = real_countries
-
-        # serializer = self.get_serializer(data=request.data, many=isinstance(request.data, list))
-        serializer = self.get_serializer(data=pops, many=True)
-        print(f"XXX: serializer is [{type(serializer)}]")
-
-        serializer.is_valid(raise_exception=True)
-        print(f"YYY: past our valid check")
-
-        """
-        print("CCC")
-        self.perform_create(serializer)
-        print("DDD")
-        headers = self.get_success_headers(serializer.data)
-        print("EEE")
-        print(headers)
-        # return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-        """
-
-        """
-        study_id = tryParseInt(request.data.get("study_id"), -1)
-
-        print(f"create firing with {study_id}")
-
-        try:
-            study = Study.objects.get(id=study_id)
-        except ObjectDoesNotExist:
-            raise ValidationError("Invalid study_id")
-
-        # permission check using the user submitting the request
-        if not study.user_can_edit_study(study.assessment, request.user):
-            raise PermissionDenied(
-                f"Submitter '{request.user}' has invalid permissions to edit Epi data for this study"
-            )
-        """
-
-        """
-        # overridden_objects is not marked as optional in RiskOfBiasScoreSerializerSlim; if it's not present
-        # in the payload, let's just add an empty array.
-        scores = request.data.get("scores")
-        for score in scores:
-            if "overridden_objects" not in score:
-                score["overridden_objects"] = []
-        """
-
-        print(f"about to call create with {args}, {kwargs}...")
-
-        try:
-            return super().create(request, *args, **kwargs)
-        except Exception as e:
-            print(f"exception: {e}")
-
-
-class Exposure(ReadWriteSerializerMixin, AssessmentEditViewset):
+class Exposure(ReadWriteSerializerMixin, PermCheckerMixin, AssessmentEditViewset):
+    perm_checker_key = "study_population"
     assessment_filter_args = "study_population__study__assessment"
     model = models.Exposure
     read_serializer_class = serializers.ExposureReadSerializer
@@ -455,61 +342,32 @@ class Exposure(ReadWriteSerializerMixin, AssessmentEditViewset):
             ct_serializer.save()
         
     def perform_create(self, serializer):
-        user_can_edit_object(
-            serializer.validated_data.get("study_population"),
-            self.request.user,
-            raise_exception=True,
-        )
         super().perform_create(serializer)
-
         self.process_ct_creation(serializer, serializer.data["id"])
 
     def perform_update(self, serializer):
-        user_can_edit_object(
-            self.get_object(),
-            self.request.user,
-            raise_exception=True,
-        )
         super().perform_update(serializer)
-
         self.process_ct_creation(serializer, self.get_object().id)
 
 
-class Outcome(AssessmentEditViewset):
+class Outcome(PermCheckerMixin, AssessmentEditViewset):
+    perm_checker_key = ["assessment", "study_population"]
     assessment_filter_args = "assessment"
     model = models.Outcome
     serializer_class = serializers.OutcomeSerializer
 
-    def perform_create(self, serializer):
-        # permissions check
-        user_can_edit_object(
-            serializer.validated_data.get("assessment"), self.request.user, raise_exception=True
-        )
-        return super().perform_create(serializer)
 
-
-class GroupResult(AssessmentEditViewset):
+class GroupResult(PermCheckerMixin, AssessmentEditViewset):
+    perm_checker_key = "group"
     assessment_filter_args = "result__outcome__assessment"
     model = models.GroupResult
     serializer_class = serializers.GroupResultSerializer
 
-    """
     # note - this does not currently validate that a supplied group is part of the assessment.
-        # what are the valid groups for a given groupresult?
-        print("fetch groups in 508")
-        groups = models.Group.objects.filter(comparison_set__study_population__study__assessment__id=508)
-        for g in groups:
-            print(f"\t{g.id} : {g.name}")
-    """
-    """
-    @transaction.atomic
-    def update(self, request, *args, **kwargs):
-
-        return super().update(request, *args, **kwargs)
-    """
 
 
-class Result(AssessmentEditViewset):
+class Result(PermCheckerMixin, AssessmentEditViewset):
+    perm_checker_key = [ "outcome", "comparison_set" ]
     assessment_filter_args = "outcome__assessment"
     model = models.Result
     serializer_class = serializers.ResultSerializer
@@ -601,58 +459,35 @@ class Result(AssessmentEditViewset):
         return super().create(request, *args, **kwargs)
 
     def perform_create(self, serializer):
-        user_can_edit_object(
-            serializer.validated_data.get("outcome"),
-            self.request.user,
-            raise_exception=True,
-        )
         super().perform_create(serializer)
-
         self.process_adjustment_factor_creation(serializer, serializer.data["id"], True)
 
     def perform_update(self, serializer):
-        user_can_edit_object(
-            self.get_object(),
-            self.request.user,
-            raise_exception=True,
-        )
         super().perform_update(serializer)
-
         self.process_adjustment_factor_creation(serializer, self.get_object().id, False)
 
 
-class ComparisonSet(AssessmentEditViewset):
+class ComparisonSet(PermCheckerMixin, AssessmentEditViewset):
+    perm_checker_key = "study_population"
     assessment_filter_args = "assessment"  # todo: fix
     model = models.ComparisonSet
     serializer_class = serializers.ComparisonSetSerializer
 
+    # note - this does not currently validate that a supplied exposure is a valid one...
 
-class GroupNumericalDescriptions(AssessmentEditViewset):
+
+class GroupNumericalDescriptions(PermCheckerMixin, AssessmentEditViewset):
+    perm_checker_key = "group"
     # assessment_filter_args = "group__assessment"
     model = models.GroupNumericalDescriptions
     serializer_class = serializers.GroupNumericalDescriptionsSerializer
 
 
-class Group(AssessmentEditViewset):
+class Group(PermCheckerMixin, AssessmentEditViewset):
+    perm_checker_key = "comparison_set"
     assessment_filter_args = "assessment"  # todo: fix
     model = models.Group
     serializer_class = serializers.GroupSerializer
-
-    def perform_create(self, serializer):
-        user_can_edit_object(
-            serializer.validated_data.get("comparison_set"),
-            self.request.user,
-            raise_exception=True,
-        )
-        super().perform_create(serializer)
-
-    def perform_update(self, serializer):
-        user_can_edit_object(
-            self.get_object(),
-            self.request.user,
-            raise_exception=True,
-        )
-        super().perform_update(serializer)
 
 
 class OutcomeCleanup(CleanupFieldsBaseViewSet):
