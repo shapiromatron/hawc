@@ -1,5 +1,6 @@
 import React, {Component} from "react";
 import PropTypes from "prop-types";
+import h from "shared/utils/helpers";
 
 import LabelInput from "./LabelInput";
 import HelpText from "./HelpText";
@@ -20,7 +21,7 @@ class CheckboxInput extends Component {
     }
 
     render() {
-        let fieldId = this.props.id || this.props.name ? `id_${this.props.name}` : null,
+        let fieldId = `checkbox_${this.props.id ? this.props.id : h.randomString()}`,
             fieldClass = "form-check-input",
             labelClass = "form-check-label";
         return (

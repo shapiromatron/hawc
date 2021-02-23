@@ -111,6 +111,7 @@ class BaseTable(BaseCellGroup):
         Returns:
             A dictionary of required property fields; often exposed in the UI.
         """
+        raise NotImplementedError("Subclass implementation required")
 
     @classmethod
     def build_default(cls):

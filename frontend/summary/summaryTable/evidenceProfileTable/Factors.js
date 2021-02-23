@@ -35,14 +35,12 @@ const increaseFactors = [
             <div>
                 {choices.map(choice => {
                     const key = h.randomString(),
-                        id = `factor_${choice.key}_${key}`,
                         selectedIndex = _.findIndex(content.factors, d => d.key == choice.key);
                     return (
                         <div key={choice.key}>
                             <CheckboxInput
                                 checked={selectedIndex >= 0}
                                 label={choice.label}
-                                id={id}
                                 onChange={() => store.toggleFactor(updateKey, choice.key)}
                             />
                             {selectedIndex >= 0 ? (
