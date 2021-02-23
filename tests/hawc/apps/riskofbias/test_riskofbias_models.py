@@ -1,9 +1,10 @@
+import json
 from textwrap import dedent
 
 import pytest
 from django.urls import reverse
 
-from hawc.apps.riskofbias.models import RiskOfBiasScoreOverrideObject
+from hawc.apps.riskofbias.models import RiskOfBias, RiskOfBiasScore, RiskOfBiasScoreOverrideObject
 
 
 @pytest.mark.django_db
@@ -31,3 +32,34 @@ class TestRiskOfBiasScoreOverrideObject:
             """
         ).strip()
         assert actual == expected
+
+
+@pytest.mark.django_db
+class TestRiskOfBias:
+    def test_get_dp_export(self):
+        assessment_id = 1
+        study_id = 1
+        _, scores_map = RiskOfBias.get_dp_export(assessment_id, [study_id], "animal")
+
+        # all of the metrics are mapped
+        set(
+            RiskOfBiasScore.objects.filter(
+                riskofbias__study=study_id, riskofbias__final=True, riskofbias__active=True,
+            ).values_list("metric_id")
+        ) == {metric for _, metric in scores_map.keys()}
+
+        # however, study has more scores than metrics
+        assert RiskOfBiasScore.objects.filter(
+            riskofbias__study=study_id, riskofbias__final=True, riskofbias__active=True,
+        ).count() > len(scores_map.keys())
+
+        # make sure only default scores are used
+        for (_, metric), score in scores_map.items():
+            expected_score = RiskOfBiasScore.objects.get(
+                metric=metric,
+                riskofbias__study=study_id,
+                riskofbias__final=True,
+                riskofbias__active=True,
+                is_default=True,
+            )
+            assert json.loads(score)["sortValue"] == expected_score.score
