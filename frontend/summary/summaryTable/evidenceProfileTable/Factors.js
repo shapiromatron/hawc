@@ -9,23 +9,23 @@ import CheckboxInput from "shared/components/CheckboxInput";
 import TextInput from "shared/components/TextInput";
 
 const increaseFactors = [
-        {key: 0, label: "No factors noted"},
-        {key: 20, label: "Consistency"},
-        {key: 30, label: "Dose - response gradient"},
-        {key: 40, label: "Coherence of effects"},
-        {key: 50, label: "Large or concerning magnitude of effect"},
-        {key: 60, label: "Mechanistic evidence providing plausibility"},
-        {key: 70, label: "Medium or high confidence studies"},
-        {key: 10, label: "Other"},
+        {key: 0, label: "No factors noted", displayLabel: true},
+        {key: 20, label: "Consistency", displayLabel: true},
+        {key: 30, label: "Dose - response gradient", displayLabel: true},
+        {key: 40, label: "Coherence of effects", displayLabel: true},
+        {key: 50, label: "Large or concerning magnitude of effect", displayLabel: true},
+        {key: 60, label: "Mechanistic evidence providing plausibility", displayLabel: true},
+        {key: 70, label: "Medium or high confidence studies", displayLabel: true},
+        {key: 100, label: "Other", displayLabel: false},
     ],
     decreaseFactors = [
-        {key: 0, label: "No factors noted"},
-        {key: -20, label: "Unexplained inconsistency"},
-        {key: -30, label: "Imprecision"},
-        {key: -40, label: "Lack of expected coherence"},
-        {key: -50, label: "Evidence demonstrating implausibility"},
-        {key: -60, label: "Low confidence studies"},
-        {key: 10, label: "Other"},
+        {key: 0, label: "No factors noted", displayLabel: true},
+        {key: -20, label: "Unexplained inconsistency", displayLabel: true},
+        {key: -30, label: "Imprecision", displayLabel: true},
+        {key: -40, label: "Lack of expected coherence", displayLabel: true},
+        {key: -50, label: "Evidence demonstrating implausibility", displayLabel: true},
+        {key: -60, label: "Low confidence studies", displayLabel: true},
+        {key: -100, label: "Other", displayLabel: false},
     ],
     FactorsForm = observer(props => {
         const {store, updateKey, content, increase} = props,
@@ -73,8 +73,10 @@ const increaseFactors = [
                 {content.factors.length > 0 ? (
                     <ul>
                         {content.factors.map((factor, index) => {
-                            let label = _factors.find(_factor => _factor.key == factor.key).label,
-                                html = `<em>${label}</em> - ` + factor.text;
+                            let factorType = _factors.find(_factor => _factor.key == factor.key),
+                                html = factorType.displayLabel
+                                    ? `<em>${factorType.label}</em> - ` + factor.text
+                                    : factor.text;
                             return <li key={index} dangerouslySetInnerHTML={{__html: html}}></li>;
                         })}
                     </ul>

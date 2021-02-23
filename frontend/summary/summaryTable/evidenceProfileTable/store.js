@@ -83,13 +83,14 @@ class EvidenceProfileTableStore {
     }
 
     @action.bound toggleFactor(objectKey, factorKey) {
-        const factors = _.cloneDeep(_.get(this.settings, objectKey).factors),
+        let factors = _.cloneDeep(_.get(this.settings, objectKey).factors),
             index = _.findIndex(factors, d => d.key == factorKey);
         if (index >= 0) {
             factors.splice(index, 1);
         } else {
             factors.push({key: factorKey, text: "..."});
         }
+        factors = _.sortBy(factors, d => d.key);
         _.set(this.settings, `${objectKey}.factors`, factors);
     }
 
