@@ -365,45 +365,17 @@ class EvidenceProfileTable(BaseTable):
         return {
             "exposed_human": {
                 "title": "Evidence from studies of exposed humans",
-                "rows": [
-                    {
-                        "evidence": {"description": "<p>...</p>"},
-                        "certain_factors": {"factors": [], "text": "<p>...</p>"},
-                        "uncertain_factors": {"factors": [], "text": "<p>...</p>"},
-                        "summary": {"findings": "<p>...</p>"},
-                        "judgement": {
-                            "judgement": JudgementChoices.Indeterminate,
-                            "description": "<p>...</p>",
-                        },
-                    }
-                ],
+                "rows": [],
                 "merge_judgement": True,
             },
             "animal": {
                 "title": "Evidence from animal studies",
-                "rows": [
-                    {
-                        "evidence": {"description": "<p>...</p>"},
-                        "certain_factors": {"factors": [], "text": "<p>...</p>"},
-                        "uncertain_factors": {"factors": [], "text": "<p>...</p>"},
-                        "summary": {"findings": "<p>...</p>"},
-                        "judgement": {
-                            "judgement": JudgementChoices.Indeterminate,
-                            "description": "<p>...</p>",
-                        },
-                    }
-                ],
+                "rows": [],
                 "merge_judgement": True,
             },
             "mechanistic": {
                 "title": "Mechanistic evidence and supplemental information",
-                "rows": [
-                    {
-                        "evidence": {"description": "<p>...</p>"},
-                        "summary": {"findings": "<p>...</p>"},
-                        "judgement": {"description": "<p>...</p>"},
-                    }
-                ],
+                "rows": [],
                 "merge_judgement": True,
             },
             "summary_judgement": {
