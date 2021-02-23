@@ -21,9 +21,37 @@ class GenericTable(BaseTable):
         return {
             "column_widths": [10, 10],
             "cells": [
-                {"header": True, "row": 0, "column": 0, "quill_text": "<p>A1</p>"},
-                {"header": True, "row": 0, "column": 1, "quill_text": "<p>B1</p>"},
-                {"header": False, "row": 1, "column": 0, "quill_text": "<p>A2</p>"},
-                {"header": False, "row": 1, "column": 1, "quill_text": "<p>B2</p>"},
+                {
+                    "header": True,
+                    "row": 0,
+                    "column": 0,
+                    "quill_text": "<p>A1</p>",
+                    "row_span": 1,
+                    "col_span": 1,
+                },
+                {
+                    "header": True,
+                    "row": 0,
+                    "column": 1,
+                    "quill_text": "<p>B1</p>",
+                    "row_span": 1,
+                    "col_span": 1,
+                },
+                {
+                    "header": False,
+                    "row": 1,
+                    "column": 0,
+                    "quill_text": "<p>A2</p>",
+                    "row_span": 1,
+                    "col_span": 1,
+                },
+                {
+                    "header": False,
+                    "row": 1,
+                    "column": 1,
+                    "quill_text": "<p>B2</p>",
+                    "row_span": 1,
+                    "col_span": 1,
+                },
             ],
         }
