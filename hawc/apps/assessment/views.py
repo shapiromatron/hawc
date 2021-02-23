@@ -199,6 +199,11 @@ class Contact(LoginRequiredMixin, MessageMixin, FormView):
     success_url = reverse_lazy("home")
     success_message = "Your message has been sent!"
 
+    def dispatch(self, request, *args, **kwargs):
+        if settings.EXTERNAL_CONTACT_US:
+            return HttpResponseRedirect(settings.EXTERNAL_CONTACT_US)
+        return super().dispatch(request, *args, **kwargs)
+
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs.update(
