@@ -11,7 +11,11 @@ Minimum hardware requirements:
 Software requirements:
 
 - docker and docker compose
-- `fabric`_ scripts are currently used for deployment, and are recommended for ease of use
+- `fabric`_ is used for (semi) automated deployment; contact if you're interested and we can share ...
+
+.. _fabric: http://www.fabfile.org/
+
+HAWC has been deployed in the past on a bare-VM, using containers with docker-compose (recommended), on AWS with RDS, and in kubernetes. If you're looking for discussion deployment options, contact us!
 
 Build and deploy
 ----------------
@@ -70,7 +74,9 @@ The same approach can be done in production, except please harden the deployment
 Configuration
 -------------
 
-HAWC generally attempts to make reasonable defaults for configuration and setup, but there are a few variables which can be configured. These settings are configurable in the ``hawc.main.settings module``, and configurable parameters are generally changable via setting environment variables.
+In general, for configurable parameters, we use environment variables and corresponding settings in the `hawc.main.settings.staging`_ module. If you need to configure something that's hard-coded, we're happy to modify the settings; feel free to contact us.
+
+.. _`hawc.main.settings.staging`: https://github.com/shapiromatron/hawc/blob/main/hawc/main/settings/staging.py
 
 Assessment creation
 ~~~~~~~~~~~~~~~~~~~

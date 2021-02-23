@@ -282,3 +282,13 @@ class TestDssToxViewset:
         resp = client.get(url)
         assert resp.status_code == 200
         assert resp.json()["dtxsid"] == dtxsid
+
+
+@pytest.mark.django_db
+class TestHealthcheckViewset:
+    def test_healthcheck(self):
+        client = APIClient()
+        url = reverse("assessment:api:healthcheck-list")
+        resp = client.get(url)
+        assert resp.status_code == 200
+        assert resp.json() == {"status": "ok"}

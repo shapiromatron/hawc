@@ -16,7 +16,7 @@
 <link rel="stylesheet" type="text/css" href="{% static 'css/hawc.css' %}" />
 <link rel="stylesheet" type="text/css" href="{% static 'css/d3.css' %}" />
 <link rel="stylesheet" type="text/css" href="{% static 'css/flex.css' %}" />
-{% if flavor == "EPA" %}
+{% if extra_branding and flavor == "EPA" %}
 <link rel="stylesheet" type="text/css" href="{% static 'css/epa.css' %}" />
 {% endif %}
 
