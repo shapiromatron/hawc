@@ -23,8 +23,9 @@ RUN apt-get update && \
     fc-cache -fv && \
     su app -c "fc-cache -fvs" && \
     \
-    tar -xvf /phantomjs.tar.bz2 phantomjs-2.1.1-linux-x86_64/bin/phantomjs -C /usr/local/bin && \
-    rm /phantomjs.tar.bz2 && \
+    tar -xvf /phantomjs.tar.bz2 phantomjs-2.1.1-linux-x86_64/bin/phantomjs && \
+    mv /phantomjs-2.1.1-linux-x86_64/bin/phantomjs /usr/local/bin/ && \
+    rm -rf /phantomjs* && \
     \
     mkdir -p /app/logs && \
     mkdir -p /app/public/media && \
