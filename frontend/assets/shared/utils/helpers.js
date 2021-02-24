@@ -5,7 +5,11 @@ import _ from "lodash";
 import moment from "moment";
 
 const stopwords = new Set("the is at which of on".split(" ")),
-    regexEscapeChars = /[-|\\{}()[\]^$+*?.]/g;
+    regexEscapeChars = /[-|\\{}()[\]^$+*?.]/g,
+    excelColumn = function(column) {
+        // column and row are 0-based; column 0 == A
+        return String.fromCharCode(65 + column);
+    };
 
 const helpers = {
     noop() {},
@@ -237,6 +241,11 @@ const helpers = {
             2,
             Math.min(Math.ceil(Math.log10(domain[1])) - Math.floor(Math.log10(domain[0])), 10)
         );
+    },
+    excelColumn,
+    excelCoords(row, column) {
+        // column and row are 0-based
+        return `${excelColumn(column)}${row + 1}`;
     },
     numericAxisFormat: d3.format(",~g"),
     COLORS: {

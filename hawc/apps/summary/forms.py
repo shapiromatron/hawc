@@ -458,6 +458,44 @@ class SummaryTextForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
 
 
+class SummaryTableForm(forms.ModelForm):
+    class Meta:
+        model = models.SummaryTable
+        exclude = ("assessment", "table_type")
+
+    def __init__(self, *args, **kwargs):
+        self.assessment = kwargs.pop("parent", None)
+        table_type = kwargs.pop("table_type", None)
+        super().__init__(*args, **kwargs)
+        if not self.instance.id:
+            self.instance = models.SummaryTable.build_default(self.assessment.id, table_type)
+        self.fields["content"].initial = self.instance.content
+
+
+class SummaryTableSelectorForm(forms.Form):
+    table_type = forms.IntegerField(
+        widget=forms.Select(choices=models.SummaryTable.TableType.choices)
+    )
+
+    def __init__(self, *args, **kwargs):
+        self.assessment = kwargs.pop("parent")
+        _ = kwargs.pop("instance")
+        super().__init__(*args, **kwargs)
+
+    @property
+    def helper(self):
+        url = models.SummaryTable.get_list_url(self.assessment.id)
+        return BaseFormHelper(
+            self,
+            legend_text="Select table type",
+            help_text="...",
+            form_actions=[
+                cfl.Submit("save", "Create table"),
+                cfl.HTML(f'<a href="{url}" class="btn btn-light">Cancel</a>'),
+            ],
+        )
+
+
 class VisualForm(forms.ModelForm):
     class Meta:
         model = models.Visual

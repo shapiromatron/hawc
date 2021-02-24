@@ -14,6 +14,7 @@ class Migration(migrations.Migration):
             model_name="dosingregime",
             name="positive_control",
             field=models.BooleanField(
+                blank=True,
                 choices=[(True, "Yes"), (False, "No"), (None, "Unknown")],
                 default=False,
                 help_text="Was a positive control used?",
