@@ -16,7 +16,7 @@ from django.utils.decorators import method_decorator
 from django.views.generic import DetailView, ListView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
-from ..assessment.models import Assessment, BaseEndpoint, TimeSpentEditing
+from ..assessment.models import Assessment, BaseEndpoint, Log, TimeSpentEditing
 from .crumbs import Breadcrumb
 from .helper import tryParseInt
 
@@ -428,6 +428,9 @@ class BaseDelete(AssessmentPermissionsMixin, MessageMixin, DeleteView):
         self.permission_check_user_can_edit()
         success_url = self.get_success_url()
         self.object.delete()
+        # Log the deletion
+        log_message = f"Deleted '{self.object}' ({self.object.__class__.__name__} {self.object.id})"
+        Log.objects.create(assessment=self.assessment, user=self.request.user, message=log_message)
         self.send_message()
         return HttpResponseRedirect(success_url)
 
