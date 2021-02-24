@@ -118,7 +118,8 @@ class StudyPopulation(PermCheckerMixin, viewsets.ModelViewSet):
         ("confounding_criteria", "C",),
     )
 
-    def process_criteria_creation(self, serializer, study_population_id, post_initial_create):
+    def process_criteria_association(self, serializer, study_population_id, post_initial_create):
+        # this should probably be rewritten to use the ManyToManyManager on the underlying instance...
         inserts = []
         for cc in self.criteria_categories:
             data_key = cc[0]
@@ -156,15 +157,21 @@ class StudyPopulation(PermCheckerMixin, viewsets.ModelViewSet):
         # first - what assessment are we working in?
         assessment_id = None
         if during_create:
-            study_id = request.data["study"]
+            if "study" in request.data:
+                study_id = request.data["study"]
 
-            try:
-                study = Study.objects.get(id=study_id)
-                assessment_id = study.get_assessment().id
-            except ObjectDoesNotExist:
-                raise ValidationError("Invalid study_id")
+                try:
+                    study = Study.objects.get(id=study_id)
+                    assessment_id = study.get_assessment().id
+                except ObjectDoesNotExist:
+                    raise ValidationError({"study": "Invalid study id"})
+            else:
+                raise ValidationError({"study": "No study id supplied"})
         else:
             assessment_id = self.get_object().get_assessment().id
+
+        if assessment_id is None:
+            return
 
         # and now do some conversions/creations
         for cc in self.criteria_categories:
@@ -197,11 +204,11 @@ class StudyPopulation(PermCheckerMixin, viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         super().perform_create(serializer)
-        self.process_criteria_creation(serializer, serializer.data["id"], True)
+        self.process_criteria_association(serializer, serializer.data["id"], True)
 
     def perform_update(self, serializer):
         super().perform_update(serializer)
-        self.process_criteria_creation(serializer, self.get_object().id, False)
+        self.process_criteria_association(serializer, self.get_object().id, False)
 
     @transaction.atomic
     def update(self, request, *args, **kwargs):
@@ -211,7 +218,16 @@ class StudyPopulation(PermCheckerMixin, viewsets.ModelViewSet):
     @transaction.atomic
     def create(self, request, *args, **kwargs):
         self.handle_criteria(request, True)
-        return super().create(request, *args, **kwargs)
+        # return super().create(request, *args, **kwargs)
+
+        # default behavior except we need to refresh the serializer to get the criteria to show up in the return...
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+
+        instance = self.model.objects.get(id=serializer.data["id"])
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class Exposure(ReadWriteSerializerMixin, PermCheckerMixin, AssessmentEditViewset):

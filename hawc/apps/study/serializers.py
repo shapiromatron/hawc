@@ -17,13 +17,13 @@ class StudySerializer(IdLookupMixin, serializers.ModelSerializer):
         ret["url"] = instance.get_absolute_url()
         return ret
 
+    """
     def to_default_representation(self, instance):
-        """
         normal serialization gives readable names for coi_reported, an absolute URL,
         etc. In some API operations we want to be able to get a non-translated
         representation of the object so that it can be fed to various DRF code easily.
-        """
         return super().to_representation(instance)
+    """
 
     class Meta:
         model = models.Study

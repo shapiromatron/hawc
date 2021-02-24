@@ -2,7 +2,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import serializers
 
 from ..assessment.serializers import DoseUnitsSerializer, DSSToxSerializer, EffectTagsSerializer
-from ..common.api import DynamicFieldsMixin, FormIntegrationMixin, GetOrCreateMixin, IdLookupMixin
+from ..common.api import DynamicFieldsMixin, GetOrCreateMixin, IdLookupMixin
 from ..common.helper import SerializerHelper
 from ..common.serializers import (
     FlexibleChoiceField,
@@ -172,7 +172,7 @@ class StudyPopulationSerializer(IdLookupMixin, serializers.ModelSerializer):
     form_integration_class = forms.StudyPopulationForm
 
     study = StudySerializer()
-    criteria = StudyPopulationCriteriaSerializer(source="spcriteria", many=True)
+    criteria = StudyPopulationCriteriaSerializer(source="spcriteria", many=True, read_only=True)
     countries = StudyPopulationCountrySerializer(many=True)
     design = FlexibleChoiceField(choices=models.StudyPopulation.DESIGN_CHOICES)
     outcomes = OutcomeLinkSerializer(many=True, read_only=True)
@@ -197,6 +197,21 @@ class StudyPopulationSerializer(IdLookupMixin, serializers.ModelSerializer):
             ]  # delete the key so we can call the default update method for all the other fields
 
         return super().update(instance, validated_data)
+
+    def create(self, validated_data):
+        temp_countries = None
+        if "countries" in validated_data:
+            temp_countries = validated_data["countries"]
+            del validated_data[
+                "countries"
+            ]  # delete the key so we can call the default update method for all the other fields
+        instance = super().create(validated_data)
+
+        if temp_countries is not None:
+            instance.countries.add(*temp_countries)
+            instance.save()
+
+        return instance
 
 
 class ExposureReadSerializer(serializers.ModelSerializer):
