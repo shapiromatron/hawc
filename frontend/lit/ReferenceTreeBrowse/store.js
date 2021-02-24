@@ -18,7 +18,6 @@ class Store {
     @observable config = null;
     @observable tagtree = null;
     @observable selectedReferences = null;
-    @observable yearFilter = null;
     @observable selectedReferencesLoading = false;
 
     @action.bound handleTagClick(selectedTag) {
@@ -28,9 +27,9 @@ class Store {
         this.requestSelectedReferences();
     }
     @action.bound requestSelectedReferences() {
-        this.yearFilter = null;
         this.selectedReferences = null;
         this.selectedReferencesLoading = false;
+        this.resetFilters();
         if (this.selectedTag === null) {
             return;
         }
@@ -44,7 +43,6 @@ class Store {
             const references = Reference.sorted(
                 results.refs.map(datum => new Reference(datum, this.tagtree))
             );
-            this.yearFilter = null;
             this.selectedReferences = references;
             this.selectedReferencesLoading = false;
         });
@@ -77,18 +75,23 @@ class Store {
             this.handleTagClick(nestedTag);
         }
     }
-    @action.bound updateYearFilter(filter) {
-        this.yearFilter = filter;
-    }
 
     @computed get filteredReferences() {
-        const filter = this.yearFilter;
-        if (!filter) {
-            return this.selectedReferences;
+        const filter = this.yearFilter,
+            quickFilterText = this.quickFilterText;
+        let refs = this.selectedReferences;
+
+        if (!refs) {
+            return refs;
         }
-        return this.selectedReferences.filter(
-            d => d.data.year >= filter.min && d.data.year <= filter.max
-        );
+
+        if (quickFilterText) {
+            refs = refs.filter(d => d._quickSearchText.includes(quickFilterText));
+        }
+        if (filter) {
+            refs = refs.filter(d => d.data.year >= filter.min && d.data.year <= filter.max);
+        }
+        return refs;
     }
 
     @computed get getActionLinks() {
@@ -117,6 +120,23 @@ class Store {
             }
         }
         return links;
+    }
+
+    // year filter
+    @observable yearFilter = null;
+    @action.bound updateYearFilter(filter) {
+        this.yearFilter = filter;
+    }
+
+    // quick search
+    @observable quickFilterText = "";
+    @action.bound changeQuickFilterText(text) {
+        this.quickFilterText = text.trim().toLowerCase();
+    }
+
+    @action.bound resetFilters() {
+        this.yearFilter = null;
+        this.quickFilterText = "";
     }
 
     // used in ReferenceTableMain

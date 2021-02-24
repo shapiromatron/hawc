@@ -1,9 +1,11 @@
+import _ from "lodash";
 import React, {Component} from "react";
 import PropTypes from "prop-types";
 import {inject, observer} from "mobx-react";
 import {toJS} from "mobx";
 
 import Loading from "shared/components/Loading";
+import TextInput from "shared/components/TextInput";
 import TagTree from "../components/TagTree";
 import YearHistogram from "./YearHistogram";
 import ReferenceTableMain from "./ReferenceTableMain";
@@ -15,6 +17,34 @@ const referenceListItem = ref => {
         </a>
     );
 };
+
+@observer
+class QuickSearch extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {text: ""};
+        this.updateQuery = _.debounce(() => props.updateQuickFilter(this.state.text), 200);
+    }
+    render() {
+        return (
+            <TextInput
+                name="quickSearch"
+                label="Quick search"
+                value={this.state.text}
+                helpText="Search by title, authors, year"
+                onChange={e => {
+                    const text = e.target.value;
+                    this.setState({text});
+                    this.updateQuery(text);
+                }}
+            />
+        );
+    }
+}
+QuickSearch.propTypes = {
+    updateQuickFilter: PropTypes.func.isRequired,
+};
+
 @inject("store")
 @observer
 class ReferenceTreeMain extends Component {
@@ -68,6 +98,9 @@ class ReferenceTreeMain extends Component {
                                 references={selectedReferences}
                                 yearFilter={store.yearFilter}
                                 onFilter={store.updateYearFilter}
+                            />
+                            <QuickSearch
+                                updateQuickFilter={text => store.changeQuickFilterText(text)}
                             />
                             <div
                                 id="reference-list"

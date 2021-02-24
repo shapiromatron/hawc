@@ -3,6 +3,7 @@ import _ from "lodash";
 class Reference {
     constructor(data, tagtree) {
         this.data = data;
+        this._quickSearchText = `${data.title}-${data.year}-${data.authors}-${data.authors_short}`.toLowerCase();
         this.tags = data.tags.map(tagId => tagtree.dict[tagId]);
     }
 
