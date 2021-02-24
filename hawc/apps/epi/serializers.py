@@ -67,7 +67,8 @@ class OutcomeLinkSerializer(serializers.ModelSerializer):
         fields = ("id", "name", "url")
 
 
-class GroupNumericalDescriptionsSerializer(FormIntegrationMixin, serializers.ModelSerializer):
+# class GroupNumericalDescriptionsSerializer(FormIntegrationMixin, serializers.ModelSerializer):
+class GroupNumericalDescriptionsSerializer(serializers.ModelSerializer):
     form_integration_class = forms.GroupNumericalDescriptionsForm
 
     mean_type = FlexibleChoiceField(choices=models.GroupNumericalDescriptions.MEAN_TYPE_CHOICES)
@@ -148,7 +149,8 @@ class ComparisonSetLinkSerializer(serializers.ModelSerializer):
         fields = ("id", "name", "url")
 
 
-class CriteriaSerializer(GetOrCreateMixin, FormIntegrationMixin, serializers.ModelSerializer):
+# class CriteriaSerializer(GetOrCreateMixin, FormIntegrationMixin, serializers.ModelSerializer):
+class CriteriaSerializer(GetOrCreateMixin, serializers.ModelSerializer):
     form_integration_class = forms.CriteriaForm
 
     def get_form_integration_kwargs(self, data):
@@ -165,7 +167,8 @@ class SimpleStudyPopulationCriteriaSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class StudyPopulationSerializer(IdLookupMixin, FormIntegrationMixin, serializers.ModelSerializer):
+# class StudyPopulationSerializer(IdLookupMixin, FormIntegrationMixin, serializers.ModelSerializer):
+class StudyPopulationSerializer(IdLookupMixin, serializers.ModelSerializer):
     form_integration_class = forms.StudyPopulationForm
 
     study = StudySerializer()
@@ -208,7 +211,8 @@ class ExposureReadSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class ExposureWriteSerializer(FormIntegrationMixin, serializers.ModelSerializer):
+# class ExposureWriteSerializer(FormIntegrationMixin, serializers.ModelSerializer):
+class ExposureWriteSerializer(serializers.ModelSerializer):
     central_tendencies = CentralTendencySerializer(many=True, read_only=True)
     form_integration_class = forms.ExposureForm
 
@@ -217,7 +221,8 @@ class ExposureWriteSerializer(FormIntegrationMixin, serializers.ModelSerializer)
         fields = "__all__"
 
 
-class GroupResultSerializer(FormIntegrationMixin, serializers.ModelSerializer):
+# class GroupResultSerializer(FormIntegrationMixin, serializers.ModelSerializer):
+class GroupResultSerializer(serializers.ModelSerializer):
     form_integration_class = forms.GroupResultForm
 
     main_finding_support = FlexibleChoiceField(choices=models.GroupResult.MAIN_FINDING_CHOICES)
@@ -262,7 +267,8 @@ class SimpleComparisonSetSerializer(IdLookupMixin, serializers.ModelSerializer):
         fields = "__all__"
 
 
-class ResultSerializer(FormIntegrationMixin, serializers.ModelSerializer):
+# class ResultSerializer(FormIntegrationMixin, serializers.ModelSerializer):
+class ResultSerializer(serializers.ModelSerializer):
     form_integration_class = forms.ResultForm
 
     dose_response = FlexibleChoiceField(choices=models.Result.DOSE_RESPONSE_CHOICES)
@@ -298,7 +304,8 @@ class ResultSerializer(FormIntegrationMixin, serializers.ModelSerializer):
         exclude = ("adjustment_factors",)
 
 
-class OutcomeSerializer(FormIntegrationMixin, serializers.ModelSerializer):
+# class OutcomeSerializer(FormIntegrationMixin, serializers.ModelSerializer):
+class OutcomeSerializer(serializers.ModelSerializer):
     form_integration_class = forms.OutcomeForm
 
     diagnostic = FlexibleChoiceField(choices=models.Outcome.DIAGNOSTIC_CHOICES)
