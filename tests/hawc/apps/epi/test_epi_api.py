@@ -288,10 +288,137 @@ class TestStudyPopulationApi:
         generic_test_scenarios(client, url, delete_scenarios)
 
 
+@pytest.mark.django_db
+class TestCriteriaApi:
+    def test_permissions(self, db_keys):
+        url = reverse("epi:api:criteria-list")
+        data = {"assessment": db_keys.assessment_working, "description": "test criteria"}
+        generic_perm_tester(url, data)
+
+    def test_bad_requests(self, db_keys):
+        url = reverse("epi:api:criteria-list")
+        client = APIClient()
+        assert client.login(username="team@hawcproject.org", password="pw") is True
+
+        scenarios = (
+            {
+                "desc": "empty payload doesn't crash",
+                "expected_code": 400,
+                "expected_keys": {"description", "assessment"},
+                "data": {},
+            },
+            {
+                "desc": "assessment must be a valid assessment id",
+                "expected_code": 400,
+                "expected_keys": {"assessment"},
+                "data": {"description": "this is ok", "assessment": 999},
+            },
+            {
+                "desc": "description must be a string",
+                "expected_code": 400,
+                "expected_keys": {"description"},
+                "data": {"description": {}, "assessment": db_keys.assessment_working},
+            },
+        )
+
+        generic_test_scenarios(client, url, scenarios)
+
+    def test_valid_requests(self, db_keys):
+        url = reverse("epi:api:criteria-list")
+        client = APIClient()
+        assert client.login(username="team@hawcproject.org", password="pw") is True
+
+        # assessment = Assessment.objects.get(id=db_keys.assessment_working)
+
+        base_data = {"assessment": db_keys.assessment_working, "description": "initial description"}
+
+        just_created_criteria_id = None
+
+        def criteria_lookup_test(resp):
+            nonlocal just_created_criteria_id
+
+            criteria_id = resp.json()["id"]
+            criteria = models.Criteria.objects.get(id=criteria_id)
+            assert criteria.description == base_data["description"]
+
+            if just_created_criteria_id is None:
+                just_created_criteria_id = criteria_id
+
+        def second_creation_test(resp):
+            nonlocal just_created_criteria_id
+
+            criteria_id = resp.json()["id"]
+            criteria = models.Criteria.objects.get(id=criteria_id)
+            assert criteria.description == base_data["description"]
+            assert criteria.id == just_created_criteria_id
+
+        def altered_criteria_test(resp):
+            nonlocal just_created_criteria_id
+
+            criteria_id = resp.json()["id"]
+            criteria = models.Criteria.objects.get(id=criteria_id)
+            assert criteria.description == "updated"
+            assert criteria_id == just_created_criteria_id
+
+        def deleted_criteria_test(resp):
+            nonlocal just_created_criteria_id
+
+            assert resp.data is None
+            try:
+                criteria_that_should_not_exist = models.Criteria.objects.get(
+                    id=just_created_criteria_id
+                )
+                assert criteria_that_should_not_exist is None
+            except ObjectDoesNotExist:
+                # this is CORRECT behavior - we WANT the object to not exist
+                pass
+
+        create_scenarios = (
+            {
+                "desc": "basic creation",
+                "expected_code": 201,
+                "expected_keys": {"id"},
+                "data": base_data,
+                "post_request_test": criteria_lookup_test,
+            },
+            {
+                "desc": "fetch - not create",
+                "expected_code": 201,
+                "expected_keys": {"id"},
+                "data": base_data,
+                "post_request_test": second_creation_test,
+            },
+        )
+        generic_test_scenarios(client, url, create_scenarios)
+
+        url = f"{url}{just_created_criteria_id}/"
+        update_scenarios = (
+            {
+                "desc": "basic update",
+                "expected_code": 200,
+                "expected_keys": {"id"},
+                "data": {"description": "updated"},
+                "method": "PATCH",
+                "post_request_test": altered_criteria_test,
+            },
+        )
+        generic_test_scenarios(client, url, update_scenarios)
+
+        delete_scenarios = (
+            {
+                "desc": "delete",
+                "expected_code": 204,
+                "method": "DELETE",
+                "post_request_test": deleted_criteria_test,
+            },
+        )
+        generic_test_scenarios(client, url, delete_scenarios)
+
+
 def generic_test_scenarios(client, url, scenarios):
-    # print(f"testing scenarios against '{url}'...")
+    print(f">>>>> testing scenarios against '{url}'...")
     for scenario in scenarios:
-        # print(f"testing '{scenario['desc']}'...")
+        print(f">>>>> testing '{scenario['desc']}'...")
         method = scenario.get("method", "POST")
         if method.upper() == "POST":
             response = client.post(url, scenario["data"], format="json")
@@ -302,7 +429,7 @@ def generic_test_scenarios(client, url, scenarios):
         else:
             return
 
-        # print(f"{method} request came back wth {response.status_code} / {response.data}")
+        print(f">>>>> {method} request came back wth {response.status_code} / {response.data}")
         if "expected_code" in scenario:
             assert response.status_code == scenario["expected_code"]
 
