@@ -22,7 +22,6 @@ def build_ehv_breadcrumbs(user, name: str) -> List[Breadcrumb]:
     )
 
 
-@method_decorator(login_required, name="dispatch")
 class EhvBrowse(TemplateView):
     template_name = "vocab/ehv_browse.html"
 

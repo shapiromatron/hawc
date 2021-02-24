@@ -567,3 +567,8 @@ class LogViewset(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.Gene
 
     def get_queryset(self):
         return self.model.objects.filter(assessment=None)
+
+
+class HealthcheckViewset(viewsets.ViewSet):
+    def list(self, request):
+        return Response({"status": "ok"})
