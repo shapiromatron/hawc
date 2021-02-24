@@ -753,6 +753,9 @@ class Reference(models.Model):
         d["tags_text"] = [tag.name for tag in self.tags.all()]
         return d
 
+    def to_json(self):
+        return json.dumps(self.to_dict())
+
     @classmethod
     def delete_caches(cls, ids):
         SerializerHelper.delete_caches(cls, ids)
