@@ -91,14 +91,10 @@ class BaseTable(BaseCellGroup):
         if docx is None:
             docx = create_document()
         table = docx.add_table(rows=self.rows, cols=self.columns)
-        table_cells = table._cells
         table.style = "Table Grid"
-        columns = self.columns
         for cell in self.cells:
-            cell_index = cell.row_order_index(columns)
-            table_cell = table_cells[cell_index]
-            span_index = cell_index + (cell.row_span - 1) * columns + cell.col_span - 1
-            span_cell = table_cells[span_index]
+            table_cell = table.cell(cell.row, cell.column)
+            span_cell = table.cell(cell.row + cell.row_span - 1, cell.column + cell.col_span - 1)
             table_cell.merge(span_cell)
             # Remove default paragraph
             paragraph = table_cell.paragraphs[0]._element
