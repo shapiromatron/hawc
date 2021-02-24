@@ -75,7 +75,8 @@ class Reference extends Component {
             year = data.year || "";
 
         return (
-            <div id={`referenceId${data.pk}`}>
+            <div>
+                <div className="sticky-offset-anchor" id={`referenceId${data.pk}`}></div>
                 {
                     <div className="ref_small">
                         <span>
@@ -112,7 +113,7 @@ class Reference extends Component {
                             <a
                                 key={i}
                                 href={getReferenceTagListUrl(data.assessment_id, tag.data.pk)}
-                                className="badge badge-info mr-1">
+                                className="referenceTag badge badge-info mr-1">
                                 {tag.get_full_name()}
                             </a>
                         ))}

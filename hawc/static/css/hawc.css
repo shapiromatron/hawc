@@ -14,6 +14,15 @@
     padding-left: 1em;
 }
 
+/* adjust links w/ a .sticky-header offset */
+.sticky-offset-anchor {
+    /* height of sticky header plus some padding */
+    display: block;
+    height: 95px;
+    margin-top: -95px;
+    visibility: hidden;
+}
+
 /* sidebar  */
 .sidebar {
     width: 230px;
