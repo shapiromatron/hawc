@@ -1,9 +1,11 @@
 from django.conf import settings
+from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404
 from django.utils.encoding import force_str
 from rest_framework import serializers, status
 from rest_framework.response import Response
 from rest_framework.validators import UniqueTogetherValidator
+
 from .permissions import user_can_edit_object
 
 
@@ -185,11 +187,13 @@ class GetOrCreateMixin:
         instance, created = self.Meta.model.objects.get_or_create(**validated_data)
         return instance
 
+
 class IdLookupMixin:
     """
     class to be mixed into serializers; provides a default to_internal_value
     implementation that attempts to look up an item with the given int id.
     """
+
     def to_internal_value(self, data):
         if type(data) is int:
             try:
@@ -216,7 +220,7 @@ class PermCheckerMixin:
         # perm_checker_key can either be a string or an array of strings
         checker_keys = self.perm_checker_key
         if type(self.perm_checker_key) is str:
-            checker_keys = [ self.perm_checker_key ]
+            checker_keys = [self.perm_checker_key]
 
         for checker_key in checker_keys:
             if checker_key in serializer.validated_data:
@@ -230,27 +234,21 @@ class PermCheckerMixin:
     def perform_create(self, serializer):
         for thing_to_check in self.generate_things_to_check(serializer, False):
             user_can_edit_object(
-                thing_to_check,
-                self.request.user,
-                raise_exception=True,
+                thing_to_check, self.request.user, raise_exception=True,
             )
         super().perform_create(serializer)
 
     def perform_update(self, serializer):
         for thing_to_check in self.generate_things_to_check(serializer, True):
             user_can_edit_object(
-                thing_to_check,
-                self.request.user,
-                raise_exception=True,
+                thing_to_check, self.request.user, raise_exception=True,
             )
 
         super().perform_update(serializer)
 
     def perform_destroy(self, instance):
         user_can_edit_object(
-            instance,
-            self.request.user,
-            raise_exception=True,
+            instance, self.request.user, raise_exception=True,
         )
         super().perform_destroy(instance)
 
@@ -258,12 +256,13 @@ class PermCheckerMixin:
 class FormIntegrationMixin:
     """
     mixin to be used with serializers. The serializer must define a "form_integration_class"
-    and this mixin will then instantiate it with the data being passed to validate and 
+    and this mixin will then instantiate it with the data being passed to validate and
     see if the form returns is_valid() == True. If not, it raises a ValidationError.
 
     The serializer can optionally define a method "get_form_integration_kwargs" to pass
     additional custom kwargs to the form constructor.
     """
+
     def validate(self, data):
         # if we need it, self.instance is None on create and set to something on update...
         data = super().validate(data)

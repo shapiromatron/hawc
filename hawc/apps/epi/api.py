@@ -1,35 +1,30 @@
 from django.conf import settings
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
-
 from django.db import transaction
-from django.db.models import Q
-# from rest_framework import status, viewsets
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
 
-from ..assessment.api import AssessmentEditViewset, AssessmentLevelPermissions, AssessmentViewset
+from hawc.services.epa.dsstox import DssSubstance
+
+from ..assessment.api import AssessmentEditViewset, AssessmentLevelPermissions
 from ..assessment.models import Assessment, DoseUnits, DSSTox
-from ..assessment.serializers import DoseUnitsSerializer, DSSToxSerializer
+from ..assessment.serializers import DoseUnitsSerializer
 from ..common.api import (
     CleanupFieldsBaseViewSet,
     LegacyAssessmentAdapterMixin,
     PermCheckerMixin,
     ReadWriteSerializerMixin,
-    user_can_edit_object,
 )
-from ..common.helper import FlatExport, re_digits, tryParseInt, find_matching_list_element_by_value
+from ..common.helper import FlatExport, find_matching_list_element_by_value, re_digits
 from ..common.renderers import PandasRenderers
 from ..common.serializers import HeatmapQuerySerializer, UnusedSerializer
 from ..common.views import AssessmentPermissionsMixin
 from ..study.models import Study
-from ..study.serializers import StudySerializer
 from . import exports, models, serializers
-
-from hawc.services.epa.dsstox import DssSubstance
 
 
 class EpiAssessmentViewset(
@@ -118,9 +113,9 @@ class StudyPopulation(PermCheckerMixin, viewsets.ModelViewSet):
     serializer_class = serializers.StudyPopulationSerializer
 
     criteria_categories = (
-        ("inclusion_criteria", "I", ),
-        ("exclusion_criteria", "E", ),
-        ("confounding_criteria", "C", )
+        ("inclusion_criteria", "I",),
+        ("exclusion_criteria", "E",),
+        ("confounding_criteria", "C",),
     )
 
     def process_criteria_creation(self, serializer, study_population_id, post_initial_create):
@@ -132,7 +127,9 @@ class StudyPopulation(PermCheckerMixin, viewsets.ModelViewSet):
             if data_key in self.request.data:
                 if not post_initial_create:
                     # wipe out existing criteria for this pop+type pair that was part of the request...
-                    models.StudyPopulationCriteria.objects.filter(study_population=self.get_object(), criteria_type=type_code).delete()
+                    models.StudyPopulationCriteria.objects.filter(
+                        study_population=self.get_object(), criteria_type=type_code
+                    ).delete()
 
                 criteria_ids = self.request.data[data_key]
 
@@ -140,7 +137,7 @@ class StudyPopulation(PermCheckerMixin, viewsets.ModelViewSet):
                     dynamic_obj = {
                         "criteria_type": type_code,
                         "criteria": criteria_id,
-                        "study_population": study_population_id
+                        "study_population": study_population_id,
                     }
                     inserts.append(dynamic_obj)
 
@@ -169,7 +166,6 @@ class StudyPopulation(PermCheckerMixin, viewsets.ModelViewSet):
         else:
             assessment_id = self.get_object().get_assessment().id
 
-
         # and now do some conversions/creations
         for cc in self.criteria_categories:
             data_key = cc[0]
@@ -182,12 +178,14 @@ class StudyPopulation(PermCheckerMixin, viewsets.ModelViewSet):
                 for el in data_probe:
                     if type(el) is str:
                         try:
-                            criteria = models.Criteria.objects.get(description=el, assessment_id=assessment_id)
+                            criteria = models.Criteria.objects.get(
+                                description=el, assessment_id=assessment_id
+                            )
                             fixed.append(criteria.id)
                         except ObjectDoesNotExist:
                             # allow creation of criteria as part of the request
                             criteria_serializer = serializers.CriteriaSerializer(
-                                data={"description": el, "assessment": assessment_id }
+                                data={"description": el, "assessment": assessment_id}
                             )
                             criteria_serializer.is_valid(raise_exception=True)
                             criteria = criteria_serializer.save()
@@ -197,7 +195,6 @@ class StudyPopulation(PermCheckerMixin, viewsets.ModelViewSet):
 
                 request.data[data_key] = fixed
 
-        
     def perform_create(self, serializer):
         super().perform_create(serializer)
         self.process_criteria_creation(serializer, serializer.data["id"], True)
@@ -224,7 +221,7 @@ class Exposure(ReadWriteSerializerMixin, PermCheckerMixin, AssessmentEditViewset
     read_serializer_class = serializers.ExposureReadSerializer
     write_serializer_class = serializers.ExposureWriteSerializer
 
-    def handle_cts(self, request, during_update = False):
+    def handle_cts(self, request, during_update=False):
         # we validate CTs here...and then post-exposure creation, we'll create them.
         if "central_tendencies" in request.data:
             """
@@ -244,32 +241,38 @@ class Exposure(ReadWriteSerializerMixin, PermCheckerMixin, AssessmentEditViewset
                 if "estimate_type" in ct:
                     probe_ct_estimate_type = ct["estimate_type"]
                     if type(probe_ct_estimate_type) is str:
-                        converted_estimate_type = find_matching_list_element_by_value(models.CentralTendency.ESTIMATE_TYPE_CHOICES, probe_ct_estimate_type, False)
+                        converted_estimate_type = find_matching_list_element_by_value(
+                            models.CentralTendency.ESTIMATE_TYPE_CHOICES,
+                            probe_ct_estimate_type,
+                            False,
+                        )
                         if converted_estimate_type is None:
-                            raise ValidationError(f"Invalid estimate_type value '{probe_ct_estimate_type}'")
+                            raise ValidationError(
+                                f"Invalid estimate_type value '{probe_ct_estimate_type}'"
+                            )
                         else:
                             ct["estimate_type"] = converted_estimate_type
 
                 if "variance_type" in ct:
                     probe_ct_variance_type = ct["variance_type"]
                     if type(probe_ct_variance_type) is str:
-                        converted_variance_type = find_matching_list_element_by_value(models.CentralTendency.VARIANCE_TYPE_CHOICES, probe_ct_variance_type)
+                        converted_variance_type = find_matching_list_element_by_value(
+                            models.CentralTendency.VARIANCE_TYPE_CHOICES, probe_ct_variance_type
+                        )
                         if converted_variance_type is None:
-                            raise ValidationError(f"Invalid variance_type value '{probe_ct_variance_type}'")
+                            raise ValidationError(
+                                f"Invalid variance_type value '{probe_ct_variance_type}'"
+                            )
                         else:
                             ct["variance_type"] = converted_variance_type
 
             # raise ValidationError("FORCE ERRO")
 
-            ct_serializer = serializers.CentralTendencyPreviewSerializer(
-                data=cts, many=True
-            )
+            ct_serializer = serializers.CentralTendencyPreviewSerializer(data=cts, many=True)
             try:
                 ct_serializer.is_valid(raise_exception=True)
             except ValidationError as ve:
-                raise ValidationError({
-                    "central_tendencies": ve.detail
-                })
+                raise ValidationError({"central_tendencies": ve.detail})
         else:
             if not during_update:
                 raise ValidationError(f"At least one central tendency is required")
@@ -279,15 +282,17 @@ class Exposure(ReadWriteSerializerMixin, PermCheckerMixin, AssessmentEditViewset
         if "dtxsid" in request.data:
             dtxsid_probe = request.data["dtxsid"]
             try:
-                dtxsid = DSSTox.objects.get(dtxsid=dtxsid_probe)
+                DSSTox.objects.get(dtxsid=dtxsid_probe)
             except ObjectDoesNotExist:
                 try:
                     substance = DssSubstance.create_from_dtxsid(dtxsid_probe)
 
                     dsstox = DSSTox(dtxsid=substance.dtxsid, content=substance.content)
                     dsstox.save()
-                except ValueError as err:
-                    raise ValidationError(f"dtxsid '{dtxsid_probe}' does not exist and could not be imported")
+                except ValueError:
+                    raise ValidationError(
+                        f"dtxsid '{dtxsid_probe}' does not exist and could not be imported"
+                    )
 
     def handle_metric_unit(self, request):
         # client can supply an id, or the name of the doseunits entry (and then we'll look it up for them - or create it if needed)
@@ -303,9 +308,7 @@ class Exposure(ReadWriteSerializerMixin, PermCheckerMixin, AssessmentEditViewset
                     # raise ValidationError(f"metric_units lookup value '{metric_units_probe}' could not be resolved")
 
                     # option 2 - allow creation of metric_units as part of the request
-                    du_serializer = DoseUnitsSerializer(
-                        data={"name": metric_units_probe }
-                    )
+                    du_serializer = DoseUnitsSerializer(data={"name": metric_units_probe})
                     du_serializer.is_valid(raise_exception=True)
                     metric_units = du_serializer.save()
                     request.data["metric_units"] = metric_units.id
@@ -341,12 +344,10 @@ class Exposure(ReadWriteSerializerMixin, PermCheckerMixin, AssessmentEditViewset
             for ct in cts:
                 ct["exposure"] = exposure_id
 
-            ct_serializer = serializers.CentralTendencyWriteSerializer(
-                data=cts, many=True
-            )
+            ct_serializer = serializers.CentralTendencyWriteSerializer(data=cts, many=True)
             ct_serializer.is_valid(raise_exception=True)
             ct_serializer.save()
-        
+
     def perform_create(self, serializer):
         super().perform_create(serializer)
         self.process_ct_creation(serializer, serializer.data["id"])
@@ -373,15 +374,12 @@ class GroupResult(PermCheckerMixin, AssessmentEditViewset):
 
 
 class Result(PermCheckerMixin, AssessmentEditViewset):
-    perm_checker_key = [ "outcome", "comparison_set" ]
+    perm_checker_key = ["outcome", "comparison_set"]
     assessment_filter_args = "outcome__assessment"
     model = models.Result
     serializer_class = serializers.ResultSerializer
 
-    factor_categories = (
-        ("factors_applied", True, ),
-        ("factors_considered", False, )
-    )
+    factor_categories = (("factors_applied", True,), ("factors_considered", False,))
 
     def process_adjustment_factor_creation(self, serializer, result_id, post_initial_create):
         inserts = []
@@ -392,7 +390,9 @@ class Result(PermCheckerMixin, AssessmentEditViewset):
             if data_key in self.request.data:
                 if not post_initial_create:
                     # wipe out existing factors for this result+included_in_final_model pair that was part of the request...
-                    models.ResultAdjustmentFactor.objects.filter(result=self.get_object(), included_in_final_model=is_included).delete()
+                    models.ResultAdjustmentFactor.objects.filter(
+                        result=self.get_object(), included_in_final_model=is_included
+                    ).delete()
 
                 adjustment_factor_ids = self.request.data[data_key]
 
@@ -400,18 +400,15 @@ class Result(PermCheckerMixin, AssessmentEditViewset):
                     dynamic_obj = {
                         "included_in_final_model": is_included,
                         "adjustment_factor": adjustment_factor_id,
-                        "result": result_id
+                        "result": result_id,
                     }
                     inserts.append(dynamic_obj)
 
         # ...and save any new ones
         if len(inserts) > 0:
-            serializer = serializers.SimpleResultAdjustmentFactorSerializer(
-                data=inserts, many=True
-            )
+            serializer = serializers.SimpleResultAdjustmentFactorSerializer(data=inserts, many=True)
             serializer.is_valid(raise_exception=True)
             serializer.save()
-
 
     def handle_adjustment_factors(self, request, during_create):
         # first - what assessment are we working in?
@@ -439,12 +436,14 @@ class Result(PermCheckerMixin, AssessmentEditViewset):
                 for el in data_probe:
                     if type(el) is str:
                         try:
-                            adj_factor = models.AdjustmentFactor.objects.get(description=el, assessment_id=assessment_id)
+                            adj_factor = models.AdjustmentFactor.objects.get(
+                                description=el, assessment_id=assessment_id
+                            )
                             fixed.append(adj_factor.id)
                         except ObjectDoesNotExist:
                             # allow creation of adjustment factors as part of the request
                             af_serializer = serializers.AdjustmentFactorSerializer(
-                                data={"description": el, "assessment": assessment_id }
+                                data={"description": el, "assessment": assessment_id}
                             )
                             af_serializer.is_valid(raise_exception=True)
                             af = af_serializer.save()

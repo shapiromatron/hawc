@@ -279,7 +279,10 @@ class FlatFileExporter:
 
 re_digits = r"\d+"
 
-def find_matching_list_element_by_value(items, lookup_value, case_insensitive = True, lookup_index = 1, return_index = 0):
+
+def find_matching_list_element_by_value(
+    items, lookup_value, case_insensitive=True, lookup_index=1, return_index=0
+):
     """
     given items like:
 
@@ -301,12 +304,13 @@ def find_matching_list_element_by_value(items, lookup_value, case_insensitive = 
     """
     if case_insensitive and type(lookup_value) is str:
         lookup_value = lookup_value.lower()
-        matching_vals = [ x[return_index] for x in items if str(x[lookup_index]).lower() == lookup_value ]
+        matching_vals = [
+            x[return_index] for x in items if str(x[lookup_index]).lower() == lookup_value
+        ]
     else:
-        matching_vals = [ x[return_index] for x in items if x[lookup_index] == lookup_value ]
+        matching_vals = [x[return_index] for x in items if x[lookup_index] == lookup_value]
 
     if len(matching_vals) != 1:
         return None
     else:
         return matching_vals[0]
-

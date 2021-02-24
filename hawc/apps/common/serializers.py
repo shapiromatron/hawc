@@ -84,21 +84,22 @@ class ReadableChoiceField(serializers.ChoiceField):
     simple field for Choices - accepts only the underlying value during writes, but returns the "readable" display during reads.
     Seems like there is probably a Django built-in way to achieve this but I couldn't figure out how...
     """
+
     def to_representation(self, obj):
-        if obj == '' and self.allow_blank:
+        if obj == "" and self.allow_blank:
             return obj
         return self._choices[obj]
 
     def to_internal_value(self, data):
         # To support inserts with the value
-        if data == '' and self.allow_blank:
-            return ''
+        if data == "" and self.allow_blank:
+            return ""
 
         for key, val in self._choices.items():
             if key == data:
                 return key
 
-        self.fail('invalid_choice', input=data)
+        self.fail("invalid_choice", input=data)
 
 
 class FlexibleChoiceField(serializers.ChoiceField):
@@ -106,15 +107,16 @@ class FlexibleChoiceField(serializers.ChoiceField):
     like a ChoiceField, except it will let you specify either the raw choice value OR a case-insensitive
     display value when supplying data. Makes client code simpler/more readable.
     """
+
     def to_representation(self, obj):
-        if obj == '' and self.allow_blank:
+        if obj == "" and self.allow_blank:
             return obj
         return self._choices[obj]
 
     def to_internal_value(self, data):
         # To support inserts with the value
-        if data == '' and self.allow_blank:
-            return ''
+        if data == "" and self.allow_blank:
+            return ""
 
         for key, val in self._choices.items():
             # print(f"\t[{key}] -> [{val}]")
@@ -130,7 +132,8 @@ class FlexibleChoiceField(serializers.ChoiceField):
                     if val.lower() == data.lower():
                         return key
 
-        self.fail('invalid_choice', input=data)
+        self.fail("invalid_choice", input=data)
+
 
 class FlexibleDBLinkedChoiceField(FlexibleChoiceField):
     """
@@ -178,4 +181,3 @@ class FlexibleDBLinkedChoiceField(FlexibleChoiceField):
             obj_id = super().to_internal_value(data)
             obj = self.mapped_model.objects.get(id=obj_id)
             return obj
-
