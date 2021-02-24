@@ -83,7 +83,8 @@ class GroupNumericalDescriptionsSerializer(FormIntegrationMixin, serializers.Mod
         fields = "__all__"
 
 
-class GroupSerializer(FormIntegrationMixin, serializers.ModelSerializer):
+# class GroupSerializer(IdLookupMixin, FormIntegrationMixin, serializers.ModelSerializer):
+class GroupSerializer(IdLookupMixin, serializers.ModelSerializer):
     form_integration_class = forms.GroupForm
 
     sex = FlexibleChoiceField(choices=models.Group.SEX_CHOICES)
@@ -224,6 +225,7 @@ class GroupResultSerializer(FormIntegrationMixin, serializers.ModelSerializer):
     p_value_text = serializers.CharField(read_only=True)
     lower_bound_interval = serializers.FloatField(read_only=True)
     upper_bound_interval = serializers.FloatField(read_only=True)
+    group = GroupSerializer()
 
     class Meta:
         model = models.GroupResult
@@ -244,9 +246,6 @@ class ResultAdjustmentFactorSerializer(serializers.ModelSerializer):
         model = models.ResultAdjustmentFactor
         fields = ("id", "description", "included_in_final_model")
 
-    def to_representation(self, obj):
-        return {"id": obj.id, "description": obj.description}
-
 
 class AdjustmentFactorSerializer(serializers.ModelSerializer):
     class Meta:
@@ -254,7 +253,7 @@ class AdjustmentFactorSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class SimpleComparisonSetSerializer(serializers.ModelSerializer):
+class SimpleComparisonSetSerializer(IdLookupMixin, serializers.ModelSerializer):
     url = serializers.CharField(source="get_absolute_url", read_only=True)
     exposure = SimpleExposureSerializer()
 
@@ -273,14 +272,25 @@ class ResultSerializer(FormIntegrationMixin, serializers.ModelSerializer):
     statistical_power = FlexibleChoiceField(choices=models.Result.STATISTICAL_POWER_CHOICES)
     estimate_type = FlexibleChoiceField(choices=models.Result.ESTIMATE_TYPE_CHOICES)
     variance_type = FlexibleChoiceField(choices=models.Result.VARIANCE_TYPE_CHOICES)
-    factors_applied = ResultAdjustmentFactorSerializer(many=True, read_only=True)
-    factors_considered = ResultAdjustmentFactorSerializer(many=True, read_only=True)
+    factors = ResultAdjustmentFactorSerializer(source="resfactors", many=True, read_only=True)
+    # factors_applied = AdjustmentFactorSerializer(many=True, read_only=True)
+    # factors_considered = AdjustmentFactorSerializer(many=True, read_only=True)
     url = serializers.CharField(source="get_absolute_url", read_only=True)
     resulttags = EffectTagsSerializer()
     results = GroupResultSerializer(many=True, read_only=True)
+    comparison_set = SimpleComparisonSetSerializer()
 
     def get_form_integration_kwargs(self, data):
         return {"parent": data["outcome"]}
+
+    def to_representation(self, instance):
+        ret = super().to_representation(instance)
+        models.GroupResult.getStdevs(ret["variance_type"], ret["results"])
+        models.GroupResult.percentControl(
+            ret["estimate_type"], ret["variance_type"], ret["results"]
+        )
+        models.GroupResult.getConfidenceIntervals(ret["variance_type"], ret["results"])
+        return ret
 
     class Meta:
         model = models.Result
