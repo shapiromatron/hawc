@@ -13,7 +13,6 @@ class Store {
         this.tagtree.add_references(config.references);
     }
 
-    selectedTagNode = null;
     @observable untaggedReferencesSelected = false;
     @observable selectedTag = null;
     @observable config = null;

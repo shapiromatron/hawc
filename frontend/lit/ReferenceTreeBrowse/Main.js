@@ -25,8 +25,9 @@ class ReferenceTreeMain extends Component {
     render() {
         const {store} = this.props,
             actions = store.getActionLinks,
-            {selectedReferences, selectedReferencesLoading, filteredReferences} = store,
-            {canEdit} = store.config;
+            {selectedReferences, selectedReferencesLoading, filteredReferences, yearFilter} = store,
+            {canEdit} = store.config,
+            yearText = yearFilter ? ` (${yearFilter.min}-${yearFilter.max})` : "";
 
         return (
             <div className="row">
@@ -46,16 +47,19 @@ class ReferenceTreeMain extends Component {
                         </div>
                     ) : null}
                     {store.untaggedReferencesSelected === true ? (
-                        <h3>Untagged references</h3>
+                        <h4>Untagged references</h4>
                     ) : store.selectedTag === null ? (
-                        <h3>Available references</h3>
+                        <h4>Available references</h4>
                     ) : (
-                        <h3>
-                            {selectedReferences && selectedReferences.length > 0
-                                ? `${selectedReferences.length} references tagged:`
-                                : "References tagged:"}
+                        <h4>
+                            <span>
+                                {selectedReferences && selectedReferences.length > 0
+                                    ? `${filteredReferences.length} references tagged:`
+                                    : "References tagged:"}
+                            </span>
                             <span className="ml-2 refTag">{store.selectedTag.get_full_name()}</span>
-                        </h3>
+                            <span>{yearText}</span>
+                        </h4>
                     )}
                 </div>
                 <div className="col-md-3">
