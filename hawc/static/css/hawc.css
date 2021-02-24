@@ -337,6 +337,10 @@ div.smart-tag.active {
     margin: 0 3px 3px 0;
     display: inline-block;
 }
+.referenceTag{
+    text-align: left;
+    white-space: pre-wrap;
+}
 .refTagEditing {
     cursor: pointer;
 }

@@ -4,10 +4,9 @@ import {inject, observer} from "mobx-react";
 import {toJS} from "mobx";
 
 import Loading from "shared/components/Loading";
-import ReferenceTable from "../components/ReferenceTable";
 import TagTree from "../components/TagTree";
-import Wordcloud from "./Wordcloud";
 import YearHistogram from "./YearHistogram";
+import ReferenceTableMain from "./ReferenceTableMain";
 
 const referenceListItem = ref => {
     return (
@@ -26,7 +25,6 @@ class ReferenceTreeMain extends Component {
         const {store} = this.props,
             actions = store.getActionLinks,
             {selectedReferences, selectedReferencesLoading, filteredReferences, yearFilter} = store,
-            {canEdit} = store.config,
             yearText = yearFilter ? ` (${yearFilter.min}-${yearFilter.max})` : "";
 
         return (
@@ -88,15 +86,7 @@ class ReferenceTreeMain extends Component {
                                 Click on a tag to view tagged references.
                             </p>
                         ) : null}
-                        {selectedReferences ? (
-                            <>
-                                <Wordcloud references={filteredReferences} />
-                                <ReferenceTable
-                                    references={filteredReferences}
-                                    showActions={canEdit}
-                                />
-                            </>
-                        ) : null}
+                        <ReferenceTableMain />
                     </div>
                 </div>
                 <div className="col-md-3">

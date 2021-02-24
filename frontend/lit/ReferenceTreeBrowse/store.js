@@ -118,6 +118,13 @@ class Store {
         }
         return links;
     }
+
+    // used in ReferenceTableMain
+    @observable activeReferenceTableTab = 0;
+    @action.bound changeActiveReferenceTableTab(index) {
+        this.activeReferenceTableTab = index;
+        return true;
+    }
 }
 
 export default Store;
