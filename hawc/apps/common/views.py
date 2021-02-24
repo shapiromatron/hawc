@@ -430,7 +430,9 @@ class BaseDelete(AssessmentPermissionsMixin, MessageMixin, DeleteView):
         self.object.delete()
         # Log the deletion
         log_message = f"Deleted '{self.object}' ({self.object.__class__.__name__} {self.object.id})"
-        Log.objects.create(assessment=self.assessment, user=self.request.user, message=log_message)
+        Log.objects.create(
+            assessment_id=self.assessment.pk, user=self.request.user, message=log_message
+        )
         self.send_message()
         return HttpResponseRedirect(success_url)
 
