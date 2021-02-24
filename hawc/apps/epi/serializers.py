@@ -324,21 +324,12 @@ class OutcomeSerializer(serializers.ModelSerializer):
     form_integration_class = forms.OutcomeForm
 
     diagnostic = FlexibleChoiceField(choices=models.Outcome.DIAGNOSTIC_CHOICES)
-    study_population = StudyPopulationSerializer(read_only=True)
+    study_population = StudyPopulationSerializer()  # read_only=True)
     can_create_sets = serializers.BooleanField(read_only=True)
     effects = EffectTagsSerializer(read_only=True)
     url = serializers.CharField(source="get_absolute_url", read_only=True)
     results = ResultSerializer(many=True, read_only=True)
     comparison_sets = ComparisonSetLinkSerializer(many=True, read_only=True)
-
-    def validate(self, data):
-        data = super().validate(data)
-
-        form = forms.OutcomeForm(data=data)
-        if form.is_valid() is False:
-            raise serializers.ValidationError(form.errors)
-
-        return data
 
     class Meta:
         model = models.Outcome

@@ -241,14 +241,14 @@ class TestStudyPopulationApi:
 
         create_scenarios = (
             {
-                "desc": "basic creation",
+                "desc": "basic studypop creation",
                 "expected_code": 201,
                 "expected_keys": {"id"},
                 "data": base_data,
                 "post_request_test": study_pop_lookup_test,
             },
             {
-                "desc": "named design",
+                "desc": "named design studypop creation",
                 "expected_code": 201,
                 "expected_keys": {"id"},
                 "data": named_design_data,
@@ -267,7 +267,7 @@ class TestStudyPopulationApi:
         url = f"{url}{just_created_study_id}/"
         update_scenarios = (
             {
-                "desc": "basic update",
+                "desc": "basic studypop update",
                 "expected_code": 200,
                 "expected_keys": {"id"},
                 "data": {"name": "updated"},
@@ -328,8 +328,6 @@ class TestCriteriaApi:
         client = APIClient()
         assert client.login(username="team@hawcproject.org", password="pw") is True
 
-        # assessment = Assessment.objects.get(id=db_keys.assessment_working)
-
         base_data = {"assessment": db_keys.assessment_working, "description": "initial description"}
 
         just_created_criteria_id = None
@@ -375,14 +373,14 @@ class TestCriteriaApi:
 
         create_scenarios = (
             {
-                "desc": "basic creation",
+                "desc": "basic criteria creation",
                 "expected_code": 201,
                 "expected_keys": {"id"},
                 "data": base_data,
                 "post_request_test": criteria_lookup_test,
             },
             {
-                "desc": "fetch - not create",
+                "desc": "fetch - not create - criteria by name",
                 "expected_code": 201,
                 "expected_keys": {"id"},
                 "data": base_data,
@@ -394,7 +392,7 @@ class TestCriteriaApi:
         url = f"{url}{just_created_criteria_id}/"
         update_scenarios = (
             {
-                "desc": "basic update",
+                "desc": "basic criteria update",
                 "expected_code": 200,
                 "expected_keys": {"id"},
                 "data": {"description": "updated"},
@@ -415,11 +413,170 @@ class TestCriteriaApi:
         generic_test_scenarios(client, url, delete_scenarios)
 
 
+@pytest.mark.django_db
+class TestOutcomeApi:
+    def test_permissions(self, db_keys):
+        url = reverse("epi:api:outcome-list")
+        data = {
+            "name": "test outcome",
+            "assessment": db_keys.assessment_working,
+            "study_population": 1,
+            "diagnostic": 0,
+            "diagnostic_description": "dd",
+        }
+        generic_perm_tester(url, data)
+
+    def test_bad_requests(self, db_keys):
+        url = reverse("epi:api:outcome-list")
+        client = APIClient()
+        assert client.login(username="team@hawcproject.org", password="pw") is True
+
+        scenarios = (
+            {
+                "desc": "empty payload doesn't crash",
+                "expected_code": 400,
+                "expected_keys": {"name", "diagnostic", "diagnostic_description"},
+                "data": {},
+            },
+            {
+                "desc": "assessment must be a valid assessment id",
+                "expected_code": 400,
+                "expected_keys": {"assessment"},
+                "data": {"name": "this is ok", "assessment": 999},
+            },
+            {
+                "desc": "diagnostic cannot be invalid id",
+                "expected_code": 400,
+                "expected_keys": {"diagnostic"},
+                "data": {"name": "this is ok", "diagnostic": -1},
+            },
+            {
+                "desc": "diagnostic cannot be invalid label",
+                "expected_code": 400,
+                "expected_keys": {"diagnostic"},
+                "data": {"name": "this is ok", "diagnostic": "NOT questionnaire"},
+            },
+        )
+
+        generic_test_scenarios(client, url, scenarios)
+
+    def test_valid_requests(self, db_keys):
+        url = reverse("epi:api:outcome-list")
+        client = APIClient()
+        # assert client.login(username="team@hawcproject.org", password="pw") is True
+        assert client.login(username="admin@hawcproject.org", password="pw") is True
+
+        study_pops = models.StudyPopulation.objects.all()
+        study_pop = None
+        for sp in study_pops:
+            study_pop = sp
+            break
+        # print(f"FOUND STUDY POP {study_pop} WHCHIS IN ASSESSMENT {study_pop.get_assessment().id}")
+
+        diagnostic = models.Outcome.DIAGNOSTIC_CHOICES[0]
+        diagnostic_code = diagnostic[0]
+        diagnostic_name = diagnostic[1]
+
+        base_data = {
+            "name": "test outcome",
+            "system": "blood",
+            "assessment": study_pop.get_assessment().id,
+            "diagnostic_description": "test diag desc",
+            "diagnostic": diagnostic_code,
+            "outcome_n": 100,
+            "study_population": study_pop.id,
+            "age_of_measurement": "test age",
+            "summary": "test summary",
+            "effect": "test effect",
+            "effect_subtype": "test subtype",
+        }
+
+        diagname_data = base_data
+        diagname_data["diagnostic"] = diagnostic_name.upper()
+
+        just_created_outcome_id = None
+
+        def outcome_lookup_test(resp):
+            nonlocal just_created_outcome_id
+
+            outcome_id = resp.json()["id"]
+            outcome = models.Outcome.objects.get(id=outcome_id)
+            assert outcome.name == base_data["name"]
+
+            if just_created_outcome_id is None:
+                just_created_outcome_id = outcome_id
+
+        def altered_outcome_test(resp):
+            nonlocal just_created_outcome_id
+
+            outcome_id = resp.json()["id"]
+            outcome = models.Outcome.objects.get(id=outcome_id)
+            assert outcome.name == "updated"
+            assert outcome_id == just_created_outcome_id
+
+        def deleted_outcome_test(resp):
+            nonlocal just_created_outcome_id
+
+            assert resp.data is None
+            try:
+                outcome_that_should_not_exist = models.Outcome.objects.get(
+                    id=just_created_outcome_id
+                )
+                assert outcome_that_should_not_exist is None
+            except ObjectDoesNotExist:
+                # this is CORRECT behavior - we WANT the object to not exist
+                pass
+
+        create_scenarios = (
+            {
+                "desc": "basic outcome creation",
+                "expected_code": 201,
+                "expected_keys": {"id"},
+                "data": base_data,
+                "post_request_test": outcome_lookup_test,
+            },
+            {
+                "desc": "creation with diagnostic name",
+                "expected_code": 201,
+                "expected_keys": {"id"},
+                "data": diagname_data,
+                "post_request_test": outcome_lookup_test,
+            },
+        )
+        generic_test_scenarios(client, url, create_scenarios)
+
+        url = f"{url}{just_created_outcome_id}/"
+        update_scenarios = (
+            {
+                "desc": "basic outcome update",
+                "expected_code": 200,
+                "expected_keys": {"id"},
+                "data": {"name": "updated"},
+                "method": "PATCH",
+                "post_request_test": altered_outcome_test,
+            },
+        )
+        generic_test_scenarios(client, url, update_scenarios)
+
+        delete_scenarios = (
+            {
+                "desc": "delete",
+                "expected_code": 204,
+                "method": "DELETE",
+                "post_request_test": deleted_outcome_test,
+            },
+        )
+        generic_test_scenarios(client, url, delete_scenarios)
+
+
 def generic_test_scenarios(client, url, scenarios):
     print(f">>>>> testing scenarios against '{url}'...")
     for scenario in scenarios:
         print(f">>>>> testing '{scenario['desc']}'...")
         method = scenario.get("method", "POST")
+        if "data" in scenario:
+            # print(f">>>>> will {method} data: {scenario['data']}")
+            pass
         if method.upper() == "POST":
             response = client.post(url, scenario["data"], format="json")
         elif method.upper() == "PATCH":
@@ -441,6 +598,7 @@ def generic_test_scenarios(client, url, scenarios):
 
 
 def generic_perm_tester(url, data):
+    print(f">>>>> generic perm test on {url}")
     # reviewers shouldn't be able to create
     client = APIClient()
     assert client.login(username="reviewer@hawcproject.org", password="pw") is True
