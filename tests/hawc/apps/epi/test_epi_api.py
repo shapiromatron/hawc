@@ -1392,6 +1392,175 @@ class TestGroupNumericalDescriptionsApi:
         generic_test_scenarios(client, url, delete_scenarios)
 
 
+@pytest.mark.django_db
+class TestExposureApi:
+    def get_upload_data(self, overrides=None):
+        study_pop = generic_get_any(models.StudyPopulation)
+
+        data = {
+            "name": "test expo",
+            "metric_description": "test description",
+            "metric": "test metric",
+            "analytical_method": "test method",
+            "dtxsid": "DTXSID6026296",
+            "inhalation": True,
+            "measured": "measurement data",
+            "sampling_period": "sample period data",
+            "age_of_exposure": 1,
+            "duration": "duration data",
+            "exposure_distribution": "distro data",
+            "study_population": study_pop.id,
+            "metric_units": "kilometer",
+            "n": 9,
+            "description": "desc",
+            "central_tendencies": [
+                {
+                    "estimate": 12,
+                    "estimate_type": 2,
+                    "variance": 5.5,
+                    "variance_type": "SD",
+                    "lower_ci": 4,
+                    "upper_ci": 99,
+                    "lower_range": 1.2,
+                    "upper_range": 1.5,
+                    "description": "description",
+                }
+            ],
+        }
+
+        data = generic_merge_overrides(data, overrides)
+
+        return data
+
+    def test_permissions(self, db_keys):
+        url = reverse("epi:api:exposure-list")
+        generic_perm_tester(url, self.get_upload_data())
+
+    def test_bad_requests(self, db_keys):
+        url = reverse("epi:api:exposure-list")
+        client = APIClient()
+        assert client.login(username="admin@hawcproject.org", password="pw") is True
+
+        scenarios = (
+            {"desc": "empty payload doesn't crash", "expected_code": 400, "data": {}},
+            {
+                "desc": "dtxsid must be a existing/importable one",
+                "expected_code": 400,
+                "expected_content": "does not exist and could not be imported",
+                "data": self.get_upload_data({"dtxsid": "bad value"}),
+            },
+            {
+                "desc": "match data types",
+                "expected_code": 400,
+                "expected_keys": {"inhalation", "n"},  # etc.
+                "data": self.get_upload_data({"inhalation": "truish", "n": "not numeric"}),
+            },
+            {
+                "desc": "study pop must be valid",
+                "expected_code": 400,
+                "expected_keys": {"study_population"},
+                "data": self.get_upload_data({"study_population": 999}),
+            },
+            {
+                "desc": "at least one central tendency is required",
+                "expected_code": 400,
+                "expected_content": "At least one",
+                "data": self.get_upload_data({"central_tendencies": None}),
+            },
+        )
+
+        generic_test_scenarios(client, url, scenarios)
+
+    def test_valid_requests(self, db_keys):
+        url = reverse("epi:api:exposure-list")
+        client = APIClient()
+        assert client.login(username="admin@hawcproject.org", password="pw") is True
+
+        just_created_exposure_id = None
+
+        new_dtxsid = "DTXSID1020190"
+
+        base_data = self.get_upload_data()
+
+        def exposure_lookup_test(resp):
+            nonlocal just_created_exposure_id
+
+            exposure_id = resp.json()["id"]
+            exposure = models.Exposure.objects.get(id=exposure_id)
+            assert exposure.name == base_data["name"]
+
+            if just_created_exposure_id is None:
+                just_created_exposure_id = exposure_id
+
+        def exposure_lookup_test_with_new_dtxsid(resp):
+            exposure_id = resp.json()["id"]
+            exposure = models.Exposure.objects.get(id=exposure_id)
+            assert exposure.name == base_data["name"]
+            assert exposure.dtxsid.dtxsid == new_dtxsid
+
+        def altered_exposure_test(resp):
+            nonlocal just_created_exposure_id
+
+            exposure_id = resp.json()["id"]
+            exposure = models.Exposure.objects.get(id=exposure_id)
+            assert exposure.name == "updated"
+            assert exposure_id == just_created_exposure_id
+
+        def deleted_exposure_test(resp):
+            nonlocal just_created_exposure_id
+
+            assert resp.data is None
+            try:
+                exposure_that_should_not_exist = models.Exposure.objects.get(
+                    id=just_created_exposure_id
+                )
+                assert exposure_that_should_not_exist is None
+            except ObjectDoesNotExist:
+                # this is CORRECT behavior - we WANT the object to not exist
+                pass
+
+        create_scenarios = (
+            {
+                "desc": "basic exposure creation",
+                "expected_code": 201,
+                "expected_keys": {"id"},
+                "data": self.get_upload_data(),
+                "post_request_test": exposure_lookup_test,
+            },
+            {
+                "desc": "on the fly dtxsid creation",
+                "expected_code": 201,
+                "expected_keys": {"id"},
+                "data": self.get_upload_data({"dtxsid": new_dtxsid}),
+                "post_request_test": exposure_lookup_test_with_new_dtxsid,
+            },
+        )
+        generic_test_scenarios(client, url, create_scenarios)
+
+        url = f"{url}{just_created_exposure_id}/"
+        update_scenarios = (
+            {
+                "desc": "basic exposure update",
+                "expected_code": 200,
+                "expected_keys": {"id"},
+                "data": {"name": "updated"},
+                "method": "PATCH",
+                "post_request_test": altered_exposure_test,
+            },
+        )
+        generic_test_scenarios(client, url, update_scenarios)
+
+        delete_scenarios = (
+            {
+                "desc": "exposure delete",
+                "expected_code": 204,
+                "method": "DELETE",
+                "post_request_test": deleted_exposure_test,
+            },
+        )
+        generic_test_scenarios(client, url, delete_scenarios)
+
+
 def generic_test_scenarios(client, url, scenarios):
     print(f">>>>> testing scenarios against '{url}'...")
     for scenario in scenarios:
@@ -1409,12 +1578,15 @@ def generic_test_scenarios(client, url, scenarios):
         else:
             return
 
-        print(f">>>>> {method} request came back wth {response.status_code} / {response.data}")
+        print(f">>>>> {method} request came back with {response.status_code} / {response.data}")
         if "expected_code" in scenario:
             assert response.status_code == scenario["expected_code"]
 
         if "expected_keys" in scenario:
             assert (scenario["expected_keys"]).issubset((response.data.keys()))
+
+        if "expected_content" in scenario:
+            assert str(response.data).lower().find(scenario["expected_content"].lower()) != -1
 
         if "post_request_test" in scenario:
             scenario["post_request_test"](response)
