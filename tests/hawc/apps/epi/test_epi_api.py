@@ -1137,12 +1137,6 @@ class TestGroupApi:
 
             assert found_ethnicity is True
 
-        def group_lookup_tests_with_two_ethnicities(resp):
-            group_lookup_tests_with_ethnicities(resp, 2)
-
-        def group_lookup_tests_with_one_ethnicity(resp):
-            group_lookup_tests_with_ethnicities(resp, 1)
-
         def altered_group_test(resp):
             nonlocal just_created_group_id
 
@@ -1213,6 +1207,186 @@ class TestGroupApi:
                 "expected_code": 204,
                 "method": "DELETE",
                 "post_request_test": deleted_group_test,
+            },
+        )
+        generic_test_scenarios(client, url, delete_scenarios)
+
+
+@pytest.mark.django_db
+class TestGroupNumericalDescriptionsApi:
+    def get_upload_data(self, overrides=None):
+        group = generic_get_any(models.Group)
+
+        data = {
+            "description": "test description",
+            "group": group.id,
+            "mean": 1.0,
+            "mean_type": "mean",
+            "variance_type": "SD",
+            "lower_type": "other",
+            "upper_type": "other",
+        }
+
+        data = generic_merge_overrides(data, overrides)
+
+        return data
+
+    def test_permissions(self, db_keys):
+        url = reverse("epi:api:numerical-descriptions-list")
+        generic_perm_tester(url, self.get_upload_data())
+
+    def test_bad_requests(self, db_keys):
+        url = reverse("epi:api:numerical-descriptions-list")
+        client = APIClient()
+        assert client.login(username="admin@hawcproject.org", password="pw") is True
+
+        scenarios = (
+            {"desc": "empty payload doesn't crash", "expected_code": 400, "data": {}},
+            {
+                "desc": "group must be valid",
+                "expected_code": 400,
+                "expected_keys": {"group"},
+                "data": self.get_upload_data({"group": 999}),
+            },
+            {
+                "desc": "mean must be numeric",
+                "expected_code": 400,
+                "expected_keys": {"mean"},
+                "data": self.get_upload_data({"mean": "not numeric"}),
+            },
+            {
+                "desc": "if numeric, mean/variance/lower/upper types must be valid ids",
+                "expected_code": 400,
+                "expected_keys": {"mean_type", "variance_type", "lower_type", "upper_type"},
+                "data": self.get_upload_data(
+                    {"mean_type": 999, "variance_type": 999, "lower_type": 999, "upper_type": 999},
+                ),
+            },
+            {
+                "desc": "if strings, mean/variance/lower/upper types must be valid values",
+                "expected_code": 400,
+                "expected_keys": {"mean_type", "variance_type", "lower_type", "upper_type"},
+                "data": self.get_upload_data(
+                    {
+                        "mean_type": "bad value 1",
+                        "variance_type": "bad value 2",
+                        "lower_type": "bad value 3",
+                        "upper_type": "bad value 4",
+                    }
+                ),
+            },
+        )
+
+        generic_test_scenarios(client, url, scenarios)
+
+    def test_valid_requests(self, db_keys):
+        url = reverse("epi:api:numerical-descriptions-list")
+        client = APIClient()
+        assert client.login(username="admin@hawcproject.org", password="pw") is True
+
+        just_created_numdesc_id = None
+
+        base_data = self.get_upload_data()
+
+        def numdesc_lookup_test(resp):
+            nonlocal just_created_numdesc_id
+
+            numdesc_id = resp.json()["id"]
+            numdesc = models.GroupNumericalDescriptions.objects.get(id=numdesc_id)
+            assert numdesc.description == base_data["description"]
+
+            if just_created_numdesc_id is None:
+                just_created_numdesc_id = numdesc_id
+
+        def altered_numdesc_test(resp):
+            nonlocal just_created_numdesc_id
+
+            numdesc_id = resp.json()["id"]
+            numdesc = models.GroupNumericalDescriptions.objects.get(id=numdesc_id)
+            assert numdesc.description == "updated"
+            assert numdesc_id == just_created_numdesc_id
+
+        def deleted_numdesc_test(resp):
+            nonlocal just_created_numdesc_id
+
+            assert resp.data is None
+            try:
+                numdesc_that_should_not_exist = models.GroupNumericalDescriptions.objects.get(
+                    id=just_created_numdesc_id
+                )
+                assert numdesc_that_should_not_exist is None
+            except ObjectDoesNotExist:
+                # this is CORRECT behavior - we WANT the object to not exist
+                pass
+
+        create_scenarios = (
+            {
+                "desc": "basic numdesc creation",
+                "expected_code": 201,
+                "expected_keys": {"id"},
+                "data": self.get_upload_data(),
+                "post_request_test": numdesc_lookup_test,
+            },
+            {
+                "desc": "numdesc creation with id values for types",
+                "expected_code": 201,
+                "expected_keys": {"id"},
+                "data": self.get_upload_data(
+                    {
+                        "mean_type": models.GroupNumericalDescriptions.MEAN_TYPE_CHOICES[1][0],
+                        "variance_type": models.GroupNumericalDescriptions.VARIANCE_TYPE_CHOICES[1][
+                            0
+                        ],
+                        "lower_type": models.GroupNumericalDescriptions.LOWER_LIMIT_CHOICES[1][0],
+                        "upper_type": models.GroupNumericalDescriptions.UPPER_LIMIT_CHOICES[1][0],
+                    }
+                ),
+                "post_request_test": numdesc_lookup_test,
+            },
+            {
+                "desc": "numdesc creation with case-insensitive string values for types",
+                "expected_code": 201,
+                "expected_keys": {"id"},
+                "data": self.get_upload_data(
+                    {
+                        "mean_type": (
+                            models.GroupNumericalDescriptions.MEAN_TYPE_CHOICES[1][1]
+                        ).upper(),
+                        "variance_type": (
+                            models.GroupNumericalDescriptions.VARIANCE_TYPE_CHOICES[1][1]
+                        ).upper(),
+                        "lower_type": (
+                            models.GroupNumericalDescriptions.LOWER_LIMIT_CHOICES[1][1]
+                        ).upper(),
+                        "upper_type": (
+                            models.GroupNumericalDescriptions.UPPER_LIMIT_CHOICES[1][1]
+                        ).upper(),
+                    }
+                ),
+                "post_request_test": numdesc_lookup_test,
+            },
+        )
+        generic_test_scenarios(client, url, create_scenarios)
+
+        url = f"{url}{just_created_numdesc_id}/"
+        update_scenarios = (
+            {
+                "desc": "basic numdesc update",
+                "expected_code": 200,
+                "expected_keys": {"id"},
+                "data": {"description": "updated"},
+                "method": "PATCH",
+                "post_request_test": altered_numdesc_test,
+            },
+        )
+        generic_test_scenarios(client, url, update_scenarios)
+
+        delete_scenarios = (
+            {
+                "desc": "numdesc delete",
+                "expected_code": 204,
+                "method": "DELETE",
+                "post_request_test": deleted_numdesc_test,
             },
         )
         generic_test_scenarios(client, url, delete_scenarios)
