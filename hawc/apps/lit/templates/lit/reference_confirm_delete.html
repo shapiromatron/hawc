@@ -2,5 +2,12 @@
 
 {% block content %}
   {{ block.super }}
-  {% include "hawc/_delete_block.html" with name="reference" notes="This also removes the reference from any searches/imports which may have included the reference. If data was extracted with this reference and it is associated with bioassay or epi extractions they will also be removed." %}
+  {% if object.has_study %}
+    <div class="alert alert-danger my-2">
+      <h4><i class="fa fa-exclamation-triangle"></i>&nbsp;Delete this reference?</h4>
+      <p>This reference cannot be deleted; it has a study associated with it. Please delete the <a href="{{object.study.get_absolute_url}}">study</a> first, then this reference can be deleted.</p>
+    </div>
+  {% else %}
+    {% include "hawc/_delete_block.html" with name="reference" notes="This also removes the reference from any searches/imports which may have included the reference. If data was extracted with this reference and it is associated with bioassay or epi extractions they will also be removed." %}
+  {% endif %}
 {% endblock content %}

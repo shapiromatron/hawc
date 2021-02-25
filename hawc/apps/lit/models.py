@@ -740,6 +740,7 @@ class Reference(models.Model):
             "journal",
             "abstract",
             "full_text_url",
+            "has_study",
         )
         for field in fields:
             d[field] = getattr(self, field)
@@ -750,7 +751,8 @@ class Reference(models.Model):
         d["deleteReferenceUrl"] = reverse("lit:ref_delete", kwargs={"pk": self.pk})
 
         d["identifiers"] = [ident.get_json(json_encode=False) for ident in self.identifiers.all()]
-        d["searches"] = [ref.get_json() for ref in self.searches.all()]
+        d["searches"] = [search.get_json() for search in self.searches.all()]
+        d["study_short_citation"] = self.study.short_citation if d["has_study"] else None
 
         d["tags"] = list(self.tags.all().values_list("pk", flat=True))
         d["tags_text"] = list(self.tags.all().values_list("name", flat=True))
@@ -826,6 +828,10 @@ class Reference(models.Model):
             citation += " " + year
 
         return citation
+
+    @property
+    def has_study(self) -> bool:
+        return apps.get_model("study", "Study").objects.filter(id=self.id).exists()
 
     def get_pubmed_id(self):
         for ident in self.identifiers.all():

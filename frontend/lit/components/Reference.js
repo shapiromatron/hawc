@@ -115,13 +115,19 @@ class Reference extends Component {
                     </p>
                 ) : null}
                 {data.searches.length > 0 ? (
-                    <p>
+                    <p className="my-1">
                         <strong>HAWC searches/imports:</strong>
                         {data.searches.map((d, i) => (
                             <span key={i}>
                                 &nbsp;<a href={d.url}>{d.title}</a>
                             </span>
                         ))}
+                    </p>
+                ) : null}
+                {data.has_study ? (
+                    <p className="my-1">
+                        <strong>HAWC study extraction:&nbsp;</strong>
+                        <a href={reference.get_study_url()}>{data.study_short_citation}</a>
                     </p>
                 ) : null}
                 {this.renderIdentifiers(data)}

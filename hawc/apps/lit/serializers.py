@@ -122,7 +122,11 @@ class ReferenceQuerySerializer(serializers.Serializer):
         if "abstract" in self.data:
             query &= Q(abstract__icontains=self.data["abstract"])
 
-        qs = models.Reference.objects.filter(query)[:100]
+        qs = (
+            models.Reference.objects.filter(query)
+            .select_related("study")
+            .prefetch_related("searches", "identifiers")[:100]
+        )
         return [ref.get_json(json_encode=False) for ref in qs]
 
 
