@@ -25,6 +25,7 @@ from ..common.serializers import HeatmapQuerySerializer, UnusedSerializer
 from ..common.views import AssessmentPermissionsMixin
 from ..study.models import Study
 from . import exports, models, serializers
+from .actions.model_metadata import EpiMetadata
 
 
 class EpiAssessmentViewset(
@@ -539,3 +540,8 @@ class ExposureCleanup(CleanupFieldsBaseViewSet):
     serializer_class = serializers.ExposureCleanupFieldsSerializer
     model = models.Exposure
     assessment_filter_args = "study_population__study__assessment"
+
+
+class Metadata(viewsets.ViewSet):
+    def list(self, request):
+        return EpiMetadata.handle_request(request)
