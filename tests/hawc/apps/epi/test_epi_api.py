@@ -1586,6 +1586,97 @@ class TestExposureApi:
         generic_test_scenarios(client, url, delete_scenarios)
 
 
+@pytest.mark.django_db
+class TestMetadataApi:
+    def test_permissions(self):
+        url = reverse(f"epi:api:metadata-list")
+        # public should have access to the main metadata
+        client = APIClient()
+        resp = client.get(url)
+        assert resp.status_code == 200
+
+        # public should NOT be able to view the version for private assessments
+        private_assessment = Assessment.objects.filter(public=False).first()
+        assert private_assessment is not None
+        url = f"{url}{private_assessment.id}/"
+        resp = client.get(url)
+        assert resp.status_code == 403
+
+    def verify_keys_in_response(self, data, keys):
+        for key in keys:
+            sub_keys = keys[key]
+            assert key in data
+            sub_data = data[key]
+
+            for sub_key in sub_keys:
+                assert sub_key in sub_data
+
+    def verify_keys_not_in_response(self, data, keys):
+        for key in keys:
+            sub_keys = keys[key]
+
+            if key in data:
+                sub_data = data[key]
+
+                for sub_key in sub_keys:
+                    assert sub_key not in sub_data
+
+    def test_bad_request(self, rewrite_data_files: bool, db_keys):
+        # invalid assessment id
+        client = APIClient()
+        url = reverse(f"epi:api:metadata-list") + "999/"
+        resp = client.get(url)
+        assert resp.status_code == 400
+
+    def test_metadata(self, rewrite_data_files: bool, db_keys):
+        # verify that we get at least the correct structure of data back
+        basic_keys = {
+            "study_population": {"design", "countries"},
+            "outcome": {"diagnostic"},
+            "result": {
+                "dose_response",
+                "statistical_power",
+                "estimate_type",
+                "variance_type",
+                "metrics",
+            },
+            "group_result": {"p_value_qualifier", "main_finding"},
+            "group": {"sex", "ethnicities"},
+            "group_numerical_descriptions": {
+                "mean_type",
+                "variance_type",
+                "lower_type",
+                "upper_type",
+            },
+            "exposure": {"dose_units"},
+            "central_tendency": {"estimate_type", "variance_type"},
+        }
+
+        non_basic_keys = {
+            "study_population": {"assessment_specific_criteria"},
+            "result": {"assessment_specific_adjustment_factors"},
+        }
+
+        client = APIClient()
+        url = reverse(f"epi:api:metadata-list")
+        resp = client.get(url)
+        assert resp.status_code == 200
+        self.verify_keys_in_response(resp.data, basic_keys)
+        self.verify_keys_not_in_response(resp.data, non_basic_keys)
+
+        assessment_specific_keys = basic_keys
+        for key in non_basic_keys:
+            sub_keys = non_basic_keys[key]
+            for sub_key in sub_keys:
+                assessment_specific_keys[key].add(sub_key)
+
+        assert client.login(username="admin@hawcproject.org", password="pw") is True
+        url = f"{url}2/"
+        resp = client.get(url)
+        assert resp.status_code == 200
+        self.verify_keys_in_response(resp.data, assessment_specific_keys)
+
+
 def generic_test_scenarios(client, url, scenarios):
     print(f">>>>> testing scenarios against '{url}'...")
     for scenario in scenarios:
@@ -1633,9 +1724,7 @@ def generic_perm_tester(url, data):
 
 
 def generic_get_any(model_class):
-    all_of_type = model_class.objects.all()
-    for obj in all_of_type:
-        return obj
+    return model_class.objects.all().first()
 
 
 def generic_merge_overrides(data, overrides):
