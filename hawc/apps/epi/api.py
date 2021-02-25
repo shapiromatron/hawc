@@ -25,7 +25,7 @@ from ..common.serializers import HeatmapQuerySerializer, UnusedSerializer
 from ..common.views import AssessmentPermissionsMixin
 from ..study.models import Study
 from . import exports, models, serializers
-from .actions.model_metadata import EpiMetadata
+from .actions.model_metadata import EpiAssessmentMetadata, EpiMetadata
 
 
 class EpiAssessmentViewset(
@@ -545,3 +545,16 @@ class ExposureCleanup(CleanupFieldsBaseViewSet):
 class Metadata(viewsets.ViewSet):
     def list(self, request):
         return EpiMetadata.handle_request(request)
+
+    def retrieve(self, request, *args, **kwargs):
+        assessment_id = kwargs["pk"]
+        try:
+            assessment = Assessment.objects.get(id=assessment_id)
+
+            if assessment.user_can_view_object(request.user):
+                eam = EpiAssessmentMetadata(None)
+                return eam.handle_assessment_request(request, assessment)
+            else:
+                raise PermissionDenied("Invalid permission to view assessment metadata")
+        except ObjectDoesNotExist:
+            raise ValidationError("Invalid assessment id")

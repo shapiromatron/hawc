@@ -1,11 +1,14 @@
 from django.db.models.functions import Lower
 from pydantic import BaseModel
+from rest_framework.response import Response
 
 from hawc.apps.assessment.models import DoseUnits
 from hawc.apps.common.actions import BaseApiAction
 from hawc.apps.epi.models import (
+    AdjustmentFactor,
     CentralTendency,
     Country,
+    Criteria,
     Ethnicity,
     Group,
     GroupNumericalDescriptions,
@@ -72,7 +75,6 @@ class EpiMetadata(BaseApiAction):
             estimate_type=dict(Result.ESTIMATE_TYPE_CHOICES),
             variance_type=dict(Result.VARIANCE_TYPE_CHOICES),
             metrics=get_all_model_objects(ResultMetric, "metric"),
-            # adjustment-factors are assessment-specific
         )
 
     def outcome_metadata(self):
@@ -82,7 +84,6 @@ class EpiMetadata(BaseApiAction):
         return dict(
             design=dict(StudyPopulation.DESIGN_CHOICES),
             countries=get_all_model_objects(Country, "name", "code"),
-            # criteria are assessment-specific
         )
 
     def evaluate(self):
@@ -96,3 +97,31 @@ class EpiMetadata(BaseApiAction):
             exposure=self.exposure_metadata(),
             central_tendency=self.central_tendency_metadata(),
         )
+
+
+class EpiAssessmentMetadata(EpiMetadata):
+    assessment = None
+
+    def handle_assessment_request(self, request, assessment):
+        self.assessment = assessment
+        return Response(self.evaluate())
+
+    def study_population_metadata(self):
+        data = super().study_population_metadata()
+        data["assessment_specific_criteria"] = {
+            c.id: c.description
+            for c in Criteria.objects.filter(assessment=self.assessment).order_by(
+                Lower("description")
+            )
+        }
+        return data
+
+    def result_metadata(self):
+        data = super().result_metadata()
+        data["assessment_specific_adjustment_factors"] = {
+            af.id: af.description
+            for af in AdjustmentFactor.objects.filter(assessment=self.assessment).order_by(
+                Lower("description")
+            )
+        }
+        return data
