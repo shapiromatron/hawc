@@ -12,8 +12,11 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.html import strip_tags
 from pydantic import BaseModel as PydanticModel
+from pydantic import ValidationError as PydanticError
 from reversion import revisions as reversion
 from treebeard.mp_tree import MP_Node
+
+from hawc.tools.tables.generic import GenericTable
 
 from ..animal.exports import EndpointFlatDataPivot, EndpointGroupFlatDataPivot
 from ..animal.models import Endpoint
@@ -22,11 +25,13 @@ from ..common.helper import (
     FlatExport,
     HAWCDjangoJSONEncoder,
     HAWCtoDateString,
+    ReportExport,
     SerializerHelper,
     read_excel,
     tryParseInt,
 )
 from ..common.models import get_model_copy_name
+from ..common.validators import validate_html_tags
 from ..epi.exports import OutcomeDataPivot
 from ..epi.models import Outcome
 from ..epimeta.exports import MetaResultFlatDataPivot
@@ -147,6 +152,104 @@ class SummaryText(MP_Node):
         if nodes[0].get("children", None):
             for node in nodes[0]["children"]:
                 print_node(node, 2)
+
+
+class SummaryTable(models.Model):
+    objects = managers.SummaryTableManager()
+
+    class TableType(models.IntegerChoices):
+        GENERIC = 0
+        EVIDENCE_PROFILE = 1
+        EVIDENCE_INTEGRATION = 2
+
+    TABLE_SCHEMA_MAP = {TableType.GENERIC: GenericTable}
+
+    assessment = models.ForeignKey(Assessment, on_delete=models.CASCADE)
+    title = models.CharField(max_length=128)
+    slug = models.SlugField(
+        verbose_name="URL Name",
+        help_text="The URL (web address) used to describe this object "
+        "(no spaces or special-characters).",
+    )
+    content = models.JSONField(default=dict)
+    table_type = models.PositiveSmallIntegerField(
+        choices=TableType.choices, default=TableType.GENERIC
+    )
+    published = models.BooleanField(
+        default=False,
+        verbose_name="Publish table for public viewing",
+        help_text="For assessments marked for public viewing, mark table to be viewable by public",
+    )
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    BREADCRUMB_PARENT = "assessment"
+
+    class Meta:
+        unique_together = (
+            ("assessment", "title"),
+            ("assessment", "slug"),
+        )
+
+    def __str__(self):
+        return self.title
+
+    def get_assessment(self):
+        return self.assessment
+
+    @classmethod
+    def get_list_url(cls, assessment_id: int):
+        return reverse("summary:tables_list", args=(assessment_id,))
+
+    @classmethod
+    def get_api_list_url(cls, assessment_id: int):
+        return reverse("summary:api:summary-table-list") + f"?assessment_id={assessment_id}"
+
+    def get_absolute_url(self):
+        return reverse("summary:tables_detail", args=(self.assessment_id, self.slug,))
+
+    def get_update_url(self):
+        return reverse("summary:tables_update", args=(self.assessment_id, self.slug,))
+
+    def get_delete_url(self):
+        return reverse("summary:tables_delete", args=(self.assessment_id, self.slug,))
+
+    def get_api_url(self):
+        return reverse("summary:api:summary-table-detail", args=(self.id,))
+
+    def get_api_word_url(self):
+        return reverse("summary:api:summary-table-docx", args=(self.id,))
+
+    def get_content_schema_class(self):
+        if self.table_type not in self.TABLE_SCHEMA_MAP:
+            raise NotImplementedError(f"Table type not found: {self.table_type}")
+        return self.TABLE_SCHEMA_MAP[self.table_type]
+
+    def get_table(self):
+        return self.get_content_schema_class().parse_obj(self.content)
+
+    @classmethod
+    def build_default(cls, assessment_id: int, table_type: int) -> "SummaryTable":
+        """Build an incomplete, but default SummaryTable instance"""
+        instance = cls(assessment_id=assessment_id, table_type=table_type)
+        schema = instance.get_content_schema_class()
+        instance.content = schema.build_default().dict()
+        return instance
+
+    def to_docx(self):
+        table = self.get_table()
+        return ReportExport(docx=table.to_docx(), filename=self.slug)
+
+    def clean(self):
+        # make sure table can be built
+        try:
+            self.get_table()
+        except PydanticError as e:
+            raise ValidationError({"content": e.json()})
+
+        # validate tags used in text
+        content_str = json.dumps(self.content)
+        validate_html_tags(content_str)
 
 
 class HeatmapDataset(PydanticModel):
@@ -923,6 +1026,7 @@ class Prefilter:
 
 
 reversion.register(SummaryText)
+reversion.register(SummaryTable)
 reversion.register(DataPivotUpload)
 reversion.register(DataPivotQuery)
 reversion.register(Visual)

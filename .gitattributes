@@ -1,3 +1,5 @@
 # ignore paths from language statistics:
 # https://github.com/github/linguist#using-gitattributes
 hawc/static/debug/* linguist-vendored
+vendor/* linguist-vendored
+scripts/* linguist-vendored

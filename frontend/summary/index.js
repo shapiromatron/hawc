@@ -4,6 +4,7 @@ import summaryTextStartup from "./summaryText";
 import dataPivotStartup from "./dataPivot";
 import heatmapTemplateStartup from "./heatmapTemplate";
 import renderPlotlyFromApi from "./renderPlotlyFromApi";
+import {summaryTableViewStartup, summaryTableEditStartup} from "./summaryTable";
 
 export {
     summaryStartup,
@@ -12,4 +13,6 @@ export {
     dataPivotStartup,
     heatmapTemplateStartup,
     renderPlotlyFromApi,
+    summaryTableViewStartup,
+    summaryTableEditStartup,
 };

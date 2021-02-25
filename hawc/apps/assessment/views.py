@@ -199,6 +199,11 @@ class Contact(LoginRequiredMixin, MessageMixin, FormView):
     success_url = reverse_lazy("home")
     success_message = "Your message has been sent!"
 
+    def dispatch(self, request, *args, **kwargs):
+        if settings.EXTERNAL_CONTACT_US:
+            return HttpResponseRedirect(settings.EXTERNAL_CONTACT_US)
+        return super().dispatch(request, *args, **kwargs)
+
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs.update(
@@ -624,16 +629,6 @@ class AdminAssessmentSize(TemplateView):
     @method_decorator(staff_member_required)
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
-
-
-class Healthcheck(View):
-    """
-    Healthcheck view check; ensure django server can serve requests.
-    """
-
-    def get(self, request, *args, **kwargs):
-        # TODO - add cache check and celery worker check
-        return HttpResponse(json.dumps({"status": "ok"}), content_type="application/json")
 
 
 # log / blog

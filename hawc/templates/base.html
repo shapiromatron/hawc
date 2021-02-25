@@ -10,22 +10,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="NONE,NOARCHIVE" />
     <title>{% block title %}Health Assessment Workspace Collaborative (HAWC){% endblock %}</title>
-    <link id="favicon" href="{% static 'img/favicon-256.png' %}" rel="shortcut icon" sizes="256x256" />
-    <link id="favicon" href="{% static 'img/favicon-128.png' %}" rel="shortcut icon" sizes="128x128" />
-    <link id="favicon" href="{% static 'img/favicon-64.png' %}" rel="shortcut icon" sizes="64x64" />
-    <link id="favicon" href="{% static 'img/favicon-32.png' %}" rel="shortcut icon" sizes="32x32" />
+
+    {% if extra_branding and flavor == "EPA" %}
+      <link rel="shortcut icon" href="https://www.epa.gov/sites/all/themes/epa/favicon.ico" type="image/vnd.microsoft.icon" />
+    {% else %}
+      <link id="favicon" href="{% static 'img/favicon-256.png' %}" rel="shortcut icon" sizes="256x256" />
+      <link id="favicon" href="{% static 'img/favicon-128.png' %}" rel="shortcut icon" sizes="128x128" />
+      <link id="favicon" href="{% static 'img/favicon-64.png' %}" rel="shortcut icon" sizes="64x64" />
+      <link id="favicon" href="{% static 'img/favicon-32.png' %}" rel="shortcut icon" sizes="32x32" />
+    {% endif %}
+
     {% block extrahead %}{% endblock %}
     {% include 'includes/css.html' %}
   </head>
   <body>
 
     {% if user.is_superuser or SERVER_ROLE != 'production' %}
-    {% include 'includes/environment_banner.html' %}
+      {% include 'includes/environment_banner.html' %}
     {% endif %}
 
     {% cache 3600 header %}
     {% if extra_branding and flavor == "EPA" %}
-    {% include 'includes/epa/header.html' %}
+      {% include 'includes/epa/header.html' %}
     {% endif %}
     {% endcache %}
 
@@ -39,20 +45,10 @@
             {% block breadcrumbs_outer %}{% endblock breadcrumbs_outer %}
 
             {% include "includes/messages.html" %}
-
             {% if UA_SUPPORTED is False %}
-            <div class="alert alert-danger">
-              <p><b>Warning:</b> Your current browser has not been tested extensively with this website, which may result in
-                some some errors with functionality. The following browsers are fully supported:</p>
-              <ul>
-                <li><a href="https://www.google.com/chrome/" target="_blank">Google Chrome</a></li>
-                <li><a href="https://www.mozilla.org/firefox/" target="_blank">Mozilla Firefox</a></li>
-                <li><a href="https://www.microsoft.com/en-us/edge" target="_blank">Microsoft Edge</a></li>
-                <li><a href="https://www.apple.com/safari/" target="_blank">Apple Safari</a></li>
-              </ul>
-              <p>Please use a different browser.</p>
-            </div>
+              {% include "includes/unsupported_browser.html" %}
             {% endif %}
+
             {% block content_header %}{% endblock content_header %}
             {% block content_outer %}
               <div class="row">
@@ -66,7 +62,13 @@
       </div>
     {% endblock content_row_outer %}
 
-    {% include "includes/footer.html" %}
+    {% cache 3600 footer %}
+    {% if extra_branding and flavor == "EPA" %}
+      {% include "./includes/epa/footer.html" %}
+    {% else %}
+      {% include "./includes/base/footer.html" %}
+    {% endif %}
+    {% endcache %}
 
     {% if debug %}
     <script type="text/javascript" src="{% static 'debug/jquery/3.5.1/jquery.js' %}"></script>

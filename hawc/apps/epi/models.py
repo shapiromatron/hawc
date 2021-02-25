@@ -701,6 +701,7 @@ class Group(models.Model):
         choices=IS_CONTROL_CHOICES,
         help_text="Should this group be interpreted as a null/control group, if applicable",
         null=True,
+        blank=True,
     )
     comments = models.TextField(
         blank=True, help_text="Provide additional group or extraction details if necessary",

@@ -550,6 +550,7 @@ class DosingRegime(models.Model):
         default=False,
         help_text="Was a positive control used?",
         null=True,
+        blank=True,
     )
     negative_control = models.CharField(
         max_length=2,

@@ -11,6 +11,7 @@ router.register(r"dataset", api.DatasetViewset, basename="dataset")
 router.register(r"jobs", api.JobViewset, basename="jobs")
 router.register(r"logs", api.LogViewset, basename="logs")
 router.register(r"dsstox", api.DssToxViewset, basename="dsstox")
+router.register(r"healthcheck", api.HealthcheckViewset, basename="healthcheck")
 
 
 app_name = "assessment"

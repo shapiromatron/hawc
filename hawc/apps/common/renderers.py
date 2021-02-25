@@ -7,7 +7,34 @@ from rest_framework import status
 from rest_framework.renderers import BaseRenderer
 from rest_framework.response import Response
 
-from .helper import FlatExport, rename_duplicate_columns
+from .helper import FlatExport, ReportExport, rename_duplicate_columns
+
+
+class DocxRenderer(BaseRenderer):
+    """
+    Renders a ReportExport object into a docx file.
+    """
+
+    media_type = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    format = ""
+
+    def render(self, data, accepted_media_type=None, renderer_context=None):
+        # return error or OPTIONS as JSON
+        status_code = renderer_context["response"].status_code
+        method = renderer_context["request"].method if "request" in renderer_context else None
+
+        # throw error if we don't have a ReportExport
+        if not isinstance(data, ReportExport):
+            success = status.is_success(status_code)
+            if (method == "OPTIONS" or not success) and isinstance(data, dict):
+                return json.dumps(data)
+            raise ValueError(f"Expecting `ReportExport`; got {type(data)}")
+
+        file = BytesIO()
+        data.docx.save(file)
+        response = renderer_context["response"]
+        response["Content-Disposition"] = f"attachment; filename={data.filename}.docx"
+        return file.getvalue()
 
 
 class PandasBaseRenderer(BaseRenderer):

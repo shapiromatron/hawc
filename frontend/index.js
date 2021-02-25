@@ -19,6 +19,8 @@ import {
     dataPivotStartup,
     heatmapTemplateStartup,
     renderPlotlyFromApi,
+    summaryTableViewStartup,
+    summaryTableEditStartup,
 } from "./summary";
 import utils from "./utils";
 
@@ -42,6 +44,8 @@ window.app = {
     studyStartup,
     summaryStartup,
     summaryFormsStartup,
+    summaryTableViewStartup,
+    summaryTableEditStartup,
     summaryTextStartup,
     textCleanupStartup,
     utils,

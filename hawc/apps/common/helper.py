@@ -15,6 +15,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import QuerySet
 from django.utils import html
 from django.utils.encoding import force_str
+from docx.document import Document
 from rest_framework.renderers import JSONRenderer
 
 
@@ -234,6 +235,16 @@ class SerializerHelper:
     def clear_cache(cls, Model, filters):
         ids = Model.objects.filter(**filters).values_list("id", flat=True)
         cls.delete_caches(Model, ids)
+
+
+@dataclass(frozen=True)
+class ReportExport:
+    """
+    Document export.
+    """
+
+    docx: Document
+    filename: str
 
 
 @dataclass(frozen=True)
