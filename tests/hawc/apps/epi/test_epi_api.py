@@ -769,6 +769,155 @@ class TestResultApi:
         generic_test_scenarios(client, url, delete_scenarios)
 
 
+@pytest.mark.django_db
+class TestGroupResultApi:
+    def get_upload_data(self, overrides=None):
+        group = generic_get_any(models.Group)
+        result = generic_get_any(models.Result)
+
+        data = {
+            "n": 50,
+            "main_finding_support": models.GroupResult.MAIN_FINDING_CHOICES[2][0],
+            "p_value_qualifier": models.GroupResult.P_VALUE_QUALIFIER_CHOICES[1][0],
+            "p_value": 0.5,
+            "group": group.id,
+            "result": result.id,
+            "estimate": 1,
+            "variance": 2,
+            "lower_ci": 3,
+            "upper_ci": 4,
+            "lower_range": 5,
+            "upper_range": 6,
+            "is_main_finding": False,
+        }
+
+        data = generic_merge_overrides(data, overrides)
+
+        return data
+
+    def test_permissions(self, db_keys):
+        url = reverse("epi:api:group-result-list")
+        generic_perm_tester(url, self.get_upload_data())
+
+    def test_bad_requests(self, db_keys):
+        url = reverse("epi:api:group-result-list")
+        client = APIClient()
+        assert client.login(username="admin@hawcproject.org", password="pw") is True
+
+        scenarios = (
+            {"desc": "empty payload doesn't crash", "expected_code": 400, "data": {}},
+            {
+                "desc": "main_finding_support must be valid",
+                "expected_code": 400,
+                "expected_keys": {"main_finding_support"},
+                "data": self.get_upload_data({"main_finding_support": "badval"}),
+            },
+            {
+                "desc": "p_value_qualifier must be valid",
+                "expected_code": 400,
+                "expected_keys": {"p_value_qualifier"},
+                "data": self.get_upload_data({"p_value_qualifier": "badval"}),
+            },
+            {
+                "desc": "group/result must be valid",
+                "expected_code": 400,
+                "expected_keys": {"group", "result"},
+                "data": self.get_upload_data({"group": 999, "result": 999}),
+            },
+            {
+                "desc": "expect numeric types",
+                "expected_code": 400,
+                "expected_keys": {"lower_ci", "upper_range"},
+                "data": self.get_upload_data({"lower_ci": "bad val", "upper_range": "xxx"}),
+            },
+        )
+
+        generic_test_scenarios(client, url, scenarios)
+
+    def test_valid_requests(self, db_keys):
+        url = reverse("epi:api:group-result-list")
+        client = APIClient()
+        assert client.login(username="admin@hawcproject.org", password="pw") is True
+
+        just_created_groupresult_id = None
+
+        base_data = self.get_upload_data()
+
+        def groupresult_lookup_test(resp):
+            nonlocal just_created_groupresult_id
+
+            groupresult_id = resp.json()["id"]
+            groupresult = models.GroupResult.objects.get(id=groupresult_id)
+            assert groupresult.n == base_data["n"]
+
+            if just_created_groupresult_id is None:
+                just_created_groupresult_id = groupresult_id
+
+        def altered_groupresult_test(resp):
+            nonlocal just_created_groupresult_id
+
+            groupresult_id = resp.json()["id"]
+            groupresult = models.GroupResult.objects.get(id=groupresult_id)
+            assert groupresult.n == 51
+            assert groupresult_id == just_created_groupresult_id
+
+        def deleted_groupresult_test(resp):
+            nonlocal just_created_groupresult_id
+
+            assert resp.data is None
+            try:
+                groupresult_that_should_not_exist = models.GroupResult.objects.get(
+                    id=just_created_groupresult_id
+                )
+                assert groupresult_that_should_not_exist is None
+            except ObjectDoesNotExist:
+                # this is CORRECT behavior - we WANT the object to not exist
+                pass
+
+        create_scenarios = (
+            {
+                "desc": "basic groupresult creation",
+                "expected_code": 201,
+                "expected_keys": {"id"},
+                "data": self.get_upload_data(),
+                "post_request_test": groupresult_lookup_test,
+            },
+            {
+                "desc": "create with named main_finding",
+                "expected_code": 201,
+                "expected_keys": {"id"},
+                "data": self.get_upload_data(
+                    {"main_finding_support": models.GroupResult.MAIN_FINDING_CHOICES[2][1]}
+                ),
+                "post_request_test": groupresult_lookup_test,
+            },
+        )
+        generic_test_scenarios(client, url, create_scenarios)
+
+        url = f"{url}{just_created_groupresult_id}/"
+        update_scenarios = (
+            {
+                "desc": "basic groupresult update",
+                "expected_code": 200,
+                "expected_keys": {"id"},
+                "data": {"n": 51},
+                "method": "PATCH",
+                "post_request_test": altered_groupresult_test,
+            },
+        )
+        generic_test_scenarios(client, url, update_scenarios)
+
+        delete_scenarios = (
+            {
+                "desc": "delete",
+                "expected_code": 204,
+                "method": "DELETE",
+                "post_request_test": deleted_groupresult_test,
+            },
+        )
+        generic_test_scenarios(client, url, delete_scenarios)
+
+
 def generic_test_scenarios(client, url, scenarios):
     print(f">>>>> testing scenarios against '{url}'...")
     for scenario in scenarios:
