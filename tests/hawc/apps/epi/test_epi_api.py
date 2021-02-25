@@ -1037,6 +1037,187 @@ class TestComparisonSetApi:
         generic_test_scenarios(client, url, delete_scenarios)
 
 
+@pytest.mark.django_db
+class TestGroupApi:
+    def get_upload_data(self, overrides=None):
+        comparison_set = generic_get_any(models.ComparisonSet)
+
+        data = {
+            "name": "test group",
+            "comparison_set": comparison_set.id,
+            "group_id": 0,
+            "numeric": 1,
+            "comparative_name": "comparative name",
+            "sex": "F",
+            "eligible_n": 500,
+            "invited_n": 250,
+            "participant_n": 10,
+            "isControl": True,
+            "comments": "test comments",
+            "ethnicities": [],
+        }
+
+        data = generic_merge_overrides(data, overrides)
+
+        return data
+
+    def test_permissions(self, db_keys):
+        url = reverse("epi:api:group-list")
+        generic_perm_tester(url, self.get_upload_data())
+
+    def test_bad_requests(self, db_keys):
+        url = reverse("epi:api:group-list")
+        client = APIClient()
+        assert client.login(username="admin@hawcproject.org", password="pw") is True
+
+        scenarios = (
+            {"desc": "empty payload doesn't crash", "expected_code": 400, "data": {}},
+            {
+                "desc": "comparison set must be valid",
+                "expected_code": 400,
+                "expected_keys": {"comparison_set"},
+                "data": self.get_upload_data({"comparison_set": 999}),
+            },
+            {
+                "desc": "sex must be a valid choice",
+                "expected_code": 400,
+                "expected_keys": {"sex"},
+                "data": self.get_upload_data({"sex": "invalid choice"}),
+            },
+            {
+                "desc": "ethnicities cannot be an invalid id",
+                "expected_code": 400,
+                "data": self.get_upload_data({"ethnicities": [999]}),
+            },
+            {
+                "desc": "ethnicities cannot be an invalid string",
+                "expected_code": 400,
+                "data": self.get_upload_data({"ethnicities": ["not a real option"]}),
+            },
+            {
+                "desc": "eligible/isControl/etc. need valid values",
+                "expected_code": 400,
+                "expected_keys": {"eligible_n", "isControl"},
+                "data": self.get_upload_data({"eligible_n": "not numeric", "isControl": {}}),
+            },
+        )
+
+        generic_test_scenarios(client, url, scenarios)
+
+    def test_valid_requests(self, db_keys):
+        url = reverse("epi:api:group-list")
+        client = APIClient()
+        assert client.login(username="admin@hawcproject.org", password="pw") is True
+
+        ethnicity = generic_get_any(models.Ethnicity)
+
+        just_created_group_id = None
+
+        base_data = self.get_upload_data()
+
+        def group_lookup_test(resp):
+            nonlocal just_created_group_id
+
+            group_id = resp.json()["id"]
+            group = models.Group.objects.get(id=group_id)
+            assert group.name == base_data["name"]
+
+            if just_created_group_id is None:
+                just_created_group_id = group_id
+
+        def group_lookup_tests_with_ethnicities(resp):
+            group_id = resp.json()["id"]
+            group = models.Group.objects.get(id=group_id)
+            assert group.name == base_data["name"]
+
+            found_ethnicity = False
+            for e in group.ethnicities.all():
+                if e.id == ethnicity.id:
+                    found_ethnicity = True
+
+            assert found_ethnicity is True
+
+        def group_lookup_tests_with_two_ethnicities(resp):
+            group_lookup_tests_with_ethnicities(resp, 2)
+
+        def group_lookup_tests_with_one_ethnicity(resp):
+            group_lookup_tests_with_ethnicities(resp, 1)
+
+        def altered_group_test(resp):
+            nonlocal just_created_group_id
+
+            group_id = resp.json()["id"]
+            group = models.Group.objects.get(id=group_id)
+            assert group.name == "updated"
+            assert group_id == just_created_group_id
+
+        def deleted_group_test(resp):
+            nonlocal just_created_group_id
+
+            assert resp.data is None
+            try:
+                group_that_should_not_exist = models.Group.objects.get(id=just_created_group_id)
+                assert group_that_should_not_exist is None
+            except ObjectDoesNotExist:
+                # this is CORRECT behavior - we WANT the object to not exist
+                pass
+
+        create_scenarios = (
+            {
+                "desc": "basic group creation",
+                "expected_code": 201,
+                "expected_keys": {"id"},
+                "data": self.get_upload_data(),
+                "post_request_test": group_lookup_test,
+            },
+            {
+                "desc": "create with named sex",
+                "expected_code": 201,
+                "expected_keys": {"id"},
+                "data": self.get_upload_data({"sex": "female"}),
+                "post_request_test": group_lookup_test,
+            },
+            {
+                "desc": "include ethnicities by name",
+                "expected_code": 201,
+                "expected_keys": {"id"},
+                "data": self.get_upload_data({"ethnicities": [ethnicity.name.lower()]}),
+                "post_request_test": group_lookup_tests_with_ethnicities,
+            },
+            {
+                "desc": "include ethnicities by id",
+                "expected_code": 201,
+                "expected_keys": {"id"},
+                "data": self.get_upload_data({"ethnicities": [ethnicity.id]}),
+                "post_request_test": group_lookup_tests_with_ethnicities,
+            },
+        )
+        generic_test_scenarios(client, url, create_scenarios)
+
+        url = f"{url}{just_created_group_id}/"
+        update_scenarios = (
+            {
+                "desc": "basic group update",
+                "expected_code": 200,
+                "expected_keys": {"id"},
+                "data": {"name": "updated"},
+                "method": "PATCH",
+                "post_request_test": altered_group_test,
+            },
+        )
+        generic_test_scenarios(client, url, update_scenarios)
+
+        delete_scenarios = (
+            {
+                "desc": "group delete",
+                "expected_code": 204,
+                "method": "DELETE",
+                "post_request_test": deleted_group_test,
+            },
+        )
+        generic_test_scenarios(client, url, delete_scenarios)
+
+
 def generic_test_scenarios(client, url, scenarios):
     print(f">>>>> testing scenarios against '{url}'...")
     for scenario in scenarios:
