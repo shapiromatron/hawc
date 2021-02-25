@@ -569,6 +569,206 @@ class TestOutcomeApi:
         generic_test_scenarios(client, url, delete_scenarios)
 
 
+@pytest.mark.django_db
+class TestResultApi:
+    def get_upload_data(self, overrides=None):
+        outcome = generic_get_any(models.Outcome)
+        comp_set = generic_get_any(models.ComparisonSet)
+        result_metric = generic_get_any(models.ResultMetric)
+
+        data = {
+            "name": "result name",
+            "dose_response": "monotonic",
+            "metric": result_metric.id,
+            "statistical_power": 2,
+            "outcome": outcome.id,
+            "estimate_type": "point",
+            "variance_type": 4,
+            "comparison_set": comp_set.id,
+            "metric_description": "test met desc",
+            "data_location": "test data loc",
+            "population_description": "test pop desc",
+            "dose_response_details": "test dose response details",
+            "prevalence_incidence": "test prevalence incidence",
+            "statistical_power_details": "test stat power details",
+            "statistical_test_results": "test stat test results",
+            "trend_test": "test trend test",
+            "ci_units": 0.5,
+            "factors_applied": [],
+            "factors_considered": [],
+            "comments": "test comments",
+        }
+
+        data = generic_merge_overrides(data, overrides)
+
+        return data
+
+    def test_permissions(self, db_keys):
+        url = reverse("epi:api:result-list")
+        generic_perm_tester(url, self.get_upload_data())
+
+    def test_bad_requests(self, db_keys):
+        url = reverse("epi:api:result-list")
+        client = APIClient()
+        assert client.login(username="admin@hawcproject.org", password="pw") is True
+
+        scenarios = (
+            {"desc": "empty payload doesn't crash", "expected_code": 400, "data": {}},
+            {
+                "desc": "outcome must be valid",
+                "expected_code": 400,
+                "expected_keys": {"outcome"},
+                "data": self.get_upload_data({"outcome": 999}),
+            },
+            {
+                "desc": "metric/comparison_Set must be valid",
+                "expected_code": 400,
+                "expected_keys": {"metric", "comparison_set"},
+                "data": self.get_upload_data({"metric": 999, "comparison_set": 999}),
+            },
+            {
+                "desc": "factors_applied / considered cannot have invalid id's",
+                "expected_code": 400,
+                "data": self.get_upload_data(
+                    {"factors_applied": [999], "factors_considered": [999]}
+                ),
+            },
+            {
+                "desc": "estimate/variance type need valid values",
+                "expected_code": 400,
+                "expected_keys": {"estimate_type", "variance_type"},
+                "data": self.get_upload_data({"estimate_type": 999, "variance_type": "bad_value"}),
+            },
+            {
+                "desc": "expect numeric types",
+                "expected_code": 400,
+                "expected_keys": {"ci_units"},
+                "data": self.get_upload_data({"ci_units": "bad val"}),
+            },
+        )
+
+        generic_test_scenarios(client, url, scenarios)
+
+    def test_valid_requests(self, db_keys):
+        url = reverse("epi:api:result-list")
+        client = APIClient()
+        assert client.login(username="admin@hawcproject.org", password="pw") is True
+
+        adj_factor = generic_get_any(models.AdjustmentFactor)
+
+        just_created_result_id = None
+
+        base_data = self.get_upload_data()
+
+        def result_lookup_test(resp):
+            nonlocal just_created_result_id
+
+            result_id = resp.json()["id"]
+            result = models.Result.objects.get(id=result_id)
+            assert result.name == base_data["name"]
+
+            if just_created_result_id is None:
+                just_created_result_id = result_id
+
+        def result_lookup_test_with_factors(resp):
+            nonlocal just_created_result_id
+
+            result_id = resp.json()["id"]
+            result = models.Result.objects.get(id=result_id)
+            assert result.name == base_data["name"]
+
+            found_existing_by_id = False
+            found_existing_by_description = False
+            found_new_one = False
+            for af in result.factors_applied:
+                if af.id == adj_factor.id:
+                    found_existing_by_description = True
+                elif af.description == "on the fly":
+                    found_new_one = True
+
+            for af in result.factors_considered:
+                if af.id == adj_factor.id:
+                    found_existing_by_id = True
+
+            assert (
+                found_existing_by_id is True
+                and found_existing_by_description is True
+                and found_new_one is True
+            )
+
+        def altered_result_test(resp):
+            nonlocal just_created_result_id
+
+            result_id = resp.json()["id"]
+            result = models.Result.objects.get(id=result_id)
+            assert result.name == "updated"
+            assert result_id == just_created_result_id
+
+        def deleted_result_test(resp):
+            nonlocal just_created_result_id
+
+            assert resp.data is None
+            try:
+                result_that_should_not_exist = models.Result.objects.get(id=just_created_result_id)
+                assert result_that_should_not_exist is None
+            except ObjectDoesNotExist:
+                # this is CORRECT behavior - we WANT the object to not exist
+                pass
+
+        create_scenarios = (
+            {
+                "desc": "basic result creation",
+                "expected_code": 201,
+                "expected_keys": {"id"},
+                "data": self.get_upload_data(),
+                "post_request_test": result_lookup_test,
+            },
+            {
+                "desc": "create with numeric est. type and named variance type",
+                "expected_code": 201,
+                "expected_keys": {"id"},
+                "data": self.get_upload_data({"estimate_type": 1, "variance_type": "sd"}),
+                "post_request_test": result_lookup_test,
+            },
+            {
+                "desc": "add some adjustment factors",
+                "expected_code": 201,
+                "expected_keys": {"id"},
+                "data": self.get_upload_data(
+                    {
+                        "factors_applied": [adj_factor.description, "on the fly"],
+                        "factors_considered": [adj_factor.id],
+                    }
+                ),
+                "post_request_test": result_lookup_test_with_factors,
+            },
+        )
+        generic_test_scenarios(client, url, create_scenarios)
+
+        url = f"{url}{just_created_result_id}/"
+        update_scenarios = (
+            {
+                "desc": "basic result update",
+                "expected_code": 200,
+                "expected_keys": {"id"},
+                "data": {"name": "updated"},
+                "method": "PATCH",
+                "post_request_test": altered_result_test,
+            },
+        )
+        generic_test_scenarios(client, url, update_scenarios)
+
+        delete_scenarios = (
+            {
+                "desc": "delete",
+                "expected_code": 204,
+                "method": "DELETE",
+                "post_request_test": deleted_result_test,
+            },
+        )
+        generic_test_scenarios(client, url, delete_scenarios)
+
+
 def generic_test_scenarios(client, url, scenarios):
     print(f">>>>> testing scenarios against '{url}'...")
     for scenario in scenarios:
@@ -603,9 +803,29 @@ def generic_perm_tester(url, data):
     client = APIClient()
     assert client.login(username="reviewer@hawcproject.org", password="pw") is True
     response = client.post(url, data, format="json")
+    print(f">>>>> response == response.status_code / {response.data}")
     assert response.status_code == 403
 
     # public shouldn't be able to create
     client = APIClient()
     response = client.post(url, data, format="json")
     assert response.status_code == 403
+
+
+def generic_get_any(model_class):
+    all_of_type = model_class.objects.all()
+    for obj in all_of_type:
+        return obj
+
+
+def generic_merge_overrides(data, overrides):
+    if overrides is not None:
+        for key in overrides:
+            val = overrides[key]
+            if val is None:
+                if key in data:
+                    del data[key]
+            else:
+                data[key] = val
+
+    return data

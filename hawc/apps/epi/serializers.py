@@ -297,7 +297,7 @@ class ResultSerializer(serializers.ModelSerializer):
     # factors_applied = AdjustmentFactorSerializer(many=True, read_only=True)
     # factors_considered = AdjustmentFactorSerializer(many=True, read_only=True)
     url = serializers.CharField(source="get_absolute_url", read_only=True)
-    resulttags = EffectTagsSerializer()
+    resulttags = EffectTagsSerializer(read_only=True)
     results = GroupResultSerializer(many=True, read_only=True)
     comparison_set = SimpleComparisonSetSerializer()
 

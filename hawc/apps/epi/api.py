@@ -430,13 +430,16 @@ class Result(PermCheckerMixin, AssessmentEditViewset):
         # first - what assessment are we working in?
         assessment_id = None
         if during_create:
-            outcome_id = request.data["outcome"]
+            if "outcome" in request.data:
+                outcome_id = request.data["outcome"]
 
-            try:
-                outcome = models.Outcome.objects.get(id=outcome_id)
-                assessment_id = outcome.get_assessment().id
-            except ObjectDoesNotExist:
-                raise ValidationError("Invalid outcome_id")
+                try:
+                    outcome = models.Outcome.objects.get(id=outcome_id)
+                    assessment_id = outcome.get_assessment().id
+                except ObjectDoesNotExist:
+                    raise ValidationError({"outcome": "Invalid outcome id supplied"})
+            else:
+                raise ValidationError({"outcome": "No outcome id supplied"})
         else:
             assessment_id = self.get_object().get_assessment().id
 
@@ -477,7 +480,16 @@ class Result(PermCheckerMixin, AssessmentEditViewset):
     @transaction.atomic
     def create(self, request, *args, **kwargs):
         self.handle_adjustment_factors(request, True)
-        return super().create(request, *args, **kwargs)
+        # return super().create(request, *args, **kwargs)
+
+        # default behavior except we need to refresh the serializer to get the adjustment factors to show up in the return...
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+
+        instance = self.model.objects.get(id=serializer.data["id"])
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def perform_create(self, serializer):
         super().perform_create(serializer)
