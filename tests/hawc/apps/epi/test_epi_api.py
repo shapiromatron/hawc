@@ -6,7 +6,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.urls import reverse
 from rest_framework.test import APIClient
 
-from hawc.apps.assessment.models import Assessment
+from hawc.apps.assessment.models import Assessment, DoseUnits
 from hawc.apps.epi import models
 
 DATA_ROOT = Path(__file__).parents[3] / "data/api"
@@ -1396,6 +1396,7 @@ class TestGroupNumericalDescriptionsApi:
 class TestExposureApi:
     def get_upload_data(self, overrides=None):
         study_pop = generic_get_any(models.StudyPopulation)
+        dose_unit = generic_get_any(DoseUnits)
 
         data = {
             "name": "test expo",
@@ -1410,7 +1411,7 @@ class TestExposureApi:
             "duration": "duration data",
             "exposure_distribution": "distro data",
             "study_population": study_pop.id,
-            "metric_units": "kilometer",
+            "metric_units": dose_unit.id,
             "n": 9,
             "description": "desc",
             "central_tendencies": [
@@ -1476,6 +1477,8 @@ class TestExposureApi:
         client = APIClient()
         assert client.login(username="admin@hawcproject.org", password="pw") is True
 
+        dose_unit = generic_get_any(DoseUnits)
+
         just_created_exposure_id = None
 
         new_dtxsid = "DTXSID1020190"
@@ -1497,6 +1500,14 @@ class TestExposureApi:
             exposure = models.Exposure.objects.get(id=exposure_id)
             assert exposure.name == base_data["name"]
             assert exposure.dtxsid.dtxsid == new_dtxsid
+
+        def exposure_lookup_test_with_new_metric_unit(resp):
+            exposure_id = resp.json()["id"]
+            exposure = models.Exposure.objects.get(id=exposure_id)
+            assert exposure.name == base_data["name"]
+
+            metric_units = exposure.metric_units
+            assert metric_units.name == "on the fly"
 
         def altered_exposure_test(resp):
             nonlocal just_created_exposure_id
@@ -1533,6 +1544,20 @@ class TestExposureApi:
                 "expected_keys": {"id"},
                 "data": self.get_upload_data({"dtxsid": new_dtxsid}),
                 "post_request_test": exposure_lookup_test_with_new_dtxsid,
+            },
+            {
+                "desc": "dose unit by name",
+                "expected_code": 201,
+                "expected_keys": {"id"},
+                "data": self.get_upload_data({"metric_units": dose_unit.name}),
+                "post_request_test": exposure_lookup_test,
+            },
+            {
+                "desc": "new dose unit",
+                "expected_code": 201,
+                "expected_keys": {"id"},
+                "data": self.get_upload_data({"metric_units": "on the fly"}),
+                "post_request_test": exposure_lookup_test_with_new_metric_unit,
             },
         )
         generic_test_scenarios(client, url, create_scenarios)
