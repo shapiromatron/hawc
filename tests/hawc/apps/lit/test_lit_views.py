@@ -1,7 +1,7 @@
 import pytest
 from django.test.client import Client
 from django.urls import reverse
-from pytest_django.asserts import assertTemplateUsed, assertTemplateNotUsed
+from pytest_django.asserts import assertTemplateNotUsed, assertTemplateUsed
 
 
 @pytest.mark.django_db

@@ -1,5 +1,5 @@
-from django.core.exceptions import ObjectDoesNotExist
 import pytest
+from django.core.exceptions import ObjectDoesNotExist
 
 from hawc.apps.lit.models import Reference, ReferenceFilterTag
 
