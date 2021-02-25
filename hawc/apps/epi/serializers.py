@@ -131,16 +131,6 @@ class CentralTendencyPreviewSerializer(serializers.ModelSerializer):
         exclude = ("exposure",)
 
 
-class SimpleExposureSerializer(serializers.ModelSerializer):
-    url = serializers.CharField(source="get_absolute_url", read_only=True)
-    metric_units = DoseUnitsSerializer()
-    central_tendencies = CentralTendencySerializer(many=True)
-
-    class Meta:
-        model = models.Exposure
-        fields = "__all__"
-
-
 class ComparisonSetLinkSerializer(serializers.ModelSerializer):
     url = serializers.CharField(source="get_absolute_url", read_only=True)
 
@@ -214,7 +204,7 @@ class StudyPopulationSerializer(IdLookupMixin, serializers.ModelSerializer):
         return instance
 
 
-class ExposureReadSerializer(serializers.ModelSerializer):
+class SimpleExposureSerializer(IdLookupMixin, serializers.ModelSerializer):
     dtxsid = DSSToxSerializer()
     study_population = StudyPopulationSerializer()
     url = serializers.CharField(source="get_absolute_url", read_only=True)
@@ -340,7 +330,7 @@ class ComparisonSetSerializer(serializers.ModelSerializer):
     # had some trouble getting this for work with FormIntegrationMixin;
     # related to the StudyPopulation/Outcome split which I don't fully understand...
     url = serializers.CharField(source="get_absolute_url", read_only=True)
-    exposure = ExposureReadSerializer(read_only=True)
+    exposure = SimpleExposureSerializer()
     outcome = OutcomeSerializer(read_only=True)
     study_population = StudyPopulationSerializer()
     groups = GroupSerializer(many=True, read_only=True)

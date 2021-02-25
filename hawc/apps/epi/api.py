@@ -234,7 +234,7 @@ class Exposure(ReadWriteSerializerMixin, PermCheckerMixin, AssessmentEditViewset
     perm_checker_key = "study_population"
     assessment_filter_args = "study_population__study__assessment"
     model = models.Exposure
-    read_serializer_class = serializers.ExposureReadSerializer
+    read_serializer_class = serializers.SimpleExposureSerializer
     write_serializer_class = serializers.ExposureWriteSerializer
 
     def handle_cts(self, request, during_update=False):

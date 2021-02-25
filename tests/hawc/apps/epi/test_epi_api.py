@@ -279,7 +279,7 @@ class TestStudyPopulationApi:
 
         delete_scenarios = (
             {
-                "desc": "delete",
+                "desc": "study pop delete",
                 "expected_code": 204,
                 "method": "DELETE",
                 "post_request_test": deleted_study_pop_test,
@@ -404,7 +404,7 @@ class TestCriteriaApi:
 
         delete_scenarios = (
             {
-                "desc": "delete",
+                "desc": "criteria delete",
                 "expected_code": 204,
                 "method": "DELETE",
                 "post_request_test": deleted_criteria_test,
@@ -560,7 +560,7 @@ class TestOutcomeApi:
 
         delete_scenarios = (
             {
-                "desc": "delete",
+                "desc": "outcome delete",
                 "expected_code": 204,
                 "method": "DELETE",
                 "post_request_test": deleted_outcome_test,
@@ -760,7 +760,7 @@ class TestResultApi:
 
         delete_scenarios = (
             {
-                "desc": "delete",
+                "desc": "result delete",
                 "expected_code": 204,
                 "method": "DELETE",
                 "post_request_test": deleted_result_test,
@@ -909,10 +909,129 @@ class TestGroupResultApi:
 
         delete_scenarios = (
             {
-                "desc": "delete",
+                "desc": "groupresult delete",
                 "expected_code": 204,
                 "method": "DELETE",
                 "post_request_test": deleted_groupresult_test,
+            },
+        )
+        generic_test_scenarios(client, url, delete_scenarios)
+
+
+@pytest.mark.django_db
+class TestComparisonSetApi:
+    def get_upload_data(self, overrides=None):
+        exposure = generic_get_any(models.Exposure)
+        study_pop = generic_get_any(models.StudyPopulation)
+
+        data = {
+            "name": "comparison set name",
+            "description": "test description",
+            "exposure": exposure.id,
+            "study_population": study_pop.id,
+        }
+
+        data = generic_merge_overrides(data, overrides)
+
+        return data
+
+    def test_permissions(self, db_keys):
+        url = reverse("epi:api:set-list")
+        generic_perm_tester(url, self.get_upload_data())
+
+    def test_bad_requests(self, db_keys):
+        url = reverse("epi:api:set-list")
+        client = APIClient()
+        assert client.login(username="admin@hawcproject.org", password="pw") is True
+
+        scenarios = (
+            {"desc": "empty payload doesn't crash", "expected_code": 400, "data": {}},
+            {
+                "desc": "exposure must be valid",
+                "expected_code": 400,
+                "expected_keys": {"exposure"},
+                "data": self.get_upload_data({"exposure": 999}),
+            },
+            {
+                "desc": "study population must be valid",
+                "expected_code": 400,
+                "expected_keys": {"study_population"},
+                "data": self.get_upload_data({"study_population": 999}),
+            },
+        )
+
+        generic_test_scenarios(client, url, scenarios)
+
+    def test_valid_requests(self, db_keys):
+        url = reverse("epi:api:set-list")
+        client = APIClient()
+        assert client.login(username="admin@hawcproject.org", password="pw") is True
+
+        just_created_comparison_set_id = None
+
+        base_data = self.get_upload_data()
+
+        def comparison_set_lookup_test(resp):
+            nonlocal just_created_comparison_set_id
+
+            comparison_set_id = resp.json()["id"]
+            comparison_set = models.ComparisonSet.objects.get(id=comparison_set_id)
+            assert comparison_set.name == base_data["name"]
+
+            if just_created_comparison_set_id is None:
+                just_created_comparison_set_id = comparison_set_id
+
+        def altered_comparison_set_test(resp):
+            nonlocal just_created_comparison_set_id
+
+            comparison_set_id = resp.json()["id"]
+            comparison_set = models.ComparisonSet.objects.get(id=comparison_set_id)
+            assert comparison_set.name == "updated"
+            assert comparison_set_id == just_created_comparison_set_id
+
+        def deleted_comparison_set_test(resp):
+            nonlocal just_created_comparison_set_id
+
+            assert resp.data is None
+            try:
+                comparison_set_that_should_not_exist = models.ComparisonSet.objects.get(
+                    id=just_created_comparison_set_id
+                )
+                assert comparison_set_that_should_not_exist is None
+            except ObjectDoesNotExist:
+                # this is CORRECT behavior - we WANT the object to not exist
+                pass
+
+        create_scenarios = (
+            {
+                "desc": "basic comparison_set creation",
+                "expected_code": 201,
+                "expected_keys": {"id"},
+                "data": self.get_upload_data(),
+                "post_request_test": comparison_set_lookup_test,
+            },
+        )
+        generic_test_scenarios(client, url, create_scenarios)
+
+        url = f"{url}{just_created_comparison_set_id}/"
+        update_scenarios = (
+            {
+                "desc": "basic comparison_set update",
+                "expected_code": 200,
+                "expected_keys": {"id"},
+                "data": {"name": "updated"},
+                "method": "PATCH",
+                "post_request_test": altered_comparison_set_test,
+            },
+        )
+        generic_test_scenarios(client, url, update_scenarios)
+
+        delete_scenarios = (
+            {
+                "desc": "comparison_set delete",
+                "expected_code": 204,
+                "method": "DELETE",
+                "post_request_test": deleted_comparison_set_test,
             },
         )
         generic_test_scenarios(client, url, delete_scenarios)
