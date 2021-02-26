@@ -160,7 +160,6 @@ class SummaryTable(models.Model):
     class TableType(models.IntegerChoices):
         GENERIC = 0
         EVIDENCE_PROFILE = 1
-        EVIDENCE_INTEGRATION = 2
 
     TABLE_SCHEMA_MAP = {TableType.GENERIC: GenericTable}
 
