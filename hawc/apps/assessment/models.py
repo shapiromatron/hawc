@@ -915,6 +915,9 @@ class Log(models.Model):
     assessment = models.ForeignKey(
         Assessment, blank=True, null=True, related_name="logs", on_delete=models.CASCADE
     )
+    user = models.ForeignKey(
+        HAWCUser, blank=True, null=True, related_name="logs", on_delete=models.SET_NULL
+    )
     message = models.TextField()
 
     created = models.DateTimeField(auto_now_add=True)
