@@ -958,8 +958,23 @@ class Content(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        ordering = ("-created",)
+
     def __str__(self) -> str:
         return self.get_content_type_display()
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        self.clear_cache()
+
+    def render(self, context):
+        template = engines["django"].from_string(self.template)
+        return template.render(context)
+
+    def clear_cache(self):
+        key = self.get_cache_key(self.content_type)
+        cache.delete(key)
 
     @property
     def template_truncated(self):
@@ -968,10 +983,6 @@ class Content(models.Model):
     @classmethod
     def get_cache_key(cls, content_type: ContentTypeChoices) -> str:
         return f"assessment.Content.{content_type}"
-
-    def render(self, context):
-        template = engines["django"].from_string(self.template)
-        return template.render(context)
 
     @classmethod
     def rendered_page(cls, content_type: ContentTypeChoices, context: Dict) -> str:
@@ -982,17 +993,6 @@ class Content(models.Model):
             html = obj.render(context)
             cache.set(key, html, 3600)
         return html
-
-    def clear_cache(self):
-        key = self.get_cache_key(self.content_type)
-        cache.delete(key)
-
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-        self.clear_cache()
-
-    class Meta:
-        ordering = ("-created",)
 
 
 reversion.register(DSSTox)
