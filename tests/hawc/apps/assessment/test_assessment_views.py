@@ -52,6 +52,7 @@ class TestAboutPage:
         assert response.context["counts"]["users"] == 5
 
 
+@pytest.mark.django_db
 def test_unsupported_browser():
     """
     Ensure our unsupported browser warning will appear with some user agents
