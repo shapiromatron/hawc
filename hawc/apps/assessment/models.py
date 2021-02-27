@@ -947,13 +947,13 @@ class Blog(models.Model):
         return self.subject
 
 
-class ContentType(models.IntegerChoices):
+class ContentTypeChoices(models.IntegerChoices):
     HOMEPAGE = 1
     ABOUT = 2
 
 
 class Content(models.Model):
-    content_type = models.PositiveIntegerField(choices=ContentType.choices, unique=True)
+    content_type = models.PositiveIntegerField(choices=ContentTypeChoices.choices, unique=True)
     template = models.TextField()
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
@@ -966,17 +966,20 @@ class Content(models.Model):
         return truncatewords(self.template, 100)
 
     @classmethod
-    def get_cache_key(cls, content_type: ContentType) -> str:
+    def get_cache_key(cls, content_type: ContentTypeChoices) -> str:
         return f"assessment.Content.{content_type}"
 
+    def render(self, context):
+        template = engines["django"].from_string(self.template)
+        return template.render(context)
+
     @classmethod
-    def rendered(cls, content_type: ContentType, context: Dict) -> str:
+    def rendered_page(cls, content_type: ContentTypeChoices, context: Dict) -> str:
         key = cls.get_cache_key(content_type)
         html = cache.get(key)
         if html is None:
             obj = cls.objects.get(content_type=content_type)
-            template = engines["django"].from_string(obj.template)
-            html = template.render(context)
+            html = obj.render(context)
             cache.set(key, html, 3600)
         return html
 
