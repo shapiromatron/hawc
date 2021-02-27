@@ -75,7 +75,7 @@ class Reference extends Component {
             year = data.year || "";
 
         return (
-            <div>
+            <div className="referenceDetail">
                 <div className="sticky-offset-anchor" id={`referenceId${data.pk}`}></div>
                 {
                     <div className="ref_small">
