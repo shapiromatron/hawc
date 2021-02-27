@@ -170,7 +170,6 @@ input[type='number'] {
 
 /* About-us page */
 .videoTab iframe {
-    margin: 10px auto;
     display: block;
     border: 2px black solid;
 }
