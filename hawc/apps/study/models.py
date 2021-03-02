@@ -178,10 +178,10 @@ class Study(Reference):
                 children.extend(list(study.riskofbiases.all().order_by("id")))
 
             if study.bioassay:
-                children.extend(list(study.experiments.all()).order_by("id"))
+                children.extend(list(study.experiments.all().order_by("id")))
 
             if study.epi:
-                children.extend(list(study.study_populations.all()).order_by("id"))
+                children.extend(list(study.study_populations.all().order_by("id")))
 
             if study.in_vitro:
                 children.extend(
