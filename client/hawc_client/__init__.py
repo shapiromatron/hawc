@@ -716,12 +716,10 @@ class StudyClient(BaseClient):
 
         Args:
             reference_id (int): Reference ID to create study from.
-            short_citation (str): Short study citation, can be used as identifier.
-            full_citation (str): Complete study citation.
             data (Dict, optional): Dict containing any additional field/value pairings for the study.
                 Possible pairings are:
-                    full_citation: str
-                    short_citation: str
+                    short_citation (str): Short study citation, can be used as identifier.
+                    full_citation (str): Complete study citation.
                     bioassay: bool (study contains animal bioassay data)
                     epi: bool (study contains epidemiology data)
                     epi_meta: bool (study contains epidemiology meta-analysis data)
