@@ -140,6 +140,11 @@ class Study(Reference):
         attrs[parent_link_field.name] = reference
         for field in reference._meta.fields:
             attrs[field.name] = getattr(reference, field.name)
+        # Set default citations
+        if "full_citation" not in attrs:
+            attrs["full_citation"] = reference.ref_full_citation
+        if "short_citation" not in attrs:
+            attrs["short_citation"] = reference.ref_short_citation
         return Study.objects.create(**attrs)
 
     @classmethod
