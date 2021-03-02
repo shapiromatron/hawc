@@ -1,6 +1,8 @@
 import $ from "$";
 import {action, computed, observable} from "mobx";
 
+import h from "shared/utils/helpers";
+
 import Reference from "../Reference";
 import TagTree from "../TagTree";
 
@@ -11,7 +13,6 @@ class Store {
         this.tagtree.add_references(config.references);
     }
 
-    selectedTagNode = null;
     @observable untaggedReferencesSelected = false;
     @observable selectedTag = null;
     @observable config = null;
@@ -19,15 +20,8 @@ class Store {
     @observable selectedReferences = null;
     @observable selectedReferencesLoading = false;
 
-    @action.bound changeSelectedTagNodeClass(targetNode) {
-        if (this.selectedTagNode) {
-            $(this.selectedTagNode).removeClass("selected");
-        }
-        this.selectedTagNode = targetNode;
-        $(this.selectedTagNode).addClass("selected");
-    }
     @action.bound handleTagClick(selectedTag) {
-        this.changeSelectedTagNodeClass(event.target);
+        h.pushUrlParamsState("tag_id", selectedTag.data.pk);
         this.selectedTag = selectedTag;
         this.untaggedReferencesSelected = false;
         this.requestSelectedReferences();
@@ -35,6 +29,7 @@ class Store {
     @action.bound requestSelectedReferences() {
         this.selectedReferences = null;
         this.selectedReferencesLoading = false;
+        this.resetFilters();
         if (this.selectedTag === null) {
             return;
         }
@@ -45,13 +40,14 @@ class Store {
         }
         this.selectedReferencesLoading = true;
         $.get(url, results => {
-            this.selectedReferences = results.refs.map(datum => new Reference(datum, this.tagtree));
+            const references = Reference.sorted(
+                results.refs.map(datum => new Reference(datum, this.tagtree))
+            );
+            this.selectedReferences = references;
             this.selectedReferencesLoading = false;
         });
     }
     @action.bound handleUntaggedReferenceClick() {
-        this.changeSelectedTagNodeClass(event.target);
-
         const {assessment_id, search_id} = this.config;
 
         let url = `/lit/assessment/${assessment_id}/references/untagged/json/`;
@@ -59,6 +55,7 @@ class Store {
             url += `?search_id=${search_id}`;
         }
 
+        h.pushUrlParamsState("tag_id", null);
         this.selectedTag = null;
         this.untaggedReferencesSelected = true;
         this.selectedReferences = null;
@@ -68,12 +65,43 @@ class Store {
             this.selectedReferencesLoading = false;
         });
     }
+    @action.bound tryLoadTag() {
+        // if `tag_id` is set in the URL query string, try to load this tag ID.
+        const params = new URLSearchParams(location.search),
+            tagId = parseInt(params.get("tag_id")),
+            nestedTag = this.tagtree.getById(tagId);
+
+        if (nestedTag) {
+            this.handleTagClick(nestedTag);
+        }
+    }
+
+    @computed get filteredReferences() {
+        const filter = this.yearFilter,
+            quickFilterText = this.quickFilterText;
+        let refs = this.selectedReferences;
+
+        if (!refs) {
+            return refs;
+        }
+
+        if (quickFilterText) {
+            refs = refs.filter(d => d._quickSearchText.includes(quickFilterText));
+        }
+        if (filter) {
+            refs = refs.filter(d => d.data.year >= filter.min && d.data.year <= filter.max);
+        }
+        return refs;
+    }
 
     @computed get getActionLinks() {
         let links = [];
-        if (this.selectedTag === null || this.untaggedReferencesSelected === true) {
-            return links;
-        } else {
+        if (this.untaggedReferencesSelected === true && this.config.canEdit) {
+            links.push([
+                `/lit/assessment/${this.config.assessment_id}/tag/untagged/`,
+                "Tag untagged references",
+            ]);
+        } else if (this.selectedTag !== null) {
             links = [
                 [
                     `/lit/api/tags/${this.selectedTag.data.pk}/references/?format=xlsx`,
@@ -87,11 +115,35 @@ class Store {
             if (this.config.canEdit) {
                 links.push([
                     `/lit/tag/${this.selectedTag.data.pk}/tag/`,
-                    "Edit references with this tag (but not descendants)",
+                    "Tag references with this tag (but not descendants)",
                 ]);
             }
-            return links;
         }
+        return links;
+    }
+
+    // year filter
+    @observable yearFilter = null;
+    @action.bound updateYearFilter(filter) {
+        this.yearFilter = filter;
+    }
+
+    // quick search
+    @observable quickFilterText = "";
+    @action.bound changeQuickFilterText(text) {
+        this.quickFilterText = text.trim().toLowerCase();
+    }
+
+    @action.bound resetFilters() {
+        this.yearFilter = null;
+        this.quickFilterText = "";
+    }
+
+    // used in ReferenceTableMain
+    @observable activeReferenceTableTab = 0;
+    @action.bound changeActiveReferenceTableTab(index) {
+        this.activeReferenceTableTab = index;
+        return true;
     }
 }
 

@@ -127,7 +127,7 @@ class ReferenceQuerySerializer(serializers.Serializer):
             .select_related("study")
             .prefetch_related("searches", "identifiers")[:100]
         )
-        return [ref.get_json(json_encode=False) for ref in qs]
+        return [ref.to_dict() for ref in qs]
 
 
 class ReferenceTagsSerializer(serializers.ModelSerializer):

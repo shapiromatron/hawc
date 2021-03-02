@@ -140,6 +140,11 @@ class Study(Reference):
         attrs[parent_link_field.name] = reference
         for field in reference._meta.fields:
             attrs[field.name] = getattr(reference, field.name)
+        # Set default citations
+        if "full_citation" not in attrs:
+            attrs["full_citation"] = reference.ref_full_citation
+        if "short_citation" not in attrs:
+            attrs["short_citation"] = reference.ref_short_citation
         return Study.objects.create(**attrs)
 
     @classmethod
@@ -251,7 +256,7 @@ class Study(Reference):
         return self.short_citation
 
     def get_absolute_url(self):
-        return reverse("study:detail", args=[str(self.pk)])
+        return reverse("study:detail", args=(self.pk,))
 
     def get_update_url(self):
         return reverse("study:update", args=[str(self.pk)])
@@ -438,7 +443,7 @@ class Attachment(models.Model):
         return self.filename
 
     def get_absolute_url(self):
-        return reverse("study:attachment_detail", args=[self.pk])
+        return reverse("study:attachment_detail", args=(self.pk,))
 
     def get_delete_url(self):
         return reverse("study:attachment_delete", args=[self.pk])

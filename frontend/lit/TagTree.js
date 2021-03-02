@@ -14,6 +14,10 @@ class TagTree {
         this.rootNode._append_to_dict(this.dict);
     }
 
+    getById(tagId) {
+        return this.dict[tagId];
+    }
+
     add_references(references) {
         references.forEach(el => {
             let node = this.dict[el.tag_id];

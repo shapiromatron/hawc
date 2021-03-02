@@ -52,8 +52,11 @@ class TestReference:
         with pytest.raises(ObjectDoesNotExist):
             ref.study.id
 
-    def test_get_json(self):
-        # make sure `get_json` works
+    def test_to_dict(self):
+        # make sure `to_dict` works
         ref = Reference.objects.get(id=1)
-        data = ref.get_json(json_encode=False)
+        data = ref.to_dict()
         assert data["pk"] == 1
+
+        data = ref.to_json()
+        assert isinstance(data, str)

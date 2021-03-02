@@ -91,20 +91,11 @@ class TestStudyCreateApi:
     def test_bad_requests(self, db_keys):
         # payload needs to include the required short_citation and full_citation
         url = reverse("study:api:study-list")
-        data = {"reference_id": db_keys.reference_unlinked}
         client = APIClient()
         assert client.login(username="team@hawcproject.org", password="pw") is True
-        response = client.post(url, data)
-        assert response.status_code == 400
-        assert {"short_citation", "full_citation"}.issubset((response.data.keys()))
 
         # invalid references will not be successful
-        data = {
-            "reference_id": "invalid",
-            "short_citation": "Short citation.",
-            "full_citation": "Full citation.",
-        }
-
+        data = {"reference_id": "invalid"}
         response = client.post(url, data)
         assert response.status_code == 400
         assert str(response.data["non_field_errors"][0]) == "Reference ID must be a number."
