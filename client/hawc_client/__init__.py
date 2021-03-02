@@ -710,7 +710,7 @@ class StudyClient(BaseClient):
     Client class for study requests.
     """
 
-    def create(self, reference_id: int, data: Optional[Dict] = None,) -> Dict:
+    def create(self, reference_id: int, data: Optional[Dict] = None) -> Dict:
         """
         Creates a study using a given reference ID.
 
