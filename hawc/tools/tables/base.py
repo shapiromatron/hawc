@@ -2,6 +2,7 @@ from typing import List
 
 from docx import Document as create_document
 from docx.document import Document
+from docx.shared import Inches
 from pydantic import BaseModel, conint
 
 
@@ -64,6 +65,8 @@ class BaseCellGroup(BaseModel):
 
 
 class BaseTable(BaseCellGroup):
+    column_widths: List[int] = []
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.validate_cells(self.cells)
@@ -91,15 +94,25 @@ class BaseTable(BaseCellGroup):
         if docx is None:
             docx = create_document()
         table = docx.add_table(rows=self.rows, cols=self.columns)
+        table_cells = table._cells
         table.style = "Table Grid"
+        columns = self.columns
         for cell in self.cells:
-            table_cell = table.cell(cell.row, cell.column)
-            span_cell = table.cell(cell.row + cell.row_span - 1, cell.column + cell.col_span - 1)
+            cell_index = cell.row_order_index(columns)
+            table_cell = table_cells[cell_index]
+            span_index = cell_index + (cell.row_span - 1) * columns + cell.col_span - 1
+            span_cell = table_cells[span_index]
             table_cell.merge(span_cell)
             # Remove default paragraph
             paragraph = table_cell.paragraphs[0]._element
             paragraph.getparent().remove(paragraph)
             cell.to_docx(table_cell)
+        if len(self.column_widths):
+            # Column width should be set on a per cell basis
+            # https://github.com/python-openxml/python-docx/issues/360#issuecomment-277385644
+            for i, width in enumerate(self.column_widths[:columns]):
+                for table_cell in table_cells[i::columns]:
+                    table_cell.width = Inches(width)
         return docx
 
     @classmethod
