@@ -30,6 +30,13 @@ class Reference {
         return `/lit/reference/${this.data.pk}/edit/`;
     }
 
+    get_study_url() {
+        if (this.data.has_study) {
+            return `/study/${this.data.pk}/`;
+        }
+        return null;
+    }
+
     shortCitation() {
         let authors = this.data.authors_short || this.data.authors || Reference.NO_AUTHORS_TEXT,
             year = this.data.year || "";

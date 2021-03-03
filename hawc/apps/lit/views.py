@@ -1,6 +1,7 @@
 import json
 from typing import Dict, List
 
+from django.core.exceptions import PermissionDenied
 from django.forms.models import model_to_dict
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
@@ -271,7 +272,7 @@ class TagReferences(TeamMemberOrHigherMixin, FormView):
         return response
 
     def get_ref_qs_filters(self) -> Dict:
-        ...
+        raise NotImplementedError("Subclass requires implementation")
 
     def get_context_data(self, **kwargs):
         if hasattr(self, "qs_reference"):
@@ -518,6 +519,13 @@ class RefDelete(BaseDelete):
     def get_success_url(self):
         return reverse_lazy("lit:overview", args=(self.assessment.pk,))
 
+    def permission_check_user_can_edit(self):
+        # perform standard check
+        super().permission_check_user_can_edit()
+        # and additional check
+        if self.object.has_study:
+            raise PermissionDenied("Cannot delete - object has related study")
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["tags"] = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
@@ -554,19 +562,16 @@ class RefsByTagJSON(BaseDetail):
 
         if search_id:
             search = models.Search.objects.get(id=search_id)
-            refs = search.get_references_with_tag(tag=tag, descendants=True).prefetch_related(
-                "searches", "identifiers", "tags",
-            )
+            qs = search.get_references_with_tag(tag=tag, descendants=True)
         elif tag:
-            refs = models.Reference.objects.get_references_with_tag(
-                tag, descendants=True
-            ).prefetch_related("searches", "identifiers", "tags",)
+            qs = models.Reference.objects.get_references_with_tag(tag, descendants=True)
         else:
-            refs = models.Reference.objects.get_untagged_references(
-                self.assessment
-            ).prefetch_related("searches", "identifiers", "tags",)
+            qs = models.Reference.objects.get_untagged_references(self.assessment)
 
-        response["refs"] = [ref.to_dict() for ref in refs]
+        response["refs"] = [
+            ref.to_dict()
+            for ref in qs.select_related("study").prefetch_related("searches", "identifiers")
+        ]
         self.response = response
 
     def render_to_response(self, context, **response_kwargs):

@@ -737,6 +737,7 @@ class Reference(models.Model):
             "journal",
             "abstract",
             "full_text_url",
+            "has_study",
         )
         for field in fields:
             d[field] = getattr(self, field)
@@ -748,6 +749,7 @@ class Reference(models.Model):
 
         d["identifiers"] = [ident.to_dict() for ident in self.identifiers.all()]
         d["searches"] = [search.to_dict() for search in self.searches.all()]
+        d["study_short_citation"] = self.study.short_citation if d["has_study"] else None
 
         d["tags"] = [tag.id for tag in self.tags.all()]
         d["tags_text"] = [tag.name for tag in self.tags.all()]
@@ -823,6 +825,10 @@ class Reference(models.Model):
             citation += " " + year
 
         return citation
+
+    @property
+    def has_study(self) -> bool:
+        return apps.get_model("study", "Study").objects.filter(id=self.id).exists()
 
     def get_pubmed_id(self):
         for ident in self.identifiers.all():
