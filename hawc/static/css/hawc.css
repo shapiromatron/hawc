@@ -14,6 +14,15 @@
     padding-left: 1em;
 }
 
+/* adjust links w/ a .sticky-header offset */
+.sticky-offset-anchor {
+    /* height of sticky header plus some padding */
+    display: block;
+    height: 95px;
+    margin-top: -95px;
+    visibility: hidden;
+}
+
 /* sidebar  */
 .sidebar {
     width: 230px;
@@ -170,38 +179,7 @@ input[type='number'] {
 
 /* About-us page */
 .videoTab iframe {
-    margin: 10px auto;
-    display: block;
     border: 2px black solid;
-}
-ul.sponsors {
-    list-style-type: none;
-    margin: 0 0 10px 0;
-}
-.sponsors li {
-    display: block;
-    float: left;
-}
-.sponsors img {
-    max-height: 65px;
-    margin-right: 5px;
-    padding: 3px;
-    border: 2px solid transparent;
-    border-radius: 4px;
-    transition: 0.5s ease-in-out;
-}
-.sponsors img:hover {
-    opacity: 0.8;
-    border: 2px solid black;
-    transition: 0.5s ease-in-out;
-}
-/* File format icons */
-.ff {
-    padding-left: 2px;
-    padding-bottom: 7px;
-}
-.ff.ytb {
-    max-height: 17px;
 }
 
 /* Formset field labels */
@@ -332,6 +310,10 @@ div.smart-tag.active {
     margin: 0 3px 3px 0;
     display: inline-block;
 }
+.referenceTag{
+    text-align: left;
+    white-space: pre-wrap;
+}
 .refTagEditing {
     cursor: pointer;
 }
@@ -343,16 +325,13 @@ div.smart-tag.active {
     font-weight: bold;
 }
 .nestedTag {
-    padding-left: 14px;
-    white-space: pre;
     border: 2px solid transparent;
     margin: 0;
     cursor: pointer;
 }
 .nestedTag:hover {
-    font-weight: bold;
     border: 2px solid #ababab;
-    background-color: #ffef8e;
+    background-color: #8ee8ff;
 }
 .nestedTag.selected {
     color: #0044cc;

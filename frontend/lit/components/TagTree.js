@@ -1,9 +1,10 @@
-import _ from "lodash";
 import React, {Component} from "react";
 import PropTypes from "prop-types";
+import {observer} from "mobx-react";
 
 import h from "shared/utils/helpers";
 
+@observer
 class TagNode extends Component {
     constructor(props) {
         super(props);
@@ -13,7 +14,9 @@ class TagNode extends Component {
         };
     }
     render() {
-        const {tag, showReferenceCount, handleOnClick} = this.props;
+        const {tag, showReferenceCount, handleOnClick, selectedTag} = this.props,
+            tagClass = tag === selectedTag ? "nestedTag selected" : "nestedTag";
+
         return (
             <div>
                 {tag.children.length > 0 ? (
@@ -27,8 +30,10 @@ class TagNode extends Component {
                         <span className={this.state.expanded ? "fa fa-minus" : "fa fa-plus"}></span>
                     </span>
                 ) : null}
-                <p className="nestedTag" onClick={() => handleOnClick(tag)}>
-                    {_.repeat("   ", tag.depth - 1)}
+                <p
+                    className={tagClass}
+                    style={{paddingLeft: 2 + tag.depth * 13}}
+                    onClick={() => handleOnClick(tag)}>
                     {tag.data.name}
                     {showReferenceCount ? ` (${tag.get_references_deep().length})` : null}
                 </p>
@@ -39,6 +44,7 @@ class TagNode extends Component {
                               tag={tag}
                               handleOnClick={handleOnClick}
                               showReferenceCount={showReferenceCount}
+                              selectedTag={selectedTag}
                           />
                       ))
                     : null}
@@ -50,11 +56,13 @@ TagNode.propTypes = {
     tag: PropTypes.object.isRequired,
     handleOnClick: PropTypes.func.isRequired,
     showReferenceCount: PropTypes.bool.isRequired,
+    selectedTag: PropTypes.object,
 };
 
+@observer
 class TagTree extends Component {
     render() {
-        const {tagtree, handleTagClick, showReferenceCount} = this.props;
+        const {tagtree, handleTagClick, showReferenceCount, selectedTag} = this.props;
         return (
             <div>
                 {tagtree.rootNode.children.map((tag, i) => (
@@ -63,6 +71,7 @@ class TagTree extends Component {
                         tag={tag}
                         handleOnClick={handleTagClick}
                         showReferenceCount={showReferenceCount}
+                        selectedTag={selectedTag}
                     />
                 ))}
             </div>
@@ -73,6 +82,7 @@ TagTree.propTypes = {
     tagtree: PropTypes.object.isRequired,
     handleTagClick: PropTypes.func,
     showReferenceCount: PropTypes.bool,
+    selectedTag: PropTypes.object,
 };
 TagTree.defaultProps = {
     showReferenceCount: false,

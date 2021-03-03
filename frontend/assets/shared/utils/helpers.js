@@ -259,6 +259,15 @@ const helpers = {
         WHITE: "#ffffff",
         BLUE: "#003d7b",
     },
+    pushUrlParamsState(key, value) {
+        var queryParams = new URLSearchParams(window.location.search);
+        if (_.isNil(value)) {
+            queryParams.delete(key);
+        } else {
+            queryParams.set(key, value);
+        }
+        history.pushState(null, null, "?" + queryParams.toString());
+    },
 };
 
 export default helpers;

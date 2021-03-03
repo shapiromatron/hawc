@@ -710,22 +710,16 @@ class StudyClient(BaseClient):
     Client class for study requests.
     """
 
-    def create(
-        self,
-        reference_id: int,
-        short_citation: str,
-        full_citation: str,
-        data: Optional[Dict] = None,
-    ) -> Dict:
+    def create(self, reference_id: int, data: Optional[Dict] = None) -> Dict:
         """
         Creates a study using a given reference ID.
 
         Args:
             reference_id (int): Reference ID to create study from.
-            short_citation (str): Short study citation, can be used as identifier.
-            full_citation (str): Complete study citation.
             data (Dict, optional): Dict containing any additional field/value pairings for the study.
                 Possible pairings are:
+                    short_citation (str): Short study citation, can be used as identifier.
+                    full_citation (str): Complete study citation.
                     bioassay: bool (study contains animal bioassay data)
                     epi: bool (study contains epidemiology data)
                     epi_meta: bool (study contains epidemiology meta-analysis data)
@@ -749,8 +743,6 @@ class StudyClient(BaseClient):
         if data is None:
             data = {}
         data["reference_id"] = reference_id
-        data["short_citation"] = short_citation
-        data["full_citation"] = full_citation
 
         url = f"{self.session.root_url}/study/api/study/"
         return self.session.post(url, data).json()

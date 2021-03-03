@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List
 
 from .base import BaseCell, BaseTable
 from .parser import QuillParser
@@ -13,7 +13,6 @@ class GenericCell(BaseCell):
 
 
 class GenericTable(BaseTable):
-    column_widths: Optional[List[int]]
     cells: List[GenericCell]
 
     @classmethod
