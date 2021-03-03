@@ -40,26 +40,21 @@ class TestRiskOfBias:
         assessment_id = 1
         study_id = 1
         _, scores_map = RiskOfBias.get_dp_export(assessment_id, [study_id], "animal")
+        scores_qs = RiskOfBiasScore.objects.filter(
+            riskofbias__study=study_id, riskofbias__final=True, riskofbias__active=True,
+        )
 
         # all of the metrics are mapped
-        set(
-            RiskOfBiasScore.objects.filter(
-                riskofbias__study=study_id, riskofbias__final=True, riskofbias__active=True,
-            ).values_list("metric_id")
-        ) == {metric for _, metric in scores_map.keys()}
+        set(scores_qs.values_list("metric_id")) == {metric for _, metric in scores_map.keys()}
 
         # however, study has more scores than metrics
-        assert RiskOfBiasScore.objects.filter(
-            riskofbias__study=study_id, riskofbias__final=True, riskofbias__active=True,
-        ).count() > len(scores_map.keys())
+        assert scores_qs.count() > len(scores_map.keys())
 
         # make sure only default scores are used
+        default_scores_qs = scores_qs.filter(is_default=True)
+        expected_metric_to_score = {
+            metric: score for metric, score in default_scores_qs.values_list("metric", "score")
+        }
         for (_, metric), score in scores_map.items():
-            expected_score = RiskOfBiasScore.objects.get(
-                metric=metric,
-                riskofbias__study=study_id,
-                riskofbias__final=True,
-                riskofbias__active=True,
-                is_default=True,
-            )
-            assert json.loads(score)["sortValue"] == expected_score.score
+            expected_score = expected_metric_to_score[metric]
+            assert json.loads(score)["sortValue"] == expected_score
