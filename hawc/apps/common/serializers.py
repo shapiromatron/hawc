@@ -190,10 +190,16 @@ class FlexibleDBLinkedChoiceField(FlexibleChoiceField):
         self.mapped_model = mapped_model
         mapped_objects = mapped_model.objects.all()
         db_choices = []
-        for mapped_object in mapped_objects:
-            loop_id = mapped_object.id
-            loop_descriptor = getattr(mapped_object, field_for_descriptor)
-            db_choices.append((loop_id, loop_descriptor))
+        try:
+            for mapped_object in mapped_objects:
+                loop_id = mapped_object.id
+                loop_descriptor = getattr(mapped_object, field_for_descriptor)
+                db_choices.append((loop_id, loop_descriptor))
+        except Exception:
+            print(
+                "unable to init FlexibleDBLinkedChoiceField; if during 'make build' this is ok..."
+            )
+            pass
 
         super().__init__(choices=db_choices)
 
