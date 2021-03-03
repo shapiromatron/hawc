@@ -45,7 +45,7 @@ class TestRiskOfBias:
         )
 
         # all of the metrics are mapped
-        assert set(scores_qs.values_list("metric_id")) == {
+        assert set(scores_qs.values_list("metric_id", flat=True)) == {
             metric for _, metric in scores_map.keys()
         }
 
