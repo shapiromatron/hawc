@@ -116,6 +116,10 @@
     model: blog
 - model: contenttypes.contenttype
   fields:
+    app_label: assessment
+    model: content
+- model: contenttypes.contenttype
+  fields:
     app_label: vocab
     model: term
 - model: contenttypes.contenttype
@@ -947,6 +951,7 @@
   pk: 1
   fields:
     assessment: 1
+    user: null
     message: Assessment log
     created: 2020-08-20 03:03:15.442430+00:00
     last_updated: 2020-08-20 03:03:15.442430+00:00
@@ -954,6 +959,7 @@
   pk: 2
   fields:
     assessment: null
+    user: null
     message: Global log
     created: 2020-08-20 03:03:22.348931+00:00
     last_updated: 2020-08-20 03:03:22.348931+00:00
@@ -962,9 +968,7 @@
   fields:
     subject: Unpublished Blog
     content: Content
-    rendered_content: '<p>Content</p>
-
-      '
+    rendered_content: '<p>Content</p>'
     published: false
     created: 2020-08-20 03:01:09.747019+00:00
     last_updated: 2020-08-20 03:01:09.747019+00:00
@@ -973,10 +977,22 @@
   fields:
     subject: Published Blog
     content: Content
-    rendered_content: '<p>Content</p>
-
-      '
+    rendered_content: '<p>Content</p>'
     published: true
+    created: 2020-08-20 03:01:26.973291+00:00
+    last_updated: 2020-08-20 03:01:26.973291+00:00
+- model: assessment.content
+  pk: 1
+  fields:
+    content_type: 1
+    template: <h1>Welcome to HAWC</h1>
+    created: 2020-08-20 03:01:26.973291+00:00
+    last_updated: 2020-08-20 03:01:26.973291+00:00
+- model: assessment.content
+  pk: 2
+  fields:
+    content_type: 2
+    template: <h1>About HAWC</h1>
     created: 2020-08-20 03:01:26.973291+00:00
     last_updated: 2020-08-20 03:01:26.973291+00:00
 - model: lit.literatureassessment

@@ -127,7 +127,7 @@ class SummaryText(MP_Node):
         return cls.get_tree(parent=root)
 
     def get_absolute_url(self):
-        return f"{reverse('summary:list', kwargs={'assessment': self.assessment.pk})}#{self.slug}"
+        return f"{reverse('summary:list', args=(self.assessment_id,))}#{self.slug}"
 
     def get_assessment(self):
         return self.assessment
@@ -160,7 +160,6 @@ class SummaryTable(models.Model):
     class TableType(models.IntegerChoices):
         GENERIC = 0
         EVIDENCE_PROFILE = 1
-        EVIDENCE_INTEGRATION = 2
 
     TABLE_SCHEMA_MAP = {TableType.GENERIC: GenericTable}
 
@@ -333,16 +332,16 @@ class Visual(models.Model):
 
     @staticmethod
     def get_list_url(assessment_id):
-        return reverse("summary:visualization_list", args=[str(assessment_id)])
+        return reverse("summary:visualization_list", args=(assessment_id,))
 
     def get_absolute_url(self):
-        return reverse("summary:visualization_detail", args=[str(self.pk)])
+        return reverse("summary:visualization_detail", args=(self.pk,))
 
     def get_update_url(self):
-        return reverse("summary:visualization_update", args=[str(self.pk)])
+        return reverse("summary:visualization_update", args=(self.pk,))
 
     def get_delete_url(self):
-        return reverse("summary:visualization_delete", args=[str(self.pk)])
+        return reverse("summary:visualization_delete", args=(self.pk,))
 
     def get_assessment(self):
         return self.assessment
@@ -631,10 +630,10 @@ class DataPivot(models.Model):
         return reverse("summary:visualization_list", args=[str(assessment_id)])
 
     def get_absolute_url(self):
-        return reverse("summary:dp_detail", kwargs={"pk": self.assessment_id, "slug": self.slug})
+        return reverse("summary:dp_detail", args=(self.assessment_id, self.slug))
 
     def get_visualization_update_url(self):
-        return reverse("summary:dp_update", kwargs={"pk": self.assessment_id, "slug": self.slug})
+        return reverse("summary:dp_update", args=(self.assessment_id, self.slug))
 
     def get_assessment(self):
         return self.assessment
