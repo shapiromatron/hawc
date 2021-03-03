@@ -28,7 +28,7 @@ class TestRiskOfBiasScoreOverrideObject:
         expected = dedent(
             """
             Found orphaned RiskOfBiasScoreOverrideObjects:
-            id=3;score=16;obj_ct=49;obj_id=99999
+            id=3;score=16;obj_ct=50;obj_id=99999
             """
         ).strip()
         assert actual == expected

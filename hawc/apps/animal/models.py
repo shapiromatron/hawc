@@ -149,7 +149,7 @@ class Experiment(models.Model):
         return self.name
 
     def get_absolute_url(self):
-        return reverse("animal:experiment_detail", args=[str(self.pk)])
+        return reverse("animal:experiment_detail", args=(self.pk,))
 
     def is_generational(self):
         return self.has_multiple_generations
@@ -345,7 +345,7 @@ class AnimalGroup(models.Model):
         return self.name
 
     def get_absolute_url(self):
-        return reverse("animal:animal_group_detail", args=[str(self.pk)])
+        return reverse("animal:animal_group_detail", args=(self.pk,))
 
     def get_assessment(self):
         return self.experiment.get_assessment()
@@ -1118,7 +1118,7 @@ class Endpoint(BaseEndpoint):
         return self.name
 
     def get_absolute_url(self):
-        return reverse("animal:endpoint_detail", args=[str(self.pk)])
+        return reverse("animal:endpoint_detail", args=(self.pk,))
 
     def save(self, *args, **kwargs):
         # ensure our controlled vocabulary terms don't have leading/trailing whitespace

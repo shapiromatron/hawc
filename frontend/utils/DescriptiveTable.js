@@ -51,6 +51,20 @@ class DescriptiveTable {
         return this;
     }
 
+    add_tbody_tr_badge(description, items) {
+        if (items.length > 0) {
+            const badges = items.map(
+                    item => `<a href="${item.url}" class="badge badge-info mr-1">${item.text}</a>`
+                ),
+                tr = $("<tr>")
+                    .append(`<th>${description}</th>`)
+                    .append($("<td>").append(badges));
+
+            this._tbody.append(tr);
+        }
+        return this;
+    }
+
     get_tbl() {
         return this._tbl;
     }

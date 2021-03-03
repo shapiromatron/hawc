@@ -53,6 +53,13 @@ class Home(TemplateView):
             return HttpResponseRedirect(reverse_lazy("portal"))
         return super().get(request, *args, **kwargs)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["content"] = models.Content.rendered_page(
+            models.ContentTypeChoices.HOMEPAGE, context
+        )
+        return context
+
 
 class About(TemplateView):
     template_name = "hawc/about.html"
@@ -187,9 +194,12 @@ class About(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["HAWC_FLAVOR"] = settings.HAWC_FLAVOR
-        context["rob_name"] = self.get_rob_name()
-        context["counts"] = self.get_object_counts()
+        context.update(
+            HAWC_FLAVOR=settings.HAWC_FLAVOR,
+            rob_name=self.get_rob_name(),
+            counts=self.get_object_counts(),
+        )
+        context["content"] = models.Content.rendered_page(models.ContentTypeChoices.ABOUT, context)
         return context
 
 
