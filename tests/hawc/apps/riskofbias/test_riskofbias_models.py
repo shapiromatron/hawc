@@ -45,7 +45,9 @@ class TestRiskOfBias:
         )
 
         # all of the metrics are mapped
-        set(scores_qs.values_list("metric_id")) == {metric for _, metric in scores_map.keys()}
+        assert set(scores_qs.values_list("metric_id")) == {
+            metric for _, metric in scores_map.keys()
+        }
 
         # however, study has more scores than metrics
         assert scores_qs.count() > len(scores_map.keys())
