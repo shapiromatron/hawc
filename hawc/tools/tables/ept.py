@@ -34,11 +34,6 @@ class JudgementChoices(IntEnum):
     NoJudgement = 900
     Custom = 910
 
-    def to_html(self):
-        icon = JudgementTexts[self.name].value[0]
-        text = JudgementTexts[self.name].value[1]
-        return tag_wrapper(icon, "p", "b") + tag_wrapper(text, "p", "em")
-
 
 class SummaryJudgementChoices(IntEnum):
     Confident = 30
@@ -48,11 +43,6 @@ class SummaryJudgementChoices(IntEnum):
     NoEffect = -10
     NoJudgement = 900
     Custom = 910
-
-    def to_html(self):
-        icon = SummaryJudgementTexts[self.name].value[0]
-        text = SummaryJudgementTexts[self.name].value[1]
-        return tag_wrapper(icon, "p", "b") + tag_wrapper(text, "p", "em")
 
 
 ## Summary judgement
@@ -71,9 +61,20 @@ class SummaryJudgementCell(BaseCell):
     cross_stream_coherence: str
     susceptibility: str
 
+    def judgement_html(self):
+        if self.judgement == SummaryJudgementChoices.NoJudgement:
+            return ""
+        if self.judgement == SummaryJudgementChoices.Custom:
+            return tag_wrapper(self.judgement_icon, "p",) + tag_wrapper(
+                self.judgement_label, "p", "em"
+            )
+        icon = SummaryJudgementTexts[self.judgement.name].value[0]
+        label = SummaryJudgementTexts[self.judgement.name].value[1]
+        return tag_wrapper(icon, "p",) + tag_wrapper(label, "p", "em")
+
     def to_docx(self, block):
         text = ""
-        text += self.judgement.to_html()
+        text += self.judgement_html()
         text += tag_wrapper("\nPrimary basis:", "p", "em")
         text += self.description
         text += tag_wrapper("\nHuman relevance:", "p", "em")
@@ -190,8 +191,19 @@ class JudgementCell(BaseCell):
 
     description: str
 
+    def judgement_html(self):
+        if self.judgement == JudgementChoices.NoJudgement:
+            return ""
+        if self.judgement == JudgementChoices.Custom:
+            return tag_wrapper(self.judgement_icon, "p",) + tag_wrapper(
+                self.judgement_label, "p", "em"
+            )
+        icon = JudgementTexts[self.judgement.name].value[0]
+        label = JudgementTexts[self.judgement.name].value[1]
+        return tag_wrapper(icon, "p",) + tag_wrapper(label, "p", "em")
+
     def to_docx(self, block):
-        text = self.judgement.to_html() + self.description  # TODO - fix
+        text = self.judgement_html() + self.description
         parser = QuillParser()
         parser.feed(text, block)
         for paragraph in block.paragraphs[0:2]:
