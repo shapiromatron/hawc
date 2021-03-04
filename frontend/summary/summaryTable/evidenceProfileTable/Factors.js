@@ -103,7 +103,7 @@ const increaseFactors = [
     });
 
 FactorsForm.propTypes = {
-    store: PropTypes.func.isRequired,
+    store: PropTypes.object.isRequired,
     updateKey: PropTypes.string.isRequired,
     content: PropTypes.object.isRequired,
     increase: PropTypes.bool.isRequired,
