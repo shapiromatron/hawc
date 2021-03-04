@@ -58,8 +58,7 @@ const increaseFactors = [
                                         }
                                     />
                                     <QuillTextInput
-                                        label="Verbose description"
-                                        helpText="Shows up as hover text"
+                                        label="Detailed description"
                                         value={
                                             content.factors[selectedIndex].long_description ||
                                             "<p></p>"
@@ -92,16 +91,19 @@ const increaseFactors = [
                     <ul>
                         {content.factors.map((factor, index) => {
                             let factorType = _factors.find(_factor => _factor.key == factor.key),
+                                dashText = factor.short_description.length > 0 ? " - " : "",
                                 html = factorType.displayLabel
-                                    ? `<em>${factorType.label}</em> - ` + factor.short_description
+                                    ? `<em>${factorType.label}</em>${dashText}${factor.short_description}`
                                     : factor.short_description;
                             return (
                                 <li key={index}>
                                     <span dangerouslySetInnerHTML={{__html: html}}></span>
-                                    <HelpTextPopup
-                                        title={factorType.label}
-                                        content={factor.long_description}
-                                    />
+                                    {h.hasInnerText(factor.long_description) ? (
+                                        <HelpTextPopup
+                                            title={factorType.label}
+                                            content={factor.long_description}
+                                        />
+                                    ) : null}
                                 </li>
                             );
                         })}

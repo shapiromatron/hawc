@@ -93,8 +93,9 @@ class EvidenceProfileTableStore {
         if (index >= 0) {
             factors.splice(index, 1);
         } else {
-            factors.push({key: factorKey, text: ""});
+            factors.push({key: factorKey, short_description: "", long_description: ""});
         }
+
         factors = _.sortBy(factors, d => d.key);
         _.set(this.settings, `${objectKey}.factors`, factors);
     }

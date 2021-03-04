@@ -3,6 +3,7 @@ import React, {Component} from "react";
 import PropTypes from "prop-types";
 import {Judgement} from "./Judgement";
 import {FactorsCell} from "./Factors";
+import h from "shared/utils/helpers";
 
 const subTitleStyle = {backgroundColor: "#f5f5f5"},
     NoDataRow = function() {
@@ -44,6 +45,21 @@ EvidenceRow.propTypes = {
     row: PropTypes.object.isRequired,
 };
 
+const TextBlock = observer(props => {
+    if (!h.hasInnerText(props.html)) {
+        return null;
+    }
+
+    return (
+        <>
+            <p>
+                <em>{props.label}:</em>&nbsp;
+            </p>
+            <div dangerouslySetInnerHTML={{__html: props.html}}></div>
+        </>
+    );
+});
+
 @observer
 class SummaryCell extends Component {
     render() {
@@ -57,25 +73,16 @@ class SummaryCell extends Component {
                     judgement={summary_judgement}
                     summary={true}
                 />
-                <p>
-                    <em>Primary basis:</em>
-                </p>
-                <div dangerouslySetInnerHTML={{__html: summary_judgement.description}}></div>
-                <p>
-                    <em>Human relevance:</em>
-                </p>
-                <div dangerouslySetInnerHTML={{__html: summary_judgement.human_relevance}}></div>
-                <p>
-                    <em>Cross-stream coherence:</em>
-                </p>
-                <div
-                    dangerouslySetInnerHTML={{
-                        __html: summary_judgement.cross_stream_coherence,
-                    }}></div>
-                <p>
-                    <em>Susceptible populations and lifestages:</em>
-                </p>
-                <div dangerouslySetInnerHTML={{__html: summary_judgement.susceptibility}}></div>
+                <TextBlock label="Primary basis" html={summary_judgement.description} />
+                <TextBlock label="Human relevance" html={summary_judgement.human_relevance} />
+                <TextBlock
+                    label="Cross-stream coherence"
+                    html={summary_judgement.cross_stream_coherence}
+                />
+                <TextBlock
+                    label="Susceptible populations and lifestages"
+                    html={summary_judgement.susceptibility}
+                />
             </td>
         );
     }
