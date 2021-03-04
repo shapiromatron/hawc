@@ -65,8 +65,8 @@ class SummaryJudgementCell(BaseCell):
         if self.judgement == SummaryJudgementChoices.NoJudgement:
             return ""
         if self.judgement == SummaryJudgementChoices.Custom:
-            return tag_wrapper(self.judgement_icon, "p",) + tag_wrapper(
-                self.judgement_label, "p", "em"
+            return tag_wrapper(self.custom_judgement_icon, "p",) + tag_wrapper(
+                self.custom_judgement_label, "p", "em"
             )
         icon = SummaryJudgementTexts[self.judgement.name].value[0]
         label = SummaryJudgementTexts[self.judgement.name].value[1]
@@ -195,8 +195,8 @@ class JudgementCell(BaseCell):
         if self.judgement == JudgementChoices.NoJudgement:
             return ""
         if self.judgement == JudgementChoices.Custom:
-            return tag_wrapper(self.judgement_icon, "p",) + tag_wrapper(
-                self.judgement_label, "p", "em"
+            return tag_wrapper(self.custom_judgement_icon, "p",) + tag_wrapper(
+                self.custom_judgement_label, "p", "em"
             )
         icon = JudgementTexts[self.judgement.name].value[0]
         label = JudgementTexts[self.judgement.name].value[1]
