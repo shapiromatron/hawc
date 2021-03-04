@@ -85,8 +85,9 @@ class SummaryJudgementCell(BaseCell):
         text += self.susceptibility
         parser = QuillParser()
         parser.feed(text, block)
-        for paragraph in block.paragraphs[0:2]:
-            paragraph.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+        if self.judgement != SummaryJudgementChoices.NoJudgement:
+            for paragraph in block.paragraphs[0:2]:
+                paragraph.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
 
 
 ## Evidence cells
@@ -206,8 +207,9 @@ class JudgementCell(BaseCell):
         text = self.judgement_html() + self.description
         parser = QuillParser()
         parser.feed(text, block)
-        for paragraph in block.paragraphs[0:2]:
-            paragraph.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+        if self.judgement != JudgementChoices.NoJudgement:
+            for paragraph in block.paragraphs[0:2]:
+                paragraph.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
 
 
 ## Mechanistic cells

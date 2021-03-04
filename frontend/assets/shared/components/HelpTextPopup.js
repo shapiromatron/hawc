@@ -20,6 +20,7 @@ class HelpTextPopover extends Component {
                 className="ml-1 fa fa-fw fa-question-circle"
                 ref={this.domNode}
                 aria-hidden="true"
+                data-html="true"
                 data-toggle="popover"
                 title={title}
                 data-content={content}></i>

@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 import React from "react";
 
 import h from "shared/utils/helpers";
+import HelpTextPopup from "shared/components/HelpTextPopup";
 import QuillTextInput from "shared/components/QuillTextInput";
 import CheckboxInput from "shared/components/CheckboxInput";
 import TextInput from "shared/components/TextInput";
@@ -46,6 +47,7 @@ const increaseFactors = [
                             {selectedIndex >= 0 ? (
                                 <>
                                     <TextInput
+                                        label="Short description"
                                         name={key}
                                         value={content.factors[selectedIndex].short_description}
                                         onChange={e =>
@@ -56,6 +58,8 @@ const increaseFactors = [
                                         }
                                     />
                                     <QuillTextInput
+                                        label="Verbose description"
+                                        helpText="Shows up as hover text"
                                         value={
                                             content.factors[selectedIndex].long_description ||
                                             "<p></p>"
@@ -91,7 +95,15 @@ const increaseFactors = [
                                 html = factorType.displayLabel
                                     ? `<em>${factorType.label}</em> - ` + factor.short_description
                                     : factor.short_description;
-                            return <li key={index} dangerouslySetInnerHTML={{__html: html}}></li>;
+                            return (
+                                <li key={index}>
+                                    <span dangerouslySetInnerHTML={{__html: html}}></span>
+                                    <HelpTextPopup
+                                        title={factorType.label}
+                                        content={factor.long_description}
+                                    />
+                                </li>
+                            );
                         })}
                     </ul>
                 ) : null}
