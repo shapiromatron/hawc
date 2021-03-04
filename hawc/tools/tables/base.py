@@ -119,7 +119,8 @@ class BaseTable(BaseCellGroup):
     def get_default_props(cls) -> Dict:
         """Return the default required properties for a table.
 
-        This should be a full set of required fields for a pydantic model, but may not include calculated fields which can often be inferred by the default property types.
+        This should be a full set of required fields for a pydantic model, but may not include
+        calculated fields which can often be inferred by the default property types.
 
         Returns:
             A dictionary of required property fields; often exposed in the UI.
