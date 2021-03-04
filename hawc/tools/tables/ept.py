@@ -53,8 +53,8 @@ class SummaryJudgementCell(BaseCell):
     column: int = 5
 
     judgement: SummaryJudgementChoices
-    judgement_icon: str = ""
-    judgement_label: str = ""
+    custom_judgement_icon: str = ""
+    custom_judgement_label: str = ""
 
     description: str
     human_relevance: str
@@ -186,8 +186,8 @@ class JudgementCell(BaseCell):
     column: int = 4
 
     judgement: JudgementChoices
-    judgement_icon: str = ""
-    judgement_label: str = ""
+    custom_judgement_icon: str = ""
+    custom_judgement_label: str = ""
 
     description: str
 
@@ -409,8 +409,8 @@ class EvidenceProfileTable(BaseTable):
             },
             "summary_judgement": {
                 "judgement": SummaryJudgementChoices.Inadequate,
-                "judgement_icon": "Icon",
-                "judgement_label": "Label",
+                "custom_judgement_icon": "Icon",
+                "custom_judgement_label": "Label",
                 "description": "<p></p>",
                 "human_relevance": "<p></p>",
                 "cross_stream_coherence": "<p></p>",

@@ -159,24 +159,24 @@ const EvidenceForm = observer(props => {
                             {row.judgement.judgement == CUSTOM ? (
                                 <>
                                     <TextInput
-                                        name="judgement_icon"
+                                        name="custom_judgement_icon"
                                         label="Judgement icon"
-                                        value={row.judgement.judgement_icon}
+                                        value={row.judgement.custom_judgement_icon}
                                         onChange={e =>
                                             store.updateValue(
-                                                `${contentType}.rows[${index}].judgement.judgement_icon`,
+                                                `${contentType}.rows[${index}].judgement.custom_judgement_icon`,
                                                 e.target.value
                                             )
                                         }
                                         required
                                     />
                                     <TextInput
-                                        name="judgement_label"
-                                        label="Judgement icon"
-                                        value={row.judgement.judgement_label}
+                                        name="custom_judgement_label"
+                                        label="Judgement label"
+                                        value={row.judgement.custom_judgement_label}
                                         onChange={e =>
                                             store.updateValue(
-                                                `${contentType}.rows[${index}].judgement.judgement_label`,
+                                                `${contentType}.rows[${index}].judgement.custom_judgement_label`,
                                                 e.target.value
                                             )
                                         }
