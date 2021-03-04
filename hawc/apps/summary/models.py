@@ -16,6 +16,7 @@ from pydantic import ValidationError as PydanticError
 from reversion import revisions as reversion
 from treebeard.mp_tree import MP_Node
 
+from hawc.tools.tables.ept import EvidenceProfileTable
 from hawc.tools.tables.generic import GenericTable
 
 from ..animal.exports import EndpointFlatDataPivot, EndpointGroupFlatDataPivot
@@ -161,7 +162,10 @@ class SummaryTable(models.Model):
         GENERIC = 0
         EVIDENCE_PROFILE = 1
 
-    TABLE_SCHEMA_MAP = {TableType.GENERIC: GenericTable}
+    TABLE_SCHEMA_MAP = {
+        TableType.GENERIC: GenericTable,
+        TableType.EVIDENCE_PROFILE: EvidenceProfileTable,
+    }
 
     assessment = models.ForeignKey(Assessment, on_delete=models.CASCADE)
     title = models.CharField(max_length=128)
@@ -232,7 +236,7 @@ class SummaryTable(models.Model):
         """Build an incomplete, but default SummaryTable instance"""
         instance = cls(assessment_id=assessment_id, table_type=table_type)
         schema = instance.get_content_schema_class()
-        instance.content = schema.build_default().dict()
+        instance.content = schema.get_default_props()
         return instance
 
     def to_docx(self):
