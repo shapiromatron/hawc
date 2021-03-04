@@ -28,7 +28,11 @@ const subTitleStyle = {backgroundColor: "#f5f5f5"},
                 <FactorsCell content={row.uncertain_factors} />
                 {index == 0 || rowSpan == 1 ? (
                     <td rowSpan={rowSpan > 1 ? rowSpan : null}>
-                        <Judgement value={row.judgement.judgement} summary={false} />
+                        <Judgement
+                            value={row.judgement.judgement}
+                            judgement={row.judgement}
+                            summary={false}
+                        />
                         <div dangerouslySetInnerHTML={{__html: row.judgement.description}}></div>
                     </td>
                 ) : null}
@@ -48,7 +52,11 @@ class SummaryCell extends Component {
 
         return (
             <td rowSpan={numSummaryRows}>
-                <Judgement value={summary_judgement.judgement} summary={true} />
+                <Judgement
+                    value={summary_judgement.judgement}
+                    judgement={summary_judgement}
+                    summary={true}
+                />
                 <p>
                     <em>Primary basis:</em>
                 </p>
