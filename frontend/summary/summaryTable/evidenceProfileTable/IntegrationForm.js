@@ -2,8 +2,11 @@ import {observer} from "mobx-react";
 import React from "react";
 import PropTypes from "prop-types";
 
+import TextInput from "shared/components/TextInput";
 import QuillTextInput from "shared/components/QuillTextInput";
 import {JudgementSelector} from "./Judgement";
+
+import {CUSTOM_JUDGEMENT} from "./common";
 
 const IntegrationForm = observer(props => {
     const {store} = props,
@@ -11,7 +14,7 @@ const IntegrationForm = observer(props => {
 
     return (
         <div className="form-row">
-            <div className="col-md-12">
+            <div className="col-md-6">
                 <JudgementSelector
                     value={summary_judgement.judgement}
                     handleSelect={value =>
@@ -20,6 +23,41 @@ const IntegrationForm = observer(props => {
                     summary={true}
                 />
             </div>
+            <div className="col-md-6">
+                {summary_judgement.judgement === CUSTOM_JUDGEMENT ? (
+                    <div className="form-row">
+                        <div className="col-md-6">
+                            <TextInput
+                                name="custom_judgement_icon"
+                                label="Custom icon"
+                                value={summary_judgement.custom_judgement_icon}
+                                onChange={e =>
+                                    store.updateValue(
+                                        "summary_judgement.custom_judgement_icon",
+                                        e.target.value
+                                    )
+                                }
+                                required
+                            />
+                        </div>
+                        <div className="col-md-6">
+                            <TextInput
+                                name="custom_judgement_label"
+                                label="Custom label"
+                                value={summary_judgement.custom_judgement_label}
+                                onChange={e =>
+                                    store.updateValue(
+                                        "summary_judgement.custom_judgement_label",
+                                        e.target.value
+                                    )
+                                }
+                                required
+                            />
+                        </div>
+                    </div>
+                ) : null}
+            </div>
+
             <div className="col-md-6">
                 <QuillTextInput
                     label="Description"

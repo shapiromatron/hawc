@@ -10,7 +10,7 @@ import {ActionsTh, MoveRowTd} from "shared/components/EditableRowData";
 import {JudgementSelector} from "./Judgement";
 import {FactorsForm} from "./Factors";
 
-import {JUDGEMENT_HELP_TEXT, CUSTOM} from "./common";
+import {JUDGEMENT_HELP_TEXT, CUSTOM_JUDGEMENT} from "./common";
 
 const EvidenceForm = observer(props => {
         const {store, contentType, createMethodName, judgementRowSpan} = props,
@@ -106,7 +106,6 @@ const EvidenceForm = observer(props => {
             <tr>
                 <td>
                     <QuillTextInput
-                        label="Evidence"
                         value={row.evidence.description}
                         onChange={value =>
                             store.updateValue(
@@ -156,11 +155,11 @@ const EvidenceForm = observer(props => {
                                 }
                                 summary={false}
                             />
-                            {row.judgement.judgement == CUSTOM ? (
+                            {row.judgement.judgement === CUSTOM_JUDGEMENT ? (
                                 <>
                                     <TextInput
                                         name="custom_judgement_icon"
-                                        label="Judgement icon"
+                                        label="Custom icon"
                                         value={row.judgement.custom_judgement_icon}
                                         onChange={e =>
                                             store.updateValue(
@@ -172,7 +171,7 @@ const EvidenceForm = observer(props => {
                                     />
                                     <TextInput
                                         name="custom_judgement_label"
-                                        label="Judgement label"
+                                        label="Custom label"
                                         value={row.judgement.custom_judgement_label}
                                         onChange={e =>
                                             store.updateValue(

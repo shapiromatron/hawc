@@ -411,8 +411,8 @@ class EvidenceProfileTable(BaseTable):
             },
             "summary_judgement": {
                 "judgement": SummaryJudgementChoices.Inadequate,
-                "custom_judgement_icon": "Icon",
-                "custom_judgement_label": "Label",
+                "custom_judgement_icon": "",
+                "custom_judgement_label": "",
                 "description": "<p></p>",
                 "human_relevance": "<p></p>",
                 "cross_stream_coherence": "<p></p>",

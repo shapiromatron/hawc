@@ -12,7 +12,12 @@ const getDefaultEvidence = () => {
         return {
             summary: {findings: blank},
             evidence: {description: blank},
-            judgement: {judgement: 1, description: blank},
+            judgement: {
+                judgement: 1,
+                description: blank,
+                custom_judgement_icon: "",
+                custom_judgement_label: "",
+            },
             certain_factors: {factors: [], text: blank},
             uncertain_factors: {factors: [], text: blank},
         };
