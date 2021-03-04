@@ -31,6 +31,8 @@ class JudgementChoices(IntEnum):
     Slight = 10
     Indeterminate = 1
     NoEffect = -10
+    NoJudgement = 900
+    Custom = 910
 
     def to_html(self):
         icon = JudgementTexts[self.name].value[0]
@@ -44,6 +46,8 @@ class SummaryJudgementChoices(IntEnum):
     Suggests = 10
     Inadequate = 1
     NoEffect = -10
+    NoJudgement = 900
+    Custom = 910
 
     def to_html(self):
         icon = SummaryJudgementTexts[self.name].value[0]
@@ -59,6 +63,9 @@ class SummaryJudgementCell(BaseCell):
     column: int = 5
 
     judgement: SummaryJudgementChoices
+    judgement_icon: str = ""
+    judgement_label: str = ""
+
     description: str
     human_relevance: str
     cross_stream_coherence: str
@@ -141,14 +148,15 @@ class FactorType(IntEnum):
 
 class Factor(BaseModel):
     key: FactorType
-    text: str
+    short_description: str
+    long_description: str
 
-    def to_docx(self):
+    def to_html(self):
         label = FactorLabel[self.key.name].value
         if label:
-            return tag_wrapper(label, "em") + " - " + self.text
+            return tag_wrapper(label, "em") + " - " + self.short_description
         else:
-            return self.text
+            return self.short_description
 
 
 class FactorsCell(BaseCell):
@@ -156,7 +164,7 @@ class FactorsCell(BaseCell):
     text: str
 
     def to_docx(self, block):
-        factors = [factor.to_docx() for factor in self.factors]
+        factors = [factor.to_html() for factor in self.factors]
         text = ""
         if len(factors):
             text = ul_wrapper(factors)
@@ -177,6 +185,9 @@ class JudgementCell(BaseCell):
     column: int = 4
 
     judgement: JudgementChoices
+    judgement_icon: str = ""
+    judgement_label: str = ""
+
     description: str
 
     def to_docx(self, block):
@@ -282,12 +293,13 @@ class EvidenceGroup(BaseCellGroup):
 
 class MechanisticGroup(BaseCellGroup):
     title: str
+    col_header_1: str
     cell_rows: List[MechanisticRow] = Field([], alias="rows")
     merge_judgement: bool
 
     @property
     def column_headers(self):
-        text1 = tag_wrapper("Biological events or pathways", "p", "strong")
+        text1 = tag_wrapper(self.col_header_1, "p", "strong")
         text2 = tag_wrapper("Summary of key findings and interpretation", "p", "strong")
         text3 = tag_wrapper("Judgment(s) and rationale", "p", "strong")
         return [
@@ -379,11 +391,14 @@ class EvidenceProfileTable(BaseTable):
             },
             "mechanistic": {
                 "title": "Mechanistic evidence and supplemental information",
+                "col_header_1": "Biological events or pathways",
                 "rows": [],
                 "merge_judgement": True,
             },
             "summary_judgement": {
                 "judgement": SummaryJudgementChoices.Inadequate,
+                "judgement_icon": "Icon",
+                "judgement_label": "Label",
                 "description": "<p></p>",
                 "human_relevance": "<p></p>",
                 "cross_stream_coherence": "<p></p>",

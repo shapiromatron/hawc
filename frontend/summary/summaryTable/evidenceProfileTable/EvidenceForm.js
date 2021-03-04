@@ -10,7 +10,7 @@ import {ActionsTh, MoveRowTd} from "shared/components/EditableRowData";
 import {JudgementSelector} from "./Judgement";
 import {FactorsForm} from "./Factors";
 
-import {JUDGEMENT_HELP_TEXT} from "./common";
+import {JUDGEMENT_HELP_TEXT, CUSTOM} from "./common";
 
 const EvidenceForm = observer(props => {
         const {store, contentType, createMethodName, judgementRowSpan} = props,
@@ -156,6 +156,34 @@ const EvidenceForm = observer(props => {
                                 }
                                 summary={false}
                             />
+                            {row.judgement.judgement == CUSTOM ? (
+                                <>
+                                    <TextInput
+                                        name="judgement_icon"
+                                        label="Judgement icon"
+                                        value={row.judgement.judgement_icon}
+                                        onChange={e =>
+                                            store.updateValue(
+                                                `${contentType}.rows[${index}].judgement.judgement_icon`,
+                                                e.target.value
+                                            )
+                                        }
+                                        required
+                                    />
+                                    <TextInput
+                                        name="judgement_label"
+                                        label="Judgement icon"
+                                        value={row.judgement.judgement_label}
+                                        onChange={e =>
+                                            store.updateValue(
+                                                `${contentType}.rows[${index}].judgement.judgement_label`,
+                                                e.target.value
+                                            )
+                                        }
+                                        required
+                                    />
+                                </>
+                            ) : null}
                             <QuillTextInput
                                 value={row.judgement.description}
                                 onChange={value =>

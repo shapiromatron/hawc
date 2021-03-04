@@ -44,16 +44,30 @@ const increaseFactors = [
                                 onChange={() => store.toggleFactor(updateKey, choice.key)}
                             />
                             {selectedIndex >= 0 ? (
-                                <TextInput
-                                    name={key}
-                                    value={content.factors[selectedIndex].text}
-                                    onChange={e =>
-                                        store.updateValue(
-                                            `${updateKey}.factors[${selectedIndex}].text`,
-                                            e.target.value
-                                        )
-                                    }
-                                />
+                                <>
+                                    <TextInput
+                                        name={key}
+                                        value={content.factors[selectedIndex].short_description}
+                                        onChange={e =>
+                                            store.updateValue(
+                                                `${updateKey}.factors[${selectedIndex}].short_description`,
+                                                e.target.value
+                                            )
+                                        }
+                                    />
+                                    <QuillTextInput
+                                        value={
+                                            content.factors[selectedIndex].long_description ||
+                                            "<p></p>"
+                                        }
+                                        onChange={value =>
+                                            store.updateValue(
+                                                `${updateKey}.factors[${selectedIndex}].long_description`,
+                                                value
+                                            )
+                                        }
+                                    />
+                                </>
                             ) : null}
                         </div>
                     );
@@ -75,8 +89,8 @@ const increaseFactors = [
                         {content.factors.map((factor, index) => {
                             let factorType = _factors.find(_factor => _factor.key == factor.key),
                                 html = factorType.displayLabel
-                                    ? `<em>${factorType.label}</em> - ` + factor.text
-                                    : factor.text;
+                                    ? `<em>${factorType.label}</em> - ` + factor.short_description
+                                    : factor.short_description;
                             return <li key={index} dangerouslySetInnerHTML={{__html: html}}></li>;
                         })}
                     </ul>

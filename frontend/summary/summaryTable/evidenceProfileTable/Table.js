@@ -146,7 +146,7 @@ class MechanisticEvidenceRows extends Component {
                     <th colSpan={5}>{mechanistic.title}</th>
                 </tr>
                 <tr>
-                    <th>Biological events or pathways</th>
+                    <th>{mechanistic.col_header_1}</th>
                     <th colSpan={3}>Summary of key findings and interpretation</th>
                     <th>Judgment(s) and rationale</th>
                 </tr>

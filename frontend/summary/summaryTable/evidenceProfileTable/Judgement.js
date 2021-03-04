@@ -10,6 +10,8 @@ const judgementChoices = [
         {value: 10, icon: "⊕⊙⊙", text: "Slight"},
         {value: 1, icon: "⊙⊙⊙", text: "Indeterminate"},
         {value: -10, icon: "⊝⊝⊝", text: "Evidence of no effect"},
+        {value: 900, icon: "", text: "None"},
+        {value: 910, icon: "", text: "Custom"},
     ],
     summaryJudgementChoices = [
         {value: 30, icon: "⊕⊕⊕", text: "Evidence demonstrates"},
@@ -17,6 +19,8 @@ const judgementChoices = [
         {value: 10, icon: "⊕⊙⊙", text: "Evidence suggests"},
         {value: 1, icon: "⊙⊙⊙", text: "Evidence inadequate"},
         {value: -10, icon: "⊝⊝⊝", text: "Strong evidence supports no effect"},
+        {value: 900, icon: "", text: "None"},
+        {value: 910, icon: "", text: "Custom"},
     ],
     JudgementSelector = observer(props => {
         const {value, handleSelect} = props,

@@ -22,6 +22,13 @@ const MechanisticForm = observer(props => {
                     onChange={e => store.updateValue("mechanistic.title", e.target.value)}
                     required
                 />
+                <TextInput
+                    name="col_header"
+                    label="Evidence header"
+                    value={mechanistic.col_header_1}
+                    onChange={e => store.updateValue("mechanistic.col_header_1", e.target.value)}
+                    required
+                />
                 <CheckboxInput
                     label="Merge judgement?"
                     checked={mechanistic.merge_judgement}
@@ -41,7 +48,7 @@ const MechanisticForm = observer(props => {
                     <thead>
                         <tr>
                             <th>
-                                Biological events or pathways
+                                {mechanistic.col_header_1}
                                 <HelpTextPopup
                                     title="Help-text"
                                     content="Briefly describe the evidence or information analyzed, which may be subdivided as described in the “adding rows” instruction. Generally, cite or link evidence synthesis (e.g., for references; for detailed analysis). Does not have to be chemical-specific (e.g., read-across)."
