@@ -3,6 +3,7 @@ import {observable, action, computed} from "mobx";
 import _ from "lodash";
 import h from "shared/utils/helpers";
 import {NULL_VALUE} from "../../summary/constants";
+import {DATA_FILTER_CONTAINS, DATA_FILTER_LOGIC_AND} from "../../summary/filters";
 import DataPivotExtension from "summary/dataPivot/DataPivotExtension";
 import {
     moveArrayElementUp,
@@ -18,6 +19,9 @@ let createDefaultAxisItem = function() {
     },
     createTableRow = function() {
         return {column: NULL_VALUE, delimiter: "", on_click_event: NULL_VALUE};
+    },
+    createFilterRow = function() {
+        return {column: NULL_VALUE, type: DATA_FILTER_CONTAINS, value: ""};
     };
 
 class ExploratoryHeatmapStore {
@@ -43,6 +47,8 @@ class ExploratoryHeatmapStore {
             show_null: true,
             autosize_cells: true,
             autorotate_tick_labels: true,
+            filters: [],
+            filtersLogic: DATA_FILTER_LOGIC_AND,
             table_fields: [
                 createTableRow(),
                 createTableRow(),
@@ -86,6 +92,10 @@ class ExploratoryHeatmapStore {
 
     @action.bound createNewAxisLabel(key) {
         this.settings[key].push(createDefaultAxisItem());
+    }
+
+    @action.bound createNewFilter() {
+        this.settings.filters.push(createFilterRow());
     }
 
     @action.bound createNewFilterWidget() {

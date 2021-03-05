@@ -4,13 +4,13 @@ import {inject, observer} from "mobx-react";
 import {Tab, Tabs, TabList, TabPanel} from "react-tabs";
 
 import CheckboxInput from "shared/components/CheckboxInput";
+import FloatInput from "shared/components/FloatInput";
 import TextInput from "shared/components/TextInput";
 import SelectInput from "shared/components/SelectInput";
 
-import FloatInput from "shared/components/FloatInput";
-
 import {MissingData, RefreshRequired} from "./common";
 import AxisLabelTable from "./AxisLabelTable";
+import FilterTable from "./FilterTable";
 import FilterWidgetTable from "./FilterWidgetTable";
 import DetailTable from "./DetailTable";
 
@@ -112,6 +112,15 @@ class VisualCustomizationPanel extends Component {
     renderFiltersTab() {
         return (
             <div>
+                <div className="card">
+                    <div className="card-body">
+                        <h4 className="card-title">Data filters</h4>
+                        <p className="text-muted">
+                            Determine which rows of your dataset should be displayed.
+                        </p>
+                        <FilterTable />
+                    </div>
+                </div>
                 <div className="card">
                     <div className="card-body">
                         <h4 className="card-title">Filter widgets</h4>

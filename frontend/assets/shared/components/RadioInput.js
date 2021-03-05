@@ -16,7 +16,7 @@ class RadioInput extends Component {
                 <div key={choice.id} className="form-check">
                     <input
                         className="form-check-input"
-                        onChange={event => this.props.onChange(this.props.name, choice.id)}
+                        onChange={() => this.props.onChange(choice.id)}
                         checked={choice.id === this.props.value}
                         type="radio"
                         id={id}

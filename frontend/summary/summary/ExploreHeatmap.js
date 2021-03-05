@@ -101,6 +101,8 @@ class ExploreHeatmap extends BaseVisual {
             show_tooltip: settings.show_tooltip,
             show_totals: settings.show_totals,
             show_null: settings.show_null,
+            filters: settings.filters,
+            filtersLogic: settings.filtersLogic,
             autosize_cells: settings.autosize_cells,
             autorotate_tick_labels: settings.autorotate_tick_labels,
             table_fields: settings.table_fields.filter(d => d.column !== NULL_VALUE),
@@ -176,7 +178,6 @@ class ExploreHeatmap extends BaseVisual {
                     if (!options.visualOnly) {
                         $el.prepend(title).append(captionDiv);
                     }
-
                     startupHeatmapAppRender($plotDiv[0], settings, dataset, options);
 
                     if (options.cb) {
