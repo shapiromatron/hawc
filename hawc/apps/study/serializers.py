@@ -62,7 +62,11 @@ class SimpleStudySerializer(StudySerializer):
             "searches",
             "identifiers",
         )
-        extra_kwargs = {"assessment": {"required": False}}
+        extra_kwargs = {
+            "assessment": {"required": False},
+            "full_citation": {"required": False},
+            "short_citation": {"required": False},
+        }
 
 
 class StudyAssessmentSerializer(serializers.ModelSerializer):

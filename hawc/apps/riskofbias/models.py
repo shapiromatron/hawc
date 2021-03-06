@@ -189,7 +189,7 @@ class RiskOfBias(models.Model):
         return reverse("riskofbias:rob_detail", args=[self.study_id])
 
     def get_absolute_url(self):
-        return reverse("riskofbias:arob_reviewers", args=[self.get_assessment().pk])
+        return reverse("riskofbias:arob_reviewers", args=[self.study.assessment_id])
 
     def get_edit_url(self):
         return reverse("riskofbias:rob_update", args=[self.pk])
@@ -355,6 +355,7 @@ class RiskOfBias(models.Model):
             riskofbias__study__in=study_ids,
             riskofbias__final=True,
             riskofbias__active=True,
+            is_default=True,
         ).prefetch_related("riskofbias")
         default_value = '{"sortValue": -1, "display": "N/A"}'
         scores_map = {(score.riskofbias.study_id, score.metric_id): score for score in scores}
@@ -740,7 +741,7 @@ class RiskOfBiasAssessment(models.Model):
     BREADCRUMB_PARENT = "assessment"
 
     def get_absolute_url(self):
-        return reverse("riskofbias:arob_reviewers", args=[self.assessment.pk])
+        return reverse("riskofbias:arob_reviewers", args=[self.assessment_id])
 
     @classmethod
     def build_default(cls, assessment):

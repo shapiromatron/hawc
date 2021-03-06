@@ -1,25 +1,80 @@
+from enum import Enum, IntEnum
 from typing import List
+
+from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
+from pydantic import BaseModel, Field
 
 from .base import BaseCell, BaseCellGroup, BaseTable
 from .generic import GenericCell
-from .parser import QuillParser, strip_tags, tag_wrapper, ul_wrapper
+from .parser import QuillParser, tag_wrapper, ul_wrapper
+
+
+class JudgementTexts(Enum):
+    Robust = ("⊕⊕⊕", "Robust")
+    Moderate = ("⊕⊕⊙", "Moderate")
+    Slight = ("⊕⊙⊙", "Slight")
+    Indeterminate = ("⊙⊙⊙", "Indeterminate")
+    NoEffect = ("⊝⊝⊝", "Evidence of no effect")
+
+
+class SummaryJudgementTexts(Enum):
+    Confident = ("⊕⊕⊕", "Evidence demonstrates")
+    Likely = ("⊕⊕⊙", "Evidence likely indicates")
+    Suggests = ("⊕⊙⊙", "Evidence suggests")
+    Inadequate = ("⊙⊙⊙", "Evidence inadequate")
+    NoEffect = ("⊝⊝⊝", "Strong evidence supports no effect")
+
+
+class JudgementChoices(IntEnum):
+    Robust = 30
+    Moderate = 20
+    Slight = 10
+    Indeterminate = 1
+    NoEffect = -10
+    NoJudgement = 900
+    Custom = 910
+
+
+class SummaryJudgementChoices(IntEnum):
+    Confident = 30
+    Likely = 20
+    Suggests = 10
+    Inadequate = 1
+    NoEffect = -10
+    NoJudgement = 900
+    Custom = 910
+
 
 ## Summary judgement
 
 
 class SummaryJudgementCell(BaseCell):
-    row: int = 1
+    row: int = 2
     column: int = 5
 
-    judgement: str
+    judgement: SummaryJudgementChoices
+    custom_judgement_icon: str = ""
+    custom_judgement_label: str = ""
+
     description: str
     human_relevance: str
     cross_stream_coherence: str
     susceptibility: str
 
+    def judgement_html(self):
+        if self.judgement == SummaryJudgementChoices.NoJudgement:
+            return ""
+        if self.judgement == SummaryJudgementChoices.Custom:
+            return tag_wrapper(self.custom_judgement_icon, "p",) + tag_wrapper(
+                self.custom_judgement_label, "p", "em"
+            )
+        icon = SummaryJudgementTexts[self.judgement.name].value[0]
+        label = SummaryJudgementTexts[self.judgement.name].value[1]
+        return tag_wrapper(icon, "p",) + tag_wrapper(label, "p", "em")
+
     def to_docx(self, block):
         text = ""
-        text += self.judgement
+        text += self.judgement_html()
         text += tag_wrapper("\nPrimary basis:", "p", "em")
         text += self.description
         text += tag_wrapper("\nHuman relevance:", "p", "em")
@@ -29,7 +84,10 @@ class SummaryJudgementCell(BaseCell):
         text += tag_wrapper("\nSusceptible populations and lifestages:", "p", "em")
         text += self.susceptibility
         parser = QuillParser()
-        return parser.feed(text, block)
+        parser.feed(text, block)
+        if self.judgement != SummaryJudgementChoices.NoJudgement:
+            for paragraph in block.paragraphs[0:2]:
+                paragraph.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
 
 
 ## Evidence cells
@@ -38,42 +96,16 @@ class SummaryJudgementCell(BaseCell):
 class EvidenceCell(BaseCell):
     column: int = 0
 
-    evidence: str
-    confidence: str
-    optional: str
+    description: str
 
     def to_docx(self, block):
-        text = self.evidence + self.confidence + self.optional
-        parser = QuillParser()
-        return parser.feed(text, block)
-
-
-class CertainFactorsCell(BaseCell):
-    column: int = 1
-
-    factors: List[str]
-
-    def to_docx(self, block):
-        factors = [strip_tags(factor, "p") for factor in self.factors]
-        text = ul_wrapper(factors)
-        parser = QuillParser()
-        return parser.feed(text, block)
-
-
-class UncertainFactorsCell(BaseCell):
-    column: int = 2
-
-    factors: List[str]
-
-    def to_docx(self, block):
-        factors = [strip_tags(factor, "p") for factor in self.factors]
-        text = ul_wrapper(factors)
+        text = self.description
         parser = QuillParser()
         return parser.feed(text, block)
 
 
 class SummaryCell(BaseCell):
-    column: int = 3
+    column: int = 1
 
     findings: str
 
@@ -82,16 +114,102 @@ class SummaryCell(BaseCell):
         return parser.feed(self.findings, block)
 
 
+class FactorLabel(Enum):
+    NoFactors = "No factors noted"
+    UpConsistency = "Consistency"
+    UpDoseGradient = "Dose - response gradient"
+    UpCoherence = "Coherence of effects"
+    UpEffect = "Large or concerning magnitude of effect"
+    UpPlausible = "Mechanistic evidence providing plausibility"
+    UpConfidence = "Medium or high confidence studies"
+    UpOther = ""
+    DownConsistency = "Unexplained inconsistency"
+    DownImprecision = "Imprecision"
+    DownCoherence = "Lack of expected coherence"
+    DownImplausible = "Evidence demonstrating implausibility"
+    DownConfidence = "Low confidence studies"
+    DownOther = ""
+
+
+class FactorType(IntEnum):
+    NoFactors = 0
+    UpConsistency = 20
+    UpDoseGradient = 30
+    UpCoherence = 40
+    UpEffect = 50
+    UpPlausible = 60
+    UpConfidence = 70
+    UpOther = 100
+    DownConsistency = -20
+    DownImprecision = -30
+    DownCoherence = -40
+    DownImplausible = -50
+    DownConfidence = -60
+    DownOther = -100
+
+
+class Factor(BaseModel):
+    key: FactorType
+    short_description: str
+    long_description: str
+
+    def to_html(self):
+        label = FactorLabel[self.key.name].value
+        if label:
+            return tag_wrapper(label, "em") + " - " + self.short_description
+        else:
+            return self.short_description
+
+
+class FactorsCell(BaseCell):
+    factors: List[Factor]
+    text: str
+
+    def to_docx(self, block):
+        factors = [factor.to_html() for factor in self.factors]
+        text = ""
+        if len(factors):
+            text = ul_wrapper(factors)
+        text += self.text
+        parser = QuillParser()
+        return parser.feed(text, block)
+
+
+class CertainFactorsCell(FactorsCell):
+    column: int = 2
+
+
+class UncertainFactorsCell(FactorsCell):
+    column: int = 3
+
+
 class JudgementCell(BaseCell):
     column: int = 4
 
-    judgement: str
+    judgement: JudgementChoices
+    custom_judgement_icon: str = ""
+    custom_judgement_label: str = ""
+
     description: str
 
+    def judgement_html(self):
+        if self.judgement == JudgementChoices.NoJudgement:
+            return ""
+        if self.judgement == JudgementChoices.Custom:
+            return tag_wrapper(self.custom_judgement_icon, "p",) + tag_wrapper(
+                self.custom_judgement_label, "p", "em"
+            )
+        icon = JudgementTexts[self.judgement.name].value[0]
+        label = JudgementTexts[self.judgement.name].value[1]
+        return tag_wrapper(icon, "p",) + tag_wrapper(label, "p", "em")
+
     def to_docx(self, block):
-        text = self.judgement + self.description
+        text = self.judgement_html() + self.description
         parser = QuillParser()
-        return parser.feed(text, block)
+        parser.feed(text, block)
+        if self.judgement != JudgementChoices.NoJudgement:
+            for paragraph in block.paragraphs[0:2]:
+                paragraph.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
 
 
 ## Mechanistic cells
@@ -133,17 +251,17 @@ class MechanisticJudgementCell(BaseCell):
 
 class EvidenceRow(BaseCellGroup):
     evidence: EvidenceCell
+    summary: SummaryCell
     certain_factors: CertainFactorsCell
     uncertain_factors: UncertainFactorsCell
-    summary: SummaryCell
     judgement: JudgementCell
 
     def _set_cells(self):
         self.cells = [
             self.evidence,
+            self.summary,
             self.certain_factors,
             self.uncertain_factors,
-            self.summary,
             self.judgement,
         ]
 
@@ -163,61 +281,41 @@ class MechanisticRow(BaseCellGroup):
 
 class EvidenceGroup(BaseCellGroup):
     title: str
-    cell_rows: List[EvidenceRow] = []
-    merge_judgement: bool = True
-
-    def column_headers(self):
-        return [
-            GenericCell.parse_args(
-                True, 1, 0, 1, 1, tag_wrapper("Studies and confidence", "p", "strong")
-            ),
-            GenericCell.parse_args(
-                True, 1, 1, 1, 1, tag_wrapper("Factors that increase certainty", "p", "strong")
-            ),
-            GenericCell.parse_args(
-                True, 1, 2, 1, 1, tag_wrapper("Factors that decrease certainty", "p", "strong")
-            ),
-            GenericCell.parse_args(
-                True, 1, 3, 1, 1, tag_wrapper("Summary and key findings", "p", "strong")
-            ),
-            GenericCell.parse_args(
-                True, 1, 4, 1, 1, tag_wrapper("Evidence stream judgement", "p", "strong")
-            ),
-        ]
+    cell_rows: List[EvidenceRow] = Field([], alias="rows")
+    merge_judgement: bool
 
     def _set_cells(self):
         cells = []
         cells.append(GenericCell.parse_args(True, 0, 0, 1, 5, tag_wrapper(self.title, "h2")))
-        cells.extend(self.column_headers())
 
         if len(self.cell_rows) == 0:
             text = tag_wrapper("No data available", "p", "em")
-            cells.append(GenericCell.parse_args(True, 2, 0, 1, 5, text))
+            cells.append(GenericCell.parse_args(True, 1, 0, 1, 5, text))
         elif self.merge_judgement:
             self.cell_rows[0].judgement.row_span = len(self.cell_rows)
-            self.cell_rows[0].add_offset(row=2)
+            self.cell_rows[0].add_offset(row=1)
             cells.extend(self.cell_rows[0].cells)
             for index, row in enumerate(self.cell_rows[1:]):
-                row.add_offset(row=index + 3)
+                row.add_offset(row=index + 2)
                 cells.extend(row.cells[:-1])
         else:
             for index, row in enumerate(self.cell_rows):
-                row.add_offset(row=index + 2)
+                row.add_offset(row=index + 1)
                 cells.extend(row.cells)
         self.cells = cells
 
 
 class MechanisticGroup(BaseCellGroup):
     title: str
-    cell_rows: List[MechanisticRow] = []
-    merge_judgement: bool = True
+    col_header_1: str
+    cell_rows: List[MechanisticRow] = Field([], alias="rows")
+    merge_judgement: bool
 
+    @property
     def column_headers(self):
-        text1 = tag_wrapper("Biological events or pathways", "p", "strong")
-        text2 = tag_wrapper(
-            "Summary of key findings, interpretation, and limitations", "p", "strong"
-        )
-        text3 = tag_wrapper("Evidence stream judgement", "p", "strong")
+        text1 = tag_wrapper(self.col_header_1, "p", "strong")
+        text2 = tag_wrapper("Summary of key findings and interpretation", "p", "strong")
+        text3 = tag_wrapper("Judgment(s) and rationale", "p", "strong")
         return [
             GenericCell.parse_args(True, 1, 0, 1, 1, text1),
             GenericCell.parse_args(True, 1, 1, 1, 3, text2,),
@@ -227,7 +325,7 @@ class MechanisticGroup(BaseCellGroup):
     def _set_cells(self):
         cells = []
         cells.append(GenericCell.parse_args(True, 0, 0, 1, 5, tag_wrapper(self.title, "h2")))
-        cells.extend(self.column_headers())
+        cells.extend(self.column_headers)
 
         if len(self.cell_rows) == 0:
             text = tag_wrapper("No data available", "p", "em")
@@ -255,88 +353,69 @@ class EvidenceProfileTable(BaseTable):
     mechanistic: MechanisticGroup
     summary_judgement: SummaryJudgementCell
 
+    @property
+    def column_headers(self):
+        return [
+            GenericCell.parse_args(
+                True, 1, 0, 1, 1, tag_wrapper("Studies, outcomes, and confidence", "p", "strong")
+            ),
+            GenericCell.parse_args(
+                True, 1, 1, 1, 1, tag_wrapper("Summary of key findings", "p", "strong")
+            ),
+            GenericCell.parse_args(
+                True, 1, 2, 1, 1, tag_wrapper("Factors that increase certainty", "p", "strong")
+            ),
+            GenericCell.parse_args(
+                True, 1, 3, 1, 1, tag_wrapper("Factors that decrease certainty", "p", "strong")
+            ),
+            GenericCell.parse_args(
+                True, 1, 4, 1, 1, tag_wrapper("Judgment(s) and rationale", "p", "strong")
+            ),
+        ]
+
     def _set_cells(self):
         cells = []
-        text = tag_wrapper("Evidence Stream Summary and Interpretation", "h1")
+        text = tag_wrapper("Evidence Summary and Interpretation", "h1")
         cells.append(GenericCell.parse_args(True, 0, 0, 1, 5, text))
-        text = tag_wrapper("Evidence Integration Summary Judgement", "h1")
-        cells.append(GenericCell.parse_args(True, 0, 5, 1, 1, text))
-        self.exposed_human.add_offset(row=1)
+        text = tag_wrapper("Inferences and Summary Judgment", "h1")
+        cells.append(GenericCell.parse_args(True, 0, 5, 2, 1, text))
+        cells.extend(self.column_headers)
+        self.exposed_human.add_offset(row=2)
         cells.extend(self.exposed_human.cells)
         self.animal.add_offset(row=self.exposed_human.rows)
         cells.extend(self.animal.cells)
         self.mechanistic.add_offset(row=self.animal.rows)
         cells.extend(self.mechanistic.cells)
-        self.summary_judgement.row_span = self.mechanistic.rows - 1
+        self.summary_judgement.row_span = self.mechanistic.rows - 2
         cells.append(self.summary_judgement)
         self.cells = cells
 
     @classmethod
-    def build_default(cls):
-        return cls.parse_obj(
-            {
-                "exposed_human": {
-                    "title": "exposed human",
-                    "cell_rows": [
-                        {
-                            "evidence": {
-                                "evidence": "<p>asdf</p>",
-                                "confidence": "<p>asdf</p>",
-                                "optional": "<p>asdf</p>",
-                            },
-                            "certain_factors": {"factors": ["<p>asdf</p>", "<p>asdf</p>"]},
-                            "uncertain_factors": {"factors": ["<p>asdf</p>", "<p>asdf</p>"]},
-                            "summary": {"findings": "<p>asdf</p>"},
-                            "judgement": {"judgement": "<p>asdf</p>", "description": "<p>asdf</p>"},
-                        },
-                        {
-                            "evidence": {
-                                "evidence": "<p>asdf</p>",
-                                "confidence": "<p>asdf</p>",
-                                "optional": "<p>asdf</p>",
-                            },
-                            "certain_factors": {"factors": ["<p>asdf</p>", "<p>asdf</p>"]},
-                            "uncertain_factors": {"factors": ["<p>asdf</p>", "<p>asdf</p>"]},
-                            "summary": {"findings": "<p>asdf</p>"},
-                            "judgement": {"judgement": "<p>asdf</p>", "description": "<p>asdf</p>"},
-                        },
-                    ],
-                },
-                "animal": {
-                    "title": "animal",
-                    "cell_rows": [
-                        {
-                            "evidence": {
-                                "evidence": "<p>asdf</p>",
-                                "confidence": "<p>asdf</p>",
-                                "optional": "<p>asdf</p>",
-                            },
-                            "certain_factors": {"factors": ["<p>asdf</p>", "<p>asdf</p>"]},
-                            "uncertain_factors": {"factors": ["<p>asdf</p>", "<p>asdf</p>"]},
-                            "summary": {"findings": "<p>asdf</p>"},
-                            "judgement": {"judgement": "<p>asdf</p>", "description": "<p>asdf</p>"},
-                        },
-                        {
-                            "evidence": {
-                                "evidence": "<p>asdf</p>",
-                                "confidence": "<p>asdf</p>",
-                                "optional": "<p>asdf</p>",
-                            },
-                            "certain_factors": {"factors": ["<p>asdf</p>", "<p>asdf</p>"]},
-                            "uncertain_factors": {"factors": ["<p>asdf</p>", "<p>asdf</p>"]},
-                            "summary": {"findings": "<p>asdf</p>"},
-                            "judgement": {"judgement": "<p>asdf</p>", "description": "<p>asdf</p>"},
-                        },
-                    ],
-                    "merge_judgement": False,
-                },
-                "mechanistic": {"title": "mechanistic"},
-                "summary_judgement": {
-                    "judgement": "<p>asdf</p>",
-                    "description": "<p>asdf</p>",
-                    "human_relevance": "<p>asdf</p>",
-                    "cross_stream_coherence": "<p>asdf</p>",
-                    "susceptibility": "<p>asdf</p>",
-                },
-            }
-        )
+    def get_default_props(cls):
+        return {
+            "exposed_human": {
+                "title": "Evidence from studies of exposed humans",
+                "rows": [],
+                "merge_judgement": True,
+            },
+            "animal": {
+                "title": "Evidence from animal studies",
+                "rows": [],
+                "merge_judgement": True,
+            },
+            "mechanistic": {
+                "title": "Mechanistic evidence and supplemental information",
+                "col_header_1": "Biological events or pathways",
+                "rows": [],
+                "merge_judgement": True,
+            },
+            "summary_judgement": {
+                "judgement": SummaryJudgementChoices.Inadequate,
+                "custom_judgement_icon": "",
+                "custom_judgement_label": "",
+                "description": "<p></p>",
+                "human_relevance": "<p></p>",
+                "cross_stream_coherence": "<p></p>",
+                "susceptibility": "<p></p>",
+            },
+        }
