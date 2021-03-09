@@ -4,6 +4,11 @@ import _ from "lodash";
 import h from "shared/utils/helpers";
 import {NULL_VALUE} from "../../summary/constants";
 import DataPivotExtension from "summary/dataPivot/DataPivotExtension";
+import {
+    moveArrayElementUp,
+    moveArrayElementDown,
+    deleteArrayElement,
+} from "shared/components/EditableRowData";
 
 let createDefaultAxisItem = function() {
         return {column: NULL_VALUE, wrap_text: 0, delimiter: ""};
@@ -62,28 +67,21 @@ class ExploratoryHeatmapStore {
     @observable dpeOptions = [];
 
     @action.bound moveArrayElementUp(key, index) {
-        const arr = this.settings[key];
-        if (index === 0) {
-            return;
-        }
-        let b = arr[index];
-        arr[index] = arr[index - 1];
-        arr[index - 1] = b;
+        const arr = _.cloneDeep(this.settings[key]);
+        moveArrayElementUp(arr, index);
+        this.settings[key] = arr;
     }
 
     @action.bound moveArrayElementDown(key, index) {
-        const arr = this.settings[key];
-        if (index + 1 >= arr.length) {
-            return;
-        }
-        let b = arr[index];
-        arr[index] = arr[index + 1];
-        arr[index + 1] = b;
+        const arr = _.cloneDeep(this.settings[key]);
+        moveArrayElementDown(arr, index);
+        this.settings[key] = arr;
     }
 
     @action.bound deleteArrayElement(key, index) {
         const arr = this.settings[key];
-        arr.splice(index, 1);
+        deleteArrayElement(arr, index);
+        this.settings[key] = arr;
     }
 
     @action.bound createNewAxisLabel(key) {
