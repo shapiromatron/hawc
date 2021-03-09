@@ -3,6 +3,22 @@ import _ from "lodash";
 import * as d3 from "d3";
 import slugify from "slugify";
 
+class HEROUtils {
+    static setHeroAccess(heroAccess) {
+        window.localStorage.setItem("hero-access", heroAccess);
+    }
+
+    static getHeroAccess() {
+        return window.localStorage.getItem("hero-access") === "true";
+    }
+
+    static getHeroUrl(id) {
+        return this.getHeroAccess()
+            ? `http://heronet.epa.gov/heronet/index.cfm?action=reference.details&reference_id=${id}`
+            : `http://hero.epa.gov/hero/index.cfm?action=reference.details&reference_id=${id}`;
+    }
+}
+
 class HAWCUtils {
     static HAWC_NEW_WINDOW_POPUP_CLOSING = "hawcNewWindowPopupClosing";
 
@@ -265,18 +281,6 @@ class HAWCUtils {
                 console.error(`Unrecognized filter: ${str}`);
         }
     }
-
-    static setHeroAccess(heroAccess) {
-        window.localStorage.setItem("hero-access", heroAccess);
-    }
-    static getHeroAccess() {
-        return window.localStorage.getItem("hero-access") === "true";
-    }
-    static getHeroUrl(id) {
-        return this.getHeroAccess()
-            ? `http://heronet.epa.gov/heronet/index.cfm?action=reference.details&reference_id=${id}`
-            : `http://hero.epa.gov/hero/index.cfm?action=reference.details&reference_id=${id}`;
-    }
 }
 
-export default HAWCUtils;
+export {HAWCUtils as default, HEROUtils};

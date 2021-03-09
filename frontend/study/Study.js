@@ -4,7 +4,7 @@ import * as d3 from "d3";
 
 import DescriptiveTable from "utils/DescriptiveTable";
 import HAWCModal from "utils/HAWCModal";
-import HAWCUtils from "utils/HAWCUtils";
+import HAWCUtils, {HEROUtils} from "utils/HAWCUtils";
 
 import {getReferenceTagListUrl} from "shared/utils/urls";
 
@@ -168,7 +168,7 @@ class Study {
                         $("<a>")
                             .attr(
                                 "href",
-                                v.database === "HERO" ? HAWCUtils.getHeroUrl(v.unique_id) : v.url
+                                v.database === "HERO" ? HEROUtils.getHeroUrl(v.unique_id) : v.url
                             )
                             .attr("target", "_blank")
                             .text(v.database)
