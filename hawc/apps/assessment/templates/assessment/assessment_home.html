@@ -80,3 +80,15 @@
   {% endwith %}
 
 {% endblock content %}
+
+{% block extrajs %}
+<script id='data' type='text/json'>
+{
+  "heroAccess": {{user.profile.HERO_access|yesno:"true,false"}}
+}
+</script>
+<script type="text/javascript">
+  const data = JSON.parse(document.getElementById('data').textContent);
+  window.app.utils.HAWCUtils.setHeroAccess(data.heroAccess);
+</script>
+{% endblock extrajs %}

@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 
 import h from "shared/utils/helpers";
 import {getReferenceTagListUrl} from "shared/utils/urls";
+import HAWCUtils from "utils/HAWCUtils";
 
 import ReferenceButton from "./ReferenceButton";
 
@@ -31,7 +32,7 @@ class Reference extends Component {
                     <ReferenceButton
                         key={h.randomString()}
                         className={"btn btn-sm btn-success"}
-                        url={v.url}
+                        url={v.database === "HERO" ? HAWCUtils.getHeroUrl(v.unique_id) : v.url}
                         displayText={v.database}
                         textToCopy={v.id}
                     />

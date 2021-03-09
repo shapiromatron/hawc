@@ -9,5 +9,8 @@
 {% block extrajs %}
   <script type="text/javascript">
     document.getElementById('id_first_name').focus();
+    $("form").submit(function (event) {
+        window.app.utils.HAWCUtils.setHeroAccess(event.currentTarget.HERO_access.checked);
+      });
   </script>
 {% endblock extrajs %}

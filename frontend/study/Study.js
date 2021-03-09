@@ -166,7 +166,10 @@ class Study {
                 ul.append(
                     $("<li>").append(
                         $("<a>")
-                            .attr("href", v.url)
+                            .attr(
+                                "href",
+                                v.database === "HERO" ? HAWCUtils.getHeroUrl(v.unique_id) : v.url
+                            )
                             .attr("target", "_blank")
                             .text(v.database)
                     )

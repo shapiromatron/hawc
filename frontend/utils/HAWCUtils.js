@@ -265,6 +265,18 @@ class HAWCUtils {
                 console.error(`Unrecognized filter: ${str}`);
         }
     }
+
+    static setHeroAccess(heroAccess) {
+        window.localStorage.setItem("hero-access", heroAccess);
+    }
+    static getHeroAccess() {
+        return window.localStorage.getItem("hero-access") === "true";
+    }
+    static getHeroUrl(id) {
+        return this.getHeroAccess()
+            ? `http://heronet.epa.gov/heronet/index.cfm?action=reference.details&reference_id=${id}`
+            : `http://hero.epa.gov/hero/index.cfm?action=reference.details&reference_id=${id}`;
+    }
 }
 
 export default HAWCUtils;
