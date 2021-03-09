@@ -407,14 +407,7 @@ class EndpointList(BaseEndpointFilterList):
             query &= self.form.get_query()
             order_by = self.form.get_order_by()
 
-        ids = (
-            self.model.objects.filter(query)
-            .order_by("id")
-            .distinct("id")
-            .values_list("id", flat=True)
-        )
-
-        qs = self.model.objects.filter(id__in=ids)
+        qs = self.model.objects.filter(query).order_by("id").distinct("id")
 
         if order_by:
             if order_by == "customBMD":
@@ -426,7 +419,9 @@ class EndpointList(BaseEndpointFilterList):
             else:
                 qs = qs.order_by(order_by)
 
-        return qs
+        return qs.select_related("animal_group__experiment__study",).prefetch_related(
+            "groups", "animal_group__dosing_regime__doses",
+        )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
