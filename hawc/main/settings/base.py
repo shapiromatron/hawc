@@ -259,6 +259,9 @@ GIT_COMMIT_FILE = PROJECT_ROOT / ".gitcommit"
 COMMIT = get_git_commit()
 
 
+# Google Analytics settings
+GOOGLE_ANALYTICS_KEY = os.getenv("GOOGLE_ANALYTICS_KEY")
+
 # PubMed settings
 PUBMED_API_KEY = os.getenv("PUBMED_API_KEY")
 PUBMED_MAX_QUERY_SIZE = 10000
