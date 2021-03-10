@@ -67,12 +67,23 @@ urlpatterns = [
         views.VisualizationCreateTester.as_view(),
         name="visualization_create_tester",
     ),
-    path("visual/<int:pk>/", views.VisualizationDetail.as_view(), name="visualization_detail",),
     path(
-        "visual/<int:pk>/update/", views.VisualizationUpdate.as_view(), name="visualization_update",
+        "visual/<int:pk>/", views.VisualizationByIdDetail.as_view(), name="visualization_detail_id",
     ),
     path(
-        "visual/<int:pk>/delete/", views.VisualizationDelete.as_view(), name="visualization_delete",
+        "visual/assessment/<int:pk>/<slug:slug>/",
+        views.VisualizationDetail.as_view(),
+        name="visualization_detail",
+    ),
+    path(
+        "visual/assessment/<int:pk>/<slug:slug>/update/",
+        views.VisualizationUpdate.as_view(),
+        name="visualization_update",
+    ),
+    path(
+        "visual/assessment/<int:pk>/<slug:slug>/delete/",
+        views.VisualizationDelete.as_view(),
+        name="visualization_delete",
     ),
     # DATA-PIVOT
     path(

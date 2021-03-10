@@ -339,13 +339,13 @@ class Visual(models.Model):
         return reverse("summary:visualization_list", args=(assessment_id,))
 
     def get_absolute_url(self):
-        return reverse("summary:visualization_detail", args=(self.pk,))
+        return reverse("summary:visualization_detail", args=(self.assessment_id, self.slug))
 
     def get_update_url(self):
-        return reverse("summary:visualization_update", args=(self.pk,))
+        return reverse("summary:visualization_update", args=(self.assessment_id, self.slug))
 
     def get_delete_url(self):
-        return reverse("summary:visualization_delete", args=(self.pk,))
+        return reverse("summary:visualization_delete", args=(self.assessment_id, self.slug))
 
     def get_assessment(self):
         return self.assessment
