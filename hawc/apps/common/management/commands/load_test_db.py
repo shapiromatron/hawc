@@ -27,7 +27,7 @@ class Command(BaseCommand):
         with ignore_signals():
             call_command("migrate", verbosity=0)
 
-            if options["ifempty"] and get_user_model().objects.count()>0:
+            if options["ifempty"] and get_user_model().objects.count() > 0:
                 message = "Migrations complete; fixture not loaded (db not empty)"
             else:
                 call_command("flush", verbosity=0, interactive=False)
