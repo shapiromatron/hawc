@@ -54,7 +54,7 @@ def _check_browsing(driver, root_url):
 
     # click the rob heatmap example
     driver.find_element_by_link_text("rob-heatmap").click()
-    assert "/summary/visual/3/" in driver.current_url
+    assert "rob-heatmap" in driver.current_url
     h.wait_until(h.Text("rob-heatmap").exists)
     assert h.Link("Actions").exists() is False
     assert len(driver.find_elements_by_css_selector("svg.d3")) > 0
@@ -66,11 +66,13 @@ def _check_visuals_working(driver, root_url):
     Tests to ensure all visual types are displayed.
     """
     h.go_to(root_url + "/summary/visual/5/")
+    # visual id should redirect to slug url
+    h.wait_until(lambda: "/summary/visual/assessment/2/barchart/" in driver.current_url)
     h.wait_until(h.Text("legend").exists)
     assert len(driver.find_elements_by_css_selector("svg")) > 0
     assert len(driver.find_elements_by_css_selector("svg .legend")) > 0
 
-    h.go_to(root_url + "/summary/visual/4/")
+    h.go_to(root_url + "/summary/visual/assessment/2/crossview/")
     h.wait_until(h.Text("Dose").exists)
     assert len(driver.find_elements_by_css_selector("svg")) > 0
     assert len(driver.find_elements_by_css_selector("svg .crossview_path_group")) > 0
@@ -87,27 +89,27 @@ def _check_visuals_working(driver, root_url):
     assert len(driver.find_elements_by_css_selector("svg .x_gridlines")) > 0
     assert len(driver.find_elements_by_css_selector("svg .y_gridlines")) > 0
 
-    h.go_to(root_url + "/summary/visual/7/")
+    h.go_to(root_url + "/summary/visual/assessment/2/embedded-tableau/")
     h.wait_until(h.Text("embedded-tableau").exists)
     h.wait_until(h.S(".tableauPlaceholder iframe").exists, timeout_secs=20)
     assert len(driver.find_elements_by_tag_name("iframe")) > 0
 
-    h.go_to(root_url + "/summary/visual/3/")
+    h.go_to(root_url + "/summary/visual/assessment/2/rob-heatmap/")
     h.wait_until(h.Text("rob-heatmap").exists)
     assert len(driver.find_elements_by_css_selector("svg")) > 0
     assert len(driver.find_elements_by_css_selector("svg .legend")) > 0
 
-    h.go_to(root_url + "/summary/visual/6/")
+    h.go_to(root_url + "/summary/visual/assessment/2/tagtree/")
     h.wait_until(h.Text("Human Study").exists)
     assert len(driver.find_elements_by_css_selector("svg")) > 0
     assert len(driver.find_elements_by_css_selector("svg .tagnode")) == 4
 
-    h.go_to(root_url + "/summary/visual/8/")
+    h.go_to(root_url + "/summary/visual/assessment/2/exploratory-heatmap/")
     h.wait_until(h.Text("exploratory-heatmap").exists)
     assert len(driver.find_elements_by_css_selector("svg.d3")) > 0
     assert len(driver.find_elements_by_css_selector("svg.d3 g rect")) > 5
 
-    h.go_to(root_url + "/summary/visual/10/")
+    h.go_to(root_url + "/summary/visual/assessment/2/bioassay-aggregation/")
     h.wait_until(h.Text("bioassay-aggregation").exists)
     assert len(driver.find_elements_by_css_selector("svg.d3")) > 0
     assert len(driver.find_elements_by_css_selector("svg.d3 g circle")) > 5
