@@ -1,7 +1,5 @@
 from django.db import models
 
-# choices for field drop down menus (note: some will need to be changed to frontend autocomplete fields)
-
 study_type_choices = (
     ("Observational/gradient", "Observational/gradient"),
     ("Manipulation/experiment", "Manipulation/experiment"),
@@ -534,8 +532,6 @@ statistical_sig_measure_type_choices = (
 )
 sort_choices = (("TBD", "TBD"),)
 
-# pick one or many field models are below
-
 
 class Country(models.Model):
 
@@ -547,7 +543,6 @@ class Country(models.Model):
     )
 
     def __str__(self):
-
         return self.country
 
     class Meta:
@@ -601,7 +596,6 @@ class Ecoregion(models.Model):
     )
 
     def __str__(self):
-
         return self.ecoregion
 
     class Meta:
@@ -683,7 +677,6 @@ class Metadata(models.Model):
     )
 
     def __str__(self):
-
         return self.study_type
 
     class Meta:
@@ -743,7 +736,6 @@ class Cause(models.Model):
     )
 
     def __str__(self):
-
         return self.term
 
     class Meta:
@@ -817,7 +809,6 @@ class Effect(models.Model):
     )
 
     def __str__(self):
-
         return self.term
 
     class Meta:
@@ -934,10 +925,6 @@ class Quantitative(models.Model):
         help_text="Calculation from 'response measure value' based on a formula linked to 'response measure type', if applicable",
         null=True,
     )
-
-    # def __str__(self):
-
-    #    return self.cause_level
 
     class Meta:
         verbose_name = "Quantitative response information"

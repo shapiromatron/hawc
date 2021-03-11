@@ -1,14 +1,13 @@
 from django.contrib import admin
 
-from .models import *
+from . import models
 
-# Register your models here.
-admin.site.register(Reference)
-admin.site.register(Metadata)
-admin.site.register(Cause)
-admin.site.register(Effect)
-admin.site.register(Quantitative)
-admin.site.register(Country)
-admin.site.register(State)
-admin.site.register(Ecoregion)
-admin.site.register(Climate)
+admin.site.register(models.Reference)
+admin.site.register(models.Metadata)
+admin.site.register(models.Cause)
+admin.site.register(models.Effect)
+admin.site.register(models.Quantitative)
+admin.site.register(models.Country)
+admin.site.register(models.State)
+admin.site.register(models.Ecoregion)
+admin.site.register(models.Climate)
