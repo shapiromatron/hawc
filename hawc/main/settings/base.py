@@ -259,7 +259,7 @@ GIT_COMMIT_FILE = PROJECT_ROOT / ".gitcommit"
 COMMIT = get_git_commit()
 
 
-# Google Analytics settings
+# Google Tag Manager settings
 GTM_ID = os.getenv("GTM_ID")
 
 # PubMed settings
