@@ -260,7 +260,7 @@ COMMIT = get_git_commit()
 
 
 # Google Analytics settings
-GOOGLE_ANALYTICS_KEY = os.getenv("GOOGLE_ANALYTICS_KEY")
+GTM_ID = os.getenv("GTM_ID")
 
 # PubMed settings
 PUBMED_API_KEY = os.getenv("PUBMED_API_KEY")

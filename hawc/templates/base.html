@@ -11,6 +11,12 @@
     <meta name="robots" content="NONE,NOARCHIVE" />
     <title>{% block title %}Health Assessment Workspace Collaborative (HAWC){% endblock %}</title>
 
+    {% if GOOGLE_ANALYTICS_KEY %}
+      <!-- Google Tag Manager -->
+      <script>(function (w, d, s, l, i) { w[l] = w[l] || []; w[l].push({ "gtm.start": new Date().getTime(), event: "gtm.js" }); var f = d.getElementsByTagName(s)[0], j = d.createElement(s), dl = l != "dataLayer" ? "&l=" + l : ""; j.async = true; j.src = "//www.googletagmanager.com/gtm.js?id=" + i + dl; f.parentNode.insertBefore(j, f); })(window, document, "script", "dataLayer", "{{GOOGLE_ANALYTICS_KEY}}");</script>
+      <!-- End Google Tag Manager -->
+    {% endif %}
+
     {% if extra_branding and flavor == "EPA" %}
       <link rel="shortcut icon" href="https://www.epa.gov/sites/all/themes/epa/favicon.ico" type="image/vnd.microsoft.icon" />
     {% else %}
@@ -24,6 +30,13 @@
     {% include 'includes/css.html' %}
   </head>
   <body>
+
+    {% if GOOGLE_ANALYTICS_KEY %}
+      <!-- Google Tag Manager -->
+      <noscript><iframe src="//www.googletagmanager.com/ns.html?id={{GOOGLE_ANALYTICS_KEY}}" height="0" width="0"
+          style="display:none;visibility:hidden"></iframe></noscript>
+      <!-- End Google Tag Manager -->
+    {% endif %}
 
     {% if user.is_superuser or SERVER_ROLE != 'production' %}
       {% include 'includes/environment_banner.html' %}
@@ -82,16 +95,6 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.1/umd/popper.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
-      {% if GOOGLE_ANALYTICS_KEY %}
-        <script>
-          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-          })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-          ga('create', '{{GOOGLE_ANALYTICS_KEY}}', 'auto');
-          ga('send', 'pageview');
-        </script>
-      {% endif %}
     {% endif %}
     {% render_bundle 'main' %}
     {% block extrajs %}{% endblock %}
