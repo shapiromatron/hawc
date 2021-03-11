@@ -15,7 +15,9 @@ class ScoreBar extends Component {
     render_score_bar() {
         let {shade, symbol, direction} = this.props;
         return (
-            <div className="rob_score_bar" style={{backgroundColor: shade, opacity: 0, width: 0}}>
+            <div
+                className="rob_score_bar mb-1"
+                style={{backgroundColor: shade, opacity: 0, width: 0}}>
                 <span style={{color: String.contrasting_color(shade)}} className="score-symbol">
                     {symbol} {BIAS_DIRECTION_SIMPLE[direction]}
                 </span>

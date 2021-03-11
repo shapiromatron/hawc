@@ -47,33 +47,33 @@ class EditableTask extends Component {
                 </div>
             </div>
         ) : (
-            <div style={{position: "relative"}}>
-                <button
-                    type="button"
-                    className="btn btn-light"
-                    onClick={() => this.setState({isEditing: true})}
-                    style={{
-                        position: "absolute",
-                        left: "170px",
-                    }}>
-                    <i
-                        title="Edit this task"
-                        className="fa fa-pencil-square-o"
-                        aria-hidden="true"
-                    />
-                </button>
-                <StatusLabel task={task} />
-                {showOwner && task.owner ? (
+            <div className="row">
+                <div className="col-md-auto">
+                    <StatusLabel task={task} />
+                    {showOwner && task.owner ? (
+                        <div>
+                            <b>Owner: </b>
+                            <span>{task.owner.full_name}</span>
+                        </div>
+                    ) : null}
                     <div>
-                        <b>Owner: </b>
-                        <span>{task.owner.full_name}</span>
+                        <b>Task: </b>
+                        <span>{TASK_TYPES[task.type]}</span>
                     </div>
-                ) : null}
-                <div>
-                    <b>Task: </b>
-                    <span>{TASK_TYPES[task.type]}</span>
+                    <DueDateLabel status={task.status} due_date={task.due_date} />
                 </div>
-                <DueDateLabel status={task.status} due_date={task.due_date} />
+                <div className="col-md">
+                    <button
+                        type="button"
+                        className="btn btn-light"
+                        onClick={() => this.setState({isEditing: true})}>
+                        <i
+                            title="Edit this task"
+                            className="fa fa-pencil-square-o"
+                            aria-hidden="true"
+                        />
+                    </button>
+                </div>
             </div>
         );
     }

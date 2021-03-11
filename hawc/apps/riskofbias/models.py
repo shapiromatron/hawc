@@ -189,7 +189,7 @@ class RiskOfBias(models.Model):
         return reverse("riskofbias:rob_detail", args=[self.study_id])
 
     def get_absolute_url(self):
-        return reverse("riskofbias:arob_reviewers", args=[self.get_assessment().pk])
+        return reverse("riskofbias:arob_reviewers", args=[self.study.assessment_id])
 
     def get_edit_url(self):
         return reverse("riskofbias:rob_update", args=[self.pk])
@@ -355,6 +355,7 @@ class RiskOfBias(models.Model):
             riskofbias__study__in=study_ids,
             riskofbias__final=True,
             riskofbias__active=True,
+            is_default=True,
         ).prefetch_related("riskofbias")
         default_value = '{"sortValue": -1, "display": "N/A"}'
         scores_map = {(score.riskofbias.study_id, score.metric_id): score for score in scores}
@@ -625,14 +626,58 @@ class RiskOfBiasScoreOverrideObject(models.Model):
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey("content_type", "object_id")
 
+    def __str__(self):
+        return f"id={self.id};score={self.score_id};obj_ct={self.content_type_id};obj_id={self.object_id}"
+
     def get_content_type_name(self) -> str:
         return f"{self.content_type.app_label}.{self.content_type.model}"
 
     def get_object_url(self) -> str:
+        if self.content_object is None:
+            return reverse("404")
         return self.content_object.get_absolute_url()
 
     def get_object_name(self) -> str:
+        if self.content_object is None:
+            return f"<deleted {self}>"
         return str(self.content_object)
+
+    @classmethod
+    def get_orphan_relations(cls, delete: bool = False) -> str:
+        """Determine if any relations are orphaned and optionally delete.
+
+        Args:
+            delete (bool, optional): Delete found instances. Defaults to False.
+
+        Returns:
+            str: A log message of relations found and what as done.
+        """
+        cts = RiskOfBiasScoreOverrideObject.objects.values_list(
+            "content_type", flat=True
+        ).distinct()
+
+        deletions = []
+        for ct in cts:
+            RelatedClass = ContentType.objects.get_for_id(ct).model_class()
+            all_ids = cls.objects.filter(content_type=ct).values_list("object_id", flat=True)
+            matched_ids = RelatedClass.objects.filter(id__in=all_ids).values_list("id", flat=True)
+            deleted_ids = list(set(all_ids) - set(matched_ids))
+            if deleted_ids:
+                deletions.extend(
+                    list(cls.objects.filter(content_type=ct, object_id__in=deleted_ids))
+                )
+
+        message = ""
+        if deletions:
+            message = "\n".join([str(item) for item in deletions])
+            ids_to_delete = [item.id for item in deletions]
+            if delete:
+                message = f"Deleting orphaned RiskOfBiasScoreOverrideObjects:\n{message}"
+                cls.objects.filter(id__in=ids_to_delete).delete()
+            else:
+                message = f"Found orphaned RiskOfBiasScoreOverrideObjects:\n{message}"
+
+        return message
 
 
 DEFAULT_QUESTIONS_OHAT = 1
@@ -696,7 +741,7 @@ class RiskOfBiasAssessment(models.Model):
     BREADCRUMB_PARENT = "assessment"
 
     def get_absolute_url(self):
-        return reverse("riskofbias:arob_reviewers", args=[self.assessment.pk])
+        return reverse("riskofbias:arob_reviewers", args=[self.assessment_id])
 
     @classmethod
     def build_default(cls, assessment):

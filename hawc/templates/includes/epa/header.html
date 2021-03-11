@@ -1,102 +1,54 @@
 <div class="epa-style app-header">
+
     <header class="masthead clearfix" role="banner">
-        <img class="site-logo" src="https://www.epa.gov/sites/all/themes/epa/logo.png" alt="">
-        <div class="site-name-and-slogan">
-            <h1 class="site-name">
-                <span>US EPA</span>
+        <form class="float-right form-inline d-none d-md-block d-lg-none mr-2 epa-search-fixed-size">
+            <div class="input-group input-group-sm">
+                <input type="text" class="form-control " placeholder="Search EPA.gov" name="querytext">
+                <div class="input-group-append">
+                    <button type="submit" class="btn epa-search-button" formaction="https://search.epa.gov/epasearch/">
+                        <i class="fa fa-search text-light" aria-hidden="true"></i></button>
+                </div>
+                <input type="hidden" name="areaname" value="">
+                <input type="hidden" name="areacontacts" value="">
+                <input type="hidden" name="areasearchurl" value="">
+                <input type="hidden" name="typeofsearch" value="epa">
+                <input type="hidden" name="result_template" value="2col.ftl">
+            </div>
+        </form>
+        <img alt="" class="site-logo" src="https://www.epa.gov/sites/all/themes/epa/logo.png">
+        <div class="ml-3 site-name-and-slogan">
+            <h1 class="site-name"><a href="https://www.epa.gov/" rel="home" title="Go to the home page"><span>US EPA</span></a>
             </h1>
             <div class="site-slogan">United States Environmental Protection Agency</div>
         </div>
     </header>
-    <nav class="navbar navbar-expand-lg  epanavbar">
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#epanavbarcontent"
-            aria-controls="epanavbarcontent" aria-expanded="false" aria-label="Toggle navigation">
-            <i class="fa fa-bars" aria-hidden="true"></i>
-        </button>
 
+    <nav class="navbar navbar-expand-md epanavbar">
         <div class="collapse navbar-collapse" id="epanavbarcontent">
             <ul class="navbar-nav mr-auto">
-                <li class="nav-item dropdown">
-                    <a class="nav-link " href="https://epa.gov/environmental-topics" id="navbarDropdown" role="button"
+                <li class="nav-item">
+                    <a class="nav-link " href="https://epa.gov/environmental-topics"
                         aria-haspopup="true" aria-expanded="false"
-                        title="View links to the most popular pages for each of EPA’s top environmental topics.">
-                        Environmental Topics
-                    </a>
-                    <div class="dropdown-menu m-0" aria-labelledby="navbarDropdown">
-                        <a href="https://epa.gov/bedbugs" title="" class="dropdown-item">Bed Bugs</a>
-                        <a href="https://epa.gov/environmental-topics/chemicals-and-toxics-topics" title=""
-                            class="dropdown-item">Chemicals and
-                            Toxics</a>
-                        <a href="https://epa.gov/environmental-topics/environmental-information-location" title=""
-                            class="dropdown-item">Environmental Information by Location</a>
-                        <a href="https://epa.gov/environmental-topics/greener-living" title="" class="dropdown-item">Greener Living</a>
-                        <a href="https://epa.gov/environmental-topics/health-topics" title="" class="dropdown-item">Health</a>
-                        <a href="https://epa.gov/environmental-topics/land-waste-and-cleanup-topics" title=""
-                            class="dropdown-item">Land,
-                            Waste, and Cleanup</a>
-                        <a href="https://epa.gov/lead" title="" class="dropdown-item">Lead</a>
-                        <a href="https://epa.gov/mold" title="" class="dropdown-item">Mold</a>
-                        <a href="https://epa.gov/pesticides" title="" class="dropdown-item">Pesticides</a>
-                        <a href="https://epa.gov/radon" title="" class="dropdown-item">Radon</a>
-                        <a href="https://epa.gov/environmental-topics/science-topics" title="" class="dropdown-item">Science</a>
-                        <a href="https://epa.gov/environmental-topics/water-topics" title="" class="dropdown-item">Water</a>
-                        <a href="https://epa.gov/topics-epa-web" title="" class="dropdown-item">A-Z Topic Index</a>
-                    </div>
+                        title="View links to the most popular pages for each of EPA’s top environmental topics.">Environmental Topics</a>
                 </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link " href="https://epa.gov/laws-regulations" id="navbarDropdown" role="button" aria-haspopup="true"
-                        aria-expanded="false"
-                        title="View links to regulatory information by topic and sector, and to top pages about environmental laws, regulations, policies, compliance, and enforcement.">
-                        Laws &amp; Regulations
-                    </a>
-                    <div class="dropdown-menu m-0" aria-labelledby="navbarDropdown">
-                        <a href="https://epa.gov/regulatory-information-sector" title="" class="dropdown-item">By
-                            Business Sector</a>
-                        <a href="https://epa.gov/regulatory-information-topic" title="" class="dropdown-item">By
-                            Topic</a>
-                        <a href="https://epa.gov/compliance" title="" class="dropdown-item">Compliance</a>
-                        <a href="https://epa.gov/enforcement" title="" class="dropdown-item">Enforcement</a>
-                        <a href="https://epa.gov/laws-regulations/laws-and-executive-orders" title="" class="dropdown-item">Laws and
-                            Executive Orders</a>
-                        <a href="https://epa.gov/guidance" title="" class="dropdown-item">Guidance</a>
-                        <a href="https://epa.gov/laws-regulations/regulations" title="" class="dropdown-item">Regulations</a>
-                    </div>
+                <li class="nav-item">
+                    <a class="nav-link" href="https://epa.gov/laws-regulations"
+                        aria-haspopup="true" aria-expanded="false"
+                        title="View links to regulatory information by topic and sector, and to top pages about environmental laws, regulations, policies, compliance, and enforcement.">Laws &amp; Regulations</a>
                 </li>
-
-                <li class="nav-item dropdown">
-                    <a href="https://epa.gov/aboutepa" aria-haspopup="true" id="navbarDropdown" aria-expanded="false"
-                        title="Learn more about our mission, organization, and locations." class="nav-link">About
-                        EPA</a>
-                    <div class="dropdown-menu m-0" aria-labelledby="navbarDropdown">
-                        <a href="https://epa.gov/aboutepa/epas-administrator" title="" class="menu-node-unpublished dropdown-item">EPA
-                            Administrator</a>
-                        <a href="https://epa.gov/aboutepa/senior-epa-leadership" title="" class="dropdown-item">Current
-                            Leadership</a>
-                        <a href="https://epa.gov/aboutepa/epa-organization-chart" title="" class="dropdown-item">Organization Chart</a>
-                        <a href="http://cfpub.epa.gov/locator/index.cfm" title="" class="dropdown-item">Staff
-                            Directory</a>
-                        <a href="https://epa.gov/planandbudget" title="" class="dropdown-item">Planning, Budget
-                            and
-                            Results</a>
-                        <a href="https://epa.gov/careers" title="" class="dropdown-item">Jobs and Internships</a>
-                        <a href="https://epa.gov/aboutepa#pane-2" title="" class="dropdown-item">Headquarters
-                            Offices</a>
-                        <a href="https://epa.gov/aboutepa#pane-4" title="" class="dropdown-item">Regional
-                            Offices</a>
-                        <a href="https://epa.gov/aboutepa#pane-5" title="" class="dropdown-item">Labs and
-                            Research
-                            Centers</a>
+                <li class="nav-item">
+                    <a class="nav-link" href="https://epa.gov/aboutepa" aria-haspopup="true"
+                        title="Learn more about our mission, organization, and locations." >About EPA</a>
+                </li>
             </ul>
-            </li>
-            </ul>
-
         </div>
-        <form class="form-inline">
+
+        <form class="form-inline d-none d-lg-block epa-search-fixed-size">
             <div class="input-group input-group-sm">
-                <input type="text" class="form-control " placeholder="Search EPA.gov" name="querytext" id="search-box">
+                <input type="text" class="form-control " placeholder="Search EPA.gov" name="querytext">
                 <div class="input-group-append">
-                    <button type="submit" class="btn btn-info" formaction="https://search.epa.gov/epasearch/">
-                        <i class="fa fa-search align-top" aria-hidden="true"></i></button>
+                    <button type="submit" class="btn epa-search-button" formaction="https://search.epa.gov/epasearch/">
+                        <i class="fa fa-search text-light" aria-hidden="true"></i></button>
                 </div>
                 <input type="hidden" name="areaname" value="">
                 <input type="hidden" name="areacontacts" value="">
@@ -107,4 +59,18 @@
         </form>
     </nav>
 
+    <form class="form-inline d-sm-block d-md-none p-2">
+        <div class="input-group input-group-sm">
+            <input type="text" class="form-control " placeholder="Search EPA.gov" name="querytext">
+            <div class="input-group-append">
+                <button type="submit" class="btn epa-search-button" formaction="https://search.epa.gov/epasearch/">
+                    <i class="fa fa-search text-light" aria-hidden="true"></i></button>
+            </div>
+            <input type="hidden" name="areaname" value="">
+            <input type="hidden" name="areacontacts" value="">
+            <input type="hidden" name="areasearchurl" value="">
+            <input type="hidden" name="typeofsearch" value="epa">
+            <input type="hidden" name="result_template" value="2col.ftl">
+        </div>
+    </form>
 </div>

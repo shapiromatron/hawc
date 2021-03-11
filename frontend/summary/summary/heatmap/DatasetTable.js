@@ -73,7 +73,7 @@ class DatasetTable extends Component {
             data = this.props.store.getTableData.data;
 
         return (
-            <div style={{maxHeight: "50vh", overflow: "auto"}}>
+            <div className="mt-2" style={{maxHeight: "50vh", overflow: "auto"}}>
                 <table className="table table-striped table-bordered">
                     <thead>
                         <tr>

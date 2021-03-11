@@ -68,6 +68,7 @@ class BMROptionModal extends BaseModal {
                     <select
                         id="bmr_type"
                         name="type"
+                        className="form-control"
                         value={state.type}
                         onChange={this.handleTypeChange.bind(this)}>
                         {opts.map((d, i) => {
@@ -86,6 +87,7 @@ class BMROptionModal extends BaseModal {
                         id="bmr_value"
                         name="value"
                         type="number"
+                        className="form-control"
                         step="any"
                         value={state.value}
                         onChange={this.handleChange.bind(this)}
@@ -98,6 +100,7 @@ class BMROptionModal extends BaseModal {
                         id="bmr_confidence_level"
                         name="confidence_level"
                         type="number"
+                        className="form-control"
                         step="any"
                         value={state.confidence_level}
                         onChange={this.handleChange.bind(this)}
@@ -119,21 +122,29 @@ class BMROptionModal extends BaseModal {
             tableFunc = editMode ? this.renderEditingForm : this.renderReadOnlyTable;
 
         return (
-            <div className="modal hide fade" role="dialog" id={BMR_MODAL_ID}>
-                <div className="modal-header">
-                    <button ref={this.closer} className="close" type="button" data-dismiss="modal">
-                        ×
-                    </button>
-                    <h3>{title}</h3>
+            <div className="modal" id={BMR_MODAL_ID}>
+                <div className="modal-dialog">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h3>{title}</h3>
+                            <button
+                                ref={this.closer}
+                                className="close"
+                                type="button"
+                                data-dismiss="modal">
+                                ×
+                            </button>
+                        </div>
+
+                        <div className="modal-body">{tableFunc.bind(this)()}</div>
+
+                        <EditableModalFooter
+                            editMode={editMode}
+                            handleSave={this.handleSave.bind(this)}
+                            handleDelete={this.props.handleDelete}
+                        />
+                    </div>
                 </div>
-
-                <div className="modal-body">{tableFunc.bind(this)()}</div>
-
-                <EditableModalFooter
-                    editMode={editMode}
-                    handleSave={this.handleSave.bind(this)}
-                    handleDelete={this.props.handleDelete}
-                />
             </div>
         );
     }

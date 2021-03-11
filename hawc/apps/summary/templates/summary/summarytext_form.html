@@ -5,62 +5,29 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-  <div class='row'>
-    <div class="col-md-3">
-      <b>Document tree:</b><br>
-      <div id="doctree"></div>
-      <b>Document editing:</b><br>
-      <div class="well">
-        <button class="btn btn-primary new_summary">New Section</button>
-      </div>
-    </div>
-
-    <div class="col-md-9">
-      <div id="summarytext_edit" style="display:none;">
-        {% crispy form %}
-      </div>
-    </div>
+<div class="row pl-1">
+  <div class="col-md-12">
+    <h1>Modify summary text</h1>
   </div>
-
-  <div id="deleteST" class="modal hide fade">
-    <div class="modal-header">
-      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-      <h3>Delete Text?</h3>
-    </div>
-    <div class="modal-body">
-      <p>Are you sure you want to delete this text?</p>
-      <p><i><b>Warning: </b>This will remove any nested-texts attached to this object as well!</i></p>
-    </div>
-    <div class="modal-footer">
-      <a id="deleteSTconfirm" class="btn btn-danger" data-dismiss="modal" aria-hidden="true">Confirm</a>
-      <button href="#" class="btn btn-light" data-dismiss="modal" aria-hidden="true">Cancel</button>
-    </div>
-  </div>
-
-  {% include "summary/_smartTagEditModal.html" with form=smart_tag_form only %}
-
+  <div id="main" class="container-fluid col-md-12"></div>
+</div>
+{% include "summary/_smartTagEditModal.html" with form=smart_tag_form only %}
 {% endblock %}
 
 {% block extrajs %}
-  {{ smart_tag_form.media }}
-  <script>
-    window.app.summaryStartup(function(summary){
-
-      $('#id_title').on('keyup', function(){
-        $('#id_slug').val(URLify($(this).val()));
-      });
-
-      window.app.smartTagsStartup(function(smartTags){
-          new summary.SummaryTextTree({
-            "assessment_id": {{assessment.pk}},
-            "mode": "modify",
-            "update_doctree": $('#doctree'),
-            "update_textdiv": $('#summarytext_edit'),
-            "update_new": $('.new_summary'),
-            "update_delete": $('#deleteSTconfirm'),
-            "text_editor": new smartTags.SmartTagEditor($('#id_text'))
-          });
-      })
-    });
-  </script>
+{{ smart_tag_form.media }}
+<script id="config" type="text/json" charset="utf-8">
+{
+    "assessment_id": {{assessment.pk}},
+    "editMode": true,
+    "csrf": "{{csrf_token}}"
+}
+</script>
+<script type="text/javascript">
+  window.app.summaryTextStartup(function (startup) {
+    var root = document.getElementById('main'),
+      config = JSON.parse(document.getElementById('config').textContent);
+    startup(root, config);
+  })
+</script>
 {% endblock extrajs %}

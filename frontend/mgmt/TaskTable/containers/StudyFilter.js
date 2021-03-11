@@ -15,7 +15,7 @@ class StudyFilter extends Component {
         return (
             <div className="container-fluid filterContainer">
                 <div className="row">
-                    <div className="col-4">
+                    <div className="col-md-4">
                         <SelectInput
                             choices={STUDY_TYPE_CHOICES}
                             value={store.filters.studyTypeFilters}
@@ -25,7 +25,7 @@ class StudyFilter extends Component {
                             label="Study type filter (optional):"
                         />
                     </div>
-                    <div className="col-4">
+                    <div className="col-md-4">
                         <RadioInput
                             label="Sort studies by:"
                             name="sortBy"
@@ -37,7 +37,7 @@ class StudyFilter extends Component {
                             ]}
                         />
                     </div>
-                    <div className="col-4">
+                    <div className="col-md-4">
                         <RadioInput
                             label="Order studies by:"
                             name="orderBy"

@@ -150,7 +150,7 @@ class HAWCUtils {
     }
 
     static wrapText(text, max_width) {
-        if (!$.isNumeric(max_width) || max_width <= 0) return;
+        if (!_.isFinite(max_width) || max_width <= 0) return;
         var $text = d3.select(text),
             // trim whitespace to prevent falsey empty strings after split
             words = text.textContent
@@ -201,7 +201,7 @@ class HAWCUtils {
     }
 
     static urlify(str) {
-        return slugify(str);
+        return slugify(str, {remove: /[^\w\s-_]/g});
     }
 
     static parseJsonOrNull(el) {

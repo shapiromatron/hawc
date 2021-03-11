@@ -792,6 +792,8 @@ class ExploreHeatmapPlot {
                     .style("fill", textColor)
                     .style("display", d => (d.rows.length == 0 ? "none" : null))
                     .text(d => d.rows.length);
+
+                this.bind_tooltip(g, "cell");
             });
     };
 

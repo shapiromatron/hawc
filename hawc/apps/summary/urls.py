@@ -7,6 +7,8 @@ router = DefaultRouter()
 router.register(r"assessment", api.SummaryAssessmentViewset, basename="assessment")
 router.register(r"visual", api.VisualViewset, basename="visual")
 router.register(r"data_pivot", api.DataPivotViewset, basename="data_pivot")
+router.register(r"summary-text", api.SummaryTextViewset, basename="summary-text")
+router.register(r"summary-table", api.SummaryTableViewset, basename="summary-table")
 
 app_name = "summary"
 urlpatterns = [
@@ -15,11 +17,35 @@ urlpatterns = [
     # SUMMARY-TEXT
     path("assessment/<int:pk>/summaries/", views.SummaryTextList.as_view(), name="list",),
     path(
-        "assessment/<int:pk>/summaries/modify/", views.SummaryTextCreate.as_view(), name="create",
+        "assessment/<int:pk>/summaries/modify/", views.SummaryTextModify.as_view(), name="create",
     ),
-    path("<int:pk>/update/", views.SummaryTextUpdate.as_view(), name="update"),
-    path("<int:pk>/delete/", views.SummaryTextDelete.as_view(), name="delete"),
-    path("assessment/<int:pk>/summaries/json/", views.SummaryTextJSON.as_view(), name="json",),
+    # SUMMARY TABLES
+    path("assessment/<int:pk>/tables/", views.SummaryTableList.as_view(), name="tables_list"),
+    path(
+        "assessment/<int:pk>/tables/create/",
+        views.SummaryTableCreateSelector.as_view(),
+        name="tables_create_selector",
+    ),
+    path(
+        "assessment/<int:pk>/tables/<int:table_type>/create/",
+        views.SummaryTableCreate.as_view(),
+        name="tables_create",
+    ),
+    path(
+        "assessment/<int:pk>/tables/<slug:slug>/",
+        views.SummaryTableDetail.as_view(),
+        name="tables_detail",
+    ),
+    path(
+        "assessment/<int:pk>/tables/<slug:slug>/update/",
+        views.SummaryTableUpdate.as_view(),
+        name="tables_update",
+    ),
+    path(
+        "assessment/<int:pk>/tables/<slug:slug>/delete/",
+        views.SummaryTableDelete.as_view(),
+        name="tables_delete",
+    ),
     # VISUALIZATIONS
     path(
         "assessment/<int:pk>/visuals/",

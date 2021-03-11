@@ -105,25 +105,29 @@ class ReferenceQuerySerializer(serializers.Serializer):
 
     def search(self):
         query = Q(assessment=self.context["assessment"])
-        if self.data["id"]:
+        if "id" in self.data and self.data["id"] is not None:
             query &= Q(id=self.data["id"])
-        if self.data["db_id"]:
+        if "db_id" in self.data and self.data["db_id"] is not None:
             query &= Q(identifiers__unique_id=self.data["db_id"])
-        if self.data["year"]:
+        if "year" in self.data and self.data["year"] is not None:
             query &= Q(year=self.data["year"])
-        if self.data["title"]:
+        if "title" in self.data:
             query &= Q(title__icontains=self.data["title"])
-        if self.data["authors"]:
-            query &= Q(authors_short__icontains=self.data["authors"]) | Q(
-                authors__icontains=self.data["authors"]
+        if "authors" in self.data:
+            query &= Q(authors_short__unaccent__icontains=self.data["authors"]) | Q(
+                authors__unaccent__icontains=self.data["authors"]
             )
-        if self.data["journal"]:
+        if "journal" in self.data:
             query &= Q(journal__icontains=self.data["journal"])
-        if self.data["abstract"]:
+        if "abstract" in self.data:
             query &= Q(abstract__icontains=self.data["abstract"])
 
-        qs = models.Reference.objects.filter(query)[:100]
-        return [ref.get_json(json_encode=False) for ref in qs]
+        qs = (
+            models.Reference.objects.filter(query)
+            .select_related("study")
+            .prefetch_related("searches", "identifiers")[:100]
+        )
+        return [ref.to_dict() for ref in qs]
 
 
 class ReferenceTagsSerializer(serializers.ModelSerializer):

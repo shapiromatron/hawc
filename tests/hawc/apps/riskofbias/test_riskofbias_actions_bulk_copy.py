@@ -14,7 +14,7 @@ class TestBulkRobCopyAction:
         return {
             "src_assessment_id": 1,
             "dst_assessment_id": 2,
-            "dst_author_id": HAWCUser.objects.get(email="team@team.com").id,
+            "dst_author_id": HAWCUser.objects.get(email="team@hawcproject.org").id,
             "src_dst_study_ids": [(1, 5)],
             "src_dst_metric_ids": [(1, 14), (2, 15)],
             "copy_mode": BulkCopyMode.ALL_ACTIVE,

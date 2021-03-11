@@ -6,6 +6,7 @@ import {
     _DataPivot_settings_sorts,
     _DataPivot_settings_spacers,
     buildHeaderTr,
+    buildColGroup,
 } from "./DataPivotUtilities";
 import {NULL_CASE} from "./shared";
 import DataPivotVisualization from "./DataPivotVisualization";
@@ -14,8 +15,9 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
         var thead = $("<thead>").html(
                 buildHeaderTr(["Field name", "Filter type", "Value", "Ordering"])
             ),
+            colgroup = buildColGroup(["", "180px", "", "120px"]),
             tbody = $("<tbody>").on("change autocompletechange", "input,select", handleTableChange),
-            tbl = $('<table class="table table-sm table-bordered">').html([thead, tbody]),
+            tbl = $('<table class="table table-sm table-bordered">').html([thead, colgroup, tbody]),
             settings = dp.settings.filters,
             addDataRow = function(i) {
                 let obj;
@@ -80,10 +82,11 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
     },
     buildSortingTable = function(tab, dp, handleTableChange) {
         let thead = $("<thead>").html(buildHeaderTr(["Field name", "Sort order", "Ordering"])),
+            colgroup = buildColGroup(["", "", "120px"]),
             tbody = $("<tbody>")
                 .on("change", "input,select", handleTableChange)
                 .on("click", "button", handleTableChange),
-            tbl = $('<table class="table table-sm table-bordered">').html([thead, tbody]),
+            tbl = $('<table class="table table-sm table-bordered">').html([thead, colgroup, tbody]),
             settings = dp.settings.sorts,
             addDataRow = function(i) {
                 let obj;
@@ -117,7 +120,8 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
             thead = $("<thead>").html(
                 buildHeaderTr(["Row index", "Show line?", "Line style", "Extra space?", "Delete"])
             ),
-            tbl = $('<table class="table table-sm table-bordered">').html([thead, tbody]),
+            colgroup = buildColGroup(["", "", "", "", "120px"]),
+            tbl = $('<table class="table table-sm table-bordered">').html([thead, colgroup, tbody]),
             settings = dp.settings.spacers,
             addDataRow = function(i) {
                 let obj;

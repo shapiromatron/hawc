@@ -1,0 +1,518 @@
+{
+  "id": 3,
+  "title": "rob-heatmap",
+  "slug": "rob-heatmap",
+  "visual_type": "risk of bias heatmap",
+  "prefilters": "{}",
+  "settings": {
+    "title": "",
+    "xAxisLabel": "",
+    "yAxisLabel": "",
+    "padding_top": 20,
+    "cell_size": 40,
+    "padding_right": 300,
+    "padding_bottom": 35,
+    "padding_left": 20,
+    "x_field": "study",
+    "study_label_field": "short_citation",
+    "included_metrics": [
+      14,
+      15
+    ],
+    "excluded_score_ids": [],
+    "show_legend": true,
+    "show_na_legend": true,
+    "show_nr_legend": true,
+    "legend_x": 231,
+    "legend_y": 30
+  },
+  "caption": "<p>caption</p>",
+  "published": true,
+  "sort_order": "short_citation",
+  "created": "2020-05-08T14:35:41.634588-05:00",
+  "last_updated": "2020-05-08T14:36:41.324440-05:00",
+  "assessment": 2,
+  "dose_units": null,
+  "url": "/summary/visual/3/",
+  "url_update": "/summary/visual/3/update/",
+  "url_delete": "/summary/visual/3/delete/",
+  "endpoints": [],
+  "studies": [
+    {
+      "id": 7,
+      "assessment": {
+        "id": 2,
+        "url": "/assessment/2/",
+        "enable_risk_of_bias": true,
+        "name": "public final"
+      },
+      "searches": [
+        5
+      ],
+      "riskofbiases": [
+        {
+          "id": 4,
+          "author": {
+            "id": 3,
+            "full_name": "Team Member"
+          },
+          "active": true,
+          "final": false,
+          "study": 7,
+          "created": "2020-05-08T12:56:45.599914-05:00",
+          "last_updated": "2020-05-08T14:33:23.187120-05:00",
+          "scores": [
+            {
+              "id": 10,
+              "score": 17,
+              "is_default": true,
+              "label": "",
+              "bias_direction": 0,
+              "notes": "<p>test</p>",
+              "metric": {
+                "id": 14,
+                "domain": {
+                  "id": 10,
+                  "assessment": {
+                    "id": 2,
+                    "url": "/assessment/2/",
+                    "enable_risk_of_bias": true,
+                    "name": "public final"
+                  },
+                  "name": "domain 1",
+                  "description": "<p>description</p>",
+                  "is_overall_confidence": false,
+                  "created": "2020-05-08T12:05:55.142679-05:00",
+                  "last_updated": "2020-05-08T12:05:55.142703-05:00"
+                },
+                "name": "metric 1",
+                "short_name": "metric 1 short",
+                "description": "<p>description</p>",
+                "required_animal": true,
+                "required_epi": true,
+                "required_invitro": true,
+                "hide_description": false,
+                "use_short_name": false,
+                "created": "2020-05-08T12:06:18.057471-05:00",
+                "last_updated": "2020-05-08T12:06:18.057493-05:00"
+              },
+              "overridden_objects": [],
+              "riskofbias_id": 4,
+              "score_description": "Definitely low risk of bias",
+              "score_symbol": "++",
+              "score_shade": "#00CC00",
+              "bias_direction_description": "not entered/unknown",
+              "url_edit": "/rob/4/edit/",
+              "study_name": "Biesemeier JA et al. 2011",
+              "study_id": 7,
+              "study_types": [
+                "bioassay"
+              ]
+            },
+            {
+              "id": 11,
+              "score": 14,
+              "is_default": true,
+              "label": "",
+              "bias_direction": 1,
+              "notes": "<p>test2</p>",
+              "metric": {
+                "id": 15,
+                "domain": {
+                  "id": 11,
+                  "assessment": {
+                    "id": 2,
+                    "url": "/assessment/2/",
+                    "enable_risk_of_bias": true,
+                    "name": "public final"
+                  },
+                  "name": "overall",
+                  "description": "<p>description</p>",
+                  "is_overall_confidence": true,
+                  "created": "2020-05-08T12:06:37.006374-05:00",
+                  "last_updated": "2020-05-08T12:06:37.006406-05:00"
+                },
+                "name": "overall",
+                "short_name": "overall short",
+                "description": "<p>overall description</p>",
+                "required_animal": true,
+                "required_epi": true,
+                "required_invitro": true,
+                "hide_description": false,
+                "use_short_name": false,
+                "created": "2020-05-08T12:06:55.509303-05:00",
+                "last_updated": "2020-05-08T12:06:55.509353-05:00"
+              },
+              "overridden_objects": [],
+              "riskofbias_id": 4,
+              "score_description": "Definitely high risk of bias",
+              "score_symbol": "--",
+              "score_shade": "#CC3333",
+              "bias_direction_description": "\u2b06 (away from null)",
+              "url_edit": "/rob/4/edit/",
+              "study_name": "Biesemeier JA et al. 2011",
+              "study_id": 7,
+              "study_types": [
+                "bioassay"
+              ]
+            }
+          ],
+          "rob_response_values": [
+            17,
+            16,
+            15,
+            12,
+            14,
+            10
+          ]
+        },
+        {
+          "id": 5,
+          "author": {
+            "id": 2,
+            "full_name": "Project Manager"
+          },
+          "active": true,
+          "final": false,
+          "study": 7,
+          "created": "2020-05-08T12:56:45.903109-05:00",
+          "last_updated": "2020-05-08T14:33:43.045401-05:00",
+          "scores": [
+            {
+              "id": 12,
+              "score": 16,
+              "is_default": true,
+              "label": "",
+              "bias_direction": 0,
+              "notes": "<p>test</p>",
+              "metric": {
+                "id": 14,
+                "domain": {
+                  "id": 10,
+                  "assessment": {
+                    "id": 2,
+                    "url": "/assessment/2/",
+                    "enable_risk_of_bias": true,
+                    "name": "public final"
+                  },
+                  "name": "domain 1",
+                  "description": "<p>description</p>",
+                  "is_overall_confidence": false,
+                  "created": "2020-05-08T12:05:55.142679-05:00",
+                  "last_updated": "2020-05-08T12:05:55.142703-05:00"
+                },
+                "name": "metric 1",
+                "short_name": "metric 1 short",
+                "description": "<p>description</p>",
+                "required_animal": true,
+                "required_epi": true,
+                "required_invitro": true,
+                "hide_description": false,
+                "use_short_name": false,
+                "created": "2020-05-08T12:06:18.057471-05:00",
+                "last_updated": "2020-05-08T12:06:18.057493-05:00"
+              },
+              "overridden_objects": [],
+              "riskofbias_id": 5,
+              "score_description": "Probably low risk of bias",
+              "score_symbol": "+",
+              "score_shade": "#6FFF00",
+              "bias_direction_description": "not entered/unknown",
+              "url_edit": "/rob/5/edit/",
+              "study_name": "Biesemeier JA et al. 2011",
+              "study_id": 7,
+              "study_types": [
+                "bioassay"
+              ]
+            },
+            {
+              "id": 13,
+              "score": 17,
+              "is_default": true,
+              "label": "",
+              "bias_direction": 0,
+              "notes": "<p>test</p>",
+              "metric": {
+                "id": 15,
+                "domain": {
+                  "id": 11,
+                  "assessment": {
+                    "id": 2,
+                    "url": "/assessment/2/",
+                    "enable_risk_of_bias": true,
+                    "name": "public final"
+                  },
+                  "name": "overall",
+                  "description": "<p>description</p>",
+                  "is_overall_confidence": true,
+                  "created": "2020-05-08T12:06:37.006374-05:00",
+                  "last_updated": "2020-05-08T12:06:37.006406-05:00"
+                },
+                "name": "overall",
+                "short_name": "overall short",
+                "description": "<p>overall description</p>",
+                "required_animal": true,
+                "required_epi": true,
+                "required_invitro": true,
+                "hide_description": false,
+                "use_short_name": false,
+                "created": "2020-05-08T12:06:55.509303-05:00",
+                "last_updated": "2020-05-08T12:06:55.509353-05:00"
+              },
+              "overridden_objects": [],
+              "riskofbias_id": 5,
+              "score_description": "Definitely low risk of bias",
+              "score_symbol": "++",
+              "score_shade": "#00CC00",
+              "bias_direction_description": "not entered/unknown",
+              "url_edit": "/rob/5/edit/",
+              "study_name": "Biesemeier JA et al. 2011",
+              "study_id": 7,
+              "study_types": [
+                "bioassay"
+              ]
+            }
+          ],
+          "rob_response_values": [
+            17,
+            16,
+            15,
+            12,
+            14,
+            10
+          ]
+        },
+        {
+          "id": 6,
+          "author": {
+            "id": 3,
+            "full_name": "Team Member"
+          },
+          "active": true,
+          "final": true,
+          "study": 7,
+          "created": "2020-05-08T12:56:46.183552-05:00",
+          "last_updated": "2020-05-08T14:34:31.468702-05:00",
+          "scores": [
+            {
+              "id": 14,
+              "score": 16,
+              "is_default": true,
+              "label": "test1",
+              "bias_direction": 1,
+              "notes": "<p>test</p>",
+              "metric": {
+                "id": 14,
+                "domain": {
+                  "id": 10,
+                  "assessment": {
+                    "id": 2,
+                    "url": "/assessment/2/",
+                    "enable_risk_of_bias": true,
+                    "name": "public final"
+                  },
+                  "name": "domain 1",
+                  "description": "<p>description</p>",
+                  "is_overall_confidence": false,
+                  "created": "2020-05-08T12:05:55.142679-05:00",
+                  "last_updated": "2020-05-08T12:05:55.142703-05:00"
+                },
+                "name": "metric 1",
+                "short_name": "metric 1 short",
+                "description": "<p>description</p>",
+                "required_animal": true,
+                "required_epi": true,
+                "required_invitro": true,
+                "hide_description": false,
+                "use_short_name": false,
+                "created": "2020-05-08T12:06:18.057471-05:00",
+                "last_updated": "2020-05-08T12:06:18.057493-05:00"
+              },
+              "overridden_objects": [],
+              "riskofbias_id": 6,
+              "score_description": "Probably low risk of bias",
+              "score_symbol": "+",
+              "score_shade": "#6FFF00",
+              "bias_direction_description": "\u2b06 (away from null)",
+              "url_edit": "/rob/6/edit/",
+              "study_name": "Biesemeier JA et al. 2011",
+              "study_id": 7,
+              "study_types": [
+                "bioassay"
+              ]
+            },
+            {
+              "id": 16,
+              "score": 14,
+              "is_default": false,
+              "label": "test2",
+              "bias_direction": 1,
+              "notes": "<p>beep</p>",
+              "metric": {
+                "id": 14,
+                "domain": {
+                  "id": 10,
+                  "assessment": {
+                    "id": 2,
+                    "url": "/assessment/2/",
+                    "enable_risk_of_bias": true,
+                    "name": "public final"
+                  },
+                  "name": "domain 1",
+                  "description": "<p>description</p>",
+                  "is_overall_confidence": false,
+                  "created": "2020-05-08T12:05:55.142679-05:00",
+                  "last_updated": "2020-05-08T12:05:55.142703-05:00"
+                },
+                "name": "metric 1",
+                "short_name": "metric 1 short",
+                "description": "<p>description</p>",
+                "required_animal": true,
+                "required_epi": true,
+                "required_invitro": true,
+                "hide_description": false,
+                "use_short_name": false,
+                "created": "2020-05-08T12:06:18.057471-05:00",
+                "last_updated": "2020-05-08T12:06:18.057493-05:00"
+              },
+              "overridden_objects": [
+                {
+                  "id": 2,
+                  "score_id": 16,
+                  "content_type_name": "animal.animalgroup",
+                  "object_id": 3,
+                  "object_name": "sd rats",
+                  "object_url": "/ani/animal-group/3/"
+                },
+                {
+                  "id": 3,
+                  "score_id": 16,
+                  "content_type_name": "animal.animalgroup",
+                  "object_id": 99999,
+                  "object_name": "<deleted id=3;score=16;obj_ct=50;obj_id=99999>",
+                  "object_url": "/404/"
+                }
+              ],
+              "riskofbias_id": 6,
+              "score_description": "Definitely high risk of bias",
+              "score_symbol": "--",
+              "score_shade": "#CC3333",
+              "bias_direction_description": "\u2b06 (away from null)",
+              "url_edit": "/rob/6/edit/",
+              "study_name": "Biesemeier JA et al. 2011",
+              "study_id": 7,
+              "study_types": [
+                "bioassay"
+              ]
+            },
+            {
+              "id": 15,
+              "score": 16,
+              "is_default": true,
+              "label": "",
+              "bias_direction": 1,
+              "notes": "<p>test</p>",
+              "metric": {
+                "id": 15,
+                "domain": {
+                  "id": 11,
+                  "assessment": {
+                    "id": 2,
+                    "url": "/assessment/2/",
+                    "enable_risk_of_bias": true,
+                    "name": "public final"
+                  },
+                  "name": "overall",
+                  "description": "<p>description</p>",
+                  "is_overall_confidence": true,
+                  "created": "2020-05-08T12:06:37.006374-05:00",
+                  "last_updated": "2020-05-08T12:06:37.006406-05:00"
+                },
+                "name": "overall",
+                "short_name": "overall short",
+                "description": "<p>overall description</p>",
+                "required_animal": true,
+                "required_epi": true,
+                "required_invitro": true,
+                "hide_description": false,
+                "use_short_name": false,
+                "created": "2020-05-08T12:06:55.509303-05:00",
+                "last_updated": "2020-05-08T12:06:55.509353-05:00"
+              },
+              "overridden_objects": [],
+              "riskofbias_id": 6,
+              "score_description": "Probably low risk of bias",
+              "score_symbol": "+",
+              "score_shade": "#6FFF00",
+              "bias_direction_description": "\u2b06 (away from null)",
+              "url_edit": "/rob/6/edit/",
+              "study_name": "Biesemeier JA et al. 2011",
+              "study_id": 7,
+              "study_types": [
+                "bioassay"
+              ]
+            }
+          ],
+          "rob_response_values": [
+            17,
+            16,
+            15,
+            12,
+            14,
+            10
+          ]
+        }
+      ],
+      "identifiers": [
+        {
+          "id": 5,
+          "unique_id": "21284075",
+          "database": "PubMed",
+          "content": "demo-content",
+          "url": "https://www.ncbi.nlm.nih.gov/pubmed/21284075"
+        }
+      ],
+      "tags": [
+        {
+          "id": 13,
+          "name": "Animal Study"
+        }
+      ],
+      "title": "An oral developmental neurotoxicity study of decabromodiphenyl ether (DecaBDE) in rats.",
+      "authors_short": "Biesemeier JA et al.",
+      "authors": "Biesemeier JA, Beck MJ, Silberberg H, Myers NR, Ariano JM, Radovsky A, Freshwater L, Sved DW, Jacobi S, Stump DG, Hardy ML, Stedeford T",
+      "year": 2011,
+      "journal": "Birth Defects Res. B Dev. Reprod. Toxicol. 2011; 92 (1):17-35",
+      "abstract": "<span class=\"abstract_label\">BACKGROUND: </span>Decabromodiphenyl ether (DecaBDE; CASRN 1163-19-5) is a flame retardant used in a variety of manufactured products. A single oral dose of 20.1 mg/kg administered to mice on postnatal day 3 has been reported to alter motor activity at 2, 4, and 6 months of age.<br><span class=\"abstract_label\">METHODS: </span>To further evaluate these results, a developmental neurotoxicity study was conducted in the most commonly used species for studies of this type, the rat, according to international validated testing guidelines and Good Laboratory Practice Standards. DecaBDE was administered orally via gavage in corn oil to dams from gestation day 6 to weaning at doses of 0, 1, 10, 100, or 1,000 mg/kg/day. Standard measures of growth, development, and neurological endpoints were evaluated in the offspring. Motor activity was assessed at 2 months of age. Additional motor activity assessments were conducted at 4 and 6 months of age. Neuropathology and morphometry evaluations of the offspring were performed at weaning and adulthood.<br><span class=\"abstract_label\">RESULTS: </span>No treatment-related neurobehavioral changes were observed in detailed clinical observations, startle response, or learning and memory tests. No test substance-related changes were noted in motor activity assessments performed at 2, 4, or 6 months of age. Finally, no treatment-related neuropathological or morphometric alterations were found.<br><span class=\"abstract_label\">CONCLUSIONS: </span>Under the conditions of this study, the no-observed-adverse-effect level for developmental neurotoxicity of DecaBDE was 1,000 mg/kg/day, the highest dose tested.",
+      "full_text_url": "",
+      "created": "2020-05-08T12:03:52.391195-05:00",
+      "last_updated": "2020-05-08T12:56:45.324222-05:00",
+      "block_id": null,
+      "bioassay": true,
+      "epi": false,
+      "epi_meta": false,
+      "in_vitro": false,
+      "short_citation": "Biesemeier JA et al. 2011",
+      "full_citation": "Biesemeier JA, Beck MJ, Silberberg H, Myers NR, Ariano JM, Radovsky A, Freshwater L, Sved DW, Jacobi S, Stump DG, Hardy ML, Stedeford T. An oral developmental neurotoxicity study of decabromodiphenyl ether (DecaBDE) in rats. Birth Defects Res. B Dev. Reprod. Toxicol. 2011; 92 (1):17-35.",
+      "coi_reported": "Authors disclosed COI",
+      "coi_details": "J.B., H.S., J.A., S.J., M.H. and T.S. are employed by specialty chemical manufacturers whose product lines include brominated flame retardants. M.B., N.M., A.R., D.W.S. and D.G.S. are employed by WIL Research Laboratories, a contract research organization commissioned to conduct the guideline DNT study presented herein. L.F. is employed with BioSTAT Consultants and was commissioned to design and evaluate the statistical aspects of the DNT study. The views and opinions expressed in this article are those of the authors and not necessarily those of their respective employers.",
+      "funding_source": "Bromine Science and Environmental Forum for funding this study",
+      "study_identifier": "",
+      "contact_author": true,
+      "ask_author": "not really (example)",
+      "published": true,
+      "summary": "<p>Adapted from <a href=\"https://hawcproject.org/study/173483/\" rel=\"noopener noreferrer\" target=\"_blank\">https://hawcproject.org/study/173483/</a></p>",
+      "editable": true,
+      "url": "/study/7/",
+      "rob_response_values": [
+        17,
+        16,
+        15,
+        12,
+        14,
+        10
+      ]
+    }
+  ],
+  "assessment_rob_name": "Risk of bias"
+}

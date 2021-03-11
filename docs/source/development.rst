@@ -287,8 +287,8 @@ variable ``hawc/main/settings/local.py``. Possible values include:
 - PRIME (default application; as hosted at https://hawcproject.org)
 - EPA (EPA application; as hosted at EPA)
 
-Loading a database dump
-~~~~~~~~~~~~~~~~~~~~~~~
+The test database
+~~~~~~~~~~~~~~~~~
 
 Loading a database dump:
 
@@ -316,10 +316,26 @@ Here's how to create a database dump:
     # dump in gzipped format
     pg_dump -U hawc hawc | gzip > db_dump.sql.gz
 
-Building a test database
-~~~~~~~~~~~~~~~~~~~~~~~~
+The test database
+~~~~~~~~~~~~~~~~~
 
-A test database is loaded to run unit tests. The database may need to be periodically updated as new feature are added. To load, make edits, and export the test database:
+A test database is loaded to run unit tests.
+
+The test database can be useful when writing new feature as well. If you use the database for feature development, there are multiple users you can use, with their global and assessment-level permissions, emails, and passwords below:
+
++---------------------+--------------------------+----------+
+| Role                | Email                    | Password |
++=====================+==========================+==========+
+| **Administrator**   | admin@hawcproject.org    | pw       |
++---------------------+--------------------------+----------+
+| **Project manager** | pm@hawcproject.org       | pw       |
++---------------------+--------------------------+----------+
+| **Team member**     | team@hawcproject.org     | pw       |
++---------------------+--------------------------+----------+
+| **Reviewer**        | reviewer@hawcproject.org | pw       |
++---------------------+--------------------------+----------+
+
+As new features are added, adding and changing content in the test-database will be required to test these features. Instructions for loading and dumping are described below.
 
 Linux/Mac
 ~~~~~~~~~
@@ -378,8 +394,8 @@ To test asynchronous functionality in development, modify your ``hawc/main/setti
 
 .. code-block:: python
 
-    CELERY_BROKER_URL = "redis://localhost:6379/1"
-    CELERY_RESULT_BACKEND = "redis://localhost:6379/2"
+    CELERY_BROKER_URL = "redis://:default-password@localhost:6379/1"
+    CELERY_RESULT_BACKEND = "redis://:default-password@localhost:6379/2"
     CELERY_TASK_ALWAYS_EAGER = False
     CELERY_TASK_EAGER_PROPAGATES = False
 
@@ -387,10 +403,19 @@ Then, create the example docker container and start a celery worker instance:
 
 .. code-block:: bash
 
+    # build container
     docker-compose build redis
     docker-compose up -d redis
-    celery worker --app=hawc.main.celery --loglevel=INFO --logfile=celery-worker.log --soft-time-limit=90 --time-limit=120
-    celery beat --app=hawc.main.celery --loglevel=INFO --logfile=celery-beat.log
+
+    # check redis is up and can be pinged successfully
+    redis-cli -h localhost -a default-password ping
+
+    # start workers
+    celery worker --app=hawc.main.celery --loglevel=INFO
+    celery beat --app=hawc.main.celery --loglevel=INFO
+
+    # stop redis when you're done
+    docker-compose down
 
 Asynchronous tasks will no be executed by celery workers instead of the main thread.
 

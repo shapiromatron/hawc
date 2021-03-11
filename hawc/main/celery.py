@@ -33,4 +33,9 @@ app.conf.beat_schedule = {
         "task": "hawc.apps.assessment.tasks.delete_old_jobs",
         "schedule": timedelta(days=1),
     },
+    "delete-orphan-relations": {
+        "task": "hawc.apps.assessment.tasks.delete_orphan_relations",
+        "schedule": timedelta(hours=6),
+        "kwargs": dict(delete=False),
+    },
 }

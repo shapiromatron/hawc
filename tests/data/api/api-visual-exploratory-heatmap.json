@@ -1,0 +1,119 @@
+{
+  "id": 8,
+  "title": "exploratory-heatmap",
+  "slug": "exploratory-heatmap",
+  "visual_type": "exploratory heatmap",
+  "prefilters": "{}",
+  "settings": {
+    "cell_height": 50,
+    "cell_width": 50,
+    "color_range": [
+      "#ffffff",
+      "#cc4700"
+    ],
+    "compress_x": true,
+    "compress_y": true,
+    "data_url": "/ani/api/assessment/2/endpoint-heatmap/",
+    "hawc_interactivity": true,
+    "filter_widgets": [
+      {
+        "column": "species",
+        "delimiter": "",
+        "on_click_event": "---"
+      },
+      {
+        "column": "strain",
+        "delimiter": "",
+        "on_click_event": "---"
+      }
+    ],
+    "padding": {
+      "top": 30,
+      "left": 30,
+      "bottom": 30,
+      "right": 30
+    },
+    "show_axis_border": true,
+    "show_grid": true,
+    "show_tooltip": true,
+    "show_totals": true,
+    "show_null": true,
+    "autosize_cells": true,
+    "autorotate_tick_labels": true,
+    "table_fields": [
+      {
+        "column": "study citation",
+        "delimiter": "",
+        "on_click_event": "study"
+      },
+      {
+        "column": "experiment name",
+        "delimiter": "",
+        "on_click_event": "experiment"
+      },
+      {
+        "column": "animal group name",
+        "delimiter": "",
+        "on_click_event": "animal_group"
+      },
+      {
+        "column": "endpoint name",
+        "delimiter": "",
+        "on_click_event": "endpoint_complete"
+      },
+      {
+        "column": "---",
+        "delimiter": "",
+        "on_click_event": "---"
+      }
+    ],
+    "title": {
+      "text": "",
+      "x": 0,
+      "y": 0,
+      "rotate": 0
+    },
+    "x_fields": [
+      {
+        "column": "system",
+        "wrap_text": 0,
+        "delimiter": ""
+      }
+    ],
+    "x_label": {
+      "text": "",
+      "x": 0,
+      "y": 0,
+      "rotate": 0
+    },
+    "x_tick_rotate": 0,
+    "y_fields": [
+      {
+        "column": "study citation",
+        "wrap_text": 0,
+        "delimiter": ""
+      }
+    ],
+    "y_label": {
+      "text": "",
+      "x": 0,
+      "y": 0,
+      "rotate": 0
+    },
+    "y_tick_rotate": -90,
+    "x_axis_bottom": false
+  },
+  "caption": "",
+  "published": true,
+  "sort_order": "short_citation",
+  "created": "2020-11-25T08:25:27.528283-06:00",
+  "last_updated": "2020-11-25T08:29:33.991892-06:00",
+  "assessment": 2,
+  "dose_units": null,
+  "url": "/summary/visual/8/",
+  "url_update": "/summary/visual/8/update/",
+  "url_delete": "/summary/visual/8/delete/",
+  "endpoints": [],
+  "studies": [],
+  "assessment_rob_name": "Risk of bias"
+}

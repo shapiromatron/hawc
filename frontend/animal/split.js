@@ -7,7 +7,6 @@ import EndpointForm from "./EndpointForm";
 import EndpointListApp from "./EndpointListApp";
 import EndpointListTable from "./EndpointListTable";
 import Experiment from "./Experiment";
-import SampleSizeWidget from "./SampleSizeWidget";
 import ehvBrowserStartup from "./EhvBrowser";
 
 export default {
@@ -20,6 +19,5 @@ export default {
     EndpointListApp,
     EndpointListTable,
     Experiment,
-    SampleSizeWidget,
     ehvBrowserStartup,
 };

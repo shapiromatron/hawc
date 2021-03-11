@@ -1,10 +1,11 @@
 from django.shortcuts import get_object_or_404
-from rest_framework import viewsets
+from rest_framework import exceptions, viewsets
 from rest_framework.decorators import action
 from rest_framework.filters import BaseFilterBackend
 from rest_framework.response import Response
 
 from ..assessment.api import (
+    AssessmentEditViewset,
     AssessmentLevelPermissions,
     AssessmentViewset,
     DisabledPagination,
@@ -12,7 +13,7 @@ from ..assessment.api import (
 )
 from ..assessment.models import Assessment
 from ..common.helper import re_digits
-from ..common.renderers import PandasRenderers
+from ..common.renderers import DocxRenderer, PandasRenderers
 from ..common.serializers import UnusedSerializer
 from . import models, serializers
 
@@ -97,3 +98,33 @@ class VisualViewset(AssessmentViewset):
 
     def get_queryset(self):
         return super().get_queryset().select_related("assessment")
+
+
+class SummaryTextViewset(AssessmentEditViewset):
+    assessment_filter_args = "assessment"
+    model = models.SummaryText
+    pagination_class = DisabledPagination
+    filter_backends = (InAssessmentFilter,)
+    serializer_class = serializers.SummaryTextSerializer
+
+    def get_queryset(self):
+        return self.model.objects.all()
+
+    def create(self, request, *args, **kwargs):
+        self.assessment = get_object_or_404(Assessment, id=request.data.get("assessment", -1))
+        if not self.assessment.user_can_edit_object(request.user):
+            raise exceptions.PermissionDenied()
+        return super().create(request, *args, **kwargs)
+
+
+class SummaryTableViewset(AssessmentEditViewset):
+    assessment_filter_args = "assessment"
+    model = models.SummaryTable
+    filter_backends = (InAssessmentFilter, UnpublishedFilter)
+    serializer_class = serializers.SummaryTableSerializer
+
+    @action(detail=True, renderer_classes=(DocxRenderer,))
+    def docx(self, request, pk):
+        obj = self.get_object()
+        report = obj.to_docx()
+        return Response(report)

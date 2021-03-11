@@ -58,37 +58,36 @@ class Exposure {
     }
 
     build_central_tendencies_table() {
-        var ctTable = $("<table/>").addClass("bordered");
-        var ctHeaders = [
-            "Estimate",
-            "Estimate type",
-            "Variance",
-            "Variance type",
-            "Lower CI",
-            "Upper CI",
-            "Lower Range",
-            "Upper Range",
-            "Description",
-        ];
+        var ctTable = $("<table>").addClass("table table-sm"),
+            ctHeaders = [
+                "Estimate",
+                "Estimate type",
+                "Variance",
+                "Variance type",
+                "Lower CI",
+                "Upper CI",
+                "Lower Range",
+                "Upper Range",
+                "Description",
+            ];
 
-        var headerRow = $("<tr/>").appendTo(ctTable);
-        for (var i = 0; i < ctHeaders.length; i++) {
-            $("<th/>")
-                .html(ctHeaders[i].replace(/ /g, "&nbsp"))
-                .appendTo(headerRow);
-        }
+        $("<tr>")
+            .appendTo(ctTable)
+            .html(ctHeaders.map(d => `<th>${d}</th>`).join(""));
+        this.data.central_tendencies.forEach(function(d) {
+            let row = $("<tr>").appendTo(ctTable);
+            ctHeaders.map(header => {
+                var variableName = header.replace(/ /g, "_").toLowerCase(),
+                    val = d[variableName];
 
-        this.data.central_tendencies.forEach(function(el, idx) {
-            var row = $("<tr/>").appendTo(ctTable);
-            for (var i = 0; i < ctHeaders.length; i++) {
-                var val = el[ctHeaders[i].replace(/ /g, "_").toLowerCase()];
                 if (val != null && typeof val == "string") {
                     val = val.replace(/ /g, "&nbsp;");
                 }
-                $("<td/>")
+
+                return $("<td/>")
                     .html(val)
                     .appendTo(row);
-            }
+            });
         });
         return ctTable;
     }

@@ -46,5 +46,29 @@
     "study id": 7,
     "study citation": "Biesemeier JA et al. 2011",
     "study identifier": ""
+  },
+  {
+    "endpoint id": 8,
+    "endpoint name": "Fatty Acid Balance",
+    "system": "Cardiovascular",
+    "organ": "Serum",
+    "effect": "Fatty Acids",
+    "effect subtype": "Clinical Chemistry",
+    "route of exposure": "Oral gavage",
+    "species": "rat",
+    "strain": "sprague dawley",
+    "animal group name": "sd rats",
+    "sex": "Combined",
+    "generation": "Parent-generation (P0)",
+    "animal group id": 3,
+    "experiment id": 3,
+    "experiment name": "developmental",
+    "experiment type": "Developmental",
+    "experiment cas": "1163-19-5",
+    "experiment dtxsid": null,
+    "experiment chemical": "PBDE 209",
+    "study id": 7,
+    "study citation": "Biesemeier JA et al. 2011",
+    "study identifier": ""
   }
 ]

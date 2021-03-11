@@ -60,8 +60,8 @@ class ExploreHeatmapComponent extends Component {
                 </div>
                 {hasFilters ? (
                     <div
+                        className="ml-2"
                         style={{
-                            marginLeft: 10,
                             display: "flex",
                             flex: 3,
                             minWidth: 300,

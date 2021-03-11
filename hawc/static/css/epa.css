@@ -11,7 +11,7 @@
     color: white;
 }
 
-.epa-style a#navbarDropdown.nav-link {
+.epa-style #epanavbarcontent a.nav-link {
     color: white;
 }
 
@@ -107,12 +107,21 @@ print and (min-width: 35em) {
 }
 
 .epa-style.app-header .navbar {
-    padding: 8px 20px;
+    padding: 0px 20px;
 }
 
 .epa-style.app-header nav {
     background-color: #0071bc;
     line-height: 1;
+}
+
+.epa-style #epanavbarcontent a:hover {
+    background-color: #205493;
+    box-shadow: none;
+}
+
+.epa-style .epa-search-button {
+    background-color: #02bfe7;
 }
 
 @media(min-width:760px) {
@@ -153,7 +162,7 @@ print and (min-width: 35em) {
 .epa-style.main-footer {
     background-color: #323a45;
     color: #fff;
-    padding-bottom: 3.9em;
+    padding-bottom: 3em;
     padding-top: 2.5em;
 }
 
@@ -187,10 +196,6 @@ print and (min-width: 35em) {
     color: white;
 }
 
-.epa-style .region-footer .col {
-    padding: 0 1.6em;
-}
-
 .epa-style .region-footer .col__title {
     font-size: 20px;
     margin: 0 0 25px;
@@ -198,7 +203,7 @@ print and (min-width: 35em) {
 
 .epa-style .region-footer .last-updated {
     font-family: "Source Sans Pro", "Helvetica Neue", "Helvetica", "Roboto", "Arial", sans-serif;
-    font-size: 12px;
+    font-size: 0.7em;
     font-weight: 500;
     padding: 0.8333em 0 0;
     text-transform: uppercase;
@@ -206,10 +211,6 @@ print and (min-width: 35em) {
 
 .epa-style .last-updated p {
     font-size: 12px;
-}
-
-.epa-style .region-footer .menu {
-    margin-bottom: 2em;
 }
 
 .epa-style .region-footer .menu>li {
@@ -266,6 +267,10 @@ print and (min-width: 58em) {
     text-decoration: none;
     text-shadow: none;
     width: 26px;
+}
+
+.epa-search-fixed-size {
+    width: 16.5em;
 }
 
 .epa-style .region-footer .social-menu>li>a:hover,

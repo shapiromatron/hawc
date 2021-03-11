@@ -36,34 +36,35 @@ class TermSelector extends Component {
             currentText = object[termTextField];
 
         return (
-            <div>
+            <div className="form-group">
                 {useControlledVocabulary && idLookupAction ? (
                     <div className="float-right">
                         <div className="input-group">
                             <input
                                 type="number"
+                                className="form-control"
                                 placeholder="Enter term ID"
-                                style={{maxWidth: 100}}
+                                style={{maxWidth: 130}}
                                 value={this.state.idLookupValue}
                                 onChange={event =>
                                     this.setState({
                                         idLookupValue: parseInt(event.target.value),
                                     })
                                 }></input>
-                            <button
-                                className="btn btn-light"
-                                type="button"
-                                onClick={() => {
-                                    idLookupAction(this.state.idLookupValue);
-                                }}>
-                                Load ID
-                            </button>
+                            <div className="input-group-append">
+                                <button
+                                    className="btn btn-light"
+                                    type="button"
+                                    onClick={() => {
+                                        idLookupAction(this.state.idLookupValue);
+                                    }}>
+                                    Load ID
+                                </button>
+                            </div>
                         </div>
                     </div>
                 ) : null}
-                <label className="col-form-label" htmlFor={this.randomId}>
-                    {label}
-                </label>
+                <label htmlFor={this.randomId}>{label}</label>
                 {useControlledVocabulary ? (
                     <AutocompleteTerm
                         url={termUrlLookup[termIdField]}
@@ -92,11 +93,11 @@ class TermSelector extends Component {
                 {object[termIdField] ? (
                     <p>
                         <b>Selected term:</b>&nbsp;
-                        <span className="badge badge-secondary">
+                        <span className="badge badge-secondary px-2 py-0">
                             {currentId}&nbsp;|&nbsp;{currentText}&nbsp;
                             <button
                                 type="button"
-                                className="btn btn-sm"
+                                className="btn btn-secondary btn-sm"
                                 title="Unselect term"
                                 onClick={() => store.setObjectField(termIdField, null)}>
                                 &times;
@@ -105,20 +106,23 @@ class TermSelector extends Component {
                     </p>
                 ) : null}
                 {store.canUseControlledVocabulary ? (
-                    <label className="form-check">
-                        <input
-                            type="checkbox"
-                            checked={useControlledVocabulary}
-                            onChange={() => {
-                                const newUseVocab = !useControlledVocabulary;
-                                store.toggleUseControlledVocabulary(termTextField);
-                                if (newUseVocab === false) {
-                                    store.setObjectField(termIdField, null);
-                                }
-                            }}
-                        />
-                        &nbsp;Use controlled vocabulary
-                    </label>
+                    <div className="form-check">
+                        <label>
+                            <input
+                                type="checkbox"
+                                className="form-check-input"
+                                checked={useControlledVocabulary}
+                                onChange={() => {
+                                    const newUseVocab = !useControlledVocabulary;
+                                    store.toggleUseControlledVocabulary(termTextField);
+                                    if (newUseVocab === false) {
+                                        store.setObjectField(termIdField, null);
+                                    }
+                                }}
+                            />
+                            &nbsp;Use controlled vocabulary
+                        </label>
+                    </div>
                 ) : null}
                 <input type="hidden" name={name + "_term"} value={currentId || ""} />
                 <input type="hidden" name={name} value={currentText || ""} />

@@ -9,7 +9,7 @@
     you would like to create.</p>
   <div class="row">
     <div class="col-md-9">
-      <select id="vis_selector" class="form-control col-md-10">
+      <select id="vis_selector" class="form-control col-md-12">
         <option data-showcase="#dataPivot" value="{% url 'summary:dp_new-prompt' assessment.id %}">Data pivot</option>
         {% comment %}
         <!-- deprecate; let's see if anyone requests it..  -->
@@ -31,7 +31,7 @@
       </select>
     </div>
     <div class="col-md-3">
-      <a id="create_btn" class="btn btn-primary" href="#">Select</a>
+      <a id="create_btn" class="btn btn-block btn-primary" href="#">Select</a>
     </div>
   </div>
   <div id="showcase" class="row py-3" style="display: none;"></div>

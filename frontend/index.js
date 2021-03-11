@@ -15,9 +15,12 @@ import studyStartup from "./study";
 import {
     summaryStartup,
     summaryFormsStartup,
+    summaryTextStartup,
     dataPivotStartup,
     heatmapTemplateStartup,
     renderPlotlyFromApi,
+    summaryTableViewStartup,
+    summaryTableEditStartup,
 } from "./summary";
 import utils from "./utils";
 
@@ -39,8 +42,11 @@ window.app = {
     riskofbiasStartup,
     smartTagsStartup,
     studyStartup,
-    summaryFormsStartup,
     summaryStartup,
+    summaryFormsStartup,
+    summaryTableViewStartup,
+    summaryTableEditStartup,
+    summaryTextStartup,
     textCleanupStartup,
     utils,
 };

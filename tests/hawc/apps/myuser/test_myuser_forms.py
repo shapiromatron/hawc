@@ -48,7 +48,7 @@ class TestRegisterForm:
     def test_validation_failures_duplicates(self):
         form = RegisterForm(
             {
-                "email": "pm@pm.com",
+                "email": "pm@hawcproject.org",
                 "first_name": "",
                 "last_name": "",
                 "password1": "yp&9f7uDN2c8mRTX4",
@@ -61,7 +61,7 @@ class TestRegisterForm:
 
         form = RegisterForm(
             {
-                "email": "PM@PM.COM",
+                "email": "pm@hawcproject.org",
                 "first_name": "",
                 "last_name": "",
                 "password1": "yp&9f7uDN2c8mRTX4",

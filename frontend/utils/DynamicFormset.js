@@ -77,6 +77,13 @@ class DynamicFormset {
 
     clearForm($row) {
         $row.find("input,select").val("");
+        $row.find("select").each((i, sel) => {
+            if ($(sel).find("option").length > 0) {
+                $(sel)
+                    .find("option:first")
+                    .prop("selected", true);
+            }
+        });
     }
 }
 

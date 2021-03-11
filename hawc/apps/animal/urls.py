@@ -19,6 +19,7 @@ router.register(
     r"dosingregime-cleanup", api.DosingRegimeCleanupFieldsView, basename="dosingregime-cleanup",
 )
 router.register(r"dose-units", api.DoseUnits, basename="dose_units")
+router.register(r"metadata", api.Metadata, basename="metadata")
 
 
 app_name = "animal"

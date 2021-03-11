@@ -36,7 +36,7 @@ class TagReferencesMain extends Component {
                     <h4>References</h4>
                     <div id="references_lists">
                         <div className="card">
-                            <div className="card-header">
+                            <div className="card-header p-1">
                                 <button
                                     className="btn btn-link"
                                     data-toggle="collapse"
@@ -48,7 +48,7 @@ class TagReferencesMain extends Component {
                                 id="references_tagged"
                                 className="collapse"
                                 data-parent="#references_lists">
-                                <div className="card-body ref-container">
+                                <div className="card-body ref-container p-1">
                                     {store.referencesTagged.map(ref => (
                                         <p
                                             key={ref.data.pk}
@@ -65,7 +65,7 @@ class TagReferencesMain extends Component {
                             </div>
                         </div>
                         <div className="card">
-                            <div className="card-header">
+                            <div className="card-header p-1">
                                 <button
                                     className="btn btn-link"
                                     data-toggle="collapse"
@@ -75,7 +75,7 @@ class TagReferencesMain extends Component {
                             </div>
                             <div
                                 id="references_untagged"
-                                className="collapse show"
+                                className="collapse show p-1"
                                 data-parent="#references_lists">
                                 <div className="card-body ref-container">
                                     {store.referencesUntagged.map(ref => (

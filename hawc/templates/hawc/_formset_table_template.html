@@ -11,8 +11,11 @@
           {{ formset.management_form }}
           {% for field in form.visible_fields %}
             <th>
-              <span class="formsetFieldLabel" data-toggle="tooltip" title="{{field.help_text}}">{{ field.label|capfirst }}</span>
+              <span class="formsetFieldLabel" {% if field.help_text %}data-toggle="tooltip" title="{{field.help_text}}"{% endif %}>
+                {{ field.label|capfirst }}
+              </span>
               {% if field.field.required %}<span class="asteriskField">*</span>{% endif %}
+              {% if field.help_text %}&nbsp;<i class="fa fa-question-circle"></i>{% endif %}
             </th>
           {% endfor %}
         </tr>

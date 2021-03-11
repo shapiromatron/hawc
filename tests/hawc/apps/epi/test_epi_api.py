@@ -13,7 +13,7 @@ class TestEpiAssessmentViewset:
     def _test_flat_export(self, rewrite_data_files: bool, fn: str, url: str):
 
         client = APIClient()
-        assert client.login(username="rev@rev.com", password="pw") is True
+        assert client.login(username="reviewer@hawcproject.org", password="pw") is True
         resp = client.get(url)
         assert resp.status_code == 200
 
@@ -27,7 +27,7 @@ class TestEpiAssessmentViewset:
 
     def test_permissions(self, db_keys):
         rev_client = APIClient()
-        assert rev_client.login(username="rev@rev.com", password="pw") is True
+        assert rev_client.login(username="reviewer@hawcproject.org", password="pw") is True
         anon_client = APIClient()
 
         urls = [

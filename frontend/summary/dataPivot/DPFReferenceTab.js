@@ -4,14 +4,16 @@ import {
     _DataPivot_settings_refrect,
     _DataPivot_settings_label,
     buildHeaderTr,
+    buildColGroup,
 } from "./DataPivotUtilities";
 
 let buildReferenceLines = function(tab, dp) {
         let thead = $("<thead>").html(
                 buildHeaderTr(["Reference line value", "Line style", "Delete"])
             ),
+            colgroup = buildColGroup(["", "", "120px"]),
             tbody = $("<tbody>"),
-            tbl = $('<table class="table table-sm table-bordered">').html([thead, tbody]),
+            tbl = $('<table class="table table-sm table-bordered">').html([thead, colgroup, tbody]),
             settings = dp.settings.reference_lines,
             addDataRow = function(i) {
                 let obj;
@@ -38,11 +40,9 @@ let buildReferenceLines = function(tab, dp) {
         let thead = $("<thead>").html(
                 buildHeaderTr(["Lower value", "Upper value", "Range style", "Delete"])
             ),
-            colgroup = $(
-                '<colgroup><col style="width: 25%;"><col style="width: 25%;"><col style="width: 25%;"><col style="width: 25%;"></colgroup>'
-            ),
+            colgroup = buildColGroup(["", "", "", "120px"]),
             tbody = $("<tbody>"),
-            tbl = $('<table class="table table-sm table-bordered">').html([colgroup, thead, tbody]),
+            tbl = $('<table class="table table-sm table-bordered">').html([thead, colgroup, tbody]),
             settings = dp.settings.reference_rectangles,
             addDataRow = function(i) {
                 let obj;
@@ -68,8 +68,9 @@ let buildReferenceLines = function(tab, dp) {
     },
     buildReferenceLabels = function(tab, dp) {
         var thead = $("<thead>").html(buildHeaderTr(["Text", "Style", "Delete"])),
+            colgroup = buildColGroup(["", "", "120px"]),
             tbody = $("<tbody>"),
-            tbl = $('<table class="table table-sm table-bordered">').html([thead, tbody]),
+            tbl = $('<table class="table table-sm table-bordered">').html([thead, colgroup, tbody]),
             settings = dp.settings.labels,
             addDataRow = function(i) {
                 let obj;

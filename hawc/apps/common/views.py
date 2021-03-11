@@ -6,6 +6,7 @@ from urllib.parse import urlparse
 from django.contrib import messages
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.sites.shortcuts import get_current_site
 from django.core.exceptions import EmptyResultSet, PermissionDenied
 from django.forms.models import model_to_dict
 from django.http import HttpRequest, HttpResponseRedirect
@@ -15,7 +16,7 @@ from django.utils.decorators import method_decorator
 from django.views.generic import DetailView, ListView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
-from ..assessment.models import Assessment, BaseEndpoint, TimeSpentEditing
+from ..assessment.models import Assessment, BaseEndpoint, Log, TimeSpentEditing
 from .crumbs import Breadcrumb
 from .helper import tryParseInt
 
@@ -45,16 +46,29 @@ def get_referrer(request: HttpRequest, default: str) -> str:
         request (HttpRequest): the http request
 
     Returns:
-        str: A valid URL
+        str: A valid URL, with query params dropped
     """
     url = request.META.get("HTTP_REFERER")
+
+    if default.startswith("https"):
+        default_url = default
+    else:
+        default_url = f"https://{get_current_site(request).domain}{default}"
+
     if url is None:
-        return default
+        return default_url
+
+    parsed_url = urlparse(url)
+
+    if get_current_site(request).domain != parsed_url.hostname:
+        return default_url
+
     try:
-        _ = resolve(urlparse(url).path)
-        return url
+        _ = resolve(parsed_url.path)
     except Resolver404:
-        return default
+        return default_url
+
+    return f"{parsed_url.scheme}://{parsed_url.netloc}{parsed_url.path}"
 
 
 class MessageMixin:
@@ -414,6 +428,11 @@ class BaseDelete(AssessmentPermissionsMixin, MessageMixin, DeleteView):
         self.permission_check_user_can_edit()
         success_url = self.get_success_url()
         self.object.delete()
+        # Log the deletion
+        log_message = f"Deleted '{self.object}' ({self.object.__class__.__name__} {self.object.id})"
+        Log.objects.create(
+            assessment_id=self.assessment.pk, user=self.request.user, message=log_message
+        )
         self.send_message()
         return HttpResponseRedirect(success_url)
 

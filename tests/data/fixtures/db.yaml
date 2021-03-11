@@ -1,3 +1,7 @@
+- model: sites.site
+  fields:
+    domain: 127.0.0.1
+    name: localhost
 - model: contenttypes.contenttype
   fields:
     app_label: auth
@@ -26,6 +30,10 @@
   fields:
     app_label: authtoken
     model: token
+- model: contenttypes.contenttype
+  fields:
+    app_label: authtoken
+    model: tokenproxy
 - model: contenttypes.contenttype
   fields:
     app_label: reversion
@@ -108,6 +116,10 @@
     model: blog
 - model: contenttypes.contenttype
   fields:
+    app_label: assessment
+    model: content
+- model: contenttypes.contenttype
+  fields:
     app_label: vocab
     model: term
 - model: contenttypes.contenttype
@@ -118,6 +130,10 @@
   fields:
     app_label: vocab
     model: entitytermrelation
+- model: contenttypes.contenttype
+  fields:
+    app_label: vocab
+    model: comment
 - model: contenttypes.contenttype
   fields:
     app_label: lit
@@ -353,9 +369,9 @@
 - model: myuser.hawcuser
   fields:
     password: md5$OtMBo5HXuH5d$79fbf1f0ae6d765b17b29256920cc8ef
-    last_login: 2020-08-12 19:33:09.398007+00:00
+    last_login: 2020-11-25 20:21:43.412531+00:00
     is_superuser: true
-    email: sudo@sudo.com
+    email: admin@hawcproject.org
     first_name: a
     last_name: superuser
     is_staff: true
@@ -370,7 +386,7 @@
     password: md5$fFanL0QpS7Sg$cf3808b6102279eb6982d78edfdc6111
     last_login: 2020-07-06 19:37:38.352592+00:00
     is_superuser: false
-    email: pm@pm.com
+    email: pm@hawcproject.org
     first_name: Project
     last_name: Manager
     is_staff: false
@@ -385,7 +401,7 @@
     password: md5$oqL3kGUEvBCo$540b7af58759b8faeef79275b327a4e8
     last_login: 2020-05-08 21:06:40.664469+00:00
     is_superuser: false
-    email: team@team.com
+    email: team@hawcproject.org
     first_name: Team
     last_name: Member
     is_staff: false
@@ -400,7 +416,7 @@
     password: md5$xp4A7HztQgax$744b942a9c35520e8a1a8c0b92a6ee27
     last_login: 2020-01-25 14:23:16.173584+00:00
     is_superuser: false
-    email: rev@rev.com
+    email: reviewer@hawcproject.org
     first_name: a
     last_name: reviewer
     is_staff: false
@@ -415,7 +431,7 @@
     password: md5$jzGYN20VEexO$c1d4bd0bf1280917505a6989338fb37d
     last_login: 2020-01-25 14:23:16.175169+00:00
     is_superuser: false
-    email: public@rev.com
+    email: public@hawcproject.org
     first_name: ''
     last_name: ''
     is_staff: false
@@ -429,7 +445,7 @@
   pk: 1
   fields:
     user:
-    - pm@pm.com
+    - pm@hawcproject.org
     HERO_access: false
 - model: vocab.term
   pk: 1
@@ -499,7 +515,7 @@
   fields:
     entity: 1
     term: 5
-    notes: ""
+    notes: ''
     approved_by: null
     approved_on: null
     deprecated_on: null
@@ -509,11 +525,11 @@
   pk: 1
   fields:
     commenter:
-    - pm@pm.com
+    - pm@hawcproject.org
     last_url_visited: /portal/
     comment: I like this idea.
     reviewed: false
-    reviewer_notes: ""
+    reviewer_notes: ''
     created_on: 2020-08-12 14:11:50.023861+00:00
     last_updated: 2020-08-12 14:11:50.023861+00:00
 - model: assessment.dsstox
@@ -521,31 +537,31 @@
   fields:
     content:
       casrn: 7732-18-5
-      checksum: NA
-      collidingCasrn: null
-      collidingGsid: null
-      collidingPreferredName: null
       dtxcid: DTXCID106296
       dtxsid: DTXSID6026296
-      imageURL: http://actorws.epa.gov/actorws/chemical/image?dtxcid=DTXCID106296&w=150&h=150&fmt=svg
-      indigoInChIKey: XLYOFNOQVPJJNP-UHFFFAOYSA-N
-      infoMsg: null
-      jChemInChIKey: XLYOFNOQVPJJNP-UHFFFAOYSA-N
-      molFormula: H2O
-      molWeight: 18.015
-      msReadyForms: http://actorws.epa.gov/actorws/dsstox/v02/msready?identifier=DTXCID106296
-      origIdentifier: DTXSID6026296
-      preferredName: Water
-      processedAs: LOOKUP
-      qsarForms: http://actorws.epa.gov/actorws/dsstox/v02/qsar?identifier=DTXCID106296
-      reformattedIdentifier: false
       smiles: O
+      infoMsg: null
       synGsid: 26296
-      synIdentifier: DTXSID6026296
       synType: DSSTox_Substance_Id
-      trimmedLeadingZeros: false
-      trimmedWhitespace: false
+      checksum: NA
+      imageURL: http://actorws.epa.gov/actorws/chemical/image?dtxcid=DTXCID106296&w=150&h=150&fmt=svg
+      molWeight: 18.015
+      qsarForms: http://actorws.epa.gov/actorws/dsstox/v02/qsar?identifier=DTXCID106296
+      molFormula: H2O
       warningMsg: null
+      processedAs: LOOKUP
+      msReadyForms: http://actorws.epa.gov/actorws/dsstox/v02/msready?identifier=DTXCID106296
+      collidingGsid: null
+      jChemInChIKey: XLYOFNOQVPJJNP-UHFFFAOYSA-N
+      preferredName: Water
+      synIdentifier: DTXSID6026296
+      collidingCasrn: null
+      indigoInChIKey: XLYOFNOQVPJJNP-UHFFFAOYSA-N
+      origIdentifier: DTXSID6026296
+      trimmedWhitespace: false
+      trimmedLeadingZeros: false
+      reformattedIdentifier: false
+      collidingPreferredName: null
     created: 2020-08-12 19:34:12.687630+00:00
     last_updated: 2020-08-12 19:34:12.687630+00:00
 - model: assessment.dsstox
@@ -553,31 +569,31 @@
   fields:
     content:
       casrn: 1836-75-5
-      checksum: NA
-      collidingCasrn: null
-      collidingGsid: null
-      collidingPreferredName: null
       dtxcid: DTXCID30970
       dtxsid: DTXSID7020970
-      imageURL: http://actorws.epa.gov/actorws/chemical/image?dtxcid=DTXCID30970&w=150&h=150&fmt=svg
-      indigoInChIKey: XITQUSLLOSKDTB-UHFFFAOYSA-N
-      infoMsg: null
-      jChemInChIKey: XITQUSLLOSKDTB-UHFFFAOYSA-N
-      molFormula: C12H7Cl2NO3
-      molWeight: 284.09
-      msReadyForms: http://actorws.epa.gov/actorws/dsstox/v02/msready?identifier=DTXCID30970
-      origIdentifier: DTXSID7020970
-      preferredName: Nitrofen
-      processedAs: LOOKUP
-      qsarForms: http://actorws.epa.gov/actorws/dsstox/v02/qsar?identifier=DTXCID30970
-      reformattedIdentifier: false
       smiles: '[O-][N+](=O)C1=CC=C(OC2=C(Cl)C=C(Cl)C=C2)C=C1'
+      infoMsg: null
       synGsid: 20970
-      synIdentifier: DTXSID7020970
       synType: DSSTox_Substance_Id
-      trimmedLeadingZeros: false
-      trimmedWhitespace: false
+      checksum: NA
+      imageURL: http://actorws.epa.gov/actorws/chemical/image?dtxcid=DTXCID30970&w=150&h=150&fmt=svg
+      molWeight: 284.09
+      qsarForms: http://actorws.epa.gov/actorws/dsstox/v02/qsar?identifier=DTXCID30970
+      molFormula: C12H7Cl2NO3
       warningMsg: null
+      processedAs: LOOKUP
+      msReadyForms: http://actorws.epa.gov/actorws/dsstox/v02/msready?identifier=DTXCID30970
+      collidingGsid: null
+      jChemInChIKey: XITQUSLLOSKDTB-UHFFFAOYSA-N
+      preferredName: Nitrofen
+      synIdentifier: DTXSID7020970
+      collidingCasrn: null
+      indigoInChIKey: XITQUSLLOSKDTB-UHFFFAOYSA-N
+      origIdentifier: DTXSID7020970
+      trimmedWhitespace: false
+      trimmedLeadingZeros: false
+      reformattedIdentifier: false
+      collidingPreferredName: null
     created: 2020-08-12 19:45:56.718230+00:00
     last_updated: 2020-08-12 19:45:56.718230+00:00
 - model: assessment.assessment
@@ -608,11 +624,11 @@
     last_updated: 2020-02-27 20:12:29.233982+00:00
     dtxsids: []
     project_manager:
-    - - pm@pm.com
+    - - pm@hawcproject.org
     team_members:
-    - - team@team.com
+    - - team@hawcproject.org
     reviewers:
-    - - rev@rev.com
+    - - reviewer@hawcproject.org
 - model: assessment.assessment
   pk: 2
   fields:
@@ -645,11 +661,11 @@
     dtxsids:
     - DTXSID6026296
     project_manager:
-    - - pm@pm.com
+    - - pm@hawcproject.org
     team_members:
-    - - team@team.com
+    - - team@hawcproject.org
     reviewers:
-    - - rev@rev.com
+    - - reviewer@hawcproject.org
 - model: assessment.assessment
   pk: 3
   fields:
@@ -678,11 +694,11 @@
     last_updated: 2020-04-10 17:45:39.555285+00:00
     dtxsids: []
     project_manager:
-    - - pm@pm.com
+    - - pm@hawcproject.org
     team_members:
-    - - team@team.com
+    - - team@hawcproject.org
     reviewers:
-    - - rev@rev.com
+    - - reviewer@hawcproject.org
 - model: assessment.doseunits
   pk: 1
   fields:
@@ -692,7 +708,7 @@
 - model: assessment.doseunits
   pk: 2
   fields:
-    name: "\xB5M"
+    name: µM
     created: 2020-05-11 04:00:03.013851+00:00
     last_updated: 2020-05-11 04:00:03.013881+00:00
 - model: assessment.species
@@ -783,14 +799,22 @@
     created: 2020-07-06 19:45:07.271513+00:00
     last_updated: 2020-07-06 19:46:42.948733+00:00
     effects: []
+- model: assessment.baseendpoint
+  pk: 8
+  fields:
+    assessment: 2
+    name: Fatty Acid Balance
+    created: 2020-11-28 03:16:20.324080+00:00
+    last_updated: 2020-11-28 03:16:20.324104+00:00
+    effects: []
 - model: assessment.dataset
   pk: 1
   fields:
     assessment: 1
     name: iris flowers
-    description: "<p>R. A. Fisher (1936). \"The use of multiple measurements in taxonomic
-      problems\". Annals of Eugenics. 7 (2): 179\u2013188. <a href=\"https://doi.org/10.1111/j.1469-1809.1936.tb02137.x\"
-      rel=\"noopener noreferrer\" target=\"_blank\">doi:10.1111/j.1469-1809.1936.tb02137</a></p>"
+    description: '<p>R. A. Fisher (1936). "The use of multiple measurements in taxonomic
+      problems". Annals of Eugenics. 7 (2): 179–188. <a href="https://doi.org/10.1111/j.1469-1809.1936.tb02137.x"
+      rel="noopener noreferrer" target="_blank">doi:10.1111/j.1469-1809.1936.tb02137</a></p>'
     published: true
     created: 2020-06-02 20:01:31.798361+00:00
     last_updated: 2020-06-02 20:04:30.023508+00:00
@@ -799,9 +823,9 @@
   fields:
     assessment: 2
     name: iris flowers final
-    description: "<p>R. A. Fisher (1936). \"The use of multiple measurements in taxonomic
-      problems\". Annals of Eugenics. 7 (2): 179\u2013188. <a href=\"https://doi.org/10.1111/j.1469-1809.1936.tb02137.x\"
-      rel=\"noopener noreferrer\" target=\"_blank\">doi:10.1111/j.1469-1809.1936.tb02137</a></p>"
+    description: '<p>R. A. Fisher (1936). "The use of multiple measurements in taxonomic
+      problems". Annals of Eugenics. 7 (2): 179–188. <a href="https://doi.org/10.1111/j.1469-1809.1936.tb02137.x"
+      rel="noopener noreferrer" target="_blank">doi:10.1111/j.1469-1809.1936.tb02137</a></p>'
     published: true
     created: 2020-06-02 20:02:31.798361+00:00
     last_updated: 2020-06-02 20:02:31.798361+00:00
@@ -810,9 +834,9 @@
   fields:
     assessment: 1
     name: iris flowers unpublished
-    description: "<p>R. A. Fisher (1936). \"The use of multiple measurements in taxonomic
-      problems\". Annals of Eugenics. 7 (2): 179\u2013188. <a href=\"https://doi.org/10.1111/j.1469-1809.1936.tb02137.x\"
-      rel=\"noopener noreferrer\" target=\"_blank\">doi:10.1111/j.1469-1809.1936.tb02137</a></p>"
+    description: '<p>R. A. Fisher (1936). "The use of multiple measurements in taxonomic
+      problems". Annals of Eugenics. 7 (2): 179–188. <a href="https://doi.org/10.1111/j.1469-1809.1936.tb02137.x"
+      rel="noopener noreferrer" target="_blank">doi:10.1111/j.1469-1809.1936.tb02137</a></p>'
     published: false
     created: 2020-06-02 20:02:31.798361+00:00
     last_updated: 2020-06-02 20:02:31.798361+00:00
@@ -823,16 +847,16 @@
     version: 1
     data: assessment/dataset-revision/iris.csv
     metadata:
+      filename: iris.csv
+      num_rows: 150
+      extension: .csv
+      num_columns: 5
       column_names:
       - sepal_length
       - sepal_width
       - petal_length
       - petal_width
       - species
-      extension: .csv
-      filename: iris.csv
-      num_columns: 5
-      num_rows: 150
     excel_worksheet_name: ''
     notes: <p>Original version.</p>
     created: 2020-06-02 20:01:31.858209+00:00
@@ -844,16 +868,16 @@
     version: 2
     data: assessment/dataset-revision/iris.xlsx
     metadata:
+      filename: iris.xlsx
+      num_rows: 150
+      extension: .xlsx
+      num_columns: 5
       column_names:
       - sepal_length
       - sepal_width
       - petal_length
       - petal_width
       - species
-      extension: .xlsx
-      filename: iris.xlsx
-      num_columns: 5
-      num_rows: 150
     excel_worksheet_name: ''
     notes: <p>Excel version</p>
     created: 2020-06-02 20:04:30.052588+00:00
@@ -865,16 +889,16 @@
     version: 1
     data: assessment/dataset-revision/iris_final.csv
     metadata:
+      filename: iris.csv
+      num_rows: 150
+      extension: .csv
+      num_columns: 5
       column_names:
       - sepal_length
       - sepal_width
       - petal_length
       - petal_width
       - species
-      extension: .csv
-      filename: iris.csv
-      num_columns: 5
-      num_rows: 150
     excel_worksheet_name: ''
     notes: <p>Original final version.</p>
     created: 2020-06-02 20:02:31.798361+00:00
@@ -886,16 +910,16 @@
     version: 1
     data: assessment/dataset-revision/iris.csv
     metadata:
+      filename: iris.csv
+      num_rows: 150
+      extension: .csv
+      num_columns: 5
       column_names:
       - sepal_length
       - sepal_width
       - petal_length
       - petal_width
       - species
-      extension: .csv
-      filename: iris.csv
-      num_columns: 5
-      num_rows: 150
     excel_worksheet_name: ''
     notes: <p>Original version.</p>
     created: 2020-06-02 20:01:31.858209+00:00
@@ -927,6 +951,7 @@
   pk: 1
   fields:
     assessment: 1
+    user: null
     message: Assessment log
     created: 2020-08-20 03:03:15.442430+00:00
     last_updated: 2020-08-20 03:03:15.442430+00:00
@@ -934,6 +959,7 @@
   pk: 2
   fields:
     assessment: null
+    user: null
     message: Global log
     created: 2020-08-20 03:03:22.348931+00:00
     last_updated: 2020-08-20 03:03:22.348931+00:00
@@ -942,9 +968,7 @@
   fields:
     subject: Unpublished Blog
     content: Content
-    rendered_content: '<p>Content</p>
-
-      '
+    rendered_content: '<p>Content</p>'
     published: false
     created: 2020-08-20 03:01:09.747019+00:00
     last_updated: 2020-08-20 03:01:09.747019+00:00
@@ -953,10 +977,22 @@
   fields:
     subject: Published Blog
     content: Content
-    rendered_content: '<p>Content</p>
-
-      '
+    rendered_content: '<p>Content</p>'
     published: true
+    created: 2020-08-20 03:01:26.973291+00:00
+    last_updated: 2020-08-20 03:01:26.973291+00:00
+- model: assessment.content
+  pk: 1
+  fields:
+    content_type: 1
+    template: <h1>Welcome to HAWC</h1>
+    created: 2020-08-20 03:01:26.973291+00:00
+    last_updated: 2020-08-20 03:01:26.973291+00:00
+- model: assessment.content
+  pk: 2
+  fields:
+    content_type: 2
+    template: <h1>About HAWC</h1>
     created: 2020-08-20 03:01:26.973291+00:00
     last_updated: 2020-08-20 03:01:26.973291+00:00
 - model: lit.literatureassessment
@@ -1351,8 +1387,8 @@
   fields:
     assessment: 1
     title: ''
-    authors_short: ''
-    authors: ''
+    authors_short: 'Frédéric Chopin'
+    authors: 'Frédéric Chopin'
     year: 2010
     journal: ''
     abstract: ''
@@ -1575,9 +1611,6 @@
     published: false
     summary: ''
     editable: true
-    searches: []
-    identifiers:
-    - 6
 - model: study.study
   pk: 4
   fields:
@@ -1597,9 +1630,6 @@
     published: true
     summary: ''
     editable: true
-    searches:
-    - 4
-    identifiers: []
 - model: study.study
   pk: 5
   fields:
@@ -1624,10 +1654,6 @@
       rgb(249, 249, 249);">not</strong><span style="background-color: rgb(249, 249,
       249);">&nbsp;extract diarrhea, vulnerability to catch colds)</span></p>'
     editable: true
-    searches:
-    - 5
-    identifiers:
-    - 4
 - model: study.study
   pk: 6
   fields:
@@ -1652,10 +1678,6 @@
       5,</li><li>TMBPA (called BTM), BPC (called BPRO), BPAF (called BHF), BPAP (called
       BDP)</li></ul><p><br></p>
     editable: true
-    searches:
-    - 5
-    identifiers:
-    - 2
 - model: study.study
   pk: 7
   fields:
@@ -1686,10 +1708,6 @@
     summary: <p>Adapted from <a href="https://hawcproject.org/study/173483/" rel="noopener
       noreferrer" target="_blank">https://hawcproject.org/study/173483/</a></p>
     editable: true
-    searches:
-    - 5
-    identifiers:
-    - 5
 - model: study.study
   pk: 8
   fields:
@@ -1715,10 +1733,6 @@
     summary: <p>Adapted from <a href="https://hawcproject.org/study/41226/" rel="noopener
       noreferrer" target="_blank">https://hawcproject.org/study/41226/</a>.</p>
     editable: true
-    searches:
-    - 5
-    identifiers:
-    - 3
 - model: animal.experiment
   pk: 1
   fields:
@@ -2005,7 +2019,7 @@
     observation_time_text: ''
     data_location: ''
     expected_adversity_direction: 4
-    response_units: "\u03BCg/dL"
+    response_units: μg/dL
     data_type: C
     variance_type: 1
     confidence_interval: null
@@ -2024,7 +2038,6 @@
     results_notes: ''
     endpoint_notes: ''
     additional_fields: '{}'
-    effects: []
 - model: animal.endpoint
   pk: 2
   fields:
@@ -2065,7 +2078,6 @@
     results_notes: ''
     endpoint_notes: ''
     additional_fields: '{}'
-    effects: []
 - model: animal.endpoint
   pk: 3
   fields:
@@ -2106,8 +2118,6 @@
     results_notes: <p>results notes</p>
     endpoint_notes: <p>methods</p>
     additional_fields: '{}'
-    effects:
-    - 1
 - model: animal.endpoint
   pk: 6
   fields:
@@ -2148,7 +2158,6 @@
     results_notes: ''
     endpoint_notes: ''
     additional_fields: '{}'
-    effects: []
 - model: animal.endpoint
   pk: 7
   fields:
@@ -2189,7 +2198,46 @@
     results_notes: ''
     endpoint_notes: ''
     additional_fields: '{}'
-    effects: []
+- model: animal.endpoint
+  pk: 8
+  fields:
+    baseendpoint_ptr: 8
+    animal_group: 3
+    name_term: 5
+    system: Cardiovascular
+    system_term: 1
+    organ: Serum
+    organ_term: 2
+    effect: Fatty Acids
+    effect_term: 3
+    effect_subtype: Clinical Chemistry
+    effect_subtype_term: 4
+    litter_effects: N
+    litter_effect_notes: ''
+    observation_time: null
+    observation_time_units: 0
+    observation_time_text: ''
+    data_location: ''
+    expected_adversity_direction: 4
+    response_units: incidence
+    data_type: D
+    variance_type: 0
+    confidence_interval: null
+    NOEL: 2
+    LOEL: 4
+    FEL: -999
+    data_reported: true
+    data_extracted: true
+    values_estimated: false
+    monotonicity: 8
+    statistical_test: ''
+    trend_value: null
+    trend_result: 3
+    diagnostic: ''
+    power_notes: ''
+    results_notes: ''
+    endpoint_notes: ''
+    additional_fields: '{}'
 - model: animal.endpointgroup
   pk: 1
   fields:
@@ -2359,6 +2407,1238 @@
     upper_ci: null
     significant: false
     significance_level: null
+- model: animal.endpointgroup
+  pk: 14
+  fields:
+    endpoint: 8
+    dose_group_id: 0
+    n: 15
+    incidence: 1
+    response: null
+    variance: null
+    lower_ci: null
+    upper_ci: null
+    significant: false
+    significance_level: null
+- model: animal.endpointgroup
+  pk: 15
+  fields:
+    endpoint: 8
+    dose_group_id: 1
+    n: 15
+    incidence: 1
+    response: null
+    variance: null
+    lower_ci: null
+    upper_ci: null
+    significant: false
+    significance_level: null
+- model: animal.endpointgroup
+  pk: 16
+  fields:
+    endpoint: 8
+    dose_group_id: 2
+    n: 15
+    incidence: 3
+    response: null
+    variance: null
+    lower_ci: null
+    upper_ci: null
+    significant: false
+    significance_level: null
+- model: animal.endpointgroup
+  pk: 17
+  fields:
+    endpoint: 8
+    dose_group_id: 3
+    n: 15
+    incidence: 2
+    response: null
+    variance: null
+    lower_ci: null
+    upper_ci: null
+    significant: false
+    significance_level: null
+- model: animal.endpointgroup
+  pk: 18
+  fields:
+    endpoint: 8
+    dose_group_id: 4
+    n: 15
+    incidence: 7
+    response: null
+    variance: null
+    lower_ci: null
+    upper_ci: null
+    significant: false
+    significance_level: null
+- model: bmd.assessmentsettings
+  pk: 1
+  fields:
+    assessment: 3
+    version: BMDS270
+    created: 2020-11-25 16:47:36.227246+00:00
+    last_updated: 2020-11-25 16:47:36.227279+00:00
+- model: bmd.assessmentsettings
+  pk: 2
+  fields:
+    assessment: 2
+    version: BMDS270
+    created: 2020-11-25 16:47:36.236947+00:00
+    last_updated: 2020-11-25 16:47:36.236964+00:00
+- model: bmd.assessmentsettings
+  pk: 3
+  fields:
+    assessment: 1
+    version: BMDS270
+    created: 2020-11-25 16:47:36.244091+00:00
+    last_updated: 2020-11-25 16:47:36.244109+00:00
+- model: bmd.logicfield
+  pk: 1
+  fields:
+    assessment: 3
+    created: 2020-11-25 16:47:36.217236+00:00
+    last_updated: 2020-11-25 16:47:36.217269+00:00
+    name: BMD
+    description: A BMD value was successfully calculated.
+    failure_bin: 2
+    threshold: null
+    continuous_on: true
+    dichotomous_on: true
+    cancer_dichotomous_on: true
+- model: bmd.logicfield
+  pk: 2
+  fields:
+    assessment: 3
+    created: 2020-11-25 16:47:36.217326+00:00
+    last_updated: 2020-11-25 16:47:36.217336+00:00
+    name: BMDL
+    description: A BMDL value was successfully calculated.
+    failure_bin: 2
+    threshold: null
+    continuous_on: true
+    dichotomous_on: true
+    cancer_dichotomous_on: true
+- model: bmd.logicfield
+  pk: 3
+  fields:
+    assessment: 3
+    created: 2020-11-25 16:47:36.217372+00:00
+    last_updated: 2020-11-25 16:47:36.217381+00:00
+    name: BMDU
+    description: A BMDU value was successfully calculated.
+    failure_bin: 0
+    threshold: null
+    continuous_on: false
+    dichotomous_on: false
+    cancer_dichotomous_on: true
+- model: bmd.logicfield
+  pk: 4
+  fields:
+    assessment: 3
+    created: 2020-11-25 16:47:36.217415+00:00
+    last_updated: 2020-11-25 16:47:36.217423+00:00
+    name: AIC
+    description: An AIC value was successfully calculated.
+    failure_bin: 2
+    threshold: null
+    continuous_on: true
+    dichotomous_on: true
+    cancer_dichotomous_on: true
+- model: bmd.logicfield
+  pk: 5
+  fields:
+    assessment: 3
+    created: 2020-11-25 16:47:36.217457+00:00
+    last_updated: 2020-11-25 16:47:36.217465+00:00
+    name: Variance Type
+    description: 'The correct variance model was used (based on p-test #2).'
+    failure_bin: 1
+    threshold: '0.10'
+    continuous_on: true
+    dichotomous_on: false
+    cancer_dichotomous_on: false
+- model: bmd.logicfield
+  pk: 6
+  fields:
+    assessment: 3
+    created: 2020-11-25 16:47:36.217604+00:00
+    last_updated: 2020-11-25 16:47:36.217614+00:00
+    name: Variance Fit
+    description: 'The variance model appropriately captures the variance of the dataset
+      being modeled (based on p-test #3).'
+    failure_bin: 1
+    threshold: '0.10'
+    continuous_on: true
+    dichotomous_on: false
+    cancer_dichotomous_on: false
+- model: bmd.logicfield
+  pk: 7
+  fields:
+    assessment: 3
+    created: 2020-11-25 16:47:36.217661+00:00
+    last_updated: 2020-11-25 16:47:36.217670+00:00
+    name: GGOF
+    description: 'The mean model is appropriately modeling the dataset, based on the
+      global-goodness-of-fit (p-test #4).'
+    failure_bin: 1
+    threshold: '0.10'
+    continuous_on: true
+    dichotomous_on: true
+    cancer_dichotomous_on: false
+- model: bmd.logicfield
+  pk: 8
+  fields:
+    assessment: 3
+    created: 2020-11-25 16:47:36.217711+00:00
+    last_updated: 2020-11-25 16:47:36.217719+00:00
+    name: GGOF (Cancer)
+    description: 'The mean model is appropriately modeling the dataset, based on the
+      global-goodness-of-fit (p-test #4).'
+    failure_bin: 1
+    threshold: '0.05'
+    continuous_on: false
+    dichotomous_on: false
+    cancer_dichotomous_on: true
+- model: bmd.logicfield
+  pk: 9
+  fields:
+    assessment: 3
+    created: 2020-11-25 16:47:36.217760+00:00
+    last_updated: 2020-11-25 16:47:36.217769+00:00
+    name: BMD/BMDL (serious)
+    description: The ratio between the BMD and BMDL values is large, indicating a
+      large spread of estimates in the range of interest (warning).
+    failure_bin: 1
+    threshold: '20.00'
+    continuous_on: true
+    dichotomous_on: true
+    cancer_dichotomous_on: true
+- model: bmd.logicfield
+  pk: 10
+  fields:
+    assessment: 3
+    created: 2020-11-25 16:47:36.217808+00:00
+    last_updated: 2020-11-25 16:47:36.217816+00:00
+    name: BMD/BMDL (warning)
+    description: The ratio between the BMD and BMDL values is large, indicating a
+      large spread of estimates in the range of interest (caution).
+    failure_bin: 0
+    threshold: '5.00'
+    continuous_on: true
+    dichotomous_on: true
+    cancer_dichotomous_on: true
+- model: bmd.logicfield
+  pk: 11
+  fields:
+    assessment: 3
+    created: 2020-11-25 16:47:36.217854+00:00
+    last_updated: 2020-11-25 16:47:36.217862+00:00
+    name: Residual of Interest
+    description: The absolute value of the residual at the dose closest to the BMD
+      is large, which means the model may not be estimating well in this range.
+    failure_bin: 1
+    threshold: '2.00'
+    continuous_on: true
+    dichotomous_on: true
+    cancer_dichotomous_on: true
+- model: bmd.logicfield
+  pk: 12
+  fields:
+    assessment: 3
+    created: 2020-11-25 16:47:36.217899+00:00
+    last_updated: 2020-11-25 16:47:36.217907+00:00
+    name: Warnings
+    description: The model output file included additional warnings.
+    failure_bin: 0
+    threshold: null
+    continuous_on: true
+    dichotomous_on: true
+    cancer_dichotomous_on: true
+- model: bmd.logicfield
+  pk: 13
+  fields:
+    assessment: 3
+    created: 2020-11-25 16:47:36.217940+00:00
+    last_updated: 2020-11-25 16:47:36.217948+00:00
+    name: BMD higher
+    description: The BMD estimate is higher than the maximum dose modeled, thus the
+      model is extrapolating a result.
+    failure_bin: 0
+    threshold: '1.00'
+    continuous_on: true
+    dichotomous_on: true
+    cancer_dichotomous_on: true
+- model: bmd.logicfield
+  pk: 14
+  fields:
+    assessment: 3
+    created: 2020-11-25 16:47:36.217986+00:00
+    last_updated: 2020-11-25 16:47:36.217994+00:00
+    name: BMDL higher
+    description: The BMDL estimate is higher than the maximum dose modeled, thus the
+      model is extrapolating a result.
+    failure_bin: 1
+    threshold: '1.00'
+    continuous_on: true
+    dichotomous_on: true
+    cancer_dichotomous_on: true
+- model: bmd.logicfield
+  pk: 15
+  fields:
+    assessment: 3
+    created: 2020-11-25 16:47:36.218031+00:00
+    last_updated: 2020-11-25 16:47:36.218039+00:00
+    name: Low BMD (warning)
+    description: The BMD estimate is lower than the lowest non-zero dose (caution).
+    failure_bin: 0
+    threshold: '3.00'
+    continuous_on: true
+    dichotomous_on: true
+    cancer_dichotomous_on: true
+- model: bmd.logicfield
+  pk: 16
+  fields:
+    assessment: 3
+    created: 2020-11-25 16:47:36.218076+00:00
+    last_updated: 2020-11-25 16:47:36.218084+00:00
+    name: Low BMDL (warning)
+    description: The BMDL estimate is lower than the lowest non-zero dose (caution).
+    failure_bin: 0
+    threshold: '3.00'
+    continuous_on: true
+    dichotomous_on: true
+    cancer_dichotomous_on: true
+- model: bmd.logicfield
+  pk: 17
+  fields:
+    assessment: 3
+    created: 2020-11-25 16:47:36.218121+00:00
+    last_updated: 2020-11-25 16:47:36.218129+00:00
+    name: Low BMD (serious)
+    description: The BMD estimate is lower than the lowest non-zero dose (warning).
+    failure_bin: 1
+    threshold: '10.00'
+    continuous_on: true
+    dichotomous_on: true
+    cancer_dichotomous_on: true
+- model: bmd.logicfield
+  pk: 18
+  fields:
+    assessment: 3
+    created: 2020-11-25 16:47:36.218167+00:00
+    last_updated: 2020-11-25 16:47:36.218175+00:00
+    name: Low BMDL (serious)
+    description: The BMDL estimate is lower than the lowest non-zero dose (warning).
+    failure_bin: 1
+    threshold: '10.00'
+    continuous_on: true
+    dichotomous_on: true
+    cancer_dichotomous_on: true
+- model: bmd.logicfield
+  pk: 19
+  fields:
+    assessment: 3
+    created: 2020-11-25 16:47:36.218212+00:00
+    last_updated: 2020-11-25 16:47:36.218220+00:00
+    name: Control residual
+    description: The absolute value of the residual at the control is large, which
+      is often used to estimate the BMR. Thus, the BMR estimate may be inaccurate.
+    failure_bin: 1
+    threshold: '2.00'
+    continuous_on: true
+    dichotomous_on: false
+    cancer_dichotomous_on: false
+- model: bmd.logicfield
+  pk: 20
+  fields:
+    assessment: 3
+    created: 2020-11-25 16:47:36.218257+00:00
+    last_updated: 2020-11-25 16:47:36.218265+00:00
+    name: Control stdev
+    description: The standard deviation estimate at the control is different the the
+      reported deviation, which is often used to estimate the BMR. Thus, the BMR estimate
+      may be inaccurate.
+    failure_bin: 1
+    threshold: '1.50'
+    continuous_on: true
+    dichotomous_on: false
+    cancer_dichotomous_on: false
+- model: bmd.logicfield
+  pk: 21
+  fields:
+    assessment: 2
+    created: 2020-11-25 16:47:36.231735+00:00
+    last_updated: 2020-11-25 16:47:36.231759+00:00
+    name: BMD
+    description: A BMD value was successfully calculated.
+    failure_bin: 2
+    threshold: null
+    continuous_on: true
+    dichotomous_on: true
+    cancer_dichotomous_on: true
+- model: bmd.logicfield
+  pk: 22
+  fields:
+    assessment: 2
+    created: 2020-11-25 16:47:36.231802+00:00
+    last_updated: 2020-11-25 16:47:36.231810+00:00
+    name: BMDL
+    description: A BMDL value was successfully calculated.
+    failure_bin: 2
+    threshold: null
+    continuous_on: true
+    dichotomous_on: true
+    cancer_dichotomous_on: true
+- model: bmd.logicfield
+  pk: 23
+  fields:
+    assessment: 2
+    created: 2020-11-25 16:47:36.231841+00:00
+    last_updated: 2020-11-25 16:47:36.231849+00:00
+    name: BMDU
+    description: A BMDU value was successfully calculated.
+    failure_bin: 0
+    threshold: null
+    continuous_on: false
+    dichotomous_on: false
+    cancer_dichotomous_on: true
+- model: bmd.logicfield
+  pk: 24
+  fields:
+    assessment: 2
+    created: 2020-11-25 16:47:36.231910+00:00
+    last_updated: 2020-11-25 16:47:36.231918+00:00
+    name: AIC
+    description: An AIC value was successfully calculated.
+    failure_bin: 2
+    threshold: null
+    continuous_on: true
+    dichotomous_on: true
+    cancer_dichotomous_on: true
+- model: bmd.logicfield
+  pk: 25
+  fields:
+    assessment: 2
+    created: 2020-11-25 16:47:36.231957+00:00
+    last_updated: 2020-11-25 16:47:36.231965+00:00
+    name: Variance Type
+    description: 'The correct variance model was used (based on p-test #2).'
+    failure_bin: 1
+    threshold: '0.10'
+    continuous_on: true
+    dichotomous_on: false
+    cancer_dichotomous_on: false
+- model: bmd.logicfield
+  pk: 26
+  fields:
+    assessment: 2
+    created: 2020-11-25 16:47:36.232036+00:00
+    last_updated: 2020-11-25 16:47:36.232045+00:00
+    name: Variance Fit
+    description: 'The variance model appropriately captures the variance of the dataset
+      being modeled (based on p-test #3).'
+    failure_bin: 1
+    threshold: '0.10'
+    continuous_on: true
+    dichotomous_on: false
+    cancer_dichotomous_on: false
+- model: bmd.logicfield
+  pk: 27
+  fields:
+    assessment: 2
+    created: 2020-11-25 16:47:36.232089+00:00
+    last_updated: 2020-11-25 16:47:36.232097+00:00
+    name: GGOF
+    description: 'The mean model is appropriately modeling the dataset, based on the
+      global-goodness-of-fit (p-test #4).'
+    failure_bin: 1
+    threshold: '0.10'
+    continuous_on: true
+    dichotomous_on: true
+    cancer_dichotomous_on: false
+- model: bmd.logicfield
+  pk: 28
+  fields:
+    assessment: 2
+    created: 2020-11-25 16:47:36.232138+00:00
+    last_updated: 2020-11-25 16:47:36.232146+00:00
+    name: GGOF (Cancer)
+    description: 'The mean model is appropriately modeling the dataset, based on the
+      global-goodness-of-fit (p-test #4).'
+    failure_bin: 1
+    threshold: '0.05'
+    continuous_on: false
+    dichotomous_on: false
+    cancer_dichotomous_on: true
+- model: bmd.logicfield
+  pk: 29
+  fields:
+    assessment: 2
+    created: 2020-11-25 16:47:36.232187+00:00
+    last_updated: 2020-11-25 16:47:36.232195+00:00
+    name: BMD/BMDL (serious)
+    description: The ratio between the BMD and BMDL values is large, indicating a
+      large spread of estimates in the range of interest (warning).
+    failure_bin: 1
+    threshold: '20.00'
+    continuous_on: true
+    dichotomous_on: true
+    cancer_dichotomous_on: true
+- model: bmd.logicfield
+  pk: 30
+  fields:
+    assessment: 2
+    created: 2020-11-25 16:47:36.232234+00:00
+    last_updated: 2020-11-25 16:47:36.232242+00:00
+    name: BMD/BMDL (warning)
+    description: The ratio between the BMD and BMDL values is large, indicating a
+      large spread of estimates in the range of interest (caution).
+    failure_bin: 0
+    threshold: '5.00'
+    continuous_on: true
+    dichotomous_on: true
+    cancer_dichotomous_on: true
+- model: bmd.logicfield
+  pk: 31
+  fields:
+    assessment: 2
+    created: 2020-11-25 16:47:36.232280+00:00
+    last_updated: 2020-11-25 16:47:36.232288+00:00
+    name: Residual of Interest
+    description: The absolute value of the residual at the dose closest to the BMD
+      is large, which means the model may not be estimating well in this range.
+    failure_bin: 1
+    threshold: '2.00'
+    continuous_on: true
+    dichotomous_on: true
+    cancer_dichotomous_on: true
+- model: bmd.logicfield
+  pk: 32
+  fields:
+    assessment: 2
+    created: 2020-11-25 16:47:36.232325+00:00
+    last_updated: 2020-11-25 16:47:36.232333+00:00
+    name: Warnings
+    description: The model output file included additional warnings.
+    failure_bin: 0
+    threshold: null
+    continuous_on: true
+    dichotomous_on: true
+    cancer_dichotomous_on: true
+- model: bmd.logicfield
+  pk: 33
+  fields:
+    assessment: 2
+    created: 2020-11-25 16:47:36.232367+00:00
+    last_updated: 2020-11-25 16:47:36.232374+00:00
+    name: BMD higher
+    description: The BMD estimate is higher than the maximum dose modeled, thus the
+      model is extrapolating a result.
+    failure_bin: 0
+    threshold: '1.00'
+    continuous_on: true
+    dichotomous_on: true
+    cancer_dichotomous_on: true
+- model: bmd.logicfield
+  pk: 34
+  fields:
+    assessment: 2
+    created: 2020-11-25 16:47:36.232411+00:00
+    last_updated: 2020-11-25 16:47:36.232419+00:00
+    name: BMDL higher
+    description: The BMDL estimate is higher than the maximum dose modeled, thus the
+      model is extrapolating a result.
+    failure_bin: 1
+    threshold: '1.00'
+    continuous_on: true
+    dichotomous_on: true
+    cancer_dichotomous_on: true
+- model: bmd.logicfield
+  pk: 35
+  fields:
+    assessment: 2
+    created: 2020-11-25 16:47:36.232457+00:00
+    last_updated: 2020-11-25 16:47:36.232465+00:00
+    name: Low BMD (warning)
+    description: The BMD estimate is lower than the lowest non-zero dose (caution).
+    failure_bin: 0
+    threshold: '3.00'
+    continuous_on: true
+    dichotomous_on: true
+    cancer_dichotomous_on: true
+- model: bmd.logicfield
+  pk: 36
+  fields:
+    assessment: 2
+    created: 2020-11-25 16:47:36.232502+00:00
+    last_updated: 2020-11-25 16:47:36.232510+00:00
+    name: Low BMDL (warning)
+    description: The BMDL estimate is lower than the lowest non-zero dose (caution).
+    failure_bin: 0
+    threshold: '3.00'
+    continuous_on: true
+    dichotomous_on: true
+    cancer_dichotomous_on: true
+- model: bmd.logicfield
+  pk: 37
+  fields:
+    assessment: 2
+    created: 2020-11-25 16:47:36.232593+00:00
+    last_updated: 2020-11-25 16:47:36.232622+00:00
+    name: Low BMD (serious)
+    description: The BMD estimate is lower than the lowest non-zero dose (warning).
+    failure_bin: 1
+    threshold: '10.00'
+    continuous_on: true
+    dichotomous_on: true
+    cancer_dichotomous_on: true
+- model: bmd.logicfield
+  pk: 38
+  fields:
+    assessment: 2
+    created: 2020-11-25 16:47:36.232678+00:00
+    last_updated: 2020-11-25 16:47:36.232688+00:00
+    name: Low BMDL (serious)
+    description: The BMDL estimate is lower than the lowest non-zero dose (warning).
+    failure_bin: 1
+    threshold: '10.00'
+    continuous_on: true
+    dichotomous_on: true
+    cancer_dichotomous_on: true
+- model: bmd.logicfield
+  pk: 39
+  fields:
+    assessment: 2
+    created: 2020-11-25 16:47:36.232729+00:00
+    last_updated: 2020-11-25 16:47:36.232737+00:00
+    name: Control residual
+    description: The absolute value of the residual at the control is large, which
+      is often used to estimate the BMR. Thus, the BMR estimate may be inaccurate.
+    failure_bin: 1
+    threshold: '2.00'
+    continuous_on: true
+    dichotomous_on: false
+    cancer_dichotomous_on: false
+- model: bmd.logicfield
+  pk: 40
+  fields:
+    assessment: 2
+    created: 2020-11-25 16:47:36.232776+00:00
+    last_updated: 2020-11-25 16:47:36.232784+00:00
+    name: Control stdev
+    description: The standard deviation estimate at the control is different the the
+      reported deviation, which is often used to estimate the BMR. Thus, the BMR estimate
+      may be inaccurate.
+    failure_bin: 1
+    threshold: '1.50'
+    continuous_on: true
+    dichotomous_on: false
+    cancer_dichotomous_on: false
+- model: bmd.logicfield
+  pk: 41
+  fields:
+    assessment: 1
+    created: 2020-11-25 16:47:36.238801+00:00
+    last_updated: 2020-11-25 16:47:36.238817+00:00
+    name: BMD
+    description: A BMD value was successfully calculated.
+    failure_bin: 2
+    threshold: null
+    continuous_on: true
+    dichotomous_on: true
+    cancer_dichotomous_on: true
+- model: bmd.logicfield
+  pk: 42
+  fields:
+    assessment: 1
+    created: 2020-11-25 16:47:36.238859+00:00
+    last_updated: 2020-11-25 16:47:36.238868+00:00
+    name: BMDL
+    description: A BMDL value was successfully calculated.
+    failure_bin: 2
+    threshold: null
+    continuous_on: true
+    dichotomous_on: true
+    cancer_dichotomous_on: true
+- model: bmd.logicfield
+  pk: 43
+  fields:
+    assessment: 1
+    created: 2020-11-25 16:47:36.238901+00:00
+    last_updated: 2020-11-25 16:47:36.238909+00:00
+    name: BMDU
+    description: A BMDU value was successfully calculated.
+    failure_bin: 0
+    threshold: null
+    continuous_on: false
+    dichotomous_on: false
+    cancer_dichotomous_on: true
+- model: bmd.logicfield
+  pk: 44
+  fields:
+    assessment: 1
+    created: 2020-11-25 16:47:36.238951+00:00
+    last_updated: 2020-11-25 16:47:36.238958+00:00
+    name: AIC
+    description: An AIC value was successfully calculated.
+    failure_bin: 2
+    threshold: null
+    continuous_on: true
+    dichotomous_on: true
+    cancer_dichotomous_on: true
+- model: bmd.logicfield
+  pk: 45
+  fields:
+    assessment: 1
+    created: 2020-11-25 16:47:36.238988+00:00
+    last_updated: 2020-11-25 16:47:36.238995+00:00
+    name: Variance Type
+    description: 'The correct variance model was used (based on p-test #2).'
+    failure_bin: 1
+    threshold: '0.10'
+    continuous_on: true
+    dichotomous_on: false
+    cancer_dichotomous_on: false
+- model: bmd.logicfield
+  pk: 46
+  fields:
+    assessment: 1
+    created: 2020-11-25 16:47:36.239059+00:00
+    last_updated: 2020-11-25 16:47:36.239068+00:00
+    name: Variance Fit
+    description: 'The variance model appropriately captures the variance of the dataset
+      being modeled (based on p-test #3).'
+    failure_bin: 1
+    threshold: '0.10'
+    continuous_on: true
+    dichotomous_on: false
+    cancer_dichotomous_on: false
+- model: bmd.logicfield
+  pk: 47
+  fields:
+    assessment: 1
+    created: 2020-11-25 16:47:36.239111+00:00
+    last_updated: 2020-11-25 16:47:36.239120+00:00
+    name: GGOF
+    description: 'The mean model is appropriately modeling the dataset, based on the
+      global-goodness-of-fit (p-test #4).'
+    failure_bin: 1
+    threshold: '0.10'
+    continuous_on: true
+    dichotomous_on: true
+    cancer_dichotomous_on: false
+- model: bmd.logicfield
+  pk: 48
+  fields:
+    assessment: 1
+    created: 2020-11-25 16:47:36.239161+00:00
+    last_updated: 2020-11-25 16:47:36.239169+00:00
+    name: GGOF (Cancer)
+    description: 'The mean model is appropriately modeling the dataset, based on the
+      global-goodness-of-fit (p-test #4).'
+    failure_bin: 1
+    threshold: '0.05'
+    continuous_on: false
+    dichotomous_on: false
+    cancer_dichotomous_on: true
+- model: bmd.logicfield
+  pk: 49
+  fields:
+    assessment: 1
+    created: 2020-11-25 16:47:36.239209+00:00
+    last_updated: 2020-11-25 16:47:36.239218+00:00
+    name: BMD/BMDL (serious)
+    description: The ratio between the BMD and BMDL values is large, indicating a
+      large spread of estimates in the range of interest (warning).
+    failure_bin: 1
+    threshold: '20.00'
+    continuous_on: true
+    dichotomous_on: true
+    cancer_dichotomous_on: true
+- model: bmd.logicfield
+  pk: 50
+  fields:
+    assessment: 1
+    created: 2020-11-25 16:47:36.239256+00:00
+    last_updated: 2020-11-25 16:47:36.239264+00:00
+    name: BMD/BMDL (warning)
+    description: The ratio between the BMD and BMDL values is large, indicating a
+      large spread of estimates in the range of interest (caution).
+    failure_bin: 0
+    threshold: '5.00'
+    continuous_on: true
+    dichotomous_on: true
+    cancer_dichotomous_on: true
+- model: bmd.logicfield
+  pk: 51
+  fields:
+    assessment: 1
+    created: 2020-11-25 16:47:36.239301+00:00
+    last_updated: 2020-11-25 16:47:36.239309+00:00
+    name: Residual of Interest
+    description: The absolute value of the residual at the dose closest to the BMD
+      is large, which means the model may not be estimating well in this range.
+    failure_bin: 1
+    threshold: '2.00'
+    continuous_on: true
+    dichotomous_on: true
+    cancer_dichotomous_on: true
+- model: bmd.logicfield
+  pk: 52
+  fields:
+    assessment: 1
+    created: 2020-11-25 16:47:36.239346+00:00
+    last_updated: 2020-11-25 16:47:36.239354+00:00
+    name: Warnings
+    description: The model output file included additional warnings.
+    failure_bin: 0
+    threshold: null
+    continuous_on: true
+    dichotomous_on: true
+    cancer_dichotomous_on: true
+- model: bmd.logicfield
+  pk: 53
+  fields:
+    assessment: 1
+    created: 2020-11-25 16:47:36.239387+00:00
+    last_updated: 2020-11-25 16:47:36.239395+00:00
+    name: BMD higher
+    description: The BMD estimate is higher than the maximum dose modeled, thus the
+      model is extrapolating a result.
+    failure_bin: 0
+    threshold: '1.00'
+    continuous_on: true
+    dichotomous_on: true
+    cancer_dichotomous_on: true
+- model: bmd.logicfield
+  pk: 54
+  fields:
+    assessment: 1
+    created: 2020-11-25 16:47:36.239432+00:00
+    last_updated: 2020-11-25 16:47:36.239440+00:00
+    name: BMDL higher
+    description: The BMDL estimate is higher than the maximum dose modeled, thus the
+      model is extrapolating a result.
+    failure_bin: 1
+    threshold: '1.00'
+    continuous_on: true
+    dichotomous_on: true
+    cancer_dichotomous_on: true
+- model: bmd.logicfield
+  pk: 55
+  fields:
+    assessment: 1
+    created: 2020-11-25 16:47:36.239477+00:00
+    last_updated: 2020-11-25 16:47:36.239485+00:00
+    name: Low BMD (warning)
+    description: The BMD estimate is lower than the lowest non-zero dose (caution).
+    failure_bin: 0
+    threshold: '3.00'
+    continuous_on: true
+    dichotomous_on: true
+    cancer_dichotomous_on: true
+- model: bmd.logicfield
+  pk: 56
+  fields:
+    assessment: 1
+    created: 2020-11-25 16:47:36.239522+00:00
+    last_updated: 2020-11-25 16:47:36.239530+00:00
+    name: Low BMDL (warning)
+    description: The BMDL estimate is lower than the lowest non-zero dose (caution).
+    failure_bin: 0
+    threshold: '3.00'
+    continuous_on: true
+    dichotomous_on: true
+    cancer_dichotomous_on: true
+- model: bmd.logicfield
+  pk: 57
+  fields:
+    assessment: 1
+    created: 2020-11-25 16:47:36.239567+00:00
+    last_updated: 2020-11-25 16:47:36.239575+00:00
+    name: Low BMD (serious)
+    description: The BMD estimate is lower than the lowest non-zero dose (warning).
+    failure_bin: 1
+    threshold: '10.00'
+    continuous_on: true
+    dichotomous_on: true
+    cancer_dichotomous_on: true
+- model: bmd.logicfield
+  pk: 58
+  fields:
+    assessment: 1
+    created: 2020-11-25 16:47:36.239613+00:00
+    last_updated: 2020-11-25 16:47:36.239621+00:00
+    name: Low BMDL (serious)
+    description: The BMDL estimate is lower than the lowest non-zero dose (warning).
+    failure_bin: 1
+    threshold: '10.00'
+    continuous_on: true
+    dichotomous_on: true
+    cancer_dichotomous_on: true
+- model: bmd.logicfield
+  pk: 59
+  fields:
+    assessment: 1
+    created: 2020-11-25 16:47:36.239659+00:00
+    last_updated: 2020-11-25 16:47:36.239667+00:00
+    name: Control residual
+    description: The absolute value of the residual at the control is large, which
+      is often used to estimate the BMR. Thus, the BMR estimate may be inaccurate.
+    failure_bin: 1
+    threshold: '2.00'
+    continuous_on: true
+    dichotomous_on: false
+    cancer_dichotomous_on: false
+- model: bmd.logicfield
+  pk: 60
+  fields:
+    assessment: 1
+    created: 2020-11-25 16:47:36.239705+00:00
+    last_updated: 2020-11-25 16:47:36.239713+00:00
+    name: Control stdev
+    description: The standard deviation estimate at the control is different the the
+      reported deviation, which is often used to estimate the BMR. Thus, the BMR estimate
+      may be inaccurate.
+    failure_bin: 1
+    threshold: '1.50'
+    continuous_on: true
+    dichotomous_on: false
+    cancer_dichotomous_on: false
+- model: bmd.session
+  pk: 2
+  fields:
+    endpoint: 8
+    dose_units: 1
+    version: BMDS270
+    bmrs:
+    - type: Extra
+      value: 0.1
+      confidence_level: 0.95
+    date_executed: 2020-11-28 05:35:14.116103+00:00
+    created: 2020-11-28 05:31:14.833635+00:00
+    last_updated: 2020-11-28 05:35:14.157469+00:00
+- model: bmd.model
+  pk: 8
+  fields:
+    session: 2
+    model_id: 0
+    bmr_id: 0
+    name: Logistic
+    overrides:
+      bmr: 0.1
+      bmr_type: 0
+      confidence_level: 0.95
+    date_executed: 2020-11-28 05:35:14.130064+00:00
+    execution_error: false
+    dfile: 'Logistic
+
+      BMDS_Model_Run
+
+      /temp/bmd/datafile.dax
+
+      /temp/bmd/output.out
+
+      5
+
+      500 1e-08 1e-08 0 0 0 1 0 0
+
+      0.1 0 0.95
+
+      -9999 -9999 -9999
+
+      0
+
+      -9999 -9999 -9999
+
+      Dose Incidence NEGATIVE_RESPONSE
+
+      0.000000 1 14
+
+      1.000000 1 14
+
+      10.000000 3 12
+
+      100.000000 2 13
+
+      1000.000000 7 8'
+    outfile: "\n\n ====================================================================\
+      \ \n   \t  Logistic Model. (Version: 2.15; Date: 3/20/2017) \n  \t  Input Data\
+      \ File: C:\\Windows\\TEMP\\bmds-dfile-vf7f3hfn.(d)  \n  \t  Gnuplot Plotting\
+      \ File:  C:\\Windows\\TEMP\\bmds-dfile-vf7f3hfn.plt\n \t\t\t\t\t\t\tSat Nov\
+      \ 28 00:35:10 2020\n ====================================================================\
+      \ \n\n BMDS_Model_Run \n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\
+      \ \n   The form of the probability function is: \n\n   P[response] = 1/[1+EXP(-intercept-slope*dose)]\n\
+      \n\n   Dependent variable = Incidence\n   Independent variable = Dose\n   Slope\
+      \ parameter is not restricted\n\n   Total number of observations = 5\n   Total\
+      \ number of records with missing values = 0\n   Maximum number of iterations\
+      \ = 500\n   Relative Function Convergence has been set to: 1e-008\n   Parameter\
+      \ Convergence has been set to: 1e-008\n\n\n\n                  Default Initial\
+      \ Parameter Values  \n                     background =            0   Specified\n\
+      \                      intercept =     -1.92753\n                          slope\
+      \ =   0.00181436\n\n\n           Asymptotic Correlation Matrix of Parameter\
+      \ Estimates\n\n           ( *** The model parameter(s)  -background   \n   \
+      \              have been estimated at a boundary point, or have been specified\
+      \ by the user,\n                 and do not appear in the correlation matrix\
+      \ )\n\n              intercept        slope\n\n intercept            1     \
+      \   -0.64\n\n     slope        -0.64            1\n\n\n\n                  \
+      \               Parameter Estimates\n\n                                    \
+      \                     95.0% Wald Confidence Interval\n       Variable      \
+      \   Estimate        Std. Err.     Lower Conf. Limit   Upper Conf. Limit\n  \
+      \    intercept         -2.08369         0.415186            -2.89744       \
+      \     -1.26994\n          slope       0.00195426        0.0006745          0.00063226\
+      \          0.00327625\n\n\n\n                        Analysis of Deviance Table\n\
+      \n       Model      Log(likelihood)  # Param's  Deviance  Test d.f.   P-value\n\
+      \     Full model        -31.1079         5\n   Fitted model        -31.9271\
+      \         2       1.63842      3          0.6507\n  Reduced model        -36.1015\
+      \         1       9.98719      4         0.04064\n\n           AIC:        \
+      \ 67.8542\n\n\n                                  Goodness  of  Fit \n      \
+      \                                                           Scaled\n     Dose\
+      \     Est._Prob.    Expected    Observed     Size       Residual\n  ------------------------------------------------------------------------\n\
+      \    0.0000     0.1107         1.660     1.000      15.000       -0.543\n  \
+      \  1.0000     0.1109         1.663     1.000      15.000       -0.545\n   10.0000\
+      \     0.1126         1.689     3.000      15.000        1.070\n  100.0000  \
+      \   0.1314         1.972     2.000      15.000        0.022\n 1000.0000    \
+      \ 0.4677         7.015     7.000      15.000       -0.008\n\n Chi^2 = 1.74 \
+      \     d.f. = 3        P-value = 0.6283\n\n\n   Benchmark Dose Computation\n\n\
+      Specified effect =            0.1\n\nRisk Type        =      Extra risk \n\n\
+      Confidence level =           0.95\n\n             BMD =        355.654\n\n \
+      \           BMDL =        238.329\n\n            BMDU =        667.165\n\n"
+    output:
+      df: 3.0
+      AIC: 67.8542
+      BMD: 355.654
+      CSF: -999
+      BMDL: 238.329
+      BMDU: 667.165
+      Chi2: 1.74
+      fit_dose:
+      - 0.0
+      - 1.0
+      - 10.0
+      - 100.0
+      - 1000.0
+      fit_size:
+      - 15.0
+      - 15.0
+      - 15.0
+      - 15.0
+      - 15.0
+      p_value4: 0.6283
+      warnings: []
+      model_date: 3/20/2017
+      model_name: Logistic
+      parameters:
+        slope:
+          stdev: 0.0006745
+          estimate: 0.00195426
+          95_low_limit: 0.00063226
+          95_high_limit: 0.00327625
+        intercept:
+          stdev: 0.415186
+          estimate: -2.08369
+          95_low_limit: -2.89744
+          95_high_limit: -1.26994
+      fit_est_prob:
+      - 0.1107
+      - 0.1109
+      - 0.1126
+      - 0.1314
+      - 0.4677
+      fit_observed:
+      - 1.0
+      - 1.0
+      - 3.0
+      - 2.0
+      - 7.0
+      fit_estimated:
+      - 1.66
+      - 1.663
+      - 1.689
+      - 1.972
+      - 7.015
+      fit_residuals:
+      - -0.543
+      - -0.545
+      - 1.07
+      - 0.022
+      - -0.008
+      model_version: 2.15
+      execution_duration: 4.622659
+      execution_end_time: '2020-11-27T23:35:14.115467'
+      execution_start_time: '2020-11-27T23:35:09.492808'
+      residual_of_interest: 0.022
+    plot: ''
+    created: 2020-11-28 05:35:09.127297+00:00
+    last_updated: 2020-11-28 05:35:14.130216+00:00
+- model: bmd.model
+  pk: 9
+  fields:
+    session: 2
+    model_id: 1
+    bmr_id: 0
+    name: Probit
+    overrides:
+      bmr: 0.1
+      slope: i|1.1
+      bmr_type: 0
+      intercept: i|0.1
+      max_iterations: 501
+      restrict_slope: 1
+      confidence_level: 0.95
+    date_executed: 2020-11-28 05:35:14.143536+00:00
+    execution_error: false
+    dfile: 'Probit
+
+      BMDS_Model_Run
+
+      /temp/bmd/datafile.dax
+
+      /temp/bmd/output.out
+
+      5
+
+      501 1e-08 1e-08 0 0 1 1 0 0
+
+      0.1 0 0.95
+
+      -9999 -9999 -9999
+
+      1
+
+      -9999 1.1 0.1
+
+      Dose Incidence NEGATIVE_RESPONSE
+
+      0.000000 1 14
+
+      1.000000 1 14
+
+      10.000000 3 12
+
+      100.000000 2 13
+
+      1000.000000 7 8'
+    outfile: "\n\n ====================================================================\
+      \ \n   \t  Probit Model. (Version: 3.4;  Date: 5/21/2017) \n  \t  Input Data\
+      \ File: C:\\Windows\\TEMP\\bmds-dfile-p169r4sj.(d)  \n  \t  Gnuplot Plotting\
+      \ File:  C:\\Windows\\TEMP\\bmds-dfile-p169r4sj.plt\n \t\t\t\t\t\t\tSat Nov\
+      \ 28 00:35:10 2020\n ====================================================================\
+      \ \n\n BMDS_Model_Run \n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\
+      \ \n   The form of the probability function is: \n\n   P[response] = CumNorm(Intercept+Slope*Dose),\n\
+      \n   where CumNorm(.) is the cumulative normal distribution function\n\n\n \
+      \  Dependent variable = Incidence\n   Independent variable = Dose\n   Slope\
+      \ parameter is restricted as slope >= 1\n\n   Total number of observations =\
+      \ 5\n   Total number of records with missing values = 0\n   Maximum number of\
+      \ iterations = 501\n   Relative Function Convergence has been set to: 1e-008\n\
+      \   Parameter Convergence has been set to: 1e-008\n\n\n\n                 User\
+      \ Inputs Initial Parameter Values  \n                     background =     \
+      \   -9999   Specified\n                      intercept =          0.1\n    \
+      \                      slope =          1.1\n\n\n           Asymptotic Correlation\
+      \ Matrix of Parameter Estimates\n\n           ( *** The model parameter(s) \
+      \ -background   \n                 have been estimated at a boundary point,\
+      \ or have been specified by the user,\n                 and do not appear in\
+      \ the correlation matrix )\n\n              intercept        slope\n\n intercept\
+      \            1        -0.58\n\n     slope        -0.58            1\n\n\n\n\
+      \                                 Parameter Estimates\n\n                  \
+      \                                       95.0% Wald Confidence Interval\n   \
+      \    Variable         Estimate        Std. Err.     Lower Conf. Limit   Upper\
+      \ Conf. Limit\n      intercept         -1.22642         0.218122           \
+      \ -1.65394           -0.798914\n          slope       0.00114535      0.000397623\
+      \         0.000366028          0.00192468\n\n\n\n                        Analysis\
+      \ of Deviance Table\n\n       Model      Log(likelihood)  # Param's  Deviance\
+      \  Test d.f.   P-value\n     Full model        -31.1079         5\n   Fitted\
+      \ model        -31.9239         2       1.63192      3          0.6522\n  Reduced\
+      \ model        -36.1015         1       9.98719      4         0.04064\n\n \
+      \          AIC:         67.8477\n\n\n                                  Goodness\
+      \  of  Fit \n                                                              \
+      \   Scaled\n     Dose     Est._Prob.    Expected    Observed     Size      \
+      \ Residual\n  ------------------------------------------------------------------------\n\
+      \    0.0000     0.1100         1.650     1.000      15.000       -0.537\n  \
+      \  1.0000     0.1102         1.654     1.000      15.000       -0.539\n   10.0000\
+      \     0.1122         1.683     3.000      15.000        1.078\n  100.0000  \
+      \   0.1331         1.996     2.000      15.000        0.003\n 1000.0000    \
+      \ 0.4677         7.015     7.000      15.000       -0.008\n\n Chi^2 = 1.74 \
+      \     d.f. = 3        P-value = 0.6282\n\n\n   Benchmark Dose Computation\n\n\
+      Specified effect =            0.1\n\nRisk Type        =      Extra risk \n\n\
+      Confidence level =           0.95\n\n             BMD =          332.9\n\n \
+      \           BMDL =         222.21\n\n            BMDU =        654.367\n\n"
+    output:
+      df: 3.0
+      AIC: 67.8477
+      BMD: 332.9
+      CSF: -999
+      BMDL: 222.21
+      BMDU: 654.367
+      Chi2: 1.74
+      fit_dose:
+      - 0.0
+      - 1.0
+      - 10.0
+      - 100.0
+      - 1000.0
+      fit_size:
+      - 15.0
+      - 15.0
+      - 15.0
+      - 15.0
+      - 15.0
+      p_value4: 0.6282
+      warnings: []
+      model_date: 5/21/2017
+      model_name: Probit
+      parameters:
+        slope:
+          stdev: 0.000397623
+          estimate: 0.00114535
+          95_low_limit: 0.000366028
+          95_high_limit: 0.00192468
+        intercept:
+          stdev: 0.218122
+          estimate: -1.22642
+          95_low_limit: -1.65394
+          95_high_limit: -0.798914
+      fit_est_prob:
+      - 0.11
+      - 0.1102
+      - 0.1122
+      - 0.1331
+      - 0.4677
+      fit_observed:
+      - 1.0
+      - 1.0
+      - 3.0
+      - 2.0
+      - 7.0
+      fit_estimated:
+      - 1.65
+      - 1.654
+      - 1.683
+      - 1.996
+      - 7.015
+      fit_residuals:
+      - -0.537
+      - -0.539
+      - 1.078
+      - 0.003
+      - -0.008
+      model_version: 3.4
+      execution_duration: 4.623014
+      execution_end_time: '2020-11-27T23:35:14.115822'
+      execution_start_time: '2020-11-27T23:35:09.492808'
+      residual_of_interest: 0.003
+    plot: ''
+    created: 2020-11-28 05:35:09.127378+00:00
+    last_updated: 2020-11-28 05:35:14.143702+00:00
+- model: bmd.selectedmodel
+  pk: 3
+  fields:
+    endpoint: 8
+    model: 8
+    notes: Selected model notes.
+    created: 2020-11-28 05:35:28.734847+00:00
+    last_updated: 2020-11-28 05:35:28.734869+00:00
 - model: riskofbias.riskofbiasdomain
   pk: 1
   fields:
@@ -2694,7 +3974,7 @@
     study: 1
     final: false
     author:
-    - team@team.com
+    - team@hawcproject.org
     active: true
     created: 2020-02-27 20:12:29.325028+00:00
     last_updated: 2020-02-27 20:13:06.061991+00:00
@@ -2704,7 +3984,7 @@
     study: 1
     final: false
     author:
-    - pm@pm.com
+    - pm@hawcproject.org
     active: true
     created: 2020-02-27 20:12:29.376104+00:00
     last_updated: 2020-02-27 20:13:30.095126+00:00
@@ -2714,7 +3994,7 @@
     study: 1
     final: true
     author:
-    - pm@pm.com
+    - pm@hawcproject.org
     active: true
     created: 2020-02-27 20:12:29.417932+00:00
     last_updated: 2020-02-27 20:53:42.455277+00:00
@@ -2724,7 +4004,7 @@
     study: 7
     final: false
     author:
-    - team@team.com
+    - team@hawcproject.org
     active: true
     created: 2020-05-08 17:56:45.599914+00:00
     last_updated: 2020-05-08 19:33:23.187120+00:00
@@ -2734,7 +4014,7 @@
     study: 7
     final: false
     author:
-    - pm@pm.com
+    - pm@hawcproject.org
     active: true
     created: 2020-05-08 17:56:45.903109+00:00
     last_updated: 2020-05-08 19:33:43.045401+00:00
@@ -2744,7 +4024,7 @@
     study: 7
     final: true
     author:
-    - team@team.com
+    - team@hawcproject.org
     active: true
     created: 2020-05-08 17:56:46.183552+00:00
     last_updated: 2020-05-08 19:34:31.468702+00:00
@@ -2914,6 +4194,14 @@
     - animal
     - animalgroup
     object_id: 3
+- model: riskofbias.riskofbiasscoreoverrideobject
+  pk: 3
+  fields:
+    score: 16
+    content_type:
+    - animal
+    - animalgroup
+    object_id: 99999
 - model: riskofbias.riskofbiasassessment
   pk: 1
   fields:
@@ -3040,8 +4328,6 @@
     outcome_n: null
     age_of_measurement: ''
     summary: ''
-    effects:
-    - 2
 - model: epi.comparisonset
   pk: 1
   fields:
@@ -3326,8 +4612,6 @@
       while the maximum vitellogenin inhibition (at 100 uM) was 99% of E2-mediated
       induction;* Tamoxifen>BPAF
     additional_fields: '{}'
-    effects:
-    - 1
 - model: invitro.ivendpointgroup
   pk: 1
   fields:
@@ -3424,7 +4708,7 @@
   fields:
     path: '0001'
     depth: 1
-    numchild: 0
+    numchild: 2
     assessment: 2
     title: assessment-2
     slug: assessment-2-slug
@@ -3455,6 +4739,78 @@
     text: Root-level text
     created: 2020-04-10 17:45:45.143229+00:00
     last_updated: 2020-04-10 17:45:45.143229+00:00
+- model: summary.summarytext
+  pk: 4
+  fields:
+    path: '00010001'
+    depth: 2
+    numchild: 2
+    assessment: 2
+    title: '1'
+    slug: '1'
+    text: <p>Level 1 text.</p>
+    created: 2020-11-25 20:22:28.807081+00:00
+    last_updated: 2020-11-25 20:23:38.366594+00:00
+- model: summary.summarytext
+  pk: 5
+  fields:
+    path: '00010003'
+    depth: 2
+    numchild: 0
+    assessment: 2
+    title: '2'
+    slug: '2'
+    text: <p>Level 2 text.</p>
+    created: 2020-11-25 20:22:42.083087+00:00
+    last_updated: 2020-11-25 20:23:43.154300+00:00
+- model: summary.summarytext
+  pk: 6
+  fields:
+    path: '000100010001'
+    depth: 3
+    numchild: 0
+    assessment: 2
+    title: 1a
+    slug: 1a
+    text: <p>Level 1A text.</p>
+    created: 2020-11-25 20:24:01.021842+00:00
+    last_updated: 2020-11-25 20:24:01.021887+00:00
+- model: summary.summarytext
+  pk: 7
+  fields:
+    path: '000100010002'
+    depth: 3
+    numchild: 2
+    assessment: 2
+    title: 1b
+    slug: 1b
+    text: <p>Level 1B text.</p>
+    created: 2020-11-25 20:24:16.857811+00:00
+    last_updated: 2020-11-25 20:24:23.483729+00:00
+- model: summary.summarytext
+  pk: 8
+  fields:
+    path: '0001000100020001'
+    depth: 4
+    numchild: 0
+    assessment: 2
+    title: 1-B-alpha
+    slug: 1-B-alpha
+    text: <p>Level 1-B-alpha text.</p>
+    created: 2020-11-25 20:25:04.079740+00:00
+    last_updated: 2020-11-25 20:25:04.079763+00:00
+- model: summary.summarytext
+  pk: 9
+  fields:
+    path: '0001000100020002'
+    depth: 4
+    numchild: 0
+    assessment: 2
+    title: 1-B-beta
+    slug: 1-B-beta
+    text: <p>Level 1-B-beta text.</p>
+    created: 2020-11-25 20:25:37.723914+00:00
+    last_updated: 2020-11-25 20:25:37.723938+00:00
 - model: summary.visual
   pk: 1
   fields:
@@ -3494,8 +4850,8 @@
 - model: summary.visual
   pk: 3
   fields:
-    title: heatmap
-    slug: heatmap
+    title: rob-heatmap
+    slug: rob-heatmap
     assessment: 2
     visual_type: 2
     dose_units: null
@@ -3583,6 +4939,97 @@
     last_updated: 2020-05-08 19:45:29.985848+00:00
     endpoints: []
     studies: []
+- model: summary.visual
+  pk: 8
+  fields:
+    title: exploratory-heatmap
+    slug: exploratory-heatmap
+    assessment: 2
+    visual_type: 6
+    dose_units: null
+    prefilters: '{}'
+    settings: "{\r\n  \"cell_height\": 50,\r\n  \"cell_width\": 50,\r\n  \"color_range\"\
+      : [\r\n    \"#ffffff\",\r\n    \"#cc4700\"\r\n  ],\r\n  \"compress_x\": true,\r\
+      \n  \"compress_y\": true,\r\n  \"data_url\": \"/ani/api/assessment/2/endpoint-heatmap/\"\
+      ,\r\n  \"hawc_interactivity\": true,\r\n  \"filter_widgets\": [\r\n    {\r\n\
+      \      \"column\": \"species\",\r\n      \"delimiter\": \"\",\r\n      \"on_click_event\"\
+      : \"---\"\r\n    },\r\n    {\r\n      \"column\": \"strain\",\r\n      \"delimiter\"\
+      : \"\",\r\n      \"on_click_event\": \"---\"\r\n    }\r\n  ],\r\n  \"padding\"\
+      : {\r\n    \"top\": 30,\r\n    \"left\": 30,\r\n    \"bottom\": 30,\r\n    \"\
+      right\": 30\r\n  },\r\n  \"show_axis_border\": true,\r\n  \"show_grid\": true,\r\
+      \n  \"show_tooltip\": true,\r\n  \"show_totals\": true,\r\n  \"show_null\":\
+      \ true,\r\n  \"autosize_cells\": true,\r\n  \"autorotate_tick_labels\": true,\r\
+      \n  \"table_fields\": [\r\n    {\r\n      \"column\": \"study citation\",\r\n\
+      \      \"delimiter\": \"\",\r\n      \"on_click_event\": \"study\"\r\n    },\r\
+      \n    {\r\n      \"column\": \"experiment name\",\r\n      \"delimiter\": \"\
+      \",\r\n      \"on_click_event\": \"experiment\"\r\n    },\r\n    {\r\n     \
+      \ \"column\": \"animal group name\",\r\n      \"delimiter\": \"\",\r\n     \
+      \ \"on_click_event\": \"animal_group\"\r\n    },\r\n    {\r\n      \"column\"\
+      : \"endpoint name\",\r\n      \"delimiter\": \"\",\r\n      \"on_click_event\"\
+      : \"endpoint_complete\"\r\n    },\r\n    {\r\n      \"column\": \"---\",\r\n\
+      \      \"delimiter\": \"\",\r\n      \"on_click_event\": \"---\"\r\n    }\r\n\
+      \  ],\r\n  \"title\": {\r\n    \"text\": \"\",\r\n    \"x\": 0,\r\n    \"y\"\
+      : 0,\r\n    \"rotate\": 0\r\n  },\r\n  \"x_fields\": [\r\n    {\r\n      \"\
+      column\": \"system\",\r\n      \"wrap_text\": 0,\r\n      \"delimiter\": \"\"\
+      \r\n    }\r\n  ],\r\n  \"x_label\": {\r\n    \"text\": \"\",\r\n    \"x\": 0,\r\
+      \n    \"y\": 0,\r\n    \"rotate\": 0\r\n  },\r\n  \"x_tick_rotate\": 0,\r\n\
+      \  \"y_fields\": [\r\n    {\r\n      \"column\": \"study citation\",\r\n   \
+      \   \"wrap_text\": 0,\r\n      \"delimiter\": \"\"\r\n    }\r\n  ],\r\n  \"\
+      y_label\": {\r\n    \"text\": \"\",\r\n    \"x\": 0,\r\n    \"y\": 0,\r\n  \
+      \  \"rotate\": 0\r\n  },\r\n  \"y_tick_rotate\": -90,\r\n  \"x_axis_bottom\"\
+      : false\r\n}"
+    caption: ''
+    published: true
+    sort_order: short_citation
+    created: 2020-11-25 14:25:27.528283+00:00
+    last_updated: 2020-11-25 14:29:33.991892+00:00
+    endpoints: []
+    studies: []
+- model: summary.visual
+  pk: 10
+  fields:
+    title: bioassay-aggregation
+    slug: bioassay-aggregation
+    assessment: 2
+    visual_type: 0
+    dose_units: 1
+    prefilters: '{}'
+    settings: '{}'
+    caption: ''
+    published: true
+    sort_order: short_citation
+    created: 2020-11-25 18:32:07.260499+00:00
+    last_updated: 2020-11-25 18:35:00.094667+00:00
+    endpoints:
+    - 3
+    studies: []
+- model: summary.visual
+  pk: 11
+  fields:
+    title: smart-tags
+    slug: smart-tags
+    assessment: 2
+    visual_type: 2
+    dose_units: null
+    prefilters: '{}'
+    settings: '{"title":"","xAxisLabel":"","yAxisLabel":"","padding_top":20,"cell_size":40,"padding_right":190,"padding_bottom":35,"padding_left":20,"x_field":"study","study_label_field":"short_citation","included_metrics":[14,15],"excluded_score_ids":[],"show_legend":true,"show_na_legend":true,"show_nr_legend":true,"legend_x":226,"legend_y":16}'
+    caption: <p>This is a <span class="smart-tag active" data-pk="7" data-type="study">study</span>,
+      an <span class="smart-tag active" data-pk="3" data-type="endpoint">endpoint</span>,
+      a <span class="smart-tag active" data-pk="3" data-type="visual">visual</span>,
+      and a <span class="smart-tag active" data-pk="2" data-type="data_pivot">data
+      pivot</span>.</p><p><br></p><div class="smart-tag active" data-pk="7" data-type="study">This
+      is an inline study.</div><p><br></p><div class="smart-tag active" data-pk="3"
+      data-type="endpoint">This is an inline endpoint.</div><p><br></p><div class="smart-tag
+      active" data-pk="3" data-type="visual">This is an inline visual.</div><p><br></p><div
+      class="smart-tag active" data-pk="2" data-type="data_pivot">This is an inline
+      data pivot.</div>
+    published: true
+    sort_order: short_citation
+    created: 2020-11-26 03:21:03.883675+00:00
+    last_updated: 2020-11-26 03:25:56.660522+00:00
+    endpoints: []
+    studies:
+    - 7
 - model: summary.datapivot
   pk: 1
   fields:
@@ -4352,7 +5799,7 @@
   pk: 1
   fields:
     owner:
-    - team@team.com
+    - team@hawcproject.org
     study: 1
     type: 10
     status: 30

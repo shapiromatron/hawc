@@ -110,7 +110,7 @@ class VisualToolbar extends Component {
             };
 
         let resizeTimer;
-        $(window).resize(() => {
+        $(window).on("resize", () => {
             clearTimeout(resizeTimer);
             resizeTimer = setTimeout(onPageResize, 1000);
         });

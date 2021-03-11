@@ -16,9 +16,9 @@
   <div id="extra" class="hidden">
     {# Endpoint Group formset #}
     <div id='endpointGroups'>
-      <div class="row">
-        <legend>Dose-response data</legend>
-        <p class="help-text">
+      <legend>Dose-response data</legend>
+      <p>
+        <small class="form-text text-muted">
           <span class="d_only">
             For dichotomous data, all fields are required. For p-values,
             0.05 or &lt;0.05 should be coded as 0.05; 0.01 or &lt;0.01
@@ -37,11 +37,11 @@
             For percent-difference data, lower CI (%) and upper CI (%) are optional.
             If any data are not reported, leave those fields blank.
           </span>
-        </p>
-      </div>
-      <div class="row">
+        </small>
+      </p>
 
-        <div class="col-md-7">
+      <div class="row">
+        <div class="col-md-8">
           {{ formset.management_form }}
           {{ formset.non_form_errors|add_class:"alert alert-danger" }}
 
@@ -60,7 +60,6 @@
             </thead>
             <tbody>
               {% for form in formset %}
-
                 <tr>
                   {% if forloop.first %}
                     {{ form.non_field_errors|add_class:"alert alert-danger" }}
@@ -89,182 +88,49 @@
         </div>
       </div>
     </div>
-
-    {# Significance calculation modal #}
-    <button
-        id="ssBtn"
-        class="btn btn-sm"
-        style="margin-left: 10px"
-        type="button"
-        data-toggle="modal"
-        data-target="#ssModal">Calculate</button>
-    <div id="ssModal" class="modal hide fade">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h3>Power calculation</h3>
-      </div>
-      <div class="modal-body">
-        <form id="ssForm">
-          <p class="form-text text-muted">Calculate the sample-size required to detect an effect with 80% power.</p>
-          <label class="col-form-label">Control mean</label>
-          <input type="number" name="mean" step="any">
-          <label class="col-form-label">Control standard-deviation</label>
-          <input type="number" name="sd" step="any">
-          <label class="col-form-label">Number of animals</label>
-          <input type="number" name="n">
-          <label class="col-form-label">Difference to detect (%)</label>
-          <input type="number" name="percentToDetect" value="10">
-          <label class="col-form-label">Result:</label>
-          <p id="ssResult" class="alert alert-info">-</p>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <a href="#" class="btn btn-light" class="close" data-dismiss="modal" aria-hidden="true">Close</a>
-        <a id="ssSavePower"
-          href="#"
-          class="btn btn-primary"
-          title='Copy results into "power-notes" field'
-          class="close"
-          data-dismiss="modal"
-          aria-hidden="true">Save output</a>
-      </div>
-    </div>
-</div>
+  </div>
 {% endblock %}
 
 {% block extrajs %}
   {{ form.media }}
   <script type="text/json" id="settings">
     {
-      "noel_names": {{form.noel_names|safe}},
+      "vocabulary": {{vocabulary|safe}},
       "litterEffectRequired": {{form.instance.litter_effect_required|lower}},
-      "NOEL": {{form.NOEL.value|default_if_none:"-999"}},
-      "LOEL": {{form.LOEL.value|default_if_none:"-999"}},
-      "FEL": {{form.FEL.value|default_if_none:"-999"}},
       "doses": {{animal_group.get_doses_json|safe}},
-      "vocabulary": {{vocabulary|safe}}
+      {% if form.instance.id  %}
+      "endpoint_data": {{form.instance.get_json|safe}}
+      {% else %}
+      "endpoint_data": {
+        "animal_group": {{animal_group.get_json|safe}},
+        "groups": [],
+        "noel_names": {{form.noel_names|safe}},
+        "NOEL": {{form.NOEL.value|default_if_none:"-999"}},
+        "LOEL": {{form.LOEL.value|default_if_none:"-999"}},
+        "FEL": {{form.FEL.value|default_if_none:"-999"}}
+      }
+      {% endif %}
     }
   </script>
   <script type="text/javascript">
-    $(document).ready(function () {
-      const settings = JSON.parse(document.getElementById('settings').text);
-
-      // reorganize forms
-      $('#endpointGroups').insertBefore($('div.form-actions'));
-
-      // html5 enabled form
-      $('#id_results_notes').quillify();
-      $('#id_endpoint_notes').quillify();
-
-      //update values in doses table
-      $('#doses_title').html('Dose<br>(' + settings.doses[0].name + ')');
-      $('.doses').each(function(i, v){
-        $(v).html(settings.doses[0].values[i]);
-      });
-
-      window.app.animalStartup(function(animal){
-          const startupEditEndpoint = () => {
-              var endpoint = new animal.EditEndpoint(
-                settings,
-                { "NOEL": settings.NOEL, "LOEL": settings.LOEL, "FEL": settings.FEL },
-                settings.doses,
-                $('#eg'),
-                $('#endpoint_plot')
-              );
-
-              // whenever input changes, update data form
-              $('body')
-                .on('keyup', '#input', endpoint.update_endpoint_from_form.bind(endpoint))
-                .on('change', 'select', endpoint.update_endpoint_from_form.bind(endpoint));
-            };
-
-          animal.EndpointForm(startup => {
-            startup.func(document.getElementById('vocab'), settings.vocabulary);
-            $('#row_id_name_1').remove();
-            $('#row_id_system_4').remove();
-            $('#row_id_name_term_5').remove();
-            $('#endpoint').removeClass('hidden').hide().fadeIn({complete:  startupEditEndpoint});
+  $(document).ready(() => {
+    const settings = JSON.parse(document.getElementById("settings").text);
+    window.app.animalStartup(function (animal) {
+      animal.EndpointForm(startup => {
+        startup.func(document.getElementById("vocab"), settings.vocabulary);
+        $("#row_id_name_1").remove();
+        $("#row_id_system_4").remove();
+        $("#row_id_name_term_5").remove();
+        $("#endpoint")
+          .removeClass("hidden")
+          .hide()
+          .fadeIn({
+            complete: () => {
+              new animal.EditEndpoint(settings);
+            },
           });
-
-          // toggle the name of the variance column header as the value changes
-          $('#id_variance_type')
-            .on('change', function(){
-              var varHeader = $('#varianceHeader'),
-                  varType = parseInt($('#id_variance_type').val(), 0);
-              varHeader.html(animal.EditEndpoint.getVarianceType(varType));
-            })
-            .trigger('change');
-
-          // change if endpoint-groups div should be shown
-          $('#id_data_reported, #id_data_extracted')
-            .on('change', function(){
-              var egDiv = $('#endpointGroups'),
-                  egsRequired = (
-                    $('#id_data_reported').prop('checked') &&
-                    $('#id_data_extracted').prop('checked')
-                  );
-              (egsRequired) ? egDiv.fadeIn() : egDiv.fadeOut();
-            }).trigger('change');
-
-          // change required fields based on dataset-type
-          $('#id_data_type')
-            .on('change', function(){
-              var varTypeDiv = $('#div_id_variance_type'),
-                    CI = $('#div_id_confidence_interval'),
-                    shows, hides;
-
-              switch(this.value){
-                  case "C":
-                    shows = ".c_only,.pc_only";
-                    hides =  ".d_only,.p_only";
-                    break;
-                  case "D":
-                  case "DC":
-                    shows = ".d_only";
-                    hides =  ".c_only,.p_only,.pc_only";
-                    break;
-                  case "P":
-                    shows = ".p_only,.pc_only";
-                    hides =  ".c_only,.d_only";
-                    break;
-              }
-              $(shows).show();
-              $(hides).hide();
-
-              if(this.value==="C"){
-                varTypeDiv.fadeIn();
-                $('#ssBtn').fadeIn();
-              } else {
-                varTypeDiv.fadeOut();
-                $('#id_variance_type').val(0);
-                $('#ssBtn').fadeOut();
-              }
-
-              if(this.value==="P"){
-                CI.fadeIn();
-              } else {
-                CI.fadeOut();
-                $('#id_confidence_interval').val("");
-              }
-            }).trigger('change');
-
-          // initialize sample-size power widget
-          new animal.SampleSizeWidget();
       });
-
-      // show/hide the litter_effects fields depending on the underlying experiment type
-      var litEff = $('#id_litter_effects'),
-        litEffNotes = $('#id_litter_effect_notes'),
-        litterDiv = litEff.parent().parent().parent();
-
-      if (settings.litterEffectRequired){
-        litterDiv.show();
-      } else {
-        litterDiv.hide();
-        litEff.val("NA");
-        litEffNotes.val("");
-      }
     });
+  });
   </script>
-
 {% endblock %}

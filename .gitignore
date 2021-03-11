@@ -15,7 +15,6 @@
 .pytest_cache
 bin/dev.local.sh
 celerybeat*
-compose/nginx/conf/nginx.conf
 hawc/main/settings/local.py
 package-lock.json
 webpack-stats.json
@@ -41,5 +40,5 @@ venv/
 hawc/static/bundles/
 !hawc/static/bundles/.gitkeep
 
-compose/django/fonts/*
-!compose/django/fonts/.gitkeep
+compose/app/fonts/*
+!compose/app/fonts/.gitkeep

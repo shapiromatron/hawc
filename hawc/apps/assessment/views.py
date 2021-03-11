@@ -4,6 +4,7 @@ import logging
 from django.apps import apps
 from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
 from django.db.models import Count
@@ -51,6 +52,13 @@ class Home(TemplateView):
         if request.user.is_authenticated:
             return HttpResponseRedirect(reverse_lazy("portal"))
         return super().get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["content"] = models.Content.rendered_page(
+            models.ContentTypeChoices.HOMEPAGE, context
+        )
+        return context
 
 
 class About(TemplateView):
@@ -186,9 +194,12 @@ class About(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["HAWC_FLAVOR"] = settings.HAWC_FLAVOR
-        context["rob_name"] = self.get_rob_name()
-        context["counts"] = self.get_object_counts()
+        context.update(
+            HAWC_FLAVOR=settings.HAWC_FLAVOR,
+            rob_name=self.get_rob_name(),
+            counts=self.get_object_counts(),
+        )
+        context["content"] = models.Content.rendered_page(models.ContentTypeChoices.ABOUT, context)
         return context
 
 
@@ -197,6 +208,11 @@ class Contact(LoginRequiredMixin, MessageMixin, FormView):
     form_class = forms.ContactForm
     success_url = reverse_lazy("home")
     success_message = "Your message has been sent!"
+
+    def dispatch(self, request, *args, **kwargs):
+        if settings.EXTERNAL_CONTACT_US:
+            return HttpResponseRedirect(settings.EXTERNAL_CONTACT_US)
+        return super().dispatch(request, *args, **kwargs)
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -273,11 +289,15 @@ class AssessmentPublicList(ListView):
         return context
 
 
-class AssessmentCreate(TimeSpentOnPageMixin, LoginRequiredMixin, MessageMixin, CreateView):
+class AssessmentCreate(TimeSpentOnPageMixin, UserPassesTestMixin, MessageMixin, CreateView):
     success_message = "Assessment created."
     model = models.Assessment
     form_class = forms.AssessmentForm
     template_name = "assessment/assessment_create_form.html"
+
+    def test_func(self):
+        user = self.request.user
+        return user.is_authenticated and user.can_create_assessments()
 
     def get_success_url(self):
         self.assessment = self.object
@@ -619,16 +639,6 @@ class AdminAssessmentSize(TemplateView):
     @method_decorator(staff_member_required)
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
-
-
-class Healthcheck(View):
-    """
-    Healthcheck view check; ensure django server can serve requests.
-    """
-
-    def get(self, request, *args, **kwargs):
-        # TODO - add cache check and celery worker check
-        return HttpResponse(json.dumps({"status": "ok"}), content_type="application/json")
 
 
 # log / blog

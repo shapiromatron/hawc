@@ -20,8 +20,9 @@ def literature(driver, root_url):
     assert h.Text("Human Study (2)").exists() is True
     assert len(driver.find_elements_by_css_selector("#references_detail_div")) > 0
     h.click("Human Study (2)")
-    h.wait_until(h.Text("References tagged:").exists)
-    assert len(driver.find_elements_by_css_selector("#reference_detail_div")) > 1
+    h.wait_until(h.Text("2 references tagged:").exists)
+    h.wait_until(h.S("#references_detail_div").exists)
+    assert len(driver.find_elements_by_css_selector(".referenceDetail")) == 2
 
     # /lit/assessment/:id/references/visualization/
     h.go_to(root_url + "/lit/assessment/2/references/visualization/")
@@ -35,6 +36,6 @@ def literature(driver, root_url):
     h.write("Kawana", into="Authors")
     h.click("Search")
     h.wait_until(h.Text("1 references found.").exists)
-    assert len(driver.find_elements_by_css_selector("#reference_detail_div")) == 1
+    assert len(driver.find_elements_by_css_selector(".referenceDetail")) == 1
 
     shared.logout()

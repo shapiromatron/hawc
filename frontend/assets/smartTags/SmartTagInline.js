@@ -16,10 +16,12 @@ class InlineRendering {
     render() {
         this.renderParent = $('<div class="inlineSmartTagParent">').insertBefore(this.$div);
 
-        let $title = $('<div class="row inlineSmartTagTitle">'),
-            $body = $('<div class="row inlineSmartTagBody">'),
-            $caption = $('<div class="row inlineSmartTagCaption">').append(this.$div.detach()),
-            $container = $('<div class="inlineSmartTagContainer container-fluid">').append([
+        let $title = $('<div class="card-header inlineSmartTagTitle">'),
+            $body = $('<div class="card-body inlineSmartTagBody">'),
+            $caption = $('<div class="card-footer inlineSmartTagCaption">').append(
+                this.$div.detach()
+            ),
+            $container = $('<div class="inlineSmartTagContainer card">').append([
                 $title,
                 $body,
                 $caption,

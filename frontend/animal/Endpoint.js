@@ -66,9 +66,6 @@ class Endpoint extends Observee {
     }
 
     unpack_doses() {
-        if (!this.data.animal_group) {
-            return; // added for edit_endpoint prototype extension
-        }
         this.doses = d3
             .nest()
             .key(d => d.dose_units.id)
@@ -100,21 +97,19 @@ class Endpoint extends Observee {
 
     _switch_dose(idx) {
         // switch doses to the selected index
-        try {
-            var egs = this.data.groups,
-                doses = this.doses[idx];
-
-            this.dose_units_id = doses.key;
-            this.dose_units = doses.name;
-
-            egs.forEach(function(eg, i) {
-                eg.dose = doses.values[i].dose;
-            });
-
-            this.notifyObservers({status: "dose_changed"});
-        } catch (err) {
+        if (this.doses[idx] === undefined) {
             console.error("error, dose index does not exist");
+            return;
         }
+        var egs = this.data.groups,
+            doses = this.doses[idx];
+
+        this.dose_units_id = doses.key;
+        this.dose_units = doses.name;
+
+        egs.forEach((eg, i) => (eg.dose = doses.values[i].dose));
+
+        this.notifyObservers({status: "dose_changed"});
     }
 
     get_name() {

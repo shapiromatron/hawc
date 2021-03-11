@@ -2,10 +2,11 @@ from pathlib import Path
 
 import pytest
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.forms.models import model_to_dict
 
 from hawc.apps.assessment.models import Assessment
 from hawc.apps.lit import constants
-from hawc.apps.lit.forms import ImportForm, LiteratureAssessmentForm, RisImportForm
+from hawc.apps.lit.forms import ImportForm, LiteratureAssessmentForm, ReferenceForm, RisImportForm
 from hawc.apps.lit.models import Reference
 
 
@@ -201,3 +202,96 @@ class TestRisImportForm:
         form = self._create_form(db_keys, SimpleUploadedFile("test.ris", b"\n"))
         assert form.is_valid() is False
         assert form.errors == {"import_file": [RisImportForm.NO_REFERENCES]}
+
+
+@pytest.mark.vcr
+@pytest.mark.django_db
+class TestReferenceForm:
+    def test_update_hero(self, db_keys):
+        # test updates to reference
+        ref = Reference.objects.get(id=1)
+        assert ref.get_hero_id() == 2
+        data = {**model_to_dict(ref), "hero_id": 2}
+
+        # existing pubmed validation check
+        form = ReferenceForm(instance=ref, data={**data, "hero_id": 3})
+        assert form.is_valid() is False
+        assert (
+            form.errors["hero_id"][0]
+            == "Existing HAWC reference with this ID already exists in this assessment: 3"
+        )
+
+        # bad pubmed validation check
+        form = ReferenceForm(instance=ref, data={**data, "hero_id": -1})
+        assert form.is_valid() is False
+        assert (
+            form.errors["hero_id"][0]
+            == "Import failed; the following HERO IDs could not be imported: -1"
+        )
+
+        # make sure pubmed is unchanged by default
+        form = ReferenceForm(instance=ref, data=data)
+        assert form.fields["hero_id"].initial == 2
+        assert form.is_valid() is True
+        form.save()
+        ref.refresh_from_db()
+        assert ref.get_hero_id() == 2
+
+        # make sure pubmed can be removed
+        form = ReferenceForm(instance=ref, data={**data, "hero_id": None})
+        assert form.fields["hero_id"].initial == 2
+        assert form.is_valid() is True
+        form.save()
+        ref.refresh_from_db()
+        assert ref.get_hero_id() is None
+
+        # make sure pubmed can be added
+        form = ReferenceForm(instance=ref, data={**data, "hero_id": 2})
+        assert form.fields["hero_id"].initial is None
+        assert form.is_valid() is True
+        form.save()
+        ref.refresh_from_db()
+        assert ref.get_hero_id() == 2
+
+    def test_update_pubmed(self, db_keys):
+        # test updates to reference
+        ref = Reference.objects.get(id=5)
+        assert ref.get_pubmed_id() == 11778423
+        data = {**model_to_dict(ref), "pubmed_id": 11778423}
+
+        # existing pubmed validation check
+        form = ReferenceForm(instance=ref, data={**data, "pubmed_id": 15907334})
+        assert form.is_valid() is False
+        assert (
+            form.errors["pubmed_id"][0]
+            == "Existing HAWC reference with this ID already exists in this assessment: 6"
+        )
+
+        # bad pubmed validation check
+        form = ReferenceForm(instance=ref, data={**data, "pubmed_id": -1})
+        assert form.is_valid() is False
+        assert form.errors["pubmed_id"][0] == "Invalid PubMed ID: -1"
+
+        # make sure pubmed is unchanged by default
+        form = ReferenceForm(instance=ref, data=data)
+        assert form.fields["pubmed_id"].initial == 11778423
+        assert form.is_valid() is True
+        form.save()
+        ref.refresh_from_db()
+        assert ref.get_pubmed_id() == 11778423
+
+        # make sure pubmed can be removed
+        form = ReferenceForm(instance=ref, data={**data, "pubmed_id": None})
+        assert form.fields["pubmed_id"].initial == 11778423
+        assert form.is_valid() is True
+        form.save()
+        ref.refresh_from_db()
+        assert ref.get_pubmed_id() is None
+
+        # make sure pubmed can be added
+        form = ReferenceForm(instance=ref, data={**data, "pubmed_id": 11778423})
+        assert form.fields["pubmed_id"].initial is None
+        assert form.is_valid() is True
+        form.save()
+        ref.refresh_from_db()
+        assert ref.get_pubmed_id() == 11778423

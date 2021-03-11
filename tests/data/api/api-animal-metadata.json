@@ -1,0 +1,173 @@
+{
+  "study": {
+    "coi_reported": {
+      "4": "---",
+      "0": "Authors report they have no COI",
+      "1": "Authors disclosed COI",
+      "5": "Not reported; no COI is inferred based on author affiliation and/or funding source",
+      "6": "Not reported; a COI is inferred based on author affiliation and/or funding source",
+      "3": "Not reported",
+      "2": "Unknown"
+    }
+  },
+  "experiment": {
+    "type": {
+      "Ac": "Acute (<24 hr)",
+      "St": "Short-term (1-30 days)",
+      "Sb": "Subchronic (30-90 days)",
+      "Ch": "Chronic (>90 days)",
+      "Ca": "Cancer",
+      "Me": "Mechanistic",
+      "Rp": "Reproductive",
+      "1r": "1-generation reproductive",
+      "2r": "2-generation reproductive",
+      "Dv": "Developmental",
+      "Ot": "Other",
+      "NR": "Not-reported"
+    }
+  },
+  "animal_group": {
+    "sex": {
+      "M": "Male",
+      "F": "Female",
+      "C": "Combined",
+      "R": "Not reported"
+    },
+    "generation": {
+      "": "N/A (not generational-study)",
+      "P0": "Parent-generation (P0)",
+      "F1": "First-generation (F1)",
+      "F2": "Second-generation (F2)",
+      "F3": "Third-generation (F3)",
+      "F4": "Fourth-generation (F4)",
+      "Ot": "Other"
+    },
+    "species": [
+      {
+        "id": 1,
+        "name": "rat"
+      },
+      {
+        "id": 2,
+        "name": "mouse"
+      }
+    ],
+    "strains": [
+      {
+        "id": 1,
+        "species_id": 1,
+        "name": "sprague dawley"
+      }
+    ],
+    "lifestage": {
+      "Developmental": "Developmental",
+      "Adult": "Adult",
+      "Adult (gestation)": "Adult (gestation)",
+      "Multi-lifestage": "Multi-lifestage"
+    }
+  },
+  "dosing_regime": {
+    "route_of_exposure": {
+      "OR": "Oral",
+      "OC": "Oral capsule",
+      "OD": "Oral diet",
+      "OG": "Oral gavage",
+      "OW": "Oral drinking water",
+      "I": "Inhalation",
+      "IG": "Inhalation - gas",
+      "IR": "Inhalation - particle",
+      "IA": "Inhalation - vapor",
+      "D": "Dermal",
+      "SI": "Subcutaneous injection",
+      "IP": "Intraperitoneal injection",
+      "IV": "Intravenous injection",
+      "IO": "in ovo",
+      "P": "Parental",
+      "W": "Whole body",
+      "M": "Multiple",
+      "U": "Unknown",
+      "O": "Other"
+    },
+    "positive_control": {
+      "true": "Yes",
+      "false": "No",
+      "null": "Unknown"
+    },
+    "negative_control": {
+      "NR": "Not-reported",
+      "UN": "Untreated",
+      "VT": "Vehicle-treated",
+      "B": "Untreated + Vehicle-treated",
+      "N": "No"
+    }
+  },
+  "dose_group": {
+    "dose_units": [
+      {
+        "id": 1,
+        "name": "mg/kg/d"
+      },
+      {
+        "id": 2,
+        "name": "\u00b5M"
+      }
+    ]
+  },
+  "endpoint": {
+    "litter_effects": {
+      "NA": "Not applicable",
+      "NR": "Not reported",
+      "YS": "Yes, statistical control",
+      "YD": "Yes, study-design",
+      "N": "No",
+      "O": "Other"
+    },
+    "observation_time_units": {
+      "0": "not reported",
+      "1": "seconds",
+      "2": "minutes",
+      "3": "hours",
+      "4": "days",
+      "5": "weeks",
+      "6": "months",
+      "9": "years",
+      "7": "post-natal day (PND)",
+      "8": "gestational day (GD)"
+    },
+    "adversity_direction": {
+      "3": "increase from reference/control group",
+      "2": "decrease from reference/control group",
+      "1": "any change from reference/control group",
+      "0": "unclear",
+      "4": "---"
+    },
+    "data_type": {
+      "C": "Continuous",
+      "D": "Dichotomous",
+      "P": "Percent Difference",
+      "DC": "Dichotomous Cancer",
+      "NR": "Not reported"
+    },
+    "variance_type": {
+      "0": "NA",
+      "1": "SD",
+      "2": "SE",
+      "3": "NR"
+    },
+    "monotonicity": {
+      "8": "--",
+      "0": "N/A, single dose level study",
+      "1": "N/A, no effects detected",
+      "2": "visual appearance of monotonicity",
+      "3": "monotonic and significant trend",
+      "4": "visual appearance of non-monotonicity",
+      "6": "no pattern/unclear"
+    },
+    "trend_result": {
+      "0": "not applicable",
+      "1": "not significant",
+      "2": "significant",
+      "3": "not reported"
+    }
+  }
+}

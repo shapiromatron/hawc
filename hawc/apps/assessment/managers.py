@@ -1,6 +1,5 @@
 import json
 
-from django.apps import apps
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Q
 
@@ -62,29 +61,22 @@ class DoseUnitManager(BaseManager):
 
     def get_animal_units(self, assessment):
         """
+        Returns a queryset of all bioassay DoseUnits used in an assessment.
+        """
+        return (
+            self.filter(
+                dosegroup__dose_regime__dosed_animals__experiment__study__assessment=assessment
+            )
+            .order_by("pk")
+            .distinct("pk")
+        )
+
+    def get_animal_units_names(self, assessment):
+        """
         Returns a list of the dose-units which are used in the selected
         assessment for animal bioassay data.
         """
-        Study = apps.get_model("study", "Study")
-        Experiment = apps.get_model("animal", "Experiment")
-        AnimalGroup = apps.get_model("animal", "AnimalGroup")
-        DosingRegime = apps.get_model("animal", "DosingRegime")
-        DoseGroup = apps.get_model("animal", "DoseGroup")
-        return (
-            self.filter(
-                dosegroup__in=DoseGroup.objects.filter(
-                    dose_regime__in=DosingRegime.objects.filter(
-                        dosed_animals__in=AnimalGroup.objects.filter(
-                            experiment__in=Experiment.objects.filter(
-                                study__in=Study.objects.get_qs(assessment)
-                            )
-                        )
-                    )
-                )
-            )
-            .values_list("name", flat=True)
-            .distinct()
-        )
+        return self.get_animal_units(assessment).values_list("name", flat=True)
 
 
 class SpeciesManager(BaseManager):

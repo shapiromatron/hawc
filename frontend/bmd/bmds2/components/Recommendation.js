@@ -67,16 +67,14 @@ class Recommendation extends React.Component {
         });
 
         return (
-            <div className="row" key={0}>
+            <>
                 <legend>Select BMD model</legend>
                 <form className="form">
                     <div className="col-md-4">
-                        <label htmlFor="bmr" className="col-form-label">
-                            Selected BMR
-                        </label>
+                        <label htmlFor="bmr">Selected BMR</label>
                         <div className="form-group">
                             <select
-                                className="col-md-12"
+                                className="form-control"
                                 value={this.state.bmr}
                                 name="bmr"
                                 onChange={this.handleFieldChange.bind(this)}>
@@ -90,13 +88,11 @@ class Recommendation extends React.Component {
                             </select>
                         </div>
 
-                        <label htmlFor="model" className="col-form-label">
-                            Selected model
-                        </label>
+                        <label htmlFor="model">Selected model</label>
 
                         <div className="form-group">
                             <select
-                                className="col-md-12"
+                                className="form-control"
                                 value={selectedModel}
                                 name="model"
                                 onChange={this.handleFieldChange.bind(this)}>
@@ -111,12 +107,10 @@ class Recommendation extends React.Component {
                         </div>
                     </div>
                     <div className="col-md-8">
-                        <label htmlFor="notes" className="col-form-label">
-                            Notes
-                        </label>
+                        <label htmlFor="notes">Notes</label>
                         <div className="form-group">
                             <textarea
-                                className="col-md-12"
+                                className="form-control"
                                 value={this.state.notes}
                                 onChange={this.handleFieldChange.bind(this)}
                                 name="notes"
@@ -130,7 +124,7 @@ class Recommendation extends React.Component {
                         </div>
                     </div>
                 </form>
-            </div>
+            </>
         );
     }
 
@@ -172,7 +166,7 @@ class Recommendation extends React.Component {
         });
 
         return (
-            <div>
+            <div className="container-fluid">
                 <RecommendationTable
                     models={modelSubset}
                     selectedModelId={this.props.selectedModelId}

@@ -2,12 +2,13 @@ import collections
 import json
 import math
 from itertools import chain
-from typing import Any, Dict, Optional
+from typing import Any, Dict
 
 import pandas as pd
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from django.forms import ModelForm
 from django.urls import reverse
 from reversion import revisions as reversion
 from scipy import stats
@@ -148,7 +149,7 @@ class Experiment(models.Model):
         return self.name
 
     def get_absolute_url(self):
-        return reverse("animal:experiment_detail", args=[str(self.pk)])
+        return reverse("animal:experiment_detail", args=(self.pk,))
 
     def is_generational(self):
         return self.has_multiple_generations
@@ -344,7 +345,7 @@ class AnimalGroup(models.Model):
         return self.name
 
     def get_absolute_url(self):
-        return reverse("animal:animal_group_detail", args=[str(self.pk)])
+        return reverse("animal:animal_group_detail", args=(self.pk,))
 
     def get_assessment(self):
         return self.experiment.get_assessment()
@@ -364,6 +365,9 @@ class AnimalGroup(models.Model):
         if json_encode:
             return json.dumps(self.doses, cls=HAWCDjangoJSONEncoder)
         return self.doses
+
+    def get_json(self, json_encode=True):
+        return SerializerHelper.get_serialized(self, json=json_encode)
 
     @property
     def generation_short(self):
@@ -546,6 +550,7 @@ class DosingRegime(models.Model):
         default=False,
         help_text="Was a positive control used?",
         null=True,
+        blank=True,
     )
     negative_control = models.CharField(
         max_length=2,
@@ -1088,25 +1093,23 @@ class Endpoint(BaseEndpoint):
         return df
 
     @classmethod
-    def get_vocabulary_settings(
-        cls, assessment: Assessment, instance: Optional["Endpoint"] = None
-    ) -> str:
+    def get_vocabulary_settings(cls, assessment: Assessment, form: ModelForm) -> str:
         return json.dumps(
             {
                 "debug": False,
                 "vocabulary": assessment.vocabulary,
                 "vocabulary_display": assessment.get_vocabulary_display(),
                 "object": {
-                    "system": instance.system if instance else "",
-                    "organ": instance.organ if instance else "",
-                    "effect": instance.effect if instance else "",
-                    "effect_subtype": instance.effect_subtype if instance else "",
-                    "name": instance.name if instance else "",
-                    "system_term_id": instance.system_term_id if instance else None,
-                    "organ_term_id": instance.organ_term_id if instance else None,
-                    "effect_term_id": instance.effect_term_id if instance else None,
-                    "effect_subtype_term_id": instance.effect_subtype_term_id if instance else None,
-                    "name_term_id": instance.name_term_id if instance else None,
+                    "system": form.initial.get("system", ""),
+                    "organ": form.initial.get("organ", ""),
+                    "effect": form.initial.get("effect", ""),
+                    "effect_subtype": form.initial.get("effect_subtype", ""),
+                    "name": form.initial.get("name", ""),
+                    "system_term_id": form.initial.get("system_term", None),
+                    "organ_term_id": form.initial.get("organ_term", None),
+                    "effect_term_id": form.initial.get("effect_term", None),
+                    "effect_subtype_term_id": form.initial.get("effect_subtype_term", None),
+                    "name_term_id": form.initial.get("name_term", None),
                 },
             }
         )
@@ -1115,7 +1118,7 @@ class Endpoint(BaseEndpoint):
         return self.name
 
     def get_absolute_url(self):
-        return reverse("animal:endpoint_detail", args=[str(self.pk)])
+        return reverse("animal:endpoint_detail", args=(self.pk,))
 
     def save(self, *args, **kwargs):
         # ensure our controlled vocabulary terms don't have leading/trailing whitespace

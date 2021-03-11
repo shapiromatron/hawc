@@ -381,6 +381,14 @@
                   "object_id": 3,
                   "object_name": "sd rats",
                   "object_url": "/ani/animal-group/3/"
+                },
+                {
+                  "id": 3,
+                  "score_id": 16,
+                  "content_type_name": "animal.animalgroup",
+                  "object_id": 99999,
+                  "object_name": "<deleted id=3;score=16;obj_ct=50;obj_id=99999>",
+                  "object_url": "/404/"
                 }
               ],
               "riskofbias_id": 6,

@@ -43,14 +43,18 @@
             {% elif field|is_file and use_custom_control  %}
             {% include 'bootstrap4/layout/field_file.html' %}
             {% else %}
-            <div class="{{ field_class }}">
+            <div class="{{ field_class }} row">
                 {% comment %}the only thing added is the <a> block {% endcomment %}
-                <a class="btn btn-primary float-right" title="{{adder_title}}" href="{{adder_url}}"
-                    onclick="return window.app.utils.HAWCUtils.newWindowPopupLink(this);">
-                    <i class="fa fa-plus"></i></a>
-                {% crispy_field field %}
-                {% include 'bootstrap4/layout/help_text_and_errors.html' %}
+                <div class="col-md-10">
+                    {% crispy_field field %}
+                </div>
+                <div class="col-md-2">
+                    <a class="btn btn-primary float-right" title="{{adder_title}}" href="{{adder_url}}"
+                        onclick="return window.app.utils.HAWCUtils.newWindowPopupLink(this);">
+                        <i class="fa fa-plus"></i></a>
+                </div>
             </div>
+            {% include 'bootstrap4/layout/help_text_and_errors.html' %}
             {% endif %}
             {% endif %}
         </{% if tag %}{{ tag }}{% else %}div{% endif %}>

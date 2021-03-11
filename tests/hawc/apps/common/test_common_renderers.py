@@ -55,6 +55,14 @@ def test_json_renderer(basic_export):
     )
     assert json.loads(response) == [{"a": 1, "b": 2}, {"a": 3, "b": 4}]
 
+    # test duplicate columns
+    df = pd.DataFrame(data=[[1, 2], [3, 4]], columns=["a", "a"])
+    export = FlatExport(df=df, filename="fn")
+    response = renderers.PandasJsonRenderer().render(
+        data=export, renderer_context={"response": Response()}
+    )
+    assert json.loads(response) == [{"a.1": 1, "a.2": 2}, {"a.1": 3, "a.2": 4}]
+
 
 def test_xlsx_renderer(basic_export):
     resp_obj = Response()

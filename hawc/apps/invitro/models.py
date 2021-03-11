@@ -64,13 +64,13 @@ class IVChemical(models.Model):
         return self.name
 
     def get_absolute_url(self):
-        return reverse("invitro:chemical_detail", args=[str(self.id)])
+        return reverse("invitro:chemical_detail", args=(self.id,))
 
     def get_update_url(self):
-        return reverse("invitro:chemical_update", args=[str(self.id)])
+        return reverse("invitro:chemical_update", args=(self.id,))
 
     def get_delete_url(self):
-        return reverse("invitro:chemical_delete", args=[str(self.id)])
+        return reverse("invitro:chemical_delete", args=(self.id,))
 
     def get_assessment(self):
         return self.study.assessment
@@ -131,13 +131,13 @@ class IVCellType(models.Model):
         return f"{self.cell_type} {self.species} {self.tissue}"
 
     def get_absolute_url(self):
-        return reverse("invitro:celltype_detail", args=[str(self.id)])
+        return reverse("invitro:celltype_detail", args=(self.id,))
 
     def get_update_url(self):
-        return reverse("invitro:celltype_update", args=[str(self.id)])
+        return reverse("invitro:celltype_update", args=(self.id,))
 
     def get_delete_url(self):
-        return reverse("invitro:celltype_delete", args=[str(self.id)])
+        return reverse("invitro:celltype_delete", args=(self.id,))
 
     def get_sex_symbol(self):
         return self.SEX_SYMBOLS.get(self.sex)
@@ -224,16 +224,16 @@ class IVExperiment(models.Model):
         return self.study.assessment
 
     def get_absolute_url(self):
-        return reverse("invitro:experiment_detail", args=[str(self.id)])
+        return reverse("invitro:experiment_detail", args=(self.id,))
 
     def get_update_url(self):
-        return reverse("invitro:experiment_update", args=[str(self.id)])
+        return reverse("invitro:experiment_update", args=(self.id,))
 
     def get_delete_url(self):
-        return reverse("invitro:experiment_delete", args=[str(self.id)])
+        return reverse("invitro:experiment_delete", args=(self.id,))
 
     def get_endpoint_create_url(self):
-        return reverse("invitro:endpoint_create", args=[str(self.id)])
+        return reverse("invitro:endpoint_create", args=(self.id,))
 
     def copy_across_assessments(self, cw):
         children = list(self.endpoints.all().order_by("id"))
@@ -419,13 +419,13 @@ class IVEndpoint(BaseEndpoint):
             return endpoints
 
     def get_absolute_url(self):
-        return reverse("invitro:endpoint_detail", args=[str(self.id)])
+        return reverse("invitro:endpoint_detail", args=(self.id,))
 
     def get_update_url(self):
-        return reverse("invitro:endpoint_update", args=[str(self.id)])
+        return reverse("invitro:endpoint_update", args=(self.id,))
 
     def get_delete_url(self):
-        return reverse("invitro:endpoint_delete", args=[str(self.id)])
+        return reverse("invitro:endpoint_delete", args=(self.id,))
 
     @classmethod
     def delete_caches(cls, ids):
@@ -530,10 +530,10 @@ class IVEndpointGroup(ConfidenceIntervalsMixin, models.Model):
     )
     significant_control = models.CharField(max_length=2, default="nr", choices=SIGNIFICANCE_CHOICES)
     cytotoxicity_observed = models.BooleanField(
-        default=None, choices=OBSERVATION_CHOICES, null=True
+        default=None, choices=OBSERVATION_CHOICES, null=True, blank=True,
     )
     precipitation_observed = models.BooleanField(
-        default=None, choices=OBSERVATION_CHOICES, null=True
+        default=None, choices=OBSERVATION_CHOICES, null=True, blank=True,
     )
 
     COPY_NAME = "ivendpoint_groups"

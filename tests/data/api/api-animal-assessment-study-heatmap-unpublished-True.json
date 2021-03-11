@@ -9,9 +9,9 @@
     "route of exposure": "Oral gavage",
     "experiment chemical": "PBDE 209",
     "sex": "Combined",
-    "system": "|developmental",
-    "organ": "|brain",
-    "effect": "|learning and memory",
+    "system": "|Cardiovascular|developmental",
+    "organ": "|Serum|brain",
+    "effect": "|Fatty Acids|learning and memory",
     "dose units": "mg/kg/d"
   }
 ]

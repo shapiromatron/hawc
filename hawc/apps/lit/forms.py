@@ -65,15 +65,9 @@ class SearchForm(forms.ModelForm):
         if "search_string" in self.fields:
             self.fields["search_string"].widget.attrs["rows"] = 5
             self.fields["search_string"].required = True
-        # by default take-up the whole row
-        for fld in list(self.fields.keys()):
-            widget = self.fields[fld].widget
-            if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "col-md-12"
 
-        self.helper = self.setHelper()
-
-    def setHelper(self):
+    @property
+    def helper(self):
         if self.instance.id:
             inputs = {
                 "legend_text": f"Update {self.instance}",
@@ -110,9 +104,8 @@ class ImportForm(SearchForm):
         else:
             self.fields.pop("search_string")
 
-        self.helper = self.setHelper()
-
-    def setHelper(self):
+    @property
+    def helper(self):
         if self.instance.id:
             inputs = {
                 "legend_text": f"Update {self.instance}",
@@ -202,9 +195,8 @@ class RisImportForm(SearchForm):
         else:
             self.fields.pop("import_file")
 
-        self.helper = self.setHelper()
-
-    def setHelper(self):
+    @property
+    def helper(self):
         if self.instance.id:
             inputs = {
                 "legend_text": f"Update {self.instance}",
@@ -313,10 +305,6 @@ class SearchSelectorForm(forms.Form):
         self.user = kwargs.pop("user")
         self.assessment = kwargs.pop("assessment")
         super().__init__(*args, **kwargs)
-
-        for fld in list(self.fields.keys()):
-            self.fields[fld].widget.attrs["class"] = "col-md-11"
-
         assessment_pks = Assessment.objects.get_viewable_assessments(self.user).values_list(
             "pk", flat=True
         )
@@ -344,7 +332,60 @@ class SearchSelectorForm(forms.Form):
         )
 
 
+def check_external_id(assessment: Assessment, db_type: int, id_: int,) -> models.Identifiers:
+    """Validate that the external ID can be used for a reference in this assessment.
+
+    This method has a side effect which may create a new identifier; however this identifier object
+    will not be associated with other objects.
+
+    Args:
+        assessment (Assessment): Assessment instance
+        db_type (int): external reference type
+        id_ (int): candidate external ID
+
+    Raises:
+        forms.ValidationError: If the external ID cannot be used
+        ValueError: If we cannot handle this external ID type
+
+    Returns:
+        Identifier: Returns the identifier object which can be used
+    """
+    identifier = models.Identifiers.objects.filter(database=db_type, unique_id=str(id_)).first()
+    if identifier:
+
+        # make sure ID doesn't already exist for this assessment
+        existing_reference = identifier.references.filter(assessment=assessment).first()
+        if existing_reference:
+            raise forms.ValidationError(
+                f"Existing HAWC reference with this ID already exists in this assessment: {existing_reference.id}"
+            )
+
+    else:
+        # try to make an identifier; if it cannot be made an exception is thrown.
+        if db_type == constants.PUBMED:
+            identifiers = models.Identifiers.objects.get_pubmed_identifiers([id_])
+            if len(identifiers) == 0:
+                raise forms.ValidationError(f"Invalid PubMed ID: {id_}")
+            identifier = identifiers[0]
+
+        elif db_type == constants.HERO:
+            _, _, content = models.Identifiers.objects.validate_valid_hero_ids([id_])
+            models.Identifiers.objects.bulk_create_hero_ids(content)
+            identifier = models.Identifiers.objects.get(database=db_type, unique_id=str(id_))
+
+        else:
+            raise ValueError("Unknown database type.")
+
+    return identifier
+
+
 class ReferenceForm(forms.ModelForm):
+
+    pubmed_id = forms.IntegerField(
+        label="PubMed ID", required=False, help_text="Add/update PubMed ID."
+    )
+    hero_id = forms.IntegerField(label="HERO ID", required=False, help_text="Add/update HERO ID.")
+
     class Meta:
         model = models.Reference
         fields = (
@@ -355,20 +396,21 @@ class ReferenceForm(forms.ModelForm):
             "journal",
             "abstract",
             "full_text_url",
+            "pubmed_id",
+            "hero_id",
         )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.helper = self.setHelper()
+        self.fields["pubmed_id"].initial = self.instance.get_pubmed_id()
+        self.fields["hero_id"].initial = self.instance.get_hero_id()
 
-    def setHelper(self):
+    @property
+    def helper(self):
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
             if fld in ["title", "authors_short", "authors", "journal"]:
                 widget.attrs["rows"] = 3
-
-            if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "col-md-12"
 
         inputs = {
             "legend_text": "Update reference details",
@@ -377,11 +419,63 @@ class ReferenceForm(forms.ModelForm):
         }
 
         helper = BaseFormHelper(self, **inputs)
-        # TODO: use new names
+
         helper.add_row("authors_short", 3, "col-md-4")
         helper.add_row("authors", 2, "col-md-6")
+        helper.add_row("pubmed_id", 2, "col-md-6")
 
         return helper
+
+    def clean_pubmed_id(self):
+        """Check if a modifications are required to the PMID.
+
+        If added/changed, sets the `self._new_pubmed_identifier` to the new identifier. If removed,
+        sets `self._new_pubmed_identifier` to -1.
+        """
+        pubmed_id = self.cleaned_data["pubmed_id"]
+        if self.fields["pubmed_id"].initial != pubmed_id:
+            if pubmed_id is None:
+                logging.info(f"Removing PMID for reference {self.instance.id}")
+                self._new_pubmed_identifier = -1
+            else:
+                logging.info(f"Setting PMID {pubmed_id} for reference {self.instance.id}")
+                self._new_pubmed_identifier = check_external_id(
+                    self.instance.assessment, constants.PUBMED, pubmed_id
+                )
+
+    def clean_hero_id(self):
+        """Check if a modifications are required to the HERO ID.
+
+        If added/changed, sets the `self._new_pubmed_identifier` to the new identifier. If removed,
+        sets `self._new_pubmed_identifier` to -1.
+        """
+        hero_id = self.cleaned_data["hero_id"]
+        if self.fields["hero_id"].initial != hero_id:
+            if hero_id is None:
+                logging.info(f"Removing HEROID for reference {self.instance.id}")
+                self._new_hero_identifier = -1
+            else:
+                logging.info(f"Setting HEROID {hero_id} for reference {self.instance.id}")
+                self._new_hero_identifier = check_external_id(
+                    self.instance.assessment, constants.HERO, hero_id
+                )
+
+    @transaction.atomic
+    def save(self, commit=True):
+        instance = super().save(commit=commit)
+        if hasattr(self, "_new_pubmed_identifier"):
+            existing = list(instance.identifiers.filter(database=constants.PUBMED))
+            if existing:
+                instance.identifiers.remove(*existing)
+            if self._new_pubmed_identifier != -1:
+                instance.identifiers.add(self._new_pubmed_identifier)
+        if hasattr(self, "_new_hero_identifier"):
+            existing = list(instance.identifiers.filter(database=constants.HERO))
+            if existing:
+                instance.identifiers.remove(*existing)
+            if self._new_hero_identifier != -1:
+                instance.identifiers.add(self._new_hero_identifier)
+        return instance
 
 
 class ReferenceFilterTagForm(forms.ModelForm):
@@ -430,9 +524,9 @@ class ReferenceExcelUploadForm(forms.Form):
     def __init__(self, *args, **kwargs):
         self.assessment = kwargs.pop("assessment")
         super().__init__(*args, **kwargs)
-        self.helper = self.setHelper()
 
-    def setHelper(self):
+    @property
+    def helper(self):
         inputs = {
             "legend_text": "Upload full-text URLs",
             "help_text": "Using an Excel file, upload full-text URLs for multiple references",

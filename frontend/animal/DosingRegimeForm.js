@@ -146,20 +146,26 @@ class DosingRegimeForm {
     _build_thead() {
         var tr = $("<tr>").append("<th>Dose Units</th>");
         for (var j = 0; j < this.columns; j++) {
-            var th = $("<th>");
-            var select = $('<select class="form-control dose_types"></select>');
-            this.dose_types.forEach(function(v, i) {
-                select.append(`<option value="${v.id}">${v.name}</option>`);
-            });
+            var th = $("<th>"),
+                input_group = $('<div class="input-group"></div>'),
+                select = $('<select class="form-control"></select>');
+            this.dose_types.forEach(v =>
+                select.append(`<option value="${v.id}">${v.name}</option>`)
+            );
             if (this.dose_units[j]) {
                 select.find(`option[value=${this.dose_units[j]}]`).prop("selected", true);
             }
-            th.append(select);
+            input_group.append(select);
             if (j > 0) {
-                th.append(
-                    '<a href="#" class="remove_dose"> <i class="fa fa-times-circle-o"></i></a>'
+                input_group.append(
+                    `<div role="button" class="input-group-append remove_dose">
+                        <button class="btn btn-outline-secondary" type="button" title="Delete representation">
+                            <i class="fa fa-times-circle-o"></i>&nbsp;Delete
+                        </button>
+                    </div>`
                 );
             }
+            th.append(input_group);
             tr.append(th);
         }
         return $("<thead>").html(tr);

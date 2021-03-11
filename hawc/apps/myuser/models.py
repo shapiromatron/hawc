@@ -1,4 +1,5 @@
 from django.apps import apps
+from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.contrib.sites.models import Site
 from django.core.mail import EmailMultiAlternatives, send_mail
@@ -13,7 +14,9 @@ from . import managers
 
 
 class HAWCUser(AbstractBaseUser, PermissionsMixin):
+
     objects = managers.HAWCMgr()
+
     email = models.EmailField(max_length=254, unique=True, db_index=True)
     first_name = models.CharField(_("first name"), max_length=30, blank=True)
     last_name = models.CharField(_("last name"), max_length=30, blank=True)
@@ -35,6 +38,7 @@ class HAWCUser(AbstractBaseUser, PermissionsMixin):
     date_joined = models.DateTimeField(_("date joined"), default=timezone.now)
 
     USERNAME_FIELD = "email"
+    CAN_CREATE_ASSESSMENTS = "can-create-assessments"
 
     class Meta:
         ordering = ("last_name",)
@@ -77,6 +81,14 @@ class HAWCUser(AbstractBaseUser, PermissionsMixin):
 
     def is_beta_tester(self):
         return self.is_staff or self.groups.filter(name="beta tester").exists()
+
+    def can_create_assessments(self):
+        if settings.ANYONE_CAN_CREATE_ASSESSMENTS:
+            return True
+        else:
+            return (
+                self.is_superuser or self.groups.filter(name=self.CAN_CREATE_ASSESSMENTS).exists()
+            )
 
 
 class UserProfile(models.Model):

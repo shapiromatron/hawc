@@ -16,7 +16,7 @@ class TestLiteratureAssessmentViewset:
     def _test_flat_export(self, rewrite_data_files: bool, fn: str, url: str):
 
         client = APIClient()
-        assert client.login(username="rev@rev.com", password="pw") is True
+        assert client.login(username="reviewer@hawcproject.org", password="pw") is True
         resp = client.get(url)
         assert resp.status_code == 200
 
@@ -30,7 +30,7 @@ class TestLiteratureAssessmentViewset:
 
     def test_permissions(self, db_keys):
         rev_client = APIClient()
-        assert rev_client.login(username="rev@rev.com", password="pw") is True
+        assert rev_client.login(username="reviewer@hawcproject.org", password="pw") is True
         anon_client = APIClient()
 
         urls = [
@@ -61,7 +61,7 @@ class TestLiteratureAssessmentViewset:
     def test_tags(self, db_keys):
         url = reverse("lit:api:assessment-tags", kwargs=dict(pk=db_keys.assessment_working))
         c = APIClient()
-        assert c.login(email="pm@pm.com", password="pw") is True
+        assert c.login(email="pm@hawcproject.org", password="pw") is True
         resp = c.get(url).json()
         assert len(resp) == 11
         assert resp[0] == {"id": 2, "depth": 2, "name": "Inclusion", "nested_name": "Inclusion"}
@@ -75,7 +75,7 @@ class TestLiteratureAssessmentViewset:
     def test_reference_ids(self, db_keys):
         url = reverse("lit:api:assessment-reference-ids", kwargs=dict(pk=db_keys.assessment_final))
         c = APIClient()
-        assert c.login(email="pm@pm.com", password="pw") is True
+        assert c.login(email="pm@hawcproject.org", password="pw") is True
         resp = c.get(url).json()
         assert resp == [
             {"reference_id": 5, "pubmed_id": 11778423, "hero_id": None},
@@ -84,10 +84,21 @@ class TestLiteratureAssessmentViewset:
             {"reference_id": 8, "pubmed_id": 24004895, "hero_id": None},
         ]
 
+    def test_reference_search(self, db_keys):
+        url = reverse("lit:api:assessment-reference-search", args=(db_keys.assessment_working,))
+        client = APIClient()
+        assert client.login(username="team@hawcproject.org", password="pw") is True
+
+        # unaccented query returns accented result
+        data = {"authors": "fred"}
+        response = client.post(url, data)
+        assert len(response.json()) == 1
+        assert "Frédéric" in response.json()["references"][0]["authors_short"]
+
     def test_reference_tags(self, db_keys):
         url = reverse("lit:api:assessment-reference-tags", kwargs=dict(pk=db_keys.assessment_final))
         c = APIClient()
-        assert c.login(email="pm@pm.com", password="pw") is True
+        assert c.login(email="pm@hawcproject.org", password="pw") is True
         resp = c.get(url).json()
         assert resp == [
             {"reference_id": 5, "tag_id": 12},
@@ -102,7 +113,7 @@ class TestLiteratureAssessmentViewset:
             kwargs=dict(pk=db_keys.assessment_working),
         )
         c = APIClient()
-        assert c.login(email="pm@pm.com", password="pw") is True
+        assert c.login(email="pm@hawcproject.org", password="pw") is True
         resp = c.get(url).json()
         assert resp["data"][0]["type"] == "histogram"
 
@@ -118,7 +129,7 @@ class TestReferenceFilterTagViewset:
         # ensure we get a valid json return
         url = reverse("lit:api:tags-references", args=(12,))
         c = APIClient()
-        assert c.login(email="pm@pm.com", password="pw") is True
+        assert c.login(email="pm@hawcproject.org", password="pw") is True
         resp = c.get(url).json()
         assert len(resp) == 2
         assert resp[0]["Inclusion"] is True
@@ -127,7 +138,7 @@ class TestReferenceFilterTagViewset:
         # ensure we get the expected return
         url = reverse("lit:api:tags-references-table-builder", args=(12,))
         c = APIClient()
-        assert c.login(email="pm@pm.com", password="pw") is True
+        assert c.login(email="pm@hawcproject.org", password="pw") is True
         resp = c.get(url).json()
         assert len(resp) == 2
         assert resp[0]["Name"] == "Kawana N, Ishimatsu S, and Kanda K 2001"
@@ -139,7 +150,7 @@ class TestSearchViewset:
     def test_success(self, db_keys):
         url = reverse("lit:api:search-list")
         c = APIClient()
-        assert c.login(email="team@team.com", password="pw") is True
+        assert c.login(email="team@hawcproject.org", password="pw") is True
 
         payload = {
             "assessment": db_keys.assessment_working,
@@ -155,7 +166,7 @@ class TestSearchViewset:
     def test_validation_failures(self, db_keys):
         url = reverse("lit:api:search-list")
         c = APIClient()
-        assert c.login(email="team@team.com", password="pw") is True
+        assert c.login(email="team@hawcproject.org", password="pw") is True
 
         # check that the "GET" method is disabled
         assert c.get(url).status_code == 405
@@ -243,7 +254,7 @@ class TestSearchViewset:
         """
         url = reverse("lit:api:search-list")
         c = APIClient()
-        assert c.login(email="team@team.com", password="pw") is True
+        assert c.login(email="team@hawcproject.org", password="pw") is True
 
         # check that the "GET" method is disabled
         assert c.get(url).status_code == 405
@@ -283,7 +294,7 @@ class TestHEROApis:
 
         # reviewers shouldn't be able to update
         client = APIClient()
-        assert client.login(username="rev@rev.com", password="pw") is True
+        assert client.login(username="reviewer@hawcproject.org", password="pw") is True
         response = client.post(url, data, format="json")
         assert response.status_code == 403
 
@@ -299,7 +310,7 @@ class TestHEROApis:
         data = {"replace": [[db_keys.reference_linked, 1]]}
 
         client = APIClient()
-        assert client.login(username="pm@pm.com", password="pw") is True
+        assert client.login(username="pm@hawcproject.org", password="pw") is True
         response = client.post(url, data, format="json")
         assert response.status_code == 204
 
@@ -317,7 +328,7 @@ class TestHEROApis:
         data = {"replace": [[db_keys.reference_linked, 1]]}
 
         client = APIClient()
-        assert client.login(username="pm@pm.com", password="pw") is True
+        assert client.login(username="pm@hawcproject.org", password="pw") is True
         response = client.post(url, data, format="json")
         assert response.status_code == 404
 
@@ -331,7 +342,7 @@ class TestHEROApis:
 
         # reviewers shouldn't be able to destroy
         client = APIClient()
-        assert client.login(username="rev@rev.com", password="pw") is True
+        assert client.login(username="reviewer@hawcproject.org", password="pw") is True
         response = client.post(url)
         assert response.status_code == 403
 
@@ -348,7 +359,7 @@ class TestHEROApis:
         )
 
         client = APIClient()
-        assert client.login(username="pm@pm.com", password="pw") is True
+        assert client.login(username="pm@hawcproject.org", password="pw") is True
         response = client.post(url)
         assert response.status_code == 204
 
@@ -360,7 +371,7 @@ class TestHEROApis:
         url = reverse("lit:api:assessment-replace-hero", args=(100,))
 
         client = APIClient()
-        assert client.login(username="pm@pm.com", password="pw") is True
+        assert client.login(username="pm@hawcproject.org", password="pw") is True
         response = client.post(url)
         assert response.status_code == 404
 
@@ -373,7 +384,7 @@ class TestReferenceDestroyApi:
 
         # reviewers shouldn't be able to destroy
         client = APIClient()
-        assert client.login(username="rev@rev.com", password="pw") is True
+        assert client.login(username="reviewer@hawcproject.org", password="pw") is True
         response = client.delete(url)
         assert response.status_code == 403
 
@@ -390,7 +401,7 @@ class TestReferenceDestroyApi:
         url = reverse("lit:api:reference-detail", args=(-1,))
 
         client = APIClient()
-        assert client.login(username="team@team.com", password="pw") is True
+        assert client.login(username="team@hawcproject.org", password="pw") is True
         response = client.delete(url)
         assert response.status_code == 404
 
@@ -399,7 +410,7 @@ class TestReferenceDestroyApi:
         url = reverse("lit:api:reference-detail", args=(db_keys.reference_linked,))
 
         client = APIClient()
-        assert client.login(username="team@team.com", password="pw") is True
+        assert client.login(username="team@hawcproject.org", password="pw") is True
         response = client.delete(url)
         # the reference is successfully deleted
         assert response.status_code == 204
@@ -420,7 +431,7 @@ class TestReferenceUpdateApi:
 
         # reviewers shouldn't be able to update
         client = APIClient()
-        assert client.login(username="rev@rev.com", password="pw") is True
+        assert client.login(username="reviewer@hawcproject.org", password="pw") is True
 
         response = client.patch(url, data)
         assert response.status_code == 403
@@ -441,7 +452,7 @@ class TestReferenceUpdateApi:
         data = {"title": "TestReferenceUpdateApi test"}
 
         client = APIClient()
-        assert client.login(username="team@team.com", password="pw") is True
+        assert client.login(username="team@hawcproject.org", password="pw") is True
         response = client.patch(url, data)
         assert response.status_code == 404
 
@@ -456,7 +467,7 @@ class TestReferenceUpdateApi:
     def test_valid_requests(self, db_keys):
         url = reverse("lit:api:reference-detail", args=(db_keys.reference_linked,))
         client = APIClient()
-        assert client.login(username="team@team.com", password="pw") is True
+        assert client.login(username="team@hawcproject.org", password="pw") is True
 
         reference = models.Reference.objects.get(id=db_keys.reference_linked)
 

@@ -3,11 +3,12 @@ import _ from "lodash";
 
 class DoseUnitsWidget {
     constructor(form, opts) {
-        form.on("submit", this.handleFormSubmit.bind(this));
-        this.init(opts);
-    }
+        // DoseUnitsWidget not shown for file data pivot
+        if ($(opts.el).length === 0) {
+            return;
+        }
 
-    init(opts) {
+        form.on("submit", this.handleFormSubmit.bind(this));
         this.$input = $(opts.el).hide();
         this.$widgetDiv = $("#pduDiv");
         this.$available = $("#pduAvailable");
@@ -77,12 +78,8 @@ class DoseUnitsWidget {
             ids = this.$input
                 .val()
                 .split(",")
-                .filter(function(d) {
-                    return d.length > 0;
-                })
-                .map(function(d) {
-                    return parseInt(d);
-                });
+                .filter(d => d.length > 0)
+                .map(d => parseInt(d));
 
         ids.forEach(function(d) {
             var dose = objectsKeymap[d];

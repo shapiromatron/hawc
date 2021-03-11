@@ -7,6 +7,17 @@ import pandas as pd
 from hawc.apps.common import helper
 
 
+def test_rename_duplicate_columns():
+    df = pd.DataFrame(data=[[1, 2]], columns=["a", "b"])
+    assert helper.rename_duplicate_columns(df).columns.tolist() == ["a", "b"]
+
+    df = pd.DataFrame(data=[[1, 2]], columns=["a", "a"])
+    assert helper.rename_duplicate_columns(df).columns.tolist() == ["a.1", "a.2"]
+
+    df = pd.DataFrame(data=[[1, 2, 3]], columns=["a", "b", "a"])
+    assert helper.rename_duplicate_columns(df).columns.tolist() == ["a.1", "b", "a.2"]
+
+
 def test_create_uuid():
     # Make sure UUID creation is stable over time
     id_1 = 1234

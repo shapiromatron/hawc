@@ -11,13 +11,12 @@ INSTALLED_APPS = [app for app in INSTALLED_APPS if app != "debug_toolbar"]
 MIDDLEWARE = [middleware for middleware in MIDDLEWARE if "debug_toolbar" not in middleware]
 
 HAWC_FLAVOR = "PRIME"
+ANYONE_CAN_CREATE_ASSESSMENTS = True
 
 DATABASES["default"]["NAME"] = "hawc-fixture-test"
 
 PRIVATE_DATA_ROOT = PROJECT_ROOT / "tests/data/private-data"
 
 PASSWORD_HASHERS = ("django.contrib.auth.hashers.MD5PasswordHasher",)
-
-TEST_DB_FIXTURE = PROJECT_ROOT / "tests/data/fixtures/db.yaml"
 
 logging.disable(logging.CRITICAL)

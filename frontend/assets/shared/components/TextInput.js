@@ -1,14 +1,16 @@
 import React, {Component} from "react";
 import PropTypes from "prop-types";
 
+import {errorsDiv, inputClass} from "./inputs";
 import LabelInput from "./LabelInput";
 import HelpText from "./HelpText";
 
 class TextInput extends Component {
-    renderField(fieldClass, fieldId) {
+    renderField(fieldId) {
+        const {errors} = this.props;
         return (
             <input
-                className={fieldClass}
+                className={inputClass("form-control", errors)}
                 id={fieldId}
                 name={this.props.name}
                 type={this.props.type || "text"}
@@ -20,12 +22,13 @@ class TextInput extends Component {
     }
 
     render() {
-        let fieldId = this.props.id || this.props.name ? `id_${this.props.name}` : null,
-            fieldClass = "form-control";
+        const fieldId = this.props.id || this.props.name ? `id_${this.props.name}` : null,
+            {errors} = this.props;
         return (
             <div className="form-group">
                 {this.props.label ? <LabelInput for={fieldId} label={this.props.label} /> : null}
-                {this.renderField(fieldClass, fieldId)}
+                {this.renderField(fieldId)}
+                {errorsDiv(errors)}
                 {this.props.helpText ? <HelpText text={this.props.helpText} /> : null}
             </div>
         );
@@ -37,6 +40,7 @@ TextInput.propTypes = {
     id: PropTypes.string,
     label: PropTypes.string,
     name: PropTypes.string.isRequired,
+    errors: PropTypes.array,
     onChange: PropTypes.func.isRequired,
     required: PropTypes.bool,
     type: PropTypes.string,

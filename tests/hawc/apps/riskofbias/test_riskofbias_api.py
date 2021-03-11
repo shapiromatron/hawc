@@ -22,7 +22,7 @@ DATA_ROOT = Path(__file__).parents[3] / "data/api"
 class TestRiskOfBiasAssessmentViewset:
     def test_permissions(self, db_keys):
         rev_client = APIClient()
-        assert rev_client.login(username="rev@rev.com", password="pw") is True
+        assert rev_client.login(username="reviewer@hawcproject.org", password="pw") is True
         anon_client = APIClient()
 
         urls = [
@@ -111,12 +111,12 @@ class TestRiskOfBiasAssessmentViewset:
         }
 
         # only admin can perform this action
-        assert client.login(username="pm@pm.com", password="pw") is True
+        assert client.login(username="pm@hawcproject.org", password="pw") is True
         resp = client.post(url, data, format="json")
         assert resp.status_code == 403
 
         # valid request
-        assert client.login(username="sudo@sudo.com", password="pw") is True
+        assert client.login(username="admin@hawcproject.org", password="pw") is True
         resp = client.post(url, data, format="json")
         assert resp.status_code == 200
         assert list(resp.data.keys()) == ["log_id", "log_url", "mapping"]
@@ -131,7 +131,7 @@ class TestRiskOfBiasAssessmentViewset:
 def test_riskofbias_detail(db_keys):
     # check read-version of study api; including deeply nested scores and overridden objects
     client = APIClient()
-    assert client.login(username="team@team.com", password="pw") is True
+    assert client.login(username="team@hawcproject.org", password="pw") is True
 
     url = reverse("study:api:study-detail", kwargs={"pk": db_keys.study_working})
     response = client.get(url)
@@ -157,7 +157,7 @@ def test_riskofbias_detail(db_keys):
 def test_riskofbias_override_options(db_keys):
     # check read-version of study api; including deeply nested scores and overridden objects
     c = APIClient()
-    assert c.login(username="team@team.com", password="pw") is True
+    assert c.login(username="team@hawcproject.org", password="pw") is True
 
     url = reverse("riskofbias:api:review-override-options", kwargs={"pk": db_keys.study_working})
     response = c.get(url)
@@ -175,7 +175,7 @@ def test_riskofbias_override_options(db_keys):
 @pytest.mark.django_db
 def test_riskofbias_delete_score(db_keys):
     c = APIClient()
-    assert c.login(username="team@team.com", password="pw") is True
+    assert c.login(username="team@hawcproject.org", password="pw") is True
 
     # ensure you can delete a non-default score
     score = RiskOfBiasScore.objects.filter(is_default=False).first()
@@ -201,7 +201,7 @@ def test_riskofbias_delete_score(db_keys):
 @pytest.mark.django_db
 def test_riskofbias_post_overrides():
     c = APIClient()
-    assert c.login(username="team@team.com", password="pw") is True
+    assert c.login(username="team@hawcproject.org", password="pw") is True
 
     rob = RiskOfBias.objects.get(id=1)
     url = reverse("riskofbias:api:review-detail", args=(rob.id,))
@@ -296,12 +296,12 @@ def build_upload_payload(study, author, metrics, dummy_score):
 def test_riskofbias_create():
     # check upload version of RoB api
     client = APIClient()
-    assert client.login(username="team@team.com", password="pw") is True
+    assert client.login(username="team@hawcproject.org", password="pw") is True
 
     url = reverse("riskofbias:api:review-list")
 
-    rev_author = HAWCUser.objects.get(email="rev@rev.com")
-    pm_author = HAWCUser.objects.get(email="pm@pm.com")
+    rev_author = HAWCUser.objects.get(email="reviewer@hawcproject.org")
+    pm_author = HAWCUser.objects.get(email="pm@hawcproject.org")
     study = Study.objects.get(id=1)
 
     required_metrics = RiskOfBiasMetric.objects.get_required_metrics(study.assessment, study)
@@ -410,7 +410,7 @@ class TestBulkRobCleanupApis:
 
     def test_study_types(self, db_keys):
         c = APIClient()
-        assert c.login(username="team@team.com", password="pw") is True
+        assert c.login(username="team@hawcproject.org", password="pw") is True
         assessment_query = f"?assessment_id={db_keys.assessment_working}"
         url = reverse("study:api:study-types") + assessment_query
 
@@ -420,7 +420,7 @@ class TestBulkRobCleanupApis:
 
     def test_score_choices(self, db_keys):
         c = APIClient()
-        assert c.login(username="team@team.com", password="pw") is True
+        assert c.login(username="team@hawcproject.org", password="pw") is True
         assessment_query = f"?assessment_id={db_keys.assessment_working}"
 
         url = reverse("riskofbias:api:scores-choices") + assessment_query
@@ -430,7 +430,7 @@ class TestBulkRobCleanupApis:
 
     def test_metrics_list(self, db_keys):
         c = APIClient()
-        assert c.login(username="team@team.com", password="pw") is True
+        assert c.login(username="team@hawcproject.org", password="pw") is True
         assessment_query = f"?assessment_id={db_keys.assessment_working}"
 
         url = reverse("riskofbias:api:metrics-list") + assessment_query
@@ -443,7 +443,7 @@ class TestBulkRobCleanupApis:
 
     def test_rob_scores(self, db_keys):
         c = APIClient()
-        assert c.login(username="team@team.com", password="pw") is True
+        assert c.login(username="team@hawcproject.org", password="pw") is True
         assessment_query = f"?assessment_id={db_keys.assessment_working}"
 
         # get metrics for score

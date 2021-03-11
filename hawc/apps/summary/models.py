@@ -12,8 +12,12 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.html import strip_tags
 from pydantic import BaseModel as PydanticModel
+from pydantic import ValidationError as PydanticError
 from reversion import revisions as reversion
 from treebeard.mp_tree import MP_Node
+
+from hawc.tools.tables.ept import EvidenceProfileTable
+from hawc.tools.tables.generic import GenericTable
 
 from ..animal.exports import EndpointFlatDataPivot, EndpointGroupFlatDataPivot
 from ..animal.models import Endpoint
@@ -22,11 +26,13 @@ from ..common.helper import (
     FlatExport,
     HAWCDjangoJSONEncoder,
     HAWCtoDateString,
+    ReportExport,
     SerializerHelper,
     read_excel,
     tryParseInt,
 )
 from ..common.models import get_model_copy_name
+from ..common.validators import validate_html_tags
 from ..epi.exports import OutcomeDataPivot
 from ..epi.models import Outcome
 from ..epimeta.exports import MetaResultFlatDataPivot
@@ -121,45 +127,8 @@ class SummaryText(MP_Node):
         root = cls.get_assessment_root_node(assessment_id)
         return cls.get_tree(parent=root)
 
-    @classmethod
-    def create(cls, form):
-        instance = form.save(commit=False)
-        sibling = form.cleaned_data.get("sibling")
-        if sibling:
-            return sibling.add_sibling(pos="right", instance=instance)
-        else:
-            parent = form.cleaned_data.get(
-                "parent", SummaryText.get_assessment_root_node(instance.assessment.id)
-            )
-            sibling = parent.get_first_child()
-            if sibling:
-                return sibling.add_sibling(pos="first-sibling", instance=instance)
-            else:
-                return parent.add_child(instance=instance)
-
-    def update(self, form):
-        data = form.cleaned_data
-        self.title = data["title"]
-        self.slug = data["slug"]
-        self.text = data["text"]
-        self.save()
-        self.move_st(parent=data.get("parent"), sibling=data.get("sibling"))
-
-    def move_st(self, parent=None, sibling=None):
-        if parent is not None and parent.assessment != self.assessment:
-            raise Exception("Parent assessment != self assessment")
-
-        if sibling is not None and sibling.assessment != self.assessment:
-            raise Exception("Sibling assessment != self assessment")
-
-        if sibling:
-            if self.get_prev_sibling() != sibling:
-                self.move(sibling, pos="right")
-        elif parent:
-            self.move(parent, pos="first-child")
-
     def get_absolute_url(self):
-        return f"{reverse('summary:list', kwargs={'assessment': self.assessment.pk})}#{self.slug}"
+        return f"{reverse('summary:list', args=(self.assessment_id,))}#{self.slug}"
 
     def get_assessment(self):
         return self.assessment
@@ -184,6 +153,106 @@ class SummaryText(MP_Node):
         if nodes[0].get("children", None):
             for node in nodes[0]["children"]:
                 print_node(node, 2)
+
+
+class SummaryTable(models.Model):
+    objects = managers.SummaryTableManager()
+
+    class TableType(models.IntegerChoices):
+        GENERIC = 0
+        EVIDENCE_PROFILE = 1
+
+    TABLE_SCHEMA_MAP = {
+        TableType.GENERIC: GenericTable,
+        TableType.EVIDENCE_PROFILE: EvidenceProfileTable,
+    }
+
+    assessment = models.ForeignKey(Assessment, on_delete=models.CASCADE)
+    title = models.CharField(max_length=128)
+    slug = models.SlugField(
+        verbose_name="URL Name",
+        help_text="The URL (web address) used to describe this object "
+        "(no spaces or special-characters).",
+    )
+    content = models.JSONField(default=dict)
+    table_type = models.PositiveSmallIntegerField(
+        choices=TableType.choices, default=TableType.GENERIC
+    )
+    published = models.BooleanField(
+        default=False,
+        verbose_name="Publish table for public viewing",
+        help_text="For assessments marked for public viewing, mark table to be viewable by public",
+    )
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    BREADCRUMB_PARENT = "assessment"
+
+    class Meta:
+        unique_together = (
+            ("assessment", "title"),
+            ("assessment", "slug"),
+        )
+
+    def __str__(self):
+        return self.title
+
+    def get_assessment(self):
+        return self.assessment
+
+    @classmethod
+    def get_list_url(cls, assessment_id: int):
+        return reverse("summary:tables_list", args=(assessment_id,))
+
+    @classmethod
+    def get_api_list_url(cls, assessment_id: int):
+        return reverse("summary:api:summary-table-list") + f"?assessment_id={assessment_id}"
+
+    def get_absolute_url(self):
+        return reverse("summary:tables_detail", args=(self.assessment_id, self.slug,))
+
+    def get_update_url(self):
+        return reverse("summary:tables_update", args=(self.assessment_id, self.slug,))
+
+    def get_delete_url(self):
+        return reverse("summary:tables_delete", args=(self.assessment_id, self.slug,))
+
+    def get_api_url(self):
+        return reverse("summary:api:summary-table-detail", args=(self.id,))
+
+    def get_api_word_url(self):
+        return reverse("summary:api:summary-table-docx", args=(self.id,))
+
+    def get_content_schema_class(self):
+        if self.table_type not in self.TABLE_SCHEMA_MAP:
+            raise NotImplementedError(f"Table type not found: {self.table_type}")
+        return self.TABLE_SCHEMA_MAP[self.table_type]
+
+    def get_table(self):
+        return self.get_content_schema_class().parse_obj(self.content)
+
+    @classmethod
+    def build_default(cls, assessment_id: int, table_type: int) -> "SummaryTable":
+        """Build an incomplete, but default SummaryTable instance"""
+        instance = cls(assessment_id=assessment_id, table_type=table_type)
+        schema = instance.get_content_schema_class()
+        instance.content = schema.get_default_props()
+        return instance
+
+    def to_docx(self):
+        table = self.get_table()
+        return ReportExport(docx=table.to_docx(), filename=self.slug)
+
+    def clean(self):
+        # make sure table can be built
+        try:
+            self.get_table()
+        except PydanticError as e:
+            raise ValidationError({"content": e.json()})
+
+        # validate tags used in text
+        content_str = json.dumps(self.content)
+        validate_html_tags(content_str)
 
 
 class HeatmapDataset(PydanticModel):
@@ -267,16 +336,16 @@ class Visual(models.Model):
 
     @staticmethod
     def get_list_url(assessment_id):
-        return reverse("summary:visualization_list", args=[str(assessment_id)])
+        return reverse("summary:visualization_list", args=(assessment_id,))
 
     def get_absolute_url(self):
-        return reverse("summary:visualization_detail", args=[str(self.pk)])
+        return reverse("summary:visualization_detail", args=(self.pk,))
 
     def get_update_url(self):
-        return reverse("summary:visualization_update", args=[str(self.pk)])
+        return reverse("summary:visualization_update", args=(self.pk,))
 
     def get_delete_url(self):
-        return reverse("summary:visualization_delete", args=[str(self.pk)])
+        return reverse("summary:visualization_delete", args=(self.pk,))
 
     def get_assessment(self):
         return self.assessment
@@ -565,10 +634,10 @@ class DataPivot(models.Model):
         return reverse("summary:visualization_list", args=[str(assessment_id)])
 
     def get_absolute_url(self):
-        return reverse("summary:dp_detail", kwargs={"pk": self.assessment_id, "slug": self.slug})
+        return reverse("summary:dp_detail", args=(self.assessment_id, self.slug))
 
     def get_visualization_update_url(self):
-        return reverse("summary:dp_update", kwargs={"pk": self.assessment_id, "slug": self.slug})
+        return reverse("summary:dp_update", args=(self.assessment_id, self.slug))
 
     def get_assessment(self):
         return self.assessment
@@ -960,6 +1029,7 @@ class Prefilter:
 
 
 reversion.register(SummaryText)
+reversion.register(SummaryTable)
 reversion.register(DataPivotUpload)
 reversion.register(DataPivotQuery)
 reversion.register(Visual)

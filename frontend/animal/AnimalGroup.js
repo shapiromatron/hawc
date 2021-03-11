@@ -51,9 +51,7 @@ class AnimalGroup {
             getRelations = function(lst) {
                 return _.chain(lst)
                     .map(self._getAniRelationLink)
-                    .map(function(d) {
-                        return $("<li>").append(d);
-                    })
+                    .map(d => $("<span>").append(d))
                     .value();
             },
             tbl;

@@ -16,13 +16,6 @@
       <legend>Central Tendencies
         <button class="float-right btn btn-primary" title="Add new central tendency" type="button" id="addFormToFormset">+</button>
       </legend>
-      {% if crud == "Create" %}
-      <p class="form-text text-muted">
-        help text placeholer
-        <span class='help-text-notes'>notes placeholder</span>
-        <span class='important-note'>important note placeholder</span>
-      </p>
-      {% endif %}
       {% include "hawc/_formset_table_template.html" with showDeleteRow=True %}
     </div>
 {% endblock %}
@@ -33,7 +26,7 @@
   <script type="text/javascript">
     $(document).on('ready', function () {
       new window.app.utils.DynamicFormset($('#ctFormset'), 'form', { oneFormRequired: true });
-      $('#ctFormset').insertBefore($('#exposureForm .form-actions'));
+      $('#ctFormset').insertBefore($('.form-actions'));
     });
   </script>
 {% endblock extrajs %}

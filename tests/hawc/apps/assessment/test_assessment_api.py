@@ -9,7 +9,7 @@ class TestDatasetViewset:
         client = APIClient()
 
         # team-member can view anything, including versions and unpublished
-        assert client.login(username="team@team.com", password="pw") is True
+        assert client.login(username="team@hawcproject.org", password="pw") is True
         for url, code in [
             (reverse("assessment:api:dataset-detail", args=(db_keys.dataset_final,)), 200),
             (reverse("assessment:api:dataset-data", args=(db_keys.dataset_final,)), 200),
@@ -25,7 +25,7 @@ class TestDatasetViewset:
             assert resp.status_code == code
 
         # reviewers can only view published final versions
-        assert client.login(username="rev@rev.com", password="pw") is True
+        assert client.login(username="reviewer@hawcproject.org", password="pw") is True
         for url, code in [
             (reverse("assessment:api:dataset-detail", args=(db_keys.dataset_final,)), 200),
             (reverse("assessment:api:dataset-data", args=(db_keys.dataset_final,)), 200),
@@ -58,7 +58,7 @@ class TestDatasetViewset:
 
     def test_response_data(self, db_keys):
         client = APIClient()
-        assert client.login(username="team@team.com", password="pw") is True
+        assert client.login(username="team@hawcproject.org", password="pw") is True
 
         # ensure we get expected response
         url = reverse("assessment:api:dataset-data", args=(db_keys.dataset_final,)) + "?format=json"
@@ -68,7 +68,7 @@ class TestDatasetViewset:
 
     def test_response_version(self, db_keys):
         client = APIClient()
-        assert client.login(username="team@team.com", password="pw") is True
+        assert client.login(username="team@hawcproject.org", password="pw") is True
 
         # ensure we get expected response
         url = (
@@ -96,11 +96,11 @@ class TestJobViewset:
         # only admin can view list of global jobs
         url = reverse("assessment:api:jobs-list")
 
-        assert client.login(username="pm@pm.com", password="pw") is True
+        assert client.login(username="pm@hawcproject.org", password="pw") is True
         resp = client.get(url)
         assert resp.status_code == 403
 
-        assert client.login(username="sudo@sudo.com", password="pw") is True
+        assert client.login(username="admin@hawcproject.org", password="pw") is True
         resp = client.get(url)
         assert resp.status_code == 200
 
@@ -111,7 +111,7 @@ class TestJobViewset:
         resp = client.get(url)
         assert resp.status_code == 403
 
-        assert client.login(username="team@team.com", password="pw") is True
+        assert client.login(username="team@hawcproject.org", password="pw") is True
         resp = client.get(url)
         assert resp.status_code == 200
 
@@ -123,18 +123,18 @@ class TestJobViewset:
         resp = client.post(url, data)
         assert resp.status_code == 403
 
-        assert client.login(username="team@team.com", password="pw") is True
+        assert client.login(username="team@hawcproject.org", password="pw") is True
         resp = client.post(url, data)
         assert resp.status_code == 201
 
         # only admin can retrieve a global job
         url = reverse("assessment:api:jobs-detail", args=(db_keys.job_global,))
 
-        assert client.login(username="pm@pm.com", password="pw") is True
+        assert client.login(username="pm@hawcproject.org", password="pw") is True
         resp = client.get(url)
         assert resp.status_code == 403
 
-        assert client.login(username="sudo@sudo.com", password="pw") is True
+        assert client.login(username="admin@hawcproject.org", password="pw") is True
         resp = client.get(url)
         assert resp.status_code == 200
 
@@ -142,11 +142,11 @@ class TestJobViewset:
         url = reverse("assessment:api:jobs-list")
         data = {"assessment": ""}
 
-        assert client.login(username="pm@pm.com", password="pw") is True
+        assert client.login(username="pm@hawcproject.org", password="pw") is True
         resp = client.post(url, data)
         assert resp.status_code == 403
 
-        assert client.login(username="sudo@sudo.com", password="pw") is True
+        assert client.login(username="admin@hawcproject.org", password="pw") is True
         resp = client.post(url, data)
         assert resp.status_code == 201
 
@@ -154,7 +154,7 @@ class TestJobViewset:
         client = APIClient()
         url = reverse("assessment:api:jobs-list")
 
-        assert client.login(username="sudo@sudo.com", password="pw") is True
+        assert client.login(username="admin@hawcproject.org", password="pw") is True
         resp = client.get(url)
         assert resp.status_code == 200
 
@@ -167,7 +167,7 @@ class TestJobViewset:
         client = APIClient()
         url = reverse("assessment:api:jobs-detail", args=(db_keys.job_assessment,))
 
-        assert client.login(username="team@team.com", password="pw") is True
+        assert client.login(username="team@hawcproject.org", password="pw") is True
         resp = client.get(url)
         assert resp.status_code == 200
 
@@ -180,7 +180,7 @@ class TestJobViewset:
         url = reverse("assessment:api:jobs-list")
 
         # on create, details of the created job is returned
-        assert client.login(username="sudo@sudo.com", password="pw") is True
+        assert client.login(username="admin@hawcproject.org", password="pw") is True
         resp = client.post(url)
         assert resp.status_code == 201
 
@@ -206,7 +206,7 @@ class TestJobViewset:
         """
         url = reverse("assessment:api:assessment-jobs", args=(db_keys.assessment_working,))
         client = APIClient()
-        assert client.login(username="pm@pm.com", password="pw") is True
+        assert client.login(username="pm@hawcproject.org", password="pw") is True
         resp = client.get(url)
         assert resp.status_code == 200
 
@@ -235,11 +235,11 @@ class TestLogViewset:
         # only admin can view list of global logs
         url = reverse("assessment:api:logs-list")
 
-        assert client.login(username="pm@pm.com", password="pw") is True
+        assert client.login(username="pm@hawcproject.org", password="pw") is True
         resp = client.get(url)
         assert resp.status_code == 403
 
-        assert client.login(username="sudo@sudo.com", password="pw") is True
+        assert client.login(username="admin@hawcproject.org", password="pw") is True
         resp = client.get(url)
         assert resp.status_code == 200
 
@@ -247,7 +247,7 @@ class TestLogViewset:
         client = APIClient()
         url = reverse("assessment:api:logs-list")
 
-        assert client.login(username="sudo@sudo.com", password="pw") is True
+        assert client.login(username="admin@hawcproject.org", password="pw") is True
         resp = client.get(url)
         assert resp.status_code == 200
 
@@ -263,7 +263,7 @@ class TestLogViewset:
         """
         url = reverse("assessment:api:assessment-logs", args=(db_keys.assessment_working,))
         client = APIClient()
-        assert client.login(username="pm@pm.com", password="pw") is True
+        assert client.login(username="pm@hawcproject.org", password="pw") is True
         resp = client.get(url)
         assert resp.status_code == 200
 
@@ -282,3 +282,13 @@ class TestDssToxViewset:
         resp = client.get(url)
         assert resp.status_code == 200
         assert resp.json()["dtxsid"] == dtxsid
+
+
+@pytest.mark.django_db
+class TestHealthcheckViewset:
+    def test_healthcheck(self):
+        client = APIClient()
+        url = reverse("assessment:api:healthcheck-list")
+        resp = client.get(url)
+        assert resp.status_code == 200
+        assert resp.json() == {"status": "ok"}

@@ -7,7 +7,7 @@ from rest_framework.test import APIClient
 @pytest.mark.django_db
 def test_study_detail_api(db_keys):
     client = Client()
-    assert client.login(username="team@team.com", password="pw") is True
+    assert client.login(username="team@hawcproject.org", password="pw") is True
 
     url = reverse("study:api:study-detail", kwargs={"pk": db_keys.study_working})
     response = client.get(url)
@@ -38,8 +38,8 @@ def test_study_detail_api(db_keys):
         ],
         "tags": [],
         "title": "",
-        "authors_short": "",
-        "authors": "",
+        "authors_short": "Frédéric Chopin",
+        "authors": "Frédéric Chopin",
         "year": 2010,
         "journal": "",
         "abstract": "",
@@ -79,7 +79,7 @@ class TestStudyCreateApi:
 
         # reviewers shouldn't be able to create
         client = APIClient()
-        assert client.login(username="rev@rev.com", password="pw") is True
+        assert client.login(username="reviewer@hawcproject.org", password="pw") is True
         response = client.post(url, data)
         assert response.status_code == 403
 
@@ -91,20 +91,11 @@ class TestStudyCreateApi:
     def test_bad_requests(self, db_keys):
         # payload needs to include the required short_citation and full_citation
         url = reverse("study:api:study-list")
-        data = {"reference_id": db_keys.reference_unlinked}
         client = APIClient()
-        assert client.login(username="team@team.com", password="pw") is True
-        response = client.post(url, data)
-        assert response.status_code == 400
-        assert {"short_citation", "full_citation"}.issubset((response.data.keys()))
+        assert client.login(username="team@hawcproject.org", password="pw") is True
 
         # invalid references will not be successful
-        data = {
-            "reference_id": "invalid",
-            "short_citation": "Short citation.",
-            "full_citation": "Full citation.",
-        }
-
+        data = {"reference_id": "invalid"}
         response = client.post(url, data)
         assert response.status_code == 400
         assert str(response.data["non_field_errors"][0]) == "Reference ID must be a number."
@@ -127,7 +118,7 @@ class TestStudyCreateApi:
             "full_citation": "Full citation.",
         }
         client = APIClient()
-        assert client.login(username="team@team.com", password="pw") is True
+        assert client.login(username="team@hawcproject.org", password="pw") is True
         response = client.post(url, data)
         assert response.status_code == 201
 

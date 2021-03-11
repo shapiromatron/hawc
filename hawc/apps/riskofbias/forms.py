@@ -20,9 +20,9 @@ class RobTextForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["help_text"].widget.attrs["class"] = "html5text"
-        self.helper = self.setHelper()
 
-    def setHelper(self):
+    @property
+    def helper(self):
         inputs = {
             "cancel_url": reverse("riskofbias:arob_update", args=[self.instance.assessment.pk])
         }
@@ -34,6 +34,11 @@ class RobTextForm(forms.ModelForm):
 class RoBDomainForm(forms.ModelForm):
     class Meta:
         model = models.RiskOfBiasDomain
+        fields = (
+            "name",
+            "is_overall_confidence",
+            "description",
+        )
         exclude = ("assessment",)
 
     def __init__(self, *args, **kwargs):
@@ -41,9 +46,10 @@ class RoBDomainForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if assessment:
             self.instance.assessment = assessment
-        self.helper = self.setHelper()
+        self.fields["description"].widget.attrs["rows"] = 3
 
-    def setHelper(self):
+    @property
+    def helper(self):
         inputs = {
             "cancel_url": reverse("riskofbias:arob_update", args=[self.instance.assessment.pk])
         }
@@ -56,8 +62,7 @@ class RoBDomainForm(forms.ModelForm):
             inputs["help_text"] = f"Create a new {rob_name} domain."
 
         helper = BaseFormHelper(self, **inputs)
-        helper["name"].wrap(cfl.Field, css_class="col-md-6")
-        helper["description"].wrap(cfl.Field, css_class="html5text col-md-12")
+        helper.add_row("name", 2, "col-md-6")
         return helper
 
     def clean(self):
@@ -82,9 +87,9 @@ class RoBMetricForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if domain:
             self.instance.domain = domain
-        self.helper = self.setHelper()
 
-    def setHelper(self):
+    @property
+    def helper(self):
         inputs = {
             "cancel_url": reverse(
                 "riskofbias:arob_update", args=[self.instance.domain.assessment.pk]
@@ -99,8 +104,10 @@ class RoBMetricForm(forms.ModelForm):
             inputs["help_text"] = f"Create a new {rob_name} metric."
 
         helper = BaseFormHelper(self, **inputs)
-        helper["name"].wrap(cfl.Field, css_class="col-md-12")
+        helper.add_row("name", 2, "col-md-6")
         helper["description"].wrap(cfl.Field, css_class="html5text col-md-12")
+        helper.add_row("required_animal", 3, "col-md-4")
+        helper.add_row("hide_description", 2, "col-md-6")
         return helper
 
 
@@ -148,13 +155,11 @@ class NumberOfReviewersForm(forms.ModelForm):
             "resolve any conflicts and make a final determination, so there "
             "will be a total of N+1 reviews."
         )
-        self.helper = self.setHelper()
 
-    def setHelper(self):
+    @property
+    def helper(self):
         inputs = {"cancel_url": self.instance.rob_settings.get_absolute_url()}
-
         helper = BaseFormHelper(self, **inputs)
-
         return helper
 
     def save(self, commit=True):
@@ -259,18 +264,6 @@ class RiskOfBiasCopyForm(forms.Form):
         label="Existing assessment", queryset=Assessment.objects.all(), empty_label=None
     )
 
-    def setHelper(self):
-        rob_name = self.assessment.get_rob_name_display().lower()
-        inputs = {
-            "legend_text": f"Copy {rob_name} approach from existing assessments",  # noqa
-            "help_text": f"Copy {rob_name} metrics and domains from an existing HAWC assessment which you have access to.",  # noqa
-            "cancel_url": reverse("riskofbias:arob_detail", args=[self.assessment.id]),
-        }
-        helper = BaseFormHelper(self, **inputs)
-        helper.layout.insert(3, cfl.Div(css_id="extra_content_insertion"))
-
-        return helper
-
     def __init__(self, *args, **kwargs):
         user = kwargs.pop("user", None)
         self.assessment = kwargs.pop("assessment", None)
@@ -279,7 +272,18 @@ class RiskOfBiasCopyForm(forms.Form):
         self.fields["assessment"].queryset = Assessment.objects.get_viewable_assessments(
             user, exclusion_id=self.assessment.id
         )
-        self.helper = self.setHelper()
+
+    @property
+    def helper(self):
+        rob_name = self.assessment.get_rob_name_display().lower()
+        inputs = {
+            "legend_text": f"Copy {rob_name} approach from existing assessments",  # noqa
+            "help_text": f"Copy {rob_name} metrics and domains from an existing HAWC assessment which you have access to.",  # noqa
+            "cancel_url": reverse("riskofbias:arob_detail", args=[self.assessment.id]),
+        }
+        helper = BaseFormHelper(self, **inputs)
+        helper.layout.insert(3, cfl.Div(css_id="extra_content_insertion"))
+        return helper
 
     def copy_riskofbias(self):
         models.RiskOfBias.copy_riskofbias(self.assessment, self.cleaned_data["assessment"])

@@ -36,17 +36,17 @@ class Root extends Component {
                 {noTasks ? <h4>No studies match the given query.</h4> : <TaskTable />}
 
                 {displayAsForm && !noTasks ? (
-                    <>
+                    <div className="well form-actions">
                         <button
                             type="button"
                             onClick={store.submitPatches}
                             className="btn btn-primary">
                             Submit changes
                         </button>
-                        <button onClick={store.handleCancel} className="btn space">
+                        <button onClick={store.handleCancel} className="btn btn-light ml-2">
                             Cancel
                         </button>
-                    </>
+                    </div>
                 ) : null}
             </div>
         );

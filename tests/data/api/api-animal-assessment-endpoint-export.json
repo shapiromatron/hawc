@@ -48,5 +48,30 @@
     "Responses": ", , , , ",
     "Doses and responses": "",
     "Response direction": "?"
+  },
+  {
+    "study-short_citation": "Biesemeier JA et al. 2011",
+    "study-study_identifier": "",
+    "experiment-chemical": "PBDE 209",
+    "animal_group-name": "sd rats",
+    "animal_group-sex": "Combined",
+    "animal description (with n)": "P0 rat, sprague dawley (\u2642\u2640, N=15)",
+    "dosing_regime-route_of_exposure": "Oral gavage",
+    "dosing_regime-duration_exposure_text": "developmental (3 days)",
+    "species-name": "rat",
+    "strain-name": "sprague dawley",
+    "endpoint-id": 8,
+    "endpoint-url": "/ani/endpoint/8/",
+    "endpoint-system": "Cardiovascular",
+    "endpoint-organ": "Serum",
+    "endpoint-effect": "Fatty Acids",
+    "endpoint-name": "Fatty Acid Balance",
+    "endpoint-observation_time": "",
+    "endpoint-response_units": "incidence",
+    "Dose units": "mg/kg/d",
+    "Doses": "0, 1, 10, 100, 1000",
+    "Responses": "1, 1, 3, 2, 7",
+    "Doses and responses": "0 mg/kg/d: 1, 1 mg/kg/d: 1, 10 mg/kg/d: 3, 100 mg/kg/d: 2, 1000 mg/kg/d: 7",
+    "Response direction": "?"
   }
 ]

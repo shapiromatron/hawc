@@ -28,6 +28,7 @@ class Metric extends Component {
                         scores={nonEditableScores}
                         showAuthors={true}
                         metricHasOverrides={metricHasOverrides}
+                        editableScores={editableScores}
                     />
                 ) : null}
                 {editableScores.map(score => {

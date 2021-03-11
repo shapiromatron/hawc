@@ -30,6 +30,10 @@
       <td>********</td>
       <td><a href="{% url 'user:change_password' %}">Click to change</a></td>
     </tr>
+    <tr>
+      <th>Can create assessments</th>
+      <td colspan="2">{{user.can_create_assessments}}</td>
+    </tr>
   </tbody>
 </table>
 

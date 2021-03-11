@@ -9,13 +9,13 @@ class TestEhvTermViewset:
         url = reverse("vocab:api:ehv-system")
         anon_client = Client()
         auth_client = Client()
-        assert auth_client.login(username="team@team.com", password="pw") is True
+        assert auth_client.login(username="team@hawcproject.org", password="pw") is True
         assert anon_client.get(url).status_code == 403
         assert auth_client.get(url).status_code == 200
 
     def test_expected_response(self):
         client = Client()
-        assert client.login(username="team@team.com", password="pw") is True
+        assert client.login(username="team@hawcproject.org", password="pw") is True
 
         test_cases = [
             # test urls resolve
@@ -31,7 +31,7 @@ class TestEhvTermViewset:
 
     def test_query_params(self):
         client = Client()
-        assert client.login(username="team@team.com", password="pw") is True
+        assert client.login(username="team@hawcproject.org", password="pw") is True
 
         test_cases = [
             # test term lookup

@@ -165,10 +165,10 @@ class _DataPivot_settings_sorts {
         );
         this.content.ascending = $(
             `<label class="form-check">
-                <input name="asc${index}" type="radio" value="true">Ascending
+                <input name="asc${index}" type="radio" value="true"> Ascending
             </label>
             <label class="form-check">
-                <input name="asc${index}" type="radio" value="false">Descending
+                <input name="asc${index}" type="radio" value="false"> Descending
             </label>`
         );
 
@@ -943,8 +943,11 @@ class _DataPivot_settings_barchart {
 }
 
 let buildHeaderTr = function(lst) {
-    return $("<tr>").html(lst.map(v => `<th>${v}</th>`).join());
-};
+        return $("<tr>").html(lst.map(v => `<th>${v}</th>`).join());
+    },
+    buildColGroup = function(widths) {
+        return $("<colgroup>").html(widths.map(width => `<col width=${width}></col>`).join(""));
+    };
 
 export {_DataPivot_settings_refline};
 export {_DataPivot_settings_refrect};
@@ -957,4 +960,4 @@ export {_DataPivot_settings_pointdata};
 export {_DataPivot_settings_linedata};
 export {_DataPivot_settings_barchart};
 export {_DataPivot_settings_general};
-export {buildHeaderTr};
+export {buildHeaderTr, buildColGroup};
