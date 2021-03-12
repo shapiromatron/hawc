@@ -1,6 +1,6 @@
 import _ from "lodash";
 
-import {HEROUtils} from "utils/HAWCUtils";
+import Hero from "utils/Hero";
 
 class Reference {
     constructor(data, tagtree) {
@@ -12,7 +12,7 @@ class Reference {
     static get_detail_url(id, subtype) {
         switch (subtype) {
             case "hero":
-                return HEROUtils.getHeroUrl(id);
+                return Hero.getUrl(id);
             case "pubmed":
                 return `https://pubmed.ncbi.nlm.nih.gov/${id}/`;
             case "reference":

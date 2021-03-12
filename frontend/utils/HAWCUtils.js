@@ -3,23 +3,10 @@ import _ from "lodash";
 import * as d3 from "d3";
 import slugify from "slugify";
 
-class HEROUtils {
-    static setHeroAccess(heroAccess) {
-        window.localStorage.setItem("hero-access", heroAccess);
-    }
-
-    static getHeroAccess() {
-        return window.localStorage.getItem("hero-access") === "true";
-    }
-
-    static getHeroUrl(id) {
-        return this.getHeroAccess()
-            ? `http://heronet.epa.gov/heronet/index.cfm?action=reference.details&reference_id=${id}`
-            : `http://hero.epa.gov/hero/index.cfm?action=reference.details&reference_id=${id}`;
-    }
-}
+import Hero from "./Hero";
 
 class HAWCUtils {
+    static Hero = Hero;
     static HAWC_NEW_WINDOW_POPUP_CLOSING = "hawcNewWindowPopupClosing";
 
     static booleanCheckbox(value) {
@@ -283,4 +270,4 @@ class HAWCUtils {
     }
 }
 
-export {HAWCUtils as default, HEROUtils};
+export default HAWCUtils;
