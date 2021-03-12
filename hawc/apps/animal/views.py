@@ -172,6 +172,32 @@ class AnimalGroupCreate(BaseCreate):
 class AnimalGroupRead(BaseDetail):
     model = models.AnimalGroup
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["endpoints"] = (
+            context["object"]
+            .endpoints.all()
+            .select_related(
+                "bmd_model",
+                "assessment",
+                "animal_group__experiment__dtxsid",
+                "animal_group__experiment__study",
+                "animal_group__species",
+                "animal_group__strain",
+            )
+            .prefetch_related(
+                "effects",
+                "groups",
+                "animal_group__parents",
+                "animal_group__siblings",
+                "animal_group__children",
+                "animal_group__dosing_regime__doses__dose_units",
+                "animal_group__experiment__study__searches",
+                "animal_group__experiment__study__identifiers",
+            )
+        )
+        return context
+
 
 class AnimalGroupCopyAsNewSelector(CopyAsNewSelectorMixin, ExperimentRead):
     copy_model = models.AnimalGroup
@@ -407,14 +433,7 @@ class EndpointList(BaseEndpointFilterList):
             query &= self.form.get_query()
             order_by = self.form.get_order_by()
 
-        ids = (
-            self.model.objects.filter(query)
-            .order_by("id")
-            .distinct("id")
-            .values_list("id", flat=True)
-        )
-
-        qs = self.model.objects.filter(id__in=ids)
+        qs = self.model.objects.filter(query).order_by("id").distinct("id")
 
         if order_by:
             if order_by == "customBMD":
@@ -426,7 +445,23 @@ class EndpointList(BaseEndpointFilterList):
             else:
                 qs = qs.order_by(order_by)
 
-        return qs
+        return qs.select_related(
+            "bmd_model",
+            "assessment",
+            "animal_group__experiment__dtxsid",
+            "animal_group__experiment__study",
+            "animal_group__species",
+            "animal_group__strain",
+        ).prefetch_related(
+            "effects",
+            "groups",
+            "animal_group__parents",
+            "animal_group__siblings",
+            "animal_group__children",
+            "animal_group__dosing_regime__doses__dose_units",
+            "animal_group__experiment__study__searches",
+            "animal_group__experiment__study__identifiers",
+        )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

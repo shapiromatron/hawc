@@ -16,9 +16,9 @@
   "last_updated": "2020-05-08T14:43:09.448621-05:00",
   "assessment": 2,
   "dose_units": null,
-  "url": "/summary/visual/6/",
-  "url_update": "/summary/visual/6/update/",
-  "url_delete": "/summary/visual/6/delete/",
+  "url": "/summary/visual/assessment/2/tagtree/",
+  "url_update": "/summary/visual/assessment/2/tagtree/update/",
+  "url_delete": "/summary/visual/assessment/2/tagtree/delete/",
   "endpoints": [],
   "studies": [],
   "assessment_rob_name": "Risk of bias"

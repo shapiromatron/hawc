@@ -20,9 +20,9 @@
   "last_updated": "2020-05-08T14:45:29.985848-05:00",
   "assessment": 2,
   "dose_units": null,
-  "url": "/summary/visual/7/",
-  "url_update": "/summary/visual/7/update/",
-  "url_delete": "/summary/visual/7/delete/",
+  "url": "/summary/visual/assessment/2/embedded-tableau/",
+  "url_update": "/summary/visual/assessment/2/embedded-tableau/update/",
+  "url_delete": "/summary/visual/assessment/2/embedded-tableau/delete/",
   "endpoints": [],
   "studies": [],
   "assessment_rob_name": "Risk of bias"
