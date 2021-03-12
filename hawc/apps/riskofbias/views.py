@@ -232,7 +232,7 @@ class ARoBReviewersUpdate(ProjectManagerOrHigherMixin, BaseUpdateWithFormset):
                         rob.activate()
 
     def get_success_url(self):
-        return reverse_lazy("riskofbias:arob_reviewers", args=(self.assessment_id,))
+        return reverse_lazy("riskofbias:arob_reviewers", args=(self.assessment.id,))
 
 
 # Risk of bias domain views

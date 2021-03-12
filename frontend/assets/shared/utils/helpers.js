@@ -247,6 +247,13 @@ const helpers = {
         // column and row are 0-based
         return `${excelColumn(column)}${row + 1}`;
     },
+    hasInnerText(text) {
+        return (
+            $(text)
+                .text()
+                .trim().length > 0
+        );
+    },
     numericAxisFormat: d3.format(",~g"),
     COLORS: {
         WHITE: "#ffffff",
