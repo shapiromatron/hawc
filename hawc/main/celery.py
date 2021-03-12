@@ -38,4 +38,8 @@ app.conf.beat_schedule = {
         "schedule": timedelta(hours=6),
         "kwargs": dict(delete=False),
     },
+    "bmds2_service_healthcheck": {
+        "task": "hawc.apps.bmd.tasks.bmds2_service_healthcheck",
+        "schedule": timedelta(hours=6),
+    },
 }

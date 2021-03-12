@@ -29,7 +29,7 @@ def run_job(url, data, api_token, interval=3, timeout=60):
         )
 
         # initial job request
-        response = s.post(url, data=data)
+        response = s.post(url, data=data, verify=False)
         if response.status_code in [400, 403]:
             raise JobException(response.json()["detail"])
 
@@ -38,7 +38,7 @@ def run_job(url, data, api_token, interval=3, timeout=60):
         job_url = response.json()["url"]
         while True:
             time.sleep(interval)
-            response = s.get(job_url).json()
+            response = s.get(job_url, verify=False).json()
 
             if response["is_finished"]:
                 if response["has_errors"]:
