@@ -172,6 +172,32 @@ class AnimalGroupCreate(BaseCreate):
 class AnimalGroupRead(BaseDetail):
     model = models.AnimalGroup
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["endpoints"] = (
+            context["object"]
+            .endpoints.all()
+            .select_related(
+                "bmd_model",
+                "assessment",
+                "animal_group__experiment__dtxsid",
+                "animal_group__experiment__study",
+                "animal_group__species",
+                "animal_group__strain",
+            )
+            .prefetch_related(
+                "effects",
+                "groups",
+                "animal_group__parents",
+                "animal_group__siblings",
+                "animal_group__children",
+                "animal_group__dosing_regime__doses__dose_units",
+                "animal_group__experiment__study__searches",
+                "animal_group__experiment__study__identifiers",
+            )
+        )
+        return context
+
 
 class AnimalGroupCopyAsNewSelector(CopyAsNewSelectorMixin, ExperimentRead):
     copy_model = models.AnimalGroup
@@ -419,8 +445,22 @@ class EndpointList(BaseEndpointFilterList):
             else:
                 qs = qs.order_by(order_by)
 
-        return qs.select_related("animal_group__experiment__study",).prefetch_related(
-            "groups", "animal_group__dosing_regime__doses",
+        return qs.select_related(
+            "bmd_model",
+            "assessment",
+            "animal_group__experiment__dtxsid",
+            "animal_group__experiment__study",
+            "animal_group__species",
+            "animal_group__strain",
+        ).prefetch_related(
+            "effects",
+            "groups",
+            "animal_group__parents",
+            "animal_group__siblings",
+            "animal_group__children",
+            "animal_group__dosing_regime__doses__dose_units",
+            "animal_group__experiment__study__searches",
+            "animal_group__experiment__study__identifiers",
         )
 
     def get_context_data(self, **kwargs):
