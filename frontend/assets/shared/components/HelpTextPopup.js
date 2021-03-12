@@ -14,10 +14,10 @@ class HelpTextPopover extends Component {
         $(this.domNode.current).popover("dispose");
     }
     render() {
-        const {title, content} = this.props;
+        const {icon, title, content} = this.props;
         return (
             <i
-                className="ml-1 fa fa-fw fa-question-circle"
+                className={`ml-1 fa fa-fw ${icon}`}
                 ref={this.domNode}
                 aria-hidden="true"
                 data-html="true"
@@ -29,8 +29,12 @@ class HelpTextPopover extends Component {
 }
 
 HelpTextPopover.propTypes = {
+    icon: PropTypes.string,
     title: PropTypes.string.isRequired,
     content: PropTypes.string.isRequired,
+};
+HelpTextPopover.defaultProps = {
+    icon: "fa-question-circle",
 };
 
 export default HelpTextPopover;
