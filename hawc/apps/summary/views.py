@@ -287,7 +287,7 @@ class VisualizationCreate(BaseCreate):
 
     def get_initial_visual(self, context) -> Dict:
         instance = self.model()
-        instance.id = 999999999999
+        instance.id = instance.FAKE_INITIAL_ID
         instance.assessment = self.assessment
         instance.visual_type = context["visual_type"]
         return serializers.VisualSerializer().to_representation(instance)
