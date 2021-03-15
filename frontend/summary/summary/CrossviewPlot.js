@@ -173,7 +173,7 @@ class CrossviewPlot extends D3Visualization {
 
         if (this.data.settings.endpointFilters) {
             this.data.settings.endpointFilters.forEach(function(d) {
-                d.fn = _.partial(filterFunction[d.filterType], _, d.value);
+                d.fn = _.partial(filterFunction(d.filterType), _, d.value);
             });
         }
 
