@@ -84,13 +84,14 @@ class FilterTable extends Component {
                         ))}
                     </tbody>
                 </table>
-                <div className="col-md-4">
+                <div className="col-md-12">
                     <RadioInput
                         label="Filter logic:"
                         name="filtersLogic"
                         helpText="Should multiple filter criteria be required for ALL rows (AND), or ANY row (OR)?"
                         onChange={value => store.changeSettings("filtersLogic", value)}
                         value={filtersLogic}
+                        horizontal={true}
                         choices={DATA_FILTER_LOGIC_OPTIONS}
                     />
                 </div>

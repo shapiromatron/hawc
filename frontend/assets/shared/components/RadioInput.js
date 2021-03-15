@@ -11,9 +11,10 @@ class RadioInput extends Component {
 
     renderField() {
         return this.props.choices.map(choice => {
-            const id = `${this.props.name}-${choice.id}`;
+            const id = `${this.props.name}-${choice.id}`,
+                divClass = this.props.horizontal ? "form-check form-check-inline" : "form-check";
             return (
-                <div key={choice.id} className="form-check">
+                <div key={choice.id} className={divClass}>
                     <input
                         className="form-check-input"
                         onChange={() => this.props.onChange(choice.id)}
@@ -38,6 +39,7 @@ class RadioInput extends Component {
         return (
             <div className="form-group">
                 {this.props.label ? <LabelInput label={this.props.label} /> : null}
+                {this.props.horizontal ? <br /> : null}
                 {this.renderField()}
                 {this.props.helpText ? <HelpText text={this.props.helpText} /> : null}
             </div>
@@ -58,11 +60,13 @@ RadioInput.propTypes = {
     name: PropTypes.string.isRequired,
     onChange: PropTypes.func.isRequired,
     required: PropTypes.bool.isRequired,
+    horizontal: PropTypes.bool,
     value: PropTypes.any.isRequired,
 };
 
 RadioInput.defaultProps = {
     required: false,
+    horizontal: false,
 };
 
 export default RadioInput;

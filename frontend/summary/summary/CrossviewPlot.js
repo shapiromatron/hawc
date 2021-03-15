@@ -2,7 +2,7 @@ import $ from "$";
 import _ from "lodash";
 import * as d3 from "d3";
 
-import {filterFunctionMap} from "./filters";
+import {filterFunction} from "./filters";
 import h from "shared/utils/helpers";
 import HAWCUtils from "utils/HAWCUtils";
 
@@ -173,7 +173,7 @@ class CrossviewPlot extends D3Visualization {
 
         if (this.data.settings.endpointFilters) {
             this.data.settings.endpointFilters.forEach(function(d) {
-                d.fn = _.partial(filterFunctionMap.get(d.filterType), _, d.value);
+                d.fn = _.partial(filterFunction[d.filterType], _, d.value);
             });
         }
 

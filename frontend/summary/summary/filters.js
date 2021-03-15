@@ -19,8 +19,8 @@ export const DATA_FILTER_CONTAINS = "contains",
         {id: DATA_FILTER_LOGIC_AND, label: "AND"},
         {id: DATA_FILTER_LOGIC_OR, label: "OR"},
     ],
-    filterFunction = function(filter) {
-        switch (filter.type) {
+    filterFunction = function(filterType) {
+        switch (filterType) {
             case "lt":
                 return (val, target) => val < target;
             case "lte":
@@ -44,7 +44,7 @@ export const DATA_FILTER_CONTAINS = "contains",
             case "exact":
                 return (val, target) => val.toString() === target;
             default:
-                console.error(`Unrecognized filter: ${filter.type}`);
+                console.error(`Unrecognized filter: ${filterType}`);
         }
     },
     normalizeTargetValue = function(filter) {
@@ -80,7 +80,7 @@ export const DATA_FILTER_CONTAINS = "contains",
             .filter(d => d.column !== NULL_VALUE)
             .forEach(filter => {
                 let target = normalizeTargetValue(filter),
-                    func = filterFunction(filter);
+                    func = filterFunction(filter.type);
 
                 if (func) {
                     if (filter_logic === DATA_FILTER_LOGIC_AND) {
