@@ -646,7 +646,7 @@ class TagtreeForm(VisualForm):
     )
     hide_empty_tag_nodes = forms.BooleanField(
         label="Hide tags with no references",
-        help_text="Prune tree; show only tags which contain at least on reference.",
+        help_text="Prune tree; show only tags which contain at least one reference.",
         required=False,
     )
     width = forms.IntegerField(
@@ -663,7 +663,7 @@ class TagtreeForm(VisualForm):
         min_value=500,
         max_value=3000,
         required=True,
-        help_text="The width of the visual, in pixels. If you have overlapping nodes, add more height",
+        help_text="The height of the visual, in pixels. If you have overlapping nodes, add more height",
     )
 
     def __init__(self, *args, **kwargs):
