@@ -114,6 +114,7 @@ INSTALLED_APPS = (
     "hawc.apps.bmd",
     "hawc.apps.summary",
     "hawc.apps.mgmt",
+    "hawc.apps.eco",
 )
 
 

@@ -58,7 +58,7 @@
       });
 
       var endpoints = [];
-      {% for obj in object.endpoints.all %}
+      {% for obj in endpoints %}
         endpoints.push(new animal.Endpoint({{obj.get_json|safe}}));
       {% endfor %}
 

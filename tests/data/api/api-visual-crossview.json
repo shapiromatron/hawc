@@ -91,9 +91,9 @@
   "last_updated": "2020-05-08T14:37:19.255730-05:00",
   "assessment": 2,
   "dose_units": 1,
-  "url": "/summary/visual/4/",
-  "url_update": "/summary/visual/4/update/",
-  "url_delete": "/summary/visual/4/delete/",
+  "url": "/summary/visual/assessment/2/crossview/",
+  "url_update": "/summary/visual/assessment/2/crossview/update/",
+  "url_delete": "/summary/visual/assessment/2/crossview/delete/",
   "endpoints": [
     {
       "id": 3,

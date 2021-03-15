@@ -3,7 +3,10 @@ import _ from "lodash";
 import * as d3 from "d3";
 import slugify from "slugify";
 
+import Hero from "./Hero";
+
 class HAWCUtils {
+    static Hero = Hero;
     static HAWC_NEW_WINDOW_POPUP_CLOSING = "hawcNewWindowPopupClosing";
 
     static booleanCheckbox(value) {
