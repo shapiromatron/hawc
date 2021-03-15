@@ -10,94 +10,111 @@ import {ActionsTh, MoveRowTd} from "shared/components/EditableRowData";
 import {JudgementSelector} from "./Judgement";
 import {FactorsForm} from "./Factors";
 
-import {JUDGEMENT_HELP_TEXT, CUSTOM_JUDGEMENT} from "./common";
+import {JUDGEMENT_HELP_TEXT, CUSTOM_JUDGEMENT, HIDE_CONTENT_HELP_TEXT} from "./common";
 
 const EvidenceForm = observer(props => {
         const {store, contentType, createMethodName, judgementRowSpan} = props,
             {settings} = props.store;
         return (
-            <div>
-                <TextInput
-                    name="title"
-                    label="Subheading"
-                    value={settings[contentType].title}
-                    onChange={e => store.updateValue(`${contentType}.title`, e.target.value)}
-                    required
-                />
+            <>
                 <CheckboxInput
-                    label="Merge judgement?"
-                    checked={settings[contentType].merge_judgement}
-                    onChange={e =>
-                        store.updateValue(`${contentType}.merge_judgement`, e.target.checked)
-                    }
-                    helpText={JUDGEMENT_HELP_TEXT}
+                    label="Hide content?"
+                    checked={settings[contentType].hide_content}
+                    onChange={e => {
+                        store.updateValue(`${contentType}.hide_content`, e.target.checked);
+                        $(`#${contentType}-form`).css(
+                            "display",
+                            e.target.checked ? "none" : "block"
+                        );
+                    }}
+                    helpText={HIDE_CONTENT_HELP_TEXT}
                     required
                 />
-                <table className="table table-sm table-bordered">
-                    <colgroup>
-                        <col width="18%" />
-                        <col width="18%" />
-                        <col width="18%" />
-                        <col width="18%" />
-                        <col width="18%" />
-                        <col width="10%" />
-                    </colgroup>
-                    <thead>
-                        <tr>
-                            <th>
-                                Studies, outcomes, and confidence
-                                <HelpTextPopup
-                                    title="Help-text"
-                                    content="List references (or link to locations) informing the outcome(s). If it makes sense to do so, summarize confidence in same free text space."
-                                />
-                            </th>
-                            <th>
-                                Summary of key findings
-                                <HelpTextPopup
-                                    title="Help-text"
-                                    content="Briefly describe the primary results on the outcome(s), including  any within-stream mechanistic evidence informing biological plausibility (e.g., precursor events linked to adverse outcomes). If sensitivity issues were identified, describe the impact on the reliability of the reported findings."
-                                />
-                            </th>
-                            <th>
-                                Factors that increase certainty
-                                <HelpTextPopup
-                                    title="Help-text"
-                                    content="For entries with a free text option,  summarize the evidence supporting the selected factor(s) in a few words (required). Note any other factors that increased certainty"
-                                />
-                            </th>
-                            <th>
-                                Factors that decrease certainty
-                                <HelpTextPopup
-                                    title="Help-text"
-                                    content="For entries with a free text option,  summarize the evidence supporting the selected factor(s) in a few words (required). Note any other factors that decreased certainty"
-                                />
-                            </th>
-                            <th>
-                                Judgment(s) and rationale
-                                <HelpTextPopup
-                                    title="Help-text"
-                                    content="Hyperlink to framework for drawing strength of evidence judgments. Summarize any important interpretations, and the primary basis for the judgment(s)"
-                                />
-                            </th>
-                            <ActionsTh onClickNew={() => store[createMethodName]()} />
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {settings[contentType].rows.map((row, index) => {
-                            return (
-                                <EvidenceFormRow
-                                    store={store}
-                                    row={row}
-                                    index={index}
-                                    key={index}
-                                    contentType={contentType}
-                                    judgementRowSpan={judgementRowSpan}
-                                />
-                            );
-                        })}
-                    </tbody>
-                </table>
-            </div>
+                <div
+                    id={contentType + "-form"}
+                    style={{display: settings[contentType].hide_content ? "none" : "block"}}>
+                    <TextInput
+                        name="title"
+                        label="Subheading"
+                        value={settings[contentType].title}
+                        onChange={e => store.updateValue(`${contentType}.title`, e.target.value)}
+                        required
+                    />
+                    <CheckboxInput
+                        label="Merge judgement?"
+                        checked={settings[contentType].merge_judgement}
+                        onChange={e =>
+                            store.updateValue(`${contentType}.merge_judgement`, e.target.checked)
+                        }
+                        helpText={JUDGEMENT_HELP_TEXT}
+                        required
+                    />
+                    <table className="table table-sm table-bordered">
+                        <colgroup>
+                            <col width="18%" />
+                            <col width="18%" />
+                            <col width="18%" />
+                            <col width="18%" />
+                            <col width="18%" />
+                            <col width="10%" />
+                        </colgroup>
+                        <thead>
+                            <tr>
+                                <th>
+                                    Studies, outcomes, and confidence
+                                    <HelpTextPopup
+                                        title="Help-text"
+                                        content="List references (or link to locations) informing the outcome(s). If it makes sense to do so, summarize confidence in same free text space."
+                                    />
+                                </th>
+                                <th>
+                                    Summary of key findings
+                                    <HelpTextPopup
+                                        title="Help-text"
+                                        content="Briefly describe the primary results on the outcome(s), including  any within-stream mechanistic evidence informing biological plausibility (e.g., precursor events linked to adverse outcomes). If sensitivity issues were identified, describe the impact on the reliability of the reported findings."
+                                    />
+                                </th>
+                                <th>
+                                    Factors that increase certainty
+                                    <HelpTextPopup
+                                        title="Help-text"
+                                        content="For entries with a free text option,  summarize the evidence supporting the selected factor(s) in a few words (required). Note any other factors that increased certainty"
+                                    />
+                                </th>
+                                <th>
+                                    Factors that decrease certainty
+                                    <HelpTextPopup
+                                        title="Help-text"
+                                        content="For entries with a free text option,  summarize the evidence supporting the selected factor(s) in a few words (required). Note any other factors that decreased certainty"
+                                    />
+                                </th>
+                                <th>
+                                    Judgment(s) and rationale
+                                    <HelpTextPopup
+                                        title="Help-text"
+                                        content="Hyperlink to framework for drawing strength of evidence judgments. Summarize any important interpretations, and the primary basis for the judgment(s)"
+                                    />
+                                </th>
+                                <ActionsTh onClickNew={() => store[createMethodName]()} />
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {settings[contentType].rows.map((row, index) => {
+                                return (
+                                    <EvidenceFormRow
+                                        store={store}
+                                        row={row}
+                                        index={index}
+                                        key={index}
+                                        contentType={contentType}
+                                        judgementRowSpan={judgementRowSpan}
+                                    />
+                                );
+                            })}
+                        </tbody>
+                    </table>
+                </div>
+            </>
         );
     }),
     EvidenceFormRow = observer(props => {

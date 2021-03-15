@@ -61,6 +61,8 @@ class SummaryJudgementCell(BaseCell):
     cross_stream_coherence: str
     susceptibility: str
 
+    hide_content: bool
+
     def judgement_html(self):
         if self.judgement == SummaryJudgementChoices.NoJudgement:
             return ""
@@ -283,6 +285,7 @@ class EvidenceGroup(BaseCellGroup):
     title: str
     cell_rows: List[EvidenceRow] = Field([], alias="rows")
     merge_judgement: bool
+    hide_content: bool
 
     def _set_cells(self):
         cells = []
@@ -310,6 +313,7 @@ class MechanisticGroup(BaseCellGroup):
     col_header_1: str
     cell_rows: List[MechanisticRow] = Field([], alias="rows")
     merge_judgement: bool
+    hide_content: bool
 
     @property
     def column_headers(self):
@@ -397,17 +401,20 @@ class EvidenceProfileTable(BaseTable):
                 "title": "Evidence from studies of exposed humans",
                 "rows": [],
                 "merge_judgement": True,
+                "hide_content": False,
             },
             "animal": {
                 "title": "Evidence from animal studies",
                 "rows": [],
                 "merge_judgement": True,
+                "hide_content": False,
             },
             "mechanistic": {
                 "title": "Mechanistic evidence and supplemental information",
                 "col_header_1": "Biological events or pathways",
                 "rows": [],
                 "merge_judgement": True,
+                "hide_content": False,
             },
             "summary_judgement": {
                 "judgement": SummaryJudgementChoices.Inadequate,
@@ -417,5 +424,6 @@ class EvidenceProfileTable(BaseTable):
                 "human_relevance": "<p></p>",
                 "cross_stream_coherence": "<p></p>",
                 "susceptibility": "<p></p>",
+                "hide_content": False,
             },
         }
