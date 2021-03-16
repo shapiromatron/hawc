@@ -99,18 +99,37 @@ const EvidenceForm = observer(props => {
                             </tr>
                         </thead>
                         <tbody>
-                            {settings[contentType].rows.map((row, index) => {
-                                return (
-                                    <EvidenceFormRow
-                                        store={store}
-                                        row={row}
-                                        index={index}
-                                        key={index}
-                                        contentType={contentType}
-                                        judgementRowSpan={judgementRowSpan}
-                                    />
-                                );
-                            })}
+                            {settings[contentType].rows.length ? (
+                                settings[contentType].rows.map((row, index) => {
+                                    return (
+                                        <EvidenceFormRow
+                                            store={store}
+                                            row={row}
+                                            index={index}
+                                            key={index}
+                                            contentType={contentType}
+                                            judgementRowSpan={judgementRowSpan}
+                                        />
+                                    );
+                                })
+                            ) : (
+                                <tr>
+                                    <td colSpan={6}>
+                                        <TextInput
+                                            name="no_content_text"
+                                            label="No content text"
+                                            value={settings[contentType].no_content_text}
+                                            onChange={e =>
+                                                store.updateValue(
+                                                    `${contentType}.no_content_text`,
+                                                    e.target.value
+                                                )
+                                            }
+                                            required
+                                        />
+                                    </td>
+                                </tr>
+                            )}
                         </tbody>
                     </table>
                 </div>

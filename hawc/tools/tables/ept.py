@@ -286,13 +286,14 @@ class EvidenceGroup(BaseCellGroup):
     cell_rows: List[EvidenceRow] = Field([], alias="rows")
     merge_judgement: bool
     hide_content: bool
+    no_content_text: str
 
     def _set_cells(self):
         cells = []
         cells.append(GenericCell.parse_args(True, 0, 0, 1, 5, tag_wrapper(self.title, "h2")))
 
         if len(self.cell_rows) == 0:
-            text = tag_wrapper("No data available", "p", "em")
+            text = tag_wrapper(self.no_content_text, "p", "em")
             cells.append(GenericCell.parse_args(True, 1, 0, 1, 5, text))
         elif self.merge_judgement:
             self.cell_rows[0].judgement.row_span = len(self.cell_rows)
@@ -314,6 +315,7 @@ class MechanisticGroup(BaseCellGroup):
     cell_rows: List[MechanisticRow] = Field([], alias="rows")
     merge_judgement: bool
     hide_content: bool
+    no_content_text: str
 
     @property
     def column_headers(self):
@@ -332,7 +334,7 @@ class MechanisticGroup(BaseCellGroup):
         cells.extend(self.column_headers)
 
         if len(self.cell_rows) == 0:
-            text = tag_wrapper("No data available", "p", "em")
+            text = tag_wrapper(self.no_content_text, "p", "em")
             cells.append(GenericCell.parse_args(True, 2, 0, 1, 5, text))
         elif self.merge_judgement:
             self.cell_rows[0].judgement.row_span = len(self.cell_rows)
@@ -402,12 +404,14 @@ class EvidenceProfileTable(BaseTable):
                 "rows": [],
                 "merge_judgement": True,
                 "hide_content": False,
+                "no_content_text": "No data available",
             },
             "animal": {
                 "title": "Evidence from animal studies",
                 "rows": [],
                 "merge_judgement": True,
                 "hide_content": False,
+                "no_content_text": "No data available",
             },
             "mechanistic": {
                 "title": "Mechanistic evidence and supplemental information",
@@ -415,6 +419,7 @@ class EvidenceProfileTable(BaseTable):
                 "rows": [],
                 "merge_judgement": True,
                 "hide_content": False,
+                "no_content_text": "No data available",
             },
             "summary_judgement": {
                 "judgement": SummaryJudgementChoices.Inadequate,

@@ -6,11 +6,11 @@ import {FactorsCell} from "./Factors";
 import h from "shared/utils/helpers";
 
 const subTitleStyle = {backgroundColor: "#f5f5f5"},
-    NoDataRow = function() {
+    NoDataRow = function(no_content_text) {
         return (
             <tr>
                 <td colSpan={5}>
-                    <em>No data available.</em>
+                    <em>{no_content_text}</em>
                 </td>
             </tr>
         );
@@ -105,7 +105,7 @@ class EpidemiologyEvidenceRows extends Component {
                     </th>
                     {show_summary ? <SummaryCell store={this.props.store} /> : null}
                 </tr>
-                {exposed_human.rows.length == 0 ? NoDataRow() : null}
+                {exposed_human.rows.length == 0 ? NoDataRow(exposed_human.no_content_text) : null}
                 {exposed_human.rows.map((row, index) => (
                     <EvidenceRow
                         key={index}
@@ -139,7 +139,7 @@ class AnimalEvidenceRows extends Component {
                     </th>
                     {show_summary ? <SummaryCell store={this.props.store} /> : null}
                 </tr>
-                {animal.rows.length == 0 ? NoDataRow() : null}
+                {animal.rows.length == 0 ? NoDataRow(animal.no_content_text) : null}
                 {animal.rows.map((row, index) => (
                     <EvidenceRow
                         key={index}
@@ -179,7 +179,7 @@ class MechanisticEvidenceRows extends Component {
                     <th colSpan={3}>Summary of key findings and interpretation</th>
                     <th>Judgment(s) and rationale</th>
                 </tr>
-                {mechanistic.rows.length == 0 ? NoDataRow() : null}
+                {mechanistic.rows.length == 0 ? NoDataRow(mechanistic.no_content_text) : null}
                 {mechanistic.rows.map((row, index) => {
                     return (
                         <tr key={index}>

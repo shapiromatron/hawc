@@ -87,16 +87,35 @@ const MechanisticForm = observer(props => {
                             </tr>
                         </thead>
                         <tbody>
-                            {mechanistic.rows.map((row, index) => {
-                                return (
-                                    <MechanisticFormRow
-                                        store={store}
-                                        row={row}
-                                        index={index}
-                                        key={index}
-                                    />
-                                );
-                            })}
+                            {mechanistic.rows.length ? (
+                                mechanistic.rows.map((row, index) => {
+                                    return (
+                                        <MechanisticFormRow
+                                            store={store}
+                                            row={row}
+                                            index={index}
+                                            key={index}
+                                        />
+                                    );
+                                })
+                            ) : (
+                                <tr>
+                                    <td colSpan={4}>
+                                        <TextInput
+                                            name="no_content_text"
+                                            label="No content text"
+                                            value={mechanistic.no_content_text}
+                                            onChange={e =>
+                                                store.updateValue(
+                                                    "mechanistic.no_content_text",
+                                                    e.target.value
+                                                )
+                                            }
+                                            required
+                                        />
+                                    </td>
+                                </tr>
+                            )}
                         </tbody>
                     </table>
                 </div>{" "}
