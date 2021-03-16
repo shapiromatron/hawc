@@ -646,14 +646,31 @@ class TagtreeForm(VisualForm):
     )
     hide_empty_tag_nodes = forms.BooleanField(
         label="Hide tags with no references",
-        help_text="Prune tree; show only tags which contain at least on reference.",
+        help_text="Prune tree; show only tags which contain at least one reference.",
         required=False,
+    )
+    width = forms.IntegerField(
+        label="Width",
+        initial=1280,
+        min_value=500,
+        max_value=2000,
+        required=True,
+        help_text="The width of the visual, in pixels.",
+    )
+    height = forms.IntegerField(
+        label="Height",
+        initial=800,
+        min_value=500,
+        max_value=3000,
+        required=True,
+        help_text="The height of the visual, in pixels. If you have overlapping nodes, add more height",
     )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = self.setHelper()
         self.helper.add_row("root_node", 3, "col-md-4")
+        self.helper.add_row("hide_empty_tag_nodes", 3, "col-md-4")
 
         choices = [
             (tag.id, tag.get_nested_name())
@@ -677,6 +694,10 @@ class TagtreeForm(VisualForm):
             self.fields["pruned_tags"].initial = data["pruned_tags"]
         if "hide_empty_tag_nodes" in data:
             self.fields["hide_empty_tag_nodes"].initial = data["hide_empty_tag_nodes"]
+        if "width" in data:
+            self.fields["width"].initial = data["width"]
+        if "height" in data:
+            self.fields["height"].initial = data["height"]
 
     def save(self, commit=True):
         self.instance.settings = json.dumps(
@@ -685,6 +706,8 @@ class TagtreeForm(VisualForm):
                 required_tags=self.cleaned_data["required_tags"],
                 pruned_tags=self.cleaned_data["pruned_tags"],
                 hide_empty_tag_nodes=self.cleaned_data["hide_empty_tag_nodes"],
+                width=self.cleaned_data["width"],
+                height=self.cleaned_data["height"],
             )
         )
         return super().save(commit)
@@ -699,6 +722,9 @@ class TagtreeForm(VisualForm):
             "root_node",
             "required_tags",
             "pruned_tags",
+            "hide_empty_tag_nodes",
+            "width",
+            "height",
         )
 
 
