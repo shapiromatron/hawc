@@ -17,6 +17,10 @@ def add_filter(apps, schema_editor):
 
         settings["filters"] = []
         settings["filtersLogic"] = "and"
+        for column in settings["filter_widgets"]:
+            column["header"] = ""
+        for column in settings["table_fields"]:
+            column["header"] = ""
         visual.settings = json.dumps(settings)
         updates.append(visual)
 
@@ -38,6 +42,10 @@ def remove_filter(apps, schema_editor):
 
         settings.pop("filters", None)
         settings.pop("filtersLogic", None)
+        for column in settings["filter_widgets"]:
+            column.pop("header", None)
+        for column in settings["table_fields"]:
+            column.pop("header", None)
         visual.settings = json.dumps(settings)
         updates.append(visual)
 

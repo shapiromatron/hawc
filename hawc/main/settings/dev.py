@@ -38,6 +38,7 @@ CACHE_10_MIN = 0  # disable cache in dev mode
 
 LOGGING["loggers"][""]["handlers"] = ["console"]
 LOGGING["loggers"][""]["level"] = "INFO"
+LOGGING["loggers"]["django.db.backends"] = {"handlers": ["console"], "level": "DEBUG"}
 
 
 COMPRESS_ENABLED = False

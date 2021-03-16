@@ -158,7 +158,7 @@ class AnimalAssessmentViewset(
                 self.assessment, published_only=not unpublished
             )
             cache.set(key, df, settings.CACHE_1_HR)
-        export = FlatExport(df=df, filename=f"bio-endpoint-lis-{self.assessment.id}")
+        export = FlatExport(df=df, filename=f"bio-endpoint-list-{self.assessment.id}")
         return Response(export)
 
 

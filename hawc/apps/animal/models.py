@@ -5,6 +5,7 @@ from itertools import chain
 from typing import Any, Dict
 
 import pandas as pd
+from django.apps import apps
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
@@ -371,7 +372,11 @@ class AnimalGroup(models.Model):
 
     @property
     def generation_short(self):
-        return "Other" if self.generation == "Ot" else self.generation
+        return self.get_generation_short(self.generation)
+
+    @classmethod
+    def get_generation_short(cls, value) -> str:
+        return "Other" if value == "Ot" else value
 
     @staticmethod
     def flat_complete_header_row():
@@ -1015,6 +1020,20 @@ class Endpoint(BaseEndpoint):
         df["sex"] = df["sex"].map(AnimalGroup.SEX_DICT)
         df["generation"] = df["generation"].map(AnimalGroup.GENERATION_DICT)
         df["experiment type"] = df["experiment type"].map(Experiment.EXPERIMENT_TYPE_DICT)
+
+        # get animal-group values
+        df = df.merge(
+            AnimalGroup.objects.animal_description(assessment.id),
+            how="left",
+            left_on="animal group id",
+            right_on="animal group id",
+        )
+
+        # overall risk of bias evaluation
+        RiskOfBiasScore = apps.get_model("riskofbias", "RiskOfBiasScore")
+        df2 = RiskOfBiasScore.objects.overall_scores(assessment.id)
+        if df2 is not None:
+            df = df.merge(df2, how="left", left_on="study id", right_on="study id").fillna("")
         return df
 
     @classmethod
@@ -1050,6 +1069,7 @@ class Endpoint(BaseEndpoint):
             .groupby("study id")
             .agg(
                 {
+                    "overall study evaluation": unique_items,
                     "experiment type": unique_items,
                     "species": unique_items,
                     "strain": unique_items,

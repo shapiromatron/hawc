@@ -68,7 +68,7 @@ class FilterTable extends Component {
                     </colgroup>
                     <thead>
                         <tr>
-                            <th>Field name</th>
+                            <th>Data column</th>
                             <th>Filter type</th>
                             <th>Value</th>
                             <ActionsTh

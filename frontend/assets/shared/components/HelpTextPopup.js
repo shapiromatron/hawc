@@ -29,8 +29,11 @@ class HelpTextPopover extends Component {
 }
 
 HelpTextPopover.propTypes = {
-    title: PropTypes.string.isRequired,
+    title: PropTypes.string,
     content: PropTypes.string.isRequired,
+};
+HelpTextPopover.defaultProps = {
+    title: "Help-text",
 };
 
 export default HelpTextPopover;

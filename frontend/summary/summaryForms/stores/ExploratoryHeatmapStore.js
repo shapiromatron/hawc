@@ -15,10 +15,10 @@ let createDefaultAxisItem = function() {
         return {column: NULL_VALUE, wrap_text: 0, delimiter: ""};
     },
     createDefaultFilterWidget = function() {
-        return {column: NULL_VALUE, delimiter: "", on_click_event: NULL_VALUE};
+        return {column: NULL_VALUE, header: "", delimiter: "", on_click_event: NULL_VALUE};
     },
     createTableRow = function() {
-        return {column: NULL_VALUE, delimiter: "", on_click_event: NULL_VALUE};
+        return {column: NULL_VALUE, header: "", delimiter: "", on_click_event: NULL_VALUE};
     },
     createFilterRow = function() {
         return {column: NULL_VALUE, type: DATA_FILTER_CONTAINS, value: ""};
