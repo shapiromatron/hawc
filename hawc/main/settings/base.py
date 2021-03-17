@@ -260,6 +260,9 @@ GIT_COMMIT_FILE = PROJECT_ROOT / ".gitcommit"
 COMMIT = get_git_commit()
 
 
+# Google Tag Manager settings
+GTM_ID = os.getenv("GTM_ID")
+
 # PubMed settings
 PUBMED_API_KEY = os.getenv("PUBMED_API_KEY")
 PUBMED_MAX_QUERY_SIZE = 10000

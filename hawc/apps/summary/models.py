@@ -291,6 +291,8 @@ class Visual(models.Model):
         ("overall_confidence", "Final Study Confidence"),
     )
 
+    FAKE_INITIAL_ID = -1
+
     title = models.CharField(max_length=128)
     slug = models.SlugField(
         verbose_name="URL Name",
