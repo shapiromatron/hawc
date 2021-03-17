@@ -1,8 +1,8 @@
-import bmds
 from celery import shared_task
 from celery.utils.log import get_task_logger
 from django.apps import apps
-import numpy as np
+
+from .diagnostics import bmds2_service_healthcheck
 
 logger = get_task_logger(__name__)
 
@@ -15,14 +15,9 @@ def execute(session_id):
 
 
 @shared_task
-def bmds2_service_healthcheck() -> bool:
-    """Run a simple dataset just to make sure the external webservice is operational.
+def bmds2_healthcheck():
     """
-    dataset = bmds.DichotomousDataset(
-        doses=[0, 1.96, 5.69, 29.75], ns=[75, 49, 50, 49], incidences=[5, 1, 3, 14]
-    )
-    session = bmds.BMDS.versions["BMDS270"](dtype="D", dataset=dataset)
-    session.add_model(bmds.constants.M_Logistic)
-    session.execute()
-    return np.isclose(session.models[0].output["BMD"], 17.4, atol=0.1)
-    # TODO - check and make sure this actually works!
+    Run a simple dataset just to make sure the external webservice is operational.
+    """
+    status = bmds2_service_healthcheck()
+    logger.info(f"BMDS healthcheck successful: {status}")
