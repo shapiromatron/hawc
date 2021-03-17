@@ -12,9 +12,9 @@
   "last_updated": "2020-11-25T12:35:00.094667-06:00",
   "assessment": 2,
   "dose_units": 1,
-  "url": "/summary/visual/10/",
-  "url_update": "/summary/visual/10/update/",
-  "url_delete": "/summary/visual/10/delete/",
+  "url": "/summary/visual/assessment/2/bioassay-aggregation/",
+  "url_update": "/summary/visual/assessment/2/bioassay-aggregation/update/",
+  "url_delete": "/summary/visual/assessment/2/bioassay-aggregation/delete/",
   "endpoints": [
     {
       "id": 3,
