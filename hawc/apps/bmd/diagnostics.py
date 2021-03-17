@@ -18,8 +18,8 @@ def diagnostic_bmds2_execution(modeladmin, request, queryset):
     if success:
         message = "BMDS2 remote execution completed successfully."
     else:
-        message = "BMDS2 did not return successfully."
+        message = "BMDS2 remote execution did not complete successfully."
     modeladmin.message_user(request, message)
 
 
-diagnostic_bmds2_execution.short_description = "Diagnostic BMDS2 run"
+diagnostic_bmds2_execution.short_description = "Diagnostic BMDS2 remote execution"
