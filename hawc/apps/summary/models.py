@@ -249,7 +249,7 @@ class SummaryTable(models.Model):
             self.get_table()
         except PydanticError as e:
             raise ValidationError({"content": e.json()})
-        except Exception as e:
+        except ValueError as e:
             raise ValidationError({"content": str(e)})
 
         # validate tags used in text
