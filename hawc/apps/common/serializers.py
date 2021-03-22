@@ -151,6 +151,7 @@ class FlexibleChoiceField(serializers.ChoiceField):
         self.fail("invalid_choice", input=data)
 
 
+# reworked this; neest to test AWS
 class FlexibleDBLinkedChoiceField(FlexibleChoiceField):
     """
     like a FlexibleChoiceField, except it derives its choices from a model/database table
@@ -161,27 +162,37 @@ class FlexibleDBLinkedChoiceField(FlexibleChoiceField):
     """
 
     def __init__(self, mapped_model, serializer_class, field_for_descriptor, many):
-        # TODO - do we need a way to refresh this if the list changes after application startup?
+        super().__init__(choices=[])
+        print("NEW INIT STYLE TAKE TWO")
         self.serializer = serializer_class()
-        self.many = many
         self.mapped_model = mapped_model
-        mapped_objects = mapped_model.objects.all()
-        db_choices = []
-        try:
+        self.field_for_descriptor = field_for_descriptor
+        self.many = many
+        self.related_objects_loaded = False
+
+    def load_related_objects_if_needed(self):
+        if self.related_objects_loaded is False:
+            print(
+                f"loading related objects for [{self.mapped_model}] / [{self.serializer}] / [{self.field_for_descriptor}]"
+            )
+            db_choices = []
+            mapped_objects = self.mapped_model.objects.all()
+
             for mapped_object in mapped_objects:
                 loop_id = mapped_object.id
-                loop_descriptor = getattr(mapped_object, field_for_descriptor)
+                loop_descriptor = getattr(mapped_object, self.field_for_descriptor)
                 db_choices.append((loop_id, loop_descriptor))
-        except Exception:
-            print(
-                "unable to init FlexibleDBLinkedChoiceField; if during 'make build' this is ok..."
-            )
-            pass
 
-        super().__init__(choices=db_choices)
+            print("DEFERRED CHOICE INIT")
+            self.choices = db_choices
+            print("PAST DEFERRED INIT")
+            self.related_objects_loaded = True
+        else:
+            print("NO NEED ALREADY GOT IT")
 
     def to_representation(self, obj):
-        # print(f"to_representation for {obj} / {type(obj)}")
+        print(f"to_representation for {obj} / {type(obj)} ({self.related_objects_loaded})")
+        self.load_related_objects_if_needed()
 
         if self.many:
             rv = []
@@ -192,7 +203,9 @@ class FlexibleDBLinkedChoiceField(FlexibleChoiceField):
             return self.serializer.to_representation(obj)
 
     def to_internal_value(self, data):
-        # print(f"to_internal_value for {data} / {type(data)}")
+        print(f"to_internal_value for {data} / {type(data)} ({self.related_objects_loaded})")
+        self.load_related_objects_if_needed()
+
         if self.many:
             fixed = []
             for x in data:
