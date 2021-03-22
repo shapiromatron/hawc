@@ -163,18 +163,14 @@ class FlexibleDBLinkedChoiceField(FlexibleChoiceField):
 
     def __init__(self, mapped_model, serializer_class, field_for_descriptor, many):
         super().__init__(choices=[])
-        print("NEW INIT STYLE TAKE TWO")
         self.serializer = serializer_class()
         self.mapped_model = mapped_model
         self.field_for_descriptor = field_for_descriptor
         self.many = many
         self.related_objects_loaded = False
 
-    def load_related_objects_if_needed(self):
-        if self.related_objects_loaded is False:
-            print(
-                f"loading related objects for [{self.mapped_model}] / [{self.serializer}] / [{self.field_for_descriptor}]"
-            )
+    def load_related_objects_if_needed(self, force_reload=False):
+        if self.related_objects_loaded is False or force_reload:
             db_choices = []
             mapped_objects = self.mapped_model.objects.all()
 
@@ -183,15 +179,10 @@ class FlexibleDBLinkedChoiceField(FlexibleChoiceField):
                 loop_descriptor = getattr(mapped_object, self.field_for_descriptor)
                 db_choices.append((loop_id, loop_descriptor))
 
-            print("DEFERRED CHOICE INIT")
             self.choices = db_choices
-            print("PAST DEFERRED INIT")
             self.related_objects_loaded = True
-        else:
-            print("NO NEED ALREADY GOT IT")
 
     def to_representation(self, obj):
-        print(f"to_representation for {obj} / {type(obj)} ({self.related_objects_loaded})")
         self.load_related_objects_if_needed()
 
         if self.many:
@@ -203,15 +194,20 @@ class FlexibleDBLinkedChoiceField(FlexibleChoiceField):
             return self.serializer.to_representation(obj)
 
     def to_internal_value(self, data):
-        print(f"to_internal_value for {data} / {type(data)} ({self.related_objects_loaded})")
         self.load_related_objects_if_needed()
 
         if self.many:
-            fixed = []
-            for x in data:
-                resolved = super().to_internal_value(x)
-                fixed.append(resolved)
-            return fixed
+            # super() doesn't work inside list comprehensions; could this leverage __class__ somehow?
+            # resolved_ids = [super().to_internal_value(x) for x in data]
+            # for now we'll just write the loop by hand.
+
+            resolved_ids = []
+            for raw_input_el in data:
+                # each element could be an id or a readable value, so first we convert to id
+                resolved_ids.append(super().to_internal_value(raw_input_el))
+
+            # and now we return the actual objects in a list
+            return list(self.mapped_model.objects.filter(id__in=resolved_ids))
         else:
             obj_id = super().to_internal_value(data)
             obj = self.mapped_model.objects.get(id=obj_id)
