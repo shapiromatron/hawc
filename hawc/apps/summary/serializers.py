@@ -32,7 +32,8 @@ class DataPivotSerializer(CollectionDataPivotSerializer):
 class CollectionVisualSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         ret = super().to_representation(instance)
-        ret["url"] = instance.get_absolute_url()
+        if instance.id != instance.FAKE_INITIAL_ID:
+            ret["url"] = instance.get_absolute_url()
         ret["visual_type"] = instance.get_rob_visual_type_display(
             instance.get_visual_type_display()
         )
@@ -55,8 +56,9 @@ class VisualSerializer(CollectionVisualSerializer):
     def to_representation(self, instance):
         ret = super().to_representation(instance)
 
-        ret["url_update"] = instance.get_update_url()
-        ret["url_delete"] = instance.get_delete_url()
+        if instance.id != instance.FAKE_INITIAL_ID:
+            ret["url_update"] = instance.get_update_url()
+            ret["url_delete"] = instance.get_delete_url()
 
         ret["endpoints"] = [
             SerializerHelper.get_serialized(d, json=False) for d in instance.get_endpoints()

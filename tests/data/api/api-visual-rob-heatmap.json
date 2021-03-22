@@ -33,9 +33,9 @@
   "last_updated": "2020-05-08T14:36:41.324440-05:00",
   "assessment": 2,
   "dose_units": null,
-  "url": "/summary/visual/3/",
-  "url_update": "/summary/visual/3/update/",
-  "url_delete": "/summary/visual/3/delete/",
+  "url": "/summary/visual/assessment/2/rob-heatmap/",
+  "url_update": "/summary/visual/assessment/2/rob-heatmap/update/",
+  "url_delete": "/summary/visual/assessment/2/rob-heatmap/delete/",
   "endpoints": [],
   "studies": [
     {
@@ -389,7 +389,7 @@
                   "score_id": 16,
                   "content_type_name": "animal.animalgroup",
                   "object_id": 99999,
-                  "object_name": "<deleted id=3;score=16;obj_ct=49;obj_id=99999>",
+                  "object_name": "<deleted id=3;score=16;obj_ct=50;obj_id=99999>",
                   "object_url": "/404/"
                 }
               ],

@@ -85,9 +85,10 @@ class TagTreeViz extends D3Plot {
     }
 
     set_defaults() {
+        const {width, height} = this.stateStore.options;
         this.padding = {top: 40, right: 5, bottom: 5, left: 115};
-        this.w = 1280 - this.padding.left - this.padding.right;
-        this.h = 800 - this.padding.top - this.padding.bottom;
+        this.w = width - this.padding.left - this.padding.right;
+        this.h = height - this.padding.top - this.padding.bottom;
         this.path_length = 180;
         this.minimum_radius = 8;
         this.maximum_radius = 30;

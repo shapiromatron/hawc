@@ -3,16 +3,8 @@ import React, {Component} from "react";
 import PropTypes from "prop-types";
 
 import Loading from "shared/components/Loading";
-import {TableType} from "../constants";
-import GenericTable from "../genericTable/Table";
 
-const getTableComponent = function(table) {
-    if (table.table_type == TableType.GENERIC) {
-        return GenericTable;
-    } else {
-        throw "Unknown table type";
-    }
-};
+import {getViewTableComponent} from "../lookups";
 
 @inject("store")
 @observer
@@ -25,7 +17,7 @@ class Root extends Component {
         if (!hasTable) {
             return <Loading />;
         }
-        const Component = getTableComponent(table);
+        const Component = getViewTableComponent(table);
         return <Component store={tableStore} />;
     }
 }

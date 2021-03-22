@@ -86,7 +86,7 @@ SelectInput.propTypes = {
     helpText: PropTypes.string,
     id: PropTypes.string,
     label: PropTypes.string,
-    multiple: PropTypes.bool.isRequired,
+    multiple: PropTypes.bool,
     name: PropTypes.string,
     required: PropTypes.bool,
     selectSize: PropTypes.number,
@@ -96,6 +96,7 @@ SelectInput.propTypes = {
 
 SelectInput.defaultProps = {
     className: "form-control",
+    multiple: false,
 };
 
 export default SelectInput;

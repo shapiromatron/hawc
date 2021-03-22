@@ -1,6 +1,7 @@
 import json
-from typing import List
+from typing import Dict, List
 
+from django.core.exceptions import PermissionDenied
 from django.forms.models import model_to_dict
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
@@ -270,10 +271,20 @@ class TagReferences(TeamMemberOrHigherMixin, FormView):
             response["status"] = "success"
         return response
 
+    def get_ref_qs_filters(self) -> Dict:
+        raise NotImplementedError("Subclass requires implementation")
+
     def get_context_data(self, **kwargs):
+        if hasattr(self, "qs_reference"):
+            refs = self.qs_reference
+        else:
+            refs = refs = models.Reference.objects.filter(**self.get_ref_qs_filters()).distinct()
+        refs = refs.prefetch_related("searches", "identifiers", "tags")
         context = super().get_context_data(**kwargs)
         context["object"] = self.object
         context["model"] = self.model.__name__
+        context["tags"] = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
+        context["refs_json"] = json.dumps([ref.to_dict() for ref in refs])
         context["breadcrumbs"] = lit_overview_crumbs(self.request.user, self.assessment, "CHANGE")
         return context
 
@@ -291,13 +302,11 @@ class TagBySearch(TagReferences):
         )
         return self.object.get_assessment()
 
+    def get_ref_qs_filters(self):
+        return dict(searches=self.object)
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        qs = models.Reference.objects.filter(searches=self.object).prefetch_related(
-            "searches", "identifiers"
-        )
-        context["references"] = qs
-        context["tags"] = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
         context["breadcrumbs"][3] = Breadcrumb.from_object(self.object)
         context["breadcrumbs"].append(Breadcrumb(name="Update tags"))
         return context
@@ -314,13 +323,11 @@ class TagByReference(TagReferences):
         self.object = get_object_or_404(self.model, pk=self.kwargs.get("pk"))
         return self.object.get_assessment()
 
+    def get_ref_qs_filters(self):
+        return dict(pk=self.object.pk)
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        qs = self.model.objects.filter(pk=self.object.pk).prefetch_related(
-            "searches", "identifiers"
-        )
-        context["references"] = qs
-        context["tags"] = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
         context["breadcrumbs"][3] = Breadcrumb.from_object(self.object)
         context["breadcrumbs"].append(Breadcrumb(name="Update tags"))
         return context
@@ -337,15 +344,11 @@ class TagByTag(TagReferences):
         self.object = get_object_or_404(self.model, pk=self.kwargs.get("pk"))
         return self.object.get_assessment()
 
+    def get_ref_qs_filters(self):
+        return dict(tags=self.object.pk)
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        qs = (
-            models.Reference.objects.filter(tags=self.object.pk)
-            .distinct()
-            .prefetch_related("searches", "identifiers")
-        )
-        context["references"] = qs
-        context["tags"] = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
         context["breadcrumbs"][3] = Breadcrumb(name=f'Update "{self.object.name}" tags')
         return context
 
@@ -361,13 +364,12 @@ class TagByUntagged(TagReferences):
         self.object = get_object_or_404(Assessment, id=self.kwargs.get("pk"))
         return self.object
 
+    def get_ref_qs_filters(self):
+        return dict(tags=self.object.pk)
+
     def get_context_data(self, **kwargs):
+        self.qs_reference = models.Reference.objects.get_untagged_references(self.assessment)
         context = super().get_context_data(**kwargs)
-        qs = models.Reference.objects.get_untagged_references(self.assessment).prefetch_related(
-            "searches", "identifiers"
-        )
-        context["references"] = qs
-        context["tags"] = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
         context["breadcrumbs"][3] = Breadcrumb(name="Tag untagged references")
         return context
 
@@ -494,7 +496,7 @@ class RefDetail(BaseDetail):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["tags"] = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
-        context["object_json"] = self.object.get_json()
+        context["object_json"] = self.object.to_json()
         context["breadcrumbs"].insert(2, lit_overview_breadcrumb(self.assessment))
         return context
 
@@ -517,10 +519,17 @@ class RefDelete(BaseDelete):
     def get_success_url(self):
         return reverse_lazy("lit:overview", args=(self.assessment.pk,))
 
+    def permission_check_user_can_edit(self):
+        # perform standard check
+        super().permission_check_user_can_edit()
+        # and additional check
+        if self.object.has_study:
+            raise PermissionDenied("Cannot delete - object has related study")
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["tags"] = models.ReferenceFilterTag.get_all_tags(self.assessment.id)
-        context["object_json"] = self.object.get_json()
+        context["object_json"] = self.object.to_json()
         context["breadcrumbs"].insert(2, lit_overview_breadcrumb(self.assessment))
         return context
 
@@ -553,19 +562,16 @@ class RefsByTagJSON(BaseDetail):
 
         if search_id:
             search = models.Search.objects.get(id=search_id)
-            refs = search.get_references_with_tag(tag=tag, descendants=True).prefetch_related(
-                "searches", "identifiers"
-            )
+            qs = search.get_references_with_tag(tag=tag, descendants=True)
         elif tag:
-            refs = models.Reference.objects.get_references_with_tag(
-                tag, descendants=True
-            ).prefetch_related("searches", "identifiers")
+            qs = models.Reference.objects.get_references_with_tag(tag, descendants=True)
         else:
-            refs = models.Reference.objects.get_untagged_references(
-                self.assessment
-            ).prefetch_related("searches", "identifiers")
+            qs = models.Reference.objects.get_untagged_references(self.assessment)
 
-        response["refs"] = [ref.get_json(json_encode=False) for ref in refs]
+        response["refs"] = [
+            ref.to_dict()
+            for ref in qs.select_related("study").prefetch_related("searches", "identifiers")
+        ]
         self.response = response
 
     def render_to_response(self, context, **response_kwargs):

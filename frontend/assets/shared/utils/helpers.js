@@ -247,10 +247,26 @@ const helpers = {
         // column and row are 0-based
         return `${excelColumn(column)}${row + 1}`;
     },
+    hasInnerText(text) {
+        return (
+            $(text)
+                .text()
+                .trim().length > 0
+        );
+    },
     numericAxisFormat: d3.format(",~g"),
     COLORS: {
         WHITE: "#ffffff",
         BLUE: "#003d7b",
+    },
+    pushUrlParamsState(key, value) {
+        var queryParams = new URLSearchParams(window.location.search);
+        if (_.isNil(value)) {
+            queryParams.delete(key);
+        } else {
+            queryParams.set(key, value);
+        }
+        history.pushState(null, null, "?" + queryParams.toString());
     },
 };
 

@@ -2,16 +2,7 @@ import _ from "lodash";
 import {action, computed, observable} from "mobx";
 import h from "shared/utils/helpers";
 
-import {TableType} from "../constants";
-import GenericTableStore from "../genericTable/store";
-
-const getTableStore = function(table) {
-    if (table.table_type == TableType.GENERIC) {
-        return new GenericTableStore(false, table.content);
-    } else {
-        throw "Unknown table type";
-    }
-};
+import {getTableStore} from "../lookups";
 
 class SummaryTableViewStore {
     @observable table = null;

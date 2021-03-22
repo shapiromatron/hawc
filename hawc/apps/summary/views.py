@@ -187,6 +187,14 @@ class SummaryTableDelete(GetSummaryTableMixin, BaseDelete):
 
 
 # VISUALIZATIONS
+class GetVisualizationObjectMixin:
+    def get_object(self):
+        slug = self.kwargs.get("slug")
+        assessment = self.kwargs.get("pk")
+        obj = get_object_or_404(models.Visual, assessment=assessment, slug=slug)
+        return super().get_object(object=obj)
+
+
 class VisualizationList(BaseList):
     parent_model = Assessment
     model = models.Visual
@@ -201,7 +209,16 @@ class VisualizationList(BaseList):
         return context
 
 
-class VisualizationDetail(BaseDetail):
+class VisualizationByIdDetail(RedirectView):
+    """
+    Redirect to standard visual page; useful for developers referencing by database id.
+    """
+
+    def get_redirect_url(*args, **kwargs):
+        return get_object_or_404(models.Visual, id=kwargs.get("pk")).get_absolute_url()
+
+
+class VisualizationDetail(GetVisualizationObjectMixin, BaseDetail):
     model = models.Visual
 
     def get_context_data(self, **kwargs):
@@ -270,7 +287,7 @@ class VisualizationCreate(BaseCreate):
 
     def get_initial_visual(self, context) -> Dict:
         instance = self.model()
-        instance.id = 999999999999
+        instance.id = instance.FAKE_INITIAL_ID
         instance.assessment = self.assessment
         instance.visual_type = context["visual_type"]
         return serializers.VisualSerializer().to_representation(instance)
@@ -288,7 +305,7 @@ class VisualizationCreateTester(VisualizationCreate):
         return HttpResponse(response, content_type="application/json")
 
 
-class VisualizationUpdate(BaseUpdate):
+class VisualizationUpdate(GetVisualizationObjectMixin, BaseUpdate):
     success_message = "Visualization updated."
     model = models.Visual
 
@@ -326,7 +343,7 @@ class VisualizationUpdate(BaseUpdate):
         return context
 
 
-class VisualizationDelete(BaseDelete):
+class VisualizationDelete(GetVisualizationObjectMixin, BaseDelete):
     success_message = "Visualization deleted."
     model = models.Visual
 

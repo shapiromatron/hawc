@@ -24,4 +24,5 @@ def from_settings(request):
         commit=settings.COMMIT,
         flavor=settings.HAWC_FLAVOR,
         extra_branding=settings.EXTRA_BRANDING,
+        GTM_ID=settings.GTM_ID,
     )
