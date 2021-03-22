@@ -12,7 +12,12 @@ from reversion import revisions as reversion
 from scipy.stats import t
 
 from ..assessment.models import Assessment, BaseEndpoint, DSSTox, EffectTag
-from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper, df_move_column
+from ..common.helper import (
+    HAWCDjangoJSONEncoder,
+    SerializerHelper,
+    df_move_column,
+    find_matching_list_element_by_value,
+)
 from ..study.models import Study
 from . import managers
 
@@ -1723,7 +1728,12 @@ class GroupResult(models.Model):
             ser["upper_range"],
             ser["lower_bound_interval"],
             ser["upper_bound_interval"],
-            ser["p_value_qualifier"],
+            find_matching_list_element_by_value(
+                GroupResult.P_VALUE_QUALIFIER_CHOICES,
+                ser["p_value_qualifier"],
+                lookup_index=0,
+                return_index=1,
+            ),
             ser["p_value"],
             ser["is_main_finding"],
             ser["main_finding_support"],
@@ -1863,6 +1873,11 @@ class GroupResult(models.Model):
 
     def get_assessment(self):
         return self.result.get_assessment()
+
+    def get_p_value_qualifier_display(self):
+        return find_matching_list_element_by_value(
+            self.P_VALUE_QUALIFIER_CHOICES, self.p_value_qualifier, lookup_index=0, return_index=1
+        )
 
 
 reversion.register(Country)

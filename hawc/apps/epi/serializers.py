@@ -4,11 +4,7 @@ from rest_framework import serializers
 from ..assessment.serializers import DoseUnitsSerializer, DSSToxSerializer, EffectTagsSerializer
 from ..common.api import DynamicFieldsMixin, GetOrCreateMixin, IdLookupMixin
 from ..common.helper import SerializerHelper
-from ..common.serializers import (
-    FlexibleChoiceField,
-    FlexibleDBLinkedChoiceField,
-    ReadableChoiceField,
-)
+from ..common.serializers import FlexibleChoiceField, FlexibleDBLinkedChoiceField
 from ..study.serializers import StudySerializer
 from . import forms, models
 
@@ -67,7 +63,6 @@ class OutcomeLinkSerializer(serializers.ModelSerializer):
         fields = ("id", "name", "url")
 
 
-# class GroupNumericalDescriptionsSerializer(FormIntegrationMixin, serializers.ModelSerializer):
 class GroupNumericalDescriptionsSerializer(serializers.ModelSerializer):
     form_integration_class = forms.GroupNumericalDescriptionsForm
 
@@ -84,7 +79,6 @@ class GroupNumericalDescriptionsSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-# class GroupSerializer(IdLookupMixin, FormIntegrationMixin, serializers.ModelSerializer):
 class GroupSerializer(IdLookupMixin, serializers.ModelSerializer):
     form_integration_class = forms.GroupForm
 
@@ -139,7 +133,6 @@ class ComparisonSetLinkSerializer(serializers.ModelSerializer):
         fields = ("id", "name", "url")
 
 
-# class CriteriaSerializer(GetOrCreateMixin, FormIntegrationMixin, serializers.ModelSerializer):
 class CriteriaSerializer(GetOrCreateMixin, serializers.ModelSerializer):
     form_integration_class = forms.CriteriaForm
 
@@ -157,7 +150,6 @@ class SimpleStudyPopulationCriteriaSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-# class StudyPopulationSerializer(IdLookupMixin, FormIntegrationMixin, serializers.ModelSerializer):
 class StudyPopulationSerializer(IdLookupMixin, serializers.ModelSerializer):
     form_integration_class = forms.StudyPopulationForm
 
@@ -216,7 +208,6 @@ class SimpleExposureSerializer(IdLookupMixin, serializers.ModelSerializer):
         fields = "__all__"
 
 
-# class ExposureWriteSerializer(FormIntegrationMixin, serializers.ModelSerializer):
 class ExposureWriteSerializer(serializers.ModelSerializer):
     central_tendencies = CentralTendencySerializer(many=True, read_only=True)
     form_integration_class = forms.ExposureForm
@@ -226,13 +217,14 @@ class ExposureWriteSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-# class GroupResultSerializer(FormIntegrationMixin, serializers.ModelSerializer):
 class GroupResultSerializer(serializers.ModelSerializer):
     form_integration_class = forms.GroupResultForm
 
     main_finding_support = FlexibleChoiceField(choices=models.GroupResult.MAIN_FINDING_CHOICES)
-    p_value_qualifier = ReadableChoiceField(choices=models.GroupResult.P_VALUE_QUALIFIER_CHOICES)
     p_value_text = serializers.CharField(read_only=True)
+    p_value_qualifier_display = serializers.CharField(
+        source="get_p_value_qualifier_display", read_only=True
+    )
     lower_bound_interval = serializers.FloatField(read_only=True)
     upper_bound_interval = serializers.FloatField(read_only=True)
     group = GroupSerializer()
@@ -272,7 +264,6 @@ class SimpleComparisonSetSerializer(IdLookupMixin, serializers.ModelSerializer):
         fields = "__all__"
 
 
-# class ResultSerializer(FormIntegrationMixin, serializers.ModelSerializer):
 class ResultSerializer(serializers.ModelSerializer):
     form_integration_class = forms.ResultForm
 
@@ -309,7 +300,6 @@ class ResultSerializer(serializers.ModelSerializer):
         exclude = ("adjustment_factors",)
 
 
-# class OutcomeSerializer(FormIntegrationMixin, serializers.ModelSerializer):
 class OutcomeSerializer(serializers.ModelSerializer):
     form_integration_class = forms.OutcomeForm
 
@@ -327,8 +317,6 @@ class OutcomeSerializer(serializers.ModelSerializer):
 
 
 class ComparisonSetSerializer(serializers.ModelSerializer):
-    # had some trouble getting this for work with FormIntegrationMixin;
-    # related to the StudyPopulation/Outcome split which I don't fully understand...
     url = serializers.CharField(source="get_absolute_url", read_only=True)
     exposure = SimpleExposureSerializer()
     outcome = OutcomeSerializer(read_only=True)
