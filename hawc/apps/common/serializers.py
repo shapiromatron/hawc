@@ -1,7 +1,7 @@
 from typing import Any, Dict, List, Type
 
 import pydantic
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import models
 from rest_framework import serializers
 from rest_framework.renderers import JSONRenderer
@@ -209,3 +209,21 @@ class FlexibleDBLinkedChoiceField(FlexibleChoiceField):
             obj_id = super().to_internal_value(data)
             obj = self.mapped_model.objects.get(id=obj_id)
             return obj
+
+
+class IdLookupMixin:
+    """
+    class to be mixed into serializers; provides a default to_internal_value
+    implementation that attempts to look up an item with the given int id.
+    """
+
+    def to_internal_value(self, data):
+        if type(data) is int:
+            try:
+                obj = self.Meta.model.objects.get(id=data)
+                return obj
+            except ObjectDoesNotExist:
+                err_msg = f"Invalid id supplied for {self.Meta.model.__name__} lookup"
+                raise serializers.ValidationError(err_msg)
+
+        return super().to_internal_value(data)

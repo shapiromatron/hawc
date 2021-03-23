@@ -2,8 +2,9 @@ from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import exceptions, serializers
 
 from ..assessment.serializers import AssessmentMiniSerializer
-from ..common.api import DynamicFieldsMixin, IdLookupMixin
+from ..common.api import DynamicFieldsMixin
 from ..common.helper import SerializerHelper
+from ..common.serializers import IdLookupMixin
 from ..lit.models import Reference
 from ..lit.serializers import IdentifiersSerializer, ReferenceTagsSerializer
 from ..riskofbias.serializers import RiskOfBiasSerializer

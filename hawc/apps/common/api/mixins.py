@@ -1,5 +1,4 @@
 from django.conf import settings
-from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404
 from django.utils.encoding import force_str
 from rest_framework import serializers, status
@@ -186,24 +185,6 @@ class GetOrCreateMixin:
     def create(self, validated_data, *args, **kwargs):
         instance, created = self.Meta.model.objects.get_or_create(**validated_data)
         return instance
-
-
-class IdLookupMixin:
-    """
-    class to be mixed into serializers; provides a default to_internal_value
-    implementation that attempts to look up an item with the given int id.
-    """
-
-    def to_internal_value(self, data):
-        if type(data) is int:
-            try:
-                obj = self.Meta.model.objects.get(id=data)
-                return obj
-            except ObjectDoesNotExist:
-                err_msg = f"Invalid id supplied for {self.Meta.model.__name__} lookup"
-                raise serializers.ValidationError(err_msg)
-
-        return super().to_internal_value(data)
 
 
 class PermCheckerMixin:
