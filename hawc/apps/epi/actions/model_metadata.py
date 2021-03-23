@@ -25,10 +25,8 @@ def tuple_to_dict(tuple):
 
 
 def get_all_model_objects(object_class, display_field="name", val_field="id"):
-    return {
-        getattr(obj, val_field): getattr(obj, display_field)
-        for obj in object_class.objects.all().order_by(Lower(display_field))
-    }
+    object_values = object_class.objects.all().order_by(Lower(display_field)).values()
+    return {x[val_field]: x[display_field] for x in object_values}
 
 
 class NoInput(BaseModel):
