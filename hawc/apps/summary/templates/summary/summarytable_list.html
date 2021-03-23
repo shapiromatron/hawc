@@ -43,6 +43,9 @@
       {% endfor %}
     </tbody>
   </table>
+  {% with total=object_list.count %}
+    <p><b>{{total}} table{{ total|pluralize }} available.</b></p>
+  {% endwith %}
 {% else %}
   {% if obj_perms.edit %}
     <p><i>No tables are available - create one!</i></p>
