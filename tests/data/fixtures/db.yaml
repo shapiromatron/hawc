@@ -5037,6 +5037,8 @@
             - key: -20
               long_description: ''
               short_description: ''
+        hide_content: false
+        no_content_text: No data available
         title: Evidence from animal studies
         merge_judgement: false
       mechanistic:
@@ -5047,6 +5049,8 @@
             description: '<p>Event #1. Event #2. Event #3.</p>'
           judgement:
             description: <p>Judgement was...</p>
+        hide_content: false
+        no_content_text: No data available
         title: Mechanistic evidence and supplemental information
         col_header_1: Biological events or pathways
         merge_judgement: true
@@ -5078,10 +5082,13 @@
             - key: 0
               long_description: ''
               short_description: ''
+        hide_content: false
+        no_content_text: No data available
         title: Evidence from studies of exposed humans
         merge_judgement: true
       summary_judgement:
         judgement: 20
+        hide_content: false
         description: <p>Water hydrates individuals who drink it.</p>
         susceptibility: <p>No additionally susceptible groups.</p>
         human_relevance: <p>Humans require water as well.</p>
