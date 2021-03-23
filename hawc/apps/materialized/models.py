@@ -1,11 +1,22 @@
 from django.apps import apps
+from django.core.cache import cache
 from django.db import connection, models, transaction
+
+from . import managers
 
 
 class MaterializedView(models.Model):
     class Meta:
         abstract = True
         managed = False
+
+    @classmethod
+    def set_refresh_cache(cls, bool):
+        cache.set(f"refresh-{cls._meta.db_table}", bool)
+
+    @classmethod
+    def get_refresh_cache(cls):
+        cache.get(f"refresh-{cls._meta.db_table}", False)
 
     @classmethod
     @transaction.atomic
@@ -15,7 +26,7 @@ class MaterializedView(models.Model):
 
 
 class Score(MaterializedView):
-    objects = models.Manager()
+    objects = managers.MaterializedScoreManager
 
     score = models.ForeignKey(
         "riskofbias.RiskOfBiasScore",
