@@ -135,18 +135,15 @@ class FlexibleChoiceField(serializers.ChoiceField):
             return ""
 
         for key, val in self._choices.items():
-            # print(f"\t[{key}] -> [{val}]")
-            if val == data:
+            if key == data or val == data:
                 return key
 
-            if key == data:
-                return key
-
-            # case-insensitive string matching
-            if type(val) is str and type(data) is str:
-                if val is not None:
-                    if val.lower() == data.lower():
-                        return key
+        # no exact match; if a string was passed in let's try case-insensitive value match
+        if type(data) is str:
+            lowered_data = data.lower()
+            for key, val in self._choices.items():
+                if val is not None and str(val).lower() == lowered_data:
+                    return key
 
         self.fail("invalid_choice", input=data)
 
