@@ -16,103 +16,99 @@ const IntegrationForm = observer(props => {
     return (
         <>
             <CheckboxInput
-                label="Hide content?"
+                label="Hide section?"
                 checked={summary_judgement.hide_content}
                 onChange={e => {
                     store.updateValue("summary_judgement.hide_content", e.target.checked);
-                    $("#integration-form").css("display", e.target.checked ? "none" : "block");
                 }}
                 helpText={HIDE_CONTENT_HELP_TEXT}
                 required
             />
-            <div
-                id="integration-form"
-                style={{display: summary_judgement.hide_content ? "none" : "block"}}>
-                <div className="form-row">
-                    <div className="col-md-6">
-                        <JudgementSelector
-                            value={summary_judgement.judgement}
-                            handleSelect={value =>
-                                store.updateValue("summary_judgement.judgement", parseInt(value))
-                            }
-                            summary={true}
-                        />
-                    </div>
-                    <div className="col-md-6">
-                        {summary_judgement.judgement === CUSTOM_JUDGEMENT ? (
-                            <div className="form-row">
-                                <div className="col-md-6">
-                                    <TextInput
-                                        name="custom_judgement_icon"
-                                        label="Custom icon"
-                                        value={summary_judgement.custom_judgement_icon}
-                                        onChange={e =>
-                                            store.updateValue(
-                                                "summary_judgement.custom_judgement_icon",
-                                                e.target.value
-                                            )
-                                        }
-                                        required
-                                    />
-                                </div>
-                                <div className="col-md-6">
-                                    <TextInput
-                                        name="custom_judgement_label"
-                                        label="Custom label"
-                                        value={summary_judgement.custom_judgement_label}
-                                        onChange={e =>
-                                            store.updateValue(
-                                                "summary_judgement.custom_judgement_label",
-                                                e.target.value
-                                            )
-                                        }
-                                        required
-                                    />
-                                </div>
+            <div className={summary_judgement.hide_content ? "form-row hidden" : "form-row"}>
+                <div className="col-md-6">
+                    <JudgementSelector
+                        value={summary_judgement.judgement}
+                        handleSelect={value =>
+                            store.updateValue("summary_judgement.judgement", parseInt(value))
+                        }
+                        summary={true}
+                    />
+                </div>
+                <div className="col-md-6">
+                    {summary_judgement.judgement === CUSTOM_JUDGEMENT ? (
+                        <div className="form-row">
+                            <div className="col-md-6">
+                                <TextInput
+                                    name="custom_judgement_icon"
+                                    label="Custom icon"
+                                    value={summary_judgement.custom_judgement_icon}
+                                    onChange={e =>
+                                        store.updateValue(
+                                            "summary_judgement.custom_judgement_icon",
+                                            e.target.value
+                                        )
+                                    }
+                                    required
+                                />
                             </div>
-                        ) : null}
-                    </div>
+                            <div className="col-md-6">
+                                <TextInput
+                                    name="custom_judgement_label"
+                                    label="Custom label"
+                                    value={summary_judgement.custom_judgement_label}
+                                    onChange={e =>
+                                        store.updateValue(
+                                            "summary_judgement.custom_judgement_label",
+                                            e.target.value
+                                        )
+                                    }
+                                    required
+                                />
+                            </div>
+                        </div>
+                    ) : null}
+                </div>
 
-                    <div className="col-md-6">
-                        <QuillTextInput
-                            label="Description"
-                            helpText="Enter the overall summary of expert interpretation across the assessed set of biological events, potential mechanisms of toxicity, or other analysis approach (e.g., AOP). Include the primary evidence supporting the interpretation(s).  Describe and substantiate the extent to which the evidence influences inferences across evidence streams. Characterize the limitations of the analyses and highlight data gaps. May have overlap with factors summarized for other streams"
-                            value={summary_judgement.description}
-                            onChange={value =>
-                                store.updateValue("summary_judgement.description", value)
-                            }
-                        />
-                    </div>
-                    <div className="col-md-6">
-                        <QuillTextInput
-                            label="Susceptibility"
-                            helpText="..."
-                            value={summary_judgement.susceptibility}
-                            onChange={value =>
-                                store.updateValue("summary_judgement.susceptibility", value)
-                            }
-                        />
-                    </div>
-                    <div className="col-md-6">
-                        <QuillTextInput
-                            label="Human relevance"
-                            helpText="..."
-                            value={summary_judgement.human_relevance}
-                            onChange={value =>
-                                store.updateValue("summary_judgement.human_relevance", value)
-                            }
-                        />
-                    </div>
-                    <div className="col-md-6">
-                        <QuillTextInput
-                            label="Cross-stream coherence"
-                            helpText="..."
-                            value={summary_judgement.cross_stream_coherence}
-                            onChange={value =>
-                                store.updateValue("summary_judgement.cross_stream_coherence", value)
-                            }
-                        />
-                    </div>
+                <div className="col-md-6">
+                    <QuillTextInput
+                        label="Description"
+                        helpText="Enter the overall summary of expert interpretation across the assessed set of biological events, potential mechanisms of toxicity, or other analysis approach (e.g., AOP). Include the primary evidence supporting the interpretation(s).  Describe and substantiate the extent to which the evidence influences inferences across evidence streams. Characterize the limitations of the analyses and highlight data gaps. May have overlap with factors summarized for other streams"
+                        value={summary_judgement.description}
+                        onChange={value =>
+                            store.updateValue("summary_judgement.description", value)
+                        }
+                    />
+                </div>
+                <div className="col-md-6">
+                    <QuillTextInput
+                        label="Susceptibility"
+                        helpText="..."
+                        value={summary_judgement.susceptibility}
+                        onChange={value =>
+                            store.updateValue("summary_judgement.susceptibility", value)
+                        }
+                    />
+                </div>
+
+                <div className="col-md-6">
+                    <QuillTextInput
+                        label="Human relevance"
+                        helpText="..."
+                        value={summary_judgement.human_relevance}
+                        onChange={value =>
+                            store.updateValue("summary_judgement.human_relevance", value)
+                        }
+                    />
+                </div>
+                <div className="col-md-6">
+                    <QuillTextInput
+                        label="Cross-stream coherence"
+                        helpText="..."
+                        value={summary_judgement.cross_stream_coherence}
+                        onChange={value =>
+                            store.updateValue("summary_judgement.cross_stream_coherence", value)
+                        }
+                    />
                 </div>
             </div>
         </>

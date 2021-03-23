@@ -10,7 +10,12 @@ import {ActionsTh, MoveRowTd} from "shared/components/EditableRowData";
 import {JudgementSelector} from "./Judgement";
 import {FactorsForm} from "./Factors";
 
-import {JUDGEMENT_HELP_TEXT, CUSTOM_JUDGEMENT, HIDE_CONTENT_HELP_TEXT} from "./common";
+import {
+    JUDGEMENT_HELP_TEXT,
+    CUSTOM_JUDGEMENT,
+    HIDE_CONTENT_HELP_TEXT,
+    NO_CONTENT_HELP_TEXT,
+} from "./common";
 
 const EvidenceForm = observer(props => {
         const {store, contentType, createMethodName, judgementRowSpan} = props,
@@ -18,24 +23,18 @@ const EvidenceForm = observer(props => {
         return (
             <>
                 <CheckboxInput
-                    label="Hide content?"
+                    label="Hide section?"
                     checked={settings[contentType].hide_content}
                     onChange={e => {
                         store.updateValue(`${contentType}.hide_content`, e.target.checked);
-                        $(`#${contentType}-form`).css(
-                            "display",
-                            e.target.checked ? "none" : "block"
-                        );
                     }}
                     helpText={HIDE_CONTENT_HELP_TEXT}
                     required
                 />
-                <div
-                    id={contentType + "-form"}
-                    style={{display: settings[contentType].hide_content ? "none" : "block"}}>
+                <div className={settings[contentType].hide_content ? "hidden" : null}>
                     <TextInput
                         name="title"
-                        label="Subheading"
+                        label="Section subheading"
                         value={settings[contentType].title}
                         onChange={e => store.updateValue(`${contentType}.title`, e.target.value)}
                         required
@@ -117,7 +116,6 @@ const EvidenceForm = observer(props => {
                                     <td colSpan={6}>
                                         <TextInput
                                             name="no_content_text"
-                                            label="No content text"
                                             value={settings[contentType].no_content_text}
                                             onChange={e =>
                                                 store.updateValue(
@@ -125,6 +123,7 @@ const EvidenceForm = observer(props => {
                                                     e.target.value
                                                 )
                                             }
+                                            helpText={NO_CONTENT_HELP_TEXT}
                                             required
                                         />
                                     </td>

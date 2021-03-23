@@ -8,7 +8,7 @@ import QuillTextInput from "shared/components/QuillTextInput";
 import CheckboxInput from "shared/components/CheckboxInput";
 import {ActionsTh, MoveRowTd} from "shared/components/EditableRowData";
 
-import {JUDGEMENT_HELP_TEXT, HIDE_CONTENT_HELP_TEXT} from "./common";
+import {JUDGEMENT_HELP_TEXT, HIDE_CONTENT_HELP_TEXT, NO_CONTENT_HELP_TEXT} from "./common";
 
 const MechanisticForm = observer(props => {
         const {store} = props,
@@ -16,21 +16,18 @@ const MechanisticForm = observer(props => {
         return (
             <>
                 <CheckboxInput
-                    label="Hide content?"
+                    label="Hide section?"
                     checked={mechanistic.hide_content}
                     onChange={e => {
                         store.updateValue("mechanistic.hide_content", e.target.checked);
-                        $("#mechanistic-form").css("display", e.target.checked ? "none" : "block");
                     }}
                     helpText={HIDE_CONTENT_HELP_TEXT}
                     required
                 />
-                <div
-                    id="mechanistic-form"
-                    style={{display: mechanistic.hide_content ? "none" : "block"}}>
+                <div className={mechanistic.hide_content ? "hidden" : null}>
                     <TextInput
                         name="title"
-                        label="Subheading"
+                        label="Section subheading"
                         value={mechanistic.title}
                         onChange={e => store.updateValue("mechanistic.title", e.target.value)}
                         required
@@ -103,7 +100,6 @@ const MechanisticForm = observer(props => {
                                     <td colSpan={4}>
                                         <TextInput
                                             name="no_content_text"
-                                            label="No content text"
                                             value={mechanistic.no_content_text}
                                             onChange={e =>
                                                 store.updateValue(
@@ -111,6 +107,7 @@ const MechanisticForm = observer(props => {
                                                     e.target.value
                                                 )
                                             }
+                                            helpText={NO_CONTENT_HELP_TEXT}
                                             required
                                         />
                                     </td>
@@ -118,7 +115,7 @@ const MechanisticForm = observer(props => {
                             )}
                         </tbody>
                     </table>
-                </div>{" "}
+                </div>
             </>
         );
     }),
