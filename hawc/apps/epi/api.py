@@ -16,9 +16,9 @@ from ..assessment.serializers import DoseUnitsSerializer
 from ..common.api import (
     CleanupFieldsBaseViewSet,
     LegacyAssessmentAdapterMixin,
-    PermCheckerMixin,
     ReadWriteSerializerMixin,
 )
+from ..common.api.viewsets import PermCheckerMixin
 from ..common.helper import FlatExport, find_matching_list_element_by_value, re_digits
 from ..common.renderers import PandasRenderers
 from ..common.serializers import HeatmapQuerySerializer, UnusedSerializer
