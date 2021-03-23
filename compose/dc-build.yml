@@ -4,9 +4,13 @@ services:
 
   postgres:
     build: ./compose/postgres
+    ports:
+      - "0.0.0.0:5432:5432"
 
   redis:
     build: ./compose/redis
+    ports:
+      - "0.0.0.0:6379:6379"
 
   app:
     build:

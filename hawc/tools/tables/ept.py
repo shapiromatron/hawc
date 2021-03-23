@@ -49,8 +49,6 @@ class SummaryJudgementChoices(IntEnum):
 
 
 class SummaryJudgementCell(BaseCell):
-    row: int = 2
-    column: int = 5
 
     judgement: SummaryJudgementChoices
     custom_judgement_icon: str = ""
@@ -60,6 +58,8 @@ class SummaryJudgementCell(BaseCell):
     human_relevance: str
     cross_stream_coherence: str
     susceptibility: str
+
+    hide_content: bool
 
     def judgement_html(self):
         if self.judgement == SummaryJudgementChoices.NoJudgement:
@@ -283,13 +283,15 @@ class EvidenceGroup(BaseCellGroup):
     title: str
     cell_rows: List[EvidenceRow] = Field([], alias="rows")
     merge_judgement: bool
+    hide_content: bool
+    no_content_text: str
 
     def _set_cells(self):
         cells = []
         cells.append(GenericCell.parse_args(True, 0, 0, 1, 5, tag_wrapper(self.title, "h2")))
 
         if len(self.cell_rows) == 0:
-            text = tag_wrapper("No data available", "p", "em")
+            text = tag_wrapper(self.no_content_text, "p", "em")
             cells.append(GenericCell.parse_args(True, 1, 0, 1, 5, text))
         elif self.merge_judgement:
             self.cell_rows[0].judgement.row_span = len(self.cell_rows)
@@ -310,6 +312,8 @@ class MechanisticGroup(BaseCellGroup):
     col_header_1: str
     cell_rows: List[MechanisticRow] = Field([], alias="rows")
     merge_judgement: bool
+    hide_content: bool
+    no_content_text: str
 
     @property
     def column_headers(self):
@@ -328,7 +332,7 @@ class MechanisticGroup(BaseCellGroup):
         cells.extend(self.column_headers)
 
         if len(self.cell_rows) == 0:
-            text = tag_wrapper("No data available", "p", "em")
+            text = tag_wrapper(self.no_content_text, "p", "em")
             cells.append(GenericCell.parse_args(True, 2, 0, 1, 5, text))
         elif self.merge_judgement:
             self.cell_rows[0].judgement.row_span = len(self.cell_rows)
@@ -375,19 +379,44 @@ class EvidenceProfileTable(BaseTable):
 
     def _set_cells(self):
         cells = []
-        text = tag_wrapper("Evidence Summary and Interpretation", "h1")
-        cells.append(GenericCell.parse_args(True, 0, 0, 1, 5, text))
-        text = tag_wrapper("Inferences and Summary Judgment", "h1")
-        cells.append(GenericCell.parse_args(True, 0, 5, 2, 1, text))
-        cells.extend(self.column_headers)
-        self.exposed_human.add_offset(row=2)
-        cells.extend(self.exposed_human.cells)
-        self.animal.add_offset(row=self.exposed_human.rows)
-        cells.extend(self.animal.cells)
-        self.mechanistic.add_offset(row=self.animal.rows)
-        cells.extend(self.mechanistic.cells)
-        self.summary_judgement.row_span = self.mechanistic.rows - 2
-        cells.append(self.summary_judgement)
+        hide_evidence = self.exposed_human.hide_content and self.animal.hide_content
+
+        if not (hide_evidence and self.mechanistic.hide_content):
+            text = tag_wrapper("Evidence Summary and Interpretation", "h1")
+            cells.append(GenericCell.parse_args(True, 0, 0, 1, 5, text))
+        rows = 1
+
+        if not hide_evidence:
+            cells.extend(self.column_headers)
+            rows = 2
+        if not self.exposed_human.hide_content:
+            self.exposed_human.add_offset(row=rows)
+            cells.extend(self.exposed_human.cells)
+            rows = self.exposed_human.rows
+        if not self.animal.hide_content:
+            self.animal.add_offset(row=rows)
+            cells.extend(self.animal.cells)
+            rows = self.animal.rows
+        if not self.mechanistic.hide_content:
+            self.mechanistic.add_offset(row=rows)
+            cells.extend(self.mechanistic.cells)
+            rows = self.mechanistic.rows
+
+        if not self.summary_judgement.hide_content:
+            text = tag_wrapper("Inferences and Summary Judgment", "h1")
+            if hide_evidence and self.mechanistic.hide_content:
+                cells.append(GenericCell.parse_args(True, 0, 0, 1, 1, text))
+                self.summary_judgement.row = 1
+                self.summary_judgement.column = 0
+                cells.append(self.summary_judgement)
+            else:
+                header_row_span = 2 if not hide_evidence else 1
+                cells.append(GenericCell.parse_args(True, 0, 5, header_row_span, 1, text))
+                self.summary_judgement.row = header_row_span
+                self.summary_judgement.column = 5
+                self.summary_judgement.row_span = rows - header_row_span
+                cells.append(self.summary_judgement)
+
         self.cells = cells
 
     @classmethod
@@ -397,17 +426,23 @@ class EvidenceProfileTable(BaseTable):
                 "title": "Evidence from studies of exposed humans",
                 "rows": [],
                 "merge_judgement": True,
+                "hide_content": False,
+                "no_content_text": "No data available",
             },
             "animal": {
                 "title": "Evidence from animal studies",
                 "rows": [],
                 "merge_judgement": True,
+                "hide_content": False,
+                "no_content_text": "No data available",
             },
             "mechanistic": {
                 "title": "Mechanistic evidence and supplemental information",
                 "col_header_1": "Biological events or pathways",
                 "rows": [],
                 "merge_judgement": True,
+                "hide_content": False,
+                "no_content_text": "No data available",
             },
             "summary_judgement": {
                 "judgement": SummaryJudgementChoices.Inadequate,
@@ -417,5 +452,6 @@ class EvidenceProfileTable(BaseTable):
                 "human_relevance": "<p></p>",
                 "cross_stream_coherence": "<p></p>",
                 "susceptibility": "<p></p>",
+                "hide_content": False,
             },
         }
