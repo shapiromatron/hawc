@@ -12,14 +12,6 @@ from ..common.diagnostics import (
 from . import forms, models
 
 
-class IntentionalException(Exception):
-    """
-    An intentionally thrown exception, used for testing in various deployment environments.
-    """
-
-    pass
-
-
 @admin.register(models.HAWCUser)
 class HAWCUserAdmin(admin.ModelAdmin):
     list_display = ("email", "is_active", "is_staff", "date_joined")
