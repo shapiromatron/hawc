@@ -1,7 +1,48 @@
 {% extends 'assessment-rooted.html' %}
 
 {% load crispy_forms_tags %}
+{% load static %}
 
 {% block content %}
   {% crispy form %}
+  <div id="tableDescriptor" class="row" style="display: none;">
+
+    <div id="table0" class="col-md-8 col-md-offset-2 tableType" style="display: none;">
+      <img
+        class="img-fluid"
+        src="{% static '/img/summary/table-generic.png' %}" />
+      <p class="form-text text-muted">
+        A generic table allows users to define their own row and column structure and add rich text to
+        the table. It is similar to creating a Microsoft Word table, where  you can define the number
+        of rows and columns and general structure you would like to use.
+      </p>
+    </div>
+
+    <div id="table1" class="col-md-8 col-md-offset-2 tableType" style="display: none;">
+      <img
+        class="img-fluid"
+        src="{% static '/img/summary/table-evidence-profile.png' %}" />
+      <p class="form-text text-muted">
+        An evidence profile table ...
+      </p>
+    </div>
+
+  </div>
 {% endblock %}
+
+{% block extrajs %}
+  <script type="text/javascript">
+    $(document).ready(function(){
+      $("#tableDescriptor").insertAfter($('#div_id_table_type')).show();
+
+      $('#id_table_type').on('change', function(e){
+        let showId = '#table' + e.target.value.toString();
+        $('#tableDescriptor').fadeOut({done: function(){
+          $('.tableType').hide();
+          $(showId).show();
+          $('#tableDescriptor').fadeIn();
+        }});
+      }).trigger('change')
+    });
+  </script>
+{% endblock extrajs %}
