@@ -404,8 +404,8 @@ Then, create the example docker container and start a celery worker instance:
 .. code-block:: bash
 
     # build container
-    docker-compose build redis
-    docker-compose up -d redis
+    docker-compose -f compose/dc-build.yml --project-directory . build redis
+    docker-compose -f compose/dc-build.yml --project-directory . up -d redis
 
     # check redis is up and can be pinged successfully
     redis-cli -h localhost -a default-password ping
@@ -415,7 +415,7 @@ Then, create the example docker container and start a celery worker instance:
     celery beat --app=hawc.main.celery --loglevel=INFO
 
     # stop redis when you're done
-    docker-compose down
+    docker-compose -f compose/dc-build.yml --project-directory . down
 
 Asynchronous tasks will no be executed by celery workers instead of the main thread.
 

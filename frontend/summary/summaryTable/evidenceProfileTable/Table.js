@@ -6,11 +6,11 @@ import {FactorsCell} from "./Factors";
 import h from "shared/utils/helpers";
 
 const subTitleStyle = {backgroundColor: "#f5f5f5"},
-    NoDataRow = function() {
+    NoDataRow = function(no_content_text) {
         return (
             <tr>
                 <td colSpan={5}>
-                    <em>No data available.</em>
+                    <em>{no_content_text}</em>
                 </td>
             </tr>
         );
@@ -95,16 +95,17 @@ SummaryCell.propTypes = {
 class EpidemiologyEvidenceRows extends Component {
     render() {
         const {numEpiJudgementRowSpan} = this.props.store,
-            {exposed_human} = this.props.store.settings;
+            {exposed_human} = this.props.store.settings,
+            show_summary = !this.props.store.settings.summary_judgement.hide_content;
         return (
             <>
                 <tr>
                     <th colSpan={5} style={subTitleStyle}>
                         {exposed_human.title}
                     </th>
-                    <SummaryCell store={this.props.store} />
+                    {show_summary ? <SummaryCell store={this.props.store} /> : null}
                 </tr>
-                {exposed_human.rows.length == 0 ? NoDataRow() : null}
+                {exposed_human.rows.length == 0 ? NoDataRow(exposed_human.no_content_text) : null}
                 {exposed_human.rows.map((row, index) => (
                     <EvidenceRow
                         key={index}
@@ -126,13 +127,19 @@ EpidemiologyEvidenceRows.propTypes = {
 class AnimalEvidenceRows extends Component {
     render() {
         const {numAniJudgementRowSpan} = this.props.store,
-            {animal} = this.props.store.settings;
+            {animal} = this.props.store.settings,
+            show_summary =
+                !this.props.store.settings.summary_judgement.hide_content &&
+                this.props.store.settings.exposed_human.hide_content;
         return (
             <>
-                <tr style={subTitleStyle}>
-                    <th colSpan={5}>{animal.title}</th>
+                <tr>
+                    <th colSpan={5} style={subTitleStyle}>
+                        {animal.title}
+                    </th>
+                    {show_summary ? <SummaryCell store={this.props.store} /> : null}
                 </tr>
-                {animal.rows.length == 0 ? NoDataRow() : null}
+                {animal.rows.length == 0 ? NoDataRow(animal.no_content_text) : null}
                 {animal.rows.map((row, index) => (
                     <EvidenceRow
                         key={index}
@@ -154,18 +161,25 @@ AnimalEvidenceRows.propTypes = {
 class MechanisticEvidenceRows extends Component {
     render() {
         const {numMechJudgementRowSpan} = this.props.store,
-            {mechanistic} = this.props.store.settings;
+            {mechanistic} = this.props.store.settings,
+            show_summary =
+                !this.props.store.settings.summary_judgement.hide_content &&
+                this.props.store.settings.exposed_human.hide_content &&
+                this.props.store.settings.animal.hide_content;
         return (
             <>
-                <tr style={subTitleStyle}>
-                    <th colSpan={5}>{mechanistic.title}</th>
+                <tr>
+                    <th colSpan={5} style={subTitleStyle}>
+                        {mechanistic.title}
+                    </th>
+                    {show_summary ? <SummaryCell store={this.props.store} /> : null}
                 </tr>
                 <tr>
                     <th>{mechanistic.col_header_1}</th>
                     <th colSpan={3}>Summary of key findings and interpretation</th>
                     <th>Judgment(s) and rationale</th>
                 </tr>
-                {mechanistic.rows.length == 0 ? NoDataRow() : null}
+                {mechanistic.rows.length == 0 ? NoDataRow(mechanistic.no_content_text) : null}
                 {mechanistic.rows.map((row, index) => {
                     return (
                         <tr key={index}>
@@ -201,34 +215,52 @@ MechanisticEvidenceRows.propTypes = {
 @observer
 class Table extends Component {
     render() {
-        const {store} = this.props;
-        return (
+        const {store} = this.props,
+            {exposed_human, animal, mechanistic, summary_judgement} = store.settings,
+            hide_evidence =
+                exposed_human.hide_content && animal.hide_content && mechanistic.hide_content;
+        return hide_evidence && summary_judgement.hide_content ? null : (
             <table className="summaryTable table table-bordered table-sm">
-                <colgroup>
-                    <col style={{width: "15%"}}></col>
-                    <col style={{width: "15%"}}></col>
-                    <col style={{width: "15%"}}></col>
-                    <col style={{width: "15%"}}></col>
-                    <col style={{width: "15%"}}></col>
-                    <col style={{width: "25%"}}></col>
-                </colgroup>
+                {hide_evidence ? null : (
+                    <colgroup>
+                        <col style={{width: "15%"}}></col>
+                        <col style={{width: "15%"}}></col>
+                        <col style={{width: "15%"}}></col>
+                        <col style={{width: "15%"}}></col>
+                        <col style={{width: "15%"}}></col>
+                        <col style={{width: "25%"}}></col>
+                    </colgroup>
+                )}
                 <thead>
                     <tr>
-                        <th colSpan={5}>Evidence Summary and Interpretation</th>
-                        <th rowSpan={2}>Inferences and Summary Judgment</th>
+                        {hide_evidence ? null : (
+                            <th colSpan={5}>Evidence Summary and Interpretation</th>
+                        )}
+                        {summary_judgement.hide_content ? null : (
+                            <th rowSpan={exposed_human.hide_content && animal.hide_content ? 1 : 2}>
+                                Inferences and Summary Judgment
+                            </th>
+                        )}
                     </tr>
-                    <tr>
-                        <th>Studies, outcomes, and confidence</th>
-                        <th>Summary of key findings</th>
-                        <th>Factors that increase certainty</th>
-                        <th>Factors that decrease certainty</th>
-                        <th>Judgment(s) and rationale</th>
-                    </tr>
+                    {exposed_human.hide_content && animal.hide_content ? null : (
+                        <tr>
+                            <th>Studies, outcomes, and confidence</th>
+                            <th>Summary of key findings</th>
+                            <th>Factors that increase certainty</th>
+                            <th>Factors that decrease certainty</th>
+                            <th>Judgment(s) and rationale</th>
+                        </tr>
+                    )}
                 </thead>
                 <tbody>
-                    <EpidemiologyEvidenceRows store={store} />
-                    <AnimalEvidenceRows store={store} />
-                    <MechanisticEvidenceRows store={store} />
+                    {exposed_human.hide_content ? null : <EpidemiologyEvidenceRows store={store} />}
+                    {animal.hide_content ? null : <AnimalEvidenceRows store={store} />}
+                    {mechanistic.hide_content ? null : <MechanisticEvidenceRows store={store} />}
+                    {hide_evidence ? (
+                        <tr>
+                            <SummaryCell store={store} />
+                        </tr>
+                    ) : null}
                 </tbody>
             </table>
         );
