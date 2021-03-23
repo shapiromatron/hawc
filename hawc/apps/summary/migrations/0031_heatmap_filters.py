@@ -56,7 +56,7 @@ def remove_filter(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("summary", "0029_tagtree_size"),
+        ("summary", "0030_ept_migration"),
     ]
 
     operations = [
