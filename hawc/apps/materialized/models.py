@@ -11,11 +11,11 @@ class MaterializedView(models.Model):
         managed = False
 
     @classmethod
-    def set_refresh_cache(cls, bool):
+    def set_refresh_view_cache(cls, bool):
         cache.set(f"refresh-{cls._meta.db_table}", bool)
 
     @classmethod
-    def get_refresh_cache(cls):
+    def get_refresh_view_cache(cls):
         cache.get(f"refresh-{cls._meta.db_table}", False)
 
     @classmethod
