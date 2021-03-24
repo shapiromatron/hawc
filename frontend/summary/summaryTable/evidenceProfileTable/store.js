@@ -52,12 +52,16 @@ class EvidenceProfileTableStore {
     }
 
     @computed get numSummaryRows() {
-        return (
-            4 +
-            Math.max(this.settings.exposed_human.rows.length, 1) +
-            Math.max(this.settings.animal.rows.length, 1) +
-            Math.max(this.settings.mechanistic.rows.length, 1)
-        );
+        let hide_exposed_human = this.settings.exposed_human.hide_content,
+            hide_animal = this.settings.animal.hide_content,
+            hide_mechanistic = this.settings.mechanistic.hide_content;
+
+        let rows = 0;
+        rows += hide_exposed_human ? 0 : 1 + Math.max(this.settings.exposed_human.rows.length, 1);
+        rows += hide_animal ? 0 : 1 + Math.max(this.settings.animal.rows.length, 1);
+        rows += hide_mechanistic ? 0 : 2 + Math.max(this.settings.mechanistic.rows.length, 1);
+
+        return rows ? rows : 1;
     }
     @computed get numEpiJudgementRowSpan() {
         return this.settings.exposed_human.merge_judgement
