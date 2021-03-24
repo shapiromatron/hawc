@@ -294,8 +294,9 @@ re_digits = r"\d+"
 def find_matching_list_element_by_value(
     items, lookup_value, case_insensitive=True, lookup_index=1, return_index=0
 ):
-    """
-    given items like:
+    """Find a particular value in a list/tuple of lists/tuples by matching another value.
+
+    Given items like:
 
     JERSEY_NUMBERS = (
         (23, "jordan"),
@@ -303,16 +304,27 @@ def find_matching_list_element_by_value(
         (56, "taylor")
     )
 
-    call this function like:
+    Call this function like:
 
     num = find_matching_list_element_by_value(JERSEY_NUMBERS, "TAYLOR")
     # num == 56
 
-    this function will traverse the list of lists/tuples, find the one that matches the supplied lookup value, and return another value
-    from that list/tuple.
+    This function will traverse the series of lists/tuples, find the one that matches the
+    supplied lookup value, and return another value from that list/tuple.
 
-    If it matches multiple/no elements, will return None
+    Args:
+        items (list, tuple): list of items to search
+        lookup_value: the value to search for
+        case_insensitive (bool): perform case-insensitive matching, if lookup_value is a string
+        lookup_index (int): the index in which to look for matches, in each element of items
+        return_index (int): the index of the value to return, if a match is found
+
+    Returns:
+        The value, if a single match can be found.
+
+        Returns None if multiple/no matches are found.
     """
+
     if case_insensitive and type(lookup_value) is str:
         lookup_value = lookup_value.lower()
         matching_vals = [
