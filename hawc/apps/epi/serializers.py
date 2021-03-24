@@ -198,7 +198,7 @@ class StudyPopulationSerializer(IdLookupMixin, serializers.ModelSerializer):
         return instance
 
 
-class SimpleExposureSerializer(IdLookupMixin, serializers.ModelSerializer):
+class ExposureSerializer(IdLookupMixin, serializers.ModelSerializer):
     dtxsid = DSSToxSerializer()
     study_population = StudyPopulationSerializer()
     url = serializers.CharField(source="get_absolute_url", read_only=True)
@@ -259,7 +259,7 @@ class AdjustmentFactorSerializer(serializers.ModelSerializer):
 
 class SimpleComparisonSetSerializer(IdLookupMixin, serializers.ModelSerializer):
     url = serializers.CharField(source="get_absolute_url", read_only=True)
-    exposure = SimpleExposureSerializer()
+    exposure = ExposureSerializer()
 
     class Meta:
         model = models.ComparisonSet
@@ -317,7 +317,7 @@ class OutcomeSerializer(serializers.ModelSerializer):
 
 class ComparisonSetSerializer(serializers.ModelSerializer):
     url = serializers.CharField(source="get_absolute_url", read_only=True)
-    exposure = SimpleExposureSerializer()
+    exposure = ExposureSerializer()
     outcome = OutcomeSerializer(read_only=True)
     study_population = StudyPopulationSerializer()
     groups = GroupSerializer(many=True, read_only=True)
