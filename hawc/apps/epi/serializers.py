@@ -122,7 +122,12 @@ class CentralTendencyWriteSerializer(serializers.ModelSerializer):
 
 class CentralTendencyPreviewSerializer(serializers.ModelSerializer):
     """
-    CT serializer that doesn't require "exposure" - can be used blahblah
+    CT serializer that doesn't require "exposure".
+
+    Can be used for example when uploading a set of CT's as part of an exposure
+    upload which includes central tendencies. A create payload for this would not
+    know the exposure id at the time of validation; a update payload would, but it's
+    slightly onerous to require the client to include the exposure id multiple times.
     """
 
     class Meta:
