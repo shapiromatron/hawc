@@ -123,25 +123,49 @@ class StudyPopulation(PermCheckerMixin, viewsets.ModelViewSet):
         return self.model.objects.all()
 
     def process_criteria_association(self, serializer, study_population_id, post_initial_create):
-        # this should probably be rewritten to use the ManyToManyManager on the underlying instance...
         inserts = []
+        spc_ids_to_disassociate = []
+
+        # loop through each category; for each figure out what's currently saved on the studypop and
+        # look at what id's were passed in.
+        # from that we can determine what actual deletions/insertions need to be made, and batch those up
+        # so we hit the db once for the deletes, and once for the inserts, and only if it's really needed.
         for data_key, type_code in self.criteria_categories:
             if data_key in self.request.data:
+                # make a copy so we don't alter the contents of the initial request
+                criteria_ids_to_create_for_type = [x for x in self.request.data[data_key]]
+
                 if not post_initial_create:
-                    # wipe out existing criteria for this pop+type pair that was part of the request...
-                    models.StudyPopulationCriteria.objects.filter(
+                    existing_study_pop_criteria_for_type = models.StudyPopulationCriteria.objects.filter(
                         study_population=self.get_object(), criteria_type=type_code
-                    ).delete()
+                    )
 
-                criteria_ids = self.request.data[data_key]
+                    for existing_study_pop_criteria in existing_study_pop_criteria_for_type:
+                        existing_criteria = existing_study_pop_criteria.criteria
 
-                for criteria_id in criteria_ids:
+                        if existing_criteria.id in criteria_ids_to_create_for_type:
+                            # the id is in the request but already associated; we don't need to re-insert it
+                            criteria_ids_to_create_for_type.remove(existing_criteria.id)
+                        else:
+                            # the id is in the database but NOT in the request; we need to delete it
+                            spc_ids_to_disassociate.append(existing_study_pop_criteria.id)
+
+                # now - criteria_ids_to_create_for_type either contains all the ids (if during a create)
+                # or just the ones that weren't removed b/c they are already in the db. We can now
+                # build up just the inserts that actually need to happen.
+                for criteria_id in criteria_ids_to_create_for_type:
                     dynamic_obj = {
                         "criteria_type": type_code,
                         "criteria": criteria_id,
                         "study_population": study_population_id,
                     }
                     inserts.append(dynamic_obj)
+
+        # now that we've looked at each category we can hit the db.
+
+        # wipe out existing criteria for each StudyPopulationCriteria.id that acutally needs deleting
+        if len(spc_ids_to_disassociate) > 0:
+            models.StudyPopulationCriteria.objects.filter(id__in=spc_ids_to_disassociate).delete()
 
         # ...and save any new ones
         if len(inserts) > 0:
