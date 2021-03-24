@@ -178,9 +178,8 @@ class StudyPopulationSerializer(IdLookupMixin, serializers.ModelSerializer):
         if "countries" in validated_data:
             instance.countries.clear()
             instance.countries.add(*validated_data["countries"])
-            del validated_data[
-                "countries"
-            ]  # delete the key so we can call the default update method for all the other fields
+            # delete the key so we can call the default update method for all the other fields
+            del validated_data["countries"]
 
         return super().update(instance, validated_data)
 
@@ -188,9 +187,8 @@ class StudyPopulationSerializer(IdLookupMixin, serializers.ModelSerializer):
         temp_countries = None
         if "countries" in validated_data:
             temp_countries = validated_data["countries"]
-            del validated_data[
-                "countries"
-            ]  # delete the key so we can call the default update method for all the other fields
+            # delete the key so we can call the default update method for all the other fields
+            del validated_data["countries"]
         instance = super().create(validated_data)
 
         if temp_countries is not None:
