@@ -26,7 +26,7 @@ class MaterializedView(models.Model):
 
 
 class Score(MaterializedView):
-    objects = managers.MaterializedScoreManager
+    objects = managers.MaterializedScoreManager()
 
     score = models.ForeignKey(
         "riskofbias.RiskOfBiasScore",
