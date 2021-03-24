@@ -104,35 +104,14 @@ class ResultMetricSerializer(serializers.ModelSerializer):
 
 
 class CentralTendencySerializer(serializers.ModelSerializer):
-    variance_type = serializers.CharField(source="get_variance_type_display", read_only=True)
-    estimate_type = serializers.CharField(source="get_estimate_type_display", read_only=True)
+    variance_type = FlexibleChoiceField(choices=models.CentralTendency.VARIANCE_TYPE_CHOICES)
+    estimate_type = FlexibleChoiceField(choices=models.CentralTendency.ESTIMATE_TYPE_CHOICES)
     lower_bound_interval = serializers.FloatField(read_only=True)
     upper_bound_interval = serializers.FloatField(read_only=True)
 
     class Meta:
         model = models.CentralTendency
         fields = "__all__"
-
-
-class CentralTendencyWriteSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.CentralTendency
-        fields = "__all__"
-
-
-class CentralTendencyPreviewSerializer(serializers.ModelSerializer):
-    """
-    CT serializer that doesn't require "exposure".
-
-    Can be used for example when uploading a set of CT's as part of an exposure
-    upload which includes central tendencies. A create payload for this would not
-    know the exposure id at the time of validation; a update payload would, but it's
-    slightly onerous to require the client to include the exposure id multiple times.
-    """
-
-    class Meta:
-        model = models.CentralTendency
-        exclude = ("exposure",)
 
 
 class ComparisonSetLinkSerializer(serializers.ModelSerializer):

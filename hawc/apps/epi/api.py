@@ -247,62 +247,6 @@ class Exposure(ReadWriteSerializerMixin, PermCheckerMixin, AssessmentEditViewset
     read_serializer_class = serializers.ExposureSerializer
     write_serializer_class = serializers.ExposureWriteSerializer
 
-    def handle_cts(self, request, during_update=False):
-        # we validate CTs here...and then post-exposure creation, we'll create them.
-        if "central_tendencies" in request.data:
-            """
-            a bit of an overly big hammer -- during an update we just wipe out existing CTs. We could instead load existing ones, delete if missing,
-            update if present, etc. but for simplicity's sake this works.
-            """
-            if during_update:
-                models.CentralTendency.objects.filter(exposure=self.get_object()).delete()
-
-            cts = request.data["central_tendencies"]
-
-            if len(cts) == 0:
-                raise ValidationError(f"At least one central tendency is required")
-
-            # allow clients to specify either keys like 2 or readable values like "median" when accessing the API
-            for ct in cts:
-                if "estimate_type" in ct:
-                    probe_ct_estimate_type = ct["estimate_type"]
-                    if type(probe_ct_estimate_type) is str:
-                        converted_estimate_type = find_matching_list_element_value_by_value(
-                            models.CentralTendency.ESTIMATE_TYPE_CHOICES,
-                            probe_ct_estimate_type,
-                            False,
-                        )
-                        if converted_estimate_type is None:
-                            raise ValidationError(
-                                f"Invalid estimate_type value '{probe_ct_estimate_type}'"
-                            )
-                        else:
-                            ct["estimate_type"] = converted_estimate_type
-
-                if "variance_type" in ct:
-                    probe_ct_variance_type = ct["variance_type"]
-                    if type(probe_ct_variance_type) is str:
-                        converted_variance_type = find_matching_list_element_value_by_value(
-                            models.CentralTendency.VARIANCE_TYPE_CHOICES, probe_ct_variance_type
-                        )
-                        if converted_variance_type is None:
-                            raise ValidationError(
-                                f"Invalid variance_type value '{probe_ct_variance_type}'"
-                            )
-                        else:
-                            ct["variance_type"] = converted_variance_type
-
-            # raise ValidationError("FORCE ERRO")
-
-            ct_serializer = serializers.CentralTendencyPreviewSerializer(data=cts, many=True)
-            try:
-                ct_serializer.is_valid(raise_exception=True)
-            except ValidationError as ve:
-                raise ValidationError({"central_tendencies": ve.detail})
-        else:
-            if not during_update:
-                raise ValidationError(f"At least one central tendency is required")
-
     def handle_dtxsid(self, request):
         # supports creating dsstox objects on the fly
         if "dtxsid" in request.data:
@@ -342,7 +286,6 @@ class Exposure(ReadWriteSerializerMixin, PermCheckerMixin, AssessmentEditViewset
 
     @transaction.atomic
     def update(self, request, *args, **kwargs):
-        self.handle_cts(request, True)
         self.handle_metric_unit(request)
         self.handle_dtxsid(request)
 
@@ -350,7 +293,6 @@ class Exposure(ReadWriteSerializerMixin, PermCheckerMixin, AssessmentEditViewset
 
     @transaction.atomic
     def create(self, request, *args, **kwargs):
-        self.handle_cts(request, False)
         self.handle_metric_unit(request)
         self.handle_dtxsid(request)
 
@@ -364,23 +306,43 @@ class Exposure(ReadWriteSerializerMixin, PermCheckerMixin, AssessmentEditViewset
         serializer = self.get_serializer(instance)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    def process_ct_creation(self, serializer, exposure_id):
-        if "central_tendencies" in self.request.data:
-            cts = self.request.data["central_tendencies"]
-            for ct in cts:
-                ct["exposure"] = exposure_id
+    def process_ct_creation(self, exposure, during_update):
+        if during_update:
+            # delete the existing ct's associated with this exposure; since we don't require CT id's to be passed in
+            # this is the only good way to do this.
+            models.CentralTendency.objects.filter(exposure=exposure).delete()
 
-            ct_serializer = serializers.CentralTendencyWriteSerializer(data=cts, many=True)
+        # if a user is updating and doesn't supply a "central_tendencies" node, we just leave the previously saved CT's alone
+        missing_needed_cts = not during_update
+
+        cts = []
+
+        if "central_tendencies" in self.request.data:
+            missing_needed_cts = True
+
+            cts = self.request.data["central_tendencies"]
+
+            if len(cts) > 0:
+                missing_needed_cts = False
+
+                # populate each ct with the just created/updated exposure id
+                for ct in cts:
+                    ct["exposure"] = exposure.id
+
+        if missing_needed_cts:
+            raise ValidationError(f"At least one central tendency is required")
+        elif len(cts) > 0:
+            ct_serializer = serializers.CentralTendencySerializer(data=cts, many=True)
             ct_serializer.is_valid(raise_exception=True)
             ct_serializer.save()
 
     def perform_create(self, serializer):
         super().perform_create(serializer)
-        self.process_ct_creation(serializer, serializer.data["id"])
+        self.process_ct_creation(serializer.instance, False)
 
     def perform_update(self, serializer):
         super().perform_update(serializer)
-        self.process_ct_creation(serializer, self.get_object().id)
+        self.process_ct_creation(serializer.instance, True)
 
 
 class Outcome(PermCheckerMixin, AssessmentEditViewset):
