@@ -119,13 +119,13 @@ class StudyPopulation(PermCheckerMixin, viewsets.ModelViewSet):
         ("confounding_criteria", "C",),
     )
 
+    def get_queryset(self, *args, **kwargs):
+        return self.model.objects.all()
+
     def process_criteria_association(self, serializer, study_population_id, post_initial_create):
         # this should probably be rewritten to use the ManyToManyManager on the underlying instance...
         inserts = []
-        for cc in self.criteria_categories:
-            data_key = cc[0]
-            type_code = cc[1]
-
+        for data_key, type_code in self.criteria_categories:
             if data_key in self.request.data:
                 if not post_initial_create:
                     # wipe out existing criteria for this pop+type pair that was part of the request...
@@ -150,9 +150,6 @@ class StudyPopulation(PermCheckerMixin, viewsets.ModelViewSet):
             )
             serializer.is_valid(raise_exception=True)
             serializer.save()
-
-    def get_queryset(self, *args, **kwargs):
-        return self.model.objects.all()
 
     def handle_criteria(self, request, during_create):
         # first - what assessment are we working in?
