@@ -86,3 +86,5 @@ class Endpoint(MaterializedView):
     cas = models.CharField(max_length=40)
 
     study = models.ForeignKey("study.Study", on_delete=models.DO_NOTHING)
+
+    assessment = models.ForeignKey("assessment.Assessment", on_delete=models.DO_NOTHING)
