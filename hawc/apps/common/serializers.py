@@ -5,6 +5,7 @@ from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import models
 from rest_framework import serializers
 from rest_framework.renderers import JSONRenderer
+from rest_framework.validators import UniqueTogetherValidator
 
 
 def to_json(Serializer: serializers.ModelSerializer, instance: models.Model) -> str:
@@ -227,3 +228,46 @@ class IdLookupMixin:
                 raise serializers.ValidationError(err_msg)
 
         return super().to_internal_value(data)
+
+
+class GetOrCreateMixin:
+    """
+    this should be mixed into a serializer
+
+   This mixin:
+    1. disables any UniqueTogetherValidators
+    2. overrides create to actually call get_or_create
+
+    The end result is a serializer mixing this in can either lookup or create
+    an element, so that clients can pass the same payload multiple times and get back
+    consistent results (idempotency, more or less).
+
+    To elaborate, as a use case consider a model like epi.models.Criteria;
+    this contains a unique_together meta restriction on the "assessment"
+    and "description" fields. Or in other words, in the database
+    assessment+description are guaranteed to be unique.
+
+    We want to build an API able to support something like a POST
+    { "assessment": 1, "description": "foo" }
+    to the endpoint defined for this. A normal serializer will complain
+    if a criteria with that description already exists, due to the
+    UniqueTogetherValidator firing. If instead we mix this class into
+    the appropriate serializer, we can code things such that the first call
+    will create a criteria with description "foo", and the second
+    call will just fetch the existing one. This makes client construction
+    just a little more straightforward -- rather than having to
+    lookup/check/create-if-needed, clients can just hit one endpoint and
+    get back the same object id every time.
+
+    Basic approach taken from https://stackoverflow.com/questions/25026034/django-rest-framework-modelserializer-get-or-create-functionality
+   """
+
+    def run_validators(self, value):
+        for validator in self.validators:
+            if isinstance(validator, UniqueTogetherValidator):
+                self.validators.remove(validator)
+        super().run_validators(value)
+
+    def create(self, validated_data, *args, **kwargs):
+        instance, created = self.Meta.model.objects.get_or_create(**validated_data)
+        return instance

@@ -2,9 +2,14 @@ from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import serializers
 
 from ..assessment.serializers import DoseUnitsSerializer, DSSToxSerializer, EffectTagsSerializer
-from ..common.api import DynamicFieldsMixin, GetOrCreateMixin
+from ..common.api import DynamicFieldsMixin
 from ..common.helper import SerializerHelper
-from ..common.serializers import FlexibleChoiceField, FlexibleDBLinkedChoiceField, IdLookupMixin
+from ..common.serializers import (
+    FlexibleChoiceField,
+    FlexibleDBLinkedChoiceField,
+    GetOrCreateMixin,
+    IdLookupMixin,
+)
 from ..study.serializers import StudySerializer
 from . import forms, models
 
