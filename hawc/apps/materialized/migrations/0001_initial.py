@@ -16,16 +16,14 @@ class Migration(migrations.Migration):
             select
                 ROW_NUMBER() OVER (ORDER BY score_id, c.model, so.object_id) as id,
                 s.id as "score_id",
-                r.final,
-                r.active,
                 s.score as "score_score",
+                s.is_default,
                 r.study_id,
                 s.metric_id,
                 s.riskofbias_id,
                 c.app_label,
                 c.model,
-                so.object_id,
-                s.is_default
+                so.object_id
             from riskofbias_riskofbiasscore s
             left join riskofbias_riskofbias r
             on s.riskofbias_id = r.id

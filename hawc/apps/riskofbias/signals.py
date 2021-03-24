@@ -1,19 +1,10 @@
 import logging
 
 from django.apps import apps
-from django.db.models.signals import post_delete, post_save, pre_delete
+from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
 
-from ..materialized.models import Score
 from . import models
-
-
-@receiver(post_save, sender=models.RiskOfBiasScore)
-@receiver(post_delete, sender=models.RiskOfBiasScore)
-@receiver(post_save, sender=models.RiskOfBiasScoreOverrideObject)
-@receiver(post_delete, sender=models.RiskOfBiasScoreOverrideObject)
-def refresh_materialized_view(**kwargs):
-    Score.refresh_view()
 
 
 @receiver(post_save, sender=models.RiskOfBiasDomain)
