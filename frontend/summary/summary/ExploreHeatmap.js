@@ -178,6 +178,7 @@ class ExploreHeatmap extends BaseVisual {
                     if (!options.visualOnly) {
                         $el.prepend(title).append(captionDiv);
                     }
+
                     startupHeatmapAppRender($plotDiv[0], settings, dataset, options);
 
                     if (options.cb) {
