@@ -114,7 +114,7 @@ class AnimalAssessmentViewset(
         key = f"assessment-{self.assessment.id}-bioassay-endpoint-heatmap-unpublished-{unpublished}"
         df = cache.get(key)
         if df is None:
-            df = models.Endpoint.heatmap_df(self.assessment, published_only=not unpublished)
+            df = models.Endpoint.heatmap_df(self.assessment.id, published_only=not unpublished)
             cache.set(key, df, settings.CACHE_1_HR)
         export = FlatExport(df=df, filename=f"bio-endpoint-heatmap-{self.assessment.id}")
         return Response(export)

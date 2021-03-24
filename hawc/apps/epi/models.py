@@ -1451,7 +1451,7 @@ class Result(models.Model):
         return self.outcome.get_study()
 
     @classmethod
-    def heatmap_study_df(cls, assessment: Assessment, published_only: bool) -> pd.DataFrame:
+    def heatmap_study_df(cls, assessment_id: int, published_only: bool) -> pd.DataFrame:
         def unique_items(els):
             return "|".join(sorted(set(el for el in els if el is not None)))
 
@@ -1460,7 +1460,7 @@ class Result(models.Model):
             return "|".join(sorted(items))
 
         # get all studies,even if no endpoint data is extracted
-        filters: Dict[str, Any] = {"assessment_id": assessment, "epi": True}
+        filters: Dict[str, Any] = {"assessment_id": assessment_id, "epi": True}
         if published_only:
             filters["published"] = True
         columns = {
@@ -1473,7 +1473,7 @@ class Result(models.Model):
 
         # rollup endpoint-level data to studies
         df2 = (
-            cls.heatmap_df(assessment, published_only)
+            cls.heatmap_df(assessment_id, published_only)
             .groupby("study id")
             .agg(
                 {
@@ -1496,8 +1496,8 @@ class Result(models.Model):
         return df
 
     @classmethod
-    def heatmap_df(cls, assessment: Assessment, published_only: bool) -> pd.DataFrame:
-        filters = {"outcome__assessment": assessment}
+    def heatmap_df(cls, assessment_id: int, published_only: bool) -> pd.DataFrame:
+        filters = {"outcome__assessment": assessment_id}
         if published_only:
             filters["outcome__study_population__study__published"] = True
         columns = {
@@ -1540,7 +1540,7 @@ class Result(models.Model):
 
         # add exposure column
         exposure_cols = ["inhalation", "dermal", "oral", "in_utero", "iv", "unknown_route"]
-        qs = Exposure.objects.filter(study_population__study__assessment=assessment).values(
+        qs = Exposure.objects.filter(study_population__study__assessment=assessment_id).values(
             "id", *exposure_cols
         )
 
@@ -1560,7 +1560,7 @@ class Result(models.Model):
 
         # overall risk of bias evaluation
         RiskOfBiasScore = apps.get_model("riskofbias", "RiskOfBiasScore")
-        df2 = RiskOfBiasScore.objects.overall_scores(assessment.id)
+        df2 = RiskOfBiasScore.objects.overall_scores(assessment_id)
         if df2 is not None:
             df = (
                 df.merge(df2, how="left", left_on="study id", right_on="study id")

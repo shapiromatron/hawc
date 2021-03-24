@@ -20,8 +20,8 @@ from ..common.helper import (
     HAWCDjangoJSONEncoder,
     SerializerHelper,
     cleanHTML,
-    tryParseInt,
     df_move_column,
+    tryParseInt,
 )
 from ..study.models import Study
 from ..vocab.models import Term
@@ -978,8 +978,8 @@ class Endpoint(BaseEndpoint):
         SerializerHelper.delete_caches(cls, ids)
 
     @classmethod
-    def heatmap_df(cls, assessment: Assessment, published_only: bool) -> pd.DataFrame:
-        filters: Dict[str, Any] = {"assessment_id": assessment}
+    def heatmap_df(cls, assessment_id: int, published_only: bool) -> pd.DataFrame:
+        filters: Dict[str, Any] = {"assessment_id": assessment_id}
         if published_only:
             filters["animal_group__experiment__study__published"] = True
         columns = {
@@ -1030,7 +1030,7 @@ class Endpoint(BaseEndpoint):
         # get animal-group values
         df = (
             df.merge(
-                AnimalGroup.objects.animal_description(assessment.id),
+                AnimalGroup.objects.animal_description(assessment_id),
                 how="left",
                 left_on="animal group id",
                 right_on="animal group id",
@@ -1042,7 +1042,7 @@ class Endpoint(BaseEndpoint):
 
         # overall risk of bias evaluation
         RiskOfBiasScore = apps.get_model("riskofbias", "RiskOfBiasScore")
-        df2 = RiskOfBiasScore.objects.overall_scores(assessment.id)
+        df2 = RiskOfBiasScore.objects.overall_scores(assessment_id)
         if df2 is not None:
             df = (
                 df.merge(df2, how="left", left_on="study id", right_on="study id")
@@ -1052,11 +1052,13 @@ class Endpoint(BaseEndpoint):
         return df
 
     @classmethod
-    def heatmap_doses_df(cls, assessment: Assessment, published_only: bool) -> pd.DataFrame:
-        df1 = cls.heatmap_df(assessment, published_only).set_index("endpoint id")
+    def heatmap_doses_df(cls, assessment_id: int, published_only: bool) -> pd.DataFrame:
+        df1 = cls.heatmap_df(assessment_id, published_only).set_index("endpoint id")
 
         columns = "dose units id|dose units name|doses|noel|loel|fel|bmd|bmdl".split("|")
-        df2 = cls.objects.endpoint_df(assessment, published_only).set_index("endpoint id")[columns]
+        df2 = cls.objects.endpoint_df(assessment_id, published_only).set_index("endpoint id")[
+            columns
+        ]
 
         df3 = (
             df1.merge(df2, how="left", left_index=True, right_index=True)
@@ -1066,12 +1068,12 @@ class Endpoint(BaseEndpoint):
         return df3
 
     @classmethod
-    def heatmap_study_df(cls, assessment: Assessment, published_only: bool) -> pd.DataFrame:
+    def heatmap_study_df(cls, assessment_id: int, published_only: bool) -> pd.DataFrame:
         def unique_items(els):
             return "|".join(sorted(set(el for el in els if el is not None)))
 
         # get all studies,even if no endpoint data is extracted
-        filters: Dict[str, Any] = {"assessment_id": assessment, "bioassay": True}
+        filters: Dict[str, Any] = {"assessment_id": assessment_id, "bioassay": True}
         if published_only:
             filters["published"] = True
         columns = {
@@ -1084,7 +1086,7 @@ class Endpoint(BaseEndpoint):
 
         # rollup endpoint-level data to studies
         df2 = (
-            cls.heatmap_df(assessment, published_only)
+            cls.heatmap_df(assessment_id, published_only)
             .groupby("study id")
             .agg(
                 {
@@ -1109,7 +1111,7 @@ class Endpoint(BaseEndpoint):
         )
         qs = (
             DoseGroup.objects.filter(
-                dose_regime__dosed_animals__experiment__study__assessment_id=assessment
+                dose_regime__dosed_animals__experiment__study__assessment_id=assessment_id
             )
             .select_related("dose_regime__dosed_animals__experiment__study",)
             .values_list(*values.keys())
