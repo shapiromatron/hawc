@@ -23,7 +23,6 @@ from ..common.helper import FlatExport, find_matching_list_element_value_by_valu
 from ..common.renderers import PandasRenderers
 from ..common.serializers import HeatmapQuerySerializer, UnusedSerializer
 from ..common.views import AssessmentPermissionsMixin
-from ..study.models import Study
 from . import exports, models, serializers
 from .actions.model_metadata import EpiAssessmentMetadata, EpiMetadata
 
@@ -123,6 +122,10 @@ class StudyPopulation(PermCheckerMixin, viewsets.ModelViewSet):
         return self.model.objects.all()
 
     def process_criteria_association(self, serializer, study_population_id, post_initial_create):
+        """
+        Associates/disassociates criteria of different categories (inclusion, exclusion, confounding)
+        with the study population.
+        """
         inserts = []
         spc_ids_to_disassociate = []
 
@@ -175,33 +178,20 @@ class StudyPopulation(PermCheckerMixin, viewsets.ModelViewSet):
             serializer.is_valid(raise_exception=True)
             serializer.save()
 
-    def handle_criteria(self, request, during_create):
+    def handle_criteria(self, study_population):
+        """
+        Converts criteria input to id's; creating if necessary.
+        """
         # first - what assessment are we working in?
-        assessment_id = None
-        if during_create:
-            if "study" in request.data:
-                study_id = request.data["study"]
-
-                try:
-                    study = Study.objects.get(id=study_id)
-                    assessment_id = study.get_assessment().id
-                except ObjectDoesNotExist:
-                    raise ValidationError({"study": "Invalid study id"})
-            else:
-                raise ValidationError({"study": "No study id supplied"})
-        else:
-            assessment_id = self.get_object().get_assessment().id
-
-        if assessment_id is None:
-            return
+        assessment_id = study_population.get_assessment().id
 
         # and now do some conversions/creations
         for cc in self.criteria_categories:
             data_key = cc[0]
 
             # client can supply an id, or the name of the criteria entry (and then we'll look it up for them - or create it if needed)
-            if data_key in request.data:
-                data_probe = request.data[data_key]
+            if data_key in self.request.data:
+                data_probe = self.request.data[data_key]
 
                 fixed = []
                 for el in data_probe:
@@ -222,26 +212,24 @@ class StudyPopulation(PermCheckerMixin, viewsets.ModelViewSet):
                     else:
                         fixed.append(el)
 
-                request.data[data_key] = fixed
+                self.request.data[data_key] = fixed
 
     def perform_create(self, serializer):
         super().perform_create(serializer)
-        self.process_criteria_association(serializer, serializer.data["id"], True)
+        self.handle_criteria(serializer.instance)
+        self.process_criteria_association(serializer, serializer.instance.id, True)
 
     def perform_update(self, serializer):
         super().perform_update(serializer)
-        self.process_criteria_association(serializer, self.get_object().id, False)
+        self.handle_criteria(serializer.instance)
+        self.process_criteria_association(serializer, serializer.instance.id, False)
 
     @transaction.atomic
     def update(self, request, *args, **kwargs):
-        self.handle_criteria(request, False)
         return super().update(request, *args, **kwargs)
 
     @transaction.atomic
     def create(self, request, *args, **kwargs):
-        self.handle_criteria(request, True)
-        # return super().create(request, *args, **kwargs)
-
         # default behavior except we need to refresh the serializer to get the criteria to show up in the return...
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
