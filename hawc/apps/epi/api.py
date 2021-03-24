@@ -397,10 +397,7 @@ class Result(PermCheckerMixin, AssessmentEditViewset):
 
     def process_adjustment_factor_creation(self, serializer, result_id, post_initial_create):
         inserts = []
-        for fc in self.factor_categories:
-            data_key = fc[0]
-            is_included = fc[1]
-
+        for data_key, is_included in self.factor_categories:
             if data_key in self.request.data:
                 if not post_initial_create:
                     # wipe out existing factors for this result+included_in_final_model pair that was part of the request...
