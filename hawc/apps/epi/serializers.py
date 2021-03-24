@@ -146,9 +146,6 @@ class ComparisonSetLinkSerializer(serializers.ModelSerializer):
 class CriteriaSerializer(GetOrCreateMixin, serializers.ModelSerializer):
     form_integration_class = forms.CriteriaForm
 
-    def get_form_integration_kwargs(self, data):
-        return {"parent": data["assessment"]}
-
     class Meta:
         model = models.Criteria
         fields = "__all__"
@@ -172,9 +169,6 @@ class StudyPopulationSerializer(IdLookupMixin, serializers.ModelSerializer):
     can_create_sets = serializers.BooleanField(read_only=True)
     comparison_sets = ComparisonSetLinkSerializer(many=True, read_only=True)
     url = serializers.CharField(source="get_absolute_url", read_only=True)
-
-    def get_form_integration_kwargs(self, data):
-        return {"parent": data["study"]}
 
     class Meta:
         model = models.StudyPopulation
@@ -291,9 +285,6 @@ class ResultSerializer(serializers.ModelSerializer):
     resulttags = EffectTagsSerializer(read_only=True)
     results = GroupResultSerializer(many=True, read_only=True)
     comparison_set = SimpleComparisonSetSerializer()
-
-    def get_form_integration_kwargs(self, data):
-        return {"parent": data["outcome"]}
 
     def to_representation(self, instance):
         ret = super().to_representation(instance)
