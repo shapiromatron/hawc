@@ -1554,10 +1554,9 @@ class TestExposureApi:
             },
             {
                 "desc": "new dose unit",
-                "expected_code": 201,
-                "expected_keys": {"id"},
+                "expected_code": 400,
+                "expected_keys": {"metric_units"},
                 "data": self.get_upload_data({"metric_units": "on the fly"}),
-                "post_request_test": exposure_lookup_test_with_new_metric_unit,
             },
         )
         generic_test_scenarios(client, url, create_scenarios)

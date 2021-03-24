@@ -11,15 +11,14 @@ from rest_framework.serializers import ValidationError
 from hawc.services.epa.dsstox import DssSubstance
 
 from ..assessment.api import AssessmentEditViewset, AssessmentLevelPermissions
-from ..assessment.models import Assessment, DoseUnits, DSSTox
-from ..assessment.serializers import DoseUnitsSerializer
+from ..assessment.models import Assessment, DSSTox
 from ..common.api import (
     CleanupFieldsBaseViewSet,
     LegacyAssessmentAdapterMixin,
     ReadWriteSerializerMixin,
 )
 from ..common.api.viewsets import PermCheckerMixin
-from ..common.helper import FlatExport, find_matching_list_element_value_by_value, re_digits
+from ..common.helper import FlatExport, re_digits
 from ..common.renderers import PandasRenderers
 from ..common.serializers import HeatmapQuerySerializer, UnusedSerializer
 from ..common.views import AssessmentPermissionsMixin
@@ -264,36 +263,14 @@ class Exposure(ReadWriteSerializerMixin, PermCheckerMixin, AssessmentEditViewset
                         f"dtxsid '{dtxsid_probe}' does not exist and could not be imported"
                     )
 
-    def handle_metric_unit(self, request):
-        # client can supply an id, or the name of the doseunits entry (and then we'll look it up for them - or create it if needed)
-        if "metric_units" in request.data:
-            metric_units_probe = request.data["metric_units"]
-
-            if type(metric_units_probe) is str:
-                try:
-                    metric_units = DoseUnits.objects.get(name=metric_units_probe)
-                    request.data["metric_units"] = metric_units.id
-                except ObjectDoesNotExist:
-                    # option 1 - require a pre-existing dose unit
-                    # raise ValidationError(f"metric_units lookup value '{metric_units_probe}' could not be resolved")
-
-                    # option 2 - allow creation of metric_units as part of the request
-                    du_serializer = DoseUnitsSerializer(data={"name": metric_units_probe})
-                    du_serializer.is_valid(raise_exception=True)
-                    metric_units = du_serializer.save()
-                    request.data["metric_units"] = metric_units.id
-        # else leave it alone
-
     @transaction.atomic
     def update(self, request, *args, **kwargs):
-        self.handle_metric_unit(request)
         self.handle_dtxsid(request)
 
         return super().update(request, *args, **kwargs)
 
     @transaction.atomic
     def create(self, request, *args, **kwargs):
-        self.handle_metric_unit(request)
         self.handle_dtxsid(request)
 
         # default behavior except we need to refresh the serializer to get the central tendencies to show up in the return...

@@ -1,6 +1,7 @@
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import serializers
 
+from ..assessment.models import DoseUnits
 from ..assessment.serializers import DoseUnitsSerializer, DSSToxSerializer, EffectTagsSerializer
 from ..common.api import DynamicFieldsMixin
 from ..common.helper import SerializerHelper
@@ -192,6 +193,7 @@ class ExposureSerializer(IdLookupMixin, serializers.ModelSerializer):
 class ExposureWriteSerializer(serializers.ModelSerializer):
     central_tendencies = CentralTendencySerializer(many=True, read_only=True)
     form_integration_class = forms.ExposureForm
+    metric_units = FlexibleDBLinkedChoiceField(DoseUnits, DoseUnitsSerializer, "name", False)
 
     class Meta:
         model = models.Exposure
