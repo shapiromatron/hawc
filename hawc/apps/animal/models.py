@@ -16,7 +16,13 @@ from scipy import stats
 
 from ..assessment.models import Assessment, BaseEndpoint, DSSTox
 from ..assessment.serializers import AssessmentSerializer
-from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper, cleanHTML, tryParseInt
+from ..common.helper import (
+    HAWCDjangoJSONEncoder,
+    SerializerHelper,
+    cleanHTML,
+    tryParseInt,
+    df_move_column,
+)
 from ..study.models import Study
 from ..vocab.models import Term
 from . import managers
@@ -977,28 +983,28 @@ class Endpoint(BaseEndpoint):
         if published_only:
             filters["animal_group__experiment__study__published"] = True
         columns = {
-            "id": "endpoint id",
-            "name": "endpoint name",
-            "system": "system",
-            "organ": "organ",
-            "effect": "effect",
-            "effect_subtype": "effect subtype",
-            "animal_group__dosing_regime__route_of_exposure": "route of exposure",
-            "animal_group__species__name": "species",
-            "animal_group__strain__name": "strain",
-            "animal_group__name": "animal group name",
-            "animal_group__sex": "sex",
-            "animal_group__generation": "generation",
-            "animal_group_id": "animal group id",
+            "animal_group__experiment__study_id": "study id",
+            "animal_group__experiment__study__short_citation": "study citation",
+            "animal_group__experiment__study__study_identifier": "study identifier",
             "animal_group__experiment_id": "experiment id",
             "animal_group__experiment__name": "experiment name",
             "animal_group__experiment__type": "experiment type",
             "animal_group__experiment__cas": "experiment cas",
             "animal_group__experiment__dtxsid": "experiment dtxsid",
             "animal_group__experiment__chemical": "experiment chemical",
-            "animal_group__experiment__study_id": "study id",
-            "animal_group__experiment__study__short_citation": "study citation",
-            "animal_group__experiment__study__study_identifier": "study identifier",
+            "animal_group_id": "animal group id",
+            "animal_group__name": "animal group name",
+            "animal_group__species__name": "species",
+            "animal_group__strain__name": "strain",
+            "animal_group__sex": "sex",
+            "animal_group__generation": "generation",
+            "animal_group__dosing_regime__route_of_exposure": "route of exposure",
+            "id": "endpoint id",
+            "system": "system",
+            "organ": "organ",
+            "effect": "effect",
+            "effect_subtype": "effect subtype",
+            "name": "endpoint name",
         }
         qs = (
             cls.objects.select_related(
@@ -1022,18 +1028,27 @@ class Endpoint(BaseEndpoint):
         df["experiment type"] = df["experiment type"].map(Experiment.EXPERIMENT_TYPE_DICT)
 
         # get animal-group values
-        df = df.merge(
-            AnimalGroup.objects.animal_description(assessment.id),
-            how="left",
-            left_on="animal group id",
-            right_on="animal group id",
+        df = (
+            df.merge(
+                AnimalGroup.objects.animal_description(assessment.id),
+                how="left",
+                left_on="animal group id",
+                right_on="animal group id",
+            )
+            .pipe(df_move_column, "animal description", "animal group name")
+            .pipe(df_move_column, "animal description, with n", "animal description")
+            .pipe(df_move_column, "treatment period", "experiment type")
         )
 
         # overall risk of bias evaluation
         RiskOfBiasScore = apps.get_model("riskofbias", "RiskOfBiasScore")
         df2 = RiskOfBiasScore.objects.overall_scores(assessment.id)
         if df2 is not None:
-            df = df.merge(df2, how="left", left_on="study id", right_on="study id").fillna("")
+            df = (
+                df.merge(df2, how="left", left_on="study id", right_on="study id")
+                .pipe(df_move_column, "overall study evaluation", "study identifier")
+                .fillna("")
+            )
         return df
 
     @classmethod
@@ -1043,7 +1058,11 @@ class Endpoint(BaseEndpoint):
         columns = "dose units id|dose units name|doses|noel|loel|fel|bmd|bmdl".split("|")
         df2 = cls.objects.endpoint_df(assessment, published_only).set_index("endpoint id")[columns]
 
-        df3 = df1.merge(df2, how="left", left_index=True, right_index=True).reset_index()
+        df3 = (
+            df1.merge(df2, how="left", left_index=True, right_index=True)
+            .reset_index()
+            .pipe(df_move_column, "endpoint id", "route of exposure")
+        )
         return df3
 
     @classmethod
@@ -1071,11 +1090,11 @@ class Endpoint(BaseEndpoint):
                 {
                     "overall study evaluation": unique_items,
                     "experiment type": unique_items,
+                    "experiment chemical": unique_items,
                     "species": unique_items,
+                    "sex": unique_items,
                     "strain": unique_items,
                     "route of exposure": unique_items,
-                    "experiment chemical": unique_items,
-                    "sex": unique_items,
                     "system": unique_items,
                     "organ": unique_items,
                     "effect": unique_items,

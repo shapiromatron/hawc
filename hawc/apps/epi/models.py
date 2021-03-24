@@ -5,6 +5,7 @@ from operator import xor
 from typing import Any, Dict
 
 import pandas as pd
+from django.apps import apps
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.urls import reverse
@@ -1476,6 +1477,7 @@ class Result(models.Model):
             .groupby("study id")
             .agg(
                 {
+                    "overall study evaluation": unique_items,
                     "study design": unique_items,
                     "study population source": unique_items,
                     "exposure name": unique_items,
@@ -1549,11 +1551,22 @@ class Result(models.Model):
         df2 = df2.drop(columns=exposure_cols)
 
         # join data together
-        df = df1.merge(df2, how="left", left_on="exposure id", right_index=True)
-        df = df_move_column(df, "exposure route", "exposure name")
+        df = df1.merge(df2, how="left", left_on="exposure id", right_index=True).pipe(
+            df_move_column, "exposure route", "exposure name"
+        )
         df["exposure route"].fillna("", inplace=True)
         df["exposure measure"].fillna("", inplace=True)
         df["exposure metric"].fillna("", inplace=True)
+
+        # overall risk of bias evaluation
+        RiskOfBiasScore = apps.get_model("riskofbias", "RiskOfBiasScore")
+        df2 = RiskOfBiasScore.objects.overall_scores(assessment.id)
+        if df2 is not None:
+            df = (
+                df.merge(df2, how="left", left_on="study id", right_on="study id")
+                .pipe(df_move_column, "overall study evaluation", "study identifier")
+                .fillna("")
+            )
 
         return df
 
