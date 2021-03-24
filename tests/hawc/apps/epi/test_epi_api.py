@@ -1714,7 +1714,7 @@ def generic_perm_tester(url, data):
     client = APIClient()
     assert client.login(username="reviewer@hawcproject.org", password="pw") is True
     response = client.post(url, data, format="json")
-    print(f">>>>> response == response.status_code / {response.data}")
+    print(f">>>>> response == {response.status_code} / {response.data}")
     assert response.status_code == 403
 
     # public shouldn't be able to create
