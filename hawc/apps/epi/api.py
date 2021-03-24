@@ -19,7 +19,7 @@ from ..common.api import (
     ReadWriteSerializerMixin,
 )
 from ..common.api.viewsets import PermCheckerMixin
-from ..common.helper import FlatExport, find_matching_list_element_by_value, re_digits
+from ..common.helper import FlatExport, find_matching_list_element_value_by_value, re_digits
 from ..common.renderers import PandasRenderers
 from ..common.serializers import HeatmapQuerySerializer, UnusedSerializer
 from ..common.views import AssessmentPermissionsMixin
@@ -258,7 +258,7 @@ class Exposure(ReadWriteSerializerMixin, PermCheckerMixin, AssessmentEditViewset
                 if "estimate_type" in ct:
                     probe_ct_estimate_type = ct["estimate_type"]
                     if type(probe_ct_estimate_type) is str:
-                        converted_estimate_type = find_matching_list_element_by_value(
+                        converted_estimate_type = find_matching_list_element_value_by_value(
                             models.CentralTendency.ESTIMATE_TYPE_CHOICES,
                             probe_ct_estimate_type,
                             False,
@@ -273,7 +273,7 @@ class Exposure(ReadWriteSerializerMixin, PermCheckerMixin, AssessmentEditViewset
                 if "variance_type" in ct:
                     probe_ct_variance_type = ct["variance_type"]
                     if type(probe_ct_variance_type) is str:
-                        converted_variance_type = find_matching_list_element_by_value(
+                        converted_variance_type = find_matching_list_element_value_by_value(
                             models.CentralTendency.VARIANCE_TYPE_CHOICES, probe_ct_variance_type
                         )
                         if converted_variance_type is None:

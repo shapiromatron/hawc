@@ -16,7 +16,7 @@ from ..common.helper import (
     HAWCDjangoJSONEncoder,
     SerializerHelper,
     df_move_column,
-    find_matching_list_element_by_value,
+    find_matching_list_element_value_by_value,
 )
 from ..study.models import Study
 from . import managers
@@ -1728,7 +1728,7 @@ class GroupResult(models.Model):
             ser["upper_range"],
             ser["lower_bound_interval"],
             ser["upper_bound_interval"],
-            find_matching_list_element_by_value(
+            find_matching_list_element_value_by_value(
                 GroupResult.P_VALUE_QUALIFIER_CHOICES,
                 ser["p_value_qualifier"],
                 lookup_index=0,
@@ -1875,7 +1875,7 @@ class GroupResult(models.Model):
         return self.result.get_assessment()
 
     def get_p_value_qualifier_display(self):
-        return find_matching_list_element_by_value(
+        return find_matching_list_element_value_by_value(
             self.P_VALUE_QUALIFIER_CHOICES, self.p_value_qualifier, lookup_index=0, return_index=1
         )
 

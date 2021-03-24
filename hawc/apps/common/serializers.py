@@ -7,6 +7,8 @@ from rest_framework import serializers
 from rest_framework.renderers import JSONRenderer
 from rest_framework.validators import UniqueTogetherValidator
 
+from .helper import find_matching_list_element_value_by_value
+
 
 def to_json(Serializer: serializers.ModelSerializer, instance: models.Model) -> str:
     """Return a JSON string from an instance just like a serializer would, outside of the drf view logic.
@@ -135,21 +137,20 @@ class FlexibleChoiceField(serializers.ChoiceField):
         if data == "" and self.allow_blank:
             return ""
 
+        # look for an exact match of either key or val
         for key, val in self._choices.items():
             if key == data or val == data:
                 return key
 
         # no exact match; if a string was passed in let's try case-insensitive value match
         if type(data) is str:
-            lowered_data = data.lower()
-            for key, val in self._choices.items():
-                if val is not None and str(val).lower() == lowered_data:
-                    return key
+            key = find_matching_list_element_value_by_value(self._choices.items(), data)
+            if key is not None:
+                return key
 
         self.fail("invalid_choice", input=data)
 
 
-# reworked this; neest to test AWS
 class FlexibleDBLinkedChoiceField(FlexibleChoiceField):
     """
     like a FlexibleChoiceField, except it derives its choices from a model/database table

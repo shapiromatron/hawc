@@ -291,7 +291,7 @@ class FlatFileExporter:
 re_digits = r"\d+"
 
 
-def find_matching_list_element_by_value(
+def find_matching_list_element_value_by_value(
     items, lookup_value, case_insensitive=True, lookup_index=1, return_index=0
 ):
     """Find a particular value in a list/tuple of lists/tuples by matching another value.
@@ -306,7 +306,7 @@ def find_matching_list_element_by_value(
 
     Call this function like:
 
-    num = find_matching_list_element_by_value(JERSEY_NUMBERS, "TAYLOR")
+    num = find_matching_list_element_value_by_value(JERSEY_NUMBERS, "TAYLOR")
     # num == 56
 
     This function will traverse the series of lists/tuples, find the one that matches the
