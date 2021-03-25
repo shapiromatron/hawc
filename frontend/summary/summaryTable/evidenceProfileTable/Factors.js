@@ -100,6 +100,7 @@ const increaseFactors = [
                                     <span dangerouslySetInnerHTML={{__html: html}}></span>
                                     {h.hasInnerText(factor.long_description) ? (
                                         <HelpTextPopup
+                                            icon={"fa-info-circle"}
                                             title={factorType.label}
                                             content={factor.long_description}
                                         />
