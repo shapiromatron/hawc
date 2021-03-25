@@ -336,6 +336,40 @@ class ComparisonSetSerializer(serializers.ModelSerializer):
         model = models.ComparisonSet
         fields = "__all__"
 
+    def validate(self, attrs):
+        if self.instance is None:
+            # when creating, we will validate that the supplied exposure and study population (both required)
+            # are part of the same assessment
+
+            exposure = attrs["exposure"]
+            study_population = attrs["study_population"]
+            if exposure.get_assessment().id != study_population.get_assessment().id:
+                raise serializers.ValidationError(
+                    f"Supplied exposure and study_population are part of different assessments."
+                )
+        else:
+            # when updating, we will validate that the exposure and study_population (if either are present) are part
+            # of the same assessment as the existing ComparisonSet object. (unless we think it'd ever be useful to allow someone
+            # to create a ComparisonSet in one assessment with a given study_population/exposure, and later move it?)
+
+            assessment_id = self.instance.get_assessment().id
+
+            if "study_population" in attrs:
+                study_population = attrs["study_population"]
+                if study_population.get_assessment().id != assessment_id:
+                    raise serializers.ValidationError(
+                        f"Supplied study_population is not in the assessment."
+                    )
+
+            if "exposure" in attrs:
+                exposure = attrs["exposure"]
+                if exposure.get_assessment().id != assessment_id:
+                    raise serializers.ValidationError(
+                        f"Supplied exposure is not in the assessment."
+                    )
+
+        return super().validate(attrs)
+
 
 class OutcomeCleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     study_short_citation = serializers.SerializerMethodField()

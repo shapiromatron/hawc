@@ -463,8 +463,6 @@ class ComparisonSet(PermCheckerMixin, AssessmentEditViewset):
     model = models.ComparisonSet
     serializer_class = serializers.ComparisonSetSerializer
 
-    # note - this does not currently validate that a supplied exposure is a valid one...
-
 
 class GroupNumericalDescriptions(PermCheckerMixin, AssessmentEditViewset):
     perm_checker_key = "group"
