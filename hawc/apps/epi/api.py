@@ -345,18 +345,38 @@ class Result(PermCheckerMixin, AssessmentEditViewset):
     factor_categories = (("factors_applied", True,), ("factors_considered", False,))
 
     def process_adjustment_factor_creation(self, serializer, result_id, post_initial_create):
+        """
+        Associates/disassociates adjustment factors of different categories (included, considered)
+        with the result
+        """
         inserts = []
+        raf_ids_to_disassociate = []
+
+        # see process_criteria_association; algorithm here is essentially identical.
         for data_key, is_included in self.factor_categories:
             if data_key in self.request.data:
+                # make a copy so we don't alter the contents of the initial request
+                af_ids_to_create_for_type = [x for x in self.request.data[data_key]]
+
                 if not post_initial_create:
-                    # wipe out existing factors for this result+included_in_final_model pair that was part of the request...
-                    models.ResultAdjustmentFactor.objects.filter(
+                    existing_result_afs_for_type = models.ResultAdjustmentFactor.objects.filter(
                         result=self.get_object(), included_in_final_model=is_included
-                    ).delete()
+                    )
 
-                adjustment_factor_ids = self.request.data[data_key]
+                    for existing_result_af in existing_result_afs_for_type:
+                        existing_af = existing_result_af.adjustment_factor
 
-                for adjustment_factor_id in adjustment_factor_ids:
+                        if existing_af.id in af_ids_to_create_for_type:
+                            # the id is in the request but already associated; we don't need to re-insert it
+                            af_ids_to_create_for_type.remove(existing_af.id)
+                        else:
+                            # the id is in the database but NOT in the request; we need to delete it
+                            raf_ids_to_disassociate.append(existing_result_af.id)
+
+                # now - ad_ids_to_create_for_type either contains all the ids (if during a create)
+                # or just the ones that weren't removed b/c they are already in the db. We can now
+                # build up just the inserts that actually need to happen.
+                for adjustment_factor_id in af_ids_to_create_for_type:
                     dynamic_obj = {
                         "included_in_final_model": is_included,
                         "adjustment_factor": adjustment_factor_id,
@@ -364,36 +384,29 @@ class Result(PermCheckerMixin, AssessmentEditViewset):
                     }
                     inserts.append(dynamic_obj)
 
+        # now that we've looked at each category we can hit the db.
+
+        # wipe out existing criteria for each ResultAdjustmentFactor.id that acutally needs deleting
+        if len(raf_ids_to_disassociate) > 0:
+            models.ResultAdjustmentFactor.objects.filter(id__in=raf_ids_to_disassociate).delete()
+
         # ...and save any new ones
         if len(inserts) > 0:
             serializer = serializers.SimpleResultAdjustmentFactorSerializer(data=inserts, many=True)
             serializer.is_valid(raise_exception=True)
             serializer.save()
 
-    def handle_adjustment_factors(self, request, during_create):
+    def handle_adjustment_factors(self, result):
         # first - what assessment are we working in?
-        assessment_id = None
-        if during_create:
-            if "outcome" in request.data:
-                outcome_id = request.data["outcome"]
-
-                try:
-                    outcome = models.Outcome.objects.get(id=outcome_id)
-                    assessment_id = outcome.get_assessment().id
-                except ObjectDoesNotExist:
-                    raise ValidationError({"outcome": "Invalid outcome id supplied"})
-            else:
-                raise ValidationError({"outcome": "No outcome id supplied"})
-        else:
-            assessment_id = self.get_object().get_assessment().id
+        assessment_id = result.get_assessment().id
 
         # and now do some conversions/creations
         for fc in self.factor_categories:
             data_key = fc[0]
 
             # client can supply an id, or the name of the factor entry (and then we'll look it up for them - or create it if needed)
-            if data_key in request.data:
-                data_probe = request.data[data_key]
+            if data_key in self.request.data:
+                data_probe = self.request.data[data_key]
 
                 fixed = []
                 for el in data_probe:
@@ -414,16 +427,14 @@ class Result(PermCheckerMixin, AssessmentEditViewset):
                     else:
                         fixed.append(el)
 
-                request.data[data_key] = fixed
+                self.request.data[data_key] = fixed
 
     @transaction.atomic
     def update(self, request, *args, **kwargs):
-        self.handle_adjustment_factors(request, False)
         return super().update(request, *args, **kwargs)
 
     @transaction.atomic
     def create(self, request, *args, **kwargs):
-        self.handle_adjustment_factors(request, True)
         # return super().create(request, *args, **kwargs)
 
         # default behavior except we need to refresh the serializer to get the adjustment factors to show up in the return...
@@ -437,11 +448,13 @@ class Result(PermCheckerMixin, AssessmentEditViewset):
 
     def perform_create(self, serializer):
         super().perform_create(serializer)
-        self.process_adjustment_factor_creation(serializer, serializer.data["id"], True)
+        self.handle_adjustment_factors(serializer.instance)
+        self.process_adjustment_factor_creation(serializer, serializer.instance.id, True)
 
     def perform_update(self, serializer):
         super().perform_update(serializer)
-        self.process_adjustment_factor_creation(serializer, self.get_object().id, False)
+        self.handle_adjustment_factors(serializer.instance)
+        self.process_adjustment_factor_creation(serializer, serializer.instance.id, False)
 
 
 class ComparisonSet(PermCheckerMixin, AssessmentEditViewset):
