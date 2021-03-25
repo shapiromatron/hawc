@@ -344,7 +344,7 @@ class Result(PermCheckerMixin, AssessmentEditViewset):
 
     factor_categories = (("factors_applied", True,), ("factors_considered", False,))
 
-    def process_adjustment_factor_creation(self, serializer, result_id, post_initial_create):
+    def process_adjustment_factor_association(self, serializer, result_id, post_initial_create):
         """
         Associates/disassociates adjustment factors of different categories (included, considered)
         with the result
@@ -449,12 +449,12 @@ class Result(PermCheckerMixin, AssessmentEditViewset):
     def perform_create(self, serializer):
         super().perform_create(serializer)
         self.handle_adjustment_factors(serializer.instance)
-        self.process_adjustment_factor_creation(serializer, serializer.instance.id, True)
+        self.process_adjustment_factor_association(serializer, serializer.instance.id, True)
 
     def perform_update(self, serializer):
         super().perform_update(serializer)
         self.handle_adjustment_factors(serializer.instance)
-        self.process_adjustment_factor_creation(serializer, serializer.instance.id, False)
+        self.process_adjustment_factor_association(serializer, serializer.instance.id, False)
 
 
 class ComparisonSet(PermCheckerMixin, AssessmentEditViewset):
