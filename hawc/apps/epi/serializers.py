@@ -81,7 +81,6 @@ class GroupNumericalDescriptionsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.GroupNumericalDescriptions
-        # exclude = ("group",)
         fields = "__all__"
 
 
@@ -158,7 +157,7 @@ class StudyPopulationSerializer(IdLookupMixin, serializers.ModelSerializer):
         if "countries" in validated_data:
             instance.countries.clear()
             instance.countries.add(*validated_data["countries"])
-            # delete the key so we can call the default update method for all the other fields
+            # Delete the key so we can call the default update method for all the other fields.
             del validated_data["countries"]
 
         return super().update(instance, validated_data)
@@ -167,7 +166,7 @@ class StudyPopulationSerializer(IdLookupMixin, serializers.ModelSerializer):
         temp_countries = None
         if "countries" in validated_data:
             temp_countries = validated_data["countries"]
-            # delete the key so we can call the default update method for all the other fields
+            # Delete the key so we can call the default update method for all the other fields.
             del validated_data["countries"]
         instance = super().create(validated_data)
 
@@ -218,7 +217,7 @@ class GroupResultSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         if self.instance is None:
-            # when creating, we will validate that the supplied result and group (both required) are part of the same assessment
+            # When creating, we will validate that the supplied result and group (both required) are part of the same assessment.
 
             result = attrs["result"]
             group = attrs["group"]
@@ -227,7 +226,7 @@ class GroupResultSerializer(serializers.ModelSerializer):
                     f"Supplied result and group are part of different assessments."
                 )
         else:
-            # when updating, we will validate that the result and group (if either are present) are part
+            # When updating, we will validate that the result and group (if either are present) are part
             # of the same assessment as the existing GroupResult object. (unless we think it'd ever be useful to allow someone
             # to create a GroupResult in one assessment with a given group/result, and later move it?)
 
@@ -287,8 +286,6 @@ class ResultSerializer(serializers.ModelSerializer):
     estimate_type = FlexibleChoiceField(choices=models.Result.ESTIMATE_TYPE_CHOICES)
     variance_type = FlexibleChoiceField(choices=models.Result.VARIANCE_TYPE_CHOICES)
     factors = ResultAdjustmentFactorSerializer(source="resfactors", many=True, read_only=True)
-    # factors_applied = AdjustmentFactorSerializer(many=True, read_only=True)
-    # factors_considered = AdjustmentFactorSerializer(many=True, read_only=True)
     url = serializers.CharField(source="get_absolute_url", read_only=True)
     resulttags = EffectTagsSerializer(read_only=True)
     results = GroupResultSerializer(many=True, read_only=True)
@@ -305,7 +302,6 @@ class ResultSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Result
-        # fields = "__all__"
         exclude = ("adjustment_factors",)
 
 
@@ -313,7 +309,7 @@ class OutcomeSerializer(serializers.ModelSerializer):
     form_integration_class = forms.OutcomeForm
 
     diagnostic = FlexibleChoiceField(choices=models.Outcome.DIAGNOSTIC_CHOICES)
-    study_population = StudyPopulationSerializer()  # read_only=True)
+    study_population = StudyPopulationSerializer()
     can_create_sets = serializers.BooleanField(read_only=True)
     effects = EffectTagsSerializer(read_only=True)
     url = serializers.CharField(source="get_absolute_url", read_only=True)
@@ -338,7 +334,7 @@ class ComparisonSetSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         if self.instance is None:
-            # when creating, we will validate that the supplied exposure and study population (both required)
+            # When creating, we will validate that the supplied exposure and study population (both required)
             # are part of the same assessment
 
             exposure = attrs["exposure"]
@@ -348,7 +344,7 @@ class ComparisonSetSerializer(serializers.ModelSerializer):
                     f"Supplied exposure and study_population are part of different assessments."
                 )
         else:
-            # when updating, we will validate that the exposure and study_population (if either are present) are part
+            # When updating, we will validate that the exposure and study_population (if either are present) are part
             # of the same assessment as the existing ComparisonSet object. (unless we think it'd ever be useful to allow someone
             # to create a ComparisonSet in one assessment with a given study_population/exposure, and later move it?)
 

@@ -112,10 +112,9 @@ class LegacyAssessmentAdapterMixin:
 
 class ReadWriteSerializerMixin:
     """
-    idea from https://www.revsys.com/tidbits/using-different-read-and-write-serializers-django-rest-framework/
+    Class to be mixed into viewsets which enforces use of separate read/write serializers
 
-    mixin that enforces specification of separate read & write serializers, for use
-    in a viewset.
+    idea from https://www.revsys.com/tidbits/using-different-read-and-write-serializers-django-rest-framework/
     """
 
     read_serializer_class = None

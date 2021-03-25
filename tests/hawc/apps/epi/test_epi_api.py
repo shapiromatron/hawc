@@ -154,7 +154,7 @@ class TestStudyPopulationApi:
         client = APIClient()
         assert client.login(username="team@hawcproject.org", password="pw") is True
 
-        # make some test criteria
+        # Make some test criteria
         assessment = Assessment.objects.get(id=db_keys.assessment_working)
         criteria1 = models.Criteria(assessment=assessment, description="dummy 1")
         criteria1.save()
@@ -186,7 +186,7 @@ class TestStudyPopulationApi:
             study_pop = models.StudyPopulation.objects.get(id=study_pop_id)
             assert study_pop.design == "CO"
             assert study_pop.name == base_data["name"]
-            # etc...
+            # Etc...
 
             if just_created_study_id is None:
                 just_created_study_id = study_pop_id
@@ -226,7 +226,7 @@ class TestStudyPopulationApi:
                 )
                 assert study_pop_that_should_not_exist is None
             except ObjectDoesNotExist:
-                # this is CORRECT behavior - we WANT the object to not exist
+                # This is CORRECT behavior - we WANT the object to not exist
                 pass
 
         named_design_data = base_data
@@ -369,7 +369,7 @@ class TestCriteriaApi:
                 )
                 assert criteria_that_should_not_exist is None
             except ObjectDoesNotExist:
-                # this is CORRECT behavior - we WANT the object to not exist
+                # This is CORRECT behavior - we WANT the object to not exist
                 pass
 
         create_scenarios = (
@@ -464,7 +464,6 @@ class TestOutcomeApi:
     def test_valid_requests(self, db_keys):
         url = reverse("epi:api:outcome-list")
         client = APIClient()
-        # assert client.login(username="team@hawcproject.org", password="pw") is True
         assert client.login(username="admin@hawcproject.org", password="pw") is True
 
         study_pops = models.StudyPopulation.objects.all()
@@ -472,7 +471,6 @@ class TestOutcomeApi:
         for sp in study_pops:
             study_pop = sp
             break
-        # print(f"FOUND STUDY POP {study_pop} WHCHIS IN ASSESSMENT {study_pop.get_assessment().id}")
 
         diagnostic = models.Outcome.DIAGNOSTIC_CHOICES[0]
         diagnostic_code = diagnostic[0]
@@ -525,7 +523,7 @@ class TestOutcomeApi:
                 )
                 assert outcome_that_should_not_exist is None
             except ObjectDoesNotExist:
-                # this is CORRECT behavior - we WANT the object to not exist
+                # This is CORRECT behavior - we WANT the object to not exist
                 pass
 
         create_scenarios = (
@@ -713,7 +711,7 @@ class TestResultApi:
                 result_that_should_not_exist = models.Result.objects.get(id=just_created_result_id)
                 assert result_that_should_not_exist is None
             except ObjectDoesNotExist:
-                # this is CORRECT behavior - we WANT the object to not exist
+                # This is CORRECT behavior - we WANT the object to not exist
                 pass
 
         create_scenarios = (
@@ -872,7 +870,7 @@ class TestGroupResultApi:
                 )
                 assert groupresult_that_should_not_exist is None
             except ObjectDoesNotExist:
-                # this is CORRECT behavior - we WANT the object to not exist
+                # This is CORRECT behavior - we WANT the object to not exist
                 pass
 
         create_scenarios = (
@@ -1000,7 +998,7 @@ class TestComparisonSetApi:
                 )
                 assert comparison_set_that_should_not_exist is None
             except ObjectDoesNotExist:
-                # this is CORRECT behavior - we WANT the object to not exist
+                # This is CORRECT behavior - we WANT the object to not exist
                 pass
 
         create_scenarios = (
@@ -1154,7 +1152,7 @@ class TestGroupApi:
                 group_that_should_not_exist = models.Group.objects.get(id=just_created_group_id)
                 assert group_that_should_not_exist is None
             except ObjectDoesNotExist:
-                # this is CORRECT behavior - we WANT the object to not exist
+                # This is CORRECT behavior - we WANT the object to not exist
                 pass
 
         create_scenarios = (
@@ -1317,7 +1315,7 @@ class TestGroupNumericalDescriptionsApi:
                 )
                 assert numdesc_that_should_not_exist is None
             except ObjectDoesNotExist:
-                # this is CORRECT behavior - we WANT the object to not exist
+                # This is CORRECT behavior - we WANT the object to not exist
                 pass
 
         create_scenarios = (
@@ -1528,7 +1526,7 @@ class TestExposureApi:
                 )
                 assert exposure_that_should_not_exist is None
             except ObjectDoesNotExist:
-                # this is CORRECT behavior - we WANT the object to not exist
+                # This is CORRECT behavior - we WANT the object to not exist
                 pass
 
         create_scenarios = (
@@ -1589,17 +1587,17 @@ class TestExposureApi:
 @pytest.mark.django_db
 class TestMetadataApi:
     def test_permissions(self):
-        # disable non-assesssment-specific list view of metadata
+        # Disable non-assesssment-specific list view of metadata
         try:
             url = reverse(f"epi:api:metadata-list")
             assert False
         except NoReverseMatch:
-            # this is correct behavior
+            # This is correct behavior
             pass
 
         client = APIClient()
 
-        # public should NOT be able to view the version for private assessments
+        # Public should NOT be able to view the version for private assessments
         private_assessment = Assessment.objects.filter(public=False).first()
         assert private_assessment is not None
         url = reverse("epi:api:metadata-detail", args=(private_assessment.id,))
@@ -1626,14 +1624,14 @@ class TestMetadataApi:
                     assert sub_key not in sub_data
 
     def test_bad_request(self, rewrite_data_files: bool, db_keys):
-        # invalid assessment id
+        # Invalid assessment id
         client = APIClient()
         url = reverse("epi:api:metadata-detail", args=("999",))
         resp = client.get(url)
         assert resp.status_code == 404
 
     def test_metadata(self, rewrite_data_files: bool, db_keys):
-        # verify that we get at least the correct structure of data back
+        # Verify that we get at least the correct structure of data back
         expected_keys = {
             "study_population": {"design", "countries", "assessment_specific_criteria"},
             "outcome": {"diagnostic"},
@@ -1699,14 +1697,14 @@ def generic_test_scenarios(client, url, scenarios):
 
 def generic_perm_tester(url, data):
     print(f">>>>> generic perm test on {url}")
-    # reviewers shouldn't be able to create
+    # Reviewers shouldn't be able to create
     client = APIClient()
     assert client.login(username="reviewer@hawcproject.org", password="pw") is True
     response = client.post(url, data, format="json")
     print(f">>>>> response == {response.status_code} / {response.data}")
     assert response.status_code == 403
 
-    # public shouldn't be able to create
+    # Public shouldn't be able to create
     client = APIClient()
     response = client.post(url, data, format="json")
     assert response.status_code == 403

@@ -54,13 +54,31 @@ class CleanupFieldsBaseViewSet(
 
 class PermCheckerMixin:
     """
-    class to be mixed into api viewsets. Provides default "user_can_edit_object" checks during
-    requests to create/update/destroy via API. Classes mixing this in should define a variable perm_checker_key
-    which can be either a string or a list of strings that should be used as the source for the checks, via
-    looking them up in the validated_data of the serializer.
+    Class to be mixed into api viewsets which provides permission checking during create/update/destroy operations.
+
+    Fires "user_can_edit_object" checks during requests to create/update/destroy. Viewsets mixing this in should
+    define a variable "perm_checker_key" which can be either a string or a list of strings that should be used as
+    the source for the checks, via looking them up in the validated_data of the associated serializer.
     """
 
     def generate_things_to_check(self, serializer, append_self_obj):
+        """
+        Internal helper function that generates a list of model objects to check permissions against.
+
+        As an example - when creating an epi Outcome, "perm_checker_key" is defined as ["assessment", "study_population"].
+        Generate things to check will look at the supplied input data - if "assessment" was supplied, it will add the
+        Assessment object. If "study_population" was supplied, it will add the StudyPopulation object. If "append_self_obj"
+        was True (during an update), then the Outcome object itself will be added.
+
+        Each object returned can then be checked using user_can_edit_object, throwing an exception if necessary.
+
+        Args:
+            serializer: the serializer of the associated viewset
+            append_self_obj (bool): specify whether the object itself should be checked
+
+        Returns:
+            list: The list of objects that should be checked using user_can_edit_object
+        """
         things_to_check = []
 
         # perm_checker_key can either be a string or an array of strings

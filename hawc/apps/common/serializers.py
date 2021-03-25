@@ -123,8 +123,8 @@ def get_matching_instances(Model: models.Model, data: Dict, field_name: str) -> 
 
 class FlexibleChoiceField(serializers.ChoiceField):
     """
-    like a ChoiceField, except it will let you specify either the raw choice value OR a case-insensitive
-    display value when supplying data. Makes client code simpler/more readable.
+    ChoiceField subclass that accepts either the raw choice value OR a case-insensitive
+    display value when supplying data.
     """
 
     def to_representation(self, obj):
@@ -137,12 +137,12 @@ class FlexibleChoiceField(serializers.ChoiceField):
         if data == "" and self.allow_blank:
             return ""
 
-        # look for an exact match of either key or val
+        # Look for an exact match of either key or val
         for key, val in self._choices.items():
             if key == data or val == data:
                 return key
 
-        # no exact match; if a string was passed in let's try case-insensitive value match
+        # No exact match; if a string was passed in let's try case-insensitive value match
         if type(data) is str:
             key = find_matching_list_element_value_by_value(self._choices.items(), data)
             if key is not None:
@@ -153,8 +153,9 @@ class FlexibleChoiceField(serializers.ChoiceField):
 
 class FlexibleDBLinkedChoiceField(FlexibleChoiceField):
     """
-    like a FlexibleChoiceField, except it derives its choices from a model/database table
-    and optionally supports multiples. Used for instance when:
+    FlexibleChoiceField subclass which derives its choices from a model/database table and optionally supports multiples.
+
+    Used for instance when:
         * linking an epi group to one or more ethnicities.
         * linking a epi result to a single metric
         * etc.
@@ -169,6 +170,14 @@ class FlexibleDBLinkedChoiceField(FlexibleChoiceField):
         self.related_objects_loaded = False
 
     def load_related_objects_if_needed(self, force_reload=False):
+        """
+        Internal helper function that loads choices from the database.
+
+        Called when needed by to_representation / to_internal_value if the choices have not already been fetched.
+
+        Args:
+            force_reload (bool): force db choices to be re-fetched from the database.
+        """
         if self.related_objects_loaded is False or force_reload:
             db_choices = []
             mapped_objects = self.mapped_model.objects.all()
@@ -198,14 +207,14 @@ class FlexibleDBLinkedChoiceField(FlexibleChoiceField):
         if self.many:
             # super() doesn't work inside list comprehensions; could this leverage __class__ somehow?
             # resolved_ids = [super().to_internal_value(x) for x in data]
-            # for now we'll just write the loop by hand.
+            # for now just write the loop by hand.
 
             resolved_ids = []
             for raw_input_el in data:
-                # each element could be an id or a readable value, so first we convert to id
+                # Each element could be an id or a readable value, so first we convert to id
                 resolved_ids.append(super().to_internal_value(raw_input_el))
 
-            # and now we return the actual objects in a list
+            # And now we return the actual objects in a list
             return list(self.mapped_model.objects.filter(id__in=resolved_ids))
         else:
             obj_id = super().to_internal_value(data)
@@ -215,7 +224,7 @@ class FlexibleDBLinkedChoiceField(FlexibleChoiceField):
 
 class IdLookupMixin:
     """
-    class to be mixed into serializers; provides a default to_internal_value
+    Class to be mixed into serializers which provides a default to_internal_value
     implementation that attempts to look up an item with the given int id.
     """
 
@@ -233,7 +242,7 @@ class IdLookupMixin:
 
 class GetOrCreateMixin:
     """
-    this should be mixed into a serializer
+    Class to be mixed into serializers which combines get/create functionality
 
    This mixin:
     1. disables any UniqueTogetherValidators

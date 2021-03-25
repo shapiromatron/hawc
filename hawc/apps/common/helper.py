@@ -294,7 +294,7 @@ re_digits = r"\d+"
 def find_matching_list_element_value_by_value(
     items, lookup_value, case_insensitive=True, lookup_index=1, return_index=0
 ):
-    """Find a particular value in a list/tuple of lists/tuples by matching another value.
+    """Find a particular value in a list/tuple of lists/tuples by matching another value in the inner list/tuple
 
     Given items like:
 

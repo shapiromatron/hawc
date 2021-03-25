@@ -123,19 +123,26 @@ class StudyPopulation(PermCheckerMixin, viewsets.ModelViewSet):
 
     def process_criteria_association(self, serializer, study_population_id, post_initial_create):
         """
-        Associates/disassociates criteria of different categories (inclusion, exclusion, confounding)
-        with the study population.
+        Associates/disassociates criteria of different categories with the study population
+
+        Loops through categories (inclusion, exclusion, confounding) and for each compares what's in the
+        db with what's in the request; builds up a list of inserts/deletes to execute.
+
+        Args:
+            serializer: the serializer just used to create/update the study population
+            study_population_id (int): the id of the study population that was just created/updated
+            post_initial_create (bool): True if just after a create; False if just after an update
         """
         inserts = []
         spc_ids_to_disassociate = []
 
-        # loop through each category; for each figure out what's currently saved on the studypop and
+        # Loop through each category; for each figure out what's currently saved on the studypop and
         # look at what id's were passed in.
-        # from that we can determine what actual deletions/insertions need to be made, and batch those up
+        # From that we can determine what actual deletions/insertions need to be made, and batch those up
         # so we hit the db once for the deletes, and once for the inserts, and only if it's really needed.
         for data_key, type_code in self.criteria_categories:
             if data_key in self.request.data:
-                # make a copy so we don't alter the contents of the initial request
+                # Make a copy so we don't alter the contents of the initial request
                 criteria_ids_to_create_for_type = [x for x in self.request.data[data_key]]
 
                 if not post_initial_create:
@@ -147,13 +154,13 @@ class StudyPopulation(PermCheckerMixin, viewsets.ModelViewSet):
                         existing_criteria = existing_study_pop_criteria.criteria
 
                         if existing_criteria.id in criteria_ids_to_create_for_type:
-                            # the id is in the request but already associated; we don't need to re-insert it
+                            # The id is in the request but already associated; we don't need to re-insert it
                             criteria_ids_to_create_for_type.remove(existing_criteria.id)
                         else:
-                            # the id is in the database but NOT in the request; we need to delete it
+                            # The id is in the database but NOT in the request; we need to delete it
                             spc_ids_to_disassociate.append(existing_study_pop_criteria.id)
 
-                # now - criteria_ids_to_create_for_type either contains all the ids (if during a create)
+                # Now - criteria_ids_to_create_for_type either contains all the ids (if during a create)
                 # or just the ones that weren't removed b/c they are already in the db. We can now
                 # build up just the inserts that actually need to happen.
                 for criteria_id in criteria_ids_to_create_for_type:
@@ -164,9 +171,9 @@ class StudyPopulation(PermCheckerMixin, viewsets.ModelViewSet):
                     }
                     inserts.append(dynamic_obj)
 
-        # now that we've looked at each category we can hit the db.
+        # Now that we've looked at each category we can hit the db.
 
-        # wipe out existing criteria for each StudyPopulationCriteria.id that acutally needs deleting
+        # Wipe out existing criteria for each StudyPopulationCriteria.id that acutally needs deleting
         if len(spc_ids_to_disassociate) > 0:
             models.StudyPopulationCriteria.objects.filter(id__in=spc_ids_to_disassociate).delete()
 
@@ -181,15 +188,17 @@ class StudyPopulation(PermCheckerMixin, viewsets.ModelViewSet):
     def handle_criteria(self, study_population):
         """
         Converts criteria input to id's; creating if necessary.
+
+        Args:
+            study_population (StudyPopulation): the just created StudyPopulation
         """
-        # first - what assessment are we working in?
         assessment_id = study_population.get_assessment().id
 
-        # and now do some conversions/creations
+        # Do some conversions/creations
         for cc in self.criteria_categories:
             data_key = cc[0]
 
-            # client can supply an id, or the name of the criteria entry (and then we'll look it up for them - or create it if needed)
+            # Client can supply an id, or the name of the criteria entry (and then we'll look it up for them - or create it if needed)
             if data_key in self.request.data:
                 data_probe = self.request.data[data_key]
 
@@ -202,7 +211,7 @@ class StudyPopulation(PermCheckerMixin, viewsets.ModelViewSet):
                             )
                             fixed.append(criteria.id)
                         except ObjectDoesNotExist:
-                            # allow creation of criteria as part of the request
+                            # Allow creation of criteria as part of the request
                             criteria_serializer = serializers.CriteriaSerializer(
                                 data={"description": el, "assessment": assessment_id}
                             )
@@ -230,7 +239,7 @@ class StudyPopulation(PermCheckerMixin, viewsets.ModelViewSet):
 
     @transaction.atomic
     def create(self, request, *args, **kwargs):
-        # default behavior except we need to refresh the serializer to get the criteria to show up in the return...
+        # Default behavior except we need to refresh the serializer to get the criteria to show up in the return...
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
@@ -248,7 +257,9 @@ class Exposure(ReadWriteSerializerMixin, PermCheckerMixin, AssessmentEditViewset
     write_serializer_class = serializers.ExposureWriteSerializer
 
     def handle_dtxsid(self, request):
-        # supports creating dsstox objects on the fly
+        """
+        Checks supplied dtxsid if present for existence in the database; attempting to create on-the-fly if necessary.
+        """
         if "dtxsid" in request.data:
             dtxsid_probe = request.data["dtxsid"]
             try:
@@ -274,24 +285,32 @@ class Exposure(ReadWriteSerializerMixin, PermCheckerMixin, AssessmentEditViewset
     def create(self, request, *args, **kwargs):
         self.handle_dtxsid(request)
 
-        # default behavior except we need to refresh the serializer to get the central tendencies to show up in the return...
+        # Default behavior except we need to refresh the serializer to get the central tendencies to show up in the return...
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
 
-        # refresh serializer instance, as we want to get the central tendencies we created...
+        # Refresh serializer instance, as we want to get the central tendencies we created...
         instance = self.model.objects.get(id=serializer.data["id"])
         serializer = self.get_serializer(instance)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    def process_ct_creation(self, exposure, during_update):
-        if during_update:
-            # delete the existing ct's associated with this exposure; since we don't require CT id's to be passed in
-            # this is the only good way to do this.
+    def process_ct_creation(self, exposure, post_initial_create):
+        """
+        Creates/removes central tendencies as needed following exposure saves.
+
+        Args:
+            exposure (Exposure): the exposure that was just created/updated
+            post_initial_create (bool): True if just after a create; False if just after an update
+
+        """
+        if not post_initial_create:
+            # Delete the existing ct's associated with this exposure; since we don't require CT id's to be passed in
+            # this is the only good way I could come up with to do this.
             models.CentralTendency.objects.filter(exposure=exposure).delete()
 
-        # if a user is updating and doesn't supply a "central_tendencies" node, we just leave the previously saved CT's alone
-        missing_needed_cts = not during_update
+        # If a user is updating and doesn't supply a "central_tendencies" node, we just leave the previously saved CT's alone
+        missing_needed_cts = post_initial_create
 
         cts = []
 
@@ -303,7 +322,7 @@ class Exposure(ReadWriteSerializerMixin, PermCheckerMixin, AssessmentEditViewset
             if len(cts) > 0:
                 missing_needed_cts = False
 
-                # populate each ct with the just created/updated exposure id
+                # Populate each ct with the just created/updated exposure id
                 for ct in cts:
                     ct["exposure"] = exposure.id
 
@@ -316,11 +335,11 @@ class Exposure(ReadWriteSerializerMixin, PermCheckerMixin, AssessmentEditViewset
 
     def perform_create(self, serializer):
         super().perform_create(serializer)
-        self.process_ct_creation(serializer.instance, False)
+        self.process_ct_creation(serializer.instance, True)
 
     def perform_update(self, serializer):
         super().perform_update(serializer)
-        self.process_ct_creation(serializer.instance, True)
+        self.process_ct_creation(serializer.instance, False)
 
 
 class Outcome(PermCheckerMixin, AssessmentEditViewset):
@@ -347,16 +366,23 @@ class Result(PermCheckerMixin, AssessmentEditViewset):
 
     def process_adjustment_factor_association(self, serializer, result_id, post_initial_create):
         """
-        Associates/disassociates adjustment factors of different categories (included, considered)
-        with the result
+        Associates/disassociates adjustment factors of different categories with the result
+
+        Loops through categories (included, considered) and for each compares what's in the
+        db with what's in the request; builds up a list of inserts/deletes to execute.
+
+        Args:
+            serializer: the serializer just used to create/update the result
+            result_id (int): the id of the result that was just created/updated
+            post_initial_create (bool): True if just after a create; False if just after an update
         """
         inserts = []
         raf_ids_to_disassociate = []
 
-        # see process_criteria_association; algorithm here is essentially identical.
+        # See process_criteria_association; algorithm here is essentially identical.
         for data_key, is_included in self.factor_categories:
             if data_key in self.request.data:
-                # make a copy so we don't alter the contents of the initial request
+                # Make a copy so we don't alter the contents of the initial request
                 af_ids_to_create_for_type = [x for x in self.request.data[data_key]]
 
                 if not post_initial_create:
@@ -368,13 +394,13 @@ class Result(PermCheckerMixin, AssessmentEditViewset):
                         existing_af = existing_result_af.adjustment_factor
 
                         if existing_af.id in af_ids_to_create_for_type:
-                            # the id is in the request but already associated; we don't need to re-insert it
+                            # The id is in the request but already associated; we don't need to re-insert it
                             af_ids_to_create_for_type.remove(existing_af.id)
                         else:
-                            # the id is in the database but NOT in the request; we need to delete it
+                            # The id is in the database but NOT in the request; we need to delete it
                             raf_ids_to_disassociate.append(existing_result_af.id)
 
-                # now - ad_ids_to_create_for_type either contains all the ids (if during a create)
+                # Now - af_ids_to_create_for_type either contains all the ids (if during a create)
                 # or just the ones that weren't removed b/c they are already in the db. We can now
                 # build up just the inserts that actually need to happen.
                 for adjustment_factor_id in af_ids_to_create_for_type:
@@ -385,9 +411,9 @@ class Result(PermCheckerMixin, AssessmentEditViewset):
                     }
                     inserts.append(dynamic_obj)
 
-        # now that we've looked at each category we can hit the db.
+        # Now that we've looked at each category we can hit the db.
 
-        # wipe out existing criteria for each ResultAdjustmentFactor.id that acutally needs deleting
+        # Wipe out existing criteria for each ResultAdjustmentFactor.id that acutally needs deleting
         if len(raf_ids_to_disassociate) > 0:
             models.ResultAdjustmentFactor.objects.filter(id__in=raf_ids_to_disassociate).delete()
 
@@ -398,14 +424,19 @@ class Result(PermCheckerMixin, AssessmentEditViewset):
             serializer.save()
 
     def handle_adjustment_factors(self, result):
-        # first - what assessment are we working in?
+        """
+        Converts adjustment factor input to id's; creating if necessary.
+
+        Args:
+            result (Result): the just created result
+        """
         assessment_id = result.get_assessment().id
 
-        # and now do some conversions/creations
+        # Now do some conversions/creations
         for fc in self.factor_categories:
             data_key = fc[0]
 
-            # client can supply an id, or the name of the factor entry (and then we'll look it up for them - or create it if needed)
+            # Client can supply an id, or the name of the factor entry (and then we'll look it up for them - or create it if needed)
             if data_key in self.request.data:
                 data_probe = self.request.data[data_key]
 
@@ -418,7 +449,7 @@ class Result(PermCheckerMixin, AssessmentEditViewset):
                             )
                             fixed.append(adj_factor.id)
                         except ObjectDoesNotExist:
-                            # allow creation of adjustment factors as part of the request
+                            # Allow creation of adjustment factors as part of the request
                             af_serializer = serializers.AdjustmentFactorSerializer(
                                 data={"description": el, "assessment": assessment_id}
                             )
@@ -436,9 +467,7 @@ class Result(PermCheckerMixin, AssessmentEditViewset):
 
     @transaction.atomic
     def create(self, request, *args, **kwargs):
-        # return super().create(request, *args, **kwargs)
-
-        # default behavior except we need to refresh the serializer to get the adjustment factors to show up in the return...
+        # Default behavior except we need to refresh the serializer to get the adjustment factors to show up in the return...
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
