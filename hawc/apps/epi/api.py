@@ -2,7 +2,7 @@ from django.conf import settings
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import transaction
-from rest_framework import status, viewsets
+from rest_framework import mixins, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
@@ -12,6 +12,7 @@ from hawc.services.epa.dsstox import DssSubstance
 
 from ..assessment.api import AssessmentEditViewset, AssessmentLevelPermissions
 from ..assessment.models import Assessment, DSSTox
+from ..assessment.serializers import AssessmentSerializer
 from ..common.api import (
     CleanupFieldsBaseViewSet,
     LegacyAssessmentAdapterMixin,
@@ -23,7 +24,7 @@ from ..common.renderers import PandasRenderers
 from ..common.serializers import HeatmapQuerySerializer, UnusedSerializer
 from ..common.views import AssessmentPermissionsMixin
 from . import exports, models, serializers
-from .actions.model_metadata import EpiAssessmentMetadata, EpiMetadata
+from .actions.model_metadata import EpiAssessmentMetadata
 
 
 class EpiAssessmentViewset(
@@ -496,19 +497,17 @@ class ExposureCleanup(CleanupFieldsBaseViewSet):
     assessment_filter_args = "study_population__study__assessment"
 
 
-class Metadata(viewsets.ViewSet):
-    def list(self, request):
-        return EpiMetadata.handle_request(request)
+class Metadata(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+    model = models.Assessment
+    serializer_class = AssessmentSerializer
+
+    def get_queryset(self, *args, **kwargs):
+        return self.model.objects.all()
 
     def retrieve(self, request, *args, **kwargs):
-        assessment_id = kwargs["pk"]
-        try:
-            assessment = Assessment.objects.get(id=assessment_id)
-
-            if assessment.user_can_view_object(request.user):
-                eam = EpiAssessmentMetadata(None)
-                return eam.handle_assessment_request(request, assessment)
-            else:
-                raise PermissionDenied("Invalid permission to view assessment metadata")
-        except ObjectDoesNotExist:
-            raise ValidationError("Invalid assessment id")
+        assessment = self.get_object()
+        if assessment.user_can_view_object(request.user):
+            eam = EpiAssessmentMetadata(None)
+            return eam.handle_assessment_request(request, assessment)
+        else:
+            raise PermissionDenied("Invalid permission to view assessment metadata")

@@ -4,6 +4,7 @@ from pathlib import Path
 import pytest
 from django.core.exceptions import ObjectDoesNotExist
 from django.urls import reverse
+from django.urls.exceptions import NoReverseMatch
 from rest_framework.test import APIClient
 
 from hawc.apps.assessment.models import Assessment, DoseUnits
@@ -1588,16 +1589,20 @@ class TestExposureApi:
 @pytest.mark.django_db
 class TestMetadataApi:
     def test_permissions(self):
-        url = reverse(f"epi:api:metadata-list")
-        # public should have access to the main metadata
+        # disable non-assesssment-specific list view of metadata
+        try:
+            url = reverse(f"epi:api:metadata-list")
+            assert False
+        except NoReverseMatch:
+            # this is correct behavior
+            pass
+
         client = APIClient()
-        resp = client.get(url)
-        assert resp.status_code == 200
 
         # public should NOT be able to view the version for private assessments
         private_assessment = Assessment.objects.filter(public=False).first()
         assert private_assessment is not None
-        url = f"{url}{private_assessment.id}/"
+        url = reverse("epi:api:metadata-detail", args=(private_assessment.id,))
         resp = client.get(url)
         assert resp.status_code == 403
 
@@ -1623,14 +1628,14 @@ class TestMetadataApi:
     def test_bad_request(self, rewrite_data_files: bool, db_keys):
         # invalid assessment id
         client = APIClient()
-        url = reverse(f"epi:api:metadata-list") + "999/"
+        url = reverse("epi:api:metadata-detail", args=("999",))
         resp = client.get(url)
-        assert resp.status_code == 400
+        assert resp.status_code == 404
 
     def test_metadata(self, rewrite_data_files: bool, db_keys):
         # verify that we get at least the correct structure of data back
-        basic_keys = {
-            "study_population": {"design", "countries"},
+        expected_keys = {
+            "study_population": {"design", "countries", "assessment_specific_criteria"},
             "outcome": {"diagnostic"},
             "result": {
                 "dose_response",
@@ -1638,6 +1643,7 @@ class TestMetadataApi:
                 "estimate_type",
                 "variance_type",
                 "metrics",
+                "assessment_specific_adjustment_factors",
             },
             "group_result": {"p_value_qualifier", "main_finding"},
             "group": {"sex", "ethnicities"},
@@ -1651,29 +1657,13 @@ class TestMetadataApi:
             "central_tendency": {"estimate_type", "variance_type"},
         }
 
-        non_basic_keys = {
-            "study_population": {"assessment_specific_criteria"},
-            "result": {"assessment_specific_adjustment_factors"},
-        }
-
         client = APIClient()
-        url = reverse(f"epi:api:metadata-list")
-        resp = client.get(url)
-        assert resp.status_code == 200
-        self.verify_keys_in_response(resp.data, basic_keys)
-        self.verify_keys_not_in_response(resp.data, non_basic_keys)
-
-        assessment_specific_keys = basic_keys
-        for key in non_basic_keys:
-            sub_keys = non_basic_keys[key]
-            for sub_key in sub_keys:
-                assessment_specific_keys[key].add(sub_key)
 
         assert client.login(username="admin@hawcproject.org", password="pw") is True
-        url = f"{url}2/"
+        url = reverse("epi:api:metadata-detail", args=("2",))
         resp = client.get(url)
         assert resp.status_code == 200
-        self.verify_keys_in_response(resp.data, assessment_specific_keys)
+        self.verify_keys_in_response(resp.data, expected_keys)
 
 
 def generic_test_scenarios(client, url, scenarios):

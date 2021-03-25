@@ -33,10 +33,12 @@ class NoInput(BaseModel):
     pass
 
 
-class EpiMetadata(BaseApiAction):
+class EpiAssessmentMetadata(BaseApiAction):
     """
-    Generate a dictionary of field choices for all epi models.
+    Generate an assessment-specific dictionary of field choices for all epi models.
     """
+
+    assessment = None
 
     input_model = NoInput
 
@@ -67,7 +69,7 @@ class EpiMetadata(BaseApiAction):
         )
 
     def result_metadata(self):
-        return dict(
+        metadata = dict(
             dose_response=dict(Result.DOSE_RESPONSE_CHOICES),
             statistical_power=dict(Result.STATISTICAL_POWER_CHOICES),
             estimate_type=dict(Result.ESTIMATE_TYPE_CHOICES),
@@ -75,14 +77,32 @@ class EpiMetadata(BaseApiAction):
             metrics=get_all_model_objects(ResultMetric, "metric"),
         )
 
+        metadata["assessment_specific_adjustment_factors"] = {
+            af.id: af.description
+            for af in AdjustmentFactor.objects.filter(assessment=self.assessment).order_by(
+                Lower("description")
+            )
+        }
+
+        return metadata
+
     def outcome_metadata(self):
         return dict(diagnostic=dict(Outcome.DIAGNOSTIC_CHOICES),)
 
     def study_population_metadata(self):
-        return dict(
+        metadata = dict(
             design=dict(StudyPopulation.DESIGN_CHOICES),
             countries=get_all_model_objects(Country, "name", "code"),
         )
+
+        metadata["assessment_specific_criteria"] = {
+            c.id: c.description
+            for c in Criteria.objects.filter(assessment=self.assessment).order_by(
+                Lower("description")
+            )
+        }
+
+        return metadata
 
     def evaluate(self):
         return dict(
@@ -96,30 +116,6 @@ class EpiMetadata(BaseApiAction):
             central_tendency=self.central_tendency_metadata(),
         )
 
-
-class EpiAssessmentMetadata(EpiMetadata):
-    assessment = None
-
     def handle_assessment_request(self, request, assessment):
         self.assessment = assessment
         return Response(self.evaluate())
-
-    def study_population_metadata(self):
-        data = super().study_population_metadata()
-        data["assessment_specific_criteria"] = {
-            c.id: c.description
-            for c in Criteria.objects.filter(assessment=self.assessment).order_by(
-                Lower("description")
-            )
-        }
-        return data
-
-    def result_metadata(self):
-        data = super().result_metadata()
-        data["assessment_specific_adjustment_factors"] = {
-            af.id: af.description
-            for af in AdjustmentFactor.objects.filter(assessment=self.assessment).order_by(
-                Lower("description")
-            )
-        }
-        return data
