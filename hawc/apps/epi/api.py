@@ -335,8 +335,6 @@ class GroupResult(PermCheckerMixin, AssessmentEditViewset):
     model = models.GroupResult
     serializer_class = serializers.GroupResultSerializer
 
-    # note - this does not currently validate that a supplied group is part of the assessment.
-
 
 class Result(PermCheckerMixin, AssessmentEditViewset):
     perm_checker_key = ["outcome", "comparison_set"]

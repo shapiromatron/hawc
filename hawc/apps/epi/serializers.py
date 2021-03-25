@@ -216,6 +216,35 @@ class GroupResultSerializer(serializers.ModelSerializer):
         model = models.GroupResult
         fields = "__all__"
 
+    def validate(self, attrs):
+        if self.instance is None:
+            # when creating, we will validate that the supplied result and group (both required) are part of the same assessment
+
+            result = attrs["result"]
+            group = attrs["group"]
+            if result.get_assessment().id != group.get_assessment().id:
+                raise serializers.ValidationError(
+                    f"Supplied result and group are part of different assessments."
+                )
+        else:
+            # when updating, we will validate that the result and group (if either are present) are part
+            # of the same assessment as the existing GroupResult object. (unless we think it'd ever be useful to allow someone
+            # to create a GroupResult in one assessment with a given group/result, and later move it?)
+
+            assessment_id = self.instance.get_assessment().id
+
+            if "group" in attrs:
+                group = attrs["group"]
+                if group.get_assessment().id != assessment_id:
+                    raise serializers.ValidationError(f"Supplied group is not in the assessment.")
+
+            if "result" in attrs:
+                result = attrs["result"]
+                if result.get_assessment().id != assessment_id:
+                    raise serializers.ValidationError(f"Supplied result is not in the assessment.")
+
+        return super().validate(attrs)
+
 
 class SimpleResultAdjustmentFactorSerializer(serializers.ModelSerializer):
     class Meta:
