@@ -1,4 +1,2 @@
-const TABLEAU_HOSTNAME = "https://public.tableau.com";
-const NULL_VALUE = "---";
-
-export {TABLEAU_HOSTNAME, NULL_VALUE};
+export const TABLEAU_HOSTNAME = "https://public.tableau.com",
+    NULL_VALUE = "---";

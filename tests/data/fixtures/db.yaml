@@ -5236,36 +5236,7 @@
     visual_type: 6
     dose_units: null
     prefilters: '{}'
-    settings: "{\r\n  \"cell_height\": 50,\r\n  \"cell_width\": 50,\r\n  \"color_range\"\
-      : [\r\n    \"#ffffff\",\r\n    \"#cc4700\"\r\n  ],\r\n  \"compress_x\": true,\r\
-      \n  \"compress_y\": true,\r\n  \"data_url\": \"/ani/api/assessment/2/endpoint-heatmap/\"\
-      ,\r\n  \"hawc_interactivity\": true,\r\n  \"filter_widgets\": [\r\n    {\r\n\
-      \      \"column\": \"species\",\r\n      \"delimiter\": \"\",\r\n      \"on_click_event\"\
-      : \"---\"\r\n    },\r\n    {\r\n      \"column\": \"strain\",\r\n      \"delimiter\"\
-      : \"\",\r\n      \"on_click_event\": \"---\"\r\n    }\r\n  ],\r\n  \"padding\"\
-      : {\r\n    \"top\": 30,\r\n    \"left\": 30,\r\n    \"bottom\": 30,\r\n    \"\
-      right\": 30\r\n  },\r\n  \"show_axis_border\": true,\r\n  \"show_grid\": true,\r\
-      \n  \"show_tooltip\": true,\r\n  \"show_totals\": true,\r\n  \"show_null\":\
-      \ true,\r\n  \"autosize_cells\": true,\r\n  \"autorotate_tick_labels\": true,\r\
-      \n  \"table_fields\": [\r\n    {\r\n      \"column\": \"study citation\",\r\n\
-      \      \"delimiter\": \"\",\r\n      \"on_click_event\": \"study\"\r\n    },\r\
-      \n    {\r\n      \"column\": \"experiment name\",\r\n      \"delimiter\": \"\
-      \",\r\n      \"on_click_event\": \"experiment\"\r\n    },\r\n    {\r\n     \
-      \ \"column\": \"animal group name\",\r\n      \"delimiter\": \"\",\r\n     \
-      \ \"on_click_event\": \"animal_group\"\r\n    },\r\n    {\r\n      \"column\"\
-      : \"endpoint name\",\r\n      \"delimiter\": \"\",\r\n      \"on_click_event\"\
-      : \"endpoint_complete\"\r\n    },\r\n    {\r\n      \"column\": \"---\",\r\n\
-      \      \"delimiter\": \"\",\r\n      \"on_click_event\": \"---\"\r\n    }\r\n\
-      \  ],\r\n  \"title\": {\r\n    \"text\": \"\",\r\n    \"x\": 0,\r\n    \"y\"\
-      : 0,\r\n    \"rotate\": 0\r\n  },\r\n  \"x_fields\": [\r\n    {\r\n      \"\
-      column\": \"system\",\r\n      \"wrap_text\": 0,\r\n      \"delimiter\": \"\"\
-      \r\n    }\r\n  ],\r\n  \"x_label\": {\r\n    \"text\": \"\",\r\n    \"x\": 0,\r\
-      \n    \"y\": 0,\r\n    \"rotate\": 0\r\n  },\r\n  \"x_tick_rotate\": 0,\r\n\
-      \  \"y_fields\": [\r\n    {\r\n      \"column\": \"study citation\",\r\n   \
-      \   \"wrap_text\": 0,\r\n      \"delimiter\": \"\"\r\n    }\r\n  ],\r\n  \"\
-      y_label\": {\r\n    \"text\": \"\",\r\n    \"x\": 0,\r\n    \"y\": 0,\r\n  \
-      \  \"rotate\": 0\r\n  },\r\n  \"y_tick_rotate\": -90,\r\n  \"x_axis_bottom\"\
-      : false\r\n}"
+    settings: '{"cell_height": 50, "cell_width": 50, "color_range": ["#ffffff", "#cc4700"], "compress_x": true, "compress_y": true, "data_url": "/ani/api/assessment/2/endpoint-heatmap/", "hawc_interactivity": true, "filter_widgets": [{"column": "species", "delimiter": "", "on_click_event": "---", "header": ""}, {"column": "strain", "delimiter": "", "on_click_event": "---", "header": ""}], "padding": {"top": 30, "left": 30, "bottom": 30, "right": 30}, "show_axis_border": true, "show_grid": true, "show_tooltip": true, "show_totals": true, "show_null": true, "autosize_cells": true, "autorotate_tick_labels": true, "table_fields": [{"column": "study citation", "delimiter": "", "on_click_event": "study", "header": ""}, {"column": "experiment name", "delimiter": "", "on_click_event": "experiment", "header": ""}, {"column": "animal group name", "delimiter": "", "on_click_event": "animal_group", "header": ""}, {"column": "endpoint name", "delimiter": "", "on_click_event": "endpoint_complete", "header": ""}, {"column": "---", "delimiter": "", "on_click_event": "---", "header": ""}], "title": {"text": "", "x": 0, "y": 0, "rotate": 0}, "x_fields": [{"column": "system", "wrap_text": 0, "delimiter": ""}], "x_label": {"text": "", "x": 0, "y": 0, "rotate": 0}, "x_tick_rotate": 0, "y_fields": [{"column": "study citation", "wrap_text": 0, "delimiter": ""}], "y_label": {"text": "", "x": 0, "y": 0, "rotate": 0}, "y_tick_rotate": -90, "x_axis_bottom": false, "filters": [], "filtersLogic": "and"}'
     caption: ''
     published: true
     sort_order: short_citation

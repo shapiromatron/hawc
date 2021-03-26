@@ -7,6 +7,7 @@ import h from "shared/utils/helpers";
 import HAWCModal from "utils/HAWCModal";
 
 import {NULL_VALUE} from "../../summary/constants";
+import {applyRowFilters} from "../../summary/filters";
 import DataPivotExtension from "summary/dataPivot/DataPivotExtension";
 
 class HeatmapDatastore {
@@ -29,7 +30,7 @@ class HeatmapDatastore {
         this.getDetailUrl = this.getDetailUrl.bind(this);
         this.modal = new HAWCModal();
         this.settings = settings;
-        this.dataset = dataset;
+        this.dataset = applyRowFilters(dataset, settings.filters, settings.filtersLogic);
         this.dpe = new DataPivotExtension();
         this.intersection = this.setIntersection();
         this.filterWidgetState = this.setFilterWidgetState();
