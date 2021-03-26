@@ -30,18 +30,20 @@ export const DATA_FILTER_CONTAINS = "contains",
                 return (val, target) => val >= target;
             case "contains":
                 return (val, target) =>
+                    val &&
                     val
                         .toString()
                         .toLowerCase()
-                        .includes(target);
+                        .includes(target.toString().toLowerCase());
             case "not_contains":
                 return (val, target) =>
+                    _.isEmpty(val) ||
                     !val
                         .toString()
                         .toLowerCase()
-                        .includes(target);
+                        .includes(target.toString().toLowerCase());
             case "exact":
-                return (val, target) => val.toString() === target;
+                return (val, target) => val == target;
             default:
                 console.error(`Unrecognized filter: ${filterType}`);
         }
