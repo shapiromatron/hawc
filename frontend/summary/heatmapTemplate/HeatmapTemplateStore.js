@@ -3,6 +3,7 @@ import h from "shared/utils/helpers";
 import {action, computed, observable, toJS} from "mobx";
 
 import OPTIONS from "./dataDefinitions";
+import {DATA_FILTER_LOGIC_AND} from "../summary/filters";
 
 class HeatmapTemplateStore {
     config = null;
@@ -97,6 +98,8 @@ class HeatmapTemplateStore {
             show_tooltip: true,
             show_totals: true,
             show_null: this.showNull,
+            filters: [],
+            filtersLogic: DATA_FILTER_LOGIC_AND,
             table_fields: this.selectedTableFields.map(d => d.settings),
             title: {text: this.selectedDashboard.label, x: 0, y: 0, rotate: 0},
             x_axis_bottom: false,

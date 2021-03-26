@@ -33,7 +33,8 @@ class FilterWidget extends Component {
                 .filter(d => itemStore[d] === false)
                 .value(),
             filterWidgetExtension = this.props.store.extensions.filterWidgets[widget.column],
-            items = _.sortedUniq([...availableItems, ...hiddenItems].sort());
+            items = _.sortedUniq([...availableItems, ...hiddenItems].sort()),
+            widgetTitle = widget.header ? widget.header : h.titleCase(widget.column);
 
         return (
             <div
@@ -66,7 +67,7 @@ class FilterWidget extends Component {
                             <i className="fa fa-lg fa-times-circle"></i>
                         </button>
                     </div>
-                    <h4 className="m-0">{h.titleCase(widget.column)}</h4>
+                    <h4 className="m-0">{widgetTitle}</h4>
                 </div>
                 <div
                     style={{

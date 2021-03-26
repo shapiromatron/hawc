@@ -56,8 +56,13 @@ class SelectInput extends Component {
     }
 
     render() {
-        const fieldId = this.props.id || this.props.name ? `id_${this.props.name}` : null,
+        const fieldId = this.props.id
+                ? this.props.id
+                : this.props.name
+                ? `id_${this.props.name}`
+                : null,
             {errors} = this.props;
+
         if (this.props.fieldOnly) {
             return this.renderField("react-select", fieldId);
         }

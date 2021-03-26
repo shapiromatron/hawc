@@ -22,9 +22,11 @@ class StudyCollection {
     }
 
     render($el) {
+        const noun = this.object_list.length === 1 ? "study" : "studies";
         $el.hide()
             .append(this.build_filters())
             .append(this.build_table())
+            .append(`<p><b>${this.object_list.length} ${noun} available.</b></p>`)
             .fadeIn();
 
         this.registerEvents($el);
@@ -54,6 +56,9 @@ class StudyCollection {
     }
 
     build_table() {
+        if (this.object_list.length === 0) {
+            return;
+        }
         var tbl = new BaseTable(),
             colgroups = [25, 50, 7, 7, 8, 7],
             header = [
