@@ -7,7 +7,7 @@ import QuillTextInput from "shared/components/QuillTextInput";
 import CheckboxInput from "shared/components/CheckboxInput";
 import {JudgementSelector} from "./Judgement";
 
-import {CUSTOM_JUDGEMENT, HIDE_CONTENT_HELP_TEXT} from "./common";
+import {CUSTOM_JUDGEMENT, HELP_TEXT} from "./common";
 
 const IntegrationForm = observer(props => {
     const {store} = props,
@@ -21,7 +21,7 @@ const IntegrationForm = observer(props => {
                 onChange={e => {
                     store.updateValue("summary_judgement.hide_content", e.target.checked);
                 }}
-                helpText={HIDE_CONTENT_HELP_TEXT}
+                helpText={HELP_TEXT.HIDE_CONTENT}
                 required
             />
             <div className={summary_judgement.hide_content ? "form-row hidden" : "form-row"}>
@@ -31,6 +31,7 @@ const IntegrationForm = observer(props => {
                         handleSelect={value =>
                             store.updateValue("summary_judgement.judgement", parseInt(value))
                         }
+                        helpText={HELP_TEXT.IRIS_HANDBOOK}
                         summary={true}
                     />
                 </div>
@@ -82,7 +83,7 @@ const IntegrationForm = observer(props => {
                 <div className="col-md-6">
                     <QuillTextInput
                         label="Susceptibility"
-                        helpText="..."
+                        helpText="Use ‘no evidence to inform’ or include specific evidence-based documentation of potential susceptible populations or lifestages, with brief rationale."
                         value={summary_judgement.susceptibility}
                         onChange={value =>
                             store.updateValue("summary_judgement.susceptibility", value)
@@ -93,7 +94,7 @@ const IntegrationForm = observer(props => {
                 <div className="col-md-6">
                     <QuillTextInput
                         label="Human relevance"
-                        helpText="..."
+                        helpText="Use ‘N/A, judgments driven by human data’ or explain the interpretation of the relevance of the animal data to humans. In many cases, a statement such as, ‘without evidence to the contrary, [health effect described in the table] responses in animals are presumed to be relevant to humans’. If possible, include some brief text describing the interpreted comparability of experimental animal organs/systems to humans based on underlying biological similarity (e.g., thyroid signaling processes are well conserved across rodents and humans)."
                         value={summary_judgement.human_relevance}
                         onChange={value =>
                             store.updateValue("summary_judgement.human_relevance", value)
@@ -103,7 +104,7 @@ const IntegrationForm = observer(props => {
                 <div className="col-md-6">
                     <QuillTextInput
                         label="Cross-stream coherence"
-                        helpText="..."
+                        helpText="Addresses the biological concordance of findings across human, animal, and mechanistic studies, considering factors such as exposure timing and levels. Notably, for many health effects (e.g., some nervous system and reproductive effects), effects manifest in animals are not expected to be manifest similarly in humans. Please consult and cite guidance and other resources when drawing these inferences."
                         value={summary_judgement.cross_stream_coherence}
                         onChange={value =>
                             store.updateValue("summary_judgement.cross_stream_coherence", value)

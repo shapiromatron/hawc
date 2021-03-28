@@ -349,6 +349,10 @@
 - model: contenttypes.contenttype
   fields:
     app_label: summary
+    model: summarytable
+- model: contenttypes.contenttype
+  fields:
+    app_label: summary
     model: visual
 - model: contenttypes.contenttype
   fields:
@@ -366,6 +370,42 @@
   fields:
     app_label: mgmt
     model: task
+- model: contenttypes.contenttype
+  fields:
+    app_label: eco
+    model: country
+- model: contenttypes.contenttype
+  fields:
+    app_label: eco
+    model: state
+- model: contenttypes.contenttype
+  fields:
+    app_label: eco
+    model: climate
+- model: contenttypes.contenttype
+  fields:
+    app_label: eco
+    model: ecoregion
+- model: contenttypes.contenttype
+  fields:
+    app_label: eco
+    model: reference
+- model: contenttypes.contenttype
+  fields:
+    app_label: eco
+    model: metadata
+- model: contenttypes.contenttype
+  fields:
+    app_label: eco
+    model: cause
+- model: contenttypes.contenttype
+  fields:
+    app_label: eco
+    model: effect
+- model: contenttypes.contenttype
+  fields:
+    app_label: eco
+    model: quantitative
 - model: myuser.hawcuser
   fields:
     password: md5$OtMBo5HXuH5d$79fbf1f0ae6d765b17b29256920cc8ef
@@ -4811,6 +4851,254 @@
     text: <p>Level 1-B-beta text.</p>
     created: 2020-11-25 20:25:37.723914+00:00
     last_updated: 2020-11-25 20:25:37.723938+00:00
+- model: summary.summarytable
+  pk: 1
+  fields:
+    assessment: 1
+    title: 'Generic #1'
+    slug: Generic-1
+    content:
+      cells:
+      - row: 0
+        column: 0
+        header: true
+        col_span: 1
+        row_span: 1
+        quill_text: <p>Atrribute</p>
+      - row: 0
+        column: 1
+        header: true
+        col_span: 1
+        row_span: 1
+        quill_text: <p>Value</p>
+      - row: 0
+        column: 2
+        header: true
+        col_span: 1
+        row_span: 1
+        quill_text: <p>Comments</p>
+      - row: 1
+        column: 0
+        header: false
+        col_span: 1
+        row_span: 1
+        quill_text: <p>Common name</p>
+      - row: 1
+        column: 1
+        header: false
+        col_span: 2
+        row_span: 1
+        quill_text: <p><a href="https://comptox.epa.gov/dashboard/dsstoxdb/results?search=DTXSID6026296"
+          rel="noopener noreferrer" target="_blank">Water</a></p>
+      - row: 2
+        column: 0
+        header: false
+        col_span: 1
+        row_span: 1
+        quill_text: <p>Melting point</p>
+      - row: 2
+        column: 1
+        header: false
+        col_span: 2
+        row_span: 1
+        quill_text: <p>0 C</p>
+      - row: 3
+        column: 0
+        header: false
+        col_span: 1
+        row_span: 1
+        quill_text: <p>Boiling point</p>
+      - row: 3
+        column: 1
+        header: false
+        col_span: 2
+        row_span: 1
+        quill_text: <p>100 C</p>
+      - row: 4
+        column: 0
+        header: false
+        col_span: 1
+        row_span: 1
+        quill_text: <p>Molar mass</p>
+      - row: 4
+        column: 1
+        header: false
+        col_span: 2
+        row_span: 1
+        quill_text: '<p><span style="color: rgb(32, 33, 36);">18.02 g/mol</span></p>'
+      - row: 5
+        column: 0
+        header: false
+        col_span: 1
+        row_span: 1
+        quill_text: <p>CASRN</p>
+      - row: 5
+        column: 1
+        header: false
+        col_span: 2
+        row_span: 1
+        quill_text: '<p><span style="color: rgb(34, 34, 34);">7732-18-5</span></p>'
+      - row: 6
+        column: 0
+        header: false
+        col_span: 1
+        row_span: 1
+        quill_text: <p>Ichl Key</p>
+      - row: 6
+        column: 1
+        header: false
+        col_span: 2
+        row_span: 1
+        quill_text: <p>XLYOFNOQVPJJNP-UHFFFAOYSA-N</p>
+      - row: 7
+        column: 0
+        header: false
+        col_span: 1
+        row_span: 1
+        quill_text: <p><strong>Other features</strong></p><ul><li>bullets can be added</li><li><a
+          href="https://google.com" rel="noopener noreferrer" target="_blank">Hyperlinks</a>
+          can be added</li></ul>
+      - row: 7
+        column: 1
+        header: false
+        col_span: 1
+        row_span: 1
+        quill_text: <p>Rows can be merged</p>
+      - row: 7
+        column: 2
+        header: false
+        col_span: 1
+        row_span: 1
+        quill_text: <p>Columns can be merged too</p>
+      column_widths:
+      - 12
+      - 12
+      - 5
+    table_type: 0
+    published: true
+    created: 2021-03-22 19:51:13.482094+00:00
+    last_updated: 2021-03-22 20:02:33.434980+00:00
+- model: summary.summarytable
+  pk: 2
+  fields:
+    assessment: 1
+    title: 'Evidence profile #1'
+    slug: Evidence-Profile-1
+    content:
+      animal:
+        rows:
+        - summary:
+            findings: <p></p>
+          evidence:
+            description: <p><a href="Baz 2021" rel="noopener noreferrer" target="_blank">Baz
+              2021</a></p>
+          judgement:
+            judgement: 20
+            description: <p></p>
+            custom_judgement_icon: ''
+            custom_judgement_label: ''
+          certain_factors:
+            text: <p></p>
+            factors:
+            - key: 30
+              long_description: ''
+              short_description: ''
+            - key: 40
+              long_description: ''
+              short_description: ''
+          uncertain_factors:
+            text: <p></p>
+            factors:
+            - key: 0
+              long_description: ''
+              short_description: ''
+        - summary:
+            findings: <p></p>
+          evidence:
+            description: <p><a href="Foo 2020 " rel="noopener noreferrer" target="_blank">Foo
+              2020 </a></p>
+          judgement:
+            judgement: 1
+            description: <p></p>
+            custom_judgement_icon: ''
+            custom_judgement_label: ''
+          certain_factors:
+            text: <p></p>
+            factors:
+            - key: 0
+              long_description: ''
+              short_description: ''
+          uncertain_factors:
+            text: <p></p>
+            factors:
+            - key: -30
+              long_description: ''
+              short_description: ''
+            - key: -20
+              long_description: ''
+              short_description: ''
+        hide_content: false
+        no_content_text: No data available
+        title: Evidence from animal studies
+        merge_judgement: false
+      mechanistic:
+        rows:
+        - summary:
+            findings: "<p>Key findings were....\t</p>"
+          evidence:
+            description: '<p>Event #1. Event #2. Event #3.</p>'
+          judgement:
+            description: <p>Judgement was...</p>
+        hide_content: false
+        no_content_text: No data available
+        title: Mechanistic evidence and supplemental information
+        col_header_1: Biological events or pathways
+        merge_judgement: true
+      exposed_human:
+        rows:
+        - summary:
+            findings: <p>Exposure orally. 8oz multiple times a day for 70 years.</p>
+          evidence:
+            description: <ul><li><a href="Doe et al. 2015" rel="noopener noreferrer"
+              target="_blank">Doe et al. 2015</a></li><li><a href="Doe et al 2018."
+              rel="noopener noreferrer" target="_blank">Doe et al 2018.</a></li></ul>
+          judgement:
+            judgement: 30
+            description: <p>Robust findings.</p>
+            custom_judgement_icon: ''
+            custom_judgement_label: ''
+          certain_factors:
+            text: <p></p>
+            factors:
+            - key: 0
+              long_description: ''
+              short_description: ''
+            - key: 30
+              long_description: <p>notes</p>
+              short_description: hydration response detected
+          uncertain_factors:
+            text: <p></p>
+            factors:
+            - key: 0
+              long_description: ''
+              short_description: ''
+        hide_content: false
+        no_content_text: No data available
+        title: Evidence from studies of exposed humans
+        merge_judgement: true
+      summary_judgement:
+        judgement: 20
+        hide_content: false
+        description: <p>Water hydrates individuals who drink it.</p>
+        susceptibility: <p>No additionally susceptible groups.</p>
+        human_relevance: <p>Humans require water as well.</p>
+        custom_judgement_icon: ''
+        cross_stream_coherence: <p>Observed in multiple evidence streams.</p>
+        custom_judgement_label: ''
+    table_type: 1
+    published: true
+    created: 2021-03-22 20:02:50.190759+00:00
+    last_updated: 2021-03-22 20:35:02.445924+00:00
 - model: summary.visual
   pk: 1
   fields:
