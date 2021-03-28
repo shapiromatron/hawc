@@ -8,7 +8,7 @@ import QuillTextInput from "shared/components/QuillTextInput";
 import CheckboxInput from "shared/components/CheckboxInput";
 import {ActionsTh, MoveRowTd} from "shared/components/EditableRowData";
 
-import {JUDGEMENT_HELP_TEXT, HIDE_CONTENT_HELP_TEXT, NO_CONTENT_HELP_TEXT} from "./common";
+import {HELP_TEXT} from "./common";
 
 const MechanisticForm = observer(props => {
         const {store} = props,
@@ -21,7 +21,7 @@ const MechanisticForm = observer(props => {
                     onChange={e => {
                         store.updateValue("mechanistic.hide_content", e.target.checked);
                     }}
-                    helpText={HIDE_CONTENT_HELP_TEXT}
+                    helpText={HELP_TEXT.HIDE_CONTENT}
                     required
                 />
                 <div className={mechanistic.hide_content ? "hidden" : null}>
@@ -30,6 +30,7 @@ const MechanisticForm = observer(props => {
                         label="Section subheading"
                         value={mechanistic.title}
                         onChange={e => store.updateValue("mechanistic.title", e.target.value)}
+                        helpText={HELP_TEXT.SECTION_SUBHEADING}
                         required
                     />
                     <TextInput
@@ -39,6 +40,7 @@ const MechanisticForm = observer(props => {
                         onChange={e =>
                             store.updateValue("mechanistic.col_header_1", e.target.value)
                         }
+                        helpText="Use different headers to explain how the mechanistic evidence was subdivided for evaluation and synthesis. ‘Biological events or pathways’ is a placeholder, as different assessments will take different approaches to the analyses. Other possible headers include: ‘Hypothesized modes-of-action’, ‘AOP key event or key event relationship’, and ‘Key science issue’."
                         required
                     />
                     <CheckboxInput
@@ -47,7 +49,7 @@ const MechanisticForm = observer(props => {
                         onChange={e =>
                             store.updateValue("mechanistic.merge_judgement", e.target.checked)
                         }
-                        helpText={JUDGEMENT_HELP_TEXT}
+                        helpText="Generally, a single judgment would be drawn across the mechanistic and supplemental evidence considered, with the exception of when specific key science issues are considered and addressed individually."
                         required
                     />
                     <table className="table table-sm table-bordered">
@@ -107,7 +109,7 @@ const MechanisticForm = observer(props => {
                                                     e.target.value
                                                 )
                                             }
-                                            helpText={NO_CONTENT_HELP_TEXT}
+                                            helpText={HELP_TEXT.NO_CONTENT}
                                             required
                                         />
                                     </td>

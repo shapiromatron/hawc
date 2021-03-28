@@ -54,6 +54,11 @@
 
         <li class="nav-item">
             <a class="nav-link text-light"
+                href="{% url 'summary:tables_list' assessment.pk %}">Summary tables</a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link text-light"
                 href="{% url 'summary:visualization_list' assessment.pk %}">Visualizations</a>
         </li>
 
