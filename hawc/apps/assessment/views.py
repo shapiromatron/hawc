@@ -33,6 +33,7 @@ from ..common.views import (
     beta_tester_required,
     get_referrer,
 )
+from ..materialized.tasks import refresh_views_by_cache
 from . import forms, models, serializers, tasks
 
 
@@ -365,6 +366,8 @@ class AssessmentClearCache(MessageMixin, View):
             raise PermissionDenied()
 
         assessment.bust_cache()
+        refresh_views_by_cache()
+
         self.send_message()
         return HttpResponseRedirect(url)
 
