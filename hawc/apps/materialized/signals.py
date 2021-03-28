@@ -10,4 +10,4 @@ from . import models
 @receiver(post_save, sender=RiskOfBiasScoreOverrideObject)
 @receiver(post_delete, sender=RiskOfBiasScoreOverrideObject)
 def set_score_cache(**kwargs):
-    models.Score.set_refresh_view_cache(True)
+    models.FinalRiskOfBiasScore.set_refresh_view_cache(True)

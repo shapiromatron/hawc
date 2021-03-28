@@ -1,7 +1,7 @@
 from django.db import models
 
 
-class MaterializedScoreQuerySet(models.QuerySet):
+class FinalRiskOfBiasScoreQuerySet(models.QuerySet):
     def prioritized_scores(self):
         # return endpoint overrides
         qs = self.filter(app_label="animal", model="endpoint")
@@ -15,6 +15,6 @@ class MaterializedScoreQuerySet(models.QuerySet):
         return self.filter(is_default=True)
 
 
-class MaterializedScoreManager(models.Manager):
+class FinalRiskOfBiasScoreManager(models.Manager):
     def get_queryset(self):
-        return MaterializedScoreQuerySet(self.model, using=self._db)
+        return FinalRiskOfBiasScoreQuerySet(self.model, using=self._db)

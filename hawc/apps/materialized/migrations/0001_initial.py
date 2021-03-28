@@ -12,9 +12,9 @@ class Migration(migrations.Migration):
     operations = [
         migrations.RunSQL(
             """
-            create materialized view materialized_score as
+            create materialized view materialized_finalriskofbiasscore as
             select
-                ROW_NUMBER() OVER (ORDER BY scrs.score_id, scrs.model, scrs.object_id) as id,
+                ROW_NUMBER() OVER (ORDER BY scrs.score_id, scrs.content_type_id, scrs.object_id) as id,
                 scrs.*,
                 rob.study_id
             from (
@@ -24,8 +24,7 @@ class Migration(migrations.Migration):
                     scr.is_default,
                     scr.metric_id,
                     scr.riskofbias_id,
-                    NULL as "app_label",
-                    NULL as "model",
+                    NULL as "content_type_id",
                     NULL as "object_id"
                 from riskofbias_riskofbiasscore scr)
                 union
@@ -35,24 +34,21 @@ class Migration(migrations.Migration):
                     scr.is_default,
                     scr.metric_id,
                     scr.riskofbias_id,
-                    con.app_label,
-                    con.model,
+                    ovr.content_type_id,
                     ovr.object_id
                 from riskofbias_riskofbiasscore scr
                 inner join riskofbias_riskofbiasscoreoverrideobject ovr
-                on scr.id = ovr.score_id
-                left join django_content_type con
-                on ovr.content_type_id = con.id)
+                on scr.id = ovr.score_id)
             ) scrs
             left join riskofbias_riskofbias rob
             on scrs.riskofbias_id = rob.id
             where rob.final and rob.active;
-            create unique index on materialized_score (id);
-            create index on materialized_score (score_id);
-            create index on materialized_score (study_id);
+            create unique index on materialized_finalriskofbiasscore (id);
+            create index on materialized_finalriskofbiasscore (score_id);
+            create index on materialized_finalriskofbiasscore (study_id);
             """,
             """
-            drop materialized view materialized_score;
+            drop materialized view materialized_finalriskofbiasscore;
             """,
         )
     ]
