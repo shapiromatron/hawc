@@ -4,6 +4,9 @@ import {inject, observer} from "mobx-react";
 import SelectInput from "shared/components/SelectInput";
 import TextInput from "shared/components/TextInput";
 import {ActionsTh, MoveRowTd} from "shared/components/EditableRowData";
+import HelpTextPopup from "shared/components/HelpTextPopup";
+
+import {HelpText} from "./common";
 
 const key = "table_fields";
 
@@ -17,15 +20,23 @@ class DetailTable extends Component {
         return (
             <table className="table table-sm table-striped">
                 <colgroup>
-                    <col width="40%" />
                     <col width="25%" />
                     <col width="25%" />
+                    <col width="20%" />
+                    <col width="20%" />
                     <col width="10%" />
                 </colgroup>
                 <thead>
                     <tr>
-                        <th>Column</th>
-                        <th>Delimiter</th>
+                        <th>Data column</th>
+                        <th>
+                            Header name
+                            <HelpTextPopup content={HelpText.header} />
+                        </th>
+                        <th>
+                            Delimiter
+                            <HelpTextPopup content={HelpText.delimiter} />
+                        </th>
                         <th>Interactivity</th>
                         <ActionsTh onClickNew={createNewTableRow} />
                     </tr>
@@ -53,6 +64,15 @@ class DetailTable extends Component {
                         multiple={false}
                         handleSelect={value => changeArraySettings(key, index, "column", value)}
                         value={row.column}
+                    />
+                </td>
+                <td>
+                    <TextInput
+                        name={`${key}-header-${index}`}
+                        value={row.header}
+                        onChange={e =>
+                            changeArraySettings(key, index, "header", e.target.value.trim())
+                        }
                     />
                 </td>
                 <td>

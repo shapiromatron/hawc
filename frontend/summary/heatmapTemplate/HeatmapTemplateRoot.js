@@ -19,20 +19,18 @@ class HeatmapTemplateRoot extends React.Component {
                     <Tab>Visual</Tab>
                     <Tab>Data</Tab>
                     <Tab>Customize</Tab>
-                    <div className="float-right">
-                        <label>Dashboard selection:</label>
-                        <span className="mx-1">
-                            <SelectInput
-                                name="dashboard"
-                                className="form-control d-inline-block h-100 py-1"
-                                choices={dashboardOptions}
-                                style={{maxWidth: 300}}
-                                multiple={false}
-                                handleSelect={value => changeDashboard(value)}
-                                value={selectedDashboard.id}
-                                fieldOnly={true}
-                            />
-                        </span>
+                    <div className="float-right" style={{width: 440}}>
+                        <label htmlFor="dashboardSelector">Dashboard:</label>
+                        <SelectInput
+                            className="form-control d-inline-block h-100 mx-1 py-1"
+                            id="dashboardSelector"
+                            choices={dashboardOptions}
+                            style={{maxWidth: 300}}
+                            multiple={false}
+                            handleSelect={value => changeDashboard(value)}
+                            value={selectedDashboard.id}
+                            fieldOnly={true}
+                        />
                         <button
                             className="btn btn-light py-1"
                             onClick={() => flipAxes()}

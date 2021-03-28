@@ -15,14 +15,18 @@
     "compress_y": true,
     "data_url": "/ani/api/assessment/2/endpoint-heatmap/",
     "hawc_interactivity": true,
+    "filters": [],
+    "filtersLogic": "and",
     "filter_widgets": [
       {
         "column": "species",
+        "header": "",
         "delimiter": "",
         "on_click_event": "---"
       },
       {
         "column": "strain",
+        "header": "",
         "delimiter": "",
         "on_click_event": "---"
       }
@@ -43,26 +47,31 @@
     "table_fields": [
       {
         "column": "study citation",
+        "header": "",
         "delimiter": "",
         "on_click_event": "study"
       },
       {
         "column": "experiment name",
+        "header": "",
         "delimiter": "",
         "on_click_event": "experiment"
       },
       {
         "column": "animal group name",
+        "header": "",
         "delimiter": "",
         "on_click_event": "animal_group"
       },
       {
         "column": "endpoint name",
+        "header": "",
         "delimiter": "",
         "on_click_event": "endpoint_complete"
       },
       {
         "column": "---",
+        "header": "",
         "delimiter": "",
         "on_click_event": "---"
       }

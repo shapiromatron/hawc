@@ -78,7 +78,9 @@ class DatasetTable extends Component {
                     <thead>
                         <tr>
                             {table_fields.map((name, i) => (
-                                <th key={i}>{h.titleCase(name.column)}</th>
+                                <th key={i}>
+                                    {name.header ? name.header : h.titleCase(name.column)}
+                                </th>
                             ))}
                         </tr>
                     </thead>

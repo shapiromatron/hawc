@@ -30,11 +30,12 @@ class HelpTextPopover extends Component {
 
 HelpTextPopover.propTypes = {
     icon: PropTypes.string,
-    title: PropTypes.string.isRequired,
+    title: PropTypes.string,
     content: PropTypes.string.isRequired,
 };
 HelpTextPopover.defaultProps = {
     icon: "fa-question-circle",
+    title: "Help-text",
 };
 
 export default HelpTextPopover;

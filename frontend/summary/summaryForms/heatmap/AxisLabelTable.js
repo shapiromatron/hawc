@@ -5,6 +5,9 @@ import IntegerInput from "shared/components/IntegerInput";
 import TextInput from "shared/components/TextInput";
 import SelectInput from "shared/components/SelectInput";
 import {ActionsTh, MoveRowTd} from "shared/components/EditableRowData";
+import HelpTextPopup from "shared/components/HelpTextPopup";
+
+import {HelpText} from "./common";
 
 @inject("store")
 @observer
@@ -24,9 +27,15 @@ class AxisLabelTable extends Component {
                 </colgroup>
                 <thead>
                     <tr>
-                        <th>Column</th>
-                        <th>Delimiter</th>
-                        <th>Wrap text</th>
+                        <th>Data column</th>
+                        <th>
+                            Delimiter
+                            <HelpTextPopup content={HelpText.delimiter} />
+                        </th>
+                        <th>
+                            Wrap text
+                            <HelpTextPopup content={HelpText.wrapText} />
+                        </th>
                         <ActionsTh onClickNew={() => createNewAxisLabel(key)} />
                     </tr>
                 </thead>

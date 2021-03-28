@@ -433,7 +433,7 @@ class EndpointList(BaseEndpointFilterList):
             query &= self.form.get_query()
             order_by = self.form.get_order_by()
 
-        qs = self.model.objects.filter(query).order_by("id").distinct("id")
+        qs = self.model.objects.filter(query)
 
         if order_by:
             if order_by == "customBMD":
