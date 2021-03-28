@@ -2,6 +2,7 @@ import $ from "$";
 import _ from "lodash";
 import * as d3 from "d3";
 
+import {filterFunction} from "./filters";
 import h from "shared/utils/helpers";
 import HAWCUtils from "utils/HAWCUtils";
 
@@ -170,47 +171,9 @@ class CrossviewPlot extends D3Visualization {
             });
         }
 
-        // get filter function
-        var filters_map = d3.map({
-            lt(val, tgt) {
-                return val < tgt;
-            },
-            lte(val, tgt) {
-                return val <= tgt;
-            },
-            gt(val, tgt) {
-                return val > tgt;
-            },
-            gte(val, tgt) {
-                return val >= tgt;
-            },
-            contains(val, tgt) {
-                if (val instanceof Array) val = val.join("|");
-                val = val.toString().toLowerCase();
-                tgt = tgt.toString().toLowerCase();
-                return val.indexOf(tgt.toLowerCase()) > -1;
-            },
-            not_contains(val, tgt) {
-                if (val instanceof Array) val = val.join("|").toLowerCase();
-                val = val.toString().toLowerCase();
-                tgt = tgt.toString().toLowerCase();
-                return val.indexOf(tgt.toLowerCase()) === 1;
-            },
-            exact(val, tgt) {
-                tgt = tgt.toString().toLowerCase();
-                if (val instanceof Array) {
-                    return _.chain(val)
-                        .map(d => d.toString().toLowerCase() === tgt)
-                        .some()
-                        .value();
-                } else {
-                    return val.toString().toLowerCase() === tgt;
-                }
-            },
-        });
         if (this.data.settings.endpointFilters) {
             this.data.settings.endpointFilters.forEach(function(d) {
-                d.fn = _.partial(filters_map.get(d.filterType), _, d.value);
+                d.fn = _.partial(filterFunction(d.filterType), _, d.value);
             });
         }
 

@@ -14,6 +14,9 @@ DATABASES = {
     }
 }
 
+# view all database queries in console
+# LOGGING["loggers"]["django.db.backends"] = {"handlers": ["console"], "level": "DEBUG"}
+
 # BMD MODELING SETTINGS
 BMD_HOST = "http://example.com"  # optional; used for BMD module
 

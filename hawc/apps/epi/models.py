@@ -5,6 +5,7 @@ from operator import xor
 from typing import Any, Dict
 
 import pandas as pd
+from django.apps import apps
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.urls import reverse
@@ -1461,7 +1462,7 @@ class Result(models.Model):
         return self.outcome.get_study()
 
     @classmethod
-    def heatmap_study_df(cls, assessment: Assessment, published_only: bool) -> pd.DataFrame:
+    def heatmap_study_df(cls, assessment_id: int, published_only: bool) -> pd.DataFrame:
         def unique_items(els):
             return "|".join(sorted(set(el for el in els if el is not None)))
 
@@ -1470,7 +1471,7 @@ class Result(models.Model):
             return "|".join(sorted(items))
 
         # get all studies,even if no endpoint data is extracted
-        filters: Dict[str, Any] = {"assessment_id": assessment, "epi": True}
+        filters: Dict[str, Any] = {"assessment_id": assessment_id, "epi": True}
         if published_only:
             filters["published"] = True
         columns = {
@@ -1483,10 +1484,11 @@ class Result(models.Model):
 
         # rollup endpoint-level data to studies
         df2 = (
-            cls.heatmap_df(assessment, published_only)
+            cls.heatmap_df(assessment_id, published_only)
             .groupby("study id")
             .agg(
                 {
+                    "overall study evaluation": unique_items,
                     "study design": unique_items,
                     "study population source": unique_items,
                     "exposure name": unique_items,
@@ -1505,8 +1507,8 @@ class Result(models.Model):
         return df
 
     @classmethod
-    def heatmap_df(cls, assessment: Assessment, published_only: bool) -> pd.DataFrame:
-        filters = {"outcome__assessment": assessment}
+    def heatmap_df(cls, assessment_id: int, published_only: bool) -> pd.DataFrame:
+        filters = {"outcome__assessment": assessment_id}
         if published_only:
             filters["outcome__study_population__study__published"] = True
         columns = {
@@ -1549,7 +1551,7 @@ class Result(models.Model):
 
         # add exposure column
         exposure_cols = ["inhalation", "dermal", "oral", "in_utero", "iv", "unknown_route"]
-        qs = Exposure.objects.filter(study_population__study__assessment=assessment).values(
+        qs = Exposure.objects.filter(study_population__study__assessment=assessment_id).values(
             "id", *exposure_cols
         )
 
@@ -1560,11 +1562,22 @@ class Result(models.Model):
         df2 = df2.drop(columns=exposure_cols)
 
         # join data together
-        df = df1.merge(df2, how="left", left_on="exposure id", right_index=True)
-        df = df_move_column(df, "exposure route", "exposure name")
+        df = df1.merge(df2, how="left", left_on="exposure id", right_index=True).pipe(
+            df_move_column, "exposure route", "exposure name"
+        )
         df["exposure route"].fillna("", inplace=True)
         df["exposure measure"].fillna("", inplace=True)
         df["exposure metric"].fillna("", inplace=True)
+
+        # overall risk of bias evaluation
+        RiskOfBiasScore = apps.get_model("riskofbias", "RiskOfBiasScore")
+        df2 = RiskOfBiasScore.objects.overall_scores(assessment_id)
+        if df2 is not None:
+            df = (
+                df.merge(df2, how="left", left_on="study id", right_on="study id")
+                .pipe(df_move_column, "overall study evaluation", "study identifier")
+                .fillna("")
+            )
 
         return df
 
