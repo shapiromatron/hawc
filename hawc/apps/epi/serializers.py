@@ -56,7 +56,7 @@ class StudyPopulationCountrySerializer(serializers.ModelSerializer):
                 country = self.Meta.model.objects.get(code__iexact=data)
                 return country
             except ObjectDoesNotExist:
-                raise serializers.ValidationError(f"Invalid country code '{data}'")
+                raise serializers.ValidationError(f"'{data}' is not a country.")
 
         return super().to_internal_value(data)
 
