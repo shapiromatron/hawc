@@ -322,7 +322,10 @@ def find_matching_list_element_value_by_value(
     Returns:
         The value, if a single match can be found.
 
-        Returns None if multiple/no matches are found.
+        Returns None if no matches are found.
+
+    Raises:
+        ValueError if multiple matches are found.
     """
 
     if case_insensitive and type(lookup_value) is str:
@@ -333,7 +336,12 @@ def find_matching_list_element_value_by_value(
     else:
         matching_vals = [x[return_index] for x in items if x[lookup_index] == lookup_value]
 
-    if len(matching_vals) != 1:
+    num_matches = len(matching_vals)
+    if num_matches == 0:
         return None
+    elif num_matches > 1:
+        raise ValueError(
+            f"Found multiple matches when searching {items} for {lookup_value} (lookup_idx={lookup_index}, case_insensitive={case_insensitive})"
+        )
     else:
         return matching_vals[0]
