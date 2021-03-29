@@ -154,16 +154,10 @@ class StudyPopulationSerializer(IdLookupMixin, serializers.ModelSerializer):
         return super().update(instance, validated_data)
 
     def create(self, validated_data):
-        temp_countries = None
-        if "countries" in validated_data:
-            temp_countries = validated_data["countries"]
-            # Delete the key so we can call the default update method for all the other fields.
-            del validated_data["countries"]
+        countries = validated_data.pop("countries", None)
         instance = super().create(validated_data)
-
-        if temp_countries is not None:
-            instance.countries.add(*temp_countries)
-            instance.save()
+        if countries:
+            instance.countries.set(countries)
 
         return instance
 
