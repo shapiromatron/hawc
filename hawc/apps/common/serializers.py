@@ -227,8 +227,7 @@ class FlexibleDBLinkedChoiceField(FlexibleChoiceField):
 
 class IdLookupMixin:
     """
-    Class to be mixed into serializers which provides a default to_internal_value
-    implementation that attempts to look up an item with the given int id.
+    Lookup object using default method unless int provided, then lookup by id
     """
 
     def to_internal_value(self, data):
@@ -272,7 +271,7 @@ class GetOrCreateMixin:
     lookup/check/create-if-needed, clients can just hit one endpoint and
     get back the same object id every time.
 
-    Basic approach taken from https://stackoverflow.com/questions/25026034/django-rest-framework-modelserializer-get-or-create-functionality
+    Basic approach taken from https://stackoverflow.com/questions/25026034/
    """
 
     def run_validators(self, value):
