@@ -583,7 +583,8 @@ class TestResultApi:
             "comments": "test comments",
         }
 
-        data = generic_merge_overrides(data, overrides)
+        if overrides is not None:
+            data.update(overrides)
 
         return data
 
@@ -772,7 +773,8 @@ class TestGroupResultApi:
             "is_main_finding": False,
         }
 
-        data = generic_merge_overrides(data, overrides)
+        if overrides is not None:
+            data.update(overrides)
 
         return data
 
@@ -907,7 +909,8 @@ class TestComparisonSetApi:
             "study_population": study_pop.id,
         }
 
-        data = generic_merge_overrides(data, overrides)
+        if overrides is not None:
+            data.update(overrides)
 
         return data
 
@@ -1028,7 +1031,8 @@ class TestGroupApi:
             "ethnicities": [],
         }
 
-        data = generic_merge_overrides(data, overrides)
+        if overrides is not None:
+            data.update(overrides)
 
         return data
 
@@ -1195,7 +1199,8 @@ class TestGroupNumericalDescriptionsApi:
             "upper_type": "other",
         }
 
-        data = generic_merge_overrides(data, overrides)
+        if overrides is not None:
+            data.update(overrides)
 
         return data
 
@@ -1392,7 +1397,8 @@ class TestExposureApi:
             ],
         }
 
-        data = generic_merge_overrides(data, overrides)
+        if overrides is not None:
+            data.update(overrides)
 
         return data
 
@@ -1665,16 +1671,3 @@ def generic_perm_tester(url, data):
 
 def generic_get_any(model_class):
     return model_class.objects.all().first()
-
-
-def generic_merge_overrides(data, overrides):
-    if overrides is not None:
-        for key in overrides:
-            val = overrides[key]
-            if val is None:
-                if key in data:
-                    del data[key]
-            else:
-                data[key] = val
-
-    return data

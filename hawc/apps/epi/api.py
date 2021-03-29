@@ -310,7 +310,7 @@ class Exposure(ReadWriteSerializerMixin, PermCheckerMixin, AssessmentEditViewset
 
             cts = self.request.data["central_tendencies"]
 
-            if len(cts) > 0:
+            if cts is not None and len(cts) > 0:
                 missing_needed_cts = False
 
                 # Populate each ct with the just created/updated exposure id
