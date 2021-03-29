@@ -1874,11 +1874,6 @@ class GroupResult(models.Model):
     def get_assessment(self):
         return self.result.get_assessment()
 
-    def get_p_value_qualifier_display(self):
-        return find_matching_list_element_value_by_value(
-            self.P_VALUE_QUALIFIER_CHOICES, self.p_value_qualifier, lookup_index=0, return_index=1
-        )
-
 
 reversion.register(Country)
 reversion.register(Criteria)
