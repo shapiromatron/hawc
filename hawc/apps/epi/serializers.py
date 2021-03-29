@@ -147,8 +147,7 @@ class StudyPopulationSerializer(IdLookupMixin, serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         if "countries" in validated_data:
-            instance.countries.clear()
-            instance.countries.add(*validated_data["countries"])
+            instance.countries.set(validated_data["countries"])
             # Delete the key so we can call the default update method for all the other fields.
             del validated_data["countries"]
 
