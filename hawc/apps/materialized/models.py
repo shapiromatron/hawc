@@ -53,13 +53,21 @@ class MaterializedViewModel(models.Model):
 class FinalRiskOfBiasScore(MaterializedViewModel):
     objects = managers.FinalRiskOfBiasScoreManager()
 
-    score = models.ForeignKey("riskofbias.RiskOfBiasScore", on_delete=models.DO_NOTHING, related_name="final_scores",)
+    score = models.ForeignKey(
+        "riskofbias.RiskOfBiasScore", on_delete=models.DO_NOTHING, related_name="final_scores",
+    )
     score_score = models.SmallIntegerField(verbose_name="Score")
     is_default = models.BooleanField()
 
-    metric = models.ForeignKey("riskofbias.RiskOfBiasMetric", on_delete=models.DO_NOTHING, related_name="final_scores",)
-    riskofbias = models.ForeignKey("riskofbias.RiskOfBias", on_delete=models.DO_NOTHING, related_name="final_scores")
-    study = models.ForeignKey("study.Study", on_delete=models.DO_NOTHING, related_name="final_scores")
+    metric = models.ForeignKey(
+        "riskofbias.RiskOfBiasMetric", on_delete=models.DO_NOTHING, related_name="final_scores",
+    )
+    riskofbias = models.ForeignKey(
+        "riskofbias.RiskOfBias", on_delete=models.DO_NOTHING, related_name="final_scores"
+    )
+    study = models.ForeignKey(
+        "study.Study", on_delete=models.DO_NOTHING, related_name="final_scores"
+    )
 
     content_type = models.ForeignKey(ContentType, on_delete=models.DO_NOTHING)
     object_id = models.IntegerField()
