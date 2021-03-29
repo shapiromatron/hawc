@@ -177,10 +177,10 @@ class TestStudyPopulationApi:
             "comments": "test comments",
         }
 
-        just_created_study_id = None
+        just_created_study_pop_id = None
 
         def study_pop_lookup_test(resp):
-            nonlocal just_created_study_id
+            nonlocal just_created_study_pop_id
 
             study_pop_id = resp.json()["id"]
             study_pop = models.StudyPopulation.objects.get(id=study_pop_id)
@@ -188,8 +188,8 @@ class TestStudyPopulationApi:
             assert study_pop.name == base_data["name"]
             # Etc...
 
-            if just_created_study_id is None:
-                just_created_study_id = study_pop_id
+            if just_created_study_pop_id is None:
+                just_created_study_pop_id = study_pop_id
 
         def study_pop_lookup_test_with_criteria(resp):
             study_pop_id = resp.json()["id"]
@@ -209,25 +209,20 @@ class TestStudyPopulationApi:
             assert found_c1 is True and found_c2 is True and found_c3 is True
 
         def altered_study_pop_test(resp):
-            nonlocal just_created_study_id
+            nonlocal just_created_study_pop_id
 
             study_pop_id = resp.json()["id"]
             study_pop = models.StudyPopulation.objects.get(id=study_pop_id)
             assert study_pop.name == "updated"
-            assert study_pop_id == just_created_study_id
+            assert study_pop_id == just_created_study_pop_id
 
         def deleted_study_pop_test(resp):
-            nonlocal just_created_study_id
+            nonlocal just_created_study_pop_id
 
             assert resp.data is None
-            try:
-                study_pop_that_should_not_exist = models.StudyPopulation.objects.get(
-                    id=just_created_study_id
-                )
-                assert study_pop_that_should_not_exist is None
-            except ObjectDoesNotExist:
-                # This is CORRECT behavior - we WANT the object to not exist
-                pass
+
+            with pytest.raises(ObjectDoesNotExist):
+                models.StudyPopulation.objects.get(id=just_created_study_pop_id)
 
         named_design_data = base_data
         named_design_data["design"] = "cohort"
@@ -265,7 +260,7 @@ class TestStudyPopulationApi:
         )
         generic_test_scenarios(client, url, create_scenarios)
 
-        url = f"{url}{just_created_study_id}/"
+        url = f"{url}{just_created_study_pop_id}/"
         update_scenarios = (
             {
                 "desc": "basic studypop update",
@@ -363,14 +358,9 @@ class TestCriteriaApi:
             nonlocal just_created_criteria_id
 
             assert resp.data is None
-            try:
-                criteria_that_should_not_exist = models.Criteria.objects.get(
-                    id=just_created_criteria_id
-                )
-                assert criteria_that_should_not_exist is None
-            except ObjectDoesNotExist:
-                # This is CORRECT behavior - we WANT the object to not exist
-                pass
+
+            with pytest.raises(ObjectDoesNotExist):
+                models.Criteria.objects.get(id=just_created_criteria_id)
 
         create_scenarios = (
             {
@@ -517,14 +507,9 @@ class TestOutcomeApi:
             nonlocal just_created_outcome_id
 
             assert resp.data is None
-            try:
-                outcome_that_should_not_exist = models.Outcome.objects.get(
-                    id=just_created_outcome_id
-                )
-                assert outcome_that_should_not_exist is None
-            except ObjectDoesNotExist:
-                # This is CORRECT behavior - we WANT the object to not exist
-                pass
+
+            with pytest.raises(ObjectDoesNotExist):
+                models.Outcome.objects.get(id=just_created_outcome_id)
 
         create_scenarios = (
             {
@@ -707,12 +692,9 @@ class TestResultApi:
             nonlocal just_created_result_id
 
             assert resp.data is None
-            try:
-                result_that_should_not_exist = models.Result.objects.get(id=just_created_result_id)
-                assert result_that_should_not_exist is None
-            except ObjectDoesNotExist:
-                # This is CORRECT behavior - we WANT the object to not exist
-                pass
+
+            with pytest.raises(ObjectDoesNotExist):
+                models.Result.objects.get(id=just_created_result_id)
 
         create_scenarios = (
             {
@@ -864,14 +846,9 @@ class TestGroupResultApi:
             nonlocal just_created_groupresult_id
 
             assert resp.data is None
-            try:
-                groupresult_that_should_not_exist = models.GroupResult.objects.get(
-                    id=just_created_groupresult_id
-                )
-                assert groupresult_that_should_not_exist is None
-            except ObjectDoesNotExist:
-                # This is CORRECT behavior - we WANT the object to not exist
-                pass
+
+            with pytest.raises(ObjectDoesNotExist):
+                models.GroupResult.objects.get(id=just_created_groupresult_id)
 
         create_scenarios = (
             {
@@ -992,14 +969,9 @@ class TestComparisonSetApi:
             nonlocal just_created_comparison_set_id
 
             assert resp.data is None
-            try:
-                comparison_set_that_should_not_exist = models.ComparisonSet.objects.get(
-                    id=just_created_comparison_set_id
-                )
-                assert comparison_set_that_should_not_exist is None
-            except ObjectDoesNotExist:
-                # This is CORRECT behavior - we WANT the object to not exist
-                pass
+
+            with pytest.raises(ObjectDoesNotExist):
+                models.ComparisonSet.objects.get(id=just_created_comparison_set_id)
 
         create_scenarios = (
             {
@@ -1148,12 +1120,9 @@ class TestGroupApi:
             nonlocal just_created_group_id
 
             assert resp.data is None
-            try:
-                group_that_should_not_exist = models.Group.objects.get(id=just_created_group_id)
-                assert group_that_should_not_exist is None
-            except ObjectDoesNotExist:
-                # This is CORRECT behavior - we WANT the object to not exist
-                pass
+
+            with pytest.raises(ObjectDoesNotExist):
+                models.Group.objects.get(id=just_created_group_id)
 
         create_scenarios = (
             {
@@ -1309,14 +1278,9 @@ class TestGroupNumericalDescriptionsApi:
             nonlocal just_created_numdesc_id
 
             assert resp.data is None
-            try:
-                numdesc_that_should_not_exist = models.GroupNumericalDescriptions.objects.get(
-                    id=just_created_numdesc_id
-                )
-                assert numdesc_that_should_not_exist is None
-            except ObjectDoesNotExist:
-                # This is CORRECT behavior - we WANT the object to not exist
-                pass
+
+            with pytest.raises(ObjectDoesNotExist):
+                models.GroupNumericalDescriptions.objects.get(id=just_created_numdesc_id)
 
         create_scenarios = (
             {
@@ -1520,14 +1484,9 @@ class TestExposureApi:
             nonlocal just_created_exposure_id
 
             assert resp.data is None
-            try:
-                exposure_that_should_not_exist = models.Exposure.objects.get(
-                    id=just_created_exposure_id
-                )
-                assert exposure_that_should_not_exist is None
-            except ObjectDoesNotExist:
-                # This is CORRECT behavior - we WANT the object to not exist
-                pass
+
+            with pytest.raises(ObjectDoesNotExist):
+                models.Exposure.objects.get(id=just_created_exposure_id)
 
         create_scenarios = (
             {
