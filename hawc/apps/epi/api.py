@@ -8,8 +8,6 @@ from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
 
-from hawc.services.epa.dsstox import DssSubstance
-
 from ..assessment.api import AssessmentEditViewset, AssessmentLevelPermissions
 from ..assessment.models import Assessment, DSSTox
 from ..assessment.serializers import AssessmentSerializer
@@ -258,22 +256,16 @@ class Exposure(ReadWriteSerializerMixin, PermCheckerMixin, AssessmentEditViewset
 
     def handle_dtxsid(self, request):
         """
-        Checks supplied dtxsid if present for existence in the database; attempting to create on-the-fly if necessary.
+        Calls get_or_create for DSSTox to ensure that the appropriate DXXTox exists in the db.
         """
         if "dtxsid" in request.data:
             dtxsid_probe = request.data["dtxsid"]
             try:
-                DSSTox.objects.get(dtxsid=dtxsid_probe)
-            except ObjectDoesNotExist:
-                try:
-                    substance = DssSubstance.create_from_dtxsid(dtxsid_probe)
-
-                    dsstox = DSSTox(dtxsid=substance.dtxsid, content=substance.content)
-                    dsstox.save()
-                except ValueError:
-                    raise ValidationError(
-                        f"dtxsid '{dtxsid_probe}' does not exist and could not be imported"
-                    )
+                DSSTox.objects.get_or_create(dtxsid=dtxsid_probe)
+            except ValueError:
+                raise ValidationError(
+                    f"dtxsid '{dtxsid_probe}' does not exist and could not be imported"
+                )
 
     @transaction.atomic
     def update(self, request, *args, **kwargs):
