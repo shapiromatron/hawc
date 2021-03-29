@@ -124,7 +124,7 @@ class PubMedFetch(PubMedUtility):
                 tree = ET.fromstring(resp.text.encode("utf-8"))
                 if tree.tag != "PubmedArticleSet":
                     raise ValueError(f"Unexpected response type: {tree.tag}")
-                for content in tree.getchildren():
+                for content in tree:
                     result = PubMedParser.parse(content)
                     if result:
                         self.content.append(result)
