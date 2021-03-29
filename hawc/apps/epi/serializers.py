@@ -12,7 +12,7 @@ from ..common.serializers import (
     IdLookupMixin,
 )
 from ..study.serializers import StudySerializer
-from . import forms, models
+from . import models
 
 
 class EthnicitySerializer(serializers.ModelSerializer):
@@ -70,8 +70,6 @@ class OutcomeLinkSerializer(serializers.ModelSerializer):
 
 
 class GroupNumericalDescriptionsSerializer(serializers.ModelSerializer):
-    form_integration_class = forms.GroupNumericalDescriptionsForm
-
     mean_type = FlexibleChoiceField(choices=models.GroupNumericalDescriptions.MEAN_TYPE_CHOICES)
     variance_type = FlexibleChoiceField(
         choices=models.GroupNumericalDescriptions.VARIANCE_TYPE_CHOICES
@@ -85,8 +83,6 @@ class GroupNumericalDescriptionsSerializer(serializers.ModelSerializer):
 
 
 class GroupSerializer(IdLookupMixin, serializers.ModelSerializer):
-    form_integration_class = forms.GroupForm
-
     sex = FlexibleChoiceField(choices=models.Group.SEX_CHOICES)
     ethnicities = FlexibleDBLinkedChoiceField(models.Ethnicity, EthnicitySerializer, "name", True)
     descriptions = GroupNumericalDescriptionsSerializer(many=True, read_only=True)
@@ -123,8 +119,6 @@ class ComparisonSetLinkSerializer(serializers.ModelSerializer):
 
 
 class CriteriaSerializer(GetOrCreateMixin, serializers.ModelSerializer):
-    form_integration_class = forms.CriteriaForm
-
     class Meta:
         model = models.Criteria
         fields = "__all__"
@@ -137,8 +131,6 @@ class SimpleStudyPopulationCriteriaSerializer(serializers.ModelSerializer):
 
 
 class StudyPopulationSerializer(IdLookupMixin, serializers.ModelSerializer):
-    form_integration_class = forms.StudyPopulationForm
-
     study = StudySerializer()
     criteria = StudyPopulationCriteriaSerializer(source="spcriteria", many=True, read_only=True)
     countries = StudyPopulationCountrySerializer(many=True)
@@ -191,7 +183,6 @@ class ExposureSerializer(IdLookupMixin, serializers.ModelSerializer):
 
 class ExposureWriteSerializer(serializers.ModelSerializer):
     central_tendencies = CentralTendencySerializer(many=True, read_only=True)
-    form_integration_class = forms.ExposureForm
     metric_units = FlexibleDBLinkedChoiceField(DoseUnits, DoseUnitsSerializer, "name", False)
 
     class Meta:
@@ -200,8 +191,6 @@ class ExposureWriteSerializer(serializers.ModelSerializer):
 
 
 class GroupResultSerializer(serializers.ModelSerializer):
-    form_integration_class = forms.GroupResultForm
-
     main_finding_support = FlexibleChoiceField(choices=models.GroupResult.MAIN_FINDING_CHOICES)
     p_value_text = serializers.CharField(read_only=True)
     p_value_qualifier_display = serializers.CharField(
@@ -276,8 +265,6 @@ class SimpleComparisonSetSerializer(IdLookupMixin, serializers.ModelSerializer):
 
 
 class ResultSerializer(serializers.ModelSerializer):
-    form_integration_class = forms.ResultForm
-
     dose_response = FlexibleChoiceField(choices=models.Result.DOSE_RESPONSE_CHOICES)
     metric = FlexibleDBLinkedChoiceField(
         models.ResultMetric, ResultMetricSerializer, "metric", False
@@ -306,8 +293,6 @@ class ResultSerializer(serializers.ModelSerializer):
 
 
 class OutcomeSerializer(serializers.ModelSerializer):
-    form_integration_class = forms.OutcomeForm
-
     diagnostic = FlexibleChoiceField(choices=models.Outcome.DIAGNOSTIC_CHOICES)
     study_population = StudyPopulationSerializer()
     can_create_sets = serializers.BooleanField(read_only=True)
