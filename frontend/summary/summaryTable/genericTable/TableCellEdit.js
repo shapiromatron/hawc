@@ -47,7 +47,10 @@ class TableCellEdit extends Component {
                 isQuickEditCell ? (
                     <QuickEditCell key={1} store={store} />
                 ) : (
-                    <div key={1} dangerouslySetInnerHTML={{__html: cell.quill_text}}></div>
+                    <div
+                        key={1}
+                        style={{minHeight: 25}}
+                        dangerouslySetInnerHTML={{__html: cell.quill_text}}></div>
                 ),
             ];
         return React.createElement(elType, attrs, children);

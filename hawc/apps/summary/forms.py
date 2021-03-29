@@ -488,7 +488,10 @@ class SummaryTableSelectorForm(forms.Form):
         return BaseFormHelper(
             self,
             legend_text="Select table type",
-            help_text="...",
+            help_text="""
+            HAWC has a number of predefined table formats which are designed for different applications
+            of the tool. Please select the table type you wish to create.
+            """,
             form_actions=[
                 cfl.Submit("save", "Create table"),
                 cfl.HTML(f'<a href="{url}" class="btn btn-light">Cancel</a>'),

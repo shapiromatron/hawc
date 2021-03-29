@@ -29,7 +29,7 @@ class StudyFilter extends Component {
                         <RadioInput
                             label="Sort studies by:"
                             name="sortBy"
-                            onChange={store.updateFilters}
+                            onChange={value => store.updateFilters("sortBy", value)}
                             value={store.filters.sortBy}
                             choices={[
                                 {id: "short_citation", label: "Short citation"},
@@ -41,7 +41,7 @@ class StudyFilter extends Component {
                         <RadioInput
                             label="Order studies by:"
                             name="orderBy"
-                            onChange={store.updateFilters}
+                            onChange={value => store.updateFilters("orderBy", value)}
                             value={store.filters.orderBy}
                             choices={[
                                 {id: "asc", label: "Ascending"},
