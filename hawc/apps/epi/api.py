@@ -242,8 +242,7 @@ class StudyPopulation(PermCheckerMixin, viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
 
-        instance = self.model.objects.get(id=serializer.data["id"])
-        serializer = self.get_serializer(instance)
+        serializer.instance.refresh_from_db()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
@@ -283,8 +282,8 @@ class Exposure(ReadWriteSerializerMixin, PermCheckerMixin, AssessmentEditViewset
         self.perform_create(serializer)
 
         # Refresh serializer instance, as we want to get the central tendencies we created...
-        instance = self.model.objects.get(id=serializer.data["id"])
-        serializer = self.get_serializer(instance)
+        serializer.instance.refresh_from_db()
+
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def process_ct_creation(self, exposure, post_initial_create):
@@ -464,8 +463,7 @@ class Result(PermCheckerMixin, AssessmentEditViewset):
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
 
-        instance = self.model.objects.get(id=serializer.data["id"])
-        serializer = self.get_serializer(instance)
+        serializer.instance.refresh_from_db()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def perform_create(self, serializer):
