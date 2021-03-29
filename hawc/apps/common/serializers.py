@@ -7,7 +7,7 @@ from rest_framework import serializers
 from rest_framework.renderers import JSONRenderer
 from rest_framework.validators import UniqueTogetherValidator
 
-from .helper import find_matching_list_element_value_by_value
+from .helper import get_id_from_choices
 
 
 def to_json(Serializer: serializers.ModelSerializer, instance: models.Model) -> str:
@@ -144,7 +144,7 @@ class FlexibleChoiceField(serializers.ChoiceField):
 
         # No exact match; if a string was passed in let's try case-insensitive value match
         if type(data) is str:
-            key = find_matching_list_element_value_by_value(self._choices.items(), data)
+            key = get_id_from_choices(self._choices.items(), data)
             if key is not None:
                 return key
 

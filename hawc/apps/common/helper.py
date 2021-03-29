@@ -291,12 +291,10 @@ class FlatFileExporter:
 re_digits = r"\d+"
 
 
-def find_matching_list_element_value_by_value(
-    items, lookup_value, case_insensitive=True, lookup_index=1, return_index=0
-):
-    """Find a particular value in a list/tuple of lists/tuples by matching another value in the inner list/tuple
+def get_id_from_choices(items, lookup_value):
+    """Checks a Django choice tuple and returns the id that matches the lookup value.
 
-    Given items like:
+    For example, given items like:
 
     JERSEY_NUMBERS = (
         (23, "jordan"),
@@ -306,18 +304,18 @@ def find_matching_list_element_value_by_value(
 
     Call this function like:
 
-    num = find_matching_list_element_value_by_value(JERSEY_NUMBERS, "TAYLOR")
+    num = get_id_from_choices(JERSEY_NUMBERS, "TAYLOR")
     # num == 56
 
     This function will traverse the series of lists/tuples, find the one that matches the
     supplied lookup value, and return another value from that list/tuple.
 
+    This is used for instance by the FlexibleChoiceField, when allowing API clients to supply
+    either the internal HAWC code for a given value, or the human-readable name.
+
     Args:
         items (list, tuple): list of items to search
         lookup_value: the value to search for
-        case_insensitive (bool): perform case-insensitive matching, if lookup_value is a string
-        lookup_index (int): the index in which to look for matches, in each element of items
-        return_index (int): the index of the value to return, if a match is found
 
     Returns:
         The value, if a single match can be found.
@@ -327,6 +325,12 @@ def find_matching_list_element_value_by_value(
     Raises:
         ValueError if multiple matches are found.
     """
+
+    # This function used to be a little more generic and could accept these as arguments; no longer
+    # needed but keeping them here in case we ever want to expand the function back to what it used to support.
+    case_insensitive = True
+    lookup_index = 1
+    return_index = 0
 
     if case_insensitive and type(lookup_value) is str:
         lookup_value = lookup_value.lower()
@@ -340,8 +344,6 @@ def find_matching_list_element_value_by_value(
     if num_matches == 0:
         return None
     elif num_matches > 1:
-        raise ValueError(
-            f"Found multiple matches when searching {items} for {lookup_value} (lookup_idx={lookup_index}, case_insensitive={case_insensitive})"
-        )
+        raise ValueError(f"Found multiple matches when searching {items} for {lookup_value}")
     else:
         return matching_vals[0]
