@@ -1,26 +1,14 @@
 from django.contrib import admin
+from django.db.models import Q
 
-from ..common.admin import ReadOnlyAdmin
+from ..common.admin import ReadOnlyAdmin, YesNoFilter
 from . import models
 
 
-class IsOverrideFilter(admin.SimpleListFilter):
+class IsOverrideFilter(YesNoFilter):
     title = "is override"
     parameter_name = "is_override"
-
-    def lookups(self, request, model_admin):
-        return (
-            ("Yes", "Yes"),
-            ("No", "No"),
-        )
-
-    def queryset(self, request, queryset):
-        value = self.value()
-        if value == "Yes":
-            return queryset.filter(object_id__isnull=False)
-        elif value == "No":
-            return queryset.filter(object_id__isnull=True)
-        return queryset
+    query = Q(object_id__isnull=False)
 
 
 @admin.register(models.FinalRiskOfBiasScore)

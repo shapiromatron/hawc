@@ -38,8 +38,8 @@ app.conf.beat_schedule = {
         "schedule": timedelta(hours=6),
         "kwargs": dict(delete=False),
     },
-    "refresh-views-by-cache": {
-        "task": "hawc.apps.materialized.tasks.refresh_views_by_cache",
+    "refresh_all_mvs": {
+        "task": "hawc.apps.materialized.tasks.refresh_all_mvs",
         "schedule": timedelta(minutes=5),
     },
 }
