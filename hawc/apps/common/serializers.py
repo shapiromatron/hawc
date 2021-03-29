@@ -200,10 +200,7 @@ class FlexibleDBLinkedChoiceField(FlexibleChoiceField):
         self.load_related_objects_if_needed()
 
         if self.many:
-            rv = []
-            for el in obj.all():
-                rv.append(self.serializer.to_representation(el))
-            return rv
+            return [self.serializer.to_representation(el) for el in obj.all()]
         else:
             return self.serializer.to_representation(obj)
 
