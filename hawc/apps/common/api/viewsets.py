@@ -4,6 +4,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from ...assessment.api import DisabledPagination
+from ..exceptions import ClassConfigurationException
 from .filters import CleanupBulkIdFilter
 from .mixins import ListUpdateModelMixin
 from .permissions import CleanupFieldsPermissions, user_can_edit_object
@@ -81,40 +82,39 @@ class PermCheckerMixin:
         """
         things_to_check = []
 
-        # perm_checker_key can either be a string or an array of strings
-        checker_keys = self.perm_checker_key
-        if type(self.perm_checker_key) is str:
-            checker_keys = [self.perm_checker_key]
+        if hasattr(self, "perm_checker_key"):
+            # perm_checker_key can either be a string or an array of strings
+            checker_keys = self.perm_checker_key
+            if type(self.perm_checker_key) is str:
+                checker_keys = [self.perm_checker_key]
 
-        for checker_key in checker_keys:
-            if checker_key in serializer.validated_data:
-                things_to_check.append(serializer.validated_data.get(checker_key))
+            for checker_key in checker_keys:
+                if checker_key in serializer.validated_data:
+                    things_to_check.append(serializer.validated_data.get(checker_key))
 
-        if append_self_obj:
-            things_to_check.append(self.get_object())
+            if append_self_obj:
+                things_to_check.append(self.get_object())
 
+        # Can't guard & must raise this at the end; a class might have perm_checker_key defined but
+        # without any good keys and we won't know it until we check.
         if len(things_to_check) == 0:
-            raise Exception(f"Improperly configured viewset {self}; needs defined perm_checker_key")
+            raise ClassConfigurationException(
+                f"Improperly configured viewset {self}; needs defined perm_checker_key with one or more valid keys"
+            )
 
         return things_to_check
 
     def perform_create(self, serializer):
         for thing_to_check in self.generate_things_to_check(serializer, False):
-            user_can_edit_object(
-                thing_to_check, self.request.user, raise_exception=True,
-            )
+            user_can_edit_object(thing_to_check, self.request.user, raise_exception=True)
         super().perform_create(serializer)
 
     def perform_update(self, serializer):
         for thing_to_check in self.generate_things_to_check(serializer, True):
-            user_can_edit_object(
-                thing_to_check, self.request.user, raise_exception=True,
-            )
+            user_can_edit_object(thing_to_check, self.request.user, raise_exception=True)
 
         super().perform_update(serializer)
 
     def perform_destroy(self, instance):
-        user_can_edit_object(
-            instance, self.request.user, raise_exception=True,
-        )
+        user_can_edit_object(instance, self.request.user, raise_exception=True)
         super().perform_destroy(instance)
