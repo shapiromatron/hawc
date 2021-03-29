@@ -161,7 +161,13 @@ class FlexibleDBLinkedChoiceField(FlexibleChoiceField):
         * etc.
     """
 
-    def __init__(self, mapped_model, serializer_class, field_for_descriptor, many):
+    def __init__(
+        self,
+        mapped_model: models.Model,
+        serializer_class: serializers.ModelSerializer,
+        field_for_descriptor: str,
+        many: bool,
+    ):
         super().__init__(choices=[])
         self.serializer = serializer_class()
         self.mapped_model = mapped_model
