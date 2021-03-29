@@ -32,7 +32,7 @@ from ..common.helper import (
     tryParseInt,
 )
 from ..common.models import get_model_copy_name
-from ..common.validators import validate_html_tags
+from ..common.validators import validate_html_tags, validate_hyperlinks
 from ..epi.exports import OutcomeDataPivot
 from ..epi.models import Outcome
 from ..epimeta.exports import MetaResultFlatDataPivot
@@ -255,6 +255,7 @@ class SummaryTable(models.Model):
         # validate tags used in text
         content_str = json.dumps(self.content)
         validate_html_tags(content_str)
+        validate_hyperlinks(content_str)
 
 
 class HeatmapDataset(PydanticModel):

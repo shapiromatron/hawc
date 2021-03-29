@@ -54,5 +54,5 @@ class TestIntegration(StaticLiveServerTestCase, TestCase):
     def test_cleanup(self):
         tests.cleanup(self.driver, self.live_server_url)
 
-    def test_visuals(self):
-        tests.visuals(self.driver, self.live_server_url)
+    def test_summary(self):
+        tests.summary(self.driver, self.live_server_url)

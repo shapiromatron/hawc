@@ -16,14 +16,13 @@
 
 {% if object_list.exists %}
   <table class="table table-sm table-striped">
+    <colgroup>
+      <col style="width: 40%;">
+      <col style="width: 20%;">
+      <col style="width: 20%;">
+      <col style="width: 20%;">
+    </colgroup>
     <thead>
-      <colgroup>
-        <col style="width: 40%;">
-        <col style="width: 15%;">
-        <col style="width: 15%;">
-        <col style="width: 15%;">
-        <col style="width: 15%;">
-      </colgroup>
       <tr>
         <th>Title</th>
         <th>Table type</th>
@@ -44,6 +43,9 @@
       {% endfor %}
     </tbody>
   </table>
+  {% with total=object_list.count %}
+    <p><b>{{total}} table{{ total|pluralize }} available.</b></p>
+  {% endwith %}
 {% else %}
   {% if obj_perms.edit %}
     <p><i>No tables are available - create one!</i></p>
