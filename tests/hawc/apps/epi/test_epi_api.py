@@ -1624,12 +1624,9 @@ class TestMetadataApi:
 
 
 def generic_test_scenarios(client, url, scenarios):
-    print(f">>>>> testing scenarios against '{url}'...")
     for scenario in scenarios:
-        print(f">>>>> testing '{scenario['desc']}'...")
         method = scenario.get("method", "POST")
         if "data" in scenario:
-            # print(f">>>>> will {method} data: {scenario['data']}")
             pass
         if method.upper() == "POST":
             response = client.post(url, scenario["data"], format="json")
@@ -1640,7 +1637,6 @@ def generic_test_scenarios(client, url, scenarios):
         else:
             return
 
-        print(f">>>>> {method} request came back with {response.status_code} / {response.data}")
         if "expected_code" in scenario:
             assert response.status_code == scenario["expected_code"]
 
@@ -1655,12 +1651,10 @@ def generic_test_scenarios(client, url, scenarios):
 
 
 def generic_perm_tester(url, data):
-    print(f">>>>> generic perm test on {url}")
     # Reviewers shouldn't be able to create
     client = APIClient()
     assert client.login(username="reviewer@hawcproject.org", password="pw") is True
     response = client.post(url, data, format="json")
-    print(f">>>>> response == {response.status_code} / {response.data}")
     assert response.status_code == 403
 
     # Public shouldn't be able to create
