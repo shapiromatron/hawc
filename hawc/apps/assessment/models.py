@@ -18,6 +18,8 @@ from django.utils import timezone
 from pydantic import BaseModel as PydanticModel
 from reversion import revisions as reversion
 
+from hawc.services.epa.dsstox import DssSubstance
+
 from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper, read_excel
 from ..common.models import IntChoiceEnum, get_private_data_storage
 from ..myuser.models import HAWCUser
@@ -76,6 +78,20 @@ class DSSTox(models.Model):
 
     def __str__(self):
         return self.dtxsid
+
+    def save(self, *args, **kwargs):
+        """
+        Save the DSSTox to the database.
+
+        Raises:
+            ValueError if the supplied dtxsid isn't valid
+        """
+        if len(self.content) == 0:
+            # If no content set, then attempt to set it based on the dtxsid.
+            substance = DssSubstance.create_from_dtxsid(self.dtxsid)
+            self.content = substance.content
+
+        super().save(*args, **kwargs)
 
     @property
     def verbose_str(self) -> str:

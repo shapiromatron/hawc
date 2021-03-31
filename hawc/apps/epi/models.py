@@ -45,6 +45,9 @@ class Criteria(models.Model):
     def __str__(self):
         return self.description
 
+    def get_assessment(self):
+        return self.assessment
+
     def copy_across_assessments(self, cw):
         new_obj, _ = self._meta.model.objects.get_or_create(
             assessment_id=cw[Assessment.COPY_NAME][self.assessment_id],
@@ -1155,6 +1158,9 @@ class GroupNumericalDescriptions(models.Model):
     def __str__(self):
         return self.description
 
+    def get_assessment(self):
+        return self.group.get_assessment()
+
     def copy_across_assessments(self, cw):
         old_id = self.id
         self.id = None
@@ -1730,7 +1736,7 @@ class GroupResult(models.Model):
             ser["upper_range"],
             ser["lower_bound_interval"],
             ser["upper_bound_interval"],
-            ser["p_value_qualifier"],
+            ser["p_value_qualifier_display"],
             ser["p_value"],
             ser["is_main_finding"],
             ser["main_finding_support"],
@@ -1867,6 +1873,9 @@ class GroupResult(models.Model):
         self.group_id = cw[Group.COPY_NAME][self.group_id]
         self.save()
         cw[self.COPY_NAME][old_id] = self.id
+
+    def get_assessment(self):
+        return self.result.get_assessment()
 
 
 reversion.register(Country)
