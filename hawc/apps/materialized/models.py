@@ -1,13 +1,12 @@
 from typing import Tuple
 
+from django.apps import apps
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
 from django.db import connection, models, transaction
-from django.apps import apps
 
-from . import managers
-from . import sql
+from . import managers, sql
 
 
 def refresh_all_mvs(force: bool = False):

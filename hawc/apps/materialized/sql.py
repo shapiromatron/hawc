@@ -25,4 +25,3 @@ FinalRiskOfBiasScore = (
     drop materialized view if exists materialized_finalriskofbiasscore;
     """,
 )
-
