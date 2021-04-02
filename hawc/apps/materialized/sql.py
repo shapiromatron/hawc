@@ -1,6 +1,6 @@
 FinalRiskOfBiasScore = (
     """
-    create materialized view materialized_finalriskofbiasscore as
+    create materialized view if not exists materialized_finalriskofbiasscore as
     select
         ROW_NUMBER() OVER (ORDER BY score_id, ovr.content_type_id, ovr.object_id) as id,
         scr.id as "score_id",
@@ -22,7 +22,7 @@ FinalRiskOfBiasScore = (
     create index on materialized_finalriskofbiasscore (study_id);
     """,
     """
-    drop materialized view materialized_finalriskofbiasscore;
+    drop materialized view if exists materialized_finalriskofbiasscore;
     """,
 )
 
