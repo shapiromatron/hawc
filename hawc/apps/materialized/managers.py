@@ -7,18 +7,18 @@ from django.db import models
 
 
 class FinalRiskOfBiasScoreQuerySet(models.QuerySet):
-    def _default_tuples(self, study_id):
+    def _default_tuples(self, score_values, study_id):
         return [
             (score["metric_id"], score)
-            for score in self.values()
+            for score in score_values
             if study_id == score["study_id"] and score["is_default"]
         ]
 
-    def _override_tuples(self, study_id, override_model, object_id):
+    def _override_tuples(self, score_values, study_id, override_model, object_id):
         content_type_id = ContentType.objects.get_for_model(override_model).id
         return [
             (score["metric_id"], score)
-            for score in self.values()
+            for score in score_values
             if study_id == score["study_id"]
             and score["content_type_id"] == content_type_id
             and object_id == score["object_id"]
@@ -83,15 +83,20 @@ class FinalRiskOfBiasScoreQuerySet(models.QuerySet):
             "outcome__study_population"
         )
 
+        score_values = self.values()
         result_scores = {result_id: {} for result_id in result_ids}
 
         for result in results:
             study_id = result.outcome.study_population.study_id
-            for metric_id, score in self._default_tuples(study_id):
+            for metric_id, score in self._default_tuples(score_values, study_id):
                 result_scores[result.id][metric_id] = score
-            for metric_id, score in self._override_tuples(study_id, Outcome, result.outcome_id):
+            for metric_id, score in self._override_tuples(
+                score_values, study_id, Outcome, result.outcome_id
+            ):
                 result_scores[result.id][metric_id] = score
-            for metric_id, score in self._override_tuples(study_id, Result, result.id):
+            for metric_id, score in self._override_tuples(
+                score_values, study_id, Result, result.id
+            ):
                 result_scores[result.id][metric_id] = score
 
         return result_scores
