@@ -18,17 +18,17 @@ urlpatterns = [
     # modify assessment rob settings
     path("assessment/<int:pk>/", views.ARoBDetail.as_view(), name="arob_detail"),
     path("assessment/<int:pk>/copy/", views.ARoBCopy.as_view(), name="arob_copy"),
-    path("assessment/<int:pk>/edit/", views.ARoBEdit.as_view(), name="arob_update"),
+    path("assessment/<int:pk>/update/", views.ARoBEdit.as_view(), name="arob_update"),
     path("assessment/<int:pk>/text-edit/", views.ARoBTextEdit.as_view(), name="arob_text_update",),
     # modify domains
     path(
         "assessment/<int:pk>/domain/create/", views.RoBDomainCreate.as_view(), name="robd_create",
     ),
-    path("domain/<int:pk>/edit/", views.RoBDomainUpdate.as_view(), name="robd_update",),
+    path("domain/<int:pk>/update/", views.RoBDomainUpdate.as_view(), name="robd_update",),
     path("domain/<int:pk>/delete/", views.RoBDomainDelete.as_view(), name="robd_delete",),
     # modify metrics
     path("domain/<int:pk>/metric/create/", views.RoBMetricCreate.as_view(), name="robm_create",),
-    path("metric/<int:pk>/edit/", views.RoBMetricUpdate.as_view(), name="robm_update",),
+    path("metric/<int:pk>/update/", views.RoBMetricUpdate.as_view(), name="robm_update",),
     path("metric/<int:pk>/delete/", views.RoBMetricDelete.as_view(), name="robm_delete",),
     # rob reviewers
     path(
@@ -37,7 +37,7 @@ urlpatterns = [
         name="arob_reviewers",
     ),
     path(
-        "assessment/<int:pk>/study-assignments/edit/",
+        "assessment/<int:pk>/study-assignments/update/",
         views.ARoBReviewersUpdate.as_view(),
         name="arob_reviewers_update",
     ),
@@ -45,5 +45,5 @@ urlpatterns = [
     path("study/<int:pk>/", views.RoBDetail.as_view(), name="rob_detail"),
     path("study/<int:pk>/all/", views.RoBsDetailAll.as_view(), name="rob_detail_all",),
     # rob editing views
-    path("<int:pk>/edit/", views.RoBEdit.as_view(), name="rob_update"),
+    path("<int:pk>/update/", views.RoBEdit.as_view(), name="rob_update"),
 ]

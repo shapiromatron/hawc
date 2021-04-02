@@ -19,5 +19,5 @@ urlpatterns = [
     # assessment-level views
     path("assessment/<int:pk>/", views.TaskDashboard.as_view(), name="assessment_dashboard",),
     path("assessment/<int:pk>/details/", views.TaskDetail.as_view(), name="assessment_tasks",),
-    path("assessment/<int:pk>/edit/", views.TaskModify.as_view(), name="assessment_modify",),
+    path("assessment/<int:pk>/update/", views.TaskModify.as_view(), name="assessment_modify",),
 ]
