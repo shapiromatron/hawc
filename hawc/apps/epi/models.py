@@ -1559,11 +1559,11 @@ class Result(models.Model):
         df["exposure metric"].fillna("", inplace=True)
 
         # overall risk of bias evaluation
-        RiskOfBiasScore = apps.get_model("riskofbias", "RiskOfBiasScore")
-        df2 = RiskOfBiasScore.objects.overall_scores(assessment_id)
+        FinalRiskOfBiasScore = apps.get_model("materialized", "FinalRiskOfBiasScore")
+        df2 = FinalRiskOfBiasScore.objects.overall_result_scores(assessment_id)
         if df2 is not None:
             df = (
-                df.merge(df2, how="left", left_on="study id", right_on="study id")
+                df.merge(df2, how="left", left_on="result id", right_on="result id")
                 .pipe(df_move_column, "overall study evaluation", "study identifier")
                 .fillna("")
             )
