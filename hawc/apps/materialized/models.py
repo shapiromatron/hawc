@@ -1,4 +1,5 @@
-from typing import Tuple
+import json
+from typing import Dict, List, Tuple
 
 from django.apps import apps
 from django.contrib.contenttypes.fields import GenericForeignKey
@@ -92,3 +93,78 @@ class FinalRiskOfBiasScore(MaterializedViewModel):
     @classmethod
     def sql(cls):
         return sql.FinalRiskOfBiasScore
+
+    @classmethod
+    def get_dp_export(cls, assessment_id: int, ids: List[int], data_type: str) -> Tuple[Dict, Dict]:
+        """
+        Given an assessment, a list of studies, and a data type, return all the data required to
+        build a data pivot risk of bias export for only active, final data.
+
+        Args:
+            assessment_id (int): An assessment identifier
+            study_ids (List[int]): A list of studies ids to include
+            data_type (str): The data type to use; one of {"animal", "epi", "invitro"}
+
+        Returns:
+            Tuple[Dict, Dict]: A {metric_id: header_name} dict for building headers, and a
+                {(study_id, metric_id): text} dict for building rows
+        """
+
+        data_types = {"animal", "epi", "invitro"}
+        if data_type not in data_types:
+            raise ValueError(f"Unsupported data type {data_type}; expected {data_types}")
+
+        filters = dict(domain__assessment_id=assessment_id)
+        if data_type == "animal":
+            filters["required_animal"] = True
+            scores_map = cls.objects.all().endpoint_scores(ids)
+        elif data_type == "epi":
+            filters["required_epi"] = True
+            scores_map = cls.objects.all().outcome_scores(ids)
+        elif data_type == "invitro":
+            filters["required_invitro"] = True
+            raise NotImplementedError("Final scores not implemented for invitro")
+
+        # return headers
+        RiskOfBiasMetric = apps.get_model("riskofbias", "RiskOfBiasMetric")
+        metric_qs = list(
+            RiskOfBiasMetric.objects.filter(**filters).select_related("domain").order_by("id")
+        )
+        header_map = {metric.id: "" for metric in metric_qs}
+        for metric in metric_qs:
+            if metric.domain.is_overall_confidence:
+                text = "Overall study confidence"
+            elif metric.use_short_name:
+                text = f"RoB ({metric.short_name})"
+            else:
+                text = f"RoB ({metric.domain.name}: {metric.name})"
+            header_map[metric.id] = text
+
+        # return data
+        RiskOfBiasScore = apps.get_model("riskofbias", "RiskOfBiasScore")
+        metric_ids = list(header_map.keys())
+        default_value = '{"sortValue": -1, "display": "N/A"}'
+
+        for metric_id in metric_ids:
+            for id in ids:
+                key = (id, metric_id)
+                if key in scores_map:
+                    # convert values in our map to a str-based JSON
+                    score = scores_map[key]["score_score"]
+                    content = json.dumps(
+                        {
+                            "sortValue": score,
+                            "display": RiskOfBiasScore.RISK_OF_BIAS_SCORE_CHOICES_MAP[score],
+                        }
+                    )
+
+                    # special case for N/A
+                    if score in RiskOfBiasScore.NA_SCORES:
+                        content = default_value
+
+                    scores_map[key] = content
+
+                else:
+                    scores_map[key] = default_value
+
+        return header_map, scores_map
