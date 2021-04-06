@@ -1,3 +1,4 @@
+from itertools import chain
 from typing import Dict, List, Optional, Tuple
 
 import pandas as pd
@@ -50,13 +51,11 @@ class FinalRiskOfBiasScoreQuerySet(models.QuerySet):
 
         for endpoint in endpoints:
             study_id = endpoint.animal_group.experiment.study_id
-            for metric_id, score in self._default_tuples(study_id):
-                endpoint_scores[endpoint.id, metric_id] = score
-            for metric_id, score in self._override_tuples(
-                study_id, AnimalGroup, endpoint.animal_group_id
+            for metric_id, score in chain(
+                self._default_tuples(study_id),
+                self._override_tuples(study_id, AnimalGroup, endpoint.animal_group_id),
+                self._override_tuples(study_id, Endpoint, endpoint.id),
             ):
-                endpoint_scores[endpoint.id, metric_id] = score
-            for metric_id, score in self._override_tuples(study_id, Endpoint, endpoint.id):
                 endpoint_scores[endpoint.id, metric_id] = score
 
         return endpoint_scores
@@ -71,9 +70,9 @@ class FinalRiskOfBiasScoreQuerySet(models.QuerySet):
 
         for outcome in outcomes:
             study_id = outcome.study_population.study_id
-            for metric_id, score in self._default_tuples(study_id):
-                outcome_scores[outcome.id, metric_id] = score
-            for metric_id, score in self._override_tuples(study_id, Outcome, outcome.id):
+            for metric_id, score in chain(
+                self._default_tuples(study_id), self._override_tuples(study_id, Outcome, outcome.id)
+            ):
                 outcome_scores[outcome.id, metric_id] = score
 
         return outcome_scores
@@ -91,11 +90,11 @@ class FinalRiskOfBiasScoreQuerySet(models.QuerySet):
 
         for result in results:
             study_id = result.outcome.study_population.study_id
-            for metric_id, score in self._default_tuples(study_id):
-                result_scores[result.id, metric_id] = score
-            for metric_id, score in self._override_tuples(study_id, Outcome, result.outcome_id):
-                result_scores[result.id, metric_id] = score
-            for metric_id, score in self._override_tuples(study_id, Result, result.id):
+            for metric_id, score in chain(
+                self._default_tuples(study_id),
+                self._override_tuples(study_id, Outcome, result.outcome_id),
+                self._override_tuples(study_id, Result, result.id),
+            ):
                 result_scores[result.id, metric_id] = score
 
         return result_scores
