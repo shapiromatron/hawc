@@ -30,6 +30,13 @@ class FinalRiskOfBiasScoreQuerySet(models.QuerySet):
             and object_id == score["object_id"]
         ]
 
+    def study_scores(self, study_ids: List[int]) -> Dict[Tuple[int, int], Dict]:
+        return {
+            (score["study_id"], score["metric_id"]): score
+            for score in self.score_values
+            if score["study_id"] in study_ids and score["is_default"]
+        }
+
     def endpoint_scores(self, endpoint_ids: List[int]) -> Dict[Tuple[int, int], Dict]:
 
         Endpoint = apps.get_model("animal", "Endpoint")

@@ -111,14 +111,13 @@ class FinalRiskOfBiasScore(MaterializedViewModel):
         filters = dict(domain__assessment_id=assessment_id)
         if data_type == "animal":
             filters["required_animal"] = True
-            scores_map = cls.objects.all().endpoint_scores(ids)
+            scores_map = cls.objects.filter(study__assessment_id=assessment_id).endpoint_scores(ids)
         elif data_type == "epi":
             filters["required_epi"] = True
-            scores_map = cls.objects.all().outcome_scores(ids)
+            scores_map = cls.objects.filter(study__assessment_id=assessment_id).outcome_scores(ids)
         elif data_type == "invitro":
             filters["required_invitro"] = True
-            raise NotImplementedError("Final scores not implemented for invitro")
-
+            scores_map = cls.objects.filter(study__assessment_id=assessment_id).study_scores(ids)
         # return headers
         RiskOfBiasMetric = apps.get_model("riskofbias", "RiskOfBiasMetric")
         metric_qs = list(
