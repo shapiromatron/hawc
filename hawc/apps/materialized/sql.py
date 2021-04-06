@@ -1,4 +1,12 @@
-FinalRiskOfBiasScore = (
+from typing import NamedTuple
+
+
+class SQL(NamedTuple):
+    create: str
+    drop: str
+
+
+FinalRiskOfBiasScore = SQL(
     """
     create materialized view if not exists materialized_finalriskofbiasscore as
     select

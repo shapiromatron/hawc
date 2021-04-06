@@ -29,18 +29,14 @@ class MaterializedViewModel(models.Model):
         managed = False
 
     @classmethod
-    def sql(cls) -> Tuple[str, str]:
-        raise NotImplementedError("SQL statements must be defined on class")
-
-    @classmethod
     def create(cls):
         with connection.cursor() as cursor:
-            cursor.execute(cls.sql()[0])
+            cursor.execute(cls.sql.create)
 
     @classmethod
     def drop(cls):
         with connection.cursor() as cursor:
-            cursor.execute(cls.sql()[1])
+            cursor.execute(cls.sql.drop)
 
     @classmethod
     def set_refresh_flag(cls, refresh: bool):
@@ -68,6 +64,8 @@ class MaterializedViewModel(models.Model):
 
 class FinalRiskOfBiasScore(MaterializedViewModel):
 
+    sql = sql.FinalRiskOfBiasScore
+
     objects = managers.FinalRiskOfBiasScoreManager()
 
     score = models.ForeignKey(
@@ -89,10 +87,6 @@ class FinalRiskOfBiasScore(MaterializedViewModel):
     content_type = models.ForeignKey(ContentType, null=True, on_delete=models.DO_NOTHING)
     object_id = models.IntegerField()
     content_object = GenericForeignKey("content_type", "object_id")
-
-    @classmethod
-    def sql(cls):
-        return sql.FinalRiskOfBiasScore
 
     @classmethod
     def get_dp_export(cls, assessment_id: int, ids: List[int], data_type: str) -> Tuple[Dict, Dict]:
