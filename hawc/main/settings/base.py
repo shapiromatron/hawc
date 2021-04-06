@@ -75,6 +75,7 @@ MIDDLEWARE = (
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "hawc.apps.common.middleware.MicrosoftOfficeLinkMiddleware",
+    "hawc.apps.common.middleware.RemoveRefererMiddleware",
 )
 
 

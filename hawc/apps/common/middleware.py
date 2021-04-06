@@ -23,3 +23,14 @@ class MicrosoftOfficeLinkMiddleware(MiddlewareMixin):
             return HttpResponse(self.RESPONSE_TEXT)
         response = self.get_response(request)
         return response
+
+
+class RemoveRefererMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        response = self.get_response(request)
+        response._headers.pop("Referer", None)
+        response._headers.pop("Origin", None)
+        return response
