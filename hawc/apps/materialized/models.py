@@ -91,17 +91,20 @@ class FinalRiskOfBiasScore(MaterializedViewModel):
     @classmethod
     def get_dp_export(cls, assessment_id: int, ids: List[int], data_type: str) -> Tuple[Dict, Dict]:
         """
-        Given an assessment, a list of studies, and a data type, return all the data required to
+        Given an assessment, a list of object ids, and a data type, return all the data required to
         build a data pivot risk of bias export for only active, final data.
 
         Args:
             assessment_id (int): An assessment identifier
-            study_ids (List[int]): A list of studies ids to include
+            ids (List[int]): A list of object ids to include, dependent on data_type:
+                "animal" takes endpoint ids
+                "epi" takes outcome ids
+                "invitro" takes study ids
             data_type (str): The data type to use; one of {"animal", "epi", "invitro"}
 
         Returns:
             Tuple[Dict, Dict]: A {metric_id: header_name} dict for building headers, and a
-                {(study_id, metric_id): text} dict for building rows
+                {(object_id, metric_id): text} dict for building rows
         """
 
         data_types = {"animal", "epi", "invitro"}
