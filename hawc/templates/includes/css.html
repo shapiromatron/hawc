@@ -1,18 +1,8 @@
 {% load static %}
 
-{% if debug %}
-<link rel="stylesheet" type="text/css" href="{% static 'debug/font-awesome/css/font-awesome.css' %}" />
-<link rel="stylesheet" type="text/css" href="{% static 'debug/twitter-bootstrap/4.5.2/css/bootstrap.css' %}" />
-<link rel="stylesheet" type="text/css" href="{% static 'debug/jqueryui/1.10.3/css/jquery-ui.css' %}" />
-{% else %}
-<link rel="stylesheet" type="text/css"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css" />
-<link rel="stylesheet" type="text/css"
-    href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/css/bootstrap.min.css" />
-<link rel="stylesheet" type="text/css"
-    href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.3/css/base/minified/jquery-ui.min.css" />
-{% endif %}
-
+<link rel="stylesheet" type="text/css" href="{% static 'vendor/font-awesome/4.7.0/css/font-awesome.min.css' %}" />
+<link rel="stylesheet" type="text/css" href="{% static 'vendor/bootstrap/4.5.3/css/bootstrap.min.css' %}" />
+<link rel="stylesheet" type="text/css" href="{% static 'vendor/jqueryui/1.10.3/css/jquery-ui.min.css' %}" />
 <link rel="stylesheet" type="text/css" href="{% static 'css/hawc.css' %}" />
 <link rel="stylesheet" type="text/css" href="{% static 'css/d3.css' %}" />
 <link rel="stylesheet" type="text/css" href="{% static 'css/flex.css' %}" />
