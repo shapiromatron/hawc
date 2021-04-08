@@ -1,10 +1,9 @@
 import re
 
 from django.http import HttpResponse
-from django.utils.deprecation import MiddlewareMixin
 
 
-class MicrosoftOfficeLinkMiddleware(MiddlewareMixin):
+class MicrosoftOfficeLinkMiddleware:
     # https://support.microsoft.com/en-us/kb/899927
     # https://github.com/spilliton/fix_microsoft_links
 
@@ -25,7 +24,7 @@ class MicrosoftOfficeLinkMiddleware(MiddlewareMixin):
         return response
 
 
-class RemoveRefererMiddleware:
+class CsrfRefererCheckMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
 
