@@ -2,8 +2,8 @@ from datetime import datetime, timedelta
 
 import pytest
 
-from hawc.apps.vocab.serializers import TermSerializer
 from hawc.apps.vocab.models import Term
+from hawc.apps.vocab.serializers import TermSerializer
 
 
 @pytest.mark.django_db
@@ -68,4 +68,3 @@ class TestTermSerializer:
         assert (
             instance.deprecated_on > five_minutes_ago and instance.last_updated > five_minutes_ago
         )
-

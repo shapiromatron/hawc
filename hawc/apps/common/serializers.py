@@ -1,5 +1,5 @@
-from typing import Any, Dict, List, Tuple, Type
 from datetime import datetime
+from typing import Any, Dict, List, Tuple, Type
 
 import pydantic
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
