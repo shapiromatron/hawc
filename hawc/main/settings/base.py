@@ -69,13 +69,13 @@ MIDDLEWARE = (
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
+    "hawc.apps.common.middleware.CsrfRefererCheckMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "reversion.middleware.RevisionMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "hawc.apps.common.middleware.MicrosoftOfficeLinkMiddleware",
-    "hawc.apps.common.middleware.CsrfRefererCheckMiddleware",
 )
 
 
