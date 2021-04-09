@@ -39,9 +39,7 @@ class CsrfRefererCheckMiddleware:
     """
 
     SAFE_METHODS = {"GET", "HEAD", "OPTIONS", "TRACE"}
-    RESPONSE_TEXT = (
-        '<html><head><meta http-equiv="refresh" content="0"/></head><body></body></html>'
-    )
+    REFRESH = b'<html><head><meta http-equiv="refresh" content="0"/></head><body></body></html>'
 
     def __init__(self, get_response):
         self.get_response = get_response
@@ -49,12 +47,12 @@ class CsrfRefererCheckMiddleware:
     def __call__(self, request):
         if request.method in self.SAFE_METHODS:
             this_host = request.get_host()
-            for header in ["referer", "origin"]:
-                value = request.headers.get(header)
+            for header in ["HTTP_REFERER", "HTTP_ORIGIN"]:
+                value = request.META.get(header)
                 if value:
                     parsed = urlparse(value)
                     if not is_same_domain(parsed.netloc, this_host):
-                        return HttpResponse(self.RESPONSE_TEXT)
+                        return HttpResponse(self.REFRESH)
 
         # continue standard parsing; no need to redirect
         response = self.get_response(request)
