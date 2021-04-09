@@ -1,4 +1,5 @@
-from typing import Any, Dict, List, Type
+from typing import Any, Dict, List, Tuple, Type
+from datetime import datetime
 
 import pydantic
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
@@ -292,17 +293,37 @@ class BulkSerializer(serializers.ListSerializer):
     (eg.  id = IntegerField(required=False))
     """
 
+    def values_equal(self, instance, field, value) -> bool:
+        return getattr(instance, field) == value
+
+    def update_field(self, instance, field, value) -> str:
+        setattr(instance, field, value)
+        return field
+
+    def update_fields(self, instance, data) -> Tuple[bool, List]:
+        fields = list(data.keys())
+        fields.remove("id")
+        updated_fields = []
+        for field in fields:
+            value = data[field]
+            if not self.values_equal(instance, field, value):
+                set_field = self.update_field(instance, field, value)
+                updated_fields.append(set_field)
+        updated = bool(updated_fields)
+        if updated and hasattr(instance, "last_updated"):
+            instance.last_updated = datetime.now()
+            updated_fields.append("last_updated")
+        return updated, updated_fields
+
     def update(self, instances, validated_data):
         updated_instances = []
         updated_fields = set()
         for data in validated_data:
             instance = next(instance for instance in instances if instance.id == data["id"])
-            fields = list(data.keys())
-            fields.remove("id")
-            for field in fields:
-                setattr(instance, field, data[field])
-            updated_instances.append(instance)
-            updated_fields.update(fields)
+            updated, fields = self.update_fields(instance, data)
+            if updated:
+                updated_instances.append(instance)
+                updated_fields.update(fields)
         Model = self.child.Meta.model
         Model.objects.bulk_update(updated_instances, updated_fields)
         return updated_instances
