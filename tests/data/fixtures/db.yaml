@@ -132,10 +132,6 @@
     model: entitytermrelation
 - model: contenttypes.contenttype
   fields:
-    app_label: vocab
-    model: comment
-- model: contenttypes.contenttype
-  fields:
     app_label: lit
     model: literatureassessment
 - model: contenttypes.contenttype
@@ -561,17 +557,6 @@
     deprecated_on: null
     created_on: 2020-08-12 14:11:50.023861+00:00
     last_updated: 2020-08-12 14:11:50.023879+00:00
-- model: vocab.comment
-  pk: 1
-  fields:
-    commenter:
-    - pm@hawcproject.org
-    last_url_visited: /portal/
-    comment: I like this idea.
-    reviewed: false
-    reviewer_notes: ''
-    created_on: 2020-08-12 14:11:50.023861+00:00
-    last_updated: 2020-08-12 14:11:50.023861+00:00
 - model: assessment.dsstox
   pk: DTXSID6026296
   fields:

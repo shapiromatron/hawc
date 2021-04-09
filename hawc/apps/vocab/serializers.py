@@ -15,12 +15,13 @@ class TermBulkSerializer(BulkSerializer):
 
 class TermSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
+    parent_id = serializers.IntegerField(required=False, write_only=True)
     deprecated = serializers.BooleanField(required=False, write_only=True)
 
     def validate(self, data):
-        if "deprecated" in data:
-            data["deprecated_on"] = datetime.now()
-            del data["deprecated"]
+        deprecated = data.pop("deprecated", None)
+        if deprecated is not None:
+            data["deprecated_on"] = datetime.now() if deprecated else None
         return data
 
     class Meta:
