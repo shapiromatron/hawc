@@ -1,12 +1,15 @@
 from rest_framework import serializers
-
+from ..common.serializers import BulkSerializer
 from . import models
 
 
 class TermSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(required=False)
+
     class Meta:
         model = models.Term
-        fields = ("id", "name")
+        fields = "__all__"
+        list_serializer_class = BulkSerializer
 
 
 class EntitySerializer(serializers.ModelSerializer):

@@ -283,3 +283,31 @@ class GetOrCreateMixin:
     def create(self, validated_data, *args, **kwargs):
         instance, created = self.Meta.model.objects.get_or_create(**validated_data)
         return instance
+
+
+class BulkSerializer(serializers.ListSerializer):
+    """
+    Bulk create/update serializer for many = True
+    "id" must be given write access on serializer for bulk update
+    (eg.  id = IntegerField(required=False))
+    """
+
+    def update(self, instances, validated_data):
+        updated_instances = []
+        updated_fields = set()
+        for data in validated_data:
+            instance = next(instance for instance in instances if instance.id == data["id"])
+            fields = list(data.keys())
+            fields.remove("id")
+            for field in fields:
+                setattr(instance, field, data[field])
+            updated_instances.append(instance)
+            updated_fields.update(fields)
+        Model = self.child.Meta.model
+        Model.objects.bulk_update(updated_instances, updated_fields)
+        return updated_instances
+
+    def create(self, validated_data):
+        Model = self.child.Meta.model
+        instances = [Model(**data) for data in validated_data]
+        return Model.objects.bulk_create(instances)
