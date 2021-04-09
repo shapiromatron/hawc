@@ -27,7 +27,17 @@
     {% endif %}
 
     {% block extrahead %}{% endblock %}
-    {% include 'includes/css.html' %}
+
+    <link rel="stylesheet" type="text/css" href="{% static 'vendor/font-awesome/4.7.0/css/font-awesome.min.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'vendor/bootstrap/4.5.3/css/bootstrap.min.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'vendor/jqueryui/1.10.3/css/jquery-ui.min.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/hawc.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/d3.css' %}" />
+    {% if extra_branding and flavor == "EPA" %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/epa.css' %}" />
+    {% endif %}
+    {% block extrastyle %}{% endblock %}
+
   </head>
   <body>
 
