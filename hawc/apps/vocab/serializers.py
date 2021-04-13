@@ -7,6 +7,24 @@ from . import models
 
 
 class TermBulkSerializer(BulkSerializer):
+    schema = {
+        "type": "array",
+        "items": {
+            "type": "object",
+            "properties": {
+                "id": {"type": "number"},
+                "uid": {"type": "number"},
+                "namespace": {"type": "number"},
+                "parent_id": {"type": "number"},
+                "type": {"type": "number"},
+                "name": {"type": "string"},
+                "notes": {"type": "string"},
+                "deprecated": {"type": "boolean"},
+            },
+            "additionalProperties": False,
+        },
+    }
+
     def values_equal(self, instance, field, value):
         # equality for deprecated_on is whether it needs to be set
         if field == "deprecated_on":
@@ -29,6 +47,12 @@ class TermSerializer(serializers.ModelSerializer):
         model = models.Term
         fields = "__all__"
         list_serializer_class = TermBulkSerializer
+
+
+class SimpleTermSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Term
+        fields = ("id", "name")
 
 
 class EntitySerializer(serializers.ModelSerializer):

@@ -1,11 +1,14 @@
 from datetime import datetime
 from typing import Any, Dict, List, Tuple, Type
 
+import jsonschema
 import pydantic
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import models
 from rest_framework import serializers
 from rest_framework.renderers import JSONRenderer
+from rest_framework.settings import api_settings
+from rest_framework.utils import html
 from rest_framework.validators import UniqueTogetherValidator
 
 from .helper import get_id_from_choices
@@ -293,6 +296,82 @@ class BulkSerializer(serializers.ListSerializer):
     (eg.  id = IntegerField(required=False))
     """
 
+    schema = {
+        "type": "array",
+        "items": {"type": "object"},
+    }
+
+    def to_internal_value(self, data):
+        """
+        List of dicts of native values <- List of dicts of primitive datatypes.
+        """
+        if html.is_html_input(data):
+            data = html.parse_html_list(data, default=[])
+
+        if not isinstance(data, list):
+            message = self.error_messages["not_a_list"].format(input_type=type(data).__name__)
+            raise ValidationError({api_settings.NON_FIELD_ERRORS_KEY: [message]}, code="not_a_list")
+
+        if not self.allow_empty and len(data) == 0:
+            message = self.error_messages["empty"]
+            raise ValidationError({api_settings.NON_FIELD_ERRORS_KEY: [message]}, code="empty")
+
+        ret = []
+        errors = []
+
+        for item in data:
+            try:
+                # https://github.com/miki725/django-rest-framework-bulk/issues/68#issuecomment-361895823
+                self.child.instance = (
+                    next((_ for _ in self.instance if _.id == item.get("id")), None)
+                    if self.instance
+                    else None
+                )
+                validated = self.child.run_validation(item)
+            except ValidationError as exc:
+                errors.append(exc.detail)
+            else:
+                ret.append(validated)
+                errors.append({})
+
+        if any(errors):
+            raise ValidationError(errors)
+
+        return ret
+
+    def validate_update(self, data):
+        # ids must be in data
+        data_ids = [obj_data.get("id") for obj_data in data if obj_data.get("id") is not None]
+        if len(data_ids) != len(data):
+            raise serializers.ValidationError("'id' is required to map to instance.")
+        # all data ids should be in instance
+        instance_ids = [obj.id for obj in self.instance]
+        invalid_data_ids = set(data_ids) - set(instance_ids)
+        if invalid_data_ids:
+            raise serializers.ValidationError(
+                f"Invalid 'id's: {', '.join([str(_) for _ in invalid_data_ids])}."
+            )
+
+    def validate_create(self, data):
+        data_ids = [obj_data.get("id") for obj_data in data if obj_data.get("id") is not None]
+        if data_ids:
+            raise serializers.ValidationError("'id' is prohibited.")
+
+    def validate(self, data):
+        # enforce schema for bulk operations
+        try:
+            jsonschema.validate(self.initial_data, self.schema)
+        except jsonschema.ValidationError as err:
+            raise serializers.ValidationError(err.message)
+        # ids needed for update operation
+        if self.instance is not None:
+            self.validate_update(data)
+        # ids forbidden for create operation
+        else:
+            self.validate_create(data)
+
+        return data
+
     def values_equal(self, instance, field, value) -> bool:
         return getattr(instance, field) == value
 
@@ -325,7 +404,8 @@ class BulkSerializer(serializers.ListSerializer):
                 updated_instances.append(instance)
                 updated_fields.update(fields)
         Model = self.child.Meta.model
-        Model.objects.bulk_update(updated_instances, updated_fields)
+        if updated_instances:
+            Model.objects.bulk_update(updated_instances, updated_fields)
         return updated_instances
 
     def create(self, validated_data):

@@ -6,6 +6,7 @@ from . import api, views
 
 router = DefaultRouter()
 router.register(r"ehv", api.EhvTermViewset, basename="ehv")
+router.register(r"term", api.TermViewset, basename="term")
 
 app_name = "vocab"
 urlpatterns = [
