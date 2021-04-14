@@ -15,7 +15,7 @@ class TermBulkSerializer(BulkSerializer):
                 "id": {"type": "number"},
                 "uid": {"type": "number"},
                 "namespace": {"type": "number"},
-                "parent_id": {"type": "number"},
+                "parent_id": {"type": ["number", "null"]},
                 "type": {"type": "number"},
                 "name": {"type": "string"},
                 "notes": {"type": "string"},
@@ -34,7 +34,7 @@ class TermBulkSerializer(BulkSerializer):
 
 class TermSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
-    parent_id = serializers.IntegerField(required=False, write_only=True)
+    parent_id = serializers.IntegerField(required=False, write_only=True, allow_null=True)
     deprecated = serializers.BooleanField(required=False, write_only=True)
 
     def validate(self, data):

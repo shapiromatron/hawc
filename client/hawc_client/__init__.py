@@ -775,6 +775,24 @@ class AssessmentClient(BaseClient):
         return self._csv_to_df(response.text)
 
 
+class VocabClient(BaseClient):
+    """
+    Client class for vocabulary requests.
+    """
+
+    def bulk_create(self, terms: List[Dict]) -> List[Dict]:
+        url = f"{self.session.root_url}/vocab/api/term/bulk-create/"
+        return self.session.post(url, terms).json()
+
+    def bulk_update(self, terms: List[Dict]) -> List[Dict]:
+        url = f"{self.session.root_url}/vocab/api/term/bulk-update/"
+        return self.session.patch(url, terms).json()
+
+    def uids(self):
+        url = f"{self.session.root_url}/vocab/api/term/uids/"
+        return self.session.get(url).json()
+
+
 class HawcClient(BaseClient):
     """
     HAWC Client.
@@ -802,6 +820,7 @@ class HawcClient(BaseClient):
         self.riskofbias = RiskOfBiasClient(self.session)
         self.summary = SummaryClient(self.session)
         self.study = StudyClient(self.session)
+        self.vocab = VocabClient(self.session)
 
     def authenticate(self, email: str, password: str):
         """

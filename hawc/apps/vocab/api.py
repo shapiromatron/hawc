@@ -117,8 +117,13 @@ class TermViewset(mixins.CreateModelMixin, viewsets.GenericViewSet):
             jsonschema.validate(request.data, BulkSerializer.schema)
         except jsonschema.ValidationError:
             raise exceptions.ValidationError("Data must be list of dicts")
-        terms = self.get_queryset().filter(id__in=[obj_data.get("id") for obj_data in request.data])
-        serializer = self.get_serializer(instance=terms, data=request.data, many=True, partial=True)
+        qs = self.get_queryset().filter(id__in=[obj_data.get("id") for obj_data in request.data])
+        serializer = self.get_serializer(instance=qs, data=request.data, many=True, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)
+
+    @action(detail=False, methods=("get",), permission_classes=(IsAuthenticated,))
+    def uids(self, request: Request) -> Response:
+        qs = self.get_queryset().exclude(uid=None)
+        return Response(qs.values_list("id", "uid"))
