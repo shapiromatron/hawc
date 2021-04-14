@@ -91,15 +91,6 @@ class TestTermViewset:
                 [{"uid": "slug", "type": 1, "name": "name"}],
                 {"uid": ["A valid integer is required."]},
             ),
-            # extraneous attrs
-            (
-                [{"uid": 1, "type": 1, "name": "name", "extra": "extra"}],
-                {
-                    "non_field_errors": [
-                        "Additional properties are not allowed ('extra' was unexpected)"
-                    ]
-                },
-            ),
         ]
 
         for data, err in test_cases:
@@ -139,15 +130,6 @@ class TestTermViewset:
             ([{"id": 9999, "name": "name"}], {"non_field_errors": ["Invalid 'id's: 9999."]}),
             # wrong attr type
             ([{"id": 9999, "type": "one"}], {"type": ['"one" is not a valid choice.']}),
-            # extraneous attrs
-            (
-                [{"id": 1, "extra": "extra"}],
-                {
-                    "non_field_errors": [
-                        "Additional properties are not allowed ('extra' was unexpected)"
-                    ]
-                },
-            ),
         ]
 
         for data, err in test_cases:

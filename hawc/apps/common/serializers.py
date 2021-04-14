@@ -1,7 +1,6 @@
 from datetime import datetime
 from typing import Any, Dict, List, Tuple, Type
 
-import jsonschema
 import pydantic
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import models
@@ -296,11 +295,6 @@ class BulkSerializer(serializers.ListSerializer):
     (eg.  id = IntegerField(required=False))
     """
 
-    schema = {
-        "type": "array",
-        "items": {"type": "object"},
-    }
-
     def to_internal_value(self, data):
         """
         List of dicts of native values <- List of dicts of primitive datatypes.
@@ -358,11 +352,6 @@ class BulkSerializer(serializers.ListSerializer):
             raise serializers.ValidationError("'id' is prohibited.")
 
     def validate(self, data):
-        # enforce schema for bulk operations
-        try:
-            jsonschema.validate(self.initial_data, self.schema)
-        except jsonschema.ValidationError as err:
-            raise serializers.ValidationError(err.message)
         # ids needed for update operation
         if self.instance is not None:
             self.validate_update(data)

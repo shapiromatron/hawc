@@ -10,7 +10,6 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 
 from ..common.helper import tryParseInt
-from ..common.serializers import BulkSerializer
 from . import models, serializers
 
 
@@ -99,7 +98,7 @@ class TermViewset(mixins.CreateModelMixin, viewsets.GenericViewSet):
     def bulk_create(self, request: Request) -> Response:
         # ensure data is list of dicts
         try:
-            jsonschema.validate(request.data, BulkSerializer.schema)
+            jsonschema.validate(request.data, {"type": "array", "items": {"type": "object"}})
         except jsonschema.ValidationError:
             raise exceptions.ValidationError("Data must be list of dicts")
         serializer = self.get_serializer(data=request.data, many=True)
@@ -114,7 +113,7 @@ class TermViewset(mixins.CreateModelMixin, viewsets.GenericViewSet):
     def bulk_update(self, request: Request) -> Response:
         # ensure data is list of dicts
         try:
-            jsonschema.validate(request.data, BulkSerializer.schema)
+            jsonschema.validate(request.data, {"type": "array", "items": {"type": "object"}})
         except jsonschema.ValidationError:
             raise exceptions.ValidationError("Data must be list of dicts")
         qs = self.get_queryset().filter(id__in=[obj_data.get("id") for obj_data in request.data])
