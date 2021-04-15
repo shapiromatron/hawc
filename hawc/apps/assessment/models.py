@@ -824,6 +824,13 @@ class DatasetRevision(models.Model):
     def get_df(self) -> pd.DataFrame:
         return self.try_read_df(self.data, self.metadata["extension"], self.excel_worksheet_name)
 
+    def data_exists(self) -> bool:
+        try:
+            _ = self.data.file
+            return True
+        except FileNotFoundError:
+            return False
+
     @classmethod
     def try_read_df(cls, data, suffix: str, worksheet_name: str = None) -> pd.DataFrame:
         """

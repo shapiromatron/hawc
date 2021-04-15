@@ -149,9 +149,8 @@ class DatasetAdmin(admin.ModelAdmin):
     )
     list_display_links = ("id",)
     list_filter = (("assessment", admin.RelatedOnlyFieldListFilter),)
-    inlines = [
-        DatasetRevisionInline,
-    ]
+    inlines = [DatasetRevisionInline]
+    readonly_fields = ("assessment_id", "assessment")
 
 
 @admin.register(models.DoseUnits)
