@@ -15,7 +15,7 @@ class AssessmentPermissions(BaseModel):
 
     @classmethod
     def get_cache_key(cls, assessment) -> str:
-        return "assessment-perms-{assessment.id}"
+        return f"assessment-perms-{assessment.id}"
 
     @classmethod
     def clear_cache(cls, assessment):

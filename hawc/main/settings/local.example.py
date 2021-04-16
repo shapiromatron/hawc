@@ -23,5 +23,5 @@ BMD_HOST = "http://example.com"  # optional; used for BMD module
 # SET HAWC FLAVOR (see docs)
 HAWC_FLAVOR = "PRIME"
 
-# cache for 1 sec instead
-CACHE_1_HR = 1
+# disable cache
+# CACHES["default"]["BACKEND"] = "django.core.cache.backends.dummy.DummyCache"
