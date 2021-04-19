@@ -1,9 +1,8 @@
 from typing import Set
 
+from django.conf import settings
 from django.core.cache import cache
 from pydantic import BaseModel
-
-from django.conf import settings
 
 
 class AssessmentPermissions(BaseModel):
