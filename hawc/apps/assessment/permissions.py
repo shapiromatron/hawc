@@ -13,16 +13,17 @@ class AssessmentPermissions(BaseModel):
     reviewers: Set[int]
 
     @classmethod
-    def get_cache_key(cls, assessment) -> str:
-        return f"assessment-perms-{assessment.id}"
+    def get_cache_key(cls, assessment_id: int) -> str:
+        return f"assessment-perms-{assessment_id}"
 
     @classmethod
-    def clear_cache(cls, assessment):
-        cache.delete(cls.get_cache_key(assessment))
+    def clear_cache(cls, assessment_id: int):
+        key = cls.get_cache_key(assessment_id)
+        cache.delete(key)
 
     @classmethod
     def get(cls, assessment) -> "AssessmentPermissions":
-        key = cls.get_cache_key(assessment)
+        key = cls.get_cache_key(assessment.id)
         perms = cache.get(key)
         if perms is None:
             perms = cls(

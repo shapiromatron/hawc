@@ -311,7 +311,7 @@ class Assessment(models.Model):
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
-        AssessmentPermissions.clear_cache(self)
+        AssessmentPermissions.clear_cache(self.id)
 
     def get_permissions(self) -> AssessmentPermissions:
         return AssessmentPermissions.get(self)
