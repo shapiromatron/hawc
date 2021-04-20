@@ -73,6 +73,7 @@ class ModelOptionTable extends React.Component {
                             {showVariance ? (
                                 <li>
                                     <a
+                                        className="dropdown-item"
                                         href="#"
                                         onClick={event => {
                                             event.preventDefault();
