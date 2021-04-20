@@ -13,6 +13,7 @@ class RiskOfBiasFlat(FlatFileExporter):
         header = []
         header.extend(Study.flat_complete_header_row())
         header.extend(models.RiskOfBiasScore.flat_complete_header_row())
+        header.extend(["rob-created", "rob-last_updated"])
         return header
 
     def _get_data_rows(self):
@@ -23,17 +24,16 @@ class RiskOfBiasFlat(FlatFileExporter):
             row.extend(Study.flat_complete_data_row(ser))
 
             try:
-                scores = [
-                    rob["scores"]
-                    for rob in ser.get("riskofbiases", [])
-                    if rob["final"] and rob["active"]
-                ][0]
-            except IndexError:
-                scores = []
+                rob = next(
+                    rob for rob in ser.get("riskofbiases", []) if rob["final"] and rob["active"]
+                )
+            except StopIteration:
+                rob = {"scores": []}
 
-            for score in scores:
+            for score in rob["scores"]:
                 row_copy = list(row)  # clone
                 row_copy.extend(models.RiskOfBiasScore.flat_complete_data_row(score))
+                row_copy.extend([rob["created"], rob["last_updated"]])
                 rows.append(row_copy)
         return rows
 
@@ -60,6 +60,7 @@ class RiskOfBiasCompleteFlat(RiskOfBiasFlat):
                 for score in rob["scores"]:
                     row_copy = list(row)
                     row_copy.extend(models.RiskOfBiasScore.flat_complete_data_row(score))
+                    row_copy.extend([rob["created"], rob["last_updated"]])
                     row_copy.extend(rob_data)
                     rows.append(row_copy)
         return rows

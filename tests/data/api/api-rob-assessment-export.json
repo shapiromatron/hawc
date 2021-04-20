@@ -29,7 +29,9 @@
     "rob-score_score": 16,
     "rob-score_description": "Probably low risk of bias",
     "rob-score_bias_direction": 1,
-    "rob-score_notes": "test"
+    "rob-score_notes": "test",
+    "rob-created": "2020-05-08T12:56:46.183552-05:00",
+    "rob-last_updated": "2020-05-08T14:34:31.468702-05:00"
   },
   {
     "study-id": 7,
@@ -61,7 +63,9 @@
     "rob-score_score": 14,
     "rob-score_description": "Definitely high risk of bias",
     "rob-score_bias_direction": 1,
-    "rob-score_notes": "beep"
+    "rob-score_notes": "beep",
+    "rob-created": "2020-05-08T12:56:46.183552-05:00",
+    "rob-last_updated": "2020-05-08T14:34:31.468702-05:00"
   },
   {
     "study-id": 7,
@@ -93,6 +97,8 @@
     "rob-score_score": 16,
     "rob-score_description": "Probably low risk of bias",
     "rob-score_bias_direction": 1,
-    "rob-score_notes": "test"
+    "rob-score_notes": "test",
+    "rob-created": "2020-05-08T12:56:46.183552-05:00",
+    "rob-last_updated": "2020-05-08T14:34:31.468702-05:00"
   }
 ]
