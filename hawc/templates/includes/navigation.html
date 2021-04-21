@@ -4,7 +4,11 @@
 <nav class="navbar navbar-expand-sm navbar-light bg-light sticky-top hawc-header">
 
     <a class="ml-3 navbar-brand" href="{% if user.is_authenticated %}{% url 'portal' %}{% else %}{% url 'home' %}{% endif %}">
+        {% if extra_branding and flavor == "EPA" %}
+        <span>HAWC</span>
+        {% else %}
         <img src="{% static 'img/HAWC-40.png' %}">
+        {% endif %}
     </a>
 
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
@@ -14,7 +18,7 @@
 
     <ul id="navbarSupportedContent" class="nav navbar-nav collapse navbar-collapse justify-content-end" >
         <li class="nav-item">
-            <a class="nav-link" href="{{ CONTACT_US }}">Contact</a>
+            <a class="nav-link" href="{{ CONTACT_US }}">Contact Us</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="{% url 'about' %}">About</a>
