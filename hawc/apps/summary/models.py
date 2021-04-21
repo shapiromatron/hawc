@@ -253,8 +253,7 @@ class SummaryTable(models.Model):
             raise ValidationError({"content": str(e)})
 
         # clean up control characters before string validation
-        content_str = json.dumps(self.content)
-        content_str = content_str.replace('\\"', '"')
+        content_str = json.dumps(self.content).replace('\\"', '"')
 
         # validate tags used in text
         validate_html_tags(content_str)
