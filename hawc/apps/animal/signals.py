@@ -37,20 +37,23 @@ def invalidate_endpoint_cache(sender, instance, **kwargs):
 
 @receiver(post_save, sender=models.DosingRegime)
 def change_num_dg(sender, instance, **kwargs):
-    # Ensure number endpoint-groups == dose-groups;
+    """Ensure endpoint groups and dose groups are synced.
+
+    Whenever a dosing regime has changed, it's possible that the number of dose-groups may
+    have also changed, which could cause animal.Endpoints to become out of sync. This signal
+    ensures that the number of dose groups between two tables are consistent.
+    """
 
     # get endpoints associated with this dosing-regime
     endpoints = models.Endpoint.objects.filter(
-        animal_group_id__in=models.AnimalGroup.objects.filter(dosing_regime=instance),
-        data_extracted=True,
+        animal_group__dosing_regime=instance, data_extracted=True,
     )
 
     # no changes required if we have no endpoints
     if endpoints.count() == 0:
         return
 
-    # get dose-ids
-    dose_group_ids = sorted(set(instance.doses.all().values_list("dose_group_id", flat=True)))
+    dose_group_ids = list(range(instance.num_dose_groups))
 
     # create endpoint-groups, as needed
     creates = []
