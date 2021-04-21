@@ -55,8 +55,9 @@ class Home(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["content"] = models.Content.rendered_page(
-            models.ContentTypeChoices.HOMEPAGE, context
+        context["recent_assessments"] = models.Assessment.objects.recent_public()
+        context["page"] = models.Content.rendered_page(
+            models.ContentTypeChoices.HOMEPAGE, self.request, context
         )
         return context
 
@@ -199,7 +200,9 @@ class About(TemplateView):
             rob_name=self.get_rob_name(),
             counts=self.get_object_counts(),
         )
-        context["content"] = models.Content.rendered_page(models.ContentTypeChoices.ABOUT, context)
+        context["page"] = models.Content.rendered_page(
+            models.ContentTypeChoices.ABOUT, self.request, context
+        )
         return context
 
 

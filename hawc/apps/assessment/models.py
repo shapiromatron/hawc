@@ -11,7 +11,8 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
 from django.core.validators import MinValueValidator
 from django.db import models
-from django.template import engines
+from django.http import HttpRequest
+from django.template import RequestContext, Template
 from django.template.defaultfilters import truncatewords
 from django.urls import reverse
 from django.utils import timezone
@@ -1001,13 +1002,14 @@ class Content(models.Model):
         return f"assessment.Content.{content_type}"
 
     @classmethod
-    def rendered_page(cls, content_type: ContentTypeChoices, context: Dict) -> str:
+    def rendered_page(cls, content_type: ContentTypeChoices, request: HttpRequest, context: Dict):
         key = cls.get_cache_key(content_type)
         html = cache.get(key)
         if html is None:
-            obj = cls.objects.get(content_type=content_type)
-            html = obj.render(context)
-            cache.set(key, html, 3600)
+            context = RequestContext(request, context)
+            content = cls.objects.get(content_type=content_type)
+            html = Template(content.template).render(context)
+            cache.set(key, html, settings.CACHE_10_MIN)
         return html
 
 
