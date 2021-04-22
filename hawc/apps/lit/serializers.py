@@ -11,6 +11,7 @@ from celery.result import ResultBase
 from django.db import transaction
 from django.db.models import Q
 from django.template.defaultfilters import slugify
+from django.urls import reverse
 from rest_framework import exceptions, serializers
 from rest_framework.exceptions import ParseError
 
@@ -249,6 +250,22 @@ class BulkReferenceTagSerializer(serializers.Serializer):
 
 class ReferenceSerializer(serializers.ModelSerializer):
     tags = serializers.ListField(write_only=True)
+
+    def to_representation(self, instance):
+        ret = super().to_representation(instance)
+        ret["has_study"] = instance.has_study
+        ret["url"] = instance.get_absolute_url()
+        ret["editTagUrl"] = reverse("lit:reference_tags_edit", kwargs={"pk": instance.pk})
+        ret["editReferenceUrl"] = reverse("lit:ref_edit", kwargs={"pk": instance.pk})
+        ret["deleteReferenceUrl"] = reverse("lit:ref_delete", kwargs={"pk": instance.pk})
+
+        ret["identifiers"] = [ident.to_dict() for ident in instance.identifiers.all()]
+        ret["searches"] = [search.to_dict() for search in instance.searches.all()]
+        ret["study_short_citation"] = instance.study.short_citation if ret["has_study"] else None
+
+        ret["tags"] = [tag.id for tag in instance.tags.all()]
+        ret["tags_text"] = [tag.name for tag in instance.tags.all()]
+        return ret
 
     def validate_tags(self, value):
         valid_tags = models.ReferenceFilterTag.get_assessment_qs(

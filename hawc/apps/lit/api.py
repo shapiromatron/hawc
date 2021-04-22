@@ -7,6 +7,7 @@ from django.utils import timezone
 from rest_framework import exceptions, mixins, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.pagination import PageNumberPagination
 
 from ..assessment.api import (
     AssessmentLevelPermissions,
@@ -44,6 +45,30 @@ class LiteratureAssessmentViewset(LegacyAssessmentAdapterMixin, viewsets.Generic
         df = models.ReferenceFilterTag.as_dataframe(instance.id)
         export = FlatExport(df=df, filename=f"reference-tags-{self.assessment.id}")
         return Response(export)
+
+    @action(detail=True, methods=("get",), pagination_class=PageNumberPagination)
+    def references(self, request, pk):
+        assessment = self.get_object()
+
+        search_id = request.query_params.get("search_id")
+        tag_id = request.query_params.get("tag_id")
+        tag = None
+        if tag_id != "untagged":
+            tag = models.ReferenceFilterTag.get_tag_in_assessment(assessment.id, int(tag_id))
+
+        if search_id:
+            search = models.Search.objects.get(id=search_id)
+            qs = search.get_references_with_tag(tag=tag, descendants=True)
+        elif tag:
+            qs = models.Reference.objects.get_references_with_tag(tag, descendants=True)
+        else:
+            qs = models.Reference.objects.get_untagged_references(assessment)
+
+        page = self.paginate_queryset(
+            qs.select_related("study").prefetch_related("searches", "identifiers", "tags")
+        )
+        serializer = serializers.ReferenceSerializer(page, many=True)
+        return self.get_paginated_response(serializer.data)
 
     @action(
         detail=True, methods=("get",), renderer_classes=PandasRenderers, url_path="reference-ids"
