@@ -4,10 +4,14 @@ images using other software (i.e. Inkscape), the software doesn't choke on
 unrecognized HTML expressions.
 */
 
+svg {
+    font-family: "Liberation Sans", Arial, Helvetica, sans-serif;
+}
+
 .d3 {
     background-color: white;
     border: thin solid black;
-    font-family: 'Liberation Sans', Arial, Helvetica, sans-serif;
+    font-family: "Liberation Sans", Arial, Helvetica, sans-serif;
     font-size: 14px;
     line-height: 20px;
 }

@@ -1,7 +1,6 @@
 from urllib.parse import urlparse
 
 import pytest
-from django.contrib.sites.shortcuts import get_current_site
 from django.test.client import Client
 from django.urls import reverse
 
@@ -25,11 +24,12 @@ class TestAssessmentClearCache:
         # test successes
         for client in ["pm@hawcproject.org", "team@hawcproject.org"]:
             c = Client()
-            if client:
-                assert c.login(username=client, password="pw") is True
-            # this is success behavior in test environment w/o redis - TODO improve?
-            with pytest.raises(NotImplementedError):
-                response = c.get(url)
+            assert c.login(username=client, password="pw") is True
+
+            # this is "success" using a non-redis cache
+            with pytest.raises(NotImplementedError) as err:
+                c.get(url)
+            assert "Cannot wipe assessment cache using this cache backend" in str(err)
 
     @pytest.mark.django_db
     def test_functionality(self, db_keys):
@@ -132,24 +132,26 @@ class TestContactUsPage:
         assert resp.status_code == 200
 
     def test_referrer(self):
-        portal_url = reverse("portal")
-        about_url = reverse("about")
         contact_url = reverse("contact")
+        client = Client(SERVER_NAME="testserver")
+        domain = client._base_environ()["SERVER_NAME"]
+        about_url = f"https://{domain}{reverse('about')}"
+        portal_url = f"https://{domain}{reverse('portal')}"
 
-        client = Client()
         client.login(username="pm@hawcproject.org", password="pw")
 
         # no referrer; use default
         resp = client.get(contact_url)
-        assert urlparse(resp.context["form"].fields["previous_page"].initial).path == portal_url
+        assert resp.context["form"].fields["previous_page"].initial == portal_url
 
         # valid referrer; use valid
-        domain = get_current_site(resp.request).domain
-        valid_url = f"https://{domain}{about_url}"
-        resp = client.get(contact_url, HTTP_REFERER=valid_url)
-        assert resp.context["form"].fields["previous_page"].initial == valid_url
+        resp = client.get(contact_url, HTTP_REFERER=about_url)
+        assert resp.context["form"].fields["previous_page"].initial == about_url
+
+        # valid referer; remove arguments
+        resp = client.get(contact_url, HTTP_REFERER=about_url + '?"onmouseover="alert(26)"')
+        assert resp.context["form"].fields["previous_page"].initial == about_url
 
         # invalid referrer; use default
-        about_url = reverse("about")
         resp = client.get(contact_url, HTTP_REFERER=about_url + '"onmouseover="alert(26)"')
-        assert urlparse(resp.context["form"].fields["previous_page"].initial).path == portal_url
+        assert resp.context["form"].fields["previous_page"].initial == portal_url

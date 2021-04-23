@@ -117,6 +117,13 @@ class ModelOptionModal extends BaseModal {
                                     );
                                 })}
                             </div>
+                            <p className="text-muted">
+                                When ‟Doses to drop” is 0, no doses are dropped. If doses dropped is
+                                greater than zero, doses are dropped from the maximum dose in
+                                reverse order (e.g., a value of 1 drops the highest dose). All
+                                models must have the same ‟Doses to Drop” value in order for a dose
+                                to actually be dropped; otherwise it is ignored.
+                            </p>
                         </fieldset>
                         <fieldset className="col-md-6">
                             <legend>Optimizer assignments</legend>

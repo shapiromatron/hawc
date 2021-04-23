@@ -22,7 +22,6 @@ class EditableTask extends Component {
                 <TaskForm
                     ref={self => (this.form = self)}
                     task={toJS(task)}
-                    className={"flex-1"}
                     autocompleteUrl={userAutocompleteUrl}
                 />
                 <div>
