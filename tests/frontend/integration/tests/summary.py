@@ -133,10 +133,35 @@ def _check_tables_working(driver, root_url):
     helium.wait_until(helium.S(".summaryTable").exists)
 
 
+def _check_modals_working(driver, root_url):
+    """
+    Tests to ensure that modals on visuals are working correctly.
+    """
+    # check study display modal
+    helium.go_to(root_url + "/summary/data-pivot/assessment/2/animal-bioassay-data-pivot-endpoint/")
+    helium.wait_until(helium.Text("study name").exists)
+    helium.click("Biesemeier JA et al. 2011")
+    helium.wait_until(helium.Text("Click on any cell above to view details.").exists)
+    shared.click_text(driver, "Show all details")
+    assert helium.Text("metric 1").exists()
+    assert helium.Text("overall description").exists()
+    shared.click_text(driver, "Hide all details")
+    assert not helium.Text("metric 1").exists()
+    assert not helium.Text("overall description").exists()
+    shared.click_text(driver, "domain 1")
+    assert helium.Text("metric 1").exists()
+    assert not helium.Text("overall description").exists()
+    shared.click_text(driver, "overall")
+    assert not helium.Text("metric 1").exists()
+    assert helium.Text("overall description").exists()
+    helium.click(helium.S('//button[text()="Close"]'))
+
+
 def summary(driver, root_url):
     shared.login(root_url)
     _check_exploratory_heatmaps(driver, root_url)
     _check_browsing(driver, root_url)
     _check_visuals_working(driver, root_url)
     _check_tables_working(driver, root_url)
+    _check_modals_working(driver, root_url)
     shared.logout()

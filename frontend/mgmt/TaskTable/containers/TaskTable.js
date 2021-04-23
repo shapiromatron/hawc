@@ -69,7 +69,6 @@ class TaskTable extends Component {
                                             {displayAsForm ? (
                                                 <TaskForm
                                                     task={task}
-                                                    className="flex-1"
                                                     autocompleteUrl={userAutocompleteUrl}
                                                     onFormChange={store.addStagedPatch}
                                                 />

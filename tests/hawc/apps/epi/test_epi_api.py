@@ -1441,6 +1441,7 @@ class TestExposureApi:
 
         generic_test_scenarios(client, url, scenarios)
 
+    @pytest.mark.vcr  # cache epa actor webservice response
     def test_valid_requests(self, db_keys):
         url = reverse("epi:api:exposure-list")
         client = APIClient()
