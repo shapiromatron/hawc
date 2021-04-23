@@ -472,7 +472,7 @@ class TestBulkRobCleanupApis:
             "score_symbol": "++",
             "score_shade": "#00CC00",
             "bias_direction_description": "not entered/unknown",
-            "url_edit": "/rob/1/edit/",
+            "url_edit": "/rob/1/update/",
             "study_name": "Foo et al.",
             "study_id": 1,
             "study_types": ["bioassay"],

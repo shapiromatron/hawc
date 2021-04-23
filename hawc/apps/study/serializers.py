@@ -4,13 +4,14 @@ from rest_framework import exceptions, serializers
 from ..assessment.serializers import AssessmentMiniSerializer
 from ..common.api import DynamicFieldsMixin
 from ..common.helper import SerializerHelper
+from ..common.serializers import IdLookupMixin
 from ..lit.models import Reference
 from ..lit.serializers import IdentifiersSerializer, ReferenceTagsSerializer
 from ..riskofbias.serializers import RiskOfBiasSerializer
 from . import models
 
 
-class StudySerializer(serializers.ModelSerializer):
+class StudySerializer(IdLookupMixin, serializers.ModelSerializer):
     def to_representation(self, instance):
         ret = super().to_representation(instance)
         ret["coi_reported"] = instance.get_coi_reported_display()

@@ -25,7 +25,7 @@ const judgementChoices = [
         {value: CUSTOM_JUDGEMENT, icon: "", text: "Custom"},
     ],
     JudgementSelector = observer(props => {
-        const {value, handleSelect} = props,
+        const {value, handleSelect, helpText} = props,
             choicesList = props.summary ? summaryJudgementChoices : judgementChoices,
             choices = choicesList.map(d => {
                 return {id: d.value, label: `${d.icon} ${d.text}`};
@@ -37,6 +37,7 @@ const judgementChoices = [
                 value={value}
                 choices={choices}
                 handleSelect={handleSelect}
+                helpText={helpText}
             />
         );
     }),
@@ -71,6 +72,7 @@ JudgementSelector.propTypes = {
     value: PropTypes.number.isRequired,
     handleSelect: PropTypes.func.isRequired,
     summary: PropTypes.bool.isRequired,
+    helpText: PropTypes.string,
 };
 Judgement.propTypes = {
     value: PropTypes.number.isRequired,
