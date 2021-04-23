@@ -14,28 +14,28 @@ class StudyDisplay extends Component {
             scores: [],
         };
         this.selectActive = this.selectActive.bind(this);
-        this.selectAllActive = this.selectActive.bind(this, {display: "all"});
+        this.selectAllActive = this.selectActive.bind(this, "all");
     }
 
     isAllShown() {
         return this.state.scores.length == this.props.riskofbias.scores.length;
     }
 
-    selectActive(selection) {
-        if (selection.domain == "all") {
+    selectActive(domain, metric) {
+        if (domain == "all") {
             let scores = this.isAllShown() ? [] : this.props.riskofbias.scores;
             this.setState({scores});
         } else {
-            let domain = _.find(this.props.riskofbias.scores, {
-                key: selection.domain,
+            let domain_scores = _.find(this.props.riskofbias.scores, {
+                key: domain,
             });
-            if (selection.metric) {
-                let metric = _.find(domain.values, {key: selection.metric});
+            if (metric) {
+                let metric_scores = _.find(domain_scores.values, {key: metric});
                 this.setState({
-                    scores: [Object.assign({}, domain, {values: [metric]})],
+                    scores: [Object.assign({}, domain, {values: [metric_scores]})],
                 });
             } else {
-                this.setState({scores: [domain]});
+                this.setState({scores: [domain_scores]});
             }
         }
     }
@@ -45,7 +45,8 @@ class StudyDisplay extends Component {
             <div>
                 <AggregateGraph
                     domains={this.props.riskofbias.scores}
-                    handleClick={this.selectActive}
+                    handleSelectDomain={this.selectActive}
+                    handleSelectMetric={this.selectActive}
                 />
                 <RiskOfBiasDisplay active={this.state.scores} config={this.props.config} />
                 <ShowAll allShown={this.isAllShown()} handleClick={this.selectAllActive} />
