@@ -102,7 +102,7 @@
               "score_symbol": "++",
               "score_shade": "#00CC00",
               "bias_direction_description": "not entered/unknown",
-              "url_edit": "/rob/4/edit/",
+              "url_edit": "/rob/4/update/",
               "study_name": "Biesemeier JA et al. 2011",
               "study_id": 7,
               "study_types": [
@@ -149,7 +149,7 @@
               "score_symbol": "--",
               "score_shade": "#CC3333",
               "bias_direction_description": "\u2b06 (away from null)",
-              "url_edit": "/rob/4/edit/",
+              "url_edit": "/rob/4/update/",
               "study_name": "Biesemeier JA et al. 2011",
               "study_id": 7,
               "study_types": [
@@ -218,7 +218,7 @@
               "score_symbol": "+",
               "score_shade": "#6FFF00",
               "bias_direction_description": "not entered/unknown",
-              "url_edit": "/rob/5/edit/",
+              "url_edit": "/rob/5/update/",
               "study_name": "Biesemeier JA et al. 2011",
               "study_id": 7,
               "study_types": [
@@ -265,7 +265,7 @@
               "score_symbol": "++",
               "score_shade": "#00CC00",
               "bias_direction_description": "not entered/unknown",
-              "url_edit": "/rob/5/edit/",
+              "url_edit": "/rob/5/update/",
               "study_name": "Biesemeier JA et al. 2011",
               "study_id": 7,
               "study_types": [
@@ -334,7 +334,7 @@
               "score_symbol": "+",
               "score_shade": "#6FFF00",
               "bias_direction_description": "\u2b06 (away from null)",
-              "url_edit": "/rob/6/edit/",
+              "url_edit": "/rob/6/update/",
               "study_name": "Biesemeier JA et al. 2011",
               "study_id": 7,
               "study_types": [
@@ -398,7 +398,7 @@
               "score_symbol": "--",
               "score_shade": "#CC3333",
               "bias_direction_description": "\u2b06 (away from null)",
-              "url_edit": "/rob/6/edit/",
+              "url_edit": "/rob/6/update/",
               "study_name": "Biesemeier JA et al. 2011",
               "study_id": 7,
               "study_types": [
@@ -445,7 +445,7 @@
               "score_symbol": "+",
               "score_shade": "#6FFF00",
               "bias_direction_description": "\u2b06 (away from null)",
-              "url_edit": "/rob/6/edit/",
+              "url_edit": "/rob/6/update/",
               "study_name": "Biesemeier JA et al. 2011",
               "study_id": 7,
               "study_types": [
