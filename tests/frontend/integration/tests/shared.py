@@ -17,3 +17,11 @@ def logout():
     h.click("Logout")
     assert h.Text("Your HAWC").exists() is False
     assert urlparse(h.get_driver().current_url).path == "/"
+
+
+def click_text(driver, text: str):
+    """
+    Helium has trouble clicking elements that are scrolled off screen.
+    This uses the webdriver directly instead.
+    """
+    driver.find_element_by_xpath(f'//*[text()="{text}"]').click()

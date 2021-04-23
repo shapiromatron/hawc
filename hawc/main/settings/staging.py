@@ -9,8 +9,11 @@ EXTRA_BRANDING = os.getenv("HAWC_EXTRA_BRANDING", "True") == "True"
 SERVER_ROLE = "staging"
 SERVER_BANNER_COLOR = "#EE8416"
 
-SESSION_COOKIE_SECURE = bool(os.environ.get("DJANGO_HTTPS_ONLY") == "True")
-CSRF_COOKIE_SECURE = bool(os.environ.get("DJANGO_HTTPS_ONLY") == "True")
+HTTPS_ONLY = bool(os.environ.get("DJANGO_HTTPS_ONLY") == "True")
+SESSION_COOKIE_SECURE = HTTPS_ONLY
+CSRF_COOKIE_SECURE = HTTPS_ONLY
+SECURE_HSTS_SECONDS = 3600 if HTTPS_ONLY else 0  # TODO - after testing, change to 60*60*24
+SECURE_SSL_REDIRECT = HTTPS_ONLY
 
 ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "").split("|")
 

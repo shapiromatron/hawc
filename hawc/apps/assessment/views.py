@@ -364,7 +364,8 @@ class AssessmentClearCache(MessageMixin, View):
     def get(self, request, *args, **kwargs):
         assessment = get_object_or_404(self.model, pk=kwargs["pk"])
         url = get_referrer(self.request, assessment.get_absolute_url())
-        if not assessment.user_can_edit_object(request.user):
+
+        if not assessment.user_is_team_member_or_higher(request.user):
             raise PermissionDenied()
 
         assessment.bust_cache()

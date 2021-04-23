@@ -131,9 +131,11 @@ const NA_KEYS = [10, 20],
     },
     getMultiScoreDisplaySettings = function(scores) {
         // Return visualization/color settings for situations where multiple scores may exist for
-        // a given metric (eg, study-level override settings)
+        // a given metric (eg, study-level override settings).
+        // By default, if multiple scores exist and show he defaults score label if one exists.
+        // If the default score does not exist, present the value of the first score (random).
         let sortedScores = _.orderBy(scores, "score", "desc"),
-            defaultScore = _.find(scores, {is_default: true}),
+            defaultScore = _.find(scores, {is_default: true}) || sortedScores[0],
             shades = _.chain(sortedScores)
                 .map(score => score.score_shade)
                 .uniq()
