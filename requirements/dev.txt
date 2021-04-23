@@ -8,7 +8,7 @@ flake8-isort==2.9.0
 mypy==0.770
 
 # django development
-django-debug-toolbar==3.1.1
+django-debug-toolbar==3.2.1
 django-extensions==3.0.9
 faker==4.0.2
 
@@ -20,9 +20,6 @@ pytest-django==3.10.0
 vcrpy==4.0.2
 pytest-vcr==1.0.2
 helium==3.0.4
-
-# build tools
-wheel==0.34.2
 
 # docs
 watchdog==0.10.2

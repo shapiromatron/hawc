@@ -32,6 +32,11 @@ class RequiresAssessmentID(APIException):
     default_detail = "Please provide an `assessment_id` argument to your GET request."
 
 
+class InvalidAssessmentID(APIException):
+    status_code = status.HTTP_400_BAD_REQUEST
+    default_detail = "Assessment does not exist for given `assessment_id`."
+
+
 class DisabledPagination(PageNumberPagination):
     page_size = None
 
@@ -47,9 +52,12 @@ def get_assessment_id_param(request) -> int:
 
 
 def get_assessment_from_query(request) -> Optional[models.Assessment]:
-    """Returns assessment or None."""
+    """Returns assessment or raises exception if does not exist."""
     assessment_id = get_assessment_id_param(request)
-    return models.Assessment.objects.filter(pk=assessment_id).first()
+    try:
+        return models.Assessment.objects.get(pk=assessment_id)
+    except models.Assessment.DoesNotExist:
+        raise InvalidAssessmentID()
 
 
 class JobPermissions(permissions.BasePermission):
@@ -105,9 +113,6 @@ class AssessmentLevelPermissions(permissions.BasePermission):
             if not hasattr(view, "assessment"):
                 view.assessment = get_assessment_from_query(request)
 
-            if view.assessment is None:
-                return False
-
             return view.assessment.user_can_view_object(request.user)
 
         return True
@@ -134,9 +139,6 @@ class InAssessmentFilter(filters.BaseFilterBackend):
 
         if not hasattr(view, "assessment"):
             view.assessment = get_assessment_from_query(request)
-
-        if view.assessment is None:
-            return queryset.none()
 
         if not view.assessment_filter_args:
             raise ValueError("Viewset requires the `assessment_filter_args` argument")
